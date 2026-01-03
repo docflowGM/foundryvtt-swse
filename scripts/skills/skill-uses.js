@@ -1784,6 +1784,1550 @@ export class RideUses {
   }
 }
 
+// ============================================================================
+// SURVIVAL SKILL (WIS)
+// ============================================================================
+
+export class SurvivalUses {
+  /**
+   * BASIC SURVIVAL - Avoid natural hazards and sustain self in wilderness
+   * Once per day, DC 15, provides food/water for one additional person per 2 points over 10
+   */
+  static async basicSurvival(actor, additionalPeople = 0) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const survivalBonus = actor.system.skills?.survival?.total || 0;
+    const dc = 15;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + survivalBonus;
+    const success = checkResult >= dc;
+
+    let supportedPeople = 1; // Always supports self
+    if (success) {
+      const beatMargin = checkResult - 10;
+      if (beatMargin > 0) {
+        supportedPeople += Math.floor(beatMargin / 2);
+      }
+    }
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Basic Survival</strong> - Hunt and Forage<br>DC: ${dc}<br>Survival Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Duration: 24 hours${success ? `<br>Supports: ${supportedPeople} people` : ''}<br>Frequency: Once per day`
+    });
+
+    SWSELogger.log(
+      `SurvivalUses | ${actor.name} used basic survival: ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    ui.notifications.info(
+      success
+        ? `${actor.name} finds food and water for ${supportedPeople} people!`
+        : `${actor.name} cannot find adequate food or water.`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      supportedPeople: supportedPeople,
+      frequency: 'Once per day',
+      duration: '24 hours',
+      message: success
+        ? `Sustains ${supportedPeople} people for 24 hours`
+        : 'Cannot find food/water'
+    };
+  }
+
+  /**
+   * ENDURE EXTREME TEMPERATURES (Requires Field Kit)
+   * Once per day, DC 20, ignore extreme cold or heat for 24 hours
+   */
+  static async endureExtremeTemperatures(actor, temperatureType = 'heat', hasFieldKit = true) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const survivalBonus = actor.system.skills?.survival?.total || 0;
+    const dc = 20;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + survivalBonus;
+    const success = checkResult >= dc;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Endure Extreme Temperatures</strong><br>Temperature Type: ${temperatureType}<br>DC: ${dc}<br>Survival Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Duration: 24 hours${hasFieldKit ? '' : '<br><strong style="color:orange">No Field Kit</strong>'}<br>Frequency: Once per day`
+    });
+
+    SWSELogger.log(
+      `SurvivalUses | ${actor.name} endured extreme temperatures: ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    ui.notifications.info(
+      success
+        ? `${actor.name} ignores extreme ${temperatureType} for 24 hours!`
+        : `${actor.name} cannot resist the extreme ${temperatureType}.`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      temperatureType: temperatureType,
+      hasFieldKit: hasFieldKit,
+      duration: success ? '24 hours' : 'None',
+      frequency: 'Once per day',
+      required: 'Field Kit',
+      message: success
+        ? `Ignores extreme ${temperatureType} for 24 hours`
+        : `Cannot endure extreme ${temperatureType}`
+    };
+  }
+
+  /**
+   * KNOW DIRECTION - Ascertain which direction is north
+   * Full-Round Action, DC 10
+   */
+  static async knowDirection(actor) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const survivalBonus = actor.system.skills?.survival?.total || 0;
+    const dc = 10;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + survivalBonus;
+    const success = checkResult >= dc;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Know Direction</strong> - Find North<br>DC: ${dc}<br>Survival Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action`
+    });
+
+    SWSELogger.log(
+      `SurvivalUses | ${actor.name} determined direction: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    ui.notifications.info(
+      success ? `${actor.name} finds north!` : `${actor.name} cannot determine direction.`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      action: 'Full-Round Action',
+      message: success ? 'Ascertains direction to north' : 'Cannot determine direction'
+    };
+  }
+
+  /**
+   * TRACK (Trained Only) - Follow creature's trail
+   * Full-Round Action to find/follow tracks
+   * DC varies by surface and circumstances
+   */
+  static async track(actor, surface = 'firm', distance = 1) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const survivalBonus = actor.system.skills?.survival?.total || 0;
+    const isTrained = actor.system.skills?.survival?.trained || false;
+
+    if (!isTrained) {
+      return {
+        success: false,
+        message: 'Must be Trained in Survival to use Track',
+        trained: false
+      };
+    }
+
+    const dcBySurface = {
+      'soft': 10,
+      'firm': 20,
+      'hard': 30
+    };
+
+    const baseDC = dcBySurface[surface.toLowerCase()] || 20;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + survivalBonus;
+    const success = checkResult >= baseDC;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Track</strong> - Follow Trail<br>Reference: Trained Only<br>Surface: ${surface}<br>Base DC: ${baseDC}<br>Survival Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Movement: Half speed while tracking`
+    });
+
+    SWSELogger.log(
+      `SurvivalUses | ${actor.name} tracked creature: ${checkResult} vs DC ${baseDC} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: baseDC,
+      surface: surface,
+      trained: true,
+      action: 'Full-Round Action',
+      speedModifier: 'Half speed while tracking',
+      message: success ? `Tracks trail on ${surface} ground` : `Loses track on ${surface} ground`
+    };
+  }
+
+  /**
+   * CREATE DEFENSIVE POSITION (Trained Only, Clone Wars)
+   * 10 minutes to prepare, DC 20, grants defensive bonuses
+   */
+  static async createDefensivePosition(actor, areaSize = '20x20') {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const survivalBonus = actor.system.skills?.survival?.total || 0;
+    const isTrained = actor.system.skills?.survival?.trained || false;
+
+    if (!isTrained) {
+      return {
+        success: false,
+        message: 'Must be Trained in Survival to create Defensive Position',
+        trained: false
+      };
+    }
+
+    const dc = 20;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + survivalBonus;
+    const success = checkResult >= dc;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Create Defensive Position</strong> - Fortified Camp<br>Reference: Clone Wars Campaign Guide<br>Area: ${areaSize} squares<br>Preparation Time: 10 minutes<br>DC: ${dc}<br>Survival Check: ${checkResult}${success ? ' ✓' : ' ✗'}${success ? '<br>Benefits: No Perception penalty, -5 to enemy Stealth, +2 Reflex Defense' : ''}`
+    });
+
+    SWSELogger.log(
+      `SurvivalUses | ${actor.name} created defensive position: ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      areaSize: areaSize,
+      prepTime: '10 minutes',
+      trained: true,
+      source: 'Clone Wars Campaign Guide',
+      noPenalty: success ? true : false,
+      enemyStealthPenalty: success ? -5 : 0,
+      reflexDefenseBonus: success ? 2 : 0,
+      message: success
+        ? `Fortifies ${areaSize} sq area (no Perception penalty, -5 enemy Stealth, +2 Reflex Defense)`
+        : 'Cannot create defensive position'
+    };
+  }
+
+  /**
+   * EXTENDED SURVIVAL (Trained Only, Force Unleashed)
+   * Find suitable shelter for extended wilderness survival
+   */
+  static async extendedSurvival(actor) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const survivalBonus = actor.system.skills?.survival?.total || 0;
+    const isTrained = actor.system.skills?.survival?.trained || false;
+
+    if (!isTrained) {
+      return {
+        success: false,
+        message: 'Must be Trained in Survival for Extended Survival',
+        trained: false
+      };
+    }
+
+    const dc = 20;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + survivalBonus;
+    const success = checkResult >= dc;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Extended Survival</strong> - Long-Term Shelter<br>Reference: Force Unleashed Campaign Guide<br>Duration: For extended wilderness periods (48+ hours)<br>DC: ${dc}<br>Survival Check: ${checkResult}${success ? ' ✓' : ' ✗'}${success ? '<br>Effect: Reduces Basic Survival DC by 5' : ''}`
+    });
+
+    SWSELogger.log(
+      `SurvivalUses | ${actor.name} established extended survival: ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      trained: true,
+      source: 'Force Unleashed Campaign Guide',
+      basicSurvivalDCReduction: success ? 5 : 0,
+      message: success
+        ? 'Finds suitable shelter (Basic Survival DC reduced by 5)'
+        : 'Cannot find suitable shelter'
+    };
+  }
+
+  static getSurvivalBonus(actor) {
+    if (!actor) return 0;
+    return actor.system.skills?.survival?.total || 0;
+  }
+
+  static isTrained(actor) {
+    if (!actor) return false;
+    return actor.system.skills?.survival?.trained || false;
+  }
+}
+
+// ============================================================================
+// SWIM SKILL (STR)
+// ============================================================================
+
+export class SwimUses {
+  /**
+   * SWIM - Move through water
+   * Move Action (1/4 speed) or Full-Round Action (1/2 speed)
+   * DC depends on water conditions
+   */
+  static async swim(actor, waterCondition = 'calm', distance = 3, actionType = 'move') {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const swimBonus = actor.system.skills?.swim?.total || 0;
+    const armorPenalty = actor.system.skills?.swim?.armor || 0;
+
+    const dcByCondition = {
+      'calm': 10,
+      'rough': 15,
+      'stormy': 20
+    };
+
+    const dc = dcByCondition[waterCondition.toLowerCase()] || 10;
+    const totalBonus = swimBonus + armorPenalty;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + totalBonus;
+    const success = checkResult >= dc;
+
+    let speedMultiplier = 0.25;
+    if (actionType.toLowerCase() === 'full-round') {
+      speedMultiplier = 0.5;
+    }
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Swim</strong> - Move Through Water<br>Water Condition: ${waterCondition}<br>DC: ${dc}<br>Swim Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: ${actionType === 'full-round' ? 'Full-Round Action (1/2 speed)' : 'Move Action (1/4 speed)'}${!success && checkResult < dc - 5 ? '<br><strong style="color:red">GOING UNDERWATER - Hold Breath!</strong>' : ''}`
+    });
+
+    SWSELogger.log(
+      `SwimUses | ${actor.name} swam in ${waterCondition} water: ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      waterCondition: waterCondition,
+      action: actionType,
+      speedMultiplier: speedMultiplier,
+      armorPenalty: armorPenalty,
+      underwater: !success && checkResult < dc - 5,
+      message: success
+        ? `Swims ${distance * speedMultiplier} meters`
+        : !success && checkResult < dc - 5
+          ? 'Goes underwater - must hold breath'
+          : 'Makes no progress'
+    };
+  }
+
+  /**
+   * HOLD BREATH - Underwater endurance
+   * Once submerged, make Endurance check to continue holding breath
+   */
+  static async holdBreach(actor, roundsHeld = 1) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const enduranceBonus = actor.system.skills?.endurance?.total || 0;
+    const constitutionModifier = actor.system.abilities?.con?.modifier || 0;
+
+    const maxRounds = constitutionModifier * roundsHeld;
+    const dc = 10 + (5 * Math.max(0, roundsHeld - constitutionModifier));
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + enduranceBonus;
+    const success = checkResult >= dc;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Hold Breath</strong> - Underwater<br>Rounds Held: ${roundsHeld}<br>CON Modifier: ${constitutionModifier}<br>DC: ${dc}<br>Endurance Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+    });
+
+    SWSELogger.log(
+      `SwimUses | ${actor.name} held breath: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      roundsHeld: roundsHeld,
+      constitutionModifier: constitutionModifier,
+      message: success ? `Continues holding breath (round ${roundsHeld})` : 'Starts drowning'
+    };
+  }
+
+  static getSwimBonus(actor) {
+    if (!actor) return 0;
+    return actor.system.skills?.swim?.total || 0;
+  }
+
+  static getArmorCheckPenalty(actor) {
+    if (!actor) return 0;
+    return actor.system.skills?.swim?.armor || 0;
+  }
+}
+
+// ============================================================================
+// TREAT INJURY SKILL (WIS)
+// ============================================================================
+
+export class TreatInjuryUses {
+  /**
+   * FIRST AID (Requires Medpac)
+   * Full-Round Action, DC 15, restores HP equal to target's level + margin above DC
+   */
+  static async firstAid(actor, target, hasMedpac = true) {
+    if (!actor || !target) {
+      return { success: false, message: 'Invalid actor or target' };
+    }
+
+    const treatInjuryBonus = actor.system.skills?.['treat-injury']?.total || 0;
+    const targetLevel = target.system.details?.level?.value || 1;
+    const dc = 15;
+
+    let equipmentBonus = 0;
+    if (hasMedpac) {
+      equipmentBonus = 2;
+    }
+
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + treatInjuryBonus + equipmentBonus;
+    const success = checkResult >= dc;
+
+    let hpRestored = 0;
+    if (success) {
+      hpRestored = targetLevel + Math.max(0, checkResult - dc);
+    }
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>First Aid</strong> - Emergency Treatment<br>Target: ${target.name}<br>DC: ${dc}<br>${hasMedpac ? 'Medpac Bonus: +2<br>' : ''}Treat Injury Check: ${checkResult}${success ? ' ✓' : ' ✗'}${success ? `<br>HP Restored: ${hpRestored}` : ''}<br>Action: Full-Round Action<br>Cooldown: 24 hours per target`
+    });
+
+    SWSELogger.log(
+      `TreatInjuryUses | ${actor.name} gave first aid to ${target.name}: ` +
+      `${checkResult} vs DC ${dc} = ${success ? `Success (${hpRestored}HP)` : 'Failure'}`
+    );
+
+    ui.notifications.info(
+      success
+        ? `${actor.name} restores ${hpRestored} HP to ${target.name}!`
+        : `${actor.name}'s first aid attempt fails.`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      target: target.name,
+      hpRestored: hpRestored,
+      hasMedpac: hasMedpac,
+      equipmentBonus: equipmentBonus,
+      action: 'Full-Round Action',
+      cooldown: '24 hours per target',
+      message: success
+        ? `Restores ${hpRestored} HP to ${target.name}`
+        : 'First aid fails'
+    };
+  }
+
+  /**
+   * LONG-TERM CARE - Tend to creature for 8 hours
+   * Restores HP equal to target's level (in addition to natural healing)
+   */
+  static async longTermCare(actor, targets = [], hasTraining = false) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const maxTargets = hasTraining ? 6 : 1;
+    const numTargets = Math.min(targets.length, maxTargets);
+
+    return {
+      success: true,
+      numTargets: numTargets,
+      maxTargets: maxTargets,
+      timeRequired: '8 consecutive hours',
+      hpRestoredPerTarget: 'Target\'s Character Level',
+      frequency: 'Once per 24 hours per target',
+      trained: hasTraining,
+      message: `Provides long-term care to ${numTargets}/${maxTargets} targets for 8 hours`
+    };
+  }
+
+  /**
+   * PERFORM SURGERY (Trained Only, Requires Surgery Kit)
+   * 1 hour of uninterrupted work, DC 20
+   */
+  static async performSurgery(actor, targetLevel = 1, surgeryType = 'heal', hasSurgeryKit = true) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const treatInjuryBonus = actor.system.skills?.['treat-injury']?.total || 0;
+    const isTrained = actor.system.skills?.['treat-injury']?.trained || false;
+
+    if (!isTrained) {
+      return {
+        success: false,
+        message: 'Must be Trained in Treat Injury to perform Surgery',
+        trained: false
+      };
+    }
+
+    const dc = 20;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + treatInjuryBonus;
+    const success = checkResult >= dc;
+
+    const constitutionModifier = actor.system.abilities?.con?.modifier || 0;
+    const hpHealed = success ? Math.max(1, constitutionModifier * targetLevel) : 0;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Perform Surgery</strong> - ${surgeryType === 'heal' ? 'Heal Damage' : 'Remove Condition/Install Prosthesis'}<br>Time: 1 hour uninterrupted<br>DC: ${dc}<br>Treat Injury Check: ${checkResult}${success ? ' ✓' : ' ✗'}${success ? `<br>HP Healed: ${hpHealed}` : `<br><strong style="color:red">Target takes Damage Threshold damage!</strong>`}<br>Required: Surgery Kit`
+    });
+
+    SWSELogger.log(
+      `TreatInjuryUses | ${actor.name} performed surgery: ` +
+      `${checkResult} vs DC ${dc} = ${success ? `Success (${hpHealed}HP)` : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      surgeryType: surgeryType,
+      timeRequired: '1 hour uninterrupted',
+      hpHealed: hpHealed,
+      trained: true,
+      required: 'Surgery Kit',
+      message: success
+        ? `Surgery successful (${hpHealed} HP, removes Persistent Conditions)`
+        : 'Surgery fails (target takes Damage Threshold damage)'
+    };
+  }
+
+  /**
+   * REVIVIFY (Trained Only, Requires Medical Kit)
+   * Full-Round Action within 1 round of death, DC 25
+   */
+  static async revivify(actor) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const treatInjuryBonus = actor.system.skills?.['treat-injury']?.total || 0;
+    const isTrained = actor.system.skills?.['treat-injury']?.trained || false;
+
+    if (!isTrained) {
+      return {
+        success: false,
+        message: 'Must be Trained in Treat Injury to Revivify',
+        trained: false
+      };
+    }
+
+    const dc = 25;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + treatInjuryBonus;
+    const success = checkResult >= dc;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Revivify</strong> - Bring Back From Death<br>Time Limit: Within 1 round of death<br>DC: ${dc}<br>Treat Injury Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Required: Medical Kit`
+    });
+
+    SWSELogger.log(
+      `TreatInjuryUses | ${actor.name} revivified creature: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      timeLimit: '1 round of death',
+      trained: true,
+      required: 'Medical Kit',
+      effect: success ? 'Target becomes Unconscious instead of dead' : 'Cannot revive',
+      message: success
+        ? 'Revives target (becomes Unconscious)'
+        : 'Cannot revive target'
+    };
+  }
+
+  /**
+   * TREAT DISEASE (Trained Only, Requires Medical Kit)
+   * 8 hours of treatment, Treat Injury check vs disease DC
+   */
+  static async treatDisease(actor, diseaseType = 'standard', hasmedKit = true) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const treatInjuryBonus = actor.system.skills?.['treat-injury']?.total || 0;
+    const isTrained = actor.system.skills?.['treat-injury']?.trained || false;
+
+    if (!isTrained) {
+      return {
+        success: false,
+        message: 'Must be Trained in Treat Injury to treat Disease',
+        trained: false
+      };
+    }
+
+    return {
+      success: null,
+      checkRequired: true,
+      timeRequired: '8 hours',
+      trained: true,
+      required: 'Medical Kit',
+      instruction: 'Make Treat Injury check vs disease DC after 8 hours',
+      message: 'Treat Disease requires Disease DC specification'
+    };
+  }
+
+  /**
+   * TREAT POISON (Trained Only, Requires Medical Kit)
+   * Full-Round Action, Treat Injury check vs poison DC
+   */
+  static async treatPoison(actor) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const treatInjuryBonus = actor.system.skills?.['treat-injury']?.total || 0;
+    const isTrained = actor.system.skills?.['treat-injury']?.trained || false;
+
+    if (!isTrained) {
+      return {
+        success: false,
+        message: 'Must be Trained in Treat Injury to treat Poison',
+        trained: false
+      };
+    }
+
+    return {
+      success: null,
+      checkRequired: true,
+      action: 'Full-Round Action',
+      trained: true,
+      required: 'Medical Kit',
+      instruction: 'Make Treat Injury check vs poison DC',
+      message: 'Treat Poison requires Poison DC specification'
+    };
+  }
+
+  static getTreatInjuryBonus(actor) {
+    if (!actor) return 0;
+    return actor.system.skills?.['treat-injury']?.total || 0;
+  }
+
+  static isTrained(actor) {
+    if (!actor) return false;
+    return actor.system.skills?.['treat-injury']?.trained || false;
+  }
+}
+
+// ============================================================================
+// USE COMPUTER SKILL (INT)
+// ============================================================================
+
+export class UseComputerUses {
+  /**
+   * ACCESS INFORMATION - Find data on computer or network
+   * Time and DC depend on information type and access method
+   */
+  static async accessInformation(actor, informationType = 'general', computerAttitude = 'indifferent') {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const useComputerBonus = actor.system.skills?.['use-computer']?.total || 0;
+
+    const dcByType = {
+      'general': 15,
+      'specific': 20,
+      'private': 25,
+      'secret': 30
+    };
+
+    const timeByType = {
+      'general': '1 minute',
+      'specific': '10 minutes',
+      'private': '1 hour',
+      'secret': '1 day'
+    };
+
+    const attitudeModifiers = {
+      'hostile': -10, 'unfriendly': -5, 'indifferent': -2,
+      'friendly': 0, 'helpful': 'auto-access'
+    };
+
+    const modifier = attitudeModifiers[computerAttitude.toLowerCase()] || 0;
+    const baseDC = dcByType[informationType.toLowerCase()] || 15;
+    const dc = modifier === 'auto-access' ? -1 : baseDC + (typeof modifier === 'number' ? modifier : 0);
+
+    const roll = modifier === 'auto-access' ? null : await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll ? roll.total + useComputerBonus : 999;
+    const success = modifier === 'auto-access' || checkResult >= dc;
+
+    if (roll) {
+      await roll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor: actor }),
+        flavor: `<strong>Access Information</strong> - Retrieve Data<br>Information Type: ${informationType}<br>Computer Attitude: ${computerAttitude}<br>Base DC: ${baseDC}<br>Attitude Modifier: ${typeof modifier === 'number' ? (modifier >= 0 ? '+' : '') + modifier : 'Auto-access'}<br>Time Required: ${timeByType[informationType.toLowerCase()]}<br>Use Computer Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+      });
+    }
+
+    SWSELogger.log(
+      `UseComputerUses | ${actor.name} accessed information (${informationType}): ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      informationType: informationType,
+      computerAttitude: computerAttitude,
+      timeRequired: timeByType[informationType.toLowerCase()],
+      automaticAccess: modifier === 'auto-access',
+      message: success
+        ? `Finds ${informationType} information`
+        : `Cannot access ${informationType} information`
+    };
+  }
+
+  /**
+   * IMPROVE ACCESS - Change computer's attitude toward user
+   * Full-Round Action, DC varies by current attitude
+   */
+  static async improveAccess(actor, computerAttitude = 'indifferent', targetAttitude = 'friendly') {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const useComputerBonus = actor.system.skills?.['use-computer']?.total || 0;
+    const isTrained = actor.system.skills?.['use-computer']?.trained || false;
+
+    if (!isTrained) {
+      return {
+        success: false,
+        message: 'Must be Trained in Use Computer to Improve Access',
+        trained: false
+      };
+    }
+
+    const attitudeModifiers = {
+      'hostile': -10, 'unfriendly': -5, 'indifferent': -2, 'friendly': 0
+    };
+
+    const modifier = attitudeModifiers[computerAttitude.toLowerCase()] || 0;
+    const baseWillDefense = 10;
+    const dc = baseWillDefense + modifier;
+
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + useComputerBonus;
+    const success = checkResult >= dc;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Improve Access</strong> - Adjust Attitude<br>Current Attitude: ${computerAttitude}<br>Target Attitude: ${targetAttitude}<br>Base Will Defense: ${baseWillDefense}<br>Attitude Modifier: ${modifier >= 0 ? '+' : ''}${modifier}<br>DC: ${dc}<br>Use Computer Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action`
+    });
+
+    SWSELogger.log(
+      `UseComputerUses | ${actor.name} improved computer access: ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      currentAttitude: computerAttitude,
+      newAttitude: success ? `One step toward ${targetAttitude}` : computerAttitude,
+      trained: true,
+      action: 'Full-Round Action',
+      message: success
+        ? `Computer's attitude improves one step`
+        : 'Attitude does not change'
+    };
+  }
+
+  /**
+   * ISSUE ROUTINE COMMAND - Control Friendly/Helpful computer
+   * Standard Action, typically automatic
+   */
+  static async issueRoutineCommand(actor, computerAttitude = 'friendly', commandType = 'routine') {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const useComputerBonus = actor.system.skills?.['use-computer']?.total || 0;
+
+    if (!['friendly', 'helpful'].includes(computerAttitude.toLowerCase())) {
+      return {
+        success: false,
+        message: 'Computer must be Friendly or Helpful to Issue Routine Commands'
+      };
+    }
+
+    return {
+      success: true,
+      computerAttitude: computerAttitude,
+      commandType: commandType,
+      action: 'Standard Action',
+      examples: 'Turn on/off, view/edit documents, print, open/close doors',
+      requiresCheck: 'Only if another character issues contradictory command',
+      message: `Issues ${commandType} command to ${computerAttitude} computer`
+    };
+  }
+
+  /**
+   * BACKTRAIL (Trained Only, Scum and Villainy)
+   * DC 25, reveals last user and information sought
+   */
+  static async backtrail(actor, computerAttitude = 'indifferent') {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const useComputerBonus = actor.system.skills?.['use-computer']?.total || 0;
+    const isTrained = actor.system.skills?.['use-computer']?.trained || false;
+
+    if (!isTrained) {
+      return {
+        success: false,
+        message: 'Must be Trained in Use Computer to Backtrail',
+        trained: false
+      };
+    }
+
+    const attitudeModifiers = {
+      'hostile': -10, 'unfriendly': -5, 'indifferent': -2, 'friendly': 0
+    };
+
+    const modifier = attitudeModifiers[computerAttitude.toLowerCase()] || 0;
+    const baseDC = 25;
+    const dc = baseDC + modifier;
+
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + useComputerBonus;
+    const success = checkResult >= dc;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Backtrail</strong> - Trace Previous Access<br>Reference: Scum and Villainy - Trained Only<br>Computer Attitude: ${computerAttitude}<br>Base DC: ${baseDC}<br>Attitude Modifier: ${modifier >= 0 ? '+' : ''}${modifier}<br>Final DC: ${dc}<br>Use Computer Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+    });
+
+    SWSELogger.log(
+      `UseComputerUses | ${actor.name} backtrailed computer: ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      trained: true,
+      source: 'Scum and Villainy',
+      reveals: success ? 'Last user identity and information sought' : 'Nothing',
+      message: success
+        ? 'Identifies last user and their purpose'
+        : 'Cannot trace previous access'
+    };
+  }
+
+  static getUseComputerBonus(actor) {
+    if (!actor) return 0;
+    return actor.system.skills?.['use-computer']?.total || 0;
+  }
+
+  static isTrained(actor) {
+    if (!actor) return false;
+    return actor.system.skills?.['use-computer']?.trained || false;
+  }
+}
+
+// ============================================================================
+// USE THE FORCE SKILL (CHA) - Expanded Implementation
+// ============================================================================
+
+export class UseTheForceUses {
+  /**
+   * FORCE TRANCE (Trained Only)
+   * Full-Round Action, DC 10, regain HP equal to level per hour
+   */
+  static async forceTrance(actor) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const useForceBonus = actor.system.skills?.['use-the-force']?.total || 0;
+    const isTrained = actor.system.skills?.['use-the-force']?.trained || false;
+
+    if (!isTrained) {
+      return {
+        success: false,
+        message: 'Must be Trained in Use the Force to enter Force Trance',
+        trained: false
+      };
+    }
+
+    const dc = 10;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + useForceBonus;
+    const success = checkResult >= dc;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Force Trance</strong> - Meditative Healing<br>DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Effect: Regain HP equal to Character Level per hour<br>Duration: 4 hours for full rest`
+    });
+
+    SWSELogger.log(
+      `UseTheForceUses | ${actor.name} entered force trance: ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      action: 'Full-Round Action',
+      trained: true,
+      hpPerHour: 'Character Level',
+      fullRestTime: '4 consecutive hours',
+      breathing: '10x normal without air',
+      message: success ? 'Enters Force Trance' : 'Cannot enter Force Trance'
+    };
+  }
+
+  /**
+   * MOVE LIGHT OBJECT (Trained Only)
+   * Move Action (telekinesis), Standard Action (projectile)
+   * DC 10 for light object, DC 15 for projectile weapon
+   */
+  static async moveLightObject(actor, weight = 5, distance = 6, asProjectile = false) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const useForceBonus = actor.system.skills?.['use-the-force']?.total || 0;
+    const isTrained = actor.system.skills?.['use-the-force']?.trained || false;
+
+    if (!isTrained) {
+      return {
+        success: false,
+        message: 'Must be Trained in Use the Force to Move Light Object',
+        trained: false
+      };
+    }
+
+    const dc = asProjectile ? 15 : 10;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + useForceBonus;
+    const success = checkResult >= dc;
+
+    let damageRoll = null;
+    let damageTotal = 0;
+    if (success && asProjectile) {
+      damageRoll = await new Roll('1d6').evaluate({ async: true });
+      damageTotal = damageRoll.total;
+    }
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Move Light Object</strong> - Telekinesis${asProjectile ? ' (Projectile)' : ''}<br>Object Weight: ${weight} kg<br>Distance: ${distance} squares<br>DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: ${asProjectile ? 'Standard Action' : 'Move Action'}${success && asProjectile ? `<br>Damage: ${damageTotal}d6 bludgeoning` : ''}<br>Max Weight: 5 kg`
+    });
+
+    SWSELogger.log(
+      `UseTheForceUses | ${actor.name} moved light object: ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      weight: weight,
+      distance: distance,
+      asProjectile: asProjectile,
+      trained: true,
+      maxWeight: '5 kg',
+      damage: asProjectile && success ? `${damageTotal}d6` : 'None',
+      message: success
+        ? `Moves ${weight}kg object ${distance} squares${asProjectile ? ` (${damageTotal}d6 damage)` : ''}`
+        : 'Cannot move object'
+    };
+  }
+
+  /**
+   * SEARCH YOUR FEELINGS - Determine if action has immediate consequences
+   * Full-Round Action, DC 15, 10-minute window
+   */
+  static async searchYourFeelings(actor) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const useForceBonus = actor.system.skills?.['use-the-force']?.total || 0;
+
+    const dc = 15;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + useForceBonus;
+    const success = checkResult >= dc;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Search Your Feelings</strong> - Sense Consequences<br>DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Window: Next 10 minutes<br>Effect: Detects immediate consequences only`
+    });
+
+    SWSELogger.log(
+      `UseTheForceUses | ${actor.name} searched feelings: ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      timeWindow: '10 minutes',
+      action: 'Full-Round Action',
+      scope: 'Immediate consequences only',
+      message: success
+        ? 'Senses immediate consequences of action'
+        : 'Cannot sense consequences'
+    };
+  }
+
+  /**
+   * SENSE FORCE (Trained Only)
+   * Automatic sensing of disturbances, can actively search
+   * Full-Round Action to determine distance/direction, DC 15
+   */
+  static async senseForce(actor, searchType = 'passive', searchRange = 100) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const useForceBonus = actor.system.skills?.['use-the-force']?.total || 0;
+    const isTrained = actor.system.skills?.['use-the-force']?.trained || false;
+
+    if (!isTrained) {
+      return {
+        success: false,
+        message: 'Must be Trained in Use the Force to Sense Force',
+        trained: false
+      };
+    }
+
+    if (searchType === 'passive') {
+      return {
+        success: true,
+        automatic: true,
+        ranges: {
+          darkSide: '1 km',
+          closeCompanion: '10,000 light years',
+          greatDisturbance: 'Entire galaxy'
+        },
+        trained: true,
+        message: 'Automatically senses major Force disturbances'
+      };
+    }
+
+    const dc = 15;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + useForceBonus;
+    const success = checkResult >= dc;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Sense Force</strong> - Active Search<br>Search Type: ${searchType}<br>Search Range: ${searchRange} km<br>DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action`
+    });
+
+    SWSELogger.log(
+      `UseTheForceUses | ${actor.name} sensed Force: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      searchType: searchType,
+      searchRange: searchRange,
+      trained: true,
+      action: 'Full-Round Action',
+      reveals: success ? 'Number, distance, direction of Force-users in range' : 'Nothing',
+      message: success
+        ? `Senses ${searchType} Force activity within ${searchRange} km`
+        : `Cannot sense Force activity`
+    };
+  }
+
+  /**
+   * SENSE SURROUNDINGS - Ignore cover/concealment for Perception
+   * Swift Action, DC 15 (DC 30 against Yuuzhan Vong)
+   */
+  static async senseSurroundings(actor, againstYuuzhanVong = false) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const useForceBonus = actor.system.skills?.['use-the-force']?.total || 0;
+    const isTrained = actor.system.skills?.['use-the-force']?.trained || false;
+
+    const dc = againstYuuzhanVong ? 30 : 15;
+
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + useForceBonus;
+    const success = checkResult >= dc;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Sense Surroundings</strong> - Ignore Cover/Concealment<br>DC: ${dc}${againstYuuzhanVong ? ' (vs Yuuzhan Vong)' : ''}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Swift Action<br>Duration: Until start of next turn`
+    });
+
+    SWSELogger.log(
+      `UseTheForceUses | ${actor.name} sensed surroundings: ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      againstYuuzhanVong: againstYuuzhanVong,
+      action: 'Swift Action',
+      duration: 'Until start of next turn',
+      effect: success ? 'Ignores cover/concealment for Perception' : 'None',
+      trainedRequired: againstYuuzhanVong ? true : false,
+      message: success
+        ? 'Ignores cover/concealment for Perception'
+        : 'Cannot sense through cover'
+    };
+  }
+
+  /**
+   * TELEPATHY - Establish telepathic link with distant creature
+   * Standard Action, DC varies by distance
+   */
+  static async telepathy(actor, target, distance = 'same-planet', messageContent = 'communication') {
+    if (!actor || !target) {
+      return { success: false, message: 'Invalid actor or target' };
+    }
+
+    const useForceBonus = actor.system.skills?.['use-the-force']?.total || 0;
+    const targetWillDefense = target.system.defenses?.will?.total || 10;
+
+    const dcByDistance = {
+      'same-planet': 15,
+      'same-system': 20,
+      'same-region': 25,
+      'different-region': 30
+    };
+
+    const dc = Math.max(dcByDistance[distance.toLowerCase()] || 15, targetWillDefense);
+
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + useForceBonus;
+    const success = checkResult >= dc;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Telepathy</strong> - Mental Communication<br>Target: ${target.name}<br>Distance: ${distance}<br>Base DC: ${dcByDistance[distance.toLowerCase()]}<br>Target Will Defense: ${targetWillDefense}<br>Final DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Standard Action<br>Limit: Single thought or emotion`
+    });
+
+    SWSELogger.log(
+      `UseTheForceUses | ${actor.name} established telepathic link with ${target.name}: ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      target: target.name,
+      distance: distance,
+      action: 'Standard Action',
+      content: success ? 'Single thought/emotion' : 'None',
+      cooldown: 'Cannot retry for 24 hours if failed (unless target becomes willing)',
+      message: success
+        ? `Establishes telepathic link with ${target.name}`
+        : `Cannot establish link with ${target.name}`
+    };
+  }
+
+  /**
+   * PLACE OTHER IN FORCE TRANCE (Trained Only, Clone Wars)
+   * Full-Round Action, DC 15, adjacent willing ally
+   */
+  static async placeOtherInForceTrance(actor, target) {
+    if (!actor || !target) {
+      return { success: false, message: 'Invalid actor or target' };
+    }
+
+    const useForceBonus = actor.system.skills?.['use-the-force']?.total || 0;
+    const isTrained = actor.system.skills?.['use-the-force']?.trained || false;
+
+    if (!isTrained) {
+      return {
+        success: false,
+        message: 'Must be Trained in Use the Force to Place Other in Force Trance',
+        trained: false
+      };
+    }
+
+    const dc = 15;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + useForceBonus;
+    const success = checkResult >= dc;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Place Other in Force Trance</strong> - Deep Rest<br>Reference: Clone Wars Campaign Guide<br>Target: ${target.name}<br>DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Requirement: Adjacent, willing ally`
+    });
+
+    SWSELogger.log(
+      `UseTheForceUses | ${actor.name} placed ${target.name} in force trance: ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      target: target.name,
+      trained: true,
+      source: 'Clone Wars Campaign Guide',
+      action: 'Full-Round Action',
+      hpPerHour: 'Character Level',
+      fullRestTime: '4 consecutive hours',
+      breathing: '10x normal without air',
+      message: success
+        ? `Places ${target.name} in Force Trance`
+        : `Cannot place ${target.name} in Force Trance`
+    };
+  }
+
+  /**
+   * BREATH CONTROL (Trained Only, Knights of the Old Republic)
+   * Full-Round Action, DC 15, hold breath for 2x Constitution score rounds
+   */
+  static async breathControl(actor) {
+    if (!actor) {
+      return { success: false, message: 'Invalid actor' };
+    }
+
+    const useForceBonus = actor.system.skills?.['use-the-force']?.total || 0;
+    const isTrained = actor.system.skills?.['use-the-force']?.trained || false;
+
+    if (!isTrained) {
+      return {
+        success: false,
+        message: 'Must be Trained in Use the Force for Breath Control',
+        trained: false
+      };
+    }
+
+    const constitutionScore = actor.system.abilities?.con?.value || 10;
+    const dc = 15;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + useForceBonus;
+    const success = checkResult >= dc;
+
+    const roundsCanHold = success ? 2 * constitutionScore : constitutionScore;
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Breath Control</strong> - Extended Breath Holding<br>Reference: Knights of the Old Republic Campaign Guide<br>CON Score: ${constitutionScore}<br>DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Rounds Can Hold Breath: ${roundsCanHold}<br>Action: Full-Round Action`
+    });
+
+    SWSELogger.log(
+      `UseTheForceUses | ${actor.name} used breath control: ` +
+      `${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
+    );
+
+    return {
+      success: success,
+      checkResult: checkResult,
+      dc: dc,
+      trained: true,
+      source: 'Knights of the Old Republic Campaign Guide',
+      action: 'Full-Round Action',
+      roundsCanHold: roundsCanHold,
+      message: success
+        ? `Can hold breath for ${roundsCanHold} rounds`
+        : `Can hold breath for ${constitutionScore} rounds (normal)`
+    };
+  }
+
+  static getUseTheForceBonus(actor) {
+    if (!actor) return 0;
+    return actor.system.skills?.['use-the-force']?.total || 0;
+  }
+
+  static isTrained(actor) {
+    if (!actor) return false;
+    return actor.system.skills?.['use-the-force']?.trained || false;
+  }
+
+  static hasForceStensitivity(actor) {
+    if (!actor) return false;
+    return actor.items?.some(item => item.name === 'Force Sensitivity') || false;
+  }
+}
+
+// ============================================================================
+// ACROBATICS SKILL (DEX)
+// ============================================================================
+
+export class AcrobaticsUses {
+  static async balance(actor, surfaceWidth = 'medium', isSlippery = false) {
+    if (!actor) return { success: false, message: 'Invalid actor' };
+    const acrobaticsBonus = actor.system.skills?.acrobatics?.total || 0;
+    const dcByWidth = { 'wide': 10, 'medium': 15, 'narrow': 20, 'very-narrow': 25 };
+    let dc = dcByWidth[surfaceWidth.toLowerCase()] || 15;
+    if (isSlippery) dc += 5;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + acrobaticsBonus;
+    const success = checkResult >= dc;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Balance</strong> - Narrow Surface<br>Surface: ${surfaceWidth}${isSlippery ? ' (Slippery)' : ''}<br>DC: ${dc}<br>Acrobatics Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+    });
+    SWSELogger.log(`AcrobaticsUses | ${actor.name} balanced: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
+    return { success, checkResult, dc, surfaceWidth, isSlippery };
+  }
+
+  static async tumble(actor, squaresMoved = 1) {
+    if (!actor) return { success: false, message: 'Invalid actor' };
+    const acrobaticsBonus = actor.system.skills?.acrobatics?.total || 0;
+    const isTrained = actor.system.skills?.acrobatics?.trained || false;
+    if (!isTrained) return { success: false, message: 'Must be Trained in Acrobatics', trained: false };
+    const dc = 15;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + acrobaticsBonus;
+    const success = checkResult >= dc;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Tumble</strong><br>Squares: ${squaresMoved}<br>DC: ${dc}<br>Acrobatics Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+    });
+    SWSELogger.log(`AcrobaticsUses | ${actor.name} tumbled: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
+    return { success, checkResult, dc, squaresMoved, trained: true };
+  }
+
+  static getAcrobaticsBonus(actor) {
+    return actor ? actor.system.skills?.acrobatics?.total || 0 : 0;
+  }
+
+  static isTrained(actor) {
+    return actor ? actor.system.skills?.acrobatics?.trained || false : false;
+  }
+}
+
+// ============================================================================
+// CLIMB SKILL (STR)
+// ============================================================================
+
+export class ClimbUses {
+  static async climbSurface(actor, surfaceType = 'rough-wall', distance = 30, isAccelerated = false) {
+    if (!actor) return { success: false, message: 'Invalid actor' };
+    const climbBonus = actor.system.skills?.climb?.total || 0;
+    const dcBySurface = {
+      'slope': 0, 'knotted-rope-with-wall': 0, 'rope-or-knotted-rope': 5, 'rough-wall': 10,
+      'natural-rock': 15, 'unknotted-rope': 15, 'narrow-handholds': 20, 'rough-surface': 25, 'overhanging': 25
+    };
+    let dc = dcBySurface[surfaceType.toLowerCase()] || 15;
+    const penalty = isAccelerated ? -5 : 0;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + climbBonus + penalty;
+    const success = checkResult >= dc;
+    const falls = (dc - checkResult) >= 5;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Climb Surface</strong> - ${surfaceType}<br>Distance: ${distance}ft<br>DC: ${dc}<br>Climb Check: ${checkResult}${success ? ' ✓' : ' ✗'}${falls ? '<br><strong style="color:red">FALLS!</strong>' : ''}`
+    });
+    SWSELogger.log(`ClimbUses | ${actor.name} climbed: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}${falls ? ' (FALLS)' : ''}`);
+    return { success, checkResult, dc, surfaceType, distance, falls };
+  }
+
+  static getClimbBonus(actor) {
+    return actor ? actor.system.skills?.climb?.total || 0 : 0;
+  }
+
+  static getSurfaceDC(surfaceType) {
+    const dcBySurface = {
+      'slope': 0, 'knotted-rope-with-wall': 0, 'rope-or-knotted-rope': 5, 'rough-wall': 10,
+      'natural-rock': 15, 'unknotted-rope': 15, 'narrow-handholds': 20, 'rough-surface': 25, 'overhanging': 25
+    };
+    return dcBySurface[surfaceType.toLowerCase()] ?? 15;
+  }
+}
+
+// ============================================================================
+// DECEPTION SKILL (CHA)
+// ============================================================================
+
+export class DeceptionUses {
+  static async makeDeceptionCheck(actor, target, difficulty = 'moderate') {
+    if (!actor || !target) return { success: false, message: 'Invalid actor or target' };
+    const deceptionBonus = actor.system.skills?.deception?.total || 0;
+    const difficultyMod = this._getDifficultyModifier(difficulty);
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + deceptionBonus + difficultyMod;
+    const targetWillDefense = target.system.defenses?.will?.total || 10;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Deceive</strong><br>Difficulty: ${difficulty}<br>Total: ${checkResult} vs ${targetWillDefense}`
+    });
+    const success = checkResult >= targetWillDefense;
+    SWSELogger.log(`DeceptionUses | ${actor.name} deceived ${target.name}: ${checkResult} vs ${targetWillDefense} = ${success ? 'Success' : 'Failure'}`);
+    return { success, checkResult, targetDefense: targetWillDefense };
+  }
+
+  static _getDifficultyModifier(difficulty) {
+    const modifiers = { 'simple': 5, 'moderate': 0, 'difficult': -5, 'incredible': -10, 'outrageous': -20 };
+    return modifiers[difficulty.toLowerCase()] ?? 0;
+  }
+}
+
+// ============================================================================
+// ENDURANCE SKILL (CON)
+// ============================================================================
+
+export class EnduranceUses {
+  static async forcedMarch(actor, hoursMarched = 1) {
+    if (!actor) return { success: false, message: 'Invalid actor' };
+    const enduranceBonus = actor.system.skills?.endurance?.total || 0;
+    const dc = 10 + (Math.max(0, hoursMarched - 1) * 2);
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + enduranceBonus;
+    const success = checkResult >= dc;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Forced March</strong><br>Hours Beyond 8: ${hoursMarched}<br>DC: ${dc}<br>Endurance Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+    });
+    SWSELogger.log(`EnduranceUses | ${actor.name} forced march: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
+    return { success, checkResult, dc, hoursMarched };
+  }
+
+  static async holdBreathe(actor, roundsHolding = null) {
+    if (!actor) return { success: false, message: 'Invalid actor' };
+    const conScore = actor.system.abilities?.con?.score || 10;
+    const enduranceBonus = actor.system.skills?.endurance?.total || 0;
+    if (roundsHolding === null) {
+      return { success: true, conScore, roundsWithoutCheck: conScore };
+    }
+    if (roundsHolding <= conScore) {
+      return { success: true, conScore, roundsHolding, roundsRemaining: conScore - roundsHolding };
+    }
+    const extraRounds = roundsHolding - conScore;
+    const dc = 10 + (extraRounds * 2);
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + enduranceBonus;
+    const success = checkResult >= dc;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Hold Breath</strong><br>CON: ${conScore}<br>Rounds: ${roundsHolding}<br>DC: ${dc}<br>Endurance Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+    });
+    return { success, checkResult, dc, conScore, roundsHolding };
+  }
+
+  static getEnduranceBonus(actor) {
+    return actor ? actor.system.skills?.endurance?.total || 0 : 0;
+  }
+
+  static getConScore(actor) {
+    return actor ? actor.system.abilities?.con?.score || 10 : 10;
+  }
+}
+
+// ============================================================================
+// GATHER INFORMATION SKILL (WIS)
+// ============================================================================
+
+export class GatherInformationUses {
+  static async learnNewsAndRumors(actor, difficulty = 'basic', useQuickIntel = false) {
+    if (!actor) return { success: false, message: 'Invalid actor' };
+    const gatherBonus = actor.system.skills?.['gather-information']?.total || 0;
+    const isTrained = actor.system.skills?.['gather-information']?.trained || false;
+    let dc = difficulty.toLowerCase() === 'detailed' ? 20 : 10;
+    const baseCost = difficulty.toLowerCase() === 'detailed' ? 50 : 0;
+    if (useQuickIntel && !isTrained) {
+      return { success: false, message: 'Must be Trained for Quick Intel', trained: false };
+    }
+    if (useQuickIntel) dc += 10;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + gatherBonus;
+    const success = checkResult >= dc;
+    const timeRoll = await new Roll('1d6').evaluate({ async: true });
+    const timeInHours = useQuickIntel ? Math.ceil(timeRoll.total / 2) : timeRoll.total;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Learn News and Rumors</strong><br>Difficulty: ${difficulty}<br>DC: ${dc}<br>Gather Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+    });
+    SWSELogger.log(`GatherInformationUses | ${actor.name} learned ${difficulty}: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
+    return { success, checkResult, dc, difficulty, timeInHours, cost: baseCost };
+  }
+
+  static async locateIndividual(actor, targetName = 'unknown', isWellKnown = true) {
+    if (!actor) return { success: false, message: 'Invalid actor' };
+    const gatherBonus = actor.system.skills?.['gather-information']?.total || 0;
+    const dc = isWellKnown ? 15 : 25;
+    const cost = isWellKnown ? 0 : 500;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + gatherBonus;
+    const success = checkResult >= dc;
+    const timeRoll = await new Roll('1d6').evaluate({ async: true });
+    const timeInHours = timeRoll.total;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Locate Individual</strong><br>Target: ${targetName}<br>DC: ${dc}<br>Gather Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+    });
+    SWSELogger.log(`GatherInformationUses | ${actor.name} located ${targetName}: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
+    return { success, checkResult, dc, targetName, isWellKnown, timeInHours, cost };
+  }
+
+  static getGatherInformationBonus(actor) {
+    return actor ? actor.system.skills?.['gather-information']?.total || 0 : 0;
+  }
+
+  static isTrained(actor) {
+    return actor ? actor.system.skills?.['gather-information']?.trained || false : false;
+  }
+}
+
 export default {
   JumpUses,
   KnowledgeUses,
@@ -1791,5 +3335,15 @@ export default {
   PerceptionUses,
   PersuasionUses,
   PilotUses,
-  RideUses
+  RideUses,
+  SurvivalUses,
+  SwimUses,
+  TreatInjuryUses,
+  UseComputerUses,
+  UseTheForceUses,
+  AcrobaticsUses,
+  ClimbUses,
+  DeceptionUses,
+  EnduranceUses,
+  GatherInformationUses
 };
