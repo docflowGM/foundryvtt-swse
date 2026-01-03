@@ -445,6 +445,15 @@ export function registerHouseruleSettings() {
     default: true
   });
 
+  register("darkInspirationEnabled", {
+    name: "Enable Dark Inspiration",
+    hint: "Allow Force-sensitive characters to use Dark Inspiration to cast dark side powers at the cost of DSP.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   register("forcePointRecovery", {
     name: "Force Point Recovery",
     hint: "When Force Points refresh.",

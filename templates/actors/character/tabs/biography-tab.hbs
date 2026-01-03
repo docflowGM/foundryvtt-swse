@@ -73,6 +73,19 @@
  <span class="light-side"><i class="fas fa-sun"></i> Pure in the Force</span>
  {{/if}}
  </div>
+ <div class="dark-side-actions">
+ <button class="dsp-action-btn reduce-dsp" title="Reduce your Dark Side Points">
+ <i class="fas fa-dove"></i> Reduce DSP
+ </button>
+ <button class="dsp-action-btn increase-dsp" title="Increase your Dark Side Points by 1">
+ <i class="fas fa-fire"></i> Increase DSP
+ </button>
+ {{#if (and hasForceSensitivity darkInspirationEnabled)}}
+ <button class="dsp-action-btn dark-inspiration" title="Use the Force with dark side power">
+ <i class="fas fa-bolt"></i> Dark Inspiration
+ </button>
+ {{/if}}
+ </div>
  </div>
  </div>
 
