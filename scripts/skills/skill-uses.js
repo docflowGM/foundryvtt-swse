@@ -3108,6 +3108,226 @@ export class UseTheForceUses {
   }
 }
 
+// ============================================================================
+// ACROBATICS SKILL (DEX)
+// ============================================================================
+
+export class AcrobaticsUses {
+  static async balance(actor, surfaceWidth = 'medium', isSlippery = false) {
+    if (!actor) return { success: false, message: 'Invalid actor' };
+    const acrobaticsBonus = actor.system.skills?.acrobatics?.total || 0;
+    const dcByWidth = { 'wide': 10, 'medium': 15, 'narrow': 20, 'very-narrow': 25 };
+    let dc = dcByWidth[surfaceWidth.toLowerCase()] || 15;
+    if (isSlippery) dc += 5;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + acrobaticsBonus;
+    const success = checkResult >= dc;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Balance</strong> - Narrow Surface<br>Surface: ${surfaceWidth}${isSlippery ? ' (Slippery)' : ''}<br>DC: ${dc}<br>Acrobatics Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+    });
+    SWSELogger.log(`AcrobaticsUses | ${actor.name} balanced: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
+    return { success, checkResult, dc, surfaceWidth, isSlippery };
+  }
+
+  static async tumble(actor, squaresMoved = 1) {
+    if (!actor) return { success: false, message: 'Invalid actor' };
+    const acrobaticsBonus = actor.system.skills?.acrobatics?.total || 0;
+    const isTrained = actor.system.skills?.acrobatics?.trained || false;
+    if (!isTrained) return { success: false, message: 'Must be Trained in Acrobatics', trained: false };
+    const dc = 15;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + acrobaticsBonus;
+    const success = checkResult >= dc;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Tumble</strong><br>Squares: ${squaresMoved}<br>DC: ${dc}<br>Acrobatics Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+    });
+    SWSELogger.log(`AcrobaticsUses | ${actor.name} tumbled: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
+    return { success, checkResult, dc, squaresMoved, trained: true };
+  }
+
+  static getAcrobaticsBonus(actor) {
+    return actor ? actor.system.skills?.acrobatics?.total || 0 : 0;
+  }
+
+  static isTrained(actor) {
+    return actor ? actor.system.skills?.acrobatics?.trained || false : false;
+  }
+}
+
+// ============================================================================
+// CLIMB SKILL (STR)
+// ============================================================================
+
+export class ClimbUses {
+  static async climbSurface(actor, surfaceType = 'rough-wall', distance = 30, isAccelerated = false) {
+    if (!actor) return { success: false, message: 'Invalid actor' };
+    const climbBonus = actor.system.skills?.climb?.total || 0;
+    const dcBySurface = {
+      'slope': 0, 'knotted-rope-with-wall': 0, 'rope-or-knotted-rope': 5, 'rough-wall': 10,
+      'natural-rock': 15, 'unknotted-rope': 15, 'narrow-handholds': 20, 'rough-surface': 25, 'overhanging': 25
+    };
+    let dc = dcBySurface[surfaceType.toLowerCase()] || 15;
+    const penalty = isAccelerated ? -5 : 0;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + climbBonus + penalty;
+    const success = checkResult >= dc;
+    const falls = (dc - checkResult) >= 5;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Climb Surface</strong> - ${surfaceType}<br>Distance: ${distance}ft<br>DC: ${dc}<br>Climb Check: ${checkResult}${success ? ' ✓' : ' ✗'}${falls ? '<br><strong style="color:red">FALLS!</strong>' : ''}`
+    });
+    SWSELogger.log(`ClimbUses | ${actor.name} climbed: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}${falls ? ' (FALLS)' : ''}`);
+    return { success, checkResult, dc, surfaceType, distance, falls };
+  }
+
+  static getClimbBonus(actor) {
+    return actor ? actor.system.skills?.climb?.total || 0 : 0;
+  }
+
+  static getSurfaceDC(surfaceType) {
+    const dcBySurface = {
+      'slope': 0, 'knotted-rope-with-wall': 0, 'rope-or-knotted-rope': 5, 'rough-wall': 10,
+      'natural-rock': 15, 'unknotted-rope': 15, 'narrow-handholds': 20, 'rough-surface': 25, 'overhanging': 25
+    };
+    return dcBySurface[surfaceType.toLowerCase()] ?? 15;
+  }
+}
+
+// ============================================================================
+// DECEPTION SKILL (CHA)
+// ============================================================================
+
+export class DeceptionUses {
+  static async makeDeceptionCheck(actor, target, difficulty = 'moderate') {
+    if (!actor || !target) return { success: false, message: 'Invalid actor or target' };
+    const deceptionBonus = actor.system.skills?.deception?.total || 0;
+    const difficultyMod = this._getDifficultyModifier(difficulty);
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + deceptionBonus + difficultyMod;
+    const targetWillDefense = target.system.defenses?.will?.total || 10;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Deceive</strong><br>Difficulty: ${difficulty}<br>Total: ${checkResult} vs ${targetWillDefense}`
+    });
+    const success = checkResult >= targetWillDefense;
+    SWSELogger.log(`DeceptionUses | ${actor.name} deceived ${target.name}: ${checkResult} vs ${targetWillDefense} = ${success ? 'Success' : 'Failure'}`);
+    return { success, checkResult, targetDefense: targetWillDefense };
+  }
+
+  static _getDifficultyModifier(difficulty) {
+    const modifiers = { 'simple': 5, 'moderate': 0, 'difficult': -5, 'incredible': -10, 'outrageous': -20 };
+    return modifiers[difficulty.toLowerCase()] ?? 0;
+  }
+}
+
+// ============================================================================
+// ENDURANCE SKILL (CON)
+// ============================================================================
+
+export class EnduranceUses {
+  static async forcedMarch(actor, hoursMarched = 1) {
+    if (!actor) return { success: false, message: 'Invalid actor' };
+    const enduranceBonus = actor.system.skills?.endurance?.total || 0;
+    const dc = 10 + (Math.max(0, hoursMarched - 1) * 2);
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + enduranceBonus;
+    const success = checkResult >= dc;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Forced March</strong><br>Hours Beyond 8: ${hoursMarched}<br>DC: ${dc}<br>Endurance Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+    });
+    SWSELogger.log(`EnduranceUses | ${actor.name} forced march: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
+    return { success, checkResult, dc, hoursMarched };
+  }
+
+  static async holdBreathe(actor, roundsHolding = null) {
+    if (!actor) return { success: false, message: 'Invalid actor' };
+    const conScore = actor.system.abilities?.con?.score || 10;
+    const enduranceBonus = actor.system.skills?.endurance?.total || 0;
+    if (roundsHolding === null) {
+      return { success: true, conScore, roundsWithoutCheck: conScore };
+    }
+    if (roundsHolding <= conScore) {
+      return { success: true, conScore, roundsHolding, roundsRemaining: conScore - roundsHolding };
+    }
+    const extraRounds = roundsHolding - conScore;
+    const dc = 10 + (extraRounds * 2);
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + enduranceBonus;
+    const success = checkResult >= dc;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Hold Breath</strong><br>CON: ${conScore}<br>Rounds: ${roundsHolding}<br>DC: ${dc}<br>Endurance Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+    });
+    return { success, checkResult, dc, conScore, roundsHolding };
+  }
+
+  static getEnduranceBonus(actor) {
+    return actor ? actor.system.skills?.endurance?.total || 0 : 0;
+  }
+
+  static getConScore(actor) {
+    return actor ? actor.system.abilities?.con?.score || 10 : 10;
+  }
+}
+
+// ============================================================================
+// GATHER INFORMATION SKILL (WIS)
+// ============================================================================
+
+export class GatherInformationUses {
+  static async learnNewsAndRumors(actor, difficulty = 'basic', useQuickIntel = false) {
+    if (!actor) return { success: false, message: 'Invalid actor' };
+    const gatherBonus = actor.system.skills?.['gather-information']?.total || 0;
+    const isTrained = actor.system.skills?.['gather-information']?.trained || false;
+    let dc = difficulty.toLowerCase() === 'detailed' ? 20 : 10;
+    const baseCost = difficulty.toLowerCase() === 'detailed' ? 50 : 0;
+    if (useQuickIntel && !isTrained) {
+      return { success: false, message: 'Must be Trained for Quick Intel', trained: false };
+    }
+    if (useQuickIntel) dc += 10;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + gatherBonus;
+    const success = checkResult >= dc;
+    const timeRoll = await new Roll('1d6').evaluate({ async: true });
+    const timeInHours = useQuickIntel ? Math.ceil(timeRoll.total / 2) : timeRoll.total;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Learn News and Rumors</strong><br>Difficulty: ${difficulty}<br>DC: ${dc}<br>Gather Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+    });
+    SWSELogger.log(`GatherInformationUses | ${actor.name} learned ${difficulty}: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
+    return { success, checkResult, dc, difficulty, timeInHours, cost: baseCost };
+  }
+
+  static async locateIndividual(actor, targetName = 'unknown', isWellKnown = true) {
+    if (!actor) return { success: false, message: 'Invalid actor' };
+    const gatherBonus = actor.system.skills?.['gather-information']?.total || 0;
+    const dc = isWellKnown ? 15 : 25;
+    const cost = isWellKnown ? 0 : 500;
+    const roll = await new Roll('1d20').evaluate({ async: true });
+    const checkResult = roll.total + gatherBonus;
+    const success = checkResult >= dc;
+    const timeRoll = await new Roll('1d6').evaluate({ async: true });
+    const timeInHours = timeRoll.total;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      flavor: `<strong>Locate Individual</strong><br>Target: ${targetName}<br>DC: ${dc}<br>Gather Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
+    });
+    SWSELogger.log(`GatherInformationUses | ${actor.name} located ${targetName}: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
+    return { success, checkResult, dc, targetName, isWellKnown, timeInHours, cost };
+  }
+
+  static getGatherInformationBonus(actor) {
+    return actor ? actor.system.skills?.['gather-information']?.total || 0 : 0;
+  }
+
+  static isTrained(actor) {
+    return actor ? actor.system.skills?.['gather-information']?.trained || false : false;
+  }
+}
+
 export default {
   JumpUses,
   KnowledgeUses,
@@ -3120,5 +3340,10 @@ export default {
   SwimUses,
   TreatInjuryUses,
   UseComputerUses,
-  UseTheForceUses
+  UseTheForceUses,
+  AcrobaticsUses,
+  ClimbUses,
+  DeceptionUses,
+  EnduranceUses,
+  GatherInformationUses
 };
