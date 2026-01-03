@@ -454,6 +454,41 @@ export class LightSideTalentMacros {
 
     return LightSideTalentMechanics.canRerollKnowledge(selectedActor, skillName);
   }
+
+  /**
+   * Helper: Apply Dark Side Scourge damage bonus
+   * This should be called during damage calculation for melee attacks
+   * Usage: game.swse.macros.applyDarkSideScourge(actor, target, baseDamage)
+   */
+  static applyDarkSideScourge(actor = null, target = null, baseDamage = 0) {
+    const selectedActor = actor || game.user.character;
+
+    if (!selectedActor) {
+      ui.notifications.error('Please select a character for Dark Side Scourge');
+      return baseDamage;
+    }
+
+    if (!target) {
+      ui.notifications.error('Please select a target for Dark Side Scourge');
+      return baseDamage;
+    }
+
+    return LightSideTalentMechanics.applyDarkSideScourge(selectedActor, target, baseDamage);
+  }
+
+  /**
+   * Helper: Check if Dark Side Scourge should apply
+   * Usage: game.swse.macros.shouldApplyDarkSideScourge(actor, target)
+   */
+  static shouldApplyDarkSideScourge(actor = null, target = null) {
+    const selectedActor = actor || game.user.character;
+
+    if (!selectedActor || !target) {
+      return false;
+    }
+
+    return LightSideTalentMechanics.shouldApplyDarkSideScourge(selectedActor, target);
+  }
 }
 
 // ============================================================================
@@ -471,5 +506,7 @@ window.SWSE.macros.triggerApprenticeBoonMacro = LightSideTalentMacros.triggerApp
 window.SWSE.macros.triggerRenewVisionMacro = LightSideTalentMacros.triggerRenewVisionMacro.bind(LightSideTalentMacros);
 window.SWSE.macros.triggerShareForceSecretMacro = LightSideTalentMacros.triggerShareForceSecretMacro.bind(LightSideTalentMacros);
 window.SWSE.macros.canRerollKnowledgeMacro = LightSideTalentMacros.canRerollKnowledgeMacro.bind(LightSideTalentMacros);
+window.SWSE.macros.applyDarkSideScourge = LightSideTalentMacros.applyDarkSideScourge.bind(LightSideTalentMacros);
+window.SWSE.macros.shouldApplyDarkSideScourge = LightSideTalentMacros.shouldApplyDarkSideScourge.bind(LightSideTalentMacros);
 
 export default LightSideTalentMacros;

@@ -54,6 +54,15 @@ export class LightSideTalentMechanics {
   }
 
   /**
+   * Check if actor has Dark Side Scourge talent
+   */
+  static hasDarkSideScourge(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Dark Side Scourge'
+    );
+  }
+
+  /**
    * Check if actor has Rebuke the Dark talent
    */
   static hasRebukeTheDark(actor) {
@@ -341,11 +350,21 @@ export class LightSideTalentMechanics {
 
   /**
    * DARK RETALIATION - React to Dark Side power with your own Force power
-   * Once per encounter
+   * Once per encounter, spend a Force Point to activate a Force Power as a Reaction
+   * Triggers when targeted by a Force Power with [Dark Side] descriptor
    */
   static async triggerDarkRetaliation(actor, darkSidePower) {
     if (!this.hasDarkRetaliation(actor)) {
       return { success: false, message: 'Actor does not have Dark Retaliation talent' };
+    }
+
+    // Check Force Points first - must have at least 1
+    const forcePoints = actor.system.forcePoints?.value || 0;
+    if (forcePoints <= 0) {
+      return {
+        success: false,
+        message: 'No Force Points available for Dark Retaliation'
+      };
     }
 
     // Check encounter status
@@ -369,7 +388,7 @@ export class LightSideTalentMechanics {
       };
     }
 
-    // Get available Force Powers
+    // Get available Force Powers (not spent)
     const forcePowers = actor.items.filter(item =>
       item.type === 'forcepower' && item.system?.spent === false
     );
@@ -377,7 +396,7 @@ export class LightSideTalentMechanics {
     if (forcePowers.length === 0) {
       return {
         success: false,
-        message: 'No Force Powers available to use for retaliation'
+        message: 'No Force Powers available in your suite to use for retaliation'
       };
     }
 
@@ -400,13 +419,58 @@ export class LightSideTalentMechanics {
       return false;
     }
 
+    // Spend the Force Point
+    const forcePoints = actor.system.forcePoints?.value || 0;
+    await actor.update({ 'system.forcePoints.value': forcePoints - 1 });
+
+    // Mark as used this encounter
     await actor.setFlag('swse', retaliationUsageFlag, true);
 
-    SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Retaliation with ${power.name}`);
-    ui.notifications.info(`${actor.name} activates ${power.name} as a reaction to the Dark Side power!`);
+    SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Retaliation with ${power.name}, spent Force Point`);
+    ui.notifications.info(`${actor.name} spends a Force Point and activates ${power.name} as a reaction to the Dark Side power!`);
 
     // The actual power activation should be handled separately
     return { success: true, power: power };
+  }
+
+  /**
+   * DARK SIDE SCOURGE - Deal extra damage to creatures with Dark Side Score
+   * Against creatures with DSP 1+, deal extra damage equal to Charisma bonus (min +1)
+   * This is applied during damage calculation
+   */
+  static applyDarkSideScourge(actor, target, baseDamage) {
+    if (!this.hasDarkSideScourge(actor)) {
+      return baseDamage;
+    }
+
+    // Check if target has Dark Side Points
+    const targetDSP = target.system?.darkSideScore || target.system?.dsp || 0;
+
+    if (targetDSP < 1) {
+      return baseDamage; // No bonus damage
+    }
+
+    // Get actor's Charisma bonus (minimum +1)
+    const chaBonus = Math.max(1, actor.system.abilities?.cha?.modifier || 1);
+
+    const totalDamage = baseDamage + chaBonus;
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Side Scourge against ${target.name} (DSP: ${targetDSP}), adding +${chaBonus} damage`);
+    ui.notifications.info(`Dark Side Scourge: +${chaBonus} damage against dark side enemy!`);
+
+    return totalDamage;
+  }
+
+  /**
+   * Check if Dark Side Scourge should apply to this target
+   */
+  static shouldApplyDarkSideScourge(actor, target) {
+    if (!this.hasDarkSideScourge(actor)) {
+      return false;
+    }
+
+    const targetDSP = target.system?.darkSideScore || target.system?.dsp || 0;
+    return targetDSP >= 1;
   }
 
   /**
@@ -943,6 +1007,83 @@ Hooks.on('consularsWisdomTriggered', async (actor) => {
           label: 'Cancel'
         }
       }
+    });
+
+    dialog.render(true);
+  }
+});
+
+/**
+ * Hook: When a character is targeted by a [Dark Side] Force Power
+ * This should be called from the Force Power system when a dark side power is used
+ *
+ * Usage from Force Power activation:
+ *   Hooks.callAll('darkSidePowerTargeted', targetActor, powerItem, sourceActor);
+ *
+ * The hook will automatically check if the target has Dark Retaliation and offer the choice
+ */
+Hooks.on('darkSidePowerTargeted', async (targetActor, darkSidePower, sourceActor) => {
+  // Check if target has Dark Retaliation
+  if (!LightSideTalentMechanics.hasDarkRetaliation(targetActor)) {
+    return;
+  }
+
+  // Trigger Dark Retaliation check
+  const result = await LightSideTalentMechanics.triggerDarkRetaliation(targetActor, darkSidePower);
+
+  if (!result.success) {
+    // Don't show notification if it's just because they're out of resources
+    if (result.message.includes('No Force Points') || result.message.includes('No Force Powers')) {
+      return; // Silently fail - they don't have the resources
+    }
+    // Only notify for other failures
+    return;
+  }
+
+  if (result.requiresSelection) {
+    // Show dialog to select Force Power to use as reaction
+    const powerOptions = result.powers
+      .map(p => `<option value="${p.id}">${p.name}${p.system?.spent ? ' (Spent)' : ''}</option>`)
+      .join('');
+
+    const dialog = new Dialog({
+      title: 'Dark Retaliation - React to Dark Side Power',
+      content: `
+        <div class="form-group">
+          <p><strong>${sourceActor.name}</strong> is targeting you with <strong>${darkSidePower.name}</strong> [Dark Side]</p>
+          <p>Use Dark Retaliation to activate a Force Power as a Reaction? (Costs 1 Force Point, once per encounter)</p>
+          <label>Choose a Force Power to activate:</label>
+          <select id="power-select" style="width: 100%; margin-top: 5px;">
+            ${powerOptions}
+          </select>
+        </div>
+      `,
+      buttons: {
+        activate: {
+          label: 'Activate (Spend FP)',
+          callback: async (html) => {
+            const powerId = html.find('#power-select').val();
+            const power = targetActor.items.get(powerId);
+            await LightSideTalentMechanics.completeDarkRetaliationSelection(
+              targetActor,
+              powerId,
+              result.combatId,
+              result.retaliationUsageFlag
+            );
+
+            // Note: The actual power activation would need to be handled by clicking the power
+            // or through additional automation
+            ui.notifications.info(`You may now activate ${power.name} as your reaction!`);
+          }
+        },
+        cancel: {
+          label: 'Don\'t Use',
+          callback: () => {
+            ui.notifications.info('Dark Retaliation not used');
+          }
+        }
+      },
+      default: 'activate'
     });
 
     dialog.render(true);

@@ -44,7 +44,9 @@ Hooks.once('ready', () => {
     apprenticeBoon: 'game.swse.macros.apprenticeBoon()',
     renewVision: 'game.swse.macros.renewVision()',
     shareForceSecret: 'game.swse.macros.shareForceSecret()',
-    canRerollKnowledge: 'game.swse.macros.canRerollKnowledge()'
+    canRerollKnowledge: 'game.swse.macros.canRerollKnowledge()',
+    applyDarkSideScourge: 'game.swse.macros.applyDarkSideScourge(actor, target, baseDamage)',
+    shouldApplyDarkSideScourge: 'game.swse.macros.shouldApplyDarkSideScourge(actor, target)'
   });
 });
 
