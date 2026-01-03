@@ -436,6 +436,74 @@ export class LightSideTalentMacros {
   }
 
   /**
+   * Macro: Trigger Steel Resolve
+   * Usage: game.swse.macros.triggerSteelResolveMacro(actor)
+   */
+  static async triggerSteelResolveMacro(actor = null) {
+    const selectedActor = actor || game.user.character;
+
+    if (!selectedActor) {
+      ui.notifications.error('Please select a character to use Steel Resolve');
+      return;
+    }
+
+    if (!LightSideTalentMechanics.hasSteelResolve(selectedActor)) {
+      ui.notifications.warn(`${selectedActor.name} does not have the Steel Resolve talent`);
+      return;
+    }
+
+    const result = await LightSideTalentMechanics.triggerSteelResolve(selectedActor);
+
+    if (!result.success) {
+      ui.notifications.warn(result.message);
+      return;
+    }
+
+    if (result.requiresSelection) {
+      // Build options for penalty selection (1 to maxPenalty)
+      const penaltyOptions = [];
+      for (let i = 1; i <= result.maxPenalty; i++) {
+        const willBonus = Math.min(i * 2, result.bab);
+        penaltyOptions.push(`<option value="${i}">-${i} attack / +${willBonus} Will Defense</option>`);
+      }
+
+      const dialog = new Dialog({
+        title: 'Steel Resolve',
+        content: `
+          <div class="form-group">
+            <label>Choose attack penalty (gains twice that as Will Defense bonus, max +${result.bab}):</label>
+            <select id="penalty-select" style="width: 100%; font-size: 14px; padding: 5px;">
+              ${penaltyOptions.join('')}
+            </select>
+            <p style="margin-top: 10px; font-size: 12px; color: #666;">
+              <i class="fas fa-info-circle"></i>
+              Effect lasts until the start of your next turn.
+            </p>
+          </div>
+        `,
+        buttons: {
+          activate: {
+            label: 'Activate Steel Resolve',
+            callback: async (html) => {
+              const penalty = parseInt(html.find('#penalty-select').val());
+              await LightSideTalentMechanics.completeSteelResolveSelection(
+                selectedActor,
+                penalty
+              );
+            }
+          },
+          cancel: {
+            label: 'Cancel'
+          }
+        },
+        default: 'activate'
+      });
+
+      dialog.render(true);
+    }
+  }
+
+  /**
    * Helper: Check if actor can reroll Knowledge with Scholarly Knowledge
    * Usage: game.swse.macros.canRerollKnowledgeMacro(actor, skillName)
    */
@@ -505,6 +573,7 @@ window.SWSE.macros.triggerSkilledAdvisorMacro = LightSideTalentMacros.triggerSki
 window.SWSE.macros.triggerApprenticeBoonMacro = LightSideTalentMacros.triggerApprenticeBoonMacro.bind(LightSideTalentMacros);
 window.SWSE.macros.triggerRenewVisionMacro = LightSideTalentMacros.triggerRenewVisionMacro.bind(LightSideTalentMacros);
 window.SWSE.macros.triggerShareForceSecretMacro = LightSideTalentMacros.triggerShareForceSecretMacro.bind(LightSideTalentMacros);
+window.SWSE.macros.triggerSteelResolveMacro = LightSideTalentMacros.triggerSteelResolveMacro.bind(LightSideTalentMacros);
 window.SWSE.macros.canRerollKnowledgeMacro = LightSideTalentMacros.canRerollKnowledgeMacro.bind(LightSideTalentMacros);
 window.SWSE.macros.applyDarkSideScourge = LightSideTalentMacros.applyDarkSideScourge.bind(LightSideTalentMacros);
 window.SWSE.macros.shouldApplyDarkSideScourge = LightSideTalentMacros.shouldApplyDarkSideScourge.bind(LightSideTalentMacros);
