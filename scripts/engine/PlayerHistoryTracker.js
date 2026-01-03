@@ -19,7 +19,7 @@ export class PlayerHistoryTracker {
    * @param {Actor} actor
    * @param {Object} suggestion - { itemId, itemName, category, theme }
    * @param {Object} confidence - { confidence, level }
-   * @param {Object} context - { mentorAlignment, classSynergy, buildCoherence }
+   * @param {Object} context - { mentorAlignment, classSynergy, buildCoherence, archetypeMatch }
    * @returns {Promise<string>} Suggestion ID (for later tracking)
    */
   static async recordSuggestionShown(actor, suggestion, confidence, context) {
@@ -27,8 +27,9 @@ export class PlayerHistoryTracker {
       // Ensure storage is initialized
       await this.initializeStorage(actor);
 
-      // Generate unique ID
-      const suggestionId = `sugg_${actor.uuid}_${Date.now()}`;
+      // Generate unique ID with random suffix to prevent same-ms collisions
+      const randomSuffix = Math.random().toString(36).substr(2, 9);
+      const suggestionId = `sugg_${actor.uuid}_${Date.now()}_${randomSuffix}`;
 
       // Create history entry
       const entry = {
@@ -39,11 +40,14 @@ export class PlayerHistoryTracker {
         theme: suggestion.theme,
         level: actor.system.level || 1,
         shownAt: Date.now(),
-        outcome: null,  // Will be set to 'accepted', 'ignored', or 'passiveIgnored'
+        outcome: null,  // Will be set to 'accepted', 'mentorIgnored', or 'passiveIgnored'
         outcomeAt: null,
         confidence: confidence.confidence,
         confidenceLevel: confidence.level,
-        context: { ...context }
+        context: {
+          ...context,
+          archetypeMatch: context.archetypeMatch || null  // Snapshot for pivot detection
+        }
       };
 
       // Add to recent history
@@ -282,18 +286,43 @@ export class PlayerHistoryTracker {
       }
 
       // Calculate acceptance rates and ignored weights
+      const currentLevel = actor.system.level || 1;
       for (const [theme, stats] of Object.entries(themeStats)) {
         // Acceptance rate: accepted / (accepted + mentor-ignored)
         // Only use mentor ignores as strong signal, not passive ignores
+        // Early-game guard: require 3+ total samples to avoid overfitting
         const denominator = stats.accepted + stats.mentorIgnored;
-        if (denominator > 0) {
+        if (denominator >= 3) {
           aggregates.acceptanceRateByTheme[theme] = stats.accepted / denominator;
+        } else if (denominator > 0) {
+          // 1-2 samples: use neutral prior
+          aggregates.acceptanceRateByTheme[theme] = 0.5;
         }
 
-        // Ignored weight: penalty based on mentor-ignored count
-        // Max -0.3, scale with frequency
+        // Ignored weight: penalty based on mentor-ignored count with time decay
+        // Only penalize if 2+ mentor ignores
+        // Soft minimum sample size: max(shown, 5)
+        // Time decay: recent ignores worth more than old ones
         if (stats.mentorIgnored >= 2) {
-          const ignorePenalty = Math.min(0.3, 0.1 * (stats.mentorIgnored / stats.shown));
+          // Calculate decay-weighted ignore count
+          let decayedIgnoreCount = 0;
+          for (const entry of history) {
+            if (entry.theme !== theme || entry.outcome !== 'mentorIgnored') continue;
+
+            const ageInLevels = currentLevel - (entry.level || currentLevel);
+            let decayFactor = 1.0;  // Last 3 levels: 100%
+            if (ageInLevels > 3 && ageInLevels <= 6) {
+              decayFactor = 0.5;    // 4-6 levels ago: 50%
+            } else if (ageInLevels > 6) {
+              decayFactor = 0.25;   // 7+ levels ago: 25%
+            }
+
+            decayedIgnoreCount += decayFactor;
+          }
+
+          // Calculate penalty with soft minimum sample size
+          const softMinShown = Math.max(stats.shown, 5);
+          const ignorePenalty = Math.min(0.3, 0.1 * (decayedIgnoreCount / softMinShown));
           aggregates.ignoredThemeWeights[theme] = -ignorePenalty;
         }
       }
