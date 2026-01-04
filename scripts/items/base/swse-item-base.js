@@ -12,7 +12,16 @@ export class SWSEItemBase extends Item {
    */
   prepareDerivedData() {
     super.prepareDerivedData();
-    
+
+    // Ensure weight is always a valid finite number
+    const typesWithWeight = ['weapon', 'armor', 'equipment'];
+    if (typesWithWeight.includes(this.type)) {
+      const weight = this.system?.weight;
+      if (!Number.isFinite(weight) || weight < 0) {
+        this.system.weight = 1;
+      }
+    }
+
     // Item type-specific preparation
     switch (this.type) {
       case 'weapon':

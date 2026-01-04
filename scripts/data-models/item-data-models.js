@@ -23,7 +23,7 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
         label: "Attack Attribute"
       }),
       range: new fields.StringField({initial: "melee", label: "Range"}),
-      weight: new fields.NumberField({required: true, initial: 1, min: 0}),
+      weight: new fields.NumberField({required: false, initial: 1, min: 0, nullable: true}),
       cost: new fields.NumberField({required: true, initial: 0, min: 0}),
       equipped: new fields.BooleanField({required: true, initial: false}),
       description: new fields.HTMLField({label: "Description"}),
@@ -99,7 +99,7 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       armorCheckPenalty: new fields.NumberField({required: true, initial: 0, integer: true}),
       fortBonus: new fields.NumberField({required: true, initial: 0, integer: true}),
       speedPenalty: new fields.NumberField({required: true, initial: 0, integer: true}),
-      weight: new fields.NumberField({required: true, initial: 1, min: 0}),
+      weight: new fields.NumberField({required: false, initial: 1, min: 0, nullable: true}),
       cost: new fields.NumberField({required: true, initial: 0, min: 0}),
       equipped: new fields.BooleanField({required: true, initial: false}),
       description: new fields.HTMLField({label: "Description"}),
@@ -155,7 +155,7 @@ export class EquipmentDataModel extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
     return {
-      weight: new fields.NumberField({required: true, initial: 1, min: 0}),
+      weight: new fields.NumberField({required: false, initial: 1, min: 0, nullable: true}),
       cost: new fields.NumberField({required: true, initial: 0, min: 0}),
       equipped: new fields.BooleanField({required: true, initial: false}),
       description: new fields.HTMLField({label: "Description"}),
