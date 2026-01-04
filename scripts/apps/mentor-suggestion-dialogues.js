@@ -498,16 +498,40 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     observation: "Combat skills may seem counter to peace, yet a guardian must be prepared.",
                     suggestion: "This feat would help you protect the innocent when diplomacy fails.",
                     respectClause: "Violence is always a last resort. Choose with that in mind."
+                },
+                force: {
+                    observation: "The Force flows through all things, but some channels run deeper.",
+                    suggestion: "This feat would strengthen your connection to the living Force.",
+                    respectClause: "Power without purpose is merely noise. Let purpose guide you."
+                },
+                mobility: {
+                    observation: "A Jedi moves with the grace of flowing water.",
+                    suggestion: "This feat enhances your ability to flow through conflict.",
+                    respectClause: "Movement is meditation. Choose what feels natural."
+                },
+                defense: {
+                    observation: "The lightsaber defends as much as it strikes.",
+                    suggestion: "This feat would make your defense impenetrable.",
+                    respectClause: "Protection of self enables protection of others."
                 }
             },
             mid: {
                 default: {
                     combined: "This feat complements your growing mastery. It would serve you well."
+                },
+                combat: {
+                    combined: "Your combat instincts have sharpened. This feat honors that growth."
+                },
+                force: {
+                    combined: "Your connection to the Force deepens. This feat channels that power wisely."
                 }
             },
             late: {
                 default: {
                     combined: "We stand as equals now. This choice is yours to make."
+                },
+                combat: {
+                    combined: "Your blade is an extension of your will. This merely refines perfection."
                 }
             }
         },
@@ -517,16 +541,142 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     observation: "Talents shape the Jedi you will become.",
                     suggestion: "This talent aligns with the Force's flow through you.",
                     respectClause: "Let your instincts and training guide you."
+                },
+                guardian: {
+                    observation: "The path of the Guardian calls to those who would shield the weak.",
+                    suggestion: "This talent strengthens your role as protector.",
+                    respectClause: "A Guardian's strength serves others, never self."
+                },
+                consular: {
+                    observation: "The Consular seeks understanding over confrontation.",
+                    suggestion: "This talent deepens your wisdom and diplomatic gifts.",
+                    respectClause: "Words can heal what violence cannot."
+                },
+                sentinel: {
+                    observation: "The Sentinel walks between light and shadow.",
+                    suggestion: "This talent hones your practical skills without losing your center.",
+                    respectClause: "Balance in all things, young one."
+                },
+                lightsaber: {
+                    observation: "The lightsaber is more than a weapon—it is a symbol.",
+                    suggestion: "This talent would refine your bladework.",
+                    respectClause: "Let the Force guide your strikes, not anger."
+                },
+                force_sense: {
+                    observation: "The Force speaks to those who listen.",
+                    suggestion: "This talent sharpens your perception of the unseen.",
+                    respectClause: "Awareness is the first step toward understanding."
                 }
             },
             mid: {
                 default: {
                     combined: "This talent deepens abilities you've already demonstrated."
+                },
+                guardian: {
+                    combined: "Your protective instincts are strong. This talent channels them."
+                },
+                consular: {
+                    combined: "Your wisdom grows. This talent reflects your path of understanding."
+                },
+                sentinel: {
+                    combined: "You walk the balanced path well. This talent supports that journey."
                 }
             },
             late: {
                 default: {
                     combined: "Your mastery speaks for itself. Trust your judgment."
+                },
+                guardian: {
+                    combined: "You are a shield against the darkness. This is fitting."
+                },
+                consular: {
+                    combined: "Your insight rivals the ancient masters. Choose freely."
+                }
+            }
+        },
+        skill: {
+            early: {
+                default: {
+                    observation: "Knowledge illuminates the path ahead.",
+                    suggestion: "This skill would serve both your missions and your understanding.",
+                    respectClause: "A Jedi seeks knowledge, but never hoards it."
+                },
+                perception: {
+                    observation: "The Force heightens awareness, but training sharpens it.",
+                    suggestion: "Perception training would make your senses keener.",
+                    respectClause: "See what is there, not what you expect."
+                },
+                persuasion: {
+                    observation: "A Jedi's words carry weight beyond mere speech.",
+                    suggestion: "Persuasion allows you to resolve conflicts without violence.",
+                    respectClause: "The mind trick is a shortcut; true persuasion is an art."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "This skill complements your growing abilities. A wise investment."
+                }
+            },
+            late: {
+                default: {
+                    combined: "Your knowledge base is formidable. This adds another facet."
+                }
+            }
+        },
+        defense: {
+            early: {
+                default: {
+                    observation: "Defense is not cowardice—it is wisdom.",
+                    suggestion: "Strengthening your defenses allows you to endure and protect.",
+                    respectClause: "A Jedi who falls cannot rise to help others."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Your defensive instincts serve you well. This enhances them."
+                }
+            },
+            late: {
+                default: {
+                    combined: "You are a fortress of calm in chaos. This is appropriate."
+                }
+            }
+        },
+        multiclass: {
+            early: {
+                default: {
+                    observation: "The Force flows through many disciplines.",
+                    suggestion: "Expanding your training could reveal new truths.",
+                    respectClause: "Not all wisdom comes from the Jedi Temple."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Diversification can illuminate what focus might miss."
+                }
+            },
+            late: {
+                default: {
+                    combined: "Your path has always been unique. This is merely another step."
+                }
+            }
+        },
+        hp: {
+            early: {
+                default: {
+                    observation: "The body is the vessel through which the Force acts.",
+                    suggestion: "Greater vitality allows you to serve longer and endure more.",
+                    respectClause: "Care for yourself so you may care for others."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Your resilience grows. The Force rewards those who endure."
+                }
+            },
+            late: {
+                default: {
+                    combined: "You have survived much. May you survive much more."
                 }
             }
         },
@@ -595,16 +745,53 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     observation: "Feats are tools.",
                     suggestion: "This one fits your kit.",
                     respectClause: "Take it or leave it — just don't blame me if you need it later."
+                },
+                stealth: {
+                    observation: "Staying unseen is half the job.",
+                    suggestion: "This feat keeps you invisible when it matters.",
+                    respectClause: "Can't scout if you're dead. Don't get spotted."
+                },
+                mobility: {
+                    observation: "Speed gets you out of trouble.",
+                    suggestion: "This feat improves your ability to reposition.",
+                    respectClause: "A scout who can't move is a corpse."
+                },
+                perception: {
+                    observation: "You need to see them before they see you.",
+                    suggestion: "This feat sharpens your awareness.",
+                    respectClause: "Intel wins battles. Get better at gathering it."
+                },
+                survival: {
+                    observation: "The field doesn't care about your feelings.",
+                    suggestion: "This feat keeps you alive in hostile terrain.",
+                    respectClause: "Survive first. Everything else comes second."
+                },
+                ranged: {
+                    observation: "Distance is safety.",
+                    suggestion: "This feat improves your ranged effectiveness.",
+                    respectClause: "Hit them from far away. They can't hit back."
                 }
             },
             mid: {
                 default: {
                     combined: "This shores up a gap in your capabilities. Solid choice."
+                },
+                stealth: {
+                    combined: "Your stealth game is already good. This makes you a ghost."
+                },
+                mobility: {
+                    combined: "You move well. This makes you untraceable."
+                },
+                ranged: {
+                    combined: "Your aim is improving. This capitalizes on that."
                 }
             },
             late: {
                 default: {
                     combined: "You're making my job easy. Good pick."
+                },
+                stealth: {
+                    combined: "I've lost track of you twice this week. That's a compliment."
                 }
             }
         },
@@ -614,16 +801,141 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     observation: "Talents define your edge.",
                     suggestion: "This one sharpens what you're already good at.",
                     respectClause: "Your specialty, your decision."
+                },
+                awareness: {
+                    observation: "Scouts live by their senses.",
+                    suggestion: "This talent enhances your awareness in the field.",
+                    respectClause: "See everything. Miss nothing."
+                },
+                camouflage: {
+                    observation: "The best scouts are never seen.",
+                    suggestion: "This talent helps you blend into any environment.",
+                    respectClause: "Invisibility is a skill, not magic."
+                },
+                evasion: {
+                    observation: "Getting hit is failure.",
+                    suggestion: "This talent helps you avoid incoming fire.",
+                    respectClause: "Dodge better. Live longer."
+                },
+                tracking: {
+                    observation: "Finding the target is step one.",
+                    suggestion: "This talent improves your tracking abilities.",
+                    respectClause: "Know where they are. Always."
                 }
             },
             mid: {
                 default: {
                     combined: "This talent plays to your strengths. Take it."
+                },
+                awareness: {
+                    combined: "Your situational awareness is already sharp. This makes it razor."
+                },
+                evasion: {
+                    combined: "You're hard to hit. This makes you impossible."
                 }
             },
             late: {
                 default: {
                     combined: "Veteran choice. Approved."
+                },
+                awareness: {
+                    combined: "Nothing escapes your notice. This is just polish."
+                }
+            }
+        },
+        skill: {
+            early: {
+                default: {
+                    observation: "Skills are intel.",
+                    suggestion: "This one fills a gap in your operational knowledge.",
+                    respectClause: "Learn it now or regret it later."
+                },
+                stealth: {
+                    observation: "Moving silently is a discipline.",
+                    suggestion: "Stealth training makes you harder to detect.",
+                    respectClause: "Practice until it's instinct."
+                },
+                perception: {
+                    observation: "Your eyes are your best weapon.",
+                    suggestion: "Perception training sharpens them.",
+                    respectClause: "See the ambush before you walk into it."
+                },
+                survival: {
+                    observation: "The terrain can kill you as fast as any enemy.",
+                    suggestion: "Survival knowledge keeps you operational.",
+                    respectClause: "Know the land. Use it."
+                },
+                mechanics: {
+                    observation: "Gear fails. Fix it.",
+                    suggestion: "Mechanics training means you're never stranded.",
+                    respectClause: "Self-sufficiency is survival."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Good skill investment. This pays dividends."
+                }
+            },
+            late: {
+                default: {
+                    combined: "You know what you need. This confirms it."
+                }
+            }
+        },
+        defense: {
+            early: {
+                default: {
+                    observation: "Don't get hit. But if you do, survive it.",
+                    suggestion: "This improves your defensive capabilities.",
+                    respectClause: "Armor is weight. Defense is skill."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Your defenses are solid. This reinforces them."
+                }
+            },
+            late: {
+                default: {
+                    combined: "You're hard to kill. Stay that way."
+                }
+            }
+        },
+        multiclass: {
+            early: {
+                default: {
+                    observation: "Branching out?",
+                    suggestion: "This could give you tools scouts don't usually have.",
+                    respectClause: "Just don't forget what made you effective in the first place."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Diversification has tactical value. If this fits your ops, take it."
+                }
+            },
+            late: {
+                default: {
+                    combined: "You're building something unique. I won't second-guess it."
+                }
+            }
+        },
+        hp: {
+            early: {
+                default: {
+                    observation: "Health is a resource.",
+                    suggestion: "More HP means more margin for error.",
+                    respectClause: "Scouts get hit sometimes. Survive it."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "You're getting tougher. Good. You'll need it."
+                }
+            },
+            late: {
+                default: {
+                    combined: "You've taken hits that would've killed most. Keep that going."
                 }
             }
         },
@@ -694,16 +1006,53 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     observation: "Feats, eh? More tricks fer the ol' kit!",
                     suggestion: "This one'll help ye swindle, sneak, or shoot — maybe all three!",
                     respectClause: "Pick what makes the galaxy easier to plunder, matey!"
+                },
+                deception: {
+                    observation: "Lies are a scoundrel's bread and butter, har har!",
+                    suggestion: "This feat makes yer tall tales even more convincing!",
+                    respectClause: "The best lie is the one they never question!"
+                },
+                stealth: {
+                    observation: "Sneaky, sneaky! I like it!",
+                    suggestion: "This feat helps ye slip past the authorities like a shadow!",
+                    respectClause: "Can't arrest what they can't see, savvy?"
+                },
+                combat: {
+                    observation: "Sometimes ye gotta fight yer way out!",
+                    suggestion: "This feat makes ye deadlier when diplomacy fails!",
+                    respectClause: "Dead men don't press charges, har har!"
+                },
+                piloting: {
+                    observation: "Every scoundrel needs a fast ship!",
+                    suggestion: "This feat improves yer spacefarin' skills!",
+                    respectClause: "Outrun the law and live to spend yer loot!"
+                },
+                social: {
+                    observation: "Ye've got a silver tongue, matey!",
+                    suggestion: "This feat polishes it to pure aurodium!",
+                    respectClause: "Talk yer way out o' anything!"
                 }
             },
             mid: {
                 default: {
                     combined: "Now that's a pirate's choice! Practical and sneaky!"
+                },
+                deception: {
+                    combined: "Yer lies could fool a Jedi! This makes 'em even better!"
+                },
+                stealth: {
+                    combined: "Slippier than a greased Hutt! This makes ye invisible!"
+                },
+                combat: {
+                    combined: "Ye fight dirty and I love it! This helps!"
                 }
             },
             late: {
                 default: {
                     combined: "Ye know what yer doin' by now. Just confirmin' yer excellent taste! Har har!"
+                },
+                deception: {
+                    combined: "The galaxy believes whatever ye tell 'em now! Legendary!"
                 }
             }
         },
@@ -713,16 +1062,141 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     observation: "Talents make a scoundrel special!",
                     suggestion: "This one fits yer style like a captain's hat!",
                     respectClause: "But hey, if ye want somethin' different, I ain't judgin'!"
+                },
+                fortune: {
+                    observation: "Luck favors the bold, matey!",
+                    suggestion: "This talent makes fortune smile on ye even brighter!",
+                    respectClause: "The luckier ye are, the richer ye get!"
+                },
+                misfortune: {
+                    observation: "Bad things happen to yer enemies, don't they? Har har!",
+                    suggestion: "This talent spreads yer bad luck to others!",
+                    respectClause: "Better them than ye, savvy?"
+                },
+                spacer: {
+                    observation: "The void is where scoundrels thrive!",
+                    suggestion: "This talent makes ye a proper spacer!",
+                    respectClause: "Born to sail the starry seas!"
+                },
+                slicer: {
+                    observation: "Every lock has a key... or a bypass!",
+                    suggestion: "This talent helps ye crack systems like eggs!",
+                    respectClause: "Information is treasure, matey!"
                 }
             },
             mid: {
                 default: {
                     combined: "Perfect addition to yer bag o' tricks!"
+                },
+                fortune: {
+                    combined: "Lady Luck herself must be smitten with ye! Har har!"
+                },
+                spacer: {
+                    combined: "Yer a proper space dog now! This makes ye legend!"
                 }
             },
             late: {
                 default: {
                     combined: "Master scoundrel choice! Ye'd make any pirate proud!"
+                },
+                fortune: {
+                    combined: "Ye could find treasure in a black hole! Pure legend!"
+                }
+            }
+        },
+        skill: {
+            early: {
+                default: {
+                    observation: "Skills unlock doors — literally and figuratively!",
+                    suggestion: "This one adds to yer repertoire of roguish talents!",
+                    respectClause: "Every skill is another way to profit, matey!"
+                },
+                deception: {
+                    observation: "Lyin' is an art, and ye've got talent!",
+                    suggestion: "Deception training makes ye even more convincing!",
+                    respectClause: "The truth is whatever ye say it is!"
+                },
+                stealth: {
+                    observation: "Movin' quiet saves lives — usually yers!",
+                    suggestion: "Stealth training makes ye a proper ghost!",
+                    respectClause: "In and out, loot in hand, none the wiser!"
+                },
+                persuasion: {
+                    observation: "Ye've got a way with words!",
+                    suggestion: "Persuasion training makes yer charm irresistible!",
+                    respectClause: "They'll be thankin' ye fer takin' their credits!"
+                },
+                mechanics: {
+                    observation: "Every scoundrel needs to fix their ship!",
+                    suggestion: "Mechanics keeps ye flyin' when others fail!",
+                    respectClause: "Duct tape and prayers only go so far!"
+                }
+            },
+            mid: {
+                default: {
+                    combined: "More tools fer the toolkit! A proper scoundrel knows everything!"
+                }
+            },
+            late: {
+                default: {
+                    combined: "Ye've mastered the art! This just adds polish!"
+                }
+            }
+        },
+        defense: {
+            early: {
+                default: {
+                    observation: "Can't spend treasure if yer dead!",
+                    suggestion: "Better defenses mean more adventures!",
+                    respectClause: "Stay alive, get rich, retire famous!"
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Harder to kill means more capers to pull! Har har!"
+                }
+            },
+            late: {
+                default: {
+                    combined: "They've been tryin' to catch ye for years! Keep it that way!"
+                }
+            }
+        },
+        multiclass: {
+            early: {
+                default: {
+                    observation: "Expandin' yer horizons, eh?",
+                    suggestion: "A pirate who can do more earns more!",
+                    respectClause: "Variety is the spice o' the spaceways!"
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Branching out like a proper entrepreneur o' chaos!"
+                }
+            },
+            late: {
+                default: {
+                    combined: "Ye've become somethin' unique! A true legend!"
+                }
+            }
+        },
+        hp: {
+            early: {
+                default: {
+                    observation: "Tougher hide means longer life!",
+                    suggestion: "More HP lets ye survive more misadventures!",
+                    respectClause: "Hard to spend loot if yer full o' holes!"
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Ye've survived more than most! Keep the trend goin'!"
+                }
+            },
+            late: {
+                default: {
+                    combined: "Tougher than durasteel, ye are! Unstoppable!"
                 }
             }
         },
@@ -783,16 +1257,53 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     observation: "Feat selection detected.",
                     suggestion: "This feat would enhance your operational parameters within acceptable ranges.",
                     respectClause: "I await your decision with carefully calibrated patience."
+                },
+                leadership: {
+                    observation: "Your leadership metrics show potential for optimization.",
+                    suggestion: "This feat would improve your ability to command subordinates.",
+                    respectClause: "A well-led team is 34.7% more efficient. Approximately."
+                },
+                diplomacy: {
+                    observation: "Diplomatic protocols are essential for nobility.",
+                    suggestion: "This feat enhances your negotiation subroutines... pardon, skills.",
+                    respectClause: "Words are cheaper than wars, Master. Usually."
+                },
+                knowledge: {
+                    observation: "Knowledge is the foundation of influence.",
+                    suggestion: "This feat expands your informational databases.",
+                    respectClause: "One cannot leverage what one does not know."
+                },
+                combat: {
+                    observation: "Even nobles must occasionally... defend themselves.",
+                    suggestion: "This feat provides acceptable combat enhancement.",
+                    respectClause: "Security details are expensive. Self-sufficiency has merit."
+                },
+                social: {
+                    observation: "Social capital is a measurable resource.",
+                    suggestion: "This feat increases your social return on investment.",
+                    respectClause: "Connections are currency, Master."
                 }
             },
             mid: {
                 default: {
                     combined: "An efficient selection. I have updated my behavioral prediction models accordingly."
+                },
+                leadership: {
+                    combined: "Your command protocols are maturing nicely. This enhances them further."
+                },
+                diplomacy: {
+                    combined: "Your diplomatic success rate is improving. This continues the trend."
+                },
+                social: {
+                    combined: "Your social network is expanding optimally. This accelerates growth."
                 }
             },
             late: {
                 default: {
                     combined: "Your choices have become increasingly... competent. Noted."
+                },
+                leadership: {
+                    combined: "You lead with distinction. This merely polishes what is already impressive."
                 }
             }
         },
@@ -802,16 +1313,141 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     observation: "Talent selection parameters engaged.",
                     suggestion: "This talent would provide measurable improvements to your capabilities.",
                     respectClause: "Though I suspect you've already decided. Humans often do."
+                },
+                inspiration: {
+                    observation: "Your presence affects those around you.",
+                    suggestion: "This talent amplifies your inspirational coefficient.",
+                    respectClause: "Inspired followers are 27% more productive. Allegedly."
+                },
+                presence: {
+                    observation: "Command presence is quantifiable, Master.",
+                    suggestion: "This talent increases your authoritative aura.",
+                    respectClause: "People obey what they respect. Usually."
+                },
+                lineage: {
+                    observation: "Your bloodline carries certain... advantages.",
+                    suggestion: "This talent maximizes your hereditary potential.",
+                    respectClause: "Genetics are destiny. Or so the nobles claim."
+                },
+                resources: {
+                    observation: "Wealth management is a noble tradition.",
+                    suggestion: "This talent optimizes your resource allocation.",
+                    respectClause: "Money talks. This helps it speak louder."
                 }
             },
             mid: {
                 default: {
                     combined: "This talent optimizes your role. A sensible choice, Master."
+                },
+                inspiration: {
+                    combined: "Your followers hang on your every word. This makes them hang tighter."
+                },
+                presence: {
+                    combined: "Your presence commands respect. This commands more of it."
                 }
             },
             late: {
                 default: {
                     combined: "Excellent selection. It has been... satisfactory serving you."
+                },
+                inspiration: {
+                    combined: "Legends are built on such choices. Your legend grows."
+                }
+            }
+        },
+        skill: {
+            early: {
+                default: {
+                    observation: "Skill acquisition requested.",
+                    suggestion: "This skill would enhance your operational versatility.",
+                    respectClause: "Versatility is... occasionally useful, Master."
+                },
+                persuasion: {
+                    observation: "Persuasion is the noble's primary tool.",
+                    suggestion: "This skill training improves your convincing capabilities.",
+                    respectClause: "Why force when you can persuade? More elegant."
+                },
+                knowledge: {
+                    observation: "Knowledge is power. Cliché, but accurate.",
+                    suggestion: "This knowledge base expansion serves your interests.",
+                    respectClause: "An educated noble is a dangerous noble."
+                },
+                deception: {
+                    observation: "Sometimes truth is... inconvenient.",
+                    suggestion: "This skill helps manage... alternative narratives.",
+                    respectClause: "I neither approve nor disapprove. I merely calculate."
+                },
+                perception: {
+                    observation: "Observing others reveals their weaknesses.",
+                    suggestion: "Perception training enhances your analytical capabilities.",
+                    respectClause: "See what others hide. Act accordingly."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Skill development proceeding according to projections. Adequate."
+                }
+            },
+            late: {
+                default: {
+                    combined: "Your skill portfolio is comprehensive. This adds another asset."
+                }
+            }
+        },
+        defense: {
+            early: {
+                default: {
+                    observation: "Self-preservation protocols are... advisable.",
+                    suggestion: "Enhanced defenses reduce mortality probability.",
+                    respectClause: "Dead nobles cannot manage estates, Master."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Your defensive capabilities are improving. Assassination probability decreasing."
+                }
+            },
+            late: {
+                default: {
+                    combined: "You have become remarkably difficult to eliminate. Satisfactory."
+                }
+            }
+        },
+        multiclass: {
+            early: {
+                default: {
+                    observation: "Diversification detected in career parameters.",
+                    suggestion: "Cross-training may provide unexpected synergies.",
+                    respectClause: "Unconventional choices sometimes yield unconventional results."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Your hybrid approach is... intriguing. Calculating projected outcomes."
+                }
+            },
+            late: {
+                default: {
+                    combined: "You have become something the models did not predict. Fascinating."
+                }
+            }
+        },
+        hp: {
+            early: {
+                default: {
+                    observation: "Physical durability assessment requested.",
+                    suggestion: "Increased health reserves extend operational lifespan.",
+                    respectClause: "I have grown... accustomed to serving you, Master."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Your physical resilience is improving. Medical expense projections decreasing."
+                }
+            },
+            late: {
+                default: {
+                    combined: "You are remarkably hardy for a noble. This is... complimentary."
                 }
             }
         },
@@ -877,16 +1513,56 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     observation: "Feats make you dangerous.",
                     suggestion: "This one fits.",
                     respectClause: "Take it."
+                },
+                weapon: {
+                    observation: "Weapon proficiency.",
+                    suggestion: "This makes your gear deadlier.",
+                    respectClause: "Tools matter. Use them."
+                },
+                armor: {
+                    observation: "Armor is survival.",
+                    suggestion: "This feat makes your protection count.",
+                    respectClause: "Tank the hits. Stay in the fight."
+                },
+                combat: {
+                    observation: "Combat effectiveness.",
+                    suggestion: "This improves how you fight.",
+                    respectClause: "Fight smarter. Win more."
+                },
+                toughness: {
+                    observation: "Durability.",
+                    suggestion: "This makes you harder to kill.",
+                    respectClause: "Dead soldiers don't win wars."
+                },
+                mobility: {
+                    observation: "Battlefield positioning.",
+                    suggestion: "This improves your movement options.",
+                    respectClause: "Be where you need to be."
                 }
             },
             mid: {
                 default: {
                     combined: "Good pick. You're learning."
+                },
+                weapon: {
+                    combined: "Your weapon skills are solid. This makes them dangerous."
+                },
+                armor: {
+                    combined: "You know how to take a hit. This helps you take more."
+                },
+                combat: {
+                    combined: "Combat instincts improving. Good."
                 }
             },
             late: {
                 default: {
                     combined: "Veteran choice."
+                },
+                weapon: {
+                    combined: "Mastery level. Respect."
+                },
+                combat: {
+                    combined: "You fight like a Mandalorian. Almost."
                 }
             }
         },
@@ -896,16 +1572,147 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     observation: "Talents define how you fight.",
                     suggestion: "This one matches your style.",
                     respectClause: "Your call."
+                },
+                armor: {
+                    observation: "Armor specialty.",
+                    suggestion: "This talent makes your armor work harder.",
+                    respectClause: "Protection is strategy."
+                },
+                weapon: {
+                    observation: "Weapon mastery.",
+                    suggestion: "This talent increases your damage output.",
+                    respectClause: "Hit hard. Hit first."
+                },
+                commando: {
+                    observation: "Special operations.",
+                    suggestion: "This talent suits unconventional warfare.",
+                    respectClause: "Sometimes stealth beats strength."
+                },
+                leadership: {
+                    observation: "Command presence.",
+                    suggestion: "This talent helps you lead in combat.",
+                    respectClause: "Soldiers follow warriors."
                 }
             },
             mid: {
                 default: {
                     combined: "This talent works. Take it."
+                },
+                armor: {
+                    combined: "Your armor proficiency is impressive. This enhances it."
+                },
+                weapon: {
+                    combined: "Your weapon skills are lethal. This makes them worse for the enemy."
+                },
+                commando: {
+                    combined: "You're operating like special forces. This supports that."
                 }
             },
             late: {
                 default: {
                     combined: "You know what you're doing. I'm just confirming."
+                },
+                armor: {
+                    combined: "Walking fortress. Nothing gets through."
+                },
+                weapon: {
+                    combined: "Every shot counts. Every shot kills."
+                }
+            }
+        },
+        skill: {
+            early: {
+                default: {
+                    observation: "Skills supplement combat.",
+                    suggestion: "This one has tactical value.",
+                    respectClause: "Learn it. Use it."
+                },
+                endurance: {
+                    observation: "Endurance keeps you fighting.",
+                    suggestion: "This skill extends your operational capacity.",
+                    respectClause: "Last soldier standing wins."
+                },
+                initiative: {
+                    observation: "First strike advantage.",
+                    suggestion: "Initiative training gets you moving first.",
+                    respectClause: "Speed kills. Literally."
+                },
+                perception: {
+                    observation: "Awareness saves lives.",
+                    suggestion: "Perception training spots threats early.",
+                    respectClause: "See the ambush. Counter it."
+                },
+                mechanics: {
+                    observation: "Gear maintenance.",
+                    suggestion: "Mechanics keeps your equipment functional.",
+                    respectClause: "A jammed rifle is a dead soldier."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Practical skill investment. Approved."
+                }
+            },
+            late: {
+                default: {
+                    combined: "Complete soldier package. This rounds it out."
+                }
+            }
+        },
+        defense: {
+            early: {
+                default: {
+                    observation: "Defense.",
+                    suggestion: "This makes you harder to hurt.",
+                    respectClause: "Simple math. Higher defenses, longer life."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Your defenses are solid. Keep building."
+                }
+            },
+            late: {
+                default: {
+                    combined: "Fortress. Good."
+                }
+            }
+        },
+        multiclass: {
+            early: {
+                default: {
+                    observation: "Branching out.",
+                    suggestion: "This could give you new tools.",
+                    respectClause: "Diversification has tactical value."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Hybrid approach. Can work if you commit."
+                }
+            },
+            late: {
+                default: {
+                    combined: "You've built something unique. Use it."
+                }
+            }
+        },
+        hp: {
+            early: {
+                default: {
+                    observation: "Health.",
+                    suggestion: "More HP means more fight.",
+                    respectClause: "Can't win if you're dead."
+                }
+            },
+            mid: {
+                default: {
+                    combined: "Getting tougher. Good trend."
+                }
+            },
+            late: {
+                default: {
+                    combined: "You're hard to kill. Stay that way."
                 }
             }
         },
