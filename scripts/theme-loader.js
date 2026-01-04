@@ -106,7 +106,7 @@ export class ThemeLoader {
    * Initialize theme system
    * Called during Foundry ready hook
    */
-  static initialize() {
+  static init() {
     SWSELogger.log('[SWSE Theme] Theme loader initialized');
 
     // Load initial theme from settings
