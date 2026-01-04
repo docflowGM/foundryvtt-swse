@@ -78,40 +78,11 @@
         continue;
       }
 
-      // Build the racial traits text for the species
-      // Join the traits with line breaks
-      const racialTraitsText = speciesData.racialTraits.join('\n\n');
-
       // Update the species document
-      // We'll add this to the system.description field or create a specific racialTraits field
+      // Store racial traits array in system.racialTraits field
       const updateData = {
-        'system.racialTraits': racialTraitsText
+        'system.racialTraits': speciesData.racialTraits
       };
-
-      // If the species document doesn't have a racialTraits field, we can add it to description
-      // Let's check the current structure and update accordingly
-      if (!speciesDoc.system.racialTraits && speciesDoc.system.description) {
-        // If there's no racialTraits field but there is a description field,
-        // we'll append to or update the description
-        const currentDesc = speciesDoc.system.description || '';
-
-        // Check if description already contains "Racial Traits" section
-        if (currentDesc.includes('Racial Traits') || currentDesc.includes('racial traits')) {
-          // Replace the racial traits section
-          const updatedDesc = currentDesc.replace(
-            /(Racial Traits|racial traits):?[\s\S]*?(?=\n\n|$)/i,
-            `Racial Traits:\n${racialTraitsText}`
-          );
-          updateData['system.description'] = updatedDesc;
-          delete updateData['system.racialTraits'];
-        } else {
-          // Append racial traits to description
-          updateData['system.description'] = currentDesc
-            ? `${currentDesc}\n\nRacial Traits:\n${racialTraitsText}`
-            : `Racial Traits:\n${racialTraitsText}`;
-          delete updateData['system.racialTraits'];
-        }
-      }
 
       await speciesDoc.update(updateData);
 

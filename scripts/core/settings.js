@@ -7,6 +7,15 @@ import { registerMetaTuningSettings } from '../engine/MetaTuning.js';
 export function registerSystemSettings() {
   SWSELogger.log("SWSE | Registering settings...");
 
+  game.settings.register('foundryvtt-swse', "enableAutomation", {
+    name: "SWSE.Settings.EnableAutomation.Name",
+    hint: "SWSE.Settings.EnableAutomation.Hint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   game.settings.register('foundryvtt-swse', "autoDamageThreshold", {
     name: "SWSE.Settings.AutoDamageThreshold.Name",
     hint: "SWSE.Settings.AutoDamageThreshold.Hint",

@@ -111,13 +111,10 @@ export class UpdateSpeciesTraitsMigration {
             continue;
           }
 
-          // Build the racial traits text
-          const racialTraitsText = speciesData.racialTraits.join('\n\n');
-
           // Update the species document
-          // Store racial traits in system.racialTraits field
+          // Store racial traits array in system.racialTraits field
           const updateData = {
-            'system.racialTraits': racialTraitsText
+            'system.racialTraits': speciesData.racialTraits
           };
 
           await speciesDoc.update(updateData);
