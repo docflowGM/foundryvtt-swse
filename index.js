@@ -314,15 +314,15 @@ Hooks.once("init", async function () {
     /* ---------------------------------------------------------
        Sheet Registration
        --------------------------------------------------------- */
-    Actors.unregisterSheet("core", ActorSheet);
-    Items.unregisterSheet("core", ItemSheet);
+    foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
+    foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
 
-    Actors.registerSheet("swse", SWSECharacterSheet, { types: ["character"], makeDefault: true });
-    Actors.registerSheet("swse", SWSENPCSheet, { types: ["npc"], makeDefault: true });
-    Actors.registerSheet("swse", SWSEDroidSheet, { types: ["droid"], makeDefault: true });
-    Actors.registerSheet("swse", SWSEVehicleSheet, { types: ["vehicle"], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet("swse", SWSECharacterSheet, { types: ["character"], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet("swse", SWSENPCSheet, { types: ["npc"], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet("swse", SWSEDroidSheet, { types: ["droid"], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet("swse", SWSEVehicleSheet, { types: ["vehicle"], makeDefault: true });
 
-    Items.registerSheet("swse", SWSEItemSheet, {
+    foundry.documents.collections.Items.registerSheet("swse", SWSEItemSheet, {
         types: ["weapon","armor","equipment","feat","talent","forcepower","force-power","class","species","talenttree","skill","combat-action","condition"],
         makeDefault: true
     });
