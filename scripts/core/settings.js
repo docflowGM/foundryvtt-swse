@@ -134,6 +134,16 @@ export function registerSystemSettings() {
     default: ""
   });
 
+  // Item weight fix migration tracking
+  game.settings.register('foundryvtt-swse', "fixItemWeightMigration", {
+    name: "Fix Item Weight Migration Version",
+    hint: "Tracks the version of the item weight fix migration that has been run",
+    scope: "world",
+    config: false,
+    type: String,
+    default: ""
+  });
+
   // World data loader tracking
   game.settings.register('foundryvtt-swse', "dataLoaded", {
     name: "World Data Loaded",
