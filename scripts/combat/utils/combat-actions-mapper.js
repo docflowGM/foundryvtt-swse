@@ -117,6 +117,34 @@ export class CombatActionsMapper {
     };
   }
 
+  /**
+   * Get all combat actions and extra uses organized by skill
+   * @returns {Object} Map of skill keys to their actions { [skillKey]: { combatActions, extraUses } }
+   */
+  static getAllActionsBySkill() {
+    if (!this._initialized) {
+      SWSELogger.warn("CombatActionsMapper used before initialization completed.");
+      return {};
+    }
+
+    const allSkills = [
+      'acrobatics', 'climb', 'deception', 'endurance', 'gatherInformation',
+      'initiative', 'jump', 'knowledge', 'mechanics', 'perception',
+      'persuasion', 'pilot', 'ride', 'stealth', 'survival', 'swim',
+      'treatInjury', 'useComputer', 'useTheForce'
+    ];
+
+    const result = {};
+    for (const skillKey of allSkills) {
+      const actions = this.getActionsForSkill(skillKey);
+      if (actions.hasActions) {
+        result[skillKey] = actions;
+      }
+    }
+
+    return result;
+  }
+
   // ---------------------------------------------------------------------------
   // Lookup by Ship Crew Position
   // ---------------------------------------------------------------------------

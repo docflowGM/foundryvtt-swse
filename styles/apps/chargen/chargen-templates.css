@@ -551,6 +551,50 @@
   }
 }
 
+/* ==================== MENTOR DIALOGUE BUTTONS ==================== */
+
+.mentor-dialogue .dialog-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  padding: 1.5rem;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.2) 0%, transparent 100%);
+}
+
+.mentor-dialogue .dialog-button {
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  border: 2px solid #4a90e2;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  max-width: 250px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.mentor-dialogue .dialog-button:hover {
+  background: linear-gradient(135deg, #357abd, #2555a0);
+  border-color: #357abd;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 144, 226, 0.5);
+}
+
+.mentor-dialogue .dialog-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3), 0 6px 20px rgba(74, 144, 226, 0.5);
+}
+
+.mentor-dialogue .dialog-button i {
+  font-size: 1.2rem;
+}
+
 /* ==================== SCROLLBAR STYLING ==================== */
 
 .template-creator-container::-webkit-scrollbar {

@@ -1497,6 +1497,32 @@ export default class CharacterGenerator extends Application {
   }
 
   /**
+   * Load backgrounds from progression rules
+   */
+  async _loadBackgroundsFromProgression() {
+    try {
+      // Import progression rules
+      const { PROGRESSION_RULES } = await import('../../progression/data/progression-data.js');
+
+      const backgroundData = PROGRESSION_RULES.backgrounds || {};
+
+      // Convert background object to array format
+      this.backgrounds = Object.entries(backgroundData).map(([key, bg]) => ({
+        id: key,
+        name: bg.name || key,
+        trainedSkills: bg.trainedSkills || [],
+        description: bg.description || '',
+        icon: bg.icon || null
+      }));
+
+      SWSELogger.log(`SWSE | Loaded ${this.backgrounds.length} backgrounds from progression rules`);
+    } catch (error) {
+      SWSELogger.error('SWSE | Failed to load backgrounds from progression rules:', error);
+      this.backgrounds = [];
+    }
+  }
+
+  /**
    * Get default skills list when skills.json fails to load
    * @returns {Array} Array of default skill objects
    */

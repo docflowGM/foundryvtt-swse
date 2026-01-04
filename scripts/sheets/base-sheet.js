@@ -49,7 +49,9 @@ export class SWSEActorSheetBase extends BaseSheet {
 
     context.halfLevel = Math.floor((system.level || 1) / 2);
     context.conditionPenalty = actor.conditionPenalty || 0;
-    context.skillActions = CombatActionsMapper.getAllActionsBySkill();
+    context.skillActions = typeof CombatActionsMapper?.getAllActionsBySkill === 'function'
+      ? CombatActionsMapper.getAllActionsBySkill()
+      : {};
 
     return context;
   }
