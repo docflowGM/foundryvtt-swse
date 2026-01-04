@@ -41,7 +41,7 @@ export const ANCHOR_STATE = {
 // Maps BUILD_THEMES to primary and secondary archetypes
 // ─────────────────────────────────────────────────────────────
 
-const THEME_TO_ARCHETYPE = {
+export const THEME_TO_ARCHETYPE = {
   [BUILD_THEMES.MELEE]: ['frontline_damage', 'assassin'],
   [BUILD_THEMES.FORCE]: ['force_dps', 'force_control'],
   [BUILD_THEMES.RANGED]: ['sniper', 'assassin'],
