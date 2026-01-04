@@ -10,12 +10,8 @@ html, body {
     overflow: visible !important;
 }
 
-/* Prevent any layout collapse on Foundry root */
-#board,
-#ui-top,
-#ui-bottom,
-#ui-left,
-#ui-right {
+/* Prevent any layout collapse on Foundry root - only apply to board */
+#board {
     min-height: 100% !important;
     display: block !important;
 }
