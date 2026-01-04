@@ -258,3 +258,87 @@ Phase 2 is working when:
 - Engine "quiets down" as builds stabilize
 - Prestige warnings are rare and meaningful
 - Anchors naturally evolve over long campaigns
+
+---
+
+## Phase 2.5: End-to-End Behavioral Simulation
+
+**PHASE_2_5_SimulationEngine.js** provides complete validation without Foundry dependencies.
+
+### What It Does
+
+Simulates player choices across levels and validates all systems evolve correctly:
+- Records selections into mock history
+- Updates anchor state machine
+- Updates pivot state machine
+- Calculates confidence scores
+- Generates explanations
+- Returns complete state snapshot per level
+
+### Running the Simulation
+
+```javascript
+import { Phase25SimulationEngine, runExampleSimulation } from './PHASE_2_5_SimulationEngine.js';
+
+// Run built-in example
+const result = await runExampleSimulation();
+
+// Or custom simulation
+const result = await Phase25SimulationEngine.simulateLevelProgression([
+  { item: 'Power Attack', theme: 'melee' },
+  { item: 'Force Sensitivity', theme: 'force' },
+  // ... more choices
+]);
+
+// Results include:
+// - result.snapshots: per-level state transitions
+// - result.summary: progression overview + validations
+```
+
+### Behavioral Contract (Auto-Validated)
+
+✓ Anchors emerge naturally (consistency >= 0.6 → PROPOSED)
+✓ Anchors lock on confirmation (PROPOSED → LOCKED)
+✓ Pivots relax constraints (exploratory players surface more options)
+✓ Confidence tracks pivot state (penalties reduced during exploration)
+✓ Explanations stay conversational (no numbers, no "system" language)
+✓ Tone adjusts by context (pivot state changes wording naturally)
+
+### Example Output
+
+```
+Level 1: Power Attack (melee)
+  Anchor: none (null)
+  Pivot: exploratory (divergence: 0.5)
+  Confidence: Suggested (0.55)
+  Explanation: "Power Attack complements your current build well."
+
+Level 4: Improved Defenses (defense)
+  Anchor: proposed → locked (frontline_damage)
+  Pivot: stable (divergence: 0.2)
+  Confidence: Suggested (0.60)
+  Explanation: "This continues building on your Frontline Damage Dealer foundation."
+
+Level 6: Force Sensitivity (force)
+  Anchor: locked (frontline_damage)
+  Pivot: exploratory (divergence: 0.4)
+  Confidence: Suggested (0.48)
+  Explanation: "Force Sensitivity doesn't fit your Frontline Damage Dealer focus, though it could work in niche cases. You've been experimenting lately, so this is presented as an option rather than a recommendation."
+
+Level 8: Force Burst (force)
+  Anchor: locked (frontline_damage)
+  Pivot: pivoting (divergence: 0.65)
+  Confidence: Possible (0.35)
+  Explanation: "Your previous focus on Frontline Damage Dealer emphasized different abilities. You've been experimenting lately, so this is presented as an option rather than a recommendation."
+```
+
+### Why Phase 2.5 Matters
+
+Before integrating with Foundry:
+- Validate the math is sound (weights, thresholds, decay rates)
+- Verify state machines don't get stuck or oscillate
+- Ensure explanations read naturally across all contexts
+- Confirm tone shifts appropriately for each state
+- Test edge cases (empty history, rapid pivots, level-up timing)
+
+The simulation is your **behavioral specification**. If it passes, the JavaScript implementation is correct.
