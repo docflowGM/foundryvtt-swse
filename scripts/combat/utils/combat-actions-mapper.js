@@ -318,6 +318,3 @@ export class CombatActionsMapper {
 
 // Expose globally
 window.CombatActionsMapper = CombatActionsMapper;
-
-// Initialize on system ready
-Hooks.once("ready", () => CombatActionsMapper.init());
