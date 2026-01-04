@@ -14,6 +14,10 @@ import { DamageSystem } from "../damage-system.js";
 
 export class SWSEGrappling {
 
+  static init() {
+    // Grappling system initialized (no additional setup required)
+  }
+
   static getSelectedActor() {
     return canvas.tokens.controlled[0]?.actor ?? null;
   }
