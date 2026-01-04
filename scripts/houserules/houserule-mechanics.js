@@ -105,6 +105,10 @@ export class HouseruleMechanics {
 
   static _setupDiagonalMovement() {
     try {
+      if (!CONFIG.SWSE) {
+        SWSELogger.warn("CONFIG.SWSE not initialized, skipping diagonal movement setup");
+        return;
+      }
       CONFIG.SWSE.diagonalMovement = game.settings.get(
         "foundryvtt-swse",
         "diagonalMovement"

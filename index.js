@@ -308,15 +308,19 @@ Hooks.once("init", async function () {
     CONFIG.Combatant.documentClass = SWSECombatant;
 
     /* ---------------------------------------------------------
-       Register Flag Scopes (Foundry v13+)
-       --------------------------------------------------------- */
-    CONFIG.Item.flagScopes.add('swse');
-    CONFIG.Actor.flagScopes.add('swse');
-
-    /* ---------------------------------------------------------
-       SWSE Config Setup
+       SWSE Config Setup (must be early to prevent undefined errors)
        --------------------------------------------------------- */
     CONFIG.SWSE = SWSE;
+
+    /* ---------------------------------------------------------
+       Register Flag Scopes (Foundry v13+)
+       --------------------------------------------------------- */
+    if (CONFIG.Item?.flagScopes) {
+        CONFIG.Item.flagScopes.add('swse');
+    }
+    if (CONFIG.Actor?.flagScopes) {
+        CONFIG.Actor.flagScopes.add('swse');
+    }
 
     /* ---------------------------------------------------------
        Sheet Registration
