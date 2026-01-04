@@ -10,13 +10,9 @@
  * This file is intentionally defensive and non-invasive.
  */
 (async function () {
-  try {
-    await foundry.applications.handlebars.loadTemplates([
-      'systems/foundryvtt-swse/templates/apps/progression/sidebar.hbs',
-      'systems/foundryvtt-swse/templates/apps/progression/attribute-method.hbs',
-      'systems/foundryvtt-swse/templates/apps/chargen/ability-rolling.hbs'
-    ]);
-  } catch(e) { console.warn("SWSE | engine-autoload: template preload failed", e); }
+  // Skip early template loading - templates are loaded in index.js ready hook
+  // This prevents "Cannot read properties of undefined (reading 'emit')" errors
+  // that occur when templates are loaded before foundry is fully initialized
 
   Hooks.on('swse:progression:created', async (engine) => {
     try {
