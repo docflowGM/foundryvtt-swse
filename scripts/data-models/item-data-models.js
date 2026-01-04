@@ -80,6 +80,23 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
       })
     };
   }
+
+  /**
+   * Migrate legacy data during document initialization
+   * Cleans invalid weight values before validation
+   */
+  static migrateData(source) {
+    // Clean weight before validation - must be a finite number >= 0
+    if (source.weight !== undefined) {
+      const weight = Number(source.weight);
+      if (!Number.isFinite(weight) || weight < 0) {
+        source.weight = 1; // Default to 1 kg
+      } else {
+        source.weight = weight; // Ensure it's a number, not a string
+      }
+    }
+    return super.migrateData(source);
+  }
 }
 
 // Armor Data Model
@@ -148,6 +165,23 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       })
     };
   }
+
+  /**
+   * Migrate legacy data during document initialization
+   * Cleans invalid weight values before validation
+   */
+  static migrateData(source) {
+    // Clean weight before validation - must be a finite number >= 0
+    if (source.weight !== undefined) {
+      const weight = Number(source.weight);
+      if (!Number.isFinite(weight) || weight < 0) {
+        source.weight = 1; // Default to 1 kg
+      } else {
+        source.weight = weight; // Ensure it's a number, not a string
+      }
+    }
+    return super.migrateData(source);
+  }
 }
 
 // Equipment Data Model
@@ -188,6 +222,23 @@ export class EquipmentDataModel extends foundry.abstract.DataModel {
         label: "Restriction Level"
       })
     };
+  }
+
+  /**
+   * Migrate legacy data during document initialization
+   * Cleans invalid weight values before validation
+   */
+  static migrateData(source) {
+    // Clean weight before validation - must be a finite number >= 0
+    if (source.weight !== undefined) {
+      const weight = Number(source.weight);
+      if (!Number.isFinite(weight) || weight < 0) {
+        source.weight = 1; // Default to 1 kg
+      } else {
+        source.weight = weight; // Ensure it's a number, not a string
+      }
+    }
+    return super.migrateData(source);
   }
 }
 
