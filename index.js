@@ -402,7 +402,6 @@ Hooks.once("ready", async function () {
     if (game.user.isGM) await WorldDataLoader.autoLoad();
 
     SWSECombat.init();
-    SWSECombatIntegration.init();
     SWSEActiveEffectsManager.init();
     SWSEGrappling.init();
     SWSEVehicleCombat.init();
