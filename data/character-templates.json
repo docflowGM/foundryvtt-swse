@@ -885,7 +885,8 @@
         "Armor Proficiency (Medium)",
         "Weapon Proficiency (Pistols)",
         "Weapon Proficiency (Rifles)",
-        "Weapon Proficiency (Simple Weapons)"
+        "Weapon Proficiency (Simple Weapons)",
+        "Extra Second Wind"
       ],
       "talent": "Commanding Presence",
       "talentTree": "Mercenary",
