@@ -14,7 +14,7 @@
 
 /* --- Sidebar Chat Layout Fix (AUTO-GENERATED) --- */
 
-.swse-app-ui #sidebar {
+#sidebar {
   display: flex;
   flex-direction: column;
 }
