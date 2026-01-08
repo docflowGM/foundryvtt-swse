@@ -330,24 +330,12 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     html.find('[data-action="filterTalents"]').click(ev => this._onFilterTalents(ev));
 
     // ========== FEAT ACTIONS PANEL ==========
-    html.find('.feat-roll').click(ev => this._onFeatRoll(ev));
-    html.find('.feat-attack').click(ev => this._onFeatAttack(ev));
-    html.find('.feat-ct').click(ev => this._onFeatCT(ev));
-    html.find('.feat-force').click(ev => this._onFeatForce(ev));
-    html.find('.feat-card-header').click(ev => this._toggleFeatCard(ev));
-    html.find('.feat-toggle').click(ev => this._onToggleFeatAction(ev));
-    html.find('.feat-variable-slider').on('input', ev => this._onUpdateVariableAction(ev));
+    // Feat actions now use data-action dispatcher in base-sheet.js
+    // Legacy handlers removed - templates refactored to use data-action attributes
 
     // ========== TALENT ABILITIES PANEL ==========
-    html.find('.ability-card-header').click(ev => this._onExpandAbilityCard(ev));
-    html.find('.ability-roll-btn').click(ev => this._onRollTalentAbility(ev));
-    html.find('.ability-toggle-btn').click(ev => this._onToggleTalentAbility(ev));
-    html.find('.ability-post-btn').click(ev => this._onPostTalentAbility(ev));
-    html.find('.ability-view-talent-btn').click(ev => this._onViewTalentFromAbility(ev));
-    html.find('.ability-choice-btn').click(ev => this._onUseAbilityChoice(ev));
-    html.find('.ability-special-action-btn').click(ev => this._onUseSpecialAction(ev));
-    html.find('.ability-reset-btn').click(ev => this._onResetAbilityUses(ev));
-    html.find('.ability-filter-btn').click(ev => this._onFilterAbilities(ev));
+    // Talent abilities now use data-action dispatcher in base-sheet.js
+    // Legacy handlers removed - templates refactored to use data-action attributes
 
     // ========== STARSHIP MANEUVERS PANEL ==========
     html.find('.starship-maneuvers-section .ability-card-header').click(ev => this._onExpandAbilityCard(ev));
@@ -2053,7 +2041,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   async _onSkillRoll(skillKey) {
     try {
       const actor = this.actor;
-      const roll = await game.swse.RollEngine.skillRoll({
+      const roll = await globalThis.SWSE.RollEngine.skillRoll({
         actor,
         skill: skillKey,
         flavor: `Skill Check — ${skillKey}`
@@ -2079,7 +2067,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
       // Trigger a standard roll message for now
       // (Your RollEngine can later be extended for action-specific logic)
-      const roll = await game.swse.RollEngine.skillRoll({
+      const roll = await globalThis.SWSE.RollEngine.skillRoll({
         actor,
         skill: skillKey,
         flavor: `Skill Action — ${actionName}`
