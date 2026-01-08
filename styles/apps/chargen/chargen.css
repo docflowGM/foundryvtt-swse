@@ -487,6 +487,213 @@
    Skill Selection Grid Styles
    ============================================ */
 
+/* ============================================
+   Feat Grid - Space Efficient Layout
+   ============================================ */
+
+.feats-grid,
+.feats-categorized {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+
+.feat-category {
+  margin-bottom: 1.5rem;
+}
+
+.feat-category .category-header {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #0af;
+  border-bottom: 1px solid #0af;
+  padding-bottom: 0.5rem;
+}
+
+.feat-category .category-description {
+  font-size: 0.85rem;
+  color: #9ed0ff;
+  margin-bottom: 0.75rem;
+  font-style: italic;
+}
+
+.feat-card,
+.feat-item {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 20, 40, 0.5);
+  border: 1px solid #0af;
+  border-radius: 4px;
+  padding: 0.5rem;
+  transition: all 0.2s ease;
+  min-height: 80px;
+  position: relative;
+}
+
+.feat-card:hover,
+.feat-item:hover {
+  background: rgba(0, 50, 100, 0.6);
+  box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
+  border-color: #00ff88;
+}
+
+.feat-card h5,
+.feat-item h4 {
+  margin: 0 0 0.35rem 0;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  color: #fff;
+  word-break: break-word;
+}
+
+.feat-card .select-feat,
+.feat-item .select-feat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  flex: 1;
+}
+
+.feat-card .feat-prereqs,
+.feat-item .feat-prereqs {
+  font-size: 0.75rem;
+  color: #aaaaaa;
+  margin: 0;
+  display: none; /* Hidden by default, show on hover/tooltip */
+  font-style: italic;
+}
+
+.feat-card:hover .feat-prereqs {
+  display: block;
+}
+
+.feat-card .suggestion-reason {
+  font-size: 0.75rem;
+  color: #00ff88;
+  margin: 0.25rem 0 0 0;
+}
+
+.feat-suggestion-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.feat-suggestion-badge.suggestion-tier-prestige {
+  background: #ff6b6b;
+  color: white;
+}
+
+.feat-suggestion-badge.suggestion-tier-chain {
+  background: #ffd93d;
+  color: #000;
+}
+
+.feat-suggestion-badge.suggestion-tier-skill {
+  background: #6bcf7f;
+  color: white;
+}
+
+.feat-suggestion-badge.suggestion-tier-ability {
+  background: #4ecdc4;
+  color: #000;
+}
+
+.feat-suggestion-badge.suggestion-tier-class {
+  background: #95e1d3;
+  color: #000;
+}
+
+.feat-chain-badge {
+  font-size: 0.65rem;
+  background: rgba(0, 170, 255, 0.2);
+  color: #0af;
+  padding: 0.1rem 0.3rem;
+  border-radius: 2px;
+  margin-top: 0.25rem;
+  display: inline-block;
+  border: 1px solid #0af;
+}
+
+.feat-indent-0 {
+  /* Base level feats - normal styling */
+}
+
+.feat-indent-1 {
+  /* Prerequisite feats - subtle indentation via darker background */
+  background: rgba(0, 20, 40, 0.7);
+  border-left: 3px solid #00ff88;
+  padding-left: 0.35rem;
+}
+
+.feat-indent-2 {
+  /* Chain feats - further indentation */
+  background: rgba(0, 20, 40, 0.85);
+  border-left: 3px solid #ffaa00;
+  padding-left: 0.35rem;
+}
+
+.selected-feats-summary {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: rgba(0, 30, 60, 0.4);
+  border: 1px solid #0af;
+  border-radius: 6px;
+}
+
+.selected-feats-summary h4 {
+  margin: 0 0 0.5rem 0;
+  color: #0af;
+  font-size: 0.95rem;
+}
+
+.selected-feats-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.selected-feat-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  background: rgba(0, 170, 255, 0.15);
+  border: 1px solid #0af;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #fff;
+}
+
+.selected-feat-badge .remove-feat {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #ff6b6b;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.selected-feat-badge .remove-feat:hover {
+  color: #ff8888;
+}
+
 .skills-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));

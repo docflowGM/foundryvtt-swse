@@ -401,6 +401,16 @@ export default class CharacterGenerator extends Application {
           context.packs.feats = featsWithSuggestions;
           // Sort by suggestion tier
           context.packs.feats = SuggestionEngine.sortBySuggestion(context.packs.feats);
+
+          // Organize feats into categories for display
+          try {
+            const categorizedFeats = this._organizeFeatsByCategory(context.packs.feats, this._featMetadata);
+            context.featCategories = categorizedFeats.categories;
+            context.featCategoryList = categorizedFeats.categoryList;
+          } catch (categErr) {
+            SWSELogger.warn('CharGen | Failed to organize feats by category:', categErr);
+            // Fallback to flat list if categorization fails
+          }
         } catch (err) {
           SWSELogger.warn('CharGen | Failed to add feat suggestions:', err);
         }
