@@ -1079,6 +1079,22 @@ export default class CharacterGenerator extends Application {
       };
     }
 
+    // Build progression structure for level-up compatibility
+    const progression = {
+      classLevels: (this.characterData.classes || []).map(cls => ({
+        class: cls.name,
+        level: cls.level || 1,
+        choices: {}
+      })),
+      species: this.characterData.species || "",
+      background: this.characterData.background?.id || "",
+      backgroundTrainedSkills: this.characterData.background?.trainedSkills || [],
+      feats: (this.characterData.feats || []).map(feat => feat.name || feat),
+      talents: (this.characterData.talents || []).map(talent => talent.name || talent),
+      trainedSkills: this.characterData.trainedSkills || [],
+      abilityIncreases: this.characterData.abilityIncreases || []
+    };
+
     const system = {
       level: this.characterData.level,
       species: this.characterData.species,  // Use consistent 'species' property
@@ -1109,7 +1125,9 @@ export default class CharacterGenerator extends Application {
       // Background data for biography tab
       event: this.characterData.background && this.characterData.background.category === 'event' ? this.characterData.background.name : "",
       profession: this.characterData.background && this.characterData.background.category === 'occupation' ? this.characterData.background.name : "",
-      planetOfOrigin: this.characterData.background && this.characterData.background.category === 'planet' ? this.characterData.background.name : ""
+      planetOfOrigin: this.characterData.background && this.characterData.background.category === 'planet' ? this.characterData.background.name : "",
+      // Progression structure for level-up system
+      progression: progression
     };
 
     // For NPCs, auto-create a Nonheroic class
