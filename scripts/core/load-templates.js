@@ -33,7 +33,8 @@ export async function preloadHandlebarsTemplates() {
     "systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs",
     "systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs",
     "systems/foundryvtt-swse/templates/partials/skill-row-static.hbs",
-    "systems/foundryvtt-swse/templates/partials/feat-actions-panel.hbs"
+    "systems/foundryvtt-swse/templates/partials/feat-actions-panel.hbs",
+    "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs"
   ];
 
   // ============================================
@@ -126,7 +127,8 @@ export function getTemplatePaths() {
       "systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs",
       "systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs",
       "systems/foundryvtt-swse/templates/partials/skill-row-static.hbs",
-      "systems/foundryvtt-swse/templates/partials/feat-actions-panel.hbs"
+      "systems/foundryvtt-swse/templates/partials/feat-actions-panel.hbs",
+      "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs"
     ],
     lazy: [
       "systems/foundryvtt-swse/templates/items/base/item-sheet.hbs",
