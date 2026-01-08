@@ -177,7 +177,7 @@ const SKILLS_DATA_MODEL = {
 function calculateSkills(actor) {
   const level = actor.system.level || 1;
   const halfLevel = Math.floor(level / 2);
-  const abilities = actor.system.abilities;
+  const abilities = actor.system.attributes;
   
   // Ability name mapping (convert skill ability to actual ability key)
   const abilityMap = {
@@ -252,7 +252,7 @@ class SWSEActor extends Actor {
     this.system.halfLevel = Math.floor(level / 2);
 
     // Calculate ability modifiers
-    for (let [key, ability] of Object.entries(this.system.abilities)) {
+    for (let [key, ability] of Object.entries(this.system.attributes)) {
       ability.total = (ability.base || 10) + (ability.racial || 0) + (ability.misc || 0);
       ability.mod = Math.floor((ability.total - 10) / 2);
     }
@@ -269,7 +269,7 @@ class SWSEActor extends Actor {
 
   _calculateSkills() {
     const halfLevel = this.system.halfLevel;
-    const abilities = this.system.abilities;
+    const abilities = this.system.attributes;
     const conditionPenalty = this.system.conditionTrack?.penalty || 0;
 
     const abilityMap = {
@@ -302,7 +302,7 @@ class SWSEActor extends Actor {
 
   _calculateDefenses() {
     const halfLevel = this.system.halfLevel;
-    const abilities = this.system.abilities;
+    const abilities = this.system.attributes;
 
     // Reflex Defense
     const reflexDef = this.system.defenses.reflex;
@@ -444,7 +444,7 @@ function calculateArmorPenalty(actor, skillKey) {
 
   // Max Dex Bonus affects these skills
   if (armor.maxDexBonus !== null && armor.maxDexBonus !== undefined) {
-    const dexMod = actor.system.abilities.dex.mod;
+    const dexMod = actor.system.attributes.dex.mod;
     penalty = Math.max(0, dexMod - armor.maxDexBonus);
   }
 

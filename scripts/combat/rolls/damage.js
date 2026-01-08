@@ -136,8 +136,8 @@ function computeDamageBonus(actor, weapon, options = {}) {
   let bonus = halfLvl + (weapon.system?.attackBonus ?? 0);
 
   // Ability modifiers
-  const strMod = actor.system.abilities?.str?.mod ?? 0;
-  const dexMod = actor.system.abilities?.dex?.mod ?? 0;
+  const strMod = actor.system.attributes?.str?.mod ?? 0;
+  const dexMod = actor.system.attributes?.dex?.mod ?? 0;
 
   // Check for explicit attack attribute setting
   const attackAttr = weapon.system?.attackAttribute;

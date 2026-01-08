@@ -200,14 +200,14 @@ getNewCharacterLevel() {
  * Get ability modifier for an ability score
  */
 getAbilityMod(ability) {
-  return this.actor.system.abilities?.[ability]?.mod ?? 0;
+  return this.actor.system.attributes?.[ability]?.mod ?? 0;
 }
 
 /**
  * Get all ability modifiers as an object
  */
 getAllAbilityMods() {
-  const abilities = this.actor.system.abilities || {};
+  const abilities = this.actor.system.attributes || {};
   return {
     str: abilities.str?.mod ?? 0,
     dex: abilities.dex?.mod ?? 0,
@@ -788,8 +788,8 @@ async applyScalingFeature(feature) {
       // Simulate ability score increases
       if (this.data.abilityIncrease) {
         const ability = this.data.abilityIncrease;
-        const currentBase = clone.system.abilities?.[ability]?.base || 10;
-        clone.system.abilities[ability].base = currentBase + 1;
+        const currentBase = clone.system.attributes?.[ability]?.base || 10;
+        clone.system.attributes[ability].base = currentBase + 1;
       }
 
       swseLogger.log('Dry run simulation completed');
@@ -873,14 +873,14 @@ async applyScalingFeature(feature) {
     if (speciesData.abilityMods) {
       for (const [ability, mod] of Object.entries(speciesData.abilityMods)) {
         if (mod !== 0) {
-          updates[`system.abilities.${ability}.racial`] = mod;
+          updates[`system.attributes.${ability}.racial`] = mod;
         }
       }
     }
 
     // Handle human ability choice (+2 to any one ability)
     if (speciesData.abilityChoice && abilityChoice) {
-      updates[`system.abilities.${abilityChoice}.racial`] = 2;
+      updates[`system.attributes.${abilityChoice}.racial`] = 2;
       updates["system.progression.speciesAbilityChoice"] = abilityChoice;
     }
 
@@ -926,9 +926,9 @@ async applyScalingFeature(feature) {
       // Apply increases to existing base scores
       for (const [ability, increase] of Object.entries(increases)) {
         if (increase > 0) {
-          const currentBase = this.actor.system.abilities?.[ability]?.base || 10;
+          const currentBase = this.actor.system.attributes?.[ability]?.base || 10;
           const newBase = currentBase + increase;
-          updates[`system.abilities.${ability}.base`] = newBase;
+          updates[`system.attributes.${ability}.base`] = newBase;
           swseLogger.log(`Progression: Increasing ${ability} by +${increase} (${currentBase} → ${newBase})`);
         }
       }
@@ -965,7 +965,7 @@ async applyScalingFeature(feature) {
     // Update base ability scores
     for (const [ability, data] of Object.entries(values)) {
       const value = data.value || data;
-      updates[`system.abilities.${ability}.base`] = value;
+      updates[`system.attributes.${ability}.base`] = value;
     }
 
     await applyActorUpdateAtomic(this.actor, updates);
@@ -1077,7 +1077,7 @@ async applyScalingFeature(feature) {
     // Add class level entry
     // SWSE skill trainings: At character creation, you get (class trainings + INT mod + Human bonus) skills to train
     // At level-up, you don't get new trainings (except from feats like Skill Training or INT increases)
-    const intMod = this.actor.system.abilities?.int?.mod || 0;
+    const intMod = this.actor.system.attributes?.int?.mod || 0;
     const isFirstCharacterLevel = classLevels.length === 0;
     const species = progression.species || '';
     const humanBonus = (species === 'Human' || species === 'human') ? 1 : 0;
@@ -1209,7 +1209,7 @@ async applyScalingFeature(feature) {
 
     // Ensure skillPoints is a valid number
     const skillPoints = typeof classData.skillPoints === 'number' ? classData.skillPoints : 4;
-    const intMod = this.actor.system.abilities?.int?.mod || 0;
+    const intMod = this.actor.system.attributes?.int?.mod || 0;
     const progression = this.actor.system.progression || {};
 
     // Available trainings = class base + INT modifier (minimum 1)
@@ -1328,10 +1328,10 @@ async applyScalingFeature(feature) {
 
   async _action_increaseAbility(payload) {
     const { ability } = payload;
-    const currentBase = this.actor.system.abilities?.[ability]?.base || 10;
+    const currentBase = this.actor.system.attributes?.[ability]?.base || 10;
 
     await applyActorUpdateAtomic(this.actor, {
-      [`system.abilities.${ability}.base`]: currentBase + 1
+      [`system.attributes.${ability}.base`]: currentBase + 1
     });
     this.data.abilityIncrease = ability;
     await this.completeStep("abilities");

@@ -73,7 +73,7 @@ export const SkillValidator = {
         if (!skillDoc) return 0;
 
         const ability = skillDoc.system?.ability || 'cha';
-        return actor.system.abilities?.[ability]?.mod ?? 0;
+        return actor.system.attributes?.[ability]?.mod ?? 0;
     },
 
     /**
@@ -87,7 +87,7 @@ export const SkillValidator = {
         if (!skillDoc) return 0;
 
         const ability = skillDoc.system?.ability || 'cha';
-        const abilityMod = actor.system.abilities?.[ability]?.mod ?? 0;
+        const abilityMod = actor.system.attributes?.[ability]?.mod ?? 0;
 
         // Class skill bonus (+3)
         const classSkillBonus = this.isClassSkill(actor, skillName) ? 3 : 0;

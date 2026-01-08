@@ -12,7 +12,7 @@ import { swseLogger } from '../../../utils/logger.js';
  * @param {Object} pending - Pending progression data
  */
 export async function autoGrantForceTrainingPowers(actor, pending) {
-  const wisMod = actor.system.abilities?.wis?.mod ?? 0;
+  const wisMod = actor.system.attributes?.wis?.mod ?? 0;
   const count = Math.max(1, 1 + wisMod);
 
   swseLogger.log(`Force Training: Granting ${count} force powers (1 + WIS mod ${wisMod})`);

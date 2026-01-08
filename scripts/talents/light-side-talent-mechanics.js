@@ -294,7 +294,7 @@ export class LightSideTalentMechanics {
     }
 
     // Get actor's Wisdom bonus
-    const wisdomBonus = actor.system.abilities?.wis?.mod || 0;
+    const wisdomBonus = actor.system.attributes?.wis?.mod || 0;
 
     // Create effect on ally
     await ally.createEmbeddedDocuments('ActiveEffect', [{
@@ -491,7 +491,7 @@ export class LightSideTalentMechanics {
     }
 
     // Get actor's Charisma bonus (minimum +1)
-    const chaBonus = Math.max(1, actor.system.abilities?.cha?.mod || 1);
+    const chaBonus = Math.max(1, actor.system.attributes?.cha?.mod || 1);
 
     const totalDamage = baseDamage + chaBonus;
 
@@ -959,7 +959,7 @@ export class LightSideTalentMechanics {
     }
 
     // Check if target has Intelligence 3 or higher
-    const targetIntelligence = targetActor.system.abilities?.int?.score || 0;
+    const targetIntelligence = targetActor.system.attributes?.int?.score || 0;
     if (targetIntelligence < 3) {
       return {
         success: false,

@@ -184,7 +184,7 @@ export class DefenseSystem {
         }
 
         const reflexTotal = sys.defenses.reflex?.total || 10;
-        const dexMod = actor.system.abilities?.dex?.mod || 0;
+        const dexMod = actor.system.attributes?.dex?.mod || 0;
 
         // Flat-footed = Reflex Defense - Dex modifier
         sys.defenses.flatFooted.total = reflexTotal - dexMod;
@@ -198,7 +198,7 @@ export class DefenseSystem {
 
     /* Ability Mod */
     static _getAbilityMod(actor, abilityKey) {
-        const ability = actor.system.abilities?.[abilityKey];
+        const ability = actor.system.attributes?.[abilityKey];
         return ability?.mod ?? 0;
     }
 

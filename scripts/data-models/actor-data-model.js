@@ -150,7 +150,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
     const system = this;
 
     // --- STR replaces CON (except HP)
-    system.abilities.con.mod = system.abilities.str.mod;
+    system.attributes.con.mod = system.attributes.str.mod;
 
     // --- Locomotion speed
     if (system.activeLocomotion && system.locomotion?.length) {
@@ -185,7 +185,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
     // Clamp Dex
     if (maxDex !== null) {
-      system.abilities.dex.mod = Math.min(system.abilities.dex.mod, maxDex);
+      system.attributes.dex.mod = Math.min(system.attributes.dex.mod, maxDex);
     }
 
     // Apply ACP to skills + attacks

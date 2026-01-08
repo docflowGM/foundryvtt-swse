@@ -129,7 +129,7 @@ export class ActorProgressionUpdater {
     const { getClassData } = await import('../utils/class-data-loader.js');
 
     let maxHP = 0;
-    const conMod = actor.system.abilities?.con?.mod || 0;
+    const conMod = actor.system.attributes?.con?.mod || 0;
     let isFirstLevel = true;
 
     for (const classLevel of classLevels) {
@@ -172,7 +172,7 @@ export class ActorProgressionUpdater {
    * @private
    */
   static async _calculateDefenses(actor, classLevels) {
-    const abilities = actor.system.abilities || {};
+    const abilities = actor.system.attributes || {};
 
     // Get ability modifiers
     const strMod = abilities.str?.mod || 0;

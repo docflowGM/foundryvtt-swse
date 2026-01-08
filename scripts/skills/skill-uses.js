@@ -1197,7 +1197,7 @@ export class PersuasionUses {
     }
 
     const persuasionBonus = actor.system.skills?.persuasion?.total || 0;
-    const targetIntModifier = target.system.abilities?.int?.modifier || 0;
+    const targetIntModifier = target.system.attributes?.int?.modifier || 0;
 
     let dc = 20 - targetIntModifier;
     if (hasPreAgreedSignals) {
@@ -2160,7 +2160,7 @@ export class SwimUses {
     }
 
     const enduranceBonus = actor.system.skills?.endurance?.total || 0;
-    const constitutionModifier = actor.system.abilities?.con?.modifier || 0;
+    const constitutionModifier = actor.system.attributes?.con?.modifier || 0;
 
     const maxRounds = constitutionModifier * roundsHeld;
     const dc = 10 + (5 * Math.max(0, roundsHeld - constitutionModifier));
@@ -2311,7 +2311,7 @@ export class TreatInjuryUses {
     const checkResult = roll.total + treatInjuryBonus;
     const success = checkResult >= dc;
 
-    const constitutionModifier = actor.system.abilities?.con?.modifier || 0;
+    const constitutionModifier = actor.system.attributes?.con?.modifier || 0;
     const hpHealed = success ? Math.max(1, constitutionModifier * targetLevel) : 0;
 
     await roll.toMessage({
@@ -3060,7 +3060,7 @@ export class UseTheForceUses {
       };
     }
 
-    const constitutionScore = actor.system.abilities?.con?.value || 10;
+    const constitutionScore = actor.system.attributes?.con?.value || 10;
     const dc = 15;
     const roll = await new Roll('1d20').evaluate({ async: true });
     const checkResult = roll.total + useForceBonus;
@@ -3244,7 +3244,7 @@ export class EnduranceUses {
 
   static async holdBreathe(actor, roundsHolding = null) {
     if (!actor) return { success: false, message: 'Invalid actor' };
-    const conScore = actor.system.abilities?.con?.score || 10;
+    const conScore = actor.system.attributes?.con?.score || 10;
     const enduranceBonus = actor.system.skills?.endurance?.total || 0;
     if (roundsHolding === null) {
       return { success: true, conScore, roundsWithoutCheck: conScore };
@@ -3269,7 +3269,7 @@ export class EnduranceUses {
   }
 
   static getConScore(actor) {
-    return actor ? actor.system.abilities?.con?.score || 10 : 10;
+    return actor ? actor.system.attributes?.con?.score || 10 : 10;
   }
 }
 

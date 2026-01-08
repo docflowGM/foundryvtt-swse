@@ -17,7 +17,7 @@ export function calculateDefense(actor, type) {
 
   const base = 10;
   const lvl = actor.system.level || 1;
-  const abilityScore = actor.system.abilities[def.ability]?.base ?? 10;
+  const abilityScore = actor.system.attributes[def.ability]?.base ?? 10;
   const ability = utils.math.calculateAbilityModifier(abilityScore);
   const armor = def.armor || 0;
   const misc = def.modifier || 0;

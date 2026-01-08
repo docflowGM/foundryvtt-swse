@@ -16,7 +16,7 @@
   <select 
     name="system.defenses.{{key}}.ability"
     class="defense-select-sm">
-    {{#each ../system.abilities as |ability aKey|}}
+    {{#each ../system.attributes as |ability aKey|}}
       <option value="{{aKey}}" {{#if (eq aKey ../defense.ability)}}selected{{/if}}>
         {{capitalize aKey}} ({{ability.mod}})
       </option>

@@ -35,7 +35,7 @@ export function getManeuverSelectionCount(actor) {
   }
 
   // Starship Tactics grants 1 + WIS modifier maneuvers per feat
-  const wisModifier = Math.floor((actor.system.abilities.wis.value - 10) / 2);
+  const wisModifier = Math.floor((actor.system.attributes.wis.value - 10) / 2);
   const maneuverCount = 1 + Math.max(0, wisModifier);
 
   return maneuverCount * tacticsFeatCount;

@@ -1207,7 +1207,7 @@ export class SWSERoll {
       if (skill.trained) parts.push(`Trained +5`);
       if (skill.focused) parts.push(`Skill Focus +5`);
 
-      const abilityMod = actor.system.abilities[skill.selectedAbility]?.mod ?? 0;
+      const abilityMod = actor.system.attributes[skill.selectedAbility]?.mod ?? 0;
       parts.push(`${skill.selectedAbility.toUpperCase()} ${abilityMod >= 0 ? "+" : ""}${abilityMod}`);
 
       const misc = skill.miscMod ?? 0;
@@ -1416,7 +1416,7 @@ export class SWSERoll {
         return { cancelled: true };
       }
 
-      const dexMod = actor.system.abilities?.dex?.mod ?? 0;
+      const dexMod = actor.system.attributes?.dex?.mod ?? 0;
       const initBonus = actor.system.initiative?.misc ?? 0;
       const total = dexMod + initBonus;
 
@@ -1774,7 +1774,7 @@ export class SWSERoll {
       parts.push(`½ Level +${halfLevel}`);
       if (skill.trained) parts.push(`Trained +5`);
       if (skill.focused) parts.push(`Skill Focus +5`);
-      const abilityMod = actor.system.abilities[skill.selectedAbility]?.mod ?? 0;
+      const abilityMod = actor.system.attributes[skill.selectedAbility]?.mod ?? 0;
       parts.push(`${skill.selectedAbility.toUpperCase()} ${abilityMod >= 0 ? "+" : ""}${abilityMod}`);
       if (skill.miscMod) parts.push(`Misc ${skill.miscMod >= 0 ? "+" : ""}${skill.miscMod}`);
       if (fpBonus) parts.push(`FP +${fpBonus}`);

@@ -126,7 +126,7 @@ export class FeintMechanics {
     // Check for non-humanoid or low-intelligence targets
     for (const target of targets) {
       const isHumanoid = this._isHumanoid(target);
-      const intScore = target.system.abilities?.int?.score || 10;
+      const intScore = target.system.attributes?.int?.score || 10;
 
       if (!isHumanoid || intScore < 3) {
         bonus -= 5;

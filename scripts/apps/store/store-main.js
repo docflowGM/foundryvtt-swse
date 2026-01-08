@@ -177,13 +177,72 @@ export class SWSEStore extends FormApplication {
   }
 
   getData(){
-    const groupsForTemplate = {};
-    for (const [bucket, map] of Object.entries(this.groupedItems)) {
-      // PERFORMANCE: Sort keys during rendering instead of reconstructing Map
-      const sortedEntries = Array.from(map.entries()).sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
-      groupsForTemplate[bucket] = sortedEntries.map(([category, items])=>({category, items, count: items.length}));
+    // Transform groupedItems Map structure to nested categories object for template
+    const categories = {};
+
+    for (const [bucket, categoryMap] of Object.entries(this.groupedItems)) {
+      categories[bucket] = {};
+
+      for (const [categoryName, items] of categoryMap.entries()) {
+        // Map category names to nested structure
+        // e.g., "Simple Melee" -> categories.weapons.melee.simple
+        const nested = this._parseCategory(bucket, categoryName);
+
+        // Navigate/create nested structure
+        let target = categories[bucket];
+        for (let i = 0; i < nested.path.length - 1; i++) {
+          target[nested.path[i]] = target[nested.path[i]] || {};
+          target = target[nested.path[i]];
+        }
+
+        // Set final array of items
+        target[nested.path[nested.path.length - 1]] = items;
+      }
     }
-    return { title: this.title, loading: !this._loaded, itemCount: this.items.length, groups: groupsForTemplate };
+
+    return {
+      title: this.title,
+      loading: !this._loaded,
+      itemCount: this.items.length,
+      categories: categories
+    };
+  }
+
+  /**
+   * Parse a category string into nested path
+   * e.g., "Simple Melee" -> { path: ["melee", "simple"] }
+   */
+  _parseCategory(bucket, categoryName) {
+    const normalized = String(categoryName || "").toLowerCase().trim();
+
+    if (bucket === "weapons") {
+      // Weapons: melee vs ranged, then type
+      if (normalized.includes("melee") || normalized.includes("blade") || normalized.includes("sword") ||
+          normalized.includes("axe") || normalized.includes("spear") || normalized.includes("staff") ||
+          normalized.includes("lightsaber")) {
+        if (normalized.includes("lightsaber")) return { path: ["melee", "lightsaber"] };
+        if (normalized.includes("advanced")) return { path: ["melee", "advanced"] };
+        if (normalized.includes("exotic")) return { path: ["melee", "exotic"] };
+        return { path: ["melee", "simple"] };
+      }
+
+      if (normalized.includes("ranged") || normalized.includes("rifle") || normalized.includes("pistol") ||
+          normalized.includes("blaster") || normalized.includes("grenade") || normalized.includes("launcher") ||
+          normalized.includes("bow") || normalized.includes("gun")) {
+        if (normalized.includes("pistol") || normalized.includes("blaster")) return { path: ["ranged", "pistol"] };
+        if (normalized.includes("rifle")) return { path: ["ranged", "rifle"] };
+        if (normalized.includes("heavy")) return { path: ["ranged", "heavy"] };
+        if (normalized.includes("grenade")) return { path: ["ranged", "grenade"] };
+        if (normalized.includes("exotic")) return { path: ["ranged", "exotic"] };
+        return { path: ["ranged", "simple"] };
+      }
+
+      // Default ranged if we couldn't determine
+      return { path: ["ranged", "simple"] };
+    }
+
+    // For non-weapons, return single-level category
+    return { path: [normalized] };
   }
 
   activateListeners(html) {
@@ -233,24 +292,38 @@ export class SWSEStore extends FormApplication {
     if (!confirmed) return;
 
     try {
-      // Deduct credits - use ActorEngine if available, otherwise direct update
-      const newCredits = currentCredits - costValue;
-      if (globalThis.SWSE?.ActorEngine?.updateActor) {
-        await globalThis.SWSE.ActorEngine.updateActor(this.actor, {
-          "system.credits": newCredits
-        });
-      } else {
-        await this.actor.update({ "system.credits": newCredits });
+      // CRITICAL: Create item FIRST before deducting credits
+      // This prevents players from losing credits if item creation fails
+      const itemData = view.raw.toObject ? view.raw.toObject() : view.raw;
+
+      try {
+        await this.actor.createEmbeddedDocuments("Item", [itemData]);
+      } catch (itemErr) {
+        swseLogger.error("SWSE Store | Failed to create item:", itemErr);
+        ui.notifications.error(`Failed to add ${view.name} to inventory. Purchase cancelled.`);
+        return; // Don't deduct credits if item creation failed
       }
 
-      // Add item to actor's inventory
-      const itemData = view.raw.toObject ? view.raw.toObject() : view.raw;
-      await this.actor.createEmbeddedDocuments("Item", [itemData]);
+      // Item created successfully, NOW deduct credits
+      const newCredits = currentCredits - costValue;
+      try {
+        if (globalThis.SWSE?.ActorEngine?.updateActor) {
+          await globalThis.SWSE.ActorEngine.updateActor(this.actor, {
+            "system.credits": newCredits
+          });
+        } else {
+          await this.actor.update({ "system.credits": newCredits });
+        }
+      } catch (creditErr) {
+        // This is less critical since item was already added
+        swseLogger.warn("SWSE Store | Warning: Failed to deduct credits (item was added):", creditErr);
+        ui.notifications.warn(`Item added but credit deduction failed! You may need to manually pay ${costValue} credits.`);
+      }
 
       ui.notifications.info(`Purchased ${view.name} for ${view.costText}`);
       this.render(true);
     } catch (err) {
-      swseLogger.error("SWSE Store | Purchase failed:", err);
+      swseLogger.error("SWSE Store | Purchase error:", err);
       ui.notifications.error("Purchase failed. Please check console.");
     }
   }

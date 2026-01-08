@@ -281,6 +281,13 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
       this.createdActor = actor;
       ui.notifications.success(`${actor.name} created at level 1!`);
 
+      // Emit progression completion hook for modules (language initialization, etc.)
+      Hooks.call('swse:progression:completed', {
+        actor: actor,
+        mode: 'chargen',
+        level: actor.system.level || 1
+      });
+
       // Apply houserule bonuses
       await this._applyHouseruleBonuses(actor);
 

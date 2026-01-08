@@ -20,7 +20,7 @@ function computeAttackBonus(actor, weapon, actionId = null) {
   const bab = actor.system.bab ?? 0;
 
   // Use new data model: abilities[xxx].mod
-  const abilityMod = actor.system.abilities[weapon.system?.attackAttribute ?? "str"]?.mod ?? 0;
+  const abilityMod = actor.system.attributes[weapon.system?.attackAttribute ?? "str"]?.mod ?? 0;
 
   const miscBonus = weapon.system?.attackBonus ?? 0;
 
@@ -91,8 +91,8 @@ function computeDamageBonus(actor, weapon) {
   let bonus = halfLvl + (weapon.system?.attackBonus ?? 0);
 
   // STR or DEX based weapon damage
-  const strMod = actor.system.abilities.str?.mod ?? 0;
-  const dexMod = actor.system.abilities.dex?.mod ?? 0;
+  const strMod = actor.system.attributes.str?.mod ?? 0;
+  const dexMod = actor.system.attributes.dex?.mod ?? 0;
 
   switch (weapon.system?.attackAttribute) {
     case "str": bonus += strMod; break;

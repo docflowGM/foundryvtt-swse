@@ -44,7 +44,7 @@ export function initializeStarshipManeuverHooks() {
     if (!changes.system?.abilities) return;
 
     // Store old abilities for comparison
-    options.oldAbilities = foundry.utils.deepClone(actor.system.abilities);
+    options.oldAbilities = foundry.utils.deepClone(actor.system.attributes);
   });
 
   Hooks.on('updateActor', async (actor, changes, options, userId) => {
@@ -61,7 +61,7 @@ export function initializeStarshipManeuverHooks() {
     if (!hasStartshipTactics) return;
 
     const oldAbilities = options.oldAbilities;
-    const newAbilities = actor.system.abilities;
+    const newAbilities = actor.system.attributes;
 
     SWSELogger.log('SWSE | Starship Maneuvers | Checking for Wisdom modifier increase');
 

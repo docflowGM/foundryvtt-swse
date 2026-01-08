@@ -369,7 +369,7 @@ export class DarkSidePowers {
       });
     }
 
-    const conModifier = actor.system.abilities.con?.mod || 0;
+    const conModifier = actor.system.attributes.con?.mod || 0;
     const durationRounds = 5 + conModifier;
     const currentRound = game.combat?.round || 0;
     const endRound = currentRound + durationRounds;
@@ -793,7 +793,7 @@ export class DarkSidePowers {
     // Roll ranged attack vs target Fortitude Defense
     const attackRoll = new Roll('1d20');
     await attackRoll.evaluate({ async: true });
-    const attackTotal = attackRoll.total + (actor.system.abilities?.dex?.mod || 0);
+    const attackTotal = attackRoll.total + (actor.system.attributes?.dex?.mod || 0);
     const targetFortitude = targetToken.actor.system.defenses?.fortitude?.value || 10;
 
     let damageAmount = 0;
@@ -897,7 +897,7 @@ export class DarkSidePowers {
     // Roll ranged attack vs target Fortitude Defense
     const attackRoll = new Roll('1d20');
     await attackRoll.evaluate({ async: true });
-    const attackTotal = attackRoll.total + (actor.system.abilities?.dex?.mod || 0);
+    const attackTotal = attackRoll.total + (actor.system.attributes?.dex?.mod || 0);
     const targetFortitude = targetToken.actor.system.defenses?.fortitude?.value || 10;
 
     const damageRoll = new Roll(`${sithLevel}d6`);

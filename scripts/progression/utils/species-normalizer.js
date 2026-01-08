@@ -19,7 +19,7 @@ export function normalizeSpeciesData(rawSpecies) {
     sp.system.abilityMods =
         sp.system.abilityMods ||
         sp.system.ability_mods ||
-        sp.system.abilities ||
+        sp.system.attributes ||
         {};
 
     // Ensure all ability keys exist

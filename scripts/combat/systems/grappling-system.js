@@ -132,7 +132,7 @@ export class SWSEGrappling {
   static async _rollGrappleBonus(actor) {
     const lvl = actor.system.level ?? 1;
     const bab = actor.system.bab ?? 0;
-    const str = actor.system.abilities.str?.mod ?? 0;
+    const str = actor.system.attributes.str?.mod ?? 0;
     const sizeMod = this._sizeMod(actor.system.size);
 
     return bab + str + sizeMod;

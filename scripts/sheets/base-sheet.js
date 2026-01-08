@@ -77,7 +77,7 @@ export class SWSEActorSheetBase extends BaseSheet {
     const topFields = ['level', 'experience', 'credits', 'currentHP', 'maxHP', 'temporaryHP', 'darkSideScore', 'forcePoints', 'destinyPoints'];
     topFields.forEach(f => system[f] = toNum(system[f]));
 
-    if (system.abilities) for (const ab of Object.values(system.abilities)) {
+    if (system.attributes) for (const ab of Object.values(system.attributes)) {
       ab.base = toNum(ab.base, 10);
       ab.racial = toNum(ab.racial, 0);
       ab.misc = toNum(ab.misc, 0);

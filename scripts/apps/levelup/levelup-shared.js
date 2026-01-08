@@ -288,7 +288,7 @@ export function calculateHPGain(classDoc, actor, newLevel) {
       SWSELogger.warn(`SWSE LevelUp | Class "${className}" not in hit dice map, using ${hitDie} from class data`);
     }
   }
-  const conMod = actor.system.abilities.con?.mod || 0;
+  const conMod = actor.system.attributes.con?.mod || 0;
   const hpGeneration = game.settings.get('foundryvtt-swse', "hpGeneration") || "average";
   const maxHPLevels = game.settings.get('foundryvtt-swse', "maxHPLevels") || 1;
 

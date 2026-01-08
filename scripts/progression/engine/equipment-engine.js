@@ -269,7 +269,7 @@ export class EquipmentEngine {
      * SWSE rule: Strength score * 10 in pounds
      */
     static getCarryingCapacity(actor) {
-        const str = actor.system.abilities?.str?.value || 10;
+        const str = actor.system.attributes?.str?.value || 10;
         return str * 10;
     }
 

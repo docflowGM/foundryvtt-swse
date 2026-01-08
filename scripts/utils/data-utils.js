@@ -25,7 +25,7 @@ export function mergeObjects(target, source) {
 /**
  * Get nested property from object using dot notation
  * @param {object} obj - Object to search
- * @param {string} path - Property path (e.g., "system.abilities.str")
+ * @param {string} path - Property path (e.g., "system.attributes.str")
  * @returns {*} Property value or undefined
  */
 export function getNestedProperty(obj, path) {

@@ -157,12 +157,10 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     );
 
     // --------------------------------------
-    // 2. FORCE POWERS: Known vs Suite
+    // 2. FORCE POWERS: Known vs Suite (use inSuite boolean on powers)
     // --------------------------------------
-    const suite = system.forceSuite || { powers: [], max: 6 };
-
-    context.activeSuite = allPowers.filter(p => suite.powers.includes(p.id));
-    context.knownPowers = allPowers.filter(p => !suite.powers.includes(p.id));
+    context.activeSuite = allPowers.filter(p => p.system?.inSuite);
+    context.knownPowers = allPowers.filter(p => !p.system?.inSuite);
 
     // --------------------------------------
     // 3. FORCE REROLL DICE
@@ -177,7 +175,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // --------------------------------------
     // 4. DARK SIDE SCORE VISUALIZATION
     // --------------------------------------
-    const wis = system.abilities?.wis?.total ?? 10;
+    const wis = system.attributes?.wis?.total ?? 10;
     const mult = game.settings.get("foundryvtt-swse", "darkSideMaxMultiplier") || 1;
     const maxDS = Math.max(wis * mult, 1);
     const cur = system.darkSideScore || 0;
@@ -281,6 +279,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       context.activeSuite = allManeuvers.filter(m => suiteIds.includes(m.id));
     }
 
+    // Calculate HP percentage for progress bar
+    context.hpPercentage = system.hp?.max && system.hp?.max > 0
+      ? Math.round((system.hp.value / system.hp.max) * 100)
+      : 0;
+
     return context;
   }
 // ----------------------------------------------------------
@@ -288,65 +291,85 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // ----------------------------------------------------------
 
   activateListeners(html) {
+    // Call super FIRST to set up base data-action handler and other core listeners
+    super.activateListeners(html);
 
-        // Progression Engine Integrated Buttons
-        html.find('.roll-attributes-btn').click(ev => this._onRollAttributes(ev));
+    // Defense input debouncing
+    html.find(".defense-input-sm, .defense-select-sm").change(ev => {
+      this._debouncedDefenseChange.call(this);
+    });
 
-        // Feat Actions handlers
-        html.find('.feat-roll').click(ev => this._onFeatRoll(ev));
-        html.find('.feat-attack').click(ev => this._onFeatAttack(ev));
-        html.find('.feat-ct').click(ev => this._onFeatCT(ev));
-        html.find('.feat-force').click(ev => this._onFeatForce(ev));
-        html.find('.feat-card-header').click(ev => this._toggleFeatCard(ev));
-        html.find('.feat-toggle').click(ev => this._onToggleFeatAction(ev));
-        html.find('.feat-variable-slider').on('input', ev => this._onUpdateVariableAction(ev));
+    // ========== HEADER BUTTONS ==========
+    html.find('.level-up').click(ev => this._onLevelUp(ev));
+    html.find('.character-generator').click(ev => this._onCharacterGenerator(ev));
+    html.find('.open-store').click(ev => this._onOpenStore(ev));
+    html.find('.pick-species-btn').click(ev => this._onPickSpecies(ev));
+    html.find('.add-class-btn').click(ev => this._onAddClass(ev));
 
-        // Talent Abilities handlers
-        html.find('.ability-card-header').click(ev => this._onExpandAbilityCard(ev));
-        html.find('.ability-roll-btn').click(ev => this._onRollTalentAbility(ev));
-        html.find('.ability-toggle-btn').click(ev => this._onToggleTalentAbility(ev));
-        html.find('.ability-post-btn').click(ev => this._onPostTalentAbility(ev));
-        html.find('.ability-view-talent-btn').click(ev => this._onViewTalentFromAbility(ev));
-        html.find('.ability-choice-btn').click(ev => this._onUseAbilityChoice(ev));
-        html.find('.ability-special-action-btn').click(ev => this._onUseSpecialAction(ev));
-        html.find('.ability-reset-btn').click(ev => this._onResetAbilityUses(ev));
-        html.find('.ability-filter-btn').click(ev => this._onFilterAbilities(ev));
+    // ========== PROGRESSION ENGINE BUTTONS ==========
+    html.find('.roll-attributes-btn').click(ev => this._onRollAttributes(ev));
 
-        // Starship Maneuvers handlers (reuse ability card handlers)
-        html.find('.starship-maneuvers-section .ability-card-header').click(ev => this._onExpandAbilityCard(ev));
-        html.find('.starship-maneuvers-section .ability-roll-btn').click(ev => this._onRollTalentAbility(ev));
-        html.find('.starship-maneuvers-section .ability-toggle-btn').click(ev => this._onToggleTalentAbility(ev));
-        html.find('.starship-maneuvers-section .ability-post-btn').click(ev => this._onPostTalentAbility(ev));
-        html.find('.starship-maneuvers-section .ability-reset-btn').click(ev => this._onResetAbilityUses(ev));
+    // ========== FORCE TAB ACTIONS ==========
+    html.find('.roll-force-point').click(ev => this._onRollForcePoint(ev));
+    html.find('[data-action="usePower"]').click(ev => this._onUsePower(ev));
+    html.find('[data-action="regainForcePower"]').click(ev => this._onRegainForcePower(ev));
+    html.find('[data-action="spendForcePoint"]').click(ev => this._onSpendForcePoint(ev));
+    html.find('[data-action="addToSuite"]').filter('.force-power').click(ev => this._onAddToSuite(ev));
+    html.find('[data-action="removeFromSuite"]').filter('.force-power').click(ev => this._onRemoveFromSuite(ev));
+    html.find('[data-action="restForce"]').click(ev => this._onRestForce(ev));
 
-        // Starship Maneuvers rules collapsible
-        html.find('.maneuvers-rules-header').click(ev => {
-          const header = $(ev.currentTarget);
-          const content = header.next('.maneuvers-rules-content');
-          content.slideToggle(200);
-        });
+    // ========== COMBAT TAB ACTIONS ==========
+    html.find('[data-action="rollAttack"]').click(ev => this._onRollAttack(ev));
+    html.find('[data-action="rollDamage"]').click(ev => this._onRollDamage(ev));
+    html.find('[data-action="rollCombatAction"]').click(ev => this._onPostCombatAction(ev));
 
-        // Starship Maneuvers suite management handlers
-        html.find('.add-to-suite').click(ev => this._onAddManeuverToSuite(ev));
-        html.find('.remove-from-suite').click(ev => this._onRemoveManeuverFromSuite(ev));
-        html.find('.use-maneuver').click(ev => this._onUseManeuver(ev));
-        html.find('.regain-maneuver').click(ev => this._onRegainManeuver(ev));
-        html.find('.rest-maneuvers').click(ev => this._onRestManeuvers(ev));
+    // ========== TALENTS TAB ACTIONS ==========
+    html.find('[data-action="toggleTree"]').click(ev => this._onToggleTree(ev));
+    html.find('[data-action="selectTalent"]').click(ev => this._onSelectTalent(ev));
+    html.find('[data-action="viewTalent"]').click(ev => this._onViewTalent(ev));
+    html.find('[data-action="filterTalents"]').click(ev => this._onFilterTalents(ev));
 
-        super.activateListeners(html);
-        html.find(".defense-input-sm, .defense-select-sm").change(ev => {
-            this._debouncedDefenseChange.call(this);
-        });
-    const root = html[0];
+    // ========== FEAT ACTIONS PANEL ==========
+    html.find('.feat-roll').click(ev => this._onFeatRoll(ev));
+    html.find('.feat-attack').click(ev => this._onFeatAttack(ev));
+    html.find('.feat-ct').click(ev => this._onFeatCT(ev));
+    html.find('.feat-force').click(ev => this._onFeatForce(ev));
+    html.find('.feat-card-header').click(ev => this._toggleFeatCard(ev));
+    html.find('.feat-toggle').click(ev => this._onToggleFeatAction(ev));
+    html.find('.feat-variable-slider').on('input', ev => this._onUpdateVariableAction(ev));
 
-    const on = (event, selector, handler) => {
-      root.addEventListener(event, evt => {
-        const el = evt.target.closest(selector);
-        if (el && root.contains(el)) handler.call(this, evt, el);
-      });
-    };
+    // ========== TALENT ABILITIES PANEL ==========
+    html.find('.ability-card-header').click(ev => this._onExpandAbilityCard(ev));
+    html.find('.ability-roll-btn').click(ev => this._onRollTalentAbility(ev));
+    html.find('.ability-toggle-btn').click(ev => this._onToggleTalentAbility(ev));
+    html.find('.ability-post-btn').click(ev => this._onPostTalentAbility(ev));
+    html.find('.ability-view-talent-btn').click(ev => this._onViewTalentFromAbility(ev));
+    html.find('.ability-choice-btn').click(ev => this._onUseAbilityChoice(ev));
+    html.find('.ability-special-action-btn').click(ev => this._onUseSpecialAction(ev));
+    html.find('.ability-reset-btn').click(ev => this._onResetAbilityUses(ev));
+    html.find('.ability-filter-btn').click(ev => this._onFilterAbilities(ev));
 
-    // Skill System Event Listeners
+    // ========== STARSHIP MANEUVERS PANEL ==========
+    html.find('.starship-maneuvers-section .ability-card-header').click(ev => this._onExpandAbilityCard(ev));
+    html.find('.starship-maneuvers-section .ability-roll-btn').click(ev => this._onRollTalentAbility(ev));
+    html.find('.starship-maneuvers-section .ability-toggle-btn').click(ev => this._onToggleTalentAbility(ev));
+    html.find('.starship-maneuvers-section .ability-post-btn').click(ev => this._onPostTalentAbility(ev));
+    html.find('.starship-maneuvers-section .ability-reset-btn').click(ev => this._onResetAbilityUses(ev));
+
+    html.find('.maneuvers-rules-header').click(ev => {
+      const header = $(ev.currentTarget);
+      const content = header.next('.maneuvers-rules-content');
+      content.slideToggle(200);
+    });
+
+    // Starship Maneuvers suite management (use class selectors to avoid Force suite conflicts)
+    html.find('.starship-maneuvers-section .add-to-suite').click(ev => this._onAddManeuverToSuite(ev));
+    html.find('.starship-maneuvers-section .remove-from-suite').click(ev => this._onRemoveManeuverFromSuite(ev));
+    html.find('.use-maneuver').click(ev => this._onUseManeuver(ev));
+    html.find('.regain-maneuver').click(ev => this._onRegainManeuver(ev));
+    html.find('.rest-maneuvers').click(ev => this._onRestManeuvers(ev));
+
+    // ========== SKILL SYSTEM EVENT LISTENERS ==========
     html.find(".roll-skill").click(ev => {
       ev.preventDefault();
       const skill = ev.currentTarget.dataset.skill;
@@ -372,7 +395,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._toggleSkillActionCard(card);
     });
 
-    // Destiny System Event Listeners
+    // ========== DESTINY SYSTEM EVENT LISTENERS ==========
     html.find(".fulfill-destiny-btn").click(ev => {
       ev.preventDefault();
       this._onFulfillDestiny();
@@ -393,7 +416,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._onSpendDestinyPoint();
     });
 
-    // Dark Side Points handlers
+    // ========== DARK SIDE POINTS HANDLERS ==========
     html.find(".reduce-dsp").click(ev => {
       ev.preventDefault();
       this._onReduceDSP();
@@ -409,7 +432,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._onDarkInspiration();
     });
 
-    // Export Character Event Listeners (Import/Export Tab)
+    // ========== IMPORT/EXPORT HANDLERS ==========
     html.find(".export-character-json-btn").click(ev => {
       ev.preventDefault();
       this._onExportCharacterJSON();
@@ -420,16 +443,65 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._onExportTemplate();
     });
 
-    // Import Character Event Listener
     html.find(".import-character-btn").click(ev => {
       ev.preventDefault();
       this._onImportCharacter();
     });
 
-    SWSELogger.log("SWSE | Character sheet listeners activated (full v13 routing)");
+    SWSELogger.log("SWSE | Character sheet listeners activated (all handlers wired)");
   }
 
   
+  // ----------------------------------------------------------
+  // E.0 Header Button Handlers
+  // ----------------------------------------------------------
+  async _onLevelUp(event) {
+    event.preventDefault();
+    // Open level up dialog using the static method from the compatibility shim
+    try {
+      const { SWSELevelUp } = await import('../apps/swse-levelup.js');
+      // Use the static openEnhanced method which handles validation and initialization
+      await SWSELevelUp.openEnhanced(this.actor);
+    } catch (err) {
+      SWSELogger.error('Level up system error:', err);
+      ui.notifications.error('Failed to open level up dialog');
+    }
+  }
+
+  async _onCharacterGenerator(event) {
+    event.preventDefault();
+    // Open character generator using barrel export
+    try {
+      const { SWSECharacterGeneratorApp } = await import('../apps/chargen.js');
+      new SWSECharacterGeneratorApp(this.actor).render(true);
+    } catch (err) {
+      SWSELogger.error('Character generator error:', err);
+      ui.notifications.error('Failed to open character generator');
+    }
+  }
+
+  async _onOpenStore(event) {
+    event.preventDefault();
+    // Open marketplace/store
+    try {
+      const { SWSEStore } = await import('../apps/store/store-main.js');
+      new SWSEStore(this.actor).render(true);
+    } catch (err) {
+      SWSELogger.warn('Store system not available:', err);
+      ui.notifications.warn('Store not loaded');
+    }
+  }
+
+  async _onPickSpecies(event) {
+    event.preventDefault();
+    return this._showSpeciesPicker();
+  }
+
+  async _onAddClass(event) {
+    event.preventDefault();
+    return this._showClassPicker();
+  }
+
   // ----------------------------------------------------------
   // E. Dialog Engine (Streamlined v13 Model)
   // ----------------------------------------------------------
@@ -551,40 +623,106 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     if (!pack) return ui.notifications.error("Species pack not found.");
 
     const index = await pack.getIndex();
-    const list = index.map(x => ({
+    let species = index.map(x => ({
       id: x._id,
       name: x.name,
       img: x.img
     }));
 
-    return this._showSelectionDialog(
-      "Select Species",
-      list,
-      sp => `<strong>${sp.name}</strong>`,
-      async sp => {
-        const doc = await pack.getDocument(sp.id);
+    // Sort species: Human first, Near-Human second, then alphabetically
+    species.sort((a, b) => {
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
 
-        // Use progression engine if available
-        try {
-          const { SWSEProgressionEngine } = await import('../../engine/progression.js');
-          const engine = new SWSEProgressionEngine(this.actor, "chargen");
+      // Human always first
+      if (nameA === "human" && nameB !== "human") return -1;
+      if (nameA !== "human" && nameB === "human") return 1;
 
-          // Call the progression engine action
-          await engine.doAction('confirmSpecies', {
-            speciesId: doc.name,
-            abilityChoice: null // Will prompt separately if needed (human bonus)
+      // Near-Human second
+      if (nameA === "near-human" && nameB !== "near-human") return -1;
+      if (nameA !== "near-human" && nameB === "near-human") return 1;
+
+      // Rest alphabetically
+      return nameA.localeCompare(nameB);
+    });
+
+    // Create species selection dialog with card UI
+    // Generate asset filename from species name (lowercase, hyphens)
+    const getSpeciesImagePath = (name) => {
+      const filename = name.toLowerCase().replace(/\s+/g, '-') + '.webp';
+      return `/assets/species/${filename}`;
+    };
+
+    const rows = species.map((sp, idx) => `
+      <div class="species-choice-card" data-key="${idx}" data-species="${escapeHTML(sp.name)}" style="cursor: pointer; padding: 12px; border: 1px solid #ccc; border-radius: 4px; margin: 8px; display: inline-block; min-width: 120px; text-align: center; transition: all 0.2s;">
+        <img src="${escapeHTML(getSpeciesImagePath(sp.name))}" alt="${escapeHTML(sp.name)}" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 8px; object-fit: cover; background: #666;" onerror="this.innerHTML='<i class=\"fas fa-dna\" style=\"color: #fff; font-size: 24px;\"></i>'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center';">
+        <strong>${escapeHTML(sp.name)}</strong>
+      </div>`
+    ).join("");
+
+    const dialog = new Dialog({
+      title: "Select Species",
+      content: `<div class="swse-species-picker" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;">${rows}</div>`,
+      buttons: {
+        cancel: { label: "Cancel" }
+      },
+      render: html => {
+        html[0].querySelectorAll(".species-choice-card").forEach(card => {
+          card.addEventListener("mouseenter", (evt) => {
+            evt.currentTarget.style.transform = "scale(1.05)";
+            evt.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+            evt.currentTarget.style.borderColor = "#4a9eff";
           });
 
-          ui.notifications.info(`Species set to ${doc.name}`);
-        } catch (err) {
-          // Fallback to old method if progression engine fails
-          console.warn("Progression engine failed, using fallback:", err);
-          const { DropHandler } = await import('../../drag-drop/drop-handler.js');
-          await DropHandler.handleSpeciesDrop(this.actor, doc);
-          ui.notifications.info(`Species set to ${doc.name}`);
-        }
+          card.addEventListener("mouseleave", (evt) => {
+            evt.currentTarget.style.transform = "scale(1)";
+            evt.currentTarget.style.boxShadow = "none";
+            evt.currentTarget.style.borderColor = "#ccc";
+          });
+
+          card.addEventListener("click", async (evt) => {
+            const key = Number(card.dataset.key);
+            const selectedSpecies = species[key];
+
+            // Get the actual document
+            const doc = await pack.getDocument(selectedSpecies.id);
+
+            // Show confirmation if changing species
+            if (this.actor.system?.species) {
+              const confirmed = await Dialog.confirm({
+                title: "Change Species?",
+                content: `<p>Change from <strong>${escapeHTML(this.actor.system.species)}</strong> to <strong>${escapeHTML(doc.name)}</strong>?</p><p>Racial bonuses and traits will be updated.</p>`
+              });
+              if (!confirmed) return;
+            }
+
+            // Use progression engine if available
+            try {
+              const { SWSEProgressionEngine } = await import('../../engine/progression.js');
+              const engine = new SWSEProgressionEngine(this.actor, "chargen");
+
+              // Call the progression engine action
+              await engine.doAction('confirmSpecies', {
+                speciesId: doc.name,
+                abilityChoice: null // Will prompt separately if needed (human bonus)
+              });
+
+              ui.notifications.info(`Species set to ${doc.name}`);
+            } catch (err) {
+              // Fallback to old method if progression engine fails
+              console.warn("Progression engine failed, using fallback:", err);
+              const { DropHandler } = await import('../../drag-drop/drop-handler.js');
+              await DropHandler.handleSpeciesDrop(this.actor, doc);
+              ui.notifications.info(`Species set to ${doc.name}`);
+            }
+
+            // Close the dialog using the Dialog's close method
+            dialog.close();
+          });
+        });
       }
-    );
+    });
+    dialog.render(true);
   }
 
   // ----------------------------------------------------------
@@ -822,7 +960,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   async _onIncreaseDSP() {
     const actor = this.actor;
     const system = actor.system;
-    const wis = system.abilities?.wis?.total ?? 10;
+    const wis = system.attributes?.wis?.total ?? 10;
     const mult = game.settings.get("foundryvtt-swse", "darkSideMaxMultiplier") || 1;
     const maxDS = Math.max(wis * mult, 1);
     const currentDSP = system.darkSideScore || 0;

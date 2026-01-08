@@ -85,15 +85,15 @@
  <span>+</span>
 
  <span title="Ability Modifier">
- {{#if (eq key "reflex")}}Dex {{numberFormat @root.system.abilities.dex.mod sign=true}}{{/if}}
+ {{#if (eq key "reflex")}}Dex {{numberFormat @root.system.attributes.dex.mod sign=true}}{{/if}}
  {{#if (eq key "fortitude")}}
  {{#if @root.system.isDroid}}
- Str {{numberFormat @root.system.abilities.str.mod sign=true}} <span class="droid-note" title="Droids use STR for Fortitude">(Droid)</span>
+ Str {{numberFormat @root.system.attributes.str.mod sign=true}} <span class="droid-note" title="Droids use STR for Fortitude">(Droid)</span>
  {{else}}
- Con {{numberFormat @root.system.abilities.con.mod sign=true}}
+ Con {{numberFormat @root.system.attributes.con.mod sign=true}}
  {{/if}}
  {{/if}}
- {{#if (eq key "will")}}Wis {{numberFormat @root.system.abilities.wis.mod sign=true}}{{/if}}
+ {{#if (eq key "will")}}Wis {{numberFormat @root.system.attributes.wis.mod sign=true}}{{/if}}
  </span>
 
  <span>+</span>

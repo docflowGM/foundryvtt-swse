@@ -357,7 +357,7 @@ export class AbilityRollingController {
       const dieId = this.assigned[k];
       const die = this.pool.find(d=>d.id===dieId);
       const val = die ? die.value : 0;
-      mapping[`system.abilities.${k.toLowerCase()}.value`] = val;
+      mapping[`system.attributes.${k.toLowerCase()}.value`] = val;
     }
     try {
       await this.actor.update(mapping);

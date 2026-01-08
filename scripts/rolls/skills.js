@@ -41,7 +41,7 @@ export async function rollSkill(actor, skillKey) {
 export function calculateSkillMod(actor, skill, actionId = null) {
   const utils = game.swse.utils;
 
-  const abilityScore = actor.system.abilities[skill.selectedAbility]?.base || 10;
+  const abilityScore = actor.system.attributes[skill.selectedAbility]?.base || 10;
   const abilMod = utils.math.calculateAbilityModifier(abilityScore);
   const trained = skill.trained ? 5 : 0;
   const focus = skill.focused ? 5 : 0;
