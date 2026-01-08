@@ -157,12 +157,10 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     );
 
     // --------------------------------------
-    // 2. FORCE POWERS: Known vs Suite
+    // 2. FORCE POWERS: Known vs Suite (use inSuite boolean on powers)
     // --------------------------------------
-    const suite = system.forceSuite || { powers: [], max: 6 };
-
-    context.activeSuite = allPowers.filter(p => suite.powers.includes(p.id));
-    context.knownPowers = allPowers.filter(p => !suite.powers.includes(p.id));
+    context.activeSuite = allPowers.filter(p => p.system?.inSuite);
+    context.knownPowers = allPowers.filter(p => !p.system?.inSuite);
 
     // --------------------------------------
     // 3. FORCE REROLL DICE
@@ -293,65 +291,85 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // ----------------------------------------------------------
 
   activateListeners(html) {
+    // Call super FIRST to set up base data-action handler and other core listeners
+    super.activateListeners(html);
 
-        // Progression Engine Integrated Buttons
-        html.find('.roll-attributes-btn').click(ev => this._onRollAttributes(ev));
+    // Defense input debouncing
+    html.find(".defense-input-sm, .defense-select-sm").change(ev => {
+      this._debouncedDefenseChange.call(this);
+    });
 
-        // Feat Actions handlers
-        html.find('.feat-roll').click(ev => this._onFeatRoll(ev));
-        html.find('.feat-attack').click(ev => this._onFeatAttack(ev));
-        html.find('.feat-ct').click(ev => this._onFeatCT(ev));
-        html.find('.feat-force').click(ev => this._onFeatForce(ev));
-        html.find('.feat-card-header').click(ev => this._toggleFeatCard(ev));
-        html.find('.feat-toggle').click(ev => this._onToggleFeatAction(ev));
-        html.find('.feat-variable-slider').on('input', ev => this._onUpdateVariableAction(ev));
+    // ========== HEADER BUTTONS ==========
+    html.find('.level-up').click(ev => this._onLevelUp(ev));
+    html.find('.character-generator').click(ev => this._onCharacterGenerator(ev));
+    html.find('.open-store').click(ev => this._onOpenStore(ev));
+    html.find('.pick-species-btn').click(ev => this._onPickSpecies(ev));
+    html.find('.add-class-btn').click(ev => this._onAddClass(ev));
 
-        // Talent Abilities handlers
-        html.find('.ability-card-header').click(ev => this._onExpandAbilityCard(ev));
-        html.find('.ability-roll-btn').click(ev => this._onRollTalentAbility(ev));
-        html.find('.ability-toggle-btn').click(ev => this._onToggleTalentAbility(ev));
-        html.find('.ability-post-btn').click(ev => this._onPostTalentAbility(ev));
-        html.find('.ability-view-talent-btn').click(ev => this._onViewTalentFromAbility(ev));
-        html.find('.ability-choice-btn').click(ev => this._onUseAbilityChoice(ev));
-        html.find('.ability-special-action-btn').click(ev => this._onUseSpecialAction(ev));
-        html.find('.ability-reset-btn').click(ev => this._onResetAbilityUses(ev));
-        html.find('.ability-filter-btn').click(ev => this._onFilterAbilities(ev));
+    // ========== PROGRESSION ENGINE BUTTONS ==========
+    html.find('.roll-attributes-btn').click(ev => this._onRollAttributes(ev));
 
-        // Starship Maneuvers handlers (reuse ability card handlers)
-        html.find('.starship-maneuvers-section .ability-card-header').click(ev => this._onExpandAbilityCard(ev));
-        html.find('.starship-maneuvers-section .ability-roll-btn').click(ev => this._onRollTalentAbility(ev));
-        html.find('.starship-maneuvers-section .ability-toggle-btn').click(ev => this._onToggleTalentAbility(ev));
-        html.find('.starship-maneuvers-section .ability-post-btn').click(ev => this._onPostTalentAbility(ev));
-        html.find('.starship-maneuvers-section .ability-reset-btn').click(ev => this._onResetAbilityUses(ev));
+    // ========== FORCE TAB ACTIONS ==========
+    html.find('.roll-force-point').click(ev => this._onRollForcePoint(ev));
+    html.find('[data-action="usePower"]').click(ev => this._onUsePower(ev));
+    html.find('[data-action="regainForcePower"]').click(ev => this._onRegainForcePower(ev));
+    html.find('[data-action="spendForcePoint"]').click(ev => this._onSpendForcePoint(ev));
+    html.find('[data-action="addToSuite"]').filter('.force-power').click(ev => this._onAddToSuite(ev));
+    html.find('[data-action="removeFromSuite"]').filter('.force-power').click(ev => this._onRemoveFromSuite(ev));
+    html.find('[data-action="restForce"]').click(ev => this._onRestForce(ev));
 
-        // Starship Maneuvers rules collapsible
-        html.find('.maneuvers-rules-header').click(ev => {
-          const header = $(ev.currentTarget);
-          const content = header.next('.maneuvers-rules-content');
-          content.slideToggle(200);
-        });
+    // ========== COMBAT TAB ACTIONS ==========
+    html.find('[data-action="rollAttack"]').click(ev => this._onRollAttack(ev));
+    html.find('[data-action="rollDamage"]').click(ev => this._onRollDamage(ev));
+    html.find('[data-action="rollCombatAction"]').click(ev => this._onPostCombatAction(ev));
 
-        // Starship Maneuvers suite management handlers
-        html.find('.add-to-suite').click(ev => this._onAddManeuverToSuite(ev));
-        html.find('.remove-from-suite').click(ev => this._onRemoveManeuverFromSuite(ev));
-        html.find('.use-maneuver').click(ev => this._onUseManeuver(ev));
-        html.find('.regain-maneuver').click(ev => this._onRegainManeuver(ev));
-        html.find('.rest-maneuvers').click(ev => this._onRestManeuvers(ev));
+    // ========== TALENTS TAB ACTIONS ==========
+    html.find('[data-action="toggleTree"]').click(ev => this._onToggleTree(ev));
+    html.find('[data-action="selectTalent"]').click(ev => this._onSelectTalent(ev));
+    html.find('[data-action="viewTalent"]').click(ev => this._onViewTalent(ev));
+    html.find('[data-action="filterTalents"]').click(ev => this._onFilterTalents(ev));
 
-        super.activateListeners(html);
-        html.find(".defense-input-sm, .defense-select-sm").change(ev => {
-            this._debouncedDefenseChange.call(this);
-        });
-    const root = html[0];
+    // ========== FEAT ACTIONS PANEL ==========
+    html.find('.feat-roll').click(ev => this._onFeatRoll(ev));
+    html.find('.feat-attack').click(ev => this._onFeatAttack(ev));
+    html.find('.feat-ct').click(ev => this._onFeatCT(ev));
+    html.find('.feat-force').click(ev => this._onFeatForce(ev));
+    html.find('.feat-card-header').click(ev => this._toggleFeatCard(ev));
+    html.find('.feat-toggle').click(ev => this._onToggleFeatAction(ev));
+    html.find('.feat-variable-slider').on('input', ev => this._onUpdateVariableAction(ev));
 
-    const on = (event, selector, handler) => {
-      root.addEventListener(event, evt => {
-        const el = evt.target.closest(selector);
-        if (el && root.contains(el)) handler.call(this, evt, el);
-      });
-    };
+    // ========== TALENT ABILITIES PANEL ==========
+    html.find('.ability-card-header').click(ev => this._onExpandAbilityCard(ev));
+    html.find('.ability-roll-btn').click(ev => this._onRollTalentAbility(ev));
+    html.find('.ability-toggle-btn').click(ev => this._onToggleTalentAbility(ev));
+    html.find('.ability-post-btn').click(ev => this._onPostTalentAbility(ev));
+    html.find('.ability-view-talent-btn').click(ev => this._onViewTalentFromAbility(ev));
+    html.find('.ability-choice-btn').click(ev => this._onUseAbilityChoice(ev));
+    html.find('.ability-special-action-btn').click(ev => this._onUseSpecialAction(ev));
+    html.find('.ability-reset-btn').click(ev => this._onResetAbilityUses(ev));
+    html.find('.ability-filter-btn').click(ev => this._onFilterAbilities(ev));
 
-    // Skill System Event Listeners
+    // ========== STARSHIP MANEUVERS PANEL ==========
+    html.find('.starship-maneuvers-section .ability-card-header').click(ev => this._onExpandAbilityCard(ev));
+    html.find('.starship-maneuvers-section .ability-roll-btn').click(ev => this._onRollTalentAbility(ev));
+    html.find('.starship-maneuvers-section .ability-toggle-btn').click(ev => this._onToggleTalentAbility(ev));
+    html.find('.starship-maneuvers-section .ability-post-btn').click(ev => this._onPostTalentAbility(ev));
+    html.find('.starship-maneuvers-section .ability-reset-btn').click(ev => this._onResetAbilityUses(ev));
+
+    html.find('.maneuvers-rules-header').click(ev => {
+      const header = $(ev.currentTarget);
+      const content = header.next('.maneuvers-rules-content');
+      content.slideToggle(200);
+    });
+
+    // Starship Maneuvers suite management (use class selectors to avoid Force suite conflicts)
+    html.find('.starship-maneuvers-section .add-to-suite').click(ev => this._onAddManeuverToSuite(ev));
+    html.find('.starship-maneuvers-section .remove-from-suite').click(ev => this._onRemoveManeuverFromSuite(ev));
+    html.find('.use-maneuver').click(ev => this._onUseManeuver(ev));
+    html.find('.regain-maneuver').click(ev => this._onRegainManeuver(ev));
+    html.find('.rest-maneuvers').click(ev => this._onRestManeuvers(ev));
+
+    // ========== SKILL SYSTEM EVENT LISTENERS ==========
     html.find(".roll-skill").click(ev => {
       ev.preventDefault();
       const skill = ev.currentTarget.dataset.skill;
@@ -377,7 +395,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._toggleSkillActionCard(card);
     });
 
-    // Destiny System Event Listeners
+    // ========== DESTINY SYSTEM EVENT LISTENERS ==========
     html.find(".fulfill-destiny-btn").click(ev => {
       ev.preventDefault();
       this._onFulfillDestiny();
@@ -398,7 +416,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._onSpendDestinyPoint();
     });
 
-    // Dark Side Points handlers
+    // ========== DARK SIDE POINTS HANDLERS ==========
     html.find(".reduce-dsp").click(ev => {
       ev.preventDefault();
       this._onReduceDSP();
@@ -414,7 +432,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._onDarkInspiration();
     });
 
-    // Export Character Event Listeners (Import/Export Tab)
+    // ========== IMPORT/EXPORT HANDLERS ==========
     html.find(".export-character-json-btn").click(ev => {
       ev.preventDefault();
       this._onExportCharacterJSON();
@@ -425,16 +443,64 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._onExportTemplate();
     });
 
-    // Import Character Event Listener
     html.find(".import-character-btn").click(ev => {
       ev.preventDefault();
       this._onImportCharacter();
     });
 
-    SWSELogger.log("SWSE | Character sheet listeners activated (full v13 routing)");
+    SWSELogger.log("SWSE | Character sheet listeners activated (all handlers wired)");
   }
 
   
+  // ----------------------------------------------------------
+  // E.0 Header Button Handlers
+  // ----------------------------------------------------------
+  async _onLevelUp(event) {
+    event.preventDefault();
+    // Open level up dialog - implemented in progression system
+    try {
+      const { SWSELevelUp } = await import('../apps/swse-levelup.js');
+      new SWSELevelUp(this.actor).render(true);
+    } catch (err) {
+      SWSELogger.warn('Level up system not available:', err);
+      ui.notifications.warn('Level up system not loaded');
+    }
+  }
+
+  async _onCharacterGenerator(event) {
+    event.preventDefault();
+    // Open character generator
+    try {
+      const { SWSECharacterGeneratorApp } = await import('../apps/chargen.js');
+      new SWSECharacterGeneratorApp(this.actor).render(true);
+    } catch (err) {
+      SWSELogger.warn('Character generator not available:', err);
+      ui.notifications.warn('Character generator not loaded');
+    }
+  }
+
+  async _onOpenStore(event) {
+    event.preventDefault();
+    // Open marketplace/store
+    try {
+      const { SWSEStore } = await import('../apps/store/store-main.js');
+      new SWSEStore(this.actor).render(true);
+    } catch (err) {
+      SWSELogger.warn('Store system not available:', err);
+      ui.notifications.warn('Store not loaded');
+    }
+  }
+
+  async _onPickSpecies(event) {
+    event.preventDefault();
+    return this._showSpeciesPicker();
+  }
+
+  async _onAddClass(event) {
+    event.preventDefault();
+    return this._showClassPicker();
+  }
+
   // ----------------------------------------------------------
   // E. Dialog Engine (Streamlined v13 Model)
   // ----------------------------------------------------------
