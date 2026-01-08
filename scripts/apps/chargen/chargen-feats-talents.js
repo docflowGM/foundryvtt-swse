@@ -545,6 +545,44 @@ export function _createTempActorForValidation() {
         }
 
         return items.some(filterFn);
+      },
+      find: (filterFn) => {
+        const items = [];
+
+        // Add feats
+        if (this.characterData.feats) {
+          for (const feat of this.characterData.feats) {
+            items.push({
+              type: 'feat',
+              name: feat.name || feat,
+              system: feat.system || {}
+            });
+          }
+        }
+
+        // Add talents
+        if (this.characterData.talents) {
+          for (const talent of this.characterData.talents) {
+            items.push({
+              type: 'talent',
+              name: talent.name || talent,
+              system: talent.system || {}
+            });
+          }
+        }
+
+        // Add classes
+        if (this.characterData.classes) {
+          for (const cls of this.characterData.classes) {
+            items.push({
+              type: 'class',
+              name: cls.name || cls,
+              system: cls.system || { level: 1, forceSensitive: cls.system?.forceSensitive || false }
+            });
+          }
+        }
+
+        return items.find(filterFn);
       }
     }
   };

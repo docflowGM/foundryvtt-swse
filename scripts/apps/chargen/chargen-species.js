@@ -213,8 +213,11 @@ export async function _onConfirmSpecies(event) {
 
   if (!_previewedSpeciesName) {
     SWSELogger.warn("CharGen | No species previewed to confirm");
+    ui.notifications.error("Please select a species first");
     return;
   }
+
+  SWSELogger.log(`CharGen | Confirming species selection: ${_previewedSpeciesName}`);
 
   // Close the overlay
   this._onCloseSpeciesOverlay(event);
@@ -222,6 +225,7 @@ export async function _onConfirmSpecies(event) {
   // Create a synthetic event with the species data for _onSelectSpecies
   const syntheticEvent = {
     preventDefault: () => {},
+    stopPropagation: () => {},
     currentTarget: {
       dataset: {
         species: _previewedSpeciesName
@@ -229,8 +233,14 @@ export async function _onConfirmSpecies(event) {
     }
   };
 
-  // Call the original species selection handler
-  await this._onSelectSpecies(syntheticEvent);
+  try {
+    // Call the original species selection handler
+    await this._onSelectSpecies(syntheticEvent);
+    SWSELogger.log(`CharGen | Species ${_previewedSpeciesName} selected successfully`);
+  } catch (error) {
+    SWSELogger.error(`CharGen | Error selecting species: ${error.message}`, error);
+    ui.notifications.error(`Failed to select species: ${error.message}`);
+  }
 
   _previewedSpeciesName = null;
 }
@@ -804,7 +814,7 @@ export async function _onSpeciesFilterChange(event) {
   }
 
   // Update filter UI indicators
-  this._updateFilterIndicators();
+  _updateFilterIndicators.call(this);
 
   // Re-render to apply filters
   this.render();
@@ -813,7 +823,7 @@ export async function _onSpeciesFilterChange(event) {
 /**
  * Update visual indicators for active filters
  */
-function _updateFilterIndicators() {
+export function _updateFilterIndicators() {
   const filters = this.characterData.speciesFilters || {};
   const hasActiveFilters = Object.values(filters).some(v => v !== null && v !== '');
 
