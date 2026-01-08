@@ -404,10 +404,10 @@
  <section class="abilities-quick">
  <h3 class="section-header">Ability Scores</h3>
  <div class="abilities-row flexrow">
- {{#each system.abilities as |ability key|}}
+ {{#each system.attributes as |ability key|}}
  <div class="ability-quick flex0">
  <label class="rollable"
- data-roll="1d20+@abilities.{{key}}.mod"
+ data-roll="1d20+@attributes.{{key}}.mod"
  data-label="{{ability.label}}">
  {{ability.label}}
  </label>

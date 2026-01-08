@@ -281,6 +281,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       context.activeSuite = allManeuvers.filter(m => suiteIds.includes(m.id));
     }
 
+    // Calculate HP percentage for progress bar
+    context.hpPercentage = system.hp?.max && system.hp?.max > 0
+      ? Math.round((system.hp.value / system.hp.max) * 100)
+      : 0;
+
     return context;
   }
 // ----------------------------------------------------------
