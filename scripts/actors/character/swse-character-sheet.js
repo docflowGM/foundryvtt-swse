@@ -1307,7 +1307,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     const el = evt.currentTarget;
     const name = el.dataset.actionName;
 
-    const data = await SWSECharacterSheet.loadCombatActionsData();
+    const data = CombatActionsMapper.getAllCombatActions();
     const action = data.find(a => a.name === name);
     if (!action) return ui.notifications.warn(`Action not found: ${name}`);
 

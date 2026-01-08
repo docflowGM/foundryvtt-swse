@@ -1,7 +1,6 @@
-import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 // ============================================
-import { SWSELogger } from '../utils/logger.js';
 // SWSE Character Generator - IMPROVED
+import { SWSELogger } from '../utils/logger.js';
 // Fully integrated with houserules and database
 // Multi-level support with automatic progression
 // ============================================
@@ -317,6 +316,10 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     const classData = this.characterData.classData;
     const conMod = this.characterData.isDroid ? 0 : (this.characterData.abilities.con.mod || 0);
 
+    // Calculate starting HP: use stored HP (from _applyClassData) + Con modifier, or fallback
+    const baseHp = this.characterData.hp?.max ?? (classData.hitDie * 5);
+    const startingHp = baseHp + conMod;
+
     // Build actor data
     const actorData = {
       name: this.characterData.name || "New Character",
@@ -334,8 +337,8 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
           cha: { base: this.characterData.abilities.cha.base || 10, racial: this.characterData.abilities.cha.racial || 0 }
         },
         hp: {
-          value: classData.hitDie + conMod,
-          max: classData.hitDie + conMod,
+          value: startingHp,
+          max: startingHp,
           temp: 0
         },
         level: 1,
@@ -384,8 +387,6 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
   // HOUSERULE BONUSES
   // ========================================
   async _applyHouseruleBonuses(actor) {
-    const updates = {};
-
     // Auto-grant Weapon Finesse if houserule is enabled
     const weaponFinesseDefault = game.settings.get('foundryvtt-swse', "weaponFinesseDefault");
     if (weaponFinesseDefault) {
@@ -404,14 +405,10 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
       }
     }
 
-    // Apply any other houserule bonuses here
+    // Log block/deflect houserule setting for reference
     const blockDeflectTalents = game.settings.get('foundryvtt-swse', "blockDeflectTalents");
     if (blockDeflectTalents === "combined") {
       SWSELogger.log("SWSE CharGen | Block/Deflect set to combined (houserule)");
-    }
-
-    if (Object.keys(updates).length > 0) {
-      await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
     }
   }
 

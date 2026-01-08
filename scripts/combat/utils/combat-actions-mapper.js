@@ -145,6 +145,19 @@ export class CombatActionsMapper {
     return result;
   }
 
+  /**
+   * Get all combat actions as a flat array (normalized)
+   * Used for looking up actions by name
+   * @returns {Array} Array of normalized combat action objects
+   */
+  static getAllCombatActions() {
+    if (!this._initialized) {
+      SWSELogger.warn("CombatActionsMapper used before initialization completed.");
+      return [];
+    }
+    return this._combatActions.map(a => this._normalizeAction(a));
+  }
+
   // ---------------------------------------------------------------------------
   // Lookup by Ship Crew Position
   // ---------------------------------------------------------------------------
