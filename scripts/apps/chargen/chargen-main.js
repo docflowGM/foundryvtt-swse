@@ -345,14 +345,22 @@ export default class CharacterGenerator extends Application {
       context.packs[key] = packsToClone[key] ? foundry.utils.deepClone(data) : data;
     }
 
-    // Filter classes for droids - only show base 4 non-Force classes
-    // Droids cannot be Force-sensitive, so they cannot select Jedi or any Force-dependent prestige classes
-    if (this.currentStep === "class" && this.characterData.isDroid && context.packs.classes) {
-      const baseClasses = ["Soldier", "Scout", "Gunslinger", "Scoundrel"];
-      context.packs.classes = context.packs.classes.filter(c => baseClasses.includes(c.name));
-      if (this.characterData.classes.length === 0 || !baseClasses.includes(this.characterData.classes[0].name)) {
-        // If an invalid class was previously selected for a droid, clear it
-        this.characterData.classes = [];
+    // Filter classes based on character type
+    if (this.currentStep === "class" && context.packs.classes) {
+      if (this.characterData.isDroid) {
+        // Droids: only base 4 non-Force classes (no Jedi, no Force powers)
+        const droidBaseClasses = ["Soldier", "Scout", "Gunslinger", "Scoundrel"];
+        context.packs.classes = context.packs.classes.filter(c => droidBaseClasses.includes(c.name));
+        if (this.characterData.classes.length === 0 || !droidBaseClasses.includes(this.characterData.classes[0]?.name)) {
+          this.characterData.classes = [];
+        }
+      } else {
+        // Normal characters: only the 5 core classes at level 1 (prestige classes available at higher levels)
+        const coreClasses = ["Soldier", "Scout", "Gunslinger", "Scoundrel", "Jedi"];
+        context.packs.classes = context.packs.classes.filter(c => coreClasses.includes(c.name));
+        if (this.characterData.classes.length === 0 || !coreClasses.includes(this.characterData.classes[0]?.name)) {
+          this.characterData.classes = [];
+        }
       }
     }
 
