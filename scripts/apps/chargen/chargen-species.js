@@ -707,6 +707,15 @@ export function _sortSpeciesBySource(species) {
     if (isHumanA && !isHumanB) return -1;
     if (!isHumanA && isHumanB) return 1;
 
+    // PRIORITY 2: Near-Human comes second (but not if it's the actual Near-Human from compendium)
+    // Note: Near-Human builder is injected via template, but compendium also has Near-Human species
+    // We want the manual builder first, so deprioritize compendium Near-Human
+    const isNearHumanA = nameA.toLowerCase() === "near-human";
+    const isNearHumanB = nameB.toLowerCase() === "near-human";
+
+    // Keep Near-Human in list for completeness but let template injection handle display
+    // (The template injects the Near-Human builder button right after Human)
+
     const sourceA = a.system?.source || "Unknown";
     const sourceB = b.system?.source || "Unknown";
 
@@ -714,17 +723,17 @@ export function _sortSpeciesBySource(species) {
     const priorityA = sourcePriority[sourceA] ?? 999;
     const priorityB = sourcePriority[sourceB] ?? 999;
 
-    // PRIORITY 2: Sort by source priority
+    // PRIORITY 3: Sort by source priority
     if (priorityA !== priorityB) {
       return priorityA - priorityB;
     }
 
-    // PRIORITY 3: If same priority (or both unknown), sort by source name alphabetically
+    // PRIORITY 4: If same priority (or both unknown), sort by source name alphabetically
     if (sourceA !== sourceB) {
       return sourceA.localeCompare(sourceB);
     }
 
-    // PRIORITY 4: Within same source, sort by species name alphabetically
+    // PRIORITY 5: Within same source, sort by species name alphabetically
     return nameA.localeCompare(nameB);
   });
 }

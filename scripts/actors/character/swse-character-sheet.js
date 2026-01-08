@@ -623,40 +623,106 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     if (!pack) return ui.notifications.error("Species pack not found.");
 
     const index = await pack.getIndex();
-    const list = index.map(x => ({
+    let species = index.map(x => ({
       id: x._id,
       name: x.name,
       img: x.img
     }));
 
-    return this._showSelectionDialog(
-      "Select Species",
-      list,
-      sp => `<strong>${sp.name}</strong>`,
-      async sp => {
-        const doc = await pack.getDocument(sp.id);
+    // Sort species: Human first, Near-Human second, then alphabetically
+    species.sort((a, b) => {
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
 
-        // Use progression engine if available
-        try {
-          const { SWSEProgressionEngine } = await import('../../engine/progression.js');
-          const engine = new SWSEProgressionEngine(this.actor, "chargen");
+      // Human always first
+      if (nameA === "human" && nameB !== "human") return -1;
+      if (nameA !== "human" && nameB === "human") return 1;
 
-          // Call the progression engine action
-          await engine.doAction('confirmSpecies', {
-            speciesId: doc.name,
-            abilityChoice: null // Will prompt separately if needed (human bonus)
+      // Near-Human second
+      if (nameA === "near-human" && nameB !== "near-human") return -1;
+      if (nameA !== "near-human" && nameB === "near-human") return 1;
+
+      // Rest alphabetically
+      return nameA.localeCompare(nameB);
+    });
+
+    // Create species selection dialog with card UI
+    // Generate asset filename from species name (lowercase, hyphens)
+    const getSpeciesImagePath = (name) => {
+      const filename = name.toLowerCase().replace(/\s+/g, '-') + '.webp';
+      return `/assets/species/${filename}`;
+    };
+
+    const rows = species.map((sp, idx) => `
+      <div class="species-choice-card" data-key="${idx}" data-species="${escapeHTML(sp.name)}" style="cursor: pointer; padding: 12px; border: 1px solid #ccc; border-radius: 4px; margin: 8px; display: inline-block; min-width: 120px; text-align: center; transition: all 0.2s;">
+        <img src="${escapeHTML(getSpeciesImagePath(sp.name))}" alt="${escapeHTML(sp.name)}" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 8px; object-fit: cover; background: #666;" onerror="this.innerHTML='<i class=\"fas fa-dna\" style=\"color: #fff; font-size: 24px;\"></i>'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center';">
+        <strong>${escapeHTML(sp.name)}</strong>
+      </div>`
+    ).join("");
+
+    const dialog = new Dialog({
+      title: "Select Species",
+      content: `<div class="swse-species-picker" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;">${rows}</div>`,
+      buttons: {
+        cancel: { label: "Cancel" }
+      },
+      render: html => {
+        html[0].querySelectorAll(".species-choice-card").forEach(card => {
+          card.addEventListener("mouseenter", (evt) => {
+            evt.currentTarget.style.transform = "scale(1.05)";
+            evt.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+            evt.currentTarget.style.borderColor = "#4a9eff";
           });
 
-          ui.notifications.info(`Species set to ${doc.name}`);
-        } catch (err) {
-          // Fallback to old method if progression engine fails
-          console.warn("Progression engine failed, using fallback:", err);
-          const { DropHandler } = await import('../../drag-drop/drop-handler.js');
-          await DropHandler.handleSpeciesDrop(this.actor, doc);
-          ui.notifications.info(`Species set to ${doc.name}`);
-        }
+          card.addEventListener("mouseleave", (evt) => {
+            evt.currentTarget.style.transform = "scale(1)";
+            evt.currentTarget.style.boxShadow = "none";
+            evt.currentTarget.style.borderColor = "#ccc";
+          });
+
+          card.addEventListener("click", async (evt) => {
+            const key = Number(card.dataset.key);
+            const selectedSpecies = species[key];
+
+            // Get the actual document
+            const doc = await pack.getDocument(selectedSpecies.id);
+
+            // Show confirmation if changing species
+            if (this.actor.system?.species) {
+              const confirmed = await Dialog.confirm({
+                title: "Change Species?",
+                content: `<p>Change from <strong>${escapeHTML(this.actor.system.species)}</strong> to <strong>${escapeHTML(doc.name)}</strong>?</p><p>Racial bonuses and traits will be updated.</p>`
+              });
+              if (!confirmed) return;
+            }
+
+            // Use progression engine if available
+            try {
+              const { SWSEProgressionEngine } = await import('../../engine/progression.js');
+              const engine = new SWSEProgressionEngine(this.actor, "chargen");
+
+              // Call the progression engine action
+              await engine.doAction('confirmSpecies', {
+                speciesId: doc.name,
+                abilityChoice: null // Will prompt separately if needed (human bonus)
+              });
+
+              ui.notifications.info(`Species set to ${doc.name}`);
+            } catch (err) {
+              // Fallback to old method if progression engine fails
+              console.warn("Progression engine failed, using fallback:", err);
+              const { DropHandler } = await import('../../drag-drop/drop-handler.js');
+              await DropHandler.handleSpeciesDrop(this.actor, doc);
+              ui.notifications.info(`Species set to ${doc.name}`);
+            }
+
+            // Close the dialog using the Dialog's close method
+            dialog.close();
+          });
+        });
       }
-    );
+    });
+    dialog.render(true);
   }
 
   // ----------------------------------------------------------
