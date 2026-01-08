@@ -327,9 +327,9 @@ export class FollowerCreator {
                 // Human gets to choose an ability from another template
                 // This would need additional dialog, for now just apply the first choice
                 const abilityChoice = template.abilityChoices[0];
-                const currentAbility = follower.system.abilities[abilityChoice].base;
+                const currentAbility = follower.system.attributes[abilityChoice].base;
                 await follower.update({
-                    [`system.abilities.${abilityChoice}.base`]: currentAbility + template.abilityBonus
+                    [`system.attributes.${abilityChoice}.base`]: currentAbility + template.abilityBonus
                 });
                 break;
             case 'feat':
@@ -625,7 +625,7 @@ export class FollowerCreator {
             const newHP = 10 + ownerLevel;
 
             // Recalculate defenses
-            const abilities = follower.system.abilities;
+            const abilities = follower.system.attributes;
             const getMod = (ability) => Math.floor(((abilities[ability]?.base || 10) - 10) / 2);
 
             await follower.update({

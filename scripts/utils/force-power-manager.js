@@ -16,9 +16,9 @@ export class ForcePowerManager {
     const attribute = game.settings.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
 
     if (attribute === 'charisma') {
-      return actor.system.abilities.cha?.mod || 0;
+      return actor.system.attributes.cha?.mod || 0;
     } else {
-      return actor.system.abilities.wis?.mod || 0;
+      return actor.system.attributes.wis?.mod || 0;
     }
   }
 

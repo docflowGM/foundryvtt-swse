@@ -101,7 +101,7 @@ export class SWSELanguageModule {
     return actor.system?.languages ?? [];
   }
   static _getIntMod(actor) {
-    const int = foundry.utils.getProperty(actor, "system.abilities.int") || {};
+    const int = foundry.utils.getProperty(actor, "system.attributes.int") || {};
     const mod = Number(int?.mod ?? int?.value ?? 0);
     if (Math.abs(mod) > 10) return Math.floor((mod - 10) / 2);
     return Math.floor(mod);

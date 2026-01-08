@@ -177,7 +177,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // --------------------------------------
     // 4. DARK SIDE SCORE VISUALIZATION
     // --------------------------------------
-    const wis = system.abilities?.wis?.total ?? 10;
+    const wis = system.attributes?.wis?.total ?? 10;
     const mult = game.settings.get("foundryvtt-swse", "darkSideMaxMultiplier") || 1;
     const maxDS = Math.max(wis * mult, 1);
     const cur = system.darkSideScore || 0;
@@ -827,7 +827,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   async _onIncreaseDSP() {
     const actor = this.actor;
     const system = actor.system;
-    const wis = system.abilities?.wis?.total ?? 10;
+    const wis = system.attributes?.wis?.total ?? 10;
     const mult = game.settings.get("foundryvtt-swse", "darkSideMaxMultiplier") || 1;
     const maxDS = Math.max(wis * mult, 1);
     const currentDSP = system.darkSideScore || 0;

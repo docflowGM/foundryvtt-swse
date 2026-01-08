@@ -40,7 +40,7 @@ export function computeAttackBonus(actor, weapon) {
 
   // Ability mod used for attack
   const attr = weapon.system?.attackAttribute ?? "str";
-  const abilityMod = actor.system.abilities[attr]?.mod ?? 0;
+  const abilityMod = actor.system.attributes[attr]?.mod ?? 0;
 
   // Weapon-based bonuses
   const misc = weapon.system?.attackBonus ?? 0;
@@ -205,8 +205,8 @@ export function computeDamageBonus(actor, weapon, options = {}) {
 
   let bonus = halfLvl + (weapon.system?.attackBonus ?? 0);
 
-  const strMod = actor.system.abilities?.str?.mod ?? 0;
-  const dexMod = actor.system.abilities?.dex?.mod ?? 0;
+  const strMod = actor.system.attributes?.str?.mod ?? 0;
+  const dexMod = actor.system.attributes?.dex?.mod ?? 0;
 
   // Check for explicit attack attribute setting
   const attackAttr = weapon.system?.attackAttribute;

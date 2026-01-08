@@ -154,8 +154,8 @@ export default class CharacterGenerator extends Application {
     }
 
     // Load abilities
-    if (system.abilities) {
-      for (const [key, value] of Object.entries(system.abilities)) {
+    if (system.attributes) {
+      for (const [key, value] of Object.entries(system.attributes)) {
         if (this.characterData.abilities[key]) {
           this.characterData.abilities[key].total = value.total ?? 10;
           this.characterData.abilities[key].base = value.base ?? 10;
@@ -1299,7 +1299,7 @@ export default class CharacterGenerator extends Application {
     const updates = { "system.level": newLevel };
     
     // Recalculate HP for new level
-    const conMod = this.actor.system.abilities.con.mod || 0;
+    const conMod = this.actor.system.attributes.con.mod || 0;
     const classDoc = this._packs.classes.find(c => 
       c.name === this.characterData.classes[0]?.name
     );

@@ -133,7 +133,7 @@ export class DarkSideDevoteeMechanics {
     }
 
     // Calculate duration: 5 + CON modifier rounds
-    const conModifier = actor.system.abilities.con?.mod || 0;
+    const conModifier = actor.system.attributes.con?.mod || 0;
     const durationRounds = 5 + conModifier;
     const currentRound = game.combat?.round || 0;
     const endRound = currentRound + durationRounds;

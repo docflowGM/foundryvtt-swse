@@ -139,7 +139,7 @@ export class HouseruleMechanics {
           }
 
           case "negativeCon": {
-            const con = actor.system.abilities.con.total;
+            const con = actor.system.attributes.con.total;
             if (newValue <= -con) update.system.dead = true;
             break;
           }
@@ -167,7 +167,7 @@ export class HouseruleMechanics {
       const method = game.settings.get("foundryvtt-swse", "hpGeneration");
       const maxLevels = game.settings.get("foundryvtt-swse", "maxHPLevels");
       const hitDie = classItem.system.hitDie || 6;
-      const conMod = actor.system.abilities.con.mod ?? 0;
+      const conMod = actor.system.attributes.con.mod ?? 0;
 
       if (level <= maxLevels) return hitDie + conMod;
 

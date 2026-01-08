@@ -3,7 +3,7 @@
  */
 
 export function calculateAbilities(actor) {
-  const abilities = actor.system.abilities;
+  const abilities = actor.system.attributes;
   
   for (const [key, ability] of Object.entries(abilities)) {
     // Total = base + racial + enhancement + temp

@@ -11,7 +11,7 @@
 export async function rollInitiative(actor) {
   const utils = game.swse.utils;
   
-  const dexScore = actor.system.abilities?.dex?.base || 10;
+  const dexScore = actor.system.attributes?.dex?.base || 10;
   const dexMod = utils.math.calculateAbilityModifier(dexScore);
   const initiativeBonus = actor.system.initiative?.bonus || 0;
   

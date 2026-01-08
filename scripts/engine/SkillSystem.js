@@ -435,7 +435,7 @@ export class SkillSystem {
         const s = actor.system.skills?.[skillKey];
         if (!s) return null;
 
-        const abilityMod = actor.system.abilities?.[s.selectedAbility]?.mod ?? 0;
+        const abilityMod = actor.system.attributes?.[s.selectedAbility]?.mod ?? 0;
         const trained    = s.trained ? 5 : 0;
         const focus      = s.focused ? 5 : 0;
         const misc       = s.miscMod ?? 0;

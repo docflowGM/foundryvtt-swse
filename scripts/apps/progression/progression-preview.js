@@ -49,7 +49,7 @@ export class ProgressionPreview {
    */
   static _previewHP(actor, levelData) {
     const currentHP = actor.system.hp?.max || 0;
-    const conMod = actor.system.abilities?.con?.mod || 0;
+    const conMod = actor.system.attributes?.con?.mod || 0;
 
     // Calculate HP gain based on class
     const classHPDie = this._getClassHPDie(levelData.classId);

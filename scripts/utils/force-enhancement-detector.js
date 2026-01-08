@@ -102,7 +102,7 @@ export class ForceEnhancementDetector {
       case "Corrupted Power":
         // Applicable to any power, but requires Dark Side Score >= Wisdom
         const darkSideScore = actor.system.darkSideScore || 0;
-        const wisdom = actor.system.abilities?.wisdom?.score || 10;
+        const wisdom = actor.system.attributes?.wisdom?.score || 10;
         const hasLightSideDescriptor = this._powerHasDescriptor(power, "light side");
         return darkSideScore >= wisdom && !hasLightSideDescriptor;
 

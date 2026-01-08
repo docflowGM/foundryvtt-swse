@@ -119,9 +119,9 @@ export class DerivedCalculator {
         }
 
         // Add ability modifiers
-        saves.reflex += actor.system.abilities?.dex?.mod || 0;
-        saves.fortitude += actor.system.abilities?.con?.mod || 0;
-        saves.will += actor.system.abilities?.wis?.mod || 0;
+        saves.reflex += actor.system.attributes?.dex?.mod || 0;
+        saves.fortitude += actor.system.attributes?.con?.mod || 0;
+        saves.will += actor.system.attributes?.wis?.mod || 0;
 
         // Add feat bonuses (pass cached feats)
         const featSaveBonus = this._calculateFeatSaveBonus(actor, feats);
@@ -180,7 +180,7 @@ export class DerivedCalculator {
 
         for (const [skillKey, skillData] of Object.entries(skills)) {
             const ability = skillData.ability || 'str';
-            const abilityMod = actor.system.abilities?.[ability]?.mod || 0;
+            const abilityMod = actor.system.attributes?.[ability]?.mod || 0;
             const classSkillBonus = skillData.classSkill ? 3 : 0;
 
             let total = abilityMod + (skillData.misc || 0) + classSkillBonus;
@@ -253,7 +253,7 @@ export class DerivedCalculator {
      * @param {Array} cachedFeats - Pre-filtered feat items (PERFORMANCE)
      */
     static _calculateInitiative(actor, cachedFeats = null) {
-        const dexMod = actor.system.abilities?.dex?.mod || 0;
+        const dexMod = actor.system.attributes?.dex?.mod || 0;
         let initiative = dexMod;
         const feats = cachedFeats || actor.items.filter(i => i.type === 'feat');
 
@@ -293,7 +293,7 @@ export class DerivedCalculator {
      * Calculate armor class
      */
     static _calculateAC(actor) {
-        const dexMod = actor.system.abilities?.dex?.mod || 0;
+        const dexMod = actor.system.attributes?.dex?.mod || 0;
         let ac = 10 + dexMod; // Base AC without armor
 
         // Add armor bonus
@@ -322,7 +322,7 @@ export class DerivedCalculator {
      * SWSE rule: Con mod + class damage threshold bonus
      */
     static _calculateDamageThreshold(actor) {
-        const conMod = actor.system.abilities?.con?.mod || 0;
+        const conMod = actor.system.attributes?.con?.mod || 0;
         const progression = actor.system.progression || {};
         const classLevels = progression.classLevels || [];
 

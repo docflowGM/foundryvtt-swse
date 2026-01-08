@@ -230,7 +230,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     // Debug logging for ability scores
     if (data.getsAbilityIncrease) {
-      SWSELogger.log("SWSE LevelUp | Current ability scores:", actor.system.abilities);
+      SWSELogger.log("SWSE LevelUp | Current ability scores:", actor.system.attributes);
     }
 
     // Feat selection
@@ -1576,11 +1576,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // Handle CON modifier retroactive HP
       // Note: This is level-up specific since chargen starts fresh
-      const conMod = this.actor.system.abilities?.con?.mod || 0;
+      const conMod = this.actor.system.attributes?.con?.mod || 0;
       let retroactiveHPGain = 0;
       if (this.abilityIncreases.con && this.abilityIncreases.con > 0) {
         // Check if the increase pushed us to a new modifier tier
-        const oldConBase = (this.actor.system.abilities?.con?.base || 10) - this.abilityIncreases.con;
+        const oldConBase = (this.actor.system.attributes?.con?.base || 10) - this.abilityIncreases.con;
         const oldConMod = Math.floor((oldConBase - 10) / 2);
         if (conMod > oldConMod) {
           const modIncrease = conMod - oldConMod;
@@ -1598,9 +1598,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // Handle INT modifier bonus skill notification
       if (this.abilityIncreases.int && this.abilityIncreases.int > 0) {
-        const oldIntBase = (this.actor.system.abilities?.int?.base || 10) - this.abilityIncreases.int;
+        const oldIntBase = (this.actor.system.attributes?.int?.base || 10) - this.abilityIncreases.int;
         const oldIntMod = Math.floor((oldIntBase - 10) / 2);
-        const newIntMod = this.actor.system.abilities?.int?.mod || 0;
+        const newIntMod = this.actor.system.attributes?.int?.mod || 0;
         if (newIntMod > oldIntMod) {
           ui.notifications.info(`Intelligence increased! You may train 1 additional skill.`);
         }
