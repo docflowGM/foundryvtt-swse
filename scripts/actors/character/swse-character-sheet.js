@@ -457,25 +457,26 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // ----------------------------------------------------------
   async _onLevelUp(event) {
     event.preventDefault();
-    // Open level up dialog - implemented in progression system
+    // Open level up dialog using the static method from the compatibility shim
     try {
       const { SWSELevelUp } = await import('../apps/swse-levelup.js');
-      new SWSELevelUp(this.actor).render(true);
+      // Use the static openEnhanced method which handles validation and initialization
+      await SWSELevelUp.openEnhanced(this.actor);
     } catch (err) {
-      SWSELogger.warn('Level up system not available:', err);
-      ui.notifications.warn('Level up system not loaded');
+      SWSELogger.error('Level up system error:', err);
+      ui.notifications.error('Failed to open level up dialog');
     }
   }
 
   async _onCharacterGenerator(event) {
     event.preventDefault();
-    // Open character generator
+    // Open character generator using barrel export
     try {
       const { SWSECharacterGeneratorApp } = await import('../apps/chargen.js');
       new SWSECharacterGeneratorApp(this.actor).render(true);
     } catch (err) {
-      SWSELogger.warn('Character generator not available:', err);
-      ui.notifications.warn('Character generator not loaded');
+      SWSELogger.error('Character generator error:', err);
+      ui.notifications.error('Failed to open character generator');
     }
   }
 
