@@ -181,6 +181,7 @@ export function validateClassDocument(classDoc) {
 
   const requiredProperties = ['hitDie', 'babProgression', 'trainedSkills'];
   const missing = [];
+  const warnings = [];
 
   for (const prop of requiredProperties) {
     const value = getClassProperty(classDoc, prop);
@@ -189,8 +190,15 @@ export function validateClassDocument(classDoc) {
     }
   }
 
+  // Check talent trees exist (warning, not failure)
+  const talentTrees = getTalentTrees(classDoc);
+  if (!talentTrees || talentTrees.length === 0) {
+    warnings.push(`Class "${classDoc.name}" has no talent trees defined`);
+  }
+
   return {
     valid: missing.length === 0,
-    missing
+    missing,
+    warnings: warnings.length > 0 ? warnings : undefined
   };
 }

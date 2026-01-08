@@ -85,6 +85,9 @@ export default class CharacterGenerator extends Application {
         cha: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 }
       },
       skills: {},
+      trainedSkills: [],  // Track which skills are trained (for progression)
+      classSkillsList: [],  // List of skills that are class skills for this class
+      trainedSkillsAllowed: 0,  // Total number of skill trainings allowed
       feats: [],
       featsRequired: 1, // Base 1, +1 for Human
       talents: [],
@@ -479,7 +482,7 @@ export default class CharacterGenerator extends Application {
     // Filter talents for the selected talent tree
     if (this.selectedTalentTree && context.packs.talents) {
       context.packs.talentsInTree = context.packs.talents.filter(talent => {
-        const talentTree = talent.system?.talentTree || talent.system?.tree || "";
+        const talentTree = getTalentTreeName(talent);
         return talentTree === this.selectedTalentTree;
       });
 
