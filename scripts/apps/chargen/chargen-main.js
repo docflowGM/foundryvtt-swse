@@ -513,9 +513,9 @@ export default class CharacterGenerator extends Application {
 
     // Near-Human builder
     $html.find('.open-near-human-builder').click(this._onOpenNearHumanBuilder.bind(this));
-    $html.find('.adaptation-btn').click(this._onSelectNearHumanAdaptation.bind(this));
+    // $html.find('.adaptation-btn').click(this._onSelectNearHumanAdaptation.bind(this)); // Method not implemented
     $html.find('.sacrifice-btn').click(this._onSelectNearHumanSacrifice.bind(this));
-    $html.find('.attr-plus, .attr-minus').click(this._onAdjustNearHumanAttribute.bind(this));
+    // $html.find('.attr-plus, .attr-minus').click(this._onAdjustNearHumanAttribute.bind(this)); // Use _onAdjustNearHumanAbility instead (see line 522)
     $html.find('.trait-btn').click(this._onSelectNearHumanTrait.bind(this));
     $html.find('.sacrifice-radio').change(this._onSelectNearHumanSacrifice.bind(this));
     $html.find('.variant-checkbox').change(this._onToggleNearHumanVariant.bind(this));
