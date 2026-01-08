@@ -28,6 +28,8 @@ export async function preloadHandlebarsTemplates() {
     "systems/foundryvtt-swse/templates/actors/character/tabs/talents-tab.hbs",
     "systems/foundryvtt-swse/templates/actors/character/tabs/inventory-tab.hbs",
     "systems/foundryvtt-swse/templates/actors/character/tabs/biography-tab.hbs",
+    "systems/foundryvtt-swse/templates/actors/character/tabs/import-export-tab.hbs",
+    "systems/foundryvtt-swse/templates/actors/character/tabs/starship-maneuvers-tab.hbs",
 
     // Critical partials (used by critical templates above)
     "systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs",
@@ -124,6 +126,8 @@ export function getTemplatePaths() {
       "systems/foundryvtt-swse/templates/actors/character/tabs/talents-tab.hbs",
       "systems/foundryvtt-swse/templates/actors/character/tabs/inventory-tab.hbs",
       "systems/foundryvtt-swse/templates/actors/character/tabs/biography-tab.hbs",
+      "systems/foundryvtt-swse/templates/actors/character/tabs/import-export-tab.hbs",
+      "systems/foundryvtt-swse/templates/actors/character/tabs/starship-maneuvers-tab.hbs",
       "systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs",
       "systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs",
       "systems/foundryvtt-swse/templates/partials/skill-row-static.hbs",

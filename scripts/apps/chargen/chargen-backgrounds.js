@@ -22,14 +22,15 @@ export async function _renderBackgroundCards(container) {
     div.innerHTML = `
       <h3>${bg.name}</h3>
       <p><strong>Trained Skills:</strong> ${bg.trainedSkills.join(", ")}</p>
-      <button class="select-background" data-bg="${bg.id}">Select</button>
+      <button class="select-background" data-bg="${bg.id}" type="button">Select</button>
     `;
 
     container.appendChild(div);
   }
 
+  // Use event delegation with proper binding
   container.querySelectorAll(".select-background")
-    .forEach(btn => btn.addEventListener("click", evt => this._onSelectBackground(evt)));
+    .forEach(btn => btn.addEventListener("click", this._onSelectBackground.bind(this)));
 }
 
 // Selection handler

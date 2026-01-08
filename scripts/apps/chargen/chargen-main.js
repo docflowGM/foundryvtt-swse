@@ -345,11 +345,13 @@ export default class CharacterGenerator extends Application {
       context.packs[key] = packsToClone[key] ? foundry.utils.deepClone(data) : data;
     }
 
-    // Filter out Jedi class for droids at level 1 (they can multiclass into Jedi later)
+    // Filter classes for droids - only show base 4 non-Force classes
+    // Droids cannot be Force-sensitive, so they cannot select Jedi or any Force-dependent prestige classes
     if (this.currentStep === "class" && this.characterData.isDroid && context.packs.classes) {
-      context.packs.classes = context.packs.classes.filter(c => c.name !== "Jedi");
-      if (this.characterData.classes.length === 0 || this.characterData.classes[0].name === "Jedi") {
-        // If Jedi was previously selected for a droid (shouldn't happen, but be safe), clear it
+      const baseClasses = ["Soldier", "Scout", "Gunslinger", "Scoundrel"];
+      context.packs.classes = context.packs.classes.filter(c => baseClasses.includes(c.name));
+      if (this.characterData.classes.length === 0 || !baseClasses.includes(this.characterData.classes[0].name)) {
+        // If an invalid class was previously selected for a droid, clear it
         this.characterData.classes = [];
       }
     }

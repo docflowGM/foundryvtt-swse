@@ -804,7 +804,7 @@ export async function _onSpeciesFilterChange(event) {
   }
 
   // Update filter UI indicators
-  this._updateFilterIndicators();
+  _updateFilterIndicators.call(this);
 
   // Re-render to apply filters
   this.render();
@@ -813,7 +813,7 @@ export async function _onSpeciesFilterChange(event) {
 /**
  * Update visual indicators for active filters
  */
-function _updateFilterIndicators() {
+export function _updateFilterIndicators() {
   const filters = this.characterData.speciesFilters || {};
   const hasActiveFilters = Object.values(filters).some(v => v !== null && v !== '');
 
