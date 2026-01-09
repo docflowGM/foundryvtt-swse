@@ -13,6 +13,7 @@ import {
   tryRender,
   isValidItemForStore
 } from "./store-shared.js";
+import { getRendarrLine } from "./dialogue/rendarr-dialogue.js";
 
 // Safe logger reference
 const swseLogger = globalThis.swseLogger || console;
@@ -200,11 +201,19 @@ export class SWSEStore extends FormApplication {
       }
     }
 
+    // Get actor credits and name
+    const actorCredits = this.actor?.system?.credits ?? 0;
+    const isGMUser = game.user?.isGM ?? false;
+
     return {
       title: this.title,
       loading: !this._loaded,
       itemCount: this.items.length,
-      categories: categories
+      categories: categories,
+      credits: actorCredits,
+      isGM: isGMUser,
+      rendarrWelcome: getRendarrLine("welcome"),
+      rendarrImage: "modules/foundryvtt-swse/images/rendarr.webp"
     };
   }
 
