@@ -40,11 +40,11 @@ export class ThemeLoader {
   };
 
   /**
-   * Load a theme CSS file
+   * Load a theme by setting the data-theme attribute
+   * Theme CSS uses [data-theme="themeName"] selectors for styling
    * @param {string} themeName - Name of the theme to load
-   * @returns {Promise<void>}
    */
-  static async loadTheme(themeName) {
+  static loadTheme(themeName) {
     // Validate theme name
     if (!this.themes.includes(themeName)) {
       SWSELogger.warn(`[SWSE Theme] Unknown theme: ${themeName}. Falling back to holo.`);
@@ -52,22 +52,20 @@ export class ThemeLoader {
     }
 
     // Set data-theme attribute on document element
-    // All theme styles are now in swse-system.css using [data-theme] selectors
+    // Theme CSS files are preloaded via system.json and use [data-theme] selectors
     document.documentElement.setAttribute('data-theme', themeName);
 
     SWSELogger.log(`[SWSE Theme] Applied theme: ${themeName}`);
-    return Promise.resolve();
   }
 
   /**
    * Apply theme and re-render SWSE sheets
    * @param {string} themeName - Name of the theme to apply
-   * @returns {Promise<void>}
    */
-  static async applyTheme(themeName) {
+  static applyTheme(themeName) {
     try {
-      // Load the theme stylesheet
-      await this.loadTheme(themeName);
+      // Load the theme (synchronously sets data-theme attribute)
+      this.loadTheme(themeName);
 
       // Re-render all SWSE actor and item sheets
       this.rerenderSWSESheets();
