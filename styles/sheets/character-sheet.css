@@ -3876,3 +3876,701 @@ font-size: 12px;
   -webkit-text-fill-color: #ffffff !important;
   font-weight: 700; /* optional but looks good */
 }
+
+/* ============================================================================
+   UI IMPROVEMENTS - Cleaner Layout & Visual Hierarchy
+   Restores classic look with improved spacing and readability
+   ============================================================================ */
+
+/* ─────────────────────────────────────────────────
+   IMPROVED HEADER LAYOUT
+   ───────────────────────────────────────────────── */
+
+/* More compact header with better proportions */
+.swse-app .sheet-header {
+  padding: 8px 12px;
+  min-height: 44px;
+  gap: 12px;
+}
+
+/* Left section - portrait and name */
+.swse-app .sheet-header .header-left {
+  flex: 0 0 auto;
+  gap: 6px;
+  min-width: 140px;
+}
+
+/* Larger, more prominent portrait */
+.swse-app .sheet-header .profile-img {
+  width: 64px;
+  height: 64px;
+  border: 2px solid var(--holo-cyan);
+  box-shadow: 0 0 12px rgba(0, 217, 255, 0.3);
+}
+
+/* Character name styling */
+.swse-app .sheet-header .character-name input {
+  font-size: 1rem;
+  padding: 4px 8px;
+  max-width: 140px;
+}
+
+/* Level display improvements */
+.swse-app .sheet-header .character-level {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.swse-app .sheet-header .character-level label {
+  font-size: 10px;
+  margin: 0;
+}
+
+.swse-app .sheet-header .character-level .level-input {
+  width: 40px;
+  padding: 2px 4px;
+  font-size: 14px;
+}
+
+.swse-app .sheet-header .half-level-display {
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.swse-app .sheet-header .level-up {
+  padding: 4px 8px;
+  font-size: 10px;
+}
+
+/* Character actions - smaller buttons */
+.swse-app .sheet-header .character-actions {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.swse-app .sheet-header .character-actions button {
+  padding: 3px 6px;
+  font-size: 9px;
+}
+
+/* Center section - defenses and resources */
+.swse-app .sheet-header .header-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* ─────────────────────────────────────────────────
+   IMPROVED DEFENSE GRID
+   ───────────────────────────────────────────────── */
+
+/* Compact 4-column defense grid */
+.swse-app .sheet-header .defenses.grid-4col {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(90px, 1fr));
+  gap: 6px;
+}
+
+/* Individual defense box */
+.swse-app .sheet-header .defense {
+  background: linear-gradient(180deg, rgba(0, 40, 60, 0.6), rgba(0, 20, 40, 0.4));
+  border: 1px solid rgba(0, 168, 204, 0.25);
+  border-radius: 6px;
+  padding: 6px;
+  text-align: center;
+}
+
+.swse-app .sheet-header .defense:hover {
+  border-color: rgba(0, 217, 255, 0.5);
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.2);
+}
+
+/* Defense label */
+.swse-app .sheet-header .defense-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2px;
+  letter-spacing: 0.5px;
+}
+
+/* Defense value - prominent display */
+.swse-app .sheet-header .defense-value {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--holo-cyan);
+  line-height: 1.1;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.swse-app .sheet-header .defense-value:hover {
+  color: #fff;
+  text-shadow: 0 0 12px var(--holo-cyan);
+  transform: scale(1.05);
+}
+
+/* Defense breakdown - smaller text */
+.swse-app .sheet-header .defense-breakdown {
+  font-size: 8px;
+  color: rgba(159, 182, 201, 0.7);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.swse-app .sheet-header .defense-breakdown .breakdown-item {
+  display: block;
+}
+
+.swse-app .sheet-header .defense-breakdown .droid-note {
+  color: var(--accent-warm);
+  font-size: 7px;
+}
+
+/* ─────────────────────────────────────────────────
+   IMPROVED RESOURCE BARS
+   ───────────────────────────────────────────────── */
+
+/* Resources row */
+.swse-app .sheet-header .resources {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Individual resource box */
+.swse-app .sheet-header .resource {
+  flex: 1;
+  min-width: 120px;
+  max-width: 180px;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(0, 168, 204, 0.2);
+  border-radius: 4px;
+}
+
+.swse-app .sheet-header .resource label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+  letter-spacing: 0.5px;
+}
+
+/* Resource bar with value/max */
+.swse-app .sheet-header .resource-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.swse-app .sheet-header .resource-input {
+  width: 42px;
+  padding: 3px 4px;
+  font-size: 14px;
+  font-weight: 900;
+  text-align: center;
+  background: rgba(0, 40, 60, 0.5) !important;
+  border: 1px solid rgba(0, 168, 204, 0.4) !important;
+}
+
+.swse-app .sheet-header .resource-max,
+.swse-app .sheet-header .resource-max-input {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.swse-app .sheet-header .separator {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Progress bar improvements */
+.swse-app .sheet-header .progress-bar {
+  height: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.swse-app .sheet-header .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--holo-green), var(--holo-cyan));
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Bonus HP indicator */
+.swse-app .sheet-header .bonus-hp-indicator {
+  font-size: 10px;
+  color: var(--holo-cyan);
+  margin-left: 4px;
+}
+
+.swse-app .sheet-header .bonus-hp-info {
+  font-size: 8px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Force points specific */
+.swse-app .sheet-header .force-points .force-point-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.swse-app .sheet-header .force-points .reroll-bonus {
+  font-size: 10px;
+  color: var(--holo-cyan);
+}
+
+.swse-app .sheet-header .force-points .dice-type-select {
+  padding: 2px 4px;
+  font-size: 10px;
+  min-width: 40px;
+}
+
+.swse-app .sheet-header .force-points .roll-force-point {
+  padding: 3px 6px;
+  font-size: 10px;
+}
+
+/* Destiny points */
+.swse-app .sheet-header .destiny-points {
+  background: linear-gradient(180deg, rgba(255, 215, 0, 0.08), rgba(255, 165, 0, 0.04));
+  border-color: rgba(255, 215, 0, 0.25);
+}
+
+.swse-app .sheet-header .destiny-points label {
+  color: #ffd700;
+}
+
+.swse-app .sheet-header .destiny-point-status {
+  font-size: 9px;
+  margin-top: 3px;
+}
+
+/* Right section - species, class, etc */
+.swse-app .sheet-header .header-right {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 130px;
+  max-width: 160px;
+}
+
+/* Species/class selector boxes */
+.swse-app .sheet-header .species-selector,
+.swse-app .sheet-header .class-selector,
+.swse-app .sheet-header .character-attribute {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 168, 204, 0.15);
+  border-radius: 4px;
+  padding: 4px 6px;
+}
+
+.swse-app .sheet-header .species-label,
+.swse-app .sheet-header .class-label,
+.swse-app .sheet-header .attribute-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.swse-app .sheet-header .species-label i,
+.swse-app .sheet-header .class-label i,
+.swse-app .sheet-header .attribute-label i {
+  font-size: 10px;
+  color: var(--holo-cyan);
+}
+
+.swse-app .sheet-header .species-value,
+.swse-app .sheet-header .class-value,
+.swse-app .sheet-header .attribute-value {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.swse-app .sheet-header .species-unselected,
+.swse-app .sheet-header .class-unselected {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.swse-app .sheet-header .pick-species-btn,
+.swse-app .sheet-header .add-class-btn {
+  margin-top: 3px;
+  padding: 2px 6px;
+  font-size: 9px;
+}
+
+/* ─────────────────────────────────────────────────
+   IMPROVED TABS
+   ───────────────────────────────────────────────── */
+
+/* Tab navigation bar */
+.swse-app nav.sheet-tabs {
+  background: linear-gradient(180deg, rgba(0, 20, 40, 0.6), rgba(0, 10, 20, 0.4));
+  border-bottom: 2px solid rgba(0, 168, 204, 0.3);
+  padding: 0 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+/* Individual tab */
+.swse-app nav.sheet-tabs .item {
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.swse-app nav.sheet-tabs .item:hover {
+  color: var(--holo-cyan);
+  background: rgba(0, 168, 204, 0.08);
+}
+
+.swse-app nav.sheet-tabs .item.active {
+  color: #fff;
+  border-bottom-color: var(--holo-cyan);
+  background: rgba(0, 168, 204, 0.12);
+  text-shadow: 0 0 8px rgba(0, 217, 255, 0.5);
+}
+
+/* ─────────────────────────────────────────────────
+   IMPROVED SHEET BODY
+   ───────────────────────────────────────────────── */
+
+.swse-app .sheet-body {
+  padding: 12px;
+  background: linear-gradient(180deg, rgba(3, 10, 20, 0.3), rgba(0, 5, 15, 0.2));
+}
+
+/* Tab content */
+.swse-app .sheet-body .tab {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Section headers */
+.swse-app .sheet-body .section-header {
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--holo-cyan);
+  border-bottom: 2px solid rgba(0, 168, 204, 0.3);
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.swse-app .sheet-body .section-header i {
+  font-size: 12px;
+  color: var(--holo-green);
+}
+
+/* Combat stats grid */
+.swse-app .combat-stats .combat-grid {
+  gap: 16px;
+}
+
+.swse-app .combat-stats .stat-block {
+  background: linear-gradient(180deg, rgba(0, 30, 50, 0.4), rgba(0, 15, 30, 0.3));
+  border: 1px solid rgba(0, 168, 204, 0.2);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.swse-app .combat-stats .stat-block label {
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.swse-app .combat-stats .stat-value {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--holo-cyan);
+}
+
+.swse-app .combat-stats .stat-value.rollable:hover {
+  color: #fff;
+  cursor: pointer;
+  text-shadow: 0 0 10px var(--holo-cyan);
+}
+
+/* Quick attacks section */
+.swse-app .quick-attacks h4 {
+  font-size: 12px;
+  color: var(--holo-green);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swse-app .quick-attacks .attack-item {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 168, 204, 0.15);
+  border-radius: 4px;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+}
+
+.swse-app .quick-attacks .attack-item:hover {
+  border-color: rgba(0, 168, 204, 0.4);
+  background: rgba(0, 168, 204, 0.08);
+}
+
+.swse-app .quick-attacks .attack-name {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.swse-app .quick-attacks .attack-roll-btn,
+.swse-app .quick-attacks .damage-roll-btn {
+  padding: 3px 8px;
+  font-size: 10px;
+  margin-right: 4px;
+}
+
+/* Hint text */
+.swse-app .hint-text {
+  font-size: 11px;
+  color: var(--muted);
+  font-style: italic;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swse-app .hint-text i {
+  color: var(--holo-cyan);
+}
+
+/* ─────────────────────────────────────────────────
+   ABILITIES QUICK REFERENCE (Summary Tab)
+   ───────────────────────────────────────────────── */
+
+.swse-app .abilities-quick .abilities-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.swse-app .abilities-quick .ability-quick {
+  background: linear-gradient(180deg, rgba(0, 30, 50, 0.5), rgba(0, 15, 30, 0.3));
+  border: 1px solid rgba(0, 168, 204, 0.25);
+  border-radius: 6px;
+  padding: 8px 12px;
+  text-align: center;
+  min-width: 60px;
+}
+
+.swse-app .abilities-quick .ability-quick label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--holo-cyan);
+  margin-bottom: 4px;
+  cursor: pointer;
+}
+
+.swse-app .abilities-quick .ability-score {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--color-text-emphatic);
+}
+
+.swse-app .abilities-quick .ability-mod {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--holo-green);
+  background: rgba(0, 255, 136, 0.1);
+  border-radius: 3px;
+  padding: 2px 6px;
+  margin-top: 4px;
+  cursor: pointer;
+}
+
+.swse-app .abilities-quick .ability-mod:hover {
+  background: rgba(0, 255, 136, 0.2);
+}
+
+/* ─────────────────────────────────────────────────
+   RACIAL/SPECIES TRAITS SECTION
+   ───────────────────────────────────────────────── */
+
+.swse-app .racial-traits .racial-traits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.swse-app .racial-traits .trait-category {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 168, 204, 0.15);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.swse-app .racial-traits .trait-category h4 {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--holo-cyan);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swse-app .racial-traits .trait-category h4 i {
+  font-size: 10px;
+}
+
+.swse-app .racial-traits .trait-item {
+  font-size: 11px;
+  color: var(--color-text-primary);
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.swse-app .racial-traits .trait-item:last-child {
+  border-bottom: none;
+}
+
+/* ─────────────────────────────────────────────────
+   DROID IMMUNITIES GRID
+   ───────────────────────────────────────────────── */
+
+.swse-app .droid-immunities .immunities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+}
+
+.swse-app .droid-immunities .trait-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 168, 204, 0.15);
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.swse-app .droid-immunities .trait-item i {
+  color: var(--holo-cyan);
+  font-size: 12px;
+}
+
+/* ─────────────────────────────────────────────────
+   DESTINY SECTION IMPROVEMENTS
+   ───────────────────────────────────────────────── */
+
+.swse-app .destiny-section .destiny-content {
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.swse-app .destiny-section .destiny-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.swse-app .destiny-section .destiny-status,
+.swse-app .destiny-section .destiny-type,
+.swse-app .destiny-section .destiny-secret {
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.swse-app .destiny-section label {
+  font-size: 10px;
+  color: #ffd700;
+}
+
+.swse-app .destiny-section .status-fulfilled {
+  color: #ffd700;
+}
+
+.swse-app .destiny-section .status-active {
+  color: var(--holo-cyan);
+}
+
+.swse-app .destiny-section .destiny-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.swse-app .destiny-section .destiny-controls button {
+  padding: 6px 12px;
+  font-size: 10px;
+}
+
+/* ─────────────────────────────────────────────────
+   RESPONSIVE ADJUSTMENTS
+   ───────────────────────────────────────────────── */
+
+@media (max-width: 700px) {
+  .swse-app .sheet-header {
+    flex-wrap: wrap;
+  }
+
+  .swse-app .sheet-header .header-center {
+    order: 3;
+    width: 100%;
+  }
+
+  .swse-app .sheet-header .defenses.grid-4col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .swse-app nav.sheet-tabs .item {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+}
