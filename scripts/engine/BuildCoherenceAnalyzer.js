@@ -81,7 +81,7 @@ export class BuildCoherenceAnalyzer {
   static _evaluateAttributeCoherence(item, actor) {
     try {
       // Get actor's ability distribution
-      const abilities = actor.system?.abilities || {};
+      const abilities = actor.system?.attributes || {};
       const abilityScores = [];
 
       for (const [key, abilityData] of Object.entries(abilities)) {
@@ -382,7 +382,7 @@ export class BuildCoherenceAnalyzer {
   static scoreCoherence(actor) {
     try {
       // Analyze overall build without a specific item
-      const abilities = actor.system?.abilities || {};
+      const abilities = actor.system?.attributes || {};
       const abilityScores = [];
 
       for (const [key, abilityData] of Object.entries(abilities)) {
@@ -462,7 +462,7 @@ export class BuildCoherenceAnalyzer {
    */
   static checkSAD(actor) {
     try {
-      const abilities = actor.system?.abilities || {};
+      const abilities = actor.system?.attributes || {};
       const abilityScores = [];
 
       for (const [key, abilityData] of Object.entries(abilities)) {
