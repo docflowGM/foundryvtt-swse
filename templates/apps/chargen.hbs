@@ -1042,8 +1042,8 @@
  <p class="category-description">{{../description}}</p>
  <div class="feats-grid">
  {{#each this.feats}}
- <div class="feat-card feat-with-tooltip {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}" data-tooltip="{{this.system.benefit}}" data-indent-level="{{this.indentLevel}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
- <button type="button" class="select-feat choice-button" data-featid="{{this._id}}">
+ <div class="feat-card feat-with-tooltip {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" data-tooltip="{{this.system.benefit}}" data-indent-level="{{this.indentLevel}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+ <button type="button" class="select-feat choice-button" data-featid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
  {{#if this.suggestion.iconClass}}
  <span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
  <i class="{{this.suggestion.iconClass}}"></i>
@@ -1071,8 +1071,8 @@
  {{else}}
  <div class="feats-list">
  {{#each packs.feats}}
- <div class="feat-item feat-with-tooltip {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}" data-tooltip="{{this.system.benefit}}" data-indent-level="{{this.indentLevel}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
- <button type="button" class="select-feat choice-button" data-featid="{{this._id}}">
+ <div class="feat-item feat-with-tooltip {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" data-tooltip="{{this.system.benefit}}" data-indent-level="{{this.indentLevel}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+ <button type="button" class="select-feat choice-button" data-featid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
  {{#if this.suggestion.iconClass}}
  <span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
  <i class="{{this.suggestion.iconClass}}"></i>
@@ -1138,8 +1138,8 @@
 
  <div class="talents-list">
  {{#each packs.talentsInTree}}
- <div class="talent-item {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
- <button type="button" class="select-talent choice-button" data-talentid="{{this._id}}">
+ <div class="talent-item {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+ <button type="button" class="select-talent choice-button" data-talentid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
  {{#if this.suggestion.iconClass}}
  <span class="talent-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
  <i class="{{this.suggestion.iconClass}}"></i>
