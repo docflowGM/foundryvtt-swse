@@ -162,11 +162,12 @@ export function getTalentTrees(classDoc) {
 
 /**
  * Get talent tree name from talent document
+ * Handles property name variants: tree, talent_tree, talentTree
  * @param {Object} talentDoc - The talent document
  * @returns {string} The talent tree name
  */
 export function getTalentTreeName(talentDoc) {
-  return getTalentProperty(talentDoc, 'talentTree', '');
+  return getTalentProperty(talentDoc, 'tree', '');
 }
 
 /**
@@ -181,6 +182,7 @@ export function validateClassDocument(classDoc) {
 
   const requiredProperties = ['hitDie', 'babProgression', 'trainedSkills'];
   const missing = [];
+  const warnings = [];
 
   for (const prop of requiredProperties) {
     const value = getClassProperty(classDoc, prop);
@@ -189,8 +191,15 @@ export function validateClassDocument(classDoc) {
     }
   }
 
+  // Check talent trees exist (warning, not failure)
+  const talentTrees = getTalentTrees(classDoc);
+  if (!talentTrees || talentTrees.length === 0) {
+    warnings.push(`Class "${classDoc.name}" has no talent trees defined`);
+  }
+
   return {
     valid: missing.length === 0,
-    missing
+    missing,
+    warnings: warnings.length > 0 ? warnings : undefined
   };
 }

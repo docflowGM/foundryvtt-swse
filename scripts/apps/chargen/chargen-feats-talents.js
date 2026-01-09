@@ -414,15 +414,25 @@ export function _getAvailableTalentTrees() {
   } else {
     // Class-restricted mode
     if (!this.characterData.classes || this.characterData.classes.length === 0) {
+      SWSELogger.warn("CharGen | No classes selected - cannot get talent trees");
       return [];
     }
 
-    const selectedClass = this._packs.classes?.find(c => c.name === this.characterData.classes[0].name);
+    const selectedClassName = this.characterData.classes[0].name;
+    const selectedClass = this._packs.classes?.find(c => c.name === selectedClassName);
+
     if (!selectedClass) {
+      SWSELogger.error(`CharGen | Class "${selectedClassName}" not found in packs. Available classes:`,
+        this._packs.classes?.map(c => c.name) || []);
       return [];
     }
 
     trees = getTalentTrees(selectedClass);
+
+    if (!trees || trees.length === 0) {
+      SWSELogger.warn(`CharGen | No talent trees found for class "${selectedClassName}". Class data:`, selectedClass.system?.talentTrees || selectedClass.system?.talent_trees);
+    }
+
     SWSELogger.log(`CharGen | Available talent trees for ${selectedClass.name}:`, trees);
   }
 

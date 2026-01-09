@@ -272,6 +272,11 @@ Hooks.once("init", async function () {
     registerHouseruleSettings();
 
     /* ---------------------------------------------------------
+       Theme System Initialization (Early)
+       --------------------------------------------------------- */
+    ThemeLoader.init();
+
+    /* ---------------------------------------------------------
        Hook Registration
        --------------------------------------------------------- */
     registerInitHooks();
@@ -422,7 +427,6 @@ Hooks.once("ready", async function () {
 
     RulesEngine.init();
     Upkeep.init();
-    ThemeLoader.init();
     initializeUtils();
 
     try {

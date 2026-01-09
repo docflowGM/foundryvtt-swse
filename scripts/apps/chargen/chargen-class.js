@@ -66,6 +66,13 @@ export async function _onSelectClass(event) {
     return;
   }
 
+  // Log any warnings (non-blocking issues like missing talent trees)
+  if (validation.warnings) {
+    validation.warnings.forEach(warning => {
+      SWSELogger.warn(`CharGen | ${warning}`);
+    });
+  }
+
   // Set class-based values
   if (classDoc && classDoc.system) {
     // Base Attack Bonus - calculate actual BAB for level 1 based on progression type
@@ -93,7 +100,12 @@ export async function _onSelectClass(event) {
     const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
     this.characterData.trainedSkillsAllowed = Math.max(1, classSkills + intMod + humanBonus);
 
+    // Extract and store the list of class skills for filtering
+    const classSkillsList = getClassProperty(classDoc, 'classSkills', []);
+    this.characterData.classSkillsList = Array.isArray(classSkillsList) ? classSkillsList : [];
+
     SWSELogger.log(`CharGen | Skill trainings: ${classSkills} (class) + ${intMod} (INT) + ${humanBonus} (Human) = ${this.characterData.trainedSkillsAllowed}`);
+    SWSELogger.log(`CharGen | Class skills available for ${className}:`, this.characterData.classSkillsList);
 
     // Force Points (if Force-sensitive class)
     // Note: Droids cannot be Force-sensitive in SWSE
