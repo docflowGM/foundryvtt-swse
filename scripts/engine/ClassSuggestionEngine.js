@@ -432,7 +432,7 @@ export class ClassSuggestionEngine {
         });
 
         // Get ability scores and find highest
-        const abilities = actor.system?.abilities || {};
+        const abilities = actor.system?.attributes || {};
         let highestAbility = null;
         let highestScore = 0;
         const abilityScores = {};

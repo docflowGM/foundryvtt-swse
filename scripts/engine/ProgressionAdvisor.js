@@ -33,7 +33,7 @@ export class ProgressionAdvisor {
    */
   static deriveAttributeBuildIntent(actor) {
     try {
-      const abilities = actor.system?.abilities || {};
+      const abilities = actor.system?.attributes || {};
 
       // Get ability scores
       const scores = {

@@ -222,7 +222,7 @@ export class StarshipManeuversEngine {
     if (!actor?.items) return 0;
 
     // 1 + WIS modifier per Starship Tactics feat taken
-    const wisValue = actor.system?.abilities?.wis?.value ?? 10;
+    const wisValue = actor.system?.attributes?.wis?.value ?? 10;
     const wisModifier = Math.floor((wisValue - 10) / 2);
     const wisBonus = Math.max(1, 1 + wisModifier);
 

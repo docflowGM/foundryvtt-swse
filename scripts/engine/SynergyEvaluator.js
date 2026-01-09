@@ -277,7 +277,7 @@ export class SynergyEvaluator {
       }
 
       // Get actor's top 2-3 abilities
-      const abilities = actor.system?.abilities || {};
+      const abilities = actor.system?.attributes || {};
       const abilityScores = [];
 
       for (const [key, abilityData] of Object.entries(abilities)) {

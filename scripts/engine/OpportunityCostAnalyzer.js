@@ -107,7 +107,7 @@ export class OpportunityCostAnalyzer {
           .filter(i => i.type === 'talent')
           .map(t => t.system?.tree?.toLowerCase() || t.name.toLowerCase())
       );
-      const abilities = actor.system?.abilities || {};
+      const abilities = actor.system?.attributes || {};
 
       // Get top 2 abilities
       const abilityScores = [];
@@ -235,7 +235,7 @@ export class OpportunityCostAnalyzer {
       }
 
       // Get actor's ability snapshot (current only)
-      const abilities = actor.system?.abilities || {};
+      const abilities = actor.system?.attributes || {};
       const abilityScores = [];
 
       for (const [key, abilityData] of Object.entries(abilities)) {

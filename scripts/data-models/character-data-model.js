@@ -153,7 +153,14 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       // Background information for Biography tab
       event: new fields.StringField({required: false, initial: ""}),
       profession: new fields.StringField({required: false, initial: ""}),
-      planetOfOrigin: new fields.StringField({required: false, initial: ""})
+      planetOfOrigin: new fields.StringField({required: false, initial: ""}),
+
+      // SWSE-specific system data (mentor survey, build intent, etc.)
+      swse: new fields.SchemaField({
+        mentorSurveyCompleted: new fields.BooleanField({required: true, initial: false}),
+        mentorBuildIntentBiases: new fields.ObjectField({required: true, initial: {}}),
+        surveyResponses: new fields.ObjectField({required: true, initial: {}})
+      })
     };
   }
 
