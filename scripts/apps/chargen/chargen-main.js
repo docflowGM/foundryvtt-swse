@@ -365,6 +365,12 @@ export default class CharacterGenerator extends Application {
           this.characterData.classes = [];
         }
       }
+
+      // Apply icon and description metadata to each class
+      context.packs.classes = context.packs.classes.map(classItem => ({
+        ...classItem,
+        ...this._getClassMetadata(classItem.name)
+      }));
     }
 
     // Apply species filters and sorting if on species step
