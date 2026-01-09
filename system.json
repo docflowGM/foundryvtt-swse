@@ -96,6 +96,8 @@
     { "type": "icon", "url": "assets/ui/title-logo.png" }
   ],
 
+  "flagScopes": ["swse"],
+
   "packs": [
     { "name": "species", "label": "Species", "type": "Item", "system": "foundryvtt-swse", "path": "packs/species.db" },
     { "name": "classes", "label": "Classes", "type": "Item", "system": "foundryvtt-swse", "path": "packs/classes.db" },
