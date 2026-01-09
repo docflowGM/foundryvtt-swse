@@ -365,6 +365,12 @@ export default class CharacterGenerator extends Application {
           this.characterData.classes = [];
         }
       }
+
+      // Apply icon and description metadata to each class
+      context.packs.classes = context.packs.classes.map(classItem => ({
+        ...classItem,
+        ...this._getClassMetadata(classItem.name)
+      }));
     }
 
     // Apply species filters and sorting if on species step
@@ -405,6 +411,26 @@ export default class CharacterGenerator extends Application {
           // Sort by suggestion tier
           context.packs.feats = SuggestionEngine.sortBySuggestion(context.packs.feats);
 
+          // Add qualification status to each feat
+          const tempActor = this.actor || this._createTempActorForValidation();
+          const pendingDataForFeats = {
+            selectedFeats: this.characterData.feats || [],
+            selectedClass: this.characterData.classes?.[0],
+            abilityIncreases: {},
+            selectedSkills: Object.keys(this.characterData.skills || {})
+              .filter(k => this.characterData.skills[k]?.trained)
+              .map(k => ({ key: k })),
+            selectedTalents: this.characterData.talents || []
+          };
+
+          context.packs.feats = context.packs.feats.map(feat => {
+            const prereqCheck = PrerequisiteValidator.checkFeatPrerequisites(feat, tempActor, pendingDataForFeats);
+            return {
+              ...feat,
+              isQualified: prereqCheck.valid
+            };
+          });
+
           // Organize feats into categories for display
           try {
             const categorizedFeats = this._organizeFeatsByCategory(context.packs.feats, this._featMetadata);
@@ -434,6 +460,25 @@ export default class CharacterGenerator extends Application {
           context.packs.talents = talentsWithSuggestions;
           // Sort by suggestion tier
           context.packs.talents = SuggestionEngine.sortBySuggestion(context.packs.talents);
+
+          // Add qualification status to each talent
+          const tempActor = this.actor || this._createTempActorForValidation();
+          const pendingDataForTalents = {
+            selectedFeats: this.characterData.feats || [],
+            selectedClass: this.characterData.classes?.[0],
+            selectedSkills: Object.keys(this.characterData.skills || {})
+              .filter(k => this.characterData.skills[k]?.trained)
+              .map(k => ({ key: k })),
+            selectedTalents: this.characterData.talents || []
+          };
+
+          context.packs.talents = context.packs.talents.map(talent => {
+            const prereqCheck = PrerequisiteValidator.checkTalentPrerequisites(talent, tempActor, pendingDataForTalents);
+            return {
+              ...talent,
+              isQualified: prereqCheck.valid
+            };
+          });
         } catch (err) {
           SWSELogger.warn('CharGen | Failed to add talent suggestions:', err);
         }

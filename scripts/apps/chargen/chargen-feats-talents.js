@@ -319,7 +319,7 @@ export async function _onSelectTalent(event) {
       return;
     }
 
-    // Check for duplicates for each talent
+    // Check for duplicates and prerequisites for each talent
     for (const talentToAdd of talentsToAdd) {
       const alreadySelected = this.characterData.talents.find(t => t.name === talentToAdd.name || t._id === talentToAdd._id);
       if (alreadySelected) {
@@ -333,6 +333,25 @@ export async function _onSelectTalent(event) {
         );
         if (existsOnActor) {
           ui.notifications.warn(`"${talentToAdd.name}" is already on your character sheet!`);
+          return;
+        }
+      }
+
+      // Check prerequisites for the Block & Deflect component talents (unless in Free Build mode)
+      if (!this.freeBuild) {
+        const tempActor = this.actor || this._createTempActorForValidation();
+        const pendingData = {
+          selectedFeats: this.characterData.feats || [],
+          selectedClass: this.characterData.classes?.[0],
+          selectedSkills: Object.keys(this.characterData.skills || {})
+            .filter(k => this.characterData.skills[k]?.trained)
+            .map(k => ({ key: k })),
+          selectedTalents: this.characterData.talents || []
+        };
+
+        const prereqCheck = PrerequisiteValidator.checkTalentPrerequisites(talentToAdd, tempActor, pendingData);
+        if (!prereqCheck.valid) {
+          ui.notifications.warn(`Cannot select "${talentToAdd.name}" from Block & Deflect: ${prereqCheck.reasons.join(', ')}`);
           return;
         }
       }
@@ -364,17 +383,37 @@ export async function _onSelectTalent(event) {
       }
     }
 
-    // Droids cannot select talents that require Force Sensitivity or Force Points (unless in Free Build mode)
-    if (this.characterData.isDroid && !this.freeBuild) {
-      const prereqs = tal.system?.prerequisites || "";
-      const preqsLower = prereqs.toLowerCase();
-      if (
-        preqsLower.includes("force sensitivity") ||
-        preqsLower.includes("force technique") ||
-        preqsLower.includes("force secret") ||
-        preqsLower.includes("force point")
-      ) {
-        ui.notifications.warn(`Droids cannot select "${tal.name}" because they cannot be Force-sensitive.`);
+    // Check prerequisites (unless in Free Build mode)
+    if (!this.freeBuild) {
+      // Droids cannot select talents that require Force Sensitivity or Force Points
+      if (this.characterData.isDroid) {
+        const prereqs = tal.system?.prerequisites || "";
+        const preqsLower = prereqs.toLowerCase();
+        if (
+          preqsLower.includes("force sensitivity") ||
+          preqsLower.includes("force technique") ||
+          preqsLower.includes("force secret") ||
+          preqsLower.includes("force point")
+        ) {
+          ui.notifications.warn(`Droids cannot select "${tal.name}" because they cannot be Force-sensitive.`);
+          return;
+        }
+      }
+
+      // Check all prerequisites using PrerequisiteValidator
+      const tempActor = this.actor || this._createTempActorForValidation();
+      const pendingData = {
+        selectedFeats: this.characterData.feats || [],
+        selectedClass: this.characterData.classes?.[0],
+        selectedSkills: Object.keys(this.characterData.skills || {})
+          .filter(k => this.characterData.skills[k]?.trained)
+          .map(k => ({ key: k })),
+        selectedTalents: this.characterData.talents || []
+      };
+
+      const prereqCheck = PrerequisiteValidator.checkTalentPrerequisites(tal, tempActor, pendingData);
+      if (!prereqCheck.valid) {
+        ui.notifications.warn(`Cannot select "${tal.name}": ${prereqCheck.reasons.join(', ')}`);
         return;
       }
     }
@@ -470,7 +509,7 @@ export function _createTempActorForValidation() {
     system: {
       level: this.characterData.level || 1,
       bab: this.characterData.bab || 0,
-      abilities: foundry.utils.deepClone(this.characterData.abilities),
+      attributes: foundry.utils.deepClone(this.characterData.abilities),
       skills: {},
       defenses: foundry.utils.deepClone(this.characterData.defenses),
       // Include mentor biases for suggestion engine

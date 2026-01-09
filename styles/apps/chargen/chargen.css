@@ -647,6 +647,26 @@
   padding-left: 0.35rem;
 }
 
+/* Unqualified feats/talents - disabled state */
+.feat-card.unqualified,
+.feat-item.unqualified,
+.talent-item.unqualified {
+  opacity: 0.5;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.feat-card.unqualified .select-feat,
+.feat-item.unqualified .select-feat,
+.talent-item.unqualified .select-talent {
+  cursor: not-allowed;
+}
+
+.feat-card.unqualified .select-feat:disabled,
+.feat-item.unqualified .select-feat:disabled,
+.talent-item.unqualified .select-talent:disabled {
+  opacity: 0.6;
+}
+
 .selected-feats-summary {
   margin-bottom: 1rem;
   padding: 0.75rem;
