@@ -162,11 +162,12 @@ export function getTalentTrees(classDoc) {
 
 /**
  * Get talent tree name from talent document
+ * Handles property name variants: tree, talent_tree, talentTree
  * @param {Object} talentDoc - The talent document
  * @returns {string} The talent tree name
  */
 export function getTalentTreeName(talentDoc) {
-  return getTalentProperty(talentDoc, 'talentTree', '');
+  return getTalentProperty(talentDoc, 'tree', '');
 }
 
 /**
