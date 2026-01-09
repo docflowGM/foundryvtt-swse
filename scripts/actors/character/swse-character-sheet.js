@@ -635,10 +635,98 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     });
 
     // Create species selection dialog with card UI
-    // Generate asset filename from species name (lowercase, hyphens)
+    // Map species names to their asset files with correct naming convention
     const getSpeciesImagePath = (name) => {
-      const filename = name.toLowerCase().replace(/\s+/g, '-') + '.webp';
-      return `/assets/species/${filename}`;
+      // List of species with their corresponding image files
+      const speciesImageMap = {
+        'Advozse': 'Advozse.webp',
+        'Anx': 'Anx.webp',
+        'Aqualish': 'Aqualish.webp',
+        'Arcona': 'Arcona.webp',
+        'Balosar': 'Balosar.webp',
+        'Barabel': 'Barabel.webp',
+        'Besalisk': 'Besalisk.webp',
+        'Bothan': 'Bothan.webp',
+        'Cathar': 'Cathar.webp',
+        'Cerean': 'Cerean.webp',
+        'Chadra-Fan': 'Chadra-Fan.webp',
+        'Chagrian': 'Chagrian.webp',
+        'Chevin': 'Chevin.webp',
+        'Chiss': 'Chiss.webp',
+        'Clawdite': 'Clawdite.webp',
+        'Codru-Ji': 'Codru-Ji.webp',
+        'Dashade': 'Dashade.webp',
+        'Defel': 'Defel.webp',
+        'Devaronian': 'Devaronian.webp',
+        'Dressellian': 'Dressellian.webp',
+        'Duros': 'Duros.webp',
+        'Elom': 'Elom.webp',
+        'Elomin': 'Elomin.webp',
+        'Ewok': 'Ewok.webp',
+        'Falleen': 'Falleen.webp',
+        'Feeorin': 'Feeorin.webp',
+        'Fosh': 'Fosh.webp',
+        'Givin': 'Givin.webp',
+        'Gotal': 'Gotal.webp',
+        'Gran': 'Gran.webp',
+        'Gree': 'Ongree.webp',
+        'Gungan': 'Gungan.webp',
+        'Herglic': 'Herglic.webp',
+        'Houk': 'Houk.webp',
+        'Iktotchi': 'Iktotchi.webp',
+        'Ishi Tib': 'Ishi_Tib.webp',
+        'Ithorian': 'Ithorian.webp',
+        'Jawa': 'Jawa.webp',
+        'Kaleesh': 'Kaleesh.webp',
+        'Kaminoan': 'Kaminoan.webp',
+        'Kel Dor': 'Kel_Dor.webp',
+        'Koorivar': 'Koorivar.webp',
+        'Kubaz': 'Kubaz.webp',
+        'Lurmen': 'Lurmen.webp',
+        'Miraluka': 'Miraluka.webp',
+        'Mon Calamari': 'Mon_Calamari.webp',
+        'Mustafarian': 'Mustafarian.webp',
+        'Nagai': 'Nagai.webp',
+        'Nautolan': 'Nautolan.webp',
+        'Nikto': 'Nikto.webp',
+        'Noghri': 'Noghri.webp',
+        'Ortolan': 'Ortolan.webp',
+        'Pau\'an': 'Pau\'an.webp',
+        'Quarren': 'Quarren.webp',
+        'Quermian': 'Quermian.webp',
+        'Rakata': 'Rakata.webp',
+        'Rodian': 'Rodian.webp',
+        'Ryn': 'Ryn.webp',
+        'Sakiyan': 'Sakiyan.webp',
+        'Selkath': 'Selkath.webp',
+        'Shistavanen': 'Shistavanen.webp',
+        'Snivvian': 'Snivvian.webp',
+        'Sullustan': 'Sullustan.webp',
+        'Talz': 'Talz.webp',
+        'Thakwaash': 'Thakwaash.webp',
+        'Togorian': 'Togorian.webp',
+        'Toydarian': 'Toydarian.webp',
+        'Trandoshan': 'Trandoshan.webp',
+        'Twi\'lek': 'Twi\'Lek.webp',
+        'Ubese': 'Ubese.webp',
+        'Umbaran': 'Umbaran.webp',
+        'Verpine': 'Verpine.webp',
+        'Vurk': 'Vurk.webp',
+        'Weequay': 'Weequay.webp',
+        'Whiphid': 'Whiphid.webp',
+        'Wookiee': 'Wookiee.webp',
+        'Yarkora': 'Yarkora.webp',
+        'Zabrak': 'Zabrak.webp',
+        'Zeltron': 'Zeltron.webp'
+      };
+
+      const filename = speciesImageMap[name];
+      if (filename) {
+        return `/assets/species/${filename}`;
+      }
+
+      // Fallback to placeholder if no image found
+      return 'icons/svg/mystery-man.svg';
     };
 
     const rows = species.map((sp, idx) => `
