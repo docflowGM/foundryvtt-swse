@@ -1,58 +1,85 @@
 <div class="condition-track">
-  <label class="track-label">Condition Track</label>
+  <label class="track-label">Condition</label>
 
   <div class="track-visual flexrow">
 
-    {{!-- Step 0 --}}
-    <div class="track-step normal {{#if (eq system.conditionTrack.current 0)}}active{{/if}}"
+    {{!-- Normal (no checkmark) --}}
+    <div class="track-condition normal {{#if (eq system.conditionTrack.current 0)}}active{{/if}}"
          data-step="0"
-         role="button" tabindex="0"
+         role="button"
+         tabindex="0"
          title="Normal">
-      <div class="step-label">Normal</div>
+      <div class="condition-name">Normal</div>
     </div>
 
-    {{!-- Step 1 --}}
-    <div class="track-step {{#if (eq system.conditionTrack.current 1)}}active{{/if}}"
+    {{!-- Step 1: -1 penalty --}}
+    <div class="track-condition level-1 {{#if (gte system.conditionTrack.current 1)}}active{{/if}}"
          data-step="1"
-         role="button" tabindex="0"
+         role="button"
+         tabindex="0"
          title="-1 to all d20 rolls">
-      <div class="step-label">-1</div>
-      <div class="step-penalty">-1</div>
+      {{#if (gte system.conditionTrack.current 1)}}
+      <div class="checkmark">✓</div>
+      {{else}}
+      <div class="checkbox-empty"></div>
+      {{/if}}
+      <div class="condition-penalty">-1</div>
     </div>
 
-    {{!-- Step 2 --}}
-    <div class="track-step {{#if (eq system.conditionTrack.current 2)}}active{{/if}}"
+    {{!-- Step 2: -2 penalty --}}
+    <div class="track-condition level-2 {{#if (gte system.conditionTrack.current 2)}}active{{/if}}"
          data-step="2"
-         role="button" tabindex="0"
+         role="button"
+         tabindex="0"
          title="-2 to all d20 rolls">
-      <div class="step-label">-2</div>
-      <div class="step-penalty">-2</div>
+      {{#if (gte system.conditionTrack.current 2)}}
+      <div class="checkmark">✓</div>
+      {{else}}
+      <div class="checkbox-empty"></div>
+      {{/if}}
+      <div class="condition-penalty">-2</div>
     </div>
 
-    {{!-- Step 3 --}}
-    <div class="track-step {{#if (eq system.conditionTrack.current 3)}}active{{/if}}"
+    {{!-- Step 3: -5 penalty --}}
+    <div class="track-condition level-3 {{#if (gte system.conditionTrack.current 3)}}active{{/if}}"
          data-step="3"
-         role="button" tabindex="0"
+         role="button"
+         tabindex="0"
          title="-5 to all d20 rolls">
-      <div class="step-label">-5</div>
-      <div class="step-penalty">-5</div>
+      {{#if (gte system.conditionTrack.current 3)}}
+      <div class="checkmark">✓</div>
+      {{else}}
+      <div class="checkbox-empty"></div>
+      {{/if}}
+      <div class="condition-penalty">-5</div>
     </div>
 
-    {{!-- Step 4 --}}
-    <div class="track-step {{#if (eq system.conditionTrack.current 4)}}active{{/if}}"
+    {{!-- Step 4: -10 penalty --}}
+    <div class="track-condition level-4 {{#if (gte system.conditionTrack.current 4)}}active{{/if}}"
          data-step="4"
-         role="button" tabindex="0"
+         role="button"
+         tabindex="0"
          title="-10 to all d20 rolls, half speed">
-      <div class="step-label">-10</div>
-      <div class="step-penalty">-10</div>
+      {{#if (gte system.conditionTrack.current 4)}}
+      <div class="checkmark">✓</div>
+      {{else}}
+      <div class="checkbox-empty"></div>
+      {{/if}}
+      <div class="condition-penalty">-10</div>
     </div>
 
-    {{!-- Step 5 --}}
-    <div class="track-step helpless {{#if (eq system.conditionTrack.current 5)}}active{{/if}}"
+    {{!-- Step 5: Helpless --}}
+    <div class="track-condition level-5 helpless {{#if (gte system.conditionTrack.current 5)}}active{{/if}}"
          data-step="5"
-         role="button" tabindex="0"
-         title="Helpless">
-      <div class="step-label">Helpless</div>
+         role="button"
+         tabindex="0"
+         title="Helpless (unconscious or disabled)">
+      {{#if (gte system.conditionTrack.current 5)}}
+      <div class="checkmark">✓</div>
+      {{else}}
+      <div class="checkbox-empty"></div>
+      {{/if}}
+      <div class="condition-penalty">Helpless</div>
     </div>
 
   </div>

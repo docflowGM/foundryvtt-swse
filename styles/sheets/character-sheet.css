@@ -4800,6 +4800,482 @@ font-size: 12px;
 }
 
 /* ─────────────────────────────────────────────────
+   NEW CONDITION TRACK - CHECKMARK STYLE
+   ───────────────────────────────────────────────── */
+
+.swse .track-visual {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.swse .track-condition {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 45px;
+  padding: 8px 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(0, 168, 204, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.swse .track-condition:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(0, 168, 204, 0.4);
+}
+
+.swse .track-condition.active {
+  background: rgba(217, 83, 79, 0.2);
+  border-color: rgba(217, 83, 79, 0.6);
+}
+
+.swse .track-condition.normal {
+  min-width: 55px;
+}
+
+.swse .track-condition.helpless {
+  border-color: rgba(217, 83, 79, 0.8);
+}
+
+.swse .track-condition.helpless.active {
+  background: rgba(217, 83, 79, 0.4);
+  border-color: rgba(217, 83, 79, 1);
+}
+
+.swse .track-condition .checkmark {
+  font-size: 18px;
+  font-weight: bold;
+  color: #d9534f;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.swse .track-condition .checkbox-empty {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 168, 204, 0.3);
+  border-radius: 2px;
+  margin-bottom: 2px;
+}
+
+.swse .track-condition .condition-name {
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  color: rgba(159, 182, 201, 0.8);
+}
+
+.swse .track-condition .condition-penalty {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(159, 182, 201, 0.9);
+  margin-top: 2px;
+}
+
+.swse .track-condition.active .condition-penalty {
+  color: #d9534f;
+  font-weight: 800;
+}
+
+/* Track controls buttons */
+.swse .track-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.swse .track-button {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border: 1px solid rgba(0, 168, 204, 0.3);
+  background: rgba(0, 168, 204, 0.1);
+  color: rgba(0, 217, 255, 0.9);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.swse .track-button:hover {
+  background: rgba(0, 168, 204, 0.2);
+  border-color: rgba(0, 217, 255, 0.5);
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.2);
+}
+
+.swse .persistent-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(159, 182, 201, 0.8);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.swse .persistent-checkbox input {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+/* ─────────────────────────────────────────────────
+   NEW DEFENSES LAYOUT - STRUCTURED BOXES
+   ───────────────────────────────────────────────── */
+
+.swse .sheet-header .defense-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.swse .sheet-header .defense-ability-select {
+  font-size: 10px;
+  padding: 2px 4px;
+  background: rgba(0, 40, 80, 0.6);
+  border: 1px solid rgba(0, 168, 204, 0.3);
+  color: rgba(0, 217, 255, 0.9);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.swse .sheet-header .defense-ability-select:hover {
+  border-color: rgba(0, 217, 255, 0.5);
+}
+
+/* Defense calculation breakdown boxes */
+.swse .sheet-header .defense-base,
+.swse .sheet-header .defense-level,
+.swse .sheet-header .defense-ability,
+.swse .sheet-header .defense-class,
+.swse .sheet-header .defense-misc {
+  font-size: 9px;
+  color: rgba(159, 182, 201, 0.7);
+  text-align: center;
+  padding: 2px 1px;
+  min-height: 12px;
+  line-height: 1.2;
+}
+
+.swse .sheet-header .flatfooted-note {
+  font-size: 8px;
+  color: rgba(159, 182, 201, 0.6);
+  text-align: center;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* ─────────────────────────────────────────────────
+   FEATS GRID - 5 COLUMN CARD LAYOUT
+   ───────────────────────────────────────────────── */
+
+.swse .feats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.swse .feat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(0, 40, 80, 0.6), rgba(0, 20, 40, 0.4));
+  border: 1px solid rgba(0, 168, 204, 0.25);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  min-height: 140px;
+}
+
+.swse .feat-card:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(0, 60, 100, 0.8), rgba(0, 40, 60, 0.6));
+  border-color: rgba(0, 217, 255, 0.6);
+  box-shadow: 0 0 12px rgba(0, 217, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.swse .feat-card.select-feat {
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.swse .feat-card .feat-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 168, 204, 0.1);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 168, 204, 0.2);
+  font-size: 24px;
+}
+
+.swse .feat-card h5 {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(0, 217, 255, 0.9);
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swse .feat-card p {
+  font-size: 9px;
+  color: rgba(159, 182, 201, 0.7);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.swse .feat-card .feat-prereqs {
+  color: rgba(255, 150, 100, 0.8);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.swse .feat-card .feat-suggestion-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+.swse .feat-card:disabled,
+.swse .feat-card.unqualified {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.swse .feat-card.is-suggested {
+  border-color: rgba(255, 200, 100, 0.4);
+  background: rgba(255, 200, 100, 0.05);
+}
+
+.swse .feat-card.is-suggested.recommended {
+  border-color: rgba(100, 200, 255, 0.6);
+  background: rgba(100, 200, 255, 0.1);
+}
+
+.swse .feat-card .item-controls {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  width: 100%;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.swse .feat-card:hover .item-controls {
+  opacity: 1;
+}
+
+.swse .feat-card .item-control {
+  color: rgba(0, 217, 255, 0.6);
+  padding: 4px;
+  border-radius: 3px;
+  transition: all 0.15s ease;
+}
+
+.swse .feat-card .item-control:hover {
+  color: rgba(0, 217, 255, 1);
+  background: rgba(0, 217, 255, 0.2);
+}
+
+/* ─────────────────────────────────────────────────
+   SUMMARY TAB LAYOUT REORGANIZATION
+   ───────────────────────────────────────────────── */
+
+.swse .summary-tab {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  grid-auto-flow: dense;
+}
+
+/* ABILITIES SECTION */
+.swse .summary-tab .abilities-quick {
+  grid-column: 1 / -1;
+  order: 1;
+}
+
+.swse .abilities-quick h3 {
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--holo-cyan);
+  padding-bottom: 8px;
+}
+
+.swse .abilities-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+/* COMBAT STATS (HP/Speed/Initiative) */
+.swse .summary-tab .combat-stats {
+  grid-column: 1;
+  order: 2;
+}
+
+.swse .combat-stats h3 {
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--holo-cyan);
+  padding-bottom: 8px;
+}
+
+/* DEFENSES SECTION - move to 2-column layout */
+.swse .summary-tab .defenses-detail {
+  grid-column: 2;
+  order: 3;
+}
+
+.swse .defenses-detail h3 {
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--holo-cyan);
+  padding-bottom: 8px;
+}
+
+.swse .defenses-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.swse .defense-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background: rgba(0, 168, 204, 0.05);
+  border: 1px solid rgba(0, 168, 204, 0.2);
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.swse .defense-detail-row label {
+  font-weight: bold;
+  min-width: 80px;
+  color: var(--holo-cyan);
+}
+
+.swse .defense-calculation {
+  display: flex;
+  gap: 2px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.swse .defense-calculation span {
+  color: var(--muted);
+}
+
+.swse .defense-total {
+  font-weight: bold;
+  color: var(--holo-cyan);
+  min-width: 30px;
+  text-align: right;
+}
+
+/* QUICK ATTACKS / COMMON ATTACKS */
+.swse .summary-tab .quick-attacks {
+  grid-column: 1 / -1;
+  order: 4;
+}
+
+.swse .quick-attacks h4 {
+  margin-bottom: 10px;
+  color: var(--holo-cyan);
+}
+
+/* DESTINY SECTION */
+.swse .summary-tab .destiny-section {
+  grid-column: 1 / -1;
+  order: 5;
+}
+
+.swse .destiny-section h3 {
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--holo-cyan);
+  padding-bottom: 8px;
+}
+
+/* RACIAL/SPECIES TRAITS */
+.swse .summary-tab .racial-traits {
+  grid-column: 1 / -1;
+  order: 6;
+}
+
+.swse .racial-traits h3 {
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--holo-cyan);
+  padding-bottom: 8px;
+}
+
+.swse .racial-traits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+/* CHARACTER TRAITS / DARK SIDE */
+.swse .summary-tab .character-traits {
+  grid-column: 1;
+  order: 7;
+}
+
+.swse .character-traits h3 {
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--holo-cyan);
+  padding-bottom: 8px;
+}
+
+/* DROID IMMUNITIES */
+.swse .summary-tab .droid-immunities {
+  grid-column: 1 / -1;
+  order: 8;
+}
+
+.swse .droid-immunities h3 {
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--holo-cyan);
+  padding-bottom: 8px;
+}
+
+.swse .immunities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+}
+
+/* ─────────────────────────────────────────────────
    RESPONSIVE ADJUSTMENTS
    ───────────────────────────────────────────────── */
 
@@ -4820,5 +5296,31 @@ font-size: 12px;
   .swse nav.sheet-tabs .item {
     padding: 6px 10px;
     font-size: 10px;
+  }
+
+  .swse .feats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Summary tab responsive */
+  .swse .summary-tab {
+    grid-template-columns: 1fr;
+  }
+
+  .swse .summary-tab .combat-stats,
+  .swse .summary-tab .defenses-detail {
+    grid-column: 1;
+  }
+
+  .swse .summary-tab .character-traits {
+    grid-column: 1;
+  }
+
+  .swse .abilities-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .swse .racial-traits-grid {
+    grid-template-columns: 1fr;
   }
 }

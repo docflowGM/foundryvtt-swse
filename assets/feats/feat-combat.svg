@@ -1,0 +1,11 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="combatGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#cc3300;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#880000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" fill="url(#combatGrad)" rx="8"/>
+  <path d="M 35 30 L 50 50 L 35 70 L 45 70 L 60 50 L 45 30 Z" fill="#fff" opacity="0.9"/>
+  <path d="M 55 30 L 70 50 L 55 70 L 65 70 L 80 50 L 65 30 Z" fill="#fff" opacity="0.7"/>
+</svg>
