@@ -69,17 +69,23 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
           total: new fields.NumberField({ required: true, initial: 10, integer: true }),
           armor: new fields.NumberField({ required: true, initial: 0, integer: true }),
           classBonus: new fields.NumberField({ required: true, initial: 0, integer: true }),
-          misc: new fields.NumberField({ required: true, initial: 0, integer: true })
+          misc: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          abilityKey: new fields.StringField({ required: true, initial: 'dex' })
         }),
         fortitude: new fields.SchemaField({
           total: new fields.NumberField({ required: true, initial: 10, integer: true }),
           classBonus: new fields.NumberField({ required: true, initial: 0, integer: true }),
-          misc: new fields.NumberField({ required: true, initial: 0, integer: true })
+          misc: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          abilityKey: new fields.StringField({ required: true, initial: 'str' })
         }),
         will: new fields.SchemaField({
           total: new fields.NumberField({ required: true, initial: 10, integer: true }),
           classBonus: new fields.NumberField({ required: true, initial: 0, integer: true }),
-          misc: new fields.NumberField({ required: true, initial: 0, integer: true })
+          misc: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          abilityKey: new fields.StringField({ required: true, initial: 'wis' })
+        }),
+        flatFooted: new fields.SchemaField({
+          total: new fields.NumberField({ required: true, initial: 10, integer: true })
         })
       }),
 

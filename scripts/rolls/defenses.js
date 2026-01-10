@@ -12,16 +12,24 @@
 export function calculateDefense(actor, type) {
   const utils = game.swse.utils;
   const def = actor.system.defenses?.[type];
-  
+
   if (!def) return 10;
 
   const base = 10;
   const lvl = actor.system.level || 1;
-  const abilityScore = actor.system.attributes[def.ability]?.base ?? 10;
+
+  // Use abilityKey if available, otherwise fall back to default abilities by type
+  let abilityKey = def.abilityKey;
+  if (!abilityKey) {
+    const defaultAbilities = { fortitude: 'str', reflex: 'dex', will: 'wis' };
+    abilityKey = defaultAbilities[type] || 'str';
+  }
+
+  const abilityScore = actor.system.attributes[abilityKey]?.base ?? 10;
   const ability = utils.math.calculateAbilityModifier(abilityScore);
   const armor = def.armor || 0;
-  const misc = def.modifier || 0;
-  const cls = def.class || 0;
+  const misc = def.misc || def.modifier || 0;
+  const cls = def.classBonus || def.class || 0;
 
   return utils.math.calculateDefense(
     base,
