@@ -306,6 +306,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     html.find('.pick-species-btn').click(ev => this._onPickSpecies(ev));
     html.find('.add-class-btn').click(ev => this._onAddClass(ev));
 
+    // ========== CONDITION TRACK ==========
+    html.find('.track-step').click(ev => this._onConditionTrackClick(ev));
+    html.find('.track-button.improve').click(ev => this._onRecoverCondition(ev));
+    html.find('.track-button.worsen').click(ev => this._onWorsenCondition(ev));
+
     // ========== PROGRESSION ENGINE BUTTONS ==========
     html.find('.roll-attributes-btn').click(ev => this._onRollAttributes(ev));
 
@@ -524,6 +529,39 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   async _onAddClass(event) {
     event.preventDefault();
     return this._showClassPicker();
+  }
+
+  // ----------------------------------------------------------
+  // Condition Track Handlers
+  // ----------------------------------------------------------
+
+  /**
+   * Handle clicking on a condition track step
+   */
+  async _onConditionTrackClick(event) {
+    event.preventDefault();
+    const step = Number(event.currentTarget.dataset.step);
+    await this.actor.update({ 'system.conditionTrack.current': step });
+    ui.notifications.info(`Condition set to Step ${step}`);
+  }
+
+  /**
+   * Handle recovering one condition step
+   */
+  async _onRecoverCondition(event) {
+    event.preventDefault();
+    const current = Math.max(0, this.actor.system.conditionTrack.current - 1);
+    await this.actor.update({ 'system.conditionTrack.current': current });
+  }
+
+  /**
+   * Handle worsening condition by one step
+   */
+  async _onWorsenCondition(event) {
+    event.preventDefault();
+    const max = 5; // Helpless is step 5
+    const current = Math.min(max, this.actor.system.conditionTrack.current + 1);
+    await this.actor.update({ 'system.conditionTrack.current': current });
   }
 
   // ----------------------------------------------------------
