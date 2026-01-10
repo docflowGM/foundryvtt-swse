@@ -4800,6 +4800,184 @@ font-size: 12px;
 }
 
 /* ─────────────────────────────────────────────────
+   NEW CONDITION TRACK - CHECKMARK STYLE
+   ───────────────────────────────────────────────── */
+
+.swse .track-visual {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.swse .track-condition {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 45px;
+  padding: 8px 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(0, 168, 204, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.swse .track-condition:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(0, 168, 204, 0.4);
+}
+
+.swse .track-condition.active {
+  background: rgba(217, 83, 79, 0.2);
+  border-color: rgba(217, 83, 79, 0.6);
+}
+
+.swse .track-condition.normal {
+  min-width: 55px;
+}
+
+.swse .track-condition.helpless {
+  border-color: rgba(217, 83, 79, 0.8);
+}
+
+.swse .track-condition.helpless.active {
+  background: rgba(217, 83, 79, 0.4);
+  border-color: rgba(217, 83, 79, 1);
+}
+
+.swse .track-condition .checkmark {
+  font-size: 18px;
+  font-weight: bold;
+  color: #d9534f;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.swse .track-condition .checkbox-empty {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 168, 204, 0.3);
+  border-radius: 2px;
+  margin-bottom: 2px;
+}
+
+.swse .track-condition .condition-name {
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  color: rgba(159, 182, 201, 0.8);
+}
+
+.swse .track-condition .condition-penalty {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(159, 182, 201, 0.9);
+  margin-top: 2px;
+}
+
+.swse .track-condition.active .condition-penalty {
+  color: #d9534f;
+  font-weight: 800;
+}
+
+/* Track controls buttons */
+.swse .track-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.swse .track-button {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border: 1px solid rgba(0, 168, 204, 0.3);
+  background: rgba(0, 168, 204, 0.1);
+  color: rgba(0, 217, 255, 0.9);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.swse .track-button:hover {
+  background: rgba(0, 168, 204, 0.2);
+  border-color: rgba(0, 217, 255, 0.5);
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.2);
+}
+
+.swse .persistent-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(159, 182, 201, 0.8);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.swse .persistent-checkbox input {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+/* ─────────────────────────────────────────────────
+   NEW DEFENSES LAYOUT - STRUCTURED BOXES
+   ───────────────────────────────────────────────── */
+
+.swse .sheet-header .defense-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.swse .sheet-header .defense-ability-select {
+  font-size: 10px;
+  padding: 2px 4px;
+  background: rgba(0, 40, 80, 0.6);
+  border: 1px solid rgba(0, 168, 204, 0.3);
+  color: rgba(0, 217, 255, 0.9);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.swse .sheet-header .defense-ability-select:hover {
+  border-color: rgba(0, 217, 255, 0.5);
+}
+
+/* Defense calculation breakdown boxes */
+.swse .sheet-header .defense-base,
+.swse .sheet-header .defense-level,
+.swse .sheet-header .defense-ability,
+.swse .sheet-header .defense-class,
+.swse .sheet-header .defense-misc {
+  font-size: 9px;
+  color: rgba(159, 182, 201, 0.7);
+  text-align: center;
+  padding: 2px 1px;
+  min-height: 12px;
+  line-height: 1.2;
+}
+
+.swse .sheet-header .flatfooted-note {
+  font-size: 8px;
+  color: rgba(159, 182, 201, 0.6);
+  text-align: center;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* ─────────────────────────────────────────────────
    RESPONSIVE ADJUSTMENTS
    ───────────────────────────────────────────────── */
 
