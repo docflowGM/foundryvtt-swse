@@ -671,16 +671,19 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     });
 
     // Create species selection dialog with card UI
-    // Generate asset filename from species name (lowercase, hyphens)
+    // Generate asset filename from species name
+    // Naming convention: preserve case, replace spaces with underscores
     const getSpeciesImagePath = (name) => {
-      const filename = name.toLowerCase().replace(/\s+/g, '-') + '.webp';
-      return `/assets/species/${filename}`;
+      // Match actual file naming: replace spaces with underscores, keep apostrophes and case
+      const filename = name.replace(/\s+/g, '_');
+      // Try webp first, with jpg as fallback via onerror
+      return `/assets/species/${filename}.webp`;
     };
 
     const rows = species.map((sp, idx) => `
       <div class="species-choice-card" data-key="${idx}" data-species="${foundry.utils.escapeHTML(sp.name)}" style="cursor: pointer; padding: 12px; border: 1px solid #ccc; border-radius: 4px; margin: 8px; display: inline-block; min-width: 120px; text-align: center; transition: all 0.2s;">
         <div class="species-img-wrapper" style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 8px auto; background: #666; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-          <img src="${foundry.utils.escapeHTML(getSpeciesImagePath(sp.name))}" alt="${foundry.utils.escapeHTML(sp.name)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <img src="${foundry.utils.escapeHTML(getSpeciesImagePath(sp.name))}" alt="${foundry.utils.escapeHTML(sp.name)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="if(this.src.endsWith('.webp')){this.src=this.src.replace('.webp','.jpg');}else{this.style.display='none';this.nextElementSibling.style.display='block';}">
           <i class="fas fa-dna" style="color: #fff; font-size: 24px; display: none;"></i>
         </div>
         <strong>${foundry.utils.escapeHTML(sp.name)}</strong>
