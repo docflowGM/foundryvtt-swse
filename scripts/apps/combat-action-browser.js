@@ -58,17 +58,23 @@ export class SWSECombatActionBrowser extends Application {
 
   static _addHUDButtonHook() {
     Hooks.on("renderTokenHUD", (hud, html) => {
-      const btn = $(`<div class="control-icon swse-action-hud">
-        <i class="fas fa-crossed-swords"></i>
-      </div>`);
+      // Convert to DOM element if needed (v13 compatibility)
+      const hudElement = html instanceof HTMLElement ? html : html[0];
+      if (!hudElement) return;
 
-      btn.attr("title", "Open Combat Action Browser");
+      const btn = document.createElement("div");
+      btn.classList.add("control-icon", "swse-action-hud");
+      btn.innerHTML = `<i class="fas fa-crossed-swords"></i>`;
+      btn.title = "Open Combat Action Browser";
 
-      btn.click(() => {
+      btn.addEventListener("click", () => {
         new SWSECombatActionBrowser().render(true);
       });
 
-      html.find(".col.right").append(btn);
+      const colRight = hudElement.querySelector(".col.right");
+      if (colRight) {
+        colRight.appendChild(btn);
+      }
     });
   }
 
