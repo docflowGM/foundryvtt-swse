@@ -141,7 +141,7 @@ export class ActorValidationMigration {
           SWSELogger.log(`Fixing ${actor.name}: creating missing defenses structure`);
           updates['system.defenses'] = {
             reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
-            fortitude: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+            fort: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
             will: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 }
           };
           needsUpdate = true;
@@ -178,30 +178,30 @@ export class ActorValidationMigration {
           }
 
           // Fix Fortitude defense - create if missing
-          if (!defenses.fortitude) {
+          if (!defenses.fort) {
             SWSELogger.log(`Fixing ${actor.name}: creating missing fortitude defense`);
-            updates['system.defenses.fortitude'] = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
+            updates['system.defenses.fort'] = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
             needsUpdate = true;
           } else {
             // Fix individual fields
-            if (defenses.fortitude.ability === undefined || !Number.isInteger(defenses.fortitude.ability)) {
-              updates['system.defenses.fortitude.ability'] = ensureInt(defenses.fortitude.ability);
+            if (defenses.fort.ability === undefined || !Number.isInteger(defenses.fort.ability)) {
+              updates['system.defenses.fort.ability'] = ensureInt(defenses.fort.ability);
               needsUpdate = true;
             }
-            if (defenses.fortitude.armor === undefined || !Number.isInteger(defenses.fortitude.armor)) {
-              updates['system.defenses.fortitude.armor'] = ensureInt(defenses.fortitude.armor);
+            if (defenses.fort.armor === undefined || !Number.isInteger(defenses.fort.armor)) {
+              updates['system.defenses.fort.armor'] = ensureInt(defenses.fort.armor);
               needsUpdate = true;
             }
-            if (defenses.fortitude.classBonus === undefined || !Number.isInteger(defenses.fortitude.classBonus)) {
-              updates['system.defenses.fortitude.classBonus'] = ensureInt(defenses.fortitude.classBonus);
+            if (defenses.fort.classBonus === undefined || !Number.isInteger(defenses.fort.classBonus)) {
+              updates['system.defenses.fort.classBonus'] = ensureInt(defenses.fort.classBonus);
               needsUpdate = true;
             }
-            if (defenses.fortitude.misc === undefined || !Number.isInteger(defenses.fortitude.misc)) {
-              updates['system.defenses.fortitude.misc'] = ensureInt(defenses.fortitude.misc);
+            if (defenses.fort.misc === undefined || !Number.isInteger(defenses.fort.misc)) {
+              updates['system.defenses.fort.misc'] = ensureInt(defenses.fort.misc);
               needsUpdate = true;
             }
-            if (defenses.fortitude.base === undefined || !Number.isInteger(defenses.fortitude.base)) {
-              updates['system.defenses.fortitude.base'] = ensureInt(defenses.fortitude.base, 10);
+            if (defenses.fort.base === undefined || !Number.isInteger(defenses.fort.base)) {
+              updates['system.defenses.fort.base'] = ensureInt(defenses.fort.base, 10);
               needsUpdate = true;
             }
           }
