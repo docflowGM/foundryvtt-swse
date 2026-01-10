@@ -25,10 +25,10 @@ export function _recalcDefenses() {
     this.characterData.abilities.con.mod || 0,
     this.characterData.abilities.str.mod || 0
   );
-  this.characterData.defenses.fortitude.total =
+  this.characterData.defenses.fort.total =
     10 + halfLevel + fortAbility +
-    this.characterData.defenses.fortitude.classBonus +
-    this.characterData.defenses.fortitude.misc;
+    this.characterData.defenses.fort.classBonus +
+    this.characterData.defenses.fort.misc;
 
   // Reflex: 10 + level/2 + DEX + class bonus + misc
   this.characterData.defenses.reflex.total =

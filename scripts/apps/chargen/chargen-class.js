@@ -89,7 +89,7 @@ export async function _onSelectClass(event) {
 
     // Defense bonuses
     if (classDoc.system.defenses) {
-      this.characterData.defenses.fortitude.classBonus = Number(classDoc.system.defenses.fortitude) || 0;
+      this.characterData.defenses.fort.classBonus = Number(classDoc.system.defenses.fort) || 0;
       this.characterData.defenses.reflex.classBonus = Number(classDoc.system.defenses.reflex) || 0;
       this.characterData.defenses.will.classBonus = Number(classDoc.system.defenses.will) || 0;
     }
