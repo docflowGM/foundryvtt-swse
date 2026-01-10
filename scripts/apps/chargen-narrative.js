@@ -11,8 +11,8 @@ import { TalentTreeVisualizer } from './talent-tree-visualizer.js';
 
 export default class CharacterGeneratorNarrative extends CharacterGeneratorImproved {
 
-  constructor(options) {
-    super(options);
+  constructor(actor = null, options = {}) {
+    super(actor, options);
     // Always use Ol' Salty (the Scoundrel mentor) as the chargen narrator
     this.narrator = MENTORS.Scoundrel;
     this.narratorPersonality = 'salty'; // Ol' Salty's unique personality
