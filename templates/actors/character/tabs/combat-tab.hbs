@@ -165,11 +165,22 @@
 
  <h3 class="section-header">Feats</h3>
 
- <div class="feats-list">
+ <div class="feats-grid">
  {{#each feats as |feat|}}
- <div class="feat-row flexrow" data-item-id="{{feat._id}}">
- <img src="{{feat.img}}" width="20" height="20" alt="{{feat.name}}"/>
- <span class="feat-name">{{feat.name}}</span>
+ <div class="feat-card" data-item-id="{{feat._id}}" title="{{feat.name}}">
+ <div class="feat-icon">
+ {{#if feat.img}}
+ <img src="{{feat.img}}" alt="{{feat.name}}" width="48" height="48"/>
+ {{else}}
+ <i class="fas fa-star"></i>
+ {{/if}}
+ </div>
+ <h5>{{feat.name}}</h5>
+ {{#if feat.system.prerequisite}}
+ <p class="feat-prereqs">
+ <i class="fas fa-link"></i> {{feat.system.prerequisite}}
+ </p>
+ {{/if}}
  <div class="item-controls flexrow">
  <a class="item-control item-edit" data-action="edit" title="Edit">
  <i class="fas fa-edit"></i>
@@ -180,11 +191,11 @@
  </div>
  </div>
  {{/each}}
+ </div>
 
  <button class="add-feat" data-action="createItem" data-type="feat">
- <i class="fas fa-star"></i> Add Feat
+ <i class="fas fa-plus"></i> Add Feat
  </button>
- </div>
 
  {{!-- Feat Actions Panel --}}
  {{> "systems/foundryvtt-swse/templates/partials/feat-actions-panel.hbs" featActions=featActions}}
