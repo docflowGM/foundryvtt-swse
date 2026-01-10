@@ -34,7 +34,7 @@ export async function _renderBackgroundCards(container) {
 }
 
 // Selection handler
-export function _onSelectBackground(event) {
+export async function _onSelectBackground(event) {
   event.preventDefault();
   const id = event.currentTarget.dataset.bg;
 
@@ -52,7 +52,7 @@ export function _onSelectBackground(event) {
   };
 
   ui.notifications.info("Background selected: " + selected.name);
-  this.render();
+  await this.render();
 }
 
 // Used to mark skills as class skills due to background
@@ -76,7 +76,7 @@ export function _getBackgroundNarratorComment(cat) {
  * Handle random background selection
  * @param {Event} event - The click event
  */
-export function _onRandomBackground(event) {
+export async function _onRandomBackground(event) {
   event.preventDefault();
 
   if (!this.backgrounds || this.backgrounds.length === 0) {
@@ -100,14 +100,14 @@ export function _onRandomBackground(event) {
   };
 
   ui.notifications.info(`Random background selected: ${selected.name}`);
-  this.render();
+  await this.render();
 }
 
 /**
  * Handle changing the selected background (clearing it to select a new one)
  * @param {Event} event - The click event
  */
-export function _onChangeBackground(event) {
+export async function _onChangeBackground(event) {
   event.preventDefault();
 
   // Clear the current background selection
@@ -115,5 +115,5 @@ export function _onChangeBackground(event) {
   this.characterData.backgroundSkills = [];
 
   ui.notifications.info("Background cleared. Please select a new background.");
-  this.render();
+  await this.render();
 }
