@@ -165,7 +165,15 @@ export class SWSEActorSheetBase extends BaseSheet {
   // -----------------------------
   async _onAction(event) {
     event.preventDefault();
-    const action = event.currentTarget.dataset.action;
+    // Find the actual element with data-action (event.currentTarget is the listener's element)
+    const actionElement = event.target.closest('[data-action]');
+    const action = actionElement?.dataset?.action;
+
+    if (!action) {
+      SWSELogger.warn('_onAction called but no action found on element');
+      return;
+    }
+
     const fn = this[`_on${action.charAt(0).toUpperCase() + action.slice(1)}`];
 
     if (typeof fn === 'function') return fn.call(this, event);
@@ -179,8 +187,10 @@ export class SWSEActorSheetBase extends BaseSheet {
   // -----------------------------
   async _onItemControl(event) {
     event.preventDefault();
-    const act = event.currentTarget.dataset.action;
-    const li = event.currentTarget.closest('[data-item-id]');
+    // Find the actual element with the action (event.currentTarget is the listener's element)
+    const controlElement = event.target.closest('.item-control');
+    const act = controlElement?.dataset?.action;
+    const li = controlElement?.closest('[data-item-id]');
     const item = this.actor.items.get(li?.dataset.itemId);
 
     if (!item) return;

@@ -643,7 +643,10 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     const rows = species.map((sp, idx) => `
       <div class="species-choice-card" data-key="${idx}" data-species="${escapeHTML(sp.name)}" style="cursor: pointer; padding: 12px; border: 1px solid #ccc; border-radius: 4px; margin: 8px; display: inline-block; min-width: 120px; text-align: center; transition: all 0.2s;">
-        <img src="${escapeHTML(getSpeciesImagePath(sp.name))}" alt="${escapeHTML(sp.name)}" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 8px; object-fit: cover; background: #666;" onerror="this.innerHTML='<i class=\"fas fa-dna\" style=\"color: #fff; font-size: 24px;\"></i>'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center';">
+        <div class="species-img-wrapper" style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 8px auto; background: #666; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+          <img src="${escapeHTML(getSpeciesImagePath(sp.name))}" alt="${escapeHTML(sp.name)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <i class="fas fa-dna" style="color: #fff; font-size: 24px; display: none;"></i>
+        </div>
         <strong>${escapeHTML(sp.name)}</strong>
       </div>`
     ).join("");
@@ -684,21 +687,32 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
               if (!confirmed) return;
             }
 
-            // Use progression engine if available
-            try {
-              const { SWSEProgressionEngine } = await import('../../engine/progression.js');
-              const engine = new SWSEProgressionEngine(this.actor, "chargen");
+            // Check if species is supported by progression engine
+            const { PROGRESSION_RULES } = await import('../../progression/data/progression-data.js');
+            const speciesSupported = PROGRESSION_RULES.species.hasOwnProperty(doc.name);
 
-              // Call the progression engine action
-              await engine.doAction('confirmSpecies', {
-                speciesId: doc.name,
-                abilityChoice: null // Will prompt separately if needed (human bonus)
-              });
+            if (speciesSupported) {
+              // Use progression engine for supported species
+              try {
+                const { SWSEProgressionEngine } = await import('../../engine/progression.js');
+                const engine = new SWSEProgressionEngine(this.actor, "chargen");
 
-              ui.notifications.info(`Species set to ${doc.name}`);
-            } catch (err) {
-              // Fallback to old method if progression engine fails
-              console.warn("Progression engine failed, using fallback:", err);
+                // Call the progression engine action
+                await engine.doAction('confirmSpecies', {
+                  speciesId: doc.name,
+                  abilityChoice: null // Will prompt separately if needed (human bonus)
+                });
+
+                ui.notifications.info(`Species set to ${doc.name}`);
+              } catch (err) {
+                // Fallback to drop handler if progression engine fails
+                console.warn("Progression engine failed, using fallback:", err);
+                const { DropHandler } = await import('../../drag-drop/drop-handler.js');
+                await DropHandler.handleSpeciesDrop(this.actor, doc);
+                ui.notifications.info(`Species set to ${doc.name}`);
+              }
+            } else {
+              // Use drop handler directly for unsupported species
               const { DropHandler } = await import('../../drag-drop/drop-handler.js');
               await DropHandler.handleSpeciesDrop(this.actor, doc);
               ui.notifications.info(`Species set to ${doc.name}`);
@@ -721,39 +735,85 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     const classes = await getAvailableClasses(this.actor, {});
     if (!classes?.length) return ui.notifications.warn("No classes available.");
 
-    return this._showSelectionDialog(
-      "Select Class",
-      classes,
-      cls => `<strong>${cls.name}</strong> — ${cls.description ?? ""}`,
-      async cls => {
-        // Use progression engine if available
-        try {
-          const { SWSEProgressionEngine } = await import('../../engine/progression.js');
-          const engine = new SWSEProgressionEngine(this.actor, "chargen");
+    // Class icons mapping
+    const classIcons = {
+      'Soldier': 'fa-sword',
+      'Jedi': 'fa-hand-sparkles',
+      'Noble': 'fa-crown',
+      'Scout': 'fa-binoculars',
+      'Scoundrel': 'fa-mask'
+    };
 
-          // Call the progression engine action
-          await engine.doAction('confirmClass', {
-            classId: cls.id,
-            skipPrerequisites: false
+    // Create card-based class picker
+    const rows = classes.map((cls, idx) => `
+      <div class="class-choice-card" data-key="${idx}" data-class="${escapeHTML(cls.name)}" style="cursor: pointer; padding: 16px; border: 1px solid #ccc; border-radius: 8px; margin: 8px; min-width: 200px; transition: all 0.2s; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <i class="fas ${classIcons[cls.name] || 'fa-user'}" style="font-size: 24px; color: #4a9eff;"></i>
+          <div>
+            <strong style="font-size: 1.1em; color: #fff;">${escapeHTML(cls.name)}</strong>
+            <p style="margin: 4px 0 0 0; font-size: 0.9em; color: #aaa;">${escapeHTML(cls.description || '')}</p>
+          </div>
+        </div>
+      </div>`
+    ).join("");
+
+    const dialog = new Dialog({
+      title: "Select Class",
+      content: `<div class="swse-class-picker" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 8px;">${rows}</div>`,
+      buttons: {
+        cancel: { label: "Cancel" }
+      },
+      render: html => {
+        html[0].querySelectorAll(".class-choice-card").forEach(card => {
+          card.addEventListener("mouseenter", (evt) => {
+            evt.currentTarget.style.transform = "scale(1.02)";
+            evt.currentTarget.style.boxShadow = "0 4px 12px rgba(74,158,255,0.3)";
+            evt.currentTarget.style.borderColor = "#4a9eff";
           });
 
-          ui.notifications.info(`Class selected: ${cls.name}`);
-        } catch (err) {
-          // Fallback to direct item creation if progression engine fails
-          console.warn("Progression engine failed for class, using fallback:", err);
-          const classItem = {
-            name: cls.name,
-            type: 'class',
-            system: {
-              level: 1,
-              description: cls.description || ''
+          card.addEventListener("mouseleave", (evt) => {
+            evt.currentTarget.style.transform = "scale(1)";
+            evt.currentTarget.style.boxShadow = "none";
+            evt.currentTarget.style.borderColor = "#ccc";
+          });
+
+          card.addEventListener("click", async () => {
+            const key = Number(card.dataset.key);
+            const cls = classes[key];
+
+            // Use progression engine if available
+            try {
+              const { SWSEProgressionEngine } = await import('../../engine/progression.js');
+              const engine = new SWSEProgressionEngine(this.actor, "chargen");
+
+              // Call the progression engine action
+              await engine.doAction('confirmClass', {
+                classId: cls.id,
+                skipPrerequisites: false
+              });
+
+              ui.notifications.info(`Class selected: ${cls.name}`);
+            } catch (err) {
+              // Fallback to direct item creation if progression engine fails
+              console.warn("Progression engine failed for class, using fallback:", err);
+              const classItem = {
+                name: cls.name,
+                type: 'class',
+                system: {
+                  level: 1,
+                  description: cls.description || ''
+                }
+              };
+              await this.actor.createEmbeddedDocuments("Item", [classItem]);
+              ui.notifications.info(`Class added: ${cls.name}`);
             }
-          };
-          await this.actor.createEmbeddedDocuments("Item", [classItem]);
-          ui.notifications.info(`Class added: ${cls.name}`);
-        }
+
+            dialog.close();
+          });
+        });
       }
-    );
+    });
+    dialog.render(true);
   }
 
   // ----------------------------------------------------------

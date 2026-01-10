@@ -6,7 +6,7 @@
  <label>Base Attack Bonus</label>
  <input type="number" 
  name="system.bab" 
- value="{{system.bab}}" 
+ value="{{safeNumber system.bab 0}}" 
  data-dtype="Number"
  placeholder="0"/>
  </div>
@@ -15,7 +15,7 @@
  <label>Speed</label>
  <input type="number" 
  name="system.speed" 
- value="{{system.speed}}" 
+ value="{{safeNumber system.speed 6}}" 
  data-dtype="Number"
  placeholder="6"/> squares
  </div>
