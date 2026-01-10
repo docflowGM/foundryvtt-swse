@@ -121,9 +121,13 @@
  {{/if}}
 
  {{#if extraUses}}
- <div class="actions-category">
- <h4><i class="fas fa-book" aria-hidden="true"></i> Other Uses</h4>
- <div class="actions-list">
+ <div class="actions-category extra-uses-category collapsible">
+ <h4 class="category-header collapsible-toggle" data-skill="{{../key}}">
+ <i class="fas fa-book" aria-hidden="true"></i> Other Uses
+ <span class="use-count">({{extraUses.length}})</span>
+ <i class="fas fa-chevron-down collapse-icon" aria-hidden="true"></i>
+ </h4>
+ <div class="actions-list collapsible-content collapsed">
  {{#each extraUses}}
  <div class="action-item skill-use-rollable" data-skill="{{../../key}}" data-action-name="{{name}}" data-dc="{{dc}}" data-effect="{{effect}}">
  <div class="action-header">

@@ -4651,6 +4651,52 @@ font-size: 12px;
 }
 
 /* ─────────────────────────────────────────────────
+   COLLAPSIBLE SKILL USES SECTION
+   ───────────────────────────────────────────────── */
+
+.swse .extra-uses-category .category-header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.swse .extra-uses-category .category-header:hover {
+  background: rgba(0, 168, 204, 0.1);
+  border-radius: 4px;
+}
+
+.swse .extra-uses-category .use-count {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  font-weight: normal;
+}
+
+.swse .extra-uses-category .collapse-icon {
+  margin-left: auto;
+  transition: transform 0.2s ease;
+}
+
+.swse .extra-uses-category.expanded .collapse-icon {
+  transform: rotate(180deg);
+}
+
+.swse .extra-uses-category .collapsible-content {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+  max-height: 2000px;
+  opacity: 1;
+}
+
+.swse .extra-uses-category .collapsible-content.collapsed {
+  max-height: 0;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+}
+
+/* ─────────────────────────────────────────────────
    RESPONSIVE ADJUSTMENTS
    ───────────────────────────────────────────────── */
 

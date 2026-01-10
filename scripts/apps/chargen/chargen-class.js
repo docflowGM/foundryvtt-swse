@@ -136,10 +136,9 @@ export async function _onSelectClass(event) {
           diceTotal = numDice * dieSize;
           SWSELogger.log(`CharGen | Starting credits (max): ${numDice}d${dieSize} = ${diceTotal}, × ${multiplier} = ${diceTotal * multiplier}`);
         } else {
-          // Roll dice
-          const roll = globalThis.SWSE.RollEngine.safeRoll(`${numDice}d${dieSize}`);
-          roll.evaluate({async: false});
-          diceTotal = roll.total;
+          // Roll dice - safeRoll is async and returns an already-evaluated roll
+          const roll = await globalThis.SWSE.RollEngine.safeRoll(`${numDice}d${dieSize}`);
+          diceTotal = roll?.total || (numDice * dieSize); // Fallback to max if roll fails
           SWSELogger.log(`CharGen | Starting credits (rolled): ${numDice}d${dieSize} = ${diceTotal}, × ${multiplier} = ${diceTotal * multiplier}`);
         }
 

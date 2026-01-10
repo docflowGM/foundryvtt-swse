@@ -383,6 +383,22 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._toggleSkillActionCard(card);
     });
 
+    // ========== COLLAPSIBLE SKILL USE SECTIONS ==========
+    html.find(".collapsible-toggle").click(ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const category = $(ev.currentTarget).closest(".extra-uses-category");
+      const content = category.find(".collapsible-content");
+
+      if (content.hasClass("collapsed")) {
+        content.removeClass("collapsed");
+        category.addClass("expanded");
+      } else {
+        content.addClass("collapsed");
+        category.removeClass("expanded");
+      }
+    });
+
     // ========== DESTINY SYSTEM EVENT LISTENERS ==========
     html.find(".fulfill-destiny-btn").click(ev => {
       ev.preventDefault();
