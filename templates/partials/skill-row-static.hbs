@@ -1,6 +1,12 @@
 {{!-- Static Skill Row - skill data may be undefined, provide defaults --}}
 <div class="skill-row-container" data-skill="{{key}}">
  <div class="skill-row flexrow" draggable="true">
+ <div class="skill-favorite-btn">
+ <button class="skill-favorite-toggle" data-skill="{{key}}" title="Favorite this skill">
+ <i class="fas fa-star {{#if skill}}{{#if skill.favorite}}active{{/if}}{{/if}}" aria-hidden="true"></i>
+ </button>
+ </div>
+
  <div class="skill-roll-btn">
  <button class="roll-skill skill-use-rollable"
  data-skill="{{key}}"
@@ -121,15 +127,17 @@
  {{/if}}
 
  {{#if extraUses}}
+ {{#let (filter extraUses (lambda (use) (or (not (includes use.name 'Trained Only')) ../../../skill.trained)))}}
+ {{#if this}}
  <div class="actions-category extra-uses-category collapsible">
- <h4 class="category-header collapsible-toggle" data-skill="{{../key}}">
- <i class="fas fa-book" aria-hidden="true"></i> Other Uses
- <span class="use-count">({{extraUses.length}})</span>
+ <h4 class="category-header collapsible-toggle" data-skill="{{../../key}}">
+ <i class="fas fa-book" aria-hidden="true"></i> Other Skill Uses <i class="fas fa-arrow-right" aria-hidden="true"></i>
+ <span class="use-count">({{this.length}})</span>
  <i class="fas fa-chevron-down collapse-icon" aria-hidden="true"></i>
  </h4>
  <div class="actions-list collapsible-content collapsed">
- {{#each extraUses}}
- <div class="action-item skill-use-rollable" data-skill="{{../../key}}" data-action-name="{{name}}" data-dc="{{dc}}" data-effect="{{effect}}">
+ {{#each this}}
+ <div class="action-item skill-use-rollable" data-skill="{{../../../key}}" data-action-name="{{name}}" data-dc="{{dc}}" data-effect="{{effect}}">
  <div class="action-header">
  <strong class="action-name"><i class="fas fa-dice-d20" aria-hidden="true"></i> {{name}}</strong>
  {{#if time}}
@@ -149,6 +157,8 @@
  {{/each}}
  </div>
  </div>
+ {{/if}}
+ {{/let}}
  {{/if}}
 
  </div>

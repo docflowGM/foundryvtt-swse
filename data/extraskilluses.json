@@ -556,5 +556,197 @@
     "DC": 15,
     "time": "full-round action",
     "effect": "Place adjacent willing ally into Force Trance (deep coma, Helpless condition). Each hour target regains HP equal to Character Level. After 4 consecutive hours emerges fully rested. Target can go 10× as long without air/food/water. Only you can bring target out (swift action, adjacent). Unwilling targets cannot be placed in trance."
+  },
+  {
+    "application": "Forced March",
+    "DC": "10 (+2 per hour after the first)",
+    "time": "per hour after 8 hours of walking",
+    "effect": "Move -1 Persistent step on Condition Track; only removed by 8 hours of rest"
+  },
+  {
+    "application": "Hold Breath",
+    "DC": "10 (+2 per additional round)",
+    "time": "after CON score rounds of holding breath",
+    "effect": "Must succeed check to continue holding breath; failure requires breathing or move -1 step on Condition Track; unconscious at bottom, death if still unable to breathe next turn"
+  },
+  {
+    "application": "Ignore Hunger",
+    "DC": "10 (first day, +2 per day thereafter)",
+    "time": "daily after CON modifier days",
+    "effect": "Move -1 Persistent step on Condition Track; only removed by eating a nutritious meal"
+  },
+  {
+    "application": "Ignore Thirst",
+    "DC": "10 (first day, +2 per day thereafter)",
+    "time": "daily after 3× CON score hours",
+    "effect": "Move -1 Persistent step on Condition Track; only removed by drinking 1 liter of water (adjust by size category)"
+  },
+  {
+    "application": "Run",
+    "DC": "10 (+1 per round after CON score rounds)",
+    "time": "full-round action; CON score rounds without check",
+    "effect": "Move up to 4× Speed (3× if heavy armor/heavy load); lose DEX bonus to Reflex Defense; failure moves -1 Persistent step on Condition Track; only removed by resting same duration as running"
+  },
+  {
+    "application": "Sleep in Armor",
+    "DC": "10 (Light) / 15 (Medium) / 20 (Heavy)",
+    "time": "full rest period",
+    "effect": "Failure means no sleep and move -1 Persistent step on Condition Track; only removed by sleeping 8 hours"
+  },
+  {
+    "application": "Swim/Tread Water",
+    "DC": "15 (swimming) / 10 (treading water) (+2 per consecutive hour)",
+    "time": "per hour of swimming/treading water",
+    "effect": "Move -1 Persistent step on Condition Track; only removed by resting (not swimming) for same duration as swimming"
+  },
+  {
+    "application": "Avoid Surprise",
+    "DC": "Special (GM-determined)",
+    "time": "reaction at start of battle",
+    "effect": "Determine if you are Surprised at the start of combat"
+  },
+  {
+    "application": "Eavesdrop",
+    "DC": "10 (normal) / 15 (noisy areas) / 25 (loud areas like droid factory)",
+    "time": "standard action",
+    "effect": "Overhear conversations; must understand the language being spoken"
+  },
+  {
+    "application": "Listen for Distant/Ambient Noises",
+    "DC": 10,
+    "time": "standard action",
+    "effect": "Detect and identify distant or ambient noises"
+  },
+  {
+    "application": "Notice Targets",
+    "DC": "Opposed by Stealth (if hiding) or target size (-15 Colossal to 25 Fine); -5 per 10 squares distance (character scale) or -5 per square (starship scale); -5 concealment/-10 total concealment",
+    "time": "reaction to detect / standard action to actively search",
+    "effect": "See or hear targets attempting to hide; notice concealed weapons/objects (identify type at +5 margin of success)"
+  },
+  {
+    "application": "Search Area",
+    "DC": "15 (standard 1 square/cubic meter) / 5 with -10 penalty (quick 5 square/cubic meter survey)",
+    "time": "full-round action",
+    "effect": "Find clues, hidden compartments, secret doors, traps, and other non-obvious details in area"
+  },
+  {
+    "application": "Search Character",
+    "DC": "Opposed by Stealth (+10 bonus if physically touching willing/pinned/helpless target)",
+    "time": "full-round action",
+    "effect": "Find concealed weapons or objects on a character; requires willing, pinned, or helpless target for physical search"
+  },
+  {
+    "application": "Sense Deception",
+    "DC": "Opposed by Deception check result",
+    "time": "reaction",
+    "effect": "See through deceptive appearances; success means you realize you're being deceived"
+  },
+  {
+    "application": "Sense Influence",
+    "DC": 20,
+    "time": "full-round action",
+    "effect": "Determine whether someone is under the influence of a [Mind-Affecting] Force Power or other coercion"
+  },
+  {
+    "application": "Long-Range Spotter (Trained Only)",
+    "DC": 10,
+    "time": "as part of ally's attack",
+    "effect": "Aid Another on ranged attack using electrobinoculars; target at least 50 squares from both you and ally; ally must hear and understand you"
+  },
+  {
+    "application": "Start Battle",
+    "DC": "Initiative check (standard); Vehicle size modifier: -10 Colossal to -1 Large",
+    "time": "at start of combat",
+    "effect": "Sets combat order from highest to lowest check result; character scale only. Can Take 10 but not Take 20. Apply vehicle size modifier when Piloting"
+  },
+  {
+    "application": "Avoid Feint",
+    "DC": "Opposed by opponent's Deception check",
+    "time": "reaction when opponent attempts feint",
+    "effect": "If Initiative check meets or beats opponent's Deception result, their Feint fails"
+  },
+  {
+    "application": "Saber Lock (Requires Block Talent)",
+    "DC": "Opposed by opponent's Initiative check (triggered when Use the Force block equals incoming attack exactly)",
+    "time": "free action after block",
+    "effect": "Both combatants make opposed Initiative checks; higher result may make immediate unarmed attack against opponent as Free Action; Saber Lock ends after attack"
+  },
+  {
+    "application": "Balance",
+    "DC": "10 (8-15 cm wide) / 15 (4-7 cm wide) / 20 (less than 4 cm wide); +5 if slippery/unstable; catch ledge DC 15 on failure",
+    "time": "move action",
+    "effect": "Move at half speed along narrow surface; fail = fall Prone. If trained, not Flat-Footed while balancing. Taking damage requires another check or fall. If trained and succeed DC 15, stand up as Free Action if successful"
+  },
+  {
+    "application": "Cross Difficult Terrain (Trained Only)",
+    "DC": 15,
+    "time": "part of movement",
+    "effect": "Move through Difficult Terrain at normal Speed instead of half speed"
+  },
+  {
+    "application": "Escape Bonds",
+    "DC": "Ropes: opponent's DEX check +10 / Net: 15 / Binder Cuffs: 25 / Grapple: opponent's Grapple check / Tight space: 20",
+    "time": "Standard (Grapple) / Full-Round (Net or tight space) / 1 minute (ropes/cuffs/manacles)",
+    "effect": "Slip free of restraints, wiggle through tight spaces, or escape from Grapple"
+  },
+  {
+    "application": "Fall Prone (Trained Only)",
+    "DC": 15,
+    "time": "free action",
+    "effect": "Drop to Prone position as Free Action instead of Swift Action"
+  },
+  {
+    "application": "Reduce Falling Damage (Trained Only)",
+    "DC": "15 (regular falls or falling objects) / 20 (guide descent from great distances)",
+    "time": "reaction when falling",
+    "effect": "Treat fall as 3 meters shorter (add 3 more meters per 10 above DC 15); land on feet if no damage. DC 20 for great distances lets you adjust landing target by 1 square per 60 meters fallen"
+  },
+  {
+    "application": "Stand up from Prone (Trained Only)",
+    "DC": 15,
+    "time": "swift action",
+    "effect": "Stand up from Prone position as Swift Action instead of Move Action"
+  },
+  {
+    "application": "Tumble (Trained Only)",
+    "DC": 15,
+    "time": "part of move action",
+    "effect": "Move through threatened area or fighting space of enemy without provoking Attack of Opportunity; each threatened/occupied square counts as 2 squares of movement"
+  },
+  {
+    "application": "Catch Item (Trained Only)",
+    "DC": 20,
+    "time": "free action after successful Disarm",
+    "effect": "Snatch disarmed object from air; requires at least one free hand"
+  },
+  {
+    "application": "Escape Artist (Trained Only)",
+    "DC": "Base DC +10 to reduce escape time",
+    "time": "Move (Grapple) / Standard (Net or tight space) / 5 rounds (ropes/cuffs/manacles)",
+    "effect": "Reduce time required to Escape Bonds by one action type"
+  },
+  {
+    "application": "Low or High Gravity Environments (Trained Only)",
+    "DC": 20,
+    "time": "as action causing penalty",
+    "effect": "Negate penalties to attack rolls in Low Gravity and High Gravity environments"
+  },
+  {
+    "application": "Nimble Charge (Trained Only)",
+    "DC": "25 (Charge through low objects/difficult terrain) / 35 (combined with Cross Difficult Terrain)",
+    "time": "as part of charge",
+    "effect": "Charge through Low Objects and Difficult Terrain; fail = no attack at end of movement"
+  },
+  {
+    "application": "Zero-Gravity Environments (Trained Only)",
+    "DC": 20,
+    "time": "swift action or no penalty",
+    "effect": "Maneuver in Zero-Gravity; arrive on target when crossing wide spaces, or reduce attack roll/skill check penalty to -2 instead of -5"
+  },
+  {
+    "application": "Fighting Defensively (Trained Only)",
+    "DC": "—",
+    "time": "passive",
+    "effect": "Gain +5 dodge bonus to Reflex Defense when trained in Acrobatics and Fighting Defensively"
   }
 ]

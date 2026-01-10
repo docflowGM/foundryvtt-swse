@@ -33,7 +33,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       trained: new fields.BooleanField({required: true, initial: false}),
       focused: new fields.BooleanField({required: true, initial: false}),
       miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-      selectedAbility: new fields.StringField({required: true, initial: defaultAbility})
+      selectedAbility: new fields.StringField({required: true, initial: defaultAbility}),
+      favorite: new fields.BooleanField({required: true, initial: false})
     };
   }
 

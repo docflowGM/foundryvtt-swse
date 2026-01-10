@@ -755,10 +755,12 @@ form.swse-datapad-sheet {
 .swse .skill-row {
   display: grid;
   grid-template-columns:
-      28px   /* Roll */
+      24px   /* Favorite */
+      36px   /* Roll */
       45px   /* Total */
       1.5fr  /* Skill Name */
       100px  /* Ability */
+      35px   /* Half Level */
       35px   /* Trained */
       35px   /* Focus */
       50px   /* Misc */
@@ -840,8 +842,8 @@ form.swse-datapad-sheet {
 
 /* --- Roll Button (New Narrow Style) --- */
 .swse .skill-roll-btn {
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -850,7 +852,7 @@ form.swse-datapad-sheet {
   border-radius: 4px;
   cursor: pointer;
   color: var(--holo-cyan);
-  font-size: 12px;
+  font-size: 16px;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
@@ -898,6 +900,107 @@ form.swse-datapad-sheet {
   font-size: 10px;
   border-radius: 3px;
   cursor: pointer;
+}
+
+/* --- Skills Filter & Sort Toolbar --- */
+.swse .skills-filter-toolbar {
+  display: flex;
+  gap: 20px;
+  padding: 8px;
+  background: rgba(0, 30, 60, 0.4);
+  border: 1px solid rgba(0, 200, 255, 0.2);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.swse .filter-group,
+.swse .sort-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.swse .filter-group label,
+.swse .sort-group label {
+  font-weight: bold;
+  color: #00c8ff;
+  font-size: 11px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.swse .filter-btn {
+  padding: 4px 10px;
+  background: rgba(0, 120, 180, 0.2);
+  border: 1px solid rgba(0, 180, 255, 0.4);
+  color: #00c8ff;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: bold;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.swse .filter-btn:hover {
+  background: rgba(0, 140, 200, 0.4);
+  border-color: rgba(0, 200, 255, 0.7);
+}
+
+.swse .filter-btn.active {
+  background: rgba(0, 168, 204, 0.5);
+  border-color: rgba(0, 255, 255, 0.8);
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+}
+
+.swse .sort-select {
+  padding: 4px 6px;
+  background: rgba(0, 30, 50, 0.8);
+  border: 1px solid rgba(0, 180, 255, 0.5);
+  color: #00c8ff;
+  font-size: 10px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.swse .sort-select:hover,
+.swse .sort-select:focus {
+  background: rgba(0, 50, 80, 0.9);
+  border-color: rgba(0, 200, 255, 0.8);
+}
+
+/* --- Favorite Button --- */
+.swse .skill-favorite-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swse .skill-favorite-toggle {
+  background: none;
+  border: none;
+  color: rgba(255, 200, 50, 0.4);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s ease;
+  padding: 2px;
+}
+
+.swse .skill-favorite-toggle:hover {
+  color: rgba(255, 200, 50, 0.8);
+  transform: scale(1.1);
+}
+
+.swse .skill-favorite-toggle i.active {
+  color: #ffc832;
+  text-shadow: 0 0 6px #ffc832;
+}
+
+/* --- Skills Row Hidden States --- */
+.swse .skill-row-container.hidden {
+  display: none;
 }
 
 
