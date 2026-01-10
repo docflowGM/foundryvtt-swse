@@ -399,6 +399,26 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       }
     });
 
+    // ========== SKILL FILTER & SORT CONTROLS ==========
+    html.find(".filter-btn").click(ev => {
+      ev.preventDefault();
+      const filterType = ev.currentTarget.dataset.filter;
+      this._onSkillFilterChange(filterType, html);
+    });
+
+    html.find(".sort-select").change(ev => {
+      ev.preventDefault();
+      const sortType = ev.currentTarget.value;
+      this._onSkillSortChange(sortType, html);
+    });
+
+    html.find(".skill-favorite-toggle").click(ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const skillKey = ev.currentTarget.dataset.skill;
+      this._onToggleSkillFavorite(skillKey);
+    });
+
     // ========== DESTINY SYSTEM EVENT LISTENERS ==========
     html.find(".fulfill-destiny-btn").click(ev => {
       ev.preventDefault();
@@ -2190,5 +2210,126 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       body.slideDown(200);
       icon.removeClass("fa-chevron-down").addClass("fa-chevron-up");
     }
+  }
+
+  /**
+   * Toggle favorite status of a skill
+   */
+  async _onToggleSkillFavorite(skillKey) {
+    const currentFavorite = this.actor.system.skills[skillKey]?.favorite || false;
+    await this.actor.update({
+      [`system.skills.${skillKey}.favorite`]: !currentFavorite
+    });
+  }
+
+  /**
+   * Filter skills based on trained/untrained/favorite status
+   */
+  _onSkillFilterChange(filterType, html) {
+    const filterBtns = html.find(".filter-btn");
+    filterBtns.removeClass("active");
+    html.find(`.filter-btn[data-filter="${filterType}"]`).addClass("active");
+
+    const skillRows = html.find(".skill-row-container");
+    skillRows.removeClass("hidden");
+
+    if (filterType === "trained") {
+      skillRows.each((_, row) => {
+        const skillKey = row.dataset.skill;
+        const isTrained = this.actor.system.skills[skillKey]?.trained || false;
+        if (!isTrained) {
+          $(row).addClass("hidden");
+        }
+      });
+    } else if (filterType === "untrained") {
+      skillRows.each((_, row) => {
+        const skillKey = row.dataset.skill;
+        const isTrained = this.actor.system.skills[skillKey]?.trained || false;
+        if (isTrained) {
+          $(row).addClass("hidden");
+        }
+      });
+    } else if (filterType === "favorite") {
+      skillRows.each((_, row) => {
+        const skillKey = row.dataset.skill;
+        const isFavorite = this.actor.system.skills[skillKey]?.favorite || false;
+        if (!isFavorite) {
+          $(row).addClass("hidden");
+        }
+      });
+    }
+
+    // Apply current sort after filtering
+    const sortSelect = html.find(".sort-select");
+    const currentSort = sortSelect.val();
+    this._applySkillSort(currentSort, html);
+  }
+
+  /**
+   * Sort skills by various criteria
+   */
+  _onSkillSortChange(sortType, html) {
+    this._applySkillSort(sortType, html);
+  }
+
+  /**
+   * Apply sorting to visible skills
+   */
+  _applySkillSort(sortType, html) {
+    const skillsList = html.find(".skills-list");
+    const skillRows = html.find(".skill-row-container").get();
+
+    // Sort based on type
+    skillRows.sort((a, b) => {
+      const aKey = a.dataset.skill;
+      const bKey = b.dataset.skill;
+      const aSkill = this.actor.system.skills[aKey];
+      const bSkill = this.actor.system.skills[bKey];
+
+      // Get skill labels from the DOM
+      const aLabel = $(a).find(".skill-name").text();
+      const bLabel = $(b).find(".skill-name").text();
+
+      switch (sortType) {
+        case "trained-first":
+          if (aSkill.trained !== bSkill.trained) {
+            return bSkill.trained - aSkill.trained;
+          }
+          return aLabel.localeCompare(bLabel);
+
+        case "trained-last":
+          if (aSkill.trained !== bSkill.trained) {
+            return aSkill.trained - bSkill.trained;
+          }
+          return aLabel.localeCompare(bLabel);
+
+        case "name-asc":
+          return aLabel.localeCompare(bLabel);
+
+        case "name-desc":
+          return bLabel.localeCompare(aLabel);
+
+        case "total-desc":
+          return (bSkill.total || 0) - (aSkill.total || 0);
+
+        case "total-asc":
+          return (aSkill.total || 0) - (bSkill.total || 0);
+
+        case "favorite-first":
+          if (aSkill.favorite !== bSkill.favorite) {
+            return (bSkill.favorite ? 1 : 0) - (aSkill.favorite ? 1 : 0);
+          }
+          return aLabel.localeCompare(bLabel);
+
+        default:
+          // Default order (as defined in template)
+          return 0;
+      }
+    });
+
+    // Re-append sorted rows
+    skillRows.forEach(row => {
+      skillsList.append(row);
+    });
   }
 }

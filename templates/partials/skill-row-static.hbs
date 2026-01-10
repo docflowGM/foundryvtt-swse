@@ -1,6 +1,12 @@
 {{!-- Static Skill Row - skill data may be undefined, provide defaults --}}
 <div class="skill-row-container" data-skill="{{key}}">
  <div class="skill-row flexrow" draggable="true">
+ <div class="skill-favorite-btn">
+ <button class="skill-favorite-toggle" data-skill="{{key}}" title="Favorite this skill">
+ <i class="fas fa-star {{#if skill}}{{#if skill.favorite}}active{{/if}}{{/if}}" aria-hidden="true"></i>
+ </button>
+ </div>
+
  <div class="skill-roll-btn">
  <button class="roll-skill skill-use-rollable"
  data-skill="{{key}}"

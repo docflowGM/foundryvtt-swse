@@ -1,7 +1,31 @@
 <div class="tab skills-tab" data-group="primary" data-tab="skills">
  <h3 class="section-header">Skills</h3>
 
+ <div class="skills-filter-toolbar flexrow">
+ <div class="filter-group">
+ <label>Show:</label>
+ <button class="filter-btn active" data-filter="all" title="Show all skills">All</button>
+ <button class="filter-btn" data-filter="trained" title="Show only trained skills">Trained</button>
+ <button class="filter-btn" data-filter="untrained" title="Show only untrained skills">Untrained</button>
+ <button class="filter-btn" data-filter="favorite" title="Show only favorite skills">Favorites</button>
+ </div>
+ <div class="sort-group">
+ <label>Sort:</label>
+ <select class="sort-select" title="Sort skills">
+ <option value="default">Default Order</option>
+ <option value="trained-first">Trained First</option>
+ <option value="trained-last">Trained Last</option>
+ <option value="name-asc">Name (A-Z)</option>
+ <option value="name-desc">Name (Z-A)</option>
+ <option value="total-desc">Total (High to Low)</option>
+ <option value="total-asc">Total (Low to High)</option>
+ <option value="favorite-first">Favorites First</option>
+ </select>
+ </div>
+ </div>
+
  <div class="skills-header flexrow">
+ <div class="skill-col-favorite"><i class="fas fa-star" aria-hidden="true"></i></div>
  <div class="skill-col-roll"></div>
  <div class="skill-col-total">Total</div>
  <div class="skill-col-name">Skill</div>
