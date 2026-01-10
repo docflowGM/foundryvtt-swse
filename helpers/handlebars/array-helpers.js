@@ -21,5 +21,18 @@ export const arrayHelpers = {
     }
     // Three arguments: (array, key, value) - find by property
     return array.find(item => item && item[key] === value);
+  },
+  /**
+   * Filter extra skill uses based on training status.
+   * Shows all uses except "Trained Only" items when the skill is not trained.
+   * @param {Array} extraUses - Array of skill use objects with 'name' property
+   * @param {boolean} isTrained - Whether the skill is trained
+   * @returns {Array} Filtered array of skill uses
+   */
+  filterExtraUsesByTraining: (extraUses, isTrained) => {
+    if (!Array.isArray(extraUses)) return [];
+    // If trained, show all uses; otherwise filter out "Trained Only" items
+    if (isTrained) return extraUses;
+    return extraUses.filter(use => !use?.name?.includes('Trained Only'));
   }
 };
