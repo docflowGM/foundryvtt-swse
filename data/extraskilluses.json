@@ -652,5 +652,23 @@
     "DC": 10,
     "time": "as part of ally's attack",
     "effect": "Aid Another on ranged attack using electrobinoculars; target at least 50 squares from both you and ally; ally must hear and understand you"
+  },
+  {
+    "application": "Start Battle",
+    "DC": "Initiative check (standard); Vehicle size modifier: -10 Colossal to -1 Large",
+    "time": "at start of combat",
+    "effect": "Sets combat order from highest to lowest check result; character scale only. Can Take 10 but not Take 20. Apply vehicle size modifier when Piloting"
+  },
+  {
+    "application": "Avoid Feint",
+    "DC": "Opposed by opponent's Deception check",
+    "time": "reaction when opponent attempts feint",
+    "effect": "If Initiative check meets or beats opponent's Deception result, their Feint fails"
+  },
+  {
+    "application": "Saber Lock (Requires Block Talent)",
+    "DC": "Opposed by opponent's Initiative check (triggered when Use the Force block equals incoming attack exactly)",
+    "time": "free action after block",
+    "effect": "Both combatants make opposed Initiative checks; higher result may make immediate unarmed attack against opponent as Free Action; Saber Lock ends after attack"
   }
 ]
