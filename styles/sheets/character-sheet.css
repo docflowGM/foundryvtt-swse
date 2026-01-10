@@ -4978,6 +4978,112 @@ font-size: 12px;
 }
 
 /* ─────────────────────────────────────────────────
+   FEATS GRID - 5 COLUMN CARD LAYOUT
+   ───────────────────────────────────────────────── */
+
+.swse .feats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.swse .feat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(0, 40, 80, 0.6), rgba(0, 20, 40, 0.4));
+  border: 1px solid rgba(0, 168, 204, 0.25);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  min-height: 140px;
+}
+
+.swse .feat-card:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(0, 60, 100, 0.8), rgba(0, 40, 60, 0.6));
+  border-color: rgba(0, 217, 255, 0.6);
+  box-shadow: 0 0 12px rgba(0, 217, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.swse .feat-card.select-feat {
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.swse .feat-card .feat-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 168, 204, 0.1);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 168, 204, 0.2);
+  font-size: 24px;
+}
+
+.swse .feat-card h5 {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(0, 217, 255, 0.9);
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swse .feat-card p {
+  font-size: 9px;
+  color: rgba(159, 182, 201, 0.7);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.swse .feat-card .feat-prereqs {
+  color: rgba(255, 150, 100, 0.8);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.swse .feat-card .feat-suggestion-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+.swse .feat-card:disabled,
+.swse .feat-card.unqualified {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.swse .feat-card.is-suggested {
+  border-color: rgba(255, 200, 100, 0.4);
+  background: rgba(255, 200, 100, 0.05);
+}
+
+.swse .feat-card.is-suggested.recommended {
+  border-color: rgba(100, 200, 255, 0.6);
+  background: rgba(100, 200, 255, 0.1);
+}
+
+/* ─────────────────────────────────────────────────
    RESPONSIVE ADJUSTMENTS
    ───────────────────────────────────────────────── */
 
@@ -4998,5 +5104,9 @@ font-size: 12px;
   .swse nav.sheet-tabs .item {
     padding: 6px 10px;
     font-size: 10px;
+  }
+
+  .swse .feats-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
