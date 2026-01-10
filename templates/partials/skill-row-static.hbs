@@ -18,7 +18,7 @@
  </div>
 
  <div class="skill-total {{#if skill.trained}}trained{{/if}}">
- {{#if skill}}{{numberFormat skill.total decimals=0 sign=true}}{{else}}+0{{/if}}
+ {{#if skill}}{{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}{{else}}+0{{/if}}
  </div>
 
  <div class="skill-name">
@@ -36,7 +36,7 @@
  <option value="wis" {{#if skill}}{{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}{{else}}{{#if (eq defaultAbility 'wis')}}selected{{/if}}{{/if}}>WIS</option>
  <option value="cha" {{#if skill}}{{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}{{else}}{{#if (eq defaultAbility 'cha')}}selected{{/if}}{{/if}}>CHA</option>
  </select>
- <span class="ability-mod">{{#if skill}}{{numberFormat skill.abilityMod decimals=0 sign=true}}{{else}}+0{{/if}}</span>
+ <span class="ability-mod">{{#if skill}}{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}{{else}}+0{{/if}}</span>
  </div>
 
  <div class="skill-half-level">
@@ -127,7 +127,7 @@
  {{/if}}
 
  {{#if extraUses}}
- {{#let (filter extraUses (lambda (use) (or (not (includes use.name 'Trained Only')) ../../../skill.trained)))}}
+ {{#let (filterExtraUsesByTraining extraUses ../../../skill.trained)}}
  {{#if this}}
  <div class="actions-category extra-uses-category collapsible">
  <h4 class="category-header collapsible-toggle" data-skill="{{../../key}}">
