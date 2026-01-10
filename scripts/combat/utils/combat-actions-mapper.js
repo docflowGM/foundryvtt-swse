@@ -28,17 +28,27 @@ export class CombatActionsMapper {
   }
 
   /**
-   * Load and cache compendium data
+   * Load and cache compendium data with JSON fallback
    */
   static async init() {
     if (this._initialized) return;
 
     try {
+      // Load combat actions - try compendium first, fall back to JSON
       this._combatActions =
         await this._loadCompendiumItems("foundryvtt-swse.combat-actions");
+      if (!this._combatActions.length) {
+        this._combatActions = await this._loadJsonFallback("data/combat-actions.json", "combatAction");
+        SWSELogger.log("SWSE | Loaded combat actions from JSON fallback");
+      }
 
+      // Load extra skill uses - use correct pack ID (extraskilluses not extra-skill-uses)
       this._extraSkillUses =
-        await this._loadCompendiumItems("foundryvtt-swse.extra-skill-uses");
+        await this._loadCompendiumItems("foundryvtt-swse.extraskilluses");
+      if (!this._extraSkillUses.length) {
+        this._extraSkillUses = await this._loadJsonFallback("data/extraskilluses.json", "extraskilluse");
+        SWSELogger.log("SWSE | Loaded extra skill uses from JSON fallback");
+      }
 
       this._shipCombatActions =
         await this._loadCompendiumItems("foundryvtt-swse.ship-combat-actions");
@@ -49,7 +59,7 @@ export class CombatActionsMapper {
       this._talentEnhancements = this._indexEnhancements(enhancementsArray);
 
       this._initialized = true;
-      SWSELogger.log("SWSE | CombatActionsMapper initialized (compendium-based)");
+      SWSELogger.log(`SWSE | CombatActionsMapper initialized: ${this._combatActions.length} combat actions, ${this._extraSkillUses.length} extra uses`);
 
     } catch (err) {
       SWSELogger.error("SWSE | Failed to load combat action packs:", err);
@@ -57,6 +67,40 @@ export class CombatActionsMapper {
       this._extraSkillUses = [];
       this._shipCombatActions = [];
       this._talentEnhancements = {};
+    }
+  }
+
+  /**
+   * Load data from JSON file as fallback when compendium is empty
+   */
+  static async _loadJsonFallback(path, type) {
+    try {
+      const response = await fetch(`systems/foundryvtt-swse/${path}`);
+      if (!response.ok) {
+        SWSELogger.warn(`SWSE | Failed to load JSON fallback from ${path}`);
+        return [];
+      }
+      const data = await response.json();
+      // Normalize JSON data to match compendium structure
+      return data.map((item, idx) => ({
+        _id: `json-${type}-${idx}`,
+        name: item.name || item.application,
+        type: type,
+        system: {
+          ...item,
+          application: item.application || item.name,
+          dc: item.DC || item.dc,
+          time: item.time,
+          effect: item.effect,
+          actionType: item.action?.type,
+          cost: item.action?.cost,
+          notes: item.notes,
+          relatedSkills: item.relatedSkills?.map(s => s.skill || s) || []
+        }
+      }));
+    } catch (err) {
+      SWSELogger.error(`SWSE | Error loading JSON fallback from ${path}:`, err);
+      return [];
     }
   }
 
