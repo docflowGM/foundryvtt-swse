@@ -840,8 +840,8 @@ form.swse-datapad-sheet {
 
 /* --- Roll Button (New Narrow Style) --- */
 .swse .skill-roll-btn {
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -850,7 +850,7 @@ form.swse-datapad-sheet {
   border-radius: 4px;
   cursor: pointer;
   color: var(--holo-cyan);
-  font-size: 12px;
+  font-size: 16px;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
