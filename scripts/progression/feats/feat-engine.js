@@ -29,7 +29,12 @@ export const FeatEngine = {
         'force training',
         'force regimen mastery',
         'ability focus',
-        'combat expertise'
+        'combat expertise',
+        'weapon focus',
+        'skill focus',
+        'attack combo (melee)',
+        'attack combo (ranged)',
+        'attack combo (fire and strike)'
     ],
 
     /**
