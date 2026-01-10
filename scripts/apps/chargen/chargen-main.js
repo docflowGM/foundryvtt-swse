@@ -351,15 +351,16 @@ export default class CharacterGenerator extends Application {
     // Filter classes based on character type
     if (this.currentStep === "class" && context.packs.classes) {
       if (this.characterData.isDroid) {
-        // Droids: only base 4 non-Force classes (no Jedi, no Force powers)
-        const droidBaseClasses = ["Soldier", "Scout", "Gunslinger", "Scoundrel"];
+        // Droids: only base 4 non-Force classes (no Jedi, no Force powers, no Gunslinger - prestige class)
+        const droidBaseClasses = ["Soldier", "Scout", "Scoundrel", "Noble"];
         context.packs.classes = context.packs.classes.filter(c => droidBaseClasses.includes(c.name));
         if (this.characterData.classes.length === 0 || !droidBaseClasses.includes(this.characterData.classes[0]?.name)) {
           this.characterData.classes = [];
         }
       } else {
         // Normal characters: only the 5 core classes at level 1 (prestige classes available at higher levels)
-        const coreClasses = ["Soldier", "Scout", "Gunslinger", "Scoundrel", "Jedi"];
+        // Noble, Scout, Scoundrel, Soldier, and Jedi (Gunslinger is prestige only)
+        const coreClasses = ["Noble", "Scout", "Scoundrel", "Soldier", "Jedi"];
         context.packs.classes = context.packs.classes.filter(c => coreClasses.includes(c.name));
         if (this.characterData.classes.length === 0 || !coreClasses.includes(this.characterData.classes[0]?.name)) {
           this.characterData.classes = [];
@@ -386,7 +387,7 @@ export default class CharacterGenerator extends Application {
 
     // Add suggestion engine integration for feats and talents
     if ((this.currentStep === "feats" || this.currentStep === "talents") && context.packs) {
-      const tempActor = this._createTempActorForValidation();
+      const tempActor = this.actor || this._createTempActorForValidation();
       const pendingData = {
         selectedFeats: this.characterData.feats || [],
         selectedClass: this.characterData.classes?.[0],
@@ -412,7 +413,6 @@ export default class CharacterGenerator extends Application {
           context.packs.feats = SuggestionEngine.sortBySuggestion(context.packs.feats);
 
           // Add qualification status to each feat
-          const tempActor = this.actor || this._createTempActorForValidation();
           const pendingDataForFeats = {
             selectedFeats: this.characterData.feats || [],
             selectedClass: this.characterData.classes?.[0],
@@ -462,7 +462,6 @@ export default class CharacterGenerator extends Application {
           context.packs.talents = SuggestionEngine.sortBySuggestion(context.packs.talents);
 
           // Add qualification status to each talent
-          const tempActor = this.actor || this._createTempActorForValidation();
           const pendingDataForTalents = {
             selectedFeats: this.characterData.feats || [],
             selectedClass: this.characterData.classes?.[0],
@@ -1159,7 +1158,7 @@ export default class CharacterGenerator extends Application {
       defenses: this.characterData.defenses,
       classes: this.characterData.classes,
       bab: this.characterData.bab,
-      speed: this.characterData.speed,
+      speed: Number.isFinite(this.characterData.speed) ? this.characterData.speed : 6,
       damageThresholdMisc: this.characterData.damageThresholdMisc || 0,
       credits: this.characterData.isDroid
         ? this.characterData.droidCredits.remaining
