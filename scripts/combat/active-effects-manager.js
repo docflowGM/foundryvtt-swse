@@ -239,14 +239,14 @@ export class SWSEActiveEffectsManager {
       flags: data.flags
     });
 
-    await actor.effects.create(effect);
+    await actor.createEmbeddedDocuments('ActiveEffect', [effect]);
     await this._applyTokenStatus(actor, data.icon);
   }
 
   static async removeConditionEffects(actor) {
     const toRemove = actor.effects.filter(e => e.flags?.swse?.conditionTrack);
     if (toRemove.length) {
-      await actor.effects.delete(toRemove.map(e => e.id));
+      await actor.deleteEmbeddedDocuments('ActiveEffect', toRemove.map(e => e.id));
     }
     await this._removeTokenStatus(actor);
   }

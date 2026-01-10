@@ -214,6 +214,20 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       this.conditionTrack.penalty = penalties[conditionStep] || 0;
     }
 
+    // Ensure defenses structure exists
+    if (!this.defenses) {
+      this.defenses = {};
+    }
+    if (!this.defenses.fort) {
+      this.defenses.fort = { classBonus: 0 };
+    }
+    if (!this.defenses.reflex) {
+      this.defenses.reflex = { classBonus: 0 };
+    }
+    if (!this.defenses.will) {
+      this.defenses.will = { classBonus: 0 };
+    }
+
     // Calculate armor effects (check penalty and speed reduction) BEFORE skills
     this._calculateArmorEffects();
 
