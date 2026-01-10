@@ -60,7 +60,7 @@
           {{else}}
           <span class="breakdown-item active">10 + Level {{system.level}}</span>
           {{/if}}
-          <span class="breakdown-item">+ Dex {{numberFormat system.attributes.dex.mod sign=true}}</span>
+          <span class="breakdown-item">+ Dex {{numberFormat (safeNumber system.attributes.dex.mod) sign=true}}</span>
         </div>
       </div>
 
@@ -77,7 +77,7 @@
 
         <div class="defense-breakdown">
           <span class="breakdown-item">Reflex - Dex</span>
-          <span class="breakdown-item">({{system.defenses.reflex.total}} - {{numberFormat system.attributes.dex.mod sign=false}})</span>
+          <span class="breakdown-item">({{system.defenses.reflex.total}} - {{numberFormat (safeNumber system.attributes.dex.mod) sign=false}})</span>
         </div>
       </div>
 
@@ -95,9 +95,9 @@
         <div class="defense-breakdown">
           <span class="breakdown-item">10 + Level {{system.level}}</span>
           {{#if system.isDroid}}
-          <span class="breakdown-item">+ Str {{numberFormat system.attributes.str.mod sign=true}} <span class="droid-note">(Droid)</span></span>
+          <span class="breakdown-item">+ Str {{numberFormat (safeNumber system.attributes.str.mod) sign=true}} <span class="droid-note">(Droid)</span></span>
           {{else}}
-          <span class="breakdown-item">+ Con {{numberFormat system.attributes.con.mod sign=true}}</span>
+          <span class="breakdown-item">+ Con {{numberFormat (safeNumber system.attributes.con.mod) sign=true}}</span>
           {{/if}}
         </div>
       </div>
@@ -115,7 +115,7 @@
 
         <div class="defense-breakdown">
           <span class="breakdown-item">10 + Level {{system.level}}</span>
-          <span class="breakdown-item">+ Wis {{numberFormat system.attributes.wis.mod sign=true}}</span>
+          <span class="breakdown-item">+ Wis {{numberFormat (safeNumber system.attributes.wis.mod) sign=true}}</span>
         </div>
       </div>
     </div>

@@ -82,7 +82,7 @@ Total: {{ability.total}}">
 
       <div class="ability-modifier mod-{{#if (gt ability.mod 0)}}positive{{else if (lt ability.mod 0)}}negative{{else}}neutral{{/if}}"
            aria-label="Modifier {{ability.mod}}">
-        {{numberFormat ability.mod decimals=0 sign=true}}
+        {{numberFormat (safeNumber ability.mod) decimals=0 sign=true}}
       </div>
 
       <button class="ability-roll"

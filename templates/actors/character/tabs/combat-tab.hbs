@@ -6,7 +6,7 @@
  <label>Base Attack Bonus</label>
  <input type="number" 
  name="system.bab" 
- value="{{system.bab}}" 
+ value="{{safeNumber system.bab 0}}" 
  data-dtype="Number"
  placeholder="0"/>
  </div>
@@ -15,7 +15,7 @@
  <label>Speed</label>
  <input type="number" 
  name="system.speed" 
- value="{{system.speed}}" 
+ value="{{safeNumber system.speed 6}}" 
  data-dtype="Number"
  placeholder="6"/> squares
  </div>
@@ -25,7 +25,7 @@
  <div class="initiative-value rollable"
  data-roll="1d20+@initiative"
  data-label="Initiative">
- {{numberFormat system.initiative sign=true}}
+ {{numberFormat (safeNumber system.initiative) sign=true}}
  </div>
  </div>
 
@@ -91,7 +91,7 @@
  <div class="weapon-attack rollable"
  data-action="rollAttack"
  data-item-id="{{weapon._id}}">
- {{numberFormat weapon.system.attackBonus sign=true}}
+ {{numberFormat (safeNumber weapon.system.attackBonus) sign=true}}
  </div>
 
  <div class="weapon-damage rollable"

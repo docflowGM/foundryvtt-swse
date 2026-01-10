@@ -55,7 +55,7 @@
  <div class="ability-mod rollable"
  data-roll="1d20+@attributes.{{key}}.mod"
  data-label="{{upper key}} Check">
- {{#if (and @root.system.isDroid (eq key 'con'))}}—{{else}}{{numberFormat ability.mod sign=true}}{{/if}}
+ {{#if (and @root.system.isDroid (eq key 'con'))}}—{{else}}{{numberFormat (safeNumber ability.mod) sign=true}}{{/if}}
  </div>
  </div>
  {{/each}}
@@ -85,15 +85,15 @@
  <span>+</span>
 
  <span title="Ability Modifier">
- {{#if (eq key "reflex")}}Dex {{numberFormat @root.system.attributes.dex.mod sign=true}}{{/if}}
+ {{#if (eq key "reflex")}}Dex {{numberFormat (safeNumber @root.system.attributes.dex.mod) sign=true}}{{/if}}
  {{#if (eq key "fortitude")}}
  {{#if @root.system.isDroid}}
- Str {{numberFormat @root.system.attributes.str.mod sign=true}} <span class="droid-note" title="Droids use STR for Fortitude">(Droid)</span>
+ Str {{numberFormat (safeNumber @root.system.attributes.str.mod) sign=true}} <span class="droid-note" title="Droids use STR for Fortitude">(Droid)</span>
  {{else}}
- Con {{numberFormat @root.system.attributes.con.mod sign=true}}
+ Con {{numberFormat (safeNumber @root.system.attributes.con.mod) sign=true}}
  {{/if}}
  {{/if}}
- {{#if (eq key "will")}}Wis {{numberFormat @root.system.attributes.wis.mod sign=true}}{{/if}}
+ {{#if (eq key "will")}}Wis {{numberFormat (safeNumber @root.system.attributes.wis.mod) sign=true}}{{/if}}
  </span>
 
  <span>+</span>
