@@ -1050,7 +1050,7 @@ export default class CharacterGenerator extends Application {
       (this.characterData.secondWind.misc || 0);
     
     // Damage Threshold = Fortitude Defense
-    this.characterData.damageThreshold = this.characterData.defenses.fortitude.total;
+    this.characterData.damageThreshold = this.characterData.defenses.fort.total;
   }
 
   async _onFinish(event) {
@@ -1230,11 +1230,11 @@ export default class CharacterGenerator extends Application {
           const classDoc = this._packs.classes.find(c => c.name === classData.name);
           if (classDoc) {
             // Get defenses from class doc or use defaults
-            const defenses = classDoc.system.defenses?.fortitude !== undefined ||
+            const defenses = classDoc.system.defenses?.fort !== undefined ||
                             classDoc.system.defenses?.reflex !== undefined ||
                             classDoc.system.defenses?.will !== undefined
               ? classDoc.system.defenses
-              : { fortitude: 0, reflex: 0, will: 0 };
+              : { fort: 0, reflex: 0, will: 0 };
 
             const classItem = {
               name: classDoc.name,
@@ -1245,7 +1245,7 @@ export default class CharacterGenerator extends Application {
                 hitDie: getHitDie(classDoc),
                 babProgression: getClassProperty(classDoc, 'babProgression', 0.75),
                 defenses: {
-                  fortitude: defenses.fortitude || 0,
+                  fort: defenses.fort || 0,
                   reflex: defenses.reflex || 0,
                   will: defenses.will || 0
                 },

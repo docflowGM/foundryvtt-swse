@@ -5163,45 +5163,110 @@ font-size: 12px;
   padding-bottom: 8px;
 }
 
-.swse .defenses-detail {
+.swse .defenses-grid-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  margin: 12px 0;
 }
 
-.swse .defense-detail-row {
+.swse .defenses-header {
+  background: linear-gradient(135deg, rgba(0, 168, 204, 0.3), rgba(0, 200, 255, 0.2));
+  border: 2px solid var(--holo-cyan);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: bold;
+  color: var(--holo-cyan);
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.swse .defense-grid-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 8px;
   padding: 8px;
-  background: rgba(0, 168, 204, 0.05);
+  background: rgba(0, 20, 40, 0.3);
   border: 1px solid rgba(0, 168, 204, 0.2);
   border-radius: 4px;
-  font-size: 11px;
 }
 
-.swse .defense-detail-row label {
-  font-weight: bold;
-  min-width: 80px;
-  color: var(--holo-cyan);
-}
-
-.swse .defense-calculation {
+.swse .defense-name-box {
   display: flex;
-  gap: 2px;
-  font-size: 10px;
-  color: var(--muted);
-}
-
-.swse .defense-calculation span {
-  color: var(--muted);
-}
-
-.swse .defense-total {
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  height: 32px;
+  background: linear-gradient(135deg, rgba(0, 168, 204, 0.4), rgba(0, 200, 255, 0.2));
+  border: 2px solid var(--holo-cyan);
+  border-radius: 4px;
   font-weight: bold;
   color: var(--holo-cyan);
-  min-width: 30px;
-  text-align: right;
+  font-size: 12px;
+}
+
+.swse .defense-box-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.swse .defense-box-input,
+.swse .defense-box-select {
+  min-width: 45px;
+  height: 28px;
+  padding: 2px 4px;
+  border: 1px solid rgba(0, 168, 204, 0.4);
+  border-radius: 3px;
+  background: rgba(0, 20, 40, 0.6);
+  color: var(--text-light);
+  font-size: 11px;
+  text-align: center;
+}
+
+.swse .defense-box-input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.swse .defense-box-select {
+  cursor: pointer;
+  padding: 2px 2px;
+}
+
+.swse .defense-box-label {
+  font-size: 9px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.swse .defense-grid-row .operator {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  color: var(--holo-cyan);
+  font-weight: bold;
+  padding: 0 4px;
+  font-size: 12px;
+}
+
+.swse .defense-total-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 45px;
+  height: 32px;
+  background: rgba(0, 168, 204, 0.15);
+  border: 2px solid var(--holo-cyan);
+  border-radius: 3px;
+  font-weight: bold;
+  color: var(--holo-cyan);
+  font-size: 12px;
 }
 
 /* QUICK ATTACKS / COMMON ATTACKS */

@@ -207,6 +207,12 @@ export class SWSEActorSheetBase extends BaseSheet {
   // -----------------------------
   async _onItemCreate(event) {
     const type = event.currentTarget.dataset.type;
+
+    if (!type) {
+      ui.notifications.error("Cannot create item: No item type specified");
+      return;
+    }
+
     const cap = type.charAt(0).toUpperCase() + type.slice(1);
 
     // Initialize system fields based on item type
