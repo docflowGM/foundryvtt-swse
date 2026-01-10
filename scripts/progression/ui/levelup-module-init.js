@@ -14,7 +14,6 @@ import { SkillRegistry } from "../skills/skill-registry-ui.js";
 import { FeatRegistry } from "../feats/feat-registry-ui.js";
 import { TalentRegistry } from "../talents/talent-registry-ui.js";
 import { ForceRegistry } from "../force/force-registry-ui.js";
-import { registerLevelUpSheetHooks } from "../../hooks/levelup-sheet-hooks.js";
 import { PrerequisiteValidator } from "../../utils/prerequisite-validator.js";
 import { SuggestionEngineCoordinator } from "../../engine/SuggestionEngineCoordinator.js";
 
@@ -25,27 +24,23 @@ export async function initializeLevelUpUI() {
   try {
     SWSELogger.log("=== Initializing Enhanced Level-Up UI ===");
 
-    // Step 1: Register sheet integration hooks
-    SWSELogger.log("Step 1: Registering sheet hooks...");
-    registerLevelUpSheetHooks();
-
-    // Step 2: Build all registries
-    SWSELogger.log("Step 2: Building registries...");
+    // Step 1: Build all registries
+    SWSELogger.log("Step 1: Building registries...");
     await SkillRegistry.build();
     await FeatRegistry.build();
     await TalentRegistry.build();
     await ForceRegistry.build();
 
-    // Step 3: Initialize suggestion engines
-    SWSELogger.log("Step 3: Initializing suggestion engines...");
+    // Step 2: Initialize suggestion engines
+    SWSELogger.log("Step 2: Initializing suggestion engines...");
     const suggestionsInitialized = await SuggestionEngineCoordinator.initialize();
     if (!suggestionsInitialized) {
       SWSELogger.warn("Suggestion engines failed to initialize, but level-up UI will continue");
     }
 
-    // Step 4: Set up the global prerequisite API (if not already done)
+    // Step 3: Set up the global prerequisite API (if not already done)
     if (!game.swse?.prereq) {
-      SWSELogger.log("Step 4: Setting up prerequisite API...");
+      SWSELogger.log("Step 3: Setting up prerequisite API...");
       game.swse = game.swse || {};
       game.swse.prereq = {
         checkFeatPrereq: (featDoc, actor, pending) => {
@@ -71,11 +66,4 @@ export async function initializeLevelUpUI() {
   }
 }
 
-/**
- * Register the initialization hook
- */
-Hooks.once("ready", async () => {
-  await initializeLevelUpUI();
-});
-
-SWSELogger.log("Level-Up UI module initialization registered");
+SWSELogger.log("Level-Up UI module loaded");
