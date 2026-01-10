@@ -808,6 +808,21 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // E.4 Class Picker (Progression Engine Integrated)
   // ----------------------------------------------------------
   async _showClassPicker() {
+    // If character doesn't have classes yet (fresh creation), open chargen to class step
+    if (!this.actor.system.classes || this.actor.system.classes.length === 0) {
+      try {
+        const { default: CharacterGenerator } = await import('../../apps/chargen/chargen-main.js');
+        const chargen = new CharacterGenerator(this.actor, { actorType: 'character' });
+        chargen.currentStep = "class"; // Jump to class selection step
+        chargen.render(true);
+        return;
+      } catch (err) {
+        console.warn("Failed to open chargen:", err);
+        // Fall through to normal class picker dialog
+      }
+    }
+
+    // Normal level-up class selection
     const { getAvailableClasses } = await import('../../apps/levelup/levelup-class.js');
     const classes = await getAvailableClasses(this.actor, {});
     if (!classes?.length) return ui.notifications.warn("No classes available.");
@@ -823,12 +838,12 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     // Create card-based class picker
     const rows = classes.map((cls, idx) => `
-      <div class="class-choice-card" data-key="${idx}" data-class="${foundry.utils.foundry.utils.escapeHTML(cls.name)}" style="cursor: pointer; padding: 16px; border: 1px solid #ccc; border-radius: 8px; margin: 8px; min-width: 200px; transition: all 0.2s; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+      <div class="class-choice-card" data-key="${idx}" data-class="${foundry.utils.escapeHTML(cls.name)}" style="cursor: pointer; padding: 16px; border: 1px solid #ccc; border-radius: 8px; margin: 8px; min-width: 200px; transition: all 0.2s; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
         <div style="display: flex; align-items: center; gap: 12px;">
           <i class="fas ${classIcons[cls.name] || 'fa-user'}" style="font-size: 24px; color: #4a9eff;"></i>
           <div>
-            <strong style="font-size: 1.1em; color: #fff;">${foundry.utils.foundry.utils.escapeHTML(cls.name)}</strong>
-            <p style="margin: 4px 0 0 0; font-size: 0.9em; color: #aaa;">${foundry.utils.foundry.utils.escapeHTML(cls.description || '')}</p>
+            <strong style="font-size: 1.1em; color: #fff;">${foundry.utils.escapeHTML(cls.name)}</strong>
+            <p style="margin: 4px 0 0 0; font-size: 0.9em; color: #aaa;">${foundry.utils.escapeHTML(cls.description || '')}</p>
           </div>
         </div>
       </div>`
