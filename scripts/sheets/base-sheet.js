@@ -209,14 +209,101 @@ export class SWSEActorSheetBase extends BaseSheet {
     const type = event.currentTarget.dataset.type;
     const cap = type.charAt(0).toUpperCase() + type.slice(1);
 
+    // Initialize system fields based on item type
+    const systemDefaults = this._getSystemDefaults(type);
+
     const itemData = {
       name: `New ${cap}`,
       type,
-      system: {}
+      system: systemDefaults
     };
 
     const [created] = await this.actor.createEmbeddedDocuments('Item', [itemData]);
     return created?.sheet.render(true);
+  }
+
+  // -----------------------------
+  // Get Default System Fields
+  // -----------------------------
+  _getSystemDefaults(type) {
+    const defaults = {
+      weapon: {
+        damage: "1d6",
+        damageType: "kinetic",
+        range: "melee",
+        attackAttribute: "str",
+        attackBonus: 0,
+        weight: 0,
+        cost: 0,
+        properties: [],
+        ammunition: { type: "none", current: 0, max: 0 },
+        upgradeSlots: 0,
+        installedUpgrades: [],
+        description: "",
+        equipped: false
+      },
+      armor: {
+        armorType: "light",
+        defenseBonus: 0,
+        equipmentBonus: 0,
+        fortBonus: 0,
+        maxDexBonus: null,
+        armorCheckPenalty: 0,
+        speedPenalty: 0,
+        weight: 0,
+        cost: 0,
+        upgradeSlots: 0,
+        installedUpgrades: [],
+        description: "",
+        equipped: false
+      },
+      equipment: {
+        weight: 0,
+        cost: 0,
+        upgradeSlots: 0,
+        installedUpgrades: [],
+        description: ""
+      },
+      feat: {
+        featType: "general",
+        prerequisite: "",
+        benefit: "",
+        special: "",
+        normalText: "",
+        bonusFeatFor: [],
+        uses: { current: 0, max: 0, perDay: false }
+      },
+      talent: {
+        tree: "Custom",
+        prerequisite: "",
+        benefit: "",
+        special: "",
+        uses: { current: 0, max: 0, perEncounter: false, perDay: false }
+      },
+      'force-power': {
+        powerLevel: 1,
+        discipline: "telekinetic",
+        useTheForce: 15,
+        time: "Standard Action",
+        range: "6 squares",
+        target: "One target",
+        duration: "Instantaneous",
+        effect: "",
+        special: "",
+        tags: [],
+        dcChart: [],
+        maintainable: false,
+        forcePointCost: 0,
+        forcePointEffect: "",
+        sourcebook: "",
+        page: null,
+        uses: { current: 0, max: 0 },
+        inSuite: false,
+        spent: false
+      }
+    };
+
+    return defaults[type] || {};
   }
 
   // -----------------------------

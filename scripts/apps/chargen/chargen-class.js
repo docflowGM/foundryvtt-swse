@@ -231,7 +231,17 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
         system: {
           description: feature.description || `Starting feature from ${classDoc.name}`,
           source: `${classDoc.name} (Starting)`,
-          type: feature.type || "class_feature"
+          featType: "class_feature",
+          prerequisite: feature.prerequisite || "",
+          benefit: feature.description || `Starting feature from ${classDoc.name}`,
+          special: feature.special || "",
+          normalText: "",
+          bonusFeatFor: [],
+          uses: {
+            current: 0,
+            max: 0,
+            perDay: false
+          }
         }
       };
 
@@ -283,7 +293,17 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
             system: {
               description: feature.description || `Class feature from ${classDoc.name} level 1`,
               source: `${classDoc.name} 1`,
-              type: feature.type
+              featType: feature.type === 'proficiency' ? 'proficiency' : 'class_feature',
+              prerequisite: feature.prerequisite || "",
+              benefit: feature.description || `Class feature from ${classDoc.name} level 1`,
+              special: feature.special || "",
+              normalText: "",
+              bonusFeatFor: [],
+              uses: {
+                current: 0,
+                max: 0,
+                perDay: false
+              }
             }
           };
 
