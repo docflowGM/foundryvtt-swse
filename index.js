@@ -281,7 +281,6 @@ Hooks.once("init", async function () {
        --------------------------------------------------------- */
     registerInitHooks();
     registerDestinyHooks();
-    registerLevelUpSheetHooks();
     registerKeybindings();
 
     /* ---------------------------------------------------------
