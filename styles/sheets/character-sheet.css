@@ -5110,6 +5110,172 @@ font-size: 12px;
 }
 
 /* ─────────────────────────────────────────────────
+   SUMMARY TAB LAYOUT REORGANIZATION
+   ───────────────────────────────────────────────── */
+
+.swse .summary-tab {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  grid-auto-flow: dense;
+}
+
+/* ABILITIES SECTION */
+.swse .summary-tab .abilities-quick {
+  grid-column: 1 / -1;
+  order: 1;
+}
+
+.swse .abilities-quick h3 {
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--holo-cyan);
+  padding-bottom: 8px;
+}
+
+.swse .abilities-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+/* COMBAT STATS (HP/Speed/Initiative) */
+.swse .summary-tab .combat-stats {
+  grid-column: 1;
+  order: 2;
+}
+
+.swse .combat-stats h3 {
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--holo-cyan);
+  padding-bottom: 8px;
+}
+
+/* DEFENSES SECTION - move to 2-column layout */
+.swse .summary-tab .defenses-detail {
+  grid-column: 2;
+  order: 3;
+}
+
+.swse .defenses-detail h3 {
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--holo-cyan);
+  padding-bottom: 8px;
+}
+
+.swse .defenses-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.swse .defense-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background: rgba(0, 168, 204, 0.05);
+  border: 1px solid rgba(0, 168, 204, 0.2);
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.swse .defense-detail-row label {
+  font-weight: bold;
+  min-width: 80px;
+  color: var(--holo-cyan);
+}
+
+.swse .defense-calculation {
+  display: flex;
+  gap: 2px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.swse .defense-calculation span {
+  color: var(--muted);
+}
+
+.swse .defense-total {
+  font-weight: bold;
+  color: var(--holo-cyan);
+  min-width: 30px;
+  text-align: right;
+}
+
+/* QUICK ATTACKS / COMMON ATTACKS */
+.swse .summary-tab .quick-attacks {
+  grid-column: 1 / -1;
+  order: 4;
+}
+
+.swse .quick-attacks h4 {
+  margin-bottom: 10px;
+  color: var(--holo-cyan);
+}
+
+/* DESTINY SECTION */
+.swse .summary-tab .destiny-section {
+  grid-column: 1 / -1;
+  order: 5;
+}
+
+.swse .destiny-section h3 {
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--holo-cyan);
+  padding-bottom: 8px;
+}
+
+/* RACIAL/SPECIES TRAITS */
+.swse .summary-tab .racial-traits {
+  grid-column: 1 / -1;
+  order: 6;
+}
+
+.swse .racial-traits h3 {
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--holo-cyan);
+  padding-bottom: 8px;
+}
+
+.swse .racial-traits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+/* CHARACTER TRAITS / DARK SIDE */
+.swse .summary-tab .character-traits {
+  grid-column: 1;
+  order: 7;
+}
+
+.swse .character-traits h3 {
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--holo-cyan);
+  padding-bottom: 8px;
+}
+
+/* DROID IMMUNITIES */
+.swse .summary-tab .droid-immunities {
+  grid-column: 1 / -1;
+  order: 8;
+}
+
+.swse .droid-immunities h3 {
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--holo-cyan);
+  padding-bottom: 8px;
+}
+
+.swse .immunities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+}
+
+/* ─────────────────────────────────────────────────
    RESPONSIVE ADJUSTMENTS
    ───────────────────────────────────────────────── */
 
@@ -5134,5 +5300,27 @@ font-size: 12px;
 
   .swse .feats-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Summary tab responsive */
+  .swse .summary-tab {
+    grid-template-columns: 1fr;
+  }
+
+  .swse .summary-tab .combat-stats,
+  .swse .summary-tab .defenses-detail {
+    grid-column: 1;
+  }
+
+  .swse .summary-tab .character-traits {
+    grid-column: 1;
+  }
+
+  .swse .abilities-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .swse .racial-traits-grid {
+    grid-template-columns: 1fr;
   }
 }
