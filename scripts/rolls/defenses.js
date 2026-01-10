@@ -68,6 +68,20 @@ export function getDefenseWithCover(actor, type, coverType = "none") {
 }
 
 /**
+ * Calculate flat-footed defense (reflex without DEX bonus)
+ * @param {Actor} actor - The actor
+ * @returns {number} Flat-footed defense value
+ */
+export function calculateFlatFooted(actor) {
+  const base = 10;
+  const lvl = actor.system.level || 1;
+  const cls = actor.system.defenses.reflex?.classBonus || 0;
+  const misc = actor.system.defenses.reflex?.misc || 0;
+
+  return base + Math.floor(lvl / 2) + cls + misc;
+}
+
+/**
  * Calculate damage threshold
  * @param {Actor} actor - The actor
  * @returns {number} Damage threshold value
@@ -76,6 +90,6 @@ export function calculateDamageThreshold(actor) {
   const utils = game.swse.utils;
   const fortitude = calculateDefense(actor, "fortitude");
   const size = actor.system.size || "medium";
-  
+
   return utils.math.calculateDamageThreshold(fortitude, size);
 }

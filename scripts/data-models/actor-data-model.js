@@ -69,20 +69,33 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
           total: new fields.NumberField({ required: true, initial: 10, integer: true }),
           armor: new fields.NumberField({ required: true, initial: 0, integer: true }),
           classBonus: new fields.NumberField({ required: true, initial: 0, integer: true }),
-          misc: new fields.NumberField({ required: true, initial: 0, integer: true }),
-          abilityKey: new fields.StringField({ required: true, initial: 'dex' })
+          misc: new fields.SchemaField({
+            auto: new fields.SchemaField({}),
+            user: new fields.SchemaField({})
+          }),
+          ability: new fields.StringField({ required: true, initial: 'dex' }),
+          source: new fields.StringField({ required: false, initial: 'level' }),
+          level: new fields.NumberField({ required: false, initial: 0, integer: true })
         }),
-        fortitude: new fields.SchemaField({
+        fort: new fields.SchemaField({
           total: new fields.NumberField({ required: true, initial: 10, integer: true }),
           classBonus: new fields.NumberField({ required: true, initial: 0, integer: true }),
-          misc: new fields.NumberField({ required: true, initial: 0, integer: true }),
-          abilityKey: new fields.StringField({ required: true, initial: 'str' })
+          misc: new fields.SchemaField({
+            auto: new fields.SchemaField({}),
+            user: new fields.SchemaField({})
+          }),
+          ability: new fields.StringField({ required: true, initial: 'str' }),
+          level: new fields.NumberField({ required: false, initial: 0, integer: true })
         }),
         will: new fields.SchemaField({
           total: new fields.NumberField({ required: true, initial: 10, integer: true }),
           classBonus: new fields.NumberField({ required: true, initial: 0, integer: true }),
-          misc: new fields.NumberField({ required: true, initial: 0, integer: true }),
-          abilityKey: new fields.StringField({ required: true, initial: 'wis' })
+          misc: new fields.SchemaField({
+            auto: new fields.SchemaField({}),
+            user: new fields.SchemaField({})
+          }),
+          ability: new fields.StringField({ required: true, initial: 'wis' }),
+          level: new fields.NumberField({ required: false, initial: 0, integer: true })
         }),
         flatFooted: new fields.SchemaField({
           total: new fields.NumberField({ required: true, initial: 10, integer: true })

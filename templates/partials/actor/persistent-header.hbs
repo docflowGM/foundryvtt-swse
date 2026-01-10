@@ -47,9 +47,9 @@
       <div class="defense fortitude-defense">
         <div class="defense-header">
           <label class="defense-label">Fort</label>
-          <select class="defense-ability-select" name="system.defenses.fortitude.abilityKey" data-defense="fortitude">
-            <option value="str" {{#if (eq system.defenses.fortitude.abilityKey "str")}}selected{{/if}}>STR</option>
-            <option value="con" {{#if (eq system.defenses.fortitude.abilityKey "con")}}selected{{/if}}>CON</option>
+          <select class="defense-ability-select" name="system.defenses.fort.ability" data-defense="fort">
+            <option value="str" {{#if (eq system.defenses.fort.ability "str")}}selected{{/if}}>STR</option>
+            <option value="con" {{#if (eq system.defenses.fort.ability "con")}}selected{{/if}}>CON</option>
           </select>
         </div>
         <div class="defense-base">10</div>
@@ -58,11 +58,11 @@
         <div class="defense-class" title="Class bonus"></div>
         <div class="defense-misc" title="Miscellaneous bonus">M</div>
         <div class="defense-value rollable"
-             data-roll="1d20+{{system.defenses.fortitude.total}}"
+             data-roll="1d20+{{system.defenses.fort.total}}"
              data-label="Fortitude Defense"
              role="button" tabindex="0"
              title="Roll vs. Fortitude Defense">
-          <strong>{{system.defenses.fortitude.total}}</strong>
+          <strong>{{system.defenses.fort.total}}</strong>
         </div>
       </div>
 
@@ -70,9 +70,7 @@
       <div class="defense reflex-defense">
         <div class="defense-header">
           <label class="defense-label">Ref</label>
-          <select class="defense-ability-select" name="system.defenses.reflex.abilityKey" data-defense="reflex">
-            <option value="dex" {{#if (eq system.defenses.reflex.abilityKey "dex")}}selected{{/if}}>DEX</option>
-          </select>
+          <span class="defense-ability-fixed" title="Reflex always uses Dexterity">DEX</span>
         </div>
         <div class="defense-base">10</div>
         <div class="defense-level" title="Character Level / 2">{{system.level}}/2</div>
@@ -92,9 +90,7 @@
       <div class="defense will-defense">
         <div class="defense-header">
           <label class="defense-label">Will</label>
-          <select class="defense-ability-select" name="system.defenses.will.abilityKey" data-defense="will">
-            <option value="wis" {{#if (eq system.defenses.will.abilityKey "wis")}}selected{{/if}}>WIS</option>
-          </select>
+          <span class="defense-ability-fixed" title="Will always uses Wisdom">WIS</span>
         </div>
         <div class="defense-base">10</div>
         <div class="defense-level" title="Character Level / 2">{{system.level}}/2</div>
