@@ -234,10 +234,10 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       this.defenses.reflex.classBonus +
       this.defenses.reflex.misc + cond;
 
-    this.defenses.fortitude.total =
+    this.defenses.fort.total =
       10 + lvl + this.abilities.str.mod +
-      this.defenses.fortitude.classBonus +
-      this.defenses.fortitude.misc + cond;
+      this.defenses.fort.classBonus +
+      this.defenses.fort.misc + cond;
 
     this.defenses.will.total =
       10 + lvl + this.abilities.wis.mod +
@@ -271,7 +271,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
   /* -------------------------------------------------------------------------- */
 
   _calculateDamageThreshold() {
-    this.damageThreshold = this.defenses.fortitude.total;
+    this.damageThreshold = this.defenses.fort.total;
   }
 
   _calculateInitiative() {
