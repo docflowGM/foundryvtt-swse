@@ -539,7 +539,13 @@ export function _createTempActorForValidation() {
             items.push({
               type: 'talent',
               name: talent.name || talent,
-              system: talent.system || {}
+              system: {
+                tree: talent.system?.tree || "Unknown",
+                prerequisite: talent.system?.prerequisite || "",
+                benefit: talent.system?.benefit || "",
+                special: talent.system?.special || "",
+                uses: talent.system?.uses || {current: 0, max: 0, perEncounter: false, perDay: false}
+              }
             });
           }
         }
@@ -577,7 +583,13 @@ export function _createTempActorForValidation() {
             items.push({
               type: 'talent',
               name: talent.name || talent,
-              system: talent.system || {}
+              system: {
+                tree: talent.system?.tree || "Unknown",
+                prerequisite: talent.system?.prerequisite || "",
+                benefit: talent.system?.benefit || "",
+                special: talent.system?.special || "",
+                uses: talent.system?.uses || {current: 0, max: 0, perEncounter: false, perDay: false}
+              }
             });
           }
         }
@@ -615,7 +627,13 @@ export function _createTempActorForValidation() {
             items.push({
               type: 'talent',
               name: talent.name || talent,
-              system: talent.system || {}
+              system: {
+                tree: talent.system?.tree || "Unknown",
+                prerequisite: talent.system?.prerequisite || "",
+                benefit: talent.system?.benefit || "",
+                special: talent.system?.special || "",
+                uses: talent.system?.uses || {current: 0, max: 0, perEncounter: false, perDay: false}
+              }
             });
           }
         }
