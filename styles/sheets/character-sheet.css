@@ -5083,6 +5083,32 @@ font-size: 12px;
   background: rgba(100, 200, 255, 0.1);
 }
 
+.swse .feat-card .item-controls {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  width: 100%;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.swse .feat-card:hover .item-controls {
+  opacity: 1;
+}
+
+.swse .feat-card .item-control {
+  color: rgba(0, 217, 255, 0.6);
+  padding: 4px;
+  border-radius: 3px;
+  transition: all 0.15s ease;
+}
+
+.swse .feat-card .item-control:hover {
+  color: rgba(0, 217, 255, 1);
+  background: rgba(0, 217, 255, 0.2);
+}
+
 /* ─────────────────────────────────────────────────
    RESPONSIVE ADJUSTMENTS
    ───────────────────────────────────────────────── */
