@@ -315,9 +315,9 @@ export class SkillSystem {
        - Supports freeform Knowledge skills
        ====================================================================== */
     static _detectSkill(use) {
-        const text = (use.application + " " + use.description).toLowerCase();
+        const text = (use.application + " " + (use.description || "")).toLowerCase();
 
-        // Manual override table
+        // Manual override table - using correct camelCase skill keys
         const MANUAL = {
             "feint": "deception",
             "group feint": "deception",
@@ -328,58 +328,92 @@ export class SkillSystem {
             "create a diversion": "stealth",
             "conceal": "stealth",
 
-            "analysis": "knowledge_analysis",
-            "alternate story": "knowledge_story",
-
-            "astrogate": "use_computer",
-            "access information": "use_computer",
+            "astrogate": "useComputer",
+            "access information": "useComputer",
+            "issue routine command": "useComputer",
+            "reprogram droid": "useComputer",
 
             "jury-rig": "mechanics",
             "modify droid": "mechanics",
             "disable device": "mechanics",
-            "repair": "mechanics"
+            "repair": "mechanics",
+
+            "first aid": "treatInjury",
+            "long-term care": "treatInjury",
+            "surgery": "treatInjury",
+            "revivify": "treatInjury",
+
+            "gather information": "gatherInfo"
         };
 
         for (const [kw, result] of Object.entries(MANUAL)) {
             if (text.includes(kw)) return result;
         }
 
-        // Keyword matching
+        // Keyword matching - using correct camelCase skill keys
         const KW = [
             ["stealth", "stealth"],
             ["hide", "stealth"],
+            ["pick pocket", "stealth"],
 
             ["perception", "perception"],
             ["spot", "perception"],
             ["listen", "perception"],
+            ["search", "perception"],
 
-            ["jump", "acrobatics"],
-            ["climb", "athletics"],
-            ["swim", "athletics"],
+            ["jump", "jump"],
+            ["long jump", "jump"],
+            ["high jump", "jump"],
+
+            ["climb", "climb"],
+            ["climbing", "climb"],
+
+            ["swim", "swim"],
+            ["swimming", "swim"],
+
+            ["acrobatics", "acrobatics"],
+            ["tumble", "acrobatics"],
+            ["balance", "acrobatics"],
 
             ["pilot", "pilot"],
             ["dogfight", "pilot"],
             ["drive", "pilot"],
+            ["ram", "pilot"],
 
-            ["use computer", "use_computer"],
-            ["search", "perception"],
+            ["use computer", "useComputer"],
+            ["computer", "useComputer"],
 
-            ["treat", "treat_injury"],
-            ["heal", "treat_injury"],
-            ["first aid", "treat_injury"],
+            ["treat injury", "treatInjury"],
+            ["treat", "treatInjury"],
+            ["heal", "treatInjury"],
 
             ["droid", "mechanics"],
             ["tech", "mechanics"],
+            ["mechanics", "mechanics"],
 
             ["persuasion", "persuasion"],
             ["haggle", "persuasion"],
             ["intimidate", "persuasion"],
+            ["bribe", "persuasion"],
+
+            ["deception", "deception"],
+            ["deceive", "deception"],
+            ["lie", "deception"],
 
             ["survival", "survival"],
             ["track", "survival"],
+            ["endure", "endurance"],
+            ["endurance", "endurance"],
+
+            ["initiative", "initiative"],
 
             ["knowledge", "knowledge"],
-            ["use the force", "use_the_force"]
+
+            ["use the force", "useTheForce"],
+            ["force trance", "useTheForce"],
+            ["telepathy", "useTheForce"],
+            ["move object", "useTheForce"],
+            ["sense", "useTheForce"]
         ];
 
         for (const [kw, skill] of KW) {
@@ -395,7 +429,7 @@ export class SkillSystem {
        - Used for collapsible category cards
        ====================================================================== */
     static _detectCategory(use) {
-        const text = (use.application + " " + use.description).toLowerCase();
+        const text = (use.application + " " + (use.description || "")).toLowerCase();
 
         if (text.includes("droid")) return "Droid Operations";
         if (text.includes("vehicle") || text.includes("pilot")) return "Vehicle / Starship";

@@ -117,6 +117,11 @@ export function _bindAbilitiesUI(root) {
       const results = [];
       for (let i = 0; i < 6; i++) {
         const r = await globalThis.SWSE.RollEngine.safeRoll("4d6kh3");
+        if (!r || !r.dice || !r.dice[0] || !r.dice[0].results) {
+          ui.notifications.error("Failed to roll dice. Please try again.");
+          SWSELogger.error("SWSE | Standard roll failed:", r);
+          return;
+        }
         const dice = r.dice[0].results.map(d => ({value: d.result, discarded: d.discarded}));
         results.push({ total: r.total, dice });
       }

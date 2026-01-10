@@ -228,8 +228,12 @@ export class SWSEActorSheetBase extends BaseSheet {
 
     if (!ds.roll) return;
 
-    const r = globalThis.SWSE.RollEngine.safeRoll(ds.roll, this.actor.getRollData());
-    const roll = await this._safeEvaluateRoll(r);
+    // safeRoll is async and returns an already-evaluated roll
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(ds.roll, this.actor.getRollData());
+    if (!roll) {
+      ui.notifications.error("Roll failed. Check console for details.");
+      return;
+    }
 
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
@@ -251,7 +255,12 @@ export class SWSEActorSheetBase extends BaseSheet {
     if (!skill) return ui.notifications.error(`Skill ${skillKey} missing on actor.`);
 
     const formula = `1d20 + ${skill.total}`;
-    const roll = await this._safeEvaluateRoll(globalThis.SWSE.RollEngine.safeRoll(formula));
+    // safeRoll is async and returns an already-evaluated roll
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(formula);
+    if (!roll) {
+      ui.notifications.error("Roll failed. Check console for details.");
+      return;
+    }
 
     const success = !isNaN(dc) && roll.total >= dc;
 
