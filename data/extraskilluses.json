@@ -598,5 +598,59 @@
     "DC": "15 (swimming) / 10 (treading water) (+2 per consecutive hour)",
     "time": "per hour of swimming/treading water",
     "effect": "Move -1 Persistent step on Condition Track; only removed by resting (not swimming) for same duration as swimming"
+  },
+  {
+    "application": "Avoid Surprise",
+    "DC": "Special (GM-determined)",
+    "time": "reaction at start of battle",
+    "effect": "Determine if you are Surprised at the start of combat"
+  },
+  {
+    "application": "Eavesdrop",
+    "DC": "10 (normal) / 15 (noisy areas) / 25 (loud areas like droid factory)",
+    "time": "standard action",
+    "effect": "Overhear conversations; must understand the language being spoken"
+  },
+  {
+    "application": "Listen for Distant/Ambient Noises",
+    "DC": 10,
+    "time": "standard action",
+    "effect": "Detect and identify distant or ambient noises"
+  },
+  {
+    "application": "Notice Targets",
+    "DC": "Opposed by Stealth (if hiding) or target size (-15 Colossal to 25 Fine); -5 per 10 squares distance (character scale) or -5 per square (starship scale); -5 concealment/-10 total concealment",
+    "time": "reaction to detect / standard action to actively search",
+    "effect": "See or hear targets attempting to hide; notice concealed weapons/objects (identify type at +5 margin of success)"
+  },
+  {
+    "application": "Search Area",
+    "DC": "15 (standard 1 square/cubic meter) / 5 with -10 penalty (quick 5 square/cubic meter survey)",
+    "time": "full-round action",
+    "effect": "Find clues, hidden compartments, secret doors, traps, and other non-obvious details in area"
+  },
+  {
+    "application": "Search Character",
+    "DC": "Opposed by Stealth (+10 bonus if physically touching willing/pinned/helpless target)",
+    "time": "full-round action",
+    "effect": "Find concealed weapons or objects on a character; requires willing, pinned, or helpless target for physical search"
+  },
+  {
+    "application": "Sense Deception",
+    "DC": "Opposed by Deception check result",
+    "time": "reaction",
+    "effect": "See through deceptive appearances; success means you realize you're being deceived"
+  },
+  {
+    "application": "Sense Influence",
+    "DC": 20,
+    "time": "full-round action",
+    "effect": "Determine whether someone is under the influence of a [Mind-Affecting] Force Power or other coercion"
+  },
+  {
+    "application": "Long-Range Spotter (Trained Only)",
+    "DC": 10,
+    "time": "as part of ally's attack",
+    "effect": "Aid Another on ranged attack using electrobinoculars; target at least 50 squares from both you and ally; ally must hear and understand you"
   }
 ]
