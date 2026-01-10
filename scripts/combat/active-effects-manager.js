@@ -258,7 +258,7 @@ export class SWSEActiveEffectsManager {
   static async toggleCombatActionEffect(actor, action) {
     const existing = actor.effects.find(e => e.flags?.swse?.combatAction === action);
     if (existing) {
-      await actor.effects.delete([existing.id]);
+      await actor.deleteEmbeddedDocuments('ActiveEffect', [existing.id]);
       return;
     }
 
@@ -273,7 +273,7 @@ export class SWSEActiveEffectsManager {
       duration: data.duration
     });
 
-    await actor.effects.create(effect);
+    await actor.createEmbeddedDocuments('ActiveEffect', [effect]);
   }
 
   /* -------------------------------------------------------------------------- */
@@ -301,7 +301,8 @@ export class SWSEActiveEffectsManager {
       duration: data.duration
     });
 
-    return (await actor.effects.create(effect))[0];
+    const result = await actor.createEmbeddedDocuments('ActiveEffect', [effect]);
+    return result[0];
   }
 
   /**
@@ -311,7 +312,7 @@ export class SWSEActiveEffectsManager {
   static async removeDestinyEffects(actor) {
     const toRemove = actor.effects.filter(e => e.flags?.swse?.destinyEffect);
     if (toRemove.length) {
-      await actor.effects.delete(toRemove.map(e => e.id));
+      await actor.deleteEmbeddedDocuments('ActiveEffect', toRemove.map(e => e.id));
     }
   }
 
@@ -321,7 +322,8 @@ export class SWSEActiveEffectsManager {
 
   static async createCustomEffect(actor, config) {
     const effect = this._buildEffect(actor, config);
-    return (await actor.effects.create(effect))[0];
+    const result = await actor.createEmbeddedDocuments('ActiveEffect', [effect]);
+    return result[0];
   }
 
   /* -------------------------------------------------------------------------- */
@@ -350,7 +352,7 @@ export class SWSEActiveEffectsManager {
       );
 
       if (expired.length)
-        actor.effects.delete(expired.map(e => e.id));
+        actor.deleteEmbeddedDocuments('ActiveEffect', expired.map(e => e.id));
     });
 
     swseLogger.log("SWSE | Active Effects Manager Ready");
