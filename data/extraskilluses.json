@@ -670,5 +670,83 @@
     "DC": "Opposed by opponent's Initiative check (triggered when Use the Force block equals incoming attack exactly)",
     "time": "free action after block",
     "effect": "Both combatants make opposed Initiative checks; higher result may make immediate unarmed attack against opponent as Free Action; Saber Lock ends after attack"
+  },
+  {
+    "application": "Balance",
+    "DC": "10 (8-15 cm wide) / 15 (4-7 cm wide) / 20 (less than 4 cm wide); +5 if slippery/unstable; catch ledge DC 15 on failure",
+    "time": "move action",
+    "effect": "Move at half speed along narrow surface; fail = fall Prone. If trained, not Flat-Footed while balancing. Taking damage requires another check or fall. If trained and succeed DC 15, stand up as Free Action if successful"
+  },
+  {
+    "application": "Cross Difficult Terrain (Trained Only)",
+    "DC": 15,
+    "time": "part of movement",
+    "effect": "Move through Difficult Terrain at normal Speed instead of half speed"
+  },
+  {
+    "application": "Escape Bonds",
+    "DC": "Ropes: opponent's DEX check +10 / Net: 15 / Binder Cuffs: 25 / Grapple: opponent's Grapple check / Tight space: 20",
+    "time": "Standard (Grapple) / Full-Round (Net or tight space) / 1 minute (ropes/cuffs/manacles)",
+    "effect": "Slip free of restraints, wiggle through tight spaces, or escape from Grapple"
+  },
+  {
+    "application": "Fall Prone (Trained Only)",
+    "DC": 15,
+    "time": "free action",
+    "effect": "Drop to Prone position as Free Action instead of Swift Action"
+  },
+  {
+    "application": "Reduce Falling Damage (Trained Only)",
+    "DC": "15 (regular falls or falling objects) / 20 (guide descent from great distances)",
+    "time": "reaction when falling",
+    "effect": "Treat fall as 3 meters shorter (add 3 more meters per 10 above DC 15); land on feet if no damage. DC 20 for great distances lets you adjust landing target by 1 square per 60 meters fallen"
+  },
+  {
+    "application": "Stand up from Prone (Trained Only)",
+    "DC": 15,
+    "time": "swift action",
+    "effect": "Stand up from Prone position as Swift Action instead of Move Action"
+  },
+  {
+    "application": "Tumble (Trained Only)",
+    "DC": 15,
+    "time": "part of move action",
+    "effect": "Move through threatened area or fighting space of enemy without provoking Attack of Opportunity; each threatened/occupied square counts as 2 squares of movement"
+  },
+  {
+    "application": "Catch Item (Trained Only)",
+    "DC": 20,
+    "time": "free action after successful Disarm",
+    "effect": "Snatch disarmed object from air; requires at least one free hand"
+  },
+  {
+    "application": "Escape Artist (Trained Only)",
+    "DC": "Base DC +10 to reduce escape time",
+    "time": "Move (Grapple) / Standard (Net or tight space) / 5 rounds (ropes/cuffs/manacles)",
+    "effect": "Reduce time required to Escape Bonds by one action type"
+  },
+  {
+    "application": "Low or High Gravity Environments (Trained Only)",
+    "DC": 20,
+    "time": "as action causing penalty",
+    "effect": "Negate penalties to attack rolls in Low Gravity and High Gravity environments"
+  },
+  {
+    "application": "Nimble Charge (Trained Only)",
+    "DC": "25 (Charge through low objects/difficult terrain) / 35 (combined with Cross Difficult Terrain)",
+    "time": "as part of charge",
+    "effect": "Charge through Low Objects and Difficult Terrain; fail = no attack at end of movement"
+  },
+  {
+    "application": "Zero-Gravity Environments (Trained Only)",
+    "DC": 20,
+    "time": "swift action or no penalty",
+    "effect": "Maneuver in Zero-Gravity; arrive on target when crossing wide spaces, or reduce attack roll/skill check penalty to -2 instead of -5"
+  },
+  {
+    "application": "Fighting Defensively (Trained Only)",
+    "DC": "—",
+    "time": "passive",
+    "effect": "Gain +5 dodge bonus to Reflex Defense when trained in Acrobatics and Fighting Defensively"
   }
 ]
