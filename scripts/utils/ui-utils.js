@@ -40,7 +40,9 @@ export async function prompt(title, label, defaultValue = "") {
                 ok: {
                     label: "OK",
                     callback: (html) => {
-                        resolve(html.find('[name="input"]').val());
+                        const element = html instanceof HTMLElement ? html : html[0];
+                        const input = element?.querySelector('[name="input"]');
+                        resolve(input?.value || null);
                     }
                 },
                 cancel: {
