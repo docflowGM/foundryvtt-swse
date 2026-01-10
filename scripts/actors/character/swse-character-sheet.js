@@ -678,12 +678,12 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     };
 
     const rows = species.map((sp, idx) => `
-      <div class="species-choice-card" data-key="${idx}" data-species="${escapeHTML(sp.name)}" style="cursor: pointer; padding: 12px; border: 1px solid #ccc; border-radius: 4px; margin: 8px; display: inline-block; min-width: 120px; text-align: center; transition: all 0.2s;">
+      <div class="species-choice-card" data-key="${idx}" data-species="${foundry.utils.escapeHTML(sp.name)}" style="cursor: pointer; padding: 12px; border: 1px solid #ccc; border-radius: 4px; margin: 8px; display: inline-block; min-width: 120px; text-align: center; transition: all 0.2s;">
         <div class="species-img-wrapper" style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 8px auto; background: #666; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-          <img src="${escapeHTML(getSpeciesImagePath(sp.name))}" alt="${escapeHTML(sp.name)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <img src="${foundry.utils.escapeHTML(getSpeciesImagePath(sp.name))}" alt="${foundry.utils.escapeHTML(sp.name)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
           <i class="fas fa-dna" style="color: #fff; font-size: 24px; display: none;"></i>
         </div>
-        <strong>${escapeHTML(sp.name)}</strong>
+        <strong>${foundry.utils.escapeHTML(sp.name)}</strong>
       </div>`
     ).join("");
 
@@ -718,7 +718,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
             if (this.actor.system?.species) {
               const confirmed = await Dialog.confirm({
                 title: "Change Species?",
-                content: `<p>Change from <strong>${escapeHTML(this.actor.system.species)}</strong> to <strong>${escapeHTML(doc.name)}</strong>?</p><p>Racial bonuses and traits will be updated.</p>`
+                content: `<p>Change from <strong>${foundry.utils.escapeHTML(this.actor.system.species)}</strong> to <strong>${foundry.utils.escapeHTML(doc.name)}</strong>?</p><p>Racial bonuses and traits will be updated.</p>`
               });
               if (!confirmed) return;
             }
@@ -782,12 +782,12 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     // Create card-based class picker
     const rows = classes.map((cls, idx) => `
-      <div class="class-choice-card" data-key="${idx}" data-class="${escapeHTML(cls.name)}" style="cursor: pointer; padding: 16px; border: 1px solid #ccc; border-radius: 8px; margin: 8px; min-width: 200px; transition: all 0.2s; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+      <div class="class-choice-card" data-key="${idx}" data-class="${foundry.utils.foundry.utils.escapeHTML(cls.name)}" style="cursor: pointer; padding: 16px; border: 1px solid #ccc; border-radius: 8px; margin: 8px; min-width: 200px; transition: all 0.2s; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
         <div style="display: flex; align-items: center; gap: 12px;">
           <i class="fas ${classIcons[cls.name] || 'fa-user'}" style="font-size: 24px; color: #4a9eff;"></i>
           <div>
-            <strong style="font-size: 1.1em; color: #fff;">${escapeHTML(cls.name)}</strong>
-            <p style="margin: 4px 0 0 0; font-size: 0.9em; color: #aaa;">${escapeHTML(cls.description || '')}</p>
+            <strong style="font-size: 1.1em; color: #fff;">${foundry.utils.foundry.utils.escapeHTML(cls.name)}</strong>
+            <p style="margin: 4px 0 0 0; font-size: 0.9em; color: #aaa;">${foundry.utils.foundry.utils.escapeHTML(cls.description || '')}</p>
           </div>
         </div>
       </div>`
