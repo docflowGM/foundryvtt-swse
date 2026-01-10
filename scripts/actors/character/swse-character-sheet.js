@@ -460,7 +460,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     event.preventDefault();
     // Open character generator using barrel export
     try {
-      const { SWSECharacterGeneratorApp } = await import('../apps/chargen.js');
+      const { SWSECharacterGeneratorApp } = await import('../../apps/chargen.js');
       new SWSECharacterGeneratorApp(this.actor).render(true);
     } catch (err) {
       SWSELogger.error('Character generator error:', err);
