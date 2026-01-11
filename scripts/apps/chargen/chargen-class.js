@@ -87,9 +87,9 @@ export async function _onSelectClass(event) {
     this.characterData.hp.max = (hitDie * 3) + conMod; // Level 1 HP is 3x hit die + CON mod (SWSE heroic rule)
     this.characterData.hp.value = this.characterData.hp.max;
 
-    // Defense bonuses
+    // Defense bonuses - NOTE: compendium uses 'fortitude', actor uses 'fort'
     if (classDoc.system.defenses) {
-      this.characterData.defenses.fort.classBonus = Number(classDoc.system.defenses.fort) || 0;
+      this.characterData.defenses.fort.classBonus = Number(classDoc.system.defenses.fortitude) || 0;
       this.characterData.defenses.reflex.classBonus = Number(classDoc.system.defenses.reflex) || 0;
       this.characterData.defenses.will.classBonus = Number(classDoc.system.defenses.will) || 0;
     }

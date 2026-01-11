@@ -1571,11 +1571,12 @@ export default class CharacterGenerator extends Application {
           const classDoc = this._packs.classes.find(c => c.name === classData.name);
           if (classDoc) {
             // Get defenses from class doc or use defaults
-            const defenses = classDoc.system.defenses?.fort !== undefined ||
+            // NOTE: compendium uses 'fortitude', but class items on actor use 'fort'
+            const defenses = classDoc.system.defenses?.fortitude !== undefined ||
                             classDoc.system.defenses?.reflex !== undefined ||
                             classDoc.system.defenses?.will !== undefined
               ? classDoc.system.defenses
-              : { fort: 0, reflex: 0, will: 0 };
+              : { fortitude: 0, reflex: 0, will: 0 };
 
             const classItem = {
               name: classDoc.name,
@@ -1586,7 +1587,7 @@ export default class CharacterGenerator extends Application {
                 hitDie: getHitDie(classDoc),
                 babProgression: getClassProperty(classDoc, 'babProgression', 0.75),
                 defenses: {
-                  fort: defenses.fort || 0,
+                  fortitude: defenses.fortitude || 0,
                   reflex: defenses.reflex || 0,
                   will: defenses.will || 0
                 },
