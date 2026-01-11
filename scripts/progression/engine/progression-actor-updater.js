@@ -129,7 +129,9 @@ export class ActorProgressionUpdater {
     const { getClassData } = await import('../utils/class-data-loader.js');
 
     let maxHP = 0;
-    const conMod = actor.system.attributes?.con?.mod || 0;
+    // Droids don't have Constitution and receive no HP from CON modifier
+    const isDroid = actor.system.isDroid || false;
+    const conMod = isDroid ? 0 : (actor.system.attributes?.con?.mod || 0);
     let isFirstLevel = true;
 
     for (const classLevel of classLevels) {
@@ -185,8 +187,9 @@ export class ActorProgressionUpdater {
     const refBonus = await calculateSaveBonus(classLevels, 'ref');
     const willBonus = await calculateSaveBonus(classLevels, 'will');
 
-    // Fortitude uses STR or CON (whichever is higher)
-    const fortAbility = Math.max(strMod, conMod);
+    // Fortitude uses STR or CON (whichever is higher) for living, STR only for droids
+    const isDroidActor = actor.system.isDroid || false;
+    const fortAbility = isDroidActor ? strMod : Math.max(strMod, conMod);
 
     return {
       fortitude: {

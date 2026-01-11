@@ -744,7 +744,28 @@ export default class CharacterGenerator extends Application {
     }
 
     const steps = this._getSteps();
-    const idx = steps.indexOf(this.currentStep);
+    let idx = steps.indexOf(this.currentStep);
+
+    // If current step is not in steps array (due to dynamic changes), find it
+    if (idx < 0) {
+      const allPossibleSteps = ["name", "type", "degree", "size", "droid-builder", "species",
+        "abilities", "class", "background", "skills", "languages", "feats", "talents",
+        "force-powers", "starship-maneuvers", "droid-final", "summary", "shop"];
+      const currentIdx = allPossibleSteps.indexOf(this.currentStep);
+      // Find the next valid step after current position
+      for (let i = currentIdx + 1; i < allPossibleSteps.length; i++) {
+        if (steps.includes(allPossibleSteps[i])) {
+          this.currentStep = allPossibleSteps[i];
+          await this.render();
+          return;
+        }
+      }
+      // If no valid next step found, go to last step
+      this.currentStep = steps[steps.length - 1];
+      await this.render();
+      return;
+    }
+
     if (idx >= 0 && idx < steps.length - 1) {
       let nextStep = steps[idx + 1];
 
@@ -795,6 +816,27 @@ export default class CharacterGenerator extends Application {
     event.preventDefault();
     const steps = this._getSteps();
     const idx = steps.indexOf(this.currentStep);
+
+    // If current step is not in steps array (due to dynamic changes), find nearest valid step
+    if (idx < 0) {
+      // Find the last completed step before the current position
+      const allPossibleSteps = ["name", "type", "degree", "size", "droid-builder", "species",
+        "abilities", "class", "background", "skills", "languages", "feats", "talents",
+        "force-powers", "starship-maneuvers", "droid-final", "summary", "shop"];
+      const currentIdx = allPossibleSteps.indexOf(this.currentStep);
+      for (let i = currentIdx - 1; i >= 0; i--) {
+        if (steps.includes(allPossibleSteps[i])) {
+          this.currentStep = allPossibleSteps[i];
+          await this.render();
+          return;
+        }
+      }
+      // If no valid previous step found, go to first step
+      this.currentStep = steps[0];
+      await this.render();
+      return;
+    }
+
     if (idx > 0) {
       this.currentStep = steps[idx - 1];
       await this.render();
@@ -968,6 +1010,53 @@ export default class CharacterGenerator extends Application {
       case "class":
         if (this.characterData.classes.length === 0) {
           ui.notifications.warn("Please select a class.");
+          return false;
+        }
+        break;
+      case "background":
+        // Background is optional in SWSE rules, allow skipping
+        break;
+      case "skills":
+        const trainedCount = Object.values(this.characterData.skills || {}).filter(s => s.trained).length;
+        const requiredCount = this.characterData.trainedSkillsAllowed || 0;
+        if (trainedCount < requiredCount) {
+          ui.notifications.warn(`You must train ${requiredCount} skills (currently trained: ${trainedCount}).`);
+          return false;
+        }
+        break;
+      case "languages":
+        // Languages validation handled by auto-skip logic in _onNextStep
+        break;
+      case "feats":
+        const selectedFeatsCount = (this.characterData.feats || []).length;
+        const requiredFeats = this.characterData.featsRequired || 1;
+        if (selectedFeatsCount < requiredFeats) {
+          ui.notifications.warn(`You must select ${requiredFeats} feat(s) (currently selected: ${selectedFeatsCount}).`);
+          return false;
+        }
+        break;
+      case "talents":
+        const selectedTalentsCount = (this.characterData.talents || []).length;
+        // Level 1 characters get 1 talent
+        const requiredTalents = 1;
+        if (selectedTalentsCount < requiredTalents) {
+          ui.notifications.warn(`You must select ${requiredTalents} talent (currently selected: ${selectedTalentsCount}).`);
+          return false;
+        }
+        break;
+      case "force-powers":
+        const selectedPowersCount = (this.characterData.powers || []).length;
+        const requiredPowers = this._getForcePowersNeeded();
+        if (selectedPowersCount < requiredPowers) {
+          ui.notifications.warn(`You must select ${requiredPowers} Force power(s) (currently selected: ${selectedPowersCount}).`);
+          return false;
+        }
+        break;
+      case "starship-maneuvers":
+        const selectedManeuversCount = (this.characterData.starshipManeuvers || []).length;
+        const requiredManeuvers = this._getStarshipManeuversNeeded();
+        if (selectedManeuversCount < requiredManeuvers) {
+          ui.notifications.warn(`You must select ${requiredManeuvers} starship maneuver(s) (currently selected: ${selectedManeuversCount}).`);
           return false;
         }
         break;
