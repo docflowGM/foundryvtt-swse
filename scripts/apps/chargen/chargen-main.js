@@ -493,6 +493,14 @@ export default class CharacterGenerator extends Application {
     context.freeBuild = this.freeBuild;
     context.isLevelUp = !!this.actor;
 
+    // DEBUG: Log packs status
+    SWSELogger.log(`CharGen | getData() - currentStep: ${this.currentStep}`, {
+      hasSpeciesPack: this._packs.species?.length || 0,
+      hasClassesPack: this._packs.classes?.length || 0,
+      hasFeatsPack: this._packs.feats?.length || 0,
+      hasTalentsPack: this._packs.talents?.length || 0
+    });
+
     // PERFORMANCE: Only clone packs that will be modified on this step
     // Use shallow reference sharing for read-only packs
     const packsToClone = {};
@@ -511,6 +519,17 @@ export default class CharacterGenerator extends Application {
     for (const [key, data] of Object.entries(this._packs)) {
       context.packs[key] = packsToClone[key] ? foundry.utils.deepClone(data) : data;
     }
+
+    // DEBUG: Log context.packs after building
+    SWSELogger.log(`CharGen | After building context.packs:`, {
+      hasSpeciesPack: context.packs.species?.length || 0,
+      hasClassesPack: context.packs.classes?.length || 0,
+      hasFeatsPack: context.packs.feats?.length || 0,
+      hasTalentsPack: context.packs.talents?.length || 0,
+      classesUndefined: context.packs.classes === undefined,
+      classesNull: context.packs.classes === null,
+      classesEmpty: Array.isArray(context.packs.classes) && context.packs.classes.length === 0
+    });
 
     // Filter classes based on character type
     if (this.currentStep === "class" && context.packs.classes) {
@@ -542,6 +561,14 @@ export default class CharacterGenerator extends Application {
           displayBAB: babProg
         };
       });
+
+      // DEBUG: Log after filtering and processing
+      SWSELogger.log(`CharGen | After filtering classes for ${this.characterData.isDroid ? 'droid' : 'living'}:`, {
+        filteredClassesCount: context.packs.classes.length,
+        classNames: context.packs.classes.map(c => c.name)
+      });
+    } else {
+      SWSELogger.log(`CharGen | Class filtering SKIPPED - step: ${this.currentStep}, hasClasses: ${!!context.packs.classes}`);
     }
 
     // Apply species filters and sorting if on species step
