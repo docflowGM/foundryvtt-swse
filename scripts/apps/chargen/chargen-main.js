@@ -853,6 +853,12 @@ export default class CharacterGenerator extends Application {
         const category = this.characterData.backgroundCategory || 'events';
         this.characterData.backgroundNarratorComment = this._getBackgroundNarratorComment(category);
       }
+
+      // Background category tab clicks
+      $html.find('.background-category-tab').click(this._onBackgroundCategoryClick.bind(this));
+
+      // Background skill filter button
+      $html.find('.background-filter-btn').click(this._onBackgroundFilterClick.bind(this));
     }
   }
 

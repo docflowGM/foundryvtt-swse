@@ -856,6 +856,18 @@
  </button>
  </div>
 
+ {{!-- Filter and Random Background Buttons --}}
+ <div class="background-controls">
+ <button type="button" class="background-filter-btn btn-secondary">
+ <i class="fas fa-search"></i> Filter by Skill
+ </button>
+ {{#unless characterData.background}}
+ <button type="button" class="random-background-btn btn-secondary">
+ <i class="fas fa-dice"></i> Random Background
+ </button>
+ {{/unless}}
+ </div>
+
  {{!-- Homebrew Toggle for Planets --}}
  {{#if (eq characterData.backgroundCategory 'planets')}}
  <div class="homebrew-toggle-container">
@@ -866,16 +878,6 @@
  </label>
  </div>
  {{/if}}
-
- {{!-- Random Background Button --}}
- {{#unless characterData.background}}
- <div class="random-background-container">
- <button type="button" class="random-background-btn btn-secondary">
- <i class="fas fa-dice"></i> Random Background
- </button>
- <span class="hint-text">Let fate choose your character's past</span>
- </div>
- {{/unless}}
 
  {{!-- Background Cards Display --}}
  <div class="background-cards-container">

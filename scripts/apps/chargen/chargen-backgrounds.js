@@ -117,3 +117,92 @@ export async function _onChangeBackground(event) {
   ui.notifications.info("Background cleared. Please select a new background.");
   await this.render();
 }
+
+/**
+ * Handle background category tab clicks
+ * @param {Event} event - The click event
+ */
+export async function _onBackgroundCategoryClick(event) {
+  event.preventDefault();
+
+  const newCategory = event.currentTarget.dataset.category;
+  if (!newCategory) return;
+
+  // Update the selected category
+  this.characterData.backgroundCategory = newCategory;
+  this.characterData.backgroundNarratorComment = this._getBackgroundNarratorComment(newCategory);
+
+  ui.notifications.info(`Switched to ${newCategory} backgrounds`);
+  await this.render();
+}
+
+/**
+ * Handle background filter/search button click
+ * @param {Event} event - The click event
+ */
+export async function _onBackgroundFilterClick(event) {
+  event.preventDefault();
+
+  // Show a dialog to filter backgrounds by skill
+  const skills = [...new Set(this.backgrounds.flatMap(bg => bg.trainedSkills || []))].sort();
+
+  const skillOptions = skills
+    .map(skill => `<option value="${skill}">${skill}</option>`)
+    .join('');
+
+  const content = `
+    <p>Filter backgrounds by trained skill:</p>
+    <select id="skill-filter-select" style="width: 100%; padding: 0.5rem; margin: 1rem 0;">
+      <option value="">-- Show All --</option>
+      ${skillOptions}
+    </select>
+  `;
+
+  new Dialog({
+    title: "Filter Backgrounds",
+    content,
+    buttons: {
+      search: {
+        icon: '<i class="fas fa-search"></i>',
+        label: "Filter",
+        callback: (html) => {
+          const selectedSkill = html.find('#skill-filter-select').val();
+          this._filterBackgroundsBySkill(selectedSkill);
+        }
+      },
+      cancel: {
+        icon: '<i class="fas fa-times"></i>',
+        label: "Cancel"
+      }
+    },
+    default: "search"
+  }).render(true);
+}
+
+/**
+ * Filter backgrounds by selected skill
+ * @param {string} skill - The skill name to filter by
+ */
+export async function _filterBackgroundsBySkill(skill) {
+  if (!skill) {
+    // Reset to show all backgrounds for current category
+    ui.notifications.info("Showing all backgrounds");
+  } else {
+    // Filter backgrounds to only those with the selected skill
+    const filtered = this.backgrounds.filter(bg =>
+      bg.trainedSkills && bg.trainedSkills.includes(skill)
+    );
+
+    if (filtered.length === 0) {
+      ui.notifications.warn(`No backgrounds found with skill: ${skill}`);
+      return;
+    }
+
+    ui.notifications.info(`Found ${filtered.length} backgrounds with ${skill}`);
+    // Temporarily replace backgrounds with filtered list
+    const originalBackgrounds = this.backgrounds;
+    this.backgrounds = filtered;
+    await this.render();
+    this.backgrounds = originalBackgrounds; // Restore original after render
+  }
+}

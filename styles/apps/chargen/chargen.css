@@ -2229,6 +2229,195 @@
     text-shadow: 0 0 8px rgba(106, 176, 245, 0.4);
 }
 
+/* ============================================
+   Background Selection Styles
+   ============================================ */
+
+.background-category-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    border-bottom: 2px solid #0af;
+}
+
+.background-category-tab {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #444;
+    color: #999;
+    cursor: pointer;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: bold;
+}
+
+.background-category-tab:hover {
+    color: #0af;
+    border-color: #0af;
+}
+
+.background-category-tab.active {
+    background: rgba(0, 170, 255, 0.2);
+    color: #0af;
+    border-color: #0af;
+    box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+}
+
+.background-controls {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+}
+
+.background-filter-btn {
+    flex: 0 0 auto;
+}
+
+.background-cards-container {
+    margin: 2rem 0;
+}
+
+#background-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.background-card {
+    background: linear-gradient(135deg, rgba(0, 50, 100, 0.6), rgba(0, 100, 150, 0.4));
+    border: 2px solid #0af;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.background-card:hover {
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.5);
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, rgba(0, 100, 150, 0.8), rgba(0, 150, 200, 0.6));
+}
+
+.background-card h3 {
+    margin: 0;
+    color: #0af;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.background-card p {
+    margin: 0;
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+.background-card .select-background {
+    margin-top: auto;
+    padding: 0.75rem;
+    background: #0af;
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.background-card .select-background:hover {
+    background: #00cfff;
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.7);
+}
+
+.selected-background-display {
+    background: linear-gradient(135deg, rgba(0, 100, 150, 0.8), rgba(0, 50, 100, 0.6));
+    border: 2px solid #0af;
+    border-radius: 8px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+}
+
+.selected-background-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.selected-background-header h4 {
+    color: #0af;
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.background-icon-large {
+    font-size: 2rem;
+}
+
+.background-narrative {
+    color: #ccc;
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.background-benefits {
+    color: #999;
+}
+
+.background-benefits strong {
+    color: #0af;
+}
+
+.background-benefits ul {
+    margin: 0.5rem 0 0 1.5rem;
+    padding: 0;
+}
+
+.background-benefits li {
+    margin: 0.25rem 0;
+}
+
+.homebrew-toggle-container {
+    background: rgba(50, 50, 50, 0.5);
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.homebrew-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.homebrew-toggle-label input {
+    cursor: pointer;
+}
+
+.homebrew-toggle-label strong {
+    color: #0af;
+}
+
+.homebrew-toggle-label .hint-text {
+    display: block;
+    font-size: 0.85rem;
+    color: #999;
+    margin-left: 1.5rem;
+    margin-top: 0.25rem;
+    font-style: italic;
+}
+
 .credits-value {
     color: #f5a623;
     font-weight: bold;
