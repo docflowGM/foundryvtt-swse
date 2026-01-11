@@ -11,6 +11,35 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: hidden;
+}
+
+/* Main body content - enable scrolling */
+.chargen-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1.5rem;
+    min-height: 0; /* Critical for flex scroll to work */
+}
+
+/* Scrollbar styling for chargen body */
+.chargen-body::-webkit-scrollbar {
+    width: 10px;
+}
+
+.chargen-body::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+.chargen-body::-webkit-scrollbar-thumb {
+    background: #0af;
+    border-radius: 5px;
+}
+
+.chargen-body::-webkit-scrollbar-thumb:hover {
+    background: #00cfff;
 }
 
 .voice-prompt {
@@ -1067,9 +1096,10 @@
   transition: all 0.3s ease;
   text-align: center;
   min-height: 300px;
-  background-size: cover;
-  background-position: center;
-  background-image: linear-gradient(rgba(10, 15, 26, 0.7), rgba(10, 15, 26, 0.8));
+  background-size: contain;
+  background-position: top center;
+  background-repeat: no-repeat;
+  background-color: rgba(10, 15, 26, 0.9);
 }
 
 .select-species::before,
@@ -1168,6 +1198,20 @@
   color: #9ed0ff;
   margin: 0;
   line-height: 1.4;
+}
+
+/* Species card content - ensure visibility above overlay */
+.select-species .bonuses,
+.select-species .species-size,
+.select-species .skill-bonuses,
+.select-species .special-abilities,
+.preview-species .bonuses,
+.preview-species .species-size,
+.preview-species .skill-bonuses,
+.preview-species .special-abilities {
+  position: relative;
+  z-index: 2;
+  margin: 0.25rem 0.5rem;
 }
 
 .bonuses {
@@ -1549,6 +1593,11 @@
 .near-human-card {
   background: linear-gradient(135deg, rgba(100, 50, 150, 0.4) 0%, rgba(60, 30, 100, 0.6) 100%) !important;
   border-color: #aa66ff !important;
+  /* Ensure content is properly contained */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 1rem;
 }
 
 .near-human-card:hover {
@@ -1558,10 +1607,42 @@
 
 .near-human-card h4 {
   color: #cc88ff !important;
+  /* Override the absolute positioning from preview-species */
+  position: relative !important;
+  bottom: auto !important;
+  background: transparent !important;
+  border-top: none !important;
+  padding: 0.5rem 0 !important;
+  margin-bottom: 0.5rem;
 }
 
 .near-human-card h4 i {
   margin-right: 0.5rem;
+}
+
+/* Ensure Near-Human card content is contained and readable */
+.near-human-card .species-size,
+.near-human-card .bonuses,
+.near-human-card .special-abilities {
+  position: relative;
+  z-index: 2;
+}
+
+.near-human-card .special-abilities {
+  margin-top: 0.5rem;
+}
+
+.near-human-card .special-ability {
+  font-size: 0.8rem;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Remove the overlay pseudo-element for Near-Human card since it has no portrait */
+.near-human-card::before {
+  display: none !important;
 }
 
 /* ============================================
