@@ -1987,36 +1987,36 @@ export default class CharacterGenerator extends Application {
       // Flatten all backgrounds from all categories
       this.allBackgrounds = [];
 
-      // Process events
-      if (backgroundsData.events && backgroundsData.events.backgrounds) {
-        this.allBackgrounds.push(...backgroundsData.events.backgrounds.map(bg => ({
+      // Process events (events is an array directly in the JSON)
+      if (backgroundsData.events && Array.isArray(backgroundsData.events)) {
+        this.allBackgrounds.push(...backgroundsData.events.map(bg => ({
           ...bg,
           category: 'event',
           homebrew: false
         })));
       }
 
-      // Process occupations
-      if (backgroundsData.occupations && backgroundsData.occupations.backgrounds) {
-        this.allBackgrounds.push(...backgroundsData.occupations.backgrounds.map(bg => ({
+      // Process occupations (occupations is an array directly in the JSON)
+      if (backgroundsData.occupations && Array.isArray(backgroundsData.occupations)) {
+        this.allBackgrounds.push(...backgroundsData.occupations.map(bg => ({
           ...bg,
           category: 'occupation',
           homebrew: false
         })));
       }
 
-      // Process core planets
-      if (backgroundsData.planets_core && backgroundsData.planets_core.backgrounds) {
-        this.allBackgrounds.push(...backgroundsData.planets_core.backgrounds.map(bg => ({
+      // Process core planets (planets_core is an array directly in the JSON)
+      if (backgroundsData.planets_core && Array.isArray(backgroundsData.planets_core)) {
+        this.allBackgrounds.push(...backgroundsData.planets_core.map(bg => ({
           ...bg,
           category: 'planet',
           homebrew: false
         })));
       }
 
-      // Process homebrew planets
-      if (backgroundsData.planets_homebrew && backgroundsData.planets_homebrew.backgrounds) {
-        this.allBackgrounds.push(...backgroundsData.planets_homebrew.backgrounds.map(bg => ({
+      // Process homebrew planets (planets_homebrew is an array directly in the JSON)
+      if (backgroundsData.planets_homebrew && Array.isArray(backgroundsData.planets_homebrew)) {
+        this.allBackgrounds.push(...backgroundsData.planets_homebrew.map(bg => ({
           ...bg,
           category: 'planet',
           homebrew: true
