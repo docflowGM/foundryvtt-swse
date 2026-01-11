@@ -389,18 +389,29 @@
 
 /* Random Name Button Container */
 .random-name-container {
+    margin: 1rem 0;
+}
+
+.random-buttons-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.random-buttons-grid > div {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    margin: 1rem 0;
     text-align: center;
 }
 
-.random-name-btn {
+.random-name-btn,
+.random-droid-name-btn {
     width: 100%;
 }
 
-.random-name-btn i {
+.random-name-btn i,
+.random-droid-name-btn i {
     margin-right: 0.5rem;
 }
 
