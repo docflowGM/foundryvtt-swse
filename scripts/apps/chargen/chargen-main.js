@@ -1480,12 +1480,15 @@ export default class CharacterGenerator extends Application {
     for (const feat of feats) {
       const metadata = this._featMetadata.feats[feat.name];
       if (metadata && metadata.category && categorized[metadata.category]) {
+        // Extract feat level (for feats like "Martial Arts I", "Dual Weapon Mastery II", etc.)
+        const { level: featLevel } = this._extractFeatLevel(feat.name);
         categorized[metadata.category].feats.push({
           ...feat,
           metadata: metadata,
           chain: metadata.chain,
           chainOrder: metadata.chainOrder,
-          prerequisiteFeat: metadata.prerequisiteFeat
+          prerequisiteFeat: metadata.prerequisiteFeat,
+          featLevel: featLevel
         });
       } else {
         uncategorized.push(feat);
@@ -1633,6 +1636,55 @@ export default class CharacterGenerator extends Application {
       { key: "useComputer", name: "Use Computer", ability: "int", trained: true },
       { key: "useTheForce", name: "Use the Force", ability: "cha", trained: true }
     ];
+  }
+
+  /**
+   * Extract Roman numeral level from feat name
+   * Handles feats like "Martial Arts I", "Dual Weapon Mastery II", etc.
+   * @param {string} featName - The feat name
+   * @returns {object} Object with level number, roman numeral, and base name
+   */
+  _extractFeatLevel(featName) {
+    const romanNumerals = [
+      { numeral: 'IV', value: 4 },
+      { numeral: 'IX', value: 9 },
+      { numeral: 'XL', value: 40 },
+      { numeral: 'XC', value: 90 },
+      { numeral: 'CD', value: 400 },
+      { numeral: 'CM', value: 900 },
+      { numeral: 'I', value: 1 },
+      { numeral: 'V', value: 5 },
+      { numeral: 'X', value: 10 },
+      { numeral: 'L', value: 50 },
+      { numeral: 'C', value: 100 },
+      { numeral: 'D', value: 500 },
+      { numeral: 'M', value: 1000 }
+    ];
+
+    const match = featName.match(/^(.+?)\s+([IVX]+)$/);
+
+    if (!match) {
+      return { level: 0, roman: "", baseName: featName };
+    }
+
+    const baseName = match[1].trim();
+    const romanStr = match[2];
+
+    let value = 0;
+    let tempRoman = romanStr;
+
+    for (const { numeral, value: val } of romanNumerals) {
+      while (tempRoman.startsWith(numeral)) {
+        value += val;
+        tempRoman = tempRoman.substring(numeral.length);
+      }
+    }
+
+    if (tempRoman === '' && value > 0) {
+      return { level: value, roman: romanStr, baseName };
+    }
+
+    return { level: 0, roman: "", baseName: featName };
   }
 }
 

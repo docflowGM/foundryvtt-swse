@@ -647,6 +647,62 @@
   padding-left: 0.35rem;
 }
 
+/* Feat level coloring - adds border color based on feat level (I, II, III, etc.) */
+.feat-card.feat-level-1,
+.feat-item.feat-level-1 {
+  border-color: #ffffff;
+  border-width: 2px;
+}
+
+.feat-card.feat-level-1:hover,
+.feat-item.feat-level-1:hover {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.feat-card.feat-level-2,
+.feat-item.feat-level-2 {
+  border-color: #00ff88;
+  border-width: 2px;
+}
+
+.feat-card.feat-level-2:hover,
+.feat-item.feat-level-2:hover {
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+}
+
+.feat-card.feat-level-3,
+.feat-item.feat-level-3 {
+  border-color: #ffbb00;
+  border-width: 2px;
+}
+
+.feat-card.feat-level-3:hover,
+.feat-item.feat-level-3:hover {
+  box-shadow: 0 0 15px rgba(255, 187, 0, 0.4);
+}
+
+.feat-card.feat-level-4,
+.feat-item.feat-level-4 {
+  border-color: #ff6b9d;
+  border-width: 2px;
+}
+
+.feat-card.feat-level-4:hover,
+.feat-item.feat-level-4:hover {
+  box-shadow: 0 0 15px rgba(255, 107, 157, 0.4);
+}
+
+.feat-card.feat-level-5,
+.feat-item.feat-level-5 {
+  border-color: #a78bfa;
+  border-width: 2px;
+}
+
+.feat-card.feat-level-5:hover,
+.feat-item.feat-level-5:hover {
+  box-shadow: 0 0 15px rgba(167, 139, 250, 0.4);
+}
+
 /* Unqualified feats/talents - disabled state */
 .feat-card.unqualified,
 .feat-item.unqualified,
