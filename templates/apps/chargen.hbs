@@ -996,12 +996,10 @@
  </div>
  <h3>{{this.name}}</h3>
  <p class="class-desc">{{this.description}}</p>
- {{#if this.system}}
  <div class="class-stats">
- <span>Hit Die: d{{#if this.system.hit_die}}{{extractHitDie this.system.hit_die}}{{else}}{{extractHitDie this.system.hitDie}}{{/if}}</span>
- <span>{{formatBAB this.system.babProgression}}</span>
+ <span>Hit Die: {{this.displayHitDie}}</span>
+ <span>{{this.displayBAB}}</span>
  </div>
- {{/if}}
  <div class="select-overlay">
  <span>Select {{this.name}}</span>
  </div>
@@ -1781,6 +1779,9 @@
  color: #e4e4e4;
  border-radius: 8px;
  overflow: hidden;
+ display: flex;
+ flex-direction: column;
+ height: 100%;
 }
 
 .chargen-header {
@@ -1802,7 +1803,10 @@
 
 .chargen-body {
  padding: 2rem;
- min-height: 400px;
+ min-height: 0;
+ flex: 1;
+ overflow-y: auto;
+ overflow-x: hidden;
 }
 
 .form-group {

@@ -374,11 +374,17 @@ export default class CharacterGenerator extends Application {
         }
       }
 
-      // Apply icon and description metadata to each class
-      context.packs.classes = context.packs.classes.map(classItem => ({
-        ...classItem,
-        ...this._getClassMetadata(classItem.name)
-      }));
+      // Apply icon, description, and formatted stats to each class
+      context.packs.classes = context.packs.classes.map(classItem => {
+        const hitDieValue = getHitDie(classItem);
+        const babProg = getClassProperty(classItem, 'babProgression', 'medium');
+        return {
+          ...classItem,
+          ...this._getClassMetadata(classItem.name),
+          displayHitDie: `d${hitDieValue}`,
+          displayBAB: babProg
+        };
+      });
     }
 
     // Apply species filters and sorting if on species step
