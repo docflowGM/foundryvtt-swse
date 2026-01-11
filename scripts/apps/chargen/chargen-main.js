@@ -533,9 +533,15 @@ export default class CharacterGenerator extends Application {
 
     // Filter classes based on character type
     if (this.currentStep === "class" && context.packs.classes) {
+      SWSELogger.log(`CharGen | Classes BEFORE filtering:`, {
+        count: context.packs.classes.length,
+        names: context.packs.classes.map(c => c.name)
+      });
+
       if (this.characterData.isDroid) {
         // Droids: only base 4 non-Force classes (no Jedi, no Force powers, no Gunslinger - prestige class)
         const droidBaseClasses = ["Soldier", "Scout", "Scoundrel", "Noble"];
+        SWSELogger.log(`CharGen | Filtering for droid - allowed classes:`, droidBaseClasses);
         context.packs.classes = context.packs.classes.filter(c => droidBaseClasses.includes(c.name));
         if (this.characterData.classes.length === 0 || !droidBaseClasses.includes(this.characterData.classes[0]?.name)) {
           this.characterData.classes = [];
@@ -544,6 +550,7 @@ export default class CharacterGenerator extends Application {
         // Normal characters: only the 5 core classes at level 1 (prestige classes available at higher levels)
         // Noble, Scout, Scoundrel, Soldier, and Jedi (Gunslinger is prestige only)
         const coreClasses = ["Noble", "Scout", "Scoundrel", "Soldier", "Jedi"];
+        SWSELogger.log(`CharGen | Filtering for living - allowed classes:`, coreClasses);
         context.packs.classes = context.packs.classes.filter(c => coreClasses.includes(c.name));
         if (this.characterData.classes.length === 0 || !coreClasses.includes(this.characterData.classes[0]?.name)) {
           this.characterData.classes = [];
