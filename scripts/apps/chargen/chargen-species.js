@@ -277,6 +277,13 @@ export async function _onSelectSpecies(event) {
   event.preventDefault();
   const speciesKey = event.currentTarget.dataset.species;
 
+  // Ensure we have a valid species key
+  if (!speciesKey || speciesKey.trim() === "") {
+    SWSELogger.error("CharGen | Species key is empty or missing");
+    ui.notifications.error("Invalid species selected. Please try again.");
+    return;
+  }
+
   SWSELogger.log(`CharGen | Attempting to select species: ${speciesKey}`);
 
   // If changing species after initial selection, confirm with user
@@ -330,7 +337,8 @@ export async function _onSelectSpecies(event) {
 
   SWSELogger.log(`CharGen | Found species: ${speciesDoc.name}`, speciesDoc);
 
-  this.characterData.species = speciesKey;
+  // Set species using the actual species document name to ensure consistency
+  this.characterData.species = speciesDoc.name;
 
   // Apply all species data
   this._applySpeciesData(speciesDoc);
