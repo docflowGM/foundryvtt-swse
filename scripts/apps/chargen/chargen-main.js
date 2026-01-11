@@ -201,6 +201,163 @@ export default class CharacterGenerator extends Application {
   }
 
   /**
+   * Comprehensive list of Star Wars-esque character names
+   * Organized by complexity: human-like to deep alien
+   */
+  static RANDOM_NAMES = [
+    // Human-esque masculine names
+    "Lando Virex Tal", "Jarek Solan Marr", "Torvan Kree Ossik", "Malric Dorne Valen",
+    "Daxen Vor Kell", "Brask Talor Kain", "Rynar Vex Holt", "Kael Orrix Juno",
+    "Voren Thal Kryss", "Zarek Mon Daal", "Korrin Vel Ashur", "Talos Ren Virek",
+    "Drel Kavos Morn", "Jaxel Prynn Tor", "Saren Kol Dravik", "Varek Ion Threx",
+    "Halder Rune Sol", "Brex Kal Vonn", "Narek Silar Quen", "Morlan Dex Ro",
+    "Cassik Vale Jorr", "Fenro Tharn Lux", "Orrin Kaas Vire", "Kelvan Drik Noor",
+    "Xarno Ul Tessik", "Torik Val Marr", "Zorin Fal Dax", "Ronik Kree Val",
+    "Ulric Vorin Taal", "Jorin Pell Strax", "Balrik Thorn Vex", "Raxen Sol Marrik",
+    "Irek Dal Vonn", "Corvek Ash Draal", "Threx Om Vull", "Lorik Sen Korr",
+    "Kyros Dune Val", "Brax Fen Dorr", "Alren Tosk Vire", "Dexar Nol Renn",
+    "Harkin Void Kaal", "Varos Kyne Jorr", "Pellis Vorn Tak", "Kavor Rin Sol",
+    "Draven Oss Kree", "Zarn Mal Virek", "Taryn Kol Voss", "Rellix Zho Marr",
+    "Kress Daal Tor", "Yarek Phos Val",
+    // Additional masculine names
+    "Xar Vel Daal", "Torren Ash Vire", "Kalos Renn Thal", "Darek Mon Kree",
+    "Vorn Sol Marr", "Jex Tal Noor", "Rovan Pell Ash", "Kellan Dorr Vex",
+    "Sarn Kyne Val", "Brevin Tor Sol", "Malrex Vire Daal", "Orrik Juno Korr",
+    "Fen Tal Marr", "Korr Ash Sol", "Zarik Venn Daal", "Dex Thorne Val",
+    "Hal Vire Kess", "Jorin Sol Taal", "Varrek Daal Ash", "Rel Tor Kree",
+    "Karesh Val Sol", "Rell Korr Marr", "Bronn Virex Tal", "Yorin Ash Kaal",
+    "Talrek Voss Daal", "Sorek Pell Sol", "Nixor Marr Val", "Kave Tor Ash",
+    "Drak Vire Sol", "Orr Tal Kess", "Zarnis Val Taal", "Krix Sol Dorr",
+    "Mal Tor Vire", "Vorik Ash Marr", "Rax Pell Kaal", "Jast Val Sol",
+    "Fenrik Daal Marr", "Tor Val Ash", "Kell Vire Taal", "Dexan Sol Noor",
+    "Korrik Marr Ash", "Brask Daal Kree", "Varek Tor Sol", "Sarn Ash Val",
+    "Orren Vire Marr", "Talrik Sol Kess", "Yex Daal Taal", "Kor Val Marr",
+    "Rellin Ash Sol", "Jor Vire Noor",
+    // Rimward/Exotic masculine names
+    "Raxen Thorn Vaal", "Lyrix Venn Dorr", "Korr Tal Marrik", "Nyssa Pell Vael",
+    "Jarek Sol Threx", "Kaela Voss Taal", "Fenro Marr Kaal", "Lira Dorr Sol",
+    "Varos Thal Kree", "Xara Vire Pell", "Torik Kaal Marr", "Nyrix Sol Dorr",
+    "Brask Thorn Vire", "Elra Vael Korr", "Rellin Daal Kree", "Kaelin Thorn Sol",
+    "Jex Marr Vael", "Lyssa Korr Thal", "Fenrik Dorr Sol", "Xera Pell Marr",
+    "Zarik Kree Thal", "Nyssa Vael Sol", "Torren Marr Kaal", "Lira Thorn Dorr",
+    "Varrek Sol Vael", "Elin Kree Thal", "Rax Marr Dorr", "Lyrix Sol Kaal",
+    "Jorin Vael Marr", "Xessa Thorn Kree",
+    // Final 200 consolidated names (human to alien)
+    "Rax Venn Daal", "Lyra Korr Sol", "Tarek Mon Vire", "Nyssa Val Marr",
+    "Jorik Ash Taal", "Kaela Vire Noor", "Dax Pell Korr", "Mira Sol Daal",
+    "Voren Kess Marr", "Elra Venn Ash", "Zarek Tor Sol", "Kira Daal Voss",
+    "Malrek Ash Noor", "Talia Mon Korr", "Fen Val Marr", "Lyss Vire Sol",
+    "Orrin Daal Ash", "Nyra Kess Val", "Jex Tor Marr", "Saela Sol Noor",
+    "Korr Ash Daal", "Rysa Val Sol", "Brask Marr Korr", "Elin Vire Ash",
+    "Tor Sol Daal", "Mira Korr Val", "Dex Ash Noor", "Lyra Marr Sol",
+    "Varrek Daal Kess", "Nyx Vire Val", "Soren Sol Marr", "Kaelin Ash Korr",
+    "Jora Daal Sol", "Taryn Val Noor", "Rell Korr Ash", "Lyssa Marr Daal",
+    "Fenrik Sol Val", "Elara Vire Kess", "Korrin Ash Noor", "Mira Sol Marr",
+    "Zella Val Daal", "Torrek Korr Sol", "Nyra Ash Marr", "Dexan Vire Noor",
+    "Sael Kess Val", "Lyra Sol Korr", "Orr Daal Ash", "Kira Marr Sol",
+    "Bronn Val Noor", "Elin Korr Ash",
+    // Alien-forward names
+    "Xor'ven Thul Marr", "Lyx'ara Vaash Sol", "Korr'tek Ul Daal", "Nyx'ira Phal Marr",
+    "Torq'ith Krexx Sol", "Ka'thra Vaash Daal", "Fen'orr Ul Marr", "Lir'iss Phal Sol",
+    "Vrek'mon Thul Daal", "Xyra'tek Ul Marr", "Orr'ka Phess Sol", "Zuun'ara Vaash Daal",
+    "Threx'lin Ul Marr", "Ka'ira Phal Sol", "Xorr'mon Krexx Daal", "Lyx'ira Vaash Marr",
+    "Khaal'tek Ul Sol", "Torq'mon Thul Marr", "Xera'li Ul Sol", "Orryx Vaash Daal",
+    "Zhekk'ira Phal Marr", "Korr'uun Krexx Sol", "Lyra'thul Daal", "Fen'tek Ul Marr",
+    // Deep alien names
+    "Xor'vaq Thul Krexx", "Kha'driss Ul Phal", "Zuun'tek Vaash Daal", "Orr'kess Krexx Sol",
+    "Threx'uun Ul Marr", "Lyx'ara Phess Kaal", "Xhekk Thul Ul", "Ka'mon Vaash Krexx",
+    "Orryx Phal Daal", "Zha'ira Ul Sol", "Xurr'tek Krexx Marr", "Khaal'iss Phal Ul",
+    "Threx'ira Vaash Daal", "Orr'uun Krexx Sol", "Zuun'mon Ul Marr", "Lyx'tek Phess Sol",
+    "Xhekk'ira Thul Daal", "Ka'drin Vaash Ul", "X'qorr Thul'kresh", "Ka'zhir Ul-Vaash",
+    "Orr'xeth Phal'uun", "Zuun'kra Krexx'ith", "Threx'qa Ul-Sol",
+    // Feminine names
+    "Lira Venn Solari", "Kaela Rynn Voss", "Mira Tal Kree", "Jessa Orin Val",
+    "Nyx Solenne Marr", "Aria Virex Daal", "Talia Ren Korr", "Selene Ash Vire",
+    "Vexa Thorn Lux", "Rina Kel Sol", "Sora Valen Jex", "Kyra Noa Pell",
+    "Elin Dorne Marr", "Zara Venn Kaal", "Lyra Tess Sol", "Cira Mon Val",
+    "Anya Kree Voss", "Thessa Rune Daal", "Rhea Sol Korr", "Kessa Vire Lux",
+    "Nira Tal Ash", "Velis Dorne Quen", "Phaela Rin Sol", "Jynra Kaas Vire",
+    "Orria Mon Vale", "Taryn Lys Daal", "Saela Thorn Kree", "Mysa Venn Val",
+    "Elara Korr Sol", "Zella Ash Marr", "Kaelin Virex Noor", "Rysa Pell Kree",
+    "Nyra Sol Taal", "Vala Renn Ash", "Jora Kess Val", "Thalia Daal Korr",
+    "Sira Vex Sol", "Kora Mon Tal", "Alis Thorn Marr", "Lyssa Vire Noor",
+    "Lyra Venn Daal", "Kaela Sol Marr", "Nira Ash Val", "Tessa Korr Sol",
+    "Vela Mon Noor", "Jyn Sol Vire", "Rysa Daal Ash", "Elin Tor Marr",
+    "Kira Sol Taal", "Zella Vire Ash",
+    // Alien-forward feminine
+    "Xyra'li Vesh Taal", "Sha'renn Ul Korr", "Vexa'na Thul Marr", "Lir'iss Phal Vire",
+    "Ka'thra Zuun Sol", "Nyxara Vaal Krexx", "Orr'la Phess Daal", "Zheela Va'resh",
+    "Tiss'ka Norr Val", "Xala'mon Ruun", "Kree'la Vith Sol", "Phex'ari Ul Marr",
+    "Shaq'ra Zaal Kess", "Lyx Venn'thra", "Vaela'qen Dorr", "Nesh'ira Karesh",
+    "Zira Kaal'eth", "Threx'a Sol Marr", "Orryx Phal'na", "Xyss Ul-Kree",
+    "Xyra'na Vesh Sol", "Sha'la Ul Marr", "Vexa'li Thul Daal", "Lir'iss Phal Noor",
+    "Kree'la Vith Sol", "Phex'ari Ul Marr",
+    // Deep alien feminine
+    "Xa'li Thress Ul", "Kheera'mon Vaash", "Orr'issa Phal Daal", "Zuun'ira Krexx",
+    "Thala'qen Mol Sol", "Vrixa Ul'mon", "Sha'tek Naash Dorr", "Lyrr Phess Vaal",
+    "Xess'ka Orr Marr", "Kaal'ira Thul", "Zhaela Krell Sol", "Orr'ith Vaash Noor",
+    "Xyraxx Phal'mon", "Thiss Ul Kaal", "Vaela Skorr Daal", "Zhekk'ira Sol",
+    "Lur'na Krexx Marr", "Orryx'a Vaal", "Kress'li Phal Noor", "Xuun'ara Thul"
+  ];
+
+  /**
+   * Comprehensive list of Star Wars-esque droid names
+   * Organized by type: Astromechs, Military/Security, Protocol, Assassin, Industrial, Mixed Rim
+   */
+  static RANDOM_DROID_NAMES = [
+    // Standard alphanumeric designations (basic series)
+    "A1-K7", "B4-T9", "C7-R4", "D2-M8", "E9-K3", "F3-L6", "G8-P1", "H2-V7",
+    "I5-X9", "J4-D2", "K9-R8", "L3-T5", "M7-Q1", "N4-Z6", "O2-K9", "P6-R3",
+    "Q8-D5", "R5-M1", "S7-K4", "T1-V9", "U3-R6", "V8-D2", "W5-K7", "X4-P9",
+    "Y9-M3", "Z2-R8", "A7-D9", "B2-K4", "C5-M8", "D9-R1", "E3-V7", "F6-K2",
+    "G4-T9", "H8-R5", "I1-M7", "J9-D4", "K5-V3", "L7-R8", "M2-K6", "N9-T4",
+    "O6-D1", "P3-M8", "Q5-R9", "R7-K2", "S4-V6", "T8-D5", "U1-M9", "V6-K4",
+    "W9-R2", "X3-T7",
+    // Astromech / Utility Feel
+    "R8-K5", "D7-P3", "T4-M9", "K2-R6", "V9-D1", "M5-T8", "P7-K4", "R1-D9",
+    "Q6-M3", "S8-K2", "T9-R4", "D3-V7", "K6-M1", "P4-R8", "M9-D2", "V1-K5",
+    "R7-T3", "Q2-D6", "S5-M8", "T6-K9", "D1-R4", "K8-P7", "M3-V9", "R6-D5",
+    "Q9-K2", "S1-T8", "V4-M7", "P5-D3", "R2-K6", "T7-M9",
+    // Military / Security Droids
+    "BX-9R", "DT-7K", "MK-4D", "SX-8T", "VR-6M", "HK-5Q", "TX-9D", "KR-2S",
+    "PX-7M", "AX-4D", "BX-1K", "DT-9R", "MK-6S", "SX-3D", "VR-8T", "HK-2M",
+    "TX-5Q", "KR-7D", "PX-9S", "AX-6M", "BX-4D", "DT-2K", "MK-8T", "SX-5M",
+    "VR-3D", "HK-9Q", "TX-1D", "KR-4S", "PX-3M", "AX-9D", "BX-7K", "DT-4R",
+    "MK-2D", "SX-6T", "VR-1M", "HK-7Q", "TX-8D", "KR-9S", "PX-2M", "AX-3D",
+    "BX-5T", "DT-6K", "MK-3S", "SX-9D", "VR-4M",
+    // Protocol / Civilian Models
+    "P3-L9", "C7-M4", "H2-T8", "V5-P1", "L9-D7", "M4-K2", "S8-R3", "T6-P9",
+    "D1-M5", "K7-L4", "P5-T2", "C1-D9", "H9-M6", "V3-L8", "L2-P4", "M7-T9",
+    "S4-K1", "T8-D6", "D5-P3", "K9-M2", "P8-L1", "C9-M7", "H1-T5", "V9-P8",
+    "L4-D2", "M6-K9", "S2-R7", "T1-P4", "D8-M3", "K4-L6", "P1-T4", "C4-D1",
+    "H6-M9", "V2-L3", "L7-P5", "M1-T8", "S9-K6", "T3-D2", "D4-P7", "K2-M5",
+    // Assassin / Black Ops Feel
+    "X9-KR", "Z7-DX", "Q5-HK", "R8-VX", "S3-ZT", "M7-XR", "K4-QD", "D9-SX",
+    "T2-VR", "P6-ZK", "X1-DQ", "Z9-KT", "Q7-XM", "R3-SD", "S8-VK", "M2-ZR",
+    "K6-XT", "D4-QS", "T9-ZX", "P1-VR", "X6-KQ", "Z2-DM", "Q1-HX", "R9-VT",
+    "S6-ZD", "M9-XK", "K1-QM", "D7-SX", "T5-VD", "P8-ZM", "X4-KD", "Z6-XT",
+    "Q9-HM", "R2-VK", "S1-ZR", "M4-XD", "K7-QX", "D2-SM", "T8-VX", "P3-ZT",
+    "X7-KM", "Z4-DX", "Q6-HK", "R5-VR",
+    // Industrial / Labor Droids
+    "L8-T3", "G5-M9", "R6-H2", "K1-P7", "T9-L4", "M3-G8", "P6-H5", "R2-T9",
+    "L7-K4", "G9-M1", "H4-P8", "T6-G2", "M9-L5", "R3-K7", "P1-H6", "G8-T4",
+    "L2-M9", "K5-P3", "T7-H1", "R9-G6", "L1-T8", "G3-M7", "R8-H9", "K9-P2",
+    "T4-L1", "M6-G5", "P9-H3", "R1-T6", "L5-K2", "G7-M4", "H8-P9", "T2-G1",
+    "M1-L8", "R7-K5", "P4-H2", "G2-T9", "L9-M3", "K8-P1", "T5-H7", "R4-G8",
+    // Mixed / Obscure Rim Models
+    "A9-RK", "B3-TD", "C8-MX", "D6-QP", "E1-KV", "F9-RD", "G2-TM", "H7-XK",
+    "I4-QD", "J8-MP", "K3-VR", "L6-QT", "M1-XD", "N9-KP", "O4-RX", "P8-QM",
+    "Q6-TK", "R1-XP", "S9-MD", "T3-VQ", "U7-RK", "V2-TD", "W5-MX", "X9-QP",
+    "Y4-KV", "Z8-RD", "A3-TM", "B6-XK", "C1-QD", "D5-MP", "E9-VR", "F2-QT",
+    "G7-XD", "H3-KP", "I8-RX", "J1-QM", "K5-TK", "L9-XP", "M4-MD", "N8-VQ",
+    "O2-RK", "P7-TD", "Q1-MX", "R6-QP", "S3-KV", "T9-RD", "U4-TM", "V8-XK",
+    // Additional variety
+    "C-3PO", "2-1B", "BB-8", "K-2SO", "GNK-7", "IG-88", "TC-14", "WED-15",
+    "EV-9D9", "0-0-0", "BT-1", "HK-47", "R-3PO", "L3-37", "Q9-X8", "V-5D7",
+    "Z-6K4", "X-1T9", "W-7M2", "Y-4P5", "U-8R3", "T-2K6", "S-9D1", "R-4V8"
+  ];
+
+  /**
    * Filter out Force-dependent talents/feats for droids
    * Droids cannot be Force-sensitive in SWSE rules
    * @param {Array} items - Array of talents or feats
@@ -502,23 +659,49 @@ export default class CharacterGenerator extends Application {
       const tempActor = this._createTempActorForValidation();
 
       try {
+        // Combine class skills with background skills
+        const allClassSkills = [
+          ...(this.characterData.classSkillsList || []),
+          ...(this.characterData.backgroundSkills?.map(s => s.key || s) || [])
+        ];
+
         const skillsWithSuggestions = await Level1SkillSuggestionEngine.suggestLevel1Skills(
           this._skillsJson,
           tempActor,
           {
+            classSkills: allClassSkills,
             selectedClass: this.characterData.classes?.[0],
             selectedSkills: Object.keys(this.characterData.skills || {})
               .filter(k => this.characterData.skills[k]?.trained)
               .map(k => ({ key: k }))
           }
         );
-        context.skillsJson = skillsWithSuggestions;
+
+        // Mark class skills in the returned data
+        const skillsWithClassMarking = skillsWithSuggestions.map(skill => ({
+          ...skill,
+          isClassSkill: allClassSkills.includes(skill.key || skill.name)
+        }));
+
+        context.skillsJson = skillsWithClassMarking;
         // Also set availableSkills for template compatibility
-        context.availableSkills = skillsWithSuggestions;
+        context.availableSkills = skillsWithClassMarking;
       } catch (err) {
         SWSELogger.warn('CharGen | Failed to add skill suggestions:', err);
-        context.skillsJson = this._skillsJson || [];
-        context.availableSkills = this._skillsJson || [];
+
+        // Fallback: still mark class skills even if suggestions fail
+        const allClassSkills = [
+          ...(this.characterData.classSkillsList || []),
+          ...(this.characterData.backgroundSkills?.map(s => s.key || s) || [])
+        ];
+
+        const fallbackSkills = (this._skillsJson || []).map(skill => ({
+          ...skill,
+          isClassSkill: allClassSkills.includes(skill.key || skill.name)
+        }));
+
+        context.skillsJson = fallbackSkills;
+        context.availableSkills = fallbackSkills;
       }
     }
 
@@ -645,6 +828,12 @@ export default class CharacterGenerator extends Application {
       this.characterData.name = ev.target.value;
     });
 
+    // Random name button
+    $html.find('.random-name-btn').click(this._onRandomName.bind(this));
+
+    // Random droid name button
+    $html.find('.random-droid-name-btn').click(this._onRandomDroidName.bind(this));
+
     // Level input
     $html.find('input[name="target-level"]').on('input change', (ev) => {
       this.targetLevel = parseInt(ev.target.value, 10) || 1;
@@ -690,6 +879,12 @@ export default class CharacterGenerator extends Application {
         const category = this.characterData.backgroundCategory || 'events';
         this.characterData.backgroundNarratorComment = this._getBackgroundNarratorComment(category);
       }
+
+      // Background category tab clicks
+      $html.find('.background-category-tab').click(this._onBackgroundCategoryClick.bind(this));
+
+      // Background skill filter button
+      $html.find('.background-filter-btn').click(this._onBackgroundFilterClick.bind(this));
     }
   }
 
@@ -737,6 +932,50 @@ export default class CharacterGenerator extends Application {
       steps.push("summary", "shop");
     }
     return steps;
+  }
+
+  /**
+   * Handle random name selection
+   * @param {Event} event - The click event
+   */
+  async _onRandomName(event) {
+    event.preventDefault();
+
+    if (!CharacterGenerator.RANDOM_NAMES || CharacterGenerator.RANDOM_NAMES.length === 0) {
+      ui.notifications.warn("No names available to choose from.");
+      return;
+    }
+
+    // Pick a random name
+    const randomIndex = Math.floor(Math.random() * CharacterGenerator.RANDOM_NAMES.length);
+    const selectedName = CharacterGenerator.RANDOM_NAMES[randomIndex];
+
+    this.characterData.name = selectedName;
+
+    ui.notifications.info(`Random name selected: ${selectedName}`);
+    await this.render();
+  }
+
+  /**
+   * Handle random droid name selection
+   * @param {Event} event - The click event
+   */
+  async _onRandomDroidName(event) {
+    event.preventDefault();
+
+    if (!CharacterGenerator.RANDOM_DROID_NAMES || CharacterGenerator.RANDOM_DROID_NAMES.length === 0) {
+      ui.notifications.warn("No droid names available to choose from.");
+      return;
+    }
+
+    // Pick a random droid name
+    const randomIndex = Math.floor(Math.random() * CharacterGenerator.RANDOM_DROID_NAMES.length);
+    const selectedName = CharacterGenerator.RANDOM_DROID_NAMES[randomIndex];
+
+    this.characterData.name = selectedName;
+
+    ui.notifications.info(`Random droid name selected: ${selectedName}`);
+    await this.render();
   }
 
   async _onNextStep(event) {
