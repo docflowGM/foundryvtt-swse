@@ -166,6 +166,13 @@ export default class CharacterGenerator extends Application {
       }
     }
 
+    // Load speed (ensure it's a valid number)
+    if (system.speed && Number.isFinite(system.speed)) {
+      this.characterData.speed = system.speed;
+    } else {
+      this.characterData.speed = 6;
+    }
+
     // Load classes
     const classItems = actor.items.filter(item => item.type === 'class');
     this.characterData.classes = classItems.map(cls => ({
