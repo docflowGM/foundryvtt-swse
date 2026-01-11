@@ -9,23 +9,50 @@ import { FinalizeIntegration } from '../progression/integration/finalize-integra
  */
 export class SWSEProgressionEngine {
   constructor(actor, mode = "chargen") {
+    swseLogger.log(`[PROGRESSION] ====== ENGINE CONSTRUCTOR START ======`);
+    swseLogger.log(`[PROGRESSION] Constructor params: mode="${mode}", actor="${actor?.name || 'UNKNOWN'}", actor.id="${actor?.id || 'UNKNOWN'}"`);
+
+    // Validate actor
+    if (!actor) {
+      swseLogger.error(`[PROGRESSION] FATAL: Actor is null/undefined in constructor`);
+      throw new Error('SWSEProgressionEngine requires valid actor');
+    }
+
     this.actor = actor;
     this.mode = mode; // "chargen" or "levelup"
     this.current = null;
     this.completedSteps = [];
     this.data = {};
 
+    swseLogger.log(`[PROGRESSION] Loading state from actor...`);
     // Load saved state from actor
-    this.loadStateFromActor();
+    try {
+      this.loadStateFromActor();
+      swseLogger.log(`[PROGRESSION] State loaded successfully`);
+    } catch (err) {
+      swseLogger.error(`[PROGRESSION] Error loading state from actor:`, err);
+      throw err;
+    }
 
     // Initialize steps
-    this._initializeSteps();
+    swseLogger.log(`[PROGRESSION] Initializing steps for mode: ${mode}`);
+    try {
+      this._initializeSteps();
+      swseLogger.log(`[PROGRESSION] Steps initialized successfully`);
+    } catch (err) {
+      swseLogger.error(`[PROGRESSION] Error initializing steps:`, err);
+      throw err;
+    }
 
     // Set initial step
     if (!this.current) {
       this.current = this.steps[0]?.id || null;
+      swseLogger.log(`[PROGRESSION] Current step set to: ${this.current}`);
+    } else {
+      swseLogger.log(`[PROGRESSION] Current step already set to: ${this.current}`);
     }
 
+    swseLogger.log(`[PROGRESSION] ====== ENGINE CONSTRUCTOR COMPLETE ======`);
     swseLogger.log(`ProgressionEngine initialized: ${mode} for ${actor.name}`);
   }
 
@@ -34,7 +61,10 @@ export class SWSEProgressionEngine {
    * @private
    */
   _initializeSteps() {
+    swseLogger.log(`[PROGRESSION-STEPS] _initializeSteps() called with mode: "${this.mode}"`);
+
     if (this.mode === "chargen") {
+      swseLogger.log(`[PROGRESSION-STEPS] Setting up CHARGEN steps...`);
       this.chargenSteps = [
         {
           id: "species",
@@ -130,6 +160,10 @@ export class SWSEProgressionEngine {
           icon: "glyph-finalize"
         }
       ];
+      swseLogger.log(`[PROGRESSION-STEPS] CHARGEN steps initialized: ${this.chargenSteps.map(s => s.id).join(', ')}`);
+    } else {
+      swseLogger.log(`[PROGRESSION-STEPS] Setting up LEVELUP steps...`);
+      swseLogger.log(`[PROGRESSION-STEPS] LEVELUP steps initialized: ${this.levelUpSteps.map(s => s.id).join(', ')}`);
     }
   }
 
@@ -138,11 +172,22 @@ export class SWSEProgressionEngine {
  * @returns {Array} Normalized step array
  */
 getSteps() {
+  swseLogger.log(`[PROGRESSION-STEPS] getSteps() called - mode: ${this.mode}`);
   const base = this.mode === "chargen"
     ? this.chargenSteps
     : this.levelUpSteps;
 
-  return this.normalizeSteps(base);
+  if (!base) {
+    swseLogger.error(`[PROGRESSION-STEPS] ERROR: base steps is null/undefined for mode ${this.mode}`);
+    swseLogger.error(`[PROGRESSION-STEPS] chargenSteps exists: ${!!this.chargenSteps}`);
+    swseLogger.error(`[PROGRESSION-STEPS] levelUpSteps exists: ${!!this.levelUpSteps}`);
+    return [];
+  }
+
+  swseLogger.log(`[PROGRESSION-STEPS] Normalizing ${base.length} steps...`);
+  const normalized = this.normalizeSteps(base);
+  swseLogger.log(`[PROGRESSION-STEPS] Normalized steps: ${normalized.map(s => s.id).join(', ')}`);
+  return normalized;
 }
 
 /**
@@ -396,21 +441,38 @@ async applyScalingFeature(feature) {
    * @returns {Promise<*>} Action result
    */
   async doAction(action, payload) {
+    swseLogger.log(`[PROGRESSION-ACTION] ======== ACTION START: "${action}" ========`);
+    swseLogger.log(`[PROGRESSION-ACTION] Actor: ${this.actor.name} (${this.actor.id})`);
+    swseLogger.log(`[PROGRESSION-ACTION] Mode: ${this.mode}`);
+    swseLogger.log(`[PROGRESSION-ACTION] Current step: ${this.current}`);
+    swseLogger.log(`[PROGRESSION-ACTION] Payload:`, payload);
+
     const fn = this[`_action_${action}`];
 
     if (typeof fn === "function") {
+      swseLogger.log(`[PROGRESSION-ACTION] Found action handler: _action_${action}`);
       try {
+        swseLogger.log(`[PROGRESSION-ACTION] Calling _action_${action}...`);
         const result = await fn.call(this, payload);
+        swseLogger.log(`[PROGRESSION-ACTION] Action completed successfully`);
+        swseLogger.log(`[PROGRESSION-ACTION] Result:`, result);
+
+        swseLogger.log(`[PROGRESSION-ACTION] Firing hook: swse:progression:updated`);
         Hooks.call('swse:progression:updated');
+
+        swseLogger.log(`[PROGRESSION-ACTION] ======== ACTION END: "${action}" ========`);
         return result;
       } catch (err) {
-        swseLogger.error(`Progression action "${action}" failed:`, err);
+        swseLogger.error(`[PROGRESSION-ACTION] FATAL ERROR in action "${action}":`, err);
+        swseLogger.error(`[PROGRESSION-ACTION] Error message: ${err.message}`);
+        swseLogger.error(`[PROGRESSION-ACTION] Error stack:`, err.stack);
         ui.notifications?.error(`Action failed: ${err.message}`);
         throw err;
       }
     } else {
       const msg = `Unknown progression action: ${action}`;
-      swseLogger.warn(msg);
+      swseLogger.warn(`[PROGRESSION-ACTION] ${msg}`);
+      swseLogger.warn(`[PROGRESSION-ACTION] Available methods:`, Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter(m => m.startsWith('_action_')));
       ui.notifications?.warn(msg);
     }
   }
@@ -419,30 +481,48 @@ async applyScalingFeature(feature) {
    * Validate all steps
    */
   validateSteps() {
-    for (const step of this.getSteps()) {
+    swseLogger.log(`[PROGRESSION-VALIDATE] Validating all steps...`);
+    const steps = this.getSteps();
+    swseLogger.log(`[PROGRESSION-VALIDATE] Total steps: ${steps.length}`);
+
+    for (const step of steps) {
       step.locked = !this._isStepAvailable(step.id);
       step.completed = this._isStepCompleted(step.id);
       step.current = step.id === this.current;
+      swseLogger.log(`[PROGRESSION-VALIDATE] Step "${step.id}": locked=${step.locked}, completed=${step.completed}, current=${step.current}`);
     }
+
+    swseLogger.log(`[PROGRESSION-VALIDATE] Validation complete`);
   }
 
   /**
    * Load state from actor flags
    */
   loadStateFromActor() {
+    swseLogger.log(`[PROGRESSION-STATE] Loading state from actor flags...`);
     const data = this.actor.getFlag('swse', 'progression') || {};
+
+    swseLogger.log(`[PROGRESSION-STATE] Flag data exists: ${!!data}`);
+    swseLogger.log(`[PROGRESSION-STATE] Completed steps: ${data.completedSteps?.length || 0}`, data.completedSteps);
+    swseLogger.log(`[PROGRESSION-STATE] Current step: ${data.currentStep || 'none'}`);
+    swseLogger.log(`[PROGRESSION-STATE] Mode: ${data.mode || 'none'}`);
+
     this.completedSteps = data.completedSteps || [];
     this.current = data.currentStep || null;
     this.mode = data.mode || this.mode;
     this.data = data.data || {};
 
+    swseLogger.log(`[PROGRESSION-STATE] State loaded - completedSteps: ${this.completedSteps.length}, current: ${this.current}, mode: ${this.mode}`);
+
     // For levelup mode, store the previous state so we can track what's new
     // This prevents double-granting force powers on subsequent finalize calls
     if (this.mode === 'levelup') {
+      swseLogger.log(`[PROGRESSION-STATE] Levelup mode detected - loading previous state...`);
       const progression = this.actor.system.progression || {};
       this.data._previousClassLevels = [...(progression.classLevels || [])];
       this.data._previousFeats = [...(progression.feats || [])];
       this.data._previousTalents = [...(progression.talents || [])];
+      swseLogger.log(`[PROGRESSION-STATE] Previous state loaded - classLevels: ${this.data._previousClassLevels.length}, feats: ${this.data._previousFeats.length}, talents: ${this.data._previousTalents.length}`);
     }
 
     swseLogger.log(`Loaded progression state:`, { completedSteps: this.completedSteps, current: this.current });
@@ -974,24 +1054,52 @@ async applyScalingFeature(feature) {
   }
 
   async _action_confirmClass(payload) {
+    swseLogger.log(`[PROGRESSION-CLASS] ======== CONFIRM CLASS START ========`);
+    swseLogger.log(`[PROGRESSION-CLASS] Payload:`, payload);
+
     const { classId, skipPrerequisites = false } = payload;
+
+    if (!classId) {
+      swseLogger.error(`[PROGRESSION-CLASS] FATAL: classId is null/undefined`);
+      throw new Error('classId is required');
+    }
+
+    swseLogger.log(`[PROGRESSION-CLASS] Loading progression rules...`);
     const { PROGRESSION_RULES, REQUIRED_PRESTIGE_LEVEL } = await import('../progression/data/progression-data.js');
     const { getClassData } = await import('../progression/utils/class-data-loader.js');
 
+    swseLogger.log(`[PROGRESSION-CLASS] PROGRESSION_RULES.classes keys:`, Object.keys(PROGRESSION_RULES.classes || {}));
+
     // Try hardcoded data first (faster for core classes)
+    swseLogger.log(`[PROGRESSION-CLASS] Looking up class "${classId}" in PROGRESSION_RULES...`);
     let classData = PROGRESSION_RULES.classes[classId];
+
+    swseLogger.log(`[PROGRESSION-CLASS] Found in hardcoded data: ${!!classData}`);
+    if (classData) {
+      swseLogger.log(`[PROGRESSION-CLASS] Hardcoded data:`, { name: classData.name, levelProgression: !!classData.levelProgression });
+    }
 
     // If not found, or if hardcoded data lacks levelProgression, load from compendium
     if (!classData || !classData.levelProgression) {
-      const compendiumData = await getClassData(classId);
-      if (compendiumData) {
-        classData = compendiumData;
+      swseLogger.log(`[PROGRESSION-CLASS] Loading from compendium for "${classId}"...`);
+      try {
+        const compendiumData = await getClassData(classId);
+        swseLogger.log(`[PROGRESSION-CLASS] Compendium data found: ${!!compendiumData}`);
+        if (compendiumData) {
+          classData = compendiumData;
+          swseLogger.log(`[PROGRESSION-CLASS] Using compendium data:`, { name: compendiumData.name, levelProgression: !!compendiumData.levelProgression });
+        }
+      } catch (err) {
+        swseLogger.error(`[PROGRESSION-CLASS] Error loading from compendium:`, err);
       }
     }
 
     if (!classData) {
+      swseLogger.error(`[PROGRESSION-CLASS] FATAL: Class data not found for "${classId}"`);
       throw new Error(`Unknown class: ${classId}`);
     }
+
+    swseLogger.log(`[PROGRESSION-CLASS] Class data loaded successfully: ${classData.name}`);
 
     // Prerequisite validation (can be skipped for free build mode)
     if (!skipPrerequisites) {
