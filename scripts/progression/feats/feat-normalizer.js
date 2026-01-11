@@ -57,7 +57,10 @@ export const FeatNormalizer = {
             'prerequisite',
             'jedi',
             'lightsaber',
-            'force'
+            'force',
+            'team',
+            'martial_arts',
+            'species'
         ];
 
         const normalized = String(featType || 'general').toLowerCase().trim();
@@ -118,7 +121,10 @@ export const FeatNormalizer = {
             'prerequisite',
             'jedi',
             'lightsaber',
-            'force'
+            'force',
+            'team',
+            'martial_arts',
+            'species'
         ];
 
         if (!validTypes.includes(featDoc.system?.featType)) {

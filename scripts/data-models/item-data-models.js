@@ -300,7 +300,7 @@ export class FeatDataModel extends foundry.abstract.DataModel {
     return {
       featType: new fields.StringField({
         initial: "general",
-        choices: ["general", "force", "species"],
+        choices: ["general", "force", "species", "team", "martial_arts", "combat", "tactical", "bonus", "prerequisite", "jedi", "lightsaber"],
         label: "Feat Type"
       }),
       prerequisite: new fields.HTMLField({label: "Prerequisites"}),
