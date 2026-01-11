@@ -708,6 +708,29 @@ export default class CharacterGenerator extends Application {
     context.skillsJson = context.skillsJson || this._skillsJson || [];
     context.availableSkills = context.availableSkills || context.skillsJson;
 
+    // Prepare languages for template
+    if (this.currentStep === "languages") {
+      try {
+        // Get starting languages based on species
+        this.characterData.languageData = await this._getStartingLanguages();
+
+        // Get all available languages by category
+        context.languageCategories = await this._getAvailableLanguages();
+      } catch (err) {
+        SWSELogger.error('CharGen | Failed to load languages:', err);
+        context.languageCategories = {
+          widelyUsed: {
+            name: "Widely Used Languages",
+            languages: ["Basic", "Binary", "Bocce", "Bothese"]
+          },
+          localTrade: {
+            name: "Local/Trade Languages",
+            languages: ["Ewokese", "Gamorrean", "Gungan"]
+          }
+        };
+      }
+    }
+
     // Prepare force powers and starship maneuvers for template
     if (this.currentStep === "force-powers") {
       context.availableForcePowers = await this._getAvailableForcePowers();
