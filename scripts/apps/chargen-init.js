@@ -1,5 +1,5 @@
 import { SWSELogger } from '../utils/logger.js';
-import CharacterGeneratorImproved from './chargen-improved.js';
+import CharacterGeneratorNarrative from './chargen-narrative.js';
 import { TemplateCharacterCreator } from './template-character-creator.js';
 
 // Single hook to handle both create button interception and header button addition
@@ -48,7 +48,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                         icon: '<i class="fas fa-dice-d20"></i>',
                         label: "Custom PC Generator",
                         callback: () => {
-                            new CharacterGeneratorImproved().render(true);
+                            new CharacterGeneratorNarrative().render(true);
                         }
                     }
                 };
@@ -115,7 +115,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
             button.innerHTML = '<i class="fas fa-hat-wizard"></i> Generator';
             button.title = 'Open custom character generator';
             button.addEventListener('click', () => {
-                new CharacterGeneratorImproved().render(true);
+                new CharacterGeneratorNarrative().render(true);
             });
             header.appendChild(button);
         }

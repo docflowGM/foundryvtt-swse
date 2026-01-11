@@ -100,6 +100,18 @@
  {{#if (eq currentStep "name")}}
  <section class="step-name">
  <h3>Character Name & Level</h3>
+
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
+
  <div class="form-group">
  <label for="character-name">Enter your character's name:</label>
  <input
@@ -294,6 +306,17 @@
  {{#if (eq currentStep "species")}}
  <section class="step-species">
  <h3>Select Species</h3>
+
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
 
  {{!-- Species Filters --}}
  <div class="species-filters">
@@ -909,6 +932,18 @@
  {{#if (eq currentStep "abilities")}}
  <section class="step-abilities">
  <h3>Generate Ability Scores</h3>
+
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
+
  <div class="ability-header">
  <button type="button" id="free-build-btn" class="free-build-button">
  <i class="fas fa-edit"></i> Free Build (Manual Entry)
@@ -1003,6 +1038,17 @@
  {{/if}}
  {{/if}}
  </header>
+
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
 
  <div class="class-grid">
  {{#each packs.classes}}
@@ -1135,6 +1181,17 @@
  {{!-- Step 1: Select Talent Tree --}}
  <h3>Select a Talent Tree</h3>
  <p class="help-text">Choose a talent tree from your class. Then select a talent from that tree.</p>
+
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
 
  {{#if (gt availableTalentTrees.length 0)}}
  <div class="talent-trees-grid">
@@ -1302,6 +1359,17 @@
  <section class="step-skills">
  <h3>Select Trained Skills</h3>
  <p class="help-text">Select {{characterData.trainedSkillsAllowed}} class skills to train. Training grants +5 bonus.</p>
+
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
 
  <div class="skills-summary" style="margin-bottom: 1rem;">
  <p><strong>Trained Skills: {{characterData.trainedSkillsCount}} / {{characterData.trainedSkillsAllowed}}</strong></p>
@@ -1587,6 +1655,17 @@
  <section class="step-summary">
  <h3><i class="fas fa-scroll"></i> Character Summary</h3>
  <p class="summary-intro">Review your character before finalizing. Click "Create Character" to proceed to equipment shopping.</p>
+
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
 
  <div class="summary-grid">
  {{!-- Basic Information --}}
