@@ -16,6 +16,7 @@ export const ClassNormalizer = {
 
     /**
      * Normalize an entire class document
+     * NOTE: Compendium may use camelCase or snake_case property names
      */
     normalizeClassDoc(classDoc) {
         if (!classDoc || !classDoc.system) {
@@ -24,12 +25,16 @@ export const ClassNormalizer = {
 
         const sys = classDoc.system;
 
-        // Normalize basic properties
-        sys.hit_die = this._normalizeHitDie(sys.hit_die);
-        sys.babProgression = this._normalizeBabProgression(sys.babProgression);
-        sys.class_skills = this._normalizeSkillsList(sys.class_skills);
-        sys.talent_trees = this._normalizeTalentTrees(sys.talent_trees);
-        sys.level_progression = this._normalizeLevelProgression(sys.level_progression);
+        // Normalize basic properties - check both naming conventions
+        sys.hit_die = this._normalizeHitDie(sys.hitDie || sys.hit_die);
+        sys.hitDie = sys.hit_die; // Keep both for compatibility
+        sys.babProgression = this._normalizeBabProgression(sys.babProgression || sys.bab_progression);
+        sys.class_skills = this._normalizeSkillsList(sys.classSkills || sys.class_skills);
+        sys.classSkills = sys.class_skills; // Keep both for compatibility
+        sys.talent_trees = this._normalizeTalentTrees(sys.talentTrees || sys.talent_trees);
+        sys.talentTrees = sys.talent_trees; // Keep both for compatibility
+        sys.level_progression = this._normalizeLevelProgression(sys.levelProgression || sys.level_progression);
+        sys.levelProgression = sys.level_progression; // Keep both for compatibility
 
         SWSELogger.log(`Normalized class: ${classDoc.name}`);
         return classDoc;
@@ -125,23 +130,27 @@ export const ClassNormalizer = {
 
     /**
      * Validate a normalized class document
+     * NOTE: Checks both camelCase and snake_case property names
      */
     validate(classDoc) {
         const errors = [];
+        const sys = classDoc.system;
 
         if (!classDoc.name) {
             errors.push('Class must have a name');
         }
 
-        if (!classDoc.system.hit_die) {
+        if (!(sys.hitDie || sys.hit_die)) {
             errors.push('Class must have a hit die');
         }
 
-        if (!['fast', 'medium', 'slow'].includes(classDoc.system.babProgression)) {
-            errors.push('Invalid BAB progression: ' + classDoc.system.babProgression);
+        const bab = sys.babProgression || sys.bab_progression;
+        if (!['fast', 'medium', 'slow'].includes(bab)) {
+            errors.push('Invalid BAB progression: ' + bab);
         }
 
-        if (!Array.isArray(classDoc.system.level_progression)) {
+        const levelProg = sys.levelProgression || sys.level_progression;
+        if (!Array.isArray(levelProg)) {
             errors.push('Class must have level progression');
         }
 
@@ -153,11 +162,13 @@ export const ClassNormalizer = {
 
     /**
      * Get class features for a specific level
+     * NOTE: Checks both camelCase and snake_case property names
      */
     getFeaturesForLevel(classDoc, level) {
-        if (!classDoc.system.level_progression) return [];
+        const levelProg = classDoc.system.levelProgression || classDoc.system.level_progression;
+        if (!levelProg) return [];
 
-        const levelData = classDoc.system.level_progression.find(l => l.level === level);
+        const levelData = levelProg.find(l => l.level === level);
         return levelData ? levelData.features : [];
     }
 };
