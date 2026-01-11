@@ -461,6 +461,9 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._onDarkInspiration();
     });
 
+    // ========== FEAT VARIABLE SLIDER (uses change event, not click) ==========
+    html.find(".feat-variable-slider").change(ev => this._onUpdateVariableAction(ev));
+
     // ========== IMPORT/EXPORT HANDLERS ==========
     html.find(".export-character-json-btn").click(ev => {
       ev.preventDefault();
@@ -1848,6 +1851,92 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
         card.style.display = cardType === filter ? '' : 'none';
       }
     });
+  }
+
+  // ----------------------------------------------------------
+  // I.3 Talent Abilities Aliases for Data-Action Dispatcher
+  // ----------------------------------------------------------
+  // These aliases enable the data-action dispatcher to work with talent abilities
+  // The actual implementation is in the longer method names for starship maneuvers compatibility
+
+  async _onExpandAbility(event) {
+    return this._onExpandAbilityCard(event);
+  }
+
+  async _onRollAbility(event) {
+    return this._onRollTalentAbility(event);
+  }
+
+  async _onToggleAbility(event) {
+    return this._onToggleTalentAbility(event);
+  }
+
+  async _onPostAbility(event) {
+    return this._onPostTalentAbility(event);
+  }
+
+  async _onResetEncounterUses(event) {
+    return this._onResetAbilityUses(event);
+  }
+
+  async _onResetDayUses(event) {
+    return this._onResetAbilityUses(event);
+  }
+
+  /**
+   * Handle using a sub-ability from a multi-option talent ability
+   */
+  async _onUseSubAbility(event) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const abilityId = btn.dataset.subAbilityId;
+    const talentId = btn.dataset.talentId;
+
+    const abilities = TalentAbilitiesEngine.getAbilitiesForActor(this.actor);
+    // Find parent ability
+    const parentAbility = abilities.all.find(a =>
+      a.isMultiOption && a.subAbilities?.some(sub => sub.id === abilityId)
+    );
+
+    if (!parentAbility) {
+      return ui.notifications.warn("Sub-ability not found.");
+    }
+
+    const subAbility = parentAbility.subAbilities.find(sub => sub.id === abilityId);
+    if (!subAbility) {
+      return ui.notifications.warn("Sub-ability not found.");
+    }
+
+    // Roll the sub-ability
+    if (subAbility.rollData?.canRoll) {
+      await TalentAbilitiesEngine.rollAbility(this.actor, subAbility, {});
+    } else {
+      // Post to chat
+      const content = `
+        <div class="swse-ability-card">
+          <div class="ability-card-header">
+            <i class="${subAbility.icon}"></i>
+            <h3>${subAbility.name}</h3>
+            <span class="ability-type-badge type-${subAbility.actionType}">${subAbility.typeLabel}</span>
+          </div>
+          <div class="ability-card-body">
+            <p class="ability-source"><em>From: ${parentAbility.name} (${parentAbility.sourceTalentName})</em></p>
+            <p class="ability-description">${subAbility.description}</p>
+          </div>
+        </div>
+      `;
+
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content
+      });
+    }
+
+    // Decrement uses if limited
+    if (parentAbility.usesData?.isLimited) {
+      await TalentAbilitiesEngine.useAbility(this.actor, parentAbility.sourceTalentId);
+      this.render();
+    }
   }
 
 
