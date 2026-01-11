@@ -99,8 +99,19 @@ export class ChargenDataCache {
         // Convert documents to plain objects for safer data handling
         packs[key] = docs.map(d => {
           try {
-            return d.toJSON ? d.toJSON() : d.toObject?.() || d;
+            // Create plain object from document, preserving all properties
+            const obj = {
+              _id: d._id,
+              name: d.name,
+              type: d.type,
+              system: d.system || {},
+              flags: d.flags || {},
+              img: d.img,
+              data: d.data
+            };
+            return obj;
           } catch (e) {
+            SWSELogger.warn(`ChargenDataCache | Error serializing ${d?.name}:`, e);
             // Last resort: create minimal object
             return {
               _id: d._id,
