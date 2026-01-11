@@ -555,11 +555,36 @@
    ============================================ */
 
 .feats-grid,
-.feats-categorized {
+.feats-categorized,
+.feats-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
   margin: 0.75rem 0;
+}
+
+@media (max-width: 1400px) {
+  .feats-grid,
+  .feats-categorized,
+  .feats-list {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 1000px) {
+  .feats-grid,
+  .feats-categorized,
+  .feats-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .feats-grid,
+  .feats-categorized,
+  .feats-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .feat-category {
@@ -585,13 +610,15 @@
 .feat-item {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
   background: rgba(0, 20, 40, 0.5);
   border: 1px solid #0af;
   border-radius: 4px;
-  padding: 0.5rem;
+  padding: 0.75rem 0.5rem;
   transition: all 0.2s ease;
-  min-height: 80px;
   position: relative;
+  min-height: 160px;
 }
 
 .feat-card:hover,
@@ -601,45 +628,168 @@
   border-color: #00ff88;
 }
 
+/* Icon-based feat button */
+.feat-icon-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+  flex: 1;
+  position: relative;
+}
+
+.feat-icon-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.feat-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.feat-card:hover .feat-icon,
+.feat-item:hover .feat-icon {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.feat-card:disabled,
+.feat-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.feat-card:disabled .feat-icon,
+.feat-item:disabled .feat-icon {
+  filter: grayscale(1) brightness(0.7);
+}
+
+.feat-name {
+  font-size: 0.8rem;
+  color: #fff;
+  text-align: center;
+  line-height: 1.2;
+  word-break: break-word;
+  width: 100%;
+  max-lines: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.feat-chain-indicator {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0, 170, 255, 0.8);
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 3px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* Tooltip styling */
+.feat-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid #0af;
+  border-radius: 6px;
+  padding: 0.75rem;
+  max-width: 280px;
+  font-size: 0.8rem;
+  color: #fff;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+}
+
+.feat-card:hover .feat-tooltip,
+.feat-item:hover .feat-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.feat-tooltip-title {
+  font-weight: bold;
+  color: #00ff88;
+  margin-bottom: 0.35rem;
+  border-bottom: 1px solid #0af;
+  padding-bottom: 0.35rem;
+}
+
+.feat-tooltip-benefit {
+  margin: 0.35rem 0;
+  line-height: 1.3;
+}
+
+.feat-tooltip-prereqs {
+  margin: 0.35rem 0;
+  color: #ffaa00;
+  font-size: 0.75rem;
+}
+
+.feat-tooltip-suggestion {
+  margin: 0.35rem 0;
+  color: #00ff88;
+  font-style: italic;
+  font-size: 0.75rem;
+}
+
 .feat-card h5,
 .feat-item h4 {
-  margin: 0 0 0.35rem 0;
-  font-size: 0.9rem;
-  line-height: 1.2;
-  color: #fff;
-  word-break: break-word;
+  display: none;
 }
 
 .feat-card .select-feat,
 .feat-item .select-feat {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0;
   padding: 0;
   border: none;
   background: transparent;
   cursor: pointer;
-  text-align: left;
+  text-align: center;
   flex: 1;
+  width: 100%;
 }
 
 .feat-card .feat-prereqs,
 .feat-item .feat-prereqs {
-  font-size: 0.75rem;
-  color: #aaaaaa;
-  margin: 0;
-  display: none; /* Hidden by default, show on hover/tooltip */
-  font-style: italic;
-}
-
-.feat-card:hover .feat-prereqs {
-  display: block;
+  display: none;
 }
 
 .feat-card .suggestion-reason {
-  font-size: 0.75rem;
-  color: #00ff88;
-  margin: 0.25rem 0 0 0;
+  display: none;
+}
+
+.feat-chain-badge {
+  display: none;
 }
 
 .feat-suggestion-badge {

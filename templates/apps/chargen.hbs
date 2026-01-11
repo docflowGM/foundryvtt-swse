@@ -1115,26 +1115,35 @@
  <p class="category-description">{{../description}}</p>
  <div class="feats-grid">
  {{#each this.feats}}
- <div class="feat-card feat-with-tooltip {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.featLevel}}feat-level-{{this.featLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" data-tooltip="{{this.system.benefit}}" data-indent-level="{{this.indentLevel}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
- <button type="button" class="select-feat choice-button" data-featid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
- {{#if this.suggestion.iconClass}}
- <span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
- <i class="{{this.suggestion.iconClass}}"></i>
- </span>
- {{/if}}
- <h5>{{this.name}}</h5>
- {{#if this.system.prerequisites}}
- <p class="feat-prereqs"><em>Prerequisites: {{this.system.prerequisites}}</em></p>
- {{/if}}
- {{#if this.suggestion.reason}}
- <p class="suggestion-reason">{{this.suggestion.reason}}</p>
- {{/if}}
- {{#if this.metadata.chain}}
- <span class="feat-chain-badge">{{this.metadata.chain}}</span>
- {{/if}}
- </button>
- </div>
- {{/each}}
+ <div class="feat-card {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.featLevel}}feat-level-{{this.featLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" data-feat-id="{{this._id}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+<button type="button" class="feat-icon-btn select-feat" data-featid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
+<div class="feat-icon-wrapper">
+<img src="systems/foundryvtt-swse/assets/feats/{{this.name}}.png" alt="{{this.name}}" class="feat-icon" onerror="this.src='systems/foundryvtt-swse/assets/icons/feats/default.png'">
+{{#if this.suggestion.iconClass}}
+<span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+<i class="{{this.suggestion.iconClass}}"></i>
+</span>
+{{/if}}
+{{#if this.metadata.chain}}
+<span class="feat-chain-indicator">{{this.featLevel}}</span>
+{{/if}}
+</div>
+<div class="feat-name">{{this.name}}</div>
+</button>
+<div class="feat-tooltip">
+<div class="feat-tooltip-title">{{this.name}}</div>
+{{#if this.system.benefit}}
+<div class="feat-tooltip-benefit">{{this.system.benefit}}</div>
+{{/if}}
+{{#if this.system.prerequisites}}
+<div class="feat-tooltip-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</div>
+{{/if}}
+{{#if this.suggestion.reason}}
+<div class="feat-tooltip-suggestion">💡 {{this.suggestion.reason}}</div>
+{{/if}}
+</div>
+</div>
+{{/each}}
  </div>
  </div>
  {{/if}}
@@ -1144,23 +1153,35 @@
  {{else}}
  <div class="feats-list">
  {{#each packs.feats}}
- <div class="feat-item feat-with-tooltip {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.featLevel}}feat-level-{{this.featLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" data-tooltip="{{this.system.benefit}}" data-indent-level="{{this.indentLevel}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
- <button type="button" class="select-feat choice-button" data-featid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
- {{#if this.suggestion.iconClass}}
- <span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
- <i class="{{this.suggestion.iconClass}}"></i>
- </span>
- {{/if}}
- <h4>{{this.name}}</h4>
- {{#if this.system.prerequisites}}
- <p class="feat-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</p>
- {{/if}}
- {{#if this.suggestion.reason}}
- <p class="suggestion-reason">{{this.suggestion.reason}}</p>
- {{/if}}
- </button>
- </div>
- {{/each}}
+ <div class="feat-card {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.featLevel}}feat-level-{{this.featLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" data-feat-id="{{this._id}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+<button type="button" class="feat-icon-btn select-feat" data-featid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
+<div class="feat-icon-wrapper">
+<img src="systems/foundryvtt-swse/assets/feats/{{this.name}}.png" alt="{{this.name}}" class="feat-icon" onerror="this.src='systems/foundryvtt-swse/assets/icons/feats/default.png'">
+{{#if this.suggestion.iconClass}}
+<span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+<i class="{{this.suggestion.iconClass}}"></i>
+</span>
+{{/if}}
+{{#if this.metadata.chain}}
+<span class="feat-chain-indicator">{{this.featLevel}}</span>
+{{/if}}
+</div>
+<div class="feat-name">{{this.name}}</div>
+</button>
+<div class="feat-tooltip">
+<div class="feat-tooltip-title">{{this.name}}</div>
+{{#if this.system.benefit}}
+<div class="feat-tooltip-benefit">{{this.system.benefit}}</div>
+{{/if}}
+{{#if this.system.prerequisites}}
+<div class="feat-tooltip-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</div>
+{{/if}}
+{{#if this.suggestion.reason}}
+<div class="feat-tooltip-suggestion">💡 {{this.suggestion.reason}}</div>
+{{/if}}
+</div>
+</div>
+{{/each}}
  </div>
  {{/if}}
 
