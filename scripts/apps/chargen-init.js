@@ -1,5 +1,6 @@
 import { SWSELogger } from '../utils/logger.js';
 import CharacterGeneratorNarrative from './chargen-narrative.js';
+import CharacterGeneratorImproved from './chargen-improved.js';
 import { TemplateCharacterCreator } from './template-character-creator.js';
 
 // Single hook to handle both create button interception and header button addition

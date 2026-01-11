@@ -74,8 +74,53 @@ export class ChargenDataCache {
           }
           continue;
         }
-        const docs = await pack.getDocuments();
-        packs[key] = docs.map(d => d.toObject());
+
+        // For droids pack (contains actors that may have validation issues), use index-based loading
+        if (key === 'droids') {
+          const index = await pack.getIndex();
+          packs[key] = index;
+          SWSELogger.log(`ChargenDataCache | Loaded ${index.length} items (index-based) from ${packName}`);
+          continue;
+        }
+
+        // For all other packs (items), load full documents
+        let docs;
+        try {
+          docs = await pack.getDocuments();
+        } catch (docErr) {
+          SWSELogger.error(`ChargenDataCache | Document loading error for ${packName}:`, docErr);
+          // Retry with index as fallback
+          const index = await pack.getIndex();
+          packs[key] = index;
+          SWSELogger.log(`ChargenDataCache | Loaded ${index.length} items (index, fallback) from ${packName}`);
+          continue;
+        }
+
+        // Convert documents to plain objects for safer data handling
+        packs[key] = docs.map(d => {
+          try {
+            // Create plain object from document, preserving all properties
+            const obj = {
+              _id: d._id,
+              name: d.name,
+              type: d.type,
+              system: d.system || {},
+              flags: d.flags || {},
+              img: d.img,
+              data: d.data
+            };
+            return obj;
+          } catch (e) {
+            SWSELogger.warn(`ChargenDataCache | Error serializing ${d?.name}:`, e);
+            // Last resort: create minimal object
+            return {
+              _id: d._id,
+              name: d.name,
+              type: d.type,
+              system: d.system || {}
+            };
+          }
+        });
         SWSELogger.log(`ChargenDataCache | Loaded ${docs.length} items from ${packName}`);
       } catch (err) {
         SWSELogger.error(`ChargenDataCache | Failed to load ${packName}:`, err);

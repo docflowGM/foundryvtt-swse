@@ -665,12 +665,5 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
 
     // Talent tree selection
     html.find('.select-talent-tree').click(this._onSelectTalentTree.bind(this));
-
-    // Display narrator comments
-    const commentBox = html.find('.narrator-comment');
-    if (commentBox.length > 0) {
-      const comment = this._getNarratorComment();
-      commentBox.text(comment).fadeIn();
-    }
   }
 }

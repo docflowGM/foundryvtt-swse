@@ -708,6 +708,29 @@ export default class CharacterGenerator extends Application {
     context.skillsJson = context.skillsJson || this._skillsJson || [];
     context.availableSkills = context.availableSkills || context.skillsJson;
 
+    // Prepare languages for template
+    if (this.currentStep === "languages") {
+      try {
+        // Get starting languages based on species
+        this.characterData.languageData = await this._getStartingLanguages();
+
+        // Get all available languages by category
+        context.languageCategories = await this._getAvailableLanguages();
+      } catch (err) {
+        SWSELogger.error('CharGen | Failed to load languages:', err);
+        context.languageCategories = {
+          widelyUsed: {
+            name: "Widely Used Languages",
+            languages: ["Basic", "Binary", "Bocce", "Bothese"]
+          },
+          localTrade: {
+            name: "Local/Trade Languages",
+            languages: ["Ewokese", "Gamorrean", "Gungan"]
+          }
+        };
+      }
+    }
+
     // Prepare force powers and starship maneuvers for template
     if (this.currentStep === "force-powers") {
       context.availableForcePowers = await this._getAvailableForcePowers();
@@ -880,11 +903,33 @@ export default class CharacterGenerator extends Application {
         this.characterData.backgroundNarratorComment = this._getBackgroundNarratorComment(category);
       }
 
+      // Mark the active category tab
+      const activeCategory = this.characterData.backgroundCategory || 'events';
+      $html.find('.background-category-tab').each((i, tab) => {
+        if (tab.dataset.category === activeCategory) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+
       // Background category tab clicks
       $html.find('.background-category-tab').click(this._onBackgroundCategoryClick.bind(this));
 
       // Background skill filter button
       $html.find('.background-filter-btn').click(this._onBackgroundFilterClick.bind(this));
+
+      // Homebrew planets toggle
+      $html.find('.allow-homebrew-toggle').change((ev) => {
+        this.characterData.allowHomebrewPlanets = ev.currentTarget.checked;
+        // Re-render if on planets category
+        if (activeCategory === 'planets') {
+          const bgContainer = $html.find('#background-selection-grid')[0];
+          if (bgContainer) {
+            this._renderBackgroundCards(bgContainer);
+          }
+        }
+      });
     }
   }
 
@@ -1931,23 +1976,60 @@ export default class CharacterGenerator extends Application {
    */
   async _loadBackgroundsFromProgression() {
     try {
-      // Import progression rules
-      const { PROGRESSION_RULES } = await import('../../progression/data/progression-data.js');
+      // Load comprehensive backgrounds from backgrounds.json
+      const response = await fetch('systems/foundryvtt-swse/data/backgrounds.json');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch backgrounds: ${response.statusText}`);
+      }
 
-      const backgroundData = PROGRESSION_RULES.backgrounds || {};
+      const backgroundsData = await response.json();
 
-      // Convert background object to array format
-      this.backgrounds = Object.entries(backgroundData).map(([key, bg]) => ({
-        id: key,
-        name: bg.name || key,
-        trainedSkills: bg.trainedSkills || [],
-        description: bg.description || '',
-        icon: bg.icon || null
-      }));
+      // Flatten all backgrounds from all categories
+      this.allBackgrounds = [];
 
-      SWSELogger.log(`SWSE | Loaded ${this.backgrounds.length} backgrounds from progression rules`);
+      // Process events
+      if (backgroundsData.events && backgroundsData.events.backgrounds) {
+        this.allBackgrounds.push(...backgroundsData.events.backgrounds.map(bg => ({
+          ...bg,
+          category: 'event',
+          homebrew: false
+        })));
+      }
+
+      // Process occupations
+      if (backgroundsData.occupations && backgroundsData.occupations.backgrounds) {
+        this.allBackgrounds.push(...backgroundsData.occupations.backgrounds.map(bg => ({
+          ...bg,
+          category: 'occupation',
+          homebrew: false
+        })));
+      }
+
+      // Process core planets
+      if (backgroundsData.planets_core && backgroundsData.planets_core.backgrounds) {
+        this.allBackgrounds.push(...backgroundsData.planets_core.backgrounds.map(bg => ({
+          ...bg,
+          category: 'planet',
+          homebrew: false
+        })));
+      }
+
+      // Process homebrew planets
+      if (backgroundsData.planets_homebrew && backgroundsData.planets_homebrew.backgrounds) {
+        this.allBackgrounds.push(...backgroundsData.planets_homebrew.backgrounds.map(bg => ({
+          ...bg,
+          category: 'planet',
+          homebrew: true
+        })));
+      }
+
+      // For backwards compatibility, also set this.backgrounds to initial category
+      this.backgrounds = this.allBackgrounds.filter(bg => bg.category === 'event');
+
+      SWSELogger.log(`SWSE | Loaded ${this.allBackgrounds.length} backgrounds total (${this.backgrounds.length} events)`);
     } catch (error) {
-      SWSELogger.error('SWSE | Failed to load backgrounds from progression rules:', error);
+      SWSELogger.error('SWSE | Failed to load backgrounds:', error);
+      this.allBackgrounds = [];
       this.backgrounds = [];
     }
   }

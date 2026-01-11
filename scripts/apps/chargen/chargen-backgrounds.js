@@ -5,24 +5,62 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 
-// Render selectable background cards
+/**
+ * Get filtered backgrounds for the current category
+ * @returns {Array} Filtered background array
+ */
+export function _getFilteredBackgrounds() {
+  const category = this.characterData.backgroundCategory || 'events';
+
+  if (!this.allBackgrounds || this.allBackgrounds.length === 0) {
+    return [];
+  }
+
+  // Map category names to background category values
+  const categoryMap = {
+    'events': 'event',
+    'occupations': 'occupation',
+    'planets': 'planet'
+  };
+
+  const targetCategory = categoryMap[category];
+
+  return this.allBackgrounds.filter(bg => {
+    // For backwards compatibility with homebrew planets toggle
+    if (category === 'planets' && !this.characterData.allowHomebrewPlanets) {
+      return bg.category === 'planet' && !bg.homebrew;
+    }
+    return bg.category === targetCategory;
+  });
+}
+
+// Render selectable background cards based on current category
 export async function _renderBackgroundCards(container) {
-  if (!this.backgrounds || this.backgrounds.length === 0) {
-    container.innerHTML = "<p>No backgrounds available.</p>";
+  const backgrounds = this._getFilteredBackgrounds();
+
+  if (!backgrounds || backgrounds.length === 0) {
+    container.innerHTML = "<p>No backgrounds available in this category.</p>";
     return;
   }
 
   container.innerHTML = "";
 
-  for (const bg of this.backgrounds) {
+  for (const bg of backgrounds) {
     const div = document.createElement("div");
     div.classList.add("background-card");
     div.dataset.id = bg.id;
 
+    const skillsText = bg.relevantSkills && bg.relevantSkills.length > 0
+      ? bg.relevantSkills.join(", ")
+      : (bg.trainedSkills && bg.trainedSkills.length > 0 ? bg.trainedSkills.join(", ") : "None");
+
+    const iconHtml = bg.icon ? `<div class="background-icon">${bg.icon}</div>` : '';
+
     div.innerHTML = `
+      ${iconHtml}
       <h3>${bg.name}</h3>
-      <p><strong>Trained Skills:</strong> ${bg.trainedSkills.join(", ")}</p>
-      <button class="select-background" data-bg="${bg.id}" type="button">Select</button>
+      <p><strong>Trained Skills:</strong> ${skillsText}</p>
+      <button class="select-background" data-bg-id="${bg.id}" type="button">Select</button>
     `;
 
     container.appendChild(div);
@@ -36,9 +74,9 @@ export async function _renderBackgroundCards(container) {
 // Selection handler
 export async function _onSelectBackground(event) {
   event.preventDefault();
-  const id = event.currentTarget.dataset.bg;
+  const id = event.currentTarget.dataset.bgId;
 
-  const selected = this.backgrounds.find(b => b.id === id);
+  const selected = this.allBackgrounds.find(b => b.id === id);
   if (!selected) {
     ui.notifications.error("Unknown background");
     return;
@@ -47,9 +85,16 @@ export async function _onSelectBackground(event) {
   this.characterData.background = {
     id: selected.id,
     name: selected.name,
-    trainedSkills: selected.trainedSkills,
-    category: "event"
+    category: selected.category,
+    narrativeDescription: selected.narrativeDescription || selected.description || '',
+    specialAbility: selected.specialAbility || null,
+    bonusLanguage: selected.bonusLanguage || null,
+    relevantSkills: selected.relevantSkills || selected.trainedSkills || [],
+    icon: selected.icon || ''
   };
+
+  // Store skills from background for later use
+  this.characterData.backgroundSkills = selected.relevantSkills || selected.trainedSkills || [];
 
   ui.notifications.info("Background selected: " + selected.name);
   await this.render();
@@ -132,8 +177,20 @@ export async function _onBackgroundCategoryClick(event) {
   this.characterData.backgroundCategory = newCategory;
   this.characterData.backgroundNarratorComment = this._getBackgroundNarratorComment(newCategory);
 
+  // Update the active tab styling
+  const tabs = event.currentTarget.parentElement?.querySelectorAll('.background-category-tab');
+  if (tabs) {
+    tabs.forEach(tab => tab.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+  }
+
+  // Re-render background cards for the new category
+  const bgContainer = event.currentTarget.closest('[class*="background"]')?.querySelector('#background-selection-grid');
+  if (bgContainer) {
+    this._renderBackgroundCards(bgContainer);
+  }
+
   ui.notifications.info(`Switched to ${newCategory} backgrounds`);
-  await this.render();
 }
 
 /**
