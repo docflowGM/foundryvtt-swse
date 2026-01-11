@@ -48,7 +48,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   // ========================================
 
   _getNarratorComment() {
-    const step = this.characterData.currentStep;
+    const step = this.currentStep;
 
     switch(step) {
       case 'name':
