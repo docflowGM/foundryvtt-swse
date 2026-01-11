@@ -32,6 +32,9 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   async getData() {
     const context = await super.getData();
 
+    // Update narrator based on selected class
+    this._updateNarratorByClass();
+
     // Add narrator commentary
     context.narratorComment = this._getNarratorComment();
 
@@ -41,6 +44,41 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     }
 
     return context;
+  }
+
+  /**
+   * Update narrator to match the selected class
+   * Changes from Ol' Salty to class-specific mentor when player selects a class
+   * @private
+   */
+  _updateNarratorByClass() {
+    const classes = this.characterData.classes || [];
+    if (classes.length === 0) {
+      // No class selected, use Ol' Salty
+      this.narrator = MENTORS.Scoundrel;
+      this.narratorPersonality = 'salty';
+      return;
+    }
+
+    const className = classes[0].name;
+    const mentorMap = {
+      'Jedi': MENTORS.Jedi,
+      'Soldier': MENTORS.Soldier,
+      'Scoundrel': MENTORS.Scoundrel,
+      'Noble': MENTORS.Noble,
+      'Scout': MENTORS.Scout
+    };
+
+    const selectedMentor = mentorMap[className];
+    if (selectedMentor) {
+      this.narrator = selectedMentor;
+      // Update personality based on class/narrator
+      this.narratorPersonality = className.toLowerCase();
+    } else {
+      // Unknown class, use Scoundrel as fallback
+      this.narrator = MENTORS.Scoundrel;
+      this.narratorPersonality = 'salty';
+    }
   }
 
   // ========================================
@@ -116,7 +154,14 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     if (classes.length === 0) return '';
 
     const className = classes[0].name;
+    const narrator = this.narrator;
 
+    // Use the mentor's class guidance if available
+    if (narrator && narrator.classGuidance && narrator.classGuidance[className]) {
+      return narrator.classGuidance[className];
+    }
+
+    // Fallback class-specific comments
     const classComments = {
       'Jedi': "A Jedi, eh? Fancy lightsaber-swingers! Just remember - laser swords don't help much when negotiatin' with Hutts, har har!",
       'Soldier': "A Soldier! Now that's a proper fighter! Load up on blasters and grenades - that's how ye survive the spaceways!",
@@ -128,7 +173,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     const comment = classComments[className];
     if (comment) return comment;
 
-    return `${className}... arr, an interesting choice, me buccaneer! Let's see what ye can do with it!`;
+    return `${className}... an interesting choice! Let's see what ye can do with it!`;
   }
 
   _getSpeciesComment() {

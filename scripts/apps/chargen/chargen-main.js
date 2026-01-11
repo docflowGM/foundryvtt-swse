@@ -659,23 +659,49 @@ export default class CharacterGenerator extends Application {
       const tempActor = this._createTempActorForValidation();
 
       try {
+        // Combine class skills with background skills
+        const allClassSkills = [
+          ...(this.characterData.classSkillsList || []),
+          ...(this.characterData.backgroundSkills?.map(s => s.key || s) || [])
+        ];
+
         const skillsWithSuggestions = await Level1SkillSuggestionEngine.suggestLevel1Skills(
           this._skillsJson,
           tempActor,
           {
+            classSkills: allClassSkills,
             selectedClass: this.characterData.classes?.[0],
             selectedSkills: Object.keys(this.characterData.skills || {})
               .filter(k => this.characterData.skills[k]?.trained)
               .map(k => ({ key: k }))
           }
         );
-        context.skillsJson = skillsWithSuggestions;
+
+        // Mark class skills in the returned data
+        const skillsWithClassMarking = skillsWithSuggestions.map(skill => ({
+          ...skill,
+          isClassSkill: allClassSkills.includes(skill.key || skill.name)
+        }));
+
+        context.skillsJson = skillsWithClassMarking;
         // Also set availableSkills for template compatibility
-        context.availableSkills = skillsWithSuggestions;
+        context.availableSkills = skillsWithClassMarking;
       } catch (err) {
         SWSELogger.warn('CharGen | Failed to add skill suggestions:', err);
-        context.skillsJson = this._skillsJson || [];
-        context.availableSkills = this._skillsJson || [];
+
+        // Fallback: still mark class skills even if suggestions fail
+        const allClassSkills = [
+          ...(this.characterData.classSkillsList || []),
+          ...(this.characterData.backgroundSkills?.map(s => s.key || s) || [])
+        ];
+
+        const fallbackSkills = (this._skillsJson || []).map(skill => ({
+          ...skill,
+          isClassSkill: allClassSkills.includes(skill.key || skill.name)
+        }));
+
+        context.skillsJson = fallbackSkills;
+        context.availableSkills = fallbackSkills;
       }
     }
 
