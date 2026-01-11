@@ -1283,46 +1283,67 @@ async applyScalingFeature(feature) {
   }
 
   async _action_confirmSkills(payload) {
+    swseLogger.log(`[PROGRESSION-SKILLS] ======== CONFIRM SKILLS START ========`);
+    swseLogger.log(`[PROGRESSION-SKILLS] Payload:`, payload);
+
     const { skills } = payload;
     const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
     const { getClassData } = await import('../progression/utils/class-data-loader.js');
 
     // Validate skill structure
     if (!Array.isArray(skills)) {
+      swseLogger.error(`[PROGRESSION-SKILLS] FATAL: skills is not an array`);
       throw new Error("Skills must be an array");
     }
+
+    swseLogger.log(`[PROGRESSION-SKILLS] Selected skills: ${skills.length} items`, skills);
 
     // Calculate available skill TRAININGS (not points!)
     // SWSE uses trainings: you pick N skills to be "trained" (+5 bonus)
     // No ranks, no points per level - just trainings at character creation
     const classLevels = this.actor.system.progression?.classLevels || [];
+    swseLogger.log(`[PROGRESSION-SKILLS] Class levels: ${classLevels.length}`, classLevels);
+
     if (classLevels.length === 0) {
+      swseLogger.error(`[PROGRESSION-SKILLS] FATAL: No class levels found`);
       throw new Error("Must select a class before selecting skills");
     }
 
     // Get class data (try hardcoded first, then compendium)
     const firstClass = classLevels[0];
     if (!firstClass || !firstClass.class) {
+      swseLogger.error(`[PROGRESSION-SKILLS] FATAL: Invalid class level data`, firstClass);
       throw new Error("Invalid class level data");
     }
 
+    swseLogger.log(`[PROGRESSION-SKILLS] Looking up class: ${firstClass.class}`);
     let classData = PROGRESSION_RULES.classes[firstClass.class];
+    swseLogger.log(`[PROGRESSION-SKILLS] Found in PROGRESSION_RULES: ${!!classData}`);
+
     if (!classData) {
+      swseLogger.log(`[PROGRESSION-SKILLS] Loading from compendium...`);
       classData = await getClassData(firstClass.class);
+      swseLogger.log(`[PROGRESSION-SKILLS] Loaded from compendium: ${!!classData}`);
     }
 
     if (!classData) {
+      swseLogger.error(`[PROGRESSION-SKILLS] FATAL: Unknown class: ${firstClass.class}`);
       throw new Error(`Unknown class: ${firstClass.class}`);
     }
+
+    swseLogger.log(`[PROGRESSION-SKILLS] Class data: ${classData.name}`);
 
     // Ensure skillPoints is a valid number
     const skillPoints = typeof classData.skillPoints === 'number' ? classData.skillPoints : 4;
     const intMod = this.actor.system.attributes?.int?.mod || 0;
     const progression = this.actor.system.progression || {};
 
+    swseLogger.log(`[PROGRESSION-SKILLS] INT mod: ${intMod}, skill points: ${skillPoints}`);
+
     // Available trainings = class base + INT modifier (minimum 1)
     // (Background trainings are automatic and don't count against this)
     const availableTrainings = Math.max(1, skillPoints + intMod);
+    swseLogger.log(`[PROGRESSION-SKILLS] Available trainings: ${availableTrainings}`);
 
     // Count background trainings (already applied, don't count against budget)
     const backgroundTrainings = Array.isArray(progression.backgroundTrainedSkills)
@@ -1400,18 +1421,35 @@ async applyScalingFeature(feature) {
   }
 
   async _action_confirmTalents(payload) {
+    swseLogger.log(`[PROGRESSION-TALENTS] ======== CONFIRM TALENTS START ========`);
+    swseLogger.log(`[PROGRESSION-TALENTS] Payload:`, payload);
+
     const { talentIds } = payload;
+
+    if (!Array.isArray(talentIds)) {
+      swseLogger.error(`[PROGRESSION-TALENTS] FATAL: talentIds is not an array`);
+      throw new Error("talentIds must be an array");
+    }
+
     const progression = this.actor.system.progression || {};
 
     // Get talent budget from progression (set by _action_confirmClass based on level features)
     const talentBudget = progression.talentBudget || 0;
     const currentTalents = progression.talents || [];
 
+    swseLogger.log(`[PROGRESSION-TALENTS] Talent budget: ${talentBudget}`);
+    swseLogger.log(`[PROGRESSION-TALENTS] Currently selected: ${currentTalents.length}`, currentTalents);
+    swseLogger.log(`[PROGRESSION-TALENTS] New talents to select: ${talentIds.length}`, talentIds);
+
     // Count how many NEW talents are being selected (not already in the list)
     const newTalents = talentIds.filter(id => !currentTalents.includes(id));
     const talentsAfterSelection = currentTalents.length + newTalents.length;
 
+    swseLogger.log(`[PROGRESSION-TALENTS] After selection: ${talentsAfterSelection} talents`);
+
     if (talentsAfterSelection > talentBudget) {
+      swseLogger.error(`[PROGRESSION-TALENTS] FATAL: Talent budget exceeded!`);
+      swseLogger.error(`[PROGRESSION-TALENTS] ${talentsAfterSelection} > ${talentBudget}`);
       throw new Error(
         `Too many talents selected: ${talentsAfterSelection}/${talentBudget} ` +
         `(${currentTalents.length} already selected, trying to add ${newTalents.length})`
@@ -1421,11 +1459,14 @@ async applyScalingFeature(feature) {
     // Merge and deduplicate
     const talents = Array.from(new Set([...currentTalents, ...talentIds]));
 
+    swseLogger.log(`[PROGRESSION-TALENTS] Final talents array: ${talents.length}`, talents);
+
     await applyActorUpdateAtomic(this.actor, {
       "system.progression.talents": talents
     });
     this.data.talents = talentIds;
     await this.completeStep("talents");
+    swseLogger.log(`[PROGRESSION-TALENTS] Completed step: talents`);
   }
 
   async _action_rollHP(payload) {
