@@ -1576,15 +1576,18 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // Handle CON modifier retroactive HP
       // Note: This is level-up specific since chargen starts fresh
-      const conMod = this.actor.system.attributes?.con?.mod || 0;
-      let retroactiveHPGain = 0;
-      if (this.abilityIncreases.con && this.abilityIncreases.con > 0) {
+      // Droids don't have Constitution, skip HP gain for droids
+      const isDroid = this.actor.system.isDroid || false;
+      if (isDroid && this.abilityIncreases.con && this.abilityIncreases.con > 0) {
+        swseLogger.log('SWSE LevelUp | CON modifier increase: Skipped for droid (no CON)');
+      } else if (!isDroid && this.abilityIncreases.con && this.abilityIncreases.con > 0) {
         // Check if the increase pushed us to a new modifier tier
+        const conMod = this.actor.system.attributes?.con?.mod || 0;
         const oldConBase = (this.actor.system.attributes?.con?.base || 10) - this.abilityIncreases.con;
         const oldConMod = Math.floor((oldConBase - 10) / 2);
         if (conMod > oldConMod) {
           const modIncrease = conMod - oldConMod;
-          retroactiveHPGain = newLevel * modIncrease;
+          const retroactiveHPGain = newLevel * modIncrease;
           // Apply retroactive HP
           const currentHP = this.actor.system.hp.max || 0;
           await this.actor.update({

@@ -288,7 +288,9 @@ export function calculateHPGain(classDoc, actor, newLevel) {
       SWSELogger.warn(`SWSE LevelUp | Class "${className}" not in hit dice map, using ${hitDie} from class data`);
     }
   }
-  const conMod = actor.system.attributes.con?.mod || 0;
+  // Droids don't have Constitution and receive no HP from CON modifier
+  const isDroid = actor.system.isDroid || false;
+  const conMod = isDroid ? 0 : (actor.system.attributes.con?.mod || 0);
   const hpGeneration = game.settings.get('foundryvtt-swse', "hpGeneration") || "average";
   const maxHPLevels = game.settings.get('foundryvtt-swse', "maxHPLevels") || 1;
 
