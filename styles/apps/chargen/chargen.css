@@ -387,6 +387,29 @@
     cursor: not-allowed;
 }
 
+/* Random Name Button Container */
+.random-name-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.random-name-btn {
+    width: 100%;
+}
+
+.random-name-btn i {
+    margin-right: 0.5rem;
+}
+
+.random-name-container .hint-text {
+    font-size: 0.85rem;
+    color: #999;
+    font-style: italic;
+}
+
 /* Scrollbar */
 .skills-grid::-webkit-scrollbar {
     width: 10px;
