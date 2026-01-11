@@ -4,36 +4,42 @@
       "name": "Combat (Attack & Damage)",
       "description": "Feats that improve your ability to hit enemies and deal damage",
       "icon": "⚔️",
+      "assetIcon": "systems/foundryvtt-swse/assets/feats/feat-combat.svg",
       "order": 1
     },
     "combat-defense": {
       "name": "Combat (Defense & Mobility)",
       "description": "Feats that improve your defenses and battlefield movement",
       "icon": "🛡️",
+      "assetIcon": "systems/foundryvtt-swse/assets/feats/feat-combat.svg",
       "order": 2
     },
     "force": {
       "name": "Force",
       "description": "Feats that enhance Force powers and Force-related abilities",
       "icon": "✨",
+      "assetIcon": "systems/foundryvtt-swse/assets/feats/feat-force.svg",
       "order": 3
     },
     "utility": {
       "name": "Utility (Skills & Social)",
       "description": "Feats that improve skills, social interactions, and versatility",
       "icon": "🔧",
+      "assetIcon": "systems/foundryvtt-swse/assets/feats/feat-generic.svg",
       "order": 4
     },
     "recovery": {
       "name": "Recovery (Survival & Resilience)",
       "description": "Feats that improve survivability and saving throws",
       "icon": "❤️",
+      "assetIcon": "systems/foundryvtt-swse/assets/feats/feat-generic.svg",
       "order": 5
     },
     "misc": {
       "name": "Miscellaneous",
       "description": "Special feats with unique effects",
       "icon": "⭐",
+      "assetIcon": "systems/foundryvtt-swse/assets/feats/feat-special.svg",
       "order": 6
     }
   },
