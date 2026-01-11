@@ -219,6 +219,9 @@ export async function _onConfirmSpecies(event) {
 
   SWSELogger.log(`CharGen | Confirming species selection: ${_previewedSpeciesName}`);
 
+  // Store the species name BEFORE closing the overlay (which resets _previewedSpeciesName)
+  const speciesNameToSelect = _previewedSpeciesName;
+
   // Close the overlay
   this._onCloseSpeciesOverlay(event);
 
@@ -228,7 +231,7 @@ export async function _onConfirmSpecies(event) {
     stopPropagation: () => {},
     currentTarget: {
       dataset: {
-        species: _previewedSpeciesName
+        species: speciesNameToSelect
       }
     }
   };
