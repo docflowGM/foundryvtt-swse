@@ -18,5 +18,9 @@ export const stringHelpers = {
     const plainText = div.textContent || div.innerText || '';
 
     return plainText.length > length ? plainText.substring(0, length) + '...' : plainText;
+  },
+  substring: (str, start = 0, end) => {
+    const s = String(str || '');
+    return end !== undefined ? s.substring(start, end) : s.substring(start);
   }
 };
