@@ -101,7 +101,7 @@ export default class CharacterGenerator extends Application {
       destinyPoints: { value: 1 },
       secondWind: { uses: 1, max: 1, misc: 0, healing: 0 },
       defenses: {
-        fortitude: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+        fort: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
         reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
         will: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 }
       },
