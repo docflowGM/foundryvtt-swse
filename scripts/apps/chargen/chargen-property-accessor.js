@@ -130,10 +130,20 @@ export function normalizeSkillKey(skillKey) {
 export function getHitDie(classDoc) {
   const hitDieString = getClassProperty(classDoc, 'hitDie', '1d6');
 
+  // Debug logging for hit die parsing
+  SWSELogger.log(`CharGen | getHitDie() called for "${classDoc?.name}":`, {
+    hitDieString,
+    classDocSystem: classDoc?.system ? Object.keys(classDoc.system) : 'no system',
+    systemHitDie: classDoc?.system?.hitDie,
+    systemHitDieAlt: classDoc?.system?.hit_die
+  });
+
   // Try to parse formats: "1d10", "d10", or "10"
   const match = hitDieString.match(/\d*d?(\d+)/);
   if (match && match[1]) {
-    return parseInt(match[1], 10);
+    const result = parseInt(match[1], 10);
+    SWSELogger.log(`CharGen | getHitDie() parsed "${hitDieString}" -> d${result} for "${classDoc?.name}"`);
+    return result;
   }
 
   SWSELogger.warn(`CharGen | Could not parse hit die: "${hitDieString}", defaulting to d6`);
