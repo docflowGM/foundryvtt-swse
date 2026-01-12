@@ -106,6 +106,18 @@ export async function _onSelectClass(event) {
     const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
     this.characterData.trainedSkillsAllowed = Math.max(1, classSkills + intMod + humanBonus);
 
+    // Debug logging for trained skills calculation
+    SWSELogger.log(`CharGen | getTrainedSkills() call details:`, {
+      className: classDoc.name,
+      classSystem_trainedSkills: classDoc.system?.trainedSkills,
+      classSystem_trained_skills: classDoc.system?.trained_skills,
+      classSkillsValue: classSkills,
+      intMod,
+      humanBonus,
+      calculation: `Math.max(1, ${classSkills} + ${intMod} + ${humanBonus})`,
+      result: this.characterData.trainedSkillsAllowed
+    });
+
     // Extract and store the list of class skills for filtering
     const classSkillsList = getClassProperty(classDoc, 'classSkills', []);
     this.characterData.classSkillsList = Array.isArray(classSkillsList) ? classSkillsList : [];
