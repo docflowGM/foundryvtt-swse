@@ -101,7 +101,7 @@ export default class CharacterGenerator extends Application {
       destinyPoints: { value: 1 },
       secondWind: { uses: 1, max: 1, misc: 0, healing: 0 },
       defenses: {
-        fortitude: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+        fort: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
         reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
         will: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 }
       },
@@ -493,6 +493,14 @@ export default class CharacterGenerator extends Application {
     context.freeBuild = this.freeBuild;
     context.isLevelUp = !!this.actor;
 
+    // DEBUG: Log packs status
+    SWSELogger.log(`CharGen | getData() - currentStep: ${this.currentStep}`, {
+      hasSpeciesPack: this._packs.species?.length || 0,
+      hasClassesPack: this._packs.classes?.length || 0,
+      hasFeatsPack: this._packs.feats?.length || 0,
+      hasTalentsPack: this._packs.talents?.length || 0
+    });
+
     // PERFORMANCE: Only clone packs that will be modified on this step
     // Use shallow reference sharing for read-only packs
     const packsToClone = {};
@@ -512,11 +520,28 @@ export default class CharacterGenerator extends Application {
       context.packs[key] = packsToClone[key] ? foundry.utils.deepClone(data) : data;
     }
 
+    // DEBUG: Log context.packs after building
+    SWSELogger.log(`CharGen | After building context.packs:`, {
+      hasSpeciesPack: context.packs.species?.length || 0,
+      hasClassesPack: context.packs.classes?.length || 0,
+      hasFeatsPack: context.packs.feats?.length || 0,
+      hasTalentsPack: context.packs.talents?.length || 0,
+      classesUndefined: context.packs.classes === undefined,
+      classesNull: context.packs.classes === null,
+      classesEmpty: Array.isArray(context.packs.classes) && context.packs.classes.length === 0
+    });
+
     // Filter classes based on character type
     if (this.currentStep === "class" && context.packs.classes) {
+      SWSELogger.log(`CharGen | Classes BEFORE filtering:`, {
+        count: context.packs.classes.length,
+        names: context.packs.classes.map(c => c.name)
+      });
+
       if (this.characterData.isDroid) {
         // Droids: only base 4 non-Force classes (no Jedi, no Force powers, no Gunslinger - prestige class)
         const droidBaseClasses = ["Soldier", "Scout", "Scoundrel", "Noble"];
+        SWSELogger.log(`CharGen | Filtering for droid - allowed classes:`, droidBaseClasses);
         context.packs.classes = context.packs.classes.filter(c => droidBaseClasses.includes(c.name));
         if (this.characterData.classes.length === 0 || !droidBaseClasses.includes(this.characterData.classes[0]?.name)) {
           this.characterData.classes = [];
@@ -525,6 +550,7 @@ export default class CharacterGenerator extends Application {
         // Normal characters: only the 5 core classes at level 1 (prestige classes available at higher levels)
         // Noble, Scout, Scoundrel, Soldier, and Jedi (Gunslinger is prestige only)
         const coreClasses = ["Noble", "Scout", "Scoundrel", "Soldier", "Jedi"];
+        SWSELogger.log(`CharGen | Filtering for living - allowed classes:`, coreClasses);
         context.packs.classes = context.packs.classes.filter(c => coreClasses.includes(c.name));
         if (this.characterData.classes.length === 0 || !coreClasses.includes(this.characterData.classes[0]?.name)) {
           this.characterData.classes = [];
@@ -542,6 +568,14 @@ export default class CharacterGenerator extends Application {
           displayBAB: babProg
         };
       });
+
+      // DEBUG: Log after filtering and processing
+      SWSELogger.log(`CharGen | After filtering classes for ${this.characterData.isDroid ? 'droid' : 'living'}:`, {
+        filteredClassesCount: context.packs.classes.length,
+        classNames: context.packs.classes.map(c => c.name)
+      });
+    } else {
+      SWSELogger.log(`CharGen | Class filtering SKIPPED - step: ${this.currentStep}, hasClasses: ${!!context.packs.classes}`);
     }
 
     // Apply species filters and sorting if on species step
@@ -1987,36 +2021,36 @@ export default class CharacterGenerator extends Application {
       // Flatten all backgrounds from all categories
       this.allBackgrounds = [];
 
-      // Process events
-      if (backgroundsData.events && backgroundsData.events.backgrounds) {
-        this.allBackgrounds.push(...backgroundsData.events.backgrounds.map(bg => ({
+      // Process events (events is an array directly in the JSON)
+      if (backgroundsData.events && Array.isArray(backgroundsData.events)) {
+        this.allBackgrounds.push(...backgroundsData.events.map(bg => ({
           ...bg,
           category: 'event',
           homebrew: false
         })));
       }
 
-      // Process occupations
-      if (backgroundsData.occupations && backgroundsData.occupations.backgrounds) {
-        this.allBackgrounds.push(...backgroundsData.occupations.backgrounds.map(bg => ({
+      // Process occupations (occupations is an array directly in the JSON)
+      if (backgroundsData.occupations && Array.isArray(backgroundsData.occupations)) {
+        this.allBackgrounds.push(...backgroundsData.occupations.map(bg => ({
           ...bg,
           category: 'occupation',
           homebrew: false
         })));
       }
 
-      // Process core planets
-      if (backgroundsData.planets_core && backgroundsData.planets_core.backgrounds) {
-        this.allBackgrounds.push(...backgroundsData.planets_core.backgrounds.map(bg => ({
+      // Process core planets (planets_core is an array directly in the JSON)
+      if (backgroundsData.planets_core && Array.isArray(backgroundsData.planets_core)) {
+        this.allBackgrounds.push(...backgroundsData.planets_core.map(bg => ({
           ...bg,
           category: 'planet',
           homebrew: false
         })));
       }
 
-      // Process homebrew planets
-      if (backgroundsData.planets_homebrew && backgroundsData.planets_homebrew.backgrounds) {
-        this.allBackgrounds.push(...backgroundsData.planets_homebrew.backgrounds.map(bg => ({
+      // Process homebrew planets (planets_homebrew is an array directly in the JSON)
+      if (backgroundsData.planets_homebrew && Array.isArray(backgroundsData.planets_homebrew)) {
+        this.allBackgrounds.push(...backgroundsData.planets_homebrew.map(bg => ({
           ...bg,
           category: 'planet',
           homebrew: true
