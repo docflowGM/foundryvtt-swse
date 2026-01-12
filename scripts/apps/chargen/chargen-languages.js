@@ -176,6 +176,15 @@ export async function _initializeLanguages() {
     }
   }
 
+  // Add bonus language from background if it exists
+  if (this.characterData.background?.bonusLanguage) {
+    const bonusLang = this.characterData.background.bonusLanguage;
+    if (!this.characterData.languages.includes(bonusLang)) {
+      this.characterData.languages.push(bonusLang);
+      SWSELogger.log(`CharGen | Added bonus language from background: ${bonusLang}`);
+    }
+  }
+
   // Store language selection metadata
   if (!this.characterData.languageData) {
     this.characterData.languageData = {

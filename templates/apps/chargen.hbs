@@ -1118,7 +1118,7 @@
  <div class="feat-card {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.featLevel}}feat-level-{{this.featLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" data-feat-id="{{this._id}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
 <button type="button" class="feat-icon-btn select-feat" data-featid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
 <div class="feat-icon-wrapper">
-<img src="systems/foundryvtt-swse/assets/feats/{{this.name}}.png" alt="{{this.name}}" class="feat-icon" onerror="this.src='systems/foundryvtt-swse/assets/icons/feats/default.png'">
+<img src="systems/foundryvtt-swse/assets/feats/{{this.name}}.png" alt="{{this.name}}" class="feat-icon" onerror="this.style.display='none'">
 {{#if this.suggestion.iconClass}}
 <span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
 <i class="{{this.suggestion.iconClass}}"></i>
@@ -1156,7 +1156,7 @@
  <div class="feat-card {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.featLevel}}feat-level-{{this.featLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" data-feat-id="{{this._id}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
 <button type="button" class="feat-icon-btn select-feat" data-featid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
 <div class="feat-icon-wrapper">
-<img src="systems/foundryvtt-swse/assets/feats/{{this.name}}.png" alt="{{this.name}}" class="feat-icon" onerror="this.src='systems/foundryvtt-swse/assets/icons/feats/default.png'">
+<img src="systems/foundryvtt-swse/assets/feats/{{this.name}}.png" alt="{{this.name}}" class="feat-icon" onerror="this.style.display='none'">
 {{#if this.suggestion.iconClass}}
 <span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
 <i class="{{this.suggestion.iconClass}}"></i>
