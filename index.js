@@ -84,6 +84,7 @@ import { perfMonitor, debounce, throttle } from './scripts/utils/performance-uti
 import { cacheManager } from './scripts/core/cache-manager.js';
 import { dataPreloader } from './scripts/core/data-preloader.js';
 import { lazyLoader } from './scripts/core/lazy-loader.js';
+import { EffectSanitizer } from './scripts/core/effect-sanitizer.js';
 
 import { SWSE_SKILLS, getSkillConfig, getSkillsArray } from './scripts/config/skills.js';
 import { SWSE } from './scripts/core/config.js';
@@ -146,6 +147,7 @@ import './scripts/migration/item-validation-migration.js';
 import './scripts/migration/fix-item-weight.js';
 import './scripts/migration/populate-force-compendiums.js';
 import './scripts/migration/update-species-traits-migration.js';
+import './scripts/migration/fix-talent-effect-validation.js';
 
 import { DamageSystem } from './scripts/combat/damage-system.js';
 import { SWSECombatAutomation } from './scripts/combat/combat-automation.js';
