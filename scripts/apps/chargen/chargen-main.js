@@ -2011,12 +2011,23 @@ export default class CharacterGenerator extends Application {
   async _loadBackgroundsFromProgression() {
     try {
       // Load comprehensive backgrounds from backgrounds.json
-      const response = await fetch('systems/foundryvtt-swse/data/backgrounds.json');
+      // Use game.settings.get to get the system data directory if available, otherwise construct the path
+      const baseUrl = game?.system?.id === 'foundryvtt-swse' ? '/systems/foundryvtt-swse' : '';
+      const fetchUrl = `${baseUrl}/data/backgrounds.json`;
+
+      SWSELogger.log(`SWSE | Loading backgrounds from: ${fetchUrl}`);
+      const response = await fetch(fetchUrl);
       if (!response.ok) {
-        throw new Error(`Failed to fetch backgrounds: ${response.statusText}`);
+        throw new Error(`Failed to fetch backgrounds: ${response.statusText} (${fetchUrl})`);
       }
 
       const backgroundsData = await response.json();
+      SWSELogger.log(`SWSE | Successfully parsed backgrounds JSON`, {
+        hasEvents: Array.isArray(backgroundsData.events),
+        hasOccupations: Array.isArray(backgroundsData.occupations),
+        hasPlanetCore: Array.isArray(backgroundsData.planets_core),
+        hasPlanetHomebrew: Array.isArray(backgroundsData.planets_homebrew)
+      });
 
       // Flatten all backgrounds from all categories
       this.allBackgrounds = [];
