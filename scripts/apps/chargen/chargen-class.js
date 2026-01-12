@@ -88,10 +88,16 @@ export async function _onSelectClass(event) {
     this.characterData.hp.value = this.characterData.hp.max;
 
     // Defense bonuses - NOTE: compendium uses 'fortitude', actor uses 'fort'
-    if (classDoc.system.defenses) {
-      this.characterData.defenses.fort.classBonus = Number(classDoc.system.defenses.fortitude) || 0;
-      this.characterData.defenses.reflex.classBonus = Number(classDoc.system.defenses.reflex) || 0;
-      this.characterData.defenses.will.classBonus = Number(classDoc.system.defenses.will) || 0;
+    if (classDoc.system.defenses && this.characterData.defenses) {
+      if (this.characterData.defenses.fort) {
+        this.characterData.defenses.fort.classBonus = Number(classDoc.system.defenses.fortitude) || 0;
+      }
+      if (this.characterData.defenses.reflex) {
+        this.characterData.defenses.reflex.classBonus = Number(classDoc.system.defenses.reflex) || 0;
+      }
+      if (this.characterData.defenses.will) {
+        this.characterData.defenses.will.classBonus = Number(classDoc.system.defenses.will) || 0;
+      }
     }
 
     // Trained skills available (class base + INT modifier, minimum 1)
@@ -105,7 +111,12 @@ export async function _onSelectClass(event) {
     this.characterData.classSkillsList = Array.isArray(classSkillsList) ? classSkillsList : [];
 
     SWSELogger.log(`CharGen | Skill trainings: ${classSkills} (class) + ${intMod} (INT) + ${humanBonus} (Human) = ${this.characterData.trainedSkillsAllowed}`);
-    SWSELogger.log(`CharGen | Class skills available for ${className}:`, this.characterData.classSkillsList);
+    SWSELogger.log(`CharGen | Class skills available for ${className}:`, {
+      count: this.characterData.classSkillsList.length,
+      skills: this.characterData.classSkillsList,
+      classSkillsRaw: classSkillsList,
+      classDocSystemHasClassSkills: !!classDoc.system.classSkills
+    });
 
     // Force Points (if Force-sensitive class)
     // Note: Droids cannot be Force-sensitive in SWSE

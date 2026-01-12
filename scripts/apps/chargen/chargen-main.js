@@ -558,9 +558,21 @@ export default class CharacterGenerator extends Application {
       }
 
       // Apply icon, description, and formatted stats to each class
-      context.packs.classes = context.packs.classes.map(classItem => {
+      context.packs.classes = context.packs.classes.map((classItem, idx) => {
         const hitDieValue = getHitDie(classItem);
         const babProg = getClassProperty(classItem, 'babProgression', 'medium');
+
+        // Log first 3 classes for debugging
+        if (idx < 3) {
+          SWSELogger.log(`CharGen | Class ${idx + 1} structure:`, {
+            name: classItem.name,
+            hasSystem: !!classItem.system,
+            systemKeys: classItem.system ? Object.keys(classItem.system) : [],
+            hitDieFromSystem: classItem.system?.hitDie || classItem.system?.hit_die,
+            computedHitDie: hitDieValue
+          });
+        }
+
         return {
           ...classItem,
           ...this._getClassMetadata(classItem.name),
@@ -572,7 +584,8 @@ export default class CharacterGenerator extends Application {
       // DEBUG: Log after filtering and processing
       SWSELogger.log(`CharGen | After filtering classes for ${this.characterData.isDroid ? 'droid' : 'living'}:`, {
         filteredClassesCount: context.packs.classes.length,
-        classNames: context.packs.classes.map(c => c.name)
+        classNames: context.packs.classes.map(c => c.name),
+        displayHitDice: context.packs.classes.map(c => c.displayHitDie)
       });
     } else {
       SWSELogger.log(`CharGen | Class filtering SKIPPED - step: ${this.currentStep}, hasClasses: ${!!context.packs.classes}`);
@@ -2011,18 +2024,38 @@ export default class CharacterGenerator extends Application {
   async _loadBackgroundsFromProgression() {
     try {
       // Load comprehensive backgrounds from backgrounds.json
-      // Use game.settings.get to get the system data directory if available, otherwise construct the path
-      const baseUrl = game?.system?.id === 'foundryvtt-swse' ? '/systems/foundryvtt-swse' : '';
-      const fetchUrl = `${baseUrl}/data/backgrounds.json`;
+      // Try multiple URL formats to handle different Foundry configurations
+      const urlFormats = [
+        'systems/foundryvtt-swse/data/backgrounds.json',
+        '/systems/foundryvtt-swse/data/backgrounds.json',
+        'data/backgrounds.json'
+      ];
 
-      SWSELogger.log(`SWSE | Loading backgrounds from: ${fetchUrl}`);
-      const response = await fetch(fetchUrl);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch backgrounds: ${response.statusText} (${fetchUrl})`);
+      let response = null;
+      let fetchUrl = null;
+      let lastError = null;
+
+      for (const url of urlFormats) {
+        try {
+          SWSELogger.log(`SWSE | Attempting to load backgrounds from: ${url}`);
+          response = await fetch(url);
+          if (response.ok) {
+            fetchUrl = url;
+            SWSELogger.log(`SWSE | Successfully fetched from: ${url}`);
+            break;
+          }
+        } catch (err) {
+          lastError = err;
+          SWSELogger.warn(`SWSE | Failed to load from ${url}: ${err.message}`);
+        }
+      }
+
+      if (!response || !response.ok) {
+        throw new Error(`Failed to fetch backgrounds from any URL. Last error: ${lastError?.message || 'Unknown error'}`);
       }
 
       const backgroundsData = await response.json();
-      SWSELogger.log(`SWSE | Successfully parsed backgrounds JSON`, {
+      SWSELogger.log(`SWSE | Successfully parsed backgrounds JSON from ${fetchUrl}`, {
         hasEvents: Array.isArray(backgroundsData.events),
         hasOccupations: Array.isArray(backgroundsData.occupations),
         hasPlanetCore: Array.isArray(backgroundsData.planets_core),
