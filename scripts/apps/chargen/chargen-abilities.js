@@ -18,6 +18,26 @@ export function _recalcAbilities() {
  * Recalculate defenses (Fortitude, Reflex, Will)
  */
 export function _recalcDefenses() {
+  // Ensure defenses are initialized
+  if (!this.characterData.defenses) {
+    this.characterData.defenses = {
+      fort: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+      reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+      will: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 }
+    };
+  }
+
+  // Ensure each defense type has classBonus
+  if (!this.characterData.defenses.fort) {
+    this.characterData.defenses.fort = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
+  }
+  if (!this.characterData.defenses.reflex) {
+    this.characterData.defenses.reflex = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
+  }
+  if (!this.characterData.defenses.will) {
+    this.characterData.defenses.will = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
+  }
+
   const halfLevel = Math.floor(this.characterData.level / 2);
 
   // Fortitude: 10 + level/2 + CON or STR (whichever is higher) + class bonus + misc
@@ -27,20 +47,20 @@ export function _recalcDefenses() {
   );
   this.characterData.defenses.fort.total =
     10 + halfLevel + fortAbility +
-    this.characterData.defenses.fort.classBonus +
-    this.characterData.defenses.fort.misc;
+    (this.characterData.defenses.fort.classBonus || 0) +
+    (this.characterData.defenses.fort.misc || 0);
 
   // Reflex: 10 + level/2 + DEX + class bonus + misc
   this.characterData.defenses.reflex.total =
     10 + halfLevel + (this.characterData.abilities.dex.mod || 0) +
-    this.characterData.defenses.reflex.classBonus +
-    this.characterData.defenses.reflex.misc;
+    (this.characterData.defenses.reflex.classBonus || 0) +
+    (this.characterData.defenses.reflex.misc || 0);
 
   // Will: 10 + level/2 + WIS + class bonus + misc
   this.characterData.defenses.will.total =
     10 + halfLevel + (this.characterData.abilities.wis.mod || 0) +
-    this.characterData.defenses.will.classBonus +
-    this.characterData.defenses.will.misc;
+    (this.characterData.defenses.will.classBonus || 0) +
+    (this.characterData.defenses.will.misc || 0);
 }
 
 /**

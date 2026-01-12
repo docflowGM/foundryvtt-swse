@@ -755,6 +755,12 @@ export default class CharacterGenerator extends Application {
     context.skillsJson = context.skillsJson || this._skillsJson || [];
     context.availableSkills = context.availableSkills || context.skillsJson;
 
+    // Calculate trainedSkillsCount for display in template
+    const trainedCount = Object.values(this.characterData.skills || {})
+      .filter(skill => skill.trained)
+      .length;
+    this.characterData.trainedSkillsCount = trainedCount;
+
     // Prepare languages for template
     if (this.currentStep === "languages") {
       try {

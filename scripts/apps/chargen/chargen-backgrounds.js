@@ -66,9 +66,11 @@ export async function _renderBackgroundCards(container) {
     container.appendChild(div);
   }
 
-  // Use event delegation with proper binding
-  container.querySelectorAll(".select-background")
-    .forEach(btn => btn.addEventListener("click", this._onSelectBackground.bind(this)));
+  // Re-bind event listeners using jQuery for consistency with rest of chargen
+  const $container = $(container);
+  $container.find(".select-background")
+    .off("click")
+    .on("click", this._onSelectBackground.bind(this));
 }
 
 // Selection handler
@@ -173,6 +175,10 @@ export async function _onBackgroundCategoryClick(event) {
   const newCategory = event.currentTarget.dataset.category;
   if (!newCategory) return;
 
+  // Clear background selection when switching categories
+  this.characterData.background = null;
+  this.characterData.backgroundSkills = [];
+
   // Update the selected category
   this.characterData.backgroundCategory = newCategory;
   this.characterData.backgroundNarratorComment = this._getBackgroundNarratorComment(newCategory);
@@ -185,9 +191,9 @@ export async function _onBackgroundCategoryClick(event) {
   }
 
   // Re-render background cards for the new category
-  const bgContainer = event.currentTarget.closest('[class*="background"]')?.querySelector('#background-selection-grid');
+  const bgContainer = document.querySelector('#background-selection-grid');
   if (bgContainer) {
-    this._renderBackgroundCards(bgContainer);
+    await this._renderBackgroundCards(bgContainer);
   }
 
   ui.notifications.info(`Switched to ${newCategory} backgrounds`);
