@@ -160,8 +160,6 @@ export class SWSEProgressionEngine {
           icon: "glyph-finalize"
         }
       ];
-      swseLogger.log(`[PROGRESSION-STEPS] CHARGEN steps initialized: ${this.chargenSteps.map(s => s.id).join(', ')}`);
-    } else {
       swseLogger.log(`[PROGRESSION-STEPS] Setting up LEVELUP steps...`);
       swseLogger.log(`[PROGRESSION-STEPS] LEVELUP steps initialized: ${this.levelUpSteps.map(s => s.id).join(', ')}`);
     }
