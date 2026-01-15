@@ -897,7 +897,7 @@
  <li><strong>Special:</strong> {{characterData.background.specialAbility}}</li>
  {{/if}}
  {{#if characterData.backgroundSkills}}
- <li><strong>Class Skills Added:</strong> {{#each characterData.backgroundSkills}}{{this.display}}{{#unless @last}}, {{/unless}}{{/each}}</li>
+ <li><strong>Class Skills Added:</strong> {{#each characterData.backgroundSkills}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</li>
  {{/if}}
  {{#if characterData.background.bonusLanguage}}
  <li><strong>Language:</strong> {{characterData.background.bonusLanguage}}</li>
@@ -1454,7 +1454,7 @@
  {{#if (eq currentStep "languages")}}
  <section class="step-languages">
  <h3>Select Languages</h3>
- <p class="help-text">Choose additional languages your character knows based on Intelligence.</p>
+ <p class="help-text">Choose additional languages your character knows based on Intelligence and any feats like Linguist.</p>
 
  {{#if characterData.languageData}}
  {{!-- Language Counter --}}
@@ -1470,7 +1470,7 @@
  {{else}}
  <div class="no-additional-languages">
  <i class="fas fa-info-circle"></i>
- <span>You have no additional languages to select (Intelligence modifier: {{characterData.languageData.additional}})</span>
+ <span>You have no additional languages to select (available: {{characterData.languageData.additional}})</span>
  </div>
  {{/if}}
  </div>

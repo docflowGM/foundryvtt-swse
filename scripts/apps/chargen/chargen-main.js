@@ -57,6 +57,8 @@ export default class CharacterGenerator extends Application {
       backgroundCategory: "events",  // Current background category tab
       backgroundSkills: [],  // Skills selected from background
       backgroundNarratorComment: "",  // Ol' Salty's comment for current category
+      skillFilter: null,  // Active skill filter for backgrounds
+      languageFilter: null,  // Active language filter for backgrounds
       allowHomebrewPlanets: false,  // Toggle for homebrew planets
       occupationBonus: null,  // Occupation untrained skill bonuses
       importedDroidData: null,

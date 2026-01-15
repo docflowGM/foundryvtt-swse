@@ -55,6 +55,41 @@ async function _loadSpeciesLanguagesData() {
 }
 
 /**
+ * Calculate total language budget including Linguist feat if applicable
+ * @returns {number} Total number of additional languages allowed
+ */
+function _calculateLanguageBudget() {
+  const intMod = this.characterData.abilities.int.mod || 0;
+  let totalBudget = intMod;
+
+  // Check if character has the Linguist feat
+  let hasLinguist = this.characterData.feats &&
+    this.characterData.feats.some(feat =>
+      (typeof feat === 'string' ? feat : feat.name) === 'Linguist'
+    );
+
+  // Also check if the selected class is Noble (which automatically grants Linguist)
+  if (!hasLinguist && this.characterData.classes && this.characterData.classes.length > 0) {
+    const selectedClassName = this.characterData.classes[0]?.name;
+    if (selectedClassName === 'Noble') {
+      hasLinguist = true;
+      SWSELogger.log(`CharGen | Noble class selected - automatically including Linguist bonus`);
+    }
+  }
+
+  // Linguist feat grants 1 + INT mod additional languages
+  if (hasLinguist) {
+    const linguistBonus = 1 + intMod;
+    totalBudget += linguistBonus;
+    SWSELogger.log(`CharGen | Language budget calculated with Linguist feat: ${intMod} (INT) + ${linguistBonus} (Linguist) = ${totalBudget}`);
+  } else {
+    SWSELogger.log(`CharGen | Language budget calculated: ${intMod} (INT)`);
+  }
+
+  return Math.max(1, totalBudget); // Minimum 1 language
+}
+
+/**
  * Get starting languages for the character based on species
  * @returns {Object} Object containing granted languages and additional languages count
  */
@@ -64,11 +99,14 @@ export async function _getStartingLanguages() {
   // Get species name
   let speciesName = this.characterData.species;
 
+  // Calculate language budget (includes INT + Linguist feat if applicable)
+  const languageBudget = _calculateLanguageBudget.call(this);
+
   // Handle droids specially
   if (this.characterData.isDroid) {
     return {
       granted: ["Binary"],
-      additional: this.characterData.abilities.int.mod || 0,
+      additional: languageBudget,
       canSpeakAll: true,
       understands: []
     };
@@ -79,10 +117,10 @@ export async function _getStartingLanguages() {
 
   if (!speciesInfo) {
     SWSELogger.warn(`No language data found for species: ${speciesName}`);
-    // Default to Basic + INT mod additional languages
+    // Default to Basic + calculated language budget
     return {
       granted: ["Basic"],
-      additional: this.characterData.abilities.int.mod || 0,
+      additional: languageBudget,
       canSpeakAll: true,
       understands: []
     };
@@ -90,7 +128,7 @@ export async function _getStartingLanguages() {
 
   return {
     granted: speciesInfo.languages || ["Basic"],
-    additional: this.characterData.abilities.int.mod || 0,
+    additional: languageBudget,
     canSpeakAll: speciesInfo.canSpeakAll !== false,
     understands: speciesInfo.understands || []
   };
@@ -159,7 +197,7 @@ export async function _getAvailableLanguages() {
 }
 
 /**
- * Initialize languages for character based on species and INT modifier
+ * Initialize languages for character based on species, INT modifier, and feats
  */
 export async function _initializeLanguages() {
   const startingInfo = await _getStartingLanguages.call(this);
@@ -188,7 +226,7 @@ export async function _initializeLanguages() {
   }
 
   // Add bonus language from background if it exists
-  // This is tracked separately and does NOT count against INT modifier budget
+  // This is tracked separately and does NOT count against the language selection budget
   if (this.characterData.background?.bonusLanguage) {
     const bonusLang = this.characterData.background.bonusLanguage;
     if (!this.characterData.languages.includes(bonusLang)) {
@@ -224,12 +262,12 @@ export async function _onSelectLanguage(event) {
   const grantedCount = languageData?.granted?.length || 0;
   const backgroundBonusCount = languageData?.backgroundBonus?.length || 0;
   const additionalAllowed = languageData?.additional || 0;
-  // Background bonus languages don't count against INT modifier budget
+  // Background bonus languages don't count against the language selection budget
   const currentAdditional = this.characterData.languages.length - grantedCount - backgroundBonusCount;
 
   // Check if can select more languages
   if (currentAdditional >= additionalAllowed) {
-    ui.notifications.warn(`You can only select ${additionalAllowed} additional language${additionalAllowed !== 1 ? 's' : ''} (based on INT modifier).`);
+    ui.notifications.warn(`You can only select ${additionalAllowed} additional language${additionalAllowed !== 1 ? 's' : ''} (based on INT modifier and any feats).`);
     return;
   }
 
@@ -298,12 +336,12 @@ export async function _onAddCustomLanguage(event) {
   const grantedCount = languageData?.granted?.length || 0;
   const backgroundBonusCount = languageData?.backgroundBonus?.length || 0;
   const additionalAllowed = languageData?.additional || 0;
-  // Background bonus languages don't count against INT modifier budget
+  // Background bonus languages don't count against the language selection budget
   const currentAdditional = this.characterData.languages.length - grantedCount - backgroundBonusCount;
 
   // Check if can select more languages
   if (currentAdditional >= additionalAllowed) {
-    ui.notifications.warn(`You can only select ${additionalAllowed} additional language${additionalAllowed !== 1 ? 's' : ''} (based on INT modifier).`);
+    ui.notifications.warn(`You can only select ${additionalAllowed} additional language${additionalAllowed !== 1 ? 's' : ''} (based on INT modifier and any feats).`);
     return;
   }
 
