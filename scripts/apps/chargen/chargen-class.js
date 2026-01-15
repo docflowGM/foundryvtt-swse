@@ -197,8 +197,12 @@ export async function _onSelectClass(event) {
   this._recalcDefenses();
 
   // Check for background skill overlap (if backgrounds are enabled and selected)
+  // Note: Background skills are informational only in SWSE - they don't affect class skill selection
+  // They're displayed in the skills step to show which skills the background trained
   if (this.characterData.background && this.characterData.backgroundSkills && this.characterData.backgroundSkills.length > 0) {
-    await this._checkBackgroundSkillOverlap(classDoc);
+    // Background skills are already stored in characterData.backgroundSkills
+    // No additional processing needed - the skills step will display them
+    SWSELogger.log(`CharGen | Background skills preserved:`, this.characterData.backgroundSkills);
   }
 
   // Offer mentor survey at class selection if not yet completed (for both droid and living characters)

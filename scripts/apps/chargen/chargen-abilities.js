@@ -537,7 +537,14 @@ export function _bindAbilitiesUI(root) {
         chargen.characterData.abilities[a].total = total;
         chargen.characterData.abilities[a].mod = mod;
 
-        if (display) display.textContent = `Total: ${total} (Mod: ${mod >= 0 ? "+" : ""}${mod})`;
+        // Build display text with Base, Racial (if non-zero), Total, and Mod
+        let displayText = `Base: ${base}`;
+        if (racial !== 0) {
+          displayText += `, Racial: ${racial >= 0 ? '+' : ''}${racial}`;
+        }
+        displayText += `, Total: ${total} (Mod: ${mod >= 0 ? "+" : ""}${mod})`;
+
+        if (display) display.textContent = displayText;
       });
 
       // Update Second Wind preview
@@ -612,6 +619,12 @@ export function _bindAbilitiesUI(root) {
     } else {
       SWSELogger.warn("SWSE | Point buy button not found in DOM");
     }
+
+    // Wire up free-mode inputs to recalc on change
+    root.querySelectorAll('.free-input').forEach(inp => {
+      inp.addEventListener('input', recalcPreview);
+      inp.addEventListener('change', recalcPreview);
+    });
 
     // Initialize
     switchMode('point-mode');
