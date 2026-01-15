@@ -1,4 +1,13 @@
-/* styles/sheets/themes/high-contrast.css */
+/* ============================================================================
+   FROZEN LEGACY CSS - DO NOT EDIT
+
+   This theme file has been superseded by the new theme system in:
+   - styles/core/variables.css ([data-theme="high-contrast"] variant)
+
+   Date frozen: 2026-01-15
+   ============================================================================ */
+
+/* styles/sheets/themes/high-contrast.css (LEGACY) */
 .swse-app-theme-high-contrast .sheet {
   --swse-bg: #0a0a0a;
   --swse-panel-bg: #101010;

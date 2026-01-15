@@ -1,4 +1,13 @@
-/* styles/sheets/themes/holo-default.css */
+/* ============================================================================
+   FROZEN LEGACY CSS - DO NOT EDIT
+
+   This theme file has been superseded by the new theme system in:
+   - styles/core/variables.css (theme variants via [data-theme] selectors)
+
+   Date frozen: 2026-01-15
+   ============================================================================ */
+
+/* styles/sheets/themes/holo-default.css (LEGACY) */
 .swse-app-theme-holo-default .sheet {
   --swse-bg: rgba(10,14,18,0.6);
   --swse-panel-bg: rgba(18,22,28,0.45);

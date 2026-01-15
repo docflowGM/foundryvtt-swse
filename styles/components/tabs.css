@@ -1,0 +1,203 @@
+/* ============================================================================
+   SWSE Tab Components
+   Clean, consistent tab navigation
+
+   Usage: Apply .swse-tabs to tab container, .swse-tab to each tab item
+   ============================================================================ */
+
+/* ─────────────────────────────────────────────────────────────────────────
+   TAB CONTAINER
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-tabs {
+  display: flex;
+  gap: var(--swse-space-sm);
+  border-bottom: 1px solid var(--swse-border);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   INDIVIDUAL TAB
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-tab {
+  padding: var(--swse-space-md) var(--swse-space-lg);
+  border-radius: var(--swse-radius-sm) var(--swse-radius-sm) 0 0;
+  cursor: pointer;
+  color: var(--swse-text-secondary);
+  font-size: var(--swse-font-size-sm);
+  font-weight: var(--swse-font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  transition: all var(--swse-transition-base) var(--swse-ease);
+  margin-bottom: -1px; /* overlap border */
+}
+
+.swse-app .swse-tab:hover {
+  color: var(--swse-text-primary);
+  background: var(--swse-accent-soft);
+}
+
+.swse-app .swse-tab.active {
+  color: var(--swse-accent);
+  background: var(--swse-accent-soft);
+  border-bottom-color: var(--swse-accent);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   TAB VARIANTS
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Compact tabs - smaller padding */
+.swse-app .swse-tabs-compact .swse-tab {
+  padding: var(--swse-space-sm) var(--swse-space-md);
+  font-size: var(--swse-font-size-xs);
+}
+
+/* Pill-style tabs */
+.swse-app .swse-tabs-pills {
+  border-bottom: none;
+  background: var(--swse-bg-panel);
+  border-radius: var(--swse-radius);
+  padding: var(--swse-space-xs);
+  gap: var(--swse-space-xs);
+}
+
+.swse-app .swse-tabs-pills .swse-tab {
+  border-radius: var(--swse-radius-sm);
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.swse-app .swse-tabs-pills .swse-tab.active {
+  background: var(--swse-accent);
+  color: var(--swse-bg-deep);
+}
+
+/* Vertical tabs */
+.swse-app .swse-tabs-vertical {
+  flex-direction: column;
+  border-bottom: none;
+  border-right: 1px solid var(--swse-border);
+  padding-right: var(--swse-space-md);
+  gap: var(--swse-space-xs);
+}
+
+.swse-app .swse-tabs-vertical .swse-tab {
+  border-radius: var(--swse-radius-sm) 0 0 var(--swse-radius-sm);
+  border-bottom: none;
+  border-right: 2px solid transparent;
+  margin-bottom: 0;
+  margin-right: -1px;
+  text-align: left;
+}
+
+.swse-app .swse-tabs-vertical .swse-tab.active {
+  border-right-color: var(--swse-accent);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   TAB CONTENT WRAPPER
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-tab-content {
+  display: none;
+  padding: var(--swse-panel-padding);
+}
+
+.swse-app .swse-tab-content.active {
+  display: block;
+}
+
+/* For CSS-only tab switching (no JS) */
+.swse-app .swse-tab-content:target {
+  display: block;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   TAB WITH ICON
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-tab-icon {
+  display: flex;
+  align-items: center;
+  gap: var(--swse-space-sm);
+}
+
+.swse-app .swse-tab-icon i {
+  font-size: var(--swse-font-size-md);
+}
+
+/* Icon-only tabs */
+.swse-app .swse-tabs-icon-only .swse-tab {
+  padding: var(--swse-space-md);
+}
+
+.swse-app .swse-tabs-icon-only .swse-tab-label {
+  display: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   TAB WITH BADGE/COUNT
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 var(--swse-space-xs);
+  margin-left: var(--swse-space-sm);
+  background: var(--swse-bg-overlay);
+  border-radius: 9px;
+  font-size: var(--swse-font-size-xs);
+  font-weight: var(--swse-font-weight-bold);
+  color: var(--swse-text-secondary);
+}
+
+.swse-app .swse-tab.active .swse-tab-badge {
+  background: var(--swse-accent);
+  color: var(--swse-bg-deep);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   HEADER-INTEGRATED TABS
+   For tabs that appear in the sheet header
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-header-tabs {
+  display: flex;
+  gap: var(--swse-space-sm);
+}
+
+.swse-app .swse-header-tab {
+  background: transparent;
+  border: 1px solid var(--swse-border-subtle);
+  color: var(--swse-accent);
+  padding: var(--swse-space-sm) var(--swse-space-lg);
+  font-weight: var(--swse-font-weight-bold);
+  text-transform: uppercase;
+  font-size: var(--swse-font-size-sm);
+  cursor: pointer;
+  border-radius: var(--swse-radius-sm);
+  transition: all var(--swse-transition-fast) var(--swse-ease);
+}
+
+.swse-app .swse-header-tab:hover {
+  background: var(--swse-accent-soft);
+  border-color: var(--swse-border-hover);
+  transform: translateY(-1px);
+}
+
+.swse-app .swse-header-tab.active {
+  background: linear-gradient(180deg, var(--swse-accent-soft), rgba(0, 100, 140, 0.2));
+  border-color: var(--swse-accent);
+  color: var(--swse-text-white);
+  box-shadow: var(--swse-glow);
+}

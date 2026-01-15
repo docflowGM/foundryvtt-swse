@@ -1,50 +1,70 @@
 /* ==========================================================================
-   SWSE Character Sheet - Merged & Optimized
-   Combines standard and enhanced character sheet styles
-   Generated: 2025-11-06
+   SWSE Character Sheet - Modular Architecture
+
+   This file now imports from the new modular CSS system:
+   - core/variables.css      : Centralized design tokens
+   - layout/sheet-layout.css : Grid and flex layout primitives
+   - components/panels.css   : Panel and stat box components
+   - components/tabs.css     : Tab navigation components
+
+   Legacy styles below are preserved for backwards compatibility.
+   New development should use the .swse-* classes from the imported modules.
+
+   Architecture: styles/core/ -> styles/layout/ -> styles/components/ -> styles/sheets/
    ========================================================================== */
 
 /* =========================
-   THEME VARIABLES
+   MODULAR IMPORTS
+   ========================= */
+@import "../core/variables.css";
+@import "../layout/sheet-layout.css";
+@import "../components/panels.css";
+@import "../components/tabs.css";
+
+/* =========================
+   LEGACY THEME VARIABLES
+   Note: These are preserved for backwards compatibility.
+   New code should use --swse-* variables from variables.css
    ========================= */
 :root {
+  /* Legacy holo variables - mapped to new system where possible */
   --holo-blue: #00a8cc;
-  --holo-cyan: #00d9ff;
-  --holo-green: #00ff88;
+  --holo-cyan: var(--swse-accent, #00d9ff);
+  --holo-green: var(--swse-success, #00ff88);
   --holo-deep: #062033;
   --holo-mid: #0f2236;
-  --panel-bg: rgba(3, 10, 20, 0.55);
+  --panel-bg: var(--swse-bg-panel, rgba(3, 10, 20, 0.55));
   --panel-contrast: rgba(255, 255, 255, 0.03);
-  --muted: #9fb6c9;
-  --accent-warm: #ffd66b;
-  --danger: #ff6b6b;
-  --success: #00ff88;
-  --radius: 8px;
-  --gutter: 10px;
-  --font-sans: "Orbitron", "Signika", "Rajdhani", "Segoe UI", sans-serif;
-  --base-font-size: 13px;
-  --focus-glow: 0 0 6px var(--holo-cyan);
-  --fast: 180ms;
-  --medium: 280ms;
-  --shadow-weak: 0 6px 20px rgba(0, 0, 0, 0.35);
-  
-  /* Enhanced theme variables */
-  --color-primary: #4b4a44;
-  --color-accent: #782e22;
-  --color-text-primary: #e0e0e0;
-  --color-text-secondary: #aaa;
-  --color-text-emphatic: #fff;
-  --color-bg-header: #2c2c2c;
-  --color-bg-block: rgba(0, 0, 0, 0.2);
-  --color-border: #555;
+  --muted: var(--swse-text-secondary, #9fb6c9);
+  --accent-warm: var(--swse-warning, #ffd66b);
+  --danger: var(--swse-danger, #ff6b6b);
+  --success: var(--swse-success, #00ff88);
+  --radius: var(--swse-radius, 8px);
+  --gutter: var(--swse-gap, 10px);
+  --font-sans: var(--swse-font-display, "Orbitron", "Signika", "Rajdhani", "Segoe UI", sans-serif);
+  --base-font-size: var(--swse-font-size-base, 13px);
+  --focus-glow: var(--swse-glow, 0 0 6px var(--holo-cyan));
+  --fast: var(--swse-transition-fast, 180ms);
+  --medium: var(--swse-transition-base, 280ms);
+  --shadow-weak: var(--swse-shadow-sm, 0 6px 20px rgba(0, 0, 0, 0.35));
+
+  /* Enhanced theme variables - mapped to new system */
+  --color-primary: var(--swse-primary, #4b4a44);
+  --color-accent: var(--swse-accent, #782e22);
+  --color-text-primary: var(--swse-text-primary, #e0e0e0);
+  --color-text-secondary: var(--swse-text-secondary, #aaa);
+  --color-text-emphatic: var(--swse-text-white, #fff);
+  --color-bg-header: var(--swse-bg-mid, #2c2c2c);
+  --color-bg-block: var(--swse-bg-overlay, rgba(0, 0, 0, 0.2));
+  --color-border: var(--swse-border-default, #555);
   --color-border-light: #666;
-  --color-border-hover: #777;
-  --color-success: #5cb85c;
-  --color-warning: #f0ad4e;
-  --color-danger: #d9534f;
+  --color-border-hover: var(--swse-border-hover, #777);
+  --color-success: var(--swse-success, #5cb85c);
+  --color-warning: var(--swse-warning, #f0ad4e);
+  --color-danger: var(--swse-danger, #d9534f);
   --color-danger-dark: #c9302c;
-  --spacing-unit: 8px;
-  --border-radius: 4px;
+  --spacing-unit: var(--swse-space-md, 8px);
+  --border-radius: var(--swse-radius-sm, 4px);
 }
 
 /* Holo Theme Override */
