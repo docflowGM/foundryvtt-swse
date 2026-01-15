@@ -25,13 +25,33 @@ export function _getFilteredBackgrounds() {
 
   const targetCategory = categoryMap[category];
 
-  return this.allBackgrounds.filter(bg => {
+  let filtered = this.allBackgrounds.filter(bg => {
     // For backwards compatibility with homebrew planets toggle
     if (category === 'planets' && !this.characterData.allowHomebrewPlanets) {
       return bg.category === 'planet' && !bg.homebrew;
     }
     return bg.category === targetCategory;
   });
+
+  // Apply skill filter if one is active
+  if (this.characterData.skillFilter) {
+    const skill = this.characterData.skillFilter;
+    filtered = filtered.filter(bg =>
+      (bg.trainedSkills && bg.trainedSkills.includes(skill)) ||
+      (bg.relevantSkills && bg.relevantSkills.includes(skill))
+    );
+  }
+
+  // Apply language filter if one is active
+  if (this.characterData.languageFilter) {
+    const language = this.characterData.languageFilter;
+    filtered = filtered.filter(bg => {
+      if (!bg.bonusLanguage) return false;
+      return bg.bonusLanguage.split(' or ').map(l => l.trim()).includes(language);
+    });
+  }
+
+  return filtered;
 }
 
 // Render selectable background cards based on current category
@@ -178,6 +198,9 @@ export async function _onBackgroundCategoryClick(event) {
   // Clear background selection when switching categories
   this.characterData.background = null;
   this.characterData.backgroundSkills = [];
+  // Clear filters when changing categories
+  this.characterData.skillFilter = null;
+  this.characterData.languageFilter = null;
 
   // Update the selected category
   this.characterData.backgroundCategory = newCategory;
@@ -206,19 +229,39 @@ export async function _onBackgroundCategoryClick(event) {
 export async function _onBackgroundFilterClick(event) {
   event.preventDefault();
 
-  // Show a dialog to filter backgrounds by skill
-  const skills = [...new Set(this.backgrounds.flatMap(bg => bg.trainedSkills || []))].sort();
+  // Collect all unique skills from backgrounds
+  const skills = [...new Set(this.allBackgrounds.flatMap(bg => [...(bg.trainedSkills || []), ...(bg.relevantSkills || [])]))].sort();
+
+  // Collect all unique languages from backgrounds
+  const languages = [...new Set(this.allBackgrounds
+    .filter(bg => bg.bonusLanguage)
+    .map(bg => bg.bonusLanguage)
+    .flatMap(lang => lang.split(' or ').map(l => l.trim()))
+  )].sort();
 
   const skillOptions = skills
-    .map(skill => `<option value="${skill}">${skill}</option>`)
+    .map(skill => `<option value="skill:${skill}">${skill}</option>`)
+    .join('');
+
+  const languageOptions = languages
+    .map(lang => `<option value="language:${lang}">${lang}</option>`)
     .join('');
 
   const content = `
-    <p>Filter backgrounds by trained skill:</p>
-    <select id="skill-filter-select" style="width: 100%; padding: 0.5rem; margin: 1rem 0;">
-      <option value="">-- Show All --</option>
-      ${skillOptions}
-    </select>
+    <div style="margin-bottom: 1rem;">
+      <p><strong>Filter by Trained Skill:</strong></p>
+      <select id="skill-filter-select" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;">
+        <option value="">-- Any Skill --</option>
+        ${skillOptions}
+      </select>
+    </div>
+    <div>
+      <p><strong>Filter by Bonus Language:</strong></p>
+      <select id="language-filter-select" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;">
+        <option value="">-- Any Language --</option>
+        ${languageOptions}
+      </select>
+    </div>
   `;
 
   new Dialog({
@@ -230,7 +273,8 @@ export async function _onBackgroundFilterClick(event) {
         label: "Filter",
         callback: (html) => {
           const selectedSkill = html.find('#skill-filter-select').val();
-          this._filterBackgroundsBySkill(selectedSkill);
+          const selectedLanguage = html.find('#language-filter-select').val();
+          this._applyBackgroundFilters(selectedSkill, selectedLanguage);
         }
       },
       cancel: {
@@ -243,29 +287,68 @@ export async function _onBackgroundFilterClick(event) {
 }
 
 /**
- * Filter backgrounds by selected skill
- * @param {string} skill - The skill name to filter by
+ * Apply filters for backgrounds by skill and/or language
+ * @param {string} skillFilter - The skill filter (prefixed with "skill:") or empty
+ * @param {string} languageFilter - The language filter (prefixed with "language:") or empty
  */
-export async function _filterBackgroundsBySkill(skill) {
-  if (!skill) {
-    // Reset to show all backgrounds for current category
+export async function _applyBackgroundFilters(skillFilter, languageFilter) {
+  // Extract the actual skill/language values
+  const skill = skillFilter.startsWith('skill:') ? skillFilter.substring(6) : null;
+  const language = languageFilter.startsWith('language:') ? languageFilter.substring(9) : null;
+
+  if (!skill && !language) {
+    // Reset filters
+    this.characterData.skillFilter = null;
+    this.characterData.languageFilter = null;
     ui.notifications.info("Showing all backgrounds");
   } else {
-    // Filter backgrounds to only those with the selected skill
-    const filtered = this.backgrounds.filter(bg =>
-      bg.trainedSkills && bg.trainedSkills.includes(skill)
-    );
+    // Validate filters
+    const currentCategory = this.characterData.backgroundCategory || 'events';
+    const categoryMap = {
+      'events': 'event',
+      'occupations': 'occupation',
+      'planets': 'planet'
+    };
+    const targetCategory = categoryMap[currentCategory];
 
-    if (filtered.length === 0) {
-      ui.notifications.warn(`No backgrounds found with skill: ${skill}`);
+    let categoryBackgrounds = this.allBackgrounds.filter(bg => bg.category === targetCategory);
+
+    if (skill) {
+      categoryBackgrounds = categoryBackgrounds.filter(bg =>
+        (bg.trainedSkills && bg.trainedSkills.includes(skill)) ||
+        (bg.relevantSkills && bg.relevantSkills.includes(skill))
+      );
+    }
+
+    if (language) {
+      categoryBackgrounds = categoryBackgrounds.filter(bg => {
+        if (!bg.bonusLanguage) return false;
+        // Check if the selected language is in the bonus language string
+        return bg.bonusLanguage.split(' or ').map(l => l.trim()).includes(language);
+      });
+    }
+
+    if (categoryBackgrounds.length === 0) {
+      const filters = [];
+      if (skill) filters.push(`skill: ${skill}`);
+      if (language) filters.push(`language: ${language}`);
+      ui.notifications.warn(`No backgrounds found with ${filters.join(' and ')}`);
       return;
     }
 
-    ui.notifications.info(`Found ${filtered.length} backgrounds with ${skill}`);
-    // Temporarily replace backgrounds with filtered list
-    const originalBackgrounds = this.backgrounds;
-    this.backgrounds = filtered;
-    await this.render();
-    this.backgrounds = originalBackgrounds; // Restore original after render
+    const filters = [];
+    if (skill) filters.push(`skill: ${skill}`);
+    if (language) filters.push(`language: ${language}`);
+    ui.notifications.info(`Found ${categoryBackgrounds.length} backgrounds with ${filters.join(' and ')}`);
+
+    // Store the filters
+    this.characterData.skillFilter = skill;
+    this.characterData.languageFilter = language;
+  }
+
+  // Re-render to apply or clear the filters
+  const bgContainer = document.querySelector('#background-selection-grid');
+  if (bgContainer) {
+    await this._renderBackgroundCards(bgContainer);
   }
 }
