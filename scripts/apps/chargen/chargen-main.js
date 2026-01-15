@@ -12,6 +12,9 @@ import { Level1SkillSuggestionEngine } from '../../engine/Level1SkillSuggestionE
 import { MentorSurvey } from '../mentor-survey.js';
 import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
 
+// SSOT Data Layer
+import { ClassesDB } from '../../data/classes-db.js';
+
 // Import all module functions
 import * as SharedModule from './chargen-shared.js';
 import { ChargenDataCache } from './chargen-shared.js';
@@ -935,6 +938,11 @@ export default class CharacterGenerator extends Application {
     // Shop button
     $html.find('.open-shop-btn').click(this._onOpenShop.bind(this));
 
+    // Starting Credits
+    $html.find('.roll-credits-btn').click(this._onRollCredits.bind(this));
+    $html.find('.take-max-credits-btn').click(this._onTakeMaxCredits.bind(this));
+    $html.find('.reroll-credits-btn').click(this._onRerollCredits.bind(this));
+
     // Abilities UI
     if (this.currentStep === "abilities") {
       this._bindAbilitiesUI($html[0]);
@@ -1427,6 +1435,13 @@ export default class CharacterGenerator extends Application {
           return false;
         }
         break;
+      case "summary":
+        // Check if starting credits have been chosen (if formula exists)
+        if (this.characterData.startingCreditsFormula && !this.characterData.creditsChosen) {
+          ui.notifications.warn("You must choose your starting credits before creating your character.");
+          return false;
+        }
+        break;
     }
     return true;
   }
@@ -1465,6 +1480,11 @@ export default class CharacterGenerator extends Application {
     // Class required for all characters
     if (!this.characterData.classes || this.characterData.classes.length === 0) {
       errors.push("Character must have at least one class");
+    }
+
+    // Starting credits - if formula exists, must be chosen
+    if (this.characterData.startingCreditsFormula && !this.characterData.creditsChosen) {
+      errors.push("You must choose your starting credits (roll or take maximum)");
     }
 
     // Show errors
@@ -1554,6 +1574,93 @@ export default class CharacterGenerator extends Application {
       SWSELogger.error("SWSE | Failed to open store:", err);
       ui.notifications.error("Failed to open the shop. You can access it from your character sheet.");
     }
+  }
+
+  /**
+   * Handle rolling for starting credits
+   */
+  async _onRollCredits(event) {
+    event.preventDefault();
+
+    if (!this.characterData.startingCreditsFormula) {
+      ui.notifications.warn("No starting credits formula available.");
+      return;
+    }
+
+    const formula = this.characterData.startingCreditsFormula;
+    const { numDice, dieSize, multiplier } = formula;
+
+    // Roll the dice
+    const rollFormula = `${numDice}d${dieSize}`;
+    const roll = await new Roll(rollFormula).evaluate();
+
+    // Calculate credits
+    const credits = roll.total * multiplier;
+
+    // Show the roll in chat
+    await roll.toMessage({
+      flavor: `<h3>Starting Credits Roll</h3><p><strong>${this.characterData.name}</strong> rolls ${rollFormula} × ${multiplier.toLocaleString()}</p>`,
+      speaker: ChatMessage.getSpeaker({ alias: this.characterData.name || "Character" })
+    });
+
+    // Set credits and mark as chosen
+    this.characterData.credits = credits;
+    this.characterData.creditsChosen = true;
+
+    SWSELogger.log(`CharGen | Starting credits rolled: ${credits} (${roll.total} × ${multiplier})`);
+    ui.notifications.info(`You rolled ${credits.toLocaleString()} credits!`);
+
+    // Re-render to show result
+    this.render();
+  }
+
+  /**
+   * Handle taking maximum starting credits
+   */
+  async _onTakeMaxCredits(event) {
+    event.preventDefault();
+
+    if (!this.characterData.startingCreditsFormula) {
+      ui.notifications.warn("No starting credits formula available.");
+      return;
+    }
+
+    const maxCredits = this.characterData.startingCreditsFormula.maxPossible;
+
+    // Set credits and mark as chosen
+    this.characterData.credits = maxCredits;
+    this.characterData.creditsChosen = true;
+
+    SWSELogger.log(`CharGen | Starting credits (maximum): ${maxCredits}`);
+    ui.notifications.info(`You chose the maximum: ${maxCredits.toLocaleString()} credits!`);
+
+    // Re-render to show result
+    this.render();
+  }
+
+  /**
+   * Handle re-rolling/changing starting credits choice
+   */
+  async _onRerollCredits(event) {
+    event.preventDefault();
+
+    // Confirm with user
+    const confirmed = await Dialog.confirm({
+      title: "Change Starting Credits?",
+      content: "<p>Are you sure you want to change your starting credits selection?</p>",
+      defaultYes: false
+    });
+
+    if (!confirmed) return;
+
+    // Reset credits choice
+    this.characterData.credits = null;
+    this.characterData.creditsChosen = false;
+
+    SWSELogger.log(`CharGen | Starting credits reset for new choice`);
+
+    // Re-render to show choices again
+    this.render();
   }
 
   async _createActor() {
@@ -1685,35 +1792,29 @@ export default class CharacterGenerator extends Application {
         for (const classData of this.characterData.classes) {
           const classDoc = this._packs.classes.find(c => c.name === classData.name);
           if (classDoc) {
-            // Get defenses from class doc or use defaults
-            // NOTE: compendium uses 'fortitude', but class items on actor use 'fort'
-            const defenses = classDoc.system.defenses?.fortitude !== undefined ||
-                            classDoc.system.defenses?.reflex !== undefined ||
-                            classDoc.system.defenses?.will !== undefined
-              ? classDoc.system.defenses
-              : { fortitude: 0, reflex: 0, will: 0 };
+            // SSOT: Get normalized class definition
+            const classDef = ClassesDB.byName(classDoc.name);
 
+            if (!classDef) {
+              SWSELogger.error(`CharGen | Class not found in ClassesDB: ${classDoc.name}`);
+              continue;
+            }
+
+            // Create STATE-ONLY class item (no mechanics data stored)
+            // All class mechanics are derived from ClassesDB at runtime
             const classItem = {
               name: classDoc.name,
               type: "class",
               img: classDoc.img,
               system: {
-                level: classData.level || 1,
-                hitDie: getHitDie(classDoc),
-                babProgression: getClassProperty(classDoc, 'babProgression', 0.75),
-                defenses: {
-                  fortitude: defenses.fortitude || 0,
-                  reflex: defenses.reflex || 0,
-                  will: defenses.will || 0
-                },
-                description: classDoc.system.description || '',
-                classSkills: getClassProperty(classDoc, 'classSkills', []),
-                talentTrees: getTalentTrees(classDoc),
-                forceSensitive: classDoc.system.forceSensitive || false
+                classId: classDef.id,      // Stable ID for ClassesDB lookup
+                level: classData.level || 1  // State: current level in this class
+                // NO mechanics data (hitDie, bab, defenses, skills, talents)
+                // All derived from ClassesDB.get(classId) at runtime
               }
             };
             items.push(classItem);
-            SWSELogger.log(`CharGen | Created class item for ${classDoc.name} with talent trees:`, classItem.system.talentTrees);
+            SWSELogger.log(`CharGen | Created STATE-ONLY class item for ${classDoc.name} (classId: ${classDef.id}, level: ${classData.level || 1})`);
           }
         }
       }
