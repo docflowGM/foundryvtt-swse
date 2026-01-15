@@ -921,6 +921,11 @@ export default class CharacterGenerator extends Application {
     // Shop button
     $html.find('.open-shop-btn').click(this._onOpenShop.bind(this));
 
+    // Starting Credits
+    $html.find('.roll-credits-btn').click(this._onRollCredits.bind(this));
+    $html.find('.take-max-credits-btn').click(this._onTakeMaxCredits.bind(this));
+    $html.find('.reroll-credits-btn').click(this._onRerollCredits.bind(this));
+
     // Abilities UI
     if (this.currentStep === "abilities") {
       this._bindAbilitiesUI($html[0]);
@@ -1413,6 +1418,13 @@ export default class CharacterGenerator extends Application {
           return false;
         }
         break;
+      case "summary":
+        // Check if starting credits have been chosen (if formula exists)
+        if (this.characterData.startingCreditsFormula && !this.characterData.creditsChosen) {
+          ui.notifications.warn("You must choose your starting credits before creating your character.");
+          return false;
+        }
+        break;
     }
     return true;
   }
@@ -1451,6 +1463,11 @@ export default class CharacterGenerator extends Application {
     // Class required for all characters
     if (!this.characterData.classes || this.characterData.classes.length === 0) {
       errors.push("Character must have at least one class");
+    }
+
+    // Starting credits - if formula exists, must be chosen
+    if (this.characterData.startingCreditsFormula && !this.characterData.creditsChosen) {
+      errors.push("You must choose your starting credits (roll or take maximum)");
     }
 
     // Show errors
@@ -1540,6 +1557,93 @@ export default class CharacterGenerator extends Application {
       SWSELogger.error("SWSE | Failed to open store:", err);
       ui.notifications.error("Failed to open the shop. You can access it from your character sheet.");
     }
+  }
+
+  /**
+   * Handle rolling for starting credits
+   */
+  async _onRollCredits(event) {
+    event.preventDefault();
+
+    if (!this.characterData.startingCreditsFormula) {
+      ui.notifications.warn("No starting credits formula available.");
+      return;
+    }
+
+    const formula = this.characterData.startingCreditsFormula;
+    const { numDice, dieSize, multiplier } = formula;
+
+    // Roll the dice
+    const rollFormula = `${numDice}d${dieSize}`;
+    const roll = await new Roll(rollFormula).evaluate();
+
+    // Calculate credits
+    const credits = roll.total * multiplier;
+
+    // Show the roll in chat
+    await roll.toMessage({
+      flavor: `<h3>Starting Credits Roll</h3><p><strong>${this.characterData.name}</strong> rolls ${rollFormula} × ${multiplier.toLocaleString()}</p>`,
+      speaker: ChatMessage.getSpeaker({ alias: this.characterData.name || "Character" })
+    });
+
+    // Set credits and mark as chosen
+    this.characterData.credits = credits;
+    this.characterData.creditsChosen = true;
+
+    SWSELogger.log(`CharGen | Starting credits rolled: ${credits} (${roll.total} × ${multiplier})`);
+    ui.notifications.info(`You rolled ${credits.toLocaleString()} credits!`);
+
+    // Re-render to show result
+    this.render();
+  }
+
+  /**
+   * Handle taking maximum starting credits
+   */
+  async _onTakeMaxCredits(event) {
+    event.preventDefault();
+
+    if (!this.characterData.startingCreditsFormula) {
+      ui.notifications.warn("No starting credits formula available.");
+      return;
+    }
+
+    const maxCredits = this.characterData.startingCreditsFormula.maxPossible;
+
+    // Set credits and mark as chosen
+    this.characterData.credits = maxCredits;
+    this.characterData.creditsChosen = true;
+
+    SWSELogger.log(`CharGen | Starting credits (maximum): ${maxCredits}`);
+    ui.notifications.info(`You chose the maximum: ${maxCredits.toLocaleString()} credits!`);
+
+    // Re-render to show result
+    this.render();
+  }
+
+  /**
+   * Handle re-rolling/changing starting credits choice
+   */
+  async _onRerollCredits(event) {
+    event.preventDefault();
+
+    // Confirm with user
+    const confirmed = await Dialog.confirm({
+      title: "Change Starting Credits?",
+      content: "<p>Are you sure you want to change your starting credits selection?</p>",
+      defaultYes: false
+    });
+
+    if (!confirmed) return;
+
+    // Reset credits choice
+    this.characterData.credits = null;
+    this.characterData.creditsChosen = false;
+
+    SWSELogger.log(`CharGen | Starting credits reset for new choice`);
+
+    // Re-render to show choices again
+    this.render();
   }
 
   async _createActor() {

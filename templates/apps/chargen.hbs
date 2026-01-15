@@ -1819,11 +1819,60 @@
  </div>
  </div>
 
+ {{!-- Starting Credits --}}
+ {{#if characterData.startingCreditsFormula}}
+ <div class="starting-credits-section">
+ <div class="credits-card">
+ <h4><i class="fas fa-coins"></i> Starting Credits</h4>
+
+ {{#if characterData.creditsChosen}}
+ {{!-- Credits already chosen --}}
+ <div class="credits-result">
+ <p class="credits-formula-display">Formula: {{characterData.startingCreditsFormula.formulaString}}</p>
+ <div class="credits-chosen-display">
+ <i class="fas fa-check-circle" style="color: #4caf50;"></i>
+ <p><strong>{{characterData.credits}}</strong> credits</p>
+ </div>
+ <button type="button" class="reroll-credits-btn btn-secondary">
+ <i class="fas fa-redo"></i> Change Selection
+ </button>
+ </div>
+ {{else}}
+ {{!-- Credits not yet chosen --}}
+ <div class="credits-choice">
+ <p class="credits-description">
+ Your {{characterData.classes.0.name}} class grants starting credits based on the following formula:
+ </p>
+ <div class="credits-formula">
+ <i class="fas fa-dice"></i>
+ <span class="formula-text">{{characterData.startingCreditsFormula.formulaString}}</span>
+ </div>
+ <p class="credits-prompt">Choose how to determine your starting wealth:</p>
+ <div class="credits-buttons">
+ <button type="button" class="roll-credits-btn btn-primary">
+ <i class="fas fa-dice-d20"></i> Roll for Credits
+ </button>
+ <button type="button" class="take-max-credits-btn btn-secondary">
+ <i class="fas fa-arrow-up"></i> Take Maximum ({{characterData.startingCreditsFormula.maxPossible}} cr)
+ </button>
+ </div>
+ </div>
+ {{/if}}
+ </div>
+ </div>
+ {{/if}}
+
  <div class="summary-confirmation">
  <div class="confirmation-box">
  <i class="fas fa-check-circle"></i>
  <p><strong>Ready to create your character?</strong></p>
+ {{#if characterData.creditsChosen}}
  <p>Once created, you'll be able to shop for equipment with your starting {{characterData.credits}} credits.</p>
+ {{else if characterData.startingCreditsFormula}}
+ <p>Please choose your starting credits above before creating your character.</p>
+ {{else}}
+ <p>Once created, you'll be able to shop for equipment with your starting {{characterData.credits}} credits.</p>
+ {{/if}}
  </div>
  </div>
 
@@ -2910,6 +2959,163 @@
  padding: 0.5rem 1rem;
  font-size: 0.9rem;
  color: #00d9ff;
+}
+
+/* Starting Credits Section */
+.starting-credits-section {
+ margin-bottom: 2rem;
+}
+
+.credits-card {
+ background: rgba(255, 193, 7, 0.1);
+ border: 2px solid rgba(255, 193, 7, 0.4);
+ border-radius: 8px;
+ padding: 2rem;
+}
+
+.credits-card h4 {
+ color: #ffc107;
+ font-size: 1.3rem;
+ margin-bottom: 1.5rem;
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
+ border-bottom: 2px solid rgba(255, 193, 7, 0.3);
+ padding-bottom: 0.5rem;
+}
+
+.credits-description {
+ color: #ddd;
+ font-size: 1rem;
+ margin-bottom: 1rem;
+ text-align: center;
+}
+
+.credits-formula {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 1rem;
+ background: rgba(0, 0, 0, 0.3);
+ border: 2px solid #ffc107;
+ border-radius: 8px;
+ padding: 1.5rem;
+ margin: 1.5rem 0;
+}
+
+.credits-formula i {
+ font-size: 2rem;
+ color: #ffc107;
+}
+
+.formula-text {
+ font-size: 1.5rem;
+ font-weight: bold;
+ color: #ffc107;
+ font-family: 'Courier New', monospace;
+}
+
+.credits-prompt {
+ color: #aaa;
+ font-size: 1rem;
+ text-align: center;
+ margin: 1.5rem 0 1rem;
+}
+
+.credits-buttons {
+ display: flex;
+ gap: 1rem;
+ justify-content: center;
+ flex-wrap: wrap;
+}
+
+.roll-credits-btn,
+.take-max-credits-btn {
+ padding: 1rem 2rem;
+ font-size: 1rem;
+ font-weight: 600;
+ border-radius: 8px;
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
+ transition: all 0.3s ease;
+ cursor: pointer;
+}
+
+.roll-credits-btn {
+ background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+ border: 2px solid #ffb74d;
+ color: #ffffff;
+}
+
+.roll-credits-btn:hover {
+ background: linear-gradient(135deg, #ffb74d 0%, #ff9800 100%);
+ border-color: #ffd54f;
+ box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+}
+
+.take-max-credits-btn {
+ background: rgba(76, 175, 80, 0.2);
+ border: 2px solid #4caf50;
+ color: #4caf50;
+}
+
+.take-max-credits-btn:hover {
+ background: rgba(76, 175, 80, 0.3);
+ border-color: #66bb6a;
+ box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.credits-result {
+ text-align: center;
+}
+
+.credits-formula-display {
+ color: #aaa;
+ font-size: 0.95rem;
+ margin-bottom: 1rem;
+}
+
+.credits-chosen-display {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: 0.5rem;
+ background: rgba(76, 175, 80, 0.15);
+ border: 2px solid #4caf50;
+ border-radius: 8px;
+ padding: 1.5rem;
+ margin: 1rem 0;
+}
+
+.credits-chosen-display i {
+ font-size: 2.5rem;
+}
+
+.credits-chosen-display p {
+ font-size: 1.8rem;
+ color: #4caf50;
+ margin: 0;
+}
+
+.reroll-credits-btn {
+ padding: 0.75rem 1.5rem;
+ font-size: 0.95rem;
+ border-radius: 8px;
+ display: inline-flex;
+ align-items: center;
+ gap: 0.5rem;
+ background: rgba(10, 116, 218, 0.2);
+ border: 2px solid #0a74da;
+ color: #00d9ff;
+ cursor: pointer;
+ transition: all 0.3s ease;
+}
+
+.reroll-credits-btn:hover {
+ background: rgba(10, 116, 218, 0.3);
+ border-color: #2196f3;
+ box-shadow: 0 4px 12px rgba(10, 116, 218, 0.3);
 }
 
 .summary-confirmation {

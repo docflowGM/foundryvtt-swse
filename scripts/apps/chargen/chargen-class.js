@@ -161,7 +161,7 @@ export async function _onSelectClass(event) {
 
   SWSELogger.log(`CharGen | Force Points calculated: ${maxFP} (base: ${classDef.baseClass ? 5 : (classDef.grantsForcePoints ? 6 : 5)})`);
 
-  // Starting Credits
+  // Starting Credits - Store formula for later choice (Finalize step)
   const creditsString = classDef.startingCredits;
   if (creditsString) {
     // Parse format like "3d4 x 400"
@@ -171,26 +171,26 @@ export async function _onSelectClass(event) {
       const dieSize = parseInt(match[2], 10);
       const multiplier = parseInt(match[3], 10);
 
-      // Check for house rule to take maximum credits
-      // Default to rolling dice
-      const takeMax = game.settings?.get("foundryvtt-swse", "maxStartingCredits") || false;
+      // Store formula for player to choose in Finalize step
+      this.characterData.startingCreditsFormula = {
+        numDice,
+        dieSize,
+        multiplier,
+        formulaString: `${numDice}d${dieSize} × ${multiplier.toLocaleString()}`,
+        maxPossible: numDice * dieSize * multiplier
+      };
 
-      let diceTotal;
-      if (takeMax) {
-        // Take maximum possible
-        diceTotal = numDice * dieSize;
-        SWSELogger.log(`CharGen | Starting credits (max): ${numDice}d${dieSize} = ${diceTotal}, × ${multiplier} = ${diceTotal * multiplier}`);
-      } else {
-        // Roll dice - safeRoll is async and returns an already-evaluated roll
-        const roll = await globalThis.SWSE.RollEngine.safeRoll(`${numDice}d${dieSize}`);
-        diceTotal = roll?.total || (numDice * dieSize); // Fallback to max if roll fails
-        SWSELogger.log(`CharGen | Starting credits (rolled): ${numDice}d${dieSize} = ${diceTotal}, × ${multiplier} = ${diceTotal * multiplier}`);
-      }
+      // Don't auto-assign credits yet - player will choose in Finalize step
+      this.characterData.credits = null;
+      this.characterData.creditsChosen = false;
 
-      this.characterData.credits = diceTotal * multiplier;
+      SWSELogger.log(`CharGen | Starting credits formula stored: ${this.characterData.startingCreditsFormula.formulaString} (max: ${this.characterData.startingCreditsFormula.maxPossible})`);
     } else {
       SWSELogger.warn(`CharGen | Could not parse starting_credits: ${creditsString}`);
+      this.characterData.startingCreditsFormula = null;
     }
+  } else {
+    this.characterData.startingCreditsFormula = null;
   }
 
   // Recalculate defenses
