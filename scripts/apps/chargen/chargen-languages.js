@@ -176,23 +176,29 @@ export async function _initializeLanguages() {
     }
   }
 
-  // Add bonus language from background if it exists
-  if (this.characterData.background?.bonusLanguage) {
-    const bonusLang = this.characterData.background.bonusLanguage;
-    if (!this.characterData.languages.includes(bonusLang)) {
-      this.characterData.languages.push(bonusLang);
-      SWSELogger.log(`CharGen | Added bonus language from background: ${bonusLang}`);
-    }
-  }
-
-  // Store language selection metadata
+  // Store language selection metadata BEFORE adding background language
   if (!this.characterData.languageData) {
     this.characterData.languageData = {
       granted: startingInfo.granted,
       understands: startingInfo.understands,
       additional: startingInfo.additional,
-      canSpeakAll: startingInfo.canSpeakAll
+      canSpeakAll: startingInfo.canSpeakAll,
+      backgroundBonus: [] // Track background bonus languages separately
     };
+  }
+
+  // Add bonus language from background if it exists
+  // This is tracked separately and does NOT count against INT modifier budget
+  if (this.characterData.background?.bonusLanguage) {
+    const bonusLang = this.characterData.background.bonusLanguage;
+    if (!this.characterData.languages.includes(bonusLang)) {
+      this.characterData.languages.push(bonusLang);
+      // Track this as a background bonus language
+      if (!this.characterData.languageData.backgroundBonus.includes(bonusLang)) {
+        this.characterData.languageData.backgroundBonus.push(bonusLang);
+      }
+      SWSELogger.log(`CharGen | Added bonus language from background: ${bonusLang}`);
+    }
   }
 }
 
@@ -216,8 +222,10 @@ export async function _onSelectLanguage(event) {
   // Get language data to check limits
   const languageData = this.characterData.languageData;
   const grantedCount = languageData?.granted?.length || 0;
+  const backgroundBonusCount = languageData?.backgroundBonus?.length || 0;
   const additionalAllowed = languageData?.additional || 0;
-  const currentAdditional = this.characterData.languages.length - grantedCount;
+  // Background bonus languages don't count against INT modifier budget
+  const currentAdditional = this.characterData.languages.length - grantedCount - backgroundBonusCount;
 
   // Check if can select more languages
   if (currentAdditional >= additionalAllowed) {
@@ -246,6 +254,12 @@ export async function _onRemoveLanguage(event) {
     return;
   }
 
+  // Check if this is a background bonus language
+  if (languageData?.backgroundBonus?.includes(language)) {
+    ui.notifications.warn(`${language} is a bonus language from your background and cannot be removed.`);
+    return;
+  }
+
   // Remove the language
   const index = this.characterData.languages.indexOf(language);
   if (index > -1) {
@@ -262,12 +276,14 @@ export async function _onRemoveLanguage(event) {
 export async function _onResetLanguages(event) {
   event.preventDefault();
 
-  // Reset to only granted languages
+  // Reset to granted languages + background bonus languages
   const languageData = this.characterData.languageData;
-  this.characterData.languages = [...(languageData?.granted || ["Basic"])];
+  const granted = [...(languageData?.granted || ["Basic"])];
+  const backgroundBonus = [...(languageData?.backgroundBonus || [])];
+  this.characterData.languages = [...granted, ...backgroundBonus];
 
   SWSELogger.log("CharGen | Reset language selections");
-  ui.notifications.info("Language selections have been reset to granted languages.");
+  ui.notifications.info("Language selections have been reset to granted languages and background bonuses.");
   await this.render();
 }
 
@@ -280,8 +296,10 @@ export async function _onAddCustomLanguage(event) {
   // Get language data to check limits
   const languageData = this.characterData.languageData;
   const grantedCount = languageData?.granted?.length || 0;
+  const backgroundBonusCount = languageData?.backgroundBonus?.length || 0;
   const additionalAllowed = languageData?.additional || 0;
-  const currentAdditional = this.characterData.languages.length - grantedCount;
+  // Background bonus languages don't count against INT modifier budget
+  const currentAdditional = this.characterData.languages.length - grantedCount - backgroundBonusCount;
 
   // Check if can select more languages
   if (currentAdditional >= additionalAllowed) {

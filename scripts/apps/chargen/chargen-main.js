@@ -795,21 +795,38 @@ export default class CharacterGenerator extends Application {
       context.characterData.starshipManeuversRequired = this._getStarshipManeuversNeeded();
     }
 
-    // Filter talents for the selected talent tree
-    if (this.selectedTalentTree && context.packs.talents) {
-      context.packs.talentsInTree = context.packs.talents.filter(talent => {
-        const talentTree = getTalentTreeName(talent);
-        return talentTree === this.selectedTalentTree;
-      });
+    // Prepare talents for template
+    if (this.currentStep === "talents") {
+      // Get available talent trees for the character
+      context.availableTalentTrees = this._getAvailableTalentTrees() || [];
 
-      // Filter out Force-dependent talents for droids in the tree view
-      context.packs.talentsInTree = this._filterForceDependentItems(context.packs.talentsInTree);
+      // Filter talents for the selected talent tree
+      if (this.selectedTalentTree && context.packs.talents) {
+        context.packs.talentsInTree = context.packs.talents.filter(talent => {
+          const talentTree = getTalentTreeName(talent);
+          return talentTree === this.selectedTalentTree;
+        });
+
+        // Filter out Force-dependent talents for droids in the tree view
+        context.packs.talentsInTree = this._filterForceDependentItems(context.packs.talentsInTree);
+      }
     }
+
+    // Add narrator comment for all steps (optional narrative enhancement)
+    context.narratorComment = this._getNarratorComment ? this._getNarratorComment() : null;
+    context.selectedTalentTree = this.selectedTalentTree;
 
     return context;
   }
 
-
+  /**
+   * Get narrator comment for the current step (can be overridden by CharacterGeneratorNarrative)
+   * @returns {string|null} Narrator comment or null if not applicable
+   */
+  _getNarratorComment() {
+    // Base implementation returns null - can be overridden in subclasses
+    return null;
+  }
 
 
 
