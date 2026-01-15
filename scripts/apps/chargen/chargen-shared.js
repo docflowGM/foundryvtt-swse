@@ -94,8 +94,26 @@ export class ChargenDataCache {
     // Block chargen if critical packs are missing
     if (missingCritical.length > 0) {
       const errorMsg = `Character generation cannot continue. Missing critical compendium packs: ${missingCritical.join(', ')}`;
-      ui.notifications.error(errorMsg);
+      ui.notifications.error(errorMsg, { permanent: true });
       throw new Error(errorMsg);
+    }
+
+    // Log successful load statistics
+    SWSELogger.log(`ChargenDataCache | Load complete:`, {
+      species: packs.species?.length || 0,
+      classes: packs.classes?.length || 0,
+      feats: packs.feats?.length || 0,
+      talents: packs.talents?.length || 0,
+      droids: packs.droids?.length || 0,
+      forcePowers: packs.forcePowers?.length || 0
+    });
+
+    // Validate that we actually got data in critical packs
+    for (const key of criticalPacks) {
+      if (packs[key] && packs[key].length === 0) {
+        SWSELogger.error(`ChargenDataCache | Critical pack "${key}" loaded but is empty!`);
+        ui.notifications.warn(`The ${key} compendium appears to be empty. Character generation may not work correctly.`);
+      }
     }
 
     return packs;
@@ -160,11 +178,13 @@ export function _getAvailableSkills() {
 export function _getAvailableTalentTrees() {
   // If no classes selected, return empty array
   if (!this.characterData.classes || this.characterData.classes.length === 0) {
+    SWSELogger.warn('CharGen | Cannot get talent trees: no classes selected');
     return [];
   }
 
   // If classes compendium isn't loaded, return empty array
   if (!this._packs.classes || this._packs.classes.length === 0) {
+    SWSELogger.error('CharGen | Cannot get talent trees: classes compendium not loaded');
     return [];
   }
 
@@ -174,15 +194,27 @@ export function _getAvailableTalentTrees() {
   for (const charClass of this.characterData.classes) {
     const classData = this._packs.classes.find(c => c.name === charClass.name);
 
-    if (classData) {
-      // Use property accessor to get talent trees
-      const trees = getTalentTrees(classData);
-      for (const tree of trees) {
+    if (!classData) {
+      SWSELogger.error(`CharGen | Class "${charClass.name}" not found in loaded classes pack`);
+      continue;
+    }
+
+    // Use property accessor to get talent trees
+    const trees = getTalentTrees(classData);
+
+    if (!trees || trees.length === 0) {
+      SWSELogger.warn(`CharGen | Class "${charClass.name}" has no talent trees defined`);
+    }
+
+    for (const tree of trees) {
+      if (tree && tree.trim().length > 0) {
         talentTreesSet.add(tree);
       }
     }
   }
 
   // Convert Set to Array and return sorted
-  return Array.from(talentTreesSet).sort();
+  const result = Array.from(talentTreesSet).sort();
+  SWSELogger.log(`CharGen | Available talent trees:`, result);
+  return result;
 }

@@ -43,12 +43,26 @@ export async function _onSelectClass(event) {
     }
   }
 
+  // Ensure classes are loaded
+  if (!this._packs.classes || this._packs.classes.length === 0) {
+    SWSELogger.error(`CharGen | Classes compendium not loaded!`);
+    ui.notifications.error(`Classes data not loaded. Please close and reopen character generation.`, { permanent: true });
+    return;
+  }
+
   // Find class document
   const classDoc = this._packs.classes.find(c => c.name === className || c._id === className);
 
   if (!classDoc) {
-    SWSELogger.error(`CharGen | Class not found: ${className}`);
-    ui.notifications.error(`Class "${className}" not found in compendium.`);
+    SWSELogger.error(`CharGen | Class "${className}" not found in loaded classes (${this._packs.classes.length} classes available)`);
+    ui.notifications.error(`Class "${className}" not found in compendium. Available classes: ${this._packs.classes.map(c => c.name).join(', ')}`);
+    return;
+  }
+
+  // Validate class has a system property
+  if (!classDoc.system) {
+    SWSELogger.error(`CharGen | Class "${className}" is missing system data!`);
+    ui.notifications.error(`Class "${className}" has corrupted data. Cannot proceed.`, { permanent: true });
     return;
   }
 
