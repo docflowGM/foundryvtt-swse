@@ -12,6 +12,9 @@ import { Level1SkillSuggestionEngine } from '../../engine/Level1SkillSuggestionE
 import { MentorSurvey } from '../mentor-survey.js';
 import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
 
+// SSOT Data Layer
+import { ClassesDB } from '../../data/classes-db.js';
+
 // Import all module functions
 import * as SharedModule from './chargen-shared.js';
 import { ChargenDataCache } from './chargen-shared.js';
@@ -1668,35 +1671,29 @@ export default class CharacterGenerator extends Application {
         for (const classData of this.characterData.classes) {
           const classDoc = this._packs.classes.find(c => c.name === classData.name);
           if (classDoc) {
-            // Get defenses from class doc or use defaults
-            // NOTE: compendium uses 'fortitude', but class items on actor use 'fort'
-            const defenses = classDoc.system.defenses?.fortitude !== undefined ||
-                            classDoc.system.defenses?.reflex !== undefined ||
-                            classDoc.system.defenses?.will !== undefined
-              ? classDoc.system.defenses
-              : { fortitude: 0, reflex: 0, will: 0 };
+            // SSOT: Get normalized class definition
+            const classDef = ClassesDB.byName(classDoc.name);
 
+            if (!classDef) {
+              SWSELogger.error(`CharGen | Class not found in ClassesDB: ${classDoc.name}`);
+              continue;
+            }
+
+            // Create STATE-ONLY class item (no mechanics data stored)
+            // All class mechanics are derived from ClassesDB at runtime
             const classItem = {
               name: classDoc.name,
               type: "class",
               img: classDoc.img,
               system: {
-                level: classData.level || 1,
-                hitDie: getHitDie(classDoc),
-                babProgression: getClassProperty(classDoc, 'babProgression', 0.75),
-                defenses: {
-                  fortitude: defenses.fortitude || 0,
-                  reflex: defenses.reflex || 0,
-                  will: defenses.will || 0
-                },
-                description: classDoc.system.description || '',
-                classSkills: getClassProperty(classDoc, 'classSkills', []),
-                talentTrees: getTalentTrees(classDoc),
-                forceSensitive: classDoc.system.forceSensitive || false
+                classId: classDef.id,      // Stable ID for ClassesDB lookup
+                level: classData.level || 1  // State: current level in this class
+                // NO mechanics data (hitDie, bab, defenses, skills, talents)
+                // All derived from ClassesDB.get(classId) at runtime
               }
             };
             items.push(classItem);
-            SWSELogger.log(`CharGen | Created class item for ${classDoc.name} with talent trees:`, classItem.system.talentTrees);
+            SWSELogger.log(`CharGen | Created STATE-ONLY class item for ${classDoc.name} (classId: ${classDef.id}, level: ${classData.level || 1})`);
           }
         }
       }
