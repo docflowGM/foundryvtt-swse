@@ -15,10 +15,12 @@
 // Force Point Formula:
 // - Base = 5 (standard heroic characters)
 // - Base = 6 (characters who have unlocked any prestige class)
+// - Base = 7 (Force Disciple, Jedi Master, Sith Lord only)
 // - Max FP = Base + floor(Total Character Level / 2)
 //
-// Special Case:
+// Special Cases:
 // - Shaper prestige class does NOT grant the base 6 increase
+// - Force Disciple, Jedi Master, Sith Lord grant base 7 (not 6)
 //
 // This calculation is actor-derived and deterministic.
 // It should be recalculated on:
@@ -46,8 +48,8 @@ export function calculateMaxForcePoints(actor) {
     // Get total character level
     const totalLevel = getTotalCharacterLevel(actor);
 
-    // Determine base Force Points (5 or 6)
-    const base = hasPrestigeForcePointBonus(actor) ? 6 : 5;
+    // Determine base Force Points (5, 6, or 7)
+    const base = getForcePointBase(actor);
 
     // Calculate max FP
     const maxFP = base + Math.floor(totalLevel / 2);
@@ -87,6 +89,70 @@ function getTotalCharacterLevel(actor) {
 }
 
 /**
+ * Get the Force Point base for an actor.
+ *
+ * Rules:
+ * - Base 5: Characters with only base classes
+ * - Base 6: Characters with any prestige class (except Shaper)
+ * - Base 7: Characters with Force Disciple, Jedi Master, or Sith Lord
+ * - Once unlocked, the highest base persists forever
+ *
+ * @param {Object} actor - Actor document
+ * @returns {number} - Force Point base (5, 6, or 7)
+ */
+function getForcePointBase(actor) {
+    if (!actor) return 5;
+
+    // Check persistent flags (once unlocked, never downgrades)
+    const hasBase7 = actor.getFlag?.('swse', 'hasBase7FP');
+    if (hasBase7) return 7;
+
+    const hasBase6 = actor.getFlag?.('swse', 'hasPrestigeFPBonus');
+    if (hasBase6) return 6;
+
+    // Check current classes
+    const classItems = actor.items?.filter?.(i => i.type === 'class') || [];
+    if (!Array.isArray(classItems)) return 5;
+
+    let highestBase = 5;
+
+    for (const classItem of classItems) {
+        // Get class definition from ClassesDB
+        const classDef = ClassesDB.fromItem?.(classItem);
+
+        if (!classDef) {
+            // Fallback: Check item data directly if ClassesDB not available
+            const isPrestige = classItem.system?.base_class === false;
+            const grantsForcePoints = classItem.system?.grants_force_points !== false;
+            const forcePointBase = classItem.system?.force_point_base;
+
+            if (forcePointBase === 7) {
+                highestBase = Math.max(highestBase, 7);
+                actor.setFlag?.('swse', 'hasBase7FP', true);
+            } else if (isPrestige && grantsForcePoints) {
+                highestBase = Math.max(highestBase, 6);
+                actor.setFlag?.('swse', 'hasPrestigeFPBonus', true);
+            }
+            continue;
+        }
+
+        // Check if this class grants a special Force Point base
+        if (classDef.forcePointBase === 7) {
+            highestBase = Math.max(highestBase, 7);
+            actor.setFlag?.('swse', 'hasBase7FP', true);
+        } else if (!classDef.baseClass && classDef.grantsForcePoints) {
+            // Prestige class that grants FP bonus
+            highestBase = Math.max(highestBase, 6);
+            if (highestBase === 6) {
+                actor.setFlag?.('swse', 'hasPrestigeFPBonus', true);
+            }
+        }
+    }
+
+    return highestBase;
+}
+
+/**
  * Check if actor has the prestige Force Point bonus.
  *
  * Rules:
@@ -96,6 +162,7 @@ function getTotalCharacterLevel(actor) {
  *
  * @param {Object} actor - Actor document
  * @returns {boolean} - True if base should be 6
+ * @deprecated Use getForcePointBase() instead
  */
 function hasPrestigeForcePointBonus(actor) {
     if (!actor) return false;

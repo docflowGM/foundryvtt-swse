@@ -18,6 +18,10 @@ from typing import Dict, Tuple
 ROOT = Path(__file__).parent.parent.parent
 CLASSES_DB = ROOT / "packs" / "classes.db"
 
+# Classes with special Force Point base
+# These prestige classes have base 7 FP instead of standard 6
+BASE_7_FP_CLASSES = {"Force Disciple", "Jedi Master", "Sith Lord"}
+
 # Prestige class authoritative data
 # Format: "Class Name": (hit_die, reflex, fortitude, will)
 PRESTIGE_FIXES: Dict[str, Tuple[int, int, int, int]] = {
@@ -123,6 +127,13 @@ def fix_class(class_doc: dict) -> bool:
             if system.get("grants_force_points") is not True:
                 system["grants_force_points"] = True
                 changed = True
+
+        # Set force_point_base for special classes (Force Disciple, Jedi Master, Sith Lord)
+        if name in BASE_7_FP_CLASSES:
+            if system.get("force_point_base") != 7:
+                system["force_point_base"] = 7
+                changed = True
+                print(f"  ✓ {name}: force_point_base → 7")
 
     # Remove Force Point progression from ALL classes
     level_progression = system.get("level_progression", [])

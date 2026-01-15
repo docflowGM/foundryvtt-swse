@@ -12,6 +12,10 @@ import {
 } from './chargen-property-accessor.js';
 import { MentorSurvey } from '../mentor-survey.js';
 
+// SSOT Data Layer
+import { ClassesDB } from '../../data/classes-db.js';
+import { calculateMaxForcePoints, initializeActorForcePoints } from '../../data/force-points.js';
+
 /**
  * Handle class selection
  */
@@ -43,13 +47,27 @@ export async function _onSelectClass(event) {
     }
   }
 
-  // Find class document
-  const classDoc = this._packs.classes.find(c => c.name === className || c._id === className);
-
-  if (!classDoc) {
-    SWSELogger.error(`CharGen | Class not found: ${className}`);
-    ui.notifications.error(`Class "${className}" not found in compendium.`);
+  // Get normalized class definition from SSOT
+  // Ensure ClassesDB is built
+  if (!ClassesDB.isBuilt) {
+    SWSELogger.error(`CharGen | ClassesDB not built yet`);
+    ui.notifications.error(`Class data not ready. Please wait a moment and try again.`);
     return;
+  }
+
+  const classDef = ClassesDB.byName(className);
+  if (!classDef) {
+    SWSELogger.error(`CharGen | Class not found in ClassesDB: ${className}`);
+    ui.notifications.error(`Class "${className}" not found.`);
+    return;
+  }
+
+  SWSELogger.log(`CharGen | Using normalized class definition:`, classDef);
+
+  // For backward compatibility, also get the raw class doc for features
+  const classDoc = this._packs.classes.find(c => c.name === className || c._id === className);
+  if (!classDoc) {
+    SWSELogger.warn(`CharGen | Could not find raw class doc for features (non-fatal)`);
   }
 
   // Clear any existing classes and add the selected one
@@ -73,102 +91,105 @@ export async function _onSelectClass(event) {
     });
   }
 
-  // Set class-based values
-  if (classDoc && classDoc.system) {
-    // Base Attack Bonus - calculate actual BAB for level 1 based on progression type
-    const babProgression = getClassProperty(classDoc, 'babProgression', 'medium');
-    const babMultipliers = { 'fast': 1.0, 'high': 1.0, 'medium': 0.75, 'slow': 0.5, 'low': 0.5 };
-    const multiplier = babMultipliers[babProgression] || 0.75;
-    this.characterData.bab = Math.floor(1 * multiplier); // Level 1 BAB
+  // Set class-based values using normalized class definition
+  // Base Attack Bonus - calculate actual BAB for level 1 based on progression type
+  const babMultipliers = { 'fast': 1.0, 'high': 1.0, 'medium': 0.75, 'slow': 0.5, 'low': 0.5 };
+  const multiplier = babMultipliers[classDef.babProgression] || 0.75;
+  this.characterData.bab = Math.floor(1 * multiplier); // Level 1 BAB
 
-    // Hit Points (3 times hit die + CON mod at level 1 per SWSE rules)
-    const hitDie = getHitDie(classDoc);
-    const conMod = this.characterData.abilities?.con?.mod || 0;
-    this.characterData.hp.max = (hitDie * 3) + conMod; // Level 1 HP is 3x hit die + CON mod (SWSE heroic rule)
-    this.characterData.hp.value = this.characterData.hp.max;
+  // Hit Points (3 times hit die + CON mod at level 1 per SWSE rules)
+  const hitDie = classDef.hitDie;
+  const conMod = this.characterData.abilities?.con?.mod || 0;
+  this.characterData.hp.max = (hitDie * 3) + conMod; // Level 1 HP is 3x hit die + CON mod (SWSE heroic rule)
+  this.characterData.hp.value = this.characterData.hp.max;
 
-    // Defense bonuses - NOTE: compendium uses 'fortitude', actor uses 'fort'
-    if (classDoc.system.defenses && this.characterData.defenses) {
-      if (this.characterData.defenses.fort) {
-        this.characterData.defenses.fort.classBonus = Number(classDoc.system.defenses.fortitude) || 0;
-      }
-      if (this.characterData.defenses.reflex) {
-        this.characterData.defenses.reflex.classBonus = Number(classDoc.system.defenses.reflex) || 0;
-      }
-      if (this.characterData.defenses.will) {
-        this.characterData.defenses.will.classBonus = Number(classDoc.system.defenses.will) || 0;
-      }
+  SWSELogger.log(`CharGen | HP calculation: (${hitDie} × 3) + ${conMod} = ${this.characterData.hp.max}`);
+
+  // Defense bonuses - NOTE: compendium uses 'fortitude', actor uses 'fort'
+  if (this.characterData.defenses) {
+    if (this.characterData.defenses.fort) {
+      this.characterData.defenses.fort.classBonus = classDef.defenses.fortitude;
     }
-
-    // Trained skills available (class base + INT modifier, minimum 1)
-    const classSkills = getTrainedSkills(classDoc);
-    const intMod = this.characterData.abilities.int.mod || 0;
-    const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
-    this.characterData.trainedSkillsAllowed = Math.max(1, classSkills + intMod + humanBonus);
-
-    // Debug logging for trained skills calculation
-    SWSELogger.log(`CharGen | getTrainedSkills() call details:`, {
-      className: classDoc.name,
-      classSystem_trainedSkills: classDoc.system?.trainedSkills,
-      classSystem_trained_skills: classDoc.system?.trained_skills,
-      classSkillsValue: classSkills,
-      intMod,
-      humanBonus,
-      calculation: `Math.max(1, ${classSkills} + ${intMod} + ${humanBonus})`,
-      result: this.characterData.trainedSkillsAllowed
-    });
-
-    // Extract and store the list of class skills for filtering
-    const classSkillsList = getClassProperty(classDoc, 'classSkills', []);
-    this.characterData.classSkillsList = Array.isArray(classSkillsList) ? classSkillsList : [];
-
-    SWSELogger.log(`CharGen | Skill trainings: ${classSkills} (class) + ${intMod} (INT) + ${humanBonus} (Human) = ${this.characterData.trainedSkillsAllowed}`);
-    SWSELogger.log(`CharGen | Class skills available for ${className}:`, {
-      count: this.characterData.classSkillsList.length,
-      skills: this.characterData.classSkillsList,
-      classSkillsRaw: classSkillsList,
-      classDocSystemHasClassSkills: !!classDoc.system.classSkills
-    });
-
-    // Force Points (if Force-sensitive class)
-    // Note: Droids cannot be Force-sensitive in SWSE
-    if (classDoc.system.forceSensitive && !this.characterData.isDroid) {
-      this.characterData.forceSensitive = true; // Set force sensitivity flag
-      this.characterData.forcePoints.max = 5 + Math.floor(this.characterData.level / 2);
-      this.characterData.forcePoints.value = this.characterData.forcePoints.max;
-      this.characterData.forcePoints.die = "1d6";
+    if (this.characterData.defenses.reflex) {
+      this.characterData.defenses.reflex.classBonus = classDef.defenses.reflex;
     }
+    if (this.characterData.defenses.will) {
+      this.characterData.defenses.will.classBonus = classDef.defenses.will;
+    }
+    SWSELogger.log(`CharGen | Defense bonuses set: Fort=${classDef.defenses.fortitude}, Ref=${classDef.defenses.reflex}, Will=${classDef.defenses.will}`);
+  }
 
-    // Starting Credits
-    const creditsString = getClassProperty(classDoc, 'startingCredits');
-    if (creditsString) {
-      // Parse format like "3d4 x 400"
-      const match = creditsString.match(/(\d+)d(\d+)\s*x\s*(\d+)/i);
-      if (match) {
-        const numDice = parseInt(match[1], 10);
-        const dieSize = parseInt(match[2], 10);
-        const multiplier = parseInt(match[3], 10);
+  // Trained skills available (class base + INT modifier, minimum 1)
+  const classSkills = classDef.trainedSkills;
+  const intMod = this.characterData.abilities.int.mod || 0;
+  const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
+  this.characterData.trainedSkillsAllowed = Math.max(1, classSkills + intMod + humanBonus);
 
-        // Check for house rule to take maximum credits
-        // Default to rolling dice
-        const takeMax = game.settings?.get("foundryvtt-swse", "maxStartingCredits") || false;
+  // Extract and store the list of class skills for filtering
+  this.characterData.classSkillsList = Array.isArray(classDef.classSkills) ? classDef.classSkills : [];
 
-        let diceTotal;
-        if (takeMax) {
-          // Take maximum possible
-          diceTotal = numDice * dieSize;
-          SWSELogger.log(`CharGen | Starting credits (max): ${numDice}d${dieSize} = ${diceTotal}, × ${multiplier} = ${diceTotal * multiplier}`);
-        } else {
-          // Roll dice - safeRoll is async and returns an already-evaluated roll
-          const roll = await globalThis.SWSE.RollEngine.safeRoll(`${numDice}d${dieSize}`);
-          diceTotal = roll?.total || (numDice * dieSize); // Fallback to max if roll fails
-          SWSELogger.log(`CharGen | Starting credits (rolled): ${numDice}d${dieSize} = ${diceTotal}, × ${multiplier} = ${diceTotal * multiplier}`);
-        }
+  SWSELogger.log(`CharGen | Skill trainings: ${classSkills} (class) + ${intMod} (INT) + ${humanBonus} (Human) = ${this.characterData.trainedSkillsAllowed}`);
+  SWSELogger.log(`CharGen | Class skills available for ${className}:`, {
+    count: this.characterData.classSkillsList.length,
+    skills: this.characterData.classSkillsList
+  });
 
-        this.characterData.credits = diceTotal * multiplier;
+  // Force Points - Now calculated using actor-derived formula
+  // This is independent of Force Sensitivity feat
+  // Base = 5 for base classes, 6 for prestige (except Shaper)
+  // Max = Base + floor(level / 2)
+  const tempActorData = {
+    system: {
+      level: this.characterData.level || 1
+    },
+    items: this.characterData.classes.map(c => ({
+      type: 'class',
+      name: c.name,
+      system: {
+        classId: classDef.id,
+        level: c.level || 1,
+        base_class: classDef.baseClass,
+        grants_force_points: classDef.grantsForcePoints
+      }
+    }))
+  };
+
+  const maxFP = calculateMaxForcePoints(tempActorData);
+  this.characterData.forcePoints.max = maxFP;
+  this.characterData.forcePoints.value = maxFP;
+  this.characterData.forcePoints.die = "1d6";
+
+  SWSELogger.log(`CharGen | Force Points calculated: ${maxFP} (base: ${classDef.baseClass ? 5 : (classDef.grantsForcePoints ? 6 : 5)})`);
+
+  // Starting Credits
+  const creditsString = classDef.startingCredits;
+  if (creditsString) {
+    // Parse format like "3d4 x 400"
+    const match = creditsString.match(/(\d+)d(\d+)\s*x\s*(\d+)/i);
+    if (match) {
+      const numDice = parseInt(match[1], 10);
+      const dieSize = parseInt(match[2], 10);
+      const multiplier = parseInt(match[3], 10);
+
+      // Check for house rule to take maximum credits
+      // Default to rolling dice
+      const takeMax = game.settings?.get("foundryvtt-swse", "maxStartingCredits") || false;
+
+      let diceTotal;
+      if (takeMax) {
+        // Take maximum possible
+        diceTotal = numDice * dieSize;
+        SWSELogger.log(`CharGen | Starting credits (max): ${numDice}d${dieSize} = ${diceTotal}, × ${multiplier} = ${diceTotal * multiplier}`);
       } else {
-        SWSELogger.warn(`CharGen | Could not parse starting_credits: ${creditsString}`);
+        // Roll dice - safeRoll is async and returns an already-evaluated roll
+        const roll = await globalThis.SWSE.RollEngine.safeRoll(`${numDice}d${dieSize}`);
+        diceTotal = roll?.total || (numDice * dieSize); // Fallback to max if roll fails
+        SWSELogger.log(`CharGen | Starting credits (rolled): ${numDice}d${dieSize} = ${diceTotal}, × ${multiplier} = ${diceTotal * multiplier}`);
       }
+
+      this.characterData.credits = diceTotal * multiplier;
+    } else {
+      SWSELogger.warn(`CharGen | Could not parse starting_credits: ${creditsString}`);
     }
   }
 

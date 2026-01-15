@@ -142,9 +142,10 @@ export function normalizeClass(rawClass) {
         startingFeatures: sys.starting_features || [],
 
         // Force Points
-        // Note: This flag is for PRESTIGE class logic only
-        // The actual FP calculation is actor-derived and ignores this
+        // Note: These flags are for PRESTIGE class logic only
+        // The actual FP calculation is actor-derived and uses these as inputs
         grantsForcePoints: sys.grants_force_points ?? true,
+        forcePointBase: sys.force_point_base ?? null,  // 7 for Force Disciple/Jedi Master/Sith Lord, null otherwise
 
         // Starting Resources
         baseHp: sys.base_hp ?? 0,
