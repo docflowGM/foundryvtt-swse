@@ -80,15 +80,15 @@ export function _bindAbilitiesUI(root) {
       : (game.settings.get('foundryvtt-swse', "livingPointBuyPool") || 25);
 
     let pool = pointBuyPool;
+    // Cumulative cost table: score -> total cost from 8
+    const cumulativeCosts = {
+      8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 6, 15: 8, 16: 10, 17: 13, 18: 16
+    };
     const pointCosts = (from, to) => {
-      const costForIncrement = (v) => {
-        if (v < 12) return 1;
-        if (v < 14) return 2;
-        return 3;
-      };
-      let cost = 0;
-      for (let v = from; v < to; v++) cost += costForIncrement(v);
-      return cost;
+      // Calculate cost difference between two scores
+      const fromCost = cumulativeCosts[from] || 0;
+      const toCost = cumulativeCosts[to] || 0;
+      return toCost - fromCost;
     };
 
     const updatePointRemaining = () => {
