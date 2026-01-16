@@ -211,11 +211,18 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     const featPack = game.packs.get('foundryvtt-swse.feats');
     if (!featPack) {
       SWSELogger.error("SWSE LevelUp | Feats compendium pack not found!");
-      ui.notifications.error("Failed to load feats compendium. Feats will not be available.");
+      ui.notifications.error("Failed to load feats compendium. Feats will not be available.", { permanent: true });
       return { categories: [], feats: [] };
     }
 
     const allFeats = await featPack.getDocuments();
+
+    if (!allFeats || allFeats.length === 0) {
+      SWSELogger.error("SWSE LevelUp | Feats compendium is empty!");
+      ui.notifications.error("Feats compendium is empty. Please check your SWSE installation.", { permanent: true });
+      return { categories: [], feats: [] };
+    }
+
     let featObjects = allFeats.map(f => f.toObject());
 
     // Filter by class bonus feats if a class is selected and this is a class bonus feat level

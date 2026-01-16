@@ -75,7 +75,16 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
     }
   } else if (talentTreeRestriction === "current") {
     // Only talent trees from the selected class
+    if (!selectedClass) {
+      SWSELogger.error('SWSE LevelUp | Cannot get talent trees: no class selected');
+      return [];
+    }
+
     availableTrees = getTalentTrees(selectedClass);
+
+    if (!availableTrees || availableTrees.length === 0) {
+      SWSELogger.warn(`SWSE LevelUp | Selected class "${selectedClass.name}" has no talent trees`);
+    }
   } else {
     // Talent trees from any class the character has levels in
     const characterClasses = getCharacterClasses(actor);
@@ -158,9 +167,19 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
  */
 export async function loadTalentData(actor = null, pendingData = {}) {
   const talentPack = game.packs.get('foundryvtt-swse.talents');
-  if (!talentPack) return [];
+  if (!talentPack) {
+    SWSELogger.error("SWSE LevelUp | Talents compendium pack not found!");
+    ui.notifications.error("Failed to load talents compendium. Talents will not be available.", { permanent: true });
+    return [];
+  }
 
   let talents = await talentPack.getDocuments();
+
+  if (!talents || talents.length === 0) {
+    SWSELogger.error("SWSE LevelUp | Talents compendium is empty!");
+    ui.notifications.error("Talents compendium is empty. Please check your SWSE installation.", { permanent: true });
+    return [];
+  }
 
   // Apply Block/Deflect combination if house rule enabled
   talents = HouseRuleTalentCombination.processBlockDeflectCombination(talents);
