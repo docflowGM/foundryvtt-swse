@@ -1739,7 +1739,12 @@ export default class CharacterGenerator extends Application {
       profession: this.characterData.background && this.characterData.background.category === 'occupation' ? this.characterData.background.name : "",
       planetOfOrigin: this.characterData.background && this.characterData.background.category === 'planet' ? this.characterData.background.name : "",
       // Progression structure for level-up system
-      progression: progression
+      progression: progression,
+      // Mentor system data for suggestion engine
+      swse: {
+        mentorBuildIntentBiases: this.characterData.mentorBiases || {},
+        mentorSurveyCompleted: this.characterData.mentorSurveyCompleted || false
+      }
     };
 
     // For NPCs, auto-create a Nonheroic class
@@ -1757,13 +1762,18 @@ export default class CharacterGenerator extends Application {
       }
     };
 
-    // Persist Near-Human builder data to actor flags
+    // Persist Near-Human builder data and mentor system data to actor flags
+    actorData.flags = {
+      'foundryvtt-swse': {}
+    };
+
     if (this.characterData.nearHumanData) {
-      actorData.flags = {
-        'foundryvtt-swse': {
-          nearHumanData: this.characterData.nearHumanData
-        }
-      };
+      actorData.flags['foundryvtt-swse'].nearHumanData = this.characterData.nearHumanData;
+    }
+
+    // Store starting class for mentor system (required for mentor identification across all levels)
+    if (this.characterData.classes && this.characterData.classes.length > 0) {
+      actorData.flags['foundryvtt-swse'].startingClass = this.characterData.classes[0].name;
     }
 
     let created = null;
