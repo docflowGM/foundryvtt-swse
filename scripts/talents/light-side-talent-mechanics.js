@@ -11,6 +11,10 @@
  * - Renew Vision: Regain Farseeing uses
  * - Scholarly Knowledge: Reroll Knowledge checks
  * - Share Force Secret: Grant Force Secret to ally
+ * - Steel Resolve: Trade attack penalty for Will Defense bonus
+ * - Adept Negotiator: Persuasion check to move opponent on Condition Track
+ * - Force Persuasion: Use Force modifier for Persuasion checks
+ * - Master Negotiator: Additional -1 step on Condition Track
  */
 
 import { SWSELogger } from '../utils/logger.js';
@@ -122,6 +126,33 @@ export class LightSideTalentMechanics {
   static hasSteelResolve(actor) {
     return actor?.items?.some(item =>
       item.type === 'talent' && item.name === 'Steel Resolve'
+    );
+  }
+
+  /**
+   * Check if actor has Adept Negotiator talent
+   */
+  static hasAdeptNegotiator(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Adept Negotiator'
+    );
+  }
+
+  /**
+   * Check if actor has Force Persuasion talent
+   */
+  static hasForcePersuasion(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Force Persuasion'
+    );
+  }
+
+  /**
+   * Check if actor has Master Negotiator talent
+   */
+  static hasMasterNegotiator(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Master Negotiator'
     );
   }
 
@@ -263,7 +294,7 @@ export class LightSideTalentMechanics {
     }
 
     // Get actor's Wisdom bonus
-    const wisdomBonus = actor.system.abilities?.wis?.modifier || 0;
+    const wisdomBonus = actor.system.attributes?.wis?.mod || 0;
 
     // Create effect on ally
     await ally.createEmbeddedDocuments('ActiveEffect', [{
@@ -460,7 +491,7 @@ export class LightSideTalentMechanics {
     }
 
     // Get actor's Charisma bonus (minimum +1)
-    const chaBonus = Math.max(1, actor.system.abilities?.cha?.modifier || 1);
+    const chaBonus = Math.max(1, actor.system.attributes?.cha?.mod || 1);
 
     const totalDamage = baseDamage + chaBonus;
 
@@ -598,14 +629,14 @@ export class LightSideTalentMechanics {
     }
 
     // Get actor's Use the Force modifier
-    const actorUseTheForce = actor.system.skills?.useTheForce?.modifier || 0;
+    const actorUseTheForce = actor.system.skills?.useTheForce?.total || 0;
 
     // Get all allies within 12 squares
     const allies = this.getAlliesInRange(actor, 12);
 
     // Filter allies with lower Use the Force modifier
     const eligibleAllies = allies.filter(ally => {
-      const allyUseTheForce = ally.actor.system.skills?.useTheForce?.modifier || 0;
+      const allyUseTheForce = ally.actor.system.skills?.useTheForce?.total || 0;
       return allyUseTheForce < actorUseTheForce;
     });
 
@@ -899,6 +930,220 @@ export class LightSideTalentMechanics {
     ui.notifications.info(`Steel Resolve activated: -${penaltyAmount} to attack rolls, +${willBonus} to Will Defense until start of your next turn!`);
 
     return { success: true, penalty: penaltyAmount, bonus: willBonus };
+  }
+
+  /**
+   * ADEPT NEGOTIATOR - Weaken opponent resolve with Persuasion check
+   * Standard Action, move target -1 step along Condition Track
+   * Target must have Intelligence 3+, see/hear/understand you
+   * Target gets +5 to Will Defense if higher level
+   * If reaches end of track, target cannot attack you/allies unless attacked first
+   * Mind-Affecting effect
+   */
+  static async triggerAdeptNegotiator(actor, targetToken) {
+    if (!this.hasAdeptNegotiator(actor)) {
+      return { success: false, message: 'Actor does not have Adept Negotiator talent' };
+    }
+
+    // Check if target is provided
+    if (!targetToken) {
+      return {
+        success: false,
+        message: 'Please select a target opponent for Adept Negotiator'
+      };
+    }
+
+    const targetActor = targetToken.actor;
+    if (!targetActor) {
+      return { success: false, message: 'Target is not valid' };
+    }
+
+    // Check if target has Intelligence 3 or higher
+    const targetIntelligence = targetActor.system.attributes?.int?.score || 0;
+    if (targetIntelligence < 3) {
+      return {
+        success: false,
+        message: `Target must have Intelligence 3 or higher (target has ${targetIntelligence})`
+      };
+    }
+
+    // Check if this is a combat encounter
+    const combatEncounterActive = game.combats?.active;
+    if (!combatEncounterActive) {
+      return {
+        success: false,
+        message: 'Adept Negotiator can only be used during an encounter'
+      };
+    }
+
+    // Get actor's Persuasion modifier
+    let persuasionModifier = actor.system.skills?.persuasion?.total || 0;
+
+    // Check if actor has Force Persuasion talent - if so, can use Use the Force instead
+    let useForceModifier = false;
+    if (this.hasForcePersuasion(actor)) {
+      useForceModifier = true;
+      const useTheForceModifier = actor.system.skills?.useTheForce?.total || 0;
+      persuasionModifier = useTheForceModifier;
+    }
+
+    // Get target's Will Defense
+    let targetWillDefense = targetActor.system.defenses?.will?.total || 10;
+
+    // Add +5 if target is higher level than actor
+    const actorLevel = actor.system.details?.level || 1;
+    const targetLevel = targetActor.system.details?.level || 1;
+    if (targetLevel > actorLevel) {
+      targetWillDefense += 5;
+    }
+
+    return {
+      success: true,
+      requiresSelection: true,
+      targetActor: targetActor,
+      targetToken: targetToken,
+      persuasionModifier: persuasionModifier,
+      targetWillDefense: targetWillDefense,
+      useForceModifier: useForceModifier,
+      actorLevel: actorLevel,
+      targetLevel: targetLevel,
+      combatEncounterActive: combatEncounterActive
+    };
+  }
+
+  /**
+   * Complete Adept Negotiator - Roll Persuasion check and apply to Condition Track
+   */
+  static async completeAdeptNegotiatorSelection(actor, targetActor, persuasionRoll, targetWillDefense, useForceModifier) {
+    // Determine if check succeeds
+    const rollResult = persuasionRoll.total;
+    const checkSucceeds = rollResult >= targetWillDefense;
+
+    // Initialize or get current Condition Track step for this target
+    const conditionTrackKey = `negotiationCondition_${targetActor.id}`;
+    let currentStep = targetActor.getFlag('swse', conditionTrackKey) || 0;
+
+    let stepsMovedBack = 0;
+    let conditionMessage = '';
+
+    if (checkSucceeds) {
+      // Move -1 step on Condition Track
+      stepsMovedBack = 1;
+
+      // Check if actor has Master Negotiator for additional -1
+      if (this.hasMasterNegotiator(actor)) {
+        stepsMovedBack += 1;
+      }
+
+      currentStep += stepsMovedBack;
+
+      // Define condition states (following game balance - typically 4 steps)
+      const conditionStates = [
+        { step: 0, name: 'Normal', effect: 'none' },
+        { step: 1, name: 'Shaken', effect: 'shaken' },
+        { step: 2, name: 'Frightened', effect: 'frightened' },
+        { step: 3, name: 'Panicked', effect: 'panicked' },
+        { step: 4, name: 'Broken', effect: 'broken' }
+      ];
+
+      const currentCondition = conditionStates[Math.min(currentStep, 4)];
+      const nextCondition = conditionStates[Math.min(currentStep + 1, 4)];
+
+      // Update the flag
+      await targetActor.setFlag('swse', conditionTrackKey, currentStep);
+
+      // Apply effects based on condition state
+      if (currentStep >= 4) {
+        // Reached the end - apply "cannot attack you or allies" effect
+        await targetActor.createEmbeddedDocuments('ActiveEffect', [{
+          name: 'Broken Resolve - Cannot Attack',
+          icon: 'icons/svg/daze.svg',
+          changes: [], // This is primarily a roleplay/rules effect
+          duration: {
+            combat: game.combat?.id
+          },
+          flags: {
+            swse: {
+              source: 'talent',
+              sourceId: 'adept-negotiator',
+              sourceActorId: actor.id,
+              brokenResolve: true,
+              condition: 'broken'
+            }
+          }
+        }]);
+
+        conditionMessage = `${targetActor.name}'s resolve is completely broken! They cannot attack ${actor.name} or their allies for the remainder of the encounter (unless attacked first).`;
+      } else {
+        // Apply condition effect (shaken, frightened, etc.)
+        await targetActor.createEmbeddedDocuments('ActiveEffect', [{
+          name: `Negotiation - ${currentCondition.name}`,
+          icon: 'icons/svg/despair.svg',
+          changes: [],
+          duration: {
+            combat: game.combat?.id
+          },
+          flags: {
+            swse: {
+              source: 'talent',
+              sourceId: 'adept-negotiator',
+              sourceActorId: actor.id,
+              condition: currentCondition.effect,
+              conditionStep: currentStep
+            }
+          }
+        }]);
+
+        const masterNote = this.hasMasterNegotiator(actor) ? ' (Master Negotiator +1 additional step)' : '';
+        conditionMessage = `${targetActor.name} moves ${stepsMovedBack} step${stepsMovedBack > 1 ? 's' : ''} back on the Condition Track${masterNote}. Current condition: ${currentCondition.name}.`;
+      }
+
+      SWSELogger.log(`SWSE Talents | ${actor.name} used Adept Negotiator on ${targetActor.name}. Check: ${rollResult} vs Will Defense: ${targetWillDefense}. Success! Moved ${stepsMovedBack} step(s) on Condition Track.`);
+      ui.notifications.info(conditionMessage);
+
+      return {
+        success: true,
+        checkSucceeds: true,
+        rollResult: rollResult,
+        targetWillDefense: targetWillDefense,
+        stepsMovedBack: stepsMovedBack,
+        currentStep: currentStep
+      };
+    } else {
+      // Check failed
+      conditionMessage = `${actor.name}'s persuasion attempt failed! Check: ${rollResult} vs Will Defense: ${targetWillDefense}.`;
+
+      SWSELogger.log(`SWSE Talents | ${actor.name} used Adept Negotiator on ${targetActor.name}. Check: ${rollResult} vs Will Defense: ${targetWillDefense}. Failed.`);
+      ui.notifications.warn(conditionMessage);
+
+      return {
+        success: true,
+        checkSucceeds: false,
+        rollResult: rollResult,
+        targetWillDefense: targetWillDefense,
+        stepsMovedBack: 0,
+        currentStep: currentStep
+      };
+    }
+  }
+
+  /**
+   * Helper: Get Persuasion modifier, considering Force Persuasion
+   */
+  static getPersuasionModifier(actor, forcePersuasion = false) {
+    if (forcePersuasion && this.hasForcePersuasion(actor)) {
+      return actor.system.skills?.useTheForce?.total || 0;
+    }
+    return actor.system.skills?.persuasion?.total || 0;
+  }
+
+  /**
+   * Helper: Roll Persuasion check with appropriate modifier
+   */
+  static async rollPersuasionCheck(actor, modifierOverride = null) {
+    const modifier = modifierOverride !== null ? modifierOverride : this.getPersuasionModifier(actor);
+    const roll = await new Roll(`1d20+${modifier}`).evaluate({ async: true });
+    return roll;
   }
 
   // ============================================================================
@@ -1205,6 +1450,15 @@ Hooks.on('deleteCombat', async (combat) => {
     await actor.unsetFlag('swse', `consularsWisdom_${combatId}`);
     await actor.unsetFlag('swse', `darkRetaliation_${combatId}`);
     await actor.unsetFlag('swse', `renewVision_${combatId}`);
+
+    // Clear negotiation condition track flags (across all targets)
+    // These are target-specific, so we clean up all actors' negotiation conditions
+    const flags = actor.getFlags('swse');
+    for (const [key] of Object.entries(flags || {})) {
+      if (key.startsWith('negotiationCondition_')) {
+        await actor.unsetFlag('swse', key);
+      }
+    }
   }
 });
 

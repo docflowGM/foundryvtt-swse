@@ -182,40 +182,46 @@ export class LazyLoader {
 
   /**
    * Create lazy tab loader for sheet tabs
-   * @param {jQuery} html - Sheet HTML
+   * @param {HTMLElement|jQuery} html - Sheet HTML
    * @param {Object} callbacks - Tab render callbacks
    */
   setupLazyTabs(html, callbacks = {}) {
-    const tabs = html.find('.sheet-tabs a[data-tab]');
+    // Convert to DOM element if needed
+    const element = html instanceof HTMLElement ? html : html[0];
+    if (!element) return new Set(['summary']);
+
+    const tabs = element.querySelectorAll('.sheet-tabs a[data-tab]');
     const loadedTabs = new Set(['summary']); // Summary always loads
 
-    tabs.on('click', async (event) => {
-      const tabName = event.currentTarget.dataset.tab;
+    tabs.forEach(tab => {
+      tab.addEventListener('click', async (event) => {
+        const tabName = event.currentTarget.dataset.tab;
 
-      if (!loadedTabs.has(tabName)) {
-        const tabContent = html.find(`.tab[data-tab="${tabName}"]`);
+        if (!loadedTabs.has(tabName)) {
+          const tabContent = element.querySelector(`.tab[data-tab="${tabName}"]`);
 
-        // Show loading indicator
-        if (tabContent.length > 0) {
-          const originalContent = tabContent.html();
-          tabContent.html('<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>');
+          // Show loading indicator
+          if (tabContent) {
+            const originalContent = tabContent.innerHTML;
+            tabContent.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
 
-          try {
-            // Execute tab-specific callback
-            if (callbacks[tabName]) {
-              await callbacks[tabName](tabContent);
+            try {
+              // Execute tab-specific callback
+              if (callbacks[tabName]) {
+                await callbacks[tabName](tabContent);
+              }
+
+              // Load tab-specific templates if needed
+              await this.loadTemplate(`tab-${tabName}`);
+
+              loadedTabs.add(tabName);
+            } catch (error) {
+              SWSELogger.error(`SWSE | Failed to load tab ${tabName}:`, error);
+              tabContent.innerHTML = originalContent;
             }
-
-            // Load tab-specific templates if needed
-            await this.loadTemplate(`tab-${tabName}`);
-
-            loadedTabs.add(tabName);
-          } catch (error) {
-            SWSELogger.error(`SWSE | Failed to load tab ${tabName}:`, error);
-            tabContent.html(originalContent);
           }
         }
-      }
+      });
     });
 
     return loadedTabs;

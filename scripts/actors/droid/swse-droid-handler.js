@@ -37,7 +37,7 @@ export class SWSEDroidHandler {
     // Core chassis update
     // -----------------------------
     await actor.update({
-      "system.abilities": abilities,
+      "system.attributes": abilities,
       "system.size": chassis.size ?? "medium",
       "system.speed": Number(chassis.speed) || 6,
 
@@ -112,7 +112,7 @@ export class SWSEDroidHandler {
 
     await actor.update({
       "system.processor": {
-        quality: actor.system.abilities.int.base,
+        quality: actor.system.attributes.int.base,
         behavioralInhibitors: sys.behavioralInhibitors !== false,
         inhibitorNotes: sys.inhibitorNotes ?? ""
       }

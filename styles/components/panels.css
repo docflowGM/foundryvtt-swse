@@ -1,0 +1,218 @@
+/* ============================================================================
+   SWSE Panel Components
+   Consistent panel styling for all sheet sections
+
+   Usage: Apply .swse-panel to any container that should be a visual group
+   ============================================================================ */
+
+/* ─────────────────────────────────────────────────────────────────────────
+   BASE PANEL
+   The fundamental card/box component
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-panel {
+  background: var(--swse-bg-panel);
+  border: 1px solid var(--swse-border);
+  border-radius: var(--swse-radius);
+  padding: var(--swse-panel-padding);
+  box-shadow: var(--swse-shadow);
+}
+
+/* Panel header - use as direct child */
+.swse-app .swse-panel > header,
+.swse-app .swse-panel-header {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: var(--swse-font-size-sm);
+  color: var(--swse-accent);
+  margin-bottom: var(--swse-space-md);
+  padding-bottom: var(--swse-space-sm);
+  border-bottom: 1px solid var(--swse-border-subtle);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   PANEL VARIANTS
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Compact panel - less padding */
+.swse-app .swse-panel-compact {
+  background: var(--swse-bg-panel);
+  border: 1px solid var(--swse-border);
+  border-radius: var(--swse-radius-sm);
+  padding: var(--swse-space-md);
+  box-shadow: var(--swse-shadow-sm);
+}
+
+/* Flush panel - no padding */
+.swse-app .swse-panel-flush {
+  background: var(--swse-bg-panel);
+  border: 1px solid var(--swse-border);
+  border-radius: var(--swse-radius);
+  box-shadow: var(--swse-shadow);
+}
+
+/* Transparent panel - just border, no background */
+.swse-app .swse-panel-ghost {
+  background: transparent;
+  border: 1px solid var(--swse-border-subtle);
+  border-radius: var(--swse-radius);
+  padding: var(--swse-panel-padding);
+}
+
+/* Highlighted panel - glowing accent */
+.swse-app .swse-panel-highlight {
+  background: var(--swse-bg-panel);
+  border: 1px solid var(--swse-accent);
+  border-radius: var(--swse-radius);
+  padding: var(--swse-panel-padding);
+  box-shadow: var(--swse-glow);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   PANEL SECTIONS
+   For dividing content within a panel
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-panel-section {
+  padding: var(--swse-space-md) 0;
+  border-bottom: 1px solid var(--swse-border-subtle);
+}
+
+.swse-app .swse-panel-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.swse-app .swse-panel-section:first-child {
+  padding-top: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   SECTION HEADERS
+   Use within panels or as standalone dividers
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-section-title {
+  font-family: var(--swse-font-display);
+  font-size: var(--swse-font-size-md);
+  font-weight: var(--swse-font-weight-bold);
+  color: var(--swse-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--swse-space-md);
+}
+
+.swse-app .swse-section-subtitle {
+  font-size: var(--swse-font-size-sm);
+  font-weight: var(--swse-font-weight-medium);
+  color: var(--swse-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: var(--swse-space-sm);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   STAT BOX
+   For displaying single values prominently (HP, defense scores, etc.)
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--swse-bg-panel);
+  border: 1px solid var(--swse-border);
+  border-radius: var(--swse-radius-sm);
+  padding: var(--swse-space-md);
+  min-width: 60px;
+}
+
+.swse-app .swse-stat-box .swse-stat-value {
+  font-family: var(--swse-font-display);
+  font-size: var(--swse-font-size-xl);
+  font-weight: var(--swse-font-weight-bold);
+  color: var(--swse-text-white);
+  line-height: 1;
+}
+
+.swse-app .swse-stat-box .swse-stat-label {
+  font-size: var(--swse-font-size-xs);
+  color: var(--swse-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: var(--swse-space-xs);
+}
+
+/* Stat box color variants */
+.swse-app .swse-stat-box-success {
+  border-color: var(--swse-success);
+}
+
+.swse-app .swse-stat-box-success .swse-stat-value {
+  color: var(--swse-success);
+}
+
+.swse-app .swse-stat-box-warning {
+  border-color: var(--swse-warning);
+}
+
+.swse-app .swse-stat-box-warning .swse-stat-value {
+  color: var(--swse-warning);
+}
+
+.swse-app .swse-stat-box-danger {
+  border-color: var(--swse-danger);
+}
+
+.swse-app .swse-stat-box-danger .swse-stat-value {
+  color: var(--swse-danger);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   INTERACTIVE PANEL STATES
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-panel-interactive {
+  cursor: pointer;
+  transition: all var(--swse-transition-base) var(--swse-ease);
+}
+
+.swse-app .swse-panel-interactive:hover {
+  border-color: var(--swse-border-hover);
+  box-shadow: var(--swse-glow);
+  transform: translateY(-1px);
+}
+
+.swse-app .swse-panel-interactive:active {
+  transform: translateY(0);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   COLLAPSIBLE PANEL
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-panel-collapsible > header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.swse-app .swse-panel-collapsible > header::after {
+  content: "\f078"; /* chevron-down */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 10px;
+  color: var(--swse-text-secondary);
+  transition: transform var(--swse-transition-base) var(--swse-ease);
+}
+
+.swse-app .swse-panel-collapsible.collapsed > header::after {
+  transform: rotate(-90deg);
+}
+
+.swse-app .swse-panel-collapsible.collapsed > .swse-panel-content {
+  display: none;
+}

@@ -68,6 +68,42 @@ export const swseHelpers = {
     const currentIndex = stepOrder.indexOf(currentStep);
 
     return stepIndex !== -1 && currentIndex !== -1 && currentIndex > stepIndex;
+  },
+
+  /**
+   * Check if a step comes before the current step in character generation
+   * Used for marking chevron navigation as "clickable" for backwards navigation
+   * @param {string} currentStep - The current active step
+   * @param {string} step - The step to check if it's previous
+   * @returns {boolean} True if step comes before currentStep
+   */
+  stepIsPrevious: (currentStep, step) => {
+    // All possible steps in character generation, in order they can appear
+    const baseStepOrder = [
+      'name',
+      'type',
+      'degree',
+      'size',
+      'droid-builder',
+      'species',
+      'abilities',
+      'class',
+      'background',
+      'skills',
+      'languages',
+      'feats',
+      'talents',
+      'force-powers',
+      'starship-maneuvers',
+      'droid-final',
+      'summary',
+      'shop'
+    ];
+
+    const stepIndex = baseStepOrder.indexOf(step);
+    const currentIndex = baseStepOrder.indexOf(currentStep);
+
+    return stepIndex !== -1 && currentIndex !== -1 && stepIndex < currentIndex;
   }
 };
 

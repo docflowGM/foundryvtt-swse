@@ -1,7 +1,7 @@
 {{!-- Premium Ability Scores Component --}}
 <div class="ability-score-block">
 
-  {{#each system.abilities as |ability key|}}
+  {{#each system.attributes as |ability key|}}
   <div class="ability-score-row flexrow">
 
     {{!-- Ability Label --}}
@@ -22,7 +22,7 @@
                 role="button" tabindex="0">−</button>
 
         <input id="ability-{{key}}-base"
-               name="system.abilities.{{key}}.base"
+               name="system.attributes.{{key}}.base"
                type="number"
                value="{{ability.base}}"
                data-dtype="Number"
@@ -42,7 +42,7 @@
 
       <span class="math-op">+</span>
 
-      <input name="system.abilities.{{key}}.racial"
+      <input name="system.attributes.{{key}}.racial"
              type="number"
              value="{{ability.racial}}"
              data-dtype="Number"
@@ -54,7 +54,7 @@
 
       <span class="math-op">+</span>
 
-      <input name="system.abilities.{{key}}.misc"
+      <input name="system.attributes.{{key}}.misc"
              type="number"
              value="{{ability.misc}}"
              data-dtype="Number"
@@ -82,7 +82,7 @@ Total: {{ability.total}}">
 
       <div class="ability-modifier mod-{{#if (gt ability.mod 0)}}positive{{else if (lt ability.mod 0)}}negative{{else}}neutral{{/if}}"
            aria-label="Modifier {{ability.mod}}">
-        {{numberFormat ability.mod decimals=0 sign=true}}
+        {{numberFormat (safeNumber ability.mod) decimals=0 sign=true}}
       </div>
 
       <button class="ability-roll"

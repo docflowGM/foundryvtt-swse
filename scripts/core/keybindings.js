@@ -1,7 +1,8 @@
 /**
-import { SWSELogger } from '../utils/logger.js';
  * Keybindings for SWSE
  */
+import { SWSELogger } from '../utils/logger.js';
+
 export function registerKeybindings() {
   SWSELogger.log("SWSE | Registering keybindings...");
 

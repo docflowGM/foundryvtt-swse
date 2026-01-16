@@ -303,7 +303,7 @@ export class LightSideTalentMacros {
 
     if (result.requiresSelection) {
       const allyOptions = result.allies
-        .map(t => `<option value="${t.actor.id}">${t.actor.name} (Use the Force: ${t.actor.system.skills?.useTheForce?.modifier || 0})</option>`)
+        .map(t => `<option value="${t.actor.id}">${t.actor.name} (Use the Force: ${t.actor.system.skills?.useTheForce?.total || 0})</option>`)
         .join('');
 
       const dialog = new Dialog({
@@ -504,6 +504,102 @@ export class LightSideTalentMacros {
   }
 
   /**
+   * Macro: Trigger Adept Negotiator
+   * Usage: game.swse.macros.triggerAdeptNegotiatorMacro(actor, targetToken)
+   */
+  static async triggerAdeptNegotiatorMacro(actor = null, targetToken = null) {
+    const selectedActor = actor || game.user.character;
+
+    if (!selectedActor) {
+      ui.notifications.error('Please select a character to use Adept Negotiator');
+      return;
+    }
+
+    if (!LightSideTalentMechanics.hasAdeptNegotiator(selectedActor)) {
+      ui.notifications.warn(`${selectedActor.name} does not have the Adept Negotiator talent`);
+      return;
+    }
+
+    // Get target if not provided
+    const selectedTarget = targetToken || game.user.targets.first();
+    if (!selectedTarget) {
+      ui.notifications.error('Please target an opponent for Adept Negotiator');
+      return;
+    }
+
+    const result = await LightSideTalentMechanics.triggerAdeptNegotiator(selectedActor, selectedTarget);
+
+    if (!result.success) {
+      ui.notifications.warn(result.message);
+      return;
+    }
+
+    if (result.requiresSelection) {
+      // Build dialog with information
+      const hasForcePersuasion = LightSideTalentMechanics.hasForcePersuasion(selectedActor);
+      const hasMasterNegotiator = LightSideTalentMechanics.hasMasterNegotiator(selectedActor);
+
+      const modifierType = hasForcePersuasion ? 'Use the Force' : 'Persuasion';
+      const levelNote = result.targetLevel > result.actorLevel
+        ? `<p style="color: #cc6644;"><i class="fas fa-exclamation-circle"></i> Target is higher level. Will Defense increased by +5.</p>`
+        : '';
+
+      const masterNote = hasMasterNegotiator
+        ? `<p style="color: #88cc44;"><i class="fas fa-star"></i> Master Negotiator: On success, target moves 2 steps instead of 1.</p>`
+        : '';
+
+      const dialogContent = `
+        <div class="form-group">
+          <h3>Adept Negotiator</h3>
+          <p><strong>Target:</strong> ${result.targetActor.name}</p>
+          <p><strong>Check Type:</strong> ${modifierType} (+${result.persuasionModifier >= 0 ? '+' : ''}${result.persuasionModifier})</p>
+          <p><strong>Target Will Defense:</strong> ${result.targetWillDefense}</p>
+          ${levelNote}
+          ${masterNote}
+          <p style="margin-top: 15px; padding: 10px; background: #f0f0f0; border-left: 3px solid #4488cc;">
+            <i class="fas fa-info-circle"></i> Rolling 1d20 + ${result.persuasionModifier} vs DC ${result.targetWillDefense}
+          </p>
+        </div>
+      `;
+
+      const dialog = new Dialog({
+        title: 'Adept Negotiator - Weaken Resolve',
+        content: dialogContent,
+        buttons: {
+          makeCheck: {
+            label: 'Roll Persuasion Check',
+            callback: async () => {
+              // Roll the check
+              const roll = await LightSideTalentMechanics.rollPersuasionCheck(selectedActor, result.persuasionModifier);
+
+              // Post roll to chat
+              await roll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor: selectedActor }),
+                flavor: `Adept Negotiator - Persuasion Check vs ${result.targetActor.name}'s Will Defense (${result.targetWillDefense})`
+              });
+
+              // Apply the result
+              await LightSideTalentMechanics.completeAdeptNegotiatorSelection(
+                selectedActor,
+                result.targetActor,
+                roll,
+                result.targetWillDefense,
+                result.useForceModifier
+              );
+            }
+          },
+          cancel: {
+            label: 'Cancel'
+          }
+        },
+        default: 'makeCheck'
+      });
+
+      dialog.render(true);
+    }
+  }
+
+  /**
    * Helper: Check if actor can reroll Knowledge with Scholarly Knowledge
    * Usage: game.swse.macros.canRerollKnowledgeMacro(actor, skillName)
    */
@@ -574,6 +670,7 @@ window.SWSE.macros.triggerApprenticeBoonMacro = LightSideTalentMacros.triggerApp
 window.SWSE.macros.triggerRenewVisionMacro = LightSideTalentMacros.triggerRenewVisionMacro.bind(LightSideTalentMacros);
 window.SWSE.macros.triggerShareForceSecretMacro = LightSideTalentMacros.triggerShareForceSecretMacro.bind(LightSideTalentMacros);
 window.SWSE.macros.triggerSteelResolveMacro = LightSideTalentMacros.triggerSteelResolveMacro.bind(LightSideTalentMacros);
+window.SWSE.macros.triggerAdeptNegotiatorMacro = LightSideTalentMacros.triggerAdeptNegotiatorMacro.bind(LightSideTalentMacros);
 window.SWSE.macros.canRerollKnowledgeMacro = LightSideTalentMacros.canRerollKnowledgeMacro.bind(LightSideTalentMacros);
 window.SWSE.macros.applyDarkSideScourge = LightSideTalentMacros.applyDarkSideScourge.bind(LightSideTalentMacros);
 window.SWSE.macros.shouldApplyDarkSideScourge = LightSideTalentMacros.shouldApplyDarkSideScourge.bind(LightSideTalentMacros);

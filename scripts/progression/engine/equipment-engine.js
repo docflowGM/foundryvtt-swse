@@ -30,8 +30,10 @@ export class EquipmentEngine {
                 const classIndex = classPack.index.find(c => c.name === className);
                 if (classIndex) {
                     const classDoc = await classPack.getDocument(classIndex._id);
-                    if (classDoc && classDoc.system?.startingCredits) {
-                        credits += classDoc.system.startingCredits;
+                    // NOTE: Compendium may use camelCase 'startingCredits' or snake_case 'starting_credits'
+                    const classCredits = classDoc?.system?.startingCredits || classDoc?.system?.starting_credits;
+                    if (classCredits) {
+                        credits += classCredits;
                     }
                 }
             }
@@ -44,8 +46,10 @@ export class EquipmentEngine {
                 const bgIndex = bgPack.index.find(b => b.name === backgroundName);
                 if (bgIndex) {
                     const bgDoc = await bgPack.getDocument(bgIndex._id);
-                    if (bgDoc && bgDoc.system?.startingCredits) {
-                        credits += bgDoc.system.startingCredits;
+                    // NOTE: Compendium may use camelCase 'startingCredits' or snake_case 'starting_credits'
+                    const bgCredits = bgDoc?.system?.startingCredits || bgDoc?.system?.starting_credits;
+                    if (bgCredits) {
+                        credits += bgCredits;
                     }
                 }
             }
@@ -269,7 +273,7 @@ export class EquipmentEngine {
      * SWSE rule: Strength score * 10 in pounds
      */
     static getCarryingCapacity(actor) {
-        const str = actor.system.abilities?.str?.value || 10;
+        const str = actor.system.attributes?.str?.value || 10;
         return str * 10;
     }
 

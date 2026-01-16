@@ -58,9 +58,14 @@ export async function _onSelectForcePower(event) {
     // Check power level requirement (must have 5 levels in Force-using class per power level)
     const powerLevel = power.system?.powerLevel || 1;
     const requiredLevels = powerLevel * 5;
-    const forceLevels = this.characterData.classes
-      .filter(c => c.system?.forceSensitive === true)
-      .reduce((sum, cls) => sum + (cls.system?.level || cls.level || 1), 0);
+    // Calculate force levels from classes - look up class docs to check force sensitivity
+    const forceLevels = (this.characterData.classes || [])
+      .filter(c => {
+        // Look up the class document to check if it's force-sensitive
+        const classDoc = this._packs?.classes?.find(cd => cd.name === c.name);
+        return classDoc?.system?.forceSensitive === true;
+      })
+      .reduce((sum, cls) => sum + (cls.level || 1), 0);
 
     if (forceLevels < requiredLevels) {
       ui.notifications.warn(
@@ -151,9 +156,14 @@ export async function _getAvailableForcePowers() {
   // For level 1 characters, only show level 1 force powers
   // Higher level force powers require 5 levels per power level in a Force-using class
   const characterLevel = this.characterData.level || 1;
-  const forceLevels = this.characterData.classes
-    .filter(c => c.system?.forceSensitive === true)
-    .reduce((sum, cls) => sum + (cls.system?.level || cls.level || 1), 0);
+  // Calculate force levels from classes - look up class docs to check force sensitivity
+  const forceLevels = (this.characterData.classes || [])
+    .filter(c => {
+      // Look up the class document to check if it's force-sensitive
+      const classDoc = this._packs?.classes?.find(cd => cd.name === c.name);
+      return classDoc?.system?.forceSensitive === true;
+    })
+    .reduce((sum, cls) => sum + (cls.level || 1), 0);
 
   const availablePowers = this._packs.forcePowers.filter(power => {
     const powerLevel = power.system?.powerLevel || 1;

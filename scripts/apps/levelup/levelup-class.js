@@ -98,8 +98,9 @@ export async function getAvailableClasses(actor, pendingData, options = {}) {
 
       // ------------------------------------------------------------
       // VALIDATE CLASS SKILLS
+      // NOTE: Compendium may use camelCase 'classSkills' or snake_case 'class_skills'
       // ------------------------------------------------------------
-      const classSkills = classDoc.system?.class_skills || [];
+      const classSkills = classDoc.system?.classSkills || classDoc.system?.class_skills || [];
 
       for (const skill of classSkills) {
         if (!skillNames.includes(skill)) {

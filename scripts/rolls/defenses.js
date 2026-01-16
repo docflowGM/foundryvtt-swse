@@ -12,16 +12,24 @@
 export function calculateDefense(actor, type) {
   const utils = game.swse.utils;
   const def = actor.system.defenses?.[type];
-  
+
   if (!def) return 10;
 
   const base = 10;
   const lvl = actor.system.level || 1;
-  const abilityScore = actor.system.abilities[def.ability]?.base ?? 10;
+
+  // Use abilityKey if available, otherwise fall back to default abilities by type
+  let abilityKey = def.abilityKey;
+  if (!abilityKey) {
+    const defaultAbilities = { fortitude: 'str', reflex: 'dex', will: 'wis' };
+    abilityKey = defaultAbilities[type] || 'str';
+  }
+
+  const abilityScore = actor.system.attributes[abilityKey]?.base ?? 10;
   const ability = utils.math.calculateAbilityModifier(abilityScore);
   const armor = def.armor || 0;
-  const misc = def.modifier || 0;
-  const cls = def.class || 0;
+  const misc = def.misc || def.modifier || 0;
+  const cls = def.classBonus || def.class || 0;
 
   return utils.math.calculateDefense(
     base,
@@ -60,6 +68,20 @@ export function getDefenseWithCover(actor, type, coverType = "none") {
 }
 
 /**
+ * Calculate flat-footed defense (reflex without DEX bonus)
+ * @param {Actor} actor - The actor
+ * @returns {number} Flat-footed defense value
+ */
+export function calculateFlatFooted(actor) {
+  const base = 10;
+  const lvl = actor.system.level || 1;
+  const cls = actor.system.defenses.reflex?.classBonus || 0;
+  const misc = actor.system.defenses.reflex?.misc || 0;
+
+  return base + Math.floor(lvl / 2) + cls + misc;
+}
+
+/**
  * Calculate damage threshold
  * @param {Actor} actor - The actor
  * @returns {number} Damage threshold value
@@ -68,6 +90,6 @@ export function calculateDamageThreshold(actor) {
   const utils = game.swse.utils;
   const fortitude = calculateDefense(actor, "fortitude");
   const size = actor.system.size || "medium";
-  
+
   return utils.math.calculateDamageThreshold(fortitude, size);
 }

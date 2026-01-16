@@ -107,30 +107,22 @@ function _normalizeClassData(doc) {
   const system = doc.system || {};
 
   // Parse hit die (e.g., "1d10" -> 10)
+  // NOTE: Compendium may use camelCase 'hitDie' or snake_case 'hit_die'
   let hitDie = 6; // Default
-  if (system.hit_die) {
-    const match = system.hit_die.match(/\d+d(\d+)/);
+  const hitDieString = system.hitDie || system.hit_die;
+  if (hitDieString) {
+    const match = hitDieString.match(/\d+d(\d+)/);
     if (match) {
       hitDie = parseInt(match[1], 10);
     }
   }
 
-  // Determine skill points from trained skills
-  // Prestige classes typically have trainedSkills: 0
-  // Base classes should have a positive value
-  let skillPoints = 4; // Default for safety
-  if (system.trainedSkills !== null && system.trainedSkills !== undefined) {
-    skillPoints = parseInt(system.trainedSkills, 10);
-    // Validate: base classes should have skill points > 0
-    if (isNaN(skillPoints)) {
-      swseLogger.warn(`Class Data Loader: Invalid trainedSkills value for ${doc.name}, using default 4`);
-      skillPoints = 4;
-    }
-  } else {
-    // trainedSkills is null/undefined - warn for base classes
-    if (system.base_class === true || system.baseClass === true) {
-      swseLogger.warn(`Class Data Loader: Base class "${doc.name}" has null trainedSkills, using default 4`);
-    }
+  // Determine skill points from trained skills or default
+  // NOTE: Compendium may use camelCase 'trainedSkills' or snake_case 'trained_skills'
+  let skillPoints = 4; // Default
+  const trainedSkillsValue = system.trainedSkills ?? system.trained_skills;
+  if (trainedSkillsValue !== null && trainedSkillsValue !== undefined) {
+    skillPoints = parseInt(trainedSkillsValue, 10) || 4;
   }
 
   // Map babProgression to baseAttackBonus format
@@ -153,15 +145,13 @@ function _normalizeClassData(doc) {
   };
 
   // Parse level progression to extract features by level
-  const levelProgression = system.level_progression || [];
+  // NOTE: Compendium may use camelCase 'levelProgression' or snake_case 'level_progression'
+  const levelProgression = system.levelProgression || system.level_progression || [];
   const featuresByLevel = {};
 
   // Validate that levelProgression is an array
   if (!Array.isArray(levelProgression)) {
-    swseLogger.error(`Class Data Loader: level_progression is not an array for ${doc.name}, forcing to empty array`);
-  } else if (levelProgression.length === 0) {
-    swseLogger.error(`Class Data Loader: level_progression is empty for ${doc.name}! Class will not grant any features.`);
-    ui.notifications?.warn(`Class "${doc.name}" has no level progression data. It will not grant feats, talents, or other features.`, { permanent: false });
+    swseLogger.warn(`Class Data Loader: level_progression is not an array for ${doc.name}`);
   } else {
     for (const levelData of levelProgression) {
       if (!levelData || typeof levelData !== 'object') {
@@ -189,7 +179,9 @@ function _normalizeClassData(doc) {
   }
 
   // Extract starting feats from level 1 or starting_features
-  const startingFeatures = Array.isArray(system.starting_features) ? system.starting_features : [];
+  // NOTE: Compendium may use camelCase 'startingFeatures' or snake_case 'starting_features'
+  const startingFeaturesRaw = system.startingFeatures || system.starting_features;
+  const startingFeatures = Array.isArray(startingFeaturesRaw) ? startingFeaturesRaw : [];
   const level1Data = Array.isArray(levelProgression) ? levelProgression.find(l => l && l.level === 1) : null;
   const level1Features = Array.isArray(level1Data?.features) ? level1Data.features : [];
   const startingFeats = [];
@@ -250,39 +242,21 @@ function _normalizeClassData(doc) {
     [];
 
   if (!Array.isArray(talentTrees)) {
-    swseLogger.error(`Class Data Loader: talentTrees is not an array for ${doc.name}, forcing to empty array`);
+    swseLogger.warn(`Class Data Loader: talentTrees is not an array for ${doc.name}`);
     talentTrees = [];
   }
 
-  // Filter out any null/undefined/empty values
-  talentTrees = talentTrees.filter(tree => tree && typeof tree === 'string' && tree.trim().length > 0);
-
   // If a core/base class has no talent trees, warn – this usually indicates a data issue
   if (talentTrees.length === 0 && !prestigeClass) {
-    swseLogger.error(`Class Data Loader: Base class "${doc.name}" has no talent trees defined! This will prevent talent selection.`);
-    ui.notifications?.warn(`Base class "${doc.name}" is missing talent trees. Character creation may be incomplete.`, { permanent: false });
+    swseLogger.warn(`Class Data Loader: Class "${doc.name}" has no talent trees defined`);
   }
-
-  // Prestige classes can have no talent trees (they might grant other features)
-  if (talentTrees.length === 0 && prestigeClass) {
-    swseLogger.log(`Class Data Loader: Prestige class "${doc.name}" has no talent trees (this may be intentional)`);
-  }
-
-  // Validate and normalize class_skills array
-  let classSkills = system.class_skills || [];
-  if (!Array.isArray(classSkills)) {
-    swseLogger.error(`Class Data Loader: class_skills is not an array for ${doc.name}, forcing to empty array`);
-    classSkills = [];
-  }
-  // Filter out null/undefined/empty strings
-  classSkills = classSkills.filter(skill => skill && typeof skill === 'string' && skill.trim().length > 0);
 
   return {
     name: doc.name,
     hitDie: hitDie,
     skillPoints: skillPoints,
     baseAttackBonus: baseAttackBonus,
-    classSkills: classSkills,
+    classSkills: system.classSkills || system.class_skills || [],
     startingFeats: startingFeats,
     talentTrees: talentTrees,
     defenses: defenses, // Flat defense bonuses (fortitude, reflex, will)

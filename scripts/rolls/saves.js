@@ -20,7 +20,7 @@ export async function rollSave(actor, type) {
   }
   
   const defenseBonus = def.class || 0;
-  const abilityScore = actor.system.abilities[def.ability]?.base || 10;
+  const abilityScore = actor.system.attributes[def.ability]?.base || 10;
   const abilityMod = utils.math.calculateAbilityModifier(abilityScore);
   const halfLvl = utils.math.halfLevel(actor.system.level);
   

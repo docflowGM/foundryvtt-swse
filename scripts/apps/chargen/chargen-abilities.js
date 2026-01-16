@@ -18,6 +18,26 @@ export function _recalcAbilities() {
  * Recalculate defenses (Fortitude, Reflex, Will)
  */
 export function _recalcDefenses() {
+  // Ensure defenses are initialized
+  if (!this.characterData.defenses) {
+    this.characterData.defenses = {
+      fort: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+      reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+      will: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 }
+    };
+  }
+
+  // Ensure each defense type has classBonus
+  if (!this.characterData.defenses.fort) {
+    this.characterData.defenses.fort = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
+  }
+  if (!this.characterData.defenses.reflex) {
+    this.characterData.defenses.reflex = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
+  }
+  if (!this.characterData.defenses.will) {
+    this.characterData.defenses.will = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
+  }
+
   const halfLevel = Math.floor(this.characterData.level / 2);
 
   // Fortitude: 10 + level/2 + CON or STR (whichever is higher) + class bonus + misc
@@ -25,22 +45,22 @@ export function _recalcDefenses() {
     this.characterData.abilities.con.mod || 0,
     this.characterData.abilities.str.mod || 0
   );
-  this.characterData.defenses.fortitude.total =
+  this.characterData.defenses.fort.total =
     10 + halfLevel + fortAbility +
-    this.characterData.defenses.fortitude.classBonus +
-    this.characterData.defenses.fortitude.misc;
+    (this.characterData.defenses.fort.classBonus || 0) +
+    (this.characterData.defenses.fort.misc || 0);
 
   // Reflex: 10 + level/2 + DEX + class bonus + misc
   this.characterData.defenses.reflex.total =
     10 + halfLevel + (this.characterData.abilities.dex.mod || 0) +
-    this.characterData.defenses.reflex.classBonus +
-    this.characterData.defenses.reflex.misc;
+    (this.characterData.defenses.reflex.classBonus || 0) +
+    (this.characterData.defenses.reflex.misc || 0);
 
   // Will: 10 + level/2 + WIS + class bonus + misc
   this.characterData.defenses.will.total =
     10 + halfLevel + (this.characterData.abilities.wis.mod || 0) +
-    this.characterData.defenses.will.classBonus +
-    this.characterData.defenses.will.misc;
+    (this.characterData.defenses.will.classBonus || 0) +
+    (this.characterData.defenses.will.misc || 0);
 }
 
 /**
@@ -117,6 +137,11 @@ export function _bindAbilitiesUI(root) {
       const results = [];
       for (let i = 0; i < 6; i++) {
         const r = await globalThis.SWSE.RollEngine.safeRoll("4d6kh3");
+        if (!r || !r.dice || !r.dice[0] || !r.dice[0].results) {
+          ui.notifications.error("Failed to roll dice. Please try again.");
+          SWSELogger.error("SWSE | Standard roll failed:", r);
+          return;
+        }
         const dice = r.dice[0].results.map(d => ({value: d.result, discarded: d.discarded}));
         results.push({ total: r.total, dice });
       }
@@ -512,7 +537,14 @@ export function _bindAbilitiesUI(root) {
         chargen.characterData.abilities[a].total = total;
         chargen.characterData.abilities[a].mod = mod;
 
-        if (display) display.textContent = `Total: ${total} (Mod: ${mod >= 0 ? "+" : ""}${mod})`;
+        // Build display text with Base, Racial (if non-zero), Total, and Mod
+        let displayText = `Base: ${base}`;
+        if (racial !== 0) {
+          displayText += `, Racial: ${racial >= 0 ? '+' : ''}${racial}`;
+        }
+        displayText += `, Total: ${total} (Mod: ${mod >= 0 ? "+" : ""}${mod})`;
+
+        if (display) display.textContent = displayText;
       });
 
       // Update Second Wind preview
@@ -587,6 +619,12 @@ export function _bindAbilitiesUI(root) {
     } else {
       SWSELogger.warn("SWSE | Point buy button not found in DOM");
     }
+
+    // Wire up free-mode inputs to recalc on change
+    root.querySelectorAll('.free-input').forEach(inp => {
+      inp.addEventListener('input', recalcPreview);
+      inp.addEventListener('change', recalcPreview);
+    });
 
     // Initialize
     switchMode('point-mode');

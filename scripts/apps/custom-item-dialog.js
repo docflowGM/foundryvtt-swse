@@ -204,6 +204,12 @@ export class CustomItemDialog {
               </div>
 
               <div class="form-group">
+                <label>Equipment Bonus:</label>
+                <input type="number" name="equipmentBonus" value="0" placeholder="Equipment bonus to Reflex"/>
+                <small>Equipment bonus (stacks with armor)</small>
+              </div>
+
+              <div class="form-group">
                 <label>Fortitude Bonus:</label>
                 <input type="number" name="fortBonus" value="0" placeholder="Bonus to Fortitude"/>
                 <small>Usually 0</small>
@@ -277,6 +283,7 @@ export class CustomItemDialog {
                 system: {
                   armorType: formData.armorType || "light",
                   defenseBonus: parseInt(formData.defenseBonus, 10) || 0,
+                  equipmentBonus: parseInt(formData.equipmentBonus, 10) || 0,
                   fortBonus: parseInt(formData.fortBonus, 10) || 0,
                   maxDexBonus: maxDexBonus,
                   armorCheckPenalty: parseInt(formData.armorCheckPenalty, 10) || 0,
@@ -836,10 +843,16 @@ export class CustomItemDialog {
                 const description = html.find(`input[name="description-${index}"]`).val();
 
                 const dc = parseInt(dcValue, 10);
-                if (!isNaN(dc) && dc > 0 && effect && effect.trim()) {
+                const hasValidDC = !isNaN(dc) && dc > 0;
+                const hasEffect = effect && effect.trim();
+                const hasDCValue = dcValue && dcValue.trim();
+
+                if (hasValidDC && hasEffect) {
                   dcChart.push({ dc, effect, description: (description && description.trim()) || "" });
-                } else if (effect && effect.trim() && dcValue) {
-                  ui.notifications.warn(`Invalid DC value in power chart row ${index}: DC must be a positive number`);
+                } else if (hasEffect && hasDCValue && !hasValidDC) {
+                  ui.notifications.warn(`Invalid DC value in power chart row: DC must be a positive number`);
+                } else if (hasValidDC && !hasEffect) {
+                  ui.notifications.warn(`Power chart row has DC but no effect description`);
                 }
               });
 

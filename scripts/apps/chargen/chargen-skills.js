@@ -77,6 +77,12 @@ export function _bindSkillsUI(root) {
   const skillsContainer = root.querySelector("#skills-list");
   if (!skillsContainer) return;
 
+  // Ensure skills data is available
+  if (!this._skillsJson || !Array.isArray(this._skillsJson)) {
+    SWSELogger.warn("CharGen | Skills data not loaded, using defaults");
+    this._skillsJson = this._getDefaultSkills();
+  }
+
   // Maximum trained skills based on class + INT + racial bonuses
   const maxTrained = this.characterData.trainedSkillsAllowed || 1;
   let trainedCount = 0;

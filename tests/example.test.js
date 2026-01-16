@@ -19,8 +19,8 @@ describe('SWSE Core Systems', () => {
 
       calculateAbilities(mockActor);
 
-      expect(mockActor.system.abilities.str.total).toBe(18);
-      expect(mockActor.system.abilities.str.mod).toBe(4);
+      expect(mockActor.system.attributes.str.total).toBe(18);
+      expect(mockActor.system.attributes.str.mod).toBe(4);
     });
 
     test('should calculate negative ability modifier', () => {
@@ -32,8 +32,8 @@ describe('SWSE Core Systems', () => {
 
       calculateAbilities(mockActor);
 
-      expect(mockActor.system.abilities.str.total).toBe(8);
-      expect(mockActor.system.abilities.str.mod).toBe(-1);
+      expect(mockActor.system.attributes.str.total).toBe(8);
+      expect(mockActor.system.attributes.str.mod).toBe(-1);
     });
   });
 

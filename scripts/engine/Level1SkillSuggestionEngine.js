@@ -88,7 +88,7 @@ export class Level1SkillSuggestionEngine {
       }
 
       // Get ability scores
-      const abilities = actor.system?.abilities || {};
+      const abilities = actor.system?.attributes || {};
       const classSkills = pendingData?.classSkills || [];
 
       // Find ability modifiers

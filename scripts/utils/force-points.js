@@ -145,7 +145,9 @@ export class ForcePointsUtil {
             icon: '<i class="fas fa-dice"></i>',
             label: 'Spend Force Point',
             callback: html => {
-              const useDarkSide = html.find('[name="useDarkSide"]').is(':checked');
+              const element = html instanceof HTMLElement ? html : html[0];
+              const checkbox = element?.querySelector('[name="useDarkSide"]');
+              const useDarkSide = checkbox?.checked || false;
               resolve({ confirmed: true, useDarkSide });
             }
           },

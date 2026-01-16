@@ -237,7 +237,7 @@ export class StarshipManeuverManager {
    * @returns {Number} WIS modifier
    */
   static getManeuverAbilityModifier(actor) {
-    const wis = actor.system.abilities.wis?.value || 10;
+    const wis = actor.system.attributes.wis?.value || 10;
     return Math.floor((wis - 10) / 2);
   }
 

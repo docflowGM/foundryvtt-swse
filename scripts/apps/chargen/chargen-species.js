@@ -213,8 +213,14 @@ export async function _onConfirmSpecies(event) {
 
   if (!_previewedSpeciesName) {
     SWSELogger.warn("CharGen | No species previewed to confirm");
+    ui.notifications.error("Please select a species first");
     return;
   }
+
+  SWSELogger.log(`CharGen | Confirming species selection: ${_previewedSpeciesName}`);
+
+  // Store the species name BEFORE closing the overlay (which resets _previewedSpeciesName)
+  const speciesNameToSelect = _previewedSpeciesName;
 
   // Close the overlay
   this._onCloseSpeciesOverlay(event);
@@ -222,15 +228,22 @@ export async function _onConfirmSpecies(event) {
   // Create a synthetic event with the species data for _onSelectSpecies
   const syntheticEvent = {
     preventDefault: () => {},
+    stopPropagation: () => {},
     currentTarget: {
       dataset: {
-        species: _previewedSpeciesName
+        species: speciesNameToSelect
       }
     }
   };
 
-  // Call the original species selection handler
-  await this._onSelectSpecies(syntheticEvent);
+  try {
+    // Call the original species selection handler
+    await this._onSelectSpecies(syntheticEvent);
+    SWSELogger.log(`CharGen | Species ${_previewedSpeciesName} selected successfully`);
+  } catch (error) {
+    SWSELogger.error(`CharGen | Error selecting species: ${error.message}`, error);
+    ui.notifications.error(`Failed to select species: ${error.message}`);
+  }
 
   _previewedSpeciesName = null;
 }
@@ -266,6 +279,13 @@ export function _onSpeciesOverlayBackdropClick(event) {
 export async function _onSelectSpecies(event) {
   event.preventDefault();
   const speciesKey = event.currentTarget.dataset.species;
+
+  // Ensure we have a valid species key
+  if (!speciesKey || speciesKey.trim() === "") {
+    SWSELogger.error("CharGen | Species key is empty or missing");
+    ui.notifications.error("Invalid species selected. Please try again.");
+    return;
+  }
 
   SWSELogger.log(`CharGen | Attempting to select species: ${speciesKey}`);
 
@@ -320,7 +340,8 @@ export async function _onSelectSpecies(event) {
 
   SWSELogger.log(`CharGen | Found species: ${speciesDoc.name}`, speciesDoc);
 
-  this.characterData.species = speciesKey;
+  // Set species using the actual species document name to ensure consistency
+  this.characterData.species = speciesDoc.name;
 
   // Apply all species data
   this._applySpeciesData(speciesDoc);
@@ -346,7 +367,7 @@ export function _applySpeciesData(speciesDoc) {
 
   try {
     // 1. Apply ability score modifiers
-    const abilityBonuses = this._parseAbilityString(system.abilities || "None");
+    const abilityBonuses = this._parseAbilityString(system.attributes || "None");
 
     // Validate that bonuses are reasonable (SWSE standard is ±2 to ±4)
     for (const [ability, bonus] of Object.entries(abilityBonuses)) {
@@ -614,7 +635,7 @@ export async function _getRacialBonuses(speciesName) {
   }
 
   // Parse the abilities string to get bonuses
-  return this._parseAbilityString(found.system.abilities || "None");
+  return this._parseAbilityString(found.system.attributes || "None");
 }
 
 /**
@@ -707,6 +728,15 @@ export function _sortSpeciesBySource(species) {
     if (isHumanA && !isHumanB) return -1;
     if (!isHumanA && isHumanB) return 1;
 
+    // PRIORITY 2: Near-Human comes second (but not if it's the actual Near-Human from compendium)
+    // Note: Near-Human builder is injected via template, but compendium also has Near-Human species
+    // We want the manual builder first, so deprioritize compendium Near-Human
+    const isNearHumanA = nameA.toLowerCase() === "near-human";
+    const isNearHumanB = nameB.toLowerCase() === "near-human";
+
+    // Keep Near-Human in list for completeness but let template injection handle display
+    // (The template injects the Near-Human builder button right after Human)
+
     const sourceA = a.system?.source || "Unknown";
     const sourceB = b.system?.source || "Unknown";
 
@@ -714,17 +744,17 @@ export function _sortSpeciesBySource(species) {
     const priorityA = sourcePriority[sourceA] ?? 999;
     const priorityB = sourcePriority[sourceB] ?? 999;
 
-    // PRIORITY 2: Sort by source priority
+    // PRIORITY 3: Sort by source priority
     if (priorityA !== priorityB) {
       return priorityA - priorityB;
     }
 
-    // PRIORITY 3: If same priority (or both unknown), sort by source name alphabetically
+    // PRIORITY 4: If same priority (or both unknown), sort by source name alphabetically
     if (sourceA !== sourceB) {
       return sourceA.localeCompare(sourceB);
     }
 
-    // PRIORITY 4: Within same source, sort by species name alphabetically
+    // PRIORITY 5: Within same source, sort by species name alphabetically
     return nameA.localeCompare(nameB);
   });
 }
@@ -757,7 +787,7 @@ export function _filterSpecies(species, filters) {
     // Parse abilities to check bonuses and penalties
     if (attributeBonus || attributePenalty) {
       // Use shared parsing function to avoid duplication
-      const abilityString = system.abilities || "None";
+      const abilityString = system.attributes || "None";
       const abilities = _parseAbilityString.call(this, abilityString);
 
       // Filter by attribute bonus
@@ -795,7 +825,7 @@ export async function _onSpeciesFilterChange(event) {
   }
 
   // Update filter UI indicators
-  this._updateFilterIndicators();
+  _updateFilterIndicators.call(this);
 
   // Re-render to apply filters
   this.render();
@@ -804,7 +834,7 @@ export async function _onSpeciesFilterChange(event) {
 /**
  * Update visual indicators for active filters
  */
-function _updateFilterIndicators() {
+export function _updateFilterIndicators() {
   const filters = this.characterData.speciesFilters || {};
   const hasActiveFilters = Object.values(filters).some(v => v !== null && v !== '');
 

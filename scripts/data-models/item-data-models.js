@@ -23,7 +23,7 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
         label: "Attack Attribute"
       }),
       range: new fields.StringField({initial: "melee", label: "Range"}),
-      weight: new fields.NumberField({required: true, initial: 1, min: 0}),
+      weight: new fields.NumberField({required: false, initial: 1, min: 0, nullable: true}),
       cost: new fields.NumberField({required: true, initial: 0, min: 0}),
       equipped: new fields.BooleanField({required: true, initial: false}),
       description: new fields.HTMLField({label: "Description"}),
@@ -80,6 +80,23 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
       })
     };
   }
+
+  /**
+   * Migrate legacy data during document initialization
+   * Cleans invalid weight values before validation
+   */
+  static migrateData(source) {
+    // Clean weight before validation - must be a finite number >= 0
+    if (source.weight !== undefined) {
+      const weight = Number(source.weight);
+      if (!Number.isFinite(weight) || weight < 0) {
+        source.weight = 1; // Default to 1 kg
+      } else {
+        source.weight = weight; // Ensure it's a number, not a string
+      }
+    }
+    return super.migrateData(source);
+  }
 }
 
 // Armor Data Model
@@ -99,7 +116,7 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       armorCheckPenalty: new fields.NumberField({required: true, initial: 0, integer: true}),
       fortBonus: new fields.NumberField({required: true, initial: 0, integer: true}),
       speedPenalty: new fields.NumberField({required: true, initial: 0, integer: true}),
-      weight: new fields.NumberField({required: true, initial: 1, min: 0}),
+      weight: new fields.NumberField({required: false, initial: 1, min: 0, nullable: true}),
       cost: new fields.NumberField({required: true, initial: 0, min: 0}),
       equipped: new fields.BooleanField({required: true, initial: false}),
       description: new fields.HTMLField({label: "Description"}),
@@ -148,6 +165,23 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       })
     };
   }
+
+  /**
+   * Migrate legacy data during document initialization
+   * Cleans invalid weight values before validation
+   */
+  static migrateData(source) {
+    // Clean weight before validation - must be a finite number >= 0
+    if (source.weight !== undefined) {
+      const weight = Number(source.weight);
+      if (!Number.isFinite(weight) || weight < 0) {
+        source.weight = 1; // Default to 1 kg
+      } else {
+        source.weight = weight; // Ensure it's a number, not a string
+      }
+    }
+    return super.migrateData(source);
+  }
 }
 
 // Equipment Data Model
@@ -155,7 +189,7 @@ export class EquipmentDataModel extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
     return {
-      weight: new fields.NumberField({required: true, initial: 1, min: 0}),
+      weight: new fields.NumberField({required: false, initial: 1, min: 0, nullable: true}),
       cost: new fields.NumberField({required: true, initial: 0, min: 0}),
       equipped: new fields.BooleanField({required: true, initial: false}),
       description: new fields.HTMLField({label: "Description"}),
@@ -188,6 +222,23 @@ export class EquipmentDataModel extends foundry.abstract.DataModel {
         label: "Restriction Level"
       })
     };
+  }
+
+  /**
+   * Migrate legacy data during document initialization
+   * Cleans invalid weight values before validation
+   */
+  static migrateData(source) {
+    // Clean weight before validation - must be a finite number >= 0
+    if (source.weight !== undefined) {
+      const weight = Number(source.weight);
+      if (!Number.isFinite(weight) || weight < 0) {
+        source.weight = 1; // Default to 1 kg
+      } else {
+        source.weight = weight; // Ensure it's a number, not a string
+      }
+    }
+    return super.migrateData(source);
   }
 }
 
@@ -249,7 +300,7 @@ export class FeatDataModel extends foundry.abstract.DataModel {
     return {
       featType: new fields.StringField({
         initial: "general",
-        choices: ["general", "force", "species"],
+        choices: ["general", "force", "species", "team", "martial_arts", "combat", "tactical", "bonus", "prerequisite", "jedi", "lightsaber"],
         label: "Feat Type"
       }),
       prerequisite: new fields.HTMLField({label: "Prerequisites"}),

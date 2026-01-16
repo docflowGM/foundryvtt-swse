@@ -6,7 +6,7 @@
  <label>Base Attack Bonus</label>
  <input type="number" 
  name="system.bab" 
- value="{{system.bab}}" 
+ value="{{safeNumber system.bab 0}}" 
  data-dtype="Number"
  placeholder="0"/>
  </div>
@@ -15,7 +15,7 @@
  <label>Speed</label>
  <input type="number" 
  name="system.speed" 
- value="{{system.speed}}" 
+ value="{{safeNumber system.speed 6}}" 
  data-dtype="Number"
  placeholder="6"/> squares
  </div>
@@ -25,7 +25,7 @@
  <div class="initiative-value rollable"
  data-roll="1d20+@initiative"
  data-label="Initiative">
- {{numberFormat system.initiative sign=true}}
+ {{numberFormat (safeNumber system.initiative) sign=true}}
  </div>
  </div>
 
@@ -91,7 +91,7 @@
  <div class="weapon-attack rollable"
  data-action="rollAttack"
  data-item-id="{{weapon._id}}">
- {{numberFormat weapon.system.attackBonus sign=true}}
+ {{numberFormat (safeNumber weapon.system.attackBonus) sign=true}}
  </div>
 
  <div class="weapon-damage rollable"
@@ -165,11 +165,22 @@
 
  <h3 class="section-header">Feats</h3>
 
- <div class="feats-list">
+ <div class="feats-grid">
  {{#each feats as |feat|}}
- <div class="feat-row flexrow" data-item-id="{{feat._id}}">
- <img src="{{feat.img}}" width="20" height="20" alt="{{feat.name}}"/>
- <span class="feat-name">{{feat.name}}</span>
+ <div class="feat-card" data-item-id="{{feat._id}}" title="{{feat.name}}">
+ <div class="feat-icon">
+ {{#if feat.img}}
+ <img src="{{feat.img}}" alt="{{feat.name}}" width="48" height="48"/>
+ {{else}}
+ <img src="systems/foundryvtt-swse/assets/feats/feat-generic.svg" alt="Feat Icon" width="48" height="48" class="default-feat-icon"/>
+ {{/if}}
+ </div>
+ <h5>{{feat.name}}</h5>
+ {{#if feat.system.prerequisite}}
+ <p class="feat-prereqs">
+ <i class="fas fa-link"></i> {{feat.system.prerequisite}}
+ </p>
+ {{/if}}
  <div class="item-controls flexrow">
  <a class="item-control item-edit" data-action="edit" title="Edit">
  <i class="fas fa-edit"></i>
@@ -180,11 +191,11 @@
  </div>
  </div>
  {{/each}}
+ </div>
 
  <button class="add-feat" data-action="createItem" data-type="feat">
- <i class="fas fa-star"></i> Add Feat
+ <i class="fas fa-plus"></i> Add Feat
  </button>
- </div>
 
  {{!-- Feat Actions Panel --}}
  {{> "systems/foundryvtt-swse/templates/partials/feat-actions-panel.hbs" featActions=featActions}}

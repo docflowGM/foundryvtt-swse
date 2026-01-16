@@ -33,7 +33,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       trained: new fields.BooleanField({required: true, initial: false}),
       focused: new fields.BooleanField({required: true, initial: false}),
       miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-      selectedAbility: new fields.StringField({required: true, initial: defaultAbility})
+      selectedAbility: new fields.StringField({required: true, initial: defaultAbility}),
+      favorite: new fields.BooleanField({required: true, initial: false})
     };
   }
 
@@ -153,7 +154,14 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       // Background information for Biography tab
       event: new fields.StringField({required: false, initial: ""}),
       profession: new fields.StringField({required: false, initial: ""}),
-      planetOfOrigin: new fields.StringField({required: false, initial: ""})
+      planetOfOrigin: new fields.StringField({required: false, initial: ""}),
+
+      // SWSE-specific system data (mentor survey, build intent, etc.)
+      swse: new fields.SchemaField({
+        mentorSurveyCompleted: new fields.BooleanField({required: true, initial: false}),
+        mentorBuildIntentBiases: new fields.ObjectField({required: true, initial: {}}),
+        surveyResponses: new fields.ObjectField({required: true, initial: {}})
+      })
     };
   }
 
@@ -204,6 +212,20 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       const conditionStep = this.conditionTrack.current || 0;
       const penalties = [0, -1, -2, -5, -10, 0]; // Helpless doesn't have numeric penalty
       this.conditionTrack.penalty = penalties[conditionStep] || 0;
+    }
+
+    // Ensure defenses structure exists
+    if (!this.defenses) {
+      this.defenses = {};
+    }
+    if (!this.defenses.fort) {
+      this.defenses.fort = { classBonus: 0 };
+    }
+    if (!this.defenses.reflex) {
+      this.defenses.reflex = { classBonus: 0 };
+    }
+    if (!this.defenses.will) {
+      this.defenses.will = { classBonus: 0 };
     }
 
     // Calculate armor effects (check penalty and speed reduction) BEFORE skills
@@ -325,7 +347,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     const level = this.heroicLevel ?? this.level ?? 1;
 
     // Ensure individual defense objects exist
-    if (!this.defenses.reflex || !this.defenses.fortitude || !this.defenses.will) {
+    if (!this.defenses.reflex || !this.defenses.fort || !this.defenses.will) {
       SWSELogger.warn('Character defense sub-objects not initialized, skipping defense calculations');
       return;
     }
@@ -424,11 +446,11 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     }
 
     // Get species trait bonus for fortitude
-    const fortSpeciesBonus = this.defenses.fortitude.speciesBonus || 0;
+    const fortSpeciesBonus = this.defenses.fort.speciesBonus || 0;
 
-    this.defenses.fortitude.total = 10 + level + fortAbility + armorFortBonus +
-                                     (this.defenses.fortitude.classBonus || 0) +
-                                     (this.defenses.fortitude.misc || 0) +
+    this.defenses.fort.total = 10 + level + fortAbility + armorFortBonus +
+                                     (this.defenses.fort.classBonus || 0) +
+                                     (this.defenses.fort.misc || 0) +
                                      fortSpeciesBonus + conditionPenalty;
 
     // WILL DEFENSE
@@ -479,8 +501,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       this.bab = 0;
       this.heroicLevel = 0; // Track heroic level separately
       this.nonheroicLevel = 0; // Track nonheroic level separately
-      if (this.defenses) {
-        this.defenses.fortitude.classBonus = 0;
+      if (this.defenses?.fort && this.defenses?.reflex && this.defenses?.will) {
+        this.defenses.fort.classBonus = 0;
         this.defenses.reflex.classBonus = 0;
         this.defenses.will.classBonus = 0;
       }
@@ -542,8 +564,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     this.nonheroicLevel = nonheroicLevel; // Store for reference
 
     // Set defense class bonuses (these get added in parent's _calculateDefenses)
-    if (this.defenses) {
-      this.defenses.fortitude.classBonus = maxFortBonus;
+    if (this.defenses?.fort && this.defenses?.reflex && this.defenses?.will) {
+      this.defenses.fort.classBonus = maxFortBonus;
       this.defenses.reflex.classBonus = maxRefBonus;
       this.defenses.will.classBonus = maxWillBonus;
     }

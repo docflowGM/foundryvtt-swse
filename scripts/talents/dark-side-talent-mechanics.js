@@ -362,7 +362,7 @@ Hooks.on('combatTurnChange', async (combat, combatantData) => {
 /**
  * Hook: When combat ends, clear Wrath damage flags
  */
-Hooks.on('combatEnd', async (combat) => {
+Hooks.on('deleteCombat', async (combat) => {
   await DarkSideTalentMechanics.clearWrathFlagsOnCombatEnd();
 });
 

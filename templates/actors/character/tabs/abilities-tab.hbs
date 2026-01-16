@@ -55,7 +55,7 @@
  <div class="ability-mod rollable"
  data-roll="1d20+@attributes.{{key}}.mod"
  data-label="{{upper key}} Check">
- {{#if (and @root.system.isDroid (eq key 'con'))}}—{{else}}{{numberFormat ability.mod sign=true}}{{/if}}
+ {{#if (and @root.system.isDroid (eq key 'con'))}}—{{else}}{{numberFormat (safeNumber ability.mod) sign=true}}{{/if}}
  </div>
  </div>
  {{/each}}
@@ -63,61 +63,70 @@
 
  <h3 class="section-header">Defenses</h3>
 
- <div class="defenses-detail">
+ <div class="defenses-grid-container">
+ <div class="defenses-header">DEFENSES</div>
+
  {{#each system.defenses as |defense key|}}
- <div class="defense-detail-row">
- <label>{{capitalize key}} Defense</label>
+ <div class="defense-grid-row">
+ <!-- Defense Name Box -->
+ <div class="defense-name-box">{{upper (substring key 0 4)}}</div>
 
- <div class="defense-calculation flexrow">
- <span>10 +</span>
-
- {{#if (eq key "reflex")}}
- <input type="number" 
- name="system.defenses.{{key}}.armor" 
- value="{{defense.armor}}" 
- data-dtype="Number"
- placeholder="Level/Armor"
- title="Armor bonus or Level"/>
- {{else}}
- <span>Level ({{@root.system.level}})</span>
- {{/if}}
-
- <span>+</span>
-
- <span title="Ability Modifier">
- {{#if (eq key "reflex")}}Dex {{numberFormat @root.system.abilities.dex.mod sign=true}}{{/if}}
- {{#if (eq key "fortitude")}}
- {{#if @root.system.isDroid}}
- Str {{numberFormat @root.system.abilities.str.mod sign=true}} <span class="droid-note" title="Droids use STR for Fortitude">(Droid)</span>
- {{else}}
- Con {{numberFormat @root.system.abilities.con.mod sign=true}}
- {{/if}}
- {{/if}}
- {{#if (eq key "will")}}Wis {{numberFormat @root.system.abilities.wis.mod sign=true}}{{/if}}
- </span>
-
- <span>+</span>
-
- <input type="number" 
- name="system.defenses.{{key}}.classBonus" 
- value="{{defense.classBonus}}" 
- data-dtype="Number"
- placeholder="0"
- title="Class Bonus"/>
-
- <span>+</span>
-
- <input type="number" 
- name="system.defenses.{{key}}.misc" 
- value="{{defense.misc}}" 
- data-dtype="Number"
- placeholder="0"
- title="Miscellaneous"/>
-
- <span>=</span>
-
- <div class="defense-total">{{defense.total}}</div>
+ <!-- Base (10) -->
+ <div class="defense-box-group">
+ <input type="number"
+ value="10"
+ disabled
+ class="defense-box-input"/>
+ <label class="defense-box-label">Base</label>
  </div>
+
+ <div class="operator">+</div>
+
+ <!-- Ability Selector Dropdown -->
+ <div class="defense-box-group">
+ <select
+ name="system.defenses.{{key}}.ability"
+ class="defense-box-select">
+ <option value="str" {{#if (eq defense.ability "str")}}selected{{/if}}>STR</option>
+ <option value="dex" {{#if (eq defense.ability "dex")}}selected{{/if}}>DEX</option>
+ <option value="con" {{#if (eq defense.ability "con")}}selected{{/if}}>CON</option>
+ <option value="int" {{#if (eq defense.ability "int")}}selected{{/if}}>INT</option>
+ <option value="wis" {{#if (eq defense.ability "wis")}}selected{{/if}}>WIS</option>
+ <option value="cha" {{#if (eq defense.ability "cha")}}selected{{/if}}>CHA</option>
+ </select>
+ <label class="defense-box-label">Ability</label>
+ </div>
+
+ <div class="operator">+</div>
+
+ <!-- Class Bonus -->
+ <div class="defense-box-group">
+ <input type="number"
+ name="system.defenses.{{key}}.classBonus"
+ value="{{defense.classBonus}}"
+ data-dtype="Number"
+ class="defense-box-input"
+ placeholder="0"/>
+ <label class="defense-box-label">Class</label>
+ </div>
+
+ <div class="operator">+</div>
+
+ <!-- Misc -->
+ <div class="defense-box-group">
+ <input type="number"
+ name="system.defenses.{{key}}.misc"
+ value="{{defense.misc}}"
+ data-dtype="Number"
+ class="defense-box-input"
+ placeholder="0"/>
+ <label class="defense-box-label">Misc</label>
+ </div>
+
+ <div class="operator">=</div>
+
+ <!-- Total -->
+ <div class="defense-total-box">{{defense.total}}</div>
  </div>
  {{/each}}
  </div>

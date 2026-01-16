@@ -211,13 +211,38 @@ export class AbilityRollingController {
     if (this.confirmed) return;
     const die = this.pool.find(d=>d.id===dieId);
     if (!die) return;
+
+    // Find where this die is currently assigned (if anywhere)
+    const oldStat = Object.keys(this.assigned).find(k => this.assigned[k] === dieId);
     const current = this.assigned[stat];
-    this._pushHistory({ action:'assign', stat, dieId, prev: current });
-    // assign (swap if applicable)
-    if (current) {
-      this.assigned[stat] = dieId;
-      // previous die remains in pool and will be visible as assigned elsewhere
+
+    // If assigning a die that's already assigned elsewhere
+    if (oldStat && oldStat !== stat) {
+      if (current) {
+        // Target slot has a die too - swap them
+        this._pushHistory({
+          action: 'swap',
+          stat1: oldStat,
+          stat2: stat,
+          dieId1: dieId,
+          dieId2: current
+        });
+        this.assigned[oldStat] = current;
+        this.assigned[stat] = dieId;
+      } else {
+        // Target slot is empty - just move the die
+        this._pushHistory({
+          action: 'move',
+          fromStat: oldStat,
+          toStat: stat,
+          dieId
+        });
+        this.assigned[oldStat] = null;
+        this.assigned[stat] = dieId;
+      }
     } else {
+      // Normal assignment (die is in pool or same stat)
+      this._pushHistory({ action:'assign', stat, dieId, prev: current });
       this.assigned[stat] = dieId;
     }
     this.render();
@@ -277,6 +302,14 @@ export class AbilityRollingController {
       this.assigned[last.stat] = last.prev || null;
     } else if (last.action === 'unassign') {
       this.assigned[last.stat] = last.dieId;
+    } else if (last.action === 'swap') {
+      // Swap back: restore original dice to their original stats
+      this.assigned[last.stat1] = last.dieId1;
+      this.assigned[last.stat2] = last.dieId2;
+    } else if (last.action === 'move') {
+      // Move back: restore die to original stat
+      this.assigned[last.fromStat] = last.dieId;
+      this.assigned[last.toStat] = null;
     } else if (last.action === 'rerollAll') {
       this.pool = last.prevPool || this.pool;
       this.assigned = last.prevAssigned || { STR:null, DEX:null, CON:null, INT:null, WIS:null, CHA:null };
@@ -357,7 +390,7 @@ export class AbilityRollingController {
       const dieId = this.assigned[k];
       const die = this.pool.find(d=>d.id===dieId);
       const val = die ? die.value : 0;
-      mapping[`system.abilities.${k.toLowerCase()}.value`] = val;
+      mapping[`system.attributes.${k.toLowerCase()}.value`] = val;
     }
     try {
       await this.actor.update(mapping);

@@ -7,6 +7,15 @@ import { registerMetaTuningSettings } from '../engine/MetaTuning.js';
 export function registerSystemSettings() {
   SWSELogger.log("SWSE | Registering settings...");
 
+  game.settings.register('foundryvtt-swse', "enableAutomation", {
+    name: "SWSE.Settings.EnableAutomation.Name",
+    hint: "SWSE.Settings.EnableAutomation.Hint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   game.settings.register('foundryvtt-swse', "autoDamageThreshold", {
     name: "SWSE.Settings.AutoDamageThreshold.Name",
     hint: "SWSE.Settings.AutoDamageThreshold.Hint",
@@ -119,6 +128,16 @@ export function registerSystemSettings() {
   game.settings.register('foundryvtt-swse', "speciesTraitsUpdate", {
     name: "Species Traits Update Version",
     hint: "Tracks the version of the species traits update migration that has been run",
+    scope: "world",
+    config: false,
+    type: String,
+    default: ""
+  });
+
+  // Item weight fix migration tracking
+  game.settings.register('foundryvtt-swse', "fixItemWeightMigration", {
+    name: "Fix Item Weight Migration Version",
+    hint: "Tracks the version of the item weight fix migration that has been run",
     scope: "world",
     config: false,
     type: String,

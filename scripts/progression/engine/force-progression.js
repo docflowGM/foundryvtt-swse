@@ -122,7 +122,7 @@ export class ForceProgressionEngine {
         if (!powerPack) return [];
 
         const allPowers = await powerPack.getDocuments();
-        const availablePowers = allPowers.filter(p => {
+        let availablePowers = allPowers.filter(p => {
             // Filter by power level if specified
             if (filters.maxPowerLevel && p.system?.powerLevel > filters.maxPowerLevel) {
                 return false;
@@ -134,15 +134,17 @@ export class ForceProgressionEngine {
             );
             if (hasIt) return false;
 
-            // Filter by prerequisites if needed
-            if (filters.checkPrerequisites) {
-                const { PrerequisiteValidator } = await import('../../utils/prerequisite-validator.js');
-                const check = PrerequisiteValidator.checkFeatPrerequisites(p, actor);
-                if (!check.valid) return false;
-            }
-
             return true;
         });
+
+        // Filter by prerequisites if needed (must be done separately due to async)
+        if (filters.checkPrerequisites) {
+            const { PrerequisiteValidator } = await import('../../utils/prerequisite-validator.js');
+            availablePowers = availablePowers.filter(p => {
+                const check = PrerequisiteValidator.checkFeatPrerequisites(p, actor);
+                return check.valid;
+            });
+        }
 
         return availablePowers;
     }

@@ -69,6 +69,7 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
     'Extra Second Wind',
     'Extra Rage',
     'Skill Training',
+    'Skill Focus',
     'Linguist',
     'Exotic Weapon Proficiency',
     'Weapon Proficiency (Advanced Melee Weapons)',
@@ -76,10 +77,14 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
     'Weapon Proficiency (Pistols)',
     'Weapon Proficiency (Rifles)',
     'Weapon Proficiency (Simple Weapons)',
+    'Weapon Proficiency',
     'Weapon Focus',
     'Double Attack',
     'Triple Attack',
     'Triple Crit',
+    'Attack Combo (Melee)',
+    'Attack Combo (Ranged)',
+    'Attack Combo (Fire and Strike)',
     'Force Training',
     'Force Regimen Mastery'
   ];

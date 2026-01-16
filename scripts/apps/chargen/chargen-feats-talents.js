@@ -319,7 +319,7 @@ export async function _onSelectTalent(event) {
       return;
     }
 
-    // Check for duplicates for each talent
+    // Check for duplicates and prerequisites for each talent
     for (const talentToAdd of talentsToAdd) {
       const alreadySelected = this.characterData.talents.find(t => t.name === talentToAdd.name || t._id === talentToAdd._id);
       if (alreadySelected) {
@@ -333,6 +333,25 @@ export async function _onSelectTalent(event) {
         );
         if (existsOnActor) {
           ui.notifications.warn(`"${talentToAdd.name}" is already on your character sheet!`);
+          return;
+        }
+      }
+
+      // Check prerequisites for the Block & Deflect component talents (unless in Free Build mode)
+      if (!this.freeBuild) {
+        const tempActor = this.actor || this._createTempActorForValidation();
+        const pendingData = {
+          selectedFeats: this.characterData.feats || [],
+          selectedClass: this.characterData.classes?.[0],
+          selectedSkills: Object.keys(this.characterData.skills || {})
+            .filter(k => this.characterData.skills[k]?.trained)
+            .map(k => ({ key: k })),
+          selectedTalents: this.characterData.talents || []
+        };
+
+        const prereqCheck = PrerequisiteValidator.checkTalentPrerequisites(talentToAdd, tempActor, pendingData);
+        if (!prereqCheck.valid) {
+          ui.notifications.warn(`Cannot select "${talentToAdd.name}" from Block & Deflect: ${prereqCheck.reasons.join(', ')}`);
           return;
         }
       }
@@ -364,17 +383,37 @@ export async function _onSelectTalent(event) {
       }
     }
 
-    // Droids cannot select talents that require Force Sensitivity or Force Points (unless in Free Build mode)
-    if (this.characterData.isDroid && !this.freeBuild) {
-      const prereqs = tal.system?.prerequisites || "";
-      const preqsLower = prereqs.toLowerCase();
-      if (
-        preqsLower.includes("force sensitivity") ||
-        preqsLower.includes("force technique") ||
-        preqsLower.includes("force secret") ||
-        preqsLower.includes("force point")
-      ) {
-        ui.notifications.warn(`Droids cannot select "${tal.name}" because they cannot be Force-sensitive.`);
+    // Check prerequisites (unless in Free Build mode)
+    if (!this.freeBuild) {
+      // Droids cannot select talents that require Force Sensitivity or Force Points
+      if (this.characterData.isDroid) {
+        const prereqs = tal.system?.prerequisites || "";
+        const preqsLower = prereqs.toLowerCase();
+        if (
+          preqsLower.includes("force sensitivity") ||
+          preqsLower.includes("force technique") ||
+          preqsLower.includes("force secret") ||
+          preqsLower.includes("force point")
+        ) {
+          ui.notifications.warn(`Droids cannot select "${tal.name}" because they cannot be Force-sensitive.`);
+          return;
+        }
+      }
+
+      // Check all prerequisites using PrerequisiteValidator
+      const tempActor = this.actor || this._createTempActorForValidation();
+      const pendingData = {
+        selectedFeats: this.characterData.feats || [],
+        selectedClass: this.characterData.classes?.[0],
+        selectedSkills: Object.keys(this.characterData.skills || {})
+          .filter(k => this.characterData.skills[k]?.trained)
+          .map(k => ({ key: k })),
+        selectedTalents: this.characterData.talents || []
+      };
+
+      const prereqCheck = PrerequisiteValidator.checkTalentPrerequisites(tal, tempActor, pendingData);
+      if (!prereqCheck.valid) {
+        ui.notifications.warn(`Cannot select "${tal.name}": ${prereqCheck.reasons.join(', ')}`);
         return;
       }
     }
@@ -414,24 +453,23 @@ export function _getAvailableTalentTrees() {
   } else {
     // Class-restricted mode
     if (!this.characterData.classes || this.characterData.classes.length === 0) {
-      SWSELogger.warn(`CharGen | No classes selected, cannot determine talent trees`);
+      SWSELogger.warn("CharGen | No classes selected - cannot get talent trees");
       return [];
     }
 
-    const className = this.characterData.classes[0].name;
-    const selectedClass = this._packs.classes?.find(c => c.name === className);
+    const selectedClassName = this.characterData.classes[0].name;
+    const selectedClass = this._packs.classes?.find(c => c.name === selectedClassName);
 
     if (!selectedClass) {
-      SWSELogger.error(`CharGen | Class "${className}" not found in loaded class pack!`);
-      ui.notifications.error(`Class "${className}" could not be loaded. Please try closing and reopening character generation.`);
+      SWSELogger.error(`CharGen | Class "${selectedClassName}" not found in packs. Available classes:`,
+        this._packs.classes?.map(c => c.name) || []);
       return [];
     }
 
     trees = getTalentTrees(selectedClass);
 
     if (!trees || trees.length === 0) {
-      SWSELogger.warn(`CharGen | Class "${selectedClass.name}" has no talent trees available`);
-      ui.notifications.warn(`Class "${selectedClass.name}" has no talent trees. You may need to select a different class.`);
+      SWSELogger.warn(`CharGen | No talent trees found for class "${selectedClassName}". Class data:`, selectedClass.system?.talentTrees || selectedClass.system?.talent_trees);
     }
 
     SWSELogger.log(`CharGen | Available talent trees for ${selectedClass.name}:`, trees);
@@ -471,7 +509,7 @@ export function _createTempActorForValidation() {
     system: {
       level: this.characterData.level || 1,
       bab: this.characterData.bab || 0,
-      abilities: foundry.utils.deepClone(this.characterData.abilities),
+      attributes: foundry.utils.deepClone(this.characterData.abilities),
       skills: {},
       defenses: foundry.utils.deepClone(this.characterData.defenses),
       // Include mentor biases for suggestion engine
@@ -501,7 +539,13 @@ export function _createTempActorForValidation() {
             items.push({
               type: 'talent',
               name: talent.name || talent,
-              system: talent.system || {}
+              system: {
+                tree: talent.system?.tree || "Unknown",
+                prerequisite: talent.system?.prerequisite || "",
+                benefit: talent.system?.benefit || "",
+                special: talent.system?.special || "",
+                uses: talent.system?.uses || {current: 0, max: 0, perEncounter: false, perDay: false}
+              }
             });
           }
         }
@@ -539,7 +583,13 @@ export function _createTempActorForValidation() {
             items.push({
               type: 'talent',
               name: talent.name || talent,
-              system: talent.system || {}
+              system: {
+                tree: talent.system?.tree || "Unknown",
+                prerequisite: talent.system?.prerequisite || "",
+                benefit: talent.system?.benefit || "",
+                special: talent.system?.special || "",
+                uses: talent.system?.uses || {current: 0, max: 0, perEncounter: false, perDay: false}
+              }
             });
           }
         }
@@ -556,6 +606,50 @@ export function _createTempActorForValidation() {
         }
 
         return items.some(filterFn);
+      },
+      find: (filterFn) => {
+        const items = [];
+
+        // Add feats
+        if (this.characterData.feats) {
+          for (const feat of this.characterData.feats) {
+            items.push({
+              type: 'feat',
+              name: feat.name || feat,
+              system: feat.system || {}
+            });
+          }
+        }
+
+        // Add talents
+        if (this.characterData.talents) {
+          for (const talent of this.characterData.talents) {
+            items.push({
+              type: 'talent',
+              name: talent.name || talent,
+              system: {
+                tree: talent.system?.tree || "Unknown",
+                prerequisite: talent.system?.prerequisite || "",
+                benefit: talent.system?.benefit || "",
+                special: talent.system?.special || "",
+                uses: talent.system?.uses || {current: 0, max: 0, perEncounter: false, perDay: false}
+              }
+            });
+          }
+        }
+
+        // Add classes
+        if (this.characterData.classes) {
+          for (const cls of this.characterData.classes) {
+            items.push({
+              type: 'class',
+              name: cls.name || cls,
+              system: cls.system || { level: 1, forceSensitive: cls.system?.forceSensitive || false }
+            });
+          }
+        }
+
+        return items.find(filterFn);
       }
     }
   };

@@ -207,7 +207,7 @@ export class SkillUseFilter {
     // Calculate skill modifier
     const halfLevel = Math.floor((actor.system.level || 1) / 2);
     const abilityKey = skill.selectedAbility || 'cha';
-    const abilityScore = actor.system.abilities[abilityKey]?.total || 10;
+    const abilityScore = actor.system.attributes[abilityKey]?.total || 10;
     const abilityMod = Math.floor((abilityScore - 10) / 2);
 
     let modifier = halfLevel + abilityMod;

@@ -59,7 +59,7 @@ export function initializeForcePowerHooks() {
     if (!changes.system?.abilities) return;
 
     // Store old abilities for comparison
-    options.oldAbilities = foundry.utils.deepClone(actor.system.abilities);
+    options.oldAbilities = foundry.utils.deepClone(actor.system.attributes);
   });
 
   Hooks.on('updateActor', async (actor, changes, options, userId) => {
@@ -73,7 +73,7 @@ export function initializeForcePowerHooks() {
     if (ForcePowerManager.countForceTrainingFeats(actor) === 0) return;
 
     const oldAbilities = options.oldAbilities;
-    const newAbilities = actor.system.abilities;
+    const newAbilities = actor.system.attributes;
 
     SWSELogger.log('SWSE | Force Powers | Checking for ability modifier increase');
 

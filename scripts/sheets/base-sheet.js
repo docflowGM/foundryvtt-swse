@@ -49,7 +49,9 @@ export class SWSEActorSheetBase extends BaseSheet {
 
     context.halfLevel = Math.floor((system.level || 1) / 2);
     context.conditionPenalty = actor.conditionPenalty || 0;
-    context.skillActions = CombatActionsMapper.getAllActionsBySkill();
+    context.skillActions = typeof CombatActionsMapper?.getAllActionsBySkill === 'function'
+      ? CombatActionsMapper.getAllActionsBySkill()
+      : {};
 
     return context;
   }
@@ -75,7 +77,7 @@ export class SWSEActorSheetBase extends BaseSheet {
     const topFields = ['level', 'experience', 'credits', 'currentHP', 'maxHP', 'temporaryHP', 'darkSideScore', 'forcePoints', 'destinyPoints'];
     topFields.forEach(f => system[f] = toNum(system[f]));
 
-    if (system.abilities) for (const ab of Object.values(system.abilities)) {
+    if (system.attributes) for (const ab of Object.values(system.attributes)) {
       ab.base = toNum(ab.base, 10);
       ab.racial = toNum(ab.racial, 0);
       ab.misc = toNum(ab.misc, 0);
@@ -163,7 +165,15 @@ export class SWSEActorSheetBase extends BaseSheet {
   // -----------------------------
   async _onAction(event) {
     event.preventDefault();
-    const action = event.currentTarget.dataset.action;
+    // Find the actual element with data-action (event.currentTarget is the listener's element)
+    const actionElement = event.target.closest('[data-action]');
+    const action = actionElement?.dataset?.action;
+
+    if (!action) {
+      SWSELogger.warn('_onAction called but no action found on element');
+      return;
+    }
+
     const fn = this[`_on${action.charAt(0).toUpperCase() + action.slice(1)}`];
 
     if (typeof fn === 'function') return fn.call(this, event);
@@ -177,8 +187,10 @@ export class SWSEActorSheetBase extends BaseSheet {
   // -----------------------------
   async _onItemControl(event) {
     event.preventDefault();
-    const act = event.currentTarget.dataset.action;
-    const li = event.currentTarget.closest('[data-item-id]');
+    // Find the actual element with the action (event.currentTarget is the listener's element)
+    const controlElement = event.target.closest('.item-control');
+    const act = controlElement?.dataset?.action;
+    const li = controlElement?.closest('[data-item-id]');
     const item = this.actor.items.get(li?.dataset.itemId);
 
     if (!item) return;
@@ -195,16 +207,109 @@ export class SWSEActorSheetBase extends BaseSheet {
   // -----------------------------
   async _onItemCreate(event) {
     const type = event.currentTarget.dataset.type;
+
+    if (!type) {
+      ui.notifications.error("Cannot create item: No item type specified");
+      return;
+    }
+
     const cap = type.charAt(0).toUpperCase() + type.slice(1);
+
+    // Initialize system fields based on item type
+    const systemDefaults = this._getSystemDefaults(type);
 
     const itemData = {
       name: `New ${cap}`,
       type,
-      system: {}
+      system: systemDefaults
     };
 
     const [created] = await this.actor.createEmbeddedDocuments('Item', [itemData]);
     return created?.sheet.render(true);
+  }
+
+  // -----------------------------
+  // Get Default System Fields
+  // -----------------------------
+  _getSystemDefaults(type) {
+    const defaults = {
+      weapon: {
+        damage: "1d6",
+        damageType: "kinetic",
+        range: "melee",
+        attackAttribute: "str",
+        attackBonus: 0,
+        weight: 0,
+        cost: 0,
+        properties: [],
+        ammunition: { type: "none", current: 0, max: 0 },
+        upgradeSlots: 0,
+        installedUpgrades: [],
+        description: "",
+        equipped: false
+      },
+      armor: {
+        armorType: "light",
+        defenseBonus: 0,
+        equipmentBonus: 0,
+        fortBonus: 0,
+        maxDexBonus: null,
+        armorCheckPenalty: 0,
+        speedPenalty: 0,
+        weight: 0,
+        cost: 0,
+        upgradeSlots: 0,
+        installedUpgrades: [],
+        description: "",
+        equipped: false
+      },
+      equipment: {
+        weight: 0,
+        cost: 0,
+        upgradeSlots: 0,
+        installedUpgrades: [],
+        description: ""
+      },
+      feat: {
+        featType: "general",
+        prerequisite: "",
+        benefit: "",
+        special: "",
+        normalText: "",
+        bonusFeatFor: [],
+        uses: { current: 0, max: 0, perDay: false }
+      },
+      talent: {
+        tree: "Custom",
+        prerequisite: "",
+        benefit: "",
+        special: "",
+        uses: { current: 0, max: 0, perEncounter: false, perDay: false }
+      },
+      'force-power': {
+        powerLevel: 1,
+        discipline: "telekinetic",
+        useTheForce: 15,
+        time: "Standard Action",
+        range: "6 squares",
+        target: "One target",
+        duration: "Instantaneous",
+        effect: "",
+        special: "",
+        tags: [],
+        dcChart: [],
+        maintainable: false,
+        forcePointCost: 0,
+        forcePointEffect: "",
+        sourcebook: "",
+        page: null,
+        uses: { current: 0, max: 0 },
+        inSuite: false,
+        spent: false
+      }
+    };
+
+    return defaults[type] || {};
   }
 
   // -----------------------------
@@ -216,8 +321,12 @@ export class SWSEActorSheetBase extends BaseSheet {
 
     if (!ds.roll) return;
 
-    const r = globalThis.SWSE.RollEngine.safeRoll(ds.roll, this.actor.getRollData());
-    const roll = await this._safeEvaluateRoll(r);
+    // safeRoll is async and returns an already-evaluated roll
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(ds.roll, this.actor.getRollData());
+    if (!roll) {
+      ui.notifications.error("Roll failed. Check console for details.");
+      return;
+    }
 
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
@@ -239,7 +348,12 @@ export class SWSEActorSheetBase extends BaseSheet {
     if (!skill) return ui.notifications.error(`Skill ${skillKey} missing on actor.`);
 
     const formula = `1d20 + ${skill.total}`;
-    const roll = await this._safeEvaluateRoll(globalThis.SWSE.RollEngine.safeRoll(formula));
+    // safeRoll is async and returns an already-evaluated roll
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(formula);
+    if (!roll) {
+      ui.notifications.error("Roll failed. Check console for details.");
+      return;
+    }
 
     const success = !isNaN(dc) && roll.total >= dc;
 

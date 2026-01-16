@@ -48,6 +48,11 @@ export class ChargenDataCache {
    * @private
    */
   static async _loadCompendia() {
+    SWSELogger.log(`[CACHE-LOAD] ======== COMPENDIUM LOAD START ========`);
+    SWSELogger.log(`[CACHE-LOAD] Checking available packs in game.packs...`);
+    SWSELogger.log(`[CACHE-LOAD] Total packs available: ${game.packs.size}`);
+    SWSELogger.log(`[CACHE-LOAD] SWSE packs:`, Array.from(game.packs.keys()).filter(k => k.includes('swse') || k.includes('SWSE')));
+
     const packNames = {
       species: "foundryvtt-swse.species",
       feats: "foundryvtt-swse.feats",
@@ -64,9 +69,12 @@ export class ChargenDataCache {
 
     for (const [key, packName] of Object.entries(packNames)) {
       try {
+        SWSELogger.log(`[CACHE-LOAD] Loading pack: ${key} = ${packName}`);
         const pack = game.packs.get(packName);
+
         if (!pack) {
-          SWSELogger.error(`ChargenDataCache | Pack not found: ${packName}`);
+          SWSELogger.error(`[CACHE-LOAD] CRITICAL: Pack not found: ${packName}`);
+          SWSELogger.error(`[CACHE-LOAD] Is critical: ${criticalPacks.includes(key)}`);
           packs[key] = [];
           errors.push(key);
           if (criticalPacks.includes(key)) {
@@ -74,9 +82,65 @@ export class ChargenDataCache {
           }
           continue;
         }
-        const docs = await pack.getDocuments();
-        packs[key] = docs.map(d => d.toObject());
-        SWSELogger.log(`ChargenDataCache | Loaded ${docs.length} items from ${packName}`);
+
+        SWSELogger.log(`[CACHE-LOAD] Pack found successfully: ${packName}`);
+
+        // For droids pack (contains actors that may have validation issues), use index-based loading
+        if (key === 'droids') {
+          SWSELogger.log(`[CACHE-LOAD] Loading droids pack (index-based)...`);
+          const index = await pack.getIndex();
+          packs[key] = index;
+          SWSELogger.log(`[CACHE-LOAD] Loaded ${index.length} droids (index-based) from ${packName}`);
+          continue;
+        }
+
+        // For all other packs (items), load full documents
+        SWSELogger.log(`[CACHE-LOAD] Loading documents from ${packName}...`);
+        let docs;
+        try {
+          docs = await pack.getDocuments();
+          SWSELogger.log(`[CACHE-LOAD] Document loading succeeded: ${docs.length} documents found`);
+        } catch (docErr) {
+          SWSELogger.error(`[CACHE-LOAD] Document loading error for ${packName}:`, docErr);
+          SWSELogger.error(`[CACHE-LOAD] Error message: ${docErr.message}`);
+          SWSELogger.error(`[CACHE-LOAD] Retrying with index-based loading...`);
+          // Retry with index as fallback
+          const index = await pack.getIndex();
+          packs[key] = index;
+          SWSELogger.log(`[CACHE-LOAD] Loaded ${index.length} items (index, fallback) from ${packName}`);
+          continue;
+        }
+
+        // Convert documents to plain objects for safer data handling
+        SWSELogger.log(`[CACHE-LOAD] Converting ${docs.length} documents to plain objects...`);
+        packs[key] = docs.map((d, idx) => {
+          try {
+            // Create plain object from document, preserving all properties
+            const obj = {
+              _id: d._id,
+              name: d.name,
+              type: d.type,
+              system: d.system || {},
+              flags: d.flags || {},
+              img: d.img,
+              data: d.data
+            };
+            if (idx < 3) { // Log first 3 items
+              SWSELogger.log(`[CACHE-LOAD] Item ${idx + 1}: ${d.name}`);
+            }
+            return obj;
+          } catch (e) {
+            SWSELogger.warn(`[CACHE-LOAD] Error serializing ${d?.name}:`, e);
+            // Last resort: create minimal object
+            return {
+              _id: d._id,
+              name: d.name,
+              type: d.type,
+              system: d.system || {}
+            };
+          }
+        });
+        SWSELogger.log(`[CACHE-LOAD] Successfully converted ${packs[key].length} items from ${packName}`);
       } catch (err) {
         SWSELogger.error(`ChargenDataCache | Failed to load ${packName}:`, err);
         packs[key] = [];
@@ -88,34 +152,29 @@ export class ChargenDataCache {
     }
 
     if (errors.length > 0) {
-      SWSELogger.warn(`ChargenDataCache | Failed to load: ${errors.join(', ')}`);
+      SWSELogger.warn(`[CACHE-LOAD] Failed to load: ${errors.join(', ')}`);
+    }
+
+    // Summary of loaded packs
+    SWSELogger.log(`[CACHE-LOAD] ======== LOAD SUMMARY ========`);
+    for (const [key, packData] of Object.entries(packs)) {
+      const count = Array.isArray(packData) ? packData.length : 0;
+      SWSELogger.log(`[CACHE-LOAD] ${key}: ${count} items`);
+      if (key === 'classes' && count > 0) {
+        const classNames = packData.slice(0, 5).map(c => c.name).join(', ');
+        SWSELogger.log(`[CACHE-LOAD]   Classes (first 5): ${classNames}${count > 5 ? '...' : ''}`);
+      }
     }
 
     // Block chargen if critical packs are missing
     if (missingCritical.length > 0) {
       const errorMsg = `Character generation cannot continue. Missing critical compendium packs: ${missingCritical.join(', ')}`;
-      ui.notifications.error(errorMsg, { permanent: true });
+      SWSELogger.error(`[CACHE-LOAD] FATAL: ${errorMsg}`);
+      ui.notifications.error(errorMsg);
       throw new Error(errorMsg);
     }
 
-    // Log successful load statistics
-    SWSELogger.log(`ChargenDataCache | Load complete:`, {
-      species: packs.species?.length || 0,
-      classes: packs.classes?.length || 0,
-      feats: packs.feats?.length || 0,
-      talents: packs.talents?.length || 0,
-      droids: packs.droids?.length || 0,
-      forcePowers: packs.forcePowers?.length || 0
-    });
-
-    // Validate that we actually got data in critical packs
-    for (const key of criticalPacks) {
-      if (packs[key] && packs[key].length === 0) {
-        SWSELogger.error(`ChargenDataCache | Critical pack "${key}" loaded but is empty!`);
-        ui.notifications.warn(`The ${key} compendium appears to be empty. Character generation may not work correctly.`);
-      }
-    }
-
+    SWSELogger.log(`[CACHE-LOAD] ======== COMPENDIUM LOAD COMPLETE ========`);
     return packs;
   }
 
@@ -178,13 +237,11 @@ export function _getAvailableSkills() {
 export function _getAvailableTalentTrees() {
   // If no classes selected, return empty array
   if (!this.characterData.classes || this.characterData.classes.length === 0) {
-    SWSELogger.warn('CharGen | Cannot get talent trees: no classes selected');
     return [];
   }
 
   // If classes compendium isn't loaded, return empty array
   if (!this._packs.classes || this._packs.classes.length === 0) {
-    SWSELogger.error('CharGen | Cannot get talent trees: classes compendium not loaded');
     return [];
   }
 
@@ -194,27 +251,15 @@ export function _getAvailableTalentTrees() {
   for (const charClass of this.characterData.classes) {
     const classData = this._packs.classes.find(c => c.name === charClass.name);
 
-    if (!classData) {
-      SWSELogger.error(`CharGen | Class "${charClass.name}" not found in loaded classes pack`);
-      continue;
-    }
-
-    // Use property accessor to get talent trees
-    const trees = getTalentTrees(classData);
-
-    if (!trees || trees.length === 0) {
-      SWSELogger.warn(`CharGen | Class "${charClass.name}" has no talent trees defined`);
-    }
-
-    for (const tree of trees) {
-      if (tree && tree.trim().length > 0) {
+    if (classData) {
+      // Use property accessor to get talent trees
+      const trees = getTalentTrees(classData);
+      for (const tree of trees) {
         talentTreesSet.add(tree);
       }
     }
   }
 
   // Convert Set to Array and return sorted
-  const result = Array.from(talentTreesSet).sort();
-  SWSELogger.log(`CharGen | Available talent trees:`, result);
-  return result;
+  return Array.from(talentTreesSet).sort();
 }

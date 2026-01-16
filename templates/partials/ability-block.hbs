@@ -5,7 +5,7 @@
     {{!-- Ability Label --}}
     <label class="ability-name"
            for="ability-{{key}}-base"
-           title="Modifier: {{numberFormat ability.mod sign=true}}">
+           title="Modifier: {{numberFormat (safeNumber ability.mod) sign=true}}">
       {{upper key}}
     </label>
 
@@ -16,7 +16,7 @@
       <input id="ability-{{key}}-base"
              data-id="ability-{{key}}-base"
              type="number"
-             name="system.abilities.{{key}}.base"
+             name="system.attributes.{{key}}.base"
              value="{{ability.base}}"
              data-dtype="Number"
              inputmode="numeric"

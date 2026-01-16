@@ -16,9 +16,9 @@ export class ForcePowerManager {
     const attribute = game.settings.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
 
     if (attribute === 'charisma') {
-      return actor.system.abilities.cha?.mod || 0;
+      return actor.system.attributes.cha?.mod || 0;
     } else {
-      return actor.system.abilities.wis?.mod || 0;
+      return actor.system.attributes.wis?.mod || 0;
     }
   }
 
@@ -241,44 +241,57 @@ export class ForcePowerManager {
         },
         default: "ok",
         render: (html) => {
+          // Convert to DOM element if needed
+          const element = html instanceof HTMLElement ? html : html[0];
+          if (!element) return;
+
           const updateRemaining = () => {
             const total = Array.from(selectedPowers.values()).reduce((sum, val) => sum + val, 0);
             const remaining = count - total;
-            html.find('.remaining-count').text(remaining);
+            const remainingElement = element.querySelector('.remaining-count');
+            if (remainingElement) remainingElement.textContent = remaining;
 
             // Disable increase buttons if at limit
             const disableIncrease = remaining <= 0;
-            html.find('.power-increase').prop('disabled', disableIncrease);
+            element.querySelectorAll('.power-increase').forEach(btn => {
+              btn.disabled = disableIncrease;
+            });
           };
 
           // Increase button
-          html.find('.power-increase').click((e) => {
-            const powerId = e.currentTarget.dataset.powerId;
-            const current = selectedPowers.get(powerId) || 0;
-            const total = Array.from(selectedPowers.values()).reduce((sum, val) => sum + val, 0);
+          element.querySelectorAll('.power-increase').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const powerId = e.currentTarget.dataset.powerId;
+              const current = selectedPowers.get(powerId) || 0;
+              const total = Array.from(selectedPowers.values()).reduce((sum, val) => sum + val, 0);
 
-            if (total < count) {
-              selectedPowers.set(powerId, current + 1);
-              html.find(`.power-count[data-power-id="${powerId}"]`).text(current + 1);
-              updateRemaining();
-            }
+              if (total < count) {
+                selectedPowers.set(powerId, current + 1);
+                const countElement = element.querySelector(`.power-count[data-power-id="${powerId}"]`);
+                if (countElement) countElement.textContent = current + 1;
+                updateRemaining();
+              }
+            });
           });
 
           // Decrease button
-          html.find('.power-decrease').click((e) => {
-            const powerId = e.currentTarget.dataset.powerId;
-            const current = selectedPowers.get(powerId) || 0;
+          element.querySelectorAll('.power-decrease').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const powerId = e.currentTarget.dataset.powerId;
+              const current = selectedPowers.get(powerId) || 0;
 
-            if (current > 0) {
-              const newCount = current - 1;
-              if (newCount === 0) {
-                selectedPowers.delete(powerId);
-              } else {
-                selectedPowers.set(powerId, newCount);
+              if (current > 0) {
+                const newCount = current - 1;
+                if (newCount === 0) {
+                  selectedPowers.delete(powerId);
+                } else {
+                  selectedPowers.set(powerId, newCount);
+                }
+                const countElement = element.querySelector(`.power-count[data-power-id="${powerId}"]`);
+                if (countElement) countElement.textContent = newCount;
+                updateRemaining();
               }
-              html.find(`.power-count[data-power-id="${powerId}"]`).text(newCount);
-              updateRemaining();
-            }
+            });
           });
 
           updateRemaining();

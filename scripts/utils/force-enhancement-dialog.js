@@ -282,8 +282,12 @@ export class ForceEnhancementDialog {
       secrets: []
     };
 
+    // Convert to DOM element if needed
+    const element = html instanceof HTMLElement ? html : html[0];
+    if (!element) return selected;
+
     // Get all checked technique checkboxes
-    html.find('input[data-type="technique"]:checked').each((i, el) => {
+    element.querySelectorAll('input[data-type="technique"]:checked').forEach(el => {
       const index = parseInt(el.dataset.index, 10);
       if (techniques[index]) {
         selected.techniques.push(techniques[index]);
@@ -291,7 +295,7 @@ export class ForceEnhancementDialog {
     });
 
     // Get all checked secret checkboxes
-    html.find('input[data-type="secret"]:checked').each((i, el) => {
+    element.querySelectorAll('input[data-type="secret"]:checked').forEach(el => {
       const index = parseInt(el.dataset.index, 10);
       if (secrets[index]) {
         selected.secrets.push(secrets[index]);
@@ -306,28 +310,33 @@ export class ForceEnhancementDialog {
    * @private
    */
   static _activateListeners(html, actor) {
+    // Convert to DOM element if needed
+    const element = html instanceof HTMLElement ? html : html[0];
+    if (!element) return;
+
     // Add hover effects for descriptions
-    html.find('.enhancement-item').hover(
-      function() {
-        $(this).addClass('hovered');
-      },
-      function() {
-        $(this).removeClass('hovered');
-      }
-    );
+    element.querySelectorAll('.enhancement-item').forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        item.classList.add('hovered');
+      });
+      item.addEventListener('mouseleave', () => {
+        item.classList.remove('hovered');
+      });
+    });
 
     // Warn if selecting secrets but insufficient resources
-    html.find('input[data-type="secret"]').on('change', (event) => {
-      const checkbox = event.currentTarget;
-      if (checkbox.checked) {
-        const fp = actor.system.forcePoints?.value || 0;
-        const dp = actor.system.destinyPoints?.value || 0;
+    element.querySelectorAll('input[data-type="secret"]').forEach(checkbox => {
+      checkbox.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+          const fp = actor.system.forcePoints?.value || 0;
+          const dp = actor.system.destinyPoints?.value || 0;
 
-        if (fp === 0 && dp === 0) {
-          ui.notifications.warn("You have no Force Points or Destiny Points to spend on Force Secrets!");
-          checkbox.checked = false;
+          if (fp === 0 && dp === 0) {
+            ui.notifications.warn("You have no Force Points or Destiny Points to spend on Force Secrets!");
+            event.currentTarget.checked = false;
+          }
         }
-      }
+      });
     });
   }
 

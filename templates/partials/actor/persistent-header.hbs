@@ -43,80 +43,82 @@
     {{!-- Defenses Grid --}}
     <div class="defenses grid grid-4col">
 
-      {{!-- Reflex --}}
-      <div class="defense reflex-defense">
-        <label class="defense-label">Reflex Defense</label>
-        <div class="defense-value rollable"
-             data-roll="1d20"
-             data-label="Reflex Defense"
-             role="button" tabindex="0"
-             title="Click to roll vs. Reflex">
-          {{system.defenses.reflex.total}}
-        </div>
-
-        <div class="defense-breakdown">
-          {{#if system.armor.equipped}}
-          <span class="breakdown-item">10 + Armor {{system.armor.reflexBonus}}</span>
-          {{else}}
-          <span class="breakdown-item active">10 + Level {{system.level}}</span>
-          {{/if}}
-          <span class="breakdown-item">+ Dex {{numberFormat system.abilities.dex.mod sign=true}}</span>
-        </div>
-      </div>
-
-      {{!-- Flat-Footed --}}
-      <div class="defense flatfooted-defense">
-        <label class="defense-label">Flat-Footed</label>
-        <div class="defense-value rollable"
-             data-roll="1d20"
-             data-label="Flat-Footed Defense"
-             role="button" tabindex="0"
-             title="Click to roll vs. Flat-Footed (Reflex without Dex bonus)">
-          {{system.defenses.flatFooted.total}}
-        </div>
-
-        <div class="defense-breakdown">
-          <span class="breakdown-item">Reflex - Dex</span>
-          <span class="breakdown-item">({{system.defenses.reflex.total}} - {{numberFormat system.abilities.dex.mod sign=false}})</span>
-        </div>
-      </div>
-
       {{!-- Fortitude --}}
       <div class="defense fortitude-defense">
-        <label class="defense-label">Fortitude Defense</label>
+        <div class="defense-header">
+          <label class="defense-label">Fort</label>
+          <select class="defense-ability-select" name="system.defenses.fort.ability" data-defense="fort">
+            <option value="str" {{#if (eq system.defenses.fort.ability "str")}}selected{{/if}}>STR</option>
+            <option value="con" {{#if (eq system.defenses.fort.ability "con")}}selected{{/if}}>CON</option>
+          </select>
+        </div>
+        <div class="defense-base">10</div>
+        <div class="defense-level" title="Character Level / 2">{{system.level}}/2</div>
+        <div class="defense-ability" title="Selected ability modifier">+</div>
+        <div class="defense-class" title="Class bonus"></div>
+        <div class="defense-misc" title="Miscellaneous bonus">M</div>
         <div class="defense-value rollable"
-             data-roll="1d20"
+             data-roll="1d20+{{system.defenses.fort.total}}"
              data-label="Fortitude Defense"
              role="button" tabindex="0"
-             title="Click to roll vs. Fortitude">
-          {{system.defenses.fortitude.total}}
+             title="Roll vs. Fortitude Defense">
+          <strong>{{system.defenses.fort.total}}</strong>
         </div>
+      </div>
 
-        <div class="defense-breakdown">
-          <span class="breakdown-item">10 + Level {{system.level}}</span>
-          {{#if system.isDroid}}
-          <span class="breakdown-item">+ Str {{numberFormat system.abilities.str.mod sign=true}} <span class="droid-note">(Droid)</span></span>
-          {{else}}
-          <span class="breakdown-item">+ Con {{numberFormat system.abilities.con.mod sign=true}}</span>
-          {{/if}}
+      {{!-- Reflex --}}
+      <div class="defense reflex-defense">
+        <div class="defense-header">
+          <label class="defense-label">Ref</label>
+          <span class="defense-ability-fixed" title="Reflex always uses Dexterity">DEX</span>
+        </div>
+        <div class="defense-base">10</div>
+        <div class="defense-level" title="Character Level / 2">{{system.level}}/2</div>
+        <div class="defense-ability" title="Dexterity modifier">+</div>
+        <div class="defense-class" title="Class bonus"></div>
+        <div class="defense-misc" title="Miscellaneous bonus">M</div>
+        <div class="defense-value rollable"
+             data-roll="1d20+{{system.defenses.reflex.total}}"
+             data-label="Reflex Defense"
+             role="button" tabindex="0"
+             title="Roll vs. Reflex Defense">
+          <strong>{{system.defenses.reflex.total}}</strong>
         </div>
       </div>
 
       {{!-- Will --}}
       <div class="defense will-defense">
-        <label class="defense-label">Will Defense</label>
+        <div class="defense-header">
+          <label class="defense-label">Will</label>
+          <span class="defense-ability-fixed" title="Will always uses Wisdom">WIS</span>
+        </div>
+        <div class="defense-base">10</div>
+        <div class="defense-level" title="Character Level / 2">{{system.level}}/2</div>
+        <div class="defense-ability" title="Wisdom modifier">+</div>
+        <div class="defense-class" title="Class bonus"></div>
+        <div class="defense-misc" title="Miscellaneous bonus">M</div>
         <div class="defense-value rollable"
-             data-roll="1d20"
+             data-roll="1d20+{{system.defenses.will.total}}"
              data-label="Will Defense"
              role="button" tabindex="0"
-             title="Click to roll vs. Will">
-          {{system.defenses.will.total}}
+             title="Roll vs. Will Defense">
+          <strong>{{system.defenses.will.total}}</strong>
         </div>
+      </div>
 
-        <div class="defense-breakdown">
-          <span class="breakdown-item">10 + Level {{system.level}}</span>
-          <span class="breakdown-item">+ Wis {{numberFormat system.abilities.wis.mod sign=true}}</span>
+      {{!-- Flat-Footed --}}
+      <div class="defense flatfooted-defense">
+        <div class="defense-header">
+          <label class="defense-label">Flat-Footed</label>
         </div>
+        <div class="defense-value rollable"
+             data-roll="1d20+{{system.defenses.flatFooted.total}}"
+             data-label="Flat-Footed Defense"
+             role="button" tabindex="0"
+             title="Roll vs. Flat-Footed (without DEX bonus)">
+          <strong>{{system.defenses.flatFooted.total}}</strong>
+        </div>
+        <div class="flatfooted-note">Reflex - DEX</div>
       </div>
     </div>
 

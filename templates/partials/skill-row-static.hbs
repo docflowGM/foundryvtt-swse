@@ -1,6 +1,12 @@
 {{!-- Static Skill Row - skill data may be undefined, provide defaults --}}
 <div class="skill-row-container" data-skill="{{key}}">
  <div class="skill-row flexrow" draggable="true">
+ <div class="skill-favorite-btn">
+ <button class="skill-favorite-toggle" data-skill="{{key}}" title="Favorite this skill">
+ <i class="fas fa-star {{#if skill}}{{#if skill.favorite}}active{{/if}}{{/if}}" aria-hidden="true"></i>
+ </button>
+ </div>
+
  <div class="skill-roll-btn">
  <button class="roll-skill skill-use-rollable"
  data-skill="{{key}}"
@@ -12,7 +18,7 @@
  </div>
 
  <div class="skill-total {{#if skill.trained}}trained{{/if}}">
- {{#if skill}}{{numberFormat skill.total decimals=0 sign=true}}{{else}}+0{{/if}}
+ {{#if skill}}{{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}{{else}}+0{{/if}}
  </div>
 
  <div class="skill-name">
@@ -30,7 +36,7 @@
  <option value="wis" {{#if skill}}{{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}{{else}}{{#if (eq defaultAbility 'wis')}}selected{{/if}}{{/if}}>WIS</option>
  <option value="cha" {{#if skill}}{{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}{{else}}{{#if (eq defaultAbility 'cha')}}selected{{/if}}{{/if}}>CHA</option>
  </select>
- <span class="ability-mod">{{#if skill}}{{numberFormat skill.abilityMod decimals=0 sign=true}}{{else}}+0{{/if}}</span>
+ <span class="ability-mod">{{#if skill}}{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}{{else}}+0{{/if}}</span>
  </div>
 
  <div class="skill-half-level">
@@ -84,7 +90,7 @@
  <h4><i class="fas fa-fist-raised" aria-hidden="true"></i> Combat Actions</h4>
  <div class="actions-list">
  {{#each combatActions}}
- <div class="action-item skill-use-skill-use-rollable" data-skill="{{../../key}}" data-action-name="{{name}}" data-dc="{{dc.value}}" data-dc-type="{{dc.type}}" data-action-type="{{actionType}}" data-outcome="{{outcome}}" data-when="{{when}}">
+ <div class="action-item skill-use-rollable" data-skill="{{../../key}}" data-action-name="{{name}}" data-dc="{{dc.value}}" data-dc-type="{{dc.type}}" data-action-type="{{actionType}}" data-outcome="{{outcome}}" data-when="{{when}}">
  <div class="action-header">
  <strong class="action-name"><i class="fas fa-dice-d20" aria-hidden="true"></i> {{name}}</strong>
  <span class="action-type">{{actionType}}</span>
@@ -121,11 +127,17 @@
  {{/if}}
 
  {{#if extraUses}}
- <div class="actions-category">
- <h4><i class="fas fa-book" aria-hidden="true"></i> Other Uses</h4>
- <div class="actions-list">
- {{#each extraUses}}
- <div class="action-item skill-use-skill-use-rollable" data-skill="{{../../key}}" data-action-name="{{name}}" data-dc="{{dc}}" data-effect="{{effect}}">
+ {{#let (filterExtraUsesByTraining extraUses ../../../skill.trained)}}
+ {{#if this}}
+ <div class="actions-category extra-uses-category collapsible">
+ <h4 class="category-header collapsible-toggle" data-skill="{{../../key}}">
+ <i class="fas fa-book" aria-hidden="true"></i> Other Skill Uses <i class="fas fa-arrow-right" aria-hidden="true"></i>
+ <span class="use-count">({{this.length}})</span>
+ <i class="fas fa-chevron-down collapse-icon" aria-hidden="true"></i>
+ </h4>
+ <div class="actions-list collapsible-content collapsed">
+ {{#each this}}
+ <div class="action-item skill-use-rollable" data-skill="{{../../../key}}" data-action-name="{{name}}" data-dc="{{dc}}" data-effect="{{effect}}">
  <div class="action-header">
  <strong class="action-name"><i class="fas fa-dice-d20" aria-hidden="true"></i> {{name}}</strong>
  {{#if time}}
@@ -145,6 +157,8 @@
  {{/each}}
  </div>
  </div>
+ {{/if}}
+ {{/let}}
  {{/if}}
 
  </div>

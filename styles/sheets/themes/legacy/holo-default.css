@@ -1,0 +1,20 @@
+/* ============================================================================
+   FROZEN LEGACY CSS - DO NOT EDIT
+
+   This theme file has been superseded by the new theme system in:
+   - styles/core/variables.css (theme variants via [data-theme] selectors)
+
+   Date frozen: 2026-01-15
+   ============================================================================ */
+
+/* styles/sheets/themes/holo-default.css (LEGACY) */
+.swse-app-theme-holo-default .sheet {
+  --swse-bg: rgba(10,14,18,0.6);
+  --swse-panel-bg: rgba(18,22,28,0.45);
+  --swse-accent: rgba(38,160,255,0.85);
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+.swse-app-theme-holo-default .sheet-body {
+  backdrop-filter: blur(6px);
+  color: #dfefff;
+}

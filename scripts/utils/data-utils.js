@@ -25,7 +25,7 @@ export function mergeObjects(target, source) {
 /**
  * Get nested property from object using dot notation
  * @param {object} obj - Object to search
- * @param {string} path - Property path (e.g., "system.abilities.str")
+ * @param {string} path - Property path (e.g., "system.attributes.str")
  * @returns {*} Property value or undefined
  */
 export function getNestedProperty(obj, path) {
@@ -110,4 +110,59 @@ export function uniqueBy(array, key) {
         seen.add(value);
         return true;
     });
+}
+
+/**
+ * Extract Roman numeral level from feat name
+ * Handles feats like "Martial Arts I", "Dual Weapon Mastery II", etc.
+ * @param {string} featName - The feat name
+ * @returns {object} Object with level number, roman numeral, and base name
+ *   e.g., { level: 1, roman: "I", baseName: "Martial Arts" }
+ *   Returns { level: 0, roman: "", baseName: "Martial Arts" } if no level found
+ */
+export function extractFeatLevel(featName) {
+    const romanNumerals = [
+        { numeral: 'IV', value: 4 },  // Check IV before I to avoid partial matches
+        { numeral: 'IX', value: 9 },
+        { numeral: 'XL', value: 40 },
+        { numeral: 'XC', value: 90 },
+        { numeral: 'CD', value: 400 },
+        { numeral: 'CM', value: 900 },
+        { numeral: 'I', value: 1 },
+        { numeral: 'V', value: 5 },
+        { numeral: 'X', value: 10 },
+        { numeral: 'L', value: 50 },
+        { numeral: 'C', value: 100 },
+        { numeral: 'D', value: 500 },
+        { numeral: 'M', value: 1000 }
+    ];
+
+    // Match pattern: word(s) followed by space and Roman numerals at end
+    const match = featName.match(/^(.+?)\s+([IVX]+)$/);
+
+    if (!match) {
+        return { level: 0, roman: "", baseName: featName };
+    }
+
+    const baseName = match[1].trim();
+    const romanStr = match[2];
+
+    // Validate and convert Roman numeral to integer
+    let value = 0;
+    let tempRoman = romanStr;
+
+    for (const { numeral, value: val } of romanNumerals) {
+        while (tempRoman.startsWith(numeral)) {
+            value += val;
+            tempRoman = tempRoman.substring(numeral.length);
+        }
+    }
+
+    // If tempRoman is empty, it was a valid Roman numeral
+    if (tempRoman === '' && value > 0) {
+        return { level: value, roman: romanStr, baseName };
+    }
+
+    // Not a valid Roman numeral, treat as part of the name
+    return { level: 0, roman: "", baseName: featName };
 }

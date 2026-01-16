@@ -2,6 +2,126 @@ import { SWSELogger } from '../utils/logger.js';
 
 export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
+  static defineSchema() {
+    if (!foundry?.data?.fields) {
+      throw new Error('Foundry data fields not available - system initialization error');
+    }
+    const fields = foundry.data.fields;
+
+    // Base schema with common actor fields
+    return {
+      // Abilities
+      abilities: new fields.SchemaField({
+        str: new fields.SchemaField({
+          base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          racial: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          misc: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          mod: new fields.NumberField({ required: true, initial: 0, integer: true })
+        }),
+        dex: new fields.SchemaField({
+          base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          racial: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          misc: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          mod: new fields.NumberField({ required: true, initial: 0, integer: true })
+        }),
+        con: new fields.SchemaField({
+          base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          racial: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          misc: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          mod: new fields.NumberField({ required: true, initial: 0, integer: true })
+        }),
+        int: new fields.SchemaField({
+          base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          racial: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          misc: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          mod: new fields.NumberField({ required: true, initial: 0, integer: true })
+        }),
+        wis: new fields.SchemaField({
+          base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          racial: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          misc: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          mod: new fields.NumberField({ required: true, initial: 0, integer: true })
+        }),
+        cha: new fields.SchemaField({
+          base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          racial: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          misc: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          mod: new fields.NumberField({ required: true, initial: 0, integer: true })
+        })
+      }),
+
+      // Condition Track
+      conditionTrack: new fields.SchemaField({
+        current: new fields.NumberField({ required: true, initial: 0, min: 0, max: 5, integer: true }),
+        persistent: new fields.BooleanField({ required: true, initial: false }),
+        penalty: new fields.NumberField({ required: true, initial: 0, integer: true })
+      }),
+
+      // Defenses
+      defenses: new fields.SchemaField({
+        reflex: new fields.SchemaField({
+          total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          armor: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          classBonus: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          misc: new fields.SchemaField({
+            auto: new fields.SchemaField({}),
+            user: new fields.SchemaField({})
+          }),
+          ability: new fields.StringField({ required: true, initial: 'dex' }),
+          source: new fields.StringField({ required: false, initial: 'level' }),
+          level: new fields.NumberField({ required: false, initial: 0, integer: true })
+        }),
+        fort: new fields.SchemaField({
+          total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          classBonus: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          misc: new fields.SchemaField({
+            auto: new fields.SchemaField({}),
+            user: new fields.SchemaField({})
+          }),
+          ability: new fields.StringField({ required: true, initial: 'str' }),
+          level: new fields.NumberField({ required: false, initial: 0, integer: true })
+        }),
+        will: new fields.SchemaField({
+          total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          classBonus: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          misc: new fields.SchemaField({
+            auto: new fields.SchemaField({}),
+            user: new fields.SchemaField({})
+          }),
+          ability: new fields.StringField({ required: true, initial: 'wis' }),
+          level: new fields.NumberField({ required: false, initial: 0, integer: true })
+        }),
+        flatFooted: new fields.SchemaField({
+          total: new fields.NumberField({ required: true, initial: 10, integer: true })
+        })
+      }),
+
+      // Level
+      level: new fields.NumberField({
+        required: true,
+        initial: 1,
+        min: 1,
+        max: 20,
+        integer: true
+      }),
+
+      // Skills (base empty, will be extended in child classes)
+      skills: new fields.SchemaField({}),
+
+      // Size
+      size: new fields.StringField({ required: false, initial: "medium" }),
+
+      // Speed
+      speed: new fields.NumberField({ required: true, initial: 6, min: 0 })
+    };
+  }
+
   /* -------------------------------------------------------------------------- */
   /* DERIVED DATA (CORE RULE ENGINE)                                            */
   /* -------------------------------------------------------------------------- */
@@ -49,7 +169,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
     const system = this;
 
     // --- STR replaces CON (except HP)
-    system.abilities.con.mod = system.abilities.str.mod;
+    system.attributes.con.mod = system.attributes.str.mod;
 
     // --- Locomotion speed
     if (system.activeLocomotion && system.locomotion?.length) {
@@ -84,7 +204,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
     // Clamp Dex
     if (maxDex !== null) {
-      system.abilities.dex.mod = Math.min(system.abilities.dex.mod, maxDex);
+      system.attributes.dex.mod = Math.min(system.attributes.dex.mod, maxDex);
     }
 
     // Apply ACP to skills + attacks
@@ -114,10 +234,10 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       this.defenses.reflex.classBonus +
       this.defenses.reflex.misc + cond;
 
-    this.defenses.fortitude.total =
+    this.defenses.fort.total =
       10 + lvl + this.abilities.str.mod +
-      this.defenses.fortitude.classBonus +
-      this.defenses.fortitude.misc + cond;
+      this.defenses.fort.classBonus +
+      this.defenses.fort.misc + cond;
 
     this.defenses.will.total =
       10 + lvl + this.abilities.wis.mod +
@@ -151,7 +271,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
   /* -------------------------------------------------------------------------- */
 
   _calculateDamageThreshold() {
-    this.damageThreshold = this.defenses.fortitude.total;
+    this.damageThreshold = this.defenses.fort.total;
   }
 
   _calculateInitiative() {

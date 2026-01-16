@@ -171,6 +171,13 @@ export class AttributeIncreaseHandler {
   static async _handleConstitutionIncrease(actor, modIncrease) {
     if (modIncrease <= 0) return;
 
+    // Droids don't have Constitution, skip HP gain
+    const isDroid = actor.system.isDroid || false;
+    if (isDroid) {
+      swseLogger.log('SWSE | Constitution increase: Skipped for droid (no CON)');
+      return;
+    }
+
     // Get heroic level (character levels, not including non-heroic levels)
     const heroicLevel = this._getHeroicLevel(actor);
     const hpGain = modIncrease * heroicLevel;

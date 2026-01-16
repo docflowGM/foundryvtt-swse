@@ -292,10 +292,10 @@ export class TemplateCharacterCreator extends Application {
         name: name,
         type: 'character',
         system: {
-          level: parseInt(template.level, 10) || 1,
+          level: Number.isFinite(parseInt(template.level, 10)) ? parseInt(template.level, 10) : 1,
           race: template.species,
-          credits: parseInt(template.credits, 10) || 1000,
-          speed: parseInt(template.speed, 10) || 6  // Ensure speed is an integer
+          credits: Number.isFinite(parseInt(template.credits, 10)) ? parseInt(template.credits, 10) : 1000,
+          speed: Number.isFinite(parseInt(template.speed, 10)) ? parseInt(template.speed, 10) : 6
         }
       };
 
@@ -310,7 +310,7 @@ export class TemplateCharacterCreator extends Application {
       // Apply ability scores
       const abilityUpdates = {};
       for (const [ability, value] of Object.entries(template.abilityScores)) {
-        abilityUpdates[`system.abilities.${ability}.base`] = parseInt(value, 10) || 10;
+        abilityUpdates[`system.attributes.${ability}.base`] = parseInt(value, 10) || 10;
       }
 
       // Apply species bonuses
@@ -368,7 +368,7 @@ export class TemplateCharacterCreator extends Application {
     const classSkills = await this._getClassSkills(template.class);
 
     // Calculate available skill points (Int mod + class bonus)
-    const intMod = Math.floor((actor.system.abilities.int.total - 10) / 2);
+    const intMod = Math.floor((actor.system.attributes.int.total - 10) / 2);
     const classSkillPoints = this._getClassSkillPoints(template.class);
     const totalSkillPoints = Math.max(1, intMod + classSkillPoints);
 
@@ -704,7 +704,7 @@ export class TemplateCharacterCreator extends Application {
       if (speciesData.abilityModifiers) {
         for (const [ability, value] of Object.entries(speciesData.abilityModifiers)) {
           if (value !== 0) {
-            abilityUpdates[`system.abilities.${ability}.racial`] = value;
+            abilityUpdates[`system.attributes.${ability}.racial`] = value;
           }
         }
       }

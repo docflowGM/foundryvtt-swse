@@ -151,7 +151,7 @@ export class AttributeIncreaseSuggestionEngine {
         return [];
       }
 
-      const abilities = actor.system?.abilities || {};
+      const abilities = actor.system?.attributes || {};
       const buildIntent = contextOptions.buildIntent || {};
       const trainedSkills = new Set(pendingData?.trainedSkills || []);
       const classLevels = actor.system?.progression?.classLevels || [];

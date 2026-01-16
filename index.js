@@ -84,6 +84,7 @@ import { perfMonitor, debounce, throttle } from './scripts/utils/performance-uti
 import { cacheManager } from './scripts/core/cache-manager.js';
 import { dataPreloader } from './scripts/core/data-preloader.js';
 import { lazyLoader } from './scripts/core/lazy-loader.js';
+import { EffectSanitizer } from './scripts/core/effect-sanitizer.js';
 
 import { SWSE_SKILLS, getSkillConfig, getSkillsArray } from './scripts/config/skills.js';
 import { SWSE } from './scripts/core/config.js';
@@ -143,8 +144,10 @@ import './scripts/migration/fix-defense-schema.js';
 import './scripts/migration/fix-actor-size.js';
 import './scripts/migration/actor-validation-migration.js';
 import './scripts/migration/item-validation-migration.js';
+import './scripts/migration/fix-item-weight.js';
 import './scripts/migration/populate-force-compendiums.js';
 import './scripts/migration/update-species-traits-migration.js';
+import './scripts/migration/fix-talent-effect-validation.js';
 
 import { DamageSystem } from './scripts/combat/damage-system.js';
 import { SWSECombatAutomation } from './scripts/combat/combat-automation.js';
@@ -154,8 +157,35 @@ import { SWSECombat } from './scripts/combat/systems/enhanced-combat-system.js';
 import { SWSEGrappling } from './scripts/combat/systems/grappling-system.js';
 import { FeintMechanics } from './scripts/combat/feint-mechanics.js';
 import { SaberLockMechanics } from './scripts/combat/saber-lock-mechanics.js';
-import { DeceptionUses } from './scripts/skills/deception-uses.js';
+import {
+  DeceptionUses,
+  AcrobaticsUses,
+  ClimbUses,
+  EnduranceUses,
+  GatherInformationUses,
+  JumpUses,
+  KnowledgeUses,
+  MechanicsUses,
+  PerceptionUses,
+  PersuasionUses,
+  PilotUses,
+  RideUses
+} from './scripts/skills/skill-uses.js';
 import { SWSEVehicleCombat } from './scripts/combat/systems/vehicle-combat-system.js';
+import ScoutTalentMechanics from './scripts/talents/scout-talent-mechanics.js';
+import { ScoutTalentMacros } from './scripts/talents/scout-talent-macros.js';
+import LightSideTalentMechanics from './scripts/talents/light-side-talent-mechanics.js';
+import { LightSideTalentMacros } from './scripts/talents/light-side-talent-macros.js';
+import DarkSideTalentMechanics from './scripts/talents/dark-side-talent-mechanics.js';
+import { DarkSideTalentMacros } from './scripts/talents/dark-side-talent-macros.js';
+import NobleTalentMechanics from './scripts/talents/noble-talent-mechanics.js';
+import { NobleTalentMacros } from './scripts/talents/noble-talent-macros.js';
+import ScoundrelTalentMechanics from './scripts/talents/scoundrel-talent-mechanics.js';
+import { ScoundrelTalentMacros } from './scripts/talents/scoundrel-talent-macros.js';
+import SoldierTalentMechanics from './scripts/talents/soldier-talent-mechanics.js';
+import { SoldierTalentMacros } from './scripts/talents/soldier-talent-macros.js';
+import PrestigeTalentMechanics from './scripts/talents/prestige-talent-mechanics.js';
+import { PrestigeTalentMacros } from './scripts/talents/prestige-talent-macros.js';
 
 import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
 import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js';
@@ -244,11 +274,15 @@ Hooks.once("init", async function () {
     registerHouseruleSettings();
 
     /* ---------------------------------------------------------
+       Theme System Initialization (Early)
+       --------------------------------------------------------- */
+    ThemeLoader.init();
+
+    /* ---------------------------------------------------------
        Hook Registration
        --------------------------------------------------------- */
     registerInitHooks();
     registerDestinyHooks();
-    registerLevelUpSheetHooks();
     registerKeybindings();
 
     /* ---------------------------------------------------------
@@ -280,22 +314,32 @@ Hooks.once("init", async function () {
     CONFIG.Combatant.documentClass = SWSECombatant;
 
     /* ---------------------------------------------------------
-       SWSE Config Setup
+       SWSE Config Setup (must be early to prevent undefined errors)
        --------------------------------------------------------- */
     CONFIG.SWSE = SWSE;
 
     /* ---------------------------------------------------------
+       Register Flag Scopes (Foundry v13+)
+       --------------------------------------------------------- */
+    if (CONFIG.Item?.flagScopes) {
+        CONFIG.Item.flagScopes.add('swse');
+    }
+    if (CONFIG.Actor?.flagScopes) {
+        CONFIG.Actor.flagScopes.add('swse');
+    }
+
+    /* ---------------------------------------------------------
        Sheet Registration
        --------------------------------------------------------- */
-    Actors.unregisterSheet("core", ActorSheet);
-    Items.unregisterSheet("core", ItemSheet);
+    foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
+    foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
 
-    Actors.registerSheet("swse", SWSECharacterSheet, { types: ["character"], makeDefault: true });
-    Actors.registerSheet("swse", SWSENPCSheet, { types: ["npc"], makeDefault: true });
-    Actors.registerSheet("swse", SWSEDroidSheet, { types: ["droid"], makeDefault: true });
-    Actors.registerSheet("swse", SWSEVehicleSheet, { types: ["vehicle"], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet("swse", SWSECharacterSheet, { types: ["character"], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet("swse", SWSENPCSheet, { types: ["npc"], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet("swse", SWSEDroidSheet, { types: ["droid"], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet("swse", SWSEVehicleSheet, { types: ["vehicle"], makeDefault: true });
 
-    Items.registerSheet("swse", SWSEItemSheet, {
+    foundry.documents.collections.Items.registerSheet("swse", SWSEItemSheet, {
         types: ["weapon","armor","equipment","feat","talent","forcepower","force-power","class","species","talenttree","skill","combat-action","condition"],
         makeDefault: true
     });
@@ -310,7 +354,32 @@ Hooks.once("init", async function () {
         perfMonitor,
         FeintMechanics,
         SaberLockMechanics,
-        DeceptionUses
+        DeceptionUses,
+        AcrobaticsUses,
+        ClimbUses,
+        EnduranceUses,
+        GatherInformationUses,
+        JumpUses,
+        KnowledgeUses,
+        MechanicsUses,
+        PerceptionUses,
+        PersuasionUses,
+        PilotUses,
+        RideUses,
+        ScoutTalentMechanics,
+        ScoutTalentMacros,
+        LightSideTalentMechanics,
+        LightSideTalentMacros,
+        DarkSideTalentMechanics,
+        DarkSideTalentMacros,
+        NobleTalentMechanics,
+        NobleTalentMacros,
+        ScoundrelTalentMechanics,
+        ScoundrelTalentMacros,
+        SoldierTalentMechanics,
+        SoldierTalentMacros,
+        PrestigeTalentMechanics,
+        PrestigeTalentMacros
     };
 });
 
@@ -350,7 +419,6 @@ Hooks.once("ready", async function () {
     if (game.user.isGM) await WorldDataLoader.autoLoad();
 
     SWSECombat.init();
-    SWSECombatIntegration.init();
     SWSEActiveEffectsManager.init();
     SWSEGrappling.init();
     SWSEVehicleCombat.init();
@@ -360,7 +428,6 @@ Hooks.once("ready", async function () {
 
     RulesEngine.init();
     Upkeep.init();
-    ThemeLoader.init();
     initializeUtils();
 
     try {

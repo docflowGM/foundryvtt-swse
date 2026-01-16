@@ -1007,7 +1007,7 @@ function _validateDroidChassis(droid) {
   // Check required ability scores
   const requiredAbilities = ['str', 'dex', 'int', 'wis', 'cha'];
   for (const ability of requiredAbilities) {
-    if (!droid.system.abilities || !(ability in droid.system.abilities)) {
+    if (!droid.system.attributes || !(ability in droid.system.attributes)) {
       missingFields.push(`abilities.${ability}`);
     }
   }
@@ -1057,8 +1057,8 @@ export async function _importDroidType(droid) {
   }
 
   // Apply droid's ability scores
-  if (droid.system && droid.system.abilities) {
-    for (const [ability, value] of Object.entries(droid.system.abilities)) {
+  if (droid.system && droid.system.attributes) {
+    for (const [ability, value] of Object.entries(droid.system.attributes)) {
       if (this.characterData.abilities[ability]) {
         // Handle both structured abilities (objects with .base) and plain numbers
         const baseScore = typeof value === 'object' ? (value.base ?? value.total ?? 10) : (value ?? 10);

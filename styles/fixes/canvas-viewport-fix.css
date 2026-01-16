@@ -1,21 +1,19 @@
-
 /* ================================================================
-   OVERRIDE FIX — Prevent High Contrast theme from collapsing viewport
+   Canvas Viewport Fix
+
+   NOTE: Global html/body rules REMOVED - they were breaking Foundry's
+   native layout by setting overflow:visible which allows unwanted
+   scrolling and breaks the fixed viewport positioning.
+
+   Foundry VTT handles its own viewport management. Do not override
+   html, body, or #board with global rules.
    ================================================================ */
 
-html, body {
-    height: 100% !important;
-    min-height: 100% !important;
-    display: block !important;
-    overflow: visible !important;
-}
-
-/* Prevent any layout collapse on Foundry root */
-#board,
-#ui-top,
-#ui-bottom,
-#ui-left,
-#ui-right {
-    min-height: 100% !important;
-    display: block !important;
-}
+/*
+ * If specific SWSE application windows need viewport fixes,
+ * namespace them properly:
+ *
+ * .swse-app-app .some-element {
+ *     ... safe rules here ...
+ * }
+ */

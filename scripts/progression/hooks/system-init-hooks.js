@@ -18,6 +18,11 @@ import { SkillNormalizer } from '../skills/skill-normalizer.js';
 import { FeatRegistry } from '../feats/feat-registry.js';
 import { FeatNormalizer } from '../feats/feat-normalizer.js';
 
+// NEW: SSOT Data Layer
+import { TalentTreeDB } from '../../data/talent-tree-db.js';
+import { ClassesDB } from '../../data/classes-db.js';
+import { TalentDB } from '../../data/talent-db.js';
+
 export const SystemInitHooks = {
 
     /**
@@ -43,6 +48,9 @@ export const SystemInitHooks = {
             SWSELogger.log('='.repeat(50));
             SWSELogger.log('SWSE Progression Engine: System Initialization');
             SWSELogger.log('='.repeat(50));
+
+            // Step 0: Build SSOT Data Registries (CRITICAL - must run first)
+            await this._buildDataRegistries();
 
             // Step 1: Build feature index from compendiums
             await this._buildFeatureIndex();
@@ -73,6 +81,47 @@ export const SystemInitHooks = {
 
         } catch (err) {
             SWSELogger.error('System initialization failed:', err);
+        }
+    },
+
+    /**
+     * Step 0: Build SSOT Data Registries
+     * This MUST run before any other game data normalization.
+     * Order matters: TalentTreeDB -> ClassesDB -> TalentDB
+     * @private
+     */
+    async _buildDataRegistries() {
+        try {
+            SWSELogger.log('Building SSOT data registries...');
+
+            // 1. Build TalentTreeDB (required by ClassesDB and TalentDB)
+            SWSELogger.log('  - Building TalentTreeDB...');
+            const treeSuccess = await TalentTreeDB.build();
+            if (!treeSuccess) {
+                SWSELogger.error('TalentTreeDB build failed');
+                return;
+            }
+
+            // 2. Build ClassesDB (requires TalentTreeDB for linking talent trees)
+            SWSELogger.log('  - Building ClassesDB...');
+            const classSuccess = await ClassesDB.build(TalentTreeDB);
+            if (!classSuccess) {
+                SWSELogger.error('ClassesDB build failed');
+                return;
+            }
+
+            // 3. Build TalentDB (requires TalentTreeDB for linking talents to trees)
+            SWSELogger.log('  - Building TalentDB...');
+            const talentSuccess = await TalentDB.build(TalentTreeDB);
+            if (!talentSuccess) {
+                SWSELogger.error('TalentDB build failed');
+                return;
+            }
+
+            SWSELogger.log(`SSOT registries built: ${TalentTreeDB.count()} trees, ${ClassesDB.count()} classes, ${TalentDB.count()} talents`);
+
+        } catch (err) {
+            SWSELogger.error('Failed to build SSOT registries:', err);
         }
     },
 

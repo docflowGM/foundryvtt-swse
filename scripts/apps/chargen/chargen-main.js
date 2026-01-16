@@ -12,6 +12,9 @@ import { Level1SkillSuggestionEngine } from '../../engine/Level1SkillSuggestionE
 import { MentorSurvey } from '../mentor-survey.js';
 import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
 
+// SSOT Data Layer
+import { ClassesDB } from '../../data/classes-db.js';
+
 // Import all module functions
 import * as SharedModule from './chargen-shared.js';
 import { ChargenDataCache } from './chargen-shared.js';
@@ -54,6 +57,8 @@ export default class CharacterGenerator extends Application {
       backgroundCategory: "events",  // Current background category tab
       backgroundSkills: [],  // Skills selected from background
       backgroundNarratorComment: "",  // Ol' Salty's comment for current category
+      skillFilter: null,  // Active skill filter for backgrounds
+      languageFilter: null,  // Active language filter for backgrounds
       allowHomebrewPlanets: false,  // Toggle for homebrew planets
       occupationBonus: null,  // Occupation untrained skill bonuses
       importedDroidData: null,
@@ -85,6 +90,9 @@ export default class CharacterGenerator extends Application {
         cha: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 }
       },
       skills: {},
+      trainedSkills: [],  // Track which skills are trained (for progression)
+      classSkillsList: [],  // List of skills that are class skills for this class
+      trainedSkillsAllowed: 0,  // Total number of skill trainings allowed
       feats: [],
       featsRequired: 1, // Base 1, +1 for Human
       talents: [],
@@ -98,7 +106,7 @@ export default class CharacterGenerator extends Application {
       destinyPoints: { value: 1 },
       secondWind: { uses: 1, max: 1, misc: 0, healing: 0 },
       defenses: {
-        fortitude: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+        fort: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
         reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
         will: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 }
       },
@@ -154,13 +162,20 @@ export default class CharacterGenerator extends Application {
     }
 
     // Load abilities
-    if (system.abilities) {
-      for (const [key, value] of Object.entries(system.abilities)) {
+    if (system.attributes) {
+      for (const [key, value] of Object.entries(system.attributes)) {
         if (this.characterData.abilities[key]) {
           this.characterData.abilities[key].total = value.total ?? 10;
           this.characterData.abilities[key].base = value.base ?? 10;
         }
       }
+    }
+
+    // Load speed (ensure it's a valid number)
+    if (system.speed && Number.isFinite(system.speed)) {
+      this.characterData.speed = system.speed;
+    } else {
+      this.characterData.speed = 6;
     }
 
     // Load classes
@@ -189,6 +204,163 @@ export default class CharacterGenerator extends Application {
       top: null    // Allow Foundry to center
     });
   }
+
+  /**
+   * Comprehensive list of Star Wars-esque character names
+   * Organized by complexity: human-like to deep alien
+   */
+  static RANDOM_NAMES = [
+    // Human-esque masculine names
+    "Lando Virex Tal", "Jarek Solan Marr", "Torvan Kree Ossik", "Malric Dorne Valen",
+    "Daxen Vor Kell", "Brask Talor Kain", "Rynar Vex Holt", "Kael Orrix Juno",
+    "Voren Thal Kryss", "Zarek Mon Daal", "Korrin Vel Ashur", "Talos Ren Virek",
+    "Drel Kavos Morn", "Jaxel Prynn Tor", "Saren Kol Dravik", "Varek Ion Threx",
+    "Halder Rune Sol", "Brex Kal Vonn", "Narek Silar Quen", "Morlan Dex Ro",
+    "Cassik Vale Jorr", "Fenro Tharn Lux", "Orrin Kaas Vire", "Kelvan Drik Noor",
+    "Xarno Ul Tessik", "Torik Val Marr", "Zorin Fal Dax", "Ronik Kree Val",
+    "Ulric Vorin Taal", "Jorin Pell Strax", "Balrik Thorn Vex", "Raxen Sol Marrik",
+    "Irek Dal Vonn", "Corvek Ash Draal", "Threx Om Vull", "Lorik Sen Korr",
+    "Kyros Dune Val", "Brax Fen Dorr", "Alren Tosk Vire", "Dexar Nol Renn",
+    "Harkin Void Kaal", "Varos Kyne Jorr", "Pellis Vorn Tak", "Kavor Rin Sol",
+    "Draven Oss Kree", "Zarn Mal Virek", "Taryn Kol Voss", "Rellix Zho Marr",
+    "Kress Daal Tor", "Yarek Phos Val",
+    // Additional masculine names
+    "Xar Vel Daal", "Torren Ash Vire", "Kalos Renn Thal", "Darek Mon Kree",
+    "Vorn Sol Marr", "Jex Tal Noor", "Rovan Pell Ash", "Kellan Dorr Vex",
+    "Sarn Kyne Val", "Brevin Tor Sol", "Malrex Vire Daal", "Orrik Juno Korr",
+    "Fen Tal Marr", "Korr Ash Sol", "Zarik Venn Daal", "Dex Thorne Val",
+    "Hal Vire Kess", "Jorin Sol Taal", "Varrek Daal Ash", "Rel Tor Kree",
+    "Karesh Val Sol", "Rell Korr Marr", "Bronn Virex Tal", "Yorin Ash Kaal",
+    "Talrek Voss Daal", "Sorek Pell Sol", "Nixor Marr Val", "Kave Tor Ash",
+    "Drak Vire Sol", "Orr Tal Kess", "Zarnis Val Taal", "Krix Sol Dorr",
+    "Mal Tor Vire", "Vorik Ash Marr", "Rax Pell Kaal", "Jast Val Sol",
+    "Fenrik Daal Marr", "Tor Val Ash", "Kell Vire Taal", "Dexan Sol Noor",
+    "Korrik Marr Ash", "Brask Daal Kree", "Varek Tor Sol", "Sarn Ash Val",
+    "Orren Vire Marr", "Talrik Sol Kess", "Yex Daal Taal", "Kor Val Marr",
+    "Rellin Ash Sol", "Jor Vire Noor",
+    // Rimward/Exotic masculine names
+    "Raxen Thorn Vaal", "Lyrix Venn Dorr", "Korr Tal Marrik", "Nyssa Pell Vael",
+    "Jarek Sol Threx", "Kaela Voss Taal", "Fenro Marr Kaal", "Lira Dorr Sol",
+    "Varos Thal Kree", "Xara Vire Pell", "Torik Kaal Marr", "Nyrix Sol Dorr",
+    "Brask Thorn Vire", "Elra Vael Korr", "Rellin Daal Kree", "Kaelin Thorn Sol",
+    "Jex Marr Vael", "Lyssa Korr Thal", "Fenrik Dorr Sol", "Xera Pell Marr",
+    "Zarik Kree Thal", "Nyssa Vael Sol", "Torren Marr Kaal", "Lira Thorn Dorr",
+    "Varrek Sol Vael", "Elin Kree Thal", "Rax Marr Dorr", "Lyrix Sol Kaal",
+    "Jorin Vael Marr", "Xessa Thorn Kree",
+    // Final 200 consolidated names (human to alien)
+    "Rax Venn Daal", "Lyra Korr Sol", "Tarek Mon Vire", "Nyssa Val Marr",
+    "Jorik Ash Taal", "Kaela Vire Noor", "Dax Pell Korr", "Mira Sol Daal",
+    "Voren Kess Marr", "Elra Venn Ash", "Zarek Tor Sol", "Kira Daal Voss",
+    "Malrek Ash Noor", "Talia Mon Korr", "Fen Val Marr", "Lyss Vire Sol",
+    "Orrin Daal Ash", "Nyra Kess Val", "Jex Tor Marr", "Saela Sol Noor",
+    "Korr Ash Daal", "Rysa Val Sol", "Brask Marr Korr", "Elin Vire Ash",
+    "Tor Sol Daal", "Mira Korr Val", "Dex Ash Noor", "Lyra Marr Sol",
+    "Varrek Daal Kess", "Nyx Vire Val", "Soren Sol Marr", "Kaelin Ash Korr",
+    "Jora Daal Sol", "Taryn Val Noor", "Rell Korr Ash", "Lyssa Marr Daal",
+    "Fenrik Sol Val", "Elara Vire Kess", "Korrin Ash Noor", "Mira Sol Marr",
+    "Zella Val Daal", "Torrek Korr Sol", "Nyra Ash Marr", "Dexan Vire Noor",
+    "Sael Kess Val", "Lyra Sol Korr", "Orr Daal Ash", "Kira Marr Sol",
+    "Bronn Val Noor", "Elin Korr Ash",
+    // Alien-forward names
+    "Xor'ven Thul Marr", "Lyx'ara Vaash Sol", "Korr'tek Ul Daal", "Nyx'ira Phal Marr",
+    "Torq'ith Krexx Sol", "Ka'thra Vaash Daal", "Fen'orr Ul Marr", "Lir'iss Phal Sol",
+    "Vrek'mon Thul Daal", "Xyra'tek Ul Marr", "Orr'ka Phess Sol", "Zuun'ara Vaash Daal",
+    "Threx'lin Ul Marr", "Ka'ira Phal Sol", "Xorr'mon Krexx Daal", "Lyx'ira Vaash Marr",
+    "Khaal'tek Ul Sol", "Torq'mon Thul Marr", "Xera'li Ul Sol", "Orryx Vaash Daal",
+    "Zhekk'ira Phal Marr", "Korr'uun Krexx Sol", "Lyra'thul Daal", "Fen'tek Ul Marr",
+    // Deep alien names
+    "Xor'vaq Thul Krexx", "Kha'driss Ul Phal", "Zuun'tek Vaash Daal", "Orr'kess Krexx Sol",
+    "Threx'uun Ul Marr", "Lyx'ara Phess Kaal", "Xhekk Thul Ul", "Ka'mon Vaash Krexx",
+    "Orryx Phal Daal", "Zha'ira Ul Sol", "Xurr'tek Krexx Marr", "Khaal'iss Phal Ul",
+    "Threx'ira Vaash Daal", "Orr'uun Krexx Sol", "Zuun'mon Ul Marr", "Lyx'tek Phess Sol",
+    "Xhekk'ira Thul Daal", "Ka'drin Vaash Ul", "X'qorr Thul'kresh", "Ka'zhir Ul-Vaash",
+    "Orr'xeth Phal'uun", "Zuun'kra Krexx'ith", "Threx'qa Ul-Sol",
+    // Feminine names
+    "Lira Venn Solari", "Kaela Rynn Voss", "Mira Tal Kree", "Jessa Orin Val",
+    "Nyx Solenne Marr", "Aria Virex Daal", "Talia Ren Korr", "Selene Ash Vire",
+    "Vexa Thorn Lux", "Rina Kel Sol", "Sora Valen Jex", "Kyra Noa Pell",
+    "Elin Dorne Marr", "Zara Venn Kaal", "Lyra Tess Sol", "Cira Mon Val",
+    "Anya Kree Voss", "Thessa Rune Daal", "Rhea Sol Korr", "Kessa Vire Lux",
+    "Nira Tal Ash", "Velis Dorne Quen", "Phaela Rin Sol", "Jynra Kaas Vire",
+    "Orria Mon Vale", "Taryn Lys Daal", "Saela Thorn Kree", "Mysa Venn Val",
+    "Elara Korr Sol", "Zella Ash Marr", "Kaelin Virex Noor", "Rysa Pell Kree",
+    "Nyra Sol Taal", "Vala Renn Ash", "Jora Kess Val", "Thalia Daal Korr",
+    "Sira Vex Sol", "Kora Mon Tal", "Alis Thorn Marr", "Lyssa Vire Noor",
+    "Lyra Venn Daal", "Kaela Sol Marr", "Nira Ash Val", "Tessa Korr Sol",
+    "Vela Mon Noor", "Jyn Sol Vire", "Rysa Daal Ash", "Elin Tor Marr",
+    "Kira Sol Taal", "Zella Vire Ash",
+    // Alien-forward feminine
+    "Xyra'li Vesh Taal", "Sha'renn Ul Korr", "Vexa'na Thul Marr", "Lir'iss Phal Vire",
+    "Ka'thra Zuun Sol", "Nyxara Vaal Krexx", "Orr'la Phess Daal", "Zheela Va'resh",
+    "Tiss'ka Norr Val", "Xala'mon Ruun", "Kree'la Vith Sol", "Phex'ari Ul Marr",
+    "Shaq'ra Zaal Kess", "Lyx Venn'thra", "Vaela'qen Dorr", "Nesh'ira Karesh",
+    "Zira Kaal'eth", "Threx'a Sol Marr", "Orryx Phal'na", "Xyss Ul-Kree",
+    "Xyra'na Vesh Sol", "Sha'la Ul Marr", "Vexa'li Thul Daal", "Lir'iss Phal Noor",
+    "Kree'la Vith Sol", "Phex'ari Ul Marr",
+    // Deep alien feminine
+    "Xa'li Thress Ul", "Kheera'mon Vaash", "Orr'issa Phal Daal", "Zuun'ira Krexx",
+    "Thala'qen Mol Sol", "Vrixa Ul'mon", "Sha'tek Naash Dorr", "Lyrr Phess Vaal",
+    "Xess'ka Orr Marr", "Kaal'ira Thul", "Zhaela Krell Sol", "Orr'ith Vaash Noor",
+    "Xyraxx Phal'mon", "Thiss Ul Kaal", "Vaela Skorr Daal", "Zhekk'ira Sol",
+    "Lur'na Krexx Marr", "Orryx'a Vaal", "Kress'li Phal Noor", "Xuun'ara Thul"
+  ];
+
+  /**
+   * Comprehensive list of Star Wars-esque droid names
+   * Organized by type: Astromechs, Military/Security, Protocol, Assassin, Industrial, Mixed Rim
+   */
+  static RANDOM_DROID_NAMES = [
+    // Standard alphanumeric designations (basic series)
+    "A1-K7", "B4-T9", "C7-R4", "D2-M8", "E9-K3", "F3-L6", "G8-P1", "H2-V7",
+    "I5-X9", "J4-D2", "K9-R8", "L3-T5", "M7-Q1", "N4-Z6", "O2-K9", "P6-R3",
+    "Q8-D5", "R5-M1", "S7-K4", "T1-V9", "U3-R6", "V8-D2", "W5-K7", "X4-P9",
+    "Y9-M3", "Z2-R8", "A7-D9", "B2-K4", "C5-M8", "D9-R1", "E3-V7", "F6-K2",
+    "G4-T9", "H8-R5", "I1-M7", "J9-D4", "K5-V3", "L7-R8", "M2-K6", "N9-T4",
+    "O6-D1", "P3-M8", "Q5-R9", "R7-K2", "S4-V6", "T8-D5", "U1-M9", "V6-K4",
+    "W9-R2", "X3-T7",
+    // Astromech / Utility Feel
+    "R8-K5", "D7-P3", "T4-M9", "K2-R6", "V9-D1", "M5-T8", "P7-K4", "R1-D9",
+    "Q6-M3", "S8-K2", "T9-R4", "D3-V7", "K6-M1", "P4-R8", "M9-D2", "V1-K5",
+    "R7-T3", "Q2-D6", "S5-M8", "T6-K9", "D1-R4", "K8-P7", "M3-V9", "R6-D5",
+    "Q9-K2", "S1-T8", "V4-M7", "P5-D3", "R2-K6", "T7-M9",
+    // Military / Security Droids
+    "BX-9R", "DT-7K", "MK-4D", "SX-8T", "VR-6M", "HK-5Q", "TX-9D", "KR-2S",
+    "PX-7M", "AX-4D", "BX-1K", "DT-9R", "MK-6S", "SX-3D", "VR-8T", "HK-2M",
+    "TX-5Q", "KR-7D", "PX-9S", "AX-6M", "BX-4D", "DT-2K", "MK-8T", "SX-5M",
+    "VR-3D", "HK-9Q", "TX-1D", "KR-4S", "PX-3M", "AX-9D", "BX-7K", "DT-4R",
+    "MK-2D", "SX-6T", "VR-1M", "HK-7Q", "TX-8D", "KR-9S", "PX-2M", "AX-3D",
+    "BX-5T", "DT-6K", "MK-3S", "SX-9D", "VR-4M",
+    // Protocol / Civilian Models
+    "P3-L9", "C7-M4", "H2-T8", "V5-P1", "L9-D7", "M4-K2", "S8-R3", "T6-P9",
+    "D1-M5", "K7-L4", "P5-T2", "C1-D9", "H9-M6", "V3-L8", "L2-P4", "M7-T9",
+    "S4-K1", "T8-D6", "D5-P3", "K9-M2", "P8-L1", "C9-M7", "H1-T5", "V9-P8",
+    "L4-D2", "M6-K9", "S2-R7", "T1-P4", "D8-M3", "K4-L6", "P1-T4", "C4-D1",
+    "H6-M9", "V2-L3", "L7-P5", "M1-T8", "S9-K6", "T3-D2", "D4-P7", "K2-M5",
+    // Assassin / Black Ops Feel
+    "X9-KR", "Z7-DX", "Q5-HK", "R8-VX", "S3-ZT", "M7-XR", "K4-QD", "D9-SX",
+    "T2-VR", "P6-ZK", "X1-DQ", "Z9-KT", "Q7-XM", "R3-SD", "S8-VK", "M2-ZR",
+    "K6-XT", "D4-QS", "T9-ZX", "P1-VR", "X6-KQ", "Z2-DM", "Q1-HX", "R9-VT",
+    "S6-ZD", "M9-XK", "K1-QM", "D7-SX", "T5-VD", "P8-ZM", "X4-KD", "Z6-XT",
+    "Q9-HM", "R2-VK", "S1-ZR", "M4-XD", "K7-QX", "D2-SM", "T8-VX", "P3-ZT",
+    "X7-KM", "Z4-DX", "Q6-HK", "R5-VR",
+    // Industrial / Labor Droids
+    "L8-T3", "G5-M9", "R6-H2", "K1-P7", "T9-L4", "M3-G8", "P6-H5", "R2-T9",
+    "L7-K4", "G9-M1", "H4-P8", "T6-G2", "M9-L5", "R3-K7", "P1-H6", "G8-T4",
+    "L2-M9", "K5-P3", "T7-H1", "R9-G6", "L1-T8", "G3-M7", "R8-H9", "K9-P2",
+    "T4-L1", "M6-G5", "P9-H3", "R1-T6", "L5-K2", "G7-M4", "H8-P9", "T2-G1",
+    "M1-L8", "R7-K5", "P4-H2", "G2-T9", "L9-M3", "K8-P1", "T5-H7", "R4-G8",
+    // Mixed / Obscure Rim Models
+    "A9-RK", "B3-TD", "C8-MX", "D6-QP", "E1-KV", "F9-RD", "G2-TM", "H7-XK",
+    "I4-QD", "J8-MP", "K3-VR", "L6-QT", "M1-XD", "N9-KP", "O4-RX", "P8-QM",
+    "Q6-TK", "R1-XP", "S9-MD", "T3-VQ", "U7-RK", "V2-TD", "W5-MX", "X9-QP",
+    "Y4-KV", "Z8-RD", "A3-TM", "B6-XK", "C1-QD", "D5-MP", "E9-VR", "F2-QT",
+    "G7-XD", "H3-KP", "I8-RX", "J1-QM", "K5-TK", "L9-XP", "M4-MD", "N8-VQ",
+    "O2-RK", "P7-TD", "Q1-MX", "R6-QP", "S3-KV", "T9-RD", "U4-TM", "V8-XK",
+    // Additional variety
+    "C-3PO", "2-1B", "BB-8", "K-2SO", "GNK-7", "IG-88", "TC-14", "WED-15",
+    "EV-9D9", "0-0-0", "BT-1", "HK-47", "R-3PO", "L3-37", "Q9-X8", "V-5D7",
+    "Z-6K4", "X-1T9", "W-7M2", "Y-4P5", "U-8R3", "T-2K6", "S-9D1", "R-4V8"
+  ];
 
   /**
    * Filter out Force-dependent talents/feats for droids
@@ -326,6 +498,14 @@ export default class CharacterGenerator extends Application {
     context.freeBuild = this.freeBuild;
     context.isLevelUp = !!this.actor;
 
+    // DEBUG: Log packs status
+    SWSELogger.log(`CharGen | getData() - currentStep: ${this.currentStep}`, {
+      hasSpeciesPack: this._packs.species?.length || 0,
+      hasClassesPack: this._packs.classes?.length || 0,
+      hasFeatsPack: this._packs.feats?.length || 0,
+      hasTalentsPack: this._packs.talents?.length || 0
+    });
+
     // PERFORMANCE: Only clone packs that will be modified on this step
     // Use shallow reference sharing for read-only packs
     const packsToClone = {};
@@ -345,13 +525,75 @@ export default class CharacterGenerator extends Application {
       context.packs[key] = packsToClone[key] ? foundry.utils.deepClone(data) : data;
     }
 
-    // Filter out Jedi class for droids at level 1 (they can multiclass into Jedi later)
-    if (this.currentStep === "class" && this.characterData.isDroid && context.packs.classes) {
-      context.packs.classes = context.packs.classes.filter(c => c.name !== "Jedi");
-      if (this.characterData.classes.length === 0 || this.characterData.classes[0].name === "Jedi") {
-        // If Jedi was previously selected for a droid (shouldn't happen, but be safe), clear it
-        this.characterData.classes = [];
+    // DEBUG: Log context.packs after building
+    SWSELogger.log(`CharGen | After building context.packs:`, {
+      hasSpeciesPack: context.packs.species?.length || 0,
+      hasClassesPack: context.packs.classes?.length || 0,
+      hasFeatsPack: context.packs.feats?.length || 0,
+      hasTalentsPack: context.packs.talents?.length || 0,
+      classesUndefined: context.packs.classes === undefined,
+      classesNull: context.packs.classes === null,
+      classesEmpty: Array.isArray(context.packs.classes) && context.packs.classes.length === 0
+    });
+
+    // Filter classes based on character type
+    if (this.currentStep === "class" && context.packs.classes) {
+      SWSELogger.log(`CharGen | Classes BEFORE filtering:`, {
+        count: context.packs.classes.length,
+        names: context.packs.classes.map(c => c.name)
+      });
+
+      if (this.characterData.isDroid) {
+        // Droids: only base 4 non-Force classes (no Jedi, no Force powers, no Gunslinger - prestige class)
+        const droidBaseClasses = ["Soldier", "Scout", "Scoundrel", "Noble"];
+        SWSELogger.log(`CharGen | Filtering for droid - allowed classes:`, droidBaseClasses);
+        context.packs.classes = context.packs.classes.filter(c => droidBaseClasses.includes(c.name));
+        if (this.characterData.classes.length === 0 || !droidBaseClasses.includes(this.characterData.classes[0]?.name)) {
+          this.characterData.classes = [];
+        }
+      } else {
+        // Normal characters: only the 5 core classes at level 1 (prestige classes available at higher levels)
+        // Noble, Scout, Scoundrel, Soldier, and Jedi (Gunslinger is prestige only)
+        const coreClasses = ["Noble", "Scout", "Scoundrel", "Soldier", "Jedi"];
+        SWSELogger.log(`CharGen | Filtering for living - allowed classes:`, coreClasses);
+        context.packs.classes = context.packs.classes.filter(c => coreClasses.includes(c.name));
+        if (this.characterData.classes.length === 0 || !coreClasses.includes(this.characterData.classes[0]?.name)) {
+          this.characterData.classes = [];
+        }
       }
+
+      // Apply icon, description, and formatted stats to each class
+      context.packs.classes = context.packs.classes.map((classItem, idx) => {
+        const hitDieValue = getHitDie(classItem);
+        const babProg = getClassProperty(classItem, 'babProgression', 'medium');
+
+        // Log first 3 classes for debugging
+        if (idx < 3) {
+          SWSELogger.log(`CharGen | Class ${idx + 1} structure:`, {
+            name: classItem.name,
+            hasSystem: !!classItem.system,
+            systemKeys: classItem.system ? Object.keys(classItem.system) : [],
+            hitDieFromSystem: classItem.system?.hitDie || classItem.system?.hit_die,
+            computedHitDie: hitDieValue
+          });
+        }
+
+        return {
+          ...classItem,
+          ...this._getClassMetadata(classItem.name),
+          displayHitDie: `d${hitDieValue}`,
+          displayBAB: babProg
+        };
+      });
+
+      // DEBUG: Log after filtering and processing
+      SWSELogger.log(`CharGen | After filtering classes for ${this.characterData.isDroid ? 'droid' : 'living'}:`, {
+        filteredClassesCount: context.packs.classes.length,
+        classNames: context.packs.classes.map(c => c.name),
+        displayHitDice: context.packs.classes.map(c => c.displayHitDie)
+      });
+    } else {
+      SWSELogger.log(`CharGen | Class filtering SKIPPED - step: ${this.currentStep}, hasClasses: ${!!context.packs.classes}`);
     }
 
     // Apply species filters and sorting if on species step
@@ -367,7 +609,7 @@ export default class CharacterGenerator extends Application {
 
     // Add suggestion engine integration for feats and talents
     if ((this.currentStep === "feats" || this.currentStep === "talents") && context.packs) {
-      const tempActor = this._createTempActorForValidation();
+      const tempActor = this.actor || this._createTempActorForValidation();
       const pendingData = {
         selectedFeats: this.characterData.feats || [],
         selectedClass: this.characterData.classes?.[0],
@@ -391,6 +633,35 @@ export default class CharacterGenerator extends Application {
           context.packs.feats = featsWithSuggestions;
           // Sort by suggestion tier
           context.packs.feats = SuggestionEngine.sortBySuggestion(context.packs.feats);
+
+          // Add qualification status to each feat
+          const pendingDataForFeats = {
+            selectedFeats: this.characterData.feats || [],
+            selectedClass: this.characterData.classes?.[0],
+            abilityIncreases: {},
+            selectedSkills: Object.keys(this.characterData.skills || {})
+              .filter(k => this.characterData.skills[k]?.trained)
+              .map(k => ({ key: k })),
+            selectedTalents: this.characterData.talents || []
+          };
+
+          context.packs.feats = context.packs.feats.map(feat => {
+            const prereqCheck = PrerequisiteValidator.checkFeatPrerequisites(feat, tempActor, pendingDataForFeats);
+            return {
+              ...feat,
+              isQualified: prereqCheck.valid
+            };
+          });
+
+          // Organize feats into categories for display
+          try {
+            const categorizedFeats = this._organizeFeatsByCategory(context.packs.feats, this._featMetadata);
+            context.featCategories = categorizedFeats.categories;
+            context.featCategoryList = categorizedFeats.categoryList;
+          } catch (categErr) {
+            SWSELogger.warn('CharGen | Failed to organize feats by category:', categErr);
+            // Fallback to flat list if categorization fails
+          }
         } catch (err) {
           SWSELogger.warn('CharGen | Failed to add feat suggestions:', err);
         }
@@ -411,6 +682,24 @@ export default class CharacterGenerator extends Application {
           context.packs.talents = talentsWithSuggestions;
           // Sort by suggestion tier
           context.packs.talents = SuggestionEngine.sortBySuggestion(context.packs.talents);
+
+          // Add qualification status to each talent
+          const pendingDataForTalents = {
+            selectedFeats: this.characterData.feats || [],
+            selectedClass: this.characterData.classes?.[0],
+            selectedSkills: Object.keys(this.characterData.skills || {})
+              .filter(k => this.characterData.skills[k]?.trained)
+              .map(k => ({ key: k })),
+            selectedTalents: this.characterData.talents || []
+          };
+
+          context.packs.talents = context.packs.talents.map(talent => {
+            const prereqCheck = PrerequisiteValidator.checkTalentPrerequisites(talent, tempActor, pendingDataForTalents);
+            return {
+              ...talent,
+              isQualified: prereqCheck.valid
+            };
+          });
         } catch (err) {
           SWSELogger.warn('CharGen | Failed to add talent suggestions:', err);
         }
@@ -422,32 +711,83 @@ export default class CharacterGenerator extends Application {
       const tempActor = this._createTempActorForValidation();
 
       try {
-        // Build class skills list (includes class native skills + background skills)
-        const classSkillsList = this._getClassSkillsList();
+        // Combine class skills with background skills
+        const allClassSkills = [
+          ...(this.characterData.classSkillsList || []),
+          ...(this.characterData.backgroundSkills?.map(s => s.key || s) || [])
+        ];
 
         const skillsWithSuggestions = await Level1SkillSuggestionEngine.suggestLevel1Skills(
           this._skillsJson,
           tempActor,
           {
+            classSkills: allClassSkills,
             selectedClass: this.characterData.classes?.[0],
-            classSkills: classSkillsList, // Pass combined class + background skills
             selectedSkills: Object.keys(this.characterData.skills || {})
               .filter(k => this.characterData.skills[k]?.trained)
               .map(k => ({ key: k }))
           }
         );
-        context.skillsJson = skillsWithSuggestions;
+
+        // Mark class skills in the returned data
+        const skillsWithClassMarking = skillsWithSuggestions.map(skill => ({
+          ...skill,
+          isClassSkill: allClassSkills.includes(skill.key || skill.name)
+        }));
+
+        context.skillsJson = skillsWithClassMarking;
         // Also set availableSkills for template compatibility
-        context.availableSkills = skillsWithSuggestions;
+        context.availableSkills = skillsWithClassMarking;
       } catch (err) {
         SWSELogger.warn('CharGen | Failed to add skill suggestions:', err);
-        context.skillsJson = this._skillsJson || [];
-        context.availableSkills = this._skillsJson || [];
+
+        // Fallback: still mark class skills even if suggestions fail
+        const allClassSkills = [
+          ...(this.characterData.classSkillsList || []),
+          ...(this.characterData.backgroundSkills?.map(s => s.key || s) || [])
+        ];
+
+        const fallbackSkills = (this._skillsJson || []).map(skill => ({
+          ...skill,
+          isClassSkill: allClassSkills.includes(skill.key || skill.name)
+        }));
+
+        context.skillsJson = fallbackSkills;
+        context.availableSkills = fallbackSkills;
       }
     }
 
     context.skillsJson = context.skillsJson || this._skillsJson || [];
     context.availableSkills = context.availableSkills || context.skillsJson;
+
+    // Calculate trainedSkillsCount for display in template
+    const trainedCount = Object.values(this.characterData.skills || {})
+      .filter(skill => skill.trained)
+      .length;
+    this.characterData.trainedSkillsCount = trainedCount;
+
+    // Prepare languages for template
+    if (this.currentStep === "languages") {
+      try {
+        // Get starting languages based on species
+        this.characterData.languageData = await this._getStartingLanguages();
+
+        // Get all available languages by category
+        context.languageCategories = await this._getAvailableLanguages();
+      } catch (err) {
+        SWSELogger.error('CharGen | Failed to load languages:', err);
+        context.languageCategories = {
+          widelyUsed: {
+            name: "Widely Used Languages",
+            languages: ["Basic", "Binary", "Bocce", "Bothese"]
+          },
+          localTrade: {
+            name: "Local/Trade Languages",
+            languages: ["Ewokese", "Gamorrean", "Gungan"]
+          }
+        };
+      }
+    }
 
     // Prepare force powers and starship maneuvers for template
     if (this.currentStep === "force-powers") {
@@ -460,21 +800,38 @@ export default class CharacterGenerator extends Application {
       context.characterData.starshipManeuversRequired = this._getStarshipManeuversNeeded();
     }
 
-    // Filter talents for the selected talent tree
-    if (this.selectedTalentTree && context.packs.talents) {
-      context.packs.talentsInTree = context.packs.talents.filter(talent => {
-        const talentTree = talent.system?.talentTree || talent.system?.tree || "";
-        return talentTree === this.selectedTalentTree;
-      });
+    // Prepare talents for template
+    if (this.currentStep === "talents") {
+      // Get available talent trees for the character
+      context.availableTalentTrees = this._getAvailableTalentTrees() || [];
 
-      // Filter out Force-dependent talents for droids in the tree view
-      context.packs.talentsInTree = this._filterForceDependentItems(context.packs.talentsInTree);
+      // Filter talents for the selected talent tree
+      if (this.selectedTalentTree && context.packs.talents) {
+        context.packs.talentsInTree = context.packs.talents.filter(talent => {
+          const talentTree = getTalentTreeName(talent);
+          return talentTree === this.selectedTalentTree;
+        });
+
+        // Filter out Force-dependent talents for droids in the tree view
+        context.packs.talentsInTree = this._filterForceDependentItems(context.packs.talentsInTree);
+      }
     }
+
+    // Add narrator comment for all steps (optional narrative enhancement)
+    context.narratorComment = this._getNarratorComment ? this._getNarratorComment() : null;
+    context.selectedTalentTree = this.selectedTalentTree;
 
     return context;
   }
 
-
+  /**
+   * Get narrator comment for the current step (can be overridden by CharacterGeneratorNarrative)
+   * @returns {string|null} Narrator comment or null if not applicable
+   */
+  _getNarratorComment() {
+    // Base implementation returns null - can be overridden in subclasses
+    return null;
+  }
 
 
 
@@ -517,9 +874,9 @@ export default class CharacterGenerator extends Application {
 
     // Near-Human builder
     $html.find('.open-near-human-builder').click(this._onOpenNearHumanBuilder.bind(this));
-    $html.find('.adaptation-btn').click(this._onSelectNearHumanAdaptation.bind(this));
+    // $html.find('.adaptation-btn').click(this._onSelectNearHumanAdaptation.bind(this)); // Method not implemented
     $html.find('.sacrifice-btn').click(this._onSelectNearHumanSacrifice.bind(this));
-    $html.find('.attr-plus, .attr-minus').click(this._onAdjustNearHumanAttribute.bind(this));
+    // $html.find('.attr-plus, .attr-minus').click(this._onAdjustNearHumanAttribute.bind(this)); // Use _onAdjustNearHumanAbility instead (see line 522)
     $html.find('.trait-btn').click(this._onSelectNearHumanTrait.bind(this));
     $html.find('.sacrifice-radio').change(this._onSelectNearHumanSacrifice.bind(this));
     $html.find('.variant-checkbox').change(this._onToggleNearHumanVariant.bind(this));
@@ -569,6 +926,12 @@ export default class CharacterGenerator extends Application {
       this.characterData.name = ev.target.value;
     });
 
+    // Random name button
+    $html.find('.random-name-btn').click(this._onRandomName.bind(this));
+
+    // Random droid name button
+    $html.find('.random-droid-name-btn').click(this._onRandomDroidName.bind(this));
+
     // Level input
     $html.find('input[name="target-level"]').on('input change', (ev) => {
       this.targetLevel = parseInt(ev.target.value, 10) || 1;
@@ -576,6 +939,11 @@ export default class CharacterGenerator extends Application {
 
     // Shop button
     $html.find('.open-shop-btn').click(this._onOpenShop.bind(this));
+
+    // Starting Credits
+    $html.find('.roll-credits-btn').click(this._onRollCredits.bind(this));
+    $html.find('.take-max-credits-btn').click(this._onTakeMaxCredits.bind(this));
+    $html.find('.reroll-credits-btn').click(this._onRerollCredits.bind(this));
 
     // Abilities UI
     if (this.currentStep === "abilities") {
@@ -614,6 +982,34 @@ export default class CharacterGenerator extends Application {
         const category = this.characterData.backgroundCategory || 'events';
         this.characterData.backgroundNarratorComment = this._getBackgroundNarratorComment(category);
       }
+
+      // Mark the active category tab
+      const activeCategory = this.characterData.backgroundCategory || 'events';
+      $html.find('.background-category-tab').each((i, tab) => {
+        if (tab.dataset.category === activeCategory) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+
+      // Background category tab clicks
+      $html.find('.background-category-tab').click(this._onBackgroundCategoryClick.bind(this));
+
+      // Background skill filter button
+      $html.find('.background-filter-btn').click(this._onBackgroundFilterClick.bind(this));
+
+      // Homebrew planets toggle
+      $html.find('.allow-homebrew-toggle').change((ev) => {
+        this.characterData.allowHomebrewPlanets = ev.currentTarget.checked;
+        // Re-render if on planets category
+        if (activeCategory === 'planets') {
+          const bgContainer = $html.find('#background-selection-grid')[0];
+          if (bgContainer) {
+            this._renderBackgroundCards(bgContainer);
+          }
+        }
+      });
     }
   }
 
@@ -663,6 +1059,50 @@ export default class CharacterGenerator extends Application {
     return steps;
   }
 
+  /**
+   * Handle random name selection
+   * @param {Event} event - The click event
+   */
+  async _onRandomName(event) {
+    event.preventDefault();
+
+    if (!CharacterGenerator.RANDOM_NAMES || CharacterGenerator.RANDOM_NAMES.length === 0) {
+      ui.notifications.warn("No names available to choose from.");
+      return;
+    }
+
+    // Pick a random name
+    const randomIndex = Math.floor(Math.random() * CharacterGenerator.RANDOM_NAMES.length);
+    const selectedName = CharacterGenerator.RANDOM_NAMES[randomIndex];
+
+    this.characterData.name = selectedName;
+
+    ui.notifications.info(`Random name selected: ${selectedName}`);
+    await this.render();
+  }
+
+  /**
+   * Handle random droid name selection
+   * @param {Event} event - The click event
+   */
+  async _onRandomDroidName(event) {
+    event.preventDefault();
+
+    if (!CharacterGenerator.RANDOM_DROID_NAMES || CharacterGenerator.RANDOM_DROID_NAMES.length === 0) {
+      ui.notifications.warn("No droid names available to choose from.");
+      return;
+    }
+
+    // Pick a random droid name
+    const randomIndex = Math.floor(Math.random() * CharacterGenerator.RANDOM_DROID_NAMES.length);
+    const selectedName = CharacterGenerator.RANDOM_DROID_NAMES[randomIndex];
+
+    this.characterData.name = selectedName;
+
+    ui.notifications.info(`Random droid name selected: ${selectedName}`);
+    await this.render();
+  }
+
   async _onNextStep(event) {
     event.preventDefault();
 
@@ -681,7 +1121,28 @@ export default class CharacterGenerator extends Application {
     }
 
     const steps = this._getSteps();
-    const idx = steps.indexOf(this.currentStep);
+    let idx = steps.indexOf(this.currentStep);
+
+    // If current step is not in steps array (due to dynamic changes), find it
+    if (idx < 0) {
+      const allPossibleSteps = ["name", "type", "degree", "size", "droid-builder", "species",
+        "abilities", "class", "background", "skills", "languages", "feats", "talents",
+        "force-powers", "starship-maneuvers", "droid-final", "summary", "shop"];
+      const currentIdx = allPossibleSteps.indexOf(this.currentStep);
+      // Find the next valid step after current position
+      for (let i = currentIdx + 1; i < allPossibleSteps.length; i++) {
+        if (steps.includes(allPossibleSteps[i])) {
+          this.currentStep = allPossibleSteps[i];
+          await this.render();
+          return;
+        }
+      }
+      // If no valid next step found, go to last step
+      this.currentStep = steps[steps.length - 1];
+      await this.render();
+      return;
+    }
+
     if (idx >= 0 && idx < steps.length - 1) {
       let nextStep = steps[idx + 1];
 
@@ -732,6 +1193,27 @@ export default class CharacterGenerator extends Application {
     event.preventDefault();
     const steps = this._getSteps();
     const idx = steps.indexOf(this.currentStep);
+
+    // If current step is not in steps array (due to dynamic changes), find nearest valid step
+    if (idx < 0) {
+      // Find the last completed step before the current position
+      const allPossibleSteps = ["name", "type", "degree", "size", "droid-builder", "species",
+        "abilities", "class", "background", "skills", "languages", "feats", "talents",
+        "force-powers", "starship-maneuvers", "droid-final", "summary", "shop"];
+      const currentIdx = allPossibleSteps.indexOf(this.currentStep);
+      for (let i = currentIdx - 1; i >= 0; i--) {
+        if (steps.includes(allPossibleSteps[i])) {
+          this.currentStep = allPossibleSteps[i];
+          await this.render();
+          return;
+        }
+      }
+      // If no valid previous step found, go to first step
+      this.currentStep = steps[0];
+      await this.render();
+      return;
+    }
+
     if (idx > 0) {
       this.currentStep = steps[idx - 1];
       await this.render();
@@ -908,6 +1390,60 @@ export default class CharacterGenerator extends Application {
           return false;
         }
         break;
+      case "background":
+        // Background is optional in SWSE rules, allow skipping
+        break;
+      case "skills":
+        const trainedCount = Object.values(this.characterData.skills || {}).filter(s => s.trained).length;
+        const requiredCount = this.characterData.trainedSkillsAllowed || 0;
+        if (trainedCount < requiredCount) {
+          ui.notifications.warn(`You must train ${requiredCount} skills (currently trained: ${trainedCount}).`);
+          return false;
+        }
+        break;
+      case "languages":
+        // Languages validation handled by auto-skip logic in _onNextStep
+        break;
+      case "feats":
+        const selectedFeatsCount = (this.characterData.feats || []).length;
+        const requiredFeats = this.characterData.featsRequired || 1;
+        if (selectedFeatsCount < requiredFeats) {
+          ui.notifications.warn(`You must select ${requiredFeats} feat(s) (currently selected: ${selectedFeatsCount}).`);
+          return false;
+        }
+        break;
+      case "talents":
+        const selectedTalentsCount = (this.characterData.talents || []).length;
+        // Level 1 characters get 1 talent
+        const requiredTalents = 1;
+        if (selectedTalentsCount < requiredTalents) {
+          ui.notifications.warn(`You must select ${requiredTalents} talent (currently selected: ${selectedTalentsCount}).`);
+          return false;
+        }
+        break;
+      case "force-powers":
+        const selectedPowersCount = (this.characterData.powers || []).length;
+        const requiredPowers = this._getForcePowersNeeded();
+        if (selectedPowersCount < requiredPowers) {
+          ui.notifications.warn(`You must select ${requiredPowers} Force power(s) (currently selected: ${selectedPowersCount}).`);
+          return false;
+        }
+        break;
+      case "starship-maneuvers":
+        const selectedManeuversCount = (this.characterData.starshipManeuvers || []).length;
+        const requiredManeuvers = this._getStarshipManeuversNeeded();
+        if (selectedManeuversCount < requiredManeuvers) {
+          ui.notifications.warn(`You must select ${requiredManeuvers} starship maneuver(s) (currently selected: ${selectedManeuversCount}).`);
+          return false;
+        }
+        break;
+      case "summary":
+        // Check if starting credits have been chosen (if formula exists)
+        if (this.characterData.startingCreditsFormula && !this.characterData.creditsChosen) {
+          ui.notifications.warn("You must choose your starting credits before creating your character.");
+          return false;
+        }
+        break;
     }
     return true;
   }
@@ -946,6 +1482,11 @@ export default class CharacterGenerator extends Application {
     // Class required for all characters
     if (!this.characterData.classes || this.characterData.classes.length === 0) {
       errors.push("Character must have at least one class");
+    }
+
+    // Starting credits - if formula exists, must be chosen
+    if (this.characterData.startingCreditsFormula && !this.characterData.creditsChosen) {
+      errors.push("You must choose your starting credits (roll or take maximum)");
     }
 
     // Show errors
@@ -987,7 +1528,7 @@ export default class CharacterGenerator extends Application {
       (this.characterData.secondWind.misc || 0);
     
     // Damage Threshold = Fortitude Defense
-    this.characterData.damageThreshold = this.characterData.defenses.fortitude.total;
+    this.characterData.damageThreshold = this.characterData.defenses.fort.total;
   }
 
   async _onFinish(event) {
@@ -1037,6 +1578,93 @@ export default class CharacterGenerator extends Application {
     }
   }
 
+  /**
+   * Handle rolling for starting credits
+   */
+  async _onRollCredits(event) {
+    event.preventDefault();
+
+    if (!this.characterData.startingCreditsFormula) {
+      ui.notifications.warn("No starting credits formula available.");
+      return;
+    }
+
+    const formula = this.characterData.startingCreditsFormula;
+    const { numDice, dieSize, multiplier } = formula;
+
+    // Roll the dice
+    const rollFormula = `${numDice}d${dieSize}`;
+    const roll = await new Roll(rollFormula).evaluate();
+
+    // Calculate credits
+    const credits = roll.total * multiplier;
+
+    // Show the roll in chat
+    await roll.toMessage({
+      flavor: `<h3>Starting Credits Roll</h3><p><strong>${this.characterData.name}</strong> rolls ${rollFormula} × ${multiplier.toLocaleString()}</p>`,
+      speaker: ChatMessage.getSpeaker({ alias: this.characterData.name || "Character" })
+    });
+
+    // Set credits and mark as chosen
+    this.characterData.credits = credits;
+    this.characterData.creditsChosen = true;
+
+    SWSELogger.log(`CharGen | Starting credits rolled: ${credits} (${roll.total} × ${multiplier})`);
+    ui.notifications.info(`You rolled ${credits.toLocaleString()} credits!`);
+
+    // Re-render to show result
+    this.render();
+  }
+
+  /**
+   * Handle taking maximum starting credits
+   */
+  async _onTakeMaxCredits(event) {
+    event.preventDefault();
+
+    if (!this.characterData.startingCreditsFormula) {
+      ui.notifications.warn("No starting credits formula available.");
+      return;
+    }
+
+    const maxCredits = this.characterData.startingCreditsFormula.maxPossible;
+
+    // Set credits and mark as chosen
+    this.characterData.credits = maxCredits;
+    this.characterData.creditsChosen = true;
+
+    SWSELogger.log(`CharGen | Starting credits (maximum): ${maxCredits}`);
+    ui.notifications.info(`You chose the maximum: ${maxCredits.toLocaleString()} credits!`);
+
+    // Re-render to show result
+    this.render();
+  }
+
+  /**
+   * Handle re-rolling/changing starting credits choice
+   */
+  async _onRerollCredits(event) {
+    event.preventDefault();
+
+    // Confirm with user
+    const confirmed = await Dialog.confirm({
+      title: "Change Starting Credits?",
+      content: "<p>Are you sure you want to change your starting credits selection?</p>",
+      defaultYes: false
+    });
+
+    if (!confirmed) return;
+
+    // Reset credits choice
+    this.characterData.credits = null;
+    this.characterData.creditsChosen = false;
+
+    SWSELogger.log(`CharGen | Starting credits reset for new choice`);
+
+    // Re-render to show choices again
+    this.render();
+  }
+
   async _createActor() {
     // Build proper actor data structure matching SWSEActorSheet expectations
     // Note: The actor system uses 'race' as the property name for species data
@@ -1063,6 +1691,22 @@ export default class CharacterGenerator extends Application {
       };
     }
 
+    // Build progression structure for level-up compatibility
+    const progression = {
+      classLevels: (this.characterData.classes || []).map(cls => ({
+        class: cls.name,
+        level: cls.level || 1,
+        choices: {}
+      })),
+      species: this.characterData.species || "",
+      background: this.characterData.background?.id || "",
+      backgroundTrainedSkills: this.characterData.background?.trainedSkills || [],
+      feats: (this.characterData.feats || []).map(feat => feat.name || feat),
+      talents: (this.characterData.talents || []).map(talent => talent.name || talent),
+      trainedSkills: this.characterData.trainedSkills || [],
+      abilityIncreases: this.characterData.abilityIncreases || []
+    };
+
     const system = {
       level: this.characterData.level,
       species: this.characterData.species,  // Use consistent 'species' property
@@ -1079,7 +1723,7 @@ export default class CharacterGenerator extends Application {
       defenses: this.characterData.defenses,
       classes: this.characterData.classes,
       bab: this.characterData.bab,
-      speed: this.characterData.speed,
+      speed: Number.isFinite(this.characterData.speed) ? this.characterData.speed : 6,
       damageThresholdMisc: this.characterData.damageThresholdMisc || 0,
       credits: this.characterData.isDroid
         ? this.characterData.droidCredits.remaining
@@ -1093,7 +1737,9 @@ export default class CharacterGenerator extends Application {
       // Background data for biography tab
       event: this.characterData.background && this.characterData.background.category === 'event' ? this.characterData.background.name : "",
       profession: this.characterData.background && this.characterData.background.category === 'occupation' ? this.characterData.background.name : "",
-      planetOfOrigin: this.characterData.background && this.characterData.background.category === 'planet' ? this.characterData.background.name : ""
+      planetOfOrigin: this.characterData.background && this.characterData.background.category === 'planet' ? this.characterData.background.name : "",
+      // Progression structure for level-up system
+      progression: progression
     };
 
     // For NPCs, auto-create a Nonheroic class
@@ -1148,34 +1794,29 @@ export default class CharacterGenerator extends Application {
         for (const classData of this.characterData.classes) {
           const classDoc = this._packs.classes.find(c => c.name === classData.name);
           if (classDoc) {
-            // Get defenses from class doc or use defaults
-            const defenses = classDoc.system.defenses?.fortitude !== undefined ||
-                            classDoc.system.defenses?.reflex !== undefined ||
-                            classDoc.system.defenses?.will !== undefined
-              ? classDoc.system.defenses
-              : { fortitude: 0, reflex: 0, will: 0 };
+            // SSOT: Get normalized class definition
+            const classDef = ClassesDB.byName(classDoc.name);
 
+            if (!classDef) {
+              SWSELogger.error(`CharGen | Class not found in ClassesDB: ${classDoc.name}`);
+              continue;
+            }
+
+            // Create STATE-ONLY class item (no mechanics data stored)
+            // All class mechanics are derived from ClassesDB at runtime
             const classItem = {
               name: classDoc.name,
               type: "class",
               img: classDoc.img,
               system: {
-                level: classData.level || 1,
-                hitDie: getHitDie(classDoc),
-                babProgression: getClassProperty(classDoc, 'babProgression', 0.75),
-                defenses: {
-                  fortitude: defenses.fortitude || 0,
-                  reflex: defenses.reflex || 0,
-                  will: defenses.will || 0
-                },
-                description: classDoc.system.description || '',
-                classSkills: getClassProperty(classDoc, 'classSkills', []),
-                talentTrees: getTalentTrees(classDoc),
-                forceSensitive: classDoc.system.forceSensitive || false
+                classId: classDef.id,      // Stable ID for ClassesDB lookup
+                level: classData.level || 1  // State: current level in this class
+                // NO mechanics data (hitDie, bab, defenses, skills, talents)
+                // All derived from ClassesDB.get(classId) at runtime
               }
             };
             items.push(classItem);
-            SWSELogger.log(`CharGen | Created class item for ${classDoc.name} with talent trees:`, classItem.system.talentTrees);
+            SWSELogger.log(`CharGen | Created STATE-ONLY class item for ${classDoc.name} (classId: ${classDef.id}, level: ${classData.level || 1})`);
           }
         }
       }
@@ -1303,7 +1944,7 @@ export default class CharacterGenerator extends Application {
     const updates = { "system.level": newLevel };
     
     // Recalculate HP for new level
-    const conMod = this.actor.system.abilities.con.mod || 0;
+    const conMod = this.actor.system.attributes.con.mod || 0;
     const classDoc = this._packs.classes.find(c => 
       c.name === this.characterData.classes[0]?.name
     );
@@ -1399,12 +2040,15 @@ export default class CharacterGenerator extends Application {
     for (const feat of feats) {
       const metadata = this._featMetadata.feats[feat.name];
       if (metadata && metadata.category && categorized[metadata.category]) {
+        // Extract feat level (for feats like "Martial Arts I", "Dual Weapon Mastery II", etc.)
+        const { level: featLevel } = this._extractFeatLevel(feat.name);
         categorized[metadata.category].feats.push({
           ...feat,
           metadata: metadata,
           chain: metadata.chain,
           chainOrder: metadata.chainOrder,
-          prerequisiteFeat: metadata.prerequisiteFeat
+          prerequisiteFeat: metadata.prerequisiteFeat,
+          featLevel: featLevel
         });
       } else {
         uncategorized.push(feat);
@@ -1501,6 +2145,100 @@ export default class CharacterGenerator extends Application {
   }
 
   /**
+   * Load backgrounds from progression rules
+   */
+  async _loadBackgroundsFromProgression() {
+    try {
+      // Load comprehensive backgrounds from backgrounds.json
+      // Try multiple URL formats to handle different Foundry configurations
+      const urlFormats = [
+        'systems/foundryvtt-swse/data/backgrounds.json',
+        '/systems/foundryvtt-swse/data/backgrounds.json',
+        'data/backgrounds.json'
+      ];
+
+      let response = null;
+      let fetchUrl = null;
+      let lastError = null;
+
+      for (const url of urlFormats) {
+        try {
+          SWSELogger.log(`SWSE | Attempting to load backgrounds from: ${url}`);
+          response = await fetch(url);
+          if (response.ok) {
+            fetchUrl = url;
+            SWSELogger.log(`SWSE | Successfully fetched from: ${url}`);
+            break;
+          }
+        } catch (err) {
+          lastError = err;
+          SWSELogger.warn(`SWSE | Failed to load from ${url}: ${err.message}`);
+        }
+      }
+
+      if (!response || !response.ok) {
+        throw new Error(`Failed to fetch backgrounds from any URL. Last error: ${lastError?.message || 'Unknown error'}`);
+      }
+
+      const backgroundsData = await response.json();
+      SWSELogger.log(`SWSE | Successfully parsed backgrounds JSON from ${fetchUrl}`, {
+        hasEvents: Array.isArray(backgroundsData.events),
+        hasOccupations: Array.isArray(backgroundsData.occupations),
+        hasPlanetCore: Array.isArray(backgroundsData.planets_core),
+        hasPlanetHomebrew: Array.isArray(backgroundsData.planets_homebrew)
+      });
+
+      // Flatten all backgrounds from all categories
+      this.allBackgrounds = [];
+
+      // Process events (events is an array directly in the JSON)
+      if (backgroundsData.events && Array.isArray(backgroundsData.events)) {
+        this.allBackgrounds.push(...backgroundsData.events.map(bg => ({
+          ...bg,
+          category: 'event',
+          homebrew: false
+        })));
+      }
+
+      // Process occupations (occupations is an array directly in the JSON)
+      if (backgroundsData.occupations && Array.isArray(backgroundsData.occupations)) {
+        this.allBackgrounds.push(...backgroundsData.occupations.map(bg => ({
+          ...bg,
+          category: 'occupation',
+          homebrew: false
+        })));
+      }
+
+      // Process core planets (planets_core is an array directly in the JSON)
+      if (backgroundsData.planets_core && Array.isArray(backgroundsData.planets_core)) {
+        this.allBackgrounds.push(...backgroundsData.planets_core.map(bg => ({
+          ...bg,
+          category: 'planet',
+          homebrew: false
+        })));
+      }
+
+      // Process homebrew planets (planets_homebrew is an array directly in the JSON)
+      if (backgroundsData.planets_homebrew && Array.isArray(backgroundsData.planets_homebrew)) {
+        this.allBackgrounds.push(...backgroundsData.planets_homebrew.map(bg => ({
+          ...bg,
+          category: 'planet',
+          homebrew: true
+        })));
+      }
+
+      // For backwards compatibility, also set this.backgrounds to initial category
+      this.backgrounds = this.allBackgrounds.filter(bg => bg.category === 'event');
+
+      SWSELogger.log(`SWSE | Loaded ${this.allBackgrounds.length} backgrounds total (${this.backgrounds.length} events)`);
+    } catch (error) {
+      SWSELogger.error('SWSE | Failed to load backgrounds:', error);
+      this.allBackgrounds = [];
+      this.backgrounds = [];
+    }
+  }
+
+  /**
    * Get default skills list when skills.json fails to load
    * @returns {Array} Array of default skill objects
    */
@@ -1529,48 +2267,52 @@ export default class CharacterGenerator extends Application {
   }
 
   /**
-   * Get combined class skills list (class + background)
-   * @returns {Array<string>} Array of skill keys that are class skills
+   * Extract Roman numeral level from feat name
+   * Handles feats like "Martial Arts I", "Dual Weapon Mastery II", etc.
+   * @param {string} featName - The feat name
+   * @returns {object} Object with level number, roman numeral, and base name
    */
-  _getClassSkillsList() {
-    const classSkills = new Set();
+  _extractFeatLevel(featName) {
+    const romanNumerals = [
+      { numeral: 'IV', value: 4 },
+      { numeral: 'IX', value: 9 },
+      { numeral: 'XL', value: 40 },
+      { numeral: 'XC', value: 90 },
+      { numeral: 'CD', value: 400 },
+      { numeral: 'CM', value: 900 },
+      { numeral: 'I', value: 1 },
+      { numeral: 'V', value: 5 },
+      { numeral: 'X', value: 10 },
+      { numeral: 'L', value: 50 },
+      { numeral: 'C', value: 100 },
+      { numeral: 'D', value: 500 },
+      { numeral: 'M', value: 1000 }
+    ];
 
-    // Add class skills from selected class
-    if (this.characterData.classes && this.characterData.classes.length > 0) {
-      const className = this.characterData.classes[0].name;
-      const classDoc = this._packs.classes?.find(c => c.name === className);
+    const match = featName.match(/^(.+?)\s+([IVX]+)$/);
 
-      if (classDoc && classDoc.system && classDoc.system.class_skills) {
-        // Normalize class skills to match skill keys
-        for (const skill of classDoc.system.class_skills) {
-          const normalizedSkill = skill.replace(/\s+/g, '').toLowerCase();
-          // Map "Gather Information" -> "gatherInfo" and "Treat Injury" -> "treatInjury"
-          if (normalizedSkill === 'gatherinformation') {
-            classSkills.add('gatherInfo');
-          } else if (normalizedSkill === 'treatinjury') {
-            classSkills.add('treatInjury');
-          } else if (normalizedSkill === 'usecomputer') {
-            classSkills.add('useComputer');
-          } else if (normalizedSkill === 'usetheforce') {
-            classSkills.add('useTheForce');
-          } else {
-            classSkills.add(normalizedSkill);
-          }
-        }
+    if (!match) {
+      return { level: 0, roman: "", baseName: featName };
+    }
+
+    const baseName = match[1].trim();
+    const romanStr = match[2];
+
+    let value = 0;
+    let tempRoman = romanStr;
+
+    for (const { numeral, value: val } of romanNumerals) {
+      while (tempRoman.startsWith(numeral)) {
+        value += val;
+        tempRoman = tempRoman.substring(numeral.length);
       }
     }
 
-    // Add background skills (these become class skills per SWSE rules)
-    if (this.characterData.backgroundSkills && this.characterData.backgroundSkills.length > 0) {
-      for (const bgSkill of this.characterData.backgroundSkills) {
-        classSkills.add(bgSkill.key);
-      }
-      SWSELogger.log(`CharGen | Added ${this.characterData.backgroundSkills.length} background skills as class skills`);
+    if (tempRoman === '' && value > 0) {
+      return { level: value, roman: romanStr, baseName };
     }
 
-    const result = Array.from(classSkills);
-    SWSELogger.log(`CharGen | Total class skills (including background):`, result);
-    return result;
+    return { level: 0, roman: "", baseName: featName };
   }
 }
 

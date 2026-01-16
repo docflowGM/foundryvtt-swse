@@ -57,7 +57,7 @@ Hooks.on("createActor", async (actor, options, userId) => {
 // Add fallback hook on item creation in case store created items with purchasedBy flag
 Hooks.on("createItem", async (item, options, userId) => {
   try {
-    const purchaser = item.getFlag?.("swse","purchasedBy");
+    const purchaser = item.getFlag?.("swse", "purchasedBy") || item.flags?.swse?.purchasedBy;
     if (!purchaser) return;
     // If an item representing a vehicle or droid was created directly as an Item, try to find an actor with the same name
     const owner = game.actors.get(purchaser);

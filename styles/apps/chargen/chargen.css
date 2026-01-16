@@ -8,6 +8,38 @@
     font-family: "Orbitron", sans-serif;
     min-height: 18px;
     border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Main body content - enable scrolling */
+.chargen-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1.5rem;
+    min-height: 0; /* Critical for flex scroll to work */
+}
+
+/* Scrollbar styling for chargen body */
+.chargen-body::-webkit-scrollbar {
+    width: 10px;
+}
+
+.chargen-body::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+.chargen-body::-webkit-scrollbar-thumb {
+    background: #0af;
+    border-radius: 5px;
+}
+
+.chargen-body::-webkit-scrollbar-thumb:hover {
+    background: #00cfff;
 }
 
 .voice-prompt {
@@ -31,10 +63,14 @@
     margin: 0 auto;
 }
 
-.chargen-content { overflow-y: auto; overflow-x: hidden; flex: 1;
-    padding: 2rem;
+.chargen-content {
     overflow-y: auto;
-    min-height: 18px; }
+    overflow-x: hidden;
+    flex: 1;
+    padding: 2rem;
+    min-height: 18px;
+    max-height: calc(100vh - 250px);
+}
 
 .welcome-screen {
     display: flex;
@@ -351,6 +387,40 @@
     cursor: not-allowed;
 }
 
+/* Random Name Button Container */
+.random-name-container {
+    margin: 1rem 0;
+}
+
+.random-buttons-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.random-buttons-grid > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+}
+
+.random-name-btn,
+.random-droid-name-btn {
+    width: 100%;
+}
+
+.random-name-btn i,
+.random-droid-name-btn i {
+    margin-right: 0.5rem;
+}
+
+.random-name-container .hint-text {
+    font-size: 0.85rem;
+    color: #999;
+    font-style: italic;
+}
+
 /* Scrollbar */
 .skills-grid::-webkit-scrollbar {
     width: 10px;
@@ -479,6 +549,475 @@
 /* ============================================
    Skill Selection Grid Styles
    ============================================ */
+
+/* ============================================
+   Feat Grid - Space Efficient Layout
+   ============================================ */
+
+.feats-grid,
+.feats-categorized,
+.feats-list {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+  margin: 0.75rem 0;
+}
+
+@media (max-width: 1400px) {
+  .feats-grid,
+  .feats-categorized,
+  .feats-list {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 1000px) {
+  .feats-grid,
+  .feats-categorized,
+  .feats-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .feats-grid,
+  .feats-categorized,
+  .feats-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.feat-category {
+  margin-bottom: 1.5rem;
+}
+
+.feat-category .category-header {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #0af;
+  border-bottom: 1px solid #0af;
+  padding-bottom: 0.5rem;
+}
+
+.feat-category .category-description {
+  font-size: 0.85rem;
+  color: #9ed0ff;
+  margin-bottom: 0.75rem;
+  font-style: italic;
+}
+
+.feat-card,
+.feat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(0, 20, 40, 0.5);
+  border: 1px solid #0af;
+  border-radius: 4px;
+  padding: 0.5rem 0.35rem;
+  transition: all 0.2s ease;
+  position: relative;
+  min-height: 180px;
+}
+
+.feat-card:hover,
+.feat-item:hover {
+  background: rgba(0, 50, 100, 0.6);
+  box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
+  border-color: #00ff88;
+}
+
+/* Icon-based feat button */
+.feat-icon-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+
+.feat-icon-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+.feat-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.feat-card:hover .feat-icon,
+.feat-item:hover .feat-icon {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.feat-card:disabled,
+.feat-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.feat-card:disabled .feat-icon,
+.feat-item:disabled .feat-icon {
+  filter: grayscale(1) brightness(0.7);
+}
+
+.feat-name {
+  font-size: 0.8rem;
+  color: #fff;
+  text-align: center;
+  line-height: 1.2;
+  word-break: break-word;
+  width: 100%;
+  max-lines: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.feat-chain-indicator {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0, 170, 255, 0.8);
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 3px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* Tooltip styling */
+.feat-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid #0af;
+  border-radius: 6px;
+  padding: 0.75rem;
+  max-width: 280px;
+  font-size: 0.8rem;
+  color: #fff;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+}
+
+.feat-card:hover .feat-tooltip,
+.feat-item:hover .feat-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.feat-tooltip-title {
+  font-weight: bold;
+  color: #00ff88;
+  margin-bottom: 0.35rem;
+  border-bottom: 1px solid #0af;
+  padding-bottom: 0.35rem;
+}
+
+.feat-tooltip-benefit {
+  margin: 0.35rem 0;
+  line-height: 1.3;
+}
+
+.feat-tooltip-prereqs {
+  margin: 0.35rem 0;
+  color: #ffaa00;
+  font-size: 0.75rem;
+}
+
+.feat-tooltip-suggestion {
+  margin: 0.35rem 0;
+  color: #00ff88;
+  font-style: italic;
+  font-size: 0.75rem;
+}
+
+.feat-card h5,
+.feat-item h4 {
+  display: none;
+}
+
+.feat-card .select-feat,
+.feat-item .select-feat {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: center;
+  flex: 1;
+  width: 100%;
+}
+
+.feat-card .feat-prereqs,
+.feat-item .feat-prereqs {
+  display: none;
+}
+
+.feat-card .suggestion-reason {
+  display: none;
+}
+
+.feat-chain-badge {
+  display: none;
+}
+
+.feat-suggestion-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.feat-suggestion-badge.suggestion-tier-prestige {
+  background: #ff6b6b;
+  color: white;
+}
+
+.feat-suggestion-badge.suggestion-tier-chain {
+  background: #ffd93d;
+  color: #000;
+}
+
+.feat-suggestion-badge.suggestion-tier-skill {
+  background: #6bcf7f;
+  color: white;
+}
+
+.feat-suggestion-badge.suggestion-tier-ability {
+  background: #4ecdc4;
+  color: #000;
+}
+
+.feat-suggestion-badge.suggestion-tier-class {
+  background: #95e1d3;
+  color: #000;
+}
+
+.feat-chain-badge {
+  font-size: 0.65rem;
+  background: rgba(0, 170, 255, 0.2);
+  color: #0af;
+  padding: 0.1rem 0.3rem;
+  border-radius: 2px;
+  margin-top: 0.25rem;
+  display: inline-block;
+  border: 1px solid #0af;
+}
+
+.feat-indent-0 {
+  /* Base level feats - normal styling */
+}
+
+.feat-indent-1 {
+  /* Prerequisite feats - subtle indentation via darker background */
+  background: rgba(0, 20, 40, 0.7);
+  border-left: 3px solid #00ff88;
+  padding-left: 0.35rem;
+}
+
+.feat-indent-2 {
+  /* Chain feats - further indentation */
+  background: rgba(0, 20, 40, 0.85);
+  border-left: 3px solid #ffaa00;
+  padding-left: 0.35rem;
+}
+
+/* Feat level coloring - adds border color based on feat level (I, II, III, etc.) */
+.feat-card.feat-level-1,
+.feat-item.feat-level-1 {
+  border-color: #ffffff;
+  border-width: 2px;
+}
+
+.feat-card.feat-level-1:hover,
+.feat-item.feat-level-1:hover {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.feat-card.feat-level-2,
+.feat-item.feat-level-2 {
+  border-color: #00ff88;
+  border-width: 2px;
+}
+
+.feat-card.feat-level-2:hover,
+.feat-item.feat-level-2:hover {
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+}
+
+.feat-card.feat-level-3,
+.feat-item.feat-level-3 {
+  border-color: #ffbb00;
+  border-width: 2px;
+}
+
+.feat-card.feat-level-3:hover,
+.feat-item.feat-level-3:hover {
+  box-shadow: 0 0 15px rgba(255, 187, 0, 0.4);
+}
+
+.feat-card.feat-level-4,
+.feat-item.feat-level-4 {
+  border-color: #ff6b9d;
+  border-width: 2px;
+}
+
+.feat-card.feat-level-4:hover,
+.feat-item.feat-level-4:hover {
+  box-shadow: 0 0 15px rgba(255, 107, 157, 0.4);
+}
+
+.feat-card.feat-level-5,
+.feat-item.feat-level-5 {
+  border-color: #a78bfa;
+  border-width: 2px;
+}
+
+.feat-card.feat-level-5:hover,
+.feat-item.feat-level-5:hover {
+  box-shadow: 0 0 15px rgba(167, 139, 250, 0.4);
+}
+
+/* Unqualified feats/talents - disabled state */
+.feat-card.unqualified,
+.feat-item.unqualified,
+.talent-item.unqualified {
+  opacity: 0.5;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.feat-card.unqualified .select-feat,
+.feat-item.unqualified .select-feat,
+.talent-item.unqualified .select-talent {
+  cursor: not-allowed;
+}
+
+.feat-card.unqualified .select-feat:disabled,
+.feat-item.unqualified .select-feat:disabled,
+.talent-item.unqualified .select-talent:disabled {
+  opacity: 0.6;
+}
+
+.selected-feats-summary {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(0, 50, 100, 0.6), rgba(0, 30, 60, 0.8));
+  border: 2px solid #0af;
+  border-radius: 6px;
+  box-shadow: 0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.1);
+}
+
+.selected-feats-summary h4 {
+  margin: 0 0 0.75rem 0;
+  color: #00ff88;
+  font-size: 1.05rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.selected-feats-summary h4::before {
+  content: "✓";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba(0, 255, 136, 0.2);
+  border: 1px solid #00ff88;
+  border-radius: 50%;
+  font-size: 0.9rem;
+}
+
+.selected-feats-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.selected-feat-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 170, 255, 0.2);
+  border: 1.5px solid #00ff88;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #fff;
+  font-weight: 500;
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+}
+
+.selected-feat-badge::before {
+  content: "✓";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: rgba(0, 255, 136, 0.3);
+  border: 1px solid #00ff88;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  color: #00ff88;
+}
+
+.selected-feat-badge .remove-feat {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #ff6b6b;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.selected-feat-badge .remove-feat:hover {
+  color: #ff8888;
+}
 
 .skills-grid {
   display: grid;
@@ -688,6 +1227,72 @@
 }
 
 /* ============================================
+   Species Filters
+   ============================================ */
+
+.species-filters {
+  margin-bottom: 2rem;
+  background: rgba(0, 30, 60, 0.4);
+  border: 1px solid #0af;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.filter-header {
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #0af;
+  margin-bottom: 1rem;
+}
+
+.filter-header i {
+  margin-right: 0.5rem;
+}
+
+.filter-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-size: 0.95rem;
+  color: #9ed0ff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.species-filter-select {
+  padding: 0.75rem;
+  height: 44px;
+  background: rgba(0, 20, 40, 0.8);
+  border: 1px solid #0af;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.species-filter-select:hover,
+.species-filter-select:focus {
+  outline: none;
+  border-color: #00ff88;
+  box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+  background: rgba(0, 30, 60, 0.9);
+}
+
+/* ============================================
    Species Selection Display
    ============================================ */
 
@@ -698,49 +1303,152 @@
   margin-bottom: 1.5rem;
 }
 
-.select-species {
+/* Species Card - New Template-like Design */
+.select-species,
+.preview-species {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
-  background: linear-gradient(135deg, rgba(0, 30, 60, 0.8) 0%, rgba(0, 50, 100, 0.6) 100%);
+  position: relative;
   border: 2px solid #0af;
-  border-radius: 10px;
+  border-radius: 12px;
+  overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-align: left;
+  text-align: center;
+  min-height: 300px;
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+  background-color: rgba(10, 15, 26, 0.9);
 }
 
-.select-species:hover {
-  box-shadow: 0 0 20px rgba(0, 170, 255, 0.6);
-  transform: translateY(-3px);
+.select-species::before,
+.preview-species::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(rgba(10, 15, 26, 0.4), rgba(10, 15, 26, 0.7));
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.select-species h4,
+.preview-species h4 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0.75rem;
+  background: linear-gradient(to top, rgba(10, 15, 26, 0.95), transparent);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+  border-top: 2px solid #0af;
+  z-index: 2;
+  text-align: center;
+  line-height: 1.2;
+  word-wrap: break-word;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.select-species:hover,
+.preview-species:hover {
+  box-shadow: 0 0 30px rgba(0, 170, 255, 0.8), inset 0 0 20px rgba(0, 170, 255, 0.2);
+  transform: translateY(-5px);
   border-color: #00ff88;
 }
 
-.select-species h4 {
-  margin: 0 0 0.75rem 0;
-  color: #00ff88;
+.select-species:hover::before,
+.preview-species:hover::before {
+  background-image: linear-gradient(rgba(10, 15, 26, 0.2), rgba(10, 15, 26, 0.4));
+}
+
+/* Details Panel on Hover */
+.select-species .details-panel,
+.preview-species .details-panel {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 15, 26, 0.95);
+  border: 1px solid #0af;
+  padding: 1.5rem;
+  overflow-y: auto;
+  z-index: 3;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.select-species:hover .details-panel,
+.preview-species:hover .details-panel {
+  display: flex;
+}
+
+.details-panel h3 {
+  color: #0af;
   font-size: 1.2rem;
-  font-weight: bold;
+  margin: 0;
   text-align: center;
-  border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+  border-bottom: 2px solid #0af;
   padding-bottom: 0.5rem;
 }
 
-.select-species .bonuses {
+.details-panel .detail-group {
+  font-size: 0.9rem;
+}
+
+.details-panel .detail-group label {
+  color: #00ff88;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.details-panel .detail-group p {
+  color: #9ed0ff;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Species card content - ensure visibility above overlay */
+.select-species .bonuses,
+.select-species .species-size,
+.select-species .skill-bonuses,
+.select-species .special-abilities,
+.preview-species .bonuses,
+.preview-species .species-size,
+.preview-species .skill-bonuses,
+.preview-species .special-abilities {
+  position: relative;
+  z-index: 2;
+  margin: 0.25rem 0.5rem;
+}
+
+.bonuses {
   margin-bottom: 0.5rem;
   padding: 0.5rem;
   background: rgba(0, 170, 255, 0.1);
   border-radius: 4px;
 }
 
-.select-species .bonus {
+.bonus {
   display: block;
   color: #9ed0ff;
   font-size: 0.95rem;
   font-weight: 500;
 }
 
-.select-species .species-size {
+.species-size {
   margin-bottom: 0.5rem;
   padding: 0.4rem 0.5rem;
   background: rgba(170, 0, 255, 0.1);
@@ -748,7 +1456,7 @@
   border-left: 3px solid #aa00ff;
 }
 
-.select-species .size-label {
+.size-label {
   display: block;
   color: #cc88ff;
   font-size: 0.9rem;
@@ -757,33 +1465,33 @@
   letter-spacing: 0.5px;
 }
 
-.select-species .skill-bonuses {
+.skill-bonuses {
   margin-bottom: 0.5rem;
   padding: 0.5rem;
   background: rgba(0, 255, 136, 0.1);
   border-radius: 4px;
 }
 
-.select-species .skill-bonus {
+.skill-bonus {
   display: block;
   color: #00ff88;
   font-size: 0.9rem;
   margin-bottom: 0.25rem;
 }
 
-.select-species .skill-bonus::before {
+.skill-bonus::before {
   content: "⚡ ";
   color: #0af;
 }
 
-.select-species .special-abilities {
+.special-abilities {
   padding: 0.5rem;
   background: rgba(255, 200, 0, 0.1);
   border-radius: 4px;
   border-left: 3px solid #ffaa00;
 }
 
-.select-species .special-ability {
+.special-ability {
   display: block;
   color: #ffcc66;
   font-size: 0.85rem;
@@ -1105,6 +1813,11 @@
 .near-human-card {
   background: linear-gradient(135deg, rgba(100, 50, 150, 0.4) 0%, rgba(60, 30, 100, 0.6) 100%) !important;
   border-color: #aa66ff !important;
+  /* Ensure content is properly contained */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 1rem;
 }
 
 .near-human-card:hover {
@@ -1114,10 +1827,42 @@
 
 .near-human-card h4 {
   color: #cc88ff !important;
+  /* Override the absolute positioning from preview-species */
+  position: relative !important;
+  bottom: auto !important;
+  background: transparent !important;
+  border-top: none !important;
+  padding: 0.5rem 0 !important;
+  margin-bottom: 0.5rem;
 }
 
 .near-human-card h4 i {
   margin-right: 0.5rem;
+}
+
+/* Ensure Near-Human card content is contained and readable */
+.near-human-card .species-size,
+.near-human-card .bonuses,
+.near-human-card .special-abilities {
+  position: relative;
+  z-index: 2;
+}
+
+.near-human-card .special-abilities {
+  margin-top: 0.5rem;
+}
+
+.near-human-card .special-ability {
+  font-size: 0.8rem;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Remove the overlay pseudo-element for Near-Human card since it has no portrait */
+.near-human-card::before {
+  display: none !important;
 }
 
 /* ============================================
@@ -1668,6 +2413,195 @@
     color: #6ab0f5;
     font-weight: bold;
     text-shadow: 0 0 8px rgba(106, 176, 245, 0.4);
+}
+
+/* ============================================
+   Background Selection Styles
+   ============================================ */
+
+.background-category-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    border-bottom: 2px solid #0af;
+}
+
+.background-category-tab {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #444;
+    color: #999;
+    cursor: pointer;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: bold;
+}
+
+.background-category-tab:hover {
+    color: #0af;
+    border-color: #0af;
+}
+
+.background-category-tab.active {
+    background: rgba(0, 170, 255, 0.2);
+    color: #0af;
+    border-color: #0af;
+    box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+}
+
+.background-controls {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+}
+
+.background-filter-btn {
+    flex: 0 0 auto;
+}
+
+.background-cards-container {
+    margin: 2rem 0;
+}
+
+#background-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.background-card {
+    background: linear-gradient(135deg, rgba(0, 50, 100, 0.6), rgba(0, 100, 150, 0.4));
+    border: 2px solid #0af;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.background-card:hover {
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.5);
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, rgba(0, 100, 150, 0.8), rgba(0, 150, 200, 0.6));
+}
+
+.background-card h3 {
+    margin: 0;
+    color: #0af;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.background-card p {
+    margin: 0;
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+.background-card .select-background {
+    margin-top: auto;
+    padding: 0.75rem;
+    background: #0af;
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.background-card .select-background:hover {
+    background: #00cfff;
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.7);
+}
+
+.selected-background-display {
+    background: linear-gradient(135deg, rgba(0, 100, 150, 0.8), rgba(0, 50, 100, 0.6));
+    border: 2px solid #0af;
+    border-radius: 8px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+}
+
+.selected-background-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.selected-background-header h4 {
+    color: #0af;
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.background-icon-large {
+    font-size: 2rem;
+}
+
+.background-narrative {
+    color: #ccc;
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.background-benefits {
+    color: #999;
+}
+
+.background-benefits strong {
+    color: #0af;
+}
+
+.background-benefits ul {
+    margin: 0.5rem 0 0 1.5rem;
+    padding: 0;
+}
+
+.background-benefits li {
+    margin: 0.25rem 0;
+}
+
+.homebrew-toggle-container {
+    background: rgba(50, 50, 50, 0.5);
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.homebrew-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.homebrew-toggle-label input {
+    cursor: pointer;
+}
+
+.homebrew-toggle-label strong {
+    color: #0af;
+}
+
+.homebrew-toggle-label .hint-text {
+    display: block;
+    font-size: 0.85rem;
+    color: #999;
+    margin-left: 1.5rem;
+    margin-top: 0.25rem;
+    font-style: italic;
 }
 
 .credits-value {

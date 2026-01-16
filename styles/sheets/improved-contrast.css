@@ -1,5 +1,16 @@
+/* ============================================================================
+   FROZEN LEGACY CSS - DO NOT EDIT
+
+   This file has been frozen as part of the CSS architecture refactoring.
+   New contrast improvements should use the --swse-* variables in:
+   - styles/core/variables.css (for theme variants)
+
+   Migration: These styles may be selectively merged into the new system.
+   Date frozen: 2026-01-15
+   ============================================================================ */
+
 /* ==========================================================================
-   SWSE Enhanced Sheet Improvements
+   SWSE Enhanced Sheet Improvements (LEGACY)
    Improves contrast, visibility, and usability across all sheets
    ========================================================================== */
 

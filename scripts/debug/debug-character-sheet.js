@@ -247,7 +247,7 @@
       debugLog('  System data exists:', !!app.actor?.system);
       debugLog('  Level:', app.actor?.system?.level);
       debugLog('  HP:', app.actor?.system?.hp);
-      debugLog('  Abilities:', app.actor?.system?.abilities ? Object.keys(app.actor.system.abilities) : 'None');
+      debugLog('  Abilities:', app.actor?.system?.abilities ? Object.keys(app.actor.system.attributes) : 'None');
     }
 
     debugLog('─'.repeat(60));

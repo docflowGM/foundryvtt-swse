@@ -1,0 +1,146 @@
+/* ============================================================================
+   SWSE Design System - Core Variables
+   Single source of truth for colors, spacing, typography, and effects
+
+   Usage: Import this file first in any sheet-specific CSS
+   ============================================================================ */
+
+:root {
+  /* ─────────────────────────────────────────────────────────────────────────
+     COLORS - Primary Palette
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Background layers (deep to light) */
+  --swse-bg-deep: #071522;
+  --swse-bg-dark: #0a0f1a;
+  --swse-bg-mid: #0f1420;
+  --swse-bg-light: #1a2030;
+  --swse-bg-panel: rgba(6, 18, 32, 0.72);
+  --swse-bg-overlay: rgba(0, 20, 40, 0.5);
+  --swse-bg-hover: rgba(0, 170, 255, 0.15);
+
+  /* Borders */
+  --swse-border: rgba(0, 217, 255, 0.25);
+  --swse-border-default: #1c4b8e;
+  --swse-border-active: #00baff;
+  --swse-border-hover: #0af;
+  --swse-border-subtle: rgba(0, 170, 255, 0.2);
+
+  /* Accent colors */
+  --swse-accent: #00d9ff;
+  --swse-accent-soft: rgba(0, 217, 255, 0.15);
+  --swse-accent-glow: rgba(0, 217, 255, 0.6);
+  --swse-primary: #9ed0ff;
+  --swse-secondary: #0af;
+
+  /* Semantic colors */
+  --swse-success: #00ff88;
+  --swse-warning: #ffd66b;
+  --swse-danger: #ff6b6b;
+  --swse-info: #00c6ff;
+
+  /* Text colors */
+  --swse-text-primary: #9ed0ff;
+  --swse-text-secondary: #6a9dcd;
+  --swse-text-light: #b5daff;
+  --swse-text-white: #fff;
+  --swse-text-muted: rgba(181, 218, 255, 0.5);
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     TYPOGRAPHY
+     ───────────────────────────────────────────────────────────────────────── */
+
+  --swse-font: "Rajdhani", "Signika", system-ui, sans-serif;
+  --swse-font-display: "Orbitron", "Roboto", sans-serif;
+  --swse-font-mono: "Consolas", "Monaco", monospace;
+
+  --swse-font-size-xs: 9px;
+  --swse-font-size-sm: 10px;
+  --swse-font-size-base: 11px;
+  --swse-font-size-md: 12px;
+  --swse-font-size-lg: 14px;
+  --swse-font-size-xl: 16px;
+  --swse-font-size-xxl: 20px;
+
+  --swse-font-weight-normal: 400;
+  --swse-font-weight-medium: 500;
+  --swse-font-weight-bold: 700;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     SPACING
+     ───────────────────────────────────────────────────────────────────────── */
+
+  --swse-space-xs: 2px;
+  --swse-space-sm: 4px;
+  --swse-space-md: 8px;
+  --swse-space-lg: 12px;
+  --swse-space-xl: 16px;
+  --swse-space-xxl: 24px;
+
+  /* Common layout values */
+  --swse-radius: 10px;
+  --swse-radius-sm: 4px;
+  --swse-radius-lg: 12px;
+  --swse-gap: 12px;
+  --swse-panel-padding: 12px;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     EFFECTS
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Shadows */
+  --swse-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --swse-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --swse-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+
+  /* Glows */
+  --swse-glow: 0 0 8px rgba(0, 217, 255, 0.35);
+  --swse-glow-strong: 0 0 16px rgba(0, 217, 255, 0.5);
+  --swse-glow-cyan: 0 0 10px rgba(0, 170, 255, 0.4);
+  --swse-glow-green: 0 0 10px rgba(0, 255, 136, 0.6);
+
+  /* Transitions */
+  --swse-transition-fast: 0.15s;
+  --swse-transition-base: 0.2s;
+  --swse-transition-slow: 0.3s;
+  --swse-ease: ease-out;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     Z-INDEX SCALE
+     ───────────────────────────────────────────────────────────────────────── */
+
+  --swse-z-base: 0;
+  --swse-z-content: 5;
+  --swse-z-overlay: 10;
+  --swse-z-dropdown: 50;
+  --swse-z-modal: 100;
+  --swse-z-tooltip: 200;
+}
+
+/* ============================================================================
+   HOLO THEME VARIANT
+   Apply via data-theme="holo" or .swse-theme-holo
+   ============================================================================ */
+
+[data-theme="holo"],
+.swse-theme-holo {
+  --swse-bg-deep: #071426;
+  --swse-bg-panel: rgba(3, 10, 20, 0.55);
+  --swse-border: rgba(0, 217, 255, 0.3);
+  --swse-accent-glow: rgba(0, 217, 255, 0.6);
+}
+
+/* ============================================================================
+   HIGH CONTRAST VARIANT
+   Apply via data-theme="high-contrast" or .swse-theme-high-contrast
+   ============================================================================ */
+
+[data-theme="high-contrast"],
+.swse-theme-high-contrast {
+  --swse-bg-deep: #000000;
+  --swse-bg-panel: rgba(0, 0, 0, 0.85);
+  --swse-border: rgba(255, 255, 255, 0.5);
+  --swse-text-primary: #ffffff;
+  --swse-text-secondary: #cccccc;
+  --swse-accent: #00ffff;
+}

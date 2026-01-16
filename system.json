@@ -55,6 +55,7 @@
     "styles/apps/upgrade-app.css",
     "styles/apps/houserules.css",
     "styles/apps/custom-item-dialog.css",
+    "styles/apps/store.css",
     "styles/sheets/character-sheet.css",
     "styles/sheets/vehicle-sheet.css",
     "styles/sheets/unified-sheets.css",
@@ -95,6 +96,8 @@
     { "type": "cover", "url": "assets/ui/swse-cover.webp" },
     { "type": "icon", "url": "assets/ui/title-logo.png" }
   ],
+
+  "flagScopes": ["swse"],
 
   "packs": [
     { "name": "species", "label": "Species", "type": "Item", "system": "foundryvtt-swse", "path": "packs/species.db" },
@@ -140,6 +143,9 @@
     { "name": "special-combat-condition", "label": "Combat Conditions", "type": "Item", "system": "foundryvtt-swse", "path": "packs/special-combat-condition.db" },
     { "name": "attributes", "label": "Attributes", "type": "Item", "system": "foundryvtt-swse", "path": "packs/attributes.db" },
     { "name": "extraskilluses", "label": "Extra Skill Uses", "type": "Item", "system": "foundryvtt-swse", "path": "packs/extraskilluses.db" },
+    { "name": "combat-actions", "label": "Combat Actions", "type": "Item", "system": "foundryvtt-swse", "path": "packs/combat-actions.db" },
+    { "name": "ship-combat-actions", "label": "Ship Combat Actions", "type": "Item", "system": "foundryvtt-swse", "path": "packs/ship-combat-actions.db" },
+    { "name": "talent-enhancements", "label": "Talent Enhancements", "type": "Item", "system": "foundryvtt-swse", "path": "packs/talent-enhancements.db" },
     { "name": "npc", "label": "NPCs", "type": "Actor", "system": "foundryvtt-swse", "path": "packs/npc.db" },
     { "name": "droids", "label": "Droids", "type": "Actor", "system": "foundryvtt-swse", "path": "packs/droids.db" }
   ],
@@ -157,11 +163,23 @@
       "type": "Boolean",
       "default": false
     },
+    "foundryvtt-swse.fixItemWeightMigration": {
+      "scope": "world",
+      "config": false,
+      "type": "String",
+      "default": ""
+    },
     "foundryvtt-swse.forceCompendiumsPopulation": {
       "scope": "world",
       "config": false,
       "type": "Boolean",
       "default": false
+    },
+    "foundryvtt-swse.talentEffectValidationMigration": {
+      "scope": "world",
+      "config": false,
+      "type": "String",
+      "default": ""
     }
   }
 }

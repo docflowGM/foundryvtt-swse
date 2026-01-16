@@ -1,0 +1,239 @@
+/* ============================================================================
+   SWSE Sheet Layout Primitives
+   Standardized grid and flexbox utilities for consistent sheet structure
+
+   Usage: These classes create the foundational layout structure.
+   All classes are prefixed with swse- and scoped under .swse-app
+   ============================================================================ */
+
+/* ─────────────────────────────────────────────────────────────────────────
+   BASE SHEET CONTAINER
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-character-sheet,
+.swse-app .swse-sheet-root {
+  font-family: var(--swse-font);
+  font-size: var(--swse-font-size-base);
+  color: var(--swse-text-primary);
+  background: radial-gradient(
+    ellipse at top,
+    #0a2238,
+    var(--swse-bg-deep)
+  );
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   PRIMARY LAYOUT GRID
+   Use for main sheet structure (sidebar + content)
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-sheet-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--swse-gap);
+  padding: var(--swse-gap);
+}
+
+/* Responsive: collapse sidebar on smaller sheets */
+@media (max-width: 900px) {
+  .swse-app .swse-sheet-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 3-column variant for wider layouts */
+.swse-app .swse-sheet-grid-3col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.8fr;
+  gap: var(--swse-gap);
+  padding: var(--swse-gap);
+}
+
+@media (max-width: 1400px) {
+  .swse-app .swse-sheet-grid-3col {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .swse-app .swse-sheet-grid-3col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   COLUMN CONTAINER
+   Vertical stack with consistent gap
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--swse-gap);
+}
+
+.swse-app .swse-column-tight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--swse-space-md);
+}
+
+.swse-app .swse-column-loose {
+  display: flex;
+  flex-direction: column;
+  gap: var(--swse-space-xl);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   ROW CONTAINER
+   Horizontal layout with wrapping and alignment
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--swse-gap);
+  flex-wrap: wrap;
+}
+
+.swse-app .swse-row-tight {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--swse-space-sm);
+  flex-wrap: wrap;
+}
+
+.swse-app .swse-row-nowrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--swse-gap);
+  flex-wrap: nowrap;
+}
+
+.swse-app .swse-row-between {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--swse-gap);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   FLEX UTILITIES
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-flex-0 { flex: 0 0 auto; }
+.swse-app .swse-flex-1 { flex: 1; }
+.swse-app .swse-flex-2 { flex: 2; }
+.swse-app .swse-flex-3 { flex: 3; }
+
+.swse-app .swse-flex-grow { flex-grow: 1; }
+.swse-app .swse-flex-shrink-0 { flex-shrink: 0; }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   GRID UTILITIES
+   Common grid patterns
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-grid {
+  display: grid;
+  gap: var(--swse-gap);
+}
+
+.swse-app .swse-grid-2col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--swse-gap);
+}
+
+.swse-app .swse-grid-3col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--swse-gap);
+}
+
+.swse-app .swse-grid-4col {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--swse-gap);
+}
+
+.swse-app .swse-grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--swse-gap);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   SCROLLABLE CONTAINER
+   For lists and content that needs scrolling
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-scrollable {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--swse-border-default) var(--swse-bg-dark);
+}
+
+.swse-app .swse-scrollable::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.swse-app .swse-scrollable::-webkit-scrollbar-track {
+  background: var(--swse-bg-dark);
+  border-radius: 3px;
+}
+
+.swse-app .swse-scrollable::-webkit-scrollbar-thumb {
+  background: var(--swse-border-default);
+  border-radius: 3px;
+}
+
+.swse-app .swse-scrollable::-webkit-scrollbar-thumb:hover {
+  background: var(--swse-border-hover);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   CONTENT AREA
+   Main content wrapper with standard padding
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-content {
+  flex: 1;
+  padding: var(--swse-panel-padding);
+  overflow-y: auto;
+}
+
+.swse-app .swse-content-flush {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   SPACING UTILITIES
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app .swse-gap-xs { gap: var(--swse-space-xs); }
+.swse-app .swse-gap-sm { gap: var(--swse-space-sm); }
+.swse-app .swse-gap-md { gap: var(--swse-space-md); }
+.swse-app .swse-gap-lg { gap: var(--swse-space-lg); }
+.swse-app .swse-gap-xl { gap: var(--swse-space-xl); }
+
+.swse-app .swse-p-xs { padding: var(--swse-space-xs); }
+.swse-app .swse-p-sm { padding: var(--swse-space-sm); }
+.swse-app .swse-p-md { padding: var(--swse-space-md); }
+.swse-app .swse-p-lg { padding: var(--swse-space-lg); }
+.swse-app .swse-p-xl { padding: var(--swse-space-xl); }
+
+.swse-app .swse-m-xs { margin: var(--swse-space-xs); }
+.swse-app .swse-m-sm { margin: var(--swse-space-sm); }
+.swse-app .swse-m-md { margin: var(--swse-space-md); }
+.swse-app .swse-m-lg { margin: var(--swse-space-lg); }
+.swse-app .swse-m-xl { margin: var(--swse-space-xl); }

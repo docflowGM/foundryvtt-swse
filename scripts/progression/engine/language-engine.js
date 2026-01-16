@@ -109,7 +109,7 @@ export class LanguageEngine {
      * SWSE rule: Characters gain 1 bonus language per INT modifier at 1st level
      */
     static async applyIntModLanguages(actor) {
-        const intMod = actor.system.abilities?.int?.mod || 0;
+        const intMod = actor.system.attributes?.int?.mod || 0;
 
         if (intMod <= 0) {
             SWSELogger.log('No INT modifier languages (INT mod is 0 or negative)');
@@ -144,7 +144,7 @@ export class LanguageEngine {
      * Includes: INT mod + Linguist feat
      */
     static calculateBonusLanguagesAvailable(actor) {
-        const intMod = actor.system.abilities?.int?.mod || 0;
+        const intMod = actor.system.attributes?.int?.mod || 0;
         const linguistBonuses = this.applyLinguistLanguages(actor);
 
         return Math.max(0, intMod) + linguistBonuses;

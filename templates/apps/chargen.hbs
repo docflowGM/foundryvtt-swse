@@ -19,60 +19,60 @@
  <span class="chevron-label">Name</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'type')}}active{{/if}} {{#if (or characterData.isDroid characterData.species)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'type') freeBuild)}}clickable{{/if}}" data-step="type">
+ <div class="chevron-step {{#if (eq currentStep 'type')}}active{{/if}} {{#if (or characterData.isDroid characterData.species)}}completed{{/if}} {{#if (or (or characterData.isDroid characterData.species) freeBuild)}}clickable{{/if}}" data-step="type">
  <span class="chevron-label">Type</span>
  </div>
 
  {{#if characterData.isDroid}}
- <div class="chevron-step {{#if (eq currentStep 'degree')}}active{{/if}} {{#if characterData.droidDegree}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'degree') freeBuild)}}clickable{{/if}}" data-step="degree">
+ <div class="chevron-step {{#if (eq currentStep 'degree')}}active{{/if}} {{#if characterData.droidDegree}}completed{{/if}} {{#if (or characterData.droidDegree freeBuild)}}clickable{{/if}}" data-step="degree">
  <span class="chevron-label">Degree</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'size')}}active{{/if}} {{#if characterData.droidSize}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'size') freeBuild)}}clickable{{/if}}" data-step="size">
+ <div class="chevron-step {{#if (eq currentStep 'size')}}active{{/if}} {{#if characterData.droidSize}}completed{{/if}} {{#if (or characterData.droidSize freeBuild)}}clickable{{/if}}" data-step="size">
  <span class="chevron-label">Size</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'droid-builder')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'droid-builder') freeBuild)}}clickable{{/if}}" data-step="droid-builder">
+ <div class="chevron-step {{#if (eq currentStep 'droid-builder')}}active{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="droid-builder">
  <span class="chevron-label">Systems</span>
  </div>
  {{else}}
- <div class="chevron-step {{#if (eq currentStep 'species')}}active{{/if}} {{#if characterData.species}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'species') freeBuild)}}clickable{{/if}}" data-step="species">
+ <div class="chevron-step {{#if (eq currentStep 'species')}}active{{/if}} {{#if characterData.species}}completed{{/if}} {{#if (or characterData.species freeBuild)}}clickable{{/if}}" data-step="species">
  <span class="chevron-label">Species</span>
  </div>
  {{/if}}
 
- <div class="chevron-step {{#if (eq currentStep 'abilities')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'abilities') freeBuild)}}clickable{{/if}}" data-step="abilities">
+ <div class="chevron-step {{#if (eq currentStep 'abilities')}}active{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="abilities">
  <span class="chevron-label">Abilities</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'class')}}active{{/if}} {{#if (gt characterData.classes.length 0)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'class') freeBuild)}}clickable{{/if}}" data-step="class">
+ <div class="chevron-step {{#if (eq currentStep 'class')}}active{{/if}} {{#if (gt characterData.classes.length 0)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="class">
  <span class="chevron-label">Class</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'background')}}active{{/if}} {{#if characterData.background}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'background') freeBuild)}}clickable{{/if}}" data-step="background">
+ <div class="chevron-step {{#if (eq currentStep 'background')}}active{{/if}} {{#if characterData.background}}completed{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="background">
  <span class="chevron-label">Background</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'skills')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'skills') freeBuild)}}clickable{{/if}}" data-step="skills">
+ <div class="chevron-step {{#if (eq currentStep 'skills')}}active{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="skills">
  <span class="chevron-label">Skills</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'languages')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'languages') freeBuild)}}clickable{{/if}}" data-step="languages">
+ <div class="chevron-step {{#if (eq currentStep 'languages')}}active{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="languages">
  <span class="chevron-label">Languages</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'feats')}}active{{/if}} {{#if (gte characterData.feats.length characterData.featsRequired)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'feats') freeBuild)}}clickable{{/if}}" data-step="feats">
+ <div class="chevron-step {{#if (eq currentStep 'feats')}}active{{/if}} {{#if (gte characterData.feats.length characterData.featsRequired)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="feats">
  <span class="chevron-label">Feats</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'talents')}}active{{/if}} {{#if (gt characterData.talents.length 0)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'talents') freeBuild)}}clickable{{/if}}" data-step="talents">
+ <div class="chevron-step {{#if (eq currentStep 'talents')}}active{{/if}} {{#if (gt characterData.talents.length 0)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="talents">
  <span class="chevron-label">Talents</span>
  </div>
 
  {{!-- Force powers only for Force-sensitive living characters (droids cannot be Force-sensitive in SWSE) --}}
  {{#if characterData.forceSensitive}}
  {{#unless characterData.isDroid}}
- <div class="chevron-step {{#if (eq currentStep 'force-powers')}}active{{/if}} {{#if (gte characterData.powers.length characterData.forcePowersRequired)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'force-powers') freeBuild)}}clickable{{/if}}" data-step="force-powers">
+ <div class="chevron-step {{#if (eq currentStep 'force-powers')}}active{{/if}} {{#if (gte characterData.powers.length characterData.forcePowersRequired)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="force-powers">
  <span class="chevron-label">Force Powers</span>
  </div>
  {{/unless}}
@@ -80,18 +80,18 @@
 
  {{!-- Starship Maneuvers only for characters with Starship Tactics feat --}}
  {{#if characterData.starshipManeuversRequired}}
- <div class="chevron-step {{#if (eq currentStep 'starship-maneuvers')}}active{{/if}} {{#if (gte characterData.starshipManeuvers.length characterData.starshipManeuversRequired)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'starship-maneuvers') freeBuild)}}clickable{{/if}}" data-step="starship-maneuvers">
+ <div class="chevron-step {{#if (eq currentStep 'starship-maneuvers')}}active{{/if}} {{#if (gte characterData.starshipManeuvers.length characterData.starshipManeuversRequired)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="starship-maneuvers">
  <span class="chevron-label">Starship Maneuvers</span>
  </div>
  {{/if}}
 
  {{#if characterData.isDroid}}
- <div class="chevron-step {{#if (eq currentStep 'droid-final')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'droid-final') freeBuild)}}clickable{{/if}}" data-step="droid-final">
+ <div class="chevron-step {{#if (eq currentStep 'droid-final')}}active{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="droid-final">
  <span class="chevron-label">Finalize Droid</span>
  </div>
  {{/if}}
 
- <div class="chevron-step {{#if (eq currentStep 'summary')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'summary') freeBuild)}}clickable{{/if}}" data-step="summary">
+ <div class="chevron-step {{#if (eq currentStep 'summary')}}active{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="summary">
  <span class="chevron-label">Summary</span>
  </div>
  </div>
@@ -100,6 +100,18 @@
  {{#if (eq currentStep "name")}}
  <section class="step-name">
  <h3>Character Name & Level</h3>
+
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
+
  <div class="form-group">
  <label for="character-name">Enter your character's name:</label>
  <input
@@ -110,6 +122,22 @@
  value="{{characterData.name}}"
  placeholder="Enter name..."
  autofocus />
+ </div>
+ <div class="random-name-container">
+ <div class="random-buttons-grid">
+ <div>
+ <button type="button" class="random-name-btn btn-secondary">
+ <i class="fas fa-dice"></i> Random Name
+ </button>
+ <span class="hint-text">Character name</span>
+ </div>
+ <div>
+ <button type="button" class="random-droid-name-btn btn-secondary">
+ <i class="fas fa-dice"></i> Random Droid Name
+ </button>
+ <span class="hint-text">Droid designation</span>
+ </div>
+ </div>
  </div>
  <div class="form-group">
  <label for="target-level-input">Starting Level:</label>
@@ -279,6 +307,17 @@
  <section class="step-species">
  <h3>Select Species</h3>
 
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
+
  {{!-- Species Filters --}}
  <div class="species-filters">
  <div class="filter-header">
@@ -341,7 +380,8 @@
          data-abilities="{{this.system.abilities}}"
          data-skill-bonuses="{{json this.system.skillBonuses}}"
          data-special="{{json this.system.special}}"
-         data-racial-traits="{{json this.system.racialTraits}}">
+         data-racial-traits="{{json this.system.racialTraits}}"
+         style="background-image: linear-gradient(rgba(10, 15, 26, 0.7), rgba(10, 15, 26, 0.8)), url('systems/foundryvtt-swse/assets/species/{{this.name}}.webp'), url('systems/foundryvtt-swse/assets/species/{{this.name}}.jpg');">
  <h4>{{this.name}}</h4>
  {{#if this.system.size}}
  <div class="species-size">
@@ -816,6 +856,18 @@
  </button>
  </div>
 
+ {{!-- Filter and Random Background Buttons --}}
+ <div class="background-controls">
+ <button type="button" class="background-filter-btn btn-secondary">
+ <i class="fas fa-search"></i> Filter by Skill
+ </button>
+ {{#unless characterData.background}}
+ <button type="button" class="random-background-btn btn-secondary">
+ <i class="fas fa-dice"></i> Random Background
+ </button>
+ {{/unless}}
+ </div>
+
  {{!-- Homebrew Toggle for Planets --}}
  {{#if (eq characterData.backgroundCategory 'planets')}}
  <div class="homebrew-toggle-container">
@@ -826,16 +878,6 @@
  </label>
  </div>
  {{/if}}
-
- {{!-- Random Background Button --}}
- {{#unless characterData.background}}
- <div class="random-background-container">
- <button type="button" class="random-background-btn btn-secondary">
- <i class="fas fa-dice"></i> Random Background
- </button>
- <span class="hint-text">Let fate choose your character's past</span>
- </div>
- {{/unless}}
 
  {{!-- Background Cards Display --}}
  <div class="background-cards-container">
@@ -855,7 +897,7 @@
  <li><strong>Special:</strong> {{characterData.background.specialAbility}}</li>
  {{/if}}
  {{#if characterData.backgroundSkills}}
- <li><strong>Class Skills Added:</strong> {{#each characterData.backgroundSkills}}{{this.display}}{{#unless @last}}, {{/unless}}{{/each}}</li>
+ <li><strong>Class Skills Added:</strong> {{#each characterData.backgroundSkills}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</li>
  {{/if}}
  {{#if characterData.background.bonusLanguage}}
  <li><strong>Language:</strong> {{characterData.background.bonusLanguage}}</li>
@@ -892,6 +934,18 @@
  {{#if (eq currentStep "abilities")}}
  <section class="step-abilities">
  <h3>Generate Ability Scores</h3>
+
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
+
  <div class="ability-header">
  <button type="button" id="free-build-btn" class="free-build-button">
  <i class="fas fa-edit"></i> Free Build (Manual Entry)
@@ -920,10 +974,15 @@
  <label>{{@key}}</label>
  <div class="ability-controls">
  <button type="button" class="ability-btn" data-minus="{{@key}}">−</button>
- <input name="ability_{{@key}}" class="ability-input" type="number" value="8" min="8" max="18" />
+ <input name="ability_{{@key}}" class="ability-input" type="number" value="{{this.base}}" min="8" max="18" />
  <button type="button" class="ability-btn" data-plus="{{@key}}">+</button>
  </div>
- <div id="display_{{@key}}" class="ability-display">Total: 10 (Mod: +0)</div>
+ <div class="ability-breakdown">
+{{#if this.racial}}
+<span class="racial-bonus">Racial: {{#if (gte this.racial 0)}}+{{/if}}{{this.racial}}</span>
+{{/if}}
+<div id="display_{{@key}}" class="ability-display">Total: {{this.total}} (Mod: {{#if (gte this.mod 0)}}+{{/if}}{{this.mod}})</div>
+</div>
  </div>
  {{/each}}
  </div>
@@ -946,7 +1005,12 @@
  <div class="ability-card">
  <label>{{@key}}</label>
  <input name="ability_{{@key}}" class="ability-input free-input" type="number" value="10" min="3" max="25" />
- <div id="display_{{@key}}" class="ability-display">Total: 10 (Mod: +0)</div>
+ <div class="ability-breakdown">
+{{#if this.racial}}
+<span class="racial-bonus">Racial: {{#if (gte this.racial 0)}}+{{/if}}{{this.racial}}</span>
+{{/if}}
+<div id="display_{{@key}}" class="ability-display">Total: {{this.total}} (Mod: {{#if (gte this.mod 0)}}+{{/if}}{{this.mod}})</div>
+</div>
  </div>
  {{/each}}
  </div>
@@ -977,6 +1041,17 @@
  {{/if}}
  </header>
 
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
+
  <div class="class-grid">
  {{#each packs.classes}}
  <div class="class-choice-btn {{#if (eq this.name ../characterData.classes.[0].name)}}selected{{/if}}" data-class="{{this.name}}">
@@ -985,12 +1060,10 @@
  </div>
  <h3>{{this.name}}</h3>
  <p class="class-desc">{{this.description}}</p>
- {{#if this.system}}
  <div class="class-stats">
- <span>Hit Die: d{{#if this.system.hit_die}}{{extractHitDie this.system.hit_die}}{{else}}{{extractHitDie this.system.hitDie}}{{/if}}</span>
- <span>{{formatBAB this.system.babProgression}}</span>
+ <span>Hit Die: {{this.displayHitDie}}</span>
+ <span>{{this.displayBAB}}</span>
  </div>
- {{/if}}
  <div class="select-overlay">
  <span>Select {{this.name}}</span>
  </div>
@@ -1042,26 +1115,35 @@
  <p class="category-description">{{../description}}</p>
  <div class="feats-grid">
  {{#each this.feats}}
- <div class="feat-card feat-with-tooltip {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}" data-tooltip="{{this.system.benefit}}" data-indent-level="{{this.indentLevel}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
- <button type="button" class="select-feat choice-button" data-featid="{{this._id}}">
- {{#if this.suggestion.iconClass}}
- <span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
- <i class="{{this.suggestion.iconClass}}"></i>
- </span>
- {{/if}}
- <h5>{{this.name}}</h5>
- {{#if this.system.prerequisites}}
- <p class="feat-prereqs"><em>Prerequisites: {{this.system.prerequisites}}</em></p>
- {{/if}}
- {{#if this.suggestion.reason}}
- <p class="suggestion-reason">{{this.suggestion.reason}}</p>
- {{/if}}
- {{#if this.metadata.chain}}
- <span class="feat-chain-badge">{{this.metadata.chain}}</span>
- {{/if}}
- </button>
- </div>
- {{/each}}
+ <div class="feat-card {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.featLevel}}feat-level-{{this.featLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" data-feat-id="{{this._id}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+<button type="button" class="feat-icon-btn select-feat" data-featid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
+<div class="feat-icon-wrapper">
+<img src="systems/foundryvtt-swse/assets/feats/{{this.name}}.png" alt="{{this.name}}" class="feat-icon" onerror="this.style.display='none'">
+{{#if this.suggestion.iconClass}}
+<span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+<i class="{{this.suggestion.iconClass}}"></i>
+</span>
+{{/if}}
+{{#if this.metadata.chain}}
+<span class="feat-chain-indicator">{{this.featLevel}}</span>
+{{/if}}
+</div>
+<div class="feat-name">{{this.name}}</div>
+</button>
+<div class="feat-tooltip">
+<div class="feat-tooltip-title">{{this.name}}</div>
+{{#if this.system.benefit}}
+<div class="feat-tooltip-benefit">{{this.system.benefit}}</div>
+{{/if}}
+{{#if this.system.prerequisites}}
+<div class="feat-tooltip-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</div>
+{{/if}}
+{{#if this.suggestion.reason}}
+<div class="feat-tooltip-suggestion">💡 {{this.suggestion.reason}}</div>
+{{/if}}
+</div>
+</div>
+{{/each}}
  </div>
  </div>
  {{/if}}
@@ -1071,23 +1153,35 @@
  {{else}}
  <div class="feats-list">
  {{#each packs.feats}}
- <div class="feat-item feat-with-tooltip {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}" data-tooltip="{{this.system.benefit}}" data-indent-level="{{this.indentLevel}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
- <button type="button" class="select-feat choice-button" data-featid="{{this._id}}">
- {{#if this.suggestion.iconClass}}
- <span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
- <i class="{{this.suggestion.iconClass}}"></i>
- </span>
- {{/if}}
- <h4>{{this.name}}</h4>
- {{#if this.system.prerequisites}}
- <p class="feat-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</p>
- {{/if}}
- {{#if this.suggestion.reason}}
- <p class="suggestion-reason">{{this.suggestion.reason}}</p>
- {{/if}}
- </button>
- </div>
- {{/each}}
+ <div class="feat-card {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.featLevel}}feat-level-{{this.featLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" data-feat-id="{{this._id}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+<button type="button" class="feat-icon-btn select-feat" data-featid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
+<div class="feat-icon-wrapper">
+<img src="systems/foundryvtt-swse/assets/feats/{{this.name}}.png" alt="{{this.name}}" class="feat-icon" onerror="this.style.display='none'">
+{{#if this.suggestion.iconClass}}
+<span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+<i class="{{this.suggestion.iconClass}}"></i>
+</span>
+{{/if}}
+{{#if this.metadata.chain}}
+<span class="feat-chain-indicator">{{this.featLevel}}</span>
+{{/if}}
+</div>
+<div class="feat-name">{{this.name}}</div>
+</button>
+<div class="feat-tooltip">
+<div class="feat-tooltip-title">{{this.name}}</div>
+{{#if this.system.benefit}}
+<div class="feat-tooltip-benefit">{{this.system.benefit}}</div>
+{{/if}}
+{{#if this.system.prerequisites}}
+<div class="feat-tooltip-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</div>
+{{/if}}
+{{#if this.suggestion.reason}}
+<div class="feat-tooltip-suggestion">💡 {{this.suggestion.reason}}</div>
+{{/if}}
+</div>
+</div>
+{{/each}}
  </div>
  {{/if}}
 
@@ -1110,6 +1204,17 @@
  {{!-- Step 1: Select Talent Tree --}}
  <h3>Select a Talent Tree</h3>
  <p class="help-text">Choose a talent tree from your class. Then select a talent from that tree.</p>
+
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
 
  {{#if (gt availableTalentTrees.length 0)}}
  <div class="talent-trees-grid">
@@ -1138,8 +1243,8 @@
 
  <div class="talents-list">
  {{#each packs.talentsInTree}}
- <div class="talent-item {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
- <button type="button" class="select-talent choice-button" data-talentid="{{this._id}}">
+ <div class="talent-item {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+ <button type="button" class="select-talent choice-button" data-talentid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
  {{#if this.suggestion.iconClass}}
  <span class="talent-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
  <i class="{{this.suggestion.iconClass}}"></i>
@@ -1278,6 +1383,17 @@
  <h3>Select Trained Skills</h3>
  <p class="help-text">Select {{characterData.trainedSkillsAllowed}} class skills to train. Training grants +5 bonus.</p>
 
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
+
  <div class="skills-summary" style="margin-bottom: 1rem;">
  <p><strong>Trained Skills: {{characterData.trainedSkillsCount}} / {{characterData.trainedSkillsAllowed}}</strong></p>
  <button type="button" class="reset-skills-btn btn-secondary" style="margin-left: 1rem;">
@@ -1338,7 +1454,7 @@
  {{#if (eq currentStep "languages")}}
  <section class="step-languages">
  <h3>Select Languages</h3>
- <p class="help-text">Choose additional languages your character knows based on Intelligence.</p>
+ <p class="help-text">Choose additional languages your character knows based on Intelligence and any feats like Linguist.</p>
 
  {{#if characterData.languageData}}
  {{!-- Language Counter --}}
@@ -1354,7 +1470,7 @@
  {{else}}
  <div class="no-additional-languages">
  <i class="fas fa-info-circle"></i>
- <span>You have no additional languages to select (Intelligence modifier: {{characterData.languageData.additional}})</span>
+ <span>You have no additional languages to select (available: {{characterData.languageData.additional}})</span>
  </div>
  {{/if}}
  </div>
@@ -1563,6 +1679,17 @@
  <h3><i class="fas fa-scroll"></i> Character Summary</h3>
  <p class="summary-intro">Review your character before finalizing. Click "Create Character" to proceed to equipment shopping.</p>
 
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
+
  <div class="summary-grid">
  {{!-- Basic Information --}}
  <div class="summary-card">
@@ -1668,7 +1795,7 @@
  <h4><i class="fas fa-shield-alt"></i> Defenses</h4>
  <dl class="summary-list">
  <dt>Fortitude:</dt>
- <dd>{{characterData.defenses.fortitude.total}}</dd>
+ <dd>{{characterData.defenses.fort.total}}</dd>
  <dt>Reflex:</dt>
  <dd>{{characterData.defenses.reflex.total}}</dd>
  <dt>Will:</dt>
@@ -1692,11 +1819,60 @@
  </div>
  </div>
 
+ {{!-- Starting Credits --}}
+ {{#if characterData.startingCreditsFormula}}
+ <div class="starting-credits-section">
+ <div class="credits-card">
+ <h4><i class="fas fa-coins"></i> Starting Credits</h4>
+
+ {{#if characterData.creditsChosen}}
+ {{!-- Credits already chosen --}}
+ <div class="credits-result">
+ <p class="credits-formula-display">Formula: {{characterData.startingCreditsFormula.formulaString}}</p>
+ <div class="credits-chosen-display">
+ <i class="fas fa-check-circle" style="color: #4caf50;"></i>
+ <p><strong>{{characterData.credits}}</strong> credits</p>
+ </div>
+ <button type="button" class="reroll-credits-btn btn-secondary">
+ <i class="fas fa-redo"></i> Change Selection
+ </button>
+ </div>
+ {{else}}
+ {{!-- Credits not yet chosen --}}
+ <div class="credits-choice">
+ <p class="credits-description">
+ Your {{characterData.classes.0.name}} class grants starting credits based on the following formula:
+ </p>
+ <div class="credits-formula">
+ <i class="fas fa-dice"></i>
+ <span class="formula-text">{{characterData.startingCreditsFormula.formulaString}}</span>
+ </div>
+ <p class="credits-prompt">Choose how to determine your starting wealth:</p>
+ <div class="credits-buttons">
+ <button type="button" class="roll-credits-btn btn-primary">
+ <i class="fas fa-dice-d20"></i> Roll for Credits
+ </button>
+ <button type="button" class="take-max-credits-btn btn-secondary">
+ <i class="fas fa-arrow-up"></i> Take Maximum ({{characterData.startingCreditsFormula.maxPossible}} cr)
+ </button>
+ </div>
+ </div>
+ {{/if}}
+ </div>
+ </div>
+ {{/if}}
+
  <div class="summary-confirmation">
  <div class="confirmation-box">
  <i class="fas fa-check-circle"></i>
  <p><strong>Ready to create your character?</strong></p>
+ {{#if characterData.creditsChosen}}
  <p>Once created, you'll be able to shop for equipment with your starting {{characterData.credits}} credits.</p>
+ {{else if characterData.startingCreditsFormula}}
+ <p>Please choose your starting credits above before creating your character.</p>
+ {{else}}
+ <p>Once created, you'll be able to shop for equipment with your starting {{characterData.credits}} credits.</p>
+ {{/if}}
  </div>
  </div>
 
@@ -1770,6 +1946,9 @@
  color: #e4e4e4;
  border-radius: 8px;
  overflow: hidden;
+ display: flex;
+ flex-direction: column;
+ height: 100%;
 }
 
 .chargen-header {
@@ -1791,7 +1970,10 @@
 
 .chargen-body {
  padding: 2rem;
- min-height: 400px;
+ min-height: 0;
+ flex: 1;
+ overflow-y: auto;
+ overflow-x: hidden;
 }
 
 .form-group {
@@ -2777,6 +2959,163 @@
  padding: 0.5rem 1rem;
  font-size: 0.9rem;
  color: #00d9ff;
+}
+
+/* Starting Credits Section */
+.starting-credits-section {
+ margin-bottom: 2rem;
+}
+
+.credits-card {
+ background: rgba(255, 193, 7, 0.1);
+ border: 2px solid rgba(255, 193, 7, 0.4);
+ border-radius: 8px;
+ padding: 2rem;
+}
+
+.credits-card h4 {
+ color: #ffc107;
+ font-size: 1.3rem;
+ margin-bottom: 1.5rem;
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
+ border-bottom: 2px solid rgba(255, 193, 7, 0.3);
+ padding-bottom: 0.5rem;
+}
+
+.credits-description {
+ color: #ddd;
+ font-size: 1rem;
+ margin-bottom: 1rem;
+ text-align: center;
+}
+
+.credits-formula {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 1rem;
+ background: rgba(0, 0, 0, 0.3);
+ border: 2px solid #ffc107;
+ border-radius: 8px;
+ padding: 1.5rem;
+ margin: 1.5rem 0;
+}
+
+.credits-formula i {
+ font-size: 2rem;
+ color: #ffc107;
+}
+
+.formula-text {
+ font-size: 1.5rem;
+ font-weight: bold;
+ color: #ffc107;
+ font-family: 'Courier New', monospace;
+}
+
+.credits-prompt {
+ color: #aaa;
+ font-size: 1rem;
+ text-align: center;
+ margin: 1.5rem 0 1rem;
+}
+
+.credits-buttons {
+ display: flex;
+ gap: 1rem;
+ justify-content: center;
+ flex-wrap: wrap;
+}
+
+.roll-credits-btn,
+.take-max-credits-btn {
+ padding: 1rem 2rem;
+ font-size: 1rem;
+ font-weight: 600;
+ border-radius: 8px;
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
+ transition: all 0.3s ease;
+ cursor: pointer;
+}
+
+.roll-credits-btn {
+ background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+ border: 2px solid #ffb74d;
+ color: #ffffff;
+}
+
+.roll-credits-btn:hover {
+ background: linear-gradient(135deg, #ffb74d 0%, #ff9800 100%);
+ border-color: #ffd54f;
+ box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+}
+
+.take-max-credits-btn {
+ background: rgba(76, 175, 80, 0.2);
+ border: 2px solid #4caf50;
+ color: #4caf50;
+}
+
+.take-max-credits-btn:hover {
+ background: rgba(76, 175, 80, 0.3);
+ border-color: #66bb6a;
+ box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.credits-result {
+ text-align: center;
+}
+
+.credits-formula-display {
+ color: #aaa;
+ font-size: 0.95rem;
+ margin-bottom: 1rem;
+}
+
+.credits-chosen-display {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: 0.5rem;
+ background: rgba(76, 175, 80, 0.15);
+ border: 2px solid #4caf50;
+ border-radius: 8px;
+ padding: 1.5rem;
+ margin: 1rem 0;
+}
+
+.credits-chosen-display i {
+ font-size: 2.5rem;
+}
+
+.credits-chosen-display p {
+ font-size: 1.8rem;
+ color: #4caf50;
+ margin: 0;
+}
+
+.reroll-credits-btn {
+ padding: 0.75rem 1.5rem;
+ font-size: 0.95rem;
+ border-radius: 8px;
+ display: inline-flex;
+ align-items: center;
+ gap: 0.5rem;
+ background: rgba(10, 116, 218, 0.2);
+ border: 2px solid #0a74da;
+ color: #00d9ff;
+ cursor: pointer;
+ transition: all 0.3s ease;
+}
+
+.reroll-credits-btn:hover {
+ background: rgba(10, 116, 218, 0.3);
+ border-color: #2196f3;
+ box-shadow: 0 4px 12px rgba(10, 116, 218, 0.3);
 }
 
 .summary-confirmation {

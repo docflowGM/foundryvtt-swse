@@ -4,36 +4,42 @@
       "name": "Combat (Attack & Damage)",
       "description": "Feats that improve your ability to hit enemies and deal damage",
       "icon": "⚔️",
+      "assetIcon": "systems/foundryvtt-swse/assets/feats/feat-combat.svg",
       "order": 1
     },
     "combat-defense": {
       "name": "Combat (Defense & Mobility)",
       "description": "Feats that improve your defenses and battlefield movement",
       "icon": "🛡️",
+      "assetIcon": "systems/foundryvtt-swse/assets/feats/feat-combat.svg",
       "order": 2
     },
     "force": {
       "name": "Force",
       "description": "Feats that enhance Force powers and Force-related abilities",
       "icon": "✨",
+      "assetIcon": "systems/foundryvtt-swse/assets/feats/feat-force.svg",
       "order": 3
     },
     "utility": {
       "name": "Utility (Skills & Social)",
       "description": "Feats that improve skills, social interactions, and versatility",
       "icon": "🔧",
+      "assetIcon": "systems/foundryvtt-swse/assets/feats/feat-generic.svg",
       "order": 4
     },
     "recovery": {
       "name": "Recovery (Survival & Resilience)",
       "description": "Feats that improve survivability and saving throws",
       "icon": "❤️",
+      "assetIcon": "systems/foundryvtt-swse/assets/feats/feat-generic.svg",
       "order": 5
     },
     "misc": {
       "name": "Miscellaneous",
       "description": "Special feats with unique effects",
       "icon": "⭐",
+      "assetIcon": "systems/foundryvtt-swse/assets/feats/feat-special.svg",
       "order": 6
     }
   },
@@ -44,9 +50,7 @@
         "weapon-mastery",
         "accuracy",
         "combat"
-      ],
-      "chain": "Weapon Focus Chain",
-      "chainOrder": 1
+      ]
     },
     "Greater Weapon Focus": {
       "category": "combat-offense",
@@ -87,9 +91,7 @@
         "critical",
         "damage",
         "combat"
-      ],
-      "chain": "Critical Hit Chain",
-      "chainOrder": 1
+      ]
     },
     "Triple Crit Specialist": {
       "category": "combat-offense",
@@ -108,9 +110,7 @@
         "melee",
         "damage",
         "tradeoff"
-      ],
-      "chain": "Power Attack Chain",
-      "chainOrder": 1
+      ]
     },
     "Hew": {
       "category": "combat-offense",
@@ -129,10 +129,7 @@
         "melee",
         "multiattack",
         "combat"
-      ],
-      "chain": "Power Attack Chain",
-      "chainOrder": 3,
-      "prerequisiteFeat": "Power Attack"
+      ]
     },
     "Bantha Rush": {
       "category": "combat-offense",
@@ -140,10 +137,7 @@
         "melee",
         "maneuver",
         "combat"
-      ],
-      "chain": "Power Attack Chain",
-      "chainOrder": 4,
-      "prerequisiteFeat": "Power Attack"
+      ]
     },
     "Two-Weapon Fighting": {
       "category": "combat-offense",
@@ -161,10 +155,7 @@
         "dual-wield",
         "mastery",
         "combat"
-      ],
-      "chain": "Two-Weapon Chain",
-      "chainOrder": 2,
-      "prerequisiteFeat": "Two-Weapon Fighting"
+      ]
     },
     "Dual Weapon Mastery II": {
       "category": "combat-offense",
@@ -172,10 +163,7 @@
         "dual-wield",
         "mastery",
         "advanced"
-      ],
-      "chain": "Two-Weapon Chain",
-      "chainOrder": 3,
-      "prerequisiteFeat": "Dual Weapon Mastery I"
+      ]
     },
     "Dual Weapon Mastery III": {
       "category": "combat-offense",
@@ -183,10 +171,7 @@
         "dual-wield",
         "mastery",
         "expert"
-      ],
-      "chain": "Two-Weapon Chain",
-      "chainOrder": 4,
-      "prerequisiteFeat": "Dual Weapon Mastery II"
+      ]
     },
     "Point Blank Shot": {
       "category": "combat-offense",
@@ -204,10 +189,7 @@
         "ranged",
         "accuracy",
         "tactical"
-      ],
-      "chain": "Ranged Attack Chain",
-      "chainOrder": 2,
-      "prerequisiteFeat": "Point Blank Shot"
+      ]
     },
     "Far Shot": {
       "category": "combat-offense",
@@ -215,21 +197,15 @@
         "ranged",
         "range",
         "combat"
-      ],
-      "chain": "Ranged Attack Chain",
-      "chainOrder": 3,
-      "prerequisiteFeat": "Point Blank Shot"
+      ]
     },
     "Deadeye": {
       "category": "combat-offense",
       "tags": [
         "ranged",
-        "reroll",
-        "combat"
-      ],
-      "chain": "Ranged Attack Chain",
-      "chainOrder": 4,
-      "prerequisiteFeat": "Point Blank Shot"
+        "accuracy",
+        "bonus"
+      ]
     },
     "Charging Fire": {
       "category": "combat-offense",
@@ -237,10 +213,7 @@
         "ranged",
         "mobility",
         "combat"
-      ],
-      "chain": "Ranged Attack Chain",
-      "chainOrder": 5,
-      "prerequisiteFeat": "Point Blank Shot"
+      ]
     },
     "Sniper": {
       "category": "combat-offense",
@@ -248,10 +221,7 @@
         "ranged",
         "precision",
         "tactical"
-      ],
-      "chain": "Ranged Attack Chain",
-      "chainOrder": 6,
-      "prerequisiteFeat": "Point Blank Shot"
+      ]
     },
     "Autofire Assault": {
       "category": "combat-offense",
@@ -315,10 +285,7 @@
         "maneuver",
         "mastery",
         "tactical"
-      ],
-      "chain": "Disarm Chain",
-      "chainOrder": 2,
-      "prerequisiteFeat": "Disarm"
+      ]
     },
     "Grapple": {
       "category": "combat-offense",
@@ -347,10 +314,7 @@
         "maneuver",
         "control",
         "immobilize"
-      ],
-      "chain": "Grapple Chain",
-      "chainOrder": 3,
-      "prerequisiteFeat": "Grapple"
+      ]
     },
     "Knock Prone": {
       "category": "combat-offense",
@@ -415,7 +379,7 @@
       "tags": [
         "melee",
         "condition",
-        "combat"
+        "stagger"
       ]
     },
     "Stunning Strike": {
@@ -480,9 +444,7 @@
         "defense",
         "reflex",
         "mobility"
-      ],
-      "chain": "Dodge Chain",
-      "chainOrder": 1
+      ]
     },
     "Mobility": {
       "category": "combat-defense",
@@ -490,10 +452,7 @@
         "defense",
         "mobility",
         "tactical"
-      ],
-      "chain": "Dodge Chain",
-      "chainOrder": 2,
-      "prerequisiteFeat": "Dodge"
+      ]
     },
     "Spring Attack": {
       "category": "combat-defense",
@@ -512,10 +471,7 @@
         "mobility",
         "multiattack",
         "area"
-      ],
-      "chain": "Dodge Chain",
-      "chainOrder": 4,
-      "prerequisiteFeat": "Spring Attack"
+      ]
     },
     "Elusive Target": {
       "category": "combat-defense",
@@ -699,10 +655,7 @@
         "force",
         "resource",
         "core"
-      ],
-      "chain": "Core Force",
-      "chainOrder": 3,
-      "prerequisiteFeat": "Force Sensitivity"
+      ]
     },
     "Force Focus": {
       "category": "force",
@@ -775,10 +728,7 @@
         "force",
         "damage",
         "advanced"
-      ],
-      "chain": "Force Grip Chain",
-      "chainOrder": 2,
-      "prerequisiteFeat": "Force Grip"
+      ]
     },
     "Forceful Grip": {
       "category": "force",
@@ -912,11 +862,11 @@
       ]
     },
     "Forceful Recovery": {
-      "category": "force",
+      "category": "recovery",
       "tags": [
         "force",
         "recovery",
-        "resilience"
+        "power"
       ]
     },
     "Forceful Warrior": {
@@ -1246,9 +1196,7 @@
         "combat",
         "dexterity",
         "finesse"
-      ],
-      "chain": "Finesse Chain",
-      "chainOrder": 1
+      ]
     },
     "Noble Fencing Style": {
       "category": "misc",
@@ -1322,7 +1270,7 @@
       "tags": [
         "special",
         "gamble",
-        "dramatic"
+        "attack"
       ]
     },
     "Starship Tactics": {
@@ -1330,10 +1278,1791 @@
       "tags": [
         "vehicle",
         "pilot",
+        "tactics"
+      ]
+    },
+    "Burst Fire": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "autofire",
+        "damage"
+      ]
+    },
+    "Careful Shot": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "accuracy",
+        "bonus"
+      ]
+    },
+    "Cybernetic Surgery": {
+      "category": "utility",
+      "tags": [
+        "technical",
+        "medical",
+        "cybernetics"
+      ]
+    },
+    "Dreadful Rage": {
+      "category": "combat-offense",
+      "tags": [
+        "rage",
+        "attack",
+        "damage"
+      ]
+    },
+    "Exotic Weapon Proficiency": {
+      "category": "combat-defense",
+      "tags": [
+        "proficiency",
+        "weapon",
+        "exotic"
+      ]
+    },
+    "Extra Rage": {
+      "category": "recovery",
+      "tags": [
+        "rage",
+        "ability",
+        "resource"
+      ]
+    },
+    "Extra Second Wind": {
+      "category": "recovery",
+      "tags": [
+        "recovery",
+        "second wind",
+        "endurance"
+      ]
+    },
+    "Great Cleave": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "multiattack",
+        "combat"
+      ]
+    },
+    "Improved Charge": {
+      "category": "combat-defense",
+      "tags": [
+        "movement",
+        "charge",
+        "mobility"
+      ]
+    },
+    "Martial Arts I": {
+      "category": "combat-offense",
+      "tags": [
+        "unarmed",
+        "combat",
+        "damage"
+      ]
+    },
+    "Martial Arts II": {
+      "category": "combat-offense",
+      "tags": [
+        "unarmed",
+        "combat",
+        "damage"
+      ]
+    },
+    "Martial Arts III": {
+      "category": "combat-offense",
+      "tags": [
+        "unarmed",
+        "combat",
+        "damage"
+      ]
+    },
+    "Point-Blank Shot": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "accuracy",
+        "combat"
+      ]
+    },
+    "Powerful Charge": {
+      "category": "combat-offense",
+      "tags": [
+        "charge",
+        "attack",
+        "bonus"
+      ]
+    },
+    "Shake It Off": {
+      "category": "recovery",
+      "tags": [
+        "recovery",
+        "condition",
+        "endurance"
+      ]
+    },
+    "Strong in the Force": {
+      "category": "force",
+      "tags": [
+        "force",
+        "power",
+        "bonus"
+      ]
+    },
+    "Surgical Expertise": {
+      "category": "utility",
+      "tags": [
+        "medical",
+        "surgery",
+        "treat injury"
+      ]
+    },
+    "Throw": {
+      "category": "combat-offense",
+      "tags": [
+        "grapple",
+        "attack",
+        "melee"
+      ]
+    },
+    "Trip": {
+      "category": "combat-offense",
+      "tags": [
+        "grapple",
+        "attack",
+        "melee"
+      ]
+    },
+    "Triple Attack": {
+      "category": "combat-offense",
+      "tags": [
+        "multiattack",
+        "combat",
+        "full-round"
+      ]
+    },
+    "Weapon Proficiency": {
+      "category": "combat-defense",
+      "tags": [
+        "proficiency",
+        "weapon"
+      ]
+    },
+    "Starship Designer": {
+      "category": "misc",
+      "tags": [
+        "vehicle",
+        "starship",
+        "design"
+      ]
+    },
+    "Tactical Genius": {
+      "category": "misc",
+      "tags": [
+        "vehicle",
         "tactics",
         "starship"
-      ],
-      "description": "Learn Starship Maneuvers for use during Starship Scale combat"
+      ]
+    },
+    "A Few Maneuvers": {
+      "category": "combat-defense",
+      "tags": [
+        "vehicle",
+        "defense",
+        "dodge"
+      ]
+    },
+    "Momentum Strike": {
+      "category": "combat-offense",
+      "tags": [
+        "mounted",
+        "attack",
+        "bonus"
+      ]
+    },
+    "Mounted Defense": {
+      "category": "combat-defense",
+      "tags": [
+        "mounted",
+        "defense",
+        "ride"
+      ]
+    },
+    "Suppression Fire": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "attack",
+        "autofire"
+      ]
+    },
+    "Accelerated Strike": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "full-attack",
+        "swift-action"
+      ]
+    },
+    "Conditioning": {
+      "category": "recovery",
+      "tags": [
+        "resilience",
+        "endurance",
+        "reroll"
+      ]
+    },
+    "Critical Strike": {
+      "category": "combat-offense",
+      "tags": [
+        "critical",
+        "threat-range",
+        "melee"
+      ]
+    },
+    "Echani Training": {
+      "category": "combat-offense",
+      "tags": [
+        "unarmed",
+        "mastery",
+        "combat"
+      ]
+    },
+    "Flurry": {
+      "category": "combat-offense",
+      "tags": [
+        "attack",
+        "bonus",
+        "tradeoff"
+      ]
+    },
+    "Force Readiness": {
+      "category": "force",
+      "tags": [
+        "force",
+        "resource",
+        "utility"
+      ]
+    },
+    "Gearhead": {
+      "category": "utility",
+      "tags": [
+        "technical",
+        "swift-action",
+        "utility"
+      ]
+    },
+    "Implant Training": {
+      "category": "utility",
+      "tags": [
+        "cybernetics",
+        "medical",
+        "resilience"
+      ]
+    },
+    "Improved Rapid Strike": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "damage",
+        "advanced"
+      ]
+    },
+    "Increased Agility": {
+      "category": "combat-defense",
+      "tags": [
+        "mobility",
+        "movement",
+        "advanced"
+      ]
+    },
+    "Logic Upgrade: Self-Defense": {
+      "category": "combat-defense",
+      "tags": [
+        "droid",
+        "defense",
+        "bonus"
+      ]
+    },
+    "Logic Upgrade: Tactician": {
+      "category": "utility",
+      "tags": [
+        "droid",
+        "teamwork",
+        "aid another"
+      ]
+    },
+    "Mandalorian Training": {
+      "category": "combat-offense",
+      "tags": [
+        "charge",
+        "ranged",
+        "bonus"
+      ]
+    },
+    "Poison Resistance": {
+      "category": "recovery",
+      "tags": [
+        "resilience",
+        "poison",
+        "defense"
+      ]
+    },
+    "Power Blast": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "damage",
+        "tradeoff"
+      ]
+    },
+    "Quick Skill": {
+      "category": "utility",
+      "tags": [
+        "skill",
+        "swift-action",
+        "utility"
+      ]
+    },
+    "Republic Military Training": {
+      "category": "combat-defense",
+      "tags": [
+        "military",
+        "defense",
+        "cover"
+      ]
+    },
+    "Sith Military Training": {
+      "category": "combat-offense",
+      "tags": [
+        "military",
+        "attack",
+        "psychology"
+      ]
+    },
+    "Sniper Shot": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "accuracy",
+        "penalty"
+      ]
+    },
+    "Tumble Defense": {
+      "category": "combat-defense",
+      "tags": [
+        "mobility",
+        "defense",
+        "acrobatics"
+      ]
+    },
+    "Withdrawal Strike": {
+      "category": "combat-defense",
+      "tags": [
+        "mobility",
+        "attack",
+        "tactical"
+      ]
+    },
+    "Advantageous Attack": {
+      "category": "combat-offense",
+      "tags": [
+        "bonus",
+        "attack",
+        "heroic"
+      ]
+    },
+    "Advantageous Cover": {
+      "category": "combat-defense",
+      "tags": [
+        "cover",
+        "defense",
+        "stealth"
+      ]
+    },
+    "Angled Throw": {
+      "category": "combat-offense",
+      "tags": [
+        "grenade",
+        "ranged",
+        "accuracy"
+      ]
+    },
+    "Bad Feeling": {
+      "category": "misc",
+      "tags": [
+        "utility",
+        "initiative",
+        "surprise"
+      ]
+    },
+    "Blaster Barrage": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "autofire",
+        "teamwork"
+      ]
+    },
+    "Controlled Rage": {
+      "category": "combat-offense",
+      "tags": [
+        "rage",
+        "control",
+        "free-action"
+      ]
+    },
+    "Crossfire": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "tactical",
+        "accuracy"
+      ]
+    },
+    "Cunning Attack": {
+      "category": "combat-offense",
+      "tags": [
+        "attack",
+        "flat-footed",
+        "bonus"
+      ]
+    },
+    "Focused Rage": {
+      "category": "combat-offense",
+      "tags": [
+        "rage",
+        "control",
+        "advanced"
+      ]
+    },
+    "Improved Bantha Rush": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "maneuver",
+        "advanced"
+      ]
+    },
+    "Informer": {
+      "category": "utility",
+      "tags": [
+        "social",
+        "perception",
+        "gather-info"
+      ]
+    },
+    "Mighty Throw": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "strength",
+        "bonus"
+      ]
+    },
+    "Powerful Rage": {
+      "category": "combat-offense",
+      "tags": [
+        "rage",
+        "strength",
+        "bonus"
+      ]
+    },
+    "Rapport": {
+      "category": "utility",
+      "tags": [
+        "social",
+        "teamwork",
+        "aid another"
+      ]
+    },
+    "Recall": {
+      "category": "utility",
+      "tags": [
+        "skill",
+        "knowledge",
+        "reroll"
+      ]
+    },
+    "Strafe": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "mobility",
+        "multiattack"
+      ]
+    },
+    "Swarm": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "teamwork",
+        "bonus"
+      ]
+    },
+    "Unleashed": {
+      "category": "misc",
+      "tags": [
+        "special",
+        "destiny",
+        "advanced"
+      ]
+    },
+    "Close Combat Escape": {
+      "category": "combat-defense",
+      "tags": [
+        "grapple",
+        "escape",
+        "acrobatics"
+      ]
+    },
+    "Collateral Damage": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "accuracy",
+        "multiattack"
+      ]
+    },
+    "Cornered": {
+      "category": "combat-offense",
+      "tags": [
+        "attack",
+        "bonus",
+        "tactical"
+      ]
+    },
+    "Deadly Sniper": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "accuracy",
+        "damage"
+      ]
+    },
+    "Deceptive Drop": {
+      "category": "combat-defense",
+      "tags": [
+        "stealth",
+        "initiative",
+        "surprise"
+      ]
+    },
+    "Duck and Cover": {
+      "category": "combat-defense",
+      "tags": [
+        "stealth",
+        "cover",
+        "defense"
+      ]
+    },
+    "Fleet-Footed": {
+      "category": "combat-defense",
+      "tags": [
+        "mobility",
+        "movement",
+        "speed"
+      ]
+    },
+    "Friends in Low Places": {
+      "category": "utility",
+      "tags": [
+        "social",
+        "gather-info",
+        "economy"
+      ]
+    },
+    "Hasty Modification": {
+      "category": "utility",
+      "tags": [
+        "technical",
+        "trait-swap",
+        "quick"
+      ]
+    },
+    "Hideous Visage": {
+      "category": "utility",
+      "tags": [
+        "social",
+        "deception",
+        "maneuver"
+      ]
+    },
+    "Impersonate": {
+      "category": "utility",
+      "tags": [
+        "social",
+        "deception",
+        "masquerade"
+      ]
+    },
+    "Impetuous Move": {
+      "category": "combat-defense",
+      "tags": [
+        "mobility",
+        "movement",
+        "constitution"
+      ]
+    },
+    "Impulsive Flight": {
+      "category": "combat-defense",
+      "tags": [
+        "mobility",
+        "withdraw",
+        "speed"
+      ]
+    },
+    "Knife Trick": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "reaction",
+        "stealth"
+      ]
+    },
+    "Lightning Draw": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "swift-action",
+        "draw"
+      ]
+    },
+    "Metamorph": {
+      "category": "utility",
+      "tags": [
+        "shapeshifting",
+        "size",
+        "transformation"
+      ]
+    },
+    "Opportunistic Retreat": {
+      "category": "combat-defense",
+      "tags": [
+        "mobility",
+        "reaction",
+        "movement"
+      ]
+    },
+    "Resurgence": {
+      "category": "recovery",
+      "tags": [
+        "recovery",
+        "movement",
+        "action"
+      ]
+    },
+    "Signature Device": {
+      "category": "utility",
+      "tags": [
+        "technical",
+        "trait",
+        "modification"
+      ]
+    },
+    "Slippery Maneuver": {
+      "category": "combat-defense",
+      "tags": [
+        "grapple",
+        "escape",
+        "mobility"
+      ]
+    },
+    "Stay Up": {
+      "category": "recovery",
+      "tags": [
+        "recovery",
+        "condition",
+        "endurance"
+      ]
+    },
+    "Superior Tech": {
+      "category": "utility",
+      "tags": [
+        "technical",
+        "modification",
+        "advanced"
+      ]
+    },
+    "Tactical Advantage": {
+      "category": "combat-offense",
+      "tags": [
+        "mobility",
+        "reaction",
+        "movement"
+      ]
+    },
+    "Wicked Strike": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "multiattack",
+        "tactical"
+      ]
+    },
+    "Anointed Hunter": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "mobility",
+        "tactical"
+      ]
+    },
+    "Artillery Shot": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "autofire",
+        "efficiency"
+      ]
+    },
+    "Coordinated Barrage": {
+      "category": "utility",
+      "tags": [
+        "teamwork",
+        "ranged",
+        "aid another"
+      ]
+    },
+    "Droidcraft": {
+      "category": "utility",
+      "tags": [
+        "droid",
+        "repair",
+        "mechanics"
+      ]
+    },
+    "Droid Hunter": {
+      "category": "combat-offense",
+      "tags": [
+        "combat",
+        "bonus",
+        "droid"
+      ]
+    },
+    "Experienced Medic": {
+      "category": "utility",
+      "tags": [
+        "medical",
+        "surgery",
+        "advanced"
+      ]
+    },
+    "Expert Droid Repair": {
+      "category": "utility",
+      "tags": [
+        "droid",
+        "repair",
+        "mechanics"
+      ]
+    },
+    "Flash and Clear": {
+      "category": "combat-defense",
+      "tags": [
+        "ranged",
+        "concealment",
+        "tactical"
+      ]
+    },
+    "Flood of Fire": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "autofire",
+        "area"
+      ]
+    },
+    "Grand Army of the Republic Training": {
+      "category": "combat-defense",
+      "tags": [
+        "military",
+        "defense",
+        "armor"
+      ]
+    },
+    "Gunnery Specialist": {
+      "category": "combat-offense",
+      "tags": [
+        "vehicle",
+        "weapon",
+        "reroll"
+      ]
+    },
+    "Jedi Familiarity": {
+      "category": "force",
+      "tags": [
+        "force",
+        "resource",
+        "bonus"
+      ]
+    },
+    "Leader of Droids": {
+      "category": "utility",
+      "tags": [
+        "droid",
+        "support",
+        "teamwork"
+      ]
+    },
+    "Overwhelming Attack": {
+      "category": "combat-offense",
+      "tags": [
+        "attack",
+        "negate",
+        "defensive"
+      ]
+    },
+    "Pall of the Dark Side": {
+      "category": "force",
+      "tags": [
+        "force",
+        "dark-side",
+        "stealth"
+      ]
+    },
+    "Separatist Military Training": {
+      "category": "combat-offense",
+      "tags": [
+        "military",
+        "attack",
+        "teamwork"
+      ]
+    },
+    "Spray Shot": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "autofire",
+        "area"
+      ]
+    },
+    "Trench Warrior": {
+      "category": "combat-defense",
+      "tags": [
+        "cover",
+        "defense",
+        "bonus"
+      ]
+    },
+    "Unwavering Resolve": {
+      "category": "recovery",
+      "tags": [
+        "mental",
+        "will",
+        "perception"
+      ]
+    },
+    "Wary Defender": {
+      "category": "combat-defense",
+      "tags": [
+        "defense",
+        "defensive-fighting",
+        "bonus"
+      ]
+    },
+    "Attack Combo (Fire and Strike)": {
+      "category": "combat-offense",
+      "tags": [
+        "multiattack",
+        "ranged-melee",
+        "combo"
+      ]
+    },
+    "Attack Combo (Melee)": {
+      "category": "combat-offense",
+      "tags": [
+        "multiattack",
+        "melee",
+        "combo"
+      ]
+    },
+    "Attack Combo (Ranged)": {
+      "category": "combat-offense",
+      "tags": [
+        "multiattack",
+        "ranged",
+        "combo"
+      ]
+    },
+    "Autofire Sweep": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "autofire",
+        "area"
+      ]
+    },
+    "Biotech Specialist": {
+      "category": "utility",
+      "tags": [
+        "technical",
+        "biotech",
+        "modification"
+      ]
+    },
+    "Biotech Surgery": {
+      "category": "utility",
+      "tags": [
+        "medical",
+        "biotech",
+        "implant"
+      ]
+    },
+    "Brink of Death": {
+      "category": "recovery",
+      "tags": [
+        "survival",
+        "hit-points",
+        "resilience"
+      ]
+    },
+    "Fatal Hit": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "lethal",
+        "execution"
+      ]
+    },
+    "Feat of Strength": {
+      "category": "misc",
+      "tags": [
+        "strength",
+        "skill-check",
+        "bonus"
+      ]
+    },
+    "Galactic Alliance Military Training": {
+      "category": "combat-defense",
+      "tags": [
+        "military",
+        "damage-threshold",
+        "resilience"
+      ]
+    },
+    "Grapple Resistance": {
+      "category": "combat-defense",
+      "tags": [
+        "grapple",
+        "defense",
+        "bonus"
+      ]
+    },
+    "Knock Heads": {
+      "category": "combat-offense",
+      "tags": [
+        "grapple",
+        "melee",
+        "tactical"
+      ]
+    },
+    "Multi-Grab": {
+      "category": "combat-offense",
+      "tags": [
+        "grapple",
+        "multiattack",
+        "control"
+      ]
+    },
+    "Rancor Crush": {
+      "category": "combat-offense",
+      "tags": [
+        "grapple",
+        "damage",
+        "condition"
+      ]
+    },
+    "Return Fire": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "reaction",
+        "retaliation"
+      ]
+    },
+    "Returning Bug": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "thrown",
+        "utility"
+      ]
+    },
+    "Vehicle Systems Expertise": {
+      "category": "utility",
+      "tags": [
+        "vehicle",
+        "shield",
+        "power"
+      ]
+    },
+    "Zero Range": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "adjacent",
+        "bonus"
+      ]
+    },
+    "Follow Through": {
+      "category": "combat-offense",
+      "tags": [
+        "mobility",
+        "movement",
+        "tactical"
+      ]
+    },
+    "Long Haft Strike": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "weapon",
+        "double-weapon"
+      ]
+    },
+    "Relentless Attack": {
+      "category": "combat-offense",
+      "tags": [
+        "attack",
+        "miss",
+        "bonus"
+      ]
+    },
+    "Unswerving Resolve": {
+      "category": "recovery",
+      "tags": [
+        "fear",
+        "force",
+        "resource"
+      ]
+    },
+    "Deft Charge": {
+      "category": "combat-defense",
+      "tags": [
+        "charge",
+        "swift-action",
+        "tactical"
+      ]
+    },
+    "Imperial Military Training": {
+      "category": "recovery",
+      "tags": [
+        "mental",
+        "fear",
+        "resilience"
+      ]
+    },
+    "Moving Target": {
+      "category": "combat-defense",
+      "tags": [
+        "mobility",
+        "defense",
+        "dodge"
+      ]
+    },
+    "Prime Shot": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "accuracy",
+        "positioning"
+      ]
+    },
+    "Rapid Reaction": {
+      "category": "misc",
+      "tags": [
+        "reaction",
+        "reflex",
+        "tactical"
+      ]
+    },
+    "Rebel Military Training": {
+      "category": "combat-defense",
+      "tags": [
+        "defense",
+        "dodge",
+        "tactical"
+      ]
+    },
+    "Recovering Surge": {
+      "category": "recovery",
+      "tags": [
+        "recovery",
+        "condition",
+        "bonus"
+      ]
+    },
+    "Unstoppable Combatant": {
+      "category": "recovery",
+      "tags": [
+        "recovery",
+        "second wind",
+        "advanced"
+      ]
+    },
+    "Vehicular Surge": {
+      "category": "misc",
+      "tags": [
+        "vehicle",
+        "recovery",
+        "pilot"
+      ]
+    },
+    "Vitality Surge": {
+      "category": "recovery",
+      "tags": [
+        "recovery",
+        "second wind",
+        "advanced"
+      ]
+    },
+    "Bantha Herder": {
+      "category": "combat-offense",
+      "tags": [
+        "mounted",
+        "maneuver",
+        "tactical"
+      ]
+    },
+    "Battering Attack": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "maneuver",
+        "prone"
+      ]
+    },
+    "Destructive Force": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "area",
+        "damage"
+      ]
+    },
+    "Disabler": {
+      "category": "combat-offense",
+      "tags": [
+        "ion",
+        "weapon",
+        "utility"
+      ]
+    },
+    "Dive for Cover": {
+      "category": "combat-defense",
+      "tags": [
+        "cover",
+        "reaction",
+        "jump"
+      ]
+    },
+    "Fight Through Pain": {
+      "category": "recovery",
+      "tags": [
+        "resilience",
+        "defense",
+        "damage-threshold"
+      ]
+    },
+    "Force of Personality": {
+      "category": "utility",
+      "tags": [
+        "social",
+        "charisma",
+        "defense"
+      ]
+    },
+    "Fortifying Recovery": {
+      "category": "recovery",
+      "tags": [
+        "recovery",
+        "hit-points",
+        "bonus"
+      ]
+    },
+    "Mission Specialist": {
+      "category": "utility",
+      "tags": [
+        "skill",
+        "teamwork",
+        "bonus"
+      ]
+    },
+    "Never Surrender": {
+      "category": "recovery",
+      "tags": [
+        "survival",
+        "endurance",
+        "resilience"
+      ]
+    },
+    "Officer Candidacy Training": {
+      "category": "utility",
+      "tags": [
+        "social",
+        "rank",
+        "privilege"
+      ]
+    },
+    "Opportunistic Shooter": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "reaction",
+        "opportunity"
+      ]
+    },
+    "Pistoleer": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "pistol",
+        "bonus"
+      ]
+    },
+    "Predictive Defense": {
+      "category": "combat-defense",
+      "tags": [
+        "intelligence",
+        "reflex",
+        "defense"
+      ]
+    },
+    "Riflemaster": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "rifle",
+        "bonus"
+      ]
+    },
+    "Risk Taker": {
+      "category": "misc",
+      "tags": [
+        "skill",
+        "climb",
+        "jump"
+      ]
+    },
+    "Sport Hunter": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "hunting",
+        "bonus"
+      ]
+    },
+    "Steadying Position": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "prone",
+        "aim"
+      ]
+    },
+    "Aiming Accuracy": {
+      "category": "combat-offense",
+      "tags": [
+        "droid",
+        "ranged",
+        "aim"
+      ]
+    },
+    "Damage Conversion": {
+      "category": "recovery",
+      "tags": [
+        "droid",
+        "hit-points",
+        "condition-track"
+      ]
+    },
+    "Distracting Droid": {
+      "category": "combat-defense",
+      "tags": [
+        "droid",
+        "area",
+        "distraction"
+      ]
+    },
+    "Droid Focus": {
+      "category": "utility",
+      "tags": [
+        "droid",
+        "skill",
+        "bonus"
+      ]
+    },
+    "Droid Shield Mastery": {
+      "category": "combat-defense",
+      "tags": [
+        "droid",
+        "shield",
+        "defense"
+      ]
+    },
+    "Erratic Target": {
+      "category": "combat-defense",
+      "tags": [
+        "droid",
+        "hovering",
+        "dodge"
+      ]
+    },
+    "Ion Shielding": {
+      "category": "recovery",
+      "tags": [
+        "droid",
+        "ion",
+        "resilience"
+      ]
+    },
+    "Logic Upgrade: Skill Swap": {
+      "category": "utility",
+      "tags": [
+        "droid",
+        "skill",
+        "flexibility"
+      ]
+    },
+    "Mechanical Martial Arts": {
+      "category": "combat-offense",
+      "tags": [
+        "droid",
+        "unarmed",
+        "penalty"
+      ]
+    },
+    "Multi-Targeting": {
+      "category": "combat-offense",
+      "tags": [
+        "droid",
+        "ranged",
+        "aim"
+      ]
+    },
+    "Pincer": {
+      "category": "combat-offense",
+      "tags": [
+        "droid",
+        "grapple",
+        "melee"
+      ]
+    },
+    "Pinpoint Accuracy": {
+      "category": "combat-offense",
+      "tags": [
+        "droid",
+        "ranged",
+        "accuracy"
+      ]
+    },
+    "Sensor Link": {
+      "category": "utility",
+      "tags": [
+        "droid",
+        "teamwork",
+        "sensor"
+      ]
+    },
+    "Shield Surge": {
+      "category": "recovery",
+      "tags": [
+        "droid",
+        "shield",
+        "recovery"
+      ]
+    },
+    "Slammer": {
+      "category": "combat-offense",
+      "tags": [
+        "droid",
+        "melee",
+        "damage"
+      ]
+    },
+    "Tool Frenzy": {
+      "category": "combat-offense",
+      "tags": [
+        "droid",
+        "appendage",
+        "bonus"
+      ]
+    },
+    "Turn and Burn": {
+      "category": "combat-defense",
+      "tags": [
+        "droid",
+        "movement",
+        "withdraw"
+      ]
+    },
+    "Bone Crusher": {
+      "category": "combat-offense",
+      "tags": [
+        "grapple",
+        "damage",
+        "condition"
+      ]
+    },
+    "Brilliant Defense": {
+      "category": "combat-defense",
+      "tags": [
+        "intelligence",
+        "reflex",
+        "reaction"
+      ]
+    },
+    "Channel Rage": {
+      "category": "recovery",
+      "tags": [
+        "rage",
+        "alternative",
+        "will"
+      ]
+    },
+    "Cut the Red Tape": {
+      "category": "utility",
+      "tags": [
+        "social",
+        "bureaucracy",
+        "gather-info"
+      ]
+    },
+    "Demoralizing Strike": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "intimidation",
+        "social"
+      ]
+    },
+    "Disturbing Presence": {
+      "category": "combat-defense",
+      "tags": [
+        "stealth",
+        "movement",
+        "deception"
+      ]
+    },
+    "Expert Briber": {
+      "category": "utility",
+      "tags": [
+        "social",
+        "bribery",
+        "economy"
+      ]
+    },
+    "Flèche": {
+      "category": "combat-offense",
+      "tags": [
+        "charge",
+        "critical",
+        "melee"
+      ]
+    },
+    "Grazing Shot": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "multiattack",
+        "accuracy"
+      ]
+    },
+    "Hobbling Strike": {
+      "category": "combat-offense",
+      "tags": [
+        "attack",
+        "movement",
+        "penalty"
+      ]
+    },
+    "Improved Opportunistic Trickery": {
+      "category": "combat-defense",
+      "tags": [
+        "reaction",
+        "reflex",
+        "defense"
+      ]
+    },
+    "Indomitable Personality": {
+      "category": "recovery",
+      "tags": [
+        "charisma",
+        "will",
+        "reaction"
+      ]
+    },
+    "Master of Disguise": {
+      "category": "utility",
+      "tags": [
+        "deception",
+        "disguise",
+        "bonus"
+      ]
+    },
+    "Meat Shield": {
+      "category": "combat-defense",
+      "tags": [
+        "ranged",
+        "cover",
+        "defense"
+      ]
+    },
+    "Opportunistic Trickery": {
+      "category": "combat-defense",
+      "tags": [
+        "reaction",
+        "reflex",
+        "defense"
+      ]
+    },
+    "Recurring Success": {
+      "category": "utility",
+      "tags": [
+        "talent",
+        "feat",
+        "reuse"
+      ]
+    },
+    "Resolute Stance": {
+      "category": "recovery",
+      "tags": [
+        "defense",
+        "defensive-fighting",
+        "bonus"
+      ]
+    },
+    "Sadistic Strike": {
+      "category": "combat-offense",
+      "tags": [
+        "coup-de-grace",
+        "condition",
+        "cruelty"
+      ]
+    },
+    "Silver Tongue": {
+      "category": "utility",
+      "tags": [
+        "social",
+        "persuasion",
+        "swift-action"
+      ]
+    },
+    "Skill Challenge: Catastrophic Avoidance": {
+      "category": "misc",
+      "tags": [
+        "skill-challenge",
+        "utility",
+        "failure"
+      ]
+    },
+    "Skill Challenge: Last Resort": {
+      "category": "misc",
+      "tags": [
+        "skill-challenge",
+        "utility",
+        "reroll"
+      ]
+    },
+    "Skill Challenge: Recovery": {
+      "category": "misc",
+      "tags": [
+        "skill-challenge",
+        "utility",
+        "recovery"
+      ]
+    },
+    "Stand Tall": {
+      "category": "recovery",
+      "tags": [
+        "resilience",
+        "teamwork",
+        "support"
+      ]
+    },
+    "Wookiee Grip": {
+      "category": "misc",
+      "tags": [
+        "strength",
+        "weapon",
+        "special"
+      ]
+    },
+    "Acrobatic Ally": {
+      "category": "combat-defense",
+      "tags": [
+        "acrobatics",
+        "teamwork",
+        "movement"
+      ]
+    },
+    "Acrobatic Dodge": {
+      "category": "combat-defense",
+      "tags": [
+        "mobility",
+        "dodge",
+        "reaction"
+      ]
+    },
+    "Combat Trickery": {
+      "category": "combat-offense",
+      "tags": [
+        "deception",
+        "combat",
+        "swift-action"
+      ]
+    },
+    "Elder's Knowledge": {
+      "category": "utility",
+      "tags": [
+        "knowledge",
+        "skill",
+        "specialization"
+      ]
+    },
+    "Frightening Cleave": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "cleave",
+        "intimidation"
+      ]
+    },
+    "Grab Back": {
+      "category": "combat-defense",
+      "tags": [
+        "grapple",
+        "reaction",
+        "defense"
+      ]
+    },
+    "Halt": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "prone",
+        "opportunity"
+      ]
+    },
+    "Heavy Hitter": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "heavy-weapon",
+        "damage"
+      ]
+    },
+    "Hold Together": {
+      "category": "utility",
+      "tags": [
+        "vehicle",
+        "damage",
+        "delay"
+      ]
+    },
+    "Hyperblazer": {
+      "category": "utility",
+      "tags": [
+        "astrogation",
+        "use-computer",
+        "utility"
+      ]
+    },
+    "Improved Sleight of Hand": {
+      "category": "utility",
+      "tags": [
+        "deception",
+        "stealth",
+        "sleight-of-hand"
+      ]
+    },
+    "Improvised Weapon Mastery": {
+      "category": "combat-offense",
+      "tags": [
+        "improvised",
+        "weapon",
+        "damage"
+      ]
+    },
+    "Instinctive Attack": {
+      "category": "combat-offense",
+      "tags": [
+        "force",
+        "attack",
+        "reroll"
+      ]
+    },
+    "Instinctive Defense": {
+      "category": "combat-defense",
+      "tags": [
+        "force",
+        "defense",
+        "reaction"
+      ]
+    },
+    "Intimidator": {
+      "category": "utility",
+      "tags": [
+        "social",
+        "intimidation",
+        "penalty"
+      ]
+    },
+    "Maniacal Charge": {
+      "category": "combat-offense",
+      "tags": [
+        "charge",
+        "intimidation",
+        "melee"
+      ]
+    },
+    "Nikto Survival": {
+      "category": "utility",
+      "tags": [
+        "survival",
+        "native",
+        "reroll"
+      ]
+    },
+    "Targeted Area": {
+      "category": "combat-offense",
+      "tags": [
+        "ranged",
+        "area",
+        "accuracy"
+      ]
+    },
+    "Trample": {
+      "category": "combat-offense",
+      "tags": [
+        "mounted",
+        "melee",
+        "area"
+      ]
+    },
+    "Wilderness First Aid": {
+      "category": "utility",
+      "tags": [
+        "survival",
+        "medical",
+        "utility"
+      ]
+    },
+    "Dreadful Countenance": {
+      "category": "utility",
+      "tags": [
+        "sith",
+        "charisma",
+        "intimidation"
+      ]
+    },
+    "Rapid Assault": {
+      "category": "combat-offense",
+      "tags": [
+        "multiattack",
+        "movement",
+        "advanced"
+      ]
     }
   }
 }

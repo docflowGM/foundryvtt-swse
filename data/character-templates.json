@@ -486,7 +486,7 @@
       "archetype": "Outlaw",
       "description": "A charming rogue who uses luck and Force Points strategically to turn the odds in their favor.",
       "quote": "Luck? I make my own luck, friend.",
-      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_outlaw.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_outlaw.webp",
       "mentor": "salty",
       "background": "Ryloth Origin",
       "abilityScores": {
@@ -885,7 +885,8 @@
         "Armor Proficiency (Medium)",
         "Weapon Proficiency (Pistols)",
         "Weapon Proficiency (Rifles)",
-        "Weapon Proficiency (Simple Weapons)"
+        "Weapon Proficiency (Simple Weapons)",
+        "Extra Second Wind"
       ],
       "talent": "Commanding Presence",
       "talentTree": "Mercenary",

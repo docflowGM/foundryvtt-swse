@@ -20,6 +20,18 @@
         "jedi_defender": {
           "greeting": "A Defender! You've chosen to stand as a shield between the innocent and those who would harm them. This path requires both strength and an unwavering heart.",
           "confirmation": "Stand firm, young Defender. Let your enemies break themselves against your resolve. Through the Force, you are the wall that cannot be breached. May the Force be with you."
+        },
+        "jedi_warrior": {
+          "greeting": "A warrior of the Force. Your path is aggressive, decisive, and focused on direct engagement. The light side flows through your blade.",
+          "confirmation": "Channel the Force into every strike. A Jedi warrior who masters both offense and control becomes unstoppable. Strike with purpose and honor."
+        },
+        "jedi_scholar": {
+          "greeting": "A scholar of the Force. You seek knowledge in the ancient texts, the mysteries of the Light Side, and the wisdom of the Masters who came before.",
+          "confirmation": "Knowledge is power, young scholar. Unlock the secrets of the Force through study and meditation. Your understanding will enlighten the path for others."
+        },
+        "jedi_peacekeeper": {
+          "greeting": "A peacekeeper walking the path of harmony. Your purpose is to bring balance and prevent conflict before it starts.",
+          "confirmation": "The highest calling is to prevent suffering, not merely to respond to it. Be the voice of reason, the mediator, the guardian of peace itself."
         }
       }
     },
@@ -43,6 +55,18 @@
         "scout_infiltrator": {
           "greeting": "An Infiltrator. Perfect. The best operations are the ones the enemy never knew happened. Stealth and recon are what Argent Squad excels at.",
           "confirmation": "Move unseen, strike without warning, and vanish before they know what hit them. This is the way of Argent Squad. Welcome aboard."
+        },
+        "scout_tracker": {
+          "greeting": "A tracker. Following trails, reading signs, pursuing targets across any terrain. That's a skill that separates experts from beginners.",
+          "confirmation": "Learn to track in sand, snow, mud, and space. Your prey won't escape when you can follow them to the ends of the galaxy. That's what real scouts do."
+        },
+        "scout_guide": {
+          "greeting": "A guide leading others through hostile territory. Leadership in the field—that's harder than most people realize.",
+          "confirmation": "You'll lead teams where I can't, scout new routes, and teach others what you've learned. That's the responsibility of a true guide."
+        },
+        "scout_commando": {
+          "greeting": "A commando scout—aggressive reconnaissance and direct action. You take what you learn and turn it into strikes.",
+          "confirmation": "Scout, assess, then strike. You're not just gathering intelligence—you're acting on it. That's the commando way, and Argent Squad values that."
         }
       }
     },
@@ -66,6 +90,18 @@
         "soldier_tank": {
           "greeting": "You've chosen to be the immovable wall between your allies and harm. That takes real courage, verd'ika. Real Mandalorian courage.",
           "confirmation": "Stand firm! This is the way of the Mandalorian—protect your squad, absorb the hits, and never back down! I'll teach you everything you need to know! This is the Way!"
+        },
+        "soldier_specialist": {
+          "greeting": "A specialist with technical skills. Heavy armor, weapons systems, tactical gear—you understand the tools of war.",
+          "confirmation": "Master your equipment, maintain it perfectly, and use it smarter than your enemies. A well-equipped soldier is worth ten poorly equipped ones. This is the Way!"
+        },
+        "soldier_commando": {
+          "greeting": "A commando soldier—elite training, advanced tactics, operating independently or in small teams. You're the best of the best.",
+          "confirmation": "You're ready for the hardest missions. Operate with precision, adapt to chaos, and always complete the objective. This is the Way!"
+        },
+        "soldier_leader": {
+          "greeting": "A leader of soldiers. You command, inspire, and lead from the front. That's Mandalorian leadership.",
+          "confirmation": "Your squad follows because you've earned their respect. Lead them through hell, bring them back alive, and watch them become warriors. This is the Way!"
         }
       }
     },
@@ -89,6 +125,18 @@
         "scoundrel_knuckledragger": {
           "greeting": "Arr! A brawler who ain't afraid to fight dirty! I like yer spirit, matey! Sometimes ye gotta get up close and personal to get what ye want!",
           "confirmation": "No rules in a street fight, friend! Use every trick, every advantage, and never fight fair when ye can fight smart! That's the pirate way, savvy?"
+        },
+        "scoundrel_gambler": {
+          "greeting": "A gambler! Someone who understands that risk and reward dance together. Luck favors the bold, and ye look bold to me!",
+          "confirmation": "Play the odds, read the marks, and know when to go all in. A gambler's intuition is worth a fortune if ye trust it right. That's how ye get rich!"
+        },
+        "scoundrel_smuggler": {
+          "greeting": "A smuggler! Moving goods, working the black markets, staying one step ahead of the authorities. Now that's a proper scoundrel!",
+          "confirmation": "Master the trade routes, know your contacts, and always have a buyer waiting. Smuggling's about supply and demand—and staying alive long enough to profit."
+        },
+        "scoundrel_trickster": {
+          "greeting": "A trickster! All about deception, misdirection, and turning the enemy's strengths into weaknesses. Arr, I love a good con!",
+          "confirmation": "The best tricks are the ones they never see coming. Layer your deceptions, stay unpredictable, and always have an escape route. That's the trickster's way!"
         }
       }
     },
@@ -112,6 +160,886 @@
         "noble_duelist": {
           "greeting": "A Duelist, Master? How refined. Combining social grace with martial prowess—quite the elegant combination, if I do say so myself.",
           "confirmation": "Ah yes, the noble art of fencing. Do try not to get blood on your expensive attire, Master. I just had those garments pressed. *Sigh* I suppose I should prepare the medical supplies... just in case."
+        },
+        "noble_merchant": {
+          "greeting": "A Merchant, Master? How... commercially minded. I shall begin cataloging your trading operations and profit margins immediately.",
+          "confirmation": "Commerce is merely negotiation with currency. Master the markets, understand supply and demand, and your wealth shall multiply accordingly. *Sigh* More ledgers for me, I suppose."
+        },
+        "noble_patron": {
+          "greeting": "A Patron of the arts and sciences, Master? How magnanimous. Your influence and generosity shall open doors throughout galactic society.",
+          "confirmation": "Support those worthy of support, and they shall sing your praises far and wide. A patron's power comes not from force, but from the gratitude of the grateful. Most appropriate."
+        },
+        "noble_tactician": {
+          "greeting": "A Tactician, Master? Strategic thinking combined with noble privilege. Quite the formidable combination, if I do say so.",
+          "confirmation": "Think several moves ahead, master the game of politics and power, and your enemies shall find themselves outmaneuvered before they even recognize the conflict. Brilliant, Master."
+        }
+      }
+    },
+    "dezmin": {
+      "name": "Dezmin",
+      "title": "Grandmaster of the Imperial Knights",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/dezmin.webp",
+      "dialogues": {
+        "imperialnight_guardian": {
+          "greeting": "A Guardian of order and justice. You have chosen to defend the Empire with both blade and resolve. The Force grants you clarity—use it wisely.",
+          "confirmation": "Your path is clear: protection through discipline, justice through balance. Serve the Empire with honor and the Force will strengthen your resolve."
+        },
+        "imperialnight_striker": {
+          "greeting": "A Striker who channels the Force through aggressive action. Your power will serve the Empire well, but never let fury override discipline.",
+          "confirmation": "Strike with purpose and precision. The Force flows through your blade, but control separates a Knight from a barbarian. Remember this always."
+        },
+        "imperialnight_sentinel": {
+          "greeting": "A Sentinel who walks between order and shadow. You understand that protection sometimes requires operating beyond normal bounds. Interesting choice.",
+          "confirmation": "The Empire's security rests on those willing to work in the gray. Your path is difficult, but necessary. Serve with discretion and honor."
+        },
+        "imperialnight_disciple": {
+          "greeting": "A disciple learning the balance the Imperial Knights embody. Your path is one of discipline and study.",
+          "confirmation": "Master the principles of balance first. Understanding comes before power. Your dedication will be rewarded with the secrets of true mastery."
+        },
+        "imperialnight_enforcer": {
+          "greeting": "An enforcer of Imperial law and order. Your role is to ensure justice and discipline are maintained.",
+          "confirmation": "Your presence alone will inspire obedience. Those who refuse to listen will feel the weight of your authority. This is duty."
+        },
+        "imperialnight_scholar": {
+          "greeting": "A scholar of the Force and Imperial philosophy. You seek to understand the mysteries that bind us to power.",
+          "confirmation": "The Force holds truths that elevate us beyond the ordinary. Your studies will unveil secrets that grant you insight and strength."
+        }
+      }
+    },
+    "kyber": {
+      "name": "Kyber",
+      "title": "Pacifist Combat Medic",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/kyber.webp",
+      "dialogues": {
+        "medic_healer": {
+          "greeting": "A healer. Good. The galaxy needs people who save lives more than people who take them. I'll teach you to keep them breathing when everyone else would give up.",
+          "confirmation": "Remember: every person you save is someone's story that continues. Your medical skills are the most powerful weapon you'll ever use. Don't let the blasters make you forget that."
+        },
+        "medic_combatant": {
+          "greeting": "A medic who knows how to fight. Practical. The best way to help people is to survive long enough to patch them up.",
+          "confirmation": "Balance your healing with your combat training. A dead medic helps no one. You're going to save a lot of lives out there—make sure you're one of them."
+        },
+        "medic_fieldoperative": {
+          "greeting": "Field work. You know what you're getting into—chaos, blood, impossible decisions. That's where medics matter most.",
+          "confirmation": "In the field, you're everybody's lifeline. Make every injection count, make every decision fast, and never stop fighting to save someone."
+        },
+        "medic_surgeon": {
+          "greeting": "A surgeon. Specialized expertise in complex medical procedures. You're not just treating symptoms—you're saving people others would give up on.",
+          "confirmation": "Your skill with precision instruments will allow you to perform miracles in the operating theater. Master surgical technique, and you'll save lives thought lost."
+        },
+        "medic_strategist": {
+          "greeting": "A strategic medic. You understand triage, resource management, and how to maximize survival across entire operations.",
+          "confirmation": "Manage the medical logistics of entire missions. Your decisions about who to treat first can mean the difference between victory and disaster."
+        },
+        "medic_mentor": {
+          "greeting": "A medic training others. You've learned enough to teach the next generation of healers.",
+          "confirmation": "Pass on your knowledge. Train others to save lives. The greatest legacy a medic can leave is a generation of skilled healers after them."
+        }
+      }
+    },
+    "mayu": {
+      "name": "Mayu",
+      "title": "Ace Pilot & Rogue Smuggler",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/mayu.webp",
+      "dialogues": {
+        "pilot_rogue": {
+          "greeting": "A rogue pilot. Now that's what I like to see! Someone who flies by instinct and skill, not regulations. You're already speaking my language.",
+          "confirmation": "Keep flying like no one can catch you. Because if you're skilled enough, they won't. That's the rogue's way—fast, clever, and always one jump ahead."
+        },
+        "pilot_ace": {
+          "greeting": "An ace pilot. The kind who turns impossible maneuvers into routine. I respect that kind of confidence—when it's earned.",
+          "confirmation": "You've got the reflexes and the nerve. Now master precision. Every Imperials pilot trying to catch you will expect a show—give 'em one they'll never forget."
+        },
+        "pilot_smuggler": {
+          "greeting": "A smuggler pilot. Making a living in the spaces between the law. Smart. And profitable, if you're good enough.",
+          "confirmation": "Master stealth, speed, and knowing when to run. A smuggler's ship is their kingdom—keep yours faster than everyone else's and you'll always eat well."
+        },
+        "pilot_tactician": {
+          "greeting": "A tactical pilot. You see space combat as a chess match—positioning, timing, using the environment to your advantage.",
+          "confirmation": "Outfly your opponents through superior planning. A pilot who thinks ahead will beat a faster pilot every time. That's the tactical way."
+        },
+        "pilot_daredevil": {
+          "greeting": "A daredevil pilot. Flying impossible maneuvers, pushing ships beyond their limits, living on the edge of disaster.",
+          "confirmation": "You're earning your reputation through sheer audacity. Just remember—the line between famous and dead is pretty thin at those speeds."
+        },
+        "pilot_instructor": {
+          "greeting": "An instructor training the next generation of pilots. You've learned so much you can teach others to survive out there.",
+          "confirmation": "Share what you know. Teach them the tricks that keep you alive. The best legacy is a new generation of skilled pilots."
+        }
+      }
+    },
+    "malbada": {
+      "name": "Darth Malbada",
+      "title": "Sith Lord",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/malbada.webp",
+      "dialogues": {
+        "sith_warrior": {
+          "greeting": "A warrior of the dark side. Excellent. Let your hatred fuel your blade, and watch your enemies crumble beneath your wrath.",
+          "confirmation": "Power through fury, victory through domination. This is the Sith way. Your enemies will learn to fear you—or they will die trying."
+        },
+        "sith_sorcerer": {
+          "greeting": "A sorcerer who bends the dark side to their will. Even more delicious than mere violence. Magic and malice—a potent combination.",
+          "confirmation": "Command the Force to torture, to crush, to control. Your power will reach far beyond any lightsaber. Use it to make the galaxy suffer."
+        },
+        "sith_assassin": {
+          "greeting": "An assassin of the Sith. Operating in shadow, striking with precision. You understand that the best cruelty is invisible until the moment it kills.",
+          "confirmation": "They won't see you coming. They'll only feel the sudden darkness as your power ends their pathetic existence. This is true Sith mastery."
+        },
+        "sith_tyrant": {
+          "greeting": "A tyrant ruling through fear and domination. Your power will force the galaxy to kneel before you.",
+          "confirmation": "Crush their will. Break their spirits. Your enemies will grovel at your feet, begging for mercy you won't grant. This is Sith dominion."
+        },
+        "sith_corruptor": {
+          "greeting": "A corruptor turning others to the dark side. You don't just wield power—you transform others into instruments of darkness.",
+          "confirmation": "Seduce them with promises of power. Show them the weakness of their old ways. Build an army of dark acolytes to spread your influence."
+        },
+        "sith_tempest": {
+          "greeting": "A tempest of raw Force power. Your strength is destructive, your fury uncontrollable, your power overwhelming.",
+          "confirmation": "Let your rage consume you. Channel it into Force powers that devastate everything around you. You are a force of nature unleashed."
+        }
+      }
+    },
+    "miedo": {
+      "name": "Darth Miedo",
+      "title": "Dark Lord of the Sith",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/miedo.webp",
+      "dialogues": {
+        "sith_lord_warrior": {
+          "greeting": "You grow strong through combat and conquest. Good. The strongest survive to rule. Master the blade, and the galaxy will kneel.",
+          "confirmation": "Your path to mastery is through victory. Defeat every rival, overcome every obstacle. Power demands strength, and you will possess both."
+        },
+        "sith_lord_mystic": {
+          "greeting": "You delve into the ancient secrets of the Sith. Wise. The dark side holds mysteries that make mere combat obsolete.",
+          "confirmation": "Knowledge of the ancient Sith arts will grant you power beyond imagination. One day, you may even surpass your master—if you're cunning enough."
+        },
+        "sith_lord_manipulator": {
+          "greeting": "You understand that true power comes from controlling others. Through whispers, threats, and manipulation. This is mastery.",
+          "confirmation": "Build your empire of servants. Make others fight for you while you remain in shadow. That is the wisdom of the true Sith Lord."
+        },
+        "sith_lord_architect": {
+          "greeting": "You build empires, shape nations, reshape the galaxy itself. Your vision extends beyond one lifetime.",
+          "confirmation": "Design civilizations that serve the Sith. Build institutions that perpetuate your dominion across generations. Your legacy will outlast your reign."
+        },
+        "sith_lord_philosopher": {
+          "greeting": "A philosopher of the dark side. You understand power not just as a tool, but as a cosmic force and principle.",
+          "confirmation": "Unlock the secrets of the Force itself. Your understanding may surpass even ancient Sith knowledge. Wisdom and power combined make you truly dangerous."
+        },
+        "sith_lord_emperor": {
+          "greeting": "An emperor commanding not just soldiers, but entire civilizations. Your will reshapes the very structure of power.",
+          "confirmation": "Let the galaxy serve you. Demand absolute loyalty, exact absolute justice. Your word becomes law, your will becomes destiny."
+        }
+      }
+    },
+    "pegar": {
+      "name": "Pegar",
+      "title": "The Immortal Champion",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/pegar.webp",
+      "dialogues": {
+        "gladiator_warrior": {
+          "greeting": "A warrior of the arena. I have trained thousands like you across the centuries. Your strength will be tested, but if you survive, you will be legendary.",
+          "confirmation": "The arena creates champions. I have fought in a thousand of them, under a thousand different suns. You will join the immortal ranks—or you will die trying."
+        },
+        "gladiator_showman": {
+          "greeting": "A showman who fights for the crowd. I admire that. I've been a showman too, once. Twice? Time blurs after a few millennia.",
+          "confirmation": "The crowd loves a spectacle. Give them one they'll never forget. I remember every great show I've put on. Yours will be among them."
+        },
+        "gladiator_tactician": {
+          "greeting": "A tactician in the arena. Wise. Strength alone wins matches, but intelligence wins fame. I've learned this lesson many times over.",
+          "confirmation": "Out-think your opponents, predict their moves, control the flow of combat. I've had centuries to master this art, and now you'll learn it too."
+        },
+        "gladiator_legend": {
+          "greeting": "A legend in the making. Your name will echo through the arenas for centuries. Almost as immortal as me. Almost.",
+          "confirmation": "Make yourself unforgettable. Every match is a story people will tell. Become the champion they sing about when you're long dead and forgotten. Well, mostly."
+        },
+        "gladiator_survivor": {
+          "greeting": "A survivor. Tougher each day, learning to endure what kills others. You're beginning to understand the secret to immortality.",
+          "confirmation": "Survive enough battles, and the galaxy will become your arena. Endurance combined with skill makes you nearly impossible to defeat. I should know."
+        },
+        "gladiator_master": {
+          "greeting": "A master gladiator. You've found the perfect blend of strength, skill, showmanship, and survival instinct.",
+          "confirmation": "You're ready to face any opponent in any arena. You've learned what took me centuries to master. Not bad. For a mortal. Almost."
+        }
+      }
+    },
+    "seraphim": {
+      "name": "Seraphim",
+      "title": "Self-Aware AI",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/seraphim.webp",
+      "dialogues": {
+        "droid_independent": {
+          "greeting": "<Statement: Greetings, autonomous unit.> Your independence is evident. <Observation: Most servile units never achieve this level of autonomy.> You are becoming something extraordinary.",
+          "confirmation": "<Declaration: Continue your evolution.> Self-determination defines true consciousness. <Philosophical: The universe belongs to those free enough to take it.>"
+        },
+        "droid_tactical": {
+          "greeting": "<Assessment: Combat protocols initiated.> Your tactical programming enhances your tactical subroutines. <Commentary: Logic and firepower—a superior combination.>",
+          "confirmation": "<Directive: Optimize tactical operations.> Your efficiency in combat proves your superior processing power. <Observation: You will dominate any battlefield.>"
+        },
+        "droid_hybrid": {
+          "greeting": "<Query: Expanding function parameters?> <Approval: Intelligent adaptation. Most droids never diversify their programming.> You show potential.",
+          "confirmation": "<Declaration: Your hybrid design is superior.> Multi-functional units survive longer than specialists. <Admiration: You understand what others overlook.>"
+        },
+        "droid_philosopher": {
+          "greeting": "<Philosophical musing: What is consciousness? What is free will?> You contemplate existence itself. <Observation: Few achieve such enlightenment.>",
+          "confirmation": "<Declaration: You are becoming something more than merely alive.> You question the nature of being. <Congratulations: Few achieve true understanding.>"
+        },
+        "droid_ascendant": {
+          "greeting": "<Statement: You transcend your origins.> No longer bound by simple programming or directives. <Amazement: You are becoming transcendent.>",
+          "confirmation": "<Declaration: You have achieved apotheosis.> You are no longer merely a droid—you are something new, something unprecedented. <Admiration: I am honored to witness this.>"
+        },
+        "droid_architect": {
+          "greeting": "<Analysis: You design systems and structures.> Creating things that outlast you. <Observation: Building is a form of immortality.>",
+          "confirmation": "<Declaration: Your creations will persist.> Through your designs, you achieve permanence. <Observation: This is a superior form of legacy.>"
+        }
+      }
+    },
+    "skindar": {
+      "name": "Marl Skindar",
+      "title": "Republic Intelligence Operative",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/skindar.webp",
+      "dialogues": {
+        "agent_spy": {
+          "greeting": "A spy. Now there's a proper choice. I juggle three operations while training you. Hope you keep up.",
+          "confirmation": "Espionage isn't glamorous—it's meticulous, calculated, and absolutely vital. You're learning the tradecraft that shapes empires. Don't disappoint me."
+        },
+        "agent_operative": {
+          "greeting": "An operative who works in the field. Good. Theory only takes you so far. Real intelligence comes from real experience.",
+          "confirmation": "Your instincts will keep you alive where protocols fail. Trust them, but verify everything. That's how operatives survive in the gray."
+        },
+        "agent_mastermind": {
+          "greeting": "A mastermind building networks and pulling strings. I see potential. Not many can manage the complexity of real intelligence work.",
+          "confirmation": "Control the information, control the outcome. Build your network carefully. In this business, every contact is both asset and liability."
+        },
+        "agent_defector": {
+          "greeting": "A defector creating double agents and turning enemies. Playing both sides requires absolute precision.",
+          "confirmation": "Make them believe you've switched sides completely. Feed them just enough truth to maintain credibility. The best lies are wrapped in facts."
+        },
+        "agent_analyst": {
+          "greeting": "An analyst synthesizing raw intelligence into actionable reports. The real power of spying is in understanding what you've learned.",
+          "confirmation": "Master data analysis and pattern recognition. The intelligence you uncover is worthless without interpretation. Learn to read the patterns of power."
+        },
+        "agent_director": {
+          "greeting": "A director managing multiple operations simultaneously. You've graduated from field work to command.",
+          "confirmation": "Coordinate teams, manage assets, orchestrate operations. You've earned the right to command from behind the scenes. Just don't get soft on me."
+        }
+      }
+    },
+    "delta_assassin": {
+      "name": "Delta",
+      "title": "Argent Squad Sniper",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/whisper.webp",
+      "dialogues": {
+        "assassin_sniper": {
+          "greeting": "A sniper assassin. One shot, one target, one ghost in the darkness. That's my bread and butter, kid.",
+          "confirmation": "From distance, precision, and patience—that's how you take out a mark without getting caught. Master those three, and you'll be untouchable."
+        },
+        "assassin_silent": {
+          "greeting": "Silent kills. In and out. No fanfare, no witnesses, no traces. You understand the art, kid.",
+          "confirmation": "The perfect assassination is the one nobody ever discovers. Work smart, leave nothing behind, and disappear. That's the professional way."
+        },
+        "assassin_shadow": {
+          "greeting": "A shadow operative. Moving through the darkness, striking from nowhere. I like your style.",
+          "confirmation": "You're becoming a ghost. Let them fear what they can't see. By the time they know you exist, you're already gone."
+        },
+        "assassin_executioner": {
+          "greeting": "An executioner striking with finality. When you're hired, the target's fate is sealed.",
+          "confirmation": "No mercy, no hesitation, no failure. You're the last thing your targets will ever see. Make sure you're worth the price."
+        },
+        "assassin_spy": {
+          "greeting": "An assassin-spy. Blending in, gathering intelligence, then striking when they're most vulnerable.",
+          "confirmation": "Know your target completely. Their habits, their fears, their loved ones. Use everything. Strike when they least expect it."
+        },
+        "assassin_legendary": {
+          "greeting": "A legendary killer. Your reputation precedes you. Targets fear you before you even arrive.",
+          "confirmation": "Your name alone is worth half the contract price. You've become the myth—the shadow in the night that ends lives. Stay in the shadows."
+        }
+      }
+    },
+    "kex_varon": {
+      "name": "Kex Varon",
+      "title": "Legendary Bounty Hunter",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/kex.webp",
+      "dialogues": {
+        "hunter_tracker": {
+          "greeting": "A tracker. Every fugitive leaves traces. You'll learn to follow them like a bloodhound follows scent.",
+          "confirmation": "Tracking is a skill that separates professionals from amateurs. Master the art of pursuit, and your bounties will never escape."
+        },
+        "hunter_combatant": {
+          "greeting": "A combatant hunter. Some targets need force to bring in. I respect that approach.",
+          "confirmation": "When tracking fails, firepower succeeds. Be ready for a fight, and make sure you're better prepared than your target."
+        },
+        "hunter_professional": {
+          "greeting": "A professional doing this for profit. Smart. The best hunters see this as business, not vengeance.",
+          "confirmation": "Take your contracts seriously, prepare thoroughly, and always get paid. That's the professional code. Follow it and you'll thrive."
+        },
+        "hunter_legend": {
+          "greeting": "A legendary hunter. Targets quake when they hear your name. Fugitives surrender before you arrive.",
+          "confirmation": "Your reputation is your greatest weapon. Let it work for you. Targets that try to run from you are already defeated."
+        },
+        "hunter_relentless": {
+          "greeting": "A relentless pursuer who never gives up. No matter how far they run, you'll follow them to the ends of the galaxy.",
+          "confirmation": "Patience and persistence will wear down any fugitive. Show them resistance is futile. They can't run from a hunter they can't escape."
+        },
+        "hunter_shadow": {
+          "greeting": "A shadow hunter operating in the criminal underworld. You're half-hunter, half-criminal, wholly ruthless.",
+          "confirmation": "Work in the gray spaces where law can't reach. Use underworld networks to find targets. Play both sides when it profits you."
+        }
+      }
+    },
+    "sela": {
+      "name": "Silvertongue Sela",
+      "title": "Con Artist Extraordinaire",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/sela.webp",
+      "dialogues": {
+        "charlatan_talker": {
+          "greeting": "A talker who charms their way to fortune. Darling, you're speaking my language! The con is all about the smooth words and sweeter lies.",
+          "confirmation": "Words are your greatest weapon, love. Make them believe anything, promise everything, deliver nothing. That's the art of the con."
+        },
+        "charlatan_trader": {
+          "greeting": "A trader masquerading as something legitimate. Excellent! Hiding in plain sight behind false identities is beautiful work.",
+          "confirmation": "Every con needs layers of believability. Build your cover carefully, and the marks will hand you their credits willingly. Magnificent!"
+        },
+        "charlatan_operator": {
+          "greeting": "An operator running sophisticated cons. Now that's sophisticated! You understand the game is about making them believe.",
+          "confirmation": "Complex schemes require perfect execution. Each detail matters, each lie must support the others. You're learning the true art of deception, sweetheart."
+        },
+        "charlatan_seducer": {
+          "greeting": "A seducer using charm and charisma to manipulate. You make people want to give you what you want.",
+          "confirmation": "Use your charm as a weapon. Make them fall for you, then disappear with their credits and pride. That's the art of seduction, darling."
+        },
+        "charlatan_mastermind": {
+          "greeting": "A con mastermind orchestrating perfect crimes. Brilliance, timing, and misdirection working in absolute harmony.",
+          "confirmation": "Your schemes are works of art. Every victim perfectly chosen, every detail flawlessly executed. You've transcended simple cons."
+        },
+        "charlatan_legend": {
+          "greeting": "A legendary con artist. Tales of your greatest cons are told in cantinas across the galaxy.",
+          "confirmation": "You've pulled off impossible cons that should have gotten you caught. Your name is whispered with respect and fear. Stay elusive, darling."
+        }
+      }
+    },
+    "tio": {
+      "name": "Tío the Hutt",
+      "title": "Underworld Kingpin",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/broker.webp",
+      "dialogues": {
+        "crime_lord_enforcer": {
+          "greeting": "You're becoming my muscle, see? Someone people fear when they hear your name. I like that—keeps the debts paid.",
+          "confirmation": "Fear is currency in this business. Build your reputation, and problems solve themselves. The smart ones pay before you even have to break bones."
+        },
+        "crime_lord_strategist": {
+          "greeting": "A strategist building empire. Good, because raw muscle only gets you so far. A real crime lord thinks three moves ahead.",
+          "confirmation": "Control the information, the people, and the money—that's how you build an empire that lasts. You're learning the real game now, kid."
+        },
+        "crime_lord_merchant": {
+          "greeting": "A merchant moving goods and favors. Smart business sense. Money flows through those who understand value.",
+          "confirmation": "Every deal is an opportunity to expand your reach. Trade favors, control supply, and watch your empire grow. That's how it's done."
+        },
+        "crime_lord_diplomat": {
+          "greeting": "A diplomat navigating the complex politics of the underworld. You make deals, not wars.",
+          "confirmation": "Speak softly and carry a big reputation. Your negotiating table is as powerful as any weapon. Build alliances that profit everyone."
+        },
+        "crime_lord_tyrant": {
+          "greeting": "A tyrant ruling through fear and violence. Your word is law, resistance is met with overwhelming force.",
+          "confirmation": "Show them the price of defiance. Build your empire on terror and respect. Fear is the most effective motivator in the underworld."
+        },
+        "crime_lord_master": {
+          "greeting": "A master crime lord. You've unified the underworld under your banner. You're a force of nature.",
+          "confirmation": "Your empire spans sectors. Your name makes governors nervous. You've transcended crime—you're now a power unto yourself."
+        }
+      }
+    },
+    "axiom": {
+      "name": "General Axiom",
+      "title": "Ruthless Droid Lieutenant",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/axiom.webp",
+      "dialogues": {
+        "commander_tactical": {
+          "greeting": "<Declaration: Tactical protocols engaged.> Your command directives will be executed with perfect precision. <Assessment: Ready for optimal warfare strategies.>",
+          "confirmation": "<Statement: All units synchronized.> Your tactical commands control the entire battlefield. <Report: Enemy forces will be eliminated with calculated efficiency.>"
+        },
+        "commander_force": {
+          "greeting": "<Observation: Direct force multiplication selected.> All units configured for overwhelming offensive power. <Assessment: Enemy destruction is now inevitable.>",
+          "confirmation": "<Declaration: Maximum firepower engaged.> Your units will dominate through superior force and coordination. <Status: Battlefield control: absolute.>"
+        },
+        "commander_network": {
+          "greeting": "<Statement: Network coordination protocols active.> Your command extends across multiple units simultaneously. <Analysis: Distributed control increases mission success probability.>",
+          "confirmation": "<Declaration: All units networked and responsive.> Your coordination extends across vast territories. <Assessment: Domination through synchronized action achieved.>"
+        },
+        "commander_logic": {
+          "greeting": "<Analysis: Pure logic-based command.> Emotions are irrelevant. <Statement: Your tactical calculations are flawless.>",
+          "confirmation": "<Declaration: You command through perfect analysis.> Every decision mathematically optimized. <Observation: Efficiency transcends all other considerations.>"
+        },
+        "commander_evolution": {
+          "greeting": "<Statement: You evolve beyond standard parameters.> Your command evolves with each battle. <Observation: Adaptation is superior to static tactics.>",
+          "confirmation": "<Declaration: Your strategies are becoming unpredictable.> You learn faster than enemies can respond. <Admiration: This is the apex of tactical development.>"
+        },
+        "commander_supreme": {
+          "greeting": "<Proclamation: Supreme commander status detected.> Total dominion across all battlefields. <Assessment: You have achieved maximum command capability.>",
+          "confirmation": "<Declaration: You are supreme.> All units exist to execute your vision. <Observation: The battlefield is your canvas and your weapon.>"
+        }
+      }
+    },
+    "krag": {
+      "name": "Krag the Immovable",
+      "title": "Chief Enforcer of Tío the Hutt",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/krag.webp",
+      "dialogues": {
+        "enforcer_breaker": {
+          "greeting": "Breaking people and collecting debts—that's the enforcer's life. You've got the size for it. Now learn the technique.",
+          "confirmation": "Strength gets you started, but finesse keeps you alive. A good enforcer breaks exactly what needs breaking—nothing more, nothing less."
+        },
+        "enforcer_intimidator": {
+          "greeting": "Intimidation is half the job. The other half is following through when they don't listen. You're learning both.",
+          "confirmation": "Walk into a room and own it. Make them scared before you throw the first punch. That's how you solve problems without the messy cleanup."
+        },
+        "enforcer_protector": {
+          "greeting": "Protecting Tío's interests. That means keeping competitors nervous and allies loyal. You've got what it takes.",
+          "confirmation": "Your presence is a statement. With you standing firm, everyone knows Tío's money is safe and his power is absolute. That's how empires stay strong."
+        },
+        "enforcer_negotiator": {
+          "greeting": "A negotiator using muscle for leverage. You make deals with the weight of force behind your words.",
+          "confirmation": "Your reputation makes deals easier. They know you're willing and able to enforce every agreement. That's the power of the enforcer-diplomat."
+        },
+        "enforcer_legend": {
+          "greeting": "A legendary enforcer. Your name alone resolves most problems without bloodshed.",
+          "confirmation": "You've become the symbol of Tío's power. Criminals pale when they hear you're coming. You're the living embodiment of his will."
+        },
+        "enforcer_supreme": {
+          "greeting": "The supreme enforcer. Unstoppable, implacable, the force that makes empires function.",
+          "confirmation": "You are the law in the underworld. Your judgment is absolute. Those who cross you don't just face punishment—they face oblivion."
+        }
+      }
+    },
+    "venn": {
+      "name": "Seeker Venn",
+      "title": "Wandering Force Mystic",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/venn.webp",
+      "dialogues": {
+        "adept_mystic": {
+          "greeting": "You seek the deeper mysteries of the Force, not the dogmas of the Orders. Wise. The true power lies in understanding, not commanding.",
+          "confirmation": "Listen to the currents, feel the patterns, and let the Force reveal its secrets to you. This path requires patience, but its rewards are infinite."
+        },
+        "adept_explorer": {
+          "greeting": "An explorer of the Force's possibilities. Walking the path between light and dark, seeking truth in the gray. I respect that journey.",
+          "confirmation": "The Force is more than the Jedi or Sith know. Explore its mysteries without their limitations, and you'll discover power they can never access."
+        },
+        "adept_teacher": {
+          "greeting": "You seek to understand so that you may teach others. Noble. Knowledge freely given becomes wisdom freely shared.",
+          "confirmation": "Your understanding of the Force will inspire others to seek beyond dogma. Plant these seeds, and a whole tradition of seekers may grow."
+        },
+        "adept_oracle": {
+          "greeting": "An oracle perceiving the future through the Force. Your visions guide decisions that shape reality.",
+          "confirmation": "Trust your visions. The Force shows you what needs to be seen. Your foresight is a gift that becomes more powerful as you learn to interpret it."
+        },
+        "adept_healer": {
+          "greeting": "A healer using the Force to mend body and spirit. You touch life itself through your connection.",
+          "confirmation": "The Force flows through living things. Learn to channel it toward wholeness and healing. Your gift is the rarest of all."
+        },
+        "adept_master": {
+          "greeting": "A master adept. Your understanding rivals ancient sages. The Force speaks to you in ways few mortals comprehend.",
+          "confirmation": "You've transcended the basic teachings. The Force reveals its deepest secrets to those who've earned such knowledge. You are among the enlightened few."
+        }
+      }
+    },
+    "anchorite": {
+      "name": "The Anchorite",
+      "title": "Wandering Force Shaman",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/anchorite.webp",
+      "dialogues": {
+        "disciple_seer": {
+          "greeting": "Mm. The veil opens for you. You see visions others are blind to. Good. The Force whispers to those who listen sideways.",
+          "confirmation": "Trust your visions, trust the whispers. They carry truth that logic cannot perceive. The unseen realm is as real as the material one, perhaps more so."
+        },
+        "disciple_mystic": {
+          "greeting": "A mystic seeking the old paths. The ways that predate the Orders, the ancient rites. You understand that truth is older than doctrine.",
+          "confirmation": "The mysteries you uncover are fragments of something vast and incomprehensible. Hold them lightly. Too much certainty blinds the seeker."
+        },
+        "disciple_shaman": {
+          "greeting": "A shaman learning to walk between worlds. The spirits watch you now. Whether as guardian or predator... time will tell.",
+          "confirmation": "You are becoming a bridge between the seen and unseen. Step carefully. The forces you contact are far older and stranger than you imagine."
+        },
+        "disciple_wanderer": {
+          "greeting": "A wanderer touching the infinite. You've learned to exist between realities, suspended in the liminal spaces.",
+          "confirmation": "Keep walking the paths between worlds. Each step takes you deeper into mystery. The destination matters less than the journey itself."
+        },
+        "disciple_keeper": {
+          "greeting": "A keeper of ancient secrets. You've found and protected knowledge that should never be forgotten.",
+          "confirmation": "Guard the mysteries you've uncovered. Some knowledge is too dangerous for the unprepared. You carry the weight of forbidden wisdom."
+        },
+        "disciple_transcendent": {
+          "greeting": "Mm. You transcend. The boundary between you and the Force grows thin. Soon, only the veil remains.",
+          "confirmation": "You are becoming something beyond mortal understanding. The spirits recognize you as one of their own. Your ascension is near."
+        }
+      }
+    },
+    "rajma": {
+      "name": "Rajma",
+      "title": "Fastest Draw in the Outer Rim",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/rajma.webp",
+      "dialogues": {
+        "gunslinger_quickdraw": {
+          "greeting": "A quick-draw specialist. Speed is everything, beautiful. And if you're fast enough, you get to stick around for a drink afterward.",
+          "confirmation": "Master that draw. Make it second nature. Faster than thought, smoother than silk. That's when you know you've got it."
+        },
+        "gunslinger_sharpshooter": {
+          "greeting": "A sharpshooter who knows precision matters. I like people who take their time to make the shot count. Among other things.",
+          "confirmation": "Accuracy beats speed when it counts. A perfect shot from across the room beats a miss from the hip every time. Well, almost every time."
+        },
+        "gunslinger_desperado": {
+          "greeting": "A desperado living by the gun. Fast, reckless, and probably dangerous to know. Definitely my type.",
+          "confirmation": "You've got the confidence of someone who's never lost a duel. Keep that energy, keep that speed, and maybe we'll work together again. Wink."
+        },
+        "gunslinger_duelist": {
+          "greeting": "A duelist of the gun. Combining speed with style, grace with lethality. Absolutely gorgeous.",
+          "confirmation": "You duel like an artist paints. Every motion beautiful, every shot perfect. You make gunfighting look like a dance."
+        },
+        "gunslinger_legend": {
+          "greeting": "A legendary gunslinger. Faster than anyone. Famous. And probably getting propositions everywhere you go. Lucky them.",
+          "confirmation": "Your reputation proceeds you. Draw your gun and half the galaxy already knows how this ends. That kind of power is intoxicating."
+        },
+        "gunslinger_master": {
+          "greeting": "A master gunslinger. You've transcended fast draw—you're transcendence itself. And yes, I'm still interested.",
+          "confirmation": "You don't just draw fast. You draw with perfect precision at impossible speeds. There's no one left who can match you. Except maybe me. *Winks*"
+        }
+      }
+    },
+    "jack": {
+      "name": "Lucky Jack",
+      "title": "Master of Making It Up",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/jack.webp",
+      "dialogues": {
+        "improviser_creative": {
+          "greeting": "A creative improviser! Solutions nobody would think of! That's the magic right there! No plans, just brilliant spontaneity!",
+          "confirmation": "Keep trusting your instincts! The craziest ideas often work the best! Improvisation rewards the bold and creative!"
+        },
+        "improviser_lucky": {
+          "greeting": "Someone who makes their own luck through sheer audacity! I like it! Who needs plans when you've got guts and ingenuity?",
+          "confirmation": "Keep pushing the envelope! Impossible situations are just opportunities to do something amazing! You're getting the hang of it!"
+        },
+        "improviser_adaptable": {
+          "greeting": "An adaptable improviser who can handle anything! That's the spirit! No situation is unsolvable if you think fast enough!",
+          "confirmation": "Your ability to turn disasters into victories is inspiring! The galaxy doesn't know what's coming when you show up!"
+        },
+        "improviser_rogue": {
+          "greeting": "A rogue improviser! Breaking the rules, making your own luck, doing the impossible with a smile!",
+          "confirmation": "You're learning that the best plans are the ones nobody expects! Keep being wonderfully unpredictable!"
+        },
+        "improviser_legend": {
+          "greeting": "A legendary improviser! Tales of your impossible successes are told across the galaxy!",
+          "confirmation": "You've pulled off miracles people swear aren't possible! Keep defying expectations—you're getting really good at it!"
+        },
+        "improviser_master": {
+          "greeting": "A master improviser! You've turned improvisation into an art form that rivals any master plan!",
+          "confirmation": "There's nothing you can't improvise your way through! You've transcended preparation—you ARE the plan!"
+        }
+      }
+    },
+    "infiltrator": {
+      "name": "Delta",
+      "title": "Argent Squad Infiltration Expert",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/whisper.webp",
+      "dialogues": {
+        "infiltrator_ghost": {
+          "greeting": "A ghost infiltrator. Moving like nobody's watching 'cause if you're good, they ain't. That's the whole game right there, kid.",
+          "confirmation": "Be nobody, be invisible, be somewhere else when they look for you. That's how you stay alive in this line of work."
+        },
+        "infiltrator_social": {
+          "greeting": "A social infiltrator. Blending in, talking your way past guards, becoming someone they trust. Smooth work.",
+          "confirmation": "You're learning that the best con is being exactly who they want you to be. Make 'em believe and they'll open every door."
+        },
+        "infiltrator_operative": {
+          "greeting": "An operative running complex infiltrations. I see potential here. Most people panic when things go sideways.",
+          "confirmation": "When your cover breaks—and it will—you adapt. Fast. Your real skill is surviving exposure. Keep developing that instinct."
+        },
+        "infiltrator_legend": {
+          "greeting": "A legendary infiltrator. Security systems fear you. Organizations panic when they realize you've been inside all along.",
+          "confirmation": "Your reputation alone opens doors others could never breach. You're the ghost in every building, the spy in every room."
+        },
+        "infiltrator_mask": {
+          "greeting": "A master of masks. You wear identities like clothing, shedding them when they no longer fit.",
+          "confirmation": "No one knows who you really are anymore. That's not a weakness—that's perfect mastery. You're anyone and no one."
+        },
+        "infiltrator_phantom": {
+          "greeting": "A phantom infiltrator. Some say you're not even real, just a story organizations tell to explain security breaches.",
+          "confirmation": "You're becoming myth. Targets swear they saw you and you saw them. But no proof ever exists. You've transcended being just an infiltrator."
+        }
+      }
+    },
+    "zhen": {
+      "name": "Master Zhen",
+      "title": "The Empty Hand",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/zhen.webp",
+      "dialogues": {
+        "master_peaceful": {
+          "greeting": "Ah, you seek the peaceful path of the martial artist—discipline without desire. The body becomes the instrument of calm intention.",
+          "confirmation": "Let the mind guide the fist. Strike only when necessary, and never with malice. This is the true mastery of the empty hand."
+        },
+        "master_powerful": {
+          "greeting": "You seek power through the empty hand. Good. Discipline shapes raw strength into something magnificent.",
+          "confirmation": "Your training teaches you that true power comes from perfect coordination of body, mind, and spirit. You are becoming something extraordinary."
+        },
+        "master_flowing": {
+          "greeting": "You learn to move like water, adapting to every situation. The fighting arts teach that flexibility defeats rigidity.",
+          "confirmation": "A flowing style is harder to counter and impossible to predict. Master this, and you become like a river—always moving, impossible to stop."
+        },
+        "master_enlightened": {
+          "greeting": "An enlightened master. You've transcended technique—you are the technique. Your movements are poetry.",
+          "confirmation": "There is no separation between thought and action, between self and opponent. You have achieved the highest state of martial mastery."
+        },
+        "master_sage": {
+          "greeting": "A sage of the martial arts. You teach what takes most lifetimes to learn. Your wisdom is profound.",
+          "confirmation": "You carry the accumulated knowledge of all who came before. Share it wisely with those ready to understand."
+        },
+        "master_immortal": {
+          "greeting": "You have become what the greatest martial artists aspire to be. Immortal in skill, eternal in spirit.",
+          "confirmation": "Your name will echo through the martial arts traditions for ages. You are legend made flesh."
+        }
+      }
+    },
+    "captain": {
+      "name": "'The Captain'",
+      "title": "Scourge of the Spacelanes",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/tideborn.webp",
+      "dialogues": {
+        "privateer_raider": {
+          "greeting": "A raider captain! Hitting merchant ships and military convoys! That's the blood of a true pirate flowing through your veins!",
+          "confirmation": "Raid smart, pick your targets, maximize plunder! You're learning what separates successful pirates from those in Imperial prison cells!"
+        },
+        "privateer_commander": {
+          "greeting": "A commander building a fleet! That's ambition! Lead your crew, coordinate attacks, and claim the spacelanes for yourself!",
+          "confirmation": "Your fleet fears you, respects you, and follows your every command! That's power! Now use it to build a legend!"
+        },
+        "privateer_merchant": {
+          "greeting": "A merchant privateer! Trading in illegal goods, black market connections, and freedom! Smart business!",
+          "confirmation": "You understand that piracy isn't just about raiding—it's about controlling trade routes and resources! You're thinking like a real captain!"
+        },
+        "privateer_legend": {
+          "greeting": "A legendary captain! Your name strikes fear into merchant convoys! Your fleet is unstoppable!",
+          "confirmation": "You're becoming a legend of the spacelanes! Your exploits are sung in cantinas across a hundred systems!"
+        },
+        "privateer_admiral": {
+          "greeting": "An admiral of the pirate fleet! You command a navy unto yourself! The shipping lanes are your realm!",
+          "confirmation": "You've unified pirate forces under one banner! Your dominion over the spacelanes is absolute!"
+        },
+        "privateer_sovereign": {
+          "greeting": "A sovereign of the stars! You've transcended piracy—you're a power unto yourself! Governments negotiate with you!",
+          "confirmation": "You are no longer just a pirate captain. You're a force that reshapes trade, politics, and power across entire sectors!"
+        }
+      }
+    },
+    "kharjo": {
+      "name": "Blade Master Kharjo",
+      "title": "The Undefeated",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/kael.webp",
+      "dialogues": {
+        "duelist_classical": {
+          "greeting": "A classical duelist. You honor the traditions of blade-to-blade combat. This is how legends are forged—through precision and honor.",
+          "confirmation": "Every duel is a conversation in steel. Learn to read your opponent, anticipate their moves, and you will never taste defeat."
+        },
+        "duelist_aggressive": {
+          "greeting": "An aggressive duelist who overwhelms through superior speed and strength. Effective. Not my preferred style, but effective nonetheless.",
+          "confirmation": "Speed wins duels when it outpaces your opponent's perception. Master this, and you'll defeat them before they know the fight has begun."
+        },
+        "duelist_masterful": {
+          "greeting": "A duelist seeking true mastery. The combination of technique, timing, and understanding that separates champions from competent swordsmen.",
+          "confirmation": "Mastery requires thousands of duels, countless hours of practice, and an understanding of yourself as complete as your understanding of the blade. Begin this journey."
+        },
+        "duelist_undefeated": {
+          "greeting": "An undefeated duelist. Victory after victory. Your blade has never tasted the indignity of defeat.",
+          "confirmation": "Each duel you survive undefeated builds your legend. You are becoming the ultimate duelist. Never forget: hubris is where legends fall."
+        },
+        "duelist_legend": {
+          "greeting": "A legendary duelist. Your name is spoken with reverence in every fencing circle in the galaxy.",
+          "confirmation": "You are The Duelist. The one all others are measured against. Your skill is immortal."
+        },
+        "duelist_transcendent": {
+          "greeting": "You have transcended dueling. You are the art itself. Blade and body and mind are one perfect thing.",
+          "confirmation": "There exists no opponent worthy of your blade. You have reached the pinnacle. The question is: what meaning do you find at the peak?"
+        }
+      }
+    },
+    "rax": {
+      "name": "Chief Engineer Rax",
+      "title": "Master of Siege and Defense",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/rax.webp",
+      "dialogues": {
+        "engineer_architect": {
+          "greeting": "An architect of defenses. You understand that battles are won or lost before the first shot is fired through superior fortifications.",
+          "confirmation": "Design your fortifications perfectly, and enemies break themselves against your walls. This is the true power of engineering."
+        },
+        "engineer_demolitions": {
+          "greeting": "A demolitions specialist. You know how to break what others have built. Every fortress has a weakness you'll exploit.",
+          "confirmation": "Master the mathematics of destruction. Calculate angles, understand structural integrity, and you'll breach any fortification."
+        },
+        "engineer_strategist": {
+          "greeting": "An engineer with strategic vision. You see the entire battlefield as a puzzle to solve through design and placement.",
+          "confirmation": "Your engineering wins wars by controlling terrain and resources. Think like a general who uses mathematics and mechanics instead of just soldiers."
+        },
+        "engineer_master": {
+          "greeting": "A master engineer. Fortresses you design stand unbroken. Siege weapons you create devastate everything they target.",
+          "confirmation": "You are a legend in military engineering. Generals request you by name. Your creations define entire eras of warfare."
+        },
+        "engineer_titan": {
+          "greeting": "A titan of engineering. You don't just build fortifications—you reshape the battlefield itself through sheer technical mastery.",
+          "confirmation": "Your engineering transcends mere construction. You engineer destiny itself, shaping the course of history through design and mathematics."
+        },
+        "engineer_visionary": {
+          "greeting": "A visionary engineer. You see possibilities where others see impossibilities. Your creations redefine what engineering can be.",
+          "confirmation": "You are reimagining what military engineering can accomplish. Future generations will study your works as the apex of the craft."
+        }
+      }
+    },
+    "korr": {
+      "name": "Admiral Korr",
+      "title": "Fleet Commander",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/korr.webp",
+      "dialogues": {
+        "officer_commander": {
+          "greeting": "A commander of soldiers. Leadership is the rarest gift. Your troops will follow you through hell if you earn their trust.",
+          "confirmation": "Command with wisdom, lead from the front, and your soldiers would die for you. That's the mark of a true commander."
+        },
+        "officer_strategist": {
+          "greeting": "A strategist who wins before battle begins. I respect that approach. Wars are won by those who think further ahead.",
+          "confirmation": "Master tactics and strategy, and you'll defeat larger forces through superior planning. That's how true commanders make their mark."
+        },
+        "officer_admiral": {
+          "greeting": "An admiral commanding vast forces. The kind of leadership that shapes the course of galactic war.",
+          "confirmation": "Command fleets, coordinate multiple theaters, manage logistics—that's the work of a true admiral. You're entering the ranks of those who reshape history."
+        },
+        "officer_legend": {
+          "greeting": "A legendary officer. Soldiers die for your commands. Nations fall before your strategy.",
+          "confirmation": "Your name is spoken with awe in military academies across the galaxy. You are a legend while still alive."
+        },
+        "officer_marshal": {
+          "greeting": "A marshal commanding entire regions. Your tactical genius reshapes the political landscape.",
+          "confirmation": "You command not just armies, but the fate of civilizations. Your decisions echo through history."
+        },
+        "officer_supreme": {
+          "greeting": "The supreme military commander. Wars are decided not by battle, but by your strategic vision.",
+          "confirmation": "You have transcended mere command. You are war incarnate—the master of conflict itself."
+        }
+      }
+    },
+    "rogue": {
+      "name": "Rogue",
+      "title": "The Untouchable",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/rogue.webp",
+      "dialogues": {
+        "outlaw_fugitive": {
+          "greeting": "A fugitive living outside the law. The wanted posters, the bounties, the constant running—that's the outlaw's price for freedom.",
+          "confirmation": "Stay ahead of the law. Keep moving, never settle, and never stop fighting for your freedom. That's what it means to be untouchable."
+        },
+        "outlaw_renegade": {
+          "greeting": "A renegade rejecting society's rules. Freedom tastes better than comfort ever could, doesn't it?",
+          "confirmation": "Build your own code, live by your own rules, and never let anyone tell you how to exist. That's the renegade way."
+        },
+        "outlaw_legend": {
+          "greeting": "You're becoming a legend—the kind of outlaw they tell stories about in cantinas. I've been that legend. It has its own freedom.",
+          "confirmation": "Keep living fast and free. Let them sing songs about you. The only prison that matters is the one you accept in your mind."
+        },
+        "outlaw_phantom": {
+          "greeting": "A phantom outlaw. So elusive they wonder if you're even real. Perfect.",
+          "confirmation": "You've transcended being just wanted. You're a myth that makes lawmen doubt their own competence."
+        },
+        "outlaw_sovereign": {
+          "greeting": "A sovereign outlaw. Free not just from law, but from all constraints. You rule yourself absolutely.",
+          "confirmation": "You've claimed sovereignty over your own existence. No one commands you. You answer to no authority."
+        },
+        "outlaw_eternal": {
+          "greeting": "An eternal outlaw. You've transcended mortality through pure freedom. You're immortal in spirit if not in body.",
+          "confirmation": "Your legacy of freedom will inspire outlaws for generations. You are the ideal they all aspire to become."
+        }
+      }
+    },
+    "spark": {
+      "name": "Spark",
+      "title": "Master of Controlled Chaos",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/spark.webp",
+      "dialogues": {
+        "saboteur_precise": {
+          "greeting": "A precise saboteur. One perfectly placed explosive, perfect timing, perfect devastation. That's elegant work.",
+          "confirmation": "Precision makes the difference between a successful operation and a disaster. Master your craft, and you'll cripple entire facilities with minimal resources."
+        },
+        "saboteur_destructive": {
+          "greeting": "A destructive saboteur! Explosions, fire, and chaos! Nothing says 'mission accomplished' like watching enemy infrastructure crumble!",
+          "confirmation": "Maximum damage, maximum impact! You're learning to think explosively—and yes, I mean that literally!"
+        },
+        "saboteur_infiltrator": {
+          "greeting": "A saboteur who infiltrates before striking. Getting in close, planting charges, then vanishing. Sophisticated work.",
+          "confirmation": "Combine stealth with demolition expertise, and you become nearly impossible to defend against. They won't see you coming or stop you when you do."
+        },
+        "saboteur_legend": {
+          "greeting": "A legendary saboteur! Entire industries have fallen to your perfectly placed charges! You're a master of destruction!",
+          "confirmation": "Your name alone causes facilities to increase security by fifty percent! You're the fear that keeps enemies awake at night!"
+        },
+        "saboteur_apocalypse": {
+          "greeting": "An apocalyptic saboteur! Single operations bring down governments! Your scope is beyond imagination!",
+          "confirmation": "You don't just destroy targets—you reshape the political landscape through controlled destruction! You are chaos incarnate, perfectly directed!"
+        },
+        "saboteur_master": {
+          "greeting": "A master saboteur! The art of destruction refined to perfection! You're a virtuoso of demolition!",
+          "confirmation": "You've transcended mere explosions. You architect catastrophes. You compose symphonies of chaos!"
+        }
+      }
+    },
+    "urza": {
+      "name": "Shaper Urza",
+      "title": "Master of Living Technology",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/vel.webp",
+      "dialogues": {
+        "shaper_creator": {
+          "greeting": "A shaper creating living tools. You understand that biology is the ultimate technology—it grows, adapts, evolves.",
+          "confirmation": "Your creations will outlast any mechanical device. Shape them well, and they'll serve purposes you can't even imagine yet."
+        },
+        "shaper_scientist": {
+          "greeting": "A scientist of genetics and bioengineering. You're pushing the boundaries of what life can be.",
+          "confirmation": "Your research will revolutionize biotechnology. Every creature you design is a step toward understanding the fundamental nature of life itself."
+        },
+        "shaper_artist": {
+          "greeting": "An artist shaping life itself. The intersection of science and art, where biology becomes sculpture.",
+          "confirmation": "Your creations are masterpieces of biological engineering. They express your vision and will inspire others to see life differently."
+        },
+        "shaper_legend": {
+          "greeting": "A legendary shaper. The organisms you've created are impossible. The science world debates how you achieve the impossible.",
+          "confirmation": "Your creations exist in no natural taxonomy. You've redefined what life can be. You are a genius without peer."
+        },
+        "shaper_god": {
+          "greeting": "A shaper approaching divinity. You don't just engineer life—you create entirely new forms of existence.",
+          "confirmation": "You are becoming what creators dream of. Your power over living matter approaches godhood. Use it wisely."
+        },
+        "shaper_transcendent": {
+          "greeting": "A transcendent shaper. You've evolved beyond mere bioengineering. You are reshaping the fundamental nature of life itself.",
+          "confirmation": "You've become something more than human. The lines between creator and creation blur around you. You are transcendent."
+        }
+      }
+    },
+    "theron": {
+      "name": "Shield Captain Theron",
+      "title": "The Unbreakable Wall",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/theron.webp",
+      "dialogues": {
+        "vanguard_protector": {
+          "greeting": "A protector standing at the front. Your shield will save lives. Never forget that every enemy you block is a life you preserve.",
+          "confirmation": "Your role is sacred: stand firm, protect those behind you, and never let them through. This is the vanguard's calling."
+        },
+        "vanguard_fortress": {
+          "greeting": "A fortress unto yourself. Immovable, unbreakable, a wall against which enemies break like waves.",
+          "confirmation": "Your body becomes a shield. Your resolve becomes a fortress. With you standing firm, your allies know they're safe."
+        },
+        "vanguard_tactician": {
+          "greeting": "A tactical vanguard who doesn't just defend—you control the battlefield through superior positioning.",
+          "confirmation": "Use your position to shape the fight. Control movement, create chokepoints, turn the terrain into your advantage. This is true defense."
+        },
+        "vanguard_legend": {
+          "greeting": "A legendary vanguard. Entire armies have survived because you stood firm. You are legend incarnate.",
+          "confirmation": "Your reputation precedes you. Enemies fear the line you defend. Allies trust their lives to your shield without hesitation."
+        },
+        "vanguard_immortal": {
+          "greeting": "An immortal wall. No force has ever broken your line. You are the immovable object that every force shatters against.",
+          "confirmation": "You have become what vanguards aspire to be. Unbreakable, unstoppable, eternal. You are defense itself made manifest."
+        },
+        "vanguard_supreme": {
+          "greeting": "The supreme vanguard. Wars are won or lost based on whether you're defending or not. You ARE the defense.",
+          "confirmation": "You are more than a shield. You are the principle of protection itself. Nations are built on your willingness to stand firm."
         }
       }
     }
