@@ -730,9 +730,11 @@ export default class CharacterGenerator extends Application {
         );
 
         // Mark class skills in the returned data
+        // NOTE: Class skill names in compendium use proper case (e.g., "Acrobatics")
+        // while skill.key is lowercase (e.g., "acrobatics"), so we compare using skill.name
         const skillsWithClassMarking = skillsWithSuggestions.map(skill => ({
           ...skill,
-          isClassSkill: allClassSkills.includes(skill.key || skill.name)
+          isClassSkill: allClassSkills.includes(skill.name)
         }));
 
         context.skillsJson = skillsWithClassMarking;
@@ -749,7 +751,7 @@ export default class CharacterGenerator extends Application {
 
         const fallbackSkills = (this._skillsJson || []).map(skill => ({
           ...skill,
-          isClassSkill: allClassSkills.includes(skill.key || skill.name)
+          isClassSkill: allClassSkills.includes(skill.name)
         }));
 
         context.skillsJson = fallbackSkills;

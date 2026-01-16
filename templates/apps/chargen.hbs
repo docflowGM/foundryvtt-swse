@@ -1531,7 +1531,8 @@
  <p class="category-description">{{languageCategories.widelyUsed.description}}</p>
  <div class="languages-grid">
  {{#each languageCategories.widelyUsed.languages}}
- {{#unless (contains ../../characterData.languages this)}}
+ {{!-- Exclude both already-selected languages and granted species languages --}}
+ {{#unless (or (contains ../../characterData.languages this) (contains ../../characterData.languageData.granted this))}}
  <button
  type="button"
  class="select-language language-button"
@@ -1553,7 +1554,8 @@
  <p class="category-description">{{languageCategories.localTrade.description}}</p>
  <div class="languages-grid">
  {{#each languageCategories.localTrade.languages}}
- {{#unless (contains ../../characterData.languages this)}}
+ {{!-- Exclude both already-selected languages and granted species languages --}}
+ {{#unless (or (contains ../../characterData.languages this) (contains ../../characterData.languageData.granted this))}}
  <button
  type="button"
  class="select-language language-button"
