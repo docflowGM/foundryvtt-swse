@@ -11,7 +11,7 @@ import { SWSELogger } from '../utils/logger.js';
 
 export class UpdateSpeciesTraitsMigration {
 
-  static MIGRATION_VERSION = "1.1.215";
+  static MIGRATION_VERSION = "1.1.216"; // Bumped to re-run with improved update logic
   static MIGRATION_KEY = "speciesTraitsUpdate";
 
   /**
@@ -102,22 +102,28 @@ export class UpdateSpeciesTraitsMigration {
             continue;
           }
 
-          // Get the full species document
-          const speciesDoc = await speciesPack.getDocument(speciesIndex._id);
-
-          if (!speciesDoc) {
-            SWSELogger.error(`SWSE | Could not load species document: ${speciesData.name}`);
+          // Update the species document using the pack's document class
+          // This avoids full document validation issues with embedded-like arrays
+          // by going through the static updateDocuments method with explicit pack context
+          try {
+            // Use updateDocuments with the pack option for more direct control
+            // This bypasses some of the document merging logic that can cause
+            // "_id required" errors when the document has complex array fields
+            await Item.updateDocuments(
+              [{
+                _id: speciesIndex._id,
+                'system.racialTraits': speciesData.racialTraits
+              }],
+              { pack: speciesPack.collection }
+            );
+          } catch (updateError) {
+            // If the update fails, log the error but don't crash the migration
+            // This can happen if the document has complex nested data that
+            // Foundry v13 validation struggles with
+            SWSELogger.warn(`SWSE | Could not update ${speciesData.name}: ${updateError.message}`);
             totalErrors++;
             continue;
           }
-
-          // Update the species document
-          // Store racial traits array in system.racialTraits field
-          const updateData = {
-            'system.racialTraits': speciesData.racialTraits
-          };
-
-          await speciesDoc.update(updateData);
 
           totalUpdated++;
 
