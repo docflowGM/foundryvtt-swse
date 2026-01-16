@@ -235,7 +235,7 @@ export function _bindAbilitiesUI(root) {
           const ability = zone.dataset.ability;
           const dragged = pool.querySelector(`.draggable-roll[data-index="${index}"]`);
 
-          if (dragged && !dragged.classList.contains('used')) {
+          if (dragged) {
             // Clear previous value in this slot
             const prevValue = zone.querySelector('.dropped-value');
             if (prevValue.textContent) {
@@ -464,7 +464,7 @@ export function _bindAbilitiesUI(root) {
           const ability = zone.dataset.ability;
           const groupDiv = container.querySelector(`.dice-group[data-group="${groupIndex}"]`);
 
-          if (groupDiv && groupDiv.classList.contains('complete') && !groupDiv.classList.contains('assigned')) {
+          if (groupDiv && groupDiv.classList.contains('complete')) {
             // Clear previous value
             const prevValue = zone.querySelector('.dropped-value');
             if (prevValue.textContent) {

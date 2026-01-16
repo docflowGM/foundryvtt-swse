@@ -331,9 +331,6 @@ export class AbilityRollingController {
     if (poolEl) poolEl.innerHTML = '';
     for (const die of this.pool) {
       const assignedTo = Object.keys(this.assigned).find(k => this.assigned[k] === die.id);
-      // Skip rendering assigned dice in the pool (they're shown in their assigned slots)
-      if (assignedTo) continue;
-
       const el = document.createElement('div');
       el.className = 'die-card';
       el.dataset.dieId = die.id;
@@ -344,7 +341,12 @@ export class AbilityRollingController {
       el.appendChild(meta);
       const menu = document.createElement('button'); menu.className='die-menu'; menu.dataset.dieId = die.id; menu.innerText='⋮';
       el.appendChild(menu);
-      el.title = die.tooltip || '';
+      if (assignedTo) {
+        el.classList.add('assigned');
+        el.title = `Assigned to ${assignedTo}`;
+      } else {
+        el.title = die.tooltip || '';
+      }
       poolEl?.appendChild(el);
     }
 
