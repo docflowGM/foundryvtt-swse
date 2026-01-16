@@ -49,7 +49,7 @@ export async function _onSelectFeat(event) {
   if (!this.freeBuild) {
     // Droids cannot select feats that require Force Sensitivity or Force Points
     if (this.characterData.isDroid) {
-      const prereqs = feat.system?.prerequisites || "";
+      const prereqs = feat.system?.prerequisite || "";
       const preqsLower = prereqs.toLowerCase();
       if (
         preqsLower.includes("force sensitivity") ||

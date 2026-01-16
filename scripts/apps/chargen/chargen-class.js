@@ -74,7 +74,14 @@ export async function _onSelectClass(event) {
   this.characterData.classes = [];
   this.characterData.classes.push({ name: className, level: 1 });
 
-  SWSELogger.log(`CharGen | Selected class: ${className}, classes array length: ${this.characterData.classes.length}`, this.characterData.classes);
+  // DIAGNOSTIC: Verify class was stored correctly
+  SWSELogger.log(`CharGen | CRITICAL - Class selection stored:`, {
+    className: className,
+    classesArray: JSON.stringify(this.characterData.classes),
+    classesLength: this.characterData.classes.length,
+    firstClassName: this.characterData.classes[0]?.name,
+    characterDataRef: this.characterData === this.characterData // Should always be true
+  });
 
   // Validate class document has required properties
   const validation = validateClassDocument(classDoc);

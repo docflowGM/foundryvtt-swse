@@ -475,6 +475,17 @@ export default class CharacterGenerator extends Application {
   
   
   async getData() {
+    // DIAGNOSTIC LOGGING: Track class data state throughout chargen
+    SWSELogger.log(`CharGen | getData() called - currentStep: ${this.currentStep}`, {
+      hasClasses: !!this.characterData.classes?.length,
+      classes: this.characterData.classes,
+      className: this.characterData.classes?.[0]?.name,
+      classSkillsList: this.characterData.classSkillsList,
+      classSkillsListLength: this.characterData.classSkillsList?.length || 0,
+      trainedSkillsAllowed: this.characterData.trainedSkillsAllowed,
+      mentorSurveyCompleted: this.characterData.mentorSurveyCompleted,
+      mentorBiases: this.characterData.mentorBiases
+    });
 
     // Load backgrounds from PROGRESSION_RULES
     if (!this.backgrounds) {
@@ -807,6 +818,12 @@ export default class CharacterGenerator extends Application {
     if (this.currentStep === "talents") {
       // Get available talent trees for the character
       context.availableTalentTrees = this._getAvailableTalentTrees() || [];
+      SWSELogger.log(`CharGen | Talents step - available talent trees:`, {
+        treeCount: context.availableTalentTrees?.length || 0,
+        trees: context.availableTalentTrees,
+        selectedClass: this.characterData.classes?.[0]?.name,
+        classesData: this.characterData.classes
+      });
 
       // Filter talents for the selected talent tree
       if (this.selectedTalentTree && context.packs.talents) {
