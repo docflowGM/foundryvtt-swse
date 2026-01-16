@@ -50,8 +50,79 @@ export function _onSelectBackground(event) {
     category: "event"
   };
 
+  // Process background skills into backgroundSkills array for skills UI
+  this.characterData.backgroundSkills = _processBackgroundSkills.call(this, selected.trainedSkills);
+
+  SWSELogger.log(`CharGen | Background selected: ${selected.name}, grants class skills:`, this.characterData.backgroundSkills);
   ui.notifications.info("Background selected: " + selected.name);
   this.render();
+}
+
+/**
+ * Process background trainedSkills array into normalized backgroundSkills array
+ * @param {Array<string>} trainedSkills - Array of skill names from background
+ * @returns {Array<Object>} Array of skill objects with key and display name
+ * @private
+ */
+function _processBackgroundSkills(trainedSkills) {
+  if (!trainedSkills || !Array.isArray(trainedSkills)) {
+    return [];
+  }
+
+  // Skill name mapping (display name -> key)
+  const skillKeyMap = {
+    'Acrobatics': 'acrobatics',
+    'Climb': 'climb',
+    'Deception': 'deception',
+    'Endurance': 'endurance',
+    'Gather Information': 'gatherInfo',
+    'Initiative': 'initiative',
+    'Jump': 'jump',
+    'Knowledge': 'knowledge', // Generic knowledge
+    'Mechanics': 'mechanics',
+    'Perception': 'perception',
+    'Persuasion': 'persuasion',
+    'Pilot': 'pilot',
+    'Ride': 'ride',
+    'Stealth': 'stealth',
+    'Survival': 'survival',
+    'Swim': 'swim',
+    'Treat Injury': 'treatInjury',
+    'Use Computer': 'useComputer',
+    'Use the Force': 'useTheForce'
+  };
+
+  const processed = [];
+
+  for (const skillName of trainedSkills) {
+    // Try exact match first
+    let key = skillKeyMap[skillName];
+
+    // If no exact match, try normalized matching
+    if (!key) {
+      const normalized = skillName.replace(/\s+/g, '').toLowerCase();
+      // Find by normalized comparison
+      for (const [displayName, skillKey] of Object.entries(skillKeyMap)) {
+        if (displayName.replace(/\s+/g, '').toLowerCase() === normalized) {
+          key = skillKey;
+          break;
+        }
+      }
+    }
+
+    // If still no match, use normalized name as key
+    if (!key) {
+      key = skillName.replace(/\s+/g, '').toLowerCase();
+      SWSELogger.warn(`CharGen | Background skill "${skillName}" not found in skill key map, using normalized: ${key}`);
+    }
+
+    processed.push({
+      key: key,
+      display: skillName
+    });
+  }
+
+  return processed;
 }
 
 // Used to mark skills as class skills due to background
@@ -98,6 +169,10 @@ export function _onRandomBackground(event) {
     category: this.characterData.backgroundCategory || "events"
   };
 
+  // Process background skills into backgroundSkills array for skills UI
+  this.characterData.backgroundSkills = _processBackgroundSkills.call(this, selected.trainedSkills || []);
+
+  SWSELogger.log(`CharGen | Random background selected: ${selected.name}, grants class skills:`, this.characterData.backgroundSkills);
   ui.notifications.info(`Random background selected: ${selected.name}`);
   this.render();
 }

@@ -310,3 +310,63 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
     ui.notifications.info(`Granted starting equipment: ${weaponItems.map(w => w.name).join(', ')}`);
   }
 }
+
+/**
+ * Check if background skills overlap with class skills
+ * Per SWSE rules, if a background grants a class skill your class already has,
+ * you can choose a different skill from the background's list
+ * @param {Object} classDoc - The selected class document
+ */
+export async function _checkBackgroundSkillOverlap(classDoc) {
+  if (!this.characterData.background || !this.characterData.background.trainedSkills) {
+    return;
+  }
+
+  // Get class skills (normalized to lowercase, no spaces)
+  const classSkills = (classDoc.system.class_skills || [])
+    .map(s => s.replace(/\s+/g, '').toLowerCase());
+
+  // Get background skills (normalized)
+  const backgroundSkills = (this.characterData.background.trainedSkills || [])
+    .map(s => s.replace(/\s+/g, '').toLowerCase());
+
+  // Find overlaps
+  const overlaps = backgroundSkills.filter(bg => classSkills.includes(bg));
+
+  if (overlaps.length > 0) {
+    const skillNames = {
+      'acrobatics': 'Acrobatics',
+      'climb': 'Climb',
+      'deception': 'Deception',
+      'endurance': 'Endurance',
+      'gatherinformation': 'Gather Information',
+      'initiative': 'Initiative',
+      'jump': 'Jump',
+      'knowledge': 'Knowledge',
+      'mechanics': 'Mechanics',
+      'perception': 'Perception',
+      'persuasion': 'Persuasion',
+      'pilot': 'Pilot',
+      'ride': 'Ride',
+      'stealth': 'Stealth',
+      'survival': 'Survival',
+      'swim': 'Swim',
+      'treatinjury': 'Treat Injury',
+      'usecomputer': 'Use Computer',
+      'usetheforce': 'Use the Force'
+    };
+
+    const overlapNames = overlaps.map(o => skillNames[o] || o).join(', ');
+
+    SWSELogger.log(`CharGen | Background skill overlap detected: ${overlapNames} already in ${classDoc.name} class skills`);
+
+    // Notify user - these skills are already class skills, so background redundantly adds them
+    // This is actually fine in SWSE - it just means the background and class both grant the same class skill
+    ui.notifications.info(
+      `Your background grants ${overlapNames}, which ${classDoc.name} already has as class ${overlaps.length > 1 ? 'skills' : 'skill'}. This is normal and does not affect your character.`,
+      { permanent: false }
+    );
+  }
+
+  SWSELogger.log(`CharGen | Background skills processed: ${backgroundSkills.length} skills marked as class skills from background`);
+}

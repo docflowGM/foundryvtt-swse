@@ -422,11 +422,15 @@ export default class CharacterGenerator extends Application {
       const tempActor = this._createTempActorForValidation();
 
       try {
+        // Build class skills list (includes class native skills + background skills)
+        const classSkillsList = this._getClassSkillsList();
+
         const skillsWithSuggestions = await Level1SkillSuggestionEngine.suggestLevel1Skills(
           this._skillsJson,
           tempActor,
           {
             selectedClass: this.characterData.classes?.[0],
+            classSkills: classSkillsList, // Pass combined class + background skills
             selectedSkills: Object.keys(this.characterData.skills || {})
               .filter(k => this.characterData.skills[k]?.trained)
               .map(k => ({ key: k }))
@@ -1522,6 +1526,51 @@ export default class CharacterGenerator extends Application {
       { key: "useComputer", name: "Use Computer", ability: "int", trained: true },
       { key: "useTheForce", name: "Use the Force", ability: "cha", trained: true }
     ];
+  }
+
+  /**
+   * Get combined class skills list (class + background)
+   * @returns {Array<string>} Array of skill keys that are class skills
+   */
+  _getClassSkillsList() {
+    const classSkills = new Set();
+
+    // Add class skills from selected class
+    if (this.characterData.classes && this.characterData.classes.length > 0) {
+      const className = this.characterData.classes[0].name;
+      const classDoc = this._packs.classes?.find(c => c.name === className);
+
+      if (classDoc && classDoc.system && classDoc.system.class_skills) {
+        // Normalize class skills to match skill keys
+        for (const skill of classDoc.system.class_skills) {
+          const normalizedSkill = skill.replace(/\s+/g, '').toLowerCase();
+          // Map "Gather Information" -> "gatherInfo" and "Treat Injury" -> "treatInjury"
+          if (normalizedSkill === 'gatherinformation') {
+            classSkills.add('gatherInfo');
+          } else if (normalizedSkill === 'treatinjury') {
+            classSkills.add('treatInjury');
+          } else if (normalizedSkill === 'usecomputer') {
+            classSkills.add('useComputer');
+          } else if (normalizedSkill === 'usetheforce') {
+            classSkills.add('useTheForce');
+          } else {
+            classSkills.add(normalizedSkill);
+          }
+        }
+      }
+    }
+
+    // Add background skills (these become class skills per SWSE rules)
+    if (this.characterData.backgroundSkills && this.characterData.backgroundSkills.length > 0) {
+      for (const bgSkill of this.characterData.backgroundSkills) {
+        classSkills.add(bgSkill.key);
+      }
+      SWSELogger.log(`CharGen | Added ${this.characterData.backgroundSkills.length} background skills as class skills`);
+    }
+
+    const result = Array.from(classSkills);
+    SWSELogger.log(`CharGen | Total class skills (including background):`, result);
+    return result;
   }
 }
 
