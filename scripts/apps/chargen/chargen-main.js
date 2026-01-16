@@ -999,6 +999,9 @@ export default class CharacterGenerator extends Application {
       // Background skill filter button
       $html.find('.background-filter-btn').click(this._onBackgroundFilterClick.bind(this));
 
+      // Ask mentor button for background suggestions
+      $html.find('.ask-mentor-background-btn').click(this._onAskMentorBackgroundSuggestion.bind(this));
+
       // Homebrew planets toggle
       $html.find('.allow-homebrew-toggle').change((ev) => {
         this.characterData.allowHomebrewPlanets = ev.currentTarget.checked;
