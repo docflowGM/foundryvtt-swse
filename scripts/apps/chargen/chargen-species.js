@@ -367,7 +367,8 @@ export function _applySpeciesData(speciesDoc) {
 
   try {
     // 1. Apply ability score modifiers
-    const abilityBonuses = this._parseAbilityString(system.attributes || "None");
+    // NOTE: Species data stores ability modifiers in 'abilities' field, not 'attributes'
+    const abilityBonuses = this._parseAbilityString(system.abilities || "None");
 
     // Validate that bonuses are reasonable (SWSE standard is ±2 to ±4)
     for (const [ability, bonus] of Object.entries(abilityBonuses)) {
@@ -635,7 +636,7 @@ export async function _getRacialBonuses(speciesName) {
   }
 
   // Parse the abilities string to get bonuses
-  return this._parseAbilityString(found.system.attributes || "None");
+  return this._parseAbilityString(found.system.abilities || "None");
 }
 
 /**
@@ -787,7 +788,7 @@ export function _filterSpecies(species, filters) {
     // Parse abilities to check bonuses and penalties
     if (attributeBonus || attributePenalty) {
       // Use shared parsing function to avoid duplication
-      const abilityString = system.attributes || "None";
+      const abilityString = system.abilities || "None";
       const abilities = _parseAbilityString.call(this, abilityString);
 
       // Filter by attribute bonus
