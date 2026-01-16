@@ -1174,7 +1174,7 @@ async applyScalingFeature(feature) {
     if (levelInClass === 1) {
       try {
         const { setLevel1Class } = await import('../apps/mentor-dialogues.js');
-        await setLevel1Class(this.actor, classId);
+        await setLevel1Class(this.actor, classData.name);
       } catch (e) {
         swseLogger.warn("Failed to record starting class for mentor system:", e);
       }

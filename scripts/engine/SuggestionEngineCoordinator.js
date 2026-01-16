@@ -23,6 +23,7 @@
 import { SWSELogger } from '../utils/logger.js';
 import { SuggestionEngine } from './SuggestionEngine.js';
 import { ClassSuggestionEngine } from './ClassSuggestionEngine.js';
+import { BackgroundSuggestionEngine } from './BackgroundSuggestionEngine.js';
 import { ForceOptionSuggestionEngine } from './ForceOptionSuggestionEngine.js';
 import { Level1SkillSuggestionEngine } from './Level1SkillSuggestionEngine.js';
 import { AttributeIncreaseSuggestionEngine } from './AttributeIncreaseSuggestionEngine.js';
@@ -79,6 +80,8 @@ export class SuggestionEngineCoordinator {
           this.suggestTalents(talents, actor, pendingData, options),
         suggestClasses: (classes, actor, pendingData, options) =>
           this.suggestClasses(classes, actor, pendingData, options),
+        suggestBackgrounds: (backgrounds, actor, pendingData, options) =>
+          this.suggestBackgrounds(backgrounds, actor, pendingData, options),
         suggestForceOptions: (options, actor, pendingData, contextOptions) =>
           this.suggestForceOptions(options, actor, pendingData, contextOptions),
         suggestLevel1Skills: (skills, actor, pendingData) =>
@@ -280,6 +283,38 @@ export class SuggestionEngineCoordinator {
         suggestion: {
           tier: 0,
           reason: 'Legal option'
+        }
+      }));
+    }
+  }
+
+  /**
+   * Suggest backgrounds based on character's class, species, abilities, and build
+   * @param {Array} backgrounds - Array of background objects
+   * @param {Actor} actor - The character (or temp actor for chargen)
+   * @param {Object} pendingData - Pending character data from chargen
+   * @param {Object} options - Additional options
+   * @returns {Promise<Array>} Backgrounds with suggestion metadata
+   */
+  static async suggestBackgrounds(backgrounds, actor, pendingData = {}, options = {}) {
+    try {
+      // Call BackgroundSuggestionEngine to score and rank backgrounds
+      const backgroundsSuggested = await BackgroundSuggestionEngine.suggestBackgrounds(
+        backgrounds,
+        actor,
+        pendingData
+      );
+
+      return backgroundsSuggested;
+    } catch (err) {
+      SWSELogger.error('Background suggestion failed:', err);
+      // Return backgrounds without suggestions as fallback
+      return backgrounds.map(b => ({
+        ...b,
+        suggestion: {
+          tier: 0,
+          reason: 'Valid option',
+          icon: ''
         }
       }));
     }

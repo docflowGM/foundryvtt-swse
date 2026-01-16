@@ -207,9 +207,9 @@ export async function _onSelectClass(event) {
 
   // Offer mentor survey at class selection if not yet completed (for both droid and living characters)
   if (!MentorSurvey.hasSurveyBeenCompleted(this._createTempActorForValidation())) {
-    const acceptSurvey = await MentorSurvey.promptSurvey(this._createTempActorForValidation(), this.mentor);
+    const acceptSurvey = await MentorSurvey.promptSurvey(this._createTempActorForValidation(), className);
     if (acceptSurvey) {
-      const surveyAnswers = await MentorSurvey.showSurvey(this._createTempActorForValidation(), className, this.mentor);
+      const surveyAnswers = await MentorSurvey.showSurvey(this._createTempActorForValidation(), className, className);
       if (surveyAnswers) {
         const biases = MentorSurvey.processSurveyAnswers(surveyAnswers);
         // Store biases in characterData for later use when creating suggestions

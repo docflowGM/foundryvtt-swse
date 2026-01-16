@@ -186,6 +186,135 @@ export async function _onChangeBackground(event) {
 }
 
 /**
+ * Ask the mentor for a background suggestion
+ * Uses the suggestion engine to recommend based on class, species, abilities
+ * @param {Event} event - The click event
+ */
+export async function _onAskMentorBackgroundSuggestion(event) {
+  event.preventDefault();
+
+  try {
+    // Get available backgrounds for current category
+    const availableBackgrounds = this._getFilteredBackgrounds();
+
+    if (!availableBackgrounds || availableBackgrounds.length === 0) {
+      ui.notifications.warn("No backgrounds available in this category.");
+      return;
+    }
+
+    // Show loading indicator
+    ui.notifications.info("Consulting with your mentor...");
+
+    // Get suggestion engine via coordinator
+    if (!game.swse?.suggestions?.suggestBackgrounds) {
+      ui.notifications.error("Suggestion engine not available. Please reload the page.");
+      SWSELogger.error("BackgroundSuggestion | Suggestion engine not available");
+      return;
+    }
+
+    // Create temp actor data for suggestion analysis
+    const tempActorData = this._createTempActorForValidation();
+
+    // Get suggestions from engine
+    const suggestedBackgrounds = await game.swse.suggestions.suggestBackgrounds(
+      availableBackgrounds,
+      tempActorData,
+      this.characterData
+    );
+
+    // Find the top suggestion
+    const topSuggestion = suggestedBackgrounds.find(bg => bg.suggestion?.tier > 0) || suggestedBackgrounds[0];
+
+    if (!topSuggestion) {
+      ui.notifications.warn("Unable to generate a suggestion.");
+      return;
+    }
+
+    // Import mentor dialog for display
+    const { MentorSuggestionDialog } = await import('../mentor-suggestion-dialog.js');
+    const { getMentorForClass, getMentorForClass: getMentorForClassName } = await import('../mentor-dialogues.js');
+
+    // Get the character's mentor based on class
+    const className = this.characterData.classes?.[0]?.name || 'Scoundrel';
+    const mentor = getMentorForClass(className);
+
+    if (!mentor) {
+      ui.notifications.error("Mentor not found for this class.");
+      return;
+    }
+
+    // Create suggestion dialog with mentor voice
+    const reason = topSuggestion.suggestion?.reason || "This seems like a good fit for your character";
+    const mentorMessage = `${mentor.name} suggests: "${topSuggestion.name}" - ${reason}`;
+
+    // Show the mentor suggestion dialog
+    const dialog = new Dialog(
+      {
+        title: `${mentor.name}'s Recommendation`,
+        content: `
+          <div class="mentor-suggestion-display">
+            <div class="mentor-portrait" style="display: flex; gap: 15px; margin-bottom: 15px;">
+              <img src="${mentor.portrait}" alt="${mentor.name}" style="width: 80px; height: 80px; border-radius: 6px;" />
+              <div>
+                <h3 style="margin: 0;">${mentor.name}</h3>
+                <p style="margin: 5px 0; opacity: 0.75;">${mentor.title}</p>
+              </div>
+            </div>
+            <div class="suggestion-content" style="margin: 15px 0;">
+              <p style="font-style: italic; font-size: 1.1em;">"${topSuggestion.name} would be an excellent choice for you."</p>
+              <p><strong>Why:</strong> ${reason}</p>
+              <div class="background-preview" style="border: 1px solid #ccc; padding: 10px; border-radius: 4px; margin-top: 10px;">
+                <p>${topSuggestion.narrativeDescription || ''}</p>
+                ${topSuggestion.relevantSkills ? `<p><strong>Skills:</strong> ${topSuggestion.relevantSkills.join(', ')}</p>` : ''}
+                ${topSuggestion.bonusLanguage ? `<p><strong>Bonus Language:</strong> ${topSuggestion.bonusLanguage}</p>` : ''}
+              </div>
+            </div>
+          </div>
+        `,
+        buttons: {
+          apply: {
+            icon: '<i class="fas fa-check"></i>',
+            label: "Accept Suggestion",
+            callback: async () => {
+              // Apply the suggested background
+              this.characterData.background = {
+                id: topSuggestion.id,
+                name: topSuggestion.name,
+                category: topSuggestion.category,
+                narrativeDescription: topSuggestion.narrativeDescription || '',
+                specialAbility: topSuggestion.specialAbility || null,
+                bonusLanguage: topSuggestion.bonusLanguage || null,
+                relevantSkills: topSuggestion.relevantSkills || [],
+                icon: topSuggestion.icon || ''
+              };
+              this.characterData.backgroundSkills = topSuggestion.relevantSkills || [];
+
+              ui.notifications.info(`${mentor.name} nods approvingly as you select ${topSuggestion.name}.`);
+              await this.render();
+            }
+          },
+          decline: {
+            icon: '<i class="fas fa-times"></i>',
+            label: "Browse Manually",
+            callback: () => {
+              // Just close the dialog
+            }
+          }
+        },
+        default: "apply"
+      },
+      { classes: ['mentor-suggestion-dialog'] }
+    );
+
+    dialog.render(true);
+
+  } catch (err) {
+    SWSELogger.error("BackgroundSuggestion | Error suggesting backgrounds:", err);
+    ui.notifications.error("Failed to get mentor suggestion. Check console for details.");
+  }
+}
+
+/**
  * Handle background category tab clicks
  * @param {Event} event - The click event
  */
