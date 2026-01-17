@@ -1,4 +1,6 @@
 import { ProgressionEngine } from "../progression/engine/progression-engine.js";
+import { SWSELogger } from "../utils/logger.js";
+
 /**
  * SWSE Mentor Dialogue System
  * Provides personalized level-up narration based on character's level 1 class
@@ -1073,12 +1075,16 @@ export const MENTORS = {
  * @returns {Object} The mentor data
  */
 export function getMentorForClass(className) {
+    SWSELogger.log(`[MENTOR-DIALOGUES] getMentorForClass: Looking up mentor for class "${className}"`);
+
     // Direct match
     if (MENTORS[className]) {
+        SWSELogger.log(`[MENTOR-DIALOGUES] getMentorForClass: Found mentor "${MENTORS[className].name}" for class "${className}"`);
         return MENTORS[className];
     }
 
     // Default to Scoundrel's Ol' Salty for unknown classes (he's the general narrator)
+    SWSELogger.warn(`[MENTOR-DIALOGUES] getMentorForClass: Class "${className}" not found, defaulting to Scoundrel mentor`);
     return MENTORS.Scoundrel;
 }
 
@@ -1090,10 +1096,14 @@ export function getMentorForClass(className) {
  * @returns {string} The greeting message
  */
 export function getMentorGreeting(mentor, level, actor = null) {
+    SWSELogger.log(`[MENTOR-DIALOGUES] getMentorGreeting: Getting greeting from "${mentor.name}" for level ${level}`);
+
     let greeting = mentor.levelGreetings[level] || mentor.levelGreetings[20];
+    SWSELogger.log(`[MENTOR-DIALOGUES] getMentorGreeting: Greeting available:`, greeting ? 'YES' : 'NO');
 
     // If greeting is a function, call it with the actor
     if (typeof greeting === 'function' && actor) {
+        SWSELogger.log(`[MENTOR-DIALOGUES] getMentorGreeting: Greeting is dynamic function, evaluating for actor "${actor.name}"`);
         greeting = greeting(actor);
     }
 
@@ -1107,6 +1117,8 @@ export function getMentorGreeting(mentor, level, actor = null) {
  * @returns {string} The guidance message
  */
 export function getMentorGuidance(mentor, choiceType) {
+    SWSELogger.log(`[MENTOR-DIALOGUES] getMentorGuidance: Getting guidance from "${mentor.name}" for choice type "${choiceType}"`);
+
     const guidanceMap = {
         'class': mentor.classGuidance,
         'talent': mentor.talentGuidance,
@@ -1116,7 +1128,9 @@ export function getMentorGuidance(mentor, choiceType) {
         'hp': mentor.hpGuidance
     };
 
-    return guidanceMap[choiceType] || "Make your choice wisely.";
+    const guidance = guidanceMap[choiceType] || "Make your choice wisely.";
+    SWSELogger.log(`[MENTOR-DIALOGUES] getMentorGuidance: Found guidance:`, guidance.substring(0, 50) + (guidance.length > 50 ? '...' : ''));
+    return guidance;
 }
 
 /**
@@ -1125,11 +1139,15 @@ export function getMentorGuidance(mentor, choiceType) {
  * @returns {string} The level 1 class name
  */
 export function getLevel1Class(actor) {
+    SWSELogger.log(`[MENTOR-DIALOGUES] getLevel1Class: Determining starting class for actor "${actor.name}" (Level ${actor.system.level})`);
+
     // Look through the actor's class items
     const classItems = actor.items.filter(i => i.type === 'class');
+    SWSELogger.log(`[MENTOR-DIALOGUES] getLevel1Class: Found ${classItems.length} class items:`, classItems.map(c => c.name));
 
     // If actor is level 1, any class they have is their starting class
     if (actor.system.level === 1 && classItems.length > 0) {
+        SWSELogger.log(`[MENTOR-DIALOGUES] getLevel1Class: Actor is level 1, using first class: "${classItems[0].name}"`);
         return classItems[0].name;
     }
 
@@ -1137,15 +1155,18 @@ export function getLevel1Class(actor) {
     // This could be stored in a flag or we use the first class item
     const storedStartClass = actor.getFlag('swse', 'startingClass');
     if (storedStartClass) {
+        SWSELogger.log(`[MENTOR-DIALOGUES] getLevel1Class: Using stored starting class flag: "${storedStartClass}"`);
         return storedStartClass;
     }
 
     // Fallback to first class item if available
     if (classItems.length > 0) {
+        SWSELogger.log(`[MENTOR-DIALOGUES] getLevel1Class: No stored flag, using first class item: "${classItems[0].name}"`);
         return classItems[0].name;
     }
 
     // Default fallback
+    SWSELogger.warn(`[MENTOR-DIALOGUES] getLevel1Class: No classes found, defaulting to "Scoundrel"`);
     return 'Scoundrel';
 }
 
@@ -1155,7 +1176,14 @@ export function getLevel1Class(actor) {
  * @param {string} className - The starting class name
  */
 export async function setLevel1Class(actor, className) {
-    await actor.setFlag('swse', 'startingClass', className);
+    SWSELogger.log(`[MENTOR-DIALOGUES] setLevel1Class: Setting starting class for actor "${actor.name}" to "${className}"`);
+    try {
+        await actor.setFlag('swse', 'startingClass', className);
+        SWSELogger.log(`[MENTOR-DIALOGUES] setLevel1Class: Successfully set starting class flag`);
+    } catch (err) {
+        SWSELogger.error(`[MENTOR-DIALOGUES] setLevel1Class: ERROR setting starting class:`, err);
+        throw err;
+    }
 }
 
 /**
@@ -1165,18 +1193,29 @@ export async function setLevel1Class(actor, className) {
  * @param {string} mentorKey - The mentor key to use (must exist in MENTORS)
  */
 export async function setMentorOverride(actor, mentorKey) {
+    SWSELogger.log(`[MENTOR-DIALOGUES] setMentorOverride: Setting mentor override for actor "${actor.name}" to "${mentorKey}"`);
+
     if (!MENTORS[mentorKey]) {
+        SWSELogger.error(`[MENTOR-DIALOGUES] setMentorOverride: ERROR - Invalid mentor key: "${mentorKey}". Available mentors:`, Object.keys(MENTORS));
         throw new Error(`Invalid mentor key: ${mentorKey}`);
     }
+    SWSELogger.log(`[MENTOR-DIALOGUES] setMentorOverride: Mentor key validated - "${MENTORS[mentorKey].name}"`);
 
-    await actor.setFlag("swse", "mentorOverride", mentorKey);
+    try {
+        await actor.setFlag("swse", "mentorOverride", mentorKey);
+        SWSELogger.log(`[MENTOR-DIALOGUES] setMentorOverride: Successfully set mentor override flag`);
 
-    // Emit hook for other systems to react to mentor change
-    Hooks.callAll("swse:mentor:changed", {
-        actor: actor,
-        newMentor: mentorKey,
-        source: "manual-override"
-    });
+        // Emit hook for other systems to react to mentor change
+        Hooks.callAll("swse:mentor:changed", {
+            actor: actor,
+            newMentor: mentorKey,
+            source: "manual-override"
+        });
+        SWSELogger.log(`[MENTOR-DIALOGUES] setMentorOverride: Emitted swse:mentor:changed hook`);
+    } catch (err) {
+        SWSELogger.error(`[MENTOR-DIALOGUES] setMentorOverride: ERROR setting mentor override:`, err);
+        throw err;
+    }
 }
 
 /**
@@ -1187,15 +1226,21 @@ export async function setMentorOverride(actor, mentorKey) {
  * @returns {Object} The active mentor object
  */
 export function getActiveMentor(actor) {
+    SWSELogger.log(`[MENTOR-DIALOGUES] getActiveMentor: Determining active mentor for actor "${actor.name}"`);
+
     // Check for manual override first
     const override = actor.getFlag("swse", "mentorOverride");
     if (override && MENTORS[override]) {
+        SWSELogger.log(`[MENTOR-DIALOGUES] getActiveMentor: Using mentor override: "${MENTORS[override].name}"`);
         return MENTORS[override];
     }
+    SWSELogger.log(`[MENTOR-DIALOGUES] getActiveMentor: No mentor override found`);
 
     // Fall back to starting class mentor
     const startClass = getLevel1Class(actor);
+    SWSELogger.log(`[MENTOR-DIALOGUES] getActiveMentor: Starting class is "${startClass}"`);
     const mentor = getMentorForClass(startClass);
+    SWSELogger.log(`[MENTOR-DIALOGUES] getActiveMentor: Active mentor is "${mentor?.name}"`);
 
     return mentor || MENTORS["Scoundrel"]; // Ultimate fallback
 }
@@ -1206,10 +1251,19 @@ export function getActiveMentor(actor) {
  * @param {Actor} actor - The actor
  */
 export async function clearMentorOverride(actor) {
-    await actor.unsetFlag("swse", "mentorOverride");
+    SWSELogger.log(`[MENTOR-DIALOGUES] clearMentorOverride: Clearing mentor override for actor "${actor.name}"`);
 
-    Hooks.callAll("swse:mentor:changed", {
-        actor: actor,
-        source: "override-cleared"
-    });
+    try {
+        await actor.unsetFlag("swse", "mentorOverride");
+        SWSELogger.log(`[MENTOR-DIALOGUES] clearMentorOverride: Successfully cleared mentor override flag`);
+
+        Hooks.callAll("swse:mentor:changed", {
+            actor: actor,
+            source: "override-cleared"
+        });
+        SWSELogger.log(`[MENTOR-DIALOGUES] clearMentorOverride: Emitted swse:mentor:changed hook`);
+    } catch (err) {
+        SWSELogger.error(`[MENTOR-DIALOGUES] clearMentorOverride: ERROR clearing mentor override:`, err);
+        throw err;
+    }
 }
