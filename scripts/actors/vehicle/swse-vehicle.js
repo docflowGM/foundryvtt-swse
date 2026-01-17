@@ -95,9 +95,9 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     html.find(".weapon-roll").click(this._onRollWeapon.bind(this));
 
     html.find(".crew-slot")
-      .on("drop", this._onCrewDrop.bind(this))
-      .on("click", this._onCrewClick.bind(this));
+      .on("drop", this._onCrewDrop.bind(this));
 
+    html.find(".crew-remove").click(this._onCrewRemove.bind(this));
     html.find(".crew-skill-roll").click(this._onCrewSkillRoll.bind(this));
     html.find(".crew-actions-toggle").click(this._onCrewActionsToggle.bind(this));
   }
@@ -325,8 +325,12 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     ui.notifications.info(`${actor.name} assigned to ${slot}.`);
   }
 
-  async _onCrewClick(event) {
-    const slot = event.currentTarget.dataset.slot;
+  async _onCrewRemove(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const crewItem = event.currentTarget.closest('.crew-position');
+    const slot = crewItem.querySelector('.crew-slot').dataset.slot;
     const crew = this.actor.system.crewPositions?.[slot];
 
     if (!crew) return;
