@@ -4637,7 +4637,8 @@ font-size: 12px;
 .swse .abilities-quick .ability-score {
   font-size: 18px;
   font-weight: 900;
-  color: var(--color-text-emphatic);
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(0, 217, 255, 0.5);
 }
 
 .swse .abilities-quick .ability-mod {
