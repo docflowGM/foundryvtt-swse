@@ -39,9 +39,11 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
       }),
 
       // Equipment size (for size-based calculations)
+      // Note: Accepts both capitalized and lowercase for compendium compatibility
       size: new fields.StringField({
-        initial: "medium",
-        choices: ["tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"],
+        initial: "Medium",
+        choices: ["Fine", "Diminutive", "Tiny", "Small", "Medium", "Large", "Huge", "Gargantuan", "Colossal",
+                  "fine", "diminutive", "tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"],
         label: "Equipment Size"
       }),
 
@@ -122,9 +124,11 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       description: new fields.HTMLField({label: "Description"}),
 
       // Armor size (for creatures it's designed to fit)
+      // Note: Accepts both capitalized and lowercase for compendium compatibility
       size: new fields.StringField({
-        initial: "medium",
-        choices: ["tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"],
+        initial: "Medium",
+        choices: ["Fine", "Diminutive", "Tiny", "Small", "Medium", "Large", "Huge", "Gargantuan", "Colossal",
+                  "fine", "diminutive", "tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"],
         label: "Armor Size"
       }),
 
@@ -195,9 +199,11 @@ export class EquipmentDataModel extends foundry.abstract.DataModel {
       description: new fields.HTMLField({label: "Description"}),
 
       // Equipment size (for size-based calculations)
+      // Note: Accepts both capitalized and lowercase for compendium compatibility
       size: new fields.StringField({
-        initial: "medium",
-        choices: ["tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"],
+        initial: "Medium",
+        choices: ["Fine", "Diminutive", "Tiny", "Small", "Medium", "Large", "Huge", "Gargantuan", "Colossal",
+                  "fine", "diminutive", "tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"],
         label: "Equipment Size"
       }),
 
