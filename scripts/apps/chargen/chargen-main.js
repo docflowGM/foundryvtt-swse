@@ -774,6 +774,35 @@ export default class CharacterGenerator extends Application {
     context.skillsJson = context.skillsJson || this._skillsJson || [];
     context.availableSkills = context.availableSkills || context.skillsJson;
 
+    // Calculate skill modifiers for display in template
+    // Formula: currentBonus = floor(level/2) + abilityMod + (trained ? 5 : 0)
+    const characterLevel = this.characterData.level || 1;
+    const halfLevel = Math.floor(characterLevel / 2);
+    const abilities = this.characterData.abilities || {};
+
+    // Add modifier data to each skill
+    context.availableSkills = context.availableSkills.map(skill => {
+      // Get the ability modifier for this skill's associated ability
+      const abilityKey = (skill.ability || '').toLowerCase();
+      const abilityMod = abilities[abilityKey]?.mod || 0;
+
+      // Check if this skill is trained (from characterData.skills)
+      const isTrained = this.characterData.skills?.[skill.key]?.trained || false;
+
+      // Calculate bonuses
+      const trainedBonus = halfLevel + abilityMod + 5;
+      const currentBonus = halfLevel + abilityMod + (isTrained ? 5 : 0);
+
+      return {
+        ...skill,
+        trained: isTrained,
+        halfLevel,
+        abilityMod,
+        currentBonus,
+        trainedBonus
+      };
+    });
+
     // Calculate trainedSkillsCount for display in template
     const trainedCount = Object.values(this.characterData.skills || {})
       .filter(skill => skill.trained)
@@ -852,8 +881,28 @@ export default class CharacterGenerator extends Application {
    * @returns {string|null} Narrator comment or null if not applicable
    */
   _getNarratorComment() {
-    // Base implementation returns null - can be overridden in subclasses
-    return null;
+    // Get current mentor based on selected class
+    const mentor = this._getCurrentMentor();
+    if (!mentor) return null;
+
+    // Return step-specific guidance from the mentor
+    switch (this.currentStep) {
+      case "class":
+        return mentor.classGuidance || null;
+      case "abilities":
+        return mentor.abilityGuidance || null;
+      case "skills":
+        return mentor.skillGuidance || null;
+      case "feats":
+      case "talents":
+        return mentor.talentGuidance || null;
+      case "summary":
+        // Get level-appropriate greeting
+        const level = this.characterData.level || 1;
+        return mentor.levelGreetings?.[level] || null;
+      default:
+        return null;
+    }
   }
 
   /**
@@ -1398,17 +1447,12 @@ export default class CharacterGenerator extends Application {
 
         // Only validate point buy budget if point buy method was used
         if (this.characterData.abilityGenerationMethod === 'point-mode') {
-          // Validate point buy budget (rough check)
-          // Calculate points spent based on current ability scores
-          const pointCosts = (value) => {
-            let cost = 0;
-            for (let v = 8; v < value; v++) {
-              if (v < 12) cost += 1;
-              else if (v < 14) cost += 2;
-              else cost += 3;
-            }
-            return cost;
+          // Validate point buy budget using the same cumulative cost table as the UI
+          // This matches the standard point buy costs from the Saga Edition rules
+          const cumulativeCosts = {
+            8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 6, 15: 8, 16: 10, 17: 13, 18: 16
           };
+          const pointCosts = (value) => cumulativeCosts[value] || 0;
 
           const totalSpent = abilities.reduce((sum, ab) => {
             return sum + pointCosts(this.characterData.abilities[ab]?.base || 8);

@@ -103,7 +103,10 @@ function inferClassRole(talentTrees = []) {
  * @returns {Object} - Normalized class definition
  */
 export function normalizeClass(rawClass) {
-    const sys = rawClass.system || {};
+    // Convert system DataModel proxy to plain object if needed
+    // This ensures properties are properly accessible
+    const rawSystem = rawClass.system;
+    const sys = rawSystem?.toObject?.() ?? (rawSystem ? { ...rawSystem } : {});
     const name = rawClass.name || "Unknown Class";
 
     return {
