@@ -341,8 +341,12 @@ export class SWSEActorSheetBase extends BaseSheet {
     event.preventDefault();
     event.stopPropagation();
 
-    const skillKey = event.currentTarget.dataset.skill;
-    const dc = parseInt(event.currentTarget.dataset.dc, 10);
+    // Find the actual element with data-skill (event.currentTarget is the listener's root element)
+    const skillElement = event.target.closest('.skill-use-rollable');
+    if (!skillElement) return;
+
+    const skillKey = skillElement.dataset.skill;
+    const dc = parseInt(skillElement.dataset.dc, 10);
 
     const skill = this.actor.system.skills?.[skillKey];
     if (!skill) return ui.notifications.error(`Skill ${skillKey} missing on actor.`);

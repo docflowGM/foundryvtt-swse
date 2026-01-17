@@ -1004,9 +1004,10 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     try {
       // Open the character generator which has the progression engine UI
       // for attribute rolling and other selections
-      const CharacterGenerator = (await import('../../apps/chargen/chargen-main.js')).default;
-      const chargen = new CharacterGenerator(this.actor);
-      chargen.currentStep = 'attributes';
+      // Use CharacterGeneratorImproved for full functionality (abilityMethod, pointBuyPool, etc.)
+      const CharacterGeneratorImproved = (await import('../../apps/chargen-improved.js')).default;
+      const chargen = new CharacterGeneratorImproved(this.actor);
+      chargen.currentStep = 'abilities';
       chargen.render(true);
 
     } catch (err) {

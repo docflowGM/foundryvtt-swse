@@ -4111,7 +4111,7 @@ font-size: 12px;
 /* More compact header with better proportions */
 .swse .sheet-header {
   padding: 8px 12px;
-  min-height: 44px;
+  min-height: auto;
   gap: 12px;
 }
 
