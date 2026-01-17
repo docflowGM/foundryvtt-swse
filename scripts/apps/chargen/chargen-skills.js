@@ -91,10 +91,11 @@ export async function _onResetSkills(event) {
  */
 export function _bindSkillsUI(root) {
   const doc = root || this.element[0];
-  const skillsContainer = root.querySelector("#skills-list");
+  // Template uses class="skills-list-chargen", not id="skills-list"
+  const skillsContainer = root.querySelector(".skills-list-chargen");
   SWSELogger.log(`[CHARGEN-SKILLS] _bindSkillsUI: START - skillsContainer:`, skillsContainer ? 'FOUND' : 'NOT FOUND');
   if (!skillsContainer) {
-    SWSELogger.warn(`[CHARGEN-SKILLS] WARNING: _bindSkillsUI - skills-list container not found`);
+    // This is expected on non-skills steps - only warn if we're on the skills step
     return;
   }
 

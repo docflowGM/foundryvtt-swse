@@ -571,8 +571,29 @@ export class ClassDataModel extends foundry.abstract.DataModel {
    * Migrate legacy data during document initialization
    * Converts numeric BAB progression values to string choices
    * Handles classLevel -> level field rename
+   * Converts snake_case property names to camelCase
    */
   static migrateData(source) {
+    // CRITICAL: Convert snake_case properties to camelCase BEFORE schema applies initial values
+    // This ensures compendium data (which uses snake_case) is properly read
+    const propertyMappings = {
+      'hit_die': 'hitDie',
+      'bab_progression': 'babProgression',
+      'class_skills': 'classSkills',
+      'talent_trees': 'talentTrees',
+      'trained_skills': 'trainedSkills',
+      'level_progression': 'levelProgression',
+      'starting_features': 'startingFeatures',
+      'defense_progression': 'defenseProgression',
+      'force_point_progression': 'forcePointProgression'
+    };
+
+    for (const [snakeCase, camelCase] of Object.entries(propertyMappings)) {
+      if (source[snakeCase] !== undefined && source[camelCase] === undefined) {
+        source[camelCase] = source[snakeCase];
+      }
+    }
+
     // Migrate classLevel to level (backwards compatibility)
     if (source.classLevel !== undefined && source.level === undefined) {
       source.level = source.classLevel;

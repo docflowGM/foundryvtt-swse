@@ -239,7 +239,7 @@ export async function _onConfirmSpecies(event) {
   try {
     // Call the original species selection handler
     await this._onSelectSpecies(syntheticEvent);
-    SWSELogger.log(`CharGen | Species ${_previewedSpeciesName} selected successfully`);
+    SWSELogger.log(`CharGen | Species ${speciesNameToSelect} selected successfully`);
   } catch (error) {
     SWSELogger.error(`CharGen | Error selecting species: ${error.message}`, error);
     ui.notifications.error(`Failed to select species: ${error.message}`);
