@@ -26,6 +26,8 @@ export class SWSEStore extends FormApplication {
     this.itemsById = new Map();
     this.items = [];
     this.groupedItems = { weapons: new Map(), armor: new Map(), equipment: new Map(), droids: new Map(), vehicles: new Map(), other: new Map() };
+    this.cart = { items: [], droids: [], vehicles: [] };
+    this.cartTotal = 0;
     this._loaded = false;
     this._loadedPacks = new Set();
   }
