@@ -532,7 +532,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     event.preventDefault();
     // Open marketplace/store
     try {
-      const { SWSEStore } = await import('../apps/store/store-main.js');
+      const { SWSEStore } = await import('../../apps/store/store-main.js');
       new SWSEStore(this.actor).render(true);
     } catch (err) {
       SWSELogger.warn('Store system not available:', err);
