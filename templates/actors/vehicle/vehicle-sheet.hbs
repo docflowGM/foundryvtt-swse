@@ -1,12 +1,75 @@
 {{!-- Level 3 HUD – vehicle-sheet.hbs --}}
 <div class="vehicle-sheet">
-  {{!-- Export Control --}}
-  <div class="vehicle-controls">
-    <button class="export-character-json-btn vehicle-export-btn" title="Export Ship to JSON" role="button" tabindex="0">
-      <i class="fas fa-download" aria-hidden="true"></i> Export
-    </button>
-  </div>
+<form class="{{cssClass}} swse-vehicle-sheet" autocomplete="off">
 
+  {{!-- Ship Header with Editable Fields --}}
+  <header class="vehicle-header">
+    <div class="header-left">
+      {{!-- Ship Image --}}
+      <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="100" height="100"/>
+
+      {{!-- Ship Name --}}
+      <div class="ship-name">
+        <input name="name" type="text" value="{{actor.name}}" placeholder="Ship Name"/>
+      </div>
+    </div>
+
+    <div class="header-center">
+      {{!-- Hull Points --}}
+      <div class="resource hull-points">
+        <label>Hull Points</label>
+        <div class="resource-bar">
+          <input type="number" name="system.hull.value" value="{{system.hull.value}}" data-dtype="Number" class="resource-input"/>
+          <span class="separator">/</span>
+          <input type="number" name="system.hull.max" value="{{system.hull.max}}" data-dtype="Number" class="resource-max-input"/>
+        </div>
+      </div>
+
+      {{!-- Shield Rating --}}
+      <div class="resource shield-rating">
+        <label>Shield Rating (SR)</label>
+        <div class="resource-bar">
+          <input type="number" name="system.shields.value" value="{{system.shields.value}}" data-dtype="Number" class="resource-input"/>
+          <span class="separator">/</span>
+          <input type="number" name="system.shields.max" value="{{system.shields.max}}" data-dtype="Number" class="resource-max-input"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      {{!-- Export Control --}}
+      <button class="export-character-json-btn vehicle-export-btn" title="Export Ship to JSON" role="button" tabindex="0">
+        <i class="fas fa-download" aria-hidden="true"></i> Export
+      </button>
+    </div>
+  </header>
+
+  {{!-- Vehicle Stats Input Section --}}
+  <section class="vehicle-stats-inputs">
+    <div class="stats-grid">
+      <div class="stat-input">
+        <label>Speed</label>
+        <input type="number" name="system.speed" value="{{system.speed}}" data-dtype="Number" placeholder="0"/>
+      </div>
+
+      <div class="stat-input">
+        <label>Max Velocity</label>
+        <input type="number" name="system.maxVelocity" value="{{system.maxVelocity}}" data-dtype="Number" placeholder="0"/>
+      </div>
+
+      <div class="stat-input">
+        <label>Maneuver</label>
+        <input type="number" name="system.maneuver" value="{{system.maneuver}}" data-dtype="Number" placeholder="0"/>
+      </div>
+
+      <div class="stat-input">
+        <label>Damage Reduction</label>
+        <input type="number" name="system.damageReduction" value="{{system.damageReduction}}" data-dtype="Number" placeholder="0"/>
+      </div>
+    </div>
+  </section>
+
+  {{!-- Visual HUD Display --}}
   <div class="vehicle-center">
 
     {{!-- Holographic ship image + scanner + damage overlays --}}
@@ -16,4 +79,73 @@
     {{> "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-callouts.hbs" actor=actor }}
 
   </div>
+
+  {{!-- Crew Positions Section --}}
+  <section class="crew-positions-section">
+    <h3>Crew Positions</h3>
+    <div class="crew-grid">
+      {{#each system.crewPositions as |crew position|}}
+      <div class="crew-position">
+        <label>{{titleCase position}}</label>
+        <div class="crew-slot" data-slot="{{position}}">
+          {{#if crew}}
+            <span class="crew-name">{{#if crew.name}}{{crew.name}}{{else}}{{crew}}{{/if}}</span>
+            <button class="crew-remove" type="button" title="Remove crew member">
+              <i class="fas fa-times"></i>
+            </button>
+          {{else}}
+            <span class="crew-empty">Drop actor here</span>
+          {{/if}}
+        </div>
+        {{#if crew}}
+        <button class="crew-actions-toggle" type="button">
+          <i class="fas fa-chevron-down"></i> Actions
+        </button>
+        <div class="crew-actions-panel" style="display: none;">
+          {{!-- Crew actions will be populated by the sheet --}}
+        </div>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+  </section>
+
+  {{!-- Weapons Section --}}
+  <section class="weapons-section">
+    <h3>
+      Weapons
+      <button class="weapon-add" type="button" title="Add weapon">
+        <i class="fas fa-plus"></i> Add Weapon
+      </button>
+    </h3>
+    <div class="weapons-list">
+      {{#each system.weapons as |weapon index|}}
+      <div class="weapon-item">
+        <input type="text" name="system.weapons.{{index}}.name" value="{{weapon.name}}" placeholder="Weapon Name"/>
+
+        <select name="system.weapons.{{index}}.arc">
+          <option value="Forward" {{#if (eq weapon.arc "Forward")}}selected{{/if}}>Forward</option>
+          <option value="Aft" {{#if (eq weapon.arc "Aft")}}selected{{/if}}>Aft</option>
+          <option value="Port" {{#if (eq weapon.arc "Port")}}selected{{/if}}>Port</option>
+          <option value="Starboard" {{#if (eq weapon.arc "Starboard")}}selected{{/if}}>Starboard</option>
+          <option value="Turret" {{#if (eq weapon.arc "Turret")}}selected{{/if}}>Turret</option>
+        </select>
+
+        <input type="text" name="system.weapons.{{index}}.bonus" value="{{weapon.bonus}}" placeholder="+0" class="weapon-bonus"/>
+        <input type="text" name="system.weapons.{{index}}.damage" value="{{weapon.damage}}" placeholder="0d0" class="weapon-damage"/>
+        <input type="text" name="system.weapons.{{index}}.range" value="{{weapon.range}}" placeholder="Close" class="weapon-range"/>
+
+        <button class="weapon-roll" data-index="{{index}}" type="button" title="Roll attack">
+          <i class="fas fa-dice-d20"></i>
+        </button>
+
+        <button class="weapon-remove" data-index="{{index}}" type="button" title="Remove weapon">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+      {{/each}}
+    </div>
+  </section>
+
+</form>
 </div>
