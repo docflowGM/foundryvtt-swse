@@ -127,8 +127,9 @@ export function normalizeClass(rawClass) {
         },
 
         // Skills
-        trainedSkills: sys.trainedSkills ?? 0,
-        classSkills: sys.class_skills || [],
+        // NOTE: Data model may migrate snake_case to camelCase, so check both
+        trainedSkills: sys.trainedSkills ?? sys.trained_skills ?? 0,
+        classSkills: sys.classSkills || sys.class_skills || [],
 
         // Talent Trees (names only - will be resolved to IDs later)
         talentTreeNames: sys.talent_trees || [],

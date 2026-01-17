@@ -98,20 +98,26 @@ export async function _onSelectClass(event) {
   });
 
   // Validate class document has required properties
-  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Validating class document...`);
-  const validation = validateClassDocument(classDoc);
-  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Validation result:`, { valid: validation.valid, missing: validation.missing, warnings: validation.warnings });
-  if (!validation.valid) {
-    SWSELogger.error(`[CHARGEN-CLASS] ERROR: Class document missing required properties:`, validation.missing);
-    ui.notifications.error(`Class "${className}" is missing required data: ${validation.missing.join(', ')}`);
-    return;
-  }
+  // NOTE: We prefer validating classDef (normalized from ClassesDB) over classDoc (raw compendium)
+  // since classDoc may not be found if packs aren't fully loaded, but classDef is guaranteed to exist
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Validating class data...`);
+  if (classDoc) {
+    const validation = validateClassDocument(classDoc);
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Validation result:`, { valid: validation.valid, missing: validation.missing, warnings: validation.warnings });
+    if (!validation.valid) {
+      // Only warn, don't fail - we have classDef from ClassesDB which has all required data
+      SWSELogger.warn(`[CHARGEN-CLASS] WARNING: Raw class document missing properties:`, validation.missing);
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Continuing with normalized classDef from ClassesDB`);
+    }
 
-  // Log any warnings (non-blocking issues like missing talent trees)
-  if (validation.warnings) {
-    validation.warnings.forEach(warning => {
-      SWSELogger.warn(`[CHARGEN-CLASS] WARNING: ${warning}`);
-    });
+    // Log any warnings (non-blocking issues like missing talent trees)
+    if (validation.warnings) {
+      validation.warnings.forEach(warning => {
+        SWSELogger.warn(`[CHARGEN-CLASS] WARNING: ${warning}`);
+      });
+    }
+  } else {
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Skipping validation - using normalized classDef from ClassesDB`);
   }
 
   // Set class-based values using normalized class definition
