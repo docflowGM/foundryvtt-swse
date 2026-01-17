@@ -31,6 +31,13 @@ import {
   updateInferredRole
 } from '../engine/mentor-memory.js';
 
+import {
+  getArchetypePaths,
+  getArchetype,
+  analyzeSynergies,
+  suggestAttributesForArchetype
+} from '../engine/mentor-archetype-paths.js';
+
 import { MENTOR_PERSONALITIES } from './mentor-suggestion-dialogues.js';
 import { MENTORS } from './mentor-dialogues.js';
 
@@ -166,19 +173,26 @@ function generatePathsOpen(actor, mentor, personality, memory, dspInfo) {
     .filter(i => i.type === 'class')
     .sort((a, b) => (a.system?.level || 0) - (b.system?.level || 0))[0];
 
-  const currentLevel = actor.system.level;
-  const pathOptions = getArchetypePaths(baseClass?.name || "Unknown");
+  const className = baseClass?.name || "Unknown";
+  const archetypes = getArchetypePaths(className);
 
   let observation = getMentorVoice(personality, "observation",
-    `At your current level, the ${baseClass?.name || "your class"} offers several paths forward.`);
+    `Among the ${className}, there are several distinct paths. Each demands something different of you.`);
 
-  let suggestion = `${pathOptions.map(p => `• ${p.name}: ${p.desc}`).join('\n')}`;
-  if (personality?.traits?.includes("minimal") || personality?.verbosity === "minimal") {
-    suggestion = pathOptions[0].name; // Minimal mentors just suggest first
+  // Build path descriptions
+  const pathDescriptions = Object.entries(archetypes).map(([key, archetype]) => {
+    return `• **${archetype.displayName}**: ${archetype.description}\n  _${archetype.warning}_`;
+  }).join('\n\n');
+
+  let suggestion = pathDescriptions;
+  if (personality?.verbosity === "minimal") {
+    // Minimal mentors just give the briefest description
+    const firstPath = Object.values(archetypes)[0];
+    suggestion = `${firstPath.displayName}: ${firstPath.description}`;
   }
 
   let respectClause = getMentorVoice(personality, "respectClause",
-    "Choose the path that calls to you. Your commitment will shape the choices available later.");
+    "You may walk one of these paths deliberately, or drift between them—but drifting has its own cost.");
 
   return { observation, suggestion, respectClause };
 }
@@ -188,29 +202,46 @@ function generatePathsOpen(actor, mentor, personality, memory, dspInfo) {
 // ============================================================================
 
 function generateDoingWell(actor, mentor, personality, memory, dspInfo) {
-  const talents = actor.items.filter(i => i.type === 'talent').map(t => t.name);
-  const feats = actor.items.filter(i => i.type === 'feat').map(f => f.name);
-  const topSkill = getTopSkill(actor);
+  // If player has committed to a path, analyze synergies with that archetype
+  let synergies = { strong: [], weak: [] };
+
+  if (memory.committedPath) {
+    const baseClass = Array.from(actor.items)
+      .filter(i => i.type === 'class')
+      .sort((a, b) => (b.system?.level || 0) - (a.system?.level || 0))[0];
+
+    if (baseClass) {
+      const archetype = getArchetype(baseClass.name, memory.committedPath);
+      if (archetype) {
+        synergies = analyzeSynergies(actor, archetype);
+      }
+    }
+  }
 
   let observation = getMentorVoice(personality, "observation",
     `I see strength in your choices. Your ${memory.inferredRole || 'approach'} shows promise.`);
 
-  // Pick something they're doing well
   let suggestion = "";
-  if (talents.length > 0) {
-    const recentTalent = talents[talents.length - 1];
+  if (synergies.strong.length > 0) {
+    const topSynergy = synergies.strong[0];
     suggestion = getMentorVoice(personality, "suggestion",
-      `The talent you recently acquired—${recentTalent}—shows excellent instinct. It complements your nature.`);
-  } else if (feats.length > 0) {
-    const recentFeat = feats[feats.length - 1];
-    suggestion = getMentorVoice(personality, "suggestion",
-      `Your selection of ${recentFeat} demonstrates growing self-awareness. This serves you well.`);
+      `${topSynergy}. Your path shows coherence.`);
   } else {
-    suggestion = getMentorVoice(personality, "suggestion",
-      "Your choices so far show coherence. You are building something worthwhile.");
+    const talents = actor.items.filter(i => i.type === 'talent').map(t => t.name);
+    const feats = actor.items.filter(i => i.type === 'feat').map(f => f.name);
+
+    if (talents.length > 0) {
+      suggestion = getMentorVoice(personality, "suggestion",
+        `The talents you have acquired show intentionality. They reinforce one another.`);
+    } else if (feats.length > 0) {
+      suggestion = getMentorVoice(personality, "suggestion",
+        `Your feat selections demonstrate growing self-awareness. This serves you well.`);
+    } else {
+      suggestion = getMentorVoice(personality, "suggestion",
+        "Your choices so far show coherence. You are building something worthwhile.");
+    }
   }
 
-  // Respect clause: Encouragement
   let respectClause = getMentorVoice(personality, "respectClause",
     "Continue trusting your instincts. You are on the right path.");
 
@@ -227,13 +258,34 @@ function generateDoingWell(actor, mentor, personality, memory, dspInfo) {
 function generateDoingWrong(actor, mentor, personality, memory, dspInfo) {
   const gaps = detectBuildGaps(actor, memory);
 
+  // If player has committed to a path, highlight weaknesses in that path
+  let weaknesses = [];
+  if (memory.committedPath) {
+    const baseClass = Array.from(actor.items)
+      .filter(i => i.type === 'class')
+      .sort((a, b) => (b.system?.level || 0) - (a.system?.level || 0))[0];
+
+    if (baseClass) {
+      const archetype = getArchetype(baseClass.name, memory.committedPath);
+      if (archetype) {
+        const synergies = analyzeSynergies(actor, archetype);
+        weaknesses = synergies.weak;
+      }
+    }
+  }
+
   let observation = getMentorVoice(personality, "observation",
-    gaps.summary || "Your path shows some inconsistencies.");
+    weaknesses.length > 0
+      ? "Your path shows promise, but it has gaps."
+      : (gaps.summary || "Your path shows some inconsistencies."));
 
   let suggestion = "";
-  if (gaps.details.length > 0) {
-    const mainGap = gaps.details[0];
-    suggestion = getMentorVoice(personality, "suggestion", mainGap);
+  if (weaknesses.length > 0) {
+    const mainWeakness = weaknesses[0];
+    suggestion = getMentorVoice(personality, "suggestion",
+      `${mainWeakness}. This will limit your effectiveness unless addressed.`);
+  } else if (gaps.details.length > 0) {
+    suggestion = getMentorVoice(personality, "suggestion", gaps.details[0]);
   } else {
     suggestion = getMentorVoice(personality, "suggestion",
       "I see no critical errors, but vigilance is always warranted.");
@@ -243,7 +295,7 @@ function generateDoingWrong(actor, mentor, personality, memory, dspInfo) {
   let respectClause = "";
   if (dspInfo.saturation > 0.4) {
     respectClause = getMentorVoice(personality, "respectClause",
-      "These missteps invite the darkness. Be mindful of where you place your focus.");
+      "These gaps invite the darkness. Address them with intention.");
   } else {
     respectClause = getMentorVoice(personality, "respectClause",
       "These gaps can still be bridged. The choice is yours.");
@@ -410,38 +462,7 @@ function getMentorVoice(personality, layer, baseText) {
   return baseText;
 }
 
-/**
- * Get archetype paths for a class
- */
-function getArchetypePaths(className) {
-  const paths = {
-    "Jedi": [
-      { name: "Guardian", desc: "Protective, resilient, defensive mastery" },
-      { name: "Consular", desc: "Force-focused, wise, supportive" },
-      { name: "Sentinel", desc: "Balanced, versatile, adaptable" }
-    ],
-    "Scout": [
-      { name: "Tracker", desc: "Pursuit, tracking, outdoors expertise" },
-      { name: "Infiltrator", desc: "Stealth, deception, infiltration" },
-      { name: "Striker", desc: "Swift offense, hit-and-run tactics" }
-    ],
-    "Scoundrel": [
-      { name: "Charmer", desc: "Persuasion, deception, manipulation" },
-      { name: "Gambler", desc: "Risk-taking, luck-based tactics" },
-      { name: "Thief", desc: "Heists, thievery, precision strikes" }
-    ],
-    "Soldier": [
-      { name: "Commando", desc: "Squad tactics, heavy weapons, demolition" },
-      { name: "Gunner", desc: "Ranged expertise, vehicle operations" },
-      { name: "Guardian", desc: "Protection, defense, heavy armor" }
-    ]
-  };
-
-  return paths[className] || [
-    { name: "Path A", desc: "One direction" },
-    { name: "Path B", desc: "Another direction" }
-  ];
-}
+// NOTE: getArchetypePaths is now imported from mentor-archetype-paths.js
 
 /**
  * Detect build gaps
