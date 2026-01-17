@@ -1098,12 +1098,33 @@ export class SWSERoll {
    * @returns {Promise<Roll|null>} The damage roll
    */
   static async rollDamage(actor, weapon, options = {}) {
+    // Get modifiers from dialog if requested
+    let modifiers = {
+      customModifier: 0,
+      useForcePoint: false
+    };
+
+    if (options.showDialog) {
+      const dialogResult = await showRollModifiersDialog({
+        title: `${weapon.name} Damage`,
+        rollType: 'damage',
+        actor,
+        weapon,
+        showCover: false,
+        showConcealment: false
+      });
+
+      if (!dialogResult) return null; // Cancelled
+      modifiers = { ...modifiers, ...dialogResult };
+    }
+
     const context = {
       actor,
       weapon,
       target: options.target,
       isCritical: options.isCritical || false,
-      critMultiplier: options.critMultiplier || 2
+      critMultiplier: options.critMultiplier || 2,
+      modifiers
     };
 
     // Call pre-roll hook
@@ -1111,7 +1132,12 @@ export class SWSERoll {
       return null;
     }
 
-    const result = await rollDamage(actor, weapon, options);
+    // Force Point if requested
+    const fpBonus = modifiers.useForcePoint
+      ? await this.promptForcePointUse(actor, "damage roll")
+      : 0;
+
+    const result = await rollDamage(actor, weapon, { ...options, fpBonus });
 
     // Record in history
     if (result) {

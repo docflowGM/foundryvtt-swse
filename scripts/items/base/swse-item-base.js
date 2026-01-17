@@ -4,6 +4,7 @@
  */
 
 import { getWeaponRangeInfo } from '../weapon-ranges.js';
+import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
 
 export class SWSEItemBase extends Item {
   
@@ -177,27 +178,12 @@ export class SWSEItemBase extends Item {
   }
 
   /**
-   * Roll force power
+   * Roll force power activation
    * @private
    */
   async _rollForcePower(options = {}) {
-    const data = this.system;
-    
-    // Create chat message for force power use
-    const messageData = {
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `${this.name} (Force Power)`,
-      content: `
-        <div class="swse force-power-card">
-          <h3>${this.name}</h3>
-          <p><strong>Level:</strong> ${data.level || 1}</p>
-          ${data.darkSide ? '<p><em>Dark Side Power</em></p>' : ''}
-          <p>${data.description || ''}</p>
-        </div>
-      `
-    };
-
-    return ChatMessage.create(messageData);
+    // Use proper SWSERoll system for Force power activation
+    return SWSERoll.rollUseTheForce(this.actor, this, options);
   }
 
   /**

@@ -234,6 +234,19 @@ export async function rollDamage(actor, weapon, context = {}) {
   if (talentBonus.formula) {
     formulaParts.push(talentBonus.formula);
   }
+
+  // Add Force Point bonus if present
+  const fpBonus = context.fpBonus || 0;
+  if (fpBonus !== 0) {
+    formulaParts.push(fpBonus.toString());
+  }
+
+  // Add custom modifier if present
+  const customModifier = context.customModifier || 0;
+  if (customModifier !== 0) {
+    formulaParts.push(customModifier.toString());
+  }
+
   const formula = formulaParts.join(' + ');
 
   const roll = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
@@ -242,6 +255,12 @@ export async function rollDamage(actor, weapon, context = {}) {
   let flavor = `${weapon.name} Damage`;
   if (talentBonus.breakdown.length > 0) {
     flavor += ` (${talentBonus.breakdown.join(', ')})`;
+  }
+  if (fpBonus !== 0) {
+    flavor += ` [FP: +${fpBonus}]`;
+  }
+  if (customModifier !== 0) {
+    flavor += ` [Mod: ${customModifier >= 0 ? '+' : ''}${customModifier}]`;
   }
 
   // Show notifications for talent bonuses

@@ -1383,12 +1383,8 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     const item = this.actor.items.get(id);
     if (!item) return ui.notifications.error("Weapon not found.");
 
-    const atk = item.system.attackBonus ?? 0;
-    const roll = await this._safeEvaluate(`1d20 + ${atk}`);
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `Attack: ${item.name}`
-    });
+    // Use proper SWSERoll system with dialog to confirm bonuses and add modifiers
+    return SWSERoll.rollAttack(this.actor, item, { showDialog: true });
   }
 
   // Damage Roll
@@ -1397,28 +1393,18 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     const item = this.actor.items.get(id);
     if (!item) return ui.notifications.error("Weapon not found.");
 
-    const dmg = item.system.damage || "1d6";
-    const roll = await this._safeEvaluate(dmg);
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `Damage: ${item.name}`
-    });
+    // Use proper SWSERoll system with dialog to confirm bonuses and add modifiers
+    return SWSERoll.rollDamage(this.actor, item, { showDialog: true });
   }
 
   // Use the Force Roll
   async _onUsePower(evt) {
     const id = evt.currentTarget.dataset.itemId;
-    const p = this.actor.items.get(id);
-    if (!p) return ui.notifications.error("Power not found.");
+    const power = this.actor.items.get(id);
+    if (!power) return ui.notifications.error("Power not found.");
 
-    const sk = this.actor.system.skills?.useTheForce;
-    if (!sk) return ui.notifications.error("Use the Force skill missing.");
-
-    const roll = await this._safeEvaluate(`1d20 + ${sk.total}`);
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `Use the Force: ${p.name}`
-    });
+    // Use proper SWSERoll system for Force power activation
+    return SWSERoll.rollUseTheForce(this.actor, power);
   }
 
   // Force Point Roll
@@ -2280,45 +2266,16 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
    * Roll a basic skill check
    */
   async _onSkillRoll(skillKey) {
-    try {
-      const actor = this.actor;
-      const roll = await globalThis.SWSE.RollEngine.skillRoll({
-        actor,
-        skill: skillKey,
-        flavor: `Skill Check — ${skillKey}`
-      });
-      roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }) });
-    } catch (err) {
-      console.error("Skill Roll Error:", err);
-      ui.notifications.error(`Failed to roll skill: ${skillKey}`);
-    }
+    // Use proper SWSERoll system with dialog to confirm bonuses and add modifiers
+    return SWSERoll.rollSkill(this.actor, skillKey, { showDialog: true });
   }
 
   /**
    * Roll a specific action for a skill (skill-action-card)
    */
   async _onSkillActionRoll(skillKey, actionName) {
-    const actor = this.actor;
-
-    try {
-      ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: `<strong>${actionName}</strong><br>Performing skill action for <em>${skillKey}</em>.`
-      });
-
-      // Trigger a standard roll message for now
-      // (Your RollEngine can later be extended for action-specific logic)
-      const roll = await globalThis.SWSE.RollEngine.skillRoll({
-        actor,
-        skill: skillKey,
-        flavor: `Skill Action — ${actionName}`
-      });
-      roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }) });
-
-    } catch (err) {
-      console.error("Skill Action Roll Error:", err);
-      ui.notifications.error(`Failed to perform action: ${actionName}`);
-    }
+    // Use proper SWSERoll system with dialog to confirm bonuses and add modifiers
+    return SWSERoll.rollSkill(this.actor, skillKey, { showDialog: true });
   }
 
   /**
