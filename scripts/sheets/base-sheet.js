@@ -57,7 +57,7 @@ export class SWSEActorSheetBase extends BaseSheet {
   }
 
   // -----------------------------
-  // Biography enrichment (v13 safe)
+  // Biography & Notes enrichment (v13 safe)
   // -----------------------------
   async _enrichBiography(context) {
     const TextEditorImpl = foundry.applications?.ux?.TextEditor?.implementation || TextEditor;
@@ -66,6 +66,14 @@ export class SWSEActorSheetBase extends BaseSheet {
       secrets: this.actor.isOwner,
       relativeTo: this.actor
     });
+    context.enrichedNotes = await TextEditorImpl.enrichHTML(context.system.notes || '', {
+      async: true,
+      secrets: this.actor.isOwner,
+      relativeTo: this.actor
+    });
+    // Ensure owner and editable flags are set for editor fields
+    context.owner = this.actor.isOwner;
+    context.editable = this.isEditable;
   }
 
   // -----------------------------

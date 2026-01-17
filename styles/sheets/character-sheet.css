@@ -5409,3 +5409,39 @@ font-size: 12px;
     grid-template-columns: 1fr;
   }
 }
+
+/* ─────────────────────────────────────────────────
+   BIOGRAPHY TAB - BACKGROUND PICKER
+   ───────────────────────────────────────────────── */
+
+.swse .biography-tab .background-picker-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swse .biography-tab .choose-background-btn {
+  background: linear-gradient(180deg, rgba(0, 168, 204, 0.3), rgba(0, 100, 140, 0.3));
+  border: 1px solid var(--holo-cyan, #00d9ff);
+  color: var(--holo-cyan, #00d9ff);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.swse .biography-tab .choose-background-btn:hover {
+  background: linear-gradient(180deg, rgba(0, 168, 204, 0.5), rgba(0, 100, 140, 0.4));
+  box-shadow: 0 0 12px rgba(0, 217, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.swse .biography-tab .choose-background-btn i {
+  font-size: 14px;
+}

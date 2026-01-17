@@ -446,19 +446,29 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     });
 
     // ========== DARK SIDE POINTS HANDLERS ==========
-    html.find(".reduce-dsp").click(ev => {
+    // Use event delegation for dark side buttons to ensure they work in all tabs
+    html.on('click', '.reduce-dsp', (ev) => {
       ev.preventDefault();
       this._onReduceDSP();
     });
 
-    html.find(".increase-dsp").click(ev => {
+    html.on('click', '.increase-dsp', (ev) => {
       ev.preventDefault();
       this._onIncreaseDSP();
     });
 
-    html.find(".dark-inspiration").click(ev => {
+    html.on('click', '.dark-inspiration', (ev) => {
       ev.preventDefault();
       this._onDarkInspiration();
+    });
+
+    // Dark side segment click - set DSP to the clicked segment
+    html.on('click', '.dark-side-segment', (ev) => {
+      ev.preventDefault();
+      const segment = ev.currentTarget.dataset.segment;
+      if (segment !== undefined) {
+        this._onSetDarkSideScore(parseInt(segment, 10));
+      }
     });
 
     // ========== FEAT VARIABLE SLIDER (uses change event, not click) ==========
@@ -478,6 +488,12 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     html.find(".import-character-btn").click(ev => {
       ev.preventDefault();
       this._onImportCharacter();
+    });
+
+    // ========== BIOGRAPHY TAB HANDLERS ==========
+    html.find(".choose-background-btn").click(ev => {
+      ev.preventDefault();
+      this._onChooseBackground();
     });
 
     SWSELogger.log("SWSE | Character sheet listeners activated (all handlers wired)");
@@ -1119,6 +1135,27 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
   /**
+   * Set DSP to a specific value (from clicking dark side segment)
+   * @param {number} value - The target dark side score
+   */
+  async _onSetDarkSideScore(value) {
+    const actor = this.actor;
+    const system = actor.system;
+    const wis = system.attributes?.wis?.total ?? 10;
+    const mult = game.settings.get("foundryvtt-swse", "darkSideMaxMultiplier") || 1;
+    const maxDS = Math.max(wis * mult, 1);
+
+    // Clamp value between 0 and max
+    const newDSP = Math.max(0, Math.min(value, maxDS));
+    const currentDSP = system.darkSideScore || 0;
+
+    if (newDSP === currentDSP) return; // No change
+
+    await actor.update({ "system.darkSideScore": newDSP });
+    ui.notifications.info(`Dark Side Points set to ${newDSP}.`);
+  }
+
+  /**
    * Open dark inspiration dialog showing dark side force powers
    */
   async _onDarkInspiration() {
@@ -1193,6 +1230,67 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   /**
    * Export character data to JSON file
    */
+  /**
+   * Helper method to download a file using modern File System Access API with fallback
+   * @param {string} content - The file content
+   * @param {string} filename - The suggested filename
+   * @param {string} mimeType - The MIME type (e.g., 'application/json')
+   * @returns {Promise<boolean>} - Whether the download was successful
+   */
+  async _downloadFile(content, filename, mimeType = 'application/json') {
+    // Try modern File System Access API first (provides native save dialog)
+    if ('showSaveFilePicker' in window) {
+      try {
+        const extension = filename.split('.').pop() || 'json';
+        const handle = await window.showSaveFilePicker({
+          suggestedName: filename,
+          types: [{
+            description: `${extension.toUpperCase()} Files`,
+            accept: { [mimeType]: [`.${extension}`] }
+          }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(content);
+        await writable.close();
+        return true;
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          // User cancelled the save dialog
+          return false;
+        }
+        // Fall through to blob download on other errors
+        console.warn('File System Access API failed, using fallback download', err);
+      }
+    }
+
+    // Fallback: Use data URI for direct download (more reliable than blob URLs)
+    try {
+      const link = document.createElement('a');
+      // Use base64 data URI which works more reliably across browsers
+      const base64 = btoa(unescape(encodeURIComponent(content)));
+      link.href = `data:${mimeType};base64,${base64}`;
+      link.download = filename;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return true;
+    } catch (err) {
+      console.error('Data URI download failed:', err);
+      // Last resort: blob URL
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      return true;
+    }
+  }
+
   async _onExportCharacterJSON() {
     try {
       // Get complete actor data including all embedded items
@@ -1215,27 +1313,16 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       // Convert to JSON string with nice formatting
       const jsonString = JSON.stringify(exportData, null, 2);
 
-      // Create a blob from the JSON string
-      const blob = new Blob([jsonString], { type: 'application/json' });
-
-      // Create a download link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-
       // Generate filename with character name and timestamp
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
       const safeName = actorData.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-      link.download = `${safeName}_${timestamp}.json`;
+      const filename = `${safeName}_${timestamp}.json`;
 
-      link.href = url;
-      document.body.appendChild(link);
-      link.click();
-
-      // Cleanup
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      ui.notifications.info(`Exported ${actorData.name} to JSON`);
+      // Download using improved method
+      const success = await this._downloadFile(jsonString, filename, 'application/json');
+      if (success) {
+        ui.notifications.info(`Exported ${actorData.name} to JSON`);
+      }
     } catch (error) {
       console.error("Error exporting character:", error);
       ui.notifications.error("Failed to export character. See console for details.");
@@ -1318,23 +1405,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       // Convert to JSON string with nice formatting
       const jsonString = JSON.stringify(template, null, 2);
 
-      // Create a blob from the JSON string
-      const blob = new Blob([jsonString], { type: 'application/json' });
-
-      // Create a download link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-
-      link.download = 'swse_character_template.json';
-      link.href = url;
-      document.body.appendChild(link);
-      link.click();
-
-      // Cleanup
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      ui.notifications.info('Character template downloaded');
+      // Download using improved method
+      const success = await this._downloadFile(jsonString, 'swse_character_template.json', 'application/json');
+      if (success) {
+        ui.notifications.info('Character template downloaded');
+      }
     } catch (error) {
       console.error("Error exporting template:", error);
       ui.notifications.error("Failed to export template. See console for details.");
@@ -1351,6 +1426,22 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     } catch (error) {
       console.error("Error opening import wizard:", error);
       ui.notifications.error("Failed to open import wizard. See console for details.");
+    }
+  }
+
+  /**
+   * Open background selection dialog
+   * Opens the character generator with the background step pre-selected
+   */
+  async _onChooseBackground() {
+    try {
+      const CharacterGeneratorImproved = (await import('../../apps/chargen-improved.js')).default;
+      const chargen = new CharacterGeneratorImproved(this.actor);
+      chargen.currentStep = 'background';
+      chargen.render(true);
+    } catch (err) {
+      console.warn("Failed to open background selector:", err);
+      ui.notifications.error("Failed to open background selection. Please try again.");
     }
   }
 
