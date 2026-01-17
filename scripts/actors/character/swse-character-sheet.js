@@ -1383,8 +1383,8 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     const item = this.actor.items.get(id);
     if (!item) return ui.notifications.error("Weapon not found.");
 
-    // Use proper SWSERoll system for correct attack bonus calculation
-    return SWSERoll.rollAttack(this.actor, item);
+    // Use proper SWSERoll system with dialog to confirm bonuses and add modifiers
+    return SWSERoll.rollAttack(this.actor, item, { showDialog: true });
   }
 
   // Damage Roll
@@ -1393,8 +1393,8 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     const item = this.actor.items.get(id);
     if (!item) return ui.notifications.error("Weapon not found.");
 
-    // Use proper SWSERoll system for correct damage calculation
-    return SWSERoll.rollDamage(this.actor, item);
+    // Use proper SWSERoll system with dialog to confirm bonuses and add modifiers
+    return SWSERoll.rollDamage(this.actor, item, { showDialog: true });
   }
 
   // Use the Force Roll
@@ -2266,16 +2266,16 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
    * Roll a basic skill check
    */
   async _onSkillRoll(skillKey) {
-    // Use proper SWSERoll system for skill checks
-    return SWSERoll.rollSkill(this.actor, skillKey);
+    // Use proper SWSERoll system with dialog to confirm bonuses and add modifiers
+    return SWSERoll.rollSkill(this.actor, skillKey, { showDialog: true });
   }
 
   /**
    * Roll a specific action for a skill (skill-action-card)
    */
   async _onSkillActionRoll(skillKey, actionName) {
-    // Use proper SWSERoll system for skill checks (same roll as base skill)
-    return SWSERoll.rollSkill(this.actor, skillKey);
+    // Use proper SWSERoll system with dialog to confirm bonuses and add modifiers
+    return SWSERoll.rollSkill(this.actor, skillKey, { showDialog: true });
   }
 
   /**
