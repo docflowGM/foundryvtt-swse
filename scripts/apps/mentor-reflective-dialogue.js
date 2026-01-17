@@ -28,7 +28,8 @@ import {
   inferRole,
   setCommittedPath,
   setTargetClass,
-  updateInferredRole
+  updateInferredRole,
+  detectPathDivergence
 } from '../engine/mentor-memory.js';
 
 import {
@@ -143,6 +144,31 @@ function generateWhoAmIBecoming(actor, mentor, personality, memory, dspInfo) {
       `You are becoming a ${roleDesc}, yet the darkness threatens to eclipse that identity.`);
   }
 
+  // Check for path divergence (stated intent vs actual choices)
+  const divergence = detectPathDivergence(memory, role);
+  let divergenceFeedback = "";
+
+  if (divergence.hasDivergence) {
+    const committedDesc = memory.committedPath === 'guardian' ? 'guardian' :
+                         memory.committedPath === 'striker' ? 'striker' :
+                         'controller';
+
+    if (divergence.severity === 1) {
+      // Subtle divergence - still forming
+      divergenceFeedback = getMentorVoice(personality, "suggestion",
+        `_You once spoke of becoming a ${committedDesc}. Your current path does not yet confirm that choice._`);
+    } else {
+      // Clear divergence - evident mismatch
+      if (dspInfo.saturation > 0.5) {
+        divergenceFeedback = getMentorVoice(personality, "suggestion",
+          `_Intent does not protect you if your actions no longer match it._`);
+      } else {
+        divergenceFeedback = getMentorVoice(personality, "suggestion",
+          `_Your choices are moving away from what you once valued. That may be growth—or avoidance._`);
+      }
+    }
+  }
+
   // Suggestion: Role-specific insight
   const roleInsights = {
     guardian: "Your instinct is to protect. Lean into that strength. Cultivate durability, tactics, and presence.",
@@ -150,12 +176,15 @@ function generateWhoAmIBecoming(actor, mentor, personality, memory, dspInfo) {
     controller: "Your instinct is to command the flow of power. Develop awareness, technique, and will."
   };
 
-  suggestion = getMentorVoice(personality, "suggestion", roleInsights[role.primary] || roleInsights.guardian);
+  suggestion = divergenceFeedback || getMentorVoice(personality, "suggestion", roleInsights[role.primary] || roleInsights.guardian);
 
   // Respect clause: Acknowledge uncertainty
   if (memory.roleConfidence < 0.6) {
     respectClause = getMentorVoice(personality, "respectClause",
       "Your path still shifts beneath your feet. This will become clearer as you progress.");
+  } else if (divergence.hasDivergence) {
+    respectClause = getMentorVoice(personality, "respectClause",
+      "Only you know whether this is a true change of heart or something else entirely.");
   } else {
     respectClause = getMentorVoice(personality, "respectClause",
       "But you walk your own path. Trust what resonates with your spirit.");

@@ -374,6 +374,44 @@ export function formatMentorMemory(memory) {
 }
 
 /**
+ * Detect divergence between committed path and current inferred role
+ * Returns severity level and whether feedback should be given
+ *
+ * @param {MentorMemory} memory - The mentor memory
+ * @param {object} roleInfo - Role inference result { primary, secondary, confidence }
+ * @returns {object} { hasDivergence, severity, reason }
+ */
+export function detectPathDivergence(memory, roleInfo) {
+  if (!memory?.committedPath || !roleInfo?.primary || memory.commitmentStrength < 0.5) {
+    return { hasDivergence: false, severity: 0, reason: null };
+  }
+
+  if (memory.committedPath === roleInfo.primary) {
+    return { hasDivergence: false, severity: 0, reason: null };
+  }
+
+  // Divergence exists - determine severity
+  const confidenceThreshold = 0.6;
+  const hasHighConfidence = roleInfo.confidence >= confidenceThreshold;
+
+  if (!hasHighConfidence) {
+    // Role still shifting - low severity feedback
+    return {
+      hasDivergence: true,
+      severity: 1, // subtle
+      reason: "shifting"
+    };
+  }
+
+  // Clear divergence - moderate severity
+  return {
+    hasDivergence: true,
+    severity: 2, // evident
+    reason: "clear"
+  };
+}
+
+/**
  * Seed mentor memory from L1 survey answers
  * Maps survey biases to mentor memory initial state so dialogue feels personalized
  *
