@@ -9,6 +9,7 @@
 
 import { MENTORS } from './mentor-dialogues.js';
 import { TypingAnimation } from '../utils/typing-animation.js';
+import { swseLogger } from '../utils/logger.js';
 
 /**
  * Survey questions with mentor voice variants
@@ -539,8 +540,14 @@ export class MentorSurvey {
    * @returns {Promise<boolean>} true if player accepts survey, false otherwise
    */
   static async promptSurvey(actor, mentorName) {
+    swseLogger.log(`[MENTOR-SURVEY] promptSurvey: START - Actor: ${actor.id} (${actor.name}), Mentor: "${mentorName}"`);
     const mentor = MENTORS[mentorName];
-    if (!mentor) return false;
+    if (!mentor) {
+      swseLogger.error(`[MENTOR-SURVEY] ERROR: Mentor not found: "${mentorName}"`);
+      swseLogger.error(`[MENTOR-SURVEY] Available mentors:`, Object.keys(MENTORS));
+      return false;
+    }
+    swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Mentor found: "${mentor.name}" (${mentor.title})`);
 
     return new Promise((resolve) => {
       const dialog = new Dialog(
@@ -605,18 +612,28 @@ export class MentorSurvey {
    * @returns {Promise<Object>} The survey answers or null if dismissed
    */
   static async showSurvey(actor, classKey, mentorName) {
+    swseLogger.log(`[MENTOR-SURVEY] showSurvey: START - Actor: ${actor.id} (${actor.name}), Class: "${classKey}", Mentor: "${mentorName}"`);
     const mentor = MENTORS[mentorName];
     const questions = MENTOR_VOICED_SURVEY[classKey];
 
-    if (!mentor || !questions) return null;
+    swseLogger.log(`[MENTOR-SURVEY] showSurvey: Mentor lookup:`, mentor ? 'FOUND' : 'NOT FOUND');
+    swseLogger.log(`[MENTOR-SURVEY] showSurvey: Questions for "${classKey}":`, questions ? `FOUND (${Object.keys(questions).length} questions)` : 'NOT FOUND');
+
+    if (!mentor || !questions) {
+      swseLogger.error(`[MENTOR-SURVEY] ERROR: Mentor or questions not found for ${classKey}/${mentorName}`);
+      return null;
+    }
 
     return new Promise((resolve) => {
       const questionIds = Object.keys(questions);
       const answers = {};
+      swseLogger.log(`[MENTOR-SURVEY] showSurvey: Starting survey with ${questionIds.length} questions:`, questionIds);
 
       const renderQuestion = (index) => {
         if (index >= questionIds.length) {
           // All questions answered
+          swseLogger.log(`[MENTOR-SURVEY] showSurvey: All questions answered, resolving survey`);
+          swseLogger.log(`[MENTOR-SURVEY] showSurvey: Survey answers:`, Object.keys(answers));
           resolve(answers);
           return;
         }
@@ -625,6 +642,7 @@ export class MentorSurvey {
         const questionData = questions[questionId];
         const question = questionData.question(mentor);
         const answerOptions = questionData.answers;
+        swseLogger.log(`[MENTOR-SURVEY] showSurvey: Rendering question ${index + 1}/${questionIds.length} - ID: "${questionId}"`);
 
         const answerHtml = answerOptions
           .map(
@@ -650,6 +668,7 @@ export class MentorSurvey {
                 label: index === questionIds.length - 1 ? "Finish" : "Next",
                 callback: (html) => {
                   const selectedIndex = parseInt(html.find('input[name="answer"]:checked').val(), 10);
+                  swseLogger.log(`[MENTOR-SURVEY] showSurvey: Answer selected for question ${index + 1} - index: ${selectedIndex}`);
                   if (selectedIndex !== undefined) {
                     answers[questionId] = {
                       questionId: questionId,
@@ -657,8 +676,10 @@ export class MentorSurvey {
                       answerText: answerOptions[selectedIndex].text,
                       biases: answerOptions[selectedIndex].biases
                     };
+                    swseLogger.log(`[MENTOR-SURVEY] showSurvey: Answer recorded - "${answerOptions[selectedIndex].text}", biases:`, answerOptions[selectedIndex].biases);
                     renderQuestion(index + 1);
                   } else {
+                    swseLogger.warn(`[MENTOR-SURVEY] WARNING: No answer selected for question ${index + 1}`);
                     ui.notifications.warn("Please select an answer before continuing.");
                   }
                 }
@@ -700,20 +721,28 @@ export class MentorSurvey {
    * @returns {Object} Compiled biases for BuildIntent
    */
   static processSurveyAnswers(surveyAnswers) {
+    swseLogger.log(`[MENTOR-SURVEY] processSurveyAnswers: Processing survey answers`);
+    swseLogger.log(`[MENTOR-SURVEY] processSurveyAnswers: Questions answered:`, surveyAnswers ? Object.keys(surveyAnswers).length : 0);
+
     const biases = {};
 
-    if (!surveyAnswers) return biases;
+    if (!surveyAnswers) {
+      swseLogger.log(`[MENTOR-SURVEY] processSurveyAnswers: No survey answers provided, returning empty biases`);
+      return biases;
+    }
 
     // Aggregate all biases from answers
     for (const answerId in surveyAnswers) {
       const answer = surveyAnswers[answerId];
       const answerBiases = answer.biases || {};
+      swseLogger.log(`[MENTOR-SURVEY] processSurveyAnswers: "${answerId}" - biases:`, answerBiases);
 
       for (const biasKey in answerBiases) {
         biases[biasKey] = (biases[biasKey] || 0) + answerBiases[biasKey];
       }
     }
 
+    swseLogger.log(`[MENTOR-SURVEY] processSurveyAnswers: Final compiled biases:`, biases);
     return biases;
   }
 
@@ -724,13 +753,23 @@ export class MentorSurvey {
    * @param {Object} biases - The processed biases
    */
   static async storeSurveyData(actor, surveyAnswers, biases) {
+    swseLogger.log(`[MENTOR-SURVEY] storeSurveyData: START - Actor: ${actor.id} (${actor.name})`);
+    swseLogger.log(`[MENTOR-SURVEY] storeSurveyData: Storing ${Object.keys(surveyAnswers || {}).length} survey answers`);
+    swseLogger.log(`[MENTOR-SURVEY] storeSurveyData: Storing biases:`, biases);
+
     const updates = {
       "system.swse.mentorBuildIntentBiases": biases,
       "system.swse.mentorSurveyCompleted": true,
       "system.swse.surveyResponses": surveyAnswers
     };
 
-    await actor.update(updates);
+    try {
+      await actor.update(updates);
+      swseLogger.log(`[MENTOR-SURVEY] storeSurveyData: Survey data stored successfully`);
+    } catch (err) {
+      swseLogger.error(`[MENTOR-SURVEY] ERROR storing survey data:`, err);
+      throw err;
+    }
   }
 
   /**
@@ -739,7 +778,9 @@ export class MentorSurvey {
    * @returns {Object} The stored biases or empty object
    */
   static getMentorBiases(actor) {
-    return actor.system?.swse?.mentorBuildIntentBiases || {};
+    const biases = actor.system?.swse?.mentorBuildIntentBiases || {};
+    swseLogger.log(`[MENTOR-SURVEY] getMentorBiases: Retrieved biases for actor ${actor.id}:`, biases);
+    return biases;
   }
 
   /**
@@ -748,6 +789,8 @@ export class MentorSurvey {
    * @returns {boolean}
    */
   static hasSurveyBeenCompleted(actor) {
-    return actor.system?.swse?.mentorSurveyCompleted === true;
+    const completed = actor.system?.swse?.mentorSurveyCompleted === true;
+    swseLogger.log(`[MENTOR-SURVEY] hasSurveyBeenCompleted: Actor ${actor.id} (${actor.name}) - ${completed ? 'COMPLETED' : 'NOT COMPLETED'}`);
+    return completed;
   }
 }
