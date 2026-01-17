@@ -214,6 +214,8 @@ export class SWSEStore extends FormApplication {
       categories: categories,
       credits: actorCredits,
       isGM: isGMUser,
+      cart: this.cart,
+      cartTotal: this.cartTotal,
       rendarrWelcome: getRendarrLine("welcome"),
       rendarrImage: "modules/foundryvtt-swse/images/rendarr.webp"
     };
