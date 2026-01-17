@@ -22,11 +22,14 @@ import { calculateMaxForcePoints, initializeActorForcePoints } from '../../data/
 export async function _onSelectClass(event) {
   event.preventDefault();
   const className = event.currentTarget.dataset.class;
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: START - Selected class: "${className}"`);
 
   // If changing class after initial selection, confirm with user
   if (this.characterData.classes && this.characterData.classes.length > 0) {
     const currentClass = this.characterData.classes[0].name;
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Current class: "${currentClass}"`);
     if (currentClass !== className) {
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Class change detected, requesting user confirmation...`);
       const confirmed = await Dialog.confirm({
         title: "Change Class?",
         content: `
@@ -43,39 +46,50 @@ export async function _onSelectClass(event) {
         `,
         defaultYes: false
       });
-      if (!confirmed) return;
+      if (!confirmed) {
+        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User cancelled class change`);
+        return;
+      }
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User confirmed class change`);
     }
   }
 
   // Get normalized class definition from SSOT
   // Ensure ClassesDB is built
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Checking ClassesDB build status: ${ClassesDB.isBuilt}`);
   if (!ClassesDB.isBuilt) {
-    SWSELogger.error(`CharGen | ClassesDB not built yet`);
+    SWSELogger.error(`[CHARGEN-CLASS] ERROR: ClassesDB not built yet!`);
+    SWSELogger.error(`[CHARGEN-CLASS] ClassesDB state:`, { isBuilt: ClassesDB.isBuilt, type: typeof ClassesDB });
     ui.notifications.error(`Class data not ready. Please wait a moment and try again.`);
     return;
   }
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ClassesDB is built, looking up class...`);
 
   const classDef = ClassesDB.byName(className);
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ClassesDB.byName("${className}") returned:`, classDef ? 'FOUND' : 'NOT FOUND');
   if (!classDef) {
-    SWSELogger.error(`CharGen | Class not found in ClassesDB: ${className}`);
+    SWSELogger.error(`[CHARGEN-CLASS] ERROR: Class not found in ClassesDB: "${className}"`);
+    SWSELogger.error(`[CHARGEN-CLASS] Available classes in ClassesDB:`, ClassesDB.all ? ClassesDB.all.map(c => c.name) : 'ClassesDB.all not available');
     ui.notifications.error(`Class "${className}" not found.`);
     return;
   }
 
-  SWSELogger.log(`CharGen | Using normalized class definition:`, classDef);
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Using normalized class definition:`, classDef);
 
   // For backward compatibility, also get the raw class doc for features
   const classDoc = this._packs.classes.find(c => c.name === className || c._id === className);
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Raw class doc lookup result:`, classDoc ? 'FOUND' : 'NOT FOUND');
   if (!classDoc) {
-    SWSELogger.warn(`CharGen | Could not find raw class doc for features (non-fatal)`);
+    SWSELogger.warn(`[CHARGEN-CLASS] WARNING: Could not find raw class doc for features (non-fatal)`);
   }
 
   // Clear any existing classes and add the selected one
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Clearing existing classes and adding new one...`);
   this.characterData.classes = [];
   this.characterData.classes.push({ name: className, level: 1 });
 
   // DIAGNOSTIC: Verify class was stored correctly
-  SWSELogger.log(`CharGen | CRITICAL - Class selection stored:`, {
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CRITICAL - Class selection stored:`, {
     className: className,
     classesArray: JSON.stringify(this.characterData.classes),
     classesLength: this.characterData.classes.length,
@@ -84,9 +98,11 @@ export async function _onSelectClass(event) {
   });
 
   // Validate class document has required properties
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Validating class document...`);
   const validation = validateClassDocument(classDoc);
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Validation result:`, { valid: validation.valid, missing: validation.missing, warnings: validation.warnings });
   if (!validation.valid) {
-    SWSELogger.error(`CharGen | Class document missing required properties:`, validation.missing);
+    SWSELogger.error(`[CHARGEN-CLASS] ERROR: Class document missing required properties:`, validation.missing);
     ui.notifications.error(`Class "${className}" is missing required data: ${validation.missing.join(', ')}`);
     return;
   }
@@ -94,49 +110,65 @@ export async function _onSelectClass(event) {
   // Log any warnings (non-blocking issues like missing talent trees)
   if (validation.warnings) {
     validation.warnings.forEach(warning => {
-      SWSELogger.warn(`CharGen | ${warning}`);
+      SWSELogger.warn(`[CHARGEN-CLASS] WARNING: ${warning}`);
     });
   }
 
   // Set class-based values using normalized class definition
   // Base Attack Bonus - calculate actual BAB for level 1 based on progression type
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Calculating BAB - babProgression: ${classDef.babProgression}`);
   const babMultipliers = { 'fast': 1.0, 'high': 1.0, 'medium': 0.75, 'slow': 0.5, 'low': 0.5 };
   const multiplier = babMultipliers[classDef.babProgression] || 0.75;
   this.characterData.bab = Math.floor(1 * multiplier); // Level 1 BAB
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: BAB calculated: ${this.characterData.bab} (multiplier: ${multiplier})`);
 
   // Hit Points (3 times hit die + CON mod at level 1 per SWSE rules)
   const hitDie = classDef.hitDie;
   const conMod = this.characterData.abilities?.con?.mod || 0;
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Calculating HP - hitDie: ${hitDie}, CON mod: ${conMod}`);
   this.characterData.hp.max = (hitDie * 3) + conMod; // Level 1 HP is 3x hit die + CON mod (SWSE heroic rule)
   this.characterData.hp.value = this.characterData.hp.max;
 
-  SWSELogger.log(`CharGen | HP calculation: (${hitDie} × 3) + ${conMod} = ${this.characterData.hp.max}`);
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: HP calculation: (${hitDie} × 3) + ${conMod} = ${this.characterData.hp.max}`);
 
   // Defense bonuses - NOTE: compendium uses 'fortitude', actor uses 'fort'
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Setting defense bonuses...`);
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Defense data from classDef:`, classDef.defenses);
   if (this.characterData.defenses) {
     if (this.characterData.defenses.fort) {
       this.characterData.defenses.fort.classBonus = classDef.defenses.fortitude;
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Set fort.classBonus = ${classDef.defenses.fortitude}`);
     }
     if (this.characterData.defenses.reflex) {
       this.characterData.defenses.reflex.classBonus = classDef.defenses.reflex;
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Set reflex.classBonus = ${classDef.defenses.reflex}`);
     }
     if (this.characterData.defenses.will) {
       this.characterData.defenses.will.classBonus = classDef.defenses.will;
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Set will.classBonus = ${classDef.defenses.will}`);
     }
-    SWSELogger.log(`CharGen | Defense bonuses set: Fort=${classDef.defenses.fortitude}, Ref=${classDef.defenses.reflex}, Will=${classDef.defenses.will}`);
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Defense bonuses set: Fort=${classDef.defenses.fortitude}, Ref=${classDef.defenses.reflex}, Will=${classDef.defenses.will}`);
+  } else {
+    SWSELogger.error(`[CHARGEN-CLASS] ERROR: characterData.defenses is not initialized!`);
   }
 
   // Trained skills available (class base + INT modifier, minimum 1)
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Calculating trained skills...`);
   const classSkills = classDef.trainedSkills;
   const intMod = this.characterData.abilities.int.mod || 0;
   const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
   this.characterData.trainedSkillsAllowed = Math.max(1, classSkills + intMod + humanBonus);
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: trainedSkills: ${classSkills}, intMod: ${intMod}, humanBonus: ${humanBonus}, total: ${this.characterData.trainedSkillsAllowed}`);
 
   // Extract and store the list of class skills for filtering
   this.characterData.classSkillsList = Array.isArray(classDef.classSkills) ? classDef.classSkills : [];
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: classSkillsList loaded:`, {
+    count: this.characterData.classSkillsList.length,
+    skills: this.characterData.classSkillsList
+  });
 
-  SWSELogger.log(`CharGen | Skill trainings: ${classSkills} (class) + ${intMod} (INT) + ${humanBonus} (Human) = ${this.characterData.trainedSkillsAllowed}`);
-  SWSELogger.log(`CharGen | Class skills available for ${className}:`, {
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Skill trainings: ${classSkills} (class) + ${intMod} (INT) + ${humanBonus} (Human) = ${this.characterData.trainedSkillsAllowed}`);
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Class skills available for ${className}:`, {
     count: this.characterData.classSkillsList.length,
     skills: this.characterData.classSkillsList
   });
@@ -145,6 +177,7 @@ export async function _onSelectClass(event) {
   // This is independent of Force Sensitivity feat
   // Base = 5 for base classes, 6 for prestige (except Shaper)
   // Max = Base + floor(level / 2)
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Calculating force points...`);
   const tempActorData = {
     system: {
       level: this.characterData.level || 1

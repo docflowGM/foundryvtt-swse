@@ -327,17 +327,35 @@ export class ClassSuggestionEngine {
      * @returns {Promise<Array>} Classes with suggestion metadata attached
      */
     static async suggestClasses(classes, actor, pendingData = {}, options = {}) {
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: START - Actor: ${actor.id} (${actor.name}), classes: ${classes.length}`);
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Class names:`, classes.map(c => c.name));
+
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Building actor state...`);
         const actorState = await this._buildActorState(actor, pendingData);
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Actor state built:`, {
+            level: actorState.characterLevel,
+            bab: actorState.bab,
+            feats: actorState.ownedFeats.size,
+            talents: actorState.ownedTalents.size,
+            skills: actorState.trainedSkills.size,
+            classes: Object.keys(actorState.classes)
+        });
+
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Loading prestige prerequisites...`);
         const prestigePrereqs = await this._loadPrestigePrerequisites();
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige prerequisites loaded:`, Object.keys(prestigePrereqs).length, 'classes');
 
         const suggestions = [];
 
         for (const cls of classes) {
+            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Evaluating class "${cls.name}"...`);
             const suggestion = await this._evaluateClass(cls, actorState, prestigePrereqs, options);
 
             // Calculate bias for sorting
             const classType = cls.isPrestige ? 'prestige' : 'base';
             const bias = PRESTIGE_BIAS[classType] || 0;
+
+            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Class "${cls.name}" - tier: ${suggestion.tier}, bias: ${bias}, isSuggested: ${suggestion.tier >= CLASS_SUGGESTION_TIERS.MECHANICAL_SYNERGY}`);
 
             suggestions.push({
                 ...cls,
@@ -347,6 +365,8 @@ export class ClassSuggestionEngine {
             });
         }
 
+        const suggestedCount = suggestions.filter(s => s.isSuggested).length;
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: COMPLETE - ${suggestedCount}/${suggestions.length} classes suggested`);
         return suggestions;
     }
 
@@ -386,17 +406,21 @@ export class ClassSuggestionEngine {
      * @returns {Promise<Object>} Normalized actor state
      */
     static async _buildActorState(actor, pendingData = {}) {
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Building state for actor ${actor.id} (${actor.name})`);
+
         // Get owned feats (names, lowercased for comparison)
         const ownedFeats = new Set(
             actor.items
                 .filter(i => i.type === 'feat')
                 .map(f => f.name.toLowerCase())
         );
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Owned feats (${ownedFeats.size}):`, Array.from(ownedFeats));
 
         // Add pending feats
         (pendingData.selectedFeats || []).forEach(f => {
             ownedFeats.add((f.name || f).toLowerCase());
         });
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: After pending feats (${ownedFeats.size}):`, Array.from(ownedFeats));
 
         // Get owned talents (names, lowercased)
         const ownedTalents = new Set(
@@ -404,11 +428,13 @@ export class ClassSuggestionEngine {
                 .filter(i => i.type === 'talent')
                 .map(t => t.name.toLowerCase())
         );
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Owned talents (${ownedTalents.size}):`, Array.from(ownedTalents));
 
         // Add pending talents
         (pendingData.selectedTalents || []).forEach(t => {
             ownedTalents.add((t.name || t).toLowerCase());
         });
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: After pending talents (${ownedTalents.size}):`, Array.from(ownedTalents));
 
         // Get talent trees the character has talents from
         const talentTrees = new Set(
@@ -416,6 +442,7 @@ export class ClassSuggestionEngine {
                 .filter(i => i.type === 'talent' && i.system?.tree)
                 .map(t => t.system.tree.toLowerCase())
         );
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Talent trees (${talentTrees.size}):`, Array.from(talentTrees));
 
         // Get trained skills (skill keys)
         const trainedSkills = new Set();
@@ -425,11 +452,13 @@ export class ClassSuggestionEngine {
                 trainedSkills.add(skillKey.toLowerCase());
             }
         }
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Trained skills (${trainedSkills.size}):`, Array.from(trainedSkills));
 
         // Add pending skill training
         (pendingData.selectedSkills || []).forEach(s => {
             trainedSkills.add((s.key || s).toLowerCase());
         });
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: After pending skills (${trainedSkills.size}):`, Array.from(trainedSkills));
 
         // Get ability scores and find highest
         const abilities = actor.system?.attributes || {};
@@ -445,6 +474,7 @@ export class ClassSuggestionEngine {
                 highestAbility = abilityKey.toLowerCase();
             }
         }
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Ability scores:`, abilityScores, `- highest: ${highestAbility} (${highestScore})`);
 
         // Get character classes (names -> levels)
         const classes = {};
@@ -453,15 +483,18 @@ export class ClassSuggestionEngine {
             .forEach(c => {
                 classes[c.name] = c.system?.level || 1;
             });
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Character classes:`, classes);
 
         // Calculate current BAB
         const bab = calculateTotalBAB(actor);
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Current BAB: ${bab}`);
 
         // Get character level
         const characterLevel = actor.system?.level ||
             Object.values(classes).reduce((sum, level) => sum + level, 0);
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Character level: ${characterLevel}`);
 
-        return {
+        const actorState = {
             ownedFeats,
             ownedTalents,
             talentTrees,
@@ -475,6 +508,9 @@ export class ClassSuggestionEngine {
             // Combined set for prereq checking
             ownedPrereqs: new Set([...ownedFeats, ...ownedTalents])
         };
+
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Actor state complete`);
+        return actorState;
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -486,19 +522,25 @@ export class ClassSuggestionEngine {
      * @returns {Promise<Object>} Prerequisites object
      */
     static async _loadPrestigePrerequisites() {
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Checking cache...`);
         if (this._prestigePrereqCache) {
+            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Using cached prerequisites (${Object.keys(this._prestigePrereqCache).length} classes)`);
             return this._prestigePrereqCache;
         }
 
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Cache miss, fetching from JSON...`);
         try {
             const response = await fetch('systems/foundryvtt-swse/data/prestige-class-prerequisites.json');
             if (!response.ok) {
                 throw new Error(`Failed to load: ${response.status}`);
             }
             this._prestigePrereqCache = await response.json();
+            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Successfully loaded ${Object.keys(this._prestigePrereqCache).length} prestige class prerequisites`);
+            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Classes with prerequisites:`, Object.keys(this._prestigePrereqCache));
             return this._prestigePrereqCache;
         } catch (err) {
-            SWSELogger.error('ClassSuggestionEngine | Failed to load prestige prerequisites:', err);
+            SWSELogger.error(`[CLASS-SUGGESTION-ENGINE] ERROR: Failed to load prestige prerequisites:`, err);
+            SWSELogger.error(`[CLASS-SUGGESTION-ENGINE] Error details:`, err.message, err.stack);
             this._prestigePrereqCache = {};
             return this._prestigePrereqCache;
         }
