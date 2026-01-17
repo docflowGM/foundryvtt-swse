@@ -19,34 +19,58 @@ import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
  * @returns {boolean}
  */
 export function getsTalent(selectedClass, actor) {
-  if (!selectedClass) return false;
+  SWSELogger.log(`[LEVELUP-TALENTS] getsTalent: Checking if talent granted for class "${selectedClass?.name}"`);
+
+  if (!selectedClass) {
+    SWSELogger.log(`[LEVELUP-TALENTS] getsTalent: No class selected, returning false`);
+    return false;
+  }
 
   // NONHEROIC RULE: Nonheroic characters do not gain talents
-  if (selectedClass.system.isNonheroic) return false;
+  if (selectedClass.system.isNonheroic) {
+    SWSELogger.log(`[LEVELUP-TALENTS] getsTalent: Class "${selectedClass.name}" is nonheroic, no talent`);
+    return false;
+  }
 
   // Check house rule: talent every level
   const talentEveryLevel = game.settings.get('foundryvtt-swse', "talentEveryLevel");
+  SWSELogger.log(`[LEVELUP-TALENTS] getsTalent: talentEveryLevel setting: ${talentEveryLevel}`);
+
   if (talentEveryLevel) {
     // Check if class has talent trees available
     const trees = getTalentTrees(selectedClass);
-    return (selectedClass.system.forceSensitive || trees?.length > 0);
+    const result = (selectedClass.system.forceSensitive || trees?.length > 0);
+    SWSELogger.log(`[LEVELUP-TALENTS] getsTalent: talentEveryLevel enabled - trees: ${trees?.length}, forceSensitive: ${selectedClass.system.forceSensitive}, result: ${result}`);
+    return result;
   }
 
   const classLevel = getClassLevel(actor, selectedClass.name) + 1;
+  SWSELogger.log(`[LEVELUP-TALENTS] getsTalent: Checking level_progression for level ${classLevel}`);
 
   // Check level_progression for this class level
   const levelProgression = getClassProperty(selectedClass, 'levelProgression', []);
+  SWSELogger.log(`[LEVELUP-TALENTS] getsTalent: levelProgression:`, levelProgression ? `Found (${levelProgression.length} levels)` : 'NOT FOUND');
+
   if (!levelProgression || !Array.isArray(levelProgression)) {
     // Fallback: if no level_progression, check if class has talent trees
     const trees = getTalentTrees(selectedClass);
-    return (selectedClass.system.forceSensitive || trees?.length > 0);
+    const result = (selectedClass.system.forceSensitive || trees?.length > 0);
+    SWSELogger.log(`[LEVELUP-TALENTS] getsTalent: No levelProgression - fallback check: ${result}`);
+    return result;
   }
 
   const levelData = levelProgression.find(lp => lp.level === classLevel);
-  if (!levelData || !levelData.features) return false;
+  SWSELogger.log(`[LEVELUP-TALENTS] getsTalent: Level ${classLevel} data:`, levelData ? 'FOUND' : 'NOT FOUND');
+
+  if (!levelData || !levelData.features) {
+    SWSELogger.log(`[LEVELUP-TALENTS] getsTalent: No level data or features for level ${classLevel}`);
+    return false;
+  }
 
   // Check if this level grants a talent_choice feature
-  return levelData.features.some(f => f.type === 'talent_choice');
+  const hasTalentChoice = levelData.features.some(f => f.type === 'talent_choice');
+  SWSELogger.log(`[LEVELUP-TALENTS] getsTalent: Level ${classLevel} talent_choice features:`, hasTalentChoice ? 'YES' : 'NO', `(total features: ${levelData.features.length})`);
+  return hasTalentChoice;
 }
 
 /**
@@ -56,11 +80,16 @@ export function getsTalent(selectedClass, actor) {
  * @returns {Promise<Array>} Available talent trees
  */
 export async function getAvailableTalentTrees(selectedClass, actor) {
+  SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: START - Class: "${selectedClass?.name}", Actor: ${actor?.id}`);
+
   const talentTreeRestriction = game.settings.get('foundryvtt-swse', "talentTreeRestriction");
+  SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: talentTreeRestriction setting: "${talentTreeRestriction}"`);
+
   let availableTrees = [];
 
   if (talentTreeRestriction === "unrestricted") {
     // Free build mode: all talent trees from all talents
+    SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Unrestricted mode - loading all talent trees`);
     const talentPack = game.packs.get('foundryvtt-swse.talents');
     if (talentPack) {
       const allTalents = await talentPack.getDocuments();
@@ -72,29 +101,37 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
         }
       });
       availableTrees = Array.from(treeSet);
+      SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Unrestricted - found ${availableTrees.length} talent trees`);
+    } else {
+      SWSELogger.error(`[LEVELUP-TALENTS] ERROR: Talents compendium not found`);
     }
   } else if (talentTreeRestriction === "current") {
     // Only talent trees from the selected class
+    SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Current mode - using selected class trees only`);
     if (!selectedClass) {
-      SWSELogger.error('SWSE LevelUp | Cannot get talent trees: no class selected');
+      SWSELogger.error(`[LEVELUP-TALENTS] ERROR: Cannot get talent trees - no class selected`);
       return [];
     }
 
     availableTrees = getTalentTrees(selectedClass);
+    SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Current - Class "${selectedClass.name}" has ${availableTrees?.length || 0} talent trees:`, availableTrees);
 
     if (!availableTrees || availableTrees.length === 0) {
-      SWSELogger.warn(`SWSE LevelUp | Selected class "${selectedClass.name}" has no talent trees`);
+      SWSELogger.warn(`[LEVELUP-TALENTS] WARNING: Selected class "${selectedClass.name}" has no talent trees`);
     }
   } else {
     // Talent trees from any class the character has levels in
+    SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Multiclass mode - collecting trees from all character classes`);
     const characterClasses = getCharacterClasses(actor);
     const classPack = game.packs.get('foundryvtt-swse.classes');
+    SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Character has classes:`, Object.keys(characterClasses));
 
     for (const className of Object.keys(characterClasses)) {
       const classDoc = await classPack.index.find(c => c.name === className);
       if (classDoc) {
         const fullClass = await classPack.getDocument(classDoc._id);
         const trees = getTalentTrees(fullClass);
+        SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Class "${className}" - trees: ${trees?.length || 0}`);
         if (trees && trees.length > 0) {
           availableTrees.push(...trees);
         }
@@ -103,12 +140,15 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
 
     // Add current class trees
     const trees = getTalentTrees(selectedClass);
+    SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Current class "${selectedClass?.name}" - trees: ${trees?.length || 0}`);
     if (trees && trees.length > 0) {
       availableTrees.push(...trees);
     }
 
     // Remove duplicates
+    const beforeDedup = availableTrees.length;
     availableTrees = [...new Set(availableTrees)];
+    SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Multiclass - before dedup: ${beforeDedup}, after dedup: ${availableTrees.length}`);
   }
 
   // -----------------------------------------------------------
@@ -166,37 +206,49 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
  * @returns {Promise<Array>} Array of talent documents with optional suggestions
  */
 export async function loadTalentData(actor = null, pendingData = {}) {
+  SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: START - Actor: ${actor?.id}, pendingData keys:`, Object.keys(pendingData));
+
   const talentPack = game.packs.get('foundryvtt-swse.talents');
+  SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Talents pack lookup:`, talentPack ? 'FOUND' : 'NOT FOUND');
+
   if (!talentPack) {
-    SWSELogger.error("SWSE LevelUp | Talents compendium pack not found!");
+    SWSELogger.error(`[LEVELUP-TALENTS] ERROR: Talents compendium pack not found!`);
+    SWSELogger.error(`[LEVELUP-TALENTS] Available packs:`, Array.from(game.packs.keys()));
     ui.notifications.error("Failed to load talents compendium. Talents will not be available.", { permanent: true });
     return [];
   }
 
+  SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Fetching talents from pack...`);
   let talents = await talentPack.getDocuments();
+  SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Retrieved ${talents?.length || 0} talents from compendium`);
 
   if (!talents || talents.length === 0) {
-    SWSELogger.error("SWSE LevelUp | Talents compendium is empty!");
+    SWSELogger.error(`[LEVELUP-TALENTS] ERROR: Talents compendium is empty!`);
     ui.notifications.error("Talents compendium is empty. Please check your SWSE installation.", { permanent: true });
     return [];
   }
 
   // Apply Block/Deflect combination if house rule enabled
+  SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Applying Block/Deflect combination house rule...`);
   talents = HouseRuleTalentCombination.processBlockDeflectCombination(talents);
+  SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: After house rules: ${talents?.length || 0} talents`);
 
   // If actor provided, apply suggestion engine
   if (actor) {
+    SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Actor provided, applying talent suggestions...`);
     // Convert to plain objects for suggestion processing
     const talentObjects = talents.map(t => t.toObject ? t.toObject() : t);
 
     // Apply suggestions using coordinator API if available, otherwise fallback
     let talentsWithSuggestions = talentObjects;
     if (game.swse?.suggestions?.suggestTalents) {
+      SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Using game.swse.suggestions.suggestTalents...`);
       talentsWithSuggestions = await game.swse.suggestions.suggestTalents(
         talentObjects,
         actor,
         pendingData
       );
+      SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Suggestions applied, returned ${talentsWithSuggestions.length} talents`);
     } else {
       talentsWithSuggestions = await SuggestionEngine.suggestTalents(
         talentObjects,

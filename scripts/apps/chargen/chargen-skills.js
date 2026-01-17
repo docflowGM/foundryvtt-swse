@@ -10,12 +10,18 @@ import { SWSELogger } from '../../utils/logger.js';
 export async function _onSkillSelect(event) {
   const skillKey = event.currentTarget.dataset.skill;
   const checked = event.currentTarget.checked;
+  SWSELogger.log(`[CHARGEN-SKILLS] _onSkillSelect: Skill "${skillKey}" - checked: ${checked}`);
 
   if (!this.characterData.skills[skillKey]) {
     this.characterData.skills[skillKey] = { trained: false };
+    SWSELogger.log(`[CHARGEN-SKILLS] _onSkillSelect: Initialized skill "${skillKey}"`);
   }
 
   this.characterData.skills[skillKey].trained = checked;
+  const currentTrained = Object.values(this.characterData.skills).filter(s => s.trained).length;
+  const maxAllowed = this.characterData.trainedSkillsAllowed || 1;
+  SWSELogger.log(`[CHARGEN-SKILLS] _onSkillSelect: Updated "${skillKey}" to trained=${checked}, current: ${currentTrained}/${maxAllowed}`);
+
   await this.render();
 }
 
@@ -25,15 +31,19 @@ export async function _onSkillSelect(event) {
 export async function _onTrainSkill(event) {
   event.preventDefault();
   const skillKey = event.currentTarget.dataset.skill;
+  SWSELogger.log(`[CHARGEN-SKILLS] _onTrainSkill: START - Skill "${skillKey}"`);
 
   // Initialize skill if not exists
   if (!this.characterData.skills[skillKey]) {
     this.characterData.skills[skillKey] = { trained: false };
+    SWSELogger.log(`[CHARGEN-SKILLS] _onTrainSkill: Initialized skill "${skillKey}"`);
   }
 
   // Train the skill
   this.characterData.skills[skillKey].trained = true;
-  SWSELogger.log(`CharGen | Trained skill: ${skillKey}`);
+  const currentTrained = Object.values(this.characterData.skills).filter(s => s.trained).length;
+  const maxAllowed = this.characterData.trainedSkillsAllowed || 1;
+  SWSELogger.log(`[CHARGEN-SKILLS] _onTrainSkill: Trained skill "${skillKey}", current: ${currentTrained}/${maxAllowed}`);
   await this.render();
 }
 
@@ -43,11 +53,16 @@ export async function _onTrainSkill(event) {
 export async function _onUntrainSkill(event) {
   event.preventDefault();
   const skillKey = event.currentTarget.dataset.skill;
+  SWSELogger.log(`[CHARGEN-SKILLS] _onUntrainSkill: START - Skill "${skillKey}"`);
 
   // Untrain the skill
   if (this.characterData.skills[skillKey]) {
     this.characterData.skills[skillKey].trained = false;
-    SWSELogger.log(`CharGen | Untrained skill: ${skillKey}`);
+    const currentTrained = Object.values(this.characterData.skills).filter(s => s.trained).length;
+    const maxAllowed = this.characterData.trainedSkillsAllowed || 1;
+    SWSELogger.log(`[CHARGEN-SKILLS] _onUntrainSkill: Untrained skill "${skillKey}", current: ${currentTrained}/${maxAllowed}`);
+  } else {
+    SWSELogger.warn(`[CHARGEN-SKILLS] WARNING: _onUntrainSkill - Skill "${skillKey}" not found in characterData`);
   }
 
   await this.render();
@@ -58,13 +73,15 @@ export async function _onUntrainSkill(event) {
  */
 export async function _onResetSkills(event) {
   event.preventDefault();
+  SWSELogger.log(`[CHARGEN-SKILLS] _onResetSkills: START - Total skills:`, Object.keys(this.characterData.skills).length);
 
   // Reset all skills to untrained
+  const previousTrained = Object.values(this.characterData.skills).filter(s => s.trained).length;
   for (const skillKey in this.characterData.skills) {
     this.characterData.skills[skillKey].trained = false;
   }
 
-  SWSELogger.log("CharGen | Reset all skill selections");
+  SWSELogger.log(`[CHARGEN-SKILLS] _onResetSkills: Reset ${previousTrained} previously trained skills`);
   ui.notifications.info("All skill selections have been reset.");
   await this.render();
 }
@@ -75,12 +92,19 @@ export async function _onResetSkills(event) {
 export function _bindSkillsUI(root) {
   const doc = root || this.element[0];
   const skillsContainer = root.querySelector("#skills-list");
-  if (!skillsContainer) return;
+  SWSELogger.log(`[CHARGEN-SKILLS] _bindSkillsUI: START - skillsContainer:`, skillsContainer ? 'FOUND' : 'NOT FOUND');
+  if (!skillsContainer) {
+    SWSELogger.warn(`[CHARGEN-SKILLS] WARNING: _bindSkillsUI - skills-list container not found`);
+    return;
+  }
 
   // Ensure skills data is available
   if (!this._skillsJson || !Array.isArray(this._skillsJson)) {
-    SWSELogger.warn("CharGen | Skills data not loaded, using defaults");
+    SWSELogger.warn(`[CHARGEN-SKILLS] WARNING: Skills data not loaded, using defaults`);
     this._skillsJson = this._getDefaultSkills();
+    SWSELogger.log(`[CHARGEN-SKILLS] _bindSkillsUI: Loaded ${this._skillsJson.length} default skills`);
+  } else {
+    SWSELogger.log(`[CHARGEN-SKILLS] _bindSkillsUI: Skills JSON loaded with ${this._skillsJson.length} skills`);
   }
 
   // Maximum trained skills based on class + INT + racial bonuses
@@ -93,6 +117,7 @@ export function _bindSkillsUI(root) {
       trainedCount++;
     }
   }
+  SWSELogger.log(`[CHARGEN-SKILLS] _bindSkillsUI: Current trained skills: ${trainedCount}/${maxTrained}`);
 
   // Update counter display
   const updateCounter = () => {

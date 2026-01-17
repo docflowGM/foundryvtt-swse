@@ -20,19 +20,23 @@ let loadPromise = null;
 export async function loadClassData() {
   // Return cached data if available
   if (classDataCache) {
+    swseLogger.log(`[CLASS-DATA-LOADER] Returning cached class data: ${classDataCache.size} classes`);
     return classDataCache;
   }
 
   // If already loading, wait for that promise
   if (loadPromise) {
+    swseLogger.log('[CLASS-DATA-LOADER] Load already in progress, waiting...');
     return loadPromise;
   }
 
   // Start loading
+  swseLogger.log('[CLASS-DATA-LOADER] Starting fresh class data load...');
   loadPromise = _loadFromCompendium();
 
   try {
     classDataCache = await loadPromise;
+    swseLogger.log(`[CLASS-DATA-LOADER] Load complete with ${classDataCache.size} classes`);
     return classDataCache;
   } finally {
     loadPromise = null;
@@ -48,41 +52,52 @@ async function _loadFromCompendium() {
   const errors = [];
 
   try {
+    swseLogger.log('[CLASS-DATA-LOADER] _loadFromCompendium: Attempting to load from compendium...');
+    swseLogger.log('[CLASS-DATA-LOADER] Available packs:', game.packs ? game.packs.size : 'PACKS NOT AVAILABLE');
+
     const pack = game.packs.get('foundryvtt-swse.classes');
+    swseLogger.log(`[CLASS-DATA-LOADER] _loadFromCompendium: Pack lookup result:`, pack ? 'FOUND' : 'NOT FOUND');
 
     if (!pack) {
       const errorMsg = 'Class Data Loader: foundryvtt-swse.classes compendium not found!';
-      swseLogger.error(errorMsg);
+      swseLogger.error(`[CLASS-DATA-LOADER] ERROR: ${errorMsg}`);
+      swseLogger.error('[CLASS-DATA-LOADER] Available packs:', Array.from(game.packs.keys()));
       ui.notifications?.error(`${errorMsg} Character progression features will not work correctly. Please ensure the SWSE system is properly installed.`, { permanent: true });
       return cache;
     }
 
+    swseLogger.log('[CLASS-DATA-LOADER] _loadFromCompendium: Fetching documents from pack...');
     const docs = await pack.getDocuments();
+    swseLogger.log(`[CLASS-DATA-LOADER] _loadFromCompendium: Retrieved ${docs ? docs.length : 'null/undefined'} documents`);
 
     if (!docs || docs.length === 0) {
       const errorMsg = 'Class Data Loader: Classes compendium is empty!';
-      swseLogger.error(errorMsg);
+      swseLogger.error(`[CLASS-DATA-LOADER] ERROR: ${errorMsg}`);
       ui.notifications?.error(`${errorMsg} No classes available for character creation.`, { permanent: true });
       return cache;
     }
 
-    swseLogger.log(`Class Data Loader: Loaded ${docs.length} classes from compendium`);
+    swseLogger.log(`[CLASS-DATA-LOADER] _loadFromCompendium: Loaded ${docs.length} raw documents from compendium`);
+    swseLogger.log('[CLASS-DATA-LOADER] _loadFromCompendium: Class names:', docs.map(d => d.name));
 
     for (const doc of docs) {
       try {
+        swseLogger.log(`[CLASS-DATA-LOADER] _loadFromCompendium: Processing class "${doc.name}"...`);
         const classData = _normalizeClassData(doc);
         cache.set(doc.name, classData);
+        swseLogger.log(`[CLASS-DATA-LOADER] _loadFromCompendium: Successfully normalized "${doc.name}"`);
       } catch (normalizeErr) {
         errors.push({ class: doc.name, error: normalizeErr.message });
-        swseLogger.warn(`Class Data Loader: Failed to normalize class "${doc.name}": ${normalizeErr.message}`);
+        swseLogger.error(`[CLASS-DATA-LOADER] ERROR normalizing class "${doc.name}": ${normalizeErr.message}`, normalizeErr);
       }
     }
 
-    swseLogger.log(`Class Data Loader: Normalized ${cache.size} classes`, Array.from(cache.keys()));
+    swseLogger.log(`[CLASS-DATA-LOADER] _loadFromCompendium: Normalization complete. ${cache.size}/${docs.length} classes successfully loaded`);
+    swseLogger.log('[CLASS-DATA-LOADER] _loadFromCompendium: Successfully normalized classes:', Array.from(cache.keys()));
 
     // Report normalization errors if any occurred
     if (errors.length > 0) {
-      swseLogger.warn(`Class Data Loader: ${errors.length} class(es) had normalization issues:`, errors);
+      swseLogger.error(`[CLASS-DATA-LOADER] ERROR: ${errors.length} class(es) had normalization issues:`, errors);
       if (errors.length <= 3) {
         ui.notifications?.warn(`Some classes may not work correctly: ${errors.map(e => e.class).join(', ')}`);
       } else {
@@ -91,10 +106,12 @@ async function _loadFromCompendium() {
     }
 
   } catch (err) {
-    swseLogger.error('Class Data Loader: Failed to load classes from compendium', err);
+    swseLogger.error('[CLASS-DATA-LOADER] CRITICAL ERROR in _loadFromCompendium:', err);
+    swseLogger.error('[CLASS-DATA-LOADER] Error stack:', err.stack);
     ui.notifications?.error('Failed to load class data. Character progression may not work correctly.', { permanent: true });
   }
 
+  swseLogger.log(`[CLASS-DATA-LOADER] _loadFromCompendium: Returning cache with ${cache.size} classes`);
   return cache;
 }
 
@@ -105,15 +122,19 @@ async function _loadFromCompendium() {
  */
 function _normalizeClassData(doc) {
   const system = doc.system || {};
+  swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: Starting normalization of "${doc.name}"`);
+  swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: System data keys:`, Object.keys(system));
 
   // Parse hit die (e.g., "1d10" -> 10)
   // NOTE: Compendium may use camelCase 'hitDie' or snake_case 'hit_die'
   let hitDie = 6; // Default
   const hitDieString = system.hitDie || system.hit_die;
+  swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" hitDieString: "${hitDieString}" -> parsed to ${hitDie}`);
   if (hitDieString) {
     const match = hitDieString.match(/\d+d(\d+)/);
     if (match) {
       hitDie = parseInt(match[1], 10);
+      swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" hitDie parsed successfully: ${hitDie}`);
     }
   }
 
@@ -121,12 +142,15 @@ function _normalizeClassData(doc) {
   // NOTE: Compendium may use camelCase 'trainedSkills' or snake_case 'trained_skills'
   let skillPoints = 4; // Default
   const trainedSkillsValue = system.trainedSkills ?? system.trained_skills;
+  swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" trainedSkills raw value:`, trainedSkillsValue, '-> parsed to', skillPoints);
   if (trainedSkillsValue !== null && trainedSkillsValue !== undefined) {
     skillPoints = parseInt(trainedSkillsValue, 10) || 4;
+    swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" skillPoints: ${skillPoints}`);
   }
 
   // Map babProgression to baseAttackBonus format
   let baseAttackBonus = "medium";
+  swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" babProgression: "${system.babProgression}" -> `, baseAttackBonus);
   if (system.babProgression === "fast") {
     baseAttackBonus = "high";
   } else if (system.babProgression === "slow") {
@@ -134,6 +158,7 @@ function _normalizeClassData(doc) {
   } else if (system.babProgression === "medium") {
     baseAttackBonus = "medium";
   }
+  swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" final baseAttackBonus: ${baseAttackBonus}`);
 
   // Get flat defense bonuses from compendium
   // These are STATIC values that don't scale with level
@@ -143,19 +168,22 @@ function _normalizeClassData(doc) {
     reflex: system.defenses?.reflex || 0,
     will: system.defenses?.will || 0
   };
+  swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" defenses:`, defenses);
 
   // Parse level progression to extract features by level
   // NOTE: Compendium may use camelCase 'levelProgression' or snake_case 'level_progression'
   const levelProgression = system.levelProgression || system.level_progression || [];
   const featuresByLevel = {};
+  swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" levelProgression found:`, levelProgression ? 'YES' : 'NO', 'array length:', Array.isArray(levelProgression) ? levelProgression.length : 'N/A');
 
   // Validate that levelProgression is an array
   if (!Array.isArray(levelProgression)) {
-    swseLogger.warn(`Class Data Loader: level_progression is not an array for ${doc.name}`);
+    swseLogger.error(`[CLASS-DATA-LOADER] ERROR: level_progression is not an array for ${doc.name}, type: ${typeof levelProgression}`);
   } else {
+    swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" Processing ${levelProgression.length} level entries`);
     for (const levelData of levelProgression) {
       if (!levelData || typeof levelData !== 'object') {
-        swseLogger.warn(`Class Data Loader: Invalid level data in ${doc.name}`);
+        swseLogger.error(`[CLASS-DATA-LOADER] ERROR: Invalid level data in ${doc.name}:`, levelData);
         continue;
       }
 
@@ -166,6 +194,7 @@ function _normalizeClassData(doc) {
 
       // Extract features array
       const features = Array.isArray(levelData.features) ? levelData.features : [];
+      swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" Level ${levelKey}: ${features.length} features`);
 
       const validFeatures = features.filter(f => f && typeof f === 'object');
 
@@ -175,7 +204,9 @@ function _normalizeClassData(doc) {
         talents: validFeatures.filter(f => f.type === 'talent_choice').length,
         forcePoints: Number(levelData.force_points || 0)
       };
+      swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" Level ${levelKey} processed: ${featuresByLevel[levelKey].bonusFeats} bonus feats, ${featuresByLevel[levelKey].talents} talents, ${featuresByLevel[levelKey].forcePoints} force points`);
     }
+    swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" Total levels processed: ${Object.keys(featuresByLevel).length}`);
   }
 
   // Extract starting feats from level 1 or starting_features
@@ -185,6 +216,7 @@ function _normalizeClassData(doc) {
   const level1Data = Array.isArray(levelProgression) ? levelProgression.find(l => l && l.level === 1) : null;
   const level1Features = Array.isArray(level1Data?.features) ? level1Data.features : [];
   const startingFeats = [];
+  swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" startingFeatures found: ${startingFeatures.length}, level 1 features found: ${level1Features.length}`);
 
   // Look for automatic feats (not choices) in starting features and level 1
   const allStartingFeatures = [...startingFeatures, ...level1Features].filter(f => f && typeof f === 'object');
@@ -198,6 +230,7 @@ function _normalizeClassData(doc) {
       }
     }
   }
+  swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" startingFeats extracted:`, startingFeats);
 
   // Detect force sensitivity from multiple sources
   // 1. Explicit forceSensitive flag in system data
@@ -215,6 +248,7 @@ function _normalizeClassData(doc) {
                          system.force_sensitive === true ||
                          hasForceStartingFeat ||
                          (hasForceKeywordInName && (hasForceTalentTree || hasForceStartingFeat));
+  swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" forceSensitive: ${forceSensitive} (flag: ${system.forceSensitive || system.force_sensitive}, startingFeat: ${hasForceStartingFeat}, keyword: ${hasForceKeywordInName})`);
 
   // Detect prestige class status from multiple sources
   // 1. Explicit base_class flag (if false or missing, it's prestige)
@@ -228,6 +262,7 @@ function _normalizeClassData(doc) {
   // If it's a core class, it's definitely not prestige
   // Otherwise, check flags - prestige if explicitly flagged or if not marked as base class
   const prestigeClass = !isCoreClass && (hasPrestigeFlag || !hasBaseClassFlag);
+  swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" prestigeClass: ${prestigeClass} (coreClass: ${isCoreClass}, prestigeFlag: ${hasPrestigeFlag}, baseClassFlag: ${hasBaseClassFlag})`);
 
   // Normalize talent tree schema
   // Support multiple shapes:
@@ -242,14 +277,29 @@ function _normalizeClassData(doc) {
     [];
 
   if (!Array.isArray(talentTrees)) {
-    swseLogger.warn(`Class Data Loader: talentTrees is not an array for ${doc.name}`);
+    swseLogger.error(`[CLASS-DATA-LOADER] ERROR: talentTrees is not an array for ${doc.name}, type: ${typeof talentTrees}`);
     talentTrees = [];
   }
+  swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" talentTrees:`, talentTrees);
 
   // If a core/base class has no talent trees, warn – this usually indicates a data issue
   if (talentTrees.length === 0 && !prestigeClass) {
-    swseLogger.warn(`Class Data Loader: Class "${doc.name}" has no talent trees defined`);
+    swseLogger.warn(`[CLASS-DATA-LOADER] WARNING: Class "${doc.name}" has no talent trees defined and is not a prestige class`);
   }
+
+  swseLogger.log(`[CLASS-DATA-LOADER] _normalizeClassData: "${doc.name}" - FINAL DATA:`, {
+    name: doc.name,
+    hitDie,
+    skillPoints,
+    baseAttackBonus,
+    classSkillsCount: (system.classSkills || system.class_skills || []).length,
+    startingFeatsCount: startingFeats.length,
+    talentTreesCount: talentTrees.length,
+    defensesCount: Object.values(defenses).filter(v => v > 0).length,
+    forceSensitive,
+    prestigeClass,
+    levelProgressionLevels: Object.keys(featuresByLevel).length
+  });
 
   return {
     name: doc.name,
@@ -273,23 +323,31 @@ function _normalizeClassData(doc) {
  * @returns {Promise<Object|null>} Class data or null if not found
  */
 export async function getClassData(className) {
+  swseLogger.log(`[CLASS-DATA-LOADER] getClassData: Looking for class "${className}"`);
   const cache = await loadClassData();
+  swseLogger.log(`[CLASS-DATA-LOADER] getClassData: Cache loaded with ${cache.size} classes`);
+  swseLogger.log(`[CLASS-DATA-LOADER] getClassData: Available classes:`, Array.from(cache.keys()));
+
   const classData = cache.get(className);
 
   if (!classData) {
-    swseLogger.warn(`Class Data Loader: Class not found: ${className}`);
+    swseLogger.error(`[CLASS-DATA-LOADER] ERROR: Class not found: "${className}". Available classes:`, Array.from(cache.keys()));
+    return null;
   }
 
-  return classData || null;
+  swseLogger.log(`[CLASS-DATA-LOADER] getClassData: Successfully retrieved class "${className}"`, classData);
+  return classData;
 }
 
 /**
  * Invalidate cache (force reload on next access)
  */
 export function invalidateClassDataCache() {
-  swseLogger.log('Class Data Loader: Cache invalidated');
+  swseLogger.log('[CLASS-DATA-LOADER] invalidateClassDataCache: Clearing cache');
+  swseLogger.log(`[CLASS-DATA-LOADER] invalidateClassDataCache: Was cached: ${classDataCache !== null}, Load in progress: ${loadPromise !== null}`);
   classDataCache = null;
   loadPromise = null;
+  swseLogger.log('[CLASS-DATA-LOADER] invalidateClassDataCache: Cache cleared successfully');
 }
 
 /**
@@ -297,5 +355,7 @@ export function invalidateClassDataCache() {
  * @returns {boolean}
  */
 export function isClassDataCached() {
-  return classDataCache !== null;
+  const isCached = classDataCache !== null;
+  swseLogger.log(`[CLASS-DATA-LOADER] isClassDataCached: ${isCached}, size: ${isCached ? classDataCache.size : 0}`);
+  return isCached;
 }

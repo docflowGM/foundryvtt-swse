@@ -13,42 +13,54 @@ import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-co
 export async function _onSelectFeat(event) {
   event.preventDefault();
   const id = event.currentTarget.dataset.featid;
+  SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: START - Feat ID: "${id}"`);
 
   if (!this._packs.feats || this._packs.feats.length === 0) {
+    SWSELogger.error(`[CHARGEN-FEATS-TALENTS] ERROR: Feats pack is null or empty!`);
     ui.notifications.error("Feats data not loaded!");
-    SWSELogger.error("CharGen | Feats pack is null or empty");
     return;
   }
+  SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Feats pack loaded with ${this._packs.feats.length} feats`);
 
   const feat = this._packs.feats.find(f => f._id === id || f.name === id);
+  SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Feat lookup result:`, feat ? `FOUND - ${feat.name}` : 'NOT FOUND');
 
   if (!feat) {
+    SWSELogger.error(`[CHARGEN-FEATS-TALENTS] ERROR: Feat not found with ID: "${id}"`);
     ui.notifications.warn("Feat not found!");
     return;
   }
 
   // Check for duplicates in characterData
+  SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Checking for duplicates in characterData (${this.characterData.feats.length} existing feats)`);
   const alreadySelected = this.characterData.feats.find(f => f.name === feat.name || f._id === feat._id);
   if (alreadySelected) {
+    SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Duplicate found - "${feat.name}" already selected`);
     ui.notifications.warn(`You've already selected "${feat.name}"!`);
     return;
   }
 
   // If leveling up, also check existing actor items
   if (this.actor) {
+    SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Checking actor items for existing feat...`);
     const existsOnActor = this.actor.items.some(item =>
       item.type === 'feat' && (item.name === feat.name || item.id === feat._id)
     );
     if (existsOnActor) {
+      SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Feat already exists on actor`);
       ui.notifications.warn(`"${feat.name}" is already on your character sheet!`);
       return;
     }
+    SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Feat not on actor, proceeding...`);
   }
 
   // Check prerequisites (unless in Free Build mode)
   if (!this.freeBuild) {
+    SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Checking prerequisites (freeBuild: ${this.freeBuild})`);
+
     // Droids cannot select feats that require Force Sensitivity or Force Points
     if (this.characterData.isDroid) {
+      SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Character is a droid, checking for Force-related prerequisites...`);
       const prereqs = feat.system?.prerequisite || "";
       const preqsLower = prereqs.toLowerCase();
       if (
@@ -57,6 +69,7 @@ export async function _onSelectFeat(event) {
         preqsLower.includes("force secret") ||
         preqsLower.includes("force point")
       ) {
+        SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Droid cannot select Force feat: "${feat.name}"`);
         ui.notifications.warn(`Droids cannot select "${feat.name}" because they cannot be Force-sensitive.`);
         return;
       }
@@ -73,11 +86,16 @@ export async function _onSelectFeat(event) {
       selectedTalents: this.characterData.talents || []
     };
 
+    SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Running PrerequisiteValidator for feat "${feat.name}"`);
     const prereqCheck = PrerequisiteValidator.checkFeatPrerequisites(feat, tempActor, pendingData);
+    SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Prerequisite check result:`, prereqCheck);
+
     if (!prereqCheck.valid) {
+      SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Prerequisites NOT met for "${feat.name}":`, prereqCheck.reasons);
       ui.notifications.warn(`Cannot select "${feat.name}": ${prereqCheck.reasons.join(', ')}`);
       return;
     }
+    SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Prerequisites MET for "${feat.name}"`);
   }
 
   // Check if this is a Skill Focus feat

@@ -8,6 +8,7 @@
 
 import { TalentTreeGraph } from "./TalentTreeGraph.js";
 import { PrerequisiteEnricher } from "../utils/PrerequisiteEnricher.js";
+import { SWSELogger } from "../../utils/logger.js";
 
 export class TalentTreeRegistry {
   static trees = new Map(); // treeName → TalentTreeGraph
@@ -16,14 +17,18 @@ export class TalentTreeRegistry {
   // Build registry from compendium
   // ------------------------------------------------------------
   static async build() {
+    SWSELogger.log(`[TALENT-TREE-REGISTRY] build: START - Building talent tree registry`);
+
     const pack = game.packs.get("foundryvtt-swse.talents");
     if (!pack) {
-      console.warn("[TalentTreeRegistry] Compendium not found.");
+      SWSELogger.error(`[TALENT-TREE-REGISTRY] ERROR: Talents compendium pack not found`);
       this.trees = new Map();
       return;
     }
+    SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Talents pack located`);
 
     const docs = await pack.getDocuments();
+    SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Retrieved ${docs.length} talent documents from compendium`);
     this.trees = new Map();
 
     // Group by tree name
@@ -33,18 +38,24 @@ export class TalentTreeRegistry {
       if (!grouped[tree]) grouped[tree] = [];
       grouped[tree].push(d);
     }
+    SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Grouped talents into ${Object.keys(grouped).length} unique trees:`, Object.keys(grouped));
 
     // Build graph per tree
     for (const treeName of Object.keys(grouped)) {
+      SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Building graph for tree "${treeName}" with ${grouped[treeName].length} talents`);
       const graph = new TalentTreeGraph(treeName);
 
       // 1. Add nodes
+      let nodeCount = 0;
       for (const doc of grouped[treeName]) {
         const node = graph.addTalent(doc);
         PrerequisiteEnricher.enrich(node);
+        nodeCount++;
       }
+      SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Added ${nodeCount} nodes to tree "${treeName}"`);
 
       // 2. Link talent → required talent edges
+      let linkedCount = 0;
       for (const node of graph.nodes.values()) {
         for (const req of node.prereq) {
           if (req.type === "talent") {
@@ -53,16 +64,21 @@ export class TalentTreeRegistry {
               .find(n => n.name.toLowerCase() === targetName);
             if (requiredNode) {
               graph.linkRequirement(node.id, requiredNode.id);
+              linkedCount++;
+              SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Linked prerequisite - "${node.name}" requires "${requiredNode.name}"`);
+            } else {
+              SWSELogger.warn(`[TALENT-TREE-REGISTRY] build: WARNING - Prerequisite talent not found: "${req.name}" required by "${node.name}"`);
             }
           }
         }
       }
+      SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Created ${linkedCount} talent prerequisite links for tree "${treeName}"`);
 
       this.trees.set(treeName, graph);
     }
 
-    console.log(
-      `[TalentTreeRegistry] Loaded ${this.trees.size} trees from compendium.`
+    SWSELogger.log(
+      `[TALENT-TREE-REGISTRY] build: COMPLETE - Loaded ${this.trees.size} talent trees from compendium`
     );
   }
 
@@ -71,20 +87,35 @@ export class TalentTreeRegistry {
   // ------------------------------------------------------------
 
   static getTreeNames() {
-    return [...this.trees.keys()];
+    const names = [...this.trees.keys()];
+    SWSELogger.log(`[TALENT-TREE-REGISTRY] getTreeNames: Retrieved ${names.length} tree names:`, names);
+    return names;
   }
 
   static getTree(name) {
-    return this.trees.get(name);
+    SWSELogger.log(`[TALENT-TREE-REGISTRY] getTree: Looking up tree "${name}"`);
+    const tree = this.trees.get(name);
+    if (tree) {
+      SWSELogger.log(`[TALENT-TREE-REGISTRY] getTree: Tree "${name}" FOUND with ${tree.nodes.size} nodes`);
+    } else {
+      SWSELogger.warn(`[TALENT-TREE-REGISTRY] getTree: Tree "${name}" NOT FOUND. Available trees:`, [...this.trees.keys()]);
+    }
+    return tree;
   }
 
   static getTalentByName(name) {
+    SWSELogger.log(`[TALENT-TREE-REGISTRY] getTalentByName: Searching for talent "${name}" across ${this.trees.size} trees`);
     const lower = name.toLowerCase();
-    for (const graph of this.trees.values()) {
+    for (const graphName of this.trees.keys()) {
+      const graph = this.trees.get(graphName);
       for (const node of graph.nodes.values()) {
-        if (node.name.toLowerCase() === lower) return node;
+        if (node.name.toLowerCase() === lower) {
+          SWSELogger.log(`[TALENT-TREE-REGISTRY] getTalentByName: Found talent "${name}" in tree "${graphName}"`);
+          return node;
+        }
       }
     }
+    SWSELogger.warn(`[TALENT-TREE-REGISTRY] getTalentByName: Talent "${name}" NOT FOUND in any tree`);
     return null;
   }
 }

@@ -73,37 +73,53 @@ function getClassMetadata(className) {
  */
 export async function getAvailableClasses(actor, pendingData, options = {}) {
   const { includeSuggestions = true } = options;
+  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: START - Actor: ${actor.id} (${actor.name}), includeSuggestions: ${includeSuggestions}`);
 
   const classPack = game.packs.get('foundryvtt-swse.classes');
+  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Classes pack lookup:`, classPack ? 'FOUND' : 'NOT FOUND');
   if (!classPack) {
-    SWSELogger.error("SWSE LevelUp | Classes compendium pack not found!");
+    SWSELogger.error(`[LEVELUP-CLASS] ERROR: Classes compendium pack not found!`);
+    SWSELogger.error(`[LEVELUP-CLASS] Available packs:`, Array.from(game.packs.keys()));
     ui.notifications.error("Failed to load classes compendium. Classes will not be available.");
     return [];
   }
 
+  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Fetching all classes from pack...`);
   const allClasses = await classPack.getDocuments();
+  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Total classes in pack: ${allClasses.length}`);
+  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Class names:`, allClasses.map(c => c.name));
   const availableClasses = [];
 
   // Load all skills for validation
+  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Loading skills pack for validation...`);
   const skillPack = game.packs.get('foundryvtt-swse.skills');
   const allSkills = skillPack ? await skillPack.getDocuments() : [];
   const skillNames = allSkills.map(s => s.name);
+  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Skills loaded: ${allSkills.length} skills`);
 
   // Check prerequisites for each class
+  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Checking prerequisites for each class...`);
   for (const classDoc of allClasses) {
+    SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Processing class "${classDoc.name}"...`);
     const isBase = isBaseClass(classDoc.name) || classDoc.system.baseClass === true;
+    SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classDoc.name}" - isBase: ${isBase}`);
 
     // meetsClassPrerequisites is now async (loads from JSON)
-    if (await meetsClassPrerequisites(classDoc, actor, pendingData)) {
+    const meetsPrereqs = await meetsClassPrerequisites(classDoc, actor, pendingData);
+    SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classDoc.name}" - meetsPrerequisites: ${meetsPrereqs}`);
+
+    if (meetsPrereqs) {
 
       // ------------------------------------------------------------
       // VALIDATE CLASS SKILLS
       // NOTE: Compendium may use camelCase 'classSkills' or snake_case 'class_skills'
       // ------------------------------------------------------------
       const classSkills = classDoc.system?.classSkills || classDoc.system?.class_skills || [];
+      SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classDoc.name}" - classSkills:`, classSkills);
 
       for (const skill of classSkills) {
         if (!skillNames.includes(skill)) {
+          SWSELogger.error(`[LEVELUP-CLASS] ERROR: "${classDoc.name}" lists "${skill}" as a class skill, but this skill does NOT exist!`);
           warnGM(
             `${classDoc.name} lists "${skill}" as a class skill, but this skill does NOT exist in skills.db`
           );
@@ -121,45 +137,62 @@ export async function getAvailableClasses(actor, pendingData, options = {}) {
         icon: metadata.icon,
         description: metadata.description
       });
+      SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classDoc.name}" - ADDED to available classes`);
+    } else {
+      SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classDoc.name}" - FILTERED OUT (prerequisite not met)`);
     }
   }
+  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Total available classes after filtering: ${availableClasses.length}`);
 
   // Apply class suggestions if enabled and character is level 1+
+  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Checking if suggestions should be applied (includeSuggestions: ${includeSuggestions}, level: ${actor.system?.level || 0})`);
   if (includeSuggestions && (actor.system?.level || 0) >= 1) {
     try {
       // Use the coordinator API for suggestions
+      SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Attempting to apply class suggestions...`);
       let classesWithSuggestions = availableClasses;
+
       if (game.swse?.suggestions?.suggestClasses) {
+        SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Using game.swse.suggestions.suggestClasses...`);
         classesWithSuggestions = await game.swse.suggestions.suggestClasses(
           availableClasses,
           actor,
           pendingData
         );
+        SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Suggestions applied via coordinator API`);
       } else {
         // Fallback to direct engine call
+        SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Using ClassSuggestionEngine.suggestClasses directly...`);
         classesWithSuggestions = await ClassSuggestionEngine.suggestClasses(
           availableClasses,
           actor,
           pendingData
         );
+        SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Suggestions applied via direct engine call`);
       }
 
       // Sort by suggestion tier
+      SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Sorting classes by suggestion tier...`);
       const sortedClasses = ClassSuggestionEngine.sortBySuggestion(classesWithSuggestions);
 
-      SWSELogger.log('SWSE LevelUp | Class suggestions applied', {
+      const suggestedCount = sortedClasses.filter(c => c.isSuggested).length;
+      SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Class suggestions applied`, {
         totalClasses: sortedClasses.length,
-        suggested: sortedClasses.filter(c => c.isSuggested).length
+        suggested: suggestedCount,
+        classes: sortedClasses.map(c => ({ name: c.name, isSuggested: c.isSuggested }))
       });
 
       return sortedClasses;
     } catch (err) {
-      SWSELogger.error('SWSE LevelUp | Failed to apply class suggestions:', err);
+      SWSELogger.error(`[LEVELUP-CLASS] ERROR: Failed to apply class suggestions:`, err);
+      SWSELogger.error(`[LEVELUP-CLASS] Error stack:`, err.stack);
       // Fall back to unsorted classes
+      SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Falling back to unsorted classes`);
       return availableClasses;
     }
   }
 
+  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Skipping suggestions (returning ${availableClasses.length} classes without suggestions)`);
   return availableClasses;
 }
 
