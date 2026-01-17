@@ -346,7 +346,8 @@ export class PrerequisiteValidator {
      * Legacy feat prerequisite checking
      */
     static _checkLegacyFeatPrerequisites(feat, actor, pendingData = {}) {
-        const prereqString = feat.system?.prerequisites || "";
+        // Note: Feats use "prerequisite" (singular), not "prerequisites"
+        const prereqString = feat.system?.prerequisite || "";
 
         // If no prerequisites, feat is available to everyone
         if (!prereqString || prereqString.trim() === "" || prereqString === "null") {

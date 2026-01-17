@@ -104,10 +104,10 @@
  {{#if narratorComment}}
  <div class="narrator-comment">
  <div class="narrator-avatar">
- <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
  </div>
  <div class="narrator-speech-bubble">
- <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
  </div>
  </div>
  {{/if}}
@@ -310,10 +310,10 @@
  {{#if narratorComment}}
  <div class="narrator-comment">
  <div class="narrator-avatar">
- <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
  </div>
  <div class="narrator-speech-bubble">
- <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
  </div>
  </div>
  {{/if}}
@@ -832,10 +832,10 @@
  {{#if characterData.backgroundNarratorComment}}
  <div class="narrator-comment background-narrator">
  <div class="narrator-avatar">
- <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
  </div>
  <div class="narrator-speech-bubble">
- <p><strong>Ol' Salty:</strong> {{characterData.backgroundNarratorComment}}</p>
+ <p><strong>{{mentor.name}}:</strong> {{characterData.backgroundNarratorComment}}</p>
  </div>
  </div>
  {{/if}}
@@ -941,10 +941,10 @@
  {{#if narratorComment}}
  <div class="narrator-comment">
  <div class="narrator-avatar">
- <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
  </div>
  <div class="narrator-speech-bubble">
- <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
  </div>
  </div>
  {{/if}}
@@ -1047,10 +1047,10 @@
  {{#if narratorComment}}
  <div class="narrator-comment">
  <div class="narrator-avatar">
- <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
  </div>
  <div class="narrator-speech-bubble">
- <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
  </div>
  </div>
  {{/if}}
@@ -1211,10 +1211,10 @@
  {{#if narratorComment}}
  <div class="narrator-comment">
  <div class="narrator-avatar">
- <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
  </div>
  <div class="narrator-speech-bubble">
- <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
  </div>
  </div>
  {{/if}}
@@ -1389,10 +1389,10 @@
  {{#if narratorComment}}
  <div class="narrator-comment">
  <div class="narrator-avatar">
- <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
  </div>
  <div class="narrator-speech-bubble">
- <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
  </div>
  </div>
  {{/if}}
@@ -1531,7 +1531,8 @@
  <p class="category-description">{{languageCategories.widelyUsed.description}}</p>
  <div class="languages-grid">
  {{#each languageCategories.widelyUsed.languages}}
- {{#unless (contains ../../characterData.languages this)}}
+ {{!-- Exclude both already-selected languages and granted species languages --}}
+ {{#unless (or (contains ../../characterData.languages this) (contains ../../characterData.languageData.granted this))}}
  <button
  type="button"
  class="select-language language-button"
@@ -1553,7 +1554,8 @@
  <p class="category-description">{{languageCategories.localTrade.description}}</p>
  <div class="languages-grid">
  {{#each languageCategories.localTrade.languages}}
- {{#unless (contains ../../characterData.languages this)}}
+ {{!-- Exclude both already-selected languages and granted species languages --}}
+ {{#unless (or (contains ../../characterData.languages this) (contains ../../characterData.languageData.granted this))}}
  <button
  type="button"
  class="select-language language-button"
@@ -1685,10 +1687,10 @@
  {{#if narratorComment}}
  <div class="narrator-comment">
  <div class="narrator-avatar">
- <img src="systems/foundryvtt-swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
  </div>
  <div class="narrator-speech-bubble">
- <p><strong>Ol' Salty:</strong> {{narratorComment}}</p>
+ <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
  </div>
  </div>
  {{/if}}

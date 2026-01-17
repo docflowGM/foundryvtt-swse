@@ -558,7 +558,7 @@
 .feats-categorized,
 .feats-list {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
   margin: 0.75rem 0;
 }
@@ -647,6 +647,7 @@
 .feat-icon-wrapper {
   position: relative;
   width: 100%;
+  min-width: 64px;
   aspect-ratio: 1;
   display: flex;
   align-items: center;
