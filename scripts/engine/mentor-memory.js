@@ -372,3 +372,61 @@ export function formatMentorMemory(memory) {
 
   return output;
 }
+
+/**
+ * Seed mentor memory from L1 survey answers
+ * Maps survey biases to mentor memory initial state so dialogue feels personalized
+ *
+ * @param {Actor} actor - The actor
+ * @param {string} mentorId - The mentor ID (e.g., "miraj")
+ * @param {Object} biases - Compiled biases from survey answers
+ * @returns {MentorMemory} The seeded memory
+ */
+export function seedMentorMemoryFromSurvey(biases) {
+  const memory = new MentorMemory();
+
+  if (!biases || Object.keys(biases).length === 0) {
+    return memory;
+  }
+
+  // 1. Determine committed path from combat role biases
+  const damageScore = (biases.damage || 0) + (biases.melee || 0) + (biases.ranged || 0);
+  const controlScore = (biases.control || 0) + (biases.forceFocus || 0) + (biases.awareness || 0);
+  const survivalScore = (biases.survivability || 0) + (biases.protection || 0);
+  const supportScore = (biases.support || 0) + (biases.social || 0);
+
+  // Determine primary combat archetype
+  if (damageScore > controlScore && damageScore > survivalScore) {
+    memory.committedPath = "striker";
+  } else if (survivalScore > damageScore && survivalScore > controlScore) {
+    memory.committedPath = "guardian";
+  } else if (controlScore > damageScore && controlScore > survivalScore) {
+    memory.committedPath = "controller";
+  }
+
+  // Set commitment strength based on specialization bias (vs generalist)
+  const specializationBias = biases.specialization || 0;
+  const generalistBias = biases.generalist || 0;
+  memory.commitmentStrength = Math.max(0.3, 0.5 + (specializationBias - generalistBias) * 0.5);
+
+  // 2. Philosophy axes (normalized -1 to 1, then converted to 0-1 scale)
+  // Restraint: 0 = reckless (damage-focused), 1 = cautious (survival-focused)
+  const riskScore = (biases.riskTolerance || 0) + (biases.damage || 0);
+  const caution = (biases.survivability || 0) + (biases.avoidance || 0);
+  memory.philosophyAxes.restraint = Math.max(0.0, Math.min(1.0, 0.5 + (caution - riskScore) * 0.3));
+
+  // Dominance: 0 = passive, 1 = aggressive (control + leadership + damage)
+  const aggressiveness = damageScore + (biases.leadership || 0) + controlScore;
+  const passiveness = (biases.avoidance || 0) + (biases.balance || 0);
+  memory.philosophyAxes.dominance = Math.max(0.0, Math.min(1.0, 0.5 + (aggressiveness - passiveness) * 0.2));
+
+  // Protection: 0 = selfish, 1 = protective (support + social + survival)
+  const protective = survivalScore + supportScore + (biases.social || 0);
+  const selfish = (biases.damage || 0) + (biases.riskTolerance || 0);
+  memory.philosophyAxes.protection = Math.max(0.0, Math.min(1.0, 0.5 + (protective - selfish) * 0.2));
+
+  // 3. Initial trust from survey completion (player took time to answer = engaged)
+  memory.trust = 0.7;
+
+  return memory;
+}
