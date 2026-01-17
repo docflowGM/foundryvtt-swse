@@ -112,31 +112,41 @@ export class ChargenDataCache {
         }
 
         // Convert documents to plain objects for safer data handling
+        // CRITICAL: Use toObject() on system data to get plain JS object from DataModel proxy
         SWSELogger.log(`[CACHE-LOAD] Converting ${docs.length} documents to plain objects...`);
         packs[key] = docs.map((d, idx) => {
           try {
+            // Convert system DataModel proxy to plain object
+            // This ensures properties like hitDie are properly accessible
+            const systemData = d.system?.toObject?.() ?? (d.system ? { ...d.system } : {});
+
             // Create plain object from document, preserving all properties
             const obj = {
               _id: d._id,
               name: d.name,
               type: d.type,
-              system: d.system || {},
+              system: systemData,
               flags: d.flags || {},
               img: d.img,
               data: d.data
             };
-            if (idx < 3) { // Log first 3 items
-              SWSELogger.log(`[CACHE-LOAD] Item ${idx + 1}: ${d.name}`);
+            if (idx < 3) { // Log first 3 items for debugging
+              SWSELogger.log(`[CACHE-LOAD] Item ${idx + 1}: ${d.name}`, {
+                hasSystem: !!systemData,
+                systemKeys: Object.keys(systemData),
+                hitDie: systemData.hitDie || systemData.hit_die
+              });
             }
             return obj;
           } catch (e) {
             SWSELogger.warn(`[CACHE-LOAD] Error serializing ${d?.name}:`, e);
-            // Last resort: create minimal object
+            // Last resort: create minimal object with spread to copy properties
+            const fallbackSystem = d.system?.toObject?.() ?? (d.system ? { ...d.system } : {});
             return {
               _id: d._id,
               name: d.name,
               type: d.type,
-              system: d.system || {}
+              system: fallbackSystem
             };
           }
         });

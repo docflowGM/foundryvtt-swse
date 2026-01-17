@@ -1398,17 +1398,12 @@ export default class CharacterGenerator extends Application {
 
         // Only validate point buy budget if point buy method was used
         if (this.characterData.abilityGenerationMethod === 'point-mode') {
-          // Validate point buy budget (rough check)
-          // Calculate points spent based on current ability scores
-          const pointCosts = (value) => {
-            let cost = 0;
-            for (let v = 8; v < value; v++) {
-              if (v < 12) cost += 1;
-              else if (v < 14) cost += 2;
-              else cost += 3;
-            }
-            return cost;
+          // Validate point buy budget using the same cumulative cost table as the UI
+          // This matches the standard point buy costs from the Saga Edition rules
+          const cumulativeCosts = {
+            8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 6, 15: 8, 16: 10, 17: 13, 18: 16
           };
+          const pointCosts = (value) => cumulativeCosts[value] || 0;
 
           const totalSpent = abilities.reduce((sum, ab) => {
             return sum + pointCosts(this.characterData.abilities[ab]?.base || 8);
