@@ -182,9 +182,9 @@ export class SWSEActorBase extends Actor {
   /* ROLLS                                                                      */
   /* -------------------------------------------------------------------------- */
 
-  async rollSkill(skill) { return SWSERoll.rollSkill(this, skill); }
-  async rollAttack(weapon) { return SWSERoll.rollAttack(this, weapon); }
-  async rollDamage(weapon) { return SWSERoll.rollDamage(this, weapon); }
+  async rollSkill(skill, options = {}) { return SWSERoll.rollSkill(this, skill, options); }
+  async rollAttack(weapon, options = {}) { return SWSERoll.rollAttack(this, weapon, options); }
+  async rollDamage(weapon, options = {}) { return SWSERoll.rollDamage(this, weapon, options); }
 
   /* -------------------------------------------------------------------------- */
   /* DESTINY POINTS                                                             */
