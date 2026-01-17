@@ -1,0 +1,415 @@
+<div class="mentor-reflective-dialog swse">
+  {{#if currentTopic}}
+    <!-- DIALOGUE DISPLAY MODE -->
+    <div class="dialogue-view">
+
+      <!-- Back Button -->
+      <button class="back-to-topics" type="button">
+        <i class="fas fa-arrow-left"></i> Back to Topics
+      </button>
+
+      <!-- Mentor Header -->
+      <div class="mentor-header">
+        {{#if mentor.portrait}}
+          <img src="{{mentor.portrait}}" alt="{{mentor.name}}" class="mentor-portrait" />
+        {{/if}}
+        <div class="mentor-info">
+          <h2>{{mentor.name}}</h2>
+          <p class="mentor-title">{{mentor.title}}</p>
+        </div>
+      </div>
+
+      <!-- Topic Title -->
+      <div class="topic-display">
+        <h3>
+          <i class="fas {{currentTopic.icon}}"></i>
+          {{currentTopic.title}}
+        </h3>
+        <p class="topic-desc">{{currentTopic.description}}</p>
+      </div>
+
+      <!-- Dialogue Content (Three-Layer) -->
+      <div class="dialogue-content">
+
+        {{#if currentDialogue.content.observation}}
+          <div class="dialogue-layer observation">
+            <p class="observation-text">{{currentDialogue.content.observation}}</p>
+          </div>
+        {{/if}}
+
+        {{#if currentDialogue.content.suggestion}}
+          <div class="dialogue-layer suggestion">
+            <p class="suggestion-text">{{currentDialogue.content.suggestion}}</p>
+          </div>
+        {{/if}}
+
+        {{#if currentDialogue.content.respectClause}}
+          <div class="dialogue-layer respect-clause">
+            <p class="respect-text"><em>{{currentDialogue.content.respectClause}}</em></p>
+          </div>
+        {{/if}}
+
+      </div>
+
+      <!-- Contextual Actions (if applicable) -->
+      {{#if currentDialogue.showPathCommitment}}
+      <div class="dialogue-actions">
+        <button class="commit-path-btn" data-path="guardian" type="button">
+          <i class="fas fa-shield"></i> Commit to Guardian Path
+        </button>
+        <button class="commit-path-btn" data-path="striker" type="button">
+          <i class="fas fa-sword"></i> Commit to Striker Path
+        </button>
+        <button class="commit-path-btn" data-path="controller" type="button">
+          <i class="fas fa-wand-magic-sparkles"></i> Commit to Controller Path
+        </button>
+      </div>
+      {{/if}}
+
+      {{#if currentDialogue.showTargetClass}}
+      <div class="dialogue-actions">
+        <button class="set-target-class-btn" type="button">
+          <i class="fas fa-crown"></i> Set Prestige Target
+        </button>
+      </div>
+      {{/if}}
+
+      <!-- DSP Context (if relevant) -->
+      {{#if currentDialogue.dspContext.saturation}}
+        <div class="dsp-context {{currentDialogue.dspContext.band}}">
+          <small>
+            <i class="fas fa-heart"></i>
+            Darkness Saturation: {{currentDialogue.dspContext.band}}
+            ({{multiply currentDialogue.dspContext.saturation 100}}%)
+          </small>
+        </div>
+      {{/if}}
+
+    </div>
+
+  {{else}}
+    <!-- TOPIC SELECTION MODE -->
+    <div class="topics-view">
+
+      <!-- Mentor Greeting -->
+      <div class="mentor-welcome">
+        {{#if mentor.portrait}}
+          <img src="{{mentor.portrait}}" alt="{{mentor.name}}" class="mentor-portrait-large" />
+        {{/if}}
+        <div class="welcome-text">
+          <h2>{{mentor.name}}, {{mentor.title}}</h2>
+          <p>What do you wish to discuss?</p>
+        </div>
+      </div>
+
+      <!-- Topics Grid -->
+      <div class="topics-grid">
+        {{#each topics}}
+          <button class="topic-button" data-topic="{{this.key}}" type="button">
+            <div class="topic-icon">
+              <i class="fas {{this.icon}}"></i>
+            </div>
+            <div class="topic-text">
+              <h4>{{this.title}}</h4>
+              <p>{{this.description}}</p>
+            </div>
+          </button>
+        {{/each}}
+      </div>
+
+      <!-- Character Info -->
+      <div class="character-info">
+        <div class="info-box">
+          <strong>{{actor.name}}</strong>
+          <span>Level {{actor.system.level}}</span>
+        </div>
+        {{#if mentorMemory.inferredRole}}
+          <div class="info-box">
+            <strong>Inferred Role</strong>
+            <span>{{mentorMemory.inferredRole}}</span>
+          </div>
+        {{/if}}
+        {{#if mentorMemory.committedPath}}
+          <div class="info-box committed">
+            <i class="fas fa-check"></i>
+            <strong>Committed Path</strong>
+            <span>{{mentorMemory.committedPath}}</span>
+          </div>
+        {{/if}}
+      </div>
+
+    </div>
+
+  {{/if}}
+
+</div>
+
+<style>
+  .mentor-reflective-dialog {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .topics-view {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .mentor-welcome {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    border-left: 3px solid #00d9ff;
+  }
+
+  .mentor-portrait-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
+  .welcome-text h2 {
+    margin: 0;
+    color: #fff;
+  }
+
+  .welcome-text p {
+    margin: 5px 0 0 0;
+    color: #aaa;
+    font-style: italic;
+  }
+
+  .topics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .topic-button {
+    display: flex;
+    gap: 15px;
+    padding: 12px;
+    background: rgba(0, 217, 255, 0.1);
+    border: 1px solid rgba(0, 217, 255, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+
+  .topic-button:hover {
+    background: rgba(0, 217, 255, 0.2);
+    border-color: rgba(0, 217, 255, 0.6);
+    transform: translateX(5px);
+  }
+
+  .topic-icon {
+    font-size: 24px;
+    color: #00d9ff;
+    display: flex;
+    align-items: center;
+    min-width: 30px;
+  }
+
+  .topic-text h4 {
+    margin: 0;
+    color: #fff;
+    font-size: 0.9em;
+  }
+
+  .topic-text p {
+    margin: 3px 0 0 0;
+    color: #999;
+    font-size: 0.85em;
+  }
+
+  .character-info {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .info-box {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    font-size: 0.85em;
+  }
+
+  .info-box strong {
+    color: #00d9ff;
+    font-weight: bold;
+  }
+
+  .info-box span {
+    color: #ccc;
+    margin-top: 2px;
+  }
+
+  .info-box.committed {
+    background: rgba(0, 217, 255, 0.15);
+    border: 1px solid rgba(0, 217, 255, 0.4);
+  }
+
+  /* Dialogue View Styles */
+  .dialogue-view {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100%;
+  }
+
+  .back-to-topics {
+    align-self: flex-start;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.9em;
+  }
+
+  .back-to-topics:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .mentor-header {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    border-left: 3px solid #00d9ff;
+  }
+
+  .mentor-portrait {
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
+  .mentor-info h2 {
+    margin: 0;
+    color: #00d9ff;
+  }
+
+  .mentor-title {
+    margin: 3px 0 0 0;
+    color: #999;
+    font-size: 0.9em;
+  }
+
+  .topic-display {
+    padding: 12px;
+    background: rgba(0, 217, 255, 0.05);
+    border-radius: 4px;
+    border-left: 2px solid #00d9ff;
+  }
+
+  .topic-display h3 {
+    margin: 0;
+    color: #00d9ff;
+    font-size: 1.1em;
+  }
+
+  .topic-desc {
+    margin: 5px 0 0 0;
+    color: #aaa;
+    font-size: 0.9em;
+  }
+
+  .dialogue-content {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 5px;
+  }
+
+  .dialogue-layer {
+    padding: 12px;
+    border-radius: 4px;
+    line-height: 1.6;
+  }
+
+  .observation {
+    background: rgba(100, 200, 255, 0.1);
+    border-left: 3px solid rgba(100, 200, 255, 0.6);
+  }
+
+  .suggestion {
+    background: rgba(150, 200, 100, 0.1);
+    border-left: 3px solid rgba(150, 200, 100, 0.6);
+  }
+
+  .respect-clause {
+    background: rgba(200, 150, 100, 0.1);
+    border-left: 3px solid rgba(200, 150, 100, 0.6);
+    font-style: italic;
+  }
+
+  .dialogue-layer p {
+    margin: 0;
+    color: #ddd;
+    font-size: 0.95em;
+  }
+
+  .dialogue-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .dialogue-actions button {
+    flex: 1;
+    min-width: 150px;
+    padding: 10px;
+    background: rgba(0, 217, 255, 0.2);
+    border: 1px solid rgba(0, 217, 255, 0.4);
+    border-radius: 3px;
+    color: #00d9ff;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+  }
+
+  .dialogue-actions button:hover {
+    background: rgba(0, 217, 255, 0.4);
+    border-color: rgba(0, 217, 255, 0.8);
+  }
+
+  .dsp-context {
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    font-size: 0.85em;
+    color: #999;
+  }
+
+  .dsp-context.slipping,
+  .dsp-context.tainted,
+  .dsp-context.edge {
+    background: rgba(200, 50, 50, 0.2);
+    color: #ff9999;
+  }
+
+</style>

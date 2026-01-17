@@ -10,6 +10,7 @@
 import { MENTORS } from './mentor-dialogues.js';
 import { TypingAnimation } from '../utils/typing-animation.js';
 import { swseLogger } from '../utils/logger.js';
+import { seedMentorMemoryFromSurvey, getMentorMemory, setMentorMemory } from '../engine/mentor-memory.js';
 
 /**
  * Survey questions with mentor voice variants
@@ -766,6 +767,20 @@ export class MentorSurvey {
     try {
       await actor.update(updates);
       swseLogger.log(`[MENTOR-SURVEY] storeSurveyData: Survey data stored successfully`);
+
+      // Seed mentor memory from survey answers
+      // This connects L1 survey to mentor dialogue personalization
+      try {
+        const mentorId = actor.getFlag('swse', 'level1Class');
+        if (mentorId) {
+          const seededMemory = seedMentorMemoryFromSurvey(biases);
+          await setMentorMemory(actor, mentorId.toLowerCase(), seededMemory);
+          swseLogger.log(`[MENTOR-SURVEY] storeSurveyData: Seeded mentor memory for ${mentorId}:`, seededMemory);
+        }
+      } catch (memErr) {
+        swseLogger.error(`[MENTOR-SURVEY] ERROR seeding mentor memory:`, memErr);
+        // Don't throw - mentor seeding is optional enhancement
+      }
     } catch (err) {
       swseLogger.error(`[MENTOR-SURVEY] ERROR storing survey data:`, err);
       throw err;

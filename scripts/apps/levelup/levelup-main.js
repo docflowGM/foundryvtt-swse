@@ -77,6 +77,9 @@ import { findActiveSynergies } from '../../engine/CommunityMetaSynergies.js';
 import { MentorSuggestionVoice } from '../mentor-suggestion-voice.js';
 import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
 
+// Import mentor memory system
+import { decayAllMentorCommitments, updateAllMentorMemories } from '../../engine/mentor-memory.js';
+
 export class SWSELevelUpEnhanced extends FormApplication {
 
   static get defaultOptions() {
@@ -1562,6 +1565,17 @@ export class SWSELevelUpEnhanced extends FormApplication {
       if (!success) {
         throw new Error('Progression engine finalization failed');
       }
+
+      // ========================================
+      // STEP 2b: Mentor Memory - Decay & Update
+      // ========================================
+      // Decay mentor commitments on levelup
+      // This ensures soft commitments fade unless reinforced
+      await decayAllMentorCommitments(this.actor, 0.15);
+      // Update all mentor memories with current actor state
+      await updateAllMentorMemories(this.actor);
+
+      swseLogger.log('SWSE LevelUp | Mentor memory: Decayed commitments and updated role inference');
 
       // ========================================
       // STEP 3: Additional level-up specific handling

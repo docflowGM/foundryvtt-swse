@@ -212,6 +212,7 @@ import { FollowerManager } from './scripts/apps/follower-manager.js';
 import { SWSECombatActionBrowser } from './scripts/apps/combat-action-browser.js';
 import './scripts/apps/mentor-guidance.js';
 import { MentorSelectorWindow } from './scripts/apps/mentor-selector.js';
+import './scripts/apps/mentor-reflective-init.js';
 import { ProficiencySelectionDialog } from './scripts/apps/proficiency-selection-dialog.js';
 
 import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
