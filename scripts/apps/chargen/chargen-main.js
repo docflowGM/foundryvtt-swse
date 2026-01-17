@@ -1616,7 +1616,7 @@ export default class CharacterGenerator extends Application {
 
     // Import and open the store
     try {
-      const { SWSEStore } = await import('../store.js');
+      const { SWSEStore } = await import('../store/store-main.js');
       const store = new SWSEStore(this.actor);
       store.render(true);
     } catch (err) {
