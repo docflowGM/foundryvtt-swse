@@ -1884,7 +1884,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     event.preventDefault();
     const btn = event.currentTarget;
     const el = btn.closest(".talent-tree");
+    if (!el) return;
+
     const content = el.querySelector(".tree-content");
+    if (!content) return;
+
     const icon = btn.querySelector("i");
 
     const open = content.style.display !== "none";
@@ -1959,6 +1963,8 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     event.preventDefault();
     const header = event.currentTarget;
     const card = header.closest('.ability-card');
+    if (!card) return;
+
     const body = card.querySelector('.ability-card-body');
     const icon = header.querySelector('.ability-expand-icon i');
 

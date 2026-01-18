@@ -66,7 +66,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       // Defenses
       defenses: new fields.SchemaField({
         reflex: new fields.SchemaField({
-          total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          total: new fields.NumberField({ required: true, initial: 12, integer: true }),
           armor: new fields.NumberField({ required: true, initial: 0, integer: true }),
           classBonus: new fields.NumberField({ required: true, initial: 0, integer: true }),
           misc: new fields.SchemaField({
@@ -84,11 +84,11 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
             auto: new fields.SchemaField({}),
             user: new fields.SchemaField({})
           }),
-          ability: new fields.StringField({ required: true, initial: 'str' }),
+          ability: new fields.StringField({ required: true, initial: 'con' }),
           level: new fields.NumberField({ required: false, initial: 0, integer: true })
         }),
         will: new fields.SchemaField({
-          total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          total: new fields.NumberField({ required: true, initial: 11, integer: true }),
           classBonus: new fields.NumberField({ required: true, initial: 0, integer: true }),
           misc: new fields.SchemaField({
             auto: new fields.SchemaField({}),

@@ -29,13 +29,19 @@ export function _recalcDefenses() {
 
   // Ensure each defense type has classBonus
   if (!this.characterData.defenses.fort) {
-    this.characterData.defenses.fort = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
+    this.characterData.defenses.fort = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10, ability: 'con' };
+  } else if (!this.characterData.defenses.fort.ability) {
+    this.characterData.defenses.fort.ability = 'con';
   }
   if (!this.characterData.defenses.reflex) {
-    this.characterData.defenses.reflex = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
+    this.characterData.defenses.reflex = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 12, ability: 'dex' };
+  } else if (!this.characterData.defenses.reflex.ability) {
+    this.characterData.defenses.reflex.ability = 'dex';
   }
   if (!this.characterData.defenses.will) {
-    this.characterData.defenses.will = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
+    this.characterData.defenses.will = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 11, ability: 'wis' };
+  } else if (!this.characterData.defenses.will.ability) {
+    this.characterData.defenses.will.ability = 'wis';
   }
 
   const halfLevel = Math.floor(this.characterData.level / 2);
@@ -238,15 +244,19 @@ export function _bindAbilitiesUI(root) {
           if (dragged) {
             // Clear previous value in this slot
             const prevValue = zone.querySelector('.dropped-value');
-            if (prevValue.textContent) {
+            if (prevValue?.textContent) {
               const oldDragged = pool.querySelector(`.draggable-roll.used[data-value="${prevValue.textContent}"]`);
               if (oldDragged) oldDragged.classList.remove('used');
             }
 
             // Set new value
-            zone.querySelector('.drop-placeholder').style.display = 'none';
-            zone.querySelector('.dropped-value').style.display = 'block';
-            zone.querySelector('.dropped-value').textContent = value;
+            const placeholder = zone.querySelector('.drop-placeholder');
+            const droppedValue = zone.querySelector('.dropped-value');
+            if (placeholder) placeholder.style.display = 'none';
+            if (droppedValue) {
+              droppedValue.style.display = 'block';
+              droppedValue.textContent = value;
+            }
             dragged.classList.add('used');
 
             // Update breakdown
@@ -271,7 +281,8 @@ export function _bindAbilitiesUI(root) {
       container.querySelector('#confirm-4d6').onclick = () => {
         const allAssigned = ablist.every(ab => {
           const zone = container.querySelector(`.ability-drop-zone[data-ability="${ab}"]`);
-          return zone.querySelector('.dropped-value').textContent !== '';
+          const droppedValue = zone?.querySelector('.dropped-value');
+          return droppedValue?.textContent !== '';
         });
 
         if (!allAssigned) {
@@ -413,7 +424,10 @@ export function _bindAbilitiesUI(root) {
             zone._dice.push(value);
 
             // Update display
-            zone.querySelector('.group-placeholder').style.display = zone._dice.length < 3 ? 'block' : 'none';
+            const placeholder = zone.querySelector('.group-placeholder');
+            if (placeholder) {
+              placeholder.style.display = zone._dice.length < 3 ? 'block' : 'none';
+            }
 
             const diceDisplay = document.createElement('span');
             diceDisplay.className = 'grouped-die';
@@ -423,22 +437,25 @@ export function _bindAbilitiesUI(root) {
             // Update total
             if (zone._dice.length === 3) {
               const total = zone._dice.reduce((a, b) => a + b, 0);
-              zone.closest('.dice-group').querySelector('.group-total span').textContent = total;
-              zone.closest('.dice-group').dataset.total = total;
-              zone.closest('.dice-group').classList.add('complete');
-              zone.closest('.dice-group').draggable = true;
-
-              // Make complete group draggable
               const groupDiv = zone.closest('.dice-group');
-              groupDiv.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('group-total', total);
-                e.dataTransfer.setData('group-index', groupIdx);
-                groupDiv.classList.add('dragging');
-              });
+              if (groupDiv) {
+                const totalSpan = groupDiv.querySelector('.group-total span');
+                if (totalSpan) totalSpan.textContent = total;
+                groupDiv.dataset.total = total;
+                groupDiv.classList.add('complete');
+                groupDiv.draggable = true;
 
-              groupDiv.addEventListener('dragend', () => {
-                groupDiv.classList.remove('dragging');
-              });
+                // Make complete group draggable
+                groupDiv.addEventListener('dragstart', (e) => {
+                  e.dataTransfer.setData('group-total', total);
+                  e.dataTransfer.setData('group-index', groupIdx);
+                  groupDiv.classList.add('dragging');
+                });
+
+                groupDiv.addEventListener('dragend', () => {
+                  groupDiv.classList.remove('dragging');
+                });
+              }
             }
           }
         });
@@ -654,15 +671,19 @@ export function _bindAbilitiesUI(root) {
           if (dragged) {
             // Clear previous value in this slot
             const prevValue = zone.querySelector('.dropped-value');
-            if (prevValue.textContent) {
+            if (prevValue?.textContent) {
               const oldDragged = pool.querySelector(`.draggable-roll.used[data-value="${prevValue.textContent}"]`);
               if (oldDragged) oldDragged.classList.remove('used');
             }
 
             // Set new value
-            zone.querySelector('.drop-placeholder').style.display = 'none';
-            zone.querySelector('.dropped-value').style.display = 'block';
-            zone.querySelector('.dropped-value').textContent = value;
+            const placeholder = zone.querySelector('.drop-placeholder');
+            const droppedValue = zone.querySelector('.dropped-value');
+            if (placeholder) placeholder.style.display = 'none';
+            if (droppedValue) {
+              droppedValue.style.display = 'block';
+              droppedValue.textContent = value;
+            }
             dragged.classList.add('used');
 
             // Update breakdown

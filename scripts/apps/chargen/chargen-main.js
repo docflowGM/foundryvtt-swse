@@ -109,9 +109,9 @@ export default class CharacterGenerator extends Application {
       destinyPoints: { value: 1 },
       secondWind: { uses: 1, max: 1, misc: 0, healing: 0 },
       defenses: {
-        fort: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
-        reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
-        will: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 }
+        fort: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10, ability: 'con' },
+        reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 12, ability: 'dex' },
+        will: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 11, ability: 'wis' }
       },
       bab: 0,
       speed: 6,
@@ -148,9 +148,9 @@ export default class CharacterGenerator extends Application {
   async render(force = false, options = {}) {
     // Store scroll positions before render
     const scrollPositions = {};
-    if (this.element) {
-      for (const selector of this.constructor.defaultOptions.scrollY || []) {
-        const el = this.element[0].querySelector(selector);
+    if (this.element?.length > 0 && this.element[0]) {
+      for (const selector of this.constructor.defaultOptions?.scrollY || []) {
+        const el = this.element[0]?.querySelector(selector);
         if (el) {
           scrollPositions[selector] = el.scrollTop;
         }
@@ -161,9 +161,9 @@ export default class CharacterGenerator extends Application {
     const result = await super.render(force, options);
 
     // Restore scroll positions after render
-    if (this.element) {
+    if (this.element?.length > 0 && this.element[0]) {
       for (const [selector, scrollTop] of Object.entries(scrollPositions)) {
-        const el = this.element[0].querySelector(selector);
+        const el = this.element[0]?.querySelector(selector);
         if (el) {
           el.scrollTop = scrollTop;
         }
