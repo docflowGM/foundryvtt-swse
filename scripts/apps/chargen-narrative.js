@@ -153,27 +153,14 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     const classes = this.characterData.classes;
     if (classes.length === 0) return '';
 
-    const className = classes[0].name;
     const narrator = this.narrator;
 
     // Use the mentor's class guidance if available
-    if (narrator && narrator.classGuidance && narrator.classGuidance[className]) {
-      return narrator.classGuidance[className];
+    if (narrator && narrator.classGuidance) {
+      return narrator.classGuidance;
     }
 
-    // Fallback class-specific comments
-    const classComments = {
-      'Jedi': "A Jedi, eh? Fancy lightsaber-swingers! Just remember - laser swords don't help much when negotiatin' with Hutts, har har!",
-      'Soldier': "A Soldier! Now that's a proper fighter! Load up on blasters and grenades - that's how ye survive the spaceways!",
-      'Scoundrel': "HAR HAR! A SCOUNDREL! Now THAT'S what I'm talkin' about! Welcome to the brotherhood of rogues and rascals!",
-      'Noble': "A Noble? All fancy-like with yer credits and estates? Well, at least ye can afford to buy ol' Salty a drink!",
-      'Scout': "A Scout! Sneaky and resourceful! Ye'll be findin' treasure and avoidin' trouble like a true spacer!"
-    };
-
-    const comment = classComments[className];
-    if (comment) return comment;
-
-    return `${className}... an interesting choice! Let's see what ye can do with it!`;
+    return '';
   }
 
   _getSpeciesComment() {
@@ -352,7 +339,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   }
 
   async _showTalentTreeDialog(treeName) {
-    const talents = this.talentData.filter(t => t.system?.tree === treeName || t.name.includes(treeName));
+    const talents = this.talentData.filter(t => (t.system?.talent_tree === treeName || t.system?.tree === treeName) || t.name.includes(treeName));
 
     if (talents.length === 0) {
       ui.notifications.warn(`No talents found for ${treeName}`);

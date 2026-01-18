@@ -1092,6 +1092,13 @@
  <h3>Select Starting Feat{{#if (gt characterData.featsRequired 1)}}s{{/if}}</h3>
  <p class="help-text">All characters gain 1 general feat at 1st level.{{#if (gt characterData.featsRequired 1)}} Humans gain 1 bonus feat.{{/if}}</p>
 
+ <div class="feats-filter-controls">
+   <label>
+     <input type="checkbox" id="show-valid-feats-only" class="filter-valid-feats" />
+     <span>Show only valid feats</span>
+   </label>
+ </div>
+
  <div class="selected-feats-summary">
  <h4>Selected Feats ({{characterData.feats.length}}/{{characterData.featsRequired}})</h4>
  <div class="selected-feats-list">
