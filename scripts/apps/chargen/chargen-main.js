@@ -846,8 +846,11 @@ export default class CharacterGenerator extends Application {
         context.availableSkills = fallbackSkills;
       }
 
-      // Update characterData with the canonical trained skills allowed (for template access)
+      // Update characterData with the canonical trained skills allowed and class skills list
+      // This ensures the skills step always has current data from ClassesDB, not stale values
+      this.characterData.classSkillsList = Array.isArray(classSkills) ? [...classSkills] : [];
       this.characterData.trainedSkillsAllowed = trainedSkillsAllowed;
+      SWSELogger.log(`[CHARGEN-SKILLS] Updated characterData: trainedSkillsAllowed=${trainedSkillsAllowed}, classSkillsList.length=${this.characterData.classSkillsList.length}`);
       context.trainedSkillsAllowed = trainedSkillsAllowed;
     }
 
