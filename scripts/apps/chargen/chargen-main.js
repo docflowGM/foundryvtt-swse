@@ -864,6 +864,35 @@ export default class CharacterGenerator extends Application {
 
         // Get all available languages by category
         context.languageCategories = await this._getAvailableLanguages();
+
+        // Filter out already-granted languages from available selection
+        // Granted languages = species granted + background bonus language
+        const grantedLanguages = new Set(this.characterData.languageData.granted || []);
+
+        // Add background bonus language if present
+        if (this.characterData.background?.bonusLanguage) {
+          // bonusLanguage may be "French or Italian" so split on "or" and add each
+          const bonusLangs = this.characterData.background.bonusLanguage
+            .split(' or ')
+            .map(l => l.trim());
+          bonusLangs.forEach(lang => grantedLanguages.add(lang));
+        }
+
+        // Filter out granted languages from each category
+        if (context.languageCategories) {
+          for (const category in context.languageCategories) {
+            if (context.languageCategories[category].languages) {
+              context.languageCategories[category].languages =
+                context.languageCategories[category].languages.filter(lang => !grantedLanguages.has(lang));
+            }
+          }
+        }
+
+        SWSELogger.log(`[CHARGEN-LANGUAGES] Filtered available languages:`, {
+          grantedLanguages: Array.from(grantedLanguages),
+          speciesGranted: this.characterData.languageData.granted,
+          backgroundBonus: this.characterData.background?.bonusLanguage || 'none'
+        });
       } catch (err) {
         SWSELogger.error('CharGen | Failed to load languages:', err);
         context.languageCategories = {

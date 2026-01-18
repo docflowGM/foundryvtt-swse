@@ -2087,10 +2087,17 @@
  font-style: italic;
 }
 
+/* Move confirmation/next button to top of all steps */
+section {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
 .form-actions {
  display: flex;
  justify-content: space-between;
- margin-top: 2rem;
+ margin-top: 0;
+ margin-bottom: 2rem;
  gap: 1rem;
 }
 
