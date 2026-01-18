@@ -1203,6 +1203,22 @@
 
  {{#if (eq currentStep "talents")}}
  <section class="step-talents">
+
+ {{!-- Selected Talents Summary --}}
+ <div class="selected-talents-summary">
+ <h4>Selected Talents ({{characterData.talents.length}}/{{characterData.talentsRequired}})</h4>
+ <div class="selected-talents-list">
+ {{#each characterData.talents}}
+ <div class="selected-talent-badge">
+ <span>{{this.name}}</span>
+ <button type="button" class="remove-talent" data-talentid="{{this._id}}" data-talentname="{{this.name}}">×</button>
+ </div>
+ {{else}}
+ <span class="no-selection">No talents selected yet</span>
+ {{/each}}
+ </div>
+ </div>
+
  {{#unless selectedTalentTree}}
  {{!-- Step 1: Select Talent Tree --}}
  <h3>Select a Talent Tree</h3>
@@ -1240,28 +1256,36 @@
  </button>
  </div>
  {{else}}
- {{!-- Step 2: Select Talent from Tree --}}
- <h3>Select Talent from {{selectedTalentTree}}</h3>
- <p class="help-text">Choose a talent from the {{selectedTalentTree}} tree.</p>
+ {{!-- Step 2: Select Talent from Tree with Graph View --}}
+ <div class="talent-tree-header">
+ <h3>{{selectedTalentTree}} Tree</h3>
+ <div class="talent-view-toggle">
+ <button type="button" class="talent-view-btn active" data-view="graph" title="Graph View">
+ <i class="fas fa-project-diagram"></i> Graph
+ </button>
+ <button type="button" class="talent-view-btn" data-view="list" title="List View">
+ <i class="fas fa-list"></i> List
+ </button>
+ </div>
+ </div>
+ <p class="help-text">Click an available (cyan) talent to select it. Prerequisites flow from top to bottom.</p>
 
- <div class="talents-list">
+ {{!-- Graph View --}}
+ <div class="talent-tree-graph-container" data-tree="{{selectedTalentTree}}">
+ <p class="loading-graph"><i class="fas fa-spinner fa-spin"></i> Loading talent tree...</p>
+ </div>
+
+ {{!-- List View (hidden by default) --}}
+ <div class="talents-list-view" style="display: none;">
  {{#each packs.talentsInTree}}
- <div class="talent-item {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+ <div class="talent-list-item {{#unless this.isQualified}}locked{{else}}available{{/unless}}">
  <button type="button" class="select-talent choice-button" data-talentid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
- {{#if this.suggestion.iconClass}}
- <span class="talent-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
- <i class="{{this.suggestion.iconClass}}"></i>
- </span>
- {{/if}}
  <h4>{{this.name}}</h4>
  {{#if this.system.description}}
  <p class="talent-description">{{this.system.description}}</p>
  {{/if}}
  {{#if this.system.prerequisites}}
  <p class="talent-prereqs"><em>Prerequisites: {{this.system.prerequisites}}</em></p>
- {{/if}}
- {{#if this.suggestion.reason}}
- <p class="suggestion-reason">{{this.suggestion.reason}}</p>
  {{/if}}
  </button>
  </div>
@@ -1274,6 +1298,20 @@
  </button>
  </div>
  {{/unless}}
+
+ {{!-- Next button - shown when enough talents selected --}}
+ <div class="form-actions talents-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ {{#if (gte characterData.talents.length characterData.talentsRequired)}}
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ {{else}}
+ <span class="selection-hint">Select {{characterData.talentsRequired}} talent(s) to continue</span>
+ {{/if}}
+ </div>
  </section>
  {{/if}}
 

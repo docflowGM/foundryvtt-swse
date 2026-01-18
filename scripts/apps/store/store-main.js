@@ -38,7 +38,9 @@ export class SWSEStore extends FormApplication {
       classes: ["swse", "store", "swse-app"],
       template: "systems/foundryvtt-swse/templates/apps/store/store.hbs",
       width: 980,
-      height: "auto",
+      height: 700,
+      resizable: true,
+      scrollY: [".shop-body", ".products-list"],
     });
   }
 
@@ -260,13 +262,266 @@ export class SWSEStore extends FormApplication {
 
   activateListeners(html) {
     super.activateListeners(html);
+
+    // Tab/Panel switching - category filter changes which panel is shown
+    html.find("#shop-category-filter").on("change", (ev) => {
+      const panelName = ev.currentTarget.value;
+      this._showPanel(html, panelName);
+    });
+
+    // Availability filter
+    html.find("#shop-availability-filter").on("change", (ev) => {
+      this._filterByAvailability(html, ev.currentTarget.value);
+    });
+
+    // Sort select
+    html.find("#shop-sort-select").on("change", (ev) => {
+      this._sortItems(html, ev.currentTarget.value);
+    });
+
+    // Search input
+    html.find("#shop-search-input").on("input", (ev) => {
+      this._searchItems(html, ev.currentTarget.value);
+    });
+
+    // View cart button
+    html.find(".view-cart-btn").on("click", (ev) => {
+      this._showPanel(html, "cart");
+      html.find("#shop-category-filter").val("cart");
+    });
+
+    // GM settings button
+    html.find(".gm-settings-btn").on("click", (ev) => {
+      this._showPanel(html, "gm");
+    });
+
+    // Buy item buttons (with item ID in data attribute)
     html.find(".buy-item").on("click", (ev) => {
-      const id = ev.currentTarget.dataset.id;
+      const id = ev.currentTarget.dataset.id || ev.currentTarget.dataset.itemId;
       if (!id) return;
       const item = this.itemsById.get(id);
       if (!item) return ui.notifications.error("Item not found");
       try { this._onBuyItem(item); } catch (err) { swseLogger.error("SWSE Store — buy handler error", err); ui.notifications.error("Purchase failed (see console)."); }
     });
+
+    // Buy service buttons
+    html.find(".buy-service").on("click", async (ev) => {
+      const cost = Number(ev.currentTarget.dataset.cost) || 0;
+      const name = ev.currentTarget.dataset.name || "Service";
+      await this._onBuyService(name, cost);
+    });
+
+    // Buy droid buttons
+    html.find(".buy-droid").on("click", async (ev) => {
+      const actorId = ev.currentTarget.dataset.actorId;
+      await this._onBuyDroid(actorId);
+    });
+
+    // Buy vehicle buttons
+    html.find(".buy-vehicle").on("click", async (ev) => {
+      const actorId = ev.currentTarget.dataset.actorId;
+      const condition = ev.currentTarget.dataset.condition || "new";
+      await this._onBuyVehicle(actorId, condition);
+    });
+
+    // Create custom droid button
+    html.find(".create-custom-droid").on("click", async () => {
+      await this._onCreateCustomDroid();
+    });
+
+    // Create custom starship button
+    html.find(".create-custom-starship").on("click", async () => {
+      await this._onCreateCustomStarship();
+    });
+
+    // Checkout cart button
+    html.find("#checkout-cart").on("click", async () => {
+      await this._onCheckout();
+    });
+
+    // Clear cart button
+    html.find("#clear-cart").on("click", () => {
+      this._clearCart();
+    });
+
+    // Save GM settings
+    html.find(".save-gm").on("click", async () => {
+      await this._saveGMSettings(html);
+    });
+
+    // Show default panel (weapons)
+    this._showPanel(html, "weapons");
+  }
+
+  /**
+   * Show a specific panel and hide others
+   */
+  _showPanel(html, panelName) {
+    html.find(".shop-panel").removeClass("active");
+    html.find(`.shop-panel[data-panel="${panelName}"]`).addClass("active");
+  }
+
+  /**
+   * Filter items by availability
+   */
+  _filterByAvailability(html, availability) {
+    const panels = html.find(".shop-panel:not(.cart-panel):not(.gm-panel)");
+    panels.find(".product-item").each((i, el) => {
+      const item = $(el);
+      if (availability === "all") {
+        item.show();
+      } else {
+        const itemAvail = item.find(".rarity-badge").text().toLowerCase();
+        if (itemAvail.includes(availability.toLowerCase())) {
+          item.show();
+        } else {
+          item.hide();
+        }
+      }
+    });
+  }
+
+  /**
+   * Sort items in the current view
+   */
+  _sortItems(html, sortOption) {
+    const activePanel = html.find(".shop-panel.active .products-list");
+    const items = activePanel.find(".product-item").get();
+
+    items.sort((a, b) => {
+      const aName = $(a).find(".product-name").text();
+      const bName = $(b).find(".product-name").text();
+      const aPrice = parseInt($(a).find(".price-amount").text().replace(/,/g, "")) || 0;
+      const bPrice = parseInt($(b).find(".price-amount").text().replace(/,/g, "")) || 0;
+
+      switch (sortOption) {
+        case "name-asc":
+          return aName.localeCompare(bName);
+        case "name-desc":
+          return bName.localeCompare(aName);
+        case "price-asc":
+          return aPrice - bPrice;
+        case "price-desc":
+          return bPrice - aPrice;
+        default:
+          return 0;
+      }
+    });
+
+    activePanel.append(items);
+  }
+
+  /**
+   * Search items by name
+   */
+  _searchItems(html, searchTerm) {
+    const term = searchTerm.toLowerCase().trim();
+    html.find(".product-item").each((i, el) => {
+      const item = $(el);
+      const name = item.find(".product-name").text().toLowerCase();
+      const desc = item.find(".detail-desc").text().toLowerCase();
+      if (!term || name.includes(term) || desc.includes(term)) {
+        item.show();
+      } else {
+        item.hide();
+      }
+    });
+  }
+
+  /**
+   * Buy a service (deduct credits only)
+   */
+  async _onBuyService(name, cost) {
+    if (!this.actor) {
+      ui.notifications.error("No character selected to purchase for");
+      return;
+    }
+
+    const currentCredits = Number(this.actor.system?.credits) || 0;
+    if (currentCredits < cost) {
+      ui.notifications.error(`Insufficient credits! Need ${cost}, have ${currentCredits}`);
+      return;
+    }
+
+    const confirmed = await Dialog.confirm({
+      title: "Confirm Purchase",
+      content: `<p>Purchase <strong>${escapeHTML(name)}</strong> for <strong>${cost.toLocaleString()} credits</strong>?</p>`
+    });
+
+    if (!confirmed) return;
+
+    const newCredits = currentCredits - cost;
+    await this.actor.update({ "system.credits": newCredits });
+    ui.notifications.info(`Purchased ${name} for ${cost.toLocaleString()} credits`);
+    this.render(true);
+  }
+
+  /**
+   * Buy a droid from the droids pack
+   */
+  async _onBuyDroid(actorId) {
+    ui.notifications.info("Droid purchase system not yet implemented - coming soon!");
+  }
+
+  /**
+   * Buy a vehicle from the vehicles pack
+   */
+  async _onBuyVehicle(actorId, condition) {
+    ui.notifications.info(`Vehicle purchase (${condition}) system not yet implemented - coming soon!`);
+  }
+
+  /**
+   * Open custom droid creation wizard
+   */
+  async _onCreateCustomDroid() {
+    try {
+      const { CharacterGenerator } = await import("../chargen/chargen-main.js");
+      new CharacterGenerator(null, { actorType: "droid" }).render(true);
+    } catch (err) {
+      swseLogger.error("SWSE Store | Failed to open droid creation:", err);
+      ui.notifications.error("Droid creation system not available");
+    }
+  }
+
+  /**
+   * Open custom starship creation wizard
+   */
+  async _onCreateCustomStarship() {
+    ui.notifications.info("Starship construction system coming soon!");
+  }
+
+  /**
+   * Process cart checkout
+   */
+  async _onCheckout() {
+    if (this.cart.items.length === 0) {
+      ui.notifications.warn("Your cart is empty!");
+      return;
+    }
+    ui.notifications.info("Cart checkout system coming soon! For now, use individual Buy buttons.");
+  }
+
+  /**
+   * Clear the shopping cart
+   */
+  _clearCart() {
+    this.cart = { items: [], droids: [], vehicles: [] };
+    this.cartTotal = 0;
+    ui.notifications.info("Cart cleared");
+    this.render(true);
+  }
+
+  /**
+   * Save GM settings
+   */
+  async _saveGMSettings(html) {
+    const markup = Number(html.find('input[name="markup"]').val()) || 0;
+    const discount = Number(html.find('input[name="discount"]').val()) || 0;
+    // Store in game settings or world flags
+    await game.settings.set("foundryvtt-swse", "storeMarkup", markup);
+    await game.settings.set("foundryvtt-swse", "storeDiscount", discount);
+    ui.notifications.info("Store settings saved");
+    this.render(true);
   }
 
   async _onBuyItem(item){

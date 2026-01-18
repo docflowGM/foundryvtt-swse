@@ -55,33 +55,98 @@ export async function _onSelectClass(event) {
   }
 
   // Get normalized class definition from SSOT
-  // Ensure ClassesDB is built
+  // Ensure ClassesDB is built - wait if not ready
   SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Checking ClassesDB build status: ${ClassesDB.isBuilt}`);
-  if (!ClassesDB.isBuilt) {
-    SWSELogger.error(`[CHARGEN-CLASS] ERROR: ClassesDB not built yet!`);
-    SWSELogger.error(`[CHARGEN-CLASS] ClassesDB state:`, { isBuilt: ClassesDB.isBuilt, type: typeof ClassesDB });
-    ui.notifications.error(`Class data not ready. Please wait a moment and try again.`);
-    return;
-  }
-  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ClassesDB is built, looking up class...`);
 
-  const classDef = ClassesDB.byName(className);
-  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ClassesDB.byName("${className}") returned:`, classDef ? 'FOUND' : 'NOT FOUND');
-  if (!classDef) {
-    SWSELogger.error(`[CHARGEN-CLASS] ERROR: Class not found in ClassesDB: "${className}"`);
-    SWSELogger.error(`[CHARGEN-CLASS] Available classes in ClassesDB:`, ClassesDB.all ? ClassesDB.all.map(c => c.name) : 'ClassesDB.all not available');
-    ui.notifications.error(`Class "${className}" not found.`);
-    return;
-  }
-
-  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Using normalized class definition:`, classDef);
-
-  // For backward compatibility, also get the raw class doc for features
-  const classDoc = this._packs.classes.find(c => c.name === className || c._id === className);
+  // Get raw class doc first - this should always be available from ChargenDataCache
+  const classDoc = this._packs.classes?.find(c => c.name === className || c._id === className);
   SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Raw class doc lookup result:`, classDoc ? 'FOUND' : 'NOT FOUND');
-  if (!classDoc) {
-    SWSELogger.warn(`[CHARGEN-CLASS] WARNING: Could not find raw class doc for features (non-fatal)`);
+
+  // DIAGNOSTIC: Log the raw class doc data in detail
+  if (classDoc) {
+    const rawSys = classDoc.system || {};
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: RAW CLASS DOC DIAGNOSTIC:`, {
+      name: classDoc.name,
+      hasSystem: !!classDoc.system,
+      systemKeys: Object.keys(rawSys),
+      trainedSkills: rawSys.trainedSkills,
+      trained_skills: rawSys.trained_skills,
+      classSkills: rawSys.classSkills,
+      class_skills: rawSys.class_skills,
+      classSkillsType: typeof rawSys.classSkills,
+      class_skillsType: typeof rawSys.class_skills,
+      classSkillsIsArray: Array.isArray(rawSys.classSkills),
+      class_skillsIsArray: Array.isArray(rawSys.class_skills),
+      classSkillsLength: rawSys.classSkills?.length ?? 'N/A',
+      class_skillsLength: rawSys.class_skills?.length ?? 'N/A'
+    });
+  } else {
+    SWSELogger.error(`[CHARGEN-CLASS] _onSelectClass: NO CLASS DOC FOUND! Checking _packs.classes:`, {
+      packsClassesExists: !!this._packs?.classes,
+      packsClassesLength: this._packs?.classes?.length ?? 0,
+      packsClassesNames: this._packs?.classes?.slice(0, 10)?.map(c => c.name) ?? []
+    });
   }
+
+  let classDef = null;
+
+  if (!ClassesDB.isBuilt) {
+    SWSELogger.warn(`[CHARGEN-CLASS] WARNING: ClassesDB not built yet, using fallback from raw class doc`);
+    // Create a fallback classDef from raw class data
+    if (classDoc && classDoc.system) {
+      const sys = classDoc.system;
+      classDef = {
+        id: className.toLowerCase().replace(/\s+/g, '_'),
+        name: className,
+        hitDie: parseInt(String(sys.hit_die || sys.hitDie || '6').replace(/^1?d/, ''), 10) || 6,
+        babProgression: sys.babProgression || 'medium',
+        trainedSkills: sys.trainedSkills ?? sys.trained_skills ?? 0,
+        classSkills: sys.classSkills || sys.class_skills || [],
+        defenses: sys.defenses || { fortitude: 0, reflex: 0, will: 0 },
+        baseClass: sys.base_class !== false,
+        talentTreeNames: sys.talent_trees || [],
+        startingCredits: sys.starting_credits || null,
+        grantsForcePoints: sys.grants_force_points ?? true
+      };
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Created fallback classDef from raw data:`, classDef);
+    } else {
+      SWSELogger.error(`[CHARGEN-CLASS] ERROR: ClassesDB not built and no raw class doc available`);
+      ui.notifications.error(`Class data not ready. Please wait a moment and try again.`);
+      return;
+    }
+  } else {
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ClassesDB is built, looking up class...`);
+    classDef = ClassesDB.byName(className);
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ClassesDB.byName("${className}") returned:`, classDef ? 'FOUND' : 'NOT FOUND');
+
+    if (!classDef) {
+      // Fallback to raw class doc if ClassesDB doesn't have the class
+      SWSELogger.warn(`[CHARGEN-CLASS] WARNING: Class not in ClassesDB, using raw class doc fallback`);
+      if (classDoc && classDoc.system) {
+        const sys = classDoc.system;
+        classDef = {
+          id: className.toLowerCase().replace(/\s+/g, '_'),
+          name: className,
+          hitDie: parseInt(String(sys.hit_die || sys.hitDie || '6').replace(/^1?d/, ''), 10) || 6,
+          babProgression: sys.babProgression || 'medium',
+          trainedSkills: sys.trainedSkills ?? sys.trained_skills ?? 0,
+          classSkills: sys.classSkills || sys.class_skills || [],
+          defenses: sys.defenses || { fortitude: 0, reflex: 0, will: 0 },
+          baseClass: sys.base_class !== false,
+          talentTreeNames: sys.talent_trees || [],
+          startingCredits: sys.starting_credits || null,
+          grantsForcePoints: sys.grants_force_points ?? true
+        };
+        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Created fallback classDef:`, classDef);
+      } else {
+        SWSELogger.error(`[CHARGEN-CLASS] ERROR: Class not found in ClassesDB or raw packs: "${className}"`);
+        ui.notifications.error(`Class "${className}" not found.`);
+        return;
+      }
+    }
+  }
+
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Using class definition:`, classDef);
 
   // Clear any existing classes and add the selected one
   SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Clearing existing classes and adding new one...`);
@@ -252,18 +317,35 @@ export async function _onSelectClass(event) {
   }
 
   // Offer mentor survey at class selection if not yet completed (for both droid and living characters)
-  if (!MentorSurvey.hasSurveyBeenCompleted(this._createTempActorForValidation())) {
-    const acceptSurvey = await MentorSurvey.promptSurvey(this._createTempActorForValidation(), className);
-    if (acceptSurvey) {
-      const surveyAnswers = await MentorSurvey.showSurvey(this._createTempActorForValidation(), className, className);
-      if (surveyAnswers) {
-        const biases = MentorSurvey.processSurveyAnswers(surveyAnswers);
-        // Store biases in characterData for later use when creating suggestions
-        this.characterData.mentorBiases = biases;
-        this.characterData.mentorSurveyCompleted = true;
-        ui.notifications.info("Survey completed! Your mentor will use this to personalize suggestions.");
+  try {
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Checking if mentor survey should be offered for class "${className}"...`);
+    const tempActor = this._createTempActorForValidation();
+    const surveyCompleted = MentorSurvey.hasSurveyBeenCompleted(tempActor);
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Survey already completed: ${surveyCompleted}`);
+
+    if (!surveyCompleted) {
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Offering mentor survey prompt...`);
+      const acceptSurvey = await MentorSurvey.promptSurvey(tempActor, className);
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User accepted survey: ${acceptSurvey}`);
+
+      if (acceptSurvey) {
+        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Showing mentor survey questions...`);
+        const surveyAnswers = await MentorSurvey.showSurvey(tempActor, className, className);
+        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Survey answers received:`, surveyAnswers ? 'YES' : 'NO');
+
+        if (surveyAnswers) {
+          const biases = MentorSurvey.processSurveyAnswers(surveyAnswers);
+          // Store biases in characterData for later use when creating suggestions
+          this.characterData.mentorBiases = biases;
+          this.characterData.mentorSurveyCompleted = true;
+          SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Mentor biases stored:`, biases);
+          ui.notifications.info("Survey completed! Your mentor will use this to personalize suggestions.");
+        }
       }
     }
+  } catch (surveyErr) {
+    SWSELogger.error(`[CHARGEN-CLASS] ERROR: Mentor survey failed:`, surveyErr);
+    // Don't block class selection if mentor survey fails - continue gracefully
   }
 
   // Re-render to show the selected class and enable the Next button
