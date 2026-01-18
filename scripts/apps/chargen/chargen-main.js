@@ -870,6 +870,13 @@ export default class CharacterGenerator extends Application {
     context.skillsJson = context.skillsJson || this._skillsJson || [];
     context.availableSkills = context.availableSkills || context.skillsJson;
 
+    // Filter out "Use the Force" skill for droids (droids cannot use the Force)
+    if (this.characterData.isDroid) {
+      context.availableSkills = context.availableSkills.filter(skill =>
+        skill.key !== 'usetheforce' && skill.name !== 'Use the Force'
+      );
+    }
+
     // Calculate skill modifiers for display in template
     // Formula: currentBonus = floor(level/2) + abilityMod + speciesBonus + (trained ? 5 : 0)
     const characterLevel = this.characterData.level || 1;
@@ -1623,7 +1630,10 @@ export default class CharacterGenerator extends Application {
         break;
       case "abilities":
         // Validate that ability scores are properly set
-        const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+        // Droids don't have Constitution ability
+        const abilities = this.characterData.isDroid
+          ? ['str', 'dex', 'int', 'wis', 'cha']
+          : ['str', 'dex', 'con', 'int', 'wis', 'cha'];
         const allSet = abilities.every(ab => {
           const base = this.characterData.abilities[ab]?.base;
           return base !== undefined && base >= 8 && base <= 18;

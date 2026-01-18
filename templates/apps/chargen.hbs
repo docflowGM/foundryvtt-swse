@@ -1440,7 +1440,7 @@
  {{#if (eq currentStep "skills")}}
  <section class="step-skills">
  <h3>Select Trained Skills</h3>
- <p class="help-text">Select {{characterData.trainedSkillsAllowed}} class skills to train. Training grants +5 bonus.</p>
+ <p class="help-text">Select {{characterData.trainedSkillsAllowed}} class skills to train.</p>
 
  {{#if narratorComment}}
  <div class="narrator-comment">
@@ -1464,8 +1464,8 @@
  <div class="skills-header-row">
  <div class="skill-name-header">Skill</div>
  <div class="skill-train-header">Train</div>
- <div class="skill-ability-header">Ability Bonus</div>
- <div class="skill-racial-header">Racial Bonus</div>
+ <div class="skill-ability-header">Ability</div>
+ <div class="skill-racial-header">Racial</div>
  <div class="skill-total-header">Total</div>
  </div>
  {{#each availableSkills}}
@@ -1477,7 +1477,8 @@
  <i class="{{this.suggestion.iconClass}}"></i>
  </span>
  {{/if}}
- <strong>{{this.name}}</strong> <span class="skill-ability-abbrev">({{uppercase this.ability}})</span>
+ <span class="skill-name">{{this.name}}</span>
+ <span class="skill-ability-abbrev">({{uppercase this.ability}})</span>
  </div>
  <div class="skill-train-col">
  <input type="checkbox"

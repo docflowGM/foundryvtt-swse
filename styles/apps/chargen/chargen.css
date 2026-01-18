@@ -2787,15 +2787,15 @@
 
 .skills-header-row {
     display: grid;
-    grid-template-columns: 2fr 0.8fr 1.2fr 1.2fr 1.2fr;
-    gap: 1rem;
-    padding: 0.75rem 1rem;
+    grid-template-columns: 2fr 50px 60px 60px 60px;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
     background: rgba(10, 116, 218, 0.15);
     border: 1px solid rgba(10, 116, 218, 0.3);
     border-radius: 4px;
     font-weight: 600;
     color: #0af;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -2806,9 +2806,9 @@
 
 .skill-row-chargen {
     display: grid;
-    grid-template-columns: 2fr 0.8fr 1.2fr 1.2fr 1.2fr;
-    gap: 1rem;
-    padding: 0.75rem 1rem;
+    grid-template-columns: 2fr 50px 60px 60px 60px;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(10, 116, 218, 0.2);
     border-radius: 4px;
@@ -2918,4 +2918,69 @@
     color: #0ffd00;
     text-shadow: 0 0 10px rgba(15, 180, 100, 0.5);
     font-weight: 600;
+}
+
+/* Simplified two-column skills layout */
+.skills-list-chargen-simple {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.skill-row-simple {
+    display: grid;
+    grid-template-columns: 1fr 60px;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(10, 116, 218, 0.2);
+    border-radius: 4px;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.skill-row-simple:hover {
+    background: rgba(10, 116, 218, 0.1);
+    border-color: rgba(10, 116, 218, 0.4);
+}
+
+.skill-row-simple.trained {
+    background: rgba(15, 180, 100, 0.1);
+    border-color: rgba(15, 180, 100, 0.3);
+}
+
+.skill-row-simple.trained:hover {
+    background: rgba(15, 180, 100, 0.15);
+    border-color: rgba(15, 180, 100, 0.5);
+}
+
+.skill-name-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    color: #9ed0ff;
+}
+
+.skill-name-section .skill-name {
+    color: #9ed0ff;
+}
+
+.skill-train-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.skill-train-section input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #0af;
+}
+
+.skill-train-section input[type="checkbox"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
