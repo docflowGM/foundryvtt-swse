@@ -99,8 +99,10 @@ function inferClassRole(talentTrees = []) {
  *
  * This is the ONLY way class data should be accessed by engines.
  *
+ * Returns a ClassModel: the canonical in-memory representation.
+ *
  * @param {Object} rawClass - Raw class document from compendium
- * @returns {Object} - Normalized class definition
+ * @returns {ClassModel} - Canonical class definition
  */
 export function normalizeClass(rawClass) {
     // Convert system DataModel proxy to plain object if needed
@@ -109,25 +111,39 @@ export function normalizeClass(rawClass) {
     const sys = rawSystem?.toObject?.() ?? (rawSystem ? { ...rawSystem } : {});
     const name = rawClass.name || "Unknown Class";
 
+    const baseClass = sys.base_class !== false;  // Default to true
+    const prestigeClass = !baseClass;  // Invert for consistency
+
+    // Infer forceSensitive from multiple sources (like loader does, but canonical here)
+    const forceKeywords = ['force', 'jedi', 'sith', 'dark side', 'light side'];
+    const hasForceKeywordInName = forceKeywords.some(keyword => name.toLowerCase().includes(keyword));
+    const startingFeatures = sys.starting_features || [];
+    const talentTrees = sys.talent_trees || [];
+    const hasForceStartingFeat = startingFeatures.some(f =>
+        (f.name || String(f)).toLowerCase().includes('force sensitivity')
+    );
+    const hasForceTalentTree = talentTrees.some(tree =>
+        forceKeywords.some(keyword => tree.toLowerCase().includes(keyword))
+    );
+
+    const forceSensitive = sys.force_sensitive === true ||
+                          sys.forceSensitive === true ||
+                          hasForceStartingFeat ||
+                          (hasForceKeywordInName && (hasForceTalentTree || hasForceStartingFeat));
+
     return {
         // Identity
         id: normalizeClassId(sys.class_name || name),
-        name: name,
         sourceId: rawClass._id,
+        name: name,
 
         // Classification
-        baseClass: sys.base_class !== false,  // Default to true
+        baseClass: baseClass,
+        prestigeClass: prestigeClass,
 
         // Core Mechanics
         hitDie: parseHitDie(sys.hit_die),
         babProgression: sys.babProgression || "medium",
-
-        // Defenses
-        defenses: {
-            fortitude: sys.defenses?.fortitude ?? 0,
-            reflex: sys.defenses?.reflex ?? 0,
-            will: sys.defenses?.will ?? 0
-        },
 
         // Skills
         // NOTE: Data model may migrate snake_case to camelCase, so check both
@@ -138,18 +154,26 @@ export function normalizeClass(rawClass) {
         talentTreeNames: sys.talent_trees || [],
         talentTreeIds: [],  // Populated by ClassesDB after TalentTreeDB is loaded
 
-        // Role (derived)
-        role: inferClassRole(sys.talent_trees),
+        // Defenses
+        defenses: {
+            fortitude: sys.defenses?.fortitude ?? 0,
+            reflex: sys.defenses?.reflex ?? 0,
+            will: sys.defenses?.will ?? 0
+        },
 
         // Progression
+        startingFeatures: startingFeatures,
         levelProgression: sys.level_progression || [],
-        startingFeatures: sys.starting_features || [],
 
         // Force Points
         // Note: These flags are for PRESTIGE class logic only
         // The actual FP calculation is actor-derived and uses these as inputs
+        forceSensitive: forceSensitive,
         grantsForcePoints: sys.grants_force_points ?? true,
         forcePointBase: sys.force_point_base ?? null,  // 7 for Force Disciple/Jedi Master/Sith Lord, null otherwise
+
+        // Role (derived)
+        role: inferClassRole(talentTrees),
 
         // Starting Resources
         baseHp: sys.base_hp ?? 0,
