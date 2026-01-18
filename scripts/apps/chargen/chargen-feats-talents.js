@@ -460,14 +460,15 @@ export function _getAvailableTalentTrees() {
     const allTrees = new Set();
     if (this._packs.talents) {
       this._packs.talents.forEach(talent => {
-        const tree = talent.system?.tree;
+        // Use property accessor to handle both 'tree' and 'talent_tree' property names
+        const tree = getTalentTreeName(talent);
         if (tree) {
           allTrees.add(tree);
         }
       });
     }
-    trees = Array.from(allTrees);
-    SWSELogger.log(`CharGen | Available talent trees (unrestricted mode):`, trees);
+    trees = Array.from(allTrees).sort();
+    SWSELogger.log(`CharGen | Available talent trees (unrestricted mode): ${trees.length} trees`);
   } else {
     // Class-restricted mode
     if (!this.characterData.classes || this.characterData.classes.length === 0) {
@@ -558,7 +559,7 @@ export function _createTempActorForValidation() {
               type: 'talent',
               name: talent.name || talent,
               system: {
-                tree: talent.system?.tree || "Unknown",
+                tree: getTalentTreeName(talent) || talent.system?.talent_tree || "Unknown",
                 prerequisite: talent.system?.prerequisite || "",
                 benefit: talent.system?.benefit || "",
                 special: talent.system?.special || "",
@@ -602,7 +603,7 @@ export function _createTempActorForValidation() {
               type: 'talent',
               name: talent.name || talent,
               system: {
-                tree: talent.system?.tree || "Unknown",
+                tree: getTalentTreeName(talent) || talent.system?.talent_tree || "Unknown",
                 prerequisite: talent.system?.prerequisite || "",
                 benefit: talent.system?.benefit || "",
                 special: talent.system?.special || "",
@@ -646,7 +647,7 @@ export function _createTempActorForValidation() {
               type: 'talent',
               name: talent.name || talent,
               system: {
-                tree: talent.system?.tree || "Unknown",
+                tree: getTalentTreeName(talent) || talent.system?.talent_tree || "Unknown",
                 prerequisite: talent.system?.prerequisite || "",
                 benefit: talent.system?.benefit || "",
                 special: talent.system?.special || "",
