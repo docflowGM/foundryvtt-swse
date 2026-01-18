@@ -524,6 +524,193 @@ export function _bindAbilitiesUI(root) {
       };
     };
 
+    // Array selection (High or Standard array)
+    const rollArray = () => {
+      const arrays = {
+        high: { name: 'High Array', values: [16, 14, 12, 12, 10, 8] },
+        standard: { name: 'Standard Array', values: [15, 14, 13, 12, 10, 8] }
+      };
+
+      const container = root.querySelector("#array-selection");
+      if (!container) return;
+
+      // Show array selection first
+      container.innerHTML = `
+        <div class="array-selection-container">
+          <h4>Select an Ability Score Array</h4>
+          <div class="array-options">
+            <div class="array-option" data-array="high">
+              <h5>High Array</h5>
+              <div class="array-values">16, 14, 12, 12, 10, 8</div>
+              <p class="array-description">Higher starting scores for more powerful characters</p>
+            </div>
+            <div class="array-option" data-array="standard">
+              <h5>Standard Array</h5>
+              <div class="array-values">15, 14, 13, 12, 10, 8</div>
+              <p class="array-description">Balanced array for typical characters</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Wire up array selection
+      container.querySelectorAll('.array-option').forEach(option => {
+        option.style.cursor = 'pointer';
+        option.onclick = () => {
+          const arrayType = option.dataset.array;
+          const arrayData = arrays[arrayType];
+          showArrayAssignment(arrayData);
+        };
+      });
+    };
+
+    // Show array assignment interface
+    const showArrayAssignment = (arrayData) => {
+      const container = root.querySelector("#array-selection");
+      if (!container) return;
+
+      container.innerHTML = `
+        <div class="array-assignment-container">
+          <h4>Assign ${arrayData.name} to Abilities</h4>
+          <p class="hint">Drag the scores below to the ability scores</p>
+          
+          <div class="roll-results-grid" id="array-pool"></div>
+          
+          <div class="ability-slots-grid">
+            ${ablist.map(ab => {
+              const abilityName = ab.charAt(0).toUpperCase() + ab.slice(1);
+              const racial = chargen.characterData.abilities[ab].racial || 0;
+              return `
+                <div class="ability-slot" data-ability="${ab}">
+                  <div class="ability-slot-header">
+                    <span class="ability-name">${abilityName}</span>
+                  </div>
+                  <div class="ability-drop-zone" data-ability="${ab}">
+                    <span class="drop-placeholder">Drop here</span>
+                    <span class="dropped-value" style="display:none;"></span>
+                  </div>
+                  <div class="ability-breakdown">
+                    <span class="base-value">Base: <span class="base-num">--</span></span>
+                    ${racial !== 0 ? `<span class="racial-value">Racial: ${racial >= 0 ? '+' : ''}${racial}</span>` : ''}
+                    <span class="total-value">Total: <span class="total-num">--</span></span>
+                    <span class="modifier-value">Mod: <span class="mod-num">--</span></span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+          
+          <div class="ability-actions">
+            <button type="button" class="btn btn-primary" id="confirm-array">Confirm</button>
+            <button type="button" class="btn btn-secondary" id="reset-array">Reset</button>
+            <button type="button" class="btn btn-secondary" id="back-array">Back</button>
+          </div>
+        </div>
+      `;
+
+      // Add draggable array values
+      const pool = container.querySelector("#array-pool");
+      arrayData.values.forEach((value, idx) => {
+        const scoreDiv = document.createElement("div");
+        scoreDiv.className = "draggable-roll";
+        scoreDiv.draggable = true;
+        scoreDiv.dataset.value = value;
+        scoreDiv.dataset.index = idx;
+        scoreDiv.innerHTML = `<div class="roll-total">${value}</div>`;
+
+        scoreDiv.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', value);
+          e.dataTransfer.setData('index', idx);
+          scoreDiv.classList.add('dragging');
+        });
+
+        scoreDiv.addEventListener('dragend', () => {
+          scoreDiv.classList.remove('dragging');
+        });
+
+        pool.appendChild(scoreDiv);
+      });
+
+      // Setup drop zones
+      container.querySelectorAll('.ability-drop-zone').forEach(zone => {
+        zone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          zone.classList.add('drag-over');
+        });
+
+        zone.addEventListener('dragleave', () => {
+          zone.classList.remove('drag-over');
+        });
+
+        zone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          zone.classList.remove('drag-over');
+
+          const value = parseInt(e.dataTransfer.getData('text/plain'), 10);
+          const index = e.dataTransfer.getData('index');
+          const ability = zone.dataset.ability;
+          const dragged = pool.querySelector(`.draggable-roll[data-index="${index}"]`);
+
+          if (dragged) {
+            // Clear previous value in this slot
+            const prevValue = zone.querySelector('.dropped-value');
+            if (prevValue.textContent) {
+              const oldDragged = pool.querySelector(`.draggable-roll.used[data-value="${prevValue.textContent}"]`);
+              if (oldDragged) oldDragged.classList.remove('used');
+            }
+
+            // Set new value
+            zone.querySelector('.drop-placeholder').style.display = 'none';
+            zone.querySelector('.dropped-value').style.display = 'block';
+            zone.querySelector('.dropped-value').textContent = value;
+            dragged.classList.add('used');
+
+            // Update breakdown
+            const slot = zone.closest('.ability-slot');
+            const racial = chargen.characterData.abilities[ability].racial || 0;
+            const total = value + racial;
+            const mod = Math.floor((total - 10) / 2);
+
+            slot.querySelector('.base-num').textContent = value;
+            slot.querySelector('.total-num').textContent = total;
+            slot.querySelector('.mod-num').textContent = (mod >= 0 ? '+' : '') + mod;
+
+            // Store value
+            chargen.characterData.abilities[ability].base = value;
+            chargen.characterData.abilities[ability].total = total;
+            chargen.characterData.abilities[ability].mod = mod;
+          }
+        });
+      });
+
+      // Confirm button
+      container.querySelector('#confirm-array').onclick = () => {
+        const allAssigned = ablist.every(ab => {
+          const zone = container.querySelector(`.ability-drop-zone[data-ability="${ab}"]`);
+          return zone.querySelector('.dropped-value').textContent !== '';
+        });
+
+        if (!allAssigned) {
+          ui.notifications.warn("Please assign all ability scores before confirming.");
+          return;
+        }
+
+        recalcPreview();
+        ui.notifications.info("Ability scores confirmed!");
+      };
+
+      // Reset button
+      container.querySelector('#reset-array').onclick = () => {
+        showArrayAssignment(arrayData);
+      };
+
+      // Back button
+      container.querySelector('#back-array').onclick = () => {
+        rollArray();
+      };
+    };
+
+
     const recalcPreview = () => {
       ablist.forEach(a => {
         const inp = root.querySelector(`[name="ability_${a}"]`);
@@ -562,7 +749,7 @@ export function _bindAbilitiesUI(root) {
     // Mode switching function
     const switchMode = (modeName) => {
       // Hide all mode divs
-      const modes = ['point-mode', 'standard-mode', 'organic-mode', 'free-mode'];
+      const modes = ['point-mode', 'standard-mode', 'organic-mode', 'array-mode', 'free-mode'];
       modes.forEach(mode => {
         const modeDiv = root.querySelector(`#${mode}`);
         if (modeDiv) modeDiv.style.display = 'none';
@@ -605,6 +792,19 @@ export function _bindAbilitiesUI(root) {
       };
     } else {
       SWSELogger.warn("SWSE | Organic roll button not found in DOM");
+    }
+
+    const arrayBtn = root.querySelector("#array-btn");
+    if (arrayBtn) {
+      SWSELogger.log("SWSE | Array button found, attaching handler");
+      arrayBtn.onclick = () => {
+        SWSELogger.log("SWSE | Array button clicked");
+        switchMode('array-mode');
+        arrayBtn.classList.add('active');
+        rollArray();
+      };
+    } else {
+      SWSELogger.warn("SWSE | Array button not found in DOM");
     }
 
     const pbInit = root.querySelector("#pb-init");
