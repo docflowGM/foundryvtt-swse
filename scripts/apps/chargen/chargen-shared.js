@@ -4,6 +4,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { getTalentTrees } from './chargen-property-accessor.js';
+import { normalizeTalentData } from '../../progression/utils/item-normalizer.js';
 
 /**
  * Singleton cache for compendium data
@@ -155,6 +156,25 @@ export class ChargenDataCache {
           }
         });
         SWSELogger.log(`[CACHE-LOAD] Successfully converted ${packs[key].length} items from ${packName}`);
+
+        // Normalize talents to ensure tree property is properly set
+        if (key === 'talents') {
+          SWSELogger.log(`[CACHE-LOAD] Normalizing ${packs[key].length} talents...`);
+          packs[key] = packs[key].map(talent => {
+            try {
+              return normalizeTalentData(talent);
+            } catch (e) {
+              SWSELogger.warn(`[CACHE-LOAD] Error normalizing talent "${talent.name}":`, e);
+              return talent; // Return unnormalized if normalization fails
+            }
+          });
+          SWSELogger.log(`[CACHE-LOAD] Normalized all talents. Now checking tree property...`);
+          // Log first few talents to verify tree property is set
+          for (let i = 0; i < Math.min(3, packs[key].length); i++) {
+            const t = packs[key][i];
+            SWSELogger.log(`[CACHE-LOAD] Talent ${i + 1}: "${t.name}" -> tree="${t.system?.tree || t.system?.talent_tree || 'MISSING'}"`);
+          }
+        }
       } catch (err) {
         SWSELogger.error(`ChargenDataCache | Failed to load ${packName}:`, err);
         packs[key] = [];
