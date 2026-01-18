@@ -214,7 +214,9 @@ export class SWSEActorSheetBase extends BaseSheet {
   // Create Item
   // -----------------------------
   async _onItemCreate(event) {
-    const type = event.currentTarget.dataset.type;
+    // Find the actual element with data-type (event.currentTarget may be the root listener)
+    const actionElement = event.target.closest('[data-action]') || event.target.closest('[data-type]');
+    const type = actionElement?.dataset?.type || event.currentTarget?.dataset?.type;
 
     if (!type) {
       ui.notifications.error("Cannot create item: No item type specified");

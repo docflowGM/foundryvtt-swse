@@ -5570,3 +5570,278 @@ font-size: 12px;
   font-size: 16px;
   font-weight: 600;
 }
+
+/* ─────────────────────────────────────────────────
+   COMBAT TAB - STATS GRID (2 columns, smaller)
+   ───────────────────────────────────────────────── */
+
+.swse .combat-tab .combat-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.swse .combat-tab .combat-stat {
+  background: linear-gradient(180deg, rgba(0, 30, 50, 0.4), rgba(0, 15, 30, 0.3));
+  border: 1px solid rgba(0, 168, 204, 0.2);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.swse .combat-tab .combat-stat label {
+  display: block;
+  font-size: 10px;
+  color: var(--muted, #8899aa);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.swse .combat-tab .combat-stat input[type="number"] {
+  width: 100%;
+  max-width: 80px;
+  padding: 6px 10px;
+  background: rgba(0, 20, 40, 0.6);
+  border: 1px solid rgba(0, 168, 204, 0.3);
+  border-radius: 4px;
+  color: var(--holo-cyan, #00d9ff);
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.swse .combat-tab .combat-stat .initiative-value,
+.swse .combat-tab .combat-stat .threshold-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--holo-cyan, #00d9ff);
+  padding: 4px 0;
+}
+
+.swse .combat-tab .combat-stat .initiative-value.rollable:hover {
+  color: #fff;
+  cursor: pointer;
+  text-shadow: 0 0 10px var(--holo-cyan, #00d9ff);
+}
+
+/* ─────────────────────────────────────────────────
+   GLOBAL DROPDOWN STYLING (dark bg, glowing green)
+   ───────────────────────────────────────────────── */
+
+.swse select,
+.swse .sheet select,
+.swse .window-content select,
+.swse .dialog select,
+.swse .app select,
+.action-type-filter,
+.combat-action-search,
+select.action-type-filter {
+  background: rgba(0, 20, 40, 0.9) !important;
+  color: var(--holo-green, #00ff88) !important;
+  border: 1px solid rgba(0, 168, 204, 0.4) !important;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+}
+
+.swse select:focus,
+.swse .sheet select:focus,
+.swse .window-content select:focus {
+  outline: none;
+  border-color: var(--holo-cyan, #00d9ff) !important;
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.4);
+}
+
+.swse select option,
+.swse .sheet select option,
+.swse .window-content select option {
+  background: rgba(0, 20, 40, 0.98) !important;
+  color: var(--holo-green, #00ff88) !important;
+  padding: 8px 12px;
+}
+
+.swse select option:hover,
+.swse select option:checked {
+  background: rgba(0, 168, 204, 0.3) !important;
+}
+
+/* ─────────────────────────────────────────────────
+   COMBAT ACTIONS - CARD LAYOUT (5 across)
+   ───────────────────────────────────────────────── */
+
+.swse .combat-actions-list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.swse .combat-action-row {
+  background: linear-gradient(180deg, rgba(0, 30, 50, 0.5), rgba(0, 15, 30, 0.4));
+  border: 1px solid rgba(0, 168, 204, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+}
+
+.swse .combat-action-row:hover {
+  border-color: var(--holo-cyan, #00d9ff);
+  box-shadow: 0 0 12px rgba(0, 217, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.swse .combat-action-row .action-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swse .combat-action-row .action-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--holo-cyan, #00d9ff);
+  display: block;
+  line-height: 1.3;
+}
+
+.swse .combat-action-row .action-name i {
+  display: none;
+}
+
+.swse .combat-action-row .action-type-badge {
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: 600;
+  display: inline-block;
+  width: fit-content;
+}
+
+.swse .combat-action-row .action-type-badge.swift {
+  background: rgba(0, 200, 100, 0.3);
+  color: #00ff88;
+}
+
+.swse .combat-action-row .action-type-badge.move {
+  background: rgba(0, 150, 200, 0.3);
+  color: #00d9ff;
+}
+
+.swse .combat-action-row .action-type-badge.standard {
+  background: rgba(200, 150, 0, 0.3);
+  color: #ffcc00;
+}
+
+.swse .combat-action-row .action-type-badge.full-round {
+  background: rgba(200, 80, 80, 0.3);
+  color: #ff6666;
+}
+
+/* Hide details by default, show on hover */
+.swse .combat-action-row .action-details {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 100;
+  background: rgba(0, 20, 40, 0.98);
+  border: 1px solid var(--holo-cyan, #00d9ff);
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  max-width: 300px;
+  min-width: 250px;
+}
+
+.swse .combat-action-row:hover .action-details {
+  display: block;
+}
+
+.swse .combat-action-row .action-notes {
+  font-size: 11px;
+  color: rgba(200, 220, 230, 0.8);
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.swse .combat-action-row .action-dc,
+.swse .combat-action-row .action-outcome,
+.swse .combat-action-row .action-when {
+  font-size: 10px;
+  color: rgba(200, 220, 230, 0.7);
+  margin: 4px 0;
+}
+
+/* Responsive: fewer columns on smaller screens */
+@media (max-width: 900px) {
+  .swse .combat-actions-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .swse .combat-actions-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ─────────────────────────────────────────────────
+   ITEM SHEET - Reduce wasted space
+   ───────────────────────────────────────────────── */
+
+.swse-sheet .holo-frame-top {
+  padding: 6px;
+  margin-bottom: 0;
+}
+
+.swse-sheet .holo-frame-top .sw-logo {
+  max-height: 40px;
+  max-width: 150px;
+}
+
+.swse-sheet .sheet-header {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding: 8px;
+}
+
+.swse-sheet .sheet-header .profile-img {
+  width: 60px;
+  height: 60px;
+  margin-right: 10px;
+}
+
+.swse-sheet .sheet-tabs {
+  margin-bottom: 8px;
+}
+
+.swse-sheet .sheet-body {
+  padding: 8px;
+}
+
+.swse-sheet .form-group {
+  margin-bottom: 8px;
+}
+
+.swse-sheet .form-group label {
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+/* Compact inputs for item sheets */
+.swse-sheet input,
+.swse-sheet select,
+.swse-sheet textarea {
+  padding: 6px 8px;
+  font-size: 12px;
+}

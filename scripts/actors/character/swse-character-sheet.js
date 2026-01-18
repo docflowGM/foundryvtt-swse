@@ -29,6 +29,7 @@ import { FeatSystem } from "../../engine/FeatSystem.js";
 import { SkillSystem } from "../../engine/SkillSystem.js";
 import { TalentAbilitiesEngine } from "../../engine/TalentAbilitiesEngine.js";
 import { StarshipManeuversEngine } from "../../engine/StarshipManeuversEngine.js";
+import { ClassNormalizer } from "../../progression/engine/class-normalizer.js";
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
@@ -283,6 +284,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     context.hpPercentage = system.hp?.max && system.hp?.max > 0
       ? Math.round((system.hp.value / system.hp.max) * 100)
       : 0;
+
+    // --------------------------------------
+    // 10. TALENT TREES (for Talents Tab)
+    // --------------------------------------
+    await this._prepareTalentTreesData(context, classes, talents);
 
     return context;
   }
@@ -1523,9 +1529,16 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // G. Combat Action Engine (Simplified)
   // ----------------------------------------------------------
 
+  // Handler for data-action="rollCombatAction" (matches _onAction naming convention)
+  async _onRollCombatAction(event) {
+    return this._onPostCombatAction(event);
+  }
+
   async _onPostCombatAction(evt) {
     evt.preventDefault();
-    const el = evt.currentTarget;
+    // Find the actual element with data-action-name (event.currentTarget may be the root listener)
+    const actionElement = evt.target.closest('[data-action-name]');
+    const el = actionElement || evt.currentTarget;
     const name = el.dataset.actionName;
 
     const data = CombatActionsMapper.getAllCombatActions();
@@ -1631,7 +1644,238 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
 
-  
+  // ----------------------------------------------------------
+  // I.0 Talent Tree Data Preparation
+  // ----------------------------------------------------------
+
+  /**
+   * Prepare talent trees data for the talents tab
+   * @param {Object} context - The render context
+   * @param {Array} classes - Array of class items on the actor
+   * @param {Array} talents - Array of talent items the actor has acquired
+   */
+  async _prepareTalentTreesData(context, classes, talents) {
+    try {
+      // Get talent tree names from all classes using ClassNormalizer
+      const treeNames = new Set();
+
+      for (const cls of classes) {
+        // Use ClassNormalizer to ensure consistent property access
+        const normalizedClass = ClassNormalizer.normalizeClassDoc(cls);
+        const classTrees = normalizedClass.system?.talentTrees
+          || normalizedClass.system?.talent_trees
+          || [];
+
+        const treesArray = Array.isArray(classTrees) ? classTrees : [classTrees].filter(Boolean);
+        treesArray.forEach(tree => {
+          if (typeof tree === 'string' && tree.trim()) {
+            treeNames.add(tree.trim());
+          }
+        });
+      }
+
+      // Debug log for troubleshooting
+      SWSELogger.log(`[TALENT-TREES] Found ${treeNames.size} talent trees from ${classes.length} classes:`, Array.from(treeNames));
+
+      // If no trees from actor's class items, try to load from compendium by class name
+      if (treeNames.size === 0 && classes.length > 0) {
+        const classPack = game.packs.get('foundryvtt-swse.classes');
+        if (classPack) {
+          for (const cls of classes) {
+            try {
+              // Find class in compendium by name
+              const classIndex = classPack.index.find(c => c.name === cls.name);
+              if (classIndex) {
+                const fullClassDoc = await classPack.getDocument(classIndex._id);
+                const normalizedClass = ClassNormalizer.normalizeClassDoc(fullClassDoc);
+                const classTrees = normalizedClass.system?.talentTrees
+                  || normalizedClass.system?.talent_trees
+                  || [];
+
+                const treesArray = Array.isArray(classTrees) ? classTrees : [classTrees].filter(Boolean);
+                treesArray.forEach(tree => {
+                  if (typeof tree === 'string' && tree.trim()) {
+                    treeNames.add(tree.trim());
+                  }
+                });
+              }
+            } catch (err) {
+              SWSELogger.warn(`[TALENT-TREES] Error loading class ${cls.name} from compendium:`, err);
+            }
+          }
+          SWSELogger.log(`[TALENT-TREES] After compendium lookup: ${treeNames.size} talent trees`);
+        }
+      }
+
+      // If still no trees, try to get trees from actor's acquired talents
+      if (treeNames.size === 0 && talents.length > 0) {
+        for (const talent of talents) {
+          const tree = talent.system?.tree || talent.system?.talent_tree || talent.system?.talentTree;
+          if (tree && typeof tree === 'string') {
+            treeNames.add(tree.trim());
+          }
+        }
+      }
+
+      // Build talent tree filters for UI
+      context.talentTreeFilters = Array.from(treeNames).map(name => ({
+        id: name.toLowerCase().replace(/\s+/g, '-'),
+        label: name
+      }));
+
+      // Build acquired talents list
+      context.acquiredTalents = talents.map(t => ({
+        _id: t.id,
+        name: t.name,
+        treeName: t.system?.tree || t.system?.talent_tree || 'Unknown',
+        summary: t.system?.benefit || t.system?.description || ''
+      }));
+
+      // Calculate available talent selections
+      const totalTalents = classes.reduce((sum, cls) => {
+        const classLevel = cls.system?.level || 1;
+        // Most classes get 1 talent at odd levels (1, 3, 5, 7, 9, etc.)
+        return sum + Math.ceil(classLevel / 2);
+      }, 0);
+      context.availableTalentSelections = Math.max(0, totalTalents - talents.length);
+
+      // Load talent tree compendium data for display
+      const treePack = game.packs.get('foundryvtt-swse.talenttrees');
+      const talentPack = game.packs.get('foundryvtt-swse.talents');
+
+      context.talentTrees = [];
+
+      if (treePack && talentPack) {
+        const allCompendiumTalents = await talentPack.getDocuments();
+        const acquiredTalentNames = new Set(talents.map(t => t.name.toLowerCase()));
+
+        for (const treeName of treeNames) {
+          // Find talents that belong to this tree
+          const treeTalents = allCompendiumTalents.filter(t => {
+            const talentTree = t.system?.tree || t.system?.talent_tree || '';
+            return talentTree.toLowerCase() === treeName.toLowerCase();
+          });
+
+          if (treeTalents.length === 0) continue;
+
+          // Organize talents into tiers based on prerequisites
+          const tiers = this._organizeTalentsIntoTiers(treeTalents, acquiredTalentNames);
+
+          context.talentTrees.push({
+            id: treeName.toLowerCase().replace(/\s+/g, '-'),
+            name: treeName,
+            class: `tree-${treeName.toLowerCase().replace(/\s+/g, '-')}`,
+            description: `Talents from the ${treeName} talent tree.`,
+            tiers
+          });
+        }
+      }
+
+      // Sort trees alphabetically
+      context.talentTrees.sort((a, b) => a.name.localeCompare(b.name));
+
+    } catch (err) {
+      SWSELogger.error('Error preparing talent trees:', err);
+      context.talentTrees = [];
+      context.talentTreeFilters = [];
+      context.acquiredTalents = [];
+      context.availableTalentSelections = 0;
+    }
+  }
+
+  /**
+   * Organize talents into tiers based on prerequisites
+   * @param {Array} treeTalents - All talents in a tree
+   * @param {Set} acquiredNames - Set of lowercase acquired talent names
+   * @returns {Array} Array of tier objects
+   */
+  _organizeTalentsIntoTiers(treeTalents, acquiredNames) {
+    const tiers = [];
+    const processed = new Set();
+
+    // Helper to check if prerequisites are met
+    const prereqsMet = (talent) => {
+      const prereq = talent.system?.prerequisite || talent.system?.prerequisites || '';
+      if (!prereq || prereq === 'None' || prereq === '-') return true;
+
+      // Check if any acquired talent is mentioned in prerequisites
+      for (const name of acquiredNames) {
+        if (prereq.toLowerCase().includes(name)) return true;
+      }
+
+      // If no specific talent prereq found, check for non-talent prereqs (BAB, feats, etc.)
+      const hasTalentPrereq = treeTalents.some(t =>
+        prereq.toLowerCase().includes(t.name.toLowerCase())
+      );
+
+      return !hasTalentPrereq; // If no talent prereq, it's available
+    };
+
+    // Build tiers iteratively
+    let iteration = 0;
+    while (processed.size < treeTalents.length && iteration < 10) {
+      const tierTalents = [];
+
+      for (const talent of treeTalents) {
+        if (processed.has(talent.id)) continue;
+
+        const prereq = talent.system?.prerequisite || talent.system?.prerequisites || '';
+
+        // Tier 0: No prerequisites or non-talent prerequisites only
+        if (iteration === 0) {
+          const hasTalentPrereq = treeTalents.some(t =>
+            prereq.toLowerCase().includes(t.name.toLowerCase())
+          );
+          if (!hasTalentPrereq) {
+            tierTalents.push(talent);
+            processed.add(talent.id);
+          }
+        } else {
+          // Later tiers: Check if prereq talent is in an earlier tier
+          const prereqInEarlierTier = tiers.some(tier =>
+            tier.talents.some(t => prereq.toLowerCase().includes(t.name.toLowerCase()))
+          );
+          if (prereqInEarlierTier) {
+            tierTalents.push(talent);
+            processed.add(talent.id);
+          }
+        }
+      }
+
+      if (tierTalents.length > 0) {
+        tiers.push({
+          talents: tierTalents.map(t => ({
+            _id: t.id,
+            name: t.name,
+            state: acquiredNames.has(t.name.toLowerCase()) ? 'acquired'
+                 : prereqsMet(t) ? 'available'
+                 : 'locked',
+            icon: t.system?.icon || 'fas fa-brain',
+            prerequisite: t.system?.prerequisite || t.system?.prerequisites || ''
+          }))
+        });
+      }
+
+      iteration++;
+    }
+
+    // Add any remaining unprocessed talents to the last tier
+    const remaining = treeTalents.filter(t => !processed.has(t.id));
+    if (remaining.length > 0) {
+      tiers.push({
+        talents: remaining.map(t => ({
+          _id: t.id,
+          name: t.name,
+          state: acquiredNames.has(t.name.toLowerCase()) ? 'acquired' : 'locked',
+          icon: t.system?.icon || 'fas fa-brain',
+          prerequisite: t.system?.prerequisite || t.system?.prerequisites || ''
+        }))
+      });
+    }
+
+    return tiers;
+  }
+
   // ----------------------------------------------------------
   // I. Talent Tree Engine
   // ----------------------------------------------------------

@@ -75,7 +75,8 @@ export class SWSECombatDocument extends Combat {
       const actor = combatant.actor;
       const rollFormula = formula || this._getInitiativeFormula(combatant);
 
-      const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula).evaluate({ async: true });
+      // safeRoll is async and already evaluates the roll, so just await it directly
+      const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula);
 
       updates.push({ _id: id, initiative: roll.total });
 
