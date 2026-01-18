@@ -722,12 +722,24 @@ export default class CharacterGenerator extends Application {
     if (this.currentStep === "skills" && context.packs) {
       const tempActor = this._createTempActorForValidation();
 
+      // DIAGNOSTIC: Log class skills data at skills step
+      SWSELogger.log(`[CHARGEN-SKILLS] Skills step rendering - DIAGNOSTIC:`, {
+        classSkillsList: this.characterData.classSkillsList,
+        classSkillsListLength: this.characterData.classSkillsList?.length ?? 0,
+        trainedSkillsAllowed: this.characterData.trainedSkillsAllowed,
+        trainedSkillsCount: this.characterData.trainedSkillsCount,
+        selectedClass: this.characterData.classes?.[0]?.name,
+        backgroundSkills: this.characterData.backgroundSkills?.length ?? 0
+      });
+
       try {
         // Combine class skills with background skills
         const allClassSkills = [
           ...(this.characterData.classSkillsList || []),
           ...(this.characterData.backgroundSkills?.map(s => s.key || s) || [])
         ];
+
+        SWSELogger.log(`[CHARGEN-SKILLS] Combined allClassSkills:`, allClassSkills);
 
         const skillsWithSuggestions = await Level1SkillSuggestionEngine.suggestLevel1Skills(
           this._skillsJson,
