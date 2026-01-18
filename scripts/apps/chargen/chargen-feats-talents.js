@@ -6,6 +6,7 @@ import { SWSELogger } from '../../utils/logger.js';
 import { getTalentTrees, getTalentTreeName } from './chargen-property-accessor.js';
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
+import { ClassesDB } from '../../data/classes-db.js';
 
 /**
  * Handle feat selection
