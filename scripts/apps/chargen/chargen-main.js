@@ -30,6 +30,7 @@ import * as LanguagesModule from './chargen-languages.js';
 import * as FeatsTalentsModule from './chargen-feats-talents.js';
 import * as ForcePowersModule from './chargen-force-powers.js';
 import * as StarshipManeuversModule from './chargen-starship-maneuvers.js';
+import { renderTalentTreeGraph, getTalentsInTree } from './chargen-talent-tree-graph.js';
 
 export default class CharacterGenerator extends Application {
   constructor(actor = null, options = {}) {
@@ -1003,6 +1004,14 @@ export default class CharacterGenerator extends Application {
     $html.find('.back-to-talent-trees').click(this._onBackToTalentTrees.bind(this));
     $html.find('.select-talent').click(this._onSelectTalent.bind(this));
     $html.find('.remove-talent').click(this._onRemoveTalent.bind(this));
+
+    // Talent tree view toggle (Graph/List)
+    $html.find('.talent-view-btn').click(this._onTalentViewToggle.bind(this));
+
+    // Render talent tree graph if on talents step with selected tree
+    if (this.currentStep === 'talents' && this.selectedTalentTree) {
+      this._renderTalentTreeGraph($html);
+    }
     $html.find('.select-power').click(this._onSelectForcePower.bind(this));
     $html.find('.remove-power').click(this._onRemoveForcePower.bind(this));
     $html.find('.select-maneuver').click(this._onSelectStarshipManeuver.bind(this));
@@ -2428,6 +2437,78 @@ export default class CharacterGenerator extends Application {
     }
 
     return { level: 0, roman: "", baseName: featName };
+  }
+
+  /**
+   * Handle talent view toggle (Graph/List)
+   */
+  _onTalentViewToggle(event) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const view = btn.dataset.view;
+
+    // Update button states
+    const $buttons = $(btn).closest('.talent-view-toggle').find('.talent-view-btn');
+    $buttons.removeClass('active');
+    $(btn).addClass('active');
+
+    // Toggle visibility
+    const $form = $(btn).closest('form');
+    const $graphContainer = $form.find('.talent-tree-graph-container');
+    const $listView = $form.find('.talents-list-view');
+
+    if (view === 'graph') {
+      $graphContainer.show();
+      $listView.hide();
+      // Re-render graph
+      this._renderTalentTreeGraph($form);
+    } else {
+      $graphContainer.hide();
+      $listView.show();
+    }
+  }
+
+  /**
+   * Render the talent tree graph visualization
+   */
+  _renderTalentTreeGraph($html) {
+    const container = $html.find('.talent-tree-graph-container')[0];
+    if (!container || !this.selectedTalentTree) return;
+
+    const treeName = this.selectedTalentTree;
+    const allTalents = this._packs?.talents || [];
+    const talentsInTree = getTalentsInTree(allTalents, treeName);
+
+    SWSELogger.log(`[CHARGEN] Rendering talent tree graph for "${treeName}" with ${talentsInTree.length} talents`);
+
+    if (talentsInTree.length === 0) {
+      container.innerHTML = '<p class="no-talents">No talents found in this tree</p>';
+      return;
+    }
+
+    // Callback when talent is selected from graph
+    const onSelectTalent = async (talent) => {
+      // Check if already selected
+      const alreadySelected = this.characterData.talents?.some(t =>
+        t._id === talent._id || t.name === talent.name
+      );
+
+      if (alreadySelected) {
+        ui.notifications.warn(`${talent.name} is already selected`);
+        return;
+      }
+
+      // Add talent to character data
+      this.characterData.talents = this.characterData.talents || [];
+      this.characterData.talents.push(talent);
+
+      ui.notifications.info(`Selected talent: ${talent.name}`);
+
+      // Re-render to update UI
+      await this.render();
+    };
+
+    renderTalentTreeGraph(container, talentsInTree, this.characterData, onSelectTalent);
   }
 }
 

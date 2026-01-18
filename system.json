@@ -49,6 +49,7 @@
     "styles/themes/swse-theme-high-republic.css",
     "styles/apps/chargen/chargen.css",
     "styles/apps/chargen/chargen-templates.css",
+    "styles/apps/chargen/chargen-talent-tree.css",
     "styles/apps/combat-action-browser.css",
     "styles/apps/force-power-picker.css",
     "styles/apps/vehicle-modification.css",

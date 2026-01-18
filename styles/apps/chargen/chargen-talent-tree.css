@@ -1,0 +1,451 @@
+/* ============================================
+   Enhanced Talent Tree Visualization Styles
+   Hexagonal nodes with glowing connections
+   ============================================ */
+
+/* Container */
+.talent-tree-graph-container {
+  position: relative;
+  width: 100%;
+  min-height: 400px;
+  max-height: 550px;
+  overflow: auto;
+  background: linear-gradient(180deg,
+    rgba(0, 30, 50, 0.95) 0%,
+    rgba(0, 20, 40, 0.98) 50%,
+    rgba(0, 15, 30, 1) 100%
+  );
+  border: 2px solid #00e5ff;
+  border-radius: 12px;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  box-shadow:
+    inset 0 0 50px rgba(0, 229, 255, 0.1),
+    0 0 30px rgba(0, 229, 255, 0.2);
+}
+
+.talent-tree-graph-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.talent-tree-graph-container::-webkit-scrollbar-track {
+  background: rgba(0, 20, 40, 0.5);
+  border-radius: 4px;
+}
+
+.talent-tree-graph-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00e5ff 0%, #0099aa 100%);
+  border-radius: 4px;
+}
+
+.talent-tree-graph-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00ffff 0%, #00bbcc 100%);
+}
+
+/* SVG canvas */
+.talent-tree-svg {
+  width: 100%;
+  height: auto;
+  min-height: 380px;
+}
+
+/* Background particles animation */
+.bg-particles .particle {
+  animation: particleFloat 8s ease-in-out infinite;
+}
+
+.bg-particles .particle:nth-child(odd) {
+  animation-duration: 10s;
+  animation-direction: alternate;
+}
+
+.bg-particles .particle:nth-child(even) {
+  animation-duration: 12s;
+  animation-delay: -4s;
+}
+
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.1;
+  }
+  25% {
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) translateX(10px);
+    opacity: 0.2;
+  }
+  75% {
+    opacity: 0.4;
+  }
+}
+
+/* Edge/connection styles */
+.talent-edges line {
+  transition: stroke 0.3s ease, stroke-opacity 0.3s ease;
+}
+
+.edge-active {
+  animation: edgePulse 2s ease-in-out infinite;
+}
+
+@keyframes edgePulse {
+  0%, 100% { stroke-opacity: 0.8; }
+  50% { stroke-opacity: 1; }
+}
+
+/* Node styles */
+.talent-node {
+  transition: transform 0.2s ease;
+}
+
+.talent-node-available {
+  cursor: pointer;
+}
+
+.talent-node-available:hover {
+  transform: scale(1.08);
+}
+
+.talent-node-locked {
+  cursor: not-allowed;
+}
+
+.talent-node-selected .hex-main {
+  animation: selectedPulse 2s ease-in-out infinite;
+}
+
+@keyframes selectedPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(255, 0, 170, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px rgba(255, 0, 170, 0.9));
+  }
+}
+
+/* Hexagon styles */
+.hex-glow {
+  transition: filter 0.3s ease;
+}
+
+.hex-main {
+  transition: stroke-width 0.2s ease, filter 0.3s ease;
+}
+
+.hex-inner {
+  transition: fill 0.3s ease;
+}
+
+.hex-icon {
+  pointer-events: none;
+  transition: fill 0.3s ease;
+}
+
+.hex-label {
+  pointer-events: none;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
+  font-weight: 500;
+}
+
+/* Legend */
+.talent-tree-legend {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  background: rgba(0, 20, 40, 0.7);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #9ed0ff;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.legend-hex {
+  width: 20px;
+  height: 18px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  border: 2px solid;
+}
+
+.legend-hex.legend-selected {
+  background: linear-gradient(180deg, rgba(255, 0, 170, 0.5) 0%, rgba(170, 0, 102, 0.3) 100%);
+  border-color: #ff00aa;
+  box-shadow: 0 0 10px rgba(255, 0, 170, 0.5);
+}
+
+.legend-hex.legend-available {
+  background: linear-gradient(180deg, rgba(0, 229, 255, 0.4) 0%, rgba(0, 153, 170, 0.2) 100%);
+  border-color: #00e5ff;
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+}
+
+.legend-hex.legend-locked {
+  background: linear-gradient(180deg, rgba(85, 102, 119, 0.3) 0%, rgba(51, 68, 85, 0.2) 100%);
+  border-color: #556677;
+}
+
+/* View toggle */
+.talent-view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.talent-view-btn {
+  padding: 0.5rem 1rem;
+  background: rgba(0, 20, 40, 0.6);
+  border: 1px solid #445566;
+  color: #88aacc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.talent-view-btn:hover {
+  border-color: #00e5ff;
+  color: #00e5ff;
+  background: rgba(0, 229, 255, 0.1);
+}
+
+.talent-view-btn.active {
+  background: rgba(0, 229, 255, 0.2);
+  border-color: #00e5ff;
+  color: #00e5ff;
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+}
+
+/* No talents message */
+.no-talents {
+  text-align: center;
+  padding: 3rem;
+  color: #556677;
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+/* Selected talents summary */
+.selected-talents-summary {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(0, 50, 80, 0.6), rgba(0, 30, 50, 0.8));
+  border: 2px solid #00e5ff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+}
+
+.selected-talents-summary h4 {
+  margin: 0 0 0.75rem 0;
+  color: #00ff88;
+  font-size: 1.05rem;
+  font-weight: bold;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.selected-talents-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.selected-talent-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: linear-gradient(135deg, rgba(255, 0, 170, 0.2) 0%, rgba(170, 0, 102, 0.15) 100%);
+  border: 1.5px solid #ff00aa;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #ff99dd;
+  font-weight: 500;
+  box-shadow: 0 0 10px rgba(255, 0, 170, 0.2);
+}
+
+.selected-talent-badge .remove-talent {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #ff6b6b;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  transition: color 0.2s, transform 0.2s;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selected-talent-badge .remove-talent:hover {
+  color: #ff8888;
+  transform: scale(1.2);
+}
+
+.no-selection {
+  color: #556677;
+  font-style: italic;
+}
+
+/* Talent tree header with view toggle */
+.talent-tree-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+.talent-tree-header h3 {
+  margin: 0;
+  color: #00e5ff;
+  font-family: 'Orbitron', sans-serif;
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .talent-tree-graph-container {
+    min-height: 300px;
+    max-height: 450px;
+  }
+
+  .talent-tree-legend {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .legend-item {
+    font-size: 0.75rem;
+  }
+
+  .talent-view-toggle {
+    flex-wrap: wrap;
+  }
+
+  .talent-view-btn {
+    flex: 1;
+    min-width: 80px;
+    justify-content: center;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Talent list view (alternative to graph) */
+.talents-list-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.talent-list-item {
+  background: rgba(0, 20, 40, 0.6);
+  border: 1px solid #445566;
+  border-radius: 8px;
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+.talent-list-item:hover {
+  border-color: #00e5ff;
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+}
+
+.talent-list-item.available {
+  border-color: #00e5ff;
+  cursor: pointer;
+}
+
+.talent-list-item.selected {
+  border-color: #ff00aa;
+  background: rgba(255, 0, 170, 0.1);
+}
+
+.talent-list-item.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.talent-list-item h4 {
+  margin: 0 0 0.5rem 0;
+  color: #00e5ff;
+  font-size: 1rem;
+}
+
+.talent-list-item.selected h4 {
+  color: #ff66cc;
+}
+
+.talent-list-item.locked h4 {
+  color: #667788;
+}
+
+.talent-list-item .talent-prereqs {
+  font-size: 0.8rem;
+  color: #ffaa00;
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
+/* Animation for node appearance */
+@keyframes nodeAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.talent-node {
+  animation: nodeAppear 0.4s ease-out backwards;
+}
+
+.talent-node:nth-child(1) { animation-delay: 0.05s; }
+.talent-node:nth-child(2) { animation-delay: 0.1s; }
+.talent-node:nth-child(3) { animation-delay: 0.15s; }
+.talent-node:nth-child(4) { animation-delay: 0.2s; }
+.talent-node:nth-child(5) { animation-delay: 0.25s; }
+.talent-node:nth-child(6) { animation-delay: 0.3s; }
+.talent-node:nth-child(7) { animation-delay: 0.35s; }
+.talent-node:nth-child(8) { animation-delay: 0.4s; }
+.talent-node:nth-child(9) { animation-delay: 0.45s; }
+.talent-node:nth-child(10) { animation-delay: 0.5s; }
+
+/* Edge appearance animation */
+@keyframes edgeAppear {
+  from {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.talent-edges line {
+  stroke-dasharray: 100;
+  animation: edgeAppear 0.6s ease-out forwards;
+}
