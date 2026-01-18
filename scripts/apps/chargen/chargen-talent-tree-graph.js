@@ -585,8 +585,22 @@ export function renderTalentTreeGraph(container, talents, characterData, onSelec
  * Get talents for a specific tree
  */
 export function getTalentsInTree(allTalents, treeName) {
-  return allTalents.filter(talent => {
+  SWSELogger.log(`[TALENT-TREE-GRAPH] getTalentsInTree called with treeName: "${treeName}", total talents: ${allTalents.length}`);
+
+  // Debug: show first few talents and their tree properties
+  if (allTalents.length > 0) {
+    for (let i = 0; i < Math.min(3, allTalents.length); i++) {
+      const t = allTalents[i];
+      const treeFromFunction = getTalentTreeName(t);
+      SWSELogger.log(`[TALENT-TREE-GRAPH] Sample talent ${i}: name="${t.name}", getTalentTreeName="${treeFromFunction}", system.tree="${t.system?.tree}", system.talent_tree="${t.system?.talent_tree}", system.talentTree="${t.system?.talentTree}"`);
+    }
+  }
+
+  const result = allTalents.filter(talent => {
     const talentTree = getTalentTreeName(talent);
     return talentTree === treeName;
   });
+
+  SWSELogger.log(`[TALENT-TREE-GRAPH] getTalentsInTree result: ${result.length} talents match tree "${treeName}"`);
+  return result;
 }
