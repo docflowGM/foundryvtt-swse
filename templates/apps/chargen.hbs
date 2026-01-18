@@ -1461,36 +1461,39 @@
  </div>
 
  <div class="skills-list-chargen">
+ <div class="skills-header-row">
+ <div class="skill-name-header">Skill</div>
+ <div class="skill-train-header">Train</div>
+ <div class="skill-ability-header">Ability Bonus</div>
+ <div class="skill-racial-header">Racial Bonus</div>
+ <div class="skill-total-header">Total</div>
+ </div>
  {{#each availableSkills}}
  {{#if this.isClassSkill}}
- <div class="skill-row-chargen {{#if this.trained}}trained{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
- <div class="skill-checkbox">
- <input type="checkbox"
- class="skill-select"
- data-skill="{{this.key}}"
- {{checked this.trained}}
- {{#if (and (not this.trained) (gte ../characterData.trainedSkillsCount ../characterData.trainedSkillsAllowed))}}disabled{{/if}}/>
- </div>
+ <div class="skill-row-chargen {{#if this.trained}}trained{{/if}}" data-skill="{{this.key}}">
  <div class="skill-name-col">
  {{#if this.suggestion.iconClass}}
  <span class="skill-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
  <i class="{{this.suggestion.iconClass}}"></i>
  </span>
  {{/if}}
- <strong>{{this.name}}</strong>
- <span class="skill-ability-label">({{uppercase this.ability}})</span>
- {{#if this.suggestion.reason}}
- <p class="suggestion-reason" style="margin-top: 0.5rem; font-size: 0.9rem;">{{this.suggestion.reason}}</p>
- {{/if}}
+ <strong>{{this.name}}</strong> <span class="skill-ability-abbrev">({{uppercase this.ability}})</span>
  </div>
- <div class="skill-bonus-col">
- {{#if this.trained}}
- <span class="current-bonus">+{{this.currentBonus}}</span>
- <span class="bonus-breakdown">= ½lvl({{this.halfLevel}}) + {{uppercase this.ability}}({{formatBonus this.abilityMod}}) + trained(+5)</span>
- {{else}}
- <span class="current-bonus untrained">+{{this.currentBonus}}</span>
- <span class="if-trained-preview">→ +{{this.trainedBonus}} if trained</span>
- {{/if}}
+ <div class="skill-train-col">
+ <input type="checkbox"
+ class="skill-select"
+ data-skill="{{this.key}}"
+ {{checked this.trained}}
+ {{#if (and (not this.trained) (gte ../characterData.trainedSkillsCount ../characterData.trainedSkillsAllowed))}}disabled{{/if}}/>
+ </div>
+ <div class="skill-ability-col">
+ {{#if (gte this.abilityMod 0)}}+{{/if}}{{this.abilityMod}}
+ </div>
+ <div class="skill-racial-col">
+ {{#if (gt this.speciesBonus 0)}}+{{this.speciesBonus}}{{else}}—{{/if}}
+ </div>
+ <div class="skill-total-col">
+ <span class="skill-total {{#if this.trained}}trained-total{{/if}}">{{#if (gte this.currentBonus 0)}}+{{/if}}{{this.currentBonus}}</span>
  </div>
  </div>
  {{/if}}
