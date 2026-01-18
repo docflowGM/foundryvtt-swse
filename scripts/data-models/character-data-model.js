@@ -461,6 +461,15 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
                                 (this.defenses.will.classBonus || 0) +
                                 (this.defenses.will.misc || 0) +
                                 willSpeciesBonus + conditionPenalty;
+
+    // FLAT-FOOTED DEFENSE
+    // Flat-footed = Reflex Defense - Dex modifier
+    // Used when character is caught off-guard or surprised
+    if (!this.defenses.flatFooted) {
+      this.defenses.flatFooted = {};
+    }
+    const dexMod = this.abilities?.dex?.mod || 0;
+    this.defenses.flatFooted.total = this.defenses.reflex.total - dexMod;
   }
 
   /**
