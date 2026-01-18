@@ -998,6 +998,47 @@ export default class CharacterGenerator extends Application {
     // Add current mentor data for dynamic mentor display in template
     context.mentor = this._getCurrentMentor();
 
+    // Add droid degrees for degree selection step
+    if (this.currentStep === "degree") {
+      context.droidDegrees = [
+        {
+          key: "1st-degree",
+          name: "1st-Degree",
+          bonuses: "INT +2, WIS +2, STR -2",
+          description: "Medical and scientific droid. Specialized in analysis and knowledge."
+        },
+        {
+          key: "2nd-degree",
+          name: "2nd-Degree",
+          bonuses: "INT +2, CHA -2",
+          description: "Engineering droid. Technical expertise and system integration."
+        },
+        {
+          key: "3rd-degree",
+          name: "3rd-Degree",
+          bonuses: "WIS +2, CHA +2, STR -2",
+          description: "Protocol and service droid. Social interface and communication."
+        },
+        {
+          key: "4th-degree",
+          name: "4th-Degree",
+          bonuses: "DEX +2, INT -2, CHA -2",
+          description: "Security and military droid. Combat and threat elimination."
+        },
+        {
+          key: "5th-degree",
+          name: "5th-Degree",
+          bonuses: "STR +4, INT -4, CHA -4",
+          description: "Labor and utility droid. Physical tasks and heavy operations."
+        }
+      ];
+
+      // Add Seraphim dialogue for droid creation
+      if (this._getSeraphimDialogue) {
+        context.seraphimDialogue = this._getSeraphimDialogue();
+      }
+    }
+
     return context;
   }
 
