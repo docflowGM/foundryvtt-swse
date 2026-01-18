@@ -223,6 +223,11 @@ export class SWSEActorSheetBase extends BaseSheet {
       return;
     }
 
+    // For talents and feats, offer choice between picking from list or creating custom
+    if (type === 'talent' || type === 'feat') {
+      return this._onCreateTalentOrFeat(type);
+    }
+
     const cap = type.charAt(0).toUpperCase() + type.slice(1);
 
     // Initialize system fields based on item type
@@ -236,6 +241,67 @@ export class SWSEActorSheetBase extends BaseSheet {
 
     const [created] = await this.actor.createEmbeddedDocuments('Item', [itemData]);
     return created?.sheet.render(true);
+  }
+
+  /**
+   * Handle talent or feat creation with choice between picking from list or creating custom
+   */
+  async _onCreateTalentOrFeat(type) {
+    const itemType = type === 'talent' ? 'Talent' : 'Feat';
+
+    // Show dialog with options
+    const dialog = new Dialog({
+      title: `Add ${itemType}`,
+      content: `
+        <p>How would you like to add a ${itemType.toLowerCase()}?</p>
+        <p style="margin-top: 10px;">
+          <strong>Pick from List:</strong> Opens the character generator to select from available ${type}s<br/>
+          <strong>Create Custom:</strong> Create a new custom ${itemType.toLowerCase()}
+        </p>
+      `,
+      buttons: {
+        pick: {
+          label: `Pick from List`,
+          callback: () => this._openChargenForSelection(type)
+        },
+        custom: {
+          label: `Create Custom`,
+          callback: () => this._createCustomItem(type)
+        }
+      },
+      default: 'pick'
+    });
+
+    return dialog.render(true);
+  }
+
+  /**
+   * Open chargen to select a talent or feat from the list
+   */
+  async _openChargenForSelection(type) {
+    const { default: CharacterGeneratorImproved } = await import('../../apps/chargen-improved.js');
+    const chargen = new CharacterGeneratorImproved(this.actor);
+
+    // Set current step to the appropriate tab
+    chargen.currentStep = type === 'talent' ? 'talents' : 'feats';
+
+    // Store reference to parent sheet so chargen can close and update parent
+    chargen._parentSheet = this;
+
+    return chargen.render(true);
+  }
+
+  /**
+   * Create a custom talent or feat
+   */
+  async _createCustomItem(type) {
+    const { default: CustomItemDialog } = await import('../../apps/custom-item-dialog.js');
+
+    if (type === 'talent') {
+      return CustomItemDialog.createTalent(this.actor);
+    } else if (type === 'feat') {
+      return CustomItemDialog.createFeat(this.actor);
+    }
   }
 
   // -----------------------------

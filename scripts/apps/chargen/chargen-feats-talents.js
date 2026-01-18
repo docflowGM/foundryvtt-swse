@@ -108,6 +108,20 @@ export async function _onSelectFeat(event) {
     ui.notifications.info(`Selected feat: ${feat.name}`);
   }
 
+  // If opened from character sheet "Add Feat" button, add to actor and close
+  if (this._parentSheet && this.actor) {
+    // Add feat directly to actor
+    const [created] = await this.actor.createEmbeddedDocuments('Item', [{
+      name: feat.name,
+      type: 'feat',
+      data: feat.system || feat.data
+    }]);
+    if (created) {
+      ui.notifications.info(`Added ${feat.name} to character sheet`);
+      this.close();
+    }
+  }
+
   // Re-render to show updated feat selection and enable Next button if requirement met
   await this.render();
 }
@@ -193,8 +207,23 @@ export async function _handleSkillFocusFeat(feat) {
 
             this.characterData.feats.push(updatedFeat);
             ui.notifications.info(`${feat.name} applied to ${skillName}. You gain +5 to this skill.`);
-            dialog.close();
-            resolve(true);
+
+            // If opened from character sheet "Add Feat" button, add to actor and close
+            if (this._parentSheet && this.actor) {
+              this.actor.createEmbeddedDocuments('Item', [{
+                name: updatedFeat.name,
+                type: 'feat',
+                data: updatedFeat.system || updatedFeat.data
+              }]).then(() => {
+                ui.notifications.info(`Added ${updatedFeat.name} to character sheet`);
+                dialog.close();
+                this.close();
+                resolve(true);
+              });
+            } else {
+              dialog.close();
+              resolve(true);
+            }
           }
         },
         cancel: {
@@ -456,6 +485,30 @@ export async function _onSelectTalent(event) {
     // DEFENSIVE CLONE: Prevent mutation of cached compendium data
     this.characterData.talents.push(foundry.utils.deepClone(tal));
     ui.notifications.info(`Selected talent: ${tal.name}`);
+  }
+
+  // If opened from character sheet "Add Talent" button, add to actor and close
+  if (this._parentSheet && this.actor) {
+    // Add talent(s) directly to actor
+    const talentsToAdd = Array.isArray(this.characterData.talents) &&
+      this.characterData.talents.length > 0 ?
+      this.characterData.talents.slice(-1) : // Get last added talent
+      [];
+
+    if (talentsToAdd.length > 0) {
+      const itemsToCreate = talentsToAdd.map(tal => ({
+        name: tal.name,
+        type: 'talent',
+        data: tal.system || tal.data
+      }));
+
+      const created = await this.actor.createEmbeddedDocuments('Item', itemsToCreate);
+      if (created.length > 0) {
+        ui.notifications.info(`Added ${created.map(c => c.name).join(', ')} to character sheet`);
+        this.close();
+        return;
+      }
+    }
   }
 
   // Clear selected tree and re-render to show updated selection
