@@ -148,7 +148,7 @@ export default class CharacterGenerator extends Application {
   async render(force = false, options = {}) {
     // Store scroll positions before render
     const scrollPositions = {};
-    if (this.element) {
+    if (this.element && this.element.length) {
       for (const selector of this.constructor.defaultOptions.scrollY || []) {
         const el = this.element[0].querySelector(selector);
         if (el) {
@@ -161,7 +161,7 @@ export default class CharacterGenerator extends Application {
     const result = await super.render(force, options);
 
     // Restore scroll positions after render
-    if (this.element) {
+    if (this.element && this.element.length) {
       for (const [selector, scrollTop] of Object.entries(scrollPositions)) {
         const el = this.element[0].querySelector(selector);
         if (el) {
