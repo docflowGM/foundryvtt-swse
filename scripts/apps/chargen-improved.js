@@ -12,7 +12,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
   constructor(actor = null, options = {}) {
     super(actor, options);
-    this.targetLevel = 1; // Target level for character creation
+    this.targetLevel = options.targetLevel || 1; // Target level for character creation
     this.createdActor = null; // Store the created actor for level-up
   }
 

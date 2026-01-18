@@ -76,7 +76,7 @@
  <input type="number"
  value="10"
  disabled
- class="defense-box-input"/>
+ class="defense-input-sm"/>
  <label class="defense-box-label">Base</label>
  </div>
 
@@ -86,7 +86,7 @@
  <div class="defense-box-group">
  <select
  name="system.defenses.{{key}}.ability"
- class="defense-box-select">
+ class="defense-select-sm">
  <option value="str" {{#if (eq defense.ability "str")}}selected{{/if}}>STR</option>
  <option value="dex" {{#if (eq defense.ability "dex")}}selected{{/if}}>DEX</option>
  <option value="con" {{#if (eq defense.ability "con")}}selected{{/if}}>CON</option>
@@ -105,7 +105,7 @@
  name="system.defenses.{{key}}.classBonus"
  value="{{defense.classBonus}}"
  data-dtype="Number"
- class="defense-box-input"
+ class="defense-input-sm"
  placeholder="0"/>
  <label class="defense-box-label">Class</label>
  </div>
@@ -115,10 +115,10 @@
  <!-- Misc -->
  <div class="defense-box-group">
  <input type="number"
- name="system.defenses.{{key}}.misc"
- value="{{defense.misc}}"
+ name="system.defenses.{{key}}.misc.user.extra"
+ value="{{defense.misc.user.extra}}"
  data-dtype="Number"
- class="defense-box-input"
+ class="defense-input-sm"
  placeholder="0"/>
  <label class="defense-box-label">Misc</label>
  </div>
