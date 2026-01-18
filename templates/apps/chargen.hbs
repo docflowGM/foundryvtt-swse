@@ -1203,6 +1203,22 @@
 
  {{#if (eq currentStep "talents")}}
  <section class="step-talents">
+
+ {{!-- Selected Talents Summary --}}
+ <div class="selected-talents-summary">
+ <h4>Selected Talents ({{characterData.talents.length}}/{{characterData.talentsRequired}})</h4>
+ <div class="selected-talents-list">
+ {{#each characterData.talents}}
+ <div class="selected-talent-badge">
+ <span>{{this.name}}</span>
+ <button type="button" class="remove-talent" data-talentid="{{this._id}}" data-talentname="{{this.name}}">×</button>
+ </div>
+ {{else}}
+ <span class="no-selection">No talents selected yet</span>
+ {{/each}}
+ </div>
+ </div>
+
  {{#unless selectedTalentTree}}
  {{!-- Step 1: Select Talent Tree --}}
  <h3>Select a Talent Tree</h3>
@@ -1274,6 +1290,20 @@
  </button>
  </div>
  {{/unless}}
+
+ {{!-- Next button - shown when enough talents selected --}}
+ <div class="form-actions talents-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ {{#if (gte characterData.talents.length characterData.talentsRequired)}}
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ {{else}}
+ <span class="selection-hint">Select {{characterData.talentsRequired}} talent(s) to continue</span>
+ {{/if}}
+ </div>
  </section>
  {{/if}}
 

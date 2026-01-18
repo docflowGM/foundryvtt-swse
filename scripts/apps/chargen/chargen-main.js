@@ -97,6 +97,7 @@ export default class CharacterGenerator extends Application {
       feats: [],
       featsRequired: 1, // Base 1, +1 for Human
       talents: [],
+      talentsRequired: 1, // 1 talent at level 1
       powers: [],
       forcePowersRequired: 0, // Calculated based on Force Sensitivity and Force Training feats
       starshipManeuvers: [],
@@ -1001,6 +1002,7 @@ export default class CharacterGenerator extends Application {
     $html.find('.select-talent-tree').click(this._onSelectTalentTree.bind(this));
     $html.find('.back-to-talent-trees').click(this._onBackToTalentTrees.bind(this));
     $html.find('.select-talent').click(this._onSelectTalent.bind(this));
+    $html.find('.remove-talent').click(this._onRemoveTalent.bind(this));
     $html.find('.select-power').click(this._onSelectForcePower.bind(this));
     $html.find('.remove-power').click(this._onRemoveForcePower.bind(this));
     $html.find('.select-maneuver').click(this._onSelectStarshipManeuver.bind(this));

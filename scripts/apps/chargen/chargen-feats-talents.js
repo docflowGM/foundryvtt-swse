@@ -441,10 +441,30 @@ export async function _onSelectTalent(event) {
     ui.notifications.info(`Selected talent: ${tal.name}`);
   }
 
-  // Clear selected tree and advance to next step
+  // Clear selected tree and re-render to show updated selection
+  // Don't auto-advance - let user click Next when ready
   this.selectedTalentTree = null;
-  await this._onNextStep(event);
+  await this.render();
 }
+
+/**
+ * Handle talent removal
+ */
+export async function _onRemoveTalent(event) {
+  event.preventDefault();
+  const talentId = event.currentTarget.dataset.talentid;
+  const talentName = event.currentTarget.dataset.talentname;
+
+  // Find and remove the talent
+  const index = this.characterData.talents.findIndex(t =>
+    t._id === talentId || t.name === talentName
+  );
+
+  if (index !== -1) {
+    const removed = this.characterData.talents.splice(index, 1);
+    ui.notifications.info(`Removed talent: ${removed[0]?.name || talentName}`);
+    await this.render();
+  }
 
 /**
  * Get available talent trees for the selected class
