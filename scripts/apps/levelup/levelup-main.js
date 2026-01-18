@@ -1019,7 +1019,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Determine next step
     const currentClasses = getCharacterClasses(this.actor);
     const isMulticlassing = Object.keys(currentClasses).length > 0 && !currentClasses[classDoc.name];
-    const isBase = isBaseClass(classDoc.name);
+    const isBase = isBaseClass(classDoc);
     const getsAbilityIncr = getsAbilityIncrease(newLevel);
     const getsBonusFt = getsBonusFeat(classDoc, this.actor);
     const getsTal = getsTalent(classDoc, this.actor);

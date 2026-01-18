@@ -61,7 +61,7 @@ export async function getPrestigeClassPrerequisites(className) {
  */
 export async function meetsClassPrerequisites(classDoc, actor, pendingData) {
   // Base classes have no prerequisites
-  if (isBaseClass(classDoc.name)) return true;
+  if (isBaseClass(classDoc)) return true;
 
   // Load prerequisites for prestige classes from JSON configuration
   const prestigePrerequisites = await getPrestigeClassPrerequisites(classDoc.name);

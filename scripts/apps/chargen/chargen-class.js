@@ -11,6 +11,7 @@ import {
   validateClassDocument
 } from './chargen-property-accessor.js';
 import { MentorSurvey } from '../mentor-survey.js';
+import { isBaseClass } from '../levelup/levelup-shared.js';
 
 // SSOT Data Layer
 import { ClassesDB } from '../../data/classes-db.js';
@@ -316,15 +317,16 @@ export async function _onSelectClass(event) {
     SWSELogger.log(`CharGen | Background skills preserved:`, this.characterData.backgroundSkills);
   }
 
-  // Offer mentor survey at class selection if not yet completed (for both droid and living characters)
+  // Offer mentor survey at class selection if not yet completed (ONLY for base classes, for both droid and living characters)
   try {
     SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Checking if mentor survey should be offered for class "${className}"...`);
     const tempActor = this._createTempActorForValidation();
     const surveyCompleted = MentorSurvey.hasSurveyBeenCompleted(tempActor);
-    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Survey already completed: ${surveyCompleted}`);
+    const isBaseClassSelection = isBaseClass(classDef);
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Survey already completed: ${surveyCompleted}, Is base class: ${isBaseClassSelection}`);
 
-    if (!surveyCompleted) {
-      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Offering mentor survey prompt...`);
+    if (!surveyCompleted && isBaseClassSelection) {
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Offering mentor survey prompt for base class "${className}"...`);
       const acceptSurvey = await MentorSurvey.promptSurvey(tempActor, className);
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User accepted survey: ${acceptSurvey}`);
 
