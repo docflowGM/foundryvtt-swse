@@ -965,6 +965,9 @@
  <button type="button" id="org-roll-btn" class="method-button">
  <i class="fas fa-dice-d20"></i> Organic Roll (24d6)
  </button>
+<button type="button" id="array-btn" class="method-button">
+<i class="fas fa-list"></i> Array (High or Standard)
+</button>
  </div>
 
  <div id="point-mode" class="ability-mode">
@@ -1017,6 +1020,10 @@
  </div>
  {{/each}}
  </div>
+ </div>
+ <div id="array-mode" class="ability-mode" style="display:none;">
+ <div id="array-selection" class="array-selection"></div>
+ <p class="hint">Select a predefined ability score array.</p>
  </div>
 
  <div class="form-actions">
