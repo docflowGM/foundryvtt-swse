@@ -481,3 +481,63 @@ export async function _applyBackgroundFilters(skillFilter, languageFilter) {
     await this._renderBackgroundCards(bgContainer);
   }
 }
+
+/**
+ * Apply background data to the created actor
+ * @param {Actor} actor - The created actor
+ */
+export async function _applyBackgroundToActor(actor) {
+  const bg = this.characterData.background;
+  if (!bg) return;
+
+  const updateData = {};
+
+  // Apply background name/event/profession to system data if fields exist
+  if (bg.category === 'events') {
+    updateData['system.event'] = bg.name;
+  } else if (bg.category === 'occupation') {
+    updateData['system.profession'] = bg.name;
+  } else if (bg.category === 'planet') {
+    updateData['system.planetOfOrigin'] = bg.name;
+  }
+
+  // Store full background info in notes or a dedicated field
+  if (bg.narrativeDescription) {
+    const existingNotes = actor.system.notes || '';
+    const bgNotes = `**Background: ${bg.name}**\n${bg.narrativeDescription}`;
+    updateData['system.notes'] = existingNotes ? `${existingNotes}\n\n${bgNotes}` : bgNotes;
+  }
+
+  // Apply the update
+  if (Object.keys(updateData).length > 0) {
+    await actor.update(updateData);
+  }
+
+  // Add bonus language if specified
+  if (bg.bonusLanguage) {
+    const existingLanguages = actor.system.languages || [];
+    const newLanguage = bg.bonusLanguage.split(' or ')[0].trim(); // Take first option if multiple
+    if (!existingLanguages.includes(newLanguage)) {
+      await actor.update({
+        'system.languages': [...existingLanguages, newLanguage]
+      });
+    }
+  }
+
+  // Add special ability as a feat if specified
+  if (bg.specialAbility) {
+    const abilityItem = {
+      name: bg.specialAbility.name || `${bg.name} Ability`,
+      type: 'feat',
+      img: bg.icon || 'icons/svg/upgrade.svg',
+      system: {
+        featType: 'starting',
+        benefit: bg.specialAbility.description || bg.specialAbility,
+        prerequisite: `Background: ${bg.name}`
+      }
+    };
+    await actor.createEmbeddedDocuments('Item', [abilityItem]);
+  }
+
+  console.log(`SWSE | Applied background ${bg.name} to actor ${actor.name}`);
+}

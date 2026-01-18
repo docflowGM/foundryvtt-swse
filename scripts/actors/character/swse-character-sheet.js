@@ -29,6 +29,7 @@ import { FeatSystem } from "../../engine/FeatSystem.js";
 import { SkillSystem } from "../../engine/SkillSystem.js";
 import { TalentAbilitiesEngine } from "../../engine/TalentAbilitiesEngine.js";
 import { StarshipManeuversEngine } from "../../engine/StarshipManeuversEngine.js";
+import { ClassNormalizer } from "../../progression/engine/class-normalizer.js";
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
@@ -284,6 +285,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       ? Math.round((system.hp.value / system.hp.max) * 100)
       : 0;
 
+    // --------------------------------------
+    // 10. TALENT TREES (for Talents Tab)
+    // --------------------------------------
+    await this._prepareTalentTreesData(context, classes, talents);
+
     return context;
   }
 // ----------------------------------------------------------
@@ -446,19 +452,29 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     });
 
     // ========== DARK SIDE POINTS HANDLERS ==========
-    html.find(".reduce-dsp").click(ev => {
+    // Use event delegation for dark side buttons to ensure they work in all tabs
+    html.on('click', '.reduce-dsp', (ev) => {
       ev.preventDefault();
       this._onReduceDSP();
     });
 
-    html.find(".increase-dsp").click(ev => {
+    html.on('click', '.increase-dsp', (ev) => {
       ev.preventDefault();
       this._onIncreaseDSP();
     });
 
-    html.find(".dark-inspiration").click(ev => {
+    html.on('click', '.dark-inspiration', (ev) => {
       ev.preventDefault();
       this._onDarkInspiration();
+    });
+
+    // Dark side segment click - set DSP to the clicked segment
+    html.on('click', '.dark-side-segment', (ev) => {
+      ev.preventDefault();
+      const segment = ev.currentTarget.dataset.segment;
+      if (segment !== undefined) {
+        this._onSetDarkSideScore(parseInt(segment, 10));
+      }
     });
 
     // ========== FEAT VARIABLE SLIDER (uses change event, not click) ==========
@@ -478,6 +494,12 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     html.find(".import-character-btn").click(ev => {
       ev.preventDefault();
       this._onImportCharacter();
+    });
+
+    // ========== BIOGRAPHY TAB HANDLERS ==========
+    html.find(".choose-background-btn").click(ev => {
+      ev.preventDefault();
+      this._onChooseBackground();
     });
 
     SWSELogger.log("SWSE | Character sheet listeners activated (all handlers wired)");
@@ -516,7 +538,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     event.preventDefault();
     // Open marketplace/store
     try {
-      const { SWSEStore } = await import('../apps/store/store-main.js');
+      const { SWSEStore } = await import('../../apps/store/store-main.js');
       new SWSEStore(this.actor).render(true);
     } catch (err) {
       SWSELogger.warn('Store system not available:', err);
@@ -1004,9 +1026,10 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     try {
       // Open the character generator which has the progression engine UI
       // for attribute rolling and other selections
-      const CharacterGenerator = (await import('../../apps/chargen/chargen-main.js')).default;
-      const chargen = new CharacterGenerator(this.actor);
-      chargen.currentStep = 'attributes';
+      // Use CharacterGeneratorImproved for full functionality (abilityMethod, pointBuyPool, etc.)
+      const CharacterGeneratorImproved = (await import('../../apps/chargen-improved.js')).default;
+      const chargen = new CharacterGeneratorImproved(this.actor);
+      chargen.currentStep = 'abilities';
       chargen.render(true);
 
     } catch (err) {
@@ -1118,6 +1141,27 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
   /**
+   * Set DSP to a specific value (from clicking dark side segment)
+   * @param {number} value - The target dark side score
+   */
+  async _onSetDarkSideScore(value) {
+    const actor = this.actor;
+    const system = actor.system;
+    const wis = system.attributes?.wis?.total ?? 10;
+    const mult = game.settings.get("foundryvtt-swse", "darkSideMaxMultiplier") || 1;
+    const maxDS = Math.max(wis * mult, 1);
+
+    // Clamp value between 0 and max
+    const newDSP = Math.max(0, Math.min(value, maxDS));
+    const currentDSP = system.darkSideScore || 0;
+
+    if (newDSP === currentDSP) return; // No change
+
+    await actor.update({ "system.darkSideScore": newDSP });
+    ui.notifications.info(`Dark Side Points set to ${newDSP}.`);
+  }
+
+  /**
    * Open dark inspiration dialog showing dark side force powers
    */
   async _onDarkInspiration() {
@@ -1192,6 +1236,67 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   /**
    * Export character data to JSON file
    */
+  /**
+   * Helper method to download a file using modern File System Access API with fallback
+   * @param {string} content - The file content
+   * @param {string} filename - The suggested filename
+   * @param {string} mimeType - The MIME type (e.g., 'application/json')
+   * @returns {Promise<boolean>} - Whether the download was successful
+   */
+  async _downloadFile(content, filename, mimeType = 'application/json') {
+    // Try modern File System Access API first (provides native save dialog)
+    if ('showSaveFilePicker' in window) {
+      try {
+        const extension = filename.split('.').pop() || 'json';
+        const handle = await window.showSaveFilePicker({
+          suggestedName: filename,
+          types: [{
+            description: `${extension.toUpperCase()} Files`,
+            accept: { [mimeType]: [`.${extension}`] }
+          }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(content);
+        await writable.close();
+        return true;
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          // User cancelled the save dialog
+          return false;
+        }
+        // Fall through to blob download on other errors
+        console.warn('File System Access API failed, using fallback download', err);
+      }
+    }
+
+    // Fallback: Use data URI for direct download (more reliable than blob URLs)
+    try {
+      const link = document.createElement('a');
+      // Use base64 data URI which works more reliably across browsers
+      const base64 = btoa(unescape(encodeURIComponent(content)));
+      link.href = `data:${mimeType};base64,${base64}`;
+      link.download = filename;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return true;
+    } catch (err) {
+      console.error('Data URI download failed:', err);
+      // Last resort: blob URL
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      return true;
+    }
+  }
+
   async _onExportCharacterJSON() {
     try {
       // Get complete actor data including all embedded items
@@ -1214,27 +1319,16 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       // Convert to JSON string with nice formatting
       const jsonString = JSON.stringify(exportData, null, 2);
 
-      // Create a blob from the JSON string
-      const blob = new Blob([jsonString], { type: 'application/json' });
-
-      // Create a download link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-
       // Generate filename with character name and timestamp
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
       const safeName = actorData.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-      link.download = `${safeName}_${timestamp}.json`;
+      const filename = `${safeName}_${timestamp}.json`;
 
-      link.href = url;
-      document.body.appendChild(link);
-      link.click();
-
-      // Cleanup
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      ui.notifications.info(`Exported ${actorData.name} to JSON`);
+      // Download using improved method
+      const success = await this._downloadFile(jsonString, filename, 'application/json');
+      if (success) {
+        ui.notifications.info(`Exported ${actorData.name} to JSON`);
+      }
     } catch (error) {
       console.error("Error exporting character:", error);
       ui.notifications.error("Failed to export character. See console for details.");
@@ -1317,23 +1411,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       // Convert to JSON string with nice formatting
       const jsonString = JSON.stringify(template, null, 2);
 
-      // Create a blob from the JSON string
-      const blob = new Blob([jsonString], { type: 'application/json' });
-
-      // Create a download link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-
-      link.download = 'swse_character_template.json';
-      link.href = url;
-      document.body.appendChild(link);
-      link.click();
-
-      // Cleanup
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      ui.notifications.info('Character template downloaded');
+      // Download using improved method
+      const success = await this._downloadFile(jsonString, 'swse_character_template.json', 'application/json');
+      if (success) {
+        ui.notifications.info('Character template downloaded');
+      }
     } catch (error) {
       console.error("Error exporting template:", error);
       ui.notifications.error("Failed to export template. See console for details.");
@@ -1350,6 +1432,22 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     } catch (error) {
       console.error("Error opening import wizard:", error);
       ui.notifications.error("Failed to open import wizard. See console for details.");
+    }
+  }
+
+  /**
+   * Open background selection dialog
+   * Opens the character generator with the background step pre-selected
+   */
+  async _onChooseBackground() {
+    try {
+      const CharacterGeneratorImproved = (await import('../../apps/chargen-improved.js')).default;
+      const chargen = new CharacterGeneratorImproved(this.actor);
+      chargen.currentStep = 'background';
+      chargen.render(true);
+    } catch (err) {
+      console.warn("Failed to open background selector:", err);
+      ui.notifications.error("Failed to open background selection. Please try again.");
     }
   }
 
@@ -1431,9 +1529,16 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // G. Combat Action Engine (Simplified)
   // ----------------------------------------------------------
 
+  // Handler for data-action="rollCombatAction" (matches _onAction naming convention)
+  async _onRollCombatAction(event) {
+    return this._onPostCombatAction(event);
+  }
+
   async _onPostCombatAction(evt) {
     evt.preventDefault();
-    const el = evt.currentTarget;
+    // Find the actual element with data-action-name (event.currentTarget may be the root listener)
+    const actionElement = evt.target.closest('[data-action-name]');
+    const el = actionElement || evt.currentTarget;
     const name = el.dataset.actionName;
 
     const data = CombatActionsMapper.getAllCombatActions();
@@ -1539,7 +1644,238 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
 
-  
+  // ----------------------------------------------------------
+  // I.0 Talent Tree Data Preparation
+  // ----------------------------------------------------------
+
+  /**
+   * Prepare talent trees data for the talents tab
+   * @param {Object} context - The render context
+   * @param {Array} classes - Array of class items on the actor
+   * @param {Array} talents - Array of talent items the actor has acquired
+   */
+  async _prepareTalentTreesData(context, classes, talents) {
+    try {
+      // Get talent tree names from all classes using ClassNormalizer
+      const treeNames = new Set();
+
+      for (const cls of classes) {
+        // Use ClassNormalizer to ensure consistent property access
+        const normalizedClass = ClassNormalizer.normalizeClassDoc(cls);
+        const classTrees = normalizedClass.system?.talentTrees
+          || normalizedClass.system?.talent_trees
+          || [];
+
+        const treesArray = Array.isArray(classTrees) ? classTrees : [classTrees].filter(Boolean);
+        treesArray.forEach(tree => {
+          if (typeof tree === 'string' && tree.trim()) {
+            treeNames.add(tree.trim());
+          }
+        });
+      }
+
+      // Debug log for troubleshooting
+      SWSELogger.log(`[TALENT-TREES] Found ${treeNames.size} talent trees from ${classes.length} classes:`, Array.from(treeNames));
+
+      // If no trees from actor's class items, try to load from compendium by class name
+      if (treeNames.size === 0 && classes.length > 0) {
+        const classPack = game.packs.get('foundryvtt-swse.classes');
+        if (classPack) {
+          for (const cls of classes) {
+            try {
+              // Find class in compendium by name
+              const classIndex = classPack.index.find(c => c.name === cls.name);
+              if (classIndex) {
+                const fullClassDoc = await classPack.getDocument(classIndex._id);
+                const normalizedClass = ClassNormalizer.normalizeClassDoc(fullClassDoc);
+                const classTrees = normalizedClass.system?.talentTrees
+                  || normalizedClass.system?.talent_trees
+                  || [];
+
+                const treesArray = Array.isArray(classTrees) ? classTrees : [classTrees].filter(Boolean);
+                treesArray.forEach(tree => {
+                  if (typeof tree === 'string' && tree.trim()) {
+                    treeNames.add(tree.trim());
+                  }
+                });
+              }
+            } catch (err) {
+              SWSELogger.warn(`[TALENT-TREES] Error loading class ${cls.name} from compendium:`, err);
+            }
+          }
+          SWSELogger.log(`[TALENT-TREES] After compendium lookup: ${treeNames.size} talent trees`);
+        }
+      }
+
+      // If still no trees, try to get trees from actor's acquired talents
+      if (treeNames.size === 0 && talents.length > 0) {
+        for (const talent of talents) {
+          const tree = talent.system?.tree || talent.system?.talent_tree || talent.system?.talentTree;
+          if (tree && typeof tree === 'string') {
+            treeNames.add(tree.trim());
+          }
+        }
+      }
+
+      // Build talent tree filters for UI
+      context.talentTreeFilters = Array.from(treeNames).map(name => ({
+        id: name.toLowerCase().replace(/\s+/g, '-'),
+        label: name
+      }));
+
+      // Build acquired talents list
+      context.acquiredTalents = talents.map(t => ({
+        _id: t.id,
+        name: t.name,
+        treeName: t.system?.tree || t.system?.talent_tree || 'Unknown',
+        summary: t.system?.benefit || t.system?.description || ''
+      }));
+
+      // Calculate available talent selections
+      const totalTalents = classes.reduce((sum, cls) => {
+        const classLevel = cls.system?.level || 1;
+        // Most classes get 1 talent at odd levels (1, 3, 5, 7, 9, etc.)
+        return sum + Math.ceil(classLevel / 2);
+      }, 0);
+      context.availableTalentSelections = Math.max(0, totalTalents - talents.length);
+
+      // Load talent tree compendium data for display
+      const treePack = game.packs.get('foundryvtt-swse.talenttrees');
+      const talentPack = game.packs.get('foundryvtt-swse.talents');
+
+      context.talentTrees = [];
+
+      if (treePack && talentPack) {
+        const allCompendiumTalents = await talentPack.getDocuments();
+        const acquiredTalentNames = new Set(talents.map(t => t.name.toLowerCase()));
+
+        for (const treeName of treeNames) {
+          // Find talents that belong to this tree
+          const treeTalents = allCompendiumTalents.filter(t => {
+            const talentTree = t.system?.tree || t.system?.talent_tree || '';
+            return talentTree.toLowerCase() === treeName.toLowerCase();
+          });
+
+          if (treeTalents.length === 0) continue;
+
+          // Organize talents into tiers based on prerequisites
+          const tiers = this._organizeTalentsIntoTiers(treeTalents, acquiredTalentNames);
+
+          context.talentTrees.push({
+            id: treeName.toLowerCase().replace(/\s+/g, '-'),
+            name: treeName,
+            class: `tree-${treeName.toLowerCase().replace(/\s+/g, '-')}`,
+            description: `Talents from the ${treeName} talent tree.`,
+            tiers
+          });
+        }
+      }
+
+      // Sort trees alphabetically
+      context.talentTrees.sort((a, b) => a.name.localeCompare(b.name));
+
+    } catch (err) {
+      SWSELogger.error('Error preparing talent trees:', err);
+      context.talentTrees = [];
+      context.talentTreeFilters = [];
+      context.acquiredTalents = [];
+      context.availableTalentSelections = 0;
+    }
+  }
+
+  /**
+   * Organize talents into tiers based on prerequisites
+   * @param {Array} treeTalents - All talents in a tree
+   * @param {Set} acquiredNames - Set of lowercase acquired talent names
+   * @returns {Array} Array of tier objects
+   */
+  _organizeTalentsIntoTiers(treeTalents, acquiredNames) {
+    const tiers = [];
+    const processed = new Set();
+
+    // Helper to check if prerequisites are met
+    const prereqsMet = (talent) => {
+      const prereq = talent.system?.prerequisite || talent.system?.prerequisites || '';
+      if (!prereq || prereq === 'None' || prereq === '-') return true;
+
+      // Check if any acquired talent is mentioned in prerequisites
+      for (const name of acquiredNames) {
+        if (prereq.toLowerCase().includes(name)) return true;
+      }
+
+      // If no specific talent prereq found, check for non-talent prereqs (BAB, feats, etc.)
+      const hasTalentPrereq = treeTalents.some(t =>
+        prereq.toLowerCase().includes(t.name.toLowerCase())
+      );
+
+      return !hasTalentPrereq; // If no talent prereq, it's available
+    };
+
+    // Build tiers iteratively
+    let iteration = 0;
+    while (processed.size < treeTalents.length && iteration < 10) {
+      const tierTalents = [];
+
+      for (const talent of treeTalents) {
+        if (processed.has(talent.id)) continue;
+
+        const prereq = talent.system?.prerequisite || talent.system?.prerequisites || '';
+
+        // Tier 0: No prerequisites or non-talent prerequisites only
+        if (iteration === 0) {
+          const hasTalentPrereq = treeTalents.some(t =>
+            prereq.toLowerCase().includes(t.name.toLowerCase())
+          );
+          if (!hasTalentPrereq) {
+            tierTalents.push(talent);
+            processed.add(talent.id);
+          }
+        } else {
+          // Later tiers: Check if prereq talent is in an earlier tier
+          const prereqInEarlierTier = tiers.some(tier =>
+            tier.talents.some(t => prereq.toLowerCase().includes(t.name.toLowerCase()))
+          );
+          if (prereqInEarlierTier) {
+            tierTalents.push(talent);
+            processed.add(talent.id);
+          }
+        }
+      }
+
+      if (tierTalents.length > 0) {
+        tiers.push({
+          talents: tierTalents.map(t => ({
+            _id: t.id,
+            name: t.name,
+            state: acquiredNames.has(t.name.toLowerCase()) ? 'acquired'
+                 : prereqsMet(t) ? 'available'
+                 : 'locked',
+            icon: t.system?.icon || 'fas fa-brain',
+            prerequisite: t.system?.prerequisite || t.system?.prerequisites || ''
+          }))
+        });
+      }
+
+      iteration++;
+    }
+
+    // Add any remaining unprocessed talents to the last tier
+    const remaining = treeTalents.filter(t => !processed.has(t.id));
+    if (remaining.length > 0) {
+      tiers.push({
+        talents: remaining.map(t => ({
+          _id: t.id,
+          name: t.name,
+          state: acquiredNames.has(t.name.toLowerCase()) ? 'acquired' : 'locked',
+          icon: t.system?.icon || 'fas fa-brain',
+          prerequisite: t.system?.prerequisite || t.system?.prerequisites || ''
+        }))
+      });
+    }
+
+    return tiers;
+  }
+
   // ----------------------------------------------------------
   // I. Talent Tree Engine
   // ----------------------------------------------------------

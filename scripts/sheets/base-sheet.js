@@ -57,7 +57,7 @@ export class SWSEActorSheetBase extends BaseSheet {
   }
 
   // -----------------------------
-  // Biography enrichment (v13 safe)
+  // Biography & Notes enrichment (v13 safe)
   // -----------------------------
   async _enrichBiography(context) {
     const TextEditorImpl = foundry.applications?.ux?.TextEditor?.implementation || TextEditor;
@@ -66,6 +66,14 @@ export class SWSEActorSheetBase extends BaseSheet {
       secrets: this.actor.isOwner,
       relativeTo: this.actor
     });
+    context.enrichedNotes = await TextEditorImpl.enrichHTML(context.system.notes || '', {
+      async: true,
+      secrets: this.actor.isOwner,
+      relativeTo: this.actor
+    });
+    // Ensure owner and editable flags are set for editor fields
+    context.owner = this.actor.isOwner;
+    context.editable = this.isEditable;
   }
 
   // -----------------------------
@@ -206,7 +214,9 @@ export class SWSEActorSheetBase extends BaseSheet {
   // Create Item
   // -----------------------------
   async _onItemCreate(event) {
-    const type = event.currentTarget.dataset.type;
+    // Find the actual element with data-type (event.currentTarget may be the root listener)
+    const actionElement = event.target.closest('[data-action]') || event.target.closest('[data-type]');
+    const type = actionElement?.dataset?.type || event.currentTarget?.dataset?.type;
 
     if (!type) {
       ui.notifications.error("Cannot create item: No item type specified");
@@ -341,8 +351,12 @@ export class SWSEActorSheetBase extends BaseSheet {
     event.preventDefault();
     event.stopPropagation();
 
-    const skillKey = event.currentTarget.dataset.skill;
-    const dc = parseInt(event.currentTarget.dataset.dc, 10);
+    // Find the actual element with data-skill (event.currentTarget is the listener's root element)
+    const skillElement = event.target.closest('.skill-use-rollable');
+    if (!skillElement) return;
+
+    const skillKey = skillElement.dataset.skill;
+    const dc = parseInt(skillElement.dataset.dc, 10);
 
     const skill = this.actor.system.skills?.[skillKey];
     if (!skill) return ui.notifications.error(`Skill ${skillKey} missing on actor.`);

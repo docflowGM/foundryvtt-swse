@@ -1111,7 +1111,7 @@ export default class CharacterGenerator extends Application {
 
   _getSteps() {
     if (this.actor) {
-      return ["class", "feats", "talents", "skills", "languages", "summary"];
+      return ["abilities", "class", "background", "feats", "talents", "skills", "languages", "summary"];
     }
 
     // Include type selection (living/droid) after name
