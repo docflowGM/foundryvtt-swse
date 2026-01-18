@@ -439,6 +439,15 @@ async applyScalingFeature(feature) {
    * @returns {Promise<*>} Action result
    */
   async doAction(action, payload) {
+    console.group("🚀 SWSE | doAction ENTRY");
+    console.log("Action:", action);
+    console.log("Engine mode:", this.mode);
+    console.log("Actor:", this.actor?.name, this.actor?.id);
+    console.log("Current step:", this.current);
+    console.log("Payload:", payload);
+    console.trace("Invocation stack");
+    console.groupEnd();
+
     swseLogger.log(`[PROGRESSION-ACTION] ======== ACTION START: "${action}" ========`);
     swseLogger.log(`[PROGRESSION-ACTION] Actor: ${this.actor.name} (${this.actor.id})`);
     swseLogger.log(`[PROGRESSION-ACTION] Mode: ${this.mode}`);
@@ -459,6 +468,7 @@ async applyScalingFeature(feature) {
         Hooks.call('swse:progression:updated');
 
         swseLogger.log(`[PROGRESSION-ACTION] ======== ACTION END: "${action}" ========`);
+        console.warn("✅ SWSE | Action executing successfully, returning result");
         return result;
       } catch (err) {
         swseLogger.error(`[PROGRESSION-ACTION] FATAL ERROR in action "${action}":`, err);
@@ -469,6 +479,9 @@ async applyScalingFeature(feature) {
       }
     } else {
       const msg = `Unknown progression action: ${action}`;
+      console.warn("⛔ SWSE | KILLER GUARD: Action handler not found");
+      console.warn("⛔ Requested action:", action);
+      console.warn("⛔ Available methods:", Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter(m => m.startsWith('_action_')));
       swseLogger.warn(`[PROGRESSION-ACTION] ${msg}`);
       swseLogger.warn(`[PROGRESSION-ACTION] Available methods:`, Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter(m => m.startsWith('_action_')));
       ui.notifications?.warn(msg);
@@ -1052,6 +1065,11 @@ async applyScalingFeature(feature) {
   }
 
   async _action_confirmClass(payload) {
+    console.group("🎯 SWSE | confirmClass ACTION ENTRY");
+    console.log("Payload:", payload);
+    console.trace("Stack trace");
+    console.groupEnd();
+
     swseLogger.log(`[PROGRESSION-CLASS] ======== CONFIRM CLASS START ========`);
     swseLogger.log(`[PROGRESSION-CLASS] Payload:`, payload);
 
@@ -1065,6 +1083,28 @@ async applyScalingFeature(feature) {
     swseLogger.log(`[PROGRESSION-CLASS] Loading progression rules...`);
     const { PROGRESSION_RULES, REQUIRED_PRESTIGE_LEVEL } = await import('../progression/data/progression-data.js');
     const { getClassData } = await import('../progression/utils/class-data-loader.js');
+
+    console.group("📦 SWSE | CLASS LOAD ATTEMPT");
+    console.log("PROGRESSION_RULES.classes exists:", !!PROGRESSION_RULES.classes);
+    console.log("Classes available:", Object.keys(PROGRESSION_RULES.classes || {}).length);
+
+    const pack = game.packs.get("foundryvtt-swse.classes");
+    console.log("Pack exists:", !!pack);
+    if (!pack) {
+      console.error("❌ Class compendium not found");
+    } else {
+      try {
+        const classes = await pack.getDocuments();
+        console.log("Classes loaded from pack:", classes.length);
+        console.table(classes.map(c => ({
+          name: c.name,
+          base: c.system?.base_class
+        })));
+      } catch (e) {
+        console.error("Error loading pack documents:", e);
+      }
+    }
+    console.groupEnd();
 
     swseLogger.log(`[PROGRESSION-CLASS] PROGRESSION_RULES.classes keys:`, Object.keys(PROGRESSION_RULES.classes || {}));
 

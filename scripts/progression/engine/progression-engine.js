@@ -69,6 +69,14 @@ export class ProgressionEngine {
    * Delegates to new engine with backward compatibility
    */
   static async applyChargenStep(actor, stepId, payload = {}) {
+    console.group("🚀 SWSE | PROGRESSION ENGINE ENTRY");
+    console.log("Actor:", actor?.name, actor?.id);
+    console.log("Actor type:", actor?.type);
+    console.log("Step ID:", stepId);
+    console.log("Payload:", payload);
+    console.trace("Invocation stack");
+    console.groupEnd();
+
     swseLogger.log(`[PROGRESSION-ENGINE] applyChargenStep: START - actor: ${actor.id} (${actor.name}), stepId: ${stepId}, payload:`, payload);
     await this.acquireLock(actor);
     try {
