@@ -1440,7 +1440,7 @@
  {{#if (eq currentStep "skills")}}
  <section class="step-skills">
  <h3>Select Trained Skills</h3>
- <p class="help-text">Select {{characterData.trainedSkillsAllowed}} class skills to train. Training grants +5 bonus.</p>
+ <p class="help-text">Select {{characterData.trainedSkillsAllowed}} class skills to train.</p>
 
  {{#if narratorComment}}
  <div class="narrator-comment">
@@ -1460,40 +1460,25 @@
  </button>
  </div>
 
- <div class="skills-list-chargen">
- <div class="skills-header-row">
- <div class="skill-name-header">Skill</div>
- <div class="skill-train-header">Train</div>
- <div class="skill-ability-header">Ability Bonus</div>
- <div class="skill-racial-header">Racial Bonus</div>
- <div class="skill-total-header">Total</div>
- </div>
+ <div class="skills-list-chargen-simple">
  {{#each availableSkills}}
  {{#if this.isClassSkill}}
- <div class="skill-row-chargen {{#if this.trained}}trained{{/if}}" data-skill="{{this.key}}">
- <div class="skill-name-col">
+ <div class="skill-row-simple {{#if this.trained}}trained{{/if}}" data-skill="{{this.key}}">
+ <div class="skill-name-section">
  {{#if this.suggestion.iconClass}}
  <span class="skill-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
  <i class="{{this.suggestion.iconClass}}"></i>
  </span>
  {{/if}}
- <strong>{{this.name}}</strong> <span class="skill-ability-abbrev">({{uppercase this.ability}})</span>
+ <span class="skill-name">{{this.name}}</span>
+ <span class="skill-ability-abbrev">({{uppercase this.ability}})</span>
  </div>
- <div class="skill-train-col">
+ <div class="skill-train-section">
  <input type="checkbox"
  class="skill-select"
  data-skill="{{this.key}}"
  {{checked this.trained}}
  {{#if (and (not this.trained) (gte ../characterData.trainedSkillsCount ../characterData.trainedSkillsAllowed))}}disabled{{/if}}/>
- </div>
- <div class="skill-ability-col">
- {{#if (gte this.abilityMod 0)}}+{{/if}}{{this.abilityMod}}
- </div>
- <div class="skill-racial-col">
- {{#if (gt this.speciesBonus 0)}}+{{this.speciesBonus}}{{else}}—{{/if}}
- </div>
- <div class="skill-total-col">
- <span class="skill-total {{#if this.trained}}trained-total{{/if}}">{{#if (gte this.currentBonus 0)}}+{{/if}}{{this.currentBonus}}</span>
  </div>
  </div>
  {{/if}}

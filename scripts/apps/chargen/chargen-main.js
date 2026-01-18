@@ -870,6 +870,13 @@ export default class CharacterGenerator extends Application {
     context.skillsJson = context.skillsJson || this._skillsJson || [];
     context.availableSkills = context.availableSkills || context.skillsJson;
 
+    // Filter out "Use the Force" skill for droids (droids cannot use the Force)
+    if (this.characterData.isDroid) {
+      context.availableSkills = context.availableSkills.filter(skill =>
+        skill.key !== 'usetheforce' && skill.name !== 'Use the Force'
+      );
+    }
+
     // Calculate skill modifiers for display in template
     // Formula: currentBonus = floor(level/2) + abilityMod + speciesBonus + (trained ? 5 : 0)
     const characterLevel = this.characterData.level || 1;
