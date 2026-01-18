@@ -351,8 +351,8 @@ export async function _onSelectClass(event) {
   }
 
   // Re-render to show the selected class and enable the Next button
-  // Force a complete re-render to ensure the Next button appears
-  await this.render(true);
+  // Preserve scroll position by not forcing a complete re-render
+  await this.render();
 
   SWSELogger.log(`CharGen | Class selection complete, Next button should now be visible`);
 }

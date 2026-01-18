@@ -142,6 +142,38 @@ export default class CharacterGenerator extends Application {
   }
 
   /**
+   * Override render to preserve scroll position during updates
+   * @override
+   */
+  async render(force = false, options = {}) {
+    // Store scroll positions before render
+    const scrollPositions = {};
+    if (this.element) {
+      for (const selector of this.constructor.defaultOptions.scrollY || []) {
+        const el = this.element[0].querySelector(selector);
+        if (el) {
+          scrollPositions[selector] = el.scrollTop;
+        }
+      }
+    }
+
+    // Call parent render
+    const result = await super.render(force, options);
+
+    // Restore scroll positions after render
+    if (this.element) {
+      for (const [selector, scrollTop] of Object.entries(scrollPositions)) {
+        const el = this.element[0].querySelector(selector);
+        if (el) {
+          el.scrollTop = scrollTop;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Load character data from an existing actor
    * @param {Actor} actor - The actor to load from
    * @private

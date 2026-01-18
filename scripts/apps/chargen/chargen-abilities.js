@@ -539,28 +539,28 @@ export function _bindAbilitiesUI(root) {
         <div class="array-selection-container">
           <h4>Select an Ability Score Array</h4>
           <div class="array-options">
-            <div class="array-option" data-array="high">
-              <h5>High Array</h5>
+            <button type="button" class="array-option method-button" data-array="high">
+              <div class="array-option-title">High Array</div>
               <div class="array-values">16, 14, 12, 12, 10, 8</div>
-              <p class="array-description">Higher starting scores for more powerful characters</p>
-            </div>
-            <div class="array-option" data-array="standard">
-              <h5>Standard Array</h5>
+              <p class="array-description">Higher starting scores</p>
+            </button>
+            <button type="button" class="array-option method-button" data-array="standard">
+              <div class="array-option-title">Standard Array</div>
               <div class="array-values">15, 14, 13, 12, 10, 8</div>
-              <p class="array-description">Balanced array for typical characters</p>
-            </div>
+              <p class="array-description">Balanced array</p>
+            </button>
           </div>
         </div>
       `;
 
       // Wire up array selection
       container.querySelectorAll('.array-option').forEach(option => {
-        option.style.cursor = 'pointer';
-        option.onclick = () => {
+        option.addEventListener('click', (e) => {
+          e.preventDefault();
           const arrayType = option.dataset.array;
           const arrayData = arrays[arrayType];
           showArrayAssignment(arrayData);
-        };
+        });
       });
     };
 
