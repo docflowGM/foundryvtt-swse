@@ -524,6 +524,205 @@ export function _bindAbilitiesUI(root) {
       };
     };
 
+    // Array selection (High or Standard array)
+    const rollArray = () => {
+      const arrays = {
+        high: { name: 'High Array', values: [16, 14, 12, 12, 10, 8] },
+        standard: { name: 'Standard Array', values: [15, 14, 13, 12, 10, 8] }
+      };
+
+      const container = root.querySelector("#array-selection");
+      if (!container) return;
+
+      container.innerHTML = `
+        <div class="array-selection-container">
+          <h4>Choose an Array</h4>
+          <div class="array-options">
+            <div class="array-option" data-array="high">
+              <h5>High Array</h5>
+              <div class="array-values">16, 14, 12, 12, 10, 8</div>
+              <button type="button" class="btn btn-primary select-array-btn" data-array="high">Select</button>
+            </div>
+            <div class="array-option" data-array="standard">
+              <h5>Standard Array</h5>
+              <div class="array-values">15, 14, 13, 12, 10, 8</div>
+              <button type="button" class="btn btn-primary select-array-btn" data-array="standard">Select</button>
+            </div>
+          </div>
+          <div id="array-assignment" style="display:none;"></div>
+        </div>
+      `;
+
+      // Wire up array selection buttons
+      container.querySelectorAll('.select-array-btn').forEach(btn => {
+        btn.onclick = () => {
+          const arrayType = btn.dataset.array;
+          const array = arrays[arrayType];
+          showArrayAssignment(array.values);
+        };
+      });
+    };
+
+    // Show array value assignment interface (drag and drop to abilities)
+    const showArrayAssignment = (arrayValues) => {
+      const container = root.querySelector("#array-selection");
+      if (!container) return;
+
+      const assignmentDiv = container.querySelector("#array-assignment");
+      if (!assignmentDiv) return;
+
+      assignmentDiv.style.display = 'block';
+      assignmentDiv.innerHTML = `
+        <div class="array-assignment-container">
+          <h4>Assign Array Values to Abilities</h4>
+          <p class="hint">Drag the values below to the ability scores</p>
+          <div class="array-values-grid" id="array-pool"></div>
+          <div class="ability-slots-grid">
+            ${ablist.map(ab => {
+              const abilityName = ab.charAt(0).toUpperCase() + ab.slice(1);
+              const racial = chargen.characterData.abilities[ab].racial || 0;
+              return `
+                <div class="ability-slot" data-ability="${ab}">
+                  <div class="ability-slot-header">
+                    <span class="ability-name">${abilityName}</span>
+                  </div>
+                  <div class="ability-drop-zone" data-ability="${ab}">
+                    <span class="drop-placeholder">Drop here</span>
+                    <span class="dropped-value" style="display:none;"></span>
+                  </div>
+                  <div class="ability-breakdown">
+                    <span class="base-value">Base: <span class="base-num">--</span></span>
+                    ${racial !== 0 ? `<span class="racial-value">Racial: ${racial >= 0 ? '+' : ''}${racial}</span>` : ''}
+                    <span class="total-value">Total: <span class="total-num">--</span></span>
+                    <span class="modifier-value">Mod: <span class="mod-num">--</span></span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+          <div class="ability-actions">
+            <button type="button" class="btn btn-primary" id="confirm-array">Confirm</button>
+            <button type="button" class="btn btn-secondary" id="reset-array">Reset</button>
+          </div>
+        </div>
+      `;
+
+      // Add draggable array values
+      const pool = assignmentDiv.querySelector("#array-pool");
+      arrayValues.forEach((value, idx) => {
+        const valueDiv = document.createElement("div");
+        valueDiv.className = "draggable-array-value";
+        valueDiv.draggable = true;
+        valueDiv.dataset.value = value;
+        valueDiv.dataset.index = idx;
+        valueDiv.textContent = value;
+
+        valueDiv.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', value);
+          e.dataTransfer.setData('index', idx);
+          valueDiv.classList.add('dragging');
+        });
+
+        valueDiv.addEventListener('dragend', () => {
+          valueDiv.classList.remove('dragging');
+        });
+
+        pool.appendChild(valueDiv);
+      });
+
+      // Setup drop zones
+      assignmentDiv.querySelectorAll('.ability-drop-zone').forEach(zone => {
+        zone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          zone.classList.add('drag-over');
+        });
+
+        zone.addEventListener('dragleave', () => {
+          zone.classList.remove('drag-over');
+        });
+
+        zone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          zone.classList.remove('drag-over');
+
+          const value = parseInt(e.dataTransfer.getData('text/plain'), 10);
+          const index = e.dataTransfer.getData('index');
+          const ability = zone.dataset.ability;
+          const dragged = pool.querySelector(`.draggable-array-value[data-index="${index}"]`);
+
+          if (dragged) {
+            // Clear previous value in this slot
+            const prevValue = zone.querySelector('.dropped-value');
+            if (prevValue.textContent) {
+              const oldDragged = pool.querySelector(`.draggable-array-value.used[data-value="${prevValue.textContent}"]`);
+              if (oldDragged) oldDragged.classList.remove('used');
+            }
+
+            // Set new value
+            zone.querySelector('.drop-placeholder').style.display = 'none';
+            zone.querySelector('.dropped-value').style.display = 'block';
+            zone.querySelector('.dropped-value').textContent = value;
+            dragged.classList.add('used');
+
+            // Update preview
+            updateArrayPreview();
+          }
+        });
+      });
+
+      // Confirm button
+      assignmentDiv.querySelector('#confirm-array').onclick = () => {
+        const allAssigned = ablist.every(ab => {
+          const zone = assignmentDiv.querySelector(`.ability-drop-zone[data-ability="${ab}"]`);
+          return zone.querySelector('.dropped-value').textContent !== '';
+        });
+
+        if (!allAssigned) {
+          ui.notifications.warn("Please assign all ability scores.");
+          return;
+        }
+
+        recalcPreview();
+        ui.notifications.info("Ability scores confirmed!");
+      };
+
+      // Reset button
+      assignmentDiv.querySelector('#reset-array').onclick = () => {
+        showArrayAssignment(arrayValues);
+      };
+
+      // Helper to update preview during drag
+      const updateArrayPreview = () => {
+        ablist.forEach(a => {
+          const zone = assignmentDiv.querySelector(`.ability-drop-zone[data-ability="${a}"]`);
+          const baseNum = zone.querySelector('.base-num');
+          const totalNum = zone.querySelector('.total-num');
+          const modNum = zone.querySelector('.mod-num');
+          const value = parseInt(zone.querySelector('.dropped-value').textContent, 10);
+
+          if (value) {
+            const inp = root.querySelector(`[name="ability_${a}"]`);
+            if (inp) inp.value = value;
+            chargen.characterData.abilities[a].base = value;
+
+            const racial = Number(chargen.characterData.abilities[a].racial || 0);
+            const total = value + racial + Number(chargen.characterData.abilities[a].temp || 0);
+            const mod = Math.floor((total - 10) / 2);
+            chargen.characterData.abilities[a].total = total;
+            chargen.characterData.abilities[a].mod = mod;
+
+            baseNum.textContent = value;
+            totalNum.textContent = total;
+            modNum.textContent = (mod >= 0 ? "+" : "") + mod;
+          } else {
+            baseNum.textContent = "--";
+            totalNum.textContent = "--";
+            modNum.textContent = "--";
+          }
+        });
+      };
+    };
+
     const recalcPreview = () => {
       ablist.forEach(a => {
         const inp = root.querySelector(`[name="ability_${a}"]`);
@@ -562,7 +761,7 @@ export function _bindAbilitiesUI(root) {
     // Mode switching function
     const switchMode = (modeName) => {
       // Hide all mode divs
-      const modes = ['point-mode', 'standard-mode', 'organic-mode', 'free-mode'];
+      const modes = ['point-mode', 'standard-mode', 'organic-mode', 'array-mode', 'free-mode'];
       modes.forEach(mode => {
         const modeDiv = root.querySelector(`#${mode}`);
         if (modeDiv) modeDiv.style.display = 'none';
@@ -618,6 +817,19 @@ export function _bindAbilitiesUI(root) {
       };
     } else {
       SWSELogger.warn("SWSE | Point buy button not found in DOM");
+    }
+
+    const arrayBtn = root.querySelector("#array-btn");
+    if (arrayBtn) {
+      SWSELogger.log("SWSE | Array button found, attaching handler");
+      arrayBtn.onclick = () => {
+        SWSELogger.log("SWSE | Array button clicked");
+        switchMode('array-mode');
+        arrayBtn.classList.add('active');
+        rollArray();
+      };
+    } else {
+      SWSELogger.warn("SWSE | Array button not found in DOM");
     }
 
     // Wire up free-mode inputs to recalc on change
