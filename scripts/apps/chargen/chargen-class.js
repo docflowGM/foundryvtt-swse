@@ -62,6 +62,32 @@ export async function _onSelectClass(event) {
   const classDoc = this._packs.classes?.find(c => c.name === className || c._id === className);
   SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Raw class doc lookup result:`, classDoc ? 'FOUND' : 'NOT FOUND');
 
+  // DIAGNOSTIC: Log the raw class doc data in detail
+  if (classDoc) {
+    const rawSys = classDoc.system || {};
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: RAW CLASS DOC DIAGNOSTIC:`, {
+      name: classDoc.name,
+      hasSystem: !!classDoc.system,
+      systemKeys: Object.keys(rawSys),
+      trainedSkills: rawSys.trainedSkills,
+      trained_skills: rawSys.trained_skills,
+      classSkills: rawSys.classSkills,
+      class_skills: rawSys.class_skills,
+      classSkillsType: typeof rawSys.classSkills,
+      class_skillsType: typeof rawSys.class_skills,
+      classSkillsIsArray: Array.isArray(rawSys.classSkills),
+      class_skillsIsArray: Array.isArray(rawSys.class_skills),
+      classSkillsLength: rawSys.classSkills?.length ?? 'N/A',
+      class_skillsLength: rawSys.class_skills?.length ?? 'N/A'
+    });
+  } else {
+    SWSELogger.error(`[CHARGEN-CLASS] _onSelectClass: NO CLASS DOC FOUND! Checking _packs.classes:`, {
+      packsClassesExists: !!this._packs?.classes,
+      packsClassesLength: this._packs?.classes?.length ?? 0,
+      packsClassesNames: this._packs?.classes?.slice(0, 10)?.map(c => c.name) ?? []
+    });
+  }
+
   let classDef = null;
 
   if (!ClassesDB.isBuilt) {

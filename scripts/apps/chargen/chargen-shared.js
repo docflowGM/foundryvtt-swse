@@ -134,7 +134,11 @@ export class ChargenDataCache {
               SWSELogger.log(`[CACHE-LOAD] Item ${idx + 1}: ${d.name}`, {
                 hasSystem: !!systemData,
                 systemKeys: Object.keys(systemData),
-                hitDie: systemData.hitDie || systemData.hit_die
+                hitDie: systemData.hitDie || systemData.hit_die,
+                trainedSkills: systemData.trainedSkills,
+                classSkills: systemData.classSkills,
+                class_skills: systemData.class_skills,
+                classSkillsLength: (systemData.classSkills || systemData.class_skills)?.length ?? 'N/A'
               });
             }
             return obj;
