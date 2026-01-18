@@ -14,6 +14,7 @@ import {
   isValidItemForStore
 } from "./store-shared.js";
 import { getRendarrLine } from "./dialogue/rendarr-dialogue.js";
+import { addDroidToCart, addVehicleToCart, checkout } from "./store-checkout.js";
 
 // Safe logger reference
 const swseLogger = globalThis.swseLogger || console;
@@ -288,6 +289,7 @@ export class SWSEStore extends FormApplication {
     html.find(".view-cart-btn").on("click", (ev) => {
       this._showPanel(html, "cart");
       html.find("#shop-category-filter").val("cart");
+      this._updateCartDisplay(html);
     });
 
     // GM settings button
@@ -359,6 +361,121 @@ export class SWSEStore extends FormApplication {
   _showPanel(html, panelName) {
     html.find(".shop-panel").removeClass("active");
     html.find(`.shop-panel[data-panel="${panelName}"]`).addClass("active");
+  }
+
+  /**
+   * Update cart display with current items
+   */
+  _updateCartDisplay(html) {
+    const cartContainer = html.find("#cart-items-list");
+    if (!cartContainer.length) return;
+
+    let cartHTML = "";
+
+    // Render regular items
+    for (const item of this.cart.items) {
+      cartHTML += `
+        <div class="cart-item" data-item-id="${item.id}" data-type="item">
+          <div class="item-info">
+            <div class="item-name">${item.name}</div>
+            <div class="item-price">
+              <span class="credits-icon">₢</span>
+              <span class="item-cost">${item.cost.toLocaleString()}</span>
+            </div>
+          </div>
+          <button class="remove-from-cart-btn" data-item-id="${item.id}" data-type="item" title="Remove from cart">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `;
+    }
+
+    // Render droids
+    for (const droid of this.cart.droids) {
+      cartHTML += `
+        <div class="cart-item" data-item-id="${droid.id}" data-type="droid">
+          <div class="item-info">
+            <div class="item-name">${droid.name}</div>
+            <div class="item-price">
+              <span class="credits-icon">₢</span>
+              <span class="item-cost">${droid.cost.toLocaleString()}</span>
+            </div>
+          </div>
+          <button class="remove-from-cart-btn" data-item-id="${droid.id}" data-type="droid" title="Remove from cart">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `;
+    }
+
+    // Render vehicles
+    for (const vehicle of this.cart.vehicles) {
+      cartHTML += `
+        <div class="cart-item" data-item-id="${vehicle.id}" data-type="vehicle">
+          <div class="item-info">
+            <div class="item-name">${vehicle.condition === "used" ? "(Used) " : ""}${vehicle.name}</div>
+            <div class="item-price">
+              <span class="credits-icon">₢</span>
+              <span class="item-cost">${vehicle.cost.toLocaleString()}</span>
+            </div>
+          </div>
+          <button class="remove-from-cart-btn" data-item-id="${vehicle.id}" data-type="vehicle" title="Remove from cart">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `;
+    }
+
+    // Set cart items HTML or empty message
+    if (cartHTML) {
+      cartContainer.html(cartHTML);
+    } else {
+      cartContainer.html("<div class='empty-message'><p>Your cart is empty. Add items to get started!</p></div>");
+    }
+
+    // Update totals
+    let subtotal = 0;
+    for (const item of this.cart.items) subtotal += item.cost;
+    for (const droid of this.cart.droids) subtotal += droid.cost;
+    for (const vehicle of this.cart.vehicles) subtotal += vehicle.cost;
+
+    const remaining = (this.actor?.system?.credits || 0) - subtotal;
+
+    html.find("#cart-subtotal").text(subtotal.toLocaleString());
+    html.find("#cart-total").text(subtotal.toLocaleString());
+    html.find("#cart-remaining").text(remaining.toLocaleString());
+    html.find("#cart-count").text(this.cart.items.length + this.cart.droids.length + this.cart.vehicles.length);
+
+    // Bind remove buttons
+    html.find(".remove-from-cart-btn").on("click", (ev) => {
+      ev.preventDefault();
+      const itemId = ev.currentTarget.dataset.itemId;
+      const type = ev.currentTarget.dataset.type;
+      this._onRemoveFromCart(itemId, type, html);
+    });
+  }
+
+  /**
+   * Remove item from cart
+   */
+  _onRemoveFromCart(itemId, type, html) {
+    if (type === "item") {
+      const index = this.cart.items.findIndex(item => item.id === itemId);
+      if (index !== -1) {
+        this.cart.items.splice(index, 1);
+      }
+    } else if (type === "droid") {
+      const index = this.cart.droids.findIndex(droid => droid.id === itemId);
+      if (index !== -1) {
+        this.cart.droids.splice(index, 1);
+      }
+    } else if (type === "vehicle") {
+      const index = this.cart.vehicles.findIndex(vehicle => vehicle.id === itemId);
+      if (index !== -1) {
+        this.cart.vehicles.splice(index, 1);
+      }
+    }
+    this._updateCartDisplay(html);
   }
 
   /**
@@ -460,14 +577,24 @@ export class SWSEStore extends FormApplication {
    * Buy a droid from the droids pack
    */
   async _onBuyDroid(actorId) {
-    ui.notifications.info("Droid purchase system not yet implemented - coming soon!");
+    if (!this.actor) {
+      ui.notifications.error("No character selected to purchase for");
+      return;
+    }
+    await addDroidToCart(this, actorId);
+    this.render(true);
   }
 
   /**
    * Buy a vehicle from the vehicles pack
    */
   async _onBuyVehicle(actorId, condition) {
-    ui.notifications.info(`Vehicle purchase (${condition}) system not yet implemented - coming soon!`);
+    if (!this.actor) {
+      ui.notifications.error("No character selected to purchase for");
+      return;
+    }
+    await addVehicleToCart(this, actorId, condition);
+    this.render(true);
   }
 
   /**
@@ -494,11 +621,15 @@ export class SWSEStore extends FormApplication {
    * Process cart checkout
    */
   async _onCheckout() {
-    if (this.cart.items.length === 0) {
+    if (!this.actor) {
+      ui.notifications.error("No character selected to purchase for");
+      return;
+    }
+    if (this.cart.items.length === 0 && this.cart.droids.length === 0 && this.cart.vehicles.length === 0) {
       ui.notifications.warn("Your cart is empty!");
       return;
     }
-    ui.notifications.info("Cart checkout system coming soon! For now, use individual Buy buttons.");
+    await checkout(this);
   }
 
   /**

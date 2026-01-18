@@ -976,6 +976,7 @@
  </div>
  <div class="abilities-grid">
  {{#each characterData.abilities}}
+ {{#unless (and ../characterData.isDroid (eq @key "con"))}}
  <div class="ability-card">
  <label>{{@key}}</label>
  <div class="ability-controls">
@@ -990,6 +991,7 @@
 <div id="display_{{@key}}" class="ability-display">Total: {{this.total}} (Mod: {{#if (gte this.mod 0)}}+{{/if}}{{this.mod}})</div>
 </div>
  </div>
+ {{/unless}}
  {{/each}}
  </div>
  </div>
@@ -1008,6 +1010,7 @@
  <p class="hint">Manually enter any ability score values (3-25).</p>
  <div class="abilities-grid">
  {{#each characterData.abilities}}
+ {{#unless (and ../characterData.isDroid (eq @key "con"))}}
  <div class="ability-card">
  <label>{{@key}}</label>
  <input name="ability_{{@key}}" class="ability-input free-input" type="number" value="10" min="3" max="25" />
@@ -1018,6 +1021,7 @@
 <div id="display_{{@key}}" class="ability-display">Total: {{this.total}} (Mod: {{#if (gte this.mod 0)}}+{{/if}}{{this.mod}})</div>
 </div>
  </div>
+ {{/unless}}
  {{/each}}
  </div>
  </div>
