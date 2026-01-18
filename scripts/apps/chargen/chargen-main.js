@@ -142,6 +142,38 @@ export default class CharacterGenerator extends Application {
   }
 
   /**
+   * Override render to preserve scroll position during updates
+   * @override
+   */
+  async render(force = false, options = {}) {
+    // Store scroll positions before render
+    const scrollPositions = {};
+    if (this.element) {
+      for (const selector of this.constructor.defaultOptions.scrollY || []) {
+        const el = this.element[0].querySelector(selector);
+        if (el) {
+          scrollPositions[selector] = el.scrollTop;
+        }
+      }
+    }
+
+    // Call parent render
+    const result = await super.render(force, options);
+
+    // Restore scroll positions after render
+    if (this.element) {
+      for (const [selector, scrollTop] of Object.entries(scrollPositions)) {
+        const el = this.element[0].querySelector(selector);
+        if (el) {
+          el.scrollTop = scrollTop;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Load character data from an existing actor
    * @param {Actor} actor - The actor to load from
    * @private
@@ -724,20 +756,48 @@ export default class CharacterGenerator extends Application {
     if (this.currentStep === "skills" && context.packs) {
       const tempActor = this._createTempActorForValidation();
 
-      // DIAGNOSTIC: Log class skills data at skills step
-      SWSELogger.log(`[CHARGEN-SKILLS] Skills step rendering - DIAGNOSTIC:`, {
-        classSkillsList: this.characterData.classSkillsList,
-        classSkillsListLength: this.characterData.classSkillsList?.length ?? 0,
-        trainedSkillsAllowed: this.characterData.trainedSkillsAllowed,
-        trainedSkillsCount: this.characterData.trainedSkillsCount,
-        selectedClass: this.characterData.classes?.[0]?.name,
+      // Get the canonical (adapted) class data from ClassesDB
+      const selectedClassName = this.characterData.classes?.[0]?.name;
+      let classData = null;
+      let classSkills = [];
+      let trainedSkillsAllowed = 0;
+
+      if (selectedClassName) {
+        // Try to get adapted class from ClassesDB first
+        if (ClassesDB.isBuilt) {
+          classData = ClassesDB.byName(selectedClassName);
+          if (classData) {
+            classSkills = classData.classSkills ?? [];
+            const intMod = this.characterData.abilities.int.mod || 0;
+            const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
+            trainedSkillsAllowed = Math.max(1, (classData.trainedSkills ?? 0) + intMod + humanBonus);
+          }
+        }
+
+        // Fallback: use values from characterData if ClassesDB lookup failed
+        if (!classData) {
+          classSkills = this.characterData.classSkillsList || [];
+          trainedSkillsAllowed = this.characterData.trainedSkillsAllowed || 0;
+        }
+      }
+
+      // DIAGNOSTIC: Log where data is coming from
+      SWSELogger.log(`[CHARGEN-SKILLS] Skills step rendering - DATA SOURCE CHECK:`, {
+        selectedClassName,
+        classDataFound: !!classData,
+        classDataSource: classData ? "ClassesDB" : "characterData fallback",
+        classSkills,
+        classSkillsLength: classSkills?.length ?? 0,
+        trainedSkillsAllowed,
+        characterDataClassSkillsList: this.characterData.classSkillsList,
+        characterDataTrainedSkills: this.characterData.trainedSkillsAllowed,
         backgroundSkills: this.characterData.backgroundSkills?.length ?? 0
       });
 
       try {
         // Combine class skills with background skills
         const allClassSkills = [
-          ...(this.characterData.classSkillsList || []),
+          ...classSkills,
           ...(this.characterData.backgroundSkills?.map(s => s.key || s) || [])
         ];
 
@@ -770,8 +830,9 @@ export default class CharacterGenerator extends Application {
         SWSELogger.warn('CharGen | Failed to add skill suggestions:', err);
 
         // Fallback: still mark class skills even if suggestions fail
+        // Use the canonical class data we retrieved above
         const allClassSkills = [
-          ...(this.characterData.classSkillsList || []),
+          ...classSkills,
           ...(this.characterData.backgroundSkills?.map(s => s.key || s) || [])
         ];
 
@@ -783,6 +844,10 @@ export default class CharacterGenerator extends Application {
         context.skillsJson = fallbackSkills;
         context.availableSkills = fallbackSkills;
       }
+
+      // Update characterData with the canonical trained skills allowed (for template access)
+      this.characterData.trainedSkillsAllowed = trainedSkillsAllowed;
+      context.trainedSkillsAllowed = trainedSkillsAllowed;
     }
 
     context.skillsJson = context.skillsJson || this._skillsJson || [];
@@ -831,6 +896,35 @@ export default class CharacterGenerator extends Application {
 
         // Get all available languages by category
         context.languageCategories = await this._getAvailableLanguages();
+
+        // Filter out already-granted languages from available selection
+        // Granted languages = species granted + background bonus language
+        const grantedLanguages = new Set(this.characterData.languageData.granted || []);
+
+        // Add background bonus language if present
+        if (this.characterData.background?.bonusLanguage) {
+          // bonusLanguage may be "French or Italian" so split on "or" and add each
+          const bonusLangs = this.characterData.background.bonusLanguage
+            .split(' or ')
+            .map(l => l.trim());
+          bonusLangs.forEach(lang => grantedLanguages.add(lang));
+        }
+
+        // Filter out granted languages from each category
+        if (context.languageCategories) {
+          for (const category in context.languageCategories) {
+            if (context.languageCategories[category].languages) {
+              context.languageCategories[category].languages =
+                context.languageCategories[category].languages.filter(lang => !grantedLanguages.has(lang));
+            }
+          }
+        }
+
+        SWSELogger.log(`[CHARGEN-LANGUAGES] Filtered available languages:`, {
+          grantedLanguages: Array.from(grantedLanguages),
+          speciesGranted: this.characterData.languageData.granted,
+          backgroundBonus: this.characterData.background?.bonusLanguage || 'none'
+        });
       } catch (err) {
         SWSELogger.error('CharGen | Failed to load languages:', err);
         context.languageCategories = {

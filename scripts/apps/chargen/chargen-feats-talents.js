@@ -561,6 +561,9 @@ export function _createTempActorForValidation() {
   // Ensure abilities are calculated
   this._recalcAbilities();
 
+  // Get starting class features (e.g., Force Sensitivity from Jedi)
+  const classFeatures = this._getStartingClassFeatures();
+
   // Create a mock actor object with the structure expected by PrerequisiteValidator
   const tempActor = {
     system: {
@@ -578,6 +581,17 @@ export function _createTempActorForValidation() {
     items: {
       filter: (filterFn) => {
         const items = [];
+
+        // Add auto-granted class features
+        if (classFeatures && classFeatures.length > 0) {
+          for (const feature of classFeatures) {
+            items.push({
+              type: 'feat',
+              name: feature.name,
+              system: feature.system || {}
+            });
+          }
+        }
 
         // Add feats
         if (this.characterData.feats) {
@@ -623,6 +637,17 @@ export function _createTempActorForValidation() {
       some: (filterFn) => {
         const items = [];
 
+        // Add auto-granted class features
+        if (classFeatures && classFeatures.length > 0) {
+          for (const feature of classFeatures) {
+            items.push({
+              type: 'feat',
+              name: feature.name,
+              system: feature.system || {}
+            });
+          }
+        }
+
         // Add feats
         if (this.characterData.feats) {
           for (const feat of this.characterData.feats) {
@@ -666,6 +691,17 @@ export function _createTempActorForValidation() {
       },
       find: (filterFn) => {
         const items = [];
+
+        // Add auto-granted class features
+        if (classFeatures && classFeatures.length > 0) {
+          for (const feature of classFeatures) {
+            items.push({
+              type: 'feat',
+              name: feature.name,
+              system: feature.system || {}
+            });
+          }
+        }
 
         // Add feats
         if (this.characterData.feats) {
@@ -720,4 +756,79 @@ export function _createTempActorForValidation() {
   }
 
   return tempActor;
+}
+
+/**
+ * Get starting class features (e.g., Force Sensitivity from Jedi)
+ * These are auto-granted by the class and should be available for prerequisite checking
+ * @private
+ * @returns {Array<Object>} Array of feature objects with name and system properties
+ */
+function _getStartingClassFeatures() {
+  const features = [];
+
+  // Get the selected class
+  const selectedClassName = this.characterData.classes?.[0]?.name;
+  if (!selectedClassName) {
+    return features;
+  }
+
+  try {
+    // Get the class definition from ClassesDB
+    const classDef = ClassesDB.byName(selectedClassName);
+    if (!classDef) {
+      return features;
+    }
+
+    // Extract starting features from the class definition
+    const startingFeatures = classDef.startingFeatures || [];
+    for (const feature of startingFeatures) {
+      features.push({
+        name: feature.name,
+        system: {
+          description: feature.description || `Starting feature from ${selectedClassName}`,
+          source: `${selectedClassName} (Starting)`,
+          featType: "class_feature",
+          prerequisite: feature.prerequisite || "",
+          benefit: feature.description || `Starting feature from ${selectedClassName}`
+        }
+      });
+    }
+
+    // Extract level 1 features from level progression
+    if (classDef.levelProgression && Array.isArray(classDef.levelProgression)) {
+      const level1Data = classDef.levelProgression.find(lp => lp.level === 1);
+      if (level1Data && level1Data.features) {
+        for (const feature of level1Data.features) {
+          // Skip talent_choice and feat_grant as these are handled via UI selection
+          if (feature.type === 'talent_choice' || feature.type === 'feat_grant') {
+            continue;
+          }
+
+          // Skip Lightsaber as it's a weapon, not a feat prerequisite
+          if (feature.name === 'Lightsaber') {
+            continue;
+          }
+
+          // Add proficiencies and class features
+          if (feature.type === 'proficiency' || feature.type === 'class_feature') {
+            features.push({
+              name: feature.name,
+              system: {
+                description: feature.description || `Class feature from ${selectedClassName} level 1`,
+                source: `${selectedClassName} 1`,
+                featType: feature.type === 'proficiency' ? 'proficiency' : 'class_feature',
+                prerequisite: feature.prerequisite || "",
+                benefit: feature.description || `Class feature from ${selectedClassName} level 1`
+              }
+            });
+          }
+        }
+      }
+    }
+  } catch (err) {
+    SWSELogger.warn(`[CHARGEN-FEATS] Failed to get starting class features for ${selectedClassName}:`, err);
+  }
+
+  return features;
 }
