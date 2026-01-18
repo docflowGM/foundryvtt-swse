@@ -775,10 +775,23 @@ export default class CharacterGenerator extends Application {
           }
         }
 
-        // Fallback: use values from characterData if ClassesDB lookup failed
+        // Fallback: try characterData.classData if ClassesDB lookup failed
         if (!classData) {
+          classData = this.characterData.classData;
+        }
+
+        // Extract skills and budget from classData (whichever source it came from)
+        if (classData) {
+          classSkills = classData.classSkills ?? [];
+          trainedSkillsAllowed = Number(classData.trainedSkills ?? 0);
+          // Store back to characterData for consistency
+          this.characterData.trainedSkillsAllowed = trainedSkillsAllowed;
+          this.characterData.classSkillsList = [...(classData.classSkills ?? [])];
+        } else {
+          // Last resort fallback to legacy properties
           classSkills = this.characterData.classSkillsList || [];
           trainedSkillsAllowed = this.characterData.trainedSkillsAllowed || 0;
+          console.error("[CHARGEN-SKILLS] No class data found at all", this.characterData);
         }
       }
 
