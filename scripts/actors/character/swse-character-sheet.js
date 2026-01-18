@@ -1959,6 +1959,8 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     event.preventDefault();
     const header = event.currentTarget;
     const card = header.closest('.ability-card');
+    if (!card) return;
+
     const body = card.querySelector('.ability-card-body');
     const icon = header.querySelector('.ability-expand-icon i');
 
