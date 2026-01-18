@@ -7,17 +7,42 @@ import { SWSELogger } from '../../utils/logger.js';
 import { getClassProperty } from '../chargen/chargen-property-accessor.js';
 
 /**
- * List of base classes in SWSE
+ * List of base classes in SWSE (legacy - should use isBaseClass with class docs instead)
  */
 export const BASE_CLASSES = ['Jedi', 'Noble', 'Scoundrel', 'Scout', 'Soldier'];
 
 /**
- * Check if a class name is a base class
- * @param {string} className - Name of the class
- * @returns {boolean}
+ * Check if a class is a base class (by document or name)
+ * PREFERRED: Pass a class document to read from system.base_class field
+ * FALLBACK: Pass a class name string to check against BASE_CLASSES array
+ *
+ * @param {Object|string} classDocOrName - Class document (with system.base_class) or class name string
+ * @returns {boolean} - true if base class, false if prestige
  */
-export function isBaseClass(className) {
-  return BASE_CLASSES.includes(className);
+export function isBaseClass(classDocOrName) {
+  // If it's an object with system.base_class, use that (authoritative source)
+  if (typeof classDocOrName === 'object' && classDocOrName !== null) {
+    const baseClassFlag = classDocOrName.system?.base_class;
+    // Explicit true means base class, anything else (false/undefined) means prestige
+    return baseClassFlag === true;
+  }
+
+  // Fallback: if it's a string, check against BASE_CLASSES array
+  if (typeof classDocOrName === 'string') {
+    return BASE_CLASSES.includes(classDocOrName);
+  }
+
+  // Unknown type, assume prestige for safety
+  return false;
+}
+
+/**
+ * Check if a class is a prestige class (opposite of isBaseClass)
+ * @param {Object|string} classDocOrName - Class document or class name string
+ * @returns {boolean} - true if prestige class, false if base
+ */
+export function isPrestigeClass(classDocOrName) {
+  return !isBaseClass(classDocOrName);
 }
 
 /**

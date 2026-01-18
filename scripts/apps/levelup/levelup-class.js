@@ -101,7 +101,7 @@ export async function getAvailableClasses(actor, pendingData, options = {}) {
   SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Checking prerequisites for each class...`);
   for (const classDoc of allClasses) {
     SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Processing class "${classDoc.name}"...`);
-    const isBase = isBaseClass(classDoc.name) || classDoc.system.baseClass === true;
+    const isBase = isBaseClass(classDoc);
     SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classDoc.name}" - isBase: ${isBase}`);
 
     // meetsClassPrerequisites is now async (loads from JSON)
@@ -386,7 +386,7 @@ export async function selectClass(classId, actor, context) {
   SWSELogger.log(`SWSE LevelUp | Selected class: ${classDoc.name}`, classDoc.system);
 
   // Update mentor based on class type and character level
-  const isPrestige = !isBaseClass(classDoc.name);
+  const isPrestige = !isBaseClass(classDoc);
   const currentLevel = actor.system.level || 0;
 
   if (isPrestige) {
