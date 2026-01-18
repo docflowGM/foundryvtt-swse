@@ -77,6 +77,105 @@ export async function addItemToCart(store, itemId, updateDialogueCallback) {
 }
 
 /**
+ * Add droid to shopping cart
+ * @param {Object} store - Store instance (this)
+ * @param {string} actorId - ID of droid actor
+ * @param {Function} updateDialogueCallback - Callback to update dialogue
+ */
+export async function addDroidToCart(store, actorId, updateDialogueCallback) {
+    if (!actorId) {
+        ui.notifications.warn("Invalid droid selection.");
+        return;
+    }
+
+    // Try to get from world actors first
+    let droidTemplate = game.actors.get(actorId);
+
+    // If not found in world, search compendiums
+    if (!droidTemplate) {
+        const pack = game.packs.get('foundryvtt-swse.droids');
+        if (pack) {
+            droidTemplate = await pack.getDocument(actorId);
+        }
+    }
+
+    if (!droidTemplate) {
+        ui.notifications.error("Droid not found.");
+        return;
+    }
+
+    const baseCost = Number(droidTemplate.system?.cost) || 0;
+    const finalCost = calculateFinalCost(baseCost);
+
+    // Add to cart
+    store.cart.droids.push({
+        id: actorId,
+        name: droidTemplate.name,
+        cost: finalCost,
+        actor: droidTemplate
+    });
+
+    ui.notifications.info(`${droidTemplate.name} added to cart.`);
+
+    // Update Rendarr's dialogue
+    const dialogue = getRandomDialogue('purchase');
+    if (updateDialogueCallback) {
+        updateDialogueCallback(dialogue);
+    }
+}
+
+/**
+ * Add vehicle to shopping cart
+ * @param {Object} store - Store instance (this)
+ * @param {string} actorId - ID of vehicle actor
+ * @param {string} condition - "new" or "used"
+ * @param {Function} updateDialogueCallback - Callback to update dialogue
+ */
+export async function addVehicleToCart(store, actorId, condition, updateDialogueCallback) {
+    if (!actorId) {
+        ui.notifications.warn("Invalid vehicle selection.");
+        return;
+    }
+
+    // Try to get from world actors first
+    let vehicleTemplate = game.actors.get(actorId);
+
+    // If not found in world, search compendiums
+    if (!vehicleTemplate) {
+        const pack = game.packs.get('foundryvtt-swse.vehicles');
+        if (pack) {
+            vehicleTemplate = await pack.getDocument(actorId);
+        }
+    }
+
+    if (!vehicleTemplate) {
+        ui.notifications.error("Vehicle not found.");
+        return;
+    }
+
+    const baseCost = Number(vehicleTemplate.system?.cost) || 0;
+    const conditionMultiplier = condition === "used" ? 0.5 : 1.0;
+    const finalCost = calculateFinalCost(baseCost * conditionMultiplier);
+
+    // Add to cart
+    store.cart.vehicles.push({
+        id: actorId,
+        name: vehicleTemplate.name,
+        cost: finalCost,
+        condition: condition,
+        actor: vehicleTemplate
+    });
+
+    ui.notifications.info(`${condition === "used" ? "Used" : "New"} ${vehicleTemplate.name} added to cart.`);
+
+    // Update Rendarr's dialogue
+    const dialogue = getRandomDialogue('purchase');
+    if (updateDialogueCallback) {
+        updateDialogueCallback(dialogue);
+    }
+}
+
+/**
  * Purchase a service (immediate credit deduction)
  * @param {Object} actor - Actor purchasing the service
  * @param {string} serviceName - Name of the service

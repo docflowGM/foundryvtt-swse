@@ -871,10 +871,11 @@ export default class CharacterGenerator extends Application {
     context.availableSkills = context.availableSkills || context.skillsJson;
 
     // Calculate skill modifiers for display in template
-    // Formula: currentBonus = floor(level/2) + abilityMod + (trained ? 5 : 0)
+    // Formula: currentBonus = floor(level/2) + abilityMod + speciesBonus + (trained ? 5 : 0)
     const characterLevel = this.characterData.level || 1;
     const halfLevel = Math.floor(characterLevel / 2);
     const abilities = this.characterData.abilities || {};
+    const speciesSkillBonuses = this.characterData.speciesSkillBonuses || {};
 
     // Add modifier data to each skill
     context.availableSkills = context.availableSkills.map(skill => {
@@ -882,18 +883,22 @@ export default class CharacterGenerator extends Application {
       const abilityKey = (skill.ability || '').toLowerCase();
       const abilityMod = abilities[abilityKey]?.mod || 0;
 
+      // Get species skill bonus (racial bonus)
+      const speciesBonus = speciesSkillBonuses[skill.key] || 0;
+
       // Check if this skill is trained (from characterData.skills)
       const isTrained = this.characterData.skills?.[skill.key]?.trained || false;
 
       // Calculate bonuses
-      const trainedBonus = halfLevel + abilityMod + 5;
-      const currentBonus = halfLevel + abilityMod + (isTrained ? 5 : 0);
+      const trainedBonus = halfLevel + abilityMod + speciesBonus + 5;
+      const currentBonus = halfLevel + abilityMod + speciesBonus + (isTrained ? 5 : 0);
 
       return {
         ...skill,
         trained: isTrained,
         halfLevel,
         abilityMod,
+        speciesBonus,
         currentBonus,
         trainedBonus
       };

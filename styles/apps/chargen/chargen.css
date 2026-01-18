@@ -2773,3 +2773,149 @@
     font-weight: bold;
     text-shadow: 0 0 10px rgba(245, 166, 35, 0.5);
 }
+
+/* ============================================
+   Skills Section - Table Layout Styles
+   ============================================ */
+
+.skills-list-chargen {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.skills-header-row {
+    display: grid;
+    grid-template-columns: 2fr 0.8fr 1.2fr 1.2fr 1.2fr;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(10, 116, 218, 0.15);
+    border: 1px solid rgba(10, 116, 218, 0.3);
+    border-radius: 4px;
+    font-weight: 600;
+    color: #0af;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.skills-header-row > div {
+    padding: 0.25rem 0;
+}
+
+.skill-row-chargen {
+    display: grid;
+    grid-template-columns: 2fr 0.8fr 1.2fr 1.2fr 1.2fr;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(10, 116, 218, 0.2);
+    border-radius: 4px;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.skill-row-chargen:hover {
+    background: rgba(10, 116, 218, 0.1);
+    border-color: rgba(10, 116, 218, 0.4);
+}
+
+.skill-row-chargen.trained {
+    background: rgba(15, 180, 100, 0.1);
+    border-color: rgba(15, 180, 100, 0.3);
+}
+
+.skill-row-chargen.trained:hover {
+    background: rgba(15, 180, 100, 0.15);
+    border-color: rgba(15, 180, 100, 0.5);
+}
+
+.skill-name-col {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    color: #9ed0ff;
+}
+
+.skill-suggestion-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+}
+
+.skill-suggestion-badge.suggested {
+    background: rgba(100, 180, 255, 0.3);
+    color: #64b4ff;
+}
+
+.skill-suggestion-badge.weak {
+    background: rgba(255, 150, 100, 0.3);
+    color: #ff9664;
+}
+
+.skill-suggestion-badge.strong {
+    background: rgba(100, 255, 180, 0.3);
+    color: #64ffb4;
+}
+
+.skill-ability-abbrev {
+    font-size: 0.85rem;
+    color: #0af;
+    font-weight: normal;
+}
+
+.skill-train-col {
+    display: flex;
+    justify-content: center;
+}
+
+.skill-train-col input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #0af;
+}
+
+.skill-train-col input[type="checkbox"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.skill-ability-col,
+.skill-racial-col,
+.skill-total-col {
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.skill-ability-col {
+    color: #9ed0ff;
+}
+
+.skill-racial-col {
+    color: #64b4ff;
+}
+
+.skill-total-col {
+    color: #64ffb4;
+}
+
+.skill-total {
+    padding: 0.25rem 0.5rem;
+    background: rgba(15, 180, 100, 0.1);
+    border-radius: 3px;
+}
+
+.skill-total.trained-total {
+    background: rgba(15, 180, 100, 0.2);
+    color: #0ffd00;
+    text-shadow: 0 0 10px rgba(15, 180, 100, 0.5);
+    font-weight: 600;
+}

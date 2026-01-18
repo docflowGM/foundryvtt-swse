@@ -75,7 +75,10 @@ export function _recalcDefenses() {
 export function _bindAbilitiesUI(root) {
     // Capture the CharacterGenerator instance context
     const chargen = this;
-    const ablist = ["str", "dex", "con", "int", "wis", "cha"];
+    // Droids don't have CON ability
+    const ablist = chargen.characterData.isDroid
+        ? ["str", "dex", "int", "wis", "cha"]
+        : ["str", "dex", "con", "int", "wis", "cha"];
 
     SWSELogger.log("SWSE | Binding abilities UI, root:", root);
 
