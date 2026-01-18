@@ -465,6 +465,7 @@ export async function _onRemoveTalent(event) {
     ui.notifications.info(`Removed talent: ${removed[0]?.name || talentName}`);
     await this.render();
   }
+}
 
 /**
  * Get available talent trees for the selected class
