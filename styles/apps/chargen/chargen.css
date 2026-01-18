@@ -2635,6 +2635,139 @@
     font-style: italic;
 }
 
+/* ============================================
+   DROID BUILDER SYSTEMS GRID
+   ============================================ */
+
+.systems-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.system-item {
+    display: flex;
+    flex-direction: column;
+    background: rgba(10, 116, 218, 0.05);
+    border: 2px solid rgba(10, 116, 218, 0.3);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.system-item:hover {
+    background: rgba(10, 116, 218, 0.15);
+    border-color: rgba(10, 116, 218, 0.6);
+    box-shadow: 0 4px 12px rgba(10, 116, 218, 0.2);
+}
+
+.system-item h4 {
+    margin: 0 0 1rem 0;
+    color: #0af;
+    font-size: 1.1rem;
+}
+
+.system-item p {
+    margin: 0.3rem 0;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+.system-item .system-description {
+    flex: 1;
+    margin-bottom: 1rem;
+    color: #999;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+.system-item .free-badge {
+    display: inline-block;
+    background: #4caf50;
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-left: 0.5rem;
+}
+
+.system-item .purchase-count {
+    color: #ffc107;
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+.system-item button {
+    align-self: flex-start;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    border: 2px solid #0af;
+    border-radius: 4px;
+    background: rgba(0, 175, 255, 0.1);
+    color: #0af;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.system-item button:hover {
+    background: rgba(0, 175, 255, 0.3);
+    box-shadow: 0 0 8px rgba(0, 175, 255, 0.5);
+    transform: translateX(2px);
+}
+
+.system-item .remove-system {
+    border-color: #ff4444;
+    color: #ff4444;
+    background: rgba(255, 68, 68, 0.1);
+}
+
+.system-item .remove-system:hover {
+    background: rgba(255, 68, 68, 0.2);
+    box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
+}
+
+/* ============================================
+   ACCESSORY TABS WITH BUFFER
+   ============================================ */
+
+.accessory-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid rgba(10, 116, 218, 0.3);
+    flex-wrap: wrap;
+}
+
+.accessory-tab {
+    padding: 0.75rem 1.5rem;
+    background: rgba(10, 116, 218, 0.1);
+    border: 2px solid rgba(10, 116, 218, 0.3);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.accessory-tab:hover {
+    background: rgba(10, 116, 218, 0.2);
+    color: #0af;
+}
+
+.accessory-tab.active {
+    background: rgba(10, 116, 218, 0.3);
+    color: #0af;
+    border-color: #0af;
+}
+
 .credits-value {
     color: #f5a623;
     font-weight: bold;

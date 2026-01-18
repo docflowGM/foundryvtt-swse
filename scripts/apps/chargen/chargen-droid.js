@@ -939,6 +939,9 @@ export async function _onImportDroid(event) {
     </style>
   `;
 
+  // Capture `this` context before creating dialog
+  const self = this;
+
   const dialog = new Dialog({
     title: "Import Droid Type",
     content: dialogContent,
@@ -970,7 +973,7 @@ export async function _onImportDroid(event) {
           const droidId = e.currentTarget.dataset.droidId;
           const droid = droidList.find(d => d.id === droidId);
           if (droid) {
-            await this._importDroidType(droid);
+            await self._importDroidType(droid);
             dialog.close();
           }
         });
@@ -999,6 +1002,10 @@ export async function _onImportDroid(event) {
 function _validateDroidChassis(droid) {
   const missingFields = [];
   const validSizes = ['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
+
+  if (!droid) {
+    return ['droid'];
+  }
 
   if (!droid.system) {
     return ['system'];
@@ -1047,6 +1054,13 @@ function _validateDroidChassis(droid) {
  * Import a droid type
  */
 export async function _importDroidType(droid) {
+  // Guard against undefined droid
+  if (!droid) {
+    SWSELogger.error(`SWSE CharGen | Cannot import droid: droid is undefined or null`);
+    ui.notifications.error("Failed to import droid. The droid data is missing.");
+    return;
+  }
+
   SWSELogger.log(`SWSE CharGen | Importing droid type: ${droid.name}`, droid);
 
   // Validate droid data completeness
