@@ -238,15 +238,19 @@ export function _bindAbilitiesUI(root) {
           if (dragged) {
             // Clear previous value in this slot
             const prevValue = zone.querySelector('.dropped-value');
-            if (prevValue.textContent) {
+            if (prevValue?.textContent) {
               const oldDragged = pool.querySelector(`.draggable-roll.used[data-value="${prevValue.textContent}"]`);
               if (oldDragged) oldDragged.classList.remove('used');
             }
 
             // Set new value
-            zone.querySelector('.drop-placeholder').style.display = 'none';
-            zone.querySelector('.dropped-value').style.display = 'block';
-            zone.querySelector('.dropped-value').textContent = value;
+            const placeholder = zone.querySelector('.drop-placeholder');
+            const droppedValue = zone.querySelector('.dropped-value');
+            if (placeholder) placeholder.style.display = 'none';
+            if (droppedValue) {
+              droppedValue.style.display = 'block';
+              droppedValue.textContent = value;
+            }
             dragged.classList.add('used');
 
             // Update breakdown
@@ -271,7 +275,8 @@ export function _bindAbilitiesUI(root) {
       container.querySelector('#confirm-4d6').onclick = () => {
         const allAssigned = ablist.every(ab => {
           const zone = container.querySelector(`.ability-drop-zone[data-ability="${ab}"]`);
-          return zone.querySelector('.dropped-value').textContent !== '';
+          const droppedValue = zone?.querySelector('.dropped-value');
+          return droppedValue?.textContent !== '';
         });
 
         if (!allAssigned) {
@@ -413,7 +418,10 @@ export function _bindAbilitiesUI(root) {
             zone._dice.push(value);
 
             // Update display
-            zone.querySelector('.group-placeholder').style.display = zone._dice.length < 3 ? 'block' : 'none';
+            const placeholder = zone.querySelector('.group-placeholder');
+            if (placeholder) {
+              placeholder.style.display = zone._dice.length < 3 ? 'block' : 'none';
+            }
 
             const diceDisplay = document.createElement('span');
             diceDisplay.className = 'grouped-die';
@@ -423,22 +431,25 @@ export function _bindAbilitiesUI(root) {
             // Update total
             if (zone._dice.length === 3) {
               const total = zone._dice.reduce((a, b) => a + b, 0);
-              zone.closest('.dice-group').querySelector('.group-total span').textContent = total;
-              zone.closest('.dice-group').dataset.total = total;
-              zone.closest('.dice-group').classList.add('complete');
-              zone.closest('.dice-group').draggable = true;
-
-              // Make complete group draggable
               const groupDiv = zone.closest('.dice-group');
-              groupDiv.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('group-total', total);
-                e.dataTransfer.setData('group-index', groupIdx);
-                groupDiv.classList.add('dragging');
-              });
+              if (groupDiv) {
+                const totalSpan = groupDiv.querySelector('.group-total span');
+                if (totalSpan) totalSpan.textContent = total;
+                groupDiv.dataset.total = total;
+                groupDiv.classList.add('complete');
+                groupDiv.draggable = true;
 
-              groupDiv.addEventListener('dragend', () => {
-                groupDiv.classList.remove('dragging');
-              });
+                // Make complete group draggable
+                groupDiv.addEventListener('dragstart', (e) => {
+                  e.dataTransfer.setData('group-total', total);
+                  e.dataTransfer.setData('group-index', groupIdx);
+                  groupDiv.classList.add('dragging');
+                });
+
+                groupDiv.addEventListener('dragend', () => {
+                  groupDiv.classList.remove('dragging');
+                });
+              }
             }
           }
         });
@@ -654,15 +665,19 @@ export function _bindAbilitiesUI(root) {
           if (dragged) {
             // Clear previous value in this slot
             const prevValue = zone.querySelector('.dropped-value');
-            if (prevValue.textContent) {
+            if (prevValue?.textContent) {
               const oldDragged = pool.querySelector(`.draggable-roll.used[data-value="${prevValue.textContent}"]`);
               if (oldDragged) oldDragged.classList.remove('used');
             }
 
             // Set new value
-            zone.querySelector('.drop-placeholder').style.display = 'none';
-            zone.querySelector('.dropped-value').style.display = 'block';
-            zone.querySelector('.dropped-value').textContent = value;
+            const placeholder = zone.querySelector('.drop-placeholder');
+            const droppedValue = zone.querySelector('.dropped-value');
+            if (placeholder) placeholder.style.display = 'none';
+            if (droppedValue) {
+              droppedValue.style.display = 'block';
+              droppedValue.textContent = value;
+            }
             dragged.classList.add('used');
 
             // Update breakdown

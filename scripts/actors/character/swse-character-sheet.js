@@ -1884,7 +1884,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     event.preventDefault();
     const btn = event.currentTarget;
     const el = btn.closest(".talent-tree");
+    if (!el) return;
+
     const content = el.querySelector(".tree-content");
+    if (!content) return;
+
     const icon = btn.querySelector("i");
 
     const open = content.style.display !== "none";
