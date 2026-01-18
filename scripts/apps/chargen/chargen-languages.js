@@ -105,7 +105,7 @@ export async function _getStartingLanguages() {
   // Handle droids specially
   if (this.characterData.isDroid) {
     return {
-      granted: ["Binary"],
+      granted: ["Binary", "Basic"],
       additional: languageBudget,
       canSpeakAll: true,
       understands: []
