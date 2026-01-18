@@ -817,7 +817,7 @@ export function _createTempActorForValidation() {
  * @private
  * @returns {Array<Object>} Array of feature objects with name and system properties
  */
-function _getStartingClassFeatures() {
+export function _getStartingClassFeatures() {
   const features = [];
 
   // Get the selected class
