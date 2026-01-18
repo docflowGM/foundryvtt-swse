@@ -468,7 +468,6 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     if (!this.defenses.flatFooted) {
       this.defenses.flatFooted = {};
     }
-    const dexMod = this.abilities?.dex?.mod || 0;
     this.defenses.flatFooted.total = this.defenses.reflex.total - dexMod;
   }
 
