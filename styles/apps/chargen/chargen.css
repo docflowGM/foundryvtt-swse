@@ -2787,15 +2787,15 @@
 
 .skills-header-row {
     display: grid;
-    grid-template-columns: 2fr 0.8fr 1.2fr 1.2fr 1.2fr;
-    gap: 1rem;
-    padding: 0.75rem 1rem;
+    grid-template-columns: 2fr 50px 60px 60px 60px;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
     background: rgba(10, 116, 218, 0.15);
     border: 1px solid rgba(10, 116, 218, 0.3);
     border-radius: 4px;
     font-weight: 600;
     color: #0af;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -2806,9 +2806,9 @@
 
 .skill-row-chargen {
     display: grid;
-    grid-template-columns: 2fr 0.8fr 1.2fr 1.2fr 1.2fr;
-    gap: 1rem;
-    padding: 0.75rem 1rem;
+    grid-template-columns: 2fr 50px 60px 60px 60px;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(10, 116, 218, 0.2);
     border-radius: 4px;
