@@ -424,9 +424,12 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Get species trait bonus for reflex
     const reflexSpeciesBonus = this.defenses.reflex.speciesBonus || 0;
 
+    // Calculate misc bonuses (auto + user)
+    const reflexMiscTotal = this._computeDefenseMisc(this.defenses.reflex);
+
     this.defenses.reflex.total = reflexBase + dexMod + equipmentBonus +
                                   (this.defenses.reflex.classBonus || 0) +
-                                  (this.defenses.reflex.misc || 0) +
+                                  reflexMiscTotal +
                                   reflexSpeciesBonus + conditionPenalty;
 
     // FORTITUDE DEFENSE
@@ -448,18 +451,24 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Get species trait bonus for fortitude
     const fortSpeciesBonus = this.defenses.fort.speciesBonus || 0;
 
+    // Calculate misc bonuses (auto + user)
+    const fortMiscTotal = this._computeDefenseMisc(this.defenses.fort);
+
     this.defenses.fort.total = 10 + level + fortAbility + armorFortBonus +
                                      (this.defenses.fort.classBonus || 0) +
-                                     (this.defenses.fort.misc || 0) +
+                                     fortMiscTotal +
                                      fortSpeciesBonus + conditionPenalty;
 
     // WILL DEFENSE
     // Get species trait bonus for will
     const willSpeciesBonus = this.defenses.will.speciesBonus || 0;
 
+    // Calculate misc bonuses (auto + user)
+    const willMiscTotal = this._computeDefenseMisc(this.defenses.will);
+
     this.defenses.will.total = 10 + level + (this.abilities?.wis?.mod || 0) +
                                 (this.defenses.will.classBonus || 0) +
-                                (this.defenses.will.misc || 0) +
+                                willMiscTotal +
                                 willSpeciesBonus + conditionPenalty;
 
     // FLAT-FOOTED DEFENSE
@@ -469,6 +478,31 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       this.defenses.flatFooted = {};
     }
     this.defenses.flatFooted.total = this.defenses.reflex.total - dexMod;
+  }
+
+  /**
+   * Helper: Compute misc defense bonuses from auto and user components
+   * @param {object} defense - Defense object with misc.auto and misc.user properties
+   * @returns {number} - Total misc bonuses
+   */
+  _computeDefenseMisc(defense) {
+    if (!defense?.misc) return 0;
+
+    let total = 0;
+
+    // Sum all auto bonuses
+    if (defense.misc.auto) {
+      for (const key in defense.misc.auto) {
+        total += Number(defense.misc.auto[key] || 0);
+      }
+    }
+
+    // Add user bonuses
+    if (defense.misc.user) {
+      total += Number(defense.misc.user.extra || 0);
+    }
+
+    return total;
   }
 
   /**
