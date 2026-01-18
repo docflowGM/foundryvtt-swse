@@ -513,7 +513,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     event.preventDefault();
     // Open level up dialog using the static method from the compatibility shim
     try {
-      const { SWSELevelUp } = await import('../apps/swse-levelup.js');
+      const { SWSELevelUp } = await import('../../apps/swse-levelup.js');
       // Use the static openEnhanced method which handles validation and initialization
       await SWSELevelUp.openEnhanced(this.actor);
     } catch (err) {
