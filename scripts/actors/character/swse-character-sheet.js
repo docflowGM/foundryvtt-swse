@@ -548,12 +548,32 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
   async _onPickSpecies(event) {
     event.preventDefault();
-    return this._showSpeciesPicker();
+    try {
+      const { default: CharacterGeneratorImproved } = await import('../../apps/chargen-improved.js');
+      const chargen = new CharacterGeneratorImproved(this.actor, {
+        singleStepMode: true  // Close after selecting species
+      });
+      chargen.currentStep = 'species';
+      chargen.render(true);
+    } catch (err) {
+      console.warn("Failed to open species selector chargen:", err);
+      ui.notifications.error("Failed to open species selection. Please try again.");
+    }
   }
 
   async _onAddClass(event) {
     event.preventDefault();
-    return this._showClassPicker();
+    try {
+      const { default: CharacterGeneratorImproved } = await import('../../apps/chargen-improved.js');
+      const chargen = new CharacterGeneratorImproved(this.actor, {
+        singleStepMode: true  // Close after selecting class
+      });
+      chargen.currentStep = 'class';
+      chargen.render(true);
+    } catch (err) {
+      console.warn("Failed to open class selector chargen:", err);
+      ui.notifications.error("Failed to open class selection. Please try again.");
+    }
   }
 
   // ----------------------------------------------------------
@@ -703,236 +723,9 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
   // ----------------------------------------------------------
-  // E.3 Species Picker (Progression Engine Integrated)
+  // E.3 & E.4 Species & Class Selection
+  // (Now integrated into chargen with singleStepMode)
   // ----------------------------------------------------------
-  async _showSpeciesPicker() {
-    const pack = game.packs.get('foundryvtt-swse.species');
-    if (!pack) return ui.notifications.error("Species pack not found.");
-
-    const index = await pack.getIndex();
-    let species = index.map(x => ({
-      id: x._id,
-      name: x.name,
-      img: x.img
-    }));
-
-    // Sort species: Human first, Near-Human second, then alphabetically
-    species.sort((a, b) => {
-      const nameA = a.name.toLowerCase();
-      const nameB = b.name.toLowerCase();
-
-      // Human always first
-      if (nameA === "human" && nameB !== "human") return -1;
-      if (nameA !== "human" && nameB === "human") return 1;
-
-      // Near-Human second
-      if (nameA === "near-human" && nameB !== "near-human") return -1;
-      if (nameA !== "near-human" && nameB === "near-human") return 1;
-
-      // Rest alphabetically
-      return nameA.localeCompare(nameB);
-    });
-
-    // Create species selection dialog with card UI
-    // Generate asset filename from species name
-    // Naming convention: preserve case, replace spaces with underscores
-    const getSpeciesImagePath = (name) => {
-      // Match actual file naming: replace spaces with underscores, keep apostrophes and case
-      const filename = name.replace(/\s+/g, '_');
-      // Try webp first, with jpg as fallback via onerror
-      return `/assets/species/${filename}.webp`;
-    };
-
-    const rows = species.map((sp, idx) => `
-      <div class="species-choice-card" data-key="${idx}" data-species="${foundry.utils.escapeHTML(sp.name)}" style="cursor: pointer; padding: 12px; border: 1px solid #ccc; border-radius: 4px; margin: 8px; display: inline-block; min-width: 120px; text-align: center; transition: all 0.2s;">
-        <div class="species-img-wrapper" style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 8px auto; background: #666; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-          <img src="${foundry.utils.escapeHTML(getSpeciesImagePath(sp.name))}" alt="${foundry.utils.escapeHTML(sp.name)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="if(this.src.endsWith('.webp')){this.src=this.src.replace('.webp','.jpg');}else{this.style.display='none';this.nextElementSibling.style.display='block';}">
-          <i class="fas fa-dna" style="color: #fff; font-size: 24px; display: none;"></i>
-        </div>
-        <strong>${foundry.utils.escapeHTML(sp.name)}</strong>
-      </div>`
-    ).join("");
-
-    const dialog = new Dialog({
-      title: "Select Species",
-      content: `<div class="swse-species-picker" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;">${rows}</div>`,
-      buttons: {
-        cancel: { label: "Cancel" }
-      },
-      render: html => {
-        html[0].querySelectorAll(".species-choice-card").forEach(card => {
-          card.addEventListener("mouseenter", (evt) => {
-            evt.currentTarget.style.transform = "scale(1.05)";
-            evt.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
-            evt.currentTarget.style.borderColor = "#4a9eff";
-          });
-
-          card.addEventListener("mouseleave", (evt) => {
-            evt.currentTarget.style.transform = "scale(1)";
-            evt.currentTarget.style.boxShadow = "none";
-            evt.currentTarget.style.borderColor = "#ccc";
-          });
-
-          card.addEventListener("click", async (evt) => {
-            const key = Number(card.dataset.key);
-            const selectedSpecies = species[key];
-
-            // Get the actual document
-            const doc = await pack.getDocument(selectedSpecies.id);
-
-            // Show confirmation if changing species
-            if (this.actor.system?.species) {
-              const confirmed = await Dialog.confirm({
-                title: "Change Species?",
-                content: `<p>Change from <strong>${foundry.utils.escapeHTML(this.actor.system.species)}</strong> to <strong>${foundry.utils.escapeHTML(doc.name)}</strong>?</p><p>Racial bonuses and traits will be updated.</p>`
-              });
-              if (!confirmed) return;
-            }
-
-            // Check if species is supported by progression engine
-            const { PROGRESSION_RULES } = await import('../../progression/data/progression-data.js');
-            const speciesSupported = PROGRESSION_RULES.species.hasOwnProperty(doc.name);
-
-            if (speciesSupported) {
-              // Use progression engine for supported species
-              try {
-                const { SWSEProgressionEngine } = await import('../../engine/progression.js');
-                const engine = new SWSEProgressionEngine(this.actor, "chargen");
-
-                // Call the progression engine action
-                await engine.doAction('confirmSpecies', {
-                  speciesId: doc.name,
-                  abilityChoice: null // Will prompt separately if needed (human bonus)
-                });
-
-                ui.notifications.info(`Species set to ${doc.name}`);
-              } catch (err) {
-                // Fallback to drop handler if progression engine fails
-                console.warn("Progression engine failed, using fallback:", err);
-                const { DropHandler } = await import('../../drag-drop/drop-handler.js');
-                await DropHandler.handleSpeciesDrop(this.actor, doc);
-                ui.notifications.info(`Species set to ${doc.name}`);
-              }
-            } else {
-              // Use drop handler directly for unsupported species
-              const { DropHandler } = await import('../../drag-drop/drop-handler.js');
-              await DropHandler.handleSpeciesDrop(this.actor, doc);
-              ui.notifications.info(`Species set to ${doc.name}`);
-            }
-
-            // Close the dialog using the Dialog's close method
-            dialog.close();
-          });
-        });
-      }
-    });
-    dialog.render(true);
-  }
-
-  // ----------------------------------------------------------
-  // E.4 Class Picker (Progression Engine Integrated)
-  // ----------------------------------------------------------
-  async _showClassPicker() {
-    // If character doesn't have classes yet (fresh creation), open chargen to class step
-    if (!this.actor.system.classes || this.actor.system.classes.length === 0) {
-      try {
-        const { default: CharacterGenerator } = await import('../../apps/chargen/chargen-main.js');
-        const chargen = new CharacterGenerator(this.actor, { actorType: 'character' });
-        chargen.currentStep = "class"; // Jump to class selection step
-        chargen.render(true);
-        return;
-      } catch (err) {
-        console.warn("Failed to open chargen:", err);
-        // Fall through to normal class picker dialog
-      }
-    }
-
-    // Normal level-up class selection
-    const { getAvailableClasses } = await import('../../apps/levelup/levelup-class.js');
-    const classes = await getAvailableClasses(this.actor, {});
-    if (!classes?.length) return ui.notifications.warn("No classes available.");
-
-    // Class icons mapping
-    const classIcons = {
-      'Soldier': 'fa-sword',
-      'Jedi': 'fa-hand-sparkles',
-      'Noble': 'fa-crown',
-      'Scout': 'fa-binoculars',
-      'Scoundrel': 'fa-mask'
-    };
-
-    // Create card-based class picker
-    const rows = classes.map((cls, idx) => `
-      <div class="class-choice-card" data-key="${idx}" data-class="${foundry.utils.escapeHTML(cls.name)}" style="cursor: pointer; padding: 16px; border: 1px solid #ccc; border-radius: 8px; margin: 8px; min-width: 200px; transition: all 0.2s; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <i class="fas ${classIcons[cls.name] || 'fa-user'}" style="font-size: 24px; color: #4a9eff;"></i>
-          <div>
-            <strong style="font-size: 1.1em; color: #fff;">${foundry.utils.escapeHTML(cls.name)}</strong>
-            <p style="margin: 4px 0 0 0; font-size: 0.9em; color: #aaa;">${foundry.utils.escapeHTML(cls.description || '')}</p>
-          </div>
-        </div>
-      </div>`
-    ).join("");
-
-    const dialog = new Dialog({
-      title: "Select Class",
-      content: `<div class="swse-class-picker" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 8px;">${rows}</div>`,
-      buttons: {
-        cancel: { label: "Cancel" }
-      },
-      render: html => {
-        html[0].querySelectorAll(".class-choice-card").forEach(card => {
-          card.addEventListener("mouseenter", (evt) => {
-            evt.currentTarget.style.transform = "scale(1.02)";
-            evt.currentTarget.style.boxShadow = "0 4px 12px rgba(74,158,255,0.3)";
-            evt.currentTarget.style.borderColor = "#4a9eff";
-          });
-
-          card.addEventListener("mouseleave", (evt) => {
-            evt.currentTarget.style.transform = "scale(1)";
-            evt.currentTarget.style.boxShadow = "none";
-            evt.currentTarget.style.borderColor = "#ccc";
-          });
-
-          card.addEventListener("click", async () => {
-            const key = Number(card.dataset.key);
-            const cls = classes[key];
-
-            // Use progression engine if available
-            try {
-              const { SWSEProgressionEngine } = await import('../../engine/progression.js');
-              const engine = new SWSEProgressionEngine(this.actor, "chargen");
-
-              // Call the progression engine action
-              await engine.doAction('confirmClass', {
-                classId: cls.id,
-                skipPrerequisites: false
-              });
-
-              ui.notifications.info(`Class selected: ${cls.name}`);
-            } catch (err) {
-              // Fallback to direct item creation if progression engine fails
-              console.warn("Progression engine failed for class, using fallback:", err);
-              const classItem = {
-                name: cls.name,
-                type: 'class',
-                system: {
-                  level: 1,
-                  description: cls.description || ''
-                }
-              };
-              await this.actor.createEmbeddedDocuments("Item", [classItem]);
-              ui.notifications.info(`Class added: ${cls.name}`);
-            }
-
-            dialog.close();
-          });
-        });
-      }
-    });
-    dialog.render(true);
-  }
-
   // ----------------------------------------------------------
   // E.5 Human Bonus Feat & Skill
   // ----------------------------------------------------------
@@ -960,62 +753,9 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
   // ----------------------------------------------------------
-  // E.5B Background Picker (Progression Engine Integrated)
+  // E.5B Background Selection
+  // (Now integrated into chargen with singleStepMode)
   // ----------------------------------------------------------
-  async _showBackgroundPicker() {
-    // Check if backgrounds are enabled
-    const enableBackgrounds = game.settings.get('foundryvtt-swse', 'enableBackgrounds');
-    if (!enableBackgrounds) {
-      return ui.notifications.warn("Backgrounds are not enabled in this world.");
-    }
-
-    // Load backgrounds from progression data
-    try {
-      const { PROGRESSION_RULES } = await import('../../progression/data/progression-data.js');
-      const backgrounds = Object.entries(PROGRESSION_RULES.backgrounds || {})
-        .map(([id, bg]) => ({
-          id,
-          name: bg.name,
-          trainedSkills: bg.trainedSkills || [],
-          description: bg.description || ""
-        }));
-
-      if (!backgrounds.length) {
-        return ui.notifications.warn("No backgrounds available.");
-      }
-
-      return this._showSelectionDialog(
-        "Select Background",
-        backgrounds,
-        bg => `<strong>${bg.name}</strong><br><small>Skills: ${(bg.trainedSkills || []).join(", ")}</small>`,
-        async bg => {
-          // Use progression engine if available
-          try {
-            const { SWSEProgressionEngine } = await import('../../engine/progression.js');
-            const engine = new SWSEProgressionEngine(this.actor, "chargen");
-
-            // Call the progression engine action
-            await engine.doAction('confirmBackground', {
-              backgroundId: bg.id
-            });
-
-            ui.notifications.info(`Background set to ${bg.name}`);
-          } catch (err) {
-            // Fallback - just apply to actor directly
-            console.warn("Progression engine failed for background, using fallback:", err);
-            await this.actor.update({
-              "system.progression.background": bg.id,
-              "system.progression.backgroundTrainedSkills": bg.trainedSkills || []
-            });
-            ui.notifications.info(`Background set to ${bg.name}`);
-          }
-        }
-      );
-    } catch (err) {
-      console.error("Failed to load backgrounds:", err);
-      ui.notifications.error("Failed to load backgrounds.");
-    }
-  }
 
   // ----------------------------------------------------------
   // E.6 Roll Attributes (Progression Engine Integrated)
@@ -1442,7 +1182,9 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   async _onChooseBackground() {
     try {
       const CharacterGeneratorImproved = (await import('../../apps/chargen-improved.js')).default;
-      const chargen = new CharacterGeneratorImproved(this.actor);
+      const chargen = new CharacterGeneratorImproved(this.actor, {
+        singleStepMode: true  // Close after selecting background
+      });
       chargen.currentStep = 'background';
       chargen.render(true);
     } catch (err) {

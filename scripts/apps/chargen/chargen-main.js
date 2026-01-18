@@ -38,6 +38,7 @@ export default class CharacterGenerator extends Application {
     this.actor = actor;
     this.actorType = options.actorType || "character"; // "character" for PCs, "npc" for NPCs
     this.mentor = null; // Mentor character for survey prompts (initialized when needed)
+    this.singleStepMode = options.singleStepMode || false; // Close after confirming single step
     this._creatingActor = false; // Re-entry guard for character creation
     this.characterData = {
       name: "",
@@ -1390,6 +1391,14 @@ export default class CharacterGenerator extends Application {
         } finally {
           this._creatingActor = false;
         }
+      }
+
+      // In single-step mode, close the window after confirming the step instead of moving forward
+      if (this.singleStepMode) {
+        // Finalize and save changes to the actor
+        this._finalizeCharacter();
+        this.close();
+        return;
       }
 
       this.currentStep = nextStep;
