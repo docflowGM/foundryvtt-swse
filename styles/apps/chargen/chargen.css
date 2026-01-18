@@ -939,6 +939,36 @@
   opacity: 0.6;
 }
 
+/* Filter: Show only valid feats */
+.step-feats.filter-valid-feats-only .feat-card.unqualified {
+  display: none;
+}
+
+.feats-filter-controls {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: rgba(0, 50, 100, 0.3);
+  border: 1px solid rgba(0, 170, 255, 0.5);
+  border-radius: 4px;
+}
+
+.feats-filter-controls label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: #00ff88;
+  user-select: none;
+}
+
+.feats-filter-controls label:hover {
+  color: #00ffaa;
+}
+
+.feats-filter-controls input[type="checkbox"] {
+  cursor: pointer;
+}
+
 .selected-feats-summary {
   margin-bottom: 1.5rem;
   padding: 1rem;

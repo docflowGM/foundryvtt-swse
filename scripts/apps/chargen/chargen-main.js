@@ -1000,6 +1000,7 @@ export default class CharacterGenerator extends Application {
     $html.find('.class-choice-btn').click(this._onSelectClass.bind(this));
     $html.find('.select-feat').click(this._onSelectFeat.bind(this));
     $html.find('.remove-feat').click(this._onRemoveFeat.bind(this));
+    $html.find('.filter-valid-feats').change(this._onToggleFeatFilter.bind(this));
     $html.find('.select-talent-tree').click(this._onSelectTalentTree.bind(this));
     $html.find('.back-to-talent-trees').click(this._onBackToTalentTrees.bind(this));
     $html.find('.select-talent').click(this._onSelectTalent.bind(this));
@@ -1991,21 +1992,10 @@ export default class CharacterGenerator extends Application {
         }
       }
 
-      // Apply starting class features (weapon proficiencies, class features, etc.)
-      // Skip for NPCs since they don't have class features
-      if (this.actorType !== "npc" && this.characterData.classes && this.characterData.classes.length > 0) {
-        const className = this.characterData.classes[0].name;
-        const classDoc = this._packs.classes.find(c => c.name === className || c._id === className);
-        if (classDoc) {
-          try {
-            await this._applyStartingClassFeatures(created, classDoc);
-          } catch (featureError) {
-            SWSELogger.warn("Failed to apply starting class features:", featureError);
-            ui.notifications.warn("Character created, but some class features may be missing. Check your character sheet.");
-            // Don't rollback here - character is usable without starting features
-          }
-        }
-      }
+      // NOTE: Auto-grant class features (like Force Sensitivity) are NOT applied during chargen
+      // to avoid consuming feat slots that the player should be able to choose from.
+      // These will be handled by the progression/level-up system when the character sheets loads
+      // or can be manually applied through the level-up UI if needed.
 
       // Apply background (Event abilities, Occupation bonuses, etc.)
       if (this.characterData.background) {

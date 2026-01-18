@@ -267,6 +267,23 @@ export async function _onRemoveFeat(event) {
 }
 
 /**
+ * Handle filtering to show only valid feats
+ */
+export function _onToggleFeatFilter(event) {
+  const isChecked = event.currentTarget.checked;
+  const featsContainer = event.currentTarget.closest('.step-feats');
+
+  if (!featsContainer) return;
+
+  // Toggle the filter class on the feats container
+  if (isChecked) {
+    featsContainer.classList.add('filter-valid-feats-only');
+  } else {
+    featsContainer.classList.remove('filter-valid-feats-only');
+  }
+}
+
+/**
  * Handle talent tree selection - shows talents within the selected tree
  */
 export async function _onSelectTalentTree(event) {
