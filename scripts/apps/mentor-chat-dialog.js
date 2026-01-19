@@ -14,6 +14,8 @@ import { MentorSuggestionVoice } from './mentor-suggestion-voice.js';
 import { BuildIntent } from '../engine/BuildIntent.js';
 import { SuggestionEngine } from '../engine/SuggestionEngine.js';
 import { SWSELogger } from '../utils/logger.js';
+import { MentorVoiceFilterV2 } from './mentor-voice-filter-v2.js';
+import { MentorDialogueV2Integration } from './mentor-dialogue-v2-integration.js';
 
 const CHAT_TOPICS = [
   {
@@ -261,61 +263,70 @@ export class MentorChatDialog extends FormApplication {
   /**
    * Generate a mentor's response to a selected topic
    * Integrates with the suggestion engine for context-aware advice
+   * Uses new mentor voice filter to wrap analysis with authentic mentor voices
    */
   async _generateTopicResponse(topic) {
     const mentorName = this.selectedMentor.mentor.name;
-    const voiceData = MentorSuggestionVoice.SUGGESTION_VOICES[mentorName];
-
-    // Get a random voice variation for this context
-    const voiceVariations = voiceData?.[topic.contextType] || [];
-    const randomVoice = voiceVariations[Math.floor(Math.random() * voiceVariations.length)] ||
-                        "Let me share my thoughts on this.";
 
     // Analyze build intent if not already done
     if (!this.buildIntent) {
       this.buildIntent = BuildIntent.analyze(this.actor, {});
     }
 
-    const response = {
-      introduction: randomVoice,
-      advice: "",
-      suggestions: []
-    };
+    // Generate context-specific analysis (raw data)
+    let analysisData = MentorDialogueV2Integration.buildAnalysisData(
+      this.actor,
+      this.buildIntent,
+      topic.key
+    );
+    let canonicalAnalysis = "";
 
-    // Generate context-specific advice
     switch (topic.key) {
       case "who_am_i_becoming":
-        response.advice = await this._generateIdentityReflection();
+        canonicalAnalysis = await this._generateIdentityReflection();
         break;
 
       case "paths_open":
-        response.advice = await this._generateArchetypePaths();
+        canonicalAnalysis = await this._generateArchetypePaths();
         break;
 
       case "doing_well":
-        response.advice = await this._generateSynergyAnalysis();
+        canonicalAnalysis = await this._generateSynergyAnalysis();
         break;
 
       case "doing_wrong":
-        response.advice = await this._generateGapAnalysis();
+        canonicalAnalysis = await this._generateGapAnalysis();
         break;
 
       case "how_should_i_fight":
-        response.advice = this._generateCombatRoleFraming();
+        canonicalAnalysis = this._generateCombatRoleFraming();
         break;
 
       case "be_careful":
-        response.advice = this._generateRiskAwareness();
+        canonicalAnalysis = this._generateRiskAwareness();
         break;
 
       case "what_lies_ahead":
-        response.advice = await this._generatePrestigePlanning();
+        canonicalAnalysis = await this._generatePrestigePlanning();
         break;
 
       case "how_would_you_play":
-        response.advice = this._generateMentorDoctrine();
+        canonicalAnalysis = this._generateMentorDoctrine();
         break;
     }
+
+    // Wrap analysis with mentor voice
+    const voiceResponse = MentorVoiceFilterV2.applyVoice(
+      mentorName,
+      topic.key,
+      analysisData
+    );
+
+    const response = {
+      introduction: MentorVoiceFilterV2.getOpening(mentorName, topic.key, analysisData),
+      advice: voiceResponse,
+      suggestions: []
+    };
 
     return response;
   }
