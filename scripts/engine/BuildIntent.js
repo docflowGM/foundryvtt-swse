@@ -302,7 +302,16 @@ export class BuildIntent {
      * @returns {Promise<Object>} Build intent analysis
      */
     static async analyze(actor, pendingData = {}) {
+        SWSELogger.log(`[BUILD-INTENT] analyze() START - Actor: ${actor.id} (${actor.name})`);
         const state = await this._buildActorState(actor, pendingData);
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Actor state built:`, {
+            ownedFeats: state.ownedFeats.size,
+            ownedTalents: state.ownedTalents.size,
+            talentTrees: Array.from(state.talentTrees),
+            trainedSkills: Array.from(state.trainedSkills),
+            highestAbility: state.highestAbility,
+            classes: Object.keys(state.classes)
+        });
 
         const intent = {
             // Theme scores (0-1 confidence)
@@ -327,34 +336,52 @@ export class BuildIntent {
         };
 
         // Analyze themes from feats
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Analyzing ${state.ownedFeats.size} feats`);
         this._analyzeFeats(state, intent);
 
         // Analyze themes from talents
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Analyzing ${state.ownedTalents.size} talents`);
         this._analyzeTalents(state, intent);
 
         // Analyze themes from skills
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Analyzing ${state.trainedSkills.size} skills`);
         this._analyzeSkills(state, intent);
 
         // Analyze themes from classes
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Analyzing ${Object.keys(state.classes).length} classes`);
         this._analyzeClasses(state, intent);
 
         // Calculate prestige affinities
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Calculating prestige affinities`);
         this._calculatePrestigeAffinities(state, intent);
 
         // Apply mentor survey biases if available
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Applying mentor survey biases`);
         this._applyMentorBiases(actor, intent);
 
         // Determine primary themes
         this._determinePrimaryThemes(intent);
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Primary themes determined:`, intent.primaryThemes);
 
         // Infer combat style
         this._inferCombatStyle(intent);
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Combat style inferred:`, intent.combatStyle);
 
         // Check for Force focus
         intent.forceFocus = (intent.themes[BUILD_THEMES.FORCE] || 0) >= 0.3;
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Force focus:`, intent.forceFocus);
 
         // Identify priority prerequisites
         this._identifyPriorityPrereqs(state, intent);
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Priority prereqs identified:`, intent.priorityPrereqs.length);
+
+        SWSELogger.log(`[BUILD-INTENT] analyze() COMPLETE - Intent summary:`, {
+            themes: intent.themes,
+            primaryThemes: intent.primaryThemes,
+            combatStyle: intent.combatStyle,
+            forceFocus: intent.forceFocus,
+            mentorBiases: intent.mentorBiases ? Object.keys(intent.mentorBiases) : 'NONE'
+        });
 
         return intent;
     }
@@ -809,8 +836,12 @@ export class BuildIntent {
      * @param {Object} intent - The build intent object to update
      */
     static _applyMentorBiases(actor, intent) {
+        SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() START - Actor: ${actor.id} (${actor.name})`);
         const mentorBiases = MentorSurvey.getMentorBiases(actor);
+        SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - Retrieved mentor biases:`, mentorBiases);
+
         if (!mentorBiases || Object.keys(mentorBiases).length === 0) {
+            SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - No mentor biases to apply`);
             return; // No mentor biases to apply
         }
 
@@ -842,16 +873,21 @@ export class BuildIntent {
         };
 
         // Apply biases to themes with small weight (0.05x multiplier)
+        SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - Processing ${Object.keys(mentorBiases).length} bias entries`);
         for (const [biasKey, biasValue] of Object.entries(mentorBiases)) {
             const themeKey = biasToThemeMap[biasKey];
+            SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - Bias key: "${biasKey}", value: ${biasValue}, maps to theme: "${themeKey}"`);
             if (themeKey && biasValue > 0) {
                 // Apply bias with light weighting (don't let survey override actual choices)
-                intent.themes[themeKey] = (intent.themes[themeKey] || 0) + (biasValue * 0.05);
+                const biasContribution = biasValue * 0.05;
+                intent.themes[themeKey] = (intent.themes[themeKey] || 0) + biasContribution;
+                SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - Applied bias to theme "${themeKey}": +${biasContribution}, new score: ${intent.themes[themeKey]}`);
             }
         }
 
         // Store mentor biases in intent for reference
         intent.mentorBiases = mentorBiases;
+        SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() COMPLETE - Final themes after bias:`, intent.themes);
     }
 }
 
