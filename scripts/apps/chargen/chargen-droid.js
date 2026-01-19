@@ -198,7 +198,7 @@ export function _populateLocomotionSystems(doc) {
         <p><strong>Availability:</strong> ${loco.availability}</p>
         ${isPurchased
           ? '<button type="button" class="remove-system" data-category="locomotion" data-id="' + loco.id + '"><i class="fas fa-times"></i> Remove</button>'
-          : '<button type="button" class="purchase-system" data-category="locomotion" data-id="' + loco.id + '" data-cost="' + cost + '" data-weight="' + weight + '" data-speed="' + speed + '"><i class="fas fa-cart-plus"></i> Select</button>'
+          : '<button type="button" class="purchase-system" data-category="locomotion" data-id="' + loco.id + '" data-cost="' + cost + '" data-weight="' + weight + '" data-speed="' + speed + '"><i class="fas fa-cart-plus"></i> Add</button>'
         }
       </div>
     `;
@@ -238,7 +238,7 @@ export function _populateProcessorSystems(doc) {
         <p><strong>Availability:</strong> ${proc.availability}</p>
         ${isPurchased
           ? '<button type="button" class="remove-system" data-category="processor" data-id="' + proc.id + '"><i class="fas fa-times"></i> Remove</button>'
-          : '<button type="button" class="purchase-system" data-category="processor" data-id="' + proc.id + '" data-cost="' + cost + '" data-weight="' + weight + '"><i class="fas fa-cart-plus"></i> Select</button>'
+          : '<button type="button" class="purchase-system" data-category="processor" data-id="' + proc.id + '" data-cost="' + cost + '" data-weight="' + weight + '"><i class="fas fa-cart-plus"></i> Add</button>'
         }
       </div>
     `;
@@ -337,7 +337,7 @@ export function _populateAccessoryCategory(doc, category, items) {
         <p><strong>Availability:</strong> ${item.availability}</p>
         ${isPurchased
           ? '<button type="button" class="remove-system" data-category="accessory" data-subcategory="' + category + '" data-id="' + item.id + '"><i class="fas fa-times"></i> Remove</button>'
-          : '<button type="button" class="purchase-system" data-category="accessory" data-subcategory="' + category + '" data-id="' + item.id + '" data-cost="' + cost + '" data-weight="' + weight + '"><i class="fas fa-cart-plus"></i> Purchase</button>'
+          : '<button type="button" class="purchase-system" data-category="accessory" data-subcategory="' + category + '" data-id="' + item.id + '" data-cost="' + cost + '" data-weight="' + weight + '"><i class="fas fa-cart-plus"></i> Add</button>'
         }
       </div>
     `;

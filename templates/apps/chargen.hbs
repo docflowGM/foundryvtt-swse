@@ -626,6 +626,10 @@
  </div>
  </div>
  </div>
+<div class="balance-warning">
+<i class="fas fa-exclamation-triangle"></i>
+<span><strong>Note:</strong> Any remaining credits will be forfeited. You do not keep the balance once you proceed.</span>
+</div>
 
  {{!-- Main Shop Interface --}}
  <div class="holo-datapad">
@@ -1727,6 +1731,10 @@
  <span class="remaining-credits {{#if (lt characterData.droidCredits.remaining 0)}}overbudget{{/if}}">{{characterData.droidCredits.remaining}}</span> cr
  </div>
  </div>
+<div class="balance-warning">
+<i class="fas fa-exclamation-triangle"></i>
+<span><strong>Note:</strong> Any remaining credits will be forfeited. You do not keep the balance once you proceed.</span>
+</div>
  </div>
 
  {{!-- Droid Builder Interface (reuse same UI) --}}
