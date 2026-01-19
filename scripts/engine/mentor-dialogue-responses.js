@@ -426,8 +426,20 @@ export class MentorDialogueResponses {
         },
 
         darth_malbada: {
-          opening: (data) => `You're learning faster than they did. Your recent choices reveal development as a **${data.inferredRole}}**. You're becoming what they feared.`,
-          closing: (data) => "Don't let them shame you for surviving.",
+          opening: [
+            "You're becoming harder. Good. Soft things break.",
+            "Pain has finally taught you what mercy never could.",
+            "I see less hesitation in you. Suffering accelerates growth.",
+            "You are learning — because you have no other choice.",
+            "The weak version of you is dying. Slowly."
+          ],
+          closing: [
+            "Don't let them shame you for surviving.",
+            "Weakness is not virtue.",
+            "They made you this way.",
+            "Suffering is instructional.",
+            "Embrace what you're becoming."
+          ],
           emphasis: ["strength", "justification"],
           dspInterpreter: (dsp) => {
             if (dsp > 0.5) return "⚠️ You don't freeze anymore. That's not darkness—that's survival. They would do the same in your place.";
@@ -563,8 +575,20 @@ export class MentorDialogueResponses {
         },
 
         darth_malbada: {
-          opening: (data) => `Power answers questions mercy never will.`,
-          closing: (data) => `You can specialize. You can stop pretending you don't want to.`,
+          opening: [
+            "Power, or continued humiliation.",
+            "You may dominate… or be dominated.",
+            "There is only ascent, or more pain.",
+            "Choose strength, or remain prey.",
+            "The path is simple. Your resistance is not."
+          ],
+          closing: [
+            "You can specialize. You can stop pretending you don't want to.",
+            "Power is the only path.",
+            "Stop resisting what you need.",
+            "They fear what you're becoming.",
+            "Embrace dominance."
+          ],
           emphasis: ["domination", "desire"],
           dspInterpreter: (dsp) => ""
         },
@@ -697,8 +721,20 @@ export class MentorDialogueResponses {
         },
 
         darth_malbada: {
-          opening: (data) => `You don't let them corner you.`,
-          closing: (data) => `You chose yourself. Most people never do.`,
+          opening: [
+            "You endured.",
+            "You didn't beg. That's improvement.",
+            "Your anger finally has direction.",
+            "You are learning to enjoy the cruelty.",
+            "You stopped apologizing for surviving."
+          ],
+          closing: [
+            "Good. Continue.",
+            "Strength recognizes strength.",
+            "That's progress.",
+            "Keep hardening.",
+            "Survival requires this."
+          ],
           emphasis: ["strength", "defiance"],
           dspInterpreter: (dsp) => ""
         },
@@ -835,8 +871,20 @@ export class MentorDialogueResponses {
         },
 
         darth_malbada: {
-          opening: (data) => `You still feel guilty.`,
-          closing: (data) => `That's how they keep you small.`,
+          opening: [
+            "You still feel shame.",
+            "You hesitate to inflict pain.",
+            "You pretend restraint is virtue.",
+            "You resist what you are becoming.",
+            "You think suffering should end."
+          ],
+          closing: [
+            "That's how they keep you small.",
+            "Weakness lingers.",
+            "Shed that guilt.",
+            "Pain is instructional.",
+            "Embrace necessity."
+          ],
           emphasis: ["defiance", "liberation"],
           dspInterpreter: (dsp) => ""
         },
@@ -943,8 +991,20 @@ export class MentorDialogueResponses {
         },
 
         j0_n1: {
-          opening: (data) => `<Analysis> Your optimal battlefield position is defined by your combat parameters.`,
-          closing: (data) => `<Directive> Execute this role for maximum tactical efficiency.`,
+          opening: [
+            "<Directive> Engage where outcomes are controlled.",
+            "<Assessment> Coordination outperforms aggression.",
+            "<Calculation> Positioning maximizes return.",
+            "<Observation> Support roles determine success.",
+            "<Conclusion> Victory is a systems problem."
+          ],
+          closing: [
+            "<Directive> Execute this role for maximum tactical efficiency.",
+            "<Assessment> Systematic execution required.",
+            "<Analysis> Optimize combat protocols.",
+            "<Recommendation> Precision over passion.",
+            "<Conclusion> Efficiency determines outcome."
+          ],
           emphasis: ["optimization", "efficiency"],
           dspInterpreter: (dsp) => ""
         },
@@ -1065,8 +1125,20 @@ export class MentorDialogueResponses {
         },
 
         j0_n1: {
-          opening: (data) => `<Warning> Threat vectors identified in your current trajectory.`,
-          closing: (data) => `<Recommendation> Implement mitigation strategies.`,
+          opening: [
+            "<Caution> Inefficient loyalty.",
+            "<Warning> Unclear authority.",
+            "<Assessment> Emotional decision-making.",
+            "<Observation> Informal arrangements.",
+            "<Conclusion> Structural weakness."
+          ],
+          closing: [
+            "<Recommendation> Implement mitigation strategies.",
+            "<Directive> Address vulnerabilities.",
+            "<Analysis> Risk management required.",
+            "<Assessment> Formalize protocols.",
+            "<Conclusion> Strengthen structure."
+          ],
           emphasis: ["analysis", "prevention"],
           dspInterpreter: (dsp) => ""
         },
@@ -1192,8 +1264,20 @@ export class MentorDialogueResponses {
         },
 
         j0_n1: {
-          opening: (data) => `<Projection> Current trajectory vectors suggest future specialization pathways.`,
-          closing: (data) => `<Analysis> Plan accordingly.`,
+          opening: [
+            "<Projection> Increased responsibility.",
+            "<Assessment> Organizational leadership.",
+            "<Calculation> Political consequences.",
+            "<Observation> Expanded influence.",
+            "<Conclusion> Strategic visibility."
+          ],
+          closing: [
+            "<Analysis> Plan accordingly.",
+            "<Directive> Prepare for escalation.",
+            "<Recommendation> Strategic positioning.",
+            "<Assessment> Future requires structure.",
+            "<Conclusion> Advancement imminent."
+          ],
           emphasis: ["forecasting", "optimization"],
           dspInterpreter: (dsp) => ""
         },
@@ -1308,8 +1392,20 @@ export class MentorDialogueResponses {
         },
 
         j0_n1: {
-          opening: (data) => `<Personal Analysis> I would optimize all parameters systematically. Emotion is inefficiency.`,
-          closing: (data) => `<Doctrine> Logic, precision, and relentless self-improvement. This is the superior approach.`,
+          opening: [
+            "<Preference> I would build redundancy.",
+            "<Directive> I would control information flow.",
+            "<Assessment> I would formalize authority.",
+            "<Calculation> I would minimize volatility.",
+            "<Conclusion> I would ensure continuity."
+          ],
+          closing: [
+            "<Doctrine> Logic, precision, and relentless self-improvement. This is the superior approach.",
+            "<Assessment> Systematic superiority.",
+            "<Analysis> Efficiency prevails.",
+            "<Recommendation> Optimize everything.",
+            "<Conclusion> Logic is optimal."
+          ],
           emphasis: ["logic", "efficiency"],
           dspInterpreter: (dsp) => ""
         },
