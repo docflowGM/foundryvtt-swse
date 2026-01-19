@@ -826,9 +826,8 @@
  {{#if (eq currentStep "background")}}
  <section class="step-background">
  <h3>Choose Your Background</h3>
- <p class="hint">Your background represents a defining aspect of your past. Choose ONE from Events, Occupations, or Planets.</p>
 
- {{!-- Ol' Salty's Commentary --}}
+ {{!-- Mentor Commentary --}}
  {{#if characterData.backgroundNarratorComment}}
  <div class="narrator-comment background-narrator">
  <div class="narrator-avatar">
@@ -839,6 +838,8 @@
  </div>
  </div>
  {{/if}}
+
+ <p class="hint">Your background represents a defining aspect of your past. Choose ONE from Events, Occupations, or Planets.</p>
 
  {{!-- Category Tabs --}}
  <div class="background-category-tabs">
@@ -1046,13 +1047,6 @@
  <header class="creator-header">
  <h1><i class="fas fa-star"></i> Choose Your Path</h1>
  <p class="subtitle">Select your character's class</p>
- {{#if characterData.classes}}
- {{#if (gt characterData.classes.length 0)}}
- <div class="selected-class-display">
- <strong>Selected: {{characterData.classes.[0].name}}</strong>
- </div>
- {{/if}}
- {{/if}}
  </header>
 
  {{#if narratorComment}}
@@ -1064,6 +1058,14 @@
  <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
  </div>
  </div>
+ {{/if}}
+
+ {{#if characterData.classes}}
+ {{#if (gt characterData.classes.length 0)}}
+ <div class="selected-class-display">
+ <strong>Selected: {{characterData.classes.[0].name}}</strong>
+ </div>
+ {{/if}}
  {{/if}}
 
  <div class="class-grid">
@@ -1101,7 +1103,6 @@
  {{#if (eq currentStep "feats")}}
  <section class="step-feats">
  <h3>Select Starting Feat{{#if (gt characterData.featsRequired 1)}}s{{/if}}</h3>
- <p class="help-text">All characters gain 1 general feat at 1st level.{{#if (gt characterData.featsRequired 1)}} Humans gain 1 bonus feat.{{/if}}</p>
 
  {{#if narratorComment}}
  <div class="narrator-comment">
@@ -1117,12 +1118,7 @@
  </div>
  {{/if}}
 
- <div class="feats-filter-controls">
-   <label>
-     <input type="checkbox" id="show-valid-feats-only" class="filter-valid-feats" />
-     <span>Show only valid feats</span>
-   </label>
- </div>
+ <p class="help-text">All characters gain 1 general feat at 1st level.{{#if (gt characterData.featsRequired 1)}} Humans gain 1 bonus feat.{{/if}}</p>
 
  <div class="selected-feats-summary">
  <h4>Selected Feats ({{characterData.feats.length}}/{{characterData.featsRequired}})</h4>
@@ -1134,6 +1130,13 @@
  </div>
  {{/each}}
  </div>
+ </div>
+
+ <div class="feats-filter-controls">
+   <label>
+     <input type="checkbox" id="show-valid-feats-only" class="filter-valid-feats" />
+     <span>Show only valid feats</span>
+   </label>
  </div>
 
  {{#if featCategories}}
@@ -1460,7 +1463,6 @@
  {{#if (eq currentStep "skills")}}
  <section class="step-skills">
  <h3>Select Trained Skills</h3>
- <p class="help-text">Select {{characterData.trainedSkillsAllowed}} class skills to train.</p>
 
  {{#if narratorComment}}
  <div class="narrator-comment">
@@ -1472,6 +1474,8 @@
  </div>
  </div>
  {{/if}}
+
+ <p class="help-text">Select {{characterData.trainedSkillsAllowed}} class skills to train.</p>
 
  <div class="skills-summary" style="margin-bottom: 1rem;">
  <p><strong>Trained Skills: {{characterData.trainedSkillsCount}} / {{characterData.trainedSkillsAllowed}}</strong></p>
@@ -1537,7 +1541,6 @@
  {{#if (eq currentStep "languages")}}
  <section class="step-languages">
  <h3>Select Languages</h3>
- <p class="help-text">Choose additional languages your character knows based on Intelligence and any feats like Linguist.</p>
 
  {{#if narratorComment}}
  <div class="narrator-comment">
@@ -1552,6 +1555,8 @@
  </div>
  </div>
  {{/if}}
+
+ <p class="help-text">Choose additional languages your character knows based on Intelligence and any feats like Linguist.</p>
 
  {{#if characterData.languageData}}
  {{!-- Language Counter --}}

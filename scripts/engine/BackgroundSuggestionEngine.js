@@ -90,9 +90,19 @@ export class BackgroundSuggestionEngine {
     // Get class
     if (pendingData?.classes?.[0]?.name) {
       profile.class = pendingData.classes[0].name;
+      SWSELogger.log(`[BGSuggest] _buildCharacterProfile: Class from pendingData`, {
+        className: profile.class,
+        pendingDataClasses: pendingData.classes
+      });
     } else if (actor?.items) {
       const classItem = actor.items.find(i => i.type === 'class');
       profile.class = classItem?.name || null;
+      SWSELogger.log(`[BGSuggest] _buildCharacterProfile: Class from actor items`, {
+        className: profile.class,
+        classItem: classItem?.name
+      });
+    } else {
+      SWSELogger.log(`[BGSuggest] _buildCharacterProfile: No class found in either pendingData or actor items`);
     }
 
     // Get species
@@ -207,9 +217,19 @@ export class BackgroundSuggestionEngine {
     };
 
     const classSkills = classSkillMap[className] || [];
-    return backgroundSkills.filter(s =>
+    if (!classSkills.length) {
+      SWSELogger.warn(`[BGSuggest] _countClassSkillMatches: No match for className "${className}"`, {
+        availableClasses: Object.keys(classSkillMap),
+        classNameType: typeof className
+      });
+    }
+    const matches = backgroundSkills.filter(s =>
       classSkills.some(cs => s.toLowerCase().includes(cs.toLowerCase()) || cs.toLowerCase().includes(s.toLowerCase()))
     ).length;
+    if (matches > 0) {
+      SWSELogger.log(`[BGSuggest] _countClassSkillMatches: Found ${matches} skill matches for class "${className}"`);
+    }
+    return matches;
   }
 
   /**

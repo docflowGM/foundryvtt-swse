@@ -38,9 +38,11 @@ export const MENTORS = {
     },
 
     classGuidance: "Choose the path that aligns with your understanding of the Force. Let it guide your spirit and purpose.",
+    backgroundGuidance: "Your past shapes your destiny. The experiences you choose will define how the Force flows through you.",
     talentGuidance: "Select talents that enhance awareness, precision, and harmony. Every choice shapes who you become.",
     abilityGuidance: "Your mind and body grow stronger as your bond with the Force deepens. Let this guide your actions.",
     skillGuidance: "Knowledge and skill are tools of a Jedi. Master them as you master the Force itself.",
+    languageGuidance: "Language bridges understanding between souls. Choose tongues that expand your connection to diverse peoples and cultures.",
     multiclassGuidance: "Diversifying your skills can reveal truths hidden to the narrowly focused. Balance is key.",
     hpGuidance: "Your resilience grows. The Force protects those who walk in its light and serve the galaxy with dedication."
 },
@@ -75,9 +77,11 @@ export const MENTORS = {
 },
 
         classGuidance: "Choose your focus carefully. The right specialization can make the difference between life and death in the field.",
+        backgroundGuidance: "Every scout's past carries lessons. Choose experiences that honed your abilities and sharpened your instincts.",
         talentGuidance: "Every talent should enhance your awareness and survival. Pick what keeps you ahead of danger.",
         abilityGuidance: "Your speed, reflexes, and judgment are improving. Keep refining them—they're your greatest tools.",
         skillGuidance: "Knowledge of terrain, enemy behavior, and subtle signals is just as important as any weapon. Master them.",
+        languageGuidance: "Learn the languages of the peoples you operate among. Intelligence gathering starts with understanding what others say.",
         multiclassGuidance: "Awe was I too hard on you? Fine, just don't come crawling back when you miss me.",
         hpGuidance: "Stay durable. You can't provide intelligence if you're out of the fight."
     },
@@ -112,9 +116,11 @@ export const MENTORS = {
         },
 
         classGuidance: "Arr! Pick yer path wisely, matey! The right tricks make the difference between a chest o' credits and a long swim in the void.",
+        backgroundGuidance: "Ev'ry scoundrel's got a tale! Pick the past that made ye cunning, bold, and ready fer adventure on the high spacelanes!",
         talentGuidance: "Every talent's a tool in yer scoundrel's kit. Pick what helps ye swindle, sneak, and survive—preferably all three.",
         abilityGuidance: "Gotta be strong to haul the loot, quick to dodge the blasters, and clever to stay outta trouble. Balance, savvy?",
         skillGuidance: "Skills open every vault and shut every trap. Learn 'em all, ye clever rascal.",
+        languageGuidance: "Arr! Speak the tongues of the spacelanes, matey! Helps ye swindle better when ye know what folks be sayin' behind yer back!",
         multiclassGuidance: "Expandin' yer horizons, eh? Smart. A pirate wears many hats… and steals most of 'em too.",
         hpGuidance: "Tougher than durasteel, ye are. Can't spend yer loot if ye're dead, har har!"
     },
@@ -149,9 +155,11 @@ export const MENTORS = {
         },
 
         classGuidance: "Master, select pursuits that enhance both skill and social standing. Strategic refinement ensures maximum efficacy.",
+        backgroundGuidance: "Your background is the foundation of your station. Select experiences that reflect your breeding and position in galactic society.",
         talentGuidance: "Each talent contributes to your influence and efficiency. Choose wisely to optimize results.",
         abilityGuidance: "Strength, intellect, and dexterity are all measured in accordance with desired outcomes. Balance is paramount.",
         skillGuidance: "Comprehensive knowledge and precision in your actions secure your success. Learn thoroughly, Master.",
+        languageGuidance: "A refined individual commands multiple tongues. Language fluency marks the distinction between the cultivated and the common.",
         multiclassGuidance: "Diversifying your expertise increases flexibility and influence. Highly recommended.",
         hpGuidance: "Maintaining your physical and strategic resilience is essential. Survival is a prerequisite for continued success."
     },
@@ -186,9 +194,11 @@ export const MENTORS = {
         },
 
         classGuidance: "Pick what feels right in your hands. Same rule as weapons. If it fits, use it.",
+        backgroundGuidance: "Your past made you a soldier. Pick experiences that tested you, forged you, and made you ready for war.",
         talentGuidance: "Talents keep you alive. Choose the stuff that stops you from dying. Pretty simple.",
         abilityGuidance: "Stronger, faster, smarter—whatever you're getting, it's working. Don't overthink it.",
         skillGuidance: "Look, knowing things makes you harder to kill. Treat skills like gear—collect the useful stuff.",
+        languageGuidance: "Understanding what others say gives you the edge. Pick languages that help you survive and fight smarter.",
         multiclassGuidance: "Trying something new? Good. Adaptation beats stubbornness. Learned that the hard way.",
         hpGuidance: "You're harder to put down now. That's good. Try to stay that way."
     },

@@ -1070,10 +1070,14 @@ export default class CharacterGenerator extends Application {
     switch (this.currentStep) {
       case "class":
         return mentor.classGuidance || null;
+      case "background":
+        return mentor.backgroundGuidance || null;
       case "abilities":
         return mentor.abilityGuidance || null;
       case "skills":
         return mentor.skillGuidance || null;
+      case "languages":
+        return mentor.languageGuidance || null;
       case "feats":
       case "talents":
         return mentor.talentGuidance || null;
@@ -1094,16 +1098,25 @@ export default class CharacterGenerator extends Application {
     const classes = this.characterData.classes || [];
     if (classes.length === 0) {
       // Default to Scoundrel mentor (Ol' Salty) before class is selected
+      SWSELogger.log(`[CHARGEN-MENTOR] _getCurrentMentor: No class selected, using default (Scoundrel)`);
       return MENTORS.Scoundrel || { name: "Ol' Salty", portrait: "systems/foundryvtt-swse/assets/mentors/salty.webp" };
     }
 
     const className = classes[0].name;
+    SWSELogger.log(`[CHARGEN-MENTOR] _getCurrentMentor: Looking up mentor for class "${className}"`, {
+      availableKeys: Object.keys(MENTORS),
+      className: className,
+      found: !!MENTORS[className]
+    });
+
     const mentor = MENTORS[className];
     if (mentor) {
+      SWSELogger.log(`[CHARGEN-MENTOR] _getCurrentMentor: Found mentor "${mentor.name}" for class "${className}"`);
       return mentor;
     }
 
     // Fallback to Scoundrel mentor
+    SWSELogger.warn(`[CHARGEN-MENTOR] _getCurrentMentor: No mentor found for class "${className}", using fallback (Scoundrel)`);
     return MENTORS.Scoundrel || { name: "Ol' Salty", portrait: "systems/foundryvtt-swse/assets/mentors/salty.webp" };
   }
 
@@ -1260,10 +1273,17 @@ export default class CharacterGenerator extends Application {
         this._renderBackgroundCards(bgContainer);
       }
 
-      // Update narrator comment
+      // Update narrator comment from mentor guidance
       if (!this.characterData.backgroundNarratorComment) {
-        const category = this.characterData.backgroundCategory || 'events';
-        this.characterData.backgroundNarratorComment = this._getBackgroundNarratorComment(category);
+        const mentor = this._getCurrentMentor();
+        SWSELogger.log(`[CHARGEN-BG] activateListeners: Selected mentor for background step`, {
+          mentorName: mentor?.name,
+          mentorTitle: mentor?.title,
+          guidance: mentor?.backgroundGuidance?.substring(0, 50)
+        });
+        if (mentor) {
+          this.characterData.backgroundNarratorComment = mentor.backgroundGuidance || null;
+        }
       }
 
       // Mark the active category tab
