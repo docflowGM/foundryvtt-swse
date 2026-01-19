@@ -1199,6 +1199,9 @@ export default class CharacterGenerator extends Application {
     $html.find('.random-background-btn').click(this._onRandomBackground.bind(this));
     $html.find('.change-background-btn').click(this._onChangeBackground.bind(this));
 
+    // Mentor "Ask Your Mentor" button
+    $html.find('.ask-mentor-btn').click(this._onAskMentor.bind(this));
+
     // Droid builder/shop
     $html.find('.shop-tab').click(this._onShopTabClick.bind(this));
     $html.find('.accessory-tab').click(this._onAccessoryTabClick.bind(this));
@@ -1383,6 +1386,21 @@ export default class CharacterGenerator extends Application {
     this.characterData.name = selectedName;
 
     ui.notifications.info(`Random droid name selected: ${selectedName}`);
+    await this.render();
+  }
+
+  /**
+   * Handle "Ask Your Mentor" button click - enable suggestion engine
+   * @param {Event} event - The click event
+   */
+  async _onAskMentor(event) {
+    event.preventDefault();
+    SWSELogger.log(`[CHARGEN] _onAskMentor: Activating suggestion engine for current step: ${this.currentStep}`);
+
+    // Enable the suggestion engine
+    this.suggestionEngine = true;
+
+    ui.notifications.info("Your mentor is now providing suggestions for this step.");
     await this.render();
   }
 
