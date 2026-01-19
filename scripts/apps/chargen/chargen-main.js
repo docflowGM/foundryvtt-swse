@@ -1070,10 +1070,14 @@ export default class CharacterGenerator extends Application {
     switch (this.currentStep) {
       case "class":
         return mentor.classGuidance || null;
+      case "background":
+        return mentor.backgroundGuidance || null;
       case "abilities":
         return mentor.abilityGuidance || null;
       case "skills":
         return mentor.skillGuidance || null;
+      case "languages":
+        return mentor.languageGuidance || null;
       case "feats":
       case "talents":
         return mentor.talentGuidance || null;
@@ -1260,10 +1264,12 @@ export default class CharacterGenerator extends Application {
         this._renderBackgroundCards(bgContainer);
       }
 
-      // Update narrator comment
+      // Update narrator comment from mentor guidance
       if (!this.characterData.backgroundNarratorComment) {
-        const category = this.characterData.backgroundCategory || 'events';
-        this.characterData.backgroundNarratorComment = this._getBackgroundNarratorComment(category);
+        const mentor = this._getCurrentMentor();
+        if (mentor) {
+          this.characterData.backgroundNarratorComment = mentor.backgroundGuidance || null;
+        }
       }
 
       // Mark the active category tab

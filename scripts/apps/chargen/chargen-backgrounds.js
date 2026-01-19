@@ -333,7 +333,12 @@ export async function _onBackgroundCategoryClick(event) {
 
   // Update the selected category
   this.characterData.backgroundCategory = newCategory;
-  this.characterData.backgroundNarratorComment = this._getBackgroundNarratorComment(newCategory);
+
+  // Update narrator comment from mentor guidance
+  const mentor = this._getCurrentMentor();
+  if (mentor) {
+    this.characterData.backgroundNarratorComment = mentor.backgroundGuidance || null;
+  }
 
   // Update the active tab styling
   const tabs = event.currentTarget.parentElement?.querySelectorAll('.background-category-tab');
