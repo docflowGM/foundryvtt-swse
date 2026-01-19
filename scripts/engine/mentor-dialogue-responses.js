@@ -335,6 +335,43 @@ export class MentorDialogueResponses {
             if (dsp > 0.5) return "<Warning> Darkside saturation escalating. Behavioral unpredictability increasing.</Warning>";
             return "";
           }
+        },
+
+        // ========================================
+        // EVIL MENTORS
+        // ========================================
+
+        darth_miedo: {
+          opening: (data) => `You hesitate less than before. That is not corruption — it is clarity. The Force reveals you as a **${data.inferredRole}**. This is inevitable.`,
+          closing: (data) => "The weak mistake hesitation for virtue.",
+          emphasis: ["certainty", "inevitability"],
+          dspInterpreter: (dsp) => {
+            if (dsp > 0.5) return "⚠️ You see clearly now. The path forward requires no further doubt.";
+            if (dsp > 0.2) return "Clarity comes with cost. You are learning to accept that cost.";
+            return "";
+          }
+        },
+
+        darth_malbada: {
+          opening: (data) => `You're learning faster than they did. Your recent choices reveal development as a **${data.inferredRole}}**. You're becoming what they feared.`,
+          closing: (data) => "Don't let them shame you for surviving.",
+          emphasis: ["strength", "justification"],
+          dspInterpreter: (dsp) => {
+            if (dsp > 0.5) return "⚠️ You don't freeze anymore. That's not darkness—that's survival. They would do the same in your place.";
+            if (dsp > 0.2) return "You're learning to act without permission. That's progress.";
+            return "";
+          }
+        },
+
+        tio_the_hutt: {
+          opening: (data) => `Ahhh, my friend. You're learning how things really work. Your choices reveal you as a **${data.inferredRole}**. Excellent development.`,
+          closing: (data) => "Never give away what you can sell.",
+          emphasis: ["leverage", "pragmatism"],
+          dspInterpreter: (dsp) => {
+            if (dsp > 0.5) return "⚠️ You understand the value of what you hold now. Power responds to those who know its price.";
+            if (dsp > 0.2) return "You're learning that sentiment costs more than most can afford.";
+            return "";
+          }
         }
       }
     },
@@ -382,6 +419,27 @@ export class MentorDialogueResponses {
           opening: (data) => `<Analysis> Multiple specialization vectors available. Each optimizes for different tactical parameters.`,
           closing: (data) => `<Recommendation> Select the specialization that maximizes your comparative advantage.`,
           emphasis: ["efficiency", "optimization"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        darth_miedo: {
+          opening: (data) => `There are not many true paths. There are only deeper understandings.`,
+          closing: (data) => `Some choose mastery. Others choose control. Both require that you stop apologizing for strength.`,
+          emphasis: ["power", "inevitability"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        darth_malbada: {
+          opening: (data) => `Power answers questions mercy never will.`,
+          closing: (data) => `You can specialize. You can stop pretending you don't want to.`,
+          emphasis: ["domination", "desire"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        tio_the_hutt: {
+          opening: (data) => `Ownership. Influence. Fear. Different investments—same outcome.`,
+          closing: (data) => `Choose the path that makes others need you.`,
+          emphasis: ["leverage", "control"],
           dspInterpreter: (dsp) => ""
         }
       }
@@ -435,6 +493,27 @@ export class MentorDialogueResponses {
           opening: (data) => `<Analysis> Your synergy index registers positive correlation.`,
           closing: (data) => `<Assessment> Continue this trajectory. Efficiency is improving.`,
           emphasis: ["optimization", "efficiency"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        darth_miedo: {
+          opening: (data) => `You act without seeking permission. That alone sets you apart.`,
+          closing: (data) => `The weak need reassurance. You no longer do.`,
+          emphasis: ["certainty", "power"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        darth_malbada: {
+          opening: (data) => `You don't let them corner you.`,
+          closing: (data) => `You chose yourself. Most people never do.`,
+          emphasis: ["strength", "defiance"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        tio_the_hutt: {
+          opening: (data) => `You don't give things away for free. Good.`,
+          closing: (data) => `Charity is expensive. You're learning.`,
+          emphasis: ["pragmatism", "profit"],
           dspInterpreter: (dsp) => ""
         }
       }
@@ -493,6 +572,27 @@ export class MentorDialogueResponses {
           closing: (data) => `<Recommendation> Optimize these parameters.`,
           emphasis: ["analysis", "optimization"],
           dspInterpreter: (dsp) => ""
+        },
+
+        darth_miedo: {
+          opening: (data) => `You still explain yourself.`,
+          closing: (data) => `Strength does not require justification. That habit will fade.`,
+          emphasis: ["certainty", "acceptance"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        darth_malbada: {
+          opening: (data) => `You still feel guilty.`,
+          closing: (data) => `That's how they keep you small.`,
+          emphasis: ["defiance", "liberation"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        tio_the_hutt: {
+          opening: (data) => `You take risks without charging interest.`,
+          closing: (data) => `That's generosity. It's bad business.`,
+          emphasis: ["calculation", "profit"],
+          dspInterpreter: (dsp) => ""
         }
       }
     },
@@ -546,6 +646,27 @@ export class MentorDialogueResponses {
           closing: (data) => `<Directive> Execute this role for maximum tactical efficiency.`,
           emphasis: ["optimization", "efficiency"],
           dspInterpreter: (dsp) => ""
+        },
+
+        darth_miedo: {
+          opening: (data) => `End resistance before it becomes conflict.`,
+          closing: (data) => `Victory is most efficient when it feels inevitable.`,
+          emphasis: ["dominance", "efficiency"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        darth_malbada: {
+          opening: (data) => `Hit first. Hit hard.`,
+          closing: (data) => `Fair fights are for people with backups.`,
+          emphasis: ["aggression", "survival"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        tio_the_hutt: {
+          opening: (data) => `Avoid fair fights.`,
+          closing: (data) => `Fair fights are costly.`,
+          emphasis: ["pragmatism", "profit"],
+          dspInterpreter: (dsp) => ""
         }
       }
     },
@@ -598,6 +719,27 @@ export class MentorDialogueResponses {
           opening: (data) => `<Warning> Threat vectors identified in your current trajectory.`,
           closing: (data) => `<Recommendation> Implement mitigation strategies.`,
           emphasis: ["analysis", "prevention"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        darth_miedo: {
+          opening: (data) => `Sentiment.`,
+          closing: (data) => `Mercy extended too often becomes doubt.`,
+          emphasis: ["clarity", "power"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        darth_malbada: {
+          opening: (data) => `Hesitation.`,
+          closing: (data) => `That's when they take advantage.`,
+          emphasis: ["urgency", "action"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        tio_the_hutt: {
+          opening: (data) => `Loyalty.`,
+          closing: (data) => `It lasts exactly as long as profit.`,
+          emphasis: ["pragmatism", "calculation"],
           dspInterpreter: (dsp) => ""
         }
       }
@@ -657,6 +799,27 @@ export class MentorDialogueResponses {
           closing: (data) => `<Analysis> Plan accordingly.`,
           emphasis: ["forecasting", "optimization"],
           dspInterpreter: (dsp) => ""
+        },
+
+        darth_miedo: {
+          opening: (data) => `The Force will demand commitment.`,
+          closing: (data) => `Those who refuse are replaced by those who do not.`,
+          emphasis: ["inevitability", "power"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        darth_malbada: {
+          opening: (data) => `Greater power means fewer excuses.`,
+          closing: (data) => `You won't need to justify yourself forever.`,
+          emphasis: ["strength", "liberation"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        tio_the_hutt: {
+          opening: (data) => `Bigger operations. Bigger risks.`,
+          closing: (data) => `And much bigger returns.`,
+          emphasis: ["opportunity", "profit"],
+          dspInterpreter: (dsp) => ""
         }
       }
     },
@@ -703,6 +866,27 @@ export class MentorDialogueResponses {
           opening: (data) => `<Personal Analysis> I would optimize all parameters systematically. Emotion is inefficiency.`,
           closing: (data) => `<Doctrine> Logic, precision, and relentless self-improvement. This is the superior approach.`,
           emphasis: ["logic", "efficiency"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        darth_miedo: {
+          opening: (data) => `I would build toward certainty.`,
+          closing: (data) => `When I strike, the outcome is already decided.`,
+          emphasis: ["inevitability", "mastery"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        darth_malbada: {
+          opening: (data) => `I'd build toward never needing permission again.`,
+          closing: (data) => `No one questions power that works.`,
+          emphasis: ["strength", "autonomy"],
+          dspInterpreter: (dsp) => ""
+        },
+
+        tio_the_hutt: {
+          opening: (data) => `I'd never be the one holding the weapon.`,
+          closing: (data) => `I'd own the person who does.`,
+          emphasis: ["leverage", "control"],
           dspInterpreter: (dsp) => ""
         }
       }
