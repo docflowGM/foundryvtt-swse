@@ -17,54 +17,68 @@ import { SWSELogger } from '../utils/logger.js';
 
 const CHAT_TOPICS = [
   {
-    key: "current_build",
-    title: "How am I doing?",
-    icon: "fa-user-check",
-    description: "Get an assessment of your current build",
-    contextType: "introduction"
+    key: "who_am_i_becoming",
+    title: "Who am I becoming?",
+    icon: "fa-mask",
+    description: "Reflect on your evolving role and identity",
+    contextType: "introduction",
+    gatesAt: 1
   },
   {
-    key: "feat_suggestions",
-    title: "What feats should I take?",
-    icon: "fa-star",
-    description: "Get feat recommendations based on your build",
-    contextType: "feat_selection"
+    key: "paths_open",
+    title: "What paths are open to me?",
+    icon: "fa-signs-post",
+    description: "Explore archetype directions within your class",
+    contextType: "class_selection",
+    gatesAt: 1
   },
   {
-    key: "talent_suggestions",
-    title: "Which talents are best for me?",
-    icon: "fa-wand-magic-sparkles",
-    description: "Get talent recommendations based on your class",
-    contextType: "talent_selection"
+    key: "doing_well",
+    title: "What am I doing well?",
+    icon: "fa-thumbs-up",
+    description: "Receive affirmation and analysis of your synergies",
+    contextType: "introduction",
+    gatesAt: 3
   },
   {
-    key: "class_planning",
-    title: "What class should I take next?",
-    icon: "fa-crown",
-    description: "Get prestige class and multiclass advice",
-    contextType: "class_selection"
+    key: "doing_wrong",
+    title: "What am I doing wrong?",
+    icon: "fa-triangle-exclamation",
+    description: "Identify gaps and inconsistencies in your build",
+    contextType: "introduction",
+    gatesAt: 3
   },
   {
-    key: "ability_allocation",
-    title: "How should I allocate abilities?",
-    icon: "fa-brain",
-    description: "Get guidance on ability score increases",
-    contextType: "ability_increase"
+    key: "how_should_i_fight",
+    title: "How should I fight?",
+    icon: "fa-shield",
+    description: "Learn your optimal combat role and battlefield positioning",
+    contextType: "introduction",
+    gatesAt: 5
   },
   {
-    key: "skill_training",
-    title: "What skills should I train?",
-    icon: "fa-book",
-    description: "Get recommendations for skill training",
-    contextType: "skill_training"
+    key: "be_careful",
+    title: "What should I be careful of?",
+    icon: "fa-warning",
+    description: "Understand risks, traps, and over-specialization",
+    contextType: "introduction",
+    gatesAt: 5
   },
   {
-    key: "force_options",
-    title: "What Force powers should I learn?",
-    icon: "fa-hand-sparkles",
-    description: "Get Force power recommendations (if Force-sensitive)",
-    contextType: "force_option",
-    requiresForce: true
+    key: "what_lies_ahead",
+    title: "What lies ahead?",
+    icon: "fa-sparkles",
+    description: "Explore prestige class options and future planning",
+    contextType: "class_selection",
+    gatesAt: 6
+  },
+  {
+    key: "how_would_you_play",
+    title: "How would you play this class?",
+    icon: "fa-person",
+    description: "Experience your mentor's personal philosophy and priorities",
+    contextType: "introduction",
+    gatesAt: 1
   }
 ];
 
@@ -148,15 +162,12 @@ export class MentorChatDialog extends FormApplication {
   _getAvailableTopics() {
     if (!this.selectedMentor) return [];
 
-    // Check if character is Force-sensitive
-    const isForceSensitive = this.actor.system.forceSensitive || false;
+    const level = this.actor.system.level || 1;
 
-    // Filter topics based on requirements
+    // Filter topics based on level gates
     return CHAT_TOPICS.filter(topic => {
-      if (topic.requiresForce && !isForceSensitive) {
-        return false;
-      }
-      return true;
+      const gateLevel = topic.gatesAt || 1;
+      return level >= gateLevel;
     });
   }
 
@@ -273,185 +284,397 @@ export class MentorChatDialog extends FormApplication {
 
     // Generate context-specific advice
     switch (topic.key) {
-      case "current_build":
-        response.advice = await this._generateBuildAssessment();
+      case "who_am_i_becoming":
+        response.advice = await this._generateIdentityReflection();
         break;
 
-      case "feat_suggestions":
-        response.advice = await this._generateFeatSuggestions();
+      case "paths_open":
+        response.advice = await this._generateArchetypePaths();
         break;
 
-      case "talent_suggestions":
-        response.advice = await this._generateTalentSuggestions();
+      case "doing_well":
+        response.advice = await this._generateSynergyAnalysis();
         break;
 
-      case "class_planning":
-        response.advice = await this._generateClassGuidance();
+      case "doing_wrong":
+        response.advice = await this._generateGapAnalysis();
         break;
 
-      case "ability_allocation":
-        response.advice = this._generateAbilityGuidance();
+      case "how_should_i_fight":
+        response.advice = this._generateCombatRoleFraming();
         break;
 
-      case "skill_training":
-        response.advice = this._generateSkillGuidance();
+      case "be_careful":
+        response.advice = this._generateRiskAwareness();
         break;
 
-      case "force_options":
-        response.advice = this._generateForceGuidance();
+      case "what_lies_ahead":
+        response.advice = await this._generatePrestigePlanning();
+        break;
+
+      case "how_would_you_play":
+        response.advice = this._generateMentorDoctrine();
         break;
     }
 
     return response;
   }
 
-  async _generateBuildAssessment() {
+  /**
+   * 1. "Who am I becoming?" — Identity Reflection
+   * Summarizes how the suggestion engine sees the character
+   */
+  async _generateIdentityReflection() {
+    const level = this.actor.system.level;
     const themes = this.buildIntent.primaryThemes || [];
     const combatStyle = this.buildIntent.combatStyle || "mixed";
-    const level = this.actor.system.level;
+    const inferredRole = this.buildIntent.inferredRole || "adventurer";
 
-    let assessment = `You're currently level ${level}. `;
+    let reflection = `At level ${level}, the galaxy sees you as a **${inferredRole}**.\n\n`;
 
     if (themes.length > 0) {
-      assessment += `Your build shows strong affinity for ${themes.slice(0, 2).join(" and ")} themes. `;
+      reflection += `Your choices reveal strong themes: **${themes.slice(0, 2).join("** and **")}**. `;
+      reflection += `This shapes how you approach challenges and conflicts.\n\n`;
     }
 
-    assessment += `Your combat style appears to be ${combatStyle}. `;
+    reflection += `Your combat approach is **${combatStyle}**. `;
 
+    if (combatStyle === "melee") {
+      reflection += "You face danger directly, relying on strength and proximity.";
+    } else if (combatStyle === "ranged") {
+      reflection += "You engage from distance, valuing positioning and precision.";
+    } else if (combatStyle === "caster") {
+      reflection += "You channel the Force, bending reality to your will.";
+    } else {
+      reflection += "You adapt your tactics to each situation, refusing to be defined by a single method.";
+    }
+
+    // Check DSP saturation if available
+    const dsp = this.actor.system.darkSidePoints?.value || 0;
+    const dspMax = this.actor.system.darkSidePoints?.max || 10;
+    const dspSaturation = dspMax > 0 ? dsp / dspMax : 0;
+
+    if (dspSaturation > 0.5) {
+      reflection += `\n\n⚠️ The darkness grows within you. Your path is shifting in ways that may be difficult to reverse.`;
+    }
+
+    return reflection;
+  }
+
+  /**
+   * 2. "What paths are open to me?" — Archetype Exploration
+   * Presents class-specific build archetypes without mechanics
+   */
+  async _generateArchetypePaths() {
+    const classItems = this.actor.items.filter(i => i.type === 'class');
+    const mentorClass = this.selectedMentor.key;
+
+    let paths = `Every path demands sacrifice. What you choose to master determines what you must forsake.\n\n`;
+
+    // Generic archetype framing based on mentor
+    if (mentorClass === "Jedi") {
+      paths += `**Guardian** — Protector and warrior. Values defense, endurance, and lightsaber mastery. Sacrifices versatility for resilience.\n\n`;
+      paths += `**Consular** — Diplomat and Force scholar. Values wisdom, persuasion, and Force depth. Sacrifices combat prowess for influence.\n\n`;
+      paths += `**Sentinel** — Balanced warrior-diplomat. Values adaptability and skill diversity. Sacrifices specialization for versatility.`;
+    } else if (mentorClass === "Scout") {
+      paths += `**Tracker** — Hunter and survivalist. Values perception, stealth, and wilderness expertise. Sacrifices social skills for survival.\n\n`;
+      paths += `**Infiltrator** — Urban operative. Values deception, agility, and information gathering. Sacrifices raw combat power for subtlety.\n\n`;
+      paths += `**Pathfinder** — Guide and leader. Values navigation, tactics, and team coordination. Sacrifices personal offense for group effectiveness.`;
+    } else if (mentorClass === "Scoundrel") {
+      paths += `**Charmer** — Negotiator and con artist. Values persuasion, deception, and social manipulation. Sacrifices combat reliability for influence.\n\n`;
+      paths += `**Gunslinger** — Quick-draw specialist. Values initiative, ranged damage, and mobility. Sacrifices defense for offense.\n\n`;
+      paths += `**Smuggler** — Trader and opportunist. Values connections, resources, and escape options. Sacrifices specialization for flexibility.`;
+    } else if (mentorClass === "Noble") {
+      paths += `**Diplomat** — Peacemaker and negotiator. Values charisma, knowledge, and coalition-building. Sacrifices combat ability for influence.\n\n`;
+      paths += `**Commander** — Tactical leader. Values inspiration, coordination, and battlefield control. Sacrifices personal power for force multiplication.\n\n`;
+      paths += `**Aristocrat** — Wealthy patron. Values resources, connections, and indirect power. Sacrifices direct action for leverage.`;
+    } else if (mentorClass === "Soldier") {
+      paths += `**Heavy Weapons** — Firepower specialist. Values damage output, armor, and suppression. Sacrifices mobility for devastating attacks.\n\n`;
+      paths += `**Commando** — Elite operative. Values versatility, tactics, and special operations. Sacrifices raw power for adaptability.\n\n`;
+      paths += `**Defender** — Frontline protector. Values durability, positioning, and threat control. Sacrifices damage for resilience.`;
+    } else {
+      paths += `Multiple archetypes exist within your class. Each emphasizes different attributes, skills, and tactical approaches. None is superior—only different in what they value and what they give up.`;
+    }
+
+    return paths;
+  }
+
+  /**
+   * 3. "What am I doing well?" — Synergy Analysis
+   * Highlights effective choices and reinforces good decisions
+   */
+  async _generateSynergyAnalysis() {
+    const combatStyle = this.buildIntent.combatStyle;
+    const abilities = this.actor.system.abilities;
+    const skills = this.actor.items.filter(i => i.type === 'skill' && i.system.trained);
+
+    let analysis = "Let me identify what's working:\n\n";
+
+    // Analyze ability-to-combat-style alignment
+    if (combatStyle === "melee") {
+      const str = abilities.str?.mod || 0;
+      const con = abilities.con?.mod || 0;
+      if (str >= 2) {
+        analysis += `✓ Your **Strength** (${str > 0 ? '+' : ''}${str}) supports your melee approach effectively.\n`;
+      }
+      if (con >= 2) {
+        analysis += `✓ Your **Constitution** (${con > 0 ? '+' : ''}${con}) provides the durability a frontline fighter needs.\n`;
+      }
+    } else if (combatStyle === "ranged") {
+      const dex = abilities.dex?.mod || 0;
+      const wis = abilities.wis?.mod || 0;
+      if (dex >= 2) {
+        analysis += `✓ Your **Dexterity** (${dex > 0 ? '+' : ''}${dex}) enhances both accuracy and defense.\n`;
+      }
+      if (wis >= 2) {
+        analysis += `✓ Your **Wisdom** (${wis > 0 ? '+' : ''}${wis}) sharpens your awareness and perception.\n`;
+      }
+    } else if (combatStyle === "caster") {
+      const cha = abilities.cha?.mod || 0;
+      const wis = abilities.wis?.mod || 0;
+      if (cha >= 2) {
+        analysis += `✓ Your **Charisma** (${cha > 0 ? '+' : ''}${cha}) amplifies your Force presence.\n`;
+      }
+      if (wis >= 2) {
+        analysis += `✓ Your **Wisdom** (${wis > 0 ? '+' : ''}${wis}) deepens your connection to the Force.\n`;
+      }
+    }
+
+    // Skill synergies
+    if (skills.length > 0) {
+      analysis += `\n✓ You've invested in **${skills.length} trained skills**, showing commitment to versatility beyond combat.\n`;
+    }
+
+    // Prestige affinity
     if (this.buildIntent.prestigeAffinities && this.buildIntent.prestigeAffinities.length > 0) {
       const topPrestige = this.buildIntent.prestigeAffinities[0];
-      assessment += `You're showing promise for ${topPrestige.className} (${Math.round(topPrestige.confidence * 100)}% match). `;
+      if (topPrestige.confidence >= 0.6) {
+        analysis += `\n✓ Your choices are building a clear path toward **${topPrestige.className}** (${Math.round(topPrestige.confidence * 100)}% alignment).\n`;
+      }
     }
 
-    return assessment;
+    analysis += `\nThese synergies compound. Continue building on what works.`;
+
+    return analysis;
   }
 
-  async _generateFeatSuggestions() {
-    // Get all available feats from game
-    const allFeats = game.items.filter(i => i.type === 'feat');
+  /**
+   * 4. "What am I doing wrong?" — Gap Analysis
+   * Identifies inefficiencies and risks without being prescriptive
+   */
+  async _generateGapAnalysis() {
+    const combatStyle = this.buildIntent.combatStyle;
+    const abilities = this.actor.system.abilities;
+    const level = this.actor.system.level;
 
-    // Filter to feats the actor doesn't have and can take
-    const availableFeats = allFeats.filter(feat => {
-      const hasFeat = this.actor.items.find(i => i.name === feat.name);
-      return !hasFeat;
-    });
+    let gaps = "Every build has weaknesses. Let me point out yours:\n\n";
 
-    // Get suggestions from engine
-    const suggestions = SuggestionEngine.suggestFeats(
-      availableFeats.slice(0, 50), // Limit for performance
-      this.actor,
-      {},
-      { buildIntent: this.buildIntent }
+    // Check for defensive gaps
+    const con = abilities.con?.mod || 0;
+    const dex = abilities.dex?.mod || 0;
+    const ref = this.actor.system.defenses?.reflex?.total || 10;
+    const fort = this.actor.system.defenses?.fort?.total || 10;
+
+    if (con < 1 && level >= 5) {
+      gaps += `⚠️ Your **Constitution** is neglected. This makes you fragile in sustained combat.\n`;
+    }
+
+    if (combatStyle === "melee" && dex < 0) {
+      gaps += `⚠️ Low **Dexterity** leaves you vulnerable to ranged attacks and difficult to position effectively.\n`;
+    }
+
+    if (combatStyle === "ranged" && fort < 15 && level >= 5) {
+      gaps += `⚠️ Weak **Fortitude** defense means poisons, diseases, and environmental hazards will disable you easily.\n`;
+    }
+
+    // Check for over-specialization
+    const highestAbility = Math.max(
+      abilities.str?.mod || 0,
+      abilities.dex?.mod || 0,
+      abilities.con?.mod || 0,
+      abilities.int?.mod || 0,
+      abilities.wis?.mod || 0,
+      abilities.cha?.mod || 0
     );
 
-    // Get top 5 suggested feats
-    const topSuggestions = suggestions
-      .filter(s => s.suggestion?.tier > 0)
-      .sort((a, b) => b.suggestion.tier - a.suggestion.tier)
-      .slice(0, 5);
+    const lowestAbility = Math.min(
+      abilities.str?.mod || 0,
+      abilities.dex?.mod || 0,
+      abilities.con?.mod || 0,
+      abilities.int?.mod || 0,
+      abilities.wis?.mod || 0,
+      abilities.cha?.mod || 0
+    );
 
-    if (topSuggestions.length === 0) {
-      return "I don't have specific feat recommendations at this time. Choose what feels right for your journey.";
+    if (highestAbility - lowestAbility > 5) {
+      gaps += `\n⚠️ You're heavily specialized. This makes you excellent in one area but vulnerable to challenges that demand different strengths.\n`;
     }
 
-    let advice = "Here are my top feat recommendations:\n\n";
-    topSuggestions.forEach((feat, idx) => {
-      advice += `${idx + 1}. **${feat.name}** — ${feat.suggestion.reason}\n`;
-    });
+    // DSP drift warning
+    const dsp = this.actor.system.darkSidePoints?.value || 0;
+    const dspMax = this.actor.system.darkSidePoints?.max || 10;
+    const dspSaturation = dspMax > 0 ? dsp / dspMax : 0;
 
-    return advice;
+    if (dspSaturation > 0.3 && dspSaturation < 0.7) {
+      gaps += `\n⚠️ You're drifting toward the dark side without committing. This instability will cost you when clarity matters most.\n`;
+    }
+
+    if (gaps === "Every build has weaknesses. Let me point out yours:\n\n") {
+      return "Your build shows no obvious gaps at this level. Continue as you are, but remain vigilant.";
+    }
+
+    return gaps;
   }
 
-  async _generateTalentSuggestions() {
-    // Get character's class talents
-    const classTalents = this.actor.items.filter(i => i.type === 'class' && i.system.talents);
+  /**
+   * 5. "How should I fight?" — Combat Role Framing
+   * Explains battlefield role without tactics
+   */
+  _generateCombatRoleFraming() {
+    const combatStyle = this.buildIntent.combatStyle;
+    const level = this.actor.system.level;
 
-    if (classTalents.length === 0) {
-      return "You don't have any talent trees available yet. Focus on your class progression.";
-    }
+    let framing = "Your role in combat defines your priorities:\n\n";
 
-    // For now, provide general guidance
-    // TODO: Integrate with talent suggestion engine when available
-    let advice = "Based on your build direction:\n\n";
-
-    if (this.buildIntent.combatStyle === 'melee') {
-      advice += "Focus on talents that enhance melee combat effectiveness, survivability, and damage output.";
-    } else if (this.buildIntent.combatStyle === 'ranged') {
-      advice += "Focus on talents that improve accuracy, damage at range, and tactical positioning.";
-    } else if (this.buildIntent.combatStyle === 'caster') {
-      advice += "Focus on talents that expand your Force powers and improve their effectiveness.";
+    if (combatStyle === "melee") {
+      framing += `**Your Role: Frontline Enforcer**\n\n`;
+      framing += `• **Positioning:** Engage the most dangerous threats directly. Draw fire away from allies.\n`;
+      framing += `• **Pacing:** Aggressive. Close distance quickly, control space, deny retreats.\n`;
+      framing += `• **Priorities:** Eliminate high-damage enemies first. Protect vulnerable allies second.\n\n`;
+      framing += `You are the anvil. Stand firm.`;
+    } else if (combatStyle === "ranged") {
+      framing += `**Your Role: Precision Striker**\n\n`;
+      framing += `• **Positioning:** Stay mobile. Use cover. Maintain firing lanes.\n`;
+      framing += `• **Pacing:** Controlled. Pick targets deliberately. Reposition between volleys.\n`;
+      framing += `• **Priorities:** Eliminate enemy ranged threats first. Exploit weakened foes second.\n\n`;
+      framing += `You are the scalpel. Strike cleanly.`;
+    } else if (combatStyle === "caster") {
+      framing += `**Your Role: Force Conduit**\n\n`;
+      framing += `• **Positioning:** Stay protected but central. Maintain awareness of all combatants.\n`;
+      framing += `• **Pacing:** Adaptive. Control the battlefield tempo. Save resources for critical moments.\n`;
+      framing += `• **Priorities:** Disable enemy Force users first. Support allies second. Damage last.\n\n`;
+      framing += `You are the fulcrum. Tip the balance.`;
     } else {
-      advice += "Focus on talents that complement your hybrid approach and provide versatility.";
+      framing += `**Your Role: Adaptive Tactician**\n\n`;
+      framing += `• **Positioning:** Read the situation. Fill gaps as they appear.\n`;
+      framing += `• **Pacing:** Reactive. Shift roles as the fight evolves.\n`;
+      framing += `• **Priorities:** Exploit enemy mistakes. Cover ally weaknesses.\n\n`;
+      framing += `You are the wildcard. Adapt or die.`;
     }
 
-    return advice;
+    return framing;
   }
 
-  async _generateClassGuidance() {
+  /**
+   * 6. "What should I be careful of?" — Risk Awareness
+   * Warns about traps and consequences
+   */
+  _generateRiskAwareness() {
+    const combatStyle = this.buildIntent.combatStyle;
+    const level = this.actor.system.level;
+    const dsp = this.actor.system.darkSidePoints?.value || 0;
+    const dspMax = this.actor.system.darkSidePoints?.max || 10;
+    const dspSaturation = dspMax > 0 ? dsp / dspMax : 0;
+
+    let risks = "These are the dangers you face:\n\n";
+
+    // Combat style-specific risks
+    if (combatStyle === "melee") {
+      risks += `**Overcommitment:** Charging into melee leaves you vulnerable to focus fire and area attacks. Know when to retreat.\n\n`;
+      risks += `**Mobility Denial:** Slow speed or lack of initiative means enemies can kite you. You'll chase while they strike.\n`;
+    } else if (combatStyle === "ranged") {
+      risks += `**Cover Dependence:** If enemies close distance or destroy your cover, you become fragile quickly.\n\n`;
+      risks += `**Tunnel Vision:** Focusing on damage output while ignoring positioning gets you flanked or surrounded.\n`;
+    } else if (combatStyle === "caster") {
+      risks += `**Resource Depletion:** The Force is finite. Spending power too early leaves you helpless when it matters most.\n\n`;
+      risks += `**Fragility:** Low defenses mean a single focused assault can disable you before you act.\n`;
+    } else {
+      risks += `**Jack-of-All-Trades Trap:** Versatility without focus means you're competent at everything but exceptional at nothing.\n\n`;
+      risks += `**Identity Drift:** Without a clear role, you risk making choices that contradict each other instead of synergizing.\n`;
+    }
+
+    // DSP-specific risks
+    if (dspSaturation > 0.5) {
+      risks += `\n🔥 **Dark Side Corruption:** The darkness offers power, but it demands more than it gives. The further you go, the harder it becomes to turn back. Eventually, it will consume you.`;
+    } else if (dspSaturation > 0.2) {
+      risks += `\n⚠️ **Temptation:** You're flirting with the dark side. Every step down that path makes the next step easier and the return harder.`;
+    }
+
+    return risks;
+  }
+
+  /**
+   * 7. "What lies ahead?" — Prestige Planning
+   * Discusses future possibilities and tradeoffs
+   */
+  async _generatePrestigePlanning() {
     const prestigeAffinities = this.buildIntent.prestigeAffinities || [];
+    const level = this.actor.system.level;
+
+    if (level < 6) {
+      return "Prestige classes unlock at higher levels. For now, focus on mastering your current class and establishing your identity.";
+    }
+
+    let planning = "The paths that lie ahead:\n\n";
 
     if (prestigeAffinities.length === 0) {
-      return "Continue developing your current class. When you're ready for a prestige class, I'll help guide you.";
+      planning += "Your build doesn't yet point toward a specific prestige class. Continue developing your core strengths, and a path will emerge.";
+      return planning;
     }
-
-    let advice = "Based on your build, here are prestige classes that suit you:\n\n";
 
     prestigeAffinities.slice(0, 3).forEach((aff, idx) => {
       const confidence = Math.round(aff.confidence * 100);
-      advice += `${idx + 1}. **${aff.className}** (${confidence}% match)\n`;
+      planning += `**${aff.className}** (${confidence}% alignment)\n`;
+      planning += `This path builds on your current direction. It will deepen what you've started, not redirect it.\n\n`;
     });
 
-    return advice;
+    planning += `⚠️ **Tradeoff:** Prestige classes offer specialization, but they narrow your options. Choose the path that serves your purpose, not the one that sounds powerful.`;
+
+    return planning;
   }
 
-  _generateAbilityGuidance() {
-    const combatStyle = this.buildIntent.combatStyle;
+  /**
+   * 8. "How would you play this class?" — Mentor Doctrine
+   * Shows mentor's personal philosophy
+   */
+  _generateMentorDoctrine() {
+    const mentorName = this.selectedMentor.mentor.name;
+    const mentorClass = this.selectedMentor.key;
 
-    let advice = "For your build, I recommend prioritizing:\n\n";
+    let doctrine = `You want to know how *I* would play this? Here's my truth:\n\n`;
 
-    if (combatStyle === 'melee') {
-      advice += "**Strength** for damage and combat effectiveness\n";
-      advice += "**Constitution** for survivability\n";
-      advice += "**Dexterity** for defense and initiative";
-    } else if (combatStyle === 'ranged') {
-      advice += "**Dexterity** for accuracy and defense\n";
-      advice += "**Wisdom** for perception and awareness\n";
-      advice += "**Constitution** for survivability";
-    } else if (combatStyle === 'caster') {
-      advice += "**Charisma** or **Wisdom** for Force power effectiveness\n";
-      advice += "**Constitution** for survivability\n";
-      advice += "**Intelligence** for skills and knowledge";
+    // Mentor-specific doctrines
+    if (mentorName === "Miraj") {
+      doctrine += `I value **balance**, **wisdom**, and **service**.\n\n`;
+      doctrine += `I would prioritize the Force above all else—not for power, but for understanding. Every decision would ask: does this bring balance, or does it serve ego?\n\n`;
+      doctrine += `I would invest in **Wisdom** and **Charisma**, train **Persuasion** and **Use the Force**, and never stop seeking knowledge.\n\n`;
+      doctrine += `I would avoid the dark side not out of fear, but because I know where it leads.`;
+    } else if (mentorName === "Lead") {
+      doctrine += `I value **efficiency**, **survival**, and **mission success**.\n\n`;
+      doctrine += `I would build for adaptability—**Dexterity** and **Wisdom** first, skills that keep me alive and aware.\n\n`;
+      doctrine += `I would master **Stealth**, **Perception**, and **Survival**. I'd never take a fight I could avoid, and I'd never leave a teammate behind.\n\n`;
+      doctrine += `Flashy moves get you killed. Smart moves get you home.`;
+    } else if (mentorName === "Ol' Salty") {
+      doctrine += `I value **freedom**, **profit**, and **survival**.\n\n`;
+      doctrine += `I'd max **Charisma** and **Dexterity**, charm me way out of most fights, and shoot me way out of the rest.\n\n`;
+      doctrine += `I'd train **Deception**, **Persuasion**, and **Pilot**. Why fight when ye can talk yer way to riches?\n\n`;
+      doctrine += `Rules be for fools. I play to win, and I don't mind bendin' a few laws along the way.`;
+    } else if (mentorName === "J0-N1") {
+      doctrine += `I value **protocol**, **diplomacy**, and **precision**.\n\n`;
+      doctrine += `I would prioritize **Intelligence** and **Charisma**, mastering etiquette, languages, and persuasion.\n\n`;
+      doctrine += `Combat is crude and inefficient. I would invest in **Knowledge**, **Persuasion**, and **Deception** to avoid it entirely.\n\n`;
+      doctrine += `Elegance is not weakness. It is the art of winning without violence.`;
+    } else if (mentorName === "Breach") {
+      doctrine += `I value **strength**, **durability**, and **overwhelming force**.\n\n`;
+      doctrine += `I would max **Strength** and **Constitution**, wear the heaviest armor available, and hit harder than anyone expects.\n\n`;
+      doctrine += `I'd train **Endurance**, **Athletics**, and **Intimidation**. Subtlety is for scouts. I *am* the plan.\n\n`;
+      doctrine += `You don't survive by being smart. You survive by being too tough to kill.`;
     } else {
-      advice += "**Versatility** — Balance your abilities to support your hybrid approach";
+      doctrine += `I would play to my strengths, shore up my weaknesses, and never forget that every choice has a cost.\n\n`;
+      doctrine += `Power means nothing without purpose. Decide what matters to you, then build toward it without compromise.`;
     }
 
-    return advice;
-  }
-
-  _generateSkillGuidance() {
-    const combatStyle = this.buildIntent.combatStyle;
-
-    let advice = "Skills to consider based on your role:\n\n";
-
-    if (combatStyle === 'melee') {
-      advice += "Athletics, Endurance, Perception, Initiative";
-    } else if (combatStyle === 'ranged') {
-      advice += "Perception, Stealth, Survival, Mechanics";
-    } else if (combatStyle === 'caster') {
-      advice += "Use the Force, Knowledge (any), Perception, Persuasion";
-    } else {
-      advice += "Focus on skills that complement both your combat and non-combat capabilities";
-    }
-
-    return advice;
-  }
-
-  _generateForceGuidance() {
-    if (!this.actor.system.forceSensitive) {
-      return "You are not yet Force-sensitive. Focus on your current path.";
-    }
-
-    return "Study Force powers that align with your philosophy and combat style. Balance offensive, defensive, and utility powers for maximum versatility.";
+    return doctrine;
   }
 
   async _updateObject(event, formData) {
