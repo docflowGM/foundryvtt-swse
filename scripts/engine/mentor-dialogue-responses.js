@@ -37,9 +37,9 @@ export class MentorDialogueResponses {
     }
 
     return {
-      opening: mentorVoice.opening(analysisData),
+      opening: this._selectDialogue(mentorVoice.opening, analysisData),
       analysis: responses.canonicalAnalysis(analysisData),
-      closing: mentorVoice.closing(analysisData),
+      closing: this._selectDialogue(mentorVoice.closing, analysisData),
       emphasis: mentorVoice.emphasis || [],
       dspWarning: mentorVoice.dspInterpreter(analysisData.dspSaturation || 0)
     };
@@ -47,6 +47,31 @@ export class MentorDialogueResponses {
 
   static _sanitizeMentorName(name) {
     return name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+  }
+
+  /**
+   * Randomly select from a dialogue pool
+   * Supports three formats:
+   * - Function: calls with data
+   * - Array: picks random element
+   * - String: returns as-is
+   * @param {string|array|function} content - Dialogue content
+   * @param {object} data - Context data for functions
+   * @returns {string}
+   */
+  static _selectDialogue(content, data = {}) {
+    // If it's a function, call it
+    if (typeof content === 'function') {
+      return content(data);
+    }
+
+    // If it's an array, pick random
+    if (Array.isArray(content)) {
+      return content[Math.floor(Math.random() * content.length)];
+    }
+
+    // Otherwise return as-is
+    return content;
   }
 
   /**
@@ -275,12 +300,20 @@ export class MentorDialogueResponses {
 
       mentors: {
         miraj: {
-          opening: (data) => `Young one, ${MentorDialogueResponses._getLevelNarrative(data.level, "miraj").toLowerCase()}. I sense your path taking shape. The Force reveals you as a **${data.inferredRole}**—not a title you chose, but one you are *becoming*.`,
-          closing: (data) => {
-            const dsp = data.dspSaturation || 0;
-            if (dsp > 0.5) return "Awareness must precede action. The path back grows narrow.";
-            return "Discipline must come before action.";
-          },
+          opening: [
+            "The Force reflects what you repeatedly choose. Your path is beginning to show itself.",
+            "Patterns emerge long before destinies are decided. You are entering that moment.",
+            "You are no longer defined by potential alone. Your actions are shaping you now.",
+            "What you practice becomes habit. Habit becomes identity.",
+            "The Force does not judge you — it reveals you."
+          ],
+          closing: [
+            "Awareness must precede action.",
+            "The path back grows narrow.",
+            "Discipline must come before action.",
+            "The Force reveals truth in time.",
+            "Choose carefully what you become."
+          ],
           emphasis: ["intent_vs_action", "long_term_consequence"],
           dspInterpreter: (dsp) => {
             if (dsp > 0.5) return "⚠️ The darkness grows, young one. I feel it pulling at you. The path back narrows with each step forward. Choose carefully.";
@@ -290,12 +323,20 @@ export class MentorDialogueResponses {
         },
 
         breach: {
-          opening: (data) => `${MentorDialogueResponses._getLevelNarrative(data.level, "breach")}. You're becoming a **${data.inferredRole}**. Your record speaks for itself.`,
-          closing: (data) => {
-            const dsp = data.dspSaturation || 0;
-            if (dsp > 0.5) return "You're getting reckless. That instability gets people killed.";
-            return "Train for what you are.";
-          },
+          opening: [
+            "You're shaping into a fighter who can hold the line.",
+            "Your choices say you're ready to face things head-on.",
+            "Battle's starting to recognize you. That matters.",
+            "You're becoming someone others rely on when it gets loud.",
+            "You're not guessing anymore. You're committing."
+          ],
+          closing: [
+            "Train for what you are.",
+            "Indecision gets people killed.",
+            "You're getting reckless. That instability gets people killed.",
+            "Pick a role. Do it well.",
+            "The record speaks for itself."
+          ],
           emphasis: ["clarity", "execution"],
           dspInterpreter: (dsp) => {
             if (dsp > 0.5) return "⚠️ Look, I'm not here to preach about light and dark. But you're getting reckless. That kind of instability? It gets people killed. Yours and mine.";
@@ -388,15 +429,39 @@ export class MentorDialogueResponses {
 
       mentors: {
         miraj: {
-          opening: (data) => `The Force reveals many paths, young one. Each demands sacrifice—what you gain in one area, you surrender in another. This is balance.`,
-          closing: (data) => `The path you choose shapes who you become. Choose with intention, not impulse.`,
+          opening: [
+            "There are many ways to serve the Force, but each demands a different discipline.",
+            "Some Jedi endure. Others act swiftly. A few guide events from the shadows.",
+            "Every path offers strength — and asks something in return.",
+            "Choosing a path is not limitation. It is focus.",
+            "You may walk between paths for a time, but eventually one will ask for commitment."
+          ],
+          closing: [
+            "The path you choose shapes who you become.",
+            "Choose with intention, not impulse.",
+            "Balance requires commitment.",
+            "Each path demands its price.",
+            "The Force will guide you, if you listen."
+          ],
           emphasis: ["balance", "consequence"],
           dspInterpreter: (dsp) => ""
         },
 
         breach: {
-          opening: (data) => `Listen up. Every class has specializations. Each one trades something for something else. No free lunches.`,
-          closing: (data) => `Pick the path that keeps your team alive and the mission successful. Everything else is noise.`,
+          opening: [
+            "Some fighters endure. Others overwhelm. Pick which one you are.",
+            "You can be a shield, a hammer, or something in between.",
+            "Every path leads back to combat. Just changes how you survive it.",
+            "Specialize, or get swallowed by the fight.",
+            "Choose how you win. Don't leave it to chance."
+          ],
+          closing: [
+            "Pick the path that keeps your team alive.",
+            "Everything else is noise.",
+            "No free lunches.",
+            "Decide what you are, then train for it.",
+            "Mission success requires commitment."
+          ],
           emphasis: ["pragmatism", "clarity"],
           dspInterpreter: (dsp) => ""
         },
@@ -462,15 +527,39 @@ export class MentorDialogueResponses {
 
       mentors: {
         miraj: {
-          opening: (data) => `Let me reflect on your strengths, for it is important to recognize growth.`,
-          closing: (data) => `The Force flows through these choices. They form a foundation. Build upon it with mindfulness.`,
+          opening: [
+            "You act with purpose rather than impulse. That is not common.",
+            "Your choices reinforce one another. That harmony has value.",
+            "You have learned when to act — and when not to.",
+            "Discipline is visible in your decisions. The Force responds to that.",
+            "You are beginning to trust preparation over reaction."
+          ],
+          closing: [
+            "The Force flows through these choices.",
+            "Build upon this foundation with mindfulness.",
+            "Growth requires both recognition and humility.",
+            "Continue this path with awareness.",
+            "Harmony strengthens with time."
+          ],
           emphasis: ["growth", "foundation"],
           dspInterpreter: (dsp) => ""
         },
 
         breach: {
-          opening: (data) => `Here's what's working:\n`,
-          closing: (data) => `Good foundation. Keep building on what works. Don't fix what isn't broken.`,
+          opening: [
+            "You don't hesitate when the shooting starts.",
+            "Your build supports your role. That's rare.",
+            "You're training like someone who expects resistance.",
+            "You're hard to put down. Good.",
+            "You fight like you plan to walk away afterward."
+          ],
+          closing: [
+            "Good foundation. Keep building on what works.",
+            "Don't fix what isn't broken.",
+            "That's how soldiers survive.",
+            "Keep that discipline.",
+            "You're doing it right."
+          ],
           emphasis: ["execution", "consistency"],
           dspInterpreter: (dsp) => ""
         },
@@ -537,15 +626,39 @@ export class MentorDialogueResponses {
 
       mentors: {
         miraj: {
-          opening: (data) => `The Light reveals all things, including our failings.`,
-          closing: (data) => `Awareness is the first step toward correction. The Force is patient with those who seek improvement.`,
+          opening: [
+            "You rely on certainty when reflection would serve you better.",
+            "Strength grows faster than wisdom if left unchecked.",
+            "You move quickly past questions that deserve patience.",
+            "Your confidence risks becoming momentum without direction.",
+            "Balance requires maintenance. You have begun to neglect it."
+          ],
+          closing: [
+            "Awareness is the first step toward correction.",
+            "The Force is patient with those who seek improvement.",
+            "Discipline requires constant attention.",
+            "Course correction is not failure—it is wisdom.",
+            "Balance must be tended, not assumed."
+          ],
           emphasis: ["awareness", "course_correction"],
           dspInterpreter: (dsp) => ""
         },
 
         breach: {
-          opening: (data) => `Every build has weaknesses. Let me point out yours.`,
-          closing: (data) => `Address these. They'll get you killed otherwise.`,
+          opening: [
+            "You're leaving gaps someone will exploit.",
+            "You're strong, but not prepared for every angle.",
+            "You're trusting momentum instead of discipline.",
+            "You're building offense faster than survivability.",
+            "Battle doesn't forgive sloppy habits."
+          ],
+          closing: [
+            "Address these. They'll get you killed otherwise.",
+            "Fix the gaps.",
+            "Discipline saves lives.",
+            "Cover your weaknesses.",
+            "Battle exposes everything."
+          ],
           emphasis: ["pragmatism", "urgency"],
           dspInterpreter: (dsp) => {
             if (dsp > 0.3 && dsp < 0.7) return "⚠️ You're drifting. That instability will cost you when clarity matters most.";
@@ -614,15 +727,39 @@ export class MentorDialogueResponses {
 
       mentors: {
         miraj: {
-          opening: (data) => `The Force shapes your role in conflict. Listen to what it demands of you.`,
-          closing: (data) => `Execute this role with discipline. Your purpose will become clear through practice.`,
+          opening: [
+            "Position yourself where your presence protects others.",
+            "End threats decisively — but never carelessly.",
+            "A Jedi survives long enough to make the right choice.",
+            "Control the space around you before striking within it.",
+            "Victory that costs awareness is no victory at all."
+          ],
+          closing: [
+            "Execute this role with discipline.",
+            "Your purpose will become clear through practice.",
+            "The Force guides those who remain mindful.",
+            "Discipline determines the outcome.",
+            "Awareness precedes action."
+          ],
           emphasis: ["purpose", "discipline"],
           dspInterpreter: (dsp) => ""
         },
 
         breach: {
-          opening: (data) => `Your role in combat defines your priorities.`,
-          closing: (data) => `Execute this role. Nothing else matters.`,
+          opening: [
+            "Take space. Hold it. Make them pay for pushing you.",
+            "End threats fast, or grind them down — just don't stall.",
+            "Fight where your armor and training matter.",
+            "Control the engagement. Don't chase glory.",
+            "If it drags out, you should still be standing."
+          ],
+          closing: [
+            "Execute this role. Nothing else matters.",
+            "That's how you survive combat.",
+            "Discipline wins battles.",
+            "Do your job.",
+            "Make every engagement count."
+          ],
           emphasis: ["clarity", "execution"],
           dspInterpreter: (dsp) => ""
         },
@@ -688,15 +825,39 @@ export class MentorDialogueResponses {
 
       mentors: {
         miraj: {
-          opening: (data) => `Temptation and cost live intertwined on every path. You must see both.`,
-          closing: (data) => `Remember this always: power without wisdom is only rope with which to hang yourself.`,
+          opening: [
+            "Convenience is the first temptation.",
+            "Power used without reflection reshapes intent.",
+            "Each easy decision makes the next one easier still.",
+            "Do not confuse urgency with necessity.",
+            "The slope rarely announces itself."
+          ],
+          closing: [
+            "Power without wisdom is only rope with which to hang yourself.",
+            "Temptation and cost live intertwined on every path.",
+            "Awareness is your first defense.",
+            "The Force warns those who listen.",
+            "Choose carefully what becomes easy."
+          ],
           emphasis: ["wisdom", "foresight"],
           dspInterpreter: (dsp) => ""
         },
 
         breach: {
-          opening: (data) => `These are the dangers you face.`,
-          closing: (data) => `Know the risks. Plan for them. Survive them.`,
+          opening: [
+            "Overconfidence kills good warriors.",
+            "Relying on one trick.",
+            "Ignoring defense because offense feels good.",
+            "Letting others decide the pace.",
+            "Forgetting that battle always escalates."
+          ],
+          closing: [
+            "Know the risks. Plan for them. Survive them.",
+            "Awareness keeps you alive.",
+            "Don't ignore the warnings.",
+            "Preparation is survival.",
+            "Battle doesn't forgive complacency."
+          ],
           emphasis: ["preparation", "awareness"],
           dspInterpreter: (dsp) => ""
         },
@@ -767,15 +928,39 @@ export class MentorDialogueResponses {
 
       mentors: {
         miraj: {
-          opening: (data) => `The future is not fixed, but your choices write it gradually. Let me show you what your path suggests.`,
-          closing: (data) => `Remember: the future belongs to those patient enough to build it with intention.`,
+          opening: [
+            "If you continue as you are, greater responsibility will follow.",
+            "Specialization brings clarity — and consequence.",
+            "Future paths will demand more than skill alone.",
+            "What you become will matter to others, whether you intend it or not.",
+            "The Force will ask you to define yourself more clearly."
+          ],
+          closing: [
+            "The future belongs to those patient enough to build it with intention.",
+            "Awareness shapes destiny.",
+            "Your choices write what comes next.",
+            "The Force guides those who prepare.",
+            "Define yourself before you are defined."
+          ],
           emphasis: ["foresight", "intentionality"],
           dspInterpreter: (dsp) => ""
         },
 
         breach: {
-          opening: (data) => `Your choices are already pointing somewhere. Here's where they lead.`,
-          closing: (data) => `Plan ahead. Good operators know where they're going before they start moving.`,
+          opening: [
+            "Harder fights. Stronger enemies.",
+            "Command. Responsibility. Bigger stakes.",
+            "Battles where retreat isn't an option.",
+            "Specialization that defines how you survive.",
+            "War doesn't slow down — you either adapt or fall."
+          ],
+          closing: [
+            "Plan ahead. Good operators know where they're going.",
+            "Prepare for what's coming.",
+            "The fight only gets harder.",
+            "Specialization is inevitable.",
+            "Adapt or die."
+          ],
           emphasis: ["planning", "strategy"],
           dspInterpreter: (dsp) => ""
         },
@@ -835,15 +1020,39 @@ export class MentorDialogueResponses {
 
       mentors: {
         miraj: {
-          opening: (data) => `You ask how I would walk this path? With discipline. With purpose. With the understanding that every choice has weight.`,
-          closing: (data) => `This is not the only way. But it is *a* way, tested by centuries of Jedi before me.`,
+          opening: [
+            "I would build toward endurance before brilliance.",
+            "I would survive long enough for wisdom to matter.",
+            "I would favor preparation over reaction.",
+            "I would let patience decide battles others rush into.",
+            "I would remain calm when power feels most tempting."
+          ],
+          closing: [
+            "This is not the only way. But it is *a* way.",
+            "Centuries of Jedi have tested this path.",
+            "Discipline shapes destiny.",
+            "The Force rewards patience.",
+            "Balance endures when passion fades."
+          ],
           emphasis: ["philosophy", "discipline"],
           dspInterpreter: (dsp) => ""
         },
 
         breach: {
-          opening: (data) => `I'd keep it simple. Train hard, hit hard, survive harder. No fancy theories.`,
-          closing: (data) => `That's Mandalorian practicality. It works. Everything else is luxury.`,
+          opening: [
+            "I'd build to outlast the fight.",
+            "I'd train for worst-case scenarios.",
+            "I'd make sure every hit against me costs them.",
+            "I'd never rely on luck.",
+            "I'd be the last one standing."
+          ],
+          closing: [
+            "That's Mandalorian practicality. It works.",
+            "Everything else is luxury.",
+            "Simple. Effective. Proven.",
+            "This is the Way.",
+            "Survive first. Win second."
+          ],
           emphasis: ["pragmatism", "execution"],
           dspInterpreter: (dsp) => ""
         },
