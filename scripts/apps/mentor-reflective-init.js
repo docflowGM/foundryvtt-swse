@@ -4,6 +4,7 @@
  */
 
 import { MentorReflectiveDialog, setupMentorDialogueHooks } from './mentor-reflective-dialog.js';
+import { MentorChatDialog } from './mentor-chat-dialog.js';
 import { SWSELogger } from '../utils/logger.js';
 
 /**
@@ -63,8 +64,20 @@ window.SWSE.Mentor = {
     }
     const level1Class = actor.getFlag('swse', 'level1Class') || mentorId;
     MentorReflectiveDialog.show(actor, level1Class);
+  },
+  showChatDialog: (actor) => {
+    if (!actor) {
+      const selection = canvas.tokens.controlled[0];
+      actor = selection?.actor;
+    }
+    if (!actor) {
+      ui.notifications.error('No actor selected');
+      return;
+    }
+    MentorChatDialog.show(actor);
   }
 };
 
 SWSELogger.log('SWSE Mentor | Reflective dialogue system ready');
 SWSELogger.log('SWSE Mentor | Use SWSE.Mentor.showReflectiveDialogue(actor, mentorId) to open dialogue');
+SWSELogger.log('SWSE Mentor | Use SWSE.Mentor.showChatDialog(actor) to open mentor chat');

@@ -311,6 +311,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     html.find('.open-store').click(ev => this._onOpenStore(ev));
     html.find('.pick-species-btn').click(ev => this._onPickSpecies(ev));
     html.find('.add-class-btn').click(ev => this._onAddClass(ev));
+    html.find('.talk-to-mentor').click(ev => this._onTalkToMentor(ev));
 
     // ========== CONDITION TRACK ==========
     html.find('.track-step').click(ev => this._onConditionTrackClick(ev));
@@ -573,6 +574,18 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     } catch (err) {
       console.warn("Failed to open class selector chargen:", err);
       ui.notifications.error("Failed to open class selection. Please try again.");
+    }
+  }
+
+  async _onTalkToMentor(event) {
+    event.preventDefault();
+    // Open mentor chat dialog
+    try {
+      const { MentorChatDialog } = await import('../../apps/mentor-chat-dialog.js');
+      MentorChatDialog.show(this.actor);
+    } catch (err) {
+      SWSELogger.error('Mentor chat dialog error:', err);
+      ui.notifications.error('Failed to open mentor chat dialog');
     }
   }
 
