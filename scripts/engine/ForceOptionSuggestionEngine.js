@@ -227,27 +227,34 @@ export class ForceOptionSuggestionEngine {
           reasons.push("Supports Force caster build");
         }
 
-        // Prestige class alignment
-        const prestigeTargets = buildIntent.prestigeTargets || {};
+        // Prestige class alignment - FIXED: Use prestigeAffinities (array) instead of prestigeTargets
+        const prestigeAffinities = buildIntent.prestigeAffinities || [];
 
-        if (prestigeTargets["Jedi Knight"] > 0.6 && ["battle_strike", "enlighten", "improved_battle_meditation"].includes(option.id)) {
-          tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
-          reasons.push("Supports Jedi Knight path");
-        }
+        // Check top prestige targets (sorted by confidence)
+        for (const affinity of prestigeAffinities.slice(0, 3)) {
+          if (affinity.confidence < 0.6) continue; // Only strong targets
 
-        if (prestigeTargets["Force Adept"] > 0.6 && ["move_object", "force_lightning", "negate_energy", "telekinetic_savant"].includes(option.id)) {
-          tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
-          reasons.push("Supports Force Adept path");
-        }
+          const className = affinity.className;
 
-        if (prestigeTargets["Sith Lord"] > 0.6 && ["force_lightning", "dark_side_mastery", "force_grip"].includes(option.id)) {
-          tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
-          reasons.push("Supports Sith Lord path");
-        }
+          if (className === "Jedi Knight" && ["battle_strike", "enlighten", "improved_battle_meditation"].includes(option.id)) {
+            tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
+            reasons.push(`Supports ${className} path (${Math.round(affinity.confidence * 100)}% confidence)`);
+          }
 
-        if (prestigeTargets["Jedi Master"] > 0.6 && ["enlighten", "force_sensitivity_focus", "improved_battle_meditation"].includes(option.id)) {
-          tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
-          reasons.push("Supports Jedi Master path");
+          if (className === "Force Adept" && ["move_object", "force_lightning", "negate_energy", "telekinetic_savant"].includes(option.id)) {
+            tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
+            reasons.push(`Supports ${className} path (${Math.round(affinity.confidence * 100)}% confidence)`);
+          }
+
+          if (className === "Sith Lord" && ["force_lightning", "dark_side_mastery", "force_grip"].includes(option.id)) {
+            tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
+            reasons.push(`Supports ${className} path (${Math.round(affinity.confidence * 100)}% confidence)`);
+          }
+
+          if (className === "Jedi Master" && ["enlighten", "force_sensitivity_focus", "improved_battle_meditation"].includes(option.id)) {
+            tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
+            reasons.push(`Supports ${className} path (${Math.round(affinity.confidence * 100)}% confidence)`);
+          }
         }
 
         // House rules adjustments

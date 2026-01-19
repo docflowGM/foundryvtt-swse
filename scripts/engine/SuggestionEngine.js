@@ -32,6 +32,7 @@ export const SUGGESTION_TIERS = {
     META_SYNERGY: 5,        // Community-proven synergy combo
     SPECIES_EARLY: 4.5,     // Species feat at early levels (decays with level)
     CHAIN_CONTINUATION: 4,
+    MENTOR_BIAS_MATCH: 3.5, // Matches L1 mentor survey answers
     SKILL_PREREQ_MATCH: 3,
     ABILITY_PREREQ_MATCH: 2,
     CLASS_SYNERGY: 1,
@@ -43,6 +44,7 @@ export const TIER_REASONS = {
     5: "Strong recommendation for your build",
     4.5: "Excellent species feat for your level",
     4: "Builds directly on a feat or talent you already have",
+    3.5: "Aligns with your mentor survey answers",
     3: "Uses a trained skill you possess",
     2: "Scales with your highest ability score",
     1: "Strong synergy with your class",
@@ -54,6 +56,7 @@ export const TIER_ICONS = {
     5: "fa-fire",           // Fire for strong recommendations
     4.5: "fa-dna",          // DNA for species feats
     4: "fa-link",           // Chain link icon for chain continuation
+    3.5: "fa-user-tie",     // Mentor guidance from survey
     3: "fa-bullseye",       // Target for skill match
     2: "fa-fist-raised",    // Strength for ability match
     1: "fa-users-cog",      // Class synergy
@@ -479,6 +482,135 @@ export class SuggestionEngine {
     }
 
     // ──────────────────────────────────────────────────────────────
+    // PRIVATE: MENTOR BIAS MATCHING
+    // ──────────────────────────────────────────────────────────────
+
+    /**
+     * Check if a feat/talent matches mentor survey biases
+     * Maps mentor biases to feat/talent characteristics and returns match info
+     * @param {string} itemName - Name of feat or talent to check
+     * @param {Object} buildIntent - BuildIntent with mentorBiases
+     * @returns {Object|null} Match info with reason, or null if no match
+     */
+    static _checkMentorBiasMatch(itemName, buildIntent) {
+        if (!buildIntent || !buildIntent.mentorBiases) {
+            return null;
+        }
+
+        const biases = buildIntent.mentorBiases;
+        const itemLower = itemName.toLowerCase();
+
+        // Combat style matches
+        if (biases.melee > 0 && this._isMeleeItem(itemName)) {
+            return {
+                reason: `Matches your melee combat preference (${Math.round(biases.melee * 100)}%)`
+            };
+        }
+        if (biases.ranged > 0 && this._isRangedItem(itemName)) {
+            return {
+                reason: `Matches your ranged combat preference (${Math.round(biases.ranged * 100)}%)`
+            };
+        }
+
+        // Force focus
+        if (biases.forceFocus > 0 && this._isForceItem(itemName)) {
+            return {
+                reason: `Aligns with your Force focus preference (${Math.round(biases.forceFocus * 100)}%)`
+            };
+        }
+
+        // Stealth/sneaky
+        if (biases.stealth > 0 && this._isStealthItem(itemName)) {
+            return {
+                reason: `Matches your stealth preference (${Math.round(biases.stealth * 100)}%)`
+            };
+        }
+
+        // Social/charisma
+        if (biases.social > 0 && this._isSocialItem(itemName)) {
+            return {
+                reason: `Supports your social preference (${Math.round(biases.social * 100)}%)`
+            };
+        }
+
+        // Tech/mechanical
+        if (biases.tech > 0 && this._isTechItem(itemName)) {
+            return {
+                reason: `Matches your tech preference (${Math.round(biases.tech * 100)}%)`
+            };
+        }
+
+        // Leadership
+        if (biases.leadership > 0 && this._isLeadershipItem(itemName)) {
+            return {
+                reason: `Supports your leadership style (${Math.round(biases.leadership * 100)}%)`
+            };
+        }
+
+        // Support/defensive
+        if (biases.support > 0 && this._isSupportItem(itemName)) {
+            return {
+                reason: `Supports your defensive preference (${Math.round(biases.support * 100)}%)`
+            };
+        }
+
+        // Survival/exploration
+        if (biases.survival > 0 && this._isSurvivalItem(itemName)) {
+            return {
+                reason: `Matches your survival preference (${Math.round(biases.survival * 100)}%)`
+            };
+        }
+
+        return null;
+    }
+
+    // Helper methods for bias matching
+    static _isMeleeItem(name) {
+        const meleeKeywords = ['melee', 'sword', 'blade', 'lightsaber', 'staff', 'club', 'axe', 'hammer', 'martial arts', 'close combat', 'hand-to-hand'];
+        return meleeKeywords.some(k => name.toLowerCase().includes(k));
+    }
+
+    static _isRangedItem(name) {
+        const rangedKeywords = ['blaster', 'rifle', 'pistol', 'bow', 'gun', 'ranged', 'throwing', 'launcher', 'sniper', 'marksman'];
+        return rangedKeywords.some(k => name.toLowerCase().includes(k));
+    }
+
+    static _isForceItem(name) {
+        const forceKeywords = ['force', 'jedi', 'sith', 'darksider', 'lightsaber', 'telekinesis', 'mind trick', 'persuasion'];
+        return forceKeywords.some(k => name.toLowerCase().includes(k));
+    }
+
+    static _isStealthItem(name) {
+        const stealthKeywords = ['stealth', 'hide', 'shadow', 'sneak', 'escape', 'evasion', 'cloak', 'invisible', 'shadow walker'];
+        return stealthKeywords.some(k => name.toLowerCase().includes(k));
+    }
+
+    static _isSocialItem(name) {
+        const socialKeywords = ['persuasion', 'deception', 'bluff', 'diplomacy', 'charm', 'inspire', 'charisma', 'gather information', 'social'];
+        return socialKeywords.some(k => name.toLowerCase().includes(k));
+    }
+
+    static _isTechItem(name) {
+        const techKeywords = ['computer', 'mechanics', 'tech', 'droid', 'repair', 'construct', 'protocol', 'hacking', 'engineering'];
+        return techKeywords.some(k => name.toLowerCase().includes(k));
+    }
+
+    static _isLeadershipItem(name) {
+        const leadershipKeywords = ['command', 'leadership', 'rally', 'inspire', 'authority', 'control', 'master', 'superior'];
+        return leadershipKeywords.some(k => name.toLowerCase().includes(k));
+    }
+
+    static _isSupportItem(name) {
+        const supportKeywords = ['defense', 'protect', 'shield', 'guard', 'block', 'deflect', 'barrier', 'ally', 'heal'];
+        return supportKeywords.some(k => name.toLowerCase().includes(k));
+    }
+
+    static _isSurvivalItem(name) {
+        const survivalKeywords = ['survival', 'endurance', 'track', 'scout', 'wilderness', 'climb', 'swim', 'journey'];
+        return survivalKeywords.some(k => name.toLowerCase().includes(k));
+    }
+
+    // ──────────────────────────────────────────────────────────────
     // PRIVATE: EVALUATE FEAT/TALENT
     // ──────────────────────────────────────────────────────────────
 
@@ -543,6 +675,19 @@ export class SuggestionEngine {
         // Tier 4: Chain continuation
         if (this._isChainContinuation(feat, actorState, metadata)) {
             return this._buildSuggestion(SUGGESTION_TIERS.CHAIN_CONTINUATION, feat.name);
+        }
+
+        // Tier 3.5: MENTOR BIAS - Feat matches L1 survey answer themes
+        if (buildIntent && buildIntent.mentorBiases && Object.keys(buildIntent.mentorBiases).length > 0) {
+            const mentorMatch = this._checkMentorBiasMatch(feat.name, buildIntent);
+            if (mentorMatch) {
+                SWSELogger.log(`[SUGGESTION-ENGINE] Feat "${feat.name}" matches mentor bias:`, mentorMatch.reason);
+                return this._buildSuggestion(
+                    SUGGESTION_TIERS.MENTOR_BIAS_MATCH,
+                    feat.name,
+                    mentorMatch.reason
+                );
+            }
         }
 
         // Tier 3: Uses trained skill
@@ -618,6 +763,19 @@ export class SuggestionEngine {
         // Tier 4: Chain continuation
         if (this._isChainContinuation(talent, actorState)) {
             return this._buildSuggestion(SUGGESTION_TIERS.CHAIN_CONTINUATION, talent.name);
+        }
+
+        // Tier 3.5: MENTOR BIAS - Talent matches L1 survey answer themes
+        if (buildIntent && buildIntent.mentorBiases && Object.keys(buildIntent.mentorBiases).length > 0) {
+            const mentorMatch = this._checkMentorBiasMatch(talent.name, buildIntent);
+            if (mentorMatch) {
+                SWSELogger.log(`[SUGGESTION-ENGINE] Talent "${talent.name}" matches mentor bias:`, mentorMatch.reason);
+                return this._buildSuggestion(
+                    SUGGESTION_TIERS.MENTOR_BIAS_MATCH,
+                    talent.name,
+                    mentorMatch.reason
+                );
+            }
         }
 
         // Tier 3: Uses trained skill

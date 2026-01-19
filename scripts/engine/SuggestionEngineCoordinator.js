@@ -137,20 +137,24 @@ export class SuggestionEngineCoordinator {
    */
   static async analyzeBuildIntent(actor, pendingData = {}) {
     try {
+      SWSELogger.log(`[SUGGESTION-COORDINATOR] analyzeBuildIntent() START - Actor: ${actor.id} (${actor.name})`);
       const cacheKey = `${actor.id}_${JSON.stringify(pendingData)}`;
 
       // Return cached result if available
       if (this._buildIntentCache.has(cacheKey)) {
+        SWSELogger.log(`[SUGGESTION-COORDINATOR] analyzeBuildIntent() - Returning CACHED build intent for actor ${actor.id}`);
         return this._buildIntentCache.get(cacheKey);
       }
 
       // Compute and cache
+      SWSELogger.log(`[SUGGESTION-COORDINATOR] analyzeBuildIntent() - Computing NEW build intent for actor ${actor.id}`);
       const buildIntent = await BuildIntent.analyze(actor, pendingData);
       this._buildIntentCache.set(cacheKey, buildIntent);
+      SWSELogger.log(`[SUGGESTION-COORDINATOR] analyzeBuildIntent() COMPLETE - BuildIntent analysis finished`);
 
       return buildIntent;
     } catch (err) {
-      SWSELogger.error('BuildIntent analysis failed:', err);
+      SWSELogger.error('[SUGGESTION-COORDINATOR] BuildIntent analysis failed:', err);
       throw err;
     }
   }
@@ -181,8 +185,10 @@ export class SuggestionEngineCoordinator {
    */
   static async suggestFeats(feats, actor, pendingData = {}, options = {}) {
     try {
+      SWSELogger.log(`[SUGGESTION-COORDINATOR] suggestFeats() START - Actor: ${actor.id}, Available feats: ${feats.length}`);
       // Get or compute BuildIntent for context
       const buildIntent = options.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
+      SWSELogger.log(`[SUGGESTION-COORDINATOR] suggestFeats() - BuildIntent obtained, primary themes:`, buildIntent.primaryThemes);
 
       // Call SuggestionEngine with BuildIntent context
       const featsSuggested = await SuggestionEngine.suggestFeats(
@@ -195,9 +201,10 @@ export class SuggestionEngineCoordinator {
         }
       );
 
+      SWSELogger.log(`[SUGGESTION-COORDINATOR] suggestFeats() COMPLETE - Returned ${featsSuggested.length} feat suggestions`);
       return featsSuggested;
     } catch (err) {
-      SWSELogger.error('Feat suggestion failed:', err);
+      SWSELogger.error('[SUGGESTION-COORDINATOR] Feat suggestion failed:', err);
       // Return feats without suggestions as fallback
       return feats.map(f => ({
         ...f,
