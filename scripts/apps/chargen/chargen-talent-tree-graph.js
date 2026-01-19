@@ -601,6 +601,25 @@ export function getTalentsInTree(allTalents, treeName) {
     return talentTree === treeName;
   });
 
+  // If no results, show diagnostic info about available trees
+  if (result.length === 0) {
+    const allTrees = new Set();
+    allTalents.forEach(t => {
+      const tree = getTalentTreeName(t);
+      if (tree) allTrees.add(tree);
+    });
+    SWSELogger.warn(`[TALENT-TREE-GRAPH] No talents found for tree "${treeName}". Available trees in data:`, Array.from(allTrees).sort());
+
+    // Also show which talents ARE in the system (for debugging)
+    const talentsInSystem = allTalents
+      .filter(t => getTalentTreeName(t) !== '')
+      .map(t => ({ name: t.name, tree: getTalentTreeName(t) }))
+      .slice(0, 20); // Show first 20
+    if (talentsInSystem.length > 0) {
+      SWSELogger.log(`[TALENT-TREE-GRAPH] Sample talents in system:`, talentsInSystem);
+    }
+  }
+
   SWSELogger.log(`[TALENT-TREE-GRAPH] getTalentsInTree result: ${result.length} talents match tree "${treeName}"`);
   return result;
 }
