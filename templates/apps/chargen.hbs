@@ -1103,6 +1103,17 @@
  <h3>Select Starting Feat{{#if (gt characterData.featsRequired 1)}}s{{/if}}</h3>
  <p class="help-text">All characters gain 1 general feat at 1st level.{{#if (gt characterData.featsRequired 1)}} Humans gain 1 bonus feat.{{/if}}</p>
 
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
+
  <div class="feats-filter-controls">
    <label>
      <input type="checkbox" id="show-valid-feats-only" class="filter-valid-feats" />
@@ -1222,6 +1233,20 @@
  {{#if (eq currentStep "talents")}}
  <section class="step-talents">
 
+ <h3>Select Talents</h3>
+ <p class="help-text">Choose talent(s) to specialize your character abilities.</p>
+
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
+
  {{!-- Selected Talents Summary --}}
  <div class="selected-talents-summary">
  <h4>Selected Talents ({{characterData.talents.length}}/{{characterData.talentsRequired}})</h4>
@@ -1241,17 +1266,6 @@
  {{!-- Step 1: Select Talent Tree --}}
  <h3>Select a Talent Tree</h3>
  <p class="help-text">Choose a talent tree from your class. Then select a talent from that tree.</p>
-
- {{#if narratorComment}}
- <div class="narrator-comment">
- <div class="narrator-avatar">
- <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
- </div>
- <div class="narrator-speech-bubble">
- <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
- </div>
- </div>
- {{/if}}
 
  {{#if (gt availableTalentTrees.length 0)}}
  <div class="talent-trees-grid">
@@ -1518,6 +1532,17 @@
  <section class="step-languages">
  <h3>Select Languages</h3>
  <p class="help-text">Choose additional languages your character knows based on Intelligence and any feats like Linguist.</p>
+
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
 
  {{#if characterData.languageData}}
  {{!-- Language Counter --}}
