@@ -50,15 +50,194 @@ export class MentorDialogueResponses {
   }
 
   /**
-   * Convert level to narrative stage (removes mechanical number references)
+   * Convert level to narrative stage with mentor-specific perspective
+   * Randomizes from mentor-appropriate progression language
    */
-  static _getLevelNarrative(level) {
-    if (level <= 1) return "Your journey has just begun";
-    if (level <= 3) return "You've gained some experience";
-    if (level <= 5) return "You've proven your mettle";
-    if (level <= 7) return "Your path grows clearer";
-    if (level <= 10) return "You've become something rare";
-    return "You've transcended the ordinary";
+  static _getLevelNarrative(level, mentorName = null) {
+    const sanitized = mentorName ? this._sanitizeMentorName(mentorName) : null;
+
+    // Mentor-specific progression narratives
+    const progressionMaps = {
+      miraj: {
+        early: [
+          "The Force awakens within you",
+          "Your path has just begun",
+          "The Light guides your first steps"
+        ],
+        mid_early: [
+          "The Force grows within you",
+          "Your connection deepens",
+          "You've learned discipline"
+        ],
+        mid: [
+          "You've proven your connection",
+          "The Force flows through your choices",
+          "Your understanding clarifies"
+        ],
+        mid_late: [
+          "Your path becomes clear",
+          "The Force speaks through your actions",
+          "Wisdom marks your steps"
+        ],
+        late: [
+          "You've become something remarkable",
+          "The Force recognizes your commitment",
+          "You walk a path few understand"
+        ],
+        transcendent: [
+          "You've transcended ordinary understanding",
+          "The Force itself bends to your will",
+          "You've become a beacon to others"
+        ]
+      },
+
+      breach: {
+        early: [
+          "You're green but learning",
+          "Combat hardens your resolve",
+          "You've seen your first action"
+        ],
+        mid_early: [
+          "You've seen some action",
+          "Your record's building",
+          "Combat's taught you lessons"
+        ],
+        mid: [
+          "You've proven yourself in the field",
+          "Your record speaks volumes",
+          "You've survived real conflict"
+        ],
+        mid_late: [
+          "Your combat experience is undeniable",
+          "You've become a reliable operator",
+          "The record shows your skill"
+        ],
+        late: [
+          "You've become a seasoned fighter",
+          "Few can match your record",
+          "You've survived what kills most soldiers"
+        ],
+        transcendent: [
+          "You've become a legend in the field",
+          "Your record is legendary",
+          "You're among the best I've seen"
+        ]
+      },
+
+      lead: {
+        early: [
+          "You're finding your footing",
+          "The patterns are starting to show",
+          "You've learned to observe"
+        ],
+        mid_early: [
+          "You're reading situations better",
+          "Patterns are becoming clear",
+          "You're learning what matters"
+        ],
+        mid: [
+          "You've learned to read people and terrain",
+          "The patterns are obvious to you now",
+          "Your instincts sharpen"
+        ],
+        mid_late: [
+          "You see what others miss",
+          "The patterns guide you naturally",
+          "Your tactical sense is solid"
+        ],
+        late: [
+          "You've become exceptionally perceptive",
+          "Few read a situation like you do",
+          "You understand things instinctively"
+        ],
+        transcendent: [
+          "You see ten steps ahead now",
+          "Pattern recognition is second nature",
+          "You've become a true strategist"
+        ]
+      },
+
+      ol_salty: {
+        early: [
+          "Luck's startin' to favor ye",
+          "Ye've got yer first tales to tell",
+          "Ye've survived yer first real test"
+        ],
+        mid_early: [
+          "Luck's been kind to ye, matey",
+          "Ye've got some real stories now",
+          "Ye're buildin' quite the reputation"
+        ],
+        mid: [
+          "Ye've cheated death more'n once",
+          "The galaxy knows yer name now",
+          "Yer luck's held strong"
+        ],
+        mid_late: [
+          "Ye've become a name worth knowin'",
+          "Luck ain't the only thing carryin' ye",
+          "Ye've got the swagger to match"
+        ],
+        late: [
+          "Ye've become a legend 'round these parts",
+          "Few have survived what ye have",
+          "Yer reputation precedes ye"
+        ],
+        transcendent: [
+          "Ye've become a galactic legend, matey",
+          "Stories about ye span the stars",
+          "Ye've earned yerself eternal glory"
+        ]
+      },
+
+      j0_n1: {
+        early: [
+          "Capability parameters initializing",
+          "Performance metrics improving",
+          "Optimization beginning"
+        ],
+        mid_early: [
+          "Capability indexes rising",
+          "Performance efficiency increasing",
+          "Optimization accelerating"
+        ],
+        mid: [
+          "You have achieved notable capability development",
+          "Performance parameters exceed baseline",
+          "Efficiency gains are measurable"
+        ],
+        mid_late: [
+          "Your capability development is substantial",
+          "Performance metrics exceed standard operations",
+          "Optimization efficiency is exceptional"
+        ],
+        late: [
+          "You have achieved exceptional capability status",
+          "Your performance metrics are outstanding",
+          "Few systems approach your efficiency"
+        ],
+        transcendent: [
+          "You have transcended normal operational parameters",
+          "Your performance is nearly optimal",
+          "You operate at peak capability thresholds"
+        ]
+      }
+    };
+
+    // Get mentor-specific map or fall back to neutral
+    const map = sanitized && progressionMaps[sanitized] ? progressionMaps[sanitized] : progressionMaps.miraj;
+
+    // Determine level band and pick random option
+    let band;
+    if (level <= 1) band = "early";
+    else if (level <= 3) band = "mid_early";
+    else if (level <= 5) band = "mid";
+    else if (level <= 7) band = "mid_late";
+    else if (level <= 10) band = "late";
+    else band = "transcendent";
+
+    const options = map[band];
+    return options[Math.floor(Math.random() * options.length)];
   }
 
   static _getFallbackResponse(topicKey, analysisData) {
@@ -96,7 +275,7 @@ export class MentorDialogueResponses {
 
       mentors: {
         miraj: {
-          opening: (data) => `Young one, ${this._getLevelNarrative(data.level).toLowerCase()}. I sense your path taking shape. The Force reveals you as a **${data.inferredRole}**—not a title you chose, but one you are *becoming*.`,
+          opening: (data) => `Young one, ${MentorDialogueResponses._getLevelNarrative(data.level, "miraj").toLowerCase()}. I sense your path taking shape. The Force reveals you as a **${data.inferredRole}**—not a title you chose, but one you are *becoming*.`,
           closing: (data) => {
             const dsp = data.dspSaturation || 0;
             if (dsp > 0.5) return "Awareness must precede action. The path back grows narrow.";
@@ -111,7 +290,7 @@ export class MentorDialogueResponses {
         },
 
         breach: {
-          opening: (data) => `${this._getLevelNarrative(data.level)}. You're becoming a **${data.inferredRole}**. Your record speaks for itself.`,
+          opening: (data) => `${MentorDialogueResponses._getLevelNarrative(data.level, "breach")}. You're becoming a **${data.inferredRole}**. Your record speaks for itself.`,
           closing: (data) => {
             const dsp = data.dspSaturation || 0;
             if (dsp > 0.5) return "You're getting reckless. That instability gets people killed.";
@@ -125,7 +304,7 @@ export class MentorDialogueResponses {
         },
 
         lead: {
-          opening: (data) => `Not bad at all. ${this._getLevelNarrative(data.level).toLowerCase()}, and you're shaping up as a **${data.inferredRole}**. That's what your choices say about you.`,
+          opening: (data) => `Not bad at all. ${MentorDialogueResponses._getLevelNarrative(data.level, "lead").toLowerCase()}, and you're shaping up as a **${data.inferredRole}**. That's what your choices say about you.`,
           closing: (data) => "Keep building on what works. Don't fix what isn't broken.",
           emphasis: ["patterns", "adaptation"],
           dspInterpreter: (dsp) => {
@@ -135,7 +314,7 @@ export class MentorDialogueResponses {
         },
 
         ol_salty: {
-          opening: (data) => `Har har! ${this._getLevelNarrative(data.level).toLowerCase()}, and still kickin', are ye? The galaxy's got ye pegged as a **${data.inferredRole}**, savvy? That's what yer choices be tellin' all of us!`,
+          opening: (data) => `Har har! ${MentorDialogueResponses._getLevelNarrative(data.level, "ol_salty").toLowerCase()}, and still kickin', are ye? The galaxy's got ye pegged as a **${data.inferredRole}**, savvy? That's what yer choices be tellin' all of us!`,
           closing: (data) => {
             const dsp = data.dspSaturation || 0;
             if (dsp > 0.5) return "Dead heroes don't spend their credits, matey. Think on that.";
@@ -149,7 +328,7 @@ export class MentorDialogueResponses {
         },
 
         j0_n1: {
-          opening: (data) => `<Observation> Your development status: ${this._getLevelNarrative(data.level).toLowerCase()}. <Analysis> Behavioral patterns indicate specialization as a **${data.inferredRole}**.`,
+          opening: (data) => `<Observation> Your development status: ${MentorDialogueResponses._getLevelNarrative(data.level, "j0_n1").toLowerCase()}. <Analysis> Behavioral patterns indicate specialization as a **${data.inferredRole}**.`,
           closing: (data) => "<Conclusion> Continue optimizing your trajectory.</Conclusion>",
           emphasis: ["systems", "patterns"],
           dspInterpreter: (dsp) => {
