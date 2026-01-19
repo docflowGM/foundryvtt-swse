@@ -7,6 +7,118 @@ import { getTalentTrees, getTalentTreeName } from './chargen-property-accessor.j
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { ClassesDB } from '../../data/classes-db.js';
+import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
+import { SuggestionEngineCoordinator } from '../../engine/SuggestionEngineCoordinator.js';
+import { BuildIntent } from '../../engine/BuildIntent.js';
+import { MentorSurvey } from '../mentor-survey.js';
+
+/**
+ * Calculate feat/talent suggestions during chargen
+ * Uses BuildIntent (which includes L1 mentor survey biases) to score feats/talents
+ * @param {Array} items - Feats or talents to score
+ * @param {Object} chargenContext - Chargen instance (this)
+ * @param {string} itemType - 'feat' or 'talent'
+ * @returns {Promise<Array>} Items with suggestion metadata
+ */
+export async function calculateChargenSuggestions(items, chargenContext, itemType = 'feat') {
+  try {
+    SWSELogger.log(`[CHARGEN-SUGGESTIONS] calculateChargenSuggestions() START - Type: ${itemType}, Items: ${items.length}`);
+
+    // Create a temporary actor from chargen data
+    const tempActor = chargenContext._createTempActorForValidation();
+    if (!tempActor) {
+      SWSELogger.warn(`[CHARGEN-SUGGESTIONS] No temp actor created, suggestions disabled`);
+      return items; // Return items without suggestions as fallback
+    }
+
+    // Build pending data from chargen character data
+    const pendingData = {
+      selectedFeats: chargenContext.characterData.feats || [],
+      selectedTalents: chargenContext.characterData.talents || [],
+      selectedClass: chargenContext.characterData.classes?.[0],
+      selectedSkills: Object.keys(chargenContext.characterData.skills || {})
+        .filter(k => chargenContext.characterData.skills[k]?.trained)
+        .map(k => ({ key: k })),
+      abilityIncreases: {}
+    };
+
+    SWSELogger.log(`[CHARGEN-SUGGESTIONS] Pending data prepared:`, {
+      feats: pendingData.selectedFeats.length,
+      talents: pendingData.selectedTalents.length,
+      class: pendingData.selectedClass?.name,
+      skills: pendingData.selectedSkills.length
+    });
+
+    // Compute BuildIntent with L1 mentor survey biases
+    SWSELogger.log(`[CHARGEN-SUGGESTIONS] Computing BuildIntent (will include L1 survey biases)...`);
+    const buildIntent = await BuildIntent.analyze(tempActor, pendingData);
+
+    SWSELogger.log(`[CHARGEN-SUGGESTIONS] BuildIntent computed:`, {
+      themes: Object.keys(buildIntent.themes),
+      primaryThemes: buildIntent.primaryThemes,
+      combatStyle: buildIntent.combatStyle,
+      hasMentorBiases: !!buildIntent.mentorBiases
+    });
+
+    // Call appropriate suggestion engine
+    let suggestedItems = items;
+    if (itemType === 'feat') {
+      SWSELogger.log(`[CHARGEN-SUGGESTIONS] Calling SuggestionEngine.suggestFeats()...`);
+      // Try to use coordinator API first
+      if (game.swse?.suggestions?.suggestFeats) {
+        SWSELogger.log(`[CHARGEN-SUGGESTIONS] Using coordinator API for feat suggestions`);
+        suggestedItems = await game.swse.suggestions.suggestFeats(
+          items,
+          tempActor,
+          pendingData,
+          { buildIntent }
+        );
+      } else {
+        SWSELogger.log(`[CHARGEN-SUGGESTIONS] Coordinator API not available, using direct engine`);
+        suggestedItems = await SuggestionEngine.suggestFeats(
+          items,
+          tempActor,
+          pendingData,
+          { buildIntent }
+        );
+      }
+    } else if (itemType === 'talent') {
+      SWSELogger.log(`[CHARGEN-SUGGESTIONS] Calling SuggestionEngine.suggestTalents()...`);
+      // Try to use coordinator API first
+      if (game.swse?.suggestions?.suggestTalents) {
+        SWSELogger.log(`[CHARGEN-SUGGESTIONS] Using coordinator API for talent suggestions`);
+        suggestedItems = await game.swse.suggestions.suggestTalents(
+          items,
+          tempActor,
+          pendingData,
+          { buildIntent }
+        );
+      } else {
+        SWSELogger.log(`[CHARGEN-SUGGESTIONS] Coordinator API not available, using direct engine`);
+        suggestedItems = await SuggestionEngine.suggestTalents(
+          items,
+          tempActor,
+          pendingData,
+          { buildIntent }
+        );
+      }
+    }
+
+    SWSELogger.log(`[CHARGEN-SUGGESTIONS] calculateChargenSuggestions() COMPLETE - ${suggestedItems.length} items scored`);
+    return suggestedItems;
+  } catch (err) {
+    SWSELogger.error(`[CHARGEN-SUGGESTIONS] ERROR calculating suggestions:`, err);
+    // Return items without suggestions as fallback
+    return items.map(item => ({
+      ...item,
+      suggestion: {
+        tier: 0,
+        reason: 'Suggestion engine error - legal option',
+        icon: ''
+      }
+    }));
+  }
+}
 
 /**
  * Handle feat selection

@@ -8,6 +8,7 @@ import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from './chargen-property-accessor.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
+import { BuildIntent } from '../../engine/BuildIntent.js';
 import { Level1SkillSuggestionEngine } from '../../engine/Level1SkillSuggestionEngine.js';
 import { MentorSurvey } from '../mentor-survey.js';
 import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
@@ -666,13 +667,29 @@ export default class CharacterGenerator extends Application {
         selectedTalents: this.characterData.talents || []
       };
 
+      // CRITICAL FIX: Compute BuildIntent first to include L1 mentor survey biases
+      SWSELogger.log(`[CHARGEN-SUGGESTIONS] Computing BuildIntent for ${this.currentStep}...`);
+      let buildIntent = null;
+      try {
+        buildIntent = await BuildIntent.analyze(tempActor, pendingData);
+        SWSELogger.log(`[CHARGEN-SUGGESTIONS] BuildIntent computed:`, {
+          primaryThemes: buildIntent.primaryThemes,
+          combatStyle: buildIntent.combatStyle,
+          hasMentorBiases: !!buildIntent.mentorBiases && Object.keys(buildIntent.mentorBiases).length > 0
+        });
+      } catch (intentErr) {
+        SWSELogger.error(`[CHARGEN-SUGGESTIONS] ERROR computing BuildIntent:`, intentErr);
+      }
+
       // Add suggestion engine suggestions to feats
       if (this.currentStep === "feats" && context.packs.feats) {
         try {
+          SWSELogger.log(`[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.feats.length} feats with BuildIntent context...`);
           let featsWithSuggestions = await SuggestionEngine.suggestFeats(
             context.packs.feats,
             tempActor,
-            pendingData
+            pendingData,
+            { buildIntent }  // CRITICAL: Pass BuildIntent to include mentor survey biases
           );
           // Filter out Force-dependent feats for droids (they cannot be Force-sensitive)
           featsWithSuggestions = this._filterForceDependentItems(featsWithSuggestions);
@@ -717,10 +734,12 @@ export default class CharacterGenerator extends Application {
       // Add suggestion engine suggestions to talents
       if (this.currentStep === "talents" && context.packs.talents) {
         try {
+          SWSELogger.log(`[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.talents.length} talents with BuildIntent context...`);
           let talentsWithSuggestions = await SuggestionEngine.suggestTalents(
             context.packs.talents,
             tempActor,
-            pendingData
+            pendingData,
+            { buildIntent }  // CRITICAL: Pass BuildIntent to include mentor survey biases
           );
 
           // Filter out Force-dependent talents for droids (they cannot be Force-sensitive)
