@@ -982,6 +982,9 @@ export default class CharacterGenerator extends Application {
 
     // Prepare talents for template
     if (this.currentStep === "talents") {
+      // Explicitly set talentsRequired for template (1 talent at level 1)
+      context.characterData.talentsRequired = 1;
+
       // Get available talent trees for the character
       context.availableTalentTrees = this._getAvailableTalentTrees() || [];
       SWSELogger.log(`CharGen | Talents step - available talent trees:`, {
@@ -2663,10 +2666,14 @@ export default class CharacterGenerator extends Application {
       this.characterData.talents = this.characterData.talents || [];
       this.characterData.talents.push(talent);
 
+      SWSELogger.log(`[CHARGEN-TALENTS] Talent selected from graph: "${talent.name}", total talents now: ${this.characterData.talents.length}, required: 1`);
+
       ui.notifications.info(`Selected talent: ${talent.name}`);
 
       // Re-render to update UI
+      SWSELogger.log(`[CHARGEN-TALENTS] About to render after talent selection`);
       await this.render();
+      SWSELogger.log(`[CHARGEN-TALENTS] Render completed`);
     };
 
     renderTalentTreeGraph(container, talentsInTree, this.characterData, onSelectTalent);
