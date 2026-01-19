@@ -1,0 +1,452 @@
+<div class="mentor-chat-dialog swse">
+
+  {{#if selectedMentor}}
+    <!-- MENTOR SELECTED - SHOW CHAT INTERFACE -->
+    <div class="chat-view">
+
+      <!-- Back to Mentors Button -->
+      <button class="back-to-mentors" type="button">
+        <i class="fas fa-arrow-left"></i> Back to Mentors
+      </button>
+
+      <!-- Mentor Header -->
+      <div class="mentor-header">
+        {{#if selectedMentor.mentor.portrait}}
+          <img src="{{selectedMentor.mentor.portrait}}" alt="{{selectedMentor.mentor.name}}" class="mentor-portrait" />
+        {{/if}}
+        <div class="mentor-info">
+          <h2>{{selectedMentor.mentor.name}}</h2>
+          <p class="mentor-title">{{selectedMentor.mentor.title}}</p>
+        </div>
+      </div>
+
+      {{#if currentTopic}}
+        <!-- TOPIC SELECTED - SHOW RESPONSE -->
+        <div class="topic-response">
+
+          <!-- Back to Topics Button -->
+          <button class="back-to-topics" type="button">
+            <i class="fas fa-arrow-left"></i> Back to Topics
+          </button>
+
+          <!-- Topic Title -->
+          <div class="topic-display">
+            <h3>
+              <i class="fas {{currentTopic.icon}}"></i>
+              {{currentTopic.title}}
+            </h3>
+            <p class="topic-desc">{{currentTopic.description}}</p>
+          </div>
+
+          <!-- Mentor Response -->
+          <div class="mentor-response">
+            {{#if currentResponse.introduction}}
+              <div class="response-intro">
+                <p>{{currentResponse.introduction}}</p>
+              </div>
+            {{/if}}
+
+            {{#if currentResponse.advice}}
+              <div class="response-advice">
+                <p>{{{currentResponse.advice}}}</p>
+              </div>
+            {{/if}}
+
+            {{#if currentResponse.suggestions}}
+              <div class="response-suggestions">
+                <h4>Top Recommendations:</h4>
+                <ul>
+                  {{#each currentResponse.suggestions}}
+                    <li><strong>{{this.name}}</strong> — {{this.reason}}</li>
+                  {{/each}}
+                </ul>
+              </div>
+            {{/if}}
+          </div>
+
+        </div>
+
+      {{else}}
+        <!-- NO TOPIC SELECTED - SHOW TOPIC LIST -->
+        <div class="topics-list">
+
+          <!-- Introduction Message -->
+          {{#if currentResponse.introduction}}
+            <div class="mentor-greeting">
+              <p><em>"{{currentResponse.introduction}}"</em></p>
+            </div>
+          {{/if}}
+
+          <!-- Topics Grid -->
+          <div class="topics-grid">
+            <h3>What would you like to discuss?</h3>
+
+            {{#each topics}}
+              <button class="topic-button" data-topic="{{this.key}}" type="button">
+                <div class="topic-icon">
+                  <i class="fas {{this.icon}}"></i>
+                </div>
+                <div class="topic-text">
+                  <h4>{{this.title}}</h4>
+                  <p>{{this.description}}</p>
+                </div>
+              </button>
+            {{/each}}
+          </div>
+
+        </div>
+      {{/if}}
+
+    </div>
+
+  {{else}}
+    <!-- NO MENTOR SELECTED - SHOW MENTOR LIST -->
+    <div class="mentor-selection">
+
+      {{#if hasMentors}}
+        <!-- Intro Text -->
+        <div class="selection-intro">
+          <p>Select a mentor to seek their guidance. These mentors have been unlocked through your class training:</p>
+        </div>
+
+        <!-- Mentor Grid -->
+        <div class="mentors-grid">
+          {{#each unlockedMentors}}
+            <div class="mentor-card" data-mentor="{{this.key}}">
+              {{#if this.mentor.portrait}}
+                <img src="{{this.mentor.portrait}}" alt="{{this.mentor.name}}" class="mentor-card-portrait" />
+              {{/if}}
+              <div class="mentor-card-info">
+                <h4>{{this.mentor.name}}</h4>
+                <p class="mentor-card-title">{{this.mentor.title}}</p>
+                <p class="mentor-card-unlocked">Unlocked via: <em>{{this.unlockedBy}}</em></p>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+
+      {{else}}
+        <!-- No Mentors Available -->
+        <div class="no-mentors">
+          <i class="fas fa-user-slash" style="font-size: 48px; opacity: 0.3; margin-bottom: 15px;"></i>
+          <p>You haven't unlocked any mentors yet.</p>
+          <p>Take a class to gain access to mentor guidance!</p>
+        </div>
+      {{/if}}
+
+    </div>
+  {{/if}}
+
+</div>
+
+<style>
+  .mentor-chat-dialog {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  /* Mentor Selection View */
+  .mentor-selection {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .selection-intro {
+    margin-bottom: 15px;
+    padding: 12px;
+    background: rgba(0, 217, 255, 0.1);
+    border-left: 3px solid #00d9ff;
+    border-radius: 4px;
+  }
+
+  .selection-intro p {
+    margin: 0;
+    color: #ddd;
+  }
+
+  .mentors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .mentor-card {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(0, 217, 255, 0.3);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mentor-card:hover {
+    background: rgba(0, 217, 255, 0.15);
+    border-color: rgba(0, 217, 255, 0.7);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 217, 255, 0.3);
+  }
+
+  .mentor-card-portrait {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+
+  .mentor-card-info h4 {
+    margin: 0 0 4px 0;
+    color: #00d9ff;
+    font-size: 1em;
+  }
+
+  .mentor-card-title {
+    margin: 0 0 8px 0;
+    color: #999;
+    font-size: 0.85em;
+    line-height: 1.3;
+  }
+
+  .mentor-card-unlocked {
+    margin: 0;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: #aaa;
+    font-size: 0.8em;
+  }
+
+  .mentor-card-unlocked em {
+    color: #00d9ff;
+  }
+
+  .no-mentors {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #999;
+  }
+
+  /* Chat View */
+  .chat-view {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100%;
+  }
+
+  .back-to-mentors,
+  .back-to-topics {
+    align-self: flex-start;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+  }
+
+  .back-to-mentors:hover,
+  .back-to-topics:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .mentor-header {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    border-left: 3px solid #00d9ff;
+  }
+
+  .mentor-portrait {
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
+  .mentor-info h2 {
+    margin: 0;
+    color: #00d9ff;
+    font-size: 1.2em;
+  }
+
+  .mentor-title {
+    margin: 3px 0 0 0;
+    color: #999;
+    font-size: 0.9em;
+  }
+
+  /* Topics List */
+  .topics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .mentor-greeting {
+    padding: 12px;
+    background: rgba(0, 217, 255, 0.1);
+    border-left: 3px solid #00d9ff;
+    border-radius: 4px;
+  }
+
+  .mentor-greeting p {
+    margin: 0;
+    color: #ddd;
+    font-style: italic;
+    font-size: 0.95em;
+  }
+
+  .topics-grid h3 {
+    margin: 10px 0;
+    color: #00d9ff;
+    font-size: 1em;
+  }
+
+  .topic-button {
+    display: flex;
+    gap: 15px;
+    padding: 12px;
+    background: rgba(0, 217, 255, 0.1);
+    border: 1px solid rgba(0, 217, 255, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+
+  .topic-button:hover {
+    background: rgba(0, 217, 255, 0.2);
+    border-color: rgba(0, 217, 255, 0.6);
+    transform: translateX(5px);
+  }
+
+  .topic-icon {
+    font-size: 24px;
+    color: #00d9ff;
+    display: flex;
+    align-items: center;
+    min-width: 30px;
+  }
+
+  .topic-text h4 {
+    margin: 0;
+    color: #fff;
+    font-size: 0.9em;
+  }
+
+  .topic-text p {
+    margin: 3px 0 0 0;
+    color: #999;
+    font-size: 0.85em;
+  }
+
+  /* Topic Response */
+  .topic-response {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .topic-display {
+    padding: 12px;
+    background: rgba(0, 217, 255, 0.05);
+    border-radius: 4px;
+    border-left: 2px solid #00d9ff;
+  }
+
+  .topic-display h3 {
+    margin: 0;
+    color: #00d9ff;
+    font-size: 1.1em;
+  }
+
+  .topic-desc {
+    margin: 5px 0 0 0;
+    color: #aaa;
+    font-size: 0.9em;
+  }
+
+  .mentor-response {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+
+  .response-intro {
+    padding: 12px;
+    background: rgba(100, 200, 255, 0.1);
+    border-left: 3px solid rgba(100, 200, 255, 0.6);
+    border-radius: 4px;
+  }
+
+  .response-intro p {
+    margin: 0;
+    color: #ddd;
+    font-style: italic;
+    font-size: 0.95em;
+  }
+
+  .response-advice {
+    padding: 12px;
+    background: rgba(150, 200, 100, 0.1);
+    border-left: 3px solid rgba(150, 200, 100, 0.6);
+    border-radius: 4px;
+  }
+
+  .response-advice p {
+    margin: 0;
+    color: #ddd;
+    line-height: 1.6;
+    white-space: pre-line;
+  }
+
+  .response-suggestions {
+    padding: 12px;
+    background: rgba(200, 150, 100, 0.1);
+    border-left: 3px solid rgba(200, 150, 100, 0.6);
+    border-radius: 4px;
+  }
+
+  .response-suggestions h4 {
+    margin: 0 0 10px 0;
+    color: #00d9ff;
+    font-size: 0.95em;
+  }
+
+  .response-suggestions ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .response-suggestions li {
+    color: #ddd;
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+
+  .response-suggestions strong {
+    color: #00d9ff;
+  }
+</style>
