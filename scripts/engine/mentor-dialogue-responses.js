@@ -345,8 +345,20 @@ export class MentorDialogueResponses {
         },
 
         lead: {
-          opening: (data) => `Not bad at all. ${MentorDialogueResponses._getLevelNarrative(data.level, "lead").toLowerCase()}, and you're shaping up as a **${data.inferredRole}**. That's what your choices say about you.`,
-          closing: (data) => "Keep building on what works. Don't fix what isn't broken.",
+          opening: [
+            "You're turning into someone who finishes contracts.",
+            "Your habits say you're learning how to survive long-term.",
+            "You're not just reacting anymore — you're planning.",
+            "You're becoming predictable to yourself. That's good.",
+            "You're shaping into an asset, not a liability."
+          ],
+          closing: [
+            "Keep building on what works.",
+            "Don't fix what isn't broken.",
+            "Patterns matter.",
+            "Stay employable.",
+            "That's how you last."
+          ],
           emphasis: ["patterns", "adaptation"],
           dspInterpreter: (dsp) => {
             if (dsp > 0.5) return "⚠️ I seen that look before. The instability's takin' hold. That path don't end with glory, if ye catch me drift.";
@@ -355,12 +367,20 @@ export class MentorDialogueResponses {
         },
 
         ol_salty: {
-          opening: (data) => `Har har! ${MentorDialogueResponses._getLevelNarrative(data.level, "ol_salty").toLowerCase()}, and still kickin', are ye? The galaxy's got ye pegged as a **${data.inferredRole}**, savvy? That's what yer choices be tellin' all of us!`,
-          closing: (data) => {
-            const dsp = data.dspSaturation || 0;
-            if (dsp > 0.5) return "Dead heroes don't spend their credits, matey. Think on that.";
-            return "Keep livin' and keep earnin'!";
-          },
+          opening: [
+            "Har… the galaxy's chewed on ye a bit, hasn't it?",
+            "You're learnin' the difference between luck and survivin'.",
+            "Aye… you're startin' to look like someone who makes it back.",
+            "You're not green anymore. That's when it gets dangerous.",
+            "The stars don't scare you like they used to. That's experience."
+          ],
+          closing: [
+            "Keep livin' and keep earnin'!",
+            "Dead heroes don't spend their credits, matey.",
+            "Survive first. Profit second.",
+            "That's the pirate way.",
+            "Stay breathing, stay free."
+          ],
           emphasis: ["survival", "opportunism"],
           dspInterpreter: (dsp) => {
             if (dsp > 0.5) return "🔥 Arr... I seen that look before. The darkness be takin' hold o' ye. Now, I ain't one to judge, but that path? It don't end with riches and freedom, if ye catch me drift.";
@@ -369,8 +389,20 @@ export class MentorDialogueResponses {
         },
 
         j0_n1: {
-          opening: (data) => `<Observation> Your development status: ${MentorDialogueResponses._getLevelNarrative(data.level, "j0_n1").toLowerCase()}. <Analysis> Behavioral patterns indicate specialization as a **${data.inferredRole}**.`,
-          closing: (data) => "<Conclusion> Continue optimizing your trajectory.</Conclusion>",
+          opening: [
+            "<Analysis> Your recent decisions indicate a consolidating role.",
+            "<Observation> You are becoming predictable — to your advantage.",
+            "<Assessment> Your behavior reflects growing strategic awareness.",
+            "<Calculation> You are positioning yourself effectively.",
+            "<Conclusion> You are no longer acting at random."
+          ],
+          closing: [
+            "<Conclusion> Continue optimizing your trajectory.",
+            "<Assessment> Strategic development proceeding.",
+            "<Recommendation> Maintain current vector.",
+            "<Analysis> Progress is measurable.",
+            "<Directive> Proceed with intention."
+          ],
           emphasis: ["systems", "patterns"],
           dspInterpreter: (dsp) => {
             if (dsp > 0.5) return "<Warning> Darkside saturation escalating. Behavioral unpredictability increasing.</Warning>";
@@ -467,22 +499,58 @@ export class MentorDialogueResponses {
         },
 
         lead: {
-          opening: (data) => `Every specialization has trade-offs. Figure out what kind of operator you want to be, then commit.`,
-          closing: (data) => `Half-measures get you half-dead.`,
+          opening: [
+            "You can specialize, or stay flexible. Both get paid.",
+            "Some operatives hit hard. Others never get seen.",
+            "Choose the path that keeps you employable.",
+            "Versatility pays. Focus pays more.",
+            "Pick what makes you valuable."
+          ],
+          closing: [
+            "Half-measures get you half-dead.",
+            "Commit or die trying.",
+            "The job doesn't care about your feelings.",
+            "Pick your specialty.",
+            "Stay valuable."
+          ],
           emphasis: ["decisiveness", "focus"],
           dspInterpreter: (dsp) => ""
         },
 
         ol_salty: {
-          opening: (data) => `Har har! So ye want to know what kinds o' scallywag ye can become? Let ol' Salty tell ye! Each path's got its profits and its perils!`,
-          closing: (data) => `Pick the one that gets ye what ye want and keeps ye breathin'! Arr!`,
+          opening: [
+            "Plenty of ways to live. Fewer ways to last.",
+            "You can be fast, clever, or feared. Pick two.",
+            "Some folk muscle through. Others slip away richer.",
+            "Every path costs somethin'. Best choose what you can afford.",
+            "There's no wrong road — just ones that end early."
+          ],
+          closing: [
+            "Pick the one that gets ye what ye want and keeps ye breathin'!",
+            "The smart path is the one you walk away from.",
+            "Profit and survival, matey.",
+            "That's the scoundrel's choice.",
+            "Live free, live long."
+          ],
           emphasis: ["opportunity", "risk"],
           dspInterpreter: (dsp) => ""
         },
 
         j0_n1: {
-          opening: (data) => `<Analysis> Multiple specialization vectors available. Each optimizes for different tactical parameters.`,
-          closing: (data) => `<Recommendation> Select the specialization that maximizes your comparative advantage.`,
+          opening: [
+            "<Projection> Leadership, influence, or specialization.",
+            "<Evaluation> Each path offers different leverage.",
+            "<Simulation> Authority scales with preparation.",
+            "<Assessment> Focus increases efficiency.",
+            "<Conclusion> Advancement requires definition."
+          ],
+          closing: [
+            "<Recommendation> Select the specialization that maximizes your comparative advantage.",
+            "<Directive> Optimize selection criteria.",
+            "<Analysis> Choose efficiency path.",
+            "<Assessment> Strategic commitment required.",
+            "<Conclusion> Define your vector."
+          ],
           emphasis: ["efficiency", "optimization"],
           dspInterpreter: (dsp) => ""
         },
@@ -565,22 +633,58 @@ export class MentorDialogueResponses {
         },
 
         lead: {
-          opening: (data) => `Your synergies are solid. Let me break down what's effective.`,
-          closing: (data) => `Those patterns work. Keep leveraging them.`,
+          opening: [
+            "You don't waste movement.",
+            "You're building toward repeatable success.",
+            "You know when to engage and when to disappear.",
+            "Your choices reduce risk. That's smart.",
+            "You're thinking like someone who expects another job."
+          ],
+          closing: [
+            "Those patterns work. Keep leveraging them.",
+            "Efficiency matters.",
+            "That's professional work.",
+            "Keep that discipline.",
+            "You'll get hired again."
+          ],
           emphasis: ["patterns", "advantage"],
           dspInterpreter: (dsp) => ""
         },
 
         ol_salty: {
-          opening: (data) => `Har! Let me tell ye what ye be doin' right, ye clever rascal!`,
-          closing: (data) => `Ye be on the right track, matey! Keep it up and ye'll be legend of the spaceways!`,
+          opening: [
+            "You don't panic when things go sideways. That's rare.",
+            "You've learned when to press and when to vanish.",
+            "You keep your head when the credits are on the table.",
+            "You plan like someone who expects betrayal.",
+            "You survive mistakes. That's the real trick."
+          ],
+          closing: [
+            "Ye be on the right track, matey!",
+            "Keep it up and ye'll be legend of the spaceways!",
+            "That's scoundrel smarts.",
+            "Profit follows cleverness.",
+            "Stay sharp, stay rich."
+          ],
           emphasis: ["success", "momentum"],
           dspInterpreter: (dsp) => ""
         },
 
         j0_n1: {
-          opening: (data) => `<Analysis> Your synergy index registers positive correlation.`,
-          closing: (data) => `<Assessment> Continue this trajectory. Efficiency is improving.`,
+          opening: [
+            "<Affirmation> Your choices reinforce one another.",
+            "<Observation> You allocate resources efficiently.",
+            "<Assessment> You understand role expectations.",
+            "<Calculation> Your build supports your objectives.",
+            "<Conclusion> You are planning beyond immediate needs."
+          ],
+          closing: [
+            "<Assessment> Continue this trajectory. Efficiency is improving.",
+            "<Recommendation> Maintain optimization.",
+            "<Analysis> Performance acceptable.",
+            "<Directive> Sustain current protocols.",
+            "<Conclusion> Synergy confirmed."
+          ],
           emphasis: ["optimization", "efficiency"],
           dspInterpreter: (dsp) => ""
         },
@@ -667,22 +771,58 @@ export class MentorDialogueResponses {
         },
 
         lead: {
-          opening: (data) => `You've got gaps. Better to know them now than discover them in the field.`,
-          closing: (data) => `Fix the critical ones. The rest you can work around if you're smart.`,
+          opening: [
+            "You're leaving money on the table.",
+            "You're relying on instincts instead of preparation.",
+            "You're not covering your exit options.",
+            "You're spreading yourself thin.",
+            "You're assuming this job will go clean."
+          ],
+          closing: [
+            "Fix the critical ones. The rest you can work around if you're smart.",
+            "Address the gaps.",
+            "You can't afford sloppiness.",
+            "Jobs don't forgive mistakes.",
+            "Plan better."
+          ],
           emphasis: ["awareness", "priority"],
           dspInterpreter: (dsp) => ""
         },
 
         ol_salty: {
-          opening: (data) => `Every scallywag's got weak spots. Ye're no exception, savvy?`,
-          closing: (data) => `Knowin' yer weaknesses is half the battle to survivin' 'em!`,
+          opening: [
+            "You're trustin' the wrong smiles.",
+            "You're forgettin' how fast luck runs out.",
+            "You're chasin' the win instead of the exit.",
+            "You're gettin' comfortable. That's when the galaxy bites.",
+            "You're thinkin' short-term in a long-term game."
+          ],
+          closing: [
+            "Knowin' yer weaknesses is half the battle to survivin' 'em!",
+            "Fix those gaps before they sink ye.",
+            "Smart pirates learn fast.",
+            "Adapt or get spaced.",
+            "Stay paranoid, stay alive."
+          ],
           emphasis: ["survival", "preparation"],
           dspInterpreter: (dsp) => ""
         },
 
         j0_n1: {
-          opening: (data) => `<Assessment> Inefficiencies detected in your current configuration.`,
-          closing: (data) => `<Recommendation> Optimize these parameters.`,
+          opening: [
+            "<Warning> Your assets are unevenly developed.",
+            "<Assessment> You are underestimating future demand.",
+            "<Observation> Redundancy is insufficient.",
+            "<Calculation> Risk mitigation is incomplete.",
+            "<Conclusion> Long-term structure requires attention."
+          ],
+          closing: [
+            "<Recommendation> Optimize these parameters.",
+            "<Directive> Address inefficiencies.",
+            "<Analysis> Correction required.",
+            "<Assessment> Adjust allocation.",
+            "<Conclusion> Rebalance systems."
+          ],
           emphasis: ["analysis", "optimization"],
           dspInterpreter: (dsp) => ""
         },
@@ -765,15 +905,39 @@ export class MentorDialogueResponses {
         },
 
         lead: {
-          opening: (data) => `Here's your role. Understand it, own it, and execute it.`,
-          closing: (data) => `Your teammates depend on you filling this role. Don't let them down.`,
+          opening: [
+            "Pick engagements you can control.",
+            "Hit where they aren't ready.",
+            "End fights before they escalate.",
+            "Position wins battles.",
+            "If it turns fair, you planned wrong."
+          ],
+          closing: [
+            "Your teammates depend on you filling this role.",
+            "Execute your job.",
+            "Tactical discipline wins.",
+            "Stay professional.",
+            "Make it clean."
+          ],
           emphasis: ["teamwork", "reliability"],
           dspInterpreter: (dsp) => ""
         },
 
         ol_salty: {
-          opening: (data) => `Listen up, matey! Here's what the fight needs from ye!`,
-          closing: (data) => `Play yer part and the crew stays breathin'!`,
+          opening: [
+            "Fight dirty, or don't fight at all.",
+            "Hit where they ain't lookin'.",
+            "End it fast, then disappear.",
+            "If it's fair, you misjudged somethin'.",
+            "The best fight's the one they never get."
+          ],
+          closing: [
+            "Play yer part and the crew stays breathin'!",
+            "Dirty tricks keep pirates alive.",
+            "Honor's expensive, matey.",
+            "Win ugly, win often.",
+            "Survive to spend yer loot."
+          ],
           emphasis: ["survival", "teamwork"],
           dspInterpreter: (dsp) => ""
         },
@@ -863,15 +1027,39 @@ export class MentorDialogueResponses {
         },
 
         lead: {
-          opening: (data) => `Every choice has consequences. These are the ones you're creating.`,
-          closing: (data) => `See them coming and you can manage them. Get caught surprised and they'll kill you.`,
+          opening: [
+            "Unpaid loyalty.",
+            "Standing still.",
+            "Contracts that sound easy.",
+            "Enemies you didn't scout.",
+            "Staying too long."
+          ],
+          closing: [
+            "See them coming and you can manage them.",
+            "Get caught surprised and they'll kill you.",
+            "Stay aware.",
+            "Plan your exits.",
+            "Don't get comfortable."
+          ],
           emphasis: ["foresight", "preparation"],
           dspInterpreter: (dsp) => ""
         },
 
         ol_salty: {
-          opening: (data) => `Watch out, matey. Even the best scallywags run into trouble if they ain't careful.`,
-          closing: (data) => `Know the dangers and ye can dance around 'em!`,
+          opening: [
+            "Promises.",
+            "Heroes.",
+            "Easy money.",
+            "Standin' still.",
+            "Believin' you're different."
+          ],
+          closing: [
+            "Know the dangers and ye can dance around 'em!",
+            "Smart pirates see the traps.",
+            "Don't fall for it, matey.",
+            "The galaxy's full of sharks.",
+            "Trust your instincts."
+          ],
           emphasis: ["survival", "cunning"],
           dspInterpreter: (dsp) => ""
         },
@@ -966,15 +1154,39 @@ export class MentorDialogueResponses {
         },
 
         lead: {
-          opening: (data) => `I've seen this pattern before. Here's where it usually leads.`,
-          closing: (data) => `Your next moves will determine if you follow that path or cut a new one.`,
+          opening: [
+            "Bigger contracts. Higher risk.",
+            "Leadership roles.",
+            "Jobs where planning matters more than firepower.",
+            "Specialization that defines your reputation.",
+            "Choices that decide who hires you next."
+          ],
+          closing: [
+            "Your next moves will determine if you follow that path or cut a new one.",
+            "Plan accordingly.",
+            "Reputation matters.",
+            "Stay valuable.",
+            "The money follows quality work."
+          ],
           emphasis: ["pattern", "agency"],
           dspInterpreter: (dsp) => ""
         },
 
         ol_salty: {
-          opening: (data) => `Ye be buildin' toward somethin', matey. Let me tell ye where the wind's blowin' ye!`,
-          closing: (data) => `The future's got riches waitin' for those clever enough to see 'em comin'!`,
+          opening: [
+            "Bigger scores. Bigger knives in the dark.",
+            "Reputations that follow you.",
+            "Jobs where walkin' away is the smart play.",
+            "Choices you can't buy your way out of.",
+            "The moment the galaxy remembers your name."
+          ],
+          closing: [
+            "The future's got riches waitin' for those clever enough to see 'em comin'!",
+            "Plan ahead, profit ahead.",
+            "Fortune favors the prepared, matey.",
+            "See it coming, claim it first.",
+            "The future's yours if you're smart."
+          ],
           emphasis: ["opportunity", "preparation"],
           dspInterpreter: (dsp) => ""
         },
@@ -1058,15 +1270,39 @@ export class MentorDialogueResponses {
         },
 
         lead: {
-          opening: (data) => `I'd stay aware. Read the situation, adapt to it, and never get caught in a predictable pattern.`,
-          closing: (data) => `That's how Argent Squad survives. Flexibility, awareness, and precision.`,
+          opening: [
+            "I'd stay flexible until the money justified commitment.",
+            "I'd build for mobility and awareness.",
+            "I'd never fight fair.",
+            "I'd always have an exit.",
+            "I'd make sure the job pays enough to be worth it."
+          ],
+          closing: [
+            "That's how Argent Squad survives.",
+            "Flexibility, awareness, and precision.",
+            "Professional. Profitable. Alive.",
+            "That's the mercenary way.",
+            "Get paid. Stay breathing."
+          ],
           emphasis: ["adaptation", "awareness"],
           dspInterpreter: (dsp) => ""
         },
 
         ol_salty: {
-          opening: (data) => `Me? I'd make luck work for me! Take risks, but calculated ones. Know when to run and when to fight!`,
-          closing: (data) => `Freedom and profit, matey! That's how ol' Salty plays this game!`,
+          opening: [
+            "I'd always keep a ship ready.",
+            "I'd never fight fair.",
+            "I'd make sure someone owed me.",
+            "I'd leave before things got poetic.",
+            "I'd live long enough to laugh about it."
+          ],
+          closing: [
+            "Freedom and profit, matey! That's how ol' Salty plays this game!",
+            "Live free, die rich.",
+            "That's the pirate code.",
+            "Laugh all the way to the bank.",
+            "Survive with style, matey."
+          ],
           emphasis: ["opportunism", "survival"],
           dspInterpreter: (dsp) => ""
         },
