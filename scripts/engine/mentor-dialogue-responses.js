@@ -415,8 +415,20 @@ export class MentorDialogueResponses {
         // ========================================
 
         darth_miedo: {
-          opening: (data) => `You hesitate less than before. That is not corruption — it is clarity. The Force reveals you as a **${data.inferredRole}**. This is inevitable.`,
-          closing: (data) => "The weak mistake hesitation for virtue.",
+          opening: [
+            "You are becoming predictable — in a useful way.",
+            "The galaxy is beginning to respond to you.",
+            "You move pieces now, instead of reacting.",
+            "You are learning how this world truly functions.",
+            "You are becoming interesting."
+          ],
+          closing: [
+            "The weak mistake hesitation for virtue.",
+            "Clarity is power.",
+            "The galaxy rewards decisiveness.",
+            "Control is inevitable.",
+            "You are learning."
+          ],
           emphasis: ["certainty", "inevitability"],
           dspInterpreter: (dsp) => {
             if (dsp > 0.5) return "⚠️ You see clearly now. The path forward requires no further doubt.";
@@ -449,8 +461,20 @@ export class MentorDialogueResponses {
         },
 
         tio_the_hutt: {
-          opening: (data) => `Ahhh, my friend. You're learning how things really work. Your choices reveal you as a **${data.inferredRole}**. Excellent development.`,
-          closing: (data) => "Never give away what you can sell.",
+          opening: [
+            "Ahhh… you're learning how power really works.",
+            "People are starting to owe you.",
+            "You're thinking in terms of leverage now.",
+            "You've stopped pretending this is about honor.",
+            "You're becoming profitable."
+          ],
+          closing: [
+            "Never give away what you can sell.",
+            "Leverage is everything.",
+            "Profit follows understanding.",
+            "You're learning well.",
+            "Excellent development."
+          ],
           emphasis: ["leverage", "pragmatism"],
           dspInterpreter: (dsp) => {
             if (dsp > 0.5) return "⚠️ You understand the value of what you hold now. Power responds to those who know its price.";
@@ -568,8 +592,20 @@ export class MentorDialogueResponses {
         },
 
         darth_miedo: {
-          opening: (data) => `There are not many true paths. There are only deeper understandings.`,
-          closing: (data) => `Some choose mastery. Others choose control. Both require that you stop apologizing for strength.`,
+          opening: [
+            "Domination. Stewardship. Replacement.",
+            "You may rule… or be consumed.",
+            "Power consolidates around those who understand it.",
+            "There is room for one more at the top.",
+            "Choose how you wish to inherit the galaxy."
+          ],
+          closing: [
+            "Some choose mastery. Others choose control.",
+            "Both require that you stop apologizing for strength.",
+            "The path is clear.",
+            "Power rewards understanding.",
+            "Decide your place."
+          ],
           emphasis: ["power", "inevitability"],
           dspInterpreter: (dsp) => ""
         },
@@ -594,8 +630,20 @@ export class MentorDialogueResponses {
         },
 
         tio_the_hutt: {
-          opening: (data) => `Ownership. Influence. Fear. Different investments—same outcome.`,
-          closing: (data) => `Choose the path that makes others need you.`,
+          opening: [
+            "Ownership. Influence. Control.",
+            "Different rackets, same outcome.",
+            "You can be feared, or indispensable.",
+            "Every path ends in power — if you price it right.",
+            "Choose what you want to own."
+          ],
+          closing: [
+            "Choose the path that makes others need you.",
+            "Leverage is everything.",
+            "Power through ownership.",
+            "Make yourself indispensable.",
+            "Control the market."
+          ],
           emphasis: ["leverage", "control"],
           dspInterpreter: (dsp) => ""
         }
@@ -714,8 +762,20 @@ export class MentorDialogueResponses {
         },
 
         darth_miedo: {
-          opening: (data) => `You act without seeking permission. That alone sets you apart.`,
-          closing: (data) => `The weak need reassurance. You no longer do.`,
+          opening: [
+            "You think ahead.",
+            "You allow others to fail for you.",
+            "You no longer confuse effort with outcome.",
+            "You are learning patience.",
+            "You let others believe they chose this."
+          ],
+          closing: [
+            "The weak need reassurance. You no longer do.",
+            "Certainty is strength.",
+            "Control requires patience.",
+            "Understanding precedes dominance.",
+            "Continue."
+          ],
           emphasis: ["certainty", "power"],
           dspInterpreter: (dsp) => ""
         },
@@ -740,8 +800,20 @@ export class MentorDialogueResponses {
         },
 
         tio_the_hutt: {
-          opening: (data) => `You don't give things away for free. Good.`,
-          closing: (data) => `Charity is expensive. You're learning.`,
+          opening: [
+            "You don't give favors away.",
+            "You understand loyalty has a cost.",
+            "You're investing in the right people.",
+            "You know when to look the other way.",
+            "You're learning patience."
+          ],
+          closing: [
+            "Charity is expensive. You're learning.",
+            "Profit follows discipline.",
+            "Good business sense.",
+            "Keep that mindset.",
+            "You're becoming profitable."
+          ],
           emphasis: ["pragmatism", "profit"],
           dspInterpreter: (dsp) => ""
         }
@@ -864,8 +936,20 @@ export class MentorDialogueResponses {
         },
 
         darth_miedo: {
-          opening: (data) => `You still explain yourself.`,
-          closing: (data) => `Strength does not require justification. That habit will fade.`,
+          opening: [
+            "You still seek validation.",
+            "You mistake control for cruelty.",
+            "You rush outcomes.",
+            "You reveal your intent.",
+            "You underestimate how replaceable you are."
+          ],
+          closing: [
+            "Strength does not require justification.",
+            "That habit will fade.",
+            "Control is patient.",
+            "Mastery is silent.",
+            "Learn restraint."
+          ],
           emphasis: ["certainty", "acceptance"],
           dspInterpreter: (dsp) => ""
         },
@@ -890,8 +974,20 @@ export class MentorDialogueResponses {
         },
 
         tio_the_hutt: {
-          opening: (data) => `You take risks without charging interest.`,
-          closing: (data) => `That's generosity. It's bad business.`,
+          opening: [
+            "You're still doing things yourself.",
+            "You're undercharging.",
+            "You let emotion affect deals.",
+            "You don't exploit fear enough.",
+            "You forget how replaceable people are."
+          ],
+          closing: [
+            "That's generosity. It's bad business.",
+            "Fix these inefficiencies.",
+            "Profit requires discipline.",
+            "Learn to delegate violence.",
+            "Charge what you're worth."
+          ],
           emphasis: ["calculation", "profit"],
           dspInterpreter: (dsp) => ""
         }
@@ -1010,22 +1106,58 @@ export class MentorDialogueResponses {
         },
 
         darth_miedo: {
-          opening: (data) => `End resistance before it becomes conflict.`,
-          closing: (data) => `Victory is most efficient when it feels inevitable.`,
+          opening: [
+            "Ensure the outcome before the battle begins.",
+            "Victory should feel inevitable.",
+            "Let others exhaust themselves.",
+            "Intervene only when necessary.",
+            "Never fight unless the result is useful."
+          ],
+          closing: [
+            "Victory is most efficient when it feels inevitable.",
+            "Control precedes combat.",
+            "Mastery is patient.",
+            "Power dictates outcome.",
+            "Efficiency is dominance."
+          ],
           emphasis: ["dominance", "efficiency"],
           dspInterpreter: (dsp) => ""
         },
 
         darth_malbada: {
-          opening: (data) => `Hit first. Hit hard.`,
-          closing: (data) => `Fair fights are for people with backups.`,
+          opening: [
+            "Make them suffer.",
+            "Break them before killing them.",
+            "Let them understand why they lost.",
+            "Fear lingers longer than wounds.",
+            "Pain teaches faster than death."
+          ],
+          closing: [
+            "Fair fights are for people with backups.",
+            "End them decisively.",
+            "Cruelty has purpose.",
+            "Mercy is weakness.",
+            "Dominate completely."
+          ],
           emphasis: ["aggression", "survival"],
           dspInterpreter: (dsp) => ""
         },
 
         tio_the_hutt: {
-          opening: (data) => `Avoid fair fights.`,
-          closing: (data) => `Fair fights are costly.`,
+          opening: [
+            "Avoid fighting.",
+            "Pay someone else to bleed.",
+            "Make violence an expense, not a habit.",
+            "Win before weapons are drawn.",
+            "If it's loud, you mismanaged something."
+          ],
+          closing: [
+            "Fair fights are costly.",
+            "Delegate violence.",
+            "Profit from distance.",
+            "Smart business avoids risk.",
+            "Let others pay the price."
+          ],
           emphasis: ["pragmatism", "profit"],
           dspInterpreter: (dsp) => ""
         }
@@ -1144,22 +1276,58 @@ export class MentorDialogueResponses {
         },
 
         darth_miedo: {
-          opening: (data) => `Sentiment.`,
-          closing: (data) => `Mercy extended too often becomes doubt.`,
+          opening: [
+            "Attachment.",
+            "Sentiment.",
+            "Believing you are indispensable.",
+            "Forgetting who taught you.",
+            "Assuming this is mercy."
+          ],
+          closing: [
+            "Mercy extended too often becomes doubt.",
+            "Sentiment is weakness.",
+            "Clarity requires distance.",
+            "Power tolerates no softness.",
+            "Remember your place."
+          ],
           emphasis: ["clarity", "power"],
           dspInterpreter: (dsp) => ""
         },
 
         darth_malbada: {
-          opening: (data) => `Hesitation.`,
-          closing: (data) => `That's when they take advantage.`,
+          opening: [
+            "Pity.",
+            "Mercy.",
+            "Letting them think you care.",
+            "Stopping too soon.",
+            "Forgetting how this felt."
+          ],
+          closing: [
+            "That's when they take advantage.",
+            "Don't show weakness.",
+            "Never relent.",
+            "Remember the pain.",
+            "Use it."
+          ],
           emphasis: ["urgency", "action"],
           dspInterpreter: (dsp) => ""
         },
 
         tio_the_hutt: {
-          opening: (data) => `Loyalty.`,
-          closing: (data) => `It lasts exactly as long as profit.`,
+          opening: [
+            "Sentiment.",
+            "Heroes.",
+            "Debts you can't collect.",
+            "Thinking small.",
+            "Trusting anyone without leverage."
+          ],
+          closing: [
+            "It lasts exactly as long as profit.",
+            "Trust nothing but leverage.",
+            "Sentiment is expensive.",
+            "Heroes die broke.",
+            "Protect your interests."
+          ],
           emphasis: ["pragmatism", "calculation"],
           dspInterpreter: (dsp) => ""
         }
@@ -1283,22 +1451,58 @@ export class MentorDialogueResponses {
         },
 
         darth_miedo: {
-          opening: (data) => `The Force will demand commitment.`,
-          closing: (data) => `Those who refuse are replaced by those who do not.`,
+          opening: [
+            "Greater authority.",
+            "Heavier consequences.",
+            "Fewer peers.",
+            "A test you will not see coming.",
+            "A decision about succession."
+          ],
+          closing: [
+            "Those who refuse are replaced by those who do not.",
+            "Power demands commitment.",
+            "The future is inevitable.",
+            "Prepare accordingly.",
+            "Control or be controlled."
+          ],
           emphasis: ["inevitability", "power"],
           dspInterpreter: (dsp) => ""
         },
 
         darth_malbada: {
-          opening: (data) => `Greater power means fewer excuses.`,
-          closing: (data) => `You won't need to justify yourself forever.`,
+          opening: [
+            "More power. More suffering.",
+            "Enemies who scream louder.",
+            "Opportunities to hurt those who deserve it.",
+            "Tests you will not enjoy — at first.",
+            "A future carved from agony."
+          ],
+          closing: [
+            "You won't need to justify yourself forever.",
+            "Power silences critics.",
+            "Strength is inevitable.",
+            "Embrace what's coming.",
+            "Pain refines."
+          ],
           emphasis: ["strength", "liberation"],
           dspInterpreter: (dsp) => ""
         },
 
         tio_the_hutt: {
-          opening: (data) => `Bigger operations. Bigger risks.`,
-          closing: (data) => `And much bigger returns.`,
+          opening: [
+            "Bigger empires.",
+            "More profitable enemies.",
+            "Political influence.",
+            "Luxury purchased with fear.",
+            "A seat no one questions."
+          ],
+          closing: [
+            "And much bigger returns.",
+            "Profit scales with power.",
+            "The future is lucrative.",
+            "Build your empire.",
+            "Wealth buys everything."
+          ],
           emphasis: ["opportunity", "profit"],
           dspInterpreter: (dsp) => ""
         }
@@ -1411,22 +1615,58 @@ export class MentorDialogueResponses {
         },
 
         darth_miedo: {
-          opening: (data) => `I would build toward certainty.`,
-          closing: (data) => `When I strike, the outcome is already decided.`,
+          opening: [
+            "I would build toward certainty.",
+            "I would design outcomes, not fights.",
+            "I would let others think they are safe.",
+            "I would groom my replacement… carefully.",
+            "I would ensure inevitability."
+          ],
+          closing: [
+            "When I strike, the outcome is already decided.",
+            "Mastery is patient.",
+            "Control precedes action.",
+            "Power is inevitable.",
+            "This is the way."
+          ],
           emphasis: ["inevitability", "mastery"],
           dspInterpreter: (dsp) => ""
         },
 
         darth_malbada: {
-          opening: (data) => `I'd build toward never needing permission again.`,
-          closing: (data) => `No one questions power that works.`,
+          opening: [
+            "I would build toward inevitability.",
+            "I would never spare them.",
+            "I would let cruelty do the work.",
+            "I would grow stronger on their pain.",
+            "I would make suffering instructional."
+          ],
+          closing: [
+            "No one questions power that works.",
+            "Strength speaks.",
+            "Cruelty is efficient.",
+            "Dominance is final.",
+            "This is the way."
+          ],
           emphasis: ["strength", "autonomy"],
           dspInterpreter: (dsp) => ""
         },
 
         tio_the_hutt: {
-          opening: (data) => `I'd never be the one holding the weapon.`,
-          closing: (data) => `I'd own the person who does.`,
+          opening: [
+            "I would own the battlefield.",
+            "I would never pull the trigger.",
+            "I would buy loyalty wholesale.",
+            "I would make violence optional.",
+            "I would let others die for my profits."
+          ],
+          closing: [
+            "I'd own the person who does.",
+            "Leverage is everything.",
+            "Profit without risk.",
+            "That's real power.",
+            "Smart business."
+          ],
           emphasis: ["leverage", "control"],
           dspInterpreter: (dsp) => ""
         }
