@@ -2847,63 +2847,159 @@
       "archetypes": {
         "underworld_kingpin": {
           "name": "Underworld Kingpin",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "controller": 0.5,
+            "support": 0.3,
+            "utility": 0.2
+          },
+          "roleBias": {
+            "controller": 1.4
+          },
+          "attributeBias": {
+            "CHA": 0.45,
+            "INT": 0.35,
+            "WIS": 0.2
+          },
+          "talentKeywords": [
+            "Command Minions",
+            "Inspire Fear"
+          ],
+          "featKeywords": [
+            "Leadership",
+            "Skill Focus (Persuasion)"
+          ],
+          "notes": "Supreme authority over a criminal empire, ruling through fear and loyalty."
         },
         "shadow_broker": {
           "name": "Shadow Broker",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "controller": 0.5,
+            "utility": 0.4,
+            "support": 0.1
+          },
+          "roleBias": {
+            "controller": 1.4
+          },
+          "attributeBias": {
+            "INT": 0.45,
+            "CHA": 0.35,
+            "WIS": 0.2
+          },
+          "talentKeywords": [
+            "Blackmail",
+            "Network of Spies"
+          ],
+          "featKeywords": [
+            "Skill Focus (Deception)",
+            "Skill Focus (Persuasion)"
+          ],
+          "notes": "Dealer of secrets and intelligence, manipulating events from the shadows."
         },
         "criminal_mastermind": {
           "name": "Criminal Mastermind",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "controller": 0.6,
+            "utility": 0.3,
+            "support": 0.1
+          },
+          "roleBias": {
+            "controller": 1.4
+          },
+          "attributeBias": {
+            "INT": 0.5,
+            "CHA": 0.3,
+            "WIS": 0.2
+          },
+          "talentKeywords": [
+            "Perfect Plan",
+            "Contingency"
+          ],
+          "featKeywords": [
+            "Skill Focus (Knowledge)",
+            "Leadership"
+          ],
+          "notes": "Strategic architect of criminal operations and long-term schemes."
         },
         "gang_leader": {
           "name": "Gang Leader",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "support": 0.4,
+            "controller": 0.4,
+            "striker": 0.2
+          },
+          "roleBias": {
+            "support": 1.3
+          },
+          "attributeBias": {
+            "CHA": 0.4,
+            "STR": 0.3,
+            "CON": 0.3
+          },
+          "talentKeywords": [
+            "Lead from the Front",
+            "Inspire Fear"
+          ],
+          "featKeywords": [
+            "Leadership",
+            "Toughness"
+          ],
+          "notes": "Hands-on boss who commands through presence and violence."
         },
         "smuggling_kingpin": {
           "name": "Smuggling Kingpin",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "utility": 0.5,
+            "controller": 0.3,
+            "support": 0.2
+          },
+          "roleBias": {
+            "utility": 1.4
+          },
+          "attributeBias": {
+            "INT": 0.4,
+            "CHA": 0.4,
+            "WIS": 0.2
+          },
+          "talentKeywords": [
+            "Connections",
+            "Logistics"
+          ],
+          "featKeywords": [
+            "Skill Focus (Pilot)",
+            "Skill Focus (Persuasion)"
+          ],
+          "notes": "Controls illicit trade routes and black-market logistics."
         },
         "information_broker": {
           "name": "Information Broker",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "controller": 0.5,
+            "utility": 0.4,
+            "support": 0.1
+          },
+          "roleBias": {
+            "controller": 1.4
+          },
+          "attributeBias": {
+            "INT": 0.45,
+            "CHA": 0.35,
+            "WIS": 0.2
+          },
+          "talentKeywords": [
+            "Intel Network",
+            "Blackmail"
+          ],
+          "featKeywords": [
+            "Skill Focus (Use Computer)",
+            "Skill Focus (Deception)"
+          ],
+          "notes": "Pure information-focused criminal operator."
         },
         "information_broker__shadow_master": {
           "name": "Information Broker / Shadow Master",
@@ -2922,33 +3018,82 @@
       "archetypes": {
         "heavy_assault": {
           "name": "Heavy Assault",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "striker": 0.6,
+            "defender": 0.2,
+            "controller": 0.2
+          },
+          "roleBias": {
+            "offense": 1.3
+          },
+          "attributeBias": {
+            "STR": 0.4,
+            "CON": 0.35,
+            "DEX": 0.25
+          },
+          "talentKeywords": [
+            "Devastating Attack",
+            "Barrage"
+          ],
+          "featKeywords": [
+            "Burst Fire",
+            "Weapon Focus (Heavy Weapons)"
+          ],
+          "notes": "Overwhelming firepower shock trooper."
         },
         "shock_commander": {
           "name": "Shock Commander",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "support": 0.4,
+            "striker": 0.4,
+            "controller": 0.2
+          },
+          "roleBias": {
+            "support": 1.2
+          },
+          "attributeBias": {
+            "CHA": 0.35,
+            "STR": 0.3,
+            "CON": 0.25,
+            "WIS": 0.1
+          },
+          "talentKeywords": [
+            "Lead the Charge",
+            "Momentum"
+          ],
+          "featKeywords": [
+            "Leadership",
+            "Coordinated Attack"
+          ],
+          "notes": "Elite frontline commander leading assault units."
         },
         "elite_enforcer": {
           "name": "Elite Enforcer",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "striker": 0.5,
+            "defender": 0.3,
+            "controller": 0.2
+          },
+          "roleBias": {
+            "offense": 1.2
+          },
+          "attributeBias": {
+            "STR": 0.4,
+            "CON": 0.35,
+            "DEX": 0.25
+          },
+          "talentKeywords": [
+            "Melee Smash",
+            "Intercept Attack"
+          ],
+          "featKeywords": [
+            "Martial Arts",
+            "Improved Damage Threshold"
+          ],
+          "notes": "High-threat personal enforcer for elite operations."
         },
         "specops_commando": {
           "name": "SpecOps Commando",
@@ -3094,33 +3239,81 @@
       "archetypes": {
         "dogfighter": {
           "name": "Dogfighter",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "striker": 0.6,
+            "pilot": 0.3,
+            "controller": 0.1
+          },
+          "roleBias": {
+            "offense": 1.3
+          },
+          "attributeBias": {
+            "DEX": 0.45,
+            "INT": 0.3,
+            "WIS": 0.25
+          },
+          "talentKeywords": [
+            "Dogfighter",
+            "Evasive Action"
+          ],
+          "featKeywords": [
+            "Vehicular Combat",
+            "Skill Focus (Pilot)"
+          ],
+          "notes": "Pure starfighter duel specialist."
         },
         "interceptor_ace": {
           "name": "Interceptor Ace",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "striker": 0.5,
+            "pilot": 0.4,
+            "utility": 0.1
+          },
+          "roleBias": {
+            "offense": 1.2
+          },
+          "attributeBias": {
+            "DEX": 0.45,
+            "CON": 0.3,
+            "WIS": 0.25
+          },
+          "talentKeywords": [
+            "Pursuit",
+            "Afterburn"
+          ],
+          "featKeywords": [
+            "Vehicular Combat",
+            "Improved Vehicular Combat"
+          ],
+          "notes": "High-speed pursuit and interception specialist."
         },
         "daredevil_pilot": {
           "name": "Daredevil Pilot",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "controller": 0.4,
+            "pilot": 0.4,
+            "striker": 0.2
+          },
+          "roleBias": {
+            "controller": 1.2
+          },
+          "attributeBias": {
+            "DEX": 0.5,
+            "CON": 0.3,
+            "WIS": 0.2
+          },
+          "talentKeywords": [
+            "Push the Limits",
+            "Trick Pilot"
+          ],
+          "featKeywords": [
+            "Improved Vehicular Combat",
+            "Skill Focus (Pilot)"
+          ],
+          "notes": "Extreme-risk pilot performing dangerous maneuvers."
         },
         "starfighter_ace": {
           "name": "Starfighter Ace",
@@ -3292,33 +3485,81 @@
       "archetypes": {
         "tactical_commander": {
           "name": "Tactical Commander",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "support": 0.4,
+            "controller": 0.4,
+            "utility": 0.2
+          },
+          "roleBias": {
+            "support": 1.3
+          },
+          "attributeBias": {
+            "INT": 0.4,
+            "CHA": 0.35,
+            "WIS": 0.25
+          },
+          "talentKeywords": [
+            "Coordinate",
+            "Focused Targeting"
+          ],
+          "featKeywords": [
+            "Coordinated Attack",
+            "Leadership"
+          ],
+          "notes": "Battlefield tactician directing allied actions."
         },
         "support_officer": {
           "name": "Support Officer",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "support": 0.5,
+            "utility": 0.3,
+            "controller": 0.2
+          },
+          "roleBias": {
+            "support": 1.4
+          },
+          "attributeBias": {
+            "CHA": 0.4,
+            "INT": 0.35,
+            "WIS": 0.25
+          },
+          "talentKeywords": [
+            "Bolster Ally",
+            "Inspire Confidence"
+          ],
+          "featKeywords": [
+            "Skill Focus (Persuasion)",
+            "Shake It Off"
+          ],
+          "notes": "Morale and logistics-focused officer."
         },
         "strategic_leader": {
           "name": "Strategic Leader",
-          "status": "stub",
-          "mechanicalBias": {},
-          "roleBias": {},
-          "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "status": "active",
+          "mechanicalBias": {
+            "controller": 0.5,
+            "support": 0.3,
+            "utility": 0.2
+          },
+          "roleBias": {
+            "controller": 1.3
+          },
+          "attributeBias": {
+            "INT": 0.45,
+            "CHA": 0.3,
+            "WIS": 0.25
+          },
+          "talentKeywords": [
+            "Battle Analysis",
+            "Grand Strategy"
+          ],
+          "featKeywords": [
+            "Skill Focus (Knowledge: Tactics)",
+            "Leadership"
+          ],
+          "notes": "High-level planner shaping long-term engagements."
         },
         "strategic_commander": {
           "name": "Strategic Commander",
