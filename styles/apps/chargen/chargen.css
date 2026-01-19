@@ -2984,3 +2984,37 @@
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+/* Ask Your Mentor Button */
+.ask-mentor-btn {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 8px;
+    background: linear-gradient(135deg, rgba(0, 170, 255, 0.15) 0%, rgba(0, 255, 136, 0.1) 100%);
+    border: 1px solid rgba(0, 170, 255, 0.4);
+    border-radius: 4px;
+    color: #00ff88;
+    font-size: 0.9em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.ask-mentor-btn:hover {
+    background: linear-gradient(135deg, rgba(0, 170, 255, 0.25) 0%, rgba(0, 255, 136, 0.2) 100%);
+    border-color: rgba(0, 170, 255, 0.6);
+    color: #00ff88;
+    box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.ask-mentor-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 0 5px rgba(0, 170, 255, 0.2);
+}
+
+.ask-mentor-btn i {
+    margin-right: 5px;
+}

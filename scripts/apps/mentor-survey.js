@@ -538,9 +538,10 @@ export class MentorSurvey {
    * Prompt the player to take a mentoring survey
    * @param {Actor} actor - The character actor
    * @param {string} mentorName - The mentor's name
+   * @param {string} playerName - The player's character name
    * @returns {Promise<boolean>} true if player accepts survey, false otherwise
    */
-  static async promptSurvey(actor, mentorName) {
+  static async promptSurvey(actor, mentorName, playerName = "") {
     swseLogger.log(`[MENTOR-SURVEY] promptSurvey: START - Actor: ${actor.id} (${actor.name}), Mentor: "${mentorName}"`);
     const mentor = MENTORS[mentorName];
     if (!mentor) {
@@ -553,19 +554,23 @@ export class MentorSurvey {
     return new Promise((resolve) => {
       const dialog = new Dialog(
         {
-          title: `${mentorName}'s Mentoring Survey`,
+          title: `${mentor.name} - Mentoring Survey`,
           content: `
-            <div class="mentor-survey-prompt">
-              <div class="mentor-portrait">
-                <img src="${mentor.portrait}" alt="${mentor.name}" />
-              </div>
-              <div class="mentor-intro">
-                <h3>${mentor.name}</h3>
-                <p>${mentor.title}</p>
-                <p class="survey-question">
-                  I'd like to understand your character's goals and design philosophy better.
-                  Would you be willing to answer a few quick questions? It will help me provide better mentorship.
-                </p>
+            <div class="mentor-survey-container">
+              <div class="mentor-intro-section">
+                <div class="mentor-portrait">
+                  <img src="${mentor.portrait}" alt="${mentor.name}" />
+                </div>
+                <div class="mentor-intro-text">
+                  <h2>${mentor.name}</h2>
+                  <p class="mentor-title">${mentor.title}</p>
+                  <p class="mentor-greeting">${mentor.description}</p>
+                  ${playerName ? `<p class="mentor-address"><em>"Welcome, ${playerName}. I can help guide your journey."</em></p>` : ""}
+                  <p class="survey-prompt">
+                    I'd like to understand your character's goals and design philosophy better.
+                    Would you be willing to answer a few quick questions? It will help me provide better mentorship.
+                  </p>
+                </div>
               </div>
             </div>
           `,
@@ -587,18 +592,18 @@ export class MentorSurvey {
           },
           default: "accept",
           render: (html) => {
-            // Add typing animation to the survey question
-            const questionElement = html.find('.survey-question')[0];
-            if (questionElement) {
-              const questionText = questionElement.textContent;
-              TypingAnimation.typeText(questionElement, questionText, {
+            // Add typing animation to the greeting
+            const greetingElement = html.find('.mentor-greeting')[0];
+            if (greetingElement) {
+              const greetingText = greetingElement.textContent;
+              TypingAnimation.typeText(greetingElement, greetingText, {
                 speed: 45,
                 skipOnClick: true
               });
             }
           }
         },
-        { classes: ['mentor-survey-dialog'] }
+        { classes: ['mentor-survey-dialog', 'holo-window'] }
       );
 
       dialog.render(true);
@@ -648,7 +653,10 @@ export class MentorSurvey {
         const answerHtml = answerOptions
           .map(
             (opt, i) =>
-              `<label><input type="radio" name="answer" value="${i}" /> ${opt.text}</label>`
+              `<label class="survey-answer-box">
+                <input type="radio" name="answer" value="${i}" />
+                <span class="answer-text">${opt.text}</span>
+              </label>`
           )
           .join('');
 
@@ -656,7 +664,7 @@ export class MentorSurvey {
           {
             title: `${mentorName}'s Mentoring - Question ${index + 1} of ${questionIds.length}`,
             content: `
-              <div class="mentor-survey-content">
+              <div class="mentor-survey-content holo-content">
                 <p class="mentor-question">${question}</p>
                 <div class="survey-answers">
                   ${answerHtml}

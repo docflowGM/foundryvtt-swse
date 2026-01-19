@@ -51,3 +51,146 @@
     color: #2c3e50;
     font-style: italic;
 }
+
+/* Holo-themed Mentor Survey Dialog */
+.mentor-survey-dialog {
+    background: linear-gradient(135deg, rgba(10, 20, 40, 0.95) 0%, rgba(15, 35, 60, 0.95) 100%);
+    border: 2px solid #0af;
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.4), inset 0 0 20px rgba(0, 170, 255, 0.1);
+}
+
+.mentor-survey-dialog .window-header {
+    background: linear-gradient(90deg, rgba(0, 170, 255, 0.2) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(0, 170, 255, 0.5);
+}
+
+.mentor-survey-dialog .window-title {
+    color: #0af;
+    text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+    font-weight: bold;
+}
+
+.mentor-survey-container {
+    padding: 20px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.mentor-intro-section {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+}
+
+.mentor-portrait {
+    flex-shrink: 0;
+    width: 120px;
+    height: 150px;
+    border: 2px solid #0af;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
+}
+
+.mentor-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mentor-intro-text {
+    flex: 1;
+    color: #e0f4ff;
+}
+
+.mentor-intro-text h2 {
+    color: #0af;
+    margin: 0 0 5px 0;
+    font-size: 1.4em;
+    text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+}
+
+.mentor-title {
+    color: #88ccff;
+    font-size: 0.9em;
+    margin: 0 0 10px 0;
+    font-style: italic;
+}
+
+.mentor-greeting {
+    color: #c0e0ff;
+    line-height: 1.5;
+    margin: 10px 0;
+}
+
+.mentor-address {
+    color: #88ff00;
+    margin: 8px 0;
+    font-style: italic;
+}
+
+.survey-prompt {
+    color: #e0f4ff;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(0, 170, 255, 0.3);
+    line-height: 1.5;
+}
+
+/* Survey content with holo theme */
+.mentor-survey-content {
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 170, 255, 0.3);
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.mentor-question {
+    color: #0af;
+    font-weight: bold;
+    margin: 0 0 20px 0;
+    font-size: 1.1em;
+    text-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
+}
+
+.survey-answers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.survey-answer-box {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background: rgba(0, 170, 255, 0.05);
+    border: 1px solid rgba(0, 170, 255, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #e0f4ff;
+}
+
+.survey-answer-box:hover {
+    background: rgba(0, 170, 255, 0.15);
+    border-color: rgba(0, 170, 255, 0.6);
+    box-shadow: 0 0 10px rgba(0, 170, 255, 0.2);
+}
+
+.survey-answer-box input[type="radio"] {
+    margin-right: 12px;
+    cursor: pointer;
+    accent-color: #0af;
+}
+
+.survey-answer-box input[type="radio"]:checked + .answer-text {
+    color: #00ff88;
+    font-weight: bold;
+}
+
+.answer-text {
+    flex: 1;
+    line-height: 1.4;
+}

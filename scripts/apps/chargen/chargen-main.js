@@ -982,6 +982,9 @@ export default class CharacterGenerator extends Application {
 
     // Prepare talents for template
     if (this.currentStep === "talents") {
+      // Explicitly set talentsRequired for template (1 talent at level 1)
+      context.characterData.talentsRequired = 1;
+
       // Get available talent trees for the character
       context.availableTalentTrees = this._getAvailableTalentTrees() || [];
       SWSELogger.log(`CharGen | Talents step - available talent trees:`, {
@@ -1196,6 +1199,9 @@ export default class CharacterGenerator extends Application {
     $html.find('.random-background-btn').click(this._onRandomBackground.bind(this));
     $html.find('.change-background-btn').click(this._onChangeBackground.bind(this));
 
+    // Mentor "Ask Your Mentor" button
+    $html.find('.ask-mentor-btn').click(this._onAskMentor.bind(this));
+
     // Droid builder/shop
     $html.find('.shop-tab').click(this._onShopTabClick.bind(this));
     $html.find('.accessory-tab').click(this._onAccessoryTabClick.bind(this));
@@ -1231,10 +1237,6 @@ export default class CharacterGenerator extends Application {
       this._bindAbilitiesUI($html[0]);
     }
 
-    // Skills UI
-    if (this.currentStep === "skills") {
-      this._bindSkillsUI($html[0]);
-    }
 
     // Droid Builder UI
     if (this.currentStep === "droid-builder") {
@@ -1384,6 +1386,21 @@ export default class CharacterGenerator extends Application {
     this.characterData.name = selectedName;
 
     ui.notifications.info(`Random droid name selected: ${selectedName}`);
+    await this.render();
+  }
+
+  /**
+   * Handle "Ask Your Mentor" button click - enable suggestion engine
+   * @param {Event} event - The click event
+   */
+  async _onAskMentor(event) {
+    event.preventDefault();
+    SWSELogger.log(`[CHARGEN] _onAskMentor: Activating suggestion engine for current step: ${this.currentStep}`);
+
+    // Enable the suggestion engine
+    this.suggestionEngine = true;
+
+    ui.notifications.info("Your mentor is now providing suggestions for this step.");
     await this.render();
   }
 
@@ -2667,10 +2684,14 @@ export default class CharacterGenerator extends Application {
       this.characterData.talents = this.characterData.talents || [];
       this.characterData.talents.push(talent);
 
+      SWSELogger.log(`[CHARGEN-TALENTS] Talent selected from graph: "${talent.name}", total talents now: ${this.characterData.talents.length}, required: 1`);
+
       ui.notifications.info(`Selected talent: ${talent.name}`);
 
       // Re-render to update UI
+      SWSELogger.log(`[CHARGEN-TALENTS] About to render after talent selection`);
       await this.render();
+      SWSELogger.log(`[CHARGEN-TALENTS] Render completed`);
     };
 
     renderTalentTreeGraph(container, talentsInTree, this.characterData, onSelectTalent);

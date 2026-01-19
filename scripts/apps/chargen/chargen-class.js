@@ -327,7 +327,8 @@ export async function _onSelectClass(event) {
 
     if (!surveyCompleted && isBaseClassSelection) {
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Offering mentor survey prompt for base class "${className}"...`);
-      const acceptSurvey = await MentorSurvey.promptSurvey(tempActor, className);
+      const playerName = this.characterData.name || "";
+      const acceptSurvey = await MentorSurvey.promptSurvey(tempActor, className, playerName);
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User accepted survey: ${acceptSurvey}`);
 
       if (acceptSurvey) {
