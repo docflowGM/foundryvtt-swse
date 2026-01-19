@@ -27,7 +27,7 @@ import { BUILD_THEMES } from './BuildIntent.js';
 
 
 // === ARCHETYPE_JSON_WIRING_START ===
-import CLASS_ARCHETYPES from '../../data/class-archetypes.json';
+import CLASS_ARCHETYPES from '../../data/class-archetypes.json' with { type: 'json' };
 
 function initializeArchetypes(buildState, classKey) {
   const classBlock = CLASS_ARCHETYPES.classes?.[classKey];
