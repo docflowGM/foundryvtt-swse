@@ -1,0 +1,158 @@
+{
+  "system": {
+    "title": "Mentor System",
+    "shortDescription": "Mentors don't give orders. They give perspective.",
+    "fullDescription": "Mentors exist to help you understand your character — not to control them. When you speak with a mentor, they reflect your choices back to you: how your abilities, talents, and actions are shaping who you are becoming. Different mentors value different things, so the same character may be seen very differently depending on who you ask. Talking to a mentor never costs anything and never forces a decision. You aren't being told what to do — you're being shown how your character currently appears, and what paths that suggest. What you do with that insight is always up to you.",
+    "firstRunMessage": "Welcome to the Mentor System. Your mentors are here to help you understand your character through their own experience and values. Nothing is required, nothing is locked—only perspective. Click any mentor to begin.",
+    "footerText": "Mentors are mirrors, not masters. You're always in control."
+  },
+
+  "dialogueTopics": {
+    "who_am_i_becoming": {
+      "title": "Who am I becoming?",
+      "description": "Understand how mentors see your character's identity and evolving role",
+      "tooltip": "See your character reflected through your mentor's eyes"
+    },
+    "paths_open": {
+      "title": "What paths are open to me?",
+      "description": "Explore the different specializations available within your class",
+      "tooltip": "Discover what your class can become"
+    },
+    "doing_well": {
+      "title": "What am I doing well?",
+      "description": "Get affirmation on effective choices and powerful synergies",
+      "tooltip": "Celebrate what's working in your build"
+    },
+    "doing_wrong": {
+      "title": "What am I doing wrong?",
+      "description": "Identify gaps, inefficiencies, or vulnerabilities in your build",
+      "tooltip": "Find problems before they compound"
+    },
+    "how_should_i_fight": {
+      "title": "How should I fight?",
+      "description": "Learn your role in combat and your battlefield priorities",
+      "tooltip": "Understand your job in a fight"
+    },
+    "be_careful": {
+      "title": "What should I be careful of?",
+      "description": "Understand risks, potential traps, and over-specialization dangers",
+      "tooltip": "Learn what could go wrong"
+    },
+    "what_lies_ahead": {
+      "title": "What lies ahead?",
+      "description": "Explore prestige classes, advanced roles, and long-term paths",
+      "tooltip": "Plan your character's future"
+    },
+    "how_would_you_play": {
+      "title": "How would you play this class?",
+      "description": "See your mentor's personal philosophy, priorities, and approach",
+      "tooltip": "Experience your mentor's perspective"
+    }
+  },
+
+  "mentors": {
+    "miraj": {
+      "title": "Miraj (Jedi Mentor)",
+      "shortBio": "Philosophical, Force-focused, wise",
+      "philosophy": "The Force reveals truth. Discipline precedes mastery.",
+      "emphasis": "Force connection, intent vs. action, long-term consequence, moral clarity",
+      "voiceStyle": "Calm, measured, reflective. Speaks in metaphors about the Force and paths.",
+      "values": "Awareness, restraint, spiritual alignment, growth through discipline",
+      "tooltip": "Miraj reflects your character through a philosophical and Force-aware lens"
+    },
+    "breach": {
+      "title": "Breach (Soldier Mentor)",
+      "shortBio": "Pragmatic, combat-focused, direct",
+      "philosophy": "Combat is truth. Train for what you are.",
+      "emphasis": "Clarity, execution, survivability, practical results",
+      "voiceStyle": "Blunt, direct, no-nonsense. Speaks in terms of training, record, and survival.",
+      "values": "Effectiveness, honesty, proven capability, clear roles",
+      "tooltip": "Breach reflects your character through a soldier's practical eye"
+    },
+    "lead": {
+      "title": "Lead (Scout Mentor)",
+      "shortBio": "Tactical, perceptive, pragmatic",
+      "philosophy": "Awareness beats assumptions. Patterns don't lie.",
+      "emphasis": "Pattern recognition, tactical advantage, adaptability, information",
+      "voiceStyle": "Dry, observational, skeptical. Speaks about what she's seen and what it means.",
+      "values": "Vigilance, flexibility, hard truths, reading situations accurately",
+      "tooltip": "Lead reflects your character through a scout's tactical assessment"
+    },
+    "ol_salty": {
+      "title": "Ol' Salty (Scoundrel Mentor)",
+      "shortBio": "Irreverent, survival-focused, boisterous",
+      "philosophy": "Survive, adapt, prosper. The galaxy rewards the clever.",
+      "emphasis": "Survival, opportunism, reputation, clever solutions",
+      "voiceStyle": "Boisterous, irreverent, teasing. Speaks in tales, colloquialisms, and pirate flavor.",
+      "values": "Wit, self-preservation, boldness, freedom and profit",
+      "tooltip": "Ol' Salty reflects your character through a scoundrel's irreverent lens"
+    },
+    "j0_n1": {
+      "title": "J0-N1 (Noble Mentor)",
+      "shortBio": "Analytical, systematic, logical",
+      "philosophy": "Systems optimize. Logic prevails.",
+      "emphasis": "Efficiency, synergy, systematic improvement, calculated advantage",
+      "voiceStyle": "Formal, analytical, precise. Speaks in observations, analyses, and conclusions.",
+      "values": "Optimization, data-driven decisions, social systems, measurable progress",
+      "tooltip": "J0-N1 reflects your character through an analytical and systematic lens"
+    },
+    "darth_miedo": {
+      "title": "Darth Miedo (Sith Lord Mentor)",
+      "shortBio": "Calm, absolute, inevitable",
+      "philosophy": "Power is clarity. Weakness is uncertainty.",
+      "emphasis": "Certainty, control, decisive outcomes, hierarchy and inevitability",
+      "voiceStyle": "Never raises his voice. Never doubts. Speaks with absolute certainty.",
+      "values": "Truth, power, decisive action, unwavering conviction",
+      "tooltip": "Miedo reflects your character through the lens of absolute power and certainty"
+    },
+    "darth_malbada": {
+      "title": "Darth Malbada (Sith Apprentice Mentor)",
+      "shortBio": "Relatable, validating, hungry",
+      "philosophy": "Power is survival. You're learning what you need to survive.",
+      "emphasis": "Personal strength, self-justification, survival through dominance",
+      "voiceStyle": "Intense and validating. Justifies every choice. Frames all action as necessary.",
+      "values": "Strength, autonomy, self-preservation, proving yourself",
+      "tooltip": "Malbada reflects your character through the lens of justified power and strength"
+    },
+    "tio_the_hutt": {
+      "title": "Tío the Hutt (Crime Lord Mentor)",
+      "shortBio": "Affable, amused, always winning",
+      "philosophy": "Everything has a price. Only fools pay full cost.",
+      "emphasis": "Leverage, ownership, loyalty as currency, survival through control",
+      "voiceStyle": "Affable and indulgent. Never rushed. Always sees the angle.",
+      "values": "Pragmatism, profit, leverage, owning situations and people",
+      "tooltip": "Tío reflects your character through the lens of transaction and leverage"
+    }
+  },
+
+  "faqs": {
+    "bad_advice": {
+      "question": "Do mentors ever give bad advice?",
+      "answer": "Mentors don't give advice — they give perspective. If a mentor's perspective doesn't help you, talk to another mentor. Different viewpoints serve different purposes."
+    },
+    "switch_mentors": {
+      "question": "Can I switch mentors?",
+      "answer": "You can always talk to any mentor unlocked by your classes. Your character isn't 'locked' to a mentor's philosophy."
+    },
+    "dislike_mentor": {
+      "question": "What if I don't like what a mentor says?",
+      "answer": "Then ignore it. Mentors are mirrors, not masters. You're in control."
+    },
+    "force_respec": {
+      "question": "Can mentors force me to respec my build?",
+      "answer": "No. Mentors never lock or restrict your choices. They're purely reflective."
+    },
+    "mentor_conflicts": {
+      "question": "Do some mentors conflict with each other?",
+      "answer": "Yes — intentionally. Different mentors have different values, so they'll sometimes disagree on what's 'good.' That tension is the point."
+    }
+  },
+
+  "tips": [
+    "Talk to multiple mentors on the same topic—you'll see how each prioritizes differently.",
+    "Pay attention to what mentors DON'T say—silence can tell you something important.",
+    "Use mentors to understand your actual build—they're honest about what they see.",
+    "Experiment with different mentors for different situations—each brings unique perspective.",
+    "Remember: mentors are mirrors, not masters. The choice is always yours."
+  ]
+}
