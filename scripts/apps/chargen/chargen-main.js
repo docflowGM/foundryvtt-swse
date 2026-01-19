@@ -1231,10 +1231,6 @@ export default class CharacterGenerator extends Application {
       this._bindAbilitiesUI($html[0]);
     }
 
-    // Skills UI
-    if (this.currentStep === "skills") {
-      this._bindSkillsUI($html[0]);
-    }
 
     // Droid Builder UI
     if (this.currentStep === "droid-builder") {
