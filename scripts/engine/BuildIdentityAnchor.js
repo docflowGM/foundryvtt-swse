@@ -24,7 +24,26 @@ import { SWSELogger } from '../utils/logger.js';
 import { ARCHETYPE_CATALOG } from './ArchetypeDefinitions.js';
 import { BUILD_THEMES } from './BuildIntent.js';
 
-// ─────────────────────────────────────────────────────────────
+
+
+// === ARCHETYPE_JSON_WIRING_START ===
+import CLASS_ARCHETYPES from '../../data/class-archetypes.json';
+
+function initializeArchetypes(buildState, classKey) {
+  const classBlock = CLASS_ARCHETYPES.classes?.[classKey];
+  if (!classBlock) return { active: {}, affinities: {} };
+
+  const affinities = {};
+  for (const key of Object.keys(classBlock.archetypes)) {
+    affinities[key] = 0;
+  }
+
+  return {
+    active: classBlock.archetypes,
+    affinities
+  };
+}
+// === ARCHETYPE_JSON_WIRING_END ===// ─────────────────────────────────────────────────────────────
 // Anchor State Enum
 // ─────────────────────────────────────────────────────────────
 
