@@ -49,6 +49,18 @@ export class MentorDialogueResponses {
     return name.toLowerCase().replace(/[^a-z0-9]/g, '_');
   }
 
+  /**
+   * Convert level to narrative stage (removes mechanical number references)
+   */
+  static _getLevelNarrative(level) {
+    if (level <= 1) return "Your journey has just begun";
+    if (level <= 3) return "You've gained some experience";
+    if (level <= 5) return "You've proven your mettle";
+    if (level <= 7) return "Your path grows clearer";
+    if (level <= 10) return "You've become something rare";
+    return "You've transcended the ordinary";
+  }
+
   static _getFallbackResponse(topicKey, analysisData) {
     return {
       opening: "Let me share my thoughts on this.",
@@ -84,7 +96,7 @@ export class MentorDialogueResponses {
 
       mentors: {
         miraj: {
-          opening: (data) => `Young one, at level ${data.level}, I sense your path taking shape. The Force reveals you as a **${data.inferredRole}**—not a title you chose, but one you are *becoming*.`,
+          opening: (data) => `Young one, ${this._getLevelNarrative(data.level).toLowerCase()}. I sense your path taking shape. The Force reveals you as a **${data.inferredRole}**—not a title you chose, but one you are *becoming*.`,
           closing: (data) => {
             const dsp = data.dspSaturation || 0;
             if (dsp > 0.5) return "Awareness must precede action. The path back grows narrow.";
@@ -99,7 +111,7 @@ export class MentorDialogueResponses {
         },
 
         breach: {
-          opening: (data) => `Level ${data.level}. You're becoming a **${data.inferredRole}**. Your record speaks for itself.`,
+          opening: (data) => `${this._getLevelNarrative(data.level)}. You're becoming a **${data.inferredRole}**. Your record speaks for itself.`,
           closing: (data) => {
             const dsp = data.dspSaturation || 0;
             if (dsp > 0.5) return "You're getting reckless. That instability gets people killed.";
@@ -113,7 +125,7 @@ export class MentorDialogueResponses {
         },
 
         lead: {
-          opening: (data) => `Level ${data.level}. Not bad. You're shaping up as a **${data.inferredRole}**. That's not me blowing smoke—that's what your choices say about you.`,
+          opening: (data) => `Not bad at all. ${this._getLevelNarrative(data.level).toLowerCase()}, and you're shaping up as a **${data.inferredRole}**. That's what your choices say about you.`,
           closing: (data) => "Keep building on what works. Don't fix what isn't broken.",
           emphasis: ["patterns", "adaptation"],
           dspInterpreter: (dsp) => {
@@ -123,7 +135,7 @@ export class MentorDialogueResponses {
         },
 
         ol_salty: {
-          opening: (data) => `Har har! Level ${data.level} and still kickin', are ye? The galaxy's got ye pegged as a **${data.inferredRole}**, savvy? That's what yer choices be sayin' about ye!`,
+          opening: (data) => `Har har! ${this._getLevelNarrative(data.level).toLowerCase()}, and still kickin', are ye? The galaxy's got ye pegged as a **${data.inferredRole}**, savvy? That's what yer choices be tellin' all of us!`,
           closing: (data) => {
             const dsp = data.dspSaturation || 0;
             if (dsp > 0.5) return "Dead heroes don't spend their credits, matey. Think on that.";
@@ -137,7 +149,7 @@ export class MentorDialogueResponses {
         },
 
         j0_n1: {
-          opening: (data) => `<Observation> You have achieved level ${data.level}. <Analysis> Your behavioral patterns indicate development as a **${data.inferredRole}**.</Analysis>`,
+          opening: (data) => `<Observation> Your development status: ${this._getLevelNarrative(data.level).toLowerCase()}. <Analysis> Behavioral patterns indicate specialization as a **${data.inferredRole}**.`,
           closing: (data) => "<Conclusion> Continue optimizing your trajectory.</Conclusion>",
           emphasis: ["systems", "patterns"],
           dspInterpreter: (dsp) => {
