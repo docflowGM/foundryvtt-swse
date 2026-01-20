@@ -1566,24 +1566,6 @@
  <p class="help-text">Choose additional languages your character knows based on Intelligence and any feats like Linguist.</p>
 
  {{#if characterData.languageData}}
- {{!-- Language Counter --}}
- <div class="language-counter-box">
- {{#if (gt characterData.languageData.additional 0)}}
- <div class="counter-display">
- <i class="fas fa-language"></i>
- <span class="counter-text">Languages Remaining:</span>
- <span class="counter-value">{{subtract (add characterData.languageData.granted.length characterData.languageData.additional) characterData.languages.length}}</span>
- /
- <span class="counter-total">{{characterData.languageData.additional}}</span>
- </div>
- {{else}}
- <div class="no-additional-languages">
- <i class="fas fa-info-circle"></i>
- <span>You have no additional languages to select (available: {{characterData.languageData.additional}})</span>
- </div>
- {{/if}}
- </div>
-
  {{!-- Automatic/Granted Languages Section --}}
  <div class="granted-languages-section">
  <h4><i class="fas fa-gift"></i> Automatic Languages</h4>
@@ -1600,6 +1582,24 @@
  {{#if (gt characterData.languageData.understands.length 0)}}
  <div class="understands-languages">
  <p><i class="fas fa-ear-listen"></i> <strong>Understands Only:</strong> {{#each characterData.languageData.understands}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p>
+ </div>
+ {{/if}}
+ </div>
+
+ {{!-- Language Counter --}}
+ <div class="language-counter-box">
+ {{#if (gt characterData.languageData.additional 0)}}
+ <div class="counter-display">
+ <i class="fas fa-language"></i>
+ <span class="counter-text">Languages Remaining:</span>
+ <span class="counter-value">{{subtract (add characterData.languageData.granted.length characterData.languageData.additional) characterData.languages.length}}</span>
+ /
+ <span class="counter-total">{{characterData.languageData.additional}}</span>
+ </div>
+ {{else}}
+ <div class="no-additional-languages">
+ <i class="fas fa-info-circle"></i>
+ <span>You have no additional languages to select (available: {{characterData.languageData.additional}})</span>
  </div>
  {{/if}}
  </div>
