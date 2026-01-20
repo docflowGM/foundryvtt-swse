@@ -1671,6 +1671,139 @@ export class MentorDialogueResponses {
           dspInterpreter: (dsp) => ""
         }
       }
+    },
+
+    // ========================================
+    // 9. "WHAT IS YOUR STORY?" — Mentor Self-Disclosure
+    // ========================================
+    mentor_story: {
+      systemIntent: "Reveal mentor backstory based on trust, alignment, and player progression",
+      canonicalAnalysis: (data) => {
+        // This topic uses MentorStoryResolver instead
+        return "";
+      },
+
+      mentors: {
+        miraj: {
+          opening: [
+            "You ask about my past. That is... a profound question.",
+            "I sense you wish to understand more than just my teachings.",
+            "My journey has been long. Perhaps it is time to share part of it."
+          ],
+          closing: [
+            "Remember, the path I walked is mine alone. Yours is still being written.",
+            "What matters is not where I came from, but where the Force guides us both.",
+            "These memories are old. Focus on the present moment."
+          ],
+          emphasis: [],
+          dspInterpreter: (dsp) => ""
+        },
+
+        breach: {
+          opening: [
+            "You want to know where I come from? Fair question.",
+            "Not many ask. Most don't care. You seem different.",
+            "Alright, kid. Here's some truth for you."
+          ],
+          closing: [
+            "That's the short version. The rest is classified.",
+            "Now you know a little. Don't waste it.",
+            "That's all you get from me. Focus on your own story."
+          ],
+          emphasis: [],
+          dspInterpreter: (dsp) => ""
+        },
+
+        lead: {
+          opening: [
+            "My past? That's operational history you don't have clearance for.",
+            "I might tell you. Depends if you've earned it.",
+            "Alright, I'll tell you something. Don't broadcast it."
+          ],
+          closing: [
+            "That's the sanitized version. The rest stays classified.",
+            "Now you know why I am the way I am.",
+            "Remember that when you're in the field."
+          ],
+          emphasis: [],
+          dspInterpreter: (dsp) => ""
+        },
+
+        ol_salty: {
+          opening: [
+            "Har! Ye want ol' Salty's tale? Pull up a chair, matey!",
+            "Not many ask these days. Seems ye got some respect fer an old pirate.",
+            "Arrr, I got stories that'll make yer hair stand on end!"
+          ],
+          closing: [
+            "That's the tale, savvy? Those were the days!",
+            "Don't tell anyone—ruins the legend if folks know the truth, eh?",
+            "That's how ol' Salty came to be. And that's all ye need know."
+          ],
+          emphasis: [],
+          dspInterpreter: (dsp) => ""
+        },
+
+        j0_n1: {
+          opening: [
+            "<Query> You wish to understand my origins and function?",
+            "<Assessment> That is... an unexpected request, Master.",
+            "<Response> I suppose transparency is warranted. Very well."
+          ],
+          closing: [
+            "<Conclusion> This is the nature of my existence.",
+            "<Note> My past informs my present service.",
+            "<Directive> Does this answer satisfy your inquiry, Master?"
+          ],
+          emphasis: [],
+          dspInterpreter: (dsp) => ""
+        },
+
+        darth_miedo: {
+          opening: [
+            "You ask about my past? How... quaint.",
+            "Most fear to know where I came from.",
+            "Perhaps I will tell you. Perhaps I will let you wonder."
+          ],
+          closing: [
+            "That is the truth that shaped me.",
+            "Now you understand the cost of power.",
+            "Don't make my mistakes. And don't pity me."
+          ],
+          emphasis: [],
+          dspInterpreter: (dsp) => ""
+        },
+
+        darth_malbada: {
+          opening: [
+            "You want to know about Malbada? Fine.",
+            "Not many survive asking me personal questions.",
+            "Listen, and understand what strength requires."
+          ],
+          closing: [
+            "That is the truth. Brutal and undeniable.",
+            "This is what survival costs.",
+            "Now stop wasting my time with sentiment."
+          ],
+          emphasis: [],
+          dspInterpreter: (dsp) => ""
+        },
+
+        tio_the_hutt: {
+          opening: [
+            "You want to know Tio's history? Interesting negotiation.",
+            "Not everyone gets to hear such things.",
+            "Perhaps we can come to an arrangement..."
+          ],
+          closing: [
+            "That is how Tio became what Tio is.",
+            "Profitable. Powerful. Alive.",
+            "Remember this if you ever cross me, hmmm?"
+          ],
+          emphasis: [],
+          dspInterpreter: (dsp) => ""
+        }
+      }
     }
   };
 }

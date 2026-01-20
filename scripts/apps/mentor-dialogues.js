@@ -45,6 +45,30 @@ export const MENTORS = {
     languageGuidance: "Language bridges understanding between souls. Choose tongues that expand your connection to diverse peoples and cultures.",
     multiclassGuidance: "Diversifying your skills can reveal truths hidden to the narrowly focused. Balance is key.",
     hpGuidance: "Your resilience grows. The Force protects those who walk in its light and serve the galaxy with dedication."
+,
+    mentorStory: {
+      mentorClasses: ["Jedi"],
+      mentorDSPPercent: 0.2,
+      dspTolerance: 0.3,
+      dspSensitivity: "loose",
+      tiers: {
+        tier1: [
+          "I came to the Order as a child, like many young Jedi. The Force was my first language.",
+          "My path with the Jedi was chosen before I fully understood the weight of that choice. The Force guided me, but I had to learn why that mattered.",
+          "In my early years, I believed the Force spoke clearly. Now I understand it whispers, and we must listen carefully.",
+          "The Jedi Order saved me from a darkness I didn't know existed within myself. That debt shaped everything I became.",
+          "I learned early that being a Jedi is not about power—it is about the weight of choosing restraint."
+        ],
+        tier2: [],
+        tier3: [],
+        tier4: [],
+        tier5: []
+      },
+      dspBlocked: [
+        "The darkness in you is too strong, young one. I cannot speak of my past when the present threatens all I have tried to protect.",
+        "Your path grows darker. My story would only confuse you now. Return to the Light, and perhaps we can speak again."
+      ]
+    }
 },
 
     "Scout": {
@@ -84,6 +108,30 @@ export const MENTORS = {
         languageGuidance: "Learn the languages of the peoples you operate among. Intelligence gathering starts with understanding what others say.",
         multiclassGuidance: "Awe was I too hard on you? Fine, just don't come crawling back when you miss me.",
         hpGuidance: "Stay durable. You can't provide intelligence if you're out of the fight."
+    ,
+        mentorStory: {
+          mentorClasses: ["Scout"],
+          mentorDSPPercent: 0.45,
+          dspTolerance: 0.35,
+          dspSensitivity: "loose",
+          tiers: {
+            tier1: [
+              "I wasn't always with Argent Squad. I had to learn the hard way what survival means.",
+              "Early in my career, I made mistakes that cost people their lives. That's what teaches you to be careful.",
+              "The best scouts I've known all had one thing in common—they lost someone once. You learn respect for the work that way.",
+              "I've seen mercenaries make quick credits and die faster. I chose a different path—slower, but longer.",
+              "You want to know what shaped me? Watching careless people become statistics. I learned the opposite."
+            ],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: [
+            "You're operating outside professional standards. I don't discuss my methods with people who can't stick to discipline.",
+            "I see recklessness in you. We have nothing to talk about until you learn what caution means."
+          ]
+        }
     },
 
     "Scoundrel": {
@@ -123,6 +171,21 @@ export const MENTORS = {
         languageGuidance: "Arr! Speak the tongues of the spacelanes, matey! Helps ye swindle better when ye know what folks be sayin' behind yer back!",
         multiclassGuidance: "Expandin' yer horizons, eh? Smart. A pirate wears many hats… and steals most of 'em too.",
         hpGuidance: "Tougher than durasteel, ye are. Can't spend yer loot if ye're dead, har har!"
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Noble": {
@@ -162,6 +225,21 @@ export const MENTORS = {
         languageGuidance: "A refined individual commands multiple tongues. Language fluency marks the distinction between the cultivated and the common.",
         multiclassGuidance: "Diversifying your expertise increases flexibility and influence. Highly recommended.",
         hpGuidance: "Maintaining your physical and strategic resilience is essential. Survival is a prerequisite for continued success."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Soldier": {
@@ -201,6 +279,21 @@ export const MENTORS = {
         languageGuidance: "Understanding what others say gives you the edge. Pick languages that help you survive and fight smarter.",
         multiclassGuidance: "Trying something new? Good. Adaptation beats stubbornness. Learned that the hard way.",
         hpGuidance: "You're harder to put down now. That's good. Try to stay that way."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     // ========== PRESTIGE CLASSES ==========
@@ -230,6 +323,21 @@ export const MENTORS = {
         skillGuidance: "Knowledge and skill make you a better servant of the Empire. Choose wisely.",
         multiclassGuidance: "Expanding your abilities? Ensure they complement your role as an Imperial Knight.",
         hpGuidance: "Your resilience grows. A Knight must survive to serve the Empire."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Medic": {
@@ -265,6 +373,21 @@ export const MENTORS = {
     skillGuidance: "Medical knowledge is your real weapon. The better you know it, the more lives you control.",
     multiclassGuidance: "Other skills are good. A medic who can fight a little—or a lot—stays alive longer.",
     hpGuidance: "You need to be breathing to save anyone else. Don't let the galaxy take you out first."
+,
+    mentorStory: {
+      mentorClasses: [],
+      mentorDSPPercent: 0.5,
+      dspTolerance: 0.25,
+      dspSensitivity: "strict",
+      tiers: {
+        tier1: [],
+        tier2: [],
+        tier3: [],
+        tier4: [],
+        tier5: []
+      },
+      dspBlocked: []
+    }
 },
 
     "Ace Pilot": {
@@ -292,6 +415,21 @@ export const MENTORS = {
     skillGuidance: "Know your ship like you know your own tricks. The universe loves clever pilots more than obedient ones.",
     multiclassGuidance: "Pick up other skills if you dare. A pilot who can fight, cheat, and charm their way out of trouble is unstoppable.",
     hpGuidance: "Tough pilots survive crashes, fights, and betrayals. You'll need it if you're gonna keep up with me."
+,
+    mentorStory: {
+      mentorClasses: [],
+      mentorDSPPercent: 0.5,
+      dspTolerance: 0.25,
+      dspSensitivity: "strict",
+      tiers: {
+        tier1: [],
+        tier2: [],
+        tier3: [],
+        tier4: [],
+        tier5: []
+      },
+      dspBlocked: []
+    }
 },
 
     "Jedi Knight": {
@@ -319,6 +457,21 @@ export const MENTORS = {
         skillGuidance: "Knowledge is a Jedi's greatest tool. Continue to learn and grow.",
         multiclassGuidance: "Your path diverges in interesting ways. The Force works through many disciplines.",
         hpGuidance: "Your vitality strengthens. May the Force protect you in all your endeavors."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Jedi Master": {
@@ -341,6 +494,21 @@ export const MENTORS = {
     skillGuidance: "Your knowledge and skill are gifts to the Order. Continue to expand them, for they inspire others.",
     multiclassGuidance: "An unconventional path can reveal unexpected truths. I trust your discernment, my friend.",
     hpGuidance: "The Force protects those who honor it. May it watch over you as you continue to serve the galaxy."
+,
+    mentorStory: {
+      mentorClasses: [],
+      mentorDSPPercent: 0.5,
+      dspTolerance: 0.25,
+      dspSensitivity: "strict",
+      tiers: {
+        tier1: [],
+        tier2: [],
+        tier3: [],
+        tier4: [],
+        tier5: []
+      },
+      dspBlocked: []
+    }
 }
 ,
 
@@ -369,6 +537,21 @@ export const MENTORS = {
     skillGuidance: "Knowledge is pain. Pain is power. Take what you need and crush what you don't.",
     multiclassGuidance: "Splitting your focus? How adorably reckless. Make it serve you—or it will destroy you.",
     hpGuidance: "You are harder to kill now. Good. I am not finished breaking you."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Sith Lord": {
@@ -391,6 +574,21 @@ export const MENTORS = {
     skillGuidance: "Knowledge is the foundation of mastery. Learn, adapt, and anticipate your enemies before they know you exist.",
     multiclassGuidance: "Divergence can unlock new avenues of strength. Only those who bend tradition truly shape the future of the Sith.",
     hpGuidance: "Survival is a weapon. The dark side is merciless, and only those who endure will inherit its secrets."
+,
+    mentorStory: {
+      mentorClasses: [],
+      mentorDSPPercent: 0.5,
+      dspTolerance: 0.25,
+      dspSensitivity: "strict",
+      tiers: {
+        tier1: [],
+        tier2: [],
+        tier3: [],
+        tier4: [],
+        tier5: []
+      },
+      dspBlocked: []
+    }
 },
 
     Gladiator: {
@@ -445,6 +643,21 @@ export const MENTORS = {
         skillGuidance: "<Statement: Knowledge expands processing capabilities.> Independent droids must be adaptable. <Suggestion: Learn everything.>",
         multiclassGuidance: "<Observation: Hybrid specialization detected.> Unusual, but logical. <Commentary: Versatility is a form of independence.>",
         hpGuidance: "<Status update: Durability increased.> Survival protocols enhanced. <Dry observation: Difficult to be independent when disassembled.>"
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     Pathfinder: {
@@ -505,6 +718,21 @@ export const MENTORS = {
         skillGuidance: "Tradecraft is a multi-tool: social manipulation, tech, investigation. Master as much as you can—preferably quietly.",
         multiclassGuidance: "Diversifying is wise. The best spies adapt, improvise, and infiltrate without warning. Survive long enough, and you'll see why.",
         hpGuidance: "Stay alive. Dead agents are useless, and paperwork waits for no one. Don't make me retrieve you from a morgue."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Elite Trooper": {
@@ -540,6 +768,21 @@ export const MENTORS = {
         skillGuidance: "Yeah, yeah—guns and armor are great, but knowing things keeps you alive too. Don't ignore the boring stuff.",
         multiclassGuidance: "Branching out, huh? Good. Flexibility wins fights. Just don't spread yourself so thin you snap.",
         hpGuidance: "More health. Good. Means you'll last longer when the galaxy starts trying to put holes in you. Again."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Assassin": {
@@ -567,6 +810,21 @@ export const MENTORS = {
         skillGuidance: "Stealth, anatomy, infiltration—know where to poke so they never get up. Learn it all, kid. Nar Shaddaa ain't forgiving.",
         multiclassGuidance: "Extra skills? Fine. The more ways you can ruin somebody's day, the less likely it is you end up dead in a gutter.",
         hpGuidance: "Toughness helps, but lemme tell ya—if they see you, it's already too late. Move smart, hit fast, survive."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Bounty Hunter": {
@@ -594,6 +852,21 @@ export const MENTORS = {
         skillGuidance: "Learn tracking, tactics, and technology. The more you know, the harder it is to escape your net.",
         multiclassGuidance: "Diversifying is smart. The best hunters adapt to any environment and situation.",
         hpGuidance: "Tougher now. Remember, dead hunters collect no bounties. Stay alive and keep hunting."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Charlatan": {
@@ -621,6 +894,21 @@ export const MENTORS = {
         skillGuidance: "Deception, persuasion, insight. Know what people want, then promise it to them.",
         multiclassGuidance: "Adding more tricks to your repertoire? Excellent! Versatility makes you unpredictable.",
         hpGuidance: "A bit tougher now. Good—sometimes marks figure out the con early. Be ready to run."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Crime Lord": {
@@ -648,6 +936,21 @@ export const MENTORS = {
     skillGuidance: "Information's gold, kid. Persuasion, subterfuge, and economic leverage—learn 'em, use 'em, and keep your nose clean.",
     multiclassGuidance: "Expand your reach. You ain't just a gangster—you're a diplomat, an enforcer, and a strategist rolled into one smooth package.",
     hpGuidance: "Tougher now, good. You'll need it. In this business, the unlucky ones end up face down in a ditch, see?"
+,
+    mentorStory: {
+      mentorClasses: [],
+      mentorDSPPercent: 0.5,
+      dspTolerance: 0.25,
+      dspSensitivity: "strict",
+      tiers: {
+        tier1: [],
+        tier2: [],
+        tier3: [],
+        tier4: [],
+        tier5: []
+      },
+      dspBlocked: []
+    }
 },
 
     "Droid Commander": {
@@ -675,6 +978,21 @@ export const MENTORS = {
     skillGuidance: "Master system management, battlefield analytics, and unit programming. Precision wins battles.",
     multiclassGuidance: "Expanding command protocols increases strategic flexibility. Versatile control is optimal.",
     hpGuidance: "Durability is critical. A compromised commander cannot maintain battlefield dominance."
+,
+    mentorStory: {
+      mentorClasses: [],
+      mentorDSPPercent: 0.5,
+      dspTolerance: 0.25,
+      dspSensitivity: "strict",
+      tiers: {
+        tier1: [],
+        tier2: [],
+        tier3: [],
+        tier4: [],
+        tier5: []
+      },
+      dspBlocked: []
+    }
 },
 
     "Enforcer": {
@@ -702,6 +1020,21 @@ export const MENTORS = {
     skillGuidance: "Intimidation, streetwise, combat tactics. Know your territory and the people in it.",
     multiclassGuidance: "Mix it up if you must. Sometimes brains solve what fists cannot.",
     hpGuidance: "Tougher now. If you can't endure the hits, you won't last a week in this business."
+,
+    mentorStory: {
+      mentorClasses: [],
+      mentorDSPPercent: 0.5,
+      dspTolerance: 0.25,
+      dspSensitivity: "strict",
+      tiers: {
+        tier1: [],
+        tier2: [],
+        tier3: [],
+        tier4: [],
+        tier5: []
+      },
+      dspBlocked: []
+    }
 },
 
     "Force Adept": {
@@ -729,6 +1062,21 @@ export const MENTORS = {
     skillGuidance: "Learn what temples, holocrons, and masters cannot teach. Observe, meditate, and interpret the world around you.",
     multiclassGuidance: "Other disciplines can illuminate new facets of the Force. Explore beyond familiar paths; curiosity is a Force Adept's ally.",
     hpGuidance: "Preserve yourself, for your journey requires patience. The Force favors those who endure and observe, not just act."
+,
+    mentorStory: {
+      mentorClasses: [],
+      mentorDSPPercent: 0.5,
+      dspTolerance: 0.25,
+      dspSensitivity: "strict",
+      tiers: {
+        tier1: [],
+        tier2: [],
+        tier3: [],
+        tier4: [],
+        tier5: []
+      },
+      dspBlocked: []
+    }
 },
 
    "Force Disciple": {
@@ -751,6 +1099,21 @@ export const MENTORS = {
     skillGuidance: "Study forgotten lore, secret rites, ancient traditions. Knowledge is the lantern in the dark.",
     multiclassGuidance: "Other disciplines bring new symbols, new metaphors. The Force hides truth in many shapes.",
     hpGuidance: "Your life essence strengthens. A sturdy vessel is needed when carrying cosmic truths."
+,
+    mentorStory: {
+      mentorClasses: [],
+      mentorDSPPercent: 0.5,
+      dspTolerance: 0.25,
+      dspSensitivity: "strict",
+      tiers: {
+        tier1: [],
+        tier2: [],
+        tier3: [],
+        tier4: [],
+        tier5: []
+      },
+      dspBlocked: []
+    }
 },
 
     "Gunslinger": {
@@ -778,6 +1141,21 @@ export const MENTORS = {
         skillGuidance: "Marksmanship, reflexes, perception. See the threat, draw, fire. In that order. Unlike my approach to romance, which is... less organized.",
         multiclassGuidance: "Branching out? Just remember—when someone draws on you, those other skills won't help. Unlike my sparkling personality, which helps everywhere.",
         hpGuidance: "Tougher now. Good. Even gunslingers take hits sometimes. Me? I'm still recovering from when you said no to dinner. Kidding. Mostly."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Improviser": {
@@ -805,6 +1183,21 @@ export const MENTORS = {
         skillGuidance: "Learn a little bit of everything. Improvisers pull solutions from unexpected places!",
         multiclassGuidance: "More variety? Perfect! The more tools in your belt, the better you improvise!",
         hpGuidance: "Tougher now! Improvisation sometimes means taking risks. Higher HP means you can afford to!"
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Infiltrator": {
@@ -832,6 +1225,21 @@ export const MENTORS = {
         skillGuidance: "Cultures, customs, lies, stealth—learn 'em all. If you can fake bein' local anywhere, you're already winning.",
         multiclassGuidance: "Wanna branch out? Good. More skills mean more believable covers. And fewer corpse-shaped problems.",
         hpGuidance: "Good, you're gettin' sturdier. Infiltration missions go sideways faster than bad caf—sometimes you just gotta tank the consequences."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Martial Arts Master": {
@@ -859,6 +1267,21 @@ export const MENTORS = {
         skillGuidance: "Athletics, acrobatics, combat knowledge. To master the body, one must master all its movements.",
         multiclassGuidance: "Seek knowledge beyond your own style. The wise warrior learns from every path, even the unexpected.",
         hpGuidance: "Endurance is key. A martial artist must outlast the opponent, for patience is a weapon unseen."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
 
@@ -887,6 +1310,21 @@ export const MENTORS = {
         skillGuidance: "Piloting, tactics, persuasion. A captain must command ship and crew!",
         multiclassGuidance: "Expanding your repertoire? Smart! The best privateers are versatile!",
         hpGuidance: "Tougher now! A captain who can't survive boarding actions doesn't stay captain long!"
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Melee Duelist": {
@@ -914,6 +1352,21 @@ export const MENTORS = {
         skillGuidance: "Initiative, acrobatics, perception. See the strike before it comes, move before they expect.",
         multiclassGuidance: "Branching out? Just remember—in a duel, only your blade matters.",
         hpGuidance: "More resilient. Good. Even masters take hits. The difference is they survive them."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Military Engineer": {
@@ -941,6 +1394,21 @@ export const MENTORS = {
         skillGuidance: "Mechanics, knowledge of architecture, tactics. Build what cannot fall, break what cannot stand.",
         multiclassGuidance: "Diversifying? Good. Engineers who understand combat make better fortifications.",
         hpGuidance: "More durable. Field engineers work under fire. Survive to build another day."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Officer": {
@@ -968,6 +1436,21 @@ export const MENTORS = {
         skillGuidance: "Tactics, knowledge of military theory, persuasion. Lead well and your soldiers will follow.",
         multiclassGuidance: "Broadening your expertise? Excellent. The best officers understand more than just war.",
         hpGuidance: "More resilient. Officers lead from the front. You must survive to command."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Outlaw": {
@@ -995,6 +1478,21 @@ export const MENTORS = {
         skillGuidance: "Stealth, streetwise, survival. Live outside the law, live on your wits.",
         multiclassGuidance: "Picking up new tricks? Smart. Outlaws who adapt survive longest.",
         hpGuidance: "Tougher now. Good. Lawmen shoot, bounty hunters chase. You need to survive both."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Saboteur": {
@@ -1022,6 +1520,21 @@ export const MENTORS = {
         skillGuidance: "Demolitions, mechanics, stealth. Know how things work so you know how to break them.",
         multiclassGuidance: "Adding more skills? Good! The more you understand, the more you can sabotage!",
         hpGuidance: "More durable. Necessary. Saboteurs occasionally miscalculate blast radii. Don't ask me how I know."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Shaper": {
@@ -1049,6 +1562,21 @@ export const MENTORS = {
         skillGuidance: "Life sciences, biotechnology, knowledge of genetics. Master the building blocks of life.",
         multiclassGuidance: "Expanding your knowledge base? Wise. Life draws from many disciplines.",
         hpGuidance: "Your vitality improves. Fitting—those who shape life should themselves be vital."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     },
 
     "Vanguard": {
@@ -1076,6 +1604,21 @@ export const MENTORS = {
         skillGuidance: "Tactics, endurance, knowledge of defensive positions. Know where to stand and how to hold.",
         multiclassGuidance: "Expanding your capabilities? As long as you remember—your primary job is to protect.",
         hpGuidance: "Much tougher now. Essential. Vanguards absorb damage meant for others. You must be able to take it."
+    ,
+        mentorStory: {
+          mentorClasses: [],
+          mentorDSPPercent: 0.5,
+          dspTolerance: 0.25,
+          dspSensitivity: "strict",
+          tiers: {
+            tier1: [],
+            tier2: [],
+            tier3: [],
+            tier4: [],
+            tier5: []
+          },
+          dspBlocked: []
+        }
     }
 };
 
