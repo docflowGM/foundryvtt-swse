@@ -153,6 +153,13 @@ export async function _onSelectFeat(event) {
     return;
   }
 
+  // Check feat slot limit (unless free build mode is on)
+  if (!this.freeBuild && this.characterData.feats.length >= this.characterData.featsRequired) {
+    SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Feat slot limit reached (${this.characterData.feats.length}/${this.characterData.featsRequired})`);
+    ui.notifications.warn(`You've already selected the maximum number of feats (${this.characterData.featsRequired})!`);
+    return;
+  }
+
   // If leveling up, also check existing actor items
   if (this.actor) {
     SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Checking actor items for existing feat...`);
@@ -235,8 +242,22 @@ export async function _onSelectFeat(event) {
     }
   }
 
+  // Save filter state before render
+  const filterCheckbox = document.querySelector('.filter-valid-feats');
+  const wasFilterActive = filterCheckbox?.checked || false;
+
   // Re-render to show updated feat selection and enable Next button if requirement met
   await this.render();
+
+  // Restore filter state after render
+  if (wasFilterActive) {
+    const newFilterCheckbox = document.querySelector('.filter-valid-feats');
+    if (newFilterCheckbox) {
+      newFilterCheckbox.checked = true;
+      // Trigger change event to apply filter
+      newFilterCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  }
 }
 
 /**
@@ -496,6 +517,12 @@ export async function _onSelectTalent(event) {
       return;
     }
 
+    // Check talent slot limit for Block & Deflect (grants 2 talents)
+    if (!this.freeBuild && (this.characterData.talents.length + talentsToAdd.length) > this.characterData.talentsRequired) {
+      ui.notifications.warn(`You don't have enough talent slots for Block & Deflect (requires ${talentsToAdd.length} slots, you have ${this.characterData.talentsRequired - this.characterData.talents.length} available)!`);
+      return;
+    }
+
     // Check for duplicates and prerequisites for each talent
     for (const talentToAdd of talentsToAdd) {
       const alreadySelected = this.characterData.talents.find(t => t.name === talentToAdd.name || t._id === talentToAdd._id);
@@ -546,6 +573,12 @@ export async function _onSelectTalent(event) {
     const alreadySelected = this.characterData.talents.find(t => t.name === tal.name || t._id === tal._id);
     if (alreadySelected) {
       ui.notifications.warn(`You've already selected "${tal.name}"!`);
+      return;
+    }
+
+    // Check talent slot limit (unless free build mode is on)
+    if (!this.freeBuild && this.characterData.talents.length >= this.characterData.talentsRequired) {
+      ui.notifications.warn(`You've already selected the maximum number of talents (${this.characterData.talentsRequired})!`);
       return;
     }
 

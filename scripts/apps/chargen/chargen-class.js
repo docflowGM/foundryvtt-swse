@@ -322,8 +322,9 @@ export async function _onSelectClass(event) {
     SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Checking if mentor survey should be offered for class "${className}"...`);
     const tempActor = this._createTempActorForValidation();
     const surveyCompleted = MentorSurvey.hasSurveyBeenCompleted(tempActor);
-    const isBaseClassSelection = isBaseClass(classDef);
-    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Survey already completed: ${surveyCompleted}, Is base class: ${isBaseClassSelection}`);
+    // Ensure classDef has baseClass flag for base class check (fallback to checking className directly)
+    const isBaseClassSelection = isBaseClass(classDef) || isBaseClass(className);
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Survey already completed: ${surveyCompleted}, Is base class: ${isBaseClassSelection}, classDefHasFlag: ${classDef?.baseClass !== undefined}`);
 
     if (!surveyCompleted && isBaseClassSelection) {
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Offering mentor survey prompt for base class "${className}"...`);

@@ -8,6 +8,7 @@ import { SWSELogger } from '../utils/logger.js';
 import CharacterGeneratorImproved from './chargen-improved.js';
 import { MENTORS } from './mentor-dialogues.js';
 import { TalentTreeVisualizer } from './talent-tree-visualizer.js';
+import { getTalentTreeName } from './chargen/chargen-property-accessor.js';
 
 export default class CharacterGeneratorNarrative extends CharacterGeneratorImproved {
 
@@ -339,7 +340,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   }
 
   async _showTalentTreeDialog(treeName) {
-    const talents = this.talentData.filter(t => (t.system?.talent_tree === treeName || t.system?.tree === treeName) || t.name.includes(treeName));
+    const talents = this.talentData.filter(t => getTalentTreeName(t) === treeName);
 
     if (talents.length === 0) {
       ui.notifications.warn(`No talents found for ${treeName}`);

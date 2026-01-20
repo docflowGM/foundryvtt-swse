@@ -3018,3 +3018,81 @@
 .ask-mentor-btn i {
     margin-right: 5px;
 }
+
+/* ============================================
+   Narrator Comment / Mentor Chat Styling
+   ============================================ */
+
+.narrator-comment {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(0, 50, 30, 0.4) 0%, rgba(0, 30, 20, 0.6) 100%);
+    border: 2px solid rgba(0, 255, 136, 0.5);
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.2), inset 0 0 20px rgba(0, 255, 136, 0.05);
+}
+
+.narrator-avatar {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.narrator-avatar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    border: 2px solid rgba(0, 255, 136, 0.6);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+}
+
+.ask-mentor-skills-btn {
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.8) 0%, rgba(0, 200, 100, 0.6) 100%);
+    border: 2px solid #00ff88;
+    color: #001a0f;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+}
+
+.ask-mentor-skills-btn:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 136, 1) 0%, rgba(0, 200, 100, 0.8) 100%);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
+    transform: scale(1.1);
+}
+
+.narrator-speech-bubble {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.narrator-speech-bubble p {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: #00ff88;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.2);
+    margin: 0;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.narrator-speech-bubble strong {
+    color: #00ffaa;
+    font-weight: 600;
+    text-shadow: 0 0 15px rgba(0, 255, 170, 0.6);
+}

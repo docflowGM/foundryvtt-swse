@@ -540,6 +540,17 @@
       <h3>Select a Bonus Feat</h3>
       <p class="hint">At level {{newLevel}}, you gain a bonus feat. Choose one that fits your character concept.</p>
 
+      {{#if selectedFeats}}
+      <div class="selected-feats-display">
+        <h4>Selected Feats:</h4>
+        {{#each selectedFeats}}
+        <div class="selected-feat">
+          <strong>{{this.name}}</strong> - {{this.system.benefit}}
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
       {{!-- FEAT SEARCH AND FILTER CONTROLS --}}
       <div class="feat-controls">
         <div class="feat-search-bar">
@@ -664,17 +675,6 @@
         {{/each}}
       </div>
 
-      {{#if selectedFeats}}
-      <div class="selected-feats-display">
-        <h4>Selected Feats:</h4>
-        {{#each selectedFeats}}
-        <div class="selected-feat">
-          <strong>{{this.name}}</strong> - {{this.system.benefit}}
-        </div>
-        {{/each}}
-      </div>
-      {{/if}}
-
       <div class="form-actions">
         <button class="prev-step btn-secondary">
           <i class="fas fa-arrow-left"></i> Back
@@ -704,6 +704,16 @@
         {{/if}}
       </p>
 
+      <div class="selected-talent-display">
+        {{#if selectedTalent}}
+        <div class="selected-talent-card">
+          <i class="fas fa-check-circle"></i>
+          <h4>Selected: {{selectedTalent.name}}</h4>
+          <p>{{selectedTalent.system.benefit}}</p>
+        </div>
+        {{/if}}
+      </div>
+
       <div class="talent-selection-intro">
         <div class="talent-intro-card">
           <div class="talent-intro-icon">
@@ -728,16 +738,6 @@
             </button>
             {{/each}}
           </div>
-        </div>
-        {{/if}}
-      </div>
-
-      <div class="selected-talent-display">
-        {{#if selectedTalent}}
-        <div class="selected-talent-card">
-          <i class="fas fa-check-circle"></i>
-          <h4>Selected: {{selectedTalent.name}}</h4>
-          <p>{{selectedTalent.system.benefit}}</p>
         </div>
         {{/if}}
       </div>

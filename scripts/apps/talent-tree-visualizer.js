@@ -5,6 +5,7 @@
 
 import { PrerequisiteValidator } from '../utils/prerequisite-validator.js';
 import { SuggestionEngine } from '../engine/SuggestionEngine.js';
+import { getTalentTreeName } from './chargen/chargen-property-accessor.js';
 
 export class TalentTreeVisualizer {
 
@@ -56,7 +57,7 @@ export class TalentTreeVisualizer {
     const talentsByTree = {};
 
     talentData.forEach(talent => {
-      const treeName = talent.system?.talent_tree || talent.system?.tree;
+      const treeName = getTalentTreeName(talent);
       if (treeName) {
         if (!talentsByTree[treeName]) {
           talentsByTree[treeName] = [];
@@ -238,9 +239,7 @@ export class TalentTreeVisualizer {
    */
   static async showEnhancedTalentTree(treeName, talentData, actor, onSelectTalent) {
     // Filter talents for this tree
-    let talents = talentData.filter(t =>
-      (t.system?.talent_tree === treeName || t.system?.tree === treeName) || t.name.includes(treeName)
-    );
+    let talents = talentData.filter(t => getTalentTreeName(t) === treeName);
 
     if (talents.length === 0) {
       ui.notifications.warn(`No talents found for ${treeName}`);
