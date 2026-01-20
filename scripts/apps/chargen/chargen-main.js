@@ -1232,7 +1232,7 @@ export default class CharacterGenerator extends Application {
     $html.find('.change-background-btn').click(this._onChangeBackground.bind(this));
 
     // Mentor "Ask Your Mentor" button
-    $html.find('.ask-mentor-btn').click(this._onAskMentor.bind(this));
+    $html.find('.ask-mentor-btn, .ask-mentor-skills-btn').click(this._onAskMentor.bind(this));
 
     // Droid builder/shop
     $html.find('.shop-tab').click(this._onShopTabClick.bind(this));
