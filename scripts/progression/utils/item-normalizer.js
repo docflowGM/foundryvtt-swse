@@ -39,12 +39,14 @@ export function normalizeFeatData(rawFeat) {
 export function normalizeTalentData(rawTalent) {
     const talent = foundry.utils.deepClone(rawTalent);
 
-    // Normalize tree name
-    talent.system.talent_tree =
-        talent.system.talent_tree ||
-        talent.system.tree ||
-        talent.system.talentTree ||
-        "";
+    // Ensure system object exists
+    if (!talent.system) {
+        talent.system = {};
+    }
+
+    // Preserve existing tree name or set to empty
+    const treeValue = talent.system.talent_tree || talent.system.tree || talent.system.talentTree || "";
+    talent.system.talent_tree = treeValue;
 
     // Prerequisites: normalize to structured format
     talent.system.prerequisites = normalizePrerequisiteString(talent.system.prerequisites);

@@ -761,7 +761,7 @@ export class PrerequisiteValidator {
 
         const pendingFeats = pendingData.selectedFeats || [];
         const hasPendingFeat = pendingFeats.some(f =>
-            f.name.toLowerCase() === prereq.featName.toLowerCase()
+            f?.name && f.name.toLowerCase() === prereq.featName.toLowerCase()
         );
 
         if (!hasFeat && !hasPendingFeat) {

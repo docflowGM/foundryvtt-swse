@@ -20,9 +20,10 @@ export const BASE_CLASSES = ['Jedi', 'Noble', 'Scoundrel', 'Scout', 'Soldier'];
  * @returns {boolean} - true if base class, false if prestige
  */
 export function isBaseClass(classDocOrName) {
-  // If it's an object with system.base_class, use that (authoritative source)
+  // If it's an object, check for base_class flag
   if (typeof classDocOrName === 'object' && classDocOrName !== null) {
-    const baseClassFlag = classDocOrName.system?.base_class;
+    // Check both normalized (baseClass) and raw (system.base_class) formats
+    const baseClassFlag = classDocOrName.baseClass ?? classDocOrName.system?.base_class;
     // Explicit true means base class, anything else (false/undefined) means prestige
     return baseClassFlag === true;
   }
