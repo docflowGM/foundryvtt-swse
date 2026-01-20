@@ -20,6 +20,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { BuildIntent } from './BuildIntent.js';
+import { MentorSurvey } from '../apps/mentor-survey.js';
 import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies.js';
 
 // ──────────────────────────────────────────────────────────────
@@ -113,7 +114,11 @@ export class SuggestionEngine {
                 buildIntent = await BuildIntent.analyze(actor, pendingData);
             } catch (err) {
                 SWSELogger.warn('SuggestionEngine | Failed to analyze build intent:', err);
-                buildIntent = null;
+                // Create minimal fallback buildIntent with mentor biases to preserve mentor-based suggestions
+                const mentorBiases = MentorSurvey.getMentorBiases(actor);
+                buildIntent = mentorBiases && Object.keys(mentorBiases).length > 0
+                    ? { mentorBiases }
+                    : null;
             }
         }
 
@@ -155,7 +160,11 @@ export class SuggestionEngine {
                 buildIntent = await BuildIntent.analyze(actor, pendingData);
             } catch (err) {
                 SWSELogger.warn('SuggestionEngine | Failed to analyze build intent:', err);
-                buildIntent = null;
+                // Create minimal fallback buildIntent with mentor biases to preserve mentor-based suggestions
+                const mentorBiases = MentorSurvey.getMentorBiases(actor);
+                buildIntent = mentorBiases && Object.keys(mentorBiases).length > 0
+                    ? { mentorBiases }
+                    : null;
             }
         }
 
@@ -576,7 +585,7 @@ export class SuggestionEngine {
     }
 
     static _isForceItem(name) {
-        const forceKeywords = ['force', 'jedi', 'sith', 'darksider', 'lightsaber', 'telekinesis', 'mind trick', 'persuasion'];
+        const forceKeywords = ['force', 'jedi', 'sith', 'darksider', 'lightsaber', 'telekinesis', 'mind trick'];
         return forceKeywords.some(k => name.toLowerCase().includes(k));
     }
 

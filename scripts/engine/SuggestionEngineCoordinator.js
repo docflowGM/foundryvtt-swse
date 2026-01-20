@@ -138,7 +138,12 @@ export class SuggestionEngineCoordinator {
   static async analyzeBuildIntent(actor, pendingData = {}) {
     try {
       SWSELogger.log(`[SUGGESTION-COORDINATOR] analyzeBuildIntent() START - Actor: ${actor.id} (${actor.name})`);
-      const cacheKey = `${actor.id}_${JSON.stringify(pendingData)}`;
+      // Use deterministic cache key with sorted property order
+      const sortedPendingData = Object.keys(pendingData).sort().reduce((acc, key) => {
+        acc[key] = pendingData[key];
+        return acc;
+      }, {});
+      const cacheKey = `${actor.id}_${JSON.stringify(sortedPendingData)}`;
 
       // Return cached result if available
       if (this._buildIntentCache.has(cacheKey)) {

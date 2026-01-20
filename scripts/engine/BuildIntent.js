@@ -614,11 +614,12 @@ export class BuildIntent {
             }
 
             // Calculate max possible score
+            const talentTreeWeight = signals.weight.talentTrees || signals.weight.talents;
             const maxScore =
                 signals.feats.length * signals.weight.feats +
                 signals.skills.length * signals.weight.skills +
                 signals.talents.length * signals.weight.talents +
-                signals.talentTrees.length * signals.weight.talents +
+                signals.talentTrees.length * talentTreeWeight +
                 signals.abilities.length * signals.weight.abilities;
 
             // Normalize to 0-1
