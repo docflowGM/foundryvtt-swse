@@ -3096,3 +3096,156 @@
     font-weight: 600;
     text-shadow: 0 0 15px rgba(0, 255, 170, 0.6);
 }
+
+/* ============================================
+   Mentor Header Section - Static Feature
+   ============================================ */
+
+.chargen-header {
+    background: linear-gradient(180deg, rgba(15, 25, 45, 0.95) 0%, rgba(10, 15, 26, 0.9) 100%);
+    border-bottom: 2px solid #0af;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mentor-header-section {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 175, 255, 0.3);
+}
+
+.mentor-portrait-container {
+    flex-shrink: 0;
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #0af;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mentor-portrait {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.mentor-portrait-placeholder {
+    font-size: 3rem;
+    color: #0af;
+}
+
+.mentor-dialogue-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: space-between;
+}
+
+.mentor-header-info {
+    flex: 1;
+}
+
+.mentor-name {
+    margin: 0 0 0.5rem 0;
+    color: #00ffaa;
+    font-size: 1.1rem;
+    text-shadow: 0 0 15px rgba(0, 255, 170, 0.6);
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 600;
+}
+
+.mentor-dialogue-text {
+    margin: 0;
+    color: #00ff88;
+    font-size: 1rem;
+    line-height: 1.5;
+    font-family: 'Consolas', 'Courier New', monospace;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.2);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.mentor-header-btn {
+    align-self: flex-start;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, rgba(0, 175, 255, 0.2) 0%, rgba(0, 100, 255, 0.1) 100%);
+    border: 1px solid #0af;
+    border-radius: 4px;
+    color: #0af;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.mentor-header-btn:hover {
+    background: linear-gradient(135deg, rgba(0, 175, 255, 0.4) 0%, rgba(0, 100, 255, 0.2) 100%);
+    box-shadow: 0 0 15px rgba(0, 175, 255, 0.6), inset 0 0 10px rgba(0, 175, 255, 0.2);
+}
+
+.chargen-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.chargen-header-info h2 {
+    margin: 0;
+    flex: 1;
+    color: #00ffaa;
+    text-shadow: 0 0 15px rgba(0, 255, 170, 0.5);
+}
+
+.header-controls {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.step-indicator {
+    color: #9ed0ff;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.step-indicator strong {
+    color: #0af;
+    text-transform: uppercase;
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(0, 175, 255, 0.5);
+}
+
+.free-build-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #9ed0ff;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.free-build-label input {
+    cursor: pointer;
+}
+
+.free-build-label i {
+    color: #ffa500;
+}
+
+.hint-text {
+    display: none;
+}

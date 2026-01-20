@@ -2,7 +2,38 @@
 <!-- SWSE Character Generator Template - Fixed -->
 <div class="chargen-app swse-chargen">
  <header class="chargen-header">
+ {{!-- Mentor Section - Static Header Feature --}}
+ <div class="mentor-header-section">
+ <div class="mentor-portrait-container">
+ {{#if mentor}}
+ <img src="{{mentor.portrait}}" alt="{{mentor.name}}" class="mentor-portrait" />
+ {{else}}
+ <div class="mentor-portrait-placeholder">
+ <i class="fas fa-user-circle"></i>
+ </div>
+ {{/if}}
+ </div>
+ <div class="mentor-dialogue-container">
+ {{#if mentor}}
+ <div class="mentor-header-info">
+ <h4 class="mentor-name">{{mentor.name}}</h4>
+ <p class="mentor-dialogue-text">{{narratorComment}}</p>
+ </div>
+ <button type="button" class="ask-mentor-btn mentor-header-btn" title="Get mentor suggestions">
+ <i class="fas fa-lightbulb"></i> Ask Your Mentor
+ </button>
+ {{else}}
+ <div class="mentor-header-info">
+ <p class="mentor-dialogue-text">Select a class to meet your mentor...</p>
+ </div>
+ {{/if}}
+ </div>
+ </div>
+
+ {{!-- Title and Controls Section --}}
+ <div class="chargen-header-info">
  <h2>Star Wars Saga Edition Character Generator</h2>
+ <div class="header-controls">
  <div class="step-indicator">Step: <strong>{{currentStep}}</strong></div>
  <div class="free-build-controls">
  <label class="free-build-label">
@@ -10,6 +41,8 @@
  <i class="fas fa-unlock-alt"></i> <strong>Free Build Mode</strong>
  <span class="hint-text">Skip validation and build freely</span>
  </label>
+ </div>
+ </div>
  </div>
  </header>
 
@@ -101,16 +134,7 @@
  <section class="step-name">
  <h3>Character Name & Level</h3>
 
- {{#if narratorComment}}
- <div class="narrator-comment">
- <div class="narrator-avatar">
- <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
- </div>
- <div class="narrator-speech-bubble">
- <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
- </div>
- </div>
- {{/if}}
+
 
  <div class="form-group">
  <label for="character-name">Enter your character's name:</label>
@@ -307,17 +331,6 @@
  <section class="step-species">
  <h3>Select Species</h3>
 
- {{#if narratorComment}}
- <div class="narrator-comment">
- <div class="narrator-avatar">
- <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
- </div>
- <div class="narrator-speech-bubble">
- <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
- </div>
- </div>
- {{/if}}
-
  {{!-- Species Filters --}}
  <div class="species-filters">
  <div class="filter-header">
@@ -370,6 +383,8 @@
  </div>
  </div>
  </div>
+
+
 
  <div class="species-grid">
  {{#each packs.species}}
@@ -587,6 +602,11 @@
  <button type="button" class="prev-step btn-secondary">
  <i class="fas fa-arrow-left"></i> Previous
  </button>
+ {{#if characterData.species}}
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ {{/if}}
  </div>
  </section>
  {{/if}}
@@ -831,18 +851,6 @@
  <section class="step-background">
  <h3>Choose Your Background</h3>
 
- {{!-- Mentor Commentary --}}
- {{#if characterData.backgroundNarratorComment}}
- <div class="narrator-comment background-narrator">
- <div class="narrator-avatar">
- <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
- </div>
- <div class="narrator-speech-bubble">
- <p><strong>{{mentor.name}}:</strong> {{characterData.backgroundNarratorComment}}</p>
- </div>
- </div>
- {{/if}}
-
  <p class="hint">Your background represents a defining aspect of your past. Choose ONE from Events, Occupations, or Planets.</p>
 
  {{!-- Category Tabs --}}
@@ -943,16 +951,7 @@
  <section class="step-abilities">
  <h3>Generate Ability Scores</h3>
 
- {{#if narratorComment}}
- <div class="narrator-comment">
- <div class="narrator-avatar">
- <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
- </div>
- <div class="narrator-speech-bubble">
- <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
- </div>
- </div>
- {{/if}}
+
 
  <div class="ability-header">
  <button type="button" id="free-build-btn" class="free-build-button">
@@ -1053,16 +1052,7 @@
  <p class="subtitle">Select your character's class</p>
  </header>
 
- {{#if narratorComment}}
- <div class="narrator-comment">
- <div class="narrator-avatar">
- <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
- </div>
- <div class="narrator-speech-bubble">
- <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
- </div>
- </div>
- {{/if}}
+
 
  {{#if characterData.classes}}
  {{#if (gt characterData.classes.length 0)}}
@@ -1108,19 +1098,7 @@
  <section class="step-feats">
  <h3>Select Starting Feat{{#if (gt characterData.featsRequired 1)}}s{{/if}}</h3>
 
- {{#if narratorComment}}
- <div class="narrator-comment">
- <div class="narrator-avatar">
- <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
- <button type="button" class="ask-mentor-btn" title="Get mentor suggestions">
- <i class="fas fa-lightbulb"></i> Ask Your Mentor
- </button>
- </div>
- <div class="narrator-speech-bubble">
- <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
- </div>
- </div>
- {{/if}}
+
 
  <p class="help-text">All characters gain 1 general feat at 1st level.{{#if (gt characterData.featsRequired 1)}} Humans gain 1 bonus feat.{{/if}}</p>
 
@@ -1247,19 +1225,7 @@
  <h3>Select Talents</h3>
  <p class="help-text">Choose talent(s) to specialize your character abilities.</p>
 
- {{#if narratorComment}}
- <div class="narrator-comment">
- <div class="narrator-avatar">
- <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
- <button type="button" class="ask-mentor-btn" title="Get mentor suggestions">
- <i class="fas fa-lightbulb"></i> Ask Your Mentor
- </button>
- </div>
- <div class="narrator-speech-bubble">
- <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
- </div>
- </div>
- {{/if}}
+
 
  {{!-- Selected Talents Summary --}}
  <div class="selected-talents-summary">
@@ -1469,19 +1435,7 @@
  <section class="step-skills">
  <h3>Select Trained Skills</h3>
 
- {{#if narratorComment}}
- <div class="narrator-comment">
- <div class="narrator-avatar">
- <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
- <button type="button" class="ask-mentor-skills-btn" title="Get mentor suggestions for skill selection">
- <i class="fas fa-lightbulb"></i> Ask Your Mentor
- </button>
- </div>
- <div class="narrator-speech-bubble">
- <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
- </div>
- </div>
- {{/if}}
+
 
  <p class="help-text">Select {{characterData.trainedSkillsAllowed}} class skills to train.</p>
 
@@ -1550,23 +1504,29 @@
  <section class="step-languages">
  <h3>Select Languages</h3>
 
- {{#if narratorComment}}
- <div class="narrator-comment">
- <div class="narrator-avatar">
- <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
- <button type="button" class="ask-mentor-btn" title="Get mentor suggestions">
- <i class="fas fa-lightbulb"></i> Ask Your Mentor
- </button>
- </div>
- <div class="narrator-speech-bubble">
- <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
- </div>
- </div>
- {{/if}}
+
 
  <p class="help-text">Choose additional languages your character knows based on Intelligence and any feats like Linguist.</p>
 
  {{#if characterData.languageData}}
+ {{!-- Language Counter - Top --}}
+ <div class="language-counter-box">
+ {{#if (gt characterData.languageData.additional 0)}}
+ <div class="counter-display">
+ <i class="fas fa-language"></i>
+ <span class="counter-text">Languages Remaining:</span>
+ <span class="counter-value">{{subtract (add characterData.languageData.granted.length characterData.languageData.additional) characterData.languages.length}}</span>
+ /
+ <span class="counter-total">{{characterData.languageData.additional}}</span>
+ </div>
+ {{else}}
+ <div class="no-additional-languages">
+ <i class="fas fa-info-circle"></i>
+ <span>You have no additional languages to select (available: {{characterData.languageData.additional}})</span>
+ </div>
+ {{/if}}
+ </div>
+
  {{!-- Automatic/Granted Languages Section --}}
  <div class="granted-languages-section">
  <h4><i class="fas fa-gift"></i> Automatic Languages</h4>
@@ -1583,24 +1543,6 @@
  {{#if (gt characterData.languageData.understands.length 0)}}
  <div class="understands-languages">
  <p><i class="fas fa-ear-listen"></i> <strong>Understands Only:</strong> {{#each characterData.languageData.understands}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p>
- </div>
- {{/if}}
- </div>
-
- {{!-- Language Counter --}}
- <div class="language-counter-box">
- {{#if (gt characterData.languageData.additional 0)}}
- <div class="counter-display">
- <i class="fas fa-language"></i>
- <span class="counter-text">Languages Remaining:</span>
- <span class="counter-value">{{subtract (add characterData.languageData.granted.length characterData.languageData.additional) characterData.languages.length}}</span>
- /
- <span class="counter-total">{{characterData.languageData.additional}}</span>
- </div>
- {{else}}
- <div class="no-additional-languages">
- <i class="fas fa-info-circle"></i>
- <span>You have no additional languages to select (available: {{characterData.languageData.additional}})</span>
  </div>
  {{/if}}
  </div>
@@ -1795,16 +1737,7 @@
  <h3><i class="fas fa-scroll"></i> Character Summary</h3>
  <p class="summary-intro">Review your character before finalizing. Click "Create Character" to proceed to equipment shopping.</p>
 
- {{#if narratorComment}}
- <div class="narrator-comment">
- <div class="narrator-avatar">
- <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
- </div>
- <div class="narrator-speech-bubble">
- <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
- </div>
- </div>
- {{/if}}
+
 
  <div class="summary-grid">
  {{!-- Basic Information --}}

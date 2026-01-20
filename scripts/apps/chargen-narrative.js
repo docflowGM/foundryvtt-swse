@@ -9,6 +9,7 @@ import CharacterGeneratorImproved from './chargen-improved.js';
 import { MENTORS } from './mentor-dialogues.js';
 import { TalentTreeVisualizer } from './talent-tree-visualizer.js';
 import { getTalentTreeName } from './chargen/chargen-property-accessor.js';
+import { normalizeTalentData } from '../progression/utils/item-normalizer.js';
 
 export default class CharacterGeneratorNarrative extends CharacterGeneratorImproved {
 
@@ -265,9 +266,23 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
       // Load talents from compendium
       const talentPack = game.packs.get('foundryvtt-swse.talents');
       if (talentPack) {
-        const talents = await talentPack.getDocuments();
+        let talents = await talentPack.getDocuments();
+        // Normalize talents to ensure tree property is properly set
+        talents = talents.map(talent => {
+          try {
+            return normalizeTalentData(talent);
+          } catch (e) {
+            SWSELogger.warn(`SWSE CharGen | Error normalizing talent "${talent.name}":`, e);
+            return talent;
+          }
+        });
         this.talentData = talents;
-        SWSELogger.log(`SWSE CharGen | Loaded ${talents.length} talents`);
+        SWSELogger.log(`SWSE CharGen | Loaded and normalized ${talents.length} talents`);
+        // Verify tree property is set
+        for (let i = 0; i < Math.min(3, talents.length); i++) {
+          const t = talents[i];
+          SWSELogger.log(`SWSE CharGen | Talent ${i + 1}: "${t.name}" -> tree="${getTalentTreeName(t) || 'MISSING'}"`);
+        }
       }
     } catch (err) {
       SWSELogger.error('SWSE CharGen | Failed to load talents:', err);

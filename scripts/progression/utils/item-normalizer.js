@@ -45,7 +45,8 @@ export function normalizeTalentData(rawTalent) {
     }
 
     // Preserve existing tree name or set to empty
-    const treeValue = talent.system.talent_tree || talent.system.tree || talent.system.talentTree || "";
+    const treeValue = talent.system.tree || talent.system.talent_tree || talent.system.talentTree || "";
+    talent.system.tree = treeValue;
     talent.system.talent_tree = treeValue;
 
     // Prerequisites: normalize to structured format
