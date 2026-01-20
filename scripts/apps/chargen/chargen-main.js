@@ -1098,6 +1098,7 @@ export default class CharacterGenerator extends Application {
       case "languages":
         return mentor.languageGuidance || null;
       case "feats":
+        return mentor.featGuidance || null;
       case "talents":
         return mentor.talentGuidance || null;
       case "summary":
