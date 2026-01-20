@@ -347,7 +347,9 @@ export async function _onSelectSpecies(event) {
   this._applySpeciesData(speciesDoc);
 
   this._recalcAbilities();
-  await this._onNextStep(event);
+
+  // Close the species overlay without advancing progression
+  this._onCloseSpeciesOverlay(event);
 }
 
 /**
