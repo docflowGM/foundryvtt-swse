@@ -1437,9 +1437,94 @@ export default class CharacterGenerator extends Application {
     event.preventDefault();
     SWSELogger.log(`[CHARGEN] _onAskMentor: Activating suggestion engine for current step: ${this.currentStep}`);
 
-    // Enable the suggestion engine
-    this.suggestionEngine = true;
+    // Special handling for feats - show popup with top 5 suggestions
+    if (this.currentStep === "feats") {
+      SWSELogger.log(`[CHARGEN] _onAskMentor: FEATS step - showing suggestion dialog`);
 
+      // Save filter state
+      const filterCheckbox = document.querySelector('.filter-valid-feats');
+      const wasFilterActive = filterCheckbox?.checked || false;
+
+      try {
+        const mentor = this._getCurrentMentor();
+        const topFeats = (this.characterData.feats || []).length > 0
+          ? document.querySelectorAll('.feat-card')
+          : [];
+
+        // Get top 5 suggested feats from the page
+        const suggestions = Array.from(document.querySelectorAll('.feat-card[data-suggestion-tier]'))
+          .sort((a, b) => {
+            const tierA = parseInt(a.dataset.suggestionTier || 0);
+            const tierB = parseInt(b.dataset.suggestionTier || 0);
+            return tierB - tierA;
+          })
+          .slice(0, 5)
+          .map(el => ({
+            name: el.dataset.featId || el.textContent.trim(),
+            tier: parseInt(el.dataset.suggestionTier || 0)
+          }));
+
+        if (suggestions.length > 0) {
+          const mentorName = mentor?.name || "Your Mentor";
+          const content = `
+            <div class="feat-suggestions-container">
+              <div class="mentor-intro">
+                <p><strong>${mentorName}</strong> recommends these feats:</p>
+              </div>
+              <div class="feat-suggestions-list">
+                ${suggestions.map((feat, i) => `
+                  <div class="feat-suggestion-item" data-feat-name="${feat.name}">
+                    <span class="suggestion-number">${i + 1}</span>
+                    <span class="feat-suggestion-name">${feat.name}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+
+          const dialog = new Dialog(
+            {
+              title: `${mentorName}'s Feat Suggestions`,
+              content: content,
+              buttons: {
+                accept: {
+                  icon: '<i class="fas fa-check"></i>',
+                  label: "Show Suggestions Inline",
+                  callback: () => {
+                    SWSELogger.log(`[CHARGEN] _onAskMentor: User accepted - enabling suggestions`);
+                    this.suggestionEngine = true;
+                    this.render();
+                  }
+                },
+                cancel: {
+                  icon: '<i class="fas fa-times"></i>',
+                  label: "Cancel",
+                  callback: () => {
+                    // Restore filter state
+                    if (wasFilterActive) {
+                      const checkbox = document.querySelector('.filter-valid-feats');
+                      if (checkbox) {
+                        checkbox.checked = true;
+                        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                      }
+                    }
+                  }
+                }
+              },
+              default: "accept"
+            },
+            { classes: ['feat-suggestions-dialog', 'holo-window'] }
+          );
+          dialog.render(true);
+          return;
+        }
+      } catch (err) {
+        SWSELogger.error(`[CHARGEN] _onAskMentor: Error showing feat suggestions:`, err);
+      }
+    }
+
+    // For other steps, enable suggestion engine and re-render
+    this.suggestionEngine = true;
     ui.notifications.info("Your mentor is now providing suggestions for this step.");
     await this.render();
   }
