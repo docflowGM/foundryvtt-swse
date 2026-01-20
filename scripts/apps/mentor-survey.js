@@ -552,61 +552,69 @@ export class MentorSurvey {
     swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Mentor found: "${mentor.name}" (${mentor.title})`);
 
     return new Promise((resolve) => {
-      const dialog = new Dialog(
-        {
-          title: `${mentor.name} - Mentoring Survey`,
-          content: `
-            <div class="mentor-survey-container">
-              <div class="mentor-intro-section">
-                <div class="mentor-portrait">
-                  <img src="${mentor.portrait}" alt="${mentor.name}" />
-                </div>
-                <div class="mentor-intro-text">
-                  <h2>${mentor.name}</h2>
-                  <p class="mentor-title">${mentor.title}</p>
-                  <p class="mentor-greeting">${mentor.description}</p>
-                  ${playerName ? `<p class="mentor-address"><em>"Welcome, ${playerName}. I can help guide your journey."</em></p>` : ""}
-                  <p class="survey-prompt">
-                    I'd like to understand your character's goals and design philosophy better.
-                    Would you be willing to answer a few quick questions? It will help me provide better mentorship.
-                  </p>
+      try {
+        const dialog = new Dialog(
+          {
+            title: `${mentor.name} - Mentoring Survey`,
+            content: `
+              <div class="mentor-survey-container">
+                <div class="mentor-intro-section">
+                  <div class="mentor-portrait">
+                    <img src="${mentor.portrait}" alt="${mentor.name}" />
+                  </div>
+                  <div class="mentor-intro-text">
+                    <h2>${mentor.name}</h2>
+                    <p class="mentor-title">${mentor.title}</p>
+                    <p class="mentor-greeting">${mentor.description}</p>
+                    ${playerName ? `<p class="mentor-address"><em>"Welcome, ${playerName}. I can help guide your journey."</em></p>` : ""}
+                    <p class="survey-prompt">
+                      I'd like to understand your character's goals and design philosophy better.
+                      Would you be willing to answer a few quick questions? It will help me provide better mentorship.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          `,
-          buttons: {
-            accept: {
-              icon: '<i class="fas fa-check"></i>',
-              label: "I'm ready",
-              callback: () => {
-                resolve(true);
+            `,
+            buttons: {
+              accept: {
+                icon: '<i class="fas fa-check"></i>',
+                label: "I'm ready",
+                callback: () => {
+                  swseLogger.log(`[MENTOR-SURVEY] promptSurvey: User accepted survey`);
+                  resolve(true);
+                }
+              },
+              decline: {
+                icon: '<i class="fas fa-times"></i>',
+                label: "Maybe later",
+                callback: () => {
+                  swseLogger.log(`[MENTOR-SURVEY] promptSurvey: User declined survey`);
+                  resolve(false);
+                }
               }
             },
-            decline: {
-              icon: '<i class="fas fa-times"></i>',
-              label: "Maybe later",
-              callback: () => {
-                resolve(false);
+            default: "accept",
+            render: (html) => {
+              // Add typing animation to the greeting
+              const greetingElement = html.find('.mentor-greeting')[0];
+              if (greetingElement) {
+                const greetingText = greetingElement.textContent;
+                TypingAnimation.typeText(greetingElement, greetingText, {
+                  speed: 45,
+                  skipOnClick: true
+                });
               }
             }
           },
-          default: "accept",
-          render: (html) => {
-            // Add typing animation to the greeting
-            const greetingElement = html.find('.mentor-greeting')[0];
-            if (greetingElement) {
-              const greetingText = greetingElement.textContent;
-              TypingAnimation.typeText(greetingElement, greetingText, {
-                speed: 45,
-                skipOnClick: true
-              });
-            }
-          }
-        },
-        { classes: ['mentor-survey-dialog', 'holo-window'] }
-      );
+          { classes: ['mentor-survey-dialog', 'holo-window'] }
+        );
 
-      dialog.render(true);
+        swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Dialog created, rendering...`);
+        dialog.render(true);
+      } catch (err) {
+        swseLogger.error(`[MENTOR-SURVEY] promptSurvey: Dialog creation/render failed:`, err);
+        resolve(false);
+      }
     });
   }
 

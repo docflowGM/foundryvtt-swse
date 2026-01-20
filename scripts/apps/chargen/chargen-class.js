@@ -21,9 +21,10 @@ import { calculateMaxForcePoints, initializeActorForcePoints } from '../../data/
  * Handle class selection
  */
 export async function _onSelectClass(event) {
-  event.preventDefault();
-  const className = event.currentTarget.dataset.class;
-  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: START - Selected class: "${className}"`);
+  try {
+    event.preventDefault();
+    const className = event.currentTarget.dataset.class;
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: START - Selected class: "${className}"`);
 
   // If changing class after initial selection, confirm with user
   if (this.characterData.classes && this.characterData.classes.length > 0) {
@@ -353,10 +354,13 @@ export async function _onSelectClass(event) {
   }
 
   // Re-render to show the selected class and enable the Next button
-  // Preserve scroll position by not forcing a complete re-render
   await this.render();
 
   SWSELogger.log(`CharGen | Class selection complete, Next button should now be visible`);
+  } catch (err) {
+    SWSELogger.error(`[CHARGEN-CLASS] _onSelectClass: UNCAUGHT ERROR:`, err);
+    ui.notifications.error(`Class selection failed: ${err.message}`);
+  }
 }
 
 /**
