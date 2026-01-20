@@ -552,61 +552,91 @@ export class MentorSurvey {
     swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Mentor found: "${mentor.name}" (${mentor.title})`);
 
     return new Promise((resolve) => {
-      const dialog = new Dialog(
-        {
-          title: `${mentor.name} - Mentoring Survey`,
-          content: `
-            <div class="mentor-survey-container">
-              <div class="mentor-intro-section">
-                <div class="mentor-portrait">
-                  <img src="${mentor.portrait}" alt="${mentor.name}" />
-                </div>
-                <div class="mentor-intro-text">
-                  <h2>${mentor.name}</h2>
-                  <p class="mentor-title">${mentor.title}</p>
-                  <p class="mentor-greeting">${mentor.description}</p>
-                  ${playerName ? `<p class="mentor-address"><em>"Welcome, ${playerName}. I can help guide your journey."</em></p>` : ""}
-                  <p class="survey-prompt">
-                    I'd like to understand your character's goals and design philosophy better.
-                    Would you be willing to answer a few quick questions? It will help me provide better mentorship.
-                  </p>
+      try {
+        swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Building dialog content...`, {
+          mentorName: mentor.name,
+          mentorTitle: mentor.title,
+          portraitUrl: mentor.portrait,
+          playerName: playerName
+        });
+
+        const dialog = new Dialog(
+          {
+            title: `${mentor.name} - Mentoring Survey`,
+            content: `
+              <div class="mentor-survey-container">
+                <div class="mentor-intro-section">
+                  <div class="mentor-portrait">
+                    <img src="${mentor.portrait}" alt="${mentor.name}" />
+                  </div>
+                  <div class="mentor-intro-text">
+                    <h2>${mentor.name}</h2>
+                    <p class="mentor-title">${mentor.title}</p>
+                    <p class="mentor-greeting">${mentor.description}</p>
+                    ${playerName ? `<p class="mentor-address"><em>"Welcome, ${playerName}. I can help guide your journey."</em></p>` : ""}
+                    <p class="survey-prompt">
+                      I'd like to understand your character's goals and design philosophy better.
+                      Would you be willing to answer a few quick questions? It will help me provide better mentorship.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          `,
-          buttons: {
-            accept: {
-              icon: '<i class="fas fa-check"></i>',
-              label: "I'm ready",
-              callback: () => {
-                resolve(true);
+            `,
+            buttons: {
+              accept: {
+                icon: '<i class="fas fa-check"></i>',
+                label: "I'm ready",
+                callback: () => {
+                  swseLogger.log(`[MENTOR-SURVEY] promptSurvey: ✓ User clicked ACCEPT button`);
+                  resolve(true);
+                }
+              },
+              decline: {
+                icon: '<i class="fas fa-times"></i>',
+                label: "Maybe later",
+                callback: () => {
+                  swseLogger.log(`[MENTOR-SURVEY] promptSurvey: ✓ User clicked DECLINE button`);
+                  resolve(false);
+                }
               }
             },
-            decline: {
-              icon: '<i class="fas fa-times"></i>',
-              label: "Maybe later",
-              callback: () => {
-                resolve(false);
+            default: "accept",
+            render: (html) => {
+              swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Dialog render callback fired, html:`, { hasHtml: !!html, length: html?.length });
+              // Add typing animation to the greeting
+              const greetingElement = html.find('.mentor-greeting')[0];
+              if (greetingElement) {
+                swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Starting typing animation...`);
+                const greetingText = greetingElement.textContent;
+                TypingAnimation.typeText(greetingElement, greetingText, {
+                  speed: 45,
+                  skipOnClick: true
+                });
+              } else {
+                swseLogger.warn(`[MENTOR-SURVEY] promptSurvey: Greeting element not found in rendered HTML`);
               }
             }
           },
-          default: "accept",
-          render: (html) => {
-            // Add typing animation to the greeting
-            const greetingElement = html.find('.mentor-greeting')[0];
-            if (greetingElement) {
-              const greetingText = greetingElement.textContent;
-              TypingAnimation.typeText(greetingElement, greetingText, {
-                speed: 45,
-                skipOnClick: true
-              });
-            }
-          }
-        },
-        { classes: ['mentor-survey-dialog', 'holo-window'] }
-      );
+          { classes: ['mentor-survey-dialog', 'holo-window'] }
+        );
 
-      dialog.render(true);
+        swseLogger.log(`[MENTOR-SURVEY] promptSurvey: ✓ Dialog object created`, {
+          title: dialog.title,
+          buttons: Object.keys(dialog.options?.buttons || {})
+        });
+
+        swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Calling dialog.render(true)...`);
+        const renderResult = dialog.render(true);
+        swseLogger.log(`[MENTOR-SURVEY] promptSurvey: ✓ dialog.render(true) returned:`, { renderResult });
+      } catch (err) {
+        swseLogger.error(`[MENTOR-SURVEY] promptSurvey: EXCEPTION during dialog creation/render:`, err);
+        swseLogger.error(`[MENTOR-SURVEY] promptSurvey: ERROR DETAILS`, {
+          message: err.message,
+          stack: err.stack,
+          name: err.name
+        });
+        resolve(false);
+      }
     });
   }
 

@@ -262,32 +262,80 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   // ========================================
 
   async _loadTalentData() {
+    SWSELogger.log(`[CHARGEN-NARRATIVE] ===== TALENT DATA LOAD START =====`);
     try {
-      // Load talents from compendium
+      SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: Getting talent pack from game.packs...`);
       const talentPack = game.packs.get('foundryvtt-swse.talents');
-      if (talentPack) {
-        let talents = await talentPack.getDocuments();
-        // Normalize talents to ensure tree property is properly set
-        talents = talents.map(talent => {
-          try {
-            return normalizeTalentData(talent);
-          } catch (e) {
-            SWSELogger.warn(`SWSE CharGen | Error normalizing talent "${talent.name}":`, e);
-            return talent;
-          }
-        });
-        this.talentData = talents;
-        SWSELogger.log(`SWSE CharGen | Loaded and normalized ${talents.length} talents`);
-        // Verify tree property is set
-        for (let i = 0; i < Math.min(3, talents.length); i++) {
-          const t = talents[i];
-          SWSELogger.log(`SWSE CharGen | Talent ${i + 1}: "${t.name}" -> tree="${getTalentTreeName(t) || 'MISSING'}"`);
-        }
+
+      if (!talentPack) {
+        SWSELogger.error(`[CHARGEN-NARRATIVE] _loadTalentData: ERROR - Pack 'foundryvtt-swse.talents' NOT FOUND!`);
+        SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: Available packs:`, game.packs.keys());
+        this.talentData = [];
+        return;
       }
+
+      SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: ✓ Pack found, calling getDocuments()...`);
+      let talents = await talentPack.getDocuments();
+      SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: ✓ getDocuments() returned:`, {
+        count: talents.length,
+        isArray: Array.isArray(talents)
+      });
+
+      if (!talents || talents.length === 0) {
+        SWSELogger.error(`[CHARGEN-NARRATIVE] _loadTalentData: ERROR - getDocuments returned empty array!`);
+        this.talentData = [];
+        return;
+      }
+
+      // Normalize talents to ensure tree property is properly set
+      SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: Normalizing ${talents.length} talents...`);
+      let normalizedCount = 0;
+      let normalizationErrors = 0;
+
+      talents = talents.map((talent, idx) => {
+        try {
+          const normalized = normalizeTalentData(talent);
+          normalizedCount++;
+
+          // Log first 5 talents to verify normalization
+          if (idx < 5) {
+            const treeName = getTalentTreeName(normalized);
+            SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: Talent ${idx + 1}:`, {
+              name: normalized.name,
+              treeValue: treeName,
+              hasSystem: !!normalized.system,
+              systemTree: normalized.system?.tree
+            });
+          }
+          return normalized;
+        } catch (e) {
+          normalizationErrors++;
+          SWSELogger.error(`[CHARGEN-NARRATIVE] _loadTalentData: ERROR normalizing talent "${talent.name}":`, e);
+          return talent;
+        }
+      });
+
+      this.talentData = talents;
+      SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: ✓ Normalization complete`, {
+        totalTalents: talents.length,
+        normalized: normalizedCount,
+        errors: normalizationErrors
+      });
+
+      // Build tree distribution
+      const treeDistribution = {};
+      talents.forEach(t => {
+        const treeName = getTalentTreeName(t) || 'NO_TREE';
+        treeDistribution[treeName] = (treeDistribution[treeName] || 0) + 1;
+      });
+
+      SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: ✓ Final talent distribution by tree:`, treeDistribution);
     } catch (err) {
-      SWSELogger.error('SWSE CharGen | Failed to load talents:', err);
+      SWSELogger.error(`[CHARGEN-NARRATIVE] _loadTalentData: EXCEPTION:`, err);
+      SWSELogger.error(`[CHARGEN-NARRATIVE] _loadTalentData: ERROR STACK:`, err.stack);
       this.talentData = [];
     }
+    SWSELogger.log(`[CHARGEN-NARRATIVE] ===== TALENT DATA LOAD END (talentData.length=${this.talentData?.length || 0}) =====`);
   }
 
   async _onSelectTalentTree(event) {
@@ -340,6 +388,24 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     if (!this.talentData) {
       await this._loadTalentData();
     }
+
+    // Debug: Check if talentData is empty or has talent objects
+    if (!this.talentData || this.talentData.length === 0) {
+      SWSELogger.error(`CharGen Narrative | talentData is empty! Cannot show tree: ${treeName}`);
+      ui.notifications.error(`Talent data not loaded. Please try again.`);
+      return;
+    }
+
+    // Debug: Check if any talents match this tree name
+    const matchingTalents = this.talentData.filter(t => getTalentTreeName(t) === treeName);
+    SWSELogger.log(`CharGen Narrative | _showEnhancedTalentTree(${treeName}): talentData.length=${this.talentData.length}, matching=${matchingTalents.length}`, {
+      firstTalent: this.talentData[0] ? {
+        name: this.talentData[0].name,
+        hasSystem: !!this.talentData[0].system,
+        treeValue: getTalentTreeName(this.talentData[0]),
+        rawTree: this.talentData[0].system?.tree
+      } : null
+    });
 
     // Create a temporary actor for visualization
     const tempActorData = {

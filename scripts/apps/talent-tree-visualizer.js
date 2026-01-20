@@ -3,6 +3,7 @@
  * Provides an interactive, animated talent tree selection and visualization system
  */
 
+import { SWSELogger } from '../utils/logger.js';
 import { PrerequisiteValidator } from '../utils/prerequisite-validator.js';
 import { SuggestionEngine } from '../engine/SuggestionEngine.js';
 import { getTalentTreeName } from './chargen/chargen-property-accessor.js';
@@ -238,13 +239,38 @@ export class TalentTreeVisualizer {
    * Show enhanced talent tree visualization
    */
   static async showEnhancedTalentTree(treeName, talentData, actor, onSelectTalent) {
+    SWSELogger.log(`[TALENT-TREE-VIS] ===== showEnhancedTalentTree START =====`);
+    SWSELogger.log(`[TALENT-TREE-VIS] showEnhancedTalentTree("${treeName}"):`, {
+      talentDataLength: talentData?.length || 0,
+      talentDataIsArray: Array.isArray(talentData)
+    });
+
+    if (!talentData || talentData.length === 0) {
+      SWSELogger.error(`[TALENT-TREE-VIS] ERROR - talentData is empty or undefined!`);
+      ui.notifications.error(`No talent data available for ${treeName}`);
+      return;
+    }
+
     // Filter talents for this tree
+    SWSELogger.log(`[TALENT-TREE-VIS] Filtering talents for tree "${treeName}"...`);
     let talents = talentData.filter(t => getTalentTreeName(t) === treeName);
 
+    SWSELogger.log(`[TALENT-TREE-VIS] Filter result:`, {
+      treeName: treeName,
+      matchingTalents: talents.length,
+      firstTalentTree: talentData[0] ? getTalentTreeName(talentData[0]) : 'N/A'
+    });
+
     if (talents.length === 0) {
+      SWSELogger.error(`[TALENT-TREE-VIS] ERROR - No talents found for tree "${treeName}"!`);
+      // Log all unique trees in data
+      const uniqueTrees = new Set(talentData.map(t => getTalentTreeName(t) || 'UNKNOWN'));
+      SWSELogger.log(`[TALENT-TREE-VIS] Available trees:`, Array.from(uniqueTrees));
       ui.notifications.warn(`No talents found for ${treeName}`);
       return;
     }
+
+    SWSELogger.log(`[TALENT-TREE-VIS] ✓ Found ${talents.length} talents for tree "${treeName}"`);
 
     // Filter talents based on prerequisites - add isQualified property
     talents = PrerequisiteValidator.filterQualifiedTalents(talents, actor, {});
