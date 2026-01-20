@@ -553,6 +553,13 @@ export class MentorSurvey {
 
     return new Promise((resolve) => {
       try {
+        swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Building dialog content...`, {
+          mentorName: mentor.name,
+          mentorTitle: mentor.title,
+          portraitUrl: mentor.portrait,
+          playerName: playerName
+        });
+
         const dialog = new Dialog(
           {
             title: `${mentor.name} - Mentoring Survey`,
@@ -580,7 +587,7 @@ export class MentorSurvey {
                 icon: '<i class="fas fa-check"></i>',
                 label: "I'm ready",
                 callback: () => {
-                  swseLogger.log(`[MENTOR-SURVEY] promptSurvey: User accepted survey`);
+                  swseLogger.log(`[MENTOR-SURVEY] promptSurvey: ✓ User clicked ACCEPT button`);
                   resolve(true);
                 }
               },
@@ -588,31 +595,46 @@ export class MentorSurvey {
                 icon: '<i class="fas fa-times"></i>',
                 label: "Maybe later",
                 callback: () => {
-                  swseLogger.log(`[MENTOR-SURVEY] promptSurvey: User declined survey`);
+                  swseLogger.log(`[MENTOR-SURVEY] promptSurvey: ✓ User clicked DECLINE button`);
                   resolve(false);
                 }
               }
             },
             default: "accept",
             render: (html) => {
+              swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Dialog render callback fired, html:`, { hasHtml: !!html, length: html?.length });
               // Add typing animation to the greeting
               const greetingElement = html.find('.mentor-greeting')[0];
               if (greetingElement) {
+                swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Starting typing animation...`);
                 const greetingText = greetingElement.textContent;
                 TypingAnimation.typeText(greetingElement, greetingText, {
                   speed: 45,
                   skipOnClick: true
                 });
+              } else {
+                swseLogger.warn(`[MENTOR-SURVEY] promptSurvey: Greeting element not found in rendered HTML`);
               }
             }
           },
           { classes: ['mentor-survey-dialog', 'holo-window'] }
         );
 
-        swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Dialog created, rendering...`);
-        dialog.render(true);
+        swseLogger.log(`[MENTOR-SURVEY] promptSurvey: ✓ Dialog object created`, {
+          title: dialog.title,
+          buttons: Object.keys(dialog.options?.buttons || {})
+        });
+
+        swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Calling dialog.render(true)...`);
+        const renderResult = dialog.render(true);
+        swseLogger.log(`[MENTOR-SURVEY] promptSurvey: ✓ dialog.render(true) returned:`, { renderResult });
       } catch (err) {
-        swseLogger.error(`[MENTOR-SURVEY] promptSurvey: Dialog creation/render failed:`, err);
+        swseLogger.error(`[MENTOR-SURVEY] promptSurvey: EXCEPTION during dialog creation/render:`, err);
+        swseLogger.error(`[MENTOR-SURVEY] promptSurvey: ERROR DETAILS`, {
+          message: err.message,
+          stack: err.stack,
+          name: err.name
+        });
         resolve(false);
       }
     });

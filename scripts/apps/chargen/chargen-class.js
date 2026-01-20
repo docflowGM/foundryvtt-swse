@@ -320,37 +320,61 @@ export async function _onSelectClass(event) {
 
   // Offer mentor survey at class selection if not yet completed (ONLY for base classes, for both droid and living characters)
   try {
+    SWSELogger.log(`[CHARGEN-CLASS] ===== MENTOR SURVEY FLOW START =====`);
     SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Checking if mentor survey should be offered for class "${className}"...`);
     const tempActor = this._createTempActorForValidation();
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Created temp actor`, { id: tempActor?.id, name: tempActor?.name });
+
     const surveyCompleted = MentorSurvey.hasSurveyBeenCompleted(tempActor);
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Survey completed check: ${surveyCompleted}`);
+
     // Ensure classDef has baseClass flag for base class check (fallback to checking className directly)
     const isBaseClassSelection = isBaseClass(classDef) || isBaseClass(className);
-    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Survey already completed: ${surveyCompleted}, Is base class: ${isBaseClassSelection}, classDefHasFlag: ${classDef?.baseClass !== undefined}`);
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Base class check: ${isBaseClassSelection}`, {
+      classDefHasFlag: classDef?.baseClass !== undefined,
+      classDefValue: classDef?.baseClass,
+      className: className
+    });
 
     if (!surveyCompleted && isBaseClassSelection) {
-      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Offering mentor survey prompt for base class "${className}"...`);
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CONDITION MET - Triggering mentor survey for "${className}"`);
       const playerName = this.characterData.name || "";
+
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CALLING promptSurvey()...`, {
+        tempActorId: tempActor?.id,
+        className: className,
+        playerName: playerName
+      });
       const acceptSurvey = await MentorSurvey.promptSurvey(tempActor, className, playerName);
-      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User accepted survey: ${acceptSurvey}`);
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ promptSurvey() returned: ${acceptSurvey}`);
 
       if (acceptSurvey) {
-        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Showing mentor survey questions...`);
+        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CALLING showSurvey()...`, { className });
         const surveyAnswers = await MentorSurvey.showSurvey(tempActor, className, className);
-        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Survey answers received:`, surveyAnswers ? 'YES' : 'NO');
+        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ showSurvey() returned:`, surveyAnswers ? 'ANSWERS_RECEIVED' : 'DISMISSED');
 
         if (surveyAnswers) {
           const biases = MentorSurvey.processSurveyAnswers(surveyAnswers);
-          // Store biases in characterData for later use when creating suggestions
           this.characterData.mentorBiases = biases;
           this.characterData.mentorSurveyCompleted = true;
-          SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Mentor biases stored:`, biases);
+          SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Mentor biases stored`, biases);
           ui.notifications.info("Survey completed! Your mentor will use this to personalize suggestions.");
+        } else {
+          SWSELogger.warn(`[CHARGEN-CLASS] _onSelectClass: User dismissed survey without answers`);
         }
+      } else {
+        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User declined survey prompt`);
       }
+    } else {
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CONDITION NOT MET - Skipping survey`, {
+        surveyAlreadyCompleted: surveyCompleted,
+        isBaseClass: isBaseClassSelection
+      });
     }
+    SWSELogger.log(`[CHARGEN-CLASS] ===== MENTOR SURVEY FLOW END =====`);
   } catch (surveyErr) {
-    SWSELogger.error(`[CHARGEN-CLASS] ERROR: Mentor survey failed:`, surveyErr);
-    // Don't block class selection if mentor survey fails - continue gracefully
+    SWSELogger.error(`[CHARGEN-CLASS] MENTOR SURVEY ERROR:`, surveyErr);
+    SWSELogger.error(`[CHARGEN-CLASS] ERROR STACK:`, surveyErr.stack);
   }
 
   // Re-render to show the selected class and enable the Next button
