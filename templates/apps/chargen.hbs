@@ -307,17 +307,6 @@
  <section class="step-species">
  <h3>Select Species</h3>
 
- {{#if narratorComment}}
- <div class="narrator-comment">
- <div class="narrator-avatar">
- <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
- </div>
- <div class="narrator-speech-bubble">
- <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
- </div>
- </div>
- {{/if}}
-
  {{!-- Species Filters --}}
  <div class="species-filters">
  <div class="filter-header">
@@ -370,6 +359,17 @@
  </div>
  </div>
  </div>
+
+ {{#if narratorComment}}
+ <div class="narrator-comment">
+ <div class="narrator-avatar">
+ <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>{{mentor.name}}:</strong> {{narratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
 
  <div class="species-grid">
  {{#each packs.species}}
@@ -587,6 +587,11 @@
  <button type="button" class="prev-step btn-secondary">
  <i class="fas fa-arrow-left"></i> Previous
  </button>
+ {{#if characterData.species}}
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ {{/if}}
  </div>
  </section>
  {{/if}}
