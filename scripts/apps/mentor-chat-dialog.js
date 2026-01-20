@@ -16,6 +16,7 @@ import { SuggestionEngine } from '../engine/SuggestionEngine.js';
 import { SWSELogger } from '../utils/logger.js';
 import { MentorVoiceFilterV2 } from './mentor-voice-filter-v2.js';
 import { MentorDialogueV2Integration } from './mentor-dialogue-v2-integration.js';
+import { MentorStoryResolver } from '../engine/mentor-story-resolver.js';
 
 const CHAT_TOPICS = [
   {
@@ -80,6 +81,14 @@ const CHAT_TOPICS = [
     icon: "fa-person",
     description: "Experience your mentor's personal philosophy and priorities",
     contextType: "introduction",
+    gatesAt: 1
+  },
+  {
+    key: "mentor_story",
+    title: "What is your story?",
+    icon: "fa-book",
+    description: "Learn about your mentor's past and what shaped them",
+    contextType: "narrative",
     gatesAt: 1
   }
 ];
@@ -312,6 +321,15 @@ export class MentorChatDialog extends FormApplication {
 
       case "how_would_you_play":
         canonicalAnalysis = this._generateMentorDoctrine();
+        break;
+
+      case "mentor_story":
+        // Story responses are resolved directly by MentorStoryResolver
+        canonicalAnalysis = MentorStoryResolver.resolveStoryResponse(
+          this.actor,
+          this.selectedMentor.mentor,
+          mentorName
+        );
         break;
     }
 
