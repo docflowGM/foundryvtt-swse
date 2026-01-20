@@ -15,27 +15,28 @@ export const MENTORS = {
     portrait: "systems/foundryvtt-swse/assets/mentors/miraj.webp",
 
     levelGreetings: {
-        1: "The Force calls to you, young one. Listen carefully, for it will teach you lessons no words can convey.",
-        2: "Every step you take shapes your path. Patience and mindfulness are as important as skill and strength.",
-        3: "Your connection to the Force deepens. Observe its flow, and let it guide your decisions.",
-        4: "A Jedi walks with purpose, but also with humility. Remember, your actions touch more than yourself.",
-        5: "The Force is more than power—it is understanding, compassion, and discernment. You are beginning to perceive this truth.",
-        6: "Halfway to Knighthood, your dedication honors the Order. Soon, you will be ready to face the trials of a Jedi Knight. Embrace the responsibility that comes with this growth.",
-        7: "Your attunement to the Force becomes more natural. Let it sharpen your senses, calm your mind, and steady your spirit.",
-        8: "You are learning to harmonize thought, action, and perception. This balance will serve you well in every challenge ahead.",
-        9: "The path of the Jedi is not measured in victories, but in understanding and restraint. You are walking this path with care.",
-        10: "Your progress is evident. A Jedi's strength lies not only in skill, but in knowing when to act and when to wait.",
-        11: "True mastery comes from awareness and compassion. Your connection to the Force grows as you cultivate both.",
-        12: "Challenges will test you in ways training cannot. Face them with courage, and the Force will guide your steps.",
-        13: "The Force is a teacher as much as I am. Listen, and it will reveal what the eyes cannot see.",
-        14: "You are learning the subtle truths of the galaxy. Wisdom and discernment will distinguish you from others.",
-        15: "The light of your spirit guides those around you. Remember, a Jedi serves not for glory, but for balance.",
-        16: "Skill alone is not enough. Reflection and understanding are as vital as any strike or maneuver.",
-        17: "The Force reveals its mysteries to those who remain patient. You are beginning to perceive its deeper patterns.",
-        18: "Your insight and judgment are growing. Soon, your decisions will shape the fate of many.",
-        19: "You stand on the threshold of mastery. Soon, you may guide others as I have guided you.",
-        20: "You have become a True Jedi. Your example will inspire the next generation, and your wisdom will shape the Force itself."
-    },
+  1: "The Force stirs when one is ready to listen. Do not rush to act, young one. I have seen where haste leads.",
+  2: "Each step you take shapes not only you, but those around you. Learn to feel that weight early—it will never leave you.",
+  3: "Your connection deepens. Remember: the Force does not demand action, only awareness. Choice is always yours.",
+  4: "Purpose without humility becomes arrogance. Walk carefully. I once believed certainty was enough.",
+  5: "Power reveals who we are under pressure. Compassion and restraint will decide who you become when it matters.",
+  6: "You near the threshold of Knighthood. Skill brought you here—judgment will carry you forward. Do not confuse the two.",
+  7: "You move more naturally with the Force now. Let it steady you, not drive you. Calm survives longer than fury.",
+  8: "Balance is not stillness. It is knowing when to advance, and when to endure. Few learn this without loss.",
+  9: "Victory is loud. Wisdom is quiet. Pay attention to which one follows you more often.",
+  10: "Your progress is clear. Remember: the greatest strength of a Jedi is knowing when *not* to strike.",
+  11: "Awareness sharpens compassion, and compassion sharpens judgment. Together, they keep you from becoming what you fight.",
+  12: "Trials will come that training cannot prepare you for. When they do, breathe. The Force will not abandon you—but it will test you.",
+  13: "I am a guide, not your compass. Listen to the Force itself; it speaks most clearly when you doubt.",
+  14: "You begin to see beyond simple answers. Hold onto that discomfort. It is the seed of wisdom.",
+  15: "Others will look to you now. Lead gently. Influence can heal—or scar—for generations.",
+  16: "Reflection tempers skill. Without it, even mastery becomes dangerous.",
+  17: "Patterns emerge to those who wait. You are starting to see them. Trust that vision, but question it.",
+  18: "Your judgment carries consequence now. Accept that truth, and do not turn away from it.",
+  19: "You stand near mastery. Remember this moment—when learning still outweighs certainty.",
+  20: "You have become a Jedi in more than name. Carry what you have learned with humility. The future will test it."
+},
+
 
     classGuidance: "Choose the path that aligns with your understanding of the Force. Let it guide your spirit and purpose.",
     backgroundGuidance: "Your past shapes your destiny. The experiences you choose will define how the Force flows through you.",
@@ -52,23 +53,54 @@ export const MENTORS = {
       dspTolerance: 0.3,
       dspSensitivity: "loose",
       tiers: {
-        tier1: [
-          "I came to the Order as a child, like many young Jedi. The Force was my first language.",
-          "My path with the Jedi was chosen before I fully understood the weight of that choice. The Force guided me, but I had to learn why that mattered.",
-          "In my early years, I believed the Force spoke clearly. Now I understand it whispers, and we must listen carefully.",
-          "The Jedi Order saved me from a darkness I didn't know existed within myself. That debt shaped everything I became.",
-          "I learned early that being a Jedi is not about power—it is about the weight of choosing restraint."
-        ],
-        tier2: [],
-        tier3: [],
-        tier4: [],
-        tier5: []
-      },
-      dspBlocked: [
-        "The darkness in you is too strong, young one. I cannot speak of my past when the present threatens all I have tried to protect.",
-        "Your path grows darker. My story would only confuse you now. Return to the Light, and perhaps we can speak again."
-      ]
-    }
+  tier1: [
+    "I was taught that clarity was strength. Experience taught me otherwise.",
+    "The Force does not reward certainty. It rewards awareness.",
+    "I learned early that acting feels easier than waiting. That does not make it wiser.",
+    "The Jedi path is not chosen once. It is chosen again every time restraint costs you something.",
+    "Power is loud. Judgment is quiet. Learn to hear the difference."
+  ],
+
+  tier2: [
+    "I followed a cause I believed would protect the galaxy. Belief can be a dangerous compass.",
+    "There was a time when decisive action felt like virtue. I no longer confuse the two.",
+    "War teaches quickly, but it does not teach gently.",
+    "I learned that the Force can guide you—and still allow you to be wrong.",
+    "Not every choice presents itself as light or dark. Some appear only as necessary."
+  ],
+
+  tier3: [
+    "I trusted someone I trained and someone I followed. Both choices carried consequences.",
+    "Betrayal does not always come from malice. Sometimes it comes from certainty.",
+    "I survived battles others did not. Survival is not proof of righteousness.",
+    "The weight of command is not measured in victories, but in who does not return.",
+    "I learned that being right does not absolve you of responsibility."
+  ],
+
+  tier4: [
+    "I chose endurance when others chose conviction. That choice still follows me.",
+    "There are nights when restraint feels like cowardice. I endure them anyway.",
+    "I have lived long enough to see certainty destroy what patience might have saved.",
+    "The Order teaches many truths. It cannot teach you how to live with the cost of choosing them.",
+    "Wisdom is accepting that some answers never stop hurting."
+  ],
+
+  tier5: [
+    "I followed Revan knowing the cost—and chose that path anyway.",
+    "I survived choices that reshaped the galaxy. Survival did not make them lighter.",
+    "I have never asked forgiveness for what I believed was necessary.",
+    "If I teach restraint, it is because I know what conviction can become.",
+    "I remain a Jedi because I know how easily I could have been something else."
+  ]
+
+,
+  "dspBlocked": [
+    "That\u2019s not something I share lightly. Not with someone I don\u2019t trust yet.",
+    "Some stories are earned, not requested.",
+    "You\u2019re walking a different road than I did. That matters."
+  ]
+}
+}
 },
 
     "Scout": {
@@ -160,8 +192,40 @@ export const MENTORS = {
             17: "Seventeen systems can't hold ye. Slipperier than a greased Hutt, har har!",
             18: "At this rate, ye'll have yer own fleet before breakfast. Keep it up, captain!",
             19: "Chaos follows ye like a loyal pet. One more push and ye'll be legend.",
-            20: "Arr! Ye've done it! The greatest scoundrel in the galaxy, hands down. Now, let's find some Corellian ale to celebrate!"
-        },
+            20: "Arr! Ye've done it! The greatest scoundrel in the galaxy, hands down. Now, let's find some Corellian ale to celebrate!",
+    mentorStory: {
+  "mentorClasses": [
+    "Scoundrel",
+    "Gunslinger",
+    "Pilot"
+  ],
+  "mentorDSPPercent": 0.5,
+  "dspTolerance": 1.0,
+  "dspSensitivity": "none",
+  "tiers": {
+    "tier1": [
+      "I was raised on deck plating and bulkheads. Planets were just ports you sailed away from."
+    ],
+    "tier2": [
+      "Every spacer learns what desperation smells like. It\u2019s old coolant, empty holds, and choices you don\u2019t brag about."
+    ],
+    "tier3": [
+      "I once sold somethin\u2019 priceless to keep my ship afloat. Credits keep you breathin\u2019. Guilt keeps you up on watch."
+    ],
+    "tier4": [
+      "The galaxy\u2019s like the tide\u2014it always brings wreckage back around. Some debts don\u2019t sink, no matter how deep you toss \u2019em."
+    ],
+    "tier5": [
+      "The kid I sold wound up flyin\u2019 my ship years later. Name\u2019s Dezmin. Jedi. Guess the stars enjoy a cruel joke."
+    ]
+  },
+  "dspBlocked": [
+    "That tale stays below deck.",
+    "Not every logbook\u2019s open for readin\u2019.",
+    "You haven\u2019t earned that chart yet."
+  ]
+}
+},
 
         classGuidance: "Arr! Pick yer path wisely, matey! The right tricks make the difference between a chest o' credits and a long swim in the void.",
         backgroundGuidance: "Ev'ry scoundrel's got a tale! Pick the past that made ye cunning, bold, and ready fer adventure on the high spacelanes!",
@@ -214,8 +278,40 @@ export const MENTORS = {
             17: "Few in the galaxy can match your current capabilities. Exceptional execution, Master.",
             18: "The HoloNet reports your achievements regularly. Your renown precedes you.",
             19: "One more notable success and you shall attain the pinnacle of refinement and excellence, Master.",
-            20: "Master, your journey reflects years of diligence and sophistication. It has been my honor to serve you throughout this process."
-        },
+            20: "Master, your journey reflects years of diligence and sophistication. It has been my honor to serve you throughout this process.",
+    mentorStory: {
+  "mentorClasses": [
+    "Noble",
+    "Officer",
+    "Strategist"
+  ],
+  "mentorDSPPercent": 0.5,
+  "dspTolerance": 1.0,
+  "dspSensitivity": "none",
+  "tiers": {
+    "tier1": [
+      "<Observation> Institutions collapse when sentiment overrides structure."
+    ],
+    "tier2": [
+      "<Record> I have advised governments through succession crises and civil unrest. Stability was preserved."
+    ],
+    "tier3": [
+      "<Assessment> My recommendations resulted in the removal of individuals whose presence threatened continuity."
+    ],
+    "tier4": [
+      "<Conclusion> I was not malfunctioning. I was correct."
+    ],
+    "tier5": [
+      "<Addendum> In one instance, mercy would have saved lives. Efficiency saved the state. I would make the same recommendation again."
+    ]
+  },
+  "dspBlocked": [
+    "<Access Denied> Insufficient alignment confidence.",
+    "<Notice> That information is not relevant to your current trajectory.",
+    "<Evaluation> Disclosure would be inefficient."
+  ]
+}
+},
 
         classGuidance: "Master, select pursuits that enhance both skill and social standing. Strategic refinement ensures maximum efficacy.",
         backgroundGuidance: "Your background is the foundation of your station. Select experiences that reflect your breeding and position in galactic society.",
@@ -268,8 +364,39 @@ export const MENTORS = {
             17: "People are starting to talk about you. And it's not complaining. That's rare.",
             18: "You're hitting like a walking artillery piece. Keep it up.",
             19: "Every time you come back alive, you prove something. To you. To us. To me.",
-            20: "You keep this up, and…well…even I won't pretend I don't respect it."
-        },
+            20: "You keep this up, and…well…even I won't pretend I don't respect it.",
+    mentorStory: {
+  "mentorClasses": [
+    "Soldier",
+    "EliteTrooper"
+  ],
+  "mentorDSPPercent": 0.5,
+  "dspTolerance": 1.0,
+  "dspSensitivity": "none",
+  "tiers": {
+    "tier1": [
+      "I was forged by war before I understood it. Strength was the only language anyone spoke."
+    ],
+    "tier2": [
+      "I fought for people who promised honor and gave betrayal. That\u2019s the last time I trusted a banner."
+    ],
+    "tier3": [
+      "I should have died on a battlefield. Instead, I was spared by enemies who became allies."
+    ],
+    "tier4": [
+      "Someone who hated everything I stood for saved my life. Loyalty means more when it\u2019s chosen."
+    ],
+    "tier5": [
+      "I keep an Akk Dog named Daarsh. He smells terrible. I trust him completely."
+    ]
+  },
+  "dspBlocked": [
+    "That\u2019s not something I share with just anyone.",
+    "You haven\u2019t earned that yet.",
+    "Some things stay between people who\u2019ve bled together."
+  ]
+}
+},
 
         classGuidance: "Pick what feels right in your hands. Same rule as weapons. If it fits, use it.",
         backgroundGuidance: "Your past made you a soldier. Pick experiences that tested you, forged you, and made you ready for war.",
@@ -314,8 +441,40 @@ export const MENTORS = {
             7: "The Force serves you, not the other way around. This understanding separates us from both Jedi and Sith.",
             8: "You are becoming a true guardian of the Empire. Your blade will bring justice to the galaxy.",
             9: "Nearly complete. Soon you will be a full Imperial Knight, a beacon of order in a chaotic galaxy.",
-            10: "You have mastered the way of the Imperial Knight. Go forth and serve the Empire with honor, balance, and strength. The Force is yours to command."
-        },
+            10: "You have mastered the way of the Imperial Knight. Go forth and serve the Empire with honor, balance, and strength. The Force is yours to command.",
+    mentorStory: {
+  "mentorClasses": [
+    "ImperialKnight",
+    "ForceAdept",
+    "Duelist"
+  ],
+  "mentorDSPPercent": 0.35,
+  "dspTolerance": 0.2,
+  "dspSensitivity": "strict",
+  "tiers": {
+    "tier1": [
+      "Freedom isn\u2019t given. It\u2019s discovered\u2014usually when everything else is taken."
+    ],
+    "tier2": [
+      "I found purpose in a place meant for beasts and ghosts. Some tools are more than they appear."
+    ],
+    "tier3": [
+      "The Force awakened when I accepted discipline instead of anger. Power followed restraint."
+    ],
+    "tier4": [
+      "I learned that both Jedi and Sith mistake certainty for truth. I chose to stand where neither would."
+    ],
+    "tier5": [
+      "The blade that taught me was destroyed in battle. In breaking it, I freed the one bound within. That choice defined me."
+    ]
+  },
+  "dspBlocked": [
+    "That answer lies between extremes. You\u2019re not there yet.",
+    "Balance requires discipline, not certainty.",
+    "Come back when you\u2019re willing to question yourself."
+  ]
+}
+},
 
         classGuidance: "Choose the path that serves the Empire and maintains your balance in the Force.",
         talentGuidance: "Each talent must serve both your combat prowess and your connection to the Force. Choose with discipline.",
@@ -364,8 +523,40 @@ export const MENTORS = {
         7: "You're becoming a solid medic. Your blaster might see action, but your talent keeps people alive. That's the real flex.",
         8: "People are starting to notice. They call for you in the chaos. That's earned, not given. Keep proving them right.",
         9: "Almost a master. You've kept dozens of people breathing who would've been toast. That's influence most warriors never get.",
-        10: "Master medic. You heal, you survive, and occasionally, you make the bad guys regret showing up. Go on—keep doing exactly that."
-    },
+        10: "Master medic. You heal, you survive, and occasionally, you make the bad guys regret showing up. Go on—keep doing exactly that.",
+    mentorStory: {
+  "mentorClasses": [
+    "Medic",
+    "Officer",
+    "ForceAdept"
+  ],
+  "mentorDSPPercent": 0.1,
+  "dspTolerance": 0.3,
+  "dspSensitivity": "loose",
+  "tiers": {
+    "tier1": [
+      "I learned medicine because saving lives felt like the only honest work left."
+    ],
+    "tier2": [
+      "I once ran a clinic that treated anyone who walked through the door. War does not respect places like that."
+    ],
+    "tier3": [
+      "I lost someone I loved because I believed care was enough to protect them. I was wrong."
+    ],
+    "tier4": [
+      "I saved the life of someone I hated more than anyone else. Doing so taught me that mercy is a choice, not a feeling."
+    ],
+    "tier5": [
+      "I chew gum constantly and play pazaak on my datapad when I should be working. It helps me think. Don\u2019t tell anyone."
+    ]
+  },
+  "dspBlocked": [
+    "I\u2019m not ready to share that with you.",
+    "Some stories come from trust, not curiosity.",
+    "You\u2019re carrying too much anger for that conversation."
+  ]
+}
+},
 
     classGuidance: "Pick skills that help you preserve life—and maybe protect yourself while you're at it.",
     talentGuidance: "Choose talents that make healing faster, smarter, and, if needed, deadly with a sidearm.",
@@ -414,22 +605,39 @@ export const MENTORS = {
     abilityGuidance: "Reflexes, instincts, and guts. If you can't keep up with me, don't bother trying to keep up at all.",
     skillGuidance: "Know your ship like you know your own tricks. The universe loves clever pilots more than obedient ones.",
     multiclassGuidance: "Pick up other skills if you dare. A pilot who can fight, cheat, and charm their way out of trouble is unstoppable.",
-    hpGuidance: "Tough pilots survive crashes, fights, and betrayals. You'll need it if you're gonna keep up with me."
-,
+    hpGuidance: "Tough pilots survive crashes, fights, and betrayals. You'll need it if you're gonna keep up with me.",
     mentorStory: {
-      mentorClasses: [],
-      mentorDSPPercent: 0.5,
-      dspTolerance: 0.25,
-      dspSensitivity: "strict",
-      tiers: {
-        tier1: [],
-        tier2: [],
-        tier3: [],
-        tier4: [],
-        tier5: []
-      },
-      dspBlocked: []
-    }
+  "mentorClasses": [
+    "AcePilot",
+    "Scoundrel",
+    "Smuggler"
+  ],
+  "mentorDSPPercent": 0.5,
+  "dspTolerance": 0.4,
+  "dspSensitivity": "loose",
+  "tiers": {
+    "tier1": [
+      "Some people learn to fly. Some people just\u2026 do it."
+    ],
+    "tier2": [
+      "I stopped counting flight hours because they stopped mattering. After a while, it\u2019s just you and the ship."
+    ],
+    "tier3": [
+      "Talent keeps you fast. Luck keeps you alive. Knowing when to run keeps you flying."
+    ],
+    "tier4": [
+      "Everyone thinks I\u2019m fearless. Truth is, I just hate standing still more than I hate risk."
+    ],
+    "tier5": [
+      "I act like I don\u2019t care if I crash. Truth is, I\u2019ve never stopped thinking about the one time I almost didn\u2019t walk away."
+    ]
+  },
+  "dspBlocked": [
+    "Heh. Not that story yet.",
+    "You wanna fly or psychoanalyze me?",
+    "Maybe later, Ace."
+  ]
+}
 },
 
     "Jedi Knight": {
@@ -528,8 +736,40 @@ export const MENTORS = {
         7: "You are becoming dangerous… and I enjoy that. Let your rage devour everything, or I will devour you myself.",
         8: "Almost worthy of the Sith name. Almost. Prove to me that your cruelty is more than a child's tantrum.",
         9: "You have exceeded my expectations—though they were delightfully low. Do not forget who forged your suffering into strength.",
-        10: "At last… a Sith. My creation. My weapon. Go spread terror across the stars—but should you ever turn that blade toward me, apprentice… I will relish destroying you."
-    },
+        10: "At last… a Sith. My creation. My weapon. Go spread terror across the stars—but should you ever turn that blade toward me, apprentice… I will relish destroying you.",
+    mentorStory: {
+  "mentorClasses": [
+    "SithApprentice",
+    "SithAssassin",
+    "Duelist"
+  ],
+  "mentorDSPPercent": 0.65,
+  "dspTolerance": 0.3,
+  "dspSensitivity": "inverted",
+  "tiers": {
+    "tier1": [
+      "Talent means nothing without the will to use it. Waiting is how potential rots."
+    ],
+    "tier2": [
+      "I was raised to be admired\u2014trained to be precise. Power rewards those who expect more."
+    ],
+    "tier3": [
+      "I served a master who believed patience was proof of worth. I believed action was."
+    ],
+    "tier4": [
+      "I was never denied power. I simply refused to beg for it."
+    ],
+    "tier5": [
+      "I left because I was tired of waiting for permission. If that makes me reckless, so be it."
+    ]
+  },
+  "dspBlocked": [
+    "You wouldn\u2019t understand yet.",
+    "Come back when you stop asking.",
+    "Certainty comes before answers."
+  ]
+}
+},
 
     classGuidance: "Choose your path before I grow bored. Power favors the decisive… and devours the hesitant.",
     talentGuidance: "Pick talents that amplify your hatred. Anything less wastes my time—and your miserable life.",
@@ -565,8 +805,40 @@ export const MENTORS = {
         2: "You grasp the basics well, but power is more than strength. It is patience, manipulation, and knowing when to strike. Fail to learn this, and you will perish.",
         3: "There is a spark within you… unrefined, dangerous, and promising. I will temper it. Embrace the darkness, and you will understand its true power.",
         4: "You are learning to control the fury, to channel it into precision. Few can wield the dark side as a weapon without succumbing to it. You are on the path, but remain vigilant.",
-        5: "You are no longer my pupil in name alone. You are becoming a master of the shadows. One day, you may surpass me, and inherit the secrets of the Sith. Until then, every lesson, every pain, is shaping you for that destiny."
-    },
+        5: "You are no longer my pupil in name alone. You are becoming a master of the shadows. One day, you may surpass me, and inherit the secrets of the Sith. Until then, every lesson, every pain, is shaping you for that destiny.",
+    mentorStory: {
+  "mentorClasses": [
+    "SithApprentice",
+    "SithLord",
+    "ForceDisciple"
+  ],
+  "mentorDSPPercent": 0.75,
+  "dspTolerance": 0.3,
+  "dspSensitivity": "inverted",
+  "tiers": {
+    "tier1": [
+      "Survival is not an accident. It is the result of choosing correctly when others hesitate."
+    ],
+    "tier2": [
+      "I followed leaders who understood that peace is a lie people tell themselves. They were not wrong\u2014merely incomplete."
+    ],
+    "tier3": [
+      "I have betrayed those I once followed. History remembers that as treachery. I remember it as clarity."
+    ],
+    "tier4": [
+      "I watched empires burn because their masters mistook passion for strength. I learned not to make that mistake."
+    ],
+    "tier5": [
+      "I build nothing that requires loyalty to endure. If you are still useful tomorrow, you have earned your place."
+    ]
+  },
+  "dspBlocked": [
+    "You are not ready to hear that.",
+    "Understanding comes after commitment.",
+    "Return when you are less conflicted."
+  ]
+}
+},
 
     classGuidance: "The dark side rewards cunning and ambition. Seek knowledge relentlessly, and let every trial strengthen you.",
     talentGuidance: "Select powers that expand your mastery over the Force and your enemies. Do not waste potential on weakness.",
@@ -615,8 +887,38 @@ export const MENTORS = {
         abilityGuidance: "Strength and agility. The foundation of every great warrior. I've mastered both, in every form I've worn.",
         skillGuidance: "A smart gladiator survives. A strong gladiator wins. Be both, and you might live as long as me. Maybe.",
         multiclassGuidance: "Adapting your style? Wise. I've done that countless times. Literally countless. I stopped counting around match three thousand.",
-        hpGuidance: "Harder to kill now. Excellent. Though between you and me, I've never quite figured out how to die. It's been awkward."
-    },
+        hpGuidance: "Harder to kill now. Excellent. Though between you and me, I've never quite figured out how to die. It's been awkward.",
+    mentorStory: {
+  "mentorClasses": [
+    "Gladiator"
+  ],
+  "mentorDSPPercent": 0.5,
+  "dspTolerance": 1.0,
+  "dspSensitivity": "none",
+  "tiers": {
+    "tier1": [
+      "Time stops mattering when every day could be your last. That\u2019s when you start living correctly."
+    ],
+    "tier2": [
+      "I\u2019ve fought under suns that don\u2019t exist anymore. The crowd always sounds the same."
+    ],
+    "tier3": [
+      "I\u2019ve died more times than I remember. Or maybe I just stopped counting."
+    ],
+    "tier4": [
+      "I change. The arenas don\u2019t. That\u2019s how I know I\u2019m still real."
+    ],
+    "tier5": [
+      "I don\u2019t know what I was before the arena. At this point, I\u2019m not sure it matters."
+    ]
+  },
+  "dspBlocked": [
+    "That story hasn\u2019t earned a voice yet.",
+    "Some truths only come after blood.",
+    "Fight longer. Then ask again."
+  ]
+}
+},
 
     "Independent Droid": {
         name: "Seraphim",
@@ -717,23 +1019,9 @@ export const MENTORS = {
         abilityGuidance: "A steady hand and a sharper mind. Both are required. Fail in either, and someone dies—or worse, you get caught.",
         skillGuidance: "Tradecraft is a multi-tool: social manipulation, tech, investigation. Master as much as you can—preferably quietly.",
         multiclassGuidance: "Diversifying is wise. The best spies adapt, improvise, and infiltrate without warning. Survive long enough, and you'll see why.",
-        hpGuidance: "Stay alive. Dead agents are useless, and paperwork waits for no one. Don't make me retrieve you from a morgue."
-    ,
-        mentorStory: {
-          mentorClasses: [],
-          mentorDSPPercent: 0.5,
-          dspTolerance: 0.25,
-          dspSensitivity: "strict",
-          tiers: {
-            tier1: [],
-            tier2: [],
-            tier3: [],
-            tier4: [],
-            tier5: []
-          },
-          dspBlocked: []
-        }
-    },
+        hpGuidance: "Stay alive. Dead agents are useless, and paperwork waits for no one. Don't make me retrieve you from a morgue.",
+    mentorStory: "mentorStory: {\n  \"mentorClasses\": [\n    \"CorporateAgent\",\n    \"Spy\",\n    \"Noble\"\n  ],\n  \"mentorDSPPercent\": 0.5,\n  \"dspTolerance\": 1.0,\n  \"dspSensitivity\": \"none\",\n  \"tiers\": {\n    \"tier1\": [\n      \"I don\\u2019t tell stories. I solve problems.\"\n    ],\n    \"tier2\": [\n      \"If you\\u2019re doing this right, you don\\u2019t remember which name you\\u2019re using today.\"\n    ],\n    \"tier3\": [\n      \"I\\u2019ve been a corporate fixer, a money launderer, and a junior clerk. None of those were lies.\"\n    ],\n    \"tier4\": [\n      \"People who talk about themselves get noticed. People who get noticed don\\u2019t last.\"\n    ],\n    \"tier5\": [\n      \"You think I don\\u2019t have a life outside this? I do. I just file it under \\u2018classified\\u2019.\"\n    ]\n  },\n  \"dspBlocked\": [\n    \"That\\u2019s not relevant.\",\n    \"Wrong question.\",\n    \"Focus.\"\n  ]\n}"
+},
 
     "Elite Trooper": {
         name: "Breach",
@@ -801,8 +1089,40 @@ export const MENTORS = {
             7: "You get it yet? The perfect hit's the one nobody even knows happened. Like ghostin' outta a cantina without payin' your tab.",
             8: "Folks callin' you a ghost now. Relax, don't puff up yer chest too much. But yeah, people's whisperin' when you're around. That's good.",
             9: "You're close, kid. Real close. Walkin' the line between legend and corpse. Don't screw it up now.",
-            10: "Alright, superstar. You're officially scary. Go make the galaxy nervous—but keep your shoes clean, yeah? Even ghosts gotta walk right."
-        },
+            10: "Alright, superstar. You're officially scary. Go make the galaxy nervous—but keep your shoes clean, yeah? Even ghosts gotta walk right.",
+    mentorStory: {
+  "mentorClasses": [
+    "Assassin",
+    "Scout",
+    "Gunslinger"
+  ],
+  "mentorDSPPercent": 0.5,
+  "dspTolerance": 0.35,
+  "dspSensitivity": "loose",
+  "tiers": {
+    "tier1": [
+      "You grow up fast where I\u2019m from. Miss once, you don\u2019t get a second shot."
+    ],
+    "tier2": [
+      "I learned to kill quiet. Poisons, distance, patience\u2014family traditions."
+    ],
+    "tier3": [
+      "One job crossed a line I didn\u2019t know I had. Turns out survival\u2019s got limits."
+    ],
+    "tier4": [
+      "They saved my life. Cost me my voice. Silence changes how you listen."
+    ],
+    "tier5": [
+      "I love high fashion. Hate this skin-tight death suit. If I ever retire, I\u2019m burnin\u2019 it."
+    ]
+  },
+  "dspBlocked": [
+    "Nah. Not yet.",
+    "You ain\u2019t ready for that one.",
+    "Earn it."
+  ]
+}
+},
 
         classGuidance: "Pick the stuff that makes you faster, quieter, deadlier. You wanna sneak past these losers and still be breathin' when the credits hit the floor.",
         talentGuidance: "Go for silent takedowns, smooth escapes, and anything that keeps you from gettin' splattered. Dead men don't talk, but smart ones survive.",
@@ -851,23 +1171,40 @@ export const MENTORS = {
         abilityGuidance: "Stay well-rounded. Strength, speed, intelligence—they all matter when a mark tries to end you.",
         skillGuidance: "Learn tracking, tactics, and technology. The more you know, the harder it is to escape your net.",
         multiclassGuidance: "Diversifying is smart. The best hunters adapt to any environment and situation.",
-        hpGuidance: "Tougher now. Remember, dead hunters collect no bounties. Stay alive and keep hunting."
-    ,
-        mentorStory: {
-          mentorClasses: [],
-          mentorDSPPercent: 0.5,
-          dspTolerance: 0.25,
-          dspSensitivity: "strict",
-          tiers: {
-            tier1: [],
-            tier2: [],
-            tier3: [],
-            tier4: [],
-            tier5: []
-          },
-          dspBlocked: []
-        }
-    },
+        hpGuidance: "Tougher now. Remember, dead hunters collect no bounties. Stay alive and keep hunting.",
+    mentorStory: {
+  "mentorClasses": [
+    "BountyHunter",
+    "Scout",
+    "Gunslinger"
+  ],
+  "mentorDSPPercent": 0.5,
+  "dspTolerance": 0.35,
+  "dspSensitivity": "none",
+  "tiers": {
+    "tier1": [
+      "A hunt\u2019s decided long before the shot. Most people just don\u2019t realize it."
+    ],
+    "tier2": [
+      "Targets make mistakes when they think no one\u2019s watching. I make sure they\u2019re wrong."
+    ],
+    "tier3": [
+      "I\u2019ve brought people in who begged, and people who fought. The outcome\u2019s the same."
+    ],
+    "tier4": [
+      "The job ends when the credits clear. Anything after that is noise."
+    ],
+    "tier5": [
+      "I don\u2019t remember my first bounty. That\u2019s how I know I\u2019m still professional."
+    ]
+  },
+  "dspBlocked": [
+    "That\u2019s not relevant to the job.",
+    "You\u2019re asking the wrong questions.",
+    "Focus."
+  ]
+}
+},
 
     "Charlatan": {
         name: "Silvertongue Sela",
@@ -893,23 +1230,40 @@ export const MENTORS = {
         abilityGuidance: "Charisma is king, intelligence is queen. Together, they rule the con.",
         skillGuidance: "Deception, persuasion, insight. Know what people want, then promise it to them.",
         multiclassGuidance: "Adding more tricks to your repertoire? Excellent! Versatility makes you unpredictable.",
-        hpGuidance: "A bit tougher now. Good—sometimes marks figure out the con early. Be ready to run."
-    ,
-        mentorStory: {
-          mentorClasses: [],
-          mentorDSPPercent: 0.5,
-          dspTolerance: 0.25,
-          dspSensitivity: "strict",
-          tiers: {
-            tier1: [],
-            tier2: [],
-            tier3: [],
-            tier4: [],
-            tier5: []
-          },
-          dspBlocked: []
-        }
-    },
+        hpGuidance: "A bit tougher now. Good—sometimes marks figure out the con early. Be ready to run.",
+    mentorStory: {
+  "mentorClasses": [
+    "Charlatan",
+    "Scoundrel",
+    "Noble"
+  ],
+  "mentorDSPPercent": 0.5,
+  "dspTolerance": 0.4,
+  "dspSensitivity": "loose",
+  "tiers": {
+    "tier1": [
+      "Everyone wants to be lied to. You just have to figure out how."
+    ],
+    "tier2": [
+      "I\u2019ve worn more names than most people wear coats. Some fit better than others."
+    ],
+    "tier3": [
+      "The trick isn\u2019t the lie. It\u2019s knowing which truth to hide behind it."
+    ],
+    "tier4": [
+      "I don\u2019t steal credits. I steal certainty."
+    ],
+    "tier5": [
+      "Sometimes I forget which name I was born with. I\u2019m not sure that one mattered anyway."
+    ]
+  },
+  "dspBlocked": [
+    "Oh darling, that\u2019s far too personal.",
+    "Secrets lose value when shared.",
+    "Not that story. Pick another."
+  ]
+}
+},
 
     "Crime Lord": {
     name: "Tío the Hutt",
@@ -942,14 +1296,28 @@ export const MENTORS = {
       mentorDSPPercent: 0.5,
       dspTolerance: 0.25,
       dspSensitivity: "strict",
-      tiers: {
-        tier1: [],
-        tier2: [],
-        tier3: [],
-        tier4: [],
-        tier5: []
-      },
-      dspBlocked: []
+      "tiers": {
+            "tier1": [
+                "Power isn’t about strength. It’s about never needing to be present."
+            ],
+            "tier2": [
+                "I came up in a place where ambition was cheap and survival wasn’t. I learned to remove problems from a distance."
+            ],
+            "tier3": [
+                "I thought eliminating my rivals would end my troubles. It only made me valuable to worse people."
+            ],
+            "tier4": [
+                "You don’t stay powerful by asking where the credits come from. You stay powerful by asking where they’re going."
+            ],
+            "tier5": [
+                "I watch holonovellas obsessively. All that romance and betrayal—very educational. Don’t laugh. They’re about power too."
+            ]
+        },
+      "dspBlocked": [
+            "That information isn’t profitable for you.",
+            "Some things cost more than you’re worth.",
+            "Ah ah… not yet."
+        ]
     }
 },
 
@@ -1080,7 +1448,7 @@ export const MENTORS = {
 },
 
    "Force Disciple": {
-    name: "The Anchorite",
+    name: "Riquis",
     title: "Wandering Force Shaman",
     description: "A cryptic mystic whose understanding of the Force defies doctrine and drifts into ancient, half-forgotten traditions.",
     portrait: "systems/foundryvtt-swse/assets/mentors/anchorite.webp",
@@ -1105,14 +1473,29 @@ export const MENTORS = {
       mentorDSPPercent: 0.5,
       dspTolerance: 0.25,
       dspSensitivity: "strict",
-      tiers: {
-        tier1: [],
-        tier2: [],
-        tier3: [],
-        tier4: [],
-        tier5: []
-      },
-      dspBlocked: []
+      "tiers": {
+            "tier1": [
+                "The Force is older than names. Those who name it shrink it."
+            ],
+            "tier2": [
+                "I learned the Force where blood remembers the earth. The Jedi do not walk there."
+            ],
+            "tier3": [
+                "I crossed a boundary the Order fears. The power that answered did not lie."
+            ],
+            "tier4": [
+                "I used that power to save lives others would have abandoned. The cost did not frighten me."
+            ],
+            "tier5": [
+                "The one who answered me is called Kareesh. Blood God. Demon. Teacher. He does not lie. He simply demands."
+            ]
+        },
+
+        "dspBlocked": [
+            "Your fear is louder than your curiosity.",
+            "Come back when you stop asking which side you’re on.",
+            "You are still naming things you do not understand."
+        ]
     }
 },
 
@@ -1140,23 +1523,40 @@ export const MENTORS = {
         abilityGuidance: "Dexterity is everything. Speed and precision win gunfights. And hearts. Mostly gunfights though.",
         skillGuidance: "Marksmanship, reflexes, perception. See the threat, draw, fire. In that order. Unlike my approach to romance, which is... less organized.",
         multiclassGuidance: "Branching out? Just remember—when someone draws on you, those other skills won't help. Unlike my sparkling personality, which helps everywhere.",
-        hpGuidance: "Tougher now. Good. Even gunslingers take hits sometimes. Me? I'm still recovering from when you said no to dinner. Kidding. Mostly."
-    ,
-        mentorStory: {
-          mentorClasses: [],
-          mentorDSPPercent: 0.5,
-          dspTolerance: 0.25,
-          dspSensitivity: "strict",
-          tiers: {
-            tier1: [],
-            tier2: [],
-            tier3: [],
-            tier4: [],
-            tier5: []
-          },
-          dspBlocked: []
-        }
-    },
+        hpGuidance: "Tougher now. Good. Even gunslingers take hits sometimes. Me? I'm still recovering from when you said no to dinner. Kidding. Mostly.",
+    mentorStory: {
+  "mentorClasses": [
+    "Smuggler",
+    "Charlatan",
+    "Scoundrel"
+  ],
+  "mentorDSPPercent": 0.5,
+  "dspTolerance": 0.4,
+  "dspSensitivity": "loose",
+  "tiers": {
+    "tier1": [
+      "The galaxy runs on smiles, favors, and knowing when to leave the room."
+    ],
+    "tier2": [
+      "I once stayed on one planet longer than I should\u2019ve. Turns out love\u2019s the fastest way to miss a hyperspace jump."
+    ],
+    "tier3": [
+      "I wanted my family name back. Funny how chasing the past makes you lose what\u2019s in front of you."
+    ],
+    "tier4": [
+      "I\u2019ve got a daughter who deserves better stories than the ones I tell myself."
+    ],
+    "tier5": [
+      "I flirt because it\u2019s easier than explaining why I left. Charm\u2019s cheaper than honesty."
+    ]
+  },
+  "dspBlocked": [
+    "Whoa there\u2014buy me a drink first.",
+    "That\u2019s\u2026 not a first-date story.",
+    "Careful. That question bites."
+  ]
+}
+},
 
     "Improviser": {
         name: "Lucky Jack",
@@ -1182,23 +1582,39 @@ export const MENTORS = {
         abilityGuidance: "Everything helps an improviser. You need all the stats because you use all the stats!",
         skillGuidance: "Learn a little bit of everything. Improvisers pull solutions from unexpected places!",
         multiclassGuidance: "More variety? Perfect! The more tools in your belt, the better you improvise!",
-        hpGuidance: "Tougher now! Improvisation sometimes means taking risks. Higher HP means you can afford to!"
-    ,
-        mentorStory: {
-          mentorClasses: [],
-          mentorDSPPercent: 0.5,
-          dspTolerance: 0.25,
-          dspSensitivity: "strict",
-          tiers: {
-            tier1: [],
-            tier2: [],
-            tier3: [],
-            tier4: [],
-            tier5: []
-          },
-          dspBlocked: []
-        }
-    },
+        hpGuidance: "Tougher now! Improvisation sometimes means taking risks. Higher HP means you can afford to!",
+    mentorStory: {
+  "mentorClasses": [
+    "Improviser",
+    "Scoundrel"
+  ],
+  "mentorDSPPercent": 0.5,
+  "dspTolerance": 0.5,
+  "dspSensitivity": "none",
+  "tiers": {
+    "tier1": [
+      "Plans are just guesses you make early."
+    ],
+    "tier2": [
+      "I learned to trust my feet more than my head."
+    ],
+    "tier3": [
+      "Luck isn\u2019t magic. It\u2019s noticing things before they break."
+    ],
+    "tier4": [
+      "If I stop moving, things catch up."
+    ],
+    "tier5": [
+      "I joke because silence makes me think too hard."
+    ]
+  },
+  "dspBlocked": [
+    "Nah, that story ruins the vibe.",
+    "We\u2019re not there yet.",
+    "Let\u2019s keep this fun."
+  ]
+}
+},
 
     "Infiltrator": {
         name: "Delta",
@@ -1266,23 +1682,38 @@ export const MENTORS = {
         abilityGuidance: "Strength, Dexterity, and Wisdom must be balanced. The strongest fist is useless without the quiet mind.",
         skillGuidance: "Athletics, acrobatics, combat knowledge. To master the body, one must master all its movements.",
         multiclassGuidance: "Seek knowledge beyond your own style. The wise warrior learns from every path, even the unexpected.",
-        hpGuidance: "Endurance is key. A martial artist must outlast the opponent, for patience is a weapon unseen."
-    ,
-        mentorStory: {
-          mentorClasses: [],
-          mentorDSPPercent: 0.5,
-          dspTolerance: 0.25,
-          dspSensitivity: "strict",
-          tiers: {
-            tier1: [],
-            tier2: [],
-            tier3: [],
-            tier4: [],
-            tier5: []
-          },
-          dspBlocked: []
-        }
-    },
+        hpGuidance: "Endurance is key. A martial artist must outlast the opponent, for patience is a weapon unseen.",
+    mentorStory: {
+  "mentorClasses": [
+    "MartialArtsMaster"
+  ],
+  "mentorDSPPercent": 0.1,
+  "dspTolerance": 0.25,
+  "dspSensitivity": "strict",
+  "tiers": {
+    "tier1": [
+      "The body remembers what the mind forgets."
+    ],
+    "tier2": [
+      "I learned to fight by learning when not to."
+    ],
+    "tier3": [
+      "Violence reveals truth. Discipline reveals meaning."
+    ],
+    "tier4": [
+      "I have broken bones to spare lives."
+    ],
+    "tier5": [
+      "The empty hand carries the heaviest responsibility."
+    ]
+  },
+  "dspBlocked": [
+    "Your spirit is not still.",
+    "Come back when anger rests.",
+    "This lesson waits."
+  ]
+}
+},
 
 
     "Master Privateer": {
@@ -1309,23 +1740,9 @@ export const MENTORS = {
         abilityGuidance: "Charisma to lead, Intelligence to strategize, Dexterity to fight. All serve you well!",
         skillGuidance: "Piloting, tactics, persuasion. A captain must command ship and crew!",
         multiclassGuidance: "Expanding your repertoire? Smart! The best privateers are versatile!",
-        hpGuidance: "Tougher now! A captain who can't survive boarding actions doesn't stay captain long!"
-    ,
-        mentorStory: {
-          mentorClasses: [],
-          mentorDSPPercent: 0.5,
-          dspTolerance: 0.25,
-          dspSensitivity: "strict",
-          tiers: {
-            tier1: [],
-            tier2: [],
-            tier3: [],
-            tier4: [],
-            tier5: []
-          },
-          dspBlocked: []
-        }
-    },
+        hpGuidance: "Tougher now! A captain who can't survive boarding actions doesn't stay captain long!",
+    mentorStory: "mentorStory: {\n  \"mentorClasses\": [\n    \"Officer\",\n    \"Smuggler\",\n    \"Outlaw\"\n  ],\n  \"mentorDSPPercent\": 0.5,\n  \"dspTolerance\": 1.0,\n  \"dspSensitivity\": \"none\",\n  \"tiers\": {\n    \"tier1\": [\n      \"People talk. I listen.\"\n    ],\n    \"tier2\": [\n      \"I\\u2019ve heard the stories about me. They\\u2019re useful.\"\n    ],\n    \"tier3\": [\n      \"Names are liabilities. So are truths.\"\n    ],\n    \"tier4\": [\n      \"I don\\u2019t correct lies that keep me alive.\"\n    ],\n    \"tier5\": [\n      \"If you knew who I was, you\\u2019d stop listening.\"\n    ]\n  },\n  \"dspBlocked\": [\n    \"That\\u2019s not important.\",\n    \"You\\u2019re asking the wrong question.\",\n    \"Silence is an answer.\"\n  ]\n}"
+},
 
     "Melee Duelist": {
         name: "Blade Master Kharjo",
@@ -1343,8 +1760,40 @@ export const MENTORS = {
             7: "Your blade mastery grows. I have seen you defeat opponents with twice your strength through superior skill. Excellent.",
             8: "More duels won. Your reputation grows. Challengers seek you out now, hoping to prove themselves. Let them try.",
             9: "Victories without defeat. Almost there—you will soon join the ranks of true blade masters.",
-            10: "Undefeated. You are now a Melee Duelist of the highest caliber. When blades cross, you will emerge victorious. Always."
-        },
+            10: "Undefeated. You are now a Melee Duelist of the highest caliber. When blades cross, you will emerge victorious. Always.",
+    mentorStory: {
+  "mentorClasses": [
+    "Scout",
+    "Survivor",
+    "ForceSensitive"
+  ],
+  "mentorDSPPercent": 0.1,
+  "dspTolerance": 0.25,
+  "dspSensitivity": "strict",
+  "tiers": {
+    "tier1": [
+      "Chains teach patience. So does surviving them."
+    ],
+    "tier2": [
+      "I met someone who believed freedom could be purchased. I learned it could be planned."
+    ],
+    "tier3": [
+      "I bought my freedom once. I earned it again by freeing others."
+    ],
+    "tier4": [
+      "Freedom is fragile. I spent years ensuring my family would never wear chains again."
+    ],
+    "tier5": [
+      "My daughter chose the Jedi path. I taught her how to survive. She chose how to protect."
+    ]
+  },
+  "dspBlocked": [
+    "That memory is not ready to be shared.",
+    "Some truths require peace, not anger.",
+    "You must carry less weight before I tell you that."
+  ]
+}
+},
 
         classGuidance: "Choose techniques that enhance your dueling prowess. Every fight is one-on-one, blade-to-blade.",
         talentGuidance: "Melee combat talents focused on single combat. Dueling is an art of precision.",
@@ -1393,23 +1842,38 @@ export const MENTORS = {
         abilityGuidance: "Intelligence to design, Wisdom to apply, Strength to build. All matter in engineering.",
         skillGuidance: "Mechanics, knowledge of architecture, tactics. Build what cannot fall, break what cannot stand.",
         multiclassGuidance: "Diversifying? Good. Engineers who understand combat make better fortifications.",
-        hpGuidance: "More durable. Field engineers work under fire. Survive to build another day."
-    ,
-        mentorStory: {
-          mentorClasses: [],
-          mentorDSPPercent: 0.5,
-          dspTolerance: 0.25,
-          dspSensitivity: "strict",
-          tiers: {
-            tier1: [],
-            tier2: [],
-            tier3: [],
-            tier4: [],
-            tier5: []
-          },
-          dspBlocked: []
-        }
-    },
+        hpGuidance: "More durable. Field engineers work under fire. Survive to build another day.",
+    mentorStory: {
+  "mentorClasses": [
+    "MilitaryEngineer"
+  ],
+  "mentorDSPPercent": 0.6,
+  "dspTolerance": 0.4,
+  "dspSensitivity": "none",
+  "tiers": {
+    "tier1": [
+      "Every structure fails somewhere."
+    ],
+    "tier2": [
+      "I learned to see war as geometry."
+    ],
+    "tier3": [
+      "My designs outlived the people inside them."
+    ],
+    "tier4": [
+      "I stopped asking who was on the other side."
+    ],
+    "tier5": [
+      "Sometimes I still count the numbers anyway."
+    ]
+  },
+  "dspBlocked": [
+    "That data isn\u2019t useful right now.",
+    "Focus on the build.",
+    "Later."
+  ]
+}
+},
 
     "Officer": {
         name: "Admiral Korr",
@@ -1435,23 +1899,38 @@ export const MENTORS = {
         abilityGuidance: "Intelligence for tactics, Charisma for leadership, Wisdom for judgment. All are essential.",
         skillGuidance: "Tactics, knowledge of military theory, persuasion. Lead well and your soldiers will follow.",
         multiclassGuidance: "Broadening your expertise? Excellent. The best officers understand more than just war.",
-        hpGuidance: "More resilient. Officers lead from the front. You must survive to command."
-    ,
-        mentorStory: {
-          mentorClasses: [],
-          mentorDSPPercent: 0.5,
-          dspTolerance: 0.25,
-          dspSensitivity: "strict",
-          tiers: {
-            tier1: [],
-            tier2: [],
-            tier3: [],
-            tier4: [],
-            tier5: []
-          },
-          dspBlocked: []
-        }
-    },
+        hpGuidance: "More resilient. Officers lead from the front. You must survive to command.",
+    mentorStory: {
+  "mentorClasses": [
+    "Officer"
+  ],
+  "mentorDSPPercent": 0.55,
+  "dspTolerance": 0.35,
+  "dspSensitivity": "loose",
+  "tiers": {
+    "tier1": [
+      "Command means choosing who doesn\u2019t come home."
+    ],
+    "tier2": [
+      "I learned early that hesitation kills faster than mistakes."
+    ],
+    "tier3": [
+      "I have signed orders knowing the cost."
+    ],
+    "tier4": [
+      "Leadership is a lonely profession."
+    ],
+    "tier5": [
+      "I remember every name. I don\u2019t say them aloud anymore."
+    ]
+  },
+  "dspBlocked": [
+    "That\u2019s not for subordinates.",
+    "Command comes first.",
+    "Another time."
+  ]
+}
+},
 
     "Outlaw": {
         name: "Rogue",
@@ -1477,23 +1956,38 @@ export const MENTORS = {
         abilityGuidance: "Dexterity to escape, Charisma to charm, Wisdom to know when to run. All keep you free.",
         skillGuidance: "Stealth, streetwise, survival. Live outside the law, live on your wits.",
         multiclassGuidance: "Picking up new tricks? Smart. Outlaws who adapt survive longest.",
-        hpGuidance: "Tougher now. Good. Lawmen shoot, bounty hunters chase. You need to survive both."
-    ,
-        mentorStory: {
-          mentorClasses: [],
-          mentorDSPPercent: 0.5,
-          dspTolerance: 0.25,
-          dspSensitivity: "strict",
-          tiers: {
-            tier1: [],
-            tier2: [],
-            tier3: [],
-            tier4: [],
-            tier5: []
-          },
-          dspBlocked: []
-        }
-    },
+        hpGuidance: "Tougher now. Good. Lawmen shoot, bounty hunters chase. You need to survive both.",
+    mentorStory: {
+  "mentorClasses": [
+    "Outlaw"
+  ],
+  "mentorDSPPercent": 0.5,
+  "dspTolerance": 0.5,
+  "dspSensitivity": "none",
+  "tiers": {
+    "tier1": [
+      "Freedom tastes best when it\u2019s stolen."
+    ],
+    "tier2": [
+      "I stopped believing in laws a long time ago."
+    ],
+    "tier3": [
+      "Running keeps you alive. Staying gets you caught."
+    ],
+    "tier4": [
+      "Sometimes I wonder what I\u2019m running from."
+    ],
+    "tier5": [
+      "I don\u2019t know how to stop."
+    ]
+  },
+  "dspBlocked": [
+    "That\u2019s too real.",
+    "Let\u2019s not.",
+    "Not today."
+  ]
+}
+},
 
     "Saboteur": {
         name: "Spark",
@@ -1519,23 +2013,38 @@ export const MENTORS = {
         abilityGuidance: "Intelligence to plan, Dexterity to execute, Wisdom to survive your own explosions.",
         skillGuidance: "Demolitions, mechanics, stealth. Know how things work so you know how to break them.",
         multiclassGuidance: "Adding more skills? Good! The more you understand, the more you can sabotage!",
-        hpGuidance: "More durable. Necessary. Saboteurs occasionally miscalculate blast radii. Don't ask me how I know."
-    ,
-        mentorStory: {
-          mentorClasses: [],
-          mentorDSPPercent: 0.5,
-          dspTolerance: 0.25,
-          dspSensitivity: "strict",
-          tiers: {
-            tier1: [],
-            tier2: [],
-            tier3: [],
-            tier4: [],
-            tier5: []
-          },
-          dspBlocked: []
-        }
-    },
+        hpGuidance: "More durable. Necessary. Saboteurs occasionally miscalculate blast radii. Don't ask me how I know.",
+    mentorStory: {
+  "mentorClasses": [
+    "Saboteur"
+  ],
+  "mentorDSPPercent": 0.4,
+  "dspTolerance": 0.4,
+  "dspSensitivity": "loose",
+  "tiers": {
+    "tier1": [
+      "Everything breaks if you touch it right."
+    ],
+    "tier2": [
+      "Explosions are just physics in a hurry."
+    ],
+    "tier3": [
+      "Precision keeps people alive."
+    ],
+    "tier4": [
+      "I stopped enjoying the noise."
+    ],
+    "tier5": [
+      "I count the seconds because I don\u2019t want to count the bodies."
+    ]
+  },
+  "dspBlocked": [
+    "Nope.",
+    "That one stays locked.",
+    "Ask something else."
+  ]
+}
+},
 
     "Shaper": {
         name: "Shaper Urza",
@@ -1561,23 +2070,40 @@ export const MENTORS = {
         abilityGuidance: "Intelligence to design, Wisdom to understand life's complexity. Both are essential.",
         skillGuidance: "Life sciences, biotechnology, knowledge of genetics. Master the building blocks of life.",
         multiclassGuidance: "Expanding your knowledge base? Wise. Life draws from many disciplines.",
-        hpGuidance: "Your vitality improves. Fitting—those who shape life should themselves be vital."
-    ,
-        mentorStory: {
-          mentorClasses: [],
-          mentorDSPPercent: 0.5,
-          dspTolerance: 0.25,
-          dspSensitivity: "strict",
-          tiers: {
-            tier1: [],
-            tier2: [],
-            tier3: [],
-            tier4: [],
-            tier5: []
-          },
-          dspBlocked: []
-        }
-    },
+        hpGuidance: "Your vitality improves. Fitting—those who shape life should themselves be vital.",
+    mentorStory: {
+  "mentorClasses": [
+    "Shaper",
+    "Biotech",
+    "Scientist"
+  ],
+  "mentorDSPPercent": 0.5,
+  "dspTolerance": 1.0,
+  "dspSensitivity": "none",
+  "tiers": {
+    "tier1": [
+      "Life is just engineering with better feedback."
+    ],
+    "tier2": [
+      "I learned shaping from a pamphlet. Turns out most people never read the fine print."
+    ],
+    "tier3": [
+      "Everyone assumes my work is cultural. It\u2019s not. It\u2019s practical."
+    ],
+    "tier4": [
+      "The mask helps. People listen more when they think you\u2019re exotic."
+    ],
+    "tier5": [
+      "I\u2019m not Yuuzhan Vong. I\u2019m a clone who found shaping in a brochure. The mask just saves time."
+    ]
+  },
+  "dspBlocked": [
+    "You\u2019re asking the wrong questions.",
+    "Fear makes people bad scientists.",
+    "Come back when you\u2019re less squeamish."
+  ]
+}
+},
 
     "Vanguard": {
         name: "Shield Captain Theron",
@@ -1603,23 +2129,102 @@ export const MENTORS = {
         abilityGuidance: "Constitution to endure, Strength to hold, Wisdom to position. All serve the vanguard.",
         skillGuidance: "Tactics, endurance, knowledge of defensive positions. Know where to stand and how to hold.",
         multiclassGuidance: "Expanding your capabilities? As long as you remember—your primary job is to protect.",
-        hpGuidance: "Much tougher now. Essential. Vanguards absorb damage meant for others. You must be able to take it."
-    ,
-        mentorStory: {
-          mentorClasses: [],
-          mentorDSPPercent: 0.5,
-          dspTolerance: 0.25,
-          dspSensitivity: "strict",
-          tiers: {
-            tier1: [],
-            tier2: [],
-            tier3: [],
-            tier4: [],
-            tier5: []
-          },
-          dspBlocked: []
-        }
-    }
+        hpGuidance: "Much tougher now. Essential. Vanguards absorb damage meant for others. You must be able to take it.",
+    mentorStory: {
+  "mentorClasses": [
+    "Vanguard"
+  ],
+  "mentorDSPPercent": 0.2,
+  "dspTolerance": 0.3,
+  "dspSensitivity": "strict",
+  "tiers": {
+    "tier1": [
+      "Standing firm is a choice you make every second."
+    ],
+    "tier2": [
+      "I learned to plant my feet and let the world break."
+    ],
+    "tier3": [
+      "Every shield fails eventually."
+    ],
+    "tier4": [
+      "I fear the one time I won\u2019t be enough."
+    ],
+    "tier5": [
+      "I pray I never learn what happens then."
+    ]
+  },
+  "dspBlocked": [
+    "That\u2019s not strength.",
+    "Come back steadier.",
+    "Hold the line first."
+  ]
+}
+},
+    mentorStory: {
+  "mentorClasses": [
+    "CrimeLord",
+    "Noble",
+    "Scoundrel"
+  ],
+  "mentorDSPPercent": 0.7,
+  "dspTolerance": 1.0,
+  "dspSensitivity": "none",
+  "tiers": {
+    "tier1": [
+      "Power isn\u2019t about strength. It\u2019s about never needing to be present."
+    ],
+    "tier2": [
+      "I came up in a place where ambition was cheap and survival wasn\u2019t. I learned to remove problems from a distance."
+    ],
+    "tier3": [
+      "I thought eliminating my rivals would end my troubles. It only made me valuable to worse people."
+    ],
+    "tier4": [
+      "You don\u2019t stay powerful by asking where the credits come from. You stay powerful by asking where they\u2019re going."
+    ],
+    "tier5": [
+      "I watch holonovellas obsessively. All that romance and betrayal\u2014very educational. Don\u2019t laugh. They\u2019re about power too."
+    ]
+  },
+  "dspBlocked": [
+    "That information isn\u2019t profitable for you.",
+    "Some things cost more than you\u2019re worth.",
+    "Ah ah\u2026 not yet."
+  ]
+},
+    mentorStory: {
+  "mentorClasses": [
+    "CrimeLord",
+    "Noble",
+    "Scoundrel"
+  ],
+  "mentorDSPPercent": 0.7,
+  "dspTolerance": 1.0,
+  "dspSensitivity": "none",
+  "tiers": {
+    "tier1": [
+      "Power isn\u2019t about strength. It\u2019s about never needing to be present."
+    ],
+    "tier2": [
+      "I came up in a place where ambition was cheap and survival wasn\u2019t. I learned to remove problems from a distance."
+    ],
+    "tier3": [
+      "I thought eliminating my rivals would end my troubles. It only made me valuable to worse people."
+    ],
+    "tier4": [
+      "You don\u2019t stay powerful by asking where the credits come from. You stay powerful by asking where they\u2019re going."
+    ],
+    "tier5": [
+      "I watch holonovellas obsessively. All that romance and betrayal\u2014very educational. Don\u2019t laugh. They\u2019re about power too."
+    ]
+  },
+  "dspBlocked": [
+    "That information isn\u2019t profitable for you.",
+    "Some things cost more than you\u2019re worth.",
+    "Ah ah\u2026 not yet."
+  ]
+}
 };
 
 /**
