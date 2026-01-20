@@ -318,6 +318,10 @@ export async function _onSelectClass(event) {
     SWSELogger.log(`CharGen | Background skills preserved:`, this.characterData.backgroundSkills);
   }
 
+  // Mark identity as ready now that class is confirmed with all stats calculated
+  this.characterData.identityReady = true;
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Identity locked - class choice is now confirmed`);
+
   // Offer mentor survey at class selection if not yet completed (ONLY for base classes, for both droid and living characters)
   try {
     SWSELogger.log(`[CHARGEN-CLASS] ===== MENTOR SURVEY FLOW START =====`);
@@ -336,7 +340,11 @@ export async function _onSelectClass(event) {
       className: className
     });
 
-    if (!surveyCompleted && isBaseClassSelection) {
+    // Check if identity is ready (class choice is confirmed, not provisional)
+    const identityReady = this.characterData.identityReady === true;
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Identity ready check: ${identityReady}`);
+
+    if (!surveyCompleted && isBaseClassSelection && identityReady) {
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CONDITION MET - Triggering mentor survey for "${className}"`);
       const playerName = this.characterData.name || "";
 
@@ -368,7 +376,8 @@ export async function _onSelectClass(event) {
     } else {
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CONDITION NOT MET - Skipping survey`, {
         surveyAlreadyCompleted: surveyCompleted,
-        isBaseClass: isBaseClassSelection
+        isBaseClass: isBaseClassSelection,
+        identityReady: identityReady
       });
     }
     SWSELogger.log(`[CHARGEN-CLASS] ===== MENTOR SURVEY FLOW END =====`);
