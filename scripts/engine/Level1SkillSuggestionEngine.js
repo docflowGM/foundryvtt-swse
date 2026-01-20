@@ -149,7 +149,8 @@ export class Level1SkillSuggestionEngine {
           suggestion: {
             tier,
             reason,
-            icon: this._getTierIcon(tier)
+            iconClass: this._getTierIcon(tier),
+            cssClass: `tier-${tier}`
           },
           isSuggested: tier >= LEVEL1_SKILL_TIERS.ATTRIBUTE_MATCH
         };

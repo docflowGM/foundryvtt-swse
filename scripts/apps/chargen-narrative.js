@@ -341,6 +341,24 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
       await this._loadTalentData();
     }
 
+    // Debug: Check if talentData is empty or has talent objects
+    if (!this.talentData || this.talentData.length === 0) {
+      SWSELogger.error(`CharGen Narrative | talentData is empty! Cannot show tree: ${treeName}`);
+      ui.notifications.error(`Talent data not loaded. Please try again.`);
+      return;
+    }
+
+    // Debug: Check if any talents match this tree name
+    const matchingTalents = this.talentData.filter(t => getTalentTreeName(t) === treeName);
+    SWSELogger.log(`CharGen Narrative | _showEnhancedTalentTree(${treeName}): talentData.length=${this.talentData.length}, matching=${matchingTalents.length}`, {
+      firstTalent: this.talentData[0] ? {
+        name: this.talentData[0].name,
+        hasSystem: !!this.talentData[0].system,
+        treeValue: getTalentTreeName(this.talentData[0]),
+        rawTree: this.talentData[0].system?.tree
+      } : null
+    });
+
     // Create a temporary actor for visualization
     const tempActorData = {
       items: []
