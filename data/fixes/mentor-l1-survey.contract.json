@@ -1,0 +1,13 @@
+{
+  "event": "swse:mentor:l1Survey",
+  "trigger": {
+    "identityReady": true,
+    "level": 1,
+    "surveyCompleted": false
+  },
+  "effects": [
+    "openMentorSurveyDialog",
+    "storeResponses",
+    "applyMentorBiases"
+  ]
+}
