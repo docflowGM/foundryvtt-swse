@@ -251,21 +251,18 @@ export class TalentTreeVisualizer {
       return;
     }
 
-    // Filter talents for this tree
-    SWSELogger.log(`[TALENT-TREE-VIS] Filtering talents for tree "${treeName}"...`);
-    let talents = talentData.filter(t => getTalentTreeName(t) === treeName);
+    // Talents are already filtered by tree when passed to this function
+    // (chargen-narrative.js uses TalentTreeDB and TalentDB to get pre-filtered talents)
+    let talents = talentData;
 
-    SWSELogger.log(`[TALENT-TREE-VIS] Filter result:`, {
+    SWSELogger.log(`[TALENT-TREE-VIS] Received pre-filtered talents for tree "${treeName}":`, {
       treeName: treeName,
-      matchingTalents: talents.length,
-      firstTalentTree: talentData[0] ? getTalentTreeName(talentData[0]) : 'N/A'
+      talentCount: talents.length,
+      firstTalent: talents[0] ? { name: talents[0].name, id: talents[0].id } : 'N/A'
     });
 
     if (talents.length === 0) {
-      SWSELogger.error(`[TALENT-TREE-VIS] ERROR - No talents found for tree "${treeName}"!`);
-      // Log all unique trees in data
-      const uniqueTrees = new Set(talentData.map(t => getTalentTreeName(t) || 'UNKNOWN'));
-      SWSELogger.log(`[TALENT-TREE-VIS] Available trees:`, Array.from(uniqueTrees));
+      SWSELogger.error(`[TALENT-TREE-VIS] ERROR - No talents provided for tree "${treeName}"!`);
       ui.notifications.warn(`No talents found for ${treeName}`);
       return;
     }

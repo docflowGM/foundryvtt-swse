@@ -10,6 +10,8 @@ import { MENTORS } from './mentor-dialogues.js';
 import { TalentTreeVisualizer } from './talent-tree-visualizer.js';
 import { getTalentTreeName } from './chargen/chargen-property-accessor.js';
 import { normalizeTalentData } from '../progression/utils/item-normalizer.js';
+import { TalentDB } from '../data/talent-db.js';
+import { TalentTreeDB } from '../data/talent-tree-db.js';
 
 export default class CharacterGeneratorNarrative extends CharacterGeneratorImproved {
 
@@ -264,72 +266,18 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   async _loadTalentData() {
     SWSELogger.log(`[CHARGEN-NARRATIVE] ===== TALENT DATA LOAD START =====`);
     try {
-      SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: Getting talent pack from game.packs...`);
-      const talentPack = game.packs.get('foundryvtt-swse.talents');
-
-      if (!talentPack) {
-        SWSELogger.error(`[CHARGEN-NARRATIVE] _loadTalentData: ERROR - Pack 'foundryvtt-swse.talents' NOT FOUND!`);
-        SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: Available packs:`, game.packs.keys());
-        this.talentData = [];
-        return;
+      // Use TalentDB instead of loading raw talents from compendium
+      if (!TalentDB.isBuilt) {
+        SWSELogger.warn(`[CHARGEN-NARRATIVE] _loadTalentData: TalentDB not built, attempting to use it anyway`);
       }
 
-      SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: ✓ Pack found, calling getDocuments()...`);
-      let talents = await talentPack.getDocuments();
-      SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: ✓ getDocuments() returned:`, {
-        count: talents.length,
-        isArray: Array.isArray(talents)
+      // Store all talents for reference (TalentDB is the SSOT)
+      this.talentData = TalentDB.talents;
+
+      SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: ✓ TalentDB ready`, {
+        totalTalents: TalentDB.talents.length,
+        treesWithTalents: TalentDB.talentsByTree.size
       });
-
-      if (!talents || talents.length === 0) {
-        SWSELogger.error(`[CHARGEN-NARRATIVE] _loadTalentData: ERROR - getDocuments returned empty array!`);
-        this.talentData = [];
-        return;
-      }
-
-      // Normalize talents to ensure tree property is properly set
-      SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: Normalizing ${talents.length} talents...`);
-      let normalizedCount = 0;
-      let normalizationErrors = 0;
-
-      talents = talents.map((talent, idx) => {
-        try {
-          const normalized = normalizeTalentData(talent);
-          normalizedCount++;
-
-          // Log first 5 talents to verify normalization
-          if (idx < 5) {
-            const treeName = getTalentTreeName(normalized);
-            SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: Talent ${idx + 1}:`, {
-              name: normalized.name,
-              treeValue: treeName,
-              hasSystem: !!normalized.system,
-              systemTree: normalized.system?.tree
-            });
-          }
-          return normalized;
-        } catch (e) {
-          normalizationErrors++;
-          SWSELogger.error(`[CHARGEN-NARRATIVE] _loadTalentData: ERROR normalizing talent "${talent.name}":`, e);
-          return talent;
-        }
-      });
-
-      this.talentData = talents;
-      SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: ✓ Normalization complete`, {
-        totalTalents: talents.length,
-        normalized: normalizedCount,
-        errors: normalizationErrors
-      });
-
-      // Build tree distribution
-      const treeDistribution = {};
-      talents.forEach(t => {
-        const treeName = getTalentTreeName(t) || 'NO_TREE';
-        treeDistribution[treeName] = (treeDistribution[treeName] || 0) + 1;
-      });
-
-      SWSELogger.log(`[CHARGEN-NARRATIVE] _loadTalentData: ✓ Final talent distribution by tree:`, treeDistribution);
     } catch (err) {
       SWSELogger.error(`[CHARGEN-NARRATIVE] _loadTalentData: EXCEPTION:`, err);
       SWSELogger.error(`[CHARGEN-NARRATIVE] _loadTalentData: ERROR STACK:`, err.stack);
@@ -389,23 +337,23 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
       await this._loadTalentData();
     }
 
-    // Debug: Check if talentData is empty or has talent objects
-    if (!this.talentData || this.talentData.length === 0) {
-      SWSELogger.error(`CharGen Narrative | talentData is empty! Cannot show tree: ${treeName}`);
-      ui.notifications.error(`Talent data not loaded. Please try again.`);
+    // Use TalentTreeDB to get the tree and its ID
+    const treeDoc = TalentTreeDB.byName(treeName);
+    if (!treeDoc) {
+      SWSELogger.error(`CharGen Narrative | _showEnhancedTalentTree: Tree not found: ${treeName}`);
+      ui.notifications.error(`Talent tree "${treeName}" not found.`);
       return;
     }
 
-    // Debug: Check if any talents match this tree name
-    const matchingTalents = this.talentData.filter(t => getTalentTreeName(t) === treeName);
-    SWSELogger.log(`CharGen Narrative | _showEnhancedTalentTree(${treeName}): talentData.length=${this.talentData.length}, matching=${matchingTalents.length}`, {
-      firstTalent: this.talentData[0] ? {
-        name: this.talentData[0].name,
-        hasSystem: !!this.talentData[0].system,
-        treeValue: getTalentTreeName(this.talentData[0]),
-        rawTree: this.talentData[0].system?.tree
-      } : null
-    });
+    // Get talents for this tree using TalentDB (the SSOT)
+    const talents = TalentDB.byTree(treeDoc.id);
+    SWSELogger.log(`CharGen Narrative | _showEnhancedTalentTree(${treeName}): ✓ Found ${talents.length} talents for tree "${treeDoc.name}" (ID: ${treeDoc.id})`);
+
+    if (talents.length === 0) {
+      SWSELogger.warn(`CharGen Narrative | _showEnhancedTalentTree: No talents found for tree "${treeName}"`);
+      ui.notifications.warn(`No talents found for ${treeName}`);
+      return;
+    }
 
     // Create a temporary actor for visualization
     const tempActorData = {
@@ -414,14 +362,23 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
 
     await TalentTreeVisualizer.showEnhancedTalentTree(
       treeName,
-      this.talentData,
+      talents,  // Pass the filtered talents directly
       tempActorData,
       (talent) => this._selectTalent(talent.name)
     );
   }
 
   async _showTalentTreeDialog(treeName) {
-    const talents = this.talentData.filter(t => getTalentTreeName(t) === treeName);
+    // Use TalentTreeDB to get the tree and its ID
+    const treeDoc = TalentTreeDB.byName(treeName);
+    if (!treeDoc) {
+      SWSELogger.error(`CharGen Narrative | _showTalentTreeDialog: Tree not found: ${treeName}`);
+      ui.notifications.error(`Talent tree "${treeName}" not found.`);
+      return;
+    }
+
+    // Get talents for this tree using TalentDB (the SSOT)
+    const talents = TalentDB.byTree(treeDoc.id);
 
     if (talents.length === 0) {
       ui.notifications.warn(`No talents found for ${treeName}`);
