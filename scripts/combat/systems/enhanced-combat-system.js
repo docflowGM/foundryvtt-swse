@@ -224,8 +224,8 @@ export class SWSECombat {
   }
 
   static init() {
-    Hooks.on("renderChatMessage", (msg, html) => {
-      html.find(".swse-roll-damage-btn").click(async ev => {
+    Hooks.on("renderChatMessageHTML", (msg, html, user) => {
+      html.querySelector(".swse-roll-damage-btn")?.addEventListener("click", async ev => {
         const btn = ev.currentTarget;
         const attacker = game.actors.get(btn.dataset.attacker);
         const weapon = attacker.items.get(btn.dataset.weapon);
@@ -233,7 +233,7 @@ export class SWSECombat {
         await SWSECombat.rollDamage(attacker, weapon, target);
       });
 
-      html.find(".swse-apply-damage-btn").click(async ev => {
+      html.querySelector(".swse-apply-damage-btn")?.addEventListener("click", async ev => {
         const btn = ev.currentTarget;
         await SWSECombat.applyDamage(
           btn.dataset.attacker,

@@ -1887,8 +1887,8 @@ export class SWSERoll {
 /* CHAT BUTTON HANDLERS                                                         */
 /* ============================================================================ */
 
-Hooks.on("renderChatMessage", (message, html) => {
-  $(html).find(".swse-roll-damage").on("click", async ev => {
+Hooks.on("renderChatMessageHTML", (message, html, user) => {
+  html.querySelector(".swse-roll-damage")?.addEventListener("click", async ev => {
     const btn = ev.currentTarget;
     const weaponId = btn.dataset.weaponId;
     const isCrit = btn.dataset.isCrit === 'true';

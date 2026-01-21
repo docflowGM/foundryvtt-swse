@@ -271,9 +271,9 @@ export class SpeciesRerollHandler {
  * Call this in system init
  */
 export function registerRerollListeners() {
-  Hooks.on('renderChatMessage', (message, html, data) => {
+  Hooks.on('renderChatMessageHTML', (message, html, user) => {
     // Find reroll buttons in the message
-    html.find('.species-reroll-btn').click(async (event) => {
+    html.querySelector('.species-reroll-btn')?.addEventListener('click', async (event) => {
       event.preventDefault();
       const button = event.currentTarget;
 
