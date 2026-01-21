@@ -19,8 +19,13 @@ export class ItemValidationMigration {
    * Check if migration has been run for current version
    */
   static async needsMigration() {
-    const lastVersion = game.settings.get('foundryvtt-swse', this.MIGRATION_KEY);
-    return lastVersion !== this.MIGRATION_VERSION;
+    try {
+      const lastVersion = game.settings.get('foundryvtt-swse', this.MIGRATION_KEY);
+      return lastVersion !== this.MIGRATION_VERSION;
+    } catch (err) {
+      // Setting not yet registered, so migration needs to run
+      return true;
+    }
   }
 
   /**

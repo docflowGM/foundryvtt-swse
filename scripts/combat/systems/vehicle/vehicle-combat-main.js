@@ -147,8 +147,8 @@ export class SWSEVehicleCombat {
   // ---------------------------------------------------------------------------
 
   static init() {
-    Hooks.on("renderChatMessage", (msg, html) => {
-      html.find(".swse-vehicle-roll-dmg").click(async ev => {
+    Hooks.on("renderChatMessageHTML", (msg, html, user) => {
+      html.querySelector(".swse-vehicle-roll-dmg")?.addEventListener("click", async ev => {
         const btn = ev.currentTarget;
         const att = game.actors.get(btn.dataset.att);
         const tgt = game.actors.get(btn.dataset.tgt);
@@ -156,7 +156,7 @@ export class SWSEVehicleCombat {
         await SWSEVehicleCombat.vehicleDamage(att, wpn, tgt);
       });
 
-      html.find(".swse-vehicle-apply-dmg").click(async ev => {
+      html.querySelector(".swse-vehicle-apply-dmg")?.addEventListener("click", async ev => {
         const btn = ev.currentTarget;
         await SWSEVehicleCombat.applyVehicleDamage(
           btn.dataset.att,
