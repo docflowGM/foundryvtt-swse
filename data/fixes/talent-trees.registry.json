@@ -1,1 +1,1739 @@
-[]
+[
+  {
+    "id": "ace-pilot",
+    "displayName": "Ace Pilot",
+    "talentCount": 1,
+    "talents": [
+      "Escort"
+    ]
+  },
+  {
+    "id": "advanced-medicine",
+    "displayName": "Advanced Medicine",
+    "talentCount": 8,
+    "talents": [
+      "Battlefield Medic",
+      "Bring Them Back",
+      "Emergency Team",
+      "Extra First Aid",
+      "Medical Miracle",
+      "Natural Healing",
+      "Second Chance",
+      "Steady Under Pressure"
+    ]
+  },
+  {
+    "id": "alter",
+    "displayName": "Alter",
+    "talentCount": 15,
+    "talents": [
+      "Aversion",
+      "Disciplined Strike",
+      "Force Flow",
+      "Illusion",
+      "Illusion Bond",
+      "Influence Savant",
+      "Link",
+      "Masquerade",
+      "Move Massive Object",
+      "Suppress Force",
+      "Telekinetic Power",
+      "Telekinetic Prodigy",
+      "Telekinetic Savant",
+      "Telepathic Influence",
+      "Telepathic Link"
+    ]
+  },
+  {
+    "id": "ambusher",
+    "displayName": "Ambusher",
+    "talentCount": 5,
+    "talents": [
+      "Ambush Specialist",
+      "Destructive Ambusher",
+      "Keep It Going",
+      "Perceptive Ambusher",
+      "Spring the Trap"
+    ]
+  },
+  {
+    "id": "armor-specialist",
+    "displayName": "Armor Specialist",
+    "talentCount": 5,
+    "talents": [
+      "Armored Defense",
+      "Improved Armored Defense",
+      "Juggernaut",
+      "Second Skin",
+      "Shield Expert"
+    ]
+  },
+  {
+    "id": "assassin",
+    "displayName": "Assassin",
+    "talentCount": 10,
+    "talents": [
+      "Advantageous Positioning",
+      "Get Some Distance",
+      "Murderous Arts I",
+      "Murderous Arts II",
+      "Ruthless",
+      "Ruthless",
+      "Shift",
+      "Sniping Assassin",
+      "Sniping Marksman",
+      "Sniping Master"
+    ]
+  },
+  {
+    "id": "awareness",
+    "displayName": "Awareness",
+    "talentCount": 8,
+    "talents": [
+      "Acute Senses",
+      "Expert Tracker",
+      "Improved Initiative",
+      "Keen Shot",
+      "Reset Initiative",
+      "Uncanny Dodge I",
+      "Uncanny Dodge II",
+      "Weak Point"
+    ]
+  },
+  {
+    "id": "beastwarden",
+    "displayName": "Beastwarden",
+    "talentCount": 4,
+    "talents": [
+      "Bonded Mount",
+      "Entreat Beast",
+      "Soothing Presence",
+      "Wild Sense"
+    ]
+  },
+  {
+    "id": "blockade-runner",
+    "displayName": "Blockade Runner",
+    "talentCount": 5,
+    "talents": [
+      "Close Cover",
+      "Outrun",
+      "Punch Through",
+      "Small Target",
+      "Watch This"
+    ]
+  },
+  {
+    "id": "bothan-spynet",
+    "displayName": "Bothan Spynet",
+    "talentCount": 6,
+    "talents": [
+      "Bothan Resources",
+      "Knowledge is Life",
+      "Knowledge is Power",
+      "Knowledge is Strength",
+      "Six Questions",
+      "Spynet Agent"
+    ]
+  },
+  {
+    "id": "bounty-hunter",
+    "displayName": "Bounty Hunter",
+    "talentCount": 11,
+    "talents": [
+      "Dread",
+      "Fearsome",
+      "Hunter's Mark",
+      "Hunter's Target",
+      "Jedi Hunter",
+      "Nowhere to Hide",
+      "Nowhere to Run",
+      "Relentless",
+      "Ruthless Negotiator",
+      "Signature Item",
+      "Tag"
+    ]
+  },
+  {
+    "id": "brawler",
+    "displayName": "Brawler",
+    "talentCount": 18,
+    "talents": [
+      "Bayonet Master",
+      "Cantina Brawler",
+      "Counterpunch",
+      "Devastating Melee Smash",
+      "Experienced Brawler",
+      "Expert Grappler",
+      "Grabber",
+      "Gun Club",
+      "Hammerblow",
+      "Make Do",
+      "Man Down",
+      "Melee Smash",
+      "Pick a Fight",
+      "Strong Grab",
+      "Stunning Strike",
+      "Sucker Punch",
+      "Unbalance Strike",
+      "Unrelenting Assault"
+    ]
+  },
+  {
+    "id": "brute-squad",
+    "displayName": "Brute Squad",
+    "talentCount": 6,
+    "talents": [
+      "Gang Leader",
+      "Melee Assault",
+      "Melee Brute",
+      "Melee Opportunist",
+      "Squad Brutality",
+      "Squad Superiority"
+    ]
+  },
+  {
+    "id": "camouflage",
+    "displayName": "Camouflage",
+    "talentCount": 6,
+    "talents": [
+      "Hidden Movement",
+      "Hide in Plain Sight",
+      "Hunker Down",
+      "Improved Stealth",
+      "Shadow Striker",
+      "Total Concealment"
+    ]
+  },
+  {
+    "id": "carbineer",
+    "displayName": "Carbineer",
+    "talentCount": 9,
+    "talents": [
+      "Blowback",
+      "Close Contact",
+      "Multiattack Proficiency (rifles)",
+      "Multiattack Proficiency (rifles)",
+      "Old Faithful",
+      "Opportunity Fire",
+      "Rifle Master",
+      "Shoot from the Hip",
+      "Snap Shot"
+    ]
+  },
+  {
+    "id": "collaborator",
+    "displayName": "Collaborator",
+    "talentCount": 5,
+    "talents": [
+      "Double Agent",
+      "Enemy Tactics",
+      "Feed Information",
+      "Friendly Fire",
+      "Protection"
+    ]
+  },
+  {
+    "id": "commando",
+    "displayName": "Commando",
+    "talentCount": 1,
+    "talents": [
+      "Ambush (Republic Commando)"
+    ]
+  },
+  {
+    "id": "control",
+    "displayName": "Control",
+    "talentCount": 12,
+    "talents": [
+      "Beast Trick",
+      "Channel Energy",
+      "Damage Reduction 10",
+      "Equilibrium",
+      "Force Exertion",
+      "Force Focus",
+      "Force Harmony",
+      "Force Recovery",
+      "Force Suppression",
+      "Indomitable Will",
+      "Telekinetic Stability",
+      "The Will to Resist"
+    ]
+  },
+  {
+    "id": "corporate-power",
+    "displayName": "Corporate Power",
+    "talentCount": 7,
+    "talents": [
+      "Competitive Drive",
+      "Competitive Edge",
+      "Corporate Clout",
+      "Impose Confusion",
+      "Impose Hesitation",
+      "Willful Resolve",
+      "Wrong Decision"
+    ]
+  },
+  {
+    "id": "critical-master",
+    "displayName": "Critical Master",
+    "talentCount": 7,
+    "talents": [
+      "Deny Move",
+      "Extended Critical Range (heavy)",
+      "Extended Critical Range (rifles)",
+      "Flurry Attack",
+      "Knockback",
+      "Reduce Defense",
+      "Reduce Mobility"
+    ]
+  },
+  {
+    "id": "dark-side",
+    "displayName": "Dark Side",
+    "talentCount": 15,
+    "talents": [
+      "Consumed by Darkness",
+      "Dark Presence",
+      "Dark Preservation",
+      "Dark Side Bane",
+      "Dark Side Savant",
+      "Dark Side Scourge",
+      "Drain Knowledge",
+      "Embrace Dark Side",
+      "Power of the Dark Side",
+      "Resist the Dark Side",
+      "Revenge",
+      "Sith Alchemy (create)",
+      "Swift Power",
+      "Transfer Essence",
+      "Wrath of the Dark Side"
+    ]
+  },
+  {
+    "id": "dark-side-devotee",
+    "displayName": "Dark Side Devotee",
+    "talentCount": 6,
+    "talents": [
+      "Channel Aggression",
+      "Channel Anger",
+      "Crippling Strike",
+      "Dark Side Talisman",
+      "Embrace the Dark Side",
+      "Greater Dark Side Talisman"
+    ]
+  },
+  {
+    "id": "disgrace",
+    "displayName": "Disgrace",
+    "talentCount": 5,
+    "talents": [
+      "Castigate",
+      "Dirty Tactics",
+      "Misplaced Loyalty",
+      "Two-Faced",
+      "Unreadable"
+    ]
+  },
+  {
+    "id": "duelist",
+    "displayName": "Duelist",
+    "talentCount": 11,
+    "talents": [
+      "Force Fortification",
+      "Greater Weapon Focus (lightsabers)",
+      "Greater Weapon Specialization (lightsabers)",
+      "Improved Lightsaber Throw",
+      "Improved Redirect",
+      "Improved Riposte",
+      "Lightsaber Form Savant",
+      "Multiattack Proficiency (lightsabers)",
+      "Severing Strike",
+      "Shoto Master",
+      "Thrown Lightsaber Mastery"
+    ]
+  },
+  {
+    "id": "enforcement",
+    "displayName": "Enforcement",
+    "talentCount": 7,
+    "talents": [
+      "Cover Bracing",
+      "Intentional Crash",
+      "Nonlethal Tactics",
+      "Pursuit",
+      "Respected Officer",
+      "Slowing Stun",
+      "Takedown"
+    ]
+  },
+  {
+    "id": "expert-pilot",
+    "displayName": "Expert Pilot",
+    "talentCount": 13,
+    "talents": [
+      "Blind Spot",
+      "Close Scrape",
+      "Elusive Dogfighter",
+      "Full Throttle",
+      "Improved Attack Run",
+      "Juke",
+      "Keep It Together",
+      "Keep it Together",
+      "Relentless Pursuit",
+      "Renowned Pilot",
+      "Vehicle Focus",
+      "Vehicular Evasion",
+      "Wingman"
+    ]
+  },
+  {
+    "id": "felucian-shaman",
+    "displayName": "Felucian Shaman",
+    "talentCount": 1,
+    "talents": [
+      "Charm Beast"
+    ]
+  },
+  {
+    "id": "fencing",
+    "displayName": "Fencing",
+    "talentCount": 5,
+    "talents": [
+      "Demoralizing Defense",
+      "Leading Feint",
+      "Noble Fencing Style",
+      "Personal Affront",
+      "Transposing Strike"
+    ]
+  },
+  {
+    "id": "force-adept",
+    "displayName": "Force Adept",
+    "talentCount": 2,
+    "talents": [
+      "Force Power Adept",
+      "Fortified Body"
+    ]
+  },
+  {
+    "id": "force-hunter",
+    "displayName": "Force Hunter",
+    "talentCount": 6,
+    "talents": [
+      "Force Blank",
+      "Lightsaber Evasion",
+      "Precision Fire",
+      "Steel Mind",
+      "Strong-Willed",
+      "Telekinetic Resistance"
+    ]
+  },
+  {
+    "id": "force-item",
+    "displayName": "Force Item",
+    "talentCount": 8,
+    "talents": [
+      "Attune Weapon",
+      "Empower Weapon",
+      "Focused Force Talisman",
+      "Force Talisman",
+      "Force Throw",
+      "Greater Focused Force Talisman",
+      "Greater Force Talisman",
+      "Primitive Block"
+    ]
+  },
+  {
+    "id": "fortune",
+    "displayName": "Fortune",
+    "talentCount": 12,
+    "talents": [
+      "Avert Disaster",
+      "Dumb Luck",
+      "Fool's Luck",
+      "Fortune's Favor",
+      "Gambler",
+      "Knack",
+      "Labyrinthine Mind",
+      "Lucky Shot",
+      "Lucky Stop",
+      "Ricochet Shot",
+      "Uncanny Luck",
+      "Unlikely Shot"
+    ]
+  },
+  {
+    "id": "fringer",
+    "displayName": "Fringer",
+    "talentCount": 8,
+    "talents": [
+      "Barter",
+      "Flee",
+      "Fringe Savant",
+      "Jury-Rigger",
+      "Long Stride",
+      "Sidestep",
+      "Surge",
+      "Swift Strider"
+    ]
+  },
+  {
+    "id": "fugitive-commander",
+    "displayName": "Fugitive Commander",
+    "talentCount": 5,
+    "talents": [
+      "Disciplined Trickery",
+      "Group Perception",
+      "Hasty Withdrawal",
+      "Stalwart Subordinates",
+      "Stealthy Withdrawal"
+    ]
+  },
+  {
+    "id": "gambling-leader",
+    "displayName": "Gambling Leader",
+    "talentCount": 5,
+    "talents": [
+      "Assault Gambit",
+      "Direct Fire",
+      "Face the Foe",
+      "Lead From the Front",
+      "Luck Favors the Bold"
+    ]
+  },
+  {
+    "id": "gand-findsman",
+    "displayName": "Gand Findsman",
+    "talentCount": 5,
+    "talents": [
+      "Findsman Ceremonies",
+      "Findsman's Foresight",
+      "Omens",
+      "Target Visions",
+      "Temporal Awareness"
+    ]
+  },
+  {
+    "id": "genohardan",
+    "displayName": "Genohardan",
+    "talentCount": 4,
+    "talents": [
+      "Deadly Repercussions",
+      "Improved Manipulating Strike",
+      "Manipulating Strike",
+      "Pulling the Strings"
+    ]
+  },
+  {
+    "id": "gladiatorial-combat",
+    "displayName": "Gladiatorial Combat",
+    "talentCount": 8,
+    "talents": [
+      "Brutal Attack",
+      "Call Out",
+      "Distracting Attack",
+      "Exotic Weapons Master",
+      "Lockdown Strike",
+      "Multiattack Proficiency (exotic)",
+      "Personal Vendetta",
+      "Unstoppable"
+    ]
+  },
+  {
+    "id": "guardian-spirit",
+    "displayName": "Guardian Spirit",
+    "talentCount": 5,
+    "talents": [
+      "Crucial Advice",
+      "Distracting Apparition",
+      "Guardian Spirit",
+      "Manifest Guardian Spirit",
+      "Vital Encouragement"
+    ]
+  },
+  {
+    "id": "gunner",
+    "displayName": "Gunner",
+    "talentCount": 7,
+    "talents": [
+      "Crippling Hit",
+      "Dogfight Gunner",
+      "Expert Gunner",
+      "Great Shot",
+      "Quick Trigger",
+      "Synchronized Fire",
+      "System Hit"
+    ]
+  },
+  {
+    "id": "gunslinger",
+    "displayName": "Gunslinger",
+    "talentCount": 10,
+    "talents": [
+      "Blind Shot",
+      "Debilitating Shot",
+      "Deceptive Shot",
+      "Improved Quick Draw",
+      "Knockdown Shot",
+      "Mobile Attack (pistols)",
+      "Multiattack Proficiency (pistols)",
+      "Ranged Disarm",
+      "Ranged Flank",
+      "Trigger Work"
+    ]
+  },
+  {
+    "id": "hyperspace-explorer",
+    "displayName": "Hyperspace Explorer",
+    "talentCount": 5,
+    "talents": [
+      "Deep-Space Gambit",
+      "Guidance",
+      "Hidden Attacker",
+      "Hyperspace Savant",
+      "Vehicle Sneak"
+    ]
+  },
+  {
+    "id": "ideologue",
+    "displayName": "Ideologue",
+    "talentCount": 5,
+    "talents": [
+      "Idealist",
+      "Instruction",
+      "Know Your Enemy",
+      "Known Dissident",
+      "Lead by Example"
+    ]
+  },
+  {
+    "id": "imperial-inquisitor",
+    "displayName": "Imperial Inquisitor",
+    "talentCount": 4,
+    "talents": [
+      "Cower Enemies",
+      "Force Interrogation",
+      "Inquisition",
+      "Unsettling Presence"
+    ]
+  },
+  {
+    "id": "implant",
+    "displayName": "Implant",
+    "talentCount": 6,
+    "talents": [
+      "Adrenaline Implant",
+      "Implant (general)",
+      "Precision Implant",
+      "Resilience Implant",
+      "Speed Implant",
+      "Strength Implant"
+    ]
+  },
+  {
+    "id": "improviser",
+    "displayName": "Improviser",
+    "talentCount": 5,
+    "talents": [
+      "Bigger Bang",
+      "Capture Droid",
+      "Custom Model",
+      "Improved Jury-Rig",
+      "Improvised Device"
+    ]
+  },
+  {
+    "id": "infamy",
+    "displayName": "Infamy",
+    "talentCount": 10,
+    "talents": [
+      "Fear Me",
+      "Frighten",
+      "Inspire Fear I",
+      "Inspire Fear II",
+      "Inspire Fear III",
+      "Notorious",
+      "Notorious (Infamy)",
+      "Shared Notoriety",
+      "Terrify",
+      "Unsavory Reputation"
+    ]
+  },
+  {
+    "id": "infiltration",
+    "displayName": "Infiltration",
+    "talentCount": 5,
+    "talents": [
+      "Always Ready",
+      "Concealed Weapon Expert",
+      "Creeping Approach",
+      "Set for Stun",
+      "Silent Takedown"
+    ]
+  },
+  {
+    "id": "influence",
+    "displayName": "Influence",
+    "talentCount": 6,
+    "talents": [
+      "Demand Surrender",
+      "Fluster",
+      "Improved Weaken Resolve",
+      "Intimidating Defense",
+      "Presence",
+      "Weaken Resolve"
+    ]
+  },
+  {
+    "id": "inspiration",
+    "displayName": "Inspiration",
+    "talentCount": 7,
+    "talents": [
+      "Beloved",
+      "Bolster Ally",
+      "Ignite Fervor",
+      "Inspire Confidence",
+      "Inspire Haste",
+      "Inspire Zeal",
+      "Willpower"
+    ]
+  },
+  {
+    "id": "jedi",
+    "displayName": "Jedi",
+    "talentCount": 25,
+    "talents": [
+      "Cortosis Gauntlet Block",
+      "Dampen Presence",
+      "Dark Retaliation",
+      "Entreat Aid",
+      "Exposing Strike",
+      "Force of Will",
+      "Forceful Warrior",
+      "Gradual Resistance",
+      "Guiding Strikes",
+      "Immovable",
+      "Improved Consular's Vitality",
+      "Master of the Great Hunt",
+      "Mobile Combatant",
+      "Reap Retribution",
+      "Recall",
+      "Renew Vision",
+      "Resilience",
+      "Sentinel Strike",
+      "Sentinel's Gambit",
+      "Sentinel's Observation",
+      "Skilled Advisor",
+      "Steel Resolve",
+      "Visionary Attack",
+      "Visionary Defense",
+      "WatchCircle Initiate"
+    ]
+  },
+  {
+    "id": "jedi-archivist",
+    "displayName": "Jedi Archivist",
+    "talentCount": 5,
+    "talents": [
+      "Direct",
+      "Impart Knowledge",
+      "Insight of the Force",
+      "Master Advisor",
+      "Scholarly Knowledge"
+    ]
+  },
+  {
+    "id": "jedi-artisan",
+    "displayName": "Jedi Artisan",
+    "talentCount": 5,
+    "talents": [
+      "Call Weapon",
+      "Lightsaber Specialist",
+      "Masterwork Lightsaber",
+      "Perfect Attunement",
+      "Quick Modification"
+    ]
+  },
+  {
+    "id": "jedi-battlemaster",
+    "displayName": "Jedi Battlemaster",
+    "talentCount": 5,
+    "talents": [
+      "Defensive Circle",
+      "Force Revive",
+      "Jedi Battle Commander",
+      "Mobile Attack (lightsabers)",
+      "Slashing Charge"
+    ]
+  },
+  {
+    "id": "jedi-consular",
+    "displayName": "Jedi Consular",
+    "talentCount": 10,
+    "talents": [
+      "Adept Negotiator",
+      "Adversary Lore",
+      "Aggressive Negotiator",
+      "Cleanse Mind",
+      "Collective Visions",
+      "Consular's Vitality",
+      "Consular's Wisdom",
+      "Force Persuasion",
+      "Know Weakness",
+      "Master Negotiator"
+    ]
+  },
+  {
+    "id": "jedi-guardian",
+    "displayName": "Jedi Guardian",
+    "talentCount": 8,
+    "talents": [
+      "Acrobatic Recovery",
+      "Battle Meditation",
+      "Close Maneuvering",
+      "Defensive Acuity",
+      "Elusive Target",
+      "Force Intuition",
+      "Guardian Strike",
+      "Improved Battle Meditation"
+    ]
+  },
+  {
+    "id": "jedi-healer",
+    "displayName": "Jedi Healer",
+    "talentCount": 5,
+    "talents": [
+      "Force Treatment",
+      "Force Treatment",
+      "Healing Boost",
+      "Improved Healing Boost",
+      "Soothe"
+    ]
+  },
+  {
+    "id": "jedi-instructor",
+    "displayName": "Jedi Instructor",
+    "talentCount": 5,
+    "talents": [
+      "Apprentice Boon",
+      "Share Force Secret",
+      "Share Force Technique",
+      "Share Talent",
+      "Transfer Power"
+    ]
+  },
+  {
+    "id": "jedi-investigator",
+    "displayName": "Jedi Investigator",
+    "talentCount": 5,
+    "talents": [
+      "Echoes in the Force",
+      "Jedi Quarry",
+      "Prepared for Danger",
+      "Sense Deception",
+      "Unclouded Judgment"
+    ]
+  },
+  {
+    "id": "jedi-knight",
+    "displayName": "Jedi Knight",
+    "talentCount": 1,
+    "talents": [
+      "Shoto Pin Block"
+    ]
+  },
+  {
+    "id": "jedi-refugee",
+    "displayName": "Jedi Refugee",
+    "talentCount": 4,
+    "talents": [
+      "Cover Your Tracks",
+      "Difficult to Sense",
+      "Force Veil",
+      "Jedi Network"
+    ]
+  },
+  {
+    "id": "jedi-sentinel",
+    "displayName": "Jedi Sentinel",
+    "talentCount": 4,
+    "talents": [
+      "Clear Mind",
+      "Force Haze",
+      "Persistent Haze",
+      "Unseen Eyes"
+    ]
+  },
+  {
+    "id": "jedi-shadow",
+    "displayName": "Jedi Shadow",
+    "talentCount": 5,
+    "talents": [
+      "Dark Deception",
+      "Improved Sentinel Strike",
+      "Improved Sentinel's Gambit",
+      "Rebuke the Dark",
+      "Taint of the Dark Side"
+    ]
+  },
+  {
+    "id": "jedi-watchman",
+    "displayName": "Jedi Watchman",
+    "talentCount": 5,
+    "talents": [
+      "Force Warning",
+      "Improved Quick Draw (lightsabers)",
+      "Sheltering Stance",
+      "Vigilance",
+      "Watchman's Advance"
+    ]
+  },
+  {
+    "id": "jedi-weapon-master",
+    "displayName": "Jedi Weapon Master",
+    "talentCount": 4,
+    "talents": [
+      "Combat Trance",
+      "Improvised Weapon Master",
+      "Twin Weapon Mastery",
+      "Twin Weapon Style"
+    ]
+  },
+  {
+    "id": "knight-s-armor",
+    "displayName": "Knight S Armor",
+    "talentCount": 6,
+    "talents": [
+      "Armor Mastery",
+      "Armor Mastery",
+      "Armored Augmentation I",
+      "Armored Augmentation II",
+      "Cortosis Defense",
+      "Cortosis Retaliation"
+    ]
+  },
+  {
+    "id": "knight-s-resolve",
+    "displayName": "Knight S Resolve",
+    "talentCount": 5,
+    "talents": [
+      "Knight's Morale",
+      "Oath of Duty",
+      "Praetoria Ishu",
+      "Praetoria Vonil",
+      "Strength of the Empire"
+    ]
+  },
+  {
+    "id": "leadership",
+    "displayName": "Leadership",
+    "talentCount": 8,
+    "talents": [
+      "Born Leader",
+      "Coordinate",
+      "Distant Command",
+      "Fearless Leader",
+      "Rally",
+      "Reactionary Attack",
+      "Trust",
+      "Unwavering Ally"
+    ]
+  },
+  {
+    "id": "light-side",
+    "displayName": "Light Side",
+    "talentCount": 4,
+    "talents": [
+      "At Peace",
+      "Attuned",
+      "Focused Attack",
+      "Surge of Light"
+    ]
+  },
+  {
+    "id": "lightsaber-combat",
+    "displayName": "Lightsaber Combat",
+    "talentCount": 9,
+    "talents": [
+      "Block",
+      "Deflect",
+      "Lightsaber Defense",
+      "Lightsaber Throw",
+      "Precise Redirect",
+      "Precision",
+      "Redirect Shot",
+      "Riposte",
+      "Shoto Focus"
+    ]
+  },
+  {
+    "id": "lightsaber-forms",
+    "displayName": "Lightsaber Forms",
+    "talentCount": 12,
+    "talents": [
+      "Ataru",
+      "Djem So",
+      "Jar'Kai",
+      "Juyo",
+      "Makashi",
+      "Niman",
+      "Shien",
+      "Shii-Cho",
+      "Sokan",
+      "Soresu",
+      "Trakata",
+      "Vaapad"
+    ]
+  },
+  {
+    "id": "lineage",
+    "displayName": "Lineage",
+    "talentCount": 7,
+    "talents": [
+      "Connections",
+      "Educated",
+      "Engineer",
+      "Influential Friends",
+      "Powerful Friends",
+      "Spontaneous Skill",
+      "Wealth"
+    ]
+  },
+  {
+    "id": "loyal-protector",
+    "displayName": "Loyal Protector",
+    "talentCount": 4,
+    "talents": [
+      "Inspire Loyalty",
+      "Protector Actions",
+      "Punishing Protection",
+      "Undying Loyalty"
+    ]
+  },
+  {
+    "id": "malkite-poisoner",
+    "displayName": "Malkite Poisoner",
+    "talentCount": 5,
+    "talents": [
+      "Malkite Techniques",
+      "Modify Poison",
+      "Numbing Poison",
+      "Undetectable Poison",
+      "Vicious Poison"
+    ]
+  },
+  {
+    "id": "mandalorian-warrior",
+    "displayName": "Mandalorian Warrior",
+    "talentCount": 4,
+    "talents": [
+      "Armored Mandalorian",
+      "Mandalorian Advance",
+      "Mandalorian Ferocity",
+      "Mandalorian Glory"
+    ]
+  },
+  {
+    "id": "master-of-teras-kasi",
+    "displayName": "Master Of Teras Kasi",
+    "talentCount": 5,
+    "talents": [
+      "Ignore Damage Reduction",
+      "Teras Kasi Basics",
+      "Teras Kasi Mastery",
+      "Unarmed Counterstrike",
+      "Unarmed Parry"
+    ]
+  },
+  {
+    "id": "mastermind",
+    "displayName": "Mastermind",
+    "talentCount": 13,
+    "talents": [
+      "Attract Minion",
+      "Bodyguard I",
+      "Bodyguard II",
+      "Bodyguard III",
+      "Impel Ally I",
+      "Impel Ally II",
+      "Impel Ally III",
+      "Inspire Wrath",
+      "Shelter",
+      "Tactical Superiority",
+      "Tactical Withdrawal",
+      "Urgency",
+      "Wealth of Allies"
+    ]
+  },
+  {
+    "id": "melee-duelist",
+    "displayName": "Melee Duelist",
+    "talentCount": 10,
+    "talents": [
+      "Advantageous Strike",
+      "Dirty Tricks",
+      "Dual Weapon Flourish I",
+      "Dual Weapon Flourish II",
+      "Master of Elegance",
+      "Multiattack Proficiency (advanced melee)",
+      "Multiattack Proficiency (advanced melee)",
+      "Out of Nowhere",
+      "Single Weapon Flourish I",
+      "Single Weapon Flourish II"
+    ]
+  },
+  {
+    "id": "melee-specialist",
+    "displayName": "Melee Specialist",
+    "talentCount": 5,
+    "talents": [
+      "Accurate Blow",
+      "Close-Quarters Fighter",
+      "Ignore Armor",
+      "Improved Stunning Strike",
+      "Whirling Death"
+    ]
+  },
+  {
+    "id": "mercenary",
+    "displayName": "Mercenary",
+    "talentCount": 3,
+    "talents": [
+      "Mercenary's Determination",
+      "Mercenary's Grit",
+      "Mercenary's Teamwork"
+    ]
+  },
+  {
+    "id": "military-engineer",
+    "displayName": "Military Engineer",
+    "talentCount": 10,
+    "talents": [
+      "Breach Cover",
+      "Breaching Explosive",
+      "Droid Expert",
+      "Prepared Explosive",
+      "Problem Solver",
+      "Quick Modifications",
+      "Repairs on the Fly",
+      "Sabotage Device",
+      "Tech Savant",
+      "Vehicular Boost"
+    ]
+  },
+  {
+    "id": "military-tactics",
+    "displayName": "Military Tactics",
+    "talentCount": 12,
+    "talents": [
+      "Assault Tactics",
+      "Deployment Tactics",
+      "Exploit Weakness",
+      "Field Tactics",
+      "Grand Leader",
+      "One for the Team",
+      "Outmaneuver",
+      "Shift Defense I",
+      "Shift Defense II",
+      "Shift Defense III",
+      "Tactical Edge",
+      "Uncanny Defense"
+    ]
+  },
+  {
+    "id": "misfortune",
+    "displayName": "Misfortune",
+    "talentCount": 15,
+    "talents": [
+      "Befuddle",
+      "Cunning Strategist",
+      "Dastardly Attack",
+      "Disruptive",
+      "Hesitate",
+      "Improved Skirmisher",
+      "Seducer",
+      "Seize Object",
+      "Skirmisher",
+      "Sneak Attack",
+      "Sow Confusion",
+      "Stymie",
+      "Sudden Strike",
+      "Walk the Line",
+      "Weakening Strike"
+    ]
+  },
+  {
+    "id": "mystic",
+    "displayName": "Mystic",
+    "talentCount": 5,
+    "talents": [
+      "Channel Vitality",
+      "Closed Mind",
+      "Esoteric Technique",
+      "Mystic Mastery",
+      "Regimen Aptitude"
+    ]
+  },
+  {
+    "id": "naval-officer",
+    "displayName": "Naval Officer",
+    "talentCount": 5,
+    "talents": [
+      "Combined Fire",
+      "Fleet Deployment",
+      "Fleet Tactics",
+      "It's a Trap",
+      "Legendary Commander"
+    ]
+  },
+  {
+    "id": "officer",
+    "displayName": "Officer",
+    "talentCount": 2,
+    "talents": [
+      "Combined Fire (Naval)",
+      "Stay in the Fight (Recruit)"
+    ]
+  },
+  {
+    "id": "opportunist",
+    "displayName": "Opportunist",
+    "talentCount": 5,
+    "talents": [
+      "Advantageous Opening",
+      "Retribution",
+      "Slip By",
+      "Thrive on Chaos",
+      "Vindication"
+    ]
+  },
+  {
+    "id": "outlaw",
+    "displayName": "Outlaw",
+    "talentCount": 9,
+    "talents": [
+      "Confounding Attack",
+      "Double Up",
+      "Find an Opening",
+      "Opportunistic Defense",
+      "Preternatural Senses",
+      "Seize the Moment",
+      "Seize the Moment",
+      "Tangle Up",
+      "Uncanny Instincts"
+    ]
+  },
+  {
+    "id": "outlaw-tech",
+    "displayName": "Outlaw Tech",
+    "talentCount": 4,
+    "talents": [
+      "Fast Repairs",
+      "Hot Wire",
+      "Personalized Modifications",
+      "Quick Fix"
+    ]
+  },
+  {
+    "id": "pathfinder",
+    "displayName": "Pathfinder",
+    "talentCount": 10,
+    "talents": [
+      "Bunker Blaster",
+      "Defensive Measures",
+      "Enhance Cover",
+      "Escort Fighter",
+      "Launch Point",
+      "Obscuring Defenses",
+      "Relocate",
+      "Safe Passage",
+      "Safe Zone",
+      "Zone of Recuperation"
+    ]
+  },
+  {
+    "id": "piracy",
+    "displayName": "Piracy",
+    "talentCount": 8,
+    "talents": [
+      "Bloodthirsty",
+      "Fight to the Death",
+      "Keep Them Reeling",
+      "Keep Them Reeling (Piracy)",
+      "Raider's Frenzy",
+      "Raider's Surge",
+      "Savage Reputation",
+      "Take Them Alive"
+    ]
+  },
+  {
+    "id": "pistoleer",
+    "displayName": "Pistoleer",
+    "talentCount": 5,
+    "talents": [
+      "Dash and Blast",
+      "Flanking Foe",
+      "Guaranteed Shot",
+      "Hailfire",
+      "Twin Shot"
+    ]
+  },
+  {
+    "id": "privateer",
+    "displayName": "Privateer",
+    "talentCount": 8,
+    "talents": [
+      "Armored Spacer",
+      "Attract Privateer",
+      "Blaster and Blade I",
+      "Blaster and Blade II",
+      "Blaster and Blade III",
+      "Boarder",
+      "Ion Mastery",
+      "Preserving Shot"
+    ]
+  },
+  {
+    "id": "procurement",
+    "displayName": "Procurement",
+    "talentCount": 5,
+    "talents": [
+      "Black Market Buyer",
+      "Excellent Kit",
+      "Just What Is Needed",
+      "Only the Finest",
+      "Right Gear for the Job"
+    ]
+  },
+  {
+    "id": "protection",
+    "displayName": "Protection",
+    "talentCount": 8,
+    "talents": [
+      "Armored Guard",
+      "Bodyguard's Sacrifice",
+      "Guard's Endurance",
+      "Lifesaver",
+      "Out of Harm's Way",
+      "Roll With It",
+      "Take the Hit",
+      "Ward"
+    ]
+  },
+  {
+    "id": "provocateur",
+    "displayName": "Provocateur",
+    "talentCount": 5,
+    "talents": [
+      "Cast Suspicion",
+      "Distress to Discord",
+      "Friend or Foe",
+      "Stolen Advantage",
+      "True Betrayal"
+    ]
+  },
+  {
+    "id": "rebel-recruiter",
+    "displayName": "Rebel Recruiter",
+    "talentCount": 5,
+    "talents": [
+      "Bolstered Numbers",
+      "Noble Sacrifice",
+      "Recruit Enemy",
+      "Stay in the Fight",
+      "Team Recruiting"
+    ]
+  },
+  {
+    "id": "recklessness",
+    "displayName": "Recklessness",
+    "talentCount": 5,
+    "talents": [
+      "Find Openings",
+      "Hit the Deck",
+      "Lure Closer",
+      "Risk for Reward",
+      "Trick Step"
+    ]
+  },
+  {
+    "id": "reconnaissance",
+    "displayName": "Reconnaissance",
+    "talentCount": 4,
+    "talents": [
+      "Close-Combat Assault",
+      "Get Into Position",
+      "Reconnaissance Actions",
+      "Reconnaissance Team Leader"
+    ]
+  },
+  {
+    "id": "republic-commando",
+    "displayName": "Republic Commando",
+    "talentCount": 6,
+    "talents": [
+      "Ambush",
+      "Higher Yield",
+      "Rapid Reload",
+      "Shoulder to Shoulder",
+      "Strength in Numbers",
+      "Weapon Shift"
+    ]
+  },
+  {
+    "id": "run-and-gun",
+    "displayName": "Run And Gun",
+    "talentCount": 5,
+    "talents": [
+      "Cheap Shot",
+      "No Escape",
+      "Opportunistic Strike",
+      "Slippery Strike",
+      "Strike and Run"
+    ]
+  },
+  {
+    "id": "sabotage",
+    "displayName": "Sabotage",
+    "talentCount": 6,
+    "talents": [
+      "Device Jammer",
+      "Droid Jammer",
+      "Extreme Explosion",
+      "Mine Mastery",
+      "Shaped Explosion",
+      "Skilled Demolitionist"
+    ]
+  },
+  {
+    "id": "scoundrel",
+    "displayName": "Scoundrel",
+    "talentCount": 2,
+    "talents": [
+      "Better Lucky than Dead",
+      "Cramped Quarters Fighting"
+    ]
+  },
+  {
+    "id": "sense",
+    "displayName": "Sense",
+    "talentCount": 13,
+    "talents": [
+      "Dark Side Sense",
+      "Feel the Force",
+      "Force Perception",
+      "Force Pilot",
+      "Force Reflexes",
+      "Foresight",
+      "Gauge Force Potential",
+      "Heightened Awareness",
+      "Instinctive Navigation",
+      "Motion of the Future",
+      "Psychometry",
+      "Shift Sense",
+      "Visions"
+    ]
+  },
+  {
+    "id": "shaper",
+    "displayName": "Shaper",
+    "talentCount": 5,
+    "talents": [
+      "Biotech Mastery",
+      "Expedient Mending",
+      "Expert Shaper",
+      "Master Mender",
+      "Skilled Implanter"
+    ]
+  },
+  {
+    "id": "sith",
+    "displayName": "Sith",
+    "talentCount": 11,
+    "talents": [
+      "Affliction",
+      "Dark Healing",
+      "Dark Healing Field",
+      "Dark Scourge",
+      "Dark Side Adept",
+      "Dark Side Master",
+      "Drain Force",
+      "Force Deception",
+      "Improved Dark Healing",
+      "Stolen Form",
+      "Wicked Strike"
+    ]
+  },
+  {
+    "id": "sith-alchemy",
+    "displayName": "Sith Alchemy",
+    "talentCount": 5,
+    "talents": [
+      "Cause Mutation",
+      "Rapid Alchemy",
+      "Sith Alchemy",
+      "Sith Alchemy (craft)",
+      "Sith Alchemy Specialist"
+    ]
+  },
+  {
+    "id": "sith-commander",
+    "displayName": "Sith Commander",
+    "talentCount": 4,
+    "talents": [
+      "Desperate Measures",
+      "Focus Terror",
+      "Incite Rage",
+      "Power of Hatred"
+    ]
+  },
+  {
+    "id": "slicer",
+    "displayName": "Slicer",
+    "talentCount": 7,
+    "talents": [
+      "Electronic Forgery",
+      "Electronic Sabotage",
+      "Gimmick",
+      "Master Slicer",
+      "Security Slicer",
+      "Trace",
+      "Virus"
+    ]
+  },
+  {
+    "id": "smuggling",
+    "displayName": "Smuggling",
+    "talentCount": 5,
+    "talents": [
+      "Art of Concealment",
+      "Fast Talker",
+      "Hidden Weapons",
+      "Illicit Dealings",
+      "Surprise Strike"
+    ]
+  },
+  {
+    "id": "soldier",
+    "displayName": "Soldier",
+    "talentCount": 33,
+    "talents": [
+      "Battle Analysis",
+      "Burning Assault",
+      "Commanding Officer",
+      "Commanding Presence",
+      "Comrades in Arms",
+      "Coordinated Tactics",
+      "Cover Fire",
+      "Crushing Assault",
+      "Demolitionist",
+      "Devastating Attack",
+      "Dirty Fighting",
+      "Disarming Attack",
+      "Draw Fire",
+      "Feared Warrior",
+      "Fire at Will",
+      "Focused Targeting",
+      "Focused Warrior",
+      "Hard Target",
+      "Harm's Way",
+      "Impaling Assault",
+      "Improved Suppression Fire",
+      "Improved Trajectory",
+      "Indomitable",
+      "Jet Pack Training",
+      "Jet Pack Withdraw",
+      "Keep Them at Bay",
+      "Penetrating Attack",
+      "Phalanx",
+      "Squad Actions",
+      "Stick Together",
+      "Stinging Assault",
+      "Tough as Nails",
+      "Watch Your Back"
+    ]
+  },
+  {
+    "id": "soldier-combat",
+    "displayName": "Soldier Combat",
+    "talentCount": 2,
+    "talents": [
+      "Weapon Specialization",
+      "Weapon Specialization"
+    ]
+  },
+  {
+    "id": "spacer",
+    "displayName": "Spacer",
+    "talentCount": 5,
+    "talents": [
+      "Hyperdriven",
+      "Make a Break for It",
+      "Spacehound",
+      "Starship Raider",
+      "Stellar Warrior"
+    ]
+  },
+  {
+    "id": "spy",
+    "displayName": "Spy",
+    "talentCount": 6,
+    "talents": [
+      "Blend In",
+      "Improved Surveillance",
+      "Incognito",
+      "Intimate Knowledge",
+      "Surveillance",
+      "Traceless Tampering"
+    ]
+  },
+  {
+    "id": "squadron-leader",
+    "displayName": "Squadron Leader",
+    "talentCount": 4,
+    "talents": [
+      "Begin Attack Run",
+      "Regroup",
+      "Squadron Maneuvers",
+      "Squadron Tactics"
+    ]
+  },
+  {
+    "id": "surveillance",
+    "displayName": "Surveillance",
+    "talentCount": 5,
+    "talents": [
+      "Advanced Intel",
+      "Hidden Eyes",
+      "Hunt the Hunter",
+      "Seek and Destroy",
+      "Spotter"
+    ]
+  },
+  {
+    "id": "survivor",
+    "displayName": "Survivor",
+    "talentCount": 4,
+    "talents": [
+      "Evasion",
+      "Extreme Effort",
+      "Sprint",
+      "Surefooted"
+    ]
+  },
+  {
+    "id": "telepath",
+    "displayName": "Telepath",
+    "talentCount": 5,
+    "talents": [
+      "Mind Probe",
+      "Perfect Telepathy",
+      "Psychic Citadel",
+      "Psychic Defenses",
+      "Telepathic Intruder"
+    ]
+  },
+  {
+    "id": "trickery",
+    "displayName": "Trickery",
+    "talentCount": 6,
+    "talents": [
+      "Cunning Distraction",
+      "Damaging Deception",
+      "Distracting Shout",
+      "Improved Soft Cover",
+      "Innocuous",
+      "Treacherous"
+    ]
+  },
+  {
+    "id": "turret",
+    "displayName": "Turret",
+    "talentCount": 6,
+    "talents": [
+      "Blaster Turret I",
+      "Blaster Turret II",
+      "Blaster Turret III",
+      "Ion Turret",
+      "Stun Turret",
+      "Turret Self-Destruct"
+    ]
+  },
+  {
+    "id": "unpredictable",
+    "displayName": "Unpredictable",
+    "talentCount": 5,
+    "talents": [
+      "Aggressive Surge",
+      "Blast Back",
+      "Fade Away",
+      "Second Strike",
+      "Swerve"
+    ]
+  },
+  {
+    "id": "vanguard",
+    "displayName": "Vanguard",
+    "talentCount": 8,
+    "talents": [
+      "Enhanced Vision",
+      "Impenetrable Cover",
+      "Invisible Attacker",
+      "Mark the Target",
+      "Maximize Cover",
+      "Shellshock",
+      "Soften the Target",
+      "Triangulate"
+    ]
+  },
+  {
+    "id": "versatility",
+    "displayName": "Versatility",
+    "talentCount": 5,
+    "talents": [
+      "Adapt and Survive",
+      "Defensive Protection",
+      "Quick on Your Feet",
+      "Ready and Willing",
+      "Unbalancing Adaptation"
+    ]
+  },
+  {
+    "id": "weapon-master",
+    "displayName": "Weapon Master",
+    "talentCount": 7,
+    "talents": [
+      "Controlled Burst",
+      "Exotic Weapon Mastery",
+      "Greater Devastating Attack",
+      "Greater Penetrating Attack",
+      "Greater Weapon Focus",
+      "Greater Weapon Specialization",
+      "Multiattack Proficiency (heavy)"
+    ]
+  },
+  {
+    "id": "wingman",
+    "displayName": "Wingman",
+    "talentCount": 4,
+    "talents": [
+      "Concentrate All Fire",
+      "Lose Pursuit",
+      "Run Interference",
+      "Wingman Retribution"
+    ]
+  },
+  {
+    "id": "yuuzhan-vong-biotech",
+    "displayName": "Yuuzhan Vong Biotech",
+    "talentCount": 5,
+    "talents": [
+      "Biotech Adept",
+      "Bugbite",
+      "Curved Throw",
+      "Surprising Weapons",
+      "Veiled Biotech"
+    ]
+  }
+]
