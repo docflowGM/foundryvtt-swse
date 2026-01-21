@@ -828,6 +828,7 @@ export class SuggestionEngine {
      */
     static _buildSuggestion(tier, itemName, customReason = null) {
         return {
+            name: itemName,
             tier,
             icon: TIER_ICONS[tier],
             iconClass: TIER_ICON_CLASSES[tier],
