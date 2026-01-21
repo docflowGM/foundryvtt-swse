@@ -1,0 +1,17 @@
+{
+  "flags": {
+    "swse": {
+      "identity": {
+        "classLocked": true,
+        "identityReady": true,
+        "level": 1
+      },
+      "mentorSurvey": {
+        "status": "pending",
+        "completed": false,
+        "responses": {},
+        "version": 1
+      }
+    }
+  }
+}

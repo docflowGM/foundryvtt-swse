@@ -1,0 +1,603 @@
+[
+  {
+    "class": "Ace Pilot",
+    "treeIds": [
+      "expert-pilot",
+      "gunner",
+      "spacer",
+      "squadron-leader",
+      "blockade-runner",
+      "wingman"
+    ],
+    "trees": [
+      "Expert Pilot",
+      "Gunner",
+      "Spacer",
+      "Squadron Leader",
+      "Blockade Runner",
+      "Wingman"
+    ]
+  },
+  {
+    "class": "Assassin",
+    "treeIds": [
+      "misfortune",
+      "malkite-poisoner",
+      "assassin",
+      "genoharadan"
+    ],
+    "trees": [
+      "Misfortune",
+      "Malkite Poisoner",
+      "Assassin",
+      "GenoHaradan"
+    ]
+  },
+  {
+    "class": "Bounty Hunter",
+    "treeIds": [
+      "awareness",
+      "bounty-hunter",
+      "misfortune",
+      "gand-findsman",
+      "force-hunter"
+    ],
+    "trees": [
+      "Awareness",
+      "Bounty Hunter",
+      "Misfortune",
+      "Gand Findsman",
+      "Force Hunter"
+    ]
+  },
+  {
+    "class": "Charlatan",
+    "treeIds": [
+      "disgrace",
+      "trickery"
+    ],
+    "trees": [
+      "Disgrace",
+      "Trickery"
+    ]
+  },
+  {
+    "class": "Corporate Agent",
+    "treeIds": [
+      "leadership",
+      "lineage",
+      "corporate-power"
+    ],
+    "trees": [
+      "Leadership",
+      "Lineage",
+      "Corporate Power"
+    ]
+  },
+  {
+    "class": "Crime Lord",
+    "treeIds": [
+      "infamy",
+      "influence",
+      "mastermind"
+    ],
+    "trees": [
+      "Infamy",
+      "Influence",
+      "Mastermind"
+    ]
+  },
+  {
+    "class": "Droid Commander",
+    "treeIds": [
+      "inspiration",
+      "leadership",
+      "droid-commander"
+    ],
+    "trees": [
+      "Inspiration",
+      "Leadership",
+      "Droid Commander"
+    ]
+  },
+  {
+    "class": "Elite Trooper",
+    "treeIds": [
+      "camouflage",
+      "commando",
+      "weapon-master",
+      "master-of-ter-s-k-si",
+      "mandalorian-warrior",
+      "critical-master",
+      "melee-specialist",
+      "republic-commando",
+      "protection"
+    ],
+    "trees": [
+      "Camouflage",
+      "Commando",
+      "Weapon Master",
+      "Master of Ter\u00c3\u00a4s K\u00c3\u00a4si",
+      "Mandalorian Warrior",
+      "Critical Master",
+      "Melee Specialist",
+      "Republic Commando",
+      "Protection"
+    ]
+  },
+  {
+    "class": "Enforcer",
+    "treeIds": [
+      "survivor",
+      "enforcement"
+    ],
+    "trees": [
+      "Survivor",
+      "Enforcement"
+    ]
+  },
+  {
+    "class": "Force Adept",
+    "treeIds": [
+      "dark-side-devotee",
+      "force-adept",
+      "force-item",
+      "imperial-inquisitor",
+      "beastwarden",
+      "mystic",
+      "telepath"
+    ],
+    "trees": [
+      "Dark Side Devotee",
+      "Force Adept",
+      "Force Item",
+      "Imperial Inquisitor",
+      "Beastwarden",
+      "Mystic",
+      "Telepath"
+    ]
+  },
+  {
+    "class": "Force Disciple",
+    "treeIds": [
+      "force-adept"
+    ],
+    "trees": [
+      "Force Adept"
+    ]
+  },
+  {
+    "class": "Gladiator",
+    "treeIds": [
+      "armor-specialist",
+      "awareness",
+      "gladiatorial-combat"
+    ],
+    "trees": [
+      "Armor Specialist",
+      "Awareness",
+      "Gladiatorial Combat"
+    ]
+  },
+  {
+    "class": "Gunslinger",
+    "treeIds": [
+      "awareness",
+      "fortune",
+      "gunslinger",
+      "pistoleer",
+      "carbineer"
+    ],
+    "trees": [
+      "Awareness",
+      "Fortune",
+      "Gunslinger",
+      "Pistoleer",
+      "Carbineer"
+    ]
+  },
+  {
+    "class": "Imperial Knight",
+    "treeIds": [
+      "armor-specialist",
+      "duelist",
+      "lightsaber-combat",
+      "knight-s-armor",
+      "knight-s-resolve"
+    ],
+    "trees": [
+      "Armor Specialist",
+      "Duelist",
+      "Lightsaber Combat",
+      "Knight's Armor",
+      "Knight's Resolve"
+    ]
+  },
+  {
+    "class": "Improviser",
+    "treeIds": [
+      "outlaw-tech",
+      "procurement",
+      "improviser"
+    ],
+    "trees": [
+      "Outlaw Tech",
+      "Procurement",
+      "Improviser"
+    ]
+  },
+  {
+    "class": "Independent Droid",
+    "treeIds": [
+      "autonomy",
+      "specialized-droid"
+    ],
+    "trees": [
+      "Autonomy",
+      "Specialized Droid"
+    ]
+  },
+  {
+    "class": "Infiltrator",
+    "treeIds": [
+      "camouflage",
+      "bothan-spynet",
+      "infiltration",
+      "spy"
+    ],
+    "trees": [
+      "Camouflage",
+      "Bothan SpyNet",
+      "Infiltration",
+      "Spy"
+    ]
+  },
+  {
+    "class": "Jedi",
+    "treeIds": [
+      "jedi-consular",
+      "jedi-guardian",
+      "jedi-sentinel",
+      "lightsaber-combat"
+    ],
+    "trees": [
+      "Jedi Consular",
+      "Jedi Guardian",
+      "Jedi Sentinel",
+      "Lightsaber Combat"
+    ]
+  },
+  {
+    "class": "Jedi Knight",
+    "treeIds": [
+      "armor-specialist",
+      "duelist",
+      "lightsaber-combat",
+      "lightsaber-forms",
+      "jedi-battlemaster",
+      "jedi-shadow",
+      "jedi-watchman",
+      "jedi-archivist",
+      "jedi-healer",
+      "jedi-artisan",
+      "jedi-instructor",
+      "jedi-investigator",
+      "jedi-refugee",
+      "jedi-weapon-master"
+    ],
+    "trees": [
+      "Armor Specialist",
+      "Duelist",
+      "Lightsaber Combat",
+      "Lightsaber Forms",
+      "Jedi Battlemaster",
+      "Jedi Shadow",
+      "Jedi Watchman",
+      "Jedi Archivist",
+      "Jedi Healer",
+      "Jedi Artisan",
+      "Jedi Instructor",
+      "Jedi Investigator",
+      "Jedi Refugee",
+      "Jedi Weapon Master"
+    ]
+  },
+  {
+    "class": "Jedi Master",
+    "treeIds": [
+      "duelist"
+    ],
+    "trees": [
+      "Duelist"
+    ]
+  },
+  {
+    "class": "Martial Arts Master",
+    "treeIds": [
+      "awareness",
+      "master-of-ter-s-k-si"
+    ],
+    "trees": [
+      "Awareness",
+      "Master of Ter\u00c3\u00a4s K\u00c3\u00a4si"
+    ]
+  },
+  {
+    "class": "Master Privateer",
+    "treeIds": [
+      "infamy",
+      "spacer",
+      "privateer",
+      "piracy"
+    ],
+    "trees": [
+      "Infamy",
+      "Spacer",
+      "Privateer",
+      "Piracy"
+    ]
+  },
+  {
+    "class": "Medic",
+    "treeIds": [
+      "survivor",
+      "advanced-medicine"
+    ],
+    "trees": [
+      "Survivor",
+      "Advanced Medicine"
+    ]
+  },
+  {
+    "class": "Melee Duelist",
+    "treeIds": [
+      "brawler",
+      "weapon-specialist",
+      "melee-duelist"
+    ],
+    "trees": [
+      "Brawler",
+      "Weapon Specialist",
+      "Melee Duelist"
+    ]
+  },
+  {
+    "class": "Military Engineer",
+    "treeIds": [
+      "outlaw-tech",
+      "military-engineer"
+    ],
+    "trees": [
+      "Outlaw Tech",
+      "Military Engineer"
+    ]
+  },
+  {
+    "class": "Noble",
+    "treeIds": [
+      "influence",
+      "inspiration",
+      "leadership",
+      "lineage",
+      "fencing",
+      "ideologue",
+      "disgrace",
+      "collaborator",
+      "loyal-protector",
+      "provocateur",
+      "gambling-leader"
+    ],
+    "trees": [
+      "Influence",
+      "Inspiration",
+      "Leadership",
+      "Lineage",
+      "Fencing",
+      "Ideologue",
+      "Disgrace",
+      "Collaborator",
+      "Loyal Protector",
+      "Provocateur",
+      "Gambling Leader"
+    ]
+  },
+  {
+    "class": "Officer",
+    "treeIds": [
+      "commando",
+      "leadership",
+      "military-tactics",
+      "naval-officer",
+      "fugitive-commander",
+      "rebel-recruiter"
+    ],
+    "trees": [
+      "Commando",
+      "Leadership",
+      "Military Tactics",
+      "Naval Officer",
+      "Fugitive Commander",
+      "Rebel Recruiter"
+    ]
+  },
+  {
+    "class": "Outlaw",
+    "treeIds": [
+      "fringer",
+      "survivor",
+      "slicer",
+      "outlaw"
+    ],
+    "trees": [
+      "Fringer",
+      "Survivor",
+      "Slicer",
+      "Outlaw"
+    ]
+  },
+  {
+    "class": "Pathfinder",
+    "treeIds": [
+      "awareness",
+      "survivor",
+      "pathfinder"
+    ],
+    "trees": [
+      "Awareness",
+      "Survivor",
+      "Pathfinder"
+    ]
+  },
+  {
+    "class": "Saboteur",
+    "treeIds": [
+      "misfortune",
+      "slicer",
+      "sabotage",
+      "turret"
+    ],
+    "trees": [
+      "Misfortune",
+      "Slicer",
+      "Sabotage",
+      "Turret"
+    ]
+  },
+  {
+    "class": "Scoundrel",
+    "treeIds": [
+      "fortune",
+      "misfortune",
+      "slicer",
+      "spacer",
+      "outlaw-tech",
+      "malkite-poisoner",
+      "run-and-gun",
+      "smuggling",
+      "opportunist",
+      "recklessness",
+      "yuuzhan-vong-biotech"
+    ],
+    "trees": [
+      "Fortune",
+      "Misfortune",
+      "Slicer",
+      "Spacer",
+      "Outlaw Tech",
+      "Malkite Poisoner",
+      "Run and Gun",
+      "Smuggling",
+      "Opportunist",
+      "Recklessness",
+      "Yuuzhan Vong Biotech"
+    ]
+  },
+  {
+    "class": "Scout",
+    "treeIds": [
+      "awareness",
+      "camouflage",
+      "fringer",
+      "survivor",
+      "hyperspace-explorer",
+      "spy",
+      "reconnaissance",
+      "surveillance",
+      "unpredictable",
+      "versatility"
+    ],
+    "trees": [
+      "Awareness",
+      "Camouflage",
+      "Fringer",
+      "Survivor",
+      "Hyperspace Explorer",
+      "Spy",
+      "Reconnaissance",
+      "Surveillance",
+      "Unpredictable",
+      "Versatility"
+    ]
+  },
+  {
+    "class": "Shaper",
+    "treeIds": [
+      "advanced-medicine",
+      "implant",
+      "shaper"
+    ],
+    "trees": [
+      "Advanced Medicine",
+      "Implant",
+      "Shaper"
+    ]
+  },
+  {
+    "class": "Sith Apprentice",
+    "treeIds": [
+      "armor-specialist",
+      "duelist",
+      "lightsaber-combat",
+      "sith",
+      "sith-alchemy",
+      "sith-commander"
+    ],
+    "trees": [
+      "Armor Specialist",
+      "Duelist",
+      "Lightsaber Combat",
+      "Sith",
+      "Sith Alchemy",
+      "Sith Commander"
+    ]
+  },
+  {
+    "class": "Sith Lord",
+    "treeIds": [
+      "sith"
+    ],
+    "trees": [
+      "Sith"
+    ]
+  },
+  {
+    "class": "Soldier",
+    "treeIds": [
+      "armor-specialist",
+      "brawler",
+      "commando",
+      "weapon-specialist",
+      "rocket-jumper",
+      "mercenary",
+      "squad-leader",
+      "trooper",
+      "ambusher",
+      "brute-squad"
+    ],
+    "trees": [
+      "Armor Specialist",
+      "Brawler",
+      "Commando",
+      "Weapon Specialist",
+      "Rocket Jumper",
+      "Mercenary",
+      "Squad Leader",
+      "Trooper",
+      "Ambusher",
+      "Brute Squad"
+    ]
+  },
+  {
+    "class": "Vanguard",
+    "treeIds": [
+      "awareness",
+      "survivor",
+      "vanguard"
+    ],
+    "trees": [
+      "Awareness",
+      "Survivor",
+      "Vanguard"
+    ]
+  }
+]
