@@ -699,6 +699,9 @@ export class MentorSurvey {
                 <div class="survey-answers">
                   ${answerHtml}
                 </div>
+                <p class="survey-hint" style="margin-top: 1rem; font-size: 0.9em; color: #999; font-style: italic;">
+                  You can skip this survey at any time. You'll be able to complete it later if desired.
+                </p>
               </div>
             `,
             buttons: {
@@ -723,10 +726,11 @@ export class MentorSurvey {
                   }
                 }
               },
-              cancel: {
-                icon: '<i class="fas fa-times"></i>',
-                label: "Cancel",
+              skip: {
+                icon: '<i class="fas fa-forward"></i>',
+                label: "Skip Survey",
                 callback: () => {
+                  swseLogger.log(`[MENTOR-SURVEY] showSurvey: User skipped survey at question ${index + 1}/${questionIds.length}`);
                   resolve(null);
                 }
               }

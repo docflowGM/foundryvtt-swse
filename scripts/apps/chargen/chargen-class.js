@@ -359,7 +359,8 @@ export async function _onSelectClass(event) {
         SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Mentor biases stored`, biases);
         ui.notifications.info("Survey completed! Your mentor will use this to personalize suggestions.");
       } else {
-        SWSELogger.warn(`[CHARGEN-CLASS] _onSelectClass: User dismissed survey without completing it (not required to complete character)`);
+        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User skipped mentor survey (can be completed later)`);
+        ui.notifications.info("Survey skipped. You can complete it later to get personalized mentor suggestions.");
       }
     } else {
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CONDITION NOT MET - Skipping survey`, {
