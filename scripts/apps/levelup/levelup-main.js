@@ -80,6 +80,9 @@ import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
 // Import mentor memory system
 import { decayAllMentorCommitments, updateAllMentorMemories } from '../../engine/mentor-memory.js';
 
+// Import mentor wishlist integration
+import { MentorWishlistIntegration } from '../../engine/MentorWishlistIntegration.js';
+
 export class SWSELevelUpEnhanced extends FormApplication {
 
   static get defaultOptions() {
@@ -429,15 +432,21 @@ export class SWSELevelUpEnhanced extends FormApplication {
     try {
       // Get suggestion from engine
       const pendingData = this._buildPendingData();
-      const suggestions = await game.swse.suggestions.suggestFeats(availableFeats, this.actor, pendingData);
+      let suggestions = await game.swse.suggestions.suggestFeats(availableFeats, this.actor, pendingData);
 
       if (!suggestions || suggestions.length === 0) {
         ui.notifications.warn("No feat suggestions available at this time.");
         return;
       }
 
+      // Enhance suggestions with wishlist consideration
+      suggestions = MentorWishlistIntegration.enhanceSuggestionsWithWishlist(suggestions, this.actor);
+
       // Get the top suggestion
       const topSuggestion = suggestions[0];
+
+      // Get mentor context considering wishlist
+      const mentorContext = MentorWishlistIntegration.getMentorWishlistContext(topSuggestion, this.actor, this.mentor);
 
       // Show mentor dialog with suggestion (expects class key like "Jedi")
       const result = await MentorSuggestionDialog.show(this.currentMentorClass, topSuggestion, 'feat_selection');
@@ -446,7 +455,13 @@ export class SWSELevelUpEnhanced extends FormApplication {
         // Auto-select the feat
         const featId = topSuggestion._id;
         await this._onSelectBonusFeat({ currentTarget: { dataset: { featId } } });
-        ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.name}`);
+
+        // Show mentor context if available
+        if (mentorContext) {
+          ui.notifications.info(mentorContext);
+        } else {
+          ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.name}`);
+        }
       }
     } catch (err) {
       console.error('Error getting feat suggestion:', err);
@@ -488,15 +503,21 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // Get suggestion from engine
       const pendingData = this._buildPendingData();
-      const suggestions = await game.swse.suggestions.suggestTalents(availableTalents, this.actor, pendingData);
+      let suggestions = await game.swse.suggestions.suggestTalents(availableTalents, this.actor, pendingData);
 
       if (!suggestions || suggestions.length === 0) {
         ui.notifications.warn("No talent suggestions available at this time.");
         return;
       }
 
+      // Enhance suggestions with wishlist consideration
+      suggestions = MentorWishlistIntegration.enhanceSuggestionsWithWishlist(suggestions, this.actor);
+
       // Get the top suggestion
       const topSuggestion = suggestions[0];
+
+      // Get mentor context considering wishlist
+      const mentorContext = MentorWishlistIntegration.getMentorWishlistContext(topSuggestion, this.actor, this.mentor);
 
       // Show mentor dialog with suggestion (expects class key like "Jedi")
       const result = await MentorSuggestionDialog.show(this.currentMentorClass, topSuggestion, 'talent_selection');
@@ -504,7 +525,13 @@ export class SWSELevelUpEnhanced extends FormApplication {
       if (result && result.applied) {
         // Auto-select the talent
         await this._selectTalent(topSuggestion.name);
-        ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.name}`);
+
+        // Show mentor context if available
+        if (mentorContext) {
+          ui.notifications.info(mentorContext);
+        } else {
+          ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.name}`);
+        }
       }
     } catch (err) {
       console.error('Error getting talent suggestion:', err);
