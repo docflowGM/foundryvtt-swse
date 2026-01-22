@@ -797,6 +797,31 @@ export class ClassSuggestionEngine {
             );
         }
 
+        // SPECIAL: Check if this base class unlocks talent trees needed by prestige target
+        if (!isPrestige && prestigeClassTarget && prestigePrereqs[prestigeClassTarget]) {
+            const targetPrereqs = prestigePrereqs[prestigeClassTarget];
+            const unlockedTrees = this._getUnlockedTalentTrees(cls.name);
+            const neededTrees = targetPrereqs.talentTrees || [];
+
+            // Check if this class provides access to any needed talent trees
+            const providesNeededTrees = neededTrees.some(neededTree =>
+                unlockedTrees.some(provided => provided.toLowerCase() === neededTree.toLowerCase())
+            );
+
+            if (providesNeededTrees) {
+                const providedTreeNames = unlockedTrees.filter(t =>
+                    neededTrees.some(n => n.toLowerCase() === t.toLowerCase())
+                ).join(', ');
+
+                return this._buildSuggestion(
+                    CLASS_SUGGESTION_TIERS.PRESTIGE_SOON,
+                    cls.name,
+                    [],
+                    `Unlocks ${providedTreeNames} talents needed for ${prestigeClassTarget}`
+                );
+            }
+        }
+
         // TIER 3: Prestige class almost legal (missing <= 2 verifiable prerequisites)
         if (isPrestige && verifiableMissing > 0 && verifiableMissing <= 2) {
             const missingText = prereqCheck.missing
@@ -978,6 +1003,16 @@ export class ClassSuggestionEngine {
             hasMissingPrereqs: missingPrereqs.length > 0,
             isSuggested: tier >= CLASS_SUGGESTION_TIERS.MECHANICAL_SYNERGY
         };
+    }
+
+    /**
+     * Get talent trees unlocked by a class
+     * @param {string} className - Name of the class
+     * @returns {Array} Talent tree names provided by this class
+     */
+    static _getUnlockedTalentTrees(className) {
+        const synergy = CLASS_SYNERGY_DATA[className];
+        return synergy?.talentTrees || [];
     }
 
     // ──────────────────────────────────────────────────────────────
