@@ -12,7 +12,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { FeatRegistry } from './feat-registry.js';
 import { FeatState } from './feat-state.js';
-import { FeatRequirements } from './feat-requirements.js';
+import { PrerequisiteRequirements as FeatRequirements } from './prerequisite_engine.js';
 import { FeatNormalizer } from './feat-normalizer.js';
 
 export const FeatEngine = {
