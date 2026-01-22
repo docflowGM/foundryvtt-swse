@@ -23,6 +23,7 @@ import { BuildIntent } from './BuildIntent.js';
 import { MentorSurvey } from '../apps/mentor-survey.js';
 import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies.js';
 import { PrerequisiteRequirements } from '../progression/feats/prerequisite_engine.js';
+import { WishlistEngine } from './WishlistEngine.js';
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (ORDER MATTERS - HIGHER = BETTER)
@@ -30,6 +31,7 @@ import { PrerequisiteRequirements } from '../progression/feats/prerequisite_engi
 
 export const SUGGESTION_TIERS = {
     PRESTIGE_PREREQ: 6,
+    WISHLIST_PATH: 5.5,     // Prerequisite for a wishlisted item (player goal)
     MARTIAL_ARTS: 5,        // Martial arts feat with prerequisites met
     META_SYNERGY: 5,        // Community-proven synergy combo
     SPECIES_EARLY: 4.5,     // Species feat at early levels (decays with level)
@@ -43,6 +45,7 @@ export const SUGGESTION_TIERS = {
 
 export const TIER_REASONS = {
     6: "Prerequisite for a prestige class you're building toward",
+    5.5: "Prerequisite for a goal on your wishlist",
     5: "Strong recommendation for your build",
     4.5: "Excellent species feat for your level",
     4: "Builds directly on a feat or talent you already have",
@@ -55,6 +58,7 @@ export const TIER_REASONS = {
 
 export const TIER_ICONS = {
     6: "fa-crown",          // Crown for prestige prereq
+    5.5: "fa-star",         // Star for wishlist/player goal
     5: "fa-fire",           // Fire for strong recommendations
     4.5: "fa-dna",          // DNA for species feats
     4: "fa-link",           // Chain link icon for chain continuation
@@ -68,6 +72,7 @@ export const TIER_ICONS = {
 // FontAwesome classes for rendering
 export const TIER_ICON_CLASSES = {
     6: "fas fa-crown suggestion-prestige",
+    5.5: "fas fa-star suggestion-wishlist",
     5: "fas fa-fire suggestion-synergy",
     4.5: "fas fa-dna suggestion-species",
     4: "fas fa-link suggestion-chain",
@@ -80,6 +85,7 @@ export const TIER_ICON_CLASSES = {
 // CSS classes for styling suggestion badges
 export const TIER_CSS_CLASSES = {
     6: "suggestion-tier-prestige",
+    5.5: "suggestion-tier-wishlist",
     5: "suggestion-tier-synergy",
     4.5: "suggestion-tier-species",
     4: "suggestion-tier-chain",
@@ -679,6 +685,18 @@ export class SuggestionEngine {
             }
         }
 
+        // Tier 5.5: Check if this feat is a prerequisite for a wishlisted item
+        if (actor) {
+            const wishlistPrereqCheck = this._checkWishlistPrerequisite(feat, actor);
+            if (wishlistPrereqCheck) {
+                return this._buildSuggestion(
+                    SUGGESTION_TIERS.WISHLIST_PATH,
+                    feat.name,
+                    wishlistPrereqCheck.reason
+                );
+            }
+        }
+
         // Tier 5: Martial arts feat (strong recommendation)
         if (this._isMartialArtsFeat(feat)) {
             return this._buildSuggestion(
@@ -782,6 +800,18 @@ export class SuggestionEngine {
                     SUGGESTION_TIERS.PRESTIGE_PREREQ,
                     talent.name,
                     alignment.reason
+                );
+            }
+        }
+
+        // Tier 5.5: Check if this talent is a prerequisite for a wishlisted item
+        if (actor) {
+            const wishlistPrereqCheck = this._checkWishlistPrerequisite(talent, actor);
+            if (wishlistPrereqCheck) {
+                return this._buildSuggestion(
+                    SUGGESTION_TIERS.WISHLIST_PATH,
+                    talent.name,
+                    wishlistPrereqCheck.reason
                 );
             }
         }
@@ -1258,6 +1288,54 @@ export class SuggestionEngine {
         }
 
         return { tier };
+    }
+
+    /**
+     * Check if feat/talent is a prerequisite for a wishlisted item
+     * @param {Object} item - The feat or talent to check
+     * @param {Object} actor - The character actor
+     * @returns {Object|null} Suggestion metadata or null if not a wishlist prerequisite
+     */
+    static _checkWishlistPrerequisite(item, actor) {
+        try {
+            const wishlist = WishlistEngine.getWishlist(actor);
+            const wishlistedItems = [...wishlist.feats, ...wishlist.talents];
+
+            // Check each wishlisted item to see if this feat/talent is a prerequisite
+            for (const wishedItem of wishlistedItems) {
+                // Try to find the actual item document
+                const itemPack = item.type === 'feat'
+                    ? game.packs.get('foundryvtt-swse.feats')
+                    : game.packs.get('foundryvtt-swse.talents');
+
+                if (!itemPack) continue;
+
+                // For now, match by name - could be improved with proper lookups
+                if (wishedItem.name.toLowerCase().includes(item.name.toLowerCase()) ||
+                    item.name.toLowerCase().includes(wishedItem.name.toLowerCase())) {
+                    // Skip if this item is itself wishlisted
+                    if (item._id === wishedItem.id || item.id === wishedItem.id) continue;
+                }
+
+                // Check if this item's unmet prerequisites include the wished-for item
+                const unmetReqs = PrerequisiteRequirements.getUnmetRequirements(actor, { ...wishedItem });
+                const prereqMentionsThisItem = unmetReqs.some(req =>
+                    req.toLowerCase().includes(item.name.toLowerCase())
+                );
+
+                if (prereqMentionsThisItem) {
+                    return {
+                        reason: `Prerequisite for your goal: ${wishedItem.name}`,
+                        wishlistedItem: wishedItem
+                    };
+                }
+            }
+
+            return null;
+        } catch (err) {
+            SWSELogger.warn('[SUGGESTION-ENGINE] Error checking wishlist prerequisites:', err);
+            return null;
+        }
     }
 
     /**
