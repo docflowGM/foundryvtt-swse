@@ -647,8 +647,8 @@ export class MentorSurvey {
    * @param {string} mentorName - The mentor's name
    * @returns {Promise<Object>} The survey answers or null if dismissed
    */
-  static async showSurvey(actor, classKey, mentorName) {
-    swseLogger.log(`[MENTOR-SURVEY] showSurvey: START - Actor: ${actor.id} (${actor.name}), Class: "${classKey}", Mentor: "${mentorName}"`);
+  static async showSurvey(actor, classKey, mentorName, isResuming = false) {
+    swseLogger.log(`[MENTOR-SURVEY] showSurvey: START - Actor: ${actor.id} (${actor.name}), Class: "${classKey}", Mentor: "${mentorName}", Resuming: ${isResuming}`);
     const mentor = MENTORS[mentorName];
     const questions = MENTOR_VOICED_SURVEY[classKey];
 
@@ -665,20 +665,81 @@ export class MentorSurvey {
       const answers = {};
       swseLogger.log(`[MENTOR-SURVEY] showSurvey: Starting survey with ${questionIds.length} questions:`, questionIds);
 
-      const showIntroduction = () => {
-        const introText = `${mentor.name}, ${mentor.title.toLowerCase()}, settles in to speak with you.`;
-        const mentorGreeting = `"I am here to guide your journey. Before we proceed, I would like to understand your vision for the path ahead. Your answers will help me offer counsel tailored to who you truly wish to become."`;
+      const showSkipConfirmation = (isAtIntroduction = true) => {
+        const skipText = isAtIntroduction
+          ? `${mentor.name} studies you for a moment.`
+          : `${mentor.name} nods understandingly.`;
+
+        const skipMessage = isAtIntroduction
+          ? `"I understand. Sometimes clarity comes when you need it, not when I ask for it. When you are ready to discuss your path, I will be here. There is no shame in taking your time."`
+          : `"There is wisdom in knowing when to pause. Continue when you are ready. I will remember what you have already shared."`;
 
         const dialog = new Dialog(
           {
-            title: `Meet Your Mentor`,
+            title: `Survey Deferred`,
+            content: `
+              <div class="mentor-survey-content holo-content">
+                <div class="mentor-skip-acknowledgment">
+                  <p style="margin-bottom: 1.5rem; font-style: italic; color: #ccc;">${skipText}</p>
+                  <p class="mentor-skip-text" style="margin: 1.5rem 0; font-size: 1.05em;">${skipMessage}</p>
+                  <p style="margin-top: 1.5rem; color: #999; font-size: 0.9em;">
+                    You can return to this survey anytime you wish. Your mentor will be waiting.
+                  </p>
+                </div>
+              </div>
+            `,
+            buttons: {
+              continue: {
+                icon: '<i class="fas fa-arrow-right"></i>',
+                label: "Continue",
+                callback: () => {
+                  swseLogger.log(`[MENTOR-SURVEY] showSurvey: User acknowledged skip confirmation`);
+                  resolve(null);
+                }
+              }
+            },
+            default: "continue",
+            render: (html) => {
+              // Add typing animation to mentor's skip message
+              const skipElement = html.find('.mentor-skip-text')[0];
+              if (skipElement) {
+                const skipText = skipElement.textContent;
+                TypingAnimation.typeText(skipElement, skipText, {
+                  speed: 45,
+                  skipOnClick: true
+                });
+              }
+            }
+          },
+          { classes: ['mentor-survey-dialog'] }
+        );
+
+        dialog.render(true);
+      };
+
+      const showIntroduction = (isResuming = false) => {
+        let introText, mentorGreeting;
+
+        if (isResuming) {
+          introText = `${mentor.name} welcomes you back.`;
+          mentorGreeting = `"I am pleased you have returned. Let us continue where we left off. Your path is still being written, and I am honored to help you understand it."`;
+        } else {
+          introText = `${mentor.name}, ${mentor.title.toLowerCase()}, settles in to speak with you.`;
+          mentorGreeting = `"I am here to guide your journey. Before we proceed, I would like to understand your vision for the path ahead. Your answers will help me offer counsel tailored to who you truly wish to become."`;
+        }
+
+        const dialog = new Dialog(
+          {
+            title: isResuming ? `Resume Your Mentoring` : `Meet Your Mentor`,
             content: `
               <div class="mentor-survey-content holo-content">
                 <div class="mentor-introduction">
                   <p style="margin-bottom: 1.5rem; font-style: italic; color: #ccc;">${introText}</p>
                   <p class="mentor-greeting" style="margin: 1.5rem 0; font-size: 1.1em;">${mentorGreeting}</p>
                   <p style="margin-top: 1.5rem; color: #999; font-size: 0.9em;">
-                    Take your time answering the questions ahead. There are no wrong answers—only the truth of who you are and who you wish to become.
+                    ${isResuming
+                      ? "Take your time. We have all the questions ahead of us still."
+                      : "Take your time answering the questions ahead. There are no wrong answers—only the truth of who you are and who you wish to become."}
                   </p>
                 </div>
               </div>
@@ -686,9 +747,9 @@ export class MentorSurvey {
             buttons: {
               begin: {
                 icon: '<i class="fas fa-arrow-right"></i>',
-                label: "Begin Survey",
+                label: isResuming ? "Continue Survey" : "Begin Survey",
                 callback: () => {
-                  swseLogger.log(`[MENTOR-SURVEY] showSurvey: User began survey`);
+                  swseLogger.log(`[MENTOR-SURVEY] showSurvey: User ${isResuming ? 'resumed' : 'began'} survey`);
                   renderQuestion(0);
                 }
               },
@@ -696,8 +757,8 @@ export class MentorSurvey {
                 icon: '<i class="fas fa-forward"></i>',
                 label: "Skip Survey",
                 callback: () => {
-                  swseLogger.log(`[MENTOR-SURVEY] showSurvey: User skipped survey at introduction`);
-                  resolve(null);
+                  swseLogger.log(`[MENTOR-SURVEY] showSurvey: User skipped survey at ${isResuming ? 'resume' : 'introduction'}`);
+                  showSkipConfirmation(!isResuming);
                 }
               }
             },
@@ -833,7 +894,7 @@ export class MentorSurvey {
                 label: "Skip Survey",
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] showSurvey: User skipped survey at question ${index + 1}/${questionIds.length}`);
-                  resolve(null);
+                  showSkipConfirmation(false);
                 }
               }
             },
@@ -856,7 +917,7 @@ export class MentorSurvey {
         dialog.render(true);
       };
 
-      showIntroduction();
+      showIntroduction(isResuming);
     });
   }
 
