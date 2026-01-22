@@ -71,7 +71,7 @@ export async function calculateChargenSuggestions(items, chargenContext, itemTyp
           items,
           tempActor,
           pendingData,
-          { buildIntent }
+          { buildIntent, includeFutureAvailability: true }
         );
       } else {
         SWSELogger.log(`[CHARGEN-SUGGESTIONS] Coordinator API not available, using direct engine`);
@@ -79,7 +79,7 @@ export async function calculateChargenSuggestions(items, chargenContext, itemTyp
           items,
           tempActor,
           pendingData,
-          { buildIntent }
+          { buildIntent, includeFutureAvailability: true }
         );
       }
     } else if (itemType === 'talent') {
@@ -91,7 +91,7 @@ export async function calculateChargenSuggestions(items, chargenContext, itemTyp
           items,
           tempActor,
           pendingData,
-          { buildIntent }
+          { buildIntent, includeFutureAvailability: true }
         );
       } else {
         SWSELogger.log(`[CHARGEN-SUGGESTIONS] Coordinator API not available, using direct engine`);
@@ -99,7 +99,7 @@ export async function calculateChargenSuggestions(items, chargenContext, itemTyp
           items,
           tempActor,
           pendingData,
-          { buildIntent }
+          { buildIntent, includeFutureAvailability: true }
         );
       }
     }

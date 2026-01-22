@@ -240,30 +240,8 @@ export async function loadTalentData(actor = null, pendingData = {}) {
     // Convert to plain objects for suggestion processing
     const talentObjects = talents.map(t => t.toObject ? t.toObject() : t);
 
-    // Apply suggestions using coordinator API if available, otherwise fallback
-    let talentsWithSuggestions = talentObjects;
-    if (game.swse?.suggestions?.suggestTalents) {
-      SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Using game.swse.suggestions.suggestTalents...`);
-      talentsWithSuggestions = await game.swse.suggestions.suggestTalents(
-        talentObjects,
-        actor,
-        pendingData
-      );
-      SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Suggestions applied, returned ${talentsWithSuggestions.length} talents`);
-    } else {
-      talentsWithSuggestions = await SuggestionEngine.suggestTalents(
-        talentObjects,
-        actor,
-        pendingData
-      );
-    }
-
-    // Log suggestion statistics
-    const suggestionCounts = SuggestionEngine.countByTier(talentsWithSuggestions);
-    SWSELogger.log(`SWSE LevelUp | Talent suggestions: Chain=${suggestionCounts[4]}, Skill=${suggestionCounts[3]}, Ability=${suggestionCounts[2]}, Class=${suggestionCounts[1]}`);
-
-    // Add prerequisite checking results to each talent
-    const talentsWithPrereqs = talentsWithSuggestions.map(talent => {
+    // Add prerequisite checking results to each talent (before suggestions for future availability analysis)
+    const talentsWithPrereqs = talentObjects.map(talent => {
       const prereqCheck = PrerequisiteRequirements.checkTalentPrerequisites(actor, talent, pendingData);
       return {
         ...talent,
@@ -272,7 +250,32 @@ export async function loadTalentData(actor = null, pendingData = {}) {
       };
     });
 
-    return talentsWithPrereqs;
+    // Apply suggestions using coordinator API if available, otherwise fallback
+    // Include future availability scoring for unqualified talents
+    let talentsWithSuggestions = talentsWithPrereqs;
+    if (game.swse?.suggestions?.suggestTalents) {
+      SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Using game.swse.suggestions.suggestTalents...`);
+      talentsWithSuggestions = await game.swse.suggestions.suggestTalents(
+        talentsWithPrereqs,
+        actor,
+        pendingData,
+        { includeFutureAvailability: true }
+      );
+      SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Suggestions applied, returned ${talentsWithSuggestions.length} talents`);
+    } else {
+      talentsWithSuggestions = await SuggestionEngine.suggestTalents(
+        talentsWithPrereqs,
+        actor,
+        pendingData,
+        { includeFutureAvailability: true }
+      );
+    }
+
+    // Log suggestion statistics
+    const suggestionCounts = SuggestionEngine.countByTier(talentsWithSuggestions);
+    SWSELogger.log(`SWSE LevelUp | Talent suggestions: Chain=${suggestionCounts[4]}, Skill=${suggestionCounts[3]}, Ability=${suggestionCounts[2]}, Class=${suggestionCounts[1]}`);
+
+    return talentsWithSuggestions;
   }
 
   return talents;

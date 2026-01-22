@@ -263,7 +263,7 @@ export async function loadFeats(actor, selectedClass, pendingData) {
       }
     }
 
-    // Filter feats based on prerequisites
+    // Filter feats based on prerequisites (for display filtering later)
     const filteredFeats = filterQualifiedFeats(featObjects, actor, pendingData);
 
     // Load feat metadata and organize into categories
@@ -271,21 +271,22 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     const selectedFeats = pendingData?.selectedFeats || [];
 
     // Apply suggestion engine to add tier-based recommendations
+    // Pass ALL feats (including unqualified) so engine can score future availability
     // Use the coordinator API if available, otherwise fall back to direct engine call
-    let featsWithSuggestions = filteredFeats;
+    let featsWithSuggestions = featObjects;  // Use all feats, not just filtered
     if (game.swse?.suggestions?.suggestFeats) {
       featsWithSuggestions = await game.swse.suggestions.suggestFeats(
-        filteredFeats,
+        featObjects,
         actor,
         pendingData,
-        { featMetadata: metadata.feats || {} }
+        { featMetadata: metadata.feats || {}, includeFutureAvailability: true }
       );
     } else {
       featsWithSuggestions = await SuggestionEngine.suggestFeats(
-        filteredFeats,
+        featObjects,
         actor,
         pendingData,
-        { featMetadata: metadata.feats || {} }
+        { featMetadata: metadata.feats || {}, includeFutureAvailability: true }
       );
     }
 
