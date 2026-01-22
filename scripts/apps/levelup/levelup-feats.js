@@ -104,6 +104,7 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
         chain: null,
         isSelected: selectedFeats.some(sf => sf._id === feat._id || sf.name === feat.name),
         isUnavailable: !feat.isQualified,
+        prereqReasons: feat.prereqReasons || [],
         isOwned: isOwned,
         isRepeatable: isRepeatable,
         // Suggestion engine metadata
@@ -124,6 +125,7 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
       prerequisiteFeat: featMeta.prerequisiteFeat || null,
       isSelected: selectedFeats.some(sf => sf._id === feat._id || sf.name === feat.name),
       isUnavailable: !feat.isQualified,
+      prereqReasons: feat.prereqReasons || [],
       isOwned: isOwned,
       isRepeatable: isRepeatable,
       // Suggestion engine metadata
@@ -261,7 +263,7 @@ export async function loadFeats(actor, selectedClass, pendingData) {
       }
     }
 
-    // Filter feats based on prerequisites
+    // Filter feats based on prerequisites (for display filtering later)
     const filteredFeats = filterQualifiedFeats(featObjects, actor, pendingData);
 
     // Load feat metadata and organize into categories
@@ -269,23 +271,29 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     const selectedFeats = pendingData?.selectedFeats || [];
 
     // Apply suggestion engine to add tier-based recommendations
+    // Pass ALL feats (including unqualified) so engine can score future availability
     // Use the coordinator API if available, otherwise fall back to direct engine call
-    let featsWithSuggestions = filteredFeats;
+    let featsWithSuggestions = featObjects;  // Use all feats, not just filtered
     if (game.swse?.suggestions?.suggestFeats) {
       featsWithSuggestions = await game.swse.suggestions.suggestFeats(
-        filteredFeats,
+        featObjects,
         actor,
         pendingData,
-        { featMetadata: metadata.feats || {} }
+        { featMetadata: metadata.feats || {}, includeFutureAvailability: true }
       );
     } else {
       featsWithSuggestions = await SuggestionEngine.suggestFeats(
-        filteredFeats,
+        featObjects,
         actor,
         pendingData,
-        { featMetadata: metadata.feats || {} }
+        { featMetadata: metadata.feats || {}, includeFutureAvailability: true }
       );
     }
+
+    // Extract future available feats (those with futureAvailable flag and suggestion tier > 0)
+    const futureAvailableFeats = featsWithSuggestions.filter(f =>
+      f.futureAvailable && f.suggestion && f.suggestion.tier > 0
+    );
 
     const categories = organizeFeatsIntoCategories(featsWithSuggestions, metadata, selectedFeats, actor);
 
@@ -293,10 +301,14 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     const suggestionCounts = SuggestionEngine.countByTier(featsWithSuggestions);
     SWSELogger.log(`SWSE LevelUp | Loaded ${filteredFeats.length} feats in ${categories.length} categories, ${filteredFeats.filter(f => f.isQualified).length} qualified`);
     SWSELogger.log(`SWSE LevelUp | Suggestions: Chain=${suggestionCounts[4]}, Skill=${suggestionCounts[3]}, Ability=${suggestionCounts[2]}, Class=${suggestionCounts[1]}`);
+    if (futureAvailableFeats.length > 0) {
+      SWSELogger.log(`SWSE LevelUp | Future Available Feats: ${futureAvailableFeats.length}`);
+    }
 
     return {
       categories,
-      feats: featsWithSuggestions  // Flat array with suggestion metadata
+      feats: featsWithSuggestions,  // Flat array with suggestion metadata
+      futureAvailableFeats  // Array of feats that will become available soon
     };
   } catch (err) {
     SWSELogger.error("SWSE LevelUp | Failed to load feats:", err);

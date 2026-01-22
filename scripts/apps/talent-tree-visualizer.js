@@ -487,6 +487,7 @@ export class TalentTreeVisualizer {
             ${isSuggested ? `<div class="tooltip-suggestion"><i class="${talent.suggestion?.iconClass || ''}"></i> ${talent.suggestion?.reason || ''}</div>` : ''}
             <p>${talent.system?.benefit || 'No description available'}</p>
             ${hasPrereq ? `<small><em>Requires: ${node.prereqs.join(', ')}</em></small>` : ''}
+            ${talent.prereqReasons && talent.prereqReasons.length > 0 ? `<div style="color: #ff5555; margin-top: 0.5em; font-weight: bold; font-size: 0.9em;">⚠ Cannot take:<ul style="margin: 0.3em 0 0 1.2em; padding: 0;">${talent.prereqReasons.map(r => `<li style="font-size: 0.9em;">${r}</li>`).join('')}</ul></div>` : ''}
           </div>
         </div>
       `;

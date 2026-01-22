@@ -4,7 +4,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { getTalentTrees, getTalentTreeName } from './chargen-property-accessor.js';
-import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
+import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { ClassesDB } from '../../data/classes-db.js';
 import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
@@ -71,7 +71,7 @@ export async function calculateChargenSuggestions(items, chargenContext, itemTyp
           items,
           tempActor,
           pendingData,
-          { buildIntent }
+          { buildIntent, includeFutureAvailability: true }
         );
       } else {
         SWSELogger.log(`[CHARGEN-SUGGESTIONS] Coordinator API not available, using direct engine`);
@@ -79,7 +79,7 @@ export async function calculateChargenSuggestions(items, chargenContext, itemTyp
           items,
           tempActor,
           pendingData,
-          { buildIntent }
+          { buildIntent, includeFutureAvailability: true }
         );
       }
     } else if (itemType === 'talent') {
@@ -91,7 +91,7 @@ export async function calculateChargenSuggestions(items, chargenContext, itemTyp
           items,
           tempActor,
           pendingData,
-          { buildIntent }
+          { buildIntent, includeFutureAvailability: true }
         );
       } else {
         SWSELogger.log(`[CHARGEN-SUGGESTIONS] Coordinator API not available, using direct engine`);
@@ -99,7 +99,7 @@ export async function calculateChargenSuggestions(items, chargenContext, itemTyp
           items,
           tempActor,
           pendingData,
-          { buildIntent }
+          { buildIntent, includeFutureAvailability: true }
         );
       }
     }
@@ -553,7 +553,7 @@ export async function _onSelectTalent(event) {
           selectedTalents: this.characterData.talents || []
         };
 
-        const prereqCheck = PrerequisiteValidator.checkTalentPrerequisites(talentToAdd, tempActor, pendingData);
+        const prereqCheck = PrerequisiteRequirements.checkTalentPrerequisites(tempActor, talentToAdd, pendingData);
         if (!prereqCheck.valid) {
           ui.notifications.warn(`Cannot select "${talentToAdd.name}" from Block & Deflect: ${prereqCheck.reasons.join(', ')}`);
           return;
@@ -621,7 +621,7 @@ export async function _onSelectTalent(event) {
         selectedTalents: this.characterData.talents || []
       };
 
-      const prereqCheck = PrerequisiteValidator.checkTalentPrerequisites(tal, tempActor, pendingData);
+      const prereqCheck = PrerequisiteRequirements.checkTalentPrerequisites(tempActor, tal, pendingData);
       if (!prereqCheck.valid) {
         ui.notifications.warn(`Cannot select "${tal.name}": ${prereqCheck.reasons.join(', ')}`);
         return;

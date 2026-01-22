@@ -345,33 +345,22 @@ export async function _onSelectClass(event) {
     SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Identity ready check: ${identityReady}`);
 
     if (!surveyCompleted && isBaseClassSelection && identityReady) {
-      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CONDITION MET - Triggering mentor survey for "${className}"`);
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CONDITION MET - Triggering non-optional mentor survey for "${className}"`);
       const playerName = this.characterData.name || "";
 
-      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CALLING promptSurvey()...`, {
-        tempActorId: tempActor?.id,
-        className: className,
-        playerName: playerName
-      });
-      const acceptSurvey = await MentorSurvey.promptSurvey(tempActor, className, playerName);
-      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ promptSurvey() returned: ${acceptSurvey}`);
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CALLING showSurvey()...`, { className });
+      const surveyAnswers = await MentorSurvey.showSurvey(tempActor, className, className);
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ showSurvey() returned:`, surveyAnswers ? 'ANSWERS_RECEIVED' : 'DISMISSED');
 
-      if (acceptSurvey) {
-        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CALLING showSurvey()...`, { className });
-        const surveyAnswers = await MentorSurvey.showSurvey(tempActor, className, className);
-        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ showSurvey() returned:`, surveyAnswers ? 'ANSWERS_RECEIVED' : 'DISMISSED');
-
-        if (surveyAnswers) {
-          const biases = MentorSurvey.processSurveyAnswers(surveyAnswers);
-          this.characterData.mentorBiases = biases;
-          this.characterData.mentorSurveyCompleted = true;
-          SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Mentor biases stored`, biases);
-          ui.notifications.info("Survey completed! Your mentor will use this to personalize suggestions.");
-        } else {
-          SWSELogger.warn(`[CHARGEN-CLASS] _onSelectClass: User dismissed survey without answers`);
-        }
+      if (surveyAnswers) {
+        const biases = MentorSurvey.processSurveyAnswers(surveyAnswers);
+        this.characterData.mentorBiases = biases;
+        this.characterData.mentorSurveyCompleted = true;
+        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Mentor biases stored`, biases);
+        ui.notifications.info("Survey completed! Your mentor will use this to personalize suggestions.");
       } else {
-        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User declined survey prompt`);
+        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User skipped mentor survey (can be completed later)`);
+        ui.notifications.info("Survey skipped. You can complete it later to get personalized mentor suggestions.");
       }
     } else {
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CONDITION NOT MET - Skipping survey`, {

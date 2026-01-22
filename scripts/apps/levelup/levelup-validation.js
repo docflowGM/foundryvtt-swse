@@ -3,7 +3,7 @@
  * Handles prerequisite checking for classes, talents, and feats
  */
 
-import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
+import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { isBaseClass } from './levelup-shared.js';
 
@@ -89,7 +89,7 @@ export async function meetsClassPrerequisites(classDoc, actor, pendingData) {
  * @returns {{valid: boolean, reasons: string[]}}
  */
 export function checkTalentPrerequisites(talent, actor, pendingData) {
-  return PrerequisiteValidator.checkTalentPrerequisites(talent, actor, pendingData);
+  return PrerequisiteRequirements.checkTalentPrerequisites(actor, talent, pendingData);
 }
 
 /**

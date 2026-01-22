@@ -22,6 +22,14 @@ export const PrerequisiteRequirements = {
    * @returns { valid: boolean, reasons: string[] }
    */
   meetsRequirements(actor, doc) {
+    return this.checkFeature(actor, doc);
+  },
+
+  /**
+   * Unified check for any feature (feat, talent, etc)
+   * @returns { valid: boolean, reasons: string[] }
+   */
+  checkFeature(actor, doc) {
     const structured = doc.system?.prerequisitesStructured;
 
     // Prefer structured prerequisites if present
@@ -33,6 +41,22 @@ export const PrerequisiteRequirements = {
 
     // Fallback to legacy string-based prerequisites
     return this._meetsLegacyStringRequirements(actor, doc);
+  },
+
+  /**
+   * Check talent prerequisites (alias for checkFeature)
+   * @returns { valid: boolean, reasons: string[] }
+   */
+  checkTalentPrerequisites(actor, talent, pending = {}) {
+    return this.checkFeature(actor, talent);
+  },
+
+  /**
+   * Check feat prerequisites (alias for checkFeature)
+   * @returns { valid: boolean, reasons: string[] }
+   */
+  checkFeatPrerequisites(actor, feat, pending = {}) {
+    return this.checkFeature(actor, feat);
   },
 
   canLearn(actor, doc) {

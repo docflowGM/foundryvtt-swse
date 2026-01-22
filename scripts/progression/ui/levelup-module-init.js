@@ -14,7 +14,7 @@ import { SkillRegistry } from "../skills/skill-registry-ui.js";
 import { FeatRegistry } from "../feats/feat-registry-ui.js";
 import { TalentRegistry } from "../talents/talent-registry-ui.js";
 import { ForceRegistry } from "../force/force-registry-ui.js";
-import { PrerequisiteValidator } from "../../utils/prerequisite-validator.js";
+import { PrerequisiteRequirements } from "../feats/prerequisite_engine.js";
 import { SuggestionEngineCoordinator } from "../../engine/SuggestionEngineCoordinator.js";
 
 /**
@@ -91,10 +91,10 @@ export async function initializeLevelUpUI() {
       game.swse = game.swse || {};
       game.swse.prereq = {
         checkFeatPrereq: (featDoc, actor, pending) => {
-          return PrerequisiteValidator.checkFeatPrerequisites(featDoc, actor, pending);
+          return PrerequisiteRequirements.checkFeatPrerequisites(actor, featDoc, pending);
         },
         checkTalentPrereq: (talentDoc, actor, pending) => {
-          return PrerequisiteValidator.checkTalentPrerequisites(talentDoc, actor, pending);
+          return PrerequisiteRequirements.checkTalentPrerequisites(actor, talentDoc, pending);
         }
       };
       SWSELogger.log("[LEVELUP-INIT] - Prerequisite API set up successfully");

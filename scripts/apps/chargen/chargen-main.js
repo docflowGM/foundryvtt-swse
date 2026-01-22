@@ -4,7 +4,7 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
-import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
+import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from './chargen-property-accessor.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
@@ -123,6 +123,7 @@ export default class CharacterGenerator extends Application {
     this.currentStep = "name";
     this.selectedTalentTree = null;  // For two-step talent selection
     this.freeBuild = false;  // Free build mode bypasses validation
+    this.skippedSteps = new Set();  // Track which steps have been skipped
 
     // Caches for compendia
     this._packs = {
@@ -545,6 +546,12 @@ export default class CharacterGenerator extends Application {
     context.currentStep = this.currentStep;
     context.freeBuild = this.freeBuild;
     context.isLevelUp = !!this.actor;
+    context.skippedSteps = Array.from(this.skippedSteps);  // For chevron status display
+    // Helper object for template: map step names to whether they're skipped
+    context.skippedStepsMap = {};
+    for (const step of this.skippedSteps) {
+      context.skippedStepsMap[step] = true;
+    }
 
     // DEBUG: Log packs status
     SWSELogger.log(`CharGen | getData() - currentStep: ${this.currentStep}`, {
@@ -710,10 +717,11 @@ export default class CharacterGenerator extends Application {
           };
 
           context.packs.feats = context.packs.feats.map(feat => {
-            const prereqCheck = PrerequisiteValidator.checkFeatPrerequisites(feat, tempActor, pendingDataForFeats);
+            const prereqCheck = PrerequisiteRequirements.checkFeatPrerequisites(tempActor, feat, pendingDataForFeats);
             return {
               ...feat,
-              isQualified: prereqCheck.valid
+              isQualified: prereqCheck.valid,
+              prereqReasons: prereqCheck.reasons
             };
           });
 
@@ -760,10 +768,11 @@ export default class CharacterGenerator extends Application {
           };
 
           context.packs.talents = context.packs.talents.map(talent => {
-            const prereqCheck = PrerequisiteValidator.checkTalentPrerequisites(talent, tempActor, pendingDataForTalents);
+            const prereqCheck = PrerequisiteRequirements.checkTalentPrerequisites(tempActor, talent, pendingDataForTalents);
             return {
               ...talent,
-              isQualified: prereqCheck.valid
+              isQualified: prereqCheck.valid,
+              prereqReasons: prereqCheck.reasons
             };
           });
         } catch (err) {
@@ -1102,12 +1111,164 @@ export default class CharacterGenerator extends Application {
       case "talents":
         return mentor.talentGuidance || null;
       case "summary":
-        // Get level-appropriate greeting
-        const level = this.characterData.level || 1;
-        return mentor.levelGreetings?.[level] || null;
+        // Get level-appropriate greeting with character overview
+        return this._getMentorSummaryCommentary(mentor);
       default:
         return null;
     }
+  }
+
+  /**
+   * Generate mentor commentary on the completed character for summary page
+   * @param {Object} mentor - The mentor object
+   * @returns {string} Mentor's narrative commentary on the character
+   */
+  _getMentorSummaryCommentary(mentor) {
+    const characterData = this.characterData;
+    const components = [];
+
+    // Opening line with level-appropriate greeting
+    const level = characterData.level || 1;
+    const levelGreeting = mentor.levelGreetings?.[level] || "Your path takes shape.";
+    components.push(levelGreeting);
+
+    // Commentary on background (if selected)
+    if (characterData.background) {
+      const backgroundComment = this._getMentorBackgroundComment(mentor, characterData.background);
+      components.push(backgroundComment);
+    }
+
+    // Commentary on skills chosen
+    if (characterData.skills) {
+      const trainedSkills = Object.entries(characterData.skills)
+        .filter(([_, skillData]) => skillData.trained)
+        .map(([skillName, _]) => skillName);
+      if (trainedSkills.length > 0) {
+        const skillsComment = this._getMentorSkillsComment(mentor, trainedSkills);
+        components.push(skillsComment);
+      }
+    }
+
+    // Commentary on talents selected
+    if (characterData.talents && characterData.talents.length > 0) {
+      const talentsComment = this._getMentorTalentsComment(mentor, characterData.talents);
+      components.push(talentsComment);
+    }
+
+    // Commentary on feats selected
+    if (characterData.feats && characterData.feats.length > 0) {
+      const featsComment = this._getMentorFeatsComment(mentor, characterData.feats);
+      components.push(featsComment);
+    }
+
+    // Final conclusion
+    const conclusionComment = this._getMentorConclusionComment(mentor, characterData);
+    components.push(conclusionComment);
+
+    return components.join(" ");
+  }
+
+  /**
+   * Get mentor's comment on the background choice
+   */
+  _getMentorBackgroundComment(mentor, background) {
+    const comments = {
+      "Jedi": {
+        "Smuggler": "Your past as a smuggler brings experience with survival and cunning. Interesting foundations for a Jedi's path.",
+        "Soldier": "A military background suggests discipline and tactical thinking. These serve the Force well.",
+        "Scout": "The skills of a scout—observation, tracking, adaptation. These will serve you in ways you cannot yet imagine.",
+        "default": "Your background shapes who you become. Use that wisdom in your journey ahead."
+      },
+      "Soldier": {
+        "Smuggler": "A smuggler's instincts paired with military discipline? That combination could be dangerous in the right ways.",
+        "Scout": "Scout training mixed with soldier's training makes you adaptable. Good—the battlefield demands flexibility.",
+        "Jedi": "A strange path, mixing Force and firearms. But unconventional approaches sometimes succeed where tradition fails.",
+        "default": "Your background prepares you for what lies ahead. Trust that preparation."
+      },
+      "Scoundrel": {
+        "Soldier": "Soldier discipline with scoundrel instincts? You'll survive things that would break others.",
+        "Smuggler": "A smuggler among scoundrels—you'll fit right in. Just remember what you value.",
+        "Scout": "Scout cunning wrapped in scoundrel charm. You'll move through the galaxy just fine.",
+        "default": "Your past is your credential. Use it wisely."
+      },
+      "default": {
+        "default": "Your background informs who you are. Do not forget where you came from."
+      }
+    };
+
+    const className = (this.characterData.classes?.[0]?.name) || "Jedi";
+    const mentorComments = comments[mentor.name] || comments["default"];
+    return mentorComments[background] || mentorComments["default"];
+  }
+
+  /**
+   * Get mentor's comment on skills chosen
+   */
+  _getMentorSkillsComment(mentor, trainedSkills) {
+    const skillCount = trainedSkills.length;
+    const skillList = trainedSkills.slice(0, 2).join(", "); // List first 2 skills
+    const moreSkills = skillCount > 2 ? ` and ${skillCount - 2} more` : "";
+
+    const skillComments = {
+      "Jedi": `You have trained yourself in ${skillList}${moreSkills}. Knowledge is a tool of the Force as much as intuition.`,
+      "Soldier": `Your choice to master ${skillList}${moreSkills} shows strategic thinking. Every skill is a weapon if wielded correctly.`,
+      "Scoundrel": `${skillList}${moreSkills}—practical choices. You know what skills keep you alive in the field.`,
+      "default": `You have developed proficiency in ${skillList}${moreSkills}. These skills will serve you well.`
+    };
+
+    return skillComments[mentor.name] || skillComments["default"];
+  }
+
+  /**
+   * Get mentor's comment on talents selected
+   */
+  _getMentorTalentsComment(mentor, talents) {
+    const talentCount = talents.length;
+    const talentList = talents.slice(0, 2).map(t => t.name).join(", ");
+    const moreTalents = talentCount > 2 ? ` and ${talentCount - 2} others` : "";
+
+    const talentComments = {
+      "Jedi": `Your talents—${talentList}${moreTalents}—show connection to deeper aspects of the Force. You are developing awareness.`,
+      "Soldier": `The talents you've chosen—${talentList}${moreTalents}—show you understand combat's nuances. Good.`,
+      "Scoundrel": `${talentList}${moreTalents}. Talents that keep you one step ahead. That's the scoundrel's way.`,
+      "default": `You have selected talents that will define your capabilities. Use them well.`
+    };
+
+    return talentComments[mentor.name] || talentComments["default"];
+  }
+
+  /**
+   * Get mentor's comment on feats selected
+   */
+  _getMentorFeatsComment(mentor, feats) {
+    const featCount = feats.length;
+    const featList = feats.slice(0, 2).map(f => f.name).join(", ");
+    const moreFeats = featCount > 2 ? ` and ${featCount - 2} others` : "";
+
+    const featComments = {
+      "Jedi": `Through ${featList}${moreFeats}, you build your foundation. Each feat is a step toward mastery.`,
+      "Soldier": `${featList}${moreFeats}—solid choices for a warrior. You are building practical strength.`,
+      "Scoundrel": `${featList}${moreFeats}. You know which advantages make the difference between freedom and chains.`,
+      "default": `Your chosen feats demonstrate your priorities. Stand by them.`
+    };
+
+    return featComments[mentor.name] || featComments["default"];
+  }
+
+  /**
+   * Get mentor's final conclusion about the completed character
+   */
+  _getMentorConclusionComment(mentor, characterData) {
+    const className = characterData.classes?.[0]?.name || "unknown";
+
+    const conclusionComments = {
+      "Jedi": `You have begun. The path ahead is long, but I sense you are ready to walk it with awareness and purpose.`,
+      "Soldier": `You have the foundation. What you build upon it—that is what matters. Go forward with clarity.`,
+      "Scoundrel": `You're ready to make your own way in this galaxy. Just remember—survival isn't everything.`,
+      "default": `The character you have created is ready to face what comes. May your choices serve you well.`
+    };
+
+    return conclusionComments[mentor.name] || conclusionComments["default"];
   }
 
   /**
@@ -1161,10 +1322,11 @@ export default class CharacterGenerator extends Application {
     // Navigation
     $html.find('.next-step').click(this._onNextStep.bind(this));
     $html.find('.prev-step').click(this._onPrevStep.bind(this));
+    $html.find('.skip-step').click(this._onSkipStep.bind(this));
     $html.find('.build-later-droid').click(this._onBuildLater.bind(this));
 
-    // Chevron step navigation (clickable for previous steps or in Free Build mode)
-    $html.find('.chevron-step.clickable').click(this._onJumpToStep.bind(this));
+    // Chevron step navigation (all steps now clickable with confirmation)
+    $html.find('.chevron-step').click(this._onJumpToStep.bind(this));
     $html.find('.finish').click(this._onFinish.bind(this));
 
     // Selections
@@ -1670,14 +1832,162 @@ export default class CharacterGenerator extends Application {
     const currentIndex = steps.indexOf(this.currentStep);
     const targetIndex = steps.indexOf(targetStep);
 
+    // Cannot jump to future steps unless in free build mode
     if (!this.freeBuild && targetIndex > currentIndex) {
-      ui.notifications.warn("You cannot jump forward to future steps.");
+      ui.notifications.warn("You cannot jump forward to future steps. You can skip the current step or enable Free Build mode.");
       return;
     }
 
-    SWSELogger.log(`CharGen | Jumping to step: ${targetStep}`);
+    // Special check: talents/skills require a class to be selected
+    const requiresClass = ["talents", "skills"].includes(targetStep);
+    const classSelected = this.characterData.classes && this.characterData.classes.length > 0;
+
+    if (requiresClass && !classSelected && !this.freeBuild) {
+      // Show dialog with options
+      await new Dialog({
+        title: "Class Required",
+        content: `
+          <div style="margin-bottom: 10px;">
+            <p><i class="fas fa-info-circle" style="color: #00d9ff;"></i> <strong>You must select a class before choosing ${targetStep === 'talents' ? 'talents' : 'skills'}.</strong></p>
+            <p>You have two options:</p>
+            <ul style="margin-left: 20px; margin-top: 5px;">
+              <li><strong>Go Back:</strong> Return to the class selection step</li>
+              <li><strong>Enable Free Build:</strong> Skip validation and proceed anyway (characters may become illegal)</li>
+            </ul>
+          </div>
+        `,
+        buttons: {
+          goback: {
+            label: "Go Back",
+            callback: () => {
+              this.currentStep = "class";
+              this.render();
+            }
+          },
+          freebuild: {
+            label: "Enable Free Build",
+            callback: async () => {
+              this.freeBuild = true;
+              this.currentStep = targetStep;
+              ui.notifications.info("Free Build Mode enabled. You can now select without class restrictions.");
+              await this.render();
+            }
+          }
+        },
+        default: "goback"
+      }).render(true);
+      return;
+    }
+
+    // If jumping forward, show confirmation that character may become illegal
+    if (targetIndex > currentIndex && !this.freeBuild) {
+      const stepLabel = this._getStepLabel(targetStep);
+      const confirmed = await Dialog.confirm({
+        title: "Skip Steps?",
+        content: `
+          <div style="margin-bottom: 10px;">
+            <p><i class="fas fa-exclamation-triangle" style="color: #ff9800;"></i> <strong>Skip to ${stepLabel}?</strong></p>
+            <p>You are about to skip ${targetIndex - currentIndex} step(s).</p>
+            <p style="margin-top: 10px; padding: 10px; background: rgba(255, 152, 0, 0.1); border-left: 3px solid #ff9800;">
+              <strong>Warning:</strong> Skipping steps may make your character illegal and affect your builds. You can return to these steps later.
+            </p>
+          </div>
+        `,
+        defaultYes: false
+      });
+
+      if (!confirmed) {
+        return;
+      }
+
+      // Mark all intermediate steps as skipped
+      for (let i = currentIndex + 1; i < targetIndex; i++) {
+        this.skippedSteps.add(steps[i]);
+      }
+    }
+
+    SWSELogger.log(`CharGen | Jumping to step: ${targetStep}`, {
+      fromStep: this.currentStep,
+      skippedSteps: Array.from(this.skippedSteps)
+    });
+
     this.currentStep = targetStep;
     await this.render();
+  }
+
+  /**
+   * Skip the current step (mark as skipped and move to next step)
+   */
+  async _onSkipStep(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Show warning dialog
+    const confirmed = await Dialog.confirm({
+      title: "Skip This Step?",
+      content: `
+        <div style="margin-bottom: 10px;">
+          <p><i class="fas fa-exclamation-triangle" style="color: #ff9800;"></i> <strong>Skip this step?</strong></p>
+          <p>This step is important for character creation.</p>
+          <p style="margin-top: 10px; padding: 10px; background: rgba(255, 152, 0, 0.1); border-left: 3px solid #ff9800;">
+            <strong>Warning:</strong> Skipping this step may make your character illegal and affect your builds. You can always come back later to complete it.
+          </p>
+        </div>
+      `,
+      defaultYes: false
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    // Mark current step as skipped
+    this.skippedSteps.add(this.currentStep);
+
+    // Get next step
+    const steps = this._getSteps();
+    const currentIndex = steps.indexOf(this.currentStep);
+    const nextStep = steps[currentIndex + 1];
+
+    if (!nextStep) {
+      ui.notifications.warn("You are at the final step. Cannot skip.");
+      return;
+    }
+
+    SWSELogger.log(`CharGen | Skipping step: ${this.currentStep}`, {
+      nextStep: nextStep,
+      skippedSteps: Array.from(this.skippedSteps)
+    });
+
+    this.currentStep = nextStep;
+    await this.render();
+  }
+
+  /**
+   * Get a readable label for a step ID
+   */
+  _getStepLabel(step) {
+    const labels = {
+      'name': 'Character Name',
+      'type': 'Character Type',
+      'degree': 'Droid Degree',
+      'size': 'Droid Size',
+      'droid-builder': 'Droid Builder',
+      'species': 'Species',
+      'abilities': 'Ability Scores',
+      'class': 'Class',
+      'background': 'Background',
+      'skills': 'Skills',
+      'languages': 'Languages',
+      'feats': 'Feats',
+      'talents': 'Talents',
+      'force-powers': 'Force Powers',
+      'starship-maneuvers': 'Starship Maneuvers',
+      'droid-final': 'Droid Finalization',
+      'summary': 'Character Summary',
+      'shop': 'Equipment Shop'
+    };
+    return labels[step] || step;
   }
 
   /**

@@ -22,6 +22,8 @@ import { SWSELogger } from '../utils/logger.js';
 import { BuildIntent } from './BuildIntent.js';
 import { MentorSurvey } from '../apps/mentor-survey.js';
 import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies.js';
+import { PrerequisiteRequirements } from '../progression/feats/prerequisite_engine.js';
+import { WishlistEngine } from './WishlistEngine.js';
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (ORDER MATTERS - HIGHER = BETTER)
@@ -29,6 +31,7 @@ import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies
 
 export const SUGGESTION_TIERS = {
     PRESTIGE_PREREQ: 6,
+    WISHLIST_PATH: 5.5,     // Prerequisite for a wishlisted item (player goal)
     MARTIAL_ARTS: 5,        // Martial arts feat with prerequisites met
     META_SYNERGY: 5,        // Community-proven synergy combo
     SPECIES_EARLY: 4.5,     // Species feat at early levels (decays with level)
@@ -42,6 +45,7 @@ export const SUGGESTION_TIERS = {
 
 export const TIER_REASONS = {
     6: "Prerequisite for a prestige class you're building toward",
+    5.5: "Prerequisite for a goal on your wishlist",
     5: "Strong recommendation for your build",
     4.5: "Excellent species feat for your level",
     4: "Builds directly on a feat or talent you already have",
@@ -54,6 +58,7 @@ export const TIER_REASONS = {
 
 export const TIER_ICONS = {
     6: "fa-crown",          // Crown for prestige prereq
+    5.5: "fa-star",         // Star for wishlist/player goal
     5: "fa-fire",           // Fire for strong recommendations
     4.5: "fa-dna",          // DNA for species feats
     4: "fa-link",           // Chain link icon for chain continuation
@@ -67,6 +72,7 @@ export const TIER_ICONS = {
 // FontAwesome classes for rendering
 export const TIER_ICON_CLASSES = {
     6: "fas fa-crown suggestion-prestige",
+    5.5: "fas fa-star suggestion-wishlist",
     5: "fas fa-fire suggestion-synergy",
     4.5: "fas fa-dna suggestion-species",
     4: "fas fa-link suggestion-chain",
@@ -79,6 +85,7 @@ export const TIER_ICON_CLASSES = {
 // CSS classes for styling suggestion badges
 export const TIER_CSS_CLASSES = {
     6: "suggestion-tier-prestige",
+    5.5: "suggestion-tier-wishlist",
     5: "suggestion-tier-synergy",
     4.5: "suggestion-tier-species",
     4: "suggestion-tier-chain",
@@ -125,6 +132,20 @@ export class SuggestionEngine {
         return feats.map(feat => {
             // Only suggest for qualified feats
             if (feat.isQualified === false) {
+                // NEW: If includeFutureAvailability option enabled, score future availability
+                if (options.includeFutureAvailability) {
+                    const futureScore = this._scoreFutureAvailability(
+                        feat, actor, actorState, buildIntent, pendingData
+                    );
+                    return {
+                        ...feat,
+                        suggestion: futureScore,
+                        isSuggested: futureScore && futureScore.tier > 0,
+                        currentlyUnavailable: true,
+                        futureAvailable: !!futureScore
+                    };
+                }
+                // Fall back to existing behavior (null suggestion)
                 return {
                     ...feat,
                     suggestion: null,
@@ -171,6 +192,20 @@ export class SuggestionEngine {
         return talents.map(talent => {
             // Only suggest for qualified talents
             if (talent.isQualified === false) {
+                // NEW: If includeFutureAvailability option enabled, score future availability
+                if (options.includeFutureAvailability) {
+                    const futureScore = this._scoreFutureAvailability(
+                        talent, actor, actorState, buildIntent, pendingData
+                    );
+                    return {
+                        ...talent,
+                        suggestion: futureScore,
+                        isSuggested: futureScore && futureScore.tier > 0,
+                        currentlyUnavailable: true,
+                        futureAvailable: !!futureScore
+                    };
+                }
+                // Fall back to existing behavior (null suggestion)
                 return {
                     ...talent,
                     suggestion: null,
@@ -650,6 +685,18 @@ export class SuggestionEngine {
             }
         }
 
+        // Tier 5.5: Check if this feat is a prerequisite for a wishlisted item
+        if (actor) {
+            const wishlistPrereqCheck = this._checkWishlistPrerequisite(feat, actor);
+            if (wishlistPrereqCheck) {
+                return this._buildSuggestion(
+                    SUGGESTION_TIERS.WISHLIST_PATH,
+                    feat.name,
+                    wishlistPrereqCheck.reason
+                );
+            }
+        }
+
         // Tier 5: Martial arts feat (strong recommendation)
         if (this._isMartialArtsFeat(feat)) {
             return this._buildSuggestion(
@@ -753,6 +800,18 @@ export class SuggestionEngine {
                     SUGGESTION_TIERS.PRESTIGE_PREREQ,
                     talent.name,
                     alignment.reason
+                );
+            }
+        }
+
+        // Tier 5.5: Check if this talent is a prerequisite for a wishlisted item
+        if (actor) {
+            const wishlistPrereqCheck = this._checkWishlistPrerequisite(talent, actor);
+            if (wishlistPrereqCheck) {
+                return this._buildSuggestion(
+                    SUGGESTION_TIERS.WISHLIST_PATH,
+                    talent.name,
+                    wishlistPrereqCheck.reason
                 );
             }
         }
@@ -1044,6 +1103,239 @@ export class SuggestionEngine {
                 </div>
             </div>
         `;
+    }
+
+    /**
+     * Score future availability of an unqualified feat/talent
+     * Analyzes when this item will become available based on prerequisites
+     * @param {Object} item - The feat or talent to evaluate
+     * @param {Object} actor - The actor
+     * @param {Object} actorState - Pre-computed actor state
+     * @param {Object} buildIntent - Build intent analysis
+     * @param {Object} pendingData - Pending selections
+     * @returns {Object|null} Suggestion metadata or null if too far away
+     */
+    static _scoreFutureAvailability(item, actor, actorState, buildIntent, pendingData) {
+        // Analyze what prerequisites are not met
+        const unmetReqs = PrerequisiteRequirements.getUnmetRequirements(actor, item);
+
+        if (!unmetReqs || unmetReqs.length === 0) {
+            // No unmet requirements (shouldn't happen, but handle it)
+            return null;
+        }
+
+        // Analyze the pathway to qualification
+        const pathway = this._analyzeQualificationPathway(
+            item, actor, unmetReqs, actorState, pendingData
+        );
+
+        // Convert pathway to suggestion tier
+        const futureScore = this._calcFutureAvailabilityTier(pathway, item, actorState);
+
+        if (!futureScore) {
+            return null;
+        }
+
+        // Build detailed reason message
+        const recommendations = pathway.recommendations.slice(0, 2).join(', ');
+        let reason = `Can qualify in ${pathway.levelsToQualify} level(s)`;
+        if (recommendations) {
+            reason += `. ${recommendations}`;
+        }
+
+        return {
+            name: item.name,
+            tier: futureScore.tier,
+            icon: "fa-hourglass-end",
+            iconClass: "fas fa-hourglass-end suggestion-future",
+            cssClass: "suggestion-future-available",
+            reason: reason,
+            isSuggested: true,
+            futureAvailable: true,
+            levelsToQualify: pathway.levelsToQualify,
+            recommendations: pathway.recommendations,
+            unmetRequirements: unmetReqs,
+            pathway: pathway
+        };
+    }
+
+    /**
+     * Analyze the qualification pathway for unqualified items
+     * @param {Object} item - The feat or talent
+     * @param {Object} actor - The actor
+     * @param {Array} unmetReqs - Array of unmet requirement descriptions
+     * @param {Object} actorState - Pre-computed actor state
+     * @param {Object} pendingData - Pending selections
+     * @returns {Object} Pathway analysis object
+     */
+    static _analyzeQualificationPathway(item, actor, unmetReqs, actorState, pendingData) {
+        const pathway = {
+            levelsToQualify: 0,
+            obtainableFeatReqs: [],
+            obtainableSkillReqs: [],
+            obtainableTalentReqs: [],
+            babGainPerLevel: 0.75,
+            recommendations: []
+        };
+
+        // Analyze each unmet requirement
+        for (const req of unmetReqs) {
+            // BAB requirements
+            if (req.includes("BAB") && req.includes("you have")) {
+                const match = req.match(/(\+\d+).*you have.*(\+\d+)/);
+                if (match) {
+                    const needed = parseInt(match[1]);
+                    const current = parseInt(match[2]);
+                    const babNeeded = needed - current;
+                    const levelsForBab = Math.ceil(babNeeded / pathway.babGainPerLevel);
+                    pathway.levelsToQualify = Math.max(pathway.levelsToQualify, levelsForBab);
+                    pathway.recommendations.push(`Gain BAB through level progression (${levelsForBab} levels)`);
+                }
+            }
+
+            // Character level requirements
+            if (req.includes("Character Level") && req.includes("you are")) {
+                const match = req.match(/(\d+).*you are level (\d+)/);
+                if (match) {
+                    const needed = parseInt(match[1]);
+                    const current = parseInt(match[2]);
+                    const levelNeeded = needed - current;
+                    pathway.levelsToQualify = Math.max(pathway.levelsToQualify, levelNeeded);
+                    pathway.recommendations.push(`Reach level ${needed}`);
+                }
+            }
+
+            // Attribute requirements
+            if (req.includes("Requires") && req.includes("you have") &&
+                (req.includes("STR") || req.includes("DEX") || req.includes("CON") ||
+                 req.includes("INT") || req.includes("WIS") || req.includes("CHA"))) {
+                const match = req.match(/(\d+).*you have (\d+)/);
+                if (match) {
+                    const needed = parseInt(match[1]);
+                    const current = parseInt(match[2]);
+                    const abilityNeeded = needed - current;
+                    // Typically 1 ability point per 4 levels of stat gain
+                    const levelsForAbility = abilityNeeded * 4;
+                    pathway.levelsToQualify = Math.max(pathway.levelsToQualify, levelsForAbility);
+                    pathway.recommendations.push(`Increase ability score by ${abilityNeeded} (${levelsForAbility} levels)`);
+                }
+            }
+
+            // Feat prerequisites
+            if (req.includes("feat") && !req.includes("martial arts")) {
+                const featName = req.replace(/.*requires.*feat\s+/i, '').trim();
+                if (featName) {
+                    pathway.obtainableFeatReqs.push(featName);
+                    pathway.recommendations.push(`Select feat: ${featName}`);
+                }
+            }
+
+            // Talent prerequisites
+            if (req.includes("talent")) {
+                const talentName = req.replace(/.*requires.*talent\s+/i, '').trim();
+                if (talentName) {
+                    pathway.obtainableTalentReqs.push(talentName);
+                    pathway.recommendations.push(`Select talent: ${talentName}`);
+                }
+            }
+
+            // Skill training requirements
+            if (req.includes("trained in")) {
+                const skillName = req.replace(/.*trained in\s+/i, '').trim();
+                if (skillName) {
+                    pathway.obtainableSkillReqs.push(skillName);
+                    pathway.recommendations.push(`Train skill: ${skillName}`);
+                }
+            }
+        }
+
+        // Minimum 1 level if has obtainable prerequisites (feats/talents/skills)
+        if ((pathway.obtainableFeatReqs.length > 0 ||
+             pathway.obtainableSkillReqs.length > 0 ||
+             pathway.obtainableTalentReqs.length > 0) &&
+            pathway.levelsToQualify === 0) {
+            pathway.levelsToQualify = 1;
+        }
+
+        return pathway;
+    }
+
+    /**
+     * Calculate future availability tier based on pathway
+     * @param {Object} pathway - Qualification pathway analysis
+     * @param {Object} item - The feat/talent
+     * @param {Object} actorState - Pre-computed actor state
+     * @returns {Object|null} Tier score object or null if too far away
+     */
+    static _calcFutureAvailabilityTier(pathway, item, actorState) {
+        if (pathway.levelsToQualify === 0) return null;  // Already qualified
+
+        // NEW TIER LEVELS FOR FUTURE AVAILABILITY
+        let tier;
+        if (pathway.levelsToQualify <= 1) {
+            tier = 0.6;  // "Very Soon"
+        } else if (pathway.levelsToQualify <= 2) {
+            tier = 0.4;  // "Soon"
+        } else if (pathway.levelsToQualify <= 5) {
+            tier = 0.2;  // "Medium Term"
+        } else {
+            tier = 0.05;  // "Long Term"
+        }
+
+        // If item matches class, boost slightly
+        if (this._matchesClass(item, actorState)) {
+            tier *= 1.2;
+        }
+
+        return { tier };
+    }
+
+    /**
+     * Check if feat/talent is a prerequisite for a wishlisted item
+     * @param {Object} item - The feat or talent to check
+     * @param {Object} actor - The character actor
+     * @returns {Object|null} Suggestion metadata or null if not a wishlist prerequisite
+     */
+    static _checkWishlistPrerequisite(item, actor) {
+        try {
+            const wishlist = WishlistEngine.getWishlist(actor);
+            const wishlistedItems = [...wishlist.feats, ...wishlist.talents];
+
+            // Check each wishlisted item to see if this feat/talent is a prerequisite
+            for (const wishedItem of wishlistedItems) {
+                // Try to find the actual item document
+                const itemPack = item.type === 'feat'
+                    ? game.packs.get('foundryvtt-swse.feats')
+                    : game.packs.get('foundryvtt-swse.talents');
+
+                if (!itemPack) continue;
+
+                // For now, match by name - could be improved with proper lookups
+                if (wishedItem.name.toLowerCase().includes(item.name.toLowerCase()) ||
+                    item.name.toLowerCase().includes(wishedItem.name.toLowerCase())) {
+                    // Skip if this item is itself wishlisted
+                    if (item._id === wishedItem.id || item.id === wishedItem.id) continue;
+                }
+
+                // Check if this item's unmet prerequisites include the wished-for item
+                const unmetReqs = PrerequisiteRequirements.getUnmetRequirements(actor, { ...wishedItem });
+                const prereqMentionsThisItem = unmetReqs.some(req =>
+                    req.toLowerCase().includes(item.name.toLowerCase())
+                );
+
+                if (prereqMentionsThisItem) {
+                    return {
+                        reason: `Prerequisite for your goal: ${wishedItem.name}`,
+                        wishlistedItem: wishedItem
+                    };
+                }
+            }
+
+            return null;
+        } catch (err) {
+            SWSELogger.warn('[SUGGESTION-ENGINE] Error checking wishlist prerequisites:', err);
+            return null;
+        }
     }
 
     /**

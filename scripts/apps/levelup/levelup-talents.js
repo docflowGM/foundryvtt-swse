@@ -9,6 +9,7 @@ import { TalentTreeVisualizer } from '../talent-tree-visualizer.js';
 import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
 import { checkTalentPrerequisites } from './levelup-validation.js';
 import { getClassProperty, getTalentTrees } from '../chargen/chargen-property-accessor.js';
+import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
 
@@ -239,21 +240,34 @@ export async function loadTalentData(actor = null, pendingData = {}) {
     // Convert to plain objects for suggestion processing
     const talentObjects = talents.map(t => t.toObject ? t.toObject() : t);
 
+    // Add prerequisite checking results to each talent (before suggestions for future availability analysis)
+    const talentsWithPrereqs = talentObjects.map(talent => {
+      const prereqCheck = PrerequisiteRequirements.checkTalentPrerequisites(actor, talent, pendingData);
+      return {
+        ...talent,
+        isQualified: prereqCheck.valid,
+        prereqReasons: prereqCheck.reasons
+      };
+    });
+
     // Apply suggestions using coordinator API if available, otherwise fallback
-    let talentsWithSuggestions = talentObjects;
+    // Include future availability scoring for unqualified talents
+    let talentsWithSuggestions = talentsWithPrereqs;
     if (game.swse?.suggestions?.suggestTalents) {
       SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Using game.swse.suggestions.suggestTalents...`);
       talentsWithSuggestions = await game.swse.suggestions.suggestTalents(
-        talentObjects,
+        talentsWithPrereqs,
         actor,
-        pendingData
+        pendingData,
+        { includeFutureAvailability: true }
       );
       SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Suggestions applied, returned ${talentsWithSuggestions.length} talents`);
     } else {
       talentsWithSuggestions = await SuggestionEngine.suggestTalents(
-        talentObjects,
+        talentsWithPrereqs,
         actor,
-        pendingData
+        pendingData,
+        { includeFutureAvailability: true }
       );
     }
 

@@ -1,0 +1,329 @@
+/**
+ * SWSE Wishlist UI Styling
+ * Styles for the wishlist system and prerequisite status displays
+ */
+
+/* ──────────────────────────────────────────────────────────────
+ * WISHLIST CONTEXT MENU
+ * ────────────────────────────────────────────────────────────── */
+
+.wishlist-context-menu {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    animation: wishlist-menu-appear 0.15s ease-out;
+}
+
+@keyframes wishlist-menu-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.wishlist-menu-item {
+    transition: background-color 0.15s ease;
+}
+
+.wishlist-menu-item:hover {
+    background: rgba(0, 217, 255, 0.2) !important;
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * WISHLIST INDICATOR
+ * ────────────────────────────────────────────────────────────── */
+
+.item-wishlisted-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    font-size: 10px;
+    margin-left: 4px;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+    cursor: help;
+    title: "Added to wishlist";
+}
+
+.item-wishlisted-indicator:hover {
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.9);
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * PREREQUISITE STATUS DISPLAY
+ * ────────────────────────────────────────────────────────────── */
+
+.prerequisite-status {
+    margin: 0.5em 0;
+    padding: 0.5em;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.prerequisite-status .fulfilled-prereqs {
+    margin-bottom: 0.3em;
+}
+
+.prerequisite-status .unfulfilled-prereqs {
+    margin-top: 0.3em;
+}
+
+.prerequisite-status .prereq-item {
+    padding: 0.3em 0.5em;
+    margin: 0.2em 0;
+    border-radius: 3px;
+    font-size: 0.85em;
+}
+
+.prerequisite-status .prereq-item.fulfilled {
+    background: rgba(76, 175, 80, 0.1);
+    border-left: 3px solid #4caf50;
+}
+
+.prerequisite-status .prereq-item.unfulfilled {
+    background: rgba(255, 85, 85, 0.1);
+    border-left: 3px solid #ff5555;
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * PREREQUISITE STATUS TOOLTIP
+ * ────────────────────────────────────────────────────────────── */
+
+.prerequisite-status-tooltip {
+    position: absolute;
+    z-index: 1000;
+    padding: 12px;
+    background: rgba(26, 26, 46, 0.98);
+    border: 1px solid rgba(0, 217, 255, 0.4);
+    border-radius: 6px;
+    min-width: 250px;
+    max-width: 350px;
+    font-size: 0.9em;
+    color: #e0e0e0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.prerequisite-status-tooltip .prereq-title {
+    font-weight: bold;
+    color: #00d9ff;
+    margin-bottom: 0.8em;
+    border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+    padding-bottom: 0.5em;
+}
+
+.prerequisite-status-tooltip .prereq-fulfilled,
+.prerequisite-status-tooltip .prereq-unfulfilled {
+    margin-bottom: 0.6em;
+}
+
+.prerequisite-status-tooltip strong {
+    display: block;
+    margin-bottom: 0.3em;
+}
+
+.prerequisite-status-tooltip .prereq-progress {
+    padding-top: 0.8em;
+    border-top: 1px solid rgba(0, 217, 255, 0.2);
+}
+
+.prerequisite-status-tooltip .prereq-progress strong {
+    display: inline;
+    font-size: 0.95em;
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * WISHLIST PROGRESS PANEL
+ * ────────────────────────────────────────────────────────────── */
+
+.wishlist-panel {
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 217, 255, 0.3);
+    border-radius: 6px;
+    margin-bottom: 1em;
+}
+
+.wishlist-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1em;
+    padding-bottom: 0.8em;
+    border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+}
+
+.wishlist-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    color: #f59e0b;
+}
+
+.wishlist-panel-title i {
+    font-size: 1.1em;
+}
+
+.wishlist-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(245, 158, 11, 0.2);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    font-size: 0.85em;
+    color: #f59e0b;
+    font-weight: bold;
+}
+
+.wishlist-empty {
+    text-align: center;
+    padding: 2em 1em;
+    color: #888;
+    font-style: italic;
+}
+
+.wishlist-progress-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.wishlist-item {
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 217, 255, 0.2);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.wishlist-item:hover {
+    background: rgba(0, 217, 255, 0.1);
+    border-color: rgba(0, 217, 255, 0.4);
+}
+
+.wishlist-item.wishlist-item-complete {
+    background: rgba(76, 175, 80, 0.1);
+    border-color: rgba(76, 175, 80, 0.3);
+}
+
+.wishlist-item.wishlist-item-complete .wishlist-item-name {
+    color: #4caf50;
+}
+
+.wishlist-item-name {
+    font-weight: bold;
+    color: #e0e0e0;
+    margin-bottom: 0.5em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.wishlist-item.wishlist-item-complete .wishlist-item-name::before {
+    content: '✓';
+    color: #4caf50;
+}
+
+.wishlist-item-progress {
+    font-size: 0.85em;
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * WISHLIST TIER STYLING (in suggestion badges)
+ * ────────────────────────────────────────────────────────────── */
+
+.suggestion-badge.suggestion-tier-wishlist {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+    animation: suggestion-wishlist-pulse 2s infinite;
+}
+
+.suggestion-badge.suggestion-tier-wishlist:hover {
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.9);
+}
+
+@keyframes suggestion-wishlist-pulse {
+    0%, 100% {
+        box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 12px rgba(245, 158, 11, 0.9);
+    }
+}
+
+/* Wishlist left border indicator */
+.feat-item.suggestion-tier-wishlist::before,
+.talent-item.suggestion-tier-wishlist::before {
+    background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * WISHLIST BUTTON
+ * ────────────────────────────────────────────────────────────── */
+
+.wishlist-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.2) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    border-radius: 4px;
+    color: #f59e0b;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.wishlist-button:hover {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(217, 119, 6, 0.3) 100%);
+    border-color: rgba(245, 158, 11, 0.6);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+}
+
+.wishlist-button.active {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    border-color: #f59e0b;
+}
+
+.wishlist-button i {
+    font-size: 0.95em;
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * ACCESSIBILITY - Reduced motion
+ * ────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .wishlist-context-menu {
+        animation: none;
+    }
+
+    .wishlist-item {
+        transition: none;
+    }
+
+    .suggestion-badge.suggestion-tier-wishlist {
+        animation: none;
+    }
+
+    .wishlist-button {
+        transition: none;
+    }
+}
