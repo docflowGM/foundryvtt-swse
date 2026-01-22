@@ -76,6 +76,8 @@ import { PathPreview } from '../../engine/PathPreview.js';
 import { findActiveSynergies } from '../../engine/CommunityMetaSynergies.js';
 import { MentorSuggestionVoice } from '../mentor-suggestion-voice.js';
 import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
+import { AttributeIncreaseSuggestionEngine } from '../../engine/AttributeIncreaseSuggestionEngine.js';
+import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 
 // Import mentor memory system
 import { decayAllMentorCommitments, updateAllMentorMemories } from '../../engine/mentor-memory.js';
@@ -315,6 +317,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     // Ability score increases
     html.find('.ability-increase-btn').click(this._onAbilityIncrease.bind(this));
+    html.find('.ask-mentor-attribute').click(this._onAskMentorAttributeSuggestion.bind(this));
 
     // Bonus feat selection
     html.find('.select-bonus-feat').click(this._onSelectBonusFeat.bind(this));
@@ -540,15 +543,90 @@ export class SWSELevelUpEnhanced extends FormApplication {
   }
 
   /**
+   * Ask mentor for attribute increase suggestion
+   */
+  async _onAskMentorAttributeSuggestion(event) {
+    event.preventDefault();
+
+    try {
+      // Get pending data and compute BuildIntent for context
+      const pendingData = this._buildPendingData();
+      const buildIntent = await game.swse.suggestions.buildIntent(this.actor, pendingData);
+
+      // Get attribute suggestions
+      const suggestions = await AttributeIncreaseSuggestionEngine.suggestAttributeIncreases(
+        this.actor,
+        pendingData,
+        { buildIntent }
+      );
+
+      if (!suggestions || suggestions.length === 0) {
+        ui.notifications.warn("No attribute suggestions available at this time.");
+        return;
+      }
+
+      // Find the best suggestion (tier 5 first, then 4, etc.)
+      const topSuggestion = suggestions.find(s => s.suggestion?.tier >= 3) || suggestions[0];
+
+      if (!topSuggestion) {
+        ui.notifications.warn("No suitable attribute suggestions found.");
+        return;
+      }
+
+      // Create suggestion object compatible with MentorSuggestionDialog
+      const suggestionObj = {
+        _id: topSuggestion.abbrev,
+        name: topSuggestion.ability,
+        tier: topSuggestion.suggestion?.tier || 0
+      };
+
+      // Show mentor dialog with suggestion
+      const result = await MentorSuggestionDialog.show(
+        this.currentMentorClass,
+        suggestionObj,
+        'attribute_increase'
+      );
+
+      if (result && result.applied) {
+        // Auto-apply the attribute increase
+        await this._onAbilityIncrease({
+          preventDefault: () => {},
+          currentTarget: { dataset: { ability: topSuggestion.abbrev } }
+        });
+
+        // Show reason for suggestion
+        if (topSuggestion.suggestion?.reason) {
+          ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.ability} (${topSuggestion.suggestion.reason})`);
+        } else {
+          ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.ability}`);
+        }
+      }
+    } catch (err) {
+      console.error('Error getting attribute suggestion:', err);
+      ui.notifications.error("Error getting mentor suggestion. Check console.");
+    }
+  }
+
+  /**
    * Build pending data object from current selections
    */
   _buildPendingData() {
+    // Extract trained skills from actor
+    const trainedSkills = Object.entries(this.actor.system.skills || {})
+      .filter(([key, skill]) => skill?.trained)
+      .map(([key]) => key);
+
+    // Get granted feats (houserules + level 1 class features)
+    const grantedFeats = PrerequisiteValidator.getAllGrantedFeats(this.actor, this.selectedClass);
+
     return {
       selectedClass: this.selectedClass,
       selectedFeats: this.selectedFeats || [],
       selectedTalents: this.selectedTalents || [],
       selectedSkills: this.selectedSkills || [],
-      abilityIncreases: this.abilityIncreases || {}
+      abilityIncreases: this.abilityIncreases || {},
+      trainedSkills: trainedSkills,
+      grantedFeats: grantedFeats
     };
   }
 

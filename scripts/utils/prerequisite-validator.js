@@ -146,7 +146,9 @@ export class PrerequisiteValidator {
                 case "feat": {
                     const hasFeat =
                         actor.items.some(i => i.type === "feat" && i.name === prereq.name) ||
-                        (pending.selectedFeats || []).some(f => f.name === prereq.name);
+                        (pending.selectedFeats || []).some(f => f.name === prereq.name) ||
+                        (pending.grantedFeats || []).includes(prereq.name) ||
+                        this.getHouseruleGrantedFeats().includes(prereq.name);
 
                     if (!hasFeat) {
                         reasons.push(`${nameForError} requires the feat ${prereq.name}`);
@@ -174,7 +176,9 @@ export class PrerequisiteValidator {
                 case "force_sensitive": {
                     const hasFS =
                         actor.items.some(i => i.type === "feat" && i.name === "Force Sensitivity") ||
-                        (pending.selectedFeats || []).some(f => f.name === "Force Sensitivity");
+                        (pending.selectedFeats || []).some(f => f.name === "Force Sensitivity") ||
+                        (pending.grantedFeats || []).includes("Force Sensitivity") ||
+                        this.getHouseruleGrantedFeats().includes("Force Sensitivity");
 
                     if (!hasFS) {
                         reasons.push(`${nameForError} requires Force Sensitivity`);
@@ -799,5 +803,92 @@ export class PrerequisiteValidator {
                 prerequisiteReasons: check.reasons
             };
         });
+    }
+
+    /**
+     * Get all feats granted by houserules
+     * @returns {Array} Array of feat names granted by houserules
+     */
+    static getHouseruleGrantedFeats() {
+        const grantedFeats = [];
+
+        // Check each houserule feat grant setting
+        const settings = [
+            { setting: 'weaponFinesseDefault', name: 'Weapon Finesse' },
+            { setting: 'pointBlankShotDefault', name: 'Point Blank Shot' },
+            { setting: 'powerAttackDefault', name: 'Power Attack' },
+            { setting: 'preciseShotDefault', name: 'Precise Shot' },
+            { setting: 'dodgeDefault', name: 'Dodge' }
+        ];
+
+        for (const { setting, name } of settings) {
+            if (game.settings.get('foundryvtt-swse', setting)) {
+                grantedFeats.push(name);
+            }
+        }
+
+        // Check talent houserule (Armored Defense)
+        if (game.settings.get('foundryvtt-swse', 'armoredDefenseForAll')) {
+            grantedFeats.push('Armored Defense');
+        }
+
+        return grantedFeats;
+    }
+
+    /**
+     * Get feats/talents granted by a class at Level 1
+     * @param {Object} classDoc - The class document
+     * @returns {Array} Array of granted feat/talent names from Level 1 features
+     */
+    static getLevel1GrantedFeats(classDoc) {
+        const granted = [];
+
+        if (!classDoc || !classDoc.system) return granted;
+
+        // Get Level 1 features (first level progression entry)
+        const levelProgression = classDoc.system.levelProgression || [];
+        if (levelProgression.length > 0) {
+            const level1Features = levelProgression[0].features || [];
+
+            for (const feature of level1Features) {
+                // feat_grant features should be included for prerequisites
+                if (feature.type === 'feat_grant' && feature.name) {
+                    granted.push(feature.name);
+                }
+            }
+        }
+
+        // Also get starting class features (non-choice)
+        const startingFeatures = classDoc.system.startingFeatures || [];
+        for (const feature of startingFeatures) {
+            // Only include non-choice features that represent actual grants
+            if (feature.type === 'feat_grant' && feature.name) {
+                granted.push(feature.name);
+            }
+        }
+
+        return granted;
+    }
+
+    /**
+     * Get all feats granted to a character (houserules + level 1 class grants)
+     * @param {Actor} actor - The character
+     * @param {Object} classDoc - Optional class being taken (for level 1 grants)
+     * @returns {Array} Array of all granted feat names
+     */
+    static getAllGrantedFeats(actor, classDoc = null) {
+        const granted = new Set();
+
+        // Add houserule-granted feats
+        const houseruleFeats = this.getHouseruleGrantedFeats();
+        houseruleFeats.forEach(f => granted.add(f));
+
+        // Add Level 1 feats from pending class if provided
+        if (classDoc) {
+            const level1Feats = this.getLevel1GrantedFeats(classDoc);
+            level1Feats.forEach(f => granted.add(f));
+        }
+
+        return Array.from(granted);
     }
 }

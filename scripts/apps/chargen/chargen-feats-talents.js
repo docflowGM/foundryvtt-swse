@@ -5,6 +5,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { getTalentTrees, getTalentTreeName } from './chargen-property-accessor.js';
 import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
+import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { ClassesDB } from '../../data/classes-db.js';
 import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
@@ -196,14 +197,20 @@ export async function _onSelectFeat(event) {
     }
 
     const tempActor = this.actor || this._createTempActorForValidation();
+
+    // Get the class being taken (first class in chargen, or for level-up use selectedClass)
+    const classDoc = this.characterData.classes?.[0];
+    const grantedFeats = PrerequisiteValidator.getAllGrantedFeats(tempActor, classDoc);
+
     const pendingData = {
       selectedFeats: this.characterData.feats || [],
-      selectedClass: this.characterData.classes?.[0],
+      selectedClass: classDoc,
       abilityIncreases: {},
       selectedSkills: Object.keys(this.characterData.skills || {})
         .filter(k => this.characterData.skills[k]?.trained)
         .map(k => ({ key: k })), // Convert to object format expected by prerequisite validator
-      selectedTalents: this.characterData.talents || []
+      selectedTalents: this.characterData.talents || [],
+      grantedFeats: grantedFeats
     };
 
     SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Running PrerequisiteValidator for feat "${feat.name}"`);

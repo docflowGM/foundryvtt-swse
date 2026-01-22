@@ -567,6 +567,24 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  register("talentEveryLevelExtraL1", {
+    name: "Talent Every Level - Extra at Level 1",
+    hint: "When Talent Every Level is enabled, grant an extra talent at character creation (Level 1). Non-L1 levels get one talent normally.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register("talentDoubleLevels", {
+    name: "Talent Double Level Option",
+    hint: "Allow characters to gain 2 talents at certain levels (they can choose to gain both their regular talent and an additional one). Requires Talent Every Level enabled.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   register("crossClassSkillTraining", {
     name: "Cross-Class Skill Training",
     hint: "Allow training skills not listed as class skills.",
