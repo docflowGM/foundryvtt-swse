@@ -18,512 +18,334 @@ import { seedMentorMemoryFromSurvey, getMentorMemory, setMentorMemory } from '..
  */
 export const MENTOR_VOICED_SURVEY = {
   "Jedi": {
-    jedi_combat_role: {
-      question: (mentor) => `${mentor.name} asks: "When conflict breaks out, how does your Jedi contribute most?"`,
+    jedi_archetype_path: {
+      question: (mentor) => `${mentor.name} asks: "Which path calls to you as a Jedi?"`,
       answers: [
         {
-          text: "Engaging enemies directly with a lightsaber",
-          biases: { combatStyle: "lightsaber", melee: 0.3 }
+          text: "Guardian - Frontline protector who endures and controls space",
+          biases: { archetype: "guardian", guardian: 0.4, survivability: 0.3 }
         },
         {
-          text: "Controlling the battlefield with the Force",
-          biases: { control: 0.3, forceFocus: 0.3 }
+          text: "Consular - Force-focused specialist emphasizing control and mastery",
+          biases: { archetype: "consular", forceFocus: 0.4, control: 0.3 }
         },
         {
-          text: "Supporting allies with the Force",
-          biases: { support: 0.3, forceFocus: 0.2 }
+          text: "Sentinel - Balanced operative blending combat, awareness, and versatility",
+          biases: { archetype: "sentinel", balance: 0.3 }
         },
         {
-          text: "Avoiding direct confrontation when possible",
-          biases: { avoidance: 0.3 }
+          text: "Duelist - Precision combatant who ends threats decisively",
+          biases: { archetype: "duelist", striker: 0.4, melee: 0.3 }
         },
         {
-          text: "Mixed / not sure",
-          biases: {}
+          text: "Healer - Support-focused Force user dedicated to preservation and recovery",
+          biases: { archetype: "healer", forceFocus: 0.3, support: 0.3 }
         }
       ]
     },
-    jedi_force_emphasis: {
-      question: (mentor) => `${mentor.name} asks: "How central is the Force to your character's identity?"`,
+    jedi_force_philosophy: {
+      question: (mentor) => `${mentor.name} asks: "How do you view the Force?"`,
       answers: [
         {
-          text: "The Force defines everything I do",
+          text: "The Force is the source of all power - master it first",
           biases: { forceFocus: 0.4 }
         },
         {
-          text: "The Force supports my combat skills",
-          biases: { forceFocus: 0.2 }
+          text: "The Force is a tool to enhance my combat abilities",
+          biases: { melee: 0.2, forceFocus: 0.2 }
         },
         {
-          text: "The Force is situational",
-          biases: { forceFocus: 0.1 }
+          text: "The Force guides my awareness and perception",
+          biases: { awareness: 0.3 }
         },
         {
-          text: "Minimal Force use",
-          biases: { forceFocus: -0.1 }
-        },
-        {
-          text: "Not sure",
+          text: "Not yet decided",
           biases: {}
         }
       ]
     },
-    jedi_mechanical_focus: {
-      question: (mentor) => `${mentor.name} asks: "What do you want to feel strongest at?"`,
+    jedi_role_focus: {
+      question: (mentor) => `${mentor.name} asks: "In a group, what's your strongest contribution?"`,
       answers: [
         {
-          text: "Raw damage",
-          biases: { damage: 0.3 }
+          text: "Standing between allies and harm",
+          biases: { guardian: 0.3, survivability: 0.2 }
         },
         {
-          text: "Control and positioning",
+          text: "Controlling the battle through positioning and precision",
           biases: { control: 0.3 }
         },
         {
-          text: "Survivability",
-          biases: { survivability: 0.3 }
+          text: "Dealing decisive damage to threats",
+          biases: { striker: 0.3, damage: 0.2 }
         },
         {
-          text: "Utility and versatility",
-          biases: { utility: 0.3 }
-        },
-        {
-          text: "Balance",
-          biases: { balance: 0.2 }
-        }
-      ]
-    },
-    jedi_specialization: {
-      question: (mentor) => `${mentor.name} asks: "Do you imagine your Jedi as…"`,
-      answers: [
-        {
-          text: "A focused specialist",
-          biases: { specialization: 0.3 }
-        },
-        {
-          text: "A flexible generalist",
-          biases: { generalist: 0.3 }
-        },
-        {
-          text: "Somewhere in between",
-          biases: { balance: 0.2 }
-        },
-        {
-          text: "Not sure",
-          biases: {}
-        }
-      ]
-    },
-    jedi_philosophy: {
-      question: (mentor) => `${mentor.name} asks: "Which approach best fits your Jedi?"`,
-      answers: [
-        {
-          text: "Traditional discipline",
-          biases: { order: 0.2 }
-        },
-        {
-          text: "Pragmatic adaptability",
-          biases: { pragmatic: 0.2 }
-        },
-        {
-          text: "Emotionally driven",
-          biases: { riskTolerance: 0.2 }
-        },
-        {
-          text: "Evolving / unsure",
-          biases: {}
+          text: "Supporting and enabling team success",
+          biases: { support: 0.3 }
         }
       ]
     }
   },
 
   "Soldier": {
-    soldier_combat_style: {
-      question: (mentor) => `${mentor.name} asks: "How do you picture your Soldier fighting most often?"`,
+    soldier_archetype_path: {
+      question: (mentor) => `${mentor.name} asks: "What's your Soldier's fighting philosophy?"`,
       answers: [
         {
-          text: "Front-line combat",
-          biases: { melee: 0.3, survivability: 0.2 }
+          text: "Commando - Front-line assault specialist with heavy firepower",
+          biases: { archetype: "commando", striker: 0.4, damage: 0.3 }
         },
         {
-          text: "Mobile skirmishing",
-          biases: { mobility: 0.3 }
+          text: "Gunner - Master of ranged weapons and tactical positioning",
+          biases: { archetype: "gunner", ranged: 0.4 }
         },
         {
-          text: "Ranged fire support",
+          text: "Guardian - Defender who holds the line and protects allies",
+          biases: { archetype: "guardian", guardian: 0.4, survivability: 0.3 }
+        },
+        {
+          text: "Not quite sure",
+          biases: {}
+        }
+      ]
+    },
+    soldier_combat_approach: {
+      question: (mentor) => `${mentor.name} asks: "On the battlefield, you prefer to…"`,
+      answers: [
+        {
+          text: "Charge in and overwhelm enemies with force",
+          biases: { striker: 0.3, melee: 0.2 }
+        },
+        {
+          text: "Rain fire from a secure position",
           biases: { ranged: 0.3 }
         },
         {
-          text: "Tactical command",
-          biases: { leadership: 0.3 }
+          text: "Control the space and protect your team",
+          biases: { guardian: 0.3, survivability: 0.2 }
         },
         {
-          text: "Mixed / not sure",
-          biases: {}
-        }
-      ]
-    },
-    soldier_weapon_pref: {
-      question: (mentor) => `${mentor.name} asks: "Which weapons feel right for this character?"`,
-      answers: [
-        {
-          text: "Rifles or heavy weapons",
-          biases: { ranged: 0.3 }
-        },
-        {
-          text: "Pistols",
-          biases: { ranged: 0.2, mobility: 0.2 }
-        },
-        {
-          text: "Melee or unarmed",
-          biases: { melee: 0.3 }
-        },
-        {
-          text: "A mix",
+          text: "Adapt to what the moment demands",
           biases: { balance: 0.2 }
-        },
-        {
-          text: "Not sure",
-          biases: {}
         }
       ]
     },
-    soldier_priority: {
-      question: (mentor) => `${mentor.name} asks: "What matters more to you in a fight?"`,
+    soldier_mechanical_priority: {
+      question: (mentor) => `${mentor.name} asks: "What matters most to you?"`,
       answers: [
         {
-          text: "Hitting harder",
+          text: "Dealing massive damage",
           biases: { damage: 0.3 }
         },
         {
-          text: "Staying standing",
+          text: "Never falling in battle",
           biases: { survivability: 0.3 }
         },
         {
-          text: "Controlling enemies",
-          biases: { control: 0.3 }
-        },
-        {
-          text: "Balance",
-          biases: { balance: 0.2 }
-        }
-      ]
-    },
-    soldier_team_role: {
-      question: (mentor) => `${mentor.name} asks: "What role do you want to fill on the team?"`,
-      answers: [
-        {
-          text: "Primary damage dealer",
-          biases: { damage: 0.3 }
-        },
-        {
-          text: "Defender / protector",
-          biases: { survivability: 0.3 }
-        },
-        {
-          text: "Tactical support",
+          text: "Commanding respect and leading others",
           biases: { leadership: 0.3 }
         },
         {
-          text: "Flexible contributor",
+          text: "Being effective in any situation",
           biases: { balance: 0.2 }
-        },
-        {
-          text: "Not sure",
-          biases: {}
         }
       ]
     }
   },
 
   "Scout": {
-    scout_primary_role: {
-      question: (mentor) => `${mentor.name} asks: "What role does your Scout fill most often?"`,
+    scout_archetype_path: {
+      question: (mentor) => `${mentor.name} asks: "Which Scout archetype calls to you?"`,
       answers: [
         {
-          text: "Recon and awareness",
+          text: "Tracker - Pursuit specialist who hunts across terrain and finds prey",
+          biases: { archetype: "tracker", striker: 0.4, survival: 0.2 }
+        },
+        {
+          text: "Infiltrator - Stealth operative who moves unseen through hostile territory",
+          biases: { archetype: "infiltrator", controller: 0.4, stealth: 0.3 }
+        },
+        {
+          text: "Striker - Swift combatant who hits hard and vanishes",
+          biases: { archetype: "striker", striker: 0.5, mobility: 0.2 }
+        },
+        {
+          text: "Still deciding",
+          biases: {}
+        }
+      ]
+    },
+    scout_tactical_focus: {
+      question: (mentor) => `${mentor.name} asks: "In the field, your strength is…"`,
+      answers: [
+        {
+          text: "Seeing what others miss - awareness and perception",
           biases: { awareness: 0.3 }
         },
         {
-          text: "Mobility and positioning",
+          text: "Moving faster and further than enemies expect",
           biases: { mobility: 0.3 }
         },
         {
-          text: "Survival and tracking",
+          text: "Finding a way to survive anything",
           biases: { survival: 0.3 }
         },
         {
-          text: "Ranged support",
-          biases: { ranged: 0.3 }
-        },
-        {
-          text: "Mixed / not sure",
-          biases: {}
+          text: "Striking enemies before they know you're there",
+          biases: { stealth: 0.3 }
         }
       ]
     },
-    scout_combat_style: {
-      question: (mentor) => `${mentor.name} asks: "When combat happens, you prefer to…"`,
+    scout_engagement_style: {
+      question: (mentor) => `${mentor.name} asks: "When you engage, you prefer to…"`,
       answers: [
         {
-          text: "Strike from range",
-          biases: { ranged: 0.3 }
+          text: "Deal swift, overwhelming damage",
+          biases: { striker: 0.3, damage: 0.2 }
         },
         {
-          text: "Control positioning and movement",
-          biases: { control: 0.3 }
-        },
-        {
-          text: "Avoid direct combat",
-          biases: { avoidance: 0.3 }
-        },
-        {
-          text: "Adapt to the situation",
-          biases: { balance: 0.2 }
-        },
-        {
-          text: "Not sure",
-          biases: {}
-        }
-      ]
-    },
-    scout_exploration: {
-      question: (mentor) => `${mentor.name} asks: "Outside of combat, what do you want to excel at?"`,
-      answers: [
-        {
-          text: "Perception and awareness",
-          biases: { awareness: 0.3 }
-        },
-        {
-          text: "Movement and terrain",
+          text: "Attack and reposition before counterattack",
           biases: { mobility: 0.3 }
         },
         {
-          text: "Survival challenges",
-          biases: { survival: 0.3 }
+          text: "Stay hidden and undetected",
+          biases: { stealth: 0.3 }
         },
         {
-          text: "A mix",
+          text: "Read the situation and adapt",
           biases: { balance: 0.2 }
-        },
-        {
-          text: "Not sure",
-          biases: {}
-        }
-      ]
-    },
-    scout_specialization: {
-      question: (mentor) => `${mentor.name} asks: "Do you want your Scout to be…"`,
-      answers: [
-        {
-          text: "Highly specialized",
-          biases: { specialization: 0.3 }
-        },
-        {
-          text: "Broadly capable",
-          biases: { generalist: 0.3 }
-        },
-        {
-          text: "Somewhere in between",
-          biases: { balance: 0.2 }
-        },
-        {
-          text: "Not sure",
-          biases: {}
         }
       ]
     }
   },
 
   "Scoundrel": {
-    scoundrel_edge: {
-      question: (mentor) => `${mentor.name} asks: "What's your Scoundrel's biggest advantage?"`,
+    scoundrel_archetype_path: {
+      question: (mentor) => `${mentor.name} asks: "What kind of Scoundrel speaks to your heart?"`,
       answers: [
         {
-          text: "Stealth and surprise",
+          text: "Charmer - Persuasion specialist who talks their way out of anything",
+          biases: { archetype: "charmer", controller: 0.4, social: 0.3 }
+        },
+        {
+          text: "Gambler - Risk-taker who makes luck and reads probability better than most",
+          biases: { archetype: "gambler", striker: 0.4 }
+        },
+        {
+          text: "Thief - Precision specialist who takes what's not theirs with surgical skill",
+          biases: { archetype: "thief", striker: 0.4, stealth: 0.3 }
+        },
+        {
+          text: "Still deciding",
+          biases: {}
+        }
+      ]
+    },
+    scoundrel_approach: {
+      question: (mentor) => `${mentor.name} asks: "Your Scoundrel's strongest tool is…"`,
+      answers: [
+        {
+          text: "Words and persuasion",
+          biases: { social: 0.3 }
+        },
+        {
+          text: "Speed and precision",
+          biases: { striker: 0.3 }
+        },
+        {
+          text: "Stealth and invisibility",
           biases: { stealth: 0.3 }
         },
         {
-          text: "Tricks and misdirection",
-          biases: { control: 0.3 }
-        },
-        {
-          text: "Social manipulation",
-          biases: { social: 0.3 }
-        },
-        {
-          text: "Versatility",
-          biases: { balance: 0.2 }
-        },
-        {
-          text: "Not sure",
-          biases: {}
-        }
-      ]
-    },
-    scoundrel_combat: {
-      question: (mentor) => `${mentor.name} asks: "When fighting breaks out, you prefer…"`,
-      answers: [
-        {
-          text: "Striking from ambush",
-          biases: { stealth: 0.3, damage: 0.2 }
-        },
-        {
-          text: "Ranged skirmishing",
-          biases: { ranged: 0.3 }
-        },
-        {
-          text: "Avoiding combat",
-          biases: { avoidance: 0.3 }
-        },
-        {
-          text: "Mixed tactics",
+          text: "Quick thinking and improvisation",
           biases: { balance: 0.2 }
         }
       ]
     },
-    scoundrel_ooc: {
-      question: (mentor) => `${mentor.name} asks: "Where do you want to shine outside combat?"`,
+    scoundrel_risk_tolerance: {
+      question: (mentor) => `${mentor.name} asks: "In a tight spot, you…"`,
       answers: [
         {
-          text: "Deception and manipulation",
+          text: "Talk or manipulate your way out",
           biases: { social: 0.3 }
         },
         {
-          text: "Skills and clever solutions",
-          biases: { utility: 0.3 }
-        },
-        {
-          text: "Social situations",
-          biases: { social: 0.3 }
-        },
-        {
-          text: "A mix",
-          biases: { balance: 0.2 }
-        },
-        {
-          text: "Not sure",
-          biases: {}
-        }
-      ]
-    },
-    scoundrel_risk: {
-      question: (mentor) => `${mentor.name} asks: "How risky do you want your Scoundrel to be?"`,
-      answers: [
-        {
-          text: "High-risk, high-reward",
+          text: "Make a daring play and hope it works",
           biases: { riskTolerance: 0.3 }
         },
         {
-          text: "Careful and opportunistic",
-          biases: { control: 0.2 }
+          text: "Use preparation and cunning",
+          biases: { control: 0.3 }
         },
         {
-          text: "Balanced",
+          text: "Adapt based on the moment",
           biases: { balance: 0.2 }
-        },
-        {
-          text: "Not sure",
-          biases: {}
         }
       ]
     }
   },
 
   "Noble": {
-    noble_leadership: {
-      question: (mentor) => `${mentor.name} asks: "How does your Noble influence others?"`,
+    noble_archetype_path: {
+      question: (mentor) => `${mentor.name} asks: "What kind of Noble will you become?"`,
       answers: [
         {
-          text: "Inspiring leadership",
-          biases: { leadership: 0.3 }
+          text: "Diplomat - Persuasion specialist who builds consensus and finds common ground",
+          biases: { archetype: "diplomat", controller: 0.4, social: 0.3 }
         },
         {
-          text: "Commanding authority",
-          biases: { authority: 0.3 }
+          text: "Leader - Inspirational figure who commands respect and unites others",
+          biases: { archetype: "leader", leadership: 0.4 }
         },
         {
-          text: "Subtle manipulation",
-          biases: { social: 0.3 }
+          text: "Scoundrel - Cunning operator who plays by different rules",
+          biases: { archetype: "scoundrel", striker: 0.3, social: 0.2 }
         },
         {
-          text: "Social dominance",
-          biases: { social: 0.3 }
-        },
-        {
-          text: "Not sure",
+          text: "Still finding my path",
           biases: {}
         }
       ]
     },
-    noble_combat: {
-      question: (mentor) => `${mentor.name} asks: "In combat, your Noble usually…"`,
+    noble_approach: {
+      question: (mentor) => `${mentor.name} asks: "How do you wield your power?"`,
       answers: [
         {
-          text: "Supports allies",
-          biases: { support: 0.3 }
+          text: "Through inspiration and unity",
+          biases: { leadership: 0.3 }
         },
         {
-          text: "Directs from the back",
+          text: "Through negotiation and understanding",
+          biases: { social: 0.3 }
+        },
+        {
+          text: "Through cunning and unconventional means",
+          biases: { control: 0.2, social: 0.2 }
+        },
+        {
+          text: "Through presence and command",
+          biases: { authority: 0.3 }
+        }
+      ]
+    },
+    noble_role_in_combat: {
+      question: (mentor) => `${mentor.name} asks: "In the chaos of battle, you…"`,
+      answers: [
+        {
+          text: "Lead from the front and inspire allies",
+          biases: { leadership: 0.3 }
+        },
+        {
+          text: "Direct from the back with strategy",
           biases: { control: 0.3 }
         },
         {
-          text: "Gets directly involved",
-          biases: { balance: 0.2 }
+          text: "Support and enable others to succeed",
+          biases: { support: 0.3 }
         },
         {
-          text: "Avoids combat",
+          text: "Stay out of direct harm if possible",
           biases: { avoidance: 0.3 }
-        },
-        {
-          text: "Not sure",
-          biases: {}
-        }
-      ]
-    },
-    noble_ooc: {
-      question: (mentor) => `${mentor.name} asks: "Outside of combat, what matters most?"`,
-      answers: [
-        {
-          text: "Social influence",
-          biases: { social: 0.3 }
-        },
-        {
-          text: "Knowledge and planning",
-          biases: { utility: 0.3 }
-        },
-        {
-          text: "Managing people and resources",
-          biases: { leadership: 0.3 }
-        },
-        {
-          text: "A mix",
-          biases: { balance: 0.2 }
-        },
-        {
-          text: "Not sure",
-          biases: {}
-        }
-      ]
-    },
-    noble_specialization: {
-      question: (mentor) => `${mentor.name} asks: "Do you want your Noble to be…"`,
-      answers: [
-        {
-          text: "A focused leader",
-          biases: { specialization: 0.3 }
-        },
-        {
-          text: "A versatile problem-solver",
-          biases: { generalist: 0.3 }
-        },
-        {
-          text: "Somewhere in between",
-          biases: { balance: 0.2 }
-        },
-        {
-          text: "Not sure",
-          biases: {}
         }
       ]
     }
