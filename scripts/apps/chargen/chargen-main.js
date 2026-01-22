@@ -4,7 +4,7 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
-import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
+import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from './chargen-property-accessor.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
@@ -710,7 +710,7 @@ export default class CharacterGenerator extends Application {
           };
 
           context.packs.feats = context.packs.feats.map(feat => {
-            const prereqCheck = PrerequisiteValidator.checkFeatPrerequisites(feat, tempActor, pendingDataForFeats);
+            const prereqCheck = PrerequisiteRequirements.checkFeatPrerequisites(tempActor, feat, pendingDataForFeats);
             return {
               ...feat,
               isQualified: prereqCheck.valid
@@ -760,7 +760,7 @@ export default class CharacterGenerator extends Application {
           };
 
           context.packs.talents = context.packs.talents.map(talent => {
-            const prereqCheck = PrerequisiteValidator.checkTalentPrerequisites(talent, tempActor, pendingDataForTalents);
+            const prereqCheck = PrerequisiteRequirements.checkTalentPrerequisites(tempActor, talent, pendingDataForTalents);
             return {
               ...talent,
               isQualified: prereqCheck.valid

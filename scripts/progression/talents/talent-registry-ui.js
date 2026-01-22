@@ -4,7 +4,7 @@
  */
 
 import { SWSELogger } from "../../utils/logger.js";
-import { PrerequisiteValidator } from "../../utils/prerequisite-validator.js";
+import { PrerequisiteRequirements } from "../../progression/feats/prerequisite_engine.js";
 
 export const TalentRegistry = {
   _trees: {},
@@ -52,7 +52,7 @@ export const TalentRegistry = {
       for (const talent of this._trees[tree]) {
         let qualified = true;
         try {
-          const result = PrerequisiteValidator.checkTalentPrerequisites(talent, actor, pending);
+          const result = PrerequisiteRequirements.checkTalentPrerequisites(actor, talent, pending);
           qualified = result.valid;
         } catch (err) {
           SWSELogger.warn(`Prerequisite check failed for ${talent.name}:`, err);
