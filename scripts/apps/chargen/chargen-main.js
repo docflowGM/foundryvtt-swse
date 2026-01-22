@@ -1104,12 +1104,164 @@ export default class CharacterGenerator extends Application {
       case "talents":
         return mentor.talentGuidance || null;
       case "summary":
-        // Get level-appropriate greeting
-        const level = this.characterData.level || 1;
-        return mentor.levelGreetings?.[level] || null;
+        // Get level-appropriate greeting with character overview
+        return this._getMentorSummaryCommentary(mentor);
       default:
         return null;
     }
+  }
+
+  /**
+   * Generate mentor commentary on the completed character for summary page
+   * @param {Object} mentor - The mentor object
+   * @returns {string} Mentor's narrative commentary on the character
+   */
+  _getMentorSummaryCommentary(mentor) {
+    const characterData = this.characterData;
+    const components = [];
+
+    // Opening line with level-appropriate greeting
+    const level = characterData.level || 1;
+    const levelGreeting = mentor.levelGreetings?.[level] || "Your path takes shape.";
+    components.push(levelGreeting);
+
+    // Commentary on background (if selected)
+    if (characterData.background) {
+      const backgroundComment = this._getMentorBackgroundComment(mentor, characterData.background);
+      components.push(backgroundComment);
+    }
+
+    // Commentary on skills chosen
+    if (characterData.skills) {
+      const trainedSkills = Object.entries(characterData.skills)
+        .filter(([_, skillData]) => skillData.trained)
+        .map(([skillName, _]) => skillName);
+      if (trainedSkills.length > 0) {
+        const skillsComment = this._getMentorSkillsComment(mentor, trainedSkills);
+        components.push(skillsComment);
+      }
+    }
+
+    // Commentary on talents selected
+    if (characterData.talents && characterData.talents.length > 0) {
+      const talentsComment = this._getMentorTalentsComment(mentor, characterData.talents);
+      components.push(talentsComment);
+    }
+
+    // Commentary on feats selected
+    if (characterData.feats && characterData.feats.length > 0) {
+      const featsComment = this._getMentorFeatsComment(mentor, characterData.feats);
+      components.push(featsComment);
+    }
+
+    // Final conclusion
+    const conclusionComment = this._getMentorConclusionComment(mentor, characterData);
+    components.push(conclusionComment);
+
+    return components.join(" ");
+  }
+
+  /**
+   * Get mentor's comment on the background choice
+   */
+  _getMentorBackgroundComment(mentor, background) {
+    const comments = {
+      "Jedi": {
+        "Smuggler": "Your past as a smuggler brings experience with survival and cunning. Interesting foundations for a Jedi's path.",
+        "Soldier": "A military background suggests discipline and tactical thinking. These serve the Force well.",
+        "Scout": "The skills of a scout—observation, tracking, adaptation. These will serve you in ways you cannot yet imagine.",
+        "default": "Your background shapes who you become. Use that wisdom in your journey ahead."
+      },
+      "Soldier": {
+        "Smuggler": "A smuggler's instincts paired with military discipline? That combination could be dangerous in the right ways.",
+        "Scout": "Scout training mixed with soldier's training makes you adaptable. Good—the battlefield demands flexibility.",
+        "Jedi": "A strange path, mixing Force and firearms. But unconventional approaches sometimes succeed where tradition fails.",
+        "default": "Your background prepares you for what lies ahead. Trust that preparation."
+      },
+      "Scoundrel": {
+        "Soldier": "Soldier discipline with scoundrel instincts? You'll survive things that would break others.",
+        "Smuggler": "A smuggler among scoundrels—you'll fit right in. Just remember what you value.",
+        "Scout": "Scout cunning wrapped in scoundrel charm. You'll move through the galaxy just fine.",
+        "default": "Your past is your credential. Use it wisely."
+      },
+      "default": {
+        "default": "Your background informs who you are. Do not forget where you came from."
+      }
+    };
+
+    const className = (this.characterData.classes?.[0]?.name) || "Jedi";
+    const mentorComments = comments[mentor.name] || comments["default"];
+    return mentorComments[background] || mentorComments["default"];
+  }
+
+  /**
+   * Get mentor's comment on skills chosen
+   */
+  _getMentorSkillsComment(mentor, trainedSkills) {
+    const skillCount = trainedSkills.length;
+    const skillList = trainedSkills.slice(0, 2).join(", "); // List first 2 skills
+    const moreSkills = skillCount > 2 ? ` and ${skillCount - 2} more` : "";
+
+    const skillComments = {
+      "Jedi": `You have trained yourself in ${skillList}${moreSkills}. Knowledge is a tool of the Force as much as intuition.`,
+      "Soldier": `Your choice to master ${skillList}${moreSkills} shows strategic thinking. Every skill is a weapon if wielded correctly.`,
+      "Scoundrel": `${skillList}${moreSkills}—practical choices. You know what skills keep you alive in the field.`,
+      "default": `You have developed proficiency in ${skillList}${moreSkills}. These skills will serve you well.`
+    };
+
+    return skillComments[mentor.name] || skillComments["default"];
+  }
+
+  /**
+   * Get mentor's comment on talents selected
+   */
+  _getMentorTalentsComment(mentor, talents) {
+    const talentCount = talents.length;
+    const talentList = talents.slice(0, 2).map(t => t.name).join(", ");
+    const moreTalents = talentCount > 2 ? ` and ${talentCount - 2} others` : "";
+
+    const talentComments = {
+      "Jedi": `Your talents—${talentList}${moreTalents}—show connection to deeper aspects of the Force. You are developing awareness.`,
+      "Soldier": `The talents you've chosen—${talentList}${moreTalents}—show you understand combat's nuances. Good.`,
+      "Scoundrel": `${talentList}${moreTalents}. Talents that keep you one step ahead. That's the scoundrel's way.`,
+      "default": `You have selected talents that will define your capabilities. Use them well.`
+    };
+
+    return talentComments[mentor.name] || talentComments["default"];
+  }
+
+  /**
+   * Get mentor's comment on feats selected
+   */
+  _getMentorFeatsComment(mentor, feats) {
+    const featCount = feats.length;
+    const featList = feats.slice(0, 2).map(f => f.name).join(", ");
+    const moreFeats = featCount > 2 ? ` and ${featCount - 2} others` : "";
+
+    const featComments = {
+      "Jedi": `Through ${featList}${moreFeats}, you build your foundation. Each feat is a step toward mastery.`,
+      "Soldier": `${featList}${moreFeats}—solid choices for a warrior. You are building practical strength.`,
+      "Scoundrel": `${featList}${moreFeats}. You know which advantages make the difference between freedom and chains.`,
+      "default": `Your chosen feats demonstrate your priorities. Stand by them.`
+    };
+
+    return featComments[mentor.name] || featComments["default"];
+  }
+
+  /**
+   * Get mentor's final conclusion about the completed character
+   */
+  _getMentorConclusionComment(mentor, characterData) {
+    const className = characterData.classes?.[0]?.name || "unknown";
+
+    const conclusionComments = {
+      "Jedi": `You have begun. The path ahead is long, but I sense you are ready to walk it with awareness and purpose.`,
+      "Soldier": `You have the foundation. What you build upon it—that is what matters. Go forward with clarity.`,
+      "Scoundrel": `You're ready to make your own way in this galaxy. Just remember—survival isn't everything.`,
+      "default": `The character you have created is ready to face what comes. May your choices serve you well.`
+    };
+
+    return conclusionComments[mentor.name] || conclusionComments["default"];
   }
 
   /**

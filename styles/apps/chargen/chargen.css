@@ -3195,6 +3195,43 @@
     box-shadow: 0 0 15px rgba(0, 175, 255, 0.6), inset 0 0 10px rgba(0, 175, 255, 0.2);
 }
 
+/* Mentor Summary Section (for summary page) */
+.mentor-summary-section {
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(0, 100, 200, 0.1) 0%, rgba(0, 200, 150, 0.05) 100%);
+    border: 2px solid rgba(0, 175, 255, 0.3);
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+}
+
+.mentor-summary-dialogue {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.mentor-summary-dialogue p {
+    margin: 0;
+    color: #00ffaa;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
+}
+
+.mentor-summary-dialogue p:first-child {
+    font-weight: bold;
+    color: #00d9ff;
+    font-size: 1rem;
+    text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+.mentor-summary-text {
+    font-style: italic;
+    border-left: 3px solid rgba(0, 175, 255, 0.5);
+    padding-left: 1rem;
+}
+
 .chargen-header-info {
     display: flex;
     justify-content: space-between;
