@@ -1010,8 +1010,26 @@ export default class CharacterGenerator extends Application {
 
     // Prepare talents for template
     if (this.currentStep === "talents") {
-      // Explicitly set talentsRequired for template (1 talent at level 1)
-      context.characterData.talentsRequired = 1;
+      // Calculate talentsRequired based on class and houserules
+      const selectedClass = this.characterData.classes?.[0];
+      let talentsRequired = 1; // Default: 1 talent at level 1
+
+      // Check houserule settings
+      const talentEveryLevel = game.settings.get('foundryvtt-swse', "talentEveryLevel");
+      const talentEveryLevelExtraL1 = game.settings.get('foundryvtt-swse', "talentEveryLevelExtraL1");
+
+      if (talentEveryLevel && selectedClass) {
+        // With talentEveryLevel, at least 1 talent available
+        const trees = getTalentTrees(selectedClass);
+        const hasAccess = (selectedClass.system.forceSensitive || trees?.length > 0);
+
+        if (hasAccess) {
+          // At Level 1 with extra enabled, require 2 talents
+          talentsRequired = talentEveryLevelExtraL1 ? 2 : 1;
+        }
+      }
+
+      context.characterData.talentsRequired = talentsRequired;
 
       // Get available talent trees for the character
       context.availableTalentTrees = this._getAvailableTalentTrees() || [];
