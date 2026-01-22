@@ -353,6 +353,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     html.find('.show-gm-debug-panel').click(this._onShowGMDebugPanel.bind(this));
 
     // Mentor suggestion buttons
+    html.find('.ask-mentor-class-suggestion').click(this._onAskMentorClassSuggestion.bind(this));
     html.find('.ask-mentor-feat-suggestion').click(this._onAskMentorFeatSuggestion.bind(this));
     html.find('.ask-mentor-talent-suggestion').click(this._onAskMentorTalentSuggestion.bind(this));
 
@@ -468,6 +469,34 @@ export class SWSELevelUpEnhanced extends FormApplication {
       }
     } catch (err) {
       console.error('Error getting feat suggestion:', err);
+      ui.notifications.error("Error getting mentor suggestion. Check console.");
+    }
+  }
+
+  /**
+   * Ask mentor for class suggestion
+   */
+  async _onAskMentorClassSuggestion(event) {
+    event.preventDefault();
+
+    try {
+      const pendingData = this._buildPendingData();
+      const availableClasses = await getAvailableClasses(this.actor, pendingData, { includeSuggestions: true });
+
+      if (!availableClasses || availableClasses.length === 0) {
+        ui.notifications.warn("No available classes to suggest.");
+        return;
+      }
+
+      // Get the highest-tier suggestion
+      const topSuggestion = availableClasses.find(c => c.isSuggested) || availableClasses[0];
+
+      // Show mentor suggestion
+      await MentorSuggestionDialog.show(this.currentMentorClass, topSuggestion, 'class_selection');
+
+      ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.name}`);
+    } catch (err) {
+      console.error('Error getting class suggestion:', err);
       ui.notifications.error("Error getting mentor suggestion. Check console.");
     }
   }

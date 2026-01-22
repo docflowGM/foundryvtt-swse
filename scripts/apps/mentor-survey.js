@@ -82,6 +82,10 @@ export const MENTOR_VOICED_SURVEY = {
         {
           text: "Supporting and enabling team success",
           biases: { support: 0.3 }
+        },
+        {
+          text: "I don't know yet",
+          biases: {}
         }
       ]
     },
@@ -90,19 +94,19 @@ export const MENTOR_VOICED_SURVEY = {
       answers: [
         {
           text: "Jedi Knight/Master - A great defender of the light and keeper of peace",
-          biases: { order: 0.4, guardian: 0.2 }
+          biases: { order: 0.4, guardian: 0.2, prestigeClass: "Jedi Knight" }
         },
         {
           text: "Sith Apprentice/Lord - Embracing power and dominion through the dark side",
-          biases: { riskTolerance: 0.4, striker: 0.3 }
+          biases: { riskTolerance: 0.4, striker: 0.3, prestigeClass: "Sith Apprentice" }
         },
         {
           text: "Force Adept/Disciple - Independent mastery beyond the Order",
-          biases: { pragmatic: 0.3, balance: 0.3 }
+          biases: { pragmatic: 0.3, balance: 0.3, prestigeClass: "Force Adept" }
         },
         {
           text: "Imperial Knight - Serving empire and authority with the Force",
-          biases: { authority: 0.3, control: 0.2 }
+          biases: { authority: 0.3, control: 0.2, prestigeClass: "Imperial Knight" }
         },
         {
           text: "Still uncertain of my destiny",
@@ -177,6 +181,10 @@ export const MENTOR_VOICED_SURVEY = {
         {
           text: "Adapt to what the moment demands",
           biases: { balance: 0.2 }
+        },
+        {
+          text: "I don't know yet",
+          biases: {}
         }
       ]
     },
@@ -206,23 +214,23 @@ export const MENTOR_VOICED_SURVEY = {
       answers: [
         {
           text: "Elite Soldier - Specialized operative at the peak of tactical combat",
-          biases: { striker: 0.3, damage: 0.3 }
+          biases: { striker: 0.3, damage: 0.3, prestigeClass: "Elite Trooper" }
         },
         {
           text: "Vanguard - Tank and frontline powerhouse who controls the battlefield",
-          biases: { guardian: 0.4, survivability: 0.2 }
+          biases: { guardian: 0.4, survivability: 0.2, prestigeClass: "Vanguard" }
         },
         {
           text: "Ace Pilot - Master of vehicles and aerial/vehicle combat",
-          biases: { striker: 0.3, control: 0.2 }
+          biases: { striker: 0.3, control: 0.2, prestigeClass: "Ace Pilot" }
         },
         {
           text: "Martial Arts Master - Legendary unarmed and melee combatant",
-          biases: { striker: 0.4, melee: 0.3 }
+          biases: { striker: 0.4, melee: 0.3, prestigeClass: "Martial Arts Master" }
         },
         {
           text: "Gladiator - Arena legend whose name strikes fear in hearts",
-          biases: { striker: 0.3, damage: 0.3 }
+          biases: { striker: 0.3, damage: 0.3, prestigeClass: "Gladiator" }
         }
       ]
     },
@@ -293,6 +301,10 @@ export const MENTOR_VOICED_SURVEY = {
         {
           text: "Striking enemies before they know you're there",
           biases: { stealth: 0.3 }
+        },
+        {
+          text: "I don't know yet",
+          biases: {}
         }
       ]
     },
@@ -314,6 +326,10 @@ export const MENTOR_VOICED_SURVEY = {
         {
           text: "Read the situation and adapt",
           biases: { balance: 0.2 }
+        },
+        {
+          text: "I don't know yet",
+          biases: {}
         }
       ]
     },
@@ -322,23 +338,23 @@ export const MENTOR_VOICED_SURVEY = {
       answers: [
         {
           text: "Pathfinder - Master explorer and guide through any wilderness or ruin",
-          biases: { striker: 0.4, survival: 0.3 }
+          biases: { striker: 0.4, survival: 0.3, prestigeClass: "Pathfinder" }
         },
         {
           text: "Bounty Hunter - Tracker and professional who brings targets to justice",
-          biases: { striker: 0.4, awareness: 0.2 }
+          biases: { striker: 0.4, awareness: 0.2, prestigeClass: "Bounty Hunter" }
         },
         {
           text: "Infiltrator - Shadow operative moving unseen through enemy territory",
-          biases: { stealth: 0.4, control: 0.2 }
+          biases: { stealth: 0.4, control: 0.2, prestigeClass: "Infiltrator" }
         },
         {
           text: "Saboteur - Expert in destruction and disabling critical systems",
-          biases: { striker: 0.3, control: 0.2 }
+          biases: { striker: 0.3, control: 0.2, prestigeClass: "Saboteur" }
         },
         {
           text: "Military Engineer - Tactical genius of terrain, fortifications, and combat infrastructure",
-          biases: { control: 0.4, leadership: 0.2 }
+          biases: { control: 0.4, leadership: 0.2, prestigeClass: "Military Engineer" }
         }
       ]
     },
@@ -409,6 +425,10 @@ export const MENTOR_VOICED_SURVEY = {
         {
           text: "Quick thinking and improvisation",
           biases: { balance: 0.2 }
+        },
+        {
+          text: "I don't know yet",
+          biases: {}
         }
       ]
     },
@@ -430,6 +450,10 @@ export const MENTOR_VOICED_SURVEY = {
         {
           text: "Adapt based on the moment",
           biases: { balance: 0.2 }
+        },
+        {
+          text: "I don't know yet",
+          biases: {}
         }
       ]
     },
@@ -438,23 +462,23 @@ export const MENTOR_VOICED_SURVEY = {
       answers: [
         {
           text: "Assassin - Master of stealth killing and professional elimination",
-          biases: { stealth: 0.4, striker: 0.3 }
+          biases: { stealth: 0.4, striker: 0.3, prestigeClass: "Assassin" }
         },
         {
           text: "Outlaw - Legendary fugitive feared by authorities across the galaxy",
-          biases: { striker: 0.3, pragmatic: 0.3 }
+          biases: { striker: 0.3, pragmatic: 0.3, prestigeClass: "Outlaw" }
         },
         {
           text: "Master Privateer - Pirate captain commanding ships and plundering wealth",
-          biases: { leadership: 0.3, striker: 0.2 }
+          biases: { leadership: 0.3, striker: 0.2, prestigeClass: "Master Privateer" }
         },
         {
           text: "Gunslinger - Fastest draw and deadliest shot in known space",
-          biases: { striker: 0.4, ranged: 0.3 }
+          biases: { striker: 0.4, ranged: 0.3, prestigeClass: "Gunslinger" }
         },
         {
           text: "Ace Pilot - Master of ships and aerial combat supremacy",
-          biases: { striker: 0.3, control: 0.2 }
+          biases: { striker: 0.3, control: 0.2, prestigeClass: "Ace Pilot" }
         }
       ]
     },
@@ -525,6 +549,10 @@ export const MENTOR_VOICED_SURVEY = {
         {
           text: "Through presence and command",
           biases: { authority: 0.3 }
+        },
+        {
+          text: "I don't know yet",
+          biases: {}
         }
       ]
     },
@@ -546,6 +574,10 @@ export const MENTOR_VOICED_SURVEY = {
         {
           text: "Stay out of direct harm if possible",
           biases: { avoidance: 0.3 }
+        },
+        {
+          text: "I don't know yet",
+          biases: {}
         }
       ]
     },
@@ -554,23 +586,23 @@ export const MENTOR_VOICED_SURVEY = {
       answers: [
         {
           text: "Officer - Military leader commanding troops and controlling strategy",
-          biases: { leadership: 0.4, guardian: 0.2 }
+          biases: { leadership: 0.4, guardian: 0.2, prestigeClass: "Officer" }
         },
         {
           text: "Melee Duelist - Master combatant of blade and personal prowess",
-          biases: { striker: 0.4, melee: 0.3 }
+          biases: { striker: 0.4, melee: 0.3, prestigeClass: "Melee Duelist" }
         },
         {
           text: "Corporate Agent - Power through business, networks, and resources",
-          biases: { control: 0.3, social: 0.3 }
+          biases: { control: 0.3, social: 0.3, prestigeClass: "Corporate Agent" }
         },
         {
           text: "Crime Lord - Building empire through cunning and shadow networks",
-          biases: { striker: 0.2, control: 0.3 }
+          biases: { striker: 0.2, control: 0.3, prestigeClass: "Crime Lord" }
         },
         {
           text: "Charlatan - Master manipulator and con artist of legendary skill",
-          biases: { social: 0.4, pragmatic: 0.2 }
+          biases: { social: 0.4, pragmatic: 0.2, prestigeClass: "Charlatan" }
         }
       ]
     },
@@ -996,13 +1028,14 @@ export class MentorSurvey {
   /**
    * Process survey answers and extract BuildIntent biases
    * @param {Object} surveyAnswers - The survey answers object
-   * @returns {Object} Compiled biases for BuildIntent
+   * @returns {Object} Compiled biases for BuildIntent (includes prestigeClass if selected)
    */
   static processSurveyAnswers(surveyAnswers) {
     swseLogger.log(`[MENTOR-SURVEY] processSurveyAnswers: Processing survey answers`);
     swseLogger.log(`[MENTOR-SURVEY] processSurveyAnswers: Questions answered:`, surveyAnswers ? Object.keys(surveyAnswers).length : 0);
 
     const biases = {};
+    let prestigeClassTarget = null;
 
     if (!surveyAnswers) {
       swseLogger.log(`[MENTOR-SURVEY] processSurveyAnswers: No survey answers provided, returning empty biases`);
@@ -1015,9 +1048,24 @@ export class MentorSurvey {
       const answerBiases = answer.biases || {};
       swseLogger.log(`[MENTOR-SURVEY] processSurveyAnswers: "${answerId}" - biases:`, answerBiases);
 
-      for (const biasKey in answerBiases) {
-        biases[biasKey] = (biases[biasKey] || 0) + answerBiases[biasKey];
+      // Extract prestige class preference if present
+      if (answerBiases.prestigeClass && !prestigeClassTarget) {
+        prestigeClassTarget = answerBiases.prestigeClass;
+        swseLogger.log(`[MENTOR-SURVEY] processSurveyAnswers: Prestige class target set to: "${prestigeClassTarget}"`);
       }
+
+      for (const biasKey in answerBiases) {
+        if (biasKey !== 'prestigeClass') {
+          biases[biasKey] = (biases[biasKey] || 0) + answerBiases[biasKey];
+        }
+      }
+    }
+
+    // Add prestige class target as a strong bias
+    if (prestigeClassTarget) {
+      biases.prestigeClassTarget = prestigeClassTarget;
+      biases.prestigeClassBias = 0.8; // Strong bias toward this prestige class
+      swseLogger.log(`[MENTOR-SURVEY] processSurveyAnswers: Added prestige class bias for: "${prestigeClassTarget}"`);
     }
 
     swseLogger.log(`[MENTOR-SURVEY] processSurveyAnswers: Final compiled biases:`, biases);

@@ -341,6 +341,12 @@ export class ClassSuggestionEngine {
             classes: Object.keys(actorState.classes)
         });
 
+        // Check for prestige class target from L1 survey
+        const prestigeClassTarget = actor.system?.swse?.mentorBuildIntentBiases?.prestigeClassTarget || null;
+        if (prestigeClassTarget) {
+            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige class target detected: "${prestigeClassTarget}"`);
+        }
+
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Loading prestige prerequisites...`);
         const prestigePrereqs = await this._loadPrestigePrerequisites();
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige prerequisites loaded:`, Object.keys(prestigePrereqs).length, 'classes');
@@ -349,11 +355,17 @@ export class ClassSuggestionEngine {
 
         for (const cls of classes) {
             SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Evaluating class "${cls.name}"...`);
-            const suggestion = await this._evaluateClass(cls, actorState, prestigePrereqs, options);
+            const suggestion = await this._evaluateClass(cls, actorState, prestigePrereqs, { ...options, prestigeClassTarget });
 
             // Calculate bias for sorting
             const classType = cls.isPrestige ? 'prestige' : 'base';
-            const bias = PRESTIGE_BIAS[classType] || 0;
+            let bias = PRESTIGE_BIAS[classType] || 0;
+
+            // Boost prestige classes that match the player's target
+            if (cls.isPrestige && cls.name === prestigeClassTarget) {
+                bias += 5; // Significant boost for target class
+                SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige class target match - boosting "${cls.name}" bias`);
+            }
 
             SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Class "${cls.name}" - tier: ${suggestion.tier}, bias: ${bias}, isSuggested: ${suggestion.tier >= CLASS_SUGGESTION_TIERS.MECHANICAL_SYNERGY}`);
 
@@ -742,6 +754,7 @@ export class ClassSuggestionEngine {
     static async _evaluateClass(cls, actorState, prestigePrereqs, options = {}) {
         const isPrestige = cls.isPrestige;
         const prereqData = isPrestige ? prestigePrereqs[cls.name] : null;
+        const prestigeClassTarget = options.prestigeClassTarget || null;
 
         // Check prerequisites
         const prereqCheck = this._checkPrerequisites(cls.name, prereqData, actorState);
@@ -754,6 +767,23 @@ export class ClassSuggestionEngine {
                 cls.name,
                 prereqCheck.missing,
                 "You meet all prerequisites for this prestige class!"
+            );
+        }
+
+        // TIER 5 (PLAYER INTENT): Prestige class that matches player's L1 survey target
+        // This gives high priority to classes the player explicitly expressed interest in
+        if (isPrestige && cls.name === prestigeClassTarget) {
+            const tier = prereqCheck.met
+                ? CLASS_SUGGESTION_TIERS.PRESTIGE_NOW
+                : CLASS_SUGGESTION_TIERS.PRESTIGE_SOON;
+            const reason = prereqCheck.met
+                ? "This matches your character goal and you qualify now!"
+                : `This matches your character goal - you're almost there! Missing: ${prereqCheck.missing.filter(m => !m.unverifiable).map(m => m.shortDisplay).join(', ')}`;
+            return this._buildSuggestion(
+                tier,
+                cls.name,
+                prereqCheck.missing,
+                reason
             );
         }
 
