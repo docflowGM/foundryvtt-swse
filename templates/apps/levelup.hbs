@@ -601,6 +601,65 @@
       </div>
 
       <div class="feat-categories-container">
+        {{!-- Show "Future Available" section if there are items that will become available soon --}}
+        {{#if futureAvailableFeats}}
+        <div class="feat-category future-available-category">
+          <div class="category-header">
+            <div class="category-icon"><i class="fas fa-hourglass-end"></i></div>
+            <div class="category-info">
+              <h4>Future Available</h4>
+              <p class="category-description">Feats that will become available with continued progression</p>
+            </div>
+            <div class="category-count">
+              <span class="count-badge">{{futureAvailableFeats.length}}</span>
+            </div>
+            <button class="category-toggle-btn">
+              <i class="fas fa-chevron-down"></i>
+            </button>
+          </div>
+
+          <div class="category-feats" style="display: none;">
+            <div class="feat-selection-grid" data-category-grid="future">
+              {{#each futureAvailableFeats}}
+              <div class="feat-card feat-with-tooltip {{#if this.isSuggested}}is-suggested{{/if}} {{#if this.suggestion.cssClass}}{{this.suggestion.cssClass}}{{/if}} suggestion-future-available"
+                   data-feat-id="{{this._id}}"
+                   data-feat-name="{{this.name}}"
+                   data-suggestion-tier="{{this.suggestion.tier}}"
+                   title="{{this.suggestion.reason}}">
+                <span class="suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+                  <i class="{{this.suggestion.iconClass}}"></i>
+                </span>
+                <h4>{{this.name}}</h4>
+
+                {{#if this.system.prerequisites}}
+                <div class="feat-prereqs">
+                  <strong>Prerequisites:</strong> {{this.system.prerequisites}}
+                </div>
+                {{/if}}
+
+                {{#if this.suggestion.unmetRequirements}}
+                <div class="feat-unmet-prereqs" style="color: #f59e0b; margin: 0.5em 0; font-weight: bold; font-size: 0.9em;">
+                  <i class="fas fa-hourglass-end"></i> Available in {{this.suggestion.levelsToQualify}} level(s)
+                  {{#if this.suggestion.recommendations}}
+                  <ul style="margin: 0.3em 0 0 1.2em; padding: 0;">
+                  {{#each this.suggestion.recommendations}}
+                    <li style="font-size: 0.85em;">{{this}}</li>
+                  {{/each}}
+                  </ul>
+                  {{/if}}
+                </div>
+                {{/if}}
+
+                <button class="select-bonus-feat choice-button" disabled title="Prerequisites not yet met">
+                  <i class="fas fa-hourglass-end"></i> Coming Soon
+                </button>
+              </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+        {{/if}}
+
         {{#each featCategories}}
         <div class="feat-category" data-category="{{this.id}}">
           <div class="category-header">

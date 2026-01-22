@@ -245,6 +245,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Pass categorized feats to template
     data.featCategories = this.featData?.categories || [];
     data.availableFeats = this.featData?.feats?.filter(f => f.isQualified) || [];
+    data.futureAvailableFeats = this.featData?.futureAvailableFeats || [];  // Feats that will be available soon
     data.allFeats = this.featData?.feats || [];  // For debugging/info
     data.selectedFeats = this.selectedFeats;
 

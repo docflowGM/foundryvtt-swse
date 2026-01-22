@@ -290,16 +290,25 @@ export async function loadFeats(actor, selectedClass, pendingData) {
       );
     }
 
+    // Extract future available feats (those with futureAvailable flag and suggestion tier > 0)
+    const futureAvailableFeats = featsWithSuggestions.filter(f =>
+      f.futureAvailable && f.suggestion && f.suggestion.tier > 0
+    );
+
     const categories = organizeFeatsIntoCategories(featsWithSuggestions, metadata, selectedFeats, actor);
 
     // Log suggestion statistics
     const suggestionCounts = SuggestionEngine.countByTier(featsWithSuggestions);
     SWSELogger.log(`SWSE LevelUp | Loaded ${filteredFeats.length} feats in ${categories.length} categories, ${filteredFeats.filter(f => f.isQualified).length} qualified`);
     SWSELogger.log(`SWSE LevelUp | Suggestions: Chain=${suggestionCounts[4]}, Skill=${suggestionCounts[3]}, Ability=${suggestionCounts[2]}, Class=${suggestionCounts[1]}`);
+    if (futureAvailableFeats.length > 0) {
+      SWSELogger.log(`SWSE LevelUp | Future Available Feats: ${futureAvailableFeats.length}`);
+    }
 
     return {
       categories,
-      feats: featsWithSuggestions  // Flat array with suggestion metadata
+      feats: featsWithSuggestions,  // Flat array with suggestion metadata
+      futureAvailableFeats  // Array of feats that will become available soon
     };
   } catch (err) {
     SWSELogger.error("SWSE LevelUp | Failed to load feats:", err);
