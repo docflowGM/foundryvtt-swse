@@ -48,64 +48,64 @@
 
  {{!-- Chevron Progress Indicator --}}
  <div class="chargen-progress-chevron">
- <div class="chevron-step {{#if (eq currentStep 'name')}}active{{/if}} {{#if characterData.name}}completed{{/if}} {{#if (or (eq currentStep 'name') freeBuild)}}clickable{{/if}}" data-step="name">
+ <div class="chevron-step {{#if (eq currentStep 'name')}}active{{/if}} {{#if characterData.name}}completed{{/if}} {{#if (lookup skippedStepsMap 'name')}}skipped{{/if}}" data-step="name">
  <span class="chevron-label">Name</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'type')}}active{{/if}} {{#if (or characterData.isDroid characterData.species)}}completed{{/if}} {{#if (or (or characterData.isDroid characterData.species) freeBuild)}}clickable{{/if}}" data-step="type">
+ <div class="chevron-step {{#if (eq currentStep 'type')}}active{{/if}} {{#if (or characterData.isDroid characterData.species)}}completed{{/if}} {{#if (or (or characterData.isDroid characterData.species) freeBuild)}}clickable{{/if}} {{#if (lookup skippedStepsMap 'type')}}skipped{{/if}}" data-step="type">
  <span class="chevron-label">Type</span>
  </div>
 
  {{#if characterData.isDroid}}
- <div class="chevron-step {{#if (eq currentStep 'degree')}}active{{/if}} {{#if characterData.droidDegree}}completed{{/if}} {{#if (or characterData.droidDegree freeBuild)}}clickable{{/if}}" data-step="degree">
+ <div class="chevron-step {{#if (eq currentStep 'degree')}}active{{/if}} {{#if characterData.droidDegree}}completed{{/if}} {{#if (or characterData.droidDegree freeBuild)}}clickable{{/if}} {{#if (lookup skippedStepsMap 'degree')}}skipped{{/if}}" data-step="degree">
  <span class="chevron-label">Degree</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'size')}}active{{/if}} {{#if characterData.droidSize}}completed{{/if}} {{#if (or characterData.droidSize freeBuild)}}clickable{{/if}}" data-step="size">
+ <div class="chevron-step {{#if (eq currentStep 'size')}}active{{/if}} {{#if characterData.droidSize}}completed{{/if}} {{#if (or characterData.droidSize freeBuild)}}clickable{{/if}} {{#if (lookup skippedStepsMap 'size')}}skipped{{/if}}" data-step="size">
  <span class="chevron-label">Size</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'droid-builder')}}active{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="droid-builder">
+ <div class="chevron-step {{#if (eq currentStep 'droid-builder')}}active{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'droid-builder')}}skipped{{/if}}" data-step="droid-builder">
  <span class="chevron-label">Systems</span>
  </div>
  {{else}}
- <div class="chevron-step {{#if (eq currentStep 'species')}}active{{/if}} {{#if characterData.species}}completed{{/if}} {{#if (or characterData.species freeBuild)}}clickable{{/if}}" data-step="species">
+ <div class="chevron-step {{#if (eq currentStep 'species')}}active{{/if}} {{#if characterData.species}}completed{{/if}} {{#if (or characterData.species freeBuild)}}clickable{{/if}} {{#if (lookup skippedStepsMap 'species')}}skipped{{/if}}" data-step="species">
  <span class="chevron-label">Species</span>
  </div>
  {{/if}}
 
- <div class="chevron-step {{#if (eq currentStep 'abilities')}}active{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="abilities">
+ <div class="chevron-step {{#if (eq currentStep 'abilities')}}active{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'abilities')}}skipped{{/if}}" data-step="abilities">
  <span class="chevron-label">Abilities</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'class')}}active{{/if}} {{#if (gt characterData.classes.length 0)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="class">
+ <div class="chevron-step {{#if (eq currentStep 'class')}}active{{/if}} {{#if (gt characterData.classes.length 0)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'class')}}skipped{{/if}}" data-step="class">
  <span class="chevron-label">Class</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'background')}}active{{/if}} {{#if characterData.background}}completed{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="background">
+ <div class="chevron-step {{#if (eq currentStep 'background')}}active{{/if}} {{#if characterData.background}}completed{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'background')}}skipped{{/if}}" data-step="background">
  <span class="chevron-label">Background</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'skills')}}active{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="skills">
+ <div class="chevron-step {{#if (eq currentStep 'skills')}}active{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'skills')}}skipped{{/if}}" data-step="skills">
  <span class="chevron-label">Skills</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'languages')}}active{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="languages">
+ <div class="chevron-step {{#if (eq currentStep 'languages')}}active{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'languages')}}skipped{{/if}}" data-step="languages">
  <span class="chevron-label">Languages</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'feats')}}active{{/if}} {{#if (gte characterData.feats.length characterData.featsRequired)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="feats">
+ <div class="chevron-step {{#if (eq currentStep 'feats')}}active{{/if}} {{#if (gte characterData.feats.length characterData.featsRequired)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'feats')}}skipped{{/if}}" data-step="feats">
  <span class="chevron-label">Feats</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'talents')}}active{{/if}} {{#if (gt characterData.talents.length 0)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="talents">
+ <div class="chevron-step {{#if (eq currentStep 'talents')}}active{{/if}} {{#if (gt characterData.talents.length 0)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'talents')}}skipped{{/if}}" data-step="talents">
  <span class="chevron-label">Talents</span>
  </div>
 
  {{!-- Force powers only for Force-sensitive living characters (droids cannot be Force-sensitive in SWSE) --}}
  {{#if characterData.forceSensitive}}
  {{#unless characterData.isDroid}}
- <div class="chevron-step {{#if (eq currentStep 'force-powers')}}active{{/if}} {{#if (gte characterData.powers.length characterData.forcePowersRequired)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="force-powers">
+ <div class="chevron-step {{#if (eq currentStep 'force-powers')}}active{{/if}} {{#if (gte characterData.powers.length characterData.forcePowersRequired)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'force-powers')}}skipped{{/if}}" data-step="force-powers">
  <span class="chevron-label">Force Powers</span>
  </div>
  {{/unless}}
@@ -113,18 +113,18 @@
 
  {{!-- Starship Maneuvers only for characters with Starship Tactics feat --}}
  {{#if characterData.starshipManeuversRequired}}
- <div class="chevron-step {{#if (eq currentStep 'starship-maneuvers')}}active{{/if}} {{#if (gte characterData.starshipManeuvers.length characterData.starshipManeuversRequired)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="starship-maneuvers">
+ <div class="chevron-step {{#if (eq currentStep 'starship-maneuvers')}}active{{/if}} {{#if (gte characterData.starshipManeuvers.length characterData.starshipManeuversRequired)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'starship-maneuvers')}}skipped{{/if}}" data-step="starship-maneuvers">
  <span class="chevron-label">Starship Maneuvers</span>
  </div>
  {{/if}}
 
  {{#if characterData.isDroid}}
- <div class="chevron-step {{#if (eq currentStep 'droid-final')}}active{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="droid-final">
+ <div class="chevron-step {{#if (eq currentStep 'droid-final')}}active{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'droid-final')}}skipped{{/if}}" data-step="droid-final">
  <span class="chevron-label">Finalize Droid</span>
  </div>
  {{/if}}
 
- <div class="chevron-step {{#if (eq currentStep 'summary')}}active{{/if}} {{#if freeBuild}}clickable{{/if}}" data-step="summary">
+ <div class="chevron-step {{#if (eq currentStep 'summary')}}active{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'summary')}}skipped{{/if}}" data-step="summary">
  <span class="chevron-label">Summary</span>
  </div>
  </div>
@@ -2727,32 +2727,53 @@ section {
 }
 
 .chevron-step.active {
- background: linear-gradient(135deg, #0a74da 0%, #0d5ba6 100%);
+ background: linear-gradient(135deg, #00d9ff 0%, #00a8cc 100%);
  color: #ffffff;
  z-index: 3;
  border-color: #00d9ff;
- box-shadow: 0 0 15px rgba(10, 116, 218, 0.5);
+ box-shadow: 0 0 20px rgba(0, 217, 255, 0.7);
+ font-weight: 700;
 }
 
 .chevron-step.completed {
- background: #1a5080;
- color: #b3d9ff;
- border-color: rgba(10, 116, 218, 0.5);
+ background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+ color: #ffffff;
+ border-color: #4caf50;
+ box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
 }
 
-.chevron-step.clickable {
+.chevron-step.skipped {
+ background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+ color: #ffffff;
+ border-color: #ffc107;
+ box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+}
+
+.chevron-step {
  cursor: pointer;
 }
 
-.chevron-step.clickable:hover {
+.chevron-step:hover:not(.active) {
  background: #3a4a5e;
  color: #ffffff;
  transform: scale(1.05);
  z-index: 4;
+ border-color: #00d9ff;
 }
 
-.chevron-step.active.clickable:hover {
- background: linear-gradient(135deg, #0d88ff 0%, #0a6ec0 100%);
+.chevron-step.active:hover {
+ background: linear-gradient(135deg, #00e8ff 0%, #00b8d4 100%);
+ box-shadow: 0 0 25px rgba(0, 217, 255, 0.9);
+}
+
+.chevron-step.completed:hover {
+ background: linear-gradient(135deg, #5cb85c 0%, #3fa659 100%);
+ box-shadow: 0 0 20px rgba(76, 175, 80, 0.7);
+}
+
+.chevron-step.skipped:hover {
+ background: linear-gradient(135deg, #ffdc57 0%, #ffb300 100%);
+ box-shadow: 0 0 20px rgba(255, 193, 7, 0.7);
 }
 
 .chevron-label {
