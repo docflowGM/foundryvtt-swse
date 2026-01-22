@@ -665,12 +665,114 @@ export class MentorSurvey {
       const answers = {};
       swseLogger.log(`[MENTOR-SURVEY] showSurvey: Starting survey with ${questionIds.length} questions:`, questionIds);
 
+      const showIntroduction = () => {
+        const introText = `${mentor.name}, ${mentor.title.toLowerCase()}, settles in to speak with you.`;
+        const mentorGreeting = `"I am here to guide your journey. Before we proceed, I would like to understand your vision for the path ahead. Your answers will help me offer counsel tailored to who you truly wish to become."`;
+
+        const dialog = new Dialog(
+          {
+            title: `Meet Your Mentor`,
+            content: `
+              <div class="mentor-survey-content holo-content">
+                <div class="mentor-introduction">
+                  <p style="margin-bottom: 1.5rem; font-style: italic; color: #ccc;">${introText}</p>
+                  <p class="mentor-greeting" style="margin: 1.5rem 0; font-size: 1.1em;">${mentorGreeting}</p>
+                  <p style="margin-top: 1.5rem; color: #999; font-size: 0.9em;">
+                    Take your time answering the questions ahead. There are no wrong answers—only the truth of who you are and who you wish to become.
+                  </p>
+                </div>
+              </div>
+            `,
+            buttons: {
+              begin: {
+                icon: '<i class="fas fa-arrow-right"></i>',
+                label: "Begin Survey",
+                callback: () => {
+                  swseLogger.log(`[MENTOR-SURVEY] showSurvey: User began survey`);
+                  renderQuestion(0);
+                }
+              },
+              skip: {
+                icon: '<i class="fas fa-forward"></i>',
+                label: "Skip Survey",
+                callback: () => {
+                  swseLogger.log(`[MENTOR-SURVEY] showSurvey: User skipped survey at introduction`);
+                  resolve(null);
+                }
+              }
+            },
+            default: "begin",
+            render: (html) => {
+              // Add typing animation to mentor's greeting
+              const greetingElement = html.find('.mentor-greeting')[0];
+              if (greetingElement) {
+                const greetingText = greetingElement.textContent;
+                TypingAnimation.typeText(greetingElement, greetingText, {
+                  speed: 45,
+                  skipOnClick: true
+                });
+              }
+            }
+          },
+          { classes: ['mentor-survey-dialog'] }
+        );
+
+        dialog.render(true);
+      };
+
+      const showConclusion = () => {
+        const conclusionText = `${mentor.name} nods with understanding.`;
+        const mentorConclusion = `"Your answers speak volumes about who you are becoming. I will use what I have learned to guide you toward choices that align with your vision. As we progress, remember: the path is as important as the destination. I am here to help you walk it well."`;
+
+        const dialog = new Dialog(
+          {
+            title: `Survey Complete`,
+            content: `
+              <div class="mentor-survey-content holo-content">
+                <div class="mentor-conclusion">
+                  <p style="margin-bottom: 1.5rem; font-style: italic; color: #ccc;">${conclusionText}</p>
+                  <p class="mentor-conclusion-text" style="margin: 1.5rem 0; font-size: 1.05em;">${mentorConclusion}</p>
+                  <p style="margin-top: 1.5rem; color: #999; font-size: 0.9em;">
+                    Your mentor will now personalize their suggestions based on your goals and intentions.
+                  </p>
+                </div>
+              </div>
+            `,
+            buttons: {
+              finish: {
+                icon: '<i class="fas fa-check"></i>',
+                label: "Continue",
+                callback: () => {
+                  swseLogger.log(`[MENTOR-SURVEY] showSurvey: User finished survey`);
+                  resolve(answers);
+                }
+              }
+            },
+            default: "finish",
+            render: (html) => {
+              // Add typing animation to mentor's conclusion
+              const conclusionElement = html.find('.mentor-conclusion-text')[0];
+              if (conclusionElement) {
+                const conclusionText = conclusionElement.textContent;
+                TypingAnimation.typeText(conclusionElement, conclusionText, {
+                  speed: 45,
+                  skipOnClick: true
+                });
+              }
+            }
+          },
+          { classes: ['mentor-survey-dialog'] }
+        );
+
+        dialog.render(true);
+      };
+
       const renderQuestion = (index) => {
         if (index >= questionIds.length) {
-          // All questions answered
-          swseLogger.log(`[MENTOR-SURVEY] showSurvey: All questions answered, resolving survey`);
+          // All questions answered - show conclusion
+          swseLogger.log(`[MENTOR-SURVEY] showSurvey: All questions answered, showing conclusion`);
           swseLogger.log(`[MENTOR-SURVEY] showSurvey: Survey answers:`, Object.keys(answers));
-          resolve(answers);
+          showConclusion();
           return;
         }
 
@@ -754,7 +856,7 @@ export class MentorSurvey {
         dialog.render(true);
       };
 
-      renderQuestion(0);
+      showIntroduction();
     });
   }
 
