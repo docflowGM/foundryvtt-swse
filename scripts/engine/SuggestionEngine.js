@@ -22,6 +22,7 @@ import { SWSELogger } from '../utils/logger.js';
 import { BuildIntent } from './BuildIntent.js';
 import { MentorSurvey } from '../apps/mentor-survey.js';
 import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies.js';
+import { PrerequisiteRequirements } from '../progression/feats/prerequisite_engine.js';
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (ORDER MATTERS - HIGHER = BETTER)
@@ -125,6 +126,20 @@ export class SuggestionEngine {
         return feats.map(feat => {
             // Only suggest for qualified feats
             if (feat.isQualified === false) {
+                // NEW: If includeFutureAvailability option enabled, score future availability
+                if (options.includeFutureAvailability) {
+                    const futureScore = this._scoreFutureAvailability(
+                        feat, actor, actorState, buildIntent, pendingData
+                    );
+                    return {
+                        ...feat,
+                        suggestion: futureScore,
+                        isSuggested: futureScore && futureScore.tier > 0,
+                        currentlyUnavailable: true,
+                        futureAvailable: !!futureScore
+                    };
+                }
+                // Fall back to existing behavior (null suggestion)
                 return {
                     ...feat,
                     suggestion: null,
@@ -171,6 +186,20 @@ export class SuggestionEngine {
         return talents.map(talent => {
             // Only suggest for qualified talents
             if (talent.isQualified === false) {
+                // NEW: If includeFutureAvailability option enabled, score future availability
+                if (options.includeFutureAvailability) {
+                    const futureScore = this._scoreFutureAvailability(
+                        talent, actor, actorState, buildIntent, pendingData
+                    );
+                    return {
+                        ...talent,
+                        suggestion: futureScore,
+                        isSuggested: futureScore && futureScore.tier > 0,
+                        currentlyUnavailable: true,
+                        futureAvailable: !!futureScore
+                    };
+                }
+                // Fall back to existing behavior (null suggestion)
                 return {
                     ...talent,
                     suggestion: null,
@@ -1044,6 +1073,191 @@ export class SuggestionEngine {
                 </div>
             </div>
         `;
+    }
+
+    /**
+     * Score future availability of an unqualified feat/talent
+     * Analyzes when this item will become available based on prerequisites
+     * @param {Object} item - The feat or talent to evaluate
+     * @param {Object} actor - The actor
+     * @param {Object} actorState - Pre-computed actor state
+     * @param {Object} buildIntent - Build intent analysis
+     * @param {Object} pendingData - Pending selections
+     * @returns {Object|null} Suggestion metadata or null if too far away
+     */
+    static _scoreFutureAvailability(item, actor, actorState, buildIntent, pendingData) {
+        // Analyze what prerequisites are not met
+        const unmetReqs = PrerequisiteRequirements.getUnmetRequirements(actor, item);
+
+        if (!unmetReqs || unmetReqs.length === 0) {
+            // No unmet requirements (shouldn't happen, but handle it)
+            return null;
+        }
+
+        // Analyze the pathway to qualification
+        const pathway = this._analyzeQualificationPathway(
+            item, actor, unmetReqs, actorState, pendingData
+        );
+
+        // Convert pathway to suggestion tier
+        const futureScore = this._calcFutureAvailabilityTier(pathway, item, actorState);
+
+        if (!futureScore) {
+            return null;
+        }
+
+        // Build detailed reason message
+        const recommendations = pathway.recommendations.slice(0, 2).join(', ');
+        let reason = `Can qualify in ${pathway.levelsToQualify} level(s)`;
+        if (recommendations) {
+            reason += `. ${recommendations}`;
+        }
+
+        return {
+            name: item.name,
+            tier: futureScore.tier,
+            icon: "fa-hourglass-end",
+            iconClass: "fas fa-hourglass-end suggestion-future",
+            cssClass: "suggestion-future-available",
+            reason: reason,
+            isSuggested: true,
+            futureAvailable: true,
+            levelsToQualify: pathway.levelsToQualify,
+            recommendations: pathway.recommendations,
+            unmetRequirements: unmetReqs,
+            pathway: pathway
+        };
+    }
+
+    /**
+     * Analyze the qualification pathway for unqualified items
+     * @param {Object} item - The feat or talent
+     * @param {Object} actor - The actor
+     * @param {Array} unmetReqs - Array of unmet requirement descriptions
+     * @param {Object} actorState - Pre-computed actor state
+     * @param {Object} pendingData - Pending selections
+     * @returns {Object} Pathway analysis object
+     */
+    static _analyzeQualificationPathway(item, actor, unmetReqs, actorState, pendingData) {
+        const pathway = {
+            levelsToQualify: 0,
+            obtainableFeatReqs: [],
+            obtainableSkillReqs: [],
+            obtainableTalentReqs: [],
+            babGainPerLevel: 0.75,
+            recommendations: []
+        };
+
+        // Analyze each unmet requirement
+        for (const req of unmetReqs) {
+            // BAB requirements
+            if (req.includes("BAB") && req.includes("you have")) {
+                const match = req.match(/(\+\d+).*you have.*(\+\d+)/);
+                if (match) {
+                    const needed = parseInt(match[1]);
+                    const current = parseInt(match[2]);
+                    const babNeeded = needed - current;
+                    const levelsForBab = Math.ceil(babNeeded / pathway.babGainPerLevel);
+                    pathway.levelsToQualify = Math.max(pathway.levelsToQualify, levelsForBab);
+                    pathway.recommendations.push(`Gain BAB through level progression (${levelsForBab} levels)`);
+                }
+            }
+
+            // Character level requirements
+            if (req.includes("Character Level") && req.includes("you are")) {
+                const match = req.match(/(\d+).*you are level (\d+)/);
+                if (match) {
+                    const needed = parseInt(match[1]);
+                    const current = parseInt(match[2]);
+                    const levelNeeded = needed - current;
+                    pathway.levelsToQualify = Math.max(pathway.levelsToQualify, levelNeeded);
+                    pathway.recommendations.push(`Reach level ${needed}`);
+                }
+            }
+
+            // Attribute requirements
+            if (req.includes("Requires") && req.includes("you have") &&
+                (req.includes("STR") || req.includes("DEX") || req.includes("CON") ||
+                 req.includes("INT") || req.includes("WIS") || req.includes("CHA"))) {
+                const match = req.match(/(\d+).*you have (\d+)/);
+                if (match) {
+                    const needed = parseInt(match[1]);
+                    const current = parseInt(match[2]);
+                    const abilityNeeded = needed - current;
+                    // Typically 1 ability point per 4 levels of stat gain
+                    const levelsForAbility = abilityNeeded * 4;
+                    pathway.levelsToQualify = Math.max(pathway.levelsToQualify, levelsForAbility);
+                    pathway.recommendations.push(`Increase ability score by ${abilityNeeded} (${levelsForAbility} levels)`);
+                }
+            }
+
+            // Feat prerequisites
+            if (req.includes("feat") && !req.includes("martial arts")) {
+                const featName = req.replace(/.*requires.*feat\s+/i, '').trim();
+                if (featName) {
+                    pathway.obtainableFeatReqs.push(featName);
+                    pathway.recommendations.push(`Select feat: ${featName}`);
+                }
+            }
+
+            // Talent prerequisites
+            if (req.includes("talent")) {
+                const talentName = req.replace(/.*requires.*talent\s+/i, '').trim();
+                if (talentName) {
+                    pathway.obtainableTalentReqs.push(talentName);
+                    pathway.recommendations.push(`Select talent: ${talentName}`);
+                }
+            }
+
+            // Skill training requirements
+            if (req.includes("trained in")) {
+                const skillName = req.replace(/.*trained in\s+/i, '').trim();
+                if (skillName) {
+                    pathway.obtainableSkillReqs.push(skillName);
+                    pathway.recommendations.push(`Train skill: ${skillName}`);
+                }
+            }
+        }
+
+        // Minimum 1 level if has obtainable prerequisites (feats/talents/skills)
+        if ((pathway.obtainableFeatReqs.length > 0 ||
+             pathway.obtainableSkillReqs.length > 0 ||
+             pathway.obtainableTalentReqs.length > 0) &&
+            pathway.levelsToQualify === 0) {
+            pathway.levelsToQualify = 1;
+        }
+
+        return pathway;
+    }
+
+    /**
+     * Calculate future availability tier based on pathway
+     * @param {Object} pathway - Qualification pathway analysis
+     * @param {Object} item - The feat/talent
+     * @param {Object} actorState - Pre-computed actor state
+     * @returns {Object|null} Tier score object or null if too far away
+     */
+    static _calcFutureAvailabilityTier(pathway, item, actorState) {
+        if (pathway.levelsToQualify === 0) return null;  // Already qualified
+
+        // NEW TIER LEVELS FOR FUTURE AVAILABILITY
+        let tier;
+        if (pathway.levelsToQualify <= 1) {
+            tier = 0.6;  // "Very Soon"
+        } else if (pathway.levelsToQualify <= 2) {
+            tier = 0.4;  // "Soon"
+        } else if (pathway.levelsToQualify <= 5) {
+            tier = 0.2;  // "Medium Term"
+        } else {
+            tier = 0.05;  // "Long Term"
+        }
+
+        // If item matches class, boost slightly
+        if (this._matchesClass(item, actorState)) {
+            tier *= 1.2;
+        }
+
+        return { tier };
     }
 
     /**
