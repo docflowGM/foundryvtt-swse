@@ -1162,6 +1162,16 @@
 {{#if this.system.prerequisites}}
 <div class="feat-tooltip-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</div>
 {{/if}}
+{{#if this.prereqReasons}}
+<div class="feat-tooltip-unmet-prereqs" style="color: #ff5555; margin-top: 0.5em;">
+  <strong>⚠ Cannot take:</strong>
+  <ul style="margin: 0.3em 0 0 1.2em; padding: 0;">
+  {{#each this.prereqReasons}}
+    <li style="font-size: 0.9em;">{{this}}</li>
+  {{/each}}
+  </ul>
+</div>
+{{/if}}
 {{#if this.suggestion.reason}}
 <div class="feat-tooltip-suggestion">💡 {{this.suggestion.reason}}</div>
 {{/if}}
@@ -1199,6 +1209,16 @@
 {{/if}}
 {{#if this.system.prerequisites}}
 <div class="feat-tooltip-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</div>
+{{/if}}
+{{#if this.prereqReasons}}
+<div class="feat-tooltip-unmet-prereqs" style="color: #ff5555; margin-top: 0.5em;">
+  <strong>⚠ Cannot take:</strong>
+  <ul style="margin: 0.3em 0 0 1.2em; padding: 0;">
+  {{#each this.prereqReasons}}
+    <li style="font-size: 0.9em;">{{this}}</li>
+  {{/each}}
+  </ul>
+</div>
 {{/if}}
 {{#if this.suggestion.reason}}
 <div class="feat-tooltip-suggestion">💡 {{this.suggestion.reason}}</div>
@@ -1301,6 +1321,14 @@
  {{/if}}
  {{#if this.system.prerequisites}}
  <p class="talent-prereqs"><em>Prerequisites: {{this.system.prerequisites}}</em></p>
+ {{/if}}
+ {{#if this.prereqReasons}}
+ <p class="talent-unmet-prereqs" style="color: #ff5555; margin: 0.3em 0; font-weight: bold; font-size: 0.9em;">
+ ⚠ Cannot take:
+ {{#each this.prereqReasons}}
+   {{#unless @first}}<br>{{/unless}}{{this}}
+ {{/each}}
+ </p>
  {{/if}}
  </button>
  </div>

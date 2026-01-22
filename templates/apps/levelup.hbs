@@ -653,6 +653,17 @@
                 </div>
                 {{/if}}
 
+                {{#if this.prereqReasons}}
+                <div class="feat-unmet-prereqs" style="color: #ff5555; margin: 0.5em 0; font-weight: bold; font-size: 0.9em;">
+                  ⚠ Cannot take:
+                  <ul style="margin: 0.3em 0 0 1.2em; padding: 0;">
+                  {{#each this.prereqReasons}}
+                    <li style="font-size: 0.9em;">{{this}}</li>
+                  {{/each}}
+                  </ul>
+                </div>
+                {{/if}}
+
                 {{#if this.tags}}
                 <div class="feat-tags">
                   {{#each this.tags}}

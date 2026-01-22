@@ -547,6 +547,12 @@ export function renderTalentTreeGraph(container, talents, characterData, onSelec
     if (prereqs) {
       tooltipText += `\n\nPrerequisites: ${prereqs}`;
     }
+    if (node.talent.prereqReasons && node.talent.prereqReasons.length > 0) {
+      tooltipText += `\n\n⚠ Cannot take:`;
+      for (const reason of node.talent.prereqReasons) {
+        tooltipText += `\n• ${reason}`;
+      }
+    }
     title.textContent = tooltipText;
     nodeGroup.appendChild(title);
 

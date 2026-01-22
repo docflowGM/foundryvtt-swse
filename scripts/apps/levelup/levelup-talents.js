@@ -9,6 +9,7 @@ import { TalentTreeVisualizer } from '../talent-tree-visualizer.js';
 import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
 import { checkTalentPrerequisites } from './levelup-validation.js';
 import { getClassProperty, getTalentTrees } from '../chargen/chargen-property-accessor.js';
+import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
 
@@ -261,7 +262,17 @@ export async function loadTalentData(actor = null, pendingData = {}) {
     const suggestionCounts = SuggestionEngine.countByTier(talentsWithSuggestions);
     SWSELogger.log(`SWSE LevelUp | Talent suggestions: Chain=${suggestionCounts[4]}, Skill=${suggestionCounts[3]}, Ability=${suggestionCounts[2]}, Class=${suggestionCounts[1]}`);
 
-    return talentsWithSuggestions;
+    // Add prerequisite checking results to each talent
+    const talentsWithPrereqs = talentsWithSuggestions.map(talent => {
+      const prereqCheck = PrerequisiteRequirements.checkTalentPrerequisites(actor, talent, pendingData);
+      return {
+        ...talent,
+        isQualified: prereqCheck.valid,
+        prereqReasons: prereqCheck.reasons
+      };
+    });
+
+    return talentsWithPrereqs;
   }
 
   return talents;

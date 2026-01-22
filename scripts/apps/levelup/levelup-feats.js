@@ -104,6 +104,7 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
         chain: null,
         isSelected: selectedFeats.some(sf => sf._id === feat._id || sf.name === feat.name),
         isUnavailable: !feat.isQualified,
+        prereqReasons: feat.prereqReasons || [],
         isOwned: isOwned,
         isRepeatable: isRepeatable,
         // Suggestion engine metadata
@@ -124,6 +125,7 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
       prerequisiteFeat: featMeta.prerequisiteFeat || null,
       isSelected: selectedFeats.some(sf => sf._id === feat._id || sf.name === feat.name),
       isUnavailable: !feat.isQualified,
+      prereqReasons: feat.prereqReasons || [],
       isOwned: isOwned,
       isRepeatable: isRepeatable,
       // Suggestion engine metadata

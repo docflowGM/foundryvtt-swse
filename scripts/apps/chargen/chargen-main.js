@@ -713,7 +713,8 @@ export default class CharacterGenerator extends Application {
             const prereqCheck = PrerequisiteRequirements.checkFeatPrerequisites(tempActor, feat, pendingDataForFeats);
             return {
               ...feat,
-              isQualified: prereqCheck.valid
+              isQualified: prereqCheck.valid,
+              prereqReasons: prereqCheck.reasons
             };
           });
 
@@ -763,7 +764,8 @@ export default class CharacterGenerator extends Application {
             const prereqCheck = PrerequisiteRequirements.checkTalentPrerequisites(tempActor, talent, pendingDataForTalents);
             return {
               ...talent,
-              isQualified: prereqCheck.valid
+              isQualified: prereqCheck.valid,
+              prereqReasons: prereqCheck.reasons
             };
           });
         } catch (err) {
