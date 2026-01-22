@@ -86,22 +86,26 @@ export const MENTOR_VOICED_SURVEY = {
       ]
     },
     jedi_future_path: {
-      question: (mentor) => `${mentor.name} asks: "Where do you see your path leading as you grow stronger?"`,
+      question: (mentor) => `${mentor.name} asks: "Which path calls to you as you grow in power?"`,
       answers: [
         {
-          text: "Jedi Knight - Becoming a great defender of the light and keeper of peace",
-          biases: { order: 0.3, guardian: 0.2 }
+          text: "Jedi Knight/Master - A great defender of the light and keeper of peace",
+          biases: { order: 0.4, guardian: 0.2 }
         },
         {
-          text: "Sith Lord - Embracing power and dominion through the dark side",
-          biases: { riskTolerance: 0.3, striker: 0.2 }
+          text: "Sith Apprentice/Lord - Embracing power and dominion through the dark side",
+          biases: { riskTolerance: 0.4, striker: 0.3 }
         },
         {
-          text: "Independent sage - Charting my own course beyond the Order",
-          biases: { pragmatic: 0.3, balance: 0.2 }
+          text: "Force Adept/Disciple - Independent mastery beyond the Order",
+          biases: { pragmatic: 0.3, balance: 0.3 }
         },
         {
-          text: "Still uncertain",
+          text: "Imperial Knight - Serving empire and authority with the Force",
+          biases: { authority: 0.3, control: 0.2 }
+        },
+        {
+          text: "Still uncertain of my destiny",
           biases: {}
         }
       ]
@@ -198,23 +202,27 @@ export const MENTOR_VOICED_SURVEY = {
       ]
     },
     soldier_advancement: {
-      question: (mentor) => `${mentor.name} asks: "How do you envision yourself advancing as a Soldier?"`,
+      question: (mentor) => `${mentor.name} asks: "What does mastery look like for you?"`,
       answers: [
         {
-          text: "Elite Trooper - The deadliest operative in the field",
-          biases: { striker: 0.3, damage: 0.2 }
+          text: "Elite Soldier - Specialized operative at the peak of tactical combat",
+          biases: { striker: 0.3, damage: 0.3 }
         },
         {
-          text: "Commander - Rising through ranks to lead entire squadrons",
-          biases: { leadership: 0.4 }
+          text: "Vanguard - Tank and frontline powerhouse who controls the battlefield",
+          biases: { guardian: 0.4, survivability: 0.2 }
         },
         {
-          text: "Legendary veteran - A living legend feared across the galaxy",
-          biases: { authority: 0.3, striker: 0.2 }
+          text: "Ace Pilot - Master of vehicles and aerial/vehicle combat",
+          biases: { striker: 0.3, control: 0.2 }
         },
         {
-          text: "Haven't thought that far ahead",
-          biases: {}
+          text: "Martial Arts Master - Legendary unarmed and melee combatant",
+          biases: { striker: 0.4, melee: 0.3 }
+        },
+        {
+          text: "Gladiator - Arena legend whose name strikes fear in hearts",
+          biases: { striker: 0.3, damage: 0.3 }
         }
       ]
     },
@@ -310,22 +318,18 @@ export const MENTOR_VOICED_SURVEY = {
       ]
     },
     scout_future_calling: {
-      question: (mentor) => `${mentor.name} asks: "Where does the path of a Scout lead you?"`,
+      question: (mentor) => `${mentor.name} asks: "Do you see yourself becoming a Pathfinder?"`,
       answers: [
         {
-          text: "Ranger - A legendary wanderer and monster hunter",
-          biases: { striker: 0.3, survival: 0.2 }
+          text: "Pathfinder - Master explorer and guide through any wilderness or ruin",
+          biases: { striker: 0.4, survival: 0.3 }
         },
         {
-          text: "Infiltrator Operative - Master of espionage and covert missions",
-          biases: { stealth: 0.3, controller: 0.2 }
+          text: "Not necessarily Pathfinder, but advancing along my Scout path",
+          biases: { balance: 0.2 }
         },
         {
-          text: "Free Agent - Selling skills to the highest bidder across the galaxy",
-          biases: { pragmatic: 0.3, balance: 0.2 }
-        },
-        {
-          text: "Still charting my own course",
+          text: "Still uncertain about the future",
           biases: {}
         }
       ]
@@ -534,23 +538,27 @@ export const MENTOR_VOICED_SURVEY = {
       ]
     },
     noble_future_station: {
-      question: (mentor) => `${mentor.name} asks: "What position do you aspire to?"`,
+      question: (mentor) => `${mentor.name} asks: "Which prestige path calls to you?"`,
       answers: [
         {
-          text: "Senator - Political power, negotiation, and galactic influence",
-          biases: { leadership: 0.4, social: 0.2 }
+          text: "Officer - Military leader commanding troops and controlling strategy",
+          biases: { leadership: 0.4, guardian: 0.2 }
         },
         {
-          text: "Military Commander - Leading armies and controlling the battlefield",
-          biases: { leadership: 0.3, striker: 0.2 }
+          text: "Melee Duelist - Master combatant of blade and personal prowess",
+          biases: { striker: 0.4, melee: 0.3 }
         },
         {
-          text: "Spymaster - Information broker operating from the shadows",
-          biases: { control: 0.3, intelligence: 0.2 }
+          text: "Corporate Agent - Power through business, networks, and resources",
+          biases: { control: 0.3, social: 0.3 }
         },
         {
-          text: "Building my own path",
-          biases: {}
+          text: "Crime Lord - Building empire through cunning and shadow networks",
+          biases: { striker: 0.2, control: 0.3 }
+        },
+        {
+          text: "Charlatan - Master manipulator and con artist of legendary skill",
+          biases: { social: 0.4, pragmatic: 0.2 }
         }
       ]
     },
