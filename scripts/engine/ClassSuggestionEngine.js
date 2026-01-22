@@ -797,27 +797,59 @@ export class ClassSuggestionEngine {
             );
         }
 
-        // SPECIAL: Check if this base class unlocks talent trees needed by prestige target
+        // SPECIAL: Check if this base class unlocks needed talent trees, skills, or feats for prestige target
         if (!isPrestige && prestigeClassTarget && prestigePrereqs[prestigeClassTarget]) {
             const targetPrereqs = prestigePrereqs[prestigeClassTarget];
             const unlockedTrees = this._getUnlockedTalentTrees(cls.name);
-            const neededTrees = targetPrereqs.talentTrees || [];
+            const classSkills = CLASS_SYNERGY_DATA[cls.name]?.skills || [];
+            const classFeats = CLASS_SYNERGY_DATA[cls.name]?.feats || [];
 
-            // Check if this class provides access to any needed talent trees
+            const neededTrees = targetPrereqs.talentTrees || [];
+            const neededSkills = targetPrereqs.skills || [];
+            const neededFeats = targetPrereqs.feats || [];
+
+            // Check which prerequisites this class helps unlock
             const providesNeededTrees = neededTrees.some(neededTree =>
                 unlockedTrees.some(provided => provided.toLowerCase() === neededTree.toLowerCase())
             );
 
-            if (providesNeededTrees) {
-                const providedTreeNames = unlockedTrees.filter(t =>
-                    neededTrees.some(n => n.toLowerCase() === t.toLowerCase())
-                ).join(', ');
+            const providesNeededSkills = neededSkills.some(neededSkill =>
+                classSkills.some(classSkill =>
+                    this._normalizeSkillName(classSkill).includes(
+                        this._normalizeSkillName(neededSkill)
+                    )
+                )
+            );
+
+            const providesNeededFeats = neededFeats.some(neededFeat =>
+                classFeats.some(classFeat => classFeat.toLowerCase() === neededFeat.toLowerCase())
+            );
+
+            if (providesNeededTrees || providesNeededSkills || providesNeededFeats) {
+                const benefits = [];
+
+                if (providesNeededTrees) {
+                    const providedTreeNames = unlockedTrees.filter(t =>
+                        neededTrees.some(n => n.toLowerCase() === t.toLowerCase())
+                    ).join(', ');
+                    benefits.push(`Unlocks ${providedTreeNames} talents`);
+                }
+
+                if (providesNeededSkills) {
+                    benefits.push(`Trains needed skills`);
+                }
+
+                if (providesNeededFeats) {
+                    benefits.push(`Provides required feats`);
+                }
+
+                const reason = `${benefits.join('; ')} for ${prestigeClassTarget}`;
 
                 return this._buildSuggestion(
                     CLASS_SUGGESTION_TIERS.PRESTIGE_SOON,
                     cls.name,
                     [],
-                    `Unlocks ${providedTreeNames} talents needed for ${prestigeClassTarget}`
+                    reason
                 );
             }
         }
