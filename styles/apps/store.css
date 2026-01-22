@@ -928,3 +928,43 @@
 .subcategory-header:first-of-type {
   margin-top: 0.5rem;
 }
+/* ======================================================
+   SWSE STORE – CRITICAL SCROLL & INTERACTION FIX
+   Drop-in patch (safe for Foundry v12 / v13)
+   ====================================================== */
+
+/* Prevent Foundry window-content from stealing scroll */
+.app.window-app .window-content {
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Ensure store root actually has a constrained height */
+.app.window-app .swse-app-store {
+  height: 100%;
+  min-height: 0;
+}
+
+/* THIS is the actual scrolling container */
+.app.window-app .swse-app-store .shop-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0; /* REQUIRED for flexbox scrolling */
+  overscroll-behavior: contain;
+}
+
+/* Prevent tab rows from breaking click targets */
+.shop-tabs {
+  overflow: hidden;
+}
+
+/* Ensure buttons always receive pointer events */
+.holo-btn {
+  pointer-events: auto;
+}
+
+/* Defensive: ensure product rows never block clicks */
+.product-item,
+.product-actions {
+  pointer-events: auto;
+}

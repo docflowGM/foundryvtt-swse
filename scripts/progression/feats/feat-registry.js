@@ -1,3 +1,13 @@
+
+async function loadJSON(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to load JSON: ${url}`);
+  }
+  return response.json();
+}
+
+
 /**
  * FEAT REGISTRY
  * Central lookup for all feats in the system.
@@ -137,3 +147,19 @@ export const FeatRegistry = {
 };
 
 export default FeatRegistry;
+
+
+
+// ============================================================
+// GENERATED FEAT VIEW MODEL INTEGRATION
+// ============================================================
+
+let featViewModel = await loadJSON("systems/foundryvtt-swse/data/generated/feat-view-model.json");
+;
+
+export function loadGeneratedFeats() {
+  if (!featViewModel?.feats) return null;
+
+  console.log(`[SWSE] Loaded generated feat view model: ${featViewModel.feats.length} feats`);
+  return featViewModel;
+}

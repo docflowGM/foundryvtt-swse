@@ -544,3 +544,22 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
     ui.notifications.info(`Granted starting equipment: ${weaponItems.map(w => w.name).join(', ')}`);
   }
 }
+
+
+
+// ============================================================
+// MENTOR L1 SURVEY TRIGGER (GENERATED DATA PIPELINE)
+// ============================================================
+
+import { maybeOpenMentorSurvey } from "../mentor-survey.js";
+
+export function maybeTriggerMentorL1Survey(actor) {
+  const identity = actor?.flags?.swse?.identity;
+  const survey = actor?.flags?.swse?.mentorSurvey;
+
+  if (!identity?.identityReady) return;
+  if (survey?.completed) return;
+
+  console.log("[SWSE Mentor] Triggering L1 mentor survey");
+  maybeOpenMentorSurvey(actor);
+}

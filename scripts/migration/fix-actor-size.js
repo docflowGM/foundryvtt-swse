@@ -51,7 +51,7 @@ export class ActorSizeMigration {
         }
 
         SWSELogger.log(`Fixing ${actor.name}: "${currentSize}" -> "${newSize}"`);
-globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.size': newSize });
+globalThis.SWSE.actor.update( { 'system.size': newSize });
         fixed++;
 
       } catch (err) {

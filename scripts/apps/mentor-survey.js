@@ -847,3 +847,86 @@ export class MentorSurvey {
     return completed;
   }
 }
+
+
+
+// ============================================================
+// EXPANDED MENTOR DIALOGUE OPTIONS (AUTO-GENERATED)
+// ============================================================
+
+export const EXPANDED_MENTOR_OPTIONS = [
+  {
+    key: "strengths",
+    label: "What am I doing well"
+  },
+  {
+    key: "weaknesses",
+    label: "What am I neglecting"
+  },
+  {
+    key: "next_steps",
+    label: "What should I prepare for next"
+  }
+];
+
+
+
+// ============================================================
+// CONTEXT-AWARE MENTOR FALLBACK RESPONSES (AUTO-GENERATED)
+// ============================================================
+
+function getContextAwareFallback(actor, mentorKey) {
+  const background =
+    actor?.flags?.swse?.background?.name ||
+    actor?.system?.background ||
+    actor?.background ||
+    null;
+
+  switch (mentorKey) {
+    case "story":
+      if (background) {
+        return `Before you ever chose this path, your life was shaped by your background as ${background}. That history still echoes in how you act, what you fear, and what you strive to protect.`;
+      }
+      return "Every journey begins before the moment you recognize it. Even if you cannot name it yet, your past still guides you.";
+
+    case "strengths":
+      return "Your recent choices show focus and intent. You are building a foundation that will support you when the path grows difficult.";
+
+    case "weaknesses":
+      return "Every path leaves something unattended. Look closely at what you have not invested in — that is often where growth waits.";
+
+    case "next_steps":
+      return "Think beyond your next choice. Preparation now determines which paths will still be open to you later.";
+
+    default:
+      return "Your path is still forming. With reflection and commitment, clarity will come.";
+  }
+}
+
+// ------------------------------------------------------------
+// OVERRIDE GENERIC DEFAULT RESPONSE
+// ------------------------------------------------------------
+
+const __originalMentorResponse = MentorSurvey.getResponse?.bind(MentorSurvey);
+
+MentorSurvey.getResponse = function(actor, mentorKey, context) {
+  const response = __originalMentorResponse
+    ? __originalMentorResponse(actor, mentorKey, context)
+    : null;
+
+  if (
+    !response ||
+    typeof response !== "string" ||
+    response.includes("I don't have any specific guidance")
+  ) {
+    return getContextAwareFallback(actor, mentorKey);
+  }
+
+  return response;
+};
+
+
+// Named export wrapper for chargen integration
+export function maybeOpenMentorSurvey(actor) {
+  return MentorSurvey.maybeOpenSurvey(actor);
+}

@@ -1,4 +1,14 @@
 
+async function loadJSON(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to load JSON: ${url}`);
+  }
+  return response.json();
+}
+
+
+
 // ======================================================================
 // TalentTreeRegistry.js
 // Backend registry that builds enriched talent trees using:
@@ -118,4 +128,23 @@ export class TalentTreeRegistry {
     SWSELogger.warn(`[TALENT-TREE-REGISTRY] getTalentByName: Talent "${name}" NOT FOUND in any tree`);
     return null;
   }
+}
+
+
+
+// ============================================================
+// GENERATED TALENT TREE REGISTRY INTEGRATION
+// ============================================================
+
+let generatedTalentTrees = await loadJSON('../../../systems/foundryvtt-swse/data/generated/talent-trees.registry.json');
+
+export function loadGeneratedTalentTrees(registry) {
+  if (!Array.isArray(generatedTalentTrees)) return false;
+
+  for (const tree of generatedTalentTrees) {
+    registry.registerTree(tree.id, tree);
+  }
+
+  console.log(`[SWSE] Loaded generated talent trees: ${generatedTalentTrees.length}`);
+  return true;
 }

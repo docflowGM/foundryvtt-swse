@@ -520,3 +520,60 @@ Hooks.on("canvasReady", () => {
         board.style.height = "";
     }
 });
+
+
+
+Hooks.once("init", () => {
+  // =====================================
+  // SWSE Migration Flags (Auto-Injected)
+  // =====================================
+
+  game.settings.register("foundryvtt-swse", "actorValidationMigration", {
+    name: "actorValidationMigration",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register("foundryvtt-swse", "itemValidationMigration", {
+    name: "itemValidationMigration",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register("foundryvtt-swse", "fixItemWeightMigration", {
+    name: "fixItemWeightMigration",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register("foundryvtt-swse", "forceCompendiumsPopulation", {
+    name: "forceCompendiumsPopulation",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register("foundryvtt-swse", "speciesTraitsUpdate", {
+    name: "speciesTraitsUpdate",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register("foundryvtt-swse", "talentEffectValidationMigration", {
+    name: "talentEffectValidationMigration",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
+  });
+
+});

@@ -88,7 +88,7 @@ export class DefenseSchemaMigration {
         }
         
         if (needsUpdate) {
-          await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
+          await globalThis.SWSE.actor.update( updates);
           fixed++;
           SWSELogger.log(`✓ Fixed ${actor.name}`);
         } else {

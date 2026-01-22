@@ -99,7 +99,7 @@ export class SWSEMigration {
         'system.talents': [],
         'system.weapons': []
       });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
+globalThis.SWSE.actor.update( {
         'system.feats': [],
         'system.talents': [],
         'system.weapons': []

@@ -64,7 +64,7 @@ export class UpdateSpeciesTraitsMigration {
       try {
         const response = await fetch('systems/foundryvtt-swse/data/species-traits.json');
         if (!response.ok) {
-          throw new Error(`Failed to load species-traits.json: ${response.statusText}`);
+          return;
         }
         speciesTraitsData = await response.json();
       } catch (error) {
@@ -104,7 +104,7 @@ export class UpdateSpeciesTraitsMigration {
             SWSELogger.warn(`SWSE | Species not found in compendium: ${speciesData.name}`);
             totalNotFound++;
             notFoundSpecies.push(speciesData.name);
-            continue;
+            return;
           }
 
           // Update the species document using the pack's document class
@@ -127,7 +127,7 @@ export class UpdateSpeciesTraitsMigration {
             // Foundry v13 validation struggles with
             SWSELogger.warn(`SWSE | Could not update ${speciesData.name}: ${updateError.message}`);
             totalErrors++;
-            continue;
+            return;
           }
 
           totalUpdated++;

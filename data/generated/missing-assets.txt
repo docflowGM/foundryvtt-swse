@@ -1,0 +1,2 @@
+icons/svg/item-bag.svg
+icons/svg/upgrade.svg
