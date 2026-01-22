@@ -318,19 +318,27 @@ export const MENTOR_VOICED_SURVEY = {
       ]
     },
     scout_future_calling: {
-      question: (mentor) => `${mentor.name} asks: "Do you see yourself becoming a Pathfinder?"`,
+      question: (mentor) => `${mentor.name} asks: "Which prestige calls to you as a Scout?"`,
       answers: [
         {
           text: "Pathfinder - Master explorer and guide through any wilderness or ruin",
           biases: { striker: 0.4, survival: 0.3 }
         },
         {
-          text: "Not necessarily Pathfinder, but advancing along my Scout path",
-          biases: { balance: 0.2 }
+          text: "Bounty Hunter - Tracker and professional who brings targets to justice",
+          biases: { striker: 0.4, awareness: 0.2 }
         },
         {
-          text: "Still uncertain about the future",
-          biases: {}
+          text: "Infiltrator - Shadow operative moving unseen through enemy territory",
+          biases: { stealth: 0.4, control: 0.2 }
+        },
+        {
+          text: "Saboteur - Expert in destruction and disabling critical systems",
+          biases: { striker: 0.3, control: 0.2 }
+        },
+        {
+          text: "Military Engineer - Tactical genius of terrain, fortifications, and combat infrastructure",
+          biases: { control: 0.4, leadership: 0.2 }
         }
       ]
     },
@@ -426,23 +434,27 @@ export const MENTOR_VOICED_SURVEY = {
       ]
     },
     scoundrel_ambition: {
-      question: (mentor) => `${mentor.name} asks: "What's the ultimate score you're chasing?"`,
+      question: (mentor) => `${mentor.name} asks: "Which prestige speaks to your Scoundrel's heart?"`,
       answers: [
         {
-          text: "Smuggler - Master of trading, moving contraband, and staying one step ahead",
-          biases: { pragmatic: 0.3, striker: 0.2 }
+          text: "Assassin - Master of stealth killing and professional elimination",
+          biases: { stealth: 0.4, striker: 0.3 }
         },
         {
-          text: "Crime Lord - Building an empire through cunning and connections",
-          biases: { leadership: 0.3, control: 0.2 }
+          text: "Outlaw - Legendary fugitive feared by authorities across the galaxy",
+          biases: { striker: 0.3, pragmatic: 0.3 }
         },
         {
-          text: "Legendary Heist Artist - Known across the galaxy for impossible jobs",
-          biases: { striker: 0.3, stealth: 0.2 }
+          text: "Master Privateer - Pirate captain commanding ships and plundering wealth",
+          biases: { leadership: 0.3, striker: 0.2 }
         },
         {
-          text: "Playing it as it comes",
-          biases: {}
+          text: "Gunslinger - Fastest draw and deadliest shot in known space",
+          biases: { striker: 0.4, ranged: 0.3 }
+        },
+        {
+          text: "Ace Pilot - Master of ships and aerial combat supremacy",
+          biases: { striker: 0.3, control: 0.2 }
         }
       ]
     },
