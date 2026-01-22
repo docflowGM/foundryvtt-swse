@@ -84,6 +84,52 @@ export const MENTOR_VOICED_SURVEY = {
           biases: { support: 0.3 }
         }
       ]
+    },
+    jedi_future_path: {
+      question: (mentor) => `${mentor.name} asks: "Where do you see your path leading as you grow stronger?"`,
+      answers: [
+        {
+          text: "Jedi Knight - Becoming a great defender of the light and keeper of peace",
+          biases: { order: 0.3, guardian: 0.2 }
+        },
+        {
+          text: "Sith Lord - Embracing power and dominion through the dark side",
+          biases: { riskTolerance: 0.3, striker: 0.2 }
+        },
+        {
+          text: "Independent sage - Charting my own course beyond the Order",
+          biases: { pragmatic: 0.3, balance: 0.2 }
+        },
+        {
+          text: "Still uncertain",
+          biases: {}
+        }
+      ]
+    },
+    jedi_ability_focus: {
+      question: (mentor) => `${mentor.name} asks: "What Force disciplines fascinate you most?"`,
+      answers: [
+        {
+          text: "Telekinesis and moving objects with will alone",
+          biases: { forceFocus: 0.3, control: 0.2 }
+        },
+        {
+          text: "Lightning and deadly Force techniques",
+          biases: { forceFocus: 0.3, damage: 0.2 }
+        },
+        {
+          text: "Healing, protection, and defense",
+          biases: { forceFocus: 0.2, support: 0.3 }
+        },
+        {
+          text: "Enhancing physical prowess - speed, strength, resilience",
+          biases: { melee: 0.3, forceFocus: 0.2 }
+        },
+        {
+          text: "Many different disciplines equally",
+          biases: { balance: 0.2 }
+        }
+      ]
     }
   },
 
@@ -147,6 +193,52 @@ export const MENTOR_VOICED_SURVEY = {
         },
         {
           text: "Being effective in any situation",
+          biases: { balance: 0.2 }
+        }
+      ]
+    },
+    soldier_advancement: {
+      question: (mentor) => `${mentor.name} asks: "How do you envision yourself advancing as a Soldier?"`,
+      answers: [
+        {
+          text: "Elite Trooper - The deadliest operative in the field",
+          biases: { striker: 0.3, damage: 0.2 }
+        },
+        {
+          text: "Commander - Rising through ranks to lead entire squadrons",
+          biases: { leadership: 0.4 }
+        },
+        {
+          text: "Legendary veteran - A living legend feared across the galaxy",
+          biases: { authority: 0.3, striker: 0.2 }
+        },
+        {
+          text: "Haven't thought that far ahead",
+          biases: {}
+        }
+      ]
+    },
+    soldier_weapon_mastery: {
+      question: (mentor) => `${mentor.name} asks: "Which weapon system do you want to master?"`,
+      answers: [
+        {
+          text: "Heavy weapons - Rockets, grenades, explosive firepower",
+          biases: { ranged: 0.3, damage: 0.2 }
+        },
+        {
+          text: "Precision rifles - Accuracy and controlled fire",
+          biases: { ranged: 0.3, control: 0.2 }
+        },
+        {
+          text: "Automatic carbines - Rate of fire and suppression",
+          biases: { ranged: 0.3, mobility: 0.2 }
+        },
+        {
+          text: "Melee weapons - Blades and hand-to-hand combat",
+          biases: { melee: 0.3, striker: 0.2 }
+        },
+        {
+          text: "Mastery of all weapon types",
           biases: { balance: 0.2 }
         }
       ]
@@ -216,6 +308,52 @@ export const MENTOR_VOICED_SURVEY = {
           biases: { balance: 0.2 }
         }
       ]
+    },
+    scout_future_calling: {
+      question: (mentor) => `${mentor.name} asks: "Where does the path of a Scout lead you?"`,
+      answers: [
+        {
+          text: "Ranger - A legendary wanderer and monster hunter",
+          biases: { striker: 0.3, survival: 0.2 }
+        },
+        {
+          text: "Infiltrator Operative - Master of espionage and covert missions",
+          biases: { stealth: 0.3, controller: 0.2 }
+        },
+        {
+          text: "Free Agent - Selling skills to the highest bidder across the galaxy",
+          biases: { pragmatic: 0.3, balance: 0.2 }
+        },
+        {
+          text: "Still charting my own course",
+          biases: {}
+        }
+      ]
+    },
+    scout_expertise: {
+      question: (mentor) => `${mentor.name} asks: "What kind of Scout expertise fascinates you?"`,
+      answers: [
+        {
+          text: "Tracking and hunting - Following any prey across any terrain",
+          biases: { survival: 0.3, awareness: 0.2 }
+        },
+        {
+          text: "Infiltration - Bypassing defenses and moving unseen",
+          biases: { stealth: 0.3, control: 0.2 }
+        },
+        {
+          text: "Swift strikes - Hit fast and hard before enemies react",
+          biases: { striker: 0.3, mobility: 0.2 }
+        },
+        {
+          text: "Environmental mastery - Excellence in wilderness and dangerous places",
+          biases: { survival: 0.3, awareness: 0.2 }
+        },
+        {
+          text: "All of the above equally",
+          biases: { balance: 0.2 }
+        }
+      ]
     }
   },
 
@@ -279,6 +417,52 @@ export const MENTOR_VOICED_SURVEY = {
         },
         {
           text: "Adapt based on the moment",
+          biases: { balance: 0.2 }
+        }
+      ]
+    },
+    scoundrel_ambition: {
+      question: (mentor) => `${mentor.name} asks: "What's the ultimate score you're chasing?"`,
+      answers: [
+        {
+          text: "Smuggler - Master of trading, moving contraband, and staying one step ahead",
+          biases: { pragmatic: 0.3, striker: 0.2 }
+        },
+        {
+          text: "Crime Lord - Building an empire through cunning and connections",
+          biases: { leadership: 0.3, control: 0.2 }
+        },
+        {
+          text: "Legendary Heist Artist - Known across the galaxy for impossible jobs",
+          biases: { striker: 0.3, stealth: 0.2 }
+        },
+        {
+          text: "Playing it as it comes",
+          biases: {}
+        }
+      ]
+    },
+    scoundrel_tactics: {
+      question: (mentor) => `${mentor.name} asks: "What's your specialty as a Scoundrel?"`,
+      answers: [
+        {
+          text: "Charisma and social engineering - Talking my way in and out",
+          biases: { social: 0.3 }
+        },
+        {
+          text: "Deception and disguise - Becoming someone else entirely",
+          biases: { stealth: 0.2, social: 0.2 }
+        },
+        {
+          text: "Theft and infiltration - Taking what I want undetected",
+          biases: { stealth: 0.3 }
+        },
+        {
+          text: "Explosives and direct action - When subtlety fails",
+          biases: { striker: 0.3, damage: 0.2 }
+        },
+        {
+          text: "A mix of all approaches",
           biases: { balance: 0.2 }
         }
       ]
@@ -346,6 +530,52 @@ export const MENTOR_VOICED_SURVEY = {
         {
           text: "Stay out of direct harm if possible",
           biases: { avoidance: 0.3 }
+        }
+      ]
+    },
+    noble_future_station: {
+      question: (mentor) => `${mentor.name} asks: "What position do you aspire to?"`,
+      answers: [
+        {
+          text: "Senator - Political power, negotiation, and galactic influence",
+          biases: { leadership: 0.4, social: 0.2 }
+        },
+        {
+          text: "Military Commander - Leading armies and controlling the battlefield",
+          biases: { leadership: 0.3, striker: 0.2 }
+        },
+        {
+          text: "Spymaster - Information broker operating from the shadows",
+          biases: { control: 0.3, intelligence: 0.2 }
+        },
+        {
+          text: "Building my own path",
+          biases: {}
+        }
+      ]
+    },
+    noble_core_value: {
+      question: (mentor) => `${mentor.name} asks: "What value guides your Noble heart?"`,
+      answers: [
+        {
+          text: "Honor and duty - Serving a cause greater than myself",
+          biases: { order: 0.3, leadership: 0.2 }
+        },
+        {
+          text: "Pragmatism and survival - Power and influence above all",
+          biases: { pragmatic: 0.3, riskTolerance: 0.2 }
+        },
+        {
+          text: "Building connections - My network is my strength",
+          biases: { social: 0.3, leadership: 0.2 }
+        },
+        {
+          text: "Personal ambition - Achieving excellence and recognition",
+          biases: { striker: 0.2, authority: 0.2 }
+        },
+        {
+          text: "Still discovering who I am",
+          biases: {}
         }
       ]
     }
