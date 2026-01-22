@@ -77,6 +77,7 @@ import { findActiveSynergies } from '../../engine/CommunityMetaSynergies.js';
 import { MentorSuggestionVoice } from '../mentor-suggestion-voice.js';
 import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
 import { AttributeIncreaseSuggestionEngine } from '../../engine/AttributeIncreaseSuggestionEngine.js';
+import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 
 // Import mentor memory system
 import { decayAllMentorCommitments, updateAllMentorMemories } from '../../engine/mentor-memory.js';
@@ -615,13 +616,17 @@ export class SWSELevelUpEnhanced extends FormApplication {
       .filter(([key, skill]) => skill?.trained)
       .map(([key]) => key);
 
+    // Get granted feats (houserules + level 1 class features)
+    const grantedFeats = PrerequisiteValidator.getAllGrantedFeats(this.actor, this.selectedClass);
+
     return {
       selectedClass: this.selectedClass,
       selectedFeats: this.selectedFeats || [],
       selectedTalents: this.selectedTalents || [],
       selectedSkills: this.selectedSkills || [],
       abilityIncreases: this.abilityIncreases || {},
-      trainedSkills: trainedSkills
+      trainedSkills: trainedSkills,
+      grantedFeats: grantedFeats
     };
   }
 
