@@ -950,29 +950,151 @@ export const DROID_SYSTEMS = {
       }
     ],
     communications: [
+      // CORE COMMUNICATION SYSTEMS
       {
-        id: "basic-comlink",
-        name: "Basic Comlink",
-        description: "Standard short-range communication device.",
+        id: "internal-comlink",
+        name: "Internal Comlink",
+        category: "comlink",
+        description: "Integrated Comlink System built directly into droid chassis. Otherwise identical to standard Comlink. Allows transmission and reception of comlink signals.",
+        cost: 250,
+        weight: 0.1,
+        availability: "-",
+        features: ["Integrated comlink", "Transmit/receive capability"],
+        restrictions: ["None"]
+      },
+      {
+        id: "vocabulator",
+        name: "Vocabulator",
+        category: "speech",
+        description: "Speaker system that enables emulation of speech rather than just Binary machine code. Standard if the droid has ability to speak any language other than Binary.",
         cost: 50,
         weight: 0.5,
-        availability: "-"
+        availability: "-",
+        features: ["Speech emulation", "Audio output"],
+        restrictions: ["None"]
       },
       {
-        id: "encrypted-comlink",
-        name: "Encrypted Comlink",
-        description: "Secure communication with encryption.",
-        cost: 150,
-        weight: 0.5,
-        availability: "Restricted"
+        id: "droid-caller",
+        name: "Droid Caller",
+        category: "control",
+        description: "Handheld transmitter (0.2 kg) that overrides a droid's motor function via Restraining Bolt. Compels droid toward caller while activated.",
+        cost: 10,
+        weight: 0.2,
+        availability: "-",
+        features: ["Restraining Bolt control", "Motor override"],
+        restrictions: ["Requires Restraining Bolt in target droid"]
+      },
+
+      // COMMUNICATION COUNTERMEASURES
+      {
+        id: "communications-countermeasures",
+        name: "Communications Countermeasures",
+        category: "defensive",
+        description: "Prevents jamming of droid communications by broadcasting on multiple frequencies. Grants +5 Equipment bonus to Use Computer checks made to overcome Communications Jamming.",
+        cost: 1000,
+        weight: 3,
+        availability: "Restricted",
+        features: ["Jam-resistant", "+5 vs Communications Jamming"],
+        restrictions: ["Restricted availability", "Typically unavailable at chargen"]
+      },
+
+      // COMMUNICATIONS JAMMING SYSTEMS
+      {
+        id: "communications-jammer",
+        name: "Communications Jammer",
+        category: "offensive",
+        description: "Allows droid to jam Comlink signals within 1-kilometer radius by interfering with communications systems or directly jamming signals. Grants +5 Equipment bonus to Use Computer checks to slice and shut down systems. Requires DC 25 Use Computer check to jam incoming/outgoing signals.",
+        cost: 5000,
+        weight: 5,
+        availability: "Military",
+        features: ["Comlink jamming", "1 km range", "+5 to slice computer systems"],
+        restrictions: ["Military availability", "NOT available at chargen"]
       },
       {
-        id: "hologram-projector",
-        name: "Hologram Projector",
-        description: "Projects small holographic images.",
-        cost: 250,
+        id: "remote-receiver-jammer",
+        name: "Remote Receiver Jammer",
+        category: "offensive",
+        description: "Portable backpack transmitter developed to scramble Battle Droid Remote Processor links at short range. Affects droids with Remote Receivers but no Backup Processors. Droid loses all actions and is Flat-Footed if jammer's Use Computer check meets or exceeds their Will Defense.",
+        cost: 2000,
         weight: 2,
-        availability: "-"
+        availability: "Military",
+        features: ["Remote Processor jamming", "Short range", "Incapacitates affected droids"],
+        restrictions: ["Military availability", "NOT available at chargen", "Ineffective against droids with Backup Processors"]
+      },
+      {
+        id: "remote-receiver-signal-booster",
+        name: "Remote Receiver Signal Booster",
+        category: "enhancement",
+        description: "Extends Remote Receiver range by 50%. Successful DC 30 Use Computer check further extends range up to 100% for 1 hour.",
+        cost: 500,
+        weight: 2,
+        availability: "Licensed",
+        features: ["Range extension +50%", "Range boost +100% (1hr, DC 30 check)"],
+        restrictions: ["Licensed availability", "Requires Remote Receiver", "Typically unavailable at chargen"]
+      }
+    ],
+
+    // HARDENED SYSTEMS - For Large or greater droids only
+    hardenedsystems: [
+      {
+        id: "hardened-systems-x2",
+        name: "Hardened Systems x2",
+        category: "internal-armor",
+        sizeRestriction: "large",
+        description: "Internal armor and redundant systems enable droid to continue functioning despite heavy damage. Provides +20 Hit Points and +10 to Damage Threshold (for Large droids; scales with size).",
+        multiplier: 2,
+        hpBonus: 20,
+        dtBonus: 10,
+        cost: (costFactor) => Math.ceil(1000 * costFactor),
+        weight: (costFactor) => 100 * costFactor,
+        availability: "Military",
+        features: ["Internal armor", "Redundant systems", "+20 HP", "+10 Damage Threshold"],
+        restrictions: ["Military availability", "Large droids or larger only", "NOT available at chargen"]
+      },
+      {
+        id: "hardened-systems-x3",
+        name: "Hardened Systems x3",
+        category: "internal-armor",
+        sizeRestriction: "large",
+        description: "Internal armor and redundant systems enable droid to continue functioning despite heavy damage. Provides +30 Hit Points and +15 to Damage Threshold (for Large droids; scales with size).",
+        multiplier: 3,
+        hpBonus: 30,
+        dtBonus: 15,
+        cost: (costFactor) => Math.ceil(2500 * costFactor),
+        weight: (costFactor) => 250 * costFactor,
+        availability: "Military",
+        features: ["Internal armor", "Redundant systems", "+30 HP", "+15 Damage Threshold"],
+        restrictions: ["Military availability", "Large droids or larger only", "NOT available at chargen"]
+      },
+      {
+        id: "hardened-systems-x4",
+        name: "Hardened Systems x4",
+        category: "internal-armor",
+        sizeRestriction: "large",
+        description: "Internal armor and redundant systems enable droid to continue functioning despite heavy damage. Provides +40 Hit Points and +20 to Damage Threshold (for Large droids; scales with size).",
+        multiplier: 4,
+        hpBonus: 40,
+        dtBonus: 20,
+        cost: (costFactor) => Math.ceil(4000 * costFactor),
+        weight: (costFactor) => 400 * costFactor,
+        availability: "Military",
+        features: ["Internal armor", "Redundant systems", "+40 HP", "+20 Damage Threshold"],
+        restrictions: ["Military availability", "Large droids or larger only", "NOT available at chargen"]
+      },
+      {
+        id: "hardened-systems-x5",
+        name: "Hardened Systems x5",
+        category: "internal-armor",
+        sizeRestriction: "large",
+        description: "Internal armor and redundant systems enable droid to continue functioning despite heavy damage. Provides +50 Hit Points and +25 to Damage Threshold (for Large droids; scales with size).",
+        multiplier: 5,
+        hpBonus: 50,
+        dtBonus: 25,
+        cost: (costFactor) => Math.ceil(6250 * costFactor),
+        weight: (costFactor) => 650 * costFactor,
+        availability: "Military",
+        features: ["Internal armor", "Redundant systems", "+50 HP", "+25 Damage Threshold"],
+        restrictions: ["Military availability", "Large droids or larger only", "NOT available at chargen"]
       }
     ],
     sensors: [
