@@ -1,0 +1,267 @@
+<form class="prerequisite-builder-form">
+  <div class="prerequisite-header">
+    <h3>Prerequisite Builder</h3>
+    <p class="help-text">Define conditions using ANY or ALL logic</p>
+  </div>
+
+  <div class="form-group">
+    <label>Logic Mode</label>
+    <div class="mode-selector">
+      <label class="radio">
+        <input type="radio" name="mode" value="all" {{#if (eq mode 'all')}}checked{{/if}} />
+        <span>ALL conditions must be met</span>
+      </label>
+      <label class="radio">
+        <input type="radio" name="mode" value="any" {{#if (eq mode 'any')}}checked{{/if}} />
+        <span>ANY condition can be met</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="conditions-section">
+    <h4>Conditions</h4>
+    <div class="conditions-list">
+      {{#each conditions}}
+      <div class="condition-row" data-index="{{@index}}">
+        <div class="condition-type-select">
+          <select name="type" data-index="{{@index}}" class="condition-type">
+            <option value="feat" {{#if (eq this.type 'feat')}}selected{{/if}}>Feat</option>
+            <option value="featPattern" {{#if (eq this.type 'featPattern')}}selected{{/if}}>Any Feat Matching</option>
+            <option value="talent" {{#if (eq this.type 'talent')}}selected{{/if}}>Talent</option>
+            <option value="talentFromTree" {{#if (eq this.type 'talentFromTree')}}selected{{/if}}>Talent from Tree</option>
+            <option value="attribute" {{#if (eq this.type 'attribute')}}selected{{/if}}>Ability Score</option>
+            <option value="skillTrained" {{#if (eq this.type 'skillTrained')}}selected{{/if}}>Skill Trained</option>
+            <option value="bab" {{#if (eq this.type 'bab')}}selected{{/if}}>Base Attack Bonus</option>
+            <option value="level" {{#if (eq this.type 'level')}}selected{{/if}}>Character Level</option>
+            <option value="darkSideScore" {{#if (eq this.type 'darkSideScore')}}selected{{/if}}>Dark Side Score</option>
+            <option value="darkSideScoreDynamic" {{#if (eq this.type 'darkSideScoreDynamic')}}selected{{/if}}>DSP vs Ability</option>
+            <option value="species" {{#if (eq this.type 'species')}}selected{{/if}}>Species</option>
+            <option value="forcePower" {{#if (eq this.type 'forcePower')}}selected{{/if}}>Force Power</option>
+            <option value="forceTechnique" {{#if (eq this.type 'forceTechnique')}}selected{{/if}}>Force Technique</option>
+            <option value="forceSecret" {{#if (eq this.type 'forceSecret')}}selected{{/if}}>Force Secret</option>
+          </select>
+        </div>
+
+        {{#switch this.type}}
+          {{#case 'feat'}}
+          <div class="condition-fields">
+            <input type="text" name="id[{{@index}}]" placeholder="ID" data-index="{{@index}}" value="{{this.id}}" />
+            <input type="text" name="name[{{@index}}]" placeholder="Feat Name" data-index="{{@index}}" value="{{this.name}}" />
+          </div>
+          {{/case}}
+
+          {{#case 'featPattern'}}
+          <div class="condition-fields">
+            <input type="text" name="pattern[{{@index}}]" placeholder="Pattern (e.g., 'Weapon Focus')" data-index="{{@index}}" value="{{this.pattern}}" />
+            <input type="text" name="description[{{@index}}]" placeholder="Description (e.g., 'any Weapon Focus feat')" data-index="{{@index}}" value="{{this.description}}" />
+          </div>
+          {{/case}}
+
+          {{#case 'talent'}}
+          <div class="condition-fields">
+            <input type="text" name="id[{{@index}}]" placeholder="ID" data-index="{{@index}}" value="{{this.id}}" />
+            <input type="text" name="name[{{@index}}]" placeholder="Talent Name" data-index="{{@index}}" value="{{this.name}}" />
+          </div>
+          {{/case}}
+
+          {{#case 'talentFromTree'}}
+          <div class="condition-fields">
+            <input type="text" name="tree[{{@index}}]" placeholder="Tree Name" data-index="{{@index}}" value="{{this.tree}}" />
+            <input type="number" name="count[{{@index}}]" placeholder="Count" data-index="{{@index}}" value="{{this.count}}" min="1" />
+          </div>
+          {{/case}}
+
+          {{#case 'attribute'}}
+          <div class="condition-fields">
+            <select name="ability[{{@index}}]" data-index="{{@index}}">
+              <option value="">Select Ability</option>
+              <option value="str" {{#if (eq this.ability 'str')}}selected{{/if}}>Strength</option>
+              <option value="dex" {{#if (eq this.ability 'dex')}}selected{{/if}}>Dexterity</option>
+              <option value="con" {{#if (eq this.ability 'con')}}selected{{/if}}>Constitution</option>
+              <option value="int" {{#if (eq this.ability 'int')}}selected{{/if}}>Intelligence</option>
+              <option value="wis" {{#if (eq this.ability 'wis')}}selected{{/if}}>Wisdom</option>
+              <option value="cha" {{#if (eq this.ability 'cha')}}selected{{/if}}>Charisma</option>
+            </select>
+            <input type="number" name="min[{{@index}}]" placeholder="Minimum" data-index="{{@index}}" value="{{this.min}}" min="1" />
+          </div>
+          {{/case}}
+
+          {{#case 'skillTrained'}}
+          <div class="condition-fields">
+            <input type="text" name="skill[{{@index}}]" placeholder="Skill name (lowercase)" data-index="{{@index}}" value="{{this.skill}}" />
+          </div>
+          {{/case}}
+
+          {{#case 'bab'}}
+          <div class="condition-fields">
+            <input type="number" name="min[{{@index}}]" placeholder="Minimum BAB" data-index="{{@index}}" value="{{this.min}}" min="0" />
+          </div>
+          {{/case}}
+
+          {{#case 'level'}}
+          <div class="condition-fields">
+            <input type="number" name="min[{{@index}}]" placeholder="Minimum Level" data-index="{{@index}}" value="{{this.min}}" min="1" />
+          </div>
+          {{/case}}
+
+          {{#case 'darkSideScore'}}
+          <div class="condition-fields">
+            <input type="number" name="min[{{@index}}]" placeholder="Minimum DSP" data-index="{{@index}}" value="{{this.min}}" min="0" />
+          </div>
+          {{/case}}
+
+          {{#case 'darkSideScoreDynamic'}}
+          <div class="condition-fields">
+            <select name="ability[{{@index}}]" data-index="{{@index}}">
+              <option value="">Select Ability</option>
+              <option value="str" {{#if (eq this.ability 'str')}}selected{{/if}}>Strength</option>
+              <option value="dex" {{#if (eq this.ability 'dex')}}selected{{/if}}>Dexterity</option>
+              <option value="con" {{#if (eq this.ability 'con')}}selected{{/if}}>Constitution</option>
+              <option value="int" {{#if (eq this.ability 'int')}}selected{{/if}}>Intelligence</option>
+              <option value="wis" {{#if (eq this.ability 'wis')}}selected{{/if}}>Wisdom</option>
+              <option value="cha" {{#if (eq this.ability 'cha')}}selected{{/if}}>Charisma</option>
+            </select>
+            <select name="operator[{{@index}}]" data-index="{{@index}}">
+              <option value="equals" {{#if (eq this.operator 'equals')}}selected{{/if}}>Equals</option>
+              <option value="greaterThan" {{#if (eq this.operator 'greaterThan')}}selected{{/if}}>&gt;</option>
+              <option value="lessThan" {{#if (eq this.operator 'lessThan')}}selected{{/if}}>&lt;</option>
+              <option value="greaterThanOrEqual" {{#if (eq this.operator 'greaterThanOrEqual')}}selected{{/if}}>&gt;=</option>
+              <option value="lessThanOrEqual" {{#if (eq this.operator 'lessThanOrEqual')}}selected{{/if}}>&lt;=</option>
+            </select>
+          </div>
+          {{/case}}
+
+          {{#case 'species'}}
+          <div class="condition-fields">
+            <input type="text" name="id[{{@index}}]" placeholder="ID" data-index="{{@index}}" value="{{this.id}}" />
+            <input type="text" name="name[{{@index}}]" placeholder="Species Name" data-index="{{@index}}" value="{{this.name}}" />
+          </div>
+          {{/case}}
+
+          {{#case 'forcePower'}}
+          <div class="condition-fields">
+            <input type="text" name="names[{{@index}}]" placeholder="Power names (comma-separated)" data-index="{{@index}}" value="{{#each this.names}}{{this}},{{/each}}" />
+          </div>
+          {{/case}}
+
+          {{#case 'forceTechnique'}}
+          <div class="condition-fields">
+            <input type="number" name="count[{{@index}}]" placeholder="Count" data-index="{{@index}}" value="{{this.count}}" min="0" />
+            <input type="text" name="associatedWithPower[{{@index}}]" placeholder="Associated with Power (optional)" data-index="{{@index}}" value="{{this.associatedWithPower}}" />
+          </div>
+          {{/case}}
+
+          {{#case 'forceSecret'}}
+          <div class="condition-fields">
+            <label class="checkbox">
+              <input type="checkbox" name="any[{{@index}}]" data-index="{{@index}}" {{#if this.any}}checked{{/if}} />
+              <span>Any Secret</span>
+            </label>
+            <input type="text" name="names[{{@index}}]" placeholder="Secret names (comma-separated)" data-index="{{@index}}" value="{{#each this.names}}{{this}},{{/each}}" />
+          </div>
+          {{/case}}
+        {{/switch}}
+
+        <button type="button" class="remove-condition" data-index="{{@index}}" title="Remove condition">×</button>
+      </div>
+      {{/each}}
+    </div>
+
+    <button type="button" class="add-condition">+ Add Condition</button>
+  </div>
+
+  <div class="prerequisite-preview">
+    <h4>Preview</h4>
+    <pre>{{json this}}</pre>
+  </div>
+</form>
+
+<style>
+.prerequisite-builder-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.condition-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  align-items: center;
+}
+
+.condition-type-select select {
+  flex: 0 0 auto;
+  min-width: 150px;
+}
+
+.condition-fields {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.condition-fields input,
+.condition-fields select {
+  flex: 1;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.remove-condition {
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.2rem;
+  padding: 0;
+  border: 1px solid #ccc;
+  background: #eee;
+  cursor: pointer;
+}
+
+.remove-condition:hover {
+  background: #ff6b6b;
+  color: white;
+  border-color: #ff6b6b;
+}
+
+.add-condition {
+  align-self: flex-start;
+  padding: 0.5rem 1rem;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-condition:hover {
+  background: #45a049;
+}
+
+.prerequisite-preview {
+  background: #f5f5f5;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.prerequisite-preview pre {
+  margin: 0;
+  overflow-x: auto;
+}
+
+.mode-selector {
+  display: flex;
+  gap: 1rem;
+}
+
+.radio label,
+.checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+</style>

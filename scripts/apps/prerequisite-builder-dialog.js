@@ -1,0 +1,254 @@
+/**
+ * PREREQUISITE BUILDER DIALOG
+ *
+ * Visual UI tool for authors to define prerequisite conditions for talents/feats
+ * Supports all condition types: feats, talents, attributes, skills, Force, etc.
+ */
+
+export class PrerequisiteBuilderDialog extends FormApplication {
+  constructor(object = {}, options = {}) {
+    super(object, options);
+    this.conditions = object.conditions ?? [];
+    this.mode = object.type ?? 'all';
+  }
+
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      id: 'prerequisite-builder',
+      title: 'Prerequisite Builder',
+      template: 'modules/foundryvtt-swse/templates/prerequisite-builder.html',
+      width: 700,
+      height: 800,
+      resizable: true,
+      classes: ['swse', 'prerequisite-builder']
+    });
+  }
+
+  getData() {
+    return {
+      mode: this.mode,
+      conditions: this.conditions,
+      conditionTypes: this._getConditionTypes(),
+      skills: this._getSkillList(),
+      feats: this._getFeatList(),
+      talents: this._getTalentList(),
+      forcePowers: this._getForcePowerList(),
+      abilities: ['str', 'dex', 'con', 'int', 'wis', 'cha']
+    };
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    // Mode toggle
+    html.find('input[name="mode"]').on('change', e => {
+      this.mode = e.target.value;
+    });
+
+    // Add condition button
+    html.find('button.add-condition').on('click', () => {
+      this.conditions.push({
+        type: 'feat',
+        id: '',
+        name: ''
+      });
+      this.render();
+    });
+
+    // Remove condition
+    html.find('button.remove-condition').on('click', e => {
+      const idx = parseInt(e.target.dataset.index);
+      this.conditions.splice(idx, 1);
+      this.render();
+    });
+
+    // Update condition type
+    html.find('select[name="type"]').on('change', e => {
+      const idx = parseInt(e.target.dataset.index);
+      this.conditions[idx].type = e.target.value;
+      this.render();
+    });
+
+    // Update condition fields
+    html.find('input, select').on('change', e => {
+      const idx = parseInt(e.target.dataset.index);
+      const field = e.target.name.split('[')[1]?.slice(0, -1);
+      if (idx !== undefined && field) {
+        this.conditions[idx][field] = e.target.value;
+      }
+    });
+  }
+
+  _getConditionTypes() {
+    return [
+      { value: 'feat', label: 'Feat' },
+      { value: 'featPattern', label: 'Any Feat Matching Pattern' },
+      { value: 'talent', label: 'Talent' },
+      { value: 'talentFromTree', label: 'Talent from Tree' },
+      { value: 'attribute', label: 'Ability Score' },
+      { value: 'skillTrained', label: 'Skill Trained' },
+      { value: 'bab', label: 'Base Attack Bonus' },
+      { value: 'level', label: 'Character Level' },
+      { value: 'darkSideScore', label: 'Dark Side Score' },
+      { value: 'darkSideScoreDynamic', label: 'Dark Side Score vs Ability' },
+      { value: 'species', label: 'Species' },
+      { value: 'forcePower', label: 'Force Power' },
+      { value: 'forceTechnique', label: 'Force Technique' },
+      { value: 'forceSecret', label: 'Force Secret' }
+    ];
+  }
+
+  _getSkillList() {
+    return Object.keys(game.system?.model?.Actor?.character?.skills ?? {})
+      .map(key => ({ id: key, label: game.system?.model?.Actor?.character?.skills?.[key]?.label ?? key }));
+  }
+
+  _getFeatList() {
+    return Array.from(game.items.values())
+      .filter(i => i.type === 'feat')
+      .map(i => ({ id: i.id, name: i.name }));
+  }
+
+  _getTalentList() {
+    return Array.from(game.items.values())
+      .filter(i => i.type === 'talent')
+      .map(i => ({ id: i.id, name: i.name }));
+  }
+
+  _getForcePowerList() {
+    return Array.from(game.items.values())
+      .filter(i => i.type === 'forcepower')
+      .map(i => ({ id: i.id, name: i.name }));
+  }
+
+  async _updateObject(event, formData) {
+    return {
+      type: this.mode,
+      conditions: this.conditions
+    };
+  }
+
+  /**
+   * Static method to open builder and return result
+   */
+  static async build(existing = {}) {
+    return new Promise((resolve) => {
+      const dialog = new PrerequisiteBuilderDialog(existing, {
+        buttons: {
+          save: {
+            label: 'Save Prerequisites',
+            callback: async (html) => {
+              const result = dialog._getCurrentState();
+              resolve(result);
+              dialog.close();
+            }
+          },
+          cancel: {
+            label: 'Cancel',
+            callback: () => {
+              resolve(null);
+              dialog.close();
+            }
+          }
+        }
+      });
+      dialog.render(true);
+    });
+  }
+
+  _getCurrentState() {
+    return {
+      type: this.mode,
+      conditions: this.conditions.filter(c => c.id || c.pattern || c.skill || c.ability)
+    };
+  }
+}
+
+/**
+ * COMPACT BUILDER - Minimal inline builder for quick edits
+ */
+export class PrerequisiteCompactBuilder {
+  static async buildCondition(doc, index) {
+    const dialog = new Dialog({
+      title: `Edit Condition ${index + 1}`,
+      content: this._getTemplate(),
+      buttons: {
+        save: {
+          label: 'Save',
+          callback: (html) => {
+            return this._parseForm(html);
+          }
+        },
+        delete: {
+          label: 'Delete',
+          callback: () => {
+            return 'DELETE';
+          }
+        },
+        cancel: {
+          label: 'Cancel'
+        }
+      }
+    });
+    dialog.render(true);
+  }
+
+  static _getTemplate() {
+    return `
+      <form>
+        <div class="form-group">
+          <label>Condition Type</label>
+          <select name="type" class="condition-type">
+            <option value="feat">Feat</option>
+            <option value="featPattern">Any Feat Matching Pattern</option>
+            <option value="talent">Talent</option>
+            <option value="talentFromTree">Talent from Tree</option>
+            <option value="attribute">Ability Score</option>
+            <option value="skillTrained">Skill Trained</option>
+            <option value="bab">Base Attack Bonus</option>
+            <option value="level">Character Level</option>
+            <option value="darkSideScore">Dark Side Score</option>
+            <option value="darkSideScoreDynamic">Dark Side Score vs Ability</option>
+            <option value="species">Species</option>
+            <option value="forcePower">Force Power</option>
+            <option value="forceTechnique">Force Technique</option>
+            <option value="forceSecret">Force Secret</option>
+          </select>
+        </div>
+        <div id="condition-fields"></div>
+      </form>
+    `;
+  }
+
+  static _parseForm(html) {
+    const type = html.find('[name="type"]').val();
+    const result = { type };
+
+    // Parse type-specific fields
+    switch (type) {
+      case 'feat':
+      case 'talent':
+        result.id = html.find('[name="id"]').val();
+        result.name = html.find('[name="name"]').val();
+        break;
+      case 'featPattern':
+      case 'forceSecret':
+        result.pattern = html.find('[name="pattern"]').val();
+        result.description = html.find('[name="description"]').val();
+        break;
+      case 'attribute':
+      case 'darkSideScoreDynamic':
+        result.ability = html.find('[name="ability"]').val();
+        result.min = parseInt(html.find('[name="min"]').val());
+        break;
+      case 'skillTrained':
+        result.skill = html.find('[name="skill"]').val();
+        break;
+      case 'forcePower':
+        result.names = html.find('[name="names"]').val().split(',').map(s => s.trim());
+        break;
+    }
+
+    return result;
+  }
+}
