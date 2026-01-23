@@ -5,17 +5,20 @@ This document outlines all vehicle statistics per Star Wars Saga Edition rules a
 ## Core Statistics
 
 ### Initiative
-**Formula**: Pilot's Initiative modifier (or Pilot skill modifier if trained) + Vehicle's size modifier + Vehicle's Dexterity modifier
-**Status**: ⚠️ NEEDS IMPLEMENTATION
+**Formula**: Pilot's Initiative modifier + Vehicle's size modifier + Vehicle's Dexterity modifier
+**Status**: ✅ IMPLEMENTED
+**Location**: `scripts/data-models/vehicle-data-model.js:908`
 **Notes**:
-- Use Pilot skill modifier as Dexterity substitute
-- If pilot is flat-footed or vehicle is out of control, lose Dexterity bonus
-- If vehicle is at full stop, disabled, or powered down, treat as Dex 0 (-5 penalty)
+- Uses Pilot's Initiative skill total as modifier
+- If pilot is flat-footed, loses their Dex bonus to initiative
+- If vehicle is out of control, loses vehicle Dex bonus
+- If vehicle is disabled, treats vehicle Dex as 0 (-5 penalty)
 
 ### Perception
-**Formula**: Character's normal Perception modifier
-**Status**: ⚠️ NEEDS IMPLEMENTATION
-**Notes**: From crew member with best Perception skill
+**Formula**: Best crew member's Perception modifier
+**Status**: ✅ IMPLEMENTED
+**Location**: `scripts/data-models/vehicle-data-model.js:808`
+**Notes**: Calculates from crew member with highest Perception skill modifier
 
 ### Size Modifier
 **Formula**: Vehicle Size Category
