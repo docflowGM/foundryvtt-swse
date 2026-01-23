@@ -70,6 +70,7 @@
     "styles/progression/ability-rolling.css",
     "styles/progression/suggestion-engine.css",
     "styles/mentor.css",
+    "styles/dialogs/holo-dialogs.css",
     "styles/sheets/droid-level3.css",
     "styles/sheets/vehicle-level3.css",
     "styles/npc-level3.css",
