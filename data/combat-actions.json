@@ -141,16 +141,16 @@
     "type": "combatAction"
   },
   {
-    "name": "Coup de grace",
+    "name": "Coup de Grace",
     "action": {
       "type": "full-round",
       "cost": 1
     },
-    "notes": "Against helpless adjacent opponent; auto-critical; target reduced to 0 HP dies (or destroyed for objects).",
+    "notes": "Full-Round Action against a Helpless target. Can use melee weapon or ranged weapon if adjacent. Automatically scores a Critical Hit dealing double damage. Target reduced to 0 HP dies instantly. Unconscious or disabled defenders hit by Coup de Grace die instantly. Cannot use against vehicles or objects.",
     "relatedSkills": [
       {
-        "skill": "Attack Roll",
-        "outcome": "Auto-crit; immediate lethal effect"
+        "skill": "Attack Roll (Melee or Ranged)",
+        "outcome": "Auto-critical hit; double damage; instant death if reduced to 0 HP"
       }
     ],
     "type": "combatAction"
@@ -630,6 +630,54 @@
         "when": "Tumble instead of provoke AoO"
       }
     ],
+    "type": "combatAction"
+  },
+  {
+    "name": "Maiming Foes",
+    "action": {
+      "type": "standard",
+      "cost": 1
+    },
+    "notes": "Declare intent to maim instead of kill. Make attack at -5 penalty. On hit, deal half damage. If attack reduces target to 0 HP, target is maimed but alive instead of dead.",
+    "relatedSkills": [
+      {
+        "skill": "Attack Roll",
+        "dc": {
+          "type": "expression",
+          "value": "d20 + BAB + modifiers - 5"
+        },
+        "outcome": "Half damage; target maimed at 0 HP instead of dying"
+      }
+    ],
+    "type": "combatAction"
+  },
+  {
+    "name": "Anticipate Enemy Strategy",
+    "action": {
+      "type": "move",
+      "cost": 1
+    },
+    "notes": "Trained in Knowledge (Tactics) only. Make Knowledge (Tactics) check vs target's Will Defense (or 10 + target's CL if no Will Defense). Success reveals target's likely next action, who they'll attack, where they'll move, or other strategies.",
+    "relatedSkills": [
+      {
+        "skill": "Knowledge (Tactics)",
+        "dc": {
+          "type": "opposed",
+          "target": "Target's Will Defense or 10 + CL"
+        },
+        "outcome": "Gain insight into target's next action and strategy"
+      }
+    ],
+    "type": "combatAction"
+  },
+  {
+    "name": "Recover",
+    "action": {
+      "type": "3 swift actions",
+      "cost": 3
+    },
+    "notes": "Spend three Swift Actions in same round or across consecutive rounds to move +1 step up the Condition Track. Cannot use Recover while afflicted by a Persistent Condition.",
+    "relatedSkills": [],
     "type": "combatAction"
   }
 ]

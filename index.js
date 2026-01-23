@@ -219,6 +219,8 @@ import { registerHouseruleSettings } from './scripts/houserules/houserule-settin
 import { HouseruleMechanics } from './scripts/houserules/houserule-mechanics.js';
 import { HouserulesConfig } from './scripts/houserules/houserules-config.js';
 import { AidAnother } from './scripts/combat/aid-another.js';
+import { MaimingMechanic } from './scripts/combat/maiming.js';
+import { TacticsAnticipation } from './scripts/combat/tactics.js';
 import { GrappleMechanics } from './scripts/houserules/houserule-grapple.js';
 import { RecoveryMechanics } from './scripts/houserules/houserule-recovery.js';
 import { ConditionTrackMechanics } from './scripts/houserules/houserule-condition-track.js';
@@ -428,6 +430,9 @@ Hooks.once("ready", async function () {
     TalentAbilitiesEngine.initCombatHooks();
     HouseruleMechanics.initialize();
     AidAnother.initialize();
+
+    // Core combat mechanics
+    // MaimingMechanic and TacticsAnticipation are utility classes, no initialization needed
 
     RulesEngine.init();
     Upkeep.init();
