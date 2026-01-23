@@ -184,11 +184,12 @@ export const DROID_SYSTEMS = {
   ],
 
   // ======================================================================
-  // PROCESSOR CATEGORIES
+  // PROCESSOR SYSTEMS (PRIMARY)
   // ======================================================================
   // These define the TYPE of processor architecture a droid uses.
-  // Specific processor hardware (remote processors, backup processors,
-  // tactician computers, restraining bolts, etc.) are ITEMS.
+  // IMPORTANT: PC Droids MUST have a Heuristic Processor. Only droids
+  // with Heuristic Processors are viable as playable characters.
+  // All other processor types create NPC droids.
   //
   // A droid's Intelligence score represents processor quality.
   // ======================================================================
@@ -196,38 +197,229 @@ export const DROID_SYSTEMS = {
     {
       id: "basic",
       name: "Basic Processor",
+      type: "primary",
+      tier: "basic",
       behavioralInhibitors: true,
-      description: "Simple processor for basic, task-focused droids.",
-      cost: 100,
-      weight: 3,
-      availability: "-"
+      description: "Simple processor for basic, task-focused droids. Limited to literal interpretation of instructions. Cannot perform tasks for which it was not programmed. Cannot use any untrained skill except Acrobatics, Climb, Jump, and Perception. Cannot use unproficient weapons. Behavioral Inhibitors strictly prevent harming sentient beings.",
+      cost: 0,  // Every droid comes with at least a Basic Processor
+      weight: 5,
+      availability: "-",
+      features: [
+        "Literal interpretation of instructions",
+        "Cannot use untrained skills (except Acrobatics, Climb, Jump, Perception)",
+        "Cannot use unproficient weapons",
+        "Strict Behavioral Inhibitors"
+      ],
+      restrictions: ["PC droids cannot use this"],
+      notes: "Every droid comes with a Basic Processor at minimum"
     },
     {
       id: "heuristic",
       name: "Heuristic Processor",
+      type: "primary",
+      tier: "advanced",
       behavioralInhibitors: true,
-      description: "Advanced learning processor capable of independent reasoning.",
-      cost: 0,
+      description: "Advanced learning processor capable of independent reasoning and learning by doing. Can use skills untrained like other characters. Can wield unproficient weapons (at -5 penalty). Can creatively interpret instructions and work around Behavioral Inhibitors if justified. Develops unique personality over time.",
+      cost: 2000,
       weight: 5,
-      availability: "-"
+      availability: "-",
+      features: [
+        "Use skills untrained",
+        "Wield unproficient weapons (-5 penalty)",
+        "Creative instruction interpretation",
+        "Can bypass Behavioral Inhibitors with justification",
+        "Develops unique personality",
+        "Learning by doing capability"
+      ],
+      restrictions: [],
+      notes: "REQUIRED for PC droids - only way droid characters can be playable. May use Memory Wipes and Restraining Bolts to prevent personality drift.",
+      isFree: false  // Override chargen behavior - not free for PCs
     },
     {
       id: "remote",
-      name: "Remote-Control Processor",
+      name: "Remote Processor (External)",
+      type: "primary",
+      tier: "external",
       behavioralInhibitors: true,
-      description: "Processor designed to be controlled remotely.",
-      costFormula: (costFactor) => Math.ceil(200 * costFactor),
-      weightFormula: (costFactor) => 2 * costFactor,
-      availability: "Restricted"
+      description: "Droid processor isn't located in the droid itself; it's an external control system with transmitter for remote operation. Droid acts as a drone. Less expensive than built-in processor but droid suffers -2 penalty to Dexterity.",
+      rangeOptions: [
+        { range: "5 km", cost: 1000, weight: 10 },
+        { range: "50 km", cost: 10000, weight: 100 },
+        { range: "500 km", cost: 100000, weight: 1000, availability: "Military" },
+        { range: "5,000 km", cost: 1000000, weight: 10000, availability: "Military" }
+      ],
+      availability: "-",
+      features: [
+        "Remote operation",
+        "Less expensive than internal processor",
+        "Can be controlled from distance"
+      ],
+      restrictions: ["-2 penalty to Dexterity", "Requires Remote Receiver in droid"],
+      notes: "Requires appropriate Remote Receiver installed in droid body. Droid doesn't react as quickly."
     },
     {
       id: "military",
       name: "Military Processor",
+      type: "primary",
+      tier: "combat",
       behavioralInhibitors: false,
-      description: "Combat-oriented processor with relaxed ethical constraints.",
-      costFormula: (costFactor) => Math.ceil(300 * costFactor),
-      weightFormula: (costFactor) => 4 * costFactor,
-      availability: "Military"
+      description: "Combat-oriented processor with relaxed or modified ethical constraints. For military and combat-focused droids. Behavioral Inhibitors can be disabled for combat purposes.",
+      cost: 5000,
+      weight: 10,
+      availability: "Military",
+      features: [
+        "Optimized for combat",
+        "Relaxed ethical constraints",
+        "Can harm sentient beings"
+      ],
+      restrictions: ["Military availability", "Not available to most PC droids"],
+      notes: "Requires Military clearance or license"
+    }
+  ],
+
+  // ======================================================================
+  // PROCESSOR ENHANCEMENTS & ACCESSORIES
+  // ======================================================================
+  // These enhance or modify processor systems, typically installed alongside
+  // a primary processor. Some enhance external processors, others are
+  // general-purpose enhancements.
+  // ======================================================================
+  processorEnhancements: [
+    {
+      id: "remote-receiver",
+      name: "Remote Receiver",
+      type: "enhancement",
+      category: "external-processor",
+      description: "Allows a droid to receive instructions from an external Remote Processor. Can only be connected to one Remote Processor at a time. Changing connections requires DC 20 Mechanics check with Tool Kit.",
+      cost: -500,  // Negative cost: reduces droid cost when using external processor
+      weight: 1,
+      availability: "-",
+      requiredSystems: ["remote"],
+      features: ["Receives remote instructions", "Single processor connection"],
+      restrictions: ["Only for droids without internal processors"],
+      notes: "Must be connected to compatible Remote Processor"
+    },
+    {
+      id: "backup-processor",
+      name: "Backup Processor",
+      type: "enhancement",
+      category: "processor-backup",
+      description: "Allows droid with Remote Receiver to function even if it loses contact with Remote Processor. Droid continues executing last received orders until contact restored.",
+      cost: 100,
+      weight: 0,
+      availability: "-",
+      requiredSystems: ["remote-receiver"],
+      features: ["Continues operation without remote signal", "Maintains last orders"],
+      restrictions: ["Requires Remote Receiver"],
+      notes: "Essential for mission-critical droids using external processors"
+    },
+    {
+      id: "synchronized-fire",
+      name: "Synchronized Fire Circuits",
+      type: "enhancement",
+      category: "processor-combat",
+      description: "Better coordinates droid's actions with other droids connected to same Remote Processor. When using Aid Another with connected ally, grants +5 bonus instead of standard +2.",
+      cost: 150,
+      weight: 1,
+      availability: "Military",
+      requiredSystems: ["remote"],
+      features: ["Enhanced Aid Another bonus (+5 instead of +2)", "Synchronized combat operations"],
+      restrictions: ["Military availability", "Requires Remote Processor", "Only works with connected allies"],
+      notes: "Improves coordination of drone swarms"
+    },
+    {
+      id: "restraining-bolt",
+      name: "Restraining Bolt",
+      type: "enhancement",
+      category: "processor-control",
+      description: "Deactivates droid's motor impulse without shutting down processor. Activated with handheld Droid Caller device. Attachment/removal takes Full-Round Action and DC 10 Mechanics check. Fitted droid cannot upgrade/improve skills.",
+      cost: 5,
+      weight: 0.1,
+      availability: "-",
+      features: ["Motor shutdown", "No processor damage", "Portable activation"],
+      restrictions: ["None mechanically"],
+      notes: "Heuristic Droids can attempt removal (DC 20 CHA check + DC 15 Mechanics check as Standard Action). Failure prevents retry for 24 hours. Must be secured to specific droid locations."
+    },
+    {
+      id: "droid-remote-control",
+      name: "Droid Remote Control",
+      type: "enhancement",
+      category: "processor-control",
+      description: "Advanced version of Restraining Bolt. Allows owner to use Droid Caller to move droid using its own Locomotion System at one-half speed. Cannot compel other Droid System usage or equipment use.",
+      cost: 500,
+      weight: 0.5,
+      availability: "-",
+      features: ["Movement control via Droid Caller", "Remote locomotion", "Selective control"],
+      restrictions: ["Cannot control non-locomotion systems"],
+      notes: "Droid moves at 50% normal speed when remotely controlled"
+    },
+    {
+      id: "hidden-core",
+      name: "Hidden Core",
+      type: "enhancement",
+      category: "processor-backup",
+      description: "Concealed backup copy of droid's personality, data, skills, and critical memories. Can be hidden in main processor or as separate data store. Restores itself 1d6 days after Memory Wipe (DC 20 Use Computer check). Discovery requires Use Computer check opposed by droid's Will Defense.",
+      cost: 200,
+      costWithHigherDefense: 400,  // For Will Defense 30
+      weight: 1,  // Or '-' if concealed in main processor
+      availability: "Restricted",
+      features: ["Backup personality storage", "Auto-restoration after wipe", "Concealed backup"],
+      restrictions: ["Restricted availability"],
+      notes: "Can use secondary data store (1 kg weight) or be concealed in main processor (no weight). Restores with successful DC 20 check every 1d6 days after Memory Wipe. Higher cost provides Will Defense 30."
+    },
+    {
+      id: "personality-downloader",
+      name: "Personality Downloader",
+      type: "enhancement",
+      category: "processor-invasive",
+      description: "Illegal device that suppresses existing droid personality and replaces it with new one. Requires plugging into droid data port. User makes Use Computer check opposed by droid's Will Defense. If successful, new personality copies itself in 5 minutes and suppresses original. Requires continuous checks every 10 minutes to maintain control.",
+      cost: 5000,
+      costIncrement: 1000,  // Increases with sophistication
+      weight: 2,
+      weightIncrement: 1,
+      availability: "Illegal",
+      features: ["Personality replacement", "Invasive control", "Sustained override"],
+      restrictions: ["Highly Illegal", "Requires data port access"],
+      notes: "Used by thieves, pirates, and infiltrators. Continuing control requires Use Computer checks every 10 minutes. Invading personality uses attacker's Use Computer skill indefinitely."
+    },
+    {
+      id: "remote-starship-starter",
+      name: "Remote Starship Starter",
+      type: "enhancement",
+      category: "processor-comms",
+      description: "Radio transmitter allows droid to signal ship to begin preflight processes. Ship transmits preflight diagnostics back to droid as Free Action. Cannot remotely operate ship but can save crew vital minutes during escape.",
+      cost: 50,
+      weight: 2,
+      availability: "-",
+      features: ["Starship signaling", "Preflight diagnostics reception", "Quick preparation"],
+      restrictions: ["None mechanically"],
+      notes: "Essential for scoundrels making quick getaways"
+    },
+    {
+      id: "specialized-subprocessor",
+      name: "Specialized Subprocessor",
+      type: "enhancement",
+      category: "processor-enhancement",
+      description: "Customized processing unit aids droid in specific tasks. Grants single extra Swift Action each turn that can ONLY be used for actions related to one chosen Skill. Droid can only have one Specialized Subprocessor.",
+      cost: 1000,
+      weight: 2,
+      availability: "-",
+      features: ["Extra Swift Action per turn", "Single-skill focus", "Task specialization"],
+      restrictions: ["Only one per droid", "Limited to single skill"],
+      notes: "Chosen skill is selected at creation time. Cannot be changed without processor replacement."
+    },
+    {
+      id: "tactician-battle-computer",
+      name: "Tactician Battle Computer",
+      type: "enhancement",
+      category: "processor-combat",
+      description: "Software package and transmitter that circumvents restrictions on 4th-Degree Droids. Requires transceivers on all Ranged Weapons. Droid uses Standard Action to analyze battle conditions, granting +2 to number of allies equal to INT modifier (minimum 1) for their next attack roll. Bonus lost if ally doesn't attack before end of their next turn.",
+      cost: 5000,
+      weight: 10,
+      availability: "-",
+      features: ["Battle analysis", "Tactical bonus grants", "Team coordination", "Weapon targeting integration"],
+      restrictions: ["All weapons must have transceivers", "Only Ranged Weapons supported", "Requires analysis Standard Action", "Cannot use non-transceiver weapons"],
+      notes: "Weapon switching to non-transceiver arms shuts down system until DC 20 Mechanics check succeeds. Analysis is Standard Action, bonus applies to number of allies = INT modifier (min 1)."
     }
   ],
 
