@@ -66,20 +66,23 @@ This document outlines all vehicle statistics per Star Wars Saga Edition rules a
 
 ### Attack Rolls
 **Formula**: Gunner's Base Attack Bonus + Vehicle's Intelligence modifier + miscellaneous bonuses + 2 (if Trained in Pilot and firing pilot-controlled weapons)
-**Status**: ⚠️ NEEDS IMPLEMENTATION
+**Status**: ✅ IMPLEMENTED
+**Location**: `scripts/data-models/vehicle-data-model.js:835`
 **Notes**:
 - Base Attack Bonus comes from gunner crew member
 - Intelligence modifier represents the quality of the ship's computer
-- +2 bonus only applies when pilot is trained in Pilot skill AND firing pilot-controlled weapons
+- +2 bonus applied when pilot is trained in Pilot skill (for pilot-controlled weapons)
 
 ### Base Attack Bonus
 **Formula**: Gunner's Base Attack Bonus
-**Status**: ⚠️ NEEDS IMPLEMENTATION
-**Notes**: Pulled from gunner crew member's character sheet
+**Status**: ✅ IMPLEMENTED
+**Location**: `scripts/data-models/vehicle-data-model.js:835`
+**Notes**: Pulled from gunner crew member's character sheet via attackBonus property
 
 ### Grapple Modifier
 **Formula**: Pilot's Base Attack Bonus + Vehicle's Strength modifier + Vehicle's Size Modifier
-**Status**: ⚠️ NEEDS IMPLEMENTATION
+**Status**: ✅ IMPLEMENTED
+**Location**: `scripts/data-models/vehicle-data-model.js:866`
 **Size Modifiers for Grapple**:
 - Large: +5
 - Huge: +10
@@ -95,6 +98,8 @@ This document outlines all vehicle statistics per Star Wars Saga Edition rules a
 **Notes**:
 - Damage multiplier applies after rolling and adding bonuses
 - Pilot's heroic level contribution: divide by 2 and round down
+- Weapon damage itself is defined in item data
+- Pilot level bonus requires manual calculation or integration with weapon roll systems
 
 ### Weapon Range Modifiers
 **Status**: ✅ IMPLEMENTED (in combat calculations)
@@ -218,20 +223,20 @@ This document outlines all vehicle statistics per Star Wars Saga Edition rules a
 
 ## Implementation Priority
 
-### HIGH PRIORITY (Core Combat)
-1. Attack Rolls calculation
-2. Base Attack Bonus from gunner
-3. Grapple modifier calculation
-4. Initiative calculation
-5. Pilot's heroic level bonus to damage
+### HIGH PRIORITY (Core Combat) - MOSTLY COMPLETE
+1. ✅ Attack Rolls calculation - DONE
+2. ✅ Base Attack Bonus from gunner - DONE
+3. ✅ Grapple modifier calculation - DONE
+4. ✅ Initiative calculation - DONE
+5. ⚠️ Pilot's heroic level bonus to damage - PARTIALLY (weapon system integration needed)
 
-### MEDIUM PRIORITY (Information)
-1. Challenge Level field
-2. Cover field
-3. Perception from best crew member
-4. Cargo Capacity field
-5. Passengers field
-6. Hyperdrive multiplier field
+### MEDIUM PRIORITY (Information) - MOSTLY COMPLETE
+1. ✅ Challenge Level field - IMPLEMENTED
+2. ✅ Cover field - IMPLEMENTED
+3. ✅ Perception from best crew member - IMPLEMENTED
+4. ✅ Cargo Capacity field - IMPLEMENTED
+5. ✅ Passengers field - IMPLEMENTED
+6. ✅ Hyperdrive multiplier field - IMPLEMENTED
 
 ### LOW PRIORITY (Reference)
 1. Availability field
