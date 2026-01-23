@@ -240,6 +240,12 @@ export async function _onConfirmSpecies(event) {
     // Call the original species selection handler
     await this._onSelectSpecies(syntheticEvent);
     SWSELogger.log(`CharGen | Species ${speciesNameToSelect} selected successfully`);
+
+    // If this is a level-up (character sheet edit), close the CharGen window after applying species
+    if (this.actor) {
+      SWSELogger.log(`CharGen | Closing CharGen after species selection (character sheet edit)`);
+      this.close();
+    }
   } catch (error) {
     SWSELogger.error(`CharGen | Error selecting species: ${error.message}`, error);
     ui.notifications.error(`Failed to select species: ${error.message}`);

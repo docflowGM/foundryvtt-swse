@@ -332,8 +332,17 @@ export class BuildIntent {
                 classes: []
             },
             // Priority prerequisites to suggest
-            priorityPrereqs: []
+            priorityPrereqs: [],
+            // Template information if applied
+            appliedTemplate: null
         };
+
+        // Check for applied template to inform build intent
+        const appliedTemplate = actor.getFlag('swse', 'appliedTemplate');
+        if (appliedTemplate) {
+            intent.appliedTemplate = appliedTemplate;
+            SWSELogger.log(`[BUILD-INTENT] analyze() - Character uses template: ${appliedTemplate.name} (${appliedTemplate.archetype})`);
+        }
 
         // Analyze themes from feats
         SWSELogger.log(`[BUILD-INTENT] analyze() - Analyzing ${state.ownedFeats.size} feats`);
@@ -354,6 +363,12 @@ export class BuildIntent {
         // Calculate prestige affinities
         SWSELogger.log(`[BUILD-INTENT] analyze() - Calculating prestige affinities`);
         this._calculatePrestigeAffinities(state, intent);
+
+        // Apply template archetype bias if available
+        if (appliedTemplate && appliedTemplate.archetype) {
+            SWSELogger.log(`[BUILD-INTENT] analyze() - Applying template archetype bias: ${appliedTemplate.archetype}`);
+            this._applyTemplateArchetypeBias(intent, appliedTemplate.archetype);
+        }
 
         // Apply mentor survey biases if available
         SWSELogger.log(`[BUILD-INTENT] analyze() - Applying mentor survey biases`);
@@ -827,6 +842,81 @@ export class BuildIntent {
         }
 
         return "Aligns with your build direction";
+    }
+
+    /**
+     * Apply template archetype bias to intent
+     * Templates are "pure" archetypes, so they strongly bias the build intent
+     * @private
+     * @param {Object} intent - The build intent object to update
+     * @param {string} archetype - The template's archetype name
+     */
+    static _applyTemplateArchetypeBias(intent, archetype) {
+        SWSELogger.log(`[BUILD-INTENT] _applyTemplateArchetypeBias() START - Archetype: ${archetype}`);
+
+        // Map common archetypes to build themes
+        const archetypeThemeMap = {
+            // Melee-focused archetypes
+            'Duelist': { [BUILD_THEMES.MELEE]: 0.4, [BUILD_THEMES.COMBAT]: 0.3 },
+            'Swordmaster': { [BUILD_THEMES.MELEE]: 0.5, [BUILD_THEMES.COMBAT]: 0.4 },
+            'Gladiator': { [BUILD_THEMES.MELEE]: 0.5, [BUILD_THEMES.COMBAT]: 0.4 },
+            'Warrior': { [BUILD_THEMES.MELEE]: 0.4, [BUILD_THEMES.COMBAT]: 0.3 },
+
+            // Ranged-focused archetypes
+            'Gunslinger': { [BUILD_THEMES.RANGED]: 0.5, [BUILD_THEMES.COMBAT]: 0.3 },
+            'Marksman': { [BUILD_THEMES.RANGED]: 0.4, [BUILD_THEMES.COMBAT]: 0.2 },
+            'Sniper': { [BUILD_THEMES.RANGED]: 0.4, [BUILD_THEMES.STEALTH]: 0.3 },
+            'Gunfighter': { [BUILD_THEMES.RANGED]: 0.5, [BUILD_THEMES.COMBAT]: 0.3 },
+
+            // Stealth-focused archetypes
+            'Assassin': { [BUILD_THEMES.STEALTH]: 0.5, [BUILD_THEMES.COMBAT]: 0.3 },
+            'Spy': { [BUILD_THEMES.STEALTH]: 0.4, [BUILD_THEMES.TECH]: 0.2 },
+            'Shadow': { [BUILD_THEMES.STEALTH]: 0.5, [BUILD_THEMES.COMBAT]: 0.2 },
+            'Infiltrator': { [BUILD_THEMES.STEALTH]: 0.4, [BUILD_THEMES.TECH]: 0.2 },
+
+            // Force-focused archetypes
+            'Jedi': { [BUILD_THEMES.FORCE]: 0.5, [BUILD_THEMES.MELEE]: 0.2 },
+            'Sith': { [BUILD_THEMES.FORCE]: 0.5, [BUILD_THEMES.MELEE]: 0.2 },
+            'Force Adept': { [BUILD_THEMES.FORCE]: 0.4, [BUILD_THEMES.TECH]: 0.1 },
+            'Knight': { [BUILD_THEMES.FORCE]: 0.4, [BUILD_THEMES.MELEE]: 0.3 },
+
+            // Social-focused archetypes
+            'Diplomat': { [BUILD_THEMES.SOCIAL]: 0.4, [BUILD_THEMES.LEADERSHIP]: 0.3 },
+            'Leader': { [BUILD_THEMES.LEADERSHIP]: 0.4, [BUILD_THEMES.SOCIAL]: 0.3 },
+            'Scoundrel': { [BUILD_THEMES.SOCIAL]: 0.3, [BUILD_THEMES.TECH]: 0.2 },
+
+            // Tech-focused archetypes
+            'Mechanic': { [BUILD_THEMES.TECH]: 0.4, [BUILD_THEMES.SUPPORT]: 0.2 },
+            'Engineer': { [BUILD_THEMES.TECH]: 0.4, [BUILD_THEMES.SUPPORT]: 0.2 },
+            'Hacker': { [BUILD_THEMES.TECH]: 0.4, [BUILD_THEMES.STEALTH]: 0.1 },
+
+            // Exploration-focused archetypes
+            'Scout': { [BUILD_THEMES.EXPLORATION]: 0.3, [BUILD_THEMES.RANGED]: 0.2 },
+            'Explorer': { [BUILD_THEMES.EXPLORATION]: 0.3 },
+            'Tracker': { [BUILD_THEMES.EXPLORATION]: 0.3, [BUILD_THEMES.TRACKING]: 0.2 },
+
+            // Vehicle-focused archetypes
+            'Pilot': { [BUILD_THEMES.VEHICLE]: 0.4, [BUILD_THEMES.RANGED]: 0.2 },
+            'Ace': { [BUILD_THEMES.VEHICLE]: 0.4, [BUILD_THEMES.COMBAT]: 0.2 },
+
+            // Support-focused archetypes
+            'Medic': { [BUILD_THEMES.SUPPORT]: 0.3, [BUILD_THEMES.TECH]: 0.2 },
+            'Healer': { [BUILD_THEMES.SUPPORT]: 0.3 },
+            'Scholar': { [BUILD_THEMES.TECH]: 0.3, [BUILD_THEMES.SUPPORT]: 0.1 }
+        };
+
+        const themeBoosts = archetypeThemeMap[archetype];
+        if (themeBoosts) {
+            SWSELogger.log(`[BUILD-INTENT] _applyTemplateArchetypeBias() - Found theme mapping for archetype: ${archetype}`, themeBoosts);
+            for (const [themeKey, boostValue] of Object.entries(themeBoosts)) {
+                intent.themes[themeKey] = (intent.themes[themeKey] || 0) + boostValue;
+                SWSELogger.log(`[BUILD-INTENT] _applyTemplateArchetypeBias() - Boosted theme "${themeKey}": +${boostValue}, new score: ${intent.themes[themeKey]}`);
+            }
+        } else {
+            SWSELogger.log(`[BUILD-INTENT] _applyTemplateArchetypeBias() - No specific mapping for archetype: ${archetype}`);
+        }
+
+        SWSELogger.log(`[BUILD-INTENT] _applyTemplateArchetypeBias() COMPLETE - Final themes after template bias:`, intent.themes);
     }
 
     /**

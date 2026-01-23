@@ -194,3 +194,87 @@
     flex: 1;
     line-height: 1.4;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TEMPLATE SUMMARY STYLING
+   ═════════════════════════════════════════════════════════════════════════ */
+
+[data-theme=holo] .template-summary-container {
+    background: linear-gradient(135deg, rgba(15, 20, 40, 0.8) 0%, rgba(10, 15, 30, 0.8) 100%);
+    border: 1px solid var(--swse-border-subtle);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px 0;
+    color: var(--swse-text-light);
+}
+
+[data-theme=holo] .template-header {
+    border-bottom: 1px solid var(--swse-border-default);
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+[data-theme=holo] .template-header h3 {
+    color: var(--swse-primary);
+    margin: 0 0 5px 0;
+    text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+}
+
+[data-theme=holo] .template-archetype {
+    color: var(--swse-text-secondary);
+    font-size: 0.9em;
+    margin: 0 0 8px 0;
+    font-style: italic;
+}
+
+[data-theme=holo] .template-quote {
+    color: var(--swse-success);
+    margin: 0;
+    font-size: 0.95em;
+}
+
+[data-theme=holo] .template-description {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    color: var(--swse-text-light);
+}
+
+[data-theme=holo] .summary-section {
+    margin-bottom: 15px;
+}
+
+[data-theme=holo] .summary-section h4 {
+    color: var(--swse-primary);
+    margin: 0 0 8px 0;
+    font-size: 0.95em;
+    text-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
+}
+
+[data-theme=holo] .summary-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+[data-theme=holo] .summary-list li {
+    padding: 5px 0;
+    padding-left: 20px;
+    position: relative;
+    color: var(--swse-text-light);
+}
+
+[data-theme=holo] .summary-list li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--swse-secondary);
+}
+
+[data-theme=holo] .template-summary-dialog {
+    background: linear-gradient(135deg, var(--swse-bg-dark) 0%, var(--swse-bg-mid) 100%);
+}
+
+[data-theme=holo] .mentor-dialogue-container {
+    max-height: 80vh;
+    overflow-y: auto;
+}
