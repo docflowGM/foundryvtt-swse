@@ -699,5 +699,36 @@
     ],
     "type": "combatAction",
     "restriction": "Droids only"
+  },
+  {
+    "name": "Treat Poison",
+    "action": {
+      "type": "full-round",
+      "cost": 1
+    },
+    "notes": "Trained in Treat Injury only. Requires Medical Kit. Make a Treat Injury check; if result equals or exceeds the Poison's DC, you successfully detoxify the poison in the character's system and the patient no longer suffers any ill effects (including Persistent Conditions caused by the poison).",
+    "relatedSkills": [
+      {
+        "skill": "Treat Injury",
+        "dc": {
+          "type": "expression",
+          "value": "Poison's DC"
+        },
+        "outcome": "On success, detoxify poison and remove all effects/persistent conditions caused by it"
+      }
+    ],
+    "type": "combatAction",
+    "requirements": ["Trained in Treat Injury", "Medical Kit"]
+  },
+  {
+    "name": "Switch Weapon Mode",
+    "action": {
+      "type": "swift",
+      "cost": 1
+    },
+    "notes": "Some weapons have multiple modes (lethal/stun, single-shot/autofire, etc). Switching weapon modes takes a Swift Action.",
+    "relatedSkills": [],
+    "type": "combatAction",
+    "examples": ["Blaster Pistol (lethal/stun)", "Blaster Carbine (single-shot/autofire)"]
   }
 ]

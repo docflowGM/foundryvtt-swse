@@ -222,6 +222,8 @@ import { AidAnother } from './scripts/combat/aid-another.js';
 import { MaimingMechanic } from './scripts/combat/maiming.js';
 import { TacticsAnticipation } from './scripts/combat/tactics.js';
 import { FeignHaywire } from './scripts/combat/feign-haywire.js';
+import { TreatPoison } from './scripts/combat/treat-poison.js';
+import { WeaponMode } from './scripts/combat/weapon-mode.js';
 import { GrappleMechanics } from './scripts/houserules/houserule-grapple.js';
 import { RecoveryMechanics } from './scripts/houserules/houserule-recovery.js';
 import { ConditionTrackMechanics } from './scripts/houserules/houserule-condition-track.js';
