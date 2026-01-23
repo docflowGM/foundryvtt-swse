@@ -904,57 +904,52 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
   }
 
   /**
-   * Calculate Vehicle Initiative
+   * Calculate Vehicle Initiative per SWSE Rules
    * Formula: Pilot's Initiative modifier (or Pilot skill modifier if trained) + Vehicle's size modifier + Vehicle's Dexterity modifier
    * Special cases:
-   * - Use Pilot skill modifier as Dexterity substitute
    * - If pilot is flat-footed or vehicle is out of control, lose Dexterity bonus
-   * - If vehicle is at full stop, disabled, or powered down, treat as Dex 0 (-5 penalty)
+   * - If vehicle is disabled, treat vehicle Dex as 0 (-5 penalty instead)
    * @private
    */
   _calculateInitiative() {
     const pilot = this._getPilot();
-    const dexMod = this.attributes.dex.mod || 0;
+    let dexMod = this.attributes.dex.mod || 0;
     const sizeModifier = this._getSizeModifier();
-
-    // Get pilot's initiative modifier
-    let pilotInitiativeMod = 0;
-    if (pilot) {
-      // Use pilot's initiative modifier
-      const skills = pilot.system?.skills;
-      if (skills?.initiative) {
-        pilotInitiativeMod = skills.initiative.total || 0;
-      } else {
-        // Fallback to BAB if no initiative skill
-        pilotInitiativeMod = pilot.system?.baseAttackBonus || 0;
-      }
-    }
 
     // Check vehicle state conditions
     const vehicleDisabled = this.conditionTrack?.current >= 4;
     const vehicleOutOfControl = this.attributes?.outOfControl || false;
 
-    let effectiveDexMod = dexMod;
-
-    // If vehicle is disabled or out of control, lose dexterity bonus
-    if (vehicleDisabled || vehicleOutOfControl) {
-      effectiveDexMod = 0;
+    // If vehicle is disabled, treat as Dex 0 (-5 penalty)
+    if (vehicleDisabled) {
+      dexMod = -5;
+    } else if (vehicleOutOfControl) {
+      // If vehicle is out of control, lose Dexterity bonus
+      dexMod = 0;
     }
 
-    // Check if pilot is flat-footed (affects their initiative bonus)
-    let pilotModToUse = pilotInitiativeMod;
+    // Get pilot's initiative modifier
+    let pilotInitiativeMod = 0;
     if (pilot) {
+      // Use pilot's initiative skill total
+      const skills = pilot.system?.skills;
+      if (skills?.initiative) {
+        pilotInitiativeMod = skills.initiative.total || 0;
+      } else {
+        // Fallback to 0 if no initiative skill (use BAB approach would double-count dex)
+        pilotInitiativeMod = 0;
+      }
+
+      // Check if pilot is flat-footed - if so, they don't get their dex bonus to initiative
       const pilotFlatFooted = pilot.system?.conditions?.flatFooted || false;
-      // If pilot is flat-footed, they don't get their DEX bonus to initiative
-      // but they keep their base initiative modifier
       if (pilotFlatFooted) {
-        // Recalculate without dex bonus
+        // Remove pilot's dex bonus from their initiative modifier
         const pilotDexMod = pilot.system?.abilities?.dex?.mod || 0;
-        pilotModToUse = (pilotInitiativeMod - pilotDexMod);
+        pilotInitiativeMod = Math.max(0, pilotInitiativeMod - pilotDexMod);
       }
     }
 
-    const initiativeBonus = pilotModToUse + sizeModifier + effectiveDexMod;
+    const initiativeBonus = pilotInitiativeMod + sizeModifier + dexMod;
     this.initiative = `${initiativeBonus >= 0 ? '+' : ''}${initiativeBonus}`;
   }
 }
