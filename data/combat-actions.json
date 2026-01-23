@@ -679,5 +679,25 @@
     "notes": "Spend three Swift Actions in same round or across consecutive rounds to move +1 step up the Condition Track. Cannot use Recover while afflicted by a Persistent Condition.",
     "relatedSkills": [],
     "type": "combatAction"
+  },
+  {
+    "name": "Feign Haywire",
+    "action": {
+      "type": "full-round",
+      "cost": 1
+    },
+    "notes": "Droids only. Pop open access panels, move erratically, make mechanical noises. Make Deception check vs Will Defense of all targets in line of sight. Success: target is Flat-Footed against you. Ends at end of your turn if you take any action. Targets no longer Flat-Footed after Deception ends.",
+    "relatedSkills": [
+      {
+        "skill": "Deception",
+        "dc": {
+          "type": "opposed",
+          "target": "All targets' Will Defense (must be in LOS)"
+        },
+        "outcome": "Targets with Will Defense <= Deception check are Flat-Footed against you"
+      }
+    ],
+    "type": "combatAction",
+    "restriction": "Droids only"
   }
 ]
