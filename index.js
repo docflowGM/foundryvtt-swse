@@ -218,6 +218,16 @@ import { ProficiencySelectionDialog } from './scripts/apps/proficiency-selection
 import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
 import { HouseruleMechanics } from './scripts/houserules/houserule-mechanics.js';
 import { HouserulesConfig } from './scripts/houserules/houserules-config.js';
+import { AidAnother } from './scripts/combat/aid-another.js';
+import { MaimingMechanic } from './scripts/combat/maiming.js';
+import { TacticsAnticipation } from './scripts/combat/tactics.js';
+import { FeignHaywire } from './scripts/combat/feign-haywire.js';
+import { TreatPoison } from './scripts/combat/treat-poison.js';
+import { WeaponMode } from './scripts/combat/weapon-mode.js';
+import { Autofire } from './scripts/combat/autofire.js';
+import { AutofireBracing } from './scripts/combat/autofire-bracing.js';
+import { BurstFire } from './scripts/combat/burst-fire.js';
+import { IonDamage } from './scripts/combat/ion-damage.js';
 import { GrappleMechanics } from './scripts/houserules/houserule-grapple.js';
 import { RecoveryMechanics } from './scripts/houserules/houserule-recovery.js';
 import { ConditionTrackMechanics } from './scripts/houserules/houserule-condition-track.js';
@@ -426,6 +436,10 @@ Hooks.once("ready", async function () {
     SWSECombatActionBrowser.init();
     TalentAbilitiesEngine.initCombatHooks();
     HouseruleMechanics.initialize();
+    AidAnother.initialize();
+
+    // Core combat mechanics
+    // MaimingMechanic and TacticsAnticipation are utility classes, no initialization needed
 
     RulesEngine.init();
     Upkeep.init();

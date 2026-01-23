@@ -5626,6 +5626,136 @@ font-size: 12px;
 }
 
 /* ─────────────────────────────────────────────────
+   GRAPPLING STATUS AND ACTIONS
+   ───────────────────────────────────────────────── */
+
+.swse .grapple-section {
+  background: linear-gradient(180deg, rgba(20, 40, 60, 0.4), rgba(10, 25, 40, 0.3));
+  border: 1px solid rgba(0, 168, 204, 0.25);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.swse .grapple-status {
+  margin-bottom: 12px;
+}
+
+.swse .grapple-condition {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  border-left: 3px solid;
+}
+
+.swse .grapple-condition.free {
+  background: rgba(0, 255, 136, 0.1);
+  border-left-color: var(--holo-green, #00ff88);
+  color: var(--holo-green, #00ff88);
+}
+
+.swse .grapple-condition.grabbed {
+  background: rgba(255, 200, 100, 0.15);
+  border-left-color: var(--accent-warm, #ffd66b);
+  color: var(--accent-warm, #ffd66b);
+}
+
+.swse .grapple-condition.grappled {
+  background: rgba(255, 150, 100, 0.15);
+  border-left-color: #ff9664;
+  color: #ffb380;
+}
+
+.swse .grapple-condition.pinned {
+  background: rgba(255, 100, 100, 0.15);
+  border-left-color: var(--danger, #ff6b6b);
+  color: var(--danger, #ff6b6b);
+}
+
+.swse .grapple-condition i {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.swse .grapple-condition strong {
+  margin-right: 4px;
+}
+
+.swse .grapple-condition .reflex-penalty {
+  margin-left: auto;
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.swse .grapple-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.swse .grapple-action-btn {
+  flex: 0 1 auto;
+  padding: 8px 12px;
+  background: linear-gradient(180deg, rgba(0, 168, 204, 0.3), rgba(0, 100, 150, 0.2));
+  border: 1px solid rgba(0, 168, 204, 0.4);
+  border-radius: 4px;
+  color: var(--holo-cyan, #00d9ff);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swse .grapple-action-btn:hover {
+  background: linear-gradient(180deg, rgba(0, 217, 255, 0.4), rgba(0, 150, 200, 0.3));
+  border-color: var(--holo-cyan, #00d9ff);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.swse .grapple-action-btn:active {
+  transform: translateY(0);
+}
+
+.swse .grapple-action-btn.escape-action {
+  background: linear-gradient(180deg, rgba(100, 200, 100, 0.3), rgba(50, 150, 50, 0.2));
+  border-color: rgba(0, 255, 136, 0.4);
+  color: var(--holo-green, #00ff88);
+}
+
+.swse .grapple-action-btn.escape-action:hover {
+  background: linear-gradient(180deg, rgba(100, 220, 100, 0.4), rgba(50, 170, 50, 0.3));
+  border-color: var(--holo-green, #00ff88);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.swse .grapple-action-btn.pin-action {
+  background: linear-gradient(180deg, rgba(255, 100, 100, 0.3), rgba(200, 50, 50, 0.2));
+  border-color: rgba(255, 100, 100, 0.4);
+  color: #ff9999;
+}
+
+.swse .grapple-action-btn.pin-action:hover {
+  background: linear-gradient(180deg, rgba(255, 120, 120, 0.4), rgba(220, 70, 70, 0.3));
+  border-color: #ff9999;
+  box-shadow: 0 0 10px rgba(255, 100, 100, 0.3);
+}
+
+.swse .grapple-action-btn i {
+  font-size: 12px;
+}
+
+/* ─────────────────────────────────────────────────
    GLOBAL DROPDOWN STYLING (dark bg, glowing green)
    ───────────────────────────────────────────────── */
 

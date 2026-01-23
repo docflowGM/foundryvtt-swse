@@ -418,6 +418,15 @@ export function registerHouseruleSettings() {
     default: "separate"
   });
 
+  register("blockMechanicalAlternative", {
+    name: "Block Mechanic Alternative",
+    hint: "Non-Jedi can use melee weapons to block incoming melee attacks as a Reaction, with the same mechanics as Unarmed Parry.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   register("forceSensitiveJediOnly", {
     name: "Force Sensitive Jedi Restriction",
     hint: "Restricts Force Sensitive feat to Jedi classes only.",

@@ -339,3 +339,10 @@ export function getRolePriorityOrder() {
     ["pilot", "shields", "weapons", "engineering", "other"]
   );
 }
+
+/**
+ * Is Block Mechanic Alternative enabled?
+ */
+export function isBlockMechanicalAlternativeEnabled() {
+  return !!getSafe("blockMechanicalAlternative", false);
+}

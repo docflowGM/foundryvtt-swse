@@ -99,23 +99,56 @@
     "type": "combatAction"
   },
   {
-    "name": "Burst Fire / Autofire (vehicle or weapon)",
+    "name": "Autofire",
     "action": {
-      "type": "standard",
-      "cost": 1
+      "type": "swift + standard",
+      "cost": null
     },
-    "notes": "Autofire targets area 2×2 squares, -5 attack; consumes ammo; braced autofire reduces penalty; burst fire -5 attack +2 dice damage.",
+    "notes": "Swift Action: Set weapon to Autofire mode. Standard Action: Target 2×2 square area, make single attack roll at -5 penalty, compare to Reflex Defense of all creatures in area. Hits take full damage, misses take half damage. Consumes 10 shots/slugs (must have 10+ in weapon). Braced autofire-only weapons reduce penalty to -2.",
     "relatedSkills": [
       {
         "skill": "Attack Roll",
         "dc": {
           "type": "expression",
-          "value": "d20 + modifiers"
+          "value": "d20 + modifiers - 5 (or -2 if braced)"
         },
-        "outcome": "Area rules; ammo consumption handled by system"
+        "outcome": "Compare to all targets' Reflex Defense; hits full damage, misses half damage"
       }
     ],
-    "type": "combatAction"
+    "type": "combatAction",
+    "notes_advanced": "Area attack covering 2×2 squares. Consumes 10 shots. Autofire-only weapons can be braced (2 swift actions) for -2 penalty instead of -5."
+  },
+  {
+    "name": "Brace Autofire-Only Weapon",
+    "action": {
+      "type": "2 swift actions",
+      "cost": 2
+    },
+    "notes": "Autofire-only weapons only. Takes 2 Swift Actions immediately before making autofire attack. When braced, take -2 penalty instead of -5 on autofire attacks. Only Heavy Weapons, Rifles, and Pistols with Retractable Stock can be braced.",
+    "relatedSkills": [],
+    "type": "combatAction",
+    "restriction": "Autofire-only weapons: Heavy Weapons, Rifles, Pistols with Retractable Stock"
+  },
+  {
+    "name": "Burst Fire",
+    "action": {
+      "type": "standard",
+      "cost": 1
+    },
+    "notes": "Requires Burst Fire feat. Use autofire weapon against single target instead of area. Take -5 penalty on attack roll, deal +2 dice of weapon damage. Uses only 5 shots (half of normal 10). NOT an area attack, so Evasion talent cannot reduce damage.",
+    "relatedSkills": [
+      {
+        "skill": "Attack Roll",
+        "dc": {
+          "type": "expression",
+          "value": "d20 + modifiers - 5"
+        },
+        "outcome": "Single-target attack with +2 dice damage"
+      }
+    ],
+    "type": "combatAction",
+    "requirements": ["Burst Fire feat"],
+    "ammo_consumption": "5 shots (instead of 10)"
   },
   {
     "name": "Charge",
@@ -141,16 +174,16 @@
     "type": "combatAction"
   },
   {
-    "name": "Coup de grace",
+    "name": "Coup de Grace",
     "action": {
       "type": "full-round",
       "cost": 1
     },
-    "notes": "Against helpless adjacent opponent; auto-critical; target reduced to 0 HP dies (or destroyed for objects).",
+    "notes": "Full-Round Action against a Helpless target. Can use melee weapon or ranged weapon if adjacent. Automatically scores a Critical Hit dealing double damage. Target reduced to 0 HP dies instantly. Unconscious or disabled defenders hit by Coup de Grace die instantly. Cannot use against vehicles or objects.",
     "relatedSkills": [
       {
-        "skill": "Attack Roll",
-        "outcome": "Auto-crit; immediate lethal effect"
+        "skill": "Attack Roll (Melee or Ranged)",
+        "outcome": "Auto-critical hit; double damage; instant death if reduced to 0 HP"
       }
     ],
     "type": "combatAction"
@@ -631,5 +664,104 @@
       }
     ],
     "type": "combatAction"
+  },
+  {
+    "name": "Maiming Foes",
+    "action": {
+      "type": "standard",
+      "cost": 1
+    },
+    "notes": "Declare intent to maim instead of kill. Make attack at -5 penalty. On hit, deal half damage. If attack reduces target to 0 HP, target is maimed but alive instead of dead.",
+    "relatedSkills": [
+      {
+        "skill": "Attack Roll",
+        "dc": {
+          "type": "expression",
+          "value": "d20 + BAB + modifiers - 5"
+        },
+        "outcome": "Half damage; target maimed at 0 HP instead of dying"
+      }
+    ],
+    "type": "combatAction"
+  },
+  {
+    "name": "Anticipate Enemy Strategy",
+    "action": {
+      "type": "move",
+      "cost": 1
+    },
+    "notes": "Trained in Knowledge (Tactics) only. Make Knowledge (Tactics) check vs target's Will Defense (or 10 + target's CL if no Will Defense). Success reveals target's likely next action, who they'll attack, where they'll move, or other strategies.",
+    "relatedSkills": [
+      {
+        "skill": "Knowledge (Tactics)",
+        "dc": {
+          "type": "opposed",
+          "target": "Target's Will Defense or 10 + CL"
+        },
+        "outcome": "Gain insight into target's next action and strategy"
+      }
+    ],
+    "type": "combatAction"
+  },
+  {
+    "name": "Recover",
+    "action": {
+      "type": "3 swift actions",
+      "cost": 3
+    },
+    "notes": "Spend three Swift Actions in same round or across consecutive rounds to move +1 step up the Condition Track. Cannot use Recover while afflicted by a Persistent Condition.",
+    "relatedSkills": [],
+    "type": "combatAction"
+  },
+  {
+    "name": "Feign Haywire",
+    "action": {
+      "type": "full-round",
+      "cost": 1
+    },
+    "notes": "Droids only. Pop open access panels, move erratically, make mechanical noises. Make Deception check vs Will Defense of all targets in line of sight. Success: target is Flat-Footed against you. Ends at end of your turn if you take any action. Targets no longer Flat-Footed after Deception ends.",
+    "relatedSkills": [
+      {
+        "skill": "Deception",
+        "dc": {
+          "type": "opposed",
+          "target": "All targets' Will Defense (must be in LOS)"
+        },
+        "outcome": "Targets with Will Defense <= Deception check are Flat-Footed against you"
+      }
+    ],
+    "type": "combatAction",
+    "restriction": "Droids only"
+  },
+  {
+    "name": "Treat Poison",
+    "action": {
+      "type": "full-round",
+      "cost": 1
+    },
+    "notes": "Trained in Treat Injury only. Requires Medical Kit. Make a Treat Injury check; if result equals or exceeds the Poison's DC, you successfully detoxify the poison in the character's system and the patient no longer suffers any ill effects (including Persistent Conditions caused by the poison).",
+    "relatedSkills": [
+      {
+        "skill": "Treat Injury",
+        "dc": {
+          "type": "expression",
+          "value": "Poison's DC"
+        },
+        "outcome": "On success, detoxify poison and remove all effects/persistent conditions caused by it"
+      }
+    ],
+    "type": "combatAction",
+    "requirements": ["Trained in Treat Injury", "Medical Kit"]
+  },
+  {
+    "name": "Switch Weapon Mode",
+    "action": {
+      "type": "swift",
+      "cost": 1
+    },
+    "notes": "Some weapons have multiple modes (lethal/stun, single-shot/autofire, etc). Switching weapon modes takes a Swift Action.",
+    "relatedSkills": [],
+    "type": "combatAction",
+    "examples": ["Blaster Pistol (lethal/stun)", "Blaster Carbine (single-shot/autofire)"]
   }
 ]
