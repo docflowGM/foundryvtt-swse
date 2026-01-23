@@ -49,22 +49,113 @@
     <div class="stats-grid">
       <div class="stat-input">
         <label>Speed</label>
-        <input type="number" name="system.speed" value="{{system.speed}}" data-dtype="Number" placeholder="0"/>
+        <input type="text" name="system.speed" value="{{system.speed}}" placeholder="12 squares"/>
       </div>
 
       <div class="stat-input">
         <label>Max Velocity</label>
-        <input type="number" name="system.maxVelocity" value="{{system.maxVelocity}}" data-dtype="Number" placeholder="0"/>
+        <input type="text" name="system.maxVelocity" value="{{system.maxVelocity}}" placeholder="800 km/h"/>
       </div>
 
       <div class="stat-input">
         <label>Maneuver</label>
-        <input type="number" name="system.maneuver" value="{{system.maneuver}}" data-dtype="Number" placeholder="0"/>
+        <input type="text" name="system.maneuver" value="{{system.maneuver}}" placeholder="+0"/>
       </div>
 
       <div class="stat-input">
         <label>Damage Reduction</label>
         <input type="number" name="system.damageReduction" value="{{system.damageReduction}}" data-dtype="Number" placeholder="0"/>
+      </div>
+    </div>
+
+    {{!-- Defensive Statistics --}}
+    <h4 class="stats-section-title">Defensive Statistics</h4>
+    <div class="stats-grid">
+      <div class="stat-display">
+        <label>Reflex Defense</label>
+        <span class="value">{{system.reflexDefense}}</span>
+      </div>
+
+      <div class="stat-display">
+        <label>Fortitude Defense</label>
+        <span class="value">{{system.fortitudeDefense}}</span>
+      </div>
+
+      <div class="stat-display">
+        <label>Damage Threshold</label>
+        <span class="value">{{system.damageThreshold}}</span>
+      </div>
+
+      <div class="stat-input">
+        <label>Armor Bonus</label>
+        <input type="number" name="system.armorBonus" value="{{system.armorBonus}}" data-dtype="Number" placeholder="0"/>
+      </div>
+    </div>
+
+    {{!-- Attack & Combat Statistics --}}
+    <h4 class="stats-section-title">Attack & Combat Statistics</h4>
+    <div class="stats-grid">
+      <div class="stat-display">
+        <label>Attack Bonus</label>
+        <span class="value">{{#if (eq system.attackBonus 0)}}{{system.attackBonus}}{{else}}{{#if (gt system.attackBonus 0)}}+{{/if}}{{system.attackBonus}}{{/if}}</span>
+      </div>
+
+      <div class="stat-display">
+        <label>Grapple Modifier</label>
+        <span class="value">{{#if (eq system.grappleModifier 0)}}{{system.grappleModifier}}{{else}}{{#if (gt system.grappleModifier 0)}}+{{/if}}{{system.grappleModifier}}{{/if}}</span>
+      </div>
+
+      <div class="stat-display">
+        <label>Perception</label>
+        <span class="value">{{#if (eq system.perception 0)}}{{system.perception}}{{else}}{{#if (gt system.perception 0)}}+{{/if}}{{system.perception}}{{/if}}</span>
+      </div>
+
+      <div class="stat-input">
+        <label>Challenge Level</label>
+        <input type="number" name="system.challengeLevel" value="{{system.challengeLevel}}" data-dtype="Number" placeholder="1"/>
+      </div>
+    </div>
+
+    {{!-- Vehicle Information --}}
+    <h4 class="stats-section-title">Vehicle Information</h4>
+    <div class="stats-grid">
+      <div class="stat-input">
+        <label>Passengers</label>
+        <input type="text" name="system.passengers" value="{{system.passengers}}" placeholder="0"/>
+      </div>
+
+      <div class="stat-input">
+        <label>Cargo Capacity</label>
+        <input type="text" name="system.cargo" value="{{system.cargo}}" placeholder="100 kg"/>
+      </div>
+
+      <div class="stat-input">
+        <label>Cover Type</label>
+        <select name="system.cover">
+          <option value="none" {{#if (eq system.cover "none")}}selected{{/if}}>None</option>
+          <option value="normal" {{#if (eq system.cover "normal")}}selected{{/if}}>Normal (+5)</option>
+          <option value="improved" {{#if (eq system.cover "improved")}}selected{{/if}}>Improved (+10)</option>
+          <option value="total" {{#if (eq system.cover "total")}}selected{{/if}}>Total Cover</option>
+        </select>
+      </div>
+
+      <div class="stat-input">
+        <label>Hyperdrive</label>
+        <input type="text" name="system.hyperdrive" value="{{system.hyperdrive}}" placeholder="x1"/>
+      </div>
+    </div>
+
+    {{!-- Optional Fields --}}
+    <h4 class="stats-section-title">Optional Information</h4>
+    <div class="stats-grid">
+      <div class="stat-input">
+        <label>Payload</label>
+        <input type="text" name="system.payload" value="{{system.payload}}" placeholder="e.g., 6 Proton Torpedoes"/>
+      </div>
+
+      <div class="stat-input">
+        <label>Availability</label>
+        <input type="text" name="system.availability" value="{{system.availability}}" placeholder="Restricted/Legal"/>
       </div>
     </div>
   </section>
@@ -82,14 +173,31 @@
 
   {{!-- Crew Positions Section --}}
   <section class="crew-positions-section">
-    <h3>Crew Positions</h3>
+    <h3>
+      Crew Positions
+      {{#if pilotSoloMode}}
+      <span class="solo-mode-badge" title="{{pilotSoloMode.message}}">
+        <i class="fas fa-star"></i> Solo Pilot
+      </span>
+      {{/if}}
+    </h3>
+
+    {{#if crewRoster.positions}}
     <div class="crew-grid">
-      {{#each system.crewPositions as |crew position|}}
+      {{#each crewRoster.positions as |posData posKey|}}
       <div class="crew-position">
-        <label>{{titleCase position}}</label>
-        <div class="crew-slot" data-slot="{{position}}">
-          {{#if crew}}
-            <span class="crew-name">{{#if crew.name}}{{crew.name}}{{else}}{{crew}}{{/if}}</span>
+        <div class="position-header">
+          <label>{{posData.display}}</label>
+          {{#if posData.crew}}
+          <span class="crew-status-badge trained">Assigned</span>
+          {{else}}
+          <span class="crew-status-badge empty">Empty</span>
+          {{/if}}
+        </div>
+
+        <div class="crew-slot" data-slot="{{posKey}}">
+          {{#if posData.crew}}
+            <span class="crew-name">{{posData.crew.name}}</span>
             <button class="crew-remove" type="button" title="Remove crew member">
               <i class="fas fa-times"></i>
             </button>
@@ -97,17 +205,149 @@
             <span class="crew-empty">Drop actor here</span>
           {{/if}}
         </div>
-        {{#if crew}}
+
+        {{!-- Crew Skills Display --}}
+        {{#if posData.skills}}
+        <div class="crew-skills">
+          {{#each posData.skills as |skill|}}
+          <div class="skill-item {{#if skill.required}}required{{else}}beneficial{{/if}} {{#if skill.trained}}trained{{/if}}">
+            <span class="skill-name">{{skill.name}}</span>
+            <span class="skill-bonus {{#if skill.bonus > 0}}positive{{/if}} {{#if skill.bonus < 0}}negative{{/if}}">
+              {{#if skill.bonus > 0}}+{{/if}}{{skill.bonus}}
+            </span>
+            {{#if skill.trained}}
+            <span class="trained-badge" title="Trained in this skill">T</span>
+            {{/if}}
+            {{#if skill.required}}
+            <span class="required-badge" title="Required for this position">*</span>
+            {{/if}}
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+
+        {{!-- Starship Maneuver Suite for Pilot --}}
+        {{#if posData.maneuverSuite}}
+        {{#if posData.maneuverSuite.hasStartshipTactics}}
+        <div class="crew-maneuvers">
+          <button class="crew-maneuvers-toggle" type="button" title="Starship Maneuver Suite">
+            <i class="fas fa-chevron-right"></i> Maneuver Suite ({{posData.maneuverSuite.total}})
+          </button>
+          <div class="crew-maneuvers-list" style="display: none;">
+            {{#if posData.maneuverSuite.total}}
+              {{!-- Attack Patterns --}}
+              {{#if posData.maneuverSuite.organized.attackPatterns}}
+              {{#if posData.maneuverSuite.organized.attackPatterns.length}}
+              <div class="maneuver-category">
+                <h5 class="category-title">Attack Patterns</h5>
+                {{#each posData.maneuverSuite.organized.attackPatterns as |maneuver|}}
+                <div class="maneuver-item">
+                  <strong>{{maneuver.name}}</strong>
+                  {{#if maneuver.description}}
+                  <p class="maneuver-desc">{{maneuver.description}}</p>
+                  {{/if}}
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+              {{/if}}
+
+              {{!-- Dogfighting --}}
+              {{#if posData.maneuverSuite.organized.dogfight}}
+              {{#if posData.maneuverSuite.organized.dogfight.length}}
+              <div class="maneuver-category">
+                <h5 class="category-title">Dogfighting</h5>
+                {{#each posData.maneuverSuite.organized.dogfight as |maneuver|}}
+                <div class="maneuver-item">
+                  <strong>{{maneuver.name}}</strong>
+                  {{#if maneuver.description}}
+                  <p class="maneuver-desc">{{maneuver.description}}</p>
+                  {{/if}}
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+              {{/if}}
+
+              {{!-- Force --}}
+              {{#if posData.maneuverSuite.organized.force}}
+              {{#if posData.maneuverSuite.organized.force.length}}
+              <div class="maneuver-category">
+                <h5 class="category-title force-category">Force Maneuvers</h5>
+                {{#each posData.maneuverSuite.organized.force as |maneuver|}}
+                <div class="maneuver-item">
+                  <strong>{{maneuver.name}}</strong>
+                  {{#if maneuver.description}}
+                  <p class="maneuver-desc">{{maneuver.description}}</p>
+                  {{/if}}
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+              {{/if}}
+
+              {{!-- Gunner --}}
+              {{#if posData.maneuverSuite.organized.gunner}}
+              {{#if posData.maneuverSuite.organized.gunner.length}}
+              <div class="maneuver-category">
+                <h5 class="category-title gunner-category">Gunner Maneuvers</h5>
+                {{#each posData.maneuverSuite.organized.gunner as |maneuver|}}
+                <div class="maneuver-item">
+                  <strong>{{maneuver.name}}</strong>
+                  {{#if maneuver.description}}
+                  <p class="maneuver-desc">{{maneuver.description}}</p>
+                  {{/if}}
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+              {{/if}}
+
+              {{!-- General --}}
+              {{#if posData.maneuverSuite.organized.general}}
+              {{#if posData.maneuverSuite.organized.general.length}}
+              <div class="maneuver-category">
+                <h5 class="category-title">General</h5>
+                {{#each posData.maneuverSuite.organized.general as |maneuver|}}
+                <div class="maneuver-item">
+                  <strong>{{maneuver.name}}</strong>
+                  {{#if maneuver.description}}
+                  <p class="maneuver-desc">{{maneuver.description}}</p>
+                  {{/if}}
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+              {{/if}}
+            {{else}}
+              <div class="no-maneuvers-notice">
+                Pilot has no maneuvers selected in their suite.
+              </div>
+            {{/if}}
+          </div>
+        </div>
+        {{else}}
+        <div class="crew-maneuvers-notice">
+          <small>Requires Starship Tactics feat</small>
+        </div>
+        {{/if}}
+        {{/if}}
+
+        {{!-- Crew Actions Toggle --}}
+        {{#if posData.actions}}
+        {{#if (or posData.actions.swift.length posData.actions.move.length posData.actions.standard.length posData.actions.fullRound.length posData.actions.reaction.length)}}
         <button class="crew-actions-toggle" type="button">
           <i class="fas fa-chevron-down"></i> Actions
         </button>
         <div class="crew-actions-panel" style="display: none;">
-          {{!-- Crew actions will be populated by the sheet --}}
+          {{> "systems/foundryvtt-swse/templates/partials/crew-action-cards.hbs" actions=posData.actions position=posKey}}
         </div>
+        {{/if}}
         {{/if}}
       </div>
       {{/each}}
     </div>
+    {{/if}}
   </section>
 
   {{!-- Weapons Section --}}

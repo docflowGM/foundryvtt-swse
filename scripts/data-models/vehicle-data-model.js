@@ -431,6 +431,66 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       cargo: new fields.StringField({required: false, initial: "100 kg"}),
       consumables: new fields.StringField({required: false, initial: "1 week"}),
       hyperdrive: new fields.StringField({required: false, initial: "x1"}),
+
+      // Additional vehicle statistics per SWSE rules
+      challengeLevel: new fields.NumberField({
+        required: true,
+        nullable: true,
+        initial: 1,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 1;
+          const num = Number(value);
+          return Number.isNaN(num) ? 1 : Math.floor(num);
+        }
+      }),
+
+      cover: new fields.StringField({
+        required: true,
+        initial: 'none',
+        choices: ['none', 'normal', 'improved', 'total']
+      }),
+
+      payload: new fields.StringField({required: false, initial: ""}),
+      availability: new fields.StringField({required: false, initial: ""}),
+
+      // Calculated combat statistics
+      perception: new fields.NumberField({
+        required: true,
+        nullable: true,
+        initial: 0,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
+      }),
+
+      grappleModifier: new fields.NumberField({
+        required: true,
+        nullable: true,
+        initial: 0,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
+      }),
+
+      attackBonus: new fields.NumberField({
+        required: true,
+        nullable: true,
+        initial: 0,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
+      }),
+
       cost: new fields.SchemaField({
         new: new fields.NumberField({
           required: true,
@@ -656,6 +716,18 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       this.conditionTrack.penalty = penalties[conditionStep] || 0;
     }
 
+    // Calculate Perception (best crew member perception)
+    this._calculatePerception();
+
+    // Calculate Attack Bonus (Gunner's BAB + Vehicle INT modifier)
+    this._calculateAttackBonus();
+
+    // Calculate Grapple Modifier (Pilot's BAB + Vehicle STR modifier + size modifier)
+    this._calculateGrappleModifier();
+
+    // Calculate Initiative (Pilot's Initiative mod + Vehicle size + Vehicle DEX)
+    this._calculateInitiative();
+
     // Ensure shield/hull values are numbers
     if (this.shields) {
       this.shields.value = Number(this.shields.value) || 0;
@@ -716,5 +788,168 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
     if (!pilotName) return null;
 
     return game.actors?.getName(pilotName) || null;
+  }
+
+  /**
+   * Get gunner actor if assigned to crew
+   * @private
+   */
+  _getGunner() {
+    if (!this.crewPositions?.gunner) return null;
+
+    const gunner = this.crewPositions.gunner;
+    const gunnerName = typeof gunner === 'string' ? gunner : gunner?.name;
+    if (!gunnerName) return null;
+
+    return game.actors?.getName(gunnerName) || null;
+  }
+
+  /**
+   * Calculate Perception from best crew member
+   * @private
+   */
+  _calculatePerception() {
+    let bestPerception = 0;
+
+    // Check all crew positions for their perception modifier
+    for (const [, crewData] of Object.entries(this.crewPositions || {})) {
+      if (!crewData) continue;
+
+      const crewName = typeof crewData === 'string' ? crewData : crewData?.name;
+      if (!crewName) continue;
+
+      const crewActor = game.actors?.getName(crewName);
+      if (!crewActor) continue;
+
+      const perception = crewActor.system?.skills?.perception?.total || 0;
+      if (perception > bestPerception) {
+        bestPerception = perception;
+      }
+    }
+
+    this.perception = bestPerception;
+  }
+
+  /**
+   * Calculate Attack Bonus
+   * Formula: Gunner's Base Attack Bonus + Vehicle's Intelligence modifier + misc bonuses
+   * @private
+   */
+  _calculateAttackBonus() {
+    const gunner = this._getGunner();
+    const intMod = this.attributes.int.mod || 0;
+
+    if (!gunner) {
+      // No gunner assigned, just use vehicle INT modifier
+      this.attackBonus = intMod;
+      return;
+    }
+
+    // Get gunner's base attack bonus
+    const gunnerBAB = gunner.system?.baseAttackBonus || 0;
+
+    // Check if pilot is trained in Pilot skill (adds +2 bonus to pilot-controlled weapons)
+    const pilot = this._getPilot();
+    let pilotTrainedBonus = 0;
+    if (pilot) {
+      const pilotSkill = pilot.system?.skills?.pilot;
+      if (pilotSkill?.trained) {
+        pilotTrainedBonus = 2;
+      }
+    }
+
+    this.attackBonus = gunnerBAB + intMod + pilotTrainedBonus;
+  }
+
+  /**
+   * Calculate Grapple Modifier
+   * Formula: Pilot's Base Attack Bonus + Vehicle's Strength modifier + Vehicle's Size modifier
+   * @private
+   */
+  _calculateGrappleModifier() {
+    const pilot = this._getPilot();
+    const strMod = this.attributes.str.mod || 0;
+
+    // Get size-specific grapple modifier
+    const sizeGrappleModifier = this._getSizeGrappleModifier();
+
+    if (!pilot) {
+      // No pilot assigned, just use vehicle STR + size
+      this.grappleModifier = strMod + sizeGrappleModifier;
+      return;
+    }
+
+    // Get pilot's base attack bonus
+    const pilotBAB = pilot.system?.baseAttackBonus || 0;
+
+    this.grappleModifier = pilotBAB + strMod + sizeGrappleModifier;
+  }
+
+  /**
+   * Get size-specific grapple modifier (different from reflex size modifier)
+   * @private
+   */
+  _getSizeGrappleModifier() {
+    const size = (this.size || 'colossal').toLowerCase();
+    const modifiers = {
+      'large': 5,
+      'huge': 10,
+      'gargantuan': 15,
+      'colossal': 20,
+      'colossal (frigate)': 25,
+      'colossal (cruiser)': 30,
+      'colossal (station)': 35
+    };
+    return modifiers[size] || 0;
+  }
+
+  /**
+   * Calculate Vehicle Initiative per SWSE Rules
+   * Formula: Pilot's Initiative modifier (or Pilot skill modifier if trained) + Vehicle's size modifier + Vehicle's Dexterity modifier
+   * Special cases:
+   * - If pilot is flat-footed or vehicle is out of control, lose Dexterity bonus
+   * - If vehicle is disabled, treat vehicle Dex as 0 (-5 penalty instead)
+   * @private
+   */
+  _calculateInitiative() {
+    const pilot = this._getPilot();
+    let dexMod = this.attributes.dex.mod || 0;
+    const sizeModifier = this._getSizeModifier();
+
+    // Check vehicle state conditions
+    const vehicleDisabled = this.conditionTrack?.current >= 4;
+    const vehicleOutOfControl = this.attributes?.outOfControl || false;
+
+    // If vehicle is disabled, treat as Dex 0 (-5 penalty)
+    if (vehicleDisabled) {
+      dexMod = -5;
+    } else if (vehicleOutOfControl) {
+      // If vehicle is out of control, lose Dexterity bonus
+      dexMod = 0;
+    }
+
+    // Get pilot's initiative modifier
+    let pilotInitiativeMod = 0;
+    if (pilot) {
+      // Use pilot's initiative skill total
+      const skills = pilot.system?.skills;
+      if (skills?.initiative) {
+        pilotInitiativeMod = skills.initiative.total || 0;
+      } else {
+        // Fallback to 0 if no initiative skill (use BAB approach would double-count dex)
+        pilotInitiativeMod = 0;
+      }
+
+      // Check if pilot is flat-footed - if so, they don't get their dex bonus to initiative
+      const pilotFlatFooted = pilot.system?.conditions?.flatFooted || false;
+      if (pilotFlatFooted) {
+        // Remove pilot's dex bonus from their initiative modifier
+        const pilotDexMod = pilot.system?.abilities?.dex?.mod || 0;
+        pilotInitiativeMod = Math.max(0, pilotInitiativeMod - pilotDexMod);
+      }
+    }
+
+    const initiativeBonus = pilotInitiativeMod + sizeModifier + dexMod;
+    this.initiative = `${initiativeBonus >= 0 ? '+' : ''}${initiativeBonus}`;
   }
 }

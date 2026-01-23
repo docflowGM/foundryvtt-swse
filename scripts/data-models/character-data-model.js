@@ -376,21 +376,25 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // REFLEX DEFENSE
     let reflexBase = 10;
-    let dexMod = this.abilities?.dex?.mod || 0;
+
+    // Get ability modifier based on defenses.reflex.ability setting (player-configurable for feats/talents)
+    const reflexAbilityKey = this.defenses?.reflex?.ability || 'dex';
+    let reflexAbilityMod = this.abilities?.[reflexAbilityKey]?.mod || 0;
     let armorBonus = 0;
 
     if (equippedArmor) {
       // Get armor bonus (use defenseBonus or armorBonus field)
       armorBonus = equippedArmor.system.defenseBonus || equippedArmor.system.armorBonus || 0;
 
-      // Apply max dex bonus restriction
-      let maxDex = equippedArmor.system.maxDexBonus;
-      if (Number.isInteger(maxDex)) {
-        // Armor Mastery talent increases max dex bonus by +1
+      // Apply max ability bonus restriction (from armor max dex bonus or other limit)
+      // This restriction applies to the configured ability modifier, not just DEX
+      let maxAbilityBonus = equippedArmor.system.maxDexBonus;
+      if (Number.isInteger(maxAbilityBonus)) {
+        // Armor Mastery talent increases max ability bonus by +1
         if (hasArmorMastery) {
-          maxDex += 1;
+          maxAbilityBonus += 1;
         }
-        dexMod = Math.min(dexMod, maxDex);
+        reflexAbilityMod = Math.min(reflexAbilityMod, maxAbilityBonus);
       }
 
       // Calculate reflex defense based on armor and talents
@@ -427,18 +431,29 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Calculate misc bonuses (auto + user)
     const reflexMiscTotal = this._computeDefenseMisc(this.defenses.reflex);
 
-    this.defenses.reflex.total = reflexBase + dexMod + equipmentBonus +
+    this.defenses.reflex.total = reflexBase + reflexAbilityMod + equipmentBonus +
                                   (this.defenses.reflex.classBonus || 0) +
                                   reflexMiscTotal +
                                   reflexSpeciesBonus + conditionPenalty;
 
     // FORTITUDE DEFENSE
-    // Droids use STR mod, organics use CON or STR (whichever is higher)
-    let fortAbility;
+    // Get ability modifier based on defenses.fort.ability setting (player-configurable for feats/talents)
+    // Default behavior:
+    //   - Droids use STR mod
+    //   - Organics use CON or STR (whichever is higher)
+    const fortAbilityKey = this.defenses?.fort?.ability || (this.isDroid ? 'str' : 'con');
+    let fortAbilityMod;
+
     if (this.isDroid) {
-      fortAbility = this.abilities?.str?.mod || 0;
+      // Droids must use STR for Fortitude (can be overridden by setting defenses.fort.ability)
+      fortAbilityMod = this.abilities?.[fortAbilityKey]?.mod || 0;
     } else {
-      fortAbility = Math.max(this.abilities?.con?.mod || 0, this.abilities?.str?.mod || 0);
+      // Organics use the configured ability, or default to max(CON, STR)
+      if (this.defenses?.fort?.ability) {
+        fortAbilityMod = this.abilities?.[fortAbilityKey]?.mod || 0;
+      } else {
+        fortAbilityMod = Math.max(this.abilities?.con?.mod || 0, this.abilities?.str?.mod || 0);
+      }
     }
 
     // Add equipment bonus from armor (only if proficient)
@@ -454,30 +469,34 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Calculate misc bonuses (auto + user)
     const fortMiscTotal = this._computeDefenseMisc(this.defenses.fort);
 
-    this.defenses.fort.total = 10 + level + fortAbility + armorFortBonus +
+    this.defenses.fort.total = 10 + level + fortAbilityMod + armorFortBonus +
                                      (this.defenses.fort.classBonus || 0) +
                                      fortMiscTotal +
                                      fortSpeciesBonus + conditionPenalty;
 
     // WILL DEFENSE
+    // Get ability modifier based on defenses.will.ability setting (player-configurable for feats/talents)
+    const willAbilityKey = this.defenses?.will?.ability || 'wis';
+    const willAbilityMod = this.abilities?.[willAbilityKey]?.mod || 0;
+
     // Get species trait bonus for will
     const willSpeciesBonus = this.defenses.will.speciesBonus || 0;
 
     // Calculate misc bonuses (auto + user)
     const willMiscTotal = this._computeDefenseMisc(this.defenses.will);
 
-    this.defenses.will.total = 10 + level + (this.abilities?.wis?.mod || 0) +
+    this.defenses.will.total = 10 + level + willAbilityMod +
                                 (this.defenses.will.classBonus || 0) +
                                 willMiscTotal +
                                 willSpeciesBonus + conditionPenalty;
 
     // FLAT-FOOTED DEFENSE
-    // Flat-footed = Reflex Defense - Dex modifier
+    // Flat-footed = Reflex Defense - [ability modifier used for Reflex]
     // Used when character is caught off-guard or surprised
     if (!this.defenses.flatFooted) {
       this.defenses.flatFooted = {};
     }
-    this.defenses.flatFooted.total = this.defenses.reflex.total - dexMod;
+    this.defenses.flatFooted.total = this.defenses.reflex.total - reflexAbilityMod;
   }
 
   /**

@@ -1,0 +1,248 @@
+{{!-- Crew Action Cards - Organized by Action Economy --}}
+<div class="crew-action-cards-container">
+  {{!-- Swift Actions --}}
+  {{#if actions.swift.length}}
+  <div class="action-economy-section">
+    <h5 class="action-economy-title swift-economy">
+      <i class="fas fa-bolt"></i> Swift Actions
+    </h5>
+    <div class="action-cards-grid">
+      {{#each actions.swift as |action|}}
+      <div class="action-card swift-card">
+        <div class="action-card-header">
+          <h4 class="action-name">{{action.name}}</h4>
+          <span class="action-economy-badge swift">Swift</span>
+        </div>
+
+        {{#if action.notes}}
+        <div class="action-description">{{action.notes}}</div>
+        {{/if}}
+
+        {{#if action.relatedSkills.length}}
+        <div class="action-skills">
+          {{#each action.relatedSkills as |skill|}}
+          <div class="skill-check">
+            <span class="skill-label">{{skill.skill}}</span>
+            {{#if skill.dc}}
+            <button class="crew-skill-roll btn-action"
+                    data-position="{{../position}}"
+                    data-skill="{{skill.skill}}"
+                    data-action-name="{{../action.name}}"
+                    data-dc="{{#if skill.dc.value}}{{skill.dc.value}}{{/if}}"
+                    title="Roll {{skill.skill}} check">
+              <i class="fas fa-dice-d20"></i> Roll
+            </button>
+            {{#if skill.dc.value}}
+            <span class="dc-value">DC {{skill.dc.value}}</span>
+            {{else if skill.dc.type}}
+            <span class="dc-type">{{skill.dc.type}}</span>
+            {{/if}}
+            {{/if}}
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{!-- Move Actions --}}
+  {{#if actions.move.length}}
+  <div class="action-economy-section">
+    <h5 class="action-economy-title move-economy">
+      <i class="fas fa-arrow-right"></i> Move Actions
+    </h5>
+    <div class="action-cards-grid">
+      {{#each actions.move as |action|}}
+      <div class="action-card move-card">
+        <div class="action-card-header">
+          <h4 class="action-name">{{action.name}}</h4>
+          <span class="action-economy-badge move">Move</span>
+        </div>
+
+        {{#if action.notes}}
+        <div class="action-description">{{action.notes}}</div>
+        {{/if}}
+
+        {{#if action.relatedSkills.length}}
+        <div class="action-skills">
+          {{#each action.relatedSkills as |skill|}}
+          <div class="skill-check">
+            <span class="skill-label">{{skill.skill}}</span>
+            {{#if skill.dc}}
+            <button class="crew-skill-roll btn-action"
+                    data-position="{{../position}}"
+                    data-skill="{{skill.skill}}"
+                    data-action-name="{{../action.name}}"
+                    data-dc="{{#if skill.dc.value}}{{skill.dc.value}}{{/if}}"
+                    title="Roll {{skill.skill}} check">
+              <i class="fas fa-dice-d20"></i> Roll
+            </button>
+            {{#if skill.dc.value}}
+            <span class="dc-value">DC {{skill.dc.value}}</span>
+            {{else if skill.dc.type}}
+            <span class="dc-type">{{skill.dc.type}}</span>
+            {{/if}}
+            {{/if}}
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{!-- Standard Actions --}}
+  {{#if actions.standard.length}}
+  <div class="action-economy-section">
+    <h5 class="action-economy-title standard-economy">
+      <i class="fas fa-hand-paper"></i> Standard Actions
+    </h5>
+    <div class="action-cards-grid">
+      {{#each actions.standard as |action|}}
+      <div class="action-card standard-card">
+        <div class="action-card-header">
+          <h4 class="action-name">{{action.name}}</h4>
+          <span class="action-economy-badge standard">Standard</span>
+        </div>
+
+        {{#if action.notes}}
+        <div class="action-description">{{action.notes}}</div>
+        {{/if}}
+
+        {{#if action.relatedSkills.length}}
+        <div class="action-skills">
+          {{#each action.relatedSkills as |skill|}}
+          <div class="skill-check">
+            <span class="skill-label">{{skill.skill}}</span>
+            {{#if skill.dc}}
+            <button class="crew-skill-roll btn-action"
+                    data-position="{{../position}}"
+                    data-skill="{{skill.skill}}"
+                    data-action-name="{{../action.name}}"
+                    data-dc="{{#if skill.dc.value}}{{skill.dc.value}}{{/if}}"
+                    title="Roll {{skill.skill}} check">
+              <i class="fas fa-dice-d20"></i> Roll
+            </button>
+            {{#if skill.dc.value}}
+            <span class="dc-value">DC {{skill.dc.value}}</span>
+            {{else if skill.dc.type}}
+            <span class="dc-type">{{skill.dc.type}}</span>
+            {{/if}}
+            {{/if}}
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{!-- Full-Round Actions --}}
+  {{#if actions.fullRound.length}}
+  <div class="action-economy-section">
+    <h5 class="action-economy-title fullround-economy">
+      <i class="fas fa-hourglass"></i> Full-Round Actions
+    </h5>
+    <div class="action-cards-grid">
+      {{#each actions.fullRound as |action|}}
+      <div class="action-card fullround-card">
+        <div class="action-card-header">
+          <h4 class="action-name">{{action.name}}</h4>
+          <span class="action-economy-badge fullround">Full-Round</span>
+        </div>
+
+        {{#if action.notes}}
+        <div class="action-description">{{action.notes}}</div>
+        {{/if}}
+
+        {{#if action.relatedSkills.length}}
+        <div class="action-skills">
+          {{#each action.relatedSkills as |skill|}}
+          <div class="skill-check">
+            <span class="skill-label">{{skill.skill}}</span>
+            {{#if skill.dc}}
+            <button class="crew-skill-roll btn-action"
+                    data-position="{{../position}}"
+                    data-skill="{{skill.skill}}"
+                    data-action-name="{{../action.name}}"
+                    data-dc="{{#if skill.dc.value}}{{skill.dc.value}}{{/if}}"
+                    title="Roll {{skill.skill}} check">
+              <i class="fas fa-dice-d20"></i> Roll
+            </button>
+            {{#if skill.dc.value}}
+            <span class="dc-value">DC {{skill.dc.value}}</span>
+            {{else if skill.dc.type}}
+            <span class="dc-type">{{skill.dc.type}}</span>
+            {{/if}}
+            {{/if}}
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{!-- Reaction Actions --}}
+  {{#if actions.reaction.length}}
+  <div class="action-economy-section">
+    <h5 class="action-economy-title reaction-economy">
+      <i class="fas fa-shield-alt"></i> Reaction Actions
+    </h5>
+    <div class="action-cards-grid">
+      {{#each actions.reaction as |action|}}
+      <div class="action-card reaction-card">
+        <div class="action-card-header">
+          <h4 class="action-name">{{action.name}}</h4>
+          <span class="action-economy-badge reaction">Reaction</span>
+        </div>
+
+        {{#if action.notes}}
+        <div class="action-description">{{action.notes}}</div>
+        {{/if}}
+
+        {{#if action.relatedSkills.length}}
+        <div class="action-skills">
+          {{#each action.relatedSkills as |skill|}}
+          <div class="skill-check">
+            <span class="skill-label">{{skill.skill}}</span>
+            {{#if skill.dc}}
+            <button class="crew-skill-roll btn-action"
+                    data-position="{{../position}}"
+                    data-skill="{{skill.skill}}"
+                    data-action-name="{{../action.name}}"
+                    data-dc="{{#if skill.dc.value}}{{skill.dc.value}}{{/if}}"
+                    title="Roll {{skill.skill}} check">
+              <i class="fas fa-dice-d20"></i> Roll
+            </button>
+            {{#if skill.dc.value}}
+            <span class="dc-value">DC {{skill.dc.value}}</span>
+            {{else if skill.dc.type}}
+            <span class="dc-type">{{skill.dc.type}}</span>
+            {{/if}}
+            {{/if}}
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{#unless (or actions.swift.length actions.move.length actions.standard.length actions.fullRound.length actions.reaction.length)}}
+  <div class="no-actions-notice">
+    <p>No actions available for this crew position</p>
+  </div>
+  {{/unless}}
+</div>

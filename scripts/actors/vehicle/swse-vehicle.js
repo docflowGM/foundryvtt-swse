@@ -3,6 +3,7 @@ import { SWSELogger } from "../../utils/logger.js";
 import { SWSEVehicleHandler } from "./swse-vehicle-handler.js";
 import { SWSEVehicleCore } from "./swse-vehicle-core.js";
 import { CombatActionsMapper } from "../../combat/utils/combat-actions-mapper.js";
+import { VehicleCrewPositions } from "./vehicle-crew-positions.js";
 
 export class SWSEVehicleSheet extends SWSECharacterSheet {
 
@@ -65,8 +66,41 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     // Ensure attributes exist in total-safe format
     context.system.attributes ??= this.constructor.defaultAttributeBlock();
 
-    // Add ship combat actions
-    context.shipActions = CombatActionsMapper.getAllShipActionsByPosition();
+    // Add ship combat actions organized by position
+    const allActions = CombatActionsMapper.getAllShipActionsByPosition();
+
+    // Build crew roster with skill information
+    context.crewRoster = VehicleCrewPositions.buildCrewRoster(this.actor);
+
+    // Load crew actor details and populate skills for each position
+    for (const [posKey, posData] of Object.entries(context.crewRoster.positions)) {
+      // Add position-specific actions organized by action economy
+      posData.actions = this._organizeActionsByEconomy(allActions[posKey] || []);
+
+      if (posData.crew && posData.crew.uuid) {
+        try {
+          const crewActor = await fromUuid(posData.crew.uuid);
+          if (crewActor) {
+            // Get available skills for this position
+            posData.skills = VehicleCrewPositions.getAvailableSkillsForPosition(posKey, crewActor);
+
+            // For pilot, get starship maneuvers suite if available
+            if (posKey === 'pilot') {
+              posData.maneuverSuite = await VehicleCrewPositions.getCrewManeuvers(crewActor);
+              posData.isForceSensitive = VehicleCrewPositions.isForceSensitive(crewActor);
+            }
+
+            // Check for pilot solo mode
+            const soloMode = VehicleCrewPositions.getPilotSoloMode(context.system.crewPositions);
+            if (soloMode) {
+              context.pilotSoloMode = soloMode;
+            }
+          }
+        } catch (error) {
+          SWSELogger.warn(`SWSE | Failed to load crew actor for ${posKey}:`, error);
+        }
+      }
+    }
 
     return context;
   }
@@ -80,6 +114,47 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
       str: blank(), dex: blank(), con: blank(),
       int: blank(), wis: blank(), cha: blank()
     };
+  }
+
+  // =========================================================================
+  // ACTION ORGANIZATION
+  // =========================================================================
+  /**
+   * Organize actions by action economy type for display
+   * @private
+   */
+  _organizeActionsByEconomy(actions) {
+    const organized = {
+      swift: [],
+      move: [],
+      standard: [],
+      fullRound: [],
+      reaction: []
+    };
+
+    for (const action of actions) {
+      const type = (action.actionType || '').toLowerCase().replace(/[- ]/g, '');
+      let category = 'standard';
+
+      if (type.includes('swift')) {
+        category = 'swift';
+      } else if (type.includes('move')) {
+        category = 'move';
+      } else if (type.includes('standard')) {
+        category = 'standard';
+      } else if (type.includes('fullround') || type.includes('full-round') || type.includes('full')) {
+        category = 'fullRound';
+      } else if (type.includes('reaction')) {
+        category = 'reaction';
+      }
+
+      organized[category].push({
+        ...action,
+        economyType: category
+      });
+    }
+
+    return organized;
   }
 
   // =========================================================================
@@ -100,6 +175,7 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     html.find(".crew-remove").click(this._onCrewRemove.bind(this));
     html.find(".crew-skill-roll").click(this._onCrewSkillRoll.bind(this));
     html.find(".crew-actions-toggle").click(this._onCrewActionsToggle.bind(this));
+    html.find(".crew-maneuvers-toggle").click(this._onCrewManeuversToggle.bind(this));
   }
 
   // =========================================================================
@@ -119,6 +195,26 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     if (icon) {
       icon.classList.toggle("fa-chevron-down", !hidden);
       icon.classList.toggle("fa-chevron-up", hidden);
+    }
+  }
+
+  // =========================================================================
+  // CREW MANEUVERS TOGGLE
+  // =========================================================================
+  _onCrewManeuversToggle(event) {
+    const button = event.currentTarget;
+    const container = button.closest(".crew-position");
+    const panel = container?.querySelector(".crew-maneuvers-list");
+    const icon = button.querySelector("i");
+
+    if (!panel) return;
+
+    const hidden = panel.style.display === "none";
+    panel.style.display = hidden ? "block" : "none";
+
+    if (icon) {
+      icon.classList.toggle("fa-chevron-right", hidden);
+      icon.classList.toggle("fa-chevron-down", !hidden);
     }
   }
 

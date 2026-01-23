@@ -137,7 +137,7 @@ export class TemplateCharacterCreator extends Application {
   }
 
   /**
-   * Show mentor dialogue
+   * Show mentor dialogue with comprehensive template summary
    */
   async showMentorDialogue(template, onConfirm, onCancel) {
     const mentorKey = template.mentor;
@@ -147,13 +147,15 @@ export class TemplateCharacterCreator extends Application {
     const dialogue = mentor?.dialogues?.[templateKey];
 
     if (!mentor || !dialogue) {
-      // No mentor dialogue, just proceed
+      // No mentor dialogue, just show summary
       SWSELogger.warn(`SWSE | No mentor dialogue found for ${mentorKey}/${templateKey}`);
-      onConfirm();
+      await this._showTemplateSummaryDialog(template, onConfirm, onCancel);
       return;
     }
 
-    // Build dialogue content
+    // Build comprehensive summary content with mentor dialogue
+    const summaryContent = this._buildTemplateSummary(template);
+
     const content = `
       <div class="mentor-dialogue-container">
         <div class="mentor-header">
@@ -173,17 +175,13 @@ export class TemplateCharacterCreator extends Application {
           </div>
         </div>
 
-        <div class="template-summary">
-          <h3>${template.name} - ${template.archetype}</h3>
-          <p class="template-quote"><em>"${template.quote}"</em></p>
-          <p>${template.description}</p>
-        </div>
+        ${summaryContent}
 
         <div class="character-name-input" style="margin-top: 1rem; padding: 1rem; background: rgba(74, 144, 226, 0.1); border-radius: 4px;">
           <label for="template-char-name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
             What shall we call you?
           </label>
-          <input type="text" id="template-char-name" name="template-char-name" placeholder="Enter your character's name..." style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;" value="${template.name}" />
+          <input type="text" id="template-char-name" name="template-char-name" placeholder="Enter your character's name..." style="width: 100%; padding: 0.5rem; border: 1px solid #0af; border-radius: 4px;" value="${template.name}" />
         </div>
       </div>
     `;
@@ -904,6 +902,124 @@ export class TemplateCharacterCreator extends Application {
     }
 
     return results;
+  }
+
+  /**
+   * Build a comprehensive template summary matching chargen final summary style
+   */
+  _buildTemplateSummary(template) {
+    const abilities = template.abilityScores || {};
+    const trainedSkills = template.trainedSkills || [];
+    const equipment = template.startingEquipment || [];
+    const notes = template.notes || '';
+
+    let skillsHtml = '';
+    if (trainedSkills && trainedSkills.length > 0) {
+      skillsHtml = `
+        <div class="summary-section">
+          <h4>Trained Skills</h4>
+          <ul class="summary-list">
+            ${trainedSkills.map(skill => `<li>${skill}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    let equipmentHtml = '';
+    if (equipment && equipment.length > 0) {
+      equipmentHtml = `
+        <div class="summary-section">
+          <h4>Starting Equipment</h4>
+          <ul class="summary-list">
+            ${equipment.map(item => `<li>${item}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    let notesHtml = '';
+    if (notes) {
+      notesHtml = `
+        <div class="summary-section">
+          <h4>Character Notes</h4>
+          <p>${notes}</p>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="template-summary-container">
+        <div class="template-header">
+          <h3>${template.name}</h3>
+          <p class="template-archetype">${template.archetype || template.class}</p>
+          <p class="template-quote"><em>"${template.quote || ''}"</em></p>
+        </div>
+
+        <div class="template-description">
+          <p>${template.description || ''}</p>
+        </div>
+
+        ${skillsHtml}
+        ${equipmentHtml}
+        ${notesHtml}
+      </div>
+    `;
+  }
+
+  /**
+   * Show template summary without mentor dialogue
+   */
+  async _showTemplateSummaryDialog(template, onConfirm, onCancel) {
+    const summaryContent = this._buildTemplateSummary(template);
+
+    const content = `
+      ${summaryContent}
+      <div class="character-name-input" style="margin-top: 1rem; padding: 1rem; background: rgba(74, 144, 226, 0.1); border-radius: 4px;">
+        <label for="template-char-name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
+          What shall we call you?
+        </label>
+        <input type="text" id="template-char-name" name="template-char-name" placeholder="Enter your character's name..." style="width: 100%; padding: 0.5rem; border: 1px solid #0af; border-radius: 4px;" value="${template.name}" />
+      </div>
+    `;
+
+    const dialog = new Dialog({
+      title: `Create ${template.name}`,
+      content: content,
+      buttons: {
+        confirm: {
+          icon: '<i class="fas fa-check"></i>',
+          label: 'Create Character',
+          callback: (html) => {
+            const nameInput = html.find('#template-char-name');
+            const charName = nameInput.val()?.trim();
+
+            if (!charName) {
+              ui.notifications.warn('Please enter a character name');
+              return false;
+            }
+
+            template.characterName = charName;
+            dialog.close();
+            onConfirm();
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: 'Go Back',
+          callback: () => {
+            dialog.close();
+            (onCancel || (() => {}))();
+          }
+        }
+      },
+      default: 'confirm',
+      close: onCancel || (() => {})
+    }, {
+      width: 700,
+      height: 600,
+      classes: ['swse', 'template-summary-dialog']
+    });
+    dialog.render(true);
   }
 }
 

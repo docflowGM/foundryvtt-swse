@@ -1421,6 +1421,8 @@ export default class CharacterGenerator extends Application {
     $html.find('.accessory-tab').click(this._onAccessoryTabClick.bind(this));
     $html.on('click', '.purchase-system', this._onPurchaseSystem.bind(this));
     $html.on('click', '.remove-system', this._onRemoveSystem.bind(this));
+    $html.on('click', '.add-enhancement', this._onPurchaseSystem.bind(this));
+    $html.on('click', '.remove-enhancement', this._onRemoveSystem.bind(this));
 
     // Name input - use 'input' event to capture changes in real-time
     $html.find('input[name="character-name"]').on('input change', (ev) => {

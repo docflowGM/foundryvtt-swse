@@ -131,7 +131,10 @@ export class SWSEVehicleHandler {
       'system.conditionTrack': template.conditionTrack || { current: 0, penalty: 0 },
 
       // Cover
-      'system.cover': template.cover || 'total',
+      'system.cover': template.cover || 'none',
+
+      // Challenge Level
+      'system.challengeLevel': template.challengeLevel || 1,
 
       // Crew positions
       'system.crewPositions': template.crewPositions || {
@@ -149,7 +152,11 @@ export class SWSEVehicleHandler {
       'system.tags': template.tags || [],
       'system.description': template.description || '',
       'system.sourcebook': template.sourcebook || '',
-      'system.page': template.page || null
+      'system.page': template.page || null,
+
+      // Optional vehicle information
+      'system.payload': template.payload || '',
+      'system.availability': template.availability || ''
     };
 
     // Validate ActorEngine exists

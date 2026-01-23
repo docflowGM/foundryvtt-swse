@@ -105,8 +105,8 @@ async function handleActorSheetDrop(actor, sheet, data) {
 }
 
 /**
- * Handle item creation for special feats
- * Handles Skill Focus feat selection
+ * Handle item creation for special items
+ * Handles Skill Focus feat selection and Shield Generator installation
  *
  * @param {Item} item - The item being created
  * @param {Object} options - Creation options
@@ -116,8 +116,32 @@ async function handleItemCreate(item, options, userId) {
     // Only process for the current user's actions
     if (game.user.id !== userId) return;
 
+    const actor = item.parent;
+    if (!actor) return;
+
+    // =========================================================================
+    // SHIELD GENERATOR INSTALLATION (For Droids)
+    // =========================================================================
+    if (item.type === 'shieldGenerator' && actor.type === 'droid') {
+        const sr = item.system?.sr ?? 0;
+        if (sr > 0) {
+            // Set shield rating on the actor
+            await actor.update({
+                "system.shields": {
+                    value: sr,      // Current shield rating
+                    max: sr,        // Maximum shield rating
+                    rating: sr      // Display rating
+                }
+            });
+            SWSELogger.log(`Shield Generator installed on ${actor.name}: SR ${sr}`);
+        }
+    }
+
+    // =========================================================================
+    // SKILL FOCUS FEAT HANDLING (Character-only)
+    // =========================================================================
     // Only process feats on character actors
-    if (item.type !== 'feat' || !item.parent || item.parent.type !== 'character') return;
+    if (item.type !== 'feat' || actor.type !== 'character') return;
 
     // Apply automatic feat effects for permanent bonuses
     await FeatEffectsEngine.applyEffectsToFeat(item);
@@ -243,8 +267,8 @@ async function handleItemCreate(item, options, userId) {
 }
 
 /**
- * Handle item deletion for special feats
- * Removes Skill Focus when feat is deleted
+ * Handle item deletion for special items
+ * Removes Skill Focus when feat is deleted or Shield Rating when Shield Generator is deleted
  *
  * @param {Item} item - The item being deleted
  * @param {Object} options - Deletion options
@@ -254,8 +278,30 @@ async function handleItemDelete(item, options, userId) {
     // Only process for the current user's actions
     if (game.user.id !== userId) return;
 
+    const actor = item.parent;
+    if (!actor) return;
+
+    // =========================================================================
+    // SHIELD GENERATOR REMOVAL (For Droids)
+    // =========================================================================
+    if (item.type === 'shieldGenerator' && actor.type === 'droid') {
+        // Clear shield rating when shield is removed
+        await actor.update({
+            "system.shields": {
+                value: 0,
+                max: 0,
+                rating: 0
+            }
+        });
+        SWSELogger.log(`Shield Generator removed from ${actor.name}`);
+        return;
+    }
+
+    // =========================================================================
+    // SKILL FOCUS FEAT HANDLING (Character-only)
+    // =========================================================================
     // Only process feats on character actors
-    if (item.type !== 'feat' || !item.parent || item.parent.type !== 'character') return;
+    if (item.type !== 'feat' || actor.type !== 'character') return;
 
     // Check if this is a Skill Focus feat
     const featName = item.name.toLowerCase();
