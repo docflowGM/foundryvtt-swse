@@ -192,10 +192,13 @@ export function _populateLocomotionSystems(doc) {
     html += `
       <div class="system-item ${isPurchased ? 'purchased' : ''}">
         <h4>${loco.name}</h4>
+        ${loco.description ? `<p class="system-description">${loco.description}</p>` : ''}
         <p><strong>Speed:</strong> ${speed} squares</p>
         <p><strong>Cost:</strong> ${cost.toLocaleString()} cr</p>
         <p><strong>Weight:</strong> ${weight} kg</p>
         <p><strong>Availability:</strong> ${loco.availability}</p>
+        ${loco.features ? `<p><strong>Features:</strong> ${loco.features.join(', ')}</p>` : ''}
+        ${loco.restrictions && loco.restrictions.length > 0 ? `<p><strong>Restrictions:</strong> ${loco.restrictions.join(', ')}</p>` : ''}
         ${isPurchased
           ? '<button type="button" class="remove-system" data-category="locomotion" data-id="' + loco.id + '"><i class="fas fa-times"></i> Remove</button>'
           : '<button type="button" class="purchase-system" data-category="locomotion" data-id="' + loco.id + '" data-cost="' + cost + '" data-weight="' + weight + '" data-speed="' + speed + '"><i class="fas fa-cart-plus"></i> Add</button>'
@@ -205,7 +208,69 @@ export function _populateLocomotionSystems(doc) {
   }
 
   html += '</div>';
+
+  // Add locomotion enhancements section if a system is selected
+  if (this.characterData.droidSystems.locomotion?.id) {
+    html += _buildLocomotionEnhancements.call(this, doc);
+  }
+
   container.innerHTML = html;
+}
+
+/**
+ * Build locomotion enhancements HTML
+ */
+function _buildLocomotionEnhancements(doc) {
+  const selectedLocomotion = this.characterData.droidSystems.locomotion?.id;
+  if (!selectedLocomotion) return '';
+
+  const costFactor = this._getCostFactor();
+  const size = this.characterData.droidSize;
+  const selectedSystem = DROID_SYSTEMS.locomotion.find(l => l.id === selectedLocomotion);
+  if (!selectedSystem) return '';
+
+  let html = '<div class="enhancements-section">';
+  html += '<h4>Locomotion Enhancements</h4>';
+  html += '<p class="enhancement-info">Enhance your locomotion system with optional upgrades. Enhancements cost 2x the base system cost.</p>';
+  html += '<div class="enhancements-grid">';
+
+  for (const enhancement of DROID_SYSTEMS.locomotionEnhancements) {
+    // Check if enhancement is compatible with selected locomotion
+    const requiredSystems = Array.isArray(enhancement.requiredLocomotion)
+      ? enhancement.requiredLocomotion
+      : [enhancement.requiredLocomotion];
+
+    if (requiredSystems.includes('any') || requiredSystems.includes(selectedLocomotion)) {
+      const isSelected = this.characterData.droidSystems.locomotionEnhancements?.some?.(e => e.id === enhancement.id) || false;
+
+      // Calculate enhancement cost
+      let enhancementCost = 0;
+      if (enhancement.costFormula && typeof enhancement.costFormula === 'function') {
+        const speed = selectedSystem.speeds[size] || selectedSystem.speeds.medium;
+        enhancementCost = enhancement.costFormula(speed, costFactor);
+      } else if (enhancement.costMultiplier) {
+        const speed = selectedSystem.speeds[size] || selectedSystem.speeds.medium;
+        const baseCost = selectedSystem.costFormula(speed, costFactor);
+        enhancementCost = baseCost * (enhancement.costMultiplier - 1); // Multiplier is x2, so additional cost is x1
+      }
+
+      html += `
+        <div class="enhancement-item ${isSelected ? 'selected' : ''}">
+          <h5>${enhancement.name}</h5>
+          <p class="enhancement-description">${enhancement.description}</p>
+          <p><strong>Additional Cost:</strong> ${enhancementCost.toLocaleString()} cr</p>
+          ${enhancement.effects ? `<p><strong>Effects:</strong> ${enhancement.effects.join(', ')}</p>` : ''}
+          ${isSelected
+            ? '<button type="button" class="remove-enhancement" data-category="enhancement" data-enhancement="' + enhancement.id + '"><i class="fas fa-times"></i> Remove</button>'
+            : '<button type="button" class="add-enhancement" data-category="enhancement" data-enhancement="' + enhancement.id + '" data-cost="' + enhancementCost + '"><i class="fas fa-plus"></i> Add</button>'
+          }
+        </div>
+      `;
+    }
+  }
+
+  html += '</div></div>';
+  return html;
 }
 
 /**
@@ -473,6 +538,20 @@ export function _onPurchaseSystem(event) {
         data: system
       });
     }
+  } else if (category === 'enhancement') {
+    const enhancementId = button.dataset.enhancement || id;
+    const enhancement = DROID_SYSTEMS.locomotionEnhancements.find(e => e.id === enhancementId);
+    if (enhancement) {
+      if (!this.characterData.droidSystems.locomotionEnhancements) {
+        this.characterData.droidSystems.locomotionEnhancements = [];
+      }
+      this.characterData.droidSystems.locomotionEnhancements.push({
+        id: enhancement.id,
+        name: enhancement.name,
+        cost,
+        weight: 0  // Enhancements typically don't add weight
+      });
+    }
   }
 
   // Update credits (except for appendages which update above)
@@ -530,6 +609,14 @@ export function _onRemoveSystem(event) {
       this.characterData.droidCredits.spent -= system.cost;
       this.characterData.droidSystems.accessories.splice(idx, 1);
     }
+  } else if (category === 'enhancement') {
+    const enhancementId = button.dataset.enhancement || id;
+    const idx = this.characterData.droidSystems.locomotionEnhancements?.findIndex(e => e.id === enhancementId);
+    if (idx >= 0) {
+      const enhancement = this.characterData.droidSystems.locomotionEnhancements[idx];
+      this.characterData.droidCredits.spent -= enhancement.cost;
+      this.characterData.droidSystems.locomotionEnhancements.splice(idx, 1);
+    }
   }
 
   this.characterData.droidCredits.remaining = this.characterData.droidCredits.base - this.characterData.droidCredits.spent;
@@ -566,6 +653,11 @@ export function _recalculateDroidTotals() {
   for (const acc of this.characterData.droidSystems.accessories) {
     totalCost += acc.cost;
     totalWeight += acc.weight;
+  }
+
+  for (const enh of (this.characterData.droidSystems.locomotionEnhancements || [])) {
+    totalCost += enh.cost;
+    totalWeight += enh.weight || 0;
   }
 
   this.characterData.droidSystems.totalCost = totalCost;

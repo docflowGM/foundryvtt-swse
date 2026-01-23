@@ -27,64 +27,159 @@ export const DROID_SYSTEMS = {
   // A droid may have multiple locomotion systems, but only one
   // may be active at a time (resolved in derived data).
   //
-  // Costs for additional locomotion systems are handled elsewhere.
+  // Cost formulas are per SWSE rules:
+  // Walking: 10 x Cost Factor x (Base Speed Squared)
+  // Wheeled: 5 x Cost Factor x (Base Speed Squared)
+  // Tracked: 20 x Cost Factor x (Base Speed Squared)
+  // Hovering: 100 x Cost Factor x (Base Speed Squared)
+  // Flying: 200 x Cost Factor x (Base Speed Squared)
+  // Burrower Drive: 200 x Cost Factor x (Speed squared)
+  // Underwater Drive: 20 x Cost Factor x (Speed Squared)
+  //
+  // Costs for enhancements (Extra Legs, Jump Servos, etc.) are handled elsewhere.
   // ======================================================================
   locomotion: [
     {
       id: "walking",
       name: "Walking",
+      description: "Versatile legged locomotion system (bipedal, quadrupedal, or multi-legged). Most common for humanoid droids. Suffers usual penalties in difficult terrain.",
+      baseSpeed: { small: 4, medium: 6, large: 8 },
       speeds: { tiny: 4, small: 4, medium: 6, large: 8, huge: 8, gargantuan: 8, colossal: 8 },
-      costFormula: (speed, costFactor) => Math.ceil(speed * 10 * costFactor),
+      costFormula: (baseSpeed, costFactor) => Math.ceil(10 * costFactor * (baseSpeed * baseSpeed)),
       weightFormula: (costFactor) => 5 * costFactor,
-      availability: "-"
+      availability: "-",
+      features: ["Versatile movement", "Can climb with Climb skill"],
+      restrictions: ["Difficult terrain penalties apply"]
     },
     {
       id: "wheeled",
       name: "Wheeled",
+      description: "One or more powered wheels for movement on smooth surfaces. Generally faster than walking but less versatile. Cannot use Climb skill; difficult terrain penalties are doubled.",
+      baseSpeed: { small: 6, medium: 8, large: 10 },
       speeds: { tiny: 6, small: 6, medium: 8, large: 10, huge: 10, gargantuan: 10, colossal: 10 },
-      costFormula: (speed, costFactor) => Math.ceil(speed * 15 * costFactor),
+      costFormula: (baseSpeed, costFactor) => Math.ceil(5 * costFactor * (baseSpeed * baseSpeed)),
       weightFormula: (costFactor) => 4 * costFactor,
-      availability: "-"
+      availability: "-",
+      features: ["High speed on flat terrain"],
+      restrictions: ["Cannot use Climb skill", "Double penalties in difficult terrain"]
     },
     {
       id: "tracked",
       name: "Tracked",
+      description: "Rigid treads providing improved traction over wheeled systems. Better off-road capability. Ignores difficult terrain penalties but suffers -5 penalty on all Climb checks.",
+      baseSpeed: { small: 4, medium: 6, large: 8 },
       speeds: { tiny: 4, small: 4, medium: 6, large: 8, huge: 8, gargantuan: 8, colossal: 8 },
-      costFormula: (speed, costFactor) => Math.ceil(speed * 12 * costFactor),
+      costFormula: (baseSpeed, costFactor) => Math.ceil(20 * costFactor * (baseSpeed * baseSpeed)),
       weightFormula: (costFactor) => 6 * costFactor,
-      availability: "-"
+      availability: "-",
+      features: ["Ignores difficult terrain", "Good traction"],
+      restrictions: ["-5 penalty on all Climb checks"]
+    },
+    {
+      id: "stationary",
+      name: "Stationary",
+      description: "Droid cannot move from its fixed position. Used for defensive emplacements, turrets, and other stationary installations.",
+      baseSpeed: { small: 0, medium: 0, large: 0 },
+      speeds: { tiny: 0, small: 0, medium: 0, large: 0, huge: 0, gargantuan: 0, colossal: 0 },
+      costFormula: (baseSpeed, costFactor) => 0,
+      weightFormula: (costFactor) => 0,
+      availability: "-",
+      features: ["No movement capability"],
+      restrictions: ["Cannot move from fixed position"]
     },
     {
       id: "hovering",
       name: "Hovering",
+      description: "Repulsorlift technology floats the droid slowly above ground (within 3 meters). Ignores difficult terrain penalties. Fixed speed of 6 squares regardless of size.",
+      baseSpeed: { small: 6, medium: 6, large: 6 },
       speeds: { tiny: 6, small: 6, medium: 6, large: 6, huge: 6, gargantuan: 6, colossal: 6 },
-      costFormula: (speed, costFactor) => Math.ceil(speed * 20 * costFactor),
+      costFormula: (baseSpeed, costFactor) => Math.ceil(100 * costFactor * (baseSpeed * baseSpeed)),
       weightFormula: (costFactor) => 3 * costFactor,
-      availability: "-"
+      availability: "-",
+      features: ["Ignores difficult terrain", "Hovers above ground", "Fixed speed"],
+      restrictions: ["Fixed 6-square speed", "Hovers within 3 meters of ground"]
     },
     {
       id: "flying",
       name: "Flying",
+      description: "Engine-based flight system for unrestricted movement. Not hampered by any terrain type but significantly more expensive than other locomotion systems.",
+      baseSpeed: { small: 9, medium: 12, large: 12 },
       speeds: { tiny: 9, small: 9, medium: 12, large: 12, huge: 12, gargantuan: 12, colossal: 12 },
-      costFormula: (speed, costFactor) => Math.ceil(speed * 25 * costFactor),
+      costFormula: (baseSpeed, costFactor) => Math.ceil(200 * costFactor * (baseSpeed * baseSpeed)),
       weightFormula: (costFactor) => 3 * costFactor,
-      availability: "-"
+      availability: "-",
+      features: ["Unrestricted movement", "No terrain penalties", "High speed"],
+      restrictions: ["Very expensive"]
     },
     {
       id: "burrower",
       name: "Burrower Drive",
+      description: "Drilling system for mining and underground movement. Moves at half-speed underground and can move vertically at same rate. Can be used as weapon dealing self-destruct damage but damages droid with each use.",
+      baseSpeed: { small: 4, medium: 6, large: 8 },
       speeds: { tiny: 4, small: 4, medium: 6, large: 8, huge: 8, gargantuan: 8, colossal: 8 },
-      costFormula: (speed, costFactor) => Math.ceil(speed * 18 * costFactor),
-      weightFormula: (costFactor) => 7 * costFactor,
-      availability: "Restricted"
+      costFormula: (baseSpeed, costFactor) => Math.ceil(200 * costFactor * (baseSpeed * baseSpeed)),
+      weightFormula: (costFactor) => 50 * costFactor,
+      availability: "Restricted",
+      features: ["Underground burrowing at half-speed", "Vertical movement", "Can be used as weapon"],
+      restrictions: ["Can damage droid with each weapon use", "Restricted availability"]
     },
     {
       id: "underwater",
       name: "Underwater Drive",
+      description: "Water propulsion system for aquatic movement. Grants swim speed equal to base land speed. Standard option on water world droids.",
+      baseSpeed: { small: 4, medium: 6, large: 8 },
       speeds: { tiny: 4, small: 4, medium: 6, large: 8, huge: 8, gargantuan: 8, colossal: 8 },
-      costFormula: (speed, costFactor) => Math.ceil(speed * 16 * costFactor),
-      weightFormula: (costFactor) => 5 * costFactor,
-      availability: "Licensed"
+      costFormula: (baseSpeed, costFactor) => Math.ceil(20 * costFactor * (baseSpeed * baseSpeed)),
+      weightFormula: (costFactor) => 10 * costFactor,
+      availability: "Licensed",
+      features: ["Aquatic movement", "Swim speed equal to base speed"],
+      restrictions: ["Licensed availability"]
+    }
+  ],
+
+  // ======================================================================
+  // LOCOMOTION ENHANCEMENTS
+  // ======================================================================
+  // Enhancements that modify existing locomotion systems.
+  // These are additions to base locomotion systems, not standalone options.
+  // All enhancements cost 2x the base locomotion system cost.
+  // ======================================================================
+  locomotionEnhancements: [
+    {
+      id: "extra-legs",
+      name: "Extra Legs",
+      description: "Three or more legs instead of bipedal. Grants 50% higher carrying capacity and +5 stability bonus to resist being knocked prone.",
+      requiresLocomtion: "walking",
+      costMultiplier: 2,
+      effects: ["Carrying capacity +50%", "Stability bonus +5"],
+      restrictions: ["Requires Walking locomotion system"]
+    },
+    {
+      id: "jump-servos",
+      name: "Jump Servos",
+      description: "Repulsorlift-assisted jumping system. Treat all jumps as running jumps without head start; reroll failed jumps; take 10 on Jump checks even when rushed or threatened.",
+      requiredLocomotion: "walking",
+      costMultiplier: 2,
+      effects: ["All jumps as running jumps", "Reroll failed jumps", "Take 10 on Jump checks"],
+      restrictions: ["Requires Walking locomotion system"]
+    },
+    {
+      id: "magnetic-feet",
+      name: "Magnetic Feet",
+      description: "Magnetic grippers allow clinging to metal surfaces, even on high-speed vehicles. Can be added to walking, wheeled, or tracked systems.",
+      requiredLocomotion: ["walking", "wheeled", "tracked"],
+      costMultiplier: 2,
+      effects: ["Cling to metal surfaces", "Function at high speeds"],
+      restrictions: ["Requires walking, wheeled, or tracked locomotion"]
+    },
+    {
+      id: "gyroscopic-stabilizers",
+      name: "Gyroscopic Stabilizers",
+      description: "Integrated gyroscope and hydraulic system grants +5 stability bonus to resist being knocked prone. Stacks with Extra Legs bonus.",
+      requiredLocomotion: "any",
+      costFormula: (baseSpeed, costFactor) => Math.ceil(2 * costFactor * (baseSpeed * baseSpeed)),
+      effects: ["Stability bonus +5 (stacks with Extra Legs)"],
+      restrictions: ["None"]
     }
   ],
 
