@@ -12,6 +12,32 @@ const ABILITY_MAP = {
     "cha": "cha", "charisma": "cha"
 };
 
+// Common species names (case-insensitive)
+const SPECIES_NAMES = [
+    "Abyssin", "Adnerem", "Aqualish", "Arcona", "Balosar", "Barabel", "Bith",
+    "Bothan", "Caamasi", "Cerean", "Chagrian", "Chalactan", "Chiss", "Clawdite",
+    "Coway", "Defel", "Devaronian", "Drall", "Dressellian", "Duinuogwuin", "Duros",
+    "Echani", "Elomin", "Ewok", "Falleen", "Farghul", "Feeorin", "Ferroan",
+    "Gamorrean", "Gand", "Givin", "Gossam", "Gran", "Gung an", "Hapan", "Human",
+    "Iktotchi", "Ishi Tib", "Ithorian", "Jawa", "Kaleesh", "Kel Dor", "Khil",
+    "Killik", "Klatooinian", "Kubaz", "Kushiban", "Lannik", "Miraluka", "Mon Calamari",
+    "Mustafarian", "Muun", "Nautolan", "Neimoidian", "Nikto", "Noghri", "Nosaurian",
+    "Omwati", "Pau'an", "Quarren", "Rodian", "Sakiyan", "Selkath", "Selonian",
+    "Shistavanen", "Skakoan", "Squib", "Ssi-ruu", "Sullustan", "T'surr", "Talz",
+    "Togorian", "Togruta", "Toydarian", "Trandoshan", "Tusken Raider", "Twi'lek",
+    "Ugnaught", "Umbaran", "Verpine", "Vratix", "Weequay", "Wookiee", "Wroonian",
+    "Yevetha", "Yuzzum", "Zabrak"
+];
+
+// Weapon groups for proficiency/focus/specialization
+const WEAPON_GROUPS = [
+    "advanced melee weapons", "exotic weapons", "heavy weapons", "lightsabers",
+    "pistols", "rifles", "simple weapons"
+];
+
+// Armor types
+const ARMOR_TYPES = ["light", "medium", "heavy"];
+
 export function normalizePrerequisiteString(raw) {
     if (!raw || raw === "null") return { raw: "", parsed: [] };
 
@@ -53,8 +79,39 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 3. Skill prerequisite: "Trained in Use the Force"
+        // 3. Skill ranks: "Ride 1 rank" → convert to "trained" (SWSE has no ranks)
         // ----------------------------------------------------------
+        const rankMatch = lower.match(/([a-z\s]+)\s+(\d+)\s+ranks?/);
+        if (rankMatch) {
+            // In SWSE, skills are trained/untrained, so treat rank requirement as trained
+            parsed.push({
+                type: "skill_trained",
+                skill: normalizeSkillName(rankMatch[1])
+            });
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 4. Skill prerequisite: "Trained in Use the Force"
+        // ----------------------------------------------------------
+        // Check for OR conditions first
+        if (lower.includes("trained in") && lower.includes(" or ")) {
+            const skillOrMatch = p.match(/Trained in (.+)/i);
+            if (skillOrMatch) {
+                const skillsRaw = skillOrMatch[1];
+                const skills = skillsRaw.split(" or ").map(s => s.trim());
+                parsed.push({
+                    type: "or",
+                    conditions: skills.map(skill => ({
+                        type: "skill_trained",
+                        skill: normalizeSkillName(skill)
+                    }))
+                });
+                continue;
+            }
+        }
+
+        // Regular single skill trained
         const skillMatch = lower.match(/trained in ([a-z\s]+)/);
         if (skillMatch) {
             parsed.push({
@@ -64,22 +121,10 @@ export function normalizePrerequisiteString(raw) {
             continue;
         }
 
-        // Skill ranks: "Perception 5 ranks"
-        const rankMatch = lower.match(/([a-z\s]+)\s+(\d+)\s+ranks/);
-        if (rankMatch) {
-            parsed.push({
-                type: "skill_ranks",
-                skill: normalizeSkillName(rankMatch[1]),
-                ranks: Number(rankMatch[2])
-            });
-            continue;
-        }
-
         // ----------------------------------------------------------
-        // 4. Feat prerequisite
+        // 4. Feat prerequisite (common feats, but NOT weapon/armor specific)
         // ----------------------------------------------------------
-        if (lower.includes("weapon focus") ||
-            lower.includes("mobility") ||
+        if (lower.includes("mobility") ||
             lower.includes("two-weapon fighting") ||
             lower.includes("point blank shot") ||
             lower.includes("skill focus") ||
@@ -149,7 +194,140 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 10. Default fallback → treat as feat name
+        // 10. Non-Droid requirement
+        // ----------------------------------------------------------
+        if (lower === "non-droid") {
+            parsed.push({ type: "non_droid" });
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 11. Species Trait requirement
+        // ----------------------------------------------------------
+        if (lower.includes("species trait")) {
+            const traitMatch = p.match(/(.+?)\s+Species Trait/i);
+            if (traitMatch) {
+                parsed.push({
+                    type: "species_trait",
+                    trait: traitMatch[1].trim()
+                });
+            }
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 12. Weapon Proficiency
+        // ----------------------------------------------------------
+        if (lower.includes("weapon proficiency") || lower.includes("proficient with")) {
+            const groupMatch = p.match(/\(([^)]+)\)/);
+            const weaponGroup = groupMatch ? groupMatch[1] : "selected weapon group";
+            parsed.push({
+                type: "weapon_proficiency",
+                group: weaponGroup
+            });
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 13. Weapon Focus
+        // ----------------------------------------------------------
+        if (lower.includes("weapon focus")) {
+            // Try to extract from parentheses first
+            let groupMatch = p.match(/\(([^)]+)\)/);
+            let weaponGroup;
+
+            if (groupMatch) {
+                weaponGroup = groupMatch[1];
+            } else {
+                // Try "with X" pattern
+                const withMatch = p.match(/with (.+)/i);
+                weaponGroup = withMatch ? withMatch[1].trim() : "selected weapon group";
+            }
+
+            parsed.push({
+                type: "weapon_focus",
+                group: weaponGroup
+            });
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 14. Weapon Specialization
+        // ----------------------------------------------------------
+        if (lower.includes("weapon specialization")) {
+            const groupMatch = p.match(/\(([^)]+)\)/);
+            const weaponGroup = groupMatch ? groupMatch[1] : "selected weapon group";
+            parsed.push({
+                type: "weapon_specialization",
+                group: weaponGroup
+            });
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 15. Armor Proficiency
+        // ----------------------------------------------------------
+        if (lower.includes("armor proficiency")) {
+            const typeMatch = p.match(/\(([^)]+)\)/);
+            const armorType = typeMatch ? typeMatch[1].toLowerCase() : null;
+
+            // Handle "light or medium"
+            if (armorType && armorType.includes(" or ")) {
+                const types = armorType.split(" or ").map(t => t.trim());
+                parsed.push({
+                    type: "or",
+                    conditions: types.map(t => ({
+                        type: "armor_proficiency",
+                        armorType: t
+                    }))
+                });
+            } else if (armorType) {
+                parsed.push({
+                    type: "armor_proficiency",
+                    armorType: armorType
+                });
+            }
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 16. OR conditions for feats (e.g., "Block or Deflect")
+        // ----------------------------------------------------------
+        if (lower.includes(" or ")) {
+            // Handle feat OR conditions (e.g., "Block or Deflect")
+            // Only if it looks like feat names (doesn't contain armor/weapon/skill keywords)
+            if (!lower.includes("armor") && !lower.includes("weapon") && !lower.includes("trained in")) {
+                const parts = p.split(" or ").map(s => s.trim());
+                if (parts.length === 2 && parts.every(part => part.length > 0)) {
+                    parsed.push({
+                        type: "or",
+                        conditions: parts.map(name => ({
+                            type: "feat",
+                            name: normalizeFeatName(name)
+                        }))
+                    });
+                    continue;
+                }
+            }
+        }
+
+        // ----------------------------------------------------------
+        // 17. Species requirement (check against known species)
+        // ----------------------------------------------------------
+        const speciesMatch = SPECIES_NAMES.find(species =>
+            lower === species.toLowerCase() ||
+            p.trim() === species
+        );
+        if (speciesMatch) {
+            parsed.push({
+                type: "species",
+                name: speciesMatch
+            });
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 18. Default fallback → treat as feat name
         // ----------------------------------------------------------
         parsed.push({
             type: "feat",

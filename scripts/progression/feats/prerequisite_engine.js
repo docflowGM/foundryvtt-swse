@@ -8,6 +8,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { normalizePrerequisiteString } from '../utils/prerequisite-normalizer.js';
 
 export const PrerequisiteRequirements = {
 
@@ -183,8 +184,15 @@ export const PrerequisiteRequirements = {
 
       /* ---------- SPECIES ---------- */
       case 'species': {
-        const speciesId = actor.system.species?.id;
-        if (speciesId !== condition.id) {
+        const actorSpeciesId = actor.system.species?.id;
+        const actorSpeciesName = actor.system.species?.name;
+
+        // Support both ID-based and name-based matching
+        const matches = condition.id
+          ? actorSpeciesId === condition.id
+          : actorSpeciesName === condition.name;
+
+        if (!matches) {
           reasons.push(`Requires ${condition.name ?? condition.id}`);
           return false;
         }
@@ -258,6 +266,139 @@ export const PrerequisiteRequirements = {
         return met;
       }
 
+      /* ---------- NON-DROID ---------- */
+      case 'non_droid': {
+        const isDroid = actor.system.isDroid ?? false;
+        if (isDroid) {
+          reasons.push('Requires character to not be a droid');
+          return false;
+        }
+        return true;
+      }
+
+      /* ---------- SPECIES TRAIT ---------- */
+      case 'species_trait': {
+        // Check if actor has the specified species trait
+        // Species traits are typically stored in actor.system.traits or similar
+        const trait = condition.trait;
+        const hasTrait = actor.items.some(i =>
+          i.type === 'trait' &&
+          i.name.toLowerCase().includes(trait.toLowerCase())
+        );
+
+        if (!hasTrait) {
+          reasons.push(`Requires ${trait} Species Trait`);
+          return false;
+        }
+        return true;
+      }
+
+      /* ---------- WEAPON PROFICIENCY ---------- */
+      case 'weapon_proficiency': {
+        const group = condition.group;
+        const hasProficiency = actor.items.some(i =>
+          i.type === 'feat' &&
+          i.name.toLowerCase().includes('weapon proficiency') &&
+          i.name.toLowerCase().includes(group.toLowerCase())
+        );
+
+        if (!hasProficiency) {
+          reasons.push(`Requires Weapon Proficiency (${group})`);
+          return false;
+        }
+        return true;
+      }
+
+      /* ---------- WEAPON FOCUS ---------- */
+      case 'weapon_focus': {
+        const group = condition.group;
+        const hasFocus = actor.items.some(i =>
+          i.type === 'feat' &&
+          i.name.toLowerCase().includes('weapon focus') &&
+          (group === "selected weapon group" || i.name.toLowerCase().includes(group.toLowerCase()))
+        );
+
+        if (!hasFocus) {
+          reasons.push(`Requires Weapon Focus with ${group}`);
+          return false;
+        }
+        return true;
+      }
+
+      /* ---------- WEAPON SPECIALIZATION ---------- */
+      case 'weapon_specialization': {
+        const group = condition.group;
+        const hasSpecialization = actor.items.some(i =>
+          i.type === 'feat' &&
+          i.name.toLowerCase().includes('weapon specialization') &&
+          (group === "selected weapon group" || i.name.toLowerCase().includes(group.toLowerCase()))
+        );
+
+        if (!hasSpecialization) {
+          reasons.push(`Requires Weapon Specialization with ${group}`);
+          return false;
+        }
+        return true;
+      }
+
+      /* ---------- ARMOR PROFICIENCY ---------- */
+      case 'armor_proficiency': {
+        const armorType = condition.armorType;
+        const hasProficiency = actor.items.some(i =>
+          i.type === 'feat' &&
+          i.name.toLowerCase().includes('armor proficiency') &&
+          i.name.toLowerCase().includes(armorType)
+        );
+
+        if (!hasProficiency) {
+          reasons.push(`Requires Armor Proficiency (${armorType})`);
+          return false;
+        }
+        return true;
+      }
+
+      /* ---------- CLASS LEVEL ---------- */
+      case 'class_level': {
+        const className = condition.className;
+        const minimumLevel = condition.minimum;
+
+        const classItem = actor.items.find(i =>
+          i.type === 'class' &&
+          i.name.toLowerCase() === className.toLowerCase()
+        );
+
+        const classLevel = classItem?.system?.level ?? 0;
+
+        if (classLevel < minimumLevel) {
+          reasons.push(`Requires ${className} level ${minimumLevel}`);
+          return false;
+        }
+        return true;
+      }
+
+
+      /* ---------- OR CONDITION ---------- */
+      case 'or': {
+        const subConditions = condition.conditions ?? [];
+        const results = subConditions.map(subCond =>
+          this._checkCondition(actor, subCond, [], doc)
+        );
+
+        const anyPassed = results.some(Boolean);
+        if (!anyPassed) {
+          // Build a descriptive message for OR conditions
+          const subReasons = subConditions.map((subCond, idx) => {
+            if (subCond.type === 'feat') return subCond.name;
+            if (subCond.type === 'skill_trained') return `Trained in ${subCond.skill}`;
+            if (subCond.type === 'armor_proficiency') return `Armor Proficiency (${subCond.armorType})`;
+            return `condition ${idx + 1}`;
+          });
+          reasons.push(`Requires one of: ${subReasons.join(' or ')}`);
+          return false;
+        }
+        return true;
+      }
+
       default:
         SWSELogger.warn('Unknown prerequisite condition:', condition);
         return true;
@@ -275,18 +416,139 @@ export const PrerequisiteRequirements = {
       return { valid: true, reasons: [] };
     }
 
+    // Use normalizer to parse the prerequisite string
+    const normalized = normalizePrerequisiteString(prereq);
     const reasons = [];
 
-    this._checkAbilityRequirements(actor, prereq, reasons);
-    this._checkBABRequirements(actor, prereq, reasons);
-    this._checkLevelRequirements(actor, prereq, reasons);
-    this._checkSkillRequirements(actor, prereq, reasons);
-    this._checkOtherFeatRequirements(actor, prereq, reasons);
+    // Check each parsed condition
+    for (const condition of normalized.parsed) {
+      const passed = this._checkNormalizedCondition(actor, condition, reasons, doc);
+      if (!passed) {
+        // Reason already added to reasons array
+      }
+    }
 
     return {
       valid: reasons.length === 0,
       reasons
     };
+  },
+
+  /**
+   * Check a condition that came from the normalizer
+   * This converts normalized types to structured types
+   */
+  _checkNormalizedCondition(actor, condition, reasons, doc) {
+    switch (condition.type) {
+      case 'ability':
+        return this._checkCondition(actor, {
+          type: 'attribute',
+          ability: condition.ability,
+          min: condition.minimum
+        }, reasons, doc);
+
+      case 'bab':
+        return this._checkCondition(actor, {
+          type: 'bab',
+          min: condition.minimum
+        }, reasons, doc);
+
+      case 'skill_trained':
+        return this._checkCondition(actor, {
+          type: 'skillTrained',
+          skill: condition.skill
+        }, reasons, doc);
+
+      case 'skill_ranks':
+        // In SWSE, skills are trained/untrained, so treat as trained check
+        return this._checkCondition(actor, {
+          type: 'skillTrained',
+          skill: condition.skill
+        }, reasons, doc);
+
+      case 'feat':
+        // Try to find the feat by name
+        const hasFeat = actor.items.some(i =>
+          i.type === 'feat' &&
+          i.name.toLowerCase() === condition.name.toLowerCase()
+        );
+        if (!hasFeat) {
+          reasons.push(`Requires ${condition.name}`);
+        }
+        return hasFeat;
+
+      case 'talent':
+        const hasTalent = actor.items.some(i =>
+          i.type === 'talent' &&
+          i.name.toLowerCase() === condition.name.toLowerCase()
+        );
+        if (!hasTalent) {
+          reasons.push(`Requires ${condition.name}`);
+        }
+        return hasTalent;
+
+      case 'force_sensitive':
+        const isForceSensitive = actor.items.some(i =>
+          i.type === 'feat' &&
+          i.name.toLowerCase().includes('force sensitive')
+        );
+        if (!isForceSensitive) {
+          reasons.push('Requires Force Sensitive');
+        }
+        return isForceSensitive;
+
+      case 'force_secret':
+        const hasSecret = actor.items.some(i => i.type === 'forceSecret');
+        if (!hasSecret) {
+          reasons.push('Requires any Force Secret');
+        }
+        return hasSecret;
+
+      case 'force_technique':
+        const hasTechnique = actor.items.some(i => i.type === 'forceTechnique');
+        if (!hasTechnique) {
+          reasons.push('Requires any Force Technique');
+        }
+        return hasTechnique;
+
+      case 'class_level':
+        return this._checkCondition(actor, condition, reasons, doc);
+
+      case 'alignment':
+        // Just pass for now, alignment checks are rare
+        return true;
+
+      case 'species':
+        return this._checkCondition(actor, {
+          type: 'species',
+          name: condition.name
+        }, reasons, doc);
+
+      case 'non_droid':
+        return this._checkCondition(actor, condition, reasons, doc);
+
+      case 'species_trait':
+        return this._checkCondition(actor, condition, reasons, doc);
+
+      case 'weapon_proficiency':
+        return this._checkCondition(actor, condition, reasons, doc);
+
+      case 'weapon_focus':
+        return this._checkCondition(actor, condition, reasons, doc);
+
+      case 'weapon_specialization':
+        return this._checkCondition(actor, condition, reasons, doc);
+
+      case 'armor_proficiency':
+        return this._checkCondition(actor, condition, reasons, doc);
+
+      case 'or':
+        return this._checkCondition(actor, condition, reasons, doc);
+
+      default:
+        SWSELogger.warn('Unknown normalized condition type:', condition);
+        return true;
+    }
   },
 
   /* ---------- LEGACY CHECKS (UNCHANGED FROM YOUR FILE) ---------- */
