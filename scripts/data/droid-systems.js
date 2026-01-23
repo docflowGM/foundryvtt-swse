@@ -429,9 +429,70 @@ export const DROID_SYSTEMS = {
   // Appendages define WHAT a droid can manipulate, not how many
   // actions it gains. A droid may have any number of appendages.
   //
-  // Unarmed damage, attack resolution, and STR modifiers are handled
-  // in derived data, not here.
+  // Unarmed damage based on size and appendage type per SWSE Core Rulebook.
+  // Droid Strength modifier applies to all unarmed damage rolls.
   // ======================================================================
+
+  // UNARMED DAMAGE TABLE - Per SWSE Core Rulebook
+  // Size/Type: Fine | Diminutive | Tiny | Small | Medium | Large | Huge | Gargantuan | Colossal
+  unarmedDamageTable: {
+    probe: {
+      fine: null,
+      diminutive: null,
+      tiny: null,
+      small: null,
+      medium: "1",
+      large: "1d2",
+      huge: "1d3",
+      gargantuan: "1d4",
+      colossal: "1d6"
+    },
+    instrument: {
+      fine: null,
+      diminutive: null,
+      tiny: null,
+      small: "1",
+      medium: "1d2",
+      large: "1d3",
+      huge: "1d4",
+      gargantuan: "1d6",
+      colossal: "1d8"
+    },
+    tool: {
+      fine: null,
+      diminutive: null,
+      tiny: "1",
+      small: "1d2",
+      medium: "1d3",
+      large: "1d4",
+      huge: "1d6",
+      gargantuan: "1d8",
+      colossal: "2d6"
+    },
+    claw: {
+      fine: null,
+      diminutive: "1",
+      tiny: "1d2",
+      small: "1d3",
+      medium: "1d4",
+      large: "1d6",
+      huge: "1d8",
+      gargantuan: "2d6",
+      colossal: "2d8"
+    },
+    hand: {
+      fine: null,
+      diminutive: null,
+      tiny: "1",
+      small: "1d2",
+      medium: "1d3",
+      large: "1d4",
+      huge: "1d6",
+      gargantuan: "1d8",
+      colossal: "2d6"
+    }
+  },
+
   appendages: [
     {
       id: "probe",
@@ -439,10 +500,13 @@ export const DROID_SYSTEMS = {
       role: "sensory",
       canManipulate: false,
       canAttack: false,
-      description: "Delicate sensory appendage.",
-      cost: 50,
-      weight: 0.5,
-      availability: "-"
+      createsUnarmedAttack: false,
+      description: "Delicate sensory appendage. Cannot be used for combat.",
+      cost: (costFactor) => Math.ceil(2 * costFactor),
+      weight: (costFactor) => 0.5 * costFactor,
+      availability: "-",
+      features: ["Sensory detection", "Push/pull small objects"],
+      restrictions: ["Cannot attack", "Very delicate"]
     },
     {
       id: "instrument",
@@ -450,10 +514,13 @@ export const DROID_SYSTEMS = {
       role: "precision",
       canManipulate: true,
       canAttack: false,
-      description: "Precision instrument for fine tasks.",
-      cost: 75,
-      weight: 0.5,
-      availability: "-"
+      createsUnarmedAttack: false,
+      description: "Precision instrument for fine tasks. Carrying capacity reduced to 1/4 if clamping type.",
+      cost: (costFactor) => Math.ceil(5 * costFactor),
+      weight: (costFactor) => 1 * costFactor,
+      availability: "-",
+      features: ["Precision task capability", "Can hold delicate objects"],
+      restrictions: ["Cannot attack", "Reduced carrying capacity if clamping type"]
     },
     {
       id: "tool",
@@ -461,10 +528,13 @@ export const DROID_SYSTEMS = {
       role: "utility",
       canManipulate: true,
       canAttack: false,
-      description: "General-purpose tool appendage.",
-      cost: 100,
-      weight: 1,
-      availability: "-"
+      createsUnarmedAttack: false,
+      description: "General-purpose tool appendage. Sturdy enough for rough use. DC 15 Dexterity check required for tasks not designed for this tool type.",
+      cost: (costFactor) => Math.ceil(10 * costFactor),
+      weight: (costFactor) => 2 * costFactor,
+      availability: "-",
+      features: ["General manipulation", "Mount weapons or tools"],
+      restrictions: ["Requires DC 15 DEX check for non-designed tasks"]
     },
     {
       id: "claw",
@@ -472,10 +542,14 @@ export const DROID_SYSTEMS = {
       role: "combat",
       canManipulate: true,
       canAttack: true,
-      description: "Grasping claw capable of unarmed attacks.",
-      cost: 150,
-      weight: 1.5,
-      availability: "-"
+      createsUnarmedAttack: true,
+      damageType: "claw",
+      description: "Grasping claw capable of unarmed attacks. Requires DC 15 Dexterity check to perform tasks requiring fine manipulation.",
+      cost: (costFactor) => Math.ceil(20 * costFactor),
+      weight: (costFactor) => 5 * costFactor,
+      availability: "-",
+      features: ["Unarmed attack", "Grasping capability", "Combat-ready"],
+      restrictions: ["DC 15 DEX check for fine manipulation tasks"]
     },
     {
       id: "hand",
@@ -483,10 +557,14 @@ export const DROID_SYSTEMS = {
       role: "manipulation",
       canManipulate: true,
       canAttack: true,
-      description: "Dexterous humanoid-style hand.",
-      cost: 200,
-      weight: 1.5,
-      availability: "-"
+      createsUnarmedAttack: true,
+      damageType: "hand",
+      description: "Dexterous humanoid-style hand with at least three digits, one opposable. Ideal for fine manipulation and combat.",
+      cost: (costFactor) => Math.ceil(50 * costFactor),
+      weight: (costFactor) => 5 * costFactor,
+      availability: "-",
+      features: ["Fine manipulation", "Unarmed attack", "Wield weapons"],
+      restrictions: ["None"]
     },
     {
       id: "mount",
@@ -494,10 +572,145 @@ export const DROID_SYSTEMS = {
       role: "weapon",
       canManipulate: false,
       canAttack: false,
-      description: "Weapon mount; does not grant additional attacks.",
-      cost: 125,
-      weight: 2,
-      availability: "-"
+      createsUnarmedAttack: false,
+      description: "Stabilized weapon mount. Does not grant additional attacks. Can hold a weapon as if wielded in two hands.",
+      cost: (costFactor) => Math.ceil(125 * costFactor),
+      weight: (costFactor) => 2 * costFactor,
+      availability: "-",
+      features: ["Weapon mounting", "Two-handed weapon capability"],
+      restrictions: ["Cannot attack without mounted weapon"]
+    }
+  ],
+
+  // ======================================================================
+  // APPENDAGE ENHANCEMENTS & SPECIAL APPENDAGES
+  // ======================================================================
+  // These modify existing appendages or provide specialized attack capability.
+  // ======================================================================
+  appendageEnhancements: [
+    {
+      id: "climbing-claws",
+      name: "Climbing Claws",
+      type: "enhancement",
+      category: "locomotion",
+      requiresAppendage: ["hand", "claw"],
+      description: "Claws designed to grip a surface. Grants climb speed equal to 1/2 base speed. Reroll failed Climb checks (keep better result). Take 10 on Climb checks even when rushed or threatened.",
+      cost: (appendageCost) => appendageCost * 2,
+      weight: (appendageWeight) => appendageWeight,
+      availability: "-",
+      features: ["Climb speed = 1/2 base speed", "Reroll Climb checks", "Take 10 on Climb checks"],
+      restrictions: ["Requires Hand or Claw appendage", "Cannot use appendage for other actions while climbing"]
+    },
+    {
+      id: "telescopic-appendage",
+      name: "Telescopic Appendage",
+      type: "enhancement",
+      category: "manipulation",
+      description: "Appendage reaches farther from body. Grants 2x normal Reach (e.g., Medium Droid goes from 1 to 2 squares).",
+      cost: (appendageCost) => appendageCost * 2,
+      weight: (appendageWeight) => appendageWeight * 2,
+      availability: "-",
+      features: ["Double reach distance"],
+      restrictions: ["None mechanically"]
+    },
+    {
+      id: "magnetic-hands",
+      name: "Magnetic Hands",
+      type: "enhancement",
+      category: "locomotion",
+      description: "Magnetic grippers for EVA operations. With Magnetic Feet: +2 bonus to Climb checks on hull, +5 bonus to Defense against knock-prone attempts. When activated, cannot make attacks or use hands for other purposes.",
+      cost: (costFactor) => 200 * costFactor,
+      weight: (costFactor) => 2 * costFactor,
+      availability: "-",
+      features: ["Hull clinging", "+2 to Climb on hull (with Magnetic Feet)", "+5 Defense vs knockdown (with Magnetic Feet)"],
+      restrictions: ["Cannot attack or use hands when activated"]
+    },
+    {
+      id: "projectile-appendage",
+      name: "Projectile Appendage",
+      type: "special-attack",
+      category: "weapon",
+      requiresAppendage: ["hand"],
+      description: "Tension-spring device that launches the appendage toward a target. Creates a ranged Simple Weapon dealing 2d8 damage. Can be used to make Disarm attempt (ranged) within 6 squares.",
+      cost: 250,
+      weight: (costFactor) => 2 * costFactor,
+      availability: "-",
+      features: ["Ranged attack 2d8 damage", "Disarm capability"],
+      restrictions: ["Licensed availability", "Requires Hand appendage"],
+      createsRangedWeapon: true,
+      weaponStats: {
+        name: "Projectile Appendage",
+        type: "simple-ranged",
+        damage: "2d8",
+        range: "6 squares",
+        weight: 1,
+        availability: "Licensed"
+      }
+    },
+    {
+      id: "rocket-arm",
+      name: "Rocket Arm",
+      type: "special-attack",
+      category: "weapon",
+      description: "Hollowed-out arm with rocket engine. Unguided projectile dealing 3d8 damage with 1-square splash radius. DC 20 Mechanics to install (failure: arm detonates with splash damage).",
+      cost: 2000,
+      weight: (costFactor) => 2 * costFactor,
+      availability: "Illegal",
+      features: ["Heavy weapon damage 3d8", "Splash 1-square radius", "Self-detaching"],
+      restrictions: ["ILLEGAL - normally not available at chargen", "Installation requires DC 20 Mechanics check"],
+      createsRangedWeapon: true,
+      weaponStats: {
+        name: "Rocket Arm",
+        type: "heavy-ranged",
+        damage: "3d8",
+        splash: "1d8 to 1-square radius",
+        weight: 2,
+        availability: "Illegal"
+      }
+    },
+    {
+      id: "multifunction-apparatus",
+      name: "Multifunction Apparatus",
+      type: "enhancement",
+      category: "manipulation",
+      description: "Allows up to 3 Tools or Weapons on single appendage. Only one active at a time. Switching requires Swift Action.",
+      cost: (costFactor) => Math.ceil(80 * costFactor),
+      weight: (costFactor) => 15 * costFactor,
+      availability: "-",
+      features: ["Mount multiple tools/weapons", "Swift Action switching", "Three-tool capacity"],
+      restrictions: ["Requires Tool appendage base"]
+    },
+    {
+      id: "remote-limb-control",
+      name: "Remote Limb Control",
+      type: "enhancement",
+      category: "advanced",
+      description: "Allows voluntary detachment with remote operation. Basic (1500 cr): one appendage, 6-square hover range, 24-square control distance. Deluxe (6000 cr): multiple appendages, control number = 1 + INT modifier.",
+      cost: [
+        { version: "basic", cost: 1500, weight: 1 },
+        { version: "deluxe", cost: 6000, weight: 2 }
+      ],
+      availability: "Restricted",
+      features: ["Detachable operation", "Remote hovering", "Extended range control"],
+      restrictions: ["Restricted availability", "Requires applicable appendage"]
+    },
+    {
+      id: "quick-release-coupling",
+      name: "Quick-Release Coupling",
+      type: "enhancement",
+      category: "utility",
+      description: "Tool-sized: swap in 2 Standard Actions. Appendage-sized: swap in 2 Full-Round Actions. Requires matching coupling on both pieces.",
+      cost: [
+        { type: "tool", cost: (costFactor) => Math.ceil(10 * costFactor) },
+        { type: "appendage", cost: (costFactor) => Math.ceil(50 * costFactor) }
+      ],
+      weight: [
+        { type: "tool", weight: (costFactor) => 2 * costFactor },
+        { type: "appendage", weight: (costFactor) => 5 * costFactor }
+      ],
+      availability: "-",
+      features: ["Quick tool swaps", "Quick appendage swaps"],
+      restrictions: ["Matching couplings required on both pieces"]
     }
   ],
 

@@ -348,20 +348,30 @@ export function _populateAppendageSystems(doc) {
 
   for (const app of DROID_SYSTEMS.appendages) {
     // Handle both formula-based and flat cost/weight
-    const cost = typeof app.costFormula === 'function'
-      ? app.costFormula(costFactor)
+    const cost = typeof app.cost === 'function'
+      ? app.cost(costFactor)
       : (app.cost || 0);
-    const weight = typeof app.weightFormula === 'function'
-      ? app.weightFormula(costFactor)
+    const weight = typeof app.weight === 'function'
+      ? app.weight(costFactor)
       : (app.weight || 0);
     const purchaseCount = this.characterData.droidSystems.appendages.filter(a => a.id === app.id).length;
     const freeHandCount = this.characterData.droidSystems.appendages.filter(a => a.id === 'hand' && a.cost === 0).length;
     const isFree = app.id === 'hand' && freeHandCount < 2;
 
-    html += `
-      <div class="system-item ${purchaseCount > 0 ? 'purchased' : ''} ${isFree ? 'free-item' : ''}">
-        <h4>${app.name} ${isFree ? '<span class="free-badge">FREE (2×)</span>' : ''}</h4>
+    let appendageHtml = `
+      <div class="system-item ${purchaseCount > 0 ? 'purchased' : ''} ${isFree ? 'free-item' : ''} ${app.createsUnarmedAttack ? 'combat-appendage' : ''}">
+        <h4>${app.name}${isFree ? '<span class="free-badge">FREE (2×)</span>' : ''}${app.createsUnarmedAttack ? '<span class="combat-badge">Combat</span>' : ''}</h4>
         <p class="system-description">${app.description}</p>
+    `;
+
+    if (app.features) {
+      appendageHtml += `<p><strong>Features:</strong> ${app.features.join(', ')}</p>`;
+    }
+    if (app.restrictions && app.restrictions.length > 0) {
+      appendageHtml += `<p><strong>Restrictions:</strong> ${app.restrictions.join(', ')}</p>`;
+    }
+
+    appendageHtml += `
         <p><strong>Cost:</strong> ${isFree ? 'Free (2×)' : cost.toLocaleString() + ' cr'}</p>
         <p><strong>Weight:</strong> ${weight} kg</p>
         <p><strong>Availability:</strong> ${app.availability}</p>
@@ -370,10 +380,91 @@ export function _populateAppendageSystems(doc) {
         ${purchaseCount > 0 ? '<button type="button" class="remove-system" data-category="appendage" data-id="' + app.id + '"><i class="fas fa-minus"></i> Remove One</button>' : ''}
       </div>
     `;
+    html += appendageHtml;
   }
 
   html += '</div>';
+
+  // Add appendage enhancements section
+  html += _buildAppendageEnhancements.call(this, doc);
+
   container.innerHTML = html;
+}
+
+/**
+ * Build appendage enhancements HTML
+ */
+function _buildAppendageEnhancements(doc) {
+  const selectedAppendages = this.characterData.droidSystems.appendages || [];
+  if (selectedAppendages.length === 0) return '';
+
+  let html = '<div class="enhancements-section"><h4>Appendage Enhancements</h4>';
+  html += '<p class="enhancement-info">Add enhancements to your appendages for improved functionality.</p>';
+
+  // Get all enhancements compatible with selected appendages
+  const compatibleEnhancements = new Map();
+
+  for (const appendageRef of selectedAppendages) {
+    const appendageDef = DROID_SYSTEMS.appendages.find(a => a.id === appendageRef.id);
+    if (!appendageDef) continue;
+
+    // Find enhancements for this appendage
+    for (const enhancement of DROID_SYSTEMS.appendageEnhancements) {
+      if (!enhancement.requiresAppendage) continue;
+
+      const required = Array.isArray(enhancement.requiresAppendage)
+        ? enhancement.requiresAppendage
+        : [enhancement.requiresAppendage];
+
+      if (required.includes(appendageRef.id) || required.includes('any')) {
+        if (!compatibleEnhancements.has(enhancement.id)) {
+          compatibleEnhancements.set(enhancement.id, enhancement);
+        }
+      }
+    }
+  }
+
+  if (compatibleEnhancements.size === 0) {
+    html += '<p class="no-enhancements">No enhancements available for selected appendages.</p>';
+    html += '</div>';
+    return html;
+  }
+
+  html += '<div class="enhancements-grid">';
+  const costFactor = this._getCostFactor();
+
+  for (const [, enhancement] of compatibleEnhancements) {
+    const isSelected = this.characterData.droidSystems.appendageEnhancements?.some?.(e => e.id === enhancement.id) || false;
+
+    // Calculate enhancement cost
+    let enhancementCost = 0;
+    if (Array.isArray(enhancement.cost)) {
+      // Multi-cost option - just show first option for now
+      enhancementCost = enhancement.cost[0].cost || 0;
+    } else if (typeof enhancement.cost === 'function') {
+      enhancementCost = enhancement.cost(costFactor);
+    } else {
+      enhancementCost = enhancement.cost || 0;
+    }
+
+    html += `
+      <div class="enhancement-item ${isSelected ? 'selected' : ''}">
+        <h5>${enhancement.name}</h5>
+        <p class="enhancement-description">${enhancement.description}</p>
+        <p><strong>Cost:</strong> ${enhancementCost.toLocaleString()} cr</p>
+        ${enhancement.features ? `<p><strong>Features:</strong> ${enhancement.features.join(', ')}</p>` : ''}
+        ${enhancement.restrictions && enhancement.restrictions.length > 0 ? `<p><strong>Restrictions:</strong> ${enhancement.restrictions.join(', ')}</p>` : ''}
+        <p><strong>Availability:</strong> ${enhancement.availability}</p>
+        ${isSelected
+          ? '<button type="button" class="remove-enhancement" data-category="appendage-enhancement" data-enhancement="' + enhancement.id + '"><i class="fas fa-times"></i> Remove</button>'
+          : '<button type="button" class="add-enhancement" data-category="appendage-enhancement" data-enhancement="' + enhancement.id + '" data-cost="' + enhancementCost + '"><i class="fas fa-plus"></i> Add</button>'
+        }
+      </div>
+    `;
+  }
+
+  html += '</div></div>';
+  return html;
 }
 
 /**
@@ -575,6 +666,20 @@ export function _onPurchaseSystem(event) {
         weight: 0  // Enhancements typically don't add weight
       });
     }
+  } else if (category === 'appendage-enhancement') {
+    const enhancementId = button.dataset.enhancement || id;
+    const enhancement = DROID_SYSTEMS.appendageEnhancements.find(e => e.id === enhancementId);
+    if (enhancement) {
+      if (!this.characterData.droidSystems.appendageEnhancements) {
+        this.characterData.droidSystems.appendageEnhancements = [];
+      }
+      this.characterData.droidSystems.appendageEnhancements.push({
+        id: enhancement.id,
+        name: enhancement.name,
+        cost,
+        weight: 0  // Enhancements typically don't add weight
+      });
+    }
   }
 
   // Update credits (except for appendages which update above)
@@ -640,6 +745,14 @@ export function _onRemoveSystem(event) {
       this.characterData.droidCredits.spent -= enhancement.cost;
       this.characterData.droidSystems.locomotionEnhancements.splice(idx, 1);
     }
+  } else if (category === 'appendage-enhancement') {
+    const enhancementId = button.dataset.enhancement || id;
+    const idx = this.characterData.droidSystems.appendageEnhancements?.findIndex(e => e.id === enhancementId);
+    if (idx >= 0) {
+      const enhancement = this.characterData.droidSystems.appendageEnhancements[idx];
+      this.characterData.droidCredits.spent -= enhancement.cost;
+      this.characterData.droidSystems.appendageEnhancements.splice(idx, 1);
+    }
   }
 
   this.characterData.droidCredits.remaining = this.characterData.droidCredits.base - this.characterData.droidCredits.spent;
@@ -679,6 +792,11 @@ export function _recalculateDroidTotals() {
   }
 
   for (const enh of (this.characterData.droidSystems.locomotionEnhancements || [])) {
+    totalCost += enh.cost;
+    totalWeight += enh.weight || 0;
+  }
+
+  for (const enh of (this.characterData.droidSystems.appendageEnhancements || [])) {
     totalCost += enh.cost;
     totalWeight += enh.weight || 0;
   }
