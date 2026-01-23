@@ -20,6 +20,7 @@ import { StatusEffectsMechanics } from "./houserule-status-effects.js";
 import { HealingMechanics } from "./houserule-healing.js";
 import { HealingSkillIntegration } from "./houserule-healing-skill-integration.js";
 import { ActorSheetEnhancements } from "./houserule-actor-enhancements.js";
+import { BlockMechanicalAlternative, setupBlockMechanicalHooks } from "./houserule-block-mechanic.js";
 
 /**
  * HouseruleMechanics
@@ -52,6 +53,8 @@ export class HouseruleMechanics {
       HealingMechanics.initialize();
       HealingSkillIntegration.initialize();
       ActorSheetEnhancements.initialize();
+      BlockMechanicalAlternative.initialize();
+      setupBlockMechanicalHooks();
     } catch (err) {
       SWSELogger.error("HouseruleMechanics initialization failed", err);
     }
