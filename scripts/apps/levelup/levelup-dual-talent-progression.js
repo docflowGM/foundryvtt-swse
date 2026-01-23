@@ -77,16 +77,18 @@ export function getTalentProgressionInfo(selectedClass, actor) {
 }
 
 /**
- * Get available talent trees for heroic-level talents (ANY class tree)
+ * Get available talent trees for heroic-level talents
+ * Returns the UNION of all talent trees available to the character's classes
+ * Example: If character has Soldier (3 trees) and Scout (2 trees), can access all 5 combined
  * @param {Actor} actor - The character actor
- * @returns {Set<string>} All talent trees available to any of the character's classes
+ * @returns {Set<string>} Union of talent trees from all character classes
  */
 export async function getAvailableTalentTreesForHeroicTalent(actor) {
   const allTrees = new Set();
   const characterClasses = getCharacterClasses(actor);
   const classPack = game.packs.get('foundryvtt-swse.classes');
 
-  // Collect all talent trees from all classes
+  // Collect all talent trees from all classes the character has levels in
   for (const [className] of Object.entries(characterClasses)) {
     const classIndex = classPack?.index.find(c => c.name === className);
     if (classIndex) {
@@ -100,7 +102,7 @@ export async function getAvailableTalentTreesForHeroicTalent(actor) {
     }
   }
 
-  SWSELogger.log(`[DUAL-TALENTS] getAvailableTalentTreesForHeroicTalent: found ${allTrees.size} trees:`, Array.from(allTrees));
+  SWSELogger.log(`[DUAL-TALENTS] getAvailableTalentTreesForHeroicTalent: found ${allTrees.size} unique trees from all classes:`, Array.from(allTrees));
 
   return allTrees;
 }

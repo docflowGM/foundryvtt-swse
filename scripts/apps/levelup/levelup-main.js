@@ -59,8 +59,19 @@ import {
   showEnhancedTreeSelection,
   showEnhancedTalentTree,
   showTalentTreeDialog,
-  selectTalent
+  selectTalent,
+  getTalentProgressionInfo
 } from './levelup-talents.js';
+
+// Import dual talent selection
+import {
+  getTalentSelectionState,
+  getHeroicTalentTrees,
+  getClassTalentTrees,
+  recordTalentSelection,
+  checkTalentSelectionsComplete,
+  getTalentSelectionDisplay
+} from './levelup-dual-talent-selection.js';
 
 // Import skill module functions
 import {
@@ -160,7 +171,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.currentStep = 'class'; // class, multiclass-bonus, ability-increase, feat, talent, skills, summary
 
     this.selectedClass = null;
-    this.selectedTalent = null;
+    this.selectedTalents = { heroic: null, class: null }; // Dual talent progression
+    this.currentTalentSelectionType = null; // Track which talent type we're selecting ('heroic' or 'class')
     this.selectedFeats = [];
     this.selectedSkills = [];
     this.abilityIncreases = {}; // Track ability score increases
@@ -259,10 +271,22 @@ export class SWSELevelUpEnhanced extends FormApplication {
     data.mentorGreeting = this.mentorGreeting;
     data.mentorGuidance = this._getMentorGuidanceForCurrentStep();
 
-    // If class selected, get talent trees
+    // If class selected, get talent trees and progression info
     if (this.selectedClass) {
       data.selectedClass = this.selectedClass;
+      // Legacy: also get talent trees (used in template)
       data.talentTrees = await getAvailableTalentTrees(this.selectedClass, this.actor);
+
+      // Dual talent progression
+      const talentState = getTalentSelectionState(this.selectedClass, this.actor);
+      data.talentState = talentState;
+      data.selectedTalents = this.selectedTalents;
+      data.talentSelectionDisplay = getTalentSelectionDisplay(this.selectedTalents);
+
+      // Heroic talent trees (union of all class trees)
+      data.heroicTalentTrees = await getHeroicTalentTrees(this.actor);
+      // Class talent trees (only this class's trees)
+      data.classTalentTrees = getClassTalentTrees(this.selectedClass);
     }
 
     // Free Build mode flag
@@ -1371,6 +1395,10 @@ export class SWSELevelUpEnhanced extends FormApplication {
   async _onSelectTalentTree(event) {
     event.preventDefault();
 
+    // Determine which talent type we're selecting (heroic or class)
+    const selectionType = event.currentTarget.dataset.talentType || 'heroic';
+    this.currentTalentSelectionType = selectionType;
+
     // If clicking on a tree name directly (old behavior)
     if (event.currentTarget.dataset.tree) {
       const treeName = event.currentTarget.dataset.tree;
@@ -1421,7 +1449,15 @@ export class SWSELevelUpEnhanced extends FormApplication {
     const existingTalents = this.actor.items
       .filter(i => i.type === 'talent')
       .map(t => ({ name: t.name, _id: t.id }));
-    const pendingTalents = this.selectedTalent ? [this.selectedTalent] : [];
+
+    // Collect pending talents from both heroic and class selections
+    const pendingTalents = [];
+    if (this.selectedTalents.heroic) {
+      pendingTalents.push(this.selectedTalents.heroic);
+    }
+    if (this.selectedTalents.class) {
+      pendingTalents.push(this.selectedTalents.class);
+    }
 
     const pendingData = {
       selectedFeats: this.selectedFeats,
@@ -1436,15 +1472,24 @@ export class SWSELevelUpEnhanced extends FormApplication {
       // Check if this is the combined Block & Deflect talent
       if (HouseRuleTalentCombination.isBlockDeflectCombined(talent)) {
         // Store the combined talent but with a flag indicating it should grant both
-        this.selectedTalent = {
-          ...talent,
+        talent._data = {
           isBlockDeflectCombined: true,
           actualTalentsToGrant: HouseRuleTalentCombination.getActualTalentsToGrant(talentName)
         };
-        ui.notifications.info(`Selected combined talent: Block & Deflect (will grant both Block and Deflect)`);
+      }
+
+      // Store in the appropriate talent slot based on current selection type
+      const selectionType = this.currentTalentSelectionType || 'heroic';
+      if (selectionType === 'class') {
+        this.selectedTalents.class = talent;
+        ui.notifications.info(`Selected class talent: ${talentName}`);
       } else {
-        this.selectedTalent = talent;
-        ui.notifications.info(`Selected talent: ${talentName}`);
+        this.selectedTalents.heroic = talent;
+        ui.notifications.info(`Selected heroic talent: ${talentName}`);
+      }
+
+      if (talent._data?.isBlockDeflectCombined) {
+        ui.notifications.info(`Selected combined talent: Block & Deflect (will grant both Block and Deflect)`);
       }
     }
   }
@@ -1518,9 +1563,16 @@ export class SWSELevelUpEnhanced extends FormApplication {
         }
         break;
       case 'talent':
-        // Check if they selected a talent (unless in Free Build mode)
-        if (!this.freeBuild && !this.selectedTalent) {
-          ui.notifications.warn("You must select a talent before continuing! (Or enable Free Build mode to skip)");
+        // Check if all required talents are selected (dual talent progression)
+        const talentState = getTalentSelectionState(this.selectedClass, this.actor);
+        const heroicDone = !talentState.needsHeroicTalent || this.selectedTalents.heroic;
+        const classDone = !talentState.needsClassTalent || this.selectedTalents.class;
+
+        if (!this.freeBuild && (!heroicDone || !classDone)) {
+          const missing = [];
+          if (!heroicDone) missing.push("Heroic Talent");
+          if (!classDone) missing.push("Class Talent");
+          ui.notifications.warn(`You must select the following before continuing: ${missing.join(", ")}. (Or enable Free Build mode to skip)`);
           return;
         }
         this.currentStep = 'summary';
@@ -1713,15 +1765,30 @@ export class SWSELevelUpEnhanced extends FormApplication {
         });
       }
 
-      // Add talent to progression if any
-      if (this.selectedTalent) {
-        // Check if this is the combined Block & Deflect talent
-        const talentNamesToGrant = this.selectedTalent.isBlockDeflectCombined
-          ? this.selectedTalent.actualTalentsToGrant
-          : [this.selectedTalent.name];
+      // Add talents to progression (both heroic and class talents if present)
+      const talentsToGrant = [];
 
+      if (this.selectedTalents.heroic) {
+        const heroicTalent = this.selectedTalents.heroic;
+        const isBlockDeflect = heroicTalent._data?.isBlockDeflectCombined;
+        const heroicNames = isBlockDeflect
+          ? heroicTalent._data.actualTalentsToGrant
+          : [heroicTalent.name];
+        talentsToGrant.push(...heroicNames);
+      }
+
+      if (this.selectedTalents.class) {
+        const classTalent = this.selectedTalents.class;
+        const isBlockDeflect = classTalent._data?.isBlockDeflectCombined;
+        const classNames = isBlockDeflect
+          ? classTalent._data.actualTalentsToGrant
+          : [classTalent.name];
+        talentsToGrant.push(...classNames);
+      }
+
+      if (talentsToGrant.length > 0) {
         await this.progressionEngine.doAction('confirmTalents', {
-          talentIds: talentNamesToGrant
+          talentIds: talentsToGrant
         });
       }
 
@@ -1852,7 +1919,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
           <p><strong>HP Gained:</strong> ${hpGainText}</p>
           <p><strong>New HP Total:</strong> ${newHPMax}</p>
           ${abilityText}
-          ${this.selectedTalent ? `<p><strong>Talent:</strong> ${this.selectedTalent.name}</p>` : ''}
+          ${this.selectedTalents.heroic ? `<p><strong>Heroic Talent:</strong> ${this.selectedTalents.heroic.name}</p>` : ''}
+          ${this.selectedTalents.class ? `<p><strong>Class Talent:</strong> ${this.selectedTalents.class.name}</p>` : ''}
           ${this.selectedFeats.length > 0 ? `<p><strong>Feat:</strong> ${this.selectedFeats.map(f => f.name).join(', ')}</p>` : ''}
           ${getMilestoneFt ? `<p><strong>Milestone Feat:</strong> Gain 1 bonus general feat!</p>` : ''}
         </div>
