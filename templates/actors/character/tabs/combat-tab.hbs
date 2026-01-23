@@ -58,6 +58,70 @@
  {{/if}}
  </div>
 
+ {{!-- Grappling Section --}}
+ <h3 class="section-header">Grappling Status</h3>
+
+ <div class="grapple-section">
+   <div class="grapple-status">
+     {{#if grappleState.grabbed}}
+       <div class="grapple-condition grabbed">
+         <i class="fas fa-hand-holding-heart"></i>
+         <strong>Grabbed by:</strong> {{grappleState.grappler}}
+       </div>
+     {{/if}}
+
+     {{#if grappleState.grappled}}
+       <div class="grapple-condition grappled">
+         <i class="fas fa-link"></i>
+         <strong>Grappled with:</strong> {{grappleState.opponent}}
+       </div>
+     {{/if}}
+
+     {{#if grappleState.pinned}}
+       <div class="grapple-condition pinned">
+         <i class="fas fa-ban"></i>
+         <strong>Pinned by:</strong> {{grappleState.grappler}}
+         <span class="reflex-penalty">-10 Reflex</span>
+       </div>
+     {{/if}}
+
+     {{#unless grappleState.grabbed}}
+       {{#unless grappleState.grappled}}
+         {{#unless grappleState.pinned}}
+           <div class="grapple-condition free">
+             <i class="fas fa-check-circle"></i>
+             <strong>Not Grappled</strong>
+           </div>
+         {{/unless}}
+       {{/unless}}
+     {{/unless}}
+   </div>
+
+   <div class="grapple-actions">
+     {{#if grappleState.grabbed}}
+       <button class="grapple-action-btn" data-action="continueGrapple" title="Make opposed grapple check">
+         <i class="fas fa-handshake"></i> Continue Grapple Check
+       </button>
+     {{else}}
+       <button class="grapple-action-btn" data-action="startGrapple" title="Initiate grab attack (standard action)">
+         <i class="fas fa-hand-holding-heart"></i> Start Grab
+       </button>
+     {{/if}}
+
+     {{#if grappleState.grappled}}
+       {{#if grappleState.canPin}}
+         <button class="grapple-action-btn pin-action" data-action="attemptPin" title="Requires Pin feat (opposed grapple check)">
+           <i class="fas fa-ban"></i> Attempt Pin
+         </button>
+       {{/if}}
+
+       <button class="grapple-action-btn escape-action" data-action="escapeGrapple" title="Escape grapple (opposed check)">
+         <i class="fas fa-running"></i> Escape
+       </button>
+     {{/if}}
+   </div>
+ </div>
+
  <h3 class="section-header">Weapons</h3>
 
  <div class="weapons-list">

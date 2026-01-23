@@ -30,6 +30,7 @@ import { SkillSystem } from "../../engine/SkillSystem.js";
 import { TalentAbilitiesEngine } from "../../engine/TalentAbilitiesEngine.js";
 import { StarshipManeuversEngine } from "../../engine/StarshipManeuversEngine.js";
 import { ClassNormalizer } from "../../progression/engine/class-normalizer.js";
+import { SWSEGrappling } from "../../combat/systems/grappling-system.js";
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
@@ -290,6 +291,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // --------------------------------------
     await this._prepareTalentTreesData(context, classes, talents);
 
+    // --------------------------------------
+    // 11. GRAPPLING STATE
+    // --------------------------------------
+    context.grappleState = this._getGrappleState();
+
     return context;
   }
 // ----------------------------------------------------------
@@ -334,6 +340,12 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     html.find('[data-action="rollAttack"]').click(ev => this._onRollAttack(ev));
     html.find('[data-action="rollDamage"]').click(ev => this._onRollDamage(ev));
     html.find('[data-action="rollCombatAction"]').click(ev => this._onPostCombatAction(ev));
+
+    // ========== GRAPPLING ACTIONS ==========
+    html.find('[data-action="startGrapple"]').click(ev => this._onStartGrapple(ev));
+    html.find('[data-action="continueGrapple"]').click(ev => this._onContinueGrapple(ev));
+    html.find('[data-action="attemptPin"]').click(ev => this._onAttemptPin(ev));
+    html.find('[data-action="escapeGrapple"]').click(ev => this._onEscapeGrapple(ev));
 
     // ========== TALENTS TAB ACTIONS ==========
     html.find('[data-action="toggleTree"]').click(ev => this._onToggleTree(ev));
@@ -1300,6 +1312,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     const action = data.find(a => a.name === name);
     if (!action) return ui.notifications.warn(`Action not found: ${name}`);
 
+    // Special handling for grapple action - use the grappling system
+    if (name.toLowerCase().includes("grapple") || name.toLowerCase().includes("grab")) {
+      return this._onStartGrapple(evt);
+    }
+
     const rollable = action.relatedSkills?.filter(r => r.dc?.type === "flat") || [];
     if (!rollable.length)
       return this._postCombatActionDescription(name, action);
@@ -1341,8 +1358,105 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     return ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: msg });
   }
 
+  // ----------------------------------------------------------
+  // G.5 Grappling Engine
+  // ----------------------------------------------------------
 
-  
+  /**
+   * Get current grapple state for the character
+   */
+  _getGrappleState() {
+    const grabbed = this.actor.effects.find(e => e.flags?.swse?.grapple === "grabbed");
+    const grappled = this.actor.effects.find(e => e.flags?.swse?.grapple === "grappled");
+    const pinned = this.actor.effects.find(e => e.flags?.swse?.grapple === "pinned");
+
+    const hasPinFeat = this.actor.items.some(i =>
+      i.type === "feat" && i.name.toLowerCase().includes("pin")
+    );
+
+    return {
+      grabbed: !!grabbed,
+      grappled: !!grappled,
+      pinned: !!pinned,
+      grappler: grabbed?.origin ? game.actors.get(grabbed.flags.swse.source)?.name : null,
+      opponent: grappled?.origin ? game.actors.get(grappled.flags.swse.source)?.name : null,
+      canPin: !!grappled && hasPinFeat
+    };
+  }
+
+  /**
+   * Get selected combat target, prompting user if none selected
+   */
+  async _getGrappleTarget() {
+    if (canvas.tokens.controlled.length > 0) {
+      const controlled = canvas.tokens.controlled[0];
+      if (controlled.actor !== this.actor) {
+        return controlled.actor;
+      }
+    }
+
+    ui.notifications.warn("Please select a target token to grapple");
+    return null;
+  }
+
+  /**
+   * Start a grab attack (initiates RAW grappling sequence)
+   */
+  async _onStartGrapple(event) {
+    event.preventDefault();
+    const target = await this._getGrappleTarget();
+    if (!target) return;
+
+    await SWSEGrappling.attemptGrab(this.actor, target);
+    this.render();
+  }
+
+  /**
+   * Continue with grapple check (next round of grappling)
+   */
+  async _onContinueGrapple(event) {
+    event.preventDefault();
+    const target = await this._getGrappleTarget();
+    if (!target) return;
+
+    await SWSEGrappling.grappleCheck(this.actor, target);
+    this.render();
+  }
+
+  /**
+   * Attempt to pin opponent (requires Pin feat)
+   */
+  async _onAttemptPin(event) {
+    event.preventDefault();
+    const target = await this._getGrappleTarget();
+    if (!target) return;
+
+    const hasPinFeat = this.actor.items.some(i =>
+      i.type === "feat" && i.name.toLowerCase().includes("pin")
+    );
+
+    if (!hasPinFeat) {
+      ui.notifications.warn("Character lacks the Pin feat");
+      return;
+    }
+
+    await SWSEGrappling.attemptPin(this.actor, target);
+    this.render();
+  }
+
+  /**
+   * Attempt to escape from a grapple
+   */
+  async _onEscapeGrapple(event) {
+    event.preventDefault();
+    const target = await this._getGrappleTarget();
+    if (!target) return;
+
+    await SWSEGrappling.escapeGrapple(this.actor, target);
+    this.render();
+  }
+
+
   // ----------------------------------------------------------
   // H. Feat Actions Engine
   // ----------------------------------------------------------
