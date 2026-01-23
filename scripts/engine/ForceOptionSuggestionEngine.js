@@ -179,6 +179,26 @@ export const FORCE_OPTIONS_CATALOG = {
 
 export class ForceOptionSuggestionEngine {
   /**
+   * Map prestige classes to Force powers that support them
+   * @private
+   */
+  static _getPrestigeClassPowerSuggestions(prestigeClass) {
+    const suggestions = {
+      "Jedi Knight": ["battle_strike", "enlighten", "improved_battle_meditation", "surge"],
+      "Jedi Master": ["enlighten", "force_sensitivity_focus", "improved_battle_meditation", "negate_energy"],
+      "Sith Apprentice": ["force_lightning", "force_grip", "dark_side_mastery", "stun"],
+      "Sith Lord": ["force_lightning", "dark_side_mastery", "force_grip", "move_object"],
+      "Force Adept": ["move_object", "force_lightning", "negate_energy", "telekinetic_savant"],
+      "Force Disciple": ["move_object", "enlighten", "force_sensitivity_focus", "telekinetic_savant"],
+      "Imperial Knight": ["battle_strike", "negate_energy", "surge", "mind_trick"],
+      "Imperial Knight Errant": ["surge", "mind_trick", "battle_strike", "quicken_power"],
+      "Imperial Knight Inquisitor": ["mind_trick", "force_grip", "force_lightning", "awareness"]
+    };
+
+    return suggestions[prestigeClass] || [];
+  }
+
+  /**
    * Suggest Force options based on character build
    * @param {Array} options - Array of force options to evaluate
    * @param {Actor} actor - The character
@@ -191,6 +211,9 @@ export class ForceOptionSuggestionEngine {
     try {
       const buildIntent = contextOptions.buildIntent || {};
       const ruleset = game.settings?.get('foundryvtt-swse', 'houseRules') || {};
+
+      // Get prestige class target from L1 survey if available
+      const prestigeClassTarget = actor.system?.swse?.mentorBuildIntentBiases?.prestigeClassTarget || null;
 
       const suggestedOptions = options.map(option => {
         let tier = FORCE_OPTION_TIERS.AVAILABLE;
@@ -225,6 +248,15 @@ export class ForceOptionSuggestionEngine {
         if (combatStyle === "caster" && ["force_lightning", "mind_trick", "move_object"].includes(option.id)) {
           tier = Math.max(tier, FORCE_OPTION_TIERS.COMBAT_SYNERGY);
           reasons.push("Supports Force caster build");
+        }
+
+        // Prestige class alignment from L1 survey (highest priority)
+        if (prestigeClassTarget) {
+          const prestigeConfig = this._getPrestigeClassPowerSuggestions(prestigeClassTarget);
+          if (prestigeConfig && prestigeConfig.includes(option.id)) {
+            tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
+            reasons.push(`Supports your goal: ${prestigeClassTarget}`);
+          }
         }
 
         // Prestige class alignment - FIXED: Use prestigeAffinities (array) instead of prestigeTargets

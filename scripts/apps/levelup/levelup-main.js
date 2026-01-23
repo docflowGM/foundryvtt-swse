@@ -356,6 +356,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     html.find('.ask-mentor-class-suggestion').click(this._onAskMentorClassSuggestion.bind(this));
     html.find('.ask-mentor-feat-suggestion').click(this._onAskMentorFeatSuggestion.bind(this));
     html.find('.ask-mentor-talent-suggestion').click(this._onAskMentorTalentSuggestion.bind(this));
+    html.find('.ask-mentor-force-power-suggestion').click(this._onAskMentorForcePowerSuggestion.bind(this));
 
     // Animate mentor text with typing effect
     this._animateMentorText(html);
@@ -567,6 +568,60 @@ export class SWSELevelUpEnhanced extends FormApplication {
       }
     } catch (err) {
       console.error('Error getting talent suggestion:', err);
+      ui.notifications.error("Error getting mentor suggestion. Check console.");
+    }
+  }
+
+  /**
+   * Ask mentor for Force power suggestion
+   */
+  async _onAskMentorForcePowerSuggestion(event) {
+    event.preventDefault();
+
+    try {
+      const { getAvailableForcePowers } = await import('../levelup/levelup-force-powers.js');
+      const { ForceOptionSuggestionEngine } = await import('../../engine/ForceOptionSuggestionEngine.js');
+
+      const availablePowers = await getAvailableForcePowers(this.actor, {});
+
+      if (!availablePowers || availablePowers.length === 0) {
+        ui.notifications.warn("No available Force powers to suggest.");
+        return;
+      }
+
+      // Filter out already-selected powers
+      const unselectedPowers = availablePowers.filter(p => p.isQualified &&
+        !this.actor.items.some(i => i.type === 'forcepower' && i.name === p.name)
+      );
+
+      if (unselectedPowers.length === 0) {
+        ui.notifications.warn("You've already learned all available Force powers!");
+        return;
+      }
+
+      // Get suggestions using the Force power suggestion engine
+      const pendingData = this._buildPendingData();
+      const suggestions = await ForceOptionSuggestionEngine.suggestForceOptions(
+        unselectedPowers,
+        this.actor,
+        pendingData,
+        { buildIntent: {} }
+      );
+
+      // Get the top-tier suggestion
+      const topSuggestion = suggestions.find(s => s.suggestion?.tier >= 4) || suggestions[0];
+
+      if (!topSuggestion) {
+        ui.notifications.warn("No Force power suggestions available at this time.");
+        return;
+      }
+
+      // Show mentor suggestion dialog
+      await MentorSuggestionDialog.show(this.currentMentorClass, topSuggestion, 'force_power_selection');
+
+      ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.name}`);
+    } catch (err) {
+      console.error('Error getting Force power suggestion:', err);
       ui.notifications.error("Error getting mentor suggestion. Check console.");
     }
   }
