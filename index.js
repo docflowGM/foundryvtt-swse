@@ -218,6 +218,7 @@ import { ProficiencySelectionDialog } from './scripts/apps/proficiency-selection
 import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
 import { HouseruleMechanics } from './scripts/houserules/houserule-mechanics.js';
 import { HouserulesConfig } from './scripts/houserules/houserules-config.js';
+import { AidAnother } from './scripts/combat/aid-another.js';
 import { GrappleMechanics } from './scripts/houserules/houserule-grapple.js';
 import { RecoveryMechanics } from './scripts/houserules/houserule-recovery.js';
 import { ConditionTrackMechanics } from './scripts/houserules/houserule-condition-track.js';
@@ -426,6 +427,7 @@ Hooks.once("ready", async function () {
     SWSECombatActionBrowser.init();
     TalentAbilitiesEngine.initCombatHooks();
     HouseruleMechanics.initialize();
+    AidAnother.initialize();
 
     RulesEngine.init();
     Upkeep.init();
