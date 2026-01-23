@@ -81,9 +81,9 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
             // Get available skills for this position
             posData.skills = VehicleCrewPositions.getAvailableSkillsForPosition(posKey, crewActor);
 
-            // For pilot, get starship maneuvers if available
+            // For pilot, get starship maneuvers suite if available
             if (posKey === 'pilot') {
-              posData.maneuvers = await VehicleCrewPositions.getCrewManeuvers(crewActor);
+              posData.maneuverSuite = await VehicleCrewPositions.getCrewManeuvers(crewActor);
               posData.isForceSensitive = VehicleCrewPositions.isForceSensitive(crewActor);
             }
 

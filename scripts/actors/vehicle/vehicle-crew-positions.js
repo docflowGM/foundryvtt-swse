@@ -185,18 +185,46 @@ export class VehicleCrewPositions {
 
   /**
    * Get crew maneuvers if pilot has Starship Tactics feat
+   * Returns only the maneuvers the pilot actually owns (selected in their suite)
+   * Organized by descriptor (attack patterns, dogfighting, force, etc.)
    * @param {Actor} pilotActor - The pilot crew member
-   * @returns {Array} Array of maneuver objects
+   * @returns {Object} Maneuver suite with organized maneuvers
    */
   static async getCrewManeuvers(pilotActor) {
-    if (!pilotActor) return [];
+    if (!pilotActor) {
+      return {
+        maneuvers: [],
+        organized: {},
+        total: 0,
+        hasStartshipTactics: false
+      };
+    }
 
     try {
-      const maneuvers = await StarshipManeuversEngine.getManeuversForActor(pilotActor);
-      return maneuvers || [];
+      // Use the engine's crew maneuvers method to get position-filtered maneuvers
+      const maneuverData = StarshipManeuversEngine.getCrewManeuvers(pilotActor, 'pilot');
+
+      // If pilot has Starship Tactics and maneuvers, return the organized suite
+      if (maneuverData.hasStartshipTactics && maneuverData.total > 0) {
+        return {
+          maneuvers: maneuverData.maneuvers,
+          organized: maneuverData.organized,
+          total: maneuverData.total,
+          hasStartshipTactics: true,
+          message: `Pilot has ${maneuverData.total} starship maneuver(s)`
+        };
+      }
+
+      return maneuverData;
     } catch (error) {
       SWSELogger.warn(`SWSE | Failed to get crew maneuvers:`, error);
-      return [];
+      return {
+        maneuvers: [],
+        organized: {},
+        total: 0,
+        hasStartshipTactics: false,
+        error: error.message
+      };
     }
   }
 

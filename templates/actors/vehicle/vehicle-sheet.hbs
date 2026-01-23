@@ -135,23 +135,111 @@
         </div>
         {{/if}}
 
-        {{!-- Starship Maneuvers for Pilot --}}
-        {{#if posData.maneuvers}}
+        {{!-- Starship Maneuver Suite for Pilot --}}
+        {{#if posData.maneuverSuite}}
+        {{#if posData.maneuverSuite.hasStartshipTactics}}
         <div class="crew-maneuvers">
-          <button class="crew-maneuvers-toggle" type="button" title="Starship Maneuvers">
-            <i class="fas fa-chevron-right"></i> Maneuvers ({{posData.maneuvers.length}})
+          <button class="crew-maneuvers-toggle" type="button" title="Starship Maneuver Suite">
+            <i class="fas fa-chevron-right"></i> Maneuver Suite ({{posData.maneuverSuite.total}})
           </button>
           <div class="crew-maneuvers-list" style="display: none;">
-            {{#each posData.maneuvers as |maneuver|}}
-            <div class="maneuver-item">
-              <strong>{{maneuver.name}}</strong>
-              {{#if maneuver.description}}
-              <p>{{maneuver.description}}</p>
+            {{#if posData.maneuverSuite.total}}
+              {{!-- Attack Patterns --}}
+              {{#if posData.maneuverSuite.organized.attackPatterns}}
+              {{#if posData.maneuverSuite.organized.attackPatterns.length}}
+              <div class="maneuver-category">
+                <h5 class="category-title">Attack Patterns</h5>
+                {{#each posData.maneuverSuite.organized.attackPatterns as |maneuver|}}
+                <div class="maneuver-item">
+                  <strong>{{maneuver.name}}</strong>
+                  {{#if maneuver.description}}
+                  <p class="maneuver-desc">{{maneuver.description}}</p>
+                  {{/if}}
+                </div>
+                {{/each}}
+              </div>
               {{/if}}
-            </div>
-            {{/each}}
+              {{/if}}
+
+              {{!-- Dogfighting --}}
+              {{#if posData.maneuverSuite.organized.dogfight}}
+              {{#if posData.maneuverSuite.organized.dogfight.length}}
+              <div class="maneuver-category">
+                <h5 class="category-title">Dogfighting</h5>
+                {{#each posData.maneuverSuite.organized.dogfight as |maneuver|}}
+                <div class="maneuver-item">
+                  <strong>{{maneuver.name}}</strong>
+                  {{#if maneuver.description}}
+                  <p class="maneuver-desc">{{maneuver.description}}</p>
+                  {{/if}}
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+              {{/if}}
+
+              {{!-- Force --}}
+              {{#if posData.maneuverSuite.organized.force}}
+              {{#if posData.maneuverSuite.organized.force.length}}
+              <div class="maneuver-category">
+                <h5 class="category-title force-category">Force Maneuvers</h5>
+                {{#each posData.maneuverSuite.organized.force as |maneuver|}}
+                <div class="maneuver-item">
+                  <strong>{{maneuver.name}}</strong>
+                  {{#if maneuver.description}}
+                  <p class="maneuver-desc">{{maneuver.description}}</p>
+                  {{/if}}
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+              {{/if}}
+
+              {{!-- Gunner --}}
+              {{#if posData.maneuverSuite.organized.gunner}}
+              {{#if posData.maneuverSuite.organized.gunner.length}}
+              <div class="maneuver-category">
+                <h5 class="category-title gunner-category">Gunner Maneuvers</h5>
+                {{#each posData.maneuverSuite.organized.gunner as |maneuver|}}
+                <div class="maneuver-item">
+                  <strong>{{maneuver.name}}</strong>
+                  {{#if maneuver.description}}
+                  <p class="maneuver-desc">{{maneuver.description}}</p>
+                  {{/if}}
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+              {{/if}}
+
+              {{!-- General --}}
+              {{#if posData.maneuverSuite.organized.general}}
+              {{#if posData.maneuverSuite.organized.general.length}}
+              <div class="maneuver-category">
+                <h5 class="category-title">General</h5>
+                {{#each posData.maneuverSuite.organized.general as |maneuver|}}
+                <div class="maneuver-item">
+                  <strong>{{maneuver.name}}</strong>
+                  {{#if maneuver.description}}
+                  <p class="maneuver-desc">{{maneuver.description}}</p>
+                  {{/if}}
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+              {{/if}}
+            {{else}}
+              <div class="no-maneuvers-notice">
+                Pilot has no maneuvers selected in their suite.
+              </div>
+            {{/if}}
           </div>
         </div>
+        {{else}}
+        <div class="crew-maneuvers-notice">
+          <small>Requires Starship Tactics feat</small>
+        </div>
+        {{/if}}
         {{/if}}
 
         {{!-- Crew Actions Toggle --}}

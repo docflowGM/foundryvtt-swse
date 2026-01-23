@@ -1205,6 +1205,63 @@
     line-height: 1.4;
 }
 
+.maneuver-desc {
+    color: var(--swse-text-secondary, #6a9dcd);
+    font-size: 0.85em;
+    margin-top: 4px;
+    line-height: 1.4;
+    font-style: italic;
+}
+
+/* Organized Maneuver Categories */
+.maneuver-category {
+    margin-bottom: 15px;
+}
+
+.maneuver-category:last-child {
+    margin-bottom: 0;
+}
+
+.category-title {
+    color: var(--swse-secondary, #0af);
+    font-weight: bold;
+    font-size: 0.95em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(0, 170, 255, 0.3);
+    letter-spacing: 0.5px;
+}
+
+.category-title.force-category {
+    color: #d4a574;
+}
+
+.category-title.gunner-category {
+    color: #ff9f43;
+}
+
+/* Empty State Notices */
+.no-maneuvers-notice {
+    padding: 12px;
+    text-align: center;
+    color: var(--swse-text-muted, #6a9dcd);
+    font-style: italic;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px dashed var(--swse-border-subtle, rgba(0, 170, 255, 0.2));
+    border-radius: 4px;
+}
+
+.crew-maneuvers-notice {
+    padding: 8px;
+    font-size: 0.85em;
+    color: var(--swse-text-muted, #6a9dcd);
+    background: rgba(255, 159, 67, 0.1);
+    border-left: 3px solid #ff9f43;
+    border-radius: 3px;
+    margin-top: 5px;
+}
+
 /* Crew Actions Button */
 .crew-actions-toggle {
     width: 100%;
