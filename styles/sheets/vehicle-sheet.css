@@ -1291,6 +1291,222 @@
     border-radius: 4px;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   CREW ACTION CARDS
+   ───────────────────────────────────────────────────────────── */
+
+.crew-action-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.action-economy-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.action-economy-title {
+    color: var(--swse-secondary, #0af);
+    font-weight: bold;
+    font-size: 0.95em;
+    text-transform: uppercase;
+    margin: 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid currentColor;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.action-economy-title.swift-economy {
+    color: #ff9f43;
+}
+
+.action-economy-title.move-economy {
+    color: #00d4ff;
+}
+
+.action-economy-title.standard-economy {
+    color: #0af;
+}
+
+.action-economy-title.fullround-economy {
+    color: #ff6b9d;
+}
+
+.action-economy-title.reaction-economy {
+    color: #74b9ff;
+}
+
+.action-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 10px;
+}
+
+.action-card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 170, 255, 0.3);
+    border-radius: 4px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.action-card:hover {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(0, 170, 255, 0.6);
+    box-shadow: 0 0 8px rgba(0, 170, 255, 0.2);
+}
+
+.action-card.swift-card {
+    border-left: 4px solid #ff9f43;
+}
+
+.action-card.move-card {
+    border-left: 4px solid #00d4ff;
+}
+
+.action-card.standard-card {
+    border-left: 4px solid #0af;
+}
+
+.action-card.fullround-card {
+    border-left: 4px solid #ff6b9d;
+}
+
+.action-card.reaction-card {
+    border-left: 4px solid #74b9ff;
+}
+
+.action-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.action-name {
+    margin: 0;
+    color: var(--swse-primary, #9ed0ff);
+    font-size: 0.95em;
+    font-weight: bold;
+}
+
+.action-economy-badge {
+    font-size: 0.7em;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+}
+
+.action-economy-badge.swift {
+    background: rgba(255, 159, 67, 0.3);
+    color: #ff9f43;
+    border: 1px solid #ff9f43;
+}
+
+.action-economy-badge.move {
+    background: rgba(0, 212, 255, 0.3);
+    color: #00d4ff;
+    border: 1px solid #00d4ff;
+}
+
+.action-economy-badge.standard {
+    background: rgba(0, 170, 255, 0.3);
+    color: #0af;
+    border: 1px solid #0af;
+}
+
+.action-economy-badge.fullround {
+    background: rgba(255, 107, 157, 0.3);
+    color: #ff6b9d;
+    border: 1px solid #ff6b9d;
+}
+
+.action-economy-badge.reaction {
+    background: rgba(116, 185, 255, 0.3);
+    color: #74b9ff;
+    border: 1px solid #74b9ff;
+}
+
+.action-description {
+    color: var(--swse-text-secondary, #6a9dcd);
+    font-size: 0.85em;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.action-skills {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(0, 170, 255, 0.2);
+}
+
+.skill-check {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85em;
+    flex-wrap: wrap;
+}
+
+.skill-label {
+    color: var(--swse-secondary, #0af);
+    font-weight: bold;
+    min-width: 80px;
+}
+
+.btn-action {
+    background: rgba(0, 170, 255, 0.2);
+    border: 1px solid var(--swse-secondary, #0af);
+    color: var(--swse-secondary, #0af);
+    padding: 2px 6px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-action:hover {
+    background: rgba(0, 170, 255, 0.4);
+    box-shadow: 0 0 8px rgba(0, 170, 255, 0.3);
+}
+
+.dc-value {
+    color: var(--swse-danger, #ff6b6b);
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.dc-type {
+    color: var(--swse-text-muted, #6a9dcd);
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+.no-actions-notice {
+    padding: 15px;
+    text-align: center;
+    color: var(--swse-text-muted, #6a9dcd);
+    font-style: italic;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px dashed rgba(0, 170, 255, 0.2);
+    border-radius: 4px;
+}
+
 @media (max-width: 900px) {
     .defense-stats-grid {
         grid-template-columns: repeat(2, 1fr);

@@ -219,6 +219,23 @@ export class CombatActionsMapper {
       .map(a => this._normalizeShipAction(a));
   }
 
+  /**
+   * Get all ship combat actions organized by crew position
+   * @returns {Object} Map of crew positions to their available actions
+   */
+  static getAllShipActionsByPosition() {
+    if (!this._initialized) return {};
+
+    const positions = ['pilot', 'copilot', 'gunner', 'engineer', 'shields', 'commander'];
+    const result = {};
+
+    for (const position of positions) {
+      result[position] = this.getActionsForCrewPosition(position);
+    }
+
+    return result;
+  }
+
   // ---------------------------------------------------------------------------
   // Talent Enhancements
   // ---------------------------------------------------------------------------

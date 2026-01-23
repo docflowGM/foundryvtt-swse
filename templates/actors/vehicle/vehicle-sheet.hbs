@@ -243,13 +243,15 @@
         {{/if}}
 
         {{!-- Crew Actions Toggle --}}
-        {{#if posData.crew}}
+        {{#if posData.actions}}
+        {{#if (or posData.actions.swift.length posData.actions.move.length posData.actions.standard.length posData.actions.fullRound.length posData.actions.reaction.length)}}
         <button class="crew-actions-toggle" type="button">
           <i class="fas fa-chevron-down"></i> Actions
         </button>
         <div class="crew-actions-panel" style="display: none;">
-          {{!-- Crew actions will be populated by the sheet --}}
+          {{> "systems/foundryvtt-swse/templates/partials/crew-action-cards.hbs" actions=posData.actions position=posKey}}
         </div>
+        {{/if}}
         {{/if}}
       </div>
       {{/each}}

@@ -66,14 +66,17 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     // Ensure attributes exist in total-safe format
     context.system.attributes ??= this.constructor.defaultAttributeBlock();
 
-    // Add ship combat actions
-    context.shipActions = CombatActionsMapper.getAllShipActionsByPosition();
+    // Add ship combat actions organized by position
+    const allActions = CombatActionsMapper.getAllShipActionsByPosition();
 
     // Build crew roster with skill information
     context.crewRoster = VehicleCrewPositions.buildCrewRoster(this.actor);
 
     // Load crew actor details and populate skills for each position
     for (const [posKey, posData] of Object.entries(context.crewRoster.positions)) {
+      // Add position-specific actions organized by action economy
+      posData.actions = this._organizeActionsByEconomy(allActions[posKey] || []);
+
       if (posData.crew && posData.crew.uuid) {
         try {
           const crewActor = await fromUuid(posData.crew.uuid);
@@ -111,6 +114,47 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
       str: blank(), dex: blank(), con: blank(),
       int: blank(), wis: blank(), cha: blank()
     };
+  }
+
+  // =========================================================================
+  // ACTION ORGANIZATION
+  // =========================================================================
+  /**
+   * Organize actions by action economy type for display
+   * @private
+   */
+  _organizeActionsByEconomy(actions) {
+    const organized = {
+      swift: [],
+      move: [],
+      standard: [],
+      fullRound: [],
+      reaction: []
+    };
+
+    for (const action of actions) {
+      const type = (action.actionType || '').toLowerCase().replace(/[- ]/g, '');
+      let category = 'standard';
+
+      if (type.includes('swift')) {
+        category = 'swift';
+      } else if (type.includes('move')) {
+        category = 'move';
+      } else if (type.includes('standard')) {
+        category = 'standard';
+      } else if (type.includes('fullround') || type.includes('full-round') || type.includes('full')) {
+        category = 'fullRound';
+      } else if (type.includes('reaction')) {
+        category = 'reaction';
+      }
+
+      organized[category].push({
+        ...action,
+        economyType: category
+      });
+    }
+
+    return organized;
   }
 
   // =========================================================================
