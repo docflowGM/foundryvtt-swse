@@ -1,0 +1,349 @@
+/**
+ * SWSE Level Up Dialog Styles
+ * Dual Talent Progression UI
+ */
+
+/* ================================================================= */
+/* DUAL TALENT SELECTION BLOCK                                      */
+/* ================================================================= */
+
+.step-talent-selection.dual-talent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.step-talent-selection h3 {
+  margin-bottom: 0.5rem;
+}
+
+/* Progress Indicator */
+.talent-progress-indicator {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(0, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.progress-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background: rgba(100, 100, 100, 0.2);
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.progress-item.required {
+  border: 1px solid rgba(255, 200, 0, 0.4);
+  background: rgba(255, 200, 0, 0.05);
+}
+
+.progress-item.completed {
+  border: 1px solid rgba(0, 255, 0, 0.4);
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.progress-item i {
+  font-size: 1.2rem;
+  margin-bottom: 0.25rem;
+}
+
+.progress-item.completed i {
+  color: #00ff00;
+}
+
+.progress-item i.fa-circle {
+  color: rgba(100, 100, 100, 0.6);
+}
+
+.progress-item span {
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: block;
+}
+
+.progress-item small {
+  font-size: 0.75rem;
+  color: rgba(0, 255, 255, 0.7);
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+.progress-connector {
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(180deg, transparent, rgba(0, 255, 255, 0.3), transparent);
+  margin: 0 0.5rem;
+}
+
+/* Talent Selection Blocks */
+.talent-selection-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 2px solid rgba(0, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(10, 14, 39, 0.5);
+  transition: all 0.3s ease;
+}
+
+.talent-selection-block:hover {
+  border-color: rgba(0, 255, 255, 0.4);
+  background: rgba(10, 14, 39, 0.7);
+}
+
+.talent-selection-block.heroic-talent {
+  border-left: 4px solid rgba(255, 215, 0, 0.5);
+}
+
+.talent-selection-block.class-talent {
+  border-left: 4px solid rgba(0, 150, 255, 0.5);
+}
+
+.talent-block-header h4 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.talent-block-header i {
+  font-size: 1.3rem;
+}
+
+.talent-block-description {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(0, 255, 255, 0.7);
+  font-style: italic;
+}
+
+.badge-success {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: rgba(0, 255, 0, 0.2);
+  border: 1px solid rgba(0, 255, 0, 0.4);
+  border-radius: 12px;
+  color: #00ff00;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+/* Selected Talent Card */
+.selected-talent-card {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(0, 255, 0, 0.08);
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  border-radius: 6px;
+  align-items: flex-start;
+}
+
+.talent-check {
+  font-size: 1.5rem;
+  color: #00ff00;
+  flex-shrink: 0;
+}
+
+.talent-details {
+  flex: 1;
+}
+
+.talent-details h5 {
+  margin: 0 0 0.25rem 0;
+  color: #00ffff;
+  font-size: 1rem;
+}
+
+.talent-tree {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(0, 255, 255, 0.6);
+  font-style: italic;
+}
+
+.talent-benefit {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.4;
+}
+
+/* Talent Selection Interface */
+.talent-selection-intro {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.talent-intro-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(100, 100, 100, 0.1);
+  border: 1px dashed rgba(0, 255, 255, 0.3);
+  border-radius: 6px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.talent-intro-card:hover {
+  background: rgba(100, 100, 100, 0.15);
+  border-color: rgba(0, 255, 255, 0.5);
+}
+
+.talent-intro-icon {
+  font-size: 2.5rem;
+  color: rgba(0, 255, 255, 0.7);
+}
+
+.talent-intro-card h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #00ffff;
+}
+
+.talent-intro-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+}
+
+/* Quick Tree Buttons */
+.quick-tree-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.quick-select-label {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(0, 255, 255, 0.7);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.talent-tree-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.talent-tree-grid .select-talent-tree.choice-button {
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 150, 200, 0.1);
+  border: 1px solid rgba(0, 150, 200, 0.3);
+  color: #00ffff;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.talent-tree-grid .select-talent-tree.choice-button:hover {
+  background: rgba(0, 150, 200, 0.3);
+  border-color: rgba(0, 255, 255, 0.6);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.talent-tree-grid .select-talent-tree.choice-button i {
+  font-size: 1.5rem;
+}
+
+.talent-tree-grid .select-talent-tree.choice-button span {
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+/* Large Browse Button */
+.btn-primary-large {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  background: linear-gradient(135deg, rgba(0, 200, 255, 0.2), rgba(0, 150, 200, 0.2));
+  border: 2px solid rgba(0, 255, 255, 0.4);
+  color: #00ffff;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.btn-primary-large:hover {
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(0, 200, 255, 0.3));
+  border-color: rgba(0, 255, 255, 0.7);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.btn-primary-large:active {
+  transform: scale(0.98);
+}
+
+/* Form Actions */
+.step-talent-selection .form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .talent-progress-indicator {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .progress-connector {
+    width: 40px;
+    height: 2px;
+    margin: 0;
+  }
+
+  .talent-tree-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .step-talent-selection .form-actions {
+    flex-direction: column;
+    justify-content: stretch;
+  }
+
+  .step-talent-selection .form-actions button {
+    flex: 1;
+  }
+}

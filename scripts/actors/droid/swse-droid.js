@@ -86,6 +86,16 @@ export class SWSEDroidSheet extends SWSECharacterSheet {
     // ---------------------------------------------------------------
     context.droidWarnings = this._prepareDroidWarnings(system, context.items);
 
+    // ---------------------------------------------------------------
+    // Droid Skills: Replace CON-based skills with STR
+    // ---------------------------------------------------------------
+    if (system.skills) {
+      // For droids, endurance uses STR instead of CON
+      if (system.skills.endurance) {
+        system.skills.endurance.selectedAbility = 'str';
+      }
+    }
+
     return context;
   }
 

@@ -774,55 +774,143 @@
     </section>
     {{/if}}
 
-    {{!-- STEP 5: TALENT SELECTION --}}
+    {{!-- STEP 5: TALENT SELECTION (Dual Progression) --}}
     {{#if (eq currentStep "talent")}}
-    <section class="step-talent-selection">
-      <h3>Select a Talent</h3>
-      <p class="hint">
-        {{#if (eq talentTreeRestriction "current")}}
-          Choose a talent tree from {{selectedClass.name}}
-        {{else}}
-          Choose a talent tree from any of your classes
-        {{/if}}
-      </p>
+    <section class="step-talent-selection dual-talent">
+      <h3>Select Talents</h3>
 
-      <div class="selected-talent-display">
-        {{#if selectedTalent}}
+      {{!-- Progress Indicator --}}
+      {{#if talentState}}
+      <div class="talent-progress-indicator">
+        <div class="progress-item {{#if selectedTalents.heroic}}completed{{/if}} {{#if talentState.needsHeroicTalent}}required{{/if}}">
+          <i class="fas {{#if selectedTalents.heroic}}fa-check-circle{{else}}fa-circle{{/if}}"></i>
+          <span>Heroic Talent</span>
+          {{#if selectedTalents.heroic}}
+            <small>{{selectedTalents.heroic.name}}</small>
+          {{/if}}
+        </div>
+        {{#if talentState.total}}
+        <div class="progress-connector"></div>
+        {{/if}}
+        {{#if talentState.needsClassTalent}}
+        <div class="progress-item {{#if selectedTalents.class}}completed{{/if}} required">
+          <i class="fas {{#if selectedTalents.class}}fa-check-circle{{else}}fa-circle{{/if}}"></i>
+          <span>Class Talent ({{selectedClass.name}})</span>
+          {{#if selectedTalents.class}}
+            <small>{{selectedTalents.class.name}}</small>
+          {{/if}}
+        </div>
+        {{/if}}
+      </div>
+      {{/if}}
+
+      {{!-- Heroic Talent Selection --}}
+      {{#if talentState.needsHeroicTalent}}
+      <div class="talent-selection-block heroic-talent">
+        <div class="talent-block-header">
+          <h4>
+            <i class="fas fa-crown"></i> Heroic Talent
+            {{#if selectedTalents.heroic}}<span class="badge-success">Selected</span>{{/if}}
+          </h4>
+          <p class="talent-block-description">
+            Choose from any talent tree available to your classes.
+          </p>
+        </div>
+
+        {{#if selectedTalents.heroic}}
         <div class="selected-talent-card">
-          <i class="fas fa-check-circle"></i>
-          <h4>Selected: {{selectedTalent.name}}</h4>
-          <p>{{selectedTalent.system.benefit}}</p>
-        </div>
-        {{/if}}
-      </div>
-
-      <div class="talent-selection-intro">
-        <div class="talent-intro-card">
-          <div class="talent-intro-icon">
-            <i class="fas fa-project-diagram"></i>
+          <div class="talent-check"><i class="fas fa-check-circle"></i></div>
+          <div class="talent-details">
+            <h5>{{selectedTalents.heroic.name}}</h5>
+            <p class="talent-tree">{{selectedTalents.heroic.system.tree}}</p>
+            <p class="talent-benefit">{{selectedTalents.heroic.system.benefit}}</p>
           </div>
-          <h4>Explore Talent Trees</h4>
-          <p>View an interactive visualization of available talent trees. Hover to preview, click to explore in detail.</p>
-          <button class="select-talent-tree btn-primary-large">
-            <i class="fas fa-search-plus"></i>
-            Browse Talent Trees
-          </button>
         </div>
-
-        {{#if talentTrees}}
-        <div class="quick-tree-buttons">
-          <p class="quick-select-label">Or quickly select a tree:</p>
-          <div class="talent-tree-grid">
-            {{#each talentTrees}}
-            <button class="select-talent-tree choice-button" data-tree="{{this}}">
-              <i class="fas fa-tree"></i>
-              <span>{{this}}</span>
+        {{else}}
+        <div class="talent-selection-intro">
+          <div class="talent-intro-card">
+            <div class="talent-intro-icon">
+              <i class="fas fa-project-diagram"></i>
+            </div>
+            <h4>Explore Talent Trees</h4>
+            <p>View an interactive visualization of available talent trees. Hover to preview, click to explore in detail.</p>
+            <button class="select-talent-tree btn-primary-large" data-talent-type="heroic">
+              <i class="fas fa-search-plus"></i>
+              Browse Talent Trees
             </button>
-            {{/each}}
           </div>
+
+          {{#if heroicTalentTrees}}
+          <div class="quick-tree-buttons">
+            <p class="quick-select-label">Or quickly select a tree:</p>
+            <div class="talent-tree-grid">
+              {{#each heroicTalentTrees}}
+              <button class="select-talent-tree choice-button" data-tree="{{this}}" data-talent-type="heroic" title="{{lookup @root.talentTreeDescriptions this}}">
+                <i class="fas fa-tree"></i>
+                <span>{{this}}</span>
+              </button>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
         </div>
         {{/if}}
       </div>
+      {{/if}}
+
+      {{!-- Class Talent Selection --}}
+      {{#if talentState.needsClassTalent}}
+      <div class="talent-selection-block class-talent">
+        <div class="talent-block-header">
+          <h4>
+            <i class="fas fa-shield-alt"></i> Class Talent
+            {{#if selectedTalents.class}}<span class="badge-success">Selected</span>{{/if}}
+          </h4>
+          <p class="talent-block-description">
+            Choose from {{selectedClass.name}}'s talent trees only.
+          </p>
+        </div>
+
+        {{#if selectedTalents.class}}
+        <div class="selected-talent-card">
+          <div class="talent-check"><i class="fas fa-check-circle"></i></div>
+          <div class="talent-details">
+            <h5>{{selectedTalents.class.name}}</h5>
+            <p class="talent-tree">{{selectedTalents.class.system.tree}}</p>
+            <p class="talent-benefit">{{selectedTalents.class.system.benefit}}</p>
+          </div>
+        </div>
+        {{else}}
+        <div class="talent-selection-intro">
+          <div class="talent-intro-card">
+            <div class="talent-intro-icon">
+              <i class="fas fa-project-diagram"></i>
+            </div>
+            <h4>Explore Talent Trees</h4>
+            <p>View an interactive visualization of {{selectedClass.name}}'s talent trees. Hover to preview, click to explore in detail.</p>
+            <button class="select-talent-tree btn-primary-large" data-talent-type="class">
+              <i class="fas fa-search-plus"></i>
+              Browse Talent Trees
+            </button>
+          </div>
+
+          {{#if classTalentTrees}}
+          <div class="quick-tree-buttons">
+            <p class="quick-select-label">Or quickly select a tree:</p>
+            <div class="talent-tree-grid">
+              {{#each classTalentTrees}}
+              <button class="select-talent-tree choice-button" data-tree="{{this}}" data-talent-type="class" title="{{lookup @root.talentTreeDescriptions this}}">
+                <i class="fas fa-tree"></i>
+                <span>{{this}}</span>
+              </button>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+        </div>
+        {{/if}}
+      </div>
+      {{/if}}
 
       <div class="form-actions">
         <button class="prev-step btn-secondary">

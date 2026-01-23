@@ -1,6 +1,10 @@
 /**
  * Talent selection and tree visualization for SWSE Level Up system
  * Handles talent tree navigation, prerequisite checking, and selection
+ *
+ * DUAL TALENT PROGRESSION:
+ * - Heroic Level Talents: 1 per odd heroic level (1, 3, 5, 7, etc.) - can pick from ANY class tree
+ * - Class Level Talents: 1 per odd class level (1, 3, 5, 7, etc.) - ONLY from that class's trees
  */
 
 import { SWSELogger } from '../../utils/logger.js';
@@ -12,10 +16,20 @@ import { getClassProperty, getTalentTrees } from '../chargen/chargen-property-ac
 import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
+import {
+  getTalentCountAtHeroicLevel,
+  getTalentCountAtClassLevel,
+  getTalentProgressionInfo,
+  getAvailableTalentTreesForHeroicTalent,
+  getAvailableTalentTreesForClassTalent
+} from './levelup-dual-talent-progression.js';
 
 /**
  * Get the number of talents granted at this level
- * Accounts for talentEveryLevel, talentEveryLevelExtraL1, and talentDoubleLevels settings
+ * Uses DUAL TALENT PROGRESSION:
+ * - 1 talent at odd heroic levels (1, 3, 5, 7, etc.) - any class tree
+ * - 1 talent at odd class levels (1, 3, 5, 7, etc.) - class's trees only
+ *
  * @param {Object} selectedClass - The selected class
  * @param {Actor} actor - The actor
  * @returns {number} Number of talents to grant (0, 1, or 2)
@@ -23,75 +37,27 @@ import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
 export function getTalentCount(selectedClass, actor) {
   SWSELogger.log(`[LEVELUP-TALENTS] getTalentCount: Checking talent count for class "${selectedClass?.name}"`);
 
-  if (!selectedClass) {
-    SWSELogger.log(`[LEVELUP-TALENTS] getTalentCount: No class selected, returning 0`);
+  if (!selectedClass || !actor) {
+    SWSELogger.log(`[LEVELUP-TALENTS] getTalentCount: Missing class or actor, returning 0`);
     return 0;
   }
 
-  // NONHEROIC RULE: Nonheroic characters do not gain talents
-  if (selectedClass.system.isNonheroic) {
-    SWSELogger.log(`[LEVELUP-TALENTS] getTalentCount: Class "${selectedClass.name}" is nonheroic, returning 0`);
-    return 0;
-  }
+  // Get progression info using new dual-talent system
+  const progression = getTalentProgressionInfo(selectedClass, actor);
+  SWSELogger.log(`[LEVELUP-TALENTS] getTalentCount: Dual progression info:`, progression);
 
-  const classLevel = getClassLevel(actor, selectedClass.name) + 1;
-  const isLevel1 = classLevel === 1;
-
-  // Check house rule: talent every level
-  const talentEveryLevel = game.settings.get('foundryvtt-swse', "talentEveryLevel");
-  const talentEveryLevelExtraL1 = game.settings.get('foundryvtt-swse', "talentEveryLevelExtraL1");
-  const talentDoubleLevels = game.settings.get('foundryvtt-swse', "talentDoubleLevels");
-
-  SWSELogger.log(`[LEVELUP-TALENTS] getTalentCount: Level ${classLevel}, talentEveryLevel: ${talentEveryLevel}, extraL1: ${talentEveryLevelExtraL1}, doubleLevels: ${talentDoubleLevels}`);
-
-  if (talentEveryLevel) {
-    // Check if class has talent trees available
+  // Only return talent count if character has access to talent trees
+  if (progression.total > 0) {
     const trees = getTalentTrees(selectedClass);
-    const hasAccess = (selectedClass.system.forceSensitive || trees?.length > 0);
+    const hasAccess = (selectedClass.system?.forceSensitive || trees?.length > 0);
 
     if (!hasAccess) {
       SWSELogger.log(`[LEVELUP-TALENTS] getTalentCount: No talent access, returning 0`);
       return 0;
     }
-
-    // At Level 1: grant extra talent if setting enabled
-    if (isLevel1 && talentEveryLevelExtraL1) {
-      SWSELogger.log(`[LEVELUP-TALENTS] getTalentCount: Level 1 with extra enabled, returning 2`);
-      return 2;
-    }
-
-    // Check if player can take double talent at this level
-    if (talentDoubleLevels) {
-      SWSELogger.log(`[LEVELUP-TALENTS] getTalentCount: Double levels enabled, allowing option for 2 talents at level ${classLevel}`);
-      return 1; // UI will allow optional 2nd talent
-    }
-
-    SWSELogger.log(`[LEVELUP-TALENTS] getTalentCount: talentEveryLevel enabled, returning 1`);
-    return 1;
   }
 
-  // Standard rules: check level_progression for talent_choice features
-  const levelProgression = getClassProperty(selectedClass, 'levelProgression', []);
-  SWSELogger.log(`[LEVELUP-TALENTS] getTalentCount: Checking level_progression for level ${classLevel}`);
-
-  if (!levelProgression || !Array.isArray(levelProgression)) {
-    // Fallback: if no level_progression, check if class has talent trees
-    const trees = getTalentTrees(selectedClass);
-    const result = (selectedClass.system.forceSensitive || trees?.length > 0) ? 1 : 0;
-    SWSELogger.log(`[LEVELUP-TALENTS] getTalentCount: No levelProgression - fallback returning ${result}`);
-    return result;
-  }
-
-  const levelData = levelProgression.find(lp => lp.level === classLevel);
-  if (!levelData || !levelData.features) {
-    SWSELogger.log(`[LEVELUP-TALENTS] getTalentCount: No level data for level ${classLevel}, returning 0`);
-    return 0;
-  }
-
-  // Count talent_choice features at this level
-  const talentChoiceCount = levelData.features.filter(f => f.type === 'talent_choice').length;
-  SWSELogger.log(`[LEVELUP-TALENTS] getTalentCount: Level ${classLevel} has ${talentChoiceCount} talent_choice features`);
-  return talentChoiceCount;
+  return progression.total;
 }
 
 /**

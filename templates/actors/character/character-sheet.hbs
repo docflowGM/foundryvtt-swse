@@ -10,7 +10,7 @@
  <a class="item" data-tab="abilities">Abilities</a>
  <a class="item" data-tab="skills">Skills</a>
  <a class="item" data-tab="combat">Combat</a>
- {{#if system.forceSensitive}}
+ {{#if canUseTheForce}}
  <a class="item" data-tab="force">Force</a>
  {{/if}}
  <a class="item" data-tab="talents">Talents</a>
@@ -37,7 +37,7 @@
  {{> "systems/foundryvtt-swse/templates/actors/character/tabs/combat-tab.hbs"}}
 
  {{!-- Force Tab --}}
- {{#if system.forceSensitive}}
+ {{#if canUseTheForce}}
  {{> "systems/foundryvtt-swse/templates/actors/character/tabs/force-tab.hbs"}}
  {{/if}}
 
