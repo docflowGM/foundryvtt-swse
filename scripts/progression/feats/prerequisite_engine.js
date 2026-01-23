@@ -191,6 +191,24 @@ export const PrerequisiteRequirements = {
         return true;
       }
 
+      /* ---------- FORCE POWERS ---------- */
+      case 'forcePower': {
+        const result = this._checkForcePowerCondition(actor, condition, reasons);
+        return result;
+      }
+
+      /* ---------- FORCE TECHNIQUES ---------- */
+      case 'forceTechnique': {
+        const result = this._checkForceTechniqueCondition(actor, condition, reasons);
+        return result;
+      }
+
+      /* ---------- FORCE SECRETS ---------- */
+      case 'forceSecret': {
+        const result = this._checkForceSecretCondition(actor, condition, reasons);
+        return result;
+      }
+
       default:
         SWSELogger.warn('Unknown prerequisite condition:', condition);
         return true;
@@ -287,6 +305,132 @@ export const PrerequisiteRequirements = {
         reasons.push(`Requires ${name}`);
       }
     }
+  },
+
+  /* ============================================
+   * FORCE PREREQUISITES
+   * ============================================ */
+
+  _getForceSnapshot(actor) {
+    const powers = actor.items.filter(i => i.type === 'forcepower');
+    const techniques = actor.items.filter(i => i.type === 'forceTechnique');
+    const secrets = actor.items.filter(i => i.type === 'forceSecret');
+
+    return {
+      powers,
+      techniques,
+      secrets,
+      powersByCategory: this._mapPowersByCategory(powers),
+      techniquesByPower: this._mapTechniquesByPower(techniques)
+    };
+  },
+
+  _mapPowersByCategory(powers) {
+    const map = {};
+    for (const power of powers) {
+      const categories = power.system?.categories ?? [];
+      for (const cat of categories) {
+        if (!map[cat]) map[cat] = [];
+        map[cat].push(power);
+      }
+    }
+    return map;
+  },
+
+  _mapTechniquesByPower(techniques) {
+    const map = {};
+    for (const tech of techniques) {
+      const associated = tech.system?.suggestion?.associatedPowers ?? [];
+      for (const powerName of associated) {
+        if (!map[powerName]) map[powerName] = [];
+        map[powerName].push(tech);
+      }
+    }
+    return map;
+  },
+
+  _checkForcePowerCondition(actor, condition, reasons) {
+    const snapshot = this._getForceSnapshot(actor);
+
+    // Check specific power names
+    if (condition.names && condition.names.length > 0) {
+      const allFound = condition.names.every(name =>
+        snapshot.powers.some(p => p.name === name)
+      );
+      if (!allFound) {
+        reasons.push(`Requires Force power: ${condition.names.join(' or ')}`);
+        return false;
+      }
+      return true;
+    }
+
+    // Check by category
+    if (condition.category) {
+      const categoryCount = snapshot.powersByCategory[condition.category]?.length ?? 0;
+      const required = condition.count ?? 1;
+      if (categoryCount < required) {
+        reasons.push(`Requires ${required} Force power(s) from ${condition.category} category`);
+        return false;
+      }
+      return true;
+    }
+
+    return true;
+  },
+
+  _checkForceTechniqueCondition(actor, condition, reasons) {
+    const snapshot = this._getForceSnapshot(actor);
+
+    // Check technique count
+    if (condition.count) {
+      if (snapshot.techniques.length < condition.count) {
+        reasons.push(`Requires ${condition.count} Force Technique(s)`);
+        return false;
+      }
+      return true;
+    }
+
+    // Check technique associated with specific power
+    if (condition.associatedWithPower) {
+      const found = snapshot.techniques.some(t => {
+        const associated = t.system?.suggestion?.associatedPowers ?? [];
+        return associated.includes(condition.associatedWithPower);
+      });
+      if (!found) {
+        reasons.push(`Requires a Technique associated with ${condition.associatedWithPower}`);
+        return false;
+      }
+      return true;
+    }
+
+    return true;
+  },
+
+  _checkForceSecretCondition(actor, condition, reasons) {
+    const snapshot = this._getForceSnapshot(actor);
+
+    // Check if any Force Secret exists
+    if (condition.any) {
+      if (snapshot.secrets.length === 0) {
+        reasons.push('Requires any Force Secret');
+        return false;
+      }
+      return true;
+    }
+
+    // Check specific secret names
+    if (condition.names && condition.names.length > 0) {
+      const allFound = condition.names.every(name =>
+        snapshot.secrets.some(s => s.name === name)
+      );
+      if (!allFound) {
+        reasons.push(`Requires Force Secret: ${condition.names.join(' or ')}`);
+        return false;
+      }
+      return true;
+    }
+
+    return true;
   },
 
   /* ============================================
