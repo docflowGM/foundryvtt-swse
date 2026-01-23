@@ -148,19 +148,22 @@ export function _populateDroidBuilder(root) {
     }
   }
 
-  // Initialize default processor (Heuristic - free) if not already set
+  // Initialize default processor (Basic - free with all droids) if not already set
   if (!this.characterData.droidSystems.processor) {
-    const heuristicSystem = DROID_SYSTEMS.processors.find(p => p.id === "heuristic");
-    if (heuristicSystem) {
+    const basicSystem = DROID_SYSTEMS.processors.find(p => p.id === "basic");
+    if (basicSystem) {
       this.characterData.droidSystems.processor = {
-        id: heuristicSystem.id,
-        name: heuristicSystem.name,
-        cost: 0,
-        weight: heuristicSystem.weight || 5
+        id: basicSystem.id,
+        name: basicSystem.name,
+        cost: 0,  // Basic comes with all droids
+        weight: basicSystem.weight || 5
       };
-      // Don't add to spent credits - Heuristic is free
+      // Don't add to spent credits - Basic is included
     }
   }
+
+  // Note: Players MUST select Heuristic Processor for PC droids
+  // This should be enforced at character finalization
 
   // Update credits display
   this._updateDroidCreditsDisplay(doc);
@@ -283,6 +286,9 @@ export function _populateProcessorSystems(doc) {
   const costFactor = this._getCostFactor();
   let html = '<div class="systems-grid">';
 
+  // Add note about PC droid requirement
+  html += '<div class="processor-note"><strong>Note:</strong> PC Droids REQUIRE a Heuristic Processor. Only droids with Heuristic Processors are viable as playable characters.</div>';
+
   for (const proc of DROID_SYSTEMS.processors) {
     // Handle both formula-based and flat cost/weight
     const cost = typeof proc.costFormula === 'function'
@@ -292,21 +298,38 @@ export function _populateProcessorSystems(doc) {
       ? proc.weightFormula(costFactor)
       : (proc.weight || 0);
     const isPurchased = this.characterData.droidSystems.processor?.id === proc.id;
-    const isFree = proc.id === 'heuristic';
+    const isFree = proc.isFree === true;  // Use explicit flag instead of hardcoded check
+    const isHeuristic = proc.id === 'heuristic';
 
-    html += `
-      <div class="system-item ${isPurchased ? 'purchased' : ''} ${isFree ? 'free-item' : ''}">
-        <h4>${proc.name} ${isFree ? '<span class="free-badge">FREE</span>' : ''}</h4>
+    let processorHtml = `
+      <div class="system-item ${isPurchased ? 'purchased' : ''} ${isFree ? 'free-item' : ''} ${isHeuristic ? 'required-for-pc' : ''}">
+        <h4>${proc.name}${isFree ? '<span class="free-badge">FREE</span>' : ''}${isHeuristic ? '<span class="required-badge">REQUIRED FOR PC</span>' : ''}</h4>
         <p class="system-description">${proc.description}</p>
+    `;
+
+    // Handle Remote Processor range options
+    if (proc.rangeOptions && proc.rangeOptions.length > 0) {
+      processorHtml += '<div class="remote-processor-options"><strong>Range Options:</strong><ul>';
+      for (const option of proc.rangeOptions) {
+        processorHtml += `<li>${option.range}: ${option.cost.toLocaleString()} cr (${option.weight} kg)${option.availability && option.availability !== '-' ? `, ${option.availability}` : ''}</li>`;
+      }
+      processorHtml += '</ul></div>';
+    }
+
+    processorHtml += `
         <p><strong>Cost:</strong> ${cost > 0 ? cost.toLocaleString() + ' cr' : 'Free'}</p>
         <p><strong>Weight:</strong> ${weight} kg</p>
         <p><strong>Availability:</strong> ${proc.availability}</p>
+        ${proc.features ? `<p><strong>Features:</strong> ${proc.features.join(', ')}</p>` : ''}
+        ${proc.restrictions && proc.restrictions.length > 0 ? `<p><strong>Restrictions:</strong> ${proc.restrictions.join(', ')}</p>` : ''}
+        ${proc.notes ? `<p class="processor-notes"><em>Note:</em> ${proc.notes}</p>` : ''}
         ${isPurchased
           ? '<button type="button" class="remove-system" data-category="processor" data-id="' + proc.id + '"><i class="fas fa-times"></i> Remove</button>'
           : '<button type="button" class="purchase-system" data-category="processor" data-id="' + proc.id + '" data-cost="' + cost + '" data-weight="' + weight + '"><i class="fas fa-cart-plus"></i> Add</button>'
         }
       </div>
     `;
+    html += processorHtml;
   }
 
   html += '</div>';
