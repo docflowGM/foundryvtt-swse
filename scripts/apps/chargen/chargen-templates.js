@@ -584,12 +584,16 @@ export class CharacterTemplates {
       await this.applyTemplateForcePowers(actor, templateData._templateForcePowers);
     }
 
-    // Store template info in actor flags
+    // Store complete template info in actor flags for later reference
     await actor.setFlag('swse', 'appliedTemplate', {
-      id: templateData.id,
-      name: templateData.name,
-      class: templateData.class,
-      archetype: templateData.archetype
+      id: templateData.id || templateData._templateId,
+      name: templateData.name || templateData._templateName,
+      class: templateData.class || templateData.className,
+      archetype: templateData.archetype || templateData._templateArchetype,
+      description: templateData.description || templateData._templateDescription || '',
+      notes: templateData.notes || templateData._templateNotes || '',
+      equipment: templateData.equipment || templateData._templateEquipment || [],
+      quote: templateData.quote || templateData._templateQuote || ''
     });
 
     ui.notifications.info(`Character created from template: ${templateData.name}`);
