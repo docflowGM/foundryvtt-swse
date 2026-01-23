@@ -287,6 +287,15 @@ export class SWSELevelUpEnhanced extends FormApplication {
       data.heroicTalentTrees = await getHeroicTalentTrees(this.actor);
       // Class talent trees (only this class's trees)
       data.classTalentTrees = getClassTalentTrees(this.selectedClass);
+
+      // Load talent tree descriptions for hover tooltips
+      try {
+        const response = await fetch('systems/foundryvtt-swse/data/talent-tree-descriptions.json');
+        data.talentTreeDescriptions = await response.json();
+      } catch (err) {
+        console.warn('[LEVELUP] Failed to load talent tree descriptions:', err);
+        data.talentTreeDescriptions = {};
+      }
     }
 
     // Free Build mode flag
