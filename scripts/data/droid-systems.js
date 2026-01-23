@@ -1099,63 +1099,132 @@ export const DROID_SYSTEMS = {
     ],
     sensors: [
       {
-        id: "basic-sensors",
-        name: "Basic Sensors",
-        description: "Standard visual and auditory sensors.",
-        bonus: "+2 Perception",
-        cost: 100,
-        weight: 1,
-        availability: "-"
+        id: "improved-sensor-package",
+        name: "Improved Sensor Package",
+        description: "Gains a +2 Equipment bonus to Perception checks. The droid gains Low-Light Vision, ignoring Concealment (but not Total Concealment) from darkness.",
+        cost: 200,
+        weight: 2.5,
+        availability: "-",
+        features: ["+2 Equipment bonus to Perception", "Low-Light Vision", "Ignores darkness Concealment"],
+        restrictions: ["Does not provide Darkvision"]
       },
       {
-        id: "enhanced-sensors",
-        name: "Enhanced Sensors",
-        description: "Advanced sensory package with thermal and motion detection.",
-        bonus: "+4 Perception",
-        cost: 250,
+        id: "darkvision",
+        name: "Darkvision",
+        description: "The Droid ignores Concealment (including Total Concealment) from darkness.",
+        cost: 150,
+        weight: 1.5,
+        availability: "-",
+        features: ["Ignores darkness Concealment", "Includes Total Concealment"],
+        restrictions: ["Does not grant Low-Light Vision features"]
+      },
+      {
+        id: "sensor-booster",
+        name: "Sensor Booster",
+        description: "Extends the range of sensors to a maximum of 2 kilometers, if the Droid has a Sensor Pack installed.",
+        cost: 200,
+        weight: 5,
+        availability: "-",
+        features: ["2 km sensor range", "Extended detection capability"],
+        restrictions: ["Requires Sensor Pack or Improved Sensor Package"]
+      },
+      {
+        id: "sensor-countermeasure-package",
+        name: "Sensor Countermeasure Package",
+        description: "Broadcasts signals that interfere with incoming sensor signals. A Droid equipped with the Sensor Countermeasure Package can make a Use Computer check to avoid being detected. If the Use Computer check equals or exceeds a Perception check made to detect the Droid through any form of non-visual sensor Equipment, the Droid remains undetected.",
+        cost: 1000,
         weight: 2,
-        availability: "-"
+        availability: "-",
+        features: ["Use Computer check vs detection", "Concealment from sensor equipment"],
+        restrictions: ["Does not provide visual concealment"]
       },
       {
-        id: "scanner-array",
-        name: "Scanner Array",
-        description: "Full-spectrum scanning capabilities.",
-        bonus: "+6 Perception, Scan",
-        cost: 400,
+        id: "weapon-detector-package",
+        name: "Weapon-Detector Package",
+        description: "Features a high-frequency receiver that can detect the hum of a deactivated Vibro weapon. It can also perform a chemical analysis to detect tibanna gas residue on blasters. Allows a Droid to add its Intelligence modifier to Perception checks made to Search for Weapons.",
+        cost: 1500,
+        weight: 5,
+        availability: "Licensed",
+        features: ["Vibro weapon detection", "Blaster residue analysis", "+INT modifier to Search for Weapons"],
+        restrictions: ["Licensed availability"]
+      },
+      {
+        id: "yv-sensor-package",
+        name: "YV Sensor Package",
+        description: "Standard on the YVH Battle Droid, this package features highly specialized sensors calibrated specifically to detect Yuuzhan Vong, including those concealed by Ooglith Masquers or other methods. Grants a +10 bonus to Perception checks to detect Yuuzhan Vong within 12 squares and within line of sight of the Droid.",
+        cost: 1000,
         weight: 3,
-        availability: "-"
+        availability: "Military",
+        features: ["+10 to Perception vs Yuuzhan Vong", "Ooglith Masquer detection", "12 square detection range"],
+        restrictions: ["Military availability", "NOT available at chargen"]
       }
     ],
     shields: [
+      // SHIELD GENERATORS
       {
-        id: "light-shield",
-        name: "Light Shield Generator",
-        description: "Basic energy shield protection.",
+        id: "sr5-shield-generator",
+        name: "SR 5 Shield Generator",
+        category: "shield",
+        description: "Deflector Shield Generator that reduces incoming damage by 5. When damage equals or exceeds Shield Rating, SR is reduced by 5. Spend three Swift Actions to make DC 20 Endurance check to restore 5 SR.",
         sr: 5,
-        sizeMinimum: "medium",
-        cost: 200,
-        weight: 2,
-        availability: "-"
+        sizeMinimum: "tiny",
+        cost: (costFactor) => Math.ceil(2500 * costFactor),
+        weight: (costFactor) => 10 * costFactor,
+        availability: "Military",
+        features: ["Damage reduction", "Self-restoration capability"],
+        restrictions: ["Military availability", "Requires 3 Swift Actions for repair check"]
       },
       {
-        id: "medium-shield",
-        name: "Medium Shield Generator",
-        description: "Standard energy shield.",
+        id: "sr10-shield-generator",
+        name: "SR 10 Shield Generator",
+        category: "shield",
+        description: "Deflector Shield Generator that reduces incoming damage by 10. When damage equals or exceeds Shield Rating, SR is reduced by 5. Spend three Swift Actions to make DC 20 Endurance check to restore 5 SR.",
         sr: 10,
-        sizeMinimum: "large",
-        cost: 500,
-        weight: 5,
-        availability: "-"
+        sizeMinimum: "small",
+        cost: (costFactor) => Math.ceil(5000 * costFactor),
+        weight: (costFactor) => 20 * costFactor,
+        availability: "Military",
+        features: ["Enhanced damage reduction", "Self-restoration capability"],
+        restrictions: ["Military availability", "Small droids or larger only", "Requires 3 Swift Actions for repair check"]
       },
       {
-        id: "heavy-shield",
-        name: "Heavy Shield Generator",
-        description: "Heavy-duty energy shield.",
+        id: "sr15-shield-generator",
+        name: "SR 15 Shield Generator",
+        category: "shield",
+        description: "Deflector Shield Generator that reduces incoming damage by 15. When damage equals or exceeds Shield Rating, SR is reduced by 5. Spend three Swift Actions to make DC 20 Endurance check to restore 5 SR.",
         sr: 15,
-        sizeMinimum: "huge",
-        cost: 1000,
-        weight: 10,
-        availability: "Restricted"
+        sizeMinimum: "medium",
+        cost: (costFactor) => Math.ceil(7500 * costFactor),
+        weight: (costFactor) => 30 * costFactor,
+        availability: "Military",
+        features: ["Heavy damage reduction", "Self-restoration capability"],
+        restrictions: ["Military availability", "Medium droids or larger only", "Requires 3 Swift Actions for repair check"]
+      },
+      {
+        id: "sr20-shield-generator",
+        name: "SR 20 Shield Generator",
+        category: "shield",
+        description: "Deflector Shield Generator that reduces incoming damage by 20. When damage equals or exceeds Shield Rating, SR is reduced by 5. Spend three Swift Actions to make DC 20 Endurance check to restore 5 SR.",
+        sr: 20,
+        sizeMinimum: "large",
+        cost: (costFactor) => Math.ceil(10000 * costFactor),
+        weight: (costFactor) => 40 * costFactor,
+        availability: "Military",
+        features: ["Maximum damage reduction", "Self-restoration capability"],
+        restrictions: ["Military availability", "Large droids or larger only", "Requires 3 Swift Actions for repair check"]
+      },
+
+      // SHIELD EXPANSION MODULE
+      {
+        id: "shield-expansion-module",
+        name: "Shield Expansion Module",
+        category: "shield-enhancement",
+        description: "Enables a Droid with a Shield Generator to expand its shield by a single square, allowing an adjacent Medium or smaller ally to benefit from the Droid's SR. Activating is a Standard Action. Only Droids of Small or larger can use this. Medium or smaller droids can install 1 module, Large or larger can install up to 2.",
+        cost: (costFactor, shieldRating = 5) => Math.ceil(50 * shieldRating * costFactor),
+        weight: (costFactor, shieldRating = 5) => 2 * shieldRating * costFactor,
+        availability: "Military",
+        features: ["Shield extension capability", "Ally protection", "Reconfigurable per Standard Action"],
+        restrictions: ["Military availability", "Requires Shield Generator", "Small or larger droids only", "Medium/smaller can have 1, Large+ can have 2"]
       }
     ],
     translators: [
