@@ -1,0 +1,2362 @@
+[
+  {
+    "_id": "023c5310a099cd41",
+    "name": "Improved Battle Strike",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Battle Strike Force Power, you can apply the bonus to attack and damage rolls for all attacks made during a Full Attack Action.",
+      "prerequisite": "Battle Strike",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Battle Strike Force Power, you can apply the bonus to attack and damage rolls for all attacks made during a Full Attack Action.</p><p><strong>Related Power:</strong> Battle Strike</p><p><strong>Prerequisites:</strong> Battle Strike</p>",
+      "relatedPower": "Battle Strike"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Battle Strike"
+      ],
+      "confidence": {
+        "Battle Strike": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "0268b55082ae8253",
+    "name": "Improved Shatterpoint",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you move a target down the Condition Track with an attack benefiting from the Shatterpoint Force Power, you can spend a Force Point to make the target's Condition Persistent.",
+      "prerequisite": "Shatterpoint",
+      "special": "This Persistent Condition can only be removed if the target receives Surgery (for living beings) or Repairs (for Droids, objects, and Vehicles).",
+      "normalText": "",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you move a target down the Condition Track with an attack benefiting from the Shatterpoint Force Power, you can spend a Force Point to make the target's Condition Persistent.</p><p><strong>Special:</strong> This Persistent Condition can only be removed if the target receives Surgery (for living beings) or Repairs (for Droids, objects, and Vehicles).</p><p><strong>Related Power:</strong> Shatterpoint</p><p><strong>Prerequisites:</strong> Shatterpoint</p>",
+      "relatedPower": "Shatterpoint"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "056ab39b3ab9df10",
+    "name": "Force Point Recovery",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "At the end of an encounter, you automatically recover 1 Force Point spent during the encounter.",
+      "prerequisite": "",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Core",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>At the end of an encounter, you automatically recover 1 Force Point spent during the encounter.</p>",
+      "relatedPower": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "07cea7e3e8b21d69",
+    "name": "Force Power Mastery",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "Choose a single Force Power. You may Take 10 on Use the Force checks to activate this Force Power even when distracted or threatened.",
+      "prerequisite": "",
+      "special": "You may select this Force Technique multiple times; each time you select this Force Technique, it applies to a different Force Power.",
+      "normalText": "",
+      "sourcebook": "Core",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>Choose a single Force Power. You may Take 10 on Use the Force checks to activate this Force Power even when distracted or threatened.</p><p><strong>Special:</strong> You may select this Force Technique multiple times; each time you select this Force Technique, it applies to a different Force Power.</p>",
+      "relatedPower": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "0e59f5761f3d479c",
+    "name": "Detoxify Poison",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "You can use the Vital Transfer Force Power to treat a Poison affecting the target. Instead of the normal effects of the Vital Transfer Force Power, you can compare the result of your Use the Force check to the Poison's DC. If you equal or exceed the Poison's DC, you detoxify the Poison as per the use of the Treat Injury Skill.",
+      "prerequisite": "Vital Transfer",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>You can use the Vital Transfer Force Power to treat a Poison affecting the target. Instead of the normal effects of the Vital Transfer Force Power, you can compare the result of your Use the Force check to the Poison's DC. If you equal or exceed the Poison's DC, you detoxify the Poison as per the use of the Treat Injury Skill.</p><p><strong>Related Power:</strong> Vital Transfer</p><p><strong>Prerequisites:</strong> Vital Transfer</p>",
+      "relatedPower": "Vital Transfer"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Vital Transfer"
+      ],
+      "confidence": {
+        "Vital Transfer": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "141ef00eb1ffc34c",
+    "name": "Improved Phase",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Phase Force Power, you can end a single Move Action inside an occupied square, but you must still end your turn in a legal, unoccupied square.",
+      "prerequisite": "Phase",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Phase Force Power, you can end a single Move Action inside an occupied square, but you must still end your turn in a legal, unoccupied square.</p><p><strong>Related Power:</strong> Phase</p><p><strong>Prerequisites:</strong> Phase</p>",
+      "relatedPower": "Phase"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "1e72f9eadd438d77",
+    "name": "Improved Force Slam",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Force Slam Force Power, you can change the time it takes to activate to a Full-Round Action in order to target all targets within a 2-square radius originating in your square.",
+      "prerequisite": "Force Slam",
+      "special": "Additionally, you can spend a Force Point to increase the area to a 4-square radius Burst that originates from your square.",
+      "normalText": "",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Force Slam Force Power, you can change the time it takes to activate to a Full-Round Action in order to target all targets within a 2-square radius originating in your square.</p><p><strong>Special:</strong> Additionally, you can spend a Force Point to increase the area to a 4-square radius Burst that originates from your square.</p><p><strong>Related Power:</strong> Force Slam</p><p><strong>Prerequisites:</strong> Force Slam</p>",
+      "relatedPower": "Force Slam"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Force Slam"
+      ],
+      "confidence": {
+        "Force Slam": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "1fcb60caf63bc0f1",
+    "name": "Extended Force Thrust",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "The base range of your Force Thrust Force Power increases to 18 squares (instead of 12 squares).",
+      "prerequisite": "Force Thrust",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>The base range of your Force Thrust Force Power increases to 18 squares (instead of 12 squares).</p><p><strong>Related Power:</strong> Force Thrust</p><p><strong>Prerequisites:</strong> Force Thrust</p>",
+      "relatedPower": "Force Thrust"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Force Thrust"
+      ],
+      "confidence": {
+        "Force Thrust": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "23fdea7dfde5f293",
+    "name": "Improved Force Stun",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "Your successful Force Stun also temporarily Immobilizes the target for one round.",
+      "prerequisite": "Force Stun",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>Your successful Force Stun also temporarily Immobilizes the target for one round.</p><p><strong>Related Power:</strong> Force Stun</p><p><strong>Prerequisites:</strong> Force Stun</p>",
+      "relatedPower": "Force Stun"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Force Stun"
+      ],
+      "confidence": {
+        "Force Stun": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "2a15d6c28e351f14",
+    "name": "Improved Lightning Burst",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Lightning Burst Force Power, also compare the result of your Use the Force check to each target's Fortitude Defense. If your check result equals or exceeds both a target's Reflex Defense and its Fortitude Defense, you push the target 1 square away from you and knock the target Prone. This movement does not provoke Attacks of Opportunity.",
+      "prerequisite": "Lightning Burst",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Lightning Burst Force Power, also compare the result of your Use the Force check to each target's Fortitude Defense. If your check result equals or exceeds both a target's Reflex Defense and its Fortitude Defense, you push the target 1 square away from you and knock the target Prone. This movement does not provoke Attacks of Opportunity.</p><p><strong>Related Power:</strong> Lightning Burst</p><p><strong>Prerequisites:</strong> Lightning Burst</p>",
+      "relatedPower": "Lightning Burst"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "2b99e97855e5f320",
+    "name": "Improved Detonate",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Detonate Force Power, you also damage enemies near the targeted object. Compare the result of your Use the Force check to the Reflex Defense of all enemies within 2 squares of the object. If your check equals or exceeds the enemy's Reflex Defense, the enemy takes slashing damage equal to one-half the damage sustained by the object. This is an Area Attack.",
+      "prerequisite": "Detonate",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Detonate Force Power, you also damage enemies near the targeted object. Compare the result of your Use the Force check to the Reflex Defense of all enemies within 2 squares of the object. If your check equals or exceeds the enemy's Reflex Defense, the enemy takes slashing damage equal to one-half the damage sustained by the object. This is an Area Attack.</p><p><strong>Related Power:</strong> Detonate</p><p><strong>Prerequisites:</strong> Detonate</p>",
+      "relatedPower": "Detonate"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "369b9fc50f50eb03",
+    "name": "Improved Force Thrust",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Force Thrust Force Power, you can change the time it takes to activate it to a Full-Round Action and spend a Force Point in order to target all creatures in a 6-square cone that originates from your square.",
+      "prerequisite": "Force Thrust",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Force Thrust Force Power, you can change the time it takes to activate it to a Full-Round Action and spend a Force Point in order to target all creatures in a 6-square cone that originates from your square.</p><p><strong>Related Power:</strong> Force Thrust</p><p><strong>Prerequisites:</strong> Force Thrust</p>",
+      "relatedPower": "Force Thrust"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Force Thrust"
+      ],
+      "confidence": {
+        "Force Thrust": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "3b4c12c89a49177d",
+    "name": "Dominate Mind",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When using Mind Trick, if you exceed your target's Will Defense by 10 or more points, you can choose what your target does with its Standard Action on its next turn.",
+      "prerequisite": "Mind Trick",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When using Mind Trick, if you exceed your target's Will Defense by 10 or more points, you can choose what your target does with its Standard Action on its next turn.</p><p><strong>Related Power:</strong> Mind Trick</p><p><strong>Prerequisites:</strong> Mind Trick</p>",
+      "relatedPower": "Mind Trick"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Mind Trick"
+      ],
+      "confidence": {
+        "Mind Trick": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "45b8b39a3225a1b0",
+    "name": "Improved Dark Transfer",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use Dark Transfer, you may spend a Force Point to Revivify a creature that died since the end of your last turn. You must succeed on a DC 25 Use the Force check.",
+      "prerequisite": "Dark Transfer",
+      "special": "If the check succeeds, the target is unconscious instead of dead but does not heal any Hit Points from the use of Dark Transfer.",
+      "normalText": "",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use Dark Transfer, you may spend a Force Point to Revivify a creature that died since the end of your last turn. You must succeed on a DC 25 Use the Force check.</p><p><strong>Special:</strong> If the check succeeds, the target is unconscious instead of dead but does not heal any Hit Points from the use of Dark Transfer.</p><p><strong>Related Power:</strong> Dark Transfer</p><p><strong>Prerequisites:</strong> Dark Transfer</p>",
+      "relatedPower": "Dark Transfer"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "4955b5076ca5da89",
+    "name": "Improved Sense Surroundings",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "You may use the Sense Surroundings application of the Use the Force Skill as a Free Action rather than a Swift Action.",
+      "prerequisite": "Sense Surroundings",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Core",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>You may use the Sense Surroundings application of the Use the Force Skill as a Free Action rather than a Swift Action.</p><p><strong>Related Power:</strong> Sense Surroundings</p><p><strong>Prerequisites:</strong> Sense Surroundings</p>",
+      "relatedPower": "Sense Surroundings"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "4f645cbc4babfa9d",
+    "name": "Improved Mind Trick",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Mind Trick Force Power, you can change the time it takes to activate it to a Full-Round Action in order to target all creatures in a 6-square Cone that originates from your square.",
+      "prerequisite": "Mind Trick",
+      "special": "Additionally, you can spend a Force Point to increase the area to a 12-square Cone that originates from your square.",
+      "normalText": "",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Mind Trick Force Power, you can change the time it takes to activate it to a Full-Round Action in order to target all creatures in a 6-square Cone that originates from your square.</p><p><strong>Special:</strong> Additionally, you can spend a Force Point to increase the area to a 12-square Cone that originates from your square.</p><p><strong>Related Power:</strong> Mind Trick</p><p><strong>Prerequisites:</strong> Mind Trick</p>",
+      "relatedPower": "Mind Trick"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Mind Trick"
+      ],
+      "confidence": {
+        "Mind Trick": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "53cfa2d1e4fe25ba",
+    "name": "Improved Telepathy",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "Whenever you use the Telepathy ability of the Use the Force Skill, you can reroll your Use the Force check, keeping the better of the two results.",
+      "prerequisite": "Telepathy",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Core",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>Whenever you use the Telepathy ability of the Use the Force Skill, you can reroll your Use the Force check, keeping the better of the two results.</p><p><strong>Related Power:</strong> Telepathy</p><p><strong>Prerequisites:</strong> Telepathy</p>",
+      "relatedPower": "Telepathy"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "5d7fede4c47f077c",
+    "name": "Improved Resist Force",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you activate Resist Force, you can choose to have it affect one of your allies within 6 squares of you instead.",
+      "prerequisite": "Resist Force",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you activate Resist Force, you can choose to have it affect one of your allies within 6 squares of you instead.</p><p><strong>Related Power:</strong> Resist Force</p><p><strong>Prerequisites:</strong> Resist Force</p>",
+      "relatedPower": "Resist Force"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "6541b54a92f4a9ed",
+    "name": "Advanced Vital Transfer",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Vital Transfer Force Power, you can spend a Destiny Point to fully heal the target of all damage and remove all of the target's debilitating Conditions.",
+      "prerequisite": "Improved Vital Transfer, Vital Transfer",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Vital Transfer Force Power, you can spend a Destiny Point to fully heal the target of all damage and remove all of the target's debilitating Conditions.</p><p><strong>Related Power:</strong> Vital Transfer</p><p><strong>Prerequisites:</strong> Improved Vital Transfer, Vital Transfer</p>",
+      "relatedPower": "Vital Transfer"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Vital Transfer"
+      ],
+      "confidence": {
+        "Vital Transfer": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "6cced906971cc03e",
+    "name": "Extended Force Grip",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "The base range of your Force Grip Force Power increases to 18 squares (instead of 12 squares).",
+      "prerequisite": "Force Grip",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>The base range of your Force Grip Force Power increases to 18 squares (instead of 12 squares).</p><p><strong>Related Power:</strong> Force Grip</p><p><strong>Prerequisites:</strong> Force Grip</p>",
+      "relatedPower": "Force Grip"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Force Grip"
+      ],
+      "confidence": {
+        "Force Grip": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "76abae492239e38c",
+    "name": "Improved Malacia",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "You can maintain the Damage Threshold penalty of the Malacia Force Power as a Swift Action, instead of as a Standard Action.",
+      "prerequisite": "Malacia",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>You can maintain the Damage Threshold penalty of the Malacia Force Power as a Swift Action, instead of as a Standard Action.</p><p><strong>Related Power:</strong> Malacia</p><p><strong>Prerequisites:</strong> Malacia</p>",
+      "relatedPower": "Malacia"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Malacia"
+      ],
+      "confidence": {
+        "Malacia": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "770bbe7f101d98bc",
+    "name": "Improved Force Disarm",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Force Disarm Force Power, you can change the time it takes to activate it to a Full-Round Action; if you do so, your opponent does not gain the normal +10 bonus to Reflex Defense normally associated with Disarming.",
+      "prerequisite": "Force Disarm",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Force Disarm Force Power, you can change the time it takes to activate it to a Full-Round Action; if you do so, your opponent does not gain the normal +10 bonus to Reflex Defense normally associated with Disarming.</p><p><strong>Related Power:</strong> Force Disarm</p><p><strong>Prerequisites:</strong> Force Disarm</p>",
+      "relatedPower": "Force Disarm"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Force Disarm"
+      ],
+      "confidence": {
+        "Force Disarm": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "7dd564fffb4fe1a1",
+    "name": "Improved Plant Surge",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "You can spend a Force Point to have Plant Surge target all enemies in a 5x5 square area; at least one square must be within the Force Power's range.",
+      "prerequisite": "Plant Surge",
+      "special": "Alternatively, you can spend a Destiny Point to target all enemies in a 10x10 square area.",
+      "normalText": "",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>You can spend a Force Point to have Plant Surge target all enemies in a 5x5 square area; at least one square must be within the Force Power's range.</p><p><strong>Special:</strong> Alternatively, you can spend a Destiny Point to target all enemies in a 10x10 square area.</p><p><strong>Related Power:</strong> Plant Surge</p><p><strong>Prerequisites:</strong> Plant Surge</p>",
+      "relatedPower": "Plant Surge"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "91afabf997a947a2",
+    "name": "Improved Thought Bomb",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "You can spend a Force Point to have Thought Bomb target all enemies within 5 squares of you.",
+      "prerequisite": "Thought Bomb",
+      "special": "Alternatively, you can spend a Destiny Point to target all enemies within your line of sight.",
+      "normalText": "",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>You can spend a Force Point to have Thought Bomb target all enemies within 5 squares of you.</p><p><strong>Special:</strong> Alternatively, you can spend a Destiny Point to target all enemies within your line of sight.</p><p><strong>Related Power:</strong> Thought Bomb</p><p><strong>Prerequisites:</strong> Thought Bomb</p>",
+      "relatedPower": "Thought Bomb"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "93b96db5b560e14a",
+    "name": "Improved Force Trance",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "Each hour you remain in a Force Trance, you regain a number of Hit Points equal to 2 x your Character Level.",
+      "prerequisite": "Force Trance",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Core",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>Each hour you remain in a Force Trance, you regain a number of Hit Points equal to 2 x your Character Level.</p><p><strong>Related Power:</strong> Force Trance</p><p><strong>Prerequisites:</strong> Force Trance</p>",
+      "relatedPower": "Force Trance"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "956df621e64afd34",
+    "name": "Improved Technometry",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Technometry Force Power, you can change the time it takes to activate to a Full-Round Action and target all Droids in a 6-square Cone that originates from your square.",
+      "prerequisite": "Technometry",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Technometry Force Power, you can change the time it takes to activate to a Full-Round Action and target all Droids in a 6-square Cone that originates from your square.</p><p><strong>Related Power:</strong> Technometry</p><p><strong>Prerequisites:</strong> Technometry</p>",
+      "relatedPower": "Technometry"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "980608560ffefe9c",
+    "name": "Improved Vital Transfer",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "You can use the Vital Transfer Force Power against a target within 6 squares, and within your line of sight.",
+      "prerequisite": "Vital Transfer",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>You can use the Vital Transfer Force Power against a target within 6 squares, and within your line of sight.</p><p><strong>Related Power:</strong> Vital Transfer</p><p><strong>Prerequisites:</strong> Vital Transfer</p>",
+      "relatedPower": "Vital Transfer"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Vital Transfer"
+      ],
+      "confidence": {
+        "Vital Transfer": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "9c5e507547e0eb72",
+    "name": "Improved Valor",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you activate Valor, you gain the benefits of that Force Power as well.",
+      "prerequisite": "Valor",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you activate Valor, you gain the benefits of that Force Power as well.</p><p><strong>Related Power:</strong> Valor</p><p><strong>Prerequisites:</strong> Valor</p>",
+      "relatedPower": "Valor"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "a964958ffb2daa9a",
+    "name": "Improved Repulse",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Repulse Force Power, you can change the time it takes to activate it to a Full-Round Action in order to target all creatures in a 2-square radius Burst that originates from your square.",
+      "prerequisite": "Repulse",
+      "special": "Additionally, you can spend a Force Point to increase the area to a 4-square radius Burst that originates from your square.",
+      "normalText": "",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Repulse Force Power, you can change the time it takes to activate it to a Full-Round Action in order to target all creatures in a 2-square radius Burst that originates from your square.</p><p><strong>Special:</strong> Additionally, you can spend a Force Point to increase the area to a 4-square radius Burst that originates from your square.</p><p><strong>Related Power:</strong> Repulse</p><p><strong>Prerequisites:</strong> Repulse</p>",
+      "relatedPower": "Repulse"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "aa17a16957b98653",
+    "name": "Improved Obscure",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Obscure Force Power, you may spend a Force Point to gain a +5 Force bonus on your Use the Force check.",
+      "prerequisite": "Obscure",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Obscure Force Power, you may spend a Force Point to gain a +5 Force bonus on your Use the Force check.</p><p><strong>Related Power:</strong> Obscure</p><p><strong>Prerequisites:</strong> Obscure</p>",
+      "relatedPower": "Obscure"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "ad67b8f3959860f2",
+    "name": "Improved Sense Force",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "You may use the Sense Force ability of the Use the Force Skill as a Move Action rather than a Full-Round Action.",
+      "prerequisite": "Sense Force",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Core",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>You may use the Sense Force ability of the Use the Force Skill as a Move Action rather than a Full-Round Action.</p><p><strong>Related Power:</strong> Sense Force</p><p><strong>Prerequisites:</strong> Sense Force</p>",
+      "relatedPower": "Sense Force"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "b10cf49890093fab",
+    "name": "Improved Dark Rage",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Dark Rage Force Power, you ignore the restriction that prevents you from using Skills or performing tasks that require patience and concentration.",
+      "prerequisite": "Dark Rage",
+      "special": "Additionally, you can always activate Dark Rage in the Surprise Round, even if you are considered Surprised.",
+      "normalText": "",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Dark Rage Force Power, you ignore the restriction that prevents you from using Skills or performing tasks that require patience and concentration.</p><p><strong>Special:</strong> Additionally, you can always activate Dark Rage in the Surprise Round, even if you are considered Surprised.</p><p><strong>Related Power:</strong> Dark Rage</p><p><strong>Prerequisites:</strong> Dark Rage</p>",
+      "relatedPower": "Dark Rage"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "bb3f1f5adcb3fcf0",
+    "name": "Improved Fold Space",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "Whenever you use Fold Space, you can spend a Force Point to move the object anywhere within your line of sight.",
+      "prerequisite": "Fold Space",
+      "special": "Alternatively, you can spend a Destiny Point to move the object anywhere within the same star system.",
+      "normalText": "",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>Whenever you use Fold Space, you can spend a Force Point to move the object anywhere within your line of sight.</p><p><strong>Special:</strong> Alternatively, you can spend a Destiny Point to move the object anywhere within the same star system.</p><p><strong>Related Power:</strong> Fold Space</p><p><strong>Prerequisites:</strong> Fold Space</p>",
+      "relatedPower": "Fold Space"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "be320ea699405714",
+    "name": "Extended Move Object",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "The base range of your Move Object Force Power increases to 18 squares (instead of 12 squares).",
+      "prerequisite": "Move Object",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>The base range of your Move Object Force Power increases to 18 squares (instead of 12 squares).</p><p><strong>Related Power:</strong> Move Object</p><p><strong>Prerequisites:</strong> Move Object</p>",
+      "relatedPower": "Move Object"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Move Object"
+      ],
+      "confidence": {
+        "Move Object": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "bfe968d89f970bf5",
+    "name": "Improved Force Light",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "You can spend a Force Point to cause your Force Light to blind those it harms; any creature that takes damage from Force Light grants Concealment to all other targets until the end of its next turn.",
+      "prerequisite": "Force Light",
+      "special": "You can spend a Destiny Point to change this to Total Concealment instead.",
+      "normalText": "",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>You can spend a Force Point to cause your Force Light to blind those it harms; any creature that takes damage from Force Light grants Concealment to all other targets until the end of its next turn.</p><p><strong>Special:</strong> You can spend a Destiny Point to change this to Total Concealment instead.</p><p><strong>Related Power:</strong> Force Light</p><p><strong>Prerequisites:</strong> Force Light</p>",
+      "relatedPower": "Force Light"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "c0439657bb9803f3",
+    "name": "Improved Force Shield",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Force Shield Force Power, you can spend a Force Point to expand the radius of the Force Shield so that it protects you and all allies adjacent to you.",
+      "prerequisite": "Force Shield",
+      "special": "Alternatively, you can spend a Destiny Point to have the Force Shield protect a Vehicle you occupy, regardless of the Vehicle's size. If the Vehicle already has a Shield Rating, the SR of the Vehicle and the SR granted by this Force Power do not stack.",
+      "normalText": "",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Force Shield Force Power, you can spend a Force Point to expand the radius of the Force Shield so that it protects you and all allies adjacent to you.</p><p><strong>Special:</strong> Alternatively, you can spend a Destiny Point to have the Force Shield protect a Vehicle you occupy, regardless of the Vehicle's size. If the Vehicle already has a Shield Rating, the SR of the Vehicle and the SR granted by this Force Power do not stack.</p><p><strong>Related Power:</strong> Force Shield</p><p><strong>Prerequisites:</strong> Force Shield</p>",
+      "relatedPower": "Force Shield"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "c11b3c4336c125d5",
+    "name": "Improved Force Storm",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "You can spend a Force Point when you activate Force Storm to fill the storm with Force Lightning. When you activate the Force Storm, and again whenever you spend a Standard Action to maintain the Force Power, compare the results of your Use the Force check to the Reflex Defense of one target within the Force Storm's area. If the Use the Force check result equals or exceeds the target's Reflex Defense, the target takes 3d6 points of Force damage.",
+      "prerequisite": "Force Storm",
+      "special": "You can spend a Destiny Point to increase the damage to 6d6 points of Force damage.",
+      "normalText": "",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>You can spend a Force Point when you activate Force Storm to fill the storm with Force Lightning. When you activate the Force Storm, and again whenever you spend a Standard Action to maintain the Force Power, compare the results of your Use the Force check to the Reflex Defense of one target within the Force Storm's area. If the Use the Force check result equals or exceeds the target's Reflex Defense, the target takes 3d6 points of Force damage.</p><p><strong>Special:</strong> You can spend a Destiny Point to increase the damage to 6d6 points of Force damage.</p><p><strong>Related Power:</strong> Force Storm</p><p><strong>Prerequisites:</strong> Force Storm</p>",
+      "relatedPower": "Force Storm"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Force Storm"
+      ],
+      "confidence": {
+        "Force Storm": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "c152de01ea34e982",
+    "name": "Extended Blind",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "The base range of your Blind Force Power increases to 18 squares (instead of 12 squares).",
+      "prerequisite": "Blind",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>The base range of your Blind Force Power increases to 18 squares (instead of 12 squares).</p><p><strong>Related Power:</strong> Blind</p><p><strong>Prerequisites:</strong> Blind</p>",
+      "relatedPower": "Blind"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "c3feb409cb7b57bf",
+    "name": "Improved Cloak",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "You can maintain your Cloak Force Power as a Move Action instead of a Standard Action.",
+      "prerequisite": "Cloak",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>You can maintain your Cloak Force Power as a Move Action instead of a Standard Action.</p><p><strong>Related Power:</strong> Cloak</p><p><strong>Prerequisites:</strong> Cloak</p>",
+      "relatedPower": "Cloak"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "c406600924a7780e",
+    "name": "Improved Move Light Object",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "You may make a Use the Force check to Move Light Object as a Swift Action instead of a Move Action. Using the light object as a projectile weapon requires a Move Action (instead of a Standard Action).",
+      "prerequisite": "Move Light Object",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Core",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>You may make a Use the Force check to Move Light Object as a Swift Action instead of a Move Action. Using the light object as a projectile weapon requires a Move Action (instead of a Standard Action).</p><p><strong>Related Power:</strong> Move Light Object</p><p><strong>Prerequisites:</strong> Move Light Object</p>",
+      "relatedPower": "Move Light Object"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "c588db8cfb8b0ca3",
+    "name": "Improved Ionize",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Ionize Force Power, you can spend a Force Point to have the target take full Ion damage (instead of halving the Ion damage after comparing it to the target's Damage Threshold, as normal).",
+      "prerequisite": "Ionize",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Ionize Force Power, you can spend a Force Point to have the target take full Ion damage (instead of halving the Ion damage after comparing it to the target's Damage Threshold, as normal).</p><p><strong>Related Power:</strong> Ionize</p><p><strong>Prerequisites:</strong> Ionize</p>",
+      "relatedPower": "Ionize"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "c883cd4adee97196",
+    "name": "Extended Force Disarm",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "The base range of your Force Disarm Force Power increases to 18 squares (instead of 12 squares).",
+      "prerequisite": "Force Disarm",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>The base range of your Force Disarm Force Power increases to 18 squares (instead of 12 squares).</p><p><strong>Related Power:</strong> Force Disarm</p><p><strong>Prerequisites:</strong> Force Disarm</p>",
+      "relatedPower": "Force Disarm"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Force Disarm"
+      ],
+      "confidence": {
+        "Force Disarm": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "cbe485f3896fe74e",
+    "name": "Improved Levitate",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "If you are moved into a pit or off another elevated surface involuntarily, such as being the target of a Force Thrust or Bantha Rush, you can spend a Force Point to activate the Levitate Force Power as a Reaction.",
+      "prerequisite": "Levitate",
+      "special": "If you do so, you end your forced movement in the last square before the edge of the precipice.",
+      "normalText": "",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>If you are moved into a pit or off another elevated surface involuntarily, such as being the target of a Force Thrust or Bantha Rush, you can spend a Force Point to activate the Levitate Force Power as a Reaction.</p><p><strong>Special:</strong> If you do so, you end your forced movement in the last square before the edge of the precipice.</p><p><strong>Related Power:</strong> Levitate</p><p><strong>Prerequisites:</strong> Levitate</p>",
+      "relatedPower": "Levitate"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "cc09cb779cbf91e3",
+    "name": "Improved Rend",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "The range of your Rend Force Power increases to 12 squares. When using Rend on an object or creature, you can ignore the object's or creature's Damage Reduction.",
+      "prerequisite": "Rend",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>The range of your Rend Force Power increases to 12 squares. When using Rend on an object or creature, you can ignore the object's or creature's Damage Reduction.</p><p><strong>Related Power:</strong> Rend</p><p><strong>Prerequisites:</strong> Rend</p>",
+      "relatedPower": "Rend"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "ccc959a2d0f81f3d",
+    "name": "Improved Force Lightning",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Force Lightning Force Power, you can choose to change the time it takes to activate to a Full-Round Action. If you do, your target must make a Strength check. If your Use the Force check result beats the target's Strength check, you push the target back 1 square plus 1 additional square for every 5 points by which you exceed the target's check result. If you push the target into a larger object, the target takes 1d6 points of damage.",
+      "prerequisite": "Force Lightning",
+      "special": "The target adds its Base Attack Bonus and size modifier to its Strength check: Colossal, +20; Gargantuan, +15; Huge, +10; Large, +5; Medium, +0; Small, -5; Tiny, -10; Diminutive, -15; Fine, -20. In addition, the target gets a +5 stability bonus if it has more than two legs or is otherwise exceptionally stable.",
+      "normalText": "",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Force Lightning Force Power, you can choose to change the time it takes to activate to a Full-Round Action. If you do, your target must make a Strength check. If your Use the Force check result beats the target's Strength check, you push the target back 1 square plus 1 additional square for every 5 points by which you exceed the target's check result. If you push the target into a larger object, the target takes 1d6 points of damage.</p><p><strong>Special:</strong> The target adds its Base Attack Bonus and size modifier to its Strength check: Colossal, +20; Gargantuan, +15; Huge, +10; Large, +5; Medium, +0; Small, -5; Tiny, -10; Diminutive, -15; Fine, -20. In addition, the target gets a +5 stability bonus if it has more than two legs or is otherwise exceptionally stable.</p><p><strong>Related Power:</strong> Force Lightning</p><p><strong>Prerequisites:</strong> Force Lightning</p>",
+      "relatedPower": "Force Lightning"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Force Lightning"
+      ],
+      "confidence": {
+        "Force Lightning": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "d36c0240ac48c171",
+    "name": "Language Absorption",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "You can use telepathy to forcibly learn a language from another creature. If the target is unwilling, you must succeed a Use the Force check against the target's Will Defense, as with the Telepathy aspect of the Use the Force Skill. You retain the ability to speak and understand this language for 24 hours.",
+      "prerequisite": "Telepathy",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>You can use telepathy to forcibly learn a language from another creature. If the target is unwilling, you must succeed a Use the Force check against the target's Will Defense, as with the Telepathy aspect of the Use the Force Skill. You retain the ability to speak and understand this language for 24 hours.</p><p><strong>Related Power:</strong> Telepathy</p><p><strong>Prerequisites:</strong> Telepathy</p>",
+      "relatedPower": "Telepathy"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "e20361353ef86276",
+    "name": "Improved Crucitorn",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "If you use Crucitorn and the attack or Force Power still deals more damage than your Damage Threshold, you do not expend this use of Crucitorn, and it remains in your Force Power Suite.",
+      "prerequisite": "Crucitorn",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>If you use Crucitorn and the attack or Force Power still deals more damage than your Damage Threshold, you do not expend this use of Crucitorn, and it remains in your Force Power Suite.</p><p><strong>Related Power:</strong> Crucitorn</p><p><strong>Prerequisites:</strong> Crucitorn</p>",
+      "relatedPower": "Crucitorn"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "e4a22dc082282bf4",
+    "name": "Improved Ballistakinesis",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use Ballistakinesis, you may spend a Force Point to target a 3x3 square area instead of a 2x2 square area.",
+      "prerequisite": "Ballistakinesis",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use Ballistakinesis, you may spend a Force Point to target a 3x3 square area instead of a 2x2 square area.</p><p><strong>Related Power:</strong> Ballistakinesis</p><p><strong>Prerequisites:</strong> Ballistakinesis</p>",
+      "relatedPower": "Ballistakinesis"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "e7b5e988e305e2cf",
+    "name": "Cure Disease",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Vital Transfer Force Power, if your Use the Force check equals or exceeds the Treat Injury DC of a Disease currently ailing the target, you can spend a Force Point to cure that Disease.",
+      "prerequisite": "Vital Transfer",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Vital Transfer Force Power, if your Use the Force check equals or exceeds the Treat Injury DC of a Disease currently ailing the target, you can spend a Force Point to cure that Disease.</p><p><strong>Related Power:</strong> Vital Transfer</p><p><strong>Prerequisites:</strong> Vital Transfer</p>",
+      "relatedPower": "Vital Transfer"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Vital Transfer"
+      ],
+      "confidence": {
+        "Vital Transfer": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "e854adf7a0029daa",
+    "name": "Improved Force Grip",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Force Grip Force Power, you can spend a Force Point as a Free Action to maintain the Force Grip for 1 additional round without the need to concentrate.",
+      "prerequisite": "Force Grip",
+      "special": "However, after this additional round you may not resume concentrating on the Force Grip.",
+      "normalText": "",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Force Grip Force Power, you can spend a Force Point as a Free Action to maintain the Force Grip for 1 additional round without the need to concentrate.</p><p><strong>Special:</strong> However, after this additional round you may not resume concentrating on the Force Grip.</p><p><strong>Related Power:</strong> Force Grip</p><p><strong>Prerequisites:</strong> Force Grip</p>",
+      "relatedPower": "Force Grip"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Force Grip"
+      ],
+      "confidence": {
+        "Force Grip": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "eb43970e8b1ccebb",
+    "name": "Improved Rebuke",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When an ally within 12 squares and within line of sight of you is the target of a Force Power, you can use the Rebuke Force Power as though you were the target of that Force Power instead.",
+      "prerequisite": "Rebuke",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When an ally within 12 squares and within line of sight of you is the target of a Force Power, you can use the Rebuke Force Power as though you were the target of that Force Power instead.</p><p><strong>Related Power:</strong> Rebuke</p><p><strong>Prerequisites:</strong> Rebuke</p>",
+      "relatedPower": "Rebuke"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [
+        "Rebuke"
+      ],
+      "confidence": {
+        "Rebuke": 0.95
+      },
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "f0408bd4fe0f3dda",
+    "name": "Improved Stagger",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Stagger Force Power, you may spend a Force Point to push your target 2 squares away from you, instead of just 1 square.",
+      "prerequisite": "Stagger",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Stagger Force Power, you may spend a Force Point to push your target 2 squares away from you, instead of just 1 square.</p><p><strong>Related Power:</strong> Stagger</p><p><strong>Prerequisites:</strong> Stagger</p>",
+      "relatedPower": "Stagger"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "f65237526f3017ad",
+    "name": "Improved Cryokinesis",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "You can use Cryokinesis on occupied Vehicles within range; however, the Vehicle only moves down the Condition Track if your Use the Force check also exceeds the Vehicle's Fortitude Defense.",
+      "prerequisite": "Cryokinesis",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>You can use Cryokinesis on occupied Vehicles within range; however, the Vehicle only moves down the Condition Track if your Use the Force check also exceeds the Vehicle's Fortitude Defense.</p><p><strong>Related Power:</strong> Cryokinesis</p><p><strong>Prerequisites:</strong> Cryokinesis</p>",
+      "relatedPower": "Cryokinesis"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "f78e87147f481618",
+    "name": "Improved Energy Resistance",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you activate Energy Resistance, you can choose to have it affect one of your allies within 6 squares of you instead.",
+      "prerequisite": "Energy Resistance",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you activate Energy Resistance, you can choose to have it affect one of your allies within 6 squares of you instead.</p><p><strong>Related Power:</strong> Energy Resistance</p><p><strong>Prerequisites:</strong> Energy Resistance</p>",
+      "relatedPower": "Energy Resistance"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "fb8aaef7f92ee63c",
+    "name": "Improved Convection",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When your target takes Fire damage from Convection, the Fire attacks the target's Fortitude Defense using your Base Attack Bonus instead of the normal +5 bonus.",
+      "prerequisite": "Convection",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When your target takes Fire damage from Convection, the Fire attacks the target's Fortitude Defense using your Base Attack Bonus instead of the normal +5 bonus.</p><p><strong>Related Power:</strong> Convection</p><p><strong>Prerequisites:</strong> Convection</p>",
+      "relatedPower": "Convection"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "ff4ddecb458e604c",
+    "name": "Improved Enlighten",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "When you use the Enlighten Force Power, you may spend a Force Point to affect one additional ally.",
+      "prerequisite": "Enlighten",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>When you use the Enlighten Force Power, you may spend a Force Point to affect one additional ally.</p><p><strong>Related Power:</strong> Enlighten</p><p><strong>Prerequisites:</strong> Enlighten</p>",
+      "relatedPower": "Enlighten"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  },
+  {
+    "_id": "ffacc2db39746f66",
+    "name": "Improved Kinetic Combat",
+    "type": "feat",
+    "img": "systems/foundryvtt-swse/assets/icons/force-technique.png",
+    "system": {
+      "featType": "force",
+      "benefit": "You can wield up to three Weapons simultaneously using the Kinetic Combat Force Power, though moving and attacking with one of the Weapons is still a Standard Action.",
+      "prerequisite": "Kinetic Combat",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": 0,
+      "tags": [
+        "force-technique"
+      ],
+      "bonus_feat_for": [],
+      "uses": {
+        "current": 0,
+        "max": 0,
+        "perDay": false
+      },
+      "description": "<p>You can wield up to three Weapons simultaneously using the Kinetic Combat Force Power, though moving and attacking with one of the Weapons is still a Standard Action.</p><p><strong>Related Power:</strong> Kinetic Combat</p><p><strong>Prerequisites:</strong> Kinetic Combat</p>",
+      "relatedPower": "Kinetic Combat"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0
+    },
+    "flags": {},
+    "suggestion": {
+      "associatedPowers": [],
+      "confidence": {},
+      "categories": [],
+      "powerSynergyWeight": 2,
+      "archetypeBias": {}
+    }
+  }
+]

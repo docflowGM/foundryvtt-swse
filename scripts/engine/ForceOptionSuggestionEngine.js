@@ -16,6 +16,11 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import {
+  FORCE_POWER_CATEGORIES,
+  generateForcePowerArchetypeWeights,
+  validateForcePowerCategories
+} from './force-power-categories.js';
 
 export const FORCE_OPTION_TIERS = {
   PRESTIGE_ALIGNED: 5,
@@ -179,6 +184,26 @@ export const FORCE_OPTIONS_CATALOG = {
 
 export class ForceOptionSuggestionEngine {
   /**
+   * Map prestige classes to Force powers that support them
+   * @private
+   */
+  static _getPrestigeClassPowerSuggestions(prestigeClass) {
+    const suggestions = {
+      "Jedi Knight": ["battle_strike", "enlighten", "improved_battle_meditation", "surge"],
+      "Jedi Master": ["enlighten", "force_sensitivity_focus", "improved_battle_meditation", "negate_energy"],
+      "Sith Apprentice": ["force_lightning", "force_grip", "dark_side_mastery", "stun"],
+      "Sith Lord": ["force_lightning", "dark_side_mastery", "force_grip", "move_object"],
+      "Force Adept": ["move_object", "force_lightning", "negate_energy", "telekinetic_savant"],
+      "Force Disciple": ["move_object", "enlighten", "force_sensitivity_focus", "telekinetic_savant"],
+      "Imperial Knight": ["battle_strike", "negate_energy", "surge", "mind_trick"],
+      "Imperial Knight Errant": ["surge", "mind_trick", "battle_strike", "quicken_power"],
+      "Imperial Knight Inquisitor": ["mind_trick", "force_grip", "force_lightning", "awareness"]
+    };
+
+    return suggestions[prestigeClass] || [];
+  }
+
+  /**
    * Suggest Force options based on character build
    * @param {Array} options - Array of force options to evaluate
    * @param {Actor} actor - The character
@@ -191,6 +216,9 @@ export class ForceOptionSuggestionEngine {
     try {
       const buildIntent = contextOptions.buildIntent || {};
       const ruleset = game.settings?.get('foundryvtt-swse', 'houseRules') || {};
+
+      // Get prestige class target from L1 survey if available
+      const prestigeClassTarget = actor.system?.swse?.mentorBuildIntentBiases?.prestigeClassTarget || null;
 
       const suggestedOptions = options.map(option => {
         let tier = FORCE_OPTION_TIERS.AVAILABLE;
@@ -225,6 +253,15 @@ export class ForceOptionSuggestionEngine {
         if (combatStyle === "caster" && ["force_lightning", "mind_trick", "move_object"].includes(option.id)) {
           tier = Math.max(tier, FORCE_OPTION_TIERS.COMBAT_SYNERGY);
           reasons.push("Supports Force caster build");
+        }
+
+        // Prestige class alignment from L1 survey (highest priority)
+        if (prestigeClassTarget) {
+          const prestigeConfig = this._getPrestigeClassPowerSuggestions(prestigeClassTarget);
+          if (prestigeConfig && prestigeConfig.includes(option.id)) {
+            tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
+            reasons.push(`Supports your goal: ${prestigeClassTarget}`);
+          }
         }
 
         // Prestige class alignment - FIXED: Use prestigeAffinities (array) instead of prestigeTargets
@@ -353,6 +390,88 @@ export class ForceOptionSuggestionEngine {
    */
   static filterByCategory(options, category) {
     return options.filter(opt => opt.category === category);
+  }
+
+  // ──────────────────────────────────────────────────────────────
+  // CATEGORY-BASED SCORING
+  // ──────────────────────────────────────────────────────────────
+
+  /**
+   * Score a Force power based on categories and archetype
+   * @param {Object} power - Force power item
+   * @param {string} archetype - Archetype ID
+   * @returns {number} Score multiplier
+   */
+  static scorePowerByArchetype(power, archetype) {
+    const powerName = power.name || "";
+    const powerData = Object.values(FORCE_POWER_CATEGORIES).find(p => p.name === powerName);
+
+    if (!powerData || !powerData.categories) {
+      return 1.0;
+    }
+
+    const weights = generateForcePowerArchetypeWeights(powerData.categories);
+    return weights[archetype] || 1.0;
+  }
+
+  /**
+   * Check if a Force power aligns with character's moral/philosophical alignment
+   * @param {Object} power - Force power item
+   * @param {Actor} actor - Character
+   * @returns {{allowed: boolean, penalty: number}} Whether power is allowed and any moral penalty
+   */
+  static checkMoralAlignment(power, actor) {
+    const powerName = power.name || "";
+    const powerData = Object.values(FORCE_POWER_CATEGORIES).find(p => p.name === powerName);
+
+    if (!powerData) {
+      return { allowed: true, penalty: 0 };
+    }
+
+    // Detect character's Force alignment
+    const darkSideScore = actor.system?.force?.darkSideScore || 0;
+    const lightSideScore = actor.system?.force?.lightSideScore || 0;
+    const isJedi = actor.items.some(i => i.type === 'class' && i.name.includes('Jedi'));
+    const isSith = actor.items.some(i => i.type === 'class' && i.name.includes('Sith'));
+
+    // Apply moral checks
+    if (powerData.moralSlant === "sith_only" && isJedi) {
+      return { allowed: false, penalty: 0 };
+    }
+    if (powerData.moralSlant === "jedi_only" && isSith) {
+      return { allowed: false, penalty: 0 };
+    }
+
+    // Soft penalties for philosophical misalignment
+    if (powerData.moralSlant === "jedi_favored" && isSith) {
+      return { allowed: true, penalty: 0.7 };
+    }
+    if (powerData.moralSlant === "sith_favored" && isJedi) {
+      return { allowed: true, penalty: 0.7 };
+    }
+
+    return { allowed: true, penalty: 1.0 };
+  }
+
+  /**
+   * Get Power philosophy/intent for mentor explanation
+   * @param {string} powerName - Force power name
+   * @returns {Object} Philosophy data
+   */
+  static getPowerPhilosophy(powerName) {
+    return Object.values(FORCE_POWER_CATEGORIES).find(p => p.name === powerName) || null;
+  }
+
+  /**
+   * Initialize Force power category system (call once on world load)
+   */
+  static initializeForcePowerSystem() {
+    try {
+      validateForcePowerCategories();
+      SWSELogger.log('[FORCE-OPTION-ENGINE] Force power category system initialized successfully');
+    } catch (err) {
+      SWSELogger.error('[FORCE-OPTION-ENGINE] Force power initialization failed:', err);
+    }
   }
 }
 

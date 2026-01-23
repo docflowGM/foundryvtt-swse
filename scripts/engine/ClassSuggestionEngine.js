@@ -341,6 +341,12 @@ export class ClassSuggestionEngine {
             classes: Object.keys(actorState.classes)
         });
 
+        // Check for prestige class target from L1 survey
+        const prestigeClassTarget = actor.system?.swse?.mentorBuildIntentBiases?.prestigeClassTarget || null;
+        if (prestigeClassTarget) {
+            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige class target detected: "${prestigeClassTarget}"`);
+        }
+
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Loading prestige prerequisites...`);
         const prestigePrereqs = await this._loadPrestigePrerequisites();
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige prerequisites loaded:`, Object.keys(prestigePrereqs).length, 'classes');
@@ -349,11 +355,17 @@ export class ClassSuggestionEngine {
 
         for (const cls of classes) {
             SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Evaluating class "${cls.name}"...`);
-            const suggestion = await this._evaluateClass(cls, actorState, prestigePrereqs, options);
+            const suggestion = await this._evaluateClass(cls, actorState, prestigePrereqs, { ...options, prestigeClassTarget });
 
             // Calculate bias for sorting
             const classType = cls.isPrestige ? 'prestige' : 'base';
-            const bias = PRESTIGE_BIAS[classType] || 0;
+            let bias = PRESTIGE_BIAS[classType] || 0;
+
+            // Boost prestige classes that match the player's target
+            if (cls.isPrestige && cls.name === prestigeClassTarget) {
+                bias += 5; // Significant boost for target class
+                SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige class target match - boosting "${cls.name}" bias`);
+            }
 
             SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Class "${cls.name}" - tier: ${suggestion.tier}, bias: ${bias}, isSuggested: ${suggestion.tier >= CLASS_SUGGESTION_TIERS.MECHANICAL_SYNERGY}`);
 
@@ -742,6 +754,7 @@ export class ClassSuggestionEngine {
     static async _evaluateClass(cls, actorState, prestigePrereqs, options = {}) {
         const isPrestige = cls.isPrestige;
         const prereqData = isPrestige ? prestigePrereqs[cls.name] : null;
+        const prestigeClassTarget = options.prestigeClassTarget || null;
 
         // Check prerequisites
         const prereqCheck = this._checkPrerequisites(cls.name, prereqData, actorState);
@@ -757,6 +770,23 @@ export class ClassSuggestionEngine {
             );
         }
 
+        // TIER 5 (PLAYER INTENT): Prestige class that matches player's L1 survey target
+        // This gives high priority to classes the player explicitly expressed interest in
+        if (isPrestige && cls.name === prestigeClassTarget) {
+            const tier = prereqCheck.met
+                ? CLASS_SUGGESTION_TIERS.PRESTIGE_NOW
+                : CLASS_SUGGESTION_TIERS.PRESTIGE_SOON;
+            const reason = prereqCheck.met
+                ? "This matches your character goal and you qualify now!"
+                : `This matches your character goal - you're almost there! Missing: ${prereqCheck.missing.filter(m => !m.unverifiable).map(m => m.shortDisplay).join(', ')}`;
+            return this._buildSuggestion(
+                tier,
+                cls.name,
+                prereqCheck.missing,
+                reason
+            );
+        }
+
         // TIER 4: Continuation of current class path
         if (actorState.classes[cls.name]) {
             return this._buildSuggestion(
@@ -765,6 +795,63 @@ export class ClassSuggestionEngine {
                 prereqCheck.missing,
                 `Continue your ${cls.name} progression`
             );
+        }
+
+        // SPECIAL: Check if this base class unlocks needed talent trees, skills, or feats for prestige target
+        if (!isPrestige && prestigeClassTarget && prestigePrereqs[prestigeClassTarget]) {
+            const targetPrereqs = prestigePrereqs[prestigeClassTarget];
+            const unlockedTrees = this._getUnlockedTalentTrees(cls.name);
+            const classSkills = CLASS_SYNERGY_DATA[cls.name]?.skills || [];
+            const classFeats = CLASS_SYNERGY_DATA[cls.name]?.feats || [];
+
+            const neededTrees = targetPrereqs.talentTrees || [];
+            const neededSkills = targetPrereqs.skills || [];
+            const neededFeats = targetPrereqs.feats || [];
+
+            // Check which prerequisites this class helps unlock
+            const providesNeededTrees = neededTrees.some(neededTree =>
+                unlockedTrees.some(provided => provided.toLowerCase() === neededTree.toLowerCase())
+            );
+
+            const providesNeededSkills = neededSkills.some(neededSkill =>
+                classSkills.some(classSkill =>
+                    this._normalizeSkillName(classSkill).includes(
+                        this._normalizeSkillName(neededSkill)
+                    )
+                )
+            );
+
+            const providesNeededFeats = neededFeats.some(neededFeat =>
+                classFeats.some(classFeat => classFeat.toLowerCase() === neededFeat.toLowerCase())
+            );
+
+            if (providesNeededTrees || providesNeededSkills || providesNeededFeats) {
+                const benefits = [];
+
+                if (providesNeededTrees) {
+                    const providedTreeNames = unlockedTrees.filter(t =>
+                        neededTrees.some(n => n.toLowerCase() === t.toLowerCase())
+                    ).join(', ');
+                    benefits.push(`Unlocks ${providedTreeNames} talents`);
+                }
+
+                if (providesNeededSkills) {
+                    benefits.push(`Trains needed skills`);
+                }
+
+                if (providesNeededFeats) {
+                    benefits.push(`Provides required feats`);
+                }
+
+                const reason = `${benefits.join('; ')} for ${prestigeClassTarget}`;
+
+                return this._buildSuggestion(
+                    CLASS_SUGGESTION_TIERS.PRESTIGE_SOON,
+                    cls.name,
+                    [],
+                    reason
+                );
+            }
         }
 
         // TIER 3: Prestige class almost legal (missing <= 2 verifiable prerequisites)
@@ -948,6 +1035,16 @@ export class ClassSuggestionEngine {
             hasMissingPrereqs: missingPrereqs.length > 0,
             isSuggested: tier >= CLASS_SUGGESTION_TIERS.MECHANICAL_SYNERGY
         };
+    }
+
+    /**
+     * Get talent trees unlocked by a class
+     * @param {string} className - Name of the class
+     * @returns {Array} Talent tree names provided by this class
+     */
+    static _getUnlockedTalentTrees(className) {
+        const synergy = CLASS_SYNERGY_DATA[className];
+        return synergy?.talentTrees || [];
     }
 
     // ──────────────────────────────────────────────────────────────

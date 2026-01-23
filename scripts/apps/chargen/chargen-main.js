@@ -1395,6 +1395,7 @@ export default class CharacterGenerator extends Application {
     }
     $html.find('.select-power').click(this._onSelectForcePower.bind(this));
     $html.find('.remove-power').click(this._onRemoveForcePower.bind(this));
+    $html.find('.ask-mentor-force-power-suggestion').click(this._onAskMentorForcePowerSuggestion.bind(this));
     $html.find('.select-maneuver').click(this._onSelectStarshipManeuver.bind(this));
     $html.find('.remove-maneuver').click(this._onRemoveStarshipManeuver.bind(this));
     $html.find('.skill-select').change(this._onSkillSelect.bind(this));
@@ -1707,6 +1708,59 @@ export default class CharacterGenerator extends Application {
     this.suggestionEngine = true;
     ui.notifications.info("Your mentor is now providing suggestions for this step.");
     await this.render();
+  }
+
+  async _onAskMentorForcePowerSuggestion(event) {
+    event.preventDefault();
+
+    try {
+      const { getAvailableForcePowers } = await import('./chargen-force-powers.js');
+      const { ForceOptionSuggestionEngine } = await import('../../engine/ForceOptionSuggestionEngine.js');
+      const { MentorSuggestionDialog } = await import('../mentor-suggestion-dialog.js');
+
+      const availablePowers = await getAvailableForcePowers(this.actor, this.characterData);
+
+      if (!availablePowers || availablePowers.length === 0) {
+        ui.notifications.warn("No available Force powers to suggest.");
+        return;
+      }
+
+      // Filter out already-selected powers
+      const unselectedPowers = availablePowers.filter(p => p.isQualified &&
+        !this.characterData.powers.some(pw => pw.name === p.name)
+      );
+
+      if (unselectedPowers.length === 0) {
+        ui.notifications.warn("You've already selected all available Force powers!");
+        return;
+      }
+
+      // Get suggestions using the Force power suggestion engine
+      const suggestions = await ForceOptionSuggestionEngine.suggestForceOptions(
+        unselectedPowers,
+        this.actor,
+        this.characterData,
+        { buildIntent: {} }
+      );
+
+      // Get the top-tier suggestion
+      const topSuggestion = suggestions.find(s => s.suggestion?.tier >= 4) || suggestions[0];
+
+      if (!topSuggestion) {
+        ui.notifications.warn("No Force power suggestions available at this time.");
+        return;
+      }
+
+      // Show mentor suggestion dialog
+      const mentor = this._getCurrentMentor();
+      const mentorClass = mentor?.class || 'neutral';
+      await MentorSuggestionDialog.show(mentorClass, topSuggestion, 'force_power_selection');
+
+      ui.notifications.info(`${mentor?.name || 'Your mentor'} suggests: ${topSuggestion.name}`);
+    } catch (err) {
+      console.error('Error getting Force power suggestion:', err);
+      ui.notifications.error("Error getting mentor suggestion. Check console.");
+    }
   }
 
   async _onNextStep(event) {

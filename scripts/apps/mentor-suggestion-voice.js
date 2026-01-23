@@ -55,6 +55,27 @@ export class MentorSuggestionVoice {
         "Consider how this technique aligns with your understanding of the Force.",
         "Mastery of the Force comes through dedication to its deeper mysteries. This is one such mystery."
       ],
+      force_power_selection: [
+        "This Power flows through the Force itself. Let it guide your hand and heart.",
+        "A Force Power is not merely a technique—it is communion with the Force itself.",
+        "Feel the connection. This Power calls to those who walk your path.",
+        "The Force grants many gifts to those who are worthy. This is one such gift.",
+        "Your mastery deepens. This Power will reshape how you channel the Force."
+      ],
+      force_technique_selection: [
+        "A technique is the refinement of mastery. This one polishes what you already know.",
+        "You have proven yourself capable of this power. Now learn to wield it with precision.",
+        "Techniques are not new paths—they are shortcuts on paths already walked.",
+        "The Force rewards those who deepen their understanding through practice.",
+        "This technique will make you a true master of the discipline you have chosen."
+      ],
+      force_secret_selection: [
+        "A Secret is earned through conviction and sustained practice. You have shown both.",
+        "This knowledge can only be granted to those who have walked the path with determination.",
+        "A Force Secret reveals itself only to those ready to bear its weight.",
+        "You have demonstrated the discipline required to receive this profound knowledge.",
+        "This Secret will forever transform how you understand your relationship with the Force."
+      ],
       introduction: [
         "The Force guides this moment. Let me share my counsel.",
         "Your path becomes clearer. Listen carefully to what calls to you.",
@@ -106,6 +127,27 @@ export class MentorSuggestionVoice {
         "This technique rewards the kind of tactical thinking you already use.",
         "Not many scouts master the Force. If you do, you'll have a real advantage.",
         "This force ability complements your scout training perfectly."
+      ],
+      force_power_selection: [
+        "This Force Power could save your life in the field. Use it wisely.",
+        "Force Powers are tools. This one is reliable and effective.",
+        "That's a solid choice for a scout who walks the Force. Practical.",
+        "Mastery of a Force Power gives you leverage most scouts never have.",
+        "This Power compounds your tactical advantages. Good thinking."
+      ],
+      force_technique_selection: [
+        "You've learned the basics. Now sharpen your edge with this technique.",
+        "This technique turns what you already know into a weapon.",
+        "Refinement makes the difference between competent and deadly.",
+        "Master this technique and you'll operate at a level most can't follow.",
+        "Every technique you master gives you one more advantage in the field."
+      ],
+      force_secret_selection: [
+        "Secrets are only for those who've proven themselves. You have.",
+        "This knowledge is worth more than any weapon. Guard it carefully.",
+        "You've earned this. Few scouts ever reach this level of mastery.",
+        "This Secret will change how you operate. Use it wisely.",
+        "You're entering rarefied territory. Make sure you're ready for what comes next."
       ],
       introduction: [
         "Listen up. Here's my professional assessment.",
@@ -159,6 +201,27 @@ export class MentorSuggestionVoice {
         "Shiver me hyperdrives! This be the kind o' power what makes ye unstoppable!",
         "By the Twin Suns! This Force ability be a pirate's dream come true!"
       ],
+      force_power_selection: [
+        "Har har! This Force Power be worth ten times its weight in credits, ye clever scallywag!",
+        "Arr! Master this Power and ye'll have advantages most spacers can't even dream of!",
+        "Blimey! Ye add this to yer arsenal and ye'll be unstoppable, ye rogue!",
+        "Shiver me hyperdrives! This be the kind o' Force Power what changes everythin'!",
+        "By the Twin Suns! Ye learn this and ye'll be the most formidable pirate in ten sectors!"
+      ],
+      force_technique_selection: [
+        "Har har! Ye take what ye know and make it twice as dangerous? That be genius, ye scoundrel!",
+        "Arr! A technique what refines yer power? Aye, that be worth learnin'!",
+        "Blimey! Ye can make yer powers even more profitable with this technique!",
+        "Shiver me hyperdrives! This technique be like addin' a hidden gun to yer arsenal!",
+        "By the Twin Suns! Ye master this and no crew will want to cross ye!"
+      ],
+      force_secret_selection: [
+        "Har har! A Secret, ye say? That be the kind o' knowledge worth its weight in gold!",
+        "Arr! Ye've earned this right and proper, ye clever dog!",
+        "Blimey! This Secret will make ye a true legend among spacers!",
+        "Shiver me hyperdrives! Guard this knowledge well—'tis valuable beyond measure!",
+        "By the Twin Suns! Ye'll be unstoppable with this knowledge, ye magnificent pirate!"
+      ],
       introduction: [
         "Har har! Listen close, ye scallywag! I got suggestions fer ye!",
         "Arr! Pull up a chair, ye rascal! Let me share me wisdom with ye!",
@@ -211,6 +274,27 @@ export class MentorSuggestionVoice {
         "This ability complements what you already do well—survival.",
         "Smart choice. This Force technique makes you more dangerous."
       ],
+      force_power_selection: [
+        "This Force Power is worth a whole squad of ordinary soldiers. Master it.",
+        "Discipline meets power here. That's a deadly combination.",
+        "Learn this Power and your unit will follow you anywhere.",
+        "This is the kind of Force mastery that changes battles.",
+        "Smart strategic choice. This Power gives you real tactical leverage."
+      ],
+      force_technique_selection: [
+        "You know the fundamentals. Now learn to execute with precision.",
+        "This technique separates good soldiers from great ones.",
+        "Mastery comes through refinement. This is the next step.",
+        "Every technique gives you another tool for the mission.",
+        "You're building toward something impressive. Keep going."
+      ],
+      force_secret_selection: [
+        "Secrets are for those who've proven their mettle. You have.",
+        "This knowledge carries weight. Use it responsibly.",
+        "Few soldiers reach this level of Force mastery. You're in rare territory.",
+        "This Secret will make you a force multiplier for your entire unit.",
+        "You've earned this. Don't take it lightly—or it will cost you."
+      ],
       introduction: [
         "Alright. Listen up. Here's what I think you should do.",
         "I've been doing this a long time. Pay attention.",
@@ -262,6 +346,27 @@ export class MentorSuggestionVoice {
         "This Force technique elevates your standing, Master. Most strategic.",
         "Master, this ability reflects your superiority and sophistication.",
         "An excellent choice, Master. This Force ability assures your dominance."
+      ],
+      force_power_selection: [
+        "Master, this Force Power shall elevate your standing most considerably.",
+        "An exceptional choice, Master. This Power demonstrates your superiority.",
+        "Master, few possess both nobility and Force mastery. You have the opportunity.",
+        "This Power shall become a defining aspect of your legacy, Master.",
+        "Master, such Force Power distinguishes you as truly exceptional among your peers."
+      ],
+      force_technique_selection: [
+        "Master, refinement of technique marks the transition from competent to exceptional.",
+        "This technique, sir, will polish your mastery to a brilliant sheen.",
+        "Master, mastery requires not only knowledge, but precision in execution.",
+        "An excellent refinement, Master. You are building quite the formidable arsenal.",
+        "Master, this technique shall distinguish you further among your noble peers."
+      ],
+      force_secret_selection: [
+        "Master, such knowledge is reserved for those of your exceptional caliber.",
+        "A Secret, sir, is the ultimate expression of your chosen path and dedication.",
+        "Master, this knowledge shall mark you as a true master of the Force itself.",
+        "An extraordinary honor, Master. Few ever achieve access to such profound wisdom.",
+        "Master, you have earned this knowledge through demonstrated excellence. Guard it well."
       ],
       introduction: [
         "Master, permit me to offer my professional assessment.",
