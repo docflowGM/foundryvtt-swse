@@ -209,6 +209,35 @@ export const PrerequisiteRequirements = {
         return result;
       }
 
+      /* ---------- FEAT PATTERN (WILDCARD) ---------- */
+      case 'featPattern': {
+        const hasFeat = actor.items.some(i => {
+          if (i.type !== 'feat') return false;
+          const name = i.name.toLowerCase();
+          const pattern = (condition.pattern ?? '').toLowerCase();
+          return name.includes(pattern) || name.startsWith(pattern);
+        });
+
+        if (!hasFeat) {
+          reasons.push(`Requires ${condition.description ?? 'a feat matching: ' + condition.pattern}`);
+        }
+        return hasFeat;
+      }
+
+      /* ---------- DARK SIDE SCORE DYNAMIC ---------- */
+      case 'darkSideScoreDynamic': {
+        const dsp = actor.system.darkSideScore ?? 0;
+        const abilityScore = actor.system.attributes?.[condition.ability]?.total ?? 10;
+
+        const met = this._evaluateDynamicComparison(dsp, abilityScore, condition.operator);
+        if (!met) {
+          reasons.push(
+            `Requires Dark Side Score ${condition.operator} ${condition.ability.toUpperCase()} (DSP: ${dsp}, ${condition.ability.toUpperCase()}: ${abilityScore})`
+          );
+        }
+        return met;
+      }
+
       default:
         SWSELogger.warn('Unknown prerequisite condition:', condition);
         return true;
@@ -431,6 +460,17 @@ export const PrerequisiteRequirements = {
     }
 
     return true;
+  },
+
+  _evaluateDynamicComparison(value1, value2, operator) {
+    switch (operator) {
+      case 'equals': return value1 === value2;
+      case 'greaterThan': return value1 > value2;
+      case 'lessThan': return value1 < value2;
+      case 'greaterThanOrEqual': return value1 >= value2;
+      case 'lessThanOrEqual': return value1 <= value2;
+      default: return false;
+    }
   },
 
   /* ============================================
