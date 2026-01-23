@@ -191,6 +191,26 @@ export const PrerequisiteRequirements = {
         return true;
       }
 
+      /* ---------- DROID DEGREE ---------- */
+      case 'droidDegree': {
+        const degree = actor.system.droidDegree ?? '';
+        if (degree !== condition.degree) {
+          reasons.push(`Requires droid with ${condition.degree} classification`);
+          return false;
+        }
+        return true;
+      }
+
+      /* ---------- DROID FLAG ---------- */
+      case 'isDroid': {
+        const isDroid = actor.system.isDroid ?? false;
+        if (!isDroid) {
+          reasons.push('Requires character to be a droid');
+          return false;
+        }
+        return true;
+      }
+
       /* ---------- FORCE POWERS ---------- */
       case 'forcePower': {
         const result = this._checkForcePowerCondition(actor, condition, reasons);
