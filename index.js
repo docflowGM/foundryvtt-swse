@@ -227,6 +227,7 @@ import { WeaponMode } from './scripts/combat/weapon-mode.js';
 import { Autofire } from './scripts/combat/autofire.js';
 import { AutofireBracing } from './scripts/combat/autofire-bracing.js';
 import { BurstFire } from './scripts/combat/burst-fire.js';
+import { IonDamage } from './scripts/combat/ion-damage.js';
 import { GrappleMechanics } from './scripts/houserules/houserule-grapple.js';
 import { RecoveryMechanics } from './scripts/houserules/houserule-recovery.js';
 import { ConditionTrackMechanics } from './scripts/houserules/houserule-condition-track.js';
