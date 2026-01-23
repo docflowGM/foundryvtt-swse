@@ -715,48 +715,238 @@ export const DROID_SYSTEMS = {
   ],
 
   // ======================================================================
-  // ACCESSORIES
+  // ACCESSORIES - DROID ARMOR
   // ======================================================================
-  // Installable accessories and equipment for droids.
-  // These are defined inline for quick reference in droid builders.
+  // Built-in armor systems for droids per SWSE rulebook.
+  // Armor Bonus applies to Reflex Defense.
+  // Armor Check Penalty affects attack rolls and specific skills.
+  // Does NOT stack with worn armor.
   // ======================================================================
   accessories: {
     armor: [
+      // LIGHT ARMOR (-2 Armor Check Penalty)
       {
-        id: "light-plating",
-        name: "Light Plating",
-        type: "Light",
-        description: "Lightweight armor plating.",
+        id: "plasteel-shell",
+        name: "Plasteel Shell",
+        armorType: "light",
+        armorCheckPenalty: -2,
+        description: "Basic plasteel armor plating. Common on service droids.",
         armorBonus: 2,
-        maxDex: null,
-        armorCheckPenalty: 0,
-        cost: 150,
-        weight: 5,
-        availability: "-"
+        maxDexBonus: 5,
+        cost: (costFactor) => Math.ceil(400 * costFactor),
+        weight: (costFactor) => 2 * costFactor,
+        availability: "-",
+        features: ["Basic protection", "No speed penalty"],
+        restrictions: ["Armor Check Penalty -2"]
       },
       {
-        id: "medium-plating",
-        name: "Medium Plating",
-        type: "Medium",
-        description: "Standard armor plating.",
+        id: "quadanium-shell",
+        name: "Quadanium Shell",
+        armorType: "light",
+        armorCheckPenalty: -2,
+        description: "Stronger than plasteel with better deflection properties.",
+        armorBonus: 3,
+        maxDexBonus: 4,
+        cost: (costFactor) => Math.ceil(900 * costFactor),
+        weight: (costFactor) => 3 * costFactor,
+        availability: "-",
+        features: ["Enhanced protection", "Good deflection"],
+        restrictions: ["Armor Check Penalty -2"]
+      },
+      {
+        id: "durasteel-shell",
+        name: "Durasteel Shell",
+        armorType: "light",
+        armorCheckPenalty: -2,
+        description: "Durable durasteel plating common on military droids.",
         armorBonus: 4,
-        maxDex: 2,
-        armorCheckPenalty: -1,
-        cost: 300,
-        weight: 10,
-        availability: "-"
+        maxDexBonus: 4,
+        cost: (costFactor) => Math.ceil(1600 * costFactor),
+        weight: (costFactor) => 8 * costFactor,
+        availability: "-",
+        features: ["Durable construction", "Reliable protection"],
+        restrictions: ["Armor Check Penalty -2", "Heavier than other light armor"]
       },
       {
-        id: "heavy-plating",
-        name: "Heavy Plating",
-        type: "Heavy",
-        description: "Reinforced armor plating.",
+        id: "quadanium-plating",
+        name: "Quadanium Plating",
+        armorType: "light",
+        armorCheckPenalty: -2,
+        description: "Advanced quadanium plating for enhanced protection.",
+        armorBonus: 5,
+        maxDexBonus: 3,
+        cost: (costFactor) => Math.ceil(2500 * costFactor),
+        weight: (costFactor) => 10 * costFactor,
+        availability: "Licensed",
+        features: ["Advanced protection", "Superior strength"],
+        restrictions: ["Armor Check Penalty -2", "Licensed availability"]
+      },
+      {
+        id: "durasteel-plating",
+        name: "Durasteel Plating",
+        armorType: "light",
+        armorCheckPenalty: -2,
+        description: "Top-tier durasteel plating with maximum light armor protection.",
         armorBonus: 6,
-        maxDex: 1,
-        armorCheckPenalty: -3,
-        cost: 500,
-        weight: 20,
-        availability: "-"
+        maxDexBonus: 3,
+        cost: (costFactor) => Math.ceil(3600 * costFactor),
+        weight: (costFactor) => 12 * costFactor,
+        availability: "Licensed",
+        features: ["Maximum light armor protection", "Excellent durability"],
+        restrictions: ["Armor Check Penalty -2", "Licensed availability"]
+      },
+      {
+        id: "duravlex-shell",
+        name: "Duravlex Shell",
+        armorType: "light",
+        armorCheckPenalty: -2,
+        description: "Heat-resistant durasteel-kevlex alloy. Provides +10 Equipment bonus to Fortitude Defense vs Fire/Heat.",
+        armorBonus: 4,
+        maxDexBonus: 3,
+        specialBonus: { fortitudeVsFire: 10, description: "vs Fire/Heat attacks" },
+        cost: (costFactor) => Math.ceil(1000 * costFactor),
+        weight: (costFactor) => 10 * costFactor,
+        availability: "Licensed",
+        features: ["Heat resistant", "+10 to Fortitude vs Fire/Heat"],
+        restrictions: ["Armor Check Penalty -2", "Licensed availability"]
+      },
+      {
+        id: "laminanium-plating",
+        name: "Laminanium Plating",
+        armorType: "light",
+        armorCheckPenalty: -2,
+        description: "Self-repairing laminanium alloy with acid resistance. Provides +2 Equipment bonus to Fortitude Defense.",
+        armorBonus: 4,
+        maxDexBonus: 3,
+        specialBonus: { fortitudeGeneral: 2, description: "vs all damage" },
+        cost: (costFactor) => Math.ceil(3000 * costFactor),
+        weight: (costFactor) => 15 * costFactor,
+        availability: "Military",
+        features: ["Self-repairing", "Acid resistant", "+2 to Fortitude Defense"],
+        restrictions: ["Armor Check Penalty -2", "Military availability"]
+      },
+
+      // MEDIUM ARMOR (-5 Armor Check Penalty)
+      {
+        id: "quadanium-battle-armor",
+        name: "Quadanium Battle Armor",
+        armorType: "medium",
+        armorCheckPenalty: -5,
+        description: "Combat-grade quadanium armor for military droids.",
+        armorBonus: 7,
+        maxDexBonus: 3,
+        cost: (costFactor) => Math.ceil(4900 * costFactor),
+        weight: (costFactor) => 7 * costFactor,
+        availability: "Restricted",
+        features: ["Combat-grade", "Strong protection"],
+        restrictions: ["Armor Check Penalty -5", "Restricted availability"]
+      },
+      {
+        id: "duranium-plating",
+        name: "Duranium Plating",
+        armorType: "medium",
+        armorCheckPenalty: -5,
+        description: "Heavy duranium plating with excellent protection.",
+        armorBonus: 8,
+        maxDexBonus: 2,
+        cost: (costFactor) => Math.ceil(6400 * costFactor),
+        weight: (costFactor) => 16 * costFactor,
+        availability: "Restricted",
+        features: ["Heavy protection", "Excellent durability"],
+        restrictions: ["Armor Check Penalty -5", "Restricted availability"]
+      },
+      {
+        id: "durasteel-battle-armor",
+        name: "Durasteel Battle Armor",
+        armorType: "medium",
+        armorCheckPenalty: -5,
+        description: "Durasteel battle armor combining strength and maneuverability.",
+        armorBonus: 8,
+        maxDexBonus: 3,
+        cost: (costFactor) => Math.ceil(9600 * costFactor),
+        weight: (costFactor) => 8 * costFactor,
+        availability: "Restricted",
+        features: ["Balanced protection", "Better dexterity allowance"],
+        restrictions: ["Armor Check Penalty -5", "Restricted availability"]
+      },
+
+      // HEAVY ARMOR (-10 Armor Check Penalty, Running Speed = 3x instead of 4x)
+      {
+        id: "mandalorian-steel-shell",
+        name: "Mandalorian Steel Shell",
+        armorType: "heavy",
+        armorCheckPenalty: -10,
+        runningSpeedMultiplier: 3,
+        description: "Rare mandalorian steel plating with superior durability.",
+        armorBonus: 9,
+        maxDexBonus: 3,
+        cost: (costFactor) => Math.ceil(8100 * costFactor),
+        weight: (costFactor) => 9 * costFactor,
+        availability: ["Military", "Rare"],
+        features: ["Superior durability", "Excellent protection"],
+        restrictions: ["Armor Check Penalty -10", "Running Speed = 3x only", "Military/Rare availability"]
+      },
+      {
+        id: "duranium-battle-armor",
+        name: "Duranium Battle Armor",
+        armorType: "heavy",
+        armorCheckPenalty: -10,
+        runningSpeedMultiplier: 3,
+        description: "Top military duranium battle armor for heavy combat.",
+        armorBonus: 10,
+        maxDexBonus: 2,
+        cost: (costFactor) => Math.ceil(10000 * costFactor),
+        weight: (costFactor) => 10 * costFactor,
+        availability: "Military",
+        features: ["Maximum protection", "Military-grade construction"],
+        restrictions: ["Armor Check Penalty -10", "Running Speed = 3x only", "Military availability"]
+      },
+      {
+        id: "neutronium-plating",
+        name: "Neutronium Plating",
+        armorType: "heavy",
+        armorCheckPenalty: -10,
+        runningSpeedMultiplier: 3,
+        description: "Ultra-dense neutronium plating for maximum protection.",
+        armorBonus: 11,
+        maxDexBonus: 1,
+        cost: (costFactor) => Math.ceil(12100 * costFactor),
+        weight: (costFactor) => 20 * costFactor,
+        availability: "Military",
+        features: ["Ultra-dense construction", "Maximum durability"],
+        restrictions: ["Armor Check Penalty -10", "Running Speed = 3x only", "Military availability", "Very heavy"]
+      },
+      {
+        id: "crystadurium-plating",
+        name: "Crystadurium Plating",
+        armorType: "heavy",
+        armorCheckPenalty: -10,
+        runningSpeedMultiplier: 3,
+        description: "Blaster-resistant armor using rare crystadurium crystals. Reduces blaster damage by 1 point per die.",
+        armorBonus: 10,
+        maxDexBonus: 2,
+        specialBonus: { blasterDamageReduction: 1, description: "1 point per die of blaster damage" },
+        cost: (costFactor) => Math.ceil(50000 * costFactor),
+        weight: (costFactor) => 30 * costFactor,
+        availability: ["Military", "Rare"],
+        features: ["Blaster resistant", "1 point blaster damage reduction", "Superior protection"],
+        restrictions: ["Armor Check Penalty -10", "Running Speed = 3x only", "Military/Rare availability", "Very expensive"]
+      },
+      {
+        id: "laminanium-heavy-plating",
+        name: "Laminanium Heavy Plating",
+        armorType: "heavy",
+        armorCheckPenalty: -10,
+        runningSpeedMultiplier: 3,
+        description: "Self-repairing laminanium heavy armor with acid resistance. Provides +2 Equipment bonus to Fortitude Defense.",
+        armorBonus: 12,
+        maxDexBonus: 2,
+        specialBonus: { fortitudeGeneral: 2, description: "vs all damage" },
+        cost: (costFactor) => Math.ceil(20000 * costFactor),
+        weight: (costFactor) => 15 * costFactor,
+        availability: ["Military", "Rare"],
+        features: ["Self-repairing", "Acid resistant", "+2 to Fortitude Defense", "Superior protection"],
+        restrictions: ["Armor Check Penalty -10", "Running Speed = 3x only", "Military/Rare availability"]
       }
     ],
     communications: [
