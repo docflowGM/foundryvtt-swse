@@ -99,23 +99,56 @@
     "type": "combatAction"
   },
   {
-    "name": "Burst Fire / Autofire (vehicle or weapon)",
+    "name": "Autofire",
     "action": {
-      "type": "standard",
-      "cost": 1
+      "type": "swift + standard",
+      "cost": null
     },
-    "notes": "Autofire targets area 2×2 squares, -5 attack; consumes ammo; braced autofire reduces penalty; burst fire -5 attack +2 dice damage.",
+    "notes": "Swift Action: Set weapon to Autofire mode. Standard Action: Target 2×2 square area, make single attack roll at -5 penalty, compare to Reflex Defense of all creatures in area. Hits take full damage, misses take half damage. Consumes 10 shots/slugs (must have 10+ in weapon). Braced autofire-only weapons reduce penalty to -2.",
     "relatedSkills": [
       {
         "skill": "Attack Roll",
         "dc": {
           "type": "expression",
-          "value": "d20 + modifiers"
+          "value": "d20 + modifiers - 5 (or -2 if braced)"
         },
-        "outcome": "Area rules; ammo consumption handled by system"
+        "outcome": "Compare to all targets' Reflex Defense; hits full damage, misses half damage"
       }
     ],
-    "type": "combatAction"
+    "type": "combatAction",
+    "notes_advanced": "Area attack covering 2×2 squares. Consumes 10 shots. Autofire-only weapons can be braced (2 swift actions) for -2 penalty instead of -5."
+  },
+  {
+    "name": "Brace Autofire-Only Weapon",
+    "action": {
+      "type": "2 swift actions",
+      "cost": 2
+    },
+    "notes": "Autofire-only weapons only. Takes 2 Swift Actions immediately before making autofire attack. When braced, take -2 penalty instead of -5 on autofire attacks. Only Heavy Weapons, Rifles, and Pistols with Retractable Stock can be braced.",
+    "relatedSkills": [],
+    "type": "combatAction",
+    "restriction": "Autofire-only weapons: Heavy Weapons, Rifles, Pistols with Retractable Stock"
+  },
+  {
+    "name": "Burst Fire",
+    "action": {
+      "type": "standard",
+      "cost": 1
+    },
+    "notes": "Requires Burst Fire feat. Use autofire weapon against single target instead of area. Take -5 penalty on attack roll, deal +2 dice of weapon damage. Uses only 5 shots (half of normal 10). NOT an area attack, so Evasion talent cannot reduce damage.",
+    "relatedSkills": [
+      {
+        "skill": "Attack Roll",
+        "dc": {
+          "type": "expression",
+          "value": "d20 + modifiers - 5"
+        },
+        "outcome": "Single-target attack with +2 dice damage"
+      }
+    ],
+    "type": "combatAction",
+    "requirements": ["Burst Fire feat"],
+    "ammo_consumption": "5 shots (instead of 10)"
   },
   {
     "name": "Charge",
