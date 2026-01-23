@@ -202,6 +202,7 @@ export class SWSEDroidHandler {
   // =========================================================================
   static async installShieldGenerator(actor, shieldItem) {
     const sys = shieldItem.system ?? {};
+    const sr = sys.sr ?? 0;  // Shield Rating from the system data
 
     if (!this._meetsSizeRequirement(actor.system.size, sys.sizeMinimum)) {
       ui.notifications.error("Droid is too small for this shield generator.");
@@ -210,9 +211,12 @@ export class SWSEDroidHandler {
 
     await actor.update({
       "system.shields": {
+        value: sr,    // Current shield rating
+        max: sr,      // Maximum shield rating
+        rating: sr,   // Display rating (same as max when fully charged)
         installed: true,
-        shieldRatingMax: sys.shieldRating,
-        shieldRatingCurrent: sys.shieldRating,
+        shieldRatingMax: sr,
+        shieldRatingCurrent: sr,
         sizeMinimum: sys.sizeMinimum
       }
     });
