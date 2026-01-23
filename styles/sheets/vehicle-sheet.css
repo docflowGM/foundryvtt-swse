@@ -966,6 +966,274 @@
     border-radius: var(--swse-border-radius-base, 4px);
 }
 
+/* ─────────────────────────────────────────────────────────────
+   CREW POSITION ENHANCEMENTS
+   ───────────────────────────────────────────────────────────── */
+
+.crew-positions-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.solo-mode-badge {
+    background: linear-gradient(135deg, var(--swse-success, #00ff88) 0%, rgba(0, 255, 136, 0.7) 100%);
+    color: var(--swse-bg-dark);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.crew-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.crew-position {
+    background: var(--swse-bg-mid, rgba(15, 20, 40, 0.5));
+    border: 1px solid var(--swse-border-default, rgba(0, 170, 255, 0.3));
+    border-radius: 6px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.position-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--swse-border-subtle, rgba(0, 170, 255, 0.2));
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+
+.position-header label {
+    color: var(--swse-primary, #9ed0ff);
+    font-weight: bold;
+    margin: 0;
+}
+
+.crew-status-badge {
+    font-size: 0.75em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.crew-status-badge.trained {
+    background: rgba(0, 255, 136, 0.2);
+    color: var(--swse-success, #00ff88);
+    border: 1px solid var(--swse-success, #00ff88);
+}
+
+.crew-status-badge.empty {
+    background: rgba(255, 107, 107, 0.2);
+    color: var(--swse-danger, #ff6b6b);
+    border: 1px solid var(--swse-danger, #ff6b6b);
+}
+
+.crew-slot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px;
+    background: var(--swse-bg-dark, rgba(10, 15, 30, 0.8));
+    border: 2px dashed var(--swse-border-default, rgba(0, 170, 255, 0.3));
+    border-radius: 4px;
+    min-height: 40px;
+}
+
+.crew-name {
+    color: var(--swse-text-light, #b5daff);
+    font-weight: 500;
+}
+
+.crew-empty {
+    color: var(--swse-text-muted, #6a9dcd);
+    font-style: italic;
+    flex: 1;
+}
+
+.crew-remove {
+    background: var(--swse-danger, #ff6b6b);
+    color: white;
+    border: 1px solid var(--swse-danger, #ff6b6b);
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+}
+
+.crew-remove:hover {
+    background: rgba(255, 107, 107, 0.8);
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+}
+
+/* Crew Skills Display */
+.crew-skills {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    background: rgba(0, 170, 255, 0.05);
+    border: 1px solid var(--swse-border-subtle, rgba(0, 170, 255, 0.2));
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+.skill-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-left: 3px solid var(--swse-border-subtle, rgba(0, 170, 255, 0.3));
+    border-radius: 3px;
+}
+
+.skill-item.required {
+    border-left-color: var(--swse-secondary, #0af);
+}
+
+.skill-item.beneficial {
+    border-left-color: var(--swse-text-secondary, #6a9dcd);
+}
+
+.skill-item.trained {
+    background: rgba(0, 255, 136, 0.1);
+}
+
+.skill-name {
+    flex: 1;
+    color: var(--swse-text-light, #b5daff);
+    font-size: 0.9em;
+}
+
+.skill-bonus {
+    color: var(--swse-text-secondary, #6a9dcd);
+    font-weight: bold;
+    min-width: 30px;
+    text-align: right;
+}
+
+.skill-bonus.positive {
+    color: var(--swse-success, #00ff88);
+}
+
+.skill-bonus.negative {
+    color: var(--swse-danger, #ff6b6b);
+}
+
+.trained-badge {
+    background: var(--swse-success, #00ff88);
+    color: var(--swse-bg-dark);
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 0.75em;
+}
+
+.required-badge {
+    background: var(--swse-secondary, #0af);
+    color: var(--swse-bg-dark);
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 0.75em;
+}
+
+/* Crew Maneuvers Display */
+.crew-maneuvers {
+    margin-top: 5px;
+}
+
+.crew-maneuvers-toggle {
+    width: 100%;
+    background: var(--swse-bg-dark, rgba(10, 15, 30, 0.8));
+    color: var(--swse-primary, #9ed0ff);
+    border: 1px solid var(--swse-border-default, rgba(0, 170, 255, 0.3));
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.crew-maneuvers-toggle:hover {
+    background: rgba(0, 170, 255, 0.1);
+    border-color: var(--swse-border-active, rgba(0, 170, 255, 0.6));
+}
+
+.crew-maneuvers-list {
+    margin-top: 8px;
+    padding: 10px;
+    background: rgba(0, 170, 255, 0.05);
+    border: 1px solid var(--swse-border-subtle, rgba(0, 170, 255, 0.2));
+    border-radius: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.maneuver-item {
+    padding: 8px;
+    margin-bottom: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-left: 3px solid var(--swse-secondary, #0af);
+    border-radius: 3px;
+}
+
+.maneuver-item strong {
+    color: var(--swse-secondary, #0af);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.maneuver-item p {
+    color: var(--swse-text-secondary, #6a9dcd);
+    font-size: 0.85em;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Crew Actions Button */
+.crew-actions-toggle {
+    width: 100%;
+    background: var(--swse-bg-dark, rgba(10, 15, 30, 0.8));
+    color: var(--swse-text-light, #b5daff);
+    border: 1px solid var(--swse-border-default, rgba(0, 170, 255, 0.3));
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.crew-actions-toggle:hover {
+    background: rgba(0, 170, 255, 0.1);
+    border-color: var(--swse-border-active, rgba(0, 170, 255, 0.6));
+}
+
+.crew-actions-panel {
+    margin-top: 8px;
+    padding: 10px;
+    background: rgba(0, 170, 255, 0.05);
+    border: 1px solid var(--swse-border-subtle, rgba(0, 170, 255, 0.2));
+    border-radius: 4px;
+}
+
 @media (max-width: 900px) {
     .defense-stats-grid {
         grid-template-columns: repeat(2, 1fr);

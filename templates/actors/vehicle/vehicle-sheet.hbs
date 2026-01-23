@@ -82,14 +82,31 @@
 
   {{!-- Crew Positions Section --}}
   <section class="crew-positions-section">
-    <h3>Crew Positions</h3>
+    <h3>
+      Crew Positions
+      {{#if pilotSoloMode}}
+      <span class="solo-mode-badge" title="{{pilotSoloMode.message}}">
+        <i class="fas fa-star"></i> Solo Pilot
+      </span>
+      {{/if}}
+    </h3>
+
+    {{#if crewRoster.positions}}
     <div class="crew-grid">
-      {{#each system.crewPositions as |crew position|}}
+      {{#each crewRoster.positions as |posData posKey|}}
       <div class="crew-position">
-        <label>{{titleCase position}}</label>
-        <div class="crew-slot" data-slot="{{position}}">
-          {{#if crew}}
-            <span class="crew-name">{{#if crew.name}}{{crew.name}}{{else}}{{crew}}{{/if}}</span>
+        <div class="position-header">
+          <label>{{posData.display}}</label>
+          {{#if posData.crew}}
+          <span class="crew-status-badge trained">Assigned</span>
+          {{else}}
+          <span class="crew-status-badge empty">Empty</span>
+          {{/if}}
+        </div>
+
+        <div class="crew-slot" data-slot="{{posKey}}">
+          {{#if posData.crew}}
+            <span class="crew-name">{{posData.crew.name}}</span>
             <button class="crew-remove" type="button" title="Remove crew member">
               <i class="fas fa-times"></i>
             </button>
@@ -97,7 +114,48 @@
             <span class="crew-empty">Drop actor here</span>
           {{/if}}
         </div>
-        {{#if crew}}
+
+        {{!-- Crew Skills Display --}}
+        {{#if posData.skills}}
+        <div class="crew-skills">
+          {{#each posData.skills as |skill|}}
+          <div class="skill-item {{#if skill.required}}required{{else}}beneficial{{/if}} {{#if skill.trained}}trained{{/if}}">
+            <span class="skill-name">{{skill.name}}</span>
+            <span class="skill-bonus {{#if skill.bonus > 0}}positive{{/if}} {{#if skill.bonus < 0}}negative{{/if}}">
+              {{#if skill.bonus > 0}}+{{/if}}{{skill.bonus}}
+            </span>
+            {{#if skill.trained}}
+            <span class="trained-badge" title="Trained in this skill">T</span>
+            {{/if}}
+            {{#if skill.required}}
+            <span class="required-badge" title="Required for this position">*</span>
+            {{/if}}
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+
+        {{!-- Starship Maneuvers for Pilot --}}
+        {{#if posData.maneuvers}}
+        <div class="crew-maneuvers">
+          <button class="crew-maneuvers-toggle" type="button" title="Starship Maneuvers">
+            <i class="fas fa-chevron-right"></i> Maneuvers ({{posData.maneuvers.length}})
+          </button>
+          <div class="crew-maneuvers-list" style="display: none;">
+            {{#each posData.maneuvers as |maneuver|}}
+            <div class="maneuver-item">
+              <strong>{{maneuver.name}}</strong>
+              {{#if maneuver.description}}
+              <p>{{maneuver.description}}</p>
+              {{/if}}
+            </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{!-- Crew Actions Toggle --}}
+        {{#if posData.crew}}
         <button class="crew-actions-toggle" type="button">
           <i class="fas fa-chevron-down"></i> Actions
         </button>
@@ -108,6 +166,7 @@
       </div>
       {{/each}}
     </div>
+    {{/if}}
   </section>
 
   {{!-- Weapons Section --}}
