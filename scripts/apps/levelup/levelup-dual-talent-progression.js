@@ -13,6 +13,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
 import { getTalentTrees } from '../chargen/chargen-property-accessor.js';
+import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 
 /**
  * Calculate available talents at the current heroic level
@@ -78,10 +79,12 @@ export function getTalentProgressionInfo(selectedClass, actor) {
 
 /**
  * Get available talent trees for heroic-level talents
- * Returns the UNION of all talent trees available to the character's classes
+ * Returns the UNION of:
+ * - All talent trees available to the character's classes
+ * - Force Talent Trees (if Force Sensitive)
  * Example: If character has Soldier (3 trees) and Scout (2 trees), can access all 5 combined
  * @param {Actor} actor - The character actor
- * @returns {Set<string>} Union of talent trees from all character classes
+ * @returns {Set<string>} Union of talent trees from classes + Force Talent Trees
  */
 export async function getAvailableTalentTreesForHeroicTalent(actor) {
   const allTrees = new Set();
@@ -102,7 +105,27 @@ export async function getAvailableTalentTreesForHeroicTalent(actor) {
     }
   }
 
-  SWSELogger.log(`[DUAL-TALENTS] getAvailableTalentTreesForHeroicTalent: found ${allTrees.size} unique trees from all classes:`, Array.from(allTrees));
+  // Add Force Talent Trees if character is Force Sensitive
+  try {
+    const accessRules = await PrerequisiteRequirements._loadTalentTreeAccessRules();
+    if (accessRules) {
+      // Get all Force Talent Trees (both generic and tradition-based)
+      const forceTrees = accessRules.talentTreeAccess.filter(t =>
+        t.accessRules.some(r => r.type === 'force-generic' || r.type === 'force-tradition')
+      );
+
+      // Check which ones the character can access
+      for (const treeConfig of forceTrees) {
+        if (await PrerequisiteRequirements.canAccessTalentTree(actor, treeConfig.treeId)) {
+          allTrees.add(treeConfig.treeId);
+        }
+      }
+    }
+  } catch (error) {
+    SWSELogger.warn('[DUAL-TALENTS] Error loading Force Talent Trees:', error);
+  }
+
+  SWSELogger.log(`[DUAL-TALENTS] getAvailableTalentTreesForHeroicTalent: found ${allTrees.size} unique trees from all classes + Force trees:`, Array.from(allTrees));
 
   return allTrees;
 }
