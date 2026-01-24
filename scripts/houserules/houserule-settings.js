@@ -1244,5 +1244,27 @@ export function registerHouseruleSettings() {
     default: 15
   });
 
+  /* -------------------------------------------------------------------------- */
+  /*                        CHARACTER CREATION - RESTRICTIONS                    */
+  /* -------------------------------------------------------------------------- */
+
+  register("enableBackgrounds", {
+    name: "Enable Backgrounds in Character Generation",
+    hint: "If disabled, the Background step is removed from character creation (though templates still apply backgrounds).",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register("bannedSpecies", {
+    name: "Banned Species/Races",
+    hint: "List of species that players cannot select. GMs can always select any species. Use commas to separate multiple species.",
+    scope: "world",
+    config: true,
+    type: String,
+    default: ""
+  });
+
   SWSELogger.info("SWSE | Houserule settings registered successfully.");
 }

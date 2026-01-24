@@ -10,7 +10,8 @@ import {
   ForceMenu,
   SkillsFeatsMenu,
   SpaceCombatMenu,
-  PresetsMenu
+  PresetsMenu,
+  CharacterRestrictionsMenu
 } from "./houserule-menus.js";
 
 export class HouserulesConfig extends FormApplication {
@@ -37,6 +38,12 @@ export class HouserulesConfig extends FormApplication {
           icon: "fas fa-user-plus",
           title: "Character Creation",
           description: "Ability scores, hit points, and starting character rules"
+        },
+        {
+          id: "character-restrictions",
+          icon: "fas fa-ban",
+          title: "Character Restrictions",
+          description: "Ban races, disable backgrounds"
         },
         {
           id: "skills-feats",
@@ -110,6 +117,7 @@ export class HouserulesConfig extends FormApplication {
     // More maintainable lookup table
     const menuMap = {
       "character-creation": CharacterCreationMenu,
+      "character-restrictions": CharacterRestrictionsMenu,
       "skills-feats": SkillsFeatsMenu,
       advancement: AdvancementMenu,
       combat: CombatMenu,
