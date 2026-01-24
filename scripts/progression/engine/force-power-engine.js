@@ -64,7 +64,34 @@ export class ForcePowerEngine {
 
     // Fallback to hardcoded data
     const f = FORCE_POWER_DATA.feats[featName];
-    return f ? (f.grants || 0) : 0;
+    if (!f) return 0;
+
+    // Handle ability modifier-based grants (Force Training)
+    if (f.grants === "ability_mod") {
+      return this._countFromAbilityMod(actor);
+    }
+
+    return f.grants || 0;
+  }
+
+  /**
+   * Calculate force powers from ability modifier
+   * Uses WIS mod by default, or CHA mod if house rule is enabled
+   * Minimum 1 power
+   * @param {Actor} actor - The actor
+   * @returns {number} Number of powers (minimum 1)
+   */
+  static _countFromAbilityMod(actor) {
+    if (!actor?.system?.abilities) {
+      return 1; // Default minimum if no ability data
+    }
+
+    // Check for house rule to use CHA instead of WIS
+    const useCha = game.settings?.get('foundryvtt-swse', 'forceTrainingUseCha') ?? false;
+    const abilityKey = useCha ? 'cha' : 'wis';
+    const mod = actor.system.abilities[abilityKey]?.mod ?? 0;
+
+    return Math.max(1, 1 + mod);
   }
 
   /**

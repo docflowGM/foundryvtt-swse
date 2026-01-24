@@ -1,145 +1,106 @@
 /**
- * Force power selection for SWSE Level Up system
- * Handles force power selection with prerequisite validation
+ * Force Power selection for SWSE Level Up system
+ * Handles Force Sensitivity (from level 1 Jedi) and Force Training feats
  */
 
 import { SWSELogger } from '../../utils/logger.js';
-import { warnGM } from '../../utils/warn-gm.js';
-import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
+import { ForcePowerEngine } from '../../progression/engine/force-power-engine.js';
 
 /**
- * Check if actor can learn force powers
+ * Determine if character gains force powers on this level up
+ * - Jedi at level 1 gets Force Sensitivity (1 power)
+ * - Force Training feat grants 1 + WIS/CHA mod (min 1)
  * @param {Actor} actor - The actor
- * @returns {boolean} True if actor is Force-sensitive
+ * @param {Array} selectedFeats - Currently selected feats
+ * @returns {boolean} True if character gains force powers
  */
-export function canLearnForcePowers(actor) {
-  // Check if character has Force Sensitivity feat
-  const hasForceSensitivityFeat = actor.items.some(i =>
-    i.type === 'feat' && i.name.toLowerCase().includes('force sensitivity')
-  );
+export function getsForcePowers(actor, selectedFeats = []) {
+  // Check if character is level 1 Jedi (gets Force Sensitivity)
+  const newLevel = actor.system.level + 1;
+  if (newLevel === 2) {
+    // If this is level 2, they were level 1. Check if they're Jedi
+    const characterClasses = actor.items.filter(i => i.type === 'class');
+    const hasJedi = characterClasses.some(c => c.name === 'Jedi');
+    if (hasJedi) return true;
+  }
 
-  // Check if character has a Force-using class
-  const hasForceClass = actor.items.some(i =>
-    i.type === 'class' && i.system?.forceSensitive === true
+  // Check if Force Training is in selected feats
+  const hasForceTraining = selectedFeats.some(f =>
+    typeof f === 'string' ? f === 'Force Training' : f.name === 'Force Training'
   );
+  if (hasForceTraining) return true;
 
-  return hasForceSensitivityFeat || hasForceClass;
+  return false;
 }
 
 /**
- * Get available force powers for selection
+ * Count how many force powers the character gains
  * @param {Actor} actor - The actor
- * @param {Object} pendingData - Pending selections (feats, class, etc.)
- * @returns {Promise<Array>} Available force powers with qualification info
+ * @param {Array} selectedFeats - Currently selected feats
+ * @returns {number} Number of powers to select
  */
-export async function getAvailableForcePowers(actor, pendingData = {}) {
-  const forcePowerPack = game.packs.get('foundryvtt-swse.forcepowers');
-  if (!forcePowerPack) {
-    SWSELogger.warn('SWSE LevelUp | Force powers compendium not found');
+export async function countForcePowersGained(actor, selectedFeats = []) {
+  let count = 0;
+
+  // Check for Force Sensitivity (level 1 Jedi)
+  const newLevel = actor.system.level + 1;
+  if (newLevel === 2) {
+    const characterClasses = actor.items.filter(i => i.type === 'class');
+    const hasJedi = characterClasses.some(c => c.name === 'Jedi');
+    if (hasJedi) count += 1;
+  }
+
+  // Check for Force Training feat
+  for (const feat of selectedFeats) {
+    const featName = typeof feat === 'string' ? feat : feat.name;
+    if (featName === 'Force Training') {
+      // Force Training grants 1 + WIS mod (or CHA mod with house rule), minimum 1
+      const wisAbility = actor.system.abilities?.wis;
+      const chaAbility = actor.system.abilities?.cha;
+
+      // Check for house rule to use CHA instead of WIS
+      const useCha = game.settings?.get('foundryvtt-swse', 'forceTrainingUseCha') ?? false;
+      const mod = (useCha ? chaAbility?.mod : wisAbility?.mod) ?? 0;
+
+      count += Math.max(1, 1 + mod);
+    }
+  }
+
+  return count;
+}
+
+/**
+ * Load available force powers for selection
+ * @returns {Promise<Array>} Array of force power objects
+ */
+export async function loadForcePowers() {
+  try {
+    return await ForcePowerEngine.collectAvailablePowers();
+  } catch (err) {
+    SWSELogger.error('SWSE LevelUp | Failed to load force powers:', err);
     return [];
   }
-
-  // Check if character can learn Force powers
-  if (!canLearnForcePowers(actor)) {
-    SWSELogger.log('SWSE LevelUp | Character is not Force-sensitive');
-    return [];
-  }
-
-  const allPowers = await forcePowerPack.getDocuments();
-  SWSELogger.log(`SWSE LevelUp | Loaded ${allPowers.length} force powers from compendium`);
-
-  // -----------------------------------------------------------
-  // VALIDATE FORCE POWER DATA STRUCTURE
-  // -----------------------------------------------------------
-
-  // Load all trees if your system stores them
-  const treePack = game.packs.get('foundryvtt-swse.forcepowertrees');
-  const treeNames = treePack ? treePack.index.map(t => t.name) : [];
-
-  for (const power of allPowers) {
-
-      // 1 — Missing powerLevel
-      if (!power.system?.powerLevel) {
-          warnGM(
-              `Force Power "${power.name}" is missing a "powerLevel" property.`
-          );
-      }
-
-      // 2 — Unknown Force power tree
-      if (power.system?.tree && !treeNames.includes(power.system.tree)) {
-          warnGM(
-              `Force Power "${power.name}" references missing Force Power tree "${power.system.tree}".`
-          );
-      }
-
-      // 3 — Missing prerequisite power
-      if (power.system?.prerequisitePower) {
-          const prereq = power.system.prerequisitePower;
-          const exists = allPowers.some(p => p.name === prereq);
-
-          if (!exists) {
-              warnGM(
-                  `Force Power "${power.name}" requires missing prerequisite power "${prereq}".`
-              );
-          }
-      }
-  }
-
-  // Filter by prerequisites and character level
-  const characterLevel = actor.system.level || 1;
-  const qualifiedPowers = [];
-
-  for (const power of allPowers) {
-    const powerLevel = power.system?.powerLevel || 1;
-
-    // Check force power level requirement (must have 5 levels in Force-using class per power level)
-    const requiredLevels = powerLevel * 5;
-    const forceLevels = actor.items
-      .filter(i => i.type === 'class' && i.system?.forceSensitive === true)
-      .reduce((sum, cls) => sum + (cls.system?.level || 0), 0);
-
-    const meetsLevelRequirement = forceLevels >= requiredLevels;
-
-    // Check other prerequisites using PrerequisiteValidator
-    const prereqCheck = PrerequisiteValidator.checkFeatPrerequisites(power, actor, pendingData);
-
-    const isQualified = meetsLevelRequirement && prereqCheck.valid;
-    const reasons = [];
-
-    if (!meetsLevelRequirement) {
-      reasons.push(`Requires ${requiredLevels} levels in a Force-using class (you have ${forceLevels})`);
-    }
-    if (!prereqCheck.valid) {
-      reasons.push(...prereqCheck.reasons);
-    }
-
-    qualifiedPowers.push({
-      ...power,
-      isQualified,
-      prerequisiteReasons: reasons,
-      powerLevel,
-      requiredLevels
-    });
-  }
-
-  SWSELogger.log(`SWSE LevelUp | ${qualifiedPowers.filter(p => p.isQualified).length} qualified force powers`);
-
-  return qualifiedPowers;
 }
 
 /**
  * Select a force power
- * @param {string} powerId - The force power ID
- * @returns {Promise<Object|null>} The selected force power or null
+ * @param {string} powerId - The power ID/name to select
+ * @param {Array} availablePowers - List of available powers
+ * @param {Array} selectedPowers - Currently selected powers
+ * @returns {Array} Updated selected powers array
  */
-export async function selectForcePower(powerId) {
-  const forcePowerPack = game.packs.get('foundryvtt-swse.forcepowers');
-  if (!forcePowerPack) return null;
+export function selectForcePower(powerId, availablePowers, selectedPowers = []) {
+  const power = availablePowers.find(p => (p.id || p._id || p.name) === powerId);
+  if (!power) return selectedPowers;
 
-  const power = await forcePowerPack.getDocument(powerId);
-  if (power) {
-    SWSELogger.log(`SWSE LevelUp | Selected force power: ${power.name}`);
+  const powersWithoutThis = selectedPowers.filter(p => (p.id || p._id || p.name) !== powerId);
+
+  // Toggle on/off
+  if (powersWithoutThis.length === selectedPowers.length) {
+    // Not found, add it
+    return [...powersWithoutThis, power];
+  } else {
+    // Found, remove it
+    return powersWithoutThis;
   }
-
-  return power || null;
 }

@@ -309,6 +309,287 @@
   transform: scale(0.98);
 }
 
+/* ================================================================= */
+/* FORCE POWER SELECTION CARDS                                       */
+/* ================================================================= */
+
+.step-force-powers-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Section Header */
+.step-force-powers-selection h3 {
+  margin: 0 0 0.5rem 0;
+  color: #9ed0ff;
+  text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+  font-weight: 600;
+}
+
+/* Mentor Guidance Box */
+.mentor-guidance-box {
+  padding: 1rem;
+  background: rgba(0, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-left: 3px solid rgba(0, 170, 255, 0.6);
+  border-radius: 6px;
+  color: #9ed0ff;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  box-shadow: inset 0 0 10px rgba(0, 170, 255, 0.05);
+}
+
+.mentor-guidance-box p {
+  margin: 0;
+}
+
+.mentor-guidance-box strong {
+  color: #00d9ff;
+  font-weight: 600;
+}
+
+/* Power Selection Header */
+.power-selection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0 0.75rem 0;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.power-selection-header .hint {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #9ed0ff;
+}
+
+.power-selection-header .hint strong {
+  color: #00d9ff;
+  font-weight: 600;
+  text-shadow: 0 0 5px rgba(0, 170, 255, 0.4);
+}
+
+/* Force Powers Grid */
+.force-powers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1.25rem;
+  margin: 1rem 0;
+}
+
+/* Force Power Card Styling - Holo Theme */
+.force-power-card {
+  padding: 1rem;
+  background: rgba(10, 14, 39, 0.6);
+  border: 2px solid rgba(0, 170, 255, 0.4);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  cursor: pointer;
+  box-shadow: inset 0 0 5px rgba(0, 170, 255, 0.05);
+}
+
+.force-power-card:hover {
+  background: rgba(10, 14, 39, 0.8);
+  border-color: rgba(0, 255, 255, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(0, 170, 255, 0.4), inset 0 0 5px rgba(0, 170, 255, 0.1);
+}
+
+.force-power-card.selected {
+  background: rgba(0, 100, 80, 0.2);
+  border-color: rgba(0, 255, 136, 0.7);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3), inset 0 0 5px rgba(0, 170, 255, 0.05);
+}
+
+/* Power Image */
+.force-power-card .power-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.1), rgba(0, 100, 150, 0.1));
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.force-power-card .power-image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 170, 255, 0.02) 0, rgba(0, 170, 255, 0.02) 4px);
+  pointer-events: none;
+  border-radius: 5px;
+}
+
+.force-power-card .power-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.95);
+}
+
+.force-power-card:hover .power-image img {
+  filter: brightness(1.05);
+}
+
+.force-power-card .power-image.no-image {
+  font-size: 2rem;
+  color: rgba(0, 170, 255, 0.6);
+  text-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+}
+
+/* Power Name */
+.force-power-card .power-name {
+  margin: 0;
+  font-size: 0.85rem;
+  text-align: center;
+  line-height: 1.2;
+  flex: 1;
+  color: #9ed0ff;
+  font-weight: 500;
+}
+
+/* Force Power Card Tooltip - Holo Style */
+.force-power-card.feat-with-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-12px);
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.98), rgba(10, 20, 50, 0.98));
+  color: #9ed0ff;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  white-space: normal;
+  max-width: 280px;
+  width: max-content;
+  border: 1px solid rgba(0, 170, 255, 0.5);
+  box-shadow: 0 0 15px rgba(0, 170, 255, 0.3), inset 0 0 10px rgba(0, 170, 255, 0.05);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  z-index: 1000;
+}
+
+.force-power-card.feat-with-tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-8px);
+}
+
+/* Tooltip Arrow */
+.force-power-card.feat-with-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-12px);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(0, 170, 255, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  z-index: 1001;
+  pointer-events: none;
+  filter: drop-shadow(0 0 4px rgba(0, 170, 255, 0.4));
+}
+
+.force-power-card.feat-with-tooltip:hover::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-8px);
+}
+
+/* Force Power Selection Button */
+.force-power-card .select-force-power {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  margin-top: auto;
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.15), rgba(0, 150, 200, 0.1));
+  border: 1px solid rgba(0, 170, 255, 0.4);
+  color: #00d9ff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+.force-power-card .select-force-power:hover {
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.25), rgba(0, 150, 200, 0.2));
+  border-color: rgba(0, 255, 255, 0.6);
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.3);
+}
+
+.force-power-card.selected .select-force-power {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 200, 100, 0.1));
+  border-color: rgba(0, 255, 136, 0.5);
+  color: #00ff88;
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+}
+
+.force-power-card.selected .select-force-power:hover {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.25), rgba(0, 200, 100, 0.2));
+  border-color: rgba(0, 255, 136, 0.7);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+}
+
+/* Selected Powers Summary */
+.selected-powers-summary {
+  padding: 1rem;
+  background: rgba(0, 100, 80, 0.08);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-left: 3px solid rgba(0, 255, 136, 0.6);
+  border-radius: 6px;
+  margin-top: 1rem;
+  box-shadow: inset 0 0 10px rgba(0, 255, 136, 0.03);
+}
+
+.selected-powers-summary h4 {
+  margin: 0 0 0.75rem 0;
+  color: #00ff88;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-shadow: 0 0 5px rgba(0, 255, 136, 0.3);
+}
+
+.selected-powers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.selected-power-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #9ed0ff;
+  font-size: 0.9rem;
+}
+
+.selected-power-item i {
+  color: #00ff88;
+  text-shadow: 0 0 5px rgba(0, 255, 136, 0.4);
+}
+
 /* Form Actions */
 .step-talent-selection .form-actions {
   display: flex;
@@ -336,6 +617,29 @@
   .talent-tree-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 0.5rem;
+  }
+
+  .force-powers-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .force-power-card {
+    padding: 0.75rem;
+  }
+
+  .force-power-card .power-image {
+    width: 70px;
+    height: 70px;
+  }
+
+  .force-power-card .power-name {
+    font-size: 0.8rem;
+  }
+
+  .force-power-card .select-force-power {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.7rem;
   }
 
   .step-talent-selection .form-actions {
