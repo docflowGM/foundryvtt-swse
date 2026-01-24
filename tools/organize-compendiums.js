@@ -15,6 +15,7 @@ function organizeArmor() {
   const light = [];
   const medium = [];
   const heavy = [];
+  const shields = [];
 
   lines.forEach(line => {
     const item = JSON.parse(line);
@@ -26,6 +27,8 @@ function organizeArmor() {
       medium.push(line);
     } else if (type === 'heavy') {
       heavy.push(line);
+    } else if (type === 'shield') {
+      shields.push(line);
     }
   });
 
@@ -33,8 +36,9 @@ function organizeArmor() {
   fs.writeFileSync(path.join(packsDir, 'armor-light.db'), light.join('\n') + (light.length > 0 ? '\n' : ''));
   fs.writeFileSync(path.join(packsDir, 'armor-medium.db'), medium.join('\n') + (medium.length > 0 ? '\n' : ''));
   fs.writeFileSync(path.join(packsDir, 'armor-heavy.db'), heavy.join('\n') + (heavy.length > 0 ? '\n' : ''));
+  fs.writeFileSync(path.join(packsDir, 'armor-shields.db'), shields.join('\n') + (shields.length > 0 ? '\n' : ''));
 
-  console.log(`Organized armor: ${light.length} light, ${medium.length} medium, ${heavy.length} heavy`);
+  console.log(`Organized armor: ${light.length} light, ${medium.length} medium, ${heavy.length} heavy, ${shields.length} shields`);
 }
 
 // Organize weapons by category
