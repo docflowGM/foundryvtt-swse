@@ -50,6 +50,12 @@
         <div class="step-label">Feat</div>
       </div>
       {{/if}}
+      {{#if getsForcePowers}}
+      <div class="progress-step {{#if (eq currentStep 'force-powers')}}active{{else if (stepCompleted 'force-powers' currentStep)}}completed{{/if}}" data-step="force-powers">
+        <div class="step-number">•</div>
+        <div class="step-label">Force Powers</div>
+      </div>
+      {{/if}}
       {{#if getsTalent}}
       <div class="progress-step {{#if (eq currentStep 'talent')}}active{{else if (stepCompleted 'talent' currentStep)}}completed{{/if}}" data-step="talent">
         <div class="step-number">•</div>
@@ -766,6 +772,61 @@
         </button>
         <button class="skip-step btn-warning" title="Skip this step (you'll need to add missing selections later)">
           <i class="fas fa-forward"></i> Skip
+        </button>
+        <button class="next-step btn-primary">
+          Continue <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </section>
+    {{/if}}
+
+    {{!-- STEP 4.5: FORCE POWER SELECTION --}}
+    {{#if (eq currentStep "force-powers")}}
+    <section class="step-force-powers-selection">
+      <h3>Select Force Powers</h3>
+      <p class="hint">You gain {{forcePowerCount}} force power(s). Choose {{forcePowerCount}} from the available options below.</p>
+
+      {{#if selectedForcePowers}}
+      <div class="selected-powers-display">
+        <h4>Selected Powers ({{selectedForcePowers.length}}/{{forcePowerCount}}):</h4>
+        {{#each selectedForcePowers}}
+        <div class="selected-power">
+          <strong>{{this.name}}</strong>
+          {{#if this.system.description}}
+          <p>{{this.system.description}}</p>
+          {{/if}}
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      <div class="force-powers-grid">
+        {{#each availableForcePowers}}
+        <div class="force-power-card {{#if (eq this.id ../selectedForcePowers.*.id)}}selected{{/if}}" data-power-id="{{this.id}}">
+          {{#if this.img}}
+          <div class="power-image">
+            <img src="{{this.img}}" alt="{{this.name}}" onerror="this.src='icons/svg/mystery-man.svg'" />
+          </div>
+          {{/if}}
+          <div class="power-info">
+            <h4>{{this.name}}</h4>
+            {{#if this.system.description}}
+            <p class="power-description">{{this.system.description}}</p>
+            {{/if}}
+          </div>
+          <button class="select-force-power choice-button" data-power-id="{{this.id}}">
+            <i class="fas fa-plus"></i> Select
+          </button>
+        </div>
+        {{/each}}
+      </div>
+
+      <div class="form-actions">
+        <button class="prev-step btn-secondary">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="ask-mentor-force-power-suggestion btn-mentor" title="Get a suggestion from your mentor">
+          <i class="fas fa-star"></i> Ask {{mentor.name}}
         </button>
         <button class="next-step btn-primary">
           Continue <i class="fas fa-arrow-right"></i>

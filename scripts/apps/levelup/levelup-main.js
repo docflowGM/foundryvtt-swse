@@ -63,6 +63,14 @@ import {
   getTalentProgressionInfo
 } from './levelup-talents.js';
 
+// Import force power module functions
+import {
+  getsForcePowers,
+  countForcePowersGained,
+  loadForcePowers,
+  selectForcePower
+} from './levelup-force-powers.js';
+
 // Import dual talent selection
 import {
   getTalentSelectionState,
@@ -168,17 +176,19 @@ export class SWSELevelUpEnhanced extends FormApplication {
       throw new Error("Character incomplete - redirecting to character generator");
     }
 
-    this.currentStep = 'class'; // class, multiclass-bonus, ability-increase, feat, talent, skills, summary
+    this.currentStep = 'class'; // class, multiclass-bonus, ability-increase, feat, force-powers, talent, skills, summary
 
     this.selectedClass = null;
     this.selectedTalents = { heroic: null, class: null }; // Dual talent progression
     this.currentTalentSelectionType = null; // Track which talent type we're selecting ('heroic' or 'class')
     this.selectedFeats = [];
+    this.selectedForcePowers = [];
     this.selectedSkills = [];
     this.abilityIncreases = {}; // Track ability score increases
     this.hpGain = 0;
     this.talentData = null;
     this.featData = null;
+    this.forcePowerData = null;
     this.activeTags = []; // Track active tag filters
     this.freeBuild = false; // Free Build mode - skips validation
 
@@ -265,6 +275,15 @@ export class SWSELevelUpEnhanced extends FormApplication {
     data.futureAvailableFeats = this.featData?.futureAvailableFeats || [];  // Feats that will be available soon
     data.allFeats = this.featData?.feats || [];  // For debugging/info
     data.selectedFeats = this.selectedFeats;
+
+    // Force Power selection
+    data.getsForcePowers = getsForcePowers(this.actor, this.selectedFeats);
+    if (data.getsForcePowers && !this.forcePowerData) {
+      await this._loadForcePowers();
+    }
+    data.forcePowerCount = data.getsForcePowers ? await countForcePowersGained(this.actor, this.selectedFeats) : 0;
+    data.availableForcePowers = this.forcePowerData || [];
+    data.selectedForcePowers = this.selectedForcePowers;
 
     // Mentor data
     data.mentor = this.mentor;
@@ -354,6 +373,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     // Bonus feat selection
     html.find('.select-bonus-feat').click(this._onSelectBonusFeat.bind(this));
+
+    // Force power selection
+    html.find('.select-force-power').click(this._onSelectForcePower.bind(this));
 
     // Talent tree selection
     html.find('.select-talent-tree').click(this._onSelectTalentTree.bind(this));
@@ -760,6 +782,17 @@ export class SWSELevelUpEnhanced extends FormApplication {
     };
 
     this.featData = await loadFeats(this.actor, this.selectedClass, pendingData);
+  }
+
+  async _loadForcePowers() {
+    this.forcePowerData = await loadForcePowers();
+  }
+
+  async _onSelectForcePower(event) {
+    event.preventDefault();
+    const powerId = event.currentTarget.dataset.powerId;
+    this.selectedForcePowers = selectForcePower(powerId, this.forcePowerData, this.selectedForcePowers);
+    this.render();
   }
 
   async _onSelectBonusFeat(event) {
@@ -1565,6 +1598,23 @@ export class SWSELevelUpEnhanced extends FormApplication {
           ui.notifications.warn("You must select a feat before continuing! (Or enable Free Build mode to skip)");
           return;
         }
+        // Check if Force Powers step applies
+        const getsFP = getsForcePowers(this.actor, this.selectedFeats);
+        if (getsFP) {
+          this.currentStep = 'force-powers';
+        } else if (getsTal) {
+          this.currentStep = 'talent';
+        } else {
+          this.currentStep = 'summary';
+        }
+        break;
+      case 'force-powers':
+        // Check if they selected required force powers (unless in Free Build mode)
+        const fpCount = await countForcePowersGained(this.actor, this.selectedFeats);
+        if (!this.freeBuild && this.selectedForcePowers.length < fpCount) {
+          ui.notifications.warn(`You must select ${fpCount} force power(s) before continuing! (Or enable Free Build mode to skip)`);
+          return;
+        }
         if (getsTal) {
           this.currentStep = 'talent';
         } else {
@@ -1621,8 +1671,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
           this.currentStep = 'class';
         }
         break;
+      case 'force-powers':
+        this.currentStep = 'feat';
+        break;
       case 'talent':
-        if (getsBonusFt) {
+        const getsFP = getsForcePowers(this.actor, this.selectedFeats);
+        if (getsFP) {
+          this.currentStep = 'force-powers';
+        } else if (getsBonusFt) {
           this.currentStep = 'feat';
         } else if (getsAbilityIncr) {
           this.currentStep = 'ability-increase';
@@ -1635,6 +1691,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
       case 'summary':
         if (getsTal) {
           this.currentStep = 'talent';
+        } else if (getsForcePowers(this.actor, this.selectedFeats)) {
+          this.currentStep = 'force-powers';
         } else if (getsBonusFt) {
           this.currentStep = 'feat';
         } else if (getsAbilityIncr) {

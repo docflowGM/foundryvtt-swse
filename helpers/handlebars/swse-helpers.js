@@ -60,6 +60,7 @@ export const swseHelpers = {
       'multiclass-bonus',
       'ability-increase',
       'feat',
+      'force-powers',
       'talent',
       'summary'
     ];
