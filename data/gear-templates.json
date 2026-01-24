@@ -1,0 +1,395 @@
+{
+  "weaponTemplates": {
+    "baragwin": {
+      "name": "Baragwin Weapon",
+      "manufacturer": "The Baragwin",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": [],
+      "effects": {
+        "criticalDamageBonus": 1,
+        "availability": "illegal"
+      },
+      "description": "On a successful Critical Hit, grants +1 die of damage (after multiplying for the Critical Hit). Weapon is considered Illegal."
+    },
+    "bothan": {
+      "name": "Bothan Weapon",
+      "manufacturer": "The Bothan",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": ["stunOrIon"],
+      "effects": {
+        "stunIonDamageBonus": 1,
+        "normalDamagePenalty": -1
+      },
+      "description": "Deals +1 die of damage when set to Stun or dealing Ion damage, but -1 die of damage otherwise. Requires weapon with Ion or Stun setting."
+    },
+    "dashade": {
+      "name": "Dashade Weapon",
+      "manufacturer": "The Dashade",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": [],
+      "effects": {
+        "limitedRecovery": true,
+        "damagePenalty": -2,
+        "availability": "illegal"
+      },
+      "description": "Target moved down Condition Track can only spend 2 Swift Actions per turn to Recover until returned to normal. -2 penalty to damage rolls. Illegal."
+    },
+    "gand": {
+      "name": "Gand Weapon",
+      "manufacturer": "The Gand",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": ["stun"],
+      "effects": {
+        "stunSpeedReduction": true,
+        "proficiency": "exotic"
+      },
+      "description": "Stun damage halves speed (or Immobilizes at -4 CT) until normal. Exotic proficiency (except for Gand). Requires Stun setting."
+    },
+    "quickDraw": {
+      "name": "Quick Draw Weapon",
+      "manufacturer": "N/A",
+      "cost": {"percent": 10, "minimum": 0},
+      "restrictions": [],
+      "effects": {
+        "quickDrawBonus": true
+      },
+      "description": "With Quick Draw feat, can draw/holster as Free Action once per round."
+    },
+    "rakatan": {
+      "name": "Rakatan Weapon",
+      "manufacturer": "The Infinite Empire",
+      "cost": {"percent": 30, "minimum": 3000},
+      "restrictions": [],
+      "effects": {
+        "dieUpgrade": 1,
+        "attackBonus": 1,
+        "proficiency": "exotic"
+      },
+      "description": "Die type +1 step (d4→d6→d8→d10→d12 max), +1 Equipment bonus to attacks. Exotic proficiency (except for Rakata)."
+    },
+    "sithAlchemical": {
+      "name": "Sith Alchemical Weapon",
+      "manufacturer": "The Sith",
+      "cost": {"percent": 20, "minimum": 2000},
+      "restrictions": ["advancedMeleeOrSimpleMelee"],
+      "effects": {
+        "lightsaberResistant": true,
+        "blockDeflectCompatible": true,
+        "darkSideDamageBonus": true
+      },
+      "description": "Lightsaber doesn't ignore DR. Can use Block/Deflect talents. Force Point adds DSS to damage (increases DSS by 1). Advanced Melee or Simple Melee only."
+    },
+    "antiquated": {
+      "name": "Antiquated Weapon",
+      "manufacturer": "N/A",
+      "cost": {"percent": 10, "minimum": 0},
+      "restrictions": ["preLegacyPowered"],
+      "effects": {
+        "availability": "rare",
+        "ammoCostIncrease": 50,
+        "repairDCIncrease": 5,
+        "canBeRefitted": true
+      },
+      "description": "Pre-Legacy powered weapon. Rare, +50% ammo cost, +5 repair DC. Can be Refitted instead."
+    },
+    "refitted": {
+      "name": "Refitted Weapon",
+      "manufacturer": "N/A",
+      "cost": {"percent": 20, "minimum": 0},
+      "restrictions": ["preLegacyPowered"],
+      "effects": {
+        "availability": "rare",
+        "standardAmmo": true,
+        "ammoCapacityBonus": 10,
+        "repairDCIncrease": 5,
+        "maintenanceRequired": true
+      },
+      "description": "Rare, uses standard ammo, +10% shots, +5 repair DC, weekly maintenance required."
+    },
+    "disruptor": {
+      "name": "Disruptor Weapon",
+      "manufacturer": "N/A",
+      "cost": {"percent": 350, "minimum": 0},
+      "restrictions": ["blaster"],
+      "effects": {
+        "damageThresholdReduction": -5,
+        "disintegration": true,
+        "fireEveryOtherRound": true,
+        "ammoReduction": {"pistol": 0.1, "other": 0.2}
+      },
+      "description": "Treats DT as 5 lower. Kills disintegrate target. Fires every other round. No multi-shot feats. 1/10 ammo (pistol) or 1/5 (other)."
+    },
+    "jawa": {
+      "name": "Jawa Weapon",
+      "manufacturer": "The Jawas",
+      "cost": {"percent": -50, "minimum": 0},
+      "restrictions": [],
+      "effects": {
+        "disableOnNatural1": true,
+        "grenadeExplosion": true,
+        "noGrenadeLauncher": true
+      },
+      "description": "50% cheaper. Natural 1 disables weapon (grenades explode on wielder). Grenades can't fit in launcher."
+    },
+    "jedaii": {
+      "name": "Je'daii Weapon",
+      "manufacturer": "The Je'daii Rangers",
+      "cost": {"percent": 20, "minimum": 2000},
+      "restrictions": ["simpleMelee"],
+      "effects": {
+        "lightsaberResistant": true,
+        "forcePointWisdomBonus": true
+      },
+      "description": "Lightsaber doesn't ignore DR. Force Point adds WIS modifier to damage (next attack before start of next turn). Simple Melee only."
+    }
+  },
+  "armorTemplates": {
+    "mandalorian": {
+      "name": "Mandalorian Armor",
+      "manufacturer": "The Mandalorians",
+      "cost": {"flat": 30000},
+      "restrictions": [],
+      "effects": {
+        "fortitudeBonus": 1,
+        "drVsLightsaber": true,
+        "intimidationBonus": true
+      },
+      "description": "+1 Fort equipment bonus. DR applies vs Lightsabers. Intimidation bonus in Mandalorian Wars era."
+    },
+    "bonadanAlloy": {
+      "name": "Bonadan-Alloy Armor",
+      "manufacturer": "Bonadan",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": ["fortBonus"],
+      "effects": {
+        "drVsSlashing": 2,
+        "fortitudePenalty": -1
+      },
+      "description": "DR 2 vs Slashing, -1 Fort equipment bonus. Requires Fort bonus."
+    },
+    "bronziumCast": {
+      "name": "Bronzium Cast Armor",
+      "manufacturer": "N/A",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": [],
+      "effects": {
+        "redirectDamage": true
+      },
+      "description": "Once/encounter redirect attack damage to armor. Armor has HP/DR/DT and can be disabled/destroyed."
+    },
+    "durasteelCast": {
+      "name": "Durasteel Cast Armor",
+      "manufacturer": "N/A",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": ["fortBonus"],
+      "effects": {
+        "damageReduction": 1,
+        "fortitudePenalty": -1
+      },
+      "description": "DR 1, -1 Fort equipment bonus. Requires Fort bonus."
+    },
+    "environmentalBastion": {
+      "name": "Environmental Bastion Armor",
+      "manufacturer": "N/A",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": ["fortBonus"],
+      "effects": {
+        "spaceSuit": true,
+        "lifeSupport": "fortBonus"
+      },
+      "description": "Space suit functionality. Breathable air = Fort equipment bonus in hours. Requires Fort bonus."
+    },
+    "eriadun": {
+      "name": "Eriadun Armor",
+      "manufacturer": "Eriadu",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": ["fortBonus"],
+      "effects": {
+        "drVsStun": 5,
+        "fortitudePenalty": -1
+      },
+      "description": "DR 5 vs Stun, -1 Fort equipment bonus. Requires Fort bonus."
+    },
+    "stygianTriprismatic": {
+      "name": "Stygian-Triprismatic Polymer Armor",
+      "manufacturer": "The Galactic Empire / The Mandalorians",
+      "cost": {"percent": 20, "minimum": 0},
+      "restrictions": [],
+      "effects": {
+        "reflexBonus": 1,
+        "stealthVsSensors": 2
+      },
+      "description": "+1 Reflex equipment bonus, +2 Stealth vs electronic sensors."
+    }
+  },
+  "generalTemplates": {
+    "arkanian": {
+      "name": "Arkanian",
+      "manufacturer": "Arkania",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": {"weapon": ["rangedEnergy"], "armor": []},
+      "weaponEffects": {
+        "damageTypes": ["energy", "fire"],
+        "overheatOnMultiShot": true
+      },
+      "armorEffects": {
+        "fortVsColdDouble": true,
+        "fortVsHeatZero": true
+      },
+      "description": "Weapons: Energy+Fire damage, overheats on multi-shot. Armor: Double Fort vs Extreme Cold, no Fort vs Extreme Heat."
+    },
+    "cinnagaran": {
+      "name": "Cinnagaran",
+      "manufacturer": "Empress Teta",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": {"weapon": ["rangedEnergy"], "armor": []},
+      "weaponEffects": {
+        "damageTypes": ["energy", "bludgeoning"]
+      },
+      "armorEffects": {
+        "drVsSonic": 5,
+        "maxDexPenalty": -1
+      },
+      "description": "Weapons: Energy+Bludgeoning. Armor: DR 5 vs Sonic, -1 Max Dex."
+    },
+    "cortosisWeave": {
+      "name": "Cortosis Weave / Phrik Alloy",
+      "manufacturer": "N/A",
+      "cost": {"percent": 20, "minimum": 0},
+      "restrictions": {"weapon": [], "armor": []},
+      "canStack": true,
+      "weaponEffects": {
+        "lightsaberResistant": true
+      },
+      "armorEffects": {
+        "lightsaberResistant": true
+      },
+      "description": "Lightsaber doesn't ignore weapon/armor DR. Not Rare in Old Republic Era."
+    },
+    "echani": {
+      "name": "Echani",
+      "manufacturer": "The Echani",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": {"weapon": ["meleeSlashingPiercing"], "armor": []},
+      "weaponEffects": {
+        "expandCritRange": true,
+        "halfHP": true
+      },
+      "armorEffects": {
+        "halfWeight": true,
+        "speedBoostOnce": true,
+        "reflexPenalty": -1
+      },
+      "description": "Weapons: Once/enc expand crit range by 1, half HP. Armor: Half weight, once/enc normal speed, -1 Reflex."
+    },
+    "genoharadan": {
+      "name": "GenoHaradan",
+      "manufacturer": "The GenoHaradan",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": {"weapon": ["meleeNonEnergy", "rangedStun"], "armor": ["fortBonus"]},
+      "weaponEffects": {
+        "poisonBonus": 2,
+        "stunAttackBonus": 1,
+        "disableOnNatural1": true
+      },
+      "armorEffects": {
+        "stealthBonus": 2,
+        "fortitudePenalty": -1
+      },
+      "description": "Weapons: +2 Poison/+1 Stun/disabled on Nat 1. Armor: +2 Stealth, -1 Fort."
+    },
+    "iridonian": {
+      "name": "Iridonian",
+      "manufacturer": "The Iridonians",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": {"weapon": [], "armor": []},
+      "weaponEffects": {
+        "powerAttackBonus": 2,
+        "availability": "illegal"
+      },
+      "armorEffects": {
+        "drVsBludgeoning": 2,
+        "availability": "illegal"
+      },
+      "description": "Weapons: +2 Power Attack/Blast dmg, Illegal. Armor: DR 2 Bludgeoning, Illegal."
+    },
+    "krath": {
+      "name": "Krath",
+      "manufacturer": "The Krath",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": {"weapon": ["meleeSlashingPiercing"], "armor": []},
+      "weaponEffects": {
+        "bleedDamage": "1d4",
+        "darkSideTaint": 1
+      },
+      "armorEffects": {
+        "drVsEnergy": 2,
+        "darkSideTaint": 1
+      },
+      "description": "Weapons: 1d4 bleed if hit Ref+Fort. Armor: DR 2 Energy. Both: +1 DSS for targeting."
+    },
+    "mandalorian": {
+      "name": "Mandalorian",
+      "manufacturer": "The Mandalorians",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": {"weapon": [], "armor": []},
+      "weaponEffects": {
+        "mechanicsBonus": 5,
+        "accessoriesDestroyedOnDisable": true
+      },
+      "armorEffects": {
+        "mechanicsBonus": 5,
+        "accessoriesDestroyedOnDisable": true
+      },
+      "description": "+5 Mechanics to repair/modify. Accessories destroyed if item disabled."
+    },
+    "massassi": {
+      "name": "Massassi",
+      "manufacturer": "The Massassi",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": {"weapon": ["simpleMelee"], "armor": []},
+      "weaponEffects": {
+        "tripleStrOnCrit": true,
+        "strengthRequirement": true,
+        "attackPenaltyNoStr": -2
+      },
+      "armorEffects": {
+        "critToHitOnce": true,
+        "strengthRequirement": true,
+        "penaltiesNoStr": true
+      },
+      "description": "Weapons: Triple Str on 2H crit, Str req or -2. Armor: Crit→hit 1/enc, Str req or penalties."
+    },
+    "prototype": {
+      "name": "Prototype",
+      "manufacturer": "N/A",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": {"weapon": [], "armor": []},
+      "canStack": true,
+      "weaponEffects": {
+        "twoModSlots": true,
+        "disableOn1234": true
+      },
+      "armorEffects": {
+        "twoModSlots": true,
+        "critDamageBonusDie": 1
+      },
+      "description": "2 Tech Specialist mods. Weapons: Nat 1-4 = disabled. Armor: +1 die on crit (before multiply)."
+    },
+    "verpine": {
+      "name": "Verpine",
+      "manufacturer": "The Verpine",
+      "cost": {"percent": 10, "minimum": 1000},
+      "restrictions": {"weapon": ["rangedEnergy"], "armor": []},
+      "weaponEffects": {
+        "ionMode": true,
+        "intelligenceRequirement": 13
+      },
+      "armorEffects": {
+        "drVsIon": 10,
+        "dexterityRequirement": 13
+      },
+      "description": "Weapons: Swift Ion mode, Int 13 or -2. Armor: DR 10 Ion, Dex 13 or penalties."
+    }
+  }
+}

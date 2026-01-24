@@ -271,14 +271,35 @@
       "equipped": false,
       "dualWielded": false,
       "wieldedTwoHanded": false,
-      "range": "Melee"
+      "range": "Melee",
+      "weight": 0,
+      "gearTemplate": "",
+      "gearTemplateSecondary": "",
+      "templateCost": 0
     },
     "armor": {
       "templates": [
         "base"
       ],
+      "armorType": "light",
       "reflexBonus": 0,
-      "maxDex": 999
+      "fortitudeBonus": 0,
+      "maxDex": 999,
+      "weight": 0,
+      "equipmentPerceptionBonus": 0,
+      "armorProficiency": false,
+      "features": "",
+      "shieldRating": 0,
+      "currentSR": 0,
+      "armorProficiencyRequired": "",
+      "charges": {
+        "current": 5,
+        "max": 5
+      },
+      "activated": false,
+      "gearTemplate": "",
+      "gearTemplateSecondary": "",
+      "templateCost": 0
     },
     "equipment": {
       "templates": [

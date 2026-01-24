@@ -68,6 +68,71 @@
         {{/if}}
     </section>
 
+    {{!-- Gear Templates --}}
+    <section class="gear-templates-section">
+        <h3>Gear Templates</h3>
+        <p class="template-info">Gear Templates represent unique manufacturing techniques. Templates are rare and cannot normally be purchased - only found or earned. Most templates cannot be stacked.</p>
+
+        {{#if appliedTemplate}}
+            <div class="applied-template">
+                <div class="template-header">
+                    <h4>{{appliedTemplate.name}}</h4>
+                    <span class="template-manufacturer">by {{appliedTemplate.manufacturer}}</span>
+                </div>
+                <div class="template-details">
+                    <p>{{{appliedTemplate.description}}}</p>
+                    <div class="template-meta">
+                        <span class="template-cost">Cost Adjustment: {{appliedTemplate.costAdjustment}} credits</span>
+                    </div>
+                </div>
+                <div class="template-actions">
+                    <button type="button" class="remove-template">
+                        <i class="fas fa-times"></i> Remove Template
+                    </button>
+                </div>
+            </div>
+        {{else}}
+            <p class="no-template">No template applied</p>
+        {{/if}}
+
+        {{#if availableTemplates.length}}
+            <details class="available-templates-details">
+                <summary>Available Templates ({{availableTemplates.length}})</summary>
+                <ul class="available-templates-list">
+                    {{#each availableTemplates}}
+                    <li class="available-template {{#if this.incompatible}}incompatible{{/if}}">
+                        <div class="template-header">
+                            <h4>{{this.name}}</h4>
+                            <div class="template-meta">
+                                <span class="template-manufacturer">{{this.manufacturer}}</span>
+                                <span class="template-cost-preview">+{{this.costPreview}} credits</span>
+                            </div>
+                        </div>
+                        <div class="template-details">
+                            <p>{{{this.description}}}</p>
+                            {{#if this.restrictions}}
+                                <p class="restrictions"><em>Restrictions: {{this.restrictions}}</em></p>
+                            {{/if}}
+                            {{#if this.incompatible}}
+                                <p class="incompatibility-warning"><strong>⚠ Cannot apply:</strong> {{this.incompatibilityReason}}</p>
+                            {{/if}}
+                        </div>
+                        <div class="template-actions">
+                            <button type="button" class="apply-template"
+                                    data-template-key="{{this.key}}"
+                                    data-template-name="{{this.name}}"
+                                    data-template-cost="{{this.cost}}"
+                                    {{#if this.incompatible}}disabled{{/if}}>
+                                <i class="fas fa-magic"></i> Apply Template
+                            </button>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ul>
+            </details>
+        {{/if}}
+    </section>
+
     {{!-- Available Upgrades --}}
     <section class="available-upgrades-section">
         <h3>Available {{npc.upgradeType}}s</h3>
