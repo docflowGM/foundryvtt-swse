@@ -286,7 +286,8 @@
       "equipmentPerceptionBonus": 0,
       "armorProficiency": false,
       "features": "",
-      "shieldRating": 0
+      "shieldRating": 0,
+      "armorProficiencyRequired": ""
     },
     "equipment": {
       "templates": [
