@@ -1624,7 +1624,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
         }
         break;
       }
-      case 'talent':
+      case 'talent': {
         // Check if all required talents are selected (dual talent progression)
         const talentState = getTalentSelectionState(this.selectedClass, this.actor);
         const heroicDone = !talentState.needsHeroicTalent || this.selectedTalents.heroic;
@@ -1639,6 +1639,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
         }
         this.currentStep = 'summary';
         break;
+      }
     }
 
     this.render();

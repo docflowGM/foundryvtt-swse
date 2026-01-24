@@ -46,7 +46,9 @@ export function normalizePrerequisiteString(raw) {
         .replace(/\s+/g, " ")
         .trim();
 
-    const parts = clean.split(/[,;]+/).map(p => p.trim());
+    // First, handle "&" by converting to commas for proper splitting
+    const withCommas = clean.replace(/\s*&\s*/g, ", ");
+    const parts = withCommas.split(/[,;]+/).map(p => p.trim());
 
     const parsed = [];
 
@@ -122,15 +124,19 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 4. Feat prerequisite (common feats, but NOT weapon/armor specific)
+        // 4. Feat prerequisite (EXPANDED to handle all feats)
         // ----------------------------------------------------------
-        if (lower.includes("mobility") ||
-            lower.includes("two-weapon fighting") ||
-            lower.includes("point blank shot") ||
-            lower.includes("skill focus") ||
-            lower.includes("dodge") ||
-            lower.includes("power attack")
-        ) {
+        // Check for common feat patterns
+        const featPatterns = [
+            "feat", "weapon focus", "weapon specialization", "dual weapon",
+            "quick draw", "double attack", "weapon finesse", "force training",
+            "tech specialist", "multiattack", "martial arts", "weapon proficiency",
+            "coordinated attack", "mobility", "two-weapon fighting", "point blank shot",
+            "skill focus", "dodge", "power attack"
+        ];
+
+        const isFeat = featPatterns.some(pattern => lower.includes(pattern));
+        if (isFeat && !lower.includes("trained in")) {
             parsed.push({
                 type: "feat",
                 name: normalizeFeatName(p)
@@ -139,9 +145,43 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 5. Talent prerequisite
+        // 5. OR logic for prerequisites (e.g., "Block or Deflect")
+        // ----------------------------------------------------------
+        if (lower.includes(" or ")) {
+            const orParts = p.split(/\s+or\s+/i).map(s => s.trim());
+            if (orParts.length > 1) {
+                // Create OR condition with each part parsed as a potential talent/feat
+                const orConditions = orParts.map(part => {
+                    const partLower = part.toLowerCase();
+                    // Determine if it's a talent or feat
+                    if (partLower.includes("talent") ||
+                        ["block", "deflect", "friend", "foe", "dual", "single", "weapon"].some(w => partLower.includes(w))) {
+                        return {
+                            type: partLower.includes("talent") ? "talent" : "talent",
+                            name: normalizeTalentName(part)
+                        };
+                    }
+                    return {
+                        type: "talent",
+                        name: normalizeTalentName(part)
+                    };
+                });
+                parsed.push({
+                    type: "or",
+                    conditions: orConditions
+                });
+                continue;
+            }
+        }
+
+        // ----------------------------------------------------------
+        // 6. Talent prerequisite
         // ----------------------------------------------------------
         if (lower.includes("talent")) {
+            // Skip malformed prerequisite descriptions that start with "Prerequisites:"
+            if (lower.startsWith("prerequisites:")) {
+                continue;
+            }
             parsed.push({
                 type: "talent",
                 name: normalizeTalentName(p)
@@ -150,7 +190,26 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 6. Force Technique / Secret prerequisites
+        // 7. Force Power prerequisite (e.g., "Vital Transfer", "Mind Trick")
+        // ----------------------------------------------------------
+        // Check for common force power names
+        const forcePowerPatterns = [
+            "vital transfer", "mind trick", "farseeing", "force perception",
+            "illusion", "battle meditation", "healing boost", "soothe",
+            "influence savant", "telekinetic savant"
+        ];
+
+        const isForcePower = forcePowerPatterns.some(pattern => lower.includes(pattern));
+        if (isForcePower) {
+            parsed.push({
+                type: "force_power",
+                name: p.trim()
+            });
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 8. Force Technique / Secret prerequisites
         // ----------------------------------------------------------
         if (lower.includes("force secret")) {
             parsed.push({ type: "force_secret" });
@@ -162,7 +221,15 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 7. Force-sensitive prerequisite
+        // 9. "Any One Force Technique" pattern
+        // ----------------------------------------------------------
+        if (lower.includes("any one force technique")) {
+            parsed.push({ type: "any_force_technique" });
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 10. Force-sensitive prerequisite
         // ----------------------------------------------------------
         if (lower.includes("force sensitive")) {
             parsed.push({ type: "force_sensitive" });
@@ -170,7 +237,7 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 8. Class Level Requirement: "Jedi level 7"
+        // 11. Class Level Requirement: "Jedi level 7"
         // ----------------------------------------------------------
         const classLevelMatch = lower.match(/([a-z\s]+)\s+level\s+(\d+)/);
         if (classLevelMatch) {
@@ -312,7 +379,34 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 17. Species requirement (check against known species)
+        // 17. "any X talents from Y tree" pattern
+        // ----------------------------------------------------------
+        const anyCountFromTreeMatch = lower.match(/any\s+(?:two|one|three|four|five)\s+(?:s\s+)?from\s+(?:the\s+)?([a-z\s]+)\s+talent\s+tree/i);
+        if (anyCountFromTreeMatch) {
+            const countMatch = lower.match(/any\s+(two|one|three|four|five)/i);
+            const count = countMatch ? countMatch[1] : "one";
+            parsed.push({
+                type: "any_talents_from_tree",
+                count: count,
+                tree: capitalizeWords(anyCountFromTreeMatch[1].trim())
+            });
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 18. "any other X talent" pattern (fallback for simpler cases)
+        // ----------------------------------------------------------
+        const anyOtherMatch = lower.match(/any\s+other\s+([a-z\s]+)\s+talent/i);
+        if (anyOtherMatch) {
+            parsed.push({
+                type: "any_talent_from_tree",
+                tree: capitalizeWords(anyOtherMatch[1].trim())
+            });
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 19. Species requirement (check against known species)
         // ----------------------------------------------------------
         const speciesMatch = SPECIES_NAMES.find(species =>
             lower === species.toLowerCase() ||
@@ -327,7 +421,7 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 18. Default fallback → treat as feat name
+        // 19. Default fallback → treat as feat name
         // ----------------------------------------------------------
         parsed.push({
             type: "feat",
