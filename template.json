@@ -272,7 +272,10 @@
       "dualWielded": false,
       "wieldedTwoHanded": false,
       "range": "Melee",
-      "weight": 0
+      "weight": 0,
+      "gearTemplate": "",
+      "gearTemplateSecondary": "",
+      "templateCost": 0
     },
     "armor": {
       "templates": [
@@ -293,7 +296,10 @@
         "current": 5,
         "max": 5
       },
-      "activated": false
+      "activated": false,
+      "gearTemplate": "",
+      "gearTemplateSecondary": "",
+      "templateCost": 0
     },
     "equipment": {
       "templates": [

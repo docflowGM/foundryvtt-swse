@@ -6,6 +6,7 @@
  */
 
 import { UpgradeRulesEngine } from "./upgrade-rules-engine.js";
+import { GearTemplatesEngine } from "./gear-templates-engine.js";
 
 export class SWSEUpgradeApp extends FormApplication {
 
@@ -78,6 +79,10 @@ export class SWSEUpgradeApp extends FormApplication {
     );
     const isPoweredArmor = this.item.type === "armor" && UpgradeRulesEngine.isPoweredArmor(this.item);
 
+    // Gear Templates
+    const appliedTemplate = this._getAppliedTemplate();
+    const availableTemplates = this._getAvailableTemplates();
+
     return {
       item: this.item,
       system,
@@ -89,7 +94,9 @@ export class SWSEUpgradeApp extends FormApplication {
       availableSlots: Math.max(0, totalSlots - usedSlots),
       isPoweredArmor,
       strippedFeatures: system.strippedFeatures ?? {},
-      restriction: UpgradeRulesEngine.getEffectiveRestriction(this.item)
+      restriction: UpgradeRulesEngine.getEffectiveRestriction(this.item),
+      appliedTemplate,
+      availableTemplates
     };
   }
 
@@ -138,8 +145,11 @@ export class SWSEUpgradeApp extends FormApplication {
   activateListeners(html) {
     super.activateListeners(html);
 
-    html.find("[data-install-upgrade]").on("click", this._onInstallUpgrade.bind(this));
-    html.find("[data-remove-upgrade]").on("click", this._onRemoveUpgrade.bind(this));
+    html.find(".install-upgrade").on("click", this._onInstallUpgrade.bind(this));
+    html.find(".remove-upgrade").on("click", this._onRemoveUpgrade.bind(this));
+    html.find(".apply-template").on("click", this._onApplyTemplate.bind(this));
+    html.find(".remove-template").on("click", this._onRemoveTemplate.bind(this));
+    html.find(".close-btn").on("click", () => this.close());
   }
 
   /* ------------------------------------------------------------------ */
@@ -222,6 +232,132 @@ export class SWSEUpgradeApp extends FormApplication {
     await this.item.update({ "system.installedUpgrades": installed });
 
     ui.notifications.info("Upgrade removed.");
+    this.render(false);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* GEAR TEMPLATES                                                      */
+  /* ------------------------------------------------------------------ */
+
+  _getAppliedTemplate() {
+    const templateKey = this.item.system.gearTemplate;
+    if (!templateKey) return null;
+
+    const template = GearTemplatesEngine._getTemplateByKey(templateKey);
+    if (!template) return null;
+
+    const cost = this.item.system.templateCost || 0;
+
+    return {
+      key: templateKey,
+      name: template.name,
+      manufacturer: template.manufacturer || 'N/A',
+      description: template.description,
+      costAdjustment: cost
+    };
+  }
+
+  _getAvailableTemplates() {
+    const templates = GearTemplatesEngine.getAvailableTemplates(this.item);
+
+    return templates.map(template => {
+      const costPreview = GearTemplatesEngine.calculateTemplateCost(this.item, template);
+      const validation = GearTemplatesEngine.canApplyTemplate(this.item, template.key);
+
+      return {
+        key: template.key,
+        name: template.name,
+        manufacturer: template.manufacturer || 'N/A',
+        description: template.description,
+        cost: costPreview,
+        costPreview,
+        restrictions: this._formatRestrictions(template.restrictions),
+        incompatible: !validation.valid,
+        incompatibilityReason: validation.reason
+      };
+    });
+  }
+
+  _formatRestrictions(restrictions) {
+    if (!restrictions || restrictions.length === 0) return null;
+
+    const restrictionMap = {
+      'stunOrIon': 'Requires Stun or Ion setting',
+      'stun': 'Requires Stun setting',
+      'advancedMeleeOrSimpleMelee': 'Advanced Melee or Simple Melee only',
+      'preLegacyPowered': 'Pre-Legacy powered weapons only',
+      'blaster': 'Blaster weapons only',
+      'simpleMelee': 'Simple Melee weapons only',
+      'fortBonus': 'Requires Fortitude bonus',
+      'rangedEnergy': 'Ranged Energy weapons only',
+      'meleeSlashingPiercing': 'Melee Slashing/Piercing only',
+      'meleeNonEnergy': 'Melee non-Energy only',
+      'rangedStun': 'Ranged with Stun only'
+    };
+
+    return restrictions.map(r => restrictionMap[r] || r).join(', ');
+  }
+
+  async _onApplyTemplate(event) {
+    event.preventDefault();
+
+    const templateKey = event.currentTarget.dataset.templateKey;
+    const templateName = event.currentTarget.dataset.templateName;
+    const templateCost = Number(event.currentTarget.dataset.templateCost || 0);
+
+    const actor = this.item.actor;
+
+    // Check if item is owned
+    if (!actor) {
+      ui.notifications.warn("Item must be owned by a character to apply templates.");
+      return;
+    }
+
+    // Validate template application
+    const validation = GearTemplatesEngine.canApplyTemplate(this.item, templateKey);
+    if (!validation.valid) {
+      ui.notifications.warn(validation.reason);
+      return;
+    }
+
+    // Check if actor has enough credits
+    const credits = Number(actor.system.credits || 0);
+    if (credits < templateCost) {
+      ui.notifications.warn(`Not enough credits! Need ${templateCost}, have ${credits}.`);
+      return;
+    }
+
+    // Confirm application
+    const confirmed = await Dialog.confirm({
+      title: "Apply Gear Template",
+      content: `<p>Apply <strong>${templateName}</strong> template to <strong>${this.item.name}</strong>?</p>
+                <p>Cost: <strong>${templateCost} credits</strong></p>
+                <p class="warning">Templates are rare and represent unique manufacturing. This cannot be reversed without GM intervention.</p>`
+    });
+
+    if (!confirmed) return;
+
+    // Deduct credits
+    await actor.update({ "system.credits": credits - templateCost });
+
+    // Apply template
+    await GearTemplatesEngine.applyTemplate(this.item, templateKey);
+
+    this.render(false);
+  }
+
+  async _onRemoveTemplate(event) {
+    event.preventDefault();
+
+    const confirmed = await Dialog.confirm({
+      title: "Remove Gear Template",
+      content: `<p>Remove template from <strong>${this.item.name}</strong>?</p>
+                <p class="warning">No credits will be refunded. This action cannot be undone.</p>`
+    });
+
+    if (!confirmed) return;
+
+    await GearTemplatesEngine.removeTemplate(this.item);
     this.render(false);
   }
 

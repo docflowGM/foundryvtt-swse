@@ -79,7 +79,12 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
         initial: "common",
         choices: ["common", "licensed", "restricted", "military", "illegal"],
         label: "Restriction Level"
-      })
+      }),
+
+      // Gear Template fields
+      gearTemplate: new fields.StringField({initial: "", label: "Primary Gear Template"}),
+      gearTemplateSecondary: new fields.StringField({initial: "", label: "Secondary Gear Template (stackable)"}),
+      templateCost: new fields.NumberField({initial: 0, min: 0, integer: true, label: "Template Cost"})
     };
   }
 
@@ -188,7 +193,12 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       maxDex: new fields.NumberField({required: false, initial: 999, nullable: true, label: "Max Dex Bonus"}),
       equipmentPerceptionBonus: new fields.NumberField({required: false, initial: 0, integer: true, label: "Equipment Perception Bonus"}),
       armorProficiency: new fields.BooleanField({required: false, initial: false, label: "Has Required Proficiency"}),
-      features: new fields.StringField({initial: "", label: "Special Features"})
+      features: new fields.StringField({initial: "", label: "Special Features"}),
+
+      // Gear Template fields
+      gearTemplate: new fields.StringField({initial: "", label: "Primary Gear Template"}),
+      gearTemplateSecondary: new fields.StringField({initial: "", label: "Secondary Gear Template (stackable)"}),
+      templateCost: new fields.NumberField({initial: 0, min: 0, integer: true, label: "Template Cost"})
     };
   }
 
