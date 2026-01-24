@@ -658,6 +658,23 @@ export default class CharacterGenerator extends Application {
         context.packs.species,
         this.characterData.speciesFilters
       );
+
+      // Apply banned species filter (only if not GM)
+      if (!game.user.isGM) {
+        const bannedSpeciesStr = game.settings.get("foundryvtt-swse", "bannedSpecies") || "";
+        const bannedSpecies = bannedSpeciesStr
+          .split(',')
+          .map(s => s.trim())
+          .filter(s => s.length > 0);
+
+        if (bannedSpecies.length > 0) {
+          context.packs.species = context.packs.species.filter(species =>
+            !bannedSpecies.includes(species.name)
+          );
+          SWSELogger.log(`CharGen | Filtered ${bannedSpecies.length} banned species from player selection`);
+        }
+      }
+
       // Then sort with Humans first
       context.packs.species = _sortSpeciesBySource(context.packs.species);
     }
@@ -1544,7 +1561,15 @@ export default class CharacterGenerator extends Application {
       // PC workflow: normal flow with class and talents
       // Note: skills before feats to allow Skill Focus validation
       // Note: languages after skills (INT-dependent) for both living and droid characters
-      steps.push("abilities", "class", "background", "skills", "languages", "feats", "talents");
+      steps.push("abilities", "class");
+
+      // Add background step only if enabled
+      const backgroundsEnabled = game.settings.get("foundryvtt-swse", "enableBackgrounds") ?? true;
+      if (backgroundsEnabled) {
+        steps.push("background");
+      }
+
+      steps.push("skills", "languages", "feats", "talents");
 
       // Add force powers step if character is Force-sensitive
       // Note: Droids cannot be Force-sensitive in SWSE

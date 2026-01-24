@@ -514,3 +514,73 @@ export class SpaceCombatMenu extends FormApplication {
     ui.notifications.info("Space Combat rules updated");
   }
 }
+
+/* ========================================================================== */
+/*                        CHARACTER RESTRICTIONS MENU                         */
+/* ========================================================================== */
+
+export class CharacterRestrictionsMenu extends FormApplication {
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      id: "swse-character-restrictions-menu",
+      title: "Character Creation - Restrictions & Backgrounds",
+      template: "systems/foundryvtt-swse/templates/apps/houserules/character-restrictions.hbs",
+      width: 600,
+      height: "auto",
+      tabs: [{ navSelector: ".tabs", contentSelector: ".content", initial: "backgrounds" }]
+    });
+  }
+
+  async getData() {
+    const enableBackgrounds = safeGet("enableBackgrounds");
+    const bannedSpeciesStr = safeGet("bannedSpecies") || "";
+    const bannedSpeciesList = bannedSpeciesStr
+      .split(',')
+      .map(s => s.trim())
+      .filter(s => s.length > 0);
+
+    // Load species from compendium
+    let availableSpecies = [];
+    try {
+      const speciesPack = game.packs.get("foundryvtt-swse.species");
+      if (speciesPack) {
+        const species = await speciesPack.getDocuments();
+        availableSpecies = species.map(s => ({
+          name: s.name,
+          id: s.id
+        }));
+      }
+    } catch (err) {
+      console.error("Failed to load species list:", err);
+    }
+
+    return {
+      enableBackgrounds: enableBackgrounds ?? true,
+      bannedSpeciesList,
+      availableSpecies,
+      isGM: game.user.isGM
+    };
+  }
+
+  async _updateObject(event, formData) {
+    // Update backgrounds setting
+    const enableBackgrounds = _bool(formData.enableBackgrounds);
+    await safeSet("enableBackgrounds", enableBackgrounds);
+
+    // Process banned species checkboxes
+    let bannedSpecies = [];
+    if (formData.bannedSpecies) {
+      // formData.bannedSpecies is either a string (single) or array (multiple)
+      if (Array.isArray(formData.bannedSpecies)) {
+        bannedSpecies = formData.bannedSpecies;
+      } else if (typeof formData.bannedSpecies === 'string' && formData.bannedSpecies.length > 0) {
+        bannedSpecies = [formData.bannedSpecies];
+      }
+    }
+
+    const bannedSpeciesStr = bannedSpecies.join(', ');
+    await safeSet("bannedSpecies", bannedSpeciesStr);
+
+    ui.notifications.info("Character restrictions updated");
+  }
+}

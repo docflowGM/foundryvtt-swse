@@ -103,6 +103,57 @@ export class ErrorHandler {
   }
 
   /**
+   * Run comprehensive validation checks (dev mode only)
+   * Checks for common issues that might not throw errors but indicate problems
+   */
+  validateSystem() {
+    if (!this._devMode) return;
+
+    const issues = [];
+
+    // Check Foundry integrity
+    if (!game?.system) {
+      issues.push({ severity: 'error', message: 'game.system is undefined' });
+    }
+    if (!game?.data?.system) {
+      issues.push({ severity: 'error', message: 'game.data.system is undefined' });
+    }
+
+    // Check cache manager if available
+    if (window.SWSE?.cacheManager) {
+      try {
+        const cacheStats = window.SWSE.cacheManager.getStats?.();
+        if (cacheStats?.hitRate !== undefined && cacheStats.hitRate < 0.3) {
+          issues.push({ severity: 'warn', message: `Cache hit rate low: ${(cacheStats.hitRate * 100).toFixed(1)}%` });
+        }
+      } catch (e) {
+        issues.push({ severity: 'warn', message: 'Cache manager check failed: ' + e.message });
+      }
+    }
+
+    // Check for memory issues
+    if (performance?.memory) {
+      const used = performance.memory.usedJSHeapSize;
+      const limit = performance.memory.jsHeapSizeLimit;
+      const percent = (used / limit) * 100;
+      if (percent > 85) {
+        issues.push({ severity: 'warn', message: `Memory usage critical: ${percent.toFixed(1)}%` });
+      }
+    }
+
+    // Log results
+    if (issues.length > 0) {
+      console.group('%c⚠️  SYSTEM VALIDATION ISSUES (Dev Mode)', 'color: #ff9800; font-weight: bold; font-size: 14px');
+      issues.forEach(issue => {
+        const style = issue.severity === 'error' ? 'color: red; font-weight: bold' : 'color: orange';
+        swseLogger.log(`%c[${issue.severity.toUpperCase()}]`, style);
+        swseLogger.log('SWSE |', issue.message);
+      });
+      console.groupEnd();
+    }
+  }
+
+  /**
    * Capture current Foundry context
    * @private
    */

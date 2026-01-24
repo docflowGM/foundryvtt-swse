@@ -1,0 +1,96 @@
+<form class="character-restrictions-menu">
+  <nav class="tabs" data-group="primary-tabs">
+    <a class="item active" data-tab="backgrounds">Backgrounds</a>
+    <a class="item" data-tab="races">Banned Races</a>
+  </nav>
+
+  <section class="content">
+    <!-- Backgrounds Tab -->
+    <div class="tab active" data-group="primary-tabs" data-tab="backgrounds">
+      <div class="form-group">
+        <label for="enableBackgrounds">
+          <input type="checkbox" id="enableBackgrounds" name="enableBackgrounds" {{#if enableBackgrounds}}checked{{/if}}/>
+          Enable Backgrounds in Character Generation
+        </label>
+        <p class="hint">If unchecked, the Background selection step is removed from chargen. Note: Templates will still apply backgrounds to characters.</p>
+      </div>
+    </div>
+
+    <!-- Banned Races Tab -->
+    <div class="tab" data-group="primary-tabs" data-tab="races">
+      <div class="form-group">
+        <label>Ban Races from Player Selection</label>
+        <p class="hint">Check any races to prevent players from selecting them. GMs can always select any race. Note: This only affects new character creation.</p>
+
+        <div class="race-checklist-container">
+          {{#if availableSpecies}}
+            {{#each availableSpecies}}
+              <div class="race-checkbox-item">
+                <input
+                  type="checkbox"
+                  name="bannedSpecies"
+                  value="{{this.name}}"
+                  {{#if (includes ../bannedSpeciesList this.name)}}checked{{/if}}
+                  class="race-ban-checkbox"
+                />
+                <label>{{this.name}}</label>
+              </div>
+            {{/each}}
+          {{else}}
+            <p class="no-species">Loading available species...</p>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="sheet-footer">
+    <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+  </footer>
+</form>
+
+<style>
+  .character-restrictions-menu .race-checklist-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .character-restrictions-menu .race-checkbox-item {
+    display: flex;
+    align-items: center;
+    padding: 6px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .character-restrictions-menu .race-checkbox-item:last-child {
+    border-bottom: none;
+  }
+
+  .character-restrictions-menu .race-checkbox-item input[type="checkbox"] {
+    margin-right: 12px;
+    cursor: pointer;
+  }
+
+  .character-restrictions-menu .race-checkbox-item label {
+    cursor: pointer;
+    flex: 1;
+    margin: 0;
+  }
+
+  .character-restrictions-menu .hint {
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .character-restrictions-menu .no-species {
+    text-align: center;
+    color: #999;
+    padding: 20px 0;
+  }
+</style>
