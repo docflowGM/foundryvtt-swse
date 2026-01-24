@@ -1593,7 +1593,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
           this.currentStep = 'summary';
         }
         break;
-      case 'feat':
+      case 'feat': {
         // Check if they selected a feat (unless in Free Build mode)
         if (!this.freeBuild && this.selectedFeats.length === 0) {
           ui.notifications.warn("You must select a feat before continuing! (Or enable Free Build mode to skip)");
@@ -1609,7 +1609,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
           this.currentStep = 'summary';
         }
         break;
-      case 'force-powers':
+      }
+      case 'force-powers': {
         // Check if they selected required force powers (unless in Free Build mode)
         const fpCount = await countForcePowersGained(this.actor, this.selectedFeats);
         if (!this.freeBuild && this.selectedForcePowers.length < fpCount) {
@@ -1622,6 +1623,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
           this.currentStep = 'summary';
         }
         break;
+      }
       case 'talent':
         // Check if all required talents are selected (dual talent progression)
         const talentState = getTalentSelectionState(this.selectedClass, this.actor);
