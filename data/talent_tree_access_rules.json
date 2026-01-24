@@ -1,0 +1,350 @@
+{
+  "talentTreeAccess": [
+    {
+      "treeId": "alter",
+      "name": "Alter Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-generic",
+          "requiresFeat": "Force Sensitivity"
+        }
+      ]
+    },
+    {
+      "treeId": "control",
+      "name": "Control Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-generic",
+          "requiresFeat": "Force Sensitivity"
+        }
+      ]
+    },
+    {
+      "treeId": "dark-side",
+      "name": "Dark Side Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-generic",
+          "requiresFeat": "Force Sensitivity"
+        }
+      ]
+    },
+    {
+      "treeId": "sense",
+      "name": "Sense Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-generic",
+          "requiresFeat": "Force Sensitivity"
+        }
+      ]
+    },
+    {
+      "treeId": "light-side",
+      "name": "Light Side Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-generic",
+          "requiresFeat": "Force Sensitivity"
+        }
+      ]
+    },
+    {
+      "treeId": "guardian-spirit",
+      "name": "Guardian Spirit Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-generic",
+          "requiresFeat": "Force Sensitivity"
+        }
+      ]
+    },
+    {
+      "treeId": "jensaarai-defender",
+      "name": "Jensaarai Defender Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Jensaarai"
+        }
+      ]
+    },
+    {
+      "treeId": "dathomiri-witch",
+      "name": "Dathomiri Witch Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Witches of Dathomir"
+        }
+      ]
+    },
+    {
+      "treeId": "jal-shey",
+      "name": "Jal Shey Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Jal Shey"
+        }
+      ]
+    },
+    {
+      "treeId": "keetael",
+      "name": "Keetael Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Keetael"
+        }
+      ]
+    },
+    {
+      "treeId": "krath",
+      "name": "Krath Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Krath"
+        }
+      ]
+    },
+    {
+      "treeId": "luka-sene",
+      "name": "Luka Sene Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Luka Sene"
+        }
+      ]
+    },
+    {
+      "treeId": "order-of-shasa",
+      "name": "Order of Shasa Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Order of Shasa"
+        }
+      ]
+    },
+    {
+      "treeId": "agent-of-ossus",
+      "name": "Agent of Ossus Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Agents of Ossus"
+        }
+      ]
+    },
+    {
+      "treeId": "felucian-shaman",
+      "name": "Felucian Shaman Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Felucian Shamans"
+        }
+      ]
+    },
+    {
+      "treeId": "bando-gora-captain",
+      "name": "Bando Gora Captain Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Bando Gora"
+        }
+      ]
+    },
+    {
+      "treeId": "believer-disciple",
+      "name": "Believer Disciple Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Believers"
+        }
+      ]
+    },
+    {
+      "treeId": "korunnai-adept",
+      "name": "Korunnai Adept Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Korunnai"
+        }
+      ]
+    },
+    {
+      "treeId": "disciple-of-twilight",
+      "name": "Disciple of Twilight Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Disciples of Twilight"
+        }
+      ]
+    },
+    {
+      "treeId": "ember-of-vahl",
+      "name": "Ember of Vahl Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Ember of Vahl"
+        }
+      ]
+    },
+    {
+      "treeId": "aing-tii-monk",
+      "name": "Aing-Tii Monk Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Aing-Tii Monks"
+        }
+      ]
+    },
+    {
+      "treeId": "baran-do-sage",
+      "name": "Baran Do Sage Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Baran Do Sages"
+        }
+      ]
+    },
+    {
+      "treeId": "iron-knight",
+      "name": "Iron Knight Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Iron Knights"
+        }
+      ]
+    },
+    {
+      "treeId": "matukai-adept",
+      "name": "Matukai Adept Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Matukai"
+        }
+      ]
+    },
+    {
+      "treeId": "seyugi-dervish",
+      "name": "Seyugi Dervish Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Seyugi Dervishes"
+        }
+      ]
+    },
+    {
+      "treeId": "shaper-of-kro-var",
+      "name": "Shaper of Kro Var Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Shapers of Kro Var"
+        }
+      ]
+    },
+    {
+      "treeId": "tyia-adept",
+      "name": "Tyia Adept Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Tyia"
+        }
+      ]
+    },
+    {
+      "treeId": "warden-of-the-sky",
+      "name": "Warden of the Sky Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Wardens of the Sky"
+        }
+      ]
+    },
+    {
+      "treeId": "white-current-adept",
+      "name": "White Current Adept Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Fallanassi"
+        }
+      ]
+    },
+    {
+      "treeId": "zeison-sha-warrior",
+      "name": "Zeison Sha Warrior Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Zeison Sha"
+        }
+      ]
+    },
+    {
+      "treeId": "kilian-ranger",
+      "name": "Kilian Ranger Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Kilian Rangers"
+        }
+      ]
+    },
+    {
+      "treeId": "blazing-chain",
+      "name": "Blazing Chain Talent Tree",
+      "accessRules": [
+        {
+          "type": "force-tradition",
+          "requiresFeat": "Force Sensitivity",
+          "requiresTradition": "The Blazing Chain"
+        }
+      ]
+    }
+  ]
+}

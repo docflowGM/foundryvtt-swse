@@ -756,6 +756,107 @@ export const PrerequisiteRequirements = {
   },
 
   /* ============================================
+   * TALENT TREE ACCESS RULES
+   * ============================================ */
+
+  /**
+   * Check if actor can access a talent tree
+   * Considers: class-based trees, force-generic trees, and force-tradition trees
+   * @param {Actor} actor - The character actor
+   * @param {string} treeId - The talent tree ID to check
+   * @returns {boolean} True if actor can access this tree
+   */
+  async canAccessTalentTree(actor, treeId) {
+    // Load talent tree access rules
+    const accessRules = await this._loadTalentTreeAccessRules();
+    if (!accessRules) return false;
+
+    // Find rules for this tree
+    const treeRules = accessRules.talentTreeAccess.find(t => t.treeId === treeId);
+    if (!treeRules) return false;
+
+    // Check if any access rule allows this actor
+    for (const rule of treeRules.accessRules) {
+      if (this._checkTalentTreeAccessRule(actor, rule)) {
+        return true;
+      }
+    }
+
+    return false;
+  },
+
+  /**
+   * Get all accessible talent trees for an actor
+   * @param {Actor} actor - The character actor
+   * @param {Array<string>} candidateTrees - Trees to check access for
+   * @returns {Promise<Array<string>>} Trees the actor can access
+   */
+  async getAccessibleTalentTrees(actor, candidateTrees) {
+    const accessible = [];
+    for (const treeId of candidateTrees) {
+      if (await this.canAccessTalentTree(actor, treeId)) {
+        accessible.push(treeId);
+      }
+    }
+    return accessible;
+  },
+
+  _checkTalentTreeAccessRule(actor, rule) {
+    switch (rule.type) {
+      case 'class':
+        // Class-based trees are handled by talent_tree_class_map.json
+        // This is checked separately in the talent selection flow
+        return false;
+
+      case 'force-generic':
+        // Force-generic trees require Force Sensitivity feat
+        return actor.items.some(i =>
+          i.type === 'feat' &&
+          i.name.toLowerCase().includes('force sensitive')
+        );
+
+      case 'force-tradition':
+        // Force-tradition trees require Force Sensitivity + tradition membership
+        const hasForceSensitivity = actor.items.some(i =>
+          i.type === 'feat' &&
+          i.name.toLowerCase().includes('force sensitive')
+        );
+
+        if (!hasForceSensitivity) return false;
+
+        // Check if character has the required tradition
+        // Traditions are typically stored as feats or talents with tradition names
+        const hasTradition = actor.items.some(i => {
+          if (i.type === 'feat' || i.type === 'talent') {
+            const itemName = i.name.toLowerCase();
+            const traditionName = rule.requiresTradition.toLowerCase();
+            return itemName.includes(traditionName) || i.system?.tradition === rule.requiresTradition;
+          }
+          return false;
+        });
+
+        return hasTradition;
+
+      default:
+        return false;
+    }
+  },
+
+  async _loadTalentTreeAccessRules() {
+    try {
+      const response = await fetch('/data/talent_tree_access_rules.json');
+      if (!response.ok) {
+        SWSELogger.error('[TALENT-ACCESS] Failed to load talent_tree_access_rules.json');
+        return null;
+      }
+      return await response.json();
+    } catch (error) {
+      SWSELogger.error('[TALENT-ACCESS] Error loading talent tree access rules:', error);
+      return null;
+    }
+  },
+
+  /* ============================================
    * UTIL
    * ============================================ */
 
