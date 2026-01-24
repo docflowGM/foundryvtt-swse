@@ -3,7 +3,7 @@
  * Handles template application, validation, and cost calculation
  */
 
-import TEMPLATES from '../../data/gear-templates.json';
+import TEMPLATES from '../../data/gear-templates.json' with { type: 'json' };
 
 export class GearTemplatesEngine {
 
