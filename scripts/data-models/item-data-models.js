@@ -170,6 +170,7 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
 
       // Shield-specific fields
       shieldRating: new fields.NumberField({required: false, initial: 0, min: 0, integer: true, label: "Shield Rating (SR)"}),
+      currentSR: new fields.NumberField({required: false, initial: 0, min: 0, integer: true, label: "Current SR"}),
       armorProficiencyRequired: new fields.StringField({
         initial: "",
         choices: ["", "light", "medium", "heavy"],

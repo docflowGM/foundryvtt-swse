@@ -287,6 +287,7 @@
       "armorProficiency": false,
       "features": "",
       "shieldRating": 0,
+      "currentSR": 0,
       "armorProficiencyRequired": "",
       "charges": {
         "current": 5,
