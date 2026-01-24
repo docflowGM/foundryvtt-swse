@@ -252,7 +252,23 @@
       "templates": [
         "base"
       ],
+      "weaponCategory": "simple",
       "damage": "1d6",
+      "attackBonus": 0,
+      "criticalRange": "20",
+      "criticalMultiplier": "x2",
+      "damageType": "energy",
+      "autofire": false,
+      "meleeOrRanged": "melee",
+      "specialEffects": "",
+      "ammunition": {
+        "type": "",
+        "current": 0,
+        "max": 0
+      },
+      "equipped": false,
+      "dualWielded": false,
+      "wieldedTwoHanded": false,
       "range": "Melee"
     },
     "armor": {
