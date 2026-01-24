@@ -46,7 +46,9 @@ export function normalizePrerequisiteString(raw) {
         .replace(/\s+/g, " ")
         .trim();
 
-    const parts = clean.split(/[,;]+/).map(p => p.trim());
+    // First, handle "&" by converting to commas for proper splitting
+    const withCommas = clean.replace(/\s*&\s*/g, ", ");
+    const parts = withCommas.split(/[,;]+/).map(p => p.trim());
 
     const parsed = [];
 
@@ -143,7 +145,37 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 5. Talent prerequisite
+        // 5. OR logic for prerequisites (e.g., "Block or Deflect")
+        // ----------------------------------------------------------
+        if (lower.includes(" or ")) {
+            const orParts = p.split(/\s+or\s+/i).map(s => s.trim());
+            if (orParts.length > 1) {
+                // Create OR condition with each part parsed as a potential talent/feat
+                const orConditions = orParts.map(part => {
+                    const partLower = part.toLowerCase();
+                    // Determine if it's a talent or feat
+                    if (partLower.includes("talent") ||
+                        ["block", "deflect", "friend", "foe", "dual", "single", "weapon"].some(w => partLower.includes(w))) {
+                        return {
+                            type: partLower.includes("talent") ? "talent" : "talent",
+                            name: normalizeTalentName(part)
+                        };
+                    }
+                    return {
+                        type: "talent",
+                        name: normalizeTalentName(part)
+                    };
+                });
+                parsed.push({
+                    type: "or",
+                    conditions: orConditions
+                });
+                continue;
+            }
+        }
+
+        // ----------------------------------------------------------
+        // 6. Talent prerequisite
         // ----------------------------------------------------------
         if (lower.includes("talent")) {
             // Skip malformed prerequisite descriptions that start with "Prerequisites:"
@@ -158,7 +190,7 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 6. Force Power prerequisite (e.g., "Vital Transfer", "Mind Trick")
+        // 7. Force Power prerequisite (e.g., "Vital Transfer", "Mind Trick")
         // ----------------------------------------------------------
         // Check for common force power names
         const forcePowerPatterns = [
@@ -177,7 +209,7 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 7. Force Technique / Secret prerequisites
+        // 8. Force Technique / Secret prerequisites
         // ----------------------------------------------------------
         if (lower.includes("force secret")) {
             parsed.push({ type: "force_secret" });
@@ -189,7 +221,7 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 8. "Any One Force Technique" pattern
+        // 9. "Any One Force Technique" pattern
         // ----------------------------------------------------------
         if (lower.includes("any one force technique")) {
             parsed.push({ type: "any_force_technique" });
@@ -197,7 +229,7 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 9. Force-sensitive prerequisite
+        // 10. Force-sensitive prerequisite
         // ----------------------------------------------------------
         if (lower.includes("force sensitive")) {
             parsed.push({ type: "force_sensitive" });
@@ -205,7 +237,7 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 8. Class Level Requirement: "Jedi level 7"
+        // 11. Class Level Requirement: "Jedi level 7"
         // ----------------------------------------------------------
         const classLevelMatch = lower.match(/([a-z\s]+)\s+level\s+(\d+)/);
         if (classLevelMatch) {

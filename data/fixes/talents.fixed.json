@@ -13842,7 +13842,7 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Privateer",
-      "prerequisites": "Dual Weapon I, Weapon Proficiency (advanced & pistols)",
+      "prerequisites": "Dual Weapon I, Weapon Proficiency (advanced), Weapon Proficiency (pistols)",
       "benefit": "With a single attack using an advanced melee weapon, make a free pistol attack.",
       "description": "When attacking with an advanced melee weapon, make a free pistol attack.",
       "class": "Master Privateer",
@@ -21483,7 +21483,7 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Battlemaster",
-      "prerequisites": "Block, Riposte, Weapon Focus & Specialization (lightsabers)",
+      "prerequisites": "Block, Riposte, Weapon Focus (lightsabers), Weapon Specialization (lightsabers)",
       "benefit": "Once per encounter when you charge with lightsabers, ignore the Use the Force penalty on Block for the charge; applies to Riposte.",
       "description": "Once per encounter during a charge, ignore Use the Force penalties for Block and Riposte.",
       "class": "Jedi Knight",
