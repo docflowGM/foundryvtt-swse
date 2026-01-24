@@ -142,6 +142,10 @@ export function normalizePrerequisiteString(raw) {
         // 5. Talent prerequisite
         // ----------------------------------------------------------
         if (lower.includes("talent")) {
+            // Skip malformed prerequisite descriptions that start with "Prerequisites:"
+            if (lower.startsWith("prerequisites:")) {
+                continue;
+            }
             parsed.push({
                 type: "talent",
                 name: normalizeTalentName(p)
