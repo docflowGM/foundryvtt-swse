@@ -103,6 +103,27 @@ export class SWSEProgressionEngine {
           icon: "glyph-feats"
         },
         {
+          id: "force-techniques",
+          label: "Force Techniques",
+          subtitle: "Select Force Techniques",
+          icon: "glyph-force-techniques",
+          conditional: true
+        },
+        {
+          id: "force-secrets",
+          label: "Force Secrets",
+          subtitle: "Select Force Secrets",
+          icon: "glyph-force-secrets",
+          conditional: true
+        },
+        {
+          id: "starship-maneuvers",
+          label: "Starship Maneuvers",
+          subtitle: "Select Maneuvers",
+          icon: "glyph-starship-maneuvers",
+          conditional: true
+        },
+        {
           id: "talents",
           label: "Talents",
           subtitle: "Choose your talents",
@@ -140,6 +161,27 @@ export class SWSEProgressionEngine {
           label: "Feats",
           subtitle: "Select new feats",
           icon: "glyph-feats"
+        },
+        {
+          id: "force-techniques",
+          label: "Force Techniques",
+          subtitle: "Select Force Techniques",
+          icon: "glyph-force-techniques",
+          conditional: true
+        },
+        {
+          id: "force-secrets",
+          label: "Force Secrets",
+          subtitle: "Select Force Secrets",
+          icon: "glyph-force-secrets",
+          conditional: true
+        },
+        {
+          id: "starship-maneuvers",
+          label: "Starship Maneuvers",
+          subtitle: "Select Maneuvers",
+          icon: "glyph-starship-maneuvers",
+          conditional: true
         },
         {
           id: "talents",
@@ -182,8 +224,16 @@ getSteps() {
     return [];
   }
 
-  swseLogger.log(`[PROGRESSION-STEPS] Normalizing ${base.length} steps...`);
-  const normalized = this.normalizeSteps(base);
+  // Filter out conditional steps that shouldn't be shown
+  const filtered = base.filter(s => {
+    if (s.conditional) {
+      return this._shouldShowConditionalStep(s.id);
+    }
+    return true;
+  });
+
+  swseLogger.log(`[PROGRESSION-STEPS] Normalizing ${filtered.length} steps...`);
+  const normalized = this.normalizeSteps(filtered);
   swseLogger.log(`[PROGRESSION-STEPS] Normalized steps: ${normalized.map(s => s.id).join(', ')}`);
   return normalized;
 }
@@ -198,7 +248,7 @@ get steps() {
 
 /**
  * Normalize step schema
- * @param {Array} steps - Raw steps
+ * @param {Array} steps - Raw steps (pre-filtered)
  * @returns {Array} Normalized steps
  */
 normalizeSteps(steps) {
@@ -326,6 +376,25 @@ async applyScalingFeature(feature) {
 
 
   /**
+   * Check if a conditional step should be shown
+   * @param {string} id - Step ID
+   * @returns {boolean}
+   * @private
+   */
+  _shouldShowConditionalStep(id) {
+    switch (id) {
+      case "force-techniques":
+        return this.data?.forceTechniqueChoices?.length > 0;
+      case "force-secrets":
+        return this.data?.forceSecretChoices?.length > 0;
+      case "starship-maneuvers":
+        return this.data?.starshipManeuverChoices?.length > 0;
+      default:
+        return false;
+    }
+  }
+
+  /**
    * Check if step is available
    * @param {string} id - Step ID
    * @returns {boolean}
@@ -345,7 +414,10 @@ async applyScalingFeature(feature) {
       if (id === "class") return this.completedSteps.includes("attributes");
       if (id === "skills") return this.completedSteps.includes("class");
       if (id === "feats") return this.completedSteps.includes("skills");
-      if (id === "talents") return this.completedSteps.includes("feats");
+      if (id === "force-techniques") return this.completedSteps.includes("feats");
+      if (id === "force-secrets") return this.completedSteps.includes("force-techniques") || !this._shouldShowConditionalStep("force-techniques");
+      if (id === "starship-maneuvers") return this.completedSteps.includes("force-secrets") || !this._shouldShowConditionalStep("force-secrets");
+      if (id === "talents") return this.completedSteps.includes("starship-maneuvers") || !this._shouldShowConditionalStep("starship-maneuvers");
       if (id === "finalize") return this.completedSteps.includes("talents");
     }
 
@@ -354,7 +426,10 @@ async applyScalingFeature(feature) {
       if (id === "hp") return this.completedSteps.includes("class");
       if (id === "skills") return this.completedSteps.includes("hp");
       if (id === "feats") return this.completedSteps.includes("skills");
-      if (id === "talents") return this.completedSteps.includes("feats");
+      if (id === "force-techniques") return this.completedSteps.includes("feats");
+      if (id === "force-secrets") return this.completedSteps.includes("force-techniques") || !this._shouldShowConditionalStep("force-techniques");
+      if (id === "starship-maneuvers") return this.completedSteps.includes("force-secrets") || !this._shouldShowConditionalStep("force-secrets");
+      if (id === "talents") return this.completedSteps.includes("starship-maneuvers") || !this._shouldShowConditionalStep("starship-maneuvers");
       if (id === "abilities") return this.completedSteps.includes("talents");
       if (id === "finalize") return this.completedSteps.includes("abilities");
     }
