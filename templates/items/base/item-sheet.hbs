@@ -165,28 +165,82 @@
  <option value="light" {{#if (eq system.armorType "light")}}selected{{/if}}>Light</option>
  <option value="medium" {{#if (eq system.armorType "medium")}}selected{{/if}}>Medium</option>
  <option value="heavy" {{#if (eq system.armorType "heavy")}}selected{{/if}}>Heavy</option>
+ <option value="shield" {{#if (eq system.armorType "shield")}}selected{{/if}}>Shield</option>
+ </select>
+ </div>
+
+ {{#if (eq system.armorType "shield")}}
+ <!-- Shield-specific fields -->
+ <div class="form-group">
+ <label>Shield Rating (SR)</label>
+ <input name="system.shieldRating" type="number" value="{{system.shieldRating}}" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Proficiency Required</label>
+ <select name="system.armorProficiencyRequired">
+ <option value="" {{#if (eq system.armorProficiencyRequired "")}}selected{{/if}}>None</option>
+ <option value="light" {{#if (eq system.armorProficiencyRequired "light")}}selected{{/if}}>Light Armor</option>
+ <option value="medium" {{#if (eq system.armorProficiencyRequired "medium")}}selected{{/if}}>Medium Armor</option>
+ <option value="heavy" {{#if (eq system.armorProficiencyRequired "heavy")}}selected{{/if}}>Heavy Armor</option>
  </select>
  </div>
  <div class="form-group">
- <label>Defense Bonus</label>
- <input name="system.defenseBonus" type="number" value="{{system.defenseBonus}}" data-dtype="Number" />
+ <label>Charges: Current / Max</label>
+ <div style="display: flex; gap: 8px;">
+ <input name="system.charges.current" type="number" value="{{system.charges.current}}" data-dtype="Number" style="flex: 1;" min="0" max="{{system.charges.max}}" />
+ <span style="line-height: 30px;">/</span>
+ <input name="system.charges.max" type="number" value="{{system.charges.max}}" data-dtype="Number" style="flex: 1;" />
+ </div>
+ </div>
+ <div class="form-group">
+ <label>Shield Active</label>
+ <input name="system.activated" type="checkbox" {{#if system.activated}}checked{{/if}} />
  </div>
  <div class="form-group">
  <label>Max Dex Bonus</label>
- <input name="system.maxDexBonus" type="number" value="{{system.maxDexBonus}}" data-dtype="Number" />
+ <input name="system.maxDex" type="number" value="{{system.maxDex}}" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Armor Check Penalty</label>
+ <input name="system.armorCheckPenalty" type="number" value="{{system.armorCheckPenalty}}" data-dtype="Number" />
+ </div>
+ {{else}}
+ <!-- Regular armor fields -->
+ <div class="form-group">
+ <label>Reflex Defense Bonus</label>
+ <input name="system.reflexBonus" type="number" value="{{system.reflexBonus}}" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Fortitude Bonus</label>
+ <input name="system.fortitudeBonus" type="number" value="{{system.fortitudeBonus}}" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Max Dex Bonus</label>
+ <input name="system.maxDex" type="number" value="{{system.maxDex}}" data-dtype="Number" />
  </div>
  <div class="form-group">
  <label>Armor Check Penalty</label>
  <input name="system.armorCheckPenalty" type="number" value="{{system.armorCheckPenalty}}" data-dtype="Number" />
  </div>
  <div class="form-group">
- <label>Fortitude Bonus</label>
- <input name="system.fortBonus" type="number" value="{{system.fortBonus}}" data-dtype="Number" />
- </div>
- <div class="form-group">
  <label>Speed Penalty (squares)</label>
  <input name="system.speedPenalty" type="number" value="{{system.speedPenalty}}" data-dtype="Number" />
  </div>
+ <div class="form-group">
+ <label>Equipment Perception Bonus</label>
+ <input name="system.equipmentPerceptionBonus" type="number" value="{{system.equipmentPerceptionBonus}}" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Has Required Proficiency</label>
+ <input name="system.armorProficiency" type="checkbox" {{#if system.armorProficiency}}checked{{/if}} />
+ </div>
+ <div class="form-group">
+ <label>Special Features</label>
+ <textarea name="system.features" rows="2">{{system.features}}</textarea>
+ </div>
+ {{/if}}
+
+ <!-- Common fields for all armor types -->
  <div class="form-group">
  <label>Weight (kg)</label>
  <input name="system.weight" type="number" value="{{system.weight}}" step="0.1" data-dtype="Number" />

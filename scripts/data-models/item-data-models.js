@@ -109,7 +109,7 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       armorType: new fields.StringField({
         required: true,
         initial: "light",
-        choices: ["light", "medium", "heavy"],
+        choices: ["light", "medium", "heavy", "shield"],
         label: "Armor Type"
       }),
       defenseBonus: new fields.NumberField({required: true, initial: 0, min: 0, integer: true}),
@@ -166,7 +166,28 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
         initial: "common",
         choices: ["common", "licensed", "restricted", "military", "illegal"],
         label: "Restriction Level"
-      })
+      }),
+
+      // Shield-specific fields
+      shieldRating: new fields.NumberField({required: false, initial: 0, min: 0, integer: true, label: "Shield Rating (SR)"}),
+      armorProficiencyRequired: new fields.StringField({
+        initial: "",
+        choices: ["", "light", "medium", "heavy"],
+        label: "Proficiency Required"
+      }),
+      charges: new fields.SchemaField({
+        current: new fields.NumberField({initial: 5, min: 0, max: 5, integer: true}),
+        max: new fields.NumberField({initial: 5, min: 0, integer: true})
+      }),
+      activated: new fields.BooleanField({initial: false, label: "Shield Active"}),
+
+      // New standardized field names (mapping from legacy)
+      reflexBonus: new fields.NumberField({required: false, initial: 0, integer: true, label: "Reflex Defense Bonus"}),
+      fortitudeBonus: new fields.NumberField({required: false, initial: 0, integer: true, label: "Fortitude Defense Bonus"}),
+      maxDex: new fields.NumberField({required: false, initial: 999, nullable: true, label: "Max Dex Bonus"}),
+      equipmentPerceptionBonus: new fields.NumberField({required: false, initial: 0, integer: true, label: "Equipment Perception Bonus"}),
+      armorProficiency: new fields.BooleanField({required: false, initial: false, label: "Has Required Proficiency"}),
+      features: new fields.StringField({initial: "", label: "Special Features"})
     };
   }
 

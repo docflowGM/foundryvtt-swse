@@ -287,7 +287,12 @@
       "armorProficiency": false,
       "features": "",
       "shieldRating": 0,
-      "armorProficiencyRequired": ""
+      "armorProficiencyRequired": "",
+      "charges": {
+        "current": 5,
+        "max": 5
+      },
+      "activated": false
     },
     "equipment": {
       "templates": [
