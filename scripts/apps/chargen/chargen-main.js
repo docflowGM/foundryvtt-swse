@@ -2241,6 +2241,10 @@ export default class CharacterGenerator extends Application {
           ui.notifications.warn(`You must train ${requiredCount} skills (currently trained: ${trainedCount}).`);
           return false;
         }
+        if (trainedCount > requiredCount) {
+          ui.notifications.warn(`You can only train ${requiredCount} skills (currently trained: ${trainedCount}). Untrain ${trainedCount - requiredCount} skill(s).`);
+          return false;
+        }
         break;
       case "languages":
         // Languages validation handled by auto-skip logic in _onNextStep
