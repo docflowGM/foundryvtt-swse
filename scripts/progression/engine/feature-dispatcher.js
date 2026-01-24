@@ -89,6 +89,16 @@ async function handleForceSecretChoice(feature, actor, engine) {
     SWSELogger.log(`Feature: Force Secret choice (${feature.value || 1} secret(s))`);
 }
 
+async function handleStarshipManeuverChoice(feature, actor, engine) {
+    // Starship Maneuver choice
+    if (!engine.data.starshipManeuverChoices) {
+        engine.data.starshipManeuverChoices = [];
+    }
+    engine.data.starshipManeuverChoices.push(feature);
+
+    SWSELogger.log(`Feature: Starship Maneuver choice (${feature.value || 1} maneuver(s))`);
+}
+
 async function applyForcePowerGrant(feature, actor, engine) {
     // Automatically grant this force power
     if (!engine.data.grantedForcePowers) {
@@ -170,6 +180,7 @@ export const FEATURE_DISPATCH_TABLE = {
     "skill_choice": handleSkillChoice,
     "force_technique_choice": handleForceTechniqueChoice,
     "force_secret_choice": handleForceSecretChoice,
+    "starship_maneuver_choice": handleStarshipManeuverChoice,
     "medical_secret_choice": handleMedicalSecretChoice,
 
     // Grant features (automatic)

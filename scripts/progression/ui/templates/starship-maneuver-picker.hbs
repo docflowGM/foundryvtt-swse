@@ -1,0 +1,31 @@
+<div class="force-picker-root">
+  <div class="force-picker-header">
+    <h2>Select Starship Maneuvers</h2>
+    <p>Select up to {{limit}} maneuvers.</p>
+  </div>
+
+  <div class="force-grid">
+    {{#each maneuvers}}
+    <div class="maneuver-card {{#if selected}}selected{{/if}}" data-id="{{id}}">
+      <img src="{{img}}" alt="{{name}}">
+      <div class="power-meta">
+        <div class="power-name">{{name}}</div>
+        <div class="power-desc">{{description}}</div>
+        {{#if prerequisites}}
+        <div class="prerequisites">
+          <strong>Prerequisites:</strong> {{#each prerequisites}}<span class="prereq">{{this}}</span>{{/each}}
+        </div>
+        {{/if}}
+      </div>
+    </div>
+    {{/each}}
+  </div>
+
+  <div class="force-picker-footer">
+    <button type="button" class="ask-mentor-starship-maneuver-suggestion btn-mentor" title="Get a suggestion from your mentor">
+      <i class="fas fa-star"></i> Ask for Guidance
+    </button>
+    <button type="button" class="cancel">Cancel</button>
+    <button type="button" class="confirm">Confirm ({{current}} / {{limit}})</button>
+  </div>
+</div>

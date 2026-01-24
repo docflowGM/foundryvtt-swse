@@ -14,6 +14,9 @@ import { SWSELogger } from '../../utils/logger.js';
 import { SnapshotManager } from '../utils/snapshot-manager.js';
 import { dispatchFeature } from '../engine/feature-dispatcher.js';
 import { ForceProgressionEngine } from '../engine/force-progression.js';
+import { ForceTechniqueEngine } from '../engine/force-technique-engine.js';
+import { ForceSecretEngine } from '../engine/force-secret-engine.js';
+import { StarshipManeuverEngine } from '../engine/starship-maneuver-engine.js';
 import { LanguageEngine } from '../engine/language-engine.js';
 import { EquipmentEngine } from '../engine/equipment-engine.js';
 import { DerivedCalculator } from '../engine/derived-calculator.js';
@@ -25,7 +28,7 @@ export class FinalizeIntegration {
      * Run integrated finalization with all subsystems
      * Called from progression engine's finalize() method
      */
-    static async integratedFinalize(actor, mode = 'chargen', beforeSnapshot = null) {
+    static async integratedFinalize(actor, mode = 'chargen', beforeSnapshot = null, engine = null) {
         try {
             SWSELogger.log(`Starting integrated finalization for ${actor.name} (${mode})`);
 
@@ -42,8 +45,8 @@ export class FinalizeIntegration {
             // Step 3: Process class features through Feature Dispatcher
             await this._dispatchClassFeatures(actor, mode);
 
-            // Step 4: Finalize specialized progressions
-            await this._finalizeSpecializedProgressions(actor, mode);
+            // Step 4: Finalize specialized progressions (including choice pickers)
+            await this._finalizeSpecializedProgressions(actor, mode, engine);
 
             // Step 5: Recalculate derived statistics
             await DerivedCalculator.updateActor(actor);
@@ -132,22 +135,27 @@ export class FinalizeIntegration {
      * Finalize specialized progressions (Force, Language, Equipment)
      * @private
      */
-    static async _finalizeSpecializedProgressions(actor, mode) {
+    static async _finalizeSpecializedProgressions(actor, mode, engine = null) {
         const progression = actor.system.progression || {};
         const className = progression.classLevels?.[0]?.class || '';
         const backgroundName = progression.background || '';
 
-        // Step 1: Finalize Force progression
+        // Step 1: Process choice-based selections (Force Techniques, Secrets, Maneuvers)
+        if (engine && engine.data) {
+            await this._processChoiceSelections(actor, engine);
+        }
+
+        // Step 2: Finalize Force progression
         if (ForceProgressionEngine.isForceEnlightened(actor)) {
             await ForceProgressionEngine.finalizeForceProgression(actor);
             SWSELogger.log('Force progression finalized');
         }
 
-        // Step 2: Finalize languages
+        // Step 3: Finalize languages
         await LanguageEngine.finalizeLanguages(actor);
         SWSELogger.log('Languages finalized');
 
-        // Step 3: Finalize equipment (chargen only - level-up doesn't grant equipment)
+        // Step 4: Finalize equipment (chargen only - level-up doesn't grant equipment)
         if (mode === 'chargen' && className && backgroundName) {
             await EquipmentEngine.finalizeEquipment(actor, className, backgroundName);
             SWSELogger.log('Equipment finalized');
@@ -155,14 +163,46 @@ export class FinalizeIntegration {
     }
 
     /**
+     * Process choice selections from engine.data populated by feature dispatcher
+     * @private
+     */
+    static async _processChoiceSelections(actor, engine) {
+        // Force Technique choices
+        if (engine.data.forceTechniqueChoices?.length > 0) {
+            const count = engine.data.forceTechniqueChoices.reduce((sum, c) => sum + (c.value || 1), 0);
+            await ForceTechniqueEngine.handleForceTechniqueTriggers(actor, count);
+            SWSELogger.log(`Processed ${count} Force Technique choice(s)`);
+        }
+
+        // Force Secret choices
+        if (engine.data.forceSecretChoices?.length > 0) {
+            const count = engine.data.forceSecretChoices.reduce((sum, c) => sum + (c.value || 1), 0);
+            await ForceSecretEngine.handleForceSecretTriggers(actor, count);
+            SWSELogger.log(`Processed ${count} Force Secret choice(s)`);
+        }
+
+        // Starship Maneuver choices
+        if (engine.data.starshipManeuverChoices?.length > 0) {
+            const count = engine.data.starshipManeuverChoices.reduce((sum, c) => sum + (c.value || 1), 0);
+            await StarshipManeuverEngine.handleStarshipManeuverTriggers(actor, count);
+            SWSELogger.log(`Processed ${count} Starship Maneuver choice(s)`);
+        }
+    }
+
+    /**
      * Alternative simple integration for existing finalize() method
      * Can be called as a quick addition to existing code
      */
-    static async quickIntegrate(actor, mode = 'chargen') {
+    static async quickIntegrate(actor, mode = 'chargen', engine = null) {
         try {
             // Create snapshot
             const beforeSnapshot = actor.toObject(false);
             await SnapshotManager.createSnapshot(actor, `Before ${mode === 'chargen' ? 'Character Creation' : 'Level Up'}`);
+
+            // Process choice selections
+            if (engine && engine.data) {
+                await this._processChoiceSelections(actor, engine);
+            }
 
             // Finalize specialized progressions
             const progression = actor.system.progression || {};
