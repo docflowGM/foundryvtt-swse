@@ -8561,7 +8561,7 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Military Tactics",
-      "prerequisites": "Deployment Tactics, DC 15 Tactics",
+      "prerequisites": "Deployment Tactics",
       "benefit": "Allies within 10 squares gain a +10 cover bonus if they are in cover until your next turn.",
       "description": "Allies in cover gain +10 cover bonus until your next turn.",
       "class": "Officer",
@@ -13630,7 +13630,7 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Military Tactics",
-      "prerequisites": "Field Tactics, DC 15 Tactics",
+      "prerequisites": "Field Tactics",
       "benefit": "Enemies in line of sight lose competence/insight/morale/dodge bonuses to Reflex Defense; opposed check to resist.",
       "description": "Enemies lose morale, insight, dodge, and competence bonuses to Reflex Defense.",
       "class": "Officer",
@@ -21789,7 +21789,7 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Naval Officer",
-      "prerequisites": "Charisma 13, Fleet Deployment, DC 15 Tactics",
+      "prerequisites": "Charisma 13, Fleet Deployment",
       "benefit": "Designate a single vehicle; allied gunners in line of sight gain +1 damage die.",
       "description": "Allied gunners gain +1 die damage against a designated target.",
       "class": "Officer",
