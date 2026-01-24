@@ -347,7 +347,22 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 17. "any other X talent" pattern
+        // 17. "any X talents from Y tree" pattern
+        // ----------------------------------------------------------
+        const anyCountFromTreeMatch = lower.match(/any\s+(?:two|one|three|four|five)\s+(?:s\s+)?from\s+(?:the\s+)?([a-z\s]+)\s+talent\s+tree/i);
+        if (anyCountFromTreeMatch) {
+            const countMatch = lower.match(/any\s+(two|one|three|four|five)/i);
+            const count = countMatch ? countMatch[1] : "one";
+            parsed.push({
+                type: "any_talents_from_tree",
+                count: count,
+                tree: capitalizeWords(anyCountFromTreeMatch[1].trim())
+            });
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 18. "any other X talent" pattern (fallback for simpler cases)
         // ----------------------------------------------------------
         const anyOtherMatch = lower.match(/any\s+other\s+([a-z\s]+)\s+talent/i);
         if (anyOtherMatch) {
@@ -359,7 +374,7 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 18. Species requirement (check against known species)
+        // 19. Species requirement (check against known species)
         // ----------------------------------------------------------
         const speciesMatch = SPECIES_NAMES.find(species =>
             lower === species.toLowerCase() ||
