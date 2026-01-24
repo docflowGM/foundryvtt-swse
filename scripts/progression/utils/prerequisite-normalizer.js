@@ -122,15 +122,19 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 4. Feat prerequisite (common feats, but NOT weapon/armor specific)
+        // 4. Feat prerequisite (EXPANDED to handle all feats)
         // ----------------------------------------------------------
-        if (lower.includes("mobility") ||
-            lower.includes("two-weapon fighting") ||
-            lower.includes("point blank shot") ||
-            lower.includes("skill focus") ||
-            lower.includes("dodge") ||
-            lower.includes("power attack")
-        ) {
+        // Check for common feat patterns
+        const featPatterns = [
+            "feat", "weapon focus", "weapon specialization", "dual weapon",
+            "quick draw", "double attack", "weapon finesse", "force training",
+            "tech specialist", "multiattack", "martial arts", "weapon proficiency",
+            "coordinated attack", "mobility", "two-weapon fighting", "point blank shot",
+            "skill focus", "dodge", "power attack"
+        ];
+
+        const isFeat = featPatterns.some(pattern => lower.includes(pattern));
+        if (isFeat && !lower.includes("trained in")) {
             parsed.push({
                 type: "feat",
                 name: normalizeFeatName(p)
@@ -154,7 +158,26 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 6. Force Technique / Secret prerequisites
+        // 6. Force Power prerequisite (e.g., "Vital Transfer", "Mind Trick")
+        // ----------------------------------------------------------
+        // Check for common force power names
+        const forcePowerPatterns = [
+            "vital transfer", "mind trick", "farseeing", "force perception",
+            "illusion", "battle meditation", "healing boost", "soothe",
+            "influence savant", "telekinetic savant"
+        ];
+
+        const isForcePower = forcePowerPatterns.some(pattern => lower.includes(pattern));
+        if (isForcePower) {
+            parsed.push({
+                type: "force_power",
+                name: p.trim()
+            });
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 7. Force Technique / Secret prerequisites
         // ----------------------------------------------------------
         if (lower.includes("force secret")) {
             parsed.push({ type: "force_secret" });
@@ -166,7 +189,15 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 7. Force-sensitive prerequisite
+        // 8. "Any One Force Technique" pattern
+        // ----------------------------------------------------------
+        if (lower.includes("any one force technique")) {
+            parsed.push({ type: "any_force_technique" });
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 9. Force-sensitive prerequisite
         // ----------------------------------------------------------
         if (lower.includes("force sensitive")) {
             parsed.push({ type: "force_sensitive" });
@@ -316,7 +347,19 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 17. Species requirement (check against known species)
+        // 17. "any other X talent" pattern
+        // ----------------------------------------------------------
+        const anyOtherMatch = lower.match(/any\s+other\s+([a-z\s]+)\s+talent/i);
+        if (anyOtherMatch) {
+            parsed.push({
+                type: "any_talent_from_tree",
+                tree: capitalizeWords(anyOtherMatch[1].trim())
+            });
+            continue;
+        }
+
+        // ----------------------------------------------------------
+        // 18. Species requirement (check against known species)
         // ----------------------------------------------------------
         const speciesMatch = SPECIES_NAMES.find(species =>
             lower === species.toLowerCase() ||
@@ -331,7 +374,7 @@ export function normalizePrerequisiteString(raw) {
         }
 
         // ----------------------------------------------------------
-        // 18. Default fallback → treat as feat name
+        // 19. Default fallback → treat as feat name
         // ----------------------------------------------------------
         parsed.push({
             type: "feat",
