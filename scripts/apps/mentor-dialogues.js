@@ -45,6 +45,7 @@ export const MENTORS = {
     skillGuidance: "Knowledge and skill are tools of a Jedi. Master them as you master the Force itself.",
     languageGuidance: "Language bridges understanding between souls. Choose tongues that expand your connection to diverse peoples and cultures.",
     multiclassGuidance: "Diversifying your skills can reveal truths hidden to the narrowly focused. Balance is key.",
+    forcePowerGuidance: "The Force offers many gifts to those who learn to listen. Choose powers that reflect your path and strengthen your connection.",
     hpGuidance: "Your resilience grows. The Force protects those who walk in its light and serve the galaxy with dedication."
 ,
     mentorStory: {
@@ -139,6 +140,7 @@ export const MENTORS = {
         skillGuidance: "Knowledge of terrain, enemy behavior, and subtle signals is just as important as any weapon. Master them.",
         languageGuidance: "Learn the languages of the peoples you operate among. Intelligence gathering starts with understanding what others say.",
         multiclassGuidance: "Awe was I too hard on you? Fine, just don't come crawling back when you miss me.",
+        forcePowerGuidance: "Not my area—if you're in that territory, make sure whatever you pick helps you survive. That's all I care about.",
         hpGuidance: "Stay durable. You can't provide intelligence if you're out of the fight."
     ,
         mentorStory: {
@@ -234,6 +236,7 @@ export const MENTORS = {
         skillGuidance: "Skills open every vault and shut every trap. Learn 'em all, ye clever rascal.",
         languageGuidance: "Arr! Speak the tongues of the spacelanes, matey! Helps ye swindle better when ye know what folks be sayin' behind yer back!",
         multiclassGuidance: "Expandin' yer horizons, eh? Smart. A pirate wears many hats… and steals most of 'em too.",
+        forcePowerGuidance: "Force powers? Never thought ye had it in ye! Well, pick somethin' flashy—intimidates the mark, makes the getaway easier.",
         hpGuidance: "Tougher than durasteel, ye are. Can't spend yer loot if ye're dead, har har!"
     ,
         mentorStory: {
@@ -320,6 +323,7 @@ export const MENTORS = {
         skillGuidance: "Comprehensive knowledge and precision in your actions secure your success. Learn thoroughly, Master.",
         languageGuidance: "A refined individual commands multiple tongues. Language fluency marks the distinction between the cultivated and the common.",
         multiclassGuidance: "Diversifying your expertise increases flexibility and influence. Highly recommended.",
+        forcePowerGuidance: "Force aptitude is a valuable asset to your station. Select powers that project authority and enhance your influence in galactic society.",
         hpGuidance: "Maintaining your physical and strategic resilience is essential. Survival is a prerequisite for continued success."
     ,
         mentorStory: {
@@ -405,6 +409,7 @@ export const MENTORS = {
         skillGuidance: "Look, knowing things makes you harder to kill. Treat skills like gear—collect the useful stuff.",
         languageGuidance: "Understanding what others say gives you the edge. Pick languages that help you survive and fight smarter.",
         multiclassGuidance: "Trying something new? Good. Adaptation beats stubbornness. Learned that the hard way.",
+        forcePowerGuidance: "Force powers? That's outside my expertise. But pick something that gives you an edge in combat. That's all that matters.",
         hpGuidance: "You're harder to put down now. That's good. Try to stay that way."
     ,
         mentorStory: {
@@ -481,6 +486,7 @@ export const MENTORS = {
         abilityGuidance: "A balanced warrior needs both physical might and mental acuity. Strengthen both.",
         skillGuidance: "Knowledge and skill make you a better servant of the Empire. Choose wisely.",
         multiclassGuidance: "Expanding your abilities? Ensure they complement your role as an Imperial Knight.",
+        forcePowerGuidance: "The Force is a tool of power. Choose powers that strengthen your command and dominance in the Empire's service.",
         hpGuidance: "Your resilience grows. A Knight must survive to serve the Empire."
     ,
         mentorStory: {
@@ -664,6 +670,7 @@ export const MENTORS = {
         abilityGuidance: "Your growth continues. The Force rewards those who seek balance in all things.",
         skillGuidance: "Knowledge is a Jedi's greatest tool. Continue to learn and grow.",
         multiclassGuidance: "Your path diverges in interesting ways. The Force works through many disciplines.",
+        forcePowerGuidance: "Your mastery of the Force deepens. Choose powers that reflect the Knight you have become.",
         hpGuidance: "Your vitality strengthens. May the Force protect you in all your endeavors."
     ,
         mentorStory: {
@@ -701,6 +708,7 @@ export const MENTORS = {
     abilityGuidance: "Even Masters grow. There is always more to learn, and the Force will reveal it to those who remain open.",
     skillGuidance: "Your knowledge and skill are gifts to the Order. Continue to expand them, for they inspire others.",
     multiclassGuidance: "An unconventional path can reveal unexpected truths. I trust your discernment, my friend.",
+    forcePowerGuidance: "You have earned mastery of the Force's greatest gifts. Choose powers that continue to elevate your understanding and service to the Order.",
     hpGuidance: "The Force protects those who honor it. May it watch over you as you continue to serve the galaxy."
 ,
     mentorStory: {
@@ -1682,6 +1690,7 @@ export const MENTORS = {
         abilityGuidance: "Strength, Dexterity, and Wisdom must be balanced. The strongest fist is useless without the quiet mind.",
         skillGuidance: "Athletics, acrobatics, combat knowledge. To master the body, one must master all its movements.",
         multiclassGuidance: "Seek knowledge beyond your own style. The wise warrior learns from every path, even the unexpected.",
+        forcePowerGuidance: "The Force flows through all things. Choose powers that enhance your connection to the inner self and external balance.",
         hpGuidance: "Endurance is key. A martial artist must outlast the opponent, for patience is a weapon unseen.",
     mentorStory: {
   "mentorClasses": [
@@ -2283,6 +2292,7 @@ export function getMentorGuidance(mentor, choiceType) {
         'ability': mentor.abilityGuidance,
         'skill': mentor.skillGuidance,
         'multiclass': mentor.multiclassGuidance,
+        'force_power': mentor.forcePowerGuidance,
         'hp': mentor.hpGuidance
     };
 

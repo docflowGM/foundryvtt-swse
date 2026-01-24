@@ -345,6 +345,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       'ability-increase': 'ability',
       'talent': 'talent',
       'skills': 'skill',
+      'force-powers': 'force_power',
       'summary': 'hp'
     };
 
