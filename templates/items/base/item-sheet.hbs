@@ -42,8 +42,38 @@
  <!-- Weapons -->
  {{#if (eq item.type "weapon")}}
  <div class="form-group">
+ <label>Weapon Category</label>
+ <select name="system.weaponCategory">
+ <option value="simple" {{#if (eq system.weaponCategory "simple")}}selected{{/if}}>Simple</option>
+ <option value="advanced" {{#if (eq system.weaponCategory "advanced")}}selected{{/if}}>Advanced</option>
+ <option value="melee-exotic" {{#if (eq system.weaponCategory "melee-exotic")}}selected{{/if}}>Melee Exotic</option>
+ <option value="heavy" {{#if (eq system.weaponCategory "heavy")}}selected{{/if}}>Heavy</option>
+ <option value="rifles" {{#if (eq system.weaponCategory "rifles")}}selected{{/if}}>Rifles</option>
+ <option value="pistols" {{#if (eq system.weaponCategory "pistols")}}selected{{/if}}>Pistols</option>
+ <option value="ranged-exotic" {{#if (eq system.weaponCategory "ranged-exotic")}}selected{{/if}}>Ranged Exotic</option>
+ <option value="natural" {{#if (eq system.weaponCategory "natural")}}selected{{/if}}>Natural</option>
+ </select>
+ </div>
+ <div class="form-group">
+ <label>Melee or Ranged</label>
+ <select name="system.meleeOrRanged">
+ <option value="melee" {{#if (eq system.meleeOrRanged "melee")}}selected{{/if}}>Melee</option>
+ <option value="ranged" {{#if (eq system.meleeOrRanged "ranged")}}selected{{/if}}>Ranged</option>
+ </select>
+ </div>
+ <div class="form-group">
  <label>Damage</label>
- <input name="system.damage" type="text" value="{{system.damage}}" />
+ <div style="display: flex; gap: 8px; align-items: center;">
+ <input name="system.damage" type="text" value="{{system.damage}}" style="flex: 1;" placeholder="e.g., 1d6" />
+ <span>+</span>
+ <select name="system.damageBonus" style="flex: 1;">
+ <option value="" {{#if (eq system.damageBonus "")}}selected{{/if}}>(None)</option>
+ <option value="str" {{#if (eq system.damageBonus "str")}}selected{{/if}}>STR</option>
+ <option value="str2" {{#if (eq system.damageBonus "str2")}}selected{{/if}}>STR x2</option>
+ <option value="dex" {{#if (eq system.damageBonus "dex")}}selected{{/if}}>DEX</option>
+ <option value="dex2" {{#if (eq system.damageBonus "dex2")}}selected{{/if}}>DEX x2</option>
+ </select>
+ </div>
  </div>
  <div class="form-group">
  <label>Damage Type</label>
@@ -58,15 +88,31 @@
  <input name="system.attackBonus" type="number" value="{{system.attackBonus}}" data-dtype="Number" />
  </div>
  <div class="form-group">
+ <label>Critical Range</label>
+ <input name="system.criticalRange" type="text" value="{{system.criticalRange}}" placeholder="e.g., 20 or 19-20" />
+ </div>
+ <div class="form-group">
+ <label>Critical Multiplier</label>
+ <input name="system.criticalMultiplier" type="text" value="{{system.criticalMultiplier}}" placeholder="e.g., x2, x3" />
+ </div>
+ <div class="form-group">
  <label>Attack Attribute</label>
  <select name="system.attackAttribute">
  <option value="str" {{#if (eq system.attackAttribute "str")}}selected{{/if}}>Strength</option>
  <option value="dex" {{#if (eq system.attackAttribute "dex")}}selected{{/if}}>Dexterity</option>
+ <option value="con" {{#if (eq system.attackAttribute "con")}}selected{{/if}}>Constitution</option>
+ <option value="int" {{#if (eq system.attackAttribute "int")}}selected{{/if}}>Intelligence</option>
+ <option value="wis" {{#if (eq system.attackAttribute "wis")}}selected{{/if}}>Wisdom</option>
+ <option value="cha" {{#if (eq system.attackAttribute "cha")}}selected{{/if}}>Charisma</option>
  </select>
  </div>
  <div class="form-group">
  <label>Range</label>
  <input name="system.range" type="text" value="{{system.range}}" />
+ </div>
+ <div class="form-group">
+ <label>Special Effects</label>
+ <textarea name="system.specialEffects" rows="2">{{system.specialEffects}}</textarea>
  </div>
  <div class="form-group">
  <label for="item-properties">Properties (comma-separated)</label>
@@ -86,16 +132,28 @@
  </div>
  </div>
  <div class="form-group">
+ <label>Autofire</label>
+ <input name="system.autofire" type="checkbox" {{#if system.autofire}}checked{{/if}} />
+ </div>
+ <div class="form-group">
+ <label>Equipped</label>
+ <input name="system.equipped" type="checkbox" {{#if system.equipped}}checked{{/if}} />
+ </div>
+ <div class="form-group">
+ <label>Dual Wielded (Two-Weapon Fighting)</label>
+ <input name="system.dualWielded" type="checkbox" {{#if system.dualWielded}}checked{{/if}} />
+ </div>
+ <div class="form-group">
+ <label>Wielded Two-Handed</label>
+ <input name="system.wieldedTwoHanded" type="checkbox" {{#if system.wieldedTwoHanded}}checked{{/if}} />
+ </div>
+ <div class="form-group">
  <label>Weight (kg)</label>
  <input name="system.weight" type="number" value="{{system.weight}}" step="0.1" data-dtype="Number" />
  </div>
  <div class="form-group">
  <label>Cost (credits)</label>
  <input name="system.cost" type="number" value="{{system.cost}}" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Equipped</label>
- <input name="system.equipped" type="checkbox" {{#if system.equipped}}checked{{/if}} />
  </div>
  {{/if}}
 
