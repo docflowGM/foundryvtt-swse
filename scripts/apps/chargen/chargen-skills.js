@@ -17,6 +17,19 @@ export async function _onSkillSelect(event) {
     SWSELogger.log(`[CHARGEN-SKILLS] _onSkillSelect: Initialized skill "${skillKey}"`);
   }
 
+  // Check if trying to train beyond limit
+  if (checked) {
+    const currentTrained = Object.values(this.characterData.skills).filter(s => s.trained).length;
+    const maxAllowed = this.characterData.trainedSkillsAllowed || 1;
+
+    if (currentTrained >= maxAllowed) {
+      ui.notifications.warn(`You can only train ${maxAllowed} skills. Untrain another skill first.`);
+      SWSELogger.warn(`[CHARGEN-SKILLS] _onSkillSelect: Limit reached (${currentTrained}/${maxAllowed}), cannot train "${skillKey}"`);
+      event.currentTarget.checked = false; // Uncheck the box
+      return;
+    }
+  }
+
   this.characterData.skills[skillKey].trained = checked;
   const currentTrained = Object.values(this.characterData.skills).filter(s => s.trained).length;
   const maxAllowed = this.characterData.trainedSkillsAllowed || 1;
@@ -39,11 +52,20 @@ export async function _onTrainSkill(event) {
     SWSELogger.log(`[CHARGEN-SKILLS] _onTrainSkill: Initialized skill "${skillKey}"`);
   }
 
-  // Train the skill
-  this.characterData.skills[skillKey].trained = true;
+  // Check if already at limit BEFORE training
   const currentTrained = Object.values(this.characterData.skills).filter(s => s.trained).length;
   const maxAllowed = this.characterData.trainedSkillsAllowed || 1;
-  SWSELogger.log(`[CHARGEN-SKILLS] _onTrainSkill: Trained skill "${skillKey}", current: ${currentTrained}/${maxAllowed}`);
+
+  if (!this.characterData.skills[skillKey].trained && currentTrained >= maxAllowed) {
+    ui.notifications.warn(`You can only train ${maxAllowed} skills. Untrain another skill first.`);
+    SWSELogger.warn(`[CHARGEN-SKILLS] _onTrainSkill: Limit reached (${currentTrained}/${maxAllowed}), cannot train "${skillKey}"`);
+    return;
+  }
+
+  // Train the skill
+  this.characterData.skills[skillKey].trained = true;
+  const newCount = Object.values(this.characterData.skills).filter(s => s.trained).length;
+  SWSELogger.log(`[CHARGEN-SKILLS] _onTrainSkill: Trained skill "${skillKey}", current: ${newCount}/${maxAllowed}`);
   await this.render();
 }
 

@@ -32,6 +32,14 @@ export async function _onSelectForcePower(event) {
     return;
   }
 
+  // Check power slot limit (unless free build mode is on)
+  const powersNeeded = this._getForcePowersNeeded();
+  if (!this.freeBuild && this.characterData.powers.length >= powersNeeded) {
+    ui.notifications.warn(`You've already selected the maximum number of Force powers (${powersNeeded})!`);
+    SWSELogger.log(`CharGen | Force power limit reached (${this.characterData.powers.length}/${powersNeeded})`);
+    return;
+  }
+
   // If leveling up, also check existing actor items
   if (this.actor) {
     const existsOnActor = this.actor.items.some(item =>
