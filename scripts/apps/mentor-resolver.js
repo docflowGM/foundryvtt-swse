@@ -11,6 +11,7 @@
  */
 
 import { MENTORS, getLevel1Class, getMentorForClass, getActiveMentor } from './mentor-dialogues.js';
+import { MentorInheritance } from './mentor-inheritance.js';
 import { SWSELogger } from '../utils/logger.js';
 
 /**
@@ -177,6 +178,63 @@ export const MentorResolver = {
    */
   has(mentorKey) {
     return !!MENTORS[mentorKey];
+  },
+
+  /**
+   * FIX 2: Resolve with full inheritance chain
+   *
+   * This is the advanced resolution method that uses the inheritance taxonomy
+   * to support prestige classes, archetypes, factions, and paths.
+   *
+   * Use this when you have detailed character information and want intelligent
+   * mentor fallback (e.g., for prestige class transitions, archetype-specific dialogue).
+   *
+   * @param {Actor} actor - The actor
+   * @param {Object} inheritanceOptions - Options for inheritance chain
+   * @param {string} inheritanceOptions.className - Base class name
+   * @param {string} inheritanceOptions.prestigeClass - Prestige class if applicable
+   * @param {string} inheritanceOptions.archetype - Character archetype (guardian, consular, etc.)
+   * @param {string} inheritanceOptions.faction - Character faction (republic, empire, etc.)
+   * @param {string} inheritanceOptions.path - Special path (dark-side, light-side, etc.)
+   * @returns {Object} The resolved mentor using inheritance chain
+   */
+  resolveWithInheritance(actor, inheritanceOptions = {}) {
+    SWSELogger.log(`[MENTOR-RESOLVER] resolveWithInheritance: Using full inheritance chain`);
+    return MentorInheritance.resolve(actor, inheritanceOptions);
+  },
+
+  /**
+   * Get the full resolution chain
+   * Useful for debugging and understanding mentor selection
+   *
+   * @param {Actor} actor - The actor
+   * @param {Object} inheritanceOptions - Same as resolveWithInheritance
+   * @returns {Array} Array of { level, value, mentor } objects
+   */
+  getInheritanceChain(actor, inheritanceOptions = {}) {
+    return MentorInheritance.getResolutionChain(actor, inheritanceOptions);
+  },
+
+  /**
+   * Get the mentor inheritance taxonomy
+   * For UI mentor selection menus, custom associations, etc.
+   *
+   * @returns {Object} The full taxonomy
+   */
+  getTaxonomy() {
+    return MentorInheritance.getTaxonomy();
+  },
+
+  /**
+   * Register a custom mentor association
+   * Allows mods to add new archetype/faction/prestige mentors
+   *
+   * @param {string} level - 'archetype', 'faction', 'prestige', or 'path'
+   * @param {string} key - The key to associate (e.g., 'guardian', 'sith-warrior')
+   * @param {string} mentorKey - The mentor to use (must exist in MENTORS)
+   */
+  registerMentorAssociation(level, key, mentorKey) {
+    MentorInheritance.addAssociation(level, key, mentorKey);
   }
 };
 
