@@ -368,39 +368,8 @@ export const MENTORS = {
             17: "People are starting to talk about you. And it's not complaining. That's rare.",
             18: "You're hitting like a walking artillery piece. Keep it up.",
             19: "Every time you come back alive, you prove something. To you. To us. To me.",
-            20: "You keep this up, and…well…even I won't pretend I don't respect it.",
-    mentorStory: {
-  "mentorClasses": [
-    "Soldier",
-    "EliteTrooper"
-  ],
-  "mentorDSPPercent": 0.5,
-  "dspTolerance": 1.0,
-  "dspSensitivity": "none",
-  "tiers": {
-    "tier1": [
-      "I was forged by war before I understood it. Strength was the only language anyone spoke."
-    ],
-    "tier2": [
-      "I fought for people who promised honor and gave betrayal. That\u2019s the last time I trusted a banner."
-    ],
-    "tier3": [
-      "I should have died on a battlefield. Instead, I was spared by enemies who became allies."
-    ],
-    "tier4": [
-      "Someone who hated everything I stood for saved my life. Loyalty means more when it\u2019s chosen."
-    ],
-    "tier5": [
-      "I keep an Akk Dog named Daarsh. He smells terrible. I trust him completely."
-    ]
-  },
-  "dspBlocked": [
-    "That\u2019s not something I share with just anyone.",
-    "You haven\u2019t earned that yet.",
-    "Some things stay between people who\u2019ve bled together."
-  ]
-}
-},
+            20: "You keep this up, and…well…even I won't pretend I don't respect it."
+        },
 
         classGuidance: "Pick what feels right in your hands. Same rule as weapons. If it fits, use it.",
         backgroundGuidance: "Your past made you a soldier. Pick experiences that tested you, forged you, and made you ready for war.",
