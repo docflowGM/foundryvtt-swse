@@ -21,7 +21,6 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
-import { ARCHETYPE_CATALOG } from './ArchetypeDefinitions.js';
 import { BUILD_THEMES } from './BuildIntent.js';
 
 
