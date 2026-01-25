@@ -41,7 +41,10 @@ const ARMOR_TYPES = ["light", "medium", "heavy"];
 export function normalizePrerequisiteString(raw) {
     if (!raw || raw === "null") return { raw: "", parsed: [] };
 
-    const clean = raw
+    // Ensure raw is a string
+    const rawStr = typeof raw === 'string' ? raw : String(raw);
+
+    const clean = rawStr
         .replace(/\n/g, " ")
         .replace(/\s+/g, " ")
         .trim();

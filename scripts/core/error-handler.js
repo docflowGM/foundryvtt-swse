@@ -18,8 +18,12 @@ export class ErrorHandler {
    * Initialize error handler with global hooks
    */
   initialize() {
-    // Get devMode setting
-    this._devMode = game.settings?.get('foundryvtt-swse', 'devMode') ?? false;
+    // Get devMode setting safely
+    try {
+      this._devMode = game.settings?.get('foundryvtt-swse', 'devMode') ?? false;
+    } catch (err) {
+      this._devMode = false;
+    }
 
     // Hook into Foundry's error handling
     if (typeof Hooks !== 'undefined') {
