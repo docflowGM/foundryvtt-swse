@@ -57,6 +57,7 @@ export class UpdateSpeciesTraitsMigration {
     let totalNotFound = 0;
     let totalErrors = 0;
     const notFoundSpecies = [];
+    const errorSpecies = [];
 
     try {
       // Load the species traits data
@@ -106,26 +107,21 @@ export class UpdateSpeciesTraitsMigration {
             continue;
           }
 
-          // Update the species document using the pack's document class
-          // This avoids full document validation issues with embedded-like arrays
-          // by going through the static updateDocuments method with explicit pack context
+          // Update the species document
           try {
-            // Use updateDocuments with the pack option for more direct control
-            // This bypasses some of the document merging logic that can cause
-            // "_id required" errors when the document has complex array fields
-            await Item.updateDocuments(
-              [{
-                _id: speciesIndex._id,
-                'system.racialTraits': speciesData.racialTraits
-              }],
-              { pack: speciesPack.collection.name }
-            );
+            const speciesDoc = await speciesPack.getDocument(speciesIndex._id);
+            if (!speciesDoc) {
+              totalErrors++;
+              errorSpecies.push({ name: speciesData.name, error: 'Could not load' });
+              continue;
+            }
+
+            await speciesDoc.update({
+              'system.racialTraits': speciesData.racialTraits
+            });
           } catch (updateError) {
-            // If the update fails, log the error but don't crash the migration
-            // This can happen if the document has complex nested data that
-            // Foundry v13 validation struggles with
-            SWSELogger.warn(`SWSE | Could not update ${speciesData.name}: ${updateError.message}`);
             totalErrors++;
+            errorSpecies.push({ name: speciesData.name, error: updateError.message });
             continue;
           }
 
@@ -166,6 +162,13 @@ export class UpdateSpeciesTraitsMigration {
       if (notFoundSpecies.length <= 5) {
         SWSELogger.log("Species not found in compendium:");
         notFoundSpecies.forEach(name => SWSELogger.log(`  - ${name}`));
+      }
+    }
+
+    if (errorSpecies.length > 0) {
+      if (errorSpecies.length <= 5) {
+        SWSELogger.log("Species with update errors:");
+        errorSpecies.forEach(({ name, error }) => SWSELogger.log(`  - ${name}: ${error}`));
       }
     }
 
