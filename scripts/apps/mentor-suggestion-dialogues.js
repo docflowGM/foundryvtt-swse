@@ -2801,12 +2801,7 @@ export function getMentorSuggestionDialogue({
     // Get phase-specific dialogues
     const phaseDialogues = contextDialogues[phase];
     if (!phaseDialogues) {
-        // Fall back to closest phase
-        const fallbackPhase = phase === "late" ? "mid" : "early";
-        const fallbackDialogues = contextDialogues[fallbackPhase];
-        if (fallbackDialogues) {
-            return buildDialogueResponse(fallbackDialogues, specificType, personality, rejectionCount, dialogues);
-        }
+        console.warn(`[SSOT] No ${phase} phase dialogues found for context ${context}. Mentor dialogue data is incomplete.`);
         return getGenericDialogue(context, phase);
     }
 

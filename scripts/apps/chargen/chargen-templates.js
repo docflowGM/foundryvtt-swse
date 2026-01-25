@@ -15,67 +15,14 @@ export class CharacterTemplates {
   static async loadTemplates() {
     if (this._templates) return this._templates;
 
-    try {
-      const response = await fetch('systems/foundryvtt-swse/data/character-templates.json');
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      const data = await response.json();
-      this._templates = data.templates;
-      SWSELogger.log(`SWSE | Loaded ${this._templates.length} character templates`);
-      return this._templates;
-    } catch (error) {
-      SWSELogger.error('SWSE | Failed to load character templates:', error);
-
-      // Provide minimal default templates as fallback
-      const defaultTemplates = [
-        {
-          id: "default-soldier",
-          name: "Basic Soldier",
-          class: "Soldier",
-          level: 1,
-          description: "Default soldier template (template file failed to load)",
-          species: "Human",
-          abilities: { str: 14, dex: 13, con: 12, int: 10, wis: 10, cha: 8 },
-          feats: ["Weapon Proficiency (Pistols)", "Weapon Proficiency (Rifles)"],
-          talents: [],
-          skills: ["Initiative", "Perception"]
-        },
-        {
-          id: "default-scout",
-          name: "Basic Scout",
-          class: "Scout",
-          level: 1,
-          description: "Default scout template (template file failed to load)",
-          species: "Human",
-          abilities: { str: 10, dex: 14, con: 12, int: 13, wis: 12, cha: 8 },
-          feats: ["Weapon Proficiency (Pistols)", "Weapon Proficiency (Rifles)"],
-          talents: [],
-          skills: ["Initiative", "Perception", "Stealth"]
-        },
-        {
-          id: "default-scoundrel",
-          name: "Basic Scoundrel",
-          class: "Scoundrel",
-          level: 1,
-          description: "Default scoundrel template (template file failed to load)",
-          species: "Human",
-          abilities: { str: 10, dex: 14, con: 10, int: 12, wis: 10, cha: 13 },
-          feats: ["Weapon Proficiency (Pistols)", "Weapon Proficiency (Simple Weapons)"],
-          talents: [],
-          skills: ["Deception", "Perception", "Stealth"]
-        }
-      ];
-
-      this._templates = defaultTemplates;
-
-      ui.notifications.warn(
-        'Character templates could not be loaded. Using default templates only.',
-        { permanent: false }
-      );
-
-      return defaultTemplates;
+    const response = await fetch('systems/foundryvtt-swse/data/character-templates.json');
+    if (!response.ok) {
+      throw new Error(`Failed to load character templates: HTTP ${response.status} ${response.statusText}`);
     }
+    const data = await response.json();
+    this._templates = data.templates;
+    SWSELogger.log(`SWSE | Loaded ${this._templates.length} character templates`);
+    return this._templates;
   }
 
   /**

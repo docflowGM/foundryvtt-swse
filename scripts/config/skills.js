@@ -73,45 +73,13 @@ async function loadSkillsFromCompendium() {
   return loadingPromise;
 }
 
-/**
- * HARD FALLBACK SKILL DEFINITIONS
- * Only used when pack missing or empty.
- */
-export const SWSE_SKILLS = {
-  acrobatics: { label: "Acrobatics", ability: "dex", untrained: true, description: "Balance, tumble, and perform acrobatic stunts" },
-  climb: { label: "Climb", ability: "str", untrained: true, description: "Scale vertical surfaces" },
-  deception: { label: "Deception", ability: "cha", untrained: true, description: "Lie, disguise, feint" },
-  endurance: { label: "Endurance", ability: "con", untrained: true, description: "Resist fatigue and hazards" },
-  "gather-information": { label: "Gather Information", ability: "cha", untrained: true, description: "Collect rumors and intelligence" },
-  initiative: { label: "Initiative", ability: "dex", untrained: true, description: "Act quickly in combat" },
-  jump: { label: "Jump", ability: "str", untrained: true, description: "Leap over obstacles" },
-  "knowledge-bureaucracy": { label: "Knowledge (Bureaucracy)", ability: "int", untrained: false },
-  "knowledge-galactic-lore": { label: "Knowledge (Galactic Lore)", ability: "int", untrained: false },
-  "knowledge-life-sciences": { label: "Knowledge (Life Sciences)", ability: "int", untrained: false },
-  "knowledge-physical-sciences": { label: "Knowledge (Physical Sciences)", ability: "int", untrained: false },
-  "knowledge-social-sciences": { label: "Knowledge (Social Sciences)", ability: "int", untrained: false },
-  "knowledge-tactics": { label: "Knowledge (Tactics)", ability: "int", untrained: false },
-  "knowledge-technology": { label: "Knowledge (Technology)", ability: "int", untrained: false },
-  mechanics: { label: "Mechanics", ability: "int", untrained: true },
-  perception: { label: "Perception", ability: "wis", untrained: true },
-  persuasion: { label: "Persuasion", ability: "cha", untrained: true },
-  pilot: { label: "Pilot", ability: "dex", untrained: true },
-  ride: { label: "Ride", ability: "dex", untrained: true },
-  stealth: { label: "Stealth", ability: "dex", untrained: true },
-  survival: { label: "Survival", ability: "wis", untrained: true },
-  swim: { label: "Swim", ability: "str", untrained: true },
-  "treat-injury": { label: "Treat Injury", ability: "wis", untrained: false },
-  "use-computer": { label: "Use Computer", ability: "int", untrained: true },
-  "use-the-force": { label: "Use the Force", ability: "cha", untrained: false }
-};
 
 /**
  * Return a skill config (async)
  */
 export async function getSkillConfig(skillKey) {
   const skills = await loadSkillsFromCompendium();
-  if (skills.size > 0) return skills.get(skillKey) || null;
-  return SWSE_SKILLS[skillKey] || null;
+  return skills.get(skillKey) || null;
 }
 
 /**
@@ -119,10 +87,7 @@ export async function getSkillConfig(skillKey) {
  */
 export async function getSkillsArray() {
   const skills = await loadSkillsFromCompendium();
-  if (skills.size > 0) {
-    return Array.from(skills.entries()).map(([key, config]) => ({ key, ...config }));
-  }
-  return Object.entries(SWSE_SKILLS).map(([key, config]) => ({ key, ...config }));
+  return Array.from(skills.entries()).map(([key, config]) => ({ key, ...config }));
 }
 
 /**
@@ -159,11 +124,11 @@ export async function getSkillAbility(skillKey) {
 }
 
 /**
- * Sync fallback for Handlebars
+ * Sync fallback for Handlebars (cached only)
  */
 function getSkillConfigSync(skillKey) {
   if (skillsCache && skillsCache.size > 0) return skillsCache.get(skillKey) || null;
-  return SWSE_SKILLS[skillKey] || null;
+  return null;
 }
 
 /**
