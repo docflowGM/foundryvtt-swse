@@ -329,6 +329,8 @@
 
  {{#if (eq currentStep "species")}}
  <section class="step-species">
+ {{!-- Step Header: Title and Filters (non-scrolling) --}}
+ <div class="step-header">
  <h3>Select Species</h3>
 
  {{!-- Species Filters --}}
@@ -383,9 +385,11 @@
  </div>
  </div>
  </div>
+ </div>
+ {{!-- End of step-header --}}
 
-
-
+ {{!-- Step Content: Species Grid (scrollable) --}}
+ <div class="step-content">
  <div class="species-grid">
  {{#each packs.species}}
  <button type="button" class="preview-species choice-button"
@@ -441,6 +445,9 @@
  {{/if}}
  {{/each}}
  </div>
+ {{!-- End of species-grid --}}
+ </div>
+ {{!-- End of step-content --}}
 
  {{!-- Species Expanded Card Overlay --}}
  <div class="species-overlay" id="species-overlay">
@@ -2131,10 +2138,32 @@
  font-style: italic;
 }
 
-/* Move confirmation/next button to top of all steps */
+/* Step container - proper flexbox layout */
 section {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Step header: filters, instructions (non-scrolling) */
+.step-header {
+  flex: 0 0 auto;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(10, 116, 218, 0.3);
+  overflow-x: auto;
+}
+
+/* Step content: cards, grids (scrollable) */
+.step-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 1.5rem 0;
+}
+
+/* Form actions always at bottom */
+.form-actions {
+  flex: 0 0 auto;
+  margin-top: auto;
 }
 
 .form-actions {

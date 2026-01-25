@@ -248,7 +248,7 @@ export async function _onConfirmSpecies(event) {
     } else {
       // For new character creation, auto-advance to the next step
       SWSELogger.log(`CharGen | Auto-advancing to next step after species selection`);
-      await this._onClickNext();
+      await this._onNextStep();
     }
   } catch (error) {
     SWSELogger.error(`CharGen | Error selecting species: ${error.message}`, error);
