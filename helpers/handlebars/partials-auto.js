@@ -1,6 +1,6 @@
 import { swseLogger } from '../../scripts/utils/logger.js';
 
-export function registerSWSEPartials() {
+export async function registerSWSEPartials() {
   const paths = [
     "systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs",
     "systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs",
@@ -23,7 +23,17 @@ export function registerSWSEPartials() {
   for (const path of paths) {
     const name = path.split("/").pop().replace(".hbs", "");
 
-    Handlebars.registerPartial(name, path);
-    swseLogger.log(`SWSE | Registered partial: ${name}`);
+    try {
+      const response = await fetch(path);
+      if (!response.ok) {
+        swseLogger.warn(`SWSE | Failed to fetch partial: ${path} (${response.status})`);
+        continue;
+      }
+      const html = await response.text();
+      Handlebars.registerPartial(name, html);
+      swseLogger.log(`SWSE | Registered partial: ${name}`);
+    } catch (error) {
+      swseLogger.error(`SWSE | Error registering partial ${name}:`, error);
+    }
   }
 }
