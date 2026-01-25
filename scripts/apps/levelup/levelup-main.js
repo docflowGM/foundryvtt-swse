@@ -59,8 +59,7 @@ import {
   showEnhancedTreeSelection,
   showEnhancedTalentTree,
   showTalentTreeDialog,
-  selectTalent,
-  getTalentProgressionInfo
+  selectTalent
 } from './levelup-talents.js';
 
 // Import force power module functions
