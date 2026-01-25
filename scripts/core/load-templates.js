@@ -87,7 +87,13 @@ export async function preloadHandlebarsTemplates() {
 
     // Vehicle-specific partials
     "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-image.hbs",
-    "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-callouts.hbs"
+    "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-callouts.hbs",
+    "systems/foundryvtt-swse/templates/partials/crew-action-cards.hbs",
+
+    // Additional partials used by actor sheets
+    "systems/foundryvtt-swse/templates/partials/skill-actions-panel.hbs",
+    "systems/foundryvtt-swse/templates/partials/skill-action-card.hbs",
+    "systems/foundryvtt-swse/templates/partials/assets-panel.hbs"
   ];
 
   // ============================================
