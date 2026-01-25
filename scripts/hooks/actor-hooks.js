@@ -152,9 +152,6 @@ async function handleItemCreate(item, options, userId) {
 
     SWSELogger.log('SWSE | Skill Focus feat detected, prompting for skill selection');
 
-    // Get actor
-    const actor = item.parent;
-
     // Get trained skills
     const trainedSkills = {};
     for (const [key, skill] of Object.entries(actor.system.skills || {})) {
