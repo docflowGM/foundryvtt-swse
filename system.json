@@ -156,24 +156,6 @@
   ],
 
   "settings": {
-    "foundryvtt-swse.actorValidationMigration": {
-      "scope": "world",
-      "config": false,
-      "type": "Boolean",
-      "default": false
-    },
-    "foundryvtt-swse.itemValidationMigration": {
-      "scope": "world",
-      "config": false,
-      "type": "Boolean",
-      "default": false
-    },
-    "foundryvtt-swse.fixItemWeightMigration": {
-      "scope": "world",
-      "config": false,
-      "type": "String",
-      "default": ""
-    },
     "foundryvtt-swse.forceCompendiumsPopulation": {
       "scope": "world",
       "config": false,
