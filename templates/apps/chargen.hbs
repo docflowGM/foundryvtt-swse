@@ -86,11 +86,11 @@
  <span class="chevron-label">Background</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'skills')}}active{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'skills')}}skipped{{/if}}" data-step="skills">
+ <div class="chevron-step {{#if (eq currentStep 'skills')}}active{{/if}} {{#if (gte characterData.trainedSkillsCount characterData.trainedSkillsAllowed)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'skills')}}skipped{{/if}}" data-step="skills">
  <span class="chevron-label">Skills</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'languages')}}active{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'languages')}}skipped{{/if}}" data-step="languages">
+ <div class="chevron-step {{#if (eq currentStep 'languages')}}active{{/if}} {{#if (gt characterData.languages.length 0)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'languages')}}skipped{{/if}}" data-step="languages">
  <span class="chevron-label">Languages</span>
  </div>
 
@@ -1252,7 +1252,11 @@
  <h3>Select Talents</h3>
  <p class="help-text">Choose talent(s) to specialize your character abilities.</p>
 
-
+ {{#if narratorComment}}
+ <div class="narrator-section">
+ <p class="narrator-comment">{{narratorComment}}</p>
+ </div>
+ {{/if}}
 
  {{!-- Selected Talents Summary --}}
  <div class="selected-talents-summary">
@@ -1271,7 +1275,6 @@
 
  {{#unless selectedTalentTree}}
  {{!-- Step 1: Select Talent Tree --}}
- <h3>Select a Talent Tree</h3>
  <p class="help-text">Choose a talent tree from your class. Then select a talent from that tree.</p>
 
  {{#if (gt availableTalentTrees.length 0)}}
