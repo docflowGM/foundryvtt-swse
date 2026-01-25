@@ -101,7 +101,6 @@ export class UpdateSpeciesTraitsMigration {
           );
 
           if (!speciesIndex) {
-            SWSELogger.warn(`SWSE | Species not found in compendium: ${speciesData.name}`);
             totalNotFound++;
             notFoundSpecies.push(speciesData.name);
             continue;
@@ -164,8 +163,10 @@ export class UpdateSpeciesTraitsMigration {
     }
 
     if (notFoundSpecies.length > 0) {
-      SWSELogger.log("Species not found in compendium:");
-      notFoundSpecies.forEach(name => SWSELogger.log(`  - ${name}`));
+      if (notFoundSpecies.length <= 5) {
+        SWSELogger.log("Species not found in compendium:");
+        notFoundSpecies.forEach(name => SWSELogger.log(`  - ${name}`));
+      }
     }
 
     SWSELogger.log("=".repeat(60));
