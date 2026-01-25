@@ -243,6 +243,7 @@ import { DropHandler } from './scripts/drag-drop/drop-handler.js';
 import './scripts/chat/chat-commands.js';
 
 import { registerInitHooks, registerDestinyHooks } from './scripts/hooks/index.js';
+import { SystemInitHooks } from './scripts/progression/hooks/system-init-hooks.js';
 
 /* ==========================================================================  
    INIT HOOK
@@ -412,6 +413,11 @@ Hooks.once("ready", async function () {
             background: ['feats','talents','forcePowers','species'],
             verbose: true
         });
+    });
+
+    /* SSOT Data Registries & Progression Engine */
+    await perfMonitor.measureAsync('Progression Engine Init', async () => {
+        await SystemInitHooks.onSystemReady();
     });
 
     await perfMonitor.measureAsync('Combat Actions Init', async () => { await CombatActionsMapper.init(); });
