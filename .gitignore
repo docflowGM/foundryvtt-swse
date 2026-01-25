@@ -14,3 +14,6 @@ system.json.bak.*
 
 # LevelDB log files (auto-generated)
 packs/*/LOG.old
+
+# Distribution packages
+*.zip
