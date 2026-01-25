@@ -932,7 +932,11 @@ export default class CharacterGenerator extends Application {
     // Add modifier data to each skill
     context.availableSkills = context.availableSkills.map(skill => {
       // Get the ability modifier for this skill's associated ability
-      const abilityKey = (skill.ability || '').toLowerCase();
+      let abilityKey = (skill.ability || '').toLowerCase();
+      // For droids, CON-based skills use STR instead
+      if (this.characterData.isDroid && abilityKey === 'con') {
+        abilityKey = 'str';
+      }
       const abilityMod = abilities[abilityKey]?.mod || 0;
 
       // Get species skill bonus (racial bonus)

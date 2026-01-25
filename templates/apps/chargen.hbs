@@ -1509,7 +1509,7 @@
  </span>
  {{/if}}
  <span class="skill-name">{{this.name}}</span>
- <span class="skill-ability-abbrev">({{uppercase this.ability}})</span>
+ <span class="skill-ability-abbrev">({{uppercase (ternary (and ../characterData.isDroid (eq this.ability 'con')) 'str' this.ability)}})</span>
  </div>
  <div class="skill-train-col">
  <input type="checkbox"
