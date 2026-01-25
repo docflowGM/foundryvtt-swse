@@ -1101,9 +1101,13 @@
  <section class="step-feats">
  <h3>Select Starting Feat{{#if (gt characterData.featsRequired 1)}}s{{/if}}</h3>
 
-
-
  <p class="help-text">All characters gain 1 general feat at 1st level.{{#if (gt characterData.featsRequired 1)}} Humans gain 1 bonus feat.{{/if}}</p>
+
+ {{#if narratorComment}}
+ <div class="narrator-section">
+ <p class="narrator-comment">{{narratorComment}}</p>
+ </div>
+ {{/if}}
 
  <div class="selected-feats-summary">
  <h4>Selected Feats ({{characterData.feats.length}}/{{characterData.featsRequired}})</h4>
