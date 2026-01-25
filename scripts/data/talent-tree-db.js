@@ -185,6 +185,9 @@ export const TalentTreeDB = {
      * Get talent trees for a class (by class ID).
      * Requires ClassesDB to be built.
      *
+     * Uses the new SSOT system: classes reference trees by stable IDs.
+     * PHASE 3: talentTreeIds is now the authoritative source.
+     *
      * @param {string} classId - Class ID
      * @param {Object} classesDB - ClassesDB instance
      * @returns {Array<Object>} - Trees for this class
@@ -195,7 +198,10 @@ export const TalentTreeDB = {
         const classDef = classesDB.get(classId);
         if (!classDef) return [];
 
-        return classDef.talentTreeIds
+        // Use new ID-based talentTreeIds (PHASE 3)
+        const treeIds = classDef.talentTreeIds || [];
+
+        return treeIds
             .map(treeId => this.get(treeId))
             .filter(Boolean);
     },
