@@ -14,7 +14,10 @@ export function registerSWSEPartials() {
     "systems/foundryvtt-swse/templates/partials/skill-actions-panel.hbs",
     "systems/foundryvtt-swse/templates/partials/skill-action-card.hbs",
     "systems/foundryvtt-swse/templates/partials/assets-panel.hbs",
-    "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs"
+    "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs",
+    "systems/foundryvtt-swse/templates/actors/droid/droid-diagnostic.hbs",
+    "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-image.hbs",
+    "systems/foundryvtt-swse/templates/partials/crew-action-cards.hbs"
   ];
 
   for (const path of paths) {
