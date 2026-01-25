@@ -110,9 +110,17 @@ export function normalizeTalentTree(rawTree) {
         name: name,
         sourceId: rawTree._id,
 
+        // SSOT: Talent ownership (authoritative list from tree)
+        talentIds: sys.talentIds || [],
+
         // Classification
         role: inferTreeRole(name),
         category: inferTreeCategory(name),
+
+        // Access tags (for flag-based eligibility)
+        // "force" = accessible to Force-sensitive characters
+        // "droid" = accessible to Droid characters
+        tags: sys.tags || [],
 
         // Source reference (for Foundry item lookups)
         // This allows getting back to the original compendium entry if needed

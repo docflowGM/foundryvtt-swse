@@ -63,11 +63,14 @@ export function normalizeTalent(rawTalent, treeMap = null) {
     const name = rawTalent.name || "Unknown Talent";
     const sys = rawTalent.system || {};
 
-    // Resolve talent tree ID
-    let treeId = null;
+    // SSOT: treeId is derived from the tree's talentIds array
+    // (authoritative source is in talent_trees.db, not here)
+    // Read the derived treeId that was written by the Python reconciliation script
+    let treeId = sys.treeId || null;
     let treeName = sys.talent_tree || sys.talentTree;
 
-    if (treeName && treeMap) {
+    if (!treeId && treeName && treeMap) {
+        // Fallback for backwards compatibility (migration safety)
         const tree = treeMap.get(treeName) || Array.from(treeMap.values()).find(t =>
             t.name.toLowerCase() === treeName.toLowerCase()
         );
@@ -75,7 +78,7 @@ export function normalizeTalent(rawTalent, treeMap = null) {
         if (tree) {
             treeId = tree.id;
         } else {
-            console.warn(`[TalentNormalizer] Talent "${name}" references unknown tree "${treeName}"`);
+            console.warn(`[TalentNormalizer] Talent "${name}" has no treeId and tree "${treeName}" not found`);
         }
     }
 
