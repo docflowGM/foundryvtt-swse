@@ -1541,7 +1541,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
   // NAVIGATION
   // ========================================
 
-  _onNextStep() {
+  async _onNextStep() {
     const newLevel = this.actor.system.level + 1;
     const getsAbilityIncr = getsAbilityIncrease(newLevel);
     const getsBonusFt = getsBonusFeat(this.selectedClass, this.actor);
