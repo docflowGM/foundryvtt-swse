@@ -134,6 +134,7 @@ import { SWSEVehicleSheet } from './scripts/actors/vehicle/swse-vehicle.js';
 import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
 
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
+import { registerSWSEPartials } from './helpers/handlebars/partials-auto.js';
 import { preloadHandlebarsTemplates } from './scripts/core/load-templates.js';
 
 import { WorldDataLoader } from './scripts/core/world-data-loader.js';
@@ -276,6 +277,10 @@ Hooks.once("init", async function () {
     try {
         await preloadHandlebarsTemplates();
         swseLogger.log("SWSE | Handlebars Templates Preloaded Early");
+
+        // Register named partials for Handlebars
+        registerSWSEPartials();
+        swseLogger.log("SWSE | Named Partials Registered");
     } catch (err) {
         swseLogger.error("SWSE | Template Preloading Failed:", err);
     }
