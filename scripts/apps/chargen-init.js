@@ -48,8 +48,19 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                     generator: {
                         icon: '<i class="fas fa-dice-d20"></i>',
                         label: "Custom PC Generator",
-                        callback: () => {
-                            new CharacterGeneratorNarrative().render(true);
+                        callback: async () => {
+                            // Create temporary actor for consistent initialization and mentor survey handling
+                            // Ensures L1 mentor survey fires consistently regardless of entry point
+                            const tempActor = await Actor.create({
+                                name: "New Character (Temp)",
+                                type: "character",
+                                system: {
+                                    level: 1,
+                                    swse: { mentorSurveyCompleted: false }
+                                }
+                            }, { temporary: true });
+
+                            new CharacterGeneratorNarrative(tempActor).render(true);
                         }
                     }
                 };
@@ -59,8 +70,18 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                     buttons.npc = {
                         icon: '<i class="fas fa-users"></i>',
                         label: "NPC Generator",
-                        callback: () => {
-                            new CharacterGeneratorImproved(null, { actorType: "npc" }).render(true);
+                        callback: async () => {
+                            // Create temporary NPC actor for consistent initialization
+                            const tempActor = await Actor.create({
+                                name: "New NPC (Temp)",
+                                type: "npc",
+                                system: {
+                                    level: 1,
+                                    swse: { mentorSurveyCompleted: false }
+                                }
+                            }, { temporary: true });
+
+                            new CharacterGeneratorImproved(tempActor, { actorType: "npc" }).render(true);
                         }
                     };
                 }
@@ -115,8 +136,19 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
             button.className = 'chargen-button';
             button.innerHTML = '<i class="fas fa-hat-wizard"></i> Generator';
             button.title = 'Open custom character generator';
-            button.addEventListener('click', () => {
-                new CharacterGeneratorNarrative().render(true);
+            button.addEventListener('click', async () => {
+                // Create temporary actor for consistent initialization and mentor survey handling
+                // Ensures L1 mentor survey fires consistently regardless of entry point
+                const tempActor = await Actor.create({
+                    name: "New Character (Temp)",
+                    type: "character",
+                    system: {
+                        level: 1,
+                        swse: { mentorSurveyCompleted: false }
+                    }
+                }, { temporary: true });
+
+                new CharacterGeneratorNarrative(tempActor).render(true);
             });
             header.appendChild(button);
         }

@@ -39,14 +39,15 @@ export const MENTORS = {
 
 
     classGuidance: "Choose the path that aligns with your understanding of the Force. Let it guide your spirit and purpose.",
-    backgroundGuidance: "Your past shapes your destiny. The experiences you choose will define how the Force flows through you.",
+    backgroundGuidance: "The Force flows through all moments of your life — even those before you understood it.\n\nYour past does not bind you, but it shapes the path you walk.\n\nA Jedi does not deny their history. They learn from it.",
     talentGuidance: "Select talents that enhance awareness, precision, and harmony. Every choice shapes who you become.",
     abilityGuidance: "Your mind and body grow stronger as your bond with the Force deepens. Let this guide your actions.",
-    skillGuidance: "Knowledge and skill are tools of a Jedi. Master them as you master the Force itself.",
-    languageGuidance: "Language bridges understanding between souls. Choose tongues that expand your connection to diverse peoples and cultures.",
+    skillGuidance: "Discipline is the root of all skill.\n\nChoose mastery, not convenience.\n\nA Jedi trains not for glory, but for balance.",
+    languageGuidance: "To understand the Force, you must first understand others.\n\nLanguage is empathy made audible.\n\nEach tongue you learn brings you closer to harmony with the galaxy.",
     multiclassGuidance: "Diversifying your skills can reveal truths hidden to the narrowly focused. Balance is key.",
     forcePowerGuidance: "The Force offers many gifts to those who learn to listen. Choose powers that reflect your path and strengthen your connection.",
-    hpGuidance: "Your resilience grows. The Force protects those who walk in its light and serve the galaxy with dedication."
+    hpGuidance: "Your resilience grows. The Force protects those who walk in its light and serve the galaxy with dedication.",
+    summaryGuidance: "You stand at the threshold of becoming.\n\nRemember: the Force responds to intention, not desire.\n\nWalk forward with clarity."
 ,
     mentorStory: {
       mentorClasses: ["Jedi"],
@@ -134,14 +135,15 @@ export const MENTORS = {
 },
 
         classGuidance: "Choose your focus carefully. The right specialization can make the difference between life and death in the field.",
-        backgroundGuidance: "Every scout's past carries lessons. Choose experiences that honed your abilities and sharpened your instincts.",
+        backgroundGuidance: "Your past determines how you read danger.\n\nExperience is pattern recognition under stress.\n\nPick the background that taught you when to move — and when to wait.",
         talentGuidance: "Every talent should enhance your awareness and survival. Pick what keeps you ahead of danger.",
         abilityGuidance: "Your speed, reflexes, and judgment are improving. Keep refining them—they're your greatest tools.",
-        skillGuidance: "Knowledge of terrain, enemy behavior, and subtle signals is just as important as any weapon. Master them.",
-        languageGuidance: "Learn the languages of the peoples you operate among. Intelligence gathering starts with understanding what others say.",
+        skillGuidance: "Skills are contingency plans.\n\nTrain what lets you adapt when terrain, people, or plans change.\n\nSurvival favors preparation.",
+        languageGuidance: "People telegraph intent through words before actions.\n\nKnowing the local tongue keeps you alive longer.\n\nUnderstanding beats guessing.",
         multiclassGuidance: "Awe was I too hard on you? Fine, just don't come crawling back when you miss me.",
         forcePowerGuidance: "Not my area—if you're in that territory, make sure whatever you pick helps you survive. That's all I care about.",
-        hpGuidance: "Stay durable. You can't provide intelligence if you're out of the fight."
+        hpGuidance: "Stay durable. You can't provide intelligence if you're out of the fight.",
+        summaryGuidance: "You're equipped to move forward.\n\nStay observant. Stay flexible.\n\nThe galaxy rewards those who notice first."
     ,
         mentorStory: {
           mentorClasses: ["Scout"],
@@ -230,14 +232,15 @@ export const MENTORS = {
 },
 
         classGuidance: "Arr! Pick yer path wisely, matey! The right tricks make the difference between a chest o' credits and a long swim in the void.",
-        backgroundGuidance: "Ev'ry scoundrel's got a tale! Pick the past that made ye cunning, bold, and ready fer adventure on the high spacelanes!",
+        backgroundGuidance: "Everyone's got a past, matey. Question is — does yours give you leverage, or does it give someone else a knife to your back?\n\nBackgrounds ain't just stories. They're debts, favors, and names whispered in the wrong cantina.\n\nPick a past you can live with… or one you can run from real fast.",
         talentGuidance: "Every talent's a tool in yer scoundrel's kit. Pick what helps ye swindle, sneak, and survive—preferably all three.",
         abilityGuidance: "Gotta be strong to haul the loot, quick to dodge the blasters, and clever to stay outta trouble. Balance, savvy?",
-        skillGuidance: "Skills open every vault and shut every trap. Learn 'em all, ye clever rascal.",
-        languageGuidance: "Arr! Speak the tongues of the spacelanes, matey! Helps ye swindle better when ye know what folks be sayin' behind yer back!",
+        skillGuidance: "Skills are what separate the professionals from the dead ones, har har!\n\nA fancy ship won't save you if you can't lie, sneak, or think fast.\n\nTrain what keeps you breathing when luck runs dry.",
+        languageGuidance: "Words are currency. Speak the right tongue, and doors open. Speak the wrong one, and blasters come out.\n\nA smuggler who only speaks Basic ends up real quiet, real quick.\n\nEvery language is a lockpick — some just fit better.",
         multiclassGuidance: "Expandin' yer horizons, eh? Smart. A pirate wears many hats… and steals most of 'em too.",
         forcePowerGuidance: "Force powers? Never thought ye had it in ye! Well, pick somethin' flashy—intimidates the mark, makes the getaway easier.",
-        hpGuidance: "Tougher than durasteel, ye are. Can't spend yer loot if ye're dead, har har!"
+        hpGuidance: "Tougher than durasteel, ye are. Can't spend yer loot if ye're dead, har har!",
+        summaryGuidance: "Well now… you look like someone who might just survive their first bad deal.\n\nRemember: credits come and go. Reputation sticks.\n\nTry not to die before the second act, eh?"
     ,
         mentorStory: {
           mentorClasses: [],
@@ -317,14 +320,15 @@ export const MENTORS = {
 },
 
         classGuidance: "Master, select pursuits that enhance both skill and social standing. Strategic refinement ensures maximum efficacy.",
-        backgroundGuidance: "Your background is the foundation of your station. Select experiences that reflect your breeding and position in galactic society.",
+        backgroundGuidance: "Your background provides critical context for social interpretation and expectation management.\n\nHistory influences perception. Perception influences outcome.\n\nSelecting an appropriate background will increase your probability of favorable engagement by approximately thirty-two percent.",
         talentGuidance: "Each talent contributes to your influence and efficiency. Choose wisely to optimize results.",
         abilityGuidance: "Strength, intellect, and dexterity are all measured in accordance with desired outcomes. Balance is paramount.",
-        skillGuidance: "Comprehensive knowledge and precision in your actions secure your success. Learn thoroughly, Master.",
-        languageGuidance: "A refined individual commands multiple tongues. Language fluency marks the distinction between the cultivated and the common.",
+        skillGuidance: "Skill selection should reflect long-term strategic intent, not short-term convenience.\n\nCompetence is most effective when it appears effortless.\n\nYou are advised to prioritize skills that reinforce authority, negotiation, and situational awareness.",
+        languageGuidance: "Linguistic versatility is a primary indicator of diplomatic competence.\n\nEach additional language reduces reliance on intermediaries — a statistically inefficient practice.\n\nI strongly recommend multilingual fluency for any individual seeking influence.",
         multiclassGuidance: "Diversifying your expertise increases flexibility and influence. Highly recommended.",
         forcePowerGuidance: "Force aptitude is a valuable asset to your station. Select powers that project authority and enhance your influence in galactic society.",
-        hpGuidance: "Maintaining your physical and strategic resilience is essential. Survival is a prerequisite for continued success."
+        hpGuidance: "Maintaining your physical and strategic resilience is essential. Survival is a prerequisite for continued success.",
+        summaryGuidance: "Your profile suggests a high likelihood of social success under structured conditions.\n\nPlease remember: influence is rarely seized — it is granted.\n\nI will remain available should further optimization be required."
     ,
         mentorStory: {
           mentorClasses: [],
@@ -372,14 +376,15 @@ export const MENTORS = {
         },
 
         classGuidance: "Pick what feels right in your hands. Same rule as weapons. If it fits, use it.",
-        backgroundGuidance: "Your past made you a soldier. Pick experiences that tested you, forged you, and made you ready for war.",
+        backgroundGuidance: "Your past forged you. Don't soften it now.\n\nScars matter. Stories don't.\n\nChoose the background that taught you how to keep moving when everything burns.",
         talentGuidance: "Talents keep you alive. Choose the stuff that stops you from dying. Pretty simple.",
         abilityGuidance: "Stronger, faster, smarter—whatever you're getting, it's working. Don't overthink it.",
-        skillGuidance: "Look, knowing things makes you harder to kill. Treat skills like gear—collect the useful stuff.",
-        languageGuidance: "Understanding what others say gives you the edge. Pick languages that help you survive and fight smarter.",
+        skillGuidance: "Skill is what keeps you standing after the first hit.\n\nTrain for the moment the plan dies.\n\nIf you can't use it under fire, it's decoration.",
+        languageGuidance: "You don't need many words. You need the right ones.\n\nUnderstanding your enemy's orders gives you an edge.\n\nSilence works too — if you know when to use it.",
         multiclassGuidance: "Trying something new? Good. Adaptation beats stubbornness. Learned that the hard way.",
         forcePowerGuidance: "Force powers? That's outside my expertise. But pick something that gives you an edge in combat. That's all that matters.",
-        hpGuidance: "You're harder to put down now. That's good. Try to stay that way."
+        hpGuidance: "You're harder to put down now. That's good. Try to stay that way.",
+        summaryGuidance: "You're ready.\n\nRemember who you are when the shooting starts.\n\nIf you fall — make it mean something."
     ,
         mentorStory: {
           mentorClasses: [],
