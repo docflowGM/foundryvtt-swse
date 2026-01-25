@@ -169,7 +169,7 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
   for (const treeName of availableTrees) {
 
       // 1 — Check if tree exists in the talent tree compendium
-      const treePack = game.packs.get('foundryvtt-swse.talenttrees');
+      const treePack = game.packs.get('foundryvtt-swse.talent_trees');
       const treeIndex = treePack?.index.find(t => t.name === treeName);
 
       if (!treeIndex) {
