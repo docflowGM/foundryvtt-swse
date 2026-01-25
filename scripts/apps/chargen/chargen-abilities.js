@@ -546,10 +546,15 @@ export function _bindAbilitiesUI(root) {
 
     // Array selection (High or Standard array)
     const rollArray = () => {
-      const arrays = {
-        high: { name: 'High Array', values: [16, 14, 12, 12, 10, 8] },
-        standard: { name: 'Standard Array', values: [15, 14, 13, 12, 10, 8] }
-      };
+      const arrays = chargen.characterData.isDroid
+        ? {
+            high: { name: 'High Array', values: [16, 14, 12, 10, 8] },
+            standard: { name: 'Standard Array', values: [15, 14, 13, 10, 8] }
+          }
+        : {
+            high: { name: 'High Array', values: [16, 14, 12, 12, 10, 8] },
+            standard: { name: 'Standard Array', values: [15, 14, 13, 12, 10, 8] }
+          };
 
       const container = root.querySelector("#array-selection");
       if (!container) return;
