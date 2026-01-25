@@ -281,6 +281,68 @@ export const TalentTreeDB = {
     },
 
     /**
+     * Get all available talent trees for a character (PHASE 3 runtime integration).
+     *
+     * Combines:
+     * 1. Class-specific trees (from class.system.talentTreeIds)
+     * 2. Flag-based trees (Force-sensitive → force trees, Droid → droid trees)
+     *
+     * @param {Object} actor - Actor document with class and flags
+     * @returns {Array<Object>} - Available talent trees for this character
+     */
+    getTalentTreesForCharacter(actor) {
+        if (!actor) return [];
+
+        const trees = new Set();
+
+        // Get class trees (if class exists)
+        if (actor.class) {
+            const classTrees = actor.class.system?.talentTreeIds || [];
+            for (const treeId of classTrees) {
+                const tree = this.get(treeId);
+                if (tree) trees.add(tree);
+            }
+        }
+
+        // Add flag-based trees
+        const flags = actor.system?.flags || {};
+
+        // Force-sensitive grants access to all force trees
+        if (flags.forceSensitive) {
+            const forceTrees = this.byTag("force");
+            for (const tree of forceTrees) {
+                trees.add(tree);
+            }
+        }
+
+        // Droid grants access to all droid trees
+        if (flags.droid) {
+            const droidTrees = this.byTag("droid");
+            for (const tree of droidTrees) {
+                trees.add(tree);
+            }
+        }
+
+        return Array.from(trees);
+    },
+
+    /**
+     * Get all available talents for a character (convenience method).
+     * Combines getTalentTreesForCharacter + getTalentsForTrees.
+     *
+     * @param {Object} actor - Actor document
+     * @returns {Array<string>} - All talent IDs available to this character
+     */
+    getTalentsForCharacter(actor) {
+        if (!actor) return [];
+
+        const trees = this.getTalentTreesForCharacter(actor);
+        const treeIds = trees.map(t => t.id);
+
+        return this.getTalentsForTrees(treeIds);
+    },
+
+    /**
      * Validate that TalentTreeDB is ready for use.
      * Throws if not built.
      */
