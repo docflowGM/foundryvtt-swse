@@ -272,6 +272,24 @@ Hooks.once("init", async function () {
     }
 
     /* ---------------------------------------------------------
+       System Settings (must be before async operations)
+       --------------------------------------------------------- */
+    registerSystemSettings();
+    registerHouseruleSettings();
+
+    /* ---------------------------------------------------------
+       Hook Registration (must be before async operations)
+       --------------------------------------------------------- */
+    registerInitHooks();
+    registerDestinyHooks();
+    registerKeybindings();
+
+    /* ---------------------------------------------------------
+       Theme System Initialization (Early)
+       --------------------------------------------------------- */
+    ThemeLoader.init();
+
+    /* ---------------------------------------------------------
        EARLY TEMPLATE PRELOADING (Prevents render race)
        --------------------------------------------------------- */
     try {
@@ -284,24 +302,6 @@ Hooks.once("init", async function () {
     } catch (err) {
         swseLogger.error("SWSE | Template Preloading Failed:", err);
     }
-
-    /* ---------------------------------------------------------
-       System Settings
-       --------------------------------------------------------- */
-    registerSystemSettings();
-    registerHouseruleSettings();
-
-    /* ---------------------------------------------------------
-       Theme System Initialization (Early)
-       --------------------------------------------------------- */
-    ThemeLoader.init();
-
-    /* ---------------------------------------------------------
-       Hook Registration
-       --------------------------------------------------------- */
-    registerInitHooks();
-    registerDestinyHooks();
-    registerKeybindings();
 
     /* ---------------------------------------------------------
        Document Classes
