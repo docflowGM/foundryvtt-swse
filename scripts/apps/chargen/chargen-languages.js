@@ -86,7 +86,9 @@ function _calculateLanguageBudget() {
     SWSELogger.log(`CharGen | Language budget calculated: ${intMod} (INT)`);
   }
 
-  return Math.max(1, totalBudget); // Minimum 1 language
+  // Allow 0 languages if INT is negative and no Linguist feat (allows auto-skip)
+  // Otherwise minimum 1 language (granted languages are always included)
+  return Math.max(0, totalBudget);
 }
 
 /**
