@@ -212,8 +212,8 @@
           {{#each posData.skills as |skill|}}
           <div class="skill-item {{#if skill.required}}required{{else}}beneficial{{/if}} {{#if skill.trained}}trained{{/if}}">
             <span class="skill-name">{{skill.name}}</span>
-            <span class="skill-bonus {{#if skill.bonus > 0}}positive{{/if}} {{#if skill.bonus < 0}}negative{{/if}}">
-              {{#if skill.bonus > 0}}+{{/if}}{{skill.bonus}}
+            <span class="skill-bonus {{#if (gt skill.bonus 0)}}positive{{/if}} {{#if (lt skill.bonus 0)}}negative{{/if}}">
+              {{#if (gt skill.bonus 0)}}+{{/if}}{{skill.bonus}}
             </span>
             {{#if skill.trained}}
             <span class="trained-badge" title="Trained in this skill">T</span>
