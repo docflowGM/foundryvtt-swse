@@ -248,7 +248,7 @@ export async function _onConfirmSpecies(event) {
     } else {
       // For new character creation, auto-advance to the next step
       SWSELogger.log(`CharGen | Auto-advancing to next step after species selection`);
-      await this._onClickNext();
+      await this._onNextStep();
     }
   } catch (error) {
     SWSELogger.error(`CharGen | Error selecting species: ${error.message}`, error);
@@ -825,6 +825,46 @@ export function _filterSpecies(species, filters) {
 }
 
 /**
+ * Apply species filters directly to DOM without full re-render
+ */
+function _applySpeciesFiltersDOM() {
+  const filters = this.characterData.speciesFilters || {};
+  const speciesCards = document.querySelectorAll('.species-grid .preview-species');
+
+  speciesCards.forEach(card => {
+    const size = card.dataset.size || "Medium";
+    const abilityString = card.dataset.abilities || "None";
+    const abilities = _parseAbilityString.call(this, abilityString);
+
+    let matches = true;
+
+    // Check size filter
+    if (filters.size && size !== filters.size) {
+      matches = false;
+    }
+
+    // Check attribute bonus filter
+    if (filters.attributeBonus) {
+      const bonus = abilities[filters.attributeBonus];
+      if (!bonus || bonus <= 0) {
+        matches = false;
+      }
+    }
+
+    // Check attribute penalty filter
+    if (filters.attributePenalty) {
+      const penalty = abilities[filters.attributePenalty];
+      if (!penalty || penalty >= 0) {
+        matches = false;
+      }
+    }
+
+    // Show/hide the card
+    card.style.display = matches ? "" : "none";
+  });
+}
+
+/**
  * Handle species filter change
  */
 export async function _onSpeciesFilterChange(event) {
@@ -840,8 +880,8 @@ export async function _onSpeciesFilterChange(event) {
   // Update filter UI indicators
   _updateFilterIndicators.call(this);
 
-  // Re-render to apply filters
-  this.render();
+  // Apply filters directly to DOM instead of full re-render
+  _applySpeciesFiltersDOM.call(this);
 }
 
 /**
@@ -886,8 +926,18 @@ export async function _onClearSpeciesFilters(event) {
     size: null
   };
 
-  // Re-render to show all species
-  this.render();
+  // Reset filter dropdowns to null
+  document.querySelectorAll('[data-filter]').forEach(filter => {
+    filter.value = '';
+  });
+
+  // Update filter UI indicators
+  _updateFilterIndicators.call(this);
+
+  // Show all species cards
+  document.querySelectorAll('.species-grid .preview-species').forEach(card => {
+    card.style.display = "";
+  });
 }
 
 // ============================================

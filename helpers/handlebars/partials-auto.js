@@ -1,6 +1,5 @@
 import { swseLogger } from '../../scripts/utils/logger.js';
 
-// Auto-generated partial loader for Foundry V12+
 export function registerSWSEPartials() {
   const paths = [
     "systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs",
@@ -23,12 +22,8 @@ export function registerSWSEPartials() {
 
   for (const path of paths) {
     const name = path.split("/").pop().replace(".hbs", "");
-    const tpl = foundry.templates.get(path);
-    if (tpl) {
-      Handlebars.registerPartial(name, tpl);
-      swseLogger.log(`SWSE | Registered partial: ${name}`);
-    } else {
-      swseLogger.warn(`SWSE | Missing partial template: ${path}`);
-    }
+
+    Handlebars.registerPartial(name, path);
+    swseLogger.log(`SWSE | Registered partial: ${name}`);
   }
 }

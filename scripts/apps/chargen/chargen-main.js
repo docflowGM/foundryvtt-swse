@@ -13,6 +13,7 @@ import { Level1SkillSuggestionEngine } from '../../engine/Level1SkillSuggestionE
 import { MentorSurvey } from '../mentor-survey.js';
 import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
 import { MENTORS } from '../mentor-dialogues.js';
+import { getMentorMemory, setMentorMemory, setTargetClass } from '../../engine/mentor-memory.js';
 
 // SSOT Data Layer
 import { ClassesDB } from '../../data/classes-db.js';
@@ -2793,32 +2794,70 @@ export default class CharacterGenerator extends Application {
   }
 
   async _updateActor() {
-    // Level-up: increment level and add new items
+    // Check if this is a class addition (singleStepMode) or full level-up
+    const selectedClassName = this.characterData.classes[0]?.name;
+
+    // If in single step mode (adding class from sheet), just add the class item and update mentor
+    if (this.singleStepMode && selectedClassName) {
+      const items = [];
+      const classItem = {
+        name: selectedClassName,
+        type: "class",
+        img: this.characterData.classes[0].img,
+        system: {
+          classId: this.characterData.classes[0].classId,
+          level: 1
+        }
+      };
+      items.push(classItem);
+
+      if (items.length > 0) {
+        await this.actor.createEmbeddedDocuments("Item", items);
+      }
+
+      // Update mentor with new class target
+      try {
+        const mentorId = this.actor.getFlag('swse', 'level1Class');
+        if (mentorId) {
+          let memory = await getMentorMemory(this.actor, mentorId.toLowerCase());
+          memory = setTargetClass(memory, selectedClassName);
+          await setMentorMemory(this.actor, mentorId.toLowerCase(), memory);
+          SWSELogger.log(`CharGen | Updated mentor memory for ${mentorId} with target class: ${selectedClassName}`);
+        }
+      } catch (err) {
+        SWSELogger.warn("Failed to update mentor memory for new class:", err);
+      }
+
+      ui.notifications.info(`${this.actor.name} learned the ${selectedClassName} class!`);
+      return;
+    }
+
+    // Full level-up: increment level and add new items
     const newLevel = (this.actor.system.level || 1) + 1;
     const updates = { "system.level": newLevel };
-    
+
     // Recalculate HP for new level
     const conMod = this.actor.system.attributes.con.mod || 0;
-    const classDoc = this._packs.classes.find(c => 
-      c.name === this.characterData.classes[0]?.name
+    const classDoc = this._packs.classes.find(c =>
+      c.name === selectedClassName
     );
     const hitDie = classDoc?.system?.hitDie || 6;
     const hpGain = Math.floor(hitDie / 2) + 1 + conMod;
     updates["system.hp.max"] = this.actor.system.hp.max + hpGain;
     updates["system.hp.value"] = this.actor.system.hp.value + hpGain;
-    
+
     await globalThis.SWSE.ActorEngine.updateActor(this.actor, updates);
-    
+
     // Add new feats/talents/powers
     const items = [];
     for (const f of (this.characterData.feats || [])) items.push(f);
     for (const t of (this.characterData.talents || [])) items.push(t);
     for (const p of (this.characterData.powers || [])) items.push(p);
-    
+
     if (items.length > 0) {
       await this.actor.createEmbeddedDocuments("Item", items);
     }
-    
+
     ui.notifications.info(`${this.actor.name} leveled up to level ${newLevel}!`);
   }
 

@@ -34,6 +34,18 @@ import { SWSEGrappling } from "../../combat/systems/grappling-system.js";
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
+  /**
+   * Prevent non-character actors from using this sheet
+   * Vehicle, Droid, and NPC sheets should be used instead
+   */
+  static canUserUseSheet(user, sheet, actor) {
+    // Only characters should use this sheet (not vehicle, droid, npc)
+    if (actor?.type && actor.type !== "character") {
+      return false;
+    }
+    return super.canUserUseSheet(user, sheet, actor);
+  }
+
   // Debounced handler for defense input changes
   _debouncedDefenseChange = debounce(function() {
     this.actor.prepareData();
@@ -306,6 +318,13 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // Call super FIRST to set up base data-action handler and other core listeners
     super.activateListeners(html);
 
+    // Prevent Enter key from triggering form submission on input fields
+    html.find('input[type="text"], input[type="number"], textarea').on('keydown', (ev) => {
+      if (ev.key === 'Enter' && !ev.ctrlKey && !ev.metaKey) {
+        ev.preventDefault();
+      }
+    });
+
     // Defense input debouncing
     html.find(".defense-input-sm, .defense-select-sm").change(ev => {
       this._debouncedDefenseChange.call(this);
@@ -320,7 +339,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     html.find('.talk-to-mentor').click(ev => this._onTalkToMentor(ev));
 
     // ========== CONDITION TRACK ==========
-    html.find('.track-step').click(ev => this._onConditionTrackClick(ev));
+    html.find('.track-condition').click(ev => this._onConditionTrackClick(ev));
     html.find('.track-button.improve').click(ev => this._onRecoverCondition(ev));
     html.find('.track-button.worsen').click(ev => this._onWorsenCondition(ev));
 

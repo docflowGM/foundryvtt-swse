@@ -21,6 +21,17 @@ import { DROID_SYSTEMS } from "../../data/droid-systems.js";
 
 export class SWSEDroidSheet extends SWSECharacterSheet {
 
+  /**
+   * Prevent non-droid actors from using this sheet
+   */
+  static canUserUseSheet(user, sheet, actor) {
+    // Only droids should use this sheet
+    if (actor?.type && actor.type !== "droid") {
+      return false;
+    }
+    return super.canUserUseSheet(user, sheet, actor);
+  }
+
   // ---------------------------------------------------------------------
   // Default Options
   // ---------------------------------------------------------------------
