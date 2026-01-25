@@ -114,7 +114,7 @@ export async function calculateChargenSuggestions(items, chargenContext, itemTyp
       ...item,
       suggestion: {
         tier: 0,
-        reason: 'Suggestion engine error - legal option',
+        reason: 'Available option',
         icon: ''
       }
     }));
