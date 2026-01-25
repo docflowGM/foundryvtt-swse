@@ -80,7 +80,10 @@ export async function preloadHandlebarsTemplates() {
     "systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs",
     "systems/foundryvtt-swse/templates/partials/skill-row-static.hbs",
     "systems/foundryvtt-swse/templates/partials/feat-actions-panel.hbs",
-    "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs"
+    "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs",
+
+    // Droid-specific partials
+    "systems/foundryvtt-swse/templates/actors/droid/droid-diagnostic.hbs"
   ];
 
   // ============================================
