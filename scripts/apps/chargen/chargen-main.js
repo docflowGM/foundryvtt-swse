@@ -932,7 +932,11 @@ export default class CharacterGenerator extends Application {
     // Add modifier data to each skill
     context.availableSkills = context.availableSkills.map(skill => {
       // Get the ability modifier for this skill's associated ability
-      const abilityKey = (skill.ability || '').toLowerCase();
+      let abilityKey = (skill.ability || '').toLowerCase();
+      // For droids, CON-based skills use STR instead
+      if (this.characterData.isDroid && abilityKey === 'con') {
+        abilityKey = 'str';
+      }
       const abilityMod = abilities[abilityKey]?.mod || 0;
 
       // Get species skill bonus (racial bonus)
@@ -1667,10 +1671,15 @@ export default class CharacterGenerator extends Application {
             return tierB - tierA;
           })
           .slice(0, 5)
-          .map(el => ({
-            name: el.dataset.featId || el.textContent.trim(),
-            tier: parseInt(el.dataset.suggestionTier || 0)
-          }));
+          .map(el => {
+            // Get the feat name from the .feat-name element
+            const nameEl = el.querySelector('.feat-name');
+            const featName = nameEl ? nameEl.textContent.trim() : 'Unknown Feat';
+            return {
+              name: featName,
+              tier: parseInt(el.dataset.suggestionTier || 0)
+            };
+          });
 
         if (suggestions.length > 0) {
           const mentorName = mentor?.name || "Your Mentor";

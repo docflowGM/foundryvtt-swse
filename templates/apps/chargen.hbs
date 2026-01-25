@@ -74,7 +74,7 @@
  </div>
  {{/if}}
 
- <div class="chevron-step {{#if (eq currentStep 'abilities')}}active{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'abilities')}}skipped{{/if}}" data-step="abilities">
+ <div class="chevron-step {{#if (eq currentStep 'abilities')}}active{{/if}} {{#if characterData.abilities}}completed{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'abilities')}}skipped{{/if}}" data-step="abilities">
  <span class="chevron-label">Abilities</span>
  </div>
 
@@ -86,11 +86,11 @@
  <span class="chevron-label">Background</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'skills')}}active{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'skills')}}skipped{{/if}}" data-step="skills">
+ <div class="chevron-step {{#if (eq currentStep 'skills')}}active{{/if}} {{#if (gte characterData.trainedSkillsCount characterData.trainedSkillsAllowed)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'skills')}}skipped{{/if}}" data-step="skills">
  <span class="chevron-label">Skills</span>
  </div>
 
- <div class="chevron-step {{#if (eq currentStep 'languages')}}active{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'languages')}}skipped{{/if}}" data-step="languages">
+ <div class="chevron-step {{#if (eq currentStep 'languages')}}active{{/if}} {{#if (gt characterData.languages.length 0)}}completed{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'languages')}}skipped{{/if}}" data-step="languages">
  <span class="chevron-label">Languages</span>
  </div>
 
@@ -856,6 +856,21 @@
 
  <p class="hint">Your background represents a defining aspect of your past. Choose ONE from Events, Occupations, or Planets.</p>
 
+ {{!-- Filter and Random Background Buttons --}}
+ <div class="background-controls">
+ <button type="button" class="background-filter-btn btn-secondary">
+ <i class="fas fa-search"></i> Filter by Skill
+ </button>
+ {{#unless characterData.background}}
+ <button type="button" class="random-background-btn btn-secondary">
+ <i class="fas fa-dice"></i> Random Background
+ </button>
+ <button type="button" class="ask-mentor-background-btn btn-secondary">
+ <i class="fas fa-user"></i> Ask Mentor
+ </button>
+ {{/unless}}
+ </div>
+
  {{!-- Category Tabs --}}
  <div class="background-category-tabs">
  <button type="button" class="background-category-tab {{#if (eq characterData.backgroundCategory 'events')}}active{{else}}{{#unless characterData.backgroundCategory}}active{{/unless}}{{/if}}" data-category="events">
@@ -870,21 +885,6 @@
  <i class="fas fa-globe"></i>
  <span>Planet of Origin</span>
  </button>
- </div>
-
- {{!-- Filter and Random Background Buttons --}}
- <div class="background-controls">
- <button type="button" class="background-filter-btn btn-secondary">
- <i class="fas fa-search"></i> Filter by Skill
- </button>
- {{#unless characterData.background}}
- <button type="button" class="random-background-btn btn-secondary">
- <i class="fas fa-dice"></i> Random Background
- </button>
- <button type="button" class="ask-mentor-background-btn btn-secondary">
- <i class="fas fa-user"></i> Ask Mentor
- </button>
- {{/unless}}
  </div>
 
  {{!-- Homebrew Toggle for Planets --}}
@@ -1020,7 +1020,7 @@
  {{#unless (and ../characterData.isDroid (eq @key "con"))}}
  <div class="ability-card">
  <label>{{@key}}</label>
- <input name="ability_{{@key}}" class="ability-input free-input" type="number" value="10" min="3" max="25" />
+ <input name="ability_{{@key}}" class="ability-input free-input" type="number" value="{{this.base}}" min="3" max="25" />
  <div class="ability-breakdown">
 {{#if this.racial}}
 <span class="racial-bonus">Racial: {{#if (gte this.racial 0)}}+{{/if}}{{this.racial}}</span>
@@ -1101,9 +1101,13 @@
  <section class="step-feats">
  <h3>Select Starting Feat{{#if (gt characterData.featsRequired 1)}}s{{/if}}</h3>
 
-
-
  <p class="help-text">All characters gain 1 general feat at 1st level.{{#if (gt characterData.featsRequired 1)}} Humans gain 1 bonus feat.{{/if}}</p>
+
+ {{#if narratorComment}}
+ <div class="narrator-section">
+ <p class="narrator-comment">{{narratorComment}}</p>
+ </div>
+ {{/if}}
 
  <div class="selected-feats-summary">
  <h4>Selected Feats ({{characterData.feats.length}}/{{characterData.featsRequired}})</h4>
@@ -1248,7 +1252,19 @@
  <h3>Select Talents</h3>
  <p class="help-text">Choose talent(s) to specialize your character abilities.</p>
 
+ {{#if narratorComment}}
+ <div class="narrator-section">
+ <p class="narrator-comment">{{narratorComment}}</p>
+ </div>
+ {{/if}}
 
+ {{#unless selectedTalentTree}}
+ {{!-- Step 1: Directions --}}
+ <p class="help-text">Choose a talent tree from your class. Then select a talent from that tree.</p>
+ {{else}}
+ {{!-- Step 2: Directions --}}
+ <p class="help-text">Click an available (cyan) talent to select it. Prerequisites flow from top to bottom.</p>
+ {{/unless}}
 
  {{!-- Selected Talents Summary --}}
  <div class="selected-talents-summary">
@@ -1265,10 +1281,6 @@
  </div>
  </div>
 
- {{#unless selectedTalentTree}}
- {{!-- Step 1: Select Talent Tree --}}
- <h3>Select a Talent Tree</h3>
- <p class="help-text">Choose a talent tree from your class. Then select a talent from that tree.</p>
 
  {{#if (gt availableTalentTrees.length 0)}}
  <div class="talent-trees-grid">
@@ -1303,7 +1315,6 @@
  </button>
  </div>
  </div>
- <p class="help-text">Click an available (cyan) talent to select it. Prerequisites flow from top to bottom.</p>
 
  {{!-- Graph View --}}
  <div class="talent-tree-graph-container" data-tree="{{selectedTalentTree}}">
@@ -1498,7 +1509,7 @@
  </span>
  {{/if}}
  <span class="skill-name">{{this.name}}</span>
- <span class="skill-ability-abbrev">({{uppercase this.ability}})</span>
+ <span class="skill-ability-abbrev">({{uppercase (ternary (and ../characterData.isDroid (eq this.ability 'con')) 'str' this.ability)}})</span>
  </div>
  <div class="skill-train-col">
  <input type="checkbox"
@@ -1559,6 +1570,14 @@
  <span>You have no additional languages to select (available: {{characterData.languageData.additional}})</span>
  </div>
  {{/if}}
+ </div>
+
+ {{!-- Add Custom Language Button --}}
+ <div class="custom-language-section">
+ <button type="button" class="add-custom-language-btn btn-custom">
+ <i class="fas fa-plus-circle"></i> Add Custom Language
+ </button>
+ <p class="custom-language-hint">Create your own language for homebrew campaigns or unique backgrounds</p>
  </div>
 
  {{!-- Automatic/Granted Languages Section --}}
@@ -1650,14 +1669,6 @@
  </div>
  </div>
  {{/if}}
-
- {{!-- Add Custom Language Button --}}
- <div class="custom-language-section">
- <button type="button" class="add-custom-language-btn btn-custom">
- <i class="fas fa-plus-circle"></i> Add Custom Language
- </button>
- <p class="custom-language-hint">Create your own language for homebrew campaigns or unique backgrounds</p>
- </div>
  </div>
  {{/if}}
  {{/if}}

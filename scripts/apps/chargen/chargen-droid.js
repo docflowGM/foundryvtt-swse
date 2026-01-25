@@ -291,15 +291,19 @@ export function _populateProcessorSystems(doc) {
 
   for (const proc of DROID_SYSTEMS.processors) {
     // Handle both formula-based and flat cost/weight
-    const cost = typeof proc.costFormula === 'function'
+    let cost = typeof proc.costFormula === 'function'
       ? proc.costFormula(costFactor)
       : (proc.cost || 0);
     const weight = typeof proc.weightFormula === 'function'
       ? proc.weightFormula(costFactor)
       : (proc.weight || 0);
     const isPurchased = this.characterData.droidSystems.processor?.id === proc.id;
-    const isFree = proc.isFree === true;  // Use explicit flag instead of hardcoded check
     const isHeuristic = proc.id === 'heuristic';
+    // Heuristic Processor is FREE in chargen only
+    const isFree = (isHeuristic || proc.isFree === true);
+    if (isHeuristic) {
+      cost = 0;  // Override cost to 0 for Heuristic Processor in chargen
+    }
 
     let processorHtml = `
       <div class="system-item ${isPurchased ? 'purchased' : ''} ${isFree ? 'free-item' : ''} ${isHeuristic ? 'required-for-pc' : ''}">

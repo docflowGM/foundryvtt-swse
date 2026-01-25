@@ -1304,7 +1304,8 @@ export class SWSERoll {
       const msg = await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
-        roll
+        rolls: [roll],
+        flags: { swse: { roll: roll.toJSON() } }
       });
 
       result.message = msg;
