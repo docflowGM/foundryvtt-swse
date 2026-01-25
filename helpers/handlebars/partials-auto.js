@@ -17,6 +17,7 @@ export function registerSWSEPartials() {
     "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs",
     "systems/foundryvtt-swse/templates/actors/droid/droid-diagnostic.hbs",
     "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-image.hbs",
+    "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-callouts.hbs",
     "systems/foundryvtt-swse/templates/partials/crew-action-cards.hbs"
   ];
 
