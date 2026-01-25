@@ -1609,7 +1609,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       context.availableTalentSelections = Math.max(0, totalTalents - talents.length);
 
       // Load talent tree compendium data for display
-      const treePack = game.packs.get('foundryvtt-swse.talenttrees');
+      const treePack = game.packs.get('foundryvtt-swse.talent_trees');
       const talentPack = game.packs.get('foundryvtt-swse.talents');
 
       context.talentTrees = [];
