@@ -840,7 +840,7 @@ export async function _onSpeciesFilterChange(event) {
   // Update filter UI indicators
   _updateFilterIndicators.call(this);
 
-  // Re-render to apply filters
+  // Re-render to apply filters (TODO: Replace with targeted DOM update to preserve window position)
   this.render();
 }
 
