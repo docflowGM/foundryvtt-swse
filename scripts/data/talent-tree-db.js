@@ -157,6 +157,31 @@ export const TalentTreeDB = {
     },
 
     /**
+     * Get talent trees by access tag (flag-based eligibility).
+     *
+     * @param {string} tag - Tag: "force", "droid", etc.
+     * @returns {Array<Object>} - Trees with this tag
+     */
+    byTag(tag) {
+        if (!tag) return [];
+        return this.all().filter(tree => (tree.tags || []).includes(tag));
+    },
+
+    /**
+     * Get talent trees by multiple tags (OR logic).
+     *
+     * @param {Array<string>} tags - Tags to search for
+     * @returns {Array<Object>} - Trees matching any of these tags
+     */
+    byTags(tags) {
+        if (!tags || tags.length === 0) return [];
+        const tagSet = new Set(tags);
+        return this.all().filter(tree =>
+            (tree.tags || []).some(tag => tagSet.has(tag))
+        );
+    },
+
+    /**
      * Get talent trees for a class (by class ID).
      * Requires ClassesDB to be built.
      *
