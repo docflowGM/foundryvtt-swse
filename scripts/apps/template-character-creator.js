@@ -222,8 +222,8 @@ export class TemplateCharacterCreator extends Application {
       default: 'confirm',
       close: onCancel || (() => {})
     }, {
-      width: 600,
-      height: 500,
+      width: 700,
+      height: 650,
       classes: ['swse', 'mentor-dialogue']
     });
     dialog.render(true);

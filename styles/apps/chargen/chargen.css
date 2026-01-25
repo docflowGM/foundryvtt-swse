@@ -3289,3 +3289,73 @@
 .hint-text {
     display: none;
 }
+
+/* Chevron Progress Styling */
+.chargen-progress-chevron {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    justify-content: center;
+}
+
+.chevron-step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    border: 2px solid #0af;
+    background: rgba(0, 30, 60, 0.8);
+    color: #0af;
+    border-radius: 4px;
+    padding: 0 8px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: default;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.chevron-step.active {
+    background: linear-gradient(135deg, rgba(0, 175, 255, 0.3), rgba(0, 100, 200, 0.3));
+    box-shadow: 0 0 15px rgba(0, 175, 255, 0.5), inset 0 0 10px rgba(0, 175, 255, 0.2);
+    border-color: #00ff88;
+    color: #00ff88;
+}
+
+.chevron-step.completed {
+    background: rgba(0, 255, 136, 0.2);
+    border-color: #00ff88;
+    color: #00ff88;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+}
+
+.chevron-step.completed::after {
+    content: "✓";
+    position: absolute;
+    right: 3px;
+    top: -2px;
+    font-size: 0.7rem;
+    color: #00ff88;
+}
+
+.chevron-step.skipped {
+    opacity: 0.5;
+    border-color: #666;
+    color: #666;
+    background: rgba(100, 100, 100, 0.2);
+}
+
+.chevron-step.clickable {
+    cursor: pointer;
+}
+
+.chevron-step.clickable:hover {
+    box-shadow: 0 0 15px rgba(0, 175, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+.chevron-label {
+    white-space: nowrap;
+}

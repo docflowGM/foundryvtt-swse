@@ -6,7 +6,7 @@ export class SWSEItemSheet extends foundry.appv1.sheets.ItemSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "item", "swse-app"],
       width: 520,
-      height: 480,
+      height: 350,
       tabs: [{navSelector: ".tabs", contentSelector: ".sheet-body", initial: "description"}]
     });
   }
