@@ -105,6 +105,7 @@
   "packs": [
     { "name": "species", "label": "Species", "type": "Item", "system": "foundryvtt-swse", "path": "packs/species.db" },
     { "name": "classes", "label": "Classes", "type": "Item", "system": "foundryvtt-swse", "path": "packs/classes.db" },
+    { "name": "talent_trees", "label": "Talent Trees", "type": "Item", "system": "foundryvtt-swse", "path": "packs/talent_trees.db" },
     { "name": "talents", "label": "Talents", "type": "Item", "system": "foundryvtt-swse", "path": "packs/talents.db" },
     { "name": "feats", "label": "Feats", "type": "Item", "system": "foundryvtt-swse", "path": "packs/feats.db" },
     { "name": "forcepowers", "label": "Force Powers", "type": "Item", "system": "foundryvtt-swse", "path": "packs/forcepowers.db" },
