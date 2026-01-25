@@ -306,8 +306,6 @@ async function handleItemDelete(item, options, userId) {
 
     SWSELogger.log('SWSE | Skill Focus feat deleted, removing focus from skill');
 
-    const actor = item.parent;
-
     // Try to find which skill was focused from the description
     const descMatch = item.system?.description?.match(/<strong>Focused Skill:<\/strong>\s*(.+?)(?:<|$)/);
     if (descMatch) {
