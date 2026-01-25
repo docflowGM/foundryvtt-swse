@@ -693,64 +693,6 @@ export async function _onRemoveTalent(event) {
 /**
  * Get available talent trees for the selected class
  */
-export function _getAvailableTalentTrees() {
-  // Check for unrestricted mode (free build)
-  const talentTreeRestriction = game.settings.get('foundryvtt-swse', "talentTreeRestriction");
-
-  let trees = [];
-
-  if (talentTreeRestriction === "unrestricted") {
-    // Free build mode: return all talent trees from all talents
-    const allTrees = new Set();
-    if (this._packs.talents) {
-      this._packs.talents.forEach(talent => {
-        // Use property accessor to handle both 'tree' and 'talent_tree' property names
-        const tree = getTalentTreeName(talent);
-        if (tree) {
-          allTrees.add(tree);
-        }
-      });
-    }
-    trees = Array.from(allTrees).sort();
-    SWSELogger.log(`CharGen | Available talent trees (unrestricted mode): ${trees.length} trees`);
-  } else {
-    // Class-restricted mode
-    if (!this.characterData.classes || this.characterData.classes.length === 0) {
-      SWSELogger.warn("CharGen | No classes selected - cannot get talent trees");
-      return [];
-    }
-
-    const selectedClassName = this.characterData.classes[0].name;
-    const selectedClass = this._packs.classes?.find(c => c.name === selectedClassName);
-
-    if (!selectedClass) {
-      SWSELogger.error(`CharGen | Class "${selectedClassName}" not found in packs. Available classes:`,
-        this._packs.classes?.map(c => c.name) || []);
-      return [];
-    }
-
-    trees = getTalentTrees(selectedClass);
-
-    if (!trees || trees.length === 0) {
-      SWSELogger.warn(`CharGen | No talent trees found for class "${selectedClassName}". Class data:`, selectedClass.system?.talentTrees || selectedClass.system?.talent_trees);
-    }
-
-    SWSELogger.log(`CharGen | Available talent trees for ${selectedClass.name}:`, trees);
-  }
-
-  // -----------------------------------------------------------
-  // FILTER TREES BASED ON CHARACTER REQUIREMENTS
-  // -----------------------------------------------------------
-
-  // Dark Side talent tree requires DSP > 0
-  // In chargen, characters start with 0 DSP, so filter it out
-  const darkSideScore = this.characterData?.darkSideScore || 0;
-  if (darkSideScore === 0) {
-    trees = trees.filter(tree => tree !== "Dark Side");
-  }
-
-  return trees;
-}
 
 /**
  * Get number of feats needed for this level

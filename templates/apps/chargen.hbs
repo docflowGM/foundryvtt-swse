@@ -1258,6 +1258,14 @@
  </div>
  {{/if}}
 
+ {{#unless selectedTalentTree}}
+ {{!-- Step 1: Directions --}}
+ <p class="help-text">Choose a talent tree from your class. Then select a talent from that tree.</p>
+ {{else}}
+ {{!-- Step 2: Directions --}}
+ <p class="help-text">Click an available (cyan) talent to select it. Prerequisites flow from top to bottom.</p>
+ {{/unless}}
+
  {{!-- Selected Talents Summary --}}
  <div class="selected-talents-summary">
  <h4>Selected Talents ({{characterData.talents.length}}/{{characterData.talentsRequired}})</h4>
@@ -1273,9 +1281,6 @@
  </div>
  </div>
 
- {{#unless selectedTalentTree}}
- {{!-- Step 1: Select Talent Tree --}}
- <p class="help-text">Choose a talent tree from your class. Then select a talent from that tree.</p>
 
  {{#if (gt availableTalentTrees.length 0)}}
  <div class="talent-trees-grid">
@@ -1310,7 +1315,6 @@
  </button>
  </div>
  </div>
- <p class="help-text">Click an available (cyan) talent to select it. Prerequisites flow from top to bottom.</p>
 
  {{!-- Graph View --}}
  <div class="talent-tree-graph-container" data-tree="{{selectedTalentTree}}">
