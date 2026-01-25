@@ -279,7 +279,7 @@ Hooks.once("init", async function () {
         swseLogger.log("SWSE | Handlebars Templates Preloaded Early");
 
         // Register named partials for Handlebars
-        registerSWSEPartials();
+        await registerSWSEPartials();
         swseLogger.log("SWSE | Named Partials Registered");
     } catch (err) {
         swseLogger.error("SWSE | Template Preloading Failed:", err);
