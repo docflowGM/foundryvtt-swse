@@ -142,7 +142,8 @@ export function normalizeClass(rawClass) {
         prestigeClass: prestigeClass,
 
         // Core Mechanics
-        hitDie: parseHitDie(sys.hit_die),
+        // FIX: Check both snake_case and camelCase for hit die to avoid undefined warning
+        hitDie: parseHitDie(sys.hit_die ?? sys.hitDie),
         babProgression: sys.babProgression || "medium",
 
         // Skills
