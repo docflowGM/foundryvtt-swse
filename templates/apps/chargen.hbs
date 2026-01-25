@@ -856,6 +856,21 @@
 
  <p class="hint">Your background represents a defining aspect of your past. Choose ONE from Events, Occupations, or Planets.</p>
 
+ {{!-- Filter and Random Background Buttons --}}
+ <div class="background-controls">
+ <button type="button" class="background-filter-btn btn-secondary">
+ <i class="fas fa-search"></i> Filter by Skill
+ </button>
+ {{#unless characterData.background}}
+ <button type="button" class="random-background-btn btn-secondary">
+ <i class="fas fa-dice"></i> Random Background
+ </button>
+ <button type="button" class="ask-mentor-background-btn btn-secondary">
+ <i class="fas fa-user"></i> Ask Mentor
+ </button>
+ {{/unless}}
+ </div>
+
  {{!-- Category Tabs --}}
  <div class="background-category-tabs">
  <button type="button" class="background-category-tab {{#if (eq characterData.backgroundCategory 'events')}}active{{else}}{{#unless characterData.backgroundCategory}}active{{/unless}}{{/if}}" data-category="events">
@@ -870,21 +885,6 @@
  <i class="fas fa-globe"></i>
  <span>Planet of Origin</span>
  </button>
- </div>
-
- {{!-- Filter and Random Background Buttons --}}
- <div class="background-controls">
- <button type="button" class="background-filter-btn btn-secondary">
- <i class="fas fa-search"></i> Filter by Skill
- </button>
- {{#unless characterData.background}}
- <button type="button" class="random-background-btn btn-secondary">
- <i class="fas fa-dice"></i> Random Background
- </button>
- <button type="button" class="ask-mentor-background-btn btn-secondary">
- <i class="fas fa-user"></i> Ask Mentor
- </button>
- {{/unless}}
  </div>
 
  {{!-- Homebrew Toggle for Planets --}}
