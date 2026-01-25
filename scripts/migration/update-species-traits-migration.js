@@ -104,7 +104,7 @@ export class UpdateSpeciesTraitsMigration {
             SWSELogger.warn(`SWSE | Species not found in compendium: ${speciesData.name}`);
             totalNotFound++;
             notFoundSpecies.push(speciesData.name);
-            return;
+            continue;
           }
 
           // Update the species document using the pack's document class
@@ -119,7 +119,7 @@ export class UpdateSpeciesTraitsMigration {
                 _id: speciesIndex._id,
                 'system.racialTraits': speciesData.racialTraits
               }],
-              { pack: speciesPack.collection }
+              { pack: speciesPack.collection.name }
             );
           } catch (updateError) {
             // If the update fails, log the error but don't crash the migration
@@ -127,7 +127,7 @@ export class UpdateSpeciesTraitsMigration {
             // Foundry v13 validation struggles with
             SWSELogger.warn(`SWSE | Could not update ${speciesData.name}: ${updateError.message}`);
             totalErrors++;
-            return;
+            continue;
           }
 
           totalUpdated++;
