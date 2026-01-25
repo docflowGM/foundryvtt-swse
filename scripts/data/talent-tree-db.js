@@ -30,6 +30,10 @@ export const TalentTreeDB = {
 
     // In-memory map for O(1) lookups: treeId -> normalized tree
     trees: new Map(),
+
+    // SSOT inverse index: talentId -> treeId (built from tree.system.talentIds)
+    talentToTree: new Map(),
+
     isBuilt: false,
 
     /**
@@ -67,6 +71,9 @@ export const TalentTreeDB = {
                     warnings++;
                 }
             }
+
+            // Build the talentToTree inverse index (SSOT for tree ownership)
+            this.buildTalentIndex();
 
             this.isBuilt = true;
             SWSELogger.log(`[TalentTreeDB] Built: ${count} trees loaded${warnings > 0 ? ` (${warnings} warnings)` : ''}`);
@@ -175,6 +182,71 @@ export const TalentTreeDB = {
      */
     count() {
         return this.trees.size;
+    },
+
+    /**
+     * Build the talentToTree inverse index (SSOT for tree ownership).
+     * Called after all trees are loaded.
+     *
+     * This enables O(1) lookup: given a talentId, find which tree owns it.
+     */
+    buildTalentIndex() {
+        this.talentToTree.clear();
+
+        for (const tree of this.trees.values()) {
+            const talentIds = tree.talentIds || [];
+
+            for (const talentId of talentIds) {
+                this.talentToTree.set(talentId, tree.id);
+            }
+        }
+
+        SWSELogger.log(`[TalentTreeDB] Built talent index: ${this.talentToTree.size} talents indexed`);
+    },
+
+    /**
+     * Get the tree ID that owns a talent (SSOT query).
+     *
+     * @param {string} talentId - Talent ID
+     * @returns {string|null} - Tree ID or null if talent is unowned
+     */
+    getTreeForTalent(talentId) {
+        if (!talentId) return null;
+        return this.talentToTree.get(talentId) ?? null;
+    },
+
+    /**
+     * Get all talents for a tree (inverse query).
+     *
+     * @param {string} treeId - Tree ID
+     * @returns {Array<string>} - Talent IDs in this tree
+     */
+    getTalentsForTree(treeId) {
+        if (!treeId) return [];
+
+        const tree = this.get(treeId);
+        return tree?.talentIds ?? [];
+    },
+
+    /**
+     * Get all talents for multiple trees.
+     *
+     * @param {Array<string>} treeIds - Tree IDs
+     * @returns {Array<string>} - Talent IDs from all trees (deduplicated)
+     */
+    getTalentsForTrees(treeIds) {
+        if (!treeIds || treeIds.length === 0) return [];
+
+        const talents = new Set();
+
+        for (const treeId of treeIds) {
+            const treetalents = this.getTalentsForTree(treeId);
+            for (const tid of treetalents) {
+                talents.add(tid);
+            }
+        }
+
+        return Array.from(talents);
     },
 
     /**

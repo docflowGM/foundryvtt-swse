@@ -148,6 +148,7 @@ import './scripts/migration/fix-item-weight.js';
 import './scripts/migration/populate-force-compendiums.js';
 import './scripts/migration/update-species-traits-migration.js';
 import './scripts/migration/fix-talent-effect-validation.js';
+import './scripts/migration/talent-ssot-refactor.js';
 
 import { DamageSystem } from './scripts/combat/damage-system.js';
 import { SWSECombatAutomation } from './scripts/combat/combat-automation.js';

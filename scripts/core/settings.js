@@ -154,6 +154,16 @@ export function registerSystemSettings() {
     default: ""
   });
 
+  // Talent SSOT Refactor migration tracking
+  game.settings.register('foundryvtt-swse', "talentSSOTRefactor", {
+    name: "Talent SSOT Refactor Migration Version",
+    hint: "Tracks the version of the talent SSOT refactor migration that has been run",
+    scope: "world",
+    config: false,
+    type: String,
+    default: ""
+  });
+
   // World data loader tracking
   game.settings.register('foundryvtt-swse', "dataLoaded", {
     name: "World Data Loaded",

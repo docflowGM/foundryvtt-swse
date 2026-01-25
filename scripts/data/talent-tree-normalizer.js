@@ -110,6 +110,9 @@ export function normalizeTalentTree(rawTree) {
         name: name,
         sourceId: rawTree._id,
 
+        // SSOT: Talent ownership (authoritative list from tree)
+        talentIds: sys.talentIds || [],
+
         // Classification
         role: inferTreeRole(name),
         category: inferTreeCategory(name),
