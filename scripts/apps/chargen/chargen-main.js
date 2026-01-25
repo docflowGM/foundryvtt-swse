@@ -2292,10 +2292,10 @@ export default class CharacterGenerator extends Application {
         }
         break;
       case "summary":
-        // Check if starting credits have been chosen (if formula exists)
+        // Auto-select maximum credits if formula exists but not chosen
         if (this.characterData.startingCreditsFormula && !this.characterData.creditsChosen) {
-          ui.notifications.warn("You must choose your starting credits before creating your character.");
-          return false;
+          this.characterData.credits = this.characterData.startingCreditsFormula.maxPossible;
+          this.characterData.creditsChosen = true;
         }
         break;
     }
@@ -2338,9 +2338,10 @@ export default class CharacterGenerator extends Application {
       errors.push("Character must have at least one class");
     }
 
-    // Starting credits - if formula exists, must be chosen
+    // Starting credits - auto-select if formula exists but not chosen
     if (this.characterData.startingCreditsFormula && !this.characterData.creditsChosen) {
-      errors.push("You must choose your starting credits (roll or take maximum)");
+      this.characterData.credits = this.characterData.startingCreditsFormula.maxPossible;
+      this.characterData.creditsChosen = true;
     }
 
     // Show errors
