@@ -74,7 +74,7 @@
  </div>
  {{/if}}
 
- <div class="chevron-step {{#if (eq currentStep 'abilities')}}active{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'abilities')}}skipped{{/if}}" data-step="abilities">
+ <div class="chevron-step {{#if (eq currentStep 'abilities')}}active{{/if}} {{#if characterData.abilities}}completed{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'abilities')}}skipped{{/if}}" data-step="abilities">
  <span class="chevron-label">Abilities</span>
  </div>
 
@@ -1020,7 +1020,7 @@
  {{#unless (and ../characterData.isDroid (eq @key "con"))}}
  <div class="ability-card">
  <label>{{@key}}</label>
- <input name="ability_{{@key}}" class="ability-input free-input" type="number" value="10" min="3" max="25" />
+ <input name="ability_{{@key}}" class="ability-input free-input" type="number" value="{{this.base}}" min="3" max="25" />
  <div class="ability-breakdown">
 {{#if this.racial}}
 <span class="racial-bonus">Racial: {{#if (gte this.racial 0)}}+{{/if}}{{this.racial}}</span>
