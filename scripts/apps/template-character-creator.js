@@ -126,18 +126,30 @@ export class TemplateCharacterCreator extends Application {
     // Close this window BEFORE showing mentor dialogue to prevent both appearing at once
     this.close();
 
-    // Show mentor dialogue before creating character
-    await this.showMentorDialogue(template, async () => {
-      // Create character from template
+    // Show mentor dialogue and wait for user confirmation
+    const confirmed = await this.showMentorDialogue(template,
+      async () => {
+        // This callback will be called if user clicks Create Character
+        // (handled by Promise resolution)
+      },
+      () => {
+        // This callback will be called if user clicks Go Back
+        // (handled by Promise resolution)
+      }
+    );
+
+    if (confirmed) {
+      // User confirmed - create character from template
       await this.createFromTemplate(templateId);
-    }, () => {
-      // If cancelled, reopen the template creator
+    } else {
+      // User cancelled - reopen the template creator
       this.render(true);
-    });
+    }
   }
 
   /**
    * Show mentor dialogue with comprehensive template summary
+   * Returns a Promise that resolves when user confirms or rejects
    */
   async showMentorDialogue(template, onConfirm, onCancel) {
     const mentorKey = template.mentor;
@@ -186,47 +198,60 @@ export class TemplateCharacterCreator extends Application {
       </div>
     `;
 
-    // Show dialog
-    const dialog = new Dialog({
-      title: `${template.name} - ${mentor.name}`,
-      content: content,
-      buttons: {
-        confirm: {
-          icon: '<i class="fas fa-check"></i>',
-          label: 'Create Character',
-          callback: (html) => {
-            // Get character name from input field
-            const nameInput = html.find('#template-char-name');
-            const charName = nameInput.val()?.trim();
+    // Wrap dialog in a Promise for proper async/await handling
+    return new Promise((resolve) => {
+      const dialog = new Dialog({
+        title: `${template.name} - ${mentor.name}`,
+        content: content,
+        buttons: {
+          confirm: {
+            icon: '<i class="fas fa-check"></i>',
+            label: 'Create Character',
+            callback: (html) => {
+              // Get character name from input field
+              const nameInput = html.find('#template-char-name');
+              const charName = nameInput.val()?.trim();
 
-            if (!charName) {
-              ui.notifications.warn('Please enter a character name');
-              return false;
+              if (!charName) {
+                ui.notifications.warn('Please enter a character name');
+                // Don't resolve, keep dialog open
+                return false;
+              }
+
+              // Store the name and call the original confirm callback
+              template.characterName = charName;
+              if (onConfirm) {
+                onConfirm();
+              }
+              resolve(true);
             }
-
-            // Store the name and call the original confirm callback
-            template.characterName = charName;
-            dialog.close();
-            onConfirm();
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: 'Go Back',
+            callback: () => {
+              if (onCancel) {
+                onCancel();
+              }
+              resolve(false);
+            }
           }
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: 'Go Back',
-          callback: () => {
-            dialog.close();
-            (onCancel || (() => {}))();
+        default: 'confirm',
+        close: () => {
+          // If dialog closed without button click, treat as cancel
+          if (onCancel) {
+            onCancel();
           }
+          resolve(false);
         }
-      },
-      default: 'confirm',
-      close: onCancel || (() => {})
-    }, {
-      width: 700,
-      height: 650,
-      classes: ['swse', 'mentor-dialogue']
+      }, {
+        width: 700,
+        height: 650,
+        classes: ['swse', 'mentor-dialogue']
+      });
+      dialog.render(true);
     });
-    dialog.render(true);
   }
 
   /**
@@ -982,44 +1007,55 @@ export class TemplateCharacterCreator extends Application {
       </div>
     `;
 
-    const dialog = new Dialog({
-      title: `Create ${template.name}`,
-      content: content,
-      buttons: {
-        confirm: {
-          icon: '<i class="fas fa-check"></i>',
-          label: 'Create Character',
-          callback: (html) => {
-            const nameInput = html.find('#template-char-name');
-            const charName = nameInput.val()?.trim();
+    return new Promise((resolve) => {
+      const dialog = new Dialog({
+        title: `Create ${template.name}`,
+        content: content,
+        buttons: {
+          confirm: {
+            icon: '<i class="fas fa-check"></i>',
+            label: 'Create Character',
+            callback: (html) => {
+              const nameInput = html.find('#template-char-name');
+              const charName = nameInput.val()?.trim();
 
-            if (!charName) {
-              ui.notifications.warn('Please enter a character name');
-              return false;
+              if (!charName) {
+                ui.notifications.warn('Please enter a character name');
+                return false;
+              }
+
+              template.characterName = charName;
+              if (onConfirm) {
+                onConfirm();
+              }
+              resolve(true);
             }
-
-            template.characterName = charName;
-            dialog.close();
-            onConfirm();
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: 'Go Back',
+            callback: () => {
+              if (onCancel) {
+                onCancel();
+              }
+              resolve(false);
+            }
           }
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: 'Go Back',
-          callback: () => {
-            dialog.close();
-            (onCancel || (() => {}))();
+        default: 'confirm',
+        close: () => {
+          if (onCancel) {
+            onCancel();
           }
+          resolve(false);
         }
-      },
-      default: 'confirm',
-      close: onCancel || (() => {})
-    }, {
-      width: 700,
-      height: 600,
-      classes: ['swse', 'template-summary-dialog']
+      }, {
+        width: 700,
+        height: 600,
+        classes: ['swse', 'template-summary-dialog']
+      });
+      dialog.render(true);
     });
-    dialog.render(true);
   }
 }
 
