@@ -110,6 +110,7 @@
     { "name": "forcepowers", "label": "Force Powers", "type": "Item", "system": "foundryvtt-swse", "path": "packs/forcepowers.db" },
     { "name": "forcesecrets", "label": "Force Secrets", "type": "Item", "system": "foundryvtt-swse", "path": "packs/forcesecrets.db" },
     { "name": "forcetechniques", "label": "Force Techniques", "type": "Item", "system": "foundryvtt-swse", "path": "packs/forcetechniques.db" },
+    { "name": "lightsaberformpowers", "label": "Lightsaber Form Powers", "type": "Item", "system": "foundryvtt-swse", "path": "packs/lightsaberformpowers.db" },
     { "name": "skills", "label": "Skills", "type": "Item", "system": "foundryvtt-swse", "path": "packs/skills.db" },
     { "name": "backgrounds", "label": "Backgrounds", "type": "Item", "system": "foundryvtt-swse", "path": "packs/backgrounds.db" },
     { "name": "languages", "label": "Languages", "type": "Item", "system": "foundryvtt-swse", "path": "packs/languages.db" },
