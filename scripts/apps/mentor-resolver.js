@@ -43,6 +43,12 @@ export const MentorResolver = {
   resolveFor(actor, context = {}) {
     const phase = context.phase || 'dialogue';
 
+    // Handle null actor - return phase default
+    if (!actor) {
+      SWSELogger.log(`[MENTOR-RESOLVER] resolveFor: No actor provided, using phase default (${phase})`);
+      return MENTORS[PHASE_DEFAULTS[phase]] || MENTORS.Scoundrel;
+    }
+
     SWSELogger.log(`[MENTOR-RESOLVER] resolveFor: Resolving mentor for "${actor.name}" (phase: ${phase})`);
 
     // Priority 1: Manual override (always respected)

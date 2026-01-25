@@ -80,7 +80,20 @@ export async function preloadHandlebarsTemplates() {
     "systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs",
     "systems/foundryvtt-swse/templates/partials/skill-row-static.hbs",
     "systems/foundryvtt-swse/templates/partials/feat-actions-panel.hbs",
-    "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs"
+    "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs",
+
+    // Droid-specific partials
+    "systems/foundryvtt-swse/templates/actors/droid/droid-diagnostic.hbs",
+
+    // Vehicle-specific partials
+    "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-image.hbs",
+    "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-callouts.hbs",
+    "systems/foundryvtt-swse/templates/partials/crew-action-cards.hbs",
+
+    // Additional partials used by actor sheets
+    "systems/foundryvtt-swse/templates/partials/skill-actions-panel.hbs",
+    "systems/foundryvtt-swse/templates/partials/skill-action-card.hbs",
+    "systems/foundryvtt-swse/templates/partials/assets-panel.hbs"
   ];
 
   // ============================================
