@@ -161,8 +161,7 @@ export class TemplateCharacterCreator extends Application {
     if (!mentor || !dialogue) {
       // No mentor dialogue, just show summary
       SWSELogger.warn(`SWSE | No mentor dialogue found for ${mentorKey}/${templateKey}`);
-      await this._showTemplateSummaryDialog(template, onConfirm, onCancel);
-      return;
+      return this._showTemplateSummaryDialog(template, onConfirm, onCancel);
     }
 
     // Build comprehensive summary content with mentor dialogue
@@ -247,8 +246,9 @@ export class TemplateCharacterCreator extends Application {
         }
       }, {
         width: 700,
-        height: 650,
-        classes: ['swse', 'mentor-dialogue']
+        height: 'auto',
+        classes: ['swse', 'mentor-dialogue'],
+        resizable: true
       });
       dialog.render(true);
     });
@@ -1051,8 +1051,9 @@ export class TemplateCharacterCreator extends Application {
         }
       }, {
         width: 700,
-        height: 600,
-        classes: ['swse', 'template-summary-dialog']
+        height: 'auto',
+        classes: ['swse', 'template-summary-dialog'],
+        resizable: true
       });
       dialog.render(true);
     });
