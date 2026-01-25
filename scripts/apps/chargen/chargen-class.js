@@ -376,7 +376,8 @@ export async function _onSelectClass(event) {
   }
 
   // Re-render to show the selected class and enable the Next button
-  await this.render();
+  // Force full re-render to recompute mentor dialogue based on new class
+  await this.render(true);
 
   SWSELogger.log(`CharGen | Class selection complete, Next button should now be visible`);
   } catch (err) {
