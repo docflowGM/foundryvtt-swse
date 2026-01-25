@@ -34,6 +34,18 @@ import { SWSEGrappling } from "../../combat/systems/grappling-system.js";
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
+  /**
+   * Prevent non-character actors from using this sheet
+   * Vehicle, Droid, and NPC sheets should be used instead
+   */
+  static canUserUseSheet(user, sheet, actor) {
+    // Only characters should use this sheet (not vehicle, droid, npc)
+    if (actor?.type && actor.type !== "character") {
+      return false;
+    }
+    return super.canUserUseSheet(user, sheet, actor);
+  }
+
   // Debounced handler for defense input changes
   _debouncedDefenseChange = debounce(function() {
     this.actor.prepareData();

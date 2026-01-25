@@ -7,6 +7,17 @@ import { VehicleCrewPositions } from "./vehicle-crew-positions.js";
 
 export class SWSEVehicleSheet extends SWSECharacterSheet {
 
+  /**
+   * Prevent non-vehicle actors from using this sheet
+   */
+  static canUserUseSheet(user, sheet, actor) {
+    // Only vehicles should use this sheet
+    if (actor?.type && actor.type !== "vehicle") {
+      return false;
+    }
+    return super.canUserUseSheet(user, sheet, actor);
+  }
+
   // =========================================================================
   // DEFAULT OPTIONS (FVTT v13+ Safe)
   // =========================================================================

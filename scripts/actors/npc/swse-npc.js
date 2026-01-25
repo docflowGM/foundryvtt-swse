@@ -7,6 +7,17 @@ import { SWSELogger } from '../../utils/logger.js';
 // ============================================
 
 export class SWSENPCSheet extends SWSECharacterSheet {
+  /**
+   * Prevent non-npc actors from using this sheet
+   */
+  static canUserUseSheet(user, sheet, actor) {
+    // Only NPCs should use this sheet
+    if (actor?.type && actor.type !== "npc") {
+      return false;
+    }
+    return super.canUserUseSheet(user, sheet, actor);
+  }
+
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor", "npc", "swse-app"],
