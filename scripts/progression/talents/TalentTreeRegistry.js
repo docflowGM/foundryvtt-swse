@@ -19,6 +19,8 @@ async function loadJSON(url) {
 import { TalentTreeGraph } from "./TalentTreeGraph.js";
 import { PrerequisiteEnricher } from "../utils/PrerequisiteEnricher.js";
 import { SWSELogger } from "../../utils/logger.js";
+import { TalentTreeDB } from "../../data/talent-tree-db.js";
+import { normalizeTalentTreeId } from "../../data/talent-tree-normalizer.js";
 
 export class TalentTreeRegistry {
   static trees = new Map(); // treeName → TalentTreeGraph
@@ -41,12 +43,38 @@ export class TalentTreeRegistry {
     SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Retrieved ${docs.length} talent documents from compendium`);
     this.trees = new Map();
 
-    // Group by tree name
+    // Group by tree name - check multiple fields with normalization
     const grouped = {};
+    const unassignedTalents = [];
     for (const d of docs) {
-      const tree = d.system?.talent_tree ?? "Unknown";
+      const sys = d.system || {};
+      // Try multiple tree fields in order of priority
+      let rawTree = sys.talent_tree || sys.tree || sys.treeId || null;
+
+      // Normalize the tree name
+      let tree = rawTree ? String(rawTree).trim().replace(/\s+/g, ' ') : null;
+
+      // Validate against TalentTreeDB if available
+      if (tree && TalentTreeDB.isBuilt) {
+        const normalizedId = normalizeTalentTreeId(tree);
+        if (!TalentTreeDB.has(normalizedId) && !TalentTreeDB.byName(tree)) {
+          SWSELogger.warn(`[TALENT-TREE-REGISTRY] Talent "${d.name}" references unregistered tree: "${tree}"`);
+          // Still use the tree name, but log it
+        }
+      }
+
+      if (!tree) {
+        unassignedTalents.push(d.name);
+        tree = "Unassigned";
+      }
+
       if (!grouped[tree]) grouped[tree] = [];
       grouped[tree].push(d);
+    }
+
+    // Log unassigned talents once (not per-talent)
+    if (unassignedTalents.length > 0) {
+      SWSELogger.warn(`[TALENT-TREE-REGISTRY] ${unassignedTalents.length} talents have no tree assigned. First 5: ${unassignedTalents.slice(0, 5).join(', ')}`);
     }
     SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Grouped talents into ${Object.keys(grouped).length} unique trees:`, Object.keys(grouped));
 

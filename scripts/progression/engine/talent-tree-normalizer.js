@@ -10,6 +10,8 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { TalentTreeDB } from '../../data/talent-tree-db.js';
+import { normalizeTalentTreeId } from '../../data/talent-tree-normalizer.js';
 
 export const TalentTreeNormalizer = {
 
@@ -23,8 +25,8 @@ export const TalentTreeNormalizer = {
 
         const sys = talentDoc.system;
 
-        // Normalize properties
-        sys.talent_tree = this._normalizeTalentTree(sys.talent_tree);
+        // Normalize properties - check multiple tree fields
+        sys.talent_tree = this._normalizeTalentTree(sys.talent_tree, sys);
         sys.prerequisites = this._normalizePrerequisites(sys.prerequisites);
         sys.benefit = this._normalizeBenefit(sys.benefit);
         sys.description = sys.description ?? '';
@@ -34,12 +36,20 @@ export const TalentTreeNormalizer = {
 
     /**
      * Normalize talent tree name
+     * Checks multiple possible source fields for tree assignment
      * @private
      */
-    _normalizeTalentTree(treeName) {
-        if (!treeName) return '';
+    _normalizeTalentTree(treeName, sys) {
+        // Try multiple fields in order of priority
+        const rawTree = treeName
+            || sys?.tree
+            || sys?.treeId
+            || sys?.flags?.swse?.tree
+            || '';
 
-        const normalized = String(treeName)
+        if (!rawTree) return '';
+
+        const normalized = String(rawTree)
             .trim()
             .replace(/\s+/g, ' '); // Normalize whitespace
 
@@ -81,10 +91,12 @@ export const TalentTreeNormalizer = {
     },
 
     /**
-     * Check if a talent document has a valid tree name
+     * Check if a talent document has a valid tree that exists in TalentTreeDB
      */
     checkTalentAgainstTree(talentDoc) {
-        const tree = talentDoc.system?.talent_tree;
+        const sys = talentDoc.system;
+        // Check multiple tree fields
+        const tree = sys?.talent_tree || sys?.tree || sys?.treeId;
 
         if (!tree) {
             SWSELogger.warn(`Talent "${talentDoc.name}" has no talent tree assigned`);
@@ -94,6 +106,15 @@ export const TalentTreeNormalizer = {
         if (!this.validateTreeName(tree)) {
             SWSELogger.warn(`Talent "${talentDoc.name}" has malformed tree name: "${tree}"`);
             return false;
+        }
+
+        // Validate against TalentTreeDB if built
+        if (TalentTreeDB.isBuilt) {
+            const normalizedId = normalizeTalentTreeId(tree);
+            if (!TalentTreeDB.has(normalizedId) && !TalentTreeDB.byName(tree)) {
+                SWSELogger.warn(`Talent "${talentDoc.name}" references unknown tree: "${tree}" (normalized: ${normalizedId})`);
+                return false;
+            }
         }
 
         return true;
