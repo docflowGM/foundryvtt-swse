@@ -2409,3 +2409,45 @@ export async function clearMentorOverride(actor) {
         throw err;
     }
 }
+
+// ============================================================================
+// V2 INTEGRATION: DIALOGUE PHASES & SUGGESTION CONTEXTS
+// ============================================================================
+// These are merged from mentor-suggestion-dialogues.js for unified system
+// They provide phase-based and context-aware dialogue support
+
+/**
+ * Dialogue phases based on character level
+ * Used for contextual mentor responses
+ */
+export const DIALOGUE_PHASES = {
+    EARLY: { min: 1, max: 5, name: "early", style: "instructional" },
+    MID: { min: 6, max: 12, name: "mid", style: "advisory" },
+    LATE: { min: 13, max: 20, name: "late", style: "peer" }
+};
+
+/**
+ * Determine the dialogue phase based on character level
+ * @param {number} level - Character level (1-20)
+ * @returns {string} Phase name: "early", "mid", or "late"
+ */
+export function getDialoguePhase(level) {
+    if (level <= DIALOGUE_PHASES.EARLY.max) return "early";
+    if (level <= DIALOGUE_PHASES.MID.max) return "mid";
+    return "late";
+}
+
+/**
+ * Suggestion context types for mentor dialogue
+ * Categorizes the type of guidance being sought
+ */
+export const SUGGESTION_CONTEXTS = {
+    ATTRIBUTE: "attribute",      // Ability score increases
+    FEAT: "feat",                // Feat selection
+    TALENT: "talent",            // Talent selection
+    DEFENSE: "defense",          // Defensive choices
+    STYLE: "style",              // Combat/playstyle choices
+    SKILL: "skill",              // Skill selection
+    MULTICLASS: "multiclass",    // Multiclass decisions
+    HP: "hp"                     // Health/survivability
+};

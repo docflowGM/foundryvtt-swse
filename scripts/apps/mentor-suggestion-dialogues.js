@@ -1,11 +1,14 @@
 /**
- * SWSE Mentor Suggestion Dialogue System
+ * SWSE Mentor Suggestion Dialogue System (V2)
  *
- * A contextual dialogue layer for the suggestion engine that speaks through mentors.
- * Each mentor has a unique voice, but all follow the same structural framework.
+ * UNIFIED SYSTEM: Part of the consolidated mentor system
+ * - Core mentor data: mentor-dialogues.js (canonical source)
+ * - Personality metadata: mentor-suggestion-dialogues.js (this file)
+ * - Phase/context helpers: exported from mentor-dialogues.js (merged)
  *
- * This is an additive layer on top of mentor-dialogues.js - it adds suggestion-specific
- * dialogue while preserving existing level greetings and guidance.
+ * This file provides:
+ * - MENTOR_PERSONALITIES - personality traits for dynamic dialogue generation
+ * - Suggestion engines for contextual mentor responses
  *
  * Framework:
  * - Universal structure: mentorSpeak() with context, confidence, phase
