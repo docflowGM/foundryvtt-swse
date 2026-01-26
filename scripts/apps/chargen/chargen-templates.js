@@ -11,6 +11,7 @@ export class CharacterTemplates {
 
   /**
    * Load character templates from JSON file
+   * Validates ID-based templates (v2 format) against compendiums
    */
   static async loadTemplates() {
     if (this._templates) return this._templates;
@@ -20,9 +21,210 @@ export class CharacterTemplates {
       throw new Error(`Failed to load character templates: HTTP ${response.status} ${response.statusText}`);
     }
     const data = await response.json();
-    this._templates = data.templates;
-    SWSELogger.log(`SWSE | Loaded ${this._templates.length} character templates`);
+
+    // If using ID-based format (v2), validate IDs
+    if (data.version === 2) {
+      SWSELogger.log(`SWSE | Templates using ID-based format (v${data.version})`);
+      const validationResults = await this._validateTemplateIds(data.templates);
+
+      if (validationResults.failedCount > 0) {
+        const msg = `${validationResults.failedCount} templates have invalid IDs`;
+        SWSELogger.warn(`[SSOT] ${msg}`);
+        console.warn(`[SSOT] ${msg}:`, validationResults.failed);
+
+        if (validationResults.successCount === 0) {
+          throw new Error(`Template validation failed: no valid templates`);
+        }
+      }
+
+      this._templates = validationResults.valid;
+      SWSELogger.log(
+        `SWSE | Loaded ${this._templates.length}/${data.templates.length} ` +
+        `character templates (ID-based format)`
+      );
+    } else {
+      // Old format (v1 or no version) - name-based, no validation
+      this._templates = data.templates;
+      SWSELogger.log(`SWSE | Loaded ${this._templates.length} character templates (name-based format)`);
+    }
+
     return this._templates;
+  }
+
+  /**
+   * Validate that all IDs in templates exist in compendiums
+   * @param {Array<Object>} templates - Templates to validate
+   * @returns {Promise<Object>} Validation results
+   * @private
+   */
+  static async _validateTemplateIds(templates) {
+    const results = {
+      valid: [],
+      failed: [],
+      failedCount: 0,
+      successCount: 0
+    };
+
+    for (const template of templates) {
+      const templateErrors = await this._validateSingleTemplate(template);
+
+      if (templateErrors.length === 0) {
+        results.valid.push(template);
+        results.successCount++;
+      } else {
+        results.failed.push({
+          templateId: template.id,
+          issues: templateErrors
+        });
+        results.failedCount++;
+
+        SWSELogger.warn(`[SSOT] Template "${template.id}" has validation issues:`);
+        templateErrors.forEach(issue => SWSELogger.warn(`  ${issue}`));
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Validate a single template's compendium IDs
+   * @param {Object} template - Template to validate
+   * @returns {Promise<Array<string>>} Array of error messages
+   * @private
+   */
+  static async _validateSingleTemplate(template) {
+    const errors = [];
+
+    // Validate species ID
+    if (template.speciesId) {
+      const speciesPack = game.packs.get('foundryvtt-swse.species');
+      if (!speciesPack) {
+        errors.push('Species compendium not found');
+      } else {
+        const doc = await speciesPack.getDocument(template.speciesId).catch(() => null);
+        if (!doc) {
+          errors.push(`Species ID not found: ${template.speciesId}`);
+        }
+      }
+    }
+
+    // Validate background ID
+    if (template.backgroundId) {
+      const bgPack = game.packs.get('foundryvtt-swse.backgrounds');
+      if (!bgPack) {
+        errors.push('Backgrounds compendium not found');
+      } else {
+        const doc = await bgPack.getDocument(template.backgroundId).catch(() => null);
+        if (!doc) {
+          errors.push(`Background ID not found: ${template.backgroundId}`);
+        }
+      }
+    }
+
+    // Validate class ID
+    if (template.classId) {
+      const classPack = game.packs.get('foundryvtt-swse.classes');
+      if (!classPack) {
+        errors.push('Classes compendium not found');
+      } else {
+        const doc = await classPack.getDocument(template.classId).catch(() => null);
+        if (!doc) {
+          errors.push(`Class ID not found: ${template.classId}`);
+        }
+      }
+    }
+
+    // Validate feat IDs
+    if (template.featIds && Array.isArray(template.featIds)) {
+      const featPack = game.packs.get('foundryvtt-swse.feats');
+      if (!featPack) {
+        errors.push('Feats compendium not found');
+      } else {
+        for (const featId of template.featIds) {
+          const doc = await featPack.getDocument(featId).catch(() => null);
+          if (!doc) {
+            errors.push(`Feat ID not found: ${featId}`);
+          }
+        }
+      }
+    }
+
+    // Validate talent IDs
+    if (template.talentIds && Array.isArray(template.talentIds)) {
+      const talentPack = game.packs.get('foundryvtt-swse.talents');
+      if (!talentPack) {
+        errors.push('Talents compendium not found');
+      } else {
+        for (const talentId of template.talentIds) {
+          const doc = await talentPack.getDocument(talentId).catch(() => null);
+          if (!doc) {
+            errors.push(`Talent ID not found: ${talentId}`);
+          }
+        }
+      }
+    }
+
+    // Validate talent tree IDs
+    if (template.talentTreeIds && Array.isArray(template.talentTreeIds)) {
+      const treePack = game.packs.get('foundryvtt-swse.talent_trees');
+      if (!treePack) {
+        errors.push('Talent trees compendium not found');
+      } else {
+        for (const treeId of template.talentTreeIds) {
+          const doc = await treePack.getDocument(treeId).catch(() => null);
+          if (!doc) {
+            errors.push(`Talent tree ID not found: ${treeId}`);
+          }
+        }
+      }
+    }
+
+    // Validate force power IDs
+    if (template.forcePowerIds && Array.isArray(template.forcePowerIds)) {
+      const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
+      if (!powerPack) {
+        errors.push('Force powers compendium not found');
+      } else {
+        for (const powerId of template.forcePowerIds) {
+          const doc = await powerPack.getDocument(powerId).catch(() => null);
+          if (!doc) {
+            errors.push(`Force power ID not found: ${powerId}`);
+          }
+        }
+      }
+    }
+
+    // Validate item IDs
+    if (template.itemIds && Array.isArray(template.itemIds)) {
+      const equipPack = game.packs.get('foundryvtt-swse.equipment');
+      const weaponPack = game.packs.get('foundryvtt-swse.weapons');
+      const armorPack = game.packs.get('foundryvtt-swse.armor');
+
+      for (const itemId of template.itemIds) {
+        let found = false;
+
+        if (equipPack) {
+          const doc = await equipPack.getDocument(itemId).catch(() => null);
+          if (doc) { found = true; }
+        }
+
+        if (!found && weaponPack) {
+          const doc = await weaponPack.getDocument(itemId).catch(() => null);
+          if (doc) { found = true; }
+        }
+
+        if (!found && armorPack) {
+          const doc = await armorPack.getDocument(itemId).catch(() => null);
+          if (doc) { found = true; }
+        }
+
+        if (!found) {
+          errors.push(`Item ID not found in equipment/weapons/armor: ${itemId}`);
+        }
+      }
+    }
+
+    return errors;
   }
 
   /**
