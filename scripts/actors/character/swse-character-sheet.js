@@ -72,47 +72,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
   async _render(force, options) {
-    this._saveScrollPositions();
     await super._render(force, options);
-    this._restoreScrollPositions();
-  }
-
-  // PERFORMANCE: Cache scroll container references to avoid repeated DOM queries
-  _cacheScrollContainers() {
-    if (this._scrollContainers) return;
-    const root = this.element?.[0];
-    if (!root) return;
-    this._scrollContainers = root.querySelectorAll('.sheet-body, .tab');
-  }
-
-  _saveScrollPositions() {
-    this._scrollPositions = {};
-    this._cacheScrollContainers();
-    if (!this._scrollContainers) return;
-
-    this._scrollContainers.forEach(el => {
-      const key = el.dataset.scrollKey || el.className;
-      this._scrollPositions[key] = el.scrollTop;
-    });
-  }
-
-  _restoreScrollPositions() {
-    if (!this._scrollPositions) return;
-    this._cacheScrollContainers();
-    if (!this._scrollContainers) return;
-
-    this._scrollContainers.forEach(el => {
-      const key = el.dataset.scrollKey || el.className;
-      if (this._scrollPositions[key] !== undefined) {
-        el.scrollTop = this._scrollPositions[key];
-      }
-    });
-  }
-
-  // Clear cache when sheet is closed
-  async close() {
-    this._scrollContainers = null;
-    return super.close();
   }
 
   

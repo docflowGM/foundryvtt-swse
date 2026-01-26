@@ -141,11 +141,6 @@ import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 import { createItemMacro } from './scripts/macros/item-macro.js';
 
 import './scripts/utils/skill-use-filter.js';
-import './scripts/migration/fix-defense-schema.js';
-import './scripts/migration/fix-actor-size.js';
-import './scripts/migration/actor-validation-migration.js';
-import './scripts/migration/item-validation-migration.js';
-import './scripts/migration/fix-item-weight.js';
 import './scripts/migration/populate-force-compendiums.js';
 import './scripts/migration/update-species-traits-migration.js';
 import './scripts/migration/fix-talent-effect-validation.js';
@@ -553,30 +548,6 @@ Hooks.once("init", () => {
   // =====================================
   // SWSE Migration Flags (Auto-Injected)
   // =====================================
-
-  game.settings.register("foundryvtt-swse", "actorValidationMigration", {
-    name: "actorValidationMigration",
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: false
-  });
-
-  game.settings.register("foundryvtt-swse", "itemValidationMigration", {
-    name: "itemValidationMigration",
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: false
-  });
-
-  game.settings.register("foundryvtt-swse", "fixItemWeightMigration", {
-    name: "fixItemWeightMigration",
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: false
-  });
 
   game.settings.register("foundryvtt-swse", "forceCompendiumsPopulation", {
     name: "forceCompendiumsPopulation",
