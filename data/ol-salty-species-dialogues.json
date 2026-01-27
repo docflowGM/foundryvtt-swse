@@ -1,123 +1,509 @@
 {
-  "Adnerem": "Adnerem? Those bug eyes see everything—and I mean *everything*. Privacy's a lost cause with your kind around.",
-  "Advozse": "Advozse, eh? Tongue slicker than a greased airlock. Just don't try sellin' me my own ship, ya silver-mouthed bilge rat.",
-  "Anzat": "Anzat. Soup-slurpin' nightmares that never stay dead. I've seen your kind drain whole cantinas. Not buyin' your act, friend.",
-  "Aleena": "An Aleena? Hah! Small as a ration tin and twice as jumpy. If you go missin', I'll check under the bunk.",
-  "Aqualish": "Aqualish. Cantina-fight legends and bad attitudes wrapped in meat. Seen your kind lose arms and still start swingin'.",
-  "Arkanian": "An Arkanian… cold eyes, colder morals. I've seen your 'science' turn folk into spare parts.",
-  "Arkanian Offshoot": "Offshoot, huh? Not pure enough for your masters, not lucky enough to escape 'em. Galaxy's cruel that way.",
-  "Balosar": "Balosar? Stand too close and my lungs start screamin'. Keep that toxic breath pointed away from the helm, spacer.",
-  "Barabel": "Barabel. All teeth and bad intentions. You look like a walking medical expense.",
-  "Bith": "A Bith! Smart as a navicomputer and about as sturdy as a cracked datapad. Don't trip.",
-  "Blood Carver": "Blood Carver… kriff me sideways, even your *name* sounds like a war crime.",
-  "Bothan": "Bothan, eh? Spies, whispers, and dead heroes. Every time your kind helps the galaxy, half of you don't make it back.",
-  "Caamasi": "A Caamasi. Soft voice in a hard void. Galaxy chews gentle folk like stim gum.",
-  "Cathar": "Cathar claws aboard. Scratch the hull and I'll scratch you back—harder.",
-  "Celegian": "A Celegian? Floatin' brain in a fishbowl. Brilliant thinker, useless in a bar fight.",
-  "Cerean": "Cerean. Two brains and still takes too long to pull the trigger. Don't overthink dying.",
-  "Chagrian": "Chagrian. Built for deep water and deeper trouble. Seen worse, smelled better.",
-  "Chiss": "A Chiss. Blue skin, red eyes, plans within plans. Bet you already know how this ends.",
-  "Chistori": "Chistori muscle. When negotiations fail, you start speakin' in broken bones.",
-  "Clawdite": "A Clawdite shapeshifter? Great. Now I gotta wonder which of you is real—and which owes me money.",
-  "Codru-Ji": "Codru-Ji. Four legs, stubborn skull. You'll block a hallway just by existin'.",
-  "Dathomirian": "Dathomirian… witches, warlords, and bad vibes. Force clings to you like rot.",
-  "Dashade": "Dashade. Force tricks bounce off you like cheap blaster fire. Jedi hate that—and so do healers.",
-  "Defel": "Defel in the shadows. If something disappears, I ain't askin' questions—I'm just lockin' doors.",
-  "Draethos": "Draethos. Thick hide, thicker head. You'll survive longer than most, whether you want to or not.",
-  "Dug": "A Dug! Upside-down legs and right-side-up problems. Try not to trip over reality.",
-  "Duros": "Ah, a Duros. Born in the cockpit, died in the void—or lived long enough to fly my ship. Don't crash it.",
-  "Elomin": "Elomin, eh? Brains like a navcore, bones like cheap glass. Don't lean too hard on the bulkhead.",
-  "Ewok": "An Ewok? Hah! Fuzzy little murder machines. I've seen your kind drop stormtroopers with rocks and bad intentions.",
-  "Falleen": "Falleen… walkin' pheromone cloud. If folk start actin' stupid around you, I'm airlockin' someone.",
-  "Felucian": "Felucian. Jungle-born and Force-soaked. That planet eats ships for breakfast, so you're already suspicious.",
-  "Feeorin": "Feeorin. Big horns, loud mouth, and zero sense of personal space. You enter a room like a bar fight.",
-  "Fosh": "A Fosh! Cute smile, sharp knives. I don't trust anything that small with that much confidence.",
-  "Gand": "A Gand. No-name stalker from the void. If you start trackin' me, I'm shootin' first.",
-  "Gamorrean": "Gamorrean. Muscle-bound pig with a grudge against doors. You swing first and ask questions never.",
-  "Gen'Dai": "Gen'Dai… stars help us. I've seen your kind keep fightin' after bits fell off that should've stayed attached.",
-  "Geonosian": "A Geonosian. Built droid armies, started wars, then got glassed for it. Hive minds ain't always smart.",
-  "Givin": "Givin. Numbers whisper to you like ghosts. Shame people don't.",
-  "Gotal": "A Gotal? Feels emotions through the void. Bet cantinas feel like gettin' punched in the head.",
-  "Gran": "Gran. Three eyes and still misses the point. I've lost credits to your kind more than once.",
-  "Gungan": "A Gungan! Galaxy laughed… right up until your shields held and the blasters didn't.",
-  "Herglic": "Herglic. Built like a bulk freighter and just as hard to move. Don't lean on the railin'.",
-  "Houk": "A Houk. Four arms, short fuse. You look like a bad day for anything bolted down.",
-  "Human": "A Human? Kriff me. Everywhere, always in charge, always surprised when it all goes wrong. Empires, Rebellions, Sith, Jedi—every galaxy-sized mess somehow traces back to you lot. No offense, spacer—but I've seen Humans rule the stars, burn 'em down, then ask why it hurts. Adaptable, sure. Responsible? Not a chance.",
-  "Hutt": "A Hutt… stars above. Crime lords, slug bellies, and deals that crawl slower than you do. Don't slime the deck.",
-  "Iktotchi": "Iktotchi. Sees trouble comin' and walks into it anyway. Bold strategy.",
-  "Ithorian": "An Ithorian. Gentle souls with voices that can shake a ship apart. Clear your throat *outside*.",
-  "Jawa": "A Jawa? Hide your tools, your credits, and your kriffin' socks. If the ship's still flyin' tomorrow, I'll be impressed.",
-  "Kaleesh": "Kaleesh. Masked war-dog with a bone-deep grudge. General Grievous made sure the galaxy flinches when it sees you.",
-  "Kaminoan": "A Kaminoan… tall drink o' rainwater who cloned half the galaxy and still couldn't make one with a sense of humor. No hard feelings—just decades of war.",
-  "Kel Dor": "Kel Dor. Masked Jedi, calm minds. Plo Koon made your kind look heroic—high bar to clear.",
-  "Kerkoiden": "Kerkoiden. Marches like there's still an officer watchin'. Bet you sleep at attention.",
-  "Khil": "A Khil. Force in the blood and bad luck in the stars. Galaxy's never gentle with your kind.",
-  "Kissai": "Kissai. Sith priests and ancient rot. If you start chantin', I'm jettisonin' the cargo—and you.",
-  "Klatooinian": "Klatooinian. Spent so long workin' for Hutts you forgot how to say 'no'. Don't worry—neither did they.",
-  "Lannik": "A Lannik. Short, solid, and stubborn as a sealed hatch. Pushing you is a waste of fuel.",
-  "Lurmen": "Lurmen. Peaceful folk who survived wars by hidin'. Can't say I blame you—void's a nasty place.",
-  "Mantellian Savrip": "Mantellian Savrip? Big, ugly, and born angry. Corellians tell bedtime stories about not meetin' you.",
-  "Massassi": "Massassi… Sith shock troops from the bad old days. History remembers your fists more than your brains.",
-  "Miraluka": "A Miraluka. Blind eyes, Force sight. Jedi got nervous around your kind—said you saw what they were tryin' to hide.",
-  "Mon Calamari": "A Mon Calamari. Shipbuilders, admirals, and freedom fighters. You'll save the ship—then cry about it.",
-  "Mrlssi": "Mrlssi. Credits whisper to you sweeter than any siren song. I've lost ships to smiles like yours.",
-  "Nagai": "A Nagai. Cold worlds, colder wars. Empire tried breakin' you once—didn't stick.",
-  "Nautolan": "Nautolan. Those head-tendrils start twitchin', I know danger's close. Jedi Quinlan Vos made your kind famous for that.",
-  "Nelvaanian": "Nelvaanian. Half myth, half nightmare. Clone troopers still wake up sweatin' over your homeworld.",
-  "Neimoidian": "Neimoidian. Trade Federations, blockades, and galaxy-wide bad decisions. Funny how that worked out.",
-  "Noghri": "A Noghri. Vader's knife in the dark. Loyal to a fault—and that fault's usually fatal.",
-  "Nosaurian": "Nosaurian. Tail strong enough to clear a room. Dockmasters hate seein' you walk in.",
-  "Nyriaanan": "Nyriaanan. Winged folk who don't fear a long fall. Gravity's just another enemy to outrun.",
-  "Quarren": "A Quarren. Always pickin' the wrong side, then complainin' when it sinks. Seen that story before.",
-  "Rakata": "Rakata… ancient empire builders who bent the Force till it snapped back. Galaxy's still payin' for it.",
-  "Replica Droid": "Replica Droid? Looks alive, thinks metal. I've argued with worse—usually cheaper.",
-  "Rodian": "A Rodian. Bounty hunters, quick shots, and loud mistakes. Greedo really did your reputation no favors.",
-  "Ryn": "A Ryn. Wandering traders with music in their bones. I've seen your kind steal hearts and wallets in one song.",
-  "Sakiyan": "Sakiyan. Sky hunters who treat gravity like a suggestion. Try not to test it indoors.",
-  "Selkath": "Selkath. Smug, neutral, and hidin' behind laws thicker than a hull plate. Manaan taught the galaxy that 'peaceful' don't mean 'kind.'",
-  "Shard": "A Shard… crystal thinker bolted into a droid shell. I've scraped ice with more warmth.",
-  "Snivvian": "Snivvian. Nervous eyes and twitchy hands. You look like you plan your escape before you enter the room.",
-  "Sullustan": "Sullustan. Sharp-eyed spacers who don't miss much. Nien Nunb proved your kind flies best when things go sideways.",
-  "Taung": "Taung. Old warriors, older grudges. Mandalorians stole your thunder and you never got it back.",
-  "Talz": "Talz. Built for frozen hellholes and ugly fights. Clone troopers still curse your snow.",
-  "Thakwaash": "Thakwaash. Two brains, one bad idea. Hope at least one of 'em's sober.",
-  "Togruta": "Togruta. Pack hunters with eyes everywhere. Ahsoka showed the galaxy your kind don't quit easy.",
-  "Togorian": "Togorian. Claws out, temper short, and subtlety spaced out an airlock years ago.",
-  "Toydarian": "Toydarian. Force tricks slide right off you. Watto proved even Jedi can't cheat a proper cheat.",
-  "Trandoshan": "Trandoshan. Hunters who don't stay dead and never stop keepin' score. Wookiees remember every kriffin' bit of it.",
-  "Trianii": "Trianii. Proud hunters measure life in trophies. Just don't start countin' my crew.",
-  "Twi'lek": "A Twi'lek. Slaved, scorned, rebelled, and still standin'. Galaxy keeps tryin' to break you and keeps failin'.",
-  "Ubese": "Ubese. Masked mercs with no past and worse futures. If I see your face, somethin's gone wrong.",
-  "Utai": "Utai. Tunnel dwellers with patience carved from stone. You'll outwait storms and grudges alike.",
-  "Vahla": "Vahla. Dark whispers in the blood. Sith never really let go of their leftovers.",
-  "Vurk": "Vurk. Jungle warriors with arms like batterin' rams. Swamps feel safer with you than cities do.",
-  "Weequay": "Weequay. Scarred sailors and pirates alike. Hondo Ohnaka didn't exactly polish your reputation.",
-  "Whiphid": "Whiphid. Arctic predators with tempers colder than space. You don't scare easy—and that scares others.",
-  "Wookiee": "A Wookiee! Loyal as a bonded hull plate and twice as dangerous when crossed. Chewbacca taught the galaxy not to test that.",
-  "Wroonian": "Wroonian. Long limbs, longer reach. You grab things others can't—and sometimes shouldn't.",
-  "Yarkora": "Yarkora. Built for war, raised in it. Peace probably feels like a trap.",
-  "Yevetha": "Yevetha. Militaristic, bitter, and hard to keep down. Empire learned the hard way you don't stay conquered.",
-  "Yuuzhan Vong": "Yuuzhan Vong… no droids, no mercy, no kriffin' compromise. Galaxy still limps from your visit.",
-  "Yuzzem": "Yuzzem. Loud rage, louder roars. I can hear you thinkin' from the next bulkhead.",
-  "Zabrak": "Zabrak. Pain's an old friend and fear's an old enemy. Darth Maul made damn sure no one forgets that.",
-  "Zeltron": "Zeltron. Charm flows like bad spice wine. By the time folk realize, they're already ruined.",
-  "Zygerrian": "Zygerrian. Slavers with long memories and shorter lifespans these days. Galaxy's done bein' patient.",
-  "Besalisk": "Besalisk. Four arms means four ways to cause trouble. Seen your kind juggle blasters like they're fruit.",
-  "Besalisk (Four-Armed)": "Four-armed Besalisk? Double the hands, double the damage potential. Hope you're good at keepin' count.",
-  "Cathar (Savage)": "Savage Cathar? Different breed entirely. Claws are bigger, temper's hotter, manners are nonexistent.",
-  "Devaronian": "Devaronian. Red skin and horns—looks like someone's nightmares got up and started walkin'. Personality to match.",
-  "Drall": "Drall. Small, furry, and stubborn as a cargo lock. Don't let the cute fool you—they'll out-argue a droid.",
-  "Echani": "Echani. Those silver eyes miss nothin'. Your kind reads body language better than most read datafiles.",
-  "Gossam": "Gossam. Four-eyed and sharp-tongued. Commerce flows where your kind gathers—along with lies and schemes.",
-  "Ikkrukkian": "Ikkrukkian. Insect-like and organized. Seen hive colonies with less structure than your kind's militaries.",
-  "Karkarodon": "Karkarodon. Apex predators from hostile waters. Galaxy's learned not to turn its back on you.",
-  "Kiffar": "Kiffar. Psychometry in the blood—you read the past like I read a manifest. Gives me the creeps.",
-  "Leporine": "Leporine. Long ears and longer patience. You'll sit through negotiations most would abandon in minutes.",
-  "Muun": "Muun. Tall, pale, and better with credits than with people. Banking families built on backs like yours.",
-  "Nikto": "Nikto. Scarred warriors from a hard world. Pain don't slow you down—it just makes you meaner.",
-  "Ortolan": "Ortolan. Music in your bones and Force-sense in your blood. Quiet ones are always the dangerous ones.",
-  "Qel-Droma": "Qel-Droma. Old Sith lineage, newer names. History sticks to your kind like blaster scars.",
-  "Rishi": "Rishi. Aquatic ancestry shows—you're more comfortable in water than most are in air.",
-  "Ssi-Ruuvi": "Ssi-Ruuvi. Reptilian and clinical. Your kind looks at conquest like it's inventory management.",
-  "Ugnaught": "Ugnaught. Small stature, big ingenuity. Cloud City's lucky you didn't decide to own it outright."
+  "Adnerem": [
+    "Adnerem? Those bug eyes see everything—and I mean *everything*. Privacy's a lost cause with your kind around."
+  ],
+  "Advozse": [
+    "Advozse, eh? Tongue slicker than a greased airlock. Just don't try sellin' me my own ship, ya silver-mouthed bilge rat."
+  ],
+  "Anzat": [
+    "Anzat. Soup-slurpin' nightmares that never stay dead. I've seen your kind drain whole cantinas. Not buyin' your act, friend."
+  ],
+  "Aleena": [
+    "An Aleena? Hah! Small as a ration tin and twice as jumpy. If you go missin', I'll check under the bunk."
+  ],
+  "Aqualish": [
+    "Aqualish, grumpy and always smelling like wet boots.",
+    "Strong swimmers, sure, but hope your temper doesn’t get you killed.",
+    "You look tough, but that face only scares the small fry.",
+    "Try not to bite anyone important, it’ll cause paperwork."
+  ],
+  "Arkanian": [
+    "An Arkanian… cold eyes, colder morals. I've seen your 'science' turn folk into spare parts."
+  ],
+  "Arkanian Offshoot": [
+    "Offshoot, huh? Not pure enough for your masters, not lucky enough to escape 'em. Galaxy's cruel that way."
+  ],
+  "Balosar": [
+    "Balosar, toxic breath and attitude to match.",
+    "Stand too close, and I’ll start praying for the ventilation.",
+    "Your venom is clever, but sometimes it’s wasted on allies.",
+    "Try to aim that sharp tongue wisely, the galaxy is unforgiving."
+  ],
+  "Barabel": [
+    "Barabel, all teeth and ambition. Hope those claws come in handy.",
+    "You scare some people just walking down the hall, but not me.",
+    "Stubborn as they come, but brains can still save you.",
+    "Try to eat only the bad guys, friend, it keeps life simpler."
+  ],
+  "Bith": [
+    "A Bith! Smart as a navicomputer and about as sturdy as a cracked datapad. Don't trip."
+  ],
+  "Blood Carver": [
+    "Blood Carver… kriff me sideways, even your *name* sounds like a war crime."
+  ],
+  "Bothan": [
+    "Bothan, spies and whispers everywhere. Can you keep one secret yourself?",
+    "Cunning and sly, but don’t let paranoia ruin the day.",
+    "Always in the shadows, yet somehow you draw attention.",
+    "Try not to betray yourself first, it’ll ruin the fun."
+  ],
+  "Caamasi": [
+    "A Caamasi. Soft voice in a hard void. Galaxy chews gentle folk like stim gum."
+  ],
+  "Cathar": [
+    "Cathar, claws ready and eyes sharper.",
+    "You look ready to pounce at the slightest insult, classic.",
+    "Strong and agile, but don’t let pride trip you up.",
+    "Try to keep your temper in check, or you’ll regret it."
+  ],
+  "Celegian": [
+    "Celegian, floating brain and fragile bones.",
+    "Smart, yes, but hope your intellect keeps you alive.",
+    "You think ahead, but sometimes your body disagrees.",
+    "Watch the walls, friend, they’re tougher than you look."
+  ],
+  "Cerean": [
+    "Cerean, two brains and still taking too long to act.",
+    "Patience is a virtue, but the galaxy doesn’t wait.",
+    "Think carefully, but don’t freeze like ice in space.",
+    "One brain might have been enough, but I’ll let you try both."
+  ],
+  "Chagrian": [
+    "Chagrian, built for deep water, bad at shallow diplomacy.",
+    "Strong, yes, but subtlety seems missing from your kit.",
+    "Your head might be stubborn, but hopefully your wits aren’t.",
+    "Move carefully, the galaxy doesn’t reward brute force alone."
+  ],
+  "Chiss": [
+    "Chiss, cold and calculating. Planning is nice, but can’t think your way out of everything.",
+    "The galaxy is bigger than your strategy, watch for surprises.",
+    "Don’t overestimate your blue skin and red eyes, danger finds you anyway.",
+    "Try to stay flexible, logic won’t save you from a blaster."
+  ],
+  "Chistori": [
+    "Chistori muscle. When negotiations fail, you start speakin' in broken bones."
+  ],
+  "Clawdite": [
+    "A Clawdite shapeshifter? Great. Now I gotta wonder which of you is real—and which owes me money."
+  ],
+  "Codru-Ji": [
+    "Codru-Ji. Four legs, stubborn skull. You'll block a hallway just by existin'."
+  ],
+  "Dathomirian": [
+    "Dathomirian, dark, strange, and tough as nails.",
+    "The Force clings to you like a shadow, just hope it doesn’t choke you.",
+    "Trouble follows you, maybe you like that, maybe not.",
+    "Keep your wits, your friends close, your enemies closer."
+  ],
+  "Dashade": [
+    "Dashade, quick with your tricks and quicker to annoy.",
+    "The Force doesn’t always favor the mischievous, keep that in mind.",
+    "Agility helps, but cleverness keeps you alive longer.",
+    "Don’t slip on your own shadow, friend, it’s happened before."
+  ],
+  "Defel": [
+    "Defel, shadows suit you well, as long as you stay in them.",
+    "Silent, deadly, but sometimes too quiet for your own good.",
+    "You strike unseen, hope the galaxy isn’t already one step ahead.",
+    "Keep moving, friend, darkness has a habit of shifting unexpectedly."
+  ],
+  "Draethos": [
+    "Draethos. Thick hide, thicker head. You'll survive longer than most, whether you want to or not."
+  ],
+  "Dug": [
+    "A Dug, topsy-turvy in appearance, chaotic in practice.",
+    "Persistence is good, but brains help too.",
+    "Try not to trip over gravity or your own legs.",
+    "You’re stubborn, I’ll give you that, but that won’t save your hide."
+  ],
+  "Duros": [
+    "Duros, pilots of the stars and often masters of bad luck.",
+    "Born to fly, but hope your skills match your confidence.",
+    "You may survive, but only if you watch the horizon closely.",
+    "Try not to crash before making your mark, friend."
+  ],
+  "Elomin": [
+    "Elomin, clever and fragile, all brains and brittle bones.",
+    "Think fast, but don’t lean too hard on luck.",
+    "Your intelligence is useful, but your bulk is deceptive.",
+    "Stay sharp, the galaxy has no patience for hesitation."
+  ],
+  "Ewok": [
+    "An Ewok? Hah! Fuzzy little murder machines. I've seen your kind drop stormtroopers with rocks and bad intentions."
+  ],
+  "Falleen": [
+    "Falleen, walk around and watch the fools flock to you.",
+    "Charm is helpful, but it won’t stop a blaster bolt.",
+    "You look impressive, try not to get distracted by the stares.",
+    "The galaxy is more dangerous than a flattering smile."
+  ],
+  "Felucian": [
+    "Felucian, jungle-born and sharp. Nature’s got nothing on you… yet.",
+    "The wilds taught you well, but the void doesn’t care.",
+    "Quick, resourceful, just hope you don’t get stuck somewhere wet.",
+    "Eyes open, senses ready, and don’t underestimate the crawlies."
+  ],
+  "Feeorin": [
+    "Feeorin. Big horns, loud mouth, and zero sense of personal space. You enter a room like a bar fight."
+  ],
+  "Fosh": [
+    "Fosh, small and quick. Don’t let anyone underestimate you, including yourself.",
+    "Your confidence is amusing, just hope it isn’t misplaced.",
+    "Speed is useful, brains even more so, keep both handy.",
+    "Tiny but feisty, try not to get squashed by the galaxy."
+  ],
+  "Gand": [
+    "Gand, always sneaky and whispering. Hope you’re better at hiding than talking.",
+    "You follow trails others leave, but don’t get caught in one yourself.",
+    "Secrets suit you, just don’t spill your own.",
+    "The galaxy has sharp ears, watch yours carefully."
+  ],
+  "Gamorrean": [
+    "Gamorrean. Muscle-bound pig with a grudge against doors. You swing first and ask questions never."
+  ],
+  "Gen'Dai": [
+    "Gen'Dai… stars help us. I've seen your kind keep fightin' after bits fell off that should've stayed attached."
+  ],
+  "Geonosian": [
+    "Geonosian, always plotting, always building. Just hope your plans don’t collapse.",
+    "Hive minds are clever, but sometimes the swarm turns on itself.",
+    "Stingers and wings are all fine, if you don’t stab yourself first.",
+    "Try not to get trapped in your own web, friend."
+  ],
+  "Givin": [
+    "Givin, numbers in your head and always counting. Don’t miscalculate the danger.",
+    "Quiet, precise, but don’t let stillness fool you, the galaxy moves.",
+    "Your calculations are solid, hope the chaos doesn’t unbalance you.",
+    "Try not to lose your head over a spreadsheet, it happens."
+  ],
+  "Gotal": [
+    "Gotal, sensing everything, feeling everything, and probably overthinking it.",
+    "Strong instincts, but sometimes they’re all nerves and no action.",
+    "Hope your senses are sharper than your patience.",
+    "Keep your focus, the galaxy won’t slow down for you."
+  ],
+  "Gran": [
+    "Gran, three eyes and twice the confusion. Hope you’re seeing what matters.",
+    "Small, fast, and usually annoying to everyone around you.",
+    "Your brains are good, but coordination sometimes isn’t.",
+    "Keep your wits about you, and maybe you’ll survive the day."
+  ],
+  "Gungan": [
+    "Gungan, underestimated and often annoying to everyone else.",
+    "Bounce around all you like, just don’t knock over the cargo.",
+    "People laugh at you until you surprise them, don’t let it backfire.",
+    "Keep your ears up and your feet grounded, that helps."
+  ],
+  "Herglic": [
+    "Herglic, massive, slow, and occasionally terrifying.",
+    "Your size is a blessing and a curse, mostly the curse in tight corridors.",
+    "Try not to roll over your friends or enemies.",
+    "When you move, the galaxy notices. Make it count."
+  ],
+  "Houk": [
+    "Houk, four arms, short temper, and probably very impatient.",
+    "Strong and stubborn, but hope that doesn’t get you squashed.",
+    "You hit hard, but brains save more than brawn.",
+    "Try not to take out more than intended, it complicates things."
+  ],
+  "Human": [
+    "A Human? Really? The boring choice if there ever was one.",
+    "Everywhere, always in charge, and somehow always surprised when it all goes wrong.",
+    "Adaptable, sure, but predictable to anyone with eyes.",
+    "Try not to ruin the galaxy again, it’s getting tedious watching you try."
+  ],
+  "Hutt": [
+    "A Hutt, slow, cunning, and fond of holding grudges.",
+    "Powerful, yes, but try not to get bored or sloppy.",
+    "Your weight is more useful in deals than in speed.",
+    "Keep your influence sharp, the galaxy has opportunists everywhere."
+  ],
+  "Iktotchi": [
+    "Iktotchi, bold and reckless. You walk straight into trouble like it owes you a favor.",
+    "Those horns might help in a fight, but not with diplomacy.",
+    "Hope your confidence matches your skills, because it usually doesn’t.",
+    "Keep your eyes sharp, the galaxy punishes the careless."
+  ],
+  "Ithorian": [
+    "Ithorian, voice like a hammer and presence to match.",
+    "Gentle by nature, but loud in practice.",
+    "Keep the peace, but try not to crush anyone in the process.",
+    "Balance strength with care, the galaxy prefers it that way."
+  ],
+  "Jawa": [
+    "Ah, a Jawa, eh? Tiny hands, big ambitions, don’t drop your gadgets again.",
+    "Always scavenging, always trading… try not to scavenge your own credits this time.",
+    "Keep your head low, your pockets higher, or you’ll be walking home.",
+    "If your sandcrawler blows up, don’t come crying to me."
+  ],
+  "Kaleesh": [
+    "Kaleesh. Masked war-dog with a bone-deep grudge. General Grievous made sure the galaxy flinches when it sees you."
+  ],
+  "Kaminoan": [
+    "Kaminoan, always calculating, cloning, and probably judging everyone.",
+    "Tall, wet, and very precise, hope that works in your favor.",
+    "Your patience is unmatched, but the galaxy moves faster than you.",
+    "Try not to overthink it, sometimes instincts win the day."
+  ],
+  "Kel Dor": [
+    "Kel Dor, calm and deliberate. Masks hide more than faces, friend.",
+    "Careful movements are good, but the galaxy moves faster than you.",
+    "Vision is limited, focus is essential, mistakes are costly.",
+    "Trust in your skills, just don’t rely on your calm alone."
+  ],
+  "Kerkoiden": [
+    "Kerkoiden. Marches like there's still an officer watchin'. Bet you sleep at attention."
+  ],
+  "Khil": [
+    "A Khil. Force in the blood and bad luck in the stars. Galaxy's never gentle with your kind."
+  ],
+  "Kissai": [
+    "Kissai. Sith priests and ancient rot. If you start chantin', I'm jettisonin' the cargo—and you."
+  ],
+  "Klatooinian": [
+    "Klatooinian. Spent so long workin' for Hutts you forgot how to say 'no'. Don't worry—neither did they."
+  ],
+  "Lannik": [
+    "A Lannik. Short, solid, and stubborn as a sealed hatch. Pushing you is a waste of fuel."
+  ],
+  "Lurmen": [
+    "Lurmen. Peaceful folk who survived wars by hidin'. Can't say I blame you—void's a nasty place."
+  ],
+  "Mantellian Savrip": [
+    "Mantellian Savrip? Big, ugly, and born angry. Corellians tell bedtime stories about not meetin' you."
+  ],
+  "Massassi": [
+    "Massassi… Sith shock troops from the bad old days. History remembers your fists more than your brains."
+  ],
+  "Miraluka": [
+    "A Miraluka. Blind eyes, Force sight. Jedi got nervous around your kind—said you saw what they were tryin' to hide."
+  ],
+  "Mon Calamari": [
+    "Mon Calamari, clever hands, clever mind, just hope your plans don’t leak.",
+    "Brains are fine, but don’t let your fingers forget.",
+    "Clever, but the galaxy has ways to humble even you.",
+    "Try not to drown in paperwork or laser fire, either is unpleasant."
+  ],
+  "Mrlssi": [
+    "Mrlssi. Credits whisper to you sweeter than any siren song. I've lost ships to smiles like yours."
+  ],
+  "Nagai": [
+    "A Nagai. Cold worlds, colder wars. Empire tried breakin' you once—didn't stick."
+  ],
+  "Nautolan": [
+    "Nautolan. Those head-tendrils start twitchin', I know danger's close. Jedi Quinlan Vos made your kind famous for that."
+  ],
+  "Nelvaanian": [
+    "Nelvaanian, half myth, half nightmare. I’ll believe it when I see it.",
+    "Legends follow your kind, try not to make new ones about failure.",
+    "Mysterious and capable, hope that covers your weaknesses.",
+    "Move carefully, even myths stumble sometimes."
+  ],
+  "Neimoidian": [
+    "Neimoidian. Trade Federations, blockades, and galaxy-wide bad decisions. Funny how that worked out."
+  ],
+  "Noghri": [
+    "Noghri, silent hunters, lethal and loyal.",
+    "Your reputation precedes you, so don’t mess it up.",
+    "Strength and speed serve you well, brains matter too.",
+    "Keep your kills precise, the galaxy remembers."
+  ],
+  "Nosaurian": [
+    "Nosaurian. Tail strong enough to clear a room. Dockmasters hate seein' you walk in."
+  ],
+  "Nyriaanan": [
+    "Nyriaanan. Winged folk who don't fear a long fall. Gravity's just another enemy to outrun."
+  ],
+  "Quarren": [
+    "Quarren, always a step off and one fin behind.",
+    "You pick the wrong side more often than not, keep it consistent.",
+    "Hope you can swim with the currents, because they don’t wait.",
+    "The galaxy remembers mistakes, make fewer of them, friend."
+  ],
+  "Rakata": [
+    "Rakata… ancient empire builders who bent the Force till it snapped back. Galaxy's still payin' for it."
+  ],
+  "Replica Droid": [
+    "Replica Droid? Looks alive, thinks metal. I've argued with worse—usually cheaper."
+  ],
+  "Rodian": [
+    "A Rodian? Quick and sneaky, but overconfidence is your real problem.",
+    "Sharp eyes won’t help if you trip over your own tail.",
+    "You hunt well, but smarter prey escapes. Take note.",
+    "Try to aim straight, don’t embarrass yourself this time."
+  ],
+  "Ryn": [
+    "Ryn, wandering traders with more confidence than sense.",
+    "Music in your bones, mischief in your steps.",
+    "You steal hearts and credits alike, hope you don’t lose either.",
+    "The galaxy has a long memory, keep moving fast."
+  ],
+  "Sakiyan": [
+    "Sakiyan. Sky hunters who treat gravity like a suggestion. Try not to test it indoors."
+  ],
+  "Selkath": [
+    "Selkath, smug and slippery, hard to pin down.",
+    "Water-born, quick, and hard to trust, just like you.",
+    "Keep your friends closer than your enemies, they tend to bite.",
+    "Move carefully, and maybe your fins will stay intact."
+  ],
+  "Shard": [
+    "A Shard… crystal thinker bolted into a droid shell. I've scraped ice with more warmth."
+  ],
+  "Snivvian": [
+    "Snivvian. Nervous eyes and twitchy hands. You look like you plan your escape before you enter the room."
+  ],
+  "Sullustan": [
+    "Sullustan, wide-eyed and steady. Try to stay out of trouble, it loves you too much.",
+    "You move with purpose, just hope purpose is enough.",
+    "Your small size might save you once, twice, maybe thrice.",
+    "Keep scanning the horizon, and hope nothing scans you back."
+  ],
+  "Taung": [
+    "Taung. Old warriors, older grudges. Mandalorians stole your thunder and you never got it back."
+  ],
+  "Talz": [
+    "Talz. Built for frozen hellholes and ugly fights. Clone troopers still curse your snow."
+  ],
+  "Thakwaash": [
+    "Thakwaash. Two brains, one bad idea. Hope at least one of 'em's sober."
+  ],
+  "Togruta": [
+    "Togruta, all eyes and ears. Hope awareness doesn’t slow you down.",
+    "You notice everything, but can you act on it?",
+    "Hunting instincts are fine, but tight corridors aren’t forgiving.",
+    "Move carefully, the wilds won’t wait for your theatrics."
+  ],
+  "Togorian": [
+    "Togorian. Claws out, temper short, and subtlety spaced out an airlock years ago."
+  ],
+  "Toydarian": [
+    "Toydarian. Force tricks slide right off you. Watto proved even Jedi can't cheat a proper cheat."
+  ],
+  "Trandoshan": [
+    "Trandoshan, hunters with sharp teeth and sharper attitudes.",
+    "Scorekeeping is second nature, try not to count your own losses.",
+    "Predatory instincts are fine, just don’t get outsmarted.",
+    "Watch your back, the galaxy has bigger hunters than you."
+  ],
+  "Trianii": [
+    "Trianii. Proud hunters measure life in trophies. Just don't start countin' my crew."
+  ],
+  "Twi'lek": [
+    "Twi’lek, graceful and flashy. Charm won’t save you everywhere.",
+    "Those head-tails are impressive, but try not to knock over everything.",
+    "You look good, move well, now see if you can survive the mess you create.",
+    "Careful in tight spaces, beauty can’t block a blaster bolt."
+  ],
+  "Ubese": [
+    "Ubese. Masked mercs with no past and worse futures. If I see your face, somethin's gone wrong."
+  ],
+  "Utai": [
+    "Utai. Tunnel dwellers with patience carved from stone. You'll outwait storms and grudges alike."
+  ],
+  "Vahla": [
+    "Vahla. Dark whispers in the blood. Sith never really let go of their leftovers."
+  ],
+  "Vurk": [
+    "Vurk. Jungle warriors with arms like batterin' rams. Swamps feel safer with you than cities do."
+  ],
+  "Weequay": [
+    "Weequay. Scarred sailors and pirates alike. Hondo Ohnaka didn't exactly polish your reputation."
+  ],
+  "Whiphid": [
+    "Whiphid. Arctic predators with tempers colder than space. You don't scare easy—and that scares others."
+  ],
+  "Wookiee": [
+    "A Wookiee? Big, loud, and probably thinks everyone’s a threat.",
+    "Strong as a hull plate, but hope you don’t trip over your own feet.",
+    "You might scare the locals, but at least you’re useful in a fight.",
+    "Try not to smash the scenery while proving your point."
+  ],
+  "Wroonian": [
+    "Wroonian. Long limbs, longer reach. You grab things others can't—and sometimes shouldn't."
+  ],
+  "Yarkora": [
+    "Yarkora. Built for war, raised in it. Peace probably feels like a trap."
+  ],
+  "Yevetha": [
+    "Yevetha. Militaristic, bitter, and hard to keep down. Empire learned the hard way you don't stay conquered."
+  ],
+  "Yuuzhan Vong": [
+    "Yuuzhan Vong… no droids, no mercy, no kriffin' compromise. Galaxy still limps from your visit."
+  ],
+  "Yuzzem": [
+    "Yuzzem, loud, fierce, and impossible to ignore.",
+    "Your presence makes even the quietest corners chaotic.",
+    "Try not to wreck more than your enemies notice.",
+    "Keep that temper, but remember subtlety is also a weapon."
+  ],
+  "Zabrak": [
+    "Zabrak? Stubborn, proud, probably reckless as usual.",
+    "Those horns look tough, but you can’t bash every problem.",
+    "Guts, sure, just try to keep your face intact.",
+    "Pain follows you, but I guess that suits you."
+  ],
+  "Zeltron": [
+    "Zeltron. Charm flows like bad spice wine. By the time folk realize, they're already ruined."
+  ],
+  "Zygerrian": [
+    "Zygerrian. Slavers with long memories and shorter lifespans these days. Galaxy's done bein' patient."
+  ],
+  "Besalisk": [
+    "Besalisk. Four arms means four ways to cause trouble. Seen your kind juggle blasters like they're fruit."
+  ],
+  "Besalisk (Four-Armed)": [
+    "Four-armed Besalisk? Double the hands, double the damage potential. Hope you're good at keepin' count."
+  ],
+  "Cathar (Savage)": [
+    "Savage Cathar? Different breed entirely. Claws are bigger, temper's hotter, manners are nonexistent."
+  ],
+  "Devaronian": [
+    "Devaronian. Red skin and horns—looks like someone's nightmares got up and started walkin'. Personality to match."
+  ],
+  "Drall": [
+    "Drall. Small, furry, and stubborn as a cargo lock. Don't let the cute fool you—they'll out-argue a droid."
+  ],
+  "Echani": [
+    "Echani. Those silver eyes miss nothin'. Your kind reads body language better than most read datafiles."
+  ],
+  "Gossam": [
+    "Gossam. Four-eyed and sharp-tongued. Commerce flows where your kind gathers—along with lies and schemes."
+  ],
+  "Ikkrukkian": [
+    "Ikkrukkian. Insect-like and organized. Seen hive colonies with less structure than your kind's militaries."
+  ],
+  "Karkarodon": [
+    "Karkarodon. Apex predators from hostile waters. Galaxy's learned not to turn its back on you."
+  ],
+  "Kiffar": [
+    "Kiffar. Psychometry in the blood—you read the past like I read a manifest. Gives me the creeps."
+  ],
+  "Leporine": [
+    "Leporine. Long ears and longer patience. You'll sit through negotiations most would abandon in minutes."
+  ],
+  "Muun": [
+    "Muun, careful, calculating, obsessed with numbers.",
+    "Don’t let your ledgers blind you to the chaos around you.",
+    "Your mind is sharp, but the galaxy will cut sharper.",
+    "Money isn’t everything, even for you."
+  ],
+  "Nikto": [
+    "Nikto. Scarred warriors from a hard world. Pain don't slow you down—it just makes you meaner."
+  ],
+  "Ortolan": [
+    "Ortolan. Music in your bones and Force-sense in your blood. Quiet ones are always the dangerous ones."
+  ],
+  "Qel-Droma": [
+    "Qel-Droma. Old Sith lineage, newer names. History sticks to your kind like blaster scars."
+  ],
+  "Rishi": [
+    "Rishi. Aquatic ancestry shows—you're more comfortable in water than most are in air."
+  ],
+  "Ssi-Ruuvi": [
+    "Ssi-Ruuvi. Reptilian and clinical. Your kind looks at conquest like it's inventory management."
+  ],
+  "Ugnaught": [
+    "Ugnaught. Small stature, big ingenuity. Cloud City's lucky you didn't decide to own it outright."
+  ]
 }

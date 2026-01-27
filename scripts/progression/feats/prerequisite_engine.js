@@ -1,3 +1,4 @@
+import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 /**
  * PREREQUISITE REQUIREMENTS ENGINE
  * Unified validator for Feats and Talents.

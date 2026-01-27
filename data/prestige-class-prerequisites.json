@@ -1,226 +1,432 @@
 {
   "Ace Pilot": {
     "level": 7,
-    "skills": ["Pilot"],
-    "feats": ["Vehicular Combat"],
+    "skills": [
+      "b8dad0c963f046c6"
+    ],
+    "feats": [
+      "Vehicular Combat"
+    ],
     "description": "Character Level 7, Trained in Pilot, Vehicular Combat"
   },
   "Bounty Hunter": {
     "level": 7,
-    "skills": ["Survival"],
+    "skills": [
+      "426945d1fc765a5d"
+    ],
     "talents": 2,
-    "talentTrees": ["Awareness"],
+    "talentTrees": [
+      "Awareness"
+    ],
     "description": "Character Level 7, Trained in Survival, 2 Awareness Talents"
   },
   "Crime Lord": {
     "level": 7,
-    "skills": ["Deception", "Persuasion"],
+    "skills": [
+      "9410ce2dfb6cefcb",
+      "b554f3e5a55ad53f"
+    ],
     "talents": 1,
-    "talentTrees": ["Fortune", "Lineage", "Misfortune"],
+    "talentTrees": [
+      "Fortune",
+      "Lineage",
+      "Misfortune"
+    ],
     "description": "Character Level 7, Trained in Deception, Trained in Persuasion, 1 Fortune/Lineage/Misfortune Talent"
   },
   "Elite Trooper": {
     "bab": 7,
-    "feats": ["Armor Proficiency (Medium)", "Martial Arts I"],
-    "featsOr": ["Point-Blank Shot", "Flurry"],
+    "feats": [
+      "Armor Proficiency (Medium)",
+      "Martial Arts I"
+    ],
+    "featsOr": [
+      "Point-Blank Shot",
+      "Flurry"
+    ],
     "talents": 1,
-    "talentTrees": ["Armor Specialist", "Commando", "Mercenary", "Weapon Specialist"],
+    "talentTrees": [
+      "Armor Specialist",
+      "Commando",
+      "Mercenary",
+      "Weapon Specialist"
+    ],
     "description": "BAB +7, Armor Proficiency (Medium), Martial Arts I, Point-Blank Shot or Flurry, 1 Armor Specialist/Commando/Mercenary/Weapon Specialist Talent"
   },
   "Force Adept": {
     "level": 7,
-    "skills": ["Use the Force"],
-    "feats": ["Force Sensitivity"],
+    "skills": [
+      "2b9e43f710664b31"
+    ],
+    "feats": [
+      "Force Sensitivity"
+    ],
     "talents": 3,
-    "talentTrees": ["Force"],
+    "talentTrees": [
+      "Force"
+    ],
     "description": "Character Level 7, Trained in Use the Force, Force Sensitivity, 3 Force Talents"
   },
   "Force Disciple": {
     "level": 12,
-    "skills": ["Use the Force"],
-    "feats": ["Force Sensitivity"],
+    "skills": [
+      "2b9e43f710664b31"
+    ],
+    "feats": [
+      "Force Sensitivity"
+    ],
     "talents": 2,
-    "talentTrees": ["Dark Side Devotee", "Force Adept", "Force Item"],
-    "powers": ["Farseeing"],
+    "talentTrees": [
+      "Dark Side Devotee",
+      "Force Adept",
+      "Force Item"
+    ],
+    "powers": [
+      "Farseeing"
+    ],
     "techniques": 1,
     "description": "Character Level 12, Trained in Use the Force, Force Sensitivity, 2 Dark Side Devotee/Force Adept/Force Item Talents, Farseeing Power, 1 Force Technique"
   },
   "Gunslinger": {
     "level": 7,
-    "feats": ["Point-Blank Shot", "Precise Shot", "Quick Draw", "Weapon Proficiency (Pistols)"],
+    "feats": [
+      "Point-Blank Shot",
+      "Precise Shot",
+      "Quick Draw",
+      "Weapon Proficiency (Pistols)"
+    ],
     "description": "Character Level 7, Point-Blank Shot, Precise Shot, Quick Draw, Weapon Proficiency (Pistols)"
   },
   "Jedi Knight": {
     "bab": 7,
-    "skills": ["Use the Force"],
-    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
-    "other": ["Member of The Jedi"],
+    "skills": [
+      "2b9e43f710664b31"
+    ],
+    "feats": [
+      "Force Sensitivity",
+      "Weapon Proficiency (Lightsabers)"
+    ],
+    "other": [
+      "Member of The Jedi"
+    ],
     "description": "BAB +7, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), Member of The Jedi"
   },
   "Jedi Master": {
     "level": 12,
-    "skills": ["Use the Force"],
-    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "skills": [
+      "2b9e43f710664b31"
+    ],
+    "feats": [
+      "Force Sensitivity",
+      "Weapon Proficiency (Lightsabers)"
+    ],
     "techniques": 1,
-    "other": ["Member of The Jedi"],
+    "other": [
+      "Member of The Jedi"
+    ],
     "description": "Character Level 12, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), 1 Force Technique, Member of The Jedi"
   },
   "Officer": {
     "level": 7,
-    "skills": ["Knowledge (Tactics)"],
+    "skills": [
+      "Knowledge (Tactics)"
+    ],
     "talents": 1,
-    "talentTrees": ["Leadership", "Commando", "Veteran"],
-    "other": ["Military/Paramilitary Organization"],
+    "talentTrees": [
+      "Leadership",
+      "Commando",
+      "Veteran"
+    ],
+    "other": [
+      "Military/Paramilitary Organization"
+    ],
     "description": "Character Level 7, Trained in Knowledge (Tactics), 1 Leadership/Commando/Veteran Talent, Military/Paramilitary Organization"
   },
   "Sith Apprentice": {
     "level": 7,
-    "skills": ["Use the Force"],
-    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
-    "other": ["Dark Side Score Equal to Wisdom", "Member of The Sith"],
+    "skills": [
+      "2b9e43f710664b31"
+    ],
+    "feats": [
+      "Force Sensitivity",
+      "Weapon Proficiency (Lightsabers)"
+    ],
+    "other": [
+      "Dark Side Score Equal to Wisdom",
+      "Member of The Sith"
+    ],
     "description": "Character Level 7, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), Dark Side Score Equal to Wisdom, Member of The Sith"
   },
   "Sith Lord": {
     "level": 12,
-    "skills": ["Use the Force"],
-    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "skills": [
+      "2b9e43f710664b31"
+    ],
+    "feats": [
+      "Force Sensitivity",
+      "Weapon Proficiency (Lightsabers)"
+    ],
     "techniques": 1,
-    "other": ["Dark Side Score Equal to Wisdom", "Member of The Sith"],
+    "other": [
+      "Dark Side Score Equal to Wisdom",
+      "Member of The Sith"
+    ],
     "description": "Character Level 12, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), 1 Force Technique, Dark Side Score Equal to Wisdom, Member of The Sith"
   },
   "Corporate Agent": {
     "level": 7,
-    "skills": ["Gather Information", "Knowledge (Bureaucracy)"],
-    "feats": ["Skill Focus (Knowledge (Bureaucracy))"],
-    "other": ["Employed by Major Corporation"],
+    "skills": [
+      "c9bf381579013b18",
+      "Knowledge (Bureaucracy)"
+    ],
+    "feats": [
+      "Skill Focus (Knowledge (Bureaucracy))"
+    ],
+    "other": [
+      "Employed by Major Corporation"
+    ],
     "description": "Character Level 7, Trained in Gather Information, Trained in Knowledge (Bureaucracy), Skill Focus (Knowledge (Bureaucracy)), Employed by Major Corporation"
   },
   "Gladiator": {
     "level": 7,
     "bab": 7,
-    "feats": ["Improved Damage Threshold", "Weapon Proficiency (Advanced Melee Weapons)"],
+    "feats": [
+      "Improved Damage Threshold",
+      "Weapon Proficiency (Advanced Melee Weapons)"
+    ],
     "description": "Character Level 7, BAB +7, Improved Damage Threshold, Weapon Proficiency (Advanced Melee Weapons)"
   },
   "Melee Duelist": {
     "level": 7,
     "bab": 7,
-    "feats": ["Melee Defense", "Rapid Strike", "Weapon Focus"],
+    "feats": [
+      "Melee Defense",
+      "Rapid Strike",
+      "Weapon Focus"
+    ],
     "description": "Character Level 7, BAB +7, Melee Defense, Rapid Strike, Weapon Focus (Melee Weapon)"
   },
   "Enforcer": {
     "level": 7,
-    "skills": ["Gather Information", "Perception"],
+    "skills": [
+      "c9bf381579013b18",
+      "43c5941072ec78af"
+    ],
     "talents": 1,
-    "talentTrees": ["Survivor"],
-    "other": ["Law Enforcement Organization"],
+    "talentTrees": [
+      "Survivor"
+    ],
+    "other": [
+      "Law Enforcement Organization"
+    ],
     "description": "Character Level 7, Trained in Gather Information, Trained in Perception, 1 Survivor Talent, Law Enforcement Organization"
   },
   "Independent Droid": {
     "level": 3,
-    "skills": ["Use Computer"],
-    "other": ["Heuristic Processor"],
+    "skills": [
+      "8f5e21f92d6d976b"
+    ],
+    "other": [
+      "Heuristic Processor"
+    ],
     "description": "Character Level 3, Trained in Use Computer, Heuristic Processor"
   },
   "Infiltrator": {
     "level": 7,
-    "skills": ["Perception", "Stealth"],
-    "feats": ["Skill Focus (Stealth)"],
+    "skills": [
+      "43c5941072ec78af",
+      "6d2ac22d9fcf402f"
+    ],
+    "feats": [
+      "Skill Focus (Stealth)"
+    ],
     "talents": 2,
-    "talentTrees": ["Camouflage", "Spy"],
+    "talentTrees": [
+      "Camouflage",
+      "Spy"
+    ],
     "description": "Character Level 7, Trained in Perception, Trained in Stealth, Skill Focus (Stealth), 2 Camouflage/Spy Talents"
   },
   "Master Privateer": {
     "level": 7,
-    "skills": ["Deception", "Pilot"],
-    "feats": ["Vehicular Combat"],
+    "skills": [
+      "9410ce2dfb6cefcb",
+      "b8dad0c963f046c6"
+    ],
+    "feats": [
+      "Vehicular Combat"
+    ],
     "talents": 2,
-    "talentTrees": ["Misfortune", "Smuggling", "Spacer"],
+    "talentTrees": [
+      "Misfortune",
+      "Smuggling",
+      "Spacer"
+    ],
     "description": "Character Level 7, Trained in Deception, Trained in Pilot, Vehicular Combat, 2 Misfortune/Smuggling/Spacer Talents"
   },
   "Medic": {
     "level": 7,
-    "skills": ["Knowledge (Life Sciences)", "Treat Injury"],
-    "feats": ["Surgical Expertise"],
+    "skills": [
+      "Knowledge (Life Sciences)",
+      "633a13c5fa6101d7"
+    ],
+    "feats": [
+      "Surgical Expertise"
+    ],
     "description": "Character Level 7, Trained in Knowledge (Life Sciences), Trained in Treat Injury, Surgical Expertise"
   },
   "Saboteur": {
     "level": 7,
-    "skills": ["Deception", "Mechanics", "Use Computer"],
+    "skills": [
+      "9410ce2dfb6cefcb",
+      "745a5686d6f21e8c",
+      "8f5e21f92d6d976b"
+    ],
     "description": "Character Level 7, Trained in Deception, Trained in Mechanics, Trained in Use Computer"
   },
   "Assassin": {
     "level": 7,
-    "skills": ["Stealth"],
-    "feats": ["Sniper"],
-    "talents": ["Dastardly Strike"],
+    "skills": [
+      "6d2ac22d9fcf402f"
+    ],
+    "feats": [
+      "Sniper"
+    ],
+    "talents": [
+      "Dastardly Strike"
+    ],
     "description": "Character Level 7, Trained in Stealth, Sniper, Dastardly Strike Talent"
   },
   "Charlatan": {
     "level": 7,
-    "skills": ["Deception", "Persuasion"],
+    "skills": [
+      "9410ce2dfb6cefcb",
+      "b554f3e5a55ad53f"
+    ],
     "talents": 1,
-    "talentTrees": ["Disgrace", "Influence", "Lineage"],
+    "talentTrees": [
+      "Disgrace",
+      "Influence",
+      "Lineage"
+    ],
     "description": "Character Level 7, Trained in Deception, Trained in Persuasion, 1 Disgrace/Influence/Lineage Talent"
   },
   "Outlaw": {
     "level": 7,
-    "skills": ["Stealth", "Survival"],
+    "skills": [
+      "6d2ac22d9fcf402f",
+      "426945d1fc765a5d"
+    ],
     "talents": 1,
-    "talentTrees": ["Disgrace", "Misfortune"],
-    "other": ["Wanted in at Least One System"],
+    "talentTrees": [
+      "Disgrace",
+      "Misfortune"
+    ],
+    "other": [
+      "Wanted in at Least One System"
+    ],
     "description": "Character Level 7, Trained in Stealth, Trained in Survival, 1 Disgrace/Misfortune Talent, Wanted in at Least One System"
   },
   "Droid Commander": {
     "level": 7,
-    "skills": ["Knowledge (Tactics)", "Use Computer"],
+    "skills": [
+      "Knowledge (Tactics)",
+      "8f5e21f92d6d976b"
+    ],
     "talents": 1,
-    "talentTrees": ["Leadership", "Commando"],
-    "other": ["Must be a Droid"],
+    "talentTrees": [
+      "Leadership",
+      "Commando"
+    ],
+    "other": [
+      "Must be a Droid"
+    ],
     "description": "Character Level 7, Trained in Knowledge (Tactics), Trained in Use Computer, 1 Leadership/Commando Talent, Must be a Droid"
   },
   "Military Engineer": {
     "bab": 7,
-    "skills": ["Mechanics", "Use Computer"],
+    "skills": [
+      "745a5686d6f21e8c",
+      "8f5e21f92d6d976b"
+    ],
     "description": "BAB +7, Trained in Mechanics, Trained in Use Computer"
   },
   "Vanguard": {
     "level": 7,
-    "skills": ["Perception", "Stealth"],
+    "skills": [
+      "43c5941072ec78af",
+      "6d2ac22d9fcf402f"
+    ],
     "talents": 2,
-    "talentTrees": ["Camouflage", "Commando"],
+    "talentTrees": [
+      "Camouflage",
+      "Commando"
+    ],
     "description": "Character Level 7, Trained in Perception, Trained in Stealth, 2 Camouflage/Commando Talents"
   },
   "Imperial Knight": {
     "bab": 7,
-    "skills": ["Use the Force"],
-    "feats": ["Armor Proficiency (Medium)", "Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
-    "other": ["Sworn Defender of Fel Empire"],
+    "skills": [
+      "2b9e43f710664b31"
+    ],
+    "feats": [
+      "Armor Proficiency (Medium)",
+      "Force Sensitivity",
+      "Weapon Proficiency (Lightsabers)"
+    ],
+    "other": [
+      "Sworn Defender of Fel Empire"
+    ],
     "description": "BAB +7, Trained in Use the Force, Armor Proficiency (Medium), Force Sensitivity, Weapon Proficiency (Lightsabers), Sworn Defender of Fel Empire"
   },
   "Shaper": {
     "level": 7,
-    "skills": ["Knowledge (Life Sciences)", "Treat Injury"],
-    "other": ["Yuuzhan Vong Species", "Biotech Specialist"],
+    "skills": [
+      "Knowledge (Life Sciences)",
+      "633a13c5fa6101d7"
+    ],
+    "other": [
+      "Yuuzhan Vong Species",
+      "Biotech Specialist"
+    ],
     "description": "Character Level 7, Yuuzhan Vong Species, Trained in Knowledge (Life Sciences), Trained in Treat Injury, Biotech Specialist"
   },
   "Improviser": {
     "level": 7,
-    "skills": ["Mechanics", "Use Computer"],
-    "feats": ["Skill Focus (Mechanics)"],
+    "skills": [
+      "745a5686d6f21e8c",
+      "8f5e21f92d6d976b"
+    ],
+    "feats": [
+      "Skill Focus (Mechanics)"
+    ],
     "description": "Character Level 7, Trained in Mechanics, Trained in Use Computer, Skill Focus (Mechanics)"
   },
   "Pathfinder": {
     "level": 7,
-    "skills": ["Perception", "Survival"],
+    "skills": [
+      "43c5941072ec78af",
+      "426945d1fc765a5d"
+    ],
     "talents": 2,
-    "talentTrees": ["Awareness", "Camouflage", "Survivor"],
+    "talentTrees": [
+      "Awareness",
+      "Camouflage",
+      "Survivor"
+    ],
     "description": "Character Level 7, Trained in Perception, Trained in Survival, 2 Awareness/Camouflage/Survivor Talents"
   },
   "Martial Arts Master": {
     "bab": 7,
-    "feats": ["Martial Arts II", "Melee Defense"],
+    "feats": [
+      "Martial Arts II",
+      "Melee Defense"
+    ],
     "talents": 1,
-    "talentTrees": ["Brawler", "Survivor"],
+    "talentTrees": [
+      "Brawler",
+      "Survivor"
+    ],
     "description": "BAB +7, Martial Arts II, Melee Defense, 1 Martial Arts Feat, 1 Brawler/Survivor Talent"
   }
 }

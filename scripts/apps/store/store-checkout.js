@@ -9,6 +9,7 @@ import CharacterGenerator from '../chargen/chargen-main.js';
 import { VehicleModificationApp } from '../vehicle-modification-app.js';
 import { calculateFinalCost } from './store-pricing.js';
 import { getRandomDialogue } from './store-shared.js';
+import { SWSEVehicleHandler } from '../../actors/vehicle/swse-vehicle-handler.js';
 
 /**
  * Add item to shopping cart
@@ -131,25 +132,17 @@ export async function addDroidToCart(store, actorId, updateDialogueCallback) {
  * @param {string} condition - "new" or "used"
  * @param {Function} updateDialogueCallback - Callback to update dialogue
  */
-export async function addVehicleToCart(store, actorId, condition, updateDialogueCallback) {
-    if (!actorId) {
+export async function addVehicleToCart(store, templateId, condition, updateDialogueCallback) {
+    if (!templateId) {
         ui.notifications.warn("Invalid vehicle selection.");
         return;
     }
 
-    // Try to get from world actors first
-    let vehicleTemplate = game.actors.get(actorId);
+    // Vehicles are stored as Item templates in store-loaded compendiums.
+    const vehicleTemplate = store.itemsById?.get(templateId);
 
-    // If not found in world, search compendiums
-    if (!vehicleTemplate) {
-        const pack = game.packs.get('foundryvtt-swse.vehicles');
-        if (pack) {
-            vehicleTemplate = await pack.getDocument(actorId);
-        }
-    }
-
-    if (!vehicleTemplate) {
-        ui.notifications.error("Vehicle not found.");
+    if (!vehicleTemplate || vehicleTemplate.type !== "vehicle") {
+        ui.notifications.error("Vehicle template not found.");
         return;
     }
 
@@ -157,18 +150,16 @@ export async function addVehicleToCart(store, actorId, condition, updateDialogue
     const conditionMultiplier = condition === "used" ? 0.5 : 1.0;
     const finalCost = calculateFinalCost(baseCost * conditionMultiplier);
 
-    // Add to cart
     store.cart.vehicles.push({
-        id: actorId,
+        id: templateId,
         name: vehicleTemplate.name,
         cost: finalCost,
         condition: condition,
-        actor: vehicleTemplate
+        template: vehicleTemplate
     });
 
     ui.notifications.info(`${condition === "used" ? "Used" : "New"} ${vehicleTemplate.name} added to cart.`);
 
-    // Update Rendarr's dialogue
     const dialogue = getRandomDialogue('purchase');
     if (updateDialogueCallback) {
         updateDialogueCallback(dialogue);
@@ -473,21 +464,24 @@ export async function createCustomStarship(actor, closeCallback) {
  * @param {string} itemId - ID of the item to remove
  */
 export function removeFromCartById(cart, type, itemId) {
-    if (type === "item") {
+    const t = String(type || "").toLowerCase();
+    const norm = t.endsWith("s") ? t.slice(0, -1) : t;
+
+    if (norm === "item") {
         const index = cart.items.findIndex(item => item.id === itemId);
-        if (index !== -1) {
-            cart.items.splice(index, 1);
-        }
-    } else if (type === "droid") {
+        if (index !== -1) cart.items.splice(index, 1);
+        return;
+    }
+
+    if (norm === "droid") {
         const index = cart.droids.findIndex(droid => droid.id === itemId);
-        if (index !== -1) {
-            cart.droids.splice(index, 1);
-        }
-    } else if (type === "vehicle") {
+        if (index !== -1) cart.droids.splice(index, 1);
+        return;
+    }
+
+    if (norm === "vehicle") {
         const index = cart.vehicles.findIndex(vehicle => vehicle.id === itemId);
-        if (index !== -1) {
-            cart.vehicles.splice(index, 1);
-        }
+        if (index !== -1) cart.vehicles.splice(index, 1);
     }
 }
 
@@ -593,20 +587,26 @@ export async function checkout(store, animateNumberCallback) {
             };
             await Actor.create(droidData);
         }
-
-        // Create vehicle actors
+        // Create vehicle actors from Item templates
         for (const vehicle of store.cart.vehicles) {
-            // Handle both Documents and plain objects
-            const vehicleData = vehicle.actor.toObject ? vehicle.actor.toObject() : vehicle.actor;
-            vehicleData.name = `${vehicle.condition === "used" ? "(Used) " : ""}${vehicle.name}`;
-            vehicleData.ownership = {
-                default: 0,
-                [game.user.id]: 3
-            };
-            if (vehicle.condition === "used" && vehicleData.system) {
-                vehicleData.system.condition = "used";
+            const template = vehicle.template || store.itemsById?.get(vehicle.id);
+            if (!template) {
+                throw new Error(`Vehicle template not found for id=${vehicle.id}`);
             }
-            await Actor.create(vehicleData);
+
+            const vehicleActor = await Actor.create({
+                name: `${vehicle.condition === "used" ? "(Used) " : ""}${vehicle.name}`,
+                type: "vehicle",
+                img: template.img || "icons/svg/anchor.svg",
+                ownership: {
+                    default: 0,
+                    [game.user.id]: 3
+                }
+            }, { renderSheet: false });
+
+            await SWSEVehicleHandler.applyVehicleTemplate(vehicleActor, template, {
+                condition: vehicle.condition
+            });
         }
 
         ui.notifications.info(`Purchase complete! Spent ${total.toLocaleString()} credits.`);
@@ -667,8 +667,8 @@ async function logPurchaseToHistory(actor, cart, total) {
                 cost: d.cost || 0
             })),
             vehicles: cart.vehicles.map(v => ({
-                id: v.id || v.actor?.id || v.actor?._id,
-                name: v.name || v.actor?.name,
+                id: v.id || v.template?._id || v.template?.id,
+                name: v.name || v.template?.name,
                 cost: v.cost || 0,
                 condition: v.condition || 'new'
             })),

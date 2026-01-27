@@ -1774,7 +1774,7 @@ async applyScalingFeature(feature) {
       swseLogger.warn('Suggestion engines not initialized');
       return feats;
     }
-    return await game.swse.suggestions.suggestFeats(feats, this.actor, pendingData);
+    return await SuggestionService.getSuggestions(feats, this.actor, pendingData);
   }
 
   /**
@@ -1789,7 +1789,7 @@ async applyScalingFeature(feature) {
       swseLogger.warn('Suggestion engines not initialized');
       return talents;
     }
-    return await game.swse.suggestions.suggestTalents(talents, this.actor, pendingData);
+    return await SuggestionService.getSuggestions(this.actor, 'progression', { domain: 'talents', available: talents, pendingData: pendingData, persist: true });
   }
 
   /**
@@ -1804,7 +1804,7 @@ async applyScalingFeature(feature) {
       swseLogger.warn('Suggestion engines not initialized');
       return classes;
     }
-    return await game.swse.suggestions.suggestClasses(classes, this.actor, pendingData);
+    return await SuggestionService.getSuggestions(this.actor, 'progression', { domain: 'classes', available: classes, pendingData: pendingData, persist: true });
   }
 
   /**
@@ -1858,7 +1858,7 @@ async applyScalingFeature(feature) {
       swseLogger.warn('Force option suggestion engine not initialized');
       return options;
     }
-    return await game.swse.suggestions.suggestForceOptions(options, this.actor, pendingData);
+    return await SuggestionService.getSuggestions(this.actor, 'progression', { domain: 'forcepowers', available: options, pendingData: pendingData, persist: true });
   }
 
   /**
@@ -1884,7 +1884,7 @@ async applyScalingFeature(feature) {
       swseLogger.warn('Level 1 skill suggestion engine not initialized');
       return skills;
     }
-    return await game.swse.suggestions.suggestLevel1Skills(skills, this.actor, pendingData);
+    return await SuggestionService.getSuggestions(this.actor, 'progression', { domain: 'skills_l1', available: skills, pendingData: pendingData, persist: true });
   }
 
   /**
@@ -1897,7 +1897,7 @@ async applyScalingFeature(feature) {
       swseLogger.warn('Attribute increase suggestion engine not initialized');
       return [];
     }
-    return await game.swse.suggestions.suggestAttributeIncreases(this.actor, pendingData);
+    return await SuggestionService.getSuggestions(this.actor, 'progression', { domain: 'attributes', pendingData: pendingData, persist: true });
   }
 
   /**

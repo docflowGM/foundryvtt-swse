@@ -4,6 +4,7 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
+import { SuggestionService } from '../../engine/SuggestionService.js';
 
 /**
  * Get filtered backgrounds for the current category
@@ -206,7 +207,7 @@ export async function _onAskMentorBackgroundSuggestion(event) {
     ui.notifications.info("Consulting with your mentor...");
 
     // Get suggestion engine via coordinator
-    if (!game.swse?.suggestions?.suggestBackgrounds) {
+    if (!SuggestionService) {
       ui.notifications.error("Suggestion engine not available. Please reload the page.");
       SWSELogger.error("BackgroundSuggestion | Suggestion engine not available");
       return;
@@ -216,11 +217,12 @@ export async function _onAskMentorBackgroundSuggestion(event) {
     const tempActorData = this._createTempActorForValidation();
 
     // Get suggestions from engine
-    const suggestedBackgrounds = await game.swse.suggestions.suggestBackgrounds(
-      availableBackgrounds,
-      tempActorData,
-      this.characterData
-    );
+    const suggestedBackgrounds = await SuggestionService.getSuggestions(tempActorData, 'chargen', {
+      domain: 'backgrounds',
+      available: availableBackgrounds,
+      pendingData: this.characterData,
+      persist: true
+    });
 
     // Find the top suggestion
     const topSuggestion = suggestedBackgrounds.find(bg => bg.suggestion?.tier > 0) || suggestedBackgrounds[0];

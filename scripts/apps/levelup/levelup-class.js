@@ -5,6 +5,7 @@ import { ProgressionEngine } from "../../progression/engine/progression-engine.j
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { SuggestionService } from '../../engine/SuggestionService.js';
 import { warnGM } from '../../utils/warn-gm.js';
 import { getMentorForClass, getMentorGreeting, getLevel1Class, setLevel1Class } from '../mentor-dialogues.js';
 import { isBaseClass, getCharacterClasses, getClassDefenseBonuses, calculateHPGain } from './levelup-shared.js';
@@ -152,28 +153,9 @@ export async function getAvailableClasses(actor, pendingData, options = {}) {
       SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Attempting to apply class suggestions...`);
       let classesWithSuggestions = availableClasses;
 
-      if (game.swse?.suggestions?.suggestClasses) {
-        SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Using game.swse.suggestions.suggestClasses...`);
-        classesWithSuggestions = await game.swse.suggestions.suggestClasses(
-          availableClasses,
-          actor,
-          pendingData
-        );
-        SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Suggestions applied via coordinator API`);
-      } else {
-        // Fallback to direct engine call
-        SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Using ClassSuggestionEngine.suggestClasses directly...`);
-        classesWithSuggestions = await ClassSuggestionEngine.suggestClasses(
-          availableClasses,
-          actor,
-          pendingData
-        );
-        SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Suggestions applied via direct engine call`);
-      }
-
-      // Sort by suggestion tier
+      classesWithSuggestions = await SuggestionService.getSuggestions(actor, 'levelup', { domain: 'classes', available: availableClasses, pendingData, persist: true });// Sort by suggestion tier
       SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Sorting classes by suggestion tier...`);
-      const sortedClasses = ClassSuggestionEngine.sortBySuggestion(classesWithSuggestions);
+      const sortedClasses = ClassSuggestionService.sortBySuggestion(classesWithSuggestions);
 
       const suggestedCount = sortedClasses.filter(c => c.isSuggested).length;
       SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Class suggestions applied`, {

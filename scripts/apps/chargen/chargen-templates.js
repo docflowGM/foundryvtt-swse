@@ -136,7 +136,7 @@ export class CharacterTemplates {
 
     // Validate feat IDs
     if (template.featIds && Array.isArray(template.featIds)) {
-      const featPack = game.packs.get('foundryvtt-swse.feats');
+      const featPack = game.packs.get(featPackName);
       if (!featPack) {
         errors.push('Feats compendium not found');
       } else {
@@ -151,7 +151,7 @@ export class CharacterTemplates {
 
     // Validate talent IDs
     if (template.talentIds && Array.isArray(template.talentIds)) {
-      const talentPack = game.packs.get('foundryvtt-swse.talents');
+      const talentPack = game.packs.get(talentPackName);
       if (!talentPack) {
         errors.push('Talents compendium not found');
       } else {
@@ -502,15 +502,52 @@ export class CharacterTemplates {
    * @param {Actor} actor - The actor to modify
    * @param {string} featName - The feat name to add
    */
-  static async applyTemplateFeat(actor, featName) {
-    if (!featName) return;
+  static async applyTemplateFeat(actor, featRef) {
+    if (!featRef) return;
+
+    const featName = typeof featRef === 'string' ? featRef : (featRef.displayName || featRef.name);
+    const featPackName = typeof featRef === 'object' && featRef.pack ? featRef.pack : 'foundryvtt-swse.feats';
+    const featId = typeof featRef === 'object' && featRef.id ? featRef.id : null;
 
     try {
       // Find feat in compendium
-      const featPack = game.packs.get('foundryvtt-swse.feats');
+      const featPack = game.packs.get(featPackName);
       if (!featPack) {
         SWSELogger.warn('SWSE | Feats compendium not found');
         return;
+      }
+
+      if (featId) {
+        const feat = await featPack.getDocument(featId);
+        if (feat) {
+          await actor.createEmbeddedDocuments('Item', [feat.toObject()]);
+          SWSELogger.log(`SWSE | Added template feat: ${featName}`);
+
+          // Handle Skill Focus feat - auto-check the skill's focused checkbox
+          if (featName.startsWith('Skill Focus')) {
+            const match = featName.match(/Skill Focus \(([^)]+)\)/);
+            if (match) {
+              await this._applySkillFocus(actor, match[1]);
+            }
+          }
+
+          // Handle Weapon Focus feat
+          if (featName.startsWith('Weapon Focus')) {
+            const match = featName.match(/Weapon Focus \(([^)]+)\)/);
+            if (match) {
+              await this._applyWeaponFocus(actor, match[1]);
+            }
+          }
+
+          // Handle Weapon Proficiency feat
+          if (featName.startsWith('Weapon Proficiency')) {
+            const match = featName.match(/Weapon Proficiency \(([^)]+)\)/);
+            if (match) {
+              await this._applyWeaponProficiency(actor, match[1]);
+            }
+          }
+          return;
+        }
       }
 
       const index = await featPack.getIndex();
@@ -610,7 +647,7 @@ export class CharacterTemplates {
    * @param {Actor} actor - The actor to modify
    * @param {string} talentName - The talent name to add
    */
-  static async applyTemplateTalent(actor, talentName) {
+  static async applyTemplateTalent(actor, talentRef) {
     if (!talentName) {
       SWSELogger.log('SWSE | No talent specified in template, skipping');
       return;
@@ -620,11 +657,20 @@ export class CharacterTemplates {
       SWSELogger.log(`SWSE | Attempting to apply template talent: ${talentName}`);
 
       // Find talent in compendium
-      const talentPack = game.packs.get('foundryvtt-swse.talents');
+      const talentPack = game.packs.get(talentPackName);
       if (!talentPack) {
         SWSELogger.warn('SWSE | Talents compendium not found');
         ui.notifications.warn('Talents compendium not found! Cannot add template talent.');
         return;
+      }
+
+      if (talentId) {
+        const talent = await talentPack.getDocument(talentId);
+        if (talent) {
+          await actor.createEmbeddedDocuments('Item', [talent.toObject()]);
+          SWSELogger.log(`SWSE | Added template talent: ${talentName}`);
+          return;
+        }
       }
 
       const index = await talentPack.getIndex();

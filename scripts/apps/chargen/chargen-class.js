@@ -361,7 +361,11 @@ export async function _onSelectClass(event) {
       } else {
         SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User skipped mentor survey (can be completed later)`);
         ui.notifications.info("Survey skipped. You can complete it later to get personalized mentor suggestions.");
-      }
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Recording mentor survey skip metadata`);
+        this.characterData.mentorSurveySkipped = true;
+        this.characterData.mentorSurveySkipCount = (this.characterData.mentorSurveySkipCount || 0) + 1;
+        this.characterData.mentorSurveyLastSkippedAt = Date.now();
+}
     } else {
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CONDITION NOT MET - Skipping survey`, {
         surveyAlreadyCompleted: surveyCompleted,
@@ -538,18 +542,4 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
 
 
 // ============================================================
-// MENTOR L1 SURVEY TRIGGER (GENERATED DATA PIPELINE)
-// ============================================================
 
-import { maybeOpenMentorSurvey } from "../mentor-survey.js";
-
-export function maybeTriggerMentorL1Survey(actor) {
-  const identity = actor?.flags?.swse?.identity;
-  const survey = actor?.flags?.swse?.mentorSurvey;
-
-  if (!identity?.identityReady) return;
-  if (survey?.completed) return;
-
-  console.log("[SWSE Mentor] Triggering L1 mentor survey");
-  maybeOpenMentorSurvey(actor);
-}

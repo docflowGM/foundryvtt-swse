@@ -30,6 +30,7 @@ export const TalentTreeDB = {
 
     // In-memory map for O(1) lookups: treeId -> normalized tree
     trees: new Map(),
+    sourceIndex: new Map(),
 
     // SSOT inverse index: talentId -> treeId (built from tree.system.talentIds)
     talentToTree: new Map(),
@@ -64,6 +65,7 @@ export const TalentTreeDB = {
 
                     // Store by ID
                     this.trees.set(normalizedTree.id, normalizedTree);
+                    if (normalizedTree.sourceId) this.sourceIndex.set(normalizedTree.sourceId, normalizedTree);
                     count++;
 
                 } catch (err) {
@@ -107,7 +109,20 @@ export const TalentTreeDB = {
      * @param {string} name - Tree name
      * @returns {Object|null} - Normalized tree or null
      */
-    byName(name) {
+    
+    /**
+     * Lookup a talent tree by its compendium document _id.
+     * This prevents drift when display names change.
+     *
+     * @param {string} sourceId - compendium document id
+     * @returns {Object|null}
+     */
+    bySourceId(sourceId) {
+        if (!sourceId) return null;
+        return this.sourceIndex.get(sourceId) || null;
+    },
+
+byName(name) {
         if (!name) return null;
 
         return findTalentTreeByName(name, this.trees);

@@ -15,7 +15,7 @@ import { checkTalentPrerequisites } from './levelup-validation.js';
 import { getClassProperty, getTalentTrees } from '../chargen/chargen-property-accessor.js';
 import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
-import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
+import { SuggestionService } from '../../engine/SuggestionService.js';
 import {
   getTalentCountAtHeroicLevel,
   getTalentCountAtClassLevel,
@@ -250,25 +250,17 @@ export async function loadTalentData(actor = null, pendingData = {}) {
     // Include future availability scoring for unqualified talents
     let talentsWithSuggestions = talentsWithPrereqs;
     if (game.swse?.suggestions?.suggestTalents) {
-      SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Using game.swse.suggestions.suggestTalents...`);
-      talentsWithSuggestions = await game.swse.suggestions.suggestTalents(
-        talentsWithPrereqs,
-        actor,
-        pendingData,
-        { includeFutureAvailability: true }
-      );
-      SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Suggestions applied, returned ${talentsWithSuggestions.length} talents`);
-    } else {
-      talentsWithSuggestions = await SuggestionEngine.suggestTalents(
-        talentsWithPrereqs,
-        actor,
-        pendingData,
-        { includeFutureAvailability: true }
-      );
-    }
+    talentsWithSuggestions = await SuggestionService.getSuggestions(actor, 'levelup', {
+      domain: 'talents',
+      available: talentObjects,
+      pendingData,
+      engineOptions: { talentMetadata: metadata.talents || {}, includeFutureAvailability: true },
+      persist: true
+    });
 
-    // Log suggestion statistics
-    const suggestionCounts = SuggestionEngine.countByTier(talentsWithSuggestions);
+  }
+// Log suggestion statistics
+    const suggestionCounts = SuggestionService.countByTier(talentsWithSuggestions);
     SWSELogger.log(`SWSE LevelUp | Talent suggestions: Chain=${suggestionCounts[4]}, Skill=${suggestionCounts[3]}, Ability=${suggestionCounts[2]}, Class=${suggestionCounts[1]}`);
 
     return talentsWithSuggestions;

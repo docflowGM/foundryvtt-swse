@@ -35,7 +35,7 @@ try {
   // Remove existing zip if present
   if (fs.existsSync(outputFileName)) {
     fs.unlinkSync(outputFileName);
-    console.log(`  🗑️  Removed old package: ${outputFileName}`);
+    console.log(`  🗑️  Removed old "package": ${outputFileName}`);
   }
 
   // Create ZIP with files at root level (no wrapper folder)
@@ -56,7 +56,7 @@ try {
   console.log(`3. Upload or paste URL to ${outputFileName}`);
   console.log(`\n✨ Distribution ready!`);
 } catch (err) {
-  console.error('❌ Error creating package:', err.message);
+  console.error('❌ Error creating "package":', err.message);
   console.error('\n⚠️  Make sure you have the "zip" command installed (usually pre-installed on Linux/Mac)');
   process.exit(1);
 }

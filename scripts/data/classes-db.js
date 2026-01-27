@@ -62,17 +62,33 @@ export const ClassesDB = {
 
                     // Link talent trees (if TalentTreeDB is available)
                     if (talentTreeDB && talentTreeDB.isBuilt) {
-                        normalizedClass.talentTreeIds = normalizedClass.talentTreeNames
-                            .map(name => {
-                                const tree = talentTreeDB.byName(name);
-                                if (!tree) {
-                                    SWSELogger.warn(`[ClassesDB] Class "${normalizedClass.name}" references unknown talent tree: "${name}"`);
-                                    warnings++;
-                                    return null;
-                                }
-                                return tree.id;
-                            })
-                            .filter(Boolean);
+                        // Prefer compendium IDs (drift-safe). Fallback to names.
+                        const sourceIds = Array.isArray(normalizedClass.talentTreeSourceIds) ? normalizedClass.talentTreeSourceIds : [];
+                        if (sourceIds.length) {
+                            normalizedClass.talentTreeIds = sourceIds
+                                .map(sourceId => {
+                                    const tree = talentTreeDB.bySourceId(sourceId);
+                                    if (!tree) {
+                                        SWSELogger.warn(`[ClassesDB] Class "${normalizedClass.name}" references unknown talent tree sourceId: "${sourceId}"`);
+                                        warnings++;
+                                        return null;
+                                    }
+                                    return tree.id;
+                                })
+                                .filter(Boolean);
+                        } else {
+                            normalizedClass.talentTreeIds = normalizedClass.talentTreeNames
+                                .map(name => {
+                                    const tree = talentTreeDB.byName(name);
+                                    if (!tree) {
+                                        SWSELogger.warn(`[ClassesDB] Class "${normalizedClass.name}" references unknown talent tree: "${name}"`);
+                                        warnings++;
+                                        return null;
+                                    }
+                                    return tree.id;
+                                })
+                                .filter(Boolean);
+                        }
                     }
 
                     // Store by ID

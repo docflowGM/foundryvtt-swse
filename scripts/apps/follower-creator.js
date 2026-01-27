@@ -11,6 +11,7 @@
  */
 
 import { swseLogger } from '../utils/logger.js';
+import { resolveSkillKey } from '../utils/skill-resolver.js';
 
 export class FollowerCreator {
 
@@ -454,7 +455,7 @@ export class FollowerCreator {
      * @returns {boolean} True if skill was trained successfully
      */
     static async _trainSkill(follower, skillName) {
-        const skillKey = this._getSkillKey(skillName);
+        const skillKey = await resolveSkillKey(skillName);
         if (skillKey && follower.system.skills?.[skillKey]) {
             await follower.update({
                 [`system.skills.${skillKey}.trained`]: true
@@ -462,42 +463,6 @@ export class FollowerCreator {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Get skill key from skill name
-     * @private
-     */
-    static _getSkillKey(skillName) {
-        const skillMap = {
-            'Acrobatics': 'acrobatics',
-            'Climb': 'climb',
-            'Deception': 'deception',
-            'Endurance': 'endurance',
-            'Gather Information': 'gatherInformation',
-            'Initiative': 'initiative',
-            'Jump': 'jump',
-            'Knowledge (Bureaucracy)': 'knowledgeBureaucracy',
-            'Knowledge (Galactic Lore)': 'knowledgeGalacticLore',
-            'Knowledge (Life Sciences)': 'knowledgeLifeSciences',
-            'Knowledge (Physical Sciences)': 'knowledgePhysicalSciences',
-            'Knowledge (Social Sciences)': 'knowledgeSocialSciences',
-            'Knowledge (Tactics)': 'knowledgeTactics',
-            'Knowledge (Technology)': 'knowledgeTechnology',
-            'Mechanics': 'mechanics',
-            'Perception': 'perception',
-            'Persuasion': 'persuasion',
-            'Pilot': 'pilot',
-            'Ride': 'ride',
-            'Stealth': 'stealth',
-            'Survival': 'survival',
-            'Swim': 'swim',
-            'Treat Injury': 'treatInjury',
-            'Use Computer': 'useComputer',
-            'Use the Force': 'useTheForce'
-        };
-
-        return skillMap[skillName] || null;
     }
 
     /**

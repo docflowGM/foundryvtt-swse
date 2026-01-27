@@ -40,14 +40,15 @@ function getOlSaltyDialogue(speciesName) {
 
   // Try exact match first
   if (_olSaltyDialogues[speciesName]) {
-    return _olSaltyDialogues[speciesName];
+    const value = _olSaltyDialogues[speciesName];
+    return Array.isArray(value) ? value[Math.floor(Math.random() * value.length)] : value;
   }
 
   // Try case-insensitive match
   const lowerName = speciesName.toLowerCase();
   for (const [key, value] of Object.entries(_olSaltyDialogues)) {
     if (key.toLowerCase() === lowerName) {
-      return value;
+      return Array.isArray(value) ? value[Math.floor(Math.random() * value.length)] : value;
     }
   }
 

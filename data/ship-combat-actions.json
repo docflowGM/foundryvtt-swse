@@ -9,7 +9,7 @@
     "notes": "Move the ship up to its speed. Make Pilot checks for difficult maneuvers.",
     "relatedSkills": [
       {
-        "skill": "Pilot",
+        "skill": "b8dad0c963f046c6",
         "dc": {
           "type": "varies",
           "value": "10-30 depending on maneuver"
@@ -29,7 +29,7 @@
     "notes": "Move and fire vehicle weapons in same turn. Move up to ship's speed and make one attack with any forward-arc weapon.",
     "relatedSkills": [
       {
-        "skill": "Pilot",
+        "skill": "b8dad0c963f046c6",
         "when": "making attack run maneuver"
       }
     ],
@@ -45,7 +45,7 @@
     "notes": "Pilot gains +2 dodge bonus to Reflex Defense until start of next turn. Ship cannot make attacks this round.",
     "relatedSkills": [
       {
-        "skill": "Pilot",
+        "skill": "b8dad0c963f046c6",
         "outcome": "+2 dodge bonus to ship's Reflex Defense"
       }
     ],
@@ -61,7 +61,7 @@
     "notes": "As reaction when targeted by attack: Pilot check DC = attack roll. Success: attack misses. Limited uses per encounter.",
     "relatedSkills": [
       {
-        "skill": "Pilot",
+        "skill": "b8dad0c963f046c6",
         "dc": {
           "type": "opposed",
           "value": "Opposed by attack roll"
@@ -81,7 +81,7 @@
     "notes": "Pilot check opposed by target's Pilot check (or Reflex if unmanned). Success: both vehicles take collision damage based on size and speed.",
     "relatedSkills": [
       {
-        "skill": "Pilot",
+        "skill": "b8dad0c963f046c6",
         "dc": {
           "type": "opposed",
           "value": "Opposed Pilot check"
@@ -101,7 +101,7 @@
     "notes": "Special maneuvers requiring Vehicular Combat feat and high Pilot skill. Includes barrel roll, bootlegger reverse, etc.",
     "relatedSkills": [
       {
-        "skill": "Pilot",
+        "skill": "b8dad0c963f046c6",
         "dc": {
           "type": "varies",
           "value": "15-30"
@@ -121,7 +121,7 @@
     "notes": "Make attack roll with one weapon system. Use ship's attack bonus or your own Pilot skill.",
     "relatedSkills": [
       {
-        "skill": "Pilot",
+        "skill": "b8dad0c963f046c6",
         "dc": {
           "type": "expression",
           "value": "d20 + Pilot (or ship's attack bonus) vs target's Reflex"
@@ -141,7 +141,7 @@
     "notes": "Gain +2 bonus on next attack with specific weapon this round. Must fire weapon same round or lose benefit.",
     "relatedSkills": [
       {
-        "skill": "Pilot",
+        "skill": "b8dad0c963f046c6",
         "outcome": "+2 to next attack roll with aimed weapon"
       }
     ],
@@ -157,7 +157,7 @@
     "notes": "Designate target for all gunners. Gunners firing at designated target gain +1 bonus to attack rolls this round.",
     "relatedSkills": [
       {
-        "skill": "Pilot",
+        "skill": "b8dad0c963f046c6",
         "outcome": "+1 attack bonus for all gunners vs designated target"
       }
     ],
@@ -173,7 +173,7 @@
     "notes": "Fire multiple weapons of same type as single attack. +1 to attack per additional weapon, combine damage dice.",
     "relatedSkills": [
       {
-        "skill": "Pilot",
+        "skill": "b8dad0c963f046c6",
         "outcome": "Combined damage from all linked weapons"
       }
     ],
@@ -189,7 +189,7 @@
     "notes": "Area attack covering 2x2 square area. -5 penalty to attack. Each target in area makes Reflex save vs attack result.",
     "relatedSkills": [
       {
-        "skill": "Pilot",
+        "skill": "b8dad0c963f046c6",
         "dc": {
           "type": "expression",
           "value": "d20 + Pilot - 5"
@@ -209,7 +209,7 @@
     "notes": "Temporary repair to restore function to damaged system. Mechanics DC 20 (trained only). System functions for 1d4 rounds then breaks again.",
     "relatedSkills": [
       {
-        "skill": "Mechanics",
+        "skill": "745a5686d6f21e8c",
         "dc": {
           "type": "flat",
           "value": 20
@@ -230,7 +230,7 @@
     "notes": "Mechanics check to restore hull points. DC 15: restore 1d4 HP. DC 20: restore 2d4 HP. DC 25: restore 3d4 HP. Requires tools.",
     "relatedSkills": [
       {
-        "skill": "Mechanics",
+        "skill": "745a5686d6f21e8c",
         "dc": {
           "type": "varies",
           "value": "15/20/25"
@@ -250,7 +250,7 @@
     "notes": "Divert power to shields. Mechanics DC 20. Success: restore SR equal to 1/4 max SR. Can only be done once per encounter.",
     "relatedSkills": [
       {
-        "skill": "Mechanics",
+        "skill": "745a5686d6f21e8c",
         "dc": {
           "type": "flat",
           "value": 20
@@ -270,7 +270,7 @@
     "notes": "Redirect power from one system to another. Mechanics DC 15. Can boost weapons (+1 damage die), shields (+SR), or speed (+2 squares).",
     "relatedSkills": [
       {
-        "skill": "Mechanics",
+        "skill": "745a5686d6f21e8c",
         "dc": {
           "type": "flat",
           "value": 15
@@ -290,7 +290,7 @@
     "notes": "Takes 3 consecutive swift actions (1.5 rounds). Mechanics DC 20. Success: restore shields to full SR.",
     "relatedSkills": [
       {
-        "skill": "Mechanics",
+        "skill": "745a5686d6f21e8c",
         "dc": {
           "type": "flat",
           "value": 20
@@ -311,7 +311,7 @@
     "notes": "Takes 3 swift actions. Mechanics DC 20. Success: move vehicle one step up condition track (max to -1).",
     "relatedSkills": [
       {
-        "skill": "Mechanics",
+        "skill": "745a5686d6f21e8c",
         "dc": {
           "type": "flat",
           "value": 20
@@ -342,7 +342,7 @@
     "notes": "Takes 3 consecutive swift actions. Mechanics DC 20. Restore shields to maximum SR.",
     "relatedSkills": [
       {
-        "skill": "Mechanics",
+        "skill": "745a5686d6f21e8c",
         "dc": {
           "type": "flat",
           "value": 20
@@ -362,7 +362,7 @@
     "notes": "Move shield strength to specific arc (forward, aft, port, starboard). Mechanics DC 15. Grants +2 to SR in chosen direction.",
     "relatedSkills": [
       {
-        "skill": "Mechanics",
+        "skill": "745a5686d6f21e8c",
         "dc": {
           "type": "flat",
           "value": 15
@@ -382,7 +382,7 @@
     "notes": "Make Persuasion check DC 15. Success: one ally gains +2 competence bonus to attack rolls or skill checks until end of your next turn.",
     "relatedSkills": [
       {
-        "skill": "Persuasion",
+        "skill": "b554f3e5a55ad53f",
         "dc": {
           "type": "flat",
           "value": 15
@@ -402,7 +402,7 @@
     "notes": "Designate target. All gunners gain +1 to attack rolls vs that target until start of your next turn.",
     "relatedSkills": [
       {
-        "skill": "Persuasion",
+        "skill": "b554f3e5a55ad53f",
         "dc": {
           "type": "flat",
           "value": 10
@@ -422,7 +422,7 @@
     "notes": "Direct a crew member to take specific action. That crew member gains +2 to their next check this round.",
     "relatedSkills": [
       {
-        "skill": "Persuasion",
+        "skill": "b554f3e5a55ad53f",
         "outcome": "Designated crew member gains +2 to next check"
       }
     ],
@@ -438,7 +438,7 @@
     "notes": "Persuasion check DC 20. Success: all crew members gain +1 morale bonus to all checks for 1 minute.",
     "relatedSkills": [
       {
-        "skill": "Persuasion",
+        "skill": "b554f3e5a55ad53f",
         "dc": {
           "type": "flat",
           "value": 20
@@ -458,7 +458,7 @@
     "notes": "Use Computer check to establish sensor lock on enemy vessel. DC = 10 + target's Stealth modifier. Grants +2 to attack rolls vs locked target.",
     "relatedSkills": [
       {
-        "skill": "Use Computer",
+        "skill": "8f5e21f92d6d976b",
         "dc": {
           "type": "opposed",
           "value": "10 + target's Stealth"
@@ -478,7 +478,7 @@
     "notes": "Use Computer check opposed by target's Perception. Success: target loses sensor lock and takes -2 to attack rolls vs your ship.",
     "relatedSkills": [
       {
-        "skill": "Use Computer",
+        "skill": "8f5e21f92d6d976b",
         "dc": {
           "type": "opposed",
           "value": "Opposed by target's Perception"
@@ -498,7 +498,7 @@
     "notes": "Aid Another action for pilot. Pilot check DC 10. Success: pilot gains +2 to next Pilot check this round.",
     "relatedSkills": [
       {
-        "skill": "Pilot",
+        "skill": "b8dad0c963f046c6",
         "dc": {
           "type": "flat",
           "value": 10
@@ -518,7 +518,7 @@
     "notes": "Assume pilot duties if pilot is incapacitated. Can pilot ship normally starting next round.",
     "relatedSkills": [
       {
-        "skill": "Pilot",
+        "skill": "b8dad0c963f046c6",
         "when": "pilot is incapacitated or absent"
       }
     ],
@@ -534,7 +534,7 @@
     "notes": "Attempt quick patch. Mechanics DC 25. Success: restore 1d4 hull points. Can only be attempted once per system per encounter.",
     "relatedSkills": [
       {
-        "skill": "Mechanics",
+        "skill": "745a5686d6f21e8c",
         "dc": {
           "type": "flat",
           "value": 25
@@ -554,7 +554,7 @@
     "notes": "Spectacular piloting maneuver for tactical advantage or to impress. Pilot check DC varies by stunt difficulty.",
     "relatedSkills": [
       {
-        "skill": "Pilot",
+        "skill": "b8dad0c963f046c6",
         "dc": {
           "type": "varies",
           "value": "15-30+"

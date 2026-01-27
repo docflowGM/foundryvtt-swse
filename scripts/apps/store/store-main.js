@@ -1,53 +1,58 @@
 /**
- * store-main.js — SWSE Store (ApplicationV2)
+ * scripts/apps/store/store-main.js — SWSE Store (ApplicationV2)
+ *
+ * Responsibilities:
+ * - Load store-visible compendium entries (items + droids)
+ * - Provide grouped categories to the Handlebars template
+ * - Maintain a cart (in-memory + actor flag)
+ * - Delegate purchase/checkout logic to store-checkout.js
+ *
+ * Non-goals:
+ * - No pricing/business logic here
+ * - No direct mutation of actor currency/items here (handled by checkout module)
  */
 
+import { STORE_PACKS } from "./store-constants.js";
 import {
-  getCostDisplay,
   getCostValue,
   safeString,
   safeImg,
   safeSystem,
   tryRender,
-  isValidItemForStore
+  isValidItemForStore,
+  categorizeEquipment,
+  sortWeapons,
+  sortArmor,
+  getRarityClass,
+  getRarityLabel
 } from "./store-shared.js";
 import { getRendarrLine } from "./dialogue/rendarr-dialogue.js";
-import { checkout } from "./store-checkout.js";
+import {
+  addItemToCart,
+  addDroidToCart,
+  addVehicleToCart,
+  removeFromCartById,
+  clearCart,
+  calculateCartTotal,
+  checkout,
+  createCustomDroid,
+  createCustomStarship
+} from "./store-checkout.js";
 
 const { ApplicationV2 } = foundry.applications.api;
-const CART_FLAG = "storeCart";
+
+const CART_FLAG_SCOPE = "foundryvtt-swse";
+const CART_FLAG_KEY = "storeCart";
+
+function emptyCart() {
+  return { items: [], droids: [], vehicles: [] };
+}
+
+function asArray(v) {
+  return Array.isArray(v) ? v : [];
+}
 
 export class SWSEStore extends ApplicationV2 {
-
-  constructor(actor = null, options = {}) {
-    super(options);
-
-    this.actor =
-      actor ||
-      canvas?.tokens?.controlled?.[0]?.actor ||
-      game.user?.character ||
-      null;
-
-    this.itemsById = new Map();
-    this.groupedItems = {
-      weapons: new Map(),
-      armor: new Map(),
-      equipment: new Map(),
-      droids: new Map(),
-      vehicles: new Map(),
-      other: new Map()
-    };
-
-    this._loaded = false;
-    this._loadedPacks = new Set();
-
-    this.cart = foundry.utils.deepClone(
-      game.user.getFlag("swse", CART_FLAG) ??
-      { items: {}, droids: {}, vehicles: {} }
-    );
-  }
-
-  /* -------------------------------------------- */
 
   static DEFAULT_OPTIONS = {
     id: "swse-store",
@@ -62,29 +67,73 @@ export class SWSEStore extends ApplicationV2 {
     template: "systems/foundryvtt-swse/templates/apps/store/store.hbs"
   };
 
-  /* -------------------------------------------- */
+  constructor(actor = null, options = {}) {
+    super(options);
+    this.actor = actor ?? null;
+
+    this.itemsById = new Map();
+    this.droidsById = new Map();
+
+    this.cart = emptyCart();
+    this._loaded = false;
+  }
 
   async _renderHTML(context, options) {
-    if (!this._loaded) {
-      await this._initialize();
-    }
+    if (!this._loaded) await this._initialize();
     return super._renderHTML(context, options);
+  }
+
+  async _prepareContext(_options) {
+    if (!this._loaded) await this._initialize();
+
+    return {
+      categories: this._buildCategoriesForTemplate(),
+      credits: Number(this.actor?.system?.credits ?? 0) || 0,
+      isGM: game.user?.isGM ?? false,
+      rendarrWelcome: getRendarrLine("welcome"),
+      rendarrImage: "systems/foundryvtt-swse/assets/mentors/rendarr.webp"
+    };
   }
 
   async _initialize() {
     if (this._loaded) return;
     this._loaded = true;
 
-    await this._loadAllPacks();
-    this._buildGroups();
+    this.cart = this._loadCartFromActor();
+
+    await this._loadItemPacks();
+    await this._loadDroidPack();
   }
 
-  /* -------------------------------------------- */
+  _loadCartFromActor() {
+    if (!this.actor) return emptyCart();
+    const stored = this.actor.getFlag(CART_FLAG_SCOPE, CART_FLAG_KEY);
+    if (!stored) return emptyCart();
+    return {
+      items: asArray(stored.items),
+      droids: asArray(stored.droids),
+      vehicles: asArray(stored.vehicles)
+    };
+  }
 
-  async _loadAllPacks() {
-    for (const pack of game.packs) {
-      if (pack.documentName !== "Item") continue;
-      if (this._loadedPacks.has(pack.collection)) continue;
+  async _persistCart() {
+    if (!this.actor) return;
+    await this.actor.setFlag(CART_FLAG_SCOPE, CART_FLAG_KEY, this.cart);
+  }
+
+  async _loadItemPacks() {
+    const vehicleBuckets = (STORE_PACKS.VEHICLE_PACKS ?? []).filter(Boolean);
+    const packIds = [
+      STORE_PACKS.WEAPONS,
+      STORE_PACKS.ARMOR,
+      STORE_PACKS.EQUIPMENT,
+      // Prefer bucketed vehicle packs; fall back to canonical pack if buckets are unavailable.
+      ...(vehicleBuckets.length ? vehicleBuckets : [STORE_PACKS.VEHICLES_CANONICAL])
+    ].filter(Boolean);
+
+    for (const collection of packIds) {
+      const pack = game.packs.get(collection);
+      if (!pack || pack.documentName !== "Item") continue;
 
       try {
         const docs = await pack.getDocuments();
@@ -93,132 +142,283 @@ export class SWSEStore extends ApplicationV2 {
           if (!isValidItemForStore(item)) continue;
           this.itemsById.set(item._id, item);
         }
-        this._loadedPacks.add(pack.collection);
       } catch (err) {
-        console.warn(`[SWSE Store] Failed to load pack ${pack.collection}`, err);
+        console.warn(`[SWSE Store] Failed to load pack ${collection}`, err);
       }
     }
   }
 
-  /* -------------------------------------------- */
+  async _loadDroidPack() {
+    const pack = game.packs.get(STORE_PACKS.DROIDS);
+    if (!pack || pack.documentName !== "Actor") return;
 
-  _prepareItemForView(item) {
+    try {
+      const docs = await pack.getDocuments();
+      for (const doc of docs) {
+        const actor = doc.toObject();
+        if (actor.type !== "droid") continue;
+        this.droidsById.set(actor._id, actor);
+      }
+    } catch (err) {
+      console.warn(`[SWSE Store] Failed to load droid pack ${STORE_PACKS.DROIDS}`, err);
+    }
+  }
+
+  _viewFromItem(item) {
     const sys = safeSystem(item) ?? {};
-
+    const rarityClass = getRarityClass(sys.availability);
     return {
-      _id: item._id,
+      id: item._id,
       name: safeString(item.name),
       img: safeImg(item),
-      costText: getCostDisplay(item),
-      costValue: getCostValue(item),
-      raw: item,
+      finalCost: getCostValue(item),
+      rarityClass,
+      rarityLabel: getRarityLabel(rarityClass),
       system: sys,
-      type: item.type,
-      category: sys.category ?? "General"
+      type: item.type
     };
   }
 
-  _buildGroups() {
-    for (const map of Object.values(this.groupedItems)) {
-      map.clear();
-    }
+  _viewFromDroid(actor) {
+    const sys = safeSystem(actor) ?? {};
+    return {
+      id: actor._id,
+      name: safeString(actor.name),
+      img: safeImg(actor),
+      finalCost: Number(sys.cost ?? 0) || 0,
+      rarityClass: null,
+      rarityLabel: "",
+      system: sys,
+      type: "droid"
+    };
+  }
+
+  _buildCategoriesForTemplate() {
+    const categories = {
+      weapons: {
+        melee: { simple: [], advanced: [], lightsaber: [], exotic: [] },
+        ranged: { pistols: [], rifles: [], heavy_weapons: [], exotic: [] }
+      },
+      armor: [],
+      grenades: [],
+      medical: [],
+      tech: [],
+      tools: [],
+      survival: [],
+      security: [],
+      equipment: [],
+      services: [],
+      droids: [],
+      vehicles: []
+    };
 
     for (const item of this.itemsById.values()) {
       tryRender(() => {
-        const view = this._prepareItemForView(item);
-        const bucket = this._determineBucket(view);
-        this._addToGroup(bucket, view);
+        const view = this._viewFromItem(item);
+        const sys = view.system ?? {};
+
+        if (view.type === "weapon") {
+          const wc = (sys.weaponCategory || "").toString().toLowerCase();
+          const cat = (sys.category || sys.subcategory || "").toString().toLowerCase();
+
+          if (cat === "grenade") {
+            categories.grenades.push(view);
+            return;
+          }
+
+          if (wc === "melee") {
+            const key = ["simple", "advanced", "lightsaber", "exotic"].includes(cat) ? cat : "exotic";
+            categories.weapons.melee[key].push(view);
+            return;
+          }
+
+          // ranged
+          const rangedKey = cat === "pistol" ? "pistols" :
+                            cat === "rifle" ? "rifles" :
+                            cat === "heavy" ? "heavy_weapons" :
+                            "exotic";
+          categories.weapons.ranged[rangedKey].push(view);
+          return;
+        }
+
+        if (view.type === "armor") {
+          categories.armor.push(view);
+          return;
+        }
+
+        if (view.type === "vehicle") {
+          categories.vehicles.push(view);
+          return;
+        }
+
+        if (view.type === "equipment") {
+          const bucket = this._categorizeEquipmentExtended(view);
+          categories[bucket].push(view);
+          return;
+        }
+
+        if (view.type === "service") {
+          categories.services.push(view);
+        }
       });
     }
-  }
 
-  _determineBucket(view) {
-    switch (view.type) {
-      case "weapon": return "weapons";
-      case "armor": return "armor";
-      case "equipment": return "equipment";
-      case "droid": return "droids";
-      case "vehicle": return "vehicles";
-      default: return "other";
+    for (const droid of this.droidsById.values()) {
+      categories.droids.push(this._viewFromDroid(droid));
     }
+
+    // Sort for consistent UX
+    categories.weapons.melee.simple = sortWeapons(categories.weapons.melee.simple);
+    categories.weapons.melee.advanced = sortWeapons(categories.weapons.melee.advanced);
+    categories.weapons.melee.lightsaber = sortWeapons(categories.weapons.melee.lightsaber);
+    categories.weapons.melee.exotic = sortWeapons(categories.weapons.melee.exotic);
+
+    categories.weapons.ranged.pistols = sortWeapons(categories.weapons.ranged.pistols);
+    categories.weapons.ranged.rifles = sortWeapons(categories.weapons.ranged.rifles);
+    categories.weapons.ranged.heavy_weapons = sortWeapons(categories.weapons.ranged.heavy_weapons);
+    categories.weapons.ranged.exotic = sortWeapons(categories.weapons.ranged.exotic);
+
+    categories.armor = sortArmor(categories.armor);
+    categories.grenades = sortWeapons(categories.grenades);
+    categories.droids = categories.droids.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+    categories.vehicles = categories.vehicles.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+
+    for (const key of ["medical","tech","tools","survival","security","equipment","services"]) {
+      categories[key] = categories[key].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+    }
+
+    return categories;
   }
 
-  _addToGroup(bucket, view) {
-    const map = this.groupedItems[bucket];
-    const cat = view.category;
-    if (!map.has(cat)) map.set(cat, []);
-    map.get(cat).push(view);
+  _categorizeEquipmentExtended(view) {
+    const sys = view.system ?? {};
+    const name = (view.name || "").toLowerCase();
+    const desc = (sys.description || "").toString().toLowerCase();
+    const text = `${name} ${desc}`;
+
+    if (text.includes("ration") || text.includes("survival") || text.includes("tent") || text.includes("climbing") || text.includes("breather")) return "survival";
+    if (text.includes("security") || text.includes("lock") || text.includes("binders") || text.includes("restraint") || text.includes("alarm")) return "security";
+
+    return categorizeEquipment({ name: view.name, system: sys });
   }
-
-  /* -------------------------------------------- */
-
-  get context() {
-    const cartCount =
-      Object.values(this.cart.items).reduce((a, b) => a + b.qty, 0) +
-      Object.keys(this.cart.droids).length +
-      Object.keys(this.cart.vehicles).length;
-
-    return {
-      categories: this.groupedItems,
-      credits: this.actor?.system?.credits ?? 0,
-      cart: this.cart,
-      cartCount,
-      rendarrWelcome: getRendarrLine("welcome"),
-      rendarrImage: "modules/foundryvtt-swse/images/rendarr.webp"
-    };
-  }
-
-  /* -------------------------------------------- */
 
   activateListeners(html) {
     super.activateListeners(html);
 
-    html.on("click", '[data-action="add-to-cart"]', ev => {
-      const id = ev.currentTarget.dataset.itemId;
-      const item = this.itemsById.get(id);
-      if (!item) return;
-
-      const entry = this.cart.items[id];
-      if (entry) {
-        entry.qty += 1;
-      } else {
-        const view = this._prepareItemForView(item);
-        this.cart.items[id] = {
-          id,
-          name: view.name,
-          cost: view.costValue,
-          qty: 1
-        };
-      }
-
+    // Add to cart buttons
+    html.on("click", ".buy-item", ev => {
+      const id = ev.currentTarget?.dataset?.itemId;
+      if (!id) return;
+      addItemToCart(this, id, line => this._setRendarrLine(line));
       this._persistCart();
-      this.render({ parts: ["body"] });
+      this._renderCartUI();
     });
 
-    html.on("click", ".remove-from-cart-btn", ev => {
-      const { itemId, type } = ev.currentTarget.dataset;
-      if (type === "item") delete this.cart.items[itemId];
-      if (type === "droid") delete this.cart.droids[itemId];
-      if (type === "vehicle") delete this.cart.vehicles[itemId];
+    html.on("click", ".buy-droid", ev => {
+      const id = ev.currentTarget?.dataset?.actorId || ev.currentTarget?.dataset?.droidId;
+      if (!id) return;
+      addDroidToCart(this, id, line => this._setRendarrLine(line));
       this._persistCart();
-      this.render({ parts: ["body"] });
+      this._renderCartUI();
     });
 
-    html.find("#checkout-cart").on("click", async () => {
-      await checkout(this);
-      this.cart = { items: {}, droids: {}, vehicles: {} };
+    html.on("click", ".buy-vehicle", ev => {
+      const id = ev.currentTarget?.dataset?.actorId || ev.currentTarget?.dataset?.vehicleId;
+      const condition = ev.currentTarget?.dataset?.condition || "new";
+      if (!id) return;
+      addVehicleToCart(this, id, condition, line => this._setRendarrLine(line));
       this._persistCart();
-      this.render(true);
+      this._renderCartUI();
     });
 
-    html.find("#clear-cart").on("click", () => {
-      this.cart = { items: {}, droids: {}, vehicles: {} };
-      this._persistCart();
-      this.render(true);
+
+    // Custom builders
+    html.on("click", ".create-custom-droid", async () => {
+      if (!this.actor) return;
+      await createCustomDroid(this.actor, () => this.render());
     });
+
+    html.on("click", ".create-custom-starship", async () => {
+      if (!this.actor) return;
+      await createCustomStarship(this.actor, () => this.render());
+    });
+
+    html.on("click", "#checkout-cart", async () => {
+      await checkout(this, (el, v) => this._animateNumber(el, v));
+      this.cart = emptyCart();
+      await this._persistCart();
+      this._renderCartUI();
+    });
+
+    html.on("click", "#clear-cart", async () => {
+      clearCart(this.cart);
+      await this._persistCart();
+      this._renderCartUI();
+    });
+
+    // Initial render once DOM exists
+    this._renderCartUI();
   }
 
-  async _persistCart() {
-    await game.user.setFlag("swse", CART_FLAG, this.cart);
+  _setRendarrLine(line) {
+    const el = this.element?.querySelector?.(".holo-message");
+    if (!el) return;
+    el.textContent = `"${line}"`;
+  }
+
+  _animateNumber(el, value) {
+    if (!el) return;
+    el.textContent = value;
+  }
+
+  _renderCartUI() {
+    const rootEl = this.element;
+    if (!rootEl) return;
+
+    const listEl = rootEl.querySelector("#cart-items-list");
+    const subtotalEl = rootEl.querySelector("#cart-subtotal");
+    const remainingEl = rootEl.querySelector("#cart-remaining");
+    const countEl = rootEl.querySelector("#cart-count");
+    if (!listEl || !subtotalEl || !remainingEl || !countEl) return;
+
+    const subtotal = calculateCartTotal(this.cart);
+    const credits = Number(this.actor?.system?.credits ?? 0) || 0;
+    const remaining = credits - subtotal;
+
+    countEl.textContent = String((this.cart.items.length + this.cart.droids.length + this.cart.vehicles.length) || 0);
+    subtotalEl.textContent = String(subtotal);
+    remainingEl.textContent = String(Math.max(0, remaining));
+
+    listEl.innerHTML = "";
+
+    const addRow = (entry, type) => {
+      const row = document.createElement("div");
+      row.classList.add("cart-item-row");
+      row.innerHTML = `
+        <img class="cart-item-img" src="${entry.img || ""}" alt="${entry.name || ""}"/>
+        <div class="cart-item-meta">
+          <div class="cart-item-name">${entry.name || ""}</div>
+          <div class="cart-item-cost">₢ ${entry.cost ?? 0}</div>
+        </div>
+        <button type="button" class="cart-item-remove holo-btn secondary" data-type="${type}" data-id="${entry.id}">
+          <i class="fas fa-times"></i>
+        </button>
+      `;
+      listEl.appendChild(row);
+    };
+
+    for (const it of this.cart.items) addRow(it, "items");
+    for (const it of this.cart.droids) addRow(it, "droids");
+    for (const it of this.cart.vehicles) addRow(it, "vehicles");
+
+    listEl.querySelectorAll(".cart-item-remove").forEach(btn => {
+      btn.addEventListener("click", async (ev) => {
+        const type = ev.currentTarget.dataset.type;
+        const id = ev.currentTarget.dataset.id;
+        removeFromCartById(this.cart, type, id);
+        await this._persistCart();
+        this._renderCartUI();
+      });
+    });
   }
 }

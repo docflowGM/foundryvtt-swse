@@ -7,9 +7,8 @@ import { SWSELogger } from '../../utils/logger.js';
 import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from './chargen-property-accessor.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
-import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
 import { BuildIntent } from '../../engine/BuildIntent.js';
-import { Level1SkillSuggestionEngine } from '../../engine/Level1SkillSuggestionEngine.js';
+import { SuggestionService } from '../../engine/SuggestionService.js';
 import { MentorSurvey } from '../mentor-survey.js';
 import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
 import { MENTORS } from '../mentor-dialogues.js';
@@ -710,7 +709,7 @@ export default class CharacterGenerator extends Application {
       if (this.currentStep === "feats" && context.packs.feats) {
         try {
           SWSELogger.log(`[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.feats.length} feats with BuildIntent context...`);
-          let featsWithSuggestions = await SuggestionEngine.suggestFeats(
+          let featsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', { domain: 'feats', available: 
             context.packs.feats,
             tempActor,
             pendingData,
@@ -721,7 +720,7 @@ export default class CharacterGenerator extends Application {
 
           context.packs.feats = featsWithSuggestions;
           // Sort by suggestion tier
-          context.packs.feats = SuggestionEngine.sortBySuggestion(context.packs.feats);
+          context.packs.feats = SuggestionService.sortBySuggestion(context.packs.feats);
 
           // Add qualification status to each feat
           const pendingDataForFeats = {
@@ -761,25 +760,7 @@ export default class CharacterGenerator extends Application {
       if (this.currentStep === "talents" && context.packs.talents) {
         try {
           SWSELogger.log(`[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.talents.length} talents with BuildIntent context...`);
-          let talentsWithSuggestions = await SuggestionEngine.suggestTalents(
-            context.packs.talents,
-            tempActor,
-            pendingData,
-            { buildIntent }  // CRITICAL: Pass BuildIntent to include mentor survey biases
-          );
-
-          // Filter out Force-dependent talents for droids (they cannot be Force-sensitive)
-          talentsWithSuggestions = this._filterForceDependentItems(talentsWithSuggestions);
-
-          context.packs.talents = talentsWithSuggestions;
-          // Sort by suggestion tier
-          context.packs.talents = SuggestionEngine.sortBySuggestion(context.packs.talents);
-
-          // Add qualification status to each talent
-          const pendingDataForTalents = {
-            selectedFeats: this.characterData.feats || [],
-            selectedClass: this.characterData.classes?.[0],
-            selectedSkills: Object.keys(this.characterData.skills || {})
+          let talentsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', { domain: 'talents', available: context.packs.talents, pendingData, engineOptions: { buildIntent, includeFutureAvailability: true }, persist: true })
               .filter(k => this.characterData.skills[k]?.trained)
               .map(k => ({ key: k })),
             selectedTalents: this.characterData.talents || []
@@ -863,17 +844,16 @@ export default class CharacterGenerator extends Application {
 
         SWSELogger.log(`[CHARGEN-SKILLS] Combined allClassSkills:`, allClassSkills);
 
-        const skillsWithSuggestions = await Level1SkillSuggestionEngine.suggestLevel1Skills(
-          this._skillsJson,
-          tempActor,
-          {
-            classSkills: allClassSkills,
-            selectedClass: this.characterData.classes?.[0],
-            selectedSkills: Object.keys(this.characterData.skills || {})
-              .filter(k => this.characterData.skills[k]?.trained)
-              .map(k => ({ key: k }))
-          }
-        );
+        const skillsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', {
+            domain: 'skills_l1',
+            available: this._skillsJson,
+            pendingData: {
+              classSkills: allClassSkills,
+              selectedClass: this.characterData.classes?.[0],
+              selectedSkills: Object.keys(this.characterData.skills || {}).filter(k => (this.characterData.skills?.[k] || 0) > 0)
+            },
+            persist: true
+          });
 
         // Mark class skills in the returned data
         // NOTE: Class skill names in compendium use proper case (e.g., "Acrobatics")
@@ -1773,7 +1753,7 @@ export default class CharacterGenerator extends Application {
       }
 
       // Get suggestions using the Force power suggestion engine
-      const suggestions = await ForceOptionSuggestionEngine.suggestForceOptions(
+      const suggestions = await SuggestionService.getSuggestions(this.actor, 'chargen', { domain: 'forcepowers', available: 
         unselectedPowers,
         this.actor,
         this.characterData,

@@ -83,8 +83,8 @@ export function verifySuggestions() {
     console.log('  3. Direct engine imports - Advanced usage');
     console.log('');
     console.log('Example usage in UI components:');
-    console.log('  const feats = await game.swse.suggestions.suggestFeats(feats, actor, pendingData);');
-    console.log('  const attrs = await game.swse.suggestions.suggestAttributeIncreases(actor, pendingData);');
+    console.log('  const feats = await SuggestionService.getSuggestions(actor, 'verify', { domain: 'feats', available: feats, pendingData: pendingData, persist: false });');
+    console.log('  const attrs = await SuggestionService.getSuggestions(actor, 'verify', { domain: 'attributes', pendingData: pendingData, persist: false });');
     results.statusMessage = 'SUCCESS';
   } else {
     console.log('❌ FAILURE: Some endpoints are missing or unavailable.');

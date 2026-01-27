@@ -2,8 +2,16 @@
   "Greater Penetrating Attack": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Greater Weapon Focus", "id": "greater-weapon-focus" },
-      { "type": "talent", "name": "Penetrating Attack", "id": "penetrating-attack" }
+      {
+        "type": "feat",
+        "name": "Greater Weapon Focus",
+        "id": "greater-weapon-focus"
+      },
+      {
+        "type": "talent",
+        "name": "Penetrating Attack",
+        "id": "penetrating-attack"
+      }
     ]
   },
   "Combined Fire": {
@@ -13,216 +21,376 @@
   "Hailfire": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Dual Weapon Mastery I", "id": "dual-weapon-mastery-1" }
+      {
+        "type": "feat",
+        "name": "Dual Weapon Mastery I",
+        "id": "dual-weapon-mastery-1"
+      }
     ]
   },
   "Creeping Approach": {
     "type": "all",
     "conditions": [
-      { "type": "skillTrained", "skill": "stealth" }
+      {
+        "type": "skillTrained",
+        "skill": "6d2ac22d9fcf402f"
+      }
     ]
   },
   "Wingman Retribution": {
     "type": "all",
     "conditions": [
-      { "type": "talent", "name": "Escort Pilot", "id": "escort-pilot" }
+      {
+        "type": "talent",
+        "name": "Escort Pilot",
+        "id": "escort-pilot"
+      }
     ]
   },
   "Weapon Specialization": {
     "type": "all",
     "conditions": [
-      { "type": "featPattern", "pattern": "Weapon Focus", "description": "any Weapon Focus feat" }
+      {
+        "type": "featPattern",
+        "pattern": "Weapon Focus",
+        "description": "any Weapon Focus feat"
+      }
     ]
   },
   "Flanking Foe": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Dual Weapon Mastery I", "id": "dual-weapon-mastery-1" }
+      {
+        "type": "feat",
+        "name": "Dual Weapon Mastery I",
+        "id": "dual-weapon-mastery-1"
+      }
     ]
   },
   "Praetoria Vonil": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Weapon Focus (Lightsabers)", "id": "weapon-focus-lightsabers" }
+      {
+        "type": "feat",
+        "name": "Weapon Focus (Lightsabers)",
+        "id": "weapon-focus-lightsabers"
+      }
     ]
   },
   "Always Ready": {
     "type": "all",
     "conditions": [
-      { "type": "skillTrained", "skill": "initiative" }
+      {
+        "type": "skillTrained",
+        "skill": "cb5493f65f0bdb62"
+      }
     ]
   },
   "Guaranteed Shot": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Dual Weapon Mastery I", "id": "dual-weapon-mastery-1" }
+      {
+        "type": "feat",
+        "name": "Dual Weapon Mastery I",
+        "id": "dual-weapon-mastery-1"
+      }
     ]
   },
   "Shield Expert": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Armor Proficiency (Light)", "id": "armor-proficiency-light" }
+      {
+        "type": "feat",
+        "name": "Armor Proficiency (Light)",
+        "id": "armor-proficiency-light"
+      }
     ]
   },
   "Exotic Weapons Master": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Exotic Weapon Proficiency", "id": "exotic-weapon-proficiency" }
+      {
+        "type": "feat",
+        "name": "Exotic Weapon Proficiency",
+        "id": "exotic-weapon-proficiency"
+      }
     ]
   },
   "Greater Weapon Focus": {
     "type": "all",
     "conditions": [
-      { "type": "featPattern", "pattern": "Weapon Focus", "description": "any Weapon Focus feat" }
+      {
+        "type": "featPattern",
+        "pattern": "Weapon Focus",
+        "description": "any Weapon Focus feat"
+      }
     ]
   },
   "Spynet Agent": {
     "type": "all",
     "conditions": [
-      { "type": "species", "name": "Bothan", "id": "bothan" },
-      { "type": "talentFromTree", "tree": "Infiltration", "count": 2 }
+      {
+        "type": "species",
+        "name": "Bothan",
+        "id": "bothan"
+      },
+      {
+        "type": "talentFromTree",
+        "tree": "Infiltration",
+        "count": 2
+      }
     ]
   },
   "Findsman Ceremonies": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Force Sensitivity", "id": "force-sensitivity" }
+      {
+        "type": "feat",
+        "name": "Force Sensitivity",
+        "id": "force-sensitivity"
+      }
     ]
   },
   "Teras Kasi Basics": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Martial Arts I", "id": "martial-arts-1" }
+      {
+        "type": "feat",
+        "name": "Martial Arts I",
+        "id": "martial-arts-1"
+      }
     ]
   },
   "Force Exertion": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Force Training", "id": "force-training" }
+      {
+        "type": "feat",
+        "name": "Force Training",
+        "id": "force-training"
+      }
     ]
   },
   "Penetrating Attack": {
     "type": "all",
     "conditions": [
-      { "type": "featPattern", "pattern": "Weapon Focus", "description": "any Weapon Focus feat" }
+      {
+        "type": "featPattern",
+        "pattern": "Weapon Focus",
+        "description": "any Weapon Focus feat"
+      }
     ]
   },
   "Force Suppression": {
     "type": "all",
     "conditions": [
-      { "type": "forcePower", "names": ["Rebuke"] }
+      {
+        "type": "forcePower",
+        "names": [
+          "Rebuke"
+        ]
+      }
     ]
   },
   "Close-Combat Assault": {
     "type": "all",
     "conditions": [
-      { "type": "talent", "name": "Recon Team Leader", "id": "recon-team-leader" }
+      {
+        "type": "talent",
+        "name": "Recon Team Leader",
+        "id": "recon-team-leader"
+      }
     ]
   },
   "Cortosis Gauntlet Block": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Armor Proficiency (Light)", "id": "armor-proficiency-light" },
-      { "type": "feat", "name": "Armor Proficiency (Medium)", "id": "armor-proficiency-medium" }
+      {
+        "type": "feat",
+        "name": "Armor Proficiency (Light)",
+        "id": "armor-proficiency-light"
+      },
+      {
+        "type": "feat",
+        "name": "Armor Proficiency (Medium)",
+        "id": "armor-proficiency-medium"
+      }
     ]
   },
   "Regimen Aptitude": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Force Regimen Mastery", "id": "force-regimen-mastery" }
+      {
+        "type": "feat",
+        "name": "Force Regimen Mastery",
+        "id": "force-regimen-mastery"
+      }
     ]
   },
   "Armored Augmentation I": {
     "type": "all",
     "conditions": [
-      { "type": "featPattern", "pattern": "Armor Proficiency", "description": "any Armor Proficiency feat" }
+      {
+        "type": "featPattern",
+        "pattern": "Armor Proficiency",
+        "description": "any Armor Proficiency feat"
+      }
     ]
   },
   "Run Interference": {
     "type": "all",
     "conditions": [
-      { "type": "talent", "name": "Escort Pilot", "id": "escort-pilot" }
+      {
+        "type": "talent",
+        "name": "Escort Pilot",
+        "id": "escort-pilot"
+      }
     ]
   },
   "WatchCircle Initiate": {
     "type": "all",
     "conditions": [
-      { "type": "forcePower", "names": ["Farseeing"] }
+      {
+        "type": "forcePower",
+        "names": [
+          "Farseeing"
+        ]
+      }
     ]
   },
   "Silent Takedown": {
     "type": "all",
     "conditions": [
-      { "type": "skillTrained", "skill": "stealth" }
+      {
+        "type": "skillTrained",
+        "skill": "6d2ac22d9fcf402f"
+      }
     ]
   },
   "Inspire Fear III": {
     "type": "all",
     "conditions": [
-      { "type": "talent", "name": "Inspire Fear II", "id": "inspire-fear-2" }
+      {
+        "type": "talent",
+        "name": "Inspire Fear II",
+        "id": "inspire-fear-2"
+      }
     ]
   },
   "Skilled Implanter": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Biotech Surgery", "id": "biotech-surgery" }
+      {
+        "type": "feat",
+        "name": "Biotech Surgery",
+        "id": "biotech-surgery"
+      }
     ]
   },
   "Transfer Essence": {
     "type": "all",
     "conditions": [
-      { "type": "darkSideScoreDynamic", "ability": "wis", "operator": "equals" }
+      {
+        "type": "darkSideScoreDynamic",
+        "ability": "wis",
+        "operator": "equals"
+      }
     ]
   },
   "Twin Shot": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Dual Weapon Mastery I", "id": "dual-weapon-mastery-1" },
-      { "type": "feat", "name": "Rapid Shot", "id": "rapid-shot" }
+      {
+        "type": "feat",
+        "name": "Dual Weapon Mastery I",
+        "id": "dual-weapon-mastery-1"
+      },
+      {
+        "type": "feat",
+        "name": "Rapid Shot",
+        "id": "rapid-shot"
+      }
     ]
   },
   "Dash and Blast": {
     "type": "all",
     "conditions": [
-      { "type": "feat", "name": "Dual Weapon Mastery I", "id": "dual-weapon-mastery-1" },
-      { "type": "feat", "name": "Running Attack", "id": "running-attack" }
+      {
+        "type": "feat",
+        "name": "Dual Weapon Mastery I",
+        "id": "dual-weapon-mastery-1"
+      },
+      {
+        "type": "feat",
+        "name": "Running Attack",
+        "id": "running-attack"
+      }
     ]
   },
   "Reconnaissance Actions": {
     "type": "all",
     "conditions": [
-      { "type": "talent", "name": "Recon Team Leader", "id": "recon-team-leader" }
+      {
+        "type": "talent",
+        "name": "Recon Team Leader",
+        "id": "recon-team-leader"
+      }
     ]
   },
   "Fleet Deployment": {
     "type": "all",
     "conditions": [
-      { "type": "attribute", "ability": "cha", "min": 13 }
+      {
+        "type": "attribute",
+        "ability": "cha",
+        "min": 13
+      }
     ]
   },
   "Brutal Attack": {
     "type": "all",
     "conditions": [
-      { "type": "featPattern", "pattern": "Weapon Focus", "description": "any Weapon Focus feat" }
+      {
+        "type": "featPattern",
+        "pattern": "Weapon Focus",
+        "description": "any Weapon Focus feat"
+      }
     ]
   },
   "Collective Visions": {
     "type": "all",
     "conditions": [
-      { "type": "forcePower", "names": ["Farseeing"] }
+      {
+        "type": "forcePower",
+        "names": [
+          "Farseeing"
+        ]
+      }
     ]
   },
   "Stolen Form": {
     "type": "all",
     "conditions": [
-      { "type": "forceTechnique", "count": 1 },
-      { "type": "feat", "name": "Weapon Focus (Lightsabers)", "id": "weapon-focus-lightsabers" }
+      {
+        "type": "forceTechnique",
+        "count": 1
+      },
+      {
+        "type": "feat",
+        "name": "Weapon Focus (Lightsabers)",
+        "id": "weapon-focus-lightsabers"
+      }
     ]
   },
   "Channel Energy": {
     "type": "all",
     "conditions": [
-      { "type": "forcePower", "names": ["Negate Energy"] }
+      {
+        "type": "forcePower",
+        "names": [
+          "Negate Energy"
+        ]
+      }
     ]
   }
 }

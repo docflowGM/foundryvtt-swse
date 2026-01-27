@@ -5,7 +5,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { PrerequisiteValidator } from '../utils/prerequisite-validator.js';
-import { SuggestionEngine } from '../engine/SuggestionEngine.js';
+import { SuggestionService } from '../engine/SuggestionService.js';
 import { getTalentTreeName } from './chargen/chargen-property-accessor.js';
 
 export class TalentTreeVisualizer {
@@ -273,7 +273,7 @@ export class TalentTreeVisualizer {
     talents = PrerequisiteValidator.filterQualifiedTalents(talents, actor, {});
 
     // Apply suggestion engine to add tier-based recommendations
-    talents = await SuggestionEngine.suggestTalents(talents, actor, {});
+    talents = await SuggestionService.getSuggestions(actor, 'sheet', { domain: 'talents', available: talents, pendingData: {}, persist: false });
 
     // Get owned talents
     const ownedTalents = new Set(

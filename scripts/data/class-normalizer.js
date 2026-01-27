@@ -119,6 +119,8 @@ export function normalizeClass(rawClass) {
     const hasForceKeywordInName = forceKeywords.some(keyword => name.toLowerCase().includes(keyword));
     const startingFeatures = sys.starting_features || [];
     const talentTrees = sys.talent_trees || [];
+    const talentTreeSourceIds = sys.talentTreeSourceIds || sys.talent_tree_source_ids || [];
+    const talentTreeUuids = sys.talentTreeUuids || sys.talent_tree_uuids || [];
     const hasForceStartingFeat = startingFeatures.some(f =>
         (f.name || String(f)).toLowerCase().includes('force sensitivity')
     );
@@ -153,6 +155,8 @@ export function normalizeClass(rawClass) {
 
         // Talent Trees (names only - will be resolved to IDs later)
         talentTreeNames: sys.talent_trees || [],
+        talentTreeSourceIds: Array.isArray(talentTreeSourceIds) ? talentTreeSourceIds : [],
+        talentTreeUuids: Array.isArray(talentTreeUuids) ? talentTreeUuids : [],
         talentTreeIds: [],  // Populated by ClassesDB after TalentTreeDB is loaded
 
         // Defenses

@@ -1,6 +1,47 @@
 // scripts/utils/actor-utils.js
 import { swseLogger } from './logger.js';
 
+function toIntOrNull(value) {
+  if (value === null || value === undefined) return null;
+  if (typeof value === 'number' && Number.isFinite(value)) return Math.trunc(value);
+  const m = String(value).match(/-?\d+/);
+  if (!m) return null;
+  const n = Number.parseInt(m[0], 10);
+  return Number.isFinite(n) ? n : null;
+}
+
+function coerceSpeedIntegers(actor, changes) {
+  // Vehicles use string speed fields; do not coerce.
+  if (!actor || actor.type === 'vehicle') return changes;
+
+  const out = foundry.utils.deepClone(changes);
+
+  // Dot-notation keys
+  for (const [k, v] of Object.entries(out)) {
+    if (!k) continue;
+    if (k === 'system.speed' || k.endsWith('.speed')) {
+      const n = toIntOrNull(v);
+      if (n !== null) out[k] = n;
+    }
+  }
+
+  // Nested shapes
+  const walk = (obj) => {
+    if (!obj || typeof obj !== 'object') return;
+    for (const [k, v] of Object.entries(obj)) {
+      if (k === 'speed') {
+        const n = toIntOrNull(v);
+        if (n !== null) obj[k] = n;
+        continue;
+      }
+      if (v && typeof v === 'object') walk(v);
+    }
+  };
+  walk(out.system);
+
+  return out;
+}
+
 /**
  * Atomic Actor Update Helper
  * Provides safe, validated actor updates that are batched and transactional.
@@ -52,8 +93,10 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
       });
     }
 
+    const sanitized = coerceSpeedIntegers(actor, changes);
+
     // Perform the update
-    const result = await actor.update(changes, options);
+    const result = await actor.update(sanitized, options);
 
     return result;
   } catch (err) {

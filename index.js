@@ -241,6 +241,9 @@ import './scripts/chat/chat-commands.js';
 
 import { registerInitHooks, registerDestinyHooks } from './scripts/hooks/index.js';
 import { SystemInitHooks } from './scripts/progression/hooks/system-init-hooks.js';
+import { registerSuggestionSettings } from './scripts/engine/suggestion-settings.js';
+import { registerSuggestionHooks } from './scripts/hooks/suggestion-hooks.js';
+import { SuggestionService } from './scripts/engine/SuggestionService.js';
 
 /* ==========================================================================  
    INIT HOOK
@@ -403,6 +406,15 @@ Hooks.once("init", async function () {
 
 Hooks.once("ready", async function () {
     swseLogger.log("SWSE | System Ready");
+
+    // Suggestion service (single entry) initialization
+    try {
+      const systemJSON = await fetch('system.json').then(r => r.json());
+      SuggestionService.initialize({ systemJSON });
+    } catch (err) {
+      console.warn('SWSE | SuggestionService init failed:', err);
+    }
+    registerSuggestionHooks();
 
     errorHandler.initialize();
     initializeRolls();
