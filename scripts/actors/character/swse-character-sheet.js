@@ -1259,7 +1259,14 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
   // Force Point Roll
   async _onRollForcePoint(evt) {
-    const fp = this.actor.system.forcePoints?.value || 0;
+    // Read from DOM first to catch unsaved input, fallback to actor data
+    const inputElement = this.element.find('input[name="system.forcePoints.value"]')[0];
+    let fp = this.actor.system.forcePoints?.value || 0;
+
+    if (inputElement && inputElement.value) {
+      fp = parseInt(inputElement.value, 10) || fp;
+    }
+
     if (fp <= 0) return ui.notifications.warn("No Force Points left.");
 
     const dieType = this.actor.system.forcePoints?.diceType || "d6";
