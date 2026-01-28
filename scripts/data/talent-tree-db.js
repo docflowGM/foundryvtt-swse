@@ -40,17 +40,17 @@ const TalentTreeDB = {
             throw new Error('[TalentTreeDB] Talent Trees compendium not found');
         }
 
-        const docs = await pack.getDocuments();
+        const index = await pack.getIndex();
         let loaded = 0;
 
-        for (const treeDoc of docs) {
-            const treeId = treeDoc.id;
+        for (const indexEntry of index) {
+            const treeId = indexEntry._id;
 
             // 🔒 SNAPSHOT ONLY — NEVER STORE LIVE DOCUMENTS
             const treeData = {
                 id: treeId,
-                name: treeDoc.name,
-                talentIds: Array.from(treeDoc.system?.talentIds ?? [])
+                name: indexEntry.name,
+                talentIds: Array.from(indexEntry.system?.talentIds ?? [])
             };
 
             this._trees.set(treeId, treeData);
