@@ -1724,18 +1724,30 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
 
         if (suggestions.length > 0) {
           const mentorName = mentor?.name || "Your Mentor";
+          const mentorPortrait = mentor?.portrait || '';
+          const mentorTitle = mentor?.title || '';
           const content = `
-            <div class="feat-suggestions-container">
-              <div class="mentor-intro">
-                <p><strong>${mentorName}</strong> recommends these feats:</p>
+            <div class="mentor-suggestions-wrapper">
+              <div class="mentor-suggestions-header">
+                ${mentorPortrait ? `<div class="mentor-header-portrait">
+                  <img src="${mentorPortrait}" alt="${mentorName}" />
+                </div>` : ''}
+                <div class="mentor-header-info">
+                  <h3>${mentorName}</h3>
+                  ${mentorTitle ? `<p class="mentor-header-title">${mentorTitle}</p>` : ''}
+                </div>
               </div>
-              <div class="feat-suggestions-list">
-                ${suggestions.map((feat, i) => `
-                  <div class="feat-suggestion-item" data-feat-name="${feat.name}">
-                    <span class="suggestion-number">${i + 1}</span>
-                    <span class="feat-suggestion-name">${feat.name}</span>
-                  </div>
-                `).join('')}
+              <div class="feat-suggestions-container">
+                <p class="mentor-intro"><strong>${mentorName}</strong> recommends these feats:</p>
+                <div class="feat-suggestions-list">
+                  ${suggestions.map((feat, i) => `
+                    <button class="feat-suggestion-button" data-feat-name="${feat.name}">
+                      <span class="suggestion-number">${i + 1}</span>
+                      <span class="feat-suggestion-name">${feat.name}</span>
+                    </button>
+                  `).join('')}
+                </div>
+                <p class="feat-suggestions-hint">Click a suggestion to select it, or close this dialog to browse feats manually.</p>
               </div>
             </div>
           `;
@@ -1745,15 +1757,6 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
               title: `${mentorName}'s Feat Suggestions`,
               content: content,
               buttons: {
-                accept: {
-                  icon: '<i class="fas fa-check"></i>',
-                  label: "Show Suggestions Inline",
-                  callback: () => {
-                    SWSELogger.log(`[CHARGEN] _onAskMentor: User accepted - enabling suggestions`);
-                    this.suggestionEngine = true;
-                    this.render();
-                  }
-                },
                 cancel: {
                   icon: '<i class="fas fa-times"></i>',
                   label: "Cancel",
@@ -1769,9 +1772,32 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
                   }
                 }
               },
-              default: "accept"
+              render: (html) => {
+                // Handle feat suggestion button clicks
+                html.find('.feat-suggestion-button').on('click', (e) => {
+                  const featName = e.currentTarget.dataset.featName;
+                  SWSELogger.log(`[CHARGEN] _onAskMentor: User selected feat: ${featName}`);
+
+                  // Find the feat card on the page and click it to select it
+                  const featCard = document.querySelector(`.feat-card .feat-name:contains("${featName}")`);
+                  if (featCard) {
+                    featCard.closest('.feat-card').click();
+                  } else {
+                    // Fallback: search by text content
+                    const cards = Array.from(document.querySelectorAll('.feat-card'));
+                    const targetCard = cards.find(card => {
+                      const nameEl = card.querySelector('.feat-name');
+                      return nameEl && nameEl.textContent.trim() === featName;
+                    });
+                    if (targetCard) {
+                      targetCard.click();
+                    }
+                  }
+                  dialog.close();
+                });
+              }
             },
-            { classes: ['feat-suggestions-dialog', 'holo-window'] }
+            { classes: ['feat-suggestions-dialog', 'mentor-suggestions-dialog', 'holo-window'], width: 800, height: 'auto' }
           );
           dialog.render(true);
           return;

@@ -138,6 +138,57 @@
     line-height: 1.5;
 }
 
+/* Mentor survey wrapper and header */
+[data-theme=holo] .mentor-survey-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+[data-theme=holo] .mentor-survey-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(0, 170, 255, 0.15) 0%, rgba(0, 100, 180, 0.1) 100%);
+    border-bottom: 2px solid var(--swse-secondary);
+    margin-bottom: 0;
+}
+
+[data-theme=holo] .mentor-header-portrait {
+    flex-shrink: 0;
+    width: 80px;
+    height: 100px;
+    border: 2px solid var(--swse-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
+}
+
+[data-theme=holo] .mentor-header-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+[data-theme=holo] .mentor-header-info {
+    flex: 1;
+}
+
+[data-theme=holo] .mentor-header-info h3 {
+    color: var(--swse-primary);
+    margin: 0;
+    font-size: 1.2em;
+    text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+}
+
+[data-theme=holo] .mentor-header-title {
+    color: var(--swse-text-secondary);
+    font-size: 0.85em;
+    margin: 2px 0 0 0;
+    font-style: italic;
+}
+
 /* Survey content with holo theme */
 [data-theme=holo] .mentor-survey-content {
     padding: 20px;
@@ -158,41 +209,298 @@
 [data-theme=holo] .survey-answers {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+    margin: 20px 0;
 }
 
-[data-theme=holo] .survey-answer-box {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    background: rgba(0, 170, 255, 0.05);
-    border: 1px solid var(--swse-border-subtle);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+[data-theme=holo] .mentor-survey-choice {
+    width: 100%;
+    padding: 1.2rem;
+    background: linear-gradient(135deg, rgba(0, 30, 60, 0.8) 0%, rgba(0, 50, 100, 0.6) 100%);
+    border: 1px solid var(--swse-secondary);
     color: var(--swse-text-light);
-}
-
-[data-theme=holo] .survey-answer-box:hover {
-    background: rgba(0, 170, 255, 0.15);
-    border-color: var(--swse-border-active);
-    box-shadow: 0 0 10px rgba(0, 170, 255, 0.2);
-}
-
-[data-theme=holo] .survey-answer-box input[type="radio"] {
-    margin-right: 12px;
+    border-radius: 8px;
     cursor: pointer;
-    accent-color: var(--swse-secondary);
+    transition: all 0.3s ease;
+    font-family: "Orbitron", sans-serif;
+    font-size: 1em;
+    text-align: left;
+    line-height: 1.4;
 }
 
-[data-theme=holo] .survey-answer-box input[type="radio"]:checked + .answer-text {
-    color: var(--swse-success);
+[data-theme=holo] .mentor-survey-choice:hover {
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.6);
+    transform: translateY(-3px);
+    background: linear-gradient(135deg, rgba(0, 50, 100, 0.9) 0%, rgba(0, 70, 130, 0.7) 100%);
+}
+
+[data-theme=holo] .mentor-survey-choice:active {
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+}
+
+/* Mentor suggestions dialog styling */
+[data-theme=holo] .mentor-suggestions-dialog {
+    background: linear-gradient(135deg, var(--swse-bg-dark) 0%, rgba(15, 35, 60, 0.95) 100%);
+    border: 2px solid var(--swse-secondary);
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.4), inset 0 0 20px rgba(0, 170, 255, 0.1);
+}
+
+[data-theme=holo] .mentor-suggestions-dialog .window-header {
+    background: linear-gradient(90deg, rgba(0, 170, 255, 0.2) 0%, transparent 100%);
+    border-bottom: 1px solid var(--swse-border-default);
+}
+
+[data-theme=holo] .mentor-suggestions-dialog .window-title {
+    color: var(--swse-primary);
+    text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
     font-weight: bold;
 }
 
-[data-theme=holo] .answer-text {
+[data-theme=holo] .mentor-suggestions-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+[data-theme=holo] .mentor-suggestions-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(0, 170, 255, 0.15) 0%, rgba(0, 100, 180, 0.1) 100%);
+    border-bottom: 2px solid var(--swse-secondary);
+}
+
+[data-theme=holo] .feat-suggestions-container {
+    padding: 20px;
+}
+
+[data-theme=holo] .feat-suggestions-hint {
+    color: var(--swse-text-secondary);
+    font-size: 0.85em;
+    font-style: italic;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--swse-border-subtle);
+}
+
+[data-theme=holo] .feat-suggestions-container .mentor-intro {
+    color: var(--swse-primary);
+    margin: 0 0 20px 0;
+    font-weight: bold;
+    font-size: 1em;
+    text-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
+}
+
+[data-theme=holo] .feat-suggestions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+[data-theme=holo] .feat-suggestion-button {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(0, 30, 60, 0.8) 0%, rgba(0, 50, 100, 0.6) 100%);
+    border: 1px solid var(--swse-secondary);
+    color: var(--swse-text-light);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: "Orbitron", sans-serif;
+    font-size: 0.95em;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+[data-theme=holo] .feat-suggestion-button:hover {
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.6);
+    transform: translateY(-3px);
+    background: linear-gradient(135deg, rgba(0, 50, 100, 0.9) 0%, rgba(0, 70, 130, 0.7) 100%);
+}
+
+[data-theme=holo] .feat-suggestion-button:active {
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+}
+
+[data-theme=holo] .suggestion-number {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    background: rgba(0, 170, 255, 0.2);
+    border: 1px solid var(--swse-secondary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: var(--swse-primary);
+    font-size: 0.9em;
+}
+
+[data-theme=holo] .feat-suggestion-name {
     flex: 1;
-    line-height: 1.4;
+    line-height: 1.3;
+}
+
+/* Mentor Suggestion Dialog (levelup/progression) */
+[data-theme=holo] .mentor-suggestion-dialog {
+    background: linear-gradient(135deg, var(--swse-bg-dark) 0%, rgba(15, 35, 60, 0.95) 100%);
+    border: 2px solid var(--swse-secondary);
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.4), inset 0 0 20px rgba(0, 170, 255, 0.1);
+}
+
+[data-theme=holo] .mentor-suggestion-dialog .window-header {
+    background: linear-gradient(90deg, rgba(0, 170, 255, 0.2) 0%, transparent 100%);
+    border-bottom: 1px solid var(--swse-border-default);
+}
+
+[data-theme=holo] .mentor-suggestion-dialog .window-title {
+    color: var(--swse-primary);
+    text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+    font-weight: bold;
+}
+
+[data-theme=holo] .mentor-suggestion-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+[data-theme=holo] .mentor-panel {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 100, 180, 0.05) 100%);
+    border: 1px solid var(--swse-border-subtle);
+    border-radius: 8px;
+}
+
+[data-theme=holo] .mentor-panel .mentor-portrait {
+    flex-shrink: 0;
+    width: 80px;
+    height: 100px;
+    border: 2px solid var(--swse-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.3);
+}
+
+[data-theme=holo] .mentor-panel .mentor-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+[data-theme=holo] .mentor-panel .mentor-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+[data-theme=holo] .mentor-panel h3 {
+    color: var(--swse-primary);
+    margin: 0;
+    font-size: 1.2em;
+    text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+}
+
+[data-theme=holo] .mentor-panel .mentor-title {
+    color: var(--swse-text-secondary);
+    font-size: 0.85em;
+    margin: 3px 0 0 0;
+    font-style: italic;
+}
+
+[data-theme=holo] .suggestion-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+[data-theme=holo] .mentor-intro {
+    color: var(--swse-text-light);
+    line-height: 1.5;
+    margin: 0;
+}
+
+[data-theme=holo] .suggestion-card {
+    background: rgba(0, 30, 60, 0.6);
+    border: 1px solid var(--swse-border-subtle);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+[data-theme=holo] .suggestion-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+[data-theme=holo] .suggestion-name {
+    flex: 1;
+    color: var(--swse-primary);
+    font-weight: bold;
+    font-size: 1.05em;
+}
+
+[data-theme=holo] .tier-label {
+    background: rgba(0, 170, 255, 0.2);
+    border: 1px solid var(--swse-secondary);
+    border-radius: 4px;
+    padding: 2px 8px;
+    color: var(--swse-secondary);
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+[data-theme=holo] .mentor-explanation {
+    color: var(--swse-text-light);
+    line-height: 1.5;
+    margin: 0;
+    font-style: italic;
+}
+
+/* Mentor Chat Dialog */
+[data-theme=holo] .mentor-chat-dialog {
+    background: linear-gradient(135deg, var(--swse-bg-dark) 0%, rgba(15, 35, 60, 0.95) 100%);
+    border: 2px solid var(--swse-secondary);
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.4), inset 0 0 20px rgba(0, 170, 255, 0.1);
+}
+
+[data-theme=holo] .mentor-chat-dialog .window-header {
+    background: linear-gradient(90deg, rgba(0, 170, 255, 0.2) 0%, transparent 100%);
+    border-bottom: 2px solid var(--swse-secondary);
+}
+
+[data-theme=holo] .mentor-chat-dialog .window-title {
+    color: var(--swse-primary);
+    text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+    font-weight: bold;
+}
+
+/* Mentor Reflective Dialog */
+[data-theme=holo] .mentor-reflective-dialog {
+    background: linear-gradient(135deg, var(--swse-bg-dark) 0%, rgba(15, 35, 60, 0.95) 100%);
+    border: 2px solid var(--swse-secondary);
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.4), inset 0 0 20px rgba(0, 170, 255, 0.1);
+}
+
+[data-theme=holo] .mentor-reflective-dialog .window-header {
+    background: linear-gradient(90deg, rgba(0, 170, 255, 0.2) 0%, transparent 100%);
+    border-bottom: 2px solid var(--swse-secondary);
+}
+
+[data-theme=holo] .mentor-reflective-dialog .window-title {
+    color: var(--swse-primary);
+    text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+    font-weight: bold;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════

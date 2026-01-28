@@ -950,10 +950,7 @@ export class MentorSurvey {
         const answerHtml = answerOptions
           .map(
             (opt, i) =>
-              `<label class="survey-answer-box">
-                <input type="radio" name="answer" value="${i}" />
-                <span class="answer-text">${opt.text}</span>
-              </label>`
+              `<button class="mentor-survey-choice" data-answer-index="${i}">${opt.text}</button>`
           )
           .join('');
 
@@ -961,38 +958,28 @@ export class MentorSurvey {
           {
             title: `${mentorName}'s Mentoring - Question ${index + 1} of ${questionIds.length}`,
             content: `
-              <div class="mentor-survey-content holo-content">
-                <p class="mentor-question">${question}</p>
-                <div class="survey-answers">
-                  ${answerHtml}
+              <div class="mentor-survey-wrapper">
+                <div class="mentor-survey-header">
+                  <div class="mentor-header-portrait">
+                    <img src="${mentor.portrait}" alt="${mentor.name}" />
+                  </div>
+                  <div class="mentor-header-info">
+                    <h3>${mentor.name}</h3>
+                    <p class="mentor-header-title">${mentor.title}</p>
+                  </div>
                 </div>
-                <p class="survey-hint" style="margin-top: 1rem; font-size: 0.9em; color: #999; font-style: italic;">
-                  You can skip this survey at any time. You'll be able to complete it later if desired.
-                </p>
+                <div class="mentor-survey-content holo-content">
+                  <p class="mentor-question">${question}</p>
+                  <div class="survey-answers">
+                    ${answerHtml}
+                  </div>
+                  <p class="survey-hint" style="margin-top: 1rem; font-size: 0.9em; color: #999; font-style: italic;">
+                    You can skip this survey at any time. You'll be able to complete it later if desired.
+                  </p>
+                </div>
               </div>
             `,
             buttons: {
-              next: {
-                icon: '<i class="fas fa-arrow-right"></i>',
-                label: index === questionIds.length - 1 ? "Finish" : "Next",
-                callback: (html) => {
-                  const selectedIndex = parseInt(html.find('input[name="answer"]:checked').val(), 10);
-                  swseLogger.log(`[MENTOR-SURVEY] showSurvey: Answer selected for question ${index + 1} - index: ${selectedIndex}`);
-                  if (selectedIndex !== undefined) {
-                    answers[questionId] = {
-                      questionId: questionId,
-                      answerIndex: selectedIndex,
-                      answerText: answerOptions[selectedIndex].text,
-                      biases: answerOptions[selectedIndex].biases
-                    };
-                    swseLogger.log(`[MENTOR-SURVEY] showSurvey: Answer recorded - "${answerOptions[selectedIndex].text}", biases:`, answerOptions[selectedIndex].biases);
-                    renderQuestion(index + 1);
-                  } else {
-                    swseLogger.warn(`[MENTOR-SURVEY] WARNING: No answer selected for question ${index + 1}`);
-                    ui.notifications.warn("Please select an answer before continuing.");
-                  }
-                }
-              },
               skip: {
                 icon: '<i class="fas fa-forward"></i>',
                 label: "Skip Survey",
@@ -1002,7 +989,6 @@ export class MentorSurvey {
                 }
               }
             },
-            default: "next",
             render: (html) => {
               // Add typing animation to the question
               const questionElement = html.find('.mentor-question')[0];
@@ -1013,6 +999,23 @@ export class MentorSurvey {
                   skipOnClick: true
                 });
               }
+
+              // Handle answer button clicks
+              html.find('.mentor-survey-choice').on('click', function() {
+                const selectedIndex = parseInt(this.dataset.answerIndex, 10);
+                swseLogger.log(`[MENTOR-SURVEY] showSurvey: Answer selected for question ${index + 1} - index: ${selectedIndex}`);
+
+                answers[questionId] = {
+                  questionId: questionId,
+                  answerIndex: selectedIndex,
+                  answerText: answerOptions[selectedIndex].text,
+                  biases: answerOptions[selectedIndex].biases
+                };
+                swseLogger.log(`[MENTOR-SURVEY] showSurvey: Answer recorded - "${answerOptions[selectedIndex].text}", biases:`, answerOptions[selectedIndex].biases);
+
+                dialog.close();
+                renderQuestion(index + 1);
+              });
             }
           },
           { classes: ['mentor-survey-dialog', 'holo-window'], width: 650, height: 'auto', resizable: true }

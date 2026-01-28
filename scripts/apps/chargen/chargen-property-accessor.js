@@ -139,7 +139,16 @@ export function getHitDie(classDoc) {
   });
 
   // Try to parse formats: "1d10", "d10", or "10"
-  const match = hitDieString.match(/\d*d?(\d+)/);
+  // First try: look for "d" followed by digits (e.g., "d10", "1d10")
+  let match = hitDieString.match(/d(\d+)/);
+  if (match && match[1]) {
+    const result = parseInt(match[1], 10);
+    SWSELogger.log(`CharGen | getHitDie() parsed "${hitDieString}" -> d${result} for "${classDoc?.name}"`);
+    return result;
+  }
+
+  // Fallback: look for just digits (e.g., "10")
+  match = hitDieString.match(/(\d+)/);
   if (match && match[1]) {
     const result = parseInt(match[1], 10);
     SWSELogger.log(`CharGen | getHitDie() parsed "${hitDieString}" -> d${result} for "${classDoc?.name}"`);
