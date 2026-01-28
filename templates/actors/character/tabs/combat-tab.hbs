@@ -204,7 +204,7 @@
  <span class="armor-max-dex"><i class="fas fa-running"></i> Max Dex: +{{item.system.maxDexBonus}}</span>
  </div>
  </div>
- <label class="armor-equipped-toggle" title="{{#if item.system.equipped}}Equipped - providing defense bonus{{else}}Not equipped{{/if}}">
+ <label class="armor-equipped-toggle" title="{{if item.system.equipped 'Equipped - providing defense bonus' 'Not equipped'}}">
  <input type="checkbox"
  name="items.{{item._id}}.system.equipped"
  {{checked item.system.equipped}}/>

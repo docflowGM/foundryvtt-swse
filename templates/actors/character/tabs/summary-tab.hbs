@@ -122,9 +122,9 @@
  <span class="unselected">Unselected</span>
  {{/if}}
  </div>
- <button class="select-species-btn trait-action-btn" type="button" title="{{#if system.race}}Change species{{else}}Select a species{{/if}}" role="button" tabindex="0">
- <i class="fas fa-{{#if system.race}}exchange-alt{{else}}plus{{/if}}" aria-hidden="true"></i>
- {{#if system.race}}Change{{else}}Select{{/if}}
+ <button class="select-species-btn trait-action-btn" type="button" title="{{if system.race 'Change species' 'Select a species'}}" role="button" tabindex="0">
+ <i class="fas fa-{{if system.race 'exchange-alt' 'plus'}}" aria-hidden="true"></i>
+ {{if system.race 'Change' 'Select'}}
  </button>
  </div>
  {{/unless}}
