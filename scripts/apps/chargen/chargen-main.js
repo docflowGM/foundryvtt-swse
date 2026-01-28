@@ -1595,10 +1595,18 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
     // If droid, show degree and size selection; if living, show species
     if (this.characterData.isDroid) {
       steps.push("degree", "size", "droid-builder");
-      SWSELogger.log(`CharGen | _getSteps: isDroid=true, added degree/size/droid-builder`);
+      SWSELogger.log(`CharGen | _getSteps: isDroid=true, added degree/size/droid-builder`, {
+        isDroid: this.characterData.isDroid,
+        steps: steps
+      });
     } else {
+      // CRITICAL: Species MUST be included for living characters
       steps.push("species");
-      SWSELogger.log(`CharGen | _getSteps: isDroid=false, added species`);
+      SWSELogger.log(`CharGen | _getSteps: isDroid=false, ADDED SPECIES TO STEPS`, {
+        isDroid: this.characterData.isDroid,
+        stepsIncludesSpecies: steps.includes("species"),
+        steps: steps
+      });
     }
 
     // NPC workflow: skip class and talents, go straight to abilities/skills/languages/feats
