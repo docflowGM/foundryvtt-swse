@@ -1585,7 +1585,11 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
   }
 
   _getSteps() {
-    if (this.actor) {
+    // Levelup flow: only if actor is already saved (has an id) - meaning it's an existing character
+    // New character creation: actor is null, unsaved, or on initial steps (name/type)
+    const isExistingSavedActor = this.actor && this.actor.id;
+
+    if (isExistingSavedActor && this.currentStep !== "name" && this.currentStep !== "type") {
       return ["abilities", "class", "background", "feats", "talents", "skills", "languages", "summary"];
     }
 
