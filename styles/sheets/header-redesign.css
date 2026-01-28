@@ -346,17 +346,17 @@
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   RIGHT COLUMN: Status + Build State (Two Clear Visual Sections)
+   RIGHT COLUMN: Condition Track
    ───────────────────────────────────────────────────────────────────────── */
 
 .swse .header-right {
   flex-direction: column;
   gap: 8px;
   flex: 0 0 auto;
-  min-width: 200px;
+  min-width: auto;
 }
 
-/* ═══ SECTION A: COMBAT STATUS (Top, High Urgency) ═══ */
+/* ═══ SECTION: CONDITION TRACK ═══ */
 
 .swse .header-right > div:first-child {
   /* Condition track container */
@@ -433,81 +433,6 @@
   color: #00ffff;
 }
 
-/* ═══ SECTION B: BUILD STATE (Bottom, Low Urgency, Muted) ═══ */
-
-.swse .species-selector,
-.swse .class-selector,
-.swse .character-attribute {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  opacity: 0.75;
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin-bottom: 4px;
-  font-size: 11px;
-}
-
-.swse .species-selector:last-child,
-.swse .class-selector:last-child,
-.swse .character-attribute:last-child {
-  margin-bottom: 0;
-}
-
-.swse .species-label,
-.swse .class-label,
-.swse .attribute-label {
-  font-size: 10px;
-  font-weight: 700;
-  color: rgba(0, 170, 255, 0.7);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  margin-bottom: 0;
-}
-
-.swse .species-value,
-.swse .class-value,
-.swse .attribute-value {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.8);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.swse .species-unselected,
-.swse .class-unselected {
-  color: rgba(0, 170, 255, 0.5);
-  font-style: italic;
-}
-
-.swse .pick-species-btn,
-.swse .add-class-btn {
-  flex: 0 0 auto;
-  padding: 4px 6px;
-  font-size: 9px;
-  background: rgba(0, 170, 255, 0.1);
-  border: 1px solid rgba(0, 170, 255, 0.2);
-  color: rgba(255, 255, 255, 0.6);
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-  margin-top: 2px;
-}
-
-.swse .pick-species-btn:hover,
-.swse .add-class-btn:hover {
-  background: rgba(0, 170, 255, 0.2);
-  border-color: rgba(0, 170, 255, 0.4);
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.swse .character-attribute input[type="checkbox"] {
-  width: auto;
-  margin-right: 4px;
-}
 
 /* ─────────────────────────────────────────────────────────────────────────
    RESPONSIVE: Stack on smaller screens
