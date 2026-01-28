@@ -52,7 +52,13 @@ export const MentorResolver = {
     SWSELogger.log(`[MENTOR-RESOLVER] resolveFor: Resolving mentor for "${actor.name}" (phase: ${phase})`);
 
     // Priority 1: Manual override (always respected)
-    const override = actor.getFlag("swse", "mentorOverride");
+    let override;
+    try {
+      override = actor.getFlag("swse", "mentorOverride");
+    } catch (err) {
+      // Flag scope may not be ready yet, ignore
+      override = null;
+    }
     if (override && MENTORS[override]) {
       SWSELogger.log(`[MENTOR-RESOLVER] resolveFor: Using mentor override: "${MENTORS[override].name}"`);
       return MENTORS[override];
