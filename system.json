@@ -57,6 +57,7 @@
     "styles/apps/store.css",
     "styles/apps/levelup.css",
     "styles/sheets/character-sheet.css",
+    "styles/sheets/header-redesign.css",
     "styles/sheets/vehicle-sheet.css",
     "styles/sheets/unified-sheets.css",
     "styles/sheets/skill-actions.css",

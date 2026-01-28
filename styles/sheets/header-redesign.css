@@ -1,0 +1,574 @@
+/* ============================================================================
+   SWSE Character Header Redesign — Condensed Cockpit HUD
+
+   Reduces visual density while preserving all functionality.
+   Implements three-tier hierarchy: Identity → Combat → Build State
+   ============================================================================ */
+
+/* ─────────────────────────────────────────────────────────────────────────
+   OVERALL HEADER CONTAINER
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse .sheet-header {
+  min-height: auto;
+  padding: 8px 10px;
+  gap: 12px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   LEFT COLUMN: Identity + Actions (Compact Command Card)
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse .header-left {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  min-width: fit-content;
+}
+
+/* Portrait stays small */
+.swse .header-left .profile-img {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+}
+
+/* Character identity stack (name + level only) */
+.swse .character-name input {
+  font-size: 1rem;
+  min-width: 120px;
+  margin-bottom: 2px;
+}
+
+.swse .character-level {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 60px;
+  margin-bottom: 0;
+}
+
+.swse .character-level label {
+  font-size: 10px;
+  margin-bottom: 0;
+}
+
+.swse .character-level .level-input {
+  font-size: 1.2rem;
+  padding: 2px 4px;
+  font-weight: bold;
+}
+
+.swse .half-level-display {
+  font-size: 10px;
+  color: rgba(0, 170, 255, 0.7);
+}
+
+.swse .level-up {
+  font-size: 11px;
+  padding: 4px 8px;
+  min-width: auto;
+  margin-top: 2px;
+}
+
+/* Action buttons: Icon-first, horizontal, compact */
+.swse .character-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.swse .character-actions button {
+  flex: 0 0 auto;
+  padding: 6px 8px;
+  font-size: 10px;
+  background: rgba(0, 170, 255, 0.15);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.swse .character-actions button i {
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.swse .character-actions button:hover {
+  background: rgba(0, 170, 255, 0.3);
+  border-color: rgba(0, 170, 255, 0.6);
+  color: #00ffff;
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.3);
+}
+
+/* Hide text on very small screens, show on hover */
+.swse .character-actions button span {
+  display: inline;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   CENTER COLUMN: Combat Snapshot (Reorganized Tiers)
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse .header-center {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  flex: 1 1 auto;
+  justify-content: flex-start;
+}
+
+/* ═══ TIER 1: DEFENSES (Primary, High Contrast) ═══ */
+
+.swse .header-center .defenses {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  margin-bottom: 0;
+}
+
+.swse .header-center .defenses.grid-4col {
+  display: flex;
+  grid-template-columns: unset;
+}
+
+.swse .defense {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  min-width: fit-content;
+  flex: 0 1 auto;
+}
+
+.swse .defense-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.swse .defense-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(0, 170, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0;
+}
+
+.swse .defense-ability-select,
+.swse .defense-ability-fixed {
+  font-size: 9px;
+  color: rgba(0, 170, 255, 0.6);
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-align: center;
+}
+
+.swse .defense-ability-select {
+  cursor: pointer;
+  border-bottom: 1px dashed rgba(0, 170, 255, 0.4);
+  padding-bottom: 2px;
+}
+
+.swse .defense-ability-select:hover {
+  border-bottom-color: rgba(0, 170, 255, 0.7);
+}
+
+/* Hide breakdown details by default */
+.swse .defense-base,
+.swse .defense-level,
+.swse .defense-ability,
+.swse .defense-class,
+.swse .defense-misc {
+  display: none;
+}
+
+.swse .defense-value {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #00ffff;
+  background: rgba(0, 170, 255, 0.1);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  padding: 4px 8px;
+  border-radius: 3px;
+  min-width: 50px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.swse .defense-value:hover {
+  background: rgba(0, 170, 255, 0.2);
+  border-color: rgba(0, 170, 255, 0.7);
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.2);
+}
+
+.swse .flatfooted-note {
+  font-size: 9px;
+  color: rgba(0, 170, 255, 0.5);
+  text-align: center;
+}
+
+/* ═══ TIER 2: RESOURCES (HP / FP / Destiny) ═══ */
+
+.swse .header-center .resources {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+.swse .resource {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0;
+  min-width: 120px;
+}
+
+.swse .resource label {
+  font-size: 10px;
+  margin-bottom: 0;
+  color: rgba(0, 170, 255, 0.7);
+}
+
+.swse .resource-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+
+.swse .resource-input,
+.swse .resource-max-input {
+  flex: 0 0 auto;
+  width: 50px;
+  padding: 4px 6px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.swse .separator {
+  color: rgba(0, 170, 255, 0.5);
+  flex: 0 0 auto;
+}
+
+.swse .progress-bar {
+  width: 100%;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 170, 255, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.swse .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg,
+    rgba(0, 170, 255, 0.5),
+    rgba(0, 220, 255, 0.8));
+  transition: width 0.2s ease;
+}
+
+.swse .bonus-hp-indicator {
+  font-size: 10px;
+  color: rgba(0, 170, 255, 0.7);
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.swse .bonus-hp-info {
+  display: none;
+}
+
+.swse .force-point-controls {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+  font-size: 10px;
+}
+
+.swse .reroll-bonus {
+  flex: 0 0 auto;
+  color: rgba(0, 170, 255, 0.6);
+  white-space: nowrap;
+}
+
+.swse .dice-type-select {
+  flex: 0 0 auto;
+  width: 50px;
+  padding: 2px 4px;
+  font-size: 10px;
+}
+
+.swse .roll-force-point {
+  flex: 0 0 auto;
+  padding: 4px 6px;
+  background: rgba(0, 170, 255, 0.15);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.swse .roll-force-point:hover {
+  background: rgba(0, 170, 255, 0.3);
+  border-color: rgba(0, 170, 255, 0.6);
+}
+
+.swse .destiny-point-status {
+  font-size: 10px;
+  color: rgba(0, 170, 255, 0.6);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   RIGHT COLUMN: Status + Build State (Two Clear Visual Sections)
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse .header-right {
+  flex-direction: column;
+  gap: 8px;
+  flex: 0 0 auto;
+  min-width: 200px;
+}
+
+/* ═══ SECTION A: COMBAT STATUS (Top, High Urgency) ═══ */
+
+.swse .header-right > div:first-child {
+  /* Condition track container */
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid rgba(0, 170, 255, 0.4);
+  background: rgba(0, 170, 255, 0.08);
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.swse .condition-track-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.swse .condition-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: rgba(0, 170, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.swse .condition-states {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+}
+
+.swse .condition-btn {
+  padding: 4px 6px;
+  font-size: 11px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.swse .condition-btn:hover,
+.swse .condition-btn.active {
+  background: rgba(0, 170, 255, 0.3);
+  border-color: rgba(0, 170, 255, 0.6);
+  color: #00ffff;
+}
+
+.swse .condition-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+
+.swse .condition-actions button {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 10px;
+  background: rgba(0, 170, 255, 0.15);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.swse .condition-actions button:hover {
+  background: rgba(0, 170, 255, 0.3);
+  border-color: rgba(0, 170, 255, 0.6);
+  color: #00ffff;
+}
+
+/* ═══ SECTION B: BUILD STATE (Bottom, Low Urgency, Muted) ═══ */
+
+.swse .species-selector,
+.swse .class-selector,
+.swse .character-attribute {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  opacity: 0.75;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+
+.swse .species-selector:last-child,
+.swse .class-selector:last-child,
+.swse .character-attribute:last-child {
+  margin-bottom: 0;
+}
+
+.swse .species-label,
+.swse .class-label,
+.swse .attribute-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(0, 170, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 0;
+}
+
+.swse .species-value,
+.swse .class-value,
+.swse .attribute-value {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.swse .species-unselected,
+.swse .class-unselected {
+  color: rgba(0, 170, 255, 0.5);
+  font-style: italic;
+}
+
+.swse .pick-species-btn,
+.swse .add-class-btn {
+  flex: 0 0 auto;
+  padding: 4px 6px;
+  font-size: 9px;
+  background: rgba(0, 170, 255, 0.1);
+  border: 1px solid rgba(0, 170, 255, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.swse .pick-species-btn:hover,
+.swse .add-class-btn:hover {
+  background: rgba(0, 170, 255, 0.2);
+  border-color: rgba(0, 170, 255, 0.4);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.swse .character-attribute input[type="checkbox"] {
+  width: auto;
+  margin-right: 4px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   RESPONSIVE: Stack on smaller screens
+   ───────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 1400px) {
+  .swse .sheet-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .swse .header-left,
+  .swse .header-center,
+  .swse .header-right {
+    flex: 1;
+  }
+
+  .swse .header-left {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .swse .header-center .defenses {
+    flex-wrap: wrap;
+  }
+
+  .swse .header-center .resources {
+    flex-wrap: wrap;
+  }
+
+  .swse .header-right {
+    flex-direction: row;
+    gap: 12px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   DARK THEME (Holo) Specific Overrides
+   ───────────────────────────────────────────────────────────────────────── */
+
+[data-theme="holo"] .swse .sheet-header {
+  background: linear-gradient(135deg,
+    rgba(26, 26, 46, 0.95) 0%,
+    rgba(0, 40, 60, 0.8) 100%);
+  border-bottom: 2px solid rgba(0, 220, 255, 0.3);
+}
+
+[data-theme="holo"] .swse .defense-value {
+  color: #00ffff;
+  background: rgba(0, 220, 255, 0.1);
+  border-color: rgba(0, 220, 255, 0.4);
+}
+
+[data-theme="holo"] .swse .defense-value:hover {
+  background: rgba(0, 220, 255, 0.2);
+  border-color: rgba(0, 220, 255, 0.7);
+  box-shadow: 0 0 12px rgba(0, 220, 255, 0.3);
+}
+
+[data-theme="holo"] .swse .progress-fill {
+  background: linear-gradient(90deg,
+    rgba(0, 220, 255, 0.5),
+    rgba(0, 255, 200, 0.8));
+}
