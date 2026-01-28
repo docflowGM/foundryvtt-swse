@@ -1595,8 +1595,18 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
     // If droid, show degree and size selection; if living, show species
     if (this.characterData.isDroid) {
       steps.push("degree", "size", "droid-builder");
+      SWSELogger.log(`CharGen | _getSteps: isDroid=true, added degree/size/droid-builder`, {
+        isDroid: this.characterData.isDroid,
+        steps: steps
+      });
     } else {
+      // CRITICAL: Species MUST be included for living characters
       steps.push("species");
+      SWSELogger.log(`CharGen | _getSteps: isDroid=false, ADDED SPECIES TO STEPS`, {
+        isDroid: this.characterData.isDroid,
+        stepsIncludesSpecies: steps.includes("species"),
+        steps: steps
+      });
     }
 
     // NPC workflow: skip class and talents, go straight to abilities/skills/languages/feats
@@ -1884,10 +1894,13 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
     }
 
     const steps = this._getSteps();
+    SWSELogger.log(`CharGen | _onNextStep: steps array:`, steps);
     let idx = steps.indexOf(this.currentStep);
+    SWSELogger.log(`CharGen | _onNextStep: currentStep="${this.currentStep}", idx=${idx}`);
 
     // If current step is not in steps array (due to dynamic changes), find it
     if (idx < 0) {
+      SWSELogger.warn(`CharGen | _onNextStep: currentStep "${this.currentStep}" not in steps array, finding nearest valid step`);
       const allPossibleSteps = ["name", "type", "degree", "size", "droid-builder", "species",
         "abilities", "class", "background", "skills", "languages", "feats", "talents",
         "force-powers", "starship-maneuvers", "droid-final", "summary", "shop"];
@@ -1908,6 +1921,7 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
 
     if (idx >= 0 && idx < steps.length - 1) {
       let nextStep = steps[idx + 1];
+      SWSELogger.log(`CharGen | _onNextStep: nextStep="${nextStep}"`);
 
       // Auto-skip languages step if no additional languages to select
       if (nextStep === "languages") {

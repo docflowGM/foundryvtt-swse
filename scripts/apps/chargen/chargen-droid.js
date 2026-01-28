@@ -14,7 +14,13 @@ export async function _onSelectType(event) {
   const type = event.currentTarget.dataset.type;
   this.characterData.isDroid = (type === "droid");
 
-  SWSELogger.log(`SWSE CharGen | Selected type: ${type} (isDroid: ${this.characterData.isDroid})`);
+  SWSELogger.log(`SWSE CharGen | Selected type: ${type}`, {
+    isDroid: this.characterData.isDroid,
+    currentStep: this.currentStep,
+    isTypeSelected: type === "droid" || type === "living"
+  });
+
+  SWSELogger.log(`SWSE CharGen | Before _onNextStep, isDroid is:`, this.characterData.isDroid);
   await this._onNextStep(event);
 }
 
