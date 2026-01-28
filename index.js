@@ -242,6 +242,9 @@ Hooks.once("init", async function () {
 
         // Add missing #let helper
         Handlebars.registerHelper("let", function(options) {
+            if (!options || typeof options.fn !== 'function') {
+                return '';
+            }
             const merged = Object.assign({}, this, options.hash);
             return options.fn(merged);
         });

@@ -879,7 +879,6 @@ export default class CharacterGenerator extends Application {
     characterDataTrainedSkills: this.characterData.trainedSkillsAllowed,
     backgroundSkills: this.characterData.backgroundSkills?.length ?? 0
       });
-    }
 
       try {
         // Combine class skills with background skills
@@ -930,6 +929,7 @@ export default class CharacterGenerator extends Application {
         context.skillsJson = fallbackSkills;
         context.availableSkills = fallbackSkills;
       }
+    }
 
     // ======================================================
     // Finalize SKILLS data for template rendering
