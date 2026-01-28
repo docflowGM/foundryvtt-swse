@@ -1,0 +1,62 @@
+[
+  {
+    "file": "scripts\\apps\\chargen-narrative.js",
+    "reference": "TalentTreeDB\\."
+  },
+  {
+    "file": "scripts\\apps\\chargen-narrative.js",
+    "reference": "TalentDB\\."
+  },
+  {
+    "file": "scripts\\data\\classes-db.js",
+    "reference": "ClassesDB\\."
+  },
+  {
+    "file": "scripts\\data\\force-points.js",
+    "reference": "ClassesDB\\."
+  },
+  {
+    "file": "scripts\\data\\talent-normalizer.js",
+    "reference": "TalentDB\\."
+  },
+  {
+    "file": "scripts\\data\\talent-tree-normalizer.js",
+    "reference": "TalentTreeDB\\."
+  },
+  {
+    "file": "scripts\\migration\\talent-ssot-refactor.js",
+    "reference": "TalentDB\\."
+  },
+  {
+    "file": "scripts\\migration\\talent-ssot-refactor.js",
+    "reference": "SWSE\\.TalentTreeDB"
+  },
+  {
+    "file": "scripts\\utils\\template-id-mapper.js",
+    "reference": "TalentTreeDB\\."
+  },
+  {
+    "file": "scripts\\utils\\template-id-mapper.js",
+    "reference": "TalentDB\\."
+  },
+  {
+    "file": "scripts\\utils\\template-id-mapper.js",
+    "reference": "ClassesDB\\."
+  },
+  {
+    "file": "scripts\\progression\\engine\\talent-tree-normalizer.js",
+    "reference": "TalentTreeDB\\."
+  },
+  {
+    "file": "scripts\\apps\\chargen\\chargen-class.js",
+    "reference": "ClassesDB\\."
+  },
+  {
+    "file": "scripts\\apps\\chargen\\chargen-feats-talents.js",
+    "reference": "ClassesDB\\."
+  },
+  {
+    "file": "scripts\\apps\\chargen\\chargen-main.js",
+    "reference": "ClassesDB\\."
+  }
+]

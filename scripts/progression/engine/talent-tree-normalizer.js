@@ -10,7 +10,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
-import { TalentTreeDB } from '../../data/talent-tree-db.js';
+import TalentTreeDB from '../../data/talent-tree-db.js';
 import { normalizeTalentTreeId } from '../../data/talent-tree-normalizer.js';
 
 export const TalentTreeNormalizer = {

@@ -19,7 +19,7 @@ async function loadJSON(url) {
 import { TalentTreeGraph } from "./TalentTreeGraph.js";
 import { PrerequisiteEnricher } from "../utils/PrerequisiteEnricher.js";
 import { SWSELogger } from "../../utils/logger.js";
-import TalentTreeDB from '../../data/talent-tree-db.js';
+import { TalentTreeDB } from "../../data/talent-tree-db.js";
 import { normalizeTalentTreeId } from "../../data/talent-tree-normalizer.js";
 
 export class TalentTreeRegistry {
@@ -168,8 +168,6 @@ this.trees.set(treeName, graph);
 
     SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Built ${this.trees.size} graphs via legacy talent grouping`);
 
-
-  }
 
   static getTreeNames() {
     const names = [...this.trees.keys()];

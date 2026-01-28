@@ -15,6 +15,10 @@ export async function registerSWSEPartials() {
     "systems/foundryvtt-swse/templates/partials/assets-panel.hbs",
     "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs",
     "systems/foundryvtt-swse/templates/actors/droid/droid-diagnostic.hbs",
+    "systems/foundryvtt-swse/templates/actors/droid/droid-image-operational.hbs",
+    "systems/foundryvtt-swse/templates/actors/droid/droid-callouts-operational.hbs",
+    "systems/foundryvtt-swse/templates/actors/droid/droid-image-blueprint.hbs",
+    "systems/foundryvtt-swse/templates/actors/droid/droid-callouts-blueprint.hbs",
     "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-image.hbs",
     "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-callouts.hbs",
     "systems/foundryvtt-swse/templates/partials/crew-action-cards.hbs"
@@ -31,6 +35,7 @@ export async function registerSWSEPartials() {
       }
       const html = await response.text();
       Handlebars.registerPartial(name, html);
+      Handlebars.registerPartial(path, html);
       swseLogger.log(`SWSE | Registered partial: ${name}`);
     } catch (error) {
       swseLogger.error(`SWSE | Error registering partial ${name}:`, error);

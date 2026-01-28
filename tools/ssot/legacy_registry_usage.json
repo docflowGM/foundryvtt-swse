@@ -1,0 +1,31 @@
+{
+  "TalentTreeRegistry": [
+    "init-talents.js",
+    "scripts\\progression\\talents\\TalentTreeRegistry.js"
+  ],
+  "system.talent_tree": [
+    "scripts\\migrations\\migrate-orphaned-talents.js",
+    "scripts\\progression\\engine\\talent-tree-normalizer.js",
+    "scripts\\progression\\talents\\talent-registry-ui.js",
+    "scripts\\progression\\talents\\TalentTreeRegistry.js",
+    "scripts\\progression\\utils\\class-normalizer.js",
+    "scripts\\progression\\utils\\item-normalizer.js",
+    "scripts\\apps\\chargen\\chargen-talent-tree-graph.js"
+  ],
+  "treeId": [
+    "scripts\\data\\talent-db.js",
+    "scripts\\data\\talent-normalizer.js",
+    "scripts\\data\\talent-tree-db.js",
+    "scripts\\migration\\talent-ssot-refactor.js",
+    "scripts\\migrations\\migrate-orphaned-talents.js",
+    "scripts\\progression\\engine\\talent-tree-normalizer.js",
+    "scripts\\progression\\feats\\prerequisite_engine.js",
+    "scripts\\progression\\talents\\TalentTreeRegistry.js",
+    "scripts\\apps\\chargen\\chargen-templates.js",
+    "scripts\\apps\\levelup\\levelup-dual-talent-progression.js",
+    "scripts\\actors\\character\\swse-character-sheet.js"
+  ],
+  "TalentTreeDB.has": [
+    "scripts\\progression\\engine\\talent-tree-normalizer.js"
+  ]
+}

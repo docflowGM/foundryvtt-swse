@@ -1,12 +1,12 @@
 {
   "SWSE": {
     "Abilities": {
-      "CHA": "Charisma",
-      "CON": "Constitution",
-      "DEX": "Dexterity",
-      "INT": "Intelligence",
-      "STR": "Strength",
-      "WIS": "Wisdom"
+      "CHA": "魅力",
+      "CON": "耐久",
+      "DEX": "敏捷",
+      "INT": "知力",
+      "STR": "筋力",
+      "WIS": "判断"
     },
     "Chat": {
       "Flavors": {
@@ -59,9 +59,9 @@
       "Normal": "Normal"
     },
     "Defenses": {
-      "Fortitude": "Fortitude Defense",
-      "Reflex": "Reflex Defense",
-      "Will": "Will Defense"
+      "Fortitude": "頑健防御",
+      "Reflex": "反射防御",
+      "Will": "意志防御"
     },
     "Dialogs": {
       "ApplyDamage": {
@@ -78,12 +78,12 @@
         "Title": "Apply Vehicle Template?"
       },
       "Buttons": {
-        "Apply": "Apply",
-        "Cancel": "Cancel",
+        "Apply": "適用",
+        "Cancel": "キャンセル",
         "Close": "Close",
         "Confirm": "Confirm",
-        "Delete": "Delete",
-        "Save": "Save"
+        "Delete": "削除",
+        "Save": "保存"
       },
       "CharacterGenerator": {
         "ImportDroidType": "Import Droid Type",
@@ -127,12 +127,12 @@
         "Title": "Replace Species?"
       },
       "Store": {
-        "BuildCustomDroid": "Build Custom Droid",
-        "BuildCustomStarship": "Build Custom Starship",
-        "CompletePurchase": "Complete Purchase",
-        "ConfirmDroidPurchase": "Confirm Droid Purchase",
-        "ConfirmVehiclePurchase": "Confirm Vehicle Purchase",
-        "Title": "Galactic Trade Exchange"
+        "BuildCustomDroid": "カスタム・ドロイド作成",
+        "BuildCustomStarship": "カスタム宇宙船作成",
+        "CompletePurchase": "購入完了",
+        "ConfirmDroidPurchase": "ドロイド購入確認",
+        "ConfirmVehiclePurchase": "ビークル購入確認",
+        "Title": "銀河交易所"
       }
     },
     "ForcePoints": {
@@ -155,7 +155,7 @@
       },
       "SpendDialog": {
         "CallDarkSide": "Call upon the Dark Side (+1d6, increases Dark Side Score by 1)",
-        "Cancel": "Cancel",
+        "Cancel": "キャンセル",
         "Question": "Spend a Force Point for {reason}?",
         "Remaining": "Force Points Remaining:",
         "RollInfo": "You will roll {die} and add the {method} to your roll.",
@@ -202,7 +202,7 @@
     "Settings": {
       "Advancement": {
         "Hint": "Configure level-up, talents, feats, and progression options",
-        "Label": "Configure",
+        "Label": "設定",
         "Name": "Advancement Rules"
       },
       "ArmoredDefenseForAll": {
@@ -227,12 +227,12 @@
       },
       "CharacterCreation": {
         "Hint": "Configure ability score generation, HP, and character creation options",
-        "Label": "Configure",
+        "Label": "設定",
         "Name": "Character Creation Rules"
       },
       "Combat": {
         "Hint": "Configure combat, damage, death, and condition track rules",
-        "Label": "Configure",
+        "Label": "設定",
         "Name": "Combat Rules"
       },
       "ConditionTrackCap": {
@@ -273,7 +273,7 @@
       },
       "Force": {
         "Hint": "Configure Force Points, Dark Side, and Force power rules",
-        "Label": "Configure",
+        "Label": "設定",
         "Name": "Force & Destiny Rules"
       },
       "ForcePointBonus": {
@@ -290,7 +290,7 @@
       },
       "Presets": {
         "Hint": "Apply preset houserule configurations or import/export settings",
-        "Label": "Manage Presets",
+        "Label": "プリセット管理",
         "Name": "Houserule Presets"
       },
       "ResetResourcesOnCombat": {
@@ -335,32 +335,32 @@
       }
     },
     "SheetLabels": {
-      "Character": "Character Sheet",
-      "Droid": "Droid Sheet",
-      "Item": "Item Sheet",
-      "NPC": "NPC Sheet",
-      "Vehicle": "Vehicle Sheet"
+      "Character": "キャラクターシート",
+      "Droid": "ドロイドシート",
+      "Item": "アイテムシート",
+      "NPC": "NPCシート",
+      "Vehicle": "ビークルシート"
     },
     "Skills": {
-      "Acrobatics": "Acrobatics",
-      "Climb": "Climb",
-      "Deception": "Deception",
-      "Endurance": "Endurance",
-      "GatherInformation": "Gather Information",
-      "Initiative": "Initiative",
-      "Jump": "Jump",
-      "Knowledge": "Knowledge",
-      "Mechanics": "Mechanics",
-      "Perception": "Perception",
-      "Persuasion": "Persuasion",
-      "Pilot": "Pilot",
-      "Ride": "Ride",
-      "Stealth": "Stealth",
-      "Survival": "Survival",
-      "Swim": "Swim",
-      "TreatInjury": "Treat Injury",
-      "UseComputer": "Use Computer",
-      "UseTheForce": "Use the Force"
+      "Acrobatics": "軽業",
+      "Climb": "登攀",
+      "Deception": "欺瞞",
+      "Endurance": "持久力",
+      "GatherInformation": "情報収集",
+      "Initiative": "イニシアチブ",
+      "Jump": "跳躍",
+      "Knowledge": "知識",
+      "Mechanics": "メカニクス",
+      "Perception": "知覚",
+      "Persuasion": "説得",
+      "Pilot": "操縦",
+      "Ride": "騎乗",
+      "Stealth": "隠密",
+      "Survival": "生存",
+      "Swim": "水泳",
+      "TreatInjury": "応急手当",
+      "UseComputer": "コンピューター操作",
+      "UseTheForce": "フォース使用"
     },
     "SystemName": "Star Wars Saga Edition"
   }

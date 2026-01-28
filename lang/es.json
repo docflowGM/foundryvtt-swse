@@ -1,25 +1,345 @@
 {
   "SWSE": {
-    "SystemName": "Star Wars Edición Saga",
-    "SheetLabels": {
-      "Character": "Hoja de Personaje",
-      "NPC": "Hoja de PNJ",
-      "Droid": "Hoja de Droide",
-      "Vehicle": "Hoja de Vehículo",
-      "Item": "Hoja de Objeto"
-    },
     "Abilities": {
-      "STR": "Fuerza",
-      "DEX": "Destreza",
+      "CHA": "Carisma",
       "CON": "Constitución",
+      "DEX": "Destreza",
       "INT": "Inteligencia",
-      "WIS": "Sabiduría",
-      "CHA": "Carisma"
+      "STR": "Fuerza",
+      "WIS": "Sabiduría"
+    },
+    "Chat": {
+      "Flavors": {
+        "Attack": "Ataque de {weapon}",
+        "ConditionRecovery": "Prueba de Recuperación de Condición (CD 10)",
+        "Damage": "Daño de {weapon}",
+        "Save": "{name} lanza una salvación de {type} ({modifier})",
+        "Skill": "Prueba de {skill}"
+      },
+      "Roll": {
+        "ApplyDamage": "Aplicar Daño",
+        "Breakdown": "Desglose",
+        "CriticalThreat": "¡AMENAZA CRÍTICA!",
+        "DiceTotal": "Total",
+        "Formula": "Fórmula",
+        "RollDamage": "Tirar Daño"
+      }
+    },
+    "Compendium": {
+      "Armor": "Armadura",
+      "ArmorHeavy": "Armadura Pesada",
+      "ArmorLight": "Armadura Ligera",
+      "ArmorMedium": "Armadura Media",
+      "Attributes": "Atributos",
+      "Classes": "Clases",
+      "Conditions": "Condiciones",
+      "Droids": "Droides",
+      "Equipment": "Equipo",
+      "ExtraSkillUses": "Usos Adicionales de Habilidad",
+      "Feats": "Dotes",
+      "ForcePowers": "Poderes de la Fuerza",
+      "ForceSecrets": "Secretos de la Fuerza",
+      "ForceTechniques": "Técnicas de la Fuerza",
+      "LightsaberFormPowers": "Poderes de Forma de Sable de Luz",
+      "NPCs": "PNJs",
+      "Skills": "Habilidades",
+      "SpecialCombatConditions": "Condiciones Especiales de Combate",
+      "Species": "Especies",
+      "TalentTrees": "Árboles de Talentos",
+      "Talents": "Talentos",
+      "Vehicles": "Vehículos",
+      "Weapons": "Armas"
+    },
+    "ConditionTrack": {
+      "Helpless": "Indefenso",
+      "Minus1": "-1",
+      "Minus10": "-10",
+      "Minus2": "-2",
+      "Minus5": "-5",
+      "Normal": "Normal"
     },
     "Defenses": {
-      "Reflex": "Defensa de Reflejos",
       "Fortitude": "Defensa de Fortaleza",
+      "Reflex": "Defensa de Reflejos",
       "Will": "Defensa de Voluntad"
+    },
+    "Dialogs": {
+      "ApplyDamage": {
+        "Amount": "Cantidad de Daño",
+        "Button": "Aplicar Daño",
+        "CheckThreshold": "Verificar Umbral de Daño",
+        "IgnoreTemp": "Ignorar PG Temporales",
+        "Title": "Aplicar Daño a {name}"
+      },
+      "ApplyDroidChassis": {
+        "Title": "¿Aplicar Chasis de Droide?"
+      },
+      "ApplyVehicleTemplate": {
+        "Title": "¿Aplicar Plantilla de Vehículo?"
+      },
+      "Buttons": {
+        "Apply": "Aplicar",
+        "Cancel": "Cancelar",
+        "Close": "Cerrar",
+        "Confirm": "Confirmar",
+        "Delete": "Eliminar",
+        "Save": "Guardar"
+      },
+      "CharacterGenerator": {
+        "ImportDroidType": "Importar Tipo de Droide",
+        "Title": "Generador de Personaje"
+      },
+      "ConditionRecovery": {
+        "Content": "<p><strong>{name}</strong> puede intentar recuperarse.</p><p>Posición actual: {current}/5</p><p>¿Hacer una prueba de Aguante CD 10?</p>",
+        "Title": "Recuperación de Condición"
+      },
+      "ConditionTrack": {
+        "Title": "Pista de Condición: {name}"
+      },
+      "Healing": {
+        "Amount": "Cantidad de Curación",
+        "ButtonHeal": "Aplicar Curación",
+        "ButtonRepair": "Aplicar Reparación",
+        "DroidNote": "Los droides solo pueden repararse con la habilidad Mecánica.",
+        "RepairAmount": "Cantidad de Reparación (vía Mecánica)",
+        "TitleHeal": "Curar a {name}",
+        "TitleRepair": "Reparar a {name}"
+      },
+      "HouseRules": {
+        "Advancement": "Avance",
+        "AdvancementRules": "Reglas de Avance",
+        "CharacterCreation": "Creación de Personaje",
+        "CharacterCreationRules": "Reglas de Creación de Personaje",
+        "Combat": "Combate",
+        "CombatRules": "Reglas de Combate",
+        "ForceDestiny": "Fuerza y Destino",
+        "ForceDestinyRules": "Reglas de Fuerza y Destino",
+        "Presets": "Preajustes",
+        "SkillsFeats": "Habilidades y Dotes",
+        "SpaceCombat": "Combate Espacial",
+        "Title": "Configuración de Reglas de Casa SWSE"
+      },
+      "LevelUp": {
+        "Title": "Subir de Nivel {name}"
+      },
+      "ReplaceSpecies": {
+        "Content": "<p>{actor} ya tiene la especie: <strong>{existing}</strong></p><p>¿Reemplazar con <strong>{new}</strong>?</p>",
+        "Title": "¿Reemplazar Especie?"
+      },
+      "Store": {
+        "BuildCustomDroid": "Construir Droide Personalizado",
+        "BuildCustomStarship": "Construir Nave Estelar Personalizada",
+        "CompletePurchase": "Completar Compra",
+        "ConfirmDroidPurchase": "Confirmar Compra de Droide",
+        "ConfirmVehiclePurchase": "Confirmar Compra de Vehículo",
+        "Title": "Bolsa de Intercambio Galáctica"
+      }
+    },
+    "ForcePoints": {
+      "Chat": {
+        "AlreadyZero": "Tu Puntuación de Lado Oscuro ya es 0.",
+        "AvoidDeath": "¡{name} gasta un Punto de Fuerza para evitar la muerte y cae inconsciente!",
+        "DarkSideBonus": "Bonificación de Lado Oscuro:",
+        "DarkSideWarning": "Puntuación de Lado Oscuro aumentada en 1",
+        "Highest": "Más Alto:",
+        "NoPointsRemaining": "¡No quedan Puntos de Fuerza!",
+        "ReducedDarkSide": "Puntuación de Lado Oscuro reducida a {score}",
+        "Result": "Resultado:",
+        "Title": "Punto de Fuerza Gastado",
+        "TotalBonus": "Bonificación Total:",
+        "UsedFor": "Usado para:"
+      },
+      "Methods": {
+        "highest_result": "resultado más alto",
+        "result": "resultado"
+      },
+      "SpendDialog": {
+        "CallDarkSide": "Invocar el Lado Oscuro (+1d6, aumenta Puntuación de Lado Oscuro en 1)",
+        "Cancel": "Cancelar",
+        "Question": "¿Gastar un Punto de Fuerza para {reason}?",
+        "Remaining": "Puntos de Fuerza Restantes:",
+        "RollInfo": "Tirarás {die} y añadirás el {method} a tu tirada.",
+        "Spend": "Gastar Punto de Fuerza",
+        "Title": "Gastar Punto de Fuerza"
+      }
+    },
+    "Notifications": {
+      "Combat": {
+        "NoActorSelected": "No hay actor seleccionado",
+        "NoTargets": "¡No hay objetivos seleccionados!"
+      },
+      "Condition": {
+        "RecoveryFailed": "{name} falla al recuperarse.",
+        "RecoverySuccess": "¡{name} recupera un paso en la pista de condición!"
+      },
+      "Damage": {
+        "CannotRoll": "No se puede tirar daño para este objeto."
+      },
+      "Items": {
+        "AlreadyHasClass": "{actor} ya tiene la clase {class}",
+        "NotOwnedByActor": "Este objeto no pertenece a ningún actor.",
+        "SpeciesApplied": "Rasgos raciales de {species} aplicados a {actor}"
+      },
+      "Rolls": {
+        "DefenseNotFound": "Tipo de defensa {type} no encontrado",
+        "DiceRollFailed": "Tirada de dados fallida: {error}",
+        "SaveFailed": "¡Salvación fallida! ({total} contra CD {dc})",
+        "SaveSucceeded": "¡Salvación exitosa! ({total} contra CD {dc})",
+        "SkillNotFound": "Habilidad {skill} no encontrada",
+        "UseForceRequiresTraining": "¡Usar la Fuerza requiere entrenamiento!"
+      },
+      "System": {
+        "MigrationComplete": "Migración completa: {updated} actualizados, {errors} errores"
+      },
+      "Welcome": {
+        "ConditionTrack": "Pista de Condición Visual activa",
+        "DamageThreshold": "Automatización de Umbral de Daño habilitada",
+        "ForceSuite": "Gestión de Suite de Fuerza lista",
+        "Summary": "Consulta la pestaña Resumen para tu panel de combate",
+        "Title": "¡Sistema SWSE Mejorado Cargado!"
+      }
+    },
+    "Settings": {
+      "Advancement": {
+        "Hint": "Configurar subida de nivel, talentos, dotes y opciones de progresión",
+        "Label": "Configurar",
+        "Name": "Reglas de Avance"
+      },
+      "ArmoredDefenseForAll": {
+        "Hint": "Todos los personajes pueden usar bonus de armadura a la Defensa de Reflejos",
+        "Name": "Defensa Acorazada para Todos"
+      },
+      "AthleticsConsolidation": {
+        "Hint": "Fusionar Escalar, Saltar y Nadar en una sola habilidad de Atletismo",
+        "Name": "Habilidad de Atletismo"
+      },
+      "AutoConditionRecovery": {
+        "Hint": "Solicitar chequeos de recuperación de pista de condición al inicio del turno de cada combatiente",
+        "Name": "Recuperación Automática de Condición"
+      },
+      "AutoDamageThreshold": {
+        "Hint": "Mover automáticamente a los personajes por la pista de condición cuando el daño exceda su umbral de daño",
+        "Name": "Umbral de Daño Automático"
+      },
+      "BlasterCharges": {
+        "Hint": "Rastrear munición para armas de energía",
+        "Name": "Rastrear Cargas de Bláster"
+      },
+      "CharacterCreation": {
+        "Hint": "Configurar generación de puntuaciones de habilidad, PG y opciones de creación de personaje",
+        "Label": "Configurar",
+        "Name": "Reglas de Creación de Personaje"
+      },
+      "Combat": {
+        "Hint": "Configurar combate, daño, muerte y reglas de la pista de condición",
+        "Label": "Configurar",
+        "Name": "Reglas de Combate"
+      },
+      "ConditionTrackCap": {
+        "Hint": "Pasos máximos de pista de condición por un solo ataque",
+        "Name": "Límite de Daño de Pista de Condición"
+      },
+      "CriticalHit": {
+        "Hint": "Cálculos alternativos de daño de golpe crítico",
+        "Name": "Variante de Golpe Crítico"
+      },
+      "CrossClassSkills": {
+        "Hint": "Permitir entrenar habilidades que no son de clase por 2 casillas de habilidad",
+        "Name": "Entrenamiento de Habilidades Entre Clases"
+      },
+      "DailyForcePoints": {
+        "Hint": "Usar Puntos de Fuerza diarios en lugar de por nivel (1-5°: 1 PF, 6-10°: 2 PF, 11-15°: 3 PF, 16+: 4 PF por día)",
+        "Name": "Puntos de Fuerza Diarios"
+      },
+      "DarkSideTemptation": {
+        "Hint": "Gastar Punto de Fuerza para ganar temporalmente poderes del Lado Oscuro",
+        "Name": "Tentación del Lado Oscuro"
+      },
+      "DarkSideTemptationMechanic": {
+        "Hint": "Permitir a los personajes invocar el Lado Oscuro al gastar Puntos de Fuerza (requiere Puntuación de Lado Oscuro ≤ mitad de Sabiduría, +1d6, aumenta Puntuación de Lado Oscuro en 1)",
+        "Name": "Mecánica de Tentación del Lado Oscuro"
+      },
+      "DevMode": {
+        "Hint": "Habilitar registro detallado de errores y trazas de pila para depuración",
+        "Name": "Modo Desarrollador"
+      },
+      "DiagonalMovement": {
+        "Hint": "Cómo contar el movimiento diagonal en la cuadrícula",
+        "Name": "Movimiento Diagonal"
+      },
+      "EnableAutomation": {
+        "Hint": "Rastrear automáticamente rondas, turnos y aplicar efectos de combate",
+        "Name": "Habilitar Automatización de Combate"
+      },
+      "Force": {
+        "Hint": "Configurar Puntos de Fuerza, Lado Oscuro y reglas de poderes de la Fuerza",
+        "Label": "Configurar",
+        "Name": "Reglas de la Fuerza y Destino"
+      },
+      "ForcePointBonus": {
+        "Hint": "Tamaño del dado de bonificación al gastar Puntos de Fuerza para retirar (d6 = +1d6)",
+        "Name": "Bonificación de Retirada de Punto de Fuerza"
+      },
+      "ForcePointRecovery": {
+        "Hint": "Cuándo se refrescan los Puntos de Fuerza",
+        "Name": "Recuperación de Puntos de Fuerza"
+      },
+      "KnowledgeSkills": {
+        "Hint": "Consolidar múltiples habilidades de conocimiento",
+        "Name": "Modo de Habilidad de Conocimiento"
+      },
+      "Presets": {
+        "Hint": "Aplicar configuraciones de reglas de casa preajustadas o importar/exportar ajustes",
+        "Label": "Gestionar Preajustes",
+        "Name": "Preajustes de Reglas de Casa"
+      },
+      "ResetResourcesOnCombat": {
+        "Hint": "Restablecer automáticamente recursos temporales (como Segundo Aliento) cuando comienza el combate",
+        "Name": "Restablecer Recursos al Inicio del Combate"
+      },
+      "Retraining": {
+        "Hint": "Permitir intercambiar dotes/talentos al subir de nivel",
+        "Name": "Permitir Reentrenamiento"
+      },
+      "SecondWindImproved": {
+        "Hint": "Segundo Aliento también mejora la pista de condición un paso",
+        "Name": "Segundo Aliento Mejorado"
+      },
+      "SkillFocusRestriction": {
+        "Hint": "Restringir Enfoque en Habilidad (Usar la Fuerza) para prevenir dominio temprano en el juego",
+        "Name": "Restricciones de Enfoque en Habilidad"
+      },
+      "StoreDiscount": {
+        "Hint": "Porcentaje del precio original al vender objetos a la tienda",
+        "Name": "Descuento de Venta en Tienda"
+      },
+      "StoreMarkup": {
+        "Hint": "Porcentaje de sobreprecio para objetos comprados en la tienda (puede ser negativo para descuentos)",
+        "Name": "Sobreprecio de Tienda"
+      },
+      "TalentEveryLevel": {
+        "Hint": "Los personajes ganan un talento en cada nivel en lugar de cada nivel impar",
+        "Name": "Talento Cada Nivel"
+      },
+      "WeaponRangeMultiplier": {
+        "Hint": "Multiplicar todos los alcances de armas por este factor (útil para cuadrículas de diferentes escalas)",
+        "Name": "Multiplicador de Alcance de Armas"
+      },
+      "WeaponRanges": {
+        "Hint": "Multiplicar todos los alcances de armas por este factor",
+        "Name": "Modificador de Alcance de Armas"
+      },
+      "WelcomeShown": {
+        "Hint": "Rastrea si el mensaje de bienvenida ha sido mostrado",
+        "Name": "Mensaje de Bienvenida Mostrado"
+      }
+    },
+    "SheetLabels": {
+      "Character": "Hoja de Personaje",
+      "Droid": "Hoja de Droide",
+      "Item": "Hoja de Objeto",
+      "NPC": "Hoja de PNJ",
+      "Vehicle": "Hoja de Vehículo"
     },
     "Skills": {
       "Acrobatics": "Acrobacias",
@@ -42,326 +362,6 @@
       "UseComputer": "Usar Computadora",
       "UseTheForce": "Usar la Fuerza"
     },
-    "ConditionTrack": {
-      "Normal": "Normal",
-      "Minus1": "-1",
-      "Minus2": "-2",
-      "Minus5": "-5",
-      "Minus10": "-10",
-      "Helpless": "Indefenso"
-    },
-    "Settings": {
-      "EnableAutomation": {
-        "Name": "Habilitar Automatización de Combate",
-        "Hint": "Rastrear automáticamente rondas, turnos y aplicar efectos de combate"
-      },
-      "AutoConditionRecovery": {
-        "Name": "Recuperación Automática de Condición",
-        "Hint": "Solicitar chequeos de recuperación de pista de condición al inicio del turno de cada combatiente"
-      },
-      "AutoDamageThreshold": {
-        "Name": "Umbral de Daño Automático",
-        "Hint": "Mover automáticamente a los personajes por la pista de condición cuando el daño exceda su umbral de daño"
-      },
-      "WeaponRangeMultiplier": {
-        "Name": "Multiplicador de Alcance de Armas",
-        "Hint": "Multiplicar todos los alcances de armas por este factor (útil para cuadrículas de diferentes escalas)"
-      },
-      "ForcePointBonus": {
-        "Name": "Bonificación de Retirada de Punto de Fuerza",
-        "Hint": "Tamaño del dado de bonificación al gastar Puntos de Fuerza para retirar (d6 = +1d6)"
-      },
-      "StoreMarkup": {
-        "Name": "Sobreprecio de Tienda",
-        "Hint": "Porcentaje de sobreprecio para objetos comprados en la tienda (puede ser negativo para descuentos)"
-      },
-      "StoreDiscount": {
-        "Name": "Descuento de Venta en Tienda",
-        "Hint": "Porcentaje del precio original al vender objetos a la tienda"
-      },
-      "CharacterCreation": {
-        "Name": "Reglas de Creación de Personaje",
-        "Label": "Configurar",
-        "Hint": "Configurar generación de puntuaciones de habilidad, PG y opciones de creación de personaje"
-      },
-      "Advancement": {
-        "Name": "Reglas de Avance",
-        "Label": "Configurar",
-        "Hint": "Configurar subida de nivel, talentos, dotes y opciones de progresión"
-      },
-      "Combat": {
-        "Name": "Reglas de Combate",
-        "Label": "Configurar",
-        "Hint": "Configurar combate, daño, muerte y reglas de la pista de condición"
-      },
-      "Force": {
-        "Name": "Reglas de la Fuerza y Destino",
-        "Label": "Configurar",
-        "Hint": "Configurar Puntos de Fuerza, Lado Oscuro y reglas de poderes de la Fuerza"
-      },
-      "Presets": {
-        "Name": "Preajustes de Reglas de Casa",
-        "Label": "Gestionar Preajustes",
-        "Hint": "Aplicar configuraciones de reglas de casa preajustadas o importar/exportar ajustes"
-      },
-      "SecondWindImproved": {
-        "Name": "Segundo Aliento Mejorado",
-        "Hint": "Segundo Aliento también mejora la pista de condición un paso"
-      },
-      "TalentEveryLevel": {
-        "Name": "Talento Cada Nivel",
-        "Hint": "Los personajes ganan un talento en cada nivel en lugar de cada nivel impar"
-      },
-      "CrossClassSkills": {
-        "Name": "Entrenamiento de Habilidades Entre Clases",
-        "Hint": "Permitir entrenar habilidades que no son de clase por 2 casillas de habilidad"
-      },
-      "SkillFocusRestriction": {
-        "Name": "Restricciones de Enfoque en Habilidad",
-        "Hint": "Restringir Enfoque en Habilidad (Usar la Fuerza) para prevenir dominio temprano en el juego"
-      },
-      "ArmoredDefenseForAll": {
-        "Name": "Defensa Acorazada para Todos",
-        "Hint": "Todos los personajes pueden usar bonus de armadura a la Defensa de Reflejos"
-      },
-      "WeaponRanges": {
-        "Name": "Modificador de Alcance de Armas",
-        "Hint": "Multiplicar todos los alcances de armas por este factor"
-      },
-      "AthleticsConsolidation": {
-        "Name": "Habilidad de Atletismo",
-        "Hint": "Fusionar Escalar, Saltar y Nadar en una sola habilidad de Atletismo"
-      },
-      "DiagonalMovement": {
-        "Name": "Movimiento Diagonal",
-        "Hint": "Cómo contar el movimiento diagonal en la cuadrícula"
-      },
-      "ForcePointRecovery": {
-        "Name": "Recuperación de Puntos de Fuerza",
-        "Hint": "Cuándo se refrescan los Puntos de Fuerza"
-      },
-      "ConditionTrackCap": {
-        "Name": "Límite de Daño de Pista de Condición",
-        "Hint": "Pasos máximos de pista de condición por un solo ataque"
-      },
-      "KnowledgeSkills": {
-        "Name": "Modo de Habilidad de Conocimiento",
-        "Hint": "Consolidar múltiples habilidades de conocimiento"
-      },
-      "DarkSideTemptation": {
-        "Name": "Tentación del Lado Oscuro",
-        "Hint": "Gastar Punto de Fuerza para ganar temporalmente poderes del Lado Oscuro"
-      },
-      "BlasterCharges": {
-        "Name": "Rastrear Cargas de Bláster",
-        "Hint": "Rastrear munición para armas de energía"
-      },
-      "CriticalHit": {
-        "Name": "Variante de Golpe Crítico",
-        "Hint": "Cálculos alternativos de daño de golpe crítico"
-      },
-      "Retraining": {
-        "Name": "Permitir Reentrenamiento",
-        "Hint": "Permitir intercambiar dotes/talentos al subir de nivel"
-      },
-      "DailyForcePoints": {
-        "Name": "Puntos de Fuerza Diarios",
-        "Hint": "Usar Puntos de Fuerza diarios en lugar de por nivel (1-5°: 1 PF, 6-10°: 2 PF, 11-15°: 3 PF, 16+: 4 PF por día)"
-      },
-      "DarkSideTemptationMechanic": {
-        "Name": "Mecánica de Tentación del Lado Oscuro",
-        "Hint": "Permitir a los personajes invocar el Lado Oscuro al gastar Puntos de Fuerza (requiere Puntuación de Lado Oscuro ≤ mitad de Sabiduría, +1d6, aumenta Puntuación de Lado Oscuro en 1)"
-      },
-      "ResetResourcesOnCombat": {
-        "Name": "Restablecer Recursos al Inicio del Combate",
-        "Hint": "Restablecer automáticamente recursos temporales (como Segundo Aliento) cuando comienza el combate"
-      },
-      "WelcomeShown": {
-        "Name": "Mensaje de Bienvenida Mostrado",
-        "Hint": "Rastrea si el mensaje de bienvenida ha sido mostrado"
-      },
-      "DevMode": {
-        "Name": "Modo Desarrollador",
-        "Hint": "Habilitar registro detallado de errores y trazas de pila para depuración"
-      }
-    },
-    "Compendium": {
-      "Classes": "Clases",
-      "Talents": "Talentos",
-      "TalentTrees": "Árboles de Talentos",
-      "Feats": "Dotes",
-      "Species": "Especies",
-      "Equipment": "Equipo",
-      "Weapons": "Armas",
-      "Armor": "Armadura",
-      "ArmorLight": "Armadura Ligera",
-      "ArmorMedium": "Armadura Media",
-      "ArmorHeavy": "Armadura Pesada",
-      "ForcePowers": "Poderes de la Fuerza",
-      "ForceTechniques": "Técnicas de la Fuerza",
-      "ForceSecrets": "Secretos de la Fuerza",
-      "LightsaberFormPowers": "Poderes de Forma de Sable de Luz",
-      "Skills": "Habilidades",
-      "ExtraSkillUses": "Usos Adicionales de Habilidad",
-      "Conditions": "Condiciones",
-      "SpecialCombatConditions": "Condiciones Especiales de Combate",
-      "Attributes": "Atributos",
-      "Vehicles": "Vehículos",
-      "Droids": "Droides",
-      "NPCs": "PNJs"
-    },
-    "ForcePoints": {
-      "SpendDialog": {
-        "Title": "Gastar Punto de Fuerza",
-        "Question": "¿Gastar un Punto de Fuerza para {reason}?",
-        "RollInfo": "Tirarás {die} y añadirás el {method} a tu tirada.",
-        "CallDarkSide": "Invocar el Lado Oscuro (+1d6, aumenta Puntuación de Lado Oscuro en 1)",
-        "Remaining": "Puntos de Fuerza Restantes:",
-        "Spend": "Gastar Punto de Fuerza",
-        "Cancel": "Cancelar"
-      },
-      "Chat": {
-        "Title": "Punto de Fuerza Gastado",
-        "Highest": "Más Alto:",
-        "Result": "Resultado:",
-        "DarkSideBonus": "Bonificación de Lado Oscuro:",
-        "DarkSideWarning": "Puntuación de Lado Oscuro aumentada en 1",
-        "TotalBonus": "Bonificación Total:",
-        "UsedFor": "Usado para:",
-        "ReducedDarkSide": "Puntuación de Lado Oscuro reducida a {score}",
-        "AvoidDeath": "¡{name} gasta un Punto de Fuerza para evitar la muerte y cae inconsciente!",
-        "AlreadyZero": "Tu Puntuación de Lado Oscuro ya es 0.",
-        "NoPointsRemaining": "¡No quedan Puntos de Fuerza!"
-      },
-      "Methods": {
-        "result": "resultado",
-        "highest_result": "resultado más alto"
-      }
-    },
-    "Notifications": {
-      "Welcome": {
-        "Title": "¡Sistema SWSE Mejorado Cargado!",
-        "ConditionTrack": "Pista de Condición Visual activa",
-        "DamageThreshold": "Automatización de Umbral de Daño habilitada",
-        "ForceSuite": "Gestión de Suite de Fuerza lista",
-        "Summary": "Consulta la pestaña Resumen para tu panel de combate"
-      },
-      "Condition": {
-        "RecoverySuccess": "¡{name} recupera un paso en la pista de condición!",
-        "RecoveryFailed": "{name} falla al recuperarse."
-      },
-      "Combat": {
-        "NoTargets": "¡No hay objetivos seleccionados!",
-        "NoActorSelected": "No hay actor seleccionado"
-      },
-      "Damage": {
-        "CannotRoll": "No se puede tirar daño para este objeto."
-      },
-      "Rolls": {
-        "DefenseNotFound": "Tipo de defensa {type} no encontrado",
-        "SaveSucceeded": "¡Salvación exitosa! ({total} contra CD {dc})",
-        "SaveFailed": "¡Salvación fallida! ({total} contra CD {dc})",
-        "DiceRollFailed": "Tirada de dados fallida: {error}",
-        "SkillNotFound": "Habilidad {skill} no encontrada",
-        "UseForceRequiresTraining": "¡Usar la Fuerza requiere entrenamiento!"
-      },
-      "Items": {
-        "NotOwnedByActor": "Este objeto no pertenece a ningún actor.",
-        "SpeciesApplied": "Rasgos raciales de {species} aplicados a {actor}",
-        "AlreadyHasClass": "{actor} ya tiene la clase {class}"
-      },
-      "System": {
-        "MigrationComplete": "Migración completa: {updated} actualizados, {errors} errores"
-      }
-    },
-    "Dialogs": {
-      "ConditionRecovery": {
-        "Title": "Recuperación de Condición",
-        "Content": "<p><strong>{name}</strong> puede intentar recuperarse.</p><p>Posición actual: {current}/5</p><p>¿Hacer una prueba de Aguante CD 10?</p>"
-      },
-      "ReplaceSpecies": {
-        "Title": "¿Reemplazar Especie?",
-        "Content": "<p>{actor} ya tiene la especie: <strong>{existing}</strong></p><p>¿Reemplazar con <strong>{new}</strong>?</p>"
-      },
-      "ApplyDroidChassis": {
-        "Title": "¿Aplicar Chasis de Droide?"
-      },
-      "ApplyVehicleTemplate": {
-        "Title": "¿Aplicar Plantilla de Vehículo?"
-      },
-      "ApplyDamage": {
-        "Title": "Aplicar Daño a {name}",
-        "Amount": "Cantidad de Daño",
-        "CheckThreshold": "Verificar Umbral de Daño",
-        "IgnoreTemp": "Ignorar PG Temporales",
-        "Button": "Aplicar Daño"
-      },
-      "Healing": {
-        "TitleHeal": "Curar a {name}",
-        "TitleRepair": "Reparar a {name}",
-        "Amount": "Cantidad de Curación",
-        "RepairAmount": "Cantidad de Reparación (vía Mecánica)",
-        "ButtonHeal": "Aplicar Curación",
-        "ButtonRepair": "Aplicar Reparación",
-        "DroidNote": "Los droides solo pueden repararse con la habilidad Mecánica."
-      },
-      "ConditionTrack": {
-        "Title": "Pista de Condición: {name}"
-      },
-      "Store": {
-        "Title": "Bolsa de Intercambio Galáctica",
-        "ConfirmDroidPurchase": "Confirmar Compra de Droide",
-        "ConfirmVehiclePurchase": "Confirmar Compra de Vehículo",
-        "BuildCustomDroid": "Construir Droide Personalizado",
-        "BuildCustomStarship": "Construir Nave Estelar Personalizada",
-        "CompletePurchase": "Completar Compra"
-      },
-      "LevelUp": {
-        "Title": "Subir de Nivel {name}"
-      },
-      "HouseRules": {
-        "Title": "Configuración de Reglas de Casa SWSE",
-        "CharacterCreation": "Creación de Personaje",
-        "SkillsFeats": "Habilidades y Dotes",
-        "Advancement": "Avance",
-        "Combat": "Combate",
-        "ForceDestiny": "Fuerza y Destino",
-        "SpaceCombat": "Combate Espacial",
-        "Presets": "Preajustes",
-        "CharacterCreationRules": "Reglas de Creación de Personaje",
-        "AdvancementRules": "Reglas de Avance",
-        "CombatRules": "Reglas de Combate",
-        "ForceDestinyRules": "Reglas de Fuerza y Destino"
-      },
-      "CharacterGenerator": {
-        "Title": "Generador de Personaje",
-        "ImportDroidType": "Importar Tipo de Droide"
-      },
-      "Buttons": {
-        "Confirm": "Confirmar",
-        "Cancel": "Cancelar",
-        "Apply": "Aplicar",
-        "Close": "Cerrar",
-        "Save": "Guardar",
-        "Delete": "Eliminar"
-      }
-    },
-    "Chat": {
-      "Flavors": {
-        "ConditionRecovery": "Prueba de Recuperación de Condición (CD 10)",
-        "Attack": "Ataque de {weapon}",
-        "Damage": "Daño de {weapon}",
-        "Save": "{name} lanza una salvación de {type} ({modifier})",
-        "Skill": "Prueba de {skill}"
-      },
-      "Roll": {
-        "CriticalThreat": "¡AMENAZA CRÍTICA!",
-        "RollDamage": "Tirar Daño",
-        "ApplyDamage": "Aplicar Daño",
-        "DiceTotal": "Total",
-        "Formula": "Fórmula",
-        "Breakdown": "Desglose"
-      }
-    }
+    "SystemName": "Star Wars Edición Saga"
   }
 }

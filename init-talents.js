@@ -1,31 +1,55 @@
-
 // ======================================================================
 // init-talents.js
-// Loads all backend talent registries during system initialization.
+// Legacy TalentTreeRegistry bootstrap (SSOT-aware, safe, and idempotent)
 // ======================================================================
 
 import { TalentTreeRegistry } from "./scripts/progression/talents/TalentTreeRegistry.js";
-import { TalentTreeDB } from "./scripts/data/talent-tree-db.js";
+import TalentTreeDB from "./scripts/data/talent-tree-db.js";
+import TalentDB from "./scripts/data/talent-db.js";
 
-// Wait for SSOT registries to be built first, then build TalentTreeRegistry
+/**
+ * Build TalentTreeRegistry if and only if:
+ * - SSOT registries exist
+ * - SSOT registries are built
+ * - TalentTreeRegistry has not already been built
+ */
+async function tryBuildTalentTreeRegistry(context) {
+    // Defensive: SSOT globals must exist
+    if (!TalentTreeDB || !TalentDB) {
+        console.warn(`[SWSE] (${context}) TalentTreeRegistry skipped — SSOT modules missing`);
+        return;
+    }
+
+    // SSOT must be built
+    if (!TalentTreeDB.isBuilt || !TalentDB.isBuilt) {
+        console.warn(`[SWSE] (${context}) TalentTreeRegistry skipped — SSOT not ready`);
+        return;
+    }
+
+    // Registry already built
+    if (TalentTreeRegistry.trees?.size > 0) {
+        return;
+    }
+
+    console.log(`[SWSE] (${context}) Building TalentTreeRegistry…`);
+    await TalentTreeRegistry.build();
+    console.log(`[SWSE] (${context}) Talent trees ready.`);
+}
+
+/* ------------------------------------------------------------------ */
+/* Primary Path: after SSOT initialization                             */
+/* ------------------------------------------------------------------ */
+
 Hooks.once("swse:progression:initialized", async () => {
-  console.log("[SWSE] Building TalentTreeRegistry (after SSOT registries)...");
-  await TalentTreeRegistry.build();
-  console.log("[SWSE] Talent trees ready.");
+    await tryBuildTalentTreeRegistry("post-SSOT");
 });
 
-// Fallback: if progression hooks aren't registered, build on ready
-Hooks.once("ready", async () => {
-  // Give SystemInitHooks time to register and run
-  setTimeout(async () => {
-    if (TalentTreeRegistry.trees.size === 0) {
-      console.log("[SWSE] Building TalentTreeRegistry (fallback)...");
-      // Ensure TalentTreeDB is built first
-      if (!TalentTreeDB.isBuilt) {
-        await TalentTreeDB.build();
-      }
-      await TalentTreeRegistry.build();
-      console.log("[SWSE] Talent trees ready (fallback).");
-    }
-  }, 2000);
+/* ------------------------------------------------------------------ */
+/* Fallback Path: late ready (legacy safety net)                       */
+/* ------------------------------------------------------------------ */
+
+Hooks.once("ready", () => {
+    setTimeout(async () => {
+        await tryBuildTalentTreeRegistry("ready-fallback");
+    }, 2000);
 });

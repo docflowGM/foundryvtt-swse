@@ -29,24 +29,6 @@ window.addEventListener("unhandledrejection", (event) => {
   console.groupEnd();
 });
 
-/* MODULE IMPORT WRAPPER (DEBUG SAFE) */
-if (!globalThis.__swse_import_wrapped__) {
-  globalThis.__swse_import_wrapped__ = true;
-  const realImport = globalThis.import;
-  globalThis.import = async function(path) {
-    try {
-      return await realImport(path);
-    } catch (err) {
-      console.group("%c💥 ES MODULE IMPORT FAILED", "color:red; font-size:18px;");
-      console.error("Import Path:", path);
-      console.error("Message:", err.message);
-      console.error("Stack:", err.stack);
-      console.groupEnd();
-      throw err;
-    }
-  };
-}
-
 /* ===================================================
    BACKUP FILE WARNINGS
    =================================================== */
@@ -409,7 +391,9 @@ Hooks.once("ready", async function () {
 
     // Suggestion service (single entry) initialization
     try {
-      const systemJSON = await fetch('system.json').then(r => r.json());
+            const res = await fetch(game.system?.manifest ?? `systems/${game.system.id}/system.json`);
+      if (!res.ok) throw new Error(`Failed to load system.json: ${res.status} ${res.statusText}`);
+      const systemJSON = await res.json();
       SuggestionService.initialize({ systemJSON });
     } catch (err) {
       console.warn('SWSE | SuggestionService init failed:', err);

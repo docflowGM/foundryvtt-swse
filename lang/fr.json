@@ -1,25 +1,345 @@
 {
   "SWSE": {
-    "SystemName": "Star Wars Édition Saga",
-    "SheetLabels": {
-      "Character": "Feuille de Personnage",
-      "NPC": "Feuille de PNJ",
-      "Droid": "Feuille de Droïde",
-      "Vehicle": "Feuille de Véhicule",
-      "Item": "Feuille d'Objet"
-    },
     "Abilities": {
-      "STR": "Force",
-      "DEX": "Dextérité",
+      "CHA": "Charisme",
       "CON": "Constitution",
+      "DEX": "Dextérité",
       "INT": "Intelligence",
-      "WIS": "Sagesse",
-      "CHA": "Charisme"
+      "STR": "Force",
+      "WIS": "Sagesse"
+    },
+    "Chat": {
+      "Flavors": {
+        "Attack": "Attaque {weapon}",
+        "ConditionRecovery": "Test de Récupération d'État (ND 10)",
+        "Damage": "Dégâts {weapon}",
+        "Save": "{name} lance un jet de sauvegarde de {type} ({modifier})",
+        "Skill": "Test de {skill}"
+      },
+      "Roll": {
+        "ApplyDamage": "Appliquer les Dégâts",
+        "Breakdown": "Détail",
+        "CriticalThreat": "MENACE CRITIQUE !",
+        "DiceTotal": "Total",
+        "Formula": "Formule",
+        "RollDamage": "Lancer les Dégâts"
+      }
+    },
+    "Compendium": {
+      "Armor": "Armure",
+      "ArmorHeavy": "Armure Lourde",
+      "ArmorLight": "Armure Légère",
+      "ArmorMedium": "Armure Moyenne",
+      "Attributes": "Attributs",
+      "Classes": "Classes",
+      "Conditions": "États",
+      "Droids": "Droïdes",
+      "Equipment": "Équipement",
+      "ExtraSkillUses": "Utilisations Supplémentaires de Compétence",
+      "Feats": "Dons",
+      "ForcePowers": "Pouvoirs de la Force",
+      "ForceSecrets": "Secrets de la Force",
+      "ForceTechniques": "Techniques de la Force",
+      "LightsaberFormPowers": "Pouvoirs de Forme de Sabre Laser",
+      "NPCs": "PNJs",
+      "Skills": "Compétences",
+      "SpecialCombatConditions": "États de Combat Spéciaux",
+      "Species": "Espèces",
+      "TalentTrees": "Arbres de Talents",
+      "Talents": "Talents",
+      "Vehicles": "Véhicules",
+      "Weapons": "Armes"
+    },
+    "ConditionTrack": {
+      "Helpless": "Sans Défense",
+      "Minus1": "-1",
+      "Minus10": "-10",
+      "Minus2": "-2",
+      "Minus5": "-5",
+      "Normal": "Normal"
     },
     "Defenses": {
-      "Reflex": "Défense de Réflexes",
       "Fortitude": "Défense de Vigueur",
+      "Reflex": "Défense de Réflexes",
       "Will": "Défense de Volonté"
+    },
+    "Dialogs": {
+      "ApplyDamage": {
+        "Amount": "Montant des Dégâts",
+        "Button": "Appliquer les Dégâts",
+        "CheckThreshold": "Vérifier le Seuil de Dégâts",
+        "IgnoreTemp": "Ignorer les PV Temporaires",
+        "Title": "Appliquer les Dégâts à {name}"
+      },
+      "ApplyDroidChassis": {
+        "Title": "Appliquer le Châssis de Droïde ?"
+      },
+      "ApplyVehicleTemplate": {
+        "Title": "Appliquer le Modèle de Véhicule ?"
+      },
+      "Buttons": {
+        "Apply": "Appliquer",
+        "Cancel": "Annuler",
+        "Close": "Fermer",
+        "Confirm": "Confirmer",
+        "Delete": "Supprimer",
+        "Save": "Sauvegarder"
+      },
+      "CharacterGenerator": {
+        "ImportDroidType": "Importer un Type de Droïde",
+        "Title": "Générateur de Personnage"
+      },
+      "ConditionRecovery": {
+        "Content": "<p><strong>{name}</strong> peut tenter de récupérer.</p><p>Position actuelle : {current}/5</p><p>Faire un test d'Endurance ND 10 ?</p>",
+        "Title": "Récupération d'État"
+      },
+      "ConditionTrack": {
+        "Title": "Piste d'État : {name}"
+      },
+      "Healing": {
+        "Amount": "Montant de Soins",
+        "ButtonHeal": "Appliquer les Soins",
+        "ButtonRepair": "Appliquer la Réparation",
+        "DroidNote": "Les droïdes ne peuvent être réparés qu'avec la compétence Mécanique.",
+        "RepairAmount": "Montant de Réparation (via Mécanique)",
+        "TitleHeal": "Soigner {name}",
+        "TitleRepair": "Réparer {name}"
+      },
+      "HouseRules": {
+        "Advancement": "Progression",
+        "AdvancementRules": "Règles de Progression",
+        "CharacterCreation": "Création de Personnage",
+        "CharacterCreationRules": "Règles de Création de Personnage",
+        "Combat": "Combat",
+        "CombatRules": "Règles de Combat",
+        "ForceDestiny": "Force & Destin",
+        "ForceDestinyRules": "Règles de Force & Destin",
+        "Presets": "Préréglages",
+        "SkillsFeats": "Compétences & Dons",
+        "SpaceCombat": "Combat Spatial",
+        "Title": "Configuration des Règles Maison SWSE"
+      },
+      "LevelUp": {
+        "Title": "Monter de Niveau {name}"
+      },
+      "ReplaceSpecies": {
+        "Content": "<p>{actor} a déjà l'espèce : <strong>{existing}</strong></p><p>Remplacer par <strong>{new}</strong> ?</p>",
+        "Title": "Remplacer l'Espèce ?"
+      },
+      "Store": {
+        "BuildCustomDroid": "Construire un Droïde Personnalisé",
+        "BuildCustomStarship": "Construire un Vaisseau Spatial Personnalisé",
+        "CompletePurchase": "Finaliser l'Achat",
+        "ConfirmDroidPurchase": "Confirmer l'Achat de Droïde",
+        "ConfirmVehiclePurchase": "Confirmer l'Achat de Véhicule",
+        "Title": "Bourse d'Échange Galactique"
+      }
+    },
+    "ForcePoints": {
+      "Chat": {
+        "AlreadyZero": "Votre Score Côté Obscur est déjà à 0.",
+        "AvoidDeath": "{name} dépense un Point de Force pour éviter la mort et tombe inconscient !",
+        "DarkSideBonus": "Bonus Côté Obscur :",
+        "DarkSideWarning": "Score Côté Obscur augmenté de 1",
+        "Highest": "Plus Élevé :",
+        "NoPointsRemaining": "Plus de Points de Force !",
+        "ReducedDarkSide": "Score Côté Obscur réduit à {score}",
+        "Result": "Résultat :",
+        "Title": "Point de Force Dépensé",
+        "TotalBonus": "Bonus Total :",
+        "UsedFor": "Utilisé pour :"
+      },
+      "Methods": {
+        "highest_result": "résultat le plus élevé",
+        "result": "résultat"
+      },
+      "SpendDialog": {
+        "CallDarkSide": "Invoquer le Côté Obscur (+1d6, augmente le Score Côté Obscur de 1)",
+        "Cancel": "Annuler",
+        "Question": "Dépenser un Point de Force pour {reason} ?",
+        "Remaining": "Points de Force Restants :",
+        "RollInfo": "Vous lancerez {die} et ajouterez le {method} à votre jet.",
+        "Spend": "Dépenser Point de Force",
+        "Title": "Dépenser un Point de Force"
+      }
+    },
+    "Notifications": {
+      "Combat": {
+        "NoActorSelected": "Aucun acteur sélectionné",
+        "NoTargets": "Aucune cible sélectionnée !"
+      },
+      "Condition": {
+        "RecoveryFailed": "{name} échoue à récupérer.",
+        "RecoverySuccess": "{name} récupère d'un cran sur la piste d'état !"
+      },
+      "Damage": {
+        "CannotRoll": "Impossible de lancer les dégâts pour cet objet."
+      },
+      "Items": {
+        "AlreadyHasClass": "{actor} a déjà la classe {class}",
+        "NotOwnedByActor": "Cet objet n'appartient à aucun acteur.",
+        "SpeciesApplied": "Traits raciaux {species} appliqués à {actor}"
+      },
+      "Rolls": {
+        "DefenseNotFound": "Type de défense {type} non trouvé",
+        "DiceRollFailed": "Lancer de dés échoué : {error}",
+        "SaveFailed": "Jet de sauvegarde échoué ! ({total} contre ND {dc})",
+        "SaveSucceeded": "Jet de sauvegarde réussi ! ({total} contre ND {dc})",
+        "SkillNotFound": "Compétence {skill} non trouvée",
+        "UseForceRequiresTraining": "Utiliser la Force nécessite un entraînement !"
+      },
+      "System": {
+        "MigrationComplete": "Migration terminée : {updated} mis à jour, {errors} erreurs"
+      },
+      "Welcome": {
+        "ConditionTrack": "Piste d'État Visuelle active",
+        "DamageThreshold": "Automatisation du Seuil de Dégâts activée",
+        "ForceSuite": "Gestion de la Suite de Force prête",
+        "Summary": "Consultez l'onglet Résumé pour votre tableau de bord de combat",
+        "Title": "Système SWSE Amélioré Chargé !"
+      }
+    },
+    "Settings": {
+      "Advancement": {
+        "Hint": "Configurer la montée de niveau, talents, dons et options de progression",
+        "Label": "Configurer",
+        "Name": "Règles de Progression"
+      },
+      "ArmoredDefenseForAll": {
+        "Hint": "Tous les personnages peuvent utiliser le bonus d'armure à la Défense de Réflexes",
+        "Name": "Défense Blindée pour Tous"
+      },
+      "AthleticsConsolidation": {
+        "Hint": "Fusionner Escalade, Saut et Natation en une seule compétence d'Athlétisme",
+        "Name": "Compétence d'Athlétisme"
+      },
+      "AutoConditionRecovery": {
+        "Hint": "Demander des jets de récupération de piste d'état au début du tour de chaque combattant",
+        "Name": "Récupération Automatique d'État"
+      },
+      "AutoDamageThreshold": {
+        "Hint": "Déplacer automatiquement les personnages sur la piste d'état lorsque les dégâts dépassent leur seuil de dégâts",
+        "Name": "Seuil de Dégâts Automatique"
+      },
+      "BlasterCharges": {
+        "Hint": "Suivre les munitions pour les armes énergétiques",
+        "Name": "Suivre les Charges de Blaster"
+      },
+      "CharacterCreation": {
+        "Hint": "Configurer la génération des scores de caractéristiques, PV et options de création de personnage",
+        "Label": "Configurer",
+        "Name": "Règles de Création de Personnage"
+      },
+      "Combat": {
+        "Hint": "Configurer le combat, les dégâts, la mort et les règles de piste d'état",
+        "Label": "Configurer",
+        "Name": "Règles de Combat"
+      },
+      "ConditionTrackCap": {
+        "Hint": "Crans maximum de piste d'état par une seule attaque",
+        "Name": "Plafond de Dégâts de Piste d'État"
+      },
+      "CriticalHit": {
+        "Hint": "Calculs alternatifs des dégâts de coup critique",
+        "Name": "Variante de Coup Critique"
+      },
+      "CrossClassSkills": {
+        "Hint": "Permettre l'entraînement de compétences hors classe pour 2 emplacements de compétence",
+        "Name": "Formation en Compétences Hors Classe"
+      },
+      "DailyForcePoints": {
+        "Hint": "Utiliser des Points de Force quotidiens au lieu de par niveau (1-5e: 1 PF, 6-10e: 2 PF, 11-15e: 3 PF, 16+: 4 PF par jour)",
+        "Name": "Points de Force Quotidiens"
+      },
+      "DarkSideTemptation": {
+        "Hint": "Dépenser un Point de Force pour obtenir temporairement des pouvoirs du Côté Obscur",
+        "Name": "Tentation du Côté Obscur"
+      },
+      "DarkSideTemptationMechanic": {
+        "Hint": "Permettre aux personnages d'invoquer le Côté Obscur lors de la dépense de Points de Force (nécessite Score Côté Obscur ≤ moitié de la Sagesse, +1d6, augmente le Score Côté Obscur de 1)",
+        "Name": "Mécanique de Tentation du Côté Obscur"
+      },
+      "DevMode": {
+        "Hint": "Activer la journalisation détaillée des erreurs et les traces de pile pour le débogage",
+        "Name": "Mode Développeur"
+      },
+      "DiagonalMovement": {
+        "Hint": "Comment compter le mouvement diagonal sur la grille",
+        "Name": "Mouvement Diagonal"
+      },
+      "EnableAutomation": {
+        "Hint": "Suivre automatiquement les rounds, tours et appliquer les effets de combat",
+        "Name": "Activer l'Automatisation de Combat"
+      },
+      "Force": {
+        "Hint": "Configurer les Points de Force, le Côté Obscur et les règles des pouvoirs de la Force",
+        "Label": "Configurer",
+        "Name": "Règles de la Force et Destinée"
+      },
+      "ForcePointBonus": {
+        "Hint": "Taille du dé de bonus lors de la dépense de Points de Force pour relancer (d6 = +1d6)",
+        "Name": "Bonus de Relance de Point de Force"
+      },
+      "ForcePointRecovery": {
+        "Hint": "Quand les Points de Force se régénèrent",
+        "Name": "Récupération des Points de Force"
+      },
+      "KnowledgeSkills": {
+        "Hint": "Consolider plusieurs compétences de connaissances",
+        "Name": "Mode de Compétence de Connaissances"
+      },
+      "Presets": {
+        "Hint": "Appliquer des configurations de règles maison prédéfinies ou importer/exporter des paramètres",
+        "Label": "Gérer les Préréglages",
+        "Name": "Préréglages de Règles Maison"
+      },
+      "ResetResourcesOnCombat": {
+        "Hint": "Réinitialiser automatiquement les ressources temporaires (comme Second Souffle) lorsque le combat commence",
+        "Name": "Réinitialiser les Ressources au Début du Combat"
+      },
+      "Retraining": {
+        "Hint": "Permettre l'échange de dons/talents lors de la montée de niveau",
+        "Name": "Permettre le Réentraînement"
+      },
+      "SecondWindImproved": {
+        "Hint": "Le Second Souffle améliore également la piste d'état d'un cran",
+        "Name": "Second Souffle Amélioré"
+      },
+      "SkillFocusRestriction": {
+        "Hint": "Restreindre Focalisation de Compétence (Utiliser la Force) pour éviter la domination en début de partie",
+        "Name": "Restrictions de Focalisation de Compétence"
+      },
+      "StoreDiscount": {
+        "Hint": "Pourcentage du prix d'origine lors de la vente d'objets au magasin",
+        "Name": "Réduction de Vente au Magasin"
+      },
+      "StoreMarkup": {
+        "Hint": "Pourcentage de majoration pour les objets achetés au magasin (peut être négatif pour des réductions)",
+        "Name": "Majoration de Prix du Magasin"
+      },
+      "TalentEveryLevel": {
+        "Hint": "Les personnages gagnent un talent à chaque niveau au lieu de chaque niveau impair",
+        "Name": "Talent à Chaque Niveau"
+      },
+      "WeaponRangeMultiplier": {
+        "Hint": "Multiplier toutes les portées d'armes par ce facteur (utile pour différentes échelles de grilles)",
+        "Name": "Multiplicateur de Portée d'Arme"
+      },
+      "WeaponRanges": {
+        "Hint": "Multiplier toutes les portées d'armes par ce facteur",
+        "Name": "Modificateur de Portée d'Arme"
+      },
+      "WelcomeShown": {
+        "Hint": "Suit si le message de bienvenue a été affiché",
+        "Name": "Message de Bienvenue Affiché"
+      }
+    },
+    "SheetLabels": {
+      "Character": "Feuille de Personnage",
+      "Droid": "Feuille de Droïde",
+      "Item": "Feuille d'Objet",
+      "NPC": "Feuille de PNJ",
+      "Vehicle": "Feuille de Véhicule"
     },
     "Skills": {
       "Acrobatics": "Acrobaties",
@@ -42,326 +362,6 @@
       "UseComputer": "Utilisation d'Ordinateur",
       "UseTheForce": "Utiliser la Force"
     },
-    "ConditionTrack": {
-      "Normal": "Normal",
-      "Minus1": "-1",
-      "Minus2": "-2",
-      "Minus5": "-5",
-      "Minus10": "-10",
-      "Helpless": "Sans Défense"
-    },
-    "Settings": {
-      "EnableAutomation": {
-        "Name": "Activer l'Automatisation de Combat",
-        "Hint": "Suivre automatiquement les rounds, tours et appliquer les effets de combat"
-      },
-      "AutoConditionRecovery": {
-        "Name": "Récupération Automatique d'État",
-        "Hint": "Demander des jets de récupération de piste d'état au début du tour de chaque combattant"
-      },
-      "AutoDamageThreshold": {
-        "Name": "Seuil de Dégâts Automatique",
-        "Hint": "Déplacer automatiquement les personnages sur la piste d'état lorsque les dégâts dépassent leur seuil de dégâts"
-      },
-      "WeaponRangeMultiplier": {
-        "Name": "Multiplicateur de Portée d'Arme",
-        "Hint": "Multiplier toutes les portées d'armes par ce facteur (utile pour différentes échelles de grilles)"
-      },
-      "ForcePointBonus": {
-        "Name": "Bonus de Relance de Point de Force",
-        "Hint": "Taille du dé de bonus lors de la dépense de Points de Force pour relancer (d6 = +1d6)"
-      },
-      "StoreMarkup": {
-        "Name": "Majoration de Prix du Magasin",
-        "Hint": "Pourcentage de majoration pour les objets achetés au magasin (peut être négatif pour des réductions)"
-      },
-      "StoreDiscount": {
-        "Name": "Réduction de Vente au Magasin",
-        "Hint": "Pourcentage du prix d'origine lors de la vente d'objets au magasin"
-      },
-      "CharacterCreation": {
-        "Name": "Règles de Création de Personnage",
-        "Label": "Configurer",
-        "Hint": "Configurer la génération des scores de caractéristiques, PV et options de création de personnage"
-      },
-      "Advancement": {
-        "Name": "Règles de Progression",
-        "Label": "Configurer",
-        "Hint": "Configurer la montée de niveau, talents, dons et options de progression"
-      },
-      "Combat": {
-        "Name": "Règles de Combat",
-        "Label": "Configurer",
-        "Hint": "Configurer le combat, les dégâts, la mort et les règles de piste d'état"
-      },
-      "Force": {
-        "Name": "Règles de la Force et Destinée",
-        "Label": "Configurer",
-        "Hint": "Configurer les Points de Force, le Côté Obscur et les règles des pouvoirs de la Force"
-      },
-      "Presets": {
-        "Name": "Préréglages de Règles Maison",
-        "Label": "Gérer les Préréglages",
-        "Hint": "Appliquer des configurations de règles maison prédéfinies ou importer/exporter des paramètres"
-      },
-      "SecondWindImproved": {
-        "Name": "Second Souffle Amélioré",
-        "Hint": "Le Second Souffle améliore également la piste d'état d'un cran"
-      },
-      "TalentEveryLevel": {
-        "Name": "Talent à Chaque Niveau",
-        "Hint": "Les personnages gagnent un talent à chaque niveau au lieu de chaque niveau impair"
-      },
-      "CrossClassSkills": {
-        "Name": "Formation en Compétences Hors Classe",
-        "Hint": "Permettre l'entraînement de compétences hors classe pour 2 emplacements de compétence"
-      },
-      "SkillFocusRestriction": {
-        "Name": "Restrictions de Focalisation de Compétence",
-        "Hint": "Restreindre Focalisation de Compétence (Utiliser la Force) pour éviter la domination en début de partie"
-      },
-      "ArmoredDefenseForAll": {
-        "Name": "Défense Blindée pour Tous",
-        "Hint": "Tous les personnages peuvent utiliser le bonus d'armure à la Défense de Réflexes"
-      },
-      "WeaponRanges": {
-        "Name": "Modificateur de Portée d'Arme",
-        "Hint": "Multiplier toutes les portées d'armes par ce facteur"
-      },
-      "AthleticsConsolidation": {
-        "Name": "Compétence d'Athlétisme",
-        "Hint": "Fusionner Escalade, Saut et Natation en une seule compétence d'Athlétisme"
-      },
-      "DiagonalMovement": {
-        "Name": "Mouvement Diagonal",
-        "Hint": "Comment compter le mouvement diagonal sur la grille"
-      },
-      "ForcePointRecovery": {
-        "Name": "Récupération des Points de Force",
-        "Hint": "Quand les Points de Force se régénèrent"
-      },
-      "ConditionTrackCap": {
-        "Name": "Plafond de Dégâts de Piste d'État",
-        "Hint": "Crans maximum de piste d'état par une seule attaque"
-      },
-      "KnowledgeSkills": {
-        "Name": "Mode de Compétence de Connaissances",
-        "Hint": "Consolider plusieurs compétences de connaissances"
-      },
-      "DarkSideTemptation": {
-        "Name": "Tentation du Côté Obscur",
-        "Hint": "Dépenser un Point de Force pour obtenir temporairement des pouvoirs du Côté Obscur"
-      },
-      "BlasterCharges": {
-        "Name": "Suivre les Charges de Blaster",
-        "Hint": "Suivre les munitions pour les armes énergétiques"
-      },
-      "CriticalHit": {
-        "Name": "Variante de Coup Critique",
-        "Hint": "Calculs alternatifs des dégâts de coup critique"
-      },
-      "Retraining": {
-        "Name": "Permettre le Réentraînement",
-        "Hint": "Permettre l'échange de dons/talents lors de la montée de niveau"
-      },
-      "DailyForcePoints": {
-        "Name": "Points de Force Quotidiens",
-        "Hint": "Utiliser des Points de Force quotidiens au lieu de par niveau (1-5e: 1 PF, 6-10e: 2 PF, 11-15e: 3 PF, 16+: 4 PF par jour)"
-      },
-      "DarkSideTemptationMechanic": {
-        "Name": "Mécanique de Tentation du Côté Obscur",
-        "Hint": "Permettre aux personnages d'invoquer le Côté Obscur lors de la dépense de Points de Force (nécessite Score Côté Obscur ≤ moitié de la Sagesse, +1d6, augmente le Score Côté Obscur de 1)"
-      },
-      "ResetResourcesOnCombat": {
-        "Name": "Réinitialiser les Ressources au Début du Combat",
-        "Hint": "Réinitialiser automatiquement les ressources temporaires (comme Second Souffle) lorsque le combat commence"
-      },
-      "WelcomeShown": {
-        "Name": "Message de Bienvenue Affiché",
-        "Hint": "Suit si le message de bienvenue a été affiché"
-      },
-      "DevMode": {
-        "Name": "Mode Développeur",
-        "Hint": "Activer la journalisation détaillée des erreurs et les traces de pile pour le débogage"
-      }
-    },
-    "Compendium": {
-      "Classes": "Classes",
-      "Talents": "Talents",
-      "TalentTrees": "Arbres de Talents",
-      "Feats": "Dons",
-      "Species": "Espèces",
-      "Equipment": "Équipement",
-      "Weapons": "Armes",
-      "Armor": "Armure",
-      "ArmorLight": "Armure Légère",
-      "ArmorMedium": "Armure Moyenne",
-      "ArmorHeavy": "Armure Lourde",
-      "ForcePowers": "Pouvoirs de la Force",
-      "ForceTechniques": "Techniques de la Force",
-      "ForceSecrets": "Secrets de la Force",
-      "LightsaberFormPowers": "Pouvoirs de Forme de Sabre Laser",
-      "Skills": "Compétences",
-      "ExtraSkillUses": "Utilisations Supplémentaires de Compétence",
-      "Conditions": "États",
-      "SpecialCombatConditions": "États de Combat Spéciaux",
-      "Attributes": "Attributs",
-      "Vehicles": "Véhicules",
-      "Droids": "Droïdes",
-      "NPCs": "PNJs"
-    },
-    "ForcePoints": {
-      "SpendDialog": {
-        "Title": "Dépenser un Point de Force",
-        "Question": "Dépenser un Point de Force pour {reason} ?",
-        "RollInfo": "Vous lancerez {die} et ajouterez le {method} à votre jet.",
-        "CallDarkSide": "Invoquer le Côté Obscur (+1d6, augmente le Score Côté Obscur de 1)",
-        "Remaining": "Points de Force Restants :",
-        "Spend": "Dépenser Point de Force",
-        "Cancel": "Annuler"
-      },
-      "Chat": {
-        "Title": "Point de Force Dépensé",
-        "Highest": "Plus Élevé :",
-        "Result": "Résultat :",
-        "DarkSideBonus": "Bonus Côté Obscur :",
-        "DarkSideWarning": "Score Côté Obscur augmenté de 1",
-        "TotalBonus": "Bonus Total :",
-        "UsedFor": "Utilisé pour :",
-        "ReducedDarkSide": "Score Côté Obscur réduit à {score}",
-        "AvoidDeath": "{name} dépense un Point de Force pour éviter la mort et tombe inconscient !",
-        "AlreadyZero": "Votre Score Côté Obscur est déjà à 0.",
-        "NoPointsRemaining": "Plus de Points de Force !"
-      },
-      "Methods": {
-        "result": "résultat",
-        "highest_result": "résultat le plus élevé"
-      }
-    },
-    "Notifications": {
-      "Welcome": {
-        "Title": "Système SWSE Amélioré Chargé !",
-        "ConditionTrack": "Piste d'État Visuelle active",
-        "DamageThreshold": "Automatisation du Seuil de Dégâts activée",
-        "ForceSuite": "Gestion de la Suite de Force prête",
-        "Summary": "Consultez l'onglet Résumé pour votre tableau de bord de combat"
-      },
-      "Condition": {
-        "RecoverySuccess": "{name} récupère d'un cran sur la piste d'état !",
-        "RecoveryFailed": "{name} échoue à récupérer."
-      },
-      "Combat": {
-        "NoTargets": "Aucune cible sélectionnée !",
-        "NoActorSelected": "Aucun acteur sélectionné"
-      },
-      "Damage": {
-        "CannotRoll": "Impossible de lancer les dégâts pour cet objet."
-      },
-      "Rolls": {
-        "DefenseNotFound": "Type de défense {type} non trouvé",
-        "SaveSucceeded": "Jet de sauvegarde réussi ! ({total} contre ND {dc})",
-        "SaveFailed": "Jet de sauvegarde échoué ! ({total} contre ND {dc})",
-        "DiceRollFailed": "Lancer de dés échoué : {error}",
-        "SkillNotFound": "Compétence {skill} non trouvée",
-        "UseForceRequiresTraining": "Utiliser la Force nécessite un entraînement !"
-      },
-      "Items": {
-        "NotOwnedByActor": "Cet objet n'appartient à aucun acteur.",
-        "SpeciesApplied": "Traits raciaux {species} appliqués à {actor}",
-        "AlreadyHasClass": "{actor} a déjà la classe {class}"
-      },
-      "System": {
-        "MigrationComplete": "Migration terminée : {updated} mis à jour, {errors} erreurs"
-      }
-    },
-    "Dialogs": {
-      "ConditionRecovery": {
-        "Title": "Récupération d'État",
-        "Content": "<p><strong>{name}</strong> peut tenter de récupérer.</p><p>Position actuelle : {current}/5</p><p>Faire un test d'Endurance ND 10 ?</p>"
-      },
-      "ReplaceSpecies": {
-        "Title": "Remplacer l'Espèce ?",
-        "Content": "<p>{actor} a déjà l'espèce : <strong>{existing}</strong></p><p>Remplacer par <strong>{new}</strong> ?</p>"
-      },
-      "ApplyDroidChassis": {
-        "Title": "Appliquer le Châssis de Droïde ?"
-      },
-      "ApplyVehicleTemplate": {
-        "Title": "Appliquer le Modèle de Véhicule ?"
-      },
-      "ApplyDamage": {
-        "Title": "Appliquer les Dégâts à {name}",
-        "Amount": "Montant des Dégâts",
-        "CheckThreshold": "Vérifier le Seuil de Dégâts",
-        "IgnoreTemp": "Ignorer les PV Temporaires",
-        "Button": "Appliquer les Dégâts"
-      },
-      "Healing": {
-        "TitleHeal": "Soigner {name}",
-        "TitleRepair": "Réparer {name}",
-        "Amount": "Montant de Soins",
-        "RepairAmount": "Montant de Réparation (via Mécanique)",
-        "ButtonHeal": "Appliquer les Soins",
-        "ButtonRepair": "Appliquer la Réparation",
-        "DroidNote": "Les droïdes ne peuvent être réparés qu'avec la compétence Mécanique."
-      },
-      "ConditionTrack": {
-        "Title": "Piste d'État : {name}"
-      },
-      "Store": {
-        "Title": "Bourse d'Échange Galactique",
-        "ConfirmDroidPurchase": "Confirmer l'Achat de Droïde",
-        "ConfirmVehiclePurchase": "Confirmer l'Achat de Véhicule",
-        "BuildCustomDroid": "Construire un Droïde Personnalisé",
-        "BuildCustomStarship": "Construire un Vaisseau Spatial Personnalisé",
-        "CompletePurchase": "Finaliser l'Achat"
-      },
-      "LevelUp": {
-        "Title": "Monter de Niveau {name}"
-      },
-      "HouseRules": {
-        "Title": "Configuration des Règles Maison SWSE",
-        "CharacterCreation": "Création de Personnage",
-        "SkillsFeats": "Compétences & Dons",
-        "Advancement": "Progression",
-        "Combat": "Combat",
-        "ForceDestiny": "Force & Destin",
-        "SpaceCombat": "Combat Spatial",
-        "Presets": "Préréglages",
-        "CharacterCreationRules": "Règles de Création de Personnage",
-        "AdvancementRules": "Règles de Progression",
-        "CombatRules": "Règles de Combat",
-        "ForceDestinyRules": "Règles de Force & Destin"
-      },
-      "CharacterGenerator": {
-        "Title": "Générateur de Personnage",
-        "ImportDroidType": "Importer un Type de Droïde"
-      },
-      "Buttons": {
-        "Confirm": "Confirmer",
-        "Cancel": "Annuler",
-        "Apply": "Appliquer",
-        "Close": "Fermer",
-        "Save": "Sauvegarder",
-        "Delete": "Supprimer"
-      }
-    },
-    "Chat": {
-      "Flavors": {
-        "ConditionRecovery": "Test de Récupération d'État (ND 10)",
-        "Attack": "Attaque {weapon}",
-        "Damage": "Dégâts {weapon}",
-        "Save": "{name} lance un jet de sauvegarde de {type} ({modifier})",
-        "Skill": "Test de {skill}"
-      },
-      "Roll": {
-        "CriticalThreat": "MENACE CRITIQUE !",
-        "RollDamage": "Lancer les Dégâts",
-        "ApplyDamage": "Appliquer les Dégâts",
-        "DiceTotal": "Total",
-        "Formula": "Formule",
-        "Breakdown": "Détail"
-      }
-    }
+    "SystemName": "Star Wars Édition Saga"
   }
 }

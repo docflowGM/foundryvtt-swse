@@ -12,7 +12,7 @@ import { TalentTreeVisualizer } from './talent-tree-visualizer.js';
 import { getTalentTreeName } from './chargen/chargen-property-accessor.js';
 import { normalizeTalentData } from '../progression/utils/item-normalizer.js';
 import { TalentDB } from '../data/talent-db.js';
-import { TalentTreeDB } from '../data/talent-tree-db.js';
+import TalentTreeDB from '../data/talent-tree-db.js';
 
 export default class CharacterGeneratorNarrative extends CharacterGeneratorImproved {
 

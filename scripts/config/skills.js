@@ -162,3 +162,4 @@ Hooks.once("ready", () => {
     .then(() => console.log("SWSE Skills: Ready phase completed"))
     .catch(err => console.error("SWSE Skills: Ready load error", err));
 });
+export const SWSE_SKILLS = {};

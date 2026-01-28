@@ -1,201 +1,130 @@
 // ============================================
 // FILE: scripts/data/talent-normalizer.js
-// Talent Data Normalizer
+// Talent Data Normalizer (PURE / READ-ONLY)
 // ============================================
 //
-// This module provides a normalization layer between the raw talents.db
-// compendium data and the rest of the system.
+// Contract:
+// - NEVER mutate live Foundry Documents
+// - NEVER return live Document-owned references (effects, flags, system, etc.)
+// - SSOT membership comes ONLY from TalentTreeDB (talentId -> treeId)
 //
-// Purpose:
-// - Links talents to talent trees via stable IDs
-// - Removes class-level eligibility (derived from trees instead)
-// - Provides clean prerequisite and benefit data
-// - Prevents circular dependency issues
-//
-// IMPORTANT: Talents do NOT define class eligibility directly.
-// Class eligibility is resolved via the talent tree they belong to.
-//
-// This is a READ-ONLY transformation layer.
-// It does NOT mutate the source data.
-// ============================================
 
 /**
- * Parse prerequisites from various formats.
- * Handles string and object formats from compendium data.
- *
- * @param {string|Object|Array} prereqValue - Prerequisites from data
- * @returns {Array<Object>} - Normalized prerequisite objects
+ * Deep clone helper that avoids returning live document-owned references.
+ * Uses structuredClone when available, falls back to foundry.utils.duplicate.
+ */
+function deepClone(value) {
+  if (value == null) return value;
+  try {
+    // eslint-disable-next-line no-undef
+    return structuredClone(value);
+  } catch (_err) {
+    // Foundry fallback (present in core)
+    // eslint-disable-next-line no-undef
+    return foundry?.utils?.duplicate ? foundry.utils.duplicate(value) : JSON.parse(JSON.stringify(value));
+  }
+}
+
+/**
+ * Normalize prerequisite data into a consistent array form.
  */
 function parsePrerequisites(prereqValue) {
-    if (!prereqValue) return [];
-
-    // Already an array
-    if (Array.isArray(prereqValue)) {
-        return prereqValue;
-    }
-
-    // Object format
-    if (typeof prereqValue === 'object') {
-        return [prereqValue];
-    }
-
-    // String format (legacy)
-    if (typeof prereqValue === 'string') {
-        return [{
-            type: "text",
-            value: prereqValue
-        }];
-    }
-
-    return [];
+  if (!prereqValue) return [];
+  if (Array.isArray(prereqValue)) return deepClone(prereqValue);
+  if (typeof prereqValue === "object") return [deepClone(prereqValue)];
+  if (typeof prereqValue === "string") return [{ type: "text", value: prereqValue }];
+  return [];
 }
 
 /**
- * Normalize a raw talent document from talents.db.
+ * Normalize a raw talent Item document into a plain object snapshot.
  *
- * This is the ONLY way talent data should be accessed by engines.
- *
- * @param {Object} rawTalent - Raw talent document from compendium
- * @param {Map<string, Object>} treeMap - Map of normalized talent trees (for linking)
- * @returns {Object} - Normalized talent definition
+ * @param {Item} rawTalent - Live Item document from the talents compendium.
+ * @param {object|null} talentTreeDB - TalentTreeDB (SSOT owner) or null.
+ * @returns {object} plain talent snapshot
  */
-export function normalizeTalent(rawTalent, treeMap = null) {
-    const name = rawTalent.name || "Unknown Talent";
-    const sys = rawTalent.system || {};
+export function normalizeTalent(rawTalent, talentTreeDB = null) {
+  const source = rawTalent?.toObject ? rawTalent.toObject() : (rawTalent ?? {});
+  const id = rawTalent?.id ?? source?._id ?? source?.id ?? null;
 
-    // SSOT: treeId is derived from the tree's talentIds array
-    // (authoritative source is in talent_trees.db, not here)
-    // Read the derived treeId that was written by the Python reconciliation script
-    let treeId = sys.treeId || null;
-    let treeName = sys.talent_tree || sys.talentTree;
+  const name = source?.name ?? rawTalent?.name ?? "Unknown Talent";
+  const sys = source?.system ?? {};
 
-    if (!treeId && treeName && treeMap) {
-        // Fallback for backwards compatibility (migration safety)
-        const tree = treeMap.get(treeName) || Array.from(treeMap.values()).find(t =>
-            t.name.toLowerCase() === treeName.toLowerCase()
-        );
+  const treeId = talentTreeDB?.getTreeForTalent?.(id) ?? null;
+  const treeName = treeId ? (talentTreeDB?.get?.(treeId)?.name ?? null) : null;
 
-        if (tree) {
-            treeId = tree.id;
-        } else {
-            console.warn(`[TalentNormalizer] Talent "${name}" has no treeId and tree "${treeName}" not found`);
-        }
-    }
+  // IMPORTANT: snapshot effects + flags (no live refs)
+  const effects = Array.isArray(source?.effects) ? deepClone(source.effects) : [];
+  const scope = game?.system?.id;
+  const flags = deepClone(source?.flags?.[scope] ?? source?.flags?.swse ?? {});
 
-    return {
-        // Identity
-        id: rawTalent._id,
-        name: name,
-        sourceId: rawTalent._id,
+  return {
+    id,
+    sourceId: id,
+    name,
 
-        // Tree Linkage (SSOT for class eligibility)
-        treeId: treeId,
-        treeName: treeName,
+    treeId,
+    treeName,
 
-        // Mechanics
-        prerequisites: parsePrerequisites(sys.prerequisites),
-        benefit: sys.benefit || "",
-        special: sys.special || "",
+    prerequisites: parsePrerequisites(sys.prerequisites),
+    benefit: sys.benefit ?? "",
+    special: sys.special ?? "",
 
-        // Effects (Active Effects for automation)
-        effects: rawTalent.effects || [],
+    effects,
 
-        // Metadata
-        description: sys.description || "",
-        img: rawTalent.img || "icons/svg/item-bag.svg",
+    description: sys.description ?? "",
+    img: source?.img ?? rawTalent?.img ?? "icons/svg/item-bag.svg",
 
-        // Flags (for system extensions)
-        flags: rawTalent.flags?.swse || {},
-
-        // DEPRECATED FIELDS (intentionally ignored)
-        // - sys.class: Class eligibility is derived from tree, not stored here
-        // - sys.category: Category is derived from tree
-        // These fields exist in old data but should NOT be used by engines
-    };
-}
-
-/**
- * Get talents by talent tree ID.
- * This is the primary way to query talents for a class.
- *
- * @param {string} treeId - Talent tree ID
- * @param {Array<Object>} allTalents - Array of all normalized talents
- * @returns {Array<Object>} - Talents belonging to this tree
- */
-export function getTalentsByTree(treeId, allTalents) {
-    if (!treeId || !allTalents) return [];
-
-    return allTalents.filter(talent => talent.treeId === treeId);
-}
-
-/**
- * Check if a talent's prerequisites are met.
- * This is a helper for progression/selection logic.
- *
- * @param {Object} talent - Normalized talent
- * @param {Object} actor - Actor document
- * @returns {boolean} - True if prerequisites are met
- */
-export function checkTalentPrerequisites(talent, actor) {
-    if (!talent.prerequisites || talent.prerequisites.length === 0) {
-        return true;
-    }
-
-    // This is a simplified check - full implementation would be in progression engine
-    // For now, just check if prerequisites exist and are not empty
-    return talent.prerequisites.every(prereq => {
-        // TODO: Implement full prerequisite checking logic
-        // This would check:
-        // - Level requirements
-        // - Feat requirements
-        // - Skill requirements
-        // - Other talent requirements
-        // - Class requirements (via tree)
-
-        // For now, assume prerequisites are met if actor exists
-        return actor !== null;
-    });
+    flags
+  };
 }
 
 /**
  * Validate a normalized talent definition.
- * Warns if critical fields are missing (non-fatal for backwards compatibility).
- *
- * @param {Object} normalizedTalent - Normalized talent object
- * @returns {boolean} - True if valid
+ * NOTE: Tree membership invariants are enforced in TalentDB.
  */
 export function validateTalent(normalizedTalent) {
-    const required = ['id', 'name'];
-    const missing = required.filter(field => !normalizedTalent[field]);
+  const missing = [];
+  if (!normalizedTalent?.id) missing.push("id");
+  if (!normalizedTalent?.name) missing.push("name");
 
-    if (missing.length > 0) {
-        console.error(`[TalentNormalizer] Invalid talent definition - missing fields: ${missing.join(', ')}`);
-        return false;
-    }
+  if (missing.length) {
+    console.error(
+      `[TalentNormalizer] Invalid talent definition – missing fields: ${missing.join(", ")}`,
+      normalizedTalent
+    );
+    return false;
+  }
 
-    if (!normalizedTalent.treeId) {
-        console.warn(`[TalentNormalizer] Talent "${normalizedTalent.name}" has no tree ID - may be orphaned`);
-    }
-
-    return true;
+  return true;
 }
 
 /**
- * Filter talents by role (via their tree).
- * Used by Suggestion Engine.
- *
- * @param {Array<Object>} talents - Array of normalized talents
- * @param {string} role - Desired role ("force", "combat", "tech", "leader", "general")
- * @param {Map<string, Object>} treeMap - Map of normalized talent trees
- * @returns {Array<Object>} - Filtered talents
+ * Get talents belonging to a specific talent tree.
  */
-export function filterTalentsByRole(talents, role, treeMap) {
-    if (!role || !treeMap) return talents;
+export function getTalentsByTree(treeId, allTalents) {
+  if (!treeId || !Array.isArray(allTalents)) return [];
+  return allTalents.filter((t) => t.treeId === treeId);
+}
 
-    return talents.filter(talent => {
-        if (!talent.treeId) return false;
+/**
+ * Check whether a talent's prerequisites are met.
+ * (Stub — full logic belongs to progression engine.)
+ */
+export function checkTalentPrerequisites(talent, actor) {
+  if (!talent?.prerequisites?.length) return true;
+  return actor != null;
+}
 
-        const tree = treeMap.get(talent.treeId);
-        return tree && tree.role === role;
-    });
+/**
+ * Filter talents by role via their talent tree.
+ */
+export function filterTalentsByRole(talents, role, talentTreeDB) {
+  if (!role || !talentTreeDB?.get) return talents;
+
+  return talents.filter((t) => {
+    if (!t.treeId) return false;
+    const tree = talentTreeDB.get(t.treeId);
+    return tree?.role === role;
+  });
 }

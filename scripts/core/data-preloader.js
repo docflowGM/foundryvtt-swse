@@ -148,7 +148,7 @@ export class DataPreloader {
 
     // Preload actual documents for small packs
     if (index.size <= 20) {
-      const documents = await pack.getDocuments();
+      const documents = await this._safeGetDocuments(pack, index);
       for (const doc of documents) {
         this._classesCache.set(doc.id, doc);
       }
@@ -197,7 +197,31 @@ export class DataPreloader {
     this._talentsCache.set('_byTree', byTree);
   }
 
-  /**
+    /**
+   * Load documents from a pack without failing the entire preload if a pack contains bad rows.
+   * @private
+   */
+  async _safeGetDocuments(pack, index) {
+    try {
+      return await pack.getDocuments();
+    } catch (err) {
+      console.warn(`SWSE | Preload fallback: failed pack.getDocuments() for ${pack.collection}`, err);
+      const docs = [];
+      for (const e of Array.from(index ?? [])) {
+        const id = e?._id ?? e?.id;
+        if (!id) continue;
+        try {
+          const doc = await pack.getDocument(id);
+          if (doc) docs.push(doc);
+        } catch (innerErr) {
+          console.warn(`SWSE | Skipping broken compendium doc ${pack.collection}.${id}`, innerErr);
+        }
+      }
+      return docs;
+    }
+  }
+
+/**
    * Preload force powers
    * @private
    */
@@ -228,7 +252,7 @@ export class DataPreloader {
     this._speciesCache.set('_index', index);
 
     // Preload all species documents (usually small)
-    const documents = await pack.getDocuments();
+    const documents = await this._safeGetDocuments(pack, index);
     for (const doc of documents) {
       this._speciesCache.set(doc.id, doc);
       this._speciesCache.set(doc.name.toLowerCase(), doc);
@@ -247,7 +271,7 @@ export class DataPreloader {
     this._skillsCache.set('_index', index);
 
     // Preload all skill documents (very small)
-    const documents = await pack.getDocuments();
+    const documents = await this._safeGetDocuments(pack, index);
     for (const doc of documents) {
       this._skillsCache.set(doc.id, doc);
       this._skillsCache.set(doc.name.toLowerCase(), doc);

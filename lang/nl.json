@@ -2,11 +2,11 @@
   "SWSE": {
     "Abilities": {
       "CHA": "Charisma",
-      "CON": "Constitution",
-      "DEX": "Dexterity",
-      "INT": "Intelligence",
-      "STR": "Strength",
-      "WIS": "Wisdom"
+      "CON": "Constitutie",
+      "DEX": "Behendigheid",
+      "INT": "Intelligentie",
+      "STR": "Kracht",
+      "WIS": "Wijsheid"
     },
     "Chat": {
       "Flavors": {
@@ -59,9 +59,9 @@
       "Normal": "Normal"
     },
     "Defenses": {
-      "Fortitude": "Fortitude Defense",
-      "Reflex": "Reflex Defense",
-      "Will": "Will Defense"
+      "Fortitude": "Fortitudeverdediging",
+      "Reflex": "Reflexverdediging",
+      "Will": "Wilverdediging"
     },
     "Dialogs": {
       "ApplyDamage": {
@@ -78,12 +78,12 @@
         "Title": "Apply Vehicle Template?"
       },
       "Buttons": {
-        "Apply": "Apply",
-        "Cancel": "Cancel",
+        "Apply": "Toepassen",
+        "Cancel": "Annuleren",
         "Close": "Close",
         "Confirm": "Confirm",
-        "Delete": "Delete",
-        "Save": "Save"
+        "Delete": "Verwijderen",
+        "Save": "Opslaan"
       },
       "CharacterGenerator": {
         "ImportDroidType": "Import Droid Type",
@@ -127,12 +127,12 @@
         "Title": "Replace Species?"
       },
       "Store": {
-        "BuildCustomDroid": "Build Custom Droid",
-        "BuildCustomStarship": "Build Custom Starship",
-        "CompletePurchase": "Complete Purchase",
-        "ConfirmDroidPurchase": "Confirm Droid Purchase",
-        "ConfirmVehiclePurchase": "Confirm Vehicle Purchase",
-        "Title": "Galactic Trade Exchange"
+        "BuildCustomDroid": "Aangepaste Droid bouwen",
+        "BuildCustomStarship": "Aangepast Sterrenschip bouwen",
+        "CompletePurchase": "Aankoop voltooien",
+        "ConfirmDroidPurchase": "Droid-aankoop bevestigen",
+        "ConfirmVehiclePurchase": "Voertuigaankoop bevestigen",
+        "Title": "Galactische Handelsbeurs"
       }
     },
     "ForcePoints": {
@@ -155,7 +155,7 @@
       },
       "SpendDialog": {
         "CallDarkSide": "Call upon the Dark Side (+1d6, increases Dark Side Score by 1)",
-        "Cancel": "Cancel",
+        "Cancel": "Annuleren",
         "Question": "Spend a Force Point for {reason}?",
         "Remaining": "Force Points Remaining:",
         "RollInfo": "You will roll {die} and add the {method} to your roll.",
@@ -202,7 +202,7 @@
     "Settings": {
       "Advancement": {
         "Hint": "Configure level-up, talents, feats, and progression options",
-        "Label": "Configure",
+        "Label": "Configureren",
         "Name": "Advancement Rules"
       },
       "ArmoredDefenseForAll": {
@@ -227,12 +227,12 @@
       },
       "CharacterCreation": {
         "Hint": "Configure ability score generation, HP, and character creation options",
-        "Label": "Configure",
+        "Label": "Configureren",
         "Name": "Character Creation Rules"
       },
       "Combat": {
         "Hint": "Configure combat, damage, death, and condition track rules",
-        "Label": "Configure",
+        "Label": "Configureren",
         "Name": "Combat Rules"
       },
       "ConditionTrackCap": {
@@ -273,7 +273,7 @@
       },
       "Force": {
         "Hint": "Configure Force Points, Dark Side, and Force power rules",
-        "Label": "Configure",
+        "Label": "Configureren",
         "Name": "Force & Destiny Rules"
       },
       "ForcePointBonus": {
@@ -290,7 +290,7 @@
       },
       "Presets": {
         "Hint": "Apply preset houserule configurations or import/export settings",
-        "Label": "Manage Presets",
+        "Label": "Voorinstellingen beheren",
         "Name": "Houserule Presets"
       },
       "ResetResourcesOnCombat": {
@@ -335,32 +335,32 @@
       }
     },
     "SheetLabels": {
-      "Character": "Character Sheet",
-      "Droid": "Droid Sheet",
-      "Item": "Item Sheet",
-      "NPC": "NPC Sheet",
-      "Vehicle": "Vehicle Sheet"
+      "Character": "Personageblad",
+      "Droid": "Droid-blad",
+      "Item": "Voorwerpblad",
+      "NPC": "NPC-blad",
+      "Vehicle": "Voertuigblad"
     },
     "Skills": {
-      "Acrobatics": "Acrobatics",
-      "Climb": "Climb",
-      "Deception": "Deception",
-      "Endurance": "Endurance",
-      "GatherInformation": "Gather Information",
-      "Initiative": "Initiative",
-      "Jump": "Jump",
-      "Knowledge": "Knowledge",
-      "Mechanics": "Mechanics",
-      "Perception": "Perception",
-      "Persuasion": "Persuasion",
-      "Pilot": "Pilot",
-      "Ride": "Ride",
-      "Stealth": "Stealth",
-      "Survival": "Survival",
-      "Swim": "Swim",
-      "TreatInjury": "Treat Injury",
-      "UseComputer": "Use Computer",
-      "UseTheForce": "Use the Force"
+      "Acrobatics": "Acrobatiek",
+      "Climb": "Klimmen",
+      "Deception": "Misleiding",
+      "Endurance": "Uithoudingsvermogen",
+      "GatherInformation": "Informatie Vergaren",
+      "Initiative": "Initiatief",
+      "Jump": "Springen",
+      "Knowledge": "Kennis",
+      "Mechanics": "Mechanica",
+      "Perception": "Waarneming",
+      "Persuasion": "Overtuigen",
+      "Pilot": "Piloten",
+      "Ride": "Rijden",
+      "Stealth": "Sluipen",
+      "Survival": "Overleven",
+      "Swim": "Zwemmen",
+      "TreatInjury": "Verwondingen Behandelen",
+      "UseComputer": "Computer Gebruiken",
+      "UseTheForce": "De Kracht Gebruiken"
     },
     "SystemName": "Star Wars Saga Edition"
   }

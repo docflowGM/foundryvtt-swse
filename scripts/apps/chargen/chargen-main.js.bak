@@ -705,162 +705,107 @@ export default class CharacterGenerator extends Application {
         SWSELogger.error(`[CHARGEN-SUGGESTIONS] ERROR computing BuildIntent:`, intentErr);
       }
 
-      // ======================================================
-// Add suggestion engine suggestions to FEATS
-// ======================================================
-if (this.currentStep === "feats" && context.packs.feats) {
-  try {
-    SWSELogger.log(
-      `[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.feats.length} feats with BuildIntent context...`
-    );
+      // Add suggestion engine suggestions to feats
+      if (this.currentStep === "feats" && context.packs.feats) {
+        try {
+          SWSELogger.log(`[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.feats.length} feats with BuildIntent context...`);
+          let featsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', { domain: 'feats', available: 
+            context.packs.feats,
+            tempActor,
+            pendingData,
+            buildIntent  // CRITICAL: Pass BuildIntent to include mentor survey biases
+          );
+          // Filter out Force-dependent feats for droids (they cannot be Force-sensitive)
+          featsWithSuggestions = this._filterForceDependentItems(featsWithSuggestions);
 
-    let featsWithSuggestions = await SuggestionService.getSuggestions(
-      tempActor,
-      "chargen",
-      {
-        domain: "feats",
-        available: context.packs.feats,
-        pendingData,
-        engineOptions: { buildIntent }
+          context.packs.feats = featsWithSuggestions;
+          // Sort by suggestion tier
+          context.packs.feats = SuggestionService.sortBySuggestion(context.packs.feats);
+
+          // Add qualification status to each feat
+          const pendingDataForFeats = {
+            selectedFeats: this.characterData.feats || [],
+            selectedClass: this.characterData.classes?.[0],
+            abilityIncreases: {},
+            selectedSkills: Object.keys(this.characterData.skills || {})
+              .filter(k => this.characterData.skills[k]?.trained)
+              .map(k => ({ key: k })),
+            selectedTalents: this.characterData.talents || []
+          };
+
+          context.packs.feats = context.packs.feats.map(feat => {
+            const prereqCheck = PrerequisiteRequirements.checkFeatPrerequisites(tempActor, feat, pendingDataForFeats);
+            return {
+              ...feat,
+              isQualified: prereqCheck.valid,
+              prereqReasons: prereqCheck.reasons
+            };
+          });
+
+          // Organize feats into categories for display
+          try {
+            const categorizedFeats = this._organizeFeatsByCategory(context.packs.feats, this._featMetadata);
+            context.featCategories = categorizedFeats.categories;
+            context.featCategoryList = categorizedFeats.categoryList;
+          } catch (categErr) {
+            SWSELogger.warn('CharGen | Failed to organize feats by category:', categErr);
+            // Fallback to flat list if categorization fails
+          }
+        } catch (err) {
+          SWSELogger.warn('CharGen | Failed to add feat suggestions:', err);
+        }
       }
-    );
 
-    // Filter out Force-dependent feats for droids
-    featsWithSuggestions = this._filterForceDependentItems(featsWithSuggestions);
+      // Add suggestion engine suggestions to talents
+      if (this.currentStep === "talents" && context.packs.talents) {
+        try {
+          SWSELogger.log(`[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.talents.length} talents with BuildIntent context...`);
+          let talentsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', { domain: 'talents', available: context.packs.talents, pendingData, engineOptions: { buildIntent, includeFutureAvailability: true }, persist: true })
+              .filter(k => this.characterData.skills[k]?.trained)
+              .map(k => ({ key: k })),
+            selectedTalents: this.characterData.talents || []
+          };
 
-    // Sort by suggestion tier
-    featsWithSuggestions = SuggestionService.sortBySuggestion(
-      featsWithSuggestions
-    );
-
-    // Add qualification status
-    const pendingDataForFeats = {
-      selectedFeats: this.characterData.feats || [],
-      selectedClass: this.characterData.classes?.[0],
-      abilityIncreases: {},
-      selectedSkills: Object.keys(this.characterData.skills || {})
-        .filter(k => this.characterData.skills[k]?.trained)
-        .map(k => ({ key: k })),
-      selectedTalents: this.characterData.talents || []
-    };
-
-    context.packs.feats = featsWithSuggestions.map(feat => {
-      const prereqCheck =
-        PrerequisiteRequirements.checkFeatPrerequisites(
-          tempActor,
-          feat,
-          pendingDataForFeats
-        );
-      return {
-        ...feat,
-        isQualified: prereqCheck.valid,
-        prereqReasons: prereqCheck.reasons
-      };
-    });
-
-    // Categorize feats
-    try {
-      const categorized = this._organizeFeatsByCategory(
-        context.packs.feats,
-        this._featMetadata
-      );
-      context.featCategories = categorized.categories;
-      context.featCategoryList = categorized.categoryList;
-    } catch (categErr) {
-      SWSELogger.warn(
-        "CharGen | Failed to organize feats by category:",
-        categErr
-      );
+          context.packs.talents = context.packs.talents.map(talent => {
+            const prereqCheck = PrerequisiteRequirements.checkTalentPrerequisites(tempActor, talent, pendingDataForTalents);
+            return {
+              ...talent,
+              isQualified: prereqCheck.valid,
+              prereqReasons: prereqCheck.reasons
+            };
+          });
+        } catch (err) {
+          SWSELogger.warn('CharGen | Failed to add talent suggestions:', err);
+        }
+      }
     }
-  } catch (err) {
-    SWSELogger.warn("CharGen | Failed to add feat suggestions:", err);
-  }
-}
 
-// ======================================================
-// Add suggestion engine suggestions to TALENTS
-// ======================================================
-if (this.currentStep === "talents" && context.packs.talents) {
-  try {
-    SWSELogger.log(
-      `[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.talents.length} talents with BuildIntent context...`
-    );
+    // Add suggestion engine integration for skills
+    if (this.currentStep === "skills" && context.packs) {
+      const tempActor = this._createTempActorForValidation();
 
-    const talentsWithSuggestions = await SuggestionService.getSuggestions(
-      tempActor,
-      "chargen",
-      {
-        domain: "talents",
-        available: context.packs.talents,
-        pendingData,
-        engineOptions: {
-          buildIntent,
-          includeFutureAvailability: true
-        },
-        persist: true
-      }
-    );
+      // Get the canonical (adapted) class data from ClassesDB
+      const selectedClassName = this.characterData.classes?.[0]?.name;
+      let classData = null;
+      let classSkills = [];
+      let trainedSkillsAllowed = 0;
 
-    const pendingDataForTalents = {
-      selectedTalents: this.characterData.talents || [],
-      selectedClass: this.characterData.classes?.[0],
-      selectedSkills: Object.keys(this.characterData.skills || {})
-        .filter(k => this.characterData.skills[k]?.trained)
-        .map(k => ({ key: k }))
-    };
+      if (selectedClassName) {
+        // Try to get adapted class from ClassesDB first
+        if (ClassesDB.isBuilt) {
+          classData = ClassesDB.byName(selectedClassName);
+          if (classData) {
+            classSkills = classData.classSkills ?? [];
+            const intMod = this.characterData.abilities.int.mod || 0;
+            const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
+            trainedSkillsAllowed = Math.max(1, (classData.trainedSkills ?? 0) + intMod + humanBonus);
+          }
+        }
 
-    context.packs.talents = talentsWithSuggestions.map(talent => {
-      const prereqCheck =
-        PrerequisiteRequirements.checkTalentPrerequisites(
-          tempActor,
-          talent,
-          pendingDataForTalents
-        );
-      return {
-        ...talent,
-        isQualified: prereqCheck.valid,
-        prereqReasons: prereqCheck.reasons
-      };
-    });
-  } catch (err) {
-    SWSELogger.warn("CharGen | Failed to add talent suggestions:", err);
-  }
-}
-
-// ======================================================
-// Add suggestion engine integration for SKILLS
-// ======================================================
-if (this.currentStep === "skills" && context.packs) {
-  const tempActor = this._createTempActorForValidation();
-
-  const selectedClassName = this.characterData.classes?.[0]?.name;
-  let classData = null;
-  let classSkills = [];
-  let trainedSkillsAllowed = 0;
-
-  if (selectedClassName && ClassesDB.isBuilt) {
-    classData = ClassesDB.byName(selectedClassName);
-  }
-
-  if (classData) {
-    classSkills = classData.classSkills ?? [];
-    const intMod = this.characterData.abilities.int.mod || 0;
-    const humanBonus =
-      this.characterData.species === "Human" ||
-      this.characterData.species === "human"
-        ? 1
-        : 0;
-
-    trainedSkillsAllowed = Math.max(
-      1,
-      (classData.trainedSkills ?? 0) + intMod + humanBonus
-    );
-
-    this.characterData.classSkillsList = [...classSkills];
-    this.characterData.trainedSkillsAllowed = trainedSkillsAllowed;
-  }
-}
-
+        // Fallback: try characterData.classData if ClassesDB lookup failed
+        if (!classData) {
+          classData = this.characterData.classData;
+        }
 
         // Extract skills and budget from classData (whichever source it came from)
         if (classData) {
@@ -878,7 +823,6 @@ if (this.currentStep === "skills" && context.packs) {
       }
 
       // DIAGNOSTIC: Log where data is coming from
-      const selectedClassName = this.characterData?.classes?.[0]?.name ?? this.characterData?.className;
       SWSELogger.log(`[CHARGEN-SKILLS] Skills step rendering - DATA SOURCE CHECK:`, {
         selectedClassName,
         classDataFound: !!classData,
@@ -941,81 +885,67 @@ if (this.currentStep === "skills" && context.packs) {
         context.availableSkills = fallbackSkills;
       }
 
-    // ======================================================
-// Finalize SKILLS data for template rendering
-// ======================================================
+      // Update characterData with the canonical trained skills allowed and class skills list
+      // This ensures the skills step always has current data from ClassesDB, not stale values
+      this.characterData.classSkillsList = Array.isArray(classSkills) ? [...classSkills] : [];
+      this.characterData.trainedSkillsAllowed = trainedSkillsAllowed;
+      SWSELogger.log(`[CHARGEN-SKILLS] Updated characterData: trainedSkillsAllowed=${trainedSkillsAllowed}, classSkillsList.length=${this.characterData.classSkillsList.length}`);
+      context.trainedSkillsAllowed = trainedSkillsAllowed;
+    }
 
-// Persist canonical class skills + training budget
-this.characterData.classSkillsList = Array.isArray(classSkills)
-  ? [...classSkills]
-  : [];
-this.characterData.trainedSkillsAllowed = trainedSkillsAllowed;
+    context.skillsJson = context.skillsJson || this._skillsJson || [];
+    context.availableSkills = context.availableSkills || context.skillsJson;
 
-SWSELogger.log(
-  `[CHARGEN-SKILLS] Updated characterData`,
-  {
-    trainedSkillsAllowed,
-    classSkillsCount: this.characterData.classSkillsList.length
-  }
-);
+    // Filter out "Use the Force" skill for droids (droids cannot use the Force)
+    if (this.characterData.isDroid) {
+      context.availableSkills = context.availableSkills.filter(skill =>
+        skill.key !== 'usetheforce' && skill.name !== 'Use the Force'
+      );
+    }
 
-context.trainedSkillsAllowed = trainedSkillsAllowed;
+    // Calculate skill modifiers for display in template
+    // Formula: currentBonus = floor(level/2) + abilityMod + speciesBonus + (trained ? 5 : 0)
+    const characterLevel = this.characterData.level || 1;
+    const halfLevel = Math.floor(characterLevel / 2);
+    const abilities = this.characterData.abilities || {};
+    const speciesSkillBonuses = this.characterData.speciesSkillBonuses || {};
 
-// Ensure skills collections exist
-context.skillsJson = context.skillsJson ?? this._skillsJson ?? [];
-context.availableSkills = context.availableSkills ?? context.skillsJson;
+    // Add modifier data to each skill
+    context.availableSkills = context.availableSkills.map(skill => {
+      // Get the ability modifier for this skill's associated ability
+      let abilityKey = (skill.ability || '').toLowerCase();
+      // For droids, CON-based skills use STR instead
+      if (this.characterData.isDroid && abilityKey === 'con') {
+        abilityKey = 'str';
+      }
+      const abilityMod = abilities[abilityKey]?.mod || 0;
 
-// Droids cannot use the Force
-if (this.characterData.isDroid) {
-  context.availableSkills = context.availableSkills.filter(
-    skill =>
-      skill.key !== "usetheforce" &&
-      skill.name !== "Use the Force"
-  );
-}
+      // Get species skill bonus (racial bonus)
+      const speciesBonus = speciesSkillBonuses[skill.key] || 0;
 
-// ======================================================
-// Compute skill modifiers for display
-// ======================================================
+      // Check if this skill is trained (from characterData.skills)
+      const isTrained = this.characterData.skills?.[skill.key]?.trained || false;
 
-const characterLevel = this.characterData.level || 1;
-const halfLevel = Math.floor(characterLevel / 2);
-const abilities = this.characterData.abilities || {};
-const speciesSkillBonuses = this.characterData.speciesSkillBonuses || {};
+      // Calculate bonuses
+      const trainedBonus = halfLevel + abilityMod + speciesBonus + 5;
+      const currentBonus = halfLevel + abilityMod + speciesBonus + (isTrained ? 5 : 0);
 
-context.availableSkills = context.availableSkills.map(skill => {
-  let abilityKey = (skill.ability || "").toLowerCase();
+      return {
+        ...skill,
+        trained: isTrained,
+        halfLevel,
+        abilityMod,
+        speciesBonus,
+        currentBonus,
+        trainedBonus
+      };
+    });
 
-  // Droids substitute STR for CON
-  if (this.characterData.isDroid && abilityKey === "con") {
-    abilityKey = "str";
-  }
-
-  const abilityMod = abilities[abilityKey]?.mod ?? 0;
-  const speciesBonus = speciesSkillBonuses[skill.key] ?? 0;
-  const isTrained = this.characterData.skills?.[skill.key]?.trained ?? false;
-
-  const currentBonus =
-    halfLevel + abilityMod + speciesBonus + (isTrained ? 5 : 0);
-
-  const trainedBonus =
-    halfLevel + abilityMod + speciesBonus + 5;
-
-  return {
-    ...skill,
-    trained: isTrained,
-    halfLevel,
-    abilityMod,
-    speciesBonus,
-    currentBonus,
-    trainedBonus
-  };
-});
-
-// Track trained skill count
-this.characterData.trainedSkillsCount = Object.values(
-  this.characterData.skills || {}
-).filter(skill => skill.trained).length;
+    // Calculate trainedSkillsCount for display in template
+    const trainedCount = Object.values(this.characterData.skills || {})
+      .filter(skill => skill.trained)
+      .length;
+    this.characterData.trainedSkillsCount = trainedCount;
 
     // Prepare languages for template
     if (this.currentStep === "languages") {
@@ -1823,12 +1753,12 @@ this.characterData.trainedSkillsCount = Object.values(
       }
 
       // Get suggestions using the Force power suggestion engine
-      const suggestions = await SuggestionService.getSuggestions(this.actor, 'chargen', {
-        domain: 'forcepowers',
-        available: unselectedPowers,
-        pendingData: this.characterData,
-        engineOptions: { buildIntent: {} }
-      });
+      const suggestions = await SuggestionService.getSuggestions(this.actor, 'chargen', { domain: 'forcepowers', available: 
+        unselectedPowers,
+        this.actor,
+        this.characterData,
+        { buildIntent: {} }
+      );
 
       // Get the top-tier suggestion
       const topSuggestion = suggestions.find(s => s.suggestion?.tier >= 4) || suggestions[0];

@@ -1,248 +1,190 @@
 // ============================================
 // FILE: scripts/data/classes-db.js
-// Classes Database - Single Source of Truth
+// Classes Database — Single Source of Truth
 // ============================================
 //
-// This module provides THE ONLY authorized access point for class data.
+// Responsibilities:
+// - Load class documents from compendium
+// - Normalize class definitions
+// - Resolve talent trees by TREE ID ONLY
+// - Enforce SSOT strictly (no fallbacks, no guessing)
+// - Provide fast lookup APIs
 //
-// Purpose:
-// - Loads classes from compendium
-// - Applies normalization
-// - Provides O(1) lookup by ID
-// - Links to talent trees
-// - Enforces SSOT contract
-//
-// ALL engines MUST use ClassesDB instead of:
-// - Reading compendiums directly
-// - Reading class Item data
-// - String matching on names
-//
-// Class Items on actors should contain ONLY:
-// - classId (string)
-// - level (number)
-//
-// All other class data is derived from this DB.
+// NON-GOALS:
+// - No name-based resolution
+// - No legacy compatibility
+// - No inference from talent names
 // ============================================
 
-import { normalizeClass, normalizeClassId, validateClass } from './class-normalizer.js';
-import { SWSELogger } from '../utils/logger.js';
+import { normalizeClass, normalizeClassId, validateClass } from "./class-normalizer.js";
+import { SWSELogger } from "../utils/logger.js";
 
 export const ClassesDB = {
 
-    // In-memory map for O(1) lookups: classId -> normalized class
-    classes: new Map(),
-    isBuilt: false,
+  /** @type {Map<string, Object>} */
+  classes: new Map(),
 
-    /**
-     * Build classes registry from compendium.
-     * Called once during system initialization (after TalentTreeDB is built).
-     *
-     * @param {Object} talentTreeDB - TalentTreeDB instance (for linking talent trees)
-     * @returns {Promise<boolean>} - True if successful
-     */
-    async build(talentTreeDB = null) {
+  isBuilt: false,
+
+  /**
+   * Build the ClassesDB.
+   * Requires TalentTreeDB to already be built.
+   *
+   * @param {Object} talentTreeDB
+   */
+  async build(talentTreeDB) {
+    if (!talentTreeDB || !talentTreeDB.isBuilt) {
+      throw new Error(
+        "[ClassesDB] build() requires a built TalentTreeDB"
+      );
+    }
+
+    try {
+      const pack = game.packs.get("foundryvtt-swse.classes");
+      if (!pack) {
+        throw new Error("[ClassesDB] Classes compendium not found");
+      }
+
+      const docs = await pack.getDocuments();
+
+      let loaded = 0;
+      let rejected = 0;
+
+      for (const rawClass of docs) {
         try {
-            const pack = game.packs.get('foundryvtt-swse.classes');
-            if (!pack) {
-                SWSELogger.warn('[ClassesDB] Classes compendium not found');
-                return false;
-            }
+          // Normalize + validate base structure
+          const normalized = normalizeClass(rawClass);
+          validateClass(normalized);
 
-            const docs = await pack.getDocuments();
-            let count = 0;
-            let warnings = 0;
+          // Enforce SSOT: classes MUST declare talent tree IDs explicitly
+          const treeIds = Array.isArray(normalized.talentTreeIds)
+            ? normalized.talentTreeIds
+            : Array.isArray(normalized.talentTreeSourceIds)
+              ? normalized.talentTreeSourceIds
+              : [];
 
-            for (const rawClass of docs) {
-                try {
-                    // Normalize the class
-                    const normalizedClass = normalizeClass(rawClass);
-
-                    // Validate
-                    validateClass(normalizedClass);
-
-                    // Link talent trees (if TalentTreeDB is available)
-                    if (talentTreeDB && talentTreeDB.isBuilt) {
-                        // Prefer compendium IDs (drift-safe). Fallback to names.
-                        const sourceIds = Array.isArray(normalizedClass.talentTreeSourceIds) ? normalizedClass.talentTreeSourceIds : [];
-                        if (sourceIds.length) {
-                            normalizedClass.talentTreeIds = sourceIds
-                                .map(sourceId => {
-                                    const tree = talentTreeDB.bySourceId(sourceId);
-                                    if (!tree) {
-                                        SWSELogger.warn(`[ClassesDB] Class "${normalizedClass.name}" references unknown talent tree sourceId: "${sourceId}"`);
-                                        warnings++;
-                                        return null;
-                                    }
-                                    return tree.id;
-                                })
-                                .filter(Boolean);
-                        } else {
-                            normalizedClass.talentTreeIds = normalizedClass.talentTreeNames
-                                .map(name => {
-                                    const tree = talentTreeDB.byName(name);
-                                    if (!tree) {
-                                        SWSELogger.warn(`[ClassesDB] Class "${normalizedClass.name}" references unknown talent tree: "${name}"`);
-                                        warnings++;
-                                        return null;
-                                    }
-                                    return tree.id;
-                                })
-                                .filter(Boolean);
-                        }
-                    }
-
-                    // Store by ID
-                    this.classes.set(normalizedClass.id, normalizedClass);
-                    count++;
-
-                } catch (err) {
-                    SWSELogger.error(`[ClassesDB] Failed to normalize class "${rawClass.name}":`, err);
-                    warnings++;
+          if (!treeIds.length) {
+            SWSELogger.warn(
+              `[ClassesDB] Class "${normalized.name}" has no talentTreeIds defined`
+            );
+            normalized.talentTreeIds = [];
+          } else {
+            normalized.talentTreeIds = treeIds
+              .map(treeId => {
+                const tree = talentTreeDB.getTree(treeId);
+                if (!tree) {
+                  throw new Error(
+                    `Unknown talent tree ID "${treeId}"`
+                  );
                 }
-            }
+                return tree.id;
+              });
+          }
 
-            this.isBuilt = true;
-            SWSELogger.log(`[ClassesDB] Built: ${count} classes loaded${warnings > 0 ? ` (${warnings} warnings)` : ''}`);
-            return true;
+          this.classes.set(normalized.id, normalized);
+          loaded++;
 
         } catch (err) {
-            SWSELogger.error('[ClassesDB] Failed to build:', err);
-            return false;
+          rejected++;
+          SWSELogger.error(
+            `[ClassesDB] Rejected class "${rawClass.name}": ${err.message}`
+          );
         }
-    },
+      }
 
-    /**
-     * Get a class by ID (normalized).
-     * This is the PRIMARY way to access class data.
-     *
-     * @param {string} classId - Normalized class ID
-     * @returns {Object|null} - Normalized class or null
-     */
-    get(classId) {
-        if (!classId) return null;
+      this.isBuilt = true;
 
-        // Ensure ID is normalized
-        const normalizedId = normalizeClassId(classId);
-        return this.classes.get(normalizedId) ?? null;
-    },
+      SWSELogger.log(
+        `[ClassesDB] Build complete — ${loaded} classes loaded, ${rejected} rejected`
+      );
 
-    /**
-     * Get a class by name (case-insensitive).
-     * Less efficient than get() - prefer ID lookup when possible.
-     *
-     * @param {string} name - Class name
-     * @returns {Object|null} - Normalized class or null
-     */
-    byName(name) {
-        if (!name) return null;
+      return true;
 
-        const normalizedId = normalizeClassId(name);
-        return this.get(normalizedId);
-    },
-
-    /**
-     * Check if a class exists.
-     *
-     * @param {string} classId - Normalized class ID
-     * @returns {boolean} - True if class exists
-     */
-    has(classId) {
-        if (!classId) return false;
-        const normalizedId = normalizeClassId(classId);
-        return this.classes.has(normalizedId);
-    },
-
-    /**
-     * Get all classes as an array.
-     *
-     * @returns {Array<Object>} - All normalized classes
-     */
-    all() {
-        return Array.from(this.classes.values());
-    },
-
-    /**
-     * Get base classes only.
-     *
-     * @returns {Array<Object>} - Base classes
-     */
-    baseClasses() {
-        return this.all().filter(cls => cls.baseClass);
-    },
-
-    /**
-     * Get prestige classes only.
-     *
-     * @returns {Array<Object>} - Prestige classes
-     */
-    prestigeClasses() {
-        return this.all().filter(cls => !cls.baseClass);
-    },
-
-    /**
-     * Get classes by role.
-     *
-     * @param {string} role - Role: "force", "combat", "tech", "leader", "general"
-     * @returns {Array<Object>} - Classes matching role
-     */
-    byRole(role) {
-        if (!role) return [];
-        return this.all().filter(cls => cls.role === role);
-    },
-
-    /**
-     * Get class definition from a class Item on an actor.
-     * This is how engines should read class data from actors.
-     *
-     * @param {Object} classItem - Class item from actor.items
-     * @returns {Object|null} - Normalized class or null
-     */
-    fromItem(classItem) {
-        if (!classItem || classItem.type !== 'class') {
-            SWSELogger.warn('[ClassesDB] fromItem called with invalid item:', classItem);
-            return null;
-        }
-
-        const classId = classItem.system?.classId || normalizeClassId(classItem.name);
-        const classDef = this.get(classId);
-
-        if (!classDef) {
-            SWSELogger.error(`[ClassesDB] Class item references unknown class: "${classId}"`);
-        }
-
-        return classDef;
-    },
-
-    /**
-     * Get count of loaded classes.
-     *
-     * @returns {number} - Number of classes
-     */
-    count() {
-        return this.classes.size;
-    },
-
-    /**
-     * Validate that ClassesDB is ready for use.
-     * Throws if not built.
-     */
-    ensureBuilt() {
-        if (!this.isBuilt) {
-            throw new Error('[ClassesDB] Database not built. Call ClassesDB.build() first.');
-        }
+    } catch (err) {
+      SWSELogger.error("[ClassesDB] Build failed:", err);
+      return false;
     }
+  },
+
+  // ============================================
+  // Lookup APIs
+  // ============================================
+
+  get(classId) {
+    if (!classId) return null;
+    return this.classes.get(normalizeClassId(classId)) ?? null;
+  },
+
+  has(classId) {
+    if (!classId) return false;
+    return this.classes.has(normalizeClassId(classId));
+  },
+
+  byName(name) {
+    // Name lookup is allowed only as a convenience wrapper
+    return this.get(name);
+  },
+
+  all() {
+    return Array.from(this.classes.values());
+  },
+
+  count() {
+    return this.classes.size;
+  },
+
+  // ============================================
+  // Filters
+  // ============================================
+
+  baseClasses() {
+    return this.all().filter(cls => cls.baseClass === true);
+  },
+
+  prestigeClasses() {
+    return this.all().filter(cls => cls.baseClass === false);
+  },
+
+  byRole(role) {
+    if (!role) return [];
+    return this.all().filter(cls => cls.role === role);
+  },
+
+  // ============================================
+  // Actor / Item Integration
+  // ============================================
+
+  fromItem(classItem) {
+    if (!classItem || classItem.type !== "class") {
+      SWSELogger.warn("[ClassesDB] fromItem called with invalid item", classItem);
+      return null;
+    }
+
+    const classId =
+      classItem.system?.classId ??
+      normalizeClassId(classItem.name);
+
+    const classDef = this.get(classId);
+
+    if (!classDef) {
+      SWSELogger.error(
+        `[ClassesDB] Actor references unknown class "${classId}"`
+      );
+    }
+
+    return classDef;
+  },
+
+  // ============================================
+  // Safety
+  // ============================================
+
+  ensureBuilt() {
+    if (!this.isBuilt) {
+      throw new Error("[ClassesDB] Accessed before build()");
+    }
+  }
 };
 
-/**
- * CRITICAL: This is the ONLY way progression/CharGen/suggestion engines
- * should access class data.
- *
- * ❌ DO NOT USE:
- * - game.packs.get('classes')
- * - actor.items.filter(i => i.type === 'class')[0].system.hitDie
- * - String matching on class names
- *
- * ✅ ALWAYS USE:
- * - ClassesDB.get(classId)
- * - ClassesDB.fromItem(classItem)
- */
+// Required for uniform DB import contract
+export default ClassesDB;

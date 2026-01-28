@@ -151,7 +151,7 @@ export class CharacterTemplates {
 
     // Validate talent IDs
     if (template.talentIds && Array.isArray(template.talentIds)) {
-      const talentPack = game.packs.get(talentPackName);
+      const talentPack = game.packs.get(talentPackName || 'foundryvtt-swse.talents');
       if (!talentPack) {
         errors.push('Talents compendium not found');
       } else {
@@ -648,7 +648,11 @@ export class CharacterTemplates {
    * @param {string} talentName - The talent name to add
    */
   static async applyTemplateTalent(actor, talentRef) {
-    if (!talentName) {
+    const talentName = typeof talentRef === 'string' ? talentRef : (talentRef?.name ?? null);
+    const talentId = (typeof talentRef === 'object' && talentRef) ? (talentRef.id ?? talentRef._id ?? null) : null;
+    const talentPackName = (typeof talentRef === 'object' && talentRef) ? (talentRef.pack ?? null) : null;
+
+    if (!talentName && !talentId) {
       SWSELogger.log('SWSE | No talent specified in template, skipping');
       return;
     }
@@ -657,7 +661,7 @@ export class CharacterTemplates {
       SWSELogger.log(`SWSE | Attempting to apply template talent: ${talentName}`);
 
       // Find talent in compendium
-      const talentPack = game.packs.get(talentPackName);
+      const talentPack = game.packs.get(talentPackName || 'foundryvtt-swse.talents');
       if (!talentPack) {
         SWSELogger.warn('SWSE | Talents compendium not found');
         ui.notifications.warn('Talents compendium not found! Cannot add template talent.');

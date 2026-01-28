@@ -1,422 +1,303 @@
 /**
  * SYSTEM INITIALIZATION HOOKS
- * Coordinates all data normalization and index building at system startup.
  *
- * Called once from system initialization (module/system.js or equivalent).
- * Ensures all game data is normalized and indexed for optimal progression engine performance.
+ * Single authoritative startup coordinator for:
+ * - SSOT registry construction
+ * - Compendium indexing
+ * - Data normalization
+ * - Progression engine readiness
+ *
+ * This file is intentionally procedural and phase-driven.
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+
+// Engine / Normalizers
 import { FeatureIndex } from '../engine/feature-index.js';
 import { ClassNormalizer } from '../engine/class-normalizer.js';
 import { TalentTreeNormalizer } from '../engine/talent-tree-normalizer.js';
 import { ForceNormalizer } from '../engine/force-normalizer.js';
 import { StartingFeatureRegistrar } from '../engine/starting-feature-registrar.js';
 import { ProgressionStateNormalizer } from '../engine/progression-state-normalizer.js';
+
+// Registries
 import { SkillRegistry } from '../skills/skill-registry.js';
 import { SkillNormalizer } from '../skills/skill-normalizer.js';
 import { FeatRegistry } from '../feats/feat-registry.js';
 import { FeatNormalizer } from '../feats/feat-normalizer.js';
 
-// NEW: SSOT Data Layer
-import { TalentTreeDB } from '../../data/talent-tree-db.js';
-import { ClassesDB } from '../../data/classes-db.js';
-import { TalentDB } from '../../data/talent-db.js';
+// SSOT OWNERS
+import TalentTreeDB from '../../data/talent-tree-db.js';
+import ClassesDB from '../../data/classes-db.js';
+import TalentDB from '../../data/talent-db.js';
 
 export const SystemInitHooks = {
 
-    /**
-     * Register all initialization hooks
-     * Call this from the system's "ready" hook
-     */
-    registerHooks() {
-        Hooks.once('ready', async () => {
-            await this.onSystemReady();
-        });
+    /* -------------------------------------------- */
+    /* Hook Registration                            */
+    /* -------------------------------------------- */
 
+    registerHooks() {
+        // Always call the PUBLIC entry point
+        Hooks.once('ready', () => this.onSystemReady());
         SWSELogger.log('System initialization hooks registered');
     },
 
+    /* -------------------------------------------- */
+    /* Public Entry Point (Stable API)              */
+    /* -------------------------------------------- */
+
     /**
-     * Main system ready handler
-     * Runs all initialization tasks
+     * This method is the ONLY supported external entry point.
+     * index.js, tests, recovery code, and hooks may call this.
      */
     async onSystemReady() {
+        return this._runInitialization();
+    },
+
+    /* -------------------------------------------- */
+    /* Internal Orchestrator                        */
+    /* -------------------------------------------- */
+
+    async _runInitialization() {
+        const start = performance.now();
+
+        SWSELogger.log('='.repeat(60));
+        SWSELogger.log('SWSE SYSTEM INITIALIZATION — START');
+        SWSELogger.log('='.repeat(60));
+
         try {
-            const startTime = performance.now();
+            // Phase 0 — SSOT (hard gate)
+            const ssotReady = await this._buildSSOT();
+            if (!ssotReady) {
+                SWSELogger.error('SSOT build failed — aborting initialization');
+                return;
+            }
 
-            SWSELogger.log('='.repeat(50));
-            SWSELogger.log('SWSE Progression Engine: System Initialization');
-            SWSELogger.log('='.repeat(50));
-
-            // Step 0: Build SSOT Data Registries (CRITICAL - must run first)
-            await this._buildDataRegistries();
-
-            // Step 1: Build feature index from compendiums
+            // Phase 1 — Feature Index
             await this._buildFeatureIndex();
 
-            // Step 2: Normalize all game data
-            await this._normalizeGameData();
+            // Phase 2 — Compendium Normalization
+            await this._normalizeCompendiums();
 
-            // Step 3: Build skill registry
+            // Phase 3 — Registries
             await this._buildSkillRegistry();
-
-            // Step 3b: Build feat registry
             await this._buildFeatRegistry();
 
-            // Step 4: Normalize actor progression states
+            // Phase 4 — Actors
             await this._normalizeActorProgression();
 
-            // Step 5: Register starting features
+            // Phase 5 — Derived / Class Features
             await this._registerStartingFeatures();
 
-            const elapsed = (performance.now() - startTime).toFixed(2);
+            const elapsed = (performance.now() - start).toFixed(2);
 
-            SWSELogger.log('='.repeat(50));
-            SWSELogger.log(`Initialization Complete (${elapsed}ms)`);
-            SWSELogger.log('='.repeat(50));
+            SWSELogger.log('='.repeat(60));
+            SWSELogger.log(`SYSTEM INITIALIZATION COMPLETE (${elapsed}ms)`);
+            SWSELogger.log('='.repeat(60));
 
-            // Emit custom hook for dependent modules
             Hooks.callAll('swse:progression:initialized');
 
         } catch (err) {
-            SWSELogger.error('System initialization failed:', err);
+            SWSELogger.error('Fatal error during system initialization:', err);
         }
     },
 
-    /**
-     * Step 0: Build SSOT Data Registries
-     * This MUST run before any other game data normalization.
-     * Order matters: TalentTreeDB -> ClassesDB -> TalentDB
-     * @private
-     */
-    async _buildDataRegistries() {
+    /* -------------------------------------------- */
+    /* Phase 0 — SSOT                               */
+    /* -------------------------------------------- */
+
+    async _buildSSOT() {
+        SWSELogger.log('[INIT:SSOT] Building Single Source of Truth registries');
+
         try {
-            SWSELogger.log('Building SSOT data registries...');
+            // 0a — Talent Trees (root owner)
+            SWSELogger.log('  → TalentTreeDB');
+            await TalentTreeDB.build();
 
-            // 1. Build TalentTreeDB (required by ClassesDB and TalentDB)
-            SWSELogger.log('  - Building TalentTreeDB...');
-            const treeSuccess = await TalentTreeDB.build();
-            if (!treeSuccess) {
-                SWSELogger.error('TalentTreeDB build failed');
-                return;
-            }
+            // 0b — Classes (consume trees)
+            SWSELogger.log('  → ClassesDB');
+            await ClassesDB.build(TalentTreeDB);
 
-            // 2. Build ClassesDB (requires TalentTreeDB for linking talent trees)
-            SWSELogger.log('  - Building ClassesDB...');
-            const classSuccess = await ClassesDB.build(TalentTreeDB);
-            if (!classSuccess) {
-                SWSELogger.error('ClassesDB build failed');
-                return;
-            }
+            // 0c — Talents (consume trees)
+            SWSELogger.log('  → TalentDB');
+            await TalentDB.build(TalentTreeDB);
 
-            // 3. Build TalentDB (requires TalentTreeDB for linking talents to trees)
-            SWSELogger.log('  - Building TalentDB...');
-            const talentSuccess = await TalentDB.build(TalentTreeDB);
-            if (!talentSuccess) {
-                SWSELogger.error('TalentDB build failed');
-                return;
-            }
+            // Expose for legacy / migrations / UI (read-only intent)
+            globalThis.SWSE = globalThis.SWSE || {};
+            globalThis.SWSE.TalentTreeDB = TalentTreeDB;
+            globalThis.SWSE.TalentDB = TalentDB;
+            globalThis.SWSE.ClassesDB = ClassesDB;
 
-            SWSELogger.log(`SSOT registries built: ${TalentTreeDB.count()} trees, ${ClassesDB.count()} classes, ${TalentDB.count()} talents`);
+            SWSELogger.log(
+                `[INIT:SSOT] Ready — ${TalentTreeDB.count()} trees, ${ClassesDB.count()} classes, ${TalentDB.count()} talents`
+            );
+
+            return true;
 
         } catch (err) {
-            SWSELogger.error('Failed to build SSOT registries:', err);
+            SWSELogger.error('[INIT:SSOT] Failed', err);
+            return false;
         }
     },
 
-    /**
-     * Step 1: Build feature index from all compendiums
-     * @private
-     */
+    /* -------------------------------------------- */
+    /* Phase 1 — Feature Index                      */
+    /* -------------------------------------------- */
+
     async _buildFeatureIndex() {
-        try {
-            SWSELogger.log('Building feature index...');
-            await FeatureIndex.buildIndex();
-            const status = FeatureIndex.getStatus();
-            SWSELogger.log(`Feature index built: ${JSON.stringify(status.counts)}`);
-        } catch (err) {
-            SWSELogger.error('Failed to build feature index:', err);
-        }
+        SWSELogger.log('[INIT:INDEX] Building FeatureIndex');
+        await FeatureIndex.buildIndex();
+        SWSELogger.log('[INIT:INDEX] Complete', FeatureIndex.getStatus()?.counts);
     },
 
-    /**
-     * Step 2: Normalize all game data (classes, talents, powers, etc.)
-     * @private
-     */
-    async _normalizeGameData() {
-        try {
-            SWSELogger.log('Normalizing game data...');
+    /* -------------------------------------------- */
+    /* Phase 2 — Normalization                      */
+    /* -------------------------------------------- */
 
-            // Normalize classes
-            await this._normalizeClasses();
+    async _normalizeCompendiums() {
+        SWSELogger.log('[INIT:NORMALIZE] Starting compendium normalization');
 
-            // Normalize talents
-            await this._normalizeTalents();
+        await this._normalizeClasses();
+        await this._normalizeTalents();
+        await this._normalizeForceContent();
 
-            // Normalize force content
-            await this._normalizeForceContent();
-
-            SWSELogger.log('Game data normalization complete');
-
-        } catch (err) {
-            SWSELogger.error('Failed to normalize game data:', err);
-        }
+        SWSELogger.log('[INIT:NORMALIZE] Complete');
     },
 
-    /**
-     * Normalize all class documents
-     * @private
-     */
     async _normalizeClasses() {
-        try {
-            const classPack = game.packs.get('foundryvtt-swse.classes');
-            if (!classPack) {
-                SWSELogger.warn('Classes compendium not found');
-                return;
-            }
+        const pack = game.packs.get('foundryvtt-swse.classes');
+        if (!pack) return;
 
-            const classes = await classPack.getDocuments();
-            let count = 0;
-
-            for (const classDoc of classes) {
-                ClassNormalizer.normalizeClassDoc(classDoc);
-                count++;
-            }
-
-            SWSELogger.log(`Normalized ${count} class documents`);
-
-        } catch (err) {
-            SWSELogger.error('Failed to normalize classes:', err);
+        let count = 0;
+        for (const doc of await pack.getDocuments()) {
+            ClassNormalizer.normalizeClassDoc(doc);
+            count++;
         }
+
+        SWSELogger.log(`[INIT:NORMALIZE] Classes: ${count}`);
     },
 
-    /**
-     * Normalize all talent documents
-     * @private
-     */
     async _normalizeTalents() {
-        try {
-            const talentPack = game.packs.get('foundryvtt-swse.talents');
-            if (!talentPack) {
-                SWSELogger.warn('Talents compendium not found');
-                return;
+        const pack = game.packs.get('foundryvtt-swse.talents');
+        if (!pack) return;
+
+        let count = 0;
+        for (const doc of await pack.getDocuments()) {
+            TalentTreeNormalizer.normalize(doc);
+
+            if (!TalentTreeNormalizer.checkTalentAgainstTree(doc)) {
+                SWSELogger.warn(`Talent "${doc.name}" has invalid tree assignment`);
             }
 
-            const talents = await talentPack.getDocuments();
-            let count = 0;
-
-            for (const talentDoc of talents) {
-                TalentTreeNormalizer.normalize(talentDoc);
-
-                // Validate tree name
-                if (!TalentTreeNormalizer.checkTalentAgainstTree(talentDoc)) {
-                    SWSELogger.warn(`Talent "${talentDoc.name}" has invalid tree assignment`);
-                }
-
-                count++;
-            }
-
-            SWSELogger.log(`Normalized ${count} talent documents`);
-
-        } catch (err) {
-            SWSELogger.error('Failed to normalize talents:', err);
+            count++;
         }
+
+        SWSELogger.log(`[INIT:NORMALIZE] Talents: ${count}`);
     },
 
-    /**
-     * Normalize all Force content (powers, techniques, secrets)
-     * @private
-     */
     async _normalizeForceContent() {
-        try {
-            // Normalize Force powers
-            const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-            if (powerPack) {
-                const powers = await powerPack.getDocuments();
-                let count = 0;
-                for (const powerDoc of powers) {
-                    ForceNormalizer.normalizePower(powerDoc);
-                    count++;
-                }
-                SWSELogger.log(`Normalized ${count} Force power documents`);
+        const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
+        if (powerPack) {
+            for (const doc of await powerPack.getDocuments()) {
+                ForceNormalizer.normalizePower(doc);
             }
+        }
 
-            // Normalize Force feats (techniques) if they exist in feats pack
-            const featPack = game.packs.get('foundryvtt-swse.feats');
-            if (featPack) {
-                const feats = await featPack.getDocuments();
-                let count = 0;
-                for (const featDoc of feats) {
-                    if (featDoc.system?.tags?.includes('force_technique')) {
-                        ForceNormalizer.normalizeTechnique(featDoc);
-                        count++;
-                    }
-                }
-                if (count > 0) {
-                    SWSELogger.log(`Normalized ${count} Force technique documents`);
+        const featPack = game.packs.get('foundryvtt-swse.feats');
+        if (featPack) {
+            for (const doc of await featPack.getDocuments()) {
+                if (doc.system?.tags?.includes('force_technique')) {
+                    ForceNormalizer.normalizeTechnique(doc);
                 }
             }
+        }
 
-            // Normalize Force talents (secrets) if they exist in talents pack
-            const talentPack = game.packs.get('foundryvtt-swse.talents');
-            if (talentPack) {
-                const talents = await talentPack.getDocuments();
-                let count = 0;
-                for (const talentDoc of talents) {
-                    if (talentDoc.system?.tags?.includes('force_secret')) {
-                        ForceNormalizer.normalizeSecret(talentDoc);
-                        count++;
-                    }
-                }
-                if (count > 0) {
-                    SWSELogger.log(`Normalized ${count} Force secret documents`);
+        const talentPack = game.packs.get('foundryvtt-swse.talents');
+        if (talentPack) {
+            for (const doc of await talentPack.getDocuments()) {
+                if (doc.system?.tags?.includes('force_secret')) {
+                    ForceNormalizer.normalizeSecret(doc);
                 }
             }
-
-        } catch (err) {
-            SWSELogger.error('Failed to normalize Force content:', err);
         }
     },
 
-    /**
-     * Step 3: Normalize actor progression states
-     * @private
-     */
-    async _normalizeActorProgression() {
-        try {
-            SWSELogger.log('Normalizing actor progression states...');
+    /* -------------------------------------------- */
+    /* Phase 3 — Registries                         */
+    /* -------------------------------------------- */
 
-            const actors = game.actors?.contents || [];
-            let updated = 0;
-
-            for (const actor of actors) {
-                const progression = actor.system?.progression;
-                if (!progression) continue;
-
-                const normalized = ProgressionStateNormalizer.normalize(progression);
-                const valid = ProgressionStateNormalizer.validate(normalized);
-
-                if (!valid.valid) {
-                    SWSELogger.warn(`Actor "${actor.name}" has invalid progression state:`, valid.errors);
-                    continue;
-                }
-
-                await actor.update({ 'system.progression': normalized });
-                updated++;
-            }
-
-            if (updated > 0) {
-                SWSELogger.log(`Normalized progression state for ${updated} actors`);
-            }
-
-        } catch (err) {
-            SWSELogger.error('Failed to normalize actor progression:', err);
-        }
-    },
-
-    /**
-     * Step 3b: Build skill registry
-     * @private
-     */
     async _buildSkillRegistry() {
-        try {
-            SWSELogger.log('Building skill registry...');
+        SWSELogger.log('[INIT:REGISTRY] SkillRegistry');
+        await SkillRegistry.build();
 
-            // Build registry
-            const success = await SkillRegistry.build();
-            if (!success) {
-                SWSELogger.warn('SkillRegistry.build() returned false');
-                return;
-            }
+        const pack = game.packs.get('foundryvtt-swse.skills');
+        if (!pack) return;
 
-            // Normalize all skills
-            const pack = game.packs.get('foundryvtt-swse.skills');
-            if (pack) {
-                const skills = await pack.getDocuments();
-                let normalized = 0;
-
-                for (const skillDoc of skills) {
-                    SkillNormalizer.normalize(skillDoc);
-                    normalized++;
-                }
-
-                SWSELogger.log(`Built skill registry with ${normalized} skills`);
-            }
-
-        } catch (err) {
-            SWSELogger.error('Failed to build skill registry:', err);
+        for (const doc of await pack.getDocuments()) {
+            SkillNormalizer.normalize(doc);
         }
     },
 
-    /**
-     * Step 3c: Build feat registry
-     * @private
-     */
     async _buildFeatRegistry() {
-        try {
-            SWSELogger.log('Building feat registry...');
+        SWSELogger.log('[INIT:REGISTRY] FeatRegistry');
+        await FeatRegistry.build();
 
-            // Build registry
-            const success = await FeatRegistry.build();
-            if (!success) {
-                SWSELogger.warn('FeatRegistry.build() returned false');
-                return;
-            }
+        const pack = game.packs.get('foundryvtt-swse.feats');
+        if (!pack) return;
 
-            // Normalize all feats
-            const pack = game.packs.get('foundryvtt-swse.feats');
-            if (pack) {
-                const feats = await pack.getDocuments();
-                let normalized = 0;
-
-                for (const featDoc of feats) {
-                    FeatNormalizer.normalize(featDoc);
-                    normalized++;
-                }
-
-                SWSELogger.log(`Built feat registry with ${normalized} feats`);
-            }
-
-        } catch (err) {
-            SWSELogger.error('Failed to build feat registry:', err);
+        for (const doc of await pack.getDocuments()) {
+            FeatNormalizer.normalize(doc);
         }
     },
 
-    /**
-     * Step 5: Register all starting features from classes
-     * @private
-     */
+    /* -------------------------------------------- */
+    /* Phase 4 — Actors                             */
+    /* -------------------------------------------- */
+
+    async _normalizeActorProgression() {
+        SWSELogger.log('[INIT:ACTORS] Progression normalization');
+
+        for (const actor of game.actors?.contents || []) {
+            const prog = actor.system?.progression;
+            if (!prog) continue;
+
+            const normalized = ProgressionStateNormalizer.normalize(prog);
+            const result = ProgressionStateNormalizer.validate(normalized);
+
+            if (!result.valid) {
+                SWSELogger.warn(
+                    `Actor "${actor.name}" has invalid progression`,
+                    result.errors
+                );
+                continue;
+            }
+
+            await actor.update({ 'system.progression': normalized });
+        }
+    },
+
+    /* -------------------------------------------- */
+    /* Phase 5 — Derived Features                   */
+    /* -------------------------------------------- */
+
     async _registerStartingFeatures() {
-        try {
-            SWSELogger.log('Registering starting features...');
+        SWSELogger.log('[INIT:FEATURES] Registering starting features');
 
-            const classPack = game.packs.get('foundryvtt-swse.classes');
-            if (!classPack) {
-                SWSELogger.warn('Classes compendium not found');
-                return;
-            }
+        const pack = game.packs.get('foundryvtt-swse.classes');
+        if (!pack) return;
 
-            const classes = await classPack.getDocuments();
-            let registered = 0;
-
-            for (const classDoc of classes) {
-                StartingFeatureRegistrar.register(classDoc);
-                registered++;
-            }
-
-            SWSELogger.log(`Registered starting features for ${registered} classes`);
-
-        } catch (err) {
-            SWSELogger.error('Failed to register starting features:', err);
+        for (const doc of await pack.getDocuments()) {
+            StartingFeatureRegistrar.register(doc);
         }
     },
 
-    /**
-     * Manual initialization trigger (for testing or emergency reset)
-     */
+    /* -------------------------------------------- */
+    /* Manual Trigger                               */
+    /* -------------------------------------------- */
+
     async initialize() {
-        await this.onSystemReady();
+        return this.onSystemReady();
     }
 };
 

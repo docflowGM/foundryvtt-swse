@@ -1,25 +1,345 @@
 {
   "SWSE": {
-    "SystemName": "Star Wars Saga Edition",
-    "SheetLabels": {
-      "Character": "Charakterbogen",
-      "NPC": "NSC-Bogen",
-      "Droid": "Droiden-Bogen",
-      "Vehicle": "Fahrzeug-Bogen",
-      "Item": "Gegenstands-Bogen"
-    },
     "Abilities": {
-      "STR": "Stärke",
-      "DEX": "Geschicklichkeit",
+      "CHA": "Charisma",
       "CON": "Konstitution",
+      "DEX": "Geschicklichkeit",
       "INT": "Intelligenz",
-      "WIS": "Weisheit",
-      "CHA": "Charisma"
+      "STR": "Stärke",
+      "WIS": "Weisheit"
+    },
+    "Chat": {
+      "Flavors": {
+        "Attack": "{weapon} Angriff",
+        "ConditionRecovery": "Zustandserholungs-Probe (SW 10)",
+        "Damage": "{weapon} Schaden",
+        "Save": "{name} würfelt einen {type}-Rettungswurf ({modifier})",
+        "Skill": "{skill} Probe"
+      },
+      "Roll": {
+        "ApplyDamage": "Schaden Anwenden",
+        "Breakdown": "Aufschlüsselung",
+        "CriticalThreat": "KRITISCHE BEDROHUNG!",
+        "DiceTotal": "Gesamt",
+        "Formula": "Formel",
+        "RollDamage": "Schaden Würfeln"
+      }
+    },
+    "Compendium": {
+      "Armor": "Rüstung",
+      "ArmorHeavy": "Schwere Rüstung",
+      "ArmorLight": "Leichte Rüstung",
+      "ArmorMedium": "Mittlere Rüstung",
+      "Attributes": "Attribute",
+      "Classes": "Klassen",
+      "Conditions": "Zustände",
+      "Droids": "Droiden",
+      "Equipment": "Ausrüstung",
+      "ExtraSkillUses": "Zusätzliche Fertigkeitsnutzungen",
+      "Feats": "Vorzüge",
+      "ForcePowers": "Machtkräfte",
+      "ForceSecrets": "Machtgeheimnisse",
+      "ForceTechniques": "Machttechniken",
+      "LightsaberFormPowers": "Lichtschwertstil-Kräfte",
+      "NPCs": "NSCs",
+      "Skills": "Fertigkeiten",
+      "SpecialCombatConditions": "Besondere Kampfzustände",
+      "Species": "Spezies",
+      "TalentTrees": "Talentbäume",
+      "Talents": "Talente",
+      "Vehicles": "Fahrzeuge",
+      "Weapons": "Waffen"
+    },
+    "ConditionTrack": {
+      "Helpless": "Hilflos",
+      "Minus1": "-1",
+      "Minus10": "-10",
+      "Minus2": "-2",
+      "Minus5": "-5",
+      "Normal": "Normal"
     },
     "Defenses": {
-      "Reflex": "Reflexverteidigung",
       "Fortitude": "Widerstandsverteidigung",
+      "Reflex": "Reflexverteidigung",
       "Will": "Willensverteidigung"
+    },
+    "Dialogs": {
+      "ApplyDamage": {
+        "Amount": "Schadensmenge",
+        "Button": "Schaden Anwenden",
+        "CheckThreshold": "Schadensschwelle Prüfen",
+        "IgnoreTemp": "Temporäre TP Ignorieren",
+        "Title": "Schaden auf {name} Anwenden"
+      },
+      "ApplyDroidChassis": {
+        "Title": "Droiden-Chassis Anwenden?"
+      },
+      "ApplyVehicleTemplate": {
+        "Title": "Fahrzeug-Vorlage Anwenden?"
+      },
+      "Buttons": {
+        "Apply": "Anwenden",
+        "Cancel": "Abbrechen",
+        "Close": "Schließen",
+        "Confirm": "Bestätigen",
+        "Delete": "Löschen",
+        "Save": "Speichern"
+      },
+      "CharacterGenerator": {
+        "ImportDroidType": "Droiden-Typ Importieren",
+        "Title": "Charakter-Generator"
+      },
+      "ConditionRecovery": {
+        "Content": "<p><strong>{name}</strong> kann versuchen, sich zu erholen.</p><p>Aktuelle Position: {current}/5</p><p>Ausdauer-Probe (SW 10) machen?</p>",
+        "Title": "Zustandserholung"
+      },
+      "ConditionTrack": {
+        "Title": "Zustandsleiste: {name}"
+      },
+      "Healing": {
+        "Amount": "Heilungsmenge",
+        "ButtonHeal": "Heilung Anwenden",
+        "ButtonRepair": "Reparatur Anwenden",
+        "DroidNote": "Droiden können nur mit der Mechanik-Fertigkeit repariert werden.",
+        "RepairAmount": "Reparaturmenge (via Mechanik)",
+        "TitleHeal": "{name} Heilen",
+        "TitleRepair": "{name} Reparieren"
+      },
+      "HouseRules": {
+        "Advancement": "Fortschritt",
+        "AdvancementRules": "Fortschrittsregeln",
+        "CharacterCreation": "Charaktererstellung",
+        "CharacterCreationRules": "Charaktererstellungsregeln",
+        "Combat": "Kampf",
+        "CombatRules": "Kampfregeln",
+        "ForceDestiny": "Macht & Schicksal",
+        "ForceDestinyRules": "Macht & Schicksalsregeln",
+        "Presets": "Voreinstellungen",
+        "SkillsFeats": "Fertigkeiten & Vorzüge",
+        "SpaceCombat": "Weltraumkampf",
+        "Title": "SWSE Hausregeln Konfiguration"
+      },
+      "LevelUp": {
+        "Title": "{name} Stufe Aufsteigen"
+      },
+      "ReplaceSpecies": {
+        "Content": "<p>{actor} hat bereits Spezies: <strong>{existing}</strong></p><p>Ersetzen mit <strong>{new}</strong>?</p>",
+        "Title": "Spezies Ersetzen?"
+      },
+      "Store": {
+        "BuildCustomDroid": "Benutzerdefinierten Droiden Bauen",
+        "BuildCustomStarship": "Benutzerdefiniertes Raumschiff Bauen",
+        "CompletePurchase": "Kauf Abschließen",
+        "ConfirmDroidPurchase": "Droiden-Kauf Bestätigen",
+        "ConfirmVehiclePurchase": "Fahrzeug-Kauf Bestätigen",
+        "Title": "Galaktische Handelsstation"
+      }
+    },
+    "ForcePoints": {
+      "Chat": {
+        "AlreadyZero": "Ihr Dunkle-Seite-Wert ist bereits 0.",
+        "AvoidDeath": "{name} gibt einen Machtpunkt aus, um dem Tod zu entgehen und wird bewusstlos!",
+        "DarkSideBonus": "Dunkle-Seite-Bonus:",
+        "DarkSideWarning": "Dunkle-Seite-Wert um 1 erhöht",
+        "Highest": "Höchste:",
+        "NoPointsRemaining": "Keine Machtpunkte mehr!",
+        "ReducedDarkSide": "Dunkle-Seite-Wert reduziert auf {score}",
+        "Result": "Ergebnis:",
+        "Title": "Machtpunkt Ausgegeben",
+        "TotalBonus": "Gesamtbonus:",
+        "UsedFor": "Verwendet für:"
+      },
+      "Methods": {
+        "highest_result": "höchstes Ergebnis",
+        "result": "Ergebnis"
+      },
+      "SpendDialog": {
+        "CallDarkSide": "Dunkle Seite anrufen (+1W6, erhöht Dunkle-Seite-Wert um 1)",
+        "Cancel": "Abbrechen",
+        "Question": "Machtpunkt für {reason} ausgeben?",
+        "Remaining": "Verbleibende Machtpunkte:",
+        "RollInfo": "Sie würfeln {die} und addieren das {method} zu Ihrem Wurf.",
+        "Spend": "Machtpunkt Ausgeben",
+        "Title": "Machtpunkt Ausgeben"
+      }
+    },
+    "Notifications": {
+      "Combat": {
+        "NoActorSelected": "Kein Akteur ausgewählt",
+        "NoTargets": "Keine Ziele ausgewählt!"
+      },
+      "Condition": {
+        "RecoveryFailed": "{name} schafft es nicht, sich zu erholen.",
+        "RecoverySuccess": "{name} erholt sich um einen Schritt auf der Zustandsleiste!"
+      },
+      "Damage": {
+        "CannotRoll": "Kann Schaden für diesen Gegenstand nicht würfeln."
+      },
+      "Items": {
+        "AlreadyHasClass": "{actor} hat bereits die Klasse {class}",
+        "NotOwnedByActor": "Dieser Gegenstand gehört keinem Akteur.",
+        "SpeciesApplied": "{species} Rasseneigenschaften auf {actor} angewendet"
+      },
+      "Rolls": {
+        "DefenseNotFound": "Verteidigungstyp {type} nicht gefunden",
+        "DiceRollFailed": "Würfelwurf fehlgeschlagen: {error}",
+        "SaveFailed": "Rettungswurf gescheitert! ({total} gegen SW {dc})",
+        "SaveSucceeded": "Rettungswurf erfolgreich! ({total} gegen SW {dc})",
+        "SkillNotFound": "Fertigkeit {skill} nicht gefunden",
+        "UseForceRequiresTraining": "Macht Anwenden erfordert Training!"
+      },
+      "System": {
+        "MigrationComplete": "Migration abgeschlossen: {updated} aktualisiert, {errors} Fehler"
+      },
+      "Welcome": {
+        "ConditionTrack": "Visuelle Zustandsleiste aktiv",
+        "DamageThreshold": "Schadensschwellen-Automatisierung aktiviert",
+        "ForceSuite": "Macht-Suite Verwaltung bereit",
+        "Summary": "Überprüfen Sie den Zusammenfassungs-Tab für Ihr Kampf-Dashboard",
+        "Title": "SWSE Erweitertes System Geladen!"
+      }
+    },
+    "Settings": {
+      "Advancement": {
+        "Hint": "Stufenaufstieg, Talente, Vorzüge und Fortschrittsoptionen konfigurieren",
+        "Label": "Konfigurieren",
+        "Name": "Fortschrittsregeln"
+      },
+      "ArmoredDefenseForAll": {
+        "Hint": "Alle Charaktere können Rüstungsbonus auf Reflexverteidigung nutzen",
+        "Name": "Gepanzerte Verteidigung für Alle"
+      },
+      "AthleticsConsolidation": {
+        "Hint": "Klettern, Springen und Schwimmen zu einer Athletik-Fertigkeit zusammenfassen",
+        "Name": "Athletik-Fertigkeit"
+      },
+      "AutoConditionRecovery": {
+        "Hint": "Zustandsleisten-Erholungswürfe zu Beginn jedes Kämpferzugs anfordern",
+        "Name": "Automatische Zustandserholung"
+      },
+      "AutoDamageThreshold": {
+        "Hint": "Charaktere automatisch auf der Zustandsleiste bewegen, wenn Schaden ihre Schadensschwelle übersteigt",
+        "Name": "Automatische Schadensschwelle"
+      },
+      "BlasterCharges": {
+        "Hint": "Munition für Energiewaffen verfolgen",
+        "Name": "Blaster-Ladungen Verfolgen"
+      },
+      "CharacterCreation": {
+        "Hint": "Attributswertgenerierung, TP und Charaktererstellungsoptionen konfigurieren",
+        "Label": "Konfigurieren",
+        "Name": "Charaktererstellungsregeln"
+      },
+      "Combat": {
+        "Hint": "Kampf, Schaden, Tod und Zustandsleisten-Regeln konfigurieren",
+        "Label": "Konfigurieren",
+        "Name": "Kampfregeln"
+      },
+      "ConditionTrackCap": {
+        "Hint": "Maximale Zustandsleisten-Schritte durch einen einzelnen Angriff",
+        "Name": "Zustandsleisten-Schadensgrenze"
+      },
+      "CriticalHit": {
+        "Hint": "Alternative Berechnungen für kritischen Trefferschaden",
+        "Name": "Kritischer Treffer Variante"
+      },
+      "CrossClassSkills": {
+        "Hint": "Ausbildung von Nicht-Klassenfertigkeiten für 2 Fertigkeitsplätze erlauben",
+        "Name": "Klassenübergreifende Fertigkeitsausbildung"
+      },
+      "DailyForcePoints": {
+        "Hint": "Verwende tägliche Machtpunkte statt pro Stufe (1.-5. Stufe: 1 MP, 6.-10.: 2 MP, 11.-15.: 3 MP, 16+: 4 MP pro Tag)",
+        "Name": "Tägliche Machtpunkte"
+      },
+      "DarkSideTemptation": {
+        "Hint": "Machtpunkt ausgeben, um vorübergehend Kräfte der Dunklen Seite zu erlangen",
+        "Name": "Versuchung der Dunklen Seite"
+      },
+      "DarkSideTemptationMechanic": {
+        "Hint": "Erlaube Charakteren, die Dunkle Seite anzurufen beim Ausgeben von Machtpunkten (erfordert Dunkle-Seite-Wert ≤ halbe Weisheit, +1W6, erhöht Dunkle-Seite-Wert um 1)",
+        "Name": "Versuchung der Dunklen Seite Mechanik"
+      },
+      "DevMode": {
+        "Hint": "Aktiviert detaillierte Fehlerprotokollierung und Stack-Traces für Debugging",
+        "Name": "Entwicklermodus"
+      },
+      "DiagonalMovement": {
+        "Hint": "Wie diagonale Bewegung auf dem Raster gezählt wird",
+        "Name": "Diagonale Bewegung"
+      },
+      "EnableAutomation": {
+        "Hint": "Kampfrunden, Züge automatisch verfolgen und Kampfeffekte anwenden",
+        "Name": "Kampfautomatisierung Aktivieren"
+      },
+      "Force": {
+        "Hint": "Machtpunkte, Dunkle Seite und Machtkraft-Regeln konfigurieren",
+        "Label": "Konfigurieren",
+        "Name": "Macht & Schicksalsregeln"
+      },
+      "ForcePointBonus": {
+        "Hint": "Bonuswürfelgröße beim Ausgeben von Machtpunkten zum Wiederholen (d6 = +1d6)",
+        "Name": "Machtpunkt-Wiederholungsbonus"
+      },
+      "ForcePointRecovery": {
+        "Hint": "Wann Machtpunkte sich regenerieren",
+        "Name": "Machtpunkt-Erholung"
+      },
+      "KnowledgeSkills": {
+        "Hint": "Mehrere Wissensfertigkeiten zusammenfassen",
+        "Name": "Wissensfertigkeits-Modus"
+      },
+      "Presets": {
+        "Hint": "Vordefinierte Hausregel-Konfigurationen anwenden oder Einstellungen importieren/exportieren",
+        "Label": "Voreinstellungen Verwalten",
+        "Name": "Hausregel-Voreinstellungen"
+      },
+      "ResetResourcesOnCombat": {
+        "Hint": "Temporäre Ressourcen (wie Zweiter Atem) automatisch zurücksetzen, wenn Kampf beginnt",
+        "Name": "Ressourcen bei Kampfbeginn Zurücksetzen"
+      },
+      "Retraining": {
+        "Hint": "Austausch von Vorzügen/Talenten beim Stufenaufstieg erlauben",
+        "Name": "Umschulung Erlauben"
+      },
+      "SecondWindImproved": {
+        "Hint": "Zweiter Atem verbessert auch die Zustandsleiste um einen Schritt",
+        "Name": "Verbesserter Zweiter Atem"
+      },
+      "SkillFocusRestriction": {
+        "Hint": "Fertigkeitsfokus (Macht Anwenden) einschränken, um frühe Dominanz zu verhindern",
+        "Name": "Fertigkeitsfokus-Beschränkungen"
+      },
+      "StoreDiscount": {
+        "Hint": "Prozentsatz des Originalpreises beim Verkauf von Gegenständen an den Laden",
+        "Name": "Laden-Verkaufsrabatt"
+      },
+      "StoreMarkup": {
+        "Hint": "Prozentualer Aufschlag für im Laden gekaufte Gegenstände (kann negativ für Rabatte sein)",
+        "Name": "Laden-Preisaufschlag"
+      },
+      "TalentEveryLevel": {
+        "Hint": "Charaktere erhalten jede Stufe ein Talent statt jeder ungeraden Stufe",
+        "Name": "Talent Jede Stufe"
+      },
+      "WeaponRangeMultiplier": {
+        "Hint": "Alle Waffenreichweiten mit diesem Faktor multiplizieren (nützlich für unterschiedliche Rastermaßstäbe)",
+        "Name": "Waffenreichweiten-Multiplikator"
+      },
+      "WeaponRanges": {
+        "Hint": "Alle Waffenreichweiten mit diesem Faktor multiplizieren",
+        "Name": "Waffenreichweiten-Modifikator"
+      },
+      "WelcomeShown": {
+        "Hint": "Verfolgt, ob die Willkommensnachricht angezeigt wurde",
+        "Name": "Willkommensnachricht Angezeigt"
+      }
+    },
+    "SheetLabels": {
+      "Character": "Charakterbogen",
+      "Droid": "Droiden-Bogen",
+      "Item": "Gegenstands-Bogen",
+      "NPC": "NSC-Bogen",
+      "Vehicle": "Fahrzeug-Bogen"
     },
     "Skills": {
       "Acrobatics": "Akrobatik",
@@ -42,326 +362,6 @@
       "UseComputer": "Computer Benutzen",
       "UseTheForce": "Macht Anwenden"
     },
-    "ConditionTrack": {
-      "Normal": "Normal",
-      "Minus1": "-1",
-      "Minus2": "-2",
-      "Minus5": "-5",
-      "Minus10": "-10",
-      "Helpless": "Hilflos"
-    },
-    "Settings": {
-      "EnableAutomation": {
-        "Name": "Kampfautomatisierung Aktivieren",
-        "Hint": "Kampfrunden, Züge automatisch verfolgen und Kampfeffekte anwenden"
-      },
-      "AutoConditionRecovery": {
-        "Name": "Automatische Zustandserholung",
-        "Hint": "Zustandsleisten-Erholungswürfe zu Beginn jedes Kämpferzugs anfordern"
-      },
-      "AutoDamageThreshold": {
-        "Name": "Automatische Schadensschwelle",
-        "Hint": "Charaktere automatisch auf der Zustandsleiste bewegen, wenn Schaden ihre Schadensschwelle übersteigt"
-      },
-      "WeaponRangeMultiplier": {
-        "Name": "Waffenreichweiten-Multiplikator",
-        "Hint": "Alle Waffenreichweiten mit diesem Faktor multiplizieren (nützlich für unterschiedliche Rastermaßstäbe)"
-      },
-      "ForcePointBonus": {
-        "Name": "Machtpunkt-Wiederholungsbonus",
-        "Hint": "Bonuswürfelgröße beim Ausgeben von Machtpunkten zum Wiederholen (d6 = +1d6)"
-      },
-      "StoreMarkup": {
-        "Name": "Laden-Preisaufschlag",
-        "Hint": "Prozentualer Aufschlag für im Laden gekaufte Gegenstände (kann negativ für Rabatte sein)"
-      },
-      "StoreDiscount": {
-        "Name": "Laden-Verkaufsrabatt",
-        "Hint": "Prozentsatz des Originalpreises beim Verkauf von Gegenständen an den Laden"
-      },
-      "CharacterCreation": {
-        "Name": "Charaktererstellungsregeln",
-        "Label": "Konfigurieren",
-        "Hint": "Attributswertgenerierung, TP und Charaktererstellungsoptionen konfigurieren"
-      },
-      "Advancement": {
-        "Name": "Fortschrittsregeln",
-        "Label": "Konfigurieren",
-        "Hint": "Stufenaufstieg, Talente, Vorzüge und Fortschrittsoptionen konfigurieren"
-      },
-      "Combat": {
-        "Name": "Kampfregeln",
-        "Label": "Konfigurieren",
-        "Hint": "Kampf, Schaden, Tod und Zustandsleisten-Regeln konfigurieren"
-      },
-      "Force": {
-        "Name": "Macht & Schicksalsregeln",
-        "Label": "Konfigurieren",
-        "Hint": "Machtpunkte, Dunkle Seite und Machtkraft-Regeln konfigurieren"
-      },
-      "Presets": {
-        "Name": "Hausregel-Voreinstellungen",
-        "Label": "Voreinstellungen Verwalten",
-        "Hint": "Vordefinierte Hausregel-Konfigurationen anwenden oder Einstellungen importieren/exportieren"
-      },
-      "SecondWindImproved": {
-        "Name": "Verbesserter Zweiter Atem",
-        "Hint": "Zweiter Atem verbessert auch die Zustandsleiste um einen Schritt"
-      },
-      "TalentEveryLevel": {
-        "Name": "Talent Jede Stufe",
-        "Hint": "Charaktere erhalten jede Stufe ein Talent statt jeder ungeraden Stufe"
-      },
-      "CrossClassSkills": {
-        "Name": "Klassenübergreifende Fertigkeitsausbildung",
-        "Hint": "Ausbildung von Nicht-Klassenfertigkeiten für 2 Fertigkeitsplätze erlauben"
-      },
-      "SkillFocusRestriction": {
-        "Name": "Fertigkeitsfokus-Beschränkungen",
-        "Hint": "Fertigkeitsfokus (Macht Anwenden) einschränken, um frühe Dominanz zu verhindern"
-      },
-      "ArmoredDefenseForAll": {
-        "Name": "Gepanzerte Verteidigung für Alle",
-        "Hint": "Alle Charaktere können Rüstungsbonus auf Reflexverteidigung nutzen"
-      },
-      "WeaponRanges": {
-        "Name": "Waffenreichweiten-Modifikator",
-        "Hint": "Alle Waffenreichweiten mit diesem Faktor multiplizieren"
-      },
-      "AthleticsConsolidation": {
-        "Name": "Athletik-Fertigkeit",
-        "Hint": "Klettern, Springen und Schwimmen zu einer Athletik-Fertigkeit zusammenfassen"
-      },
-      "DiagonalMovement": {
-        "Name": "Diagonale Bewegung",
-        "Hint": "Wie diagonale Bewegung auf dem Raster gezählt wird"
-      },
-      "ForcePointRecovery": {
-        "Name": "Machtpunkt-Erholung",
-        "Hint": "Wann Machtpunkte sich regenerieren"
-      },
-      "ConditionTrackCap": {
-        "Name": "Zustandsleisten-Schadensgrenze",
-        "Hint": "Maximale Zustandsleisten-Schritte durch einen einzelnen Angriff"
-      },
-      "KnowledgeSkills": {
-        "Name": "Wissensfertigkeits-Modus",
-        "Hint": "Mehrere Wissensfertigkeiten zusammenfassen"
-      },
-      "DarkSideTemptation": {
-        "Name": "Versuchung der Dunklen Seite",
-        "Hint": "Machtpunkt ausgeben, um vorübergehend Kräfte der Dunklen Seite zu erlangen"
-      },
-      "BlasterCharges": {
-        "Name": "Blaster-Ladungen Verfolgen",
-        "Hint": "Munition für Energiewaffen verfolgen"
-      },
-      "CriticalHit": {
-        "Name": "Kritischer Treffer Variante",
-        "Hint": "Alternative Berechnungen für kritischen Trefferschaden"
-      },
-      "Retraining": {
-        "Name": "Umschulung Erlauben",
-        "Hint": "Austausch von Vorzügen/Talenten beim Stufenaufstieg erlauben"
-      },
-      "DailyForcePoints": {
-        "Name": "Tägliche Machtpunkte",
-        "Hint": "Verwende tägliche Machtpunkte statt pro Stufe (1.-5. Stufe: 1 MP, 6.-10.: 2 MP, 11.-15.: 3 MP, 16+: 4 MP pro Tag)"
-      },
-      "DarkSideTemptationMechanic": {
-        "Name": "Versuchung der Dunklen Seite Mechanik",
-        "Hint": "Erlaube Charakteren, die Dunkle Seite anzurufen beim Ausgeben von Machtpunkten (erfordert Dunkle-Seite-Wert ≤ halbe Weisheit, +1W6, erhöht Dunkle-Seite-Wert um 1)"
-      },
-      "ResetResourcesOnCombat": {
-        "Name": "Ressourcen bei Kampfbeginn Zurücksetzen",
-        "Hint": "Temporäre Ressourcen (wie Zweiter Atem) automatisch zurücksetzen, wenn Kampf beginnt"
-      },
-      "WelcomeShown": {
-        "Name": "Willkommensnachricht Angezeigt",
-        "Hint": "Verfolgt, ob die Willkommensnachricht angezeigt wurde"
-      },
-      "DevMode": {
-        "Name": "Entwicklermodus",
-        "Hint": "Aktiviert detaillierte Fehlerprotokollierung und Stack-Traces für Debugging"
-      }
-    },
-    "Compendium": {
-      "Classes": "Klassen",
-      "Talents": "Talente",
-      "TalentTrees": "Talentbäume",
-      "Feats": "Vorzüge",
-      "Species": "Spezies",
-      "Equipment": "Ausrüstung",
-      "Weapons": "Waffen",
-      "Armor": "Rüstung",
-      "ArmorLight": "Leichte Rüstung",
-      "ArmorMedium": "Mittlere Rüstung",
-      "ArmorHeavy": "Schwere Rüstung",
-      "ForcePowers": "Machtkräfte",
-      "ForceTechniques": "Machttechniken",
-      "ForceSecrets": "Machtgeheimnisse",
-      "LightsaberFormPowers": "Lichtschwertstil-Kräfte",
-      "Skills": "Fertigkeiten",
-      "ExtraSkillUses": "Zusätzliche Fertigkeitsnutzungen",
-      "Conditions": "Zustände",
-      "SpecialCombatConditions": "Besondere Kampfzustände",
-      "Attributes": "Attribute",
-      "Vehicles": "Fahrzeuge",
-      "Droids": "Droiden",
-      "NPCs": "NSCs"
-    },
-    "ForcePoints": {
-      "SpendDialog": {
-        "Title": "Machtpunkt Ausgeben",
-        "Question": "Machtpunkt für {reason} ausgeben?",
-        "RollInfo": "Sie würfeln {die} und addieren das {method} zu Ihrem Wurf.",
-        "CallDarkSide": "Dunkle Seite anrufen (+1W6, erhöht Dunkle-Seite-Wert um 1)",
-        "Remaining": "Verbleibende Machtpunkte:",
-        "Spend": "Machtpunkt Ausgeben",
-        "Cancel": "Abbrechen"
-      },
-      "Chat": {
-        "Title": "Machtpunkt Ausgegeben",
-        "Highest": "Höchste:",
-        "Result": "Ergebnis:",
-        "DarkSideBonus": "Dunkle-Seite-Bonus:",
-        "DarkSideWarning": "Dunkle-Seite-Wert um 1 erhöht",
-        "TotalBonus": "Gesamtbonus:",
-        "UsedFor": "Verwendet für:",
-        "ReducedDarkSide": "Dunkle-Seite-Wert reduziert auf {score}",
-        "AvoidDeath": "{name} gibt einen Machtpunkt aus, um dem Tod zu entgehen und wird bewusstlos!",
-        "AlreadyZero": "Ihr Dunkle-Seite-Wert ist bereits 0.",
-        "NoPointsRemaining": "Keine Machtpunkte mehr!"
-      },
-      "Methods": {
-        "result": "Ergebnis",
-        "highest_result": "höchstes Ergebnis"
-      }
-    },
-    "Notifications": {
-      "Welcome": {
-        "Title": "SWSE Erweitertes System Geladen!",
-        "ConditionTrack": "Visuelle Zustandsleiste aktiv",
-        "DamageThreshold": "Schadensschwellen-Automatisierung aktiviert",
-        "ForceSuite": "Macht-Suite Verwaltung bereit",
-        "Summary": "Überprüfen Sie den Zusammenfassungs-Tab für Ihr Kampf-Dashboard"
-      },
-      "Condition": {
-        "RecoverySuccess": "{name} erholt sich um einen Schritt auf der Zustandsleiste!",
-        "RecoveryFailed": "{name} schafft es nicht, sich zu erholen."
-      },
-      "Combat": {
-        "NoTargets": "Keine Ziele ausgewählt!",
-        "NoActorSelected": "Kein Akteur ausgewählt"
-      },
-      "Damage": {
-        "CannotRoll": "Kann Schaden für diesen Gegenstand nicht würfeln."
-      },
-      "Rolls": {
-        "DefenseNotFound": "Verteidigungstyp {type} nicht gefunden",
-        "SaveSucceeded": "Rettungswurf erfolgreich! ({total} gegen SW {dc})",
-        "SaveFailed": "Rettungswurf gescheitert! ({total} gegen SW {dc})",
-        "DiceRollFailed": "Würfelwurf fehlgeschlagen: {error}",
-        "SkillNotFound": "Fertigkeit {skill} nicht gefunden",
-        "UseForceRequiresTraining": "Macht Anwenden erfordert Training!"
-      },
-      "Items": {
-        "NotOwnedByActor": "Dieser Gegenstand gehört keinem Akteur.",
-        "SpeciesApplied": "{species} Rasseneigenschaften auf {actor} angewendet",
-        "AlreadyHasClass": "{actor} hat bereits die Klasse {class}"
-      },
-      "System": {
-        "MigrationComplete": "Migration abgeschlossen: {updated} aktualisiert, {errors} Fehler"
-      }
-    },
-    "Dialogs": {
-      "ConditionRecovery": {
-        "Title": "Zustandserholung",
-        "Content": "<p><strong>{name}</strong> kann versuchen, sich zu erholen.</p><p>Aktuelle Position: {current}/5</p><p>Ausdauer-Probe (SW 10) machen?</p>"
-      },
-      "ReplaceSpecies": {
-        "Title": "Spezies Ersetzen?",
-        "Content": "<p>{actor} hat bereits Spezies: <strong>{existing}</strong></p><p>Ersetzen mit <strong>{new}</strong>?</p>"
-      },
-      "ApplyDroidChassis": {
-        "Title": "Droiden-Chassis Anwenden?"
-      },
-      "ApplyVehicleTemplate": {
-        "Title": "Fahrzeug-Vorlage Anwenden?"
-      },
-      "ApplyDamage": {
-        "Title": "Schaden auf {name} Anwenden",
-        "Amount": "Schadensmenge",
-        "CheckThreshold": "Schadensschwelle Prüfen",
-        "IgnoreTemp": "Temporäre TP Ignorieren",
-        "Button": "Schaden Anwenden"
-      },
-      "Healing": {
-        "TitleHeal": "{name} Heilen",
-        "TitleRepair": "{name} Reparieren",
-        "Amount": "Heilungsmenge",
-        "RepairAmount": "Reparaturmenge (via Mechanik)",
-        "ButtonHeal": "Heilung Anwenden",
-        "ButtonRepair": "Reparatur Anwenden",
-        "DroidNote": "Droiden können nur mit der Mechanik-Fertigkeit repariert werden."
-      },
-      "ConditionTrack": {
-        "Title": "Zustandsleiste: {name}"
-      },
-      "Store": {
-        "Title": "Galaktische Handelsstation",
-        "ConfirmDroidPurchase": "Droiden-Kauf Bestätigen",
-        "ConfirmVehiclePurchase": "Fahrzeug-Kauf Bestätigen",
-        "BuildCustomDroid": "Benutzerdefinierten Droiden Bauen",
-        "BuildCustomStarship": "Benutzerdefiniertes Raumschiff Bauen",
-        "CompletePurchase": "Kauf Abschließen"
-      },
-      "LevelUp": {
-        "Title": "{name} Stufe Aufsteigen"
-      },
-      "HouseRules": {
-        "Title": "SWSE Hausregeln Konfiguration",
-        "CharacterCreation": "Charaktererstellung",
-        "SkillsFeats": "Fertigkeiten & Vorzüge",
-        "Advancement": "Fortschritt",
-        "Combat": "Kampf",
-        "ForceDestiny": "Macht & Schicksal",
-        "SpaceCombat": "Weltraumkampf",
-        "Presets": "Voreinstellungen",
-        "CharacterCreationRules": "Charaktererstellungsregeln",
-        "AdvancementRules": "Fortschrittsregeln",
-        "CombatRules": "Kampfregeln",
-        "ForceDestinyRules": "Macht & Schicksalsregeln"
-      },
-      "CharacterGenerator": {
-        "Title": "Charakter-Generator",
-        "ImportDroidType": "Droiden-Typ Importieren"
-      },
-      "Buttons": {
-        "Confirm": "Bestätigen",
-        "Cancel": "Abbrechen",
-        "Apply": "Anwenden",
-        "Close": "Schließen",
-        "Save": "Speichern",
-        "Delete": "Löschen"
-      }
-    },
-    "Chat": {
-      "Flavors": {
-        "ConditionRecovery": "Zustandserholungs-Probe (SW 10)",
-        "Attack": "{weapon} Angriff",
-        "Damage": "{weapon} Schaden",
-        "Save": "{name} würfelt einen {type}-Rettungswurf ({modifier})",
-        "Skill": "{skill} Probe"
-      },
-      "Roll": {
-        "CriticalThreat": "KRITISCHE BEDROHUNG!",
-        "RollDamage": "Schaden Würfeln",
-        "ApplyDamage": "Schaden Anwenden",
-        "DiceTotal": "Gesamt",
-        "Formula": "Formel",
-        "Breakdown": "Aufschlüsselung"
-      }
-    }
+    "SystemName": "Star Wars Saga Edition"
   }
 }

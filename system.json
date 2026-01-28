@@ -84,12 +84,12 @@
     },
     {
       "lang": "es",
-      "name": "Espa\u00f1ol",
+      "name": "Español",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Fran\u00e7ais",
+      "name": "Français",
       "path": "lang/fr.json"
     },
     {
@@ -99,8 +99,28 @@
     },
     {
       "lang": "ru",
-      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "name": "Русский",
       "path": "lang/ru.json"
+    },
+    {
+      "lang": "nl",
+      "name": "Nederlands",
+      "path": "lang/nl.json"
+    },
+    {
+      "lang": "fi",
+      "name": "Suomi",
+      "path": "lang/fi.json"
+    },
+    {
+      "lang": "ja",
+      "name": "日本語",
+      "path": "lang/ja.json"
+    },
+    {
+      "lang": "zh-CN",
+      "name": "中文（简体）",
+      "path": "lang/zh-CN.json"
     }
   ],
   "socket": true,

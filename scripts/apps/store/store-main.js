@@ -39,9 +39,9 @@ import {
   createCustomStarship
 } from "./store-checkout.js";
 
-const { ApplicationV2 } = foundry.applications.api;
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-const CART_FLAG_SCOPE = "foundryvtt-swse";
+const CART_FLAG_SCOPE = () => (game?.system?.id ?? "foundryvtt-swse");
 const CART_FLAG_KEY = "storeCart";
 
 function emptyCart() {
@@ -52,7 +52,7 @@ function asArray(v) {
   return Array.isArray(v) ? v : [];
 }
 
-export class SWSEStore extends ApplicationV2 {
+export class SWSEStore extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static DEFAULT_OPTIONS = {
     id: "swse-store",
@@ -76,11 +76,6 @@ export class SWSEStore extends ApplicationV2 {
 
     this.cart = emptyCart();
     this._loaded = false;
-  }
-
-  async _renderHTML(context, options) {
-    if (!this._loaded) await this._initialize();
-    return super._renderHTML(context, options);
   }
 
   async _prepareContext(_options) {
@@ -107,7 +102,7 @@ export class SWSEStore extends ApplicationV2 {
 
   _loadCartFromActor() {
     if (!this.actor) return emptyCart();
-    const stored = this.actor.getFlag(CART_FLAG_SCOPE, CART_FLAG_KEY);
+    const stored = this.actor.getFlag(CART_FLAG_SCOPE(), CART_FLAG_KEY);
     if (!stored) return emptyCart();
     return {
       items: asArray(stored.items),
@@ -118,7 +113,7 @@ export class SWSEStore extends ApplicationV2 {
 
   async _persistCart() {
     if (!this.actor) return;
-    await this.actor.setFlag(CART_FLAG_SCOPE, CART_FLAG_KEY, this.cart);
+    await this.actor.setFlag(CART_FLAG_SCOPE(), CART_FLAG_KEY, this.cart);
   }
 
   async _loadItemPacks() {
@@ -302,63 +297,75 @@ export class SWSEStore extends ApplicationV2 {
     return categorizeEquipment({ name: view.name, system: sys });
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  _onRender(_context, _options) {
+    super._onRender(_context, _options);
 
-    // Add to cart buttons
-    html.on("click", ".buy-item", ev => {
+    const root = this.element;
+    if (!root) return;
+
+    const bind = (selector, type, handler) => {
+      root.querySelectorAll(selector).forEach((el) => el.addEventListener(type, handler));
+    };
+
+    bind(".buy-item", "click", (ev) => {
       const id = ev.currentTarget?.dataset?.itemId;
       if (!id) return;
-      addItemToCart(this, id, line => this._setRendarrLine(line));
-      this._persistCart();
+      addItemToCart(this, id, (line) => this._setRendarrLine(line));
+      void this._persistCart();
       this._renderCartUI();
     });
 
-    html.on("click", ".buy-droid", ev => {
+    bind(".buy-droid", "click", (ev) => {
       const id = ev.currentTarget?.dataset?.actorId || ev.currentTarget?.dataset?.droidId;
       if (!id) return;
-      addDroidToCart(this, id, line => this._setRendarrLine(line));
-      this._persistCart();
+      addDroidToCart(this, id, (line) => this._setRendarrLine(line));
+      void this._persistCart();
       this._renderCartUI();
     });
 
-    html.on("click", ".buy-vehicle", ev => {
+    bind(".buy-vehicle", "click", (ev) => {
       const id = ev.currentTarget?.dataset?.actorId || ev.currentTarget?.dataset?.vehicleId;
       const condition = ev.currentTarget?.dataset?.condition || "new";
       if (!id) return;
-      addVehicleToCart(this, id, condition, line => this._setRendarrLine(line));
-      this._persistCart();
+      addVehicleToCart(this, id, condition, (line) => this._setRendarrLine(line));
+      void this._persistCart();
       this._renderCartUI();
     });
 
+    bind(".remove-from-cart", "click", (ev) => {
+      const id = ev.currentTarget?.dataset?.cartId || ev.currentTarget?.dataset?.id;
+      if (!id) return;
+      removeFromCartById(this.cart, id);
+      void this._persistCart();
+      this._renderCartUI();
+    });
 
-    // Custom builders
-    html.on("click", ".create-custom-droid", async () => {
+    bind(".create-custom-droid", "click", async () => {
       if (!this.actor) return;
       await createCustomDroid(this.actor, () => this.render());
     });
 
-    html.on("click", ".create-custom-starship", async () => {
+    bind(".create-custom-starship", "click", async () => {
       if (!this.actor) return;
       await createCustomStarship(this.actor, () => this.render());
     });
 
-    html.on("click", "#checkout-cart", async () => {
+    bind("#checkout-cart", "click", async () => {
       await checkout(this, (el, v) => this._animateNumber(el, v));
       this.cart = emptyCart();
       await this._persistCart();
       this._renderCartUI();
     });
 
-    html.on("click", "#clear-cart", async () => {
+    bind("#clear-cart", "click", async () => {
       clearCart(this.cart);
       await this._persistCart();
       this._renderCartUI();
     });
 
-    // Initial render once DOM exists
     this._renderCartUI();
   }
+
 
   _setRendarrLine(line) {
     const el = this.element?.querySelector?.(".holo-message");

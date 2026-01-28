@@ -10,6 +10,8 @@
 
 import { SWSELogger } from '../utils/logger.js';
 
+const _swseFlagScope = () => game?.system?.id ?? "foundryvtt-swse";
+
 export class DarkSidePowers {
 
   // ========================================================================
@@ -32,7 +34,7 @@ export class DarkSidePowers {
     }
 
     // Check if already used today
-    const lastUsed = actor.getFlag('swse', 'swiftPowerUsedToday');
+    const lastUsed = actor.getFlag(_swseFlagScope(), 'swiftPowerUsedToday');
     const today = new Date().toDateString();
 
     if (lastUsed === today) {
@@ -41,7 +43,7 @@ export class DarkSidePowers {
     }
 
     // Record usage
-    await actor.setFlag('swse', 'swiftPowerUsedToday', today);
+    await actor.setFlag(_swseFlagScope(), 'swiftPowerUsedToday', today);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Swift Power on ${forcePower.name}`);
     ui.notifications.info(`${forcePower.name} is being used as a Swift Action!`);
@@ -76,7 +78,7 @@ export class DarkSidePowers {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const savantUsageFlag = `darkSideSavant_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', savantUsageFlag);
+    const alreadyUsed = actor.getFlag(_swseFlagScope(), savantUsageFlag);
 
     if (alreadyUsed) {
       return {
@@ -107,7 +109,7 @@ export class DarkSidePowers {
         'system.spent': false
       }]);
 
-      await actor.setFlag('swse', savantUsageFlag, true);
+      await actor.setFlag(_swseFlagScope(), savantUsageFlag, true);
 
       SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Side Savant to return ${power.name}`);
       ui.notifications.info(`${power.name} has been returned to your Force Power Suite without spending a Force Point!`);
@@ -137,7 +139,7 @@ export class DarkSidePowers {
       'system.spent': false
     }]);
 
-    await actor.setFlag('swse', savantUsageFlag, true);
+    await actor.setFlag(_swseFlagScope(), savantUsageFlag, true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Side Savant to return ${power.name}`);
     ui.notifications.info(`${power.name} has been returned to your Force Power Suite!`);
@@ -194,7 +196,7 @@ export class DarkSidePowers {
 
     // Store the delayed damage on the target
     const targetActor = targetToken.actor;
-    const wrathFlags = targetActor.getFlag('swse', 'wrathDamage') || [];
+    const wrathFlags = targetActor.getFlag(_swseFlagScope(), 'wrathDamage') || [];
     wrathFlags.push({
       id: wrathFlagId,
       damage: halfDamage,
@@ -204,7 +206,7 @@ export class DarkSidePowers {
       triggeredAt: new Date().toISOString()
     });
 
-    await targetActor.setFlag('swse', 'wrathDamage', wrathFlags);
+    await targetActor.setFlag(_swseFlagScope(), 'wrathDamage', wrathFlags);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} triggered Wrath of the Dark Side on ${targetActor.name}. Will deal ${halfDamage} damage at start of next turn.`);
     ui.notifications.info(`${targetActor.name} will take ${halfDamage} additional damage at the start of their next turn from Wrath of the Dark Side!`);
@@ -218,7 +220,7 @@ export class DarkSidePowers {
 
   static async applyWrathDamageAtTurnStart(token) {
     const actor = token.actor;
-    const wrathFlags = actor.getFlag('swse', 'wrathDamage') || [];
+    const wrathFlags = actor.getFlag(_swseFlagScope(), 'wrathDamage') || [];
 
     if (wrathFlags.length === 0) {
       return;
@@ -257,17 +259,17 @@ export class DarkSidePowers {
     );
 
     if (remainingDamages.length === 0) {
-      await actor.unsetFlag('swse', 'wrathDamage');
+      await actor.unsetFlag(_swseFlagScope(), 'wrathDamage');
     } else {
-      await actor.setFlag('swse', 'wrathDamage', remainingDamages);
+      await actor.setFlag(_swseFlagScope(), 'wrathDamage', remainingDamages);
     }
   }
 
   static async clearWrathFlagsOnCombatEnd() {
     for (const combatant of game.combat?.combatants || []) {
       const actor = combatant.actor;
-      if (actor?.getFlag('swse', 'wrathDamage')) {
-        await actor.unsetFlag('swse', 'wrathDamage');
+      if (actor?.getFlag(_swseFlagScope(), 'wrathDamage')) {
+        await actor.unsetFlag(_swseFlagScope(), 'wrathDamage');
       }
     }
   }
@@ -347,7 +349,7 @@ export class DarkSidePowers {
       return { success: false, message: 'Actor does not have Channel Anger' };
     }
 
-    const isRaging = actor.getFlag('swse', 'isChannelAngerRaging');
+    const isRaging = actor.getFlag(_swseFlagScope(), 'isChannelAngerRaging');
     if (isRaging) {
       return {
         success: false,
@@ -381,7 +383,7 @@ export class DarkSidePowers {
       conModifier: conModifier
     };
 
-    await actor.setFlag('swse', 'isChannelAngerRaging', rageInfo);
+    await actor.setFlag(_swseFlagScope(), 'isChannelAngerRaging', rageInfo);
 
     const chatContent = `
       <div class="swse-channel-anger">
@@ -411,12 +413,12 @@ export class DarkSidePowers {
   }
 
   static async endChannelAnger(actor) {
-    const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
+    const rageInfo = actor.getFlag(_swseFlagScope(), 'isChannelAngerRaging');
     if (!rageInfo) {
       return { success: false, message: 'Actor is not currently raging' };
     }
 
-    await actor.unsetFlag('swse', 'isChannelAngerRaging');
+    await actor.unsetFlag(_swseFlagScope(), 'isChannelAngerRaging');
 
     const currentCondition = actor.system.conditionTrack?.value || 0;
     const newCondition = Math.max(0, currentCondition - 1);
@@ -445,7 +447,7 @@ export class DarkSidePowers {
   }
 
   static isCurrentlyRaging(actor) {
-    const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
+    const rageInfo = actor.getFlag(_swseFlagScope(), 'isChannelAngerRaging');
     if (!rageInfo) return false;
 
     const currentRound = game.combat?.round || 0;
@@ -481,7 +483,7 @@ export class DarkSidePowers {
     const originalSpeed = targetActor.system.speed?.base || 6;
     const crippledSpeed = Math.ceil(originalSpeed / 2);
 
-    await targetActor.setFlag('swse', 'isCrippled', {
+    await targetActor.setFlag(_swseFlagScope(), 'isCrippled', {
       sourceActor: actor.id,
       sourceName: actor.name,
       originalSpeed: originalSpeed,
@@ -518,7 +520,7 @@ export class DarkSidePowers {
   }
 
   static checkCripplingStrikeExpiry(targetActor) {
-    const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
+    const crippledInfo = targetActor.getFlag(_swseFlagScope(), 'isCrippled');
     if (!crippledInfo) return false;
 
     if (targetActor.system.hp.value >= crippledInfo.maxHpWhenCrippled) {
@@ -529,14 +531,14 @@ export class DarkSidePowers {
   }
 
   static async removeCripplingStrike(targetActor) {
-    const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
+    const crippledInfo = targetActor.getFlag(_swseFlagScope(), 'isCrippled');
     if (!crippledInfo) return;
 
     await targetActor.update({
       'system.speed.current': crippledInfo.originalSpeed
     });
 
-    await targetActor.unsetFlag('swse', 'isCrippled');
+    await targetActor.unsetFlag(_swseFlagScope(), 'isCrippled');
 
     const chatContent = `
       <div class="swse-crippling-strike-end">
@@ -602,7 +604,7 @@ export class DarkSidePowers {
       };
     }
 
-    const activeTalisman = actor.getFlag('swse', 'activeDarkSideTalisman');
+    const activeTalisman = actor.getFlag(_swseFlagScope(), 'activeDarkSideTalisman');
     if (activeTalisman) {
       return {
         success: false,
@@ -653,7 +655,7 @@ export class DarkSidePowers {
       createdRound: game.combat?.round || 0
     };
 
-    await actor.setFlag('swse', 'activeDarkSideTalisman', talismantInfo);
+    await actor.setFlag(_swseFlagScope(), 'activeDarkSideTalisman', talismantInfo);
 
     const chatContent = `
       <div class="swse-dark-side-talisman">
@@ -682,7 +684,7 @@ export class DarkSidePowers {
   }
 
   static async destroyDarkSideTalisman(actor) {
-    const talisman = actor.getFlag('swse', 'activeDarkSideTalisman');
+    const talisman = actor.getFlag(_swseFlagScope(), 'activeDarkSideTalisman');
     if (!talisman) {
       return { success: false, message: 'Actor does not have an active Dark Side Talisman' };
     }
@@ -695,12 +697,12 @@ export class DarkSidePowers {
       }
     }
 
-    await actor.unsetFlag('swse', 'activeDarkSideTalisman');
+    await actor.unsetFlag(_swseFlagScope(), 'activeDarkSideTalisman');
 
     const cooldownUntil = new Date();
     cooldownUntil.setHours(cooldownUntil.getHours() + 24);
 
-    await actor.setFlag('swse', 'darkSideTalismanCooldown', cooldownUntil.toISOString());
+    await actor.setFlag(_swseFlagScope(), 'darkSideTalismanCooldown', cooldownUntil.toISOString());
 
     const chatContent = `
       <div class="swse-dark-side-talisman-destroyed">
@@ -722,7 +724,7 @@ export class DarkSidePowers {
   }
 
   static canCreateNewTalisman(actor) {
-    const cooldown = actor.getFlag('swse', 'darkSideTalismanCooldown');
+    const cooldown = actor.getFlag(_swseFlagScope(), 'darkSideTalismanCooldown');
     if (!cooldown) return true;
 
     const cooldownTime = new Date(cooldown);
@@ -732,7 +734,7 @@ export class DarkSidePowers {
   }
 
   static getActiveTalisman(actor) {
-    return actor.getFlag('swse', 'activeDarkSideTalisman');
+    return actor.getFlag(_swseFlagScope(), 'activeDarkSideTalisman');
   }
 
   // ========================================================================
@@ -1168,7 +1170,7 @@ export class DarkSidePowers {
 
   static async applyAffliction(targetToken, sourceName) {
     const targetActor = targetToken.actor;
-    const afflictionFlags = targetActor.getFlag('swse', 'afflictions') || [];
+    const afflictionFlags = targetActor.getFlag(_swseFlagScope(), 'afflictions') || [];
 
     afflictionFlags.push({
       sourceName: sourceName,
@@ -1176,14 +1178,14 @@ export class DarkSidePowers {
       triggeredAt: false
     });
 
-    await targetActor.setFlag('swse', 'afflictions', afflictionFlags);
+    await targetActor.setFlag(_swseFlagScope(), 'afflictions', afflictionFlags);
 
     SWSELogger.log(`SWSE Talents | Applied Affliction from ${sourceName} to ${targetActor.name}`);
   }
 
   static async applyAfflictionDamage(targetToken) {
     const targetActor = targetToken.actor;
-    const afflictions = targetActor.getFlag('swse', 'afflictions') || [];
+    const afflictions = targetActor.getFlag(_swseFlagScope(), 'afflictions') || [];
 
     if (afflictions.length === 0) return;
 
@@ -1215,7 +1217,7 @@ export class DarkSidePowers {
     }
 
     // Clear afflictions after applying
-    await targetActor.unsetFlag('swse', 'afflictions');
+    await targetActor.unsetFlag(_swseFlagScope(), 'afflictions');
   }
 
   /**
@@ -1244,7 +1246,7 @@ export class DarkSidePowers {
     }
 
     const drainForceFlag = `drainForce_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', drainForceFlag);
+    const alreadyUsed = actor.getFlag(_swseFlagScope(), drainForceFlag);
 
     if (alreadyUsed) {
       return {
@@ -1284,7 +1286,7 @@ export class DarkSidePowers {
     });
 
     // Mark as used
-    await actor.setFlag('swse', drainForceFlag, true);
+    await actor.setFlag(_swseFlagScope(), drainForceFlag, true);
 
     const chatContent = `
       <div class="swse-drain-force">
@@ -1329,7 +1331,7 @@ export class DarkSidePowers {
       };
     }
 
-    const activeTalisman = actor.getFlag('swse', 'activeSithTalisman');
+    const activeTalisman = actor.getFlag(_swseFlagScope(), 'activeSithTalisman');
     if (activeTalisman) {
       return {
         success: false,
@@ -1380,7 +1382,7 @@ export class DarkSidePowers {
       dspIncreaseApplied: true
     };
 
-    await actor.setFlag('swse', 'activeSithTalisman', talismantInfo);
+    await actor.setFlag(_swseFlagScope(), 'activeSithTalisman', talismantInfo);
 
     const chatContent = `
       <div class="swse-sith-talisman">
@@ -1410,7 +1412,7 @@ export class DarkSidePowers {
   }
 
   static async destroySithTalisman(actor) {
-    const talisman = actor.getFlag('swse', 'activeSithTalisman');
+    const talisman = actor.getFlag(_swseFlagScope(), 'activeSithTalisman');
     if (!talisman) {
       return { success: false, message: 'Actor does not have an active Sith Talisman' };
     }
@@ -1423,12 +1425,12 @@ export class DarkSidePowers {
       }
     }
 
-    await actor.unsetFlag('swse', 'activeSithTalisman');
+    await actor.unsetFlag(_swseFlagScope(), 'activeSithTalisman');
 
     const cooldownUntil = new Date();
     cooldownUntil.setHours(cooldownUntil.getHours() + 24);
 
-    await actor.setFlag('swse', 'sithTalismanCooldown', cooldownUntil.toISOString());
+    await actor.setFlag(_swseFlagScope(), 'sithTalismanCooldown', cooldownUntil.toISOString());
 
     const chatContent = `
       <div class="swse-sith-talisman-destroyed">
@@ -1450,7 +1452,7 @@ export class DarkSidePowers {
   }
 
   static canCreateNewSithTalisman(actor) {
-    const cooldown = actor.getFlag('swse', 'sithTalismanCooldown');
+    const cooldown = actor.getFlag(_swseFlagScope(), 'sithTalismanCooldown');
     if (!cooldown) return true;
 
     const cooldownTime = new Date(cooldown);
@@ -1460,7 +1462,7 @@ export class DarkSidePowers {
   }
 
   static getActiveSithTalisman(actor) {
-    return actor.getFlag('swse', 'activeSithTalisman');
+    return actor.getFlag(_swseFlagScope(), 'activeSithTalisman');
   }
 
   // ========================================================================
@@ -1625,9 +1627,9 @@ export class DarkSidePowers {
       activatedTurn: game.combat?.turn || 0
     };
 
-    const activeBonus = actor.getFlag('swse', 'sithAlchemicalBonus');
+    const activeBonus = actor.getFlag(_swseFlagScope(), 'sithAlchemicalBonus');
     const bonuses = activeBonus ? [activeBonus, bonusFlag] : [bonusFlag];
-    await actor.setFlag('swse', 'sithAlchemicalBonus', bonuses[0]); // Keep only the latest (one per encounter typically)
+    await actor.setFlag(_swseFlagScope(), 'sithAlchemicalBonus', bonuses[0]); // Keep only the latest (one per encounter typically)
 
     const chatContent = `
       <div class="swse-sith-alchemical-bonus">
@@ -1659,7 +1661,7 @@ export class DarkSidePowers {
    * Clear Sith Alchemical bonus after attack is made
    */
   static async clearSithAlchemicalBonus(actor) {
-    await actor.unsetFlag('swse', 'sithAlchemicalBonus');
+    await actor.unsetFlag(_swseFlagScope(), 'sithAlchemicalBonus');
   }
 
   /**
@@ -1733,11 +1735,11 @@ export class DarkSidePowers {
   }
 
   static getStolenFormTalent(actor) {
-    return actor.getFlag('swse', 'stolenFormTalent');
+    return actor.getFlag(_swseFlagScope(), 'stolenFormTalent');
   }
 
   static async setStolenFormTalent(actor, talentName) {
-    await actor.setFlag('swse', 'stolenFormTalent', talentName);
+    await actor.setFlag(_swseFlagScope(), 'stolenFormTalent', talentName);
 
     const chatContent = `
       <div class="swse-stolen-form">
@@ -1766,7 +1768,7 @@ export class DarkSidePowers {
 Hooks.on('combatRoundChange', async (combat) => {
   for (const combatant of combat.combatants) {
     const actor = combatant.actor;
-    const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
+    const rageInfo = actor.getFlag(_swseFlagScope(), 'isChannelAngerRaging');
 
     if (rageInfo && combat.round >= rageInfo.endRound) {
       await DarkSidePowers.endChannelAnger(actor);
@@ -1776,7 +1778,7 @@ Hooks.on('combatRoundChange', async (combat) => {
 
 Hooks.on('preUpdateActor', async (actor, update, options, userId) => {
   if (update.system?.hp?.value !== undefined) {
-    const crippledInfo = actor.getFlag('swse', 'isCrippled');
+    const crippledInfo = actor.getFlag(_swseFlagScope(), 'isCrippled');
     if (crippledInfo && update.system.hp.value >= crippledInfo.maxHpWhenCrippled) {
       await DarkSidePowers.removeCripplingStrike(actor);
     }
