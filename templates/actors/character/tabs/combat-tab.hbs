@@ -58,6 +58,76 @@
  {{/if}}
  </div>
 
+ <h3 class="section-header">Defenses</h3>
+
+ <div class="defenses-grid-container">
+ <div class="defenses-header">DEFENSES</div>
+
+ {{#each system.defenses as |defense key|}}
+ <div class="defense-grid-row">
+ <!-- Defense Name Box -->
+ <div class="defense-name-box">{{upper (substring key 0 4)}}</div>
+
+ <!-- Base (10) -->
+ <div class="defense-box-group">
+ <input type="number"
+ value="10"
+ disabled
+ class="defense-input-sm"/>
+ <label class="defense-box-label">Base</label>
+ </div>
+
+ <div class="operator">+</div>
+
+ <!-- Ability Selector Dropdown -->
+ <div class="defense-box-group">
+ <select
+ name="system.defenses.{{key}}.ability"
+ class="defense-select-sm">
+ <option value="str" {{#if (eq defense.ability "str")}}selected{{/if}}>STR</option>
+ <option value="dex" {{#if (eq defense.ability "dex")}}selected{{/if}}>DEX</option>
+ <option value="con" {{#if (eq defense.ability "con")}}selected{{/if}}>CON</option>
+ <option value="int" {{#if (eq defense.ability "int")}}selected{{/if}}>INT</option>
+ <option value="wis" {{#if (eq defense.ability "wis")}}selected{{/if}}>WIS</option>
+ <option value="cha" {{#if (eq defense.ability "cha")}}selected{{/if}}>CHA</option>
+ </select>
+ <label class="defense-box-label">Ability</label>
+ </div>
+
+ <div class="operator">+</div>
+
+ <!-- Class Bonus -->
+ <div class="defense-box-group">
+ <input type="number"
+ name="system.defenses.{{key}}.classBonus"
+ value="{{defense.classBonus}}"
+ data-dtype="Number"
+ class="defense-input-sm"
+ placeholder="0"/>
+ <label class="defense-box-label">Class</label>
+ </div>
+
+ <div class="operator">+</div>
+
+ <!-- Misc -->
+ <div class="defense-box-group">
+ <input type="number"
+ name="system.defenses.{{key}}.misc.user.extra"
+ value="{{defense.misc.user.extra}}"
+ data-dtype="Number"
+ class="defense-input-sm"
+ placeholder="0"/>
+ <label class="defense-box-label">Misc</label>
+ </div>
+
+ <div class="operator">=</div>
+
+ <!-- Total -->
+ <div class="defense-total-box">{{defense.total}}</div>
+ </div>
+ {{/each}}
+ </div>
+
  {{!-- Grappling Section --}}
  <h3 class="section-header">Grappling Status</h3>
 

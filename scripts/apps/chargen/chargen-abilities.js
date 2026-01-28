@@ -122,18 +122,19 @@ export function _bindAbilitiesUI(root) {
     const adjustAttribute = (ab, delta) => {
       const el = root.querySelector(`[name="ability_${ab}"]`);
       if (!el) return;
-      
+
       let cur = Number(el.value || 8);
       const newVal = Math.max(8, Math.min(18, cur + delta));
       const costNow = pointCosts(8, cur);
       const costNew = pointCosts(8, newVal);
       const deltaCost = costNew - costNow;
-      
-      if (deltaCost > pool) {
+
+      // In Free Build mode, skip point-buy validation
+      if (!chargen.freeBuild && deltaCost > pool) {
         ui.notifications.warn("Not enough point-buy points remaining.");
         return;
       }
-      
+
       pool -= deltaCost;
       el.value = newVal;
       chargen.characterData.abilities[ab].base = newVal;

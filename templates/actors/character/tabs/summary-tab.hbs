@@ -1,6 +1,20 @@
 {{!-- Summary Tab: Combat Dashboard --}}
 <div class="tab summary-tab active" data-group="primary" data-tab="summary">
 
+ {{!-- Character Level --}}
+ <section class="character-level-section">
+ <div class="level-display-grid">
+  <div class="level-block">
+   <label>Level</label>
+   <div class="level-value">{{system.level}}</div>
+  </div>
+  <div class="level-block">
+   <label>½ Level</label>
+   <div class="level-value">{{system.halfLevel}}</div>
+  </div>
+ </div>
+ </section>
+
  <section class="combat-stats">
  <h3 class="section-header">Combat Statistics</h3>
  

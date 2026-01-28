@@ -83,7 +83,7 @@ export class SWSERoll {
   static async _safeRoll(formula, data = {}) {
     try {
       const roll = new Roll(formula, data);
-      roll.evaluateSync();
+      await roll.evaluate({ async: true });
       return roll;
     } catch (err) {
       swseLogger.error('Roll failed:', formula, err);

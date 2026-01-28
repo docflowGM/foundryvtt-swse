@@ -152,6 +152,14 @@ Hooks.once("init", () => {
     const skill = getSkillConfigSync(skillKey);
     return skill ? skill.untrained : false;
   });
+
+  Handlebars.registerHelper("filterExtraUsesByTraining", (extraUses, isTrained) => {
+    if (!extraUses || !Array.isArray(extraUses)) return [];
+    // If skill is trained, show all extra uses
+    if (isTrained) return extraUses;
+    // If untrained, filter to only untrained-friendly uses (by convention, those without trainedOnly flag)
+    return extraUses.filter(use => !use.trainedOnly);
+  });
 });
 
 /**

@@ -17,116 +17,61 @@
  </label>
 
  <div class="ability-inputs flexrow">
- <input type="number"
- name="system.attributes.{{key}}.base"
- value="{{ability.base}}"
- data-dtype="Number"
- placeholder="10"
- title="Base Score"
- {{#if (and @root.system.isDroid (eq key 'con'))}}disabled{{/if}}/>
+ <div class="ability-input-group">
+  <label class="input-label">Base</label>
+  <input type="number"
+  name="system.attributes.{{key}}.base"
+  value="{{ability.base}}"
+  data-dtype="Number"
+  placeholder="10"
+  title="Base Score"
+  {{#if (and @root.system.isDroid (eq key 'con'))}}disabled{{/if}}/>
+ </div>
 
- <span>+</span>
+ <span class="operator">+</span>
 
- <input type="number"
- name="system.attributes.{{key}}.racial"
- value="{{ability.racial}}"
- data-dtype="Number"
- placeholder="0"
- title="Racial Modifier"
- {{#if (and @root.system.isDroid (eq key 'con'))}}disabled{{/if}}/>
+ <div class="ability-input-group">
+  <label class="input-label">Racial</label>
+  <input type="number"
+  name="system.attributes.{{key}}.racial"
+  value="{{ability.racial}}"
+  data-dtype="Number"
+  placeholder="0"
+  title="Racial Modifier"
+  {{#if (and @root.system.isDroid (eq key 'con'))}}disabled{{/if}}/>
+ </div>
 
- <span>+</span>
+ <span class="operator">+</span>
 
- <input type="number"
- name="system.attributes.{{key}}.enhancement"
- value="{{ability.enhancement}}"
- data-dtype="Number"
- placeholder="0"
- title="Enhancement Bonus"
- {{#if (and @root.system.isDroid (eq key 'con'))}}disabled{{/if}}/>
+ <div class="ability-input-group">
+  <label class="input-label">Enhancement</label>
+  <input type="number"
+  name="system.attributes.{{key}}.enhancement"
+  value="{{ability.enhancement}}"
+  data-dtype="Number"
+  placeholder="0"
+  title="Enhancement Bonus"
+  {{#if (and @root.system.isDroid (eq key 'con'))}}disabled{{/if}}/>
+ </div>
 
- <span>=</span>
+ <span class="operator">=</span>
 
- <div class="ability-total">
- {{#if (and @root.system.isDroid (eq key 'con'))}}—{{else}}{{ability.total}}{{/if}}
+ <div class="ability-input-group">
+  <label class="input-label">Total</label>
+  <div class="ability-total">
+  {{#if (and @root.system.isDroid (eq key 'con'))}}—{{else}}{{ability.total}}{{/if}}
+  </div>
  </div>
  </div>
 
- <div class="ability-mod rollable"
- data-roll="1d20+@attributes.{{key}}.mod"
- data-label="{{upper key}} Check">
- {{#if (and @root.system.isDroid (eq key 'con'))}}—{{else}}{{numberFormat (safeNumber ability.mod) sign=true}}{{/if}}
+ <div class="ability-modifier-group">
+  <label class="input-label">Modifier</label>
+  <div class="ability-mod rollable"
+  data-roll="1d20+@attributes.{{key}}.mod"
+  data-label="{{upper key}} Check">
+  {{#if (and @root.system.isDroid (eq key 'con'))}}—{{else}}{{numberFormat (safeNumber ability.mod) sign=true}}{{/if}}
+  </div>
  </div>
- </div>
- {{/each}}
- </div>
-
- <h3 class="section-header">Defenses</h3>
-
- <div class="defenses-grid-container">
- <div class="defenses-header">DEFENSES</div>
-
- {{#each system.defenses as |defense key|}}
- <div class="defense-grid-row">
- <!-- Defense Name Box -->
- <div class="defense-name-box">{{upper (substring key 0 4)}}</div>
-
- <!-- Base (10) -->
- <div class="defense-box-group">
- <input type="number"
- value="10"
- disabled
- class="defense-input-sm"/>
- <label class="defense-box-label">Base</label>
- </div>
-
- <div class="operator">+</div>
-
- <!-- Ability Selector Dropdown -->
- <div class="defense-box-group">
- <select
- name="system.defenses.{{key}}.ability"
- class="defense-select-sm">
- <option value="str" {{#if (eq defense.ability "str")}}selected{{/if}}>STR</option>
- <option value="dex" {{#if (eq defense.ability "dex")}}selected{{/if}}>DEX</option>
- <option value="con" {{#if (eq defense.ability "con")}}selected{{/if}}>CON</option>
- <option value="int" {{#if (eq defense.ability "int")}}selected{{/if}}>INT</option>
- <option value="wis" {{#if (eq defense.ability "wis")}}selected{{/if}}>WIS</option>
- <option value="cha" {{#if (eq defense.ability "cha")}}selected{{/if}}>CHA</option>
- </select>
- <label class="defense-box-label">Ability</label>
- </div>
-
- <div class="operator">+</div>
-
- <!-- Class Bonus -->
- <div class="defense-box-group">
- <input type="number"
- name="system.defenses.{{key}}.classBonus"
- value="{{defense.classBonus}}"
- data-dtype="Number"
- class="defense-input-sm"
- placeholder="0"/>
- <label class="defense-box-label">Class</label>
- </div>
-
- <div class="operator">+</div>
-
- <!-- Misc -->
- <div class="defense-box-group">
- <input type="number"
- name="system.defenses.{{key}}.misc.user.extra"
- value="{{defense.misc.user.extra}}"
- data-dtype="Number"
- class="defense-input-sm"
- placeholder="0"/>
- <label class="defense-box-label">Misc</label>
- </div>
-
- <div class="operator">=</div>
-
- <!-- Total -->
- <div class="defense-total-box">{{defense.total}}</div>
  </div>
  {{/each}}
  </div>

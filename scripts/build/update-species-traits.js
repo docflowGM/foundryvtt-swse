@@ -52,25 +52,31 @@
   let errors = 0;
   const notFoundSpecies = [];
 
-  // Load the compendium index
-  await speciesPack.getIndex();
+  // Load the compendium index and build a map of names to IDs
+  const index = await speciesPack.getIndex();
+  const nameToIdMap = new Map();
+
+  for (const indexEntry of index) {
+    const name = indexEntry.name?.toLowerCase();
+    if (name) {
+      nameToIdMap.set(name, indexEntry._id);
+    }
+  }
 
   for (const speciesData of speciesTraitsData) {
     try {
-      // Find the species in the compendium
-      const speciesIndex = speciesPack.index.find(
-        i => i.name.toLowerCase() === speciesData.name.toLowerCase()
-      );
+      // Find the species ID by name lookup
+      const speciesId = nameToIdMap.get(speciesData.name.toLowerCase());
 
-      if (!speciesIndex) {
+      if (!speciesId) {
         console.warn(`Species not found in compendium: ${speciesData.name}`);
         notFound++;
         notFoundSpecies.push(speciesData.name);
         continue;
       }
 
-      // Get the full species document
-      const speciesDoc = await speciesPack.getDocument(speciesIndex._id);
+      // Get the full species document by ID
+      const speciesDoc = await speciesPack.getDocument(speciesId);
 
       if (!speciesDoc) {
         console.error(`Could not load species document: ${speciesData.name}`);

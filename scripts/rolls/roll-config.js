@@ -489,7 +489,8 @@ export async function showRollModifiersDialog(options = {}) {
           callback: () => resolve(null)
         }
       },
-      default: 'roll'
+      default: 'roll',
+      classes: ['swse', 'dialog', 'holo-dialog']
     }).render(true);
   });
 }
