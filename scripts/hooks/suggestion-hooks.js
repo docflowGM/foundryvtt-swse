@@ -33,7 +33,13 @@ export function registerSuggestionHooks() {
 
   Hooks.on('renderActorSheet', async (app, html) => {
     try {
-      const enabled = game.settings.get('foundryvtt-swse', 'enableMentorNotesPanel') ?? true;
+      let enabled = true;
+      try {
+        enabled = game.settings.get('foundryvtt-swse', 'enableMentorNotesPanel') ?? true;
+      } catch {
+        // Setting not yet registered or error retrieving it - default to true
+        enabled = true;
+      }
       if (!enabled) return;
 
       const actor = app?.actor;

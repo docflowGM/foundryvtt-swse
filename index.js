@@ -241,8 +241,8 @@ Hooks.once("init", async function () {
         registerHandlebarsHelpers();
 
         // Add missing #let helper
-        Handlebars.registerHelper("let", function(context, options) {
-            const merged = Object.assign({}, this, context);
+        Handlebars.registerHelper("let", function(options) {
+            const merged = Object.assign({}, this, options.hash);
             return options.fn(merged);
         });
 
@@ -256,6 +256,7 @@ Hooks.once("init", async function () {
        --------------------------------------------------------- */
     registerSystemSettings();
     registerHouseruleSettings();
+    registerSuggestionSettings();
 
     /* ---------------------------------------------------------
        Hook Registration (must be before async operations)
@@ -319,12 +320,15 @@ Hooks.once("init", async function () {
     /* ---------------------------------------------------------
        Register Flag Scopes (Foundry v13+)
        --------------------------------------------------------- */
-    if (CONFIG.Item?.flagScopes) {
-        CONFIG.Item.flagScopes.add('swse');
+    if (!CONFIG.Item.flagScopes) {
+        CONFIG.Item.flagScopes = new Set();
     }
-    if (CONFIG.Actor?.flagScopes) {
-        CONFIG.Actor.flagScopes.add('swse');
+    CONFIG.Item.flagScopes.add('swse');
+
+    if (!CONFIG.Actor.flagScopes) {
+        CONFIG.Actor.flagScopes = new Set();
     }
+    CONFIG.Actor.flagScopes.add('swse');
 
     /* ---------------------------------------------------------
        Sheet Registration

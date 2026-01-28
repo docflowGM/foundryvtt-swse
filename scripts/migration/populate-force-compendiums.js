@@ -149,7 +149,7 @@ export class PopulateForceCompendiumsMigration {
 
       for (const t of data.techniques) {
         try {
-          const item = await Item.create({
+          const item = new Item({
             name: t.name,
             type: "feat",
             img: "systems/foundryvtt-swse/assets/icons/force-technique.png",
@@ -160,7 +160,7 @@ export class PopulateForceCompendiumsMigration {
               prerequisites: (t.prerequisites || []).join(", "),
               relatedPower: t.relatedPower || ""
             }
-          }, { temporary: true });
+          });
 
           await pack.importDocument(item);
           created++;
@@ -192,7 +192,7 @@ export class PopulateForceCompendiumsMigration {
 
       for (const s of data.secrets) {
         try {
-          const item = await Item.create({
+          const item = new Item({
             name: s.name,
             type: "feat",
             img: "systems/foundryvtt-swse/assets/icons/force-secret.png",
@@ -203,7 +203,7 @@ export class PopulateForceCompendiumsMigration {
               prerequisites: (s.prerequisites || []).join(", "),
               cost: s.cost
             }
-          }, { temporary: true });
+          });
 
           await pack.importDocument(item);
           created++;
@@ -237,7 +237,7 @@ export class PopulateForceCompendiumsMigration {
 
       for (const p of data.powers) {
         try {
-          const item = await Item.create({
+          const item = new Item({
             name: p.name,
             type: "feat",
             img: "systems/foundryvtt-swse/assets/icons/lightsaber-form-power.png",
@@ -250,7 +250,7 @@ export class PopulateForceCompendiumsMigration {
               time: p.time || "",
               canRebuke: !!p.canRebuke
             }
-          }, { temporary: true });
+          });
 
           await pack.importDocument(item);
           created++;

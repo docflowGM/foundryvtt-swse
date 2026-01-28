@@ -932,8 +932,12 @@ export class TemplateCharacterCreator extends Application {
           if (entry) {
             // Found the item, add it to the actor
             const item = await pack.getDocument(entry._id);
-            const itemData = item.toObject();
+            if (!item) {
+              SWSELogger.warn(`SWSE | Equipment found in index but failed to load: ${entry.name}`);
+              continue;
+            }
 
+            const itemData = item.toObject();
             await actor.createEmbeddedDocuments('Item', [itemData]);
             results.added.push(entry.name);
             found = true;

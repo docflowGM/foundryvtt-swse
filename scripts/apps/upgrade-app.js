@@ -271,16 +271,41 @@ export class SWSEUpgradeApp extends FormApplication {
         description: template.description,
         cost: costPreview,
         costPreview,
-        restrictions: this._formatRestrictions(template.restrictions),
+        restrictions: this._formatRestrictions(template),
         incompatible: !validation.valid,
         incompatibilityReason: validation.reason
       };
     });
   }
 
-  _formatRestrictions(restrictions) {
-    if (!restrictions || restrictions.length === 0) return null;
+  _formatRestrictions(template) {
+    // Handle restrictions based on item type and template type
+    if (!template || !template.restrictions) return null;
 
+    const itemType = this.item.type;
+    const restrictions = template.restrictions;
+
+    // For general templates, get restrictions specific to the item type
+    if (template.category === 'general') {
+      const typeRestrictions = itemType === 'weapon'
+        ? restrictions.weapon
+        : itemType === 'armor'
+        ? restrictions.armor
+        : null;
+
+      if (!typeRestrictions || typeRestrictions.length === 0) return null;
+
+      return this._mapRestrictions(typeRestrictions).join(', ');
+    }
+
+    // For specific templates, restrictions is an array
+    const restrictionArray = Array.isArray(restrictions) ? restrictions : [];
+    if (restrictionArray.length === 0) return null;
+
+    return this._mapRestrictions(restrictionArray).join(', ');
+  }
+
+  _mapRestrictions(restrictionArray) {
     const restrictionMap = {
       'stunOrIon': 'Requires Stun or Ion setting',
       'stun': 'Requires Stun setting',
@@ -295,7 +320,7 @@ export class SWSEUpgradeApp extends FormApplication {
       'rangedStun': 'Ranged with Stun only'
     };
 
-    return restrictions.map(r => restrictionMap[r] || r).join(', ');
+    return restrictionArray.map(r => restrictionMap[r] || r);
   }
 
   async _onApplyTemplate(event) {

@@ -830,13 +830,14 @@ if (this.currentStep === "talents" && context.packs.talents) {
 // ======================================================
 // Add suggestion engine integration for SKILLS
 // ======================================================
+let classData = null;
+let classSkills = [];
+let trainedSkillsAllowed = 0;
+
 if (this.currentStep === "skills" && context.packs) {
   const tempActor = this._createTempActorForValidation();
 
   const selectedClassName = this.characterData.classes?.[0]?.name;
-  let classData = null;
-  let classSkills = [];
-  let trainedSkillsAllowed = 0;
 
   if (selectedClassName && ClassesDB.isBuilt) {
     classData = ClassesDB.byName(selectedClassName);
@@ -858,38 +859,26 @@ if (this.currentStep === "skills" && context.packs) {
 
     this.characterData.classSkillsList = [...classSkills];
     this.characterData.trainedSkillsAllowed = trainedSkillsAllowed;
+  } else {
+    // Last resort fallback to legacy properties
+    classSkills = this.characterData.classSkillsList || [];
+    trainedSkillsAllowed = this.characterData.trainedSkillsAllowed || 0;
   }
+
+  // DIAGNOSTIC: Log where data is coming from
+  const selectedClassNameForLog = this.characterData?.classes?.[0]?.name ?? this.characterData?.className;
+  SWSELogger.log(`[CHARGEN-SKILLS] Skills step rendering - DATA SOURCE CHECK:`, {
+    selectedClassNameForLog,
+    classDataFound: !!classData,
+    classDataSource: classData ? "ClassesDB" : "characterData fallback",
+    classSkills,
+    classSkillsLength: classSkills?.length ?? 0,
+    trainedSkillsAllowed,
+    characterDataClassSkillsList: this.characterData.classSkillsList,
+    characterDataTrainedSkills: this.characterData.trainedSkillsAllowed,
+    backgroundSkills: this.characterData.backgroundSkills?.length ?? 0
+  });
 }
-
-
-        // Extract skills and budget from classData (whichever source it came from)
-        if (classData) {
-          classSkills = classData.classSkills ?? [];
-          trainedSkillsAllowed = Number(classData.trainedSkills ?? 0);
-          // Store back to characterData for consistency
-          this.characterData.trainedSkillsAllowed = trainedSkillsAllowed;
-          this.characterData.classSkillsList = [...(classData.classSkills ?? [])];
-        } else {
-          // Last resort fallback to legacy properties
-          classSkills = this.characterData.classSkillsList || [];
-          trainedSkillsAllowed = this.characterData.trainedSkillsAllowed || 0;
-          console.error("[CHARGEN-SKILLS] No class data found at all", this.characterData);
-        }
-      }
-
-      // DIAGNOSTIC: Log where data is coming from
-      const selectedClassName = this.characterData?.classes?.[0]?.name ?? this.characterData?.className;
-      SWSELogger.log(`[CHARGEN-SKILLS] Skills step rendering - DATA SOURCE CHECK:`, {
-        selectedClassName,
-        classDataFound: !!classData,
-        classDataSource: classData ? "ClassesDB" : "characterData fallback",
-        classSkills,
-        classSkillsLength: classSkills?.length ?? 0,
-        trainedSkillsAllowed,
-        characterDataClassSkillsList: this.characterData.classSkillsList,
-        characterDataTrainedSkills: this.characterData.trainedSkillsAllowed,
-        backgroundSkills: this.characterData.backgroundSkills?.length ?? 0
-      });
 
       try {
         // Combine class skills with background skills

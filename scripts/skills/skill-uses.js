@@ -34,7 +34,7 @@ export class JumpUses {
     }
 
     const totalBonus = jumpBonus + armorPenalty;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + totalBonus;
     const success = checkResult >= dc;
 
@@ -88,7 +88,7 @@ export class JumpUses {
     }
 
     const totalBonus = jumpBonus + armorPenalty;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + totalBonus;
     const success = checkResult >= dc;
 
@@ -131,7 +131,7 @@ export class JumpUses {
 
     const jumpBonus = actor.system.skills?.jump?.total || 0;
     const dc = 15;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + jumpBonus;
     const success = checkResult >= dc;
 
@@ -220,7 +220,7 @@ export class KnowledgeUses {
     const isTrained = actor.system.skills?.[skillKey]?.trained || false;
 
     const dc = 10;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + knowledgeBonus;
     const success = checkResult >= dc;
 
@@ -278,7 +278,7 @@ export class KnowledgeUses {
     };
 
     const dc = dcByDifficulty[questionDifficulty.toLowerCase()] || 20;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + knowledgeBonus;
     const success = checkResult >= dc;
 
@@ -329,7 +329,7 @@ export class KnowledgeUses {
     }
 
     let dc = targetWillDefense || (10 + (target.system.details?.level?.value || 1));
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + tacticsBonus;
     const success = checkResult >= dc;
 
@@ -379,7 +379,7 @@ export class KnowledgeUses {
     }
 
     const dc = 20;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + tacticsBonus;
     const success = checkResult >= dc;
 
@@ -467,7 +467,7 @@ export class MechanicsUses {
       dc += 5;
     }
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + mechanicsBonus;
     const success = checkResult >= dc;
     const springsOrFails = (dc - checkResult) >= 5;
@@ -526,7 +526,7 @@ export class MechanicsUses {
       actionName = `Booby Trap (${explosivePower} damage)`;
     }
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + mechanicsBonus;
     const success = checkResult >= dc;
     const failureMargin = dc - checkResult;
@@ -571,11 +571,11 @@ export class MechanicsUses {
       dc -= toolKitBonus;
     }
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + mechanicsBonus;
     const success = checkResult >= dc;
 
-    const hpRoll = success ? await new Roll('1d8').evaluate({ async: true }) : null;
+    const hpRoll = success ? new Roll('1d8').evaluateSync() : null;
     const hpRestored = success ? hpRoll.total : 0;
 
     await roll.toMessage({
@@ -624,7 +624,7 @@ export class MechanicsUses {
       penalty = vehicleConditionPenalty;
     }
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const totalBonus = mechanicsBonus + penalty;
     const checkResult = roll.total + totalBonus;
     const success = checkResult >= dc;
@@ -633,7 +633,7 @@ export class MechanicsUses {
       if (targetType.toLowerCase() === 'droid') {
         hpRestored = targetLevel;
       } else {
-        const hpRoll = await new Roll('1d8').evaluate({ async: false });
+        const hpRoll = new Roll('1d8').evaluateSync();
         hpRestored = hpRoll.total;
       }
     }
@@ -691,7 +691,7 @@ export class PerceptionUses {
 
     const perceptionBonus = actor.system.skills?.perception?.total || 0;
     const dc = 15;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + perceptionBonus;
     const success = checkResult >= dc;
 
@@ -737,7 +737,7 @@ export class PerceptionUses {
     };
 
     const dc = dcByNoise[noiseLevel.toLowerCase()] || 10;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + perceptionBonus;
     const success = checkResult >= dc;
 
@@ -791,7 +791,7 @@ export class PerceptionUses {
       dc -= 5;
     }
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + perceptionBonus;
     const success = checkResult >= dc;
 
@@ -833,7 +833,7 @@ export class PerceptionUses {
       penalty = -10;
     }
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + perceptionBonus + penalty;
     const success = checkResult >= dc;
 
@@ -869,7 +869,7 @@ export class PerceptionUses {
 
     const perceptionBonus = actor.system.skills?.perception?.total || 0;
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + perceptionBonus;
     const success = checkResult >= deceptionCheckResult;
 
@@ -903,7 +903,7 @@ export class PerceptionUses {
     const perceptionBonus = actor.system.skills?.perception?.total || 0;
 
     const dc = 20;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + perceptionBonus;
     const success = checkResult >= dc;
 
@@ -946,7 +946,7 @@ export class PerceptionUses {
     }
 
     const dc = 10;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + perceptionBonus;
     const success = checkResult >= dc;
 
@@ -1006,7 +1006,7 @@ export class PersuasionUses {
     const modifier = modifierByAttitude[currentAttitude.toLowerCase()] || 0;
     const dc = Math.max(10, (target.system.defenses?.will?.total || 10) + modifier);
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + persuasionBonus;
     const success = checkResult >= dc;
 
@@ -1054,7 +1054,7 @@ export class PersuasionUses {
 
     const dc = dcByAttitude[targetAttitude.toLowerCase()] || 25;
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + persuasionBonus;
     const success = checkResult >= dc;
 
@@ -1105,7 +1105,7 @@ export class PersuasionUses {
     const dc = target.system.defenses?.will?.total || 10;
     const totalBonus = persuasionBonus + situationMod;
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + totalBonus;
     const success = checkResult >= dc;
 
@@ -1158,7 +1158,7 @@ export class PersuasionUses {
       dc += 15;
     }
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + persuasionBonus;
     const success = checkResult >= dc;
 
@@ -1204,7 +1204,7 @@ export class PersuasionUses {
       dc -= 5;
     }
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + persuasionBonus;
     const success = checkResult >= dc;
 
@@ -1266,7 +1266,7 @@ export class PilotUses {
     }
 
     const totalBonus = pilotBonus + vehicleSizeModifier;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const initiativeResult = roll.total + totalBonus;
 
     await roll.toMessage({
@@ -1312,7 +1312,7 @@ export class PilotUses {
     }
 
     const dc = 20;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + pilotBonus;
     const success = checkResult >= dc;
 
@@ -1371,7 +1371,7 @@ export class PilotUses {
       };
     }
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + pilotBonus;
     const success = checkResult >= deceptionDC;
 
@@ -1422,7 +1422,7 @@ export class PilotUses {
       bonus -= 5;
     }
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + bonus;
 
     await roll.toMessage({
@@ -1485,7 +1485,7 @@ export class RideUses {
     const rideBonus = actor.system.skills?.ride?.total || 0;
 
     const dc = 10;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + rideBonus;
     const success = checkResult >= dc;
 
@@ -1525,7 +1525,7 @@ export class RideUses {
     const rideBonus = actor.system.skills?.ride?.total || 0;
 
     const dc = 10;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + rideBonus;
     const success = checkResult >= dc;
 
@@ -1565,7 +1565,7 @@ export class RideUses {
     const rideBonus = actor.system.skills?.ride?.total || 0;
 
     const dc = 15;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + rideBonus;
     const success = checkResult >= dc;
 
@@ -1606,14 +1606,14 @@ export class RideUses {
     const rideBonus = actor.system.skills?.ride?.total || 0;
 
     const dc = 15;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + rideBonus;
     const success = checkResult >= dc;
 
     let damageRoll = null;
     let damageTotal = 0;
     if (!success) {
-      damageRoll = await new Roll('1d6').evaluate({ async: true });
+      damageRoll = new Roll('1d6').evaluateSync();
       damageTotal = damageRoll.total;
     }
 
@@ -1655,7 +1655,7 @@ export class RideUses {
     const effectiveBonus = Math.min(rideBonus, mountJumpBonus);
 
     const dc = 15;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + effectiveBonus;
     const success = checkResult >= dc;
 
@@ -1703,7 +1703,7 @@ export class RideUses {
     const rideBonus = actor.system.skills?.ride?.total || 0;
 
     const dc = 20;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + rideBonus;
     const success = checkResult >= dc;
 
@@ -1745,7 +1745,7 @@ export class RideUses {
     const dc = 20;
     const totalBonus = rideBonus + armorCheckPenalty;
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + totalBonus;
     const success = checkResult >= dc;
 
@@ -1800,7 +1800,7 @@ export class SurvivalUses {
 
     const survivalBonus = actor.system.skills?.survival?.total || 0;
     const dc = 15;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + survivalBonus;
     const success = checkResult >= dc;
 
@@ -1852,7 +1852,7 @@ export class SurvivalUses {
 
     const survivalBonus = actor.system.skills?.survival?.total || 0;
     const dc = 20;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + survivalBonus;
     const success = checkResult >= dc;
 
@@ -1898,7 +1898,7 @@ export class SurvivalUses {
 
     const survivalBonus = actor.system.skills?.survival?.total || 0;
     const dc = 10;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + survivalBonus;
     const success = checkResult >= dc;
 
@@ -1952,7 +1952,7 @@ export class SurvivalUses {
     };
 
     const baseDC = dcBySurface[surface.toLowerCase()] || 20;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + survivalBonus;
     const success = checkResult >= baseDC;
 
@@ -1998,7 +1998,7 @@ export class SurvivalUses {
     }
 
     const dc = 20;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + survivalBonus;
     const success = checkResult >= dc;
 
@@ -2050,7 +2050,7 @@ export class SurvivalUses {
     }
 
     const dc = 20;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + survivalBonus;
     const success = checkResult >= dc;
 
@@ -2114,7 +2114,7 @@ export class SwimUses {
 
     const dc = dcByCondition[waterCondition.toLowerCase()] || 10;
     const totalBonus = swimBonus + armorPenalty;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + totalBonus;
     const success = checkResult >= dc;
 
@@ -2164,7 +2164,7 @@ export class SwimUses {
 
     const maxRounds = constitutionModifier * roundsHeld;
     const dc = 10 + (5 * Math.max(0, roundsHeld - constitutionModifier));
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + enduranceBonus;
     const success = checkResult >= dc;
 
@@ -2221,7 +2221,7 @@ export class TreatInjuryUses {
       equipmentBonus = 2;
     }
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + treatInjuryBonus + equipmentBonus;
     const success = checkResult >= dc;
 
@@ -2307,7 +2307,7 @@ export class TreatInjuryUses {
     }
 
     const dc = 20;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + treatInjuryBonus;
     const success = checkResult >= dc;
 
@@ -2360,7 +2360,7 @@ export class TreatInjuryUses {
     }
 
     const dc = 25;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + treatInjuryBonus;
     const success = checkResult >= dc;
 
@@ -2499,7 +2499,7 @@ export class UseComputerUses {
     const baseDC = dcByType[informationType.toLowerCase()] || 15;
     const dc = modifier === 'auto-access' ? -1 : baseDC + (typeof modifier === 'number' ? modifier : 0);
 
-    const roll = modifier === 'auto-access' ? null : await new Roll('1d20').evaluate({ async: true });
+    const roll = modifier === 'auto-access' ? null : new Roll('1d20').evaluateSync();
     const checkResult = roll ? roll.total + useComputerBonus : 999;
     const success = modifier === 'auto-access' || checkResult >= dc;
 
@@ -2557,7 +2557,7 @@ export class UseComputerUses {
     const baseWillDefense = 10;
     const dc = baseWillDefense + modifier;
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + useComputerBonus;
     const success = checkResult >= dc;
 
@@ -2642,7 +2642,7 @@ export class UseComputerUses {
     const baseDC = 25;
     const dc = baseDC + modifier;
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + useComputerBonus;
     const success = checkResult >= dc;
 
@@ -2706,7 +2706,7 @@ export class UseTheForceUses {
     }
 
     const dc = 10;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + useForceBonus;
     const success = checkResult >= dc;
 
@@ -2755,14 +2755,14 @@ export class UseTheForceUses {
     }
 
     const dc = asProjectile ? 15 : 10;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + useForceBonus;
     const success = checkResult >= dc;
 
     let damageRoll = null;
     let damageTotal = 0;
     if (success && asProjectile) {
-      damageRoll = await new Roll('1d6').evaluate({ async: true });
+      damageRoll = new Roll('1d6').evaluateSync();
       damageTotal = damageRoll.total;
     }
 
@@ -2804,7 +2804,7 @@ export class UseTheForceUses {
     const useForceBonus = actor.system.skills?.['use-the-force']?.total || 0;
 
     const dc = 15;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + useForceBonus;
     const success = checkResult >= dc;
 
@@ -2867,7 +2867,7 @@ export class UseTheForceUses {
     }
 
     const dc = 15;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + useForceBonus;
     const success = checkResult >= dc;
 
@@ -2909,7 +2909,7 @@ export class UseTheForceUses {
 
     const dc = againstYuuzhanVong ? 30 : 15;
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + useForceBonus;
     const success = checkResult >= dc;
 
@@ -2959,7 +2959,7 @@ export class UseTheForceUses {
 
     const dc = Math.max(dcByDistance[distance.toLowerCase()] || 15, targetWillDefense);
 
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + useForceBonus;
     const success = checkResult >= dc;
 
@@ -3009,7 +3009,7 @@ export class UseTheForceUses {
     }
 
     const dc = 15;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + useForceBonus;
     const success = checkResult >= dc;
 
@@ -3062,7 +3062,7 @@ export class UseTheForceUses {
 
     const constitutionScore = actor.system.attributes?.con?.value || 10;
     const dc = 15;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + useForceBonus;
     const success = checkResult >= dc;
 
@@ -3119,7 +3119,7 @@ export class AcrobaticsUses {
     const dcByWidth = { 'wide': 10, 'medium': 15, 'narrow': 20, 'very-narrow': 25 };
     let dc = dcByWidth[surfaceWidth.toLowerCase()] || 15;
     if (isSlippery) dc += 5;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + acrobaticsBonus;
     const success = checkResult >= dc;
     await roll.toMessage({
@@ -3136,7 +3136,7 @@ export class AcrobaticsUses {
     const isTrained = actor.system.skills?.acrobatics?.trained || false;
     if (!isTrained) return { success: false, message: 'Must be Trained in Acrobatics', trained: false };
     const dc = 15;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + acrobaticsBonus;
     const success = checkResult >= dc;
     await roll.toMessage({
@@ -3170,7 +3170,7 @@ export class ClimbUses {
     };
     let dc = dcBySurface[surfaceType.toLowerCase()] || 15;
     const penalty = isAccelerated ? -5 : 0;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + climbBonus + penalty;
     const success = checkResult >= dc;
     const falls = (dc - checkResult) >= 5;
@@ -3204,7 +3204,7 @@ export class DeceptionUses {
     if (!actor || !target) return { success: false, message: 'Invalid actor or target' };
     const deceptionBonus = actor.system.skills?.deception?.total || 0;
     const difficultyMod = this._getDifficultyModifier(difficulty);
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + deceptionBonus + difficultyMod;
     const targetWillDefense = target.system.defenses?.will?.total || 10;
     await roll.toMessage({
@@ -3231,7 +3231,7 @@ export class EnduranceUses {
     if (!actor) return { success: false, message: 'Invalid actor' };
     const enduranceBonus = actor.system.skills?.endurance?.total || 0;
     const dc = 10 + (Math.max(0, hoursMarched - 1) * 2);
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + enduranceBonus;
     const success = checkResult >= dc;
     await roll.toMessage({
@@ -3254,7 +3254,7 @@ export class EnduranceUses {
     }
     const extraRounds = roundsHolding - conScore;
     const dc = 10 + (extraRounds * 2);
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + enduranceBonus;
     const success = checkResult >= dc;
     await roll.toMessage({
@@ -3288,10 +3288,10 @@ export class GatherInformationUses {
       return { success: false, message: 'Must be Trained for Quick Intel', trained: false };
     }
     if (useQuickIntel) dc += 10;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + gatherBonus;
     const success = checkResult >= dc;
-    const timeRoll = await new Roll('1d6').evaluate({ async: true });
+    const timeRoll = new Roll('1d6').evaluateSync();
     const timeInHours = useQuickIntel ? Math.ceil(timeRoll.total / 2) : timeRoll.total;
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
@@ -3306,10 +3306,10 @@ export class GatherInformationUses {
     const gatherBonus = actor.system.skills?.['gather-information']?.total || 0;
     const dc = isWellKnown ? 15 : 25;
     const cost = isWellKnown ? 0 : 500;
-    const roll = await new Roll('1d20').evaluate({ async: true });
+    const roll = new Roll('1d20').evaluateSync();
     const checkResult = roll.total + gatherBonus;
     const success = checkResult >= dc;
-    const timeRoll = await new Roll('1d6').evaluate({ async: true });
+    const timeRoll = new Roll('1d6').evaluateSync();
     const timeInHours = timeRoll.total;
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
