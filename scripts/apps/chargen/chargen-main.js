@@ -959,7 +959,7 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
     if (this.characterData.isDroid) {
       context.availableSkills = context.availableSkills.filter(
     skill =>
-      skill.key !== "usetheforce" &&
+      skill.key !== "useTheForce" &&
       skill.name !== "Use the Force"
       );
     }
@@ -971,7 +971,7 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
     const characterLevel = this.characterData.level || 1;
     const halfLevel = Math.floor(characterLevel / 2);
     const abilities = this.characterData.abilities || {};
-    const speciesSkillBonuses = this.characterData.speciesSkillBonuses || {};
+    const racialSkillBonuses = this.characterData.racialSkillBonuses || {};
 
     context.availableSkills = context.availableSkills.map(skill => {
       let abilityKey = (skill.ability || "").toLowerCase();
@@ -982,7 +982,7 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
       }
 
       const abilityMod = abilities[abilityKey]?.mod ?? 0;
-      const speciesBonus = speciesSkillBonuses[skill.key] ?? 0;
+      const speciesBonus = racialSkillBonuses[skill.key] ?? 0;
       const isTrained = this.characterData.skills?.[skill.key]?.trained ?? false;
 
       const currentBonus =
