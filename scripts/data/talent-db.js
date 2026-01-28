@@ -30,7 +30,14 @@ export const TalentDB = {
             throw new Error('[TalentDB] Talents compendium not found');
         }
 
-        const docs = await pack.getDocuments();
+        let docs;
+        try {
+            docs = await pack.getDocuments();
+        } catch (err) {
+            SWSELogger.error('[TalentDB] Failed to load talents from pack', err);
+            this.isBuilt = true;
+            return false;
+        }
 
         // Reset state (build is authoritative)
         this.talents = [];
