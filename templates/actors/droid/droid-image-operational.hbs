@@ -8,7 +8,7 @@
 
   {{!-- Portrait --}}
   <img class="droid-portrait"
-       src="{{#if actor.img}}{{actor.img}}{{else}}/systems/foundryvtt-swse/assets/ui/droid-default.svg{{/if}}"
+       src="{{if actor.img actor.img '/systems/foundryvtt-swse/assets/ui/droid-default.svg'}}"
        alt="{{actor.name}}" />
 
   {{!-- Damage Overlays --}}

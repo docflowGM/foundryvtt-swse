@@ -8,7 +8,7 @@
 
   {{!-- Ship Image --}}
   <img class="ship-model"
-       src="{{#if actor.img}}{{actor.img}}{{else}}/assets/ui/vehicle-stats.png{{/if}}"
+       src="{{if actor.img actor.img '/assets/ui/vehicle-stats.png'}}"
        alt="{{actor.name}}" />
 
   {{!-- Damage overlays --}}

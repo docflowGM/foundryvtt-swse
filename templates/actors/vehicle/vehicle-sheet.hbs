@@ -210,9 +210,9 @@
         {{#if posData.skills}}
         <div class="crew-skills">
           {{#each posData.skills as |skill|}}
-          <div class="skill-item {{#if skill.required}}required{{else}}beneficial{{/if}} {{#if skill.trained}}trained{{/if}}">
+          <div class="skill-item {{if skill.required 'required' 'beneficial'}} {{if skill.trained 'trained' ''}}">
             <span class="skill-name">{{skill.name}}</span>
-            <span class="skill-bonus {{#if (gt skill.bonus 0)}}positive{{/if}} {{#if (lt skill.bonus 0)}}negative{{/if}}">
+            <span class="skill-bonus {{if (gt skill.bonus 0) 'positive' ''}} {{if (lt skill.bonus 0) 'negative' ''}}">
               {{#if (gt skill.bonus 0)}}+{{/if}}{{skill.bonus}}
             </span>
             {{#if skill.trained}}

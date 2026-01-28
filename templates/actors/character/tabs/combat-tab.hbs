@@ -146,7 +146,7 @@
  </div>
 
  {{#each weapons as |weapon|}}
- <div class="weapon-row flexrow {{#if weapon.system.equipped}}equipped{{/if}}" data-item-id="{{weapon._id}}">
+ <div class="weapon-row flexrow {{if weapon.system.equipped 'equipped' ''}}" data-item-id="{{weapon._id}}">
  <div class="weapon-name">
  <img src="{{weapon.img}}" width="24" height="24" alt="{{weapon.name}}"/>
  {{weapon.name}}
@@ -195,7 +195,7 @@
 
  <div class="armor-section">
  {{#each armor as |item|}}
- <div class="armor-row flexrow {{#if item.system.equipped}}equipped{{/if}}" data-item-id="{{item._id}}">
+ <div class="armor-row flexrow {{if item.system.equipped 'equipped' ''}}" data-item-id="{{item._id}}">
  <img src="{{item.img}}" width="24" height="24" alt="{{item.name}}"/>
  <div class="armor-info flex2">
  <span class="armor-name">{{item.name}}</span>
@@ -204,12 +204,12 @@
  <span class="armor-max-dex"><i class="fas fa-running"></i> Max Dex: +{{item.system.maxDexBonus}}</span>
  </div>
  </div>
- <label class="armor-equipped-toggle" title="{{#if item.system.equipped}}Equipped - providing defense bonus{{else}}Not equipped{{/if}}">
+ <label class="armor-equipped-toggle" title="{{if item.system.equipped 'Equipped - providing defense bonus' 'Not equipped'}}">
  <input type="checkbox"
  name="items.{{item._id}}.system.equipped"
  {{checked item.system.equipped}}/>
  <i class="fas fa-user-shield"></i>
- <span class="equipped-label">{{#if item.system.equipped}}Equipped{{else}}Equip{{/if}}</span>
+ <span class="equipped-label">{{if item.system.equipped 'Equipped' 'Equip'}}</span>
  </label>
  <div class="item-controls flexrow">
  <a class="item-control item-edit" data-action="edit" title="Edit">

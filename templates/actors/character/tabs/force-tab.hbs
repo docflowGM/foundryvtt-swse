@@ -92,7 +92,7 @@
  <h4>Active Suite ({{activeSuite.length}}/{{system.forceSuite.max}})</h4>
  <div class="powers-list drop-zone suite-zone" data-zone="suite">
  {{#each activeSuite as |power|}}
- <div class="power-card in-suite {{#if power.system.spent}}power-spent{{/if}}"
+ <div class="power-card in-suite {{if power.system.spent 'power-spent' ''}}"
  draggable="true"
  data-item-id="{{power._id}}">
  <img src="{{power.img}}" width="32" height="32" alt="{{power.name}}"/>
