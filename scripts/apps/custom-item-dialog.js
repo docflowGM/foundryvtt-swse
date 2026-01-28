@@ -939,3 +939,5 @@ export class CustomItemDialog {
     }
   }
 }
+
+export default CustomItemDialog;
