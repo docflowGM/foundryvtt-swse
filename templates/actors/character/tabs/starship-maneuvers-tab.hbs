@@ -40,7 +40,7 @@
           <h4>Active Suite ({{activeSuite.length}}/{{system.starshipManeuverSuite.max}})</h4>
           <div class="maneuvers-list drop-zone suite-zone" data-zone="suite">
             {{#each activeSuite as |maneuver|}}
-            <div class="maneuver-card in-suite {{#if maneuver.system.spent}}maneuver-spent{{/if}}"
+            <div class="maneuver-card in-suite {{if maneuver.system.spent 'maneuver-spent' ''}}"
               draggable="true"
               data-item-id="{{maneuver._id}}">
               <img src="{{maneuver.img}}" width="32" height="32" alt="{{maneuver.name}}"/>

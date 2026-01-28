@@ -59,7 +59,7 @@
  </label>
  <div class="dark-side-segments" data-max-segments="{{darkSideMax}}">
  {{#each darkSideSegments}}
- <div class="dark-side-segment {{#if this.active}}active{{/if}}{{#if this.isCurrent}} current{{/if}}"
+ <div class="dark-side-segment {{if this.active 'active' ''}}{{if this.isCurrent ' current' ''}}"
  data-segment="{{this.index}}"
  data-color-level="{{this.colorLevel}}"
  style="background-color: {{this.color}};"
