@@ -77,7 +77,7 @@ export class MentorReflectiveDialog extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "mentor-reflective-dialog",
-      classes: ["swse", "mentor-reflective-dialog"],
+      classes: ["swse", "mentor-reflective-dialog", "holo-window"],
       template: "systems/foundryvtt-swse/templates/apps/mentor-reflective-dialog.hbs",
       width: 700,
       height: 600,

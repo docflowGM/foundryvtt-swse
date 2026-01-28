@@ -99,7 +99,7 @@ export class MentorSuggestionDialog extends Dialog {
             resolve(null);
           }
         },
-        options
+        { ...options, classes: (options.classes || []).concat(['mentor-suggestion-dialog', 'holo-window']) }
       );
 
       dialog.render(true);

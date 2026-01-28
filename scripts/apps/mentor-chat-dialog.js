@@ -96,7 +96,7 @@ export class MentorChatDialog extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "mentor-chat-dialog",
-      classes: ["swse", "mentor-chat-dialog"],
+      classes: ["swse", "mentor-chat-dialog", "holo-window"],
       template: "systems/foundryvtt-swse/templates/apps/mentor-chat-dialog.hbs",
       width: 750,
       height: 650,
