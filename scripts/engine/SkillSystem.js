@@ -343,7 +343,7 @@ export class SkillSystem {
             "surgery": "treatInjury",
             "revivify": "treatInjury",
 
-            "gather information": "gatherInfo"
+            "gather information": "gatherInformation"
         };
 
         for (const [kw, result] of Object.entries(MANUAL)) {
@@ -380,6 +380,9 @@ export class SkillSystem {
             ["drive", "pilot"],
             ["ram", "pilot"],
 
+            ["ride", "ride"],
+            ["mounted", "ride"],
+
             ["use computer", "useComputer"],
             ["computer", "useComputer"],
 
@@ -407,6 +410,22 @@ export class SkillSystem {
 
             ["initiative", "initiative"],
 
+            ["gather information", "gatherInformation"],
+
+            ["knowledge bureaucracy", "knowledgeBureaucracy"],
+            ["knowledge galactic lore", "knowledgeGalacticLore"],
+            ["knowledge life sciences", "knowledgeLifeSciences"],
+            ["knowledge physical sciences", "knowledgePhysicalSciences"],
+            ["knowledge social sciences", "knowledgeSocialSciences"],
+            ["knowledge tactics", "knowledgeTactics"],
+            ["knowledge technology", "knowledgeTechnology"],
+            ["bureaucracy", "knowledgeBureaucracy"],
+            ["galactic lore", "knowledgeGalacticLore"],
+            ["life sciences", "knowledgeLifeSciences"],
+            ["physical sciences", "knowledgePhysicalSciences"],
+            ["social sciences", "knowledgeSocialSciences"],
+            ["tactics", "knowledgeTactics"],
+            ["technology", "knowledgeTechnology"],
             ["knowledge", "knowledge"],
 
             ["use the force", "useTheForce"],
