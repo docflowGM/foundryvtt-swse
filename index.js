@@ -241,8 +241,8 @@ Hooks.once("init", async function () {
         registerHandlebarsHelpers();
 
         // Add missing #let helper
-        Handlebars.registerHelper("let", function(context, options) {
-            const merged = Object.assign({}, this, context);
+        Handlebars.registerHelper("let", function(options) {
+            const merged = Object.assign({}, this, options.hash);
             return options.fn(merged);
         });
 
