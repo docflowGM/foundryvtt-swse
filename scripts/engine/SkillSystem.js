@@ -51,16 +51,27 @@ export class SkillSystem {
        ====================================================================== */
     static async _loadExtraSkillUses() {
         const pack = game.packs.get("foundryvtt-swse.extraskilluses");
-        if (!pack) return [];
+        if (!pack) {
+            console.warn('[SkillSystem] Extra Skill Uses pack not found');
+            return [];
+        }
 
-        const index = await pack.getIndex();
-        const docs = await Promise.all(index.map(i => pack.getDocument(i._id)));
+        try {
+            const index = await pack.getIndex();
+            const docs = await Promise.all(index.map(i => pack.getDocument(i._id)));
 
-        return docs.map(doc => ({
-            _id: doc.id,
-            name: doc.name,
-            ...doc.system
-        }));
+            const result = docs.map(doc => ({
+                _id: doc.id,
+                name: doc.name,
+                ...doc.system
+            }));
+
+            console.log(`[SkillSystem] Loaded ${result.length} extra skill uses from pack`);
+            return result;
+        } catch (err) {
+            console.error('[SkillSystem] Failed to load extra skill uses:', err);
+            return [];
+        }
     }
 
     /* ======================================================================

@@ -775,19 +775,20 @@ form.swse-datapad-sheet {
 .swse .skill-row {
   display: grid;
   grid-template-columns:
-      24px   /* Favorite */
-      36px   /* Roll */
-      45px   /* Total */
-      1.5fr  /* Skill Name */
-      100px  /* Ability */
-      35px   /* Half Level */
-      35px   /* Trained */
-      35px   /* Focus */
-      50px   /* Misc */
-      120px; /* Combat Actions moved here */
-  gap: 4px;
+      1fr    /* Favorite */
+      1fr    /* Roll */
+      1fr    /* Total */
+      2fr    /* Skill Name */
+      1fr    /* Ability */
+      1fr    /* Half Level */
+      1fr    /* Trained */
+      1fr    /* Focus */
+      1fr    /* Misc */
+      1.5fr; /* Combat Actions moved here */
+  gap: 12px;
   align-items: center;
-  padding: 4px;
+  justify-items: center;
+  padding: 8px;
 }
 
 /* --- Header Styling --- */
@@ -827,7 +828,9 @@ form.swse-datapad-sheet {
 .swse .skill-name {
   font-weight: 700;
   color: var(--holo-cyan);
-  font-size: 11px;
+  font-size: 14px;
+  text-align: center;
+  width: 100%;
 }
 
 /* --- Ability Column (Drop-down + Mod) --- */
@@ -835,8 +838,9 @@ form.swse-datapad-sheet {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   font-size: 10px;
+  width: 100%;
 }
 
 .swse .skill-ability select {
@@ -862,8 +866,8 @@ form.swse-datapad-sheet {
 
 /* --- Roll Button (New Narrow Style) --- */
 .swse .skill-roll-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -872,7 +876,7 @@ form.swse-datapad-sheet {
   border-radius: 4px;
   cursor: pointer;
   color: var(--holo-cyan);
-  font-size: 16px;
+  font-size: 18px;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
@@ -883,7 +887,7 @@ form.swse-datapad-sheet {
 
 
 .swse .skill-total {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 900;
   color: #00ff88;
   background: linear-gradient(180deg, rgba(0, 100, 50, 0.4), rgba(0, 60, 30, 0.6));
@@ -891,23 +895,26 @@ form.swse-datapad-sheet {
   border-radius: 6px;
   text-shadow: 0 0 8px rgba(0, 255, 136, 0.8);
   box-shadow: 0 2px 8px rgba(0, 255, 136, 0.3);
-  padding: 4px 8px;
+  padding: 6px 10px;
   text-align: center;
+  min-width: 50px;
 }
 
 /* --- Checkboxes & Inputs --- */
 .swse .skill-row input[type="number"] {
-  width: 100%;
-  padding: 3px;
-  font-size: 11px;
+  width: 60px;
+  padding: 4px 6px;
+  font-size: 12px;
   text-align: center;
+  margin: 0 auto;
 }
 
 .swse .skill-row input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   margin: 0 auto;
   display: block;
+  cursor: pointer;
 }
 
 /* --- Combat Actions (now at end) --- */
