@@ -340,7 +340,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     }
 
     // Use TalentTreeDB to get the tree and its ID
-    const treeDoc = TalentTreeDB.byName(treeName);
+    const treeDoc = TalentTreeDB.all().find(tree => tree.name === treeName);
     if (!treeDoc) {
       SWSELogger.error(`CharGen Narrative | _showEnhancedTalentTree: Tree not found: ${treeName}`);
       ui.notifications.error(`Talent tree "${treeName}" not found.`);
@@ -372,7 +372,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
 
   async _showTalentTreeDialog(treeName) {
     // Use TalentTreeDB to get the tree and its ID
-    const treeDoc = TalentTreeDB.byName(treeName);
+    const treeDoc = TalentTreeDB.all().find(tree => tree.name === treeName);
     if (!treeDoc) {
       SWSELogger.error(`CharGen Narrative | _showTalentTreeDialog: Tree not found: ${treeName}`);
       ui.notifications.error(`Talent tree "${treeName}" not found.`);

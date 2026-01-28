@@ -16,7 +16,7 @@ import { normalizeTalentTreeId } from '../../data/talent-tree-normalizer.js';
 export const TalentTreeNormalizer = {
 
     /**
-     * Normalize a talent document
+     * Normalize a talent document - returns normalized snapshot without mutating original
      */
     normalize(talentDoc) {
         if (!talentDoc || !talentDoc.system) {
@@ -25,13 +25,17 @@ export const TalentTreeNormalizer = {
 
         const sys = talentDoc.system;
 
-        // Normalize properties - check multiple tree fields
-        sys.talent_tree = this._normalizeTalentTree(sys.talent_tree, sys);
-        sys.prerequisites = this._normalizePrerequisites(sys.prerequisites);
-        sys.benefit = this._normalizeBenefit(sys.benefit);
-        sys.description = sys.description ?? '';
-
-        return talentDoc;
+        // Return normalized snapshot without mutating the original document
+        return {
+            ...talentDoc,
+            system: {
+                ...sys,
+                talent_tree: this._normalizeTalentTree(sys.talent_tree, sys),
+                prerequisites: this._normalizePrerequisites(sys.prerequisites),
+                benefit: this._normalizeBenefit(sys.benefit),
+                description: sys.description ?? ''
+            }
+        };
     },
 
     /**
@@ -111,7 +115,8 @@ export const TalentTreeNormalizer = {
         // Validate against TalentTreeDB if built
         if (TalentTreeDB.isBuilt) {
             const normalizedId = normalizeTalentTreeId(tree);
-            if (!TalentTreeDB.has(normalizedId) && !TalentTreeDB.byName(tree)) {
+            const treeExists = TalentTreeDB.get(normalizedId) || TalentTreeDB.all().find(t => t.name === tree);
+            if (!treeExists) {
                 SWSELogger.warn(`Talent "${talentDoc.name}" references unknown tree: "${tree}" (normalized: ${normalizedId})`);
                 return false;
             }

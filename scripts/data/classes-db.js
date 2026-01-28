@@ -71,7 +71,7 @@ export const ClassesDB = {
           } else {
             normalized.talentTreeIds = treeIds
               .map(treeId => {
-                const tree = talentTreeDB.getTree(treeId);
+                const tree = talentTreeDB.get(treeId);
                 if (!tree) {
                   throw new Error(
                     `Unknown talent tree ID "${treeId}"`
