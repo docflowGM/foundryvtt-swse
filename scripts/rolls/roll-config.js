@@ -317,15 +317,33 @@ export async function showRollModifiersDialog(options = {}) {
       <style>
         .swse-roll-modifiers-dialog {
           display: grid;
-          gap: 10px;
+          gap: 12px;
+          padding: 8px 0;
         }
         .swse-roll-modifiers-dialog .form-group {
           display: flex;
           flex-direction: column;
-          gap: 4px;
+          gap: 6px;
         }
         .swse-roll-modifiers-dialog label {
           font-weight: bold;
+          color: #00ffff;
+          text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+        }
+        .swse-roll-modifiers-dialog select,
+        .swse-roll-modifiers-dialog input[type="number"] {
+          background: rgba(0, 20, 40, 0.8);
+          border: 1px solid #00ffff;
+          color: #00ffff;
+          padding: 6px 8px;
+          border-radius: 4px;
+          font-family: monospace;
+        }
+        .swse-roll-modifiers-dialog select:focus,
+        .swse-roll-modifiers-dialog input[type="number"]:focus {
+          outline: none;
+          box-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+          border-color: #00ffff;
         }
         .swse-roll-modifiers-dialog .checkbox-group {
           display: flex;
@@ -337,6 +355,10 @@ export async function showRollModifiersDialog(options = {}) {
           display: flex;
           align-items: center;
           gap: 4px;
+          color: #aaffff;
+        }
+        .swse-roll-modifiers-dialog input[type="checkbox"] {
+          accent-color: #00ffff;
         }
         .swse-roll-modifiers-dialog .custom-modifier {
           display: flex;
@@ -439,7 +461,7 @@ export async function showRollModifiersDialog(options = {}) {
   content += '</form>';
 
   return new Promise(resolve => {
-    new Dialog({
+    const dialog = new Dialog({
       title,
       content,
       buttons: {
@@ -491,7 +513,23 @@ export async function showRollModifiersDialog(options = {}) {
       },
       default: 'roll',
       classes: ['swse', 'dialog', 'holo-dialog']
-    }).render(true);
+    });
+
+    dialog.render(true);
+
+    // Apply holo button styling after render
+    dialog._rendered.then(() => {
+      const buttons = dialog.element?.find('button');
+      if (buttons) {
+        buttons.each(function() {
+          const $btn = $(this);
+          $btn.addClass('holo-button');
+          if ($btn.text().includes('Roll')) {
+            $btn.addClass('holo-button-primary');
+          }
+        });
+      }
+    }).catch(() => {});
   });
 }
 
