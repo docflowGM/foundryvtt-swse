@@ -69,7 +69,7 @@
  <div class="skill-actions">
  {{#if @root.skillActions}}
  {{#let (lookup @root.skillActions key)}}
- {{#if hasActions}}
+ {{#if this.hasActions}}
  <button type="button" class="skill-actions-toggle" data-skill="{{../key}}" title="Show available actions">
  <i class="fas fa-chevron-down" aria-hidden="true"></i>
  </button>
@@ -82,10 +82,10 @@
  {{!-- Expandable Combat Actions Section --}}
  {{#if @root.skillActions}}
  {{#let (lookup @root.skillActions key)}}
- {{#if hasActions}}
+ {{#if this.hasActions}}
  <div class="skill-actions-panel"  data-skill="{{../key}}">
 
- {{#if combatActions}}
+ {{#if this.combatActions}}
  <div class="actions-category">
  <h4><i class="fas fa-fist-raised" aria-hidden="true"></i> Combat Actions</h4>
  <div class="actions-list">
