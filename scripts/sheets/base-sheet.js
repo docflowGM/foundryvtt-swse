@@ -465,4 +465,33 @@ export class SWSEActorSheetBase extends BaseSheet {
     const item = await Item.fromDropData(data);
     return await this.actor.createEmbeddedDocuments('Item', [item.toObject()]);
   }
+
+  // ---------------------------------
+  // Form Submission (v13 Foundry Compatibility)
+  // Separates item updates from actor updates for synthetic actors
+  // ---------------------------------
+  async _updateObject(event, formData) {
+    // Expand form data into nested structure for easier manipulation
+    const expandedData = foundry.utils.expandObject(formData);
+
+    // Separate out any embedded Item field updates
+    const itemUpdates = [];
+    if (expandedData.items) {
+      for (const [itemId, itemData] of Object.entries(expandedData.items)) {
+        itemUpdates.push({ _id: itemId, ...itemData });
+      }
+      delete expandedData.items;  // Remove items from actor data
+    }
+
+    // Update the Actor document with actor-only data
+    if (Object.keys(expandedData).length > 0) {
+      await this.actor.update(expandedData);
+    }
+
+    // Apply any pending Item updates separately
+    // This ensures Foundry v13 validation doesn't reject them as part of the actor update
+    if (itemUpdates.length > 0) {
+      await this.actor.updateEmbeddedDocuments("Item", itemUpdates);
+    }
+  }
 }

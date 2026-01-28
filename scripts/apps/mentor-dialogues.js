@@ -1,5 +1,6 @@
 import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 import { SWSELogger } from "../utils/logger.js";
+import { MENTORS } from './mentor-dialogues.data.js';
 
 /**
  * SWSE Mentor Dialogue System

@@ -959,7 +959,7 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
     if (this.characterData.isDroid) {
       context.availableSkills = context.availableSkills.filter(
     skill =>
-      skill.key !== "usetheforce" &&
+      skill.key !== "useTheForce" &&
       skill.name !== "Use the Force"
       );
     }
@@ -971,7 +971,7 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
     const characterLevel = this.characterData.level || 1;
     const halfLevel = Math.floor(characterLevel / 2);
     const abilities = this.characterData.abilities || {};
-    const speciesSkillBonuses = this.characterData.speciesSkillBonuses || {};
+    const racialSkillBonuses = this.characterData.racialSkillBonuses || {};
 
     context.availableSkills = context.availableSkills.map(skill => {
       let abilityKey = (skill.ability || "").toLowerCase();
@@ -982,7 +982,7 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
       }
 
       const abilityMod = abilities[abilityKey]?.mod ?? 0;
-      const speciesBonus = speciesSkillBonuses[skill.key] ?? 0;
+      const speciesBonus = racialSkillBonuses[skill.key] ?? 0;
       const isTrained = this.characterData.skills?.[skill.key]?.trained ?? false;
 
       const currentBonus =
@@ -1585,7 +1585,11 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
   }
 
   _getSteps() {
-    if (this.actor) {
+    // Levelup flow: only if actor is already saved (has an id) - meaning it's an existing character
+    // New character creation: actor is null, unsaved, or on initial steps (name/type)
+    const isExistingSavedActor = this.actor && this.actor.id;
+
+    if (isExistingSavedActor && this.currentStep !== "name" && this.currentStep !== "type") {
       return ["abilities", "class", "background", "feats", "talents", "skills", "languages", "summary"];
     }
 
@@ -2784,7 +2788,7 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
             },
             classSkills: [
               "acrobatics", "climb", "deception", "endurance",
-              "gatherInformation", "initiative", "jump",
+              "gatherInfo", "initiative", "jump",
               "knowledgeBureaucracy", "knowledgeGalacticLore",
               "knowledgeLifeSciences", "knowledgePhysicalSciences",
               "knowledgeSocialSciences", "knowledgeTactics",
@@ -3092,7 +3096,7 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
       climb: 'str',
       deception: 'cha',
       endurance: 'con',
-      gatherInformation: 'cha',
+      gatherInfo: 'cha',
       initiative: 'dex',
       jump: 'str',
       knowledgeBureaucracy: 'int',
@@ -3221,7 +3225,7 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
       { key: "climb", name: "Climb", ability: "str", trained: false, armorCheck: true },
       { key: "deception", name: "Deception", ability: "cha", trained: false },
       { key: "endurance", name: "Endurance", ability: "con", trained: false, armorCheck: true },
-      { key: "gatherInformation", name: "Gather Information", ability: "cha", trained: false },
+      { key: "gatherInfo", name: "Gather Information", ability: "cha", trained: false },
       { key: "initiative", name: "Initiative", ability: "dex", trained: false },
       { key: "jump", name: "Jump", ability: "str", trained: false, armorCheck: true },
       { key: "knowledge", name: "Knowledge", ability: "int", trained: true },
