@@ -182,45 +182,19 @@ export const SystemInitHooks = {
         const pack = game.packs.get('foundryvtt-swse.talents');
         if (!pack) return;
 
-        let count = 0;
-        for (const doc of await pack.getDocuments()) {
-            TalentTreeNormalizer.normalize(doc);
-
-            if (!TalentTreeNormalizer.checkTalentAgainstTree(doc)) {
-                SWSELogger.warn(`Talent "${doc.name}" has invalid tree assignment`);
-            }
-
-            count++;
-        }
-
-        SWSELogger.log(`[INIT:NORMALIZE] Talents: ${count}`);
+        // NOTE: TalentDB.build() already normalizes talents via non-mutating normalizeTalent()
+        // Calling TalentTreeNormalizer.normalize(doc) here would mutate live compendium documents
+        // and trigger Foundry's document reconciliation, causing "You may only push instances of Item" error
+        // SSOT is the authoritative source; skip re-normalization of live docs
+        SWSELogger.log(`[INIT:NORMALIZE] Talents: skipped (SSOT-managed)`);
     },
 
     async _normalizeForceContent() {
-        const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-        if (powerPack) {
-            for (const doc of await powerPack.getDocuments()) {
-                ForceNormalizer.normalizePower(doc);
-            }
-        }
-
-        const featPack = game.packs.get('foundryvtt-swse.feats');
-        if (featPack) {
-            for (const doc of await featPack.getDocuments()) {
-                if (doc.system?.tags?.includes('force_technique')) {
-                    ForceNormalizer.normalizeTechnique(doc);
-                }
-            }
-        }
-
-        const talentPack = game.packs.get('foundryvtt-swse.talents');
-        if (talentPack) {
-            for (const doc of await talentPack.getDocuments()) {
-                if (doc.system?.tags?.includes('force_secret')) {
-                    ForceNormalizer.normalizeSecret(doc);
-                }
-            }
-        }
+        // NOTE: ForceNormalizer mutates live compendium documents (sys.powerLevel, sys.tags, etc.)
+        // This triggers Foundry's document reconciliation during SSOT initialization
+        // SSOT registries (TalentDB, etc.) already handle normalization via mutation-safe cloning
+        // Deferring force content normalization to avoid mutation conflicts with active data loading
+        SWSELogger.log(`[INIT:NORMALIZE] Force Content: skipped (SSOT-managed)`);
     },
 
     /* -------------------------------------------- */
