@@ -290,6 +290,12 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._debouncedDefenseChange.call(this);
     });
 
+    // Ability score input changes - recalculate modifiers
+    html.find(".ability-inputs input").change(ev => {
+      this.actor.prepareData();
+      this.render();
+    });
+
     // ========== HEADER BUTTONS ==========
     html.find('.level-up').click(ev => this._onLevelUp(ev));
     html.find('.character-generator').click(ev => this._onCharacterGenerator(ev));
