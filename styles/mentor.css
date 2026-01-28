@@ -276,6 +276,15 @@
     padding: 20px;
 }
 
+[data-theme=holo] .feat-suggestions-hint {
+    color: var(--swse-text-secondary);
+    font-size: 0.85em;
+    font-style: italic;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--swse-border-subtle);
+}
+
 [data-theme=holo] .feat-suggestions-container .mentor-intro {
     color: var(--swse-primary);
     margin: 0 0 20px 0;

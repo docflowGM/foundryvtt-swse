@@ -220,7 +220,7 @@ export class SuggestionEngineCoordinator {
         ...f,
         suggestion: {
           tier: 0,
-          reason: 'Legal option',
+          reason: '',
           icon: ''
         }
       }));
@@ -259,7 +259,7 @@ export class SuggestionEngineCoordinator {
         ...t,
         suggestion: {
           tier: 0,
-          reason: 'Legal option',
+          reason: '',
           icon: ''
         }
       }));

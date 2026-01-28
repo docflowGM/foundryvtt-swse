@@ -1747,6 +1747,7 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
                     </button>
                   `).join('')}
                 </div>
+                <p class="feat-suggestions-hint">Click a suggestion to select it, or close this dialog to browse feats manually.</p>
               </div>
             </div>
           `;
@@ -1796,7 +1797,7 @@ context.availableSkills = context.availableSkills ?? context.skillsJson;
                 });
               }
             },
-            { classes: ['feat-suggestions-dialog', 'mentor-suggestions-dialog', 'holo-window'] }
+            { classes: ['feat-suggestions-dialog', 'mentor-suggestions-dialog', 'holo-window'], width: 800, height: 'auto' }
           );
           dialog.render(true);
           return;
