@@ -256,6 +256,7 @@ Hooks.once("init", async function () {
        --------------------------------------------------------- */
     registerSystemSettings();
     registerHouseruleSettings();
+    registerSuggestionSettings();
 
     /* ---------------------------------------------------------
        Hook Registration (must be before async operations)

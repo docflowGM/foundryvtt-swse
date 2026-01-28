@@ -523,29 +523,8 @@ export class CharacterTemplates {
           await actor.createEmbeddedDocuments('Item', [feat.toObject()]);
           SWSELogger.log(`SWSE | Added template feat: ${featName}`);
 
-          // Handle Skill Focus feat - auto-check the skill's focused checkbox
-          if (featName.startsWith('Skill Focus')) {
-            const match = featName.match(/Skill Focus \(([^)]+)\)/);
-            if (match) {
-              await this._applySkillFocus(actor, match[1]);
-            }
-          }
-
-          // Handle Weapon Focus feat
-          if (featName.startsWith('Weapon Focus')) {
-            const match = featName.match(/Weapon Focus \(([^)]+)\)/);
-            if (match) {
-              await this._applyWeaponFocus(actor, match[1]);
-            }
-          }
-
-          // Handle Weapon Proficiency feat
-          if (featName.startsWith('Weapon Proficiency')) {
-            const match = featName.match(/Weapon Proficiency \(([^)]+)\)/);
-            if (match) {
-              await this._applyWeaponProficiency(actor, match[1]);
-            }
-          }
+          // NOTE: Special feat handling is already done in the fallback path below (lines 579+)
+          // Skip duplication of logic here
           return;
         }
       }

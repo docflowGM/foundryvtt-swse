@@ -179,6 +179,8 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       armorProficiencyRequired: new fields.StringField({
         initial: "",
         choices: ["", "light", "medium", "heavy"],
+        blank: true,
+        nullable: true,
         label: "Proficiency Required"
       }),
       charges: new fields.SchemaField({
