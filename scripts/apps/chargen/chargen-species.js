@@ -242,8 +242,8 @@ export async function _onConfirmSpecies(event) {
     await this._onSelectSpecies(syntheticEvent);
     SWSELogger.log(`CharGen | Species ${speciesNameToSelect} selected successfully`);
 
-    // If this is a level-up (character sheet edit), close the CharGen window after applying species
-    if (this.actor) {
+    // If this is a character sheet edit (singleStepMode), close the CharGen window after applying species
+    if (this.singleStepMode) {
       SWSELogger.log(`CharGen | Closing CharGen after species selection (character sheet edit)`);
       this.close();
     } else {
