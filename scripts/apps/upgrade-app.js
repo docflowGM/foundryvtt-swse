@@ -279,7 +279,14 @@ export class SWSEUpgradeApp extends FormApplication {
   }
 
   _formatRestrictions(restrictions) {
-    if (!restrictions || restrictions.length === 0) return null;
+    // Ensure restrictions is an array
+    if (!restrictions) return null;
+
+    const restrictionArray = Array.isArray(restrictions)
+      ? restrictions
+      : (typeof restrictions === 'string' ? [restrictions] : []);
+
+    if (restrictionArray.length === 0) return null;
 
     const restrictionMap = {
       'stunOrIon': 'Requires Stun or Ion setting',
@@ -295,7 +302,7 @@ export class SWSEUpgradeApp extends FormApplication {
       'rangedStun': 'Ranged with Stun only'
     };
 
-    return restrictions.map(r => restrictionMap[r] || r).join(', ');
+    return restrictionArray.map(r => restrictionMap[r] || r).join(', ');
   }
 
   async _onApplyTemplate(event) {
