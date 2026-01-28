@@ -706,10 +706,10 @@ export default class CharacterGenerator extends Application {
       }
 
       // ======================================================
-// Add suggestion engine suggestions to FEATS
-// ======================================================
-if (this.currentStep === "feats" && context.packs.feats) {
-  try {
+      // Add suggestion engine suggestions to FEATS
+      // ======================================================
+      if (this.currentStep === "feats" && context.packs.feats) {
+        try {
     SWSELogger.log(
       `[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.feats.length} feats with BuildIntent context...`
     );
@@ -772,16 +772,16 @@ if (this.currentStep === "feats" && context.packs.feats) {
         categErr
       );
     }
-  } catch (err) {
-    SWSELogger.warn("CharGen | Failed to add feat suggestions:", err);
-  }
-}
+        } catch (err) {
+          SWSELogger.warn("CharGen | Failed to add feat suggestions:", err);
+        }
+      }
 
-// ======================================================
-// Add suggestion engine suggestions to TALENTS
-// ======================================================
-if (this.currentStep === "talents" && context.packs.talents) {
-  try {
+    // ======================================================
+    // Add suggestion engine suggestions to TALENTS
+    // ======================================================
+      if (this.currentStep === "talents" && context.packs.talents) {
+        try {
     SWSELogger.log(
       `[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.talents.length} talents with BuildIntent context...`
     );
@@ -822,28 +822,29 @@ if (this.currentStep === "talents" && context.packs.talents) {
         prereqReasons: prereqCheck.reasons
       };
     });
-  } catch (err) {
-    SWSELogger.warn("CharGen | Failed to add talent suggestions:", err);
-  }
-}
+        } catch (err) {
+          SWSELogger.warn("CharGen | Failed to add talent suggestions:", err);
+        }
+      }
 
-// ======================================================
-// Add suggestion engine integration for SKILLS
-// ======================================================
-let classData = null;
-let classSkills = [];
-let trainedSkillsAllowed = 0;
+    }
+    // ======================================================
+    // Add suggestion engine integration for SKILLS
+    // ======================================================
+    let classData = null;
+    let classSkills = [];
+    let trainedSkillsAllowed = 0;
 
-if (this.currentStep === "skills" && context.packs) {
-  const tempActor = this._createTempActorForValidation();
+    if (this.currentStep === "skills" && context.packs) {
+      const tempActor = this._createTempActorForValidation();
 
-  const selectedClassName = this.characterData.classes?.[0]?.name;
+      const selectedClassName = this.characterData.classes?.[0]?.name;
 
-  if (selectedClassName && ClassesDB.isBuilt) {
+      if (selectedClassName && ClassesDB.isBuilt) {
     classData = ClassesDB.byName(selectedClassName);
-  }
+      }
 
-  if (classData) {
+      if (classData) {
     classSkills = classData.classSkills ?? [];
     const intMod = this.characterData.abilities.int.mod || 0;
     const humanBonus =
@@ -859,15 +860,15 @@ if (this.currentStep === "skills" && context.packs) {
 
     this.characterData.classSkillsList = [...classSkills];
     this.characterData.trainedSkillsAllowed = trainedSkillsAllowed;
-  } else {
+      } else {
     // Last resort fallback to legacy properties
     classSkills = this.characterData.classSkillsList || [];
     trainedSkillsAllowed = this.characterData.trainedSkillsAllowed || 0;
-  }
+      }
 
-  // DIAGNOSTIC: Log where data is coming from
-  const selectedClassNameForLog = this.characterData?.classes?.[0]?.name ?? this.characterData?.className;
-  SWSELogger.log(`[CHARGEN-SKILLS] Skills step rendering - DATA SOURCE CHECK:`, {
+      // DIAGNOSTIC: Log where data is coming from
+      const selectedClassNameForLog = this.characterData?.classes?.[0]?.name ?? this.characterData?.className;
+      SWSELogger.log(`[CHARGEN-SKILLS] Skills step rendering - DATA SOURCE CHECK:`, {
     selectedClassNameForLog,
     classDataFound: !!classData,
     classDataSource: classData ? "ClassesDB" : "characterData fallback",
@@ -877,8 +878,8 @@ if (this.currentStep === "skills" && context.packs) {
     characterDataClassSkillsList: this.characterData.classSkillsList,
     characterDataTrainedSkills: this.characterData.trainedSkillsAllowed,
     backgroundSkills: this.characterData.backgroundSkills?.length ?? 0
-  });
-}
+      });
+    }
 
       try {
         // Combine class skills with background skills
@@ -931,66 +932,66 @@ if (this.currentStep === "skills" && context.packs) {
       }
 
     // ======================================================
-// Finalize SKILLS data for template rendering
-// ======================================================
+    // Finalize SKILLS data for template rendering
+    // ======================================================
 
-// Persist canonical class skills + training budget
-this.characterData.classSkillsList = Array.isArray(classSkills)
-  ? [...classSkills]
-  : [];
-this.characterData.trainedSkillsAllowed = trainedSkillsAllowed;
+    // Persist canonical class skills + training budget
+    this.characterData.classSkillsList = Array.isArray(classSkills)
+      ? [...classSkills]
+      : [];
+    this.characterData.trainedSkillsAllowed = trainedSkillsAllowed;
 
-SWSELogger.log(
-  `[CHARGEN-SKILLS] Updated characterData`,
-  {
+    SWSELogger.log(
+      `[CHARGEN-SKILLS] Updated characterData`,
+      {
     trainedSkillsAllowed,
     classSkillsCount: this.characterData.classSkillsList.length
-  }
+      }
 );
 
 context.trainedSkillsAllowed = trainedSkillsAllowed;
 
-// Ensure skills collections exist
+    // Ensure skills collections exist
 context.skillsJson = context.skillsJson ?? this._skillsJson ?? [];
 context.availableSkills = context.availableSkills ?? context.skillsJson;
 
-// Droids cannot use the Force
-if (this.characterData.isDroid) {
-  context.availableSkills = context.availableSkills.filter(
+    // Droids cannot use the Force
+    if (this.characterData.isDroid) {
+      context.availableSkills = context.availableSkills.filter(
     skill =>
       skill.key !== "usetheforce" &&
       skill.name !== "Use the Force"
-  );
-}
+      );
+    }
 
-// ======================================================
-// Compute skill modifiers for display
-// ======================================================
+    // ======================================================
+    // Compute skill modifiers for display
+    // ======================================================
 
-const characterLevel = this.characterData.level || 1;
-const halfLevel = Math.floor(characterLevel / 2);
-const abilities = this.characterData.abilities || {};
-const speciesSkillBonuses = this.characterData.speciesSkillBonuses || {};
+    const characterLevel = this.characterData.level || 1;
+    const halfLevel = Math.floor(characterLevel / 2);
+    const abilities = this.characterData.abilities || {};
+    const speciesSkillBonuses = this.characterData.speciesSkillBonuses || {};
 
-context.availableSkills = context.availableSkills.map(skill => {
-  let abilityKey = (skill.ability || "").toLowerCase();
+    context.availableSkills = context.availableSkills.map(skill => {
+      let abilityKey = (skill.ability || "").toLowerCase();
 
-  // Droids substitute STR for CON
-  if (this.characterData.isDroid && abilityKey === "con") {
+      // Droids substitute STR for CON
+      if (this.characterData.isDroid && abilityKey === "con") {
     abilityKey = "str";
-  }
+      }
 
-  const abilityMod = abilities[abilityKey]?.mod ?? 0;
-  const speciesBonus = speciesSkillBonuses[skill.key] ?? 0;
-  const isTrained = this.characterData.skills?.[skill.key]?.trained ?? false;
+      const abilityMod = abilities[abilityKey]?.mod ?? 0;
+      const speciesBonus = speciesSkillBonuses[skill.key] ?? 0;
+      const isTrained = this.characterData.skills?.[skill.key]?.trained ?? false;
 
-  const currentBonus =
+      const currentBonus =
     halfLevel + abilityMod + speciesBonus + (isTrained ? 5 : 0);
 
-  const trainedBonus =
+      const trainedBonus =
     halfLevel + abilityMod + speciesBonus + 5;
 
-  return {
+      return {
     ...skill,
     trained: isTrained,
     halfLevel,
@@ -998,13 +999,13 @@ context.availableSkills = context.availableSkills.map(skill => {
     speciesBonus,
     currentBonus,
     trainedBonus
-  };
-});
+      };
+    });
 
-// Track trained skill count
-this.characterData.trainedSkillsCount = Object.values(
-  this.characterData.skills || {}
-).filter(skill => skill.trained).length;
+    // Track trained skill count
+    this.characterData.trainedSkillsCount = Object.values(
+      this.characterData.skills || {}
+    ).filter(skill => skill.trained).length;
 
     // Prepare languages for template
     if (this.currentStep === "languages") {
