@@ -297,6 +297,120 @@ export const ROLL_MODIFIERS = Object.freeze({
  * @param {boolean} [options.showForcePoint=true] - Show Force Point option
  * @returns {Promise<Object|null>} The selected modifiers or null if cancelled
  */
+/**
+ * Custom V2 Application for roll modifiers dialog
+ */
+class RollModifiersDialog extends foundry.applications.api.ApplicationV2 {
+  constructor(options = {}) {
+    super(options);
+    this.resolve = options.resolve || (() => {});
+  }
+
+  static DEFAULT_OPTIONS = {
+    classes: ['swse', 'dialog', 'holo-dialog'],
+    window: {
+      icon: 'fas fa-dice-d20',
+      title: 'Roll Modifiers'
+    },
+    position: {
+      width: 400,
+      height: 'auto'
+    }
+  };
+
+  get title() {
+    return this.options.window.title;
+  }
+
+  async _prepareContext() {
+    return {
+      content: this.options.content || ''
+    };
+  }
+
+  _onRender(context, options) {
+    super._onRender(context, options);
+    this._applyHoloStyling();
+    this._attachFormHandlers();
+  }
+
+  _applyHoloStyling() {
+    const buttons = this.element?.querySelectorAll('button');
+    if (buttons) {
+      buttons.forEach(btn => {
+        btn.classList.add('holo-button');
+        if (btn.textContent.includes('Roll')) {
+          btn.classList.add('holo-button-primary');
+        }
+      });
+    }
+  }
+
+  _attachFormHandlers() {
+    const form = this.element?.querySelector('form.swse-roll-modifiers-dialog');
+    if (!form) return;
+
+    const rollBtn = this.element?.querySelector('[data-action="roll"]');
+    const cancelBtn = this.element?.querySelector('[data-action="cancel"]');
+
+    if (rollBtn) {
+      rollBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this._onRoll(form);
+      });
+    }
+
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this._onCancel();
+      });
+    }
+  }
+
+  _onRoll(form) {
+    const data = new FormDataEntries(form);
+
+    const result = {
+      cover: data.get('cover') || 'none',
+      concealment: data.get('concealment') || 'none',
+      customModifier: parseInt(data.get('customModifier'), 10) || 0,
+      useForcePoint: data.get('useForcePoint') === 'on',
+      twoHanded: data.get('twoHanded') === 'on',
+      situational: {
+        aiming: data.get('aiming') === 'on',
+        charging: data.get('charging') === 'on',
+        flanking: data.get('flanking') === 'on',
+        higherGround: data.get('higherGround') === 'on',
+        pointBlank: data.get('pointBlank') === 'on',
+        prone: data.get('prone') === 'on'
+      }
+    };
+
+    // Calculate total situational modifier
+    result.situationalBonus = 0;
+    if (result.situational.aiming) result.situationalBonus += 2;
+    if (result.situational.charging) result.situationalBonus += 2;
+    if (result.situational.flanking) result.situationalBonus += 2;
+    if (result.situational.higherGround) result.situationalBonus += 1;
+    if (result.situational.pointBlank) result.situationalBonus += 1;
+
+    // Cover bonus (for target's defense)
+    result.coverBonus = ROLL_MODIFIERS.cover[result.cover]?.value || 0;
+
+    // Concealment miss chance
+    result.missChance = ROLL_MODIFIERS.concealment[result.concealment]?.missChance || 0;
+
+    this.resolve(result);
+    this.close();
+  }
+
+  _onCancel() {
+    this.resolve(null);
+    this.close();
+  }
+}
+
 export async function showRollModifiersDialog(options = {}) {
   const {
     title = 'Roll Modifiers',
@@ -458,78 +572,26 @@ export async function showRollModifiersDialog(options = {}) {
     `;
   }
 
-  content += '</form>';
+  // Add buttons to the form
+  content += `
+    <div class="dialog-buttons" style="display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end;">
+      <button type="button" data-action="cancel" style="padding: 6px 12px; cursor: pointer;">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+      <button type="button" data-action="roll" style="padding: 6px 12px; cursor: pointer;">
+        <i class="fas fa-dice-d20"></i> Roll
+      </button>
+    </div>
+  </form>`;
 
   return new Promise(resolve => {
-    const dialog = new Dialog({
-      title,
-      content,
-      buttons: {
-        roll: {
-          icon: '<i class="fas fa-dice-d20"></i>',
-          label: 'Roll',
-          callback: html => {
-            const form = html.find('form')[0];
-            const data = new FormDataEntries(form);
-
-            const result = {
-              cover: data.get('cover') || 'none',
-              concealment: data.get('concealment') || 'none',
-              customModifier: parseInt(data.get('customModifier'), 10) || 0,
-              useForcePoint: data.get('useForcePoint') === 'on',
-              twoHanded: data.get('twoHanded') === 'on',
-              situational: {
-                aiming: data.get('aiming') === 'on',
-                charging: data.get('charging') === 'on',
-                flanking: data.get('flanking') === 'on',
-                higherGround: data.get('higherGround') === 'on',
-                pointBlank: data.get('pointBlank') === 'on',
-                prone: data.get('prone') === 'on'
-              }
-            };
-
-            // Calculate total situational modifier
-            result.situationalBonus = 0;
-            if (result.situational.aiming) result.situationalBonus += 2;
-            if (result.situational.charging) result.situationalBonus += 2;
-            if (result.situational.flanking) result.situationalBonus += 2;
-            if (result.situational.higherGround) result.situationalBonus += 1;
-            if (result.situational.pointBlank) result.situationalBonus += 1;
-
-            // Cover bonus (for target's defense)
-            result.coverBonus = ROLL_MODIFIERS.cover[result.cover]?.value || 0;
-
-            // Concealment miss chance
-            result.missChance = ROLL_MODIFIERS.concealment[result.concealment]?.missChance || 0;
-
-            resolve(result);
-          }
-        },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: 'Cancel',
-          callback: () => resolve(null)
-        }
-      },
-      default: 'roll',
-      classes: ['swse', 'dialog', 'holo-dialog']
+    const dialog = new RollModifiersDialog({
+      resolve,
+      window: { title },
+      content
     });
 
     dialog.render(true);
-
-    // Apply holo button styling after render
-    dialog._rendered.then(() => {
-      const buttons = dialog.element?.find('button');
-      if (buttons) {
-        buttons.each(function() {
-          const $btn = $(this);
-          $btn.addClass('holo-button');
-          if ($btn.text().includes('Roll')) {
-            $btn.addClass('holo-button-primary');
-          }
-        });
-      }
-    }).catch(() => {});
   });
 }
 
