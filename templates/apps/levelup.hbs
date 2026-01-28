@@ -287,16 +287,14 @@
             {{#if this.isSuggested}}
             <div class="class-choice-btn {{#if this.isPrestige}}prestige-class{{/if}} is-suggested {{this.suggestion.cssClass}}"
                  data-class-id="{{this.id}}"
-                 data-suggestion-tier="{{this.suggestion.tier}}">
+                 data-suggestion-tier="{{this.suggestion.tier}}"
+                 style="background-image: url('systems/foundryvtt-swse/assets/class/{{this.name}}.webp');">
               {{!-- Suggestion Badge --}}
               {{#if this.suggestion.iconClass}}
               <span class="class-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
                 <i class="{{this.suggestion.iconClass}}"></i>
               </span>
               {{/if}}
-              <div class="class-icon {{#if this.isPrestige}}prestige-icon{{/if}}">
-                <i class="fas {{this.icon}}"></i>
-              </div>
               <h3>{{this.name}}</h3>
               <p class="class-desc">{{this.description}}</p>
               <p class="suggestion-reason">{{this.suggestion.reason}}</p>
@@ -329,16 +327,14 @@
             {{#if (and this.isBase (or (eq this.name "Jedi") (eq this.name "Noble") (eq this.name "Scout") (eq this.name "Scoundrel") (eq this.name "Soldier")))}}
             <div class="class-choice-btn {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}"
                  data-class-id="{{this.id}}"
-                 {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+                 {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}
+                 style="background-image: url('systems/foundryvtt-swse/assets/class/{{this.name}}.webp');">
               {{!-- Suggestion Badge --}}
               {{#if this.suggestion.iconClass}}
               <span class="class-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
                 <i class="{{this.suggestion.iconClass}}"></i>
               </span>
               {{/if}}
-              <div class="class-icon">
-                <i class="fas {{this.icon}}"></i>
-              </div>
               <h3>{{this.name}}</h3>
               <p class="class-desc">{{this.description}}</p>
               {{#if this.suggestion.reason}}
@@ -405,16 +401,14 @@
           {{#if this.isPrestige}}
           <div class="class-choice-btn prestige-class {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}"
                data-class-id="{{this.id}}"
-               {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+               {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}
+               style="background-image: url('systems/foundryvtt-swse/assets/class/{{this.name}}.webp');">
             {{!-- Suggestion Badge --}}
             {{#if this.suggestion.iconClass}}
             <span class="class-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
               <i class="{{this.suggestion.iconClass}}"></i>
             </span>
             {{/if}}
-            <div class="class-icon prestige-icon">
-              <i class="fas {{#if this.isSuggested}}fa-star{{else}}fa-crown{{/if}}"></i>
-            </div>
             <h3>{{this.name}}</h3>
             <p class="class-desc">{{this.description}}</p>
             {{#if this.suggestion.reason}}
@@ -2385,13 +2379,31 @@
 
 .class-choice-btn {
   position: relative;
-  background: linear-gradient(135deg, rgba(30, 30, 40, 0.9), rgba(20, 20, 30, 0.9));
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(20, 20, 30, 0.9);
   border: 3px solid #444;
   border-radius: 12px;
   padding: 2rem;
   cursor: pointer;
   transition: all 0.4s ease;
   overflow: hidden;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.class-choice-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(20, 20, 30, 0.7), rgba(10, 10, 20, 0.7));
+  pointer-events: none;
+  z-index: 1;
 }
 
 .class-choice-btn::before {
@@ -2429,31 +2441,11 @@
   background: linear-gradient(90deg, #ffd700, #ffaa00);
 }
 
-.class-icon {
-  font-size: 4rem;
-  color: #4a90e2;
-  margin-bottom: 1rem;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.class-icon.prestige-icon {
-  color: #ffd700;
-}
-
-.class-choice-btn:hover .class-icon {
-  transform: scale(1.1);
-  text-shadow: 0 0 20px rgba(74, 144, 226, 0.8);
-}
-
-.class-choice-btn.prestige-class:hover .class-icon {
-  text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
-}
-
 .class-choice-btn h3 {
   margin: 0 0 0.75rem 0;
   font-size: 1.8rem;
-  color: #4a90e2;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
   text-align: center;
   font-weight: bold;
 }
