@@ -20,7 +20,7 @@
 // ============================================
 
 import { PRESTIGE_PREREQUISITES } from './prestige-prerequisites.js';
-import { TalentTreeDB } from './talent-tree-db.js';
+import TalentTreeDB from './talent-tree-db.js';
 import { normalizeTalentTreeId } from './talent-tree-normalizer.js';
 import { SWSELogger } from '../utils/logger.js';
 

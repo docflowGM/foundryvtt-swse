@@ -109,7 +109,7 @@ export class TalentTreeRegistry {
           if (reqId) graph.linkRequirement(n.id, reqId);
         }
       }
-this.trees.set(treeName, graph);
+      this.trees.set(treeName, graph);
       return graph;
     };
 
