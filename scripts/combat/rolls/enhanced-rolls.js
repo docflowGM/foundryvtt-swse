@@ -83,7 +83,7 @@ export class SWSERoll {
   static async _safeRoll(formula, data = {}) {
     try {
       const roll = new Roll(formula, data);
-      await roll.evaluate({ async: true });
+      roll.evaluateSync();
       return roll;
     } catch (err) {
       swseLogger.error('Roll failed:', formula, err);
@@ -1215,7 +1215,7 @@ export class SWSERoll {
         ? await this.promptForcePointUse(actor, `${skillKey} check`)
         : 0;
 
-      const total = skill.total + fpBonus + modifiers.customModifier;
+      const total = (skill.total ?? 0) + (fpBonus ?? 0) + (modifiers.customModifier ?? 0);
 
       // Build formula
       const formula = `1d20 + ${total}`;

@@ -320,12 +320,15 @@ Hooks.once("init", async function () {
     /* ---------------------------------------------------------
        Register Flag Scopes (Foundry v13+)
        --------------------------------------------------------- */
-    if (CONFIG.Item?.flagScopes) {
-        CONFIG.Item.flagScopes.add('swse');
+    if (!CONFIG.Item.flagScopes) {
+        CONFIG.Item.flagScopes = new Set();
     }
-    if (CONFIG.Actor?.flagScopes) {
-        CONFIG.Actor.flagScopes.add('swse');
+    CONFIG.Item.flagScopes.add('swse');
+
+    if (!CONFIG.Actor.flagScopes) {
+        CONFIG.Actor.flagScopes = new Set();
     }
+    CONFIG.Actor.flagScopes.add('swse');
 
     /* ---------------------------------------------------------
        Sheet Registration
