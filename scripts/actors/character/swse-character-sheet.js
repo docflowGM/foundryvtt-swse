@@ -227,6 +227,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     context.classDisplay = classes.length > 0
       ? classes.map(c => `${c.name} ${c.system.level || 1}`).join(" / ")
       : "No classes";
+    context.displayedClasses = context.classDisplay; // Alias for HUD template
 
     // --------------------------------------
     // 8. TALENT ABILITIES (NEW)
@@ -305,15 +306,15 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     html.find('.talk-to-mentor').click(ev => this._onTalkToMentor(ev));
 
     // ========== CONDITION TRACK ==========
-    html.find('.track-condition').click(ev => this._onConditionTrackClick(ev));
-    html.find('.track-button.improve').click(ev => this._onRecoverCondition(ev));
-    html.find('.track-button.worsen').click(ev => this._onWorsenCondition(ev));
+    html.find('.track-condition, .track-pip').click(ev => this._onConditionTrackClick(ev));
+    html.find('.track-button.improve, .cond-btn.improve').click(ev => this._onRecoverCondition(ev));
+    html.find('.track-button.worsen, .cond-btn.worsen').click(ev => this._onWorsenCondition(ev));
 
     // ========== PROGRESSION ENGINE BUTTONS ==========
     html.find('.roll-attributes-btn').click(ev => this._onRollAttributes(ev));
 
     // ========== FORCE TAB ACTIONS ==========
-    html.find('.roll-force-point').click(ev => this._onRollForcePoint(ev));
+    html.find('.roll-force-point, .roll-fp').click(ev => this._onRollForcePoint(ev));
     html.find('[data-action="usePower"]').click(ev => this._onUsePower(ev));
     html.find('[data-action="regainForcePower"]').click(ev => this._onRegainForcePower(ev));
     html.find('[data-action="spendForcePoint"]').click(ev => this._onSpendForcePoint(ev));
