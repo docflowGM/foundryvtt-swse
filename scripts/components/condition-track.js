@@ -1,19 +1,19 @@
-/**
- * SWSE Condition Track Sheet Component (Updated for RAW + New CT System)
- * - Correct CT penalties
- * - Persistent condition restrictions
- * - Consistent with Actor.moveConditionTrack()
- * - UI safely triggers CT updates without breaking Active Effects
- */
+// ==================================================
+// ConditionTrackComponent (v2)
+// UI-only renderer + intent dispatcher
+// ==================================================
+
 import { escapeHTML } from "../utils/security-utils.js";
+import { ActorEngine } from "../actors/engine/actor-engine.js";
 
 export class ConditionTrackComponent {
 
   /* ---------------------------------------- */
-  /* Public Render API                        */
+  /* Public API                               */
   /* ---------------------------------------- */
 
   static render(actor, container) {
+    if (!actor?.system) return;
     container.innerHTML = this._template(actor);
     this._activate(container, actor);
   }
@@ -27,11 +27,17 @@ export class ConditionTrackComponent {
   /* ---------------------------------------- */
 
   static _template(actor) {
-    const current = actor.system.conditionTrack.current ?? 0;
-    const persistent = actor.system.conditionTrack.persistent ?? false;
+    const track = actor.system.conditionTrack ?? {};
+    const derived = actor.system.derived ?? {};
 
-    const steps = this._defineSteps();
-    const penaltyText = steps[current]?.penalty || "";
+    const current = track.step ?? 0;
+    const max = actor.getMaxDamageTrackStep?.() ?? 5;
+    const persistent = track.persistent ?? false;
+
+    const steps = this._buildSteps(actor, max);
+    const penaltyText = derived.damagePenalty
+      ? `${derived.damagePenalty}`
+      : "";
 
     return `
       <div class="swse-condition-track">
@@ -52,14 +58,16 @@ export class ConditionTrackComponent {
           </button>
 
           <label class="ct-persistent">
-            <input type="checkbox" data-ct="persistent" ${persistent ? "checked" : ""}/>
+            <input type="checkbox"
+                   data-ct="persistent"
+                   ${persistent ? "checked" : ""}/>
             Persistent
           </label>
         </div>
 
-        ${current > 0 ? `
+        ${penaltyText ? `
           <div class="ct-penalty">
-            Penalty: <strong>${penaltyText}</strong> to Attacks, Defenses, Ability Checks, and Skill Checks
+            Penalty: <strong>${escapeHTML(penaltyText)}</strong>
           </div>
         ` : ""}
       </div>
@@ -67,18 +75,17 @@ export class ConditionTrackComponent {
   }
 
   /* ---------------------------------------- */
-  /* Step Definitions                         */
+  /* Step Builder (UI only)                   */
   /* ---------------------------------------- */
 
-  static _defineSteps() {
-    return [
-      { index: 0, label: "Normal", penalty: "", css: "normal" },
-      { index: 1, label: "-1", penalty: "-1", css: "ct-1" },
-      { index: 2, label: "-2", penalty: "-2", css: "ct-2" },
-      { index: 3, label: "-5", penalty: "-5", css: "ct-5" },
-      { index: 4, label: "-10", penalty: "-10 (Half Speed)", css: "ct-10" },
-      { index: 5, label: "Helpless", penalty: "Unconscious/Disabled", css: "ct-helpless" }
-    ];
+  static _buildSteps(actor, max) {
+    const labels = actor.getConditionTrackLabels?.() ?? [];
+
+    return Array.from({ length: max + 1 }, (_, i) => ({
+      index: i,
+      label: labels[i] ?? `Step ${i}`,
+      css: `ct-step-${i}`
+    }));
   }
 
   /* ---------------------------------------- */
@@ -104,7 +111,6 @@ export class ConditionTrackComponent {
            data-step="${step.index}"
            title="Set condition to ${escapeHTML(step.label)}">
         <span class="ct-label">${escapeHTML(step.label)}</span>
-        ${step.penalty ? `<span class="ct-pen">${escapeHTML(step.penalty)}</span>` : ""}
         ${marker}
       </div>
     `;
@@ -118,34 +124,49 @@ export class ConditionTrackComponent {
     const $c = $(container);
 
     // Set CT directly
-    $c.find('[data-ct="set"]').on("click", async ev => {
-      await this._setCondition(actor, Number(ev.currentTarget.dataset.step));
+    $c.find('[data-ct="set"]').on("click", ev => {
+      const step = Number(ev.currentTarget.dataset.step);
+      this._requestSet(actor, step);
     });
 
-    // Improve CT (respect persistent)
-    $c.find('[data-ct="improve"]').on("click", async () => {
-      if (actor.system.conditionTrack.persistent) {
-        return ui.notifications.warn("Condition is Persistent and cannot be removed by the Recover Action.");
-      }
-      await actor.moveConditionTrack(-1);
+    // Improve CT
+    $c.find('[data-ct="improve"]').on("click", () => {
+      this._requestMove(actor, -1);
     });
 
     // Worsen CT
-    $c.find('[data-ct="worsen"]').on("click", async () => {
-      await actor.moveConditionTrack(1);
+    $c.find('[data-ct="worsen"]').on("click", () => {
+      this._requestMove(actor, 1);
     });
 
-    // Persistent flag
-    $c.find('[data-ct="persistent"]').on("change", async ev => {
-      await actor.update({ "system.conditionTrack.persistent": ev.target.checked });
+    // Persistent flag toggle
+    $c.find('[data-ct="persistent"]').on("change", ev => {
+      this._requestPersistent(actor, ev.target.checked);
     });
   }
 
   /* ---------------------------------------- */
-  /* Logic                                    */
+  /* Intent Dispatchers (NO LOGIC)             */
   /* ---------------------------------------- */
 
-  static async _setCondition(actor, step) {
-    return actor.update({ "system.conditionTrack.current": Math.clamp(step, 0, 5) });
+  static async _requestMove(actor, delta) {
+    if (typeof actor.moveConditionTrack === "function") {
+      return actor.moveConditionTrack(delta);
+    }
+
+    const current = actor.system.conditionTrack?.step ?? 0;
+    return this._requestSet(actor, current + delta);
+  }
+
+  static async _requestSet(actor, step) {
+    return ActorEngine.updateActor(actor, {
+      "system.conditionTrack.step": step
+    });
+  }
+
+  static async _requestPersistent(actor, persistent) {
+    return ActorEngine.updateActor(actor, {
+      "system.conditionTrack.persistent": !!persistent
+    });
   }
 }
