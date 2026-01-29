@@ -2,7 +2,7 @@
   "id": "foundryvtt-swse",
   "title": "Star Wars Saga Edition",
   "description": "Complete Star Wars Saga Edition implementation for FoundryVTT with automated character sheets, combat mechanics, Force powers, vehicles, and comprehensive game rules.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "compatibility": {
     "minimum": "11",
     "verified": "12",
@@ -21,7 +21,7 @@
   "changelog": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/CHANGELOG.md",
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
-  "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.2.0/foundryvtt-swse.zip",
+  "download": "https://github.com/docflowGM/foundryvtt-swse/releases/latest/download/swse.zip",
   "esmodules": [
     "index.js",
     "scripts/progression/talents/TalentNode.js",
@@ -75,7 +75,8 @@
     "styles/sheets/vehicle-level3.css",
     "styles/npc-level3.css",
     "styles/species/species-traits.css",
-    "styles/components/talent-abilities.css"
+    "styles/components/talent-abilities.css",
+    "styles/sheets/tab-holo-hotfix.css"
   ],
   "languages": [
     {
@@ -85,12 +86,12 @@
     },
     {
       "lang": "es",
-      "name": "Español",
+      "name": "Espa\u00f1ol",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Français",
+      "name": "Fran\u00e7ais",
       "path": "lang/fr.json"
     },
     {
@@ -100,7 +101,7 @@
     },
     {
       "lang": "ru",
-      "name": "Русский",
+      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
       "path": "lang/ru.json"
     },
     {
@@ -115,12 +116,12 @@
     },
     {
       "lang": "ja",
-      "name": "日本語",
+      "name": "\u65e5\u672c\u8a9e",
       "path": "lang/ja.json"
     },
     {
       "lang": "zh-CN",
-      "name": "中文（简体）",
+      "name": "\u4e2d\u6587\uff08\u7b80\u4f53\uff09",
       "path": "lang/zh-CN.json"
     }
   ],
