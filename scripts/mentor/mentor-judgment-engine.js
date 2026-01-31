@@ -211,6 +211,12 @@ export function selectJudgmentAtom(context) {
     return JUDGMENT_ATOMS.CONCERN;
   }
 
+  // Off-path without high-impact = reassessment (drift detection)
+  // If player is committed to a path but now diverging, mentor should note the shift
+  if (!isOnPath && mentorMemory?.commitmentStrength > 0.3 && !isHighImpact) {
+    return JUDGMENT_ATOMS.REASSESSMENT;
+  }
+
   // PRIORITY 4: AFFIRMATION (Synergistic choices)
   // When player choice reinforces existing themes
   if (isOnPath && !isHighImpact && topic === 'doing_well') {
