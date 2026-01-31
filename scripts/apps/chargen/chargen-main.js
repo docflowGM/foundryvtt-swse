@@ -4,6 +4,7 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
+import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from './chargen-property-accessor.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
@@ -734,11 +735,15 @@ export default class CharacterGenerator extends Application {
           };
 
           context.packs.feats = context.packs.feats.map(feat => {
-            const prereqCheck = PrerequisiteRequirements.checkFeatPrerequisites(tempActor, feat, pendingDataForFeats);
+            const canonical = PrerequisiteChecker.checkFeatPrerequisites(tempActor, feat, pendingDataForFeats);
+            const legacy = PrerequisiteRequirements.checkFeatPrerequisites(tempActor, feat, pendingDataForFeats);
+            if (canonical.met !== legacy.valid) {
+              console.warn("Prereq mismatch (feat) detected", { feat: feat.name, canonical, legacy });
+            }
             return {
               ...feat,
-              isQualified: prereqCheck.valid,
-              prereqReasons: prereqCheck.reasons
+              isQualified: canonical.met,
+              prereqReasons: canonical.missing
             };
           });
 
@@ -781,11 +786,15 @@ export default class CharacterGenerator extends Application {
           };
 
           context.packs.talents = context.packs.talents.map(talent => {
-            const prereqCheck = PrerequisiteRequirements.checkTalentPrerequisites(tempActor, talent, pendingDataForTalents);
+            const canonical = PrerequisiteChecker.checkTalentPrerequisites(tempActor, talent, pendingDataForTalents);
+            const legacy = PrerequisiteRequirements.checkTalentPrerequisites(tempActor, talent, pendingDataForTalents);
+            if (canonical.met !== legacy.valid) {
+              console.warn("Prereq mismatch (talent) detected", { talent: talent.name, canonical, legacy });
+            }
             return {
               ...talent,
-              isQualified: prereqCheck.valid,
-              prereqReasons: prereqCheck.reasons
+              isQualified: canonical.met,
+              prereqReasons: canonical.missing
             };
           });
         } catch (err) {

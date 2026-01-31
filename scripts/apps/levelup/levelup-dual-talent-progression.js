@@ -13,6 +13,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
 import { getTalentTrees } from '../chargen/chargen-property-accessor.js';
+import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 
 /**
@@ -107,7 +108,10 @@ export async function getAvailableTalentTreesForHeroicTalent(actor) {
 
   // Add Force Talent Trees if character is Force Sensitive
   try {
-    const accessRules = await PrerequisiteRequirements._loadTalentTreeAccessRules();
+    const canonical = await PrerequisiteChecker._loadTalentTreeAccessRules();
+    const legacy = await PrerequisiteRequirements._loadTalentTreeAccessRules();
+    const accessRules = canonical;  // Use canonical
+
     if (accessRules) {
       // Get all Force Talent Trees (both generic and tradition-based)
       const forceTrees = accessRules.talentTreeAccess.filter(t =>
@@ -116,7 +120,12 @@ export async function getAvailableTalentTreesForHeroicTalent(actor) {
 
       // Check which ones the character can access
       for (const treeConfig of forceTrees) {
-        if (await PrerequisiteRequirements.canAccessTalentTree(actor, treeConfig.treeId)) {
+        const canCanonical = await PrerequisiteChecker.canAccessTalentTree(actor, treeConfig.treeId);
+        const canLegacy = await PrerequisiteRequirements.canAccessTalentTree(actor, treeConfig.treeId);
+        if (canCanonical !== canLegacy) {
+          console.warn("Tree access mismatch detected", { treeId: treeConfig.treeId, canonical: canCanonical, legacy: canLegacy });
+        }
+        if (canCanonical) {
           allTrees.add(treeConfig.treeId);
         }
       }

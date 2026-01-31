@@ -14,6 +14,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { ApplyHandlers } from '../utils/apply-handlers.js';
+import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 
 export class ForceProgressionEngine {
 
@@ -141,8 +142,12 @@ export class ForceProgressionEngine {
         if (filters.checkPrerequisites) {
             const { PrerequisiteValidator } = await import('../../utils/prerequisite-validator.js');
             availablePowers = availablePowers.filter(p => {
-                const check = PrerequisiteValidator.checkFeatPrerequisites(p, actor);
-                return check.valid;
+                const canonical = PrerequisiteChecker.checkFeatPrerequisites(actor, p);
+                const legacy = PrerequisiteValidator.checkFeatPrerequisites(p, actor);
+                if (canonical.met !== legacy.valid) {
+                    console.warn("Force power prereq mismatch detected", { power: p.name, canonical, legacy });
+                }
+                return canonical.met;
             });
         }
 
