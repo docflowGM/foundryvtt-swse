@@ -2632,6 +2632,13 @@ export default class CharacterGenerator extends Application {
       actorData.flags['foundryvtt-swse'].startingClass = this.characterData.classes[0].name;
     }
 
+    // Store level1Class in swse namespace for mentor memory system compatibility
+    if (this.characterData.classes && this.characterData.classes.length > 0) {
+      actorData.flags.swse = actorData.flags.swse || {};
+      actorData.flags.swse.level1Class = this.characterData.classes[0].name;
+      actorData.flags.swse.startingClass = this.characterData.classes[0].name;
+    }
+
     let created = null;
     try {
       // Create the actor

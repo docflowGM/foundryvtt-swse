@@ -24,7 +24,42 @@ function _hashString(s) {
   return String(h);
 }
 
-function _actorRevisionKey(actor) {
+/**
+ * Generate a hash key for pending data to incorporate in-progress selections
+ * This ensures cache invalidation when player makes new selections during a workflow
+ * @param {Object} pendingData - Pending selections (selectedFeats, selectedTalents, etc.)
+ * @returns {string} Hash string representing pending state
+ */
+function _pendingDataHash(pendingData) {
+  if (!pendingData || typeof pendingData !== 'object') return '';
+
+  // Extract selection arrays and normalize to names
+  const parts = [];
+
+  if (pendingData.selectedClass?.name) {
+    parts.push(`class:${pendingData.selectedClass.name}`);
+  }
+  if (Array.isArray(pendingData.selectedFeats)) {
+    const feats = pendingData.selectedFeats.map(f => f.name || f).sort().join(',');
+    if (feats) parts.push(`feats:${feats}`);
+  }
+  if (Array.isArray(pendingData.selectedTalents)) {
+    const talents = pendingData.selectedTalents.map(t => t.name || t).sort().join(',');
+    if (talents) parts.push(`talents:${talents}`);
+  }
+  if (Array.isArray(pendingData.selectedSkills)) {
+    const skills = pendingData.selectedSkills.map(s => s.key || s.name || s).sort().join(',');
+    if (skills) parts.push(`skills:${skills}`);
+  }
+  if (Array.isArray(pendingData.selectedPowers)) {
+    const powers = pendingData.selectedPowers.map(p => p.name || p).sort().join(',');
+    if (powers) parts.push(`powers:${powers}`);
+  }
+
+  return parts.length > 0 ? _hashString(parts.join('|')) : '';
+}
+
+function _actorRevisionKey(actor, pendingData = null) {
   // Cheap + stable: level + abilities + item ids + item system-level-like fields.
   const lvl = actor?.system?.level ?? 0;
   const abilities = actor?.system?.abilities ?? {};
@@ -39,7 +74,10 @@ function _actorRevisionKey(actor) {
     return `${ty}:${nm}:${id}:${l}`;
   }).sort().join('|');
 
-  return _hashString(`${lvl}|${ab}|${items}`);
+  // Include pendingData hash to ensure cache invalidation on in-progress selections
+  const pendingHash = _pendingDataHash(pendingData);
+
+  return _hashString(`${lvl}|${ab}|${items}|${pendingHash}`);
 }
 
 function _domainToResolverDomain(domain) {
@@ -85,7 +123,9 @@ export class SuggestionService {
 
   static async getSuggestions(actorOrData, context = 'sheet', options = {}) {
     const actor = await _ensureActorDoc(actorOrData);
-    const revision = actor?.id ? _actorRevisionKey(actor) : `${Date.now()}`;
+    const pendingData = options.pendingData ?? {};
+    // Include pendingData in revision key to invalidate cache on in-progress selections
+    const revision = actor?.id ? _actorRevisionKey(actor, pendingData) : `${Date.now()}`;
     const key = `${actor?.id ?? 'temp'}::${context}::${options.domain ?? 'all'}`;
 
     const cached = this._cache.get(key);

@@ -135,6 +135,32 @@ export class SuggestionEngineCoordinator {
   static _buildIntentCache = new Map();
 
   /**
+   * Generate a compact hash for pending data to use in cache keys
+   * @private
+   */
+  static _hashPendingData(pendingData) {
+    if (!pendingData || typeof pendingData !== 'object') return '';
+
+    const parts = [];
+    if (pendingData.selectedClass?.name) {
+      parts.push(`c:${pendingData.selectedClass.name}`);
+    }
+    if (Array.isArray(pendingData.selectedFeats) && pendingData.selectedFeats.length) {
+      parts.push(`f:${pendingData.selectedFeats.map(f => f.name || f).sort().join(',')}`);
+    }
+    if (Array.isArray(pendingData.selectedTalents) && pendingData.selectedTalents.length) {
+      parts.push(`t:${pendingData.selectedTalents.map(t => t.name || t).sort().join(',')}`);
+    }
+    if (Array.isArray(pendingData.selectedSkills) && pendingData.selectedSkills.length) {
+      parts.push(`s:${pendingData.selectedSkills.map(s => s.key || s.name || s).sort().join(',')}`);
+    }
+    if (pendingData.mentorBiases && Object.keys(pendingData.mentorBiases).length) {
+      parts.push(`mb:${Object.keys(pendingData.mentorBiases).sort().join(',')}`);
+    }
+    return parts.join('|');
+  }
+
+  /**
    * Analyze character's build direction (cached)
    * @param {Actor} actor - The character
    * @param {Object} pendingData - Pending selections from level-up
@@ -143,12 +169,9 @@ export class SuggestionEngineCoordinator {
   static async analyzeBuildIntent(actor, pendingData = {}) {
     try {
       SWSELogger.log(`[SUGGESTION-COORDINATOR] analyzeBuildIntent() START - Actor: ${actor.id} (${actor.name})`);
-      // Use deterministic cache key with sorted property order
-      const sortedPendingData = Object.keys(pendingData).sort().reduce((acc, key) => {
-        acc[key] = pendingData[key];
-        return acc;
-      }, {});
-      const cacheKey = `${actor.id}_${JSON.stringify(sortedPendingData)}`;
+      // Use compact hash of pendingData for efficient, deterministic cache key
+      const pendingHash = this._hashPendingData(pendingData);
+      const cacheKey = `${actor.id}_${pendingHash}`;
 
       // Return cached result if available
       if (this._buildIntentCache.has(cacheKey)) {
