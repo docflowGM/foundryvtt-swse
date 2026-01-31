@@ -60,3 +60,39 @@ export function isTakingForceTraining(pending) {
     typeof f === 'string' && f.toLowerCase().includes('force training')
   );
 }
+
+/**
+ * FIXED: Bug #5 - Check if actor is force-sensitive (required for Force Training feat)
+ * @param {Actor} actor - The actor
+ * @param {Object} pending - Pending progression data
+ * @returns {Object} { allowed: boolean, reason: string }
+ */
+export function canTakeForceTraining(actor, pending) {
+  const progression = actor.system.progression || {};
+  const classLevels = progression.classLevels || [];
+
+  // Check if any class taken is force-sensitive
+  const hasForceSensitiveClass = classLevels.some(cl => {
+    const className = cl.class;
+    // Jedi and Jedi Knight are force-sensitive by default
+    return className === 'Jedi' || className === 'Jedi Knight';
+  });
+
+  // Check if has Force Sensitivity feat
+  const hasForceFeats = [
+    ...(progression.startingFeats || []),
+    ...(progression.feats || [])
+  ];
+  const hasForceSensitivityFeat = hasForceFeats.some(f =>
+    typeof f === 'string' && f.toLowerCase().includes('force sensitivity')
+  );
+
+  if (!hasForceSensitiveClass && !hasForceSensitivityFeat) {
+    return {
+      allowed: false,
+      reason: 'Force Training feat requires Force Sensitivity or a Force-Sensitive class (Jedi, Jedi Knight)'
+    };
+  }
+
+  return { allowed: true, reason: 'Force-sensitive character may take Force Training' };
+}

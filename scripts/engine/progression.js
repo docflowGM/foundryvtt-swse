@@ -1215,65 +1215,54 @@ async applyScalingFeature(feature) {
 
     swseLogger.log(`[PROGRESSION-CLASS] Class data loaded successfully: ${classData.name}`);
 
+    // FIXED: Bug #3 - Verify levelProgression data exists (critical for BAB, features)
+    if (!classData.levelProgression) {
+      const errorMsg = `Class "${classId}" missing levelProgression data. BAB and features will not work correctly.`;
+      swseLogger.error(`[PROGRESSION-CLASS] FATAL: ${errorMsg}`);
+      throw new Error(errorMsg);
+    }
+
     // Prerequisite validation (can be skipped for free build mode)
     if (!skipPrerequisites) {
       const progression = this.actor.system.progression || {};
       const classLevels = progression.classLevels || [];
-      const currentLevel = classLevels.length;
+      // FIXED: Calculate actual character level, not array length
+      // Character level = sum of all class levels (not count of classes)
+      const currentLevel = classLevels.reduce((sum, cl) => sum + cl.level, 0);
 
-      // Check prestige class prerequisites
+      // Check prestige class prerequisites using centralized PrerequisiteChecker
       if (classData.prestigeClass) {
-        // Prestige classes require minimum level (default 7)
-        const requiredLevel = REQUIRED_PRESTIGE_LEVEL || 7;
-        if (currentLevel < requiredLevel) {
-          throw new Error(`Prestige class "${classId}" requires character level ${requiredLevel}. Current level: ${currentLevel}`);
+        const { checkPrerequisites } = await import('../data/prerequisite-checker.js');
+
+        // Create a snapshot that includes pending progression data
+        // This allows PrerequisiteChecker to validate against both current and pending state
+        const progressionSnapshot = {
+          ...this.actor,
+          system: {
+            ...this.actor.system,
+            // Override with current/pending progression values
+            level: currentLevel,
+            bab: await calculateBAB(classLevels),
+            // Include pending feats/talents/trained skills
+            progression: {
+              ...progression,
+              feats: progression.feats || [],
+              startingFeats: progression.startingFeats || [],
+              trainedSkills: progression.trainedSkills || []
+            }
+          }
+        };
+
+        // Use centralized prerequisite checker (reads from PRESTIGE_PREREQUISITES)
+        const prereqCheck = checkPrerequisites(progressionSnapshot, classId);
+
+        if (!prereqCheck.met) {
+          const details = prereqCheck.missing.join(', ');
+          throw new Error(`Prestige class "${classId}" unmet prerequisites: ${details}`);
         }
 
-        // Check for additional prerequisites from compendium
-        if (classData._raw?.prerequisites) {
-          const prereqs = classData._raw.prerequisites;
-
-          // Check BAB prerequisite
-          if (prereqs.bab) {
-            const { calculateBAB } = await import('../progression/data/progression-data.js');
-            const currentBAB = await calculateBAB(classLevels);
-            if (currentBAB < prereqs.bab) {
-              throw new Error(`Prestige class "${classId}" requires BAB +${prereqs.bab}. Current BAB: +${currentBAB}`);
-            }
-          }
-
-          // Check trained skills prerequisite
-          if (prereqs.trainedSkills && Array.isArray(prereqs.trainedSkills)) {
-            const trainedSkills = progression.trainedSkills || [];
-            const missingSkills = prereqs.trainedSkills.filter(s => !trainedSkills.includes(s));
-            if (missingSkills.length > 0) {
-              throw new Error(`Prestige class "${classId}" requires trained skills: ${missingSkills.join(', ')}`);
-            }
-          }
-
-          // Check required feats prerequisite
-          if (prereqs.feats && Array.isArray(prereqs.feats)) {
-            const allFeats = [...(progression.feats || []), ...(progression.startingFeats || [])];
-            const missingFeats = prereqs.feats.filter(f => !allFeats.some(pf => pf.toLowerCase() === f.toLowerCase()));
-            if (missingFeats.length > 0) {
-              throw new Error(`Prestige class "${classId}" requires feats: ${missingFeats.join(', ')}`);
-            }
-          }
-
-          // Check force sensitivity prerequisite
-          if (prereqs.forceSensitive === true) {
-            const hasForceSensitivity = (progression.startingFeats || []).some(f =>
-              f.toLowerCase().includes('force sensitivity')
-            );
-            const isForceSensitiveClass = classLevels.some(cl => {
-              const clData = PROGRESSION_RULES.classes[cl.class];
-              return clData?.forceSensitive;
-            });
-
-            if (!hasForceSensitivity && !isForceSensitiveClass) {
-              throw new Error(`Prestige class "${classId}" requires Force Sensitivity`);
-            }
-          }
+        if (prereqCheck.details?.special) {
+          swseLogger.warn(`[PROGRESSION-PRESTIGE] Special condition for "${classId}": ${prereqCheck.details.special}`);
         }
       }
     }
@@ -1350,6 +1339,15 @@ async applyScalingFeature(feature) {
       talentBudget += levelFeatures.talents;
     }
 
+    // Check for Ability Score Increase feat at levels 4, 8, 12, 16, 20
+    // These are CHARACTER levels, not class levels
+    const characterLevel = classLevels.reduce((sum, cl) => sum + cl.level, 0);
+    const abilityIncreaseFeats = [4, 8, 12, 16, 20];
+    if (abilityIncreaseFeats.includes(characterLevel)) {
+      featBudget += 1; // Grant one feat for ability score increase
+      swseLogger.log(`Progression: Character reached level ${characterLevel}, granting Ability Score Increase feat`);
+    }
+
     // Accumulate starting feats from all classes (level 1 of each class grants automatic feats)
     const existingStartingFeats = progression.startingFeats || [];
     const classStartingFeats = (levelInClass === 1) ? (classData.startingFeats || []) : [];
@@ -1376,11 +1374,16 @@ async applyScalingFeature(feature) {
       `Starting feats: [${allStartingFeats.join(', ')}]`
     );
 
+    // Recalculate defense class bonuses based on all current class levels
+    // FIXED: Defense bonuses should take MAX of all class contributions, not stack
+    const defenseUpdates = await this._recalculateDefenseClassBonuses(classLevels);
+
     await applyActorUpdateAtomic(this.actor, {
       "system.progression.classLevels": classLevels,
       "system.progression.startingFeats": allStartingFeats,
       "system.progression.featBudget": featBudget,
-      "system.progression.talentBudget": talentBudget
+      "system.progression.talentBudget": talentBudget,
+      ...defenseUpdates
     });
 
     // Apply class auto-grants (starting feats/proficiencies) for level 1 only
@@ -1513,6 +1516,18 @@ async applyScalingFeature(feature) {
 
   async _action_confirmFeats(payload) {
     const { featIds } = payload;
+
+    // FIXED: Bug #5 - Validate Force Training feat gating
+    const { canTakeForceTraining } = await import('../progression/engine/autogrants/force-training.js');
+    for (const featId of featIds) {
+      const featName = typeof featId === 'string' ? featId : '';
+      if (featName.toLowerCase().includes('force training')) {
+        const gatingCheck = canTakeForceTraining(this.actor, { feats: featIds });
+        if (!gatingCheck.allowed) {
+          throw new Error(`Cannot take Force Training feat: ${gatingCheck.reason}`);
+        }
+      }
+    }
 
     // Get feat budget from progression
     const featBudget = this.actor.system.progression?.featBudget || 0;
@@ -1708,6 +1723,56 @@ async applyScalingFeature(feature) {
    */
   mustChooseForceSecret() {
     return false;
+  }
+
+  /**
+   * Recalculate defense class bonuses based on all class levels
+   * FIXED: Bug #2 - Defense bonuses should use MAX of all classes, not stack
+   * @param {Array} classLevels - Array of class level entries
+   * @returns {Promise<Object>} Object with system updates for defenses
+   * @private
+   */
+  async _recalculateDefenseClassBonuses(classLevels) {
+    const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
+    const { getClassData } = await import('../progression/utils/class-data-loader.js');
+
+    // Initialize bonuses at 0
+    let fortBonus = 0;
+    let refBonus = 0;
+    let willBonus = 0;
+
+    // For each class level 1 (every class's first level), get its defense bonuses
+    // Take the MAX, not sum
+    for (const classLevel of classLevels) {
+      if (classLevel.level === 1) { // Only level 1 grants class defense bonuses
+        let classData = PROGRESSION_RULES.classes[classLevel.class];
+
+        if (!classData) {
+          try {
+            classData = await getClassData(classLevel.class);
+          } catch (err) {
+            swseLogger.warn(`Could not load class data for ${classLevel.class} to recalculate defenses`);
+            continue;
+          }
+        }
+
+        if (classData?.defenses) {
+          fortBonus = Math.max(fortBonus, classData.defenses.fortitude || 0);
+          refBonus = Math.max(refBonus, classData.defenses.reflex || 0);
+          willBonus = Math.max(willBonus, classData.defenses.will || 0);
+        }
+      }
+    }
+
+    swseLogger.log(
+      `Defense bonuses recalculated: Fort +${fortBonus}, Ref +${refBonus}, Will +${willBonus}`
+    );
+
+    return {
+      "system.defenses.fort.classBonus": fortBonus,
+      "system.defenses.reflex.classBonus": refBonus,
+      "system.defenses.will.classBonus": willBonus
+    };
   }
 
   /**

@@ -161,38 +161,21 @@ export function checkPrerequisites(actor, className) {
 function getTotalLevel(actor) {
     if (!actor) return 0;
 
-    if (actor.system?.level) return actor.system.level;
-    if (actor.system?.heroicLevel) return actor.system.heroicLevel;
-
-    const classItems = actor.items?.filter(i => i.type === 'class') || [];
-    return classItems.reduce((sum, cls) => sum + (cls.system?.level || 0), 0);
+    // v2 Architecture: Trust system.level as source of truth
+    // This field is maintained by ActorProgressionUpdater.finalize()
+    return actor.system?.level ?? 1;
 }
 
 /**
  * Get Base Attack Bonus.
+ * v2 Architecture: Trusts progression-owned BAB from system.bab
  */
 function getBaseAttackBonus(actor) {
     if (!actor) return 0;
 
-    // Try to read directly from actor
-    if (actor.system?.bab !== undefined) return actor.system.bab;
-    if (actor.system?.baseAttackBonus !== undefined) return actor.system.baseAttackBonus;
-
-    // Calculate from classes (fallback)
-    const classItems = actor.items?.filter(i => i.type === 'class') || [];
-    let totalBAB = 0;
-
-    for (const classItem of classItems) {
-        const level = classItem.system?.level || 0;
-        const progression = classItem.system?.babProgression || 'medium';
-
-        const multipliers = { 'fast': 1.0, 'high': 1.0, 'medium': 0.75, 'slow': 0.5, 'low': 0.5 };
-        const multiplier = multipliers[progression] || 0.75;
-
-        totalBAB += Math.floor(level * multiplier);
-    }
-
-    return totalBAB;
+    // v2 Architecture: Trust system.bab as source of truth
+    // This field is maintained by ActorProgressionUpdater.finalize()
+    return actor.system?.bab ?? 0;
 }
 
 /**
@@ -222,19 +205,26 @@ function checkSkills(actor, requiredSkills) {
 
 /**
  * Get list of trained skills from actor.
+ * Includes both finalized skills (actor.system.skills) and pending skills (actor.system.progression.trainedSkills)
+ * This allows prerequisite checking during progression before updates are applied.
  */
 function getTrainedSkills(actor) {
     if (!actor) return [];
 
     const skills = [];
 
-    // Check actor.system.skills
+    // Check actor.system.skills (finalized skills)
     if (actor.system?.skills) {
         for (const [skillKey, skillData] of Object.entries(actor.system.skills)) {
             if (skillData?.trained || skillData?.rank > 0) {
                 skills.push(skillKey);
             }
         }
+    }
+
+    // Check pending progression.trainedSkills (from chargen/levelup)
+    if (actor.system?.progression?.trainedSkills && Array.isArray(actor.system.progression.trainedSkills)) {
+        skills.push(...actor.system.progression.trainedSkills);
     }
 
     // Check skill items
@@ -303,25 +293,49 @@ function checkFeatsAny(actor, requiredFeats) {
 function getActorFeats(actor) {
     if (!actor) return [];
 
+    const feats = [];
+
+    // Check feat items (finalized feats)
     const featItems = actor.items?.filter(i => i.type === 'feat') || [];
-    return featItems.map(f => f.name);
+    feats.push(...featItems.map(f => f.name));
+
+    // Check pending progression.feats and progression.startingFeats
+    if (actor.system?.progression?.feats && Array.isArray(actor.system.progression.feats)) {
+        feats.push(...actor.system.progression.feats);
+    }
+    if (actor.system?.progression?.startingFeats && Array.isArray(actor.system.progression.startingFeats)) {
+        feats.push(...actor.system.progression.startingFeats);
+    }
+
+    return feats;
 }
 
 /**
  * Check talent requirements.
+ * Includes both finalized talents (actor.items) and pending talents (actor.system.progression.talents)
  */
 function checkTalents(actor, talentReq) {
     if (!actor || !talentReq) {
         return { met: true };
     }
 
+    // Get finalized talent items
     const actorTalents = actor.items?.filter(i => i.type === 'talent') || [];
+
+    // Also include pending talents from progression (store as names for compatibility)
+    const pendingTalentNames = actor.system?.progression?.talents || [];
+    const pendingTalents = pendingTalentNames.map(name => ({
+        name: typeof name === 'string' ? name : name.name || '',
+        system: {}
+    }));
+
+    const allTalents = [...actorTalents, ...pendingTalents];
 
     // Check for specific named talents
     if (talentReq.specific) {
         const missing = [];
         for (const talentName of talentReq.specific) {
-            const found = actorTalents.some(t =>
+            const found = allTalents.some(t =>
                 t.name.toLowerCase() === talentName.toLowerCase()
             );
             if (!found) {
@@ -340,7 +354,7 @@ function checkTalents(actor, talentReq) {
 
     // Check for Force talents only
     if (talentReq.forceTalentsOnly) {
-        const forceTalents = actorTalents.filter(t =>
+        const forceTalents = allTalents.filter(t =>
             t.system?.isForce || t.system?.tags?.includes('force')
         );
 
@@ -360,7 +374,7 @@ function checkTalents(actor, talentReq) {
     if (talentReq.trees) {
         const matchingTalents = [];
 
-        for (const talent of actorTalents) {
+        for (const talent of allTalents) {
             const treeName = talent.system?.talentTree || talent.system?.talent_tree;
             if (!treeName) continue;
 
@@ -393,22 +407,31 @@ function checkTalents(actor, talentReq) {
 
 /**
  * Check Force Power requirements.
+ * Includes both finalized powers (actor.items) and pending powers (actor.system.progression.powers)
  */
 function checkForcePowers(actor, requiredPowers) {
     if (!actor || !requiredPowers || requiredPowers.length === 0) {
         return { met: true, missing: [] };
     }
 
+    // Get finalized force power items
     const actorPowers = actor.items?.filter(i =>
         i.type === 'forcepower' || i.type === 'force-power'
     ) || [];
+
+    // Also include pending force powers from progression
+    const pendingPowerNames = actor.system?.progression?.powers || [];
+    const allPowerNames = [
+        ...actorPowers.map(p => p.name),
+        ...pendingPowerNames
+    ];
 
     const missing = [];
 
     for (const power of requiredPowers) {
         const normalized = power.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const found = actorPowers.some(p =>
-            p.name.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized
+        const found = allPowerNames.some(p =>
+            (typeof p === 'string' ? p : p.name || '').toLowerCase().replace(/[^a-z0-9]/g, '') === normalized
         );
 
         if (!found) {
