@@ -487,16 +487,159 @@ Hooks.on('deleteItem', async (item, options, userId) => {
 
 ---
 
+## Implementation Status
+
+### ✅ COMPLETED: Core Rule Element System
+
+The complete rule element infrastructure is implemented in `scripts/engine/RuleElement.js`:
+
+**Base Classes:**
+- `RuleElement` - Factory pattern for creating/applying rules
+- `RuleEngine` - Manages all rules for an actor
+
+**Implemented Rule Types:**
+1. `StatBonusRule` - Stat/bonus application
+2. `GrantAbilityRule` - Grant actions/abilities
+3. `PrerequisiteRule` - Define requirements
+4. `ConditionalBonusRule` - Conditional effects
+5. `SkillTrainingRule` - Skill grants
+6. `AttributeModifierRule` - Ability modifiers
+
+**Key Features:**
+- Formula resolution: `@level`, `@str.mod`, etc.
+- Factory pattern for creating rule types
+- Composable/stackable effects
+- Full apply/remove lifecycle
+
+### ⏳ IN PROGRESS: Integration with Existing Systems
+
+**What's NOT yet integrated:**
+
+1. **Compendium items** lack `system.rules` data
+   - Feats: "Skill Focus", "Dodge", "Weapon Focus", etc.
+   - Talents: "Deflect", "Improved Damage", etc.
+   - Classes: Need base class features as rules
+   - Species: Racial modifiers should be rules
+
+2. **Item creation/deletion hooks** don't use RuleElement system
+   - File: `scripts/hooks/actor-hooks.js`
+   - Current: Hard-coded logic for Skill Focus, Shield Generator
+   - Needed: Replace with generic rule element application
+
+3. **Current hard-coded logic** to migrate:
+   - Shield Generator installation (line 125-138)
+   - Skill Focus selection dialog (line 141-262)
+   - Skill Focus deletion cleanup (line 272+)
+   - FeatEffectsEngine.applyEffectsToFeat() (line 147)
+
+### 📋 RECOMMENDED MIGRATION PATH
+
+#### Phase 1: Convert Item Data (2-3 hours)
+```javascript
+// Before: Hard-coded logic in progression engine
+if (featName === "Skill Focus (Stealth)") {
+  actor.system.skills.stealth.focused = true;
+}
+
+// After: Item data in compendium
+{
+  "name": "Skill Focus (Stealth)",
+  "type": "feat",
+  "system": {
+    "rules": [
+      {
+        "type": "SkillTraining",
+        "skill": "stealth",
+        "bonus": 5
+      }
+    ]
+  }
+}
+```
+
+**Items to convert:**
+- All feats in `foundryvtt-swse.feats` pack (50+ items)
+- All talents in `foundryvtt-swse.talents` pack (100+ items)
+- All classes in `foundryvtt-swse.classes` pack (feature rows)
+- All species in `foundryvtt-swse.species` pack (racial modifiers)
+
+#### Phase 2: Hook Integration (1-2 hours)
+Replace hard-coded hooks in `scripts/hooks/actor-hooks.js`:
+
+```javascript
+// In handleItemCreate - replace all hard-coded logic:
+async function handleItemCreate(item, options, userId) {
+  const actor = item.parent;
+  if (!actor || !item.system.rules) return;
+
+  const ruleEngine = new RuleEngine(actor);
+
+  // Apply all rules from this item
+  for (const ruleData of item.system.rules) {
+    const rule = RuleElement.create(ruleData, item);
+    if (rule && rule.test(actor)) {
+      await rule.apply(actor);
+    }
+  }
+}
+
+// In handleItemDelete - replace all hard-coded logic:
+async function handleItemDelete(item, options, userId) {
+  const actor = item.parent;
+  if (!actor || !item.system.rules) return;
+
+  const ruleEngine = new RuleEngine(actor);
+  await ruleEngine.removeItemRules(item);
+}
+```
+
+#### Phase 3: Validation & Testing (2-3 hours)
+- Test each feat/talent with rule elements
+- Verify stacking behavior (bonus types)
+- Test removal and re-addition
+- Validate prerequisites still work
+- Check with mentor/suggestion system
+
+#### Phase 4: Remove Hard-Coded Logic (1 hour)
+Delete obsolete code from:
+- `scripts/hooks/actor-hooks.js` (Skill Focus dialog, Shield Generator logic)
+- `scripts/progression/utils/apply-handlers.js` (static feat application)
+- Any feat-specific processing in level-up system
+
+### 🔍 TESTING CHECKLIST FOR INTEGRATION
+
+- [ ] Create character with Skill Focus feat
+- [ ] Verify +5 bonus applied to selected skill
+- [ ] Delete Skill Focus feat
+- [ ] Verify bonus removed
+- [ ] Add multiple feats with stacking bonuses
+- [ ] Verify only highest non-stacking bonus (e.g., dodge) is used
+- [ ] Test droid with Shield Generator (rule element or special handling?)
+- [ ] Test level-up progression with new rules
+- [ ] Test backtracking in character gen
+- [ ] Run unit tests for RuleEngine.js
+- [ ] Verify compendium items have valid rule syntax
+- [ ] Check mentor suggestions still work with rule elements
+
+---
+
 ## Future Enhancements
+
+Once integration is complete:
 
 - **Rule element editor UI** in item sheets
 - **Visual effect preview** when dragging feats
 - **Rule conflict detection** (warn about non-stacking bonuses)
 - **Rule dependency graph** for debugging
 - **Import/export rule templates** for common patterns
+- **Rule audit tool** - find items without rule elements
+- **Bulk migration tool** - auto-convert hard-coded logic to rules
 
 ---
 
 ## Questions?
 
-See `scripts/engine/RuleElement.js` for implementation details.
+1. **Implementation questions**: See `scripts/engine/RuleElement.js` for system details
+2. **Integration questions**: See `scripts/hooks/actor-hooks.js` for current hard-coded logic
+3. **Compendium structure**: Check existing feat/talent items in packs
+4. **Testing**: Run test suite after modifications
