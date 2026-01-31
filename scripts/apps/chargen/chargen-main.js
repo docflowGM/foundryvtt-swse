@@ -1773,12 +1773,12 @@ export default class CharacterGenerator extends Application {
       }
 
       // Get suggestions using the Force power suggestion engine
-      const suggestions = await SuggestionService.getSuggestions(this.actor, 'chargen', { domain: 'forcepowers', available: 
+      const suggestions = await SuggestionService.getSuggestions(this.actor, 'chargen', { domain: 'forcepowers', available:
         unselectedPowers,
-        this.actor,
-        this.characterData,
-        { buildIntent: {} }
-      );
+        actor: this.actor,
+        characterData: this.characterData,
+        buildIntent: { buildIntent: {} }
+      });
 
       // Get the top-tier suggestion
       const topSuggestion = suggestions.find(s => s.suggestion?.tier >= 4) || suggestions[0];
