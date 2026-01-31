@@ -370,9 +370,9 @@ export class BuildIntent {
             this._applyTemplateArchetypeBias(intent, appliedTemplate.archetype);
         }
 
-        // Apply mentor survey biases if available
+        // Apply mentor survey biases if available (check pendingData as fallback for chargen)
         SWSELogger.log(`[BUILD-INTENT] analyze() - Applying mentor survey biases`);
-        this._applyMentorBiases(actor, intent);
+        this._applyMentorBiases(actor, intent, pendingData);
 
         // Determine primary themes
         this._determinePrimaryThemes(intent);
@@ -925,11 +925,20 @@ export class BuildIntent {
      * @private
      * @param {Actor} actor - The actor being analyzed
      * @param {Object} intent - The build intent object to update
+     * @param {Object} pendingData - Pending selections (may contain mentorBiases during chargen)
      */
-    static _applyMentorBiases(actor, intent) {
+    static _applyMentorBiases(actor, intent, pendingData = {}) {
         SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() START - Actor: ${actor.id} (${actor.name})`);
-        const mentorBiases = MentorSurvey.getMentorBiases(actor);
-        SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - Retrieved mentor biases:`, mentorBiases);
+
+        // Try to get biases from actor first, then fall back to pendingData (for chargen flow)
+        let mentorBiases = MentorSurvey.getMentorBiases(actor);
+        SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - Retrieved actor biases:`, mentorBiases);
+
+        // Fallback to pendingData.mentorBiases if actor doesn't have biases (chargen scenario)
+        if ((!mentorBiases || Object.keys(mentorBiases).length === 0) && pendingData?.mentorBiases) {
+            mentorBiases = pendingData.mentorBiases;
+            SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - Using pendingData.mentorBiases fallback:`, mentorBiases);
+        }
 
         if (!mentorBiases || Object.keys(mentorBiases).length === 0) {
             SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - No mentor biases to apply`);

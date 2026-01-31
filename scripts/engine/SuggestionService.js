@@ -24,7 +24,42 @@ function _hashString(s) {
   return String(h);
 }
 
-function _actorRevisionKey(actor) {
+/**
+ * Generate a hash key for pending data to incorporate in-progress selections
+ * This ensures cache invalidation when player makes new selections during a workflow
+ * @param {Object} pendingData - Pending selections (selectedFeats, selectedTalents, etc.)
+ * @returns {string} Hash string representing pending state
+ */
+function _pendingDataHash(pendingData) {
+  if (!pendingData || typeof pendingData !== 'object') return '';
+
+  // Extract selection arrays and normalize to names
+  const parts = [];
+
+  if (pendingData.selectedClass?.name) {
+    parts.push(`class:${pendingData.selectedClass.name}`);
+  }
+  if (Array.isArray(pendingData.selectedFeats)) {
+    const feats = pendingData.selectedFeats.map(f => f.name || f).sort().join(',');
+    if (feats) parts.push(`feats:${feats}`);
+  }
+  if (Array.isArray(pendingData.selectedTalents)) {
+    const talents = pendingData.selectedTalents.map(t => t.name || t).sort().join(',');
+    if (talents) parts.push(`talents:${talents}`);
+  }
+  if (Array.isArray(pendingData.selectedSkills)) {
+    const skills = pendingData.selectedSkills.map(s => s.key || s.name || s).sort().join(',');
+    if (skills) parts.push(`skills:${skills}`);
+  }
+  if (Array.isArray(pendingData.selectedPowers)) {
+    const powers = pendingData.selectedPowers.map(p => p.name || p).sort().join(',');
+    if (powers) parts.push(`powers:${powers}`);
+  }
+
+  return parts.length > 0 ? _hashString(parts.join('|')) : '';
+}
+
+function _actorRevisionKey(actor, pendingData = null) {
   // Cheap + stable: level + abilities + item ids + item system-level-like fields.
   const lvl = actor?.system?.level ?? 0;
   const abilities = actor?.system?.abilities ?? {};
@@ -39,7 +74,10 @@ function _actorRevisionKey(actor) {
     return `${ty}:${nm}:${id}:${l}`;
   }).sort().join('|');
 
-  return _hashString(`${lvl}|${ab}|${items}`);
+  // Include pendingData hash to ensure cache invalidation on in-progress selections
+  const pendingHash = _pendingDataHash(pendingData);
+
+  return _hashString(`${lvl}|${ab}|${items}|${pendingHash}`);
 }
 
 function _domainToResolverDomain(domain) {
@@ -85,7 +123,9 @@ export class SuggestionService {
 
   static async getSuggestions(actorOrData, context = 'sheet', options = {}) {
     const actor = await _ensureActorDoc(actorOrData);
-    const revision = actor?.id ? _actorRevisionKey(actor) : `${Date.now()}`;
+    const pendingData = options.pendingData ?? {};
+    // Include pendingData in revision key to invalidate cache on in-progress selections
+    const revision = actor?.id ? _actorRevisionKey(actor, pendingData) : `${Date.now()}`;
     const key = `${actor?.id ?? 'temp'}::${context}::${options.domain ?? 'all'}`;
 
     const cached = this._cache.get(key);
@@ -170,6 +210,80 @@ export class SuggestionService {
     await actor.setFlag('foundryvtt-swse', 'suggestionState', state);
   }
 
+  /**
+   * Store the last mentor advice for a specific step to ensure consistency
+   * When player re-opens a step, they hear the same advice unless inputs changed
+   * @param {Actor} actor - The character actor
+   * @param {string} step - The decision step (feats, talents, class, etc.)
+   * @param {Object} advice - The advice object to store
+   * @param {string} advice.suggestionId - ID or name of the suggested item
+   * @param {string} advice.reasonCode - Machine-readable reason code
+   * @param {string} advice.reason - Human-readable reason
+   * @param {number} advice.tier - Suggestion tier
+   * @param {string} inputsHash - Hash of inputs that produced this advice
+   */
+  static async storeMentorAdvice(actor, step, advice, inputsHash) {
+    if (!actor?.id) return;
+
+    const state = (await actor.getFlag('foundryvtt-swse', 'suggestionState')) || {};
+    state.lastMentorAdvice = state.lastMentorAdvice || {};
+    state.lastMentorAdvice[step] = {
+      suggestionId: advice.suggestionId || advice.name,
+      reasonCode: advice.reasonCode,
+      reason: advice.reason,
+      tier: advice.tier,
+      confidence: advice.confidence,
+      inputsHash,
+      at: Date.now()
+    };
+    await actor.setFlag('foundryvtt-swse', 'suggestionState', state);
+  }
+
+  /**
+   * Get the last mentor advice for a step if inputs haven't changed
+   * Returns null if inputs changed or no previous advice exists
+   * @param {Actor} actor - The character actor
+   * @param {string} step - The decision step
+   * @param {string} currentInputsHash - Hash of current inputs
+   * @returns {Object|null} Previous advice if still valid, null otherwise
+   */
+  static async getLastMentorAdvice(actor, step, currentInputsHash) {
+    if (!actor?.id) return null;
+
+    const state = await actor.getFlag('foundryvtt-swse', 'suggestionState');
+    const lastAdvice = state?.lastMentorAdvice?.[step];
+
+    if (!lastAdvice) return null;
+
+    // Only return if inputs haven't changed
+    if (lastAdvice.inputsHash === currentInputsHash) {
+      return lastAdvice;
+    }
+
+    return null;
+  }
+
+  /**
+   * Clear stored mentor advice for a step (call when inputs change significantly)
+   * @param {Actor} actor - The character actor
+   * @param {string} step - The decision step to clear, or null to clear all
+   */
+  static async clearMentorAdvice(actor, step = null) {
+    if (!actor?.id) return;
+
+    const state = (await actor.getFlag('foundryvtt-swse', 'suggestionState')) || {};
+
+    if (step) {
+      if (state.lastMentorAdvice?.[step]) {
+        delete state.lastMentorAdvice[step];
+        await actor.setFlag('foundryvtt-swse', 'suggestionState', state);
+      }
+    } else {
+      state.lastMentorAdvice = {};
+      await actor.setFlag('foundryvtt-swse', 'suggestionState', state);
+    }
+  }
+
 
   static sortBySuggestion(items) {
     if (!Array.isArray(items)) return items;
@@ -179,6 +293,86 @@ export class SuggestionService {
       const tb = b?.suggestion?.tier ?? b?.tier ?? 0;
       return tb - ta;
     });
+  }
+
+  /**
+   * Analyze suggestions and return a summary with fallback messaging
+   * Use this when displaying mentor advice to provide meaningful feedback even when no strong suggestions exist
+   * @param {Array} suggestions - Array of suggestion objects
+   * @param {Object} options - Analysis options
+   * @param {number} options.strongThreshold - Tier threshold for "strong" suggestions (default: 4)
+   * @returns {Object} Analysis result with hasSuggestions, reason code, and mentor message
+   */
+  static analyzeSuggestionStrength(suggestions, options = {}) {
+    const threshold = options.strongThreshold ?? 4;
+    const items = suggestions || [];
+
+    const strongSuggestions = items.filter(s => {
+      const tier = s?.suggestion?.tier ?? s?.tier ?? 0;
+      return tier >= threshold;
+    });
+
+    const moderateSuggestions = items.filter(s => {
+      const tier = s?.suggestion?.tier ?? s?.tier ?? 0;
+      return tier >= 2 && tier < threshold;
+    });
+
+    const totalSuggestions = items.filter(s => {
+      const tier = s?.suggestion?.tier ?? s?.tier ?? 0;
+      return tier > 0;
+    });
+
+    // Determine the appropriate fallback reason and message
+    if (strongSuggestions.length > 0) {
+      const topSuggestion = strongSuggestions[0];
+      const confidence = topSuggestion?.suggestion?.confidence ?? topSuggestion?.confidence ?? 0.75;
+      return {
+        hasSuggestions: true,
+        hasStrongSuggestions: true,
+        reasonCode: "STRONG_FIT",
+        confidence,
+        count: strongSuggestions.length,
+        suggestions: strongSuggestions,
+        mentorMessage: confidence >= 0.85
+          ? "I have a strong recommendation for you."
+          : "I have a suggestion that fits your path well."
+      };
+    }
+
+    if (moderateSuggestions.length > 0) {
+      return {
+        hasSuggestions: true,
+        hasStrongSuggestions: false,
+        reasonCode: "MODERATE_FIT",
+        confidence: 0.5,
+        count: moderateSuggestions.length,
+        suggestions: moderateSuggestions,
+        mentorMessage: "Several options could work for your build. Consider what feels right."
+      };
+    }
+
+    if (totalSuggestions.length > 0) {
+      return {
+        hasSuggestions: true,
+        hasStrongSuggestions: false,
+        reasonCode: "WEAK_FIT",
+        confidence: 0.3,
+        count: totalSuggestions.length,
+        suggestions: totalSuggestions,
+        mentorMessage: "All options are viable at this stage. Choose what resonates with your vision."
+      };
+    }
+
+    // No suggestions at all
+    return {
+      hasSuggestions: false,
+      hasStrongSuggestions: false,
+      reasonCode: "NO_STRONG_FIT",
+      confidence: 0,
+      count: 0,
+      suggestions: [],
+      mentorMessage: "At this point, any path is open to you. Trust your instincts and choose what feels right."
+    };
   }
 
   static countByTier(items) {

@@ -95,6 +95,34 @@ export const TIER_CSS_CLASSES = {
     0: ""
 };
 
+// Machine-readable reason codes for UI icon-tagging and programmatic use
+export const TIER_REASON_CODES = {
+    6: "PRESTIGE_PREREQ",
+    5.5: "WISHLIST_PATH",
+    5: "META_SYNERGY",
+    4.5: "SPECIES_EARLY",
+    4: "CHAIN_CONTINUATION",
+    3.5: "MENTOR_BIAS_MATCH",
+    3: "SKILL_PREREQ_MATCH",
+    2: "ABILITY_PREREQ_MATCH",
+    1: "CLASS_SYNERGY",
+    0: "FALLBACK"
+};
+
+// Confidence levels based on tier (for mentor tone modulation)
+export const TIER_CONFIDENCE = {
+    6: 0.95,    // Very high - prestige path
+    5.5: 0.90,  // High - player's stated goal
+    5: 0.85,    // High - proven synergy
+    4.5: 0.80,  // Good - species fit
+    4: 0.75,    // Good - chain continuation
+    3.5: 0.70,  // Moderate - mentor survey match
+    3: 0.60,    // Moderate - skill fit
+    2: 0.50,    // Low-moderate - ability fit
+    1: 0.40,    // Low - class synergy only
+    0: 0.20     // Minimal - just legal
+};
+
 // ──────────────────────────────────────────────────────────────
 // SUGGESTION ENGINE CLASS
 // ──────────────────────────────────────────────────────────────
@@ -883,12 +911,20 @@ export class SuggestionEngine {
      * @param {number} tier - The suggestion tier
      * @param {string} itemName - Name of the item for logging
      * @param {string|null} customReason - Optional custom reason (overrides default)
+     * @param {string|null} customReasonCode - Optional custom reason code (overrides default)
      * @returns {Object} Suggestion metadata
      */
-    static _buildSuggestion(tier, itemName, customReason = null) {
+    static _buildSuggestion(tier, itemName, customReason = null, customReasonCode = null) {
+        // Find the closest tier key for lookups (handles decimal tiers like 4.5)
+        const tierKey = Object.keys(TIER_REASON_CODES)
+            .map(Number)
+            .sort((a, b) => Math.abs(a - tier) - Math.abs(b - tier))[0];
+
         return {
             name: itemName,
             tier,
+            reasonCode: customReasonCode || TIER_REASON_CODES[tierKey] || "FALLBACK",
+            confidence: TIER_CONFIDENCE[tierKey] || 0.2,
             icon: TIER_ICONS[tier],
             iconClass: TIER_ICON_CLASSES[tier],
             cssClass: TIER_CSS_CLASSES[tier],

@@ -3,9 +3,11 @@
  *
  * - Cache invalidation on actor changes
  * - Character sheet Mentor Notes panel
+ * - Proactive suggestion triggers for decision steps
  */
 import { SuggestionService } from '../engine/SuggestionService.js';
 import { SWSELogger } from '../utils/logger.js';
+import { SuggestionEngineCoordinator } from '../engine/SuggestionEngineCoordinator.js';
 
 function _safeGetActorId(doc) {
   return doc?.actor?.id || doc?.parent?.id || doc?.id || null;
@@ -101,6 +103,68 @@ export function registerSuggestionHooks() {
       });
     } catch (err) {
       SWSELogger.error('[SuggestionHooks] Mentor Notes failed:', err);
+    }
+  });
+
+  // Hook for proactive suggestion triggers when entering decision steps
+  // UI components can call: Hooks.callAll('swse:decision-step-entered', { actor, step, pendingData })
+  Hooks.on('swse:decision-step-entered', async ({ actor, step, pendingData, callback }) => {
+    try {
+      if (!actor) return;
+
+      // Determine domain based on step
+      const stepToDomain = {
+        'feats': 'feats',
+        'talents': 'talents',
+        'class': 'classes',
+        'skills': 'skills_l1',
+        'forcepowers': 'forcepowers',
+        'attributes': 'attributes'
+      };
+
+      const domain = stepToDomain[step];
+      if (!domain) return;
+
+      SWSELogger.log(`[SuggestionHooks] Decision step entered: ${step}, fetching proactive suggestions`);
+
+      // Get suggestions for this step
+      const suggestions = await SuggestionService.getSuggestions(actor, 'decision-step', {
+        domain,
+        pendingData: pendingData || {}
+      });
+
+      // Find strong suggestions (tier 4+)
+      const strongSuggestions = (suggestions || []).filter(s => {
+        const tier = s?.suggestion?.tier ?? s?.tier ?? 0;
+        return tier >= 4;
+      });
+
+      // If we have strong suggestions, notify the callback or emit an event
+      if (strongSuggestions.length > 0) {
+        SWSELogger.log(`[SuggestionHooks] Found ${strongSuggestions.length} strong suggestions for ${step}`);
+
+        if (typeof callback === 'function') {
+          callback(strongSuggestions);
+        }
+
+        // Also emit hook for UI to react
+        Hooks.callAll('swse:strong-suggestions-available', {
+          actor,
+          step,
+          suggestions: strongSuggestions
+        });
+      }
+    } catch (err) {
+      SWSELogger.error('[SuggestionHooks] Decision step handler failed:', err);
+    }
+  });
+
+  // Hook for invalidating suggestions when pending data changes
+  Hooks.on('swse:pending-selection-changed', ({ actorId }) => {
+    if (actorId) {
+      SuggestionService.invalidate(actorId);
+      SuggestionEngineCoordinator.clearBuildIntentCache(actorId);
+      SWSELogger.log(`[SuggestionHooks] Invalidated caches for actor ${actorId} due to pending selection change`);
     }
   });
 
