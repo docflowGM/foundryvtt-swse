@@ -1,0 +1,141 @@
+<div class="swse-level-up-summary">
+  <header class="card-header">
+    <h3>Level Up!</h3>
+    <div class="level-badge">Level {{newLevel}}</div>
+  </header>
+
+  <div class="card-content">
+    <div class="class-info">
+      <strong>{{className}}</strong> Level {{levelInClass}}
+    </div>
+
+    {{#if grants}}
+    <section class="grants">
+      <h4>Granted:</h4>
+      <ul>
+        {{#if grants.talents}}
+          <li><strong>Talents:</strong> {{grants.talents}} slot(s)</li>
+        {{/if}}
+        {{#if grants.bonusFeats}}
+          <li><strong>Bonus Feats:</strong> {{grants.bonusFeats}}</li>
+        {{/if}}
+        {{#if grants.forcePoints}}
+          <li><strong>Force Points:</strong> +{{grants.forcePoints}}</li>
+        {{/if}}
+        {{#if grants.abilityIncrease}}
+          <li><strong>Ability Increase:</strong> {{grants.abilityIncrease}} point(s)</li>
+        {{/if}}
+        {{#if grants.features}}
+          {{#each grants.features}}
+            <li>{{this}}</li>
+          {{/each}}
+        {{/if}}
+      </ul>
+    </section>
+    {{/if}}
+
+    {{#if choices}}
+    <section class="selections">
+      <h4>Selected:</h4>
+      <ul>
+        {{#if choices.talents}}
+          <li><strong>Talents:</strong> {{#each choices.talents}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</li>
+        {{/if}}
+        {{#if choices.feats}}
+          <li><strong>Feats:</strong> {{#each choices.feats}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</li>
+        {{/if}}
+        {{#if choices.abilityIncrease}}
+          <li><strong>Ability Increases:</strong>
+            {{#each choices.abilityIncrease}}
+              {{#if this}}{{@key}} +{{this}}{{/if}}
+            {{/each}}
+          </li>
+        {{/if}}
+        {{#if choices.hp}}
+          <li><strong>Hit Points:</strong> +{{choices.hp}}</li>
+        {{/if}}
+      </ul>
+    </section>
+    {{/if}}
+  </div>
+
+  <footer class="card-footer">
+    <a href="https://claude.ai/code/session_{{sessionId}}">View Session</a>
+  </footer>
+</div>
+
+<style>
+.swse-level-up-summary {
+  border: 2px solid #4a90e2;
+  border-radius: 8px;
+  padding: 12px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #e0e0e0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.swse-level-up-summary .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #4a90e2;
+}
+
+.swse-level-up-summary h3 {
+  margin: 0;
+  color: #4a90e2;
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+.swse-level-up-summary .level-badge {
+  background: #4a90e2;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.swse-level-up-summary .class-info {
+  font-size: 1.1em;
+  margin-bottom: 12px;
+  color: #f0f0f0;
+}
+
+.swse-level-up-summary section {
+  margin: 12px 0;
+}
+
+.swse-level-up-summary h4 {
+  margin: 0 0 8px 0;
+  color: #4a90e2;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.swse-level-up-summary ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.swse-level-up-summary li {
+  margin: 4px 0;
+  line-height: 1.4;
+}
+
+.swse-level-up-summary .card-footer {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #4a90e2;
+  text-align: right;
+  font-size: 0.85em;
+  opacity: 0.7;
+}
+
+.swse-level-up-summary .card-footer a {
+  color: #4a90e2;
+  text-decoration: none;
+}
+</style>
