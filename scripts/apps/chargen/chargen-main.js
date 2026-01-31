@@ -709,12 +709,12 @@ export default class CharacterGenerator extends Application {
       if (this.currentStep === "feats" && context.packs.feats) {
         try {
           SWSELogger.log(`[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.feats.length} feats with BuildIntent context...`);
-          let featsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', { domain: 'feats', available: 
+          let featsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', { domain: 'feats', available:
             context.packs.feats,
             tempActor,
             pendingData,
             buildIntent  // CRITICAL: Pass BuildIntent to include mentor survey biases
-          );
+          });
           // Filter out Force-dependent feats for droids (they cannot be Force-sensitive)
           featsWithSuggestions = this._filterForceDependentItems(featsWithSuggestions);
 
@@ -1773,12 +1773,12 @@ export default class CharacterGenerator extends Application {
       }
 
       // Get suggestions using the Force power suggestion engine
-      const suggestions = await SuggestionService.getSuggestions(this.actor, 'chargen', { domain: 'forcepowers', available: 
+      const suggestions = await SuggestionService.getSuggestions(this.actor, 'chargen', { domain: 'forcepowers', available:
         unselectedPowers,
-        this.actor,
-        this.characterData,
-        { buildIntent: {} }
-      );
+        actor: this.actor,
+        characterData: this.characterData,
+        buildIntent: { buildIntent: {} }
+      });
 
       // Get the top-tier suggestion
       const topSuggestion = suggestions.find(s => s.suggestion?.tier >= 4) || suggestions[0];
