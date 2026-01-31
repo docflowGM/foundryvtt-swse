@@ -1219,7 +1219,9 @@ async applyScalingFeature(feature) {
     if (!skipPrerequisites) {
       const progression = this.actor.system.progression || {};
       const classLevels = progression.classLevels || [];
-      const currentLevel = classLevels.length;
+      // FIXED: Calculate actual character level, not array length
+      // Character level = sum of all class levels (not count of classes)
+      const currentLevel = classLevels.reduce((sum, cl) => sum + cl.level, 0);
 
       // Check prestige class prerequisites
       if (classData.prestigeClass) {
@@ -1350,6 +1352,15 @@ async applyScalingFeature(feature) {
       talentBudget += levelFeatures.talents;
     }
 
+    // Check for Ability Score Increase feat at levels 4, 8, 12, 16, 20
+    // These are CHARACTER levels, not class levels
+    const characterLevel = classLevels.reduce((sum, cl) => sum + cl.level, 0);
+    const abilityIncreaseFeats = [4, 8, 12, 16, 20];
+    if (abilityIncreaseFeats.includes(characterLevel)) {
+      featBudget += 1; // Grant one feat for ability score increase
+      swseLogger.log(`Progression: Character reached level ${characterLevel}, granting Ability Score Increase feat`);
+    }
+
     // Accumulate starting feats from all classes (level 1 of each class grants automatic feats)
     const existingStartingFeats = progression.startingFeats || [];
     const classStartingFeats = (levelInClass === 1) ? (classData.startingFeats || []) : [];
@@ -1376,11 +1387,16 @@ async applyScalingFeature(feature) {
       `Starting feats: [${allStartingFeats.join(', ')}]`
     );
 
+    // Recalculate defense class bonuses based on all current class levels
+    // FIXED: Defense bonuses should take MAX of all class contributions, not stack
+    const defenseUpdates = await this._recalculateDefenseClassBonuses(classLevels);
+
     await applyActorUpdateAtomic(this.actor, {
       "system.progression.classLevels": classLevels,
       "system.progression.startingFeats": allStartingFeats,
       "system.progression.featBudget": featBudget,
-      "system.progression.talentBudget": talentBudget
+      "system.progression.talentBudget": talentBudget,
+      ...defenseUpdates
     });
 
     // Apply class auto-grants (starting feats/proficiencies) for level 1 only
@@ -1708,6 +1724,56 @@ async applyScalingFeature(feature) {
    */
   mustChooseForceSecret() {
     return false;
+  }
+
+  /**
+   * Recalculate defense class bonuses based on all class levels
+   * FIXED: Bug #2 - Defense bonuses should use MAX of all classes, not stack
+   * @param {Array} classLevels - Array of class level entries
+   * @returns {Promise<Object>} Object with system updates for defenses
+   * @private
+   */
+  async _recalculateDefenseClassBonuses(classLevels) {
+    const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
+    const { getClassData } = await import('../progression/utils/class-data-loader.js');
+
+    // Initialize bonuses at 0
+    let fortBonus = 0;
+    let refBonus = 0;
+    let willBonus = 0;
+
+    // For each class level 1 (every class's first level), get its defense bonuses
+    // Take the MAX, not sum
+    for (const classLevel of classLevels) {
+      if (classLevel.level === 1) { // Only level 1 grants class defense bonuses
+        let classData = PROGRESSION_RULES.classes[classLevel.class];
+
+        if (!classData) {
+          try {
+            classData = await getClassData(classLevel.class);
+          } catch (err) {
+            swseLogger.warn(`Could not load class data for ${classLevel.class} to recalculate defenses`);
+            continue;
+          }
+        }
+
+        if (classData?.defenses) {
+          fortBonus = Math.max(fortBonus, classData.defenses.fortitude || 0);
+          refBonus = Math.max(refBonus, classData.defenses.reflex || 0);
+          willBonus = Math.max(willBonus, classData.defenses.will || 0);
+        }
+      }
+    }
+
+    swseLogger.log(
+      `Defense bonuses recalculated: Fort +${fortBonus}, Ref +${refBonus}, Will +${willBonus}`
+    );
+
+    return {
+      "system.defenses.fort.classBonus": fortBonus,
+      "system.defenses.reflex.classBonus": refBonus,
+      "system.defenses.will.classBonus": willBonus
+    };
   }
 
   /**
