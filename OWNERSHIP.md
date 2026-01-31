@@ -67,6 +67,8 @@ Nothing else is allowed to decide rules.
 - `scripts/data/adapters/ClassModelAdapters.js` — Class data adapter ✅
 - `scripts/data/force-points.js` — Force point calculation (math only) ✅
 
+**🔒 SSOT LAYER FROZEN:** No new logic allowed in this layer. All game rules belong in SSOT data files, not in loader code. Any new rule must be authored as SSOT data, loaded by existing readers.
+
 ---
 
 ## Prerequisite Engine Layer
@@ -176,6 +178,8 @@ Nothing else is allowed to decide rules.
 
 **Owns:** Recommendation ranking, build analysis, explanations, mentor guidance
 **Must not:** Gate features, override prerequisites, mutate actors, make final choices
+
+**🔒 SUGGESTION LAYER FROZEN:** This layer is correct and complete. No new features allowed here without architectural review.
 
 ### Core Suggestion System
 - `scripts/engine/SuggestionEngine.js` — **Main suggestion engine (tier-based)** ✅
@@ -316,6 +320,8 @@ Nothing else is allowed to decide rules.
 - `scripts/sheets/v2/droid-sheet.js` — Droid sheet (read-only) ✅
 - `scripts/sheets/v2/vehicle-sheet.js` — Vehicle sheet (read-only) ✅
 
+**🔒 v2 SHEETS FROZEN:** These are read-only projections. No new logic allowed in sheets. All rules belong in Engine layer.
+
 ### Legacy Actor System (v1 - to be deprecated)
 - `scripts/actors/base/swse-actor-base.js` — Old v1 base ⚠️ (deprecate)
 - `scripts/actors/character/swse-character-sheet.js` — Old v1 character ⚠️ (deprecate)
@@ -438,30 +444,54 @@ These layers are stable and not part of the v2 progression refactor. Leave as-is
 
 ## Known Issues & Consolidation Needed
 
-### 🧨 CRITICAL: Three Prerequisite Validators
+### 🧨 CRITICAL: Three Prerequisite Validators (Illegal Architecture)
+
+**Constraint:** Only PrerequisiteEngine may answer "Is this legal?"
+
+Multiple validators exist because logic leaked historically. Under v2, this is forbidden.
 
 **Files involved:**
-1. `scripts/data/prerequisite-checker.js`
-2. `scripts/progression/feats/prerequisite_engine.js`
-3. `scripts/utils/prerequisite-validator.js`
+1. `scripts/data/prerequisite-checker.js` — CORRECT owner (reads SSOT)
+2. `scripts/progression/feats/prerequisite_engine.js` — ILLEGAL (prereq logic in Progression)
+3. `scripts/utils/prerequisite-validator.js` — ILLEGAL (prereq logic in Utilities)
 
-**Action needed:** Consolidate into single `PrerequisiteChecker` (currently correct owner).
-- **Keep:** `scripts/data/prerequisite-checker.js` (correct layer, read SSOT)
-- **Merge into it:** Logic from prerequisite_engine.js + prerequisite-validator.js
-- **Delete:** Old validator files after consolidation
+**Action (non-negotiable):**
+1. **Consolidate all prerequisite logic** into `scripts/data/prerequisite-checker.js`
+   - Merge logic from prerequisite_engine.js
+   - Merge logic from prerequisite-validator.js
+   - Ensure single implementation of each check (level, BAB, skills, feats, talents, force)
+
+2. **Delete or stub out** the illegal validators
+   - `scripts/progression/feats/prerequisite_engine.js` — delete or delegate to prerequisite-checker
+   - `scripts/utils/prerequisite-validator.js` — delete or delegate to prerequisite-checker
+
+3. **Enforce:** Any new prereq check must be added to PrerequisiteChecker, nowhere else.
+
+**Why:** Multiple validators = multiple sources of truth = bugs. v2 has one source of truth.
 
 ---
 
-### ⚠️ Misplaced Logic (Derived Math in Progression)
+### ⚠️ Misplaced Logic (Derived Math in Progression — Boundary Violation)
+
+**Constraint:** Progression may set progression-owned fields only. Derived may compute read-only projections only. No layer may overwrite the other's outputs.
 
 **Files involved:**
-- `scripts/progression/engine/derived-calculator.js`
-- `scripts/progression/engine/derived-stats.js`
+- `scripts/progression/engine/derived-calculator.js` — ILLEGAL (math computation in Progression)
+- `scripts/progression/engine/derived-stats.js` — ILLEGAL (math computation in Progression)
 
-**Action needed:** Move to `scripts/actors/derived/` or similar
-- These compute derived values (BAB, saves, AC)
-- Should live in Derived layer, not Progression
-- Called from Actor.prepareDerivedData(), not during progression
+**Current problem:**
+- These files compute derived values (BAB, saves, AC) in Progression layer
+- But they are called from Actor.prepareDerivedData() in Derived layer
+- This creates a layer violation: Progression reaches into Derived
+
+**Action needed:**
+1. **Move to Derived layer** — `scripts/actors/engine/derived-calculator.js` or similar
+   - These compute derived values from progression-owned inputs
+   - Should live where they are called: in prepareDerivedData()
+
+2. **Clear ownership:** Progression writes `actor.system.progression.*`, Derived writes `actor.system.derived.*`
+
+**Why:** This is how BAB was written by both layers at different times = bugs. Clear ownership prevents this.
 
 ---
 
@@ -509,6 +539,75 @@ These layers are stable and not part of the v2 progression refactor. Leave as-is
 - `scripts/progression/feats/feat-normalizer.js` vs `scripts/progression/engine/feature-normalizer.js` — Feature normalization duplicated
 
 **Action:** Audit and consolidate normalizers after prerequisites consolidation.
+
+---
+
+## Illegal Patterns (All Layers)
+
+These patterns are forbidden under v2. Code review must reject them immediately.
+
+**Prerequisite checks outside PrerequisiteEngine:**
+- ❌ Validation logic in sheets, application, or progression layers
+- ❌ Multiple implementations of the same rule
+- ✅ All prereq checks go through `scripts/data/prerequisite-checker.js`
+
+**Actor mutation outside Application layer:**
+- ❌ Progression, Suggestion, or Utility layers mutating actors
+- ❌ Sheets writing to actor
+- ✅ Only `ActorEngine.updateActor()` mutates actors
+
+**Derived layer writing progression-owned fields:**
+- ❌ Derived code writing to `actor.system.progression.*`
+- ❌ Derived overwrites Progression outputs
+- ✅ Derived computes `actor.system.derived.*` from read-only inputs
+
+**Sheets reading SSOT directly:**
+- ❌ Sheets importing from `data/*.json` or `scripts/data/`
+- ❌ Sheets making availability decisions
+- ✅ Sheets read `actor.system.derived` only
+
+**Items containing rule logic:**
+- ❌ Item's `system` fields contain active rules/checks
+- ❌ Items decide availability or requirements
+- ✅ Items store ownership state + `ssotId` pointer to rules in SSOT
+
+**Suggestion engine gating:**
+- ❌ Suggestions blocking or disabling options
+- ❌ Suggestions overriding prerequisites
+- ✅ Suggestions rank valid options, never gate
+
+**Progression reading live actor:**
+- ❌ Progression reading from mutable actor state
+- ❌ Order-dependent progression (depends on actor field changes)
+- ✅ Progression reads `snapshot` only (frozen copy of actor)
+
+---
+
+## Deletion is Success
+
+If a file's responsibility disappears under v2 architectural enforcement, **deletion is the correct action**, not relocation.
+
+**Examples of "glue code" to delete (after ownership is enforced):**
+
+- Files that exist only to compensate for leaked logic
+  - E.g., normalizer that patches bad data from wrong layer → delete once source is fixed
+
+- Duplicate validators that existed because logic leaked
+  - E.g., second prerequisite checker → delete once single checker is canonical
+
+- Adapter layers that translate between illegal architectures
+  - E.g., wrapper that works around layer violation → delete once layers are separated
+
+- Fallback implementations that patched missing SSOT
+  - E.g., hardcoded rules when SSOT data was missing → delete once data is authored
+
+**Before deleting, verify:**
+1. ✅ Logic is consolidated in correct layer
+2. ✅ All callers updated to use new location
+3. ✅ Tests pass with deletion
+4. ✅ No backward-compat requirements
+
+**Permission granted:** You may delete files guilt-free if they were created to work around architectural leakage. Simplification is progress.
 
 ---
 
