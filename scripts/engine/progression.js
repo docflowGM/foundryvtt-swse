@@ -1939,6 +1939,508 @@ async applyScalingFeature(feature) {
   }
 
   // ============================================================================
+  // PREVIEW/COMMIT PATTERN - V2 COMPLIANT LEVEL-UP FLOW
+  // ============================================================================
+
+  /**
+   * Preview what a level-up would grant (PURE - no mutation)
+   *
+   * @param {string} classId - Class to preview
+   * @returns {Object} Preview data with grants and available choices
+   */
+  async previewLevelUp(classId) {
+    swseLogger.log(`[PREVIEW] Previewing level-up for class: ${classId}`);
+
+    // Load class data from SSOT
+    const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
+    const { getClassData } = await import('../progression/utils/class-data-loader.js');
+
+    let classData = PROGRESSION_RULES.classes[classId];
+    if (!classData || !classData.levelProgression) {
+      classData = await getClassData(classId);
+    }
+
+    if (!classData) {
+      throw new Error(`Unknown class: ${classId}`);
+    }
+
+    // Calculate current and new state
+    const progression = this.actor.system.progression || {};
+    const classLevels = progression.classLevels || [];
+    const currentCharacterLevel = classLevels.length;
+    const newCharacterLevel = currentCharacterLevel + 1;
+
+    // Determine level in this specific class
+    const existingLevelsInClass = classLevels.filter(cl => cl.class === classId).length;
+    const levelInClass = existingLevelsInClass + 1;
+
+    // Validate prerequisites (BEFORE preview)
+    const prereqErrors = await this._validateClassPrerequisites(classId, classData, currentCharacterLevel);
+    if (prereqErrors.length > 0) {
+      return {
+        valid: false,
+        errors: prereqErrors,
+        classId,
+        currentLevel: currentCharacterLevel,
+        newLevel: newCharacterLevel
+      };
+    }
+
+    // Get level-specific grants from class progression
+    const levelFeatures = classData.levelProgression?.[levelInClass] || {
+      features: [],
+      bonusFeats: 0,
+      talents: 0,
+      forcePoints: 0
+    };
+
+    // Calculate granted slots
+    const grants = {
+      talents: levelFeatures.talents || 0,
+      bonusFeats: levelFeatures.bonusFeats || 0,
+      forcePoints: levelFeatures.forcePoints || 0,
+      features: levelFeatures.features || [],
+      // Every 4 levels (4, 8, 12, 16, 20) grants ability score increase
+      abilityIncrease: (newCharacterLevel % 4 === 0) ? 2 : 0
+    };
+
+    // Get available choices from SSOT registries
+    const availableChoices = {
+      talents: await this._getAvailableTalents(classId, classData),
+      feats: await this._getAvailableFeats(classId, classData),
+      forcePowers: await this._getAvailableForcePowers(classId),
+      forceTechniques: await this._getAvailableForceTechniques(),
+      forceSecrets: await this._getAvailableForceSecrets(),
+      starshipManeuvers: await this._getAvailableStarshipManeuvers()
+    };
+
+    // Build class level breakdown
+    const classBreakdown = new Map();
+    for (const cl of classLevels) {
+      const count = classBreakdown.get(cl.class) || 0;
+      classBreakdown.set(cl.class, count + 1);
+    }
+    classBreakdown.set(classId, (classBreakdown.get(classId) || 0) + 1);
+
+    swseLogger.log(`[PREVIEW] Preview complete - Grants:`, grants);
+
+    return {
+      valid: true,
+      classId,
+      className: classData.name,
+      currentLevel: currentCharacterLevel,
+      newLevel: newCharacterLevel,
+      levelInClass,
+      classBreakdown: Object.fromEntries(classBreakdown),
+      grants,
+      availableChoices,
+      features: levelFeatures.features || []
+    };
+  }
+
+  /**
+   * Commit a level-up (AUTHORITATIVE - mutates actor)
+   *
+   * @param {string} classId - Class to take
+   * @param {Object} choices - Player choices { talents: [], feats: [], abilityIncrease: {str:1,dex:1}, ... }
+   * @returns {Promise<Object>} Commit result with changes
+   */
+  async commitLevelUp(classId, choices = {}) {
+    swseLogger.log(`[COMMIT] Committing level-up for class: ${classId}`, choices);
+
+    // First, preview to validate
+    const preview = await this.previewLevelUp(classId);
+
+    if (!preview.valid) {
+      throw new Error(`Cannot commit level-up: ${preview.errors.join(', ')}`);
+    }
+
+    // Validate choices against preview
+    const validationErrors = this._validateChoices(preview, choices);
+    if (validationErrors.length > 0) {
+      throw new Error(`Invalid choices: ${validationErrors.join(', ')}`);
+    }
+
+    // Apply class level
+    await this._action_confirmClass({ classId });
+
+    // Apply HP roll/choice
+    if (choices.hp !== undefined) {
+      await this._action_rollHP({ value: choices.hp });
+    }
+
+    // Apply ability increase (if level 4/8/12/16/20)
+    if (choices.abilityIncrease && preview.grants.abilityIncrease > 0) {
+      await this._action_confirmAbilities({ increases: choices.abilityIncrease });
+    }
+
+    // Apply talent selections
+    if (choices.talents && choices.talents.length > 0) {
+      await this._action_confirmTalents({ talentIds: choices.talents });
+    }
+
+    // Apply feat selections
+    if (choices.feats && choices.feats.length > 0) {
+      await this._action_confirmFeats({ featIds: choices.feats });
+    }
+
+    // Apply Force Techniques
+    if (choices.forceTechniques && choices.forceTechniques.length > 0) {
+      await this.doAction('confirmForceTechniques', { techniqueIds: choices.forceTechniques });
+    }
+
+    // Apply Force Secrets
+    if (choices.forceSecrets && choices.forceSecrets.length > 0) {
+      await this.doAction('confirmForceSecrets', { secretIds: choices.forceSecrets });
+    }
+
+    // Apply Starship Maneuvers
+    if (choices.starshipManeuvers && choices.starshipManeuvers.length > 0) {
+      await this.doAction('confirmStarshipManeuvers', { maneuverIds: choices.starshipManeuvers });
+    }
+
+    // Create progression items from SSOT
+    await this._createProgressionItems();
+
+    // Recalculate derived stats (Actor.prepareDerivedData will be called automatically)
+    try {
+      const { recalcDerivedStats } = await import('../progression/engine/autocalc/derived-stats.js');
+      await recalcDerivedStats(this.actor);
+    } catch (err) {
+      swseLogger.warn("Derived stats recalculation failed:", err);
+    }
+
+    // Emit hook for other systems
+    Hooks.callAll('swse:levelUp:committed', {
+      actor: this.actor,
+      classId,
+      newLevel: preview.newLevel,
+      choices
+    });
+
+    // Post chat summary
+    await this._postLevelUpSummary(preview, choices);
+
+    swseLogger.log(`[COMMIT] Level-up committed successfully`);
+
+    return {
+      success: true,
+      newLevel: preview.newLevel,
+      classId,
+      choices
+    };
+  }
+
+  // ============================================================================
+  // VALIDATION HELPERS
+  // ============================================================================
+
+  /**
+   * Validate class prerequisites
+   * @private
+   */
+  async _validateClassPrerequisites(classId, classData, currentLevel) {
+    const errors = [];
+    const progression = this.actor.system.progression || {};
+    const classLevels = progression.classLevels || [];
+
+    // Prestige class validation
+    if (classData.prestigeClass) {
+      const { REQUIRED_PRESTIGE_LEVEL } = await import('../progression/data/progression-data.js');
+      const requiredLevel = REQUIRED_PRESTIGE_LEVEL || 7;
+
+      if (currentLevel < requiredLevel) {
+        errors.push(`Prestige class requires character level ${requiredLevel}`);
+      }
+
+      // Check additional prerequisites
+      if (classData._raw?.prerequisites) {
+        const prereqs = classData._raw.prerequisites;
+
+        // BAB prerequisite
+        if (prereqs.bab) {
+          const { calculateBAB } = await import('../progression/data/progression-data.js');
+          const currentBAB = await calculateBAB(classLevels);
+          if (currentBAB < prereqs.bab) {
+            errors.push(`Requires BAB +${prereqs.bab} (current: +${currentBAB})`);
+          }
+        }
+
+        // Skill prerequisites
+        if (prereqs.trainedSkills?.length > 0) {
+          const trainedSkills = progression.trainedSkills || [];
+          const missing = prereqs.trainedSkills.filter(s => !trainedSkills.includes(s));
+          if (missing.length > 0) {
+            errors.push(`Requires trained skills: ${missing.join(', ')}`);
+          }
+        }
+
+        // Feat prerequisites
+        if (prereqs.feats?.length > 0) {
+          const allFeats = [...(progression.feats || []), ...(progression.startingFeats || [])];
+          const missing = prereqs.feats.filter(f => !allFeats.some(pf => pf.toLowerCase() === f.toLowerCase()));
+          if (missing.length > 0) {
+            errors.push(`Requires feats: ${missing.join(', ')}`);
+          }
+        }
+
+        // Force sensitivity
+        if (prereqs.forceSensitive === true) {
+          const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
+          const hasForceSensitivity = (progression.startingFeats || []).some(f =>
+            f.toLowerCase().includes('force sensitivity')
+          );
+          const isForceSensitiveClass = classLevels.some(cl => {
+            const clData = PROGRESSION_RULES.classes[cl.class];
+            return clData?.forceSensitive;
+          });
+
+          if (!hasForceSensitivity && !isForceSensitiveClass) {
+            errors.push('Requires Force Sensitivity');
+          }
+        }
+      }
+    }
+
+    return errors;
+  }
+
+  /**
+   * Validate player choices against preview
+   * @private
+   */
+  _validateChoices(preview, choices) {
+    const errors = [];
+
+    // Validate talent count
+    if (choices.talents) {
+      if (choices.talents.length > preview.grants.talents) {
+        errors.push(`Too many talents: ${choices.talents.length}/${preview.grants.talents}`);
+      }
+
+      // Validate talent uniqueness
+      const progression = this.actor.system.progression || {};
+      const existingTalents = progression.talents || [];
+      const duplicates = choices.talents.filter(t => existingTalents.includes(t));
+      if (duplicates.length > 0) {
+        errors.push(`Duplicate talents: ${duplicates.join(', ')}`);
+      }
+    }
+
+    // Validate feat count
+    if (choices.feats) {
+      if (choices.feats.length > preview.grants.bonusFeats) {
+        errors.push(`Too many feats: ${choices.feats.length}/${preview.grants.bonusFeats}`);
+      }
+
+      // Validate feat uniqueness
+      const progression = this.actor.system.progression || {};
+      const existingFeats = [...(progression.feats || []), ...(progression.startingFeats || [])];
+      const duplicates = choices.feats.filter(f => existingFeats.includes(f));
+      if (duplicates.length > 0) {
+        errors.push(`Duplicate feats: ${duplicates.join(', ')}`);
+      }
+    }
+
+    // Validate ability increase
+    if (choices.abilityIncrease) {
+      const total = Object.values(choices.abilityIncrease).reduce((sum, val) => sum + val, 0);
+      if (total > preview.grants.abilityIncrease) {
+        errors.push(`Too many ability points: ${total}/${preview.grants.abilityIncrease}`);
+      }
+    }
+
+    return errors;
+  }
+
+  // ============================================================================
+  // SSOT LOOKUP HELPERS
+  // ============================================================================
+
+  /**
+   * Get available talents from SSOT
+   * @private
+   */
+  async _getAvailableTalents(classId, classData) {
+    try {
+      const { TalentTreeRegistry } = await import('../progression/talents/TalentTreeRegistry.js');
+
+      if (!TalentTreeRegistry.trees || TalentTreeRegistry.trees.size === 0) {
+        await TalentTreeRegistry.build();
+      }
+
+      const talentTreeNames = classData.talentTreeNames || [];
+      const availableTalents = [];
+
+      for (const treeName of talentTreeNames) {
+        const tree = TalentTreeRegistry.trees.get(treeName);
+        if (tree) {
+          const talents = tree.getAllTalents();
+          availableTalents.push(...talents.map(t => ({
+            id: t.id,
+            name: t.name,
+            tree: treeName,
+            prerequisites: t.prerequisites
+          })));
+        }
+      }
+
+      return availableTalents;
+    } catch (err) {
+      swseLogger.error('Failed to get available talents:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Get available feats from SSOT
+   * @private
+   */
+  async _getAvailableFeats(classId, classData) {
+    try {
+      const { FeatRegistry } = await import('../progression/feats/feat-registry.js');
+
+      if (!FeatRegistry.isBuilt) {
+        await FeatRegistry.build();
+      }
+
+      // Get all feats, filtered by prerequisites
+      const allFeats = FeatRegistry.list();
+      const { canTakeFeat } = await import('../progression/engine/validators/feat-duplication.js');
+
+      return allFeats
+        .filter(feat => canTakeFeat(this.actor, feat.name))
+        .map(feat => ({
+          id: feat.id,
+          name: feat.name,
+          type: feat.system?.featType || 'general',
+          prerequisites: feat.system?.prerequisites
+        }));
+    } catch (err) {
+      swseLogger.error('Failed to get available feats:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Get available force powers
+   * @private
+   */
+  async _getAvailableForcePowers(classId) {
+    try {
+      const pack = game.packs.get('foundryvtt-swse.force_powers');
+      if (!pack) return [];
+
+      const docs = await pack.getDocuments();
+      return docs.map(doc => ({
+        id: doc.id,
+        name: doc.name,
+        discipline: doc.system?.discipline
+      }));
+    } catch (err) {
+      swseLogger.error('Failed to get force powers:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Get available force techniques
+   * @private
+   */
+  async _getAvailableForceTechniques() {
+    try {
+      const pack = game.packs.get('foundryvtt-swse.force_techniques');
+      if (!pack) return [];
+
+      const docs = await pack.getDocuments();
+      return docs.map(doc => ({
+        id: doc.id,
+        name: doc.name
+      }));
+    } catch (err) {
+      swseLogger.error('Failed to get force techniques:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Get available force secrets
+   * @private
+   */
+  async _getAvailableForceSecrets() {
+    try {
+      const pack = game.packs.get('foundryvtt-swse.force_secrets');
+      if (!pack) return [];
+
+      const docs = await pack.getDocuments();
+      return docs.map(doc => ({
+        id: doc.id,
+        name: doc.name
+      }));
+    } catch (err) {
+      swseLogger.error('Failed to get force secrets:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Get available starship maneuvers
+   * @private
+   */
+  async _getAvailableStarshipManeuvers() {
+    try {
+      const pack = game.packs.get('foundryvtt-swse.starship_maneuvers');
+      if (!pack) return [];
+
+      const docs = await pack.getDocuments();
+      return docs.map(doc => ({
+        id: doc.id,
+        name: doc.name
+      }));
+    } catch (err) {
+      swseLogger.error('Failed to get starship maneuvers:', err);
+      return [];
+    }
+  }
+
+  // ============================================================================
+  // CHAT REPORTING
+  // ============================================================================
+
+  /**
+   * Post level-up summary to chat (report only)
+   * @private
+   */
+  async _postLevelUpSummary(preview, choices) {
+    try {
+      const content = await renderTemplate('systems/foundryvtt-swse/templates/chat/level-up-summary.hbs', {
+        actor: this.actor,
+        className: preview.className,
+        newLevel: preview.newLevel,
+        levelInClass: preview.levelInClass,
+        grants: preview.grants,
+        choices
+      });
+
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content,
+        flags: {
+          swse: {
+            type: 'levelUp',
+            actorId: this.actor.id,
+            classId: preview.classId,
+            level: preview.newLevel
+          }
+        }
+      });
+    } catch (err) {
+      // Chat failure should not block progression
+      swseLogger.warn('Failed to post level-up summary:', err);
+    }
+  }
+
+  // ============================================================================
   // PUBLIC API METHODS - For use by Chargen, Templates, and Level-up UI
   // ============================================================================
   // These methods provide a clean interface for external callers to interact
