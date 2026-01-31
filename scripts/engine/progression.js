@@ -1215,6 +1215,13 @@ async applyScalingFeature(feature) {
 
     swseLogger.log(`[PROGRESSION-CLASS] Class data loaded successfully: ${classData.name}`);
 
+    // FIXED: Bug #3 - Verify levelProgression data exists (critical for BAB, features)
+    if (!classData.levelProgression) {
+      const errorMsg = `Class "${classId}" missing levelProgression data. BAB and features will not work correctly.`;
+      swseLogger.error(`[PROGRESSION-CLASS] FATAL: ${errorMsg}`);
+      throw new Error(errorMsg);
+    }
+
     // Prerequisite validation (can be skipped for free build mode)
     if (!skipPrerequisites) {
       const progression = this.actor.system.progression || {};
@@ -1529,6 +1536,18 @@ async applyScalingFeature(feature) {
 
   async _action_confirmFeats(payload) {
     const { featIds } = payload;
+
+    // FIXED: Bug #5 - Validate Force Training feat gating
+    const { canTakeForceTraining } = await import('../progression/engine/autogrants/force-training.js');
+    for (const featId of featIds) {
+      const featName = typeof featId === 'string' ? featId : '';
+      if (featName.toLowerCase().includes('force training')) {
+        const gatingCheck = canTakeForceTraining(this.actor, { feats: featIds });
+        if (!gatingCheck.allowed) {
+          throw new Error(`Cannot take Force Training feat: ${gatingCheck.reason}`);
+        }
+      }
+    }
 
     // Get feat budget from progression
     const featBudget = this.actor.system.progression?.featBudget || 0;
