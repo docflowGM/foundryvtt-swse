@@ -713,7 +713,7 @@ export default class CharacterGenerator extends Application {
             context.packs.feats,
             tempActor,
             pendingData,
-            { buildIntent }  // CRITICAL: Pass BuildIntent to include mentor survey biases
+            buildIntent  // CRITICAL: Pass BuildIntent to include mentor survey biases
           );
           // Filter out Force-dependent feats for droids (they cannot be Force-sensitive)
           featsWithSuggestions = this._filterForceDependentItems(featsWithSuggestions);
