@@ -167,7 +167,7 @@ this.trees.set(treeName, graph);
     }
 
     SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Built ${this.trees.size} graphs via legacy talent grouping`);
-
+  }
 
   static getTreeNames() {
     const names = [...this.trees.keys()];

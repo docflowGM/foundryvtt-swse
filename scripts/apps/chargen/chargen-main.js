@@ -760,7 +760,21 @@ export default class CharacterGenerator extends Application {
       if (this.currentStep === "talents" && context.packs.talents) {
         try {
           SWSELogger.log(`[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.talents.length} talents with BuildIntent context...`);
-          let talentsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', { domain: 'talents', available: context.packs.talents, pendingData, engineOptions: { buildIntent, includeFutureAvailability: true }, persist: true })
+          let talentsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', { domain: 'talents', available: context.packs.talents, pendingData, engineOptions: { buildIntent, includeFutureAvailability: true }, persist: true });
+
+          // Filter out Force-dependent talents for droids (they cannot be Force-sensitive)
+          talentsWithSuggestions = this._filterForceDependentItems(talentsWithSuggestions);
+
+          context.packs.talents = talentsWithSuggestions;
+          // Sort by suggestion tier
+          context.packs.talents = SuggestionService.sortBySuggestion(context.packs.talents);
+
+          // Add qualification status to each talent
+          const pendingDataForTalents = {
+            selectedFeats: this.characterData.feats || [],
+            selectedClass: this.characterData.classes?.[0],
+            abilityIncreases: {},
+            selectedSkills: Object.keys(this.characterData.skills || {})
               .filter(k => this.characterData.skills[k]?.trained)
               .map(k => ({ key: k })),
             selectedTalents: this.characterData.talents || []
@@ -1731,6 +1745,12 @@ export default class CharacterGenerator extends Application {
     event.preventDefault();
 
     try {
+      // Check if actor exists for suggestions (may not exist during chargen)
+      if (!this.actor) {
+        ui.notifications.warn("Character not yet created. Complete character generation first.");
+        return;
+      }
+
       const { getAvailableForcePowers } = await import('./chargen-force-powers.js');
       const { ForceOptionSuggestionEngine } = await import('../../engine/ForceOptionSuggestionEngine.js');
       const { MentorSuggestionDialog } = await import('../mentor-suggestion-dialog.js');
