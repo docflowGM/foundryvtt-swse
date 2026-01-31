@@ -4,7 +4,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
-import { PrerequisiteValidator } from '../utils/prerequisite-validator.js';
+import { PrerequisiteChecker } from '../data/prerequisite-checker.js';
 import { SuggestionService } from '../engine/SuggestionService.js';
 import { getTalentTreeName } from './chargen/chargen-property-accessor.js';
 
@@ -270,7 +270,7 @@ export class TalentTreeVisualizer {
     SWSELogger.log(`[TALENT-TREE-VIS] ✓ Found ${talents.length} talents for tree "${treeName}"`);
 
     // Filter talents based on prerequisites - add isQualified property
-    talents = PrerequisiteValidator.filterQualifiedTalents(talents, actor, {});
+    talents = PrerequisiteChecker.filterQualifiedTalents(talents, actor, {});
 
     // Apply suggestion engine to add tier-based recommendations
     talents = await SuggestionService.getSuggestions(actor, 'sheet', { domain: 'talents', available: talents, pendingData: {}, persist: false });

@@ -5,6 +5,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { PrerequisiteChecker } from '../data/prerequisite-checker.js';
 import { PrerequisiteRequirements } from '../progression/feats/prerequisite_engine.js';
 
 export class WishlistEngine {
@@ -102,7 +103,12 @@ export class WishlistEngine {
    * @returns {Object} Prerequisite analysis with fulfilled/unfulfilled breakdown
    */
   static analyzePrerequisiteFulfillment(actor, item) {
-    const unmetReqs = PrerequisiteRequirements.getUnmetRequirements(actor, item);
+    const canonical = PrerequisiteChecker.getUnmetRequirements(actor, item);
+    const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
+    if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
+      console.warn("getUnmetRequirements mismatch (analyze fulfillment)", { item: item.name, canonical, legacy });
+    }
+    const unmetReqs = canonical;
     const allReqs = this._extractAllRequirements(item);
 
     const analysis = {
@@ -142,7 +148,12 @@ export class WishlistEngine {
   static getWishlistedPrerequisites(actor, item) {
     const wishlist = this._getWishlist(actor);
     const allItems = [...wishlist.feats, ...wishlist.talents];
-    const unmetReqs = PrerequisiteRequirements.getUnmetRequirements(actor, item);
+    const canonical = PrerequisiteChecker.getUnmetRequirements(actor, item);
+    const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
+    if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
+      console.warn("getUnmetRequirements mismatch (wishlisted prereqs)", { item: item.name, canonical, legacy });
+    }
+    const unmetReqs = canonical;
 
     // Extract feat/talent names from unmet requirements
     const prereqNames = unmetReqs
@@ -165,7 +176,12 @@ export class WishlistEngine {
    * @returns {Object} Path analysis with steps and progress
    */
   static analyzePathToWishlist(actor, itemId, itemType, item) {
-    const unmetReqs = PrerequisiteRequirements.getUnmetRequirements(actor, item);
+    const canonical = PrerequisiteChecker.getUnmetRequirements(actor, item);
+    const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
+    if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
+      console.warn("getUnmetRequirements mismatch (analyze path)", { item: item.name, canonical, legacy });
+    }
+    const unmetReqs = canonical;
     const analysis = this.analyzePrerequisiteFulfillment(actor, item);
 
     return {
@@ -219,7 +235,12 @@ export class WishlistEngine {
    * @returns {Array} Ordered recommendations
    */
   static getWishlistRecommendations(actor, item) {
-    const unmetReqs = PrerequisiteRequirements.getUnmetRequirements(actor, item);
+    const canonical = PrerequisiteChecker.getUnmetRequirements(actor, item);
+    const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
+    if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
+      console.warn("getUnmetRequirements mismatch (recommendations)", { item: item.name, canonical, legacy });
+    }
+    const unmetReqs = canonical;
     const recommendations = [];
 
     for (const req of unmetReqs) {

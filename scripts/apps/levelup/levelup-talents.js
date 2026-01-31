@@ -13,6 +13,7 @@ import { TalentTreeVisualizer } from '../talent-tree-visualizer.js';
 import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
 import { checkTalentPrerequisites } from './levelup-validation.js';
 import { getClassProperty, getTalentTrees } from '../chargen/chargen-property-accessor.js';
+import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { SuggestionService } from '../../engine/SuggestionService.js';
@@ -238,11 +239,15 @@ export async function loadTalentData(actor = null, pendingData = {}) {
 
     // Add prerequisite checking results to each talent (before suggestions for future availability analysis)
     const talentsWithPrereqs = talentObjects.map(talent => {
-      const prereqCheck = PrerequisiteRequirements.checkTalentPrerequisites(actor, talent, pendingData);
+      const canonical = PrerequisiteChecker.checkTalentPrerequisites(actor, talent, pendingData);
+      const legacy = PrerequisiteRequirements.checkTalentPrerequisites(actor, talent, pendingData);
+      if (canonical.met !== legacy.valid) {
+        console.warn("Prereq mismatch (talent) detected", { talent: talent.name, canonical, legacy });
+      }
       return {
         ...talent,
-        isQualified: prereqCheck.valid,
-        prereqReasons: prereqCheck.reasons
+        isQualified: canonical.met,
+        prereqReasons: canonical.missing
       };
     });
 

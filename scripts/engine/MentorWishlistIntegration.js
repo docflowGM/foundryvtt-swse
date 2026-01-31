@@ -5,6 +5,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { WishlistEngine } from '../engine/WishlistEngine.js';
+import { PrerequisiteChecker } from '../data/prerequisite-checker.js';
 import { PrerequisiteRequirements } from '../progression/feats/prerequisite_engine.js';
 
 export class MentorWishlistIntegration {
@@ -40,7 +41,12 @@ export class MentorWishlistIntegration {
 
       // Check if this suggestion is a prerequisite for any wishlisted item
       for (const wishedItem of allWishlisted) {
-        const unmetReqs = PrerequisiteRequirements.getUnmetRequirements(actor, wishedItem);
+        const canonical = PrerequisiteChecker.getUnmetRequirements(actor, wishedItem);
+        const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, wishedItem);
+        if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
+          console.warn("getUnmetRequirements mismatch (wishlist)", { item: wishedItem.name, canonical, legacy });
+        }
+        const unmetReqs = canonical;
 
         // Check if this suggestion fulfills one of the unmet requirements
         const helpfulForGoal = unmetReqs.some(req =>
@@ -130,7 +136,12 @@ export class MentorWishlistIntegration {
       const itemDoc = allItems.find(i => (i._id || i.id) === wishedItem.id);
       if (!itemDoc) continue;
 
-      const unmetReqs = PrerequisiteRequirements.getUnmetRequirements(actor, itemDoc);
+      const canonical = PrerequisiteChecker.getUnmetRequirements(actor, itemDoc);
+      const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, itemDoc);
+      if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
+        console.warn("getUnmetRequirements mismatch (prerequisites)", { item: itemDoc.name, canonical, legacy });
+      }
+      const unmetReqs = canonical;
 
       // For each unmet requirement, find items that fulfill it
       for (const req of unmetReqs) {
@@ -205,13 +216,24 @@ export class MentorWishlistIntegration {
     if (req.includes(itemName)) return true;
 
     // Check if acquiring this item gets us closer to the requirement
-    const unmetAfterItem = PrerequisiteRequirements.getUnmetRequirements(actor, {
+    const tempItem = {
       ...item,
       // Simulate having acquired this item
       _id: item._id + '_temp'
-    });
+    };
+    const unmetAfterCanonical = PrerequisiteChecker.getUnmetRequirements(actor, tempItem);
+    const unmetAfterLegacy = PrerequisiteRequirements.getUnmetRequirements(actor, tempItem);
+    const unmetBeforeCanonical = PrerequisiteChecker.getUnmetRequirements(actor, item);
+    const unmetBeforeLegacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
 
-    return unmetAfterItem.length < PrerequisiteRequirements.getUnmetRequirements(actor, item).length;
+    if (JSON.stringify(unmetAfterCanonical) !== JSON.stringify(unmetAfterLegacy)) {
+      console.warn("getUnmetRequirements mismatch (after item)", { item: item.name, canonical: unmetAfterCanonical, legacy: unmetAfterLegacy });
+    }
+    if (JSON.stringify(unmetBeforeCanonical) !== JSON.stringify(unmetBeforeLegacy)) {
+      console.warn("getUnmetRequirements mismatch (before item)", { item: item.name, canonical: unmetBeforeCanonical, legacy: unmetBeforeLegacy });
+    }
+
+    return unmetAfterCanonical.length < unmetBeforeCanonical.length;
   }
 
   static _buildMentorReason(suggestion, wishlistBoost, wishlistContext) {

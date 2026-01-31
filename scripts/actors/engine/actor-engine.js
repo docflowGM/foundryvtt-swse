@@ -187,4 +187,122 @@ export const ActorEngine = {
     }
   },
 
+  /**
+   * applyDelta(actor, delta)
+   *
+   * v2 Progression Contract: The ONLY legal way to apply ProgressionCompiler output.
+   *
+   * Enforces strict guarantees:
+   * - No derived writes (illegal boundary violation)
+   * - No async computation (math belongs in prepareDerivedData)
+   * - No conditional branching (resolver is deterministic)
+   *
+   * @param {Actor} actor
+   * @param {ProgressionDelta} delta - { set, add, delete }
+   * @throws if delta violates v2 constraints
+   */
+  async applyDelta(actor, delta) {
+    try {
+      if (!actor) throw new Error("applyDelta() called with no actor");
+      if (!delta) return; // noop
+
+      // ---- GUARDRAIL 1: Reject derived writes ----
+      if (delta.derived) {
+        throw new Error(
+          "ARCHITECTURE VIOLATION: Progression attempted to write to derived fields. " +
+          "Math computation belongs in prepareDerivedData(), not progression."
+        );
+      }
+
+      // ---- GUARDRAIL 2: Validate delta structure ----
+      if (delta.set && typeof delta.set !== "object") {
+        throw new Error("Invalid delta.set: must be object { path: value }");
+      }
+      if (delta.add && typeof delta.add !== "object") {
+        throw new Error("Invalid delta.add: must be object with feature arrays");
+      }
+      if (delta.delete && typeof delta.delete !== "object") {
+        throw new Error("Invalid delta.delete: must be object with feature arrays");
+      }
+
+      swseLogger.debug(`ActorEngine.applyDelta → ${actor.name}`, { delta });
+
+      // ---- Phase 4: Apply SET operations (field updates) ----
+      const updates = {};
+      if (delta.set) {
+        for (const [path, value] of Object.entries(delta.set)) {
+          if (path.startsWith("system.derived")) {
+            throw new Error(`ILLEGAL: applyDelta cannot write ${path} (derived field)`);
+          }
+          updates[path] = value;
+        }
+      }
+
+      // Apply field updates atomically
+      if (Object.keys(updates).length > 0) {
+        await this.updateActor(actor, updates);
+      }
+
+      // ---- Phase 4: Apply ADD operations (create items) ----
+      if (delta.add?.talents && delta.add.talents.length > 0) {
+        const talentItems = delta.add.talents.map(talentId => ({
+          type: "talent",
+          name: talentId, // Will be enriched by sheet
+          system: {
+            ssotId: talentId // Pointer to SSOT, not rules
+          }
+        }));
+        await this.createEmbeddedDocuments(actor, "Item", talentItems);
+      }
+
+      if (delta.add?.feats && delta.add.feats.length > 0) {
+        const featItems = delta.add.feats.map(featId => ({
+          type: "feat",
+          name: featId,
+          system: {
+            ssotId: featId
+          }
+        }));
+        await this.createEmbeddedDocuments(actor, "Item", featItems);
+      }
+
+      if (delta.add?.skills && delta.add.skills.length > 0) {
+        const skillUpdates = {};
+        for (const skillId of delta.add.skills) {
+          // Skills are ranks in system.skills, not items
+          skillUpdates[`system.progression.skills.${skillId}`] = 1;
+        }
+        await this.updateActor(actor, skillUpdates);
+      }
+
+      // ---- Phase 4: Apply DELETE operations (remove items) ----
+      if (delta.delete?.talents && delta.delete.talents.length > 0) {
+        const talentsToDelete = actor.items
+          .filter(item => item.type === "talent" && delta.delete.talents.includes(item.system.ssotId))
+          .map(item => item.id);
+        if (talentsToDelete.length > 0) {
+          await this.deleteEmbeddedDocuments(actor, "Item", talentsToDelete);
+        }
+      }
+
+      if (delta.delete?.feats && delta.delete.feats.length > 0) {
+        const featsToDelete = actor.items
+          .filter(item => item.type === "feat" && delta.delete.feats.includes(item.system.ssotId))
+          .map(item => item.id);
+        if (featsToDelete.length > 0) {
+          await this.deleteEmbeddedDocuments(actor, "Item", featsToDelete);
+        }
+      }
+
+      swseLogger.log(`ActorEngine.applyDelta completed for ${actor.name}`);
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applyDelta failed for ${actor?.name ?? "unknown actor"}`, {
+        error: err,
+        delta
+      });
+      throw err;
+    }
+  },
+
 };

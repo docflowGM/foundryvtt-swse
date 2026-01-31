@@ -3,6 +3,7 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
+import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 
 /**
@@ -82,10 +83,14 @@ export async function _onSelectForcePower(event) {
       return;
     }
 
-    // Check other prerequisites using PrerequisiteValidator
-    const prereqCheck = PrerequisiteValidator.checkFeatPrerequisites(power, tempActor, pendingData);
-    if (!prereqCheck.valid) {
-      ui.notifications.warn(`Cannot select "${power.name}": ${prereqCheck.reasons.join(', ')}`);
+    // Check other prerequisites (dual-check for migration safety)
+    const canonical = PrerequisiteChecker.checkFeatPrerequisites(tempActor, power, pendingData);
+    const legacy = PrerequisiteValidator.checkFeatPrerequisites(power, tempActor, pendingData);
+    if (canonical.met !== legacy.valid) {
+      console.warn("Prereq mismatch (force power) detected", { power: power.name, canonical, legacy });
+    }
+    if (!canonical.met) {
+      ui.notifications.warn(`Cannot select "${power.name}": ${canonical.missing.join(', ')}`);
       return;
     }
   }

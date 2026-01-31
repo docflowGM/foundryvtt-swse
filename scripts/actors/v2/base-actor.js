@@ -1,6 +1,7 @@
 // scripts/actors/v2/base-actor.js
 import { SWSEActorBase } from "../base/swse-actor-base.js";
 import { ActorEngine } from "../engine/actor-engine.js";
+import { DerivedCalculator } from "../derived/derived-calculator.js";
 import { computeCharacterDerived } from "./character-actor.js";
 import { computeNpcDerived } from "./npc-actor.js";
 import { computeDroidDerived } from "./droid-actor.js";
@@ -27,6 +28,10 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     system.derived ??= {};
     system.derived.meta ??= {};
 
+    // v2: Compute HP, BAB, and defenses from progression data
+    // This is async but we fire-and-forget since Foundry doesn't await prepareDerivedData
+    this._computeDerivedAsync(system);
+
     switch (this.type) {
       case "character":
         computeCharacterDerived(this, system);
@@ -48,6 +53,32 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     this._applyV2ConditionTrackDerived(system);
 
     system.derived.meta.lastRecalcMs = Date.now();
+  }
+
+  /**
+   * Async computation of HP, BAB, defenses.
+   * Runs after prepareDerivedData completes.
+   * @private
+   */
+  async _computeDerivedAsync(system) {
+    try {
+      const updates = await DerivedCalculator.computeAll(this);
+
+      // Merge computed values into system.derived
+      if (updates) {
+        for (const [path, value] of Object.entries(updates)) {
+          const parts = path.split('.');
+          if (parts.length === 3 && parts[0] === 'system' && parts[1] === 'derived') {
+            // system.derived.field → system.derived[field]
+            const field = parts[2];
+            system.derived[field] = value;
+          }
+        }
+      }
+    } catch (err) {
+      // Log but don't throw - derived computation is non-critical
+      console.warn(`Failed to compute derived values for ${this.name}:`, err);
+    }
   }
 
   /* ------------------------------------------------------------------------ */

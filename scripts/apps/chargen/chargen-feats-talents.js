@@ -4,8 +4,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { getTalentTrees, getTalentTreeName } from './chargen-property-accessor.js';
-import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
-import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
+import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { ClassesDB } from '../../data/classes-db.js';
 import { SuggestionService } from '../../engine/SuggestionService.js';
@@ -181,7 +180,7 @@ export async function _onSelectFeat(event) {
 
     // Get the class being taken (first class in chargen, or for level-up use selectedClass)
     const classDoc = this.characterData.classes?.[0];
-    const grantedFeats = PrerequisiteValidator.getAllGrantedFeats(tempActor, classDoc);
+    const grantedFeats = PrerequisiteChecker.getAllGrantedFeats(tempActor, classDoc);
 
     const pendingData = {
       selectedFeats: this.characterData.feats || [],
@@ -194,13 +193,13 @@ export async function _onSelectFeat(event) {
       grantedFeats: grantedFeats
     };
 
-    SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Running PrerequisiteValidator for feat "${feat.name}"`);
-    const prereqCheck = PrerequisiteValidator.checkFeatPrerequisites(feat, tempActor, pendingData);
+    SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Running PrerequisiteChecker for feat "${feat.name}"`);
+    const prereqCheck = PrerequisiteChecker.checkFeatPrerequisites(tempActor, feat, pendingData);
     SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Prerequisite check result:`, prereqCheck);
 
-    if (!prereqCheck.valid) {
-      SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Prerequisites NOT met for "${feat.name}":`, prereqCheck.reasons);
-      ui.notifications.warn(`Cannot select "${feat.name}": ${prereqCheck.reasons.join(', ')}`);
+    if (!prereqCheck.met) {
+      SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Prerequisites NOT met for "${feat.name}":`, prereqCheck.missing);
+      ui.notifications.warn(`Cannot select "${feat.name}": ${prereqCheck.missing.join(', ')}`);
       return;
     }
     SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Prerequisites MET for "${feat.name}"`);
@@ -541,9 +540,9 @@ export async function _onSelectTalent(event) {
           selectedTalents: this.characterData.talents || []
         };
 
-        const prereqCheck = PrerequisiteRequirements.checkTalentPrerequisites(tempActor, talentToAdd, pendingData);
-        if (!prereqCheck.valid) {
-          ui.notifications.warn(`Cannot select "${talentToAdd.name}" from Block & Deflect: ${prereqCheck.reasons.join(', ')}`);
+        const prereqCheck = PrerequisiteChecker.checkTalentPrerequisites(tempActor, talentToAdd, pendingData);
+        if (!prereqCheck.met) {
+          ui.notifications.warn(`Cannot select "${talentToAdd.name}" from Block & Deflect: ${prereqCheck.missing.join(', ')}`);
           return;
         }
       }
@@ -609,9 +608,9 @@ export async function _onSelectTalent(event) {
         selectedTalents: this.characterData.talents || []
       };
 
-      const prereqCheck = PrerequisiteRequirements.checkTalentPrerequisites(tempActor, tal, pendingData);
-      if (!prereqCheck.valid) {
-        ui.notifications.warn(`Cannot select "${tal.name}": ${prereqCheck.reasons.join(', ')}`);
+      const prereqCheck = PrerequisiteChecker.checkTalentPrerequisites(tempActor, tal, pendingData);
+      if (!prereqCheck.met) {
+        ui.notifications.warn(`Cannot select "${tal.name}": ${prereqCheck.missing.join(', ')}`);
         return;
       }
     }
