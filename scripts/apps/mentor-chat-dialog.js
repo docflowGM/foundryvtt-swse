@@ -16,6 +16,8 @@ import { SWSELogger } from '../utils/logger.js';
 import { MentorVoiceFilterV2 } from './mentor-voice-filter-v2.js';
 import { MentorDialogueV2Integration } from './mentor-dialogue-v2-integration.js';
 import { MentorStoryResolver } from '../engine/mentor-story-resolver.js';
+import { selectJudgmentAtom, buildJudgmentContext } from '../mentor/mentor-judgment-engine.js';
+import { renderJudgmentAtom } from '../mentor/mentor-judgment-renderer.js';
 
 const CHAT_TOPICS = [
   {
@@ -271,10 +273,12 @@ export class MentorChatDialog extends FormApplication {
   /**
    * Generate a mentor's response to a selected topic
    * Integrates with the suggestion engine for context-aware advice
-   * Uses new mentor voice filter to wrap analysis with authentic mentor voices
+   * Uses judgment atoms for semantic reaction selection
+   * Wraps analysis with authentic mentor voices
    */
   async _generateTopicResponse(topic) {
     const mentorName = this.selectedMentor.mentor.name;
+    const mentorId = this.selectedMentor.key.toLowerCase();
 
     // Analyze build intent if not already done
     if (!this.buildIntent) {
@@ -332,6 +336,22 @@ export class MentorChatDialog extends FormApplication {
         break;
     }
 
+    // NEW: Select judgment atom for semantic reaction
+    try {
+      const judgmentContext = await buildJudgmentContext(
+        this.actor,
+        mentorId,
+        topic.key,
+        this.buildIntent
+      );
+      const judgmentAtom = selectJudgmentAtom(judgmentContext);
+      const judgmentPhrase = renderJudgmentAtom(mentorId, judgmentAtom, 0.6);
+      analysisData.judgmentPhrase = judgmentPhrase;
+    } catch (err) {
+      SWSELogger.warn('Error selecting judgment atom:', err);
+      analysisData.judgmentPhrase = '';
+    }
+
     // Wrap analysis with mentor voice
     const voiceResponse = MentorVoiceFilterV2.applyVoice(
       mentorName,
@@ -339,9 +359,15 @@ export class MentorChatDialog extends FormApplication {
       analysisData
     );
 
+    // Prepend judgment atom phrase to advice if it exists and is not silence
+    let advice = voiceResponse;
+    if (analysisData.judgmentPhrase && analysisData.judgmentPhrase.length > 0) {
+      advice = analysisData.judgmentPhrase + '\n\n' + voiceResponse;
+    }
+
     const response = {
       introduction: MentorVoiceFilterV2.getOpening(mentorName, topic.key, analysisData),
-      advice: voiceResponse,
+      advice: advice,
       suggestions: []
     };
 
