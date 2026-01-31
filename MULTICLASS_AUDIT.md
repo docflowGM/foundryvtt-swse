@@ -356,20 +356,25 @@ system.defenses.reflex.classBonus = MAX(1, 1, JK_reflex_bonus);
 
 ---
 
-### Break Point 7: Multiple Prestige Class Features
+### Break Point 7: Prestige Class Features Auto-Grant
 
-**Location**: scripts/progression/engine/feature-dispatcher.js (inferred)
+**Location**: scripts/progression/engine/feature-dispatcher.js
 
-**Issue**: Class features dispatched during finalize. For each class level 1:
+**Clarification**: Prestige classes grant **class features** (not feats) at level 1:
 ```
-Jedi L1 → auto-grant Force Sensitivity feat
-Scout L1 → auto-grant Shake It Off
-Jedi Knight L1 → auto-grant ? (unknown, prestige feature)
-Pathfinder L1 → auto-grant ? (unknown, prestige feature)
-Jedi Knight L5 → (level 2+, no feature?)
+Jedi L1 → Force Sensitivity feat (auto-grant)
+Scout L1 → Shake It Off feat (auto-grant)
+Jedi Knight L1 → Class features like "Lightsaber Focus" (auto-grant from levelProgression[1].features)
+Pathfinder L1 → Class features (auto-grant from levelProgression[1].features)
+Jedi Knight L5 → No new features (only L1 grants features)
 ```
 
-**Problem**: The audit can't trace this without seeing feature-dispatcher source. Blind spot 🔴
+**Potential Issue**: When switching back to Jedi Knight L5 (after other classes), need to ensure:
+1. Features aren't duplicated (JK L1 features shouldn't appear twice)
+2. Prestige class feature loading is prestige-aware
+3. No feature mutations happen during re-progression
+
+**Status**: Likely working for simple cases, but multiclass prestige transitions need validation.
 
 ---
 
@@ -383,7 +388,7 @@ Jedi Knight L5 → (level 2+, no feature?)
 | currentLevel uses array length instead of character level | **High** | progression.js:1222 | Prestige prerequisite checks order-dependent |
 | Force Training feat gating not enforced | **Medium** | force-progression.js | Non-force-sensitive characters can take Force Training feat |
 | Talent-per-level tracking absent | **Medium** | progression.js:1347 | Can't validate prestige class talent requirements |
-| Prestige class starting feats undefined | **Medium** | progression.js:1354 | JK/Pathfinder starting feats may not be in PROGRESSION_RULES.classes |
+| Prestige class features duplication risk | **Medium** | feature-dispatcher.js | If switching back to prestige class, features might duplicate |
 
 ---
 

@@ -225,19 +225,24 @@ for (const featId of featIds) {
 
 ---
 
-### Bug 7: Prestige Class Starting Feats Undefined
+### Bug 7: Prestige Class Features Not Auto-Granted (MEDIUM)
 
 **Severity**: 🟡 MEDIUM
-**Status**: ⏳ PENDING
+**Status**: ⏳ DEPENDS ON FEATURE-DISPATCHER
 
-**Problem**: Jedi Knight, Pathfinder, and other prestige classes don't have their starting feats defined in PROGRESSION_RULES. They must be in compendium, but code doesn't assume this.
+**Clarification**: Prestige classes (Jedi Knight, Pathfinder, etc.) grant **class features** (e.g., Lightsaber Focus), not starting feats.
+
+**Problem**: Need to verify that:
+1. Prestige class level progression includes `features` array
+2. Feature dispatcher properly loads and grants these features
+3. Multiclass prestige transitions don't duplicate features
 
 **Requires**:
-- Add prestige class data to PROGRESSION_RULES or ensure compendium loading is robust
-- Document what starting feats each prestige class grants
-- Add fallback if compendium data missing
+- Audit feature-dispatcher to confirm prestige class features are loaded
+- Verify no feature duplication when switching prestige classes
+- Ensure all prestige classes have `levelProgression[1].features` in compendium
 
-**Impact**: Prestige class feats may not be auto-granted if compendium isn't loaded properly.
+**Current Status**: Likely working but needs validation that multiclass scenarios handle feature grants correctly (shouldn't appear twice if taking JK twice).
 
 ---
 
