@@ -9,7 +9,6 @@ import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { ClassesDB } from '../../data/classes-db.js';
 import { SuggestionService } from '../../engine/SuggestionService.js';
-import { SuggestionService } from '../../engine/SuggestionService.js';
 import { BuildIntent } from '../../engine/BuildIntent.js';
 import { MentorSurvey } from '../mentor-survey.js';
 
