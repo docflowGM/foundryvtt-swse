@@ -136,7 +136,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
     this._calculateDefenses();
     this._calculateSkills();
-    this._calculateBaseAttack();
+    // BAB is progression-owned, never computed here (see PROGRESSION_COMPILER.md)
     this._calculateDamageThreshold();
     this._calculateInitiative();
   }
@@ -276,10 +276,5 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
   _calculateInitiative() {
     this.initiative = this.skills.initiative.total;
-  }
-
-  _calculateBaseAttack() {
-    this.bab = Math.floor(this.level * 0.75);
-    this.baseAttack = this.bab;
   }
 }
