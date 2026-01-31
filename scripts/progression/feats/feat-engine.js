@@ -12,7 +12,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { FeatRegistry } from './feat-registry.js';
 import { FeatState } from './feat-state.js';
-import { PrerequisiteRequirements as FeatRequirements } from './prerequisite_engine.js';
+import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { FeatNormalizer } from './feat-normalizer.js';
 
 export const FeatEngine = {
@@ -71,7 +71,7 @@ export const FeatEngine = {
         }
 
         // Check requirements
-        const reqCheck = FeatRequirements.meetsRequirements(actor, featDoc);
+        const reqCheck = PrerequisiteChecker.meetsRequirements(actor, featDoc);
         if (!reqCheck.valid) {
             return {
                 success: false,
@@ -142,7 +142,7 @@ export const FeatEngine = {
             }
 
             // Must meet requirements
-            if (!FeatRequirements.canLearn(actor, feat)) {
+            if (!PrerequisiteChecker.canLearn(actor, feat)) {
                 continue;
             }
 
@@ -188,7 +188,7 @@ export const FeatEngine = {
             return ['Feat not found'];
         }
 
-        return FeatRequirements.getUnmetRequirements(actor, featDoc);
+        return PrerequisiteChecker.getUnmetRequirements(actor, featDoc);
     },
 
     /**

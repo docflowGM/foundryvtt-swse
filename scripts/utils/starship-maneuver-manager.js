@@ -5,8 +5,6 @@
  * Works similarly to ForcePowerManager for Force Powers
  */
 
-import { PrerequisiteValidator } from './prerequisite-validator.js';
-
 export class StarshipManeuverManager {
   /**
    * Get all available maneuvers an actor can learn
