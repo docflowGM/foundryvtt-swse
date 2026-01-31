@@ -16,6 +16,7 @@ import { SWSELogger } from '../utils/logger.js';
 import { MentorVoiceFilterV2 } from './mentor-voice-filter-v2.js';
 import { MentorDialogueV2Integration } from './mentor-dialogue-v2-integration.js';
 import { MentorStoryResolver } from '../engine/mentor-story-resolver.js';
+import { MentorGoalDialog } from './mentor-goal-dialog.js';
 
 const CHAT_TOPICS = [
   {
@@ -88,6 +89,14 @@ const CHAT_TOPICS = [
     icon: "fa-book",
     description: "Learn about your mentor's past and what shaped them",
     contextType: "narrative",
+    gatesAt: 1
+  },
+  {
+    key: "discuss_path",
+    title: "Discuss a Path",
+    icon: "fa-map",
+    description: "Set a personal goal toward an archetype or prestige class",
+    contextType: "planning",
     gatesAt: 1
   }
 ];
@@ -330,6 +339,17 @@ export class MentorChatDialog extends FormApplication {
           mentorName
         );
         break;
+
+      case "discuss_path":
+        // Open mentor goal dialog
+        const goalDialog = new MentorGoalDialog(this.actor, this.selectedMentor.key);
+        goalDialog.render(true);
+        // Return early to avoid rendering the topic response
+        return {
+          introduction: "Let's discuss your path...",
+          advice: null,
+          suggestions: []
+        };
     }
 
     // Wrap analysis with mentor voice

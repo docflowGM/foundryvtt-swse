@@ -1,0 +1,260 @@
+<div class="mentor-goal-dialog swse kotor-style">
+
+  <div class="goal-setup">
+
+    <!-- Introduction -->
+    <div class="goal-introduction">
+      <h3>Choose Your Path</h3>
+      <p>Select one or both of the following to set a personal goal. Your mentor will guide suggestions accordingly.</p>
+    </div>
+
+    <!-- Two-Column Layout: Archetypes and Prestige Classes -->
+    <div class="goal-columns">
+
+      <!-- Left Column: Archetypes -->
+      <div class="goal-column archetypes-column">
+        <h4>Class Archetypes</h4>
+        <p class="column-help">Different ways to play {{primaryClass}}</p>
+        <div class="archetype-list">
+          {{#each archetypes}}
+            <div class="archetype-card {{#if this.selected}}selected{{/if}}" data-archetype="{{this.key}}">
+              <div class="archetype-header">
+                <h5>{{this.displayName}}</h5>
+                {{#if this.selected}}
+                  <span class="selection-badge">✓ Selected</span>
+                {{/if}}
+              </div>
+              <p class="archetype-description">{{this.description}}</p>
+              {{#if this.philosophyStatement}}
+                <p class="archetype-philosophy"><em>"{{this.philosophyStatement}}"</em></p>
+              {{/if}}
+            </div>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- Right Column: Prestige Classes -->
+      <div class="goal-column prestige-column">
+        <h4>Prestige Classes</h4>
+        <p class="column-help">Long-term specialization goals</p>
+        <div class="prestige-list">
+          {{#each prestiges}}
+            <div class="prestige-card {{#if this.selected}}selected{{/if}}" data-prestige="{{this.name}}">
+              <div class="prestige-header">
+                <h5>{{this.name}}</h5>
+                {{#if this.selected}}
+                  <span class="selection-badge">✓ Selected</span>
+                {{/if}}
+              </div>
+              <p class="prestige-description">{{this.description}}</p>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="goal-actions">
+      {{#if hasSelection}}
+        <button class="confirm-goal action-button primary" type="button">
+          <i class="fas fa-check"></i> Confirm Path
+        </button>
+      {{else}}
+        <button class="confirm-goal action-button primary" type="button" disabled>
+          <i class="fas fa-check"></i> Confirm Path (select at least one)
+        </button>
+      {{/if}}
+      <button class="cancel-goal action-button secondary" type="button">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+<style>
+.mentor-goal-dialog {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #e0e0e0;
+  padding: 20px;
+  border-radius: 8px;
+  font-family: "Arial", sans-serif;
+}
+
+.goal-introduction {
+  text-align: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 15px;
+}
+
+.goal-introduction h3 {
+  margin: 0 0 10px 0;
+  color: #ffd700;
+  font-size: 1.3em;
+}
+
+.goal-introduction p {
+  margin: 0;
+  font-size: 0.95em;
+  color: #b0b0b0;
+}
+
+.goal-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.goal-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.goal-column h4 {
+  margin: 0 0 5px 0;
+  color: #ffd700;
+  font-size: 1.1em;
+  border-bottom: 1px solid #555;
+  padding-bottom: 8px;
+}
+
+.column-help {
+  margin: 0 0 12px 0;
+  font-size: 0.85em;
+  color: #888;
+}
+
+.archetype-list,
+.prestige-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.archetype-card,
+.prestige-card {
+  padding: 12px;
+  background: rgba(40, 40, 60, 0.6);
+  border: 1px solid #444;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.archetype-card:hover,
+.prestige-card:hover {
+  background: rgba(50, 50, 80, 0.8);
+  border-color: #666;
+}
+
+.archetype-card.selected,
+.prestige-card.selected {
+  background: rgba(255, 215, 0, 0.15);
+  border-color: #ffd700;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+}
+
+.archetype-header,
+.prestige-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.archetype-header h5,
+.prestige-header h5 {
+  margin: 0;
+  font-size: 0.95em;
+  color: #fff;
+  flex: 1;
+}
+
+.selection-badge {
+  font-size: 0.8em;
+  color: #ffd700;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.archetype-description,
+.prestige-description {
+  margin: 6px 0 0 0;
+  font-size: 0.85em;
+  color: #b0b0b0;
+  line-height: 1.3;
+}
+
+.archetype-philosophy {
+  margin: 6px 0 0 0;
+  font-size: 0.8em;
+  color: #888;
+  font-style: italic;
+}
+
+.goal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding-top: 15px;
+  border-top: 1px solid #444;
+}
+
+.action-button {
+  padding: 10px 20px;
+  border: 1px solid #666;
+  border-radius: 4px;
+  background: rgba(50, 50, 80, 0.6);
+  color: #e0e0e0;
+  cursor: pointer;
+  font-size: 0.95em;
+  transition: all 0.2s ease;
+  flex: 1;
+  max-width: 200px;
+}
+
+.action-button:hover:not(:disabled) {
+  background: rgba(70, 70, 100, 0.8);
+  border-color: #ffd700;
+  color: #ffd700;
+}
+
+.action-button.primary {
+  background: rgba(255, 215, 0, 0.2);
+  border-color: #ffd700;
+  color: #ffd700;
+}
+
+.action-button.primary:hover:not(:disabled) {
+  background: rgba(255, 215, 0, 0.3);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+}
+
+.action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-button.secondary {
+  background: rgba(100, 50, 50, 0.3);
+  border-color: #666;
+  color: #b0b0b0;
+}
+
+.action-button.secondary:hover:not(:disabled) {
+  background: rgba(120, 60, 60, 0.4);
+  border-color: #888;
+}
+
+@media (max-width: 800px) {
+  .goal-columns {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
