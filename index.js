@@ -86,7 +86,7 @@ import { dataPreloader } from './scripts/core/data-preloader.js';
 import { lazyLoader } from './scripts/core/lazy-loader.js';
 import { EffectSanitizer } from './scripts/core/effect-sanitizer.js';
 
-import { SWSE_SKILLS, getSkillConfig, getSkillsArray } from './scripts/config/skills.js';
+import { getSkillConfig, getSkillsArray } from './scripts/config/skills.js';
 import { SWSE } from './scripts/core/config.js';
 import { registerSystemSettings } from './scripts/core/settings.js';
 import { RulesEngine } from './scripts/rules/rules-engine.js';
