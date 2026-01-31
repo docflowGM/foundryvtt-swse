@@ -1258,6 +1258,38 @@ export class PrerequisiteChecker {
             .filter(result => result.met)
             .map(result => result.className);
     }
+
+    /**
+     * Get unmet requirements for any item (feat, talent, class, etc).
+     * Helper method for suggestion engines and pathway analysis.
+     *
+     * @param {Object} actor - Actor document
+     * @param {Object} doc - Item document (feat, talent, class, etc.)
+     * @param {Object} pending - Pending selections (optional)
+     * @returns {Array<string>} Array of unmet requirement strings
+     */
+    static getUnmetRequirements(actor, doc, pending = {}) {
+        if (!doc) return [];
+
+        // Detect item type and use appropriate checker
+        const type = doc.type || '';
+        let result = { missing: [] };
+
+        if (type === 'feat') {
+            result = this.checkFeatPrerequisites(actor, doc, pending);
+        } else if (type === 'talent') {
+            result = this.checkTalentPrerequisites(actor, doc, pending);
+        } else if (type === 'class') {
+            result = this.checkClassLevelPrerequisites(actor, doc, pending);
+        } else {
+            // Fallback: try as feat first, then talent
+            result = this.checkFeatPrerequisites(actor, doc, pending);
+            if (result.met) return [];
+            result = this.checkTalentPrerequisites(actor, doc, pending);
+        }
+
+        return result.missing || [];
+    }
 }
 
 /**

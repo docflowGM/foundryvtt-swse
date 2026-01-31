@@ -4,7 +4,7 @@
  */
 
 import { SWSELogger } from "../../utils/logger.js";
-import { PrerequisiteValidator } from "../../utils/prerequisite-validator.js";
+import { PrerequisiteChecker } from "../../data/prerequisite-checker.js";
 
 export const FeatRegistry = {
   _feats: [],
@@ -36,8 +36,8 @@ export const FeatRegistry = {
     return this._feats.map(f => {
       let valid = true;
       try {
-        const result = PrerequisiteValidator.checkFeatPrerequisites(f, actor, pending);
-        valid = result.valid;
+        const result = PrerequisiteChecker.checkFeatPrerequisites(actor, f, pending);
+        valid = result.met;
       } catch (err) {
         SWSELogger.warn(`Prerequisite check failed for ${f.name}:`, err);
         valid = false;

@@ -22,7 +22,7 @@ import { SWSELogger } from '../utils/logger.js';
 import { BuildIntent } from './BuildIntent.js';
 import { MentorSurvey } from '../apps/mentor-survey.js';
 import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies.js';
-import { PrerequisiteRequirements } from '../progression/feats/prerequisite_engine.js';
+import { PrerequisiteChecker } from '../data/prerequisite-checker.js';
 import { WishlistEngine } from './WishlistEngine.js';
 
 // ──────────────────────────────────────────────────────────────
@@ -1153,7 +1153,7 @@ export class SuggestionEngine {
      */
     static _scoreFutureAvailability(item, actor, actorState, buildIntent, pendingData) {
         // Analyze what prerequisites are not met
-        const unmetReqs = PrerequisiteRequirements.getUnmetRequirements(actor, item);
+        const unmetReqs = PrerequisiteChecker.getUnmetRequirements(actor, item);
 
         if (!unmetReqs || unmetReqs.length === 0) {
             // No unmet requirements (shouldn't happen, but handle it)
@@ -1354,7 +1354,7 @@ export class SuggestionEngine {
                 }
 
                 // Check if this item's unmet prerequisites include the wished-for item
-                const unmetReqs = PrerequisiteRequirements.getUnmetRequirements(actor, { ...wishedItem });
+                const unmetReqs = PrerequisiteChecker.getUnmetRequirements(actor, { ...wishedItem });
                 const prereqMentionsThisItem = unmetReqs.some(req =>
                     req.toLowerCase().includes(item.name.toLowerCase())
                 );
