@@ -115,19 +115,22 @@ Pathfinder: ? (prestige)
 
 ### Force Powers & Secrets
 
-Only Jedi, Jedi Knight (prestige) grant force points. Scout and Pathfinder do not.
+Jedis do NOT grant force powers by level. Force powers are only granted by:
+1. **Force Sensitivity** feat at Jedi L1 (grants 1 force power for free) ✅
+2. **Force Training** feat (grants additional force power per rank)
+
+Scout, Jedi Knight, Pathfinder: do not grant force powers directly.
 
 **Expected**:
-- Jedi: 4 levels → force powers granted per Jedi level progression
-- Jedi Knight: 4 + 5 = 9 levels → additional force powers
-- Scout: 2 levels → 0 force powers
-- Pathfinder: 1 level → 0 force powers (unless it's force-sensitive prestige, which is unclear)
+- Jedi L1: Force Sensitivity feat grants 1 force power
+- Master Pathfinder overall: 1 force power (from Jedi L1 Force Sensitivity only)
+- If any Force Training feats taken: +1 power per feat
 
-**⚠️ Bugs the engine likely has**:
-1. Force Power Engine checks `forceSensitive` flag per class
-2. When multiclassing, does it re-read the flag correctly?
-3. Are force points accumulated or overwritten?
-4. Does Force Training feat at L3 or L7 interact correctly with multiclass?
+**⚠️ Bugs the engine might still have**:
+1. Force Training feat may not be gated to force-sensitive classes
+2. Duplicate force training feat selection (taken twice = 2 power grants?)
+3. Force power picker integration with multiclass prestige classes
+4. Verify Force Sensitivity is auto-granted at Jedi L1, not human-selectable
 
 ---
 
@@ -335,23 +338,21 @@ system.defenses.reflex.classBonus = MAX(1, 1, JK_reflex_bonus);
 
 ---
 
-### Break Point 6: Force Powers with Prestige Multiclass
+### Break Point 6: Force Training Feat Interactions
 
-**Location**: scripts/progression/engine/force-progression.js (not fully read, but relevant)
+**Location**: scripts/progression/engine/force-progression.js (not fully read)
 
-**Questions**:
-1. At Jedi Knight L1 (L7 total), is the character force-sensitive already?
-   - Yes, Force Sensitivity is a Jedi starting feat ✅
-2. Does Jedi Knight grant additional force powers?
-   - Should load from JK levelProgression[1].forcePointGrants
-3. When switching back to Jedi Knight L5 (L16 total), are duplicates prevented?
-   - Code doesn't track "already has this power"
+**Clarification**: Jedis don't grant force powers by level. Only:
+1. Force Sensitivity at Jedi L1 (auto-grant, 1 power)
+2. Force Training feat (each rank grants 1 power)
 
 **Potential issues**:
-- Force powers are Items. If code doesn't deduplicate, you'd get 2 copies of "Force Throw" ❌
-- Force Power Engine probably checks feat-based grants (Force Training) but not class-based grants
+1. Force Training feat may not be gated to force-sensitive classes (anyone could take it)
+2. Force Training may be selectable multiple times (exploit?)
+3. Force Sensitivity should auto-grant at Jedi L1, not selectable
+4. Force power picker must integrate with multiclass (Jedi 4 + JK 5 = still only 1 Force Sensitivity)
 
-**Verdict**: 🚨 **Likely grants duplicate force powers** if prestige class re-grants base abilities.
+**Verdict**: ⚠️ **Force Training gating and duplication checks needed** (lower priority than ability feats/defenses)
 
 ---
 
@@ -380,7 +381,7 @@ Jedi Knight L5 → (level 2+, no feature?)
 | classBonus not recalculated on prestige transition | **Critical** | progression engine → data model | Defenses use stale class bonus (stays at Scout 2 instead of updating to JK) |
 | Prestige class levelProgression not verified | **High** | calculateBAB, feature-dispatcher | If Pathfinder compendium data missing, BAB wrong + features not applied |
 | currentLevel uses array length instead of character level | **High** | progression.js:1222 | Prestige prerequisite checks order-dependent |
-| Force power deduplication not implemented | **High** | force-progression.js | Duplicate force powers if prestige class re-grants |
+| Force Training feat gating not enforced | **Medium** | force-progression.js | Non-force-sensitive characters can take Force Training feat |
 | Talent-per-level tracking absent | **Medium** | progression.js:1347 | Can't validate prestige class talent requirements |
 | Prestige class starting feats undefined | **Medium** | progression.js:1354 | JK/Pathfinder starting feats may not be in PROGRESSION_RULES.classes |
 
@@ -400,7 +401,7 @@ Jedi Knight L5 → (level 2+, no feature?)
   ],
   feats: ["Force Sensitivity", ..., /* 5 total */],
   talents: [/* 12 total */],
-  forcePowers: [/* from Jedi + JK */],
+  forcePowers: [/* 1 from Force Sensitivity (auto-grant at Jedi L1); more only if Force Training feats taken */],
   characterLevel: 16,
   bab: 15,
   abilities: { str: 14, dex: 16, con: 13, int: 12, wis: 14, cha: 10 }
