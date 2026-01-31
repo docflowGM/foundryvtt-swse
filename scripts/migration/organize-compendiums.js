@@ -73,7 +73,7 @@ async function organizeCompendiums() {
           if (targetPackDoc) {
             // Clone to new pack
             const weaponData = weapon.toObject();
-            await targetPackDoc.importDocument(weaponData);
+            await targetPackDoc.createDocument(weaponData);
 
             // Delete from original pack
             await weaponsPack.deleteDocument(weapon.id);
@@ -113,7 +113,7 @@ async function organizeCompendiums() {
           const targetPackDoc = game.packs.get(`foundryvtt-swse.${targetPack}`);
           if (targetPackDoc) {
             const itemData = item.toObject();
-            await targetPackDoc.importDocument(itemData);
+            await targetPackDoc.createDocument(itemData);
             await equipmentPack.deleteDocument(item.id);
             stats.equipment.organized++;
             console.log(`✓ ${item.name} → ${targetPack}`);
@@ -151,7 +151,7 @@ async function organizeCompendiums() {
           const targetPackDoc = game.packs.get(`foundryvtt-swse.${targetPack}`);
           if (targetPackDoc) {
             const vehicleData = vehicle.toObject();
-            await targetPackDoc.importDocument(vehicleData);
+            await targetPackDoc.createDocument(vehicleData);
             await vehiclesPack.deleteDocument(vehicle.id);
             stats.vehicles.organized++;
             console.log(`✓ ${vehicle.name} → ${targetPack}`);
@@ -189,7 +189,7 @@ async function organizeCompendiums() {
           const targetPackDoc = game.packs.get(`foundryvtt-swse.${targetPack}`);
           if (targetPackDoc) {
             const armorData = armor.toObject();
-            await targetPackDoc.importDocument(armorData);
+            await targetPackDoc.createDocument(armorData);
             await armorPack.deleteDocument(armor.id);
             stats.armor.organized++;
             console.log(`✓ ${armor.name} → ${targetPack}`);

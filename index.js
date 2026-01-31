@@ -413,7 +413,7 @@ Hooks.once("ready", async function () {
 
     // Suggestion service (single entry) initialization
     try {
-      const systemJSON = await fetch('system.json').then(r => r.json());
+      const systemJSON = await fetch('systems/foundryvtt-swse/system.json').then(r => r.json());
       SuggestionService.initialize({ systemJSON });
     } catch (err) {
       console.warn('SWSE | SuggestionService init failed:', err);
