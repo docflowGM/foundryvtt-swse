@@ -321,7 +321,7 @@ export class PopulateForceCompendiumsMigration {
           img: 'systems/foundryvtt-swse/assets/icons/lightsaber-form-power.png'
         };
 
-        await pack.importDocument(itemData);
+        await pack.createDocument(itemData);
         created++;
       } catch (err) {
         SWSELogger.error(`SWSE | Failed to create Lightsaber Form Power: ${power.name}`, err);
