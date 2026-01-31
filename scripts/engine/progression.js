@@ -2,6 +2,7 @@
 import { swseLogger } from '../utils/logger.js';
 import { applyActorUpdateAtomic } from '../utils/actor-utils.js';
 import { FinalizeIntegration } from '../progression/integration/finalize-integration.js';
+import { ProgressionSession } from './ProgressionSession.js';
 
 /**
  * Unified SWSE Progression Engine
@@ -2627,6 +2628,108 @@ async applyScalingFeature(feature) {
     // This will be populated with real mentor data from the unified mentor system
     // For now, return empty object - mentor system consolidation will fill this in
     return {};
+  }
+
+  // ============================================================================
+  // SESSION MANAGEMENT - Transactional Progression
+  // ============================================================================
+
+  /**
+   * Create a new progression session for this actor
+   * Sessions provide transactional boundaries for character creation/level-up
+   *
+   * @returns {ProgressionSession}
+   */
+  createSession() {
+    swseLogger.log(`[PROGRESSION] Creating new session for ${this.actor.name}`);
+    const session = new ProgressionSession(this.actor, this.mode);
+
+    // Store session reference on actor for access
+    this.actor._progressionSession = session;
+
+    return session;
+  }
+
+  /**
+   * Get the active session for this actor (if any)
+   *
+   * @returns {ProgressionSession|null}
+   */
+  getActiveSession() {
+    return this.actor._progressionSession || null;
+  }
+
+  /**
+   * Clear the active session
+   */
+  clearSession() {
+    if (this.actor._progressionSession) {
+      delete this.actor._progressionSession;
+      swseLogger.log(`[PROGRESSION] Cleared session for ${this.actor.name}`);
+    }
+  }
+
+  /**
+   * Start a new transactional level-up session
+   * This is the recommended v2 way to handle level-ups
+   *
+   * @returns {ProgressionSession}
+   */
+  async startLevelUpSession() {
+    swseLogger.log(`[PROGRESSION] Starting level-up session for ${this.actor.name}`);
+
+    // Clear any existing session
+    this.clearSession();
+
+    // Create new session
+    const session = this.createSession();
+
+    // Emit hook
+    Hooks.callAll('swse:levelUp:sessionStarted', {
+      actor: this.actor,
+      session
+    });
+
+    return session;
+  }
+
+  /**
+   * Start a new transactional chargen session
+   * This is the recommended v2 way to handle character creation
+   *
+   * @returns {ProgressionSession}
+   */
+  async startChargenSession() {
+    swseLogger.log(`[PROGRESSION] Starting chargen session for ${this.actor.name}`);
+
+    // Clear any existing session
+    this.clearSession();
+
+    // Create new session
+    const session = this.createSession();
+
+    // Emit hook
+    Hooks.callAll('swse:chargen:sessionStarted', {
+      actor: this.actor,
+      session
+    });
+
+    return session;
+  }
+
+  /**
+   * Resume an existing session (e.g., after page reload)
+   *
+   * @param {string} sessionId - Session ID to resume
+   * @returns {ProgressionSession|null}
+   */
+  async resumeSession(sessionId) {
+    swseLogger.log(`[PROGRESSION] Attempting to resume session ${sessionId}`);
+
+    // For now, we don't persist sessions across reloads
+    // In the future, we could store session state in actor flags
+    swseLogger.warn(`[PROGRESSION] Session persistence not yet implemented`);
+    return null;
   }
 }
 
