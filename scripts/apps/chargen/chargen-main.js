@@ -7,12 +7,12 @@ import { SWSELogger } from '../../utils/logger.js';
 import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from './chargen-property-accessor.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
-import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
 import { BuildIntent } from '../../engine/BuildIntent.js';
-import { Level1SkillSuggestionEngine } from '../../engine/Level1SkillSuggestionEngine.js';
+import { SuggestionService } from '../../engine/SuggestionService.js';
 import { MentorSurvey } from '../mentor-survey.js';
 import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
 import { MENTORS } from '../mentor-dialogues.js';
+import { getMentorMemory, setMentorMemory, setTargetClass } from '../../engine/mentor-memory.js';
 
 // SSOT Data Layer
 import { ClassesDB } from '../../data/classes-db.js';
@@ -709,7 +709,7 @@ export default class CharacterGenerator extends Application {
       if (this.currentStep === "feats" && context.packs.feats) {
         try {
           SWSELogger.log(`[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.feats.length} feats with BuildIntent context...`);
-          let featsWithSuggestions = await SuggestionEngine.suggestFeats(
+          let featsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', { domain: 'feats', available: 
             context.packs.feats,
             tempActor,
             pendingData,
@@ -720,7 +720,7 @@ export default class CharacterGenerator extends Application {
 
           context.packs.feats = featsWithSuggestions;
           // Sort by suggestion tier
-          context.packs.feats = SuggestionEngine.sortBySuggestion(context.packs.feats);
+          context.packs.feats = SuggestionService.sortBySuggestion(context.packs.feats);
 
           // Add qualification status to each feat
           const pendingDataForFeats = {
@@ -760,25 +760,7 @@ export default class CharacterGenerator extends Application {
       if (this.currentStep === "talents" && context.packs.talents) {
         try {
           SWSELogger.log(`[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.talents.length} talents with BuildIntent context...`);
-          let talentsWithSuggestions = await SuggestionEngine.suggestTalents(
-            context.packs.talents,
-            tempActor,
-            pendingData,
-            { buildIntent }  // CRITICAL: Pass BuildIntent to include mentor survey biases
-          );
-
-          // Filter out Force-dependent talents for droids (they cannot be Force-sensitive)
-          talentsWithSuggestions = this._filterForceDependentItems(talentsWithSuggestions);
-
-          context.packs.talents = talentsWithSuggestions;
-          // Sort by suggestion tier
-          context.packs.talents = SuggestionEngine.sortBySuggestion(context.packs.talents);
-
-          // Add qualification status to each talent
-          const pendingDataForTalents = {
-            selectedFeats: this.characterData.feats || [],
-            selectedClass: this.characterData.classes?.[0],
-            selectedSkills: Object.keys(this.characterData.skills || {})
+          let talentsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', { domain: 'talents', available: context.packs.talents, pendingData, engineOptions: { buildIntent, includeFutureAvailability: true }, persist: true })
               .filter(k => this.characterData.skills[k]?.trained)
               .map(k => ({ key: k })),
             selectedTalents: this.characterData.talents || []
@@ -862,17 +844,16 @@ export default class CharacterGenerator extends Application {
 
         SWSELogger.log(`[CHARGEN-SKILLS] Combined allClassSkills:`, allClassSkills);
 
-        const skillsWithSuggestions = await Level1SkillSuggestionEngine.suggestLevel1Skills(
-          this._skillsJson,
-          tempActor,
-          {
-            classSkills: allClassSkills,
-            selectedClass: this.characterData.classes?.[0],
-            selectedSkills: Object.keys(this.characterData.skills || {})
-              .filter(k => this.characterData.skills[k]?.trained)
-              .map(k => ({ key: k }))
-          }
-        );
+        const skillsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', {
+            domain: 'skills_l1',
+            available: this._skillsJson,
+            pendingData: {
+              classSkills: allClassSkills,
+              selectedClass: this.characterData.classes?.[0],
+              selectedSkills: Object.keys(this.characterData.skills || {}).filter(k => (this.characterData.skills?.[k] || 0) > 0)
+            },
+            persist: true
+          });
 
         // Mark class skills in the returned data
         // NOTE: Class skill names in compendium use proper case (e.g., "Acrobatics")
@@ -1772,7 +1753,7 @@ export default class CharacterGenerator extends Application {
       }
 
       // Get suggestions using the Force power suggestion engine
-      const suggestions = await ForceOptionSuggestionEngine.suggestForceOptions(
+      const suggestions = await SuggestionService.getSuggestions(this.actor, 'chargen', { domain: 'forcepowers', available: 
         unselectedPowers,
         this.actor,
         this.characterData,
@@ -2292,10 +2273,10 @@ export default class CharacterGenerator extends Application {
         }
         break;
       case "summary":
-        // Check if starting credits have been chosen (if formula exists)
+        // Auto-select maximum credits if formula exists but not chosen
         if (this.characterData.startingCreditsFormula && !this.characterData.creditsChosen) {
-          ui.notifications.warn("You must choose your starting credits before creating your character.");
-          return false;
+          this.characterData.credits = this.characterData.startingCreditsFormula.maxPossible;
+          this.characterData.creditsChosen = true;
         }
         break;
     }
@@ -2338,9 +2319,10 @@ export default class CharacterGenerator extends Application {
       errors.push("Character must have at least one class");
     }
 
-    // Starting credits - if formula exists, must be chosen
+    // Starting credits - auto-select if formula exists but not chosen
     if (this.characterData.startingCreditsFormula && !this.characterData.creditsChosen) {
-      errors.push("You must choose your starting credits (roll or take maximum)");
+      this.characterData.credits = this.characterData.startingCreditsFormula.maxPossible;
+      this.characterData.creditsChosen = true;
     }
 
     // Show errors
@@ -2457,7 +2439,7 @@ export default class CharacterGenerator extends Application {
     await roll.toMessage({
       flavor: `<h3>Starting Credits Roll</h3><p><strong>${this.characterData.name}</strong> rolls ${rollFormula} × ${multiplier.toLocaleString()}</p>`,
       speaker: ChatMessage.getSpeaker({ alias: this.characterData.name || "Character" })
-    });
+    } , { create: true });
 
     // Set credits and mark as chosen
     this.characterData.credits = credits;
@@ -2792,32 +2774,70 @@ export default class CharacterGenerator extends Application {
   }
 
   async _updateActor() {
-    // Level-up: increment level and add new items
+    // Check if this is a class addition (singleStepMode) or full level-up
+    const selectedClassName = this.characterData.classes[0]?.name;
+
+    // If in single step mode (adding class from sheet), just add the class item and update mentor
+    if (this.singleStepMode && selectedClassName) {
+      const items = [];
+      const classItem = {
+        name: selectedClassName,
+        type: "class",
+        img: this.characterData.classes[0].img,
+        system: {
+          classId: this.characterData.classes[0].classId,
+          level: 1
+        }
+      };
+      items.push(classItem);
+
+      if (items.length > 0) {
+        await this.actor.createEmbeddedDocuments("Item", items);
+      }
+
+      // Update mentor with new class target
+      try {
+        const mentorId = this.actor.getFlag('swse', 'level1Class');
+        if (mentorId) {
+          let memory = await getMentorMemory(this.actor, mentorId.toLowerCase());
+          memory = setTargetClass(memory, selectedClassName);
+          await setMentorMemory(this.actor, mentorId.toLowerCase(), memory);
+          SWSELogger.log(`CharGen | Updated mentor memory for ${mentorId} with target class: ${selectedClassName}`);
+        }
+      } catch (err) {
+        SWSELogger.warn("Failed to update mentor memory for new class:", err);
+      }
+
+      ui.notifications.info(`${this.actor.name} learned the ${selectedClassName} class!`);
+      return;
+    }
+
+    // Full level-up: increment level and add new items
     const newLevel = (this.actor.system.level || 1) + 1;
     const updates = { "system.level": newLevel };
-    
+
     // Recalculate HP for new level
     const conMod = this.actor.system.attributes.con.mod || 0;
-    const classDoc = this._packs.classes.find(c => 
-      c.name === this.characterData.classes[0]?.name
+    const classDoc = this._packs.classes.find(c =>
+      c.name === selectedClassName
     );
     const hitDie = classDoc?.system?.hitDie || 6;
     const hpGain = Math.floor(hitDie / 2) + 1 + conMod;
     updates["system.hp.max"] = this.actor.system.hp.max + hpGain;
     updates["system.hp.value"] = this.actor.system.hp.value + hpGain;
-    
+
     await globalThis.SWSE.ActorEngine.updateActor(this.actor, updates);
-    
+
     // Add new feats/talents/powers
     const items = [];
     for (const f of (this.characterData.feats || [])) items.push(f);
     for (const t of (this.characterData.talents || [])) items.push(t);
     for (const p of (this.characterData.powers || [])) items.push(p);
-    
+
     if (items.length > 0) {
       await this.actor.createEmbeddedDocuments("Item", items);
     }
-    
+
     ui.notifications.info(`${this.actor.name} leveled up to level ${newLevel}!`);
   }
 

@@ -1,0 +1,14 @@
+{
+  "summary": {
+    "total_talents": 986,
+    "total_trees": 187,
+    "claimed_talents": 986,
+    "errors": 0
+  },
+  "errors": {
+    "trees_with_no_talentIds": [],
+    "missing_talents": [],
+    "duplicate_claims": [],
+    "orphaned_talents": []
+  }
+}

@@ -1,150 +1,354 @@
 [
   {
     "class": "Medic",
-    "treeIds": []
+    "treeIds": [
+      "survivor",
+      "advanced_medicine"
+    ]
   },
   {
     "class": "Jedi Master",
-    "treeIds": []
+    "treeIds": [
+      "duelist"
+    ]
   },
   {
     "class": "Gunslinger",
-    "treeIds": []
+    "treeIds": [
+      "awareness",
+      "fortune",
+      "gunslinger",
+      "pistoleer",
+      "carbineer"
+    ]
   },
   {
     "class": "Outlaw",
-    "treeIds": []
+    "treeIds": [
+      "fringer",
+      "survivor",
+      "slicer",
+      "outlaw"
+    ]
   },
   {
     "class": "Sith Apprentice",
-    "treeIds": []
+    "treeIds": [
+      "armor_specialist",
+      "duelist",
+      "lightsaber_combat",
+      "sith",
+      "sith_alchemy",
+      "sith_commander"
+    ]
   },
   {
     "class": "Scoundrel",
-    "treeIds": []
+    "treeIds": [
+      "fortune",
+      "misfortune",
+      "slicer",
+      "spacer",
+      "outlaw_tech",
+      "malkite_poisoner",
+      "run_and_gun",
+      "smuggling",
+      "opportunist",
+      "recklessness",
+      "yuuzhan_vong_biotech"
+    ]
   },
   {
     "class": "Force Adept",
-    "treeIds": []
+    "treeIds": [
+      "dark_side_devotee",
+      "force_adept",
+      "force_item",
+      "imperial_inquisitor",
+      "beastwarden",
+      "mystic",
+      "telepath"
+    ]
   },
   {
     "class": "Sith Lord",
-    "treeIds": []
+    "treeIds": [
+      "sith"
+    ]
   },
   {
     "class": "Officer",
-    "treeIds": []
+    "treeIds": [
+      "commando",
+      "leadership",
+      "military_tactics",
+      "naval_officer",
+      "fugitive_commander",
+      "rebel_recruiter"
+    ]
   },
   {
     "class": "Crime Lord",
-    "treeIds": []
+    "treeIds": [
+      "infamy",
+      "influence",
+      "mastermind"
+    ]
   },
   {
     "class": "Bounty Hunter",
-    "treeIds": []
+    "treeIds": [
+      "awareness",
+      "bounty_hunter",
+      "misfortune",
+      "gand_findsman",
+      "force_hunter"
+    ]
   },
   {
     "class": "Independent Droid",
-    "treeIds": []
+    "treeIds": [
+      "autonomy",
+      "specialized_droid"
+    ]
   },
   {
     "class": "Martial Arts Master",
-    "treeIds": []
+    "treeIds": [
+      "awareness"
+    ]
   },
   {
     "class": "Pathfinder",
-    "treeIds": []
+    "treeIds": [
+      "awareness",
+      "survivor",
+      "pathfinder"
+    ]
   },
   {
     "class": "Gladiator",
-    "treeIds": []
+    "treeIds": [
+      "armor_specialist",
+      "awareness",
+      "gladiatorial_combat"
+    ]
   },
   {
     "class": "Shaper",
-    "treeIds": []
+    "treeIds": [
+      "advanced_medicine",
+      "implant",
+      "shaper"
+    ]
   },
   {
     "class": "Enforcer",
-    "treeIds": []
+    "treeIds": [
+      "survivor",
+      "enforcement"
+    ]
   },
   {
     "class": "Assassin",
-    "treeIds": []
+    "treeIds": [
+      "misfortune",
+      "malkite_poisoner",
+      "assassin"
+    ]
   },
   {
     "class": "Droid Commander",
-    "treeIds": []
+    "treeIds": [
+      "inspiration",
+      "leadership",
+      "droid_commander"
+    ]
   },
   {
     "class": "Noble",
-    "treeIds": []
+    "treeIds": [
+      "influence",
+      "inspiration",
+      "leadership",
+      "lineage",
+      "fencing",
+      "ideologue",
+      "disgrace",
+      "collaborator",
+      "loyal_protector",
+      "provocateur",
+      "gambling_leader"
+    ]
   },
   {
     "class": "Charlatan",
-    "treeIds": []
+    "treeIds": [
+      "disgrace",
+      "trickery"
+    ]
   },
   {
     "class": "Ace Pilot",
-    "treeIds": []
+    "treeIds": [
+      "expert_pilot",
+      "gunner",
+      "spacer",
+      "squadron_leader",
+      "blockade_runner",
+      "wingman"
+    ]
   },
   {
     "class": "Vanguard",
-    "treeIds": []
+    "treeIds": [
+      "awareness",
+      "survivor",
+      "vanguard"
+    ]
   },
   {
     "class": "Scout",
-    "treeIds": []
+    "treeIds": [
+      "awareness",
+      "camouflage",
+      "fringer",
+      "survivor",
+      "hyperspace_explorer",
+      "spy",
+      "reconnaissance",
+      "surveillance",
+      "unpredictable",
+      "versatility"
+    ]
   },
   {
     "class": "Military Engineer",
-    "treeIds": []
+    "treeIds": [
+      "outlaw_tech",
+      "military_engineer"
+    ]
   },
   {
     "class": "Elite Trooper",
-    "treeIds": []
+    "treeIds": [
+      "camouflage",
+      "commando",
+      "weapon_master",
+      "mandalorian_warrior",
+      "critical_master",
+      "melee_specialist",
+      "republic_commando",
+      "protection"
+    ]
   },
   {
     "class": "Melee Duelist",
-    "treeIds": []
+    "treeIds": [
+      "brawler",
+      "weapon_specialist",
+      "melee_duelist"
+    ]
   },
   {
     "class": "Improviser",
-    "treeIds": []
+    "treeIds": [
+      "outlaw_tech",
+      "procurement",
+      "improviser"
+    ]
   },
   {
     "class": "Saboteur",
-    "treeIds": []
+    "treeIds": [
+      "misfortune",
+      "slicer",
+      "sabotage",
+      "turret"
+    ]
   },
   {
     "class": "Infiltrator",
-    "treeIds": []
+    "treeIds": [
+      "camouflage",
+      "infiltration",
+      "spy"
+    ]
   },
   {
     "class": "Imperial Knight",
-    "treeIds": []
+    "treeIds": [
+      "armor_specialist",
+      "duelist",
+      "lightsaber_combat",
+      "knights_armor",
+      "knights_resolve"
+    ]
   },
   {
     "class": "Force Disciple",
-    "treeIds": []
+    "treeIds": [
+      "force_adept"
+    ]
   },
   {
     "class": "Soldier",
-    "treeIds": []
+    "treeIds": [
+      "armor_specialist",
+      "brawler",
+      "commando",
+      "weapon_specialist",
+      "rocket_jumper",
+      "mercenary",
+      "squad_leader",
+      "trooper",
+      "ambusher",
+      "brute_squad"
+    ]
   },
   {
     "class": "Jedi Knight",
-    "treeIds": []
+    "treeIds": [
+      "armor_specialist",
+      "duelist",
+      "lightsaber_combat",
+      "lightsaber_forms",
+      "jedi_battlemaster",
+      "jedi_shadow",
+      "jedi_watchman",
+      "jedi_archivist",
+      "jedi_healer",
+      "jedi_artisan",
+      "jedi_instructor",
+      "jedi_investigator",
+      "jedi_refugee",
+      "jedi_weapon_master"
+    ]
   },
   {
     "class": "Corporate Agent",
-    "treeIds": []
+    "treeIds": [
+      "leadership",
+      "lineage",
+      "corporate_power"
+    ]
   },
   {
     "class": "Master Privateer",
-    "treeIds": []
+    "treeIds": [
+      "infamy",
+      "spacer",
+      "privateer",
+      "piracy"
+    ]
   },
   {
     "class": "Jedi",
-    "treeIds": []
+    "treeIds": [
+      "jedi_consular",
+      "jedi_guardian",
+      "jedi_sentinel",
+      "lightsaber_combat"
+    ]
   }
 ]

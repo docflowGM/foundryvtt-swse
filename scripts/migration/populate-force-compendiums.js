@@ -158,7 +158,7 @@ export class PopulateForceCompendiumsMigration {
           img: 'systems/foundryvtt-swse/assets/icons/force-technique.png'
         };
 
-        await pack.createDocument(itemData);
+        await pack.importDocument(itemData);
         created++;
       } catch (err) {
         SWSELogger.error(`SWSE | Failed to create Force Technique: ${technique.name}`, err);
@@ -229,7 +229,7 @@ export class PopulateForceCompendiumsMigration {
           img: 'systems/foundryvtt-swse/assets/icons/force-secret.png'
         };
 
-        await pack.createDocument(itemData);
+        await pack.importDocument(itemData);
         created++;
       } catch (err) {
         SWSELogger.error(`SWSE | Failed to create Force Secret: ${secret.name}`, err);
@@ -321,7 +321,7 @@ export class PopulateForceCompendiumsMigration {
           img: 'systems/foundryvtt-swse/assets/icons/lightsaber-form-power.png'
         };
 
-        await pack.createDocument(itemData);
+        await pack.importDocument(itemData);
         created++;
       } catch (err) {
         SWSELogger.error(`SWSE | Failed to create Lightsaber Form Power: ${power.name}`, err);

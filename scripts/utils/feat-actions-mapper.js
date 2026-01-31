@@ -1,4 +1,5 @@
 import { SWSELogger } from './logger.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 /**
  * Feat Actions Mapper
  * Maps feat-granted combat actions to character abilities
@@ -166,7 +167,7 @@ export class FeatActionsMapper {
         }
       };
 
-      await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+      await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [effectData]);
     }
   }
 
@@ -183,7 +184,7 @@ export class FeatActionsMapper {
     );
 
     if (effects.length > 0) {
-      await actor.deleteEmbeddedDocuments('ActiveEffect', effects.map(e => e.id));
+      await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', effects.map(e => e.id));
     }
   }
 

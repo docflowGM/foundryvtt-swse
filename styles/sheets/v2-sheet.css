@@ -1,0 +1,282 @@
+/* styles/sheets/v2-sheet.css */
+.swse-sheet.v2 .sheet-header { padding: 10px 12px; }
+.swse-sheet.v2 .swse-stat { min-width: 64px; text-align: center; }
+.swse-sheet.v2 .swse-stat .label { font-size: 0.7rem; opacity: 0.75; }
+.swse-sheet.v2 .swse-stat .value { font-size: 1.35rem; font-weight: 800; }
+.swse-sheet.v2 .swse-v2-condition-step { padding: 6px 10px; border-radius: 8px; }
+
+
+/* ------------------------------------------------------------------ */
+/* v2 sheet glue (layout + condition controls)                         */
+/* ------------------------------------------------------------------ */
+
+.swse-sheet.v2 .holo-panel { padding: 10px; margin: 10px 0; }
+
+.swse-sheet.v2 .section-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+
+.swse-sheet.v2 .section-header { margin: 0; }
+
+.swse-sheet.v2 .inline-flag { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; opacity: 0.9; }
+
+.swse-sheet.v2 .condition-row { display:flex; align-items:center; gap: 10px; flex-wrap: wrap; }
+
+.swse-sheet.v2 .condition-steps { display:flex; gap: 6px; flex-wrap: wrap; }
+
+.swse-sheet.v2 .condition-readout { margin-left: auto; display:flex; align-items:center; gap: 8px; opacity: 0.9; }
+
+.swse-sheet.v2 .condition-readout .badge { padding: 2px 8px; border-radius: 999px; font-size: 0.85rem; }
+
+.swse-sheet.v2 .swse-v2-condition-step.active { outline: 2px solid currentColor; }
+
+
+/* ------------------------------------------------------------------ */
+/* v2 character layout (read-only truth view)                          */
+/* ------------------------------------------------------------------ */
+
+.swse-sheet.v2 .swse-v2-sheet-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.swse-sheet.v2 .swse-v2-left,
+.swse-sheet.v2 .swse-v2-right { min-width: 0; }
+
+.swse-sheet.v2 .swse-v2-full { grid-column: 1 / -1; }
+
+.swse-sheet.v2 .swse-v2-identity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+}
+
+.swse-sheet.v2 .swse-v2-identity-grid .field {
+  display:flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.swse-sheet.v2 .swse-v2-identity-grid .label { opacity: 0.75; }
+.swse-sheet.v2 .swse-v2-identity-grid .value { font-weight: 700; }
+
+.swse-sheet.v2 .swse-v2-hp-row { display:flex; gap: 12px; flex-wrap: wrap; }
+.swse-sheet.v2 .swse-v2-hp-block { min-width: 160px; }
+.swse-sheet.v2 .swse-v2-hp-block .label { opacity: 0.75; }
+.swse-sheet.v2 .swse-v2-hp-block .value { font-size: 1.1rem; font-weight: 800; }
+
+.swse-sheet.v2 .swse-v2-defenses-grid {
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.swse-sheet.v2 .swse-v2-skills,
+.swse-sheet.v2 .swse-v2-attacks { display:flex; flex-direction: column; gap: 6px; }
+
+.swse-sheet.v2 .swse-v2-skill-header,
+.swse-sheet.v2 .swse-v2-skill-row,
+.swse-sheet.v2 .swse-v2-attack-header,
+.swse-sheet.v2 .swse-v2-attack-row {
+  display:grid;
+  gap: 8px;
+  align-items: center;
+}
+
+.swse-sheet.v2 .swse-v2-skill-header,
+.swse-sheet.v2 .swse-v2-skill-row {
+  grid-template-columns: 1fr 64px 24px 24px 64px;
+}
+
+.swse-sheet.v2 .swse-v2-attack-header,
+.swse-sheet.v2 .swse-v2-attack-row {
+  grid-template-columns: 1fr 120px 120px 120px;
+}
+
+.swse-sheet.v2 .swse-v2-skill-header,
+.swse-sheet.v2 .swse-v2-attack-header {
+  opacity: 0.75;
+  font-size: 0.85rem;
+}
+
+.swse-sheet.v2 .swse-v2-skill-row .total,
+.swse-sheet.v2 .swse-v2-attack-row .meta {
+  font-weight: 700;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* v2 feats + talents (read-only groups)                               */
+/* ------------------------------------------------------------------ */
+
+
+.swse-sheet.v2 .swse-v2-groups { display:flex; flex-direction: column; gap: 10px; }
+
+.swse-sheet.v2 .swse-v2-group { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; }
+
+.swse-sheet.v2 .swse-v2-group-header {
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.9;
+  font-weight: 800;
+}
+
+.swse-sheet.v2 .swse-v2-group-header .meta { opacity: 0.75; font-weight: 700; }
+
+.swse-sheet.v2 .swse-v2-group-list { display:flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+
+.swse-sheet.v2 .swse-v2-entry .row { display:flex; justify-content: space-between; align-items:center; gap: 10px; }
+
+.swse-sheet.v2 .swse-v2-entry .name { font-weight: 800; }
+
+.swse-sheet.v2 .swse-v2-entry .tag {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.15);
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Read-only item inspection affordance                                */
+/* ------------------------------------------------------------------ */
+
+.swse-sheet.v2 .swse-v2-open-item { cursor: pointer; }
+
+.swse-sheet.v2 .swse-v2-open-item:hover {
+  background: rgba(255,255,255,0.06);
+  border-radius: 8px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Actions panel                                                       */
+/* ------------------------------------------------------------------ */
+
+.swse-sheet.v2 .swse-v2-actions { display: flex; flex-direction: column; gap: 10px; }
+
+.swse-sheet.v2 .swse-v2-action-group {
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 12px;
+  padding: 10px;
+  background: rgba(0,0,0,0.12);
+}
+
+.swse-sheet.v2 .swse-v2-action-group-header {
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 900;
+  opacity: 0.92;
+  margin-bottom: 8px;
+}
+
+.swse-sheet.v2 .swse-v2-action-group-header .count { opacity: 0.7; font-weight: 800; }
+
+.swse-sheet.v2 .swse-v2-action-subgroup { margin-top: 8px; }
+
+.swse-sheet.v2 .swse-v2-action-subheader {
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  font-weight: 800;
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
+
+.swse-sheet.v2 .swse-v2-action-subheader .count { opacity: 0.7; }
+
+.swse-sheet.v2 .swse-v2-action-list { display:flex; flex-direction: column; gap: 6px; }
+
+.swse-sheet.v2 .swse-v2-action-row {
+  padding: 6px 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  background: rgba(0,0,0,0.08);
+}
+
+.swse-sheet.v2 .swse-v2-action-row-top { display:flex; justify-content: space-between; align-items:center; gap:10px; }
+
+.swse-sheet.v2 .swse-v2-action-row .name { font-weight: 800; }
+
+.swse-sheet.v2 .swse-v2-action-row .tag {
+  font-size: 0.75rem;
+  opacity: 0.85;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.15);
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Resource ticks                                                             */
+
+.swse-sheet.v2 .swse-v2-resources {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.swse-sheet.v2 .swse-v2-resource {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.92;
+}
+
+.swse-sheet.v2 .swse-v2-resource .label {
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.swse-sheet.v2 .swse-v2-resource .count {
+  font-size: 0.75rem;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+.swse-sheet.v2 .ticks {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+}
+
+.swse-sheet.v2 .tick {
+  display: inline-block;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.03);
+}
+
+.swse-sheet.v2 .tick.filled {
+  background: rgba(255,255,255,0.30);
+}
+
+.swse-sheet.v2 .ticks.tick-xl .tick { width: 10px; height: 10px; }
+.swse-sheet.v2 .ticks.tick-lg .tick { width: 7px; height: 7px; }
+.swse-sheet.v2 .ticks.tick-md .tick { width: 5px; height: 5px; }
+.swse-sheet.v2 .ticks.tick-sm .tick { width: 4px; height: 4px; }
+.swse-sheet.v2 .ticks.tick-xs .tick { width: 3px; height: 3px; }
+
+/* ------------------------------------------------------------------------- */
+/* Buttons                                                                   */
+
+.swse-sheet.v2 .swse-v2-btn {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.15);
+  color: inherit;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.swse-sheet.v2 .swse-v2-btn:hover {
+  border-color: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.06);
+}
+

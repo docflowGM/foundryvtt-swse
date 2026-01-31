@@ -14,7 +14,7 @@ export const ApplyHandlers = {
         const item = actor.items.find(i => i.type === "class" && i.name === classDoc.name);
 
         if (item) {
-            await item.update({ "system.level": level });
+            await actor.updateOwnedItem(item, { "system.level": level });
         } else {
             await actor.createEmbeddedDocuments("Item", [{
                 name: classDoc.name,
@@ -152,7 +152,7 @@ export const ApplyHandlers = {
     // ────────────────────────────────────────────
     async recalculateDerived(actor) {
         // Recalculate BAB, defenses, skills, etc.
-        await actor.prepareData();
+        await // actor.prepareData(); // v13+ handled by lifecycle
         await actor.sheet?.render(true);
     }
 };

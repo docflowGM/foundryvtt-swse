@@ -252,7 +252,7 @@ export class SWSEVehicleCore {
         speaker: ChatMessage.getSpeaker({ actor: vehicle }),
         flavor: `<strong>${weaponItem.name}</strong> Attack Roll`,
         rollMode
-      });
+      } , { create: true });
 
       // Confirm → damage
       const hit = await Dialog.confirm({
@@ -266,7 +266,7 @@ export class SWSEVehicleCore {
           speaker: ChatMessage.getSpeaker({ actor: vehicle }),
           flavor: `<strong>${weaponItem.name}</strong> Damage`,
           rollMode
-        });
+        } , { create: true });
       }
 
       return true;

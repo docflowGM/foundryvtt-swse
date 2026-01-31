@@ -94,7 +94,6 @@ import { PathPreview } from '../../engine/PathPreview.js';
 import { findActiveSynergies } from '../../engine/CommunityMetaSynergies.js';
 import { MentorSuggestionVoice } from '../mentor-suggestion-voice.js';
 import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
-import { AttributeIncreaseSuggestionEngine } from '../../engine/AttributeIncreaseSuggestionEngine.js';
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 
 // Import mentor memory system
@@ -415,6 +414,32 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     // Animate mentor text with typing effect
     this._animateMentorText(html);
+  
+    // Suggestion diff (optional learning aid)
+    try {
+      const enabled = game.settings.get('foundryvtt-swse', 'showSuggestionDiffOnLevelUp') ?? false;
+      if (enabled) {
+        const panel = html.find('.swse-suggestion-diff');
+        if (panel.length === 0) {
+          html.find('.window-content').prepend(`<div class="swse-suggestion-diff"><h4>Recommendation changes</h4><div class="swse-suggestion-diff__body">Loading…</div></div>`);
+        }
+        (async () => {
+          const sugs = await SuggestionService.getSuggestions(this.actor, 'levelup', { persist: false });
+          const diff = await SuggestionService.getSuggestionDiff(this.actor, 'levelup', sugs);
+          const body = html.find('.swse-suggestion-diff__body');
+          body.empty();
+          if (!diff.added.length && !diff.removed.length) {
+            body.append(`<div>No changes since last time.</div>`);
+          } else {
+            if (diff.added.length) body.append(`<div><strong>New:</strong> ${diff.added.slice(0,8).join(', ')}</div>`);
+            if (diff.removed.length) body.append(`<div><strong>Gone:</strong> ${diff.removed.slice(0,8).join(', ')}</div>`);
+          }
+        })();
+      }
+    } catch (err) {
+      console.warn('SWSE | Suggestion diff failed:', err);
+    }
+
   }
 
   /**
@@ -492,7 +517,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     try {
       // Get suggestion from engine
       const pendingData = this._buildPendingData();
-      let suggestions = await game.swse.suggestions.suggestFeats(availableFeats, this.actor, pendingData);
+      let suggestions = await SuggestionService.getSuggestions(this.actor, 'levelup', { domain: 'feats', available: availableFeats, pendingData, persist: true });
 
       if (!suggestions || suggestions.length === 0) {
         ui.notifications.warn("No feat suggestions available at this time.");
@@ -591,7 +616,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // Get suggestion from engine
       const pendingData = this._buildPendingData();
-      let suggestions = await game.swse.suggestions.suggestTalents(availableTalents, this.actor, pendingData);
+      let suggestions = await SuggestionService.getSuggestions(this.actor, 'levelup', { domain: 'talents', available: availableTalents, pendingData, persist: true });
 
       if (!suggestions || suggestions.length === 0) {
         ui.notifications.warn("No talent suggestions available at this time.");
@@ -656,12 +681,13 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // Get suggestions using the Force power suggestion engine
       const pendingData = this._buildPendingData();
-      const suggestions = await ForceOptionSuggestionEngine.suggestForceOptions(
-        unselectedPowers,
-        this.actor,
+      const suggestions = await SuggestionService.getSuggestions(this.actor, 'levelup', {
+        domain: 'forcepowers',
+        available: unselectedPowers,
         pendingData,
-        { buildIntent: {} }
-      );
+        engineOptions: { buildIntent: {} },
+        persist: true
+      });
 
       // Get the top-tier suggestion
       const topSuggestion = suggestions.find(s => s.suggestion?.tier >= 4) || suggestions[0];
@@ -693,11 +719,12 @@ export class SWSELevelUpEnhanced extends FormApplication {
       const buildIntent = await game.swse.suggestions.buildIntent(this.actor, pendingData);
 
       // Get attribute suggestions
-      const suggestions = await AttributeIncreaseSuggestionEngine.suggestAttributeIncreases(
-        this.actor,
+      const suggestions = await SuggestionService.getSuggestions(this.actor, 'levelup', {
+        domain: 'attributes',
         pendingData,
-        { buildIntent }
-      );
+        engineOptions: { buildIntent },
+        persist: true
+      });
 
       if (!suggestions || suggestions.length === 0) {
         ui.notifications.warn("No attribute suggestions available at this time.");
@@ -1999,7 +2026,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         content: chatContent,
-        type: CONST.CHAT_MESSAGE_TYPES.OTHER
+        style: CONST.CHAT_MESSAGE_STYLES.OTHER
       });
 
       ui.notifications.success(`${this.actor.name} leveled up to level ${newLevel}!`);

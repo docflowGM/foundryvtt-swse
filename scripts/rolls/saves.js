@@ -31,7 +31,7 @@ export async function rollSave(actor, type) {
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({actor}),
     flavor: `${actor.name} rolls a ${utils.string.capitalize(type)} save (${utils.string.formatModifier(totalBonus)})`
-  });
+  } , { create: true });
   
   return roll;
 }

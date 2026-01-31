@@ -18,7 +18,7 @@ export async function rollDice(formula, data = {}, label = "Roll") {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker(),
       flavor: label
-    });
+    } , { create: true });
 
     return roll;
   } catch (err) {
@@ -43,7 +43,7 @@ export async function rollWithAdvantage(formula, label = "Roll with Advantage") 
   await higherRoll.toMessage({
     speaker: ChatMessage.getSpeaker(),
     flavor: `${label} (${roll1.total} vs ${roll2.total})`
-  });
+  } , { create: true });
   
   return higherRoll;
 }
@@ -63,7 +63,7 @@ export async function rollWithDisadvantage(formula, label = "Roll with Disadvant
   await lowerRoll.toMessage({
     speaker: ChatMessage.getSpeaker(),
     flavor: `${label} (${roll1.total} vs ${roll2.total})`
-  });
+  } , { create: true });
   
   return lowerRoll;
 }

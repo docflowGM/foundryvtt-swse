@@ -451,7 +451,7 @@ export class SWSERoll {
       const message = await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
-        roll
+        rolls: [roll],
       });
 
       result.message = message;
@@ -736,9 +736,12 @@ export class SWSERoll {
 
       // Consume ammunition
       const newAmmo = currentAmmo - ammoRequired;
-      await weapon.update({
-        'system.ammunition.current': newAmmo
-      });
+      const ammoUpdate = { 'system.ammunition.current': newAmmo };
+      if (weapon?.actor && typeof weapon.actor.updateOwnedItem === 'function') {
+        await weapon.actor.updateOwnedItem(weapon, ammoUpdate);
+      } else {
+        await weapon.update(ammoUpdate);
+      }
 
       // Build HTML result
       const attackTypeLabel = options.burstFire ? 'Burst Fire' : 'Autofire';
@@ -830,7 +833,7 @@ export class SWSERoll {
       const message = await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
-        roll
+        rolls: [roll],
       });
 
       const result = {
@@ -1404,7 +1407,7 @@ export class SWSERoll {
       const msg = await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
-        roll
+        rolls: [roll],
       });
 
       result.message = msg;
@@ -1481,7 +1484,7 @@ export class SWSERoll {
       const msg = await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
-        roll
+        rolls: [roll],
       });
 
       result.message = msg;
@@ -1860,7 +1863,7 @@ export class SWSERoll {
       const message = await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
-        roll
+        rolls: [roll],
       });
 
       result.message = message;

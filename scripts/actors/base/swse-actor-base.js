@@ -1,5 +1,7 @@
 import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
 import { ForcePointsUtil } from '../../utils/force-points.js';
+import { SWSEChat } from '../../chat/swse-chat.js';
+import { ActorEngine } from '../engine/actor-engine.js';
 
 /**
  * SWSE Actor Base – v13+
@@ -119,7 +121,7 @@ export class SWSEActorBase extends Actor {
       if (isDroid && options.checkThreshold !== false) {
         if (amount >= this.system.damageThreshold) {
           updates["system.hp.value"] = -1;
-          await this.update(updates, { diff: true });
+          await ActorEngine.updateActor(this, updates, { diff: true });
           ui.notifications.error(`${this.name} is DESTROYED!`);
           return amount;
         }
@@ -129,7 +131,7 @@ export class SWSEActorBase extends Actor {
       updates["system.hp.value"] = newHP;
     }
 
-    await this.update(updates, { diff: true });
+    await ActorEngine.updateActor(this, updates, { diff: true });
     return amount;
   }
 
@@ -147,36 +149,111 @@ export class SWSEActorBase extends Actor {
     if (hp.value <= -1) return 0;
 
     const newHP = Math.min(hp.max, hp.value + amount);
-    await this.update({ "system.hp.value": newHP }, { diff: true });
+    await ActorEngine.updateActor(this, { "system.hp.value": newHP }, { diff: true });
     return newHP - hp.value;
+  }
+
+
+  /* -------------------------------------------------------------------------- */
+  /* OWNED ITEM STATE (EQUIP / ACTIVATE)                                         */
+  /* -------------------------------------------------------------------------- */
+
+  /**
+   * Update an owned Item through ActorEngine.
+   *
+   * @param {Item} item
+   * @param {object} changes - Dot-notation changes (e.g. {"system.equipped": true})
+   * @param {object} [options={}] - forwarded to updateEmbeddedDocuments
+   */
+  async updateOwnedItem(item, changes, options = {}) {
+    if (!item) return null;
+
+    // Unowned items (directory) update normally.
+    if (!item.isOwned || item.parent?.id !== this.id) {
+      return item.update(changes, options);
+    }
+
+    const update = { _id: item.id, ...changes };
+    const [updated] = await ActorEngine.updateOwnedItems(this, [update], options);
+    return updated ?? null;
+  }
+
+  /**
+   * Set equipped state for an owned Item.
+   * @param {Item} item
+   * @param {boolean} equipped
+   */
+  async setItemEquipped(item, equipped, options = {}) {
+    return this.updateOwnedItem(item, { 'system.equipped': !!equipped }, options);
+  }
+
+  async equipItem(item, options = {}) {
+    return this.setItemEquipped(item, true, options);
+  }
+
+  async unequipItem(item, options = {}) {
+    return this.setItemEquipped(item, false, options);
+  }
+
+  async toggleItemEquipped(item, options = {}) {
+    const next = !item?.system?.equipped;
+    return this.setItemEquipped(item, next, options);
+  }
+
+  /**
+   * Activate an owned Item.
+   *
+   * Shields consume one charge on activation and reset SR to max.
+   */
+  async activateItem(item, options = {}) {
+    if (!item) return null;
+
+    // Shield special-case (armorType === 'shield')
+    if (item.type === 'armor' && item.system?.armorType === 'shield') {
+      const currentCharges = Number(item.system?.charges?.current ?? 0);
+      const shieldRating = Number(item.system?.shieldRating ?? 0);
+
+      if (currentCharges <= 0) {
+        ui.notifications.warn('No charges remaining to activate shield!');
+        return null;
+      }
+
+      if (shieldRating <= 0) {
+        ui.notifications.warn('Shield has no rating to activate!');
+        return null;
+      }
+
+      const updated = await this.updateOwnedItem(item, {
+        'system.charges.current': currentCharges - 1,
+        'system.activated': true,
+        'system.currentSR': shieldRating
+      }, options);
+
+      ui.notifications.info(`${item.name} activated! SR: ${shieldRating}, Charges remaining: ${currentCharges - 1}`);
+      return updated;
+    }
+
+    const updated = await this.updateOwnedItem(item, { 'system.activated': true }, options);
+    ui.notifications.info(`${item.name} activated!`);
+    return updated;
+  }
+
+  async deactivateItem(item, options = {}) {
+    if (!item) return null;
+
+    const updated = await this.updateOwnedItem(item, { 'system.activated': false }, options);
+    ui.notifications.info(`${item.name} deactivated!`);
+    return updated;
+  }
+
+  async toggleItemActivated(item, options = {}) {
+    const next = !item?.system?.activated;
+    return next ? this.activateItem(item, options) : this.deactivateItem(item, options);
   }
 
   /* -------------------------------------------------------------------------- */
   /* DESTINY POINTS                                                             */
   /* -------------------------------------------------------------------------- */
-
-  async spendDestinyPoint(reason = "unspecified") {
-    if (this.type !== "character") return false;
-
-    const current = this.system.destinyPoints?.value ?? 0;
-    if (current <= 0) {
-      ui.notifications.warn("No Destiny Points remaining!");
-      return false;
-    }
-
-    await this.update(
-      { "system.destinyPoints.value": current - 1 },
-      { diff: true }
-    );
-
-    ChatMessage.create({
-      content: `<p><strong>${this.name}</strong> spends a Destiny Point for ${reason}. (${current - 1} remaining)</p>`,
-      speaker: { actor: this }
-    });
-
-    Hooks.callAll("swse.destinyPointSpent", this, reason);
-    return true;
-  }
 
   /* -------------------------------------------------------------------------- */
   /* ROLLS                                                                      */
@@ -185,6 +262,71 @@ export class SWSEActorBase extends Actor {
   async rollSkill(skill, options = {}) { return SWSERoll.rollSkill(this, skill, options); }
   async rollAttack(weapon, options = {}) { return SWSERoll.rollAttack(this, weapon, options); }
   async rollDamage(weapon, options = {}) { return SWSERoll.rollDamage(this, weapon, options); }
+
+
+  /**
+   * Use an owned item.
+   *
+   * v2 contract: items do not roll or post chat output on their own.
+   * This method is the canonical entry-point for item macros and UI.
+   *
+   * @param {Item} item
+   * @param {object} [options={}] - Use options (type-specific)
+   */
+  async useItem(item, options = {}) {
+    if (!item) return null;
+
+    switch (item.type) {
+      case 'weapon':
+        return this.rollAttack(item, options);
+      case 'forcepower': {
+        const enhancements = options?.enhancements ?? null;
+        return SWSERoll.rollUseTheForce(this, item, enhancements);
+      }
+      default:
+        return this._postItemToChat(item, options);
+    }
+  }
+
+  /**
+   * Post a simple holo-themed item card to chat.
+   * @private
+   */
+  async _postItemToChat(item, options = {}) {
+    const description = item.system?.description || '';
+    const labels = typeof item.getChatData === 'function' ? (item.getChatData().labels || {}) : {};
+
+    const meta = Object.entries(labels)
+      .filter(([, v]) => v !== '' && v !== null && v !== undefined)
+      .map(([k, v]) => `<span class="swse-item-meta"><strong>${k}:</strong> ${v}</span>`)
+      .join(' ');
+
+    const content = `
+      <div class="swse-holo-card swse-item-card">
+        <div class="swse-holo-header">
+          <i class="fas fa-box"></i> ${item.name}
+        </div>
+        ${meta ? `<div class="swse-item-meta-row">${meta}</div>` : ''}
+        ${description ? `<div class="swse-item-body">${description}</div>` : ''}
+      </div>
+    `;
+
+    return SWSEChat.postHTML({
+      content,
+      actor: this,
+      style: CONST.CHAT_MESSAGE_STYLES.OTHER,
+      flags: {
+        ...options?.flags,
+        swse: {
+          ...(options?.flags?.swse ?? {}),
+          item: true,
+          itemId: item.id,
+          itemType: item.type
+        }
+      }
+    });
+  }
+
 
   /* -------------------------------------------------------------------------- */
   /* DESTINY POINTS                                                             */
@@ -217,7 +359,7 @@ export class SWSEActorBase extends Actor {
     }
 
     // Decrement Destiny Points
-    await this.update({ "system.destinyPoints.value": dp.value - 1 });
+    await ActorEngine.updateActor(this, { "system.destinyPoints.value": dp.value - 1 });
 
     // Fire hook for other systems to respond
     Hooks.callAll("swse.destinyPointSpent", this, type, options);
@@ -244,11 +386,11 @@ export class SWSEActorBase extends Actor {
       </div>
     `;
 
-    ChatMessage.create({
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this }),
+    SWSEChat.postHTML({
+      actor: this,
       content: message,
-      type: CONST.CHAT_MESSAGE_TYPES.OOC
+      style: CONST.CHAT_MESSAGE_STYLES.OOC,
+      flags: { swse: { source: "destinyPoint" } }
     });
   }
 
@@ -285,7 +427,7 @@ export class SWSEActorBase extends Actor {
     }
 
     // Deduct Force Points
-    await this.update({ 'system.forcePoints.value': fp.value - amount });
+    await ActorEngine.updateActor(this, { 'system.forcePoints.value': fp.value - amount });
 
     // Create chat message unless silent
     if (!options.silent) {
@@ -297,10 +439,10 @@ export class SWSEActorBase extends Actor {
         </div>
       `;
 
-      await ChatMessage.create({
-        user: game.user.id,
-        speaker: ChatMessage.getSpeaker({ actor: this }),
-        content: message
+      await SWSEChat.postHTML({
+        actor: this,
+        content: message,
+        flags: { swse: { source: "forcePoint" } }
       });
     }
 
@@ -323,7 +465,7 @@ export class SWSEActorBase extends Actor {
       ? Math.min(fp.max, fp.value + amount)
       : fp.max;
 
-    await this.update({ 'system.forcePoints.value': newValue });
+    await ActorEngine.updateActor(this, { 'system.forcePoints.value': newValue });
 
     if (newValue > fp.value) {
       ui.notifications.info(`${this.name} regains ${newValue - fp.value} Force Point(s).`);

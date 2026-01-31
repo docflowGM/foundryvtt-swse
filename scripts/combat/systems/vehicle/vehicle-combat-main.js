@@ -74,7 +74,7 @@ export class SWSEVehicleCombat {
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
-      roll: attackRoll.roll
+      rolls: [attackRoll.roll],
     });
 
     return ctx;
@@ -104,7 +104,7 @@ export class SWSEVehicleCombat {
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
-      roll
+      rolls: [roll],
     });
 
     return roll;

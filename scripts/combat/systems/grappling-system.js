@@ -235,7 +235,7 @@ export class SWSEGrappling {
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
-      roll
+      rolls: [roll],
     });
   }
 

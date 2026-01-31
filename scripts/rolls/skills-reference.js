@@ -357,7 +357,7 @@ class SWSEActor extends Actor {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: this }),
       flavor: `${skillKey} Check (${modifier >= 0 ? '+' : ''}${modifier})`
-    });
+    } , { create: true });
 
     return roll;
   }

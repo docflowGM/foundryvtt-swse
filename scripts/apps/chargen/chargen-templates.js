@@ -11,71 +11,220 @@ export class CharacterTemplates {
 
   /**
    * Load character templates from JSON file
+   * Validates ID-based templates (v2 format) against compendiums
    */
   static async loadTemplates() {
     if (this._templates) return this._templates;
 
-    try {
-      const response = await fetch('systems/foundryvtt-swse/data/character-templates.json');
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      const data = await response.json();
-      this._templates = data.templates;
-      SWSELogger.log(`SWSE | Loaded ${this._templates.length} character templates`);
-      return this._templates;
-    } catch (error) {
-      SWSELogger.error('SWSE | Failed to load character templates:', error);
-
-      // Provide minimal default templates as fallback
-      const defaultTemplates = [
-        {
-          id: "default-soldier",
-          name: "Basic Soldier",
-          class: "Soldier",
-          level: 1,
-          description: "Default soldier template (template file failed to load)",
-          species: "Human",
-          abilities: { str: 14, dex: 13, con: 12, int: 10, wis: 10, cha: 8 },
-          feats: ["Weapon Proficiency (Pistols)", "Weapon Proficiency (Rifles)"],
-          talents: [],
-          skills: ["Initiative", "Perception"]
-        },
-        {
-          id: "default-scout",
-          name: "Basic Scout",
-          class: "Scout",
-          level: 1,
-          description: "Default scout template (template file failed to load)",
-          species: "Human",
-          abilities: { str: 10, dex: 14, con: 12, int: 13, wis: 12, cha: 8 },
-          feats: ["Weapon Proficiency (Pistols)", "Weapon Proficiency (Rifles)"],
-          talents: [],
-          skills: ["Initiative", "Perception", "Stealth"]
-        },
-        {
-          id: "default-scoundrel",
-          name: "Basic Scoundrel",
-          class: "Scoundrel",
-          level: 1,
-          description: "Default scoundrel template (template file failed to load)",
-          species: "Human",
-          abilities: { str: 10, dex: 14, con: 10, int: 12, wis: 10, cha: 13 },
-          feats: ["Weapon Proficiency (Pistols)", "Weapon Proficiency (Simple Weapons)"],
-          talents: [],
-          skills: ["Deception", "Perception", "Stealth"]
-        }
-      ];
-
-      this._templates = defaultTemplates;
-
-      ui.notifications.warn(
-        'Character templates could not be loaded. Using default templates only.',
-        { permanent: false }
-      );
-
-      return defaultTemplates;
+    const response = await fetch('systems/foundryvtt-swse/data/character-templates.json');
+    if (!response.ok) {
+      throw new Error(`Failed to load character templates: HTTP ${response.status} ${response.statusText}`);
     }
+    const data = await response.json();
+
+    // If using ID-based format (v2), validate IDs
+    if (data.version === 2) {
+      SWSELogger.log(`SWSE | Templates using ID-based format (v${data.version})`);
+      const validationResults = await this._validateTemplateIds(data.templates);
+
+      if (validationResults.failedCount > 0) {
+        const msg = `${validationResults.failedCount} templates have invalid IDs`;
+        SWSELogger.warn(`[SSOT] ${msg}`);
+        console.warn(`[SSOT] ${msg}:`, validationResults.failed);
+
+        if (validationResults.successCount === 0) {
+          throw new Error(`Template validation failed: no valid templates`);
+        }
+      }
+
+      this._templates = validationResults.valid;
+      SWSELogger.log(
+        `SWSE | Loaded ${this._templates.length}/${data.templates.length} ` +
+        `character templates (ID-based format)`
+      );
+    } else {
+      // Old format (v1 or no version) - name-based, no validation
+      this._templates = data.templates;
+      SWSELogger.log(`SWSE | Loaded ${this._templates.length} character templates (name-based format)`);
+    }
+
+    return this._templates;
+  }
+
+  /**
+   * Validate that all IDs in templates exist in compendiums
+   * @param {Array<Object>} templates - Templates to validate
+   * @returns {Promise<Object>} Validation results
+   * @private
+   */
+  static async _validateTemplateIds(templates) {
+    const results = {
+      valid: [],
+      failed: [],
+      failedCount: 0,
+      successCount: 0
+    };
+
+    for (const template of templates) {
+      const templateErrors = await this._validateSingleTemplate(template);
+
+      if (templateErrors.length === 0) {
+        results.valid.push(template);
+        results.successCount++;
+      } else {
+        results.failed.push({
+          templateId: template.id,
+          issues: templateErrors
+        });
+        results.failedCount++;
+
+        SWSELogger.warn(`[SSOT] Template "${template.id}" has validation issues:`);
+        templateErrors.forEach(issue => SWSELogger.warn(`  ${issue}`));
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Validate a single template's compendium IDs
+   * @param {Object} template - Template to validate
+   * @returns {Promise<Array<string>>} Array of error messages
+   * @private
+   */
+  static async _validateSingleTemplate(template) {
+    const errors = [];
+
+    // Validate species ID
+    if (template.speciesId) {
+      const speciesPack = game.packs.get('foundryvtt-swse.species');
+      if (!speciesPack) {
+        errors.push('Species compendium not found');
+      } else {
+        const doc = await speciesPack.getDocument(template.speciesId).catch(() => null);
+        if (!doc) {
+          errors.push(`Species ID not found: ${template.speciesId}`);
+        }
+      }
+    }
+
+    // Validate background ID
+    if (template.backgroundId) {
+      const bgPack = game.packs.get('foundryvtt-swse.backgrounds');
+      if (!bgPack) {
+        errors.push('Backgrounds compendium not found');
+      } else {
+        const doc = await bgPack.getDocument(template.backgroundId).catch(() => null);
+        if (!doc) {
+          errors.push(`Background ID not found: ${template.backgroundId}`);
+        }
+      }
+    }
+
+    // Validate class ID
+    if (template.classId) {
+      const classPack = game.packs.get('foundryvtt-swse.classes');
+      if (!classPack) {
+        errors.push('Classes compendium not found');
+      } else {
+        const doc = await classPack.getDocument(template.classId).catch(() => null);
+        if (!doc) {
+          errors.push(`Class ID not found: ${template.classId}`);
+        }
+      }
+    }
+
+    // Validate feat IDs
+    if (template.featIds && Array.isArray(template.featIds)) {
+      const featPack = game.packs.get(featPackName);
+      if (!featPack) {
+        errors.push('Feats compendium not found');
+      } else {
+        for (const featId of template.featIds) {
+          const doc = await featPack.getDocument(featId).catch(() => null);
+          if (!doc) {
+            errors.push(`Feat ID not found: ${featId}`);
+          }
+        }
+      }
+    }
+
+    // Validate talent IDs
+    if (template.talentIds && Array.isArray(template.talentIds)) {
+      const talentPack = game.packs.get(talentPackName);
+      if (!talentPack) {
+        errors.push('Talents compendium not found');
+      } else {
+        for (const talentId of template.talentIds) {
+          const doc = await talentPack.getDocument(talentId).catch(() => null);
+          if (!doc) {
+            errors.push(`Talent ID not found: ${talentId}`);
+          }
+        }
+      }
+    }
+
+    // Validate talent tree IDs
+    if (template.talentTreeIds && Array.isArray(template.talentTreeIds)) {
+      const treePack = game.packs.get('foundryvtt-swse.talent_trees');
+      if (!treePack) {
+        errors.push('Talent trees compendium not found');
+      } else {
+        for (const treeId of template.talentTreeIds) {
+          const doc = await treePack.getDocument(treeId).catch(() => null);
+          if (!doc) {
+            errors.push(`Talent tree ID not found: ${treeId}`);
+          }
+        }
+      }
+    }
+
+    // Validate force power IDs
+    if (template.forcePowerIds && Array.isArray(template.forcePowerIds)) {
+      const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
+      if (!powerPack) {
+        errors.push('Force powers compendium not found');
+      } else {
+        for (const powerId of template.forcePowerIds) {
+          const doc = await powerPack.getDocument(powerId).catch(() => null);
+          if (!doc) {
+            errors.push(`Force power ID not found: ${powerId}`);
+          }
+        }
+      }
+    }
+
+    // Validate item IDs
+    if (template.itemIds && Array.isArray(template.itemIds)) {
+      const equipPack = game.packs.get('foundryvtt-swse.equipment');
+      const weaponPack = game.packs.get('foundryvtt-swse.weapons');
+      const armorPack = game.packs.get('foundryvtt-swse.armor');
+
+      for (const itemId of template.itemIds) {
+        let found = false;
+
+        if (equipPack) {
+          const doc = await equipPack.getDocument(itemId).catch(() => null);
+          if (doc) { found = true; }
+        }
+
+        if (!found && weaponPack) {
+          const doc = await weaponPack.getDocument(itemId).catch(() => null);
+          if (doc) { found = true; }
+        }
+
+        if (!found && armorPack) {
+          const doc = await armorPack.getDocument(itemId).catch(() => null);
+          if (doc) { found = true; }
+        }
+
+        if (!found) {
+          errors.push(`Item ID not found in equipment/weapons/armor: ${itemId}`);
+        }
+      }
+    }
+
+    return errors;
   }
 
   /**
@@ -353,15 +502,52 @@ export class CharacterTemplates {
    * @param {Actor} actor - The actor to modify
    * @param {string} featName - The feat name to add
    */
-  static async applyTemplateFeat(actor, featName) {
-    if (!featName) return;
+  static async applyTemplateFeat(actor, featRef) {
+    if (!featRef) return;
+
+    const featName = typeof featRef === 'string' ? featRef : (featRef.displayName || featRef.name);
+    const featPackName = typeof featRef === 'object' && featRef.pack ? featRef.pack : 'foundryvtt-swse.feats';
+    const featId = typeof featRef === 'object' && featRef.id ? featRef.id : null;
 
     try {
       // Find feat in compendium
-      const featPack = game.packs.get('foundryvtt-swse.feats');
+      const featPack = game.packs.get(featPackName);
       if (!featPack) {
         SWSELogger.warn('SWSE | Feats compendium not found');
         return;
+      }
+
+      if (featId) {
+        const feat = await featPack.getDocument(featId);
+        if (feat) {
+          await actor.createEmbeddedDocuments('Item', [feat.toObject()]);
+          SWSELogger.log(`SWSE | Added template feat: ${featName}`);
+
+          // Handle Skill Focus feat - auto-check the skill's focused checkbox
+          if (featName.startsWith('Skill Focus')) {
+            const match = featName.match(/Skill Focus \(([^)]+)\)/);
+            if (match) {
+              await this._applySkillFocus(actor, match[1]);
+            }
+          }
+
+          // Handle Weapon Focus feat
+          if (featName.startsWith('Weapon Focus')) {
+            const match = featName.match(/Weapon Focus \(([^)]+)\)/);
+            if (match) {
+              await this._applyWeaponFocus(actor, match[1]);
+            }
+          }
+
+          // Handle Weapon Proficiency feat
+          if (featName.startsWith('Weapon Proficiency')) {
+            const match = featName.match(/Weapon Proficiency \(([^)]+)\)/);
+            if (match) {
+              await this._applyWeaponProficiency(actor, match[1]);
+            }
+          }
+          return;
+        }
       }
 
       const index = await featPack.getIndex();
@@ -461,7 +647,7 @@ export class CharacterTemplates {
    * @param {Actor} actor - The actor to modify
    * @param {string} talentName - The talent name to add
    */
-  static async applyTemplateTalent(actor, talentName) {
+  static async applyTemplateTalent(actor, talentRef) {
     if (!talentName) {
       SWSELogger.log('SWSE | No talent specified in template, skipping');
       return;
@@ -471,11 +657,20 @@ export class CharacterTemplates {
       SWSELogger.log(`SWSE | Attempting to apply template talent: ${talentName}`);
 
       // Find talent in compendium
-      const talentPack = game.packs.get('foundryvtt-swse.talents');
+      const talentPack = game.packs.get(talentPackName);
       if (!talentPack) {
         SWSELogger.warn('SWSE | Talents compendium not found');
         ui.notifications.warn('Talents compendium not found! Cannot add template talent.');
         return;
+      }
+
+      if (talentId) {
+        const talent = await talentPack.getDocument(talentId);
+        if (talent) {
+          await actor.createEmbeddedDocuments('Item', [talent.toObject()]);
+          SWSELogger.log(`SWSE | Added template talent: ${talentName}`);
+          return;
+        }
       }
 
       const index = await talentPack.getIndex();

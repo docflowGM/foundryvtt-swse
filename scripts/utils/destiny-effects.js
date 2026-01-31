@@ -22,7 +22,7 @@ export class DestinyEffects {
     ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `<p><strong>${actor.name}</strong> uses Destiny to guarantee a critical hit on their next attack!</p>`,
-      type: CONST.CHAT_MESSAGE_TYPES.OOC
+      style: CONST.CHAT_MESSAGE_STYLES.OOC
     });
   }
 
@@ -36,7 +36,7 @@ export class DestinyEffects {
     ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `<p><strong>${actor.name}</strong> uses Destiny to guarantee an attacker misses their next attack!</p>`,
-      type: CONST.CHAT_MESSAGE_TYPES.OOC
+      style: CONST.CHAT_MESSAGE_STYLES.OOC
     });
   }
 
@@ -49,7 +49,7 @@ export class DestinyEffects {
     ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `<p><strong>${actor.name}</strong> uses Destiny to act out of turn!</p>`,
-      type: CONST.CHAT_MESSAGE_TYPES.OOC
+      style: CONST.CHAT_MESSAGE_STYLES.OOC
     });
   }
 
@@ -79,7 +79,7 @@ export class DestinyEffects {
       content: `<p><strong>${actor.name}</strong> uses Destiny to gain <strong>${actualGain}</strong> Force Points!</p>
                 <p><strong>Roll:</strong> ${roll.formula} = ${roll.total}</p>
                 <p><strong>Force Points:</strong> ${newValue}/${fp.max}</p>`,
-      type: CONST.CHAT_MESSAGE_TYPES.OOC
+      style: CONST.CHAT_MESSAGE_STYLES.OOC
     });
   }
 
@@ -93,7 +93,7 @@ export class DestinyEffects {
     ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `<p><strong>${actor.name}</strong> uses Destiny to take damage for an ally instead!</p>`,
-      type: CONST.CHAT_MESSAGE_TYPES.OOC
+      style: CONST.CHAT_MESSAGE_STYLES.OOC
     });
   }
 

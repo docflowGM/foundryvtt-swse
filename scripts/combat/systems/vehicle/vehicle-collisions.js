@@ -197,6 +197,6 @@ export async function createCollisionMessage(result) {
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({actor: vehicle}),
     content,
-    type: CONST.CHAT_MESSAGE_TYPES.OTHER
+    style: CONST.CHAT_MESSAGE_STYLES.OTHER
   });
 }

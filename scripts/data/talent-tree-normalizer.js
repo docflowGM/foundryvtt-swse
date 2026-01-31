@@ -110,9 +110,17 @@ export function normalizeTalentTree(rawTree) {
         name: name,
         sourceId: rawTree._id,
 
+        // SSOT: Talent ownership (authoritative list from tree)
+        talentIds: sys.talentIds || [],
+
         // Classification
         role: inferTreeRole(name),
         category: inferTreeCategory(name),
+
+        // Access tags (for flag-based eligibility)
+        // "force" = accessible to Force-sensitive characters
+        // "droid" = accessible to Droid characters
+        tags: sys.tags || [],
 
         // Source reference (for Foundry item lookups)
         // This allows getting back to the original compendium entry if needed
@@ -125,31 +133,26 @@ export function normalizeTalentTree(rawTree) {
 }
 
 /**
- * Find a talent tree by name (fuzzy matching).
- * Handles encoding issues and spacing variations.
+ * DEPRECATED: Exact-match talent tree lookup only (SSOT stabilization).
+ * This function no longer does fuzzy/fallback matching.
+ * If a tree is not found by exact ID, it fails loudly to expose data issues.
  *
- * @param {string} name - Talent tree name to find
+ * @deprecated Use TalentTreeDB.get(normalizedId) for direct ID lookup
+ * @param {string} name - Talent tree ID (must match exactly after normalization)
  * @param {Map<string, Object>} treeMap - Map of normalized trees
- * @returns {Object|null} - Normalized tree or null
+ * @returns {Object|null} - Tree if exact ID found, null otherwise (never fuzzy matches)
  */
 export function findTalentTreeByName(name, treeMap) {
     if (!name || !treeMap) return null;
 
-    // Try exact ID match first
+    // Only exact ID match - no fuzzy matching (removed in SSOT stabilization)
     const id = normalizeTalentTreeId(name);
     if (treeMap.has(id)) {
         return treeMap.get(id);
     }
 
-    // Try fuzzy match by comparing normalized names
-    for (const [treeId, tree] of treeMap) {
-        const normalizedTreeName = normalizeTalentTreeId(tree.name);
-        if (normalizedTreeName === id) {
-            return tree;
-        }
-    }
-
-    console.warn(`[TalentTreeNormalizer] Could not find talent tree for name: "${name}"`);
+    // Fail loudly: data integrity issue if we reach here
+    console.warn(`[SSOT] Talent tree not found by exact ID: "${name}" (normalized: "${id}")`);
     return null;
 }
 

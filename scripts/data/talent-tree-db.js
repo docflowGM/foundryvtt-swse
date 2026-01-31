@@ -30,6 +30,11 @@ export const TalentTreeDB = {
 
     // In-memory map for O(1) lookups: treeId -> normalized tree
     trees: new Map(),
+    sourceIndex: new Map(),
+
+    // SSOT inverse index: talentId -> treeId (built from tree.system.talentIds)
+    talentToTree: new Map(),
+
     isBuilt: false,
 
     /**
@@ -60,6 +65,7 @@ export const TalentTreeDB = {
 
                     // Store by ID
                     this.trees.set(normalizedTree.id, normalizedTree);
+                    if (normalizedTree.sourceId) this.sourceIndex.set(normalizedTree.sourceId, normalizedTree);
                     count++;
 
                 } catch (err) {
@@ -67,6 +73,9 @@ export const TalentTreeDB = {
                     warnings++;
                 }
             }
+
+            // Build the talentToTree inverse index (SSOT for tree ownership)
+            this.buildTalentIndex();
 
             this.isBuilt = true;
             SWSELogger.log(`[TalentTreeDB] Built: ${count} trees loaded${warnings > 0 ? ` (${warnings} warnings)` : ''}`);
@@ -100,7 +109,20 @@ export const TalentTreeDB = {
      * @param {string} name - Tree name
      * @returns {Object|null} - Normalized tree or null
      */
-    byName(name) {
+    
+    /**
+     * Lookup a talent tree by its compendium document _id.
+     * This prevents drift when display names change.
+     *
+     * @param {string} sourceId - compendium document id
+     * @returns {Object|null}
+     */
+    bySourceId(sourceId) {
+        if (!sourceId) return null;
+        return this.sourceIndex.get(sourceId) || null;
+    },
+
+byName(name) {
         if (!name) return null;
 
         return findTalentTreeByName(name, this.trees);
@@ -150,8 +172,36 @@ export const TalentTreeDB = {
     },
 
     /**
+     * Get talent trees by access tag (flag-based eligibility).
+     *
+     * @param {string} tag - Tag: "force", "droid", etc.
+     * @returns {Array<Object>} - Trees with this tag
+     */
+    byTag(tag) {
+        if (!tag) return [];
+        return this.all().filter(tree => (tree.tags || []).includes(tag));
+    },
+
+    /**
+     * Get talent trees by multiple tags (OR logic).
+     *
+     * @param {Array<string>} tags - Tags to search for
+     * @returns {Array<Object>} - Trees matching any of these tags
+     */
+    byTags(tags) {
+        if (!tags || tags.length === 0) return [];
+        const tagSet = new Set(tags);
+        return this.all().filter(tree =>
+            (tree.tags || []).some(tag => tagSet.has(tag))
+        );
+    },
+
+    /**
      * Get talent trees for a class (by class ID).
      * Requires ClassesDB to be built.
+     *
+     * Uses the new SSOT system: classes reference trees by stable IDs.
+     * PHASE 3: talentTreeIds is now the authoritative source.
      *
      * @param {string} classId - Class ID
      * @param {Object} classesDB - ClassesDB instance
@@ -163,7 +213,10 @@ export const TalentTreeDB = {
         const classDef = classesDB.get(classId);
         if (!classDef) return [];
 
-        return classDef.talentTreeIds
+        // Use new ID-based talentTreeIds (PHASE 3)
+        const treeIds = classDef.talentTreeIds || [];
+
+        return treeIds
             .map(treeId => this.get(treeId))
             .filter(Boolean);
     },
@@ -175,6 +228,133 @@ export const TalentTreeDB = {
      */
     count() {
         return this.trees.size;
+    },
+
+    /**
+     * Build the talentToTree inverse index (SSOT for tree ownership).
+     * Called after all trees are loaded.
+     *
+     * This enables O(1) lookup: given a talentId, find which tree owns it.
+     */
+    buildTalentIndex() {
+        this.talentToTree.clear();
+
+        for (const tree of this.trees.values()) {
+            const talentIds = tree.talentIds || [];
+
+            for (const talentId of talentIds) {
+                this.talentToTree.set(talentId, tree.id);
+            }
+        }
+
+        SWSELogger.log(`[TalentTreeDB] Built talent index: ${this.talentToTree.size} talents indexed`);
+    },
+
+    /**
+     * Get the tree ID that owns a talent (SSOT query).
+     *
+     * @param {string} talentId - Talent ID
+     * @returns {string|null} - Tree ID or null if talent is unowned
+     */
+    getTreeForTalent(talentId) {
+        if (!talentId) return null;
+        return this.talentToTree.get(talentId) ?? null;
+    },
+
+    /**
+     * Get all talents for a tree (inverse query).
+     *
+     * @param {string} treeId - Tree ID
+     * @returns {Array<string>} - Talent IDs in this tree
+     */
+    getTalentsForTree(treeId) {
+        if (!treeId) return [];
+
+        const tree = this.get(treeId);
+        return tree?.talentIds ?? [];
+    },
+
+    /**
+     * Get all talents for multiple trees.
+     *
+     * @param {Array<string>} treeIds - Tree IDs
+     * @returns {Array<string>} - Talent IDs from all trees (deduplicated)
+     */
+    getTalentsForTrees(treeIds) {
+        if (!treeIds || treeIds.length === 0) return [];
+
+        const talents = new Set();
+
+        for (const treeId of treeIds) {
+            const treetalents = this.getTalentsForTree(treeId);
+            for (const tid of treetalents) {
+                talents.add(tid);
+            }
+        }
+
+        return Array.from(talents);
+    },
+
+    /**
+     * Get all available talent trees for a character (PHASE 3 runtime integration).
+     *
+     * Combines:
+     * 1. Class-specific trees (from class.system.talentTreeIds)
+     * 2. Flag-based trees (Force-sensitive → force trees, Droid → droid trees)
+     *
+     * @param {Object} actor - Actor document with class and flags
+     * @returns {Array<Object>} - Available talent trees for this character
+     */
+    getTalentTreesForCharacter(actor) {
+        if (!actor) return [];
+
+        const trees = new Set();
+
+        // Get class trees (if class exists)
+        if (actor.class) {
+            const classTrees = actor.class.system?.talentTreeIds || [];
+            for (const treeId of classTrees) {
+                const tree = this.get(treeId);
+                if (tree) trees.add(tree);
+            }
+        }
+
+        // Add flag-based trees
+        const flags = actor.system?.flags || {};
+
+        // Force-sensitive grants access to all force trees
+        if (flags.forceSensitive) {
+            const forceTrees = this.byTag("force");
+            for (const tree of forceTrees) {
+                trees.add(tree);
+            }
+        }
+
+        // Droid grants access to all droid trees
+        if (flags.droid) {
+            const droidTrees = this.byTag("droid");
+            for (const tree of droidTrees) {
+                trees.add(tree);
+            }
+        }
+
+        return Array.from(trees);
+    },
+
+    /**
+     * Get all available talents for a character (convenience method).
+     * Combines getTalentTreesForCharacter + getTalentsForTrees.
+     *
+     * @param {Object} actor - Actor document
+     * @returns {Array<string>} - All talent IDs available to this character
+     */
+    getTalentsForCharacter(actor) {
+        if (!actor) return [];
+
+        const trees = this.getTalentTreesForCharacter(actor);
+        const treeIds = trees.map(t => t.id);
+
+        return this.getTalentsForTrees(treeIds);
     },
 
     /**

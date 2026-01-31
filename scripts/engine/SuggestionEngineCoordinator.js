@@ -21,6 +21,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { SuggestionService } from './SuggestionService.js';
 import { SuggestionEngine } from './SuggestionEngine.js';
 import { ClassSuggestionEngine } from './ClassSuggestionEngine.js';
 import { BackgroundSuggestionEngine } from './BackgroundSuggestionEngine.js';
@@ -74,6 +75,10 @@ export class SuggestionEngineCoordinator {
       game.swse = game.swse || {};
       game.swse.suggestions = {
         coordinator: this,
+        // Single entry point (preferred)
+        getSuggestions: (actor, context, options) => SuggestionService.getSuggestions(actor, context, options),
+        getSuggestionDiff: (actor, context, suggestions) => SuggestionService.getSuggestionDiff(actor, context, suggestions),
+        invalidateSuggestions: (actorId) => SuggestionService.invalidate(actorId),
         suggestFeats: (feats, actor, pendingData, options) =>
           this.suggestFeats(feats, actor, pendingData, options),
         suggestTalents: (talents, actor, pendingData, options) =>

@@ -122,18 +122,18 @@
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 0.15rem;
-  padding: 0.2rem 0.4rem;
+  gap: 0.1rem;
+  padding: 0.15rem 0.3rem;
   background: rgba(0, 50, 100, 0.3);
   border: 1px solid rgba(0, 100, 200, 0.3);
   border-radius: 3px 3px 0 0;
   color: #aaa;
-  font-size: 0.6rem;
+  font-size: 0.5rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   margin-top: 2px;
   white-space: nowrap;
 }
@@ -156,7 +156,7 @@
 }
 
 .shop-tab i {
-  font-size: 0.65rem;
+  font-size: 0.55rem;
 }
 
 .tab-label {

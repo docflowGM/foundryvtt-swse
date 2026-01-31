@@ -215,6 +215,11 @@ export function _bindAbilitiesUI(root) {
           e.dataTransfer.setData('text/plain', res.total);
           e.dataTransfer.setData('index', idx);
           rollDiv.classList.add('dragging');
+
+          // If this item is already used, mark it for removal from current zone
+          if (rollDiv.classList.contains('used')) {
+            e.dataTransfer.setData('removing', 'true');
+          }
         });
 
         rollDiv.addEventListener('dragend', () => {
@@ -241,15 +246,40 @@ export function _bindAbilitiesUI(root) {
 
           const value = parseInt(e.dataTransfer.getData('text/plain'), 10);
           const index = e.dataTransfer.getData('index');
+          const isRemoving = e.dataTransfer.getData('removing') === 'true';
           const ability = zone.dataset.ability;
           const dragged = pool.querySelector(`.draggable-roll[data-index="${index}"]`);
 
           if (dragged) {
-            // Clear previous value in this slot
-            const prevValue = zone.querySelector('.dropped-value');
-            if (prevValue?.textContent) {
-              const oldDragged = pool.querySelector(`.draggable-roll.used[data-value="${prevValue.textContent}"]`);
-              if (oldDragged) oldDragged.classList.remove('used');
+            // If removing (dragging from an already-placed value to swap it out)
+            if (isRemoving) {
+              // Find the zone that currently has this value and clear it
+              container.querySelectorAll('.ability-drop-zone').forEach(checkZone => {
+                const droppedVal = checkZone.querySelector('.dropped-value');
+                if (droppedVal && droppedVal.textContent === String(value) && checkZone !== zone) {
+                  // Clear the old zone
+                  checkZone.querySelector('.drop-placeholder').style.display = 'block';
+                  checkZone.querySelector('.dropped-value').style.display = 'none';
+                  checkZone.querySelector('.dropped-value').textContent = '';
+
+                  // Reset breakdown for old ability
+                  const oldAbility = checkZone.dataset.ability;
+                  const oldSlot = checkZone.closest('.ability-slot');
+                  oldSlot.querySelector('.base-num').textContent = '--';
+                  oldSlot.querySelector('.total-num').textContent = '--';
+                  oldSlot.querySelector('.mod-num').textContent = '--';
+                  chargen.characterData.abilities[oldAbility].base = 10;
+                  chargen.characterData.abilities[oldAbility].total = chargen.characterData.abilities[oldAbility].racial || 10;
+                  chargen.characterData.abilities[oldAbility].mod = Math.floor(((chargen.characterData.abilities[oldAbility].racial || 10) - 10) / 2);
+                }
+              });
+            } else {
+              // Normal placement - clear previous value in this slot
+              const prevValue = zone.querySelector('.dropped-value');
+              if (prevValue?.textContent) {
+                const oldDragged = pool.querySelector(`.draggable-roll.used[data-value="${prevValue.textContent}"]`);
+                if (oldDragged) oldDragged.classList.remove('used');
+              }
             }
 
             // Set new value
@@ -546,10 +576,15 @@ export function _bindAbilitiesUI(root) {
 
     // Array selection (High or Standard array)
     const rollArray = () => {
-      const arrays = {
-        high: { name: 'High Array', values: [16, 14, 12, 12, 10, 8] },
-        standard: { name: 'Standard Array', values: [15, 14, 13, 12, 10, 8] }
-      };
+      const arrays = chargen.characterData.isDroid
+        ? {
+            high: { name: 'High Array', values: [16, 14, 12, 10, 8] },
+            standard: { name: 'Standard Array', values: [15, 14, 13, 10, 8] }
+          }
+        : {
+            high: { name: 'High Array', values: [16, 14, 12, 12, 10, 8] },
+            standard: { name: 'Standard Array', values: [15, 14, 13, 12, 10, 8] }
+          };
 
       const container = root.querySelector("#array-selection");
       if (!container) return;
@@ -642,6 +677,11 @@ export function _bindAbilitiesUI(root) {
           e.dataTransfer.setData('text/plain', value);
           e.dataTransfer.setData('index', idx);
           scoreDiv.classList.add('dragging');
+
+          // If this item is already used, mark it for removal from current zone
+          if (scoreDiv.classList.contains('used')) {
+            e.dataTransfer.setData('removing', 'true');
+          }
         });
 
         scoreDiv.addEventListener('dragend', () => {
@@ -668,15 +708,40 @@ export function _bindAbilitiesUI(root) {
 
           const value = parseInt(e.dataTransfer.getData('text/plain'), 10);
           const index = e.dataTransfer.getData('index');
+          const isRemoving = e.dataTransfer.getData('removing') === 'true';
           const ability = zone.dataset.ability;
           const dragged = pool.querySelector(`.draggable-roll[data-index="${index}"]`);
 
           if (dragged) {
-            // Clear previous value in this slot
-            const prevValue = zone.querySelector('.dropped-value');
-            if (prevValue?.textContent) {
-              const oldDragged = pool.querySelector(`.draggable-roll.used[data-value="${prevValue.textContent}"]`);
-              if (oldDragged) oldDragged.classList.remove('used');
+            // If removing (dragging from an already-placed value to swap it out)
+            if (isRemoving) {
+              // Find the zone that currently has this value and clear it
+              container.querySelectorAll('.ability-drop-zone').forEach(checkZone => {
+                const droppedVal = checkZone.querySelector('.dropped-value');
+                if (droppedVal && droppedVal.textContent === String(value) && checkZone !== zone) {
+                  // Clear the old zone
+                  checkZone.querySelector('.drop-placeholder').style.display = 'block';
+                  checkZone.querySelector('.dropped-value').style.display = 'none';
+                  checkZone.querySelector('.dropped-value').textContent = '';
+
+                  // Reset breakdown for old ability
+                  const oldAbility = checkZone.dataset.ability;
+                  const oldSlot = checkZone.closest('.ability-slot');
+                  oldSlot.querySelector('.base-num').textContent = '--';
+                  oldSlot.querySelector('.total-num').textContent = '--';
+                  oldSlot.querySelector('.mod-num').textContent = '--';
+                  chargen.characterData.abilities[oldAbility].base = 10;
+                  chargen.characterData.abilities[oldAbility].total = chargen.characterData.abilities[oldAbility].racial || 10;
+                  chargen.characterData.abilities[oldAbility].mod = Math.floor(((chargen.characterData.abilities[oldAbility].racial || 10) - 10) / 2);
+                }
+              });
+            } else {
+              // Normal placement - clear previous value in this slot
+              const prevValue = zone.querySelector('.dropped-value');
+              if (prevValue?.textContent) {
+                const oldDragged = pool.querySelector(`.draggable-roll.used[data-value="${prevValue.textContent}"]`);
+                if (oldDragged) oldDragged.classList.remove('used');
+              }
             }
 
             // Set new value

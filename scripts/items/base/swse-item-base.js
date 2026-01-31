@@ -1,10 +1,14 @@
 /**
  * Base Item Class for SWSE System
  * Extends Foundry's Item class with SWSE-specific functionality
+ *
+ * v2 contract:
+ * - Items are passive data documents.
+ * - Items do not mutate actors, perform rolls, or post chat output.
+ * - Actors and engines interpret item data and produce outcomes.
  */
 
 import { getWeaponRangeInfo } from '../weapon-ranges.js';
-import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
 
 export class SWSEItemBase extends Item {
   
@@ -144,103 +148,24 @@ export class SWSEItemBase extends Item {
   }
 
   /**
-   * Roll the item (attack, activation, etc.)
-   * @param {Object} options - Roll options
-   * @returns {Promise<Roll|null>}
+   * Use this item.
+   *
+   * Items do not roll or post chat output in v2. This delegates to the owning actor.
+   * @param {Object} options - Use options
+   * @returns {Promise<any>}
    */
   async roll(options = {}) {
     if (!this.actor) {
-      ui.notifications.warn("This item must be owned by an actor to be rolled.");
+      ui.notifications.warn('This item must be owned by an actor to be used.');
       return null;
     }
 
-    switch (this.type) {
-      case 'weapon':
-        return this._rollWeapon(options);
-      case 'forcepower':
-        return this._rollForcePower(options);
-      default:
-        return this._displayInChat();
-    }
-  }
-
-  /**
-   * Roll weapon attack
-   * @private
-   */
-  async _rollWeapon(options = {}) {
-    if (!this.actor.rollAttack) {
-      ui.notifications.error("Actor does not have rollAttack method.");
+    if (typeof this.actor.useItem !== 'function') {
+      ui.notifications.warn('This actor cannot use items yet.');
       return null;
     }
 
-    return this.actor.rollAttack(this, options);
-  }
-
-  /**
-   * Roll force power activation
-   * @private
-   */
-  async _rollForcePower(options = {}) {
-    // Use proper SWSERoll system for Force power activation
-    return SWSERoll.rollUseTheForce(this.actor, this, options);
-  }
-
-  /**
-   * Display item in chat
-   * @private
-   */
-  async _displayInChat() {
-    const chatData = this.getChatData();
-    
-    const messageData = {
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: this.name,
-      content: `
-        <div class="swse item-card">
-          <h3>${this.name}</h3>
-          <p>${this.system.description || ''}</p>
-        </div>
-      `
-    };
-
-    return ChatMessage.create(messageData);
-  }
-
-  /**
-   * Handle item updates
-   * @param {Object} changed - Changed data
-   * @param {Object} options - Update options
-   * @param {string} userId - User ID making the update
-   * @override
-   */
-  _onUpdate(changed, options, userId) {
-    super._onUpdate(changed, options, userId);
-    
-    // Trigger actor recalculation if this item affects stats
-    if (this.actor && this._affectsActorStats(changed)) {
-      this.actor.prepareData();
-    }
-  }
-
-  /**
-   * Check if item update affects actor stats
-   * @private
-   */
-  _affectsActorStats(changed) {
-    // Items that affect stats when equipped/updated
-    const statAffectingTypes = ['armor', 'species', 'class', 'feat', 'talent'];
-    
-    if (!statAffectingTypes.includes(this.type)) return false;
-    
-    // Check if equipped state changed
-    if (changed.system?.equipped !== undefined) return true;
-    
-    // Check if bonuses changed
-    if (changed.system?.bonuses !== undefined) return true;
-    if (changed.system?.armorBonus !== undefined) return true;
-    
-    return false;
+    return this.actor.useItem(this, options);
   }
 
   /**
@@ -252,7 +177,7 @@ export class SWSEItemBase extends Item {
     
     // Add actor data if available
     if (this.actor) {
-      rollData.actor = this.actor.getRollData();
+      rollData.actor = this.actor.getRollData?.() ?? {};
     }
     
     return rollData;

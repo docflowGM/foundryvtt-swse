@@ -8,8 +8,8 @@ import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_e
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { ClassesDB } from '../../data/classes-db.js';
-import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
-import { SuggestionEngineCoordinator } from '../../engine/SuggestionEngineCoordinator.js';
+import { SuggestionService } from '../../engine/SuggestionService.js';
+import { SuggestionService } from '../../engine/SuggestionService.js';
 import { BuildIntent } from '../../engine/BuildIntent.js';
 import { MentorSurvey } from '../mentor-survey.js';
 
@@ -64,46 +64,28 @@ export async function calculateChargenSuggestions(items, chargenContext, itemTyp
     // Call appropriate suggestion engine
     let suggestedItems = items;
     if (itemType === 'feat') {
-      SWSELogger.log(`[CHARGEN-SUGGESTIONS] Calling SuggestionEngine.suggestFeats()...`);
+      SWSELogger.log(`[CHARGEN-SUGGESTIONS] Getting feat suggestions via SuggestionService...`);
       // Try to use coordinator API first
-      if (game.swse?.suggestions?.suggestFeats) {
-        SWSELogger.log(`[CHARGEN-SUGGESTIONS] Using coordinator API for feat suggestions`);
-        suggestedItems = await game.swse.suggestions.suggestFeats(
-          items,
-          tempActor,
+      SWSELogger.log(`[CHARGEN-SUGGESTIONS] Using SuggestionService for feat suggestions`);
+        suggestedItems = await SuggestionService.getSuggestions(tempActor, 'chargen', {
+          domain: 'feats',
+          available: items,
           pendingData,
-          { buildIntent, includeFutureAvailability: true }
-        );
-      } else {
-        SWSELogger.log(`[CHARGEN-SUGGESTIONS] Coordinator API not available, using direct engine`);
-        suggestedItems = await SuggestionEngine.suggestFeats(
-          items,
-          tempActor,
-          pendingData,
-          { buildIntent, includeFutureAvailability: true }
-        );
-      }
-    } else if (itemType === 'talent') {
-      SWSELogger.log(`[CHARGEN-SUGGESTIONS] Calling SuggestionEngine.suggestTalents()...`);
+          engineOptions: { buildIntent, includeFutureAvailability: true },
+          persist: true
+        });
+} else if (itemType === 'talent') {
+      SWSELogger.log(`[CHARGEN-SUGGESTIONS] Getting talent suggestions via SuggestionService...`);
       // Try to use coordinator API first
-      if (game.swse?.suggestions?.suggestTalents) {
-        SWSELogger.log(`[CHARGEN-SUGGESTIONS] Using coordinator API for talent suggestions`);
-        suggestedItems = await game.swse.suggestions.suggestTalents(
-          items,
-          tempActor,
+      SWSELogger.log(`[CHARGEN-SUGGESTIONS] Using SuggestionService for talent suggestions`);
+        suggestedItems = await SuggestionService.getSuggestions(tempActor, 'chargen', {
+          domain: 'talents',
+          available: items,
           pendingData,
-          { buildIntent, includeFutureAvailability: true }
-        );
-      } else {
-        SWSELogger.log(`[CHARGEN-SUGGESTIONS] Coordinator API not available, using direct engine`);
-        suggestedItems = await SuggestionEngine.suggestTalents(
-          items,
-          tempActor,
-          pendingData,
-          { buildIntent, includeFutureAvailability: true }
-        );
-      }
-    }
+          engineOptions: { buildIntent, includeFutureAvailability: true },
+          persist: true
+        });
+}
 
     SWSELogger.log(`[CHARGEN-SUGGESTIONS] calculateChargenSuggestions() COMPLETE - ${suggestedItems.length} items scored`);
     return suggestedItems;
@@ -723,7 +705,10 @@ export function _createTempActorForValidation() {
       // Include mentor biases for suggestion engine
       swse: {
         mentorBuildIntentBiases: this.characterData.mentorBiases || {},
-        mentorSurveyCompleted: this.characterData.mentorSurveyCompleted || false
+        mentorSurveyCompleted: this.characterData.mentorSurveyCompleted || false,
+        mentorSurveySkipped: this.characterData.mentorSurveySkipped || false,
+        mentorSurveySkipCount: this.characterData.mentorSurveySkipCount || 0,
+        mentorSurveyLastSkippedAt: this.characterData.mentorSurveyLastSkippedAt || null
       }
     },
     items: {

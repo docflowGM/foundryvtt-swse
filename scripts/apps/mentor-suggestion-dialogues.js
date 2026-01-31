@@ -1,11 +1,14 @@
 /**
- * SWSE Mentor Suggestion Dialogue System
+ * SWSE Mentor Suggestion Dialogue System (V2)
  *
- * A contextual dialogue layer for the suggestion engine that speaks through mentors.
- * Each mentor has a unique voice, but all follow the same structural framework.
+ * UNIFIED SYSTEM: Part of the consolidated mentor system
+ * - Core mentor data: mentor-dialogues.js (canonical source)
+ * - Personality metadata: mentor-suggestion-dialogues.js (this file)
+ * - Phase/context helpers: exported from mentor-dialogues.js (merged)
  *
- * This is an additive layer on top of mentor-dialogues.js - it adds suggestion-specific
- * dialogue while preserving existing level greetings and guidance.
+ * This file provides:
+ * - MENTOR_PERSONALITIES - personality traits for dynamic dialogue generation
+ * - Suggestion engines for contextual mentor responses
  *
  * Framework:
  * - Universal structure: mentorSpeak() with context, confidence, phase
@@ -15,40 +18,22 @@
  */
 
 // ============================================================================
-// PHASE DEFINITIONS
+// IMPORTS - Phase/Context helpers from canonical mentor system
 // ============================================================================
 
-export const DIALOGUE_PHASES = {
-    EARLY: { min: 1, max: 5, name: "early", style: "instructional" },
-    MID: { min: 6, max: 12, name: "mid", style: "advisory" },
-    LATE: { min: 13, max: 20, name: "late", style: "peer" }
-};
-
-/**
- * Determine the dialogue phase based on character level
- * @param {number} level - Character level (1-20)
- * @returns {string} Phase name: "early", "mid", or "late"
- */
-export function getDialoguePhase(level) {
-    if (level <= DIALOGUE_PHASES.EARLY.max) return "early";
-    if (level <= DIALOGUE_PHASES.MID.max) return "mid";
-    return "late";
-}
+import { getDialoguePhase, SUGGESTION_CONTEXTS, DIALOGUE_PHASES } from './mentor-dialogues.js';
 
 // ============================================================================
-// SUGGESTION CONTEXT TYPES
+// PHASE DEFINITIONS - DEPRECATED (imported from mentor-dialogues.js)
 // ============================================================================
+// Removed: DIALOGUE_PHASES now imported from mentor-dialogues.js
 
-export const SUGGESTION_CONTEXTS = {
-    ATTRIBUTE: "attribute",      // Ability score increases
-    FEAT: "feat",                // Feat selection
-    TALENT: "talent",            // Talent selection
-    DEFENSE: "defense",          // Defensive choices
-    STYLE: "style",              // Combat/playstyle choices
-    SKILL: "skill",              // Skill selection
-    MULTICLASS: "multiclass",    // Multiclass decisions
-    HP: "hp"                     // Health/survivability
-};
+// Removed: getDialoguePhase now imported from mentor-dialogues.js
+
+// ============================================================================
+// SUGGESTION CONTEXT TYPES - DEPRECATED (imported from mentor-dialogues.js)
+// ============================================================================
+// Removed: SUGGESTION_CONTEXTS now imported from mentor-dialogues.js
 
 // ============================================================================
 // MENTOR PERSONALITY TRAITS
@@ -2801,12 +2786,7 @@ export function getMentorSuggestionDialogue({
     // Get phase-specific dialogues
     const phaseDialogues = contextDialogues[phase];
     if (!phaseDialogues) {
-        // Fall back to closest phase
-        const fallbackPhase = phase === "late" ? "mid" : "early";
-        const fallbackDialogues = contextDialogues[fallbackPhase];
-        if (fallbackDialogues) {
-            return buildDialogueResponse(fallbackDialogues, specificType, personality, rejectionCount, dialogues);
-        }
+        console.warn(`[SSOT] No ${phase} phase dialogues found for context ${context}. Mentor dialogue data is incomplete.`);
         return getGenericDialogue(context, phase);
     }
 
@@ -3043,12 +3023,12 @@ export function mentorSpeak({
 }
 
 export default {
-    DIALOGUE_PHASES,
-    SUGGESTION_CONTEXTS,
+    // Phase/context helpers now imported from mentor-dialogues.js:
+    // DIALOGUE_PHASES, SUGGESTION_CONTEXTS, getDialoguePhase
+
     MENTOR_PERSONALITIES,
     SCOLDING_LEVELS,
     MENTOR_SUGGESTION_DIALOGUES,
-    getDialoguePhase,
     getScoldingLevel,
     getMentorSuggestionDialogue,
     getMentorRejectionResponse,

@@ -1,0 +1,40 @@
+<div class="holo-panel">
+  <div class="section-bar">
+    <h3 class="section-header">Identity</h3>
+  </div>
+
+  <div class="swse-v2-identity-grid">
+    <div class="field"><span class="label">Class</span><span class="value">{{derived.identity.className}}</span></div>
+    <div class="field"><span class="label">Level</span><span class="value">{{derived.identity.level}}</span></div>
+    <div class="field"><span class="label">Species</span><span class="value">{{derived.identity.species}}</span></div>
+    <div class="field"><span class="label">Gender</span><span class="value">{{derived.identity.gender}}</span></div>
+    <div class="field"><span class="label">Background</span><span class="value">{{derived.identity.background}}</span></div>
+    <div class="field"><span class="label">Destiny</span><span class="value">{{derived.identity.destinyType}}</span></div>
+    <div class="field"><span class="label">Size</span><span class="value">{{derived.identity.size}}</span></div>
+    <div class="field"><span class="label">Speed</span><span class="value">{{derived.identity.speed}}</span></div>
+  </div>
+
+  {{#if derived.identity.forcePoints.display}}
+    <div class="swse-v2-resources" style="margin-top:8px;">
+      <div class="swse-v2-resource" data-kind="destiny" title="Destiny Points">
+        <span class="label">DP</span>
+        <span class="ticks {{derived.identity.destinyPoints.display.sizeClass}}">
+          {{#each derived.identity.destinyPoints.display.ticks as |t|}}
+            <span class="tick {{#if t.filled}}filled{{/if}}"></span>
+          {{/each}}
+        </span>
+        <span class="count">{{derived.identity.destinyPoints.display.labelText}}</span>
+      </div>
+
+      <div class="swse-v2-resource" data-kind="force" title="Force Points">
+        <span class="label">FP</span>
+        <span class="ticks {{derived.identity.forcePoints.display.sizeClass}}">
+          {{#each derived.identity.forcePoints.display.ticks as |t|}}
+            <span class="tick {{#if t.filled}}filled{{/if}}"></span>
+          {{/each}}
+        </span>
+        <span class="count">{{derived.identity.forcePoints.display.labelText}}</span>
+      </div>
+    </div>
+  {{/if}}
+</div>

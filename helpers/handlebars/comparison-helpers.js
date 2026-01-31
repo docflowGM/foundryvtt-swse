@@ -9,5 +9,6 @@ export const comparisonHelpers = {
   or: (...args) => args.slice(0, -1).some(Boolean),
   not: (value) => !value,
   includes: (array, value) => Array.isArray(array) && array.includes(value),
-  checked: (value) => value ? 'checked' : ''
+  checked: (value) => value ? 'checked' : '',
+  ternary: (condition, trueValue, falseValue) => condition ? trueValue : falseValue
 };

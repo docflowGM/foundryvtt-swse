@@ -224,9 +224,7 @@ async function handleItemCreate(item, options, userId) {
                     // Update the feat description to note which skill
                     const skillName = skillNames[selectedSkill] || selectedSkill;
                     const updatedDescription = `${item.system.description || ''}\n\n<strong>Focused Skill:</strong> ${skillName}`;
-                    await item.update({
-                        'system.description': updatedDescription
-                    });
+                    await (actor.updateOwnedItem ? actor.updateOwnedItem(item, { 'system.description': updatedDescription }) : item.update({ 'system.description': updatedDescription }));
 
                     ui.notifications.info(`${item.name} applied to ${skillName}. You gain +5 to this skill.`);
                 }

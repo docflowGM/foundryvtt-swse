@@ -1,27 +1,98 @@
 /**
- * SWSE Item Upgrade Application (Foundry v13+)
- * Handles weapon, armor, and equipment upgrades via Item mutation only.
- * Mechanical effects are resolved in actor-data-model derived data.
- * Implements complete SWSE upgrade slot rules.
+ * SWSE Item Upgrade Application (ApplicationV2)
+ *
+ * Contract:
+ * - UI emits intent only
+ * - Item mutations route through actor-owned APIs when owned
+ * - Actor credits updates route through ActorEngine
  */
 
-import { UpgradeRulesEngine } from "./upgrade-rules-engine.js";
+import { ActorEngine } from "../actors/engine/actor-engine.js";
 import { GearTemplatesEngine } from "./gear-templates-engine.js";
+import { UpgradeRulesEngine } from "./upgrade-rules-engine.js";
 
-export class SWSEUpgradeApp extends FormApplication {
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-  constructor(object, options = {}) {
-    super(object, options);
-    this.item = object;
-    this.itemType = object.type;
-    this.npc = this._getNPCForItemType(this.itemType);
+export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
+  constructor(item, options = {}) {
+    super(options);
+    this.item = item;
+    this.itemType = item?.type;
+    this.npc = this.#getNPCForItemType(this.itemType);
+  }
+
+  static DEFAULT_OPTIONS = {
+    id: "swse-upgrade-app",
+    classes: ["swse", "swse-app", "swse-upgrade-app", "swse-theme-holo"],
+    position: { width: 700, height: 600 },
+    window: { resizable: true }
+  };
+
+  static PARTS = {
+    content: {
+      template: "systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs"
+    }
+  };
+
+  async _prepareContext(options) {
+    const system = this.item?.system ?? {};
+
+    const installedUpgrades = system.installedUpgrades ?? [];
+    const totalSlots = UpgradeRulesEngine.getBaseUpgradeSlots(this.item);
+    const usedSlots = installedUpgrades.reduce((sum, u) => sum + Number(u.slotsUsed ?? 1), 0);
+    const isPoweredArmor = this.item?.type === "armor" && UpgradeRulesEngine.isPoweredArmor(this.item);
+
+    const appliedTemplate = this.#getAppliedTemplate();
+    const availableTemplates = this.#getAvailableTemplates();
+    const availableUpgrades = await this.#getAvailableUpgrades();
+
+    return {
+      ...options,
+      item: this.item,
+      system,
+      npc: this.npc,
+      welcomeMessage: this.#getWelcomeMessage(),
+      examinMsg: this.#getExamineMessage(),
+      installedUpgrades,
+      availableUpgrades,
+      totalSlots,
+      usedSlots,
+      availableSlots: Math.max(0, totalSlots - usedSlots),
+      isPoweredArmor,
+      strippedFeatures: system.strippedFeatures ?? {},
+      restriction: UpgradeRulesEngine.getEffectiveRestriction(this.item),
+      appliedTemplate,
+      availableTemplates
+    };
+  }
+
+  _onRender(context, options) {
+    super._onRender(context, options);
+
+    const root = this.element;
+    if (!root) return;
+
+    root.querySelectorAll(".install-upgrade").forEach((el) =>
+      el.addEventListener("click", this.#onInstallUpgrade.bind(this))
+    );
+    root.querySelectorAll(".remove-upgrade").forEach((el) =>
+      el.addEventListener("click", this.#onRemoveUpgrade.bind(this))
+    );
+    root.querySelectorAll(".apply-template").forEach((el) =>
+      el.addEventListener("click", this.#onApplyTemplate.bind(this))
+    );
+    root.querySelectorAll(".remove-template").forEach((el) =>
+      el.addEventListener("click", this.#onRemoveTemplate.bind(this))
+    );
+
+    root.querySelector(".close-btn")?.addEventListener("click", () => this.close());
   }
 
   /* ------------------------------------------------------------------ */
   /* NPC CONFIGURATION                                                   */
   /* ------------------------------------------------------------------ */
 
-  _getNPCForItemType(itemType) {
+  #getNPCForItemType(itemType) {
     switch (itemType) {
       case "weapon":
         return {
@@ -47,133 +118,84 @@ export class SWSEUpgradeApp extends FormApplication {
     }
   }
 
-  /* ------------------------------------------------------------------ */
-  /* DEFAULT OPTIONS                                                     */
-  /* ------------------------------------------------------------------ */
-
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      id: "swse-upgrade-app",
-      template: "systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs",
-      width: 700,
-      height: 600,
-      resizable: true,
-      closeOnSubmit: false,
-      classes: ["swse", "swse-upgrade-app"]
-    });
+  #getWelcomeMessage() {
+    const name = this.npc?.name ?? "Technician";
+    const itemName = this.item?.name ?? "that";
+    return `${name}: Let's take a look at ${itemName}.`;
   }
 
-  /* ------------------------------------------------------------------ */
-  /* DATA                                                               */
-  /* ------------------------------------------------------------------ */
-
-  async getData() {
-    const system = this.item.system;
-
-    const installedUpgrades = system.installedUpgrades ?? [];
-
-    // Use rules engine to calculate proper slot count
-    const totalSlots = UpgradeRulesEngine.getBaseUpgradeSlots(this.item);
-    const usedSlots = installedUpgrades.reduce(
-      (sum, u) => sum + Number(u.slotsUsed ?? 1), 0
-    );
-    const isPoweredArmor = this.item.type === "armor" && UpgradeRulesEngine.isPoweredArmor(this.item);
-
-    // Gear Templates
-    const appliedTemplate = this._getAppliedTemplate();
-    const availableTemplates = this._getAvailableTemplates();
-
-    return {
-      item: this.item,
-      system,
-      npc: this.npc,
-      installedUpgrades,
-      availableUpgrades: await this._getAvailableUpgrades(),
-      totalSlots,
-      usedSlots,
-      availableSlots: Math.max(0, totalSlots - usedSlots),
-      isPoweredArmor,
-      strippedFeatures: system.strippedFeatures ?? {},
-      restriction: UpgradeRulesEngine.getEffectiveRestriction(this.item),
-      appliedTemplate,
-      availableTemplates
-    };
+  #getExamineMessage() {
+    const type = this.item?.type ?? "item";
+    return `Examining ${type} upgrade slots and compatible parts...`;
   }
 
   /* ------------------------------------------------------------------ */
   /* UPGRADE DISCOVERY                                                   */
   /* ------------------------------------------------------------------ */
 
-  async _getAvailableUpgrades() {
+  async #getAvailableUpgrades() {
     const upgrades = [];
 
-    // World items
-    const world = game.items.filter(i => i.system?.isUpgrade === true);
-
-    // Compendium items
+    const world = game.items.filter((i) => i.system?.isUpgrade === true);
     const pack = game.packs.get("foundryvtt-swse.equipment");
     const compendium = pack ? await pack.getDocuments() : [];
 
     for (const upgrade of [...world, ...compendium]) {
-      if (!this._isCompatibleUpgrade(upgrade)) continue;
-      upgrades.push(this._formatUpgrade(upgrade));
+      if (!this.#isCompatibleUpgrade(upgrade)) continue;
+      upgrades.push(this.#formatUpgrade(upgrade));
     }
 
     return upgrades;
   }
 
-  _isCompatibleUpgrade(upgrade) {
+  #isCompatibleUpgrade(upgrade) {
     const category = upgrade.system?.upgradeType;
     return category === this.npc.upgradeType;
   }
 
-  _formatUpgrade(upgrade) {
+  #formatUpgrade(upgrade) {
+    const cost = Number(upgrade.system.cost ?? 0);
     return {
       id: upgrade.id,
       name: upgrade.name,
-      cost: Number(upgrade.system.cost ?? 0),
+      cost,
+      calculatedCost: cost,
       slotsRequired: Number(upgrade.system.upgradeSlots ?? 1),
       availability: upgrade.system.availability ?? "Standard",
-      description: upgrade.system.description ?? ""
+      description: upgrade.system.description ?? "",
+      notes: null
     };
   }
 
-  /* ------------------------------------------------------------------ */
-  /* LISTENERS                                                          */
-  /* ------------------------------------------------------------------ */
+  async #findUpgrade(id) {
+    const world = game.items.get(id);
+    if (world) return world;
 
-  activateListeners(html) {
-    super.activateListeners(html);
-
-    html.find(".install-upgrade").on("click", this._onInstallUpgrade.bind(this));
-    html.find(".remove-upgrade").on("click", this._onRemoveUpgrade.bind(this));
-    html.find(".apply-template").on("click", this._onApplyTemplate.bind(this));
-    html.find(".remove-template").on("click", this._onRemoveTemplate.bind(this));
-    html.find(".close-btn").on("click", () => this.close());
+    const pack = game.packs.get("foundryvtt-swse.equipment");
+    return pack ? await pack.getDocument(id) : null;
   }
 
   /* ------------------------------------------------------------------ */
-  /* INSTALL UPGRADE                                                     */
+  /* INSTALL / REMOVE UPGRADES                                           */
   /* ------------------------------------------------------------------ */
 
-  async _onInstallUpgrade(event) {
+  async #onInstallUpgrade(event) {
     event.preventDefault();
 
-    const { upgradeId } = event.currentTarget.dataset;
-    const actor = this.item.actor;
+    const upgradeId = event.currentTarget?.dataset?.upgradeId;
+    const actor = this.item?.actor;
 
     if (!actor) {
       ui.notifications.error("Item must be owned to install upgrades.");
       return;
     }
 
-    const upgrade = await this._findUpgrade(upgradeId);
+    const upgrade = await this.#findUpgrade(upgradeId);
     if (!upgrade) {
       ui.notifications.error("Upgrade not found.");
       return;
     }
 
-    // Validate using rules engine
     const validation = UpgradeRulesEngine.validateUpgradeInstallation(this.item, upgrade, actor);
     if (!validation.valid) {
       ui.notifications.warn(validation.reason);
@@ -184,39 +206,33 @@ export class SWSEUpgradeApp extends FormApplication {
     const slots = validation.slotsNeeded;
     const credits = Number(actor.system.credits ?? 0);
 
-    const newCredits = credits - cost;
-
-    await actor.update(
-      { "system.credits": newCredits },
-      { diff: true }
-    );
+    await ActorEngine.updateActor(actor, { "system.credits": credits - cost }, { diff: true });
 
     const installed = this.item.system.installedUpgrades ?? [];
-    await this.item.update({
-      "system.installedUpgrades": [
-        ...installed,
-        {
-          id: upgrade.id,
-          name: upgrade.name,
-          slotsUsed: slots,
-          cost,
-          restriction: upgrade.system.restriction ?? "common"
-        }
-      ]
-    });
+    const nextInstalled = [
+      ...installed,
+      {
+        id: upgrade.id,
+        name: upgrade.name,
+        slotsUsed: slots,
+        cost,
+        restriction: upgrade.system.restriction ?? "common",
+        description: upgrade.system.description ?? ""
+      }
+    ];
+
+    if (actor.updateOwnedItem && this.item.isEmbedded) await actor.updateOwnedItem(this.item, { "system.installedUpgrades": nextInstalled });
+    else await this.item.update({ "system.installedUpgrades": nextInstalled });
 
     ui.notifications.info("Upgrade installed successfully.");
-    this.render(false);
+    this.render({ force: true });
   }
 
-  /* ------------------------------------------------------------------ */
-  /* REMOVE UPGRADE                                                      */
-  /* ------------------------------------------------------------------ */
-
-  async _onRemoveUpgrade(event) {
+  async #onRemoveUpgrade(event) {
     event.preventDefault();
 
-    const index = Number(event.currentTarget.dataset.index);
+    const actor = this.item?.actor;
+    const index = Number(event.currentTarget?.dataset?.upgradeIndex ?? event.currentTarget?.dataset?.index);
     const installed = this.item.system.installedUpgrades ?? [];
 
     if (!Number.isInteger(index) || !installed[index]) return;
@@ -228,18 +244,24 @@ export class SWSEUpgradeApp extends FormApplication {
 
     if (!confirmed) return;
 
-    installed.splice(index, 1);
-    await this.item.update({ "system.installedUpgrades": installed });
+    const nextInstalled = installed.toSpliced ? installed.toSpliced(index, 1) : (() => {
+      const copy = [...installed];
+      copy.splice(index, 1);
+      return copy;
+    })();
+
+    if (actor?.updateOwnedItem && this.item.isEmbedded) await actor.updateOwnedItem(this.item, { "system.installedUpgrades": nextInstalled });
+    else await this.item.update({ "system.installedUpgrades": nextInstalled });
 
     ui.notifications.info("Upgrade removed.");
-    this.render(false);
+    this.render({ force: true });
   }
 
   /* ------------------------------------------------------------------ */
   /* GEAR TEMPLATES                                                      */
   /* ------------------------------------------------------------------ */
 
-  _getAppliedTemplate() {
+  #getAppliedTemplate() {
     const templateKey = this.item.system.gearTemplate;
     if (!templateKey) return null;
 
@@ -251,83 +273,78 @@ export class SWSEUpgradeApp extends FormApplication {
     return {
       key: templateKey,
       name: template.name,
-      manufacturer: template.manufacturer || 'N/A',
+      manufacturer: template.manufacturer || "N/A",
       description: template.description,
       costAdjustment: cost
     };
   }
 
-  _getAvailableTemplates() {
+  #getAvailableTemplates() {
     const templates = GearTemplatesEngine.getAvailableTemplates(this.item);
 
-    return templates.map(template => {
+    return templates.map((template) => {
       const costPreview = GearTemplatesEngine.calculateTemplateCost(this.item, template);
       const validation = GearTemplatesEngine.canApplyTemplate(this.item, template.key);
 
       return {
         key: template.key,
         name: template.name,
-        manufacturer: template.manufacturer || 'N/A',
+        manufacturer: template.manufacturer || "N/A",
         description: template.description,
         cost: costPreview,
         costPreview,
-        restrictions: this._formatRestrictions(template.restrictions),
+        restrictions: this.#formatRestrictions(template.restrictions),
         incompatible: !validation.valid,
         incompatibilityReason: validation.reason
       };
     });
   }
 
-  _formatRestrictions(restrictions) {
+  #formatRestrictions(restrictions) {
     if (!restrictions || restrictions.length === 0) return null;
 
     const restrictionMap = {
-      'stunOrIon': 'Requires Stun or Ion setting',
-      'stun': 'Requires Stun setting',
-      'advancedMeleeOrSimpleMelee': 'Advanced Melee or Simple Melee only',
-      'preLegacyPowered': 'Pre-Legacy powered weapons only',
-      'blaster': 'Blaster weapons only',
-      'simpleMelee': 'Simple Melee weapons only',
-      'fortBonus': 'Requires Fortitude bonus',
-      'rangedEnergy': 'Ranged Energy weapons only',
-      'meleeSlashingPiercing': 'Melee Slashing/Piercing only',
-      'meleeNonEnergy': 'Melee non-Energy only',
-      'rangedStun': 'Ranged with Stun only'
+      stunOrIon: "Requires Stun or Ion setting",
+      stun: "Requires Stun setting",
+      advancedMeleeOrSimpleMelee: "Advanced Melee or Simple Melee only",
+      preLegacyPowered: "Pre-Legacy powered weapons only",
+      blaster: "Blaster weapons only",
+      simpleMelee: "Simple Melee weapons only",
+      fortBonus: "Requires Fortitude bonus",
+      rangedEnergy: "Ranged Energy weapons only",
+      meleeSlashingPiercing: "Melee Slashing/Piercing only",
+      meleeNonEnergy: "Melee non-Energy only",
+      rangedStun: "Ranged with Stun only"
     };
 
-    return restrictions.map(r => restrictionMap[r] || r).join(', ');
+    return restrictions.map((r) => restrictionMap[r] || r).join(", ");
   }
 
-  async _onApplyTemplate(event) {
+  async #onApplyTemplate(event) {
     event.preventDefault();
 
-    const templateKey = event.currentTarget.dataset.templateKey;
-    const templateName = event.currentTarget.dataset.templateName;
-    const templateCost = Number(event.currentTarget.dataset.templateCost || 0);
+    const templateKey = event.currentTarget?.dataset?.templateKey;
+    const templateName = event.currentTarget?.dataset?.templateName;
+    const templateCost = Number(event.currentTarget?.dataset?.templateCost || 0);
 
     const actor = this.item.actor;
-
-    // Check if item is owned
     if (!actor) {
       ui.notifications.warn("Item must be owned by a character to apply templates.");
       return;
     }
 
-    // Validate template application
     const validation = GearTemplatesEngine.canApplyTemplate(this.item, templateKey);
     if (!validation.valid) {
       ui.notifications.warn(validation.reason);
       return;
     }
 
-    // Check if actor has enough credits
     const credits = Number(actor.system.credits || 0);
     if (credits < templateCost) {
       ui.notifications.warn(`Not enough credits! Need ${templateCost}, have ${credits}.`);
       return;
     }
 
-    // Confirm application
     const confirmed = await Dialog.confirm({
       title: "Apply Gear Template",
       content: `<p>Apply <strong>${templateName}</strong> template to <strong>${this.item.name}</strong>?</p>
@@ -337,16 +354,12 @@ export class SWSEUpgradeApp extends FormApplication {
 
     if (!confirmed) return;
 
-    // Deduct credits
-    await actor.update({ "system.credits": credits - templateCost });
-
-    // Apply template
+    await ActorEngine.updateActor(actor, { "system.credits": credits - templateCost }, { diff: true });
     await GearTemplatesEngine.applyTemplate(this.item, templateKey);
-
-    this.render(false);
+    this.render({ force: true });
   }
 
-  async _onRemoveTemplate(event) {
+  async #onRemoveTemplate(event) {
     event.preventDefault();
 
     const confirmed = await Dialog.confirm({
@@ -358,18 +371,6 @@ export class SWSEUpgradeApp extends FormApplication {
     if (!confirmed) return;
 
     await GearTemplatesEngine.removeTemplate(this.item);
-    this.render(false);
-  }
-
-  /* ------------------------------------------------------------------ */
-  /* UTIL                                                               */
-  /* ------------------------------------------------------------------ */
-
-  async _findUpgrade(id) {
-    const world = game.items.get(id);
-    if (world) return world;
-
-    const pack = game.packs.get("foundryvtt-swse.equipment");
-    return pack ? await pack.getDocument(id) : null;
+    this.render({ force: true });
   }
 }

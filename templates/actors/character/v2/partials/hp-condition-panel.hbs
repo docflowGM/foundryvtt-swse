@@ -1,0 +1,42 @@
+<div class="holo-panel">
+  <div class="section-bar">
+    <h3 class="section-header">Hit Points & Condition</h3>
+    <label class="inline-flag">
+      <input type="checkbox" class="swse-v2-condition-persistent" {{#if derived.damage.conditionPersistent}}checked{{/if}} />
+      Persistent
+    </label>
+  </div>
+
+  <div class="swse-v2-hp-row">
+    <div class="swse-v2-hp-block">
+      <div class="label">HP</div>
+      <div class="value">{{derived.hp.value}} / {{derived.hp.max}}</div>
+      {{#if derived.hp.temp}}
+        <div class="muted">Temp: {{derived.hp.temp}}</div>
+      {{/if}}
+    </div>
+
+    <div class="swse-v2-condition-block">
+      <div class="condition-row">
+        <button type="button" class="swse-v2-condition-improve">Improve</button>
+        <div class="condition-steps">
+          <button type="button" class="swse-v2-condition-step" data-step="0">Normal</button>
+          <button type="button" class="swse-v2-condition-step" data-step="1">-1</button>
+          <button type="button" class="swse-v2-condition-step" data-step="2">-2</button>
+          <button type="button" class="swse-v2-condition-step" data-step="3">-5</button>
+          <button type="button" class="swse-v2-condition-step" data-step="4">-10</button>
+          <button type="button" class="swse-v2-condition-step" data-step="5">Helpless</button>
+        </div>
+        <button type="button" class="swse-v2-condition-worsen">Worsen</button>
+
+        <div class="condition-readout">
+          <span class="label">Penalty:</span>
+          <span class="value">{{derived.damage.conditionPenalty}}</span>
+          {{#if derived.damage.conditionHelpless}}
+            <span class="badge">Helpless</span>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

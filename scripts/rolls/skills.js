@@ -26,7 +26,7 @@ export async function rollSkill(actor, skillKey) {
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({actor}),
     flavor: `${skill.label || skillKey} Check (${utils.string.formatModifier(mod)})`
-  });
+  } , { create: true });
   
   return roll;
 }

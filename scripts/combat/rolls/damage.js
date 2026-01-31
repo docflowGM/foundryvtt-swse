@@ -271,7 +271,7 @@ export async function rollDamage(actor, weapon, context = {}) {
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({ actor }),
     flavor
-  });
+  } , { create: true });
 
   return roll;
 }
@@ -331,7 +331,7 @@ export async function rollDamageGeneric(actor, formula = "1d6", label = "Damage"
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({ actor }),
     flavor: `${label} (${formula})`
-  });
+  } , { create: true });
 
   return roll;
 }

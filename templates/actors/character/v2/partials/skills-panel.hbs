@@ -1,0 +1,25 @@
+<div class="holo-panel">
+  <div class="section-bar">
+    <h3 class="section-header">Skills</h3>
+    <div class="muted">Read-only v2 view (derived)</div>
+  </div>
+
+  <div class="swse-v2-skills">
+    <div class="swse-v2-skill-header">
+      <span class="name">Skill</span>
+      <span class="meta">Ability</span>
+      <span class="meta">T</span>
+      <span class="meta">F</span>
+      <span class="total">Total</span>
+    </div>
+    {{#each derived.skills.list}}
+      <div class="swse-v2-skill-row">
+        <span class="name">{{this.label}}</span>
+        <span class="meta">{{this.ability}}</span>
+        <span class="meta">{{#if this.trained}}✔{{/if}}</span>
+        <span class="meta">{{#if this.focused}}✔{{/if}}</span>
+        <span class="total">{{this.total}}</span>
+      </div>
+    {{/each}}
+  </div>
+</div>

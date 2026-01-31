@@ -85,7 +85,7 @@ export class SWSECombatDocument extends Combat {
         flavor: game.i18n.format("COMBAT.RollsInitiative", { name: combatant.name }),
         flags: { "core.initiativeRoll": true },
         ...messageOptions
-      }, { create: false });
+      }, { create: true,  create: false });
 
       if (roll.dice.length) chatData.sound = CONFIG.sounds.dice;
       messages.push(chatData);

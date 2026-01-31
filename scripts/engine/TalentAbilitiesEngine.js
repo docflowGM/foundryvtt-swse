@@ -683,7 +683,7 @@ export class TalentAbilitiesEngine {
             speaker: ChatMessage.getSpeaker({ actor }),
             content,
             rolls: [roll],
-            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+            style: CONST.CHAT_MESSAGE_STYLES.OTHER
         });
 
         // Decrement uses if limited
@@ -1316,7 +1316,7 @@ export class TalentAbilitiesEngine {
             speaker: ChatMessage.getSpeaker({ actor: defender }),
             content,
             rolls: [roll],
-            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+            style: CONST.CHAT_MESSAGE_STYLES.OTHER
         });
 
         return { success, roll, canRedirect, reaction };

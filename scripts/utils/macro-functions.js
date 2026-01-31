@@ -15,7 +15,7 @@ export function registerMacroFunctions() {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({actor}),
       flavor: `${skillKey} Check`
-    });
+    } , { create: true });
   };
   
   SWSELogger.log("SWSE | Macro functions registered");

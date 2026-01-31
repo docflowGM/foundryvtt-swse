@@ -19,6 +19,8 @@ async function loadJSON(url) {
 import { TalentTreeGraph } from "./TalentTreeGraph.js";
 import { PrerequisiteEnricher } from "../utils/PrerequisiteEnricher.js";
 import { SWSELogger } from "../../utils/logger.js";
+import { TalentTreeDB } from "../../data/talent-tree-db.js";
+import { normalizeTalentTreeId } from "../../data/talent-tree-normalizer.js";
 
 export class TalentTreeRegistry {
   static trees = new Map(); // treeName → TalentTreeGraph
@@ -29,72 +31,143 @@ export class TalentTreeRegistry {
   static async build() {
     SWSELogger.log(`[TALENT-TREE-REGISTRY] build: START - Building talent tree registry`);
 
-    const pack = game.packs.get("foundryvtt-swse.talents");
-    if (!pack) {
+    const talentsPack = game.packs.get("foundryvtt-swse.talents");
+    const treesPack = game.packs.get("foundryvtt-swse.talent_trees");
+
+    if (!talentsPack) {
       SWSELogger.error(`[TALENT-TREE-REGISTRY] ERROR: Talents compendium pack not found`);
       this.trees = new Map();
       return;
     }
-    SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Talents pack located`);
 
-    const docs = await pack.getDocuments();
-    SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Retrieved ${docs.length} talent documents from compendium`);
+    const talentDocs = await talentsPack.getDocuments();
+    const talentById = new Map(talentDocs.map(d => [d.id, d]));
+
+    const normalizeName = (s) => String(s || '')
+      .toLowerCase()
+      .replace(/['’`]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const extractTalentNamesFromPrereq = (pr) => {
+      const names = [];
+      if (!pr) return names;
+      if (Array.isArray(pr)) {
+        for (const p of pr) names.push(...extractTalentNamesFromPrereq(p));
+        return names;
+      }
+      if (typeof pr !== 'object') return names;
+
+      if (pr.type === 'talent' && pr.name) {
+        names.push(pr.name);
+        return names;
+      }
+
+      if (pr.type === 'or' && Array.isArray(pr.conditions)) {
+        for (const c of pr.conditions) names.push(...extractTalentNamesFromPrereq(c));
+        return names;
+      }
+
+      // Unknown / non-talent prereqs ignored for graph edges
+      return names;
+    };
+
+
+    // Prefer canonical talent_trees compendium (drift-safe, SSOT)
+    let treeDocs = [];
+    if (treesPack) {
+      treeDocs = await treesPack.getDocuments();
+      SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Retrieved ${treeDocs.length} talent tree documents from compendium`);
+    } else {
+      SWSELogger.warn(`[TALENT-TREE-REGISTRY] build: Talent trees compendium not found; falling back to talent document grouping`);
+    }
+
     this.trees = new Map();
 
-    // Group by tree name
+    // Helper: add tree from explicit talentIds
+    const addTreeFromIds = async (treeName, talentIds) => {
+      const graph = new TalentTreeGraph(treeName);
+
+      for (const tid of (talentIds || [])) {
+        const doc = talentById.get(tid);
+        if (!doc) {
+          SWSELogger.warn(`[TALENT-TREE-REGISTRY] Tree "${treeName}" references missing talent id: ${tid}`);
+          continue;
+        }
+        const node = graph.addTalent(doc);
+        PrerequisiteEnricher.enrich(node);
+      }
+
+      // Link edges for all nodes (talent prerequisites only)
+      const idByName = new Map();
+      for (const n of graph.nodes.values()) idByName.set(normalizeName(n.name), n.id);
+
+      for (const n of graph.nodes.values()) {
+        const prereqNames = extractTalentNamesFromPrereq(n.prereq);
+        for (const prereqName of prereqNames) {
+          const reqId = idByName.get(normalizeName(prereqName));
+          if (reqId) graph.linkRequirement(n.id, reqId);
+        }
+      }
+this.trees.set(treeName, graph);
+      return graph;
+    };
+
+    // Build from tree docs when available
+    if (treeDocs.length > 0) {
+      for (const td of treeDocs) {
+        const treeName = td.name;
+        const talentIds = td.system?.talentIds || [];
+        await addTreeFromIds(treeName, talentIds);
+      }
+
+      SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Built ${this.trees.size} graphs from canonical talent trees`);
+      return;
+    }
+
+    // Fallback: legacy grouping by talent.system.talent_tree (non-authoritative)
     const grouped = {};
-    for (const d of docs) {
-      const tree = d.system?.talent_tree ?? "Unknown";
+    const unassignedTalents = [];
+    for (const d of talentDocs) {
+      const sys = d.system || {};
+      let rawTree = sys.talent_tree || sys.tree || sys.treeId || null;
+      let tree = rawTree ? String(rawTree).trim().replace(/\s+/g, ' ') : null;
+
+      if (!tree) {
+        unassignedTalents.push(d.name);
+        tree = "Unassigned";
+      }
+
       if (!grouped[tree]) grouped[tree] = [];
       grouped[tree].push(d);
     }
-    SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Grouped talents into ${Object.keys(grouped).length} unique trees:`, Object.keys(grouped));
 
-    // Build graph per tree
+    if (unassignedTalents.length > 0) {
+      SWSELogger.warn(`[TALENT-TREE-REGISTRY] ${unassignedTalents.length} talents have no tree assigned. First 5: ${unassignedTalents.slice(0, 5).join(', ')}`);
+    }
+
     for (const treeName of Object.keys(grouped)) {
-      SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Building graph for tree "${treeName}" with ${grouped[treeName].length} talents`);
       const graph = new TalentTreeGraph(treeName);
-
-      // 1. Add nodes
-      let nodeCount = 0;
       for (const doc of grouped[treeName]) {
         const node = graph.addTalent(doc);
         PrerequisiteEnricher.enrich(node);
-        nodeCount++;
       }
-      SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Added ${nodeCount} nodes to tree "${treeName}"`);
+      // Link edges for all nodes (talent prerequisites only)
+      const idByName = new Map();
+      for (const n of graph.nodes.values()) idByName.set(normalizeName(n.name), n.id);
 
-      // 2. Link talent → required talent edges
-      let linkedCount = 0;
-      for (const node of graph.nodes.values()) {
-        for (const req of node.prereq) {
-          if (req.type === "talent") {
-            const targetName = req.name.toLowerCase();
-            const requiredNode = [...graph.nodes.values()]
-              .find(n => n.name.toLowerCase() === targetName);
-            if (requiredNode) {
-              graph.linkRequirement(node.id, requiredNode.id);
-              linkedCount++;
-              SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Linked prerequisite - "${node.name}" requires "${requiredNode.name}"`);
-            } else {
-              SWSELogger.warn(`[TALENT-TREE-REGISTRY] build: WARNING - Prerequisite talent not found: "${req.name}" required by "${node.name}"`);
-            }
-          }
+      for (const n of graph.nodes.values()) {
+        const prereqNames = extractTalentNamesFromPrereq(n.prereq);
+        for (const prereqName of prereqNames) {
+          const reqId = idByName.get(normalizeName(prereqName));
+          if (reqId) graph.linkRequirement(n.id, reqId);
         }
       }
-      SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Created ${linkedCount} talent prerequisite links for tree "${treeName}"`);
-
       this.trees.set(treeName, graph);
     }
 
-    SWSELogger.log(
-      `[TALENT-TREE-REGISTRY] build: COMPLETE - Loaded ${this.trees.size} talent trees from compendium`
-    );
-  }
+    SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Built ${this.trees.size} graphs via legacy talent grouping`);
 
-  // ------------------------------------------------------------
-  // Accessors
-  // ------------------------------------------------------------
 
   static getTreeNames() {
     const names = [...this.trees.keys()];

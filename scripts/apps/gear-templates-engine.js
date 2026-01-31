@@ -3,6 +3,12 @@
  * Handles template application, validation, and cost calculation
  */
 
+
+async function _updateOwnedItemOrDocument(item, updates) {
+  const actor = item?.actor;
+  if (actor?.updateOwnedItem) return actor.updateOwnedItem(item, updates);
+  return item.update(updates);
+}
 import TEMPLATES from '../../data/gear-templates.json' with { type: 'json' };
 
 export class GearTemplatesEngine {
@@ -286,7 +292,7 @@ export class GearTemplatesEngine {
       updates['system.availability'] = 'Rare';
     }
 
-    await item.update(updates);
+    await _updateOwnedItemOrDocument(item, updates);
 
     ui.notifications.info(`${template.name} template applied to ${item.name}!`);
   }
@@ -301,7 +307,7 @@ export class GearTemplatesEngine {
       'system.templateCost': 0
     };
 
-    await item.update(updates);
+    await _updateOwnedItemOrDocument(item, updates);
     ui.notifications.info(`Template removed from ${item.name}.`);
   }
 }

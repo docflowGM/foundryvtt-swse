@@ -1,4 +1,5 @@
 import { SWSELogger } from '../../utils/logger.js';
+import { parseVehicleSpeedText, formatSquares } from '../../utils/movement-normalizer.js';
 
 /**
  * Vehicle-specific functionality
@@ -42,6 +43,18 @@ export class SWSEVehicleHandler {
       racial: attr?.racial ?? 0,
       temp: attr?.temp ?? 0
     });
+
+    // Normalize SWSE speed strings into flags + schema-safe strings
+    const speedInfo = parseVehicleSpeedText(template.speed ?? template.speedText ?? "");
+
+    const speedString = formatSquares(
+      speedInfo.character?.squares ?? template.speed,
+      typeof template.speed === "string" ? template.speed : "12 squares"
+    );
+
+    const starshipSpeedString = template.starshipSpeed
+      ? (typeof template.starshipSpeed === "string" ? template.starshipSpeed : formatSquares(template.starshipSpeed, ""))
+      : (speedInfo.starship?.squares != null ? formatSquares(speedInfo.starship.squares, "") : null);
 
     // Build update object - the template now uses the migrated schema
     const updates = {
@@ -94,9 +107,10 @@ export class SWSEVehicleHandler {
       'system.crewQuality': template.crewQuality || 'normal',
 
       // Movement
-      'system.speed': template.speed || '12 squares',
-      'system.starshipSpeed': template.starshipSpeed || null,
-      'system.maxVelocity': template.maxVelocity || '800 km/h',
+      // VehicleDataModel uses StringField for speed fields.
+      'system.speed': speedString,
+      ...(starshipSpeedString ? { 'system.starshipSpeed': starshipSpeedString } : {}),
+      'system.maxVelocity': speedInfo.maxVelocity || template.maxVelocity || '800 km/h',
       'system.maneuver': template.maneuver || '+0',
       'system.initiative': template.initiative || '+0',
 
@@ -156,7 +170,16 @@ export class SWSEVehicleHandler {
 
       // Optional vehicle information
       'system.payload': template.payload || '',
-      'system.availability': template.availability || ''
+      'system.availability': template.availability || '',
+
+      // Store parsed movement so sheets/builders can present type + scale without schema churn
+      'flags.swse.movement': {
+        raw: speedInfo.raw,
+        maxVelocity: speedInfo.maxVelocity,
+        modes: speedInfo.modes,
+        character: speedInfo.character,
+        starship: speedInfo.starship
+      }
     };
 
     // Validate ActorEngine exists

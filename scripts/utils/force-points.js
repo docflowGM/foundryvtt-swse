@@ -69,7 +69,7 @@ export class ForcePointsUtil {
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({actor}),
       content: messageContent,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      style: CONST.CHAT_MESSAGE_STYLES.OTHER,
       sound: CONFIG.sounds.dice
     });
 

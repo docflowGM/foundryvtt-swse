@@ -41,7 +41,7 @@ export class JumpUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Long Jump</strong> - Horizontal Leap<br>Distance: ${distance} meter(s)<br>Running Start: ${hasRunningStart ? 'Yes' : 'No (DC doubled)'}<br>Base DC: ${distance * 3}<br>Final DC: ${dc}<br>Jump Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `JumpUses | ${actor.name} long jumped ${distance}m: ` +
@@ -95,7 +95,7 @@ export class JumpUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>High Jump</strong> - Vertical Leap<br>Height: ${distance} meter(s)<br>Running Start: ${hasRunningStart ? 'Yes' : 'No (DC doubled)'}<br>Pole Vault: ${hasPole ? 'Yes (DC halved)' : 'No'}<br>Base DC: ${distance * 12}<br>Final DC: ${dc}<br>Jump Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `JumpUses | ${actor.name} high jumped ${distance}m: ` +
@@ -149,7 +149,7 @@ export class JumpUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Jump Down</strong> - Reduce Falling Damage<br>Fall Distance: ${fallDistance} meters<br>DC: ${dc}<br>Jump Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Reduced Distance: ${reducedDistance} meters<br>Final Distance (for damage): ${finalDistance} meters${success && reducedDistance === fallDistance ? '<br>Lands on feet!' : ''}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `JumpUses | ${actor.name} jumped down ${fallDistance}m: ` +
@@ -227,7 +227,7 @@ export class KnowledgeUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Common Knowledge</strong> - ${this._formatField(field)}<br>Question: ${question || 'Basic fact'}<br>DC: ${dc}<br>Knowledge Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `KnowledgeUses | ${actor.name} answered common knowledge (${field}): ` +
@@ -285,7 +285,7 @@ export class KnowledgeUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Expert Knowledge</strong> - ${this._formatField(field)}<br>Question Difficulty: ${questionDifficulty}<br>DC: ${dc}<br>Knowledge Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Swift Action`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `KnowledgeUses | ${actor.name} used expert knowledge (${field}): ` +
@@ -336,7 +336,7 @@ export class KnowledgeUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Anticipate Enemy Strategy</strong> - Tactics<br>Reference: Clone Wars Campaign Guide<br>Target: ${target.name}<br>DC: ${dc}<br>Knowledge (Tactics) Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Move Action`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `KnowledgeUses | ${actor.name} anticipated ${target.name}'s strategy: ` +
@@ -475,7 +475,7 @@ export class MechanicsUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Disable Device</strong> - ${complexity} ${deviceType}<br>Base DC: ${dcByComplexity[complexity.toLowerCase()]}<br>${leaveNoTrace ? 'No Trace Modifier: +5<br>' : ''}Final DC: ${dc}<br>Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Required: Security Kit${springsOrFails ? '<br><strong style="color:red">TRAP SPRUNG/DEVICE FAILS!</strong>' : ''}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `MechanicsUses | ${actor.name} disabled device (${complexity}): ` +
@@ -534,7 +534,7 @@ export class MechanicsUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Handle Explosives</strong> - ${actionName}<br>DC: ${dc}<br>Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action${failureMargin >= 10 && action.toLowerCase() === 'connect' ? '<br><strong style="color:red">EXPLOSION!</strong>' : ''}${failureMargin >= 5 && action.toLowerCase() === 'disarm' ? '<br><strong style="color:red">DETONATES WHILE ADJACENT!</strong>' : ''}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `MechanicsUses | ${actor.name} ${action}ed explosive: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -581,7 +581,7 @@ export class MechanicsUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Jury-Rig</strong> - Temporary Repairs<br>Base DC: 25<br>${hasToolKit ? 'Tool Kit Bonus: -5<br>' : ''}Final DC: ${dc}<br>Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action${success ? `<br>HP Restored: ${hpRestored}<br>Condition: +2 steps` : ''}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `MechanicsUses | ${actor.name} jury-rigged device: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -641,7 +641,7 @@ export class MechanicsUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Repair</strong> - ${targetType}<br>Time Required: 1 hour<br>DC: ${dc}<br>${penalty !== 0 ? `Penalty: ${penalty}<br>` : ''}Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Required: Tool Kit${success ? `<br>HP Restored: ${hpRestored}` : ''}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `MechanicsUses | ${actor.name} repaired ${targetType}: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -698,7 +698,7 @@ export class PerceptionUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Avoid Surprise</strong> - Initiative<br>DC: ${dc}<br>Perception Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Reaction`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PerceptionUses | ${actor.name} avoided surprise: ${checkResult} vs DC ${dc} = ${success ? 'Not surprised' : 'Surprised'}`
@@ -744,7 +744,7 @@ export class PerceptionUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Eavesdrop</strong> - Listen to Conversation<br>Noise Level: ${noiseLevel}<br>DC: ${dc}<br>Perception Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Standard Action`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PerceptionUses | ${actor.name} eavesdropped: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -798,7 +798,7 @@ export class PerceptionUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Notice Targets</strong> - Detect Presence<br>Target Size: ${targetSize}<br>Distance: ${distance} squares<br>${hasConcealment ? 'Concealment: -5<br>' : ''}DC: ${dc}<br>Perception Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PerceptionUses | ${actor.name} noticed target: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -840,7 +840,7 @@ export class PerceptionUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Search</strong> - ${areaSize} area<br>Search Type: ${searchType}<br>DC: ${dc}<br>${penalty !== 0 ? `Penalty: ${penalty}<br>` : ''}Perception Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PerceptionUses | ${actor.name} searched ${areaSize}: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -876,7 +876,7 @@ export class PerceptionUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Sense Deception</strong> - Detect Lies<br>Deception Result: ${deceptionCheckResult}<br>Perception Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Reaction`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PerceptionUses | ${actor.name} sensed deception: ${checkResult} vs ${deceptionCheckResult} = ${success ? 'Success' : 'Failure'}`
@@ -910,7 +910,7 @@ export class PerceptionUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Sense Influence</strong> - Detect Mind Control<br>DC: ${dc}<br>Perception Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PerceptionUses | ${actor.name} sensed influence: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -953,7 +953,7 @@ export class PerceptionUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Long-Range Spotter</strong> - Sight Assist<br>Reference: Clone Wars Campaign Guide<br>Distance: ${allyDistance} squares<br>DC: ${dc}<br>Perception Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PerceptionUses | ${actor.name} used long-range spotter: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -1013,7 +1013,7 @@ export class PersuasionUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Change Attitude</strong><br>Target: ${target.name}<br>Current Attitude: ${currentAttitude}<br>Attitude Modifier: ${modifier >= 0 ? '+' : ''}${modifier}<br>DC: ${dc}<br>Persuasion Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PersuasionUses | ${actor.name} changed ${target.name}'s attitude: ` +
@@ -1063,7 +1063,7 @@ export class PersuasionUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Haggle</strong> - Negotiate Price<br>Transaction Type: ${transactionType}<br>Original Amount: ${amount} credits<br>Target Attitude: ${targetAttitude}<br>DC: ${dc}<br>Persuasion Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: ${transactionType === 'information' ? 'Swift Action' : 'Full-Round Action'}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PersuasionUses | ${actor.name} haggled: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -1112,7 +1112,7 @@ export class PersuasionUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Intimidate</strong><br>Target: ${target.name}<br>Will Defense: ${dc}<br>${situationMod !== 0 ? `Situation Modifier: ${situationMod >= 0 ? '+' : ''}${situationMod}<br>` : ''}Persuasion Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PersuasionUses | ${actor.name} intimidated ${target.name}: ` +
@@ -1165,7 +1165,7 @@ export class PersuasionUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Bribery</strong> - Corrupt Official<br>Reference: Force Unleashed Campaign Guide<br>Request Type: ${requestType}<br>Bribe Amount: ${bribeAmount} credits<br>${personalRisk ? 'Personal Risk: +15 to DC<br>' : ''}DC: ${dc}<br>Persuasion Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PersuasionUses | ${actor.name} bribed official: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -1211,7 +1211,7 @@ export class PersuasionUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Improvised Communication</strong><br>Reference: Force Unleashed Campaign Guide<br>Target: ${target.name}<br>Base DC: 20<br>Target INT Modifier: ${targetIntModifier >= 0 ? '+' : ''}${targetIntModifier}<br>${hasPreAgreedSignals ? 'Pre-Agreed Signals: -5<br>' : ''}Final DC: ${dc}<br>Persuasion Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Move Action`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PersuasionUses | ${actor.name} communicated with ${target.name}: ` +
@@ -1272,7 +1272,7 @@ export class PilotUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Engage the Enemy</strong> - Vehicle Initiative<br>Reference: Trained Only<br>Vehicle Size Modifier: ${vehicleSizeModifier}<br>Pilot Check: ${initiativeResult}<br>Action: Replaces Initiative check`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PilotUses | ${actor.name} engaged enemy: Initiative result ${initiativeResult}`
@@ -1324,7 +1324,7 @@ export class PilotUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Increase Vehicle Speed</strong> - Boost Speed<br>Vehicle Size: ${vehicleSize}<br>DC: ${dc}<br>Pilot Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Swift Action${success ? `<br>Speed Increase: +${speedBonus} squares` : '<br>Speed does not increase'}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PilotUses | ${actor.name} increased vehicle speed: ` +
@@ -1378,7 +1378,7 @@ export class PilotUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Fly Casual</strong> - Deceptive Piloting<br>Reference: Scum and Villainy - Trained Only<br>Deception DC: ${deceptionDC}<br>Pilot Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PilotUses | ${actor.name} flew casual: ${checkResult} vs DC ${deceptionDC} = ${success ? 'Success' : 'Failure'}`
@@ -1428,7 +1428,7 @@ export class PilotUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Starship Stealth</strong> - Hide Starship<br>Reference: Starships of the Galaxy<br>Vehicle Size: ${vehicleSize}<br>Size Modifier: ${sizeModifier}<br>DEX Modifier: ${dexModifier}<br>${!isTrained ? 'Untrained Pilot: -5<br>' : ''}Stealth Check Result: ${checkResult}<br>DC for Use Computer (sensors): ${checkResult}<br>DC for Perception: ${checkResult}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `PilotUses | ${actor.name} performed starship stealth: Result ${checkResult}`
@@ -1492,7 +1492,7 @@ export class RideUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Guide with Knees</strong> - Free Up Hands<br>Mount: ${mountName}<br>DC: ${dc}<br>Ride Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Swift Action`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `RideUses | ${actor.name} guided mount with knees: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -1532,7 +1532,7 @@ export class RideUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Stay in Saddle</strong> - Maintain Control<br>Circumstance: ${circumstance}<br>DC: ${dc}<br>Ride Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Reaction`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `RideUses | ${actor.name} stayed in saddle: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -1572,7 +1572,7 @@ export class RideUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Use Mount as Cover</strong> - Seek Protection<br>Mount: ${mountName}<br>DC: ${dc}<br>Ride Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Reaction`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `RideUses | ${actor.name} used mount as cover: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -1620,7 +1620,7 @@ export class RideUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Soft Fall</strong> - Avoid Falling Damage<br>Mount: ${mountName}<br>DC: ${dc}<br>Ride Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Reaction${!success ? `<br>Damage Taken: ${damageTotal} (1d6)` : ''}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `RideUses | ${actor.name} attempted soft fall: ${checkResult} vs DC ${dc} = ${success ? 'Success' : `Failure (${damageTotal}dmg)`}`
@@ -1662,7 +1662,7 @@ export class RideUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Leap</strong> - Jump Obstacle<br>Mount: ${mountName}<br>Obstacle: ${obstacle}<br>Ride/Jump Bonus: ${effectiveBonus}<br>DC: ${dc}<br>Ride Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `RideUses | ${actor.name} leaped obstacle: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -1710,7 +1710,7 @@ export class RideUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Control Mount in Battle</strong> - Combat Control<br>Mount: ${mountName}<br>DC: ${dc}<br>Ride Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Move Action`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `RideUses | ${actor.name} controlled mount in battle: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -1752,7 +1752,7 @@ export class RideUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Fast ${action.charAt(0).toUpperCase() + action.slice(1)}</strong> - Quick Action<br>DC: ${dc}<br>${armorCheckPenalty !== 0 ? `Armor Penalty: ${armorCheckPenalty}<br>` : ''}Ride Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: ${success ? 'Swift Action' : 'Move Action'}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `RideUses | ${actor.name} ${action}ed quickly: ${checkResult} vs DC ${dc} = ${success ? 'Swift Action' : 'Move Action'}`
@@ -1815,7 +1815,7 @@ export class SurvivalUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Basic Survival</strong> - Hunt and Forage<br>DC: ${dc}<br>Survival Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Duration: 24 hours${success ? `<br>Supports: ${supportedPeople} people` : ''}<br>Frequency: Once per day`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `SurvivalUses | ${actor.name} used basic survival: ` +
@@ -1859,7 +1859,7 @@ export class SurvivalUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Endure Extreme Temperatures</strong><br>Temperature Type: ${temperatureType}<br>DC: ${dc}<br>Survival Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Duration: 24 hours${hasFieldKit ? '' : '<br><strong style="color:orange">No Field Kit</strong>'}<br>Frequency: Once per day`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `SurvivalUses | ${actor.name} endured extreme temperatures: ` +
@@ -1905,7 +1905,7 @@ export class SurvivalUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Know Direction</strong> - Find North<br>DC: ${dc}<br>Survival Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `SurvivalUses | ${actor.name} determined direction: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -1959,7 +1959,7 @@ export class SurvivalUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Track</strong> - Follow Trail<br>Reference: Trained Only<br>Surface: ${surface}<br>Base DC: ${baseDC}<br>Survival Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Movement: Half speed while tracking`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `SurvivalUses | ${actor.name} tracked creature: ${checkResult} vs DC ${baseDC} = ${success ? 'Success' : 'Failure'}`
@@ -2005,7 +2005,7 @@ export class SurvivalUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Create Defensive Position</strong> - Fortified Camp<br>Reference: Clone Wars Campaign Guide<br>Area: ${areaSize} squares<br>Preparation Time: 10 minutes<br>DC: ${dc}<br>Survival Check: ${checkResult}${success ? ' ✓' : ' ✗'}${success ? '<br>Benefits: No Perception penalty, -5 to enemy Stealth, +2 Reflex Defense' : ''}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `SurvivalUses | ${actor.name} created defensive position: ` +
@@ -2057,7 +2057,7 @@ export class SurvivalUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Extended Survival</strong> - Long-Term Shelter<br>Reference: Force Unleashed Campaign Guide<br>Duration: For extended wilderness periods (48+ hours)<br>DC: ${dc}<br>Survival Check: ${checkResult}${success ? ' ✓' : ' ✗'}${success ? '<br>Effect: Reduces Basic Survival DC by 5' : ''}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `SurvivalUses | ${actor.name} established extended survival: ` +
@@ -2126,7 +2126,7 @@ export class SwimUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Swim</strong> - Move Through Water<br>Water Condition: ${waterCondition}<br>DC: ${dc}<br>Swim Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: ${actionType === 'full-round' ? 'Full-Round Action (1/2 speed)' : 'Move Action (1/4 speed)'}${!success && checkResult < dc - 5 ? '<br><strong style="color:red">GOING UNDERWATER - Hold Breath!</strong>' : ''}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `SwimUses | ${actor.name} swam in ${waterCondition} water: ` +
@@ -2171,7 +2171,7 @@ export class SwimUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Hold Breath</strong> - Underwater<br>Rounds Held: ${roundsHeld}<br>CON Modifier: ${constitutionModifier}<br>DC: ${dc}<br>Endurance Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `SwimUses | ${actor.name} held breath: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -2233,7 +2233,7 @@ export class TreatInjuryUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>First Aid</strong> - Emergency Treatment<br>Target: ${target.name}<br>DC: ${dc}<br>${hasMedpac ? 'Medpac Bonus: +2<br>' : ''}Treat Injury Check: ${checkResult}${success ? ' ✓' : ' ✗'}${success ? `<br>HP Restored: ${hpRestored}` : ''}<br>Action: Full-Round Action<br>Cooldown: 24 hours per target`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `TreatInjuryUses | ${actor.name} gave first aid to ${target.name}: ` +
@@ -2317,7 +2317,7 @@ export class TreatInjuryUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Perform Surgery</strong> - ${surgeryType === 'heal' ? 'Heal Damage' : 'Remove Condition/Install Prosthesis'}<br>Time: 1 hour uninterrupted<br>DC: ${dc}<br>Treat Injury Check: ${checkResult}${success ? ' ✓' : ' ✗'}${success ? `<br>HP Healed: ${hpHealed}` : `<br><strong style="color:red">Target takes Damage Threshold damage!</strong>`}<br>Required: Surgery Kit`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `TreatInjuryUses | ${actor.name} performed surgery: ` +
@@ -2367,7 +2367,7 @@ export class TreatInjuryUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Revivify</strong> - Bring Back From Death<br>Time Limit: Within 1 round of death<br>DC: ${dc}<br>Treat Injury Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Required: Medical Kit`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `TreatInjuryUses | ${actor.name} revivified creature: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -2507,7 +2507,7 @@ export class UseComputerUses {
       await roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor: actor }),
         flavor: `<strong>Access Information</strong> - Retrieve Data<br>Information Type: ${informationType}<br>Computer Attitude: ${computerAttitude}<br>Base DC: ${baseDC}<br>Attitude Modifier: ${typeof modifier === 'number' ? (modifier >= 0 ? '+' : '') + modifier : 'Auto-access'}<br>Time Required: ${timeByType[informationType.toLowerCase()]}<br>Use Computer Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-      });
+      } , { create: true });
     }
 
     SWSELogger.log(
@@ -2564,7 +2564,7 @@ export class UseComputerUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Improve Access</strong> - Adjust Attitude<br>Current Attitude: ${computerAttitude}<br>Target Attitude: ${targetAttitude}<br>Base Will Defense: ${baseWillDefense}<br>Attitude Modifier: ${modifier >= 0 ? '+' : ''}${modifier}<br>DC: ${dc}<br>Use Computer Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `UseComputerUses | ${actor.name} improved computer access: ` +
@@ -2649,7 +2649,7 @@ export class UseComputerUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Backtrail</strong> - Trace Previous Access<br>Reference: Scum and Villainy - Trained Only<br>Computer Attitude: ${computerAttitude}<br>Base DC: ${baseDC}<br>Attitude Modifier: ${modifier >= 0 ? '+' : ''}${modifier}<br>Final DC: ${dc}<br>Use Computer Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `UseComputerUses | ${actor.name} backtrailed computer: ` +
@@ -2713,7 +2713,7 @@ export class UseTheForceUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Force Trance</strong> - Meditative Healing<br>DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Effect: Regain HP equal to Character Level per hour<br>Duration: 4 hours for full rest`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `UseTheForceUses | ${actor.name} entered force trance: ` +
@@ -2769,7 +2769,7 @@ export class UseTheForceUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Move Light Object</strong> - Telekinesis${asProjectile ? ' (Projectile)' : ''}<br>Object Weight: ${weight} kg<br>Distance: ${distance} squares<br>DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: ${asProjectile ? 'Standard Action' : 'Move Action'}${success && asProjectile ? `<br>Damage: ${damageTotal}d6 bludgeoning` : ''}<br>Max Weight: 5 kg`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `UseTheForceUses | ${actor.name} moved light object: ` +
@@ -2811,7 +2811,7 @@ export class UseTheForceUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Search Your Feelings</strong> - Sense Consequences<br>DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Window: Next 10 minutes<br>Effect: Detects immediate consequences only`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `UseTheForceUses | ${actor.name} searched feelings: ` +
@@ -2874,7 +2874,7 @@ export class UseTheForceUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Sense Force</strong> - Active Search<br>Search Type: ${searchType}<br>Search Range: ${searchRange} km<br>DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `UseTheForceUses | ${actor.name} sensed Force: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`
@@ -2916,7 +2916,7 @@ export class UseTheForceUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Sense Surroundings</strong> - Ignore Cover/Concealment<br>DC: ${dc}${againstYuuzhanVong ? ' (vs Yuuzhan Vong)' : ''}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Swift Action<br>Duration: Until start of next turn`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `UseTheForceUses | ${actor.name} sensed surroundings: ` +
@@ -2966,7 +2966,7 @@ export class UseTheForceUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Telepathy</strong> - Mental Communication<br>Target: ${target.name}<br>Distance: ${distance}<br>Base DC: ${dcByDistance[distance.toLowerCase()]}<br>Target Will Defense: ${targetWillDefense}<br>Final DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Standard Action<br>Limit: Single thought or emotion`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `UseTheForceUses | ${actor.name} established telepathic link with ${target.name}: ` +
@@ -3016,7 +3016,7 @@ export class UseTheForceUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Place Other in Force Trance</strong> - Deep Rest<br>Reference: Clone Wars Campaign Guide<br>Target: ${target.name}<br>DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Requirement: Adjacent, willing ally`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `UseTheForceUses | ${actor.name} placed ${target.name} in force trance: ` +
@@ -3071,7 +3071,7 @@ export class UseTheForceUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Breath Control</strong> - Extended Breath Holding<br>Reference: Knights of the Old Republic Campaign Guide<br>CON Score: ${constitutionScore}<br>DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Rounds Can Hold Breath: ${roundsCanHold}<br>Action: Full-Round Action`
-    });
+    } , { create: true });
 
     SWSELogger.log(
       `UseTheForceUses | ${actor.name} used breath control: ` +
@@ -3125,7 +3125,7 @@ export class AcrobaticsUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Balance</strong> - Narrow Surface<br>Surface: ${surfaceWidth}${isSlippery ? ' (Slippery)' : ''}<br>DC: ${dc}<br>Acrobatics Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
     SWSELogger.log(`AcrobaticsUses | ${actor.name} balanced: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
     return { success, checkResult, dc, surfaceWidth, isSlippery };
   }
@@ -3142,7 +3142,7 @@ export class AcrobaticsUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Tumble</strong><br>Squares: ${squaresMoved}<br>DC: ${dc}<br>Acrobatics Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
     SWSELogger.log(`AcrobaticsUses | ${actor.name} tumbled: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
     return { success, checkResult, dc, squaresMoved, trained: true };
   }
@@ -3177,7 +3177,7 @@ export class ClimbUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Climb Surface</strong> - ${surfaceType}<br>Distance: ${distance}ft<br>DC: ${dc}<br>Climb Check: ${checkResult}${success ? ' ✓' : ' ✗'}${falls ? '<br><strong style="color:red">FALLS!</strong>' : ''}`
-    });
+    } , { create: true });
     SWSELogger.log(`ClimbUses | ${actor.name} climbed: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}${falls ? ' (FALLS)' : ''}`);
     return { success, checkResult, dc, surfaceType, distance, falls };
   }
@@ -3210,7 +3210,7 @@ export class DeceptionUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Deceive</strong><br>Difficulty: ${difficulty}<br>Total: ${checkResult} vs ${targetWillDefense}`
-    });
+    } , { create: true });
     const success = checkResult >= targetWillDefense;
     SWSELogger.log(`DeceptionUses | ${actor.name} deceived ${target.name}: ${checkResult} vs ${targetWillDefense} = ${success ? 'Success' : 'Failure'}`);
     return { success, checkResult, targetDefense: targetWillDefense };
@@ -3237,7 +3237,7 @@ export class EnduranceUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Forced March</strong><br>Hours Beyond 8: ${hoursMarched}<br>DC: ${dc}<br>Endurance Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
     SWSELogger.log(`EnduranceUses | ${actor.name} forced march: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
     return { success, checkResult, dc, hoursMarched };
   }
@@ -3260,7 +3260,7 @@ export class EnduranceUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Hold Breath</strong><br>CON: ${conScore}<br>Rounds: ${roundsHolding}<br>DC: ${dc}<br>Endurance Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
     return { success, checkResult, dc, conScore, roundsHolding };
   }
 
@@ -3296,7 +3296,7 @@ export class GatherInformationUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Learn News and Rumors</strong><br>Difficulty: ${difficulty}<br>DC: ${dc}<br>Gather Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
     SWSELogger.log(`GatherInformationUses | ${actor.name} learned ${difficulty}: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
     return { success, checkResult, dc, difficulty, timeInHours, cost: baseCost };
   }
@@ -3314,7 +3314,7 @@ export class GatherInformationUses {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Locate Individual</strong><br>Target: ${targetName}<br>DC: ${dc}<br>Gather Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
-    });
+    } , { create: true });
     SWSELogger.log(`GatherInformationUses | ${actor.name} located ${targetName}: ${checkResult} vs DC ${dc} = ${success ? 'Success' : 'Failure'}`);
     return { success, checkResult, dc, targetName, isWellKnown, timeInHours, cost };
   }

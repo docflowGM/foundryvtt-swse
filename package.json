@@ -10,12 +10,14 @@
     "build:themes": "node scripts/build/build-themes.js",
     "watch:styles": "sass styles/src:styles/core --watch --no-source-map",
     "build": "npm run build:styles",
+    "package": "node scripts/build/package-system.js",
     "lint": "eslint scripts/ helpers/ --ext .js",
     "lint:fix": "eslint scripts/ helpers/ --ext .js --fix",
     "format": "prettier --write \"**/*.{js,json,css,scss,md}\"",
     "format:check": "prettier --check \"**/*.{js,json,css,scss,md}\"",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "check:mutations": "bash tools/check-mutation-paths.sh"
   },
   "devDependencies": {
     "sass": "^1.69.5",

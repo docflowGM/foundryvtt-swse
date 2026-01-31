@@ -8,11 +8,11 @@
     "notes": "Start vehicle, turn on device, ignite lightsaber.",
     "relatedSkills": [
       {
-        "skill": "Use Computer",
+        "skill": "8f5e21f92d6d976b",
         "when": "device needs login or friendly computer"
       },
       {
-        "skill": "Mechanics",
+        "skill": "745a5686d6f21e8c",
         "when": "device is jury-rigged or broken"
       }
     ],
@@ -147,7 +147,9 @@
       }
     ],
     "type": "combatAction",
-    "requirements": ["Burst Fire feat"],
+    "requirements": [
+      "Burst Fire feat"
+    ],
     "ammo_consumption": "5 shots (instead of 10)"
   },
   {
@@ -163,7 +165,7 @@
         "outcome": "Apply +2 competence, -2 target Reflex"
       },
       {
-        "skill": "Acrobatics",
+        "skill": "a6c5e98148aad9a9",
         "dc": {
           "type": "flat",
           "value": 25
@@ -226,7 +228,7 @@
         "when": "concealing or palming items"
       },
       {
-        "skill": "Perception",
+        "skill": "43c5941072ec78af",
         "dc": {
           "type": "opposed",
           "target": null
@@ -245,7 +247,7 @@
     "notes": "Deception vs target's Initiative to make target flat-footed vs your next attack. -5 vs non-humanoids/low INT.",
     "relatedSkills": [
       {
-        "skill": "Deception",
+        "skill": "9410ce2dfb6cefcb",
         "dc": {
           "type": "opposed",
           "target": null
@@ -264,7 +266,7 @@
     "notes": "Standard: -5 attacks, +2 dodge to Ref (or +5 if trained in Acrobatics). Full-round no attacks: +5 dodge (+10 if trained).",
     "relatedSkills": [
       {
-        "skill": "Acrobatics",
+        "skill": "a6c5e98148aad9a9",
         "when": "trained offers better dodge bonus"
       }
     ],
@@ -306,7 +308,7 @@
         "outcome": "Grabbed/grappled; escape via Acrobatics vs Grappler's check"
       },
       {
-        "skill": "Acrobatics",
+        "skill": "a6c5e98148aad9a9",
         "dc": {
           "type": "opposed",
           "target": null
@@ -333,7 +335,7 @@
         "outcome": "If succeed, weapon drops; Acrobatics DC20 to catch item (trained)"
       },
       {
-        "skill": "Acrobatics",
+        "skill": "a6c5e98148aad9a9",
         "dc": {
           "type": "flat",
           "value": 20
@@ -352,7 +354,7 @@
     "notes": "Escape nets: Acrobatics DC15 as full-round; nets often require higher DC to escape as standard.",
     "relatedSkills": [
       {
-        "skill": "Acrobatics",
+        "skill": "a6c5e98148aad9a9",
         "dc": {
           "type": "flat",
           "value": 15
@@ -381,7 +383,7 @@
     "notes": "Move up to speed; diagonal counts as 2 squares; options include Balance (half speed), Climb (1/4 speed), Tumble (part of move with Acrobatics).",
     "relatedSkills": [
       {
-        "skill": "Acrobatics",
+        "skill": "a6c5e98148aad9a9",
         "dc": {
           "type": "flat",
           "value": 15
@@ -389,7 +391,7 @@
         "when": "Tumble to avoid AoO (trained)"
       },
       {
-        "skill": "Climb",
+        "skill": "34a9c3f170eb9f40",
         "dc": {
           "type": "expression",
           "value": "Climb check"
@@ -408,7 +410,7 @@
     "notes": "Acrobatics DC15 to move through threatened squares without provoking AoO; each threatened square counts as 2 squares of movement.",
     "relatedSkills": [
       {
-        "skill": "Acrobatics",
+        "skill": "a6c5e98148aad9a9",
         "dc": {
           "type": "flat",
           "value": 15
@@ -427,7 +429,7 @@
     "notes": "Move 4× speed (3× if heavy armor), lose Dex bonus to Ref; can run for CON rounds, then Endurance checks.",
     "relatedSkills": [
       {
-        "skill": "Endurance",
+        "skill": "35df8faa4878f2c5",
         "dc": {
           "type": "flat",
           "value": 10
@@ -466,7 +468,7 @@
     "notes": "From hiding: make ranged attack then hide again (Stealth check at -10 as move). Must be at least 2 squares away.",
     "relatedSkills": [
       {
-        "skill": "Stealth",
+        "skill": "6d2ac22d9fcf402f",
         "dc": {
           "type": "expression",
           "value": "Stealth move-action -10"
@@ -474,7 +476,7 @@
         "outcome": "If success remain hidden; if fail, revealed"
       },
       {
-        "skill": "Perception",
+        "skill": "43c5941072ec78af",
         "when": "Opponents attempt to notice"
       }
     ],
@@ -489,7 +491,7 @@
     "notes": "Stand normally as move; trained in Acrobatics can DC15 to stand as swift.",
     "relatedSkills": [
       {
-        "skill": "Acrobatics",
+        "skill": "a6c5e98148aad9a9",
         "dc": {
           "type": "flat",
           "value": 15
@@ -508,7 +510,7 @@
     "notes": "If trained in Acrobatics DC15 you can fall prone as a free action; otherwise swift. Prone penalties apply.",
     "relatedSkills": [
       {
-        "skill": "Acrobatics",
+        "skill": "a6c5e98148aad9a9",
         "dc": {
           "type": "flat",
           "value": 15
@@ -537,7 +539,7 @@
     "notes": "Vehicle actions include Raise/lower shields (swift), Recharge shields (3 swift w/ Mechanics DC20), regulate power (3 swifts Mechanics DC20).",
     "relatedSkills": [
       {
-        "skill": "Mechanics",
+        "skill": "745a5686d6f21e8c",
         "dc": {
           "type": "flat",
           "value": 20
@@ -556,7 +558,7 @@
     "notes": "Perception vs Stealth or passive size DCs; reaction to notice entering LOS. Reaction swift to retry failed Perception.",
     "relatedSkills": [
       {
-        "skill": "Perception",
+        "skill": "43c5941072ec78af",
         "dc": {
           "type": "expression",
           "value": "d20 + Perception"
@@ -575,7 +577,7 @@
     "notes": "Deception vs all targets' Will to allow a Stealth attempt while targets are aware. You must be able to reach hiding place with a move.",
     "relatedSkills": [
       {
-        "skill": "Deception",
+        "skill": "9410ce2dfb6cefcb",
         "dc": {
           "type": "opposed",
           "target": null
@@ -583,7 +585,7 @@
         "outcome": "If success, allow Stealth attempt"
       },
       {
-        "skill": "Stealth",
+        "skill": "6d2ac22d9fcf402f",
         "when": "Follow-up hide attempt"
       }
     ],
@@ -598,7 +600,7 @@
     "notes": "Use Computer checks to access info: general 15 (1 min), specific 20 (10 min), private 25 (1 hr), secret 30 (1 day) when computer attitude allows.",
     "relatedSkills": [
       {
-        "skill": "Use Computer",
+        "skill": "8f5e21f92d6d976b",
         "dc": {
           "type": "expression",
           "value": "d20 + Use Computer"
@@ -655,7 +657,7 @@
     "notes": "Withdraw at half speed; treat first square as non-threatened; cannot withdraw if must move more than one square to exit threatened area.",
     "relatedSkills": [
       {
-        "skill": "Acrobatics",
+        "skill": "a6c5e98148aad9a9",
         "dc": {
           "type": "flat",
           "value": 15
@@ -722,7 +724,7 @@
     "notes": "Droids only. Pop open access panels, move erratically, make mechanical noises. Make Deception check vs Will Defense of all targets in line of sight. Success: target is Flat-Footed against you. Ends at end of your turn if you take any action. Targets no longer Flat-Footed after Deception ends.",
     "relatedSkills": [
       {
-        "skill": "Deception",
+        "skill": "9410ce2dfb6cefcb",
         "dc": {
           "type": "opposed",
           "target": "All targets' Will Defense (must be in LOS)"
@@ -742,7 +744,7 @@
     "notes": "Trained in Treat Injury only. Requires Medical Kit. Make a Treat Injury check; if result equals or exceeds the Poison's DC, you successfully detoxify the poison in the character's system and the patient no longer suffers any ill effects (including Persistent Conditions caused by the poison).",
     "relatedSkills": [
       {
-        "skill": "Treat Injury",
+        "skill": "633a13c5fa6101d7",
         "dc": {
           "type": "expression",
           "value": "Poison's DC"
@@ -751,7 +753,10 @@
       }
     ],
     "type": "combatAction",
-    "requirements": ["Trained in Treat Injury", "Medical Kit"]
+    "requirements": [
+      "Trained in Treat Injury",
+      "Medical Kit"
+    ]
   },
   {
     "name": "Switch Weapon Mode",
@@ -762,6 +767,9 @@
     "notes": "Some weapons have multiple modes (lethal/stun, single-shot/autofire, etc). Switching weapon modes takes a Swift Action.",
     "relatedSkills": [],
     "type": "combatAction",
-    "examples": ["Blaster Pistol (lethal/stun)", "Blaster Carbine (single-shot/autofire)"]
+    "examples": [
+      "Blaster Pistol (lethal/stun)",
+      "Blaster Carbine (single-shot/autofire)"
+    ]
   }
 ]

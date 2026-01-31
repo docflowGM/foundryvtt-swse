@@ -9,7 +9,6 @@ export class ErrorHandler {
   constructor() {
     this._errorLog = [];
     this._maxLogSize = 100;
-    this._recoveryHandlers = new Map();
     this._criticalErrors = new Set();
     this._devMode = false;
   }
@@ -18,8 +17,12 @@ export class ErrorHandler {
    * Initialize error handler with global hooks
    */
   initialize() {
-    // Get devMode setting
-    this._devMode = game.settings?.get('foundryvtt-swse', 'devMode') ?? false;
+    // Get devMode setting safely
+    try {
+      this._devMode = game.settings?.get('foundryvtt-swse', 'devMode') ?? false;
+    } catch (err) {
+      this._devMode = false;
+    }
 
     // Hook into Foundry's error handling
     if (typeof Hooks !== 'undefined') {
@@ -80,18 +83,6 @@ export class ErrorHandler {
     } else {
       this._handleRecoverableError(errorInfo);
     }
-
-    // Attempt recovery
-    this._attemptRecovery(error, context);
-  }
-
-  /**
-   * Register a recovery handler for specific error types
-   * @param {string} errorType - Error type or pattern
-   * @param {Function} handler - Recovery function
-   */
-  registerRecoveryHandler(errorType, handler) {
-    this._recoveryHandlers.set(errorType, handler);
   }
 
   /**
@@ -354,53 +345,6 @@ export class ErrorHandler {
   }
 
   /**
-   * Attempt to recover from error
-   * @private
-   */
-  async _attemptRecovery(error, context) {
-    const errorType = error?.constructor?.name;
-
-    // Check for registered handler
-    if (this._recoveryHandlers.has(errorType)) {
-      try {
-        const handler = this._recoveryHandlers.get(errorType);
-        await handler(error, context);
-        ui.notifications.info('Error recovered successfully');
-        return true;
-      } catch (recoveryError) {
-        SWSELogger.error('SWSE | Recovery failed:', recoveryError);
-      }
-    }
-
-    // Generic recovery attempts
-    return this._genericRecovery(error, context);
-  }
-
-  /**
-   * Generic recovery strategies
-   * @private
-   */
-  async _genericRecovery(error, context) {
-    // Strategy 1: Clear caches if cache-related
-    if (context.source?.includes('cache')) {
-      SWSELogger.log('SWSE | Attempting cache clear recovery');
-      if (window.SWSE?.cacheManager) {
-        window.SWSE.cacheManager.clear();
-      }
-      return true;
-    }
-
-    // Strategy 2: Re-render if sheet-related
-    if (context.location?.includes('sheet') || context.source?.includes('sheet')) {
-      SWSELogger.log('SWSE | Attempting sheet re-render recovery');
-      // Could trigger sheet re-render here
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
    * Get error log
    */
   getErrorLog() {
@@ -447,50 +391,6 @@ export class ErrorHandler {
   }
 }
 
-/**
- * Safe execution wrapper
- * @param {Function} func - Function to execute safely
- * @param {*} fallback - Fallback value on error
- * @param {Object} context - Error context
- * @returns {*} Function result or fallback
- */
-export async function safeExecute(func, fallback = null, context = {}) {
-  try {
-    return await func();
-  } catch (error) {
-    if (window.SWSE?.errorHandler) {
-      window.SWSE.errorHandler.handleError(error, context);
-    } else {
-      SWSELogger.error('SWSE | Safe execution failed:', error);
-    }
-    return fallback;
-  }
-}
-
-/**
- * Safe property access with default value
- * @param {Object} obj - Object to access
- * @param {string} path - Dot-notation path
- * @param {*} defaultValue - Default value
- * @returns {*}
- */
-export function safeGet(obj, path, defaultValue = undefined) {
-  try {
-    const keys = path.split('.');
-    let result = obj;
-
-    for (const key of keys) {
-      if (result == null) {
-        return defaultValue;
-      }
-      result = result[key];
-    }
-
-    return result !== undefined ? result : defaultValue;
-  } catch (error) {
-    return defaultValue;
-  }
-}
 
 /**
  * Validate required data

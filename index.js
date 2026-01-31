@@ -99,8 +99,14 @@ import { SWSE_RACES } from './scripts/core/races.js';
 import * as SWSEData from './scripts/core/swse-data.js';
 
 import { SWSEActorBase } from './scripts/actors/base/swse-actor-base.js';
+import { SWSEV2BaseActor } from './scripts/actors/v2/base-actor.js';
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
 import { ActorEngine } from './scripts/actors/engine/actor-engine.js';
+
+import { SWSEV2CharacterSheet } from './scripts/sheets/v2/character-sheet.js';
+import { SWSEV2NpcSheet } from './scripts/sheets/v2/npc-sheet.js';
+import { SWSEV2DroidSheet } from './scripts/sheets/v2/droid-sheet.js';
+import { SWSEV2VehicleSheet } from './scripts/sheets/v2/vehicle-sheet.js';
 import { DefenseSystem } from './scripts/engine/DefenseSystem.js';
 import { BonusHitPointsEngine } from './scripts/engine/BonusHitPointsEngine.js';
 import { RollEngine } from './scripts/engine/roll-engine.js';
@@ -127,27 +133,22 @@ import {
 import { SWSECombatDocument } from './scripts/combat/swse-combat.js';
 import { SWSECombatant } from './scripts/combat/swse-combatant.js';
 
-import { SWSECharacterSheet } from './scripts/actors/character/swse-character-sheet.js';
-import { SWSEDroidSheet } from './scripts/actors/droid/swse-droid.js';
-import { SWSENPCSheet } from './scripts/actors/npc/swse-npc.js';
-import { SWSEVehicleSheet } from './scripts/actors/vehicle/swse-vehicle.js';
+// Legacy (v1) actor sheets were retired in Phase 3.3.
+// The system only registers v2 sheets as playable surfaces.
 import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
 
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
+import { registerSWSEPartials } from './helpers/handlebars/partials-auto.js';
 import { preloadHandlebarsTemplates } from './scripts/core/load-templates.js';
 
 import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 import { createItemMacro } from './scripts/macros/item-macro.js';
 
 import './scripts/utils/skill-use-filter.js';
-import './scripts/migration/fix-defense-schema.js';
-import './scripts/migration/fix-actor-size.js';
-import './scripts/migration/actor-validation-migration.js';
-import './scripts/migration/item-validation-migration.js';
-import './scripts/migration/fix-item-weight.js';
 import './scripts/migration/populate-force-compendiums.js';
 import './scripts/migration/update-species-traits-migration.js';
 import './scripts/migration/fix-talent-effect-validation.js';
+import './scripts/migration/talent-ssot-refactor.js';
 
 import { DamageSystem } from './scripts/combat/damage-system.js';
 import { SWSECombatAutomation } from './scripts/combat/combat-automation.js';
@@ -244,6 +245,9 @@ import './scripts/chat/chat-commands.js';
 
 import { registerInitHooks, registerDestinyHooks } from './scripts/hooks/index.js';
 import { SystemInitHooks } from './scripts/progression/hooks/system-init-hooks.js';
+import { registerSuggestionSettings } from './scripts/engine/suggestion-settings.js';
+import { registerSuggestionHooks } from './scripts/hooks/suggestion-hooks.js';
+import { SuggestionService } from './scripts/engine/SuggestionService.js';
 
 /* ==========================================================================  
    INIT HOOK
@@ -270,20 +274,17 @@ Hooks.once("init", async function () {
     }
 
     /* ---------------------------------------------------------
-       EARLY TEMPLATE PRELOADING (Prevents render race)
-       --------------------------------------------------------- */
-    try {
-        await preloadHandlebarsTemplates();
-        swseLogger.log("SWSE | Handlebars Templates Preloaded Early");
-    } catch (err) {
-        swseLogger.error("SWSE | Template Preloading Failed:", err);
-    }
-
-    /* ---------------------------------------------------------
-       System Settings
+       System Settings (must be before async operations)
        --------------------------------------------------------- */
     registerSystemSettings();
     registerHouseruleSettings();
+
+    /* ---------------------------------------------------------
+       Hook Registration (must be before async operations)
+       --------------------------------------------------------- */
+    registerInitHooks();
+    registerDestinyHooks();
+    registerKeybindings();
 
     /* ---------------------------------------------------------
        Theme System Initialization (Early)
@@ -291,11 +292,18 @@ Hooks.once("init", async function () {
     ThemeLoader.init();
 
     /* ---------------------------------------------------------
-       Hook Registration
+       EARLY TEMPLATE PRELOADING (Prevents render race)
        --------------------------------------------------------- */
-    registerInitHooks();
-    registerDestinyHooks();
-    registerKeybindings();
+    try {
+        await preloadHandlebarsTemplates();
+        swseLogger.log("SWSE | Handlebars Templates Preloaded Early");
+
+        // Register named partials for Handlebars
+        await registerSWSEPartials();
+        swseLogger.log("SWSE | Named Partials Registered");
+    } catch (err) {
+        swseLogger.error("SWSE | Template Preloading Failed:", err);
+    }
 
     /* ---------------------------------------------------------
        Document Classes
@@ -320,7 +328,7 @@ Hooks.once("init", async function () {
         species: SpeciesDataModel
     };
 
-    CONFIG.Actor.documentClass = SWSEActorBase;
+    CONFIG.Actor.documentClass = SWSEV2BaseActor;
     CONFIG.Item.documentClass = SWSEItemBase;
     CONFIG.Combat.documentClass = SWSECombatDocument;
     CONFIG.Combatant.documentClass = SWSECombatant;
@@ -346,10 +354,10 @@ Hooks.once("init", async function () {
     foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
     foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
 
-    foundry.documents.collections.Actors.registerSheet("swse", SWSECharacterSheet, { types: ["character"], makeDefault: true });
-    foundry.documents.collections.Actors.registerSheet("swse", SWSENPCSheet, { types: ["npc"], makeDefault: true });
-    foundry.documents.collections.Actors.registerSheet("swse", SWSEDroidSheet, { types: ["droid"], makeDefault: true });
-    foundry.documents.collections.Actors.registerSheet("swse", SWSEVehicleSheet, { types: ["vehicle"], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet("swse", SWSEV2CharacterSheet, { types: ["character"], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet("swse", SWSEV2NpcSheet, { types: ["npc"], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet("swse", SWSEV2DroidSheet, { types: ["droid"], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet("swse", SWSEV2VehicleSheet, { types: ["vehicle"], makeDefault: true });
 
     foundry.documents.collections.Items.registerSheet("swse", SWSEItemSheet, {
         types: ["weapon","armor","equipment","feat","talent","forcepower","force-power","class","species","talenttree","skill","combat-action","condition"],
@@ -402,6 +410,15 @@ Hooks.once("init", async function () {
 
 Hooks.once("ready", async function () {
     swseLogger.log("SWSE | System Ready");
+
+    // Suggestion service (single entry) initialization
+    try {
+      const systemJSON = await fetch('system.json').then(r => r.json());
+      SuggestionService.initialize({ systemJSON });
+    } catch (err) {
+      console.warn('SWSE | SuggestionService init failed:', err);
+    }
+    registerSuggestionHooks();
 
     errorHandler.initialize();
     initializeRolls();
@@ -547,30 +564,6 @@ Hooks.once("init", () => {
   // =====================================
   // SWSE Migration Flags (Auto-Injected)
   // =====================================
-
-  game.settings.register("foundryvtt-swse", "actorValidationMigration", {
-    name: "actorValidationMigration",
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: false
-  });
-
-  game.settings.register("foundryvtt-swse", "itemValidationMigration", {
-    name: "itemValidationMigration",
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: false
-  });
-
-  game.settings.register("foundryvtt-swse", "fixItemWeightMigration", {
-    name: "fixItemWeightMigration",
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: false
-  });
 
   game.settings.register("foundryvtt-swse", "forceCompendiumsPopulation", {
     name: "forceCompendiumsPopulation",

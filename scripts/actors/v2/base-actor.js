@@ -1,0 +1,177 @@
+// scripts/actors/v2/base-actor.js
+import { SWSEActorBase } from "../base/swse-actor-base.js";
+import { ActorEngine } from "../engine/actor-engine.js";
+import { computeCharacterDerived } from "./character-actor.js";
+import { computeNpcDerived } from "./npc-actor.js";
+import { computeDroidDerived } from "./droid-actor.js";
+import { computeVehicleDerived } from "./vehicle-actor.js";
+
+/**
+ * SWSE V2 Base Actor
+ *
+ * V2 contract:
+ * - All derived values live in actor.system.derived
+ * - UI reads derived data only (no math in sheets)
+ * - Actor owns rules APIs (Condition Track v2 contract)
+ * - All mutations route through ActorEngine
+ *
+ * Bridge behavior (Phase 2):
+ * - Calls legacy SWSEActorBase.prepareDerivedData() to preserve existing mechanics
+ * - Mirrors minimal derived fields into system.derived
+ */
+export class SWSEV2BaseActor extends SWSEActorBase {
+  prepareDerivedData() {
+    super.prepareDerivedData();
+
+    const system = this.system ?? {};
+    system.derived ??= {};
+    system.derived.meta ??= {};
+
+    switch (this.type) {
+      case "character":
+        computeCharacterDerived(this, system);
+        break;
+      case "npc":
+        computeNpcDerived(this, system);
+        break;
+      case "droid":
+        computeDroidDerived(this, system);
+        break;
+      case "vehicle":
+        computeVehicleDerived(this, system);
+        break;
+      default:
+        computeCharacterDerived(this, system);
+        break;
+    }
+
+    this._applyV2ConditionTrackDerived(system);
+
+    system.derived.meta.lastRecalcMs = Date.now();
+  }
+
+  /* ------------------------------------------------------------------------ */
+  /* Action Execution v2 Contract                                              */
+  /* ------------------------------------------------------------------------ */
+
+  /**
+   * Execute a derived action by id.
+   *
+   * v2 rule: the sheet emits intent only.
+   * Execution is resolved by the Actor (and its engines), never the UI.
+   *
+   * @param {string} actionId
+   * @param {object} [options]
+   */
+  async useAction(actionId, options = {}) {
+    const id = String(actionId ?? "").trim();
+    if (!id) return null;
+
+    const action = this.system?.derived?.actions?.map?.[id];
+    if (!action || action.executable !== true) return null;
+
+    const exec = action.execute ?? {};
+    const kind = String(exec.kind ?? "");
+
+    if (kind === "item") {
+      const item = this.items?.get(exec.itemId);
+      return this.useItem(item, { ...options, actionId: id });
+    }
+
+    if (kind === "itemToggleActivated") {
+      const item = this.items?.get(exec.itemId);
+      return this.toggleItemActivated(item, { ...options, actionId: id });
+    }
+
+    if (kind === "featActionToggle") {
+      const mod = await import("../../utils/feat-actions-mapper.js");
+      return mod.FeatActionsMapper.toggleAction(this, exec.actionKey);
+    }
+
+    return null;
+  }
+
+  /* ------------------------------------------------------------------------ */
+  /* Condition Track v2 Contract                                               */
+  /* ------------------------------------------------------------------------ */
+
+  getConditionTrackState() {
+    const ct = this.system?.conditionTrack ?? {};
+    const step = Number(ct.current ?? 0);
+    const max = Number(ct.max ?? 5);
+    const persistent = ct.persistent === true;
+
+    return {
+      step: Number.isFinite(step) ? step : 0,
+      max: Number.isFinite(max) ? max : 5,
+      persistent,
+      helpless: (Number.isFinite(step) ? step : 0) >= 5
+    };
+  }
+
+  getConditionPenalty(step = undefined) {
+    const s = step === undefined ? this.getConditionTrackState().step : Number(step);
+    const stepNum = Number.isFinite(s) ? s : 0;
+    // Official SWSE: Normal(0), -1(1), -2(2), -5(3), -10(4), Helpless(5)
+    const penalties = [0, -1, -2, -5, -10, 0]; // helpless = no numeric penalty
+    return penalties[stepNum] ?? 0;
+  }
+
+  async setConditionTrackStep(step, { force = false } = {}) {
+    const next = clampInt(step, 0, 5);
+    const ct = this.system?.conditionTrack ?? {};
+    const current = clampInt(ct.current ?? 0, 0, 5);
+    const persistent = ct.persistent === true;
+
+    // If persistent and improving (lowering step), block unless forced.
+    if (!force && persistent && next < current) return false;
+
+    await ActorEngine.updateActor(this, {
+      "system.conditionTrack.current": next
+    });
+
+    return true;
+  }
+
+  async moveConditionTrack(delta, { force = false } = {}) {
+    const ct = this.system?.conditionTrack ?? {};
+    const current = clampInt(ct.current ?? 0, 0, 5);
+    return this.setConditionTrackStep(current + Number(delta || 0), { force });
+  }
+
+  async worsenConditionTrack() {
+    return this.moveConditionTrack(1, { force: true });
+  }
+
+  async improveConditionTrack({ force = false } = {}) {
+    // improvement respects persistent unless forced
+    return this.moveConditionTrack(-1, { force });
+  }
+
+  async setConditionTrackPersistent(flag) {
+    await ActorEngine.updateActor(this, {
+      "system.conditionTrack.persistent": flag === true
+    });
+    return true;
+  }
+
+  _applyV2ConditionTrackDerived(system) {
+    system.derived ??= {};
+    system.derived.damage ??= {};
+
+    const { step, max, persistent, helpless } = this.getConditionTrackState();
+
+    system.derived.damage.conditionStep = step;
+    system.derived.damage.conditionMax = max;
+    system.derived.damage.conditionPersistent = persistent;
+    system.derived.damage.conditionHelpless = helpless;
+    system.derived.damage.conditionPenalty = this.getConditionPenalty(step);
+  }
+}
+
+function clampInt(value, min, max) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return min;
+  const i = Math.trunc(n);
+  return Math.max(min, Math.min(max, i));
+}

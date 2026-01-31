@@ -137,9 +137,15 @@
                  name="system.hp.value"
                  value="{{system.hp.value}}"
                  data-dtype="Number"
-                 class="resource-input"/>
+                 class="resource-input"
+                 title="Current Hit Points"/>
           <span class="separator">/</span>
-          <span class="resource-max">{{system.hp.max}}</span>
+          <input type="text"
+                 name="system.hp.max"
+                 value="{{system.hp.max}}"
+                 data-dtype="Number"
+                 class="resource-max-input"
+                 title="Maximum Hit Points (editable, defaults from chargen/levelup)"/>
           {{#if system.hp.bonus}}
           <span class="bonus-hp-indicator" title="Bonus Hit Points (temporary damage buffer)">
             <i class="fas fa-shield-alt" aria-hidden="true"></i>+{{system.hp.bonus}}

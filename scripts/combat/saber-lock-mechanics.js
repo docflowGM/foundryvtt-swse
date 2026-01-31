@@ -130,7 +130,7 @@ export class SaberLockMechanics {
         flavor: `<strong>Saber Lock - Initiative Check</strong><br>` +
                 `Initiative Bonus: ${initiativeBonus >= 0 ? '+' : ''}${initiativeBonus}<br>` +
                 `Total: ${total}`
-      });
+      } , { create: true });
 
       return total;
     } catch (err) {

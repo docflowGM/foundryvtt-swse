@@ -5,6 +5,7 @@ import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 // ============================================
 
 import { SWSELogger } from '../utils/logger.js';
+import { resolveSkillKey, resolveSkillName } from '../utils/skill-resolver.js';
 import CharacterTemplates from './chargen/chargen-templates.js';
 
 /**
@@ -126,18 +127,30 @@ export class TemplateCharacterCreator extends Application {
     // Close this window BEFORE showing mentor dialogue to prevent both appearing at once
     this.close();
 
-    // Show mentor dialogue before creating character
-    await this.showMentorDialogue(template, async () => {
-      // Create character from template
+    // Show mentor dialogue and wait for user confirmation
+    const confirmed = await this.showMentorDialogue(template,
+      async () => {
+        // This callback will be called if user clicks Create Character
+        // (handled by Promise resolution)
+      },
+      () => {
+        // This callback will be called if user clicks Go Back
+        // (handled by Promise resolution)
+      }
+    );
+
+    if (confirmed) {
+      // User confirmed - create character from template
       await this.createFromTemplate(templateId);
-    }, () => {
-      // If cancelled, reopen the template creator
+    } else {
+      // User cancelled - reopen the template creator
       this.render(true);
-    });
+    }
   }
 
   /**
    * Show mentor dialogue with comprehensive template summary
+   * Returns a Promise that resolves when user confirms or rejects
    */
   async showMentorDialogue(template, onConfirm, onCancel) {
     const mentorKey = template.mentor;
@@ -149,8 +162,7 @@ export class TemplateCharacterCreator extends Application {
     if (!mentor || !dialogue) {
       // No mentor dialogue, just show summary
       SWSELogger.warn(`SWSE | No mentor dialogue found for ${mentorKey}/${templateKey}`);
-      await this._showTemplateSummaryDialog(template, onConfirm, onCancel);
-      return;
+      return this._showTemplateSummaryDialog(template, onConfirm, onCancel);
     }
 
     // Build comprehensive summary content with mentor dialogue
@@ -186,47 +198,61 @@ export class TemplateCharacterCreator extends Application {
       </div>
     `;
 
-    // Show dialog
-    const dialog = new Dialog({
-      title: `${template.name} - ${mentor.name}`,
-      content: content,
-      buttons: {
-        confirm: {
-          icon: '<i class="fas fa-check"></i>',
-          label: 'Create Character',
-          callback: (html) => {
-            // Get character name from input field
-            const nameInput = html.find('#template-char-name');
-            const charName = nameInput.val()?.trim();
+    // Wrap dialog in a Promise for proper async/await handling
+    return new Promise((resolve) => {
+      const dialog = new Dialog({
+        title: `${template.name} - ${mentor.name}`,
+        content: content,
+        buttons: {
+          confirm: {
+            icon: '<i class="fas fa-check"></i>',
+            label: 'Create Character',
+            callback: (html) => {
+              // Get character name from input field
+              const nameInput = html.find('#template-char-name');
+              const charName = nameInput.val()?.trim();
 
-            if (!charName) {
-              ui.notifications.warn('Please enter a character name');
-              return false;
+              if (!charName) {
+                ui.notifications.warn('Please enter a character name');
+                // Don't resolve, keep dialog open
+                return false;
+              }
+
+              // Store the name and call the original confirm callback
+              template.characterName = charName;
+              if (onConfirm) {
+                onConfirm();
+              }
+              resolve(true);
             }
-
-            // Store the name and call the original confirm callback
-            template.characterName = charName;
-            dialog.close();
-            onConfirm();
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: 'Go Back',
+            callback: () => {
+              if (onCancel) {
+                onCancel();
+              }
+              resolve(false);
+            }
           }
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: 'Go Back',
-          callback: () => {
-            dialog.close();
-            (onCancel || (() => {}))();
+        default: 'confirm',
+        close: () => {
+          // If dialog closed without button click, treat as cancel
+          if (onCancel) {
+            onCancel();
           }
+          resolve(false);
         }
-      },
-      default: 'confirm',
-      close: onCancel || (() => {})
-    }, {
-      width: 700,
-      height: 650,
-      classes: ['swse', 'mentor-dialogue']
+      }, {
+        width: 700,
+        height: 'auto',
+        classes: ['swse', 'mentor-dialogue'],
+        resizable: true
+      });
+      dialog.render(true);
     });
-    dialog.render(true);
   }
 
   /**
@@ -312,7 +338,7 @@ export class TemplateCharacterCreator extends Application {
       }
 
       // Apply species bonuses
-      await this._applySpeciesBonus(actor, template.species, abilityUpdates);
+      await this._applySpeciesBonus(actor, template.speciesRef || template.species, abilityUpdates);
 
       // Update actor with abilities
       await globalThis.SWSE.ActorEngine.updateActor(actor, abilityUpdates);
@@ -324,18 +350,18 @@ export class TemplateCharacterCreator extends Application {
       await this._applySkills(actor, template.trainedSkills);
 
       // Apply feat
-      await CharacterTemplates.applyTemplateFeat(actor, template.feat);
+      await CharacterTemplates.applyTemplateFeat(actor, template.featRef || template.feat);
 
       // Apply talent
-      await CharacterTemplates.applyTemplateTalent(actor, template.talent);
+      await CharacterTemplates.applyTemplateTalent(actor, template.talentRef || template.talent);
 
       // Apply Force powers (if any)
       if (template.forcePowers && template.forcePowers.length > 0) {
-        await CharacterTemplates.applyTemplateForcePowers(actor, template.forcePowers);
+        await CharacterTemplates.applyTemplateForcePowers(actor, template.forcePowerRefs || template.forcePowers);
       }
 
       // Apply starting equipment
-      const equipmentResults = await this._applyEquipment(actor, template.startingEquipment);
+      const equipmentResults = await this._applyEquipment(actor, template.equipmentRefs || template.startingEquipment);
 
       // Store template info
       await actor.setFlag('swse', 'appliedTemplate', {
@@ -516,38 +542,9 @@ export class TemplateCharacterCreator extends Application {
     // Build trained skills section
     let skillsHtml = '';
     if (template.trainedSkills && template.trainedSkills.length > 0) {
-      const skillNames = template.trainedSkills.map(skillKey => {
-        // Convert skill keys to readable names
-        const skillNameMap = {
-          'acrobatics': 'Acrobatics',
-          'climb': 'Climb',
-          'deception': 'Deception',
-          'endurance': 'Endurance',
-          'gatherInformation': 'Gather Information',
-          'initiative': 'Initiative',
-          'jump': 'Jump',
-          'knowledge_bureaucracy': 'Knowledge (Bureaucracy)',
-          'knowledge_galactic_lore': 'Knowledge (Galactic Lore)',
-          'knowledge_life_sciences': 'Knowledge (Life Sciences)',
-          'knowledge_physical_sciences': 'Knowledge (Physical Sciences)',
-          'knowledge_social_sciences': 'Knowledge (Social Sciences)',
-          'knowledge_tactics': 'Knowledge (Tactics)',
-          'knowledge_technology': 'Knowledge (Technology)',
-          'mechanics': 'Mechanics',
-          'perception': 'Perception',
-          'persuasion': 'Persuasion',
-          'pilot': 'Pilot',
-          'ride': 'Ride',
-          'stealth': 'Stealth',
-          'survival': 'Survival',
-          'swim': 'Swim',
-          'treatInjury': 'Treat Injury',
-          'useComputer': 'Use Computer',
-          'useTheForce': 'Use the Force',
-          'use_the_force': 'Use the Force'
-        };
-        return skillNameMap[skillKey] || skillKey;
-      });
+      const skillNames = (await Promise.all(
+        template.trainedSkills.map(ref => resolveSkillName(ref))
+      )).map((name, i) => name ?? template.trainedSkills[i]);
 
       skillsHtml = `
         <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(156, 39, 176, 0.1); border-left: 3px solid #9C27B0; border-radius: 4px;">
@@ -677,10 +674,20 @@ export class TemplateCharacterCreator extends Application {
   /**
    * Apply species bonuses
    */
-  async _applySpeciesBonus(actor, speciesName, abilityUpdates) {
+  async _applySpeciesBonus(actor, speciesRefOrName, abilityUpdates) {
     try {
-      const speciesPack = game.packs.get('foundryvtt-swse.species');
+      const speciesName = typeof speciesRefOrName === 'string' ? speciesRefOrName : (speciesRefOrName.displayName || speciesRefOrName.name);
+      const speciesPackName = typeof speciesRefOrName === 'object' && speciesRefOrName.pack ? speciesRefOrName.pack : 'foundryvtt-swse.species';
+      const speciesId = typeof speciesRefOrName === 'object' && speciesRefOrName.id ? speciesRefOrName.id : null;
+      const speciesPack = game.packs.get(speciesPackName);
       if (!speciesPack) return;
+
+      if (speciesId) {
+        const species = await speciesPack.getDocument(speciesId);
+        if (species) {
+          return this._applySpeciesDataToAbilities(species.system, abilityUpdates);
+        }
+      }
 
       const index = await speciesPack.getIndex();
       const speciesEntry = index.find(s => s.name === speciesName);
@@ -697,26 +704,29 @@ export class TemplateCharacterCreator extends Application {
       }
 
       const speciesData = species.system;
-
-      // Apply ability modifiers
-      if (speciesData.abilityModifiers) {
-        for (const [ability, value] of Object.entries(speciesData.abilityModifiers)) {
-          if (value !== 0) {
-            abilityUpdates[`system.attributes.${ability}.racial`] = value;
-          }
-        }
-      }
-
-      // Apply size and speed
-      if (speciesData.size) {
-        abilityUpdates['system.size'] = speciesData.size;
-      }
-      if (speciesData.speed) {
-        abilityUpdates['system.speed'] = parseInt(speciesData.speed, 10) || 6;
-      }
+      return this._applySpeciesDataToAbilities(speciesData, abilityUpdates);
 
     } catch (error) {
       SWSELogger.error('SWSE | Failed to apply species bonus:', error);
+    }
+  }
+
+  _applySpeciesDataToAbilities(speciesData, abilityUpdates) {
+    // Updates abilityUpdates in-place; no side effects.
+    if (speciesData?.abilityModifiers) {
+      for (const [ability, value] of Object.entries(speciesData.abilityModifiers)) {
+        if (value !== 0) {
+          abilityUpdates[`system.attributes.${ability}.racial`] = value;
+        }
+      }
+    }
+
+    if (speciesData?.size) {
+      abilityUpdates['system.size'] = speciesData.size;
+    }
+
+    if (speciesData?.speed) {
+      abilityUpdates['system.speed'] = parseInt(speciesData.speed, 10) || 6;
     }
   }
 
@@ -728,8 +738,27 @@ export class TemplateCharacterCreator extends Application {
       const classPack = game.packs.get('foundryvtt-swse.classes');
       if (!classPack) return;
 
+      const classRef = template.classRef || null;
+      const className = classRef ? (classRef.displayName || classRef.name) : template.className;
+      const classPackName = classRef?.pack || 'foundryvtt-swse.classes';
+      const classId = classRef?.id || null;
+
+      if (classId) {
+        const pack = game.packs.get(classPackName);
+        if (pack) {
+          const classItem = await pack.getDocument(classId);
+          if (classItem) {
+            const classData = classItem.toObject();
+            classData.system.level = template.level || 1;
+            await actor.createEmbeddedDocuments('Item', [classData]);
+            SWSELogger.log(`SWSE | Added class: ${className}`);
+            return;
+          }
+        }
+      }
+
       const index = await classPack.getIndex();
-      const classEntry = index.find(c => c.name === template.className);
+      const classEntry = index.find(c => c.name === className);
 
       if (!classEntry) {
         SWSELogger.warn(`SWSE | Class not found: ${template.className}`);
@@ -809,12 +838,14 @@ export class TemplateCharacterCreator extends Application {
 
     try {
       const updates = {};
-      trainedSkills.forEach(skillKey => {
+      for (const ref of trainedSkills) {
+        const skillKey = await resolveSkillKey(ref);
+        if (!skillKey) continue;
         updates[`system.skills.${skillKey}.trained`] = true;
-      });
+      }
 
       await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
-      SWSELogger.log(`SWSE | Trained ${trainedSkills.length} skills`);
+      SWSELogger.log(`SWSE | Trained ${Object.keys(updates).length} skills`);
 
     } catch (error) {
       SWSELogger.error('SWSE | Failed to apply skills:', error);
@@ -847,9 +878,35 @@ export class TemplateCharacterCreator extends Application {
     ];
 
     try {
-      for (const equipmentName of equipmentList) {
+      for (const equipmentEntry of equipmentList) {
+        const isRef = typeof equipmentEntry === 'object' && equipmentEntry !== null;
+        const equipmentName = isRef ? (equipmentEntry.displayName || equipmentEntry.name) : equipmentEntry;
+        const equipmentPackName = isRef ? equipmentEntry.pack : null;
+        const equipmentId = isRef ? equipmentEntry.id : null;
+        const equipmentQty = isRef ? (equipmentEntry.quantity || 1) : 1;
         let found = false;
         const searchName = equipmentName.trim();
+
+        if (equipmentId && equipmentPackName) {
+          const pack = game.packs.get(equipmentPackName);
+          if (pack) {
+            const item = await pack.getDocument(equipmentId);
+            if (item) {
+              const itemData = item.toObject();
+              if (itemData.system && typeof itemData.system.quantity === 'number') {
+                itemData.system.quantity = equipmentQty;
+                await actor.createEmbeddedDocuments('Item', [itemData]);
+              } else {
+                for (let i = 0; i < equipmentQty; i++) {
+                  await actor.createEmbeddedDocuments('Item', [itemData]);
+                }
+              }
+              results.added.push(itemData.name);
+              found = true;
+              SWSELogger.log(`SWSE | Added equipment: ${itemData.name} x${equipmentQty}`);
+            }
+          }
+        }
 
         // Search through all compendia
         for (const packName of compendiaPacks) {
@@ -982,44 +1039,56 @@ export class TemplateCharacterCreator extends Application {
       </div>
     `;
 
-    const dialog = new Dialog({
-      title: `Create ${template.name}`,
-      content: content,
-      buttons: {
-        confirm: {
-          icon: '<i class="fas fa-check"></i>',
-          label: 'Create Character',
-          callback: (html) => {
-            const nameInput = html.find('#template-char-name');
-            const charName = nameInput.val()?.trim();
+    return new Promise((resolve) => {
+      const dialog = new Dialog({
+        title: `Create ${template.name}`,
+        content: content,
+        buttons: {
+          confirm: {
+            icon: '<i class="fas fa-check"></i>',
+            label: 'Create Character',
+            callback: (html) => {
+              const nameInput = html.find('#template-char-name');
+              const charName = nameInput.val()?.trim();
 
-            if (!charName) {
-              ui.notifications.warn('Please enter a character name');
-              return false;
+              if (!charName) {
+                ui.notifications.warn('Please enter a character name');
+                return false;
+              }
+
+              template.characterName = charName;
+              if (onConfirm) {
+                onConfirm();
+              }
+              resolve(true);
             }
-
-            template.characterName = charName;
-            dialog.close();
-            onConfirm();
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: 'Go Back',
+            callback: () => {
+              if (onCancel) {
+                onCancel();
+              }
+              resolve(false);
+            }
           }
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: 'Go Back',
-          callback: () => {
-            dialog.close();
-            (onCancel || (() => {}))();
+        default: 'confirm',
+        close: () => {
+          if (onCancel) {
+            onCancel();
           }
+          resolve(false);
         }
-      },
-      default: 'confirm',
-      close: onCancel || (() => {})
-    }, {
-      width: 700,
-      height: 600,
-      classes: ['swse', 'template-summary-dialog']
+      }, {
+        width: 700,
+        height: 'auto',
+        classes: ['swse', 'template-summary-dialog'],
+        resizable: true
+      });
+      dialog.render(true);
     });
-    dialog.render(true);
   }
 }
 

@@ -1,0 +1,68 @@
+<form class="{{cssClass}} swse holo" autocomplete="off" data-theme="holo">
+  <header class="sheet-header">
+    <div class="flexrow" style="align-items:center; gap:12px;">
+      <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="48" height="48" style="border-radius:8px;"/>
+      <div class="flexcol" style="gap:4px;">
+        <input name="name" type="text" value="{{actor.name}}" style="font-size:1.2rem; font-weight:700;"/>
+        <div class="muted" style="opacity:0.8;">v2 Vehicle Sheet (Phase 2)</div>
+      </div>
+      <div class="flexrow" style="margin-left:auto; gap:10px;">
+        <div class="swse-stat"><div class="label">FORT</div><div class="value">{{derived.defenses.fort}}</div></div>
+        <div class="swse-stat"><div class="label">REF</div><div class="value">{{derived.defenses.ref}}</div></div>
+        <div class="swse-stat"><div class="label">WILL</div><div class="value">{{derived.defenses.will}}</div></div>
+        <div class="swse-stat"><div class="label">DT</div><div class="value">{{derived.damage.threshold}}</div></div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="summary">Summary</a>
+  </nav>
+
+  <section class="sheet-body">
+    <section class="tab" data-group="primary" data-tab="summary">
+      <div class="holo-panel">
+        <div class="section-bar">
+          <h3 class="section-header">Condition</h3>
+          <label class="inline-flag">
+            <input type="checkbox" class="swse-v2-condition-persistent" {{#if derived.damage.conditionPersistent}}checked{{/if}} />
+            Persistent
+          </label>
+        </div>
+
+        <div class="condition-row">
+          <button type="button" class="swse-v2-condition-improve">Improve</button>
+          <div class="condition-steps">
+            <button type="button" class="swse-v2-condition-step" data-step="0">Normal</button>
+            <button type="button" class="swse-v2-condition-step" data-step="1">-1</button>
+            <button type="button" class="swse-v2-condition-step" data-step="2">-2</button>
+            <button type="button" class="swse-v2-condition-step" data-step="3">-5</button>
+            <button type="button" class="swse-v2-condition-step" data-step="4">-10</button>
+            <button type="button" class="swse-v2-condition-step" data-step="5">Helpless</button>
+          </div>
+          <button type="button" class="swse-v2-condition-worsen">Worsen</button>
+
+          <div class="condition-readout">
+            <span class="label">Penalty:</span>
+            <span class="value">{{derived.damage.conditionPenalty}}</span>
+            {{#if derived.damage.conditionHelpless}}
+              <span class="badge">Helpless</span>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+
+      <div class="swse-v2-grid" style="margin-top:12px;">
+        <div class="swse-v2-holo-group">
+          <div class="swse-v2-holo-header">Attacks</div>
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/attacks-panel.hbs"}}
+        </div>
+
+        <div class="swse-v2-holo-group">
+          <div class="swse-v2-holo-header">Actions</div>
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs"}}
+        </div>
+      </div>
+    </section>
+  </section>
+</form>

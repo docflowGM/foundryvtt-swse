@@ -721,7 +721,7 @@ export class MentorSurvey {
               }
             }
           },
-          { classes: ['mentor-survey-dialog', 'holo-window'] }
+          { classes: ['mentor-survey-dialog', 'holo-window'], width: 650, height: 'auto', resizable: true }
         );
 
         swseLogger.log(`[MENTOR-SURVEY] promptSurvey: ✓ Dialog object created`, {
@@ -815,7 +815,7 @@ export class MentorSurvey {
               }
             }
           },
-          { classes: ['mentor-survey-dialog'] }
+          { classes: ['mentor-survey-dialog', 'holo-window'], width: 650, height: 'auto', resizable: true }
         );
 
         dialog.render(true);
@@ -879,7 +879,7 @@ export class MentorSurvey {
               }
             }
           },
-          { classes: ['mentor-survey-dialog'] }
+          { classes: ['mentor-survey-dialog', 'holo-window'], width: 650, height: 'auto', resizable: true }
         );
 
         dialog.render(true);
@@ -926,7 +926,7 @@ export class MentorSurvey {
               }
             }
           },
-          { classes: ['mentor-survey-dialog'] }
+          { classes: ['mentor-survey-dialog', 'holo-window'], width: 650, height: 'auto', resizable: true }
         );
 
         dialog.render(true);
@@ -1015,7 +1015,7 @@ export class MentorSurvey {
               }
             }
           },
-          { classes: ['mentor-survey-dialog'] }
+          { classes: ['mentor-survey-dialog', 'holo-window'], width: 650, height: 'auto', resizable: true }
         );
 
         dialog.render(true);

@@ -576,7 +576,7 @@ export class LightSideTalentMacros {
               await roll.toMessage({
                 speaker: ChatMessage.getSpeaker({ actor: selectedActor }),
                 flavor: `Adept Negotiator - Persuasion Check vs ${result.targetActor.name}'s Will Defense (${result.targetWillDefense})`
-              });
+              } , { create: true });
 
               // Apply the result
               await LightSideTalentMechanics.completeAdeptNegotiatorSelection(

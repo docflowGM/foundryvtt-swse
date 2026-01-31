@@ -7,11 +7,21 @@
  * Compendium pack names used by the store
  */
 export const STORE_PACKS = {
-    WEAPONS: 'foundryvtt-swse.weapons',
+        WEAPONS: 'foundryvtt-swse.weapons',
     ARMOR: 'foundryvtt-swse.armor',
     EQUIPMENT: 'foundryvtt-swse.equipment',
     DROIDS: 'foundryvtt-swse.droids',
+    // Vehicles are split into bucket packs for UI organization.
+    VEHICLE_PACKS: [
+        'foundryvtt-swse.vehicles-walkers',
+        'foundryvtt-swse.vehicles-speeders',
+        'foundryvtt-swse.vehicles-starships',
+        'foundryvtt-swse.vehicles-stations'
+    ],
+    // Canonical vehicles pack retained for compatibility with older references.
+    VEHICLES_CANONICAL: 'foundryvtt-swse.vehicles',
     VEHICLES: 'foundryvtt-swse.vehicles'
+
 };
 
 /**

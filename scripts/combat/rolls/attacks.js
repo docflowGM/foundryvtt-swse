@@ -76,7 +76,7 @@ export async function rollAttack(actor, weapon) {
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({ actor }),
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? "+" : ""}${atkBonus})`
-  });
+  } , { create: true });
 
   return roll;
 }
@@ -123,7 +123,7 @@ export async function rollDamage(actor, weapon) {
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({ actor }),
     flavor: `${weapon.name} Damage (${formula})`
-  });
+  } , { create: true });
 
   return roll;
 }

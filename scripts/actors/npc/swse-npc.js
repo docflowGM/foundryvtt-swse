@@ -1,45 +1,14 @@
-import { SWSECharacterSheet } from '../character/swse-character-sheet.js';
-import { SWSELogger } from '../../utils/logger.js';
+/**
+ * LEGACY SHEET (REMOVED)
+ * ---------------------
+ * Phase 3.3: legacy (v1) NPC sheet retired.
+ *
+ * Backward-compatibility stub only.
+ */
 
-// ============================================
-// FILE: module/actors/swse-npc.js
-// NPC actor sheet
-// ============================================
+import { SWSEV2NpcSheet } from "../../sheets/v2/npc-sheet.js";
 
-export class SWSENPCSheet extends SWSECharacterSheet {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "sheet", "actor", "npc", "swse-app"],
-      template: "systems/foundryvtt-swse/templates/actors/npc/npc-sheet.hbs",
-      width: 800,
-      height: 720,
-      tabs: [{
-        navSelector: '.sheet-tabs',
-        contentSelector: '.sheet-body',
-        initial: 'summary'
-      }]
-    });
-  }
-
-  getData() {
-    const context = super.getData();
-    // Add NPC-specific data here
-    return context;
-  }
-
-  activateListeners(html) {
-    super.activateListeners(html);
-
-    // Only add listeners if not read-only
-    if (!this.options.editable) return;
-
-    // Add NPC-specific listeners here
-    SWSELogger.log("SWSE | NPC sheet listeners activated");
-  }
-
-  // ============================================
-  // INHERITED METHOD STUBS
-  // These prevent errors when parent tries to call them
-  // ============================================
-
-}
+/**
+ * @deprecated Use {@link SWSEV2NpcSheet}.
+ */
+export class SWSENPCSheet extends SWSEV2NpcSheet {}

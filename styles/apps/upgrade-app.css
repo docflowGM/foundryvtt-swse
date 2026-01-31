@@ -9,7 +9,8 @@
 /* ROOT + THEME VARIABLES                                             */
 /* ================================================================= */
 
-.app.window-app.swse-upgrade-app {
+.app.window-app.swse-upgrade-app,
+.application.window-app.swse-upgrade-app {
   --swse-cyan: #00ffff;
   --swse-green: #00ff00;
   --swse-yellow: #ffff00;
@@ -29,7 +30,8 @@
 }
 
 /* Remove default Foundry padding */
-.app.window-app.swse-upgrade-app .window-content {
+.app.window-app.swse-upgrade-app .window-content,
+.application.window-app.swse-upgrade-app .window-content {
   padding: 0;
   background: transparent;
 }

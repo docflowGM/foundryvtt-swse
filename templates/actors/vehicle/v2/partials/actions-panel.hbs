@@ -1,0 +1,76 @@
+<div class="holo-panel">
+  <div class="section-bar">
+    <h3 class="section-header">Actions</h3>
+    <div class="muted" style="opacity:0.85; font-size:0.85rem;">Read-only — click an item-linked action to inspect</div>
+  </div>
+
+  {{#if derived.actions.groups.length}}
+    <div class="swse-v2-actions">
+      {{#each derived.actions.groups}}
+        <div class="swse-v2-action-group">
+          <div class="swse-v2-action-group-header">
+            <span class="label">{{this.label}}</span>
+            <span class="count">{{this.count}}</span>
+          </div>
+
+          {{#each this.subgroups}}
+            <div class="swse-v2-action-subgroup">
+              <div class="swse-v2-action-subheader">
+                <span class="label">{{this.label}}</span>
+                <span class="count">{{this.count}}</span>
+              </div>
+
+              <div class="swse-v2-action-list">
+                {{#each this.items}}
+                  <div class="swse-v2-action-row">
+                    <div class="swse-v2-action-row-top">
+                      <div class="left">
+                        {{#if this.itemId}}
+                          <a class="name swse-v2-open-item" data-item-id="{{this.itemId}}">{{this.name}}</a>
+                        {{else}}
+                          <span class="name">{{this.name}}</span>
+                        {{/if}}
+                        {{#if this.sourceName}}
+                          <span class="tag">{{this.sourceName}}</span>
+                        {{/if}}
+                        {{#if this.active}}
+                          <span class="tag">Active</span>
+                        {{/if}}
+                      </div>
+                      <div class="right">
+                        {{#if this.executable}}
+                          <button type="button" class="swse-v2-btn swse-v2-use-action" data-action-id="{{this.key}}">{{#if this.useLabel}}{{this.useLabel}}{{else}}Use{{/if}}</button>
+                        {{/if}}
+                      </div>
+                    </div>
+
+                    {{#if this.resources.length}}
+                      <div class="swse-v2-resources" style="margin-top:4px;">
+                        {{#each this.resources as |r|}}
+                          <div class="swse-v2-resource" data-kind="{{r.kind}}">
+                            <span class="ticks {{r.sizeClass}}">
+                              {{#each r.ticks as |t|}}
+                                <span class="tick {{#if t.filled}}filled{{/if}}"></span>
+                              {{/each}}
+                            </span>
+                            <span class="count">{{r.labelText}}</span>
+                          </div>
+                        {{/each}}
+                      </div>
+                    {{/if}}
+
+                    {{#if this.description}}
+                      <div class="muted" style="opacity:0.85; margin-top:4px;">{{this.description}}</div>
+                    {{/if}}
+                  </div>
+                {{/each}}
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="muted" style="opacity:0.8;">No actions available.</div>
+  {{/if}}
+</div>

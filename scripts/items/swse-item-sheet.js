@@ -1,125 +1,174 @@
-import { SWSEUpgradeApp } from '../apps/upgrade-app.js';
+/**
+ * SWSE Item Sheet (ApplicationV2)
+ *
+ * Contract:
+ * - UI edits item data only
+ * - No rules math
+ * - No actor mutation outside ActorEngine-owned APIs (actor.updateOwnedItem / actor.activateItem / etc.)
+ */
 
-export class SWSEItemSheet extends foundry.appv1.sheets.ItemSheet {
+import { SWSEUpgradeApp } from "../apps/upgrade-app.js";
+import { SWSELogger } from "../utils/logger.js";
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "sheet", "item", "swse-app"],
-      width: 520,
-      height: 350,
-      tabs: [{navSelector: ".tabs", contentSelector: ".sheet-body", initial: "description"}]
-    });
-  }
+const { HandlebarsApplicationMixin } = foundry.applications.api;
+const { ItemSheetV2 } = foundry.applications.sheets;
 
-  get template() {
-    return "systems/foundryvtt-swse/templates/items/base/item-sheet.hbs";
-  }
+export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
+  /** @inheritDoc */
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+    classes: ["swse", "sheet", "item", "swse-app", "swse-theme-holo"],
+    position: { width: 520, height: 600 },
+    window: { resizable: true },
+    form: {
+      handler: SWSEItemSheet.#onSubmitForm,
+      submitOnChange: true,
+      closeOnSubmit: false
+    }
+  });
 
-  getData() {
-    const context = super.getData();
-    context.system = context.item.system;
+  /** @inheritDoc */
+  static PARTS = {
+    form: {
+      template: "systems/foundryvtt-swse/templates/items/base/item-sheet.hbs"
+    }
+  };
+
+  /** @inheritDoc */
+  static TABS = {
+    primary: {
+      tabs: [
+        { id: "data", group: "primary" },
+        { id: "desc", group: "primary" }
+      ],
+      initial: "data"
+    }
+  };
+
+  /** @inheritDoc */
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+
+    context.item = this.item;
+    context.system = this.item.system;
+
+    // Template expects this for the <form class="{{cssClass}} ..."> binding.
+    context.cssClass = this.classList?.value || this.constructor.DEFAULT_OPTIONS.classes.join(" ");
+
     return context;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    if (!this.isEditable) return;
+  /** @inheritDoc */
+  _onRender(context, options) {
+    super._onRender(context, options);
 
-    // Open upgrade app
-    html.find(".open-upgrade-app").click(this._onOpenUpgradeApp.bind(this));
+    const root = this.element;
+    if (!root) return;
 
-    // Shield activation/deactivation
-    html.find(".activate-shield").click(this._onActivateShield.bind(this));
-    html.find(".deactivate-shield").click(this._onDeactivateShield.bind(this));
+    // Upgrade management
+    root.querySelector(".open-upgrade-app")?.addEventListener("click", (event) => {
+      event.preventDefault();
+      try {
+        new SWSEUpgradeApp(this.item).render(true);
+      } catch (err) {
+        SWSELogger.error("[SWSEItemSheet] Failed to open UpgradeApp", err);
+      }
+    });
+
+    // Shield activation helpers (data-only intent -> actor API)
+    root.querySelector(".activate-shield")?.addEventListener("click", this.#onActivateShield.bind(this));
+    root.querySelector(".deactivate-shield")?.addEventListener("click", this.#onDeactivateShield.bind(this));
   }
 
-  /**
-   * Handle opening the upgrade application
-   */
-  _onOpenUpgradeApp(event) {
-    event.preventDefault();
-    const upgradeApp = new SWSEUpgradeApp(this.item);
-    upgradeApp.render(true);
-  }
-
-  /**
-   * Handle shield activation
-   */
-  async _onActivateShield(event) {
+  async #onActivateShield(event) {
     event.preventDefault();
 
-    const currentCharges = this.item.system.charges?.current || 0;
-    const shieldRating = this.item.system.shieldRating || 0;
+    const actor = this.item?.actor;
+    if (actor?.activateItem) {
+      await actor.activateItem(this.item);
+      return;
+    }
+
+    // Fallback for unowned items or legacy contexts.
+    const currentCharges = Number(this.item.system.charges?.current ?? 0);
+    const shieldRating = Number(this.item.system.shieldRating ?? 0);
 
     if (currentCharges <= 0) {
       ui.notifications.warn("No charges remaining to activate shield!");
       return;
     }
-
     if (shieldRating <= 0) {
       ui.notifications.warn("Shield has no rating to activate!");
       return;
     }
 
-    // Use one charge, activate the shield, and set current SR to max
-    await this.item.update({
-      'system.charges.current': currentCharges - 1,
-      'system.activated': true,
-      'system.currentSR': shieldRating
-    });
+    const updates = {
+      "system.charges.current": currentCharges - 1,
+      "system.activated": true,
+      "system.currentSR": shieldRating
+    };
 
-    ui.notifications.info(`${this.item.name} activated! SR: ${shieldRating}, Charges remaining: ${currentCharges - 1}`);
+    if (actor?.updateOwnedItem && this.item?.isEmbedded) await actor.updateOwnedItem(this.item, updates);
+    else await this.item.update(updates);
+
+    ui.notifications.info(
+      `${this.item.name} activated! SR: ${shieldRating}, Charges remaining: ${currentCharges - 1}`
+    );
   }
 
-  /**
-   * Handle shield deactivation
-   */
-  async _onDeactivateShield(event) {
+  async #onDeactivateShield(event) {
     event.preventDefault();
 
-    await this.item.update({
-      'system.activated': false
-    });
+    const actor = this.item?.actor;
+    if (actor?.deactivateItem) {
+      await actor.deactivateItem(this.item);
+      return;
+    }
 
+    const updates = { "system.activated": false };
+
+    if (actor?.updateOwnedItem && this.item?.isEmbedded) await actor.updateOwnedItem(this.item, updates);
+    else await this.item.update(updates);
     ui.notifications.info(`${this.item.name} deactivated!`);
   }
 
   /**
-   * Custom update handler to process comma-separated arrays and handle shield auto-deactivation
+   * V2 form handler.
+   * @this {SWSEItemSheet}
+   * @param {SubmitEvent} event
+   * @param {HTMLFormElement} form
+   * @param {FormDataExtended} formData
    */
-  async _updateObject(event, formData) {
-    // Convert comma-separated strings to arrays for specific fields
-    if (formData['system.properties'] !== undefined && typeof formData['system.properties'] === 'string') {
-      formData['system.properties'] = formData['system.properties']
-        .split(',')
-        .map(p => p.trim())
-        .filter(p => p);
+  static async #onSubmitForm(event, form, formData) {
+    event.preventDefault();
+
+    const data = foundry.utils.expandObject(formData.object);
+
+    // Normalize string lists into arrays.
+    if (typeof data?.system?.properties === "string") {
+      data.system.properties = data.system.properties
+        .split(",")
+        .map((p) => p.trim())
+        .filter(Boolean);
     }
 
-    if (formData['system.tags'] !== undefined && typeof formData['system.tags'] === 'string') {
-      formData['system.tags'] = formData['system.tags']
-        .split(',')
-        .map(t => t.trim())
-        .filter(t => t);
+    if (typeof data?.system?.tags === "string") {
+      data.system.tags = data.system.tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
     }
 
-    if (formData['system.bonusFeatFor'] !== undefined && typeof formData['system.bonusFeatFor'] === 'string') {
-      formData['system.bonusFeatFor'] = formData['system.bonusFeatFor']
-        .split(',')
-        .map(c => c.trim())
-        .filter(c => c);
+    // If a shield is toggled off via form edits, ensure derived UI doesn't remain "active".
+    if (data?.system?.charges && Number(data.system.charges?.current ?? 0) <= 0) {
+      data.system.activated = false;
     }
 
-    // Auto-deactivate shield when current SR reaches 0
-    if (this.item.system.armorType === 'shield' && this.item.system.activated) {
-      const newCurrentSR = formData['system.currentSR'] !== undefined ? formData['system.currentSR'] : this.item.system.currentSR;
-      if (newCurrentSR <= 0) {
-        formData['system.activated'] = false;
-        ui.notifications.info(`${this.item.name} depleted and auto-deactivated!`);
-      }
+    const actor = this.item?.actor;
+    if (actor?.updateOwnedItem && this.item?.isEmbedded) {
+      await actor.updateOwnedItem(this.item, foundry.utils.flattenObject(data));
+      return;
     }
 
-    // Call parent to handle the actual update
-    return super._updateObject(event, formData);
+    await this.item.update(foundry.utils.flattenObject(data));
   }
 }

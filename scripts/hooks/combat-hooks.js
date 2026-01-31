@@ -151,7 +151,7 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
     await roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         flavor: game.i18n.localize('SWSE.Chat.Flavors.ConditionRecovery')
-    });
+    } , { create: true });
 
     if (roll.total >= 10) {
         globalThis.SWSE.ActorEngine.updateActor(actor, {

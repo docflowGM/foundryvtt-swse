@@ -295,6 +295,36 @@ body.swse-app-theme-holo .swse-app .swse-sheet-holo {
   color: white;
 }
 
+
+/* ============================================================================
+   Phase 3.2: Legacy execution freeze banner + soft-disable styling
+   ============================================================================ */
+.swse-app .swse-legacy-freeze-banner {
+  margin: 6px 6px 10px;
+  padding: 8px 10px;
+  border: 1px solid rgba(0, 186, 255, 0.7);
+  border-radius: 6px;
+  background: rgba(10, 14, 18, 0.65);
+  color: rgba(213, 236, 255, 0.92);
+}
+
+.swse-app .swse-legacy-freeze-banner__title {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 2px;
+}
+
+.swse-app .swse-legacy-freeze-banner__body {
+  font-size: 12px;
+  opacity: 0.95;
+}
+
+.swse-app .swse-legacy-execution-disabled .swse-legacy-exec-disabled {
+  opacity: 0.55;
+  filter: grayscale(20%);
+  cursor: not-allowed;
+}
+
 /* ============================================================================
    END SAFE VERSION
    ============================================================================ */

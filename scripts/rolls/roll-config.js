@@ -754,7 +754,7 @@ export async function rollCriticalConfirmation({ actor, weapon, attackBonus, tar
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
     content: html,
-    roll
+    rolls: [roll],
   });
 
   // Show 3D dice if available
@@ -838,7 +838,7 @@ export async function rollConcealmentCheck(missChance, actor = null) {
   await ChatMessage.create({
     speaker: actor ? ChatMessage.getSpeaker({ actor }) : ChatMessage.getSpeaker(),
     content: html,
-    roll
+    rolls: [roll],
   });
 
   return { roll, hit, missChance };

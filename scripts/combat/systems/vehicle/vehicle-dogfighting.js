@@ -357,6 +357,6 @@ export async function createDogfightMessage(result) {
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({actor: initiator}),
     content,
-    type: CONST.CHAT_MESSAGE_TYPES.OTHER
+    style: CONST.CHAT_MESSAGE_STYLES.OTHER
   });
 }

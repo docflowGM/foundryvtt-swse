@@ -1,0 +1,47 @@
+<form class="{{cssClass}} swse holo" autocomplete="off" data-theme="holo">
+  <header class="sheet-header holo-header">
+    <div class="header-left">
+      <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="64" width="64"/>
+      <div class="title-block">
+        <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h1>
+        <div class="subline muted">NPC — v2 truth view</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="swse-stat"><div class="label">FORT</div><div class="value">{{derived.defenses.fort}}</div></div>
+      <div class="swse-stat"><div class="label">REF</div><div class="value">{{derived.defenses.ref}}</div></div>
+      <div class="swse-stat"><div class="label">WILL</div><div class="value">{{derived.defenses.will}}</div></div>
+      <div class="swse-stat"><div class="label">DT</div><div class="value">{{derived.damage.threshold}}</div></div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="summary">Summary</a>
+  </nav>
+
+  <section class="sheet-body">
+    <section class="tab" data-group="primary" data-tab="summary">
+      <div class="swse-v2-sheet-grid">
+        <div class="swse-v2-left">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
+        </div>
+
+        <div class="swse-v2-right">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs"}}
+        </div>
+
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
+        </div>
+
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
+        </div>
+      </div>
+    </section>
+  </section>
+</form>

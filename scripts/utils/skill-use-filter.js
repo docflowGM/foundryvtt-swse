@@ -239,7 +239,7 @@ export class SkillUseFilter {
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({actor}),
       flavor: flavor
-    });
+    } , { create: true });
 
     return roll;
   }

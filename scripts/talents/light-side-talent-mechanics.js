@@ -18,6 +18,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { ActorEngine } from "../actors/engine/actor-engine.js";
 
 export class LightSideTalentMechanics {
 
@@ -221,7 +222,7 @@ export class LightSideTalentMechanics {
       return false;
     }
 
-    await ally.updateEmbeddedDocuments('Item', [{
+    await ActorEngine.updateOwnedItems(ally, [{
       _id: power.id,
       'system.spent': false
     }]);
@@ -673,7 +674,7 @@ export class LightSideTalentMechanics {
     await fpRoll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `Apprentice Boon - Force Point for ${ally.name}`
-    });
+    } , { create: true });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Apprentice Boon on ${ally.name}, granting +${fpRoll.total}`);
     ui.notifications.info(`${ally.name} gains +${fpRoll.total} bonus from Apprentice Boon!`);
@@ -725,7 +726,7 @@ export class LightSideTalentMechanics {
 
     // Restore uses if it has a uses system
     if (farseeing.system?.uses) {
-      await actor.updateEmbeddedDocuments('Item', [{
+      await ActorEngine.updateOwnedItems(actor, [{
         _id: farseeing.id,
         'system.uses.current': farseeing.system.uses.max
       }]);

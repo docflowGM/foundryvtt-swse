@@ -167,8 +167,8 @@ export class SWSECombat {
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-      roll
+      style: CONST.CHAT_MESSAGE_STYLES.OTHER,
+      rolls: [roll],
     });
   }
 
@@ -198,7 +198,7 @@ export class SWSECombat {
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
-      roll
+      rolls: [roll],
     });
   }
 

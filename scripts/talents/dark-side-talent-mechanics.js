@@ -7,6 +7,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { ActorEngine } from "../actors/engine/actor-engine.js";
 
 export class DarkSideTalentMechanics {
 
@@ -121,7 +122,7 @@ export class DarkSideTalentMechanics {
 
     // Single power - return it
     const power = darkSidePowers[0];
-    await actor.updateEmbeddedDocuments('Item', [{
+    await ActorEngine.updateOwnedItems(actor, [{
       _id: power.id,
       'system.spent': false
     }]);
@@ -145,7 +146,7 @@ export class DarkSideTalentMechanics {
       return false;
     }
 
-    await actor.updateEmbeddedDocuments('Item', [{
+    await ActorEngine.updateOwnedItems(actor, [{
       _id: power.id,
       'system.spent': false
     }]);

@@ -82,7 +82,7 @@ export class SWSECombatAutomation {
         <p><strong>${actor.name}</strong> takes ${damage} damage (Threshold: ${threshold})</p>
         <p>Condition worsens by one step.</p>
       </div>`,
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER
+      style: CONST.CHAT_MESSAGE_STYLES.OTHER
     });
 
     await actor.moveConditionTrack(1);
@@ -95,7 +95,7 @@ export class SWSECombatAutomation {
           <h3>☠ Character Defeated!</h3>
           <p><strong>${actor.name}</strong> is Helpless at 0 HP.</p>
         </div>`,
-        type: CONST.CHAT_MESSAGE_TYPES.OTHER
+        style: CONST.CHAT_MESSAGE_STYLES.OTHER
       });
     }
 

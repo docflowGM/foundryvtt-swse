@@ -1774,7 +1774,7 @@ async applyScalingFeature(feature) {
       swseLogger.warn('Suggestion engines not initialized');
       return feats;
     }
-    return await game.swse.suggestions.suggestFeats(feats, this.actor, pendingData);
+    return await SuggestionService.getSuggestions(feats, this.actor, pendingData);
   }
 
   /**
@@ -1789,7 +1789,7 @@ async applyScalingFeature(feature) {
       swseLogger.warn('Suggestion engines not initialized');
       return talents;
     }
-    return await game.swse.suggestions.suggestTalents(talents, this.actor, pendingData);
+    return await SuggestionService.getSuggestions(this.actor, 'progression', { domain: 'talents', available: talents, pendingData: pendingData, persist: true });
   }
 
   /**
@@ -1804,7 +1804,7 @@ async applyScalingFeature(feature) {
       swseLogger.warn('Suggestion engines not initialized');
       return classes;
     }
-    return await game.swse.suggestions.suggestClasses(classes, this.actor, pendingData);
+    return await SuggestionService.getSuggestions(this.actor, 'progression', { domain: 'classes', available: classes, pendingData: pendingData, persist: true });
   }
 
   /**
@@ -1858,7 +1858,7 @@ async applyScalingFeature(feature) {
       swseLogger.warn('Force option suggestion engine not initialized');
       return options;
     }
-    return await game.swse.suggestions.suggestForceOptions(options, this.actor, pendingData);
+    return await SuggestionService.getSuggestions(this.actor, 'progression', { domain: 'forcepowers', available: options, pendingData: pendingData, persist: true });
   }
 
   /**
@@ -1884,7 +1884,7 @@ async applyScalingFeature(feature) {
       swseLogger.warn('Level 1 skill suggestion engine not initialized');
       return skills;
     }
-    return await game.swse.suggestions.suggestLevel1Skills(skills, this.actor, pendingData);
+    return await SuggestionService.getSuggestions(this.actor, 'progression', { domain: 'skills_l1', available: skills, pendingData: pendingData, persist: true });
   }
 
   /**
@@ -1897,7 +1897,7 @@ async applyScalingFeature(feature) {
       swseLogger.warn('Attribute increase suggestion engine not initialized');
       return [];
     }
-    return await game.swse.suggestions.suggestAttributeIncreases(this.actor, pendingData);
+    return await SuggestionService.getSuggestions(this.actor, 'progression', { domain: 'attributes', pendingData: pendingData, persist: true });
   }
 
   /**
@@ -1936,6 +1936,195 @@ async applyScalingFeature(feature) {
     if (game.swse?.suggestions?.clearBuildIntentCache) {
       game.swse.suggestions.clearBuildIntentCache(this.actor.id);
     }
+  }
+
+  // ============================================================================
+  // PUBLIC API METHODS - For use by Chargen, Templates, and Level-up UI
+  // ============================================================================
+  // These methods provide a clean interface for external callers to interact
+  // with the progression engine without needing to know about internal _action_* methods
+
+  /**
+   * PUBLIC: Confirm species selection
+   * @param {string} speciesId - Compendium ID of species
+   * @param {Object} options - Options (e.g., { abilityChoice: 'str' } for human)
+   * @returns {Promise<void>}
+   */
+  async confirmSpecies(speciesId, options = {}) {
+    return this.doAction('confirmSpecies', { speciesId, ...options });
+  }
+
+  /**
+   * PUBLIC: Confirm background selection
+   * @param {string} backgroundId - Compendium ID of background
+   * @param {Object} options - Additional options
+   * @returns {Promise<void>}
+   */
+  async confirmBackground(backgroundId, options = {}) {
+    return this.doAction('confirmBackground', { backgroundId, ...options });
+  }
+
+  /**
+   * PUBLIC: Confirm ability scores
+   * @param {Object} abilities - Ability scores { str, dex, con, int, wis, cha }
+   * @param {string} method - Method used ('preset', 'pointbuy', 'standard', 'heroic', 'dice')
+   * @param {Object} options - Additional options
+   * @returns {Promise<void>}
+   */
+  async confirmAbilities(abilities, method = 'preset', options = {}) {
+    return this.doAction('confirmAbilities', { abilities, method, ...options });
+  }
+
+  /**
+   * PUBLIC: Confirm class selection
+   * @param {string} classId - Compendium ID of class
+   * @param {Object} options - Options (e.g., { skipPrerequisites: true })
+   * @returns {Promise<void>}
+   */
+  async confirmClass(classId, options = {}) {
+    return this.doAction('confirmClass', { classId, ...options });
+  }
+
+  /**
+   * PUBLIC: Confirm skill selections
+   * @param {Array<string>} skills - Array of skill IDs to train
+   * @param {Object} options - Additional options
+   * @returns {Promise<void>}
+   */
+  async confirmSkills(skills, options = {}) {
+    return this.doAction('confirmSkills', { skills, ...options });
+  }
+
+  /**
+   * PUBLIC: Confirm multiple feats at once
+   * @param {Array<string>} featIds - Array of feat IDs
+   * @param {Object} options - Additional options
+   * @returns {Promise<void>}
+   */
+  async confirmFeats(featIds, options = {}) {
+    return this.doAction('confirmFeats', { featIds, ...options });
+  }
+
+  /**
+   * PUBLIC: Confirm single feat (convenience method)
+   * @param {string} featId - Feat ID
+   * @param {Object} options - Additional options
+   * @returns {Promise<void>}
+   */
+  async confirmFeat(featId, options = {}) {
+    return this.confirmFeats([featId], options);
+  }
+
+  /**
+   * PUBLIC: Confirm multiple talents at once
+   * @param {Array<string>} talentIds - Array of talent IDs
+   * @param {Object} options - Additional options
+   * @returns {Promise<void>}
+   */
+  async confirmTalents(talentIds, options = {}) {
+    return this.doAction('confirmTalents', { talentIds, ...options });
+  }
+
+  /**
+   * PUBLIC: Confirm single talent (convenience method)
+   * @param {string} talentId - Talent ID
+   * @param {Object} options - Additional options
+   * @returns {Promise<void>}
+   */
+  async confirmTalent(talentId, options = {}) {
+    return this.confirmTalents([talentId], options);
+  }
+
+  /**
+   * PUBLIC: Confirm mentor selection
+   * @param {string} mentorClass - Mentor class/type (e.g., 'Jedi', 'Scout', 'Scoundrel', 'Noble')
+   * @param {Object} options - Additional options
+   * @returns {Promise<void>}
+   */
+  async confirmMentor(mentorClass, options = {}) {
+    // Store mentor data in progression state for consistency
+    await applyActorUpdateAtomic(this.actor, {
+      'system.progression.mentor': mentorClass,
+      'system.mentorMemory': {
+        class: mentorClass,
+        biases: this._getMentorBiases(mentorClass),
+        dialogueHistory: []
+      }
+    });
+    this.data.mentor = mentorClass;
+  }
+
+  /**
+   * PUBLIC: Apply a template package (all template data at once)
+   * @param {string} templateId - Template ID
+   * @param {Object} options - Options to override template data
+   * @returns {Promise<boolean>} - Success status
+   */
+  async applyTemplatePackage(templateId, options = {}) {
+    const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
+    const template = PROGRESSION_RULES.templates?.[templateId];
+
+    if (!template) {
+      throw new Error(`Unknown template: ${templateId}`);
+    }
+
+    try {
+      // Apply template selections in order
+      if (template.species) {
+        const speciesOpt = options.species || {};
+        await this.confirmSpecies(template.species, speciesOpt);
+      }
+
+      if (template.background) {
+        await this.confirmBackground(template.background, options.background || {});
+      }
+
+      if (template.abilities) {
+        await this.confirmAbilities(template.abilities, 'preset', options.abilities || {});
+      }
+
+      if (template.class) {
+        const classOpt = { skipPrerequisites: true, ...options.class };
+        await this.confirmClass(template.class, classOpt);
+      }
+
+      if (template.skills && Array.isArray(template.skills)) {
+        await this.confirmSkills(template.skills, options.skills || {});
+      }
+
+      if (template.feats && Array.isArray(template.feats)) {
+        await this.confirmFeats(template.feats, options.feats || {});
+      }
+
+      if (template.talents && Array.isArray(template.talents)) {
+        await this.confirmTalents(template.talents, options.talents || {});
+      }
+
+      if (template.forcePowers && Array.isArray(template.forcePowers)) {
+        await this.doAction('confirmForceTechniques', { techniqueIds: template.forcePowers });
+      }
+
+      if (template.mentor) {
+        await this.confirmMentor(template.mentor, options.mentor || {});
+      }
+
+      return true;
+    } catch (err) {
+      swseLogger.error(`[PROGRESSION-TEMPLATE] Error applying template ${templateId}:`, err);
+      throw err;
+    }
+  }
+
+  /**
+   * INTERNAL: Get mentor biases for a given mentor
+   * Used by confirmMentor to populate initial biases
+   * @param {string} mentorClass
+   * @returns {Object} Mentor biases object
+   */
+  _getMentorBiases(mentorClass) {
+    // This will be populated with real mentor data from the unified mentor system
+    // For now, return empty object - mentor system consolidation will fill this in
+    return {};
   }
 }
 

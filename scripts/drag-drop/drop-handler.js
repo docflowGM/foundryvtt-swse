@@ -391,7 +391,7 @@ export class DropHandler {
       'system.vehicleType': template.system.vehicleType || 'starfighter',
       'system.shields': template.system.shields || 0,
       'system.hull': template.system.hull || 0,
-      'system.speed': template.system.speed || 0
+      'system.speed': parseInt(template.system.speed, 10) || 0
     });
 
     ui.notifications.info(`Applied ${template.name} vehicle template to ${actor.name}`);

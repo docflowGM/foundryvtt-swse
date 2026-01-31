@@ -8,7 +8,7 @@ import { warnGM } from '../../utils/warn-gm.js';
 import { getClassLevel } from './levelup-shared.js';
 import { filterQualifiedFeats } from './levelup-validation.js';
 import { getClassProperty } from '../chargen/chargen-property-accessor.js';
-import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
+import { SuggestionService } from '../../engine/SuggestionService.js';
 
 // Cache for feat metadata
 let _featMetadataCache = null;
@@ -275,22 +275,16 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     // Use the coordinator API if available, otherwise fall back to direct engine call
     let featsWithSuggestions = featObjects;  // Use all feats, not just filtered
     if (game.swse?.suggestions?.suggestFeats) {
-      featsWithSuggestions = await game.swse.suggestions.suggestFeats(
-        featObjects,
-        actor,
+      featsWithSuggestions = await SuggestionService.getSuggestions(actor, 'levelup', {
+        domain: 'feats',
+        available: featObjects,
         pendingData,
-        { featMetadata: metadata.feats || {}, includeFutureAvailability: true }
-      );
-    } else {
-      featsWithSuggestions = await SuggestionEngine.suggestFeats(
-        featObjects,
-        actor,
-        pendingData,
-        { featMetadata: metadata.feats || {}, includeFutureAvailability: true }
-      );
-    }
+        engineOptions: { featMetadata: metadata.feats || {}, includeFutureAvailability: true },
+        persist: true
+      });
 
-    // Extract future available feats (those with futureAvailable flag and suggestion tier > 0)
+    }
+// Extract future available feats (those with futureAvailable flag and suggestion tier > 0)
     const futureAvailableFeats = featsWithSuggestions.filter(f =>
       f.futureAvailable && f.suggestion && f.suggestion.tier > 0
     );
@@ -298,7 +292,7 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     const categories = organizeFeatsIntoCategories(featsWithSuggestions, metadata, selectedFeats, actor);
 
     // Log suggestion statistics
-    const suggestionCounts = SuggestionEngine.countByTier(featsWithSuggestions);
+    const suggestionCounts = SuggestionService.countByTier(featsWithSuggestions);
     SWSELogger.log(`SWSE LevelUp | Loaded ${filteredFeats.length} feats in ${categories.length} categories, ${filteredFeats.filter(f => f.isQualified).length} qualified`);
     SWSELogger.log(`SWSE LevelUp | Suggestions: Chain=${suggestionCounts[4]}, Skill=${suggestionCounts[3]}, Ability=${suggestionCounts[2]}, Class=${suggestionCounts[1]}`);
     if (futureAvailableFeats.length > 0) {

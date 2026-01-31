@@ -1,0 +1,35 @@
+<div class="holo-panel">
+  <div class="section-bar">
+    <h3 class="section-header">Feats</h3>
+    <div class="muted">Read-only (derived)</div>
+  </div>
+
+  {{#if derived.feats.groups.length}}
+    <div class="swse-v2-groups">
+      {{#each derived.feats.groups}}
+        <div class="swse-v2-group">
+          <div class="swse-v2-group-header">
+            <span class="name">{{this.label}}</span>
+            <span class="meta">{{this.count}}</span>
+          </div>
+
+          <div class="swse-v2-group-list">
+            {{#each this.items}}
+              <div class="swse-v2-entry swse-v2-open-item" data-item-id="{{this.id}}" title="Click to open item">
+                <div class="row">
+                  <span class="name">{{this.name}}</span>
+                  <span class="tag">{{this.featTypeLabel}}</span>
+                </div>
+                {{#if this.summary}}
+                  <div class="muted">{{this.summary}}</div>
+                {{/if}}
+              </div>
+            {{/each}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="muted" style="padding:6px 0;">No feats.</div>
+  {{/if}}
+</div>

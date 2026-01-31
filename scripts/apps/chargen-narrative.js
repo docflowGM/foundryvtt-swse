@@ -7,6 +7,7 @@ import { SWSELogger } from '../utils/logger.js';
 
 import CharacterGeneratorImproved from './chargen-improved.js';
 import { MENTORS } from './mentor-dialogues.js';
+import { MentorResolver } from './mentor-resolver.js';
 import { TalentTreeVisualizer } from './talent-tree-visualizer.js';
 import { getTalentTreeName } from './chargen/chargen-property-accessor.js';
 import { normalizeTalentData } from '../progression/utils/item-normalizer.js';
@@ -17,9 +18,10 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
 
   constructor(actor = null, options = {}) {
     super(actor, options);
-    // Always use Ol' Salty (the Scoundrel mentor) as the chargen narrator
-    this.narrator = MENTORS.Scoundrel;
-    this.narratorPersonality = 'salty'; // Ol' Salty's unique personality
+    // FIX 3 (Lazy Binding): Don't resolve mentor here
+    // It will be resolved in getData() when the UI actually opens
+    this.narrator = MENTORS.Scoundrel; // Temporary default only
+    this.narratorPersonality = 'salty';
     this.selectedTalentTree = null;
     this.talentData = null;
 
@@ -36,8 +38,9 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   async getData() {
     const context = await super.getData();
 
-    // Update narrator based on selected class
-    this._updateNarratorByClass();
+    // FIX 3 (Lazy Binding): Resolve mentor now when rendering
+    // This ensures actor state is complete before mentor selection
+    this._resolveMentorLazy();
 
     // Add narrator commentary
     context.narratorComment = this._getNarratorComment();
@@ -51,38 +54,37 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   }
 
   /**
-   * Update narrator to match the selected class
-   * Changes from Ol' Salty to class-specific mentor when player selects a class
+   * FIX 3: Lazy mentor binding
+   * Resolve the mentor at render time instead of construction time
+   * Ensures all actor data is available before resolution
    * @private
    */
-  _updateNarratorByClass() {
+  _resolveMentorLazy() {
     const classes = this.characterData.classes || [];
+
     if (classes.length === 0) {
-      // No class selected, use Ol' Salty
-      this.narrator = MENTORS.Scoundrel;
+      // FIX 1 (Context-aware): No class yet - use chargen default (Ol' Salty)
+      this.narrator = MentorResolver.resolveFor(this.actor, { phase: 'chargen' });
       this.narratorPersonality = 'salty';
+      SWSELogger.log(`[CHARGEN-NARRATIVE] Lazy resolved mentor (no class): "${this.narrator?.name}"`);
       return;
     }
 
+    // Class selected - resolve class-specific mentor
     const className = classes[0].name;
-    const mentorMap = {
-      'Jedi': MENTORS.Jedi,
-      'Soldier': MENTORS.Soldier,
-      'Scoundrel': MENTORS.Scoundrel,
-      'Noble': MENTORS.Noble,
-      'Scout': MENTORS.Scout
-    };
+    this.narrator = MentorResolver.getForClass(className);
+    this.narratorPersonality = className.toLowerCase();
+    SWSELogger.log(`[CHARGEN-NARRATIVE] Lazy resolved mentor for class "${className}": "${this.narrator?.name}"`);
+  }
 
-    const selectedMentor = mentorMap[className];
-    if (selectedMentor) {
-      this.narrator = selectedMentor;
-      // Update personality based on class/narrator
-      this.narratorPersonality = className.toLowerCase();
-    } else {
-      // Unknown class, use Scoundrel as fallback
-      this.narrator = MENTORS.Scoundrel;
-      this.narratorPersonality = 'salty';
-    }
+  /**
+   * DEPRECATED: Kept for backward compatibility
+   * Now uses the lazy mentor resolver
+   * @private
+   */
+  _updateNarratorByClass() {
+    // Call the new lazy binding method
+    this._resolveMentorLazy();
   }
 
   // ========================================

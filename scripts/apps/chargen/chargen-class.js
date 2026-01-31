@@ -361,7 +361,11 @@ export async function _onSelectClass(event) {
       } else {
         SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User skipped mentor survey (can be completed later)`);
         ui.notifications.info("Survey skipped. You can complete it later to get personalized mentor suggestions.");
-      }
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Recording mentor survey skip metadata`);
+        this.characterData.mentorSurveySkipped = true;
+        this.characterData.mentorSurveySkipCount = (this.characterData.mentorSurveySkipCount || 0) + 1;
+        this.characterData.mentorSurveyLastSkippedAt = Date.now();
+}
     } else {
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CONDITION NOT MET - Skipping survey`, {
         surveyAlreadyCompleted: surveyCompleted,
@@ -376,7 +380,8 @@ export async function _onSelectClass(event) {
   }
 
   // Re-render to show the selected class and enable the Next button
-  await this.render();
+  // Force full re-render to recompute mentor dialogue based on new class
+  await this.render(true);
 
   SWSELogger.log(`CharGen | Class selection complete, Next button should now be visible`);
   } catch (err) {
@@ -537,18 +542,4 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
 
 
 // ============================================================
-// MENTOR L1 SURVEY TRIGGER (GENERATED DATA PIPELINE)
-// ============================================================
 
-import { maybeOpenMentorSurvey } from "../mentor-survey.js";
-
-export function maybeTriggerMentorL1Survey(actor) {
-  const identity = actor?.flags?.swse?.identity;
-  const survey = actor?.flags?.swse?.mentorSurvey;
-
-  if (!identity?.identityReady) return;
-  if (survey?.completed) return;
-
-  console.log("[SWSE Mentor] Triggering L1 mentor survey");
-  maybeOpenMentorSurvey(actor);
-}

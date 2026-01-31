@@ -9,6 +9,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { ActorEngine } from "../actors/engine/actor-engine.js";
 
 export class DarkSidePowers {
 
@@ -102,7 +103,7 @@ export class DarkSidePowers {
     // If single power, return it directly
     if (darkSidePowers.length === 1) {
       const power = darkSidePowers[0];
-      await actor.updateEmbeddedDocuments('Item', [{
+      await ActorEngine.updateOwnedItems(actor, [{
         _id: power.id,
         'system.spent': false
       }]);
@@ -132,7 +133,7 @@ export class DarkSidePowers {
       return false;
     }
 
-    await actor.updateEmbeddedDocuments('Item', [{
+    await ActorEngine.updateOwnedItems(actor, [{
       _id: power.id,
       'system.spent': false
     }]);
@@ -1271,7 +1272,7 @@ export class DarkSidePowers {
     let regainedPowerName = null;
     if (spentPowers.length > 0) {
       const powerToRegain = spentPowers[0];
-      await actor.updateEmbeddedDocuments('Item', [{
+      await ActorEngine.updateOwnedItems(actor, [{
         _id: powerToRegain.id,
         'system.spent': false
       }]);
@@ -1542,7 +1543,7 @@ export class DarkSidePowers {
     const originalDescription = weaponItem.system?.description || '';
     const enhancedDescription = `${originalDescription}\n\n**Sith Alchemical Enhancement:** This weapon has been imbued with Sith sorcery. Lightsabers do not ignore its Damage Reduction. Proficient users treat it as a Lightsaber for Block, Deflect, and Redirect Shot talents.`;
 
-    await actor.updateEmbeddedDocuments('Item', [{
+    await ActorEngine.updateOwnedItems(actor, [{
       _id: weaponItem.id,
       'flags.swse.sithAlchemical': true,
       'system.description': enhancedDescription

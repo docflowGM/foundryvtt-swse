@@ -22,7 +22,7 @@ export async function rollInitiative(actor) {
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({actor}),
     flavor: `${actor.name} rolls initiative! (${utils.string.formatModifier(totalBonus)})`
-  });
+  } , { create: true });
   
   return roll;
 }

@@ -196,7 +196,7 @@ export class FeintMechanics {
                 `Bonus: ${deceptionBonus >= 0 ? '+' : ''}${deceptionBonus}<br>` +
                 `Total DC: ${total}` +
                 (targetCount > 1 ? `<br>Targets: ${targetCount}` : '')
-      });
+      } , { create: true });
 
       return total;
     } catch (err) {
@@ -223,7 +223,7 @@ export class FeintMechanics {
         flavor: `<strong>Oppose Feint</strong> - Initiative Check<br>` +
                 `Initiative Bonus: ${initiativeBonus >= 0 ? '+' : ''}${initiativeBonus}<br>` +
                 `Total: ${total}`
-      });
+      } , { create: true });
 
       return total;
     } catch (err) {
