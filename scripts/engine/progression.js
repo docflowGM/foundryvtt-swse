@@ -1230,59 +1230,39 @@ async applyScalingFeature(feature) {
       // Character level = sum of all class levels (not count of classes)
       const currentLevel = classLevels.reduce((sum, cl) => sum + cl.level, 0);
 
-      // Check prestige class prerequisites
+      // Check prestige class prerequisites using centralized PrerequisiteChecker
       if (classData.prestigeClass) {
-        // Prestige classes require minimum level (default 7)
-        const requiredLevel = REQUIRED_PRESTIGE_LEVEL || 7;
-        if (currentLevel < requiredLevel) {
-          throw new Error(`Prestige class "${classId}" requires character level ${requiredLevel}. Current level: ${currentLevel}`);
+        const { checkPrerequisites } = await import('../data/prerequisite-checker.js');
+
+        // Create a snapshot that includes pending progression data
+        // This allows PrerequisiteChecker to validate against both current and pending state
+        const progressionSnapshot = {
+          ...this.actor,
+          system: {
+            ...this.actor.system,
+            // Override with current/pending progression values
+            level: currentLevel,
+            bab: await calculateBAB(classLevels),
+            // Include pending feats/talents/trained skills
+            progression: {
+              ...progression,
+              feats: progression.feats || [],
+              startingFeats: progression.startingFeats || [],
+              trainedSkills: progression.trainedSkills || []
+            }
+          }
+        };
+
+        // Use centralized prerequisite checker (reads from PRESTIGE_PREREQUISITES)
+        const prereqCheck = checkPrerequisites(progressionSnapshot, classId);
+
+        if (!prereqCheck.met) {
+          const details = prereqCheck.missing.join(', ');
+          throw new Error(`Prestige class "${classId}" unmet prerequisites: ${details}`);
         }
 
-        // Check for additional prerequisites from compendium
-        if (classData._raw?.prerequisites) {
-          const prereqs = classData._raw.prerequisites;
-
-          // Check BAB prerequisite
-          if (prereqs.bab) {
-            const { calculateBAB } = await import('../progression/data/progression-data.js');
-            const currentBAB = await calculateBAB(classLevels);
-            if (currentBAB < prereqs.bab) {
-              throw new Error(`Prestige class "${classId}" requires BAB +${prereqs.bab}. Current BAB: +${currentBAB}`);
-            }
-          }
-
-          // Check trained skills prerequisite
-          if (prereqs.trainedSkills && Array.isArray(prereqs.trainedSkills)) {
-            const trainedSkills = progression.trainedSkills || [];
-            const missingSkills = prereqs.trainedSkills.filter(s => !trainedSkills.includes(s));
-            if (missingSkills.length > 0) {
-              throw new Error(`Prestige class "${classId}" requires trained skills: ${missingSkills.join(', ')}`);
-            }
-          }
-
-          // Check required feats prerequisite
-          if (prereqs.feats && Array.isArray(prereqs.feats)) {
-            const allFeats = [...(progression.feats || []), ...(progression.startingFeats || [])];
-            const missingFeats = prereqs.feats.filter(f => !allFeats.some(pf => pf.toLowerCase() === f.toLowerCase()));
-            if (missingFeats.length > 0) {
-              throw new Error(`Prestige class "${classId}" requires feats: ${missingFeats.join(', ')}`);
-            }
-          }
-
-          // Check force sensitivity prerequisite
-          if (prereqs.forceSensitive === true) {
-            const hasForceSensitivity = (progression.startingFeats || []).some(f =>
-              f.toLowerCase().includes('force sensitivity')
-            );
-            const isForceSensitiveClass = classLevels.some(cl => {
-              const clData = PROGRESSION_RULES.classes[cl.class];
-              return clData?.forceSensitive;
-            });
-
-            if (!hasForceSensitivity && !isForceSensitiveClass) {
-              throw new Error(`Prestige class "${classId}" requires Force Sensitivity`);
-            }
-          }
+        if (prereqCheck.details?.special) {
+          swseLogger.warn(`[PROGRESSION-PRESTIGE] Special condition for "${classId}": ${prereqCheck.details.special}`);
         }
       }
     }
