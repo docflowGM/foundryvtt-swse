@@ -15,6 +15,7 @@ import { FeatRegistry } from "../feats/feat-registry-ui.js";
 import { TalentRegistry } from "../talents/talent-registry-ui.js";
 import { ForceRegistry } from "../force/force-registry-ui.js";
 import { PrerequisiteChecker } from "../../data/prerequisite-checker.js";
+import { enforcePrerequisiteConsolidation } from "../../data/prerequisite-checker-regression-guard.js";
 import { SuggestionEngineCoordinator } from "../../engine/SuggestionEngineCoordinator.js";
 
 /**
