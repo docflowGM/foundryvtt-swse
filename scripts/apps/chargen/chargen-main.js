@@ -2864,7 +2864,7 @@ export default class CharacterGenerator extends Application {
       });
 
       // Open the character sheet
-      created.sheet.render(true);
+      await created.sheet.render(true);
 
       ui.notifications.info(`Character ${this.characterData.name} created successfully!`);
     } catch (err) {
