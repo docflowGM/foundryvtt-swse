@@ -127,7 +127,8 @@ import {
     TalentDataModel,
     ForcePowerDataModel,
     ClassDataModel,
-    SpeciesDataModel
+    SpeciesDataModel,
+    TalentTreeDataModel
 } from './scripts/data-models/item-data-models.js';
 
 import { SWSECombatDocument } from './scripts/combat/swse-combat.js';
@@ -322,6 +323,7 @@ Hooks.once("init", async function () {
         upgrade: UpgradeDataModel,
         feat: FeatDataModel,
         talent: TalentDataModel,
+        talenttree: TalentTreeDataModel,
         forcepower: ForcePowerDataModel,
         "force-power": ForcePowerDataModel,
         class: ClassDataModel,

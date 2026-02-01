@@ -771,3 +771,34 @@ export class SpeciesDataModel extends foundry.abstract.DataModel {
     };
   }
 }
+
+// Talent Tree Data Model
+export class TalentTreeDataModel extends foundry.abstract.DataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+      talent_tree: new fields.StringField({
+        required: true,
+        initial: "Unknown Tree",
+        label: "Tree Name"
+      }),
+      description: new fields.HTMLField({
+        initial: "",
+        label: "Description"
+      }),
+      talentIds: new fields.ArrayField(new fields.StringField(), {
+        initial: [],
+        label: "Talent IDs"
+      }),
+      tags: new fields.ArrayField(new fields.StringField(), {
+        initial: [],
+        label: "Tags"
+      }),
+      costNumeric: new fields.NumberField({
+        required: false,
+        nullable: true,
+        label: "Cost"
+      })
+    };
+  }
+}
