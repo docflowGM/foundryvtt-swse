@@ -22,6 +22,8 @@
 // ============================================================================
 
 import { getDialoguePhase, SUGGESTION_CONTEXTS, DIALOGUE_PHASES } from './mentor-dialogues.js';
+import { getMentor, getReasons, selectBestReason, getMentorDialogueFromJSON } from './mentor-json-loader.js';
+import { SWSELogger } from '../utils/logger.js';
 
 // ============================================================================
 // PHASE DEFINITIONS - DEPRECATED (imported from mentor-dialogues.js)
@@ -2912,9 +2914,9 @@ export function getScoldingMentorLists() {
  * @param {string} speakParams.phase - "early" | "mid" | "late" (or derived from level)
  * @param {string} speakParams.mentorClass - The mentor class key
  * @param {number} speakParams.level - Character level
- * @returns {Object} Complete dialogue response
+ * @returns {Promise<Object>} Complete dialogue response
  */
-export function mentorSpeak({
+export async function mentorSpeak({
     context,
     recommendation = {},
     reasoning = {},
@@ -2938,15 +2940,20 @@ export function mentorSpeak({
         specificType = recommendation.name.toLowerCase();
     }
 
-    // Get the base dialogue
-    const dialogue = getMentorSuggestionDialogue({
-        mentorClass,
-        context,
-        specificType,
-        level,
-        rejectionCount,
-        recommendation
-    });
+    // Try to get dialogue from JSON files first (source of truth)
+    let dialogue = await getMentorDialogueFromJSON(mentorClass, context, effectivePhase, specificType);
+
+    // Fall back to hardcoded data if not found in JSON
+    if (!dialogue || (!dialogue.suggestion && !dialogue.combined)) {
+        dialogue = getMentorSuggestionDialogue({
+            mentorClass,
+            context,
+            specificType,
+            level,
+            rejectionCount,
+            recommendation
+        });
+    }
 
     // Add confidence indicator for low-confidence suggestions
     if (confidence < 0.4) {
