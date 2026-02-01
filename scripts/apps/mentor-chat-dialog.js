@@ -348,7 +348,7 @@ export class MentorChatDialog extends FormApplication {
       );
 
       // Get complete mentor response: {judgment, intensity, reasons}
-      const mentorResponse = selectMentorResponse(judgmentContext);
+      const mentorResponse = await selectMentorResponse(judgmentContext);
 
       // Render judgment phrase using mentor voice + rule-determined intensity
       const judgmentPhrase = renderJudgmentAtom(
