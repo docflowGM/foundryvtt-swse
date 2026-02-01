@@ -76,6 +76,7 @@
 
 import { INTENSITY_ATOMS, getIntensityScale } from './mentor-intensity-atoms.js';
 import { isValidReasonKey } from './mentor-reason-renderer.js';
+import { findMatchingRule, validateMentorRules } from './mentor-reason-judgment-map.js';
 
 export const JUDGMENT_ATOMS = {
   // Recognition & Observation
@@ -406,18 +407,21 @@ function selectIntensityAtom(judgment, context) {
 }
 
 /**
- * Determine reason keys based on context
+ * Determine reason keys based on context (CONTEXT-ONLY, no judgment dependency)
+ *
  * Reasons explain WHY the mentor reacted, factual and inspectable.
  * Returns 0-3 canonical reason keys (usually 1-2).
  *
  * All returned keys MUST exist in REASON_TEXT_MAP (mentor-reason-renderer.js).
  * Reasons are never spoken; they are exposed only via UI inspection.
  *
- * @param {string} judgment - The selected judgment atom
+ * NOTE: This function derives facts from context ONLY.
+ * It does not depend on judgment selection (judgment comes later from rule matching).
+ *
  * @param {Object} context - The judgment context object
  * @returns {string[]} Array of canonical reason keys (may be empty)
  */
-function selectReasonAtoms(judgment, context) {
+export function selectReasonAtoms(context) {
   const {
     isOnPath,
     isHighImpact,
@@ -445,22 +449,22 @@ function selectReasonAtoms(judgment, context) {
   // ========================================================================
   if (buildIntent?.synergies && buildIntent.synergies.length > 1) {
     // Multiple synergies present
-    reasons.push('feat_synergy_present');
+    reasons.push('synergy_present');
   } else if (buildIntent?.synergies && buildIntent.synergies.length === 1) {
     // Single strong synergy
     reasons.push('feat_reinforces_core_strength');
   }
 
   // ========================================================================
-  // Commitment & Declaration
+  // Commitment & Strength
   // ========================================================================
-  if (judgment === JUDGMENT_ATOMS.CONFIRMATION) {
-    // Strong on-path confirmation
+  if (mentorMemory?.commitmentStrength > 0.7 && isOnPath) {
+    // Strong commitment to current path
     reasons.push('prestige_path_consistency');
   }
-  if (judgment === JUDGMENT_ATOMS.REASSESSMENT && mentorMemory?.commitmentStrength > 0.3) {
-    // Player drifting from committed path
-    reasons.push('prestige_path_divergence');
+  if (mentorMemory?.commitmentStrength > 0.3 && !isOnPath) {
+    // Commitment exists but being ignored
+    reasons.push('commitment_ignored');
   }
 
   // ========================================================================
@@ -468,31 +472,43 @@ function selectReasonAtoms(judgment, context) {
   // ========================================================================
   if (dspSaturation > 0.8) {
     // Very high DSP saturation—severe warning
-    reasons.push('progression_focus_consistency');
+    reasons.push('risk_increased');
   } else if (dspSaturation > 0.6) {
     // Moderate DSP saturation—caution
-    reasons.push('power_curve_alignment');
-  }
-
-  if (judgment === JUDGMENT_ATOMS.EXPOSURE) {
-    // Vulnerability detected
-    reasons.push('progression_gap_detected');
+    reasons.push('risk_increased');
   }
 
   // ========================================================================
   // Growth & Progression Stage
   // ========================================================================
-  if (actor?.system?.level >= 6 && context.topic === 'what_lies_ahead') {
+  if (actor?.system?.level >= 6) {
     // Level 6+ is prestige threshold
     reasons.push('prestige_specialization_threshold');
   } else if (actor?.system?.level >= 4 && actor?.system?.level < 6) {
     // Mid-level progression
-    reasons.push('mid_level_specialization');
+    reasons.push('growth_stage_shift');
   }
 
-  if (isHighImpact && judgment === JUDGMENT_ATOMS.GRAVITY) {
-    // Major threshold moment
-    reasons.push('progression_milestone_reached');
+  // High-impact choices at key moments
+  if (isHighImpact && actor?.system?.level >= 6) {
+    // Major threshold moment at late stage
+    reasons.push('prestige_prerequisites_met');
+  }
+
+  // ========================================================================
+  // Exploration Signals
+  // ========================================================================
+  if (!isOnPath && mentorMemory?.commitmentStrength < 0.3) {
+    // Active exploration (low commitment)
+    reasons.push('exploration_signal');
+  }
+
+  // ========================================================================
+  // Readiness Signals
+  // ========================================================================
+  if (isOnPath && mentorMemory?.commitmentStrength > 0.5) {
+    // Ready for significant advancement
+    reasons.push('readiness_met');
   }
 
   // ========================================================================
@@ -500,7 +516,7 @@ function selectReasonAtoms(judgment, context) {
   // ========================================================================
   const validReasons = reasons.filter(key => {
     if (!isValidReasonKey(key)) {
-      console.warn(`[selectReasonAtoms] Invalid reason key: "${key}" — using alternative`);
+      console.warn(`[selectReasonAtoms] Invalid reason key: "${key}" — skipping`);
       return false;
     }
     return true;
@@ -511,14 +527,50 @@ function selectReasonAtoms(judgment, context) {
 }
 
 /**
- * Select complete mentor response (judgment + intensity + reasons)
- * This is the unified interface for getting all reaction axes at once.
+ * Refine intensity based on context (Phase 2: Feel Tuning)
+ *
+ * This function takes a base intensity from the rule and adjusts it based on
+ * signal strength, commitment level, and impact category.
+ *
+ * PHASE 2 EXPANSION: Add heuristics for:
+ * - Number of reasons present
+ * - Strength of commitment
+ * - High-impact vs exploratory contexts
+ * - Drift detection
+ *
+ * For now, returns base intensity unchanged.
+ *
+ * @param {string} baseIntensity - Intensity from the rule (e.g., "medium")
+ * @param {Object} context - The judgment context
+ * @returns {string} Refined intensity atom
+ */
+function refineIntensity(baseIntensity, context) {
+  // PHASE 2: This is where we'll add tuning logic
+  // For now, return base intensity unchanged
+
+  // Example (future):
+  // if (context.reasonCount >= 3) return incrementIntensity(baseIntensity);
+  // if (context.isExplorationOnly) return decrementIntensity(baseIntensity);
+
+  return baseIntensity;
+}
+
+/**
+ * Select complete mentor response using rule-based judgment determination
+ *
+ * This is the AUTHORITATIVE mentor response interface.
+ * Flow:
+ * 1. Extract facts from context (selectReasonAtoms)
+ * 2. Match facts to rule (findMatchingRule)
+ * 3. Get judgment + base intensity from rule
+ * 4. Refine intensity based on context
+ * 5. Return complete response
  *
  * @param {Object} context - The judgment context (from buildJudgmentContext)
  * @returns {Object} Complete response:
  *   {
- *     judgment: string,      // judgment atom
- *     intensity: string,     // intensity atom
+ *     judgment: string,      // judgment atom (from rule)
+ *     intensity: string,     // intensity atom (rule-based + refined)
  *     reasons: string[]      // array of canonical reason keys (0-3)
  *                            // Each key maps to text in REASON_TEXT_MAP
  *   }
@@ -532,15 +584,18 @@ export function selectMentorResponse(context) {
     };
   }
 
-  // Select judgment using existing algorithm (backward compatible)
-  const judgment = selectJudgmentAtom(context);
+  // PHASE 1: Extract facts from character context
+  const reasons = selectReasonAtoms(context);
 
-  // Derive intensity from judgment + context
-  const intensity = selectIntensityAtom(judgment, context);
+  // PHASE 1: Match facts to rule → get judgment + baseIntensity
+  const rule = findMatchingRule(reasons);
+  const judgment = rule.judgment;
+  const baseIntensity = rule.intensity;
 
-  // Derive reasons from judgment + context
-  const reasons = selectReasonAtoms(judgment, context);
+  // PHASE 2: Refine intensity based on context signals (skeleton, no-op for now)
+  const intensity = refineIntensity(baseIntensity, context);
 
+  // Return complete response
   return {
     judgment,
     intensity,
