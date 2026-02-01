@@ -62,7 +62,7 @@ export const TalentDB = {
             for (const rawTalent of index) {
                 try {
                     // Skip invalid documents
-                    if (!rawTalent || typeof rawTalent !== 'object') {
+                    if (!rawTalent || typeof rawTalent !== 'object' || !rawTalent._id) {
                         warnings++;
                         continue;
                     }
