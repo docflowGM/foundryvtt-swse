@@ -206,13 +206,5 @@ function getTopSkill(actor) {
  * Export for testing/console access
  */
 export const MentorReflectiveDialogue = {
-  generateReflectiveDialogue,
-  generateWhoAmIBecoming,
-  generatePathsOpen,
-  generateDoingWell,
-  generateDoingWrong,
-  generateHowShouldIFight,
-  generateBeCareful,
-  generateWhatLiesAhead,
-  generateHowWouldYouPlay
+  generateReflectiveDialogue
 };

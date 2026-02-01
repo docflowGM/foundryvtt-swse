@@ -569,24 +569,24 @@ Hooks.once("init", () => {
     name: "forceCompendiumsPopulation",
     scope: "world",
     config: false,
-    type: Boolean,
-    default: false
+    type: String,
+    default: ""
   });
 
   game.settings.register("foundryvtt-swse", "speciesTraitsUpdate", {
     name: "speciesTraitsUpdate",
     scope: "world",
     config: false,
-    type: Boolean,
-    default: false
+    type: String,
+    default: ""
   });
 
   game.settings.register("foundryvtt-swse", "talentEffectValidationMigration", {
     name: "talentEffectValidationMigration",
     scope: "world",
     config: false,
-    type: Boolean,
-    default: false
+    type: String,
+    default: ""
   });
 
 });
