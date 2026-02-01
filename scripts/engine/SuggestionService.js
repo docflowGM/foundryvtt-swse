@@ -19,6 +19,7 @@ import { getAllowedReasonDomains } from '../suggestions/suggestion-focus-map.js'
 import { getReasonRelevance } from '../suggestions/reason-relevance.js';
 import { ReasonFactory } from './ReasonFactory.js';
 import { ConfidenceScoring } from './ConfidenceScoring.js';
+import { SnapshotBuilder } from './SnapshotBuilder.js';
 
 import { FeatEngine } from '../progression/feats/feat-engine.js';
 import { ForcePowerEngine } from '../progression/engine/force-power-engine.js';
@@ -34,6 +35,10 @@ function _hashString(s) {
  * This ensures cache invalidation when player makes new selections during a workflow
  * @param {Object} pendingData - Pending selections (selectedFeats, selectedTalents, etc.)
  * @returns {string} Hash string representing pending state
+ */
+/**
+ * @deprecated Use SnapshotBuilder.build() and SnapshotBuilder.hash() instead
+ * Kept for reference only. No longer called by SuggestionService.
  */
 function _pendingDataHash(pendingData) {
   if (!pendingData || typeof pendingData !== 'object') return '';
@@ -64,6 +69,13 @@ function _pendingDataHash(pendingData) {
   return parts.length > 0 ? _hashString(parts.join('|')) : '';
 }
 
+/**
+ * @deprecated Use SnapshotBuilder.hashFromActor() instead
+ * Kept for reference only. No longer called by SuggestionService.
+ *
+ * Legacy hash function that was fragile and opaque.
+ * Replaced by SnapshotBuilder for clarity and maintainability.
+ */
 function _actorRevisionKey(actor, pendingData = null) {
   // Cheap + stable: level + abilities + item ids + item system-level-like fields.
   const lvl = actor?.system?.level ?? 0;
@@ -129,8 +141,14 @@ export class SuggestionService {
   static async getSuggestions(actorOrData, context = 'sheet', options = {}) {
     const actor = await _ensureActorDoc(actorOrData);
     const pendingData = options.pendingData ?? {};
-    // Include pendingData in revision key to invalidate cache on in-progress selections
-    const revision = actor?.id ? _actorRevisionKey(actor, pendingData) : `${Date.now()}`;
+    const focus = options.focus ?? null;
+
+    // Build canonical snapshot and compute stable hash
+    // Hash includes: level, abilities, items, focus, and pending selections
+    const revision = actor?.id
+      ? SnapshotBuilder.hashFromActor(actor, focus, pendingData)
+      : `${Date.now()}`;
+
     const key = `${actor?.id ?? 'temp'}::${context}::${options.domain ?? 'all'}`;
 
     const cached = this._cache.get(key);
@@ -179,7 +197,7 @@ export class SuggestionService {
 
     // Filter reasons by focus (visibility gating only, not scoring change)
     // If focus is provided, only show reason domains relevant to that focus
-    const focus = options.focus ?? null;
+    // (focus was already extracted at the beginning of this method for snapshot hashing)
     const focusFiltered = this._filterReasonsByFocus(enriched, focus, { trace });
 
     // Optional persist
