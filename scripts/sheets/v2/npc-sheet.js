@@ -17,7 +17,7 @@ function markActiveConditionStep(html, actor) {
  * - Emit intent via Actor APIs (which route through ActorEngine)
  * - _updateObject routes through ActorEngine
  */
-export class SWSEV2NpcSheet extends foundry.applications.sheets.ActorSheet {
+export class SWSEV2NpcSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheet) {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['swse', 'swse-sheet', 'swse-npc-sheet', 'v2'],
