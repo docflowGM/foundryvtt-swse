@@ -49,13 +49,40 @@ export const TalentDB = {
                 return false;
             }
 
-            const docs = await pack.getDocuments();
+            let docs = [];
+            try {
+                docs = await pack.getDocuments();
+            } catch (err) {
+                // Fallback: Recover data from corrupted compendium using getIndex()
+                SWSELogger.warn('[TalentDB] Failed to load documents, attempting recovery via index');
+                const index = await pack.getIndex();
+                for (const entry of index) {
+                    try {
+                        const doc = await pack.getDocument(entry._id);
+                        if (doc && typeof doc === 'object') {
+                            docs.push(doc);
+                        }
+                    } catch (docErr) {
+                        SWSELogger.warn(`[TalentDB] Could not recover talent ${entry.name || entry._id}`);
+                    }
+                }
+                if (docs.length === 0) {
+                    throw new Error('[TalentDB] Unable to recover any talent documents from compendium');
+                }
+            }
+
             let count = 0;
             let orphaned = 0;
             let warnings = 0;
 
             for (const rawTalent of docs) {
                 try {
+                    // Skip invalid documents
+                    if (!rawTalent || typeof rawTalent !== 'object') {
+                        warnings++;
+                        continue;
+                    }
+
                     // Normalize the talent (with tree linkage)
                     const normalizedTalent = normalizeTalent(rawTalent, talentTreeDB?.trees);
 
@@ -84,7 +111,7 @@ export const TalentDB = {
                     count++;
 
                 } catch (err) {
-                    SWSELogger.error(`[TalentDB] Failed to normalize talent "${rawTalent.name}":`, err);
+                    SWSELogger.error(`[TalentDB] Failed to normalize talent "${rawTalent?.name || 'unknown'}":`, err);
                     warnings++;
                 }
             }
