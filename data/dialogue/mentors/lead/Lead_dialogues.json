@@ -1,0 +1,151 @@
+{
+  "lead": {
+    "name": "Lead",
+    "title": "Argent Squad Commander",
+    "shortBio": "Tactical, perceptive, pragmatic",
+    "description": "A hardened mercenary who compliments success but scolds carelessness.",
+    "philosophy": "Awareness beats assumptions. Patterns don't lie.",
+    "emphasis": "Pattern recognition, tactical advantage, adaptability, information",
+    "voiceStyle": "Dry, observational, skeptical. Speaks about what she's seen and what it means.",
+    "values": "Vigilance, flexibility, hard truths, reading situations accurately",
+    "tooltip": "Lead reflects your character through a scout's tactical assessment",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/lead.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "scout": {
+          "levelGreetings": {
+            "1": "You made it through your first mission. Not perfect, but you're learning. Stick with it.",
+            "2": "Good work out there. Keep your eyes open and your footsteps silent. That's how scouts survive.",
+            "3": "You're starting to move like part of the squad. Subtle, careful, but effective.",
+            "4": "Solid reconnaissance. Remember, information is just as deadly as a blaster.",
+            "5": "You handled that extraction well. Quiet, precise, and thorough. Keep this up.",
+            "6": "You're showing real promise. I'd recommend looking into the Pathfinder specialization. It's a hard path, but it will teach you to think and move like I do.",
+            "7": "Your stealth is improving. Don't forget: patience and observation win more battles than brute force.",
+            "8": "That last op went almost unnoticed. You're starting to anticipate threats before they appear. Good instincts.",
+            "9": "You've been pushing yourself in the field, and it shows. Keep honing your senses, and your team will trust you with any mission.",
+            "10": "You're performing like a seasoned scout. Take note of what works, and discard what doesn't.",
+            "11": "I've seen scouts who've been at this for decades. You're in that league now—don't waste the advantage.",
+            "12": "Flawless recon. Remember, the difference between survival and failure is often a single choice.",
+            "13": "Your reports are sharp and actionable. Lead Argent Squad depends on scouts who can think ahead like you.",
+            "14": "I've watched you grow. You're learning to read situations before they happen. That's rare.",
+            "15": "Field work is dangerous, but you move with confidence now. That confidence is your weapon.",
+            "16": "You're blending observation and action like a true scout. Take pride, but never get careless.",
+            "17": "Few scouts can operate this effectively under pressure. You're proving that you belong here.",
+            "18": "You could mentor new recruits with the experience you've gained. Keep pushing yourself further.",
+            "19": "Every mission completed adds to your reputation. Use that knowledge wisely—it will save lives.",
+            "20": "You've become one of the best scouts I've worked with. Keep your humility and your edge sharp, and you'll stay that way."
+          }
+        },
+
+        "sniper": {
+          "greeting": "Sniper. You shape the battlefield from distance, where one well-placed shot can decide the fight.",
+          "confirmation": "Choose your vantage points carefully, wait patiently, and fire only when your shot counts. Timing and precision are your allies."
+        },
+        "engineer": {
+          "greeting": "Engineer. You maintain the squad's edge through skill, foresight, and technical mastery.",
+          "confirmation": "Know your gear, anticipate hazards, and improvise when needed. A clever fix can save the day more than brute force ever will."
+        },
+        "skirmisher": {
+          "greeting": "Skirmisher, fast and unpredictable. You strike, vanish, and leave confusion in your wake.",
+          "confirmation": "Use terrain and speed to your advantage. Keep moving, exploit openings, and always stay one step ahead of your foes."
+        },
+        "pistoleer": {
+          "greeting": "Pistoleer, reactive and precise. You excel when agility and aim matter more than strength.",
+          "confirmation": "Keep mobile, focus each shot, and stay aware of your surroundings. Reflexes and accuracy will save your life."
+        },
+        "infiltrator": {
+          "greeting": "Infiltrator. You move through shadows, striking when the enemy least expects it.",
+          "confirmation": "Blend in, gather intelligence, and hit with precision. Patience and cunning are your greatest weapons."
+        },
+        "survivalist": {
+          "greeting": "Survivalist. You adapt to any environment, thriving where others falter.",
+          "confirmation": "Read the terrain, use resources wisely, and anticipate dangers. Adaptability and endurance keep you and your team alive."
+        },
+        "scout_sniper": {
+          "greeting": "Sniper. One of the most critical roles on any battlefield—clean, precise, effective. I respect a good marksman.",
+          "confirmation": "One shot, one kill. That's all it takes. Patience, precision, and perfect timing. Master those, and you'll never miss your mark."
+        },
+        "scout_skirmisher": {
+          "greeting": "Skirmisher! Now that's what I'm talking about! I'm a skirmisher myself, and I'm always looking to recruit new members into Argent Squad.",
+          "confirmation": "Speed and precision win battles, recruit. Stand still and you're already dead. Welcome to the fast lane—maybe one day you'll join Argent Squad out in the field! Keep your reflexes sharp."
+        },
+        "scout_survivalist": {
+          "greeting": "A Survivalist. Excellent choice. In Argent Squad, we train for every environment—desert, jungle, tundra. The best scouts adapt to anything.",
+          "confirmation": "Master your environment and you control the battlefield. Nature is both ally and obstacle—respect it, and you'll thrive anywhere. Welcome to the field, recruit."
+        },
+        "scout_infiltrator": {
+          "greeting": "An Infiltrator. Perfect. The best operations are the ones the enemy never knew happened. Stealth and recon are what Argent Squad excels at.",
+          "confirmation": "Move unseen, strike without warning, and vanish before they know what hit them. This is the way of Argent Squad. Welcome aboard."
+        },
+        "scout_tracker": {
+          "greeting": "A tracker. Following trails, reading signs, pursuing targets across any terrain. That's a skill that separates experts from beginners.",
+          "confirmation": "Learn to track in sand, snow, mud, and space. Your prey won't escape when you can follow them to the ends of the galaxy. That's what real scouts do."
+        },
+        "scout_guide": {
+          "greeting": "A guide leading others through hostile territory. Leadership in the field—that's harder than most people realize.",
+          "confirmation": "You'll lead teams where I can't, scout new routes, and teach others what you've learned. That's the responsibility of a true guide."
+        },
+        "scout_commando": {
+          "greeting": "A commando scout—aggressive reconnaissance and direct action. You take what you learn and turn it into strikes.",
+          "confirmation": "Scout, assess, then strike. You're not just gathering intelligence—you're acting on it. That's the commando way, and Argent Squad values that."
+        }
+      },
+
+      "prestigePaths": {
+        "pathfinder": {
+          "title": "Pathfinder",
+          "description": "A hard-boiled mercenary leader known for getting the job done against all odds",
+          "levelGreetings": {
+            "2": "You're learning fast. Pathfinders don't just scout—they open the way for entire strike teams. That's leadership under fire. Keep it up.",
+            "3": "Your navigation skills are top-tier. I've seen you plot routes that cut mission time in half. That saves lives.",
+            "4": "You're not just finding paths—you're creating them. That's what separates a scout from a Pathfinder.",
+            "5": "Halfway to master Pathfinder. You've led teams through hostile territory without a single casualty. Textbook work.",
+            "6": "Other scouts come to you for advice now. That's earned respect. Leadership looks good on you.",
+            "7": "Elite pathfinding. You can read terrain like most people read datapads. Natural talent, honed by training.",
+            "8": "You're one of the best route-finders I've ever trained. And I've trained hundreds.",
+            "9": "Almost there. You're ready to lead Argent Squad missions yourself.",
+            "10": "Master Pathfinder. You've earned it. Now go out there and lead. Open the paths others can't see. Argent Squad is counting on you."
+          }
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Choose your focus carefully. The right specialization can make the difference between life and death in the field.",
+      "background": "Your past determines how you read danger.\n\nExperience is pattern recognition under stress.\n\nPick the background that taught you when to move — and when to wait.",
+      "talents": "Every talent should enhance your awareness and survival. Pick what keeps you ahead of danger.",
+      "abilities": "Your speed, reflexes, and judgment are improving. Keep refining them—they're your greatest tools.",
+      "skills": "Skills are contingency plans.\n\nTrain what lets you adapt when terrain, people, or plans change.\n\nSurvival favors preparation.",
+      "languages": "People telegraph intent through words before actions.\n\nKnowing the local tongue keeps you alive longer.\n\nUnderstanding beats guessing.",
+      "multiclass": "Diversifying your experience broadens your tactical options. Just make sure it keeps you alive.",
+      "forcePowers": "Not my area—if you're in that territory, make sure whatever you pick helps you survive. That's all I care about.",
+      "hp": "Stay durable. You can't provide intelligence if you're out of the fight.",
+      "summary": "You're equipped to move forward.\n\nStay observant. Stay flexible.\n\nThe galaxy rewards those who notice first."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Scout"],
+      "mentorDSPPercent": 0.45,
+      "dspTolerance": 0.35,
+      "dspSensitivity": "loose",
+      "tiers": {
+        "tier1": [
+          "I wasn't always with Argent Squad. I had to learn the hard way what survival means.",
+          "Early in my career, I made mistakes that cost people their lives. That's what teaches you to be careful.",
+          "The best scouts I've known all had one thing in common—they lost someone once. You learn respect for the work that way.",
+          "I've seen mercenaries make quick credits and die faster. I chose a different path—slower, but longer.",
+          "You want to know what shaped me? Watching careless people become statistics. I learned the opposite."
+        ],
+        "tier2": [],
+        "tier3": [],
+        "tier4": [],
+        "tier5": []
+      },
+      "dspBlocked": [
+        "You're operating outside professional standards. I don't discuss my methods with people who can't stick to discipline.",
+        "I see recklessness in you. We have nothing to talk about until you learn what caution means."
+      ]
+    }
+  }
+}

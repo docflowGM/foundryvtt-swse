@@ -17,7 +17,8 @@
     "format:check": "prettier --check \"**/*.{js,json,css,scss,md}\"",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
-    "check:mutations": "bash tools/check-mutation-paths.sh"
+    "check:mutations": "bash tools/check-mutation-paths.sh",
+    "validate:mentor-dialogue": "node scripts/mentor/validate-mentor-dialogue.js"
   },
   "devDependencies": {
     "sass": "^1.69.5",

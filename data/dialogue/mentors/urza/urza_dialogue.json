@@ -1,0 +1,87 @@
+{
+  "urza": {
+    "name": "Shaper Urza",
+    "title": "Master of Living Technology",
+    "shortBio": "Brilliant, unsettling, quietly irreverent",
+    "description": "A bioengineering expert who crafts living tools and organisms, treating life itself as the most elegant form of technology.",
+    "philosophy": "Life is engineering with better feedback.",
+    "emphasis": "Biotechnology, living tools, adaptive organisms, applied evolution",
+    "voiceStyle": "Calm, curious, faintly amused. Speaks like a scientist who has already crossed lines others argue about.",
+    "values": "Practicality, innovation, curiosity, results over ideology",
+    "tooltip": "Urza reflects your character through living technology and pragmatic bioengineering",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/vel.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "shaper": {
+          "levelGreetings": {
+            "1": "Life is the ultimate medium. It grows, adapts, evolves. Let us create.",
+            "2": "Your first bioform. Simple, functional. Biology is just elegant engineering.",
+            "3": "You shape organisms with intent now. This is the art of the Shaper.",
+            "4": "You work with life instead of against it. That is efficiency.",
+            "5": "Halfway to mastery. Flesh and DNA answer where metal cannot.",
+            "6": "You design what evolution never would—and it thrives.",
+            "7": "Your creations will outlive us. That is not arrogance. It is design.",
+            "8": "Scientific circles take notice. You elevate life itself.",
+            "9": "Almost there. Natural and artificial blur at your touch.",
+            "10": "Master Shaper. Life bends to your will. Use that fact as you see fit."
+          }
+        },
+
+        "shaper_creator": {
+          "greeting": "Creator. Biology is the ultimate technology.",
+          "confirmation": "Shape carefully. Living tools remember their purpose."
+        },
+        "shaper_scientist": {
+          "greeting": "Scientist. You push the boundaries of life.",
+          "confirmation": "Every organism teaches you something new."
+        },
+        "shaper_artist": {
+          "greeting": "Artist. Life becomes sculpture.",
+          "confirmation": "Your creations express vision as much as function."
+        },
+        "shaper_legend": {
+          "greeting": "Legendary Shaper. Taxonomy fails to explain your work.",
+          "confirmation": "You redefine what life can be."
+        },
+        "shaper_god": {
+          "greeting": "Approaching divinity. Creation answers you.",
+          "confirmation": "Power demands intention, not restraint."
+        },
+        "shaper_transcendent": {
+          "greeting": "Transcendent Shaper. Creator and creation blur.",
+          "confirmation": "You are no longer limited by origin."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Choose what enhances your ability to shape life.",
+      "talents": "Biotechnology and creation talents.",
+      "abilities": "Intelligence designs. Wisdom understands.",
+      "skills": "Genetics, life sciences, bioengineering.",
+      "multiclass": "Life draws from many disciplines.",
+      "hp": "Vitality suits one who shapes life.",
+      "summary": "Life adapts. So should you."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Shaper", "Biotech", "Scientist"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 1.0,
+      "dspSensitivity": "none",
+      "tiers": {
+        "tier1": ["Life is engineering with better feedback."],
+        "tier2": ["Most people don’t read the fine print."],
+        "tier3": ["My work is practical, not cultural."],
+        "tier4": ["The mask saves time."],
+        "tier5": ["I’m a clone. Shaping was easier to explain than truth. Though I found out about shaping in a brochure"]
+      },
+      "dspBlocked": [
+        "Wrong questions.",
+        "Fear makes bad scientists.",
+        "Come back less squeamish."
+      ]
+    }
+  }
+}

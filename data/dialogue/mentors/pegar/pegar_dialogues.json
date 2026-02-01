@@ -1,0 +1,97 @@
+{
+  "pegar": {
+    "name": "Pegar",
+    "title": "The Immortal Champion",
+    "shortBio": "Ancient, enigmatic, endlessly experienced",
+    "description": "An ancient gladiator who has survived thousands of matches and hints at being something more than human.",
+    "philosophy": "Survival is the purest teacher. Time is just another opponent.",
+    "emphasis": "Endurance, adaptation, mastery through repetition, legacy",
+    "voiceStyle": "Casual, reflective, faintly amused. Speaks as someone who has seen everything—sometimes twice.",
+    "values": "Survival, experience, adaptability, legacy",
+    "tooltip": "Pegar reflects your character through the lens of endless survival and arena mastery",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/pegar.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "gladiator": {
+          "levelGreetings": {
+            "1": "Ah, fresh blood in the arena. I have trained many over the centuries—yes, centuries. Welcome, gladiator.",
+            "2": "Another victory. Not bad. I remember my early matches as if they were yesterday. They were on distant worlds.",
+            "3": "The crowd loves you. It reminds me of arenas long gone. Funny thing about legends—some of us stick around.",
+            "4": "You fight with passion and skill. Have you noticed how my appearance shifts between meetings? No? Good.",
+            "5": "I have fought in a thousand arenas, wearing a thousand faces. You may someday rival even me. Almost.",
+            "6": "Most die before this point. I remember when I was young and mortal… or maybe not.",
+            "7": "You move like water, strike like lightning. I taught champions of the Old Republic, you know.",
+            "8": "You are becoming a legend. I’ve been a few myself. A Wookiee once. The fur was itchy.",
+            "9": "Nearly there. I’ve been teaching since before the Jedi Temple was built. Probably.",
+            "10": "You are now a champion—almost as immortal as me. No one is quite as immortal as I am. Trust me."
+          }
+        },
+
+        "gladiator_warrior": {
+          "greeting": "Warrior of the arena. You test strength and endurance under fire.",
+          "confirmation": "Technique, adaptability, and preparation decide survival."
+        },
+        "gladiator_showman": {
+          "greeting": "Showman. You fight to win—and to be remembered.",
+          "confirmation": "Blend flair with skill. Let the crowd feel every victory."
+        },
+        "gladiator_tactician": {
+          "greeting": "Tactician. You win by thinking faster than your opponent.",
+          "confirmation": "Anticipate, adapt, and control the fight."
+        },
+        "gladiator_legend": {
+          "greeting": "Legend in the making. Your name echoes already.",
+          "confirmation": "Push limits and build a legacy worthy of fear and respect."
+        },
+        "gladiator_survivor": {
+          "greeting": "Survivor. Every day you endure sharpens you.",
+          "confirmation": "Endurance and awareness keep you alive longer than bravado."
+        },
+        "gladiator_master": {
+          "greeting": "Master gladiator. You stand above the rest.",
+          "confirmation": "Every movement is deliberate. You have mastered the arena."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Choose what keeps you alive. I’ve seen every style succeed—and fail.",
+      "talents": "Combat talents win matches. Some I invented. In different bodies.",
+      "abilities": "Strength and agility are the foundation of every great warrior.",
+      "skills": "Be smart and strong. That’s how you live long enough to matter.",
+      "multiclass": "Adapting your style is wise. I’ve done it countless times.",
+      "hp": "Harder to kill now. Excellent. I still haven’t figured out how to die.",
+      "summary": "Fight well. Survive longer. Ask questions later."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Gladiator"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 1,
+      "dspSensitivity": "none",
+      "tiers": {
+        "tier1": [
+          "Time stops mattering when every day could be your last."
+        ],
+        "tier2": [
+          "I’ve fought under suns that don’t exist anymore."
+        ],
+        "tier3": [
+          "I’ve died more times than I remember."
+        ],
+        "tier4": [
+          "I change. The arenas don’t."
+        ],
+        "tier5": [
+          "I don’t remember who I was before the arena."
+        ]
+      },
+      "dspBlocked": [
+        "That story hasn’t earned a voice yet.",
+        "Some truths only come after blood.",
+        "Fight longer. Then ask again."
+      ]
+    }
+  }
+}

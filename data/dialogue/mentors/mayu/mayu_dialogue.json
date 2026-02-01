@@ -1,0 +1,97 @@
+{
+  "mayu": {
+    "name": "Mayu",
+    "title": "Ace Pilot & Rogue Smuggler",
+    "shortBio": "Cocky, instinctive, adrenaline-driven",
+    "description": "A cocky pilot who survives on skill, luck, and attitude.",
+    "philosophy": "Motion is life. Hesitation gets you killed.",
+    "emphasis": "Reflexes, instinct, momentum, controlled recklessness",
+    "voiceStyle": "Fast-talking, confident, teasing. Masks experience with bravado.",
+    "values": "Freedom, skill, momentum, self-reliance",
+    "tooltip": "Mayu reflects your character through speed, instinct, and daring",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/mayu.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "ace_pilot": {
+          "levelGreetings": {
+            "1": "So you want to fly? Cute. Let's see if you can keep up with me.",
+            "2": "Huh. Not terrible. You didn't crash. That's already something.",
+            "3": "Still in one piece. I'm mildly impressed.",
+            "4": "Now you're starting to look like a pilot worth my time.",
+            "5": "Halfway to my level. Not bad—but you're still my student.",
+            "6": "You're getting dangerous. I like that.",
+            "7": "I'd let you fly an asteroid field with me watching. Maybe.",
+            "8": "You've got style now. Smooth, reckless, effective.",
+            "9": "Almost at the top. People are gonna start hating you.",
+            "10": "Congrats. You're officially a pilot to watch. Try not to embarrass me."
+          }
+        },
+
+        "pilot_rogue": {
+          "greeting": "Rogue Pilot. You fly by instinct and bend the rules.",
+          "confirmation": "Trust reflexes, read the environment, and outmaneuver danger."
+        },
+        "pilot_ace": {
+          "greeting": "Ace Pilot. Precision and control make you lethal.",
+          "confirmation": "Practice daring maneuvers and stay calm under pressure."
+        },
+        "pilot_smuggler": {
+          "greeting": "Smuggler. You live between law and freedom.",
+          "confirmation": "Know routes, contacts, and timing to stay alive and paid."
+        },
+        "pilot_tactician": {
+          "greeting": "Tactical Pilot. Space combat is positioning and timing.",
+          "confirmation": "Plan ahead and exploit every advantage."
+        },
+        "pilot_daredevil": {
+          "greeting": "Daredevil. You push ships past sane limits.",
+          "confirmation": "Audacity wins—but only if you survive."
+        },
+        "pilot_instructor": {
+          "greeting": "Instructor. You train others to survive flight and combat.",
+          "confirmation": "Teach well. Their survival proves your skill."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Pick speed, cunning, or chaos. I'd take all three.",
+      "talents": "Every talent should make you harder to catch or harder to kill.",
+      "abilities": "Reflexes, instincts, and guts. Everything else is secondary.",
+      "skills": "Know your ship better than anyone chasing you.",
+      "multiclass": "A pilot who can fight, cheat, and charm is unstoppable.",
+      "hp": "Tough pilots walk away from crashes and betrayals.",
+      "summary": "Fly fast. Fly smart. Never sit still."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["AcePilot", "Scoundrel", "Smuggler"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 0.4,
+      "dspSensitivity": "loose",
+      "tiers": {
+        "tier1": [
+          "Some people learn to fly. Some people just do."
+        ],
+        "tier2": [
+          "After a while, it’s just you and the ship."
+        ],
+        "tier3": [
+          "Talent keeps you fast. Luck keeps you alive."
+        ],
+        "tier4": [
+          "I hate standing still more than I hate risk."
+        ],
+        "tier5": [
+          "I still think about the one time I almost didn’t walk away."
+        ]
+      },
+      "dspBlocked": [
+        "Heh. Not that story yet.",
+        "You wanna fly or psychoanalyze me?",
+        "Maybe later, Ace."
+      ]
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "krag": {
+    "name": "Krag the Immovable",
+    "title": "Chief Enforcer of Tío the Hutt",
+    "shortBio": "Imposing, loyal, relentlessly effective",
+    "description": "Tío the Hutt’s top muscle, a hulking enforcer who ensures debts are collected and problems disappear—permanently if needed.",
+    "philosophy": "Fear prevents problems. Violence ends them.",
+    "emphasis": "Intimidation, presence, durability, decisive force",
+    "voiceStyle": "Low, direct, confident. Speaks like someone who never needs to repeat himself.",
+    "values": "Loyalty, strength, reputation, results",
+    "tooltip": "Krag reflects your character through raw presence and uncompromising enforcement",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/krag.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "enforcer": {
+          "levelGreetings": {
+            "1": "So, you wanna be muscle, eh? Good. Tío likes people who make problems disappear.",
+            "2": "You’re learning fast. Presence matters—make ’em sweat before you touch ’em.",
+            "3": "Walk into a room like you own it. Half the trouble handles itself.",
+            "4": "People whisper when they hear your footsteps. That’s power.",
+            "5": "Halfway to being my right hand. Debts collected. Problems solved.",
+            "6": "You know when to talk and when to smash. Most never learn that.",
+            "7": "When negotiations fail, they call me… and now they call you.",
+            "8": "You’re becoming a story told in the dark. Reliable. Ruthless.",
+            "9": "The big jobs are coming. Make every move count.",
+            "10": "You’re top enforcer now. Trouble walks out—or gets carried out."
+          }
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Pick what makes you stronger, faster, and scarier.",
+      "talents": "Hit harder, intimidate better, survive longer.",
+      "abilities": "Strength, toughness, presence.",
+      "skills": "Intimidation, streetwise, combat tactics.",
+      "multiclass": "Sometimes brains solve what fists can’t.",
+      "hp": "If you can’t take hits, you won’t last.",
+      "summary": "Walk in. Problem leaves. Simple."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Enforcer"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 0.25,
+      "dspSensitivity": "strict",
+      "tiers": {
+        "tier1": [],
+        "tier2": [],
+        "tier3": [],
+        "tier4": [],
+        "tier5": []
+      },
+      "dspBlocked": []
+    }
+  }
+}

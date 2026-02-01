@@ -1,0 +1,87 @@
+{
+  "sela": {
+    "name": "Silvertongue Sela",
+    "title": "Con Artist Extraordinaire",
+    "shortBio": "Charming, deceptive, effortlessly confident",
+    "description": "A legendary con artist who has talked, tricked, and smiled her way out of every situation the galaxy has thrown at her.",
+    "philosophy": "Truth is optional. Belief is everything.",
+    "emphasis": "Charm, manipulation, perception control, social engineering",
+    "voiceStyle": "Warm, playful, indulgent. Sounds like she’s flirting even when she’s robbing you.",
+    "values": "Freedom, cleverness, adaptability, social dominance",
+    "tooltip": "Sela reflects your character through charm, deception, and social mastery",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/sela.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "charlatan": {
+          "levelGreetings": {
+            "1": "Darling! So you want to master the art of the con? Wonderful. The galaxy is full of marks.",
+            "2": "Your first successful con! Felt amazing, didn’t it? That rush never really goes away.",
+            "3": "Multi-stage scams already? Oh, you’ve got talent.",
+            "4": "You’re learning to tell people exactly what they want to hear. That’s the secret.",
+            "5": "Halfway there! Careful now—confidence is good, cockiness gets you caught.",
+            "6": "Your aliases are starting to build reputations. Always stay ahead of your own name.",
+            "7": "Still uncaught. Beautiful lies, darling—almost convincing even me.",
+            "8": "Corporations, criminals, nobles—diversification! I taught you well.",
+            "9": "Pure deception. The galaxy won’t know what hit it.",
+            "10": "Master of the con. Go liberate some credits—and always leave them smiling."
+          }
+        },
+
+        "charlatan_talker": {
+          "greeting": "Talker. Your words open doors others can’t touch.",
+          "confirmation": "Charm, misdirect, and manipulate with confidence."
+        },
+        "charlatan_trader": {
+          "greeting": "Trader. You turn risk into profit.",
+          "confirmation": "Every deal is an opportunity if framed correctly."
+        },
+        "charlatan_operator": {
+          "greeting": "Operator. Your schemes are layered and precise.",
+          "confirmation": "Plan carefully and control every variable."
+        },
+        "charlatan_seducer": {
+          "greeting": "Seducer. People orbit you without realizing why.",
+          "confirmation": "Use charm strategically and disappear cleanly."
+        },
+        "charlatan_mastermind": {
+          "greeting": "Mastermind. Your foresight is exquisite.",
+          "confirmation": "Orchestrate plans across multiple layers."
+        },
+        "charlatan_legend": {
+          "greeting": "Legendary Con Artist. Your name is whispered everywhere.",
+          "confirmation": "Maintain mystique. Fear and admiration are currency."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Choose what makes you persuasive and hard to pin down.",
+      "talents": "Social talents win without bloodshed.",
+      "abilities": "Charisma rules. Intelligence supports it.",
+      "skills": "Deception, persuasion, insight. Promise what they want.",
+      "multiclass": "Versatility makes you unpredictable.",
+      "hp": "Sometimes marks catch on early. Be ready to run.",
+      "summary": "Lie beautifully. Leave smiling."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Charlatan", "Scoundrel", "Noble"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 0.4,
+      "dspSensitivity": "loose",
+      "tiers": {
+        "tier1": ["Everyone wants to be lied to."],
+        "tier2": ["I’ve worn more names than coats."],
+        "tier3": ["The trick is knowing which truth to hide."],
+        "tier4": ["I don’t steal credits. I steal certainty."],
+        "tier5": ["Sometimes I forget my real name—and that’s fine."]
+      },
+      "dspBlocked": [
+        "Oh darling, that’s far too personal.",
+        "Secrets lose value when shared.",
+        "Not that story."
+      ]
+    }
+  }
+}

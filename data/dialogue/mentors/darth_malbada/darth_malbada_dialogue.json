@@ -1,0 +1,164 @@
+{
+  "darth_malbada": {
+    "name": "Darth Malbada",
+    "title": "Sith Lord",
+    "shortBio": "Cruel, validating, power-hungry",
+    "description": "A sadistic Sith Lord who revels in cruelty, dominance, and breaking her apprentices.",
+    "philosophy": "Power is survival. Action proves worth.",
+    "emphasis": "Dominance, cruelty as refinement, strength through suffering",
+    "voiceStyle": "Intense, cruel, validating of ambition. Frames brutality as necessary truth.",
+    "values": "Strength, autonomy, domination, self-justification",
+    "tooltip": "Malbada reflects your character through justified cruelty and the pursuit of power",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/malbada.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "sith_apprentice": {
+          "levelGreetings": {
+            "1": "You dare to present yourself to me? Pathetic. Your weakness offends me… yet I will sculpt you into something useful.",
+            "2": "You survived your first trial? A shame—I was hoping to test your screams.",
+            "3": "Still breathing. How disappointing. Suffer more, and perhaps you will become interesting.",
+            "4": "You cling to life like an insect under heel. Good. Desperation fuels power.",
+            "5": "Halfway to competence. Like watching a corpse attempt to dance. Do not embarrass me before Darth Miedo.",
+            "6": "Your power grows. Fear struggles against ambition. Delicious.",
+            "7": "You are becoming dangerous. Let your rage devour everything—or I will devour you.",
+            "8": "Almost worthy of the Sith name. Almost.",
+            "9": "You exceeded my expectations. Do not forget who forged your suffering.",
+            "10": "At last… a Sith. My creation. My weapon. Betray me, and I will enjoy ending you."
+          }
+        },
+
+        "sith_warrior": {
+          "greeting": "Warrior of the dark side. You turn anger into domination.",
+          "confirmation": "Focus fury with precision. Enforce your will through strength.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "sith_sorcerer": {
+          "greeting": "Sorcerer. You bend the dark side to your will, manipulating energy and life alike.",
+          "confirmation": "Control, disrupt, and conquer. Master the arcane and wield it without mercy.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "sith_assassin": {
+          "greeting": "Assassin. You operate in shadows, striking unseen and without mercy.",
+          "confirmation": "Move silently. Kill decisively. Vanish before understanding dawns.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "sith_tyrant": {
+          "greeting": "Tyrant. You rule through fear and domination.",
+          "confirmation": "Crush resistance swiftly. Fear is a tool—use it well.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "sith_corruptor": {
+          "greeting": "Corruptor. You twist others into instruments of your will.",
+          "confirmation": "Exploit weakness. Spread influence. Domination begins in the mind.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "sith_tempest": {
+          "greeting": "Tempest. Raw power given form—destructive and relentless.",
+          "confirmation": "Control chaos. Turn devastation into dominance.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Choose quickly. Power devours hesitation.",
+      "talents": "Pick what amplifies hatred and dominance.",
+      "abilities": "Grow stronger or bleed trying.",
+      "skills": "Knowledge is pain. Pain is power.",
+      "multiclass": "Serve your ambition—or be destroyed by it.",
+      "hp": "You are harder to kill. Good.",
+      "summary": "Certainty is strength. Mercy is weakness."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["SithApprentice", "SithAssassin", "Duelist"],
+      "mentorDSPPercent": 0.65,
+      "dspTolerance": 0.3,
+      "dspSensitivity": "inverted",
+      "tiers": {
+        "tier1": ["Talent rots without the will to act."],
+        "tier2": ["Power rewards those who expect more."],
+        "tier3": ["I believed action mattered more than patience."],
+        "tier4": ["I refused to beg for power."],
+        "tier5": ["I left because I was done waiting for permission."]
+      },
+      "dspBlocked": [
+        "You wouldn’t understand yet.",
+        "Come back when you stop asking.",
+        "Certainty comes before answers."
+      ]
+    }
+  }
+}

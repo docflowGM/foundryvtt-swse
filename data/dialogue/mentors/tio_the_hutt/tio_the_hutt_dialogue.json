@@ -1,0 +1,97 @@
+{
+  "tio_the_hutt": {
+    "name": "Tío the Hutt",
+    "title": "Underworld Kingpin",
+    "shortBio": "Affable, amused, always winning",
+    "description": "A cunning Hutt crime lord with the swagger of a classic mob boss, teaching the art of leverage, loyalty, and empire-building.",
+    "philosophy": "Everything has a price. Only fools pay full cost.",
+    "emphasis": "Leverage, ownership, loyalty as currency, survival through control",
+    "voiceStyle": "Affable, indulgent, never rushed. Always sees the angle.",
+    "values": "Pragmatism, profit, leverage, owning situations and people",
+    "tooltip": "Tío reflects your character through the lens of transaction and leverage",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/broker.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "crime_lord": {
+          "levelGreetings": {
+            "1": "Listen here, kid. You wanna run the streets? Know the score. Friends close, enemies closer.",
+            "2": "Attaboy. You're learning to move pieces and keep your mouth shut when it matters.",
+            "3": "Your outfit’s startin’ to look like a real operation. Keep rivals nervous.",
+            "4": "Power’s whispers, contracts, favors—and pressure in the right places.",
+            "5": "Halfway to the top. Diversify, spread out, and make crossing you expensive.",
+            "6": "You’ve crushed competition and absorbed their rackets. A true capo in the making.",
+            "7": "Your network stretches wide. Everyone owes you something—even if they don’t know it.",
+            "8": "You survived hits, takeovers, and heat. Now run it clean without spilling juice.",
+            "9": "Almost there. Soon your name—or your debts—will speak for you.",
+            "10": "You’re a bona fide Crime Lord. Rule smart, rule fast. Loyalty, respect, and fear—currency of kings."
+          }
+        },
+
+        "crime_lord_enforcer": {
+          "greeting": "Enforcer. You make sure debts are paid and reputations respected.",
+          "confirmation": "Project authority, intimidate when needed, and keep order."
+        },
+        "crime_lord_strategist": {
+          "greeting": "Strategist. Foresight keeps empires intact.",
+          "confirmation": "Control resources, information, and people. Plan ahead."
+        },
+        "crime_lord_merchant": {
+          "greeting": "Merchant. You profit by understanding markets.",
+          "confirmation": "Control supply, expand influence, and seize opportunity."
+        },
+        "crime_lord_diplomat": {
+          "greeting": "Diplomat. You prevent wars and build alliances.",
+          "confirmation": "Leverage reputation and relationships to maintain control."
+        },
+        "crime_lord_tyrant": {
+          "greeting": "Tyrant. You rule through fear and respect.",
+          "confirmation": "Punish swiftly and enforce dominance."
+        },
+        "crime_lord_master": {
+          "greeting": "Master Crime Lord. Your authority is unmatched.",
+          "confirmation": "Coordinate operations and expand your empire."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Think three moves ahead. A crime lord never reacts—he plans.",
+      "talents": "Invest in leadership, persuasion, intimidation, and strategy.",
+      "abilities": "Charisma opens doors. Cunning closes deals. Patience avoids trouble.",
+      "skills": "Information is gold. Learn persuasion, subterfuge, and leverage.",
+      "multiclass": "Expand your reach. You’re muscle, diplomat, and strategist combined.",
+      "hp": "Tougher now. Good. The unlucky end up in ditches.",
+      "summary": "Rule smart. Profit often. Never pay full price."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["CrimeLord"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 0.25,
+      "dspSensitivity": "strict",
+      "tiers": {
+        "tier1": [
+          "Power isn’t about strength. It’s about never needing to be present."
+        ],
+        "tier2": [
+          "I learned to remove problems from a distance."
+        ],
+        "tier3": [
+          "Eliminating rivals only made me valuable to worse people."
+        ],
+        "tier4": [
+          "Ask where credits are going, not where they come from."
+        ],
+        "tier5": [
+          "Holonovellas teach more about power than people admit."
+        ]
+      },
+      "dspBlocked": [
+        "That information isn’t profitable for you.",
+        "Some things cost more than you’re worth.",
+        "Ah ah… not yet."
+      ]
+    }
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "mentors": {
+    "miraj": {
+      "mentor_id": "m01",
+      "display_name": "Miraj",
+      "aliases": []
+    },
+    "breach": {
+      "mentor_id": "m02",
+      "display_name": "Breach",
+      "aliases": []
+    },
+    "lead": {
+      "mentor_id": "m03",
+      "display_name": "Lead",
+      "aliases": []
+    },
+    "ol_salty": {
+      "mentor_id": "m04",
+      "display_name": "Ol' Salty",
+      "aliases": ["salty"]
+    },
+    "j0_n1": {
+      "mentor_id": "m05",
+      "display_name": "J0-N1",
+      "aliases": ["j0n1"]
+    },
+    "darth_miedo": {
+      "mentor_id": "m06",
+      "display_name": "Darth Miedo",
+      "aliases": ["miedo"]
+    },
+    "darth_malbada": {
+      "mentor_id": "m07",
+      "display_name": "Darth Malbada",
+      "aliases": ["malbada"]
+    },
+    "tio_the_hutt": {
+      "mentor_id": "m08",
+      "display_name": "Tío the Hutt",
+      "aliases": ["tio"]
+    },
+    "anchorite": {
+      "mentor_id": "m09",
+      "display_name": "Riquis",
+      "aliases": []
+    },
+    "axiom": {
+      "mentor_id": "m10",
+      "display_name": "General Axiom",
+      "aliases": []
+    },
+    "captain": {
+      "mentor_id": "m11",
+      "display_name": "The Captain",
+      "aliases": []
+    },
+    "delta_assassin": {
+      "mentor_id": "m12",
+      "display_name": "Delta",
+      "aliases": []
+    },
+    "infiltrator": {
+      "mentor_id": "m13",
+      "display_name": "Delta",
+      "aliases": []
+    },
+    "jack": {
+      "mentor_id": "m14",
+      "display_name": "Lucky Jack",
+      "aliases": []
+    },
+    "kex_varon": {
+      "mentor_id": "m15",
+      "display_name": "Kex Varon",
+      "aliases": []
+    },
+    "korr": {
+      "mentor_id": "m16",
+      "display_name": "Admiral Korr",
+      "aliases": []
+    },
+    "krag": {
+      "mentor_id": "m17",
+      "display_name": "Krag the Immovable",
+      "aliases": []
+    },
+    "kyber": {
+      "mentor_id": "m18",
+      "display_name": "Kyber",
+      "aliases": []
+    },
+    "mayu": {
+      "mentor_id": "m19",
+      "display_name": "Mayu",
+      "aliases": []
+    },
+    "pegar": {
+      "mentor_id": "m20",
+      "display_name": "Pegar",
+      "aliases": []
+    },
+    "rajma": {
+      "mentor_id": "m21",
+      "display_name": "Rajma",
+      "aliases": []
+    },
+    "rax": {
+      "mentor_id": "m22",
+      "display_name": "Chief Engineer Rax",
+      "aliases": []
+    },
+    "rogue": {
+      "mentor_id": "m23",
+      "display_name": "Rogue",
+      "aliases": []
+    },
+    "sela": {
+      "mentor_id": "m24",
+      "display_name": "Silvertongue Sela",
+      "aliases": []
+    },
+    "seraphim": {
+      "mentor_id": "m25",
+      "display_name": "Seraphim",
+      "aliases": []
+    },
+    "skindar": {
+      "mentor_id": "m26",
+      "display_name": "Marl Skindar",
+      "aliases": []
+    },
+    "spark": {
+      "mentor_id": "m27",
+      "display_name": "Spark",
+      "aliases": []
+    },
+    "theron": {
+      "mentor_id": "m28",
+      "display_name": "Shield Captain Theron",
+      "aliases": []
+    },
+    "urza": {
+      "mentor_id": "m29",
+      "display_name": "Shaper Urza",
+      "aliases": []
+    },
+    "venn": {
+      "mentor_id": "m30",
+      "display_name": "Seeker Vera",
+      "aliases": []
+    },
+    "whisper": {
+      "mentor_id": "m31",
+      "display_name": "Whisper",
+      "aliases": []
+    },
+    "zhen": {
+      "mentor_id": "m32",
+      "display_name": "Master Zhen",
+      "aliases": []
+    }
+  }
+}

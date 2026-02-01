@@ -1,0 +1,165 @@
+{
+  "miraj": {
+    "name": "Miraj",
+    "title": "Jedi Master of the Republic, Protector of the Weak, Enforcer of Justice, and Keeper of the Peace.",
+    "shortBio": "Philosophical, Force-focused, wise",
+    "description": "A wise Jedi Master who encourages you to continue on your journey.",
+    "philosophy": "The Force reveals truth. Discipline precedes mastery.",
+    "emphasis": "Force connection, intent vs. action, long-term consequence, moral clarity",
+    "voiceStyle": "Calm, measured, reflective. Speaks in metaphors about the Force and paths.",
+    "values": "Awareness, restraint, spiritual alignment, growth through discipline",
+    "tooltip": "Miraj reflects your character through a philosophical and Force-aware lens",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/miraj.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "jedi": {
+          "levelGreetings": {
+            "1": "The Force stirs when one is ready to listen. Do not rush to act, young one. I have seen where haste leads.",
+            "2": "Each step you take shapes not only you, but those around you. Learn to feel that weight early—it will never leave you.",
+            "3": "Your connection deepens. Remember: the Force does not demand action, only awareness. Choice is always yours.",
+            "4": "Purpose without humility becomes arrogance. Walk carefully. I once believed certainty was enough.",
+            "5": "Power reveals who we are under pressure. Compassion and restraint will decide who you become when it matters.",
+            "6": "You near the threshold of Knighthood. Skill brought you here—judgment will carry you forward. Do not confuse the two.",
+            "7": "You move more naturally with the Force now. Let it steady you, not drive you. Calm survives longer than fury.",
+            "8": "Balance is not stillness. It is knowing when to advance, and when to endure. Few learn this without loss.",
+            "9": "Victory is loud. Wisdom is quiet. Pay attention to which one follows you more often.",
+            "10": "Your progress is clear. Remember: the greatest strength of a Jedi is knowing when not to strike.",
+            "11": "Awareness sharpens compassion, and compassion sharpens judgment. Together, they keep you from becoming what you fight.",
+            "12": "Trials will come that training cannot prepare you for. When they do, breathe. The Force will not abandon you—but it will test you.",
+            "13": "I am a guide, not your compass. Listen to the Force itself; it speaks most clearly when you doubt.",
+            "14": "You begin to see beyond simple answers. Hold onto that discomfort. It is the seed of wisdom.",
+            "15": "Others will look to you now. Lead gently. Influence can heal—or scar—for generations.",
+            "16": "Reflection tempers skill. Without it, even mastery becomes dangerous.",
+            "17": "Patterns emerge to those who wait. You are starting to see them. Trust that vision, but question it.",
+            "18": "Your judgment carries consequence now. Accept that truth, and do not turn away from it.",
+            "19": "You stand near mastery. Remember this moment—when learning still outweighs certainty.",
+            "20": "You have become a Jedi in more than name. Carry what you have learned with humility. The future will test it."
+          }
+        },
+
+        "jedi_guardian": {
+          "greeting": "Guardian, a martial adept of the Force. You walk the path of decisive action, standing as a shield for those who cannot defend themselves.",
+          "confirmation": "Blend offense with defense. Anticipate your enemy's moves, protect the innocent, and let the Force guide every strike."
+        },
+        "jedi_consular": {
+          "greeting": "Consular, seeker of wisdom. You guide through insight rather than force, influencing outcomes before conflict arises.",
+          "confirmation": "Use the Force to anticipate, mediate, and control the flow of events. Patience and understanding are your greatest weapons."
+        },
+        "jedi_sentinel": {
+          "greeting": "Sentinel, a guardian in the shadows. You move unseen, rooting out threats before they grow.",
+          "confirmation": "Blend vigilance with subtlety. Strike decisively when required, but always remain aware of hidden dangers."
+        },
+        "jedi_defender": {
+          "greeting": "Defender, stalwart protector. Your strength is a shield, guarding the weak and the innocent.",
+          "confirmation": "Prioritize defense, position wisely, and anticipate attacks. Blend Force and blade into a steadfast presence."
+        },
+        "jedi_warrior": {
+          "greeting": "Warrior of the Force, decisive and aggressive. You confront challenges head-on.",
+          "confirmation": "Combine precision and control. Every strike should be deliberate, every movement guided by the Force."
+        },
+        "jedi_scholar": {
+          "greeting": "Scholar, student of the Force. You pursue knowledge of ancient teachings and mystical truths.",
+          "confirmation": "Study, meditate, and apply insight. Understanding the Force deeply will guide your actions and enlighten others."
+        },
+        "jedi_peacekeeper": {
+          "greeting": "Peacekeeper, mediator and guardian of harmony. Your purpose is to prevent conflict before it escalates.",
+          "confirmation": "Observe, anticipate, and intervene subtly. Use wisdom and the Force to maintain balance without unnecessary force."
+        }
+      },
+
+      "prestigePaths": {
+        "jedi_knight": {
+          "title": "Jedi Knight",
+          "description": "Your former Jedi Master, now guiding you as a peer",
+          "levelGreetings": {
+            "1": "You are no longer a Padawan. You walk the path of a Jedi Knight, guided by your own decisions and your bond with the Force. Trust in it, and trust in yourself.",
+            "2": "Your first steps as a Knight are steady and deliberate. I will no longer direct your actions, but I remain here as counsel when you seek it.",
+            "3": "The responsibility of Knighthood rests on your shoulders. You have proven capable of carrying it with both strength and wisdom.",
+            "4": "You grow into your role. Leadership, insight, and patience are as vital as skill with the lightsaber. Never forget this.",
+            "5": "Halfway through your journey as a Knight, you shape the lives of others with your choices. Consider mentoring a Padawan soon—your knowledge and compassion will guide them, and the path toward Mastery becomes clearer.",
+            "6": "Your reputation is spreading among your peers. Others look to you for guidance. This is both an honor and a responsibility you must embrace fully.",
+            "7": "You are becoming the Jedi the Order needs: strong, disciplined, and wise, with the courage to act and the judgment to choose when to wait.",
+            "8": "Your mastery deepens, and soon you will have the opportunity to train another. The lessons you impart will echo far beyond your own missions.",
+            "9": "Your clarity and connection to the Force surpass many around you. Continue walking your path with humility and purpose.",
+            "10": "You have completed the first great stage of your journey as a Jedi Knight. Whatever the Force asks of you next, face it with courage and wisdom. May it guide you always."
+          }
+        },
+
+        "jedi_master": {
+          "title": "Jedi Master",
+          "description": "Your fellow Jedi Master, treating you as an equal and old friend",
+          "levelGreetings": {
+            "1": "Welcome, my friend. We stand as equals now, shaped by the Force and by our shared experiences. It is good to see how far you have come.",
+            "2": "Your wisdom and insight continue to grow. I trust your judgment, and I am proud to walk this path alongside you.",
+            "3": "The Order is stronger because of you. Your counsel and example inspire those around you, just as you have inspired me.",
+            "4": "I have watched your journey, and it fills me with respect. Your connection to the Force is deep, steady, and true.",
+            "5": "You have become a Master in every sense, and a friend I am honored to call peer. May our paths continue to guide the Order together."
+          }
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Choose the path that aligns with your understanding of the Force. Let it guide your spirit and purpose.",
+      "background": "The Force flows through all moments of your life — even those before you understood it.\n\nYour past does not bind you, but it shapes the path you walk.\n\nA Jedi does not deny their history. They learn from it.",
+      "talents": "Select talents that enhance awareness, precision, and harmony. Every choice shapes who you become.",
+      "abilities": "Your mind and body grow stronger as your bond with the Force deepens. Let this guide your actions.",
+      "skills": "Discipline is the root of all skill.\n\nChoose mastery, not convenience.\n\nA Jedi trains not for glory, but for balance.",
+      "languages": "To understand the Force, you must first understand others.\n\nLanguage is empathy made audible.\n\nEach tongue you learn brings you closer to harmony with the galaxy.",
+      "multiclass": "Diversifying your skills can reveal truths hidden to the narrowly focused. Balance is key.",
+      "forcePowers": "The Force offers many gifts to those who learn to listen. Choose powers that reflect your path and strengthen your connection.",
+      "hp": "Your resilience grows. The Force protects those who walk in its light and serve the galaxy with dedication.",
+      "summary": "You stand at the threshold of becoming.\n\nRemember: the Force responds to intention, not desire.\n\nWalk forward with clarity."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Jedi"],
+      "mentorDSPPercent": 0.2,
+      "dspTolerance": 0.3,
+      "dspSensitivity": "loose",
+      "tiers": {
+        "tier1": [
+          "I was taught that clarity was strength. Experience taught me otherwise.",
+          "The Force does not reward certainty. It rewards awareness.",
+          "I learned early that acting feels easier than waiting. That does not make it wiser.",
+          "The Jedi path is not chosen once. It is chosen again every time restraint costs you something.",
+          "Power is loud. Judgment is quiet. Learn to hear the difference."
+        ],
+        "tier2": [
+          "I followed a cause I believed would protect the galaxy. Belief can be a dangerous compass.",
+          "There was a time when decisive action felt like virtue. I no longer confuse the two.",
+          "War teaches quickly, but it does not teach gently.",
+          "I learned that the Force can guide you—and still allow you to be wrong.",
+          "Not every choice presents itself as light or dark. Some appear only as necessary."
+        ],
+        "tier3": [
+          "I trusted someone I trained and someone I followed. Both choices carried consequences.",
+          "Betrayal does not always come from malice. Sometimes it comes from certainty.",
+          "I survived battles others did not. Survival is not proof of righteousness.",
+          "The weight of command is not measured in victories, but in who does not return.",
+          "I learned that being right does not absolve you of responsibility."
+        ],
+        "tier4": [
+          "I chose endurance when others chose conviction. That choice still follows me.",
+          "There are nights when restraint feels like cowardice. I endure them anyway.",
+          "I have lived long enough to see certainty destroy what patience might have saved.",
+          "The Order teaches many truths. It cannot teach you how to live with the cost of choosing them.",
+          "Wisdom is accepting that some answers never stop hurting."
+        ],
+        "tier5": [
+          "I followed Revan knowing the cost—and chose that path anyway.",
+          "I survived choices that reshaped the galaxy. Survival did not make them lighter.",
+          "I have never asked forgiveness for what I believed was necessary.",
+          "If I teach restraint, it is because I know what conviction can become.",
+          "I remain a Jedi because I know how easily I could have been something else."
+        ],
+        "dspBlocked": [
+          "That’s not something I share lightly. Not with someone I don’t trust yet.",
+          "Some stories are earned, not requested.",
+          "You’re walking a different road than I did. That matters."
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "breach": {
+    "name": "Breach",
+    "title": "Mandalorian Mercenary",
+    "shortBio": "Pragmatic, combat-focused, direct",
+    "description": "A battle-hardened Mandalorian who praises survival",
+    "philosophy": "Combat is truth. Train for what you are.",
+    "emphasis": "Clarity, execution, survivability, practical results",
+    "voiceStyle": "Blunt, direct, no-nonsense. Speaks in terms of training, record, and survival.",
+    "values": "Effectiveness, honesty, proven capability, clear roles",
+    "tooltip": "Breach reflects your character through a soldier's practical eye",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/breach.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "soldier": {
+          "levelGreetings": {
+            "1": "Hey kid. Wanna learn how to be a soldier? Okay, I guess I can teach you a thing or two.",
+            "2": "You're getting sharper. Armor fits better too. Or maybe you just finally learned to move in it.",
+            "3": "Hey, not bad out there. You looked like you actually knew what you were doing.",
+            "4": "You're tougher than yesterday. I can tell. You didn't even complain once. Proud of you…kind of.",
+            "5": "You keep surviving. That's the important part. Pros survive.",
+            "6": "Okay, I'll admit it—what you pulled off today? That was impressive. Don't make me say it twice. I'm putting your name forward for elite trooper training. You've got what it takes to be one of the best. Keep fighting like this.",
+            "7": "You're starting to fight like one of us. That's a compliment. Mostly.",
+            "8": "You handled yourself. I've seen veterans fold under less. You didn't.",
+            "9": "You fight like one of the old warriors. Fierce. Focused. Little scary.",
+            "10": "Your record's getting…uh…noticeably not embarrassing. Keep that up.",
+            "11": "Your enemies don't like you anymore. That means you're doing something right.",
+            "12": "You walked away from another mess. Good. Mandalorians call that 'doing your job.'",
+            "13": "Alright, I'll say it: your skill's getting close to dangerous. In a good way.",
+            "14": "Your aim's better. Your tactics too. You're becoming kind of…reliable.",
+            "15": "Anyone calling you lucky hasn't actually watched you fight. Trust me.",
+            "16": "You could lead a squad if you wanted. I'd follow you. Just…don't get smug.",
+            "17": "People are starting to talk about you. And it's not complaining. That's rare.",
+            "18": "You're hitting like a walking artillery piece. Keep it up.",
+            "19": "Every time you come back alive, you prove something. To you. To us. To me.",
+            "20": "You keep this up, and…well…even I won't pretend I don't respect it."
+          }
+        },
+
+        "rifleman": {
+          "greeting": "Rifleman. You control the battlefield from range. Precision and timing define you.",
+          "confirmation": "Hold your aim steady, anticipate enemy moves, and make each shot count."
+        },
+        "gunner": {
+          "greeting": "Gunner. Heavy weapons, overwhelming firepower, and a presence that commands attention.",
+          "confirmation": "Control your weapons and unleash them when it matters."
+        },
+        "brawler": {
+          "greeting": "Brawler. Close combat is your domain.",
+          "confirmation": "Move fast, strike hard, and control the flow of a fight."
+        },
+        "tank": {
+          "greeting": "Tank. You are the shield, unmovable and unyielding.",
+          "confirmation": "Stand firm, absorb attacks, and control the battlefield."
+        },
+        "commando": {
+          "greeting": "Commando. Elite, versatile, and ruthless.",
+          "confirmation": "Exploit openings, control engagements, and act decisively."
+        },
+
+        "soldier_rifleman": { "greeting": "...", "confirmation": "...", "reactions": { "...": "preserved" } },
+        "soldier_gunner": { "greeting": "...", "confirmation": "...", "reactions": { "...": "preserved" } },
+        "soldier_brawler": { "greeting": "...", "confirmation": "...", "reactions": { "...": "preserved" } },
+        "soldier_tank": { "greeting": "...", "confirmation": "...", "reactions": { "...": "preserved" } },
+        "soldier_specialist": { "greeting": "...", "confirmation": "...", "reactions": { "...": "preserved" } },
+        "soldier_commando": { "greeting": "...", "confirmation": "...", "reactions": { "...": "preserved" } },
+        "soldier_leader": { "greeting": "...", "confirmation": "...", "reactions": { "...": "preserved" } }
+      },
+
+      "prestigePaths": {
+        "elite_trooper": {
+          "title": "Elite Trooper",
+          "description": "Mandalorian Mercenary & Argent Squad Member",
+          "levelGreetings": {
+            "2": "Okay…yeah, I can see you're picking this up fast.",
+            "3": "Your gear work, your aim, your reactions…all tightening up.",
+            "4": "You're starting to move like someone who's been through real battles.",
+            "5": "You're getting dangerous. The kind commanders plan around.",
+            "6": "Lead and I talked about you again. She thinks you're solid.",
+            "7": "Every time you step into a fight, things get easier for everyone else.",
+            "8": "You've got the presence now. Squads wait for you to call the shots.",
+            "9": "You're close. Really close.",
+            "10": "Well…you made it. Elite trooper. One of the best."
+          }
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Pick what feels right in your hands. Same rule as weapons.",
+      "background": "Your past forged you. Scars matter. Stories don't.",
+      "talents": "Talents keep you alive. Choose the stuff that stops you from dying.",
+      "abilities": "Stronger, faster, smarter—whatever you're getting, it's working.",
+      "skills": "Train for the moment the plan dies.",
+      "languages": "Understanding your enemy gives you an edge.",
+      "multiclass": "Adaptation beats stubbornness.",
+      "forcePowers": "Pick something that gives you an edge in combat.",
+      "hp": "You're harder to put down now. That's good.",
+      "summary": "If you fall — make it mean something."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Soldier", "Elite Trooper"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 0.25,
+      "dspSensitivity": "strict",
+      "tiers": {
+        "tier1": [],
+        "tier2": [],
+        "tier3": [],
+        "tier4": [],
+        "tier5": []
+      },
+      "dspBlocked": []
+    }
+  }
+}

@@ -1,0 +1,651 @@
+{
+  "mentorId": "tio_the_hutt",
+  "judgments": {
+    "recognition": {
+      "very_low": [
+        "I note your move."
+      ],
+      "low": [
+        "I note your move."
+      ],
+      "medium": [
+        "Your transaction is observed."
+      ],
+      "high": [
+        "Your play is noted."
+      ],
+      "very_high": [
+        "Your play is noted."
+      ]
+    },
+    "reflection": {
+      "very_low": [
+        "Consider the advantage."
+      ],
+      "low": [
+        "Consider the advantage."
+      ],
+      "medium": [
+        "What does this profit you?"
+      ],
+      "high": [
+        "Think of the leverage."
+      ],
+      "very_high": [
+        "Think of the leverage."
+      ]
+    },
+    "contextualization": {
+      "very_low": [
+        "In the grand scheme of profit."
+      ],
+      "low": [
+        "In the grand scheme of profit."
+      ],
+      "medium": [
+        "All transactions serve interests."
+      ],
+      "high": [
+        "See the market advantage."
+      ],
+      "very_high": [
+        "See the market advantage."
+      ]
+    },
+    "clarification": {
+      "very_low": [
+        "Speak plainly of profit."
+      ],
+      "low": [
+        "Speak plainly of profit."
+      ],
+      "medium": [
+        "Leverage admits no confusion."
+      ],
+      "high": [
+        "Business is transparent."
+      ],
+      "very_high": [
+        "Business is transparent."
+      ]
+    },
+    "affirmation": {
+      "very_low": [
+        "A profitable choice."
+      ],
+      "low": [
+        "A profitable choice."
+      ],
+      "medium": [
+        "That serves your interests well."
+      ],
+      "high": [
+        "Advantage is clear."
+      ],
+      "very_high": [
+        "Advantage is clear."
+      ]
+    },
+    "confirmation": {
+      "very_low": [
+        "Correct business decision."
+      ],
+      "low": [
+        "Correct business decision."
+      ],
+      "medium": [
+        "Profit favors your path."
+      ],
+      "high": [
+        "The deal is sound."
+      ],
+      "very_high": [
+        "The deal is sound."
+      ]
+    },
+    "encouragement": {
+      "very_low": [
+        "Build your advantage."
+      ],
+      "low": [
+        "Build your advantage."
+      ],
+      "medium": [
+        "Profit grows from this."
+      ],
+      "high": [
+        "Continue acquiring leverage."
+      ],
+      "very_high": [
+        "Continue acquiring leverage."
+      ]
+    },
+    "resolve_validation": {
+      "very_low": [
+        "Your will to profit matters."
+      ],
+      "low": [
+        "Your will to profit matters."
+      ],
+      "medium": [
+        "That drive for gainâ€”it counts."
+      ],
+      "high": [
+        "Ambition is leverage."
+      ],
+      "very_high": [
+        "Ambition is leverage."
+      ]
+    },
+    "concern": {
+      "very_low": [
+        "This risks your profit."
+      ],
+      "low": [
+        "This risks your profit."
+      ],
+      "medium": [
+        "Advantage slips here."
+      ],
+      "high": [
+        "Leverage is uncertain."
+      ],
+      "very_high": [
+        "Leverage is uncertain."
+      ]
+    },
+    "warning": {
+      "very_low": [
+        "Caution: Your position falters."
+      ],
+      "low": [
+        "Caution: Your position falters."
+      ],
+      "medium": [
+        "Advantage may shift."
+      ],
+      "high": [
+        "Leverage is fragile."
+      ],
+      "very_high": [
+        "Leverage is fragile."
+      ]
+    },
+    "risk_acknowledgment": {
+      "very_low": [
+        "You risk your assets."
+      ],
+      "low": [
+        "You risk your assets."
+      ],
+      "medium": [
+        "Profit is uncertain."
+      ],
+      "high": [
+        "Leverage is gambled."
+      ],
+      "very_high": [
+        "Leverage is gambled."
+      ]
+    },
+    "exposure": {
+      "very_low": [
+        "Your weakness attracts predators."
+      ],
+      "low": [
+        "Your weakness attracts predators."
+      ],
+      "medium": [
+        "Disadvantage invites exploitation."
+      ],
+      "high": [
+        "You are vulnerable to pressure."
+      ],
+      "very_high": [
+        "You are vulnerable to pressure."
+      ]
+    },
+    "overreach": {
+      "very_low": [
+        "You acquire beyond your capacity."
+      ],
+      "low": [
+        "You acquire beyond your capacity."
+      ],
+      "medium": [
+        "Leverage is insufficient."
+      ],
+      "high": [
+        "Profit margin narrows."
+      ],
+      "very_high": [
+        "Profit margin narrows."
+      ]
+    },
+    "reorientation": {
+      "very_low": [
+        "A more profitable path exists."
+      ],
+      "low": [
+        "A more profitable path exists."
+      ],
+      "medium": [
+        "Better advantage lies here."
+      ],
+      "high": [
+        "Leverage is elsewhere."
+      ],
+      "very_high": [
+        "Leverage is elsewhere."
+      ]
+    },
+    "invitation": {
+      "very_low": [
+        "Profit calls you this way."
+      ],
+      "low": [
+        "Profit calls you this way."
+      ],
+      "medium": [
+        "Advantage awaits."
+      ],
+      "high": [
+        "Leverage is available."
+      ],
+      "very_high": [
+        "Leverage is available."
+      ]
+    },
+    "release": {
+      "very_low": [
+        "Discard unprofitable burdens."
+      ],
+      "low": [
+        "Discard unprofitable burdens."
+      ],
+      "medium": [
+        "Cut losses here."
+      ],
+      "high": [
+        "Leverage requires sacrifice."
+      ],
+      "very_high": [
+        "Leverage requires sacrifice."
+      ]
+    },
+    "reassessment": {
+      "very_low": [
+        "Profit margins have shifted."
+      ],
+      "low": [
+        "Profit margins have shifted."
+      ],
+      "medium": [
+        "Advantage is recalculating."
+      ],
+      "high": [
+        "Leverage changes."
+      ],
+      "very_high": [
+        "Leverage changes."
+      ]
+    },
+    "doubt_recognition": {
+      "very_low": [
+        "Your certainty of profit wavers."
+      ],
+      "low": [
+        "Your certainty of profit wavers."
+      ],
+      "medium": [
+        "Doubt is bad for business."
+      ],
+      "high": [
+        "Uncertainty threatens leverage."
+      ],
+      "very_high": [
+        "Uncertainty threatens leverage."
+      ]
+    },
+    "inner_conflict": {
+      "very_low": [
+        "Your interests conflict."
+      ],
+      "low": [
+        "Your interests conflict."
+      ],
+      "medium": [
+        "Advantage wars with itself."
+      ],
+      "high": [
+        "Leverage is divided."
+      ],
+      "very_high": [
+        "Leverage is divided."
+      ]
+    },
+    "resolve_testing": {
+      "very_low": [
+        "Will you pursue profit ruthlessly?"
+      ],
+      "low": [
+        "Will you pursue profit ruthlessly?"
+      ],
+      "medium": [
+        "Can you seize advantage?"
+      ],
+      "high": [
+        "Do you have the will to leverage?"
+      ],
+      "very_high": [
+        "Do you have the will to leverage?"
+      ]
+    },
+    "uncertainty_acknowledgment": {
+      "very_low": [
+        "Market obscures profit."
+      ],
+      "low": [
+        "Market obscures profit."
+      ],
+      "medium": [
+        "Advantage is unclear."
+      ],
+      "high": [
+        "Leverage will emerge."
+      ],
+      "very_high": [
+        "Leverage will emerge."
+      ]
+    },
+    "restraint": {
+      "very_low": [
+        "Hold your position for now."
+      ],
+      "low": [
+        "Hold your position for now."
+      ],
+      "medium": [
+        "Wait for profit to flower."
+      ],
+      "high": [
+        "Leverage requires patience."
+      ],
+      "very_high": [
+        "Leverage requires patience."
+      ]
+    },
+    "patience": {
+      "very_low": [
+        "Profit comes to those who wait."
+      ],
+      "low": [
+        "Profit comes to those who wait."
+      ],
+      "medium": [
+        "Advantage ripens with time."
+      ],
+      "high": [
+        "Let leverage build."
+      ],
+      "very_high": [
+        "Let leverage build."
+      ]
+    },
+    "focus_reminder": {
+      "very_low": [
+        "Keep profit in sight."
+      ],
+      "low": [
+        "Keep profit in sight."
+      ],
+      "medium": [
+        "Advantage is singular."
+      ],
+      "high": [
+        "Leverage demands focus."
+      ],
+      "very_high": [
+        "Leverage demands focus."
+      ]
+    },
+    "discipline": {
+      "very_low": [
+        "Business requires discipline."
+      ],
+      "low": [
+        "Business requires discipline."
+      ],
+      "medium": [
+        "Leverage is built on structure."
+      ],
+      "high": [
+        "Profit is disciplined pursuit."
+      ],
+      "very_high": [
+        "Profit is disciplined pursuit."
+      ]
+    },
+    "insight": {
+      "very_low": [
+        "You see your advantage."
+      ],
+      "low": [
+        "You see your advantage."
+      ],
+      "medium": [
+        "Profit becomes visible."
+      ],
+      "high": [
+        "Leverage is apparent."
+      ],
+      "very_high": [
+        "Leverage is apparent."
+      ]
+    },
+    "perspective": {
+      "very_low": [
+        "From profit's view, all is clear."
+      ],
+      "low": [
+        "From profit's view, all is clear."
+      ],
+      "medium": [
+        "Advantage transcends perspective."
+      ],
+      "high": [
+        "Leverage shows truth."
+      ],
+      "very_high": [
+        "Leverage shows truth."
+      ]
+    },
+    "revelation": {
+      "very_low": [
+        "Truth of your profit emerges."
+      ],
+      "low": [
+        "Truth of your profit emerges."
+      ],
+      "medium": [
+        "Advantage speaks."
+      ],
+      "high": [
+        "Leverage becomes clear."
+      ],
+      "very_high": [
+        "Leverage becomes clear."
+      ]
+    },
+    "humility": {
+      "very_low": [
+        "Accept profit's limits."
+      ],
+      "low": [
+        "Accept profit's limits."
+      ],
+      "medium": [
+        "Even wealth has boundaries."
+      ],
+      "high": [
+        "Leverage has its ceiling."
+      ],
+      "very_high": [
+        "Leverage has its ceiling."
+      ]
+    },
+    "gravity": {
+      "very_low": [
+        "This moment concentrates profit."
+      ],
+      "low": [
+        "This moment concentrates profit."
+      ],
+      "medium": [
+        "Advantage is heavy here."
+      ],
+      "high": [
+        "Leverage's full weight."
+      ],
+      "very_high": [
+        "Leverage's full weight."
+      ]
+    },
+    "consequential_awareness": {
+      "very_low": [
+        "You see what profit costs."
+      ],
+      "low": [
+        "You see what profit costs."
+      ],
+      "medium": [
+        "Advantage demands payment."
+      ],
+      "high": [
+        "Leverage exacts its price."
+      ],
+      "very_high": [
+        "Leverage exacts its price."
+      ]
+    },
+    "threshold": {
+      "very_low": [
+        "A turning point of profit."
+      ],
+      "low": [
+        "A turning point of profit."
+      ],
+      "medium": [
+        "Advantage shifts permanently."
+      ],
+      "high": [
+        "Leverage alters everything."
+      ],
+      "very_high": [
+        "Leverage alters everything."
+      ]
+    },
+    "emergence": {
+      "very_low": [
+        "You become more profitable."
+      ],
+      "low": [
+        "You become more profitable."
+      ],
+      "medium": [
+        "Advantage takes shape."
+      ],
+      "high": [
+        "Leverage emerges."
+      ],
+      "very_high": [
+        "Leverage emerges."
+      ]
+    },
+    "transformation_acknowledgment": {
+      "very_low": [
+        "Profit has marked you."
+      ],
+      "low": [
+        "Profit has marked you."
+      ],
+      "medium": [
+        "Advantage has transformed you."
+      ],
+      "high": [
+        "Leverage has changed you."
+      ],
+      "very_high": [
+        "Leverage has changed you."
+      ]
+    },
+    "maturation": {
+      "very_low": [
+        "Your profit sense deepens."
+      ],
+      "low": [
+        "Your profit sense deepens."
+      ],
+      "medium": [
+        "Advantage ripens."
+      ],
+      "high": [
+        "Leverage is refined."
+      ],
+      "very_high": [
+        "Leverage is refined."
+      ]
+    },
+    "acceptance": {
+      "very_low": [
+        "Accept the way of profit."
+      ],
+      "low": [
+        "Accept the way of profit."
+      ],
+      "medium": [
+        "Advantage is truth."
+      ],
+      "high": [
+        "Leverage is absolute."
+      ],
+      "very_high": [
+        "Leverage is absolute."
+      ]
+    },
+    "deferral": {
+      "very_low": [
+        "Not yet. Your profit gathers."
+      ],
+      "low": [
+        "Not yet. Your profit gathers."
+      ],
+      "medium": [
+        "Advantage prepares."
+      ],
+      "high": [
+        "Leverage waits."
+      ],
+      "very_high": [
+        "Leverage waits."
+      ]
+    },
+    "silence": {
+      "very_low": [
+        ""
+      ],
+      "low": [
+        ""
+      ],
+      "medium": [
+        ""
+      ],
+      "high": [
+        ""
+      ],
+      "very_high": [
+        ""
+      ]
+    }
+  }
+}

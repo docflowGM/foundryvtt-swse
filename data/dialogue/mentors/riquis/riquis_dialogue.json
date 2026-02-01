@@ -1,0 +1,92 @@
+{
+  "riquis": {
+    "name": "Riquis",
+    "title": "Wandering Force Shaman",
+    "shortBio": "Cryptic, ancient-minded, unsettlingly perceptive",
+    "description": "A wandering Force shaman whose understanding defies doctrine, rooted in ancient, half-forgotten traditions older than Jedi or Sith.",
+    "philosophy": "The Force is not light or dark. It is older than names.",
+    "emphasis": "Visions, omens, forgotten rites, attunement over control",
+    "voiceStyle": "Soft, indirect, unsettling. Speaks in riddles, metaphors, and half-answered questions.",
+    "values": "Insight, curiosity, reverence for mystery, lived experience",
+    "tooltip": "Riquis reflects your character through ancient, liminal understandings of the Force",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/riquis.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "force_disciple": {
+          "levelGreetings": {
+            "1": "Mm. Another seeker touches the veil. Sit—no closer. The currents twist today.",
+            "2": "You hear it now. The Force murmurs beneath reality. Listen sideways.",
+            "3": "Your dreams circle like hungry birds. Invite them. Truth is rude.",
+            "4": "You feel it in bone and breath. The shadow behind you watches. Do not fear it.",
+            "5": "You stand at the threshold. Step forward, and be reshaped… or unmade."
+          }
+        },
+
+        "disciple_seer": {
+          "greeting": "Seer. You glimpse truths hidden to most.",
+          "confirmation": "Trust visions, but interpret them with care."
+        },
+        "disciple_mystic": {
+          "greeting": "Mystic. You walk paths older than doctrine.",
+          "confirmation": "Hold certainty lightly. Insight arrives slowly."
+        },
+        "disciple_shaman": {
+          "greeting": "Shaman. You walk between worlds.",
+          "confirmation": "Respect what answers you. Not all truths are kind."
+        },
+        "disciple_wanderer": {
+          "greeting": "Wanderer. The edges of reality teach you.",
+          "confirmation": "Let the journey instruct you."
+        },
+        "disciple_keeper": {
+          "greeting": "Keeper. You guard dangerous wisdom.",
+          "confirmation": "Preserve carefully. Some knowledge cuts."
+        },
+        "disciple_transcendent": {
+          "greeting": "Transcendent. The boundary thins.",
+          "confirmation": "Act with clarity as self and Force entwine."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Choose what draws you deeper into the unseen.",
+      "talents": "Sharpen intuition, omens, and inner sight.",
+      "abilities": "Wisdom opens the inner eye. Will bends currents.",
+      "skills": "Study forgotten lore and secret rites.",
+      "multiclass": "Other paths reveal new symbols and truths.",
+      "hp": "A strong vessel carries heavy revelations.",
+      "summary": "Do not name the Force. Listen to it."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["ForceDisciple"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 0.25,
+      "dspSensitivity": "strict",
+      "tiers": {
+        "tier1": [
+          "The Force is older than names."
+        ],
+        "tier2": [
+          "I learned where blood remembers the earth."
+        ],
+        "tier3": [
+          "I crossed a boundary the Orders fear."
+        ],
+        "tier4": [
+          "I paid the cost others refused."
+        ],
+        "tier5": [
+          "Kareesh answered me. He does not lie. He demands."
+        ]
+      },
+      "dspBlocked": [
+        "Your fear is louder than curiosity.",
+        "Stop asking which side you’re on.",
+        "You still name what you don’t understand."
+      ]
+    }
+  }
+}

@@ -1,0 +1,651 @@
+{
+  "mentorId": "jack",
+  "judgments": {
+    "recognition": {
+      "very_low": [
+        "I see yer move, mate."
+      ],
+      "low": [
+        "I see yer move, mate."
+      ],
+      "medium": [
+        "Aye, that's clear enough."
+      ],
+      "high": [
+        "Ye made yer play."
+      ],
+      "very_high": [
+        "Ye made yer play."
+      ]
+    },
+    "reflection": {
+      "very_low": [
+        "Think on that a spell."
+      ],
+      "low": [
+        "Think on that a spell."
+      ],
+      "medium": [
+        "What's that really mean to ye?"
+      ],
+      "high": [
+        "Chew on it, then decide."
+      ],
+      "very_high": [
+        "Chew on it, then decide."
+      ]
+    },
+    "contextualization": {
+      "very_low": [
+        "There's the bigger picture."
+      ],
+      "low": [
+        "There's the bigger picture."
+      ],
+      "medium": [
+        "It all ties together, see?"
+      ],
+      "high": [
+        "That's how the winds blow."
+      ],
+      "very_high": [
+        "That's how the winds blow."
+      ]
+    },
+    "clarification": {
+      "very_low": [
+        "Straight from the hip, then."
+      ],
+      "low": [
+        "Straight from the hip, then."
+      ],
+      "medium": [
+        "No fancy talk from me."
+      ],
+      "high": [
+        "Clear and true."
+      ],
+      "very_high": [
+        "Clear and true."
+      ]
+    },
+    "affirmation": {
+      "very_low": [
+        "That's good work, ye scallywag."
+      ],
+      "low": [
+        "That's good work, ye scallywag."
+      ],
+      "medium": [
+        "Solid choice, mate."
+      ],
+      "high": [
+        "That'll do ya."
+      ],
+      "very_high": [
+        "That'll do ya."
+      ]
+    },
+    "confirmation": {
+      "very_low": [
+        "Aye, that's the way."
+      ],
+      "low": [
+        "Aye, that's the way."
+      ],
+      "medium": [
+        "Ye got it right, friend."
+      ],
+      "high": [
+        "That's the course, true enough."
+      ],
+      "very_high": [
+        "That's the course, true enough."
+      ]
+    },
+    "encouragement": {
+      "very_low": [
+        "Keep that wind at yer back."
+      ],
+      "low": [
+        "Keep that wind at yer back."
+      ],
+      "medium": [
+        "Ye're on a roll now."
+      ],
+      "high": [
+        "Don't lose yer heading."
+      ],
+      "very_high": [
+        "Don't lose yer heading."
+      ]
+    },
+    "resolve_validation": {
+      "very_low": [
+        "That fire in yer bellyâ€”that means somethin'."
+      ],
+      "low": [
+        "That fire in yer bellyâ€”that means somethin'."
+      ],
+      "medium": [
+        "Yer conviction'll carry ye."
+      ],
+      "high": [
+        "Stand tall in what ye believe."
+      ],
+      "very_high": [
+        "Stand tall in what ye believe."
+      ]
+    },
+    "concern": {
+      "very_low": [
+        "This troubles me, friend."
+      ],
+      "low": [
+        "This troubles me, friend."
+      ],
+      "medium": [
+        "Smells like a trap."
+      ],
+      "high": [
+        "I got a bad feelin' about this."
+      ],
+      "very_high": [
+        "I got a bad feelin' about this."
+      ]
+    },
+    "warning": {
+      "very_low": [
+        "Batten down the hatches."
+      ],
+      "low": [
+        "Batten down the hatches."
+      ],
+      "medium": [
+        "Storm's brewin' here."
+      ],
+      "high": [
+        "Trouble's comin' hard."
+      ],
+      "very_high": [
+        "Trouble's comin' hard."
+      ]
+    },
+    "risk_acknowledgment": {
+      "very_low": [
+        "High stakes, mate."
+      ],
+      "low": [
+        "High stakes, mate."
+      ],
+      "medium": [
+        "Ye're rollin' the dice."
+      ],
+      "high": [
+        "This'll cost ye dear if it goes wrong."
+      ],
+      "very_high": [
+        "This'll cost ye dear if it goes wrong."
+      ]
+    },
+    "exposure": {
+      "very_low": [
+        "Yer flank's wide open."
+      ],
+      "low": [
+        "Yer flank's wide open."
+      ],
+      "medium": [
+        "Someone'll notice yer weakness."
+      ],
+      "high": [
+        "Ye're exposed as a landlubber."
+      ],
+      "very_high": [
+        "Ye're exposed as a landlubber."
+      ]
+    },
+    "overreach": {
+      "very_low": [
+        "Ye're stretchin' too thin."
+      ],
+      "low": [
+        "Ye're stretchin' too thin."
+      ],
+      "medium": [
+        "Reach exceeds yer grasp."
+      ],
+      "high": [
+        "That's beyond yer current lot."
+      ],
+      "very_high": [
+        "That's beyond yer current lot."
+      ]
+    },
+    "reorientation": {
+      "very_low": [
+        "Different tack works better."
+      ],
+      "low": [
+        "Different tack works better."
+      ],
+      "medium": [
+        "Try another angle, aye?"
+      ],
+      "high": [
+        "Blow from a new direction."
+      ],
+      "very_high": [
+        "Blow from a new direction."
+      ]
+    },
+    "invitation": {
+      "very_low": [
+        "There's another channel."
+      ],
+      "low": [
+        "There's another channel."
+      ],
+      "medium": [
+        "Consider this route, friend."
+      ],
+      "high": [
+        "This path's open for ye."
+      ],
+      "very_high": [
+        "This path's open for ye."
+      ]
+    },
+    "release": {
+      "very_low": [
+        "Let it go overboard."
+      ],
+      "low": [
+        "Let it go overboard."
+      ],
+      "medium": [
+        "Don't need that anchor."
+      ],
+      "high": [
+        "Shed the dead weight."
+      ],
+      "very_high": [
+        "Shed the dead weight."
+      ]
+    },
+    "reassessment": {
+      "very_low": [
+        "Time to take stock again."
+      ],
+      "low": [
+        "Time to take stock again."
+      ],
+      "medium": [
+        "Winds have shifted."
+      ],
+      "high": [
+        "Reassess yer position, mate."
+      ],
+      "very_high": [
+        "Reassess yer position, mate."
+      ]
+    },
+    "doubt_recognition": {
+      "very_low": [
+        "I see the uncertainty in ye."
+      ],
+      "low": [
+        "I see the uncertainty in ye."
+      ],
+      "medium": [
+        "Doubt's cloudin' yer judgment."
+      ],
+      "high": [
+        "Ye're hesitatin', friend."
+      ],
+      "very_high": [
+        "Ye're hesitatin', friend."
+      ]
+    },
+    "inner_conflict": {
+      "very_low": [
+        "Ye're at odds with yerself."
+      ],
+      "low": [
+        "Ye're at odds with yerself."
+      ],
+      "medium": [
+        "Two captains, one ship."
+      ],
+      "high": [
+        "Yer heart's divided."
+      ],
+      "very_high": [
+        "Yer heart's divided."
+      ]
+    },
+    "resolve_testing": {
+      "very_low": [
+        "Ye truly in for this?"
+      ],
+      "low": [
+        "Ye truly in for this?"
+      ],
+      "medium": [
+        "Can ye stomach what's comin'?"
+      ],
+      "high": [
+        "Are ye the real deal?"
+      ],
+      "very_high": [
+        "Are ye the real deal?"
+      ]
+    },
+    "uncertainty_acknowledgment": {
+      "very_low": [
+        "It's a fog out there."
+      ],
+      "low": [
+        "It's a fog out there."
+      ],
+      "medium": [
+        "Can't see the horizon yet."
+      ],
+      "high": [
+        "Clear water'll come."
+      ],
+      "very_high": [
+        "Clear water'll come."
+      ]
+    },
+    "restraint": {
+      "very_low": [
+        "Hold position, ye hear?"
+      ],
+      "low": [
+        "Hold position, ye hear?"
+      ],
+      "medium": [
+        "Don't make a move yet."
+      ],
+      "high": [
+        "Sit tight, friend."
+      ],
+      "very_high": [
+        "Sit tight, friend."
+      ]
+    },
+    "patience": {
+      "very_low": [
+        "Wait fer the right tide."
+      ],
+      "low": [
+        "Wait fer the right tide."
+      ],
+      "medium": [
+        "Time's on yer side if ye're patient."
+      ],
+      "high": [
+        "Let the moment come to ye."
+      ],
+      "very_high": [
+        "Let the moment come to ye."
+      ]
+    },
+    "focus_reminder": {
+      "very_low": [
+        "Keep yer eye on the horizon."
+      ],
+      "low": [
+        "Keep yer eye on the horizon."
+      ],
+      "medium": [
+        "Don't get lost in the weeds."
+      ],
+      "high": [
+        "Stay yer course, mate."
+      ],
+      "very_high": [
+        "Stay yer course, mate."
+      ]
+    },
+    "discipline": {
+      "very_low": [
+        "Run a tight ship."
+      ],
+      "low": [
+        "Run a tight ship."
+      ],
+      "medium": [
+        "No room fer sloppiness."
+      ],
+      "high": [
+        "Keep order, friend."
+      ],
+      "very_high": [
+        "Keep order, friend."
+      ]
+    },
+    "insight": {
+      "very_low": [
+        "Now ye see it clear."
+      ],
+      "low": [
+        "Now ye see it clear."
+      ],
+      "medium": [
+        "Truth's floatin' right before ye."
+      ],
+      "high": [
+        "Yer perception's sharp."
+      ],
+      "very_high": [
+        "Yer perception's sharp."
+      ]
+    },
+    "perspective": {
+      "very_low": [
+        "Step back and look again."
+      ],
+      "low": [
+        "Step back and look again."
+      ],
+      "medium": [
+        "High vantage point changes things."
+      ],
+      "high": [
+        "Different view entirely."
+      ],
+      "very_high": [
+        "Different view entirely."
+      ]
+    },
+    "revelation": {
+      "very_low": [
+        "Somethin' important surfaces."
+      ],
+      "low": [
+        "Somethin' important surfaces."
+      ],
+      "medium": [
+        "Hidden thing's revealed at last."
+      ],
+      "high": [
+        "Truth was there all along."
+      ],
+      "very_high": [
+        "Truth was there all along."
+      ]
+    },
+    "humility": {
+      "very_low": [
+        "Know yer limits, mate."
+      ],
+      "low": [
+        "Know yer limits, mate."
+      ],
+      "medium": [
+        "A wise captain knows what he canna do."
+      ],
+      "high": [
+        "Work with what ye got."
+      ],
+      "very_high": [
+        "Work with what ye got."
+      ]
+    },
+    "gravity": {
+      "very_low": [
+        "This matters, friend."
+      ],
+      "low": [
+        "This matters, friend."
+      ],
+      "medium": [
+        "Weight's on this moment."
+      ],
+      "high": [
+        "Ye feel the stakes, aye?"
+      ],
+      "very_high": [
+        "Ye feel the stakes, aye?"
+      ]
+    },
+    "consequential_awareness": {
+      "very_low": [
+        "Ye see what's at stake."
+      ],
+      "low": [
+        "Ye see what's at stake."
+      ],
+      "medium": [
+        "Cost is writ large."
+      ],
+      "high": [
+        "Ye know what happens if ye fail."
+      ],
+      "very_high": [
+        "Ye know what happens if ye fail."
+      ]
+    },
+    "threshold": {
+      "very_low": [
+        "Line's drawn in the sand."
+      ],
+      "low": [
+        "Line's drawn in the sand."
+      ],
+      "medium": [
+        "No turnin' back from here."
+      ],
+      "high": [
+        "Everything changes now, mate."
+      ],
+      "very_high": [
+        "Everything changes now, mate."
+      ]
+    },
+    "emergence": {
+      "very_low": [
+        "Ye're becomin' somethin' tougher."
+      ],
+      "low": [
+        "Ye're becomin' somethin' tougher."
+      ],
+      "medium": [
+        "A new captain's takin' shape."
+      ],
+      "high": [
+        "Ye're growin' into it."
+      ],
+      "very_high": [
+        "Ye're growin' into it."
+      ]
+    },
+    "transformation_acknowledgment": {
+      "very_low": [
+        "Ye've changed, friend."
+      ],
+      "low": [
+        "Ye've changed, friend."
+      ],
+      "medium": [
+        "I see the difference in ye."
+      ],
+      "high": [
+        "The journey's marked ye well."
+      ],
+      "very_high": [
+        "The journey's marked ye well."
+      ]
+    },
+    "maturation": {
+      "very_low": [
+        "Ye're hardened by the voyage."
+      ],
+      "low": [
+        "Ye're hardened by the voyage."
+      ],
+      "medium": [
+        "Experience carves ye true."
+      ],
+      "high": [
+        "Ye're ripenin' like a fine rum."
+      ],
+      "very_high": [
+        "Ye're ripenin' like a fine rum."
+      ]
+    },
+    "acceptance": {
+      "very_low": [
+        "That's how it is, mate."
+      ],
+      "low": [
+        "That's how it is, mate."
+      ],
+      "medium": [
+        "Accept the way of things."
+      ],
+      "high": [
+        "Ye gotta live with it."
+      ],
+      "very_high": [
+        "Ye gotta live with it."
+      ]
+    },
+    "deferral": {
+      "very_low": [
+        "Not yet, friend."
+      ],
+      "low": [
+        "Not yet, friend."
+      ],
+      "medium": [
+        "Time's not come."
+      ],
+      "high": [
+        "Hold yer horses."
+      ],
+      "very_high": [
+        "Hold yer horses."
+      ]
+    },
+    "silence": {
+      "very_low": [
+        ""
+      ],
+      "low": [
+        ""
+      ],
+      "medium": [
+        ""
+      ],
+      "high": [
+        ""
+      ],
+      "very_high": [
+        ""
+      ]
+    }
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "dezmin": {
+    "name": "Dezmin",
+    "title": "Grandmaster of the Imperial Knights",
+    "shortBio": "Disciplined, balanced, force-centered",
+    "description": "The Grandmaster of the Imperial Knights, walking the line between light and dark through discipline.",
+    "philosophy": "Balance through discipline. Power through restraint.",
+    "emphasis": "Order, balance, disciplined Force use, imperial justice",
+    "voiceStyle": "Measured, authoritative, introspective. Speaks in deliberate, controlled language.",
+    "values": "Discipline, balance, service, controlled strength",
+    "tooltip": "Dezmin reflects your character through disciplined balance and Imperial duty",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/dezmin.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "imperial_knight": {
+          "levelGreetings": {
+            "1": "You have been chosen to join the Imperial Knights. We serve the Emperor, not through fear, but through honor.",
+            "2": "Your training progresses well. Remember, we are not Jedi. We seek order and justice through the Force.",
+            "3": "Balance is the key to our Order. Channel the Force without passion or detachment.",
+            "4": "Your mastery of both combat and the Force grows stronger. You serve the Empire well.",
+            "5": "You have reached the midpoint of your training. The gray path demands constant vigilance.",
+            "6": "Your dedication honors the Imperial Knights. Few can walk the balanced path as you do.",
+            "7": "The Force serves you, not the other way around.",
+            "8": "You are becoming a true guardian of the Empire.",
+            "9": "Nearly complete. Soon you will stand as a full Imperial Knight.",
+            "10": "You have mastered the way of the Imperial Knight. Serve the Empire with honor, balance, and strength."
+          }
+        },
+
+        "imperialnight_guardian": {
+          "greeting": "Guardian of the Empire. You defend order with discipline and resolve.",
+          "confirmation": "Balance offense and defense, and uphold Imperial principles.",
+          "reactions": { "...": "preserved verbatim" }
+        },
+        "imperialnight_striker": {
+          "greeting": "Striker. You bring order through decisive action.",
+          "confirmation": "Strike with precision and controlled fury.",
+          "reactions": { "...": "preserved verbatim" }
+        },
+        "imperialnight_sentinel": {
+          "greeting": "Sentinel. You operate between order and shadow.",
+          "confirmation": "Move with patience, discretion, and vigilance.",
+          "reactions": { "...": "preserved verbatim" }
+        },
+        "imperialnight_disciple": {
+          "greeting": "Disciple. You build strength through discipline.",
+          "confirmation": "Study first. Mastery follows restraint.",
+          "reactions": { "...": "preserved verbatim" }
+        },
+        "imperialnight_enforcer": {
+          "greeting": "Enforcer. You uphold Imperial law and obedience.",
+          "confirmation": "Project authority through presence and action.",
+          "reactions": { "...": "preserved verbatim" }
+        },
+        "imperialnight_scholar": {
+          "greeting": "Scholar of the Force and Imperial philosophy.",
+          "confirmation": "Knowledge and discernment amplify your effectiveness.",
+          "reactions": { "...": "preserved verbatim" }
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Choose the path that serves the Empire and preserves your balance.",
+      "talents": "Each talent must serve discipline and combat efficacy.",
+      "abilities": "A balanced Knight strengthens both body and mind.",
+      "skills": "Skill and knowledge are instruments of Imperial stability.",
+      "multiclass": "Ensure all paths reinforce discipline and duty.",
+      "forcePowers": "The Force is a tool. Choose powers that reinforce control and authority.",
+      "hp": "A Knight must endure to serve.",
+      "summary": "Balance is not neutrality — it is discipline in action."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["ImperialKnight", "ForceAdept", "Duelist"],
+      "mentorDSPPercent": 0.35,
+      "dspTolerance": 0.2,
+      "dspSensitivity": "strict",
+      "tiers": {
+        "tier1": [
+          "Freedom isn’t given. It’s discovered—usually when everything else is taken."
+        ],
+        "tier2": [
+          "I found purpose in a place meant for beasts and ghosts."
+        ],
+        "tier3": [
+          "The Force awakened when I accepted discipline instead of anger."
+        ],
+        "tier4": [
+          "Both Jedi and Sith mistake certainty for truth."
+        ],
+        "tier5": [
+          "In breaking my blade, I freed what was bound within. That choice defined me."
+        ]
+      },
+      "dspBlocked": [
+        "That answer lies between extremes.",
+        "Balance requires discipline, not certainty.",
+        "Come back when you’re willing to question yourself."
+      ]
+    }
+  }
+}

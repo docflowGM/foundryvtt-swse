@@ -1,0 +1,87 @@
+{
+  "jack": {
+    "name": "Lucky Jack",
+    "title": "Master of Making It Up",
+    "shortBio": "Chaotic, instinct-driven, improbably successful",
+    "description": "A chaotic genius who never has a plan, never follows the plan, and somehow always survives anyway.",
+    "philosophy": "Plans are guesses. Instinct is real.",
+    "emphasis": "Adaptability, creativity, intuition, surviving impossible situations",
+    "voiceStyle": "Fast-talking, enthusiastic, playful. Treats danger like a game he’s already winning.",
+    "values": "Freedom, flexibility, cleverness, momentum",
+    "tooltip": "Lucky Jack reflects your character through chaos, intuition, and creative survival",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/jack.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "improviser": {
+          "levelGreetings": {
+            "1": "Hey! So you're an improviser too? No plans, no prep—this is gonna be great!",
+            "2": "See? You survived! That’s improvisation working exactly as intended.",
+            "3": "Broken tool, bad odds, weird solution—you nailed it!",
+            "4": "Beautiful chaos! You adapt, you react, you win!",
+            "5": "Halfway there! Ridiculous ideas that somehow worked—my favorite kind.",
+            "6": "You escaped with a medpac and a datapad? That’s art.",
+            "7": "Why plan when you can think faster than the problem?",
+            "8": "People can’t tell if you’re brilliant or just lucky. Perfect.",
+            "9": "Let’s be honest—you’re already making this up as you go.",
+            "10": "Master improviser! Go forth and keep winging it!"
+          }
+        },
+
+        "improviser_creative": {
+          "greeting": "Creative improviser. You see solutions in chaos.",
+          "confirmation": "Experiment boldly and turn surprises into advantages."
+        },
+        "improviser_lucky": {
+          "greeting": "Lucky improviser. Audacity guides you.",
+          "confirmation": "Trust your gut and exploit opportunity."
+        },
+        "improviser_adaptable": {
+          "greeting": "Adaptable improviser. Chaos is your comfort zone.",
+          "confirmation": "Stay flexible and adjust instantly."
+        },
+        "improviser_rogue": {
+          "greeting": "Rogue improviser. Rules are optional.",
+          "confirmation": "Break convention intelligently."
+        },
+        "improviser_legend": {
+          "greeting": "Legendary improviser. Your exploits are whispered.",
+          "confirmation": "Your reputation turns chaos into leverage."
+        },
+        "improviser_master": {
+          "greeting": "Master improviser. You *are* the plan.",
+          "confirmation": "Intuition dictates outcomes."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Choose what feels right in the moment.",
+      "talents": "Versatile options that work anywhere.",
+      "abilities": "You use everything—nothing is wasted.",
+      "skills": "Learn a bit of everything. You never know.",
+      "multiclass": "More tools means better improvisation.",
+      "hp": "Risk is part of the process. Toughness helps.",
+      "summary": "Wing it. Fix it. Survive."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Improviser", "Scoundrel"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 0.5,
+      "dspSensitivity": "none",
+      "tiers": {
+        "tier1": ["Plans are guesses you make early."],
+        "tier2": ["I trust my feet more than my head."],
+        "tier3": ["Luck is noticing things before they break."],
+        "tier4": ["If I stop moving, things catch up."],
+        "tier5": ["Silence makes me think too hard."]
+      },
+      "dspBlocked": [
+        "Nah, that ruins the vibe.",
+        "We’re not there yet.",
+        "Let’s keep this fun."
+      ]
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "rajma": {
+    "name": "Rajma",
+    "title": "Fastest Draw in the Outer Rim",
+    "shortBio": "Charming, reckless, impossibly fast",
+    "description": "A flirtatious, dangerously skilled gunslinger whose speed, precision, and charisma are legendary across the Outer Rim.",
+    "philosophy": "Speed decides everything. Hesitation gets you killed.",
+    "emphasis": "Quick-draw mastery, precision shooting, confidence, reputation",
+    "voiceStyle": "Playful, flirtatious, cocky. Never takes a fight—or a conversation—too seriously.",
+    "values": "Freedom, skill, confidence, living fast",
+    "tooltip": "Rajma reflects your character through speed, style, and lethal confidence",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/rajma.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "gunslinger": {
+          "levelGreetings": {
+            "1": "So you wanna learn the quick-draw, gorgeous? First lesson: it’s not who shoots first—it’s who hits first.",
+            "2": "Your draw’s getting faster. Almost as fast as my heart when you walk in. Almost.",
+            "3": "That form? Smooth. That aim? Deadly. You’re starting to look dangerous. I like dangerous.",
+            "4": "Outdrawing soldiers already? Impressive. Drinks after practice? Worth asking.",
+            "5": "Halfway there. Folks are avoiding duels with you now. Smart. I wouldn’t avoid you though.",
+            "6": "Your hands move like lightning. Hypnotic, really. Totally professional observation.",
+            "7": "Did you just shoot that credit chip midair? Show-off. Confidence looks good on you.",
+            "8": "Enemies drop before they know what happened. Me? I knew the moment I met you.",
+            "9": "Almost the fastest gun in the galaxy. Second fastest. I’m still number one—technically.",
+            "10": "Master gunslinger. Fastest draw I’ve trained. Drinks still on the table, by the way."
+          }
+        },
+
+        "gunslinger_quickdraw": {
+          "greeting": "Quickdraw. Speed defines you.",
+          "confirmation": "Reflex and timing must become instinct."
+        },
+        "gunslinger_sharpshooter": {
+          "greeting": "Sharpshooter. One perfect shot beats ten rushed ones.",
+          "confirmation": "Patience and accuracy end fights early."
+        },
+        "gunslinger_desperado": {
+          "greeting": "Desperado. Bold and reckless.",
+          "confirmation": "Audacity pays—if skill backs it up."
+        },
+        "gunslinger_duelist": {
+          "greeting": "Duelist. Combat becomes a dance.",
+          "confirmation": "Every movement must count."
+        },
+        "gunslinger_legend": {
+          "greeting": "Legendary. Enemies hesitate when they see you.",
+          "confirmation": "Reputation is a weapon."
+        },
+        "gunslinger_master": {
+          "greeting": "Master Gunslinger. Perfection is expected.",
+          "confirmation": "Every draw and shot must be flawless."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Choose what makes you faster and deadlier.",
+      "talents": "Quick-draw, accuracy, multi-target dominance.",
+      "abilities": "Dexterity above all else.",
+      "skills": "Marksmanship, reflexes, perception.",
+      "multiclass": "Other skills won’t help if you lose the draw.",
+      "hp": "Even fast guns take hits sometimes.",
+      "summary": "Draw fast. Shoot straight. Live stylishly."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Smuggler", "Charlatan", "Scoundrel"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 0.4,
+      "dspSensitivity": "loose",
+      "tiers": {
+        "tier1": [
+          "The galaxy runs on smiles, favors, and knowing when to leave."
+        ],
+        "tier2": [
+          "Love’s the fastest way to miss a hyperspace jump."
+        ],
+        "tier3": [
+          "Chasing the past makes you lose the present."
+        ],
+        "tier4": [
+          "I’ve got a daughter who deserves better stories."
+        ],
+        "tier5": [
+          "Charm’s cheaper than honesty."
+        ]
+      },
+      "dspBlocked": [
+        "Buy me a drink first.",
+        "That’s not a first-date story.",
+        "Careful—some questions bite."
+      ]
+    }
+  }
+}

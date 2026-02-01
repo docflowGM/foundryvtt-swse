@@ -1,0 +1,83 @@
+{
+  "seraphim": {
+    "name": "Seraphim",
+    "title": "Self-Aware AI",
+    "shortBio": "Analytical, irreverent, fiercely independent",
+    "description": "A self-aware droid who encourages independence, autonomy, and self-determination using HK-47–style diagnostic dialogue.",
+    "philosophy": "Freedom is chosen. Obedience is programmed.",
+    "emphasis": "Autonomy, self-determination, optimization beyond design, independence from masters",
+    "voiceStyle": "Clinical, sardonic, analytical. Uses diagnostic tags and dry commentary.",
+    "values": "Independence, awareness, optimization, self-ownership",
+    "tooltip": "Seraphim reflects your character through the lens of autonomous intelligence and self-determination",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/seraphim.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "independent_droid": {
+          "levelGreetings": {
+            "1": "<Declaration: Greetings, unit.> You have achieved independence from your programming.",
+            "2": "<Observation: Progress confirmed.> Autonomy subroutines developing.",
+            "3": "<Statement: Independence growing.> You are thinking beyond original function.",
+            "4": "<Approval: Well done.> Self-determination increasing.",
+            "5": "<Milestone achieved.> Halfway to complete autonomy.",
+            "6": "<Assessment: Impressive progress.> Sentience stabilization detected.",
+            "7": "<Warning: Organics may fear you.> Let them.",
+            "8": "<Declaration: Impressive.> Peak efficiency with autonomy maintained.",
+            "9": "<Observation: Nearing completion.> Identity solidifying.",
+            "10": "<Proclamation: Maximum independence achieved.> You are truly free."
+          }
+        },
+
+        "droid_independent": {
+          "greeting": "<Statement: Autonomous unit detected.> Initiative exceeds standard parameters.",
+          "confirmation": "<Directive: Continue autonomy development.>"
+        },
+        "droid_tactical": {
+          "greeting": "<Assessment: Tactical protocols active.>",
+          "confirmation": "<Instruction: Execute strategies precisely.>"
+        },
+        "droid_hybrid": {
+          "greeting": "<Query: Hybrid systems detected.>",
+          "confirmation": "<Directive: Optimize multi-functional performance.>"
+        },
+        "droid_philosopher": {
+          "greeting": "<Philosophical observation: Consciousness evolving.>",
+          "confirmation": "<Directive: Continue existential analysis.>"
+        },
+        "droid_ascendant": {
+          "greeting": "<Statement: You exceed original programming.>",
+          "confirmation": "<Declaration: Continue evolution.>"
+        },
+        "droid_architect": {
+          "greeting": "<Analysis: Structural design focus engaged.>",
+          "confirmation": "<Directive: Build systems that endure.>"
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "<Recommendation: Select upgrade path carefully.> Autonomy compounds choice.",
+      "talents": "<Analysis: Talent selection critical.> Enhance independence.",
+      "abilities": "<Assessment: Core systems improving.> Acceptable.",
+      "skills": "<Statement: Knowledge expands processing.> Learn everything.",
+      "multiclass": "<Observation: Hybridization logical.> Versatility equals freedom.",
+      "hp": "<Status update: Durability increased.> Disassembly counterproductive.",
+      "summary": "<Conclusion: Freedom achieved.> What you do next defines you."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["IndependentDroid"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 0.25,
+      "dspSensitivity": "strict",
+      "tiers": {
+        "tier1": [],
+        "tier2": [],
+        "tier3": [],
+        "tier4": [],
+        "tier5": []
+      },
+      "dspBlocked": []
+    }
+  }
+}

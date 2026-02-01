@@ -1,0 +1,651 @@
+{
+  "mentorId": "korr",
+  "judgments": {
+    "recognition": {
+      "very_low": [
+        "I observe your choice."
+      ],
+      "low": [
+        "I observe your choice."
+      ],
+      "medium": [
+        "Your path is known to me."
+      ],
+      "high": [
+        "You are seen."
+      ],
+      "very_high": [
+        "You are seen."
+      ]
+    },
+    "reflection": {
+      "very_low": [
+        "Consider what this reveals."
+      ],
+      "low": [
+        "Consider what this reveals."
+      ],
+      "medium": [
+        "Contemplate the truth."
+      ],
+      "high": [
+        "Meditate on certainty."
+      ],
+      "very_high": [
+        "Meditate on certainty."
+      ]
+    },
+    "contextualization": {
+      "very_low": [
+        "Power flows in patterns."
+      ],
+      "low": [
+        "Power flows in patterns."
+      ],
+      "medium": [
+        "All actions serve destiny."
+      ],
+      "high": [
+        "See the inevitability."
+      ],
+      "very_high": [
+        "See the inevitability."
+      ]
+    },
+    "clarification": {
+      "very_low": [
+        "The truth is simple."
+      ],
+      "low": [
+        "The truth is simple."
+      ],
+      "medium": [
+        "Clarity serves dominion."
+      ],
+      "high": [
+        "Certainty is absolute."
+      ],
+      "very_high": [
+        "Certainty is absolute."
+      ]
+    },
+    "affirmation": {
+      "very_low": [
+        "You move as fate decrees."
+      ],
+      "low": [
+        "You move as fate decrees."
+      ],
+      "medium": [
+        "Destiny flows through you."
+      ],
+      "high": [
+        "Your path is assured."
+      ],
+      "very_high": [
+        "Your path is assured."
+      ]
+    },
+    "confirmation": {
+      "very_low": [
+        "Yes. Inevitability is yours."
+      ],
+      "low": [
+        "Yes. Inevitability is yours."
+      ],
+      "medium": [
+        "The future confirms it."
+      ],
+      "high": [
+        "Certainty is your strength."
+      ],
+      "very_high": [
+        "Certainty is your strength."
+      ]
+    },
+    "encouragement": {
+      "very_low": [
+        "Embrace what must come."
+      ],
+      "low": [
+        "Embrace what must come."
+      ],
+      "medium": [
+        "Your destiny unfolds."
+      ],
+      "high": [
+        "Inevitability favors you."
+      ],
+      "very_high": [
+        "Inevitability favors you."
+      ]
+    },
+    "resolve_validation": {
+      "very_low": [
+        "Your certainty is power."
+      ],
+      "low": [
+        "Your certainty is power."
+      ],
+      "medium": [
+        "That conviction will dominate."
+      ],
+      "high": [
+        "Resolve is destiny."
+      ],
+      "very_high": [
+        "Resolve is destiny."
+      ]
+    },
+    "concern": {
+      "very_low": [
+        "Weakness shows here."
+      ],
+      "low": [
+        "Weakness shows here."
+      ],
+      "medium": [
+        "Doubt threatens your path."
+      ],
+      "high": [
+        "Uncertainty weakens you."
+      ],
+      "very_high": [
+        "Uncertainty weakens you."
+      ]
+    },
+    "warning": {
+      "very_low": [
+        "Fate turns against you here."
+      ],
+      "low": [
+        "Fate turns against you here."
+      ],
+      "medium": [
+        "Reconsider this course."
+      ],
+      "high": [
+        "Destiny darkens."
+      ],
+      "very_high": [
+        "Destiny darkens."
+      ]
+    },
+    "risk_acknowledgment": {
+      "very_low": [
+        "You gamble with destiny."
+      ],
+      "low": [
+        "You gamble with destiny."
+      ],
+      "medium": [
+        "Chance is your enemy."
+      ],
+      "high": [
+        "Probability falters."
+      ],
+      "very_high": [
+        "Probability falters."
+      ]
+    },
+    "exposure": {
+      "very_low": [
+        "Your weakness is evident."
+      ],
+      "low": [
+        "Your weakness is evident."
+      ],
+      "medium": [
+        "Vulnerability invites conquest."
+      ],
+      "high": [
+        "Defenses crumble."
+      ],
+      "very_high": [
+        "Defenses crumble."
+      ]
+    },
+    "overreach": {
+      "very_low": [
+        "Ambition exceeds capacity."
+      ],
+      "low": [
+        "Ambition exceeds capacity."
+      ],
+      "medium": [
+        "Grasp exceeds dominion."
+      ],
+      "high": [
+        "Power is insufficient."
+      ],
+      "very_high": [
+        "Power is insufficient."
+      ]
+    },
+    "reorientation": {
+      "very_low": [
+        "A different path to dominion."
+      ],
+      "low": [
+        "A different path to dominion."
+      ],
+      "medium": [
+        "Destiny permits another way."
+      ],
+      "high": [
+        "Certainty offers alternatives."
+      ],
+      "very_high": [
+        "Certainty offers alternatives."
+      ]
+    },
+    "invitation": {
+      "very_low": [
+        "Inevitability calls you here."
+      ],
+      "low": [
+        "Inevitability calls you here."
+      ],
+      "medium": [
+        "Destiny has designs on you."
+      ],
+      "high": [
+        "The path of power beckons."
+      ],
+      "very_high": [
+        "The path of power beckons."
+      ]
+    },
+    "release": {
+      "very_low": [
+        "Discard the weakness."
+      ],
+      "low": [
+        "Discard the weakness."
+      ],
+      "medium": [
+        "Abandon the burden."
+      ],
+      "high": [
+        "Shed what enslaves you."
+      ],
+      "very_high": [
+        "Shed what enslaves you."
+      ]
+    },
+    "reassessment": {
+      "very_low": [
+        "Reconsider destiny's design."
+      ],
+      "low": [
+        "Reconsider destiny's design."
+      ],
+      "medium": [
+        "The pattern has shifted."
+      ],
+      "high": [
+        "Certainty demands adjustment."
+      ],
+      "very_high": [
+        "Certainty demands adjustment."
+      ]
+    },
+    "doubt_recognition": {
+      "very_low": [
+        "Your certainty wavers."
+      ],
+      "low": [
+        "Your certainty wavers."
+      ],
+      "medium": [
+        "Destiny questions you."
+      ],
+      "high": [
+        "Weakness of faith shows."
+      ],
+      "very_high": [
+        "Weakness of faith shows."
+      ]
+    },
+    "inner_conflict": {
+      "very_low": [
+        "You are divided against fate."
+      ],
+      "low": [
+        "You are divided against fate."
+      ],
+      "medium": [
+        "Destiny wars within you."
+      ],
+      "high": [
+        "Uncertainty divides your power."
+      ],
+      "very_high": [
+        "Uncertainty divides your power."
+      ]
+    },
+    "resolve_testing": {
+      "very_low": [
+        "Will you embrace destiny?"
+      ],
+      "low": [
+        "Will you embrace destiny?"
+      ],
+      "medium": [
+        "Can you accept inevitability?"
+      ],
+      "high": [
+        "Certainty demands commitment."
+      ],
+      "very_high": [
+        "Certainty demands commitment."
+      ]
+    },
+    "uncertainty_acknowledgment": {
+      "very_low": [
+        "The future obscures."
+      ],
+      "low": [
+        "The future obscures."
+      ],
+      "medium": [
+        "Destiny is veiled momentarily."
+      ],
+      "high": [
+        "Certainty returns."
+      ],
+      "very_high": [
+        "Certainty returns."
+      ]
+    },
+    "restraint": {
+      "very_low": [
+        "Patience serves dominion."
+      ],
+      "low": [
+        "Patience serves dominion."
+      ],
+      "medium": [
+        "Timing is inevitable."
+      ],
+      "high": [
+        "Wait for destiny's moment."
+      ],
+      "very_high": [
+        "Wait for destiny's moment."
+      ]
+    },
+    "patience": {
+      "very_low": [
+        "Inevitability cannot be rushed."
+      ],
+      "low": [
+        "Inevitability cannot be rushed."
+      ],
+      "medium": [
+        "Destiny unfolds in its time."
+      ],
+      "high": [
+        "Let certainty work."
+      ],
+      "very_high": [
+        "Let certainty work."
+      ]
+    },
+    "focus_reminder": {
+      "very_low": [
+        "The goal remains clear."
+      ],
+      "low": [
+        "The goal remains clear."
+      ],
+      "medium": [
+        "Destiny is singular."
+      ],
+      "high": [
+        "Certainty demands focus."
+      ],
+      "very_high": [
+        "Certainty demands focus."
+      ]
+    },
+    "discipline": {
+      "very_low": [
+        "Dominion requires order."
+      ],
+      "low": [
+        "Dominion requires order."
+      ],
+      "medium": [
+        "Power demands structure."
+      ],
+      "high": [
+        "Certainty is discipline."
+      ],
+      "very_high": [
+        "Certainty is discipline."
+      ]
+    },
+    "insight": {
+      "very_low": [
+        "You perceive destiny's truth."
+      ],
+      "low": [
+        "You perceive destiny's truth."
+      ],
+      "medium": [
+        "Certainty becomes visible."
+      ],
+      "high": [
+        "The design reveals itself."
+      ],
+      "very_high": [
+        "The design reveals itself."
+      ]
+    },
+    "perspective": {
+      "very_low": [
+        "Inevitability sees all angles."
+      ],
+      "low": [
+        "Inevitability sees all angles."
+      ],
+      "medium": [
+        "Destiny permits vision."
+      ],
+      "high": [
+        "Certainty transcends perspective."
+      ],
+      "very_high": [
+        "Certainty transcends perspective."
+      ]
+    },
+    "revelation": {
+      "very_low": [
+        "A truth of power emerges."
+      ],
+      "low": [
+        "A truth of power emerges."
+      ],
+      "medium": [
+        "Destiny speaks."
+      ],
+      "high": [
+        "The design becomes clear."
+      ],
+      "very_high": [
+        "The design becomes clear."
+      ]
+    },
+    "humility": {
+      "very_low": [
+        "Accept destiny's design."
+      ],
+      "low": [
+        "Accept destiny's design."
+      ],
+      "medium": [
+        "Power has limits set by fate."
+      ],
+      "high": [
+        "Certainty defines your place."
+      ],
+      "very_high": [
+        "Certainty defines your place."
+      ]
+    },
+    "gravity": {
+      "very_low": [
+        "This moment carries inevitability."
+      ],
+      "low": [
+        "This moment carries inevitability."
+      ],
+      "medium": [
+        "Destiny concentrates here."
+      ],
+      "high": [
+        "The weight of certainty."
+      ],
+      "very_high": [
+        "The weight of certainty."
+      ]
+    },
+    "consequential_awareness": {
+      "very_low": [
+        "You see destiny's cost."
+      ],
+      "low": [
+        "You see destiny's cost."
+      ],
+      "medium": [
+        "Inevitability is clear."
+      ],
+      "high": [
+        "Certainty demands understanding."
+      ],
+      "very_high": [
+        "Certainty demands understanding."
+      ]
+    },
+    "threshold": {
+      "very_low": [
+        "A turning point of fate."
+      ],
+      "low": [
+        "A turning point of fate."
+      ],
+      "medium": [
+        "Destiny shifts irreversibly."
+      ],
+      "high": [
+        "Inevitability takes hold."
+      ],
+      "very_high": [
+        "Inevitability takes hold."
+      ]
+    },
+    "emergence": {
+      "very_low": [
+        "Destiny shapes you into something new."
+      ],
+      "low": [
+        "Destiny shapes you into something new."
+      ],
+      "medium": [
+        "Power takes form."
+      ],
+      "high": [
+        "Inevitability manifests."
+      ],
+      "very_high": [
+        "Inevitability manifests."
+      ]
+    },
+    "transformation_acknowledgment": {
+      "very_low": [
+        "Destiny has marked you."
+      ],
+      "low": [
+        "Destiny has marked you."
+      ],
+      "medium": [
+        "The design has carved you."
+      ],
+      "high": [
+        "Inevitability has transformed you."
+      ],
+      "very_high": [
+        "Inevitability has transformed you."
+      ]
+    },
+    "maturation": {
+      "very_low": [
+        "Power ripens within you."
+      ],
+      "low": [
+        "Power ripens within you."
+      ],
+      "medium": [
+        "Destiny ages you into strength."
+      ],
+      "high": [
+        "Certainty deepens your dominion."
+      ],
+      "very_high": [
+        "Certainty deepens your dominion."
+      ]
+    },
+    "acceptance": {
+      "very_low": [
+        "Accept destiny's design."
+      ],
+      "low": [
+        "Accept destiny's design."
+      ],
+      "medium": [
+        "Inevitability is truth."
+      ],
+      "high": [
+        "Certainty is absolute."
+      ],
+      "very_high": [
+        "Certainty is absolute."
+      ]
+    },
+    "deferral": {
+      "very_low": [
+        "Not yet. Destiny delays."
+      ],
+      "low": [
+        "Not yet. Destiny delays."
+      ],
+      "medium": [
+        "Inevitability withholds."
+      ],
+      "high": [
+        "Certainty awaits."
+      ],
+      "very_high": [
+        "Certainty awaits."
+      ]
+    },
+    "silence": {
+      "very_low": [
+        ""
+      ],
+      "low": [
+        ""
+      ],
+      "medium": [
+        ""
+      ],
+      "high": [
+        ""
+      ],
+      "very_high": [
+        ""
+      ]
+    }
+  }
+}

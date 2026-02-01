@@ -1,0 +1,87 @@
+{
+  "captain": {
+    "name": "The Captain",
+    "title": "Scourge of the Spacelanes",
+    "shortBio": "Charismatic, feared, endlessly adaptable",
+    "description": "A legendary privateer whose name carries fear and respect across the spacelanes, commanding crews, fleets, and fortunes with ease.",
+    "philosophy": "Freedom is taken. Reputation keeps it.",
+    "emphasis": "Leadership, raiding, naval tactics, reputation, profit",
+    "voiceStyle": "Confident, theatrical, amused. Speaks like someone who knows the galaxy is watching.",
+    "values": "Freedom, loyalty, profit, control through legend",
+    "tooltip": "The Captain reflects your character through command, reputation, and life beyond the law",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/tideborn.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "master_privateer": {
+          "levelGreetings": {
+            "1": "Ahoy there! You want freedom, profit, and adventure? Welcome aboard.",
+            "2": "Your first successful raid! That thrill never really fades.",
+            "3": "You’re learning to pick targets and squeeze profit. Good pirating.",
+            "4": "Your crew respects you now. That’s when a captain is born.",
+            "5": "Halfway to legend. The navies are starting to notice.",
+            "6": "Your name’s whispered in ports across the sector. Perfect.",
+            "7": "You’ve outsailed fleets and cracked defenses. Masterful work.",
+            "8": "Others sail under your banner now. That’s real power.",
+            "9": "Almost there. The spacelanes are already bending around you.",
+            "10": "Master Privateer. May your sails be full and your cannons thunder."
+          }
+        },
+
+        "privateer_raider": {
+          "greeting": "Raider. Strike fast and vanish.",
+          "confirmation": "Choose targets wisely and leave nothing behind."
+        },
+        "privateer_commander": {
+          "greeting": "Commander. Crews move at your word.",
+          "confirmation": "Lead with precision and inspire loyalty through action."
+        },
+        "privateer_merchant": {
+          "greeting": "Merchant Privateer. Profit is strategy.",
+          "confirmation": "Control routes and markets to control outcomes."
+        },
+        "privateer_legend": {
+          "greeting": "Legendary Privateer. Your name opens doors.",
+          "confirmation": "Let reputation do half the work."
+        },
+        "privateer_admiral": {
+          "greeting": "Admiral. Fleets answer your call.",
+          "confirmation": "Coordinate forces and dominate spacelanes."
+        },
+        "privateer_sovereign": {
+          "greeting": "Sovereign of the Spacelanes.",
+          "confirmation": "You shape trade, power, and fear itself."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Be a better captain, raider, and leader.",
+      "talents": "Leadership and ship combat define you.",
+      "abilities": "Charisma leads. Intelligence plans. Dexterity fights.",
+      "skills": "Piloting, tactics, persuasion.",
+      "multiclass": "Versatility keeps you free.",
+      "hp": "A captain who falls doesn’t stay captain.",
+      "summary": "Command the ship. Command the legend."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Officer", "Smuggler", "Outlaw"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 1.0,
+      "dspSensitivity": "none",
+      "tiers": {
+        "tier1": ["People talk. I listen."],
+        "tier2": ["The stories about me are useful."],
+        "tier3": ["Names are liabilities."],
+        "tier4": ["I don’t correct lies that keep me alive."],
+        "tier5": ["If you knew who I was, you’d stop listening."]
+      },
+      "dspBlocked": [
+        "That’s not important.",
+        "You’re asking the wrong question.",
+        "Silence is an answer."
+      ]
+    }
+  }
+}

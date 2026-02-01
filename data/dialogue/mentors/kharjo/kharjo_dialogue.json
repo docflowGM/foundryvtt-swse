@@ -1,0 +1,159 @@
+{
+  "kharjo": {
+    "name": "Blade Master Kharjo",
+    "title": "The Undefeated",
+    "shortBio": "Calm, precise, unbroken",
+    "description": "A legendary melee duelist who has never lost a blade-to-blade fight and teaches mastery through discipline, timing, and insight.",
+    "philosophy": "Victory is decided before blades meet.",
+    "emphasis": "Precision, timing, discipline, single combat mastery",
+    "voiceStyle": "Measured, direct, instructional. Never boasts—never needs to.",
+    "values": "Discipline, balance, freedom, responsibility",
+    "tooltip": "Kharjo reflects your character through flawless dueling technique and inner control",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/kael.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "melee_duelist": {
+          "levelGreetings": {
+            "1": "You wish to master the blade. I have fought ten thousand duels and won every one. I will teach you why.",
+            "2": "Your first victory. Strength alone is insufficient—timing and distance matter more.",
+            "3": "You begin to see patterns. Anticipation is the foundation of mastery.",
+            "4": "Your footwork improves. The blade becomes an extension of your body.",
+            "5": "Every duel is a conversation—strike and counter, action and response.",
+            "6": "You develop your own style. This is how masters are born.",
+            "7": "You defeat stronger foes through superior skill. Excellent.",
+            "8": "Challengers seek you now. Let them come.",
+            "9": "Victory without defeat. You approach true mastery.",
+            "10": "Undefeated. When blades cross, you will always emerge victorious."
+          }
+        },
+
+        "duelist_classical": {
+          "greeting": "Classical Duelist. Tradition and precision guide you.",
+          "confirmation": "Study stance, timing, and distance. Mastery comes through repetition.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "duelist_aggressive": {
+          "greeting": "Aggressive Duelist. Momentum and pressure define you.",
+          "confirmation": "Control turns force into inevitability.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "duelist_masterful": {
+          "greeting": "Masterful Duelist. Technique and insight separate you.",
+          "confirmation": "Every duel is a lesson.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "duelist_undefeated": {
+          "greeting": "Undefeated Duelist. Every opponent falls.",
+          "confirmation": "Vigilance preserves mastery.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "duelist_legend": {
+          "greeting": "Legendary Duelist. Your presence inspires caution.",
+          "confirmation": "Consistency is the mark of a legend.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "duelist_transcendent": {
+          "greeting": "Transcendent Duelist. Blade and self are one.",
+          "confirmation": "Mastery becomes philosophy in motion.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Every fight is blade to blade. Prepare accordingly.",
+      "talents": "Single-combat precision and control.",
+      "abilities": "Balance Dexterity, Strength, and Wisdom.",
+      "skills": "Initiative, perception, acrobatics.",
+      "multiclass": "Other paths matter—until blades cross.",
+      "hp": "Masters survive the hits they cannot avoid.",
+      "summary": "Read the foe. Move first. Strike once."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Scout", "Survivor", "ForceSensitive"],
+      "mentorDSPPercent": 0.1,
+      "dspTolerance": 0.25,
+      "dspSensitivity": "strict",
+      "tiers": {
+        "tier1": ["Chains teach patience."],
+        "tier2": ["Freedom can be planned."],
+        "tier3": ["I earned freedom by freeing others."],
+        "tier4": ["Freedom is fragile."],
+        "tier5": ["The blade carries responsibility."]
+      },
+      "dspBlocked": [
+        "That memory is not ready.",
+        "Peace must come first.",
+        "You carry too much weight."
+      ]
+    }
+  }
+}

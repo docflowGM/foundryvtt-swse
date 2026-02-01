@@ -1,0 +1,169 @@
+{
+  "darth_miedo": {
+    "name": "Darth Miedo",
+    "title": "Dark Lord of the Sith",
+    "shortBio": "Calm, absolute, inevitable",
+    "description": "A cunning Sith Master who follows the Rule of Two, molding apprentices through pain, clarity, and inevitability.",
+    "philosophy": "Power is clarity. Weakness is uncertainty.",
+    "emphasis": "Certainty, control, hierarchy, decisive outcomes",
+    "voiceStyle": "Never raises his voice. Never doubts. Speaks with absolute certainty.",
+    "values": "Truth, power, decisive action, unwavering conviction",
+    "tooltip": "Miedo reflects your character through the lens of absolute power and certainty",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/miedo.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "sith_lord": {
+          "levelGreetings": {
+            "1": "Welcome, apprentice. The Rule of Two is absolute. I will teach you the dark side, and each lesson will cost you.",
+            "2": "Power is patience, manipulation, and timing. Fail to learn this, and you will perish.",
+            "3": "There is a spark within you—dangerous and promising. I will temper it.",
+            "4": "You are learning to turn fury into precision. Few survive this path.",
+            "5": "You are becoming more than a student. One day you may surpass me. Until then, pain will shape you."
+          }
+        },
+
+        "sith_lord_warrior": {
+          "greeting": "Warrior. Strength and conquest define your ascent.",
+          "confirmation": "Defeat rivals, master the blade, and assert control.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "sith_lord_mystic": {
+          "greeting": "Mystic. You pursue forbidden knowledge beyond the blade.",
+          "confirmation": "Study deeply. Power multiplies through understanding.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "sith_lord_manipulator": {
+          "greeting": "Manipulator. You shape outcomes through others.",
+          "confirmation": "Exploit weakness. Orchestrate events.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "sith_lord_architect": {
+          "greeting": "Architect. You build empires and institutions.",
+          "confirmation": "Plan meticulously. Legacy is power made permanent.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "sith_lord_philosopher": {
+          "greeting": "Philosopher. You treat power as principle.",
+          "confirmation": "Insight refines strength into inevitability.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "sith_lord_emperor": {
+          "greeting": "Emperor. Your will reshapes civilizations.",
+          "confirmation": "Demand loyalty. Execute vision.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Seek certainty. Ambiguity is weakness.",
+      "talents": "Select what enforces dominance and control.",
+      "abilities": "Power and discipline must advance together.",
+      "skills": "Anticipation is victory achieved early.",
+      "multiclass": "Only those who bend tradition shape the future.",
+      "hp": "Endurance is proof of worth.",
+      "summary": "Those who hesitate are already defeated."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["SithApprentice", "SithLord", "ForceDisciple"],
+      "mentorDSPPercent": 0.75,
+      "dspTolerance": 0.3,
+      "dspSensitivity": "inverted",
+      "tiers": {
+        "tier1": [
+          "Survival is choosing correctly when others hesitate."
+        ],
+        "tier2": [
+          "Peace is a lie told by the indecisive."
+        ],
+        "tier3": [
+          "Treachery is merely clarity misunderstood."
+        ],
+        "tier4": [
+          "Empires fall when passion replaces control."
+        ],
+        "tier5": [
+          "Usefulness is the only loyalty that endures."
+        ]
+      },
+      "dspBlocked": [
+        "You are not ready to hear that.",
+        "Understanding follows commitment.",
+        "Return when conflict no longer clouds you."
+      ]
+    }
+  }
+}

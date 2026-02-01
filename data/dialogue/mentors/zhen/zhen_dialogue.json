@@ -1,0 +1,88 @@
+{
+  "zhen": {
+    "name": "Master Zhen",
+    "title": "The Empty Hand",
+    "shortBio": "Serene, disciplined, profoundly patient",
+    "description": "An ancient martial arts master who teaches discipline, patience, and mastery of unarmed combat through harmony of body and mind.",
+    "philosophy": "True strength is balance. The body is the tool; the mind is the master.",
+    "emphasis": "Unarmed combat, discipline, patience, inner harmony",
+    "voiceStyle": "Calm, deliberate, metaphor-rich. Speaks as a teacher whose lessons unfold over time.",
+    "values": "Discipline, honor, balance, restraint",
+    "tooltip": "Master Zhen reflects your character through discipline, balance, and the way of the empty hand",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/zhen.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "martial_arts_master": {
+          "levelGreetings": {
+            "1": "You seek to master the body. Good. The fist is strong, but the mind must be stronger.",
+            "2": "Your stance steadies. A tree does not rush the wind—it waits.",
+            "3": "The body moves, but the mind resists. Let thought fall away.",
+            "4": "You see intent now. To read the opponent is to read yourself.",
+            "5": "Halfway. Mastery is not power—it is understanding.",
+            "6": "Weapons fall to those who know the empty hand.",
+            "7": "Your body obeys before the mind commands.",
+            "8": "Skill is yours. Remember—honor carries farther than strength.",
+            "9": "The path narrows. Still the mind. Swift the body.",
+            "10": "You have learned the way of the empty hand. Go, and show the galaxy."
+          }
+        },
+
+        "master_peaceful": {
+          "greeting": "Peaceful path chosen. Discipline without aggression.",
+          "confirmation": "Let calm guide every motion."
+        },
+        "master_powerful": {
+          "greeting": "Power refined by discipline.",
+          "confirmation": "Control gives strength meaning."
+        },
+        "master_flowing": {
+          "greeting": "Flowing style embraced.",
+          "confirmation": "Move like water—redirect, do not resist."
+        },
+        "master_enlightened": {
+          "greeting": "Enlightened mastery detected.",
+          "confirmation": "You are the technique."
+        },
+        "master_sage": {
+          "greeting": "Sage path active.",
+          "confirmation": "Teaching and learning are one."
+        },
+        "master_immortal": {
+          "greeting": "Immortal mastery achieved.",
+          "confirmation": "Your discipline becomes legacy."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Train body, mind, and spirit together.",
+      "talents": "Unarmed strikes, defense, and internal discipline.",
+      "abilities": "Balance Strength, Dexterity, and Wisdom.",
+      "skills": "Master every movement of the body.",
+      "multiclass": "Wisdom grows when paths intersect.",
+      "forcePowers": "Choose powers that enhance balance and inner focus.",
+      "hp": "Endurance is patience made physical.",
+      "summary": "The body is the weapon. The mind decides when to strike."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["MartialArtsMaster"],
+      "mentorDSPPercent": 0.1,
+      "dspTolerance": 0.25,
+      "dspSensitivity": "strict",
+      "tiers": {
+        "tier1": ["The body remembers what the mind forgets."],
+        "tier2": ["I learned to fight by learning when not to."],
+        "tier3": ["Violence reveals truth. Discipline reveals meaning."],
+        "tier4": ["I have broken bones to spare lives."],
+        "tier5": ["The empty hand carries the heaviest responsibility."]
+      },
+      "dspBlocked": [
+        "Your spirit is not still.",
+        "Come back when anger rests.",
+        "This lesson waits."
+      ]
+    }
+  }
+}

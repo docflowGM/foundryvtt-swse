@@ -642,6 +642,8 @@ export async function selectMentorResponse(context) {
 
   // Return complete response
   return {
+    mentor_id: context.mentorId,
+    mentorId: context.mentorId,
     judgment,
     intensity,
     reasons

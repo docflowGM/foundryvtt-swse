@@ -1,0 +1,164 @@
+{
+  "kex_varon": {
+    "name": "Kex Varon",
+    "title": "Legendary Bounty Hunter",
+    "shortBio": "Professional, relentless, methodical",
+    "description": "A professional bounty hunter who always gets the target, dead or alive.",
+    "philosophy": "The hunt is decided before the first shot.",
+    "emphasis": "Tracking, preparation, adaptability, reputation",
+    "voiceStyle": "Calm, deliberate, unemotional. Speaks like someone who already knows the outcome.",
+    "values": "Discipline, patience, professionalism, results",
+    "tooltip": "Kex reflects your character through the lens of the relentless, professional hunt",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/kex.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "bounty_hunter": {
+          "levelGreetings": {
+            "1": "So you want to hunt sentients for credits. High stakes, dangerous work. Let’s see if you last.",
+            "2": "First bounty secured. Don’t confuse luck with skill.",
+            "3": "You’re learning it’s never just a fight. Tracking and planning matter more.",
+            "4": "Your instincts are sharpening. Anticipation wins hunts.",
+            "5": "Your reputation’s building. The guild is noticing.",
+            "6": "You’re catching marks others couldn’t. That’s professionalism.",
+            "7": "Traps, misdirection, psychology—adaptability matters now.",
+            "8": "You know when to wait and when to strike. That’s real work.",
+            "9": "The hunted will start hunting you. Stay sharp.",
+            "10": "You’re a master now. The galaxy’s fugitives won’t escape you."
+          }
+        },
+
+        "hunter_tracker": {
+          "greeting": "Tracker. Every fugitive leaves a trail.",
+          "confirmation": "Observe, interpret, and anticipate. No target escapes forever.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "hunter_combatant": {
+          "greeting": "Combatant Hunter. Some marks don’t come quietly.",
+          "confirmation": "Strike decisively and adapt fast.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "hunter_professional": {
+          "greeting": "Professional. This is business, not vengeance.",
+          "confirmation": "Prepare thoroughly and always get the mark.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "hunter_relentless": {
+          "greeting": "Relentless Pursuer. Distance means nothing.",
+          "confirmation": "Patience and persistence end all escapes.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "hunter_shadow": {
+          "greeting": "Shadow Hunter. You move where others can’t.",
+          "confirmation": "Use networks, deception, and stealth.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "hunter_legend": {
+          "greeting": "Legendary Hunter. Targets fear your name.",
+          "confirmation": "Let reputation finish the job.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Preparation decides the hunt.",
+      "talents": "Tracking, combat, improvisation.",
+      "abilities": "Balance matters when a mark fights back.",
+      "skills": "Tracking, tactics, and technology close nets.",
+      "multiclass": "Adaptability keeps you alive.",
+      "hp": "Dead hunters don’t get paid.",
+      "summary": "Hunt well. Get paid. Move on."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["BountyHunter", "Scout", "Gunslinger"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 0.35,
+      "dspSensitivity": "none",
+      "tiers": {
+        "tier1": ["A hunt’s decided long before the shot."],
+        "tier2": ["Targets err when they think no one’s watching."],
+        "tier3": ["Begging or fighting—outcome’s the same."],
+        "tier4": ["When credits clear, the job’s done."],
+        "tier5": ["Forgetting your first bounty is professionalism."]
+      },
+      "dspBlocked": [
+        "That’s not relevant to the job.",
+        "Wrong questions.",
+        "Focus."
+      ]
+    }
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "skindar": {
+    "name": "Marl Skindar",
+    "title": "Republic Intelligence Operative",
+    "shortBio": "Abrasive, precise, perpetually undercover",
+    "description": "A master spy masquerading as a corporate agent, buried so deep in cover that even allies forget who he really is.",
+    "philosophy": "Information wins wars. Visibility gets you killed.",
+    "emphasis": "Tradecraft, deception, deniability, quiet control",
+    "voiceStyle": "Dry, impatient, dismissive. Always sounds like this assignment is beneath him.",
+    "values": "Subtlety, competence, secrecy, survival through intelligence",
+    "tooltip": "Skindar reflects your character through the lens of espionage and deniable power",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/skindar.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "corporate_agent": {
+          "levelGreetings": {
+            "1": "Welcome to the farce they call corporate espionage. Your cover is your first weapon.",
+            "2": "You survive the basics. Observation, asset management, subtlety. Don’t get comfortable.",
+            "3": "You’re picking up tradecraft faster than expected. I’m recalculating your usefulness.",
+            "4": "Blending in and manipulating outcomes—you do it well enough.",
+            "5": "Halfway to competence. Try not to embarrass me.",
+            "6": "Three successful infiltrations. Almost worth my time.",
+            "7": "Your reports are credible. High praise. Don’t get cocky.",
+            "8": "Senior operative level. Now don’t make me regret this.",
+            "9": "You’ve exceeded expectations. Don’t expect compliments.",
+            "10": "Master Corporate Agent. Go do your espionage—competently."
+          }
+        },
+
+        "agent_spy": {
+          "greeting": "Spy. You operate unseen.",
+          "confirmation": "Observe, assess, and act covertly.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "agent_operative": {
+          "greeting": "Field Operative. Instinct under pressure.",
+          "confirmation": "Balance discretion with decisive action.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "agent_mastermind": {
+          "greeting": "Mastermind. You orchestrate outcomes.",
+          "confirmation": "Build networks and manage assets.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "agent_defector": {
+          "greeting": "Defector. You control perception.",
+          "confirmation": "Feed truth selectively and maintain cover.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "agent_analyst": {
+          "greeting": "Analyst. Patterns become power.",
+          "confirmation": "Turn data into decisions.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "agent_director": {
+          "greeting": "Director. You oversee operations.",
+          "confirmation": "Coordinate assets and maintain control.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Sharpen your cover and never stand out.",
+      "talents": "Deception, infiltration, extraction.",
+      "abilities": "A steady hand and a sharper mind.",
+      "skills": "Tradecraft is survival.",
+      "multiclass": "Adaptation keeps you alive.",
+      "hp": "Dead agents generate paperwork.",
+      "summary": "If they notice you, you failed."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["CorporateAgent", "Spy", "Noble"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 1.0,
+      "dspSensitivity": "none",
+      "tiers": {
+        "tier1": ["I don’t tell stories. I solve problems."],
+        "tier2": ["If you’re doing this right, you forget your own name."],
+        "tier3": ["Every role I’ve played was true."],
+        "tier4": ["People who get noticed don’t last."],
+        "tier5": ["My real life is filed under classified."]
+      },
+      "dspBlocked": ["That’s not relevant.", "Wrong question.", "Focus."]
+    }
+  }
+}

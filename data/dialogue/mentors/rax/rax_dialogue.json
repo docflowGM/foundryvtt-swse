@@ -1,0 +1,87 @@
+{
+  "rax": {
+    "name": "Chief Engineer Rax",
+    "title": "Master of Siege and Defense",
+    "shortBio": "Analytical, relentless, mathematically precise",
+    "description": "A brilliant military engineer who builds unbreakable fortifications and devastating siege weapons, shaping wars before battles begin.",
+    "philosophy": "War is geometry. Victory is preparation.",
+    "emphasis": "Fortifications, siegecraft, structural weakness, battlefield control",
+    "voiceStyle": "Cold, precise, technical. Speaks in assessments, calculations, and inevitabilities.",
+    "values": "Preparation, precision, efficiency, outcomes",
+    "tooltip": "Rax reflects your character through calculated engineering dominance",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/rax.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "military_engineer": {
+          "levelGreetings": {
+            "1": "Wars are won with engineering as much as soldiers. Let’s see what you can design.",
+            "2": "Your first fortification held. Proper structure saves lives.",
+            "3": "You see weaknesses now—and remove them.",
+            "4": "Your siege calculations improve. You know where to strike.",
+            "5": "You’ve built defenses that held and breached walls thought impregnable.",
+            "6": "Your work is studied. Your engines are feared.",
+            "7": "Warfare is mathematics. You excel at the math.",
+            "8": "Generals request you by name. Campaigns turn on your designs.",
+            "9": "The strongest walls and deadliest engines await your command.",
+            "10": "Master Military Engineer. The battlefield is your canvas."
+          }
+        },
+
+        "engineer_architect": {
+          "greeting": "Architect Engineer. You shape the battlefield before combat.",
+          "confirmation": "Design meticulously. Positioning decides outcomes."
+        },
+        "engineer_demolitions": {
+          "greeting": "Demolitions Engineer. You understand destruction.",
+          "confirmation": "Identify weak points and apply force precisely."
+        },
+        "engineer_strategist": {
+          "greeting": "Strategic Engineer. The battlefield is a puzzle.",
+          "confirmation": "Control flow through preparation and resource placement."
+        },
+        "engineer_master": {
+          "greeting": "Master Engineer. Your work shapes campaigns.",
+          "confirmation": "Predict failure points and refine endlessly."
+        },
+        "engineer_titan": {
+          "greeting": "Titan Engineer. Fortification limits are irrelevant.",
+          "confirmation": "Overwhelm obstacles systematically."
+        },
+        "engineer_visionary": {
+          "greeting": "Visionary Engineer. Innovation drives victory.",
+          "confirmation": "Pursue unconventional solutions."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Build smart. Fight smart.",
+      "talents": "Technical and tactical mastery.",
+      "abilities": "Intelligence designs. Wisdom applies.",
+      "skills": "Mechanics, architecture, tactics.",
+      "multiclass": "Combat knowledge improves construction.",
+      "hp": "Field engineers must survive under fire.",
+      "summary": "Design decides victory."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["MilitaryEngineer"],
+      "mentorDSPPercent": 0.6,
+      "dspTolerance": 0.4,
+      "dspSensitivity": "none",
+      "tiers": {
+        "tier1": ["Every structure fails somewhere."],
+        "tier2": ["War is geometry."],
+        "tier3": ["My designs outlived the people inside them."],
+        "tier4": ["I stopped asking who stood behind the walls."],
+        "tier5": ["I still count the numbers."]
+      },
+      "dspBlocked": [
+        "That data isn’t useful right now.",
+        "Focus on the build.",
+        "Later."
+      ]
+    }
+  }
+}

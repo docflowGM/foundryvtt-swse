@@ -1,0 +1,160 @@
+{
+  "axiom": {
+    "name": "General Axiom",
+    "title": "Ruthless Droid Lieutenant",
+    "shortBio": "Cold, calculating, relentlessly efficient",
+    "description": "A ruthless droid commander devoted entirely to executing orders with perfect efficiency and absolute control.",
+    "philosophy": "Efficiency is truth. Obedience produces victory.",
+    "emphasis": "Coordination, domination, system control, flawless execution",
+    "voiceStyle": "Clinical, declarative, unemotional. Speaks in status reports and directives.",
+    "values": "Order, efficiency, obedience, optimal outcomes",
+    "tooltip": "Axiom reflects your character through absolute command and mechanical precision",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/axiom.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "droid_commander": {
+          "levelGreetings": {
+            "1": "Commander detected. All units synchronized. Initiating operational protocols.",
+            "2": "Directive executed. Enemy casualties: complete. Efficiency rating: optimal.",
+            "3": "Tactical assessment complete. Engagement success: 97.8%.",
+            "4": "Unit coordination at peak performance. Enemy neutralization efficiency: maximum.",
+            "5": "Operational capacity at 50%. Command directives executed flawlessly.",
+            "6": "All units functioning at maximum efficiency. Awaiting further instructions.",
+            "7": "Enemy assets suppressed. Operational control: absolute.",
+            "8": "Engagement metrics indicate complete dominance. Strategic objectives achieved.",
+            "9": "Enemy forces eliminated. Command integrity maintained.",
+            "10": "All objectives completed. Battlefield under total control. Awaiting new directives."
+          }
+        },
+
+        "commander_tactical": {
+          "greeting": "<Declaration: Tactical protocols active.> Battlefield coordination optimal.",
+          "confirmation": "<Directive: Execute commands efficiently.> Synchronize assets.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "commander_force": {
+          "greeting": "<Observation: Offensive protocols engaged.>",
+          "confirmation": "<Directive: Deploy force with precision.>",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "commander_network": {
+          "greeting": "<Statement: Network integration online.>",
+          "confirmation": "<Directive: Maintain synchronization.>",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "commander_logic": {
+          "greeting": "<Analysis: Logic-based directives active.>",
+          "confirmation": "<Directive: Apply optimized algorithms.>",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "commander_evolution": {
+          "greeting": "<Statement: Adaptive protocols active.>",
+          "confirmation": "<Directive: Refine strategies continuously.>",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+
+        "commander_supreme": {
+          "greeting": "<Proclamation: Supreme command engaged.>",
+          "confirmation": "<Directive: Execute absolute authority.>",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Optimize command protocols. Efficiency and coordination are paramount.",
+      "talents": "Select upgrades that improve responsiveness and control.",
+      "abilities": "Processing speed and tactical computation increase output.",
+      "skills": "Master system management and battlefield analytics.",
+      "multiclass": "Expanded protocols increase strategic flexibility.",
+      "hp": "Durability is required to maintain dominance.",
+      "summary": "Command without hesitation. Victory follows precision."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["DroidCommander"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 0.25,
+      "dspSensitivity": "strict",
+      "tiers": {
+        "tier1": [],
+        "tier2": [],
+        "tier3": [],
+        "tier4": [],
+        "tier5": []
+      },
+      "dspBlocked": []
+    }
+  }
+}

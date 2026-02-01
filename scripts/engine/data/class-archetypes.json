@@ -1,0 +1,621 @@
+{
+  "version": "1.0",
+  "generatedFrom": "engine/mentor-archetype-paths.js",
+  "classes": {
+    "jedi": {
+      "label": "Jedi",
+      "archetypes": {
+        "guardian": {
+          "name": "Jedi Guardian",
+          "status": "active",
+          "description": "Frontline protector who endures and controls space.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "guardian": 1.2
+          },
+          "attributeBias": {
+            "con": 1,
+            "wis": 1
+          },
+          "talentKeywords": [
+            "Defense",
+            "Block",
+            "Deflect"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Guardians who ignore threat generation and positioning fail their allies.",
+            "Philosophy: Endure so others do not fall.",
+            "Quote: A Guardian stands between darkness and those who cannot defend themselves."
+          ],
+          "focusAttributes": [
+            "con",
+            "wis"
+          ],
+          "focusSkills": [
+            "useTheForce"
+          ],
+          "philosophyStatement": "Endure so others do not fall.",
+          "mentorQuote": "A Guardian stands between darkness and those who cannot defend themselves.",
+          "warning": "Guardians who ignore threat generation and positioning fail their allies."
+        },
+        "consular": {
+          "name": "Jedi Consular",
+          "status": "active",
+          "description": "Force-focused specialist emphasizing control and mastery.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "controller": 1.3
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "talentKeywords": [
+            "Force",
+            "Control",
+            "Meditation"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Consulars who neglect survivability collapse under pressure.",
+            "Philosophy: Mastery before action.",
+            "Quote: The Force flows through all things. Master that flow, and you master the battlefield."
+          ],
+          "focusAttributes": [
+            "wis"
+          ],
+          "focusSkills": [
+            "useTheForce",
+            "knowledge"
+          ],
+          "philosophyStatement": "Mastery before action.",
+          "mentorQuote": "The Force flows through all things. Master that flow, and you master the battlefield.",
+          "warning": "Consulars who neglect survivability collapse under pressure."
+        },
+        "sentinel": {
+          "name": "Jedi Sentinel",
+          "status": "active",
+          "description": "Balanced operative blending combat skill, awareness, and versatility.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "guardian": 1.1,
+            "striker": 1.1
+          },
+          "attributeBias": {
+            "dex": 1,
+            "wis": 1
+          },
+          "talentKeywords": [
+            "Awareness",
+            "Mobility",
+            "Precision"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Sentinels who lack focus risk becoming unfocused generalists.",
+            "Philosophy: Awareness is survival.",
+            "Quote: A Sentinel sees the full board and adapts. Do not mistake balance for indecision."
+          ],
+          "focusAttributes": [
+            "dex",
+            "wis"
+          ],
+          "focusSkills": [
+            "perception",
+            "stealth",
+            "useTheForce"
+          ],
+          "philosophyStatement": "Awareness is survival.",
+          "mentorQuote": "A Sentinel sees the full board and adapts. Do not mistake balance for indecision.",
+          "warning": "Sentinels who lack focus risk becoming unfocused generalists."
+        },
+        "duelist": {
+          "name": "Jedi Duelist",
+          "status": "active",
+          "description": "Precision combatant who ends threats decisively in single combat.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "striker": 1.4
+          },
+          "attributeBias": {
+            "dex": 1,
+            "str": 1
+          },
+          "talentKeywords": [
+            "Lightsaber",
+            "Riposte",
+            "Precision"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Duelists who overextend fall quickly when isolated.",
+            "Philosophy: Precision is temptation's first test.",
+            "Quote: One strike, perfectly placed, is worth a hundred desperate blows."
+          ],
+          "focusAttributes": [
+            "dex",
+            "str"
+          ],
+          "focusSkills": [
+            "useTheForce",
+            "acrobatics"
+          ],
+          "philosophyStatement": "Precision is temptation's first test.",
+          "mentorQuote": "One strike, perfectly placed, is worth a hundred desperate blows.",
+          "warning": "Duelists who overextend fall quickly when isolated."
+        },
+        "healer": {
+          "name": "Jedi Healer",
+          "status": "active",
+          "description": "Support-focused Force user dedicated to preservation and recovery.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "controller": 1.2
+          },
+          "attributeBias": {
+            "wis": 1,
+            "cha": 1
+          },
+          "talentKeywords": [
+            "Healing",
+            "Vitality",
+            "Preservation"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Healers who neglect positioning are removed early from combat.",
+            "Philosophy: Preservation is the hardest discipline.",
+            "Quote: The greatest power is not in taking life, but in preserving it."
+          ],
+          "focusAttributes": [
+            "wis",
+            "cha"
+          ],
+          "focusSkills": [
+            "useTheForce",
+            "treatInjury"
+          ],
+          "philosophyStatement": "Preservation is the hardest discipline.",
+          "mentorQuote": "The greatest power is not in taking life, but in preserving it.",
+          "warning": "Healers who neglect positioning are removed early from combat."
+        }
+      }
+    },
+    "scout": {
+      "label": "Scout",
+      "archetypes": {
+        "tracker": {
+          "name": "Scout Tracker",
+          "status": "active",
+          "description": "Pursuit specialist who hunts across terrain and finds prey.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "striker": 1.2
+          },
+          "attributeBias": {
+            "str": 1,
+            "dex": 1,
+            "wis": 1
+          },
+          "talentKeywords": [
+            "Tracking",
+            "Endurance"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Trackers who lose patience lose their prey.",
+            "Philosophy: The hunt requires time and discipline.",
+            "Quote: Speed wins races. Patience wins wars."
+          ],
+          "focusAttributes": [
+            "str",
+            "dex",
+            "wis"
+          ],
+          "focusSkills": [
+            "survival",
+            "perception"
+          ],
+          "philosophyStatement": "The hunt requires time and discipline.",
+          "mentorQuote": "Speed wins races. Patience wins wars.",
+          "warning": "Trackers who lose patience lose their prey."
+        },
+        "infiltrator": {
+          "name": "Scout Infiltrator",
+          "status": "active",
+          "description": "Stealth operative who moves unseen through hostile territory.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "controller": 1.2
+          },
+          "attributeBias": {
+            "dex": 1,
+            "int": 1
+          },
+          "talentKeywords": [
+            "Stealth",
+            "Deception",
+            "Infiltration"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Infiltrators discovered are infiltrators captured.",
+            "Philosophy: Move like shadow. Strike like shadow.",
+            "Quote: The best mission is the one no one ever knows happened."
+          ],
+          "focusAttributes": [
+            "dex",
+            "int"
+          ],
+          "focusSkills": [
+            "stealth",
+            "deception"
+          ],
+          "philosophyStatement": "Move like shadow. Strike like shadow.",
+          "mentorQuote": "The best mission is the one no one ever knows happened.",
+          "warning": "Infiltrators discovered are infiltrators captured."
+        },
+        "striker": {
+          "name": "Scout Striker",
+          "status": "active",
+          "description": "Swift offense combatant who hits hard and vanishes.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "striker": 1.5
+          },
+          "attributeBias": {
+            "dex": 1,
+            "str": 1
+          },
+          "talentKeywords": [
+            "Mobility",
+            "PowerAttack"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Strikers who cannot escape are strikers who die.",
+            "Philosophy: Hit hard. Leave faster.",
+            "Quote: Superior firepower means nothing if you're never there when they shoot back."
+          ],
+          "focusAttributes": [
+            "dex",
+            "str"
+          ],
+          "focusSkills": [
+            "acrobatics",
+            "initiative"
+          ],
+          "philosophyStatement": "Hit hard. Leave faster.",
+          "mentorQuote": "Superior firepower means nothing if you're never there when they shoot back.",
+          "warning": "Strikers who cannot escape are strikers who die."
+        }
+      }
+    },
+    "scoundrel": {
+      "label": "Scoundrel",
+      "archetypes": {
+        "charmer": {
+          "name": "Scoundrel Charmer",
+          "status": "active",
+          "description": "Persuasion specialist who talks their way out of (and into) anything.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "controller": 1.3
+          },
+          "attributeBias": {
+            "cha": 1,
+            "int": 1
+          },
+          "talentKeywords": [
+            "Persuasion",
+            "Charm"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Charmers who run out of words run out of options.",
+            "Philosophy: Every problem can be solved with the right words.",
+            "Quote: You can make 100 credits with a blaster, or 10,000 with a smile."
+          ],
+          "focusAttributes": [
+            "cha",
+            "int"
+          ],
+          "focusSkills": [
+            "persuasion",
+            "deception",
+            "gatherInformation"
+          ],
+          "philosophyStatement": "Every problem can be solved with the right words.",
+          "mentorQuote": "You can make 100 credits with a blaster, or 10,000 with a smile.",
+          "warning": "Charmers who run out of words run out of options."
+        },
+        "gambler": {
+          "name": "Scoundrel Gambler",
+          "status": "active",
+          "description": "Risk-taker who makes luck and reads probability better than most.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "striker": 1.2
+          },
+          "attributeBias": {
+            "cha": 1,
+            "wis": 1
+          },
+          "talentKeywords": [
+            "Risk",
+            "Luck"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Gamblers who play the odds always lose eventually.",
+            "Philosophy: The house edge can be beaten, but rarely.",
+            "Quote: If you're not prepared to lose it all, you have no business at the table."
+          ],
+          "focusAttributes": [
+            "cha",
+            "wis"
+          ],
+          "focusSkills": [
+            "deception",
+            "gatherInformation"
+          ],
+          "philosophyStatement": "The house edge can be beaten, but rarely.",
+          "mentorQuote": "If you're not prepared to lose it all, you have no business at the table.",
+          "warning": "Gamblers who play the odds always lose eventually."
+        },
+        "thief": {
+          "name": "Scoundrel Thief",
+          "status": "active",
+          "description": "Precision specialist who takes what's not theirs with surgical precision.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "striker": 1.3
+          },
+          "attributeBias": {
+            "dex": 1,
+            "int": 1
+          },
+          "talentKeywords": [
+            "Stealth",
+            "Thievery",
+            "Precision"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Thieves caught are thieves hanged.",
+            "Philosophy: Every lock has a solution. Every system has a flaw.",
+            "Quote: The best heist is one where the mark never knows they've been robbed."
+          ],
+          "focusAttributes": [
+            "dex",
+            "int"
+          ],
+          "focusSkills": [
+            "stealth",
+            "mechanics"
+          ],
+          "philosophyStatement": "Every lock has a solution. Every system has a flaw.",
+          "mentorQuote": "The best heist is one where the mark never knows they've been robbed.",
+          "warning": "Thieves caught are thieves hanged."
+        }
+      }
+    },
+    "soldier": {
+      "label": "Soldier",
+      "archetypes": {
+        "commando": {
+          "name": "Soldier Commando",
+          "status": "active",
+          "description": "Squad-focused combatant who coordinates firepower and tactics.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "guardian": 1.2,
+            "controller": 1.2
+          },
+          "attributeBias": {
+            "str": 1,
+            "cha": 1
+          },
+          "talentKeywords": [
+            "Leadership",
+            "Tactics"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Commandos who lose their squad lose their edge.",
+            "Philosophy: Victory is a team operation.",
+            "Quote: A lone soldier is a dead soldier. Never forget that."
+          ],
+          "focusAttributes": [
+            "str",
+            "cha"
+          ],
+          "focusSkills": [
+            "perception",
+            "initiative"
+          ],
+          "philosophyStatement": "Victory is a team operation.",
+          "mentorQuote": "A lone soldier is a dead soldier. Never forget that.",
+          "warning": "Commandos who lose their squad lose their edge."
+        },
+        "gunner": {
+          "name": "Soldier Gunner",
+          "status": "active",
+          "description": "Ranged specialist who maximizes firepower through technique and positioning.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "striker": 1.4
+          },
+          "attributeBias": {
+            "dex": 1,
+            "str": 1
+          },
+          "talentKeywords": [
+            "Ranged",
+            "Precision",
+            "PowerAttack"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Gunners caught in close quarters are gunners who die.",
+            "Philosophy: Distance is safety. Distance is victory.",
+            "Quote: Keep enemies at range. Problems that can't reach you can't hurt you."
+          ],
+          "focusAttributes": [
+            "dex",
+            "str"
+          ],
+          "focusSkills": [
+            "pilot",
+            "perception"
+          ],
+          "philosophyStatement": "Distance is safety. Distance is victory.",
+          "mentorQuote": "Keep enemies at range. Problems that can't reach you can't hurt you.",
+          "warning": "Gunners caught in close quarters are gunners who die."
+        },
+        "guardian": {
+          "name": "Soldier Guardian",
+          "status": "active",
+          "description": "Defensive specialist who holds ground and protects others through positioning.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "guardian": 1.3
+          },
+          "attributeBias": {
+            "con": 1,
+            "str": 1
+          },
+          "talentKeywords": [
+            "Defense",
+            "Block",
+            "Protection"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Guardians who move lose their defensive advantage.",
+            "Philosophy: A strong line holds forever.",
+            "Quote: Hold this position. Whatever comes, you don't move. They move, or they fall."
+          ],
+          "focusAttributes": [
+            "con",
+            "str"
+          ],
+          "focusSkills": [
+            "endurance"
+          ],
+          "philosophyStatement": "A strong line holds forever.",
+          "mentorQuote": "Hold this position. Whatever comes, you don't move. They move, or they fall.",
+          "warning": "Guardians who move lose their defensive advantage."
+        }
+      }
+    },
+    "noble": {
+      "label": "Noble",
+      "archetypes": {
+        "diplomat": {
+          "name": "Noble Diplomat",
+          "status": "active",
+          "description": "Negotiator who builds alliances and navigates politics.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "controller": 1.2
+          },
+          "attributeBias": {
+            "cha": 1,
+            "int": 1
+          },
+          "talentKeywords": [
+            "Persuasion",
+            "Diplomacy"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Diplomats without allies have no power.",
+            "Philosophy: A deal that benefits both sides lasts forever.",
+            "Quote: Never resort to violence when words can win the day."
+          ],
+          "focusAttributes": [
+            "cha",
+            "int"
+          ],
+          "focusSkills": [
+            "persuasion",
+            "gatherInformation",
+            "knowledge"
+          ],
+          "philosophyStatement": "A deal that benefits both sides lasts forever.",
+          "mentorQuote": "Never resort to violence when words can win the day.",
+          "warning": "Diplomats without allies have no power."
+        },
+        "leader": {
+          "name": "Noble Leader",
+          "status": "active",
+          "description": "Authority figure who commands through presence and decisiveness.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "controller": 1.3
+          },
+          "attributeBias": {
+            "cha": 1,
+            "wis": 1
+          },
+          "talentKeywords": [
+            "Leadership",
+            "Presence"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Leaders who hesitate lose their followers.",
+            "Philosophy: Authority without conviction is merely authority.",
+            "Quote: Your people follow you because you make the hard choices they cannot."
+          ],
+          "focusAttributes": [
+            "cha",
+            "wis"
+          ],
+          "focusSkills": [
+            "persuasion",
+            "knowledge"
+          ],
+          "philosophyStatement": "Authority without conviction is merely authority.",
+          "mentorQuote": "Your people follow you because you make the hard choices they cannot.",
+          "warning": "Leaders who hesitate lose their followers."
+        },
+        "scoundrel": {
+          "name": "Noble Scoundrel",
+          "status": "active",
+          "description": "Ambitious schemer who plays politics for personal advantage.",
+          "mechanicalBias": {},
+          "roleBias": {
+            "controller": 1.2
+          },
+          "attributeBias": {
+            "cha": 1,
+            "int": 1
+          },
+          "talentKeywords": [
+            "Deception",
+            "Intrigue"
+          ],
+          "featKeywords": [],
+          "notes": [
+            "Warning: Scoundrels who get caught lose everything.",
+            "Philosophy: Power comes to those willing to take it.",
+            "Quote: The throne belongs to those bold enough to sit in it."
+          ],
+          "focusAttributes": [
+            "cha",
+            "int"
+          ],
+          "focusSkills": [
+            "deception",
+            "gatherInformation"
+          ],
+          "philosophyStatement": "Power comes to those willing to take it.",
+          "mentorQuote": "The throne belongs to those bold enough to sit in it.",
+          "warning": "Scoundrels who get caught lose everything."
+        }
+      }
+    }
+  }
+}

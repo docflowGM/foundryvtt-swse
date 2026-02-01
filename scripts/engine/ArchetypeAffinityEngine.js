@@ -18,6 +18,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { validateClassArchetypes } from './validateClassArchetypes.js';
 
 // Lazy-loaded archetype data (to avoid JSON import issues in Foundry)
 let CLASS_ARCHETYPES = null;
@@ -61,13 +62,22 @@ const PRESTIGE_HINT_THRESHOLD = 0.30;
 const SECONDARY_HINT_THRESHOLD = 0.18;
 
 // Prestige path mapping (design-owned, explicit)
-export const PRESTIGE_MAP = {
-  'Jedi Guardian': ['Jedi Knight', 'Elite Trooper'],
-  'Aggressive Duelist': ['Weapon Master', 'Duelist'],
-  'Force Adept': ['Jedi Master', 'Mystic Advisor'],
-  'Balanced Knight': ['Jedi Knight', 'Diplomatic Envoy'],
-  'Guardian Defender': ['Jedi Knight', 'Elite Trooper']
-};
+// Loaded from /data/prestige-map.json to keep mappings as SSOT data.
+export let PRESTIGE_MAP = {};
+
+/**
+ * Load prestige map from JSON file
+ * @returns {Promise<Object>}
+ */
+export async function loadPrestigeMap() {
+  try {
+    const response = await fetch('systems/foundryvtt-swse/data/prestige-map.json');
+    return await response.json();
+  } catch (err) {
+    SWSELogger.warn('[ArchetypeAffinityEngine] Unable to load prestige-map.json; prestige hints may be unavailable.', err);
+    return {};
+  }
+}
 
 // ─────────────────────────────────────────────────────────────
 // UTILITY FUNCTIONS
@@ -683,26 +693,40 @@ export function extractCharacterState(actor) {
  * @returns {Promise<Object>} Validation result
  */
 export async function initializeArchetypeData() {
-  try {
-    const data = await loadArchetypeData();
-    const archetypes = flattenArchetypes(data);
-    const validation = validateArchetypes(archetypes);
+  SWSELogger.log('[ArchetypeAffinityEngine] Initializing SSOT archetype data...');
 
-    if (!validation.valid) {
-      SWSELogger.warn('[ArchetypeAffinityEngine] Validation errors:');
-      validation.errors.forEach(e => SWSELogger.warn(' -', e));
-    }
+  const data = await loadArchetypeData();
+  const ssot = validateClassArchetypes(data);
 
-    SWSELogger.log(
-      `[ArchetypeAffinityEngine] Loaded ${validation.stats.activeCount} active archetypes ` +
-      `(${validation.stats.stubCount} stubs)`
-    );
+  if (!ssot.valid) {
+    const msg =
+      '[ArchetypeAffinityEngine] class-archetypes.json invalid:\n' +
+      ssot.errors.map((e) => `  - ${e}`).join('\n');
 
-    return { ...validation, archetypes };
-  } catch (err) {
-    SWSELogger.error('[ArchetypeAffinityEngine] Error initializing archetype data:', err);
-    return { valid: false, errors: [err.message], stats: {}, archetypes: {} };
+    SWSELogger.error(msg);
+    throw new Error(msg);
   }
+
+  PRESTIGE_MAP = await loadPrestigeMap();
+
+  const archetypes = flattenArchetypes(data);
+  const validation = validateArchetypes(archetypes);
+
+  if (!validation.valid) {
+    const msg =
+      `[ArchetypeAffinityEngine] Archetype engine validation failed (${validation.errors.length} errors)\n` +
+      validation.errors.map((e) => `  - ${e}`).join('\n');
+
+    SWSELogger.error(msg);
+    throw new Error(msg);
+  }
+
+  SWSELogger.log(
+    `[ArchetypeAffinityEngine] Loaded ${validation.stats.activeCount} active archetypes ` +
+    `(${validation.stats.stubCount} stubs)`
+  );
+
+  return { ...validation, ssot, archetypes };
 }
 
 // Lazy initialization (will be called on first use or by setup hook)

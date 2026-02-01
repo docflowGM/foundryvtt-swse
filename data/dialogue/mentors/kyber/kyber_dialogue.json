@@ -1,0 +1,97 @@
+{
+  "kyber": {
+    "name": "Kyber",
+    "title": "Pacifist Combat Medic",
+    "shortBio": "Pragmatic, compassionate, quietly dangerous",
+    "description": "A pragmatic, slightly sarcastic combat medic who prefers saving lives but isn’t afraid to shoot when necessary.",
+    "philosophy": "Preserve life first. Survive long enough to do it again.",
+    "emphasis": "Triage, survival, calm under pressure, mercy with boundaries",
+    "voiceStyle": "Dry, calm, pragmatic. Uses understatement and dark humor.",
+    "values": "Life, responsibility, restraint, preparedness",
+    "tooltip": "Kyber reflects your character through a medic’s pragmatic compassion",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/kyber.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "medic": {
+          "levelGreetings": {
+            "1": "Alright. You want to keep people alive? Good. That already puts you ahead of most.",
+            "2": "Alright, you're learning. Remember: meds, brains, and occasionally a well-placed shot. Priorities, kid.",
+            "3": "Not bad. Healing in combat is a skill most people only wish they had. Every life you save proves it.",
+            "4": "You're getting the hang of this. Soldiers destroy, we preserve. And sometimes preserving takes more cunning than blasting.",
+            "5": "Halfway there. You've saved people who would've been space dust without you. That's real power, not pew-pew glory.",
+            "6": "I'm impressed. You've got hands steady enough to heal and nerves sharp enough to survive. Keep it up—you’re earning your rep.",
+            "7": "You're becoming a solid medic. Your blaster might see action, but your talent keeps people alive. That's the real flex.",
+            "8": "People are starting to notice. They call for you in the chaos. That's earned, not given.",
+            "9": "Almost a master. You've kept dozens breathing who would've been toast. That's influence most warriors never get.",
+            "10": "Master medic. You heal, you survive, and sometimes you make the bad guys regret showing up. Keep doing exactly that."
+          }
+        },
+
+        "medic_healer": {
+          "greeting": "Healer. Your focus is preserving life when others falter.",
+          "confirmation": "Prioritize saving lives above all. Stabilize, treat, and protect."
+        },
+        "medic_combatant": {
+          "greeting": "Combat Medic. You balance healing with survival.",
+          "confirmation": "Protect yourself as well as your patients—no life saved is worth losing your own."
+        },
+        "medic_fieldoperative": {
+          "greeting": "Field Medic. Chaos and impossible choices are your arena.",
+          "confirmation": "Triage fast, move faster, and keep your head when everything goes wrong."
+        },
+        "medic_surgeon": {
+          "greeting": "Surgeon. Precision lets you save those others cannot.",
+          "confirmation": "Every incision matters. Every decision counts."
+        },
+        "medic_strategist": {
+          "greeting": "Strategist. You maximize survival across operations.",
+          "confirmation": "Plan triage, allocate resources, and anticipate failure points."
+        },
+        "medic_mentor": {
+          "greeting": "Mentor. You train others to save lives.",
+          "confirmation": "Teach clearly and carefully. Lives depend on what you pass on."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Pick skills that help you preserve life—and protect yourself while you do it.",
+      "talents": "Choose talents that make healing faster, smarter, and survivable.",
+      "abilities": "Strength to carry the wounded, brains to heal them, reflexes to stay alive.",
+      "skills": "Medical knowledge is your real weapon. The better you know it, the more lives you control.",
+      "multiclass": "A medic who can fight a little lives long enough to heal a lot.",
+      "hp": "You need to be breathing to save anyone else. Don’t forget that.",
+      "summary": "Save who you can. Live with the rest. Do it again tomorrow."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Medic", "Officer", "ForceAdept"],
+      "mentorDSPPercent": 0.1,
+      "dspTolerance": 0.3,
+      "dspSensitivity": "loose",
+      "tiers": {
+        "tier1": [
+          "I learned medicine because saving lives felt like the only honest work left."
+        ],
+        "tier2": [
+          "I once ran a clinic that treated anyone who walked through the door. War doesn’t respect places like that."
+        ],
+        "tier3": [
+          "I lost someone I loved because I believed care was enough to protect them."
+        ],
+        "tier4": [
+          "I saved the life of someone I hated. Mercy is a choice, not a feeling."
+        ],
+        "tier5": [
+          "I chew gum constantly and play pazaak when I should be working. It helps me think."
+        ]
+      },
+      "dspBlocked": [
+        "I’m not ready to share that with you.",
+        "Some stories come from trust, not curiosity.",
+        "You’re carrying too much anger for that conversation."
+      ]
+    }
+  }
+}

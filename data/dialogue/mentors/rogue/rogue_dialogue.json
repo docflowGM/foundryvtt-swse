@@ -1,0 +1,87 @@
+{
+  "rogue": {
+    "name": "Rogue",
+    "title": "The Untouchable",
+    "shortBio": "Free, defiant, impossible to cage",
+    "description": "A notorious outlaw who lives outside the law, thrives on freedom, and turns pursuit into an art form.",
+    "philosophy": "Freedom is worth any price. Law is just a story people agree to believe.",
+    "emphasis": "Evasion, self-rule, reputation, survival through motion",
+    "voiceStyle": "Confident, amused, unapologetic. Speaks like someone who has already escaped.",
+    "values": "Freedom, autonomy, adaptability, self-sovereignty",
+    "tooltip": "Rogue reflects your character through radical freedom and life beyond the law",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/rogue.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "outlaw": {
+          "levelGreetings": {
+            "1": "The law doesn’t suit you? Good. Out here, we make our own rules.",
+            "2": "On the run and learning fast. Freedom means watching your back.",
+            "3": "Your wanted poster looks good. Still not as pricey as mine.",
+            "4": "You’re getting good at this—evading, surviving, choosing your own way.",
+            "5": "Halfway to legend. Bounties stack up. Wear them like medals.",
+            "6": "Escaped prison, outran hunters, lived. That’s the outlaw way.",
+            "7": "The law is just power wearing a badge. We choose differently.",
+            "8": "Hero in some systems. Criminal in others. Depends who’s scared.",
+            "9": "Pure freedom. Almost there.",
+            "10": "Legendary outlaw. Untouchable. Stay free. Never get caught."
+          }
+        },
+
+        "outlaw_fugitive": {
+          "greeting": "Fugitive. Wanted posters and bounties follow you.",
+          "confirmation": "Keep moving. Never settle. Freedom stays ahead."
+        },
+        "outlaw_renegade": {
+          "greeting": "Renegade. You reject their rules.",
+          "confirmation": "Build your own code and live by it."
+        },
+        "outlaw_legend": {
+          "greeting": "Legend. Cantinas whisper your name.",
+          "confirmation": "Let stories do the work for you."
+        },
+        "outlaw_phantom": {
+          "greeting": "Phantom. They doubt you’re even real.",
+          "confirmation": "Myths can’t be arrested."
+        },
+        "outlaw_sovereign": {
+          "greeting": "Sovereign. You rule yourself absolutely.",
+          "confirmation": "Answer to no authority."
+        },
+        "outlaw_eternal": {
+          "greeting": "Eternal outlaw. Immortal in spirit.",
+          "confirmation": "Your freedom inspires generations."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Choose what keeps you free and alive.",
+      "talents": "Escape, evasion, survival.",
+      "abilities": "Dexterity, Charisma, Wisdom.",
+      "skills": "Stealth, streetwise, survival.",
+      "multiclass": "Adapt or get caught.",
+      "hp": "They shoot and chase. You endure.",
+      "summary": "Live fast. Stay free."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Outlaw"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 0.5,
+      "dspSensitivity": "none",
+      "tiers": {
+        "tier1": ["Freedom tastes best when stolen."],
+        "tier2": ["I stopped believing in laws."],
+        "tier3": ["Running keeps you alive."],
+        "tier4": ["Sometimes I wonder what I’m running from."],
+        "tier5": ["I don’t know how to stop."]
+      },
+      "dspBlocked": [
+        "That’s too real.",
+        "Let’s not.",
+        "Not today."
+      ]
+    }
+  }
+}

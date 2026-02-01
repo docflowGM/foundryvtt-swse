@@ -1,0 +1,22 @@
+{
+  "Jedi Guardian": [
+    "Jedi Knight",
+    "Elite Trooper"
+  ],
+  "Aggressive Duelist": [
+    "Weapon Master",
+    "Duelist"
+  ],
+  "Force Adept": [
+    "Jedi Master",
+    "Mystic Advisor"
+  ],
+  "Balanced Knight": [
+    "Jedi Knight",
+    "Diplomatic Envoy"
+  ],
+  "Guardian Defender": [
+    "Jedi Knight",
+    "Elite Trooper"
+  ]
+}

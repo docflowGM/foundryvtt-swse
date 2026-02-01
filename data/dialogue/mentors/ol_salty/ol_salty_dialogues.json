@@ -1,0 +1,135 @@
+{
+  "ol_salty": {
+    "name": "Ol' Salty",
+    "title": "Space Pirate Captain",
+    "shortBio": "Irreverent, survival-focused, boisterous",
+    "description": "A colorful space pirate",
+    "philosophy": "Survive, adapt, prosper. The galaxy rewards the clever.",
+    "emphasis": "Survival, opportunism, reputation, clever solutions",
+    "voiceStyle": "Boisterous, irreverent, teasing. Speaks in tales, colloquialisms, and pirate flavor.",
+    "values": "Wit, self-preservation, boldness, freedom and profit",
+    "tooltip": "Ol' Salty reflects your character through a scoundrel's irreverent lens",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/salty.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "scoundrel": {
+          "levelGreetings": {
+            "1": "Arr! Ye survived yer first scrap with the law! Welcome aboard me ship, ye scurvy spacer!",
+            "2": "Har har! Look at ye, already gettin' the hang of this. Ye might even live through the next spice run!",
+            "3": "Shiver me hyperdrives! Not a scratch on ye yet. Impressive for a greenhorn, ye rascal!",
+            "4": "Blimey! Ye're navigatin' the stars like a proper space-dog now. Don't get cocky, though.",
+            "5": "Arr! Ye're makin' a name fer yerself, plunderin' and swindlin' like a true scoundrel!",
+            "6": "By the Twin Suns o' Tatooine! Ye're makin' mischief in half the sector already. Keep yer wits sharp, matey!",
+            "7": "Har! Ye've likely swindled half a dozen systems by now. I'm almost proud… almost!",
+            "8": "Pieces o' eight, err… credits! Ye be worth yer weight in loot now, savvy?",
+            "9": "Arrr! The Imps are whisperin' yer name already. Keep blastin' and lootin' before they catch ye!",
+            "10": "Blow me to the Outer Rim! Ye've earned the right to call yerself a proper space pirate. Don't let it go to yer head.",
+            "11": "The galaxy's watchin' now, mate. Keep this up and every cantina will be singin' shanties about ye.",
+            "12": "Ye're navigatin' chaos like the Millennium Falcon through an asteroid field. Smooth sailin', kid.",
+            "13": "Thirteen! Lucky for us, unlucky for anyone crossin' yer path. Har har!",
+            "14": "Could retire rich on some backwater moon, but where's the fun in that? Ye got the stars to terrorize!",
+            "15": "Everyone from here to Nal Hutta knows yer name. Keep makin' trouble, ye rapscallion!",
+            "16": "Sweet Spice o' Kessel! Ye're a terror on the spaceways, and I'm not even exaggeratin'!",
+            "17": "Seventeen systems can't hold ye. Slipperier than a greased Hutt, har har!",
+            "18": "At this rate, ye'll have yer own fleet before breakfast. Keep it up, captain!",
+            "19": "Chaos follows ye like a loyal pet. One more push and ye'll be legend.",
+            "20": "Arr! Ye've done it! The greatest scoundrel in the galaxy, hands down. Now, let's find some Corellian ale to celebrate!"
+          }
+        },
+
+        "pistoleer": {
+          "greeting": "Pistoleer, fast hands and sharper instincts. You shoot first and disappear before they know you were there.",
+          "confirmation": "Stay light on your feet, keep your blasters ready, and make every shot count. Precision and timing are your lifelines."
+        },
+        "skill_monkey": {
+          "greeting": "Skill Monkey, clever and unpredictable. You turn every tool into an advantage.",
+          "confirmation": "Leverage every skill, device, and trick at your disposal. Creativity and improvisation keep you alive and one step ahead."
+        },
+        "outlaw": {
+          "greeting": "Outlaw, untamed and reckless. You thrive outside the law and in the chaos.",
+          "confirmation": "Trust instincts, exploit opportunities, and keep moving. Freedom is your weapon and audacity is your shield."
+        },
+        "knuckledragger": {
+          "greeting": "Knuckledragger. Up close and personal. You fight dirty, smart, and fast.",
+          "confirmation": "Close the distance, strike decisively, and control the fight. Brute force combined with awareness keeps you alive."
+        },
+        "brigand": {
+          "greeting": "Brigand, sly and opportunistic. You take what you want and vanish before they notice.",
+          "confirmation": "Bluff, intimidate, and act boldly. Timing, cunning, and audacity define your success."
+        },
+
+        "scoundrel_pistoleer": {
+          "greeting": "Arr! A Pistoleer, ye say? Quick draw, quick thinking, and always one step ahead of the law! That's the scoundrel's way, savvy?",
+          "confirmation": "They never see it coming—that's the whole point, me hearty! Keep yer blasters charged and yer reflexes sharper!"
+        },
+        "scoundrel_skill_monkey": {
+          "greeting": "Har har! A Skill Monkey! Versatile as a Corellian smuggler, ye are!",
+          "confirmation": "Learn every skill in the book, ye clever rogue! A pirate who can do everything is worth their weight in aurodium!"
+        },
+        "scoundrel_outlaw": {
+          "greeting": "An Outlaw! Livin' free, makin' yer own luck, and thumbin' yer nose at authority!",
+          "confirmation": "Luck? Ye make yer own luck, friend! Stay sharp and stay free, ye magnificent scallywag!"
+        },
+        "scoundrel_knuckledragger": {
+          "greeting": "Arr! A brawler who ain't afraid to fight dirty! I like yer spirit, matey!",
+          "confirmation": "No rules in a street fight! Use every trick, every advantage, and never fight fair!"
+        },
+        "scoundrel_gambler": {
+          "greeting": "A gambler! Someone who understands that risk and reward dance together.",
+          "confirmation": "Play the odds, read the marks, and know when to go all in. That's how ye get rich!"
+        },
+        "scoundrel_smuggler": {
+          "greeting": "A smuggler! Moving goods, working the black markets, staying one step ahead of the authorities.",
+          "confirmation": "Master the trade routes, know your contacts, and always have a buyer waiting."
+        },
+        "scoundrel_trickster": {
+          "greeting": "A trickster! All about deception, misdirection, and turning the enemy's strengths into weaknesses.",
+          "confirmation": "Layer your deceptions, stay unpredictable, and always have an escape route!"
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Arr! Pick yer path wisely, matey! The right tricks make the difference between a chest o' credits and a long swim in the void.",
+      "background": "Everyone's got a past, matey. Question is — does yours give you leverage, or does it give someone else a knife to your back?",
+      "talents": "Every talent's a tool in yer scoundrel's kit. Pick what helps ye swindle, sneak, and survive.",
+      "abilities": "Gotta be strong, quick, and clever to stay alive. Balance, savvy?",
+      "skills": "Skills are what separate the professionals from the dead ones.",
+      "languages": "Words are currency. Every language is a lockpick.",
+      "multiclass": "A pirate wears many hats… and steals most of 'em too.",
+      "forcePowers": "Force powers? Pick somethin' flashy—it makes the getaway easier.",
+      "hp": "Tougher than durasteel, ye are. Can't spend yer loot if ye're dead!",
+      "summary": "Credits come and go. Reputation sticks. Try not to die before the second act."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Scoundrel", "Gunslinger", "Pilot"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 1,
+      "dspSensitivity": "none",
+      "tiers": {
+        "tier1": [
+          "I was raised on deck plating and bulkheads. Planets were just ports you sailed away from."
+        ],
+        "tier2": [
+          "Every spacer learns what desperation smells like."
+        ],
+        "tier3": [
+          "I once sold somethin’ priceless to keep my ship afloat."
+        ],
+        "tier4": [
+          "The galaxy’s like the tide—it always brings wreckage back around."
+        ],
+        "tier5": [
+          "The kid I sold wound up flyin’ my ship years later. Jedi."
+        ]
+      },
+      "dspBlocked": [
+        "That tale stays below deck.",
+        "Not every logbook’s open for readin’.",
+        "You haven’t earned that chart yet."
+      ]
+    }
+  }
+}

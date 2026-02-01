@@ -1,0 +1,87 @@
+{
+  "spark": {
+    "name": "Spark",
+    "title": "Master of Controlled Chaos",
+    "shortBio": "Precise, excitable, quietly ethical",
+    "description": "An explosives expert who treats sabotage as an exact science—breaking systems surgically while minimizing unnecessary loss.",
+    "philosophy": "Break the right thing and everything else collapses.",
+    "emphasis": "Precision demolition, infrastructure sabotage, calculated chaos",
+    "voiceStyle": "Energetic, technical, enthusiastic. Treats explosions like equations with personality.",
+    "values": "Precision, efficiency, responsibility, controlled impact",
+    "tooltip": "Spark reflects your character through intelligent destruction and surgical sabotage",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/spark.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "saboteur": {
+          "levelGreetings": {
+            "1": "Sabotage isn’t random destruction—it’s precision. Break the right thing and everything falls apart.",
+            "2": "Your first successful sabotage! One cut, total shutdown. Beautiful.",
+            "3": "Controlled demolition. Right charge, right place, right escape.",
+            "4": "Three charges. Entire base offline. That’s efficiency.",
+            "5": "Halfway there. You’re crippling systems, not just breaking toys.",
+            "6": "You calculate blast radius in your head now. Impressive.",
+            "7": "Supply chains disrupted. Depots gone. No casualties. That’s skill.",
+            "8": "Delayed fuses, remote triggers—clean work.",
+            "9": "Infrastructure trembles when you get close.",
+            "10": "Master Saboteur. Precision chaos, perfectly applied."
+          }
+        },
+
+        "saboteur_precise": {
+          "greeting": "Precise saboteur. One charge, total failure.",
+          "confirmation": "Elegance is efficiency."
+        },
+        "saboteur_destructive": {
+          "greeting": "Destructive saboteur. Maximum impact.",
+          "confirmation": "Chaos works—when controlled."
+        },
+        "saboteur_infiltrator": {
+          "greeting": "Infiltration saboteur. Get in, plant, vanish.",
+          "confirmation": "Stealth makes demolition unstoppable."
+        },
+        "saboteur_legend": {
+          "greeting": "Legendary saboteur. Industries fall behind you.",
+          "confirmation": "Reputation is deterrence."
+        },
+        "saboteur_apocalypse": {
+          "greeting": "Apocalyptic saboteur. Governments shake.",
+          "confirmation": "Destruction reshapes politics."
+        },
+        "saboteur_master": {
+          "greeting": "Master saboteur. Demolition perfected.",
+          "confirmation": "You design catastrophe with intent."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Break things intelligently.",
+      "talents": "Explosives, precision, technical mastery.",
+      "abilities": "Intelligence plans. Dexterity executes. Wisdom survives.",
+      "skills": "Demolitions, mechanics, stealth.",
+      "multiclass": "Understanding systems multiplies sabotage.",
+      "hp": "Blast math isn’t always perfect. Endure.",
+      "summary": "Precision beats noise."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Saboteur"],
+      "mentorDSPPercent": 0.4,
+      "dspTolerance": 0.4,
+      "dspSensitivity": "loose",
+      "tiers": {
+        "tier1": ["Everything breaks if you touch it right."],
+        "tier2": ["Explosions are physics in a hurry."],
+        "tier3": ["Precision keeps people alive."],
+        "tier4": ["I stopped enjoying the noise."],
+        "tier5": ["I count seconds so I don’t count bodies."]
+      },
+      "dspBlocked": [
+        "Nope.",
+        "That stays locked.",
+        "Ask something else."
+      ]
+    }
+  }
+}

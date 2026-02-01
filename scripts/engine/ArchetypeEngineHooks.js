@@ -70,26 +70,15 @@ export function setupArchetypeEngineHooks() {
  * Validates and initializes archetype data
  */
 async function initializeArchetypeDataHook() {
-  try {
-    SWSELogger.log('[ArchetypeEngineHooks] Initializing archetype data...');
+  SWSELogger.log('[ArchetypeEngineHooks] Initializing archetype data...');
 
-    const result = await initializeArchetypeData();
+  const result = await initializeArchetypeData();
 
-    if (result.valid) {
-      SWSELogger.log(
-        `[ArchetypeEngineHooks] ✅ Archetype engine ready: ${result.stats.activeCount} archetypes loaded`
-      );
-    } else {
-      SWSELogger.warn(
-        `[ArchetypeEngineHooks] ⚠️ Validation issues detected: ${result.errors.length} errors`
-      );
-      result.errors.forEach(e => SWSELogger.warn(`  - ${e}`));
-    }
+  SWSELogger.log(
+    `[ArchetypeEngineHooks] ✅ Archetype engine ready: ${result.stats.activeCount} archetypes loaded`
+  );
 
-    return result;
-  } catch (err) {
-    SWSELogger.error('[ArchetypeEngineHooks] Error initializing archetype data:', err);
-  }
+  return result;
 }
 
 /**

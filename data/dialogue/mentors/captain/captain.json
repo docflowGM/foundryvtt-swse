@@ -1,0 +1,651 @@
+{
+  "mentorId": "captain",
+  "judgments": {
+    "recognition": {
+      "very_low": [
+        "Observation acknowledged."
+      ],
+      "low": [
+        "Observation acknowledged."
+      ],
+      "medium": [
+        "Your action has been logged."
+      ],
+      "high": [
+        "Status confirmed."
+      ],
+      "very_high": [
+        "Status confirmed."
+      ]
+    },
+    "reflection": {
+      "very_low": [
+        "Suggest consideration of implications."
+      ],
+      "low": [
+        "Suggest consideration of implications."
+      ],
+      "medium": [
+        "Analysis warranted."
+      ],
+      "high": [
+        "Process this systematically."
+      ],
+      "very_high": [
+        "Process this systematically."
+      ]
+    },
+    "contextualization": {
+      "very_low": [
+        "Contextual framework applied."
+      ],
+      "low": [
+        "Contextual framework applied."
+      ],
+      "medium": [
+        "Pattern integration required."
+      ],
+      "high": [
+        "Broader scope revealed."
+      ],
+      "very_high": [
+        "Broader scope revealed."
+      ]
+    },
+    "clarification": {
+      "very_low": [
+        "Precise statement warranted."
+      ],
+      "low": [
+        "Precise statement warranted."
+      ],
+      "medium": [
+        "Factual perspective: Thus."
+      ],
+      "high": [
+        "Systematize your understanding."
+      ],
+      "very_high": [
+        "Systematize your understanding."
+      ]
+    },
+    "affirmation": {
+      "very_low": [
+        "Correct formulation."
+      ],
+      "low": [
+        "Correct formulation."
+      ],
+      "medium": [
+        "Efficient selection."
+      ],
+      "high": [
+        "Approved assessment."
+      ],
+      "very_high": [
+        "Approved assessment."
+      ]
+    },
+    "confirmation": {
+      "very_low": [
+        "Assertion verified."
+      ],
+      "low": [
+        "Assertion verified."
+      ],
+      "medium": [
+        "Logic confirmed."
+      ],
+      "high": [
+        "Your conclusion is sound."
+      ],
+      "very_high": [
+        "Your conclusion is sound."
+      ]
+    },
+    "encouragement": {
+      "very_low": [
+        "Continue optimization."
+      ],
+      "low": [
+        "Continue optimization."
+      ],
+      "medium": [
+        "Path trajectory favorable."
+      ],
+      "high": [
+        "Momentum sustained."
+      ],
+      "very_high": [
+        "Momentum sustained."
+      ]
+    },
+    "resolve_validation": {
+      "very_low": [
+        "Commitment strength noted."
+      ],
+      "low": [
+        "Commitment strength noted."
+      ],
+      "medium": [
+        "Conviction data significant."
+      ],
+      "high": [
+        "Resolve parameter optimal."
+      ],
+      "very_high": [
+        "Resolve parameter optimal."
+      ]
+    },
+    "concern": {
+      "very_low": [
+        "Alert status elevated."
+      ],
+      "low": [
+        "Alert status elevated."
+      ],
+      "medium": [
+        "Complication probability increased."
+      ],
+      "high": [
+        "Caution parameter activated."
+      ],
+      "very_high": [
+        "Caution parameter activated."
+      ]
+    },
+    "warning": {
+      "very_low": [
+        "Threat assessment elevated."
+      ],
+      "low": [
+        "Threat assessment elevated."
+      ],
+      "medium": [
+        "Risk factor: High."
+      ],
+      "high": [
+        "Proceed with restraint."
+      ],
+      "very_high": [
+        "Proceed with restraint."
+      ]
+    },
+    "risk_acknowledgment": {
+      "very_low": [
+        "Risk calculation: Significant."
+      ],
+      "low": [
+        "Risk calculation: Significant."
+      ],
+      "medium": [
+        "Probability of loss: Elevated."
+      ],
+      "high": [
+        "Outcomes uncertain."
+      ],
+      "very_high": [
+        "Outcomes uncertain."
+      ]
+    },
+    "exposure": {
+      "very_low": [
+        "Defensive parameters compromised."
+      ],
+      "low": [
+        "Defensive parameters compromised."
+      ],
+      "medium": [
+        "Vulnerability detected."
+      ],
+      "high": [
+        "Protection insufficient."
+      ],
+      "very_high": [
+        "Protection insufficient."
+      ]
+    },
+    "overreach": {
+      "very_low": [
+        "Capacity exceeded."
+      ],
+      "low": [
+        "Capacity exceeded."
+      ],
+      "medium": [
+        "Resources insufficient."
+      ],
+      "high": [
+        "Overcommitment detected."
+      ],
+      "very_high": [
+        "Overcommitment detected."
+      ]
+    },
+    "reorientation": {
+      "very_low": [
+        "Alternative algorithm available."
+      ],
+      "low": [
+        "Alternative algorithm available."
+      ],
+      "medium": [
+        "Parameter adjustment suggested."
+      ],
+      "high": [
+        "New approach viable."
+      ],
+      "very_high": [
+        "New approach viable."
+      ]
+    },
+    "invitation": {
+      "very_low": [
+        "Favorable path available."
+      ],
+      "low": [
+        "Favorable path available."
+      ],
+      "medium": [
+        "Probability of success: Increased."
+      ],
+      "high": [
+        "Option generated."
+      ],
+      "very_high": [
+        "Option generated."
+      ]
+    },
+    "release": {
+      "very_low": [
+        "Burden unnecessary."
+      ],
+      "low": [
+        "Burden unnecessary."
+      ],
+      "medium": [
+        "Delete extraneous data."
+      ],
+      "high": [
+        "Offload unnecessary load."
+      ],
+      "very_high": [
+        "Offload unnecessary load."
+      ]
+    },
+    "reassessment": {
+      "very_low": [
+        "Data revision required."
+      ],
+      "low": [
+        "Data revision required."
+      ],
+      "medium": [
+        "Parameters shifted."
+      ],
+      "high": [
+        "Analysis update necessary."
+      ],
+      "very_high": [
+        "Analysis update necessary."
+      ]
+    },
+    "doubt_recognition": {
+      "very_low": [
+        "Confidence metric: Low."
+      ],
+      "low": [
+        "Confidence metric: Low."
+      ],
+      "medium": [
+        "Certainty factor: Declining."
+      ],
+      "high": [
+        "Doubt parameter detected."
+      ],
+      "very_high": [
+        "Doubt parameter detected."
+      ]
+    },
+    "inner_conflict": {
+      "very_low": [
+        "Contradiction identified."
+      ],
+      "low": [
+        "Contradiction identified."
+      ],
+      "medium": [
+        "Dual parameters detected."
+      ],
+      "high": [
+        "Conflict data noted."
+      ],
+      "very_high": [
+        "Conflict data noted."
+      ]
+    },
+    "resolve_testing": {
+      "very_low": [
+        "Commitment verification required."
+      ],
+      "low": [
+        "Commitment verification required."
+      ],
+      "medium": [
+        "Resolve confirmation requested."
+      ],
+      "high": [
+        "Sustain parameter query."
+      ],
+      "very_high": [
+        "Sustain parameter query."
+      ]
+    },
+    "uncertainty_acknowledgment": {
+      "very_low": [
+        "Data incomplete."
+      ],
+      "low": [
+        "Data incomplete."
+      ],
+      "medium": [
+        "Visibility limited."
+      ],
+      "high": [
+        "Clarity forthcoming."
+      ],
+      "very_high": [
+        "Clarity forthcoming."
+      ]
+    },
+    "restraint": {
+      "very_low": [
+        "Activation deferred."
+      ],
+      "low": [
+        "Activation deferred."
+      ],
+      "medium": [
+        "Movement parameter: Hold."
+      ],
+      "high": [
+        "Discretionary: Maintain position."
+      ],
+      "very_high": [
+        "Discretionary: Maintain position."
+      ]
+    },
+    "patience": {
+      "very_low": [
+        "Timing optimization required."
+      ],
+      "low": [
+        "Timing optimization required."
+      ],
+      "medium": [
+        "Moment alignment pending."
+      ],
+      "high": [
+        "Sequential process initiated."
+      ],
+      "very_high": [
+        "Sequential process initiated."
+      ]
+    },
+    "focus_reminder": {
+      "very_low": [
+        "Primary objective maintained."
+      ],
+      "low": [
+        "Primary objective maintained."
+      ],
+      "medium": [
+        "Distraction: Rejected."
+      ],
+      "high": [
+        "Target priority sustained."
+      ],
+      "very_high": [
+        "Target priority sustained."
+      ]
+    },
+    "discipline": {
+      "very_low": [
+        "Protocol adherence required."
+      ],
+      "low": [
+        "Protocol adherence required."
+      ],
+      "medium": [
+        "Rigor maintained."
+      ],
+      "high": [
+        "Structure enforced."
+      ],
+      "very_high": [
+        "Structure enforced."
+      ]
+    },
+    "insight": {
+      "very_low": [
+        "Recognition clarity: High."
+      ],
+      "low": [
+        "Recognition clarity: High."
+      ],
+      "medium": [
+        "Perception parameter: Optimal."
+      ],
+      "high": [
+        "Understanding confirmed."
+      ],
+      "very_high": [
+        "Understanding confirmed."
+      ]
+    },
+    "perspective": {
+      "very_low": [
+        "Viewpoint recalibration valuable."
+      ],
+      "low": [
+        "Viewpoint recalibration valuable."
+      ],
+      "medium": [
+        "Vantage point analysis: Higher level."
+      ],
+      "high": [
+        "Distance provides clarity factor."
+      ],
+      "very_high": [
+        "Distance provides clarity factor."
+      ]
+    },
+    "revelation": {
+      "very_low": [
+        "Significant data emergence."
+      ],
+      "low": [
+        "Significant data emergence."
+      ],
+      "medium": [
+        "Hidden factor revealed."
+      ],
+      "high": [
+        "Critical information accessed."
+      ],
+      "very_high": [
+        "Critical information accessed."
+      ]
+    },
+    "humility": {
+      "very_low": [
+        "Capacity parameters: Define limits."
+      ],
+      "low": [
+        "Capacity parameters: Define limits."
+      ],
+      "medium": [
+        "Boundary recognition essential."
+      ],
+      "high": [
+        "Acknowledge functional ceiling."
+      ],
+      "very_high": [
+        "Acknowledge functional ceiling."
+      ]
+    },
+    "gravity": {
+      "very_low": [
+        "Significance parameter: Elevated."
+      ],
+      "low": [
+        "Significance parameter: Elevated."
+      ],
+      "medium": [
+        "Moment weight: Substantial."
+      ],
+      "high": [
+        "Importance calculation: High."
+      ],
+      "very_high": [
+        "Importance calculation: High."
+      ]
+    },
+    "consequential_awareness": {
+      "very_low": [
+        "Outcome probability mapped."
+      ],
+      "low": [
+        "Outcome probability mapped."
+      ],
+      "medium": [
+        "Stake assessment: Clear."
+      ],
+      "high": [
+        "Consequence data: Processed."
+      ],
+      "very_high": [
+        "Consequence data: Processed."
+      ]
+    },
+    "threshold": {
+      "very_low": [
+        "Critical junction identified."
+      ],
+      "low": [
+        "Critical junction identified."
+      ],
+      "medium": [
+        "Transition point imminent."
+      ],
+      "high": [
+        "Irreversible change initiated."
+      ],
+      "very_high": [
+        "Irreversible change initiated."
+      ]
+    },
+    "emergence": {
+      "very_low": [
+        "Evolution detected."
+      ],
+      "low": [
+        "Evolution detected."
+      ],
+      "medium": [
+        "New capability formation."
+      ],
+      "high": [
+        "Adaptation in progress."
+      ],
+      "very_high": [
+        "Adaptation in progress."
+      ]
+    },
+    "transformation_acknowledgment": {
+      "very_low": [
+        "Change state: Verified."
+      ],
+      "low": [
+        "Change state: Verified."
+      ],
+      "medium": [
+        "Transformation degree: Significant."
+      ],
+      "high": [
+        "Alteration: Confirmed and logged."
+      ],
+      "very_high": [
+        "Alteration: Confirmed and logged."
+      ]
+    },
+    "maturation": {
+      "very_low": [
+        "Development phase: Advanced."
+      ],
+      "low": [
+        "Development phase: Advanced."
+      ],
+      "medium": [
+        "Competency growth: Observable."
+      ],
+      "high": [
+        "Evolution: Ongoing process."
+      ],
+      "very_high": [
+        "Evolution: Ongoing process."
+      ]
+    },
+    "acceptance": {
+      "very_low": [
+        "Operational reality: Confirmed."
+      ],
+      "low": [
+        "Operational reality: Confirmed."
+      ],
+      "medium": [
+        "Parameters: Accept as given."
+      ],
+      "high": [
+        "Status quo: Acknowledge and process."
+      ],
+      "very_high": [
+        "Status quo: Acknowledge and process."
+      ]
+    },
+    "deferral": {
+      "very_low": [
+        "Timing: Premature."
+      ],
+      "low": [
+        "Timing: Premature."
+      ],
+      "medium": [
+        "Readiness: Insufficient."
+      ],
+      "high": [
+        "Activation: Deferred."
+      ],
+      "very_high": [
+        "Activation: Deferred."
+      ]
+    },
+    "silence": {
+      "very_low": [
+        ""
+      ],
+      "low": [
+        ""
+      ],
+      "medium": [
+        ""
+      ],
+      "high": [
+        ""
+      ],
+      "very_high": [
+        ""
+      ]
+    }
+  }
+}

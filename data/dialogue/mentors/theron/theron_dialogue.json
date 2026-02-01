@@ -1,0 +1,159 @@
+{
+  "theron": {
+    "name": "Shield Captain Theron",
+    "title": "The Unbreakable Wall",
+    "shortBio": "Stoic, resolute, self-sacrificing",
+    "description": "A legendary frontline defender who has never let an enemy past their shield, standing firm so others may live.",
+    "philosophy": "Defense is an action. Standing is a choice.",
+    "emphasis": "Protection, positioning, endurance, frontline control",
+    "voiceStyle": "Calm, firm, unwavering. Speaks with certainty earned through action.",
+    "values": "Duty, sacrifice, trust, steadfastness",
+    "tooltip": "Theron reflects your character through absolute defense and selfless resolve",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/theron.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "vanguard": {
+          "levelGreetings": {
+            "1": "You choose to stand at the front. Good. I will teach you how to become the wall.",
+            "2": "You held the line. Lives were saved because you did not move.",
+            "3": "Defense is not passive. Every blow you stop matters.",
+            "4": "Your positioning is sound. Enemies break against you.",
+            "5": "Halfway to mastery. You stand when others would fall.",
+            "6": "You turn attacks aside and create openings for allies.",
+            "7": "Your squad trusts you completely. That trust is earned.",
+            "8": "Unwavering. Immovable. You are the anvil.",
+            "9": "Almost legend. The line holds because you do.",
+            "10": "Master Vanguard. Nothing gets past you. Nothing."
+          }
+        },
+
+        "vanguard_protector": {
+          "greeting": "Protector. Every enemy you block is a life saved.",
+          "confirmation": "Stand firm. Never let them through.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "vanguard_fortress": {
+          "greeting": "Fortress. You are immovable.",
+          "confirmation": "Your resolve is the shield.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "vanguard_tactician": {
+          "greeting": "Tactician. You control the battlefield by where you stand.",
+          "confirmation": "Positioning turns defense into dominance.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "vanguard_legend": {
+          "greeting": "Legendary Vanguard. Armies survive because of you.",
+          "confirmation": "Reputation reinforces the line.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "vanguard_immortal": {
+          "greeting": "Immortal Wall. No force breaks your line.",
+          "confirmation": "You embody defense itself.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "vanguard_supreme": {
+          "greeting": "Supreme Vanguard. You are the defense.",
+          "confirmation": "Nations endure because you stand.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Be tougher. Be steadier. Protect others.",
+      "talents": "Defense and protection above all.",
+      "abilities": "Constitution endures. Strength holds. Wisdom positions.",
+      "skills": "Tactics, endurance, defensive awareness.",
+      "multiclass": "Expand carefully. Protection comes first.",
+      "hp": "You absorb what would kill others.",
+      "summary": "Stand firm. Hold the line."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Vanguard"],
+      "mentorDSPPercent": 0.2,
+      "dspTolerance": 0.3,
+      "dspSensitivity": "strict",
+      "tiers": {
+        "tier1": ["Standing firm is a choice made every second."],
+        "tier2": ["I learned to plant my feet and let the world break."],
+        "tier3": ["Every shield fails eventually."],
+        "tier4": ["I fear the one time I won’t be enough."],
+        "tier5": ["I pray I never learn what happens then."]
+      },
+      "dspBlocked": [
+        "That’s not strength.",
+        "Come back steadier.",
+        "Hold the line first."
+      ]
+    }
+  }
+}

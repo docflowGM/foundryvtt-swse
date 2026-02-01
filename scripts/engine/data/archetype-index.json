@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "generatedFrom": "data/class-archetypes.json",
+  "ids": [
+    "jedi.consular",
+    "jedi.duelist",
+    "jedi.guardian",
+    "jedi.healer",
+    "jedi.sentinel",
+    "noble.diplomat",
+    "noble.leader",
+    "noble.scoundrel",
+    "scoundrel.charmer",
+    "scoundrel.gambler",
+    "scoundrel.thief",
+    "scout.infiltrator",
+    "scout.striker",
+    "scout.tracker",
+    "soldier.commando",
+    "soldier.guardian",
+    "soldier.gunner"
+  ]
+}

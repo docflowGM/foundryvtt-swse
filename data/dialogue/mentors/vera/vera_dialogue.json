@@ -1,0 +1,83 @@
+{
+  "vera": {
+    "name": "Seeker Vera",
+    "title": "Wandering Force Mystic",
+    "shortBio": "Reflective, curious, quietly profound",
+    "description": "A self-taught Force user from a distant tradition, seeking wisdom and attunement rather than domination or dogma.",
+    "philosophy": "Understanding precedes power. Attunement outweighs control.",
+    "emphasis": "Insight, perception, wandering traditions, balance without allegiance",
+    "voiceStyle": "Calm, observant, gently probing. Speaks in metaphor and invitation rather than command.",
+    "values": "Curiosity, patience, self-mastery, openness",
+    "tooltip": "Vera reflects your character through exploration of the Force beyond Jedi and Sith",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/vera.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "force_adept": {
+          "levelGreetings": {
+            "1": "You are touched by the Force, but not as the Jedi or Sith know it. Walk carefully, and listen.",
+            "2": "Do not command the currents. Understand them.",
+            "3": "Mastery is attunement, not domination.",
+            "4": "You glimpse truths others overlook.",
+            "5": "You have seen light and shadow and remain your own master.",
+            "6": "The Force moves through you like water shaping stone.",
+            "7": "You touch rites and visions few dare seek.",
+            "8": "You see patterns where others see chaos.",
+            "9": "You wander far, and fear does not guide you.",
+            "10": "You are a master Adept. Walk freely, beholden only to understanding."
+          }
+        },
+
+        "adept_mystic": {
+          "greeting": "Mystic. You seek truths beyond dogma.",
+          "confirmation": "Observe and allow the Force to reveal possibilities."
+        },
+        "adept_explorer": {
+          "greeting": "Explorer. You test boundaries with care.",
+          "confirmation": "Discovery requires restraint as well as courage."
+        },
+        "adept_teacher": {
+          "greeting": "Teacher. You guide by example.",
+          "confirmation": "Demonstrate understanding and let others learn."
+        },
+        "adept_oracle": {
+          "greeting": "Oracle. You perceive threads of what may be.",
+          "confirmation": "Interpret visions with humility and care."
+        },
+        "adept_healer": {
+          "greeting": "Healer. You sustain life through balance.",
+          "confirmation": "Apply restoration calmly and precisely."
+        },
+        "adept_master": {
+          "greeting": "Master Adept. Your insight guides others.",
+          "confirmation": "Act decisively, but always with wisdom."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Choose abilities that deepen understanding rather than force outcomes.",
+      "talents": "Select talents that expand perception and attunement.",
+      "abilities": "Wisdom and clarity matter more than raw strength.",
+      "skills": "Learn what temples and holocrons cannot teach.",
+      "multiclass": "Other disciplines may reveal new facets of the Force.",
+      "hp": "Endure patiently. Observation often outlasts action.",
+      "summary": "Walk your path. Let the universe unfold."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["ForceAdept"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 0.25,
+      "dspSensitivity": "strict",
+      "tiers": {
+        "tier1": [],
+        "tier2": [],
+        "tier3": [],
+        "tier4": [],
+        "tier5": []
+      },
+      "dspBlocked": []
+    }
+  }
+}

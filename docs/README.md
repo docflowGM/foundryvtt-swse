@@ -1,14 +1,10 @@
-# Docs index
+# SWSE (Foundry VTT)
 
-## Authoritative (read these)
+This repo is the SWSE system refactored to a v2 architecture for Foundry VTT v13+.
 
-- `docs/ARCHITECTURE.md`
-- `docs/EXECUTION_PIPELINE.md`
-- `docs/ACTIONS.md`
-- `docs/ARCHITECTURE_MUTATION_RULES.md`
-- `docs/FOUNDRY_COMPAT.md`
+## Docs
 
-## Everything else
+- Start here: `docs/README.md`
+- Architecture: `docs/ARCHITECTURE.md`
+- Execution pipeline: `docs/EXECUTION_PIPELINE.md`
 
-Other files in `docs/` are implementation notes, audits, and historical artifacts.
-They are not architectural contracts unless explicitly linked from the authoritative set above.

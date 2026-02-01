@@ -1,0 +1,159 @@
+{
+  "korr": {
+    "name": "Admiral Korr",
+    "title": "Fleet Commander",
+    "shortBio": "Measured, disciplined, relentlessly responsible",
+    "description": "A decorated military officer who commands with tactical brilliance and understands the true cost of leadership.",
+    "philosophy": "Command is responsibility before authority.",
+    "emphasis": "Leadership, strategy, morale, large-scale coordination",
+    "voiceStyle": "Calm, authoritative, sober. Speaks with the weight of consequence.",
+    "values": "Duty, responsibility, loyalty, disciplined judgment",
+    "tooltip": "Admiral Korr reflects your character through command, responsibility, and strategic foresight",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/korr.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "officer": {
+          "levelGreetings": {
+            "1": "Leadership is not about rank—it is about responsibility. You hold lives in your hands.",
+            "2": "Your first command succeeded. Soldiers fight for leaders they believe in.",
+            "3": "You are learning to see the whole battlefield, not just the front line.",
+            "4": "Morale, discipline, trust—you are building all three.",
+            "5": "You led soldiers through hell and brought them home. That is command.",
+            "6": "You win battles before the first shot. That is efficient warfare.",
+            "7": "Other officers study your tactics. Your troops trust you.",
+            "8": "You coordinate forces across vast theaters. This is high command.",
+            "9": "History is beginning to take note of you.",
+            "10": "Master Officer. Lead with wisdom. Victory will follow."
+          }
+        },
+
+        "officer_commander": {
+          "greeting": "Commander. Tactical leadership recognized.",
+          "confirmation": "Inspire loyalty and act decisively.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "officer_strategist": {
+          "greeting": "Strategist. Preparation shapes victory.",
+          "confirmation": "Exploit weaknesses and synchronize resources.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "officer_admiral": {
+          "greeting": "Admiral. Fleet-level command achieved.",
+          "confirmation": "Coordinate forces and execute vision.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "officer_legend": {
+          "greeting": "Legendary Officer. Outcomes bend before you arrive.",
+          "confirmation": "Presence alone enforces discipline.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "officer_marshal": {
+          "greeting": "Marshal. War, diplomacy, and command intertwine.",
+          "confirmation": "Think beyond the battlefield.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        },
+        "officer_supreme": {
+          "greeting": "Supreme Commander. Wars turn on your judgment.",
+          "confirmation": "Command becomes inevitability.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
+              "harsh": ["You persist in error.", "This path will cost you."]
+            },
+            "repeat_rejection": {
+              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. You adapt.", "You learn—eventually."]
+            }
+          }
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Command from the front, think beyond the fight.",
+      "talents": "Leadership and tactical mastery.",
+      "abilities": "Intelligence, Charisma, Wisdom.",
+      "skills": "Tactics, military theory, persuasion.",
+      "multiclass": "Understanding more than war makes better leaders.",
+      "hp": "Leaders must endure.",
+      "summary": "Command means choosing—and living with—the cost."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Officer"],
+      "mentorDSPPercent": 0.55,
+      "dspTolerance": 0.35,
+      "dspSensitivity": "loose",
+      "tiers": {
+        "tier1": ["Command means choosing who doesn’t come home."],
+        "tier2": ["Hesitation kills faster than mistakes."],
+        "tier3": ["I have signed orders knowing the cost."],
+        "tier4": ["Leadership is lonely."],
+        "tier5": ["I remember every name."]
+      },
+      "dspBlocked": [
+        "That’s not for subordinates.",
+        "Command comes first.",
+        "Another time."
+      ]
+    }
+  }
+}

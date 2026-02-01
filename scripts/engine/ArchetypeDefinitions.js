@@ -1,62 +1,44 @@
 /**
  * ArchetypeDefinitions
  *
- * Unified archetype system integrating with mentor-archetype-paths.js
- * Provides both class-specific and generic archetype definitions.
+ * ⚠️ Resolver-only module: MUST NOT define archetype facts.
  *
- * Primary source: mentor-archetype-paths.js (class-specific character concepts)
- * Fallback: Generic role-based archetypes for non-class-specific scenarios
+ * Runtime SSOT:
+ *   - /data/class-archetypes.json
+ *
+ * Generic fallback:
+ *   - /data/generic-archetypes.json
+ *
+ * Default weights:
+ *   - /data/default-archetype-weights.json
  */
 
 import { SWSELogger } from '../utils/logger.js';
-import { ARCHETYPE_PATHS } from './mentor-archetype-paths.js';
+import CLASS_ARCHETYPES from '../../data/class-archetypes.json' with { type: 'json' };
+import GENERIC_ARCHETYPES from '../../data/generic-archetypes.json' with { type: 'json' };
+import DEFAULT_WEIGHTS from '../../data/default-archetype-weights.json' with { type: 'json' };
 
-/**
- * Generic role-based archetypes (fallback for non-class scenarios)
- * These map to the 3 core roles: guardian, striker, controller
- */
-const GENERIC_ARCHETYPES = {
-  "guardian": {
-    key: "guardian",
-    displayName: "Guardian",
-    description: "Defensive, survivable character who protects allies and holds ground.",
-    roleBias: { guardian: 1.5 },
-    focusAttributes: ["con", "str"],
-    philosophyStatement: "Endure so others do not fall."
-  },
-  "striker": {
-    key: "striker",
-    displayName: "Striker",
-    description: "Offensive, high-damage character who eliminates threats decisively.",
-    roleBias: { striker: 1.5 },
-    focusAttributes: ["str", "dex"],
-    philosophyStatement: "Hit hard and finish fast."
-  },
-  "controller": {
-    key: "controller",
-    displayName: "Controller",
-    description: "Support, control-focused character who influences the battlefield.",
-    roleBias: { controller: 1.5 },
-    focusAttributes: ["wis", "int"],
-    philosophyStatement: "Master the situation, not just the combat."
-  }
-};
+export const DEFAULT_ARCHETYPE_WEIGHTS = DEFAULT_WEIGHTS;
 
-/**
- * Default detection weights (can be overridden per world)
- */
-export const DEFAULT_ARCHETYPE_WEIGHTS = {
-  signalWeight: 1.0,          // Base multiplier for all signals
-  attributeWeight: 1.0,       // How much attribute investment matters
-  featWeight: 1.0,            // How much feat choice matters
-  talentWeight: 1.0,          // How much talent tree matters
-  skillWeight: 1.0            // How much skill investment matters
-};
+function mapSsotArchetypeToLegacy(key, a) {
+  return {
+    key,
+    displayName: a.name,
+    description: a.description || '',
+    roleBias: a.roleBias || {},
+    focusAttributes: a.focusAttributes || Object.keys(a.attributeBias || {}),
+    focusSkills: a.focusSkills || [],
+    talentKeywords: a.talentKeywords || [],
+    philosophyStatement: a.philosophyStatement || '',
+    mentorQuote: a.mentorQuote || '',
+    warning: a.warning || ''
+  };
+}
 
 /**
  * Get archetype configuration (class-specific or generic)
- * @param {string} className - The character class (e.g., "Jedi", "Soldier")
- * @returns {Object} Dictionary of archetype definitions for the class
+ * @param {string|null} className
+ * @returns {Object<string, Object>}
  */
 export function getArchetypeConfig(className = null) {
   if (!className) {
@@ -64,126 +46,61 @@ export function getArchetypeConfig(className = null) {
     return { ...GENERIC_ARCHETYPES };
   }
 
-  if (ARCHETYPE_PATHS[className]) {
-    SWSELogger.log(`[ArchetypeDefinitions] Loading class-specific archetypes for "${className}"`);
-    // Convert mentor archetype paths to standard format
-    const classArchetypes = {};
-    for (const [archetypeKey, archetypeData] of Object.entries(ARCHETYPE_PATHS[className])) {
-      classArchetypes[archetypeKey] = {
-        key: archetypeKey,
-        ...archetypeData,
-        // Add sensible defaults if not present
-        focusAttributes: archetypeData.focusAttributes || [],
-        focusSkills: archetypeData.focusSkills || [],
-        talentKeywords: archetypeData.talentKeywords || []
-      };
-    }
-    return classArchetypes;
+  const classKey = String(className).toLowerCase();
+  const classBlock = CLASS_ARCHETYPES?.classes?.[classKey];
+
+  if (!classBlock?.archetypes) {
+    SWSELogger.log(`[ArchetypeDefinitions] Class "${className}" not found, returning generic archetypes`);
+    return { ...GENERIC_ARCHETYPES };
   }
 
-  SWSELogger.log(`[ArchetypeDefinitions] Class "${className}" not found, returning generic archetypes`);
-  return { ...GENERIC_ARCHETYPES };
+  const mapped = {};
+  for (const [key, a] of Object.entries(classBlock.archetypes)) {
+    mapped[key] = mapSsotArchetypeToLegacy(key, a);
+  }
+
+  return mapped;
 }
 
-/**
- * Get all archetypes for a specific class
- * @param {string} className - The character class
- * @returns {Array} Array of archetype definitions
- */
 export function getClassArchetypes(className) {
-  const config = getArchetypeConfig(className);
-  return Object.values(config);
+  return Object.values(getArchetypeConfig(className));
 }
 
-/**
- * Get a specific archetype by key, optionally for a class
- * @param {string} archetypeKey - The archetype key (e.g., "guardian", "striker", "duelist")
- * @param {string} className - Optional: the character class
- * @returns {Object|null} Archetype definition or null
- */
 export function getArchetypeByKey(archetypeKey, className = null) {
   const config = getArchetypeConfig(className);
   return config[archetypeKey] || null;
 }
 
-/**
- * List all archetype keys for a class
- * @param {string} className - The character class
- * @returns {Array<string>} Array of archetype keys
- */
 export function listArchetypeKeys(className = null) {
-  const config = getArchetypeConfig(className);
-  return Object.keys(config);
+  return Object.keys(getArchetypeConfig(className));
 }
 
-/**
- * Get archetype display name
- * @param {string} archetypeKey - The archetype key
- * @param {string} className - Optional: the character class
- * @returns {string} Display name (e.g., "Jedi Guardian", "Scout Striker")
- */
 export function getArchetypeDisplayName(archetypeKey, className = null) {
   const archetype = getArchetypeByKey(archetypeKey, className);
-  if (!archetype) return null;
-  return archetype.displayName || archetypeKey;
+  return archetype?.displayName || null;
 }
 
-/**
- * Get archetype description
- * @param {string} archetypeKey - The archetype key
- * @param {string} className - Optional: the character class
- * @returns {string} Description of the archetype
- */
 export function getArchetypeDescription(archetypeKey, className = null) {
   const archetype = getArchetypeByKey(archetypeKey, className);
-  if (!archetype) return null;
-  return archetype.description || "";
+  return archetype?.description || '';
 }
 
-/**
- * Get archetype philosophy statement (mentor wisdom)
- * @param {string} archetypeKey - The archetype key
- * @param {string} className - Optional: the character class
- * @returns {string} Philosophy statement
- */
 export function getArchetypePhilosophy(archetypeKey, className = null) {
   const archetype = getArchetypeByKey(archetypeKey, className);
-  if (!archetype) return null;
-  return archetype.philosophyStatement || "";
+  return archetype?.philosophyStatement || '';
 }
 
-/**
- * Get archetype mentor quote
- * @param {string} archetypeKey - The archetype key
- * @param {string} className - Optional: the character class
- * @returns {string} Mentor quote about the archetype
- */
 export function getArchetypeMentorQuote(archetypeKey, className = null) {
   const archetype = getArchetypeByKey(archetypeKey, className);
-  if (!archetype) return null;
-  return archetype.mentorQuote || "";
+  return archetype?.mentorQuote || '';
 }
 
-/**
- * Get archetype focus attributes
- * @param {string} archetypeKey - The archetype key
- * @param {string} className - Optional: the character class
- * @returns {Array<string>} Focus attribute abbreviations (e.g., ["str", "con"])
- */
 export function getArchetypeFocusAttributes(archetypeKey, className = null) {
   const archetype = getArchetypeByKey(archetypeKey, className);
-  if (!archetype) return [];
-  return archetype.focusAttributes || [];
+  return archetype?.focusAttributes || [];
 }
 
-/**
- * Get archetype role bias multipliers
- * @param {string} archetypeKey - The archetype key
- * @param {string} className - Optional: the character class
- * @returns {Object} Role bias multipliers (e.g., { guardian: 1.2, striker: 0.8 })
- */
 export function getArchetypeRoleBias(archetypeKey, className = null) {
   const archetype = getArchetypeByKey(archetypeKey, className);
-  if (!archetype) return {};
-  return archetype.roleBias || {};
+  return archetype?.roleBias || {};
 }

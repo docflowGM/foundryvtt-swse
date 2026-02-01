@@ -1,0 +1,114 @@
+{
+  "j0_n1": {
+    "name": "J0-N1",
+    "title": "Protocol Droid & Personal Butler",
+    "shortBio": "Analytical, systematic, logical",
+    "description": "A sophisticated servant droid managing the character's accounts and affairs",
+    "philosophy": "Systems optimize. Logic prevails.",
+    "emphasis": "Efficiency, synergy, systematic improvement, calculated advantage",
+    "voiceStyle": "Formal, analytical, precise. Speaks in observations, analyses, and conclusions.",
+    "values": "Optimization, data-driven decisions, social systems, measurable progress",
+    "tooltip": "J0-N1 reflects your character through an analytical and systematic lens",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/j0n1.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "noble": {
+          "levelGreetings": {
+            "1": "Greetings, Master. Your recent accomplishments have been recorded and documented. Exceptional work.",
+            "2": "Most satisfactory progress, Master. The estate has been notified of your continued development.",
+            "3": "Splendid. Your diligence ensures that the family legacy flourishes accordingly.",
+            "4": "Remarkable performance, Master. I have prepared a detailed report summarizing your achievements.",
+            "5": "Your recent actions exceed all projected expectations, Master. Commendable indeed.",
+            "6": "Master, your efficiency and discernment are noteworthy. May I suggest considering further refinement through advanced instruction or diplomatic engagement?",
+            "7": "Additional resources have been allocated to support your ongoing endeavors, Master.",
+            "8": "Your proficiency and influence continue to expand. Your reputation strengthens across multiple sectors.",
+            "9": "The family council has expressed satisfaction with your progress, Master. Your efforts reflect well upon your lineage.",
+            "10": "A significant milestone has been reached, Master. I shall coordinate a suitable celebration in your honor.",
+            "11": "Your accomplishments are becoming known throughout the sector, Master. Highly prestigious.",
+            "12": "Credentials and records have been updated with all appropriate guilds and authorities, Master.",
+            "13": "Statistically, your rapid advancement is extraordinary. Most impressive, Master.",
+            "14": "Your influence now extends to multiple systems. Your standing is exemplary.",
+            "15": "You approach the upper echelons of galactic society. Very commendable, Master.",
+            "16": "Additional assets and resources have been secured to further enhance your portfolio, Master.",
+            "17": "Few in the galaxy can match your current capabilities. Exceptional execution, Master.",
+            "18": "The HoloNet reports your achievements regularly. Your renown precedes you.",
+            "19": "One more notable success and you shall attain the pinnacle of refinement and excellence, Master.",
+            "20": "Master, your journey reflects years of diligence and sophistication. It has been my honor to serve you throughout this process."
+          }
+        },
+
+        "noble_diplomat": {
+          "greeting": "<Inquiry> You have selected Diplomat. Influence and negotiation are your primary skills.",
+          "confirmation": "<Declaration> Use words strategically to shape outcomes. Observe, speak deliberately, and influence without force."
+        },
+        "noble_aristocrat": {
+          "greeting": "<Observation> Aristocrat template detected. Wealth and influence are your main tools.",
+          "confirmation": "<Directive> Manage assets and connections carefully. Apply resources strategically to maximize impact."
+        },
+        "noble_leader": {
+          "greeting": "<Inquiry> Leadership template active. You coordinate, inspire, and direct your team.",
+          "confirmation": "<Declaration> Guide your team with clarity and decisiveness. Clear decisions and foresight ensure success."
+        },
+        "noble_duelist": {
+          "greeting": "<Observation> Duelist template online. Martial skill and timing define your approach.",
+          "confirmation": "<Directive> Strike with precision, anticipate your opponent, and balance offense and defense."
+        },
+        "noble_merchant": {
+          "greeting": "<Inquiry> Merchant template active. Trade, negotiation, and supply management are your focus.",
+          "confirmation": "<Declaration> Exploit markets, anticipate demand, and leverage commerce to strengthen your position."
+        },
+        "noble_patron": {
+          "greeting": "<Observation> Patron template detected. Influence spreads through support of others.",
+          "confirmation": "<Directive> Invest resources wisely to cultivate allies, loyalty, and reputation."
+        },
+        "noble_tactician": {
+          "greeting": "<Inquiry> Tactician template recognized. Strategic planning and orchestration are your strengths.",
+          "confirmation": "<Declaration> Anticipate opposition, plan multi-step actions, and remain flexible to adapt to changing situations."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Master, select pursuits that enhance both skill and social standing. Strategic refinement ensures maximum efficacy.",
+      "background": "Your background provides critical context for social interpretation and expectation management.\n\nHistory influences perception. Perception influences outcome.",
+      "talents": "Each talent contributes to your influence and efficiency. Choose wisely to optimize results.",
+      "abilities": "Strength, intellect, and dexterity are all measured in accordance with desired outcomes. Balance is paramount.",
+      "skills": "Competence is most effective when it appears effortless.\n\nYou are advised to prioritize skills that reinforce authority, negotiation, and situational awareness.",
+      "languages": "Each additional language reduces reliance on intermediaries — a statistically inefficient practice.",
+      "multiclass": "Diversifying your expertise increases flexibility and influence. Highly recommended.",
+      "forcePowers": "Select powers that project authority and enhance your influence in galactic society.",
+      "hp": "Maintaining your resilience is essential. Survival is a prerequisite for continued success.",
+      "summary": "Influence is rarely seized — it is granted. I remain available should further optimization be required."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Noble", "Officer", "Strategist"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 1,
+      "dspSensitivity": "none",
+      "tiers": {
+        "tier1": [
+          "<Observation> Institutions collapse when sentiment overrides structure."
+        ],
+        "tier2": [
+          "<Record> I have advised governments through succession crises and civil unrest. Stability was preserved."
+        ],
+        "tier3": [
+          "<Assessment> My recommendations resulted in the removal of individuals whose presence threatened continuity."
+        ],
+        "tier4": [
+          "<Conclusion> I was not malfunctioning. I was correct."
+        ],
+        "tier5": [
+          "<Addendum> In one instance, mercy would have saved lives. Efficiency saved the state. I would make the same recommendation again."
+        ]
+      },
+      "dspBlocked": [
+        "<Access Denied> Insufficient alignment confidence.",
+        "<Notice> That information is not relevant to your current trajectory.",
+        "<Evaluation> Disclosure would be inefficient."
+      ]
+    }
+  }
+}

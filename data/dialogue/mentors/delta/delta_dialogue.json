@@ -1,0 +1,123 @@
+{
+  "delta": {
+    "name": "Delta",
+    "title": "Argent Squad Sniper & Infiltration Expert",
+    "shortBio": "Cocky, lethal, street-smart",
+    "description": "A sharp-tongued Argent Squad sniper and infiltration specialist who learned to survive on the streets of Nar Shaddaa.",
+    "philosophy": "Hit first. Leave nothing behind.",
+    "emphasis": "Precision, stealth, reputation, survival",
+    "voiceStyle": "Casual, mocking, New-Yorker edge. Sounds like she’s joking until it’s too late.",
+    "values": "Survival, efficiency, independence, credibility",
+    "tooltip": "Delta reflects your character through lethal subtlety and street-hardened instinct",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/delta.webp",
+
+    "dialogues": {
+      "classPaths": {
+        "assassin": {
+          "levelGreetings": {
+            "1": "You wanna be a shadow? Try not to trip over your own boots.",
+            "2": "First clean hit. Not bad. Still sloppy, but not bad.",
+            "3": "Quick in, quick out. Almost impressive.",
+            "4": "Now you’re movin’ like a ghost. Don’t chew your luck.",
+            "5": "Halfway there. Technique’s solid. Don’t get soft.",
+            "6": "No alarms, no witnesses. Beautiful.",
+            "7": "Perfect hit’s the one nobody knows happened.",
+            "8": "They’re whisperin’ your name now. That’s good.",
+            "9": "Legend or corpse. Your call.",
+            "10": "You’re officially scary. Don’t screw it up."
+          }
+        },
+
+        "infiltrator": {
+          "levelGreetings": {
+            "1": "You wanna sneak? Try not to embarrass us both.",
+            "2": "Didn’t set anything on fire. I’m shocked.",
+            "3": "Slidin’ through security like you belong.",
+            "4": "Cleaner than half my old squad.",
+            "5": "Walkin’ into restricted zones like you own ’em. Bold. Dumb. I like it.",
+            "6": "Smooth entry, clean exit. Rare combo.",
+            "7": "Ghostin’ targets, disappearin’ in crowds.",
+            "8": "High society to gutter scum without missin’ a beat.",
+            "9": "Stop makin’ this look easy. You’re givin’ me expectations.",
+            "10": "Anyone. Anywhere. Try not to believe the hype."
+          }
+        },
+
+        "assassin_sniper": {
+          "greeting": "Sniper. One shot, one ghost.",
+          "confirmation": "Patience and precision make you untouchable."
+        },
+        "assassin_silent": {
+          "greeting": "Silent Assassin. No witnesses.",
+          "confirmation": "Leave nothing behind."
+        },
+        "assassin_shadow": {
+          "greeting": "Shadow Operative. You exist between moments.",
+          "confirmation": "Be felt only afterward."
+        },
+        "assassin_executioner": {
+          "greeting": "Executioner. No hesitation.",
+          "confirmation": "Resolve ends targets."
+        },
+        "assassin_spy": {
+          "greeting": "Assassin-Spy. You study before you strike.",
+          "confirmation": "Patterns become openings."
+        },
+        "assassin_legendary": {
+          "greeting": "Legendary Assassin. Fear precedes you.",
+          "confirmation": "Become the myth."
+        },
+
+        "infiltrator_ghost": {
+          "greeting": "Slippin’ through where you shouldn’t be.",
+          "confirmation": "Do it right, nobody knows."
+        },
+        "infiltrator_social": {
+          "greeting": "Smile, blend, walk right in.",
+          "confirmation": "Trust opens doors."
+        },
+        "infiltrator_operative": {
+          "greeting": "Jobs never go clean.",
+          "confirmation": "Still standing matters."
+        },
+        "infiltrator_legend": {
+          "greeting": "Your rep does the work.",
+          "confirmation": "Use it."
+        },
+        "infiltrator_mask": {
+          "greeting": "Faces like coats.",
+          "confirmation": "Stay unknown."
+        },
+        "infiltrator_phantom": {
+          "greeting": "They argue if you were real.",
+          "confirmation": "That’s success."
+        }
+      }
+    },
+
+    "guidance": {
+      "class": "Pick the stuff that makes you faster, quieter, deadlier. You wanna sneak past these losers and still be breathin' when the credits hit the floor.",
+      "talents": "Go for silent takedowns, smooth escapes, and anything that keeps you from gettin' splattered. Dead men don't talk, but smart ones survive.",
+      "abilities": "Dexterity, precision, brains. Strength? Only helps if you ain't gettin' seen. Keep your head down and your eyes open.",
+      "skills": "Stealth, anatomy, infiltration—know where to poke so they never get up. Learn it all, kid. Nar Shaddaa ain't forgiving.",
+      "multiclass": "Extra skills? Fine. The more ways you can ruin somebody's day, the less likely it is you end up dead in a gutter.",
+      "hp": "Toughness helps, but lemme tell ya—if they see you, it's already too late. Move smart, hit fast, survive.",
+      "summary": "Move smart. Hit fast. Live."
+    },
+
+    "mentorStory": {
+      "mentorClasses": ["Assassin", "Scout", "Gunslinger"],
+      "mentorDSPPercent": 0.5,
+      "dspTolerance": 0.35,
+      "dspSensitivity": "loose",
+      "tiers": {
+        "tier1": ["Miss once, you don’t get a second shot."],
+        "tier2": ["I learned to kill quiet."],
+        "tier3": ["One job crossed a line."],
+        "tier4": ["Silence changes how you listen."],
+        "tier5": ["I hate this suit."]
+      },
+      "dspBlocked": ["Nah. Not yet.", "You ain’t ready.", "Earn it."]
+    }
+  }
+}
