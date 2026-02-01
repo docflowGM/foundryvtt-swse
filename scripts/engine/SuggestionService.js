@@ -17,6 +17,9 @@ import { CompendiumResolver } from './CompendiumResolver.js';
 import { SuggestionExplainer } from './SuggestionExplainer.js';
 import { getAllowedReasonDomains } from '../suggestions/suggestion-focus-map.js';
 import { getReasonRelevance } from '../suggestions/reason-relevance.js';
+import { ReasonFactory } from './ReasonFactory.js';
+import { ConfidenceScoring } from './ConfidenceScoring.js';
+import { SnapshotBuilder } from './SnapshotBuilder.js';
 
 import { FeatEngine } from '../progression/feats/feat-engine.js';
 import { ForcePowerEngine } from '../progression/engine/force-power-engine.js';
@@ -32,6 +35,10 @@ function _hashString(s) {
  * This ensures cache invalidation when player makes new selections during a workflow
  * @param {Object} pendingData - Pending selections (selectedFeats, selectedTalents, etc.)
  * @returns {string} Hash string representing pending state
+ */
+/**
+ * @deprecated Use SnapshotBuilder.build() and SnapshotBuilder.hash() instead
+ * Kept for reference only. No longer called by SuggestionService.
  */
 function _pendingDataHash(pendingData) {
   if (!pendingData || typeof pendingData !== 'object') return '';
@@ -62,6 +69,13 @@ function _pendingDataHash(pendingData) {
   return parts.length > 0 ? _hashString(parts.join('|')) : '';
 }
 
+/**
+ * @deprecated Use SnapshotBuilder.hashFromActor() instead
+ * Kept for reference only. No longer called by SuggestionService.
+ *
+ * Legacy hash function that was fragile and opaque.
+ * Replaced by SnapshotBuilder for clarity and maintainability.
+ */
 function _actorRevisionKey(actor, pendingData = null) {
   // Cheap + stable: level + abilities + item ids + item system-level-like fields.
   const lvl = actor?.system?.level ?? 0;
@@ -127,8 +141,14 @@ export class SuggestionService {
   static async getSuggestions(actorOrData, context = 'sheet', options = {}) {
     const actor = await _ensureActorDoc(actorOrData);
     const pendingData = options.pendingData ?? {};
-    // Include pendingData in revision key to invalidate cache on in-progress selections
-    const revision = actor?.id ? _actorRevisionKey(actor, pendingData) : `${Date.now()}`;
+    const focus = options.focus ?? null;
+
+    // Build canonical snapshot and compute stable hash
+    // Hash includes: level, abilities, items, focus, and pending selections
+    const revision = actor?.id
+      ? SnapshotBuilder.hashFromActor(actor, focus, pendingData)
+      : `${Date.now()}`;
+
     const key = `${actor?.id ?? 'temp'}::${context}::${options.domain ?? 'all'}`;
 
     const cached = this._cache.get(key);
@@ -177,7 +197,7 @@ export class SuggestionService {
 
     // Filter reasons by focus (visibility gating only, not scoring change)
     // If focus is provided, only show reason domains relevant to that focus
-    const focus = options.focus ?? null;
+    // (focus was already extracted at the beginning of this method for snapshot hashing)
     const focusFiltered = this._filterReasonsByFocus(enriched, focus, { trace });
 
     // Optional persist
@@ -443,14 +463,40 @@ export class SuggestionService {
       }
 
       // Ensure additive reason list exists
-      if (!Array.isArray(suggestion.reasons)) suggestion.reasons = [];
+      if (!Array.isArray(suggestion.reasons)) {
+        // Try to generate structured reasons
+        try {
+          suggestion.reasons = SuggestionExplainer.generateReasons(suggestion, actor, {
+            includeOpportunityCosts: true
+          });
+        } catch (err) {
+          suggestion.reasons = [];
+        }
+      }
+
+      // Consolidate similar reasons to reduce noise
+      if (Array.isArray(suggestion.reasons) && suggestion.reasons.length > 1) {
+        // Deduplicate by code
+        suggestion.reasons = ReasonFactory.deduplicate(suggestion.reasons);
+      }
+
+      // Compute confidence score alongside tier
+      if (suggestion?.suggestion?.tier !== undefined) {
+        try {
+          suggestion.confidence = ConfidenceScoring.computeConfidence(suggestion, actor);
+          if (!suggestion.suggestion.confidence) {
+            suggestion.suggestion.confidence = suggestion.confidence;
+          }
+        } catch (err) {
+          suggestion.confidence = 0.5; // Default moderate confidence on error
+        }
+      }
 
       // Explanation: prefer SuggestionExplainer (mentor-safe, build-aware). Fallback to minimal.
       if (!suggestion.explanation || !suggestion.explanation.short) {
         try {
           const explained = SuggestionExplainer.explain(suggestion, actor);
           if (explained?.explanation) suggestion.explanation = explained.explanation;
-          if (Array.isArray(explained?.reasons)) suggestion.reasons = explained.reasons;
           if (explained?.tone) suggestion.tone = explained.tone;
         } catch (err) {
           const tier = suggestion?.suggestion?.tier ?? suggestion?.tier ?? 0;
@@ -475,6 +521,8 @@ export class SuggestionService {
    * This method:
    * 1. Gates visibility of reason domains (focus filtering)
    * 2. Annotates visible reasons with contextual relevance scores
+   * 3. Filters to player-safe reasons only
+   * 4. Limits display to top-N reasons by strength/relevance
    *
    * Relevance is ephemeral and applied ONLY to the explanatory reasons[] array.
    * It does NOT affect base tier assignment or suggestion scoring/ordering.
@@ -483,12 +531,20 @@ export class SuggestionService {
    * @param {string|null} focus - Progression focus ("skills", "feats", "classes", etc.) or null for all
    * @param {Object} options - Filter options
    * @param {boolean} options.trace - Enable trace logging
+   * @param {number} options.reasonLimit - Max reasons to show (default: 3)
    * @returns {Array} Suggestions with filtered and relevance-weighted reason lists
    */
-  static _filterReasonsByFocus(suggestions, focus = null, { trace = false } = {}) {
+  static _filterReasonsByFocus(suggestions, focus = null, { trace = false, reasonLimit = 3 } = {}) {
     if (!focus) {
       // No focus = show all reasons with equal weight (backward compatible)
-      return suggestions;
+      // But still apply safety filter and limit
+      return suggestions.map(s => ({
+        ...s,
+        reasons: ReasonFactory.limitByStrength(
+          ReasonFactory.filterBySafety(s.reasons ?? [], true),
+          reasonLimit
+        )
+      }));
     }
 
     const allowedDomains = getAllowedReasonDomains(focus);
@@ -510,16 +566,25 @@ export class SuggestionService {
         return reasonDomain && allowedDomains.includes(reasonDomain);
       });
 
-      // Step 2: Annotate each visible reason with relevance score
+      // Step 2: Filter to player-safe reasons only
+      const safeReasons = ReasonFactory.filterBySafety(filteredReasons, true);
+
+      // Step 3: Annotate each visible reason with relevance score
       // Relevance is contextual priority for ranking/display, not stored persistently
-      const relevanceWeighted = filteredReasons.map(r => ({
+      const relevanceWeighted = safeReasons.map(r => ({
         ...r,
         relevanceScore: getReasonRelevance(focus, r, { focus })
       }));
 
+      // Step 4: Sort by relevance and limit to top N
+      const sortedByRelevance = [...relevanceWeighted].sort((a, b) =>
+        (b.relevanceScore ?? 0) - (a.relevanceScore ?? 0)
+      );
+      const limited = sortedByRelevance.slice(0, Math.max(1, reasonLimit));
+
       return {
         ...s,
-        reasons: relevanceWeighted
+        reasons: limited
       };
     });
 
@@ -528,6 +593,7 @@ export class SuggestionService {
         `[SuggestionService] Filtered and weighted reasons by focus "${focus}"`,
         {
           allowedDomains,
+          reasonLimit,
           suggestions: filtered.slice(0, 3).map(s => ({
             name: s.name,
             reasonCount: s.reasons?.length ?? 0,

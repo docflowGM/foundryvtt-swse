@@ -17,19 +17,80 @@
 import { SWSELogger } from '../utils/logger.js';
 import { BuildIdentityAnchor, ANCHOR_STATE } from './BuildIdentityAnchor.js';
 import { PivotDetector, PIVOT_STATE } from './PivotDetector.js';
+import { ReasonFactory } from './ReasonFactory.js';
 
 export class SuggestionExplainer {
+
+  /**
+   * Generate structured reasons for a suggestion (new API)
+   * Returns an array of reason objects with domain, code, text, safe, strength
+   *
+   * @param {Object} suggestion - { itemName, theme, confidenceLevel, confidence, tier, reason }
+   * @param {Actor} actor
+   * @param {Object} options - { focus, includeOpportunityCosts }
+   * @returns {Array} Array of structured reason objects
+   */
+  static generateReasons(suggestion, actor, options = {}) {
+    try {
+      const { focus = null, includeOpportunityCosts = true } = options;
+      const reasons = [];
+      const primaryAnchor = BuildIdentityAnchor.getAnchor(actor, 'primary');
+      const pivotState = PivotDetector.getState(actor);
+      const level = actor.system?.level || 1;
+
+      // Base reason from tier
+      if (suggestion?.suggestion?.tier && suggestion.suggestion.tier > 0) {
+        const tierReason = this._getTierReason(suggestion.suggestion.tier, suggestion, primaryAnchor, level);
+        if (tierReason) {
+          reasons.push(tierReason);
+        }
+      }
+
+      // Add anchor-related reasons if available
+      if (primaryAnchor) {
+        const anchorReason = this._getAnchorReason(suggestion, primaryAnchor, level);
+        if (anchorReason) {
+          reasons.push(anchorReason);
+        }
+      }
+
+      // Add pivot-state context
+      if (pivotState === PIVOT_STATE.EXPLORATORY) {
+        reasons.push(ReasonFactory.weak('player_state', 'EXPLORATORY_PHASE', 'You\'re exploring different directions', true));
+      } else if (pivotState === PIVOT_STATE.PIVOTING) {
+        reasons.push(ReasonFactory.weak('player_state', 'PIVOTING_PHASE', 'You\'re shifting your build direction', true));
+      }
+
+      return ReasonFactory.deduplicate(reasons);
+    } catch (err) {
+      SWSELogger.error('[SuggestionExplainer] Error generating reasons:', err);
+      return [];
+    }
+  }
 
   /**
    * Generate a human-readable explanation for a suggestion
    *
    * @param {Object} suggestion - { itemName, theme, confidenceLevel, confidence }
    * @param {Actor} actor
-   * @param {Array} opportunityCostReasons - Array of warning strings (optional)
+   * @param {Array|Object} opportunityCostReasons - Array of warning strings OR options object
+   * @param {Object} options - Optional: { focus, emphasizeContext }
    * @returns {string} Single-sentence explanation
    */
-  static explain(suggestion, actor, opportunityCostReasons = []) {
+  static explain(suggestion, actor, opportunityCostReasons = [], options = {}) {
     try {
+      // Handle backward compatibility: third argument can be options object
+      let focusContext = null;
+      let costReasons = opportunityCostReasons;
+
+      if (opportunityCostReasons && typeof opportunityCostReasons === 'object' && !Array.isArray(opportunityCostReasons)) {
+        options = opportunityCostReasons;
+        costReasons = [];
+      }
+
+      focusContext = options.focus || null;
+      const { emphasizeContext = true } = options;
+
       const primaryAnchor = BuildIdentityAnchor.getAnchor(actor, 'primary');
       const pivotState = PivotDetector.getState(actor);
       const level = actor.system.level || 1;
@@ -52,6 +113,14 @@ export class SuggestionExplainer {
       }
 
       // ─────────────────────────────────────────────────────────────
+      // Adjust for focus context (narrative emphasis)
+      // ─────────────────────────────────────────────────────────────
+
+      if (emphasizeContext && focusContext) {
+        explanation = this._adjustForFocus(explanation, focusContext, suggestion);
+      }
+
+      // ─────────────────────────────────────────────────────────────
       // Adjust for pivot state
       // ─────────────────────────────────────────────────────────────
 
@@ -65,8 +134,8 @@ export class SuggestionExplainer {
       // Add soft opportunity cost warning if needed
       // ─────────────────────────────────────────────────────────────
 
-      if (opportunityCostReasons && opportunityCostReasons.length > 0 && level >= 5) {
-        explanation = this._addOpportunityCostWarning(explanation, opportunityCostReasons);
+      if (Array.isArray(costReasons) && costReasons.length > 0 && level >= 5) {
+        explanation = this._addOpportunityCostWarning(explanation, costReasons);
       }
 
       return explanation;
@@ -74,6 +143,49 @@ export class SuggestionExplainer {
       SWSELogger.error('[SuggestionExplainer] Error generating explanation:', err);
       return `${suggestion.itemName} is available for your character.`;
     }
+  }
+
+  /**
+   * Adjust explanation for progression focus context
+   * Emphasizes different aspects based on what the player is focusing on
+   * @private
+   */
+  static _adjustForFocus(explanation, focus, suggestion) {
+    if (!focus) return explanation;
+
+    const focusAdjustments = {
+      skills: {
+        replace: /strong fit/i,
+        with: 'useful skill training'
+      },
+      feats: {
+        replace: /strong fit/i,
+        with: 'powerful feat choice'
+      },
+      classes: {
+        replace: /strong fit/i,
+        with: 'strong class progression'
+      },
+      talents: {
+        replace: /strong fit/i,
+        with: 'excellent talent synergy'
+      },
+      attributes: {
+        replace: /strong fit/i,
+        with: 'key ability improvement'
+      },
+      forcepowers: {
+        replace: /strong fit/i,
+        with: 'powerful Force ability'
+      }
+    };
+
+    const adjustment = focusAdjustments[focus];
+    if (adjustment) {
+      return explanation.replace(adjustment.replace, adjustment.with);
+    }
+
+    return explanation;
   }
 
   /**
@@ -174,6 +286,58 @@ export class SuggestionExplainer {
     }
 
     return `${explanation} Just note: ${warningText}.`;
+  }
+
+  /**
+   * Generate a tier-based reason object
+   * @private
+   */
+  static _getTierReason(tier, suggestion, primaryAnchor, level) {
+    const TIER_REASONS = {
+      5: { code: 'PRESTIGE_PATH', text: 'Opens a prestige class path', domain: 'progression', strength: 0.95 },
+      4: { code: 'CHAIN_CONT', text: 'Continues your current path', domain: 'progression', strength: 0.90 },
+      3: { code: 'STRONG_FIT', text: 'Strong fit for your build', domain: 'synergy', strength: 0.85 },
+      2: { code: 'MODERATE_FIT', text: 'Works well with your choices', domain: 'synergy', strength: 0.75 },
+      1: { code: 'VIABLE', text: 'A viable option', domain: 'options', strength: 0.50 }
+    };
+
+    const tierInfo = TIER_REASONS[tier];
+    if (!tierInfo) return null;
+
+    return ReasonFactory.create({
+      domain: tierInfo.domain,
+      code: tierInfo.code,
+      text: tierInfo.text,
+      safe: true,
+      strength: tierInfo.strength
+    });
+  }
+
+  /**
+   * Generate an anchor-based reason object
+   * @private
+   */
+  static _getAnchorReason(suggestion, primaryAnchor, level) {
+    const matches = this._suggestionMatchesArchetype(suggestion, primaryAnchor.archetype);
+    const archetypeName = this._archetypeKeyToName(primaryAnchor.archetype);
+
+    if (matches) {
+      return ReasonFactory.create({
+        domain: 'archetype',
+        code: 'MATCHES_ARCHETYPE',
+        text: `Aligns with your ${archetypeName} focus`,
+        safe: true,
+        strength: 0.85
+      });
+    } else {
+      return ReasonFactory.create({
+        domain: 'archetype',
+        code: 'DIVERGES_ARCHETYPE',
+        text: `Diverges from your ${archetypeName} focus, but viable`,
+        safe: true,
+        strength: 0.60
+      });
+    }
   }
 
   /**
