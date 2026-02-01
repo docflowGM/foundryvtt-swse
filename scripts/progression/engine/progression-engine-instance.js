@@ -304,14 +304,23 @@ export class ProgressionEngine {
 
   /**
    * Get suggestions from the SuggestionService
-   * Integrates with current progression context
-   * Considers pending selections when scoring suggestions
-   * @param {string} domain - Domain to suggest for ('feats', 'talents', 'forcepowers', etc.)
-   * @param {Object} options - Additional options to pass to SuggestionService
-   * @returns {Promise<Array>} Sorted array of suggestions for the domain
+   * Integrates with current progression context and considers pending selections
+   *
+   * @param {Object} options - Suggestion request options
+   * @param {string} options.focus - Semantic intent: "skills" | "talents" | "feats" | "classes" | "attributes"
+   *                                 Routes which reason domains are visible in responses
+   * @param {string} options.domain - Domain to suggest for ('feats', 'talents', 'forcepowers', etc.)
+   * @param {Array} options.available - Available items to suggest from
+   * @returns {Promise<Array>} Sorted array of suggestions for the domain, with focus-filtered reasons
    */
-  async getSuggestions(domain, options = {}) {
+  async getSuggestions(options = {}) {
     try {
+      const {
+        focus = null,
+        domain = null,
+        available = null
+      } = options;
+
       const pendingData = {
         selectedClass: this.pending.class ? { name: this.pending.class } : null,
         selectedFeats: this.pending.feats,
@@ -325,16 +334,17 @@ export class ProgressionEngine {
         this.actor,
         this.mode,
         {
+          focus,
           domain,
-          pendingData,
-          ...options
+          available,
+          pendingData
         }
       );
 
-      SWSELogger.log(`[PROGRESSION] Got ${suggestions.length} suggestions for domain: ${domain}`);
+      SWSELogger.log(`[PROGRESSION] Got ${suggestions.length} suggestions (focus: ${focus}, domain: ${domain})`);
       return suggestions;
     } catch (err) {
-      SWSELogger.error(`[PROGRESSION] Error getting suggestions for ${domain}:`, err);
+      SWSELogger.error(`[PROGRESSION] Error getting suggestions:`, err);
       return [];
     }
   }

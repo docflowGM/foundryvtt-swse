@@ -2805,25 +2805,39 @@ async applyScalingFeature(feature) {
   /**
    * Get suggestions from the SuggestionService
    * Provides context-aware recommendations based on progression mode and current state
-   * @param {string} domain - Domain to suggest for ('feats', 'talents', 'forcepowers', etc.)
-   * @param {Object} options - Additional options to pass to SuggestionService
-   * @returns {Promise<Array>} Sorted array of suggestions for the domain
+   *
+   * @param {Object} options - Suggestion request options
+   * @param {string} options.focus - Semantic intent: "skills" | "talents" | "feats" | "classes" | "attributes"
+   *                                 Routes which reason domains are visible in responses
+   * @param {string} options.domain - Domain to suggest for ('feats', 'talents', 'forcepowers', etc.)
+   * @param {Array} options.available - Available items to suggest from
+   * @param {Object} options.pendingSelections - Pending selections to influence scoring
+   * @returns {Promise<Array>} Sorted array of suggestions for the domain, with focus-filtered reasons
    */
-  async getSuggestions(domain, options = {}) {
+  async getSuggestions(options = {}) {
     try {
+      const {
+        focus = null,
+        domain = null,
+        available = null,
+        pendingSelections = null
+      } = options;
+
       const suggestions = await SuggestionService.getSuggestions(
         this.actor,
         this.mode,
         {
+          focus,
           domain,
-          ...options
+          available,
+          pendingData: pendingSelections
         }
       );
 
-      swseLogger.log(`[PROGRESSION] Got ${suggestions.length} suggestions for domain: ${domain}`);
+      swseLogger.log(`[PROGRESSION] Got ${suggestions.length} suggestions (focus: ${focus}, domain: ${domain})`);
       return suggestions;
     } catch (err) {
-      swseLogger.error(`[PROGRESSION] Error getting suggestions for ${domain}:`, err);
+      swseLogger.error(`[PROGRESSION] Error getting suggestions:`, err);
       return [];
     }
   }

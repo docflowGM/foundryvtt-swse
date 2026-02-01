@@ -7,6 +7,7 @@
  * - Call SuggestionEngineCoordinator (SSOT evaluation)
  * - Add drift-safe targetRef (pack+id) when resolvable
  * - Add reasons/explanations as additive fields when available
+ * - Filter reasons by progression focus (visibility gating, not scoring change)
  * - Cache results and invalidate on actor changes
  * - Optionally persist minimal SuggestionState in actor flags
  */
@@ -14,6 +15,7 @@ import { SWSELogger } from '../utils/logger.js';
 import { SuggestionEngineCoordinator } from './SuggestionEngineCoordinator.js';
 import { CompendiumResolver } from './CompendiumResolver.js';
 import { SuggestionExplainer } from './SuggestionExplainer.js';
+import { getAllowedReasonDomains } from '../suggestions/suggestion-focus-map.js';
 
 import { FeatEngine } from '../progression/feats/feat-engine.js';
 import { ForcePowerEngine } from '../progression/engine/force-power-engine.js';
@@ -172,14 +174,19 @@ export class SuggestionService {
     // Normalize + enrich
     const enriched = await this._enrichSuggestions(actor, suggestions, { trace });
 
+    // Filter reasons by focus (visibility gating only, not scoring change)
+    // If focus is provided, only show reason domains relevant to that focus
+    const focus = options.focus ?? null;
+    const focusFiltered = this._filterReasonsByFocus(enriched, focus, { trace });
+
     // Optional persist
     if (options.persist === true) {
-      await this._persistSuggestionState(actor, context, enriched);
+      await this._persistSuggestionState(actor, context, focusFiltered);
     }
 
-    this.validateSuggestionDTO(enriched, { context, domain: options.domain });
-    this._cache.set(key, { rev: revision, suggestions: enriched, meta: { debug } });
-    return enriched;
+    this.validateSuggestionDTO(focusFiltered, { context, domain: options.domain });
+    this._cache.set(key, { rev: revision, suggestions: focusFiltered, meta: { debug } });
+    return focusFiltered;
   }
 
   static async getSuggestionDiff(actor, context = 'levelup', suggestions = null) {
@@ -459,5 +466,65 @@ export class SuggestionService {
       SWSELogger.log('[SuggestionService] Enriched suggestions:', out.slice(0, 5));
     }
     return out;
+  }
+
+  /**
+   * Filter reasons in suggestions by progression focus
+   *
+   * This method gates visibility of reason domains without changing scoring.
+   * When a progression step requests suggestions with a specific focus,
+   * only reason domains relevant to that focus are shown.
+   *
+   * @param {Array} suggestions - Array of enriched suggestion objects
+   * @param {string|null} focus - Progression focus ("skills", "feats", "classes", etc.) or null for all
+   * @param {Object} options - Filter options
+   * @param {boolean} options.trace - Enable trace logging
+   * @returns {Array} Suggestions with filtered reason lists
+   */
+  static _filterReasonsByFocus(suggestions, focus = null, { trace = false } = {}) {
+    if (!focus) {
+      // No focus = show all reasons (backward compatible)
+      return suggestions;
+    }
+
+    const allowedDomains = getAllowedReasonDomains(focus);
+    if (!allowedDomains) {
+      // Unknown focus = show no reasons (safe fail)
+      if (trace) {
+        SWSELogger.warn(`[SuggestionService] Unknown focus: "${focus}", filtering all reasons`);
+      }
+      return suggestions.map(s => ({
+        ...s,
+        reasons: []
+      }));
+    }
+
+    const filtered = suggestions.map(s => {
+      // Filter the reasons array to only those with allowed domains
+      const filteredReasons = (s.reasons ?? []).filter(r => {
+        const reasonDomain = r?.domain ?? null;
+        return reasonDomain && allowedDomains.includes(reasonDomain);
+      });
+
+      return {
+        ...s,
+        reasons: filteredReasons
+      };
+    });
+
+    if (trace) {
+      SWSELogger.log(
+        `[SuggestionService] Filtered reasons by focus "${focus}"`,
+        {
+          allowedDomains,
+          suggestions: filtered.slice(0, 3).map(s => ({
+            name: s.name,
+            reasonCount: s.reasons?.length ?? 0
+          }))
+        }
+      );
+    }
+
+    return filtered;
   }
 }
