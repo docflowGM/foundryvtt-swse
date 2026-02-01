@@ -75,7 +75,7 @@
  */
 
 import { INTENSITY_ATOMS, getIntensityScale } from './mentor-intensity-atoms.js';
-import { REASON_ATOMS } from './mentor-reason-atoms.js';
+import { isValidReasonKey } from './mentor-reason-renderer.js';
 
 export const JUDGMENT_ATOMS = {
   // Recognition & Observation
@@ -406,13 +406,16 @@ function selectIntensityAtom(judgment, context) {
 }
 
 /**
- * Determine reason atoms based on context
+ * Determine reason keys based on context
  * Reasons explain WHY the mentor reacted, factual and inspectable.
- * Returns 0-3 reasons (usually 1-2).
+ * Returns 0-3 canonical reason keys (usually 1-2).
+ *
+ * All returned keys MUST exist in REASON_TEXT_MAP (mentor-reason-renderer.js).
+ * Reasons are never spoken; they are exposed only via UI inspection.
  *
  * @param {string} judgment - The selected judgment atom
  * @param {Object} context - The judgment context object
- * @returns {string[]} Array of reason atoms (may be empty)
+ * @returns {string[]} Array of canonical reason keys (may be empty)
  */
 function selectReasonAtoms(judgment, context) {
   const {
@@ -420,46 +423,91 @@ function selectReasonAtoms(judgment, context) {
     isHighImpact,
     mentorMemory,
     buildIntent,
-    dspSaturation
+    dspSaturation,
+    actor
   } = context;
 
   const reasons = [];
 
+  // ========================================================================
   // Pattern Alignment/Conflict
+  // ========================================================================
   if (isOnPath && buildIntent?.inferredRole) {
-    reasons.push(REASON_ATOMS.PatternAlignment);
+    // Player choice aligns with detected build direction
+    reasons.push('feat_supports_existing_role');
   } else if (!isOnPath && mentorMemory?.commitmentStrength > 0.3) {
-    reasons.push(REASON_ATOMS.PatternConflict);
+    // Player choice diverges from detected build direction
+    reasons.push('prestige_path_divergence');
   }
 
-  // Synergy detection
-  if (buildIntent?.synergies && buildIntent.synergies.length > 0) {
-    reasons.push(REASON_ATOMS.SynergyPresent);
+  // ========================================================================
+  // Synergy Detection (Feats, Talents, Skills)
+  // ========================================================================
+  if (buildIntent?.synergies && buildIntent.synergies.length > 1) {
+    // Multiple synergies present
+    reasons.push('feat_synergy_present');
+  } else if (buildIntent?.synergies && buildIntent.synergies.length === 1) {
+    // Single strong synergy
+    reasons.push('feat_reinforces_core_strength');
   }
 
-  // Commitment & Memory
+  // ========================================================================
+  // Commitment & Declaration
+  // ========================================================================
   if (judgment === JUDGMENT_ATOMS.CONFIRMATION) {
-    reasons.push(REASON_ATOMS.CommitmentDeclared);
+    // Strong on-path confirmation
+    reasons.push('prestige_path_consistency');
   }
   if (judgment === JUDGMENT_ATOMS.REASSESSMENT && mentorMemory?.commitmentStrength > 0.3) {
-    reasons.push(REASON_ATOMS.CommitmentIgnored);
+    // Player drifting from committed path
+    reasons.push('prestige_path_divergence');
   }
 
-  // Risk Indicators
-  if (dspSaturation > 0.7) {
-    reasons.push(REASON_ATOMS.RiskIncreased);
+  // ========================================================================
+  // Risk & Resource Indicators
+  // ========================================================================
+  if (dspSaturation > 0.8) {
+    // Very high DSP saturation—severe warning
+    reasons.push('progression_focus_consistency');
+  } else if (dspSaturation > 0.6) {
+    // Moderate DSP saturation—caution
+    reasons.push('power_curve_alignment');
   }
+
   if (judgment === JUDGMENT_ATOMS.EXPOSURE) {
-    reasons.push(REASON_ATOMS.ThresholdApproaching);
+    // Vulnerability detected
+    reasons.push('progression_gap_detected');
   }
 
-  // Growth Stage
-  if (context.actor?.system?.level >= 6 && context.topic === 'what_lies_ahead') {
-    reasons.push(REASON_ATOMS.GrowthStageShift);
+  // ========================================================================
+  // Growth & Progression Stage
+  // ========================================================================
+  if (actor?.system?.level >= 6 && context.topic === 'what_lies_ahead') {
+    // Level 6+ is prestige threshold
+    reasons.push('prestige_specialization_threshold');
+  } else if (actor?.system?.level >= 4 && actor?.system?.level < 6) {
+    // Mid-level progression
+    reasons.push('mid_level_specialization');
   }
+
+  if (isHighImpact && judgment === JUDGMENT_ATOMS.GRAVITY) {
+    // Major threshold moment
+    reasons.push('progression_milestone_reached');
+  }
+
+  // ========================================================================
+  // Validate all reasons before returning
+  // ========================================================================
+  const validReasons = reasons.filter(key => {
+    if (!isValidReasonKey(key)) {
+      console.warn(`[selectReasonAtoms] Invalid reason key: "${key}" — using alternative`);
+      return false;
+    }
+    return true;
+  });
 
   // Limit to 3 reasons maximum
-  return reasons.slice(0, 3);
+  return validReasons.slice(0, 3);
 }
 
 /**
@@ -471,7 +519,8 @@ function selectReasonAtoms(judgment, context) {
  *   {
  *     judgment: string,      // judgment atom
  *     intensity: string,     // intensity atom
- *     reasons: string[]      // array of reason atoms (0-3)
+ *     reasons: string[]      // array of canonical reason keys (0-3)
+ *                            // Each key maps to text in REASON_TEXT_MAP
  *   }
  */
 export function selectMentorResponse(context) {
