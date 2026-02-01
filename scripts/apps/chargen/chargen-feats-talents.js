@@ -311,6 +311,9 @@ export async function _handleSkillFocusFeat(feat) {
             const selectedSkill = html.find('#skill-focus-selection').val();
 
             // Mark the skill as focused in character data
+            if (!this.characterData.skills) {
+              this.characterData.skills = {};
+            }
             if (!this.characterData.skills[selectedSkill]) {
               this.characterData.skills[selectedSkill] = { trained: true, focused: false };
             }
@@ -504,6 +507,11 @@ export async function _onSelectTalent(event) {
       return;
     }
 
+    // Initialize talents array if needed
+    if (!this.characterData.talents) {
+      this.characterData.talents = [];
+    }
+
     // Check talent slot limit for Block & Deflect (grants 2 talents)
     if (!this.freeBuild && (this.characterData.talents.length + talentsToAdd.length) > this.characterData.talentsRequired) {
       ui.notifications.warn(`You don't have enough talent slots for Block & Deflect (requires ${talentsToAdd.length} slots, you have ${this.characterData.talentsRequired - this.characterData.talents.length} available)!`);
@@ -556,6 +564,11 @@ export async function _onSelectTalent(event) {
     ui.notifications.info(`Selected combined talent: Block & Deflect (grants both Block and Deflect)`);
   } else {
     // Standard talent selection
+    // Initialize talents array if needed
+    if (!this.characterData.talents) {
+      this.characterData.talents = [];
+    }
+
     // Check for duplicates in characterData
     const alreadySelected = this.characterData.talents.find(t => t.name === tal.name || t._id === tal._id);
     if (alreadySelected) {
@@ -879,7 +892,7 @@ export function _createTempActorForValidation() {
   };
 
   // Map skills to the expected structure
-  for (const [key, skill] of Object.entries(this.characterData.skills)) {
+  for (const [key, skill] of Object.entries(this.characterData.skills || {})) {
     tempActor.system.skills[key] = {
       trained: skill.trained || false,
       focused: skill.focused || false
