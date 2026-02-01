@@ -76,7 +76,6 @@
 
 import { INTENSITY_ATOMS, getIntensityScale, incrementIntensity, decrementIntensity } from './mentor-intensity-atoms.js';
 import { isValidReasonKey } from './mentor-reason-renderer.js';
-import { findMatchingRule, validateMentorRules } from './mentor-reason-judgment-map.js';
 import { logMentorDecision, isMentorLoggingEnabled } from './mentor-decision-logger.js';
 
 export const JUDGMENT_ATOMS = {
@@ -605,7 +604,7 @@ function refineIntensity(baseIntensity, reasons, context) {
  *                            // Each key maps to text in REASON_TEXT_MAP
  *   }
  */
-export function selectMentorResponse(context) {
+export async function selectMentorResponse(context) {
   if (!context) {
     return {
       judgment: JUDGMENT_ATOMS.SILENCE,
@@ -618,6 +617,8 @@ export function selectMentorResponse(context) {
   const reasons = selectReasonAtoms(context);
 
   // PHASE 1: Match facts to rule → get judgment + baseIntensity
+  // Import dynamically to avoid circular dependency
+  const { findMatchingRule } = await import('./mentor-reason-judgment-map.js');
   const rule = findMatchingRule(reasons);
   const judgment = rule.judgment;
   const baseIntensity = rule.intensity;
