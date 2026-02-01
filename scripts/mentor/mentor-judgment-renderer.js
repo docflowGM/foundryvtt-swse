@@ -5,6 +5,9 @@
  * Pure lookup, no logic. Each mentor has 1–3 variants per atom.
  * Phrases are short, in mentor voice, never explain mechanics.
  *
+ * Supports both numeric intensity (0-1, legacy) and intensity atoms (new).
+ * Intensity determines which variant of the phrase is selected.
+ *
  * Mentors:
  * - miraj: Philosophical, Force-focused, reflective
  * - breach: Blunt, direct, pragmatic
@@ -15,6 +18,8 @@
  * - darth_malbada: Strength, justified dominance
  * - tio_the_hutt: Pragmatism, leverage
  */
+
+import { INTENSITY_ATOMS, getIntensityScale } from './mentor-intensity-atoms.js';
 
 /**
  * Phrase tables indexed by mentor ID and atom ID
@@ -356,10 +361,23 @@ const PHRASE_TABLES = {
  *
  * @param {string} mentorId - The mentor's ID (e.g., "miraj")
  * @param {string} atomId - The judgment atom ID (e.g., "recognition")
- * @param {number} intensity - Optional intensity (0-1), affects variant selection. Default 0.5
+ * @param {number|string} intensity - Optional intensity (0-1 numeric OR intensity atom string).
+ *                                     Default 0.5 (medium).
+ *                                     Supports both legacy (0.5) and new (INTENSITY_ATOMS.medium) formats.
  * @returns {string} Short mentor phrase, or empty string for silence
  */
 export function renderJudgmentAtom(mentorId, atomId, intensity = 0.5) {
+  // Convert intensity atom to numeric scale if needed
+  let intensityScale = intensity;
+  if (typeof intensity === 'string') {
+    // Intensity atom provided—convert to 0-1 scale
+    intensityScale = getIntensityScale(intensity);
+    // If invalid atom, fall back to medium (0.5)
+    if (intensityScale < 0) {
+      intensityScale = 0.5;
+    }
+  }
+
   // Normalize mentor ID
   const normalizedId = (mentorId || "").toLowerCase().replace(/\s+/g, '_');
 
@@ -367,7 +385,7 @@ export function renderJudgmentAtom(mentorId, atomId, intensity = 0.5) {
   const mentorTable = PHRASE_TABLES[normalizedId];
   if (!mentorTable) {
     // Fallback mentor if unknown
-    return renderJudgmentAtom('miraj', atomId, intensity);
+    return renderJudgmentAtom('miraj', atomId, intensityScale);
   }
 
   // Get phrase variants for this atom
@@ -382,13 +400,13 @@ export function renderJudgmentAtom(mentorId, atomId, intensity = 0.5) {
   }
 
   // Select variant based on intensity
-  // intensity 0-1 maps to variant index
+  // intensityScale 0-1 maps to variant index
   // Low intensity = first variant (simpler), high intensity = last variant (richer)
   let index;
   if (variants.length === 1) {
     index = 0;
   } else {
-    index = Math.floor(intensity * variants.length);
+    index = Math.floor(intensityScale * variants.length);
     index = Math.min(index, variants.length - 1); // Clamp to array bounds
   }
 
@@ -402,7 +420,8 @@ export function renderJudgmentAtom(mentorId, atomId, intensity = 0.5) {
  *
  * @param {string} mentorId - The mentor's ID
  * @param {Array<string>} atomIds - Array of judgment atoms to render in sequence
- * @param {number} intensity - Base intensity (0-1)
+ * @param {number|string} intensity - Base intensity (0-1 numeric OR intensity atom string).
+ *                                     Default 0.5 (medium).
  * @returns {string} Joined phrases separated by space
  */
 export function renderJudgmentSequence(mentorId, atomIds, intensity = 0.5) {

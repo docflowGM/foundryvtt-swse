@@ -1,10 +1,19 @@
 /**
  * Mentor Judgment Engine
  *
- * Selects exactly ONE semantic reaction atom per mentor interaction.
- * No prose generation. Pure, deterministic reaction selection.
+ * Selects exactly ONE semantic reaction atom per mentor interaction,
+ * along with an intensity level and explanatory reasons.
  *
- * JUDGMENT ATOMS (38 total, authoritative):
+ * Mentor responses flow through FOUR AXES:
+ * 1. TOPIC - What is being discussed (passed in, not inferred)
+ * 2. JUDGMENT - How the mentor emotionally reacts (selected by this engine)
+ * 3. INTENSITY - How strongly the mentor stands behind the reaction
+ * 4. REASON - Why the mentor reacted (factual, inspectable via UI)
+ *
+ * This module handles judgment, intensity, and reason selection.
+ * Dialogue rendering is handled separately in mentor-judgment-renderer.js.
+ *
+ * JUDGMENT ATOMS (36 total, authoritative):
  *
  * Recognition & Observation (4):
  *   - recognition: "I see what you're doing"
@@ -64,6 +73,9 @@
  *   - deferral: "Not yet"
  *   - silence: No response
  */
+
+import { INTENSITY_ATOMS, getIntensityScale } from './mentor-intensity-atoms.js';
+import { REASON_ATOMS } from './mentor-reason-atoms.js';
 
 export const JUDGMENT_ATOMS = {
   // Recognition & Observation
@@ -323,5 +335,166 @@ export async function buildJudgmentContext(actor, mentorId, topic, buildIntent) 
     isUndecidedOrDrifting,
     lastAction: null, // Would track previous user interaction
     dspSaturation
+  };
+}
+
+/**
+ * Determine intensity level based on context
+ * Intensity represents how strongly the mentor stands behind the reaction.
+ *
+ * @param {string} judgment - The selected judgment atom
+ * @param {Object} context - The judgment context object
+ * @returns {string} One of: very_low, low, medium, high, very_high
+ */
+function selectIntensityAtom(judgment, context) {
+  const {
+    isHighImpact,
+    isOnPath,
+    mentorMemory,
+    dspSaturation,
+    buildIntent
+  } = context;
+
+  // very_high: Exceptional moments (threshold, severe warning)
+  if (judgment === JUDGMENT_ATOMS.GRAVITY || judgment === JUDGMENT_ATOMS.CONSEQUENTIAL_AWARENESS) {
+    return INTENSITY_ATOMS.very_high;
+  }
+  if (judgment === JUDGMENT_ATOMS.EXPOSURE && dspSaturation > 0.8) {
+    return INTENSITY_ATOMS.very_high;
+  }
+
+  // high: Strong reactions (confirmation, overreach, major concern)
+  if (judgment === JUDGMENT_ATOMS.CONFIRMATION && isHighImpact && isOnPath) {
+    return INTENSITY_ATOMS.high;
+  }
+  if (judgment === JUDGMENT_ATOMS.OVERREACH) {
+    return INTENSITY_ATOMS.high;
+  }
+  if (judgment === JUDGMENT_ATOMS.CONCERN && isHighImpact) {
+    return INTENSITY_ATOMS.high;
+  }
+  if (judgment === JUDGMENT_ATOMS.WARNING && dspSaturation > 0.6) {
+    return INTENSITY_ATOMS.high;
+  }
+
+  // medium: Balanced guidance (most reactions)
+  if (judgment === JUDGMENT_ATOMS.AFFIRMATION || judgment === JUDGMENT_ATOMS.ENCOURAGEMENT) {
+    return INTENSITY_ATOMS.medium;
+  }
+  if (judgment === JUDGMENT_ATOMS.REASSESSMENT) {
+    return INTENSITY_ATOMS.medium;
+  }
+  if (judgment === JUDGMENT_ATOMS.INSIGHT || judgment === JUDGMENT_ATOMS.PERSPECTIVE) {
+    return INTENSITY_ATOMS.medium;
+  }
+
+  // low: Gentle guidance (minor concerns, weak synergies)
+  if (judgment === JUDGMENT_ATOMS.CONCERN && !isHighImpact) {
+    return INTENSITY_ATOMS.low;
+  }
+  if (judgment === JUDGMENT_ATOMS.DOUBT_RECOGNITION) {
+    return INTENSITY_ATOMS.low;
+  }
+
+  // very_low: Barely warrants comment (silence or filler)
+  if (judgment === JUDGMENT_ATOMS.SILENCE) {
+    return INTENSITY_ATOMS.very_low;
+  }
+
+  // Default to medium for unspecified reactions
+  return INTENSITY_ATOMS.medium;
+}
+
+/**
+ * Determine reason atoms based on context
+ * Reasons explain WHY the mentor reacted, factual and inspectable.
+ * Returns 0-3 reasons (usually 1-2).
+ *
+ * @param {string} judgment - The selected judgment atom
+ * @param {Object} context - The judgment context object
+ * @returns {string[]} Array of reason atoms (may be empty)
+ */
+function selectReasonAtoms(judgment, context) {
+  const {
+    isOnPath,
+    isHighImpact,
+    mentorMemory,
+    buildIntent,
+    dspSaturation
+  } = context;
+
+  const reasons = [];
+
+  // Pattern Alignment/Conflict
+  if (isOnPath && buildIntent?.inferredRole) {
+    reasons.push(REASON_ATOMS.PatternAlignment);
+  } else if (!isOnPath && mentorMemory?.commitmentStrength > 0.3) {
+    reasons.push(REASON_ATOMS.PatternConflict);
+  }
+
+  // Synergy detection
+  if (buildIntent?.synergies && buildIntent.synergies.length > 0) {
+    reasons.push(REASON_ATOMS.SynergyPresent);
+  }
+
+  // Commitment & Memory
+  if (judgment === JUDGMENT_ATOMS.CONFIRMATION) {
+    reasons.push(REASON_ATOMS.CommitmentDeclared);
+  }
+  if (judgment === JUDGMENT_ATOMS.REASSESSMENT && mentorMemory?.commitmentStrength > 0.3) {
+    reasons.push(REASON_ATOMS.CommitmentIgnored);
+  }
+
+  // Risk Indicators
+  if (dspSaturation > 0.7) {
+    reasons.push(REASON_ATOMS.RiskIncreased);
+  }
+  if (judgment === JUDGMENT_ATOMS.EXPOSURE) {
+    reasons.push(REASON_ATOMS.ThresholdApproaching);
+  }
+
+  // Growth Stage
+  if (context.actor?.system?.level >= 6 && context.topic === 'what_lies_ahead') {
+    reasons.push(REASON_ATOMS.GrowthStageShift);
+  }
+
+  // Limit to 3 reasons maximum
+  return reasons.slice(0, 3);
+}
+
+/**
+ * Select complete mentor response (judgment + intensity + reasons)
+ * This is the unified interface for getting all reaction axes at once.
+ *
+ * @param {Object} context - The judgment context (from buildJudgmentContext)
+ * @returns {Object} Complete response:
+ *   {
+ *     judgment: string,      // judgment atom
+ *     intensity: string,     // intensity atom
+ *     reasons: string[]      // array of reason atoms (0-3)
+ *   }
+ */
+export function selectMentorResponse(context) {
+  if (!context) {
+    return {
+      judgment: JUDGMENT_ATOMS.SILENCE,
+      intensity: INTENSITY_ATOMS.very_low,
+      reasons: []
+    };
+  }
+
+  // Select judgment using existing algorithm (backward compatible)
+  const judgment = selectJudgmentAtom(context);
+
+  // Derive intensity from judgment + context
+  const intensity = selectIntensityAtom(judgment, context);
+
+  // Derive reasons from judgment + context
+  const reasons = selectReasonAtoms(judgment, context);
+
+  return {
+    judgment,
+    intensity,
+    reasons
   };
 }
