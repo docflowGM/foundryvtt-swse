@@ -148,9 +148,14 @@ export class DataPreloader {
 
     // Preload actual documents for small packs
     if (index.size <= 20) {
-      const documents = await pack.getDocuments();
-      for (const doc of documents) {
-        this._classesCache.set(doc.id, doc);
+      try {
+        const documents = await pack.getDocuments();
+        for (const doc of documents) {
+          this._classesCache.set(doc.id, doc);
+        }
+      } catch (error) {
+        // Fall back to index-only if document loading fails
+        SWSELogger.warn('Failed to preload class documents, using index only:', error.message);
       }
     }
   }
@@ -228,10 +233,20 @@ export class DataPreloader {
     this._speciesCache.set('_index', index);
 
     // Preload all species documents (usually small)
-    const documents = await pack.getDocuments();
-    for (const doc of documents) {
-      this._speciesCache.set(doc.id, doc);
-      this._speciesCache.set(doc.name.toLowerCase(), doc);
+    try {
+      const documents = await pack.getDocuments();
+      for (const doc of documents) {
+        this._speciesCache.set(doc.id, doc);
+        this._speciesCache.set(doc.name.toLowerCase(), doc);
+      }
+    } catch (error) {
+      // Fall back to index-only if document loading fails
+      SWSELogger.warn('Failed to preload species documents, using index only:', error.message);
+      const byName = new Map();
+      for (const entry of index) {
+        byName.set(entry.name.toLowerCase(), entry);
+      }
+      this._speciesCache.set('_byName', byName);
     }
   }
 
@@ -246,12 +261,12 @@ export class DataPreloader {
     const index = await pack.getIndex();
     this._skillsCache.set('_index', index);
 
-    // Preload all skill documents (very small)
-    const documents = await pack.getDocuments();
-    for (const doc of documents) {
-      this._skillsCache.set(doc.id, doc);
-      this._skillsCache.set(doc.name.toLowerCase(), doc);
+    // Cache by name for quick lookup
+    const byName = new Map();
+    for (const entry of index) {
+      byName.set(entry.name.toLowerCase(), entry);
     }
+    this._skillsCache.set('_byName', byName);
   }
 
   /**
