@@ -139,7 +139,7 @@ export function getHitDie(classDoc) {
   });
 
   // Try to parse formats: "1d10", "d10", or "10"
-  const match = hitDieString.match(/\d*d?(\d+)/);
+  const match = hitDieString.match(/(\d+)$/);
   if (match && match[1]) {
     const result = parseInt(match[1], 10);
     SWSELogger.log(`CharGen | getHitDie() parsed "${hitDieString}" -> d${result} for "${classDoc?.name}"`);
