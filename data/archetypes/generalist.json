@@ -1,0 +1,61 @@
+{
+  "name": "Generalist",
+  "status": "active",
+  "description": "Flexible build emphasizing versatility and survivability when archetype is unclear.",
+  "mechanicalBias": {
+    "defender": 0.4,
+    "controller": 0.3,
+    "support": 0.2,
+    "striker": 0.1
+  },
+  "roleBias": {
+    "offense": 0.8,
+    "defense": 1.0,
+    "support": 1.0,
+    "utility": 1.1
+  },
+  "attributeBias": {
+    "STR": 0.2,
+    "DEX": 0.2,
+    "CON": 0.25,
+    "INT": 0.15,
+    "WIS": 0.2,
+    "CHA": 0.2
+  },
+  "talentKeywords": [
+    "Skill Training",
+    "Talent Focus",
+    "Defensive Stance",
+    "Versatile Training"
+  ],
+  "featKeywords": [
+    "Skill Focus",
+    "Toughness",
+    "Defensive Stance",
+    "Versatility"
+  ],
+  "preferredTags": [
+    "defense",
+    "skills",
+    "evasion",
+    "condition-removal",
+    "damage-reduction",
+    "sustainability",
+    "action-economy",
+    "mobility"
+  ],
+  "secondaryTags": [
+    "support",
+    "perception",
+    "leadership",
+    "social",
+    "positioning"
+  ],
+  "avoidTags": [
+    "burst-damage",
+    "glass-cannon",
+    "hyper-specialized"
+  ],
+  "notes": "Used when no single archetype emerges as primary choice. Emphasizes balanced defensive capabilities, versatile skill training, and survivability across diverse scenarios. Never returns empty suggestion list.",
+  "philosophyStatement": "I see many paths open to you. Let us focus on versatility for now."
+}

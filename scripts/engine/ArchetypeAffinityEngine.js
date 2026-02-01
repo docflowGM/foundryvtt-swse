@@ -22,6 +22,7 @@ import { validateClassArchetypes } from './validateClassArchetypes.js';
 
 // Lazy-loaded archetype data (to avoid JSON import issues in Foundry)
 let CLASS_ARCHETYPES = null;
+let GENERALIST_ARCHETYPE = null;
 
 /**
  * Load archetype data from JSON file
@@ -60,6 +61,7 @@ const REQUIRED_ARCHETYPE_FIELDS = [
 const ACTIVE_STATUS = 'active';
 const PRESTIGE_HINT_THRESHOLD = 0.30;
 const SECONDARY_HINT_THRESHOLD = 0.18;
+const ARCHETYPE_CONFIDENCE_THRESHOLD = 0.25;  // Min affinity score to use specific archetype
 
 // Prestige path mapping (design-owned, explicit)
 // Loaded from /data/prestige-map.json to keep mappings as SSOT data.
@@ -76,6 +78,33 @@ export async function loadPrestigeMap() {
   } catch (err) {
     SWSELogger.warn('[ArchetypeAffinityEngine] Unable to load prestige-map.json; prestige hints may be unavailable.', err);
     return {};
+  }
+}
+
+/**
+ * Load generalist archetype fallback
+ * Used when no specific archetype exceeds confidence threshold
+ * @returns {Promise<Object>} Generalist archetype
+ */
+export async function loadGeneralistArchetype() {
+  if (GENERALIST_ARCHETYPE) {
+    return GENERALIST_ARCHETYPE;
+  }
+
+  try {
+    const response = await fetch('systems/foundryvtt-swse/data/archetypes/generalist.json');
+    GENERALIST_ARCHETYPE = await response.json();
+    return GENERALIST_ARCHETYPE;
+  } catch (err) {
+    SWSELogger.warn('[ArchetypeAffinityEngine] Unable to load generalist archetype; will use default fallback.', err);
+    return {
+      name: "Generalist",
+      status: "active",
+      preferredTags: ["defense", "skills", "evasion", "condition-removal"],
+      secondaryTags: ["support", "perception", "leadership"],
+      avoidTags: ["burst-damage"],
+      notes: "Default generalist fallback"
+    };
   }
 }
 
@@ -119,6 +148,17 @@ function flattenArchetypes(data, includeStubs = false) {
   }
 
   return flat;
+}
+
+/**
+ * Determine if generalist archetype should be used
+ * Returns true if no single archetype exceeds confidence threshold
+ * @param {Object} archetypeAffinity - Computed affinity scores
+ * @returns {boolean} True if should use generalist
+ */
+export function shouldUseGeneralistArchetype(archetypeAffinity) {
+  const maxAffinity = Math.max(...Object.values(archetypeAffinity), 0);
+  return maxAffinity < ARCHETYPE_CONFIDENCE_THRESHOLD;
 }
 
 /**

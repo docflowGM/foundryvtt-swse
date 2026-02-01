@@ -1,0 +1,30 @@
+{
+  "id": "ace_pilot.mobility_specialist",
+  "class": "ace_pilot",
+  "name": "Mobility Specialist",
+  "description": "Elite pilot who masters speed, positioning, and tactical movement in vehicles or on foot.",
+  "preferredTags": ["mobility", "positioning", "action-economy", "piloting", "burst-damage"],
+  "secondaryTags": ["ranged", "striker", "perception"],
+  "avoidTags": ["tanking", "heavy-weapons", "sustained-damage"],
+  "mechanicalBias": {
+    "mobility": 0.4,
+    "striker": 0.3,
+    "action_economy": 0.3
+  },
+  "roleBias": {
+    "offense": 1.2,
+    "defense": 0.8,
+    "support": 0.7,
+    "utility": 1.1
+  },
+  "attributeBias": {
+    "DEX": 0.35,
+    "WIS": 0.25,
+    "INT": 0.2,
+    "CHA": 0.2
+  },
+  "talentKeywords": ["Pilot", "Dodge", "Acrobatics", "Fast Reflexes"],
+  "featKeywords": ["Skill Focus (Pilot)", "Evasion", "Improved Evasion"],
+  "confidenceThreshold": 0.25,
+  "notes": "Master of flight and positioning. Victory through speed, maneuverability, and tactical positioning."
+}
