@@ -1,0 +1,167 @@
+{
+  "fixed": 18,
+  "details": [
+    {
+      "talentId": "181da7f36b9fba9d",
+      "talentName": "Force Treatment",
+      "oldTreeId": "a2a7a376e4905da9",
+      "oldTreeName": "Jedi Healer",
+      "newTreeId": "e35ee41362604227",
+      "newTreeName": "Force Adept",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "222327492c484b4a",
+      "talentName": "Teräs Käsi Basics",
+      "oldTreeId": "f96cb0f2a46b4dd1",
+      "oldTreeName": "Master of Teräs Käsi",
+      "newTreeId": "ba726f623e42f849",
+      "newTreeName": "Master of Teras Kasi",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "24bf81bc6d74fafd",
+      "talentName": "Keep Them Reeling",
+      "oldTreeId": "61db5e2c0c44ef67",
+      "oldTreeName": "Piracy",
+      "newTreeId": "12027e0ad5e4d260",
+      "newTreeName": "Ambusher",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "2e96f06be6b9def8",
+      "talentName": "Dark Side Scourge",
+      "oldTreeId": "de95d37c72b1c4cd",
+      "oldTreeName": "Dark Side",
+      "newTreeId": "36f18f3e974feb33",
+      "newTreeName": "Jedi Sentinel",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "3331d4b2b88e446f",
+      "talentName": "Resist the Dark Side",
+      "oldTreeId": "de95d37c72b1c4cd",
+      "oldTreeName": "Dark Side",
+      "newTreeId": "36f18f3e974feb33",
+      "newTreeName": "Jedi Sentinel",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "379019c29b37d717",
+      "talentName": "Unarmed Parry",
+      "oldTreeId": "f96cb0f2a46b4dd1",
+      "oldTreeName": "Master of Teräs Käsi",
+      "newTreeId": "ba726f623e42f849",
+      "newTreeName": "Master of Teras Kasi",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "3cc9552cfab59676",
+      "talentName": "Embrace Dark Side",
+      "oldTreeId": "de95d37c72b1c4cd",
+      "oldTreeName": "Dark Side",
+      "newTreeId": "96ef43a3054dcb58",
+      "newTreeName": "Dark Side Devotee",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "4fc3fe4c1e7f9ba0",
+      "talentName": "Armor Mastery",
+      "oldTreeId": "ea01d740c91888b3",
+      "oldTreeName": "Knight's Armor",
+      "newTreeId": "17cec542331cb4e4",
+      "newTreeName": "Armor Specialist",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "5ec84c7e500601e4",
+      "talentName": "Multiattack Proficiency (rifles)",
+      "oldTreeId": "1933731cc59f8463",
+      "oldTreeName": "Carbineer",
+      "newTreeId": "2f720d8b061f9bd0",
+      "newTreeName": "Weapon Master",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "6021056231839e7c",
+      "talentName": "Multiattack Proficiency (advanced melee)",
+      "oldTreeId": "1381bb8c9a838279",
+      "oldTreeName": "Melee Duelist",
+      "newTreeId": "df6678946610c554",
+      "newTreeName": "Privateer",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "893158dcfe246ad7",
+      "talentName": "Implant (general)",
+      "oldTreeId": "d8a71a6c5b2b7581",
+      "oldTreeName": "Implant",
+      "newTreeId": "1bfe6f481402aa22",
+      "newTreeName": "Turret/Implant",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "8a6fc1f368226b7b",
+      "talentName": "Sith Alchemy (create)",
+      "oldTreeId": "de95d37c72b1c4cd",
+      "oldTreeName": "Dark Side",
+      "newTreeId": "d1037bc7a08ea80b",
+      "newTreeName": "Sith",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "9211e3f6268b3413",
+      "talentName": "Keep it Together",
+      "oldTreeId": "b17c1515c06361d6",
+      "oldTreeName": "Expert Pilot",
+      "newTreeId": "7c47d36dc1f77d9c",
+      "newTreeName": "Fringer",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "97a771d1f4627521",
+      "talentName": "Dark Side Bane",
+      "oldTreeId": "de95d37c72b1c4cd",
+      "oldTreeName": "Dark Side",
+      "newTreeId": "36f18f3e974feb33",
+      "newTreeName": "Jedi Sentinel",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "a3ac90e84127805d",
+      "talentName": "Ambush",
+      "oldTreeId": "cb3751283ea8fa3d",
+      "oldTreeName": "Republic Commando",
+      "newTreeId": "e91cc675fbf9ba6e",
+      "newTreeName": "Disgrace",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "adfb725d20faade5",
+      "talentName": "Ruthless",
+      "oldTreeId": "186daeee7bd65a69",
+      "oldTreeName": "Assassin",
+      "newTreeId": "4007fa87192b5884",
+      "newTreeName": "Mercenary",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "c5996de1e3c69c04",
+      "talentName": "Ambush (Republic Commando)",
+      "oldTreeId": "798ed0945cbdac1c",
+      "oldTreeName": "Commando",
+      "newTreeId": "cb3751283ea8fa3d",
+      "newTreeName": "Republic Commando",
+      "status": "FIXED"
+    },
+    {
+      "talentId": "c980750800b91061",
+      "talentName": "Stay in the Fight",
+      "oldTreeId": "a2c6962521c29361",
+      "oldTreeName": "Rebel Recruiter",
+      "newTreeId": "61b74c82cb56876c",
+      "newTreeName": "Fugitive Commander",
+      "status": "FIXED"
+    }
+  ]
+}
