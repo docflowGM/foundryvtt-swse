@@ -846,14 +846,94 @@ export const MENTOR_DIALOGUE_VARIANTS = {
     }
   },
 
-  // STUB: ol_salty, j0_n1, darth_miedo, darth_malbada, tio_the_hutt
-  // Each mentor follows the same structure as above
-  // TODO: Complete variants for remaining mentors
+  // STUB: Remaining Core Mentors (8 total)
+  // Each mentor follows the same structure as Miraj, Breach, Lead above
+  // TODO: Complete variants for these mentors
   ol_salty: { judgments: {} },
   j0_n1: { judgments: {} },
   darth_miedo: { judgments: {} },
   darth_malbada: { judgments: {} },
-  tio_the_hutt: { judgments: {} }
+  tio_the_hutt: { judgments: {} },
+
+  // STUB: Prestige Class Mentors (32+)
+  // These are defined in mentor-dialogues.json and may be integrated
+  // into the judgment system in the future. All follow standard structure.
+  // TODO: Complete variants as prestige mentors are added to judgment system
+
+  // Ace Pilot Mentors
+  mayu: { judgments: {} },
+
+  // Assassin Mentors
+  delta: { judgments: {} },
+
+  // Bounty Hunter Mentors
+  kex_varon: { judgments: {} },
+
+  // Charlatan Mentors
+  silvertongue_sela: { judgments: {} },
+
+  // Corporate Agent Mentors
+  marl_skindar: { judgments: {} },
+
+  // Droid Commander Mentors
+  general_axiom: { judgments: {} },
+
+  // Enforcer Mentors
+  krag_the_immovable: { judgments: {} },
+
+  // Force Adept Mentors
+  seeker_vera: { judgments: {} },
+
+  // Force Disciple Mentors
+  riquis: { judgments: {} },
+
+  // Gladiator Mentors
+  pegar: { judgments: {} },
+
+  // Gunslinger Mentors
+  rajma: { judgments: {} },
+
+  // Imperial Knight Mentors
+  dezmin: { judgments: {} },
+
+  // Improviser Mentors
+  lucky_jack: { judgments: {} },
+
+  // Independent Droid Mentors
+  seraphim: { judgments: {} },
+
+  // Infiltrator Mentors
+  infiltrator_delta: { judgments: {} },
+
+  // Martial Arts Master Mentors
+  master_zhen: { judgments: {} },
+
+  // Master Privateer Mentors
+  the_captain: { judgments: {} },
+
+  // Medic Mentors
+  kyber: { judgments: {} },
+
+  // Melee Duelist Mentors
+  blade_master_kharjo: { judgments: {} },
+
+  // Military Engineer Mentors
+  chief_engineer_rax: { judgments: {} },
+
+  // Officer Mentors
+  admiral_korr: { judgments: {} },
+
+  // Outlaw Mentors
+  rogue: { judgments: {} },
+
+  // Saboteur Mentors
+  spark: { judgments: {} },
+
+  // Shaper Mentors
+  shaper_urza: { judgments: {} },
+
+  // Vanguard Mentors
+  shield_captain_theron: { judgments: {} }
 };
 
 /**
