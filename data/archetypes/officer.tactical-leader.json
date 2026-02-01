@@ -1,0 +1,31 @@
+{
+  "id": "officer.tactical_leader",
+  "class": "officer",
+  "name": "Tactical Leader",
+  "description": "Military officer who leads from the front with discipline, strategy, and command presence.",
+  "preferredTags": ["leader", "controller", "positioning", "action-economy", "support"],
+  "secondaryTags": ["striker", "defender", "perception", "leadership"],
+  "avoidTags": ["stealth", "solo", "evasion"],
+  "mechanicalBias": {
+    "leader": 0.4,
+    "controller": 0.3,
+    "defender": 0.2,
+    "striker": 0.1
+  },
+  "roleBias": {
+    "offense": 1.0,
+    "defense": 1.1,
+    "support": 1.3,
+    "utility": 0.9
+  },
+  "attributeBias": {
+    "CHA": 0.3,
+    "WIS": 0.3,
+    "STR": 0.2,
+    "INT": 0.2
+  },
+  "talentKeywords": ["Command", "Tactics", "Rally", "Inspire"],
+  "featKeywords": ["Leadership", "Skill Focus (Profession)"],
+  "confidenceThreshold": 0.3,
+  "notes": "Professional military leader. Victory through coordinated action and morale."
+}

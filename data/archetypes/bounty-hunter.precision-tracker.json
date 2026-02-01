@@ -1,0 +1,30 @@
+{
+  "id": "bounty_hunter.precision_tracker",
+  "class": "bounty_hunter",
+  "name": "Precision Tracker",
+  "description": "Bounty hunter who specializes in tracking, precise strikes, and calculated kills from range.",
+  "preferredTags": ["scout", "ranged", "precision", "perception", "ambush"],
+  "secondaryTags": ["striker", "stealth", "positioning"],
+  "avoidTags": ["burst-damage", "melee", "heavy-weapons"],
+  "mechanicalBias": {
+    "striker": 0.4,
+    "scout": 0.3,
+    "precision": 0.3
+  },
+  "roleBias": {
+    "offense": 1.1,
+    "defense": 0.9,
+    "support": 0.6,
+    "utility": 1.1
+  },
+  "attributeBias": {
+    "DEX": 0.35,
+    "WIS": 0.3,
+    "INT": 0.2,
+    "STR": 0.15
+  },
+  "talentKeywords": ["Tracker", "Sniper", "Perception", "Ambush"],
+  "featKeywords": ["Weapon Focus (Ranged)", "Point-Blank Shot", "Precise Shot"],
+  "confidenceThreshold": 0.25,
+  "notes": "Professional tracker and assassin. Victory through superior positioning and deadly accuracy."
+}
