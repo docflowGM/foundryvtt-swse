@@ -384,7 +384,8 @@ export class MentorChatDialog extends FormApplication {
     const response = {
       introduction: MentorVoiceFilterV2.getOpening(mentorName, topic.key, analysisData),
       advice: advice,
-      suggestions: []
+      suggestions: [],
+      reasonTexts: analysisData.reasonTexts || []
     };
 
     return response;

@@ -3,6 +3,7 @@ import { swseLogger } from '../utils/logger.js';
 import { applyActorUpdateAtomic } from '../utils/actor-utils.js';
 import { FinalizeIntegration } from '../progression/integration/finalize-integration.js';
 import { ProgressionSession } from './ProgressionSession.js';
+import { SuggestionService } from './SuggestionService.js';
 
 /**
  * Unified SWSE Progression Engine
@@ -2795,6 +2796,36 @@ async applyScalingFeature(feature) {
     // In the future, we could store session state in actor flags
     swseLogger.warn(`[PROGRESSION] Session persistence not yet implemented`);
     return null;
+  }
+
+  /* ========================================
+     SUGGESTION ENGINE INTEGRATION
+     ======================================== */
+
+  /**
+   * Get suggestions from the SuggestionService
+   * Provides context-aware recommendations based on progression mode and current state
+   * @param {string} domain - Domain to suggest for ('feats', 'talents', 'forcepowers', etc.)
+   * @param {Object} options - Additional options to pass to SuggestionService
+   * @returns {Promise<Array>} Sorted array of suggestions for the domain
+   */
+  async getSuggestions(domain, options = {}) {
+    try {
+      const suggestions = await SuggestionService.getSuggestions(
+        this.actor,
+        this.mode,
+        {
+          domain,
+          ...options
+        }
+      );
+
+      swseLogger.log(`[PROGRESSION] Got ${suggestions.length} suggestions for domain: ${domain}`);
+      return suggestions;
+    } catch (err) {
+      swseLogger.error(`[PROGRESSION] Error getting suggestions for ${domain}:`, err);
+      return [];
+    }
   }
 }
 

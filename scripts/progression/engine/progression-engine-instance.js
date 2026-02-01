@@ -3,6 +3,7 @@
  *
  * This class provides an instance-based interface for the level-up UI.
  * It tracks pending selections and coordinates with all subsystems.
+ * Integrates with SuggestionService for context-aware recommendations.
  */
 
 import { SWSELogger } from '../../utils/logger.js';
@@ -13,6 +14,7 @@ import { ForceProgressionEngine } from './force-progression.js';
 import { ApplyHandlers } from '../utils/apply-handlers.js';
 import { FinalizeIntegration } from '../integration/finalize-integration.js';
 import { dispatchFeature } from './feature-dispatcher.js';
+import { SuggestionService } from '../../engine/SuggestionService.js';
 
 export class ProgressionEngine {
   /**
@@ -294,6 +296,47 @@ export class ProgressionEngine {
            this.pending.forcePowers.length > 0 ||
            this.pending.forceSecrets.length > 0 ||
            this.pending.forceTechniques.length > 0;
+  }
+
+  /* ========================================
+     SUGGESTION ENGINE INTEGRATION
+     ======================================== */
+
+  /**
+   * Get suggestions from the SuggestionService
+   * Integrates with current progression context
+   * Considers pending selections when scoring suggestions
+   * @param {string} domain - Domain to suggest for ('feats', 'talents', 'forcepowers', etc.)
+   * @param {Object} options - Additional options to pass to SuggestionService
+   * @returns {Promise<Array>} Sorted array of suggestions for the domain
+   */
+  async getSuggestions(domain, options = {}) {
+    try {
+      const pendingData = {
+        selectedClass: this.pending.class ? { name: this.pending.class } : null,
+        selectedFeats: this.pending.feats,
+        selectedTalents: this.pending.talents,
+        selectedSkills: this.pending.skills,
+        selectedPowers: this.pending.forcePowers
+      };
+
+      // Pass pending context to suggestion service for scoring
+      const suggestions = await SuggestionService.getSuggestions(
+        this.actor,
+        this.mode,
+        {
+          domain,
+          pendingData,
+          ...options
+        }
+      );
+
+      SWSELogger.log(`[PROGRESSION] Got ${suggestions.length} suggestions for domain: ${domain}`);
+      return suggestions;
+    } catch (err) {
+      SWSELogger.error(`[PROGRESSION] Error getting suggestions for ${domain}:`, err);
+      return [];
+    }
   }
 }
 
