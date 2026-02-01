@@ -51,6 +51,10 @@
         "improviser_master": {
           "greeting": "Master improviser. You *are* the plan.",
           "confirmation": "Intuition dictates outcomes."
+        },
+        "generalist": {
+          "greeting": "I see many paths open to you. Let us focus on versatility for now.",
+          "confirmation": "Balance and adaptability serve you well. Stay flexible!"
         }
       }
     },

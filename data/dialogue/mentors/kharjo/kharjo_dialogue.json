@@ -123,6 +123,22 @@
               "neutral": ["Good. You adapt.", "You learn—eventually."]
             }
           }
+        },
+        "generalist": {
+          "greeting": "I see many paths open to you. Let us focus on versatility for now.",
+          "confirmation": "Balance and adaptability serve you well.",
+          "reactions": {
+            "reject_suggestion": {
+              "mild": ["Your choice has merit.", "That option is sound."],
+              "harsh": ["Consider your options carefully."]
+            },
+            "repeat_rejection": {
+              "harsh": ["Indecision clouds progress."]
+            },
+            "accept_after_resistance": {
+              "neutral": ["Good. Flexibility strengthens you.", "A wise adaptation."]
+            }
+          }
         }
       }
     },
