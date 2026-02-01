@@ -41,6 +41,12 @@ export const TalentTreeDB = {
      * Build talent tree registry from compendium.
      * Called once during system initialization (before ClassesDB).
      *
+     * NOTE: This registry intentionally uses getIndex() instead of getDocuments().
+     * TalentTreeDB is a data-only SSOT registry and must NOT instantiate Item documents.
+     * Using getDocuments() causes Foundry v12/v13 validation failures for custom Item
+     * types ("talenttree") due to CompendiumCollection.set() rejecting partially-
+     * constructed documents. The index provides all needed data without lifecycle issues.
+     *
      * @returns {Promise<boolean>} - True if successful
      */
     async build() {
@@ -51,14 +57,15 @@ export const TalentTreeDB = {
                 return false;
             }
 
-            const docs = await pack.getDocuments();
+            // Use getIndex with expanded fields - NOT getDocuments (see note above)
+            const index = await pack.getIndex({ fields: ['system', 'name', 'img'] });
             let count = 0;
             let warnings = 0;
 
-            for (const rawTree of docs) {
+            for (const entry of index) {
                 try {
-                    // Normalize the tree
-                    const normalizedTree = normalizeTalentTree(rawTree);
+                    // Normalize the tree from index entry (has _id, name, system, img)
+                    const normalizedTree = normalizeTalentTree(entry);
 
                     // Validate
                     validateTalentTree(normalizedTree);
@@ -69,7 +76,7 @@ export const TalentTreeDB = {
                     count++;
 
                 } catch (err) {
-                    SWSELogger.error(`[TalentTreeDB] Failed to normalize tree "${rawTree.name}":`, err);
+                    SWSELogger.error(`[TalentTreeDB] Failed to normalize tree "${entry.name}":`, err);
                     warnings++;
                 }
             }
