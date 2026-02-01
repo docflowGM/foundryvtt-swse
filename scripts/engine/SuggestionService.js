@@ -18,6 +18,7 @@ import { SuggestionExplainer } from './SuggestionExplainer.js';
 import { getAllowedReasonDomains } from '../suggestions/suggestion-focus-map.js';
 import { getReasonRelevance } from '../suggestions/reason-relevance.js';
 import { ReasonFactory } from './ReasonFactory.js';
+import { ConfidenceScoring } from './ConfidenceScoring.js';
 
 import { FeatEngine } from '../progression/feats/feat-engine.js';
 import { ForcePowerEngine } from '../progression/engine/force-power-engine.js';
@@ -452,6 +453,24 @@ export class SuggestionService {
           });
         } catch (err) {
           suggestion.reasons = [];
+        }
+      }
+
+      // Consolidate similar reasons to reduce noise
+      if (Array.isArray(suggestion.reasons) && suggestion.reasons.length > 1) {
+        // Deduplicate by code
+        suggestion.reasons = ReasonFactory.deduplicate(suggestion.reasons);
+      }
+
+      // Compute confidence score alongside tier
+      if (suggestion?.suggestion?.tier !== undefined) {
+        try {
+          suggestion.confidence = ConfidenceScoring.computeConfidence(suggestion, actor);
+          if (!suggestion.suggestion.confidence) {
+            suggestion.suggestion.confidence = suggestion.confidence;
+          }
+        } catch (err) {
+          suggestion.confidence = 0.5; // Default moderate confidence on error
         }
       }
 
