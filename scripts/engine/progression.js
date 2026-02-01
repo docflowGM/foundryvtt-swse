@@ -3,6 +3,7 @@ import { swseLogger } from '../utils/logger.js';
 import { applyActorUpdateAtomic } from '../utils/actor-utils.js';
 import { FinalizeIntegration } from '../progression/integration/finalize-integration.js';
 import { ProgressionSession } from './ProgressionSession.js';
+import { SuggestionService } from './SuggestionService.js';
 
 /**
  * Unified SWSE Progression Engine
@@ -2795,6 +2796,50 @@ async applyScalingFeature(feature) {
     // In the future, we could store session state in actor flags
     swseLogger.warn(`[PROGRESSION] Session persistence not yet implemented`);
     return null;
+  }
+
+  /* ========================================
+     SUGGESTION ENGINE INTEGRATION
+     ======================================== */
+
+  /**
+   * Get suggestions from the SuggestionService
+   * Provides context-aware recommendations based on progression mode and current state
+   *
+   * @param {Object} options - Suggestion request options
+   * @param {string} options.focus - Semantic intent: "skills" | "talents" | "feats" | "classes" | "attributes"
+   *                                 Routes which reason domains are visible in responses
+   * @param {string} options.domain - Domain to suggest for ('feats', 'talents', 'forcepowers', etc.)
+   * @param {Array} options.available - Available items to suggest from
+   * @param {Object} options.pendingSelections - Pending selections to influence scoring
+   * @returns {Promise<Array>} Sorted array of suggestions for the domain, with focus-filtered reasons
+   */
+  async getSuggestions(options = {}) {
+    try {
+      const {
+        focus = null,
+        domain = null,
+        available = null,
+        pendingSelections = null
+      } = options;
+
+      const suggestions = await SuggestionService.getSuggestions(
+        this.actor,
+        this.mode,
+        {
+          focus,
+          domain,
+          available,
+          pendingData: pendingSelections
+        }
+      );
+
+      swseLogger.log(`[PROGRESSION] Got ${suggestions.length} suggestions (focus: ${focus}, domain: ${domain})`);
+      return suggestions;
+    } catch (err) {
+      swseLogger.error(`[PROGRESSION] Error getting suggestions:`, err);
+      return [];
+    }
   }
 }
 

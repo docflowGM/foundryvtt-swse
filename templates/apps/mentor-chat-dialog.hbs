@@ -55,6 +55,20 @@
               {{/if}}
             </div>
 
+            <!-- System Analysis Panel (Reasoning) -->
+            {{#if currentResponse.reasonTexts}}
+              {{#if currentResponse.reasonTexts.length}}
+                <div class="system-analysis-panel">
+                  <p class="analysis-label">System Analysis</p>
+                  <ul class="reason-list">
+                    {{#each currentResponse.reasonTexts}}
+                      <li class="reason-item">{{this.text}}</li>
+                    {{/each}}
+                  </ul>
+                </div>
+              {{/if}}
+            {{/if}}
+
             <!-- Response Options -->
             <div class="kotor-response-options">
               <button class="back-to-topics response-option" type="button">
@@ -660,5 +674,46 @@
   .back-to-mentors:hover {
     background: rgba(0, 170, 255, 0.2);
     border-color: rgba(0, 170, 255, 0.6);
+  }
+
+  /* System Analysis Panel */
+  .system-analysis-panel {
+    padding: 12px;
+    background: rgba(200, 200, 200, 0.08);
+    border: 1px solid rgba(200, 200, 200, 0.3);
+    border-radius: 4px;
+    margin-top: 8px;
+  }
+
+  .analysis-label {
+    margin: 0 0 8px 0;
+    color: #aaa;
+    font-size: 0.85em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .reason-list {
+    margin: 0;
+    padding-left: 18px;
+    list-style: none;
+  }
+
+  .reason-item {
+    margin-bottom: 6px;
+    color: #bbb;
+    font-size: 0.9em;
+    line-height: 1.5;
+  }
+
+  .reason-item:before {
+    content: "• ";
+    color: #999;
+    margin-right: 6px;
+  }
+
+  .reason-item:last-child {
+    margin-bottom: 0;
   }
 </style>

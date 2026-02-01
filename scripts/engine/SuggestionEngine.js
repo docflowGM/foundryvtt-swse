@@ -14,6 +14,13 @@
  * This engine integrates with BuildIntent to provide coherent recommendations
  * aligned with the character's apparent build direction and prestige targets.
  *
+ * ARCHITECTURAL BOUNDARY (IMPORTANT):
+ * This engine produces deterministic tiers and primary reasons.
+ * Tier assignment is NEVER influenced by progression focus or relevance weighting.
+ * Relevance annotation is applied ONLY to the explanatory reasons[] array
+ * in SuggestionService._filterReasonsByFocus(), for display ranking only.
+ * This tier output is immutable and final.
+ *
  * This engine is a pure logic layer with no UI coupling.
  * It outputs UI-ready metadata: tier, icon, and human-readable reason.
  */
