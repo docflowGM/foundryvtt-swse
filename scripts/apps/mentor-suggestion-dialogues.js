@@ -357,41 +357,15 @@ export const MENTOR_PERSONALITIES = {
 };
 
 // ============================================================================
-// SCOLDING SYSTEM
-// ============================================================================
-
-/**
- * Scolding intensity levels
- * These are tone shifts only - no mechanical penalties
- */
-export const SCOLDING_LEVELS = {
-    NONE: 0,
-    CORRECTION: 1,    // Mild, instructional
-    REPRIMAND: 2,     // Sharp, disapproving
-    PRESSURE: 3       // Ideological or emotional weight
-};
-
-/**
- * Get the appropriate scolding level based on rejection count
- * @param {number} rejectionCount - How many similar suggestions have been rejected
- * @param {string} mentorKey - The mentor class key
- * @returns {number} Scolding level (0-3)
- */
-export function getScoldingLevel(rejectionCount, mentorKey) {
-    const personality = MENTOR_PERSONALITIES[mentorKey];
-
-    // Non-scolding mentors always return NONE
-    if (!personality?.scolds) return SCOLDING_LEVELS.NONE;
-
-    if (rejectionCount >= 5) return SCOLDING_LEVELS.PRESSURE;
-    if (rejectionCount >= 3) return SCOLDING_LEVELS.REPRIMAND;
-    if (rejectionCount >= 1) return SCOLDING_LEVELS.CORRECTION;
-
-    return SCOLDING_LEVELS.NONE;
-}
-
-// ============================================================================
 // CORE CLASS MENTOR SUGGESTION DIALOGUES
+//
+// PHASE2_MIGRATE_TO_UI: This entire section contains explanation content that should be
+// migrated to inspectable UI panels:
+// - Attribute selectors: Move suggestion text to attribute picker tooltips
+// - Feat/Talent/Skill selectors: Move to dedicated browser/picker UI
+// - Class guidance: Move to prestige class preview panel
+// - Multiclass warnings: Move to conflict detection UI
+// - Build advice: Move to character sheet "Build Analysis" tab
 // ============================================================================
 
 export const MENTOR_SUGGESTION_DIALOGUES = {
@@ -399,6 +373,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
     // MIRAJ (JEDI) - Wise, spiritual, compassionate
     // ========================================================================
     "Jedi": {
+        // PHASE2_MIGRATE_TO_UI: Attribute suggestions → Attribute picker tooltips
         attribute: {
             early: {
                 wisdom: {
@@ -472,6 +447,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                 }
             }
         },
+        // PHASE2_MIGRATE_TO_UI: Feat suggestions → Feat browser/picker tooltips or "Why?" expandable
         feat: {
             early: {
                 default: {
@@ -520,6 +496,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                 }
             }
         },
+        // PHASE2_MIGRATE_TO_UI: Talent suggestions → Talent browser/selector tooltips
         talent: {
             early: {
                 default: {
@@ -579,6 +556,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                 }
             }
         },
+        // PHASE2_MIGRATE_TO_UI: Skill suggestions → Skill selector/training UI tooltips
         skill: {
             early: {
                 default: {
@@ -608,6 +586,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                 }
             }
         },
+        // PHASE2_MIGRATE_TO_UI: Defense build guidance → Character Sheet "Build Analysis" or tooltip
         defense: {
             early: {
                 default: {
@@ -627,6 +606,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                 }
             }
         },
+        // PHASE2_MIGRATE_TO_UI: Multiclass suggestions → Multiclass conflict detection UI or prestige preview
         multiclass: {
             early: {
                 default: {
@@ -2808,33 +2788,14 @@ function buildDialogueResponse(phaseDialogues, specificType, personality, reject
     if (dialogue.combined) {
         let text = dialogue.combined;
 
-        // Add scolding if applicable
-        if (personality?.scolds && rejectionCount > 0 && fullDialogues.scolding) {
-            const scoldLevel = getScoldingLevel(rejectionCount, personality.key);
-            const scoldText = getScoldingText(fullDialogues.scolding, scoldLevel);
-            if (scoldText) {
-                text = `${scoldText}\n\n${text}`;
-            }
-        }
-
         return {
             text,
-            phase: "combined",
-            usedScolding: rejectionCount > 0 && personality?.scolds
+            phase: "combined"
         };
     }
 
     // Build three-layer response
     let parts = [];
-
-    // Add scolding prefix if applicable
-    if (personality?.scolds && rejectionCount > 0 && fullDialogues.scolding) {
-        const scoldLevel = getScoldingLevel(rejectionCount, personality.key);
-        const scoldText = getScoldingText(fullDialogues.scolding, scoldLevel);
-        if (scoldText) {
-            parts.push(scoldText);
-        }
-    }
 
     if (dialogue.observation && (!personality || personality.usesAllLayers)) {
         parts.push(dialogue.observation);
@@ -2855,25 +2816,8 @@ function buildDialogueResponse(phaseDialogues, specificType, personality, reject
             observation: dialogue.observation,
             suggestion: dialogue.suggestion,
             respectClause: dialogue.respectClause
-        },
-        usedScolding: rejectionCount > 0 && personality?.scolds
+        }
     };
-}
-
-/**
- * Get scolding text based on level
- */
-function getScoldingText(scoldingDialogues, level) {
-    switch (level) {
-        case SCOLDING_LEVELS.CORRECTION:
-            return scoldingDialogues.correction;
-        case SCOLDING_LEVELS.REPRIMAND:
-            return scoldingDialogues.reprimand;
-        case SCOLDING_LEVELS.PRESSURE:
-            return scoldingDialogues.pressure;
-        default:
-            return null;
-    }
 }
 
 /**
@@ -3027,9 +2971,7 @@ export default {
     // DIALOGUE_PHASES, SUGGESTION_CONTEXTS, getDialoguePhase
 
     MENTOR_PERSONALITIES,
-    SCOLDING_LEVELS,
     MENTOR_SUGGESTION_DIALOGUES,
-    getScoldingLevel,
     getMentorSuggestionDialogue,
     getMentorRejectionResponse,
     mentorCanScold,
