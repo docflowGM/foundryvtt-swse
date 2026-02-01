@@ -74,9 +74,10 @@
  *   - silence: No response
  */
 
-import { INTENSITY_ATOMS, getIntensityScale } from './mentor-intensity-atoms.js';
+import { INTENSITY_ATOMS, getIntensityScale, incrementIntensity, decrementIntensity } from './mentor-intensity-atoms.js';
 import { isValidReasonKey } from './mentor-reason-renderer.js';
 import { findMatchingRule, validateMentorRules } from './mentor-reason-judgment-map.js';
+import { logMentorDecision, isMentorLoggingEnabled } from './mentor-decision-logger.js';
 
 export const JUDGMENT_ATOMS = {
   // Recognition & Observation
@@ -529,30 +530,58 @@ export function selectReasonAtoms(context) {
 /**
  * Refine intensity based on context (Phase 2: Feel Tuning)
  *
- * This function takes a base intensity from the rule and adjusts it based on
- * signal strength, commitment level, and impact category.
+ * This function takes a base intensity from the rule and adjusts it based on:
+ * - Number and strength of reasons present
+ * - Player commitment level
+ * - Whether this is a high-impact decision
+ * - Whether player is exploring vs committed
  *
- * PHASE 2 EXPANSION: Add heuristics for:
- * - Number of reasons present
- * - Strength of commitment
- * - High-impact vs exploratory contexts
- * - Drift detection
- *
- * For now, returns base intensity unchanged.
+ * Tuning heuristics:
+ * - Multiple strong reasons → bump intensity up
+ * - Exploration-only signal → bump intensity down
+ * - High-impact + strong commitment → bump intensity up
+ * - DSP saturation → bump intensity up for warnings
  *
  * @param {string} baseIntensity - Intensity from the rule (e.g., "medium")
+ * @param {string[]} reasons - The extracted reason keys (for count/analysis)
  * @param {Object} context - The judgment context
  * @returns {string} Refined intensity atom
  */
-function refineIntensity(baseIntensity, context) {
-  // PHASE 2: This is where we'll add tuning logic
-  // For now, return base intensity unchanged
+function refineIntensity(baseIntensity, reasons, context) {
+  let intensity = baseIntensity;
 
-  // Example (future):
-  // if (context.reasonCount >= 3) return incrementIntensity(baseIntensity);
-  // if (context.isExplorationOnly) return decrementIntensity(baseIntensity);
+  const {
+    isHighImpact,
+    mentorMemory,
+    dspSaturation,
+    isUndecidedOrDrifting
+  } = context;
 
-  return baseIntensity;
+  // Multiple strong reasons → increase intensity
+  // (More facts supporting the reaction = more conviction)
+  if (reasons && reasons.length >= 3) {
+    intensity = incrementIntensity(intensity);
+  }
+
+  // High-impact decision with strong commitment → increase intensity
+  // (Important moment with clear path = mentor should be more emphatic)
+  if (isHighImpact && mentorMemory?.commitmentStrength > 0.7) {
+    intensity = incrementIntensity(intensity);
+  }
+
+  // Exploration-only signal (low commitment, not on path) → decrease intensity
+  // (Player exploring without commitment = mentor should hold back)
+  if (!isUndecidedOrDrifting && mentorMemory?.commitmentStrength < 0.2) {
+    intensity = decrementIntensity(intensity);
+  }
+
+  // Very high DSP saturation with warning judgments → increase intensity
+  // (Severe danger = mentor must be emphatic)
+  if (dspSaturation > 0.8 && baseIntensity !== INTENSITY_ATOMS.very_low) {
+    intensity = incrementIntensity(intensity);
+  }
+
+  return intensity;
 }
 
 /**
@@ -563,8 +592,9 @@ function refineIntensity(baseIntensity, context) {
  * 1. Extract facts from context (selectReasonAtoms)
  * 2. Match facts to rule (findMatchingRule)
  * 3. Get judgment + base intensity from rule
- * 4. Refine intensity based on context
- * 5. Return complete response
+ * 4. Refine intensity based on context + reasons
+ * 5. Log decision (if enabled)
+ * 6. Return complete response
  *
  * @param {Object} context - The judgment context (from buildJudgmentContext)
  * @returns {Object} Complete response:
@@ -592,8 +622,22 @@ export function selectMentorResponse(context) {
   const judgment = rule.judgment;
   const baseIntensity = rule.intensity;
 
-  // PHASE 2: Refine intensity based on context signals (skeleton, no-op for now)
-  const intensity = refineIntensity(baseIntensity, context);
+  // PHASE 2: Refine intensity based on context + reason strength
+  const intensity = refineIntensity(baseIntensity, reasons, context);
+
+  // LOGGING (Dev-only): Trace the complete decision flow
+  if (isMentorLoggingEnabled()) {
+    logMentorDecision({
+      characterName: context.actor?.name || "Unknown",
+      mentorId: context.mentorId,
+      reasons,
+      ruleLabel: rule.label,
+      judgment,
+      baseIntensity,
+      intensity,
+      refined: intensity !== baseIntensity
+    });
+  }
 
   // Return complete response
   return {
