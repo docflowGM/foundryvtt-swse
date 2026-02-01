@@ -48,11 +48,15 @@ export const ClassesDB = {
                 return false;
             }
 
-            const docs = await pack.getDocuments();
+            // NOTE: ClassesDB is SSOT and must remain data-only.
+            // Never call getDocuments() here — Foundry v12/v13 cannot safely
+            // instantiate custom Item documents during system initialization.
+            // Use getIndex() with expanded fields instead.
+            const index = await pack.getIndex({ fields: ['system', 'name', 'img'] });
             let count = 0;
             let warnings = 0;
 
-            for (const rawClass of docs) {
+            for (const rawClass of index) {
                 try {
                     // Normalize the class
                     const normalizedClass = normalizeClass(rawClass);

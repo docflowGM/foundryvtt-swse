@@ -49,33 +49,17 @@ export const TalentDB = {
                 return false;
             }
 
-            let docs = [];
-            try {
-                docs = await pack.getDocuments();
-            } catch (err) {
-                // Fallback: Recover data from corrupted compendium using getIndex()
-                SWSELogger.warn('[TalentDB] Failed to load documents, attempting recovery via index');
-                const index = await pack.getIndex();
-                for (const entry of index) {
-                    try {
-                        const doc = await pack.getDocument(entry._id);
-                        if (doc && typeof doc === 'object') {
-                            docs.push(doc);
-                        }
-                    } catch (docErr) {
-                        SWSELogger.warn(`[TalentDB] Could not recover talent ${entry.name || entry._id}`);
-                    }
-                }
-                if (docs.length === 0) {
-                    throw new Error('[TalentDB] Unable to recover any talent documents from compendium');
-                }
-            }
+            // NOTE: TalentDB is SSOT and must remain data-only.
+            // Never call getDocuments() here — Foundry v12/v13 cannot safely
+            // instantiate custom Item documents during system initialization.
+            // Use getIndex() with expanded fields instead.
+            const index = await pack.getIndex({ fields: ['system', 'name', 'img'] });
 
             let count = 0;
             let orphaned = 0;
             let warnings = 0;
 
-            for (const rawTalent of docs) {
+            for (const rawTalent of index) {
                 try {
                     // Skip invalid documents
                     if (!rawTalent || typeof rawTalent !== 'object') {
