@@ -286,6 +286,9 @@ export class MentorDialogueResponses {
     // ========================================
     what_lies_ahead: {
       systemIntent: "Hint at prestige classes and long-term options",
+      // PHASE2_MIGRATE_TO_UI: Prestige alignment percentage and target class hints should be
+      // moved to a "Why?" expandable or prestige class preview panel, separate from dialogue.
+      // Mentor dialogue here should remain as NARRATIVE (pure voice/philosophy).
       canonicalAnalysis: (data) => {
         const { targetClass, targetConfidence } = data;
         let analysis = `Your choices are creating trajectories. `;

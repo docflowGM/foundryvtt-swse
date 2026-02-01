@@ -358,6 +358,14 @@ export const MENTOR_PERSONALITIES = {
 
 // ============================================================================
 // CORE CLASS MENTOR SUGGESTION DIALOGUES
+//
+// PHASE2_MIGRATE_TO_UI: This entire section contains explanation content that should be
+// migrated to inspectable UI panels:
+// - Attribute selectors: Move suggestion text to attribute picker tooltips
+// - Feat/Talent/Skill selectors: Move to dedicated browser/picker UI
+// - Class guidance: Move to prestige class preview panel
+// - Multiclass warnings: Move to conflict detection UI
+// - Build advice: Move to character sheet "Build Analysis" tab
 // ============================================================================
 
 export const MENTOR_SUGGESTION_DIALOGUES = {
@@ -365,6 +373,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
     // MIRAJ (JEDI) - Wise, spiritual, compassionate
     // ========================================================================
     "Jedi": {
+        // PHASE2_MIGRATE_TO_UI: Attribute suggestions → Attribute picker tooltips
         attribute: {
             early: {
                 wisdom: {
@@ -438,6 +447,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                 }
             }
         },
+        // PHASE2_MIGRATE_TO_UI: Feat suggestions → Feat browser/picker tooltips or "Why?" expandable
         feat: {
             early: {
                 default: {
@@ -486,6 +496,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                 }
             }
         },
+        // PHASE2_MIGRATE_TO_UI: Talent suggestions → Talent browser/selector tooltips
         talent: {
             early: {
                 default: {
@@ -545,6 +556,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                 }
             }
         },
+        // PHASE2_MIGRATE_TO_UI: Skill suggestions → Skill selector/training UI tooltips
         skill: {
             early: {
                 default: {
@@ -574,6 +586,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                 }
             }
         },
+        // PHASE2_MIGRATE_TO_UI: Defense build guidance → Character Sheet "Build Analysis" or tooltip
         defense: {
             early: {
                 default: {
@@ -593,6 +606,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                 }
             }
         },
+        // PHASE2_MIGRATE_TO_UI: Multiclass suggestions → Multiclass conflict detection UI or prestige preview
         multiclass: {
             early: {
                 default: {
