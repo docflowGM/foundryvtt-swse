@@ -16,8 +16,9 @@ import { SWSELogger } from '../utils/logger.js';
 import { MentorVoiceFilterV2 } from './mentor-voice-filter-v2.js';
 import { MentorDialogueV2Integration } from './mentor-dialogue-v2-integration.js';
 import { MentorStoryResolver } from '../engine/mentor-story-resolver.js';
-import { selectJudgmentAtom, buildJudgmentContext } from '../mentor/mentor-judgment-engine.js';
+import { selectMentorResponse, buildJudgmentContext } from '../mentor/mentor-judgment-engine.js';
 import { renderJudgmentAtom } from '../mentor/mentor-judgment-renderer.js';
+import { getReasonTexts } from '../mentor/mentor-reason-renderer.js';
 
 const CHAT_TOPICS = [
   {
@@ -336,7 +337,8 @@ export class MentorChatDialog extends FormApplication {
         break;
     }
 
-    // NEW: Select judgment atom for semantic reaction
+    // Select mentor response using rule-based judgment determination
+    // This flow: context → reasons → rule match → judgment + intensity + reasons
     try {
       const judgmentContext = await buildJudgmentContext(
         this.actor,
@@ -344,12 +346,26 @@ export class MentorChatDialog extends FormApplication {
         topic.key,
         this.buildIntent
       );
-      const judgmentAtom = selectJudgmentAtom(judgmentContext);
-      const judgmentPhrase = renderJudgmentAtom(mentorId, judgmentAtom, 0.6);
+
+      // Get complete mentor response: {judgment, intensity, reasons}
+      const mentorResponse = selectMentorResponse(judgmentContext);
+
+      // Render judgment phrase using mentor voice + rule-determined intensity
+      const judgmentPhrase = renderJudgmentAtom(
+        mentorId,
+        mentorResponse.judgment,
+        mentorResponse.intensity
+      );
+
+      // Store on analysisData for UI and future "Why?" inspection
       analysisData.judgmentPhrase = judgmentPhrase;
+      analysisData.mentorReasons = mentorResponse.reasons;
+      analysisData.reasonTexts = getReasonTexts(mentorResponse.reasons);
     } catch (err) {
-      SWSELogger.warn('Error selecting judgment atom:', err);
+      SWSELogger.warn('Error in mentor response determination:', err);
       analysisData.judgmentPhrase = '';
+      analysisData.mentorReasons = [];
+      analysisData.reasonTexts = [];
     }
 
     // Wrap analysis with mentor voice
