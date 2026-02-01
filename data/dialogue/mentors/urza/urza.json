@@ -1,5 +1,5 @@
 {
-  "mentorId": "urza",
+  "mentor_id": "m29",
   "judgments": {
     "recognition": {
       "very_low": [
@@ -647,5 +647,6 @@
         ""
       ]
     }
-  }
+  },
+  "mentorId": "urza"
 }
