@@ -16,6 +16,7 @@ import { SuggestionEngineCoordinator } from './SuggestionEngineCoordinator.js';
 import { CompendiumResolver } from './CompendiumResolver.js';
 import { SuggestionExplainer } from './SuggestionExplainer.js';
 import { getAllowedReasonDomains } from '../suggestions/suggestion-focus-map.js';
+import { getReasonRelevance } from '../suggestions/reason-relevance.js';
 
 import { FeatEngine } from '../progression/feats/feat-engine.js';
 import { ForcePowerEngine } from '../progression/engine/force-power-engine.js';
@@ -469,21 +470,24 @@ export class SuggestionService {
   }
 
   /**
-   * Filter reasons in suggestions by progression focus
+   * Filter reasons in suggestions by progression focus and apply relevance weighting
    *
-   * This method gates visibility of reason domains without changing scoring.
-   * When a progression step requests suggestions with a specific focus,
-   * only reason domains relevant to that focus are shown.
+   * This method:
+   * 1. Gates visibility of reason domains (focus filtering)
+   * 2. Annotates visible reasons with contextual relevance scores
+   *
+   * Relevance is ephemeral and applied ONLY to the explanatory reasons[] array.
+   * It does NOT affect base tier assignment or suggestion scoring/ordering.
    *
    * @param {Array} suggestions - Array of enriched suggestion objects
    * @param {string|null} focus - Progression focus ("skills", "feats", "classes", etc.) or null for all
    * @param {Object} options - Filter options
    * @param {boolean} options.trace - Enable trace logging
-   * @returns {Array} Suggestions with filtered reason lists
+   * @returns {Array} Suggestions with filtered and relevance-weighted reason lists
    */
   static _filterReasonsByFocus(suggestions, focus = null, { trace = false } = {}) {
     if (!focus) {
-      // No focus = show all reasons (backward compatible)
+      // No focus = show all reasons with equal weight (backward compatible)
       return suggestions;
     }
 
@@ -500,26 +504,34 @@ export class SuggestionService {
     }
 
     const filtered = suggestions.map(s => {
-      // Filter the reasons array to only those with allowed domains
+      // Step 1: Filter the reasons array to only those with allowed domains
       const filteredReasons = (s.reasons ?? []).filter(r => {
         const reasonDomain = r?.domain ?? null;
         return reasonDomain && allowedDomains.includes(reasonDomain);
       });
 
+      // Step 2: Annotate each visible reason with relevance score
+      // Relevance is contextual priority for ranking/display, not stored persistently
+      const relevanceWeighted = filteredReasons.map(r => ({
+        ...r,
+        relevanceScore: getReasonRelevance(focus, r, { focus })
+      }));
+
       return {
         ...s,
-        reasons: filteredReasons
+        reasons: relevanceWeighted
       };
     });
 
     if (trace) {
       SWSELogger.log(
-        `[SuggestionService] Filtered reasons by focus "${focus}"`,
+        `[SuggestionService] Filtered and weighted reasons by focus "${focus}"`,
         {
           allowedDomains,
           suggestions: filtered.slice(0, 3).map(s => ({
             name: s.name,
-            reasonCount: s.reasons?.length ?? 0
+            reasonCount: s.reasons?.length ?? 0,
+            topRelevance: s.reasons?.[0]?.relevanceScore ?? null
           }))
         }
       );
