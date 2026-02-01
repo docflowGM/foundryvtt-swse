@@ -10,6 +10,10 @@ from collections import defaultdict
 
 BASE = Path("packs")
 
+def normalize_id(id_str):
+    """Remove hyphens from UUID-format IDs to match Foundry's document.id format"""
+    return id_str.replace('-', '') if id_str else id_str
+
 print("=" * 60)
 print("TALENT TREE SSOT RECONCILIATION")
 print("=" * 60)
@@ -33,6 +37,17 @@ print(f"  ✓ Loaded {len(trees)} talent trees")
 
 # STEP 4: Build lookup tables
 print("\n[3/5] Building lookup tables...")
+
+# Normalize all talent IDs (remove hyphens to match Foundry document.id)
+for t in talents:
+    t["_id"] = normalize_id(t["_id"])
+
+# Normalize tree IDs and their talentIds references
+for tree in trees:
+    tree["_id"] = normalize_id(tree["_id"])
+    if "system" in tree and "talentIds" in tree["system"]:
+        tree["system"]["talentIds"] = [normalize_id(tid) for tid in tree["system"]["talentIds"]]
+
 talent_by_id = {t["_id"]: t for t in talents}
 errors = {
     "missing_talent": [],  # tree references non-existent talent
