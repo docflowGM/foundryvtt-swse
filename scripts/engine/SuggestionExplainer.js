@@ -73,11 +73,24 @@ export class SuggestionExplainer {
    *
    * @param {Object} suggestion - { itemName, theme, confidenceLevel, confidence }
    * @param {Actor} actor
-   * @param {Array} opportunityCostReasons - Array of warning strings (optional)
+   * @param {Array|Object} opportunityCostReasons - Array of warning strings OR options object
+   * @param {Object} options - Optional: { focus, emphasizeContext }
    * @returns {string} Single-sentence explanation
    */
-  static explain(suggestion, actor, opportunityCostReasons = []) {
+  static explain(suggestion, actor, opportunityCostReasons = [], options = {}) {
     try {
+      // Handle backward compatibility: third argument can be options object
+      let focusContext = null;
+      let costReasons = opportunityCostReasons;
+
+      if (opportunityCostReasons && typeof opportunityCostReasons === 'object' && !Array.isArray(opportunityCostReasons)) {
+        options = opportunityCostReasons;
+        costReasons = [];
+      }
+
+      focusContext = options.focus || null;
+      const { emphasizeContext = true } = options;
+
       const primaryAnchor = BuildIdentityAnchor.getAnchor(actor, 'primary');
       const pivotState = PivotDetector.getState(actor);
       const level = actor.system.level || 1;
@@ -100,6 +113,14 @@ export class SuggestionExplainer {
       }
 
       // ─────────────────────────────────────────────────────────────
+      // Adjust for focus context (narrative emphasis)
+      // ─────────────────────────────────────────────────────────────
+
+      if (emphasizeContext && focusContext) {
+        explanation = this._adjustForFocus(explanation, focusContext, suggestion);
+      }
+
+      // ─────────────────────────────────────────────────────────────
       // Adjust for pivot state
       // ─────────────────────────────────────────────────────────────
 
@@ -113,8 +134,8 @@ export class SuggestionExplainer {
       // Add soft opportunity cost warning if needed
       // ─────────────────────────────────────────────────────────────
 
-      if (opportunityCostReasons && opportunityCostReasons.length > 0 && level >= 5) {
-        explanation = this._addOpportunityCostWarning(explanation, opportunityCostReasons);
+      if (Array.isArray(costReasons) && costReasons.length > 0 && level >= 5) {
+        explanation = this._addOpportunityCostWarning(explanation, costReasons);
       }
 
       return explanation;
@@ -122,6 +143,49 @@ export class SuggestionExplainer {
       SWSELogger.error('[SuggestionExplainer] Error generating explanation:', err);
       return `${suggestion.itemName} is available for your character.`;
     }
+  }
+
+  /**
+   * Adjust explanation for progression focus context
+   * Emphasizes different aspects based on what the player is focusing on
+   * @private
+   */
+  static _adjustForFocus(explanation, focus, suggestion) {
+    if (!focus) return explanation;
+
+    const focusAdjustments = {
+      skills: {
+        replace: /strong fit/i,
+        with: 'useful skill training'
+      },
+      feats: {
+        replace: /strong fit/i,
+        with: 'powerful feat choice'
+      },
+      classes: {
+        replace: /strong fit/i,
+        with: 'strong class progression'
+      },
+      talents: {
+        replace: /strong fit/i,
+        with: 'excellent talent synergy'
+      },
+      attributes: {
+        replace: /strong fit/i,
+        with: 'key ability improvement'
+      },
+      forcepowers: {
+        replace: /strong fit/i,
+        with: 'powerful Force ability'
+      }
+    };
+
+    const adjustment = focusAdjustments[focus];
+    if (adjustment) {
+      return explanation.replace(adjustment.replace, adjustment.with);
+    }
+
+    return explanation;
   }
 
   /**

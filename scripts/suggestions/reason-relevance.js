@@ -8,9 +8,10 @@
  * Critical: Relevance is applied ONLY to the explanatory reasons[] array,
  * NEVER to base tier assignment or suggestion scoring/ordering.
  *
- * Each function receives:
- * - reason: The reason object with domain, code, text, etc.
- * - context: Focus context (optional, for future expansion)
+ * Context object may include:
+ * - focus: string (e.g., "feats", "talents", "skills")
+ * - pendingSelections: {selectedFeats, selectedTalents, selectedSkills, etc.}
+ *   Reasons matching pending selections get a boost to relevance
  *
  * Returns: 0.0 → 1.0 (higher = more relevant to this progression focus)
  * Default: 1.0 (equal weight if not matched)
@@ -98,7 +99,7 @@ export const REASON_RELEVANCE = {
  *
  * @param {string} focus - The progression focus ("skills", "feats", "classes", etc.)
  * @param {Object} reason - The reason object with domain, code, text, etc.
- * @param {Object} context - Optional context (for future expansion)
+ * @param {Object} context - Optional context with focus and pendingSelections
  * @returns {number} Relevance weight (0.0 → 1.0)
  */
 export function getReasonRelevance(focus, reason, context = {}) {
@@ -108,11 +109,60 @@ export function getReasonRelevance(focus, reason, context = {}) {
   if (!fn) return 1.0;
 
   try {
-    const weight = fn(reason, context);
+    let weight = fn(reason, context);
+
+    // Boost relevance if reason matches pending selections
+    const pendingBoost = getPendingSelectionBoost(reason, context.pendingSelections);
+    weight = Math.min(1.0, weight + pendingBoost);
+
     // Clamp to valid range
     return Math.max(0, Math.min(1, weight ?? 1.0));
   } catch (err) {
     // Fail open on any error
     return 1.0;
   }
+}
+
+/**
+ * Check if a reason relates to pending selections and boost relevance
+ * This helps emphasize reasons that explain recent player choices
+ * @private
+ * @param {Object} reason - The reason object
+ * @param {Object} pendingSelections - Pending selections (may be null/undefined)
+ * @returns {number} Boost amount (0.0 → 0.1)
+ */
+function getPendingSelectionBoost(reason, pendingSelections) {
+  if (!pendingSelections || typeof pendingSelections !== 'object') {
+    return 0;
+  }
+
+  const reasonCode = reason?.code || '';
+  const reasonDomain = reason?.domain || '';
+
+  // Detect if this reason is about feats/talents that player just selected
+  const selectedFeats = pendingSelections.selectedFeats || [];
+  const selectedTalents = pendingSelections.selectedTalents || [];
+  const selectedSkills = pendingSelections.selectedSkills || [];
+
+  // Boost if reason mentions prerequisites (suggests player met requirements)
+  if (reasonCode === 'PREREQ_MET' && (selectedFeats.length > 0 || selectedTalents.length > 0)) {
+    return 0.1;
+  }
+
+  // Boost if reason is about synergy with recent choices
+  if (reasonDomain === 'synergy' && (selectedFeats.length > 0 || selectedTalents.length > 0)) {
+    return 0.08;
+  }
+
+  // Boost if reason is about ability/skill training and they just selected skills
+  if (reasonDomain === 'trained_skills' && selectedSkills.length > 0) {
+    return 0.08;
+  }
+
+  // Boost pattern matching when player is actively building direction
+  if (reasonCode === 'MATCHES_ARCHETYPE' && selectedFeats.length > 2) {
+    return 0.06;
+  }
+
+  return 0;
 }
