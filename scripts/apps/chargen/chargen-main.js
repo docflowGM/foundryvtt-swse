@@ -1809,6 +1809,30 @@ export default class CharacterGenerator extends Application {
     }
   }
 
+  /**
+   * Handle character type selection (Living vs Droid)
+   * @param {Event} event - The click event
+   */
+  async _onSelectType(event) {
+    event.preventDefault();
+
+    const button = event.currentTarget;
+    const type = button?.dataset?.type;
+
+    if (!type || !['living', 'droid'].includes(type)) {
+      ui.notifications.warn("Invalid character type selected.");
+      return;
+    }
+
+    // Update character data based on selection
+    this.characterData.isDroid = type === 'droid';
+
+    SWSELogger.log(`CharGen | Character type selected: ${type} (isDroid: ${this.characterData.isDroid})`);
+
+    // Move to next step
+    await this._onNextStep(event);
+  }
+
   async _onNextStep(event) {
     event.preventDefault();
 
