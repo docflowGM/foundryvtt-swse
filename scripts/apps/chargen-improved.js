@@ -45,20 +45,33 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     return context;
   }
 
-  async _onRender(html, options) {
-    await super._onRender(html, options);
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+
+    // AppV2 invariant:
+    // _onRender receives NO html/jQuery object.
+    // All DOM access must use this.element (HTMLElement).
+
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
     // Level selection
-    html.find('#target-level-input').change(this._onLevelChange.bind(this));
+    const levelInput = root.querySelector('#target-level-input');
+    if (levelInput) {
+      levelInput.addEventListener('change', this._onLevelChange.bind(this));
+    }
 
     // Free Build button
-    html.find('#free-build-btn').click(this._onFreeBuild.bind(this));
+    const freeBuildBtn = root.querySelector('#free-build-btn');
+    if (freeBuildBtn) {
+      freeBuildBtn.addEventListener('click', this._onFreeBuild.bind(this));
+    }
 
     // Class preview
-    html.find('.choice-button[data-class]').hover(
-      (e) => this._showClassPreview(e),
-      () => this._hideClassPreview()
-    );
+    for (const button of root.querySelectorAll('.choice-button[data-class]')) {
+      button.addEventListener('mouseenter', (e) => this._showClassPreview(e));
+      button.addEventListener('mouseleave', () => this._hideClassPreview());
+    }
   }
 
   // ========================================
@@ -111,12 +124,12 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
   _onFreeBuild(event) {
     event.preventDefault();
 
-    const html = this.element[0];
+    const root = this.element;
     const ablist = ["str", "dex", "con", "int", "wis", "cha"];
 
     // Enable all inputs for manual entry
     ablist.forEach(ab => {
-      const input = html.querySelector(`[name="ability_${ab}"]`);
+      const input = root.querySelector(`[name="ability_${ab}"]`);
       if (input) {
         input.disabled = false;
         input.readOnly = false;
@@ -124,19 +137,19 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
         input.max = 25;
         input.value = this.characterData.abilities[ab].base || 10;
 
-        input.oninput = (ev) => {
+        input.addEventListener('input', (ev) => {
           const val = Math.max(3, Math.min(25, Number(ev.target.value) || 10));
           ev.target.value = val;
           this.characterData.abilities[ab].base = val;
           this._recalcAbilities();
-          this._updateAbilityDisplay(html, ab);
-        };
+          this._updateAbilityDisplay(root, ab);
+        });
       }
     });
 
     // Hide other UI elements
-    html.querySelectorAll('.ability-mode').forEach(el => el.style.display = 'none');
-    html.querySelector('#free-mode').style.display = 'block';
+    root.querySelectorAll('.ability-mode').forEach(el => el.style.display = 'none');
+    root.querySelector('#free-mode').style.display = 'block';
 
     ui.notifications.info("Free Build enabled - manually enter any ability scores (3-25)");
   }
