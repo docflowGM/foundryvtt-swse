@@ -302,59 +302,77 @@ export class SWSEStore extends ApplicationV2 {
     return categorizeEquipment({ name: view.name, system: sys });
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
     // Add to cart buttons
-    html.on("click", ".buy-item", ev => {
-      const id = ev.currentTarget?.dataset?.itemId;
-      if (!id) return;
-      addItemToCart(this, id, line => this._setRendarrLine(line));
-      this._persistCart();
-      this._renderCartUI();
+    root.querySelectorAll(".buy-item").forEach(btn => {
+      btn.addEventListener("click", ev => {
+        const id = ev.currentTarget?.dataset?.itemId;
+        if (!id) return;
+        addItemToCart(this, id, line => this._setRendarrLine(line));
+        this._persistCart();
+        this._renderCartUI();
+      });
     });
 
-    html.on("click", ".buy-droid", ev => {
-      const id = ev.currentTarget?.dataset?.actorId || ev.currentTarget?.dataset?.droidId;
-      if (!id) return;
-      addDroidToCart(this, id, line => this._setRendarrLine(line));
-      this._persistCart();
-      this._renderCartUI();
+    root.querySelectorAll(".buy-droid").forEach(btn => {
+      btn.addEventListener("click", ev => {
+        const id = ev.currentTarget?.dataset?.actorId || ev.currentTarget?.dataset?.droidId;
+        if (!id) return;
+        addDroidToCart(this, id, line => this._setRendarrLine(line));
+        this._persistCart();
+        this._renderCartUI();
+      });
     });
 
-    html.on("click", ".buy-vehicle", ev => {
-      const id = ev.currentTarget?.dataset?.actorId || ev.currentTarget?.dataset?.vehicleId;
-      const condition = ev.currentTarget?.dataset?.condition || "new";
-      if (!id) return;
-      addVehicleToCart(this, id, condition, line => this._setRendarrLine(line));
-      this._persistCart();
-      this._renderCartUI();
+    root.querySelectorAll(".buy-vehicle").forEach(btn => {
+      btn.addEventListener("click", ev => {
+        const id = ev.currentTarget?.dataset?.actorId || ev.currentTarget?.dataset?.vehicleId;
+        const condition = ev.currentTarget?.dataset?.condition || "new";
+        if (!id) return;
+        addVehicleToCart(this, id, condition, line => this._setRendarrLine(line));
+        this._persistCart();
+        this._renderCartUI();
+      });
     });
-
 
     // Custom builders
-    html.on("click", ".create-custom-droid", async () => {
-      if (!this.actor) return;
-      await createCustomDroid(this.actor, () => this.render());
-    });
+    const customDroidBtn = root.querySelector(".create-custom-droid");
+    if (customDroidBtn) {
+      customDroidBtn.addEventListener("click", async () => {
+        if (!this.actor) return;
+        await createCustomDroid(this.actor, () => this.render());
+      });
+    }
 
-    html.on("click", ".create-custom-starship", async () => {
-      if (!this.actor) return;
-      await createCustomStarship(this.actor, () => this.render());
-    });
+    const customStarshipBtn = root.querySelector(".create-custom-starship");
+    if (customStarshipBtn) {
+      customStarshipBtn.addEventListener("click", async () => {
+        if (!this.actor) return;
+        await createCustomStarship(this.actor, () => this.render());
+      });
+    }
 
-    html.on("click", "#checkout-cart", async () => {
-      await checkout(this, (el, v) => this._animateNumber(el, v));
-      this.cart = emptyCart();
-      await this._persistCart();
-      this._renderCartUI();
-    });
+    const checkoutBtn = root.querySelector("#checkout-cart");
+    if (checkoutBtn) {
+      checkoutBtn.addEventListener("click", async () => {
+        await checkout(this, (el, v) => this._animateNumber(el, v));
+        this.cart = emptyCart();
+        await this._persistCart();
+        this._renderCartUI();
+      });
+    }
 
-    html.on("click", "#clear-cart", async () => {
-      clearCart(this.cart);
-      await this._persistCart();
-      this._renderCartUI();
-    });
+    const clearBtn = root.querySelector("#clear-cart");
+    if (clearBtn) {
+      clearBtn.addEventListener("click", async () => {
+        clearCart(this.cart);
+        await this._persistCart();
+        this._renderCartUI();
+      });
+    }
 
     // Initial render once DOM exists
     this._renderCartUI();

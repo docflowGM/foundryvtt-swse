@@ -1,27 +1,31 @@
 /**
- * Base FormApplication class for SWSE system
+ * Base FormApplication class for SWSE system (AppV2)
  * Provides standardized defaults for all SWSE form-based windows
  * including Forge compatibility and consistent positioning
  */
-export default class SWSEFormApplication extends FormApplication {
+const { HandlebarsApplicationMixin } = foundry.applications.api;
+const { FormApplication } = foundry.applications;
+
+export default class SWSEFormApplication extends HandlebarsApplicationMixin(FormApplication) {
     /**
      * Default options for SWSE FormApplications
-     * @returns {Object} Merged default options
      */
-    static get defaultOptions() {
-        return foundry.utils.mergeObject(super.defaultOptions, {
+    static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+        FormApplication.DEFAULT_OPTIONS ?? {},
+        {
             classes: ['swse', 'swse-form', "swse-app"],
-            left: null,        // Center horizontally
-            top: null,         // Center vertically
+            position: {
+                width: 600,
+                height: 'auto'
+            },
             resizable: true,
             draggable: true,
             closeOnSubmit: false,
             submitOnChange: false,
             submitOnClose: false,
-            // Forge detection - popOut may need adjustment for Forge environments
             popOut: true
-        });
-    }
+        }
+    );
 
     /**
      * Check if running in Forge environment
@@ -32,23 +36,22 @@ export default class SWSEFormApplication extends FormApplication {
     }
 
     /**
-     * Enhanced render with Forge compatibility checks
-     * @param {boolean} force - Force render
-     * @param {Object} options - Render options
-     * @returns {FormApplication} The rendered application
+     * Prepare context for rendering
+     * Override in subclasses to provide template data
+     * @returns {Promise<Object>} Context object for template
      */
-    render(force = false, options = {}) {
-        // Ensure position options are set for Forge compatibility
-        if (!this.options.left && this.options.left !== 0) {
-/* COMMENTED BY fix_ui_js.py */
-            this.options.left = null;
-        }
-        if (!this.options.top && this.options.top !== 0) {
-/* COMMENTED BY fix_ui_js.py */
-            this.options.top = null;
-        }
+    async _prepareContext(options) {
+        return {};
+    }
 
-        return super.render(force, options);
+    /**
+     * Called after render to set up event listeners
+     * Override in subclasses to bind event handlers
+     * @param {Object} context - The prepared context
+     * @param {Object} options - Render options
+     */
+    async _onRender(context, options) {
+        // Override in subclasses for event binding
     }
 
     /**

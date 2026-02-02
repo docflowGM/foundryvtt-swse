@@ -2,8 +2,9 @@
  * force-technique-picker.js
  * Force Technique picker UI using FormApplication + HBS template.
  */
+import SWSEFormApplication from "../../apps/base/swse-form-application.js";
 
-export class ForceTechniquePicker extends FormApplication {
+export class ForceTechniquePicker extends SWSEFormApplication {
   /**
    * Helper: open a picker and return the selected techniques.
    */
@@ -15,10 +16,7 @@ export class ForceTechniquePicker extends FormApplication {
   }
 
   constructor(techniques, opts = {}) {
-    super({}, {
-      ...ForceTechniquePicker.defaultOptions,
-      title: "Select Force Techniques"
-    });
+    super({});
 
     this.techniques = techniques || [];
     this.limit = opts.count || 1;
@@ -27,17 +25,18 @@ export class ForceTechniquePicker extends FormApplication {
     this.selectedSet = new Set();
   }
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    {
+      id: "force-technique-picker",
       classes: ["swse-app", "force-technique-picker"],
       template: "systems/foundryvtt-swse/scripts/progression/ui/templates/force-technique-picker.hbs",
-      width: 720,
-      height: 620,
+      position: { width: 720, height: 620 },
       resizable: true
-    });
-  }
+    }
+  );
 
-  getData() {
+  async _prepareContext(options) {
     return {
       techniques: this.techniques.map(t => {
         const id = t.id || t._id || t.name;
@@ -55,43 +54,53 @@ export class ForceTechniquePicker extends FormApplication {
     };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
-    html.find(".technique-card").on("click", ev => {
-      const id = ev.currentTarget.dataset.id;
-      if (!id) return;
+    root.querySelectorAll(".technique-card").forEach(card => {
+      card.addEventListener("click", ev => {
+        const id = ev.currentTarget.dataset.id;
+        if (!id) return;
 
-      if (this.selectedSet.has(id)) {
-        this.selectedSet.delete(id);
-      } else if (this.selectedSet.size < this.limit) {
-        this.selectedSet.add(id);
-      }
+        if (this.selectedSet.has(id)) {
+          this.selectedSet.delete(id);
+        } else if (this.selectedSet.size < this.limit) {
+          this.selectedSet.add(id);
+        }
 
-      this.render();
+        this.render();
+      });
     });
 
-    html.find(".ask-mentor-force-technique-suggestion").on("click", ev => {
-      this._askMentor();
-    });
+    const mentorBtn = root.querySelector(".ask-mentor-force-technique-suggestion");
+    if (mentorBtn) {
+      mentorBtn.addEventListener("click", () => this._askMentor());
+    }
 
-    html.find(".confirm").on("click", ev => {
-      const result = [];
-      const sel = new Set(this.selectedSet);
+    const confirmBtn = root.querySelector(".confirm");
+    if (confirmBtn) {
+      confirmBtn.addEventListener("click", ev => {
+        const result = [];
+        const sel = new Set(this.selectedSet);
 
-      for (const t of this.techniques) {
-        const id = t.id || t._id || t.name;
-        if (sel.has(id)) result.push(t);
-      }
+        for (const t of this.techniques) {
+          const id = t.id || t._id || t.name;
+          if (sel.has(id)) result.push(t);
+        }
 
-      this.resolve(result);
-      this.close();
-    });
+        this.resolve(result);
+        this.close();
+      });
+    }
 
-    html.find(".cancel").on("click", ev => {
-      this.resolve([]);
-      this.close();
-    });
+    const cancelBtn = root.querySelector(".cancel");
+    if (cancelBtn) {
+      cancelBtn.addEventListener("click", ev => {
+        this.resolve([]);
+        this.close();
+      });
+    }
   }
 
   async _askMentor() {
