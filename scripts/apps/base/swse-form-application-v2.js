@@ -3,6 +3,8 @@
  * Extends HandlebarsApplicationMixin for proper V2 rendering lifecycle
  * Use for progression UI that handles form submission
  */
+const { HandlebarsApplicationMixin } = foundry.applications;
+
 export default class SWSEFormApplicationV2 extends HandlebarsApplicationMixin(FormApplication) {
     /**
      * Default options for SWSE V2 FormApplications
