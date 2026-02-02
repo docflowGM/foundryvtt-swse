@@ -37,14 +37,18 @@ export class SWSEV2DroidSheet extends foundry.applications.api.HandlebarsApplica
         `SWSEV2DroidSheet requires actor type "droid", got "${this.document.type}"`
       );
     }
-    return super._prepareContext(options);
-  }
 
-  async getData(options = {}) {
-    const data = await super.getData(options);
-    data.system = this.actor.system;
-    data.derived = this.actor.system?.derived ?? {};
-    return data;
+    // Return SWSE-specific context for the template
+    const actor = this.document;
+    return {
+      actor,
+      system: actor.system,
+      derived: actor.system?.derived ?? {},
+      items: actor.items,
+      editable: this.isEditable,
+      user: game.user,
+      config: CONFIG.SWSE
+    };
   }
 
   activateListeners(html) {
