@@ -6,6 +6,15 @@ import { SWSELogger } from '../utils/logger.js';
 // ============================================
 
 import CharacterGeneratorImproved from './chargen-improved.js';
+import {
+  guardOnRender,
+  logChargenRender,
+  verifyPrepareContext,
+  validateSelectors,
+  guardActorAccess,
+  trackAsyncPhase,
+  logContextKey
+} from '../debug/appv2-probe.js';
 import { MENTORS } from './mentor-dialogues.js';
 import { MentorResolver } from './mentor-resolver.js';
 import { TalentTreeVisualizer } from './talent-tree-visualizer.js';
@@ -42,15 +51,20 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     // This ensures actor state is complete before mentor selection
     this._resolveMentorLazy();
 
+    // Log critical context keys
+    logContextKey(this, 'characterData', this.characterData);
+    logContextKey(this, 'currentStep', this.currentStep);
+    logContextKey(this, 'narrator', this.narrator);
+
     // Add narrator commentary
     context.narratorComment = this._getNarratorComment();
 
     // Load talent data if not already loaded
     if (!this.talentData) {
-      await this._loadTalentData();
+      await trackAsyncPhase(this, '_loadTalentData', this._loadTalentData());
     }
 
-    return context;
+    return verifyPrepareContext(context, this);
   }
 
   /**
@@ -688,10 +702,23 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   // ENHANCED ACTIVATION
   // ========================================
 
-  async _onRender(html, options) {
-    await super._onRender(html, options);
+  async _onRender(context, options) {
+    guardOnRender(context, options, this);
+    logChargenRender(this, context);
+    guardActorAccess(this, 'actor');
 
-    // Talent tree selection
-    html.find('.select-talent-tree').click(this._onSelectTalentTree.bind(this));
+    await super._onRender(context, options);
+
+    // Validate all selectors BEFORE attaching listeners
+    validateSelectors(this, [
+      '.select-talent-tree',
+      '[data-action]'
+    ]);
+
+    // Talent tree selection - AppV2 DOM API
+    const root = this.element;
+    root.querySelectorAll('.select-talent-tree').forEach(el => {
+      el.addEventListener('click', this._onSelectTalentTree.bind(this));
+    });
   }
 }

@@ -5,6 +5,8 @@
  */
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
+import { guardOnRender, validateTemplate } from '../../debug/appv2-probe.js';
+
 export default class SWSEFormApplicationV2 extends HandlebarsApplicationMixin(FormApplication) {
     /**
      * Default options for SWSE V2 FormApplications
@@ -41,11 +43,15 @@ export default class SWSEFormApplicationV2 extends HandlebarsApplicationMixin(Fo
     /**
      * V2 API: Called after render to set up event listeners
      * Scope all listeners to this.element
-     * @param {HTMLElement} html - The rendered HTML element
+     * @param {Object} context - Prepared context data
      * @param {Object} options - Render options
      */
-    async _onRender(html, options) {
+    async _onRender(context, options) {
         try {
+            // Guard against V1 patterns
+            guardOnRender(context, options, this);
+            validateTemplate(this);
+
             // Override in subclasses for event binding
             // All DOM queries MUST be scoped to this.element
         } catch (error) {
