@@ -31,6 +31,7 @@ import { PRESTIGE_PREREQUISITES } from './prestige-prerequisites.js';
 import { TalentTreeDB } from './talent-tree-db.js';
 import { normalizeTalentTreeId } from './talent-tree-normalizer.js';
 import { SWSELogger } from '../utils/logger.js';
+import { normalizeClassPrerequisites } from '../progression/prerequisites/class-prereq-normalizer.js';
 
 /**
  * MAIN CLASS: PrerequisiteChecker
@@ -218,8 +219,12 @@ export class PrerequisiteChecker {
     }
 
     /**
-     * Check prestige class prerequisites (legacy, still used by CONSOLIDATION_STRATEGY).
-     * Routes to old prestige-specific logic.
+     * Check prestige class prerequisites.
+     *
+     * NORMALIZATION ARCHITECTURE:
+     * Prerequisites are defined in prestige-prerequisites.js (authoritative source).
+     * For raw class documents, use checkClassDocumentPrerequisites() instead.
+     * That method normalizes class docs via class-prereq-normalizer.js before checking.
      *
      * @param {Object} actor - Actor document
      * @param {string} className - Prestige class name
@@ -346,6 +351,37 @@ export class PrerequisiteChecker {
             details,
             special: prereqs.special || null
         };
+    }
+
+    /**
+     * Check prestige class prerequisites from a class document.
+     *
+     * NORMALIZATION LAYER:
+     * This is the entry point for checking class documents.
+     * It normalizes raw class data via class-prereq-normalizer.js,
+     * ensuring the prerequisite engine never interprets raw data directly.
+     *
+     * @param {Object} actor - Actor document
+     * @param {Object} classDoc - Class document from classes.db
+     * @param {Object} pending - Pending selections
+     * @returns {Object} - { met: boolean, missing: string[], details: object }
+     */
+    static checkClassDocumentPrerequisites(actor, classDoc, pending = {}) {
+        if (!classDoc || !classDoc.name) {
+            return { met: true, missing: [], details: {} };
+        }
+
+        // Normalize class document → canonical structure
+        const normalized = normalizeClassPrerequisites(classDoc);
+
+        if (!normalized) {
+            // Not a prestige class, no prerequisites
+            return { met: true, missing: [], details: {} };
+        }
+
+        // Check against normalized prerequisites
+        // (delegates to checkPrestigeClassPrerequisites with class name)
+        return this.checkPrestigeClassPrerequisites(actor, classDoc.name, pending);
     }
 
     /**
@@ -1385,6 +1421,7 @@ function getTrainedSkills(actor) {
 
 /**
  * Check if actor has all required feats.
+ * Supports both feat names/IDs and flag-based checks (e.g., { flag: "martialArtsFeat" }).
  */
 function checkFeats(actor, requiredFeats) {
     if (!actor || !requiredFeats || requiredFeats.length === 0) {
@@ -1395,13 +1432,24 @@ function checkFeats(actor, requiredFeats) {
     const missing = [];
 
     for (const feat of requiredFeats) {
-        const normalized = feat.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const found = actorFeats.some(f =>
-            f.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized
-        );
+        // Handle flag-based checks
+        if (typeof feat === 'object' && feat.flag) {
+            const hasFlag = actorFeats.some(f => f.system?.[feat.flag]);
+            if (!hasFlag) {
+                missing.push(`Feat with flag: ${feat.flag}`);
+            }
+            continue;
+        }
+
+        // Handle feat name/ID checks
+        const normalized = feat.toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+        const found = actorFeats.some(f => {
+            const fname = f.name ? f.name : f.toString();
+            return fname.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized;
+        });
 
         if (!found) {
-            missing.push(feat);
+            missing.push(feat.toString());
         }
     }
 
@@ -1410,6 +1458,7 @@ function checkFeats(actor, requiredFeats) {
 
 /**
  * Check if actor has any one of the required feats.
+ * Supports both feat names/IDs and flag-based checks (e.g., { flag: "martialArtsFeat" }).
  */
 function checkFeatsAny(actor, requiredFeats) {
     if (!actor || !requiredFeats || requiredFeats.length === 0) {
@@ -1419,13 +1468,24 @@ function checkFeatsAny(actor, requiredFeats) {
     const actorFeats = getActorFeats(actor);
 
     for (const feat of requiredFeats) {
-        const normalized = feat.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const found = actorFeats.some(f =>
-            f.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized
-        );
+        // Handle flag-based checks
+        if (typeof feat === 'object' && feat.flag) {
+            const hasFlag = actorFeats.some(f => f.system?.[feat.flag]);
+            if (hasFlag) {
+                return { met: true, found: `Feat with flag: ${feat.flag}` };
+            }
+            continue;
+        }
+
+        // Handle feat name/ID checks
+        const normalized = feat.toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+        const found = actorFeats.some(f => {
+            const fname = f.name ? f.name : f.toString();
+            return fname.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized;
+        });
 
         if (found) {
-            return { met: true, found: feat };
+            return { met: true, found: feat.toString() };
         }
     }
 
@@ -1434,22 +1494,31 @@ function checkFeatsAny(actor, requiredFeats) {
 
 /**
  * Get list of feats from actor.
+ * Returns feat objects (with name and system properties) to support flag checking.
  */
 function getActorFeats(actor) {
     if (!actor) return [];
 
     const feats = [];
 
-    // Check feat items (finalized feats)
+    // Check feat items (finalized feats) - include full objects for flag checking
     const featItems = actor.items?.filter(i => i.type === 'feat') || [];
-    feats.push(...featItems.map(f => f.name));
+    feats.push(...featItems.map(f => ({
+        name: f.name,
+        system: f.system
+    })));
 
     // Check pending progression.feats and progression.startingFeats
+    // These are typically strings (feat names), wrap them
     if (actor.system?.progression?.feats && Array.isArray(actor.system.progression.feats)) {
-        feats.push(...actor.system.progression.feats);
+        feats.push(...actor.system.progression.feats.map(f =>
+            typeof f === 'string' ? { name: f } : f
+        ));
     }
     if (actor.system?.progression?.startingFeats && Array.isArray(actor.system.progression.startingFeats)) {
-        feats.push(...actor.system.progression.startingFeats);
+        feats.push(...actor.system.progression.startingFeats.map(f =>
+            typeof f === 'string' ? { name: f } : f
+        ));
     }
 
     return feats;

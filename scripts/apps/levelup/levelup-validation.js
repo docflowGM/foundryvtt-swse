@@ -8,6 +8,7 @@ import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_e
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { isBaseClass } from './levelup-shared.js';
+import { evaluateClassEligibility } from '../../progression/prerequisites/class-prerequisites-cache.js';
 
 // Cache for prestige class prerequisites loaded from JSON
 let _prestigePrereqCache = null;
@@ -86,6 +87,44 @@ export async function meetsClassPrerequisites(classDoc, actor, pendingData) {
     console.warn("Class prereq mismatch detected", { className: classDoc.name, canonical, legacy });
   }
   return canonical.met;
+}
+
+/**
+ * Get detailed class eligibility information.
+ *
+ * NORMALIZATION ARCHITECTURE:
+ * This function returns eligibility + missing prerequisites.
+ * The suggestion engine uses this to provide specific guidance.
+ *
+ * Example output:
+ * {
+ *   eligible: false,
+ *   className: "Bounty Hunter",
+ *   isPrestige: true,
+ *   reasons: {
+ *     missing: [
+ *       "Minimum level 7 (you are level 5)",
+ *       "Trained in: Survival",
+ *       "At least 2 from Awareness talent tree"
+ *     ],
+ *     met: []
+ *   }
+ * }
+ *
+ * Used by suggestion engine to build specific mentor advice like:
+ * "You're close — reach level 7 and train the Survival skill."
+ *
+ * @param {string} className - Class name to evaluate
+ * @param {Actor} actor - The actor
+ * @param {Object} pendingData - Pending selections
+ * @returns {Object} - Eligibility result with detailed reasons
+ */
+export function getClassEligibilityDetails(className, actor, pendingData = {}) {
+  return evaluateClassEligibility({
+    className,
+    actor,
+    pendingData
+  });
 }
 
 /**
