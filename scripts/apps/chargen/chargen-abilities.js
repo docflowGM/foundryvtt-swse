@@ -4,6 +4,44 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 
+
+
+const _SPECIES_MOD_CLASSES = ["mod-positive", "mod-negative", "mod-neutral"];
+
+function _formatSigned(n) {
+  const v = Number(n || 0);
+  return `${v > 0 ? "+" : ""}${v}`;
+}
+
+function _speciesModClass(n) {
+  const v = Number(n || 0);
+  if (v > 0) return "mod-positive";
+  if (v < 0) return "mod-negative";
+  return "mod-neutral";
+}
+
+function _applySpeciesModDisplay(speciesNumEl, mod) {
+  if (!speciesNumEl) return;
+  speciesNumEl.textContent = _formatSigned(mod);
+  _SPECIES_MOD_CLASSES.forEach(c => speciesNumEl.classList.remove(c));
+  speciesNumEl.classList.add(_speciesModClass(mod));
+}
+
+function _updateAbilityBreakdown(containerEl, { base, speciesMod, total, mod }) {
+  if (!containerEl) return;
+
+  const baseEl = containerEl.querySelector(".base-num");
+  const speciesEl = containerEl.querySelector(".species-num");
+  const totalEl = containerEl.querySelector(".total-num");
+  const modEl = containerEl.querySelector(".mod-num");
+
+  if (baseEl) baseEl.textContent = base ?? "--";
+  _applySpeciesModDisplay(speciesEl, speciesMod);
+
+  if (totalEl) totalEl.textContent = total ?? "--";
+  if (modEl) modEl.textContent = typeof mod === "number" ? _formatSigned(mod) : "--";
+}
+
 /**
  * Recalculate all ability scores (total and modifier)
  */
@@ -158,6 +196,8 @@ export function _bindAbilitiesUI(root) {
       const container = root.querySelector("#roll-results");
       if (!container) return;
 
+      container.dataset.locked = "false";
+
       container.innerHTML = `
         <div class="roll-4d6-container">
           <h4>4d6 Drop Lowest Results</h4>
@@ -178,8 +218,8 @@ export function _bindAbilitiesUI(root) {
                   </div>
                   <div class="ability-breakdown">
                     <span class="base-value">Base: <span class="base-num">--</span></span>
-                    ${racial !== 0 ? `<span class="racial-value">Racial: ${racial >= 0 ? '+' : ''}${racial}</span>` : ''}
-                    <span class="total-value">Total: <span class="total-num">--</span></span>
+                    <span class="species-value">Species: <span class="species-num ${_speciesModClass(racial)}">${_formatSigned(racial)}</span></span>
+<span class="total-value">Total: <span class="total-num">--</span></span>
                     <span class="modifier-value">Mod: <span class="mod-num">--</span></span>
                   </div>
                 </div>
@@ -229,6 +269,50 @@ export function _bindAbilitiesUI(root) {
         pool.appendChild(rollDiv);
       });
 
+      const assignedByAbility = new Map();
+      const assignedByIndex = new Map();
+
+      const _clearSlot = (ability) => {
+        const z = container.querySelector(`.ability-drop-zone[data-ability="${ability}"]`);
+        if (!z) return;
+        z.querySelector('.drop-placeholder').style.display = 'block';
+        const dv = z.querySelector('.dropped-value');
+        if (dv) { dv.style.display = 'none'; dv.textContent = ''; }
+
+        const slot = z.closest('.ability-slot');
+        if (slot) {
+          slot.querySelector('.base-num').textContent = '--';
+          slot.querySelector('.total-num').textContent = '--';
+          slot.querySelector('.mod-num').textContent = '--';
+        }
+
+        // Keep species modifier visible even when unassigned.
+        const speciesMod = Number(chargen.characterData.abilities[ability].racial || 0);
+        const total = 10 + speciesMod;
+        chargen.characterData.abilities[ability].base = 10;
+        chargen.characterData.abilities[ability].total = total;
+        chargen.characterData.abilities[ability].mod = Math.floor((total - 10) / 2);
+      };
+
+      const _setSlot = (ability, base) => {
+        const z = container.querySelector(`.ability-drop-zone[data-ability="${ability}"]`);
+        if (!z) return;
+        z.querySelector('.drop-placeholder').style.display = 'none';
+        const dv = z.querySelector('.dropped-value');
+        if (dv) { dv.style.display = 'block'; dv.textContent = String(base); }
+
+        const slot = z.closest('.ability-slot');
+        const speciesMod = Number(chargen.characterData.abilities[ability].racial || 0);
+        const total = base + speciesMod;
+        const mod = Math.floor((total - 10) / 2);
+
+        if (slot) _updateAbilityBreakdown(slot, { base, speciesMod, total, mod });
+
+        chargen.characterData.abilities[ability].base = base;
+        chargen.characterData.abilities[ability].total = total;
+        chargen.characterData.abilities[ability].mod = mod;
+      };
+
       // Setup drop zones
       container.querySelectorAll('.ability-drop-zone').forEach(zone => {
         zone.addEventListener('dragover', (e) => {
@@ -244,69 +328,54 @@ export function _bindAbilitiesUI(root) {
           e.preventDefault();
           zone.classList.remove('drag-over');
 
+          if (container.dataset.locked === 'true') return;
+
           const value = parseInt(e.dataTransfer.getData('text/plain'), 10);
-          const index = e.dataTransfer.getData('index');
-          const isRemoving = e.dataTransfer.getData('removing') === 'true';
-          const ability = zone.dataset.ability;
+          const index = String(e.dataTransfer.getData('index'));
+          const targetAbility = zone.dataset.ability;
+
           const dragged = pool.querySelector(`.draggable-roll[data-index="${index}"]`);
+          if (!dragged || Number.isNaN(value)) return;
 
-          if (dragged) {
-            // If removing (dragging from an already-placed value to swap it out)
-            if (isRemoving) {
-              // Find the zone that currently has this value and clear it
-              container.querySelectorAll('.ability-drop-zone').forEach(checkZone => {
-                const droppedVal = checkZone.querySelector('.dropped-value');
-                if (droppedVal && droppedVal.textContent === String(value) && checkZone !== zone) {
-                  // Clear the old zone
-                  checkZone.querySelector('.drop-placeholder').style.display = 'block';
-                  checkZone.querySelector('.dropped-value').style.display = 'none';
-                  checkZone.querySelector('.dropped-value').textContent = '';
+          const oldAbility = assignedByIndex.get(index);
+          const prevIndex = assignedByAbility.get(targetAbility);
 
-                  // Reset breakdown for old ability
-                  const oldAbility = checkZone.dataset.ability;
-                  const oldSlot = checkZone.closest('.ability-slot');
-                  oldSlot.querySelector('.base-num').textContent = '--';
-                  oldSlot.querySelector('.total-num').textContent = '--';
-                  oldSlot.querySelector('.mod-num').textContent = '--';
-                  chargen.characterData.abilities[oldAbility].base = 10;
-                  chargen.characterData.abilities[oldAbility].total = chargen.characterData.abilities[oldAbility].racial || 10;
-                  chargen.characterData.abilities[oldAbility].mod = Math.floor(((chargen.characterData.abilities[oldAbility].racial || 10) - 10) / 2);
-                }
-              });
-            } else {
-              // Normal placement - clear previous value in this slot
-              const prevValue = zone.querySelector('.dropped-value');
-              if (prevValue?.textContent) {
-                const oldDragged = pool.querySelector(`.draggable-roll.used[data-value="${prevValue.textContent}"]`);
-                if (oldDragged) oldDragged.classList.remove('used');
-              }
-            }
+          // Swap if both sides are occupied and the dragged item is already assigned elsewhere.
+          if (oldAbility && prevIndex && oldAbility !== targetAbility) {
+            const prevDiv = pool.querySelector(`.draggable-roll[data-index="${prevIndex}"]`);
+            const prevVal = parseInt(prevDiv?.dataset.value ?? "", 10);
 
-            // Set new value
-            const placeholder = zone.querySelector('.drop-placeholder');
-            const droppedValue = zone.querySelector('.dropped-value');
-            if (placeholder) placeholder.style.display = 'none';
-            if (droppedValue) {
-              droppedValue.style.display = 'block';
-              droppedValue.textContent = value;
-            }
-            dragged.classList.add('used');
+            assignedByAbility.set(targetAbility, index);
+            assignedByIndex.set(index, targetAbility);
+            _setSlot(targetAbility, value);
 
-            // Update breakdown
-            const slot = zone.closest('.ability-slot');
-            const racial = chargen.characterData.abilities[ability].racial || 0;
-            const total = value + racial;
-            const mod = Math.floor((total - 10) / 2);
+            assignedByAbility.set(oldAbility, prevIndex);
+            assignedByIndex.set(prevIndex, oldAbility);
+            if (!Number.isNaN(prevVal)) _setSlot(oldAbility, prevVal);
 
-            slot.querySelector('.base-num').textContent = value;
-            slot.querySelector('.total-num').textContent = total;
-            slot.querySelector('.mod-num').textContent = (mod >= 0 ? '+' : '') + mod;
-
-            // Store value
-            chargen.characterData.abilities[ability].base = value;
-            chargen.characterData.abilities[ability].total = total;
-            chargen.characterData.abilities[ability].mod = mod;
+            return;
           }
+
+          // If dragged item was assigned to another ability, clear that ability.
+          if (oldAbility && oldAbility !== targetAbility) {
+            assignedByAbility.delete(oldAbility);
+            assignedByIndex.delete(index);
+            _clearSlot(oldAbility);
+          }
+
+          // If target already had a different score, free it.
+          if (prevIndex && prevIndex !== index) {
+            const prevDiv = pool.querySelector(`.draggable-roll[data-index="${prevIndex}"]`);
+            if (prevDiv) prevDiv.classList.remove('used');
+            assignedByIndex.delete(prevIndex);
+            assignedByAbility.delete(targetAbility);
+          }
+
+          // Assign dragged to target.
+          assignedByAbility.set(targetAbility, index);
+          assignedByIndex.set(index, targetAbility);
+          dragged.classList.add('used');
+          _setSlot(targetAbility, value);
         });
       });
 
@@ -324,7 +393,9 @@ export function _bindAbilitiesUI(root) {
         }
 
         recalcPreview();
-        ui.notifications.info("Ability scores confirmed!");
+        container.dataset.locked = "true";
+        container.querySelectorAll(".draggable-roll").forEach(el => (el.draggable = false));
+        ui.notifications.info("Ability scores confirmed and locked!");
       };
 
       // Reset button
@@ -347,6 +418,8 @@ export function _bindAbilitiesUI(root) {
 
       const container = root.querySelector("#organic-groups");
       if (!container) return;
+
+      container.dataset.locked = "false";
 
       container.innerHTML = `
         <div class="organic-roll-container">
@@ -390,8 +463,8 @@ export function _bindAbilitiesUI(root) {
                     </div>
                     <div class="ability-breakdown">
                       <span class="base-value">Base: <span class="base-num">--</span></span>
-                      ${racial !== 0 ? `<span class="racial-value">Racial: ${racial >= 0 ? '+' : ''}${racial}</span>` : ''}
-                      <span class="total-value">Total: <span class="total-num">--</span></span>
+                      <span class="species-value">Species: <span class="species-num ${_speciesModClass(racial)}">${_formatSigned(racial)}</span></span>
+<span class="total-value">Total: <span class="total-num">--</span></span>
                       <span class="modifier-value">Mod: <span class="mod-num">--</span></span>
                     </div>
                   </div>
@@ -495,6 +568,54 @@ export function _bindAbilitiesUI(root) {
       });
 
       // Setup ability drop zones
+      const assignedGroupByAbility = new Map();
+      const assignedAbilityByGroup = new Map();
+
+      const _clearOrganicSlot = (ability) => {
+        const z = container.querySelector(`.ability-drop-zone[data-ability="${ability}"]`);
+        if (!z) return;
+        z.querySelector('.drop-placeholder').style.display = 'block';
+        const dv = z.querySelector('.dropped-value');
+        if (dv) { dv.style.display = 'none'; dv.textContent = ''; }
+
+        const slot = z.closest('.ability-slot');
+        if (slot) {
+          slot.querySelector('.base-num').textContent = '--';
+          slot.querySelector('.total-num').textContent = '--';
+          slot.querySelector('.mod-num').textContent = '--';
+        }
+
+        const speciesMod = Number(chargen.characterData.abilities[ability].racial || 0);
+        const total = 10 + speciesMod;
+        chargen.characterData.abilities[ability].base = 10;
+        chargen.characterData.abilities[ability].total = total;
+        chargen.characterData.abilities[ability].mod = Math.floor((total - 10) / 2);
+      };
+
+      const _setOrganicSlot = (ability, base) => {
+        const z = container.querySelector(`.ability-drop-zone[data-ability="${ability}"]`);
+        if (!z) return;
+        z.querySelector('.drop-placeholder').style.display = 'none';
+        const dv = z.querySelector('.dropped-value');
+        if (dv) { dv.style.display = 'block'; dv.textContent = String(base); }
+
+        const slot = z.closest('.ability-slot');
+        const speciesMod = Number(chargen.characterData.abilities[ability].racial || 0);
+        const total = base + speciesMod;
+        const mod = Math.floor((total - 10) / 2);
+
+        if (slot) _updateAbilityBreakdown(slot, { base, speciesMod, total, mod });
+
+        chargen.characterData.abilities[ability].base = base;
+        chargen.characterData.abilities[ability].total = total;
+        chargen.characterData.abilities[ability].mod = mod;
+      };
+
+      const _setGroupAssigned = (groupIdx, isAssigned) => {
+        const g = container.querySelector(`.dice-group[data-group="${groupIdx}"]`);
+        if (g) g.classList.toggle('assigned', isAssigned);
+      };
+
       container.querySelectorAll('.ability-drop-zone').forEach(zone => {
         zone.addEventListener('dragover', (e) => {
           e.preventDefault();
@@ -509,40 +630,55 @@ export function _bindAbilitiesUI(root) {
           e.preventDefault();
           zone.classList.remove('drag-over');
 
+          if (container.dataset.locked === 'true') return;
+
           const value = parseInt(e.dataTransfer.getData('group-total'), 10);
-          const groupIndex = e.dataTransfer.getData('group-index');
-          const ability = zone.dataset.ability;
+          const groupIndex = String(e.dataTransfer.getData('group-index'));
+          const targetAbility = zone.dataset.ability;
+
           const groupDiv = container.querySelector(`.dice-group[data-group="${groupIndex}"]`);
+          if (!groupDiv || !groupDiv.classList.contains('complete') || Number.isNaN(value)) return;
 
-          if (groupDiv && groupDiv.classList.contains('complete')) {
-            // Clear previous value
-            const prevValue = zone.querySelector('.dropped-value');
-            if (prevValue.textContent) {
-              const oldGroup = container.querySelector(`.dice-group.assigned[data-total="${prevValue.textContent}"]`);
-              if (oldGroup) oldGroup.classList.remove('assigned');
-            }
+          const oldAbility = assignedAbilityByGroup.get(groupIndex);
+          const prevGroupIndex = assignedGroupByAbility.get(targetAbility);
 
-            // Set new value
-            zone.querySelector('.drop-placeholder').style.display = 'none';
-            zone.querySelector('.dropped-value').style.display = 'block';
-            zone.querySelector('.dropped-value').textContent = value;
-            groupDiv.classList.add('assigned');
+          // Swap: group was assigned elsewhere AND target already has a group.
+          if (oldAbility && prevGroupIndex && oldAbility !== targetAbility) {
+            const prevGroupDiv = container.querySelector(`.dice-group[data-group="${prevGroupIndex}"]`);
+            const prevTotal = parseInt(prevGroupDiv?.dataset.total ?? "", 10);
 
-            // Update breakdown
-            const slot = zone.closest('.ability-slot');
-            const racial = chargen.characterData.abilities[ability].racial || 0;
-            const total = value + racial;
-            const mod = Math.floor((total - 10) / 2);
+            assignedGroupByAbility.set(targetAbility, groupIndex);
+            assignedAbilityByGroup.set(groupIndex, targetAbility);
+            _setOrganicSlot(targetAbility, value);
+            _setGroupAssigned(groupIndex, true);
 
-            slot.querySelector('.base-num').textContent = value;
-            slot.querySelector('.total-num').textContent = total;
-            slot.querySelector('.mod-num').textContent = (mod >= 0 ? '+' : '') + mod;
+            assignedGroupByAbility.set(oldAbility, prevGroupIndex);
+            assignedAbilityByGroup.set(prevGroupIndex, oldAbility);
+            if (!Number.isNaN(prevTotal)) _setOrganicSlot(oldAbility, prevTotal);
+            _setGroupAssigned(prevGroupIndex, true);
 
-            // Store value
-            chargen.characterData.abilities[ability].base = value;
-            chargen.characterData.abilities[ability].total = total;
-            chargen.characterData.abilities[ability].mod = mod;
+            return;
           }
+
+          // Move: group assigned elsewhere (target empty or replacement).
+          if (oldAbility && oldAbility !== targetAbility) {
+            assignedGroupByAbility.delete(oldAbility);
+            assignedAbilityByGroup.delete(groupIndex);
+            _clearOrganicSlot(oldAbility);
+          }
+
+          // Replace: target had a different group.
+          if (prevGroupIndex && prevGroupIndex !== groupIndex) {
+            assignedAbilityByGroup.delete(prevGroupIndex);
+            assignedGroupByAbility.delete(targetAbility);
+            _setGroupAssigned(prevGroupIndex, false);
+          }
+
+          // Assign group to target.
+          assignedGroupByAbility.set(targetAbility, groupIndex);
+          assignedAbilityByGroup.set(groupIndex, targetAbility);
+          _setGroupAssigned(groupIndex, true);
+          _setOrganicSlot(targetAbility, value);
         });
       });
 
@@ -565,7 +701,9 @@ export function _bindAbilitiesUI(root) {
         }
 
         recalcPreview();
-        ui.notifications.info("Ability scores confirmed!");
+        container.dataset.locked = "true";
+        container.querySelectorAll(".draggable-roll").forEach(el => (el.draggable = false));
+        ui.notifications.info("Ability scores confirmed and locked!");
       };
 
       // Reset button
@@ -624,6 +762,8 @@ export function _bindAbilitiesUI(root) {
       const container = root.querySelector("#array-selection");
       if (!container) return;
 
+      container.dataset.locked = "false";
+
       container.innerHTML = `
         <div class="array-assignment-container">
           <h4>Assign ${arrayData.name} to Abilities</h4>
@@ -646,8 +786,8 @@ export function _bindAbilitiesUI(root) {
                   </div>
                   <div class="ability-breakdown">
                     <span class="base-value">Base: <span class="base-num">--</span></span>
-                    ${racial !== 0 ? `<span class="racial-value">Racial: ${racial >= 0 ? '+' : ''}${racial}</span>` : ''}
-                    <span class="total-value">Total: <span class="total-num">--</span></span>
+                    <span class="species-value">Species: <span class="species-num ${_speciesModClass(racial)}">${_formatSigned(racial)}</span></span>
+<span class="total-value">Total: <span class="total-num">--</span></span>
                     <span class="modifier-value">Mod: <span class="mod-num">--</span></span>
                   </div>
                 </div>
@@ -690,6 +830,49 @@ export function _bindAbilitiesUI(root) {
 
         pool.appendChild(scoreDiv);
       });
+
+      const assignedByAbility = new Map();
+      const assignedByIndex = new Map();
+
+      const _clearSlot = (ability) => {
+        const z = container.querySelector(`.ability-drop-zone[data-ability="${ability}"]`);
+        if (!z) return;
+        z.querySelector('.drop-placeholder').style.display = 'block';
+        const dv = z.querySelector('.dropped-value');
+        if (dv) { dv.style.display = 'none'; dv.textContent = ''; }
+
+        const slot = z.closest('.ability-slot');
+        if (slot) {
+          slot.querySelector('.base-num').textContent = '--';
+          slot.querySelector('.total-num').textContent = '--';
+          slot.querySelector('.mod-num').textContent = '--';
+        }
+
+        const speciesMod = Number(chargen.characterData.abilities[ability].racial || 0);
+        const total = 10 + speciesMod;
+        chargen.characterData.abilities[ability].base = 10;
+        chargen.characterData.abilities[ability].total = total;
+        chargen.characterData.abilities[ability].mod = Math.floor((total - 10) / 2);
+      };
+
+      const _setSlot = (ability, base) => {
+        const z = container.querySelector(`.ability-drop-zone[data-ability="${ability}"]`);
+        if (!z) return;
+        z.querySelector('.drop-placeholder').style.display = 'none';
+        const dv = z.querySelector('.dropped-value');
+        if (dv) { dv.style.display = 'block'; dv.textContent = String(base); }
+
+        const slot = z.closest('.ability-slot');
+        const speciesMod = Number(chargen.characterData.abilities[ability].racial || 0);
+        const total = base + speciesMod;
+        const mod = Math.floor((total - 10) / 2);
+
+        if (slot) _updateAbilityBreakdown(slot, { base, speciesMod, total, mod });
+
+        chargen.characterData.abilities[ability].base = base;
+        chargen.characterData.abilities[ability].total = total;
+        chargen.characterData.abilities[ability].mod = mod;
+      };
 
       // Setup drop zones
       container.querySelectorAll('.ability-drop-zone').forEach(zone => {
@@ -785,7 +968,9 @@ export function _bindAbilitiesUI(root) {
         }
 
         recalcPreview();
-        ui.notifications.info("Ability scores confirmed!");
+        container.dataset.locked = "true";
+        container.querySelectorAll(".draggable-roll").forEach(el => (el.draggable = false));
+        ui.notifications.info("Ability scores confirmed and locked!");
       };
 
       // Reset button
@@ -803,24 +988,17 @@ export function _bindAbilitiesUI(root) {
     const recalcPreview = () => {
       ablist.forEach(a => {
         const inp = root.querySelector(`[name="ability_${a}"]`);
-        const display = root.querySelector(`#display_${a}`);
         const base = Number(inp?.value || 10);
-        const racial = Number(chargen.characterData.abilities[a].racial || 0);
-        const total = base + racial + Number(chargen.characterData.abilities[a].temp || 0);
+        const speciesMod = Number(chargen.characterData.abilities[a].racial || 0);
+        const total = base + speciesMod + Number(chargen.characterData.abilities[a].temp || 0);
         const mod = Math.floor((total - 10) / 2);
 
         chargen.characterData.abilities[a].base = base;
         chargen.characterData.abilities[a].total = total;
         chargen.characterData.abilities[a].mod = mod;
 
-        // Build display text with Base, Racial (if non-zero), Total, and Mod
-        let displayText = `Base: ${base}`;
-        if (racial !== 0) {
-          displayText += `, Racial: ${racial >= 0 ? '+' : ''}${racial}`;
-        }
-        displayText += `, Total: ${total} (Mod: ${mod >= 0 ? "+" : ""}${mod})`;
-
-        if (display) display.textContent = displayText;
+        const card = root.querySelector(`.ability-card[data-ability="${a}"]`);
+        _updateAbilityBreakdown(card, { base, speciesMod, total, mod });
       });
 
       // Update Second Wind preview

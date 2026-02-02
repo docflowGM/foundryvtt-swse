@@ -991,19 +991,24 @@
  <div class="abilities-grid">
  {{#each characterData.abilities}}
  {{#unless (and ../characterData.isDroid (eq @key "con"))}}
- <div class="ability-card">
+ <div class="ability-card" data-ability="{{@key}}">
  <label>{{@key}}</label>
  <div class="ability-controls">
  <button type="button" class="ability-btn" data-minus="{{@key}}">−</button>
  <input name="ability_{{@key}}" class="ability-input" type="number" value="{{this.base}}" min="8" max="18" />
  <button type="button" class="ability-btn" data-plus="{{@key}}">+</button>
  </div>
- <div class="ability-breakdown">
-{{#if this.racial}}
-<span class="racial-bonus">Racial: {{#if (gte this.racial 0)}}+{{/if}}{{this.racial}}</span>
-{{/if}}
-<div id="display_{{@key}}" class="ability-display">Total: {{this.total}} (Mod: {{#if (gte this.mod 0)}}+{{/if}}{{this.mod}})</div>
+ 
+<div class="ability-breakdown" data-ability="{{@key}}">
+  <div class="ability-breakdown-row">
+    <span class="base-value">Base: <span class="base-num">{{this.base}}</span></span>
+    <span class="species-value">Species: <span class="species-num">0</span></span>
+    <span class="total-value">Total: <span class="total-num">{{this.total}}</span></span>
+    <span class="modifier-value">Mod: <span class="mod-num">{{#if (gte this.mod 0)}}+{{/if}}{{this.mod}}</span></span>
+  </div>
 </div>
+
+ </div>
  </div>
  {{/unless}}
  {{/each}}
@@ -1025,15 +1030,20 @@
  <div class="abilities-grid">
  {{#each characterData.abilities}}
  {{#unless (and ../characterData.isDroid (eq @key "con"))}}
- <div class="ability-card">
+ <div class="ability-card" data-ability="{{@key}}">
  <label>{{@key}}</label>
  <input name="ability_{{@key}}" class="ability-input free-input" type="number" value="{{this.base}}" min="3" max="25" />
- <div class="ability-breakdown">
-{{#if this.racial}}
-<span class="racial-bonus">Racial: {{#if (gte this.racial 0)}}+{{/if}}{{this.racial}}</span>
-{{/if}}
-<div id="display_{{@key}}" class="ability-display">Total: {{this.total}} (Mod: {{#if (gte this.mod 0)}}+{{/if}}{{this.mod}})</div>
+ 
+<div class="ability-breakdown" data-ability="{{@key}}">
+  <div class="ability-breakdown-row">
+    <span class="base-value">Base: <span class="base-num">{{this.base}}</span></span>
+    <span class="species-value">Species: <span class="species-num">0</span></span>
+    <span class="total-value">Total: <span class="total-num">{{this.total}}</span></span>
+    <span class="modifier-value">Mod: <span class="mod-num">{{#if (gte this.mod 0)}}+{{/if}}{{this.mod}}</span></span>
+  </div>
 </div>
+
+ </div>
  </div>
  {{/unless}}
  {{/each}}
@@ -2515,6 +2525,45 @@ section {
  margin-top: 0.5rem;
  font-size: 0.9rem;
  color: #aaa;
+}
+
+
+
+.ability-breakdown {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.ability-breakdown-row,
+.ability-slot .ability-breakdown {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 0.35rem;
+  text-align: center;
+}
+
+.species-value.mod-positive,
+.species-num.mod-positive {
+  color: #46ff8a;
+}
+
+.species-value.mod-negative,
+.species-num.mod-negative {
+  color: #ff5a5a;
+}
+
+.species-value.mod-neutral,
+.species-num.mod-neutral {
+  color: #aaa;
+}
+
+.total-value .total-num {
+  font-weight: 700;
+  color: #fff;
+}
+
+.modifier-value .mod-num {
+  font-weight: 600;
 }
 
 /* Class Selection Styles */

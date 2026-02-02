@@ -3,6 +3,8 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
+import { applyProgressionPatch } from '../../progression/engine/apply-progression-patch.js';
+import { buildSpeciesAtomicPatch } from './steps/species-step.js';
 
 // Store the currently previewed species name for confirmation
 let _previewedSpeciesName = null;
@@ -351,8 +353,9 @@ export async function _onSelectSpecies(event) {
 
   SWSELogger.log(`CharGen | Found species: ${speciesDoc.name}`, speciesDoc);
 
-  // Set species using the actual species document name to ensure consistency
-  this.characterData.species = speciesDoc.name;
+  // Apply species + entitlements as a single atomic patch
+  const patch = buildSpeciesAtomicPatch(this.characterData, speciesDoc, this.actorType);
+  this.characterData = applyProgressionPatch(this.characterData, patch);
 
   // Apply all species data
   this._applySpeciesData(speciesDoc);
@@ -418,10 +421,14 @@ export function _applySpeciesData(speciesDoc) {
     if (isNPC) {
       // NONHEROIC RULE: Nonheroic characters get 3 starting feats
       // Non-human nonheroic characters get 2 feats (remove 1 for no human bonus)
-      this.characterData.featsRequired = isHuman ? 3 : 2;
+      if (this.characterData.featsRequired == null) {
+        this.characterData.featsRequired = isHuman ? 3 : 2;
+      }
     } else {
       // PCs: Humans get 2 feats, all other species get 1
-      this.characterData.featsRequired = isHuman ? 2 : 1;
+      if (this.characterData.featsRequired == null) {
+        this.characterData.featsRequired = isHuman ? 2 : 1;
+      }
     }
 
     // 6. Store languages (ensure it's an array)
@@ -434,7 +441,9 @@ export function _applySpeciesData(speciesDoc) {
     this._applyRacialSkillBonuses(skillBonuses);
 
     // 8. Store source
-    this.characterData.speciesSource = system.source || "";
+    if (this.characterData.speciesSource == null) {
+      this.characterData.speciesSource = system.source || "";
+    }
 
     SWSELogger.log(`CharGen | Successfully applied species data for ${speciesName}:`, {
       abilities: abilityBonuses,

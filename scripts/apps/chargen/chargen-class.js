@@ -3,6 +3,8 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
+import { applyProgressionPatch } from '../../progression/engine/apply-progression-patch.js';
+import { buildClassAtomicPatch } from './steps/class-step.js';
 import {
   getClassProperty,
   getHitDie,
@@ -150,12 +152,14 @@ export async function _onSelectClass(event) {
 
   SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Using class definition:`, classDef);
 
-  // Clear any existing classes and add the selected one
-  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Clearing existing classes and adding new one...`);
-  this.characterData.classes = [];
-  this.characterData.classes.push({ name: className, level: 1 });
+  // Apply class selection + resets as a single atomic patch
+  const talentEveryLevelRule = game.settings.get("foundryvtt-swse", "talentEveryLevel") ?? false;
+  const talentEveryLevelExtraL1 = game.settings.get("foundryvtt-swse", "talentEveryLevelExtraL1") ?? false;
+  const talentsRequired = talentEveryLevelRule ? (talentEveryLevelExtraL1 ? 2 : 1) : 1;
 
-  // DIAGNOSTIC: Verify class was stored correctly
+  const patch = buildClassAtomicPatch(this.characterData, className, talentsRequired);
+  this.characterData = applyProgressionPatch(this.characterData, patch);
+// DIAGNOSTIC: Verify class was stored correctly
   SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CRITICAL - Class selection stored:`, {
     className: className,
     classesArray: JSON.stringify(this.characterData.classes),
@@ -309,11 +313,8 @@ export async function _onSelectClass(event) {
   // Recalculate defenses
   this._recalcDefenses();
 
-  // Reset class-dependent selections (talents, feats from old class no longer apply)
-  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Resetting class-dependent data...`);
-  this.characterData.talents = [];
-  this.characterData.feats = [];
-  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Class-dependent selections cleared`);
+  // Class selection patch already cleared feats/talents and set talentsRequired/identityReady.
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Class selection patch applied (classes/feats/talents/talentsRequired/identityReady)`);
 
   // Recalculate feats required (may vary by class in future, currently species-dependent)
   // featsRequired is set during species selection and may be adjusted by class grants
@@ -322,31 +323,7 @@ export async function _onSelectClass(event) {
     this.characterData.featsRequired = 1;
     SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: featsRequired was undefined, set to 1`);
   }
-
-  // Calculate talentsRequired based on class and houserules
-  let talentsRequired = 1; // Default: 1 talent at level 1
-  const talentEveryLevelRule = game.settings.get("foundryvtt-swse", "talentEveryLevel") ?? false;
-  if (talentEveryLevelRule) {
-    const talentEveryLevelExtraL1 = game.settings.get("foundryvtt-swse", "talentEveryLevelExtraL1") ?? false;
-    talentsRequired = talentEveryLevelExtraL1 ? 2 : 1;
-  }
-  this.characterData.talentsRequired = talentsRequired;
-  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: talentsRequired recalculated = ${talentsRequired}`);
-
-  // Check for background skill overlap (if backgrounds are enabled and selected)
-  // Note: Background skills are informational only in SWSE - they don't affect class skill selection
-  // They're displayed in the skills step to show which skills the background trained
-  if (this.characterData.background && this.characterData.backgroundSkills && this.characterData.backgroundSkills.length > 0) {
-    // Background skills are already stored in characterData.backgroundSkills
-    // No additional processing needed - the skills step will display them
-    SWSELogger.log(`CharGen | Background skills preserved:`, this.characterData.backgroundSkills);
-  }
-
-  // Mark identity as ready now that class is confirmed with all stats calculated
-  this.characterData.identityReady = true;
-  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Identity locked - class choice is now confirmed`);
-
-  // Offer mentor survey at class selection if not yet completed (ONLY for base classes, for both droid and living characters)
+// Offer mentor survey at class selection if not yet completed (ONLY for base classes, for both droid and living characters)
   try {
     SWSELogger.log(`[CHARGEN-CLASS] ===== MENTOR SURVEY FLOW START =====`);
     SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Checking if mentor survey should be offered for class "${className}"...`);

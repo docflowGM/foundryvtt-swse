@@ -3,6 +3,9 @@
 // Orchestrates all chargen functionality
 // ============================================
 
+// NOTE: Chargen step transitions MUST be state-driven.
+// Do not advance steps via render side-effects.
+
 import { SWSELogger } from '../../utils/logger.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
@@ -36,6 +39,9 @@ import * as FeatsTalentsModule from './chargen-feats-talents.js';
 import * as ForcePowersModule from './chargen-force-powers.js';
 import * as StarshipManeuversModule from './chargen-starship-maneuvers.js';
 import { renderTalentTreeGraph, getTalentsInTree } from './chargen-talent-tree-graph.js';
+
+import { applyProgressionPatch } from '../../progression/engine/apply-progression-patch.js';
+import { buildNamePatch } from './steps/name-step.js';
 
 export default class CharacterGenerator extends SWSEApplicationV2 {
   constructor(actor = null, options = {}) {
@@ -147,6 +153,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       this._loadFromActor(actor);
     }
   }
+
+  // NOTE: Chargen step transitions MUST be state-driven.
+  // Do not advance steps via render side-effects.
 
   /**
    * Override render to preserve scroll position during updates
@@ -1464,7 +1473,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Name input - use 'input' event to capture changes in real-time
     $html.find('input[name="character-name"]').on('input change', (ev) => {
-      this.characterData.name = ev.target.value;
+      const patch = buildNamePatch(this.characterData, ev.target.value);
+      this.characterData = applyProgressionPatch(this.characterData, patch);
     });
 
     // Random name button
@@ -1630,7 +1640,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const randomIndex = Math.floor(Math.random() * CharacterGenerator.RANDOM_NAMES.length);
     const selectedName = CharacterGenerator.RANDOM_NAMES[randomIndex];
 
-    this.characterData.name = selectedName;
+    const patch = buildNamePatch(this.characterData, selectedName);
+
+    this.characterData = applyProgressionPatch(this.characterData, patch);
 
     ui.notifications.info(`Random name selected: ${selectedName}`);
     await this.render();
@@ -1652,7 +1664,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const randomIndex = Math.floor(Math.random() * CharacterGenerator.RANDOM_DROID_NAMES.length);
     const selectedName = CharacterGenerator.RANDOM_DROID_NAMES[randomIndex];
 
-    this.characterData.name = selectedName;
+    const patch = buildNamePatch(this.characterData, selectedName);
+
+    this.characterData = applyProgressionPatch(this.characterData, patch);
 
     ui.notifications.info(`Random droid name selected: ${selectedName}`);
     await this.render();
@@ -1854,7 +1868,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       const form = event.currentTarget.closest('.chargen-app');
       const nameInput = form?.querySelector('input[name="character-name"]');
       if (nameInput) {
-        this.characterData.name = nameInput.value;
+        const patch = buildNamePatch(this.characterData, nameInput.value);
+
+        this.characterData = applyProgressionPatch(this.characterData, patch);
       }
     }
 
