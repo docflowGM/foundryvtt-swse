@@ -24,6 +24,21 @@ These are the core rules that define chargen's design. Violations cause bugs or 
 // Invariant 5: AppV2 lifecycle owns rendering
 // State drives render, not vice versa
 // Never change state inside _onRender
+
+// Invariant 6: Blank chargen screens indicate missing data, not UI bugs
+// Empty packs (species, classes, feats) fail-fast at load time
+// Never silently render empty steps
+// Fix root cause: ensure compendia are installed and loaded
+
+// Invariant 7: Actors are never created without required progression data
+// Name, abilities, class, and species (or droid systems) are non-negotiable
+// _assertCharacterComplete() enforces this before actor creation
+// Violations are caught and reported with explicit errors
+
+// Invariant 8: Derived data is computed by the Actor, not the UI
+// Character sheet reads actor.system.derived only
+// Derived values are populated in prepareDerivedData() post-creation
+// No fallback rendering if derived data is missing
 ```
 
 ## Architecture Diagram
