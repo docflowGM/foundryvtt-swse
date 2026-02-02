@@ -178,6 +178,7 @@ export function normalizeClassPrerequisites(classDoc) {
 
 /**
  * Convert feat names to their database IDs.
+ * Handles both specific feats and feat patterns.
  * Falls back to name if ID not found (for engine to handle).
  *
  * @param {string[]} featNames
@@ -189,13 +190,14 @@ function convertFeatNamesToIds(featNames) {
     }
 
     return featNames.map(name => {
-        // Case-insensitive lookup
+        // Case-insensitive lookup for exact matches
         for (const [featName, featId] of Object.entries(FEAT_IDS)) {
             if (featName.toLowerCase() === name.toLowerCase()) {
                 return featId;
             }
         }
         // Fallback: return the name for engine to match
+        // This handles patterns like "Martial Arts Feat" which the engine will match
         return name;
     });
 }
@@ -287,19 +289,30 @@ export function validateTalentTreeMappings() {
 
 /**
  * Validate that all feat names are mapped to IDs.
+ * Ignores patterns (e.g., "Martial Arts Feat") - those are resolved by the engine.
  * Dev utility to catch missing mappings.
  *
- * @returns {Object} - { missing: string[], mapped: number }
+ * @returns {Object} - { missing: string[], mapped: number, patterns: number }
  */
 export function validateFeatMappings() {
     const missing = [];
     let mapped = 0;
+    let patterns = 0;
+
+    // List of known feat patterns (not specific feats)
+    const FEAT_PATTERNS = ['Martial Arts Feat'];
 
     for (const className of Object.keys(PRESTIGE_PREREQUISITES)) {
         const prereqs = PRESTIGE_PREREQUISITES[className];
         const feats = [...(prereqs.feats || []), ...(prereqs.featsAny || [])];
 
         for (const featName of feats) {
+            // Skip patterns
+            if (FEAT_PATTERNS.includes(featName)) {
+                patterns++;
+                continue;
+            }
+
             let found = false;
             for (const mappedName of Object.keys(FEAT_IDS)) {
                 if (mappedName.toLowerCase() === featName.toLowerCase()) {
@@ -314,7 +327,7 @@ export function validateFeatMappings() {
         }
     }
 
-    return { missing, mapped };
+    return { missing, mapped, patterns };
 }
 
 /**
@@ -352,6 +365,9 @@ export function auditNormalizedOutput() {
     }
     if (featValidation.missing.length > 0) {
         report.warnings.push(`Missing feat mappings: ${featValidation.missing.join(', ')}`);
+    }
+    if (featValidation.patterns > 0) {
+        report.info = `${featValidation.patterns} feat pattern(s) handled by engine (expected)`;
     }
 
     return report;
