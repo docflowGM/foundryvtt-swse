@@ -2483,15 +2483,74 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     // Final recalculations before character creation
     this._recalcAbilities();
     this._recalcDefenses();
-    
+
     // Second Wind
     const conMod = this.characterData.abilities.con.mod || 0;
     const hpMax = this.characterData.hp.max;
-    this.characterData.secondWind.healing = Math.max(Math.floor(hpMax / 4), conMod) + 
+    this.characterData.secondWind.healing = Math.max(Math.floor(hpMax / 4), conMod) +
       (this.characterData.secondWind.misc || 0);
-    
+
     // Damage Threshold = Fortitude Defense
     this.characterData.damageThreshold = this.characterData.defenses.fort.total;
+  }
+
+  /**
+   * Assert that character has all required progression data before creation
+   * Fail-fast precondition check to prevent incomplete actors
+   *
+   * Invariant: Actors are never created without required progression data.
+   * This ensures prepareDerivedData() can compute valid derived values.
+   *
+   * @private
+   * @throws {Error} if any required field is missing or invalid
+   */
+  _assertCharacterComplete() {
+    const errors = [];
+
+    // Required: Character name
+    if (!this.characterData.name || this.characterData.name.trim() === '') {
+      errors.push("Character name is required");
+    }
+
+    // Required: Abilities (all 6 must be defined)
+    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    for (const key of abilityKeys) {
+      const ability = this.characterData.abilities[key];
+      if (!ability || typeof ability.base !== 'number' || !Number.isFinite(ability.base)) {
+        errors.push(`Ability ${key.toUpperCase()} is required and must be a number`);
+      }
+    }
+
+    // Required: Class (living or droid)
+    if (!this.characterData.classes || this.characterData.classes.length === 0) {
+      errors.push("At least one class is required");
+    }
+
+    // Required: Species (for non-droids)
+    if (!this.characterData.isDroid && !this.characterData.species) {
+      errors.push("Species is required for non-droid characters");
+    }
+
+    // Required: Droid systems (for droids)
+    if (this.characterData.isDroid) {
+      if (!this.characterData.droidSystems?.locomotion) {
+        errors.push("Droid locomotion system is required");
+      }
+      if (!this.characterData.droidSystems?.processor) {
+        errors.push("Droid processor is required");
+      }
+      if (!this.characterData.droidDegree) {
+        errors.push("Droid degree is required");
+      }
+    }
+
+    // If any errors, throw immediately
+    if (errors.length > 0) {
+      SWSELogger.error('[CHARGEN] Character precondition check failed:', errors);
+      throw new Error(
+        `Character is incomplete and cannot be created:\n${errors.map(e => `• ${e}`).join('\n')}`
+      );
+    }
   }
 
   async _onFinish(event) {
@@ -2629,6 +2688,10 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
   }
 
   async _createActor() {
+    // Invariant: Actors are never created without required progression data.
+    // These assertions ensure derived data can be properly computed.
+    this._assertCharacterComplete();
+
     // Build proper actor data structure matching SWSEActorSheet expectations
     // Note: The actor system uses 'race' as the property name for species data
     // IMPORTANT: CharacterDataModel uses 'attributes' not 'abilities'

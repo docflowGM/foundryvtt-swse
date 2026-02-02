@@ -8,6 +8,28 @@ import { normalizeTalentData } from '../../progression/utils/item-normalizer.js'
 import { normalizeClassData } from '../../progression/utils/class-normalizer.js';
 
 /**
+ * Assert that a required pack is loaded and non-empty
+ * Fail-fast on missing or empty packs to prevent silent chargen failures
+ *
+ * Invariant: Blank chargen screens indicate missing data, not UI bugs.
+ * This function makes that invariant explicit and actionable.
+ *
+ * @private
+ * @param {string} packName - Pack identifier (e.g., 'species')
+ * @param {Array} packData - Pack contents from cache
+ * @throws {Error} if pack is missing or empty
+ */
+function _assertPackLoaded(packName, packData) {
+  if (!Array.isArray(packData) || packData.length === 0) {
+    throw new Error(
+      `[CHARGEN] Required pack "${packName}" is missing or empty. ` +
+      `This indicates a compendium load failure or missing data. ` +
+      `Check browser console for [CACHE-LOAD] diagnostics.`
+    );
+  }
+}
+
+/**
  * Singleton cache for compendium data
  * Prevents reloading compendia for each new chargen instance
  */
@@ -226,6 +248,18 @@ export class ChargenDataCache {
       SWSELogger.error(`[CACHE-LOAD] FATAL: ${errorMsg}`);
       ui.notifications.error(errorMsg);
       throw new Error(errorMsg);
+    }
+
+    // Fail-fast assertions: Ensure critical packs are non-empty
+    // Invariant: Blank chargen screens indicate missing data, not UI bugs.
+    try {
+      _assertPackLoaded('species', packs.species);
+      _assertPackLoaded('classes', packs.classes);
+      _assertPackLoaded('feats', packs.feats);
+    } catch (err) {
+      SWSELogger.error(`[CACHE-LOAD] Pack assertion failed:`, err);
+      ui.notifications.error(`${err.message}`);
+      throw err;
     }
 
     SWSELogger.log(`[CACHE-LOAD] ======== COMPENDIUM LOAD COMPLETE ========`);
