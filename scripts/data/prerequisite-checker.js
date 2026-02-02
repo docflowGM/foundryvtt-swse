@@ -31,6 +31,7 @@ import { PRESTIGE_PREREQUISITES } from './prestige-prerequisites.js';
 import { TalentTreeDB } from './talent-tree-db.js';
 import { normalizeTalentTreeId } from './talent-tree-normalizer.js';
 import { SWSELogger } from '../utils/logger.js';
+import { normalizeClassPrerequisites } from '../progression/prerequisites/class-prereq-normalizer.js';
 
 /**
  * MAIN CLASS: PrerequisiteChecker
@@ -218,8 +219,12 @@ export class PrerequisiteChecker {
     }
 
     /**
-     * Check prestige class prerequisites (legacy, still used by CONSOLIDATION_STRATEGY).
-     * Routes to old prestige-specific logic.
+     * Check prestige class prerequisites.
+     *
+     * NORMALIZATION ARCHITECTURE:
+     * Prerequisites are defined in prestige-prerequisites.js (authoritative source).
+     * For raw class documents, use checkClassDocumentPrerequisites() instead.
+     * That method normalizes class docs via class-prereq-normalizer.js before checking.
      *
      * @param {Object} actor - Actor document
      * @param {string} className - Prestige class name
@@ -346,6 +351,37 @@ export class PrerequisiteChecker {
             details,
             special: prereqs.special || null
         };
+    }
+
+    /**
+     * Check prestige class prerequisites from a class document.
+     *
+     * NORMALIZATION LAYER:
+     * This is the entry point for checking class documents.
+     * It normalizes raw class data via class-prereq-normalizer.js,
+     * ensuring the prerequisite engine never interprets raw data directly.
+     *
+     * @param {Object} actor - Actor document
+     * @param {Object} classDoc - Class document from classes.db
+     * @param {Object} pending - Pending selections
+     * @returns {Object} - { met: boolean, missing: string[], details: object }
+     */
+    static checkClassDocumentPrerequisites(actor, classDoc, pending = {}) {
+        if (!classDoc || !classDoc.name) {
+            return { met: true, missing: [], details: {} };
+        }
+
+        // Normalize class document → canonical structure
+        const normalized = normalizeClassPrerequisites(classDoc);
+
+        if (!normalized) {
+            // Not a prestige class, no prerequisites
+            return { met: true, missing: [], details: {} };
+        }
+
+        // Check against normalized prerequisites
+        // (delegates to checkPrestigeClassPrerequisites with class name)
+        return this.checkPrestigeClassPrerequisites(actor, classDoc.name, pending);
     }
 
     /**
