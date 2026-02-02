@@ -562,7 +562,12 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       }
     }
 
-    const context = await super._prepareContext();
+    // AppV2: Build chargen-specific context from scratch (not from super._prepareContext)
+    const context = {
+      editable: this.isEditable,
+      user: game.user,
+      config: CONFIG.SWSE
+    };
 
     if (!this._packs.species) {
       const ok = await this._loadData();
