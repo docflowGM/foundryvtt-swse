@@ -520,7 +520,10 @@ export class CharacterTemplates {
       if (featId) {
         const feat = await featPack.getDocument(featId);
         if (feat) {
-          await actor.createEmbeddedDocuments('Item', [feat.toObject()]);
+          const featData = feat.toObject();
+          // Strip effects during chargen to avoid Foundry v13+ validation issues
+          delete featData.effects;
+          await actor.createEmbeddedDocuments('Item', [featData]);
           SWSELogger.log(`SWSE | Added template feat: ${featName}`);
 
           // Handle Skill Focus feat - auto-check the skill's focused checkbox
@@ -572,7 +575,10 @@ export class CharacterTemplates {
       }
 
       const feat = await featPack.getDocument(featEntry._id);
-      await actor.createEmbeddedDocuments('Item', [feat.toObject()]);
+      const featData = feat.toObject();
+      // Strip effects during chargen to avoid Foundry v13+ validation issues
+      delete featData.effects;
+      await actor.createEmbeddedDocuments('Item', [featData]);
       SWSELogger.log(`SWSE | Added template feat: ${featName}`);
 
       // Handle Skill Focus feat - auto-check the skill's focused checkbox
@@ -645,13 +651,17 @@ export class CharacterTemplates {
   /**
    * Apply template talent to actor
    * @param {Actor} actor - The actor to modify
-   * @param {string} talentName - The talent name to add
+   * @param {Object|string} talentRef - The talent reference object or name
    */
   static async applyTemplateTalent(actor, talentRef) {
-    if (!talentName) {
+    if (!talentRef) {
       SWSELogger.log('SWSE | No talent specified in template, skipping');
       return;
     }
+
+    const talentName = typeof talentRef === 'string' ? talentRef : (talentRef.displayName || talentRef.name);
+    const talentPackName = typeof talentRef === 'object' && talentRef.pack ? talentRef.pack : 'foundryvtt-swse.talents';
+    const talentId = typeof talentRef === 'object' && talentRef.id ? talentRef.id : null;
 
     try {
       SWSELogger.log(`SWSE | Attempting to apply template talent: ${talentName}`);
@@ -667,7 +677,10 @@ export class CharacterTemplates {
       if (talentId) {
         const talent = await talentPack.getDocument(talentId);
         if (talent) {
-          await actor.createEmbeddedDocuments('Item', [talent.toObject()]);
+          const talentData = talent.toObject();
+          // Strip effects during chargen to avoid Foundry v13+ validation issues
+          delete talentData.effects;
+          await actor.createEmbeddedDocuments('Item', [talentData]);
           SWSELogger.log(`SWSE | Added template talent: ${talentName}`);
           return;
         }
@@ -702,7 +715,10 @@ export class CharacterTemplates {
         return;
       }
 
-      await actor.createEmbeddedDocuments('Item', [talent.toObject()]);
+      const talentData = talent.toObject();
+      // Strip effects during chargen to avoid Foundry v13+ validation issues
+      delete talentData.effects;
+      await actor.createEmbeddedDocuments('Item', [talentData]);
       SWSELogger.log(`SWSE | Successfully added template talent: ${talentName}`);
       ui.notifications.info(`Added talent: ${talentName}`);
     } catch (error) {
@@ -739,7 +755,10 @@ export class CharacterTemplates {
         const powerEntry = index.find(p => p.name === powerName);
         if (powerEntry) {
           const power = await powerPack.getDocument(powerEntry._id);
-          powersToAdd.push(power.toObject());
+          const powerData = power.toObject();
+          // Strip effects during chargen to avoid Foundry v13+ validation issues
+          delete powerData.effects;
+          powersToAdd.push(powerData);
         } else {
           SWSELogger.warn(`SWSE | Force power not found: ${powerName}`);
         }
