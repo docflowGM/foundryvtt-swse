@@ -177,12 +177,19 @@ export function normalizeClassPrerequisites(classDoc) {
 }
 
 /**
- * Convert feat names to their database IDs.
- * Handles both specific feats and feat patterns.
- * Falls back to name if ID not found (for engine to handle).
+ * Known feat flag requirements (feats with semantic flags, not IDs).
+ * These feats are identified by a flag on the feat document, not by ID.
+ */
+const FEAT_FLAGS = {
+    "Martial Arts Feat": "martialArtsFeat"
+};
+
+/**
+ * Convert feat names to their database IDs or flag checks.
+ * Handles both specific feats (by ID) and flag-based feat groups.
  *
  * @param {string[]} featNames
- * @returns {string[]} - Array of IDs or names
+ * @returns {Array} - Array of IDs, names, or { flag: flagName } objects
  */
 function convertFeatNamesToIds(featNames) {
     if (!Array.isArray(featNames)) {
@@ -190,14 +197,20 @@ function convertFeatNamesToIds(featNames) {
     }
 
     return featNames.map(name => {
-        // Case-insensitive lookup for exact matches
+        // Check if this is a flag-based requirement
+        if (name in FEAT_FLAGS) {
+            return { flag: FEAT_FLAGS[name] };
+        }
+
+        // Case-insensitive lookup for exact feat ID matches
         for (const [featName, featId] of Object.entries(FEAT_IDS)) {
             if (featName.toLowerCase() === name.toLowerCase()) {
                 return featId;
             }
         }
-        // Fallback: return the name for engine to match
-        // This handles patterns like "Martial Arts Feat" which the engine will match
+
+        // Fallback: return the name (shouldn't happen in normal operation)
+        console.warn(`[ClassPrereqNormalizer] Unknown feat: ${name}`);
         return name;
     });
 }
@@ -288,28 +301,24 @@ export function validateTalentTreeMappings() {
 }
 
 /**
- * Validate that all feat names are mapped to IDs.
- * Ignores patterns (e.g., "Martial Arts Feat") - those are resolved by the engine.
+ * Validate that all feat names are mapped to IDs or flags.
  * Dev utility to catch missing mappings.
  *
- * @returns {Object} - { missing: string[], mapped: number, patterns: number }
+ * @returns {Object} - { missing: string[], mapped: number, flagged: number }
  */
 export function validateFeatMappings() {
     const missing = [];
     let mapped = 0;
-    let patterns = 0;
-
-    // List of known feat patterns (not specific feats)
-    const FEAT_PATTERNS = ['Martial Arts Feat'];
+    let flagged = 0;
 
     for (const className of Object.keys(PRESTIGE_PREREQUISITES)) {
         const prereqs = PRESTIGE_PREREQUISITES[className];
         const feats = [...(prereqs.feats || []), ...(prereqs.featsAny || [])];
 
         for (const featName of feats) {
-            // Skip patterns
-            if (FEAT_PATTERNS.includes(featName)) {
-                patterns++;
+            // Check if this is a flag-based requirement
+            if (featName in FEAT_FLAGS) {
+                flagged++;
                 continue;
             }
 
@@ -327,7 +336,7 @@ export function validateFeatMappings() {
         }
     }
 
-    return { missing, mapped, patterns };
+    return { missing, mapped, flagged };
 }
 
 /**
@@ -366,9 +375,10 @@ export function auditNormalizedOutput() {
     if (featValidation.missing.length > 0) {
         report.warnings.push(`Missing feat mappings: ${featValidation.missing.join(', ')}`);
     }
-    if (featValidation.patterns > 0) {
-        report.info = `${featValidation.patterns} feat pattern(s) handled by engine (expected)`;
+    if (featValidation.flagged > 0) {
+        report.info = `${featValidation.flagged} feat(s) resolved by flag check`;
     }
+    report.featStats = { mapped: featValidation.mapped, flagged: featValidation.flagged };
 
     return report;
 }
