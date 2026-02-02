@@ -3,9 +3,9 @@
  * Extends HandlebarsApplicationMixin for proper V2 rendering lifecycle
  * All progression UI classes must extend this
  */
-const { HandlebarsApplicationMixin } = foundry.applications.api;
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-export default class SWSEApplicationV2 extends HandlebarsApplicationMixin(Application) {
+export default class SWSEApplicationV2 extends HandlebarsApplicationMixin(ApplicationV2) {
     /**
      * Default options for SWSE V2 Applications
      */

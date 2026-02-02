@@ -51,14 +51,15 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                         callback: async () => {
                             // Create temporary actor for consistent initialization and mentor survey handling
                             // Ensures L1 mentor survey fires consistently regardless of entry point
-                            const tempActor = await Actor.create({
+                            const ActorClass = CONFIG.Actor.documentClass;
+                            const tempActor = new ActorClass({
                                 name: "New Character (Temp)",
                                 type: "character",
                                 system: {
                                     level: 1,
                                     swse: { mentorSurveyCompleted: false }
                                 }
-                            }, { temporary: true });
+                            }, { parent: null });
 
                             new CharacterGeneratorNarrative(tempActor).render(true);
                         }
@@ -72,14 +73,15 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                         label: "NPC Generator",
                         callback: async () => {
                             // Create temporary NPC actor for consistent initialization
-                            const tempActor = await Actor.create({
+                            const ActorClass = CONFIG.Actor.documentClass;
+                            const tempActor = new ActorClass({
                                 name: "New NPC (Temp)",
                                 type: "npc",
                                 system: {
                                     level: 1,
                                     swse: { mentorSurveyCompleted: false }
                                 }
-                            }, { temporary: true });
+                            }, { parent: null });
 
                             new CharacterGeneratorImproved(tempActor, { actorType: "npc" }).render(true);
                         }
@@ -139,14 +141,15 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
             button.addEventListener('click', async () => {
                 // Create temporary actor for consistent initialization and mentor survey handling
                 // Ensures L1 mentor survey fires consistently regardless of entry point
-                const tempActor = await Actor.create({
+                const ActorClass = CONFIG.Actor.documentClass;
+                const tempActor = new ActorClass({
                     name: "New Character (Temp)",
                     type: "character",
                     system: {
                         level: 1,
                         swse: { mentorSurveyCompleted: false }
                     }
-                }, { temporary: true });
+                }, { parent: null });
 
                 new CharacterGeneratorNarrative(tempActor).render(true);
             });
