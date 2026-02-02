@@ -18,15 +18,26 @@ function markActiveConditionStep(html, actor) {
  * - _updateObject routes through ActorEngine
  */
 export class SWSEV2NpcSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheet) {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    super.DEFAULT_OPTIONS,
+    {
       classes: ['swse', 'swse-sheet', 'swse-npc-sheet', 'v2'],
       template: "systems/foundryvtt-swse/templates/actors/npc/v2/npc-sheet.hbs",
       width: 820,
       height: 920,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "summary" }],
       scrollY: [".sheet-body"]
-    });
+    }
+  );
+
+  async _prepareContext(options) {
+    // Fail-fast: this sheet is for NPCs only
+    if (this.document.type !== "npc") {
+      throw new Error(
+        `SWSEV2NpcSheet requires actor type "npc", got "${this.document.type}"`
+      );
+    }
+    return super._prepareContext(options);
   }
 
   async getData(options = {}) {
