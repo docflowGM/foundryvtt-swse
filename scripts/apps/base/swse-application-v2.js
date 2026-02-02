@@ -25,7 +25,12 @@ export default class SWSEApplicationV2 extends HandlebarsApplicationMixin(Applic
      * @returns {Promise<Object>} Context object for template
      */
     async _prepareContext() {
-        return {};
+        try {
+            return {};
+        } catch (error) {
+            this._handleError('_prepareContext', error);
+            return {};
+        }
     }
 
     /**
@@ -35,8 +40,12 @@ export default class SWSEApplicationV2 extends HandlebarsApplicationMixin(Applic
      * @param {Object} options - Render options
      */
     async _onRender(html, options) {
-        // Override in subclasses for event binding
-        // All DOM queries MUST be scoped to this.element
+        try {
+            // Override in subclasses for event binding
+            // All DOM queries MUST be scoped to this.element
+        } catch (error) {
+            this._handleError('_onRender', error);
+        }
     }
 
     /**

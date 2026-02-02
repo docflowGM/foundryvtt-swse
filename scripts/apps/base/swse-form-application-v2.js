@@ -28,7 +28,12 @@ export default class SWSEFormApplicationV2 extends HandlebarsApplicationMixin(Fo
      * @returns {Promise<Object>} Context object for template
      */
     async _prepareContext() {
-        return {};
+        try {
+            return {};
+        } catch (error) {
+            this._handleError('_prepareContext', error);
+            return {};
+        }
     }
 
     /**
@@ -38,8 +43,12 @@ export default class SWSEFormApplicationV2 extends HandlebarsApplicationMixin(Fo
      * @param {Object} options - Render options
      */
     async _onRender(html, options) {
-        // Override in subclasses for event binding
-        // All DOM queries MUST be scoped to this.element
+        try {
+            // Override in subclasses for event binding
+            // All DOM queries MUST be scoped to this.element
+        } catch (error) {
+            this._handleError('_onRender', error);
+        }
     }
 
     /**
@@ -50,8 +59,12 @@ export default class SWSEFormApplicationV2 extends HandlebarsApplicationMixin(Fo
      * @returns {Promise<void>}
      */
     async _updateObject(event, formData) {
-        // Override in subclasses
-        this._log('Form submitted', formData);
+        try {
+            // Override in subclasses
+            this._log('Form submitted', formData);
+        } catch (error) {
+            this._handleError('_updateObject', error);
+        }
     }
 
     /**
