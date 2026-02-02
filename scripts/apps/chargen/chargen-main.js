@@ -28,6 +28,8 @@ import SWSEApplicationV2 from '../base/swse-application-v2.js';
 import * as SharedModule from './chargen-shared.js';
 import { ChargenDataCache } from './chargen-shared.js';
 import * as DroidModule from './chargen-droid.js';
+import { ChargenDevGuards, initializeChargenDevGuards } from './chargen-dev-guards.js';
+import { ChargenFinalizer } from './chargen-finalizer.js';
 import * as SpeciesModule from './chargen-species.js';
 import { _filterSpecies, _sortSpeciesBySource } from './chargen-species.js';
 import * as BackgroundsModule from './chargen-backgrounds.js';
@@ -152,6 +154,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     if (this.actor) {
       this._loadFromActor(actor);
     }
+
+    // Initialize dev guards for architectural constraint enforcement
+    initializeChargenDevGuards(this);
   }
 
   // NOTE: Chargen step transitions MUST be state-driven.
