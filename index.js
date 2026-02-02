@@ -198,7 +198,6 @@ import { registerKeybindings } from './scripts/core/keybindings.js';
 import { ConditionTrackComponent } from './scripts/components/condition-track.js';
 import { ForceSuiteComponent } from './scripts/components/force-suite.js';
 
-import './init-talents.js';
 import './scripts/apps/chargen-init.js';
 import './scripts/hooks/assets-hooks.js';
 import './scripts/npc-level3.js';
@@ -562,33 +561,3 @@ Hooks.on("canvasReady", () => {
 
 
 
-Hooks.once("init", () => {
-  // =====================================
-  // SWSE Migration Flags (Auto-Injected)
-  // =====================================
-
-  game.settings.register("foundryvtt-swse", "forceCompendiumsPopulation", {
-    name: "forceCompendiumsPopulation",
-    scope: "world",
-    config: false,
-    type: String,
-    default: ""
-  });
-
-  game.settings.register("foundryvtt-swse", "speciesTraitsUpdate", {
-    name: "speciesTraitsUpdate",
-    scope: "world",
-    config: false,
-    type: String,
-    default: ""
-  });
-
-  game.settings.register("foundryvtt-swse", "talentEffectValidationMigration", {
-    name: "talentEffectValidationMigration",
-    scope: "world",
-    config: false,
-    type: String,
-    default: ""
-  });
-
-});
