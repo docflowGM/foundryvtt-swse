@@ -29,7 +29,6 @@
     "scripts/progression/utils/PrerequisiteEnricher.js",
     "scripts/progression/RuleEngine.js",
     "scripts/progression/talents/TalentTreeRegistry.js",
-    "init-talents.js",
     "scripts/talents/DarkSidePowers.js",
     "scripts/talents/dark-side-powers-init.js",
     "scripts/talents/light-side-init.js"
@@ -465,6 +464,12 @@
       "default": false
     },
     "foundryvtt-swse.talentEffectValidationMigration": {
+      "scope": "world",
+      "config": false,
+      "type": "String",
+      "default": ""
+    },
+    "foundryvtt-swse.speciesTraitsUpdate": {
       "scope": "world",
       "config": false,
       "type": "String",
