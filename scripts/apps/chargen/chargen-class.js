@@ -309,6 +309,30 @@ export async function _onSelectClass(event) {
   // Recalculate defenses
   this._recalcDefenses();
 
+  // Reset class-dependent selections (talents, feats from old class no longer apply)
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Resetting class-dependent data...`);
+  this.characterData.talents = [];
+  this.characterData.feats = [];
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Class-dependent selections cleared`);
+
+  // Recalculate feats required (may vary by class in future, currently species-dependent)
+  // featsRequired is set during species selection and may be adjusted by class grants
+  // For now, leave featsRequired as-is (set by species) but ensure it's available
+  if (!this.characterData.featsRequired) {
+    this.characterData.featsRequired = 1;
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: featsRequired was undefined, set to 1`);
+  }
+
+  // Calculate talentsRequired based on class and houserules
+  let talentsRequired = 1; // Default: 1 talent at level 1
+  const talentEveryLevelRule = game.settings.get("foundryvtt-swse", "talentEveryLevel") ?? false;
+  if (talentEveryLevelRule) {
+    const talentEveryLevelExtraL1 = game.settings.get("foundryvtt-swse", "talentEveryLevelExtraL1") ?? false;
+    talentsRequired = talentEveryLevelExtraL1 ? 2 : 1;
+  }
+  this.characterData.talentsRequired = talentsRequired;
+  SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: talentsRequired recalculated = ${talentsRequired}`);
+
   // Check for background skill overlap (if backgrounds are enabled and selected)
   // Note: Background skills are informational only in SWSE - they don't affect class skill selection
   // They're displayed in the skills step to show which skills the background trained
@@ -361,11 +385,11 @@ export async function _onSelectClass(event) {
       } else {
         SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User skipped mentor survey (can be completed later)`);
         ui.notifications.info("Survey skipped. You can complete it later to get personalized mentor suggestions.");
-      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Recording mentor survey skip metadata`);
+        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Recording mentor survey skip metadata`);
         this.characterData.mentorSurveySkipped = true;
         this.characterData.mentorSurveySkipCount = (this.characterData.mentorSurveySkipCount || 0) + 1;
         this.characterData.mentorSurveyLastSkippedAt = Date.now();
-}
+      }
     } else {
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CONDITION NOT MET - Skipping survey`, {
         surveyAlreadyCompleted: surveyCompleted,

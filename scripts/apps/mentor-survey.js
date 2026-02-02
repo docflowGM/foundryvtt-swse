@@ -1215,5 +1215,13 @@ MentorSurvey.getResponse = function(actor, mentorKey, context) {
 
 // Named export wrapper for chargen integration
 export function maybeOpenMentorSurvey(actor) {
-  return MentorSurvey.maybeOpenSurvey(actor);
+  // Check if survey has already been completed
+  const hasSurvey = MentorSurvey.hasSurveyBeenCompleted(actor);
+  if (!hasSurvey) {
+    // Get mentor name from actor metadata or default
+    const mentorName = actor.flags?.swse?.mentorMemory?.mentorName || "Your Mentor";
+    const playerName = actor.name || "";
+    return MentorSurvey.promptSurvey(actor, mentorName, playerName);
+  }
+  return Promise.resolve();
 }

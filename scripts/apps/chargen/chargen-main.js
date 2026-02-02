@@ -224,9 +224,19 @@ export default class CharacterGenerator extends Application {
       level: cls.system.level || 1
     }));
 
-    // Load existing items as references
-    this.characterData.feats = actor.items.filter(item => item.type === 'feat').map(f => f.name);
-    this.characterData.talents = actor.items.filter(item => item.type === 'talent').map(t => t.name);
+    // Load existing items as full objects (not just names) to preserve ._id and other properties
+    this.characterData.feats = actor.items.filter(item => item.type === 'feat').map(f => ({
+      name: f.name,
+      _id: f.id,
+      type: f.type,
+      system: f.system
+    }));
+    this.characterData.talents = actor.items.filter(item => item.type === 'talent').map(t => ({
+      name: t.name,
+      _id: t.id,
+      type: t.type,
+      system: t.system
+    }));
   }
 
   static get defaultOptions() {
@@ -1954,6 +1964,8 @@ export default class CharacterGenerator extends Application {
 
     if (idx > 0) {
       this.currentStep = steps[idx - 1];
+      // Re-validate selections if returning to feats/talents (class may have changed)
+      await this._revalidateSelectionsOnNavigation();
       await this.render();
     }
   }
@@ -2302,10 +2314,9 @@ export default class CharacterGenerator extends Application {
         break;
       case "talents":
         const selectedTalentsCount = (this.characterData.talents || []).length;
-        // Level 1 characters get 1 talent
-        const requiredTalents = 1;
+        const requiredTalents = this.characterData.talentsRequired || 1;
         if (selectedTalentsCount < requiredTalents) {
-          ui.notifications.warn(`You must select ${requiredTalents} talent (currently selected: ${selectedTalentsCount}).`);
+          ui.notifications.warn(`You must select ${requiredTalents} talent(s) (currently selected: ${selectedTalentsCount}).`);
           return false;
         }
         break;
@@ -2334,6 +2345,45 @@ export default class CharacterGenerator extends Application {
         break;
     }
     return true;
+  }
+
+  /**
+   * Re-validate feat/talent selections when navigating back
+   * Removes selections that no longer meet prerequisites (e.g., due to class change)
+   * @returns {Promise<void>}
+   */
+  async _revalidateSelectionsOnNavigation() {
+    // Re-validate feats when going back to feats step
+    if (this.currentStep === "feats" && this.characterData.feats && this.characterData.feats.length > 0) {
+      const validFeats = [];
+      for (const feat of this.characterData.feats) {
+        const tempActor = this._createTempActorForValidation();
+        const prereqCheck = PrerequisiteChecker.checkFeatPrerequisites(feat, tempActor);
+        if (prereqCheck.met) {
+          validFeats.push(feat);
+        } else {
+          SWSELogger.warn(`[CHARGEN] Removing feat "${feat.name}" - no longer meets prerequisites: ${prereqCheck.reasons.join(", ")}`);
+          ui.notifications.info(`Removed feat "${feat.name}" - no longer meets requirements after class change.`);
+        }
+      }
+      this.characterData.feats = validFeats;
+    }
+
+    // Re-validate talents when going back to talents step
+    if (this.currentStep === "talents" && this.characterData.talents && this.characterData.talents.length > 0) {
+      const validTalents = [];
+      for (const talent of this.characterData.talents) {
+        const tempActor = this._createTempActorForValidation();
+        const prereqCheck = PrerequisiteChecker.checkTalentPrerequisites(talent, tempActor);
+        if (prereqCheck.met) {
+          validTalents.push(talent);
+        } else {
+          SWSELogger.warn(`[CHARGEN] Removing talent "${talent.name}" - no longer meets prerequisites: ${prereqCheck.reasons.join(", ")}`);
+          ui.notifications.info(`Removed talent "${talent.name}" - no longer meets requirements after class change.`);
+        }
+      }
+      this.characterData.talents = validTalents;
+    }
   }
 
   /**
@@ -2814,7 +2864,7 @@ export default class CharacterGenerator extends Application {
       });
 
       // Open the character sheet
-      created.sheet.render(true);
+      await created.sheet.render(true);
 
       ui.notifications.info(`Character ${this.characterData.name} created successfully!`);
     } catch (err) {

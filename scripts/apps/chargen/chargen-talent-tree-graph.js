@@ -104,7 +104,14 @@ function calculateLevels(nodes) {
   const inProgress = new Set();
 
   function visit(nodeId, level) {
-    if (inProgress.has(nodeId)) return;
+    if (inProgress.has(nodeId)) {
+      // Cycle detected - log warning
+      const node = nodes.get(nodeId);
+      if (node) {
+        console.warn(`[TALENT-TREE] Circular dependency detected for talent: ${node.name || nodeId}`);
+      }
+      return;
+    }
 
     const node = nodes.get(nodeId);
     if (!node) return;
