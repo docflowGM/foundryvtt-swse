@@ -9,7 +9,10 @@ import { FeatRegistry } from "../../progression/feats/feat-registry-ui.js";
 import { TalentRegistry } from "../../progression/talents/talent-registry-ui.js";
 import { ForceRegistry } from "../../progression/force/force-registry-ui.js";
 
-export class SWSELevelUpEnhanced extends FormApplication {
+// V2 API base class
+import SWSEFormApplicationV2 from '../base/swse-form-application-v2.js';
+
+export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
   constructor(actor, opts = {}) {
     super(actor, opts);
@@ -46,8 +49,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
     return `Level Up — ${this.actor.name} (Level ${lvl} → ${lvl + 1})`;
   }
 
-  async getData() {
-    const data = await super.getData();
+  async _prepareContext() {
+    const data = await super._prepareContext();
     data.actor = this.actor;
     data.step = this.currentStep;
 
@@ -57,8 +60,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
     return data;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(html, options) {
+    await super._onRender(html, options);
 
     html.find(".select-class").on("click", this._onSelectClass.bind(this));
     html.find(".select-skill").on("click", this._onSelectSkill.bind(this));

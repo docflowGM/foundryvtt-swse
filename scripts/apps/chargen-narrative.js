@@ -35,8 +35,8 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     };
   }
 
-  async getData() {
-    const context = await super.getData();
+  async _prepareContext() {
+    const context = await super._prepareContext();
 
     // FIX 3 (Lazy Binding): Resolve mentor now when rendering
     // This ensures actor state is complete before mentor selection
@@ -688,8 +688,8 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   // ENHANCED ACTIVATION
   // ========================================
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(html, options) {
+    await super._onRender(html, options);
 
     // Talent tree selection
     html.find('.select-talent-tree').click(this._onSelectTalentTree.bind(this));

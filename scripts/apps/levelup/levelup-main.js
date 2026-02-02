@@ -103,7 +103,10 @@ import { decayAllMentorCommitments, updateAllMentorMemories } from '../../engine
 // Import mentor wishlist integration
 import { MentorWishlistIntegration } from '../../engine/MentorWishlistIntegration.js';
 
-export class SWSELevelUpEnhanced extends FormApplication {
+// V2 API base class
+import SWSEFormApplicationV2 from '../base/swse-form-application-v2.js';
+
+export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -216,8 +219,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
     return `Level Up ${this.actor.name} (${this.actor.system.level} → ${this.actor.system.level + 1})`;
   }
 
-  async getData() {
-    const data = await super.getData();
+  async _prepareContext() {
+    const data = await super._prepareContext();
 
     // Use this.object (managed by FormApplication) to ensure fresh actor data
     // Force a data preparation to ensure abilities are up-to-date
@@ -352,8 +355,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
     return getMentorGuidance(this.mentor, choiceType);
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(html, options) {
+    await super._onRender(html, options);
 
     // Class selection (old and new styles)
     html.find('.select-class-btn').click(this._onSelectClass.bind(this));
