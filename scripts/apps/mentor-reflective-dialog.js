@@ -13,6 +13,9 @@ import { generateReflectiveDialogue } from './mentor-reflective-dialogue.js';
 import { getMentorMemory, setMentorMemory, setCommittedPath, setTargetClass } from '../engine/mentor-memory.js';
 import { MENTORS } from './mentor-dialogues.js';
 
+// V2 API base class
+import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';
+
 const TOPICS = [
   {
     key: "who_am_i_becoming",
@@ -73,7 +76,7 @@ const TOPICS = [
   }
 ];
 
-export class MentorReflectiveDialog extends FormApplication {
+export class MentorReflectiveDialog extends SWSEFormApplicationV2 {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "mentor-reflective-dialog",
@@ -100,8 +103,8 @@ export class MentorReflectiveDialog extends FormApplication {
     return `${mentor?.name || "Your Mentor"} — Reflective Guidance`;
   }
 
-  async getData() {
-    const data = await super.getData();
+  async _prepareContext() {
+    const data = await super._prepareContext();
 
     const mentor = MENTORS[this.mentorId];
     const memory = getMentorMemory(this.actor, this.mentorId.toLowerCase());
@@ -121,8 +124,8 @@ export class MentorReflectiveDialog extends FormApplication {
     return data;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(html, options) {
+    await super._onRender(html, options);
 
     // Topic selection
     html.find('.topic-button').click(this._onSelectTopic.bind(this));

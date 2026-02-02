@@ -20,6 +20,9 @@ import { selectMentorResponse, buildJudgmentContext } from '../mentor/mentor-jud
 import { renderJudgmentAtom } from '../mentor/mentor-judgment-renderer.js';
 import { getReasonTexts } from '../mentor/mentor-reason-renderer.js';
 
+// V2 API base class
+import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';
+
 const CHAT_TOPICS = [
   {
     key: "who_am_i_becoming",
@@ -95,7 +98,7 @@ const CHAT_TOPICS = [
   }
 ];
 
-export class MentorChatDialog extends FormApplication {
+export class MentorChatDialog extends SWSEFormApplicationV2 {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "mentor-chat-dialog",
@@ -122,8 +125,8 @@ export class MentorChatDialog extends FormApplication {
     return `Talk to Your Mentors — ${this.actor.name}`;
   }
 
-  async getData() {
-    const data = await super.getData();
+  async _prepareContext() {
+    const data = await super._prepareContext();
 
     // Get all mentors unlocked via classes
     const unlockedMentors = this._getUnlockedMentors();
@@ -184,8 +187,8 @@ export class MentorChatDialog extends FormApplication {
     });
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(html, options) {
+    await super._onRender(html, options);
 
     // Mentor selection
     html.find('.mentor-card').click(this._onSelectMentor.bind(this));

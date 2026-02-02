@@ -11,11 +11,14 @@ import { BuildIntent, BUILD_THEMES, PRESTIGE_SIGNALS, FEAT_THEME_SIGNALS } from 
 import { ClassSuggestionEngine, CLASS_SYNERGY_DATA } from '../../engine/ClassSuggestionEngine.js';
 import { SWSELogger } from '../../utils/logger.js';
 
+// V2 API base class
+import SWSEApplicationV2 from '../base/swse-application-v2.js';
+
 /**
  * GM Debug Panel Application
  * Shows detailed BuildIntent analysis for a character
  */
-export class GMDebugPanel extends Application {
+export class GMDebugPanel extends SWSEApplicationV2 {
 
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
@@ -42,8 +45,8 @@ export class GMDebugPanel extends Application {
         return `BuildIntent Debug: ${this.actor.name}`;
     }
 
-    async getData() {
-        const data = await super.getData();
+    async _prepareContext() {
+        const data = await super._prepareContext();
 
         // Analyze build intent
         try {
@@ -233,8 +236,8 @@ export class GMDebugPanel extends Application {
         return analysis;
     }
 
-    activateListeners(html) {
-        super.activateListeners(html);
+    async _onRender(html, options) {
+        await super._onRender(html, options);
 
         // Refresh button
         html.find('.refresh-analysis').click(() => this.render(true));

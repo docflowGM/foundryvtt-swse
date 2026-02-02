@@ -11,11 +11,14 @@ import { BuildIntent, PRESTIGE_SIGNALS } from '../../engine/BuildIntent.js';
 import { PathPreview } from '../../engine/PathPreview.js';
 import { SWSELogger } from '../../utils/logger.js';
 
+// V2 API base class
+import SWSEApplicationV2 from '../base/swse-application-v2.js';
+
 /**
  * Prestige Roadmap Application
  * Shows visual progress toward prestige class qualification
  */
-export class PrestigeRoadmap extends Application {
+export class PrestigeRoadmap extends SWSEApplicationV2 {
 
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
@@ -41,8 +44,8 @@ export class PrestigeRoadmap extends Application {
         return `Prestige Roadmap: ${this.actor.name}`;
     }
 
-    async getData() {
-        const data = await super.getData();
+    async _prepareContext() {
+        const data = await super._prepareContext();
 
         // Build roadmap data
         this.roadmapData = await this._buildRoadmapData();
@@ -294,8 +297,8 @@ export class PrestigeRoadmap extends Application {
         return breakdown;
     }
 
-    activateListeners(html) {
-        super.activateListeners(html);
+    async _onRender(html, options) {
+        await super._onRender(html, options);
 
         // Class card selection
         html.find('.roadmap-class-card').click(event => {

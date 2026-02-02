@@ -18,6 +18,9 @@ import { getMentorMemory, setMentorMemory, setTargetClass } from '../../engine/m
 // SSOT Data Layer
 import { ClassesDB } from '../../data/classes-db.js';
 
+// V2 API base class
+import SWSEApplicationV2 from '../base/swse-application-v2.js';
+
 // Import all module functions
 import * as SharedModule from './chargen-shared.js';
 import { ChargenDataCache } from './chargen-shared.js';
@@ -34,7 +37,7 @@ import * as ForcePowersModule from './chargen-force-powers.js';
 import * as StarshipManeuversModule from './chargen-starship-maneuvers.js';
 import { renderTalentTreeGraph, getTalentsInTree } from './chargen-talent-tree-graph.js';
 
-export default class CharacterGenerator extends Application {
+export default class CharacterGenerator extends SWSEApplicationV2 {
   constructor(actor = null, options = {}) {
     super(options);
     this.actor = actor;
@@ -522,9 +525,9 @@ export default class CharacterGenerator extends Application {
   
   
   
-  async getData() {
+  async _prepareContext() {
     // DIAGNOSTIC LOGGING: Track class data state throughout chargen
-    SWSELogger.log(`CharGen | getData() called - currentStep: ${this.currentStep}`, {
+    SWSELogger.log(`CharGen | _prepareContext() called - currentStep: ${this.currentStep}`, {
       hasClasses: !!this.characterData.classes?.length,
       classes: this.characterData.classes,
       className: this.characterData.classes?.[0]?.name,
@@ -545,7 +548,7 @@ export default class CharacterGenerator extends Application {
       }
     }
 
-    const context = super.getData();
+    const context = await super._prepareContext();
 
     if (!this._packs.species) {
       const ok = await this._loadData();
@@ -1356,8 +1359,8 @@ export default class CharacterGenerator extends Application {
 
 
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(html, options) {
+    await super._onRender(html, options);
 
     // Ensure html is jQuery object for compatibility
     const $html = html instanceof jQuery ? html : $(html);
@@ -1721,10 +1724,10 @@ export default class CharacterGenerator extends Application {
                 accept: {
                   icon: '<i class="fas fa-check"></i>',
                   label: "Show Suggestions Inline",
-                  callback: () => {
+                  callback: async () => {
                     SWSELogger.log(`[CHARGEN] _onAskMentor: User accepted - enabling suggestions`);
                     this.suggestionEngine = true;
-                    this.render();
+                    await this.render();
                   }
                 },
                 cancel: {
@@ -2013,9 +2016,9 @@ export default class CharacterGenerator extends Application {
         buttons: {
           goback: {
             label: "Go Back",
-            callback: () => {
+            callback: async () => {
               this.currentStep = "class";
-              this.render();
+              await this.render();
             }
           },
           freebuild: {
@@ -2552,7 +2555,7 @@ export default class CharacterGenerator extends Application {
     ui.notifications.info(`You rolled ${credits.toLocaleString()} credits!`);
 
     // Re-render to show result
-    this.render();
+    await this.render();
   }
 
   /**
@@ -2576,7 +2579,7 @@ export default class CharacterGenerator extends Application {
     ui.notifications.info(`You chose the maximum: ${maxCredits.toLocaleString()} credits!`);
 
     // Re-render to show result
-    this.render();
+    await this.render();
   }
 
   /**
@@ -2601,7 +2604,7 @@ export default class CharacterGenerator extends Application {
     SWSELogger.log(`CharGen | Starting credits reset for new choice`);
 
     // Re-render to show choices again
-    this.render();
+    await this.render();
   }
 
   async _createActor() {

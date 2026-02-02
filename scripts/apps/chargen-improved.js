@@ -16,8 +16,8 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     this.createdActor = null; // Store the created actor for level-up
   }
 
-  async getData() {
-    const context = await super.getData();
+  async _prepareContext() {
+    const context = await super._prepareContext();
 
     // Get GM's ability generation method from houserules
     context.abilityMethod = game.settings.get('foundryvtt-swse', "abilityScoreMethod") || "pointbuy";
@@ -45,8 +45,8 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     return context;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(html, options) {
+    await super._onRender(html, options);
 
     // Level selection
     html.find('#target-level-input').change(this._onLevelChange.bind(this));
