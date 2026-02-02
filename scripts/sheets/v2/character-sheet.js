@@ -20,7 +20,7 @@ function markActiveConditionStep(root, actor) {
  * - Emit intent via Actor APIs (which route through ActorEngine)
  * - _updateObject routes through ActorEngine
  */
-export class SWSEV2CharacterSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheet) {
+export class SWSEV2CharacterSheet extends foundry.applications.sheets.ActorSheetV2 {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
     super.DEFAULT_OPTIONS,
     {
@@ -41,6 +41,8 @@ export class SWSEV2CharacterSheet extends foundry.applications.api.HandlebarsApp
       );
     }
 
+    console.log(`📦 SWSEV2CharacterSheet _prepareContext CALLED for ${this.document.name}`);
+
     // Return SWSE-specific context for the template
     const actor = this.document;
     return {
@@ -54,8 +56,8 @@ export class SWSEV2CharacterSheet extends foundry.applications.api.HandlebarsApp
     };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    console.log(`🖼️ SWSEV2CharacterSheet _onRender CALLED for ${this.document.name}`, { hasElement: !!this.element, childCount: this.element?.children?.length });
 
     // AppV2 invariant: all DOM access must use this.element
     const root = this.element;
