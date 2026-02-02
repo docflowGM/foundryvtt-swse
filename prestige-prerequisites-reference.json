@@ -1,0 +1,374 @@
+{
+  "metadata": {
+    "description": "Prestige Class Prerequisites with Database IDs",
+    "note": "Tree IDs and Feat IDs are from the actual database for engine matching",
+    "requirements_format": {
+      "min_level": "Minimum character level",
+      "bab": "Base Attack Bonus requirement",
+      "skills": "Skills must be trained",
+      "talents_from": "Must have count talents from any of the listed tree IDs",
+      "feats": "Required feats (arrays represent OR conditions)",
+      "condition": "Complex conditional requirement",
+      "special": "Campaign/RP requirement"
+    }
+  },
+  "talent_trees": {
+    "Awareness": "1c48d1cd9ab1f5c8",
+    "Armor Specialist": "17cec542331cb4e4",
+    "Brawler": "67fdd8dce9abd6c1",
+    "Camouflage": "3926d582d2077489",
+    "Commando": "798ed0945cbdac1c",
+    "Dark Side Devotee": "96ef43a3054dcb58",
+    "Disgrace": "e91cc675fbf9ba6e",
+    "Force Adept": "e35ee41362604227",
+    "Force Item": "01e443d93e47f9c4",
+    "Fortune": "cee9b9398682b7d0",
+    "Influence": "8375b9b26b679901",
+    "Leadership": "5964237d22681dc0",
+    "Lineage": "b5bb4154688c66ab",
+    "Mercenary": "4007fa87192b5884",
+    "Misfortune": "67b59e020c1660eb",
+    "Smuggling": "9f7ca12cc084737a",
+    "Spacer": "5ea8c79492d40713",
+    "Spy": "7c42882a1347ef18",
+    "Survivor": "9b06340233eb3cdd",
+    "Veteran": "96c390430d7a4975",
+    "Weapon Specialist": "2e9265a596cc43f7"
+  },
+  "feats_to_resolve": {
+    "note": "These feats need database lookup and potential mapping/creation",
+    "missing_or_variant": [
+      "Armor Proficiency (medium) -> d445051370a88a7f",
+      "Skill Focus (Knowledge (Bureaucracy)) -> Generic Skill Focus: 1592aaedf4b6e40a",
+      "Skill Focus (Stealth) -> Generic Skill Focus: 1592aaedf4b6e40a",
+      "Skill Focus (Mechanics) -> Generic Skill Focus: 1592aaedf4b6e40a",
+      "Weapon Focus (Melee Weapon) -> Generic Weapon Focus: c41814601364b643",
+      "Weapon Proficiency (Advanced Melee Weapons) -> Advanced Melee Weapon Proficiency: cf28ec45cabaff59",
+      "Weapon Proficiency (Lightsabers) -> NO FEAT EQUIVALENT (use talent?)"
+    ]
+  },
+  "prestige_classes": {
+    "Ace Pilot": {
+      "min_level": 7,
+      "skills": ["Pilot"],
+      "feats": ["Vehicular Combat: 1f2f70d34a17667d"]
+    },
+    "Assassin": {
+      "min_level": 7,
+      "skills": ["Stealth"],
+      "feats": ["Sniper: 56367f3943ee8c17"],
+      "note": "Requires Dastardly Strike talent (check talent DB)"
+    },
+    "Bounty Hunter": {
+      "min_level": 7,
+      "skills": ["Survival"],
+      "talents_from": {
+        "count": 2,
+        "trees": ["Awareness: 1c48d1cd9ab1f5c8"]
+      }
+    },
+    "Charlatan": {
+      "min_level": 7,
+      "skills": ["Deception", "Persuasion"],
+      "talents_from": {
+        "count": 1,
+        "trees": [
+          "Disgrace: e91cc675fbf9ba6e",
+          "Influence: 8375b9b26b679901",
+          "Lineage: b5bb4154688c66ab"
+        ]
+      }
+    },
+    "Corporate Agent": {
+      "min_level": 7,
+      "skills": ["Gather Information", "Knowledge (Bureaucracy)"],
+      "feats": ["Skill Focus (Knowledge (Bureaucracy)): 1592aaedf4b6e40a (generic)"]
+    },
+    "Crime Lord": {
+      "min_level": 7,
+      "skills": ["Deception", "Persuasion"],
+      "talents_from": {
+        "count": 1,
+        "trees": [
+          "Fortune: cee9b9398682b7d0",
+          "Lineage: b5bb4154688c66ab",
+          "Misfortune: 67b59e020c1660eb"
+        ]
+      }
+    },
+    "Droid Commander": {
+      "min_level": 7,
+      "skills": ["Knowledge (Tactics)", "Use Computer"],
+      "talents_from": {
+        "count": 1,
+        "trees": [
+          "Leadership: 5964237d22681dc0",
+          "Commando: 798ed0945cbdac1c"
+        ]
+      },
+      "special": "Must be a droid"
+    },
+    "Elite Trooper": {
+      "bab": 7,
+      "feats": [
+        "Armor Proficiency (medium): d445051370a88a7f",
+        "Martial Arts I: 92f927c92ded9fcf",
+        ["Point-Blank Shot: 05459ac4d439f229", "Flurry: 0536f81eff886234"]
+      ],
+      "talents_from": {
+        "count": 1,
+        "trees": [
+          "Armor Specialist: 17cec542331cb4e4",
+          "Commando: 798ed0945cbdac1c",
+          "Mercenary: 4007fa87192b5884",
+          "Weapon Specialist: 2e9265a596cc43f7"
+        ]
+      }
+    },
+    "Enforcer": {
+      "min_level": 7,
+      "skills": ["Gather Information", "Perception"],
+      "talents_from": {
+        "count": 1,
+        "trees": ["Survivor: 9b06340233eb3cdd"]
+      }
+    },
+    "Force Adept": {
+      "min_level": 7,
+      "skills": ["Use the Force"],
+      "feats": ["Force Sensitivity: ddbeb23013d9e917"],
+      "note": "Any 3 Force Talents (need to enumerate Force Talents)"
+    },
+    "Force Disciple": {
+      "min_level": 12,
+      "skills": ["Use the Force"],
+      "feats": ["Force Sensitivity: ddbeb23013d9e917"],
+      "talents_from": {
+        "count": 2,
+        "trees": [
+          "Dark Side Devotee: 96ef43a3054dcb58",
+          "Force Adept: e35ee41362604227",
+          "Force Item: 01e443d93e47f9c4"
+        ]
+      },
+      "note": "Plus: Farseeing force power, Any 1 Force Technique"
+    },
+    "Gladiator": {
+      "min_level": 7,
+      "bab": 7,
+      "feats": [
+        "Improved Damage Threshold: 96666de28ba99b64",
+        "Advanced Melee Weapon Proficiency: cf28ec45cabaff59"
+      ]
+    },
+    "Gunslinger": {
+      "min_level": 7,
+      "feats": [
+        "Point-Blank Shot: 05459ac4d439f229",
+        "Precise Shot: c180eee7d3bc29b2",
+        "Quick Draw: 44705a692e2f01a6",
+        "Weapon Proficiency (Pistols): e5d361d01d1b44e4"
+      ]
+    },
+    "Imperial Knight": {
+      "bab": 7,
+      "skills": ["Use the Force"],
+      "feats": [
+        "Force Sensitivity: ddbeb23013d9e917",
+        "Armor Proficiency (medium): d445051370a88a7f"
+      ],
+      "note": "Weapon Proficiency (Lightsabers) - no feat equivalent, check talent requirements"
+    },
+    "Improviser": {
+      "min_level": 7,
+      "skills": ["Mechanics", "Use Computer"],
+      "feats": ["Skill Focus (Mechanics): 1592aaedf4b6e40a (generic)"]
+    },
+    "Independent Droid": {
+      "min_level": 3,
+      "skills": ["Use Computer"],
+      "special": "Must be a droid"
+    },
+    "Infiltrator": {
+      "min_level": 7,
+      "skills": ["Perception", "Stealth"],
+      "feats": ["Skill Focus (Stealth): 1592aaedf4b6e40a (generic)"],
+      "talents_from": {
+        "count": 2,
+        "trees": [
+          "Camouflage: 3926d582d2077489",
+          "Spy: 7c42882a1347ef18"
+        ]
+      }
+    },
+    "Jedi Knight": {
+      "bab": 7,
+      "skills": ["Use the Force"],
+      "feats": ["Force Sensitivity: ddbeb23013d9e917"],
+      "special": "Member of The Jedi, Weapon Proficiency (Lightsabers) - check talent requirements"
+    },
+    "Jedi Master": {
+      "min_level": 12,
+      "skills": ["Use the Force"],
+      "feats": ["Force Sensitivity: ddbeb23013d9e917"],
+      "special": "Member of The Jedi, Weapon Proficiency (Lightsabers) - check talent requirements",
+      "note": "Any 1 Force Technique"
+    },
+    "Martial Arts Master": {
+      "bab": 7,
+      "feats": [
+        "Martial Arts II: 5bedd71f0eead6b9",
+        "Melee Defense: 3a847230d573a623"
+      ],
+      "talents_from": {
+        "count": 1,
+        "trees": [
+          "Brawler: 67fdd8dce9abd6c1",
+          "Survivor: 9b06340233eb3cdd"
+        ]
+      },
+      "note": "Plus: Any 1 Martial Arts feat"
+    },
+    "Master Privateer": {
+      "min_level": 7,
+      "skills": ["Deception", "Pilot"],
+      "feats": ["Vehicular Combat: 1f2f70d34a17667d"],
+      "talents_from": {
+        "count": 2,
+        "trees": [
+          "Misfortune: 67b59e020c1660eb",
+          "Smuggling: 9f7ca12cc084737a",
+          "Spacer: 5ea8c79492d40713"
+        ]
+      }
+    },
+    "Medic": {
+      "min_level": 7,
+      "skills": ["Knowledge (Life Sciences)", "Treat Injury"],
+      "feats": ["Surgical Expertise: f9ae5b531ae01fd0"]
+    },
+    "Melee Duelist": {
+      "min_level": 7,
+      "bab": 7,
+      "feats": [
+        "Melee Defense: 3a847230d573a623",
+        "Rapid Strike: ccb33e58342499a3",
+        "Weapon Focus (Melee Weapon): c41814601364b643 (generic)"
+      ]
+    },
+    "Military Engineer": {
+      "bab": 7,
+      "skills": ["Mechanics", "Use Computer"]
+    },
+    "Officer": {
+      "min_level": 7,
+      "skills": ["Knowledge (Tactics)"],
+      "talents_from": {
+        "count": 1,
+        "trees": [
+          "Leadership: 5964237d22681dc0",
+          "Commando: 798ed0945cbdac1c",
+          "Veteran: 96c390430d7a4975"
+        ]
+      },
+      "special": "Member of military/paramilitary organization"
+    },
+    "Outlaw": {
+      "min_level": 7,
+      "skills": ["Stealth", "Survival"],
+      "talents_from": {
+        "count": 1,
+        "trees": [
+          "Disgrace: e91cc675fbf9ba6e",
+          "Misfortune: 67b59e020c1660eb"
+        ]
+      }
+    },
+    "Pathfinder": {
+      "min_level": 7,
+      "skills": ["Perception", "Survival"],
+      "talents_from": {
+        "count": 2,
+        "trees": [
+          "Awareness: 1c48d1cd9ab1f5c8",
+          "Camouflage: 3926d582d2077489",
+          "Survivor: 9b06340233eb3cdd"
+        ]
+      }
+    },
+    "Saboteur": {
+      "min_level": 7,
+      "skills": ["Deception", "Mechanics", "Use Computer"]
+    },
+    "Shaper": {
+      "min_level": 7,
+      "species": "Yuuzhan Vong",
+      "skills": ["Knowledge (Life Sciences)", "Treat Injury"],
+      "feats": ["Biotech Specialist: bf6c01fa590a3f75"]
+    },
+    "Sith Apprentice": {
+      "min_level": 7,
+      "skills": ["Use the Force"],
+      "feats": ["Force Sensitivity: ddbeb23013d9e917"],
+      "condition": "Dark Side Points >= Wisdom score",
+      "special": "Member of The Sith, Weapon Proficiency (Lightsabers) - check talent requirements"
+    },
+    "Sith Lord": {
+      "min_level": 12,
+      "skills": ["Use the Force"],
+      "feats": ["Force Sensitivity: ddbeb23013d9e917"],
+      "condition": "Dark Side Points >= Wisdom score",
+      "special": "Member of The Sith, Weapon Proficiency (Lightsabers) - check talent requirements",
+      "note": "Any 1 Force Technique"
+    },
+    "Vanguard": {
+      "min_level": 7,
+      "skills": ["Perception", "Stealth"],
+      "talents_from": {
+        "count": 2,
+        "trees": [
+          "Camouflage: 3926d582d2077489",
+          "Commando: 798ed0945cbdac1c"
+        ]
+      }
+    }
+  },
+  "issues_to_resolve": {
+    "lightsaber_proficiency": {
+      "issue": "No 'Weapon Proficiency (Lightsabers)' feat exists in feats.db",
+      "affected_classes": ["Jedi Knight", "Jedi Master", "Sith Apprentice", "Sith Lord", "Imperial Knight"],
+      "options": [
+        "Use talent-based check: Check for lightsaber-related talents like 'Lightsaber Specialist'",
+        "Create the missing feat in feats.db",
+        "Use a special flag/code in prerequisites"
+      ],
+      "lightsaber_talents_available": [
+        "Greater Weapon Focus (lightsabers): 3038f4c26de19e39",
+        "Lightsaber Specialist: 6fe17dc4f0f03c12",
+        "Weapon Specialization (Lightsabers): bcd9981b3c6a46dc"
+      ]
+    },
+    "force_talents_enumeration": {
+      "issue": "Force Adept requires 'Any 3 Force Talents' - need complete list",
+      "affected_classes": ["Force Adept"],
+      "action": "Enumerate all talents in Force Adept/Force Item/Dark Side Devotee trees"
+    },
+    "specific_skill_focus": {
+      "issue": "Specific Skill Focus variants (Stealth, Mechanics, Bureaucracy) not found",
+      "current": "Using generic Skill Focus feat: 1592aaedf4b6e40a",
+      "options": [
+        "Create specific variants in feats.db",
+        "Use generic with notation"
+      ]
+    },
+    "specific_weapon_focus": {
+      "issue": "Weapon Focus (Melee Weapon) not found, only generic Weapon Focus",
+      "current": "Using generic: c41814601364b643",
+      "affected_classes": ["Melee Duelist"]
+    },
+    "force_techniques": {
+      "issue": "Force Techniques requirement (Force Disciple, Jedi Master, Sith Lord)",
+      "action": "Need to enumerate or define Force Techniques"
+    }
+  }
+}
