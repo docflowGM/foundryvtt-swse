@@ -99,3 +99,94 @@ export function initV1Tripwire() {
     };
   }
 }
+
+/**
+ * Validates all CSS selectors match elements in the app
+ */
+export function validateSelectors(app, selectors) {
+  const root = app?.element;
+  if (!root) {
+    console.error(
+      `🚨 ${app?.constructor?.name} has no element yet!`
+    );
+    return;
+  }
+
+  selectors.forEach(sel => {
+    const count = root.querySelectorAll(sel).length;
+    if (count === 0) {
+      console.warn(
+        `⚠️ ${app.constructor.name}: selector "${sel}" matched 0 elements`
+      );
+    } else {
+      console.debug(
+        `✓ ${app.constructor.name}: selector "${sel}" matched ${count}`
+      );
+    }
+  });
+}
+
+/**
+ * Guard access to actor/document with diagnostics
+ */
+export function guardActorAccess(app, property = "document") {
+  const doc = app?.document || app?.actor;
+  if (!doc) {
+    console.error(
+      `🚨 ${app?.constructor?.name} accessing ${property} but has no document/actor!`
+    );
+    return null;
+  }
+  console.debug(`✓ ${app.constructor.name} has ${property}:`, doc.type || doc.constructor.name);
+  return doc;
+}
+
+/**
+ * Track async operation phases with timing
+ */
+export function trackAsyncPhase(app, phase, promise) {
+  const name = app?.constructor?.name || "Unknown";
+  console.debug(`⏳ ${name} ${phase}:start`);
+
+  return promise
+    .then(result => {
+      console.debug(`✓ ${name} ${phase}:complete`);
+      return result;
+    })
+    .catch(err => {
+      console.error(`❌ ${name} ${phase}:error`, err);
+      throw err;
+    });
+}
+
+/**
+ * Log context assembly per key with type info
+ */
+export function logContextKey(app, key, value) {
+  const name = app?.constructor?.name || "Unknown";
+
+  if (value === undefined) {
+    console.warn(`⚠️ ${name}._prepareContext["${key}"] is undefined`);
+  } else if (value === null) {
+    console.warn(`⚠️ ${name}._prepareContext["${key}"] is null`);
+  } else if (typeof value === "object") {
+    console.debug(`📦 ${name}.${key}:`, {
+      type: value.constructor.name,
+      keys: Object.keys(value).slice(0, 5)
+    });
+  } else {
+    console.debug(`📦 ${name}.${key}:`, value);
+  }
+}
+
+/**
+ * Log template rendering start/end
+ */
+export function logTemplateRender(app, template) {
+  const name = app?.constructor?.name || "Unknown";
+  if (!template) {
+    console.error(`🚨 ${name} has no template path!`);
+    return;
+  }
+  console.debug(`📄 ${name} rendering:`, template);
+}
