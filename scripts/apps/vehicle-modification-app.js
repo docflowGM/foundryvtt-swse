@@ -5,8 +5,9 @@ import { ProgressionEngine } from "../progression/engine/progression-engine.js";
  */
 
 import { VehicleModificationManager } from './vehicle-modification-manager.js';
+import SWSEApplication from './base/swse-application.js';
 
-export class VehicleModificationApp extends Application {
+export class VehicleModificationApp extends SWSEApplication {
 
   constructor(actor, options = {}) {
     super(options);
@@ -18,28 +19,20 @@ export class VehicleModificationApp extends Application {
     this.marlDialogue = '';
   }
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEApplication.DEFAULT_OPTIONS ?? {},
+    {
       classes: ['swse', 'vehicle-modification-app', "swse-app"],
       template: 'systems/foundryvtt-swse/templates/apps/vehicle-modification.hbs',
-      width: 900,
-      height: 700,
+      position: { width: 900, height: 700 },
       title: "Starship Acquisition & Modification",
       resizable: true,
-      draggable: true,
-      scrollY: [".content", ".tab-content", ".window-content"],
-      tabs: [{
-        navSelector: '.tabs',
-        contentSelector: '.content',
-        initial: 'selection'
-      }],
-      left: null,  // Allow Foundry to center
-      top: null    // Allow Foundry to center
-    });
-  }
+      draggable: true
+    }
+  );
 
-  async getData() {
-    const context = await super.getData();
+  async _prepareContext(options) {
+    const context = {};
 
     context.actor = this.actor;
     context.currentStep = this.currentStep;
@@ -97,32 +90,52 @@ export class VehicleModificationApp extends Application {
     return context;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
     // Start selection button
-    html.find('.start-selection').click(this._onStartSelection.bind(this));
+    const startBtn = root.querySelector('.start-selection');
+    if (startBtn) {
+      startBtn.addEventListener('click', this._onStartSelection.bind(this));
+    }
 
     // Stock ship selection
-    html.find('.select-ship').click(this._onSelectShip.bind(this));
+    root.querySelectorAll('.select-ship').forEach(el => {
+      el.addEventListener('click', this._onSelectShip.bind(this));
+    });
 
     // Category tabs
-    html.find('.category-tab').click(this._onSelectCategory.bind(this));
+    root.querySelectorAll('.category-tab').forEach(el => {
+      el.addEventListener('click', this._onSelectCategory.bind(this));
+    });
 
     // Add modification
-    html.find('.add-modification').click(this._onAddModification.bind(this));
+    root.querySelectorAll('.add-modification').forEach(el => {
+      el.addEventListener('click', this._onAddModification.bind(this));
+    });
 
     // Remove modification
-    html.find('.remove-modification').click(this._onRemoveModification.bind(this));
+    root.querySelectorAll('.remove-modification').forEach(el => {
+      el.addEventListener('click', this._onRemoveModification.bind(this));
+    });
 
     // Finalize button
-    html.find('.finalize-ship').click(this._onFinalizeShip.bind(this));
+    const finalizeBtn = root.querySelector('.finalize-ship');
+    if (finalizeBtn) {
+      finalizeBtn.addEventListener('click', this._onFinalizeShip.bind(this));
+    }
 
     // Reset button
-    html.find('.reset-ship').click(this._onResetShip.bind(this));
+    const resetBtn = root.querySelector('.reset-ship');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', this._onResetShip.bind(this));
+    }
 
     // Modification details
-    html.find('.modification-item').click(this._onShowModificationDetails.bind(this));
+    root.querySelectorAll('.modification-item').forEach(el => {
+      el.addEventListener('click', this._onShowModificationDetails.bind(this));
+    });
   }
 
   async _onStartSelection(event) {
