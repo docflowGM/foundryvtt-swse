@@ -1385,8 +1385,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const $html = html instanceof jQuery ? html : $(html);
 
     // Activate Foundry tooltips for feat descriptions
-    if (game.tooltip) {
-      game.tooltip.activate(html[0] || html, {
+    if (this.element instanceof HTMLElement && game.tooltip) {
+      game.tooltip.activate(this.element, {
         selector: '[data-tooltip]'
       });
     }
