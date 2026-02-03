@@ -1,0 +1,1417 @@
+[
+  {
+    "name": "HEADER",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "CHARACTERNAME",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "STATS",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "GAMEMASTER",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "GAMEMASTERNAME",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "DEFENSES",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPONS",
+    "type": "PDFCheckBox",
+    "defaultValue": null
+  },
+  {
+    "name": "SPECIALCOMBATACTIONS",
+    "type": "PDFCheckBox",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIPMENT",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "LANGUAGES",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TALENTS",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATS",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWERS",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TOOLTIPNOTE",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "PLAYERNAME",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "CLASS",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SPECIES",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "LVL",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "GENDER",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "AGE",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "HEIGHT",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEIGHT",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "DESTINY",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "STRENGTH",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "S_MOD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "D_MOD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "CN_MOD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "I_MOD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "W_MOD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "CH_MOD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "DEXTERITY",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "CONSTITUTION",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "INTELLIGENCE",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WISDOM",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "CHARISMA",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "HITPOINTS",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "CLASS_BONUS_FORT",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "CLASS_BONUS_REF",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "CLASS_BONUS_WILL",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "LVL_ARMOR_BONUS_FORT",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "LVL_ARMOR_BONUS_WILL",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "LVL_ARMOR_BONUS_REF",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "HITPOINTSTAB",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORT",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORT_DEF",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "MISC_MOD_FORT",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "MISC_MOD_REF",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "MISC_MOD_WILL",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "REF_DEF",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WILL_DEF",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "DMG_THRESH_MOD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "DMG_THRESHOLD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SPEED",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "INITIATIVE",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "PERCEPTION",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "BASE_ATTACK",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCE_POINTS",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "DESTINY_POINTS",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "XP",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SPEC_COMBAT_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SPEC_COMBAT_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SPEC_COMBAT_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SPEC_COMBAT_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SPEC_COMBAT_05",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SPEC_COMBAT_06",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SPEC_COMBAT_07",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_NAME_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_NAME_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_NAME_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_NAME_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_ATK_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_ATK_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_ATK_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_ATK_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_DMG_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_DMG_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_DMG_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_DMG_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_CRIT_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_CRIT_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_CRIT_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_CRIT_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_TYPE_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_TYPE_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_TYPE_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_TYPE_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_NOTES_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_NOTES_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_NOTES_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WEAPON_NOTES_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "DEX_MOD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "CON_MOD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "CHA_MOD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "STR_MOD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "INT_MOD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "WIS_MOD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_05",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_06",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_07",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_08",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_09",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "KNOWLEDGE08",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "KNOWLEDGE09",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_10",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_11",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_12",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_13",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_14",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_15",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_16",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_17",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_18",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_19",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_BONUS_20",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILLS_HALF_LVL",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "HALFFIELD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_LVL_MOD",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "ARMOR_PENTALTY_NOTE",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_05",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_06",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_07",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_08",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_09",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_10",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_11",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_12",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_13",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_14",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_15",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_16",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_17",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_18",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_19",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TRAINED_20",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_05",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_06",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_07",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_08",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_09",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_10",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_11",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_12",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_13",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_14",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_15",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_16",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_17",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_18",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_19",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_FOCUS_20",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_14",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_15",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_16",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_17",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_18",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_19",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_20",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_05",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_06",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_07",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_08",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_09",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_10",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_11",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_12",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "SKILL_MISC_13",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TOTAL_WEIGHT",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_05",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_06",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_07",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_08",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_09",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_10",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_11",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_12",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_13",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_14",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_NAME_15",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "MONEY",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_05",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_06",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_07",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_08",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_09",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_10",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_11",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_12",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_13",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_14",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "EQUIP_WEIGHT_15",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "LANGUAGE_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "LANGUAGE_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "LANGUAGE_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "LANGUAGE_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "LANGUAGE_05",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "LANGUAGE_06",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TALENT_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TALENT_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TALENT_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TALENT_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TALENT_05",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TALENT_06",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TALENT_07",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TALENT_08",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TALENT_09",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "TALENT_10",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWER_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWER_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWER_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWER_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWER_05",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWER_06",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWER_07",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWER_08",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWER_09",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWER_10",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWER_11",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWER_12",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWER_13",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FORCEPOWER_14",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_05",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_06",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_07",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_08",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_09",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_10",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_11",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_12",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_13",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_14",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_15",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_16",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_17",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATNAME_18",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_01",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_02",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_03",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_04",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_05",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_06",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_07",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_08",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_09",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_10",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_11",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_12",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_13",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_14",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_15",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_16",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_17",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "FEATPAGE_18",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "NEXT LEVEL:",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "CurrentXP",
+    "type": "PDFTextField",
+    "defaultValue": null
+  },
+  {
+    "name": "NextLevel",
+    "type": "PDFTextField",
+    "defaultValue": null
+  }
+]
