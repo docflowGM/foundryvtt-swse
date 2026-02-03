@@ -1,3 +1,4 @@
+import SWSEFormApplication from './base/swse-form-application.js';
 import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 // ============================================
 // Template Character Creator
@@ -11,7 +12,7 @@ import CharacterTemplates from './chargen/chargen-templates.js';
 /**
  * Creates a character from a template with class-first selection
  */
-export class TemplateCharacterCreator extends Application {
+export class TemplateCharacterCreator extends SWSEFormApplication {
 
   constructor(options = {}) {
     super(options);
@@ -19,35 +20,33 @@ export class TemplateCharacterCreator extends Application {
     this.mentorDialogues = null;
   }
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['swse', 'template-creator', "swse-app"],
-      template: 'systems/foundryvtt-swse/templates/apps/template-creator.hbs',
-      width: 1000,
-      height: 700,
-      title: 'Character Template Creator',
-      resizable: true
-    });
-  }
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(SWSEFormApplication.DEFAULT_OPTIONS ?? {}, {
+    classes: ['swse', 'template-creator', "swse-app"],
+    template: 'systems/foundryvtt-swse/templates/apps/template-creator.hbs',
+    width: 1000,
+    height: 700,
+    title: 'Character Template Creator',
+    resizable: true
+  });
 
-  async getData() {
-    const data = await super.getData();
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
 
     // Load mentor dialogues
     if (!this.mentorDialogues) {
       await this.loadMentorDialogues();
     }
 
-    data.selectedClass = this.selectedClass;
+    context.selectedClass = this.selectedClass;
 
     // Get templates for selected class
     if (this.selectedClass) {
       const allTemplates = await CharacterTemplates.getTemplates();
-      data.templates = allTemplates.filter(t => t.class === this.selectedClass);
+      context.templates = allTemplates.filter(t => t.class === this.selectedClass);
     }
 
     // Get available classes
-    data.classes = [
+    context.classes = [
       { name: 'Jedi', icon: 'fa-jedi', description: 'Force-wielding guardians of peace and justice' },
       { name: 'Noble', icon: 'fa-crown', description: 'Leaders, diplomats, and aristocrats of influence' },
       { name: 'Scoundrel', icon: 'fa-mask', description: 'Rogues, smugglers, and fortune seekers' },
@@ -59,30 +58,40 @@ export class TemplateCharacterCreator extends Application {
     const isGM = game.user.isGM;
     const allowPlayersNonheroic = game.settings.get('foundryvtt-swse', "allowPlayersNonheroic");
     if (isGM || allowPlayersNonheroic) {
-      data.classes.push({
+      context.classes.push({
         name: 'Nonheroic',
         icon: 'fa-users',
         description: 'Common citizens, workers, guards, and NPCs'
       });
     }
 
-    return data;
+    return context;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+
+    const root = this.element;
 
     // Class selection
-    html.find('.class-choice-btn').click(this._onSelectClass.bind(this));
+    root.querySelectorAll('.class-choice-btn').forEach(el => {
+      el.addEventListener('click', this._onSelectClass.bind(this));
+    });
 
     // Template card selection
-    html.find('.template-card').click(this._onSelectTemplate.bind(this));
+    root.querySelectorAll('.template-card').forEach(el => {
+      el.addEventListener('click', this._onSelectTemplate.bind(this));
+    });
 
     // Back button
-    html.find('.back-to-classes').click(this._onBackToClasses.bind(this));
+    root.querySelectorAll('.back-to-classes').forEach(el => {
+      el.addEventListener('click', this._onBackToClasses.bind(this));
+    });
 
     // Custom build button
-    html.find('.custom-build-btn').click(this._onCustomBuild.bind(this));
+    root.querySelectorAll('.custom-build-btn').forEach(el => {
+      el.addEventListener('click', this._onCustomBuild.bind(this));
+    });
   }
 
   /**
@@ -208,9 +217,9 @@ export class TemplateCharacterCreator extends Application {
             icon: '<i class="fas fa-check"></i>',
             label: 'Create Character',
             callback: (html) => {
-              // Get character name from input field
-              const nameInput = html.find('#template-char-name');
-              const charName = nameInput.val()?.trim();
+              // Get character name from input field using native DOM API
+              const nameInput = html.querySelector('#template-char-name');
+              const charName = nameInput?.value?.trim();
 
               if (!charName) {
                 ui.notifications.warn('Please enter a character name');
@@ -420,10 +429,10 @@ export class TemplateCharacterCreator extends Application {
           icon: '<i class="fas fa-check"></i>',
           label: 'Finish',
           callback: async (html) => {
-            // Get selected skills
+            // Get selected skills using native DOM API
             const selectedSkills = [];
-            html.find('input[type="checkbox"]:checked').each(function() {
-              selectedSkills.push($(this).val());
+            html.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+              selectedSkills.push(checkbox.value);
             });
 
             // Apply selected skills
@@ -448,20 +457,26 @@ export class TemplateCharacterCreator extends Application {
       },
       default: 'confirm',
       render: (html) => {
-        // Add checkbox change handler to enforce point limit
-        const checkboxes = html.find('input[type="checkbox"]');
-        const pointsRemaining = html.find('#points-remaining');
+        // Add checkbox change handler to enforce point limit using native DOM API
+        const checkboxes = html.querySelectorAll('input[type="checkbox"]');
+        const pointsRemaining = html.querySelector('#points-remaining');
 
-        checkboxes.on('change', function() {
-          const checked = html.find('input[type="checkbox"]:checked').length;
-          pointsRemaining.text(remainingPoints - checked);
+        checkboxes.forEach(checkbox => {
+          checkbox.addEventListener('change', () => {
+            const checked = html.querySelectorAll('input[type="checkbox"]:checked').length;
+            pointsRemaining.textContent = remainingPoints - checked;
 
-          // Disable unchecked boxes if at limit
-          if (checked >= remainingPoints) {
-            html.find('input[type="checkbox"]:not(:checked)').prop('disabled', true);
-          } else {
-            html.find('input[type="checkbox"]').prop('disabled', false);
-          }
+            // Disable unchecked boxes if at limit
+            if (checked >= remainingPoints) {
+              html.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(cb => {
+                cb.disabled = true;
+              });
+            } else {
+              html.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.disabled = false;
+              });
+            }
+          });
         });
       }
     }, {
@@ -507,7 +522,7 @@ export class TemplateCharacterCreator extends Application {
     let html = `
       <div class="skill-training-container">
         <p><strong>Available Skill Points:</strong> <span id="points-remaining">${remainingPoints}</span></p>
-        <p class="hint">Select up to ${remainingPoints} additional skills to train. Class skills are marked with ⭐.</p>
+        <p class="hint">Select up to ${remainingPoints} additional skills to train. Class skills are marked with star.</p>
         <div class="skills-list" style="max-height: 300px; overflow-y: auto; padding: 0.5rem;">
     `;
 
@@ -517,11 +532,12 @@ export class TemplateCharacterCreator extends Application {
 
       if (isTrained) continue; // Skip already trained skills
 
+      const starMark = isClassSkill ? 'star-icon' : '';
       html += `
         <div class="skill-item" style="padding: 0.5rem; border-bottom: 1px solid #ddd;">
           <label style="display: flex; align-items: center; cursor: pointer;">
             <input type="checkbox" value="${key}" style="margin-right: 0.5rem;" />
-            <span style="flex: 1;">${label} ${isClassSkill ? '⭐' : ''}</span>
+            <span style="flex: 1;">${label} ${isClassSkill ? 'starred' : ''}</span>
           </label>
         </div>
       `;
@@ -548,7 +564,7 @@ export class TemplateCharacterCreator extends Application {
 
       skillsHtml = `
         <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(156, 39, 176, 0.1); border-left: 3px solid #9C27B0; border-radius: 4px;">
-          <strong style="color: #9C27B0;">📚 Trained Skills:</strong>
+          <strong style="color: #9C27B0;">Book Trained Skills:</strong>
           <ul style="margin: 0.5rem 0 0 1.5rem; font-size: 0.9rem;">
             ${skillNames.map(skill => `<li>${skill}</li>`).join('')}
           </ul>
@@ -563,7 +579,7 @@ export class TemplateCharacterCreator extends Application {
       if (equipmentResults.added.length > 0) {
         equipmentHtml += `
           <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(76, 175, 80, 0.1); border-left: 3px solid #4CAF50; border-radius: 4px;">
-            <strong style="color: #4CAF50;">✓ Equipment Added:</strong>
+            <strong style="color: #4CAF50;">Checkmark Equipment Added:</strong>
             <ul style="margin: 0.5rem 0 0 1.5rem; font-size: 0.9rem;">
               ${equipmentResults.added.map(item => `<li>${item}</li>`).join('')}
             </ul>
@@ -574,7 +590,7 @@ export class TemplateCharacterCreator extends Application {
       if (equipmentResults.notFound.length > 0) {
         equipmentHtml += `
           <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(255, 152, 0, 0.1); border-left: 3px solid #FF9800; border-radius: 4px;">
-            <strong style="color: #FF9800;">⚠ Equipment Not Found:</strong>
+            <strong style="color: #FF9800;">Warning Equipment Not Found:</strong>
             <ul style="margin: 0.5rem 0 0 1.5rem; font-size: 0.9rem;">
               ${equipmentResults.notFound.map(item => `<li>${item}</li>`).join('')}
             </ul>
@@ -638,7 +654,8 @@ export class TemplateCharacterCreator extends Application {
             icon: '<i class="fas fa-check"></i>',
             label: 'Create',
             callback: (html) => {
-              const name = html.find('#character-name').val().trim();
+              const nameInput = html.querySelector('#character-name');
+              const name = nameInput.value.trim();
               if (!name) {
                 ui.notifications.warn('Please enter a character name');
                 resolve(null);
@@ -659,10 +676,11 @@ export class TemplateCharacterCreator extends Application {
         },
         default: 'create',
         render: (html) => {
-          html.find('#character-name').focus();
-          html.find('#character-name').on('keypress', (e) => {
+          const nameInput = html.querySelector('#character-name');
+          nameInput.focus();
+          nameInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-              html.find('button.create').click();
+              html.querySelector('button.create')?.click();
             }
           });
         }
@@ -808,7 +826,7 @@ export class TemplateCharacterCreator extends Application {
       'Noble': ['deception', 'gatherInformation', 'initiative', ...allKnowledgeSkills, 'perception', 'persuasion', 'pilot', 'ride', 'treatInjury', 'useComputer'],
       'Scoundrel': ['acrobatics', 'deception', 'gatherInformation', 'initiative', ...allKnowledgeSkills, 'mechanics', 'perception', 'persuasion', 'pilot', 'stealth', 'useComputer'],
       'Scout': ['climb', 'endurance', 'initiative', 'jump', ...allKnowledgeSkills, 'mechanics', 'perception', 'pilot', 'ride', 'stealth', 'survival', 'swim'],
-      'Soldier': ['climb', 'endurance', 'initiative', 'jump', 'knowledge_tactics', 'mechanics', 'perception', 'pilot', 'swim', 'treatInjury', 'useComputer'] // Only Knowledge (Tactics)
+      'Soldier': ['climb', 'endurance', 'initiative', 'jump', 'knowledge_tactics', 'mechanics', 'perception', 'pilot', 'swim', 'treatInjury', 'useComputer']
     };
 
     return classSkillMap[className] || [];
@@ -1048,8 +1066,8 @@ export class TemplateCharacterCreator extends Application {
             icon: '<i class="fas fa-check"></i>',
             label: 'Create Character',
             callback: (html) => {
-              const nameInput = html.find('#template-char-name');
-              const charName = nameInput.val()?.trim();
+              const nameInput = html.querySelector('#template-char-name');
+              const charName = nameInput?.value?.trim();
 
               if (!charName) {
                 ui.notifications.warn('Please enter a character name');
