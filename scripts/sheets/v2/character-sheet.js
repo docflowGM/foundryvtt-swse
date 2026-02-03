@@ -20,7 +20,7 @@ function markActiveConditionStep(root, actor) {
  * - Emit intent via Actor APIs (which route through ActorEngine)
  * - _updateObject routes through ActorEngine
  */
-export class SWSEV2CharacterSheet extends foundry.applications.sheets.ActorSheetV2 {
+export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
     super.DEFAULT_OPTIONS,
     {
