@@ -13,6 +13,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import SWSEFormApplication from '../apps/base/swse-form-application.js';
 
 // ──────────────────────────────────────────────────────────────
 // DEFAULT META TUNING VALUES
@@ -235,24 +236,24 @@ export function registerMetaTuningSettings() {
 /**
  * Meta Tuning Configuration Application
  */
-export class MetaTuningConfig extends FormApplication {
+export class MetaTuningConfig extends SWSEFormApplication {
 
-    static get defaultOptions() {
-        return foundry.utils.mergeObject(super.defaultOptions, {
+    static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+        SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+        {
             id: 'swse-meta-tuning-config',
             classes: ['swse', 'swse-app', 'meta-tuning-config'],
             template: 'systems/foundryvtt-swse/templates/apps/meta-tuning-config.hbs',
-            width: 600,
-            height: 700,
+            position: { width: 600, height: 700 },
             resizable: true,
             title: 'Suggestion Engine Configuration',
             tabs: [{ navSelector: '.config-tabs', contentSelector: '.config-content', initial: 'tiers' }],
             closeOnSubmit: true
-        });
-    }
+        }
+    );
 
-    async getData() {
-        const data = await super.getData();
+    async _prepareContext(options) {
+        const data = await super._prepareContext(options);
         data.config = MetaTuning.getConfig();
         data.defaults = DEFAULT_META_TUNING;
         return data;
@@ -264,35 +265,42 @@ export class MetaTuningConfig extends FormApplication {
         ui.notifications.info('Suggestion engine configuration saved');
     }
 
-    activateListeners(html) {
-        super.activateListeners(html);
+    async _onRender(context, options) {
+        const root = this.element;
+        if (!(root instanceof HTMLElement)) return;
 
         // Reset button
-        html.find('.reset-defaults').click(async () => {
-            const confirmed = await Dialog.confirm({
-                title: 'Reset to Defaults',
-                content: '<p>Reset all suggestion engine settings to defaults?</p>'
+        const resetBtn = root.querySelector('.reset-defaults');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', async () => {
+                const confirmed = await Dialog.confirm({
+                    title: 'Reset to Defaults',
+                    content: '<p>Reset all suggestion engine settings to defaults?</p>'
+                });
+                if (confirmed) {
+                    await MetaTuning.resetToDefaults();
+                    this.render(true);
+                    ui.notifications.info('Settings reset to defaults');
+                }
             });
-            if (confirmed) {
-                await MetaTuning.resetToDefaults();
-                this.render(true);
-                ui.notifications.info('Settings reset to defaults');
-            }
-        });
+        }
 
         // Slider value display update
-        html.find('input[type="range"]').on('input', event => {
-            const slider = event.currentTarget;
-            const valueDisplay = slider.parentElement.querySelector('.slider-value');
-            if (valueDisplay) {
-                valueDisplay.textContent = slider.value;
-            }
+        root.querySelectorAll('input[type="range"]').forEach(slider => {
+            slider.addEventListener('input', event => {
+                const valueDisplay = event.currentTarget.parentElement.querySelector('.slider-value');
+                if (valueDisplay) {
+                    valueDisplay.textContent = event.currentTarget.value;
+                }
+            });
         });
 
         // Preset buttons
-        html.find('.preset-btn').click(event => {
-            const preset = event.currentTarget.dataset.preset;
-            this._applyPreset(preset);
+        root.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', event => {
+                const preset = event.currentTarget.dataset.preset;
+                this._applyPreset(preset);
+            });
         });
     }
 
@@ -345,7 +353,7 @@ export class MetaTuningConfig extends FormApplication {
         };
 
         if (presets[preset]) {
-            const form = this.element.find('form')[0];
+            const form = this.element?.querySelector('form');
             if (form) {
                 const flatData = foundry.utils.flattenObject(presets[preset]);
                 for (const [key, value] of Object.entries(flatData)) {

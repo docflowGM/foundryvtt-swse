@@ -1,4 +1,5 @@
 import { SWSELogger } from '../utils/logger.js';
+import SWSEFormApplication from '../apps/base/swse-form-application.js';
 /**
  * GM Homebrew Management
  * Central system for custom rules and options
@@ -127,21 +128,21 @@ export class SWSEHomebrewManager {
 /**
  * Homebrew Manager Application
  */
-class HomebrewManagerApp extends FormApplication {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+class HomebrewManagerApp extends SWSEFormApplication {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    {
       id: 'homebrew-manager',
       title: 'SWSE Homebrew Manager',
       template: 'systems/foundryvtt-swse/templates/apps/homebrew-manager.hbs',
-      width: 720,
-      height: 600,
+      position: { width: 720, height: 600 },
       tabs: [{navSelector: '.tabs', contentSelector: '.content', initial: 'feats'}],
       closeOnSubmit: false,
       submitOnChange: false
-    });
-  }
+    }
+  );
 
-  getData() {
+  async _prepareContext(options) {
     const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
     return {
       homebrew,
@@ -149,20 +150,33 @@ class HomebrewManagerApp extends FormApplication {
     };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
     // Create buttons
-    html.find('[data-action="createFeat"]').click(() => this._createFeat());
-    html.find('[data-action="createTalent"]').click(() => this._createTalent());
-    html.find('[data-action="createForcePower"]').click(() => this._createForcePower());
+    root.querySelectorAll('[data-action="createFeat"]').forEach(btn =>
+      btn.addEventListener('click', () => this._createFeat())
+    );
+    root.querySelectorAll('[data-action="createTalent"]').forEach(btn =>
+      btn.addEventListener('click', () => this._createTalent())
+    );
+    root.querySelectorAll('[data-action="createForcePower"]').forEach(btn =>
+      btn.addEventListener('click', () => this._createForcePower())
+    );
 
     // Delete buttons
-    html.find('[data-action="delete"]').click((ev) => this._deleteItem(ev));
+    root.querySelectorAll('[data-action="delete"]').forEach(btn =>
+      btn.addEventListener('click', (ev) => this._deleteItem(ev))
+    );
 
     // Import/Export
-    html.find('[data-action="export"]').click(() => SWSEHomebrewManager.exportHomebrew());
-    html.find('[data-action="import"]').click(() => this._importDialog());
+    root.querySelectorAll('[data-action="export"]').forEach(btn =>
+      btn.addEventListener('click', () => SWSEHomebrewManager.exportHomebrew())
+    );
+    root.querySelectorAll('[data-action="import"]').forEach(btn =>
+      btn.addEventListener('click', () => this._importDialog())
+    );
   }
 
   async _createFeat() {
@@ -211,7 +225,11 @@ class HomebrewManagerApp extends FormApplication {
           create: {
             icon: '<i class="fas fa-check"></i>',
             label: 'Create',
-            callback: (html) => resolve(html.find('[name="name"]').val())
+            callback: (html) => {
+              const element = html instanceof HTMLElement ? html : html[0];
+              const input = element.querySelector('[name="name"]');
+              resolve(input?.value || null);
+            }
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
@@ -255,7 +273,9 @@ class HomebrewManagerApp extends FormApplication {
           icon: '<i class="fas fa-file-import"></i>',
           label: 'Import',
           callback: async (html) => {
-            const file = html.find('[name="import"]')[0].files[0];
+            const element = html instanceof HTMLElement ? html : html[0];
+            const fileInput = element.querySelector('[name="import"]');
+            const file = fileInput?.files?.[0];
             if (file) {
               await SWSEHomebrewManager.importHomebrew(file);
               this.render();
