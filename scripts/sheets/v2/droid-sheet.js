@@ -1,6 +1,8 @@
 // scripts/sheets/v2/droid-sheet.js
 import { ActorEngine } from "../../actors/engine/actor-engine.js";
 
+const { HandlebarsApplicationMixin } = foundry.applications.api;
+
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
   if (!(root instanceof HTMLElement)) return;
@@ -20,7 +22,7 @@ function markActiveConditionStep(root, actor) {
  * - Emit intent via Actor APIs (which route through ActorEngine)
  * - _updateObject routes through ActorEngine
  */
-export class SWSEV2DroidSheet extends foundry.applications.sheets.ActorSheetV2 {
+export class SWSEV2DroidSheet extends HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
     super.DEFAULT_OPTIONS,
     {
