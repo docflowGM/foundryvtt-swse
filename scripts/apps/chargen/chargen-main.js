@@ -1578,6 +1578,22 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         }
       });
     }
+
+    /* =================================================================
+       RENDER ASSERTION (V13+ SAFETY NET)
+       ================================================================= */
+
+    // Verify that the current step rendered content
+    if (this.currentStep) {
+      const stepContainer = this.element.querySelector(`[data-step="${this.currentStep}"]`);
+      if (stepContainer && stepContainer.children.length === 0) {
+        console.warn(
+          `[SWSE CharGen] Step "${this.currentStep}" rendered no content.`,
+          `Selector: [data-step="${this.currentStep}"]`,
+          `Container:`, stepContainer
+        );
+      }
+    }
   }
 
   _getSteps() {
