@@ -20,6 +20,9 @@
     "check:mutations": "bash tools/check-mutation-paths.sh",
     "validate:mentor-dialogue": "node scripts/mentor/validate-mentor-dialogue.js"
   },
+  "dependencies": {
+    "pdf-lib": "^1.17.1"
+  },
   "devDependencies": {
     "sass": "^1.69.5",
     "postcss": "^8.4.32",
