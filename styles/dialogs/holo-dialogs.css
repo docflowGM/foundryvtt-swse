@@ -540,5 +540,5 @@
 }
 
 [data-theme=holo] #sidebar-content > * {
-  overflow: hidden;
+  overflow: auto;
 }
