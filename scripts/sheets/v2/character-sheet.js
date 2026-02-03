@@ -34,6 +34,20 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
     }
   );
 
+  /**
+   * Validate sheet configuration on instantiation (v13+ safety).
+   * Catches missing template path early instead of blank sheet.
+   */
+  constructor(options = {}) {
+    super(options);
+
+    if (!this.constructor.DEFAULT_OPTIONS?.template) {
+      throw new Error(
+        "SWSEV2CharacterSheet: Missing template path in DEFAULT_OPTIONS. Sheet cannot render."
+      );
+    }
+  }
+
   async _prepareContext(options) {
     // Fail-fast: this sheet is for characters only
     if (this.document.type !== "character") {
