@@ -931,7 +931,7 @@
  </ul>
  </div>
  <button type="button" class="change-background-btn btn-secondary">
- <i class="fas fa-rotate-left"></i> Change Background
+ <i class="{{getIconClass 'undo'}}"></i> Change Background
  </button>
  </div>
  </div>
@@ -1502,7 +1502,7 @@
  <div class="skills-summary" style="margin-bottom: 1rem;">
  <p><strong>Trained Skills: {{characterData.trainedSkillsCount}} / {{characterData.trainedSkillsAllowed}}</strong></p>
  <button type="button" class="reset-skills-btn btn-secondary" style="margin-left: 1rem;">
- <i class="fas fa-rotate-right"></i> Reset All
+ <i class="{{getIconClass 'redo'}}"></i> Reset All
  </button>
  </div>
 
@@ -1581,7 +1581,7 @@
  </div>
  {{else}}
  <div class="no-additional-languages">
- <i class="fas fa-circle-info"></i>
+ <i class="{{getIconClass 'info'}}"></i>
  <span>You have no additional languages to select (available: {{characterData.languageData.additional}})</span>
  </div>
  {{/if}}
@@ -1590,7 +1590,7 @@
  {{!-- Add Custom Language Button --}}
  <div class="custom-language-section">
  <button type="button" class="add-custom-language-btn btn-custom">
- <i class="fas fa-circle-plus"></i> Add Custom Language
+ <i class="{{getIconClass 'add'}}"></i> Add Custom Language
  </button>
  <p class="custom-language-hint">Create your own language for homebrew campaigns or unique backgrounds</p>
  </div>
@@ -1602,7 +1602,7 @@
  <div class="granted-languages-list">
  {{#each characterData.languageData.granted}}
  <div class="language-item granted">
- <i class="fas fa-circle-check"></i>
+ <i class="{{getIconClass 'success'}}"></i>
  <span class="language-name">{{this}}</span>
  <span class="language-badge">Granted</span>
  </div>
@@ -1622,7 +1622,7 @@
  {{#each characterData.languages}}
  {{#unless (contains ../characterData.languageData.granted this)}}
  <div class="language-item selected">
- <i class="fas fa-circle-check"></i>
+ <i class="{{getIconClass 'success'}}"></i>
  <span class="language-name">{{this}}</span>
  <button type="button" class="remove-language" data-language="{{this}}" title="Remove language">
  <i class="fas fa-times"></i>
@@ -1952,7 +1952,7 @@
  <p><strong>{{characterData.credits}}</strong> credits</p>
  </div>
  <button type="button" class="reroll-credits-btn btn-secondary">
- <i class="fas fa-rotate-right"></i> Change Selection
+ <i class="{{getIconClass 'redo'}}"></i> Change Selection
  </button>
  </div>
  {{else}}
@@ -1982,7 +1982,7 @@
 
  <div class="summary-confirmation">
  <div class="confirmation-box">
- <i class="fas fa-circle-check"></i>
+ <i class="{{getIconClass 'success'}}"></i>
  <p><strong>Ready to create your character?</strong></p>
  {{#if characterData.creditsChosen}}
  <p>Once created, you'll be able to shop for equipment with your starting {{characterData.credits}} credits.</p>
