@@ -524,3 +524,21 @@
   font-family: "Font Awesome 6 Free" !important;
   font-weight: 900;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SIDEBAR CONTAINMENT FIX - Restore Foundry's sidebar sliding mechanism
+   ═════════════════════════════════════════════════════════════════════════ */
+
+[data-theme=holo] #sidebar {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+[data-theme=holo] #sidebar-content {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+[data-theme=holo] #sidebar-content > * {
+  overflow: hidden;
+}
