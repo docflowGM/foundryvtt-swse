@@ -100,81 +100,91 @@ export async function _onPreviewSpecies(event) {
   _previewedSpeciesName = speciesName;
 
   // Populate the expanded card
-  const overlay = this.element.find('#species-overlay');
-  overlay.find('#expanded-species-name').text(speciesName);
-  overlay.find('#expanded-species-size').text(size);
-  overlay.find('#expanded-species-speed').text(`${speed} squares`);
+  const overlay = this.element.querySelector('#species-overlay');
+  overlay.querySelector('#expanded-species-name').textContent = speciesName;
+  overlay.querySelector('#expanded-species-size').textContent = size;
+  overlay.querySelector('#expanded-species-speed').textContent = `${speed} squares`;
 
   // Update Ol' Salty dialogue
   const dialogue = getOlSaltyDialogue(speciesName);
-  const dialogueElement = overlay.find('#ol-salty-dialogue');
+  const dialogueElement = overlay.querySelector('#ol-salty-dialogue');
   if (dialogue) {
-    dialogueElement.text(`"${dialogue}"`);
-    overlay.find('#ol-salty-banner').show();
+    dialogueElement.textContent = `"${dialogue}"`;
+    overlay.querySelector('#ol-salty-banner').style.display = 'block';
   } else {
-    dialogueElement.text('"Well, well... let\'s see what you\'ve got."');
-    overlay.find('#ol-salty-banner').show();
+    dialogueElement.textContent = '"Well, well... let\'s see what you\'ve got."';
+    overlay.querySelector('#ol-salty-banner').style.display = 'block';
   }
 
   // Parse and display ability modifiers
-  const abilitiesContainer = overlay.find('#expanded-species-abilities');
-  abilitiesContainer.empty();
+  const abilitiesContainer = overlay.querySelector('#expanded-species-abilities');
+  abilitiesContainer.innerHTML = '';
 
   if (abilities) {
     // Parse abilities string like "+2 Dexterity, -2 Charisma"
     const abilityParts = abilities.split(/,\s*/);
     abilityParts.forEach(part => {
       const trimmed = part.trim();
+      const span = document.createElement('span');
       if (trimmed.startsWith('+')) {
-        abilitiesContainer.append(`<span class="ability-bonus">${trimmed}</span>`);
+        span.className = 'ability-bonus';
       } else if (trimmed.startsWith('-')) {
-        abilitiesContainer.append(`<span class="ability-penalty">${trimmed}</span>`);
+        span.className = 'ability-penalty';
       } else if (trimmed) {
-        abilitiesContainer.append(`<span class="ability-bonus">${trimmed}</span>`);
+        span.className = 'ability-bonus';
       }
+      span.textContent = trimmed;
+      if (trimmed) abilitiesContainer.appendChild(span);
     });
   } else {
-    abilitiesContainer.append('<span class="ability-bonus">No modifiers (versatile)</span>');
+    const span = document.createElement('span');
+    span.className = 'ability-bonus';
+    span.textContent = 'No modifiers (versatile)';
+    abilitiesContainer.appendChild(span);
   }
 
   // Show/hide abilities section
-  const abilitiesSection = overlay.find('#expanded-abilities-section');
-  abilitiesSection.show();
+  const abilitiesSection = overlay.querySelector('#expanded-abilities-section');
+  abilitiesSection.style.display = 'block';
 
   // Display skill bonuses
-  const skillsList = overlay.find('#expanded-species-skills');
-  skillsList.empty();
+  const skillsList = overlay.querySelector('#expanded-species-skills');
+  skillsList.innerHTML = '';
 
   if (skillBonuses && skillBonuses.length > 0) {
     skillBonuses.forEach(skill => {
-      skillsList.append(`<li>${skill}</li>`);
+      const li = document.createElement('li');
+      li.textContent = skill;
+      skillsList.appendChild(li);
     });
-    overlay.find('#expanded-skills-section').show();
+    overlay.querySelector('#expanded-skills-section').style.display = 'block';
   } else {
-    overlay.find('#expanded-skills-section').hide();
+    overlay.querySelector('#expanded-skills-section').style.display = 'none';
   }
 
   // Display special abilities (combine special and racialTraits)
-  const specialList = overlay.find('#expanded-species-special');
-  specialList.empty();
+  const specialList = overlay.querySelector('#expanded-species-special');
+  specialList.innerHTML = '';
 
   const allSpecial = [...(special || []), ...(racialTraits || [])];
 
   if (allSpecial.length > 0) {
     allSpecial.forEach(trait => {
       if (trait && typeof trait === 'string') {
-        specialList.append(`<li>${trait}</li>`);
+        const li = document.createElement('li');
+        li.textContent = trait;
+        specialList.appendChild(li);
       }
     });
-    overlay.find('#expanded-special-section').show();
+    overlay.querySelector('#expanded-special-section').style.display = 'block';
   } else {
-    overlay.find('#expanded-special-section').hide();
+    overlay.querySelector('#expanded-special-section').style.display = 'none';
   }
 
   // Display a quick summary of key mechanical effects
-  const summaryList = overlay.find('#expanded-species-summary');
-  if (summaryList && summaryList.length > 0) {
-    summaryList.empty();
+  const summaryList = overlay.querySelector('#expanded-species-summary');
+  if (summaryList) {
+    summaryList.innerHTML = '';
 
     // Summarize key mechanical effects
     const summary = [];

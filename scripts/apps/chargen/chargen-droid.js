@@ -111,7 +111,7 @@ export function _getCostFactor() {
  * Populate the droid builder interface
  */
 export function _populateDroidBuilder(root) {
-  const doc = root || this.element[0];
+  const doc = root || this.element;
   if (!doc) return;
 
   // Mark that droid was built (at least attempted) in initial step if we're in droid-builder step
@@ -536,7 +536,7 @@ export function _populateAccessoryCategory(doc, category, items) {
 export function _onShopTabClick(event) {
   event.preventDefault();
   const tabName = event.currentTarget.dataset.tab;
-  const doc = this.element[0];
+  const doc = this.element;
 
   // Switch active tab
   doc.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
@@ -559,7 +559,7 @@ export function _onShopTabClick(event) {
 export function _onAccessoryTabClick(event) {
   event.preventDefault();
   const tabName = event.currentTarget.dataset.accessorytab;
-  const doc = this.element[0];
+  const doc = this.element;
 
   // Switch active accessory tab
   doc.querySelectorAll('.accessory-tab').forEach(t => t.classList.remove('active'));
@@ -1065,7 +1065,7 @@ export async function _onBuildLater(event) {
  * Populate final droid builder (after class/background selection)
  */
 export function _populateFinalDroidBuilder(root) {
-  const doc = root || this.element[0];
+  const doc = root || this.element;
   if (!doc) return;
 
   // Get equipment engine to calculate final credits
@@ -1189,8 +1189,9 @@ export async function _onImportDroid(event) {
       }
     },
     render: (html) => {
-      const searchInput = html.find('#droid-search');
-      const resultsDiv = html.find('#droid-results');
+      const htmlElement = html instanceof jQuery ? html[0] : html;
+      const searchInput = htmlElement.querySelector('#droid-search');
+      const resultsDiv = htmlElement.querySelector('#droid-results');
 
       const renderResults = (query) => {
         const filtered = query
@@ -1203,16 +1204,18 @@ export async function _onImportDroid(event) {
           </div>
         `).join('');
 
-        resultsDiv.html(resultsHTML || '<p>No droids found</p>');
+        resultsDiv.innerHTML = resultsHTML || '<p>No droids found</p>';
 
         // Add click handlers to results
-        resultsDiv.find('.droid-result-item').click(async (e) => {
-          const droidId = e.currentTarget.dataset.droidId;
-          const droid = droidList.find(d => d.id === droidId);
-          if (droid) {
-            await self._importDroidType(droid);
-            dialog.close();
-          }
+        resultsDiv.querySelectorAll('.droid-result-item').forEach(item => {
+          item.addEventListener('click', async (e) => {
+            const droidId = e.currentTarget.dataset.droidId;
+            const droid = droidList.find(d => d.id === droidId);
+            if (droid) {
+              await self._importDroidType(droid);
+              dialog.close();
+            }
+          });
         });
       };
 
