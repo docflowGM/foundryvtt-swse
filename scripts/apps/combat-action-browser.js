@@ -14,20 +14,21 @@ import { CombatActionsMapper } from "../combat/utils/combat-actions-mapper.js";
 import { SWSERoll } from "../combat/rolls/enhanced-rolls.js";
 import { SWSECombat } from "../combat/systems/enhanced-combat-system.js";
 import { SWSEVehicleCombat } from "../combat/systems/vehicle-combat-system.js";
+import SWSEApplication from "./base/swse-application.js";
 
-export class SWSECombatActionBrowser extends Application {
+export class SWSECombatActionBrowser extends SWSEApplication {
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEApplication.DEFAULT_OPTIONS ?? {},
+    {
       id: "swse-combat-action-browser",
       classes: ["swse", "swse-action-browser"],
       template: "systems/foundryvtt-swse/templates/apps/combat-action-browser.hbs",
-      width: 700,
-      height: 600,
+      position: { width: 700, height: 600 },
       resizable: true,
       title: "Combat Actions"
-    });
-  }
+    }
+  );
 
   /* ------------------------------- */
   /* Initialization                   */
@@ -82,7 +83,7 @@ export class SWSECombatActionBrowser extends Application {
   /* Application Rendering            */
   /* ------------------------------- */
 
-  async getData(options = {}) {
+  async _prepareContext(options) {
     await CombatActionsMapper.init();
 
     const selectedActor = canvas.tokens.controlled[0]?.actor ?? null;
@@ -99,29 +100,39 @@ export class SWSECombatActionBrowser extends Application {
     return data;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
-    html.find(".swse-action-tab").click(ev => {
-      this.currentTab = ev.currentTarget.dataset.tab;
-      this.render();
+    root.querySelectorAll(".swse-action-tab").forEach(el => {
+      el.addEventListener("click", ev => {
+        this.currentTab = ev.currentTarget.dataset.tab;
+        this.render();
+      });
     });
 
-    html.find(".swse-action-search").on("keyup", ev => {
-      this.searchQuery = ev.target.value.toLowerCase();
-      this.render();
+    const searchInput = root.querySelector(".swse-action-search");
+    if (searchInput) {
+      searchInput.addEventListener("keyup", ev => {
+        this.searchQuery = ev.target.value.toLowerCase();
+        this.render();
+      });
+    }
+
+    root.querySelectorAll(".swse-action-fav").forEach(el => {
+      el.addEventListener("click", ev => {
+        const key = ev.currentTarget.dataset.key;
+        this._toggleFavorite(key);
+        this.render();
+      });
     });
 
-    html.find(".swse-action-fav").click(ev => {
-      const key = ev.currentTarget.dataset.key;
-      this._toggleFavorite(key);
-      this.render();
-    });
-
-    html.find(".swse-action-exec").click(ev => {
-      const key = ev.currentTarget.dataset.key;
-      const type = ev.currentTarget.dataset.actionType;
-      this._executeAction(key, type);
+    root.querySelectorAll(".swse-action-exec").forEach(el => {
+      el.addEventListener("click", ev => {
+        const key = ev.currentTarget.dataset.key;
+        const type = ev.currentTarget.dataset.actionType;
+        this._executeAction(key, type);
+      });
     });
   }
 

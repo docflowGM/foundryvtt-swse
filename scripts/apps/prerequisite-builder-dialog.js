@@ -5,26 +5,28 @@
  * Supports all condition types: feats, talents, attributes, skills, Force, etc.
  */
 
-export class PrerequisiteBuilderDialog extends FormApplication {
+import SWSEFormApplication from './base/swse-form-application.js';
+
+export class PrerequisiteBuilderDialog extends SWSEFormApplication {
   constructor(object = {}, options = {}) {
     super(object, options);
     this.conditions = object.conditions ?? [];
     this.mode = object.type ?? 'all';
   }
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    {
       id: 'prerequisite-builder',
       title: 'Prerequisite Builder',
       template: 'modules/foundryvtt-swse/templates/prerequisite-builder.html',
-      width: 700,
-      height: 800,
+      position: { width: 700, height: 800 },
       resizable: true,
       classes: ['swse', 'prerequisite-builder']
-    });
-  }
+    }
+  );
 
-  getData() {
+  async _prepareContext(options) {
     return {
       mode: this.mode,
       conditions: this.conditions,
@@ -37,45 +39,57 @@ export class PrerequisiteBuilderDialog extends FormApplication {
     };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
     // Mode toggle
-    html.find('input[name="mode"]').on('change', e => {
-      this.mode = e.target.value;
+    root.querySelectorAll('input[name="mode"]').forEach(el => {
+      el.addEventListener('change', e => {
+        this.mode = e.target.value;
+      });
     });
 
     // Add condition button
-    html.find('button.add-condition').on('click', () => {
-      this.conditions.push({
-        type: 'feat',
-        id: '',
-        name: ''
+    const addBtn = root.querySelector('button.add-condition');
+    if (addBtn) {
+      addBtn.addEventListener('click', () => {
+        this.conditions.push({
+          type: 'feat',
+          id: '',
+          name: ''
+        });
+        this.render();
       });
-      this.render();
-    });
+    }
 
     // Remove condition
-    html.find('button.remove-condition').on('click', e => {
-      const idx = parseInt(e.target.dataset.index);
-      this.conditions.splice(idx, 1);
-      this.render();
+    root.querySelectorAll('button.remove-condition').forEach(el => {
+      el.addEventListener('click', e => {
+        const idx = parseInt(e.target.dataset.index);
+        this.conditions.splice(idx, 1);
+        this.render();
+      });
     });
 
     // Update condition type
-    html.find('select[name="type"]').on('change', e => {
-      const idx = parseInt(e.target.dataset.index);
-      this.conditions[idx].type = e.target.value;
-      this.render();
+    root.querySelectorAll('select[name="type"]').forEach(el => {
+      el.addEventListener('change', e => {
+        const idx = parseInt(e.target.dataset.index);
+        this.conditions[idx].type = e.target.value;
+        this.render();
+      });
     });
 
     // Update condition fields
-    html.find('input, select').on('change', e => {
-      const idx = parseInt(e.target.dataset.index);
-      const field = e.target.name.split('[')[1]?.slice(0, -1);
-      if (idx !== undefined && field) {
-        this.conditions[idx][field] = e.target.value;
-      }
+    root.querySelectorAll('input, select').forEach(el => {
+      el.addEventListener('change', e => {
+        const idx = parseInt(e.target.dataset.index);
+        const field = e.target.name.split('[')[1]?.slice(0, -1);
+        if (idx !== undefined && field) {
+          this.conditions[idx][field] = e.target.value;
+        }
+      });
     });
   }
 
@@ -221,31 +235,39 @@ export class PrerequisiteCompactBuilder {
   }
 
   static _parseForm(html) {
-    const type = html.find('[name="type"]').val();
+    // Support both jQuery and HTMLElement
+    const getVal = (selector) => {
+      if (html instanceof HTMLElement) {
+        return html.querySelector(selector)?.value ?? '';
+      }
+      return html.find(selector).val();
+    };
+
+    const type = getVal('[name="type"]');
     const result = { type };
 
     // Parse type-specific fields
     switch (type) {
       case 'feat':
       case 'talent':
-        result.id = html.find('[name="id"]').val();
-        result.name = html.find('[name="name"]').val();
+        result.id = getVal('[name="id"]');
+        result.name = getVal('[name="name"]');
         break;
       case 'featPattern':
       case 'forceSecret':
-        result.pattern = html.find('[name="pattern"]').val();
-        result.description = html.find('[name="description"]').val();
+        result.pattern = getVal('[name="pattern"]');
+        result.description = getVal('[name="description"]');
         break;
       case 'attribute':
       case 'darkSideScoreDynamic':
-        result.ability = html.find('[name="ability"]').val();
-        result.min = parseInt(html.find('[name="min"]').val());
+        result.ability = getVal('[name="ability"]');
+        result.min = parseInt(getVal('[name="min"]'));
         break;
       case 'skillTrained':
-        result.skill = html.find('[name="skill"]').val();
+        result.skill = getVal('[name="skill"]');
         break;
       case 'forcePower':
-        result.names = html.find('[name="names"]').val().split(',').map(s => s.trim());
+        result.names = getVal('[name="names"]').split(',').map(s => s.trim());
         break;
     }
 

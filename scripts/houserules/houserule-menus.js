@@ -4,6 +4,8 @@
  * Includes safety, sanitation, error handling, and maintainability improvements.
  */
 
+import SWSEFormApplication from '../apps/base/swse-form-application.js';
+
 const NAMESPACE = "foundryvtt-swse";
 
 /* -------------------------------------------------------------------------- */
@@ -40,19 +42,19 @@ function _num(v) {
 /*                         CHARACTER CREATION MENU                             */
 /* ========================================================================== */
 
-export class CharacterCreationMenu extends FormApplication {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+export class CharacterCreationMenu extends SWSEFormApplication {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    {
       id: "swse-character-creation-menu",
       title: "Character Creation Rules",
       template: "systems/foundryvtt-swse/templates/apps/houserules/character-creation.hbs",
-      width: 600,
-      height: "auto",
+      position: { width: 600, height: "auto" },
       tabs: [{ navSelector: ".tabs", contentSelector: ".content", initial: "abilities" }]
-    });
-  }
+    }
+  );
 
-  getData() {
+  async _prepareContext(options) {
     return {
       ...safeGet("characterCreation"),
       isGM: game.user.isGM
@@ -69,19 +71,19 @@ export class CharacterCreationMenu extends FormApplication {
 /*                              ADVANCEMENT MENU                               */
 /* ========================================================================== */
 
-export class AdvancementMenu extends FormApplication {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+export class AdvancementMenu extends SWSEFormApplication {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    {
       id: "swse-advancement-menu",
       title: "Advancement Rules",
       template: "systems/foundryvtt-swse/templates/apps/houserules/advancement.hbs",
-      width: 600,
-      height: "auto",
+      position: { width: 600, height: "auto" },
       tabs: [{ navSelector: ".tabs", contentSelector: ".content", initial: "levelup" }]
-    });
-  }
+    }
+  );
 
-  getData() {
+  async _prepareContext(options) {
     return {
       talentEveryLevel: safeGet("talentEveryLevel"),
       crossClassSkillTraining: safeGet("crossClassSkillTraining"),
@@ -129,19 +131,19 @@ export class AdvancementMenu extends FormApplication {
 /*                                COMBAT MENU                                 */
 /* ========================================================================== */
 
-export class CombatMenu extends FormApplication {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+export class CombatMenu extends SWSEFormApplication {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    {
       id: "swse-combat-menu",
       title: "Combat Rules",
       template: "systems/foundryvtt-swse/templates/apps/houserules/combat.hbs",
-      width: 600,
-      height: "auto",
+      position: { width: 600, height: "auto" },
       tabs: [{ navSelector: ".tabs", contentSelector: ".content", initial: "damage" }]
-    });
-  }
+    }
+  );
 
-  getData() {
+  async _prepareContext(options) {
     return {
       deathSystem: safeGet("deathSystem"),
       secondWindImproved: safeGet("secondWindImproved"),
@@ -251,18 +253,18 @@ export class CombatMenu extends FormApplication {
 /*                                FORCE MENU                                  */
 /* ========================================================================== */
 
-export class ForceMenu extends FormApplication {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+export class ForceMenu extends SWSEFormApplication {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    {
       id: "swse-force-menu",
       title: "Force & Destiny Rules",
       template: "systems/foundryvtt-swse/templates/apps/houserules/force.hbs",
-      width: 600,
-      height: "auto"
-    });
-  }
+      position: { width: 600, height: "auto" }
+    }
+  );
 
-  getData() {
+  async _prepareContext(options) {
     return {
       forcePointRecovery: safeGet("forcePointRecovery"),
       darkSideTemptation: safeGet("darkSideTemptation"),
@@ -283,36 +285,37 @@ export class ForceMenu extends FormApplication {
 /*                               PRESETS MENU                                 */
 /* ========================================================================== */
 
-export class PresetsMenu extends FormApplication {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+export class PresetsMenu extends SWSEFormApplication {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    {
       id: "swse-presets-menu",
       title: "Houserule Presets",
       template: "systems/foundryvtt-swse/templates/apps/houserules/presets.hbs",
-      width: 500,
-      height: "auto"
-    });
-  }
+      position: { width: 500, height: "auto" }
+    }
+  );
 
-  getData() {
+  async _prepareContext(options) {
     return {
       currentPreset: safeGet("houserulePreset"),
       isGM: game.user.isGM
     };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
-    html[0].querySelectorAll("[data-action='apply-preset']").forEach(btn =>
+    root.querySelectorAll("[data-action='apply-preset']").forEach(btn =>
       btn.addEventListener("click", e => this._onApplyPreset(e))
     );
 
-    html[0].querySelector("[data-action='export-settings']")?.addEventListener("click", e =>
+    root.querySelector("[data-action='export-settings']")?.addEventListener("click", e =>
       this._onExportSettings(e)
     );
 
-    html[0].querySelector("[data-action='import-settings']")?.addEventListener("click", e =>
+    root.querySelector("[data-action='import-settings']")?.addEventListener("click", e =>
       this._onImportSettings(e)
     );
   }
@@ -394,19 +397,19 @@ export class PresetsMenu extends FormApplication {
 /*                        SKILLS & FEATS MENU                                 */
 /* ========================================================================== */
 
-export class SkillsFeatsMenu extends FormApplication {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+export class SkillsFeatsMenu extends SWSEFormApplication {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    {
       id: "swse-skills-feats-menu",
       title: "Skills & Feats Rules",
       template: "systems/foundryvtt-swse/templates/apps/houserules/skills-feats.hbs",
-      width: 600,
-      height: "auto",
+      position: { width: 600, height: "auto" },
       tabs: [{ navSelector: ".tabs", contentSelector: ".content", initial: "skills" }]
-    });
-  }
+    }
+  );
 
-  getData() {
+  async _prepareContext(options) {
     return {
       feintSkill: safeGet("feintSkill"),
       skillFocusVariant: safeGet("skillFocusVariant"),
@@ -428,19 +431,19 @@ export class SkillsFeatsMenu extends FormApplication {
 /*                         SPACE COMBAT MENU                                  */
 /* ========================================================================== */
 
-export class SpaceCombatMenu extends FormApplication {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+export class SpaceCombatMenu extends SWSEFormApplication {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    {
       id: "swse-space-combat-menu",
       title: "Space Combat Rules",
       template: "systems/foundryvtt-swse/templates/apps/houserules/space-combat.hbs",
-      width: 600,
-      height: "auto",
+      position: { width: 600, height: "auto" },
       tabs: [{ navSelector: ".tabs", contentSelector: ".content", initial: "initiative" }]
-    });
-  }
+    }
+  );
 
-  getData() {
+  async _prepareContext(options) {
     return {
       spaceInitiativeSystem: safeGet("spaceInitiativeSystem"),
       initiativeRolePriority: safeGet("initiativeRolePriority"),
@@ -449,10 +452,11 @@ export class SpaceCombatMenu extends FormApplication {
     };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
-    const list = html[0].querySelector(".role-priority-list");
+    const list = root.querySelector(".role-priority-list");
     if (!list) return;
 
     this._activateDragAndDrop(list);
@@ -505,7 +509,7 @@ export class SpaceCombatMenu extends FormApplication {
     await safeSet("weaponsOperatorsRollInit", _bool(formData.weaponsOperatorsRollInit));
 
     // Save new role priority
-    const list = this.element[0].querySelector(".role-priority-list");
+    const list = this.element?.querySelector(".role-priority-list");
     if (list) {
       const ordered = [...list.querySelectorAll("li")].map(li => li.dataset.role);
       await safeSet("initiativeRolePriority", ordered);
@@ -519,19 +523,19 @@ export class SpaceCombatMenu extends FormApplication {
 /*                        CHARACTER RESTRICTIONS MENU                         */
 /* ========================================================================== */
 
-export class CharacterRestrictionsMenu extends FormApplication {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+export class CharacterRestrictionsMenu extends SWSEFormApplication {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    {
       id: "swse-character-restrictions-menu",
       title: "Character Creation - Restrictions & Backgrounds",
       template: "systems/foundryvtt-swse/templates/apps/houserules/character-restrictions.hbs",
-      width: 600,
-      height: "auto",
+      position: { width: 600, height: "auto" },
       tabs: [{ navSelector: ".tabs", contentSelector: ".content", initial: "backgrounds" }]
-    });
-  }
+    }
+  );
 
-  async getData() {
+  async _prepareContext(options) {
     const enableBackgrounds = safeGet("enableBackgrounds");
     const bannedSpeciesStr = safeGet("bannedSpecies") || "";
     const bannedSpeciesList = bannedSpeciesStr
