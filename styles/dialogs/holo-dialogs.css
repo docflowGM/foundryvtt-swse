@@ -542,3 +542,29 @@
 [data-theme=holo] #sidebar-content > * {
   overflow: auto;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FOUNDRY UI CONTAINMENT CONTRACT (V13+ INVARIANT)
+   ═════════════════════════════════════════════════════════════════════════
+
+   These containers are critical to Foundry's layout and z-index stacking.
+   Violations cause: tab bleed, z-index chaos, phantom scroll bugs.
+
+   REQUIRED: These rules must always have:
+   - position: relative
+   - contain: layout paint
+
+   FORBIDDEN: Never apply to these containers:
+   - transform (will break z-index stacking)
+   - filter (will create stacking context corruption)
+   - backdrop-filter (will clip descendants)
+
+   If you need glow/blur effects, wrap with an inner div.
+   ═════════════════════════════════════════════════════════════════════════ */
+
+[data-theme=holo] #sidebar,
+[data-theme=holo] #sidebar-content,
+[data-theme=holo] .app.window-app {
+  position: relative;
+  contain: layout paint;
+}
