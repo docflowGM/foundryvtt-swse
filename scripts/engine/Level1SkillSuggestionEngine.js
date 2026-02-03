@@ -213,8 +213,8 @@ export class Level1SkillSuggestionEngine {
   static _getTierIcon(tier) {
     const icons = {
       3: 'fas fa-star',
-      2: 'fas fa-plus-circle',
-      1: 'fas fa-check-circle',
+      2: 'fas fa-circle-plus',
+      1: 'fas fa-circle-check',
       0: ''
     };
     return icons[tier] || '';

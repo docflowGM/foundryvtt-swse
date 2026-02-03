@@ -44,7 +44,7 @@ export const CLASS_TIER_ICONS = {
     5: "fa-star",           // Star for prestige qualification
     4: "fa-route",          // Path for continuation
     3: "fa-unlock",         // Unlock for near-prestige
-    2: "fa-cogs",           // Gears for mechanical synergy
+    2: "fa-gears",           // Gears for mechanical synergy
     1: "fa-masks-theater",  // Theater masks for thematic
     0: ""                   // No icon for fallback
 };
@@ -53,7 +53,7 @@ export const CLASS_TIER_ICON_CLASSES = {
     5: "fas fa-star class-suggestion-prestige",
     4: "fas fa-route class-suggestion-path",
     3: "fas fa-unlock class-suggestion-unlock",
-    2: "fas fa-cogs class-suggestion-synergy",
+    2: "fas fa-gears class-suggestion-synergy",
     1: "fas fa-masks-theater class-suggestion-thematic",
     0: ""
 };
@@ -1195,7 +1195,7 @@ export class ClassSuggestionEngine {
                     <span>Near Prestige</span>
                 </div>
                 <div class="class-suggestion-legend-item tier-synergy">
-                    <span class="legend-icon"><i class="fas fa-cogs"></i></span>
+                    <span class="legend-icon"><i class="fas fa-gears"></i></span>
                     <span>Build Synergy</span>
                 </div>
             </div>

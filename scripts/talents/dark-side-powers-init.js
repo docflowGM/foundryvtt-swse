@@ -48,7 +48,7 @@ Hooks.once('ready', () => {
             ${powerOptions}
           </select>
           <p class="hint-text" style="margin-top: 10px;">
-            <i class="fas fa-info-circle"></i>
+            <i class="fas fa-circle-info"></i>
             This can be used once per day. It allows using a Force Power that normally takes a Standard or Move action as a Swift Action instead.
           </p>
         </div>
@@ -574,7 +574,7 @@ Hooks.once('ready', () => {
             ${weaponOptions}
           </select>
           <p class="hint-text" style="margin-top: 10px;">
-            <i class="fas fa-info-circle"></i>
+            <i class="fas fa-circle-info"></i>
             Cost: 20% of weapon cost or 2,000 credits (whichever is higher). The enhanced weapon gains Sith Alchemical properties and a special Swift Action ability.
           </p>
         </div>
@@ -638,7 +638,7 @@ Hooks.once('ready', () => {
               ${weaponOptions}
             </select>
             <p class="hint-text" style="margin-top: 10px;">
-              <i class="fas fa-info-circle"></i>
+              <i class="fas fa-circle-info"></i>
               This is a Swift Action. Spend 1 Force Point to gain a bonus to damage equal to your Dark Side Score on your next attack (increases your DSP by 1).
             </p>
           </div>
@@ -717,7 +717,7 @@ Hooks.once('ready', () => {
             ${optionsHTML}
           </select>
           <p class="hint-text" style="margin-top: 15px;">
-            <i class="fas fa-info-circle"></i>
+            <i class="fas fa-circle-info"></i>
             <strong>Note:</strong> You gain all the benefits of this talent, but still must meet any prerequisites.
           </p>
         </div>

@@ -278,7 +278,7 @@
             <span>Near Prestige</span>
           </div>
           <div class="class-suggestion-legend-item tier-synergy">
-            <span class="legend-icon"><i class="fas fa-cogs"></i></span>
+            <span class="legend-icon"><i class="fas fa-gears"></i></span>
             <span>Build Synergy</span>
           </div>
         </div>
@@ -395,7 +395,7 @@
           <span>Almost Qualified</span>
         </div>
         <div class="class-suggestion-legend-item tier-synergy">
-          <span class="legend-icon"><i class="fas fa-cogs"></i></span>
+          <span class="legend-icon"><i class="fas fa-gears"></i></span>
           <span>Build Synergy</span>
         </div>
       </div>
@@ -478,7 +478,7 @@
             <div class="skill-selection">
               {{#each selectedClass.system.classSkills}}
               <button class="select-skill-btn choice-button" data-skill="{{this}}">
-                <i class="fas fa-check-circle"></i> {{this}}
+                <i class="fas fa-circle-check"></i> {{this}}
               </button>
               {{/each}}
             </div>
@@ -523,7 +523,7 @@
             <span>Mod: {{#if (gte this.mod 0)}}+{{/if}}{{this.mod}}</span>
           </div>
           <button class="ability-increase-btn btn-primary" data-ability="{{@key}}">
-            <i class="fas fa-plus-circle"></i> Add +1
+            <i class="fas fa-circle-plus"></i> Add +1
           </button>
           {{#if (lookup ../abilityIncreases @key)}}
           <div class="ability-allocated">
@@ -586,7 +586,7 @@
           </label>
 
           <button class="clear-filters-btn">
-            <i class="fas fa-redo"></i> Clear All Filters
+            <i class="fas fa-rotate-right"></i> Clear All Filters
           </button>
         </div>
       </div>
@@ -708,7 +708,7 @@
                    data-tooltip="{{this.system.benefit}}">
                 {{#if this.isOwned}}
                 <div class="feat-owned-badge {{#if this.isRepeatable}}repeatable{{/if}}">
-                  <i class="fas fa-check-circle"></i> {{#if this.isRepeatable}}Owned (Repeatable){{else}}Owned{{/if}}
+                  <i class="fas fa-circle-check"></i> {{#if this.isRepeatable}}Owned (Repeatable){{else}}Owned{{/if}}
                 </div>
                 {{/if}}
                 {{#if this.isSuggested}}
@@ -753,7 +753,7 @@
                         data-feat-id="{{this._id}}"
                         {{#if this.isUnavailable}}disabled title="Prerequisites not met"{{/if}}
                         {{#if this.isOwned}}{{#unless this.isRepeatable}}disabled title="Already owned"{{/unless}}{{/if}}>
-                  <i class="fas {{#if this.isOwned}}fa-check-circle{{else}}fa-star{{/if}}"></i> {{#if this.isOwned}}{{#if this.isRepeatable}}Select Again{{else}}Owned{{/if}}{{else if this.isUnavailable}}Unavailable{{else}}Select{{/if}}
+                  <i class="fas {{#if this.isOwned}}fa-circle-check{{else}}fa-star{{/if}}"></i> {{#if this.isOwned}}{{#if this.isRepeatable}}Select Again{{else}}Owned{{/if}}{{else if this.isUnavailable}}Unavailable{{else}}Select{{/if}}
                 </button>
               </div>
               {{/each}}
@@ -813,7 +813,7 @@
           {{/if}}
           <h4 class="power-name">{{this.name}}</h4>
           <button class="select-force-power choice-button" data-power-id="{{this.id}}">
-            <i class="fas {{#if (eq this.id ../selectedForcePowers.*.id)}}fa-check-circle{{else}}fa-plus-circle{{/if}}"></i> {{#if (eq this.id ../selectedForcePowers.*.id)}}Selected{{else}}Select{{/if}}
+            <i class="fas {{#if (eq this.id ../selectedForcePowers.*.id)}}fa-circle-check{{else}}fa-circle-plus{{/if}}"></i> {{#if (eq this.id ../selectedForcePowers.*.id)}}Selected{{else}}Select{{/if}}
           </button>
         </div>
         {{/each}}
@@ -825,7 +825,7 @@
         <div class="selected-powers-list">
           {{#each selectedForcePowers}}
           <div class="selected-power-item">
-            <i class="fas fa-check-circle"></i>
+            <i class="fas fa-circle-check"></i>
             <strong>{{this.name}}</strong>
           </div>
           {{/each}}
@@ -856,7 +856,7 @@
       {{#if talentState}}
       <div class="talent-progress-indicator">
         <div class="progress-item {{#if selectedTalents.heroic}}completed{{/if}} {{#if talentState.needsHeroicTalent}}required{{/if}}">
-          <i class="fas {{#if selectedTalents.heroic}}fa-check-circle{{else}}fa-circle{{/if}}"></i>
+          <i class="fas {{#if selectedTalents.heroic}}fa-circle-check{{else}}fa-circle{{/if}}"></i>
           <span>Heroic Talent</span>
           {{#if selectedTalents.heroic}}
             <small>{{selectedTalents.heroic.name}}</small>
@@ -867,7 +867,7 @@
         {{/if}}
         {{#if talentState.needsClassTalent}}
         <div class="progress-item {{#if selectedTalents.class}}completed{{/if}} required">
-          <i class="fas {{#if selectedTalents.class}}fa-check-circle{{else}}fa-circle{{/if}}"></i>
+          <i class="fas {{#if selectedTalents.class}}fa-circle-check{{else}}fa-circle{{/if}}"></i>
           <span>Class Talent ({{selectedClass.name}})</span>
           {{#if selectedTalents.class}}
             <small>{{selectedTalents.class.name}}</small>
@@ -892,7 +892,7 @@
 
         {{#if selectedTalents.heroic}}
         <div class="selected-talent-card">
-          <div class="talent-check"><i class="fas fa-check-circle"></i></div>
+          <div class="talent-check"><i class="fas fa-circle-check"></i></div>
           <div class="talent-details">
             <h5>{{selectedTalents.heroic.name}}</h5>
             <p class="talent-tree">{{selectedTalents.heroic.system.tree}}</p>
@@ -946,7 +946,7 @@
 
         {{#if selectedTalents.class}}
         <div class="selected-talent-card">
-          <div class="talent-check"><i class="fas fa-check-circle"></i></div>
+          <div class="talent-check"><i class="fas fa-circle-check"></i></div>
           <div class="talent-details">
             <h5>{{selectedTalents.class.name}}</h5>
             <p class="talent-tree">{{selectedTalents.class.system.tree}}</p>

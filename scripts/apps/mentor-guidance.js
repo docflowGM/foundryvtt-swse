@@ -82,7 +82,7 @@ export class MentorGuidanceUI {
             buttons: {
                 ok: {
                     label: "Understood",
-                    icon: '<i class="far fa-check-circle"></i>'
+                    icon: '<i class="far fa-circle-check"></i>'
                 }
             },
             default: "ok",

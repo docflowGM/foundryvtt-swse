@@ -962,7 +962,7 @@ export function _updateCartDisplay(doc) {
             <span class="price-amount">${item.cost.toLocaleString()} cr</span>
           </div>
           <button type="button" class="remove-from-cart remove-system" ${removeDataAttrs}>
-            <i class="fas fa-trash-alt"></i>
+            <i class="fas fa-trash"></i>
           </button>
         </div>
       `;
@@ -998,14 +998,14 @@ export function _updateCartValidation(doc) {
   if (issues.length === 0) {
     validationContainer.innerHTML = `
       <div class="validation-success">
-        <i class="fas fa-check-circle"></i>
+        <i class="fas fa-circle-check"></i>
         <span>All requirements met! Ready to proceed.</span>
       </div>
     `;
   } else {
     validationContainer.innerHTML = issues.map(issue => `
       <div class="validation-item" id="validation-${escapeHtml(issue.id)}">
-        <i class="fas fa-exclamation-circle"></i>
+        <i class="fas fa-circle-exclamation"></i>
         <span>${escapeHtml(issue.text)}</span>
       </div>
     `).join('');

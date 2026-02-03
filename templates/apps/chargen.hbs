@@ -9,7 +9,7 @@
  <img src="{{mentor.portrait}}" alt="{{mentor.name}}" class="mentor-portrait" />
  {{else}}
  <div class="mentor-portrait-placeholder">
- <i class="fas fa-user-circle"></i>
+ <i class="fas fa-circle-user"></i>
  </div>
  {{/if}}
  </div>
@@ -546,7 +546,7 @@
 
        {{!-- Sacrifice Selection --}}
        <section class="near-human-section sacrifice-section">
-         <h3><i class="fas fa-exchange-alt"></i> Choose What to Sacrifice</h3>
+         <h3><i class="fas fa-arrows-left-right"></i> Choose What to Sacrifice</h3>
          <p class="section-hint">Your Near-Human trait replaces either a bonus Feat OR bonus Trained Skill</p>
          <div class="sacrifice-options" id="sacrifice-options">
            <label class="radio-label">
@@ -834,7 +834,7 @@
 
  <div class="cart-validation" id="cart-validation">
  <div class="validation-item" id="validation-locomotion">
- <i class="fas fa-exclamation-circle"></i>
+ <i class="fas fa-circle-exclamation"></i>
  <span>Locomotion system required</span>
  </div>
  </div>
@@ -931,7 +931,7 @@
  </ul>
  </div>
  <button type="button" class="change-background-btn btn-secondary">
- <i class="fas fa-undo"></i> Change Background
+ <i class="fas fa-rotate-left"></i> Change Background
  </button>
  </div>
  </div>
@@ -965,7 +965,7 @@
 
  <div class="ability-header">
  <button type="button" id="free-build-btn" class="free-build-button">
- <i class="fas fa-edit"></i> Free Build (Manual Entry)
+ <i class="fas fa-pen"></i> Free Build (Manual Entry)
  </button>
  <p class="method-hint">GM's Setting: <strong>{{methodLabels.[abilityMethod]}}</strong></p>
  </div>
@@ -1502,7 +1502,7 @@
  <div class="skills-summary" style="margin-bottom: 1rem;">
  <p><strong>Trained Skills: {{characterData.trainedSkillsCount}} / {{characterData.trainedSkillsAllowed}}</strong></p>
  <button type="button" class="reset-skills-btn btn-secondary" style="margin-left: 1rem;">
- <i class="fas fa-redo"></i> Reset All
+ <i class="fas fa-rotate-right"></i> Reset All
  </button>
  </div>
 
@@ -1581,7 +1581,7 @@
  </div>
  {{else}}
  <div class="no-additional-languages">
- <i class="fas fa-info-circle"></i>
+ <i class="fas fa-circle-info"></i>
  <span>You have no additional languages to select (available: {{characterData.languageData.additional}})</span>
  </div>
  {{/if}}
@@ -1590,7 +1590,7 @@
  {{!-- Add Custom Language Button --}}
  <div class="custom-language-section">
  <button type="button" class="add-custom-language-btn btn-custom">
- <i class="fas fa-plus-circle"></i> Add Custom Language
+ <i class="fas fa-circle-plus"></i> Add Custom Language
  </button>
  <p class="custom-language-hint">Create your own language for homebrew campaigns or unique backgrounds</p>
  </div>
@@ -1602,7 +1602,7 @@
  <div class="granted-languages-list">
  {{#each characterData.languageData.granted}}
  <div class="language-item granted">
- <i class="fas fa-check-circle"></i>
+ <i class="fas fa-circle-check"></i>
  <span class="language-name">{{this}}</span>
  <span class="language-badge">Granted</span>
  </div>
@@ -1622,7 +1622,7 @@
  {{#each characterData.languages}}
  {{#unless (contains ../characterData.languageData.granted this)}}
  <div class="language-item selected">
- <i class="fas fa-check-circle"></i>
+ <i class="fas fa-circle-check"></i>
  <span class="language-name">{{this}}</span>
  <button type="button" class="remove-language" data-language="{{this}}" title="Remove language">
  <i class="fas fa-times"></i>
@@ -1948,11 +1948,11 @@
  <div class="credits-result">
  <p class="credits-formula-display">Formula: {{characterData.startingCreditsFormula.formulaString}}</p>
  <div class="credits-chosen-display">
- <i class="fas fa-check-circle" style="color: #4caf50;"></i>
+ <i class="fas fa-circle-check" style="color: #4caf50;"></i>
  <p><strong>{{characterData.credits}}</strong> credits</p>
  </div>
  <button type="button" class="reroll-credits-btn btn-secondary">
- <i class="fas fa-redo"></i> Change Selection
+ <i class="fas fa-rotate-right"></i> Change Selection
  </button>
  </div>
  {{else}}
@@ -1982,7 +1982,7 @@
 
  <div class="summary-confirmation">
  <div class="confirmation-box">
- <i class="fas fa-check-circle"></i>
+ <i class="fas fa-circle-check"></i>
  <p><strong>Ready to create your character?</strong></p>
  {{#if characterData.creditsChosen}}
  <p>Once created, you'll be able to shop for equipment with your starting {{characterData.credits}} credits.</p>

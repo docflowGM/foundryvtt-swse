@@ -286,7 +286,7 @@ export class PrestigeRoadmap extends SWSEApplicationV2 {
                 breakdown.push({
                     type: 'other',
                     name: other,
-                    icon: 'fa-question-circle',
+                    icon: 'fa-circle-question',
                     isMet: false,
                     progress: 0,
                     unverifiable: true

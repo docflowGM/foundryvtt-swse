@@ -49,7 +49,7 @@ function getClassMetadata(className) {
     'Jedi Master': { icon: 'fa-star', description: 'Elite Jedi who have achieved mastery of the Force' },
     'Martial Arts Master': { icon: 'fa-fist-raised', description: 'Unarmed combat specialists and fighters' },
     'Master Privateer': { icon: 'fa-ship', description: 'Legendary spacers and ship captains' },
-    'Medic': { icon: 'fa-medkit', description: 'Healers skilled in medicine and first aid' },
+    'Medic': { icon: 'fa-kit-medical', description: 'Healers skilled in medicine and first aid' },
     'Melee Duelist': { icon: 'fa-skull-crossbones', description: 'Masters of one-on-one melee combat' },
     'Military Engineer': { icon: 'fa-hard-hat', description: 'Combat engineers and demolitions experts' },
     'Officer': { icon: 'fa-medal', description: 'Military leaders and tactical commanders' },

@@ -202,7 +202,7 @@
  <span style="flex: 1;">{{#if system.activated}}Active ({{system.currentSR}}/{{system.shieldRating}} SR){{else}}Inactive{{/if}}</span>
  {{#if system.activated}}
  <button type="button" class="deactivate-shield" style="flex: 1;">
- <i class="fas fa-times-circle"></i> Deactivate
+ <i class="fas fa-circle-xmark"></i> Deactivate
  </button>
  {{else}}
  <button type="button" class="activate-shield" style="flex: 1;" {{#if (lte system.charges.current 0)}}disabled{{/if}}>

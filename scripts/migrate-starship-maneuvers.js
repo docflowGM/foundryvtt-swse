@@ -217,7 +217,7 @@ const starshipManeuvers = {
     },
     special: "Make Starship Scale Area Attack with Autofire weapon even if not normally capable. Weapon must be capable of Autofire.",
     tags: ["vehicle", "pilot", "offense", "standard"],
-    icon: "fas fa-sync",
+    icon: "fas fa-arrows-rotate",
     linkedAction: "starship-maneuver"
   },
   "devastating-hit": {
@@ -447,7 +447,7 @@ const starshipManeuvers = {
       ]
     },
     tags: ["vehicle", "pilot", "mobility", "reaction"],
-    icon: "fas fa-redo",
+    icon: "fas fa-rotate-right",
     linkedAction: "starship-maneuver"
   },
   "shield-hit": {

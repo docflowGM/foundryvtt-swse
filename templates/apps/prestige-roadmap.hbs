@@ -6,7 +6,7 @@
     </div>
     <div class="roadmap-summary">
       <div class="summary-stat qualified">
-        <i class="fas fa-check-circle"></i>
+        <i class="fas fa-circle-check"></i>
         <span class="stat-value">{{roadmap.summary.qualifiedCount}}</span>
         <span class="stat-label">Qualified</span>
       </div>
@@ -57,7 +57,7 @@
     {{#if roadmap.inProgress.length}}
     <section class="roadmap-section in-progress-section">
       <div class="section-header">
-        <h3><i class="fas fa-tasks"></i> In Progress</h3>
+        <h3><i class="fas fa-list-check"></i> In Progress</h3>
         <i class="fas fa-chevron-down"></i>
       </div>
       <div class="section-content">
@@ -173,9 +173,9 @@
       <div class="prereq-item {{#if this.isMet}}met{{else}}unmet{{/if}} {{#if this.unverifiable}}unverifiable{{/if}}">
         <div class="prereq-icon">
           {{#if this.isMet}}
-          <i class="fas fa-check-circle"></i>
+          <i class="fas fa-circle-check"></i>
           {{else if this.unverifiable}}
-          <i class="fas fa-question-circle"></i>
+          <i class="fas fa-circle-question"></i>
           {{else}}
           <i class="fas fa-circle"></i>
           {{/if}}

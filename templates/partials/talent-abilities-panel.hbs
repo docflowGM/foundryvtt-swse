@@ -131,7 +131,7 @@
 
           {{#if ability.condition}}
           <div class="ability-condition-info">
-            <i class="fas fa-check-circle"></i>
+            <i class="fas fa-circle-check"></i>
             <strong>Condition:</strong> {{ability.condition}}
           </div>
           {{/if}}
@@ -220,7 +220,7 @@
           {{#if ability.hasAlternative}}
           <div class="ability-alternative-section">
             <div class="alternative-label">
-              <i class="fas fa-exchange-alt"></i> <strong>Alternative ({{ability.alternativeAction.actionType}}):</strong>
+              <i class="fas fa-arrows-left-right"></i> <strong>Alternative ({{ability.alternativeAction.actionType}}):</strong>
             </div>
             <p>{{ability.alternativeAction.effect}}</p>
           </div>
@@ -317,7 +317,7 @@
     {{!-- Reset Uses Button --}}
     <div class="ability-reset-section">
       <button class="ability-reset-btn" data-action="resetEncounterUses" type="button">
-        <i class="fas fa-sync"></i> Reset Encounter Uses
+        <i class="fas fa-arrows-rotate"></i> Reset Encounter Uses
       </button>
       <button class="ability-reset-btn" data-action="resetDayUses" type="button">
         <i class="fas fa-sun"></i> Reset Daily Uses

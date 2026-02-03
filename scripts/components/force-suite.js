@@ -121,7 +121,7 @@ export class ForceSuiteComponent {
             </button>
           ` : `
             <button class="regain-one" data-act="regainOne" data-power="${power.id}">
-              <i class="fas fa-undo"></i>
+              <i class="fas fa-rotate-left"></i>
             </button>
           `}
         </div>

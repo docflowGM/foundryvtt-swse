@@ -364,7 +364,7 @@ export class PathPreview {
  */
 export function generatePathPreviewHtml(preview) {
     const statusClass = `status-${preview.status}`;
-    const statusIcon = preview.status === 'qualified' ? 'fa-check-circle' :
+    const statusIcon = preview.status === 'qualified' ? 'fa-circle-check' :
                        preview.status === 'reachable' ? 'fa-clock' : 'fa-hourglass-half';
 
     let html = `

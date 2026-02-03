@@ -6,7 +6,7 @@
     </div>
     <div class="header-actions">
       <button class="refresh-analysis" title="Refresh Analysis">
-        <i class="fas fa-sync-alt"></i>
+        <i class="fas fa-arrows-rotate"></i>
       </button>
       <button class="copy-json" title="Copy JSON to Clipboard">
         <i class="fas fa-copy"></i>
@@ -48,9 +48,9 @@
           <h3><i class="fas fa-atom"></i> Force Focus</h3>
           <div class="force-focus {{#if forceFocus}}active{{/if}}">
             {{#if forceFocus}}
-            <i class="fas fa-check-circle"></i> Force-Focused
+            <i class="fas fa-circle-check"></i> Force-Focused
             {{else}}
-            <i class="fas fa-times-circle"></i> Non-Force
+            <i class="fas fa-circle-xmark"></i> Non-Force
             {{/if}}
           </div>
         </div>
@@ -231,7 +231,7 @@
         <div class="class-analysis-card {{#if qualified}}qualified{{else}}not-qualified{{/if}}">
           <div class="class-header">
             <h4>
-              {{#if qualified}}<i class="fas fa-check-circle"></i>{{else}}<i class="fas fa-times-circle"></i>{{/if}}
+              {{#if qualified}}<i class="fas fa-circle-check"></i>{{else}}<i class="fas fa-circle-xmark"></i>{{/if}}
               {{name}}
             </h4>
             <span class="synergy-score">Synergy: {{synergyScore}}</span>
