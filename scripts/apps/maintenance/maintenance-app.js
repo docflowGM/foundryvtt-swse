@@ -1,21 +1,25 @@
 // scripts/apps/maintenance/maintenance-app.js
 import { swseLogger } from "../../utils/logger.js";
-export class MaintenanceApp extends Application {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+import SWSEApplication from "../base/swse-application.js";
+
+export class MaintenanceApp extends SWSEApplication {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEApplication.DEFAULT_OPTIONS ?? {},
+    {
       id: "swse-maintenance",
       classes: ["swse", "swse-maintenance", "swse-app"],
       template: "systems/foundryvtt-swse/templates/apps/maintenance.hbs",
-      width: 600,
-      height: 400,
+      position: { width: 600, height: 400 },
       title: "SWSE Maintenance"
-    });
-  }
+    }
+  );
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    html.find('.swse-rest-short').on('click', () => this._onShortRest());
-    html.find('.swse-rest-long').on('click', () => this._onLongRest());
+  async _onRender(context, options) {
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
+
+    root.querySelector('.swse-rest-short')?.addEventListener('click', () => this._onShortRest());
+    root.querySelector('.swse-rest-long')?.addEventListener('click', () => this._onLongRest());
   }
 
   async _onShortRest() {

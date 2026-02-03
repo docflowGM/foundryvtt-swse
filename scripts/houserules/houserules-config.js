@@ -3,6 +3,7 @@
  * Main launcher UI for all houserule sub-menus.
  */
 
+import SWSEFormApplication from '../apps/base/swse-form-application.js';
 import {
   CharacterCreationMenu,
   AdvancementMenu,
@@ -14,22 +15,21 @@ import {
   CharacterRestrictionsMenu
 } from "./houserule-menus.js";
 
-export class HouserulesConfig extends FormApplication {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+export class HouserulesConfig extends SWSEFormApplication {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    {
       id: "swse-houserules-config",
       title: "SWSE House Rules Configuration",
-      template:
-        "systems/foundryvtt-swse/templates/apps/houserules/houserules-config.hbs",
-      width: 700,
-      height: 600,
+      template: "systems/foundryvtt-swse/templates/apps/houserules/houserules-config.hbs",
+      position: { width: 700, height: 600 },
       resizable: true,
       classes: ["swse", "houserules"]
-    });
-  }
+    }
+  );
 
   /** Prepare render context */
-  getData() {
+  async _prepareContext(options) {
     return {
       isGM: game.user.isGM,
       menus: [
@@ -85,22 +85,18 @@ export class HouserulesConfig extends FormApplication {
     };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
-    // Use native DOM API (No jQuery for V13+)
-    const container = html[0] ?? html;
-
-    container
-      .querySelectorAll(".houserule-menu-button")
-      .forEach((button) =>
-        button.addEventListener("click", (ev) =>
-          this._onOpenMenu(ev).catch((err) => {
-            console.error("SWSE | Failed to open houserule menu:", err);
-            ui.notifications.error("Failed to open menu. See console.");
-          })
-        )
-      );
+    root.querySelectorAll(".houserule-menu-button").forEach((button) =>
+      button.addEventListener("click", (ev) =>
+        this._onOpenMenu(ev).catch((err) => {
+          console.error("SWSE | Failed to open houserule menu:", err);
+          ui.notifications.error("Failed to open menu. See console.");
+        })
+      )
+    );
   }
 
   /**

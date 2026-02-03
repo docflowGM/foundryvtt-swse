@@ -3,7 +3,9 @@
  * Provides a searchable, filterable interface for browsing and importing nonheroic units
  */
 
-export class NonheroicUnitsBrowser extends Application {
+import SWSEApplication from "./base/swse-application.js";
+
+export class NonheroicUnitsBrowser extends SWSEApplication {
   constructor(options = {}) {
     super(options);
     this.units = [];
@@ -12,21 +14,21 @@ export class NonheroicUnitsBrowser extends Application {
     this.challengeLevelFilter = 'all';
   }
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    SWSEApplication.DEFAULT_OPTIONS ?? {},
+    {
       id: 'nonheroic-units-browser',
       title: 'Nonheroic Units Browser',
       template: 'systems/foundryvtt-swse/templates/apps/nonheroic-units-browser.hbs',
       classes: ['swse', 'nonheroic-browser', "swse-app"],
-      width: 800,
-      height: 700,
+      position: { width: 800, height: 700 },
       resizable: true,
       scrollY: ['.units-list'],
       tabs: [{ navSelector: '.tabs', contentSelector: '.content', initial: 'browse' }]
-    });
-  }
+    }
+  );
 
-  async getData() {
+  async _prepareContext(options) {
     // Load units data if not already loaded
     if (this.units.length === 0) {
       try {
@@ -56,29 +58,39 @@ export class NonheroicUnitsBrowser extends Application {
     };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
     // Search functionality
-    html.find('#unit-search').on('input', this._onSearch.bind(this));
+    const searchInput = root.querySelector('#unit-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', this._onSearch.bind(this));
+    }
 
     // Challenge level filter
-    html.find('#cl-filter').on('change', this._onFilterChange.bind(this));
+    const clFilter = root.querySelector('#cl-filter');
+    if (clFilter) {
+      clFilter.addEventListener('change', this._onFilterChange.bind(this));
+    }
 
     // Drag functionality for units
-    html.find('.unit-entry').each((i, el) => {
+    root.querySelectorAll('.unit-entry').forEach(el => {
       el.setAttribute('draggable', true);
       el.addEventListener('dragstart', this._onDragStart.bind(this), false);
+      el.addEventListener('click', this._onUnitClick.bind(this));
     });
 
-    // Click to view details
-    html.find('.unit-entry').on('click', this._onUnitClick.bind(this));
-
     // Import to compendium button
-    html.find('#import-all-btn').on('click', this._onImportAll.bind(this));
+    const importAllBtn = root.querySelector('#import-all-btn');
+    if (importAllBtn) {
+      importAllBtn.addEventListener('click', this._onImportAll.bind(this));
+    }
 
-    // Import selected button
-    html.find('.import-unit-btn').on('click', this._onImportUnit.bind(this));
+    // Import selected buttons
+    root.querySelectorAll('.import-unit-btn').forEach(el => {
+      el.addEventListener('click', this._onImportUnit.bind(this));
+    });
   }
 
   _onSearch(event) {
