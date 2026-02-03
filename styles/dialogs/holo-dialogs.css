@@ -1,3 +1,15 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   CSS LAYER DECLARATION (V13+ FUTURE-PROOFING)
+
+   Establishes layering order:
+   1. foundry — Untouched Foundry UI styles (lowest specificity)
+   2. swse    — SWSE system customizations (higher specificity)
+
+   Prevents: SWSE styles accidentally overriding critical Foundry rules
+   or losing to future Foundry v14+ changes.
+   ═════════════════════════════════════════════════════════════════════════ */
+@layer foundry, swse;
+
 /**
  * SWSE Holo-Themed Dialog Styling
  * Ensures consistent holo theme across all progression and suggestion engine dialogs
