@@ -3,7 +3,7 @@
  * Provides standardized defaults for all SWSE form-based windows
  * including Forge compatibility and consistent positioning
  */
-const { HandlebarsApplicationMixin, FormApplication } = foundry.applications.api;
+const { HandlebarsApplicationMixin } = foundry.applications.api;
 
 export default class SWSEFormApplication extends HandlebarsApplicationMixin(FormApplication) {
     /**
