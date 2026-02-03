@@ -429,8 +429,8 @@ export async function _onBackgroundFilterClick(event) {
  */
 export async function _applyBackgroundFilters(skillFilter, languageFilter) {
   // Extract the actual skill/language values
-  const skill = skillFilter.startsWith('skill:') ? skillFilter.substring(6) : null;
-  const language = languageFilter.startsWith('language:') ? languageFilter.substring(9) : null;
+  const skill = skillFilter && skillFilter.startsWith('skill:') ? skillFilter.substring(6) : null;
+  const language = languageFilter && languageFilter.startsWith('language:') ? languageFilter.substring(9) : null;
 
   if (!skill && !language) {
     // Reset filters
