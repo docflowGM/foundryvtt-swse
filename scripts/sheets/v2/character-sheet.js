@@ -1,4 +1,5 @@
 // scripts/sheets/v2/character-sheet.js
+const { HandlebarsApplicationMixin } = foundry.applications.api;
 import { ActorEngine } from "../../actors/engine/actor-engine.js";
 
 function markActiveConditionStep(root, actor) {
