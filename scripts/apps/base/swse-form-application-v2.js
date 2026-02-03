@@ -7,6 +7,8 @@ const { HandlebarsApplicationMixin } = foundry.applications.api;
 
 import { guardOnRender, validateTemplate } from '../../debug/appv2-probe.js';
 
+// FormApplication is available globally in Foundry
+
 export default class SWSEFormApplicationV2 extends HandlebarsApplicationMixin(FormApplication) {
     /**
      * Default options for SWSE V2 FormApplications
