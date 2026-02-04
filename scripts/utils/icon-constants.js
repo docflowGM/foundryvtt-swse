@@ -246,7 +246,7 @@ export const ICONS = Object.freeze({
  *   applyIcon(icon, 'info');
  *
  * @param {HTMLElement} element - Target element
- * @param {string} iconKey - Key from ICONS map
+ * @param {string|*} iconKey - Key from ICONS map (defensive: converts non-strings to string)
  */
 export function applyIcon(element, iconKey) {
   if (!element || !(element instanceof HTMLElement)) {
@@ -254,9 +254,12 @@ export function applyIcon(element, iconKey) {
     return;
   }
 
-  const classes = ICONS[iconKey];
+  // Defensive: ensure iconKey is a string
+  const key = typeof iconKey === 'string' ? iconKey : String(iconKey);
+
+  const classes = ICONS[key];
   if (!classes) {
-    console.warn(`[SWSE Icons] Unknown icon key: "${iconKey}". Available keys:`, Object.keys(ICONS));
+    console.warn(`[SWSE Icons] Unknown icon key: "${key}". Available keys:`, Object.keys(ICONS));
     return;
   }
 
@@ -285,9 +288,11 @@ export function createIcon(iconKey) {
  * Usage (in Handlebars):
  *   <i class="{{getIconClass 'info'}}"></i>
  *
- * @param {string} iconKey - Key from ICONS map
+ * @param {string|*} iconKey - Key from ICONS map (defensive: converts non-strings to string)
  * @returns {string} Full class string or empty string if not found
  */
 export function getIconClass(iconKey) {
-  return ICONS[iconKey] || "";
+  // Defensive: ensure iconKey is a string
+  const key = typeof iconKey === 'string' ? iconKey : String(iconKey);
+  return ICONS[key] || "";
 }
