@@ -5,7 +5,7 @@
 
       <!-- Back Button -->
       <button class="back-to-topics" type="button">
-        <i class="fas fa-arrow-left"></i> Back to Topics
+        <i class="{{getIconClass 'arrowLeft'}}"></i> Back to Topics
       </button>
 
       <!-- Mentor Header -->
@@ -55,10 +55,10 @@
       {{#if currentDialogue.showPathCommitment}}
       <div class="dialogue-actions">
         <button class="commit-path-btn" data-path="guardian" type="button">
-          <i class="fas fa-shield"></i> Commit to Guardian Path
+          <i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Commit to Guardian Path
         </button>
         <button class="commit-path-btn" data-path="striker" type="button">
-          <i class="fas fa-sword"></i> Commit to Striker Path
+          <i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Commit to Striker Path
         </button>
         <button class="commit-path-btn" data-path="controller" type="button">
           <i class="fas fa-wand-magic-sparkles"></i> Commit to Controller Path
@@ -69,7 +69,7 @@
       {{#if currentDialogue.showTargetClass}}
       <div class="dialogue-actions">
         <button class="set-target-class-btn" type="button">
-          <i class="fas fa-crown"></i> Set Prestige Target
+          <i class="{{getIconClass 'crown'}}"></i> Set Prestige Target
         </button>
       </div>
       {{/if}}
@@ -78,7 +78,7 @@
       {{#if currentDialogue.dspContext.saturation}}
         <div class="dsp-context {{currentDialogue.dspContext.band}}">
           <small>
-            <i class="fas fa-heart"></i>
+            <i class="{{getIconClass 'heart'}}"></i>
             Darkness Saturation: {{currentDialogue.dspContext.band}}
             ({{multiply currentDialogue.dspContext.saturation 100}}%)
           </small>
@@ -131,7 +131,7 @@
         {{/if}}
         {{#if mentorMemory.committedPath}}
           <div class="info-box committed">
-            <i class="fas fa-check"></i>
+            <i class="{{getIconClass 'check'}}"></i>
             <strong>Committed Path</strong>
             <span>{{mentorMemory.committedPath}}</span>
           </div>

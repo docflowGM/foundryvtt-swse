@@ -9,7 +9,7 @@
  <img src="{{mentor.portrait}}" alt="{{mentor.name}}" class="mentor-portrait" />
  {{else}}
  <div class="mentor-portrait-placeholder">
- <i class="fas fa-circle-user"></i>
+ <i class="{{getIconClass 'circle'}}-user"></i>
  </div>
  {{/if}}
  </div>
@@ -20,7 +20,7 @@
  <p class="mentor-dialogue-text">{{narratorComment}}</p>
  </div>
  <button type="button" class="ask-mentor-btn mentor-header-btn" title="Get mentor suggestions">
- <i class="fas fa-lightbulb"></i> Ask Your Mentor
+ <i class="{{getIconClass 'lightbulb'}}"></i> Ask Your Mentor
  </button>
  {{else}}
  <div class="mentor-header-info">
@@ -38,7 +38,7 @@
  <div class="free-build-controls">
  <label class="free-build-label">
  <input type="checkbox" class="free-build-toggle" {{checked freeBuild}}>
- <i class="fas fa-unlock-alt"></i> <strong>Free Build Mode</strong>
+ <i class="{{getIconClass 'unlockAlt'}}"></i> <strong>Free Build Mode</strong>
  <span class="hint-text">Skip validation and build freely</span>
  </label>
  </div>
@@ -151,13 +151,13 @@
  <div class="random-buttons-grid">
  <div>
  <button type="button" class="random-name-btn btn-secondary">
- <i class="fas fa-dice"></i> Random Name
+ <i class="{{getIconClass 'diceD6'}}"></i> Random Name
  </button>
  <span class="hint-text">Character name</span>
  </div>
  <div>
  <button type="button" class="random-droid-name-btn btn-secondary">
- <i class="fas fa-dice"></i> Random Droid Name
+ <i class="{{getIconClass 'diceD6'}}"></i> Random Droid Name
  </button>
  <span class="hint-text">Droid designation</span>
  </div>
@@ -181,7 +181,7 @@
 
  <div class="form-actions">
  <button type="button" class="next-step btn-primary">
- Next <i class="fas fa-arrow-right"></i>
+ Next <i class="{{getIconClass 'arrowRight'}}"></i>
  </button>
  </div>
  </section>
@@ -193,19 +193,19 @@
  <p class="hint">Choose whether you're creating a living being or a droid character.</p>
  <div class="type-grid">
  <button type="button" class="select-type choice-button" data-type="living">
- <i class="fas fa-user"></i>
+ <i class="{{getIconClass 'user'}}"></i>
  <h4>Living Being</h4>
  <p>Organic species with unique traits</p>
  </button>
  <button type="button" class="select-type choice-button" data-type="droid">
- <i class="fas fa-robot"></i>
+ <i class="{{getIconClass 'robot'}}"></i>
  <h4>Droid</h4>
  <p>Mechanical beings with specialized functions</p>
  </button>
  </div>
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  </div>
  </section>
@@ -223,7 +223,7 @@
    </div>
    <div class="holo-content">
      <div class="holo-speaker">
-       <i class="fas fa-robot"></i>
+       <i class="{{getIconClass 'robot'}}"></i>
        <span>SERAPHIM - SELF-AWARE AI</span>
      </div>
      <div class="holo-message">{{seraphimDialogue}}</div>
@@ -233,7 +233,7 @@
 
  <div class="import-option">
  <button type="button" class="import-droid-btn btn-primary">
- <i class="fas fa-download"></i> Import Existing Droid Type
+ <i class="{{getIconClass 'download'}}"></i> Import Existing Droid Type
  </button>
  <p class="import-hint">Or select a degree below to build from scratch</p>
  </div>
@@ -249,7 +249,7 @@
  </div>
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  </div>
  </section>
@@ -267,7 +267,7 @@
    </div>
    <div class="holo-content">
      <div class="holo-speaker">
-       <i class="fas fa-robot"></i>
+       <i class="{{getIconClass 'robot'}}"></i>
        <span>SERAPHIM - SELF-AWARE AI</span>
      </div>
      <div class="holo-message">{{seraphimDialogue}}</div>
@@ -321,7 +321,7 @@
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  </div>
  </section>
@@ -336,7 +336,7 @@
  {{!-- Species Filters --}}
  <div class="species-filters">
  <div class="filter-header">
- <i class="fas fa-filter"></i>
+ <i class="{{getIconClass 'PLACEHOLDER_'}}"></i>
  <span class="filter-title">Filter Species</span>
  <span class="filter-badge" style="display: none; background: #ff6b6b; color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-left: 8px;">0</span>
  </div>
@@ -380,7 +380,7 @@
  </div>
  <div class="filter-group">
  <button type="button" class="clear-species-filters btn-secondary">
- <i class="fas fa-times"></i> Clear Filters
+ <i class="{{getIconClass 'times'}}"></i> Clear Filters
  </button>
  </div>
  </div>
@@ -430,7 +430,7 @@
  {{!-- Add Near-Human option right after Human --}}
  {{#if (eq this.name "Human")}}
  <button type="button" class="open-near-human-builder choice-button near-human-card">
- <h4><i class="fas fa-dna"></i> Near-Human</h4>
+ <h4><i class="{{getIconClass 'dna'}}"></i> Near-Human</h4>
  <div class="species-size">
  <span class="size-label">Size: Medium</span>
  </div>
@@ -453,13 +453,13 @@
  <div class="species-overlay" id="species-overlay">
    <div class="species-card-expanded">
      <button type="button" class="species-close-btn" id="species-close-btn">
-       <i class="fas fa-times"></i>
+       <i class="{{getIconClass 'times'}}"></i>
      </button>
 
      {{!-- Ol' Salty Dialogue Banner --}}
      <div class="ol-salty-banner" id="ol-salty-banner">
        <div class="ol-salty-portrait">
-         <i class="fas fa-anchor"></i>
+         <i class="{{getIconClass 'anchor'}}"></i>
        </div>
        <div class="ol-salty-content">
          <div class="ol-salty-name">OL' SALTY</div>
@@ -507,13 +507,13 @@
 
      <div class="species-expanded-actions">
        <button type="button" class="species-back-btn" id="species-back-btn">
-         <i class="fas fa-arrow-left"></i> Back
+         <i class="{{getIconClass 'arrowLeft'}}"></i> Back
        </button>
        <button type="button" class="species-confirm-btn" id="species-confirm-btn">
-         <i class="fas fa-check"></i> Select Species
+         <i class="{{getIconClass 'check'}}"></i> Select Species
        </button>
        <button type="button" class="next-step species-next-btn" id="species-next-btn">
-         <i class="fas fa-arrow-right"></i> Next
+         <i class="{{getIconClass 'arrowRight'}}"></i> Next
        </button>
      </div>
    </div>
@@ -523,7 +523,7 @@
  <div class="species-overlay" id="near-human-overlay">
    <div class="species-card-expanded near-human-forge">
      <button type="button" class="species-close-btn" id="near-human-close-btn">
-       <i class="fas fa-times"></i>
+       <i class="{{getIconClass 'times'}}"></i>
      </button>
 
      <div class="species-expanded-header">
@@ -534,7 +534,7 @@
      <div class="near-human-sections">
        {{!-- Trait Selection --}}
        <section class="near-human-section traits-section">
-         <h3><i class="fas fa-dna"></i> Select One Trait</h3>
+         <h3><i class="{{getIconClass 'dna'}}"></i> Select One Trait</h3>
          <p class="section-hint">Choose one trait from the 24 official Near-Human Traits (per SWSE rules)</p>
          <div class="traits-scroll" id="traits-list">
            {{!-- Traits will be populated by JavaScript from near-human-traits.json --}}
@@ -546,7 +546,7 @@
 
        {{!-- Sacrifice Selection --}}
        <section class="near-human-section sacrifice-section">
-         <h3><i class="fas fa-arrows-left-right"></i> Choose What to Sacrifice</h3>
+         <h3><i class="{{getIconClass 'arrowsHorizontal'}}"></i> Choose What to Sacrifice</h3>
          <p class="section-hint">Your Near-Human trait replaces either a bonus Feat OR bonus Trained Skill</p>
          <div class="sacrifice-options" id="sacrifice-options">
            <label class="radio-label">
@@ -567,7 +567,7 @@
 
        {{!-- Optional Variants --}}
        <section class="near-human-section variants-section">
-         <h3><i class="fas fa-sparkles"></i> Optional Cosmetic Variants</h3>
+         <h3><i class="{{getIconClass 'sparkles'}}"></i> Optional Cosmetic Variants</h3>
          <p class="section-hint">Select 0-3 cosmetic variations (mostly cosmetic, GM discretion on mechanical effects)</p>
          <div class="variants-list" id="variants-list">
            {{!-- Variants will be populated by JavaScript from near-human-traits.json --}}
@@ -579,7 +579,7 @@
 
        {{!-- Ability Adjustment (if Ability Adjustment trait selected) --}}
        <section class="near-human-section ability-adjustment-section" id="ability-adjustment-section" style="display: none;">
-         <h3><i class="fas fa-chart-line"></i> Adjust Ability Scores</h3>
+         <h3><i class="{{getIconClass 'chartLine'}}"></i> Adjust Ability Scores</h3>
          <p class="section-hint">Customize each ability by ±1. Total adjustments must equal 0.</p>
          <div class="ability-adjustments" id="ability-adjustments">
            {{!-- Ability adjustment controls will be populated by JavaScript --}}
@@ -596,13 +596,13 @@
 
      <div class="species-expanded-actions">
        <button type="button" class="species-randomize-btn" id="near-human-randomize-btn" title="Randomly select trait, sacrifice, and variants">
-         <i class="fas fa-dice"></i> Randomize
+         <i class="{{getIconClass 'diceD6'}}"></i> Randomize
        </button>
        <button type="button" class="species-back-btn" id="near-human-back-btn">
-         <i class="fas fa-arrow-left"></i> Back
+         <i class="{{getIconClass 'arrowLeft'}}"></i> Back
        </button>
        <button type="button" class="species-confirm-btn" id="near-human-confirm-btn" disabled>
-         <i class="fas fa-check"></i> Confirm Near-Human
+         <i class="{{getIconClass 'check'}}"></i> Confirm Near-Human
        </button>
      </div>
    </div>
@@ -610,11 +610,11 @@
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  {{#if characterData.species}}
  <button type="button" class="next-step btn-primary">
- Next <i class="fas fa-arrow-right"></i>
+ Next <i class="{{getIconClass 'arrowRight'}}"></i>
  </button>
  {{/if}}
  </div>
@@ -626,7 +626,7 @@
  {{!-- Holographic Welcome Banner --}}
  <div class="holo-banner">
  <div class="holo-speaker">
- <i class="fas fa-volume-up"></i>
+ <i class="{{getIconClass 'volumeUp'}}"></i>
  <span class="speaker-name">RENDARR:</span>
  </div>
  <div class="holo-message">
@@ -637,7 +637,7 @@
  {{!-- Credit Balance Display (Prominent) --}}
  <div class="credit-wallet">
  <div class="wallet-header">
- <i class="fas fa-wallet"></i>
+ <i class="{{getIconClass 'wallet'}}"></i>
  <span>ACCOUNT BALANCE</span>
  </div>
  <div class="wallet-amount">
@@ -657,7 +657,7 @@
  </div>
  </div>
 <div class="balance-warning">
-<i class="fas fa-exclamation-triangle"></i>
+<i class="{{getIconClass 'exclamation'}}"></i>
 <span><strong>Note:</strong> Any remaining credits will be forfeited. You do not keep the balance once you proceed.</span>
 </div>
 
@@ -665,26 +665,26 @@
  <div class="holo-datapad">
  <nav class="shop-tabs">
  <button type="button" class="shop-tab active" data-tab="locomotion">
- <i class="fas fa-shoe-prints"></i>
+ <i class="{{getIconClass 'shoePrints'}}"></i>
  <span class="tab-label">Locomotion</span>
  <span class="required-badge">REQUIRED</span>
  </button>
  <button type="button" class="shop-tab" data-tab="processor">
- <i class="fas fa-microchip"></i>
+ <i class="{{getIconClass 'microchip'}}"></i>
  <span class="tab-label">Processors</span>
  <span class="required-badge">REQUIRED</span>
  </button>
  <button type="button" class="shop-tab" data-tab="appendages">
- <i class="fas fa-hand-paper"></i>
+ <i class="{{getIconClass 'handPaper'}}"></i>
  <span class="tab-label">Appendages</span>
  <span class="required-badge">REQUIRED</span>
  </button>
  <button type="button" class="shop-tab" data-tab="accessories">
- <i class="fas fa-tools"></i>
+ <i class="{{getIconClass 'tools'}}"></i>
  <span class="tab-label">Accessories</span>
  </button>
  <button type="button" class="shop-tab cart-tab" data-tab="cart">
- <i class="fas fa-shopping-cart"></i>
+ <i class="{{getIconClass 'cart'}}"></i>
  <span class="tab-label">Cart</span>
  <span class="cart-count" id="cart-count">2</span>
  </button>
@@ -694,7 +694,7 @@
  {{!-- Locomotion Tab --}}
  <div class="shop-panel active" data-panel="locomotion">
  <div class="panel-header">
- <h4><i class="fas fa-shoe-prints"></i> Locomotion Systems</h4>
+ <h4><i class="{{getIconClass 'shoePrints'}}"></i> Locomotion Systems</h4>
  <p class="panel-desc">Choose how your droid moves through the galaxy</p>
  </div>
  <div id="locomotion-list" class="product-grid"></div>
@@ -703,7 +703,7 @@
  {{!-- Processor Tab --}}
  <div class="shop-panel" data-panel="processor">
  <div class="panel-header">
- <h4><i class="fas fa-microchip"></i> Processor Units</h4>
+ <h4><i class="{{getIconClass 'microchip'}}"></i> Processor Units</h4>
  <p class="panel-desc">The brain of your droid. Heuristic processor included free.</p>
  </div>
  <div id="processor-list" class="product-grid"></div>
@@ -712,7 +712,7 @@
  {{!-- Appendages Tab --}}
  <div class="shop-panel" data-panel="appendages">
  <div class="panel-header">
- <h4><i class="fas fa-hand-paper"></i> Appendages</h4>
+ <h4><i class="{{getIconClass 'handPaper'}}"></i> Appendages</h4>
  <p class="panel-desc">Tools and manipulators. Two hands included free.</p>
  </div>
  <div id="appendages-list" class="product-grid"></div>
@@ -721,27 +721,27 @@
  {{!-- Accessories Tab --}}
  <div class="shop-panel" data-panel="accessories">
  <div class="panel-header">
- <h4><i class="fas fa-tools"></i> Accessories & Upgrades</h4>
+ <h4><i class="{{getIconClass 'tools'}}"></i> Accessories & Upgrades</h4>
  <p class="panel-desc">Enhance your droid with specialized equipment</p>
  </div>
  <nav class="accessory-tabs">
  <button type="button" class="accessory-tab active" data-accessorytab="armor">
- <i class="fas fa-shield-alt"></i> Armor
+ <i class="{{getIconClass 'shieldAlt'}}"></i> Armor
  </button>
  <button type="button" class="accessory-tab" data-accessorytab="communications">
- <i class="fas fa-broadcast-tower"></i> Comms
+ <i class="{{getIconClass 'broadcastTower'}}"></i> Comms
  </button>
  <button type="button" class="accessory-tab" data-accessorytab="sensors">
- <i class="fas fa-radar"></i> Sensors
+ <i class="{{getIconClass 'radar'}}"></i> Sensors
  </button>
  <button type="button" class="accessory-tab" data-accessorytab="shields">
- <i class="fas fa-shield-halved"></i> Shields
+ <i class="{{getIconClass 'shieldHalved'}}"></i> Shields
  </button>
  <button type="button" class="accessory-tab" data-accessorytab="translators">
- <i class="fas fa-language"></i> Translators
+ <i class="{{getIconClass 'language'}}"></i> Translators
  </button>
  <button type="button" class="accessory-tab" data-accessorytab="miscellaneous">
- <i class="fas fa-box"></i> Misc
+ <i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Misc
  </button>
  </nav>
  <div class="accessory-content">
@@ -769,18 +769,18 @@
  {{!-- Cart Tab --}}
  <div class="shop-panel cart-panel" data-panel="cart">
  <div class="panel-header">
- <h4><i class="fas fa-shopping-cart"></i> Your Cart</h4>
+ <h4><i class="{{getIconClass 'cart'}}"></i> Your Cart</h4>
  <p class="panel-desc">Review your droid configuration</p>
  </div>
 
  <div class="cart-container">
  <div class="cart-section">
  <h5 class="cart-section-title">
- <i class="fas fa-gift"></i> Included (Free)
+ <i class="{{getIconClass 'gift'}}"></i> Included (Free)
  </h5>
  <div class="cart-items">
  <div class="cart-item free-item">
- <div class="item-icon"><i class="fas fa-microchip"></i></div>
+ <div class="item-icon"><i class="{{getIconClass 'microchip'}}"></i></div>
  <div class="item-details">
  <div class="item-name">Heuristic Processor</div>
  <div class="item-specs">Standard droid brain unit</div>
@@ -790,7 +790,7 @@
  </div>
  </div>
  <div class="cart-item free-item">
- <div class="item-icon"><i class="fas fa-hand-paper"></i></div>
+ <div class="item-icon"><i class="{{getIconClass 'handPaper'}}"></i></div>
  <div class="item-details">
  <div class="item-name">Hand Appendages (×2)</div>
  <div class="item-specs">Basic manipulators</div>
@@ -804,11 +804,11 @@
 
  <div class="cart-section" id="cart-purchased-section">
  <h5 class="cart-section-title">
- <i class="fas fa-shopping-bag"></i> Purchased Systems
+ <i class="{{getIconClass 'shoppingBag'}}"></i> Purchased Systems
  </h5>
  <div class="cart-items" id="cart-items-list">
  <div class="cart-empty-message">
- <i class="fas fa-box-open"></i>
+ <i class="{{getIconClass 'boxOpen'}}"></i>
  <p>No systems added yet. Browse the shop to customize your droid!</p>
  </div>
  </div>
@@ -834,7 +834,7 @@
 
  <div class="cart-validation" id="cart-validation">
  <div class="validation-item" id="validation-locomotion">
- <i class="fas fa-circle-exclamation"></i>
+ <i class="{{getIconClass 'circle'}}-exclamation"></i>
  <span>Locomotion system required</span>
  </div>
  </div>
@@ -845,13 +845,13 @@
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  <button type="button" class="build-later-droid btn-tertiary" id="droid-builder-later">
- Build Later <i class="fas fa-hourglass-end"></i>
+ Build Later <i class="{{getIconClass 'hourglassEnd'}}"></i>
  </button>
  <button type="button" class="next-step btn-primary" id="droid-builder-next">
- Next <i class="fas fa-arrow-right"></i>
+ Next <i class="{{getIconClass 'arrowRight'}}"></i>
  </button>
  </div>
  </section>
@@ -866,14 +866,14 @@
  {{!-- Filter and Random Background Buttons --}}
  <div class="background-controls">
  <button type="button" class="background-filter-btn btn-secondary">
- <i class="fas fa-search"></i> Filter by Skill
+ <i class="{{getIconClass 'search'}}"></i> Filter by Skill
  </button>
  {{#unless characterData.background}}
  <button type="button" class="random-background-btn btn-secondary">
- <i class="fas fa-dice"></i> Random Background
+ <i class="{{getIconClass 'diceD6'}}"></i> Random Background
  </button>
  <button type="button" class="ask-mentor-background-btn btn-secondary">
- <i class="fas fa-user"></i> Ask Mentor
+ <i class="{{getIconClass 'user'}}"></i> Ask Mentor
  </button>
  {{/unless}}
  </div>
@@ -881,15 +881,15 @@
  {{!-- Category Tabs --}}
  <div class="background-category-tabs">
  <button type="button" class="background-category-tab {{#if (eq characterData.backgroundCategory 'events')}}active{{else}}{{#unless characterData.backgroundCategory}}active{{/unless}}{{/if}}" data-category="events">
- <i class="fas fa-bolt"></i>
+ <i class="{{getIconClass 'bolt'}}"></i>
  <span>Defining Events</span>
  </button>
  <button type="button" class="background-category-tab {{#if (eq characterData.backgroundCategory 'occupations')}}active{{/if}}" data-category="occupations">
- <i class="fas fa-briefcase"></i>
+ <i class="{{getIconClass 'briefcase'}}"></i>
  <span>Past Occupations</span>
  </button>
  <button type="button" class="background-category-tab {{#if (eq characterData.backgroundCategory 'planets')}}active{{/if}}" data-category="planets">
- <i class="fas fa-globe"></i>
+ <i class="{{getIconClass 'globe'}}"></i>
  <span>Planet of Origin</span>
  </button>
  </div>
@@ -899,7 +899,7 @@
  <div class="homebrew-toggle-container">
  <label class="homebrew-toggle-label">
  <input type="checkbox" class="allow-homebrew-toggle" {{checked characterData.allowHomebrewPlanets}}>
- <i class="fas fa-flask"></i> <strong>Allow Homebrew Planets</strong>
+ <i class="{{getIconClass 'flask'}}"></i> <strong>Allow Homebrew Planets</strong>
  <span class="hint-text">Include additional planet options beyond core rulebook</span>
  </label>
  </div>
@@ -946,11 +946,11 @@
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  {{#if characterData.background}}
  <button type="button" class="next-step btn-primary">
- Next <i class="fas fa-arrow-right"></i>
+ Next <i class="{{getIconClass 'arrowRight'}}"></i>
  </button>
  {{/if}}
  </div>
@@ -965,22 +965,22 @@
 
  <div class="ability-header">
  <button type="button" id="free-build-btn" class="free-build-button">
- <i class="fas fa-pen"></i> Free Build (Manual Entry)
+ <i class="{{getIconClass 'edit'}}"></i> Free Build (Manual Entry)
  </button>
  <p class="method-hint">GM's Setting: <strong>{{methodLabels.[abilityMethod]}}</strong></p>
  </div>
  <div class="ability-methods">
  <button type="button" id="pb-init" class="method-button">
- <i class="fas fa-calculator"></i> Point Buy ({{pointBuyPool}} points)
+ <i class="{{getIconClass 'calculator'}}"></i> Point Buy ({{pointBuyPool}} points)
  </button>
  <button type="button" id="std-roll-btn" class="method-button">
- <i class="fas fa-dice"></i> Standard Roll (4d6 drop lowest)
+ <i class="{{getIconClass 'diceD6'}}"></i> Standard Roll (4d6 drop lowest)
  </button>
  <button type="button" id="org-roll-btn" class="method-button">
- <i class="fas fa-dice-d20"></i> Organic Roll (24d6)
+ <i class="{{getIconClass 'diceD20'}}"></i> Organic Roll (24d6)
  </button>
 <button type="button" id="array-btn" class="method-button">
-<i class="fas fa-list"></i> Array (High or Standard)
+<i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Array (High or Standard)
 </button>
  </div>
 
@@ -1056,10 +1056,10 @@
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  <button type="button" class="next-step btn-primary">
- Next <i class="fas fa-arrow-right"></i>
+ Next <i class="{{getIconClass 'arrowRight'}}"></i>
  </button>
  </div>
  </section>
@@ -1068,7 +1068,7 @@
  {{#if (eq currentStep "class")}}
  <section class="step-class">
  <header class="creator-header">
- <h1><i class="fas fa-star"></i> Choose Your Path</h1>
+ <h1><i class="{{getIconClass 'star'}}"></i> Choose Your Path</h1>
  <p class="subtitle">Select your character's class</p>
  </header>
 
@@ -1103,11 +1103,11 @@
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  {{#if (gt characterData.classes.length 0)}}
  <button type="button" class="next-step btn-primary">
- Next <i class="fas fa-arrow-right"></i>
+ Next <i class="{{getIconClass 'arrowRight'}}"></i>
  </button>
  {{/if}}
  </div>
@@ -1252,11 +1252,11 @@
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  {{#if (gte characterData.feats.length characterData.featsRequired)}}
  <button type="button" class="next-step btn-primary">
- Next <i class="fas fa-arrow-right"></i>
+ Next <i class="{{getIconClass 'arrowRight'}}"></i>
  </button>
  {{/if}}
  </div>
@@ -1315,7 +1315,7 @@
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  </div>
  {{!-- Step 2: Select Talent from Tree with Graph View --}}
@@ -1323,17 +1323,17 @@
  <h3>{{selectedTalentTree}} Tree</h3>
  <div class="talent-view-toggle">
  <button type="button" class="talent-view-btn active" data-view="graph" title="Graph View">
- <i class="fas fa-project-diagram"></i> Graph
+ <i class="{{getIconClass 'projectDiagram'}}"></i> Graph
  </button>
  <button type="button" class="talent-view-btn" data-view="list" title="List View">
- <i class="fas fa-list"></i> List
+ <i class="{{getIconClass 'PLACEHOLDER_'}}"></i> List
  </button>
  </div>
  </div>
 
  {{!-- Graph View --}}
  <div class="talent-tree-graph-container" data-tree="{{selectedTalentTree}}">
- <p class="loading-graph"><i class="fas fa-spinner fa-spin"></i> Loading talent tree...</p>
+ <p class="loading-graph"><i class="{{getIconClass 'spinner'}} fa-spin"></i> Loading talent tree...</p>
  </div>
 
  {{!-- List View (hidden by default) --}}
@@ -1363,7 +1363,7 @@
 
  <div class="form-actions">
  <button type="button" class="back-to-talent-trees btn-secondary">
- <i class="fas fa-arrow-left"></i> Back to Talent Trees
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Back to Talent Trees
  </button>
  </div>
  {{/unless}}
@@ -1371,11 +1371,11 @@
  {{!-- Next button - shown when enough talents selected --}}
  <div class="form-actions talents-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  {{#if (gte characterData.talents.length characterData.talentsRequired)}}
  <button type="button" class="next-step btn-primary">
- Next <i class="fas fa-arrow-right"></i>
+ Next <i class="{{getIconClass 'arrowRight'}}"></i>
  </button>
  {{else}}
  <span class="selection-hint">Select {{characterData.talentsRequired}} talent(s) to continue</span>
@@ -1425,14 +1425,14 @@
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  <button type="button" class="ask-mentor-force-power-suggestion btn-mentor" title="Get a suggestion from your mentor">
- <i class="fas fa-star"></i> Ask for Guidance
+ <i class="{{getIconClass 'star'}}"></i> Ask for Guidance
  </button>
  {{#if (gte characterData.powers.length characterData.forcePowersRequired)}}
  <button type="button" class="next-step btn-primary">
- Next <i class="fas fa-arrow-right"></i>
+ Next <i class="{{getIconClass 'arrowRight'}}"></i>
  </button>
  {{/if}}
  </div>
@@ -1480,11 +1480,11 @@
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  {{#if (gte characterData.starshipManeuvers.length characterData.starshipManeuversRequired)}}
  <button type="button" class="next-step btn-primary">
- Next <i class="fas fa-arrow-right"></i>
+ Next <i class="{{getIconClass 'arrowRight'}}"></i>
  </button>
  {{/if}}
  </div>
@@ -1549,11 +1549,11 @@
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  {{#if (gte characterData.trainedSkillsCount characterData.trainedSkillsAllowed)}}
  <button type="button" class="next-step btn-primary">
- Next <i class="fas fa-arrow-right"></i>
+ Next <i class="{{getIconClass 'arrowRight'}}"></i>
  </button>
  {{/if}}
  </div>
@@ -1573,7 +1573,7 @@
  <div class="language-counter-box">
  {{#if (gt characterData.languageData.additional 0)}}
  <div class="counter-display">
- <i class="fas fa-language"></i>
+ <i class="{{getIconClass 'language'}}"></i>
  <span class="counter-text">Languages Remaining:</span>
  <span class="counter-value">{{subtract (add characterData.languageData.granted.length characterData.languageData.additional) characterData.languages.length}}</span>
  /
@@ -1597,7 +1597,7 @@
 
  {{!-- Automatic/Granted Languages Section --}}
  <div class="granted-languages-section">
- <h4><i class="fas fa-gift"></i> Automatic Languages</h4>
+ <h4><i class="{{getIconClass 'gift'}}"></i> Automatic Languages</h4>
  <p class="section-description">These languages are automatically granted by your species.</p>
  <div class="granted-languages-list">
  {{#each characterData.languageData.granted}}
@@ -1610,7 +1610,7 @@
  </div>
  {{#if (gt characterData.languageData.understands.length 0)}}
  <div class="understands-languages">
- <p><i class="fas fa-ear-listen"></i> <strong>Understands Only:</strong> {{#each characterData.languageData.understands}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p>
+ <p><i class="{{getIconClass 'ear'}}"></i> <strong>Understands Only:</strong> {{#each characterData.languageData.understands}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p>
  </div>
  {{/if}}
  </div>
@@ -1618,14 +1618,14 @@
  {{!-- Selected Additional Languages --}}
  {{#if (gt characterData.languageData.additional 0)}}
  <div class="selected-additional-languages-section">
- <h4><i class="fas fa-star"></i> Selected Additional Languages</h4>
+ <h4><i class="{{getIconClass 'star'}}"></i> Selected Additional Languages</h4>
  {{#each characterData.languages}}
  {{#unless (contains ../characterData.languageData.granted this)}}
  <div class="language-item selected">
  <i class="{{getIconClass 'success'}}"></i>
  <span class="language-name">{{this}}</span>
  <button type="button" class="remove-language" data-language="{{this}}" title="Remove language">
- <i class="fas fa-times"></i>
+ <i class="{{getIconClass 'times'}}"></i>
  </button>
  </div>
  {{/unless}}
@@ -1637,13 +1637,13 @@
 
  {{!-- Available Languages to Choose --}}
  <div class="available-languages-section">
- <h4><i class="fas fa-globe"></i> Available Languages</h4>
+ <h4><i class="{{getIconClass 'globe'}}"></i> Available Languages</h4>
 
  {{!-- Widely Used Languages First --}}
  {{#if languageCategories.widelyUsed}}
  <div class="language-category">
  <h5 class="category-name">
- <i class="fas fa-star"></i> {{languageCategories.widelyUsed.name}}
+ <i class="{{getIconClass 'star'}}"></i> {{languageCategories.widelyUsed.name}}
  </h5>
  <p class="category-description">{{languageCategories.widelyUsed.description}}</p>
  <div class="languages-grid">
@@ -1666,7 +1666,7 @@
  {{#if languageCategories.localTrade}}
  <div class="language-category">
  <h5 class="category-name">
- <i class="fas fa-map-marked-alt"></i> {{languageCategories.localTrade.name}}
+ <i class="{{getIconClass 'mapMarkedAlt'}}"></i> {{languageCategories.localTrade.name}}
  </h5>
  <p class="category-description">{{languageCategories.localTrade.description}}</p>
  <div class="languages-grid">
@@ -1690,10 +1690,10 @@
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  <button type="button" class="next-step btn-primary">
- Next <i class="fas fa-arrow-right"></i>
+ Next <i class="{{getIconClass 'arrowRight'}}"></i>
  </button>
  </div>
  </section>
@@ -1704,7 +1704,7 @@
  {{!-- Header --}}
  <div class="holo-banner">
  <div class="holo-speaker">
- <i class="fas fa-microchip"></i>
+ <i class="{{getIconClass 'microchip'}}"></i>
  <span class="speaker-name">FINAL DROID CUSTOMIZATION:</span>
  </div>
  <div class="holo-message">
@@ -1715,7 +1715,7 @@
  {{!-- Credits including class/background bonuses --}}
  <div class="credit-wallet final-credits-wallet">
  <div class="wallet-header">
- <i class="fas fa-wallet"></i>
+ <i class="{{getIconClass 'wallet'}}"></i>
  <span>FINAL CREDIT ALLOCATION</span>
  </div>
  <div class="wallet-amount">
@@ -1738,7 +1738,7 @@
  </div>
  </div>
 <div class="balance-warning">
-<i class="fas fa-exclamation-triangle"></i>
+<i class="{{getIconClass 'exclamation'}}"></i>
 <span><strong>Note:</strong> Any remaining credits will be forfeited. You do not keep the balance once you proceed.</span>
 </div>
  </div>
@@ -1746,11 +1746,11 @@
  {{!-- Droid Builder Interface (reuse same UI) --}}
  <div id="droid-final-builder" class="holo-datapad">
  <nav class="shop-tabs">
- <button type="button" class="shop-tab active" data-tab="locomotion"><i class="fas fa-shoe-prints"></i> Locomotion</button>
- <button type="button" class="shop-tab" data-tab="processor"><i class="fas fa-microchip"></i> Processors</button>
- <button type="button" class="shop-tab" data-tab="appendages"><i class="fas fa-hand-paper"></i> Appendages</button>
- <button type="button" class="shop-tab" data-tab="accessories"><i class="fas fa-tools"></i> Accessories</button>
- <button type="button" class="shop-tab cart-tab" data-tab="cart"><i class="fas fa-shopping-cart"></i> Cart</button>
+ <button type="button" class="shop-tab active" data-tab="locomotion"><i class="{{getIconClass 'shoePrints'}}"></i> Locomotion</button>
+ <button type="button" class="shop-tab" data-tab="processor"><i class="{{getIconClass 'microchip'}}"></i> Processors</button>
+ <button type="button" class="shop-tab" data-tab="appendages"><i class="{{getIconClass 'handPaper'}}"></i> Appendages</button>
+ <button type="button" class="shop-tab" data-tab="accessories"><i class="{{getIconClass 'tools'}}"></i> Accessories</button>
+ <button type="button" class="shop-tab cart-tab" data-tab="cart"><i class="{{getIconClass 'cart'}}"></i> Cart</button>
  </nav>
  <div class="shop-content">
  <div class="shop-panel active" data-panel="locomotion"><div id="locomotion-list" class="product-grid"></div></div>
@@ -1758,12 +1758,12 @@
  <div class="shop-panel" data-panel="appendages"><div id="appendages-list" class="product-grid"></div></div>
  <div class="shop-panel" data-panel="accessories">
  <nav class="accessory-tabs">
- <button type="button" class="accessory-tab active" data-accessorytab="armor"><i class="fas fa-shield-alt"></i> Armor</button>
- <button type="button" class="accessory-tab" data-accessorytab="communications"><i class="fas fa-broadcast-tower"></i> Comms</button>
- <button type="button" class="accessory-tab" data-accessorytab="sensors"><i class="fas fa-radar"></i> Sensors</button>
- <button type="button" class="accessory-tab" data-accessorytab="shields"><i class="fas fa-shield-halved"></i> Shields</button>
- <button type="button" class="accessory-tab" data-accessorytab="translators"><i class="fas fa-language"></i> Translators</button>
- <button type="button" class="accessory-tab" data-accessorytab="miscellaneous"><i class="fas fa-box"></i> Misc</button>
+ <button type="button" class="accessory-tab active" data-accessorytab="armor"><i class="{{getIconClass 'shieldAlt'}}"></i> Armor</button>
+ <button type="button" class="accessory-tab" data-accessorytab="communications"><i class="{{getIconClass 'broadcastTower'}}"></i> Comms</button>
+ <button type="button" class="accessory-tab" data-accessorytab="sensors"><i class="{{getIconClass 'radar'}}"></i> Sensors</button>
+ <button type="button" class="accessory-tab" data-accessorytab="shields"><i class="{{getIconClass 'shieldHalved'}}"></i> Shields</button>
+ <button type="button" class="accessory-tab" data-accessorytab="translators"><i class="{{getIconClass 'language'}}"></i> Translators</button>
+ <button type="button" class="accessory-tab" data-accessorytab="miscellaneous"><i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Misc</button>
  </nav>
  <div class="accessory-content">
  <div class="accessory-panel active" data-accessory-panel="armor"><div id="accessories-armor" class="product-grid"></div></div>
@@ -1784,17 +1784,17 @@
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  <button type="button" class="next-step btn-primary" id="droid-final-next">
- Next <i class="fas fa-arrow-right"></i>
+ Next <i class="{{getIconClass 'arrowRight'}}"></i>
  </button>
  </div>
  {{/if}}
 
  {{#if (eq currentStep "summary")}}
  <section class="step-summary">
- <h3><i class="fas fa-scroll"></i> Character Summary</h3>
+ <h3><i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Character Summary</h3>
  <p class="summary-intro">Review your character before finalizing. Click "Create Character" to proceed to equipment shopping.</p>
 
 
@@ -1811,7 +1811,7 @@
  <div class="summary-grid">
  {{!-- Basic Information --}}
  <div class="summary-card">
- <h4><i class="fas fa-user"></i> Basic Information</h4>
+ <h4><i class="{{getIconClass 'user'}}"></i> Basic Information</h4>
  <dl class="summary-list">
  <dt>Name:</dt>
  <dd><strong>{{characterData.name}}</strong></dd>
@@ -1831,7 +1831,7 @@
 
  {{!-- Classes --}}
  <div class="summary-card">
- <h4><i class="fas fa-graduation-cap"></i> Classes</h4>
+ <h4><i class="{{getIconClass 'graduationCap'}}"></i> Classes</h4>
  <ul class="summary-list-items">
  {{#each characterData.classes}}
  <li><strong>{{this.name}}</strong> (Level {{this.level}})</li>
@@ -1841,7 +1841,7 @@
 
  {{!-- Ability Scores --}}
  <div class="summary-card">
- <h4><i class="fas fa-chart-line"></i> Ability Scores</h4>
+ <h4><i class="{{getIconClass 'chartLine'}}"></i> Ability Scores</h4>
  <div class="abilities-grid">
  {{#each characterData.abilities}}
  <div class="ability-box">
@@ -1856,7 +1856,7 @@
  {{!-- Languages --}}
  {{#if characterData.languages}}
  <div class="summary-card">
- <h4><i class="fas fa-language"></i> Languages</h4>
+ <h4><i class="{{getIconClass 'language'}}"></i> Languages</h4>
  <div class="language-chips">
  {{#each characterData.languages}}
  <span class="language-chip">{{this}}</span>
@@ -1867,7 +1867,7 @@
 
  {{!-- Trained Skills --}}
  <div class="summary-card">
- <h4><i class="fas fa-tools"></i> Trained Skills</h4>
+ <h4><i class="{{getIconClass 'tools'}}"></i> Trained Skills</h4>
  <ul class="summary-list-items">
  {{#each characterData.skills}}
  {{#if this.trained}}
@@ -1882,7 +1882,7 @@
 
  {{!-- Feats --}}
  <div class="summary-card">
- <h4><i class="fas fa-award"></i> Feats ({{characterData.feats.length}})</h4>
+ <h4><i class="{{getIconClass 'award'}}"></i> Feats ({{characterData.feats.length}})</h4>
  <ul class="summary-list-items">
  {{#each characterData.feats}}
  <li>{{this.name}}</li>
@@ -1896,7 +1896,7 @@
  {{!-- Talents --}}
  {{#if characterData.talents}}
  <div class="summary-card">
- <h4><i class="fas fa-star"></i> Talents ({{characterData.talents.length}})</h4>
+ <h4><i class="{{getIconClass 'star'}}"></i> Talents ({{characterData.talents.length}})</h4>
  <ul class="summary-list-items">
  {{#each characterData.talents}}
  <li>{{this.name}}</li>
@@ -1910,7 +1910,7 @@
 
  {{!-- Defense Stats --}}
  <div class="summary-card">
- <h4><i class="fas fa-shield-alt"></i> Defenses</h4>
+ <h4><i class="{{getIconClass 'shieldAlt'}}"></i> Defenses</h4>
  <dl class="summary-list">
  <dt>Fortitude:</dt>
  <dd>{{characterData.defenses.fort.total}}</dd>
@@ -1923,7 +1923,7 @@
 
  {{!-- Combat Stats --}}
  <div class="summary-card">
- <h4><i class="fas fa-crosshairs"></i> Combat Stats</h4>
+ <h4><i class="{{getIconClass 'target'}}"></i> Combat Stats</h4>
  <dl class="summary-list">
  <dt>Hit Points:</dt>
  <dd>{{characterData.hp.max}}</dd>
@@ -1941,14 +1941,14 @@
  {{#if characterData.startingCreditsFormula}}
  <div class="starting-credits-section">
  <div class="credits-card">
- <h4><i class="fas fa-coins"></i> Starting Credits</h4>
+ <h4><i class="{{getIconClass 'coins'}}"></i> Starting Credits</h4>
 
  {{#if characterData.creditsChosen}}
  {{!-- Credits already chosen --}}
  <div class="credits-result">
  <p class="credits-formula-display">Formula: {{characterData.startingCreditsFormula.formulaString}}</p>
  <div class="credits-chosen-display">
- <i class="fas fa-circle-check" style="color: #4caf50;"></i>
+ <i class="{{getIconClass 'success'}}" style="color: #4caf50;"></i>
  <p><strong>{{characterData.credits}}</strong> credits</p>
  </div>
  <button type="button" class="reroll-credits-btn btn-secondary">
@@ -1962,16 +1962,16 @@
  Your {{characterData.classes.0.name}} class grants starting credits based on the following formula:
  </p>
  <div class="credits-formula">
- <i class="fas fa-dice"></i>
+ <i class="{{getIconClass 'diceD6'}}"></i>
  <span class="formula-text">{{characterData.startingCreditsFormula.formulaString}}</span>
  </div>
  <p class="credits-prompt">Choose how to determine your starting wealth:</p>
  <div class="credits-buttons">
  <button type="button" class="roll-credits-btn btn-primary">
- <i class="fas fa-dice-d20"></i> Roll for Credits
+ <i class="{{getIconClass 'diceD20'}}"></i> Roll for Credits
  </button>
  <button type="button" class="take-max-credits-btn btn-secondary">
- <i class="fas fa-arrow-up"></i> Take Maximum ({{characterData.startingCreditsFormula.maxPossible}} cr)
+ <i class="{{getIconClass 'arrowUp'}}"></i> Take Maximum ({{characterData.startingCreditsFormula.maxPossible}} cr)
  </button>
  </div>
  </div>
@@ -1996,10 +1996,10 @@
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Previous
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Previous
  </button>
  <button type="button" class="next-step btn-primary">
- <i class="fas fa-check"></i> Create Character & Shop
+ <i class="{{getIconClass 'check'}}"></i> Create Character & Shop
  </button>
  </div>
  </section>
@@ -2011,7 +2011,7 @@
  {{!-- Holographic Welcome Banner --}}
  <div class="holo-banner">
  <div class="holo-speaker">
- <i class="fas fa-volume-up"></i>
+ <i class="{{getIconClass 'volumeUp'}}"></i>
  <span class="speaker-name">RENDARR:</span>
  </div>
  <div class="holo-message">
@@ -2022,34 +2022,34 @@
  <div class="shop-intro">
  <p>Your character has been created! Now you can spend your starting credits on equipment, weapons, and gear.</p>
  <p class="credits-available">
- <i class="fas fa-wallet"></i>
+ <i class="{{getIconClass 'wallet'}}"></i>
  <strong>Available Credits:</strong> <span class="credits-value">{{characterData.credits}}</span> cr
  </p>
  </div>
 
  <div class="shop-options">
  <div class="shop-option-card">
- <i class="fas fa-store"></i>
+ <i class="{{getIconClass 'store'}}"></i>
  <h4>Browse the Marketplace</h4>
  <p>Purchase weapons, armor, equipment, and more from the Galactic Trade Exchange.</p>
  <button type="button" class="open-shop-btn btn-primary">
- <i class="fas fa-shopping-cart"></i> Open Shop
+ <i class="{{getIconClass 'cart'}}"></i> Open Shop
  </button>
  </div>
 
  <div class="shop-option-card">
- <i class="fas fa-forward"></i>
+ <i class="{{getIconClass 'forward'}}"></i>
  <h4>Skip for Now</h4>
  <p>You can always access the shop later from your character sheet.</p>
  <button type="button" class="finish btn-secondary">
- <i class="fas fa-check"></i> Complete Character Creation
+ <i class="{{getIconClass 'check'}}"></i> Complete Character Creation
  </button>
  </div>
  </div>
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
- <i class="fas fa-arrow-left"></i> Back to Summary
+ <i class="{{getIconClass 'arrowLeft'}}"></i> Back to Summary
  </button>
  </div>
  </section>

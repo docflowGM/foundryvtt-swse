@@ -12,11 +12,11 @@
 
         <div class="feat-card-header" data-expand="{{feat.key}}">
           <div class="feat-icon">
-            <i class="{{#if feat.toggleable}}fas fa-toggle-on{{else if feat.variable}}fas fa-sliders-h{{else}}fas fa-fist-raised{{/if}}"></i>
+            <i class="{{#if feat.toggleable}}fas fa-toggle-on{{else if feat.variable}}{{getIconClass 'slidersH'}}{{else}}{{getIconClass 'fist'}}{{/if}}"></i>
           </div>
           <div class="feat-title">{{feat.name}}</div>
           <div class="feat-type-label">{{feat.typeLabel}}</div>
-          <div class="feat-expand-icon"><i class="fas fa-chevron-down"></i></div>
+          <div class="feat-expand-icon"><i class="{{getIconClass 'chevronDown'}}"></i></div>
         </div>
 
         <div class="feat-card-body" id="feat-body-{{feat.key}}">
@@ -25,7 +25,7 @@
 
             {{#if feat.notes}}
             <div class="feat-notes">
-              <i class="fas fa-circle-info"></i> {{feat.notes}}
+              <i class="{{getIconClass 'info'}}"></i> {{feat.notes}}
             </div>
             {{/if}}
 
@@ -58,7 +58,7 @@
             {{!-- Source info --}}
             {{#if feat.source}}
             <div class="feat-source">
-              <i class="fas fa-book"></i> Source: {{feat.source}}
+              <i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Source: {{feat.source}}
             </div>
             {{/if}}
 
@@ -78,7 +78,7 @@
   {{else}}
 
     <p class="feat-actions-empty">
-      <i class="fas fa-scroll"></i>
+      <i class="{{getIconClass 'PLACEHOLDER_'}}"></i>
       No feat actions available. Gain feats to unlock special combat abilities!
     </p>
 

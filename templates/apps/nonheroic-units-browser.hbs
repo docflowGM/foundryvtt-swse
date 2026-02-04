@@ -6,7 +6,7 @@
 
   <div class="browser-controls">
     <div class="search-box">
-      <i class="fas fa-search"></i>
+      <i class="{{getIconClass 'search'}}"></i>
       <input type="text" id="unit-search" placeholder="Search by name or type..." value="{{searchTerm}}">
     </div>
 
@@ -27,7 +27,7 @@
 
   <div class="browser-actions">
     <button type="button" id="import-all-btn" class="import-btn">
-      <i class="fas fa-file-import"></i> Bulk Import to Compendium
+      <i class="{{getIconClass 'fileImport'}}"></i> Bulk Import to Compendium
     </button>
   </div>
 
@@ -57,9 +57,9 @@
           </div>
           <div class="unit-actions">
             <button type="button" class="import-unit-btn" title="Import to Compendium">
-              <i class="fas fa-download"></i>
+              <i class="{{getIconClass 'download'}}"></i>
             </button>
-            <i class="fas fa-grip-vertical drag-handle" title="Drag onto NPC sheet"></i>
+            <i class="{{getIconClass 'gripVertical'}} drag-handle" title="Drag onto NPC sheet"></i>
           </div>
         </div>
       {{/each}}

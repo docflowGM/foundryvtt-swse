@@ -26,7 +26,7 @@
         </ul>
       </div>
       <button type="button" class="preset-action" data-action="apply-preset" data-preset="core">
-        <i class="fas fa-check"></i> {{#if (eq currentPreset "core")}}Active{{else}}Apply Preset{{/if}}
+        <i class="{{getIconClass 'check'}}"></i> {{#if (eq currentPreset "core")}}Active{{else}}Apply Preset{{/if}}
       </button>
     </div>
 
@@ -49,7 +49,7 @@
         </ul>
       </div>
       <button type="button" class="preset-action" data-action="apply-preset" data-preset="balanced">
-        <i class="fas fa-check"></i> {{#if (eq currentPreset "balanced")}}Active{{else}}Apply Preset{{/if}}
+        <i class="{{getIconClass 'check'}}"></i> {{#if (eq currentPreset "balanced")}}Active{{else}}Apply Preset{{/if}}
       </button>
     </div>
 
@@ -73,7 +73,7 @@
         </ul>
       </div>
       <button type="button" class="preset-action" data-action="apply-preset" data-preset="heroic">
-        <i class="fas fa-check"></i> {{#if (eq currentPreset "heroic")}}Active{{else}}Apply Preset{{/if}}
+        <i class="{{getIconClass 'check'}}"></i> {{#if (eq currentPreset "heroic")}}Active{{else}}Apply Preset{{/if}}
       </button>
     </div>
   </div>
@@ -84,10 +84,10 @@
 
     <div class="utility-buttons">
       <button type="button" class="utility-btn" data-action="export-settings">
-        <i class="fas fa-download"></i> Export Current Settings
+        <i class="{{getIconClass 'download'}}"></i> Export Current Settings
       </button>
       <button type="button" class="utility-btn" data-action="import-settings">
-        <i class="fas fa-upload"></i> Import Settings from File
+        <i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Import Settings from File
       </button>
     </div>
   </div>

@@ -8,7 +8,7 @@
       </div>
       <div class="holo-content">
         <div class="holo-speaker">
-          <i class="fas fa-user-secret"></i>
+          <i class="{{getIconClass 'user'}}-secret"></i>
           <span>MARL SKINDAR - REPUBLIC INTELLIGENCE</span>
         </div>
         <div class="holo-message">{{{marlDialogue}}}</div>
@@ -21,7 +21,7 @@
       <h2>Starship Acquisition</h2>
       <p>Ready to begin? Select a stock ship to start your customization.</p>
       <button type="button" class="start-selection holo-btn">
-        <i class="fas fa-rocket"></i> Begin Ship Selection
+        <i class="{{getIconClass 'rocket'}}"></i> Begin Ship Selection
       </button>
     </div>
     {{/if}}
@@ -29,18 +29,18 @@
     {{#unless selectedShip}}
     {{!-- Ship Selection Grid --}}
     <div class="ship-selection-grid">
-      <h3><i class="fas fa-rocket"></i> Select Stock Ship</h3>
+      <h3><i class="{{getIconClass 'rocket'}}"></i> Select Stock Ship</h3>
       <div class="stock-ships-grid">
         {{#each stockShips}}
         <div class="stock-ship-card" data-ship="{{this.name}}">
           <div class="ship-image">
-            <i class="fas fa-space-shuttle"></i>
+            <i class="{{getIconClass 'shuttle'}}"></i>
           </div>
           <div class="ship-info">
             <h4>{{this.name}}</h4>
             <div class="ship-stats">
-              <span class="stat-item"><i class="fas fa-ruler-combined"></i> {{this.size}}</span>
-              <span class="stat-item"><i class="fas fa-plug"></i> {{this.emplacementPoints}} EP</span>
+              <span class="stat-item"><i class="{{getIconClass 'rulerCombined'}}-combined"></i> {{this.size}}</span>
+              <span class="stat-item"><i class="{{getIconClass 'plug'}}"></i> {{this.emplacementPoints}} EP</span>
             </div>
             <div class="ship-cost">
               <span class="credits-icon">₢</span>
@@ -48,7 +48,7 @@
             </div>
           </div>
           <button type="button" class="select-ship holo-btn" data-ship="{{this.name}}">
-            <i class="fas fa-check"></i> Select
+            <i class="{{getIconClass 'check'}}"></i> Select
           </button>
         </div>
         {{/each}}
@@ -106,10 +106,10 @@
               <div class="mod-details">
                 <p class="mod-description">{{this.description}}</p>
                 <div class="mod-stats">
-                  <span class="mod-stat"><i class="fas fa-plug"></i> {{this.emplacementPoints}} EP</span>
-                  <span class="mod-stat"><i class="fas fa-tag"></i> {{this.availability}}</span>
+                  <span class="mod-stat"><i class="{{getIconClass 'plug'}}"></i> {{this.emplacementPoints}} EP</span>
+                  <span class="mod-stat"><i class="{{getIconClass 'tag'}}"></i> {{this.availability}}</span>
                   {{#if this.sizeRestriction}}
-                  <span class="mod-stat"><i class="fas fa-ruler-combined"></i> {{this.sizeRestriction}}</span>
+                  <span class="mod-stat"><i class="{{getIconClass 'rulerCombined'}}-combined"></i> {{this.sizeRestriction}}</span>
                   {{/if}}
                 </div>
                 <div class="mod-effect">
@@ -117,12 +117,12 @@
                 </div>
               </div>
               <button type="button" class="add-modification holo-btn" data-mod-id="{{this.id}}">
-                <i class="fas fa-plus"></i> Add
+                <i class="{{getIconClass 'plus'}}"></i> Add
               </button>
             </div>
             {{else}}
             <div class="empty-message">
-              <i class="fas fa-box-open"></i>
+              <i class="{{getIconClass 'boxOpen'}}"></i>
               <p>No modifications available in this category.</p>
             </div>
             {{/each}}
@@ -143,7 +143,7 @@
                 <span>₢{{this.cost}}</span>
               </div>
               <button type="button" class="remove-modification" data-mod-id="{{this.id}}" title="Remove">
-                <i class="fas fa-times"></i>
+                <i class="{{getIconClass 'times'}}"></i>
               </button>
             </div>
             {{else}}
@@ -161,7 +161,7 @@
           <i class="fas fa-rotate-left"></i> Start Over
         </button>
         <button type="button" class="finalize-ship holo-btn primary">
-          <i class="fas fa-circle-check"></i> Finalize Starship
+          <i class="{{getIconClass 'success'}}"></i> Finalize Starship
         </button>
       </div>
     </div>

@@ -24,7 +24,7 @@
       </div>
       
       <div class="info-box">
-        <h4><i class="fas fa-circle-info"></i> Feint in Combat</h4>
+        <h4><i class="{{getIconClass 'info'}}"></i> Feint in Combat</h4>
         <p><strong>Action:</strong> Standard action</p>
         <p><strong>Check:</strong> Opposed skill check vs target's Will Defense</p>
         <p><strong>Success:</strong> Target is flat-footed against your next melee attack before end of your next turn</p>
@@ -62,7 +62,7 @@
       {{/if}}
       
       <div class="info-box">
-        <h4><i class="fas fa-chart-line"></i> Skill Focus Progression</h4>
+        <h4><i class="{{getIconClass 'chartLine'}}"></i> Skill Focus Progression</h4>
         <table class="progression-table">
           <thead>
             <tr>
@@ -86,7 +86,7 @@
   </section>
   
   <footer class="sheet-footer">
-    <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+    <button type="submit"><i class="{{getIconClass 'save'}}"></i> Save Changes</button>
     <button type="button" class="reset-defaults"><i class="fas fa-rotate-left"></i> Reset to Defaults</button>
   </footer>
 </form>

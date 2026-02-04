@@ -12,7 +12,7 @@
     {{#if rarityClass}}
     <div class="badge-row">
       <span class="rarity-badge rarity-{{rarityClass}}">
-        <i class="fas fa-star"></i> {{rarityLabel}}
+        <i class="{{getIconClass 'star'}}"></i> {{rarityLabel}}
       </span>
     </div>
     {{/if}}
@@ -20,7 +20,7 @@
     <!-- Droid Class/Type -->
     {{#if system.class}}
     <div class="detail-line">
-      <i class="fas fa-cube"></i>
+      <i class="{{getIconClass 'cube'}}"></i>
       <span class="droid-class">{{system.class}}</span>
     </div>
     {{/if}}
@@ -28,7 +28,7 @@
     <!-- Droid Level -->
     {{#if system.level}}
     <div class="detail-line">
-      <i class="fas fa-level-up-alt"></i>
+      <i class="{{getIconClass 'levelUpAlt'}}"></i>
       <span>Level {{system.level}}</span>
     </div>
     {{/if}}
@@ -47,7 +47,7 @@
     </div>
 
     <button class="holo-btn buy-droid" data-actor-id="{{id}}">
-      <i class="fas fa-shopping-cart"></i> Purchase Droid
+      <i class="{{getIconClass 'cart'}}"></i> Purchase Droid
     </button>
   </div>
 </div>

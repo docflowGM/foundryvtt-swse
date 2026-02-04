@@ -1,22 +1,22 @@
 <div class="prestige-roadmap">
   <header class="roadmap-header">
     <div class="header-info">
-      <h2><i class="fas fa-road"></i> Prestige Class Roadmap</h2>
+      <h2><i class="{{getIconClass 'road'}}"></i> Prestige Class Roadmap</h2>
       <p class="character-name">{{actor.name}} (Level {{actor.system.level}})</p>
     </div>
     <div class="roadmap-summary">
       <div class="summary-stat qualified">
-        <i class="fas fa-circle-check"></i>
+        <i class="{{getIconClass 'success'}}"></i>
         <span class="stat-value">{{roadmap.summary.qualifiedCount}}</span>
         <span class="stat-label">Qualified</span>
       </div>
       <div class="summary-stat in-progress">
-        <i class="fas fa-spinner"></i>
+        <i class="{{getIconClass 'spinner'}}"></i>
         <span class="stat-value">{{roadmap.summary.inProgressCount}}</span>
         <span class="stat-label">In Progress</span>
       </div>
       <div class="summary-stat recommended">
-        <i class="fas fa-star"></i>
+        <i class="{{getIconClass 'star'}}"></i>
         <span class="stat-value">{{roadmap.summary.recommendedCount}}</span>
         <span class="stat-label">Recommended</span>
       </div>
@@ -28,8 +28,8 @@
     {{#if roadmap.qualified.length}}
     <section class="roadmap-section qualified-section">
       <div class="section-header">
-        <h3><i class="fas fa-trophy"></i> Qualified Now</h3>
-        <i class="fas fa-chevron-down"></i>
+        <h3><i class="{{getIconClass 'trophy'}}"></i> Qualified Now</h3>
+        <i class="{{getIconClass 'chevronDown'}}"></i>
       </div>
       <div class="section-content">
         <div class="roadmap-cards">
@@ -37,7 +37,7 @@
           <div class="roadmap-class-card qualified {{#if (eq ../selectedClass this.name)}}selected{{/if}}"
                data-class-name="{{this.name}}">
             <div class="card-header">
-              <i class="fas fa-crown"></i>
+              <i class="{{getIconClass 'crown'}}"></i>
               <h4>{{this.name}}</h4>
             </div>
             <div class="progress-indicator full">
@@ -58,7 +58,7 @@
     <section class="roadmap-section in-progress-section">
       <div class="section-header">
         <h3><i class="fas fa-list-check"></i> In Progress</h3>
-        <i class="fas fa-chevron-down"></i>
+        <i class="{{getIconClass 'chevronDown'}}"></i>
       </div>
       <div class="section-content">
         <div class="roadmap-cards">
@@ -66,7 +66,7 @@
           <div class="roadmap-class-card in-progress {{#if (eq ../selectedClass this.name)}}selected{{/if}}"
                data-class-name="{{this.name}}">
             <div class="card-header">
-              <i class="fas fa-unlock"></i>
+              <i class="{{getIconClass 'unlock'}}"></i>
               <h4>{{this.name}}</h4>
               <span class="levels-away">{{this.levelsAway}} lvl</span>
             </div>
@@ -88,8 +88,8 @@
     {{#if roadmap.recommended.length}}
     <section class="roadmap-section recommended-section">
       <div class="section-header">
-        <h3><i class="fas fa-compass"></i> Recommended for Your Build</h3>
-        <i class="fas fa-chevron-down"></i>
+        <h3><i class="{{getIconClass 'compass'}}"></i> Recommended for Your Build</h3>
+        <i class="{{getIconClass 'chevronDown'}}"></i>
       </div>
       <div class="section-content">
         <div class="roadmap-cards">
@@ -97,7 +97,7 @@
           <div class="roadmap-class-card recommended {{#if (eq ../selectedClass this.name)}}selected{{/if}}"
                data-class-name="{{this.name}}">
             <div class="card-header">
-              <i class="fas fa-star"></i>
+              <i class="{{getIconClass 'star'}}"></i>
               <h4>{{this.name}}</h4>
               <span class="affinity-badge">{{this.affinityPercent}}% match</span>
             </div>
@@ -119,8 +119,8 @@
     {{#if roadmap.other.length}}
     <section class="roadmap-section other-section collapsed">
       <div class="section-header">
-        <h3><i class="fas fa-list"></i> Other Prestige Classes ({{roadmap.other.length}})</h3>
-        <i class="fas fa-chevron-down"></i>
+        <h3><i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Other Prestige Classes ({{roadmap.other.length}})</h3>
+        <i class="{{getIconClass 'chevronDown'}}"></i>
       </div>
       <div class="section-content">
         <div class="roadmap-cards compact">
@@ -146,7 +146,7 @@
   <aside class="roadmap-detail-panel">
     <div class="detail-header">
       <h3>{{selectedClassData.name}}</h3>
-      <button class="close-detail" title="Close"><i class="fas fa-times"></i></button>
+      <button class="close-detail" title="Close"><i class="{{getIconClass 'times'}}"></i></button>
     </div>
 
     <div class="detail-progress">
@@ -173,11 +173,11 @@
       <div class="prereq-item {{#if this.isMet}}met{{else}}unmet{{/if}} {{#if this.unverifiable}}unverifiable{{/if}}">
         <div class="prereq-icon">
           {{#if this.isMet}}
-          <i class="fas fa-circle-check"></i>
+          <i class="{{getIconClass 'success'}}"></i>
           {{else if this.unverifiable}}
-          <i class="fas fa-circle-question"></i>
+          <i class="{{getIconClass 'circle'}}-question"></i>
           {{else}}
-          <i class="fas fa-circle"></i>
+          <i class="{{getIconClass 'circle'}}"></i>
           {{/if}}
         </div>
         <div class="prereq-info">
@@ -203,7 +203,7 @@
       <ol class="recommendation-list">
         {{#each selectedClassData.recommendations}}
         <li class="rec-{{this.priority}}">
-          <i class="fas fa-arrow-right"></i>
+          <i class="{{getIconClass 'arrowRight'}}"></i>
           {{this.text}}
         </li>
         {{/each}}

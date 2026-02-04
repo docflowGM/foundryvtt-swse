@@ -57,7 +57,7 @@
                     </div>
                     <div class="upgrade-actions">
                         <button type="button" class="remove-upgrade" data-upgrade-index="{{@index}}">
-                            <i class="fas fa-times"></i> Remove
+                            <i class="{{getIconClass 'times'}}"></i> Remove
                         </button>
                     </div>
                 </li>
@@ -87,7 +87,7 @@
                 </div>
                 <div class="template-actions">
                     <button type="button" class="remove-template">
-                        <i class="fas fa-times"></i> Remove Template
+                        <i class="{{getIconClass 'times'}}"></i> Remove Template
                     </button>
                 </div>
             </div>
@@ -123,7 +123,7 @@
                                     data-template-name="{{this.name}}"
                                     data-template-cost="{{this.cost}}"
                                     {{#if this.incompatible}}disabled{{/if}}>
-                                <i class="fas fa-magic"></i> Apply Template
+                                <i class="{{getIconClass 'magic'}}"></i> Apply Template
                             </button>
                         </div>
                     </li>
@@ -160,7 +160,7 @@
                                 data-upgrade-name="{{this.name}}"
                                 data-upgrade-cost="{{this.calculatedCost}}"
                                 data-slots-required="{{this.slotsRequired}}">
-                            <i class="fas fa-plus"></i> Install ({{this.calculatedCost}} credits)
+                            <i class="{{getIconClass 'plus'}}"></i> Install ({{this.calculatedCost}} credits)
                         </button>
                     </div>
                 </li>
@@ -174,7 +174,7 @@
     {{!-- Footer with Close Button --}}
     <footer class="upgrade-footer">
         <button type="button" class="close-btn">
-            <i class="fas fa-times"></i> Close
+            <i class="{{getIconClass 'times'}}"></i> Close
         </button>
     </footer>
 </div>

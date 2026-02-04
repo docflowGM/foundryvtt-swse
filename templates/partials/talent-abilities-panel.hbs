@@ -10,26 +10,26 @@
     {{!-- Filter Tabs --}}
     <div class="ability-filter-tabs">
       <button class="ability-filter-btn active" data-filter="all" type="button">
-        <i class="fas fa-th"></i> All ({{talentAbilities.all.length}})
+        <i class="{{getIconClass 'th'}}"></i> All ({{talentAbilities.all.length}})
       </button>
       {{#if talentAbilities.byType.reaction.length}}
       <button class="ability-filter-btn" data-filter="reaction" type="button">
-        <i class="fas fa-bolt"></i> Reactions ({{talentAbilities.byType.reaction.length}})
+        <i class="{{getIconClass 'bolt'}}"></i> Reactions ({{talentAbilities.byType.reaction.length}})
       </button>
       {{/if}}
       {{#if talentAbilities.byType.standard.length}}
       <button class="ability-filter-btn" data-filter="standard" type="button">
-        <i class="fas fa-circle"></i> Standard ({{talentAbilities.byType.standard.length}})
+        <i class="{{getIconClass 'circle'}}"></i> Standard ({{talentAbilities.byType.standard.length}})
       </button>
       {{/if}}
       {{#if talentAbilities.byType.swift.length}}
       <button class="ability-filter-btn" data-filter="swift" type="button">
-        <i class="fas fa-wind"></i> Swift ({{talentAbilities.byType.swift.length}})
+        <i class="{{getIconClass 'wind'}}"></i> Swift ({{talentAbilities.byType.swift.length}})
       </button>
       {{/if}}
       {{#if talentAbilities.byType.passive.length}}
       <button class="ability-filter-btn" data-filter="passive" type="button">
-        <i class="fas fa-shield-alt"></i> Passive ({{talentAbilities.byType.passive.length}})
+        <i class="{{getIconClass 'shieldAlt'}}"></i> Passive ({{talentAbilities.byType.passive.length}})
       </button>
       {{/if}}
     </div>
@@ -63,9 +63,9 @@
           </div>
           <div class="ability-expand-icon">
             {{#if ability.isMultiOption}}
-            <i class="fas fa-caret-right"></i>
+            <i class="{{getIconClass 'caretRight'}}"></i>
             {{else}}
-            <i class="fas fa-chevron-down"></i>
+            <i class="{{getIconClass 'chevronDown'}}"></i>
             {{/if}}
           </div>
         </div>
@@ -106,7 +106,7 @@
                       data-sub-ability-id="{{subAbility.id}}"
                       data-talent-id="{{subAbility.sourceTalentId}}"
                       type="button">
-                <i class="fas fa-dice-d20"></i>
+                <i class="{{getIconClass 'diceD20'}}"></i>
                 Use {{subAbility.name}}
               </button>
               {{/if}}
@@ -124,14 +124,14 @@
           {{!-- Trigger/Condition Info --}}
           {{#if ability.trigger}}
           <div class="ability-trigger-info">
-            <i class="fas fa-bolt"></i>
+            <i class="{{getIconClass 'bolt'}}"></i>
             <strong>Trigger:</strong> {{ability.trigger}}
           </div>
           {{/if}}
 
           {{#if ability.condition}}
           <div class="ability-condition-info">
-            <i class="fas fa-circle-check"></i>
+            <i class="{{getIconClass 'success'}}"></i>
             <strong>Condition:</strong> {{ability.condition}}
           </div>
           {{/if}}
@@ -139,7 +139,7 @@
           {{!-- Force Point Cost --}}
           {{#if ability.costData}}
           <div class="ability-cost-info {{#unless ability.costData.hasEnough}}insufficient{{/unless}}">
-            <i class="fas fa-hand-sparkles"></i>
+            <i class="{{getIconClass 'handSparkles'}}"></i>
             <strong>Cost:</strong> {{ability.costData.forcePoints}} Force Point{{#if (gt ability.costData.forcePoints 1)}}s{{/if}}
             <span class="current-fp">(You have: {{ability.costData.currentFP}})</span>
             {{#unless ability.costData.hasEnough}}
@@ -156,7 +156,7 @@
                     data-ability-id="{{ability.id}}"
                     data-talent-id="{{ability.sourceTalentId}}"
                     type="button">
-              <i class="fas fa-dice-d20"></i>
+              <i class="{{getIconClass 'diceD20'}}"></i>
               Roll {{ability.rollData.skillName}}
               <span class="roll-modifier">{{#if (gt ability.rollData.modifier 0)}}+{{/if}}{{ability.rollData.modifier}}</span>
             </button>
@@ -199,7 +199,7 @@
           {{!-- Choices (for multi-option abilities) --}}
           {{#if ability.hasChoices}}
           <div class="ability-choices-section">
-            <h4><i class="fas fa-list"></i> Options:</h4>
+            <h4><i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Options:</h4>
             <div class="ability-choices-list">
               {{#each ability.choices as |choice|}}
               <button class="ability-choice-btn"
@@ -220,7 +220,7 @@
           {{#if ability.hasAlternative}}
           <div class="ability-alternative-section">
             <div class="alternative-label">
-              <i class="fas fa-arrows-left-right"></i> <strong>Alternative ({{ability.alternativeAction.actionType}}):</strong>
+              <i class="{{getIconClass 'arrowsHorizontal'}}"></i> <strong>Alternative ({{ability.alternativeAction.actionType}}):</strong>
             </div>
             <p>{{ability.alternativeAction.effect}}</p>
           </div>
@@ -234,7 +234,7 @@
                     data-ability-id="{{ability.id}}"
                     data-talent-id="{{ability.sourceTalentId}}"
                     type="button">
-              <i class="fas fa-magic"></i>
+              <i class="{{getIconClass 'magic'}}"></i>
               {{ability.specialActionData.name}}
               <span class="special-action-type">({{ability.specialActionData.typeLabel}})</span>
             </button>
@@ -267,7 +267,7 @@
           {{!-- Modifiers Applied --}}
           {{#if ability.isModified}}
           <div class="ability-modifiers-section">
-            <h4><i class="fas fa-arrow-up"></i> Enhanced by:</h4>
+            <h4><i class="{{getIconClass 'arrowUp'}}"></i> Enhanced by:</h4>
             <ul class="modifiers-list">
               {{#each ability.modifiers as |mod|}}
               <li>
@@ -287,7 +287,7 @@
                     data-talent-id="{{ability.sourceTalentId}}"
                     type="button"
                     title="Post ability details to chat">
-              <i class="fas fa-comment"></i> Post to Chat
+              <i class="{{getIconClass 'comment'}}"></i> Post to Chat
             </button>
 
             <button class="ability-view-talent-btn"
@@ -295,7 +295,7 @@
                     data-talent-id="{{ability.sourceTalentId}}"
                     type="button"
                     title="View source talent">
-              <i class="fas fa-eye"></i> View Talent
+              <i class="{{getIconClass 'eye'}}"></i> View Talent
             </button>
           </div>
 
@@ -320,14 +320,14 @@
         <i class="fas fa-arrows-rotate"></i> Reset Encounter Uses
       </button>
       <button class="ability-reset-btn" data-action="resetDayUses" type="button">
-        <i class="fas fa-sun"></i> Reset Daily Uses
+        <i class="{{getIconClass 'sun'}}"></i> Reset Daily Uses
       </button>
     </div>
 
   {{else}}
 
     <div class="talent-abilities-empty">
-      <i class="fas fa-magic"></i>
+      <i class="{{getIconClass 'magic'}}"></i>
       <p>No special abilities from talents yet.</p>
       <p class="empty-hint">Acquire talents to unlock special abilities that appear here as interactive cards!</p>
     </div>

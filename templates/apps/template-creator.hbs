@@ -3,7 +3,7 @@
     <!-- Class Selection Screen -->
     <div class="class-selection-screen">
       <header class="creator-header">
-        <h1><i class="fas fa-star"></i> Choose Your Path</h1>
+        <h1><i class="{{getIconClass 'star'}}"></i> Choose Your Path</h1>
         <p class="subtitle">Select a class to view character templates</p>
       </header>
 
@@ -24,7 +24,7 @@
 
       <footer class="creator-footer">
         <button class="custom-build-btn">
-          <i class="fas fa-user-edit"></i>
+          <i class="{{getIconClass 'user'}}-edit"></i>
           Custom Character Generator
         </button>
       </footer>
@@ -34,7 +34,7 @@
     <div class="template-selection-screen">
       <header class="creator-header">
         <button class="back-to-classes">
-          <i class="fas fa-arrow-left"></i> Back to Classes
+          <i class="{{getIconClass 'arrowLeft'}}"></i> Back to Classes
         </button>
         <h1>{{selectedClass}} Templates</h1>
         <p class="subtitle">Choose your archetype</p>
@@ -86,7 +86,7 @@
                 </div>
 
                 <div class="select-indicator">
-                  <i class="fas fa-hand-pointer"></i> Click to Select
+                  <i class="{{getIconClass 'hand'}}-pointer"></i> Click to Select
                 </div>
               </div>
             </div>
@@ -96,7 +96,7 @@
 
       <footer class="creator-footer">
         <button class="custom-build-btn">
-          <i class="fas fa-user-edit"></i>
+          <i class="{{getIconClass 'user'}}-edit"></i>
           Or Create Custom Character
         </button>
       </footer>

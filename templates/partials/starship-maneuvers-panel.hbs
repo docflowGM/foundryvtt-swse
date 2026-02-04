@@ -7,7 +7,7 @@
     {{#if maneuvers.organized.attackPatterns.length}}
       <div class="maneuver-category">
         <div class="category-header">
-          <i class="fas fa-cube"></i>
+          <i class="{{getIconClass 'cube'}}"></i>
           <h4>Attack Patterns</h4>
           <span class="category-count">{{maneuvers.organized.attackPatterns.length}}</span>
         </div>
@@ -23,7 +23,7 @@
     {{#if maneuvers.organized.dogfight.length}}
       <div class="maneuver-category">
         <div class="category-header">
-          <i class="fas fa-crosshairs"></i>
+          <i class="{{getIconClass 'target'}}"></i>
           <h4>Dogfight Maneuvers</h4>
           <span class="category-count">{{maneuvers.organized.dogfight.length}}</span>
         </div>
@@ -39,7 +39,7 @@
     {{#if maneuvers.organized.force.length}}
       <div class="maneuver-category">
         <div class="category-header">
-          <i class="fas fa-yin-yang"></i>
+          <i class="{{getIconClass 'yinYang'}}"></i>
           <h4>Force Maneuvers</h4>
           <span class="category-count">{{maneuvers.organized.force.length}}</span>
         </div>
@@ -55,7 +55,7 @@
     {{#if maneuvers.organized.gunner.length}}
       <div class="maneuver-category">
         <div class="category-header">
-          <i class="fas fa-gun"></i>
+          <i class="{{getIconClass 'gun'}}"></i>
           <h4>Gunner Maneuvers</h4>
           <span class="category-count">{{maneuvers.organized.gunner.length}}</span>
         </div>
@@ -71,7 +71,7 @@
     {{#if maneuvers.organized.general.length}}
       <div class="maneuver-category">
         <div class="category-header">
-          <i class="fas fa-fighter-jet"></i>
+          <i class="{{getIconClass 'fighterJet'}}"></i>
           <h4>General Maneuvers</h4>
           <span class="category-count">{{maneuvers.organized.general.length}}</span>
         </div>

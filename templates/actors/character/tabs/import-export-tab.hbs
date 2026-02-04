@@ -4,7 +4,7 @@
 
     <div class="import-export-section">
       <h2>
-        <i class="fas fa-file-export"></i> Export Character
+        <i class="{{getIconClass 'fileExport'}}"></i> Export Character
       </h2>
       <p class="section-description">
         Export your character data to a JSON file that can be saved to your computer,
@@ -13,11 +13,11 @@
 
       <div class="export-options">
         <button class="export-character-json-btn" title="Export character to JSON file">
-          <i class="fas fa-download"></i> Export Character
+          <i class="{{getIconClass 'download'}}"></i> Export Character
         </button>
 
         <button class="export-template-btn" title="Download a blank character template">
-          <i class="fas fa-file-alt"></i> Download Template
+          <i class="{{getIconClass 'fileAlt'}}"></i> Download Template
         </button>
       </div>
 
@@ -37,7 +37,7 @@
 
     <div class="import-export-section">
       <h2>
-        <i class="fas fa-file-import"></i> Import Character
+        <i class="{{getIconClass 'fileImport'}}"></i> Import Character
       </h2>
       <p class="section-description">
         Import a character from a JSON or text file. You can import a previously exported
@@ -58,7 +58,7 @@
         </ul>
 
         <p class="hint">
-          <i class="fas fa-circle-info"></i>
+          <i class="{{getIconClass 'info'}}"></i>
           <strong>Tip:</strong> Download a template file, fill it out, and import it to quickly
           create a new character!
         </p>

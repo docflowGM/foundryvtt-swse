@@ -12,7 +12,7 @@
     {{#if rarityClass}}
     <div class="badge-row">
       <span class="rarity-badge rarity-{{rarityClass}}">
-        <i class="fas fa-star"></i> {{rarityLabel}}
+        <i class="{{getIconClass 'star'}}"></i> {{rarityLabel}}
       </span>
     </div>
     {{/if}}
@@ -20,7 +20,7 @@
     <!-- Vehicle Type/Class -->
     {{#if system.vehicleType}}
     <div class="detail-line">
-      <i class="fas fa-car"></i>
+      <i class="{{getIconClass 'car'}}"></i>
       <span>{{system.vehicleType}}</span>
     </div>
     {{/if}}
@@ -28,7 +28,7 @@
     <!-- Speed -->
     {{#if system.speed}}
     <div class="detail-line">
-      <i class="fas fa-tachometer-alt"></i>
+      <i class="{{getIconClass 'tachometerAlt'}}"></i>
       <span>{{system.speed}}</span>
     </div>
     {{/if}}
@@ -59,12 +59,12 @@
 
     <div class="vehicle-buttons">
       <button class="holo-btn buy-vehicle" data-actor-id="{{id}}" data-condition="new">
-        <i class="fas fa-shopping-cart"></i> Buy New
+        <i class="{{getIconClass 'cart'}}"></i> Buy New
       </button>
 
       {{#if costUsed}}
       <button class="holo-btn secondary buy-vehicle" data-actor-id="{{id}}" data-condition="used">
-        <i class="fas fa-shopping-cart"></i> Buy Used
+        <i class="{{getIconClass 'cart'}}"></i> Buy Used
       </button>
       {{/if}}
     </div>

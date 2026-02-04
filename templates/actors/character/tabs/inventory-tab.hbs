@@ -2,7 +2,7 @@
  <h3 class="section-header">
  Equipment
  <button class="open-store" style="float: right;" title="Open Galactic Trade Exchange">
- <i class="fas fa-shopping-cart"></i> Store
+ <i class="{{getIconClass 'cart'}}"></i> Store
  </button>
  </h3>
 
@@ -21,17 +21,17 @@
    <span class="item-weight">{{item.system.weight}} kg</span>
    <div class="item-controls flexrow">
    <a class="item-control item-edit" data-action="edit" title="Edit">
-   <i class="fas fa-pen"></i>
+   <i class="{{getIconClass 'edit'}}"></i>
    </a>
    <a class="item-control item-delete" data-action="delete" title="Delete">
-   <i class="fas fa-trash"></i>
+   <i class="{{getIconClass 'trash'}}"></i>
    </a>
    </div>
    </div>
    {{/each}}
  {{else}}
    <div class="empty-state">
-     <i class="fas fa-box-open"></i>
+     <i class="{{getIconClass 'boxOpen'}}"></i>
      <p>No equipment yet.</p>
      <p class="hint">Click "Add Equipment" below to add items to your inventory.</p>
    </div>
@@ -39,7 +39,7 @@
  </div>
 
  <button class="add-equipment" data-action="createItem" data-type="equipment">
- <i class="fas fa-plus"></i> Add Equipment
+ <i class="{{getIconClass 'plus'}}"></i> Add Equipment
  </button>
 
  <div class="currency-section">

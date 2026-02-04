@@ -65,21 +65,21 @@
    <div class="grapple-status">
      {{#if grappleState.grabbed}}
        <div class="grapple-condition grabbed">
-         <i class="fas fa-hand-holding-heart"></i>
+         <i class="{{getIconClass 'handHoldingHeart'}}"></i>
          <strong>Grabbed by:</strong> {{grappleState.grappler}}
        </div>
      {{/if}}
 
      {{#if grappleState.grappled}}
        <div class="grapple-condition grappled">
-         <i class="fas fa-link"></i>
+         <i class="{{getIconClass 'link'}}"></i>
          <strong>Grappled with:</strong> {{grappleState.opponent}}
        </div>
      {{/if}}
 
      {{#if grappleState.pinned}}
        <div class="grapple-condition pinned">
-         <i class="fas fa-ban"></i>
+         <i class="{{getIconClass 'ban'}}"></i>
          <strong>Pinned by:</strong> {{grappleState.grappler}}
          <span class="reflex-penalty">-10 Reflex</span>
        </div>
@@ -89,7 +89,7 @@
        {{#unless grappleState.grappled}}
          {{#unless grappleState.pinned}}
            <div class="grapple-condition free">
-             <i class="fas fa-circle-check"></i>
+             <i class="{{getIconClass 'success'}}"></i>
              <strong>Not Grappled</strong>
            </div>
          {{/unless}}
@@ -100,23 +100,23 @@
    <div class="grapple-actions">
      {{#if grappleState.grabbed}}
        <button class="grapple-action-btn" data-action="continueGrapple" title="Make opposed grapple check">
-         <i class="fas fa-handshake"></i> Continue Grapple Check
+         <i class="{{getIconClass 'hand'}}shake"></i> Continue Grapple Check
        </button>
      {{else}}
        <button class="grapple-action-btn" data-action="startGrapple" title="Initiate grab attack (standard action)">
-         <i class="fas fa-hand-holding-heart"></i> Start Grab
+         <i class="{{getIconClass 'handHoldingHeart'}}"></i> Start Grab
        </button>
      {{/if}}
 
      {{#if grappleState.grappled}}
        {{#if grappleState.canPin}}
          <button class="grapple-action-btn pin-action" data-action="attemptPin" title="Requires Pin feat (opposed grapple check)">
-           <i class="fas fa-ban"></i> Attempt Pin
+           <i class="{{getIconClass 'ban'}}"></i> Attempt Pin
          </button>
        {{/if}}
 
        <button class="grapple-action-btn escape-action" data-action="escapeGrapple" title="Escape grapple (opposed check)">
-         <i class="fas fa-running"></i> Escape
+         <i class="{{getIconClass 'running'}}"></i> Escape
        </button>
      {{/if}}
    </div>
@@ -161,22 +161,22 @@
  <input type="checkbox"
  name="items.{{weapon._id}}.system.equipped"
  {{checked weapon.system.equipped}}/>
- <i class="fas fa-hand-holding"></i>
+ <i class="{{getIconClass 'hand'}}-holding"></i>
  </label>
 
  <div class="weapon-controls flexrow">
  <a class="item-control item-edit" data-action="edit" title="Edit">
- <i class="fas fa-pen"></i>
+ <i class="{{getIconClass 'edit'}}"></i>
  </a>
  <a class="item-control item-delete" data-action="delete" title="Delete">
- <i class="fas fa-trash"></i>
+ <i class="{{getIconClass 'trash'}}"></i>
  </a>
  </div>
  </div>
  {{/each}}
 
  <button class="add-weapon" data-action="createItem" data-type="weapon">
- <i class="fas fa-plus"></i> Add Weapon
+ <i class="{{getIconClass 'plus'}}"></i> Add Weapon
  </button>
  </div>
 
@@ -189,30 +189,30 @@
  <div class="armor-info flex2">
  <span class="armor-name">{{item.name}}</span>
  <div class="armor-stats">
- <span class="armor-bonus"><i class="fas fa-shield-alt"></i> Reflex: +{{item.system.defenseBonus}}</span>
- <span class="armor-max-dex"><i class="fas fa-running"></i> Max Dex: +{{item.system.maxDexBonus}}</span>
+ <span class="armor-bonus"><i class="{{getIconClass 'shieldAlt'}}"></i> Reflex: +{{item.system.defenseBonus}}</span>
+ <span class="armor-max-dex"><i class="{{getIconClass 'running'}}"></i> Max Dex: +{{item.system.maxDexBonus}}</span>
  </div>
  </div>
  <label class="armor-equipped-toggle" title="{{#if item.system.equipped}}Equipped - providing defense bonus{{else}}Not equipped{{/if}}">
  <input type="checkbox"
  name="items.{{item._id}}.system.equipped"
  {{checked item.system.equipped}}/>
- <i class="fas fa-user-shield"></i>
+ <i class="{{getIconClass 'user'}}-shield"></i>
  <span class="equipped-label">{{#if item.system.equipped}}Equipped{{else}}Equip{{/if}}</span>
  </label>
  <div class="item-controls flexrow">
  <a class="item-control item-edit" data-action="edit" title="Edit">
- <i class="fas fa-pen"></i>
+ <i class="{{getIconClass 'edit'}}"></i>
  </a>
  <a class="item-control item-delete" data-action="delete" title="Delete">
- <i class="fas fa-trash"></i>
+ <i class="{{getIconClass 'trash'}}"></i>
  </a>
  </div>
  </div>
  {{/each}}
 
  <button class="add-armor" data-action="createItem" data-type="armor">
- <i class="fas fa-shield-alt"></i> Add Armor
+ <i class="{{getIconClass 'shieldAlt'}}"></i> Add Armor
  </button>
  </div>
 
@@ -231,15 +231,15 @@
  <h5>{{feat.name}}</h5>
  {{#if feat.system.prerequisite}}
  <p class="feat-prereqs">
- <i class="fas fa-link"></i> {{feat.system.prerequisite}}
+ <i class="{{getIconClass 'link'}}"></i> {{feat.system.prerequisite}}
  </p>
  {{/if}}
  <div class="item-controls flexrow">
  <a class="item-control item-edit" data-action="edit" title="Edit">
- <i class="fas fa-pen"></i>
+ <i class="{{getIconClass 'edit'}}"></i>
  </a>
  <a class="item-control item-delete" data-action="delete" title="Delete">
- <i class="fas fa-trash"></i>
+ <i class="{{getIconClass 'trash'}}"></i>
  </a>
  </div>
  </div>
@@ -247,7 +247,7 @@
  </div>
 
  <button class="add-feat" data-action="createItem" data-type="feat">
- <i class="fas fa-plus"></i> Add Feat
+ <i class="{{getIconClass 'plus'}}"></i> Add Feat
  </button>
 
  {{!-- Feat Actions Panel --}}
@@ -282,7 +282,7 @@
  data-dc="{{action.dc.value}}"
  data-notes="{{action.notes}}"
  title="Click to post to chat">
- <i class="fas fa-dice-d20"></i> {{action.name}}
+ <i class="{{getIconClass 'diceD20'}}"></i> {{action.name}}
  </span>
  <span class="action-type-badge {{action.actionType}}">
  {{action.actionType}}
@@ -310,7 +310,7 @@
  {{!-- Talent Enhancements --}}
  {{#if action.hasEnhancements}}
  <div class="talent-enhancements">
- <h5><i class="fas fa-star"></i> Optional Talent Effects:</h5>
+ <h5><i class="{{getIconClass 'star'}}"></i> Optional Talent Effects:</h5>
  {{#each action.enhancements as |enhancement|}}
  <div class="talent-enhancement-item">
  <label class="enhancement-checkbox">

@@ -20,7 +20,7 @@
       </div>
 
       <button class="level-up" title="Level Up Character" role="button" tabindex="0">
-        <i class="fas fa-level-up-alt" aria-hidden="true"></i> Level Up
+        <i class="{{getIconClass 'levelUpAlt'}}" aria-hidden="true"></i> Level Up
       </button>
     </div>
 
@@ -28,16 +28,16 @@
     <div class="character-actions">
       {{#unless chargenComplete}}
       <button class="character-generator" title="Character Generator" role="button" tabindex="0">
-        <i class="fas fa-user-plus" aria-hidden="true"></i> Chargen
+        <i class="{{getIconClass 'user'}}-plus" aria-hidden="true"></i> Chargen
       </button>
       {{/unless}}
 
       <button class="open-store" title="Open Marketplace" role="button" tabindex="0">
-        <i class="fas fa-store" aria-hidden="true"></i> Shop
+        <i class="{{getIconClass 'store'}}" aria-hidden="true"></i> Shop
       </button>
 
       <button class="talk-to-mentor" title="Talk to Your Mentors" role="button" tabindex="0">
-        <i class="fas fa-comments" aria-hidden="true"></i> Mentor
+        <i class="{{getIconClass 'comment'}}s" aria-hidden="true"></i> Mentor
       </button>
     </div>
   </div>
@@ -148,7 +148,7 @@
                  title="Maximum Hit Points (editable, defaults from chargen/levelup)"/>
           {{#if system.hp.bonus}}
           <span class="bonus-hp-indicator" title="Bonus Hit Points (temporary damage buffer)">
-            <i class="fas fa-shield-alt" aria-hidden="true"></i>+{{system.hp.bonus}}
+            <i class="{{getIconClass 'shieldAlt'}}" aria-hidden="true"></i>+{{system.hp.bonus}}
           </span>
           {{/if}}
         </div>
@@ -186,7 +186,7 @@
 
         <div class="force-point-controls flexrow">
           <div class="reroll-bonus">
-            <i class="fas fa-dice" aria-hidden="true"></i> {{forceRerollDice}}
+            <i class="{{getIconClass 'diceD6'}}" aria-hidden="true"></i> {{forceRerollDice}}
           </div>
 
           <select name="system.forcePoints.diceType"
@@ -197,7 +197,7 @@
           </select>
 
           <button class="roll-force-point" title="Roll Force Point" role="button" tabindex="0">
-            <i class="fas fa-dice-d6" aria-hidden="true"></i>
+            <i class="{{getIconClass 'diceD6'}}-d6" aria-hidden="true"></i>
           </button>
         </div>
       </div>
@@ -224,11 +224,11 @@
         <div class="destiny-point-status">
           {{#if system.destiny.fulfilled}}
           <span class="destiny-fulfilled" title="Destiny has been fulfilled">
-            <i class="fas fa-crown" aria-hidden="true"></i> Fulfilled
+            <i class="{{getIconClass 'crown'}}" aria-hidden="true"></i> Fulfilled
           </span>
           {{else}}
           <span class="destiny-active" title="Destiny is active">
-            <i class="fas fa-star" aria-hidden="true"></i> Active
+            <i class="{{getIconClass 'star'}}" aria-hidden="true"></i> Active
           </span>
           {{/if}}
         </div>
@@ -246,7 +246,7 @@
     {{#unless system.isDroid}}
     <div class="species-selector">
       <label class="species-label">
-        <i class="fas fa-dna" aria-hidden="true"></i> Species
+        <i class="{{getIconClass 'dna'}}" aria-hidden="true"></i> Species
       </label>
       <div class="species-value">
         {{#if system.race}}
@@ -266,7 +266,7 @@
     {{!-- Class Display --}}
     <div class="class-selector">
       <label class="class-label">
-        <i class="fas fa-hat-wizard" aria-hidden="true"></i> Classes
+        <i class="{{getIconClass 'hatWizard'}}" aria-hidden="true"></i> Classes
       </label>
       <div class="class-value">
         {{#if chargenComplete}}
@@ -276,14 +276,14 @@
         {{/if}}
       </div>
       <button class="add-class-btn" type="button" role="button" tabindex="0" title="Add a class">
-        <i class="fas fa-plus" aria-hidden="true"></i> Add Class
+        <i class="{{getIconClass 'plus'}}" aria-hidden="true"></i> Add Class
       </button>
     </div>
 
     {{!-- Size --}}
     <div class="character-attribute">
       <label class="attribute-label">
-        <i class="fas fa-expand-arrows-alt" aria-hidden="true"></i> Size
+        <i class="{{getIconClass 'expandArrows'}}-arrows-alt" aria-hidden="true"></i> Size
       </label>
       <div class="attribute-value">
         <span>{{system.size}}</span>
@@ -294,7 +294,7 @@
     {{#unless system.isDroid}}
     <div class="character-attribute">
       <label class="attribute-label">
-        <i class="fas fa-hand-sparkles" aria-hidden="true"></i> Force Sensitive
+        <i class="{{getIconClass 'handSparkles'}}" aria-hidden="true"></i> Force Sensitive
       </label>
       <div class="attribute-value">
         <input type="checkbox"

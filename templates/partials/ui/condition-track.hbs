@@ -93,7 +93,7 @@
             tabindex="0"
             aria-label="Recover one step"
             title="Recover one step">
-      <i class="fas fa-arrow-up" aria-hidden="true"></i>
+      <i class="{{getIconClass 'arrowUp'}}" aria-hidden="true"></i>
       Recover
     </button>
 
@@ -114,14 +114,14 @@
             tabindex="0"
             aria-label="Worsen one step"
             title="Worsen one step">
-      <i class="fas fa-arrow-down" aria-hidden="true"></i>
+      <i class="{{getIconClass 'arrowDown'}}" aria-hidden="true"></i>
       Damage
     </button>
   </div>
 
   {{#if (gt system.conditionTrack.penalty 0)}}
   <div class="penalty-warning">
-    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+    <i class="{{getIconClass 'exclamation'}}" aria-hidden="true"></i>
     <span>{{system.conditionTrack.penalty}} penalty to all d20 rolls</span>
   </div>
   {{/if}}

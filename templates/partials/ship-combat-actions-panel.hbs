@@ -15,7 +15,7 @@
  {{#each relatedSkills}}
  {{#if dc}}
  <div class="ship-action-dc">
- <i class="fas fa-dice-d20" aria-hidden="true"></i>
+ <i class="{{getIconClass 'diceD20'}}" aria-hidden="true"></i>
  <strong>{{skill}}:</strong>
  DC
  {{#if dc.value}}
@@ -27,7 +27,7 @@
          data-action-name="{{../name}}"
          data-dc="{{dc.value}}"
          title="Roll {{skill}} check">
-   <i class="fas fa-dice" aria-hidden="true"></i> Roll
+   <i class="{{getIconClass 'diceD6'}}" aria-hidden="true"></i> Roll
  </button>
  {{else if dc.type}}
  {{dc.type}}
