@@ -14,11 +14,23 @@
  */
 
 /**
+ * Safe accessor for devMode setting
+ * Safely checks if core.devMode is registered before accessing
+ */
+function getDevMode() {
+  try {
+    return getDevMode();
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Initialize migration auditor
  * Call this during system init to set up listeners
  */
 export function initMigrationAuditor() {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   // Hook signature validator
   validateHookSignatures();
@@ -55,7 +67,7 @@ export function v2Assert(condition, code, message, context = {}) {
  * Catches code assuming v1 render order (element exists before render, etc.)
  */
 export function logRenderLifecycle(app, phase) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   const info = {
     app: app.constructor.name,
@@ -108,7 +120,7 @@ function validateHookSignatures() {
  * Catches templates expecting data.field instead of system.field, removed fields, etc.
  */
 export function validateContextShape(context, requiredKeys, label) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   const missing = [];
   const null_values = [];
@@ -142,7 +154,7 @@ export function validateContextShape(context, requiredKeys, label) {
  * Catches async operations resolving after render (causes stale UI)
  */
 export function logAsyncOrderViolation(label, resolvedAt) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   const now = performance.now();
   if (resolvedAt < now - 100) { // 100ms is our "post-render" threshold
@@ -161,7 +173,7 @@ export function logAsyncOrderViolation(label, resolvedAt) {
  */
 export class CompendiumAccessAuditor {
   static audit(pack, method) {
-    if (!game.settings.get('core', 'devMode')) {return;}
+    if (!getDevMode()) {return;}
 
     // getDocuments() is v1 pattern - should use index
     if (method === 'getDocuments') {
@@ -203,7 +215,7 @@ export class CompendiumAccessAuditor {
  * Catches one app mutating another app's DOM
  */
 export function validateDOMOwnership(el, app, label) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   // Check if element is within app root
   if (app.element && !app.element.contains(el)) {
@@ -221,7 +233,7 @@ export function validateDOMOwnership(el, app, label) {
  * Catches JS assuming CSS layout state that might not be ready
  */
 export function validateLayoutState(el, label) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   const rect = el.getBoundingClientRect();
 
@@ -243,7 +255,7 @@ export function validateLayoutState(el, label) {
  * Catches rendering from live actor instead of snapshot (v2 batching hides this)
  */
 export function validateStateDrift(snapshot, liveActor, label) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   if (snapshot._id !== liveActor.id) {
     v2Assert(
@@ -274,7 +286,7 @@ export function validateStateDrift(snapshot, liveActor, label) {
  * @returns {Object} Audit results
  */
 export function generateMigrationReport() {
-  if (!game.settings.get('core', 'devMode')) {
+  if (!getDevMode()) {
     console.warn('[MIGRATION AUDIT] Skipped (dev mode disabled)');
     return { skipped: true };
   }
@@ -283,7 +295,7 @@ export function generateMigrationReport() {
 
   const checks = {
     'Strict V2 Mode': window.SWSE?.strictV2 ? '✓ ENABLED' : '○ disabled',
-    'Dev Mode': game.settings.get('core', 'devMode') ? '✓ enabled' : '✗ DISABLED',
+    'Dev Mode': getDevMode() ? '✓ enabled' : '✗ DISABLED',
     'CSS Auditor': typeof window.SWSE?.cssHealth === 'function' ? '✓ available' : '✗ missing',
     'Smoke Tests': typeof window.SWSE?.smokeTest === 'function' ? '✓ available' : '✗ missing',
     'Character Sheets': CONFIG.Actor.sheetClasses.character ? '✓ registered' : '✗ missing',
@@ -341,7 +353,7 @@ export function getSessionId() {
  * Helps identify exactly where a blank UI pipeline broke
  */
 export function logPhase(surface, phase, context = {}) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   const entry = {
     surface,
@@ -359,7 +371,7 @@ export function logPhase(surface, phase, context = {}) {
  * Detects half-migrated compendiums, broken JSON, schema drift
  */
 export function validateCompendiumIntegrity(name, items, requiredFields) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   if (!items || items.length === 0) {
     v2Assert(
@@ -391,7 +403,7 @@ export function validateCompendiumIntegrity(name, items, requiredFields) {
  * Catches incomplete context before template rendering
  */
 export function validateContextComplete(surface, context, requiredKeys) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   const missing = requiredKeys.filter(k => context[k] === undefined);
 
@@ -410,7 +422,7 @@ export function validateContextComplete(surface, context, requiredKeys) {
  * Detects partials that were used but not preloaded
  */
 export function validateTemplateDependencies(templatePath, partialsUsed) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   const missing = [];
   for (const partial of partialsUsed) {
@@ -437,7 +449,7 @@ export function validateTemplateDependencies(templatePath, partialsUsed) {
  * Distinguishes between: completely blank, text-only, fully interactive
  */
 export function classifyRenderOutcome(root, surface) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   const text = root.innerText?.trim() || '';
   const hasControls = root.querySelectorAll('input, button, select').length > 0;
@@ -468,7 +480,7 @@ export function classifyRenderOutcome(root, surface) {
  * Catches data mismatches when transitioning between surfaces (chargen → sheet)
  */
 export function validateSurfaceTransition(fromSurface, toSurface, actor) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   if (!actor) {
     v2Assert(
@@ -501,7 +513,7 @@ export function validateSurfaceTransition(fromSurface, toSurface, actor) {
  * Failsafe that catches catastrophic silent failures after startup
  */
 export function setupNoWindowSentinel() {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   setTimeout(() => {
     // Only check if we're past initial load and at least one app should be open
@@ -519,7 +531,7 @@ export function setupNoWindowSentinel() {
  * Correlate failures across all systems using session ID
  */
 export function generateUIFailureReport() {
-  if (!game.settings.get('core', 'devMode')) {
+  if (!getDevMode()) {
     console.warn('[UI FAILURE REPORT] Skipped (dev mode disabled)');
     return null;
   }

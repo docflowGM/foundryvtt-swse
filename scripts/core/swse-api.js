@@ -5,6 +5,18 @@
  * This provides a single point of documentation for what's safe to use.
  */
 
+/**
+ * Safe accessor for devMode setting
+ * Safely checks if core.devMode is registered before accessing
+ */
+function getDevMode() {
+  try {
+    return game.settings.get('core', 'devMode');
+  } catch {
+    return false;
+  }
+}
+
 import CharacterGenerator from '../apps/chargen/chargen-main.js';
 import { auditCSSHealth } from './css-auditor.js';
 import {
@@ -25,7 +37,7 @@ import {
  *   window.SWSE.smokeTest()
  */
 async function smokeTest() {
-  if (!game.settings.get('core', 'devMode')) {
+  if (!getDevMode()) {
     console.warn('[SWSE Smoke Test] Skipped (dev mode disabled)');
     return false;
   }

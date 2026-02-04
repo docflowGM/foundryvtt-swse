@@ -2,6 +2,18 @@
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
+/**
+ * Safe accessor for devMode setting
+ * Safely checks if core.devMode is registered before accessing
+ */
+function getDevMode() {
+  try {
+    return game.settings.get('core', 'devMode');
+  } catch {
+    return false;
+  }
+}
+
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
   if (!(root instanceof HTMLElement)) {return;}
@@ -86,7 +98,7 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
     };
 
     // DATA VALIDATION (catches 80% of blank sheet issues)
-    if (game.settings.get('core', 'devMode')) {
+    if (getDevMode()) {
       if (!context.system) {
         throw new Error(
           `${this.constructor.name}: getData() missing system data. Template will be blank.`

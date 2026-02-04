@@ -14,12 +14,24 @@
  */
 
 /**
+ * Safe accessor for devMode setting
+ * Safely checks if core.devMode is registered before accessing
+ */
+function getDevMode() {
+  try {
+    return getDevMode();
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Log overflow violations (clipped content)
  * @param {string} selector - CSS selector to check
  * @param {string} label - Human-readable label
  */
 export function auditOverflow(selector, label) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   const el = document.querySelector(selector);
   if (!el) {return;}
@@ -44,7 +56,7 @@ export function auditOverflow(selector, label) {
  * @param {string} label - Human-readable label
  */
 export function auditZeroSize(el, label) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
   if (!el) {return;}
 
   const rect = el.getBoundingClientRect();
@@ -66,7 +78,7 @@ export function auditZeroSize(el, label) {
  * @param {string} label - Human-readable label
  */
 export function auditStackingContext(el, label) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
   if (!el) {return;}
 
   const style = getComputedStyle(el);
@@ -86,7 +98,7 @@ export function auditStackingContext(el, label) {
  * @param {string[]} forbidden - List of forbidden properties
  */
 export function auditForbiddenStyles(el, label, forbidden = ['transform', 'filter', 'backdrop-filter']) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
   if (!el) {return;}
 
   const style = getComputedStyle(el);
@@ -105,7 +117,7 @@ export function auditForbiddenStyles(el, label, forbidden = ['transform', 'filte
  * Detects the "X icon" failure pattern.
  */
 export function auditIcons() {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   const icons = document.querySelectorAll('i.fa, i.fa-solid, i.fas, [class*="fa-"]');
   const issues = [];
@@ -134,7 +146,7 @@ export function auditIcons() {
  * @param {string} expectedFallback - Expected fallback value
  */
 export function auditCSSVariable(varName, expectedFallback) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
   if (!value || value === expectedFallback) {
@@ -151,7 +163,7 @@ export function auditCSSVariable(varName, expectedFallback) {
  * @param {string} label - Human-readable label
  */
 export function auditHidden(el, label) {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
   if (!el) {return;}
 
   const style = getComputedStyle(el);
@@ -169,7 +181,7 @@ export function auditHidden(el, label) {
  * @returns {Object} Health report with pass/fail status
  */
 export function auditCSSHealth() {
-  if (!game.settings.get('core', 'devMode')) {
+  if (!getDevMode()) {
     console.warn('[CSS Auditor] Skipped (dev mode disabled)');
     return false;
   }
@@ -269,7 +281,7 @@ export function auditCSSHealth() {
  * Called automatically after render in dev mode.
  */
 export function runFullCSSAudit() {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   // Overflow checks
   auditOverflow('#sidebar', 'Sidebar');
