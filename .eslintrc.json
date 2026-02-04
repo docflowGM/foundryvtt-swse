@@ -26,6 +26,7 @@
     "Application": "readonly",
     "FormApplication": "readonly",
     "foundry": "readonly",
+    "Handlebars": "readonly",
     "CONST": "readonly",
     "loadTemplates": "readonly",
     "renderTemplate": "readonly",
@@ -39,10 +40,13 @@
     "globalThis": "readonly"
   },
   "rules": {
-    "no-unused-vars": ["warn", {
-      "argsIgnorePattern": "^_",
-      "varsIgnorePattern": "^_"
-    }],
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
     "no-console": "off",
     "no-empty": ["error", { "allowEmptyCatch": true }],
     "no-irregular-whitespace": "warn",
@@ -51,7 +55,11 @@
     "eqeqeq": ["warn", "smart"],
     "curly": ["warn", "all"],
     "brace-style": ["warn", "1tbs", { "allowSingleLine": true }],
-    "quotes": ["warn", "single", { "avoidEscape": true, "allowTemplateLiterals": true }],
+    "quotes": [
+      "warn",
+      "single",
+      { "avoidEscape": true, "allowTemplateLiterals": true }
+    ],
     "semi": ["warn", "always"],
     "no-trailing-spaces": "warn",
     "comma-dangle": ["warn", "never"],
@@ -68,39 +76,49 @@
        Prevent jQuery patterns and deprecated Foundry v12 DOM access.
        ================================================================= */
 
-    "no-restricted-properties": ["error", {
-      "object": "HTMLElement",
-      "property": "find",
-      "message": "jQuery .find() not available on HTMLElement in v13+. Use .querySelector() instead."
-    }, {
-      "object": "HTMLElement",
-      "property": "text",
-      "message": "jQuery .text() not available in v13+. Use .textContent instead."
-    }, {
-      "object": "HTMLElement",
-      "property": "show",
-      "message": "jQuery .show() not available in v13+. Use .style.display = 'block' instead."
-    }, {
-      "object": "HTMLElement",
-      "property": "hide",
-      "message": "jQuery .hide() not available in v13+. Use .style.display = 'none' instead."
-    }, {
-      "object": "HTMLElement",
-      "property": "empty",
-      "message": "jQuery .empty() not available in v13+. Use .innerHTML = '' instead."
-    }, {
-      "object": "HTMLElement",
-      "property": "append",
-      "message": "jQuery .append() not available on HTMLElement. Use .appendChild() or .insertAdjacentHTML()."
-    }, {
-      "object": "HTMLElement",
-      "property": "click",
-      "message": "jQuery .click() not available in v13+. Use .addEventListener('click', ...) instead."
-    }, {
-      "object": "HTMLElement",
-      "property": "change",
-      "message": "jQuery .change() not available in v13+. Use .addEventListener('change', ...) instead."
-    }],
+    "no-restricted-properties": [
+      "error",
+      {
+        "object": "HTMLElement",
+        "property": "find",
+        "message": "jQuery .find() not available on HTMLElement in v13+. Use .querySelector() instead."
+      },
+      {
+        "object": "HTMLElement",
+        "property": "text",
+        "message": "jQuery .text() not available in v13+. Use .textContent instead."
+      },
+      {
+        "object": "HTMLElement",
+        "property": "show",
+        "message": "jQuery .show() not available in v13+. Use .style.display = 'block' instead."
+      },
+      {
+        "object": "HTMLElement",
+        "property": "hide",
+        "message": "jQuery .hide() not available in v13+. Use .style.display = 'none' instead."
+      },
+      {
+        "object": "HTMLElement",
+        "property": "empty",
+        "message": "jQuery .empty() not available in v13+. Use .innerHTML = '' instead."
+      },
+      {
+        "object": "HTMLElement",
+        "property": "append",
+        "message": "jQuery .append() not available on HTMLElement. Use .appendChild() or .insertAdjacentHTML()."
+      },
+      {
+        "object": "HTMLElement",
+        "property": "click",
+        "message": "jQuery .click() not available in v13+. Use .addEventListener('click', ...) instead."
+      },
+      {
+        "object": "HTMLElement",
+        "property": "change",
+        "message": "jQuery .change() not available in v13+. Use .addEventListener('change', ...) instead."
+      }
+    ],
 
     "no-restricted-syntax": [
       "error",
