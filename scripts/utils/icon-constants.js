@@ -294,5 +294,24 @@ export function createIcon(iconKey) {
 export function getIconClass(iconKey) {
   // Defensive: ensure iconKey is a string
   const key = typeof iconKey === 'string' ? iconKey : String(iconKey);
+
+  if (!ICONS[key]) {
+    if (typeof iconKey !== 'string') {
+      console.error(
+        "[SWSE Icons] Non-string icon key received",
+        {
+          received: iconKey,
+          type: typeof iconKey,
+          stringified: key,
+          isObject: iconKey !== null && typeof iconKey === 'object',
+          objectKeys: iconKey !== null && typeof iconKey === 'object' ? Object.keys(iconKey) : null,
+          stack: new Error().stack
+        }
+      );
+    } else {
+      console.warn(`[SWSE Icons] Unknown icon key: "${key}". Available keys:`, Object.keys(ICONS));
+    }
+  }
+
   return ICONS[key] || "";
 }
