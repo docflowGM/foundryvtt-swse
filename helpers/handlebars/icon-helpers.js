@@ -13,6 +13,13 @@ export const iconHelpers = {
    *   <i class="{{getIconClass 'info'}}"></i>
    */
   getIconClass: function(iconKey) {
+    if (typeof iconKey !== 'string') {
+      console.error('[SWSE Icons] getIconClass received non-string:', {
+        received: iconKey,
+        type: typeof iconKey,
+        context: this,
+      });
+    }
     return getIconClass(iconKey);
   },
 
@@ -23,6 +30,13 @@ export const iconHelpers = {
    *   {{{icon 'warning'}}}
    */
   icon: function(iconKey) {
+    if (typeof iconKey !== 'string') {
+      console.error('[SWSE Icons] icon helper received non-string:', {
+        received: iconKey,
+        type: typeof iconKey,
+        context: this,
+      });
+    }
     const el = createIcon(iconKey);
     return el.outerHTML;
   }
