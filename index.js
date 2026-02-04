@@ -141,6 +141,7 @@ import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
 import { registerSWSEPartials } from './helpers/handlebars/partials-auto.js';
 import { preloadHandlebarsTemplates, assertPartialsResolved } from './scripts/core/load-templates.js';
+import { SWSEAPI } from './scripts/core/swse-api.js';
 
 import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 import { createItemMacro } from './scripts/macros/item-macro.js';
@@ -548,6 +549,7 @@ Hooks.once('ready', async function () {
         validateUserInput,
         hookMonitor,
         compendiumLoader,
+        ...SWSEAPI,  // Public API (frozen)
         ...game.swse
     });
 
