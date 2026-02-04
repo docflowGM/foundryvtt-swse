@@ -6,6 +6,7 @@
  */
 
 import CharacterGenerator from '../apps/chargen/chargen-main.js';
+import { auditCSSHealth } from './css-auditor.js';
 
 /**
  * Smoke Test Suite - Basic validation that SWSE loads correctly
@@ -108,11 +109,22 @@ async function openCharGen(actor = null) {
 }
 
 /**
+ * CSS Health Report - Validate CSS invariants
+ * Checks for overflow, containment, icons, and other CSS assumptions.
+ * Dev-only. Run after Foundry updates to detect CSS regressions.
+ * @returns {boolean} True if all CSS tests pass
+ */
+function cssHealth() {
+  return auditCSSHealth();
+}
+
+/**
  * SWSE Public API - Frozen to prevent mutation
  *
  * Safe to use:
- * - window.SWSE.openCharGen()
- * - window.SWSE.smokeTest()
+ * - window.SWSE.openCharGen() - Open character generator
+ * - window.SWSE.smokeTest() - Validate system initialization
+ * - window.SWSE.cssHealth() - Validate CSS assumptions
  *
  * Not safe:
  * - Modifying this object
@@ -121,5 +133,6 @@ async function openCharGen(actor = null) {
 export const SWSEAPI = Object.freeze({
   openCharGen,
   smokeTest,
+  cssHealth,
   version: '1.2.0'
 });
