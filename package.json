@@ -18,19 +18,22 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "check:mutations": "bash tools/check-mutation-paths.sh",
-    "validate:mentor-dialogue": "node scripts/mentor/validate-mentor-dialogue.js"
+    "validate:mentor-dialogue": "node scripts/mentor/validate-mentor-dialogue.js",
+    "prepare": "husky install"
   },
   "dependencies": {
     "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
-    "sass": "^1.69.5",
-    "postcss": "^8.4.32",
-    "postcss-cli": "^11.0.0",
     "autoprefixer": "^10.4.16",
     "cssnano": "^6.0.2",
     "eslint": "^8.56.0",
+    "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "lint-staged": "^16.2.7",
+    "postcss": "^8.4.32",
+    "postcss-cli": "^11.0.0",
     "prettier": "^3.1.1",
-    "jest": "^29.7.0"
+    "sass": "^1.69.5"
   }
 }
