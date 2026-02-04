@@ -48,7 +48,7 @@
              data-action="{{#if ability.isMultiOption}}showMultiOptions{{else}}expandAbility{{/if}}"
              data-ability-id="{{ability.id}}">
           <div class="ability-icon">
-            <i class="{{ability.icon}}"></i>
+            <i class="{{getIconClass ability.icon}}"></i>
           </div>
           <div class="ability-title-block">
             <span class="ability-name">{{ability.name}}</span>
@@ -83,7 +83,7 @@
 
               <div class="sub-ability-header">
                 <div class="sub-ability-icon">
-                  <i class="{{subAbility.icon}}"></i>
+                  <i class="{{getIconClass subAbility.icon}}"></i>
                 </div>
                 <div class="sub-ability-title">
                   <strong>{{subAbility.name}}</strong>
