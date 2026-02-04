@@ -695,7 +695,13 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       // Apply banned species filter (only if not GM)
       if (!game.user.isGM) {
-        const bannedSpeciesStr = game.settings.get("foundryvtt-swse", "bannedSpecies") || "";
+        let bannedSpeciesStr = "";
+        try {
+          bannedSpeciesStr = game.settings.get("foundryvtt-swse", "bannedSpecies") || "";
+        } catch (err) {
+          bannedSpeciesStr = "";
+        }
+
         const bannedSpecies = bannedSpeciesStr
           .split(',')
           .map(s => s.trim())
@@ -1073,8 +1079,15 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       let talentsRequired = 1; // Default: 1 talent at level 1
 
       // Check houserule settings
-      const talentEveryLevel = game.settings.get('foundryvtt-swse', "talentEveryLevel");
-      const talentEveryLevelExtraL1 = game.settings.get('foundryvtt-swse', "talentEveryLevelExtraL1");
+      let talentEveryLevel = false;
+      let talentEveryLevelExtraL1 = false;
+      try {
+        talentEveryLevel = game.settings.get('foundryvtt-swse', "talentEveryLevel");
+        talentEveryLevelExtraL1 = game.settings.get('foundryvtt-swse', "talentEveryLevelExtraL1");
+      } catch (err) {
+        talentEveryLevel = false;
+        talentEveryLevelExtraL1 = false;
+      }
 
       if (talentEveryLevel && selectedClass) {
         // With talentEveryLevel, at least 1 talent available
@@ -1664,7 +1677,13 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       steps.push("abilities", "class");
 
       // Add background step only if enabled
-      const backgroundsEnabled = game.settings.get("foundryvtt-swse", "enableBackgrounds") ?? true;
+      let backgroundsEnabled = true;
+      try {
+        backgroundsEnabled = game.settings.get("foundryvtt-swse", "enableBackgrounds") ?? true;
+      } catch (err) {
+        backgroundsEnabled = true;
+      }
+
       if (backgroundsEnabled) {
         steps.push("background");
       }
@@ -2352,9 +2371,14 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           }, 0);
 
           // Get the correct point buy pool based on character type
-          const pointBuyPool = this.characterData.isDroid
-            ? (game.settings.get('foundryvtt-swse', "droidPointBuyPool") || 20)
-            : (game.settings.get('foundryvtt-swse', "livingPointBuyPool") || 25);
+          let pointBuyPool = 25;
+          try {
+            pointBuyPool = this.characterData.isDroid
+              ? (game.settings.get('foundryvtt-swse', "droidPointBuyPool") || 20)
+              : (game.settings.get('foundryvtt-swse', "livingPointBuyPool") || 25);
+          } catch (err) {
+            pointBuyPool = this.characterData.isDroid ? 20 : 25;
+          }
 
           // Allow some flexibility (within 2 points of the budget)
           if (totalSpent > pointBuyPool) {

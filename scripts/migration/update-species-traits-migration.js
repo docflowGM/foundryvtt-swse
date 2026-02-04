@@ -22,7 +22,8 @@ export class UpdateSpeciesTraitsMigration {
       const lastVersion = game.settings.get('foundryvtt-swse', this.MIGRATION_KEY);
       return lastVersion !== this.MIGRATION_VERSION;
     } catch (err) {
-      // Setting not yet registered, so migration needs to run
+      // Setting not yet registered or inaccessible, assume migration needs to run
+      SWSELogger.warn(`SWSE | Could not check migration status for ${this.MIGRATION_KEY}:`, err.message);
       return true;
     }
   }
@@ -31,7 +32,11 @@ export class UpdateSpeciesTraitsMigration {
    * Mark migration as complete
    */
   static async markComplete() {
-    await game.settings.set('foundryvtt-swse', this.MIGRATION_KEY, this.MIGRATION_VERSION);
+    try {
+      await game.settings.set('foundryvtt-swse', this.MIGRATION_KEY, this.MIGRATION_VERSION);
+    } catch (err) {
+      SWSELogger.warn(`SWSE | Could not mark migration complete for ${this.MIGRATION_KEY}:`, err.message);
+    }
   }
 
   /**

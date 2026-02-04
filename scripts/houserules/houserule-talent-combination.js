@@ -19,10 +19,15 @@ export class HouseRuleTalentCombination {
    * @returns {Array} Modified talent array
    */
   static processBlockDeflectCombination(talents) {
-    const blockDeflectMode = game.settings.get(
-      "foundryvtt-swse",
-      "blockDeflectTalents"
-    );
+    try {
+      var blockDeflectMode = game.settings.get(
+        "foundryvtt-swse",
+        "blockDeflectTalents"
+      );
+    } catch (err) {
+      // Setting not yet registered, use default
+      blockDeflectMode = "separate";
+    }
 
     if (blockDeflectMode !== "combined") {
       return talents;
