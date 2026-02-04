@@ -260,15 +260,17 @@ import { SuggestionService } from './scripts/engine/SuggestionService.js';
  * HTML Elements no longer support jQuery methods.
  * This catches regressions early instead of silent failures.
  */
-if (game.settings.get('core', 'devMode')) {
-  if (typeof HTMLElement !== 'undefined') {
-    if (HTMLElement.prototype.find || HTMLElement.prototype.text || HTMLElement.prototype.show || HTMLElement.prototype.hide) {
-      console.warn(
-        '%c⚠️ SWSE: jQuery-style methods detected on HTMLElement',
-        'color: #ff6600; font-size: 14px; font-weight: bold;'
-      );
-      console.warn('This will break rendering in v13+. Update to standard DOM APIs.');
-      console.warn('Bad patterns: .find(), .text(), .show(), .hide(), .element[0]');
+if (typeof game !== 'undefined' && game.settings) {
+  if (game.settings.get('core', 'devMode')) {
+    if (typeof HTMLElement !== 'undefined') {
+      if (HTMLElement.prototype.find || HTMLElement.prototype.text || HTMLElement.prototype.show || HTMLElement.prototype.hide) {
+        console.warn(
+          '%c⚠️ SWSE: jQuery-style methods detected on HTMLElement',
+          'color: #ff6600; font-size: 14px; font-weight: bold;'
+        );
+        console.warn('This will break rendering in v13+. Update to standard DOM APIs.');
+        console.warn('Bad patterns: .find(), .text(), .show(), .hide(), .element[0]');
+      }
     }
   }
 }

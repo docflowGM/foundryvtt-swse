@@ -19,14 +19,26 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
   async _prepareContext() {
     const context = await super._prepareContext();
 
-    // Get GM's ability generation method from houserules
-    context.abilityMethod = game.settings.get('foundryvtt-swse', "abilityScoreMethod") || "pointbuy";
+    // Get GM's ability generation method from houserules (with safe fallback)
+    try {
+      context.abilityMethod = game.settings.get('foundryvtt-swse', "abilityScoreMethod") || "pointbuy";
+    } catch (err) {
+      context.abilityMethod = "pointbuy";
+    }
 
     // Use droid or living point buy pool based on character type
     if (this.characterData.isDroid) {
-      context.pointBuyPool = game.settings.get('foundryvtt-swse', "droidPointBuyPool") || 20;
+      try {
+        context.pointBuyPool = game.settings.get('foundryvtt-swse', "droidPointBuyPool") || 20;
+      } catch (err) {
+        context.pointBuyPool = 20;
+      }
     } else {
-      context.pointBuyPool = game.settings.get('foundryvtt-swse', "livingPointBuyPool") || 25;
+      try {
+        context.pointBuyPool = game.settings.get('foundryvtt-swse', "livingPointBuyPool") || 25;
+      } catch (err) {
+        context.pointBuyPool = 25;
+      }
     }
 
     // Add target level
@@ -401,7 +413,13 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
   // ========================================
   async _applyHouseruleBonuses(actor) {
     // Auto-grant Weapon Finesse if houserule is enabled
-    const weaponFinesseDefault = game.settings.get('foundryvtt-swse', "weaponFinesseDefault");
+    let weaponFinesseDefault = false;
+    try {
+      weaponFinesseDefault = game.settings.get('foundryvtt-swse', "weaponFinesseDefault");
+    } catch (err) {
+      weaponFinesseDefault = false;
+    }
+
     if (weaponFinesseDefault) {
       SWSELogger.log("SWSE CharGen | Auto-granting Weapon Finesse (houserule)");
 
@@ -419,7 +437,13 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     }
 
     // Log block/deflect houserule setting for reference
-    const blockDeflectTalents = game.settings.get('foundryvtt-swse', "blockDeflectTalents");
+    let blockDeflectTalents = "separate";
+    try {
+      blockDeflectTalents = game.settings.get('foundryvtt-swse', "blockDeflectTalents");
+    } catch (err) {
+      blockDeflectTalents = "separate";
+    }
+
     if (blockDeflectTalents === "combined") {
       SWSELogger.log("SWSE CharGen | Block/Deflect set to combined (houserule)");
     }
@@ -448,8 +472,15 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     const conMod = this.characterData.isDroid ? 0 : (this.characterData.abilities.con.mod || 0);
 
     // Calculate HP gain based on houserule settings
-    const hpGeneration = game.settings.get('foundryvtt-swse', "hpGeneration");
-    const maxHPLevels = game.settings.get('foundryvtt-swse', "maxHPLevels") || 1;
+    let hpGeneration = "average";
+    let maxHPLevels = 1;
+    try {
+      hpGeneration = game.settings.get('foundryvtt-swse', "hpGeneration") || "average";
+      maxHPLevels = game.settings.get('foundryvtt-swse', "maxHPLevels") || 1;
+    } catch (err) {
+      hpGeneration = "average";
+      maxHPLevels = 1;
+    }
 
     let hpGain = 0;
     const hitDie = classData.hitDie;

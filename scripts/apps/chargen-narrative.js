@@ -477,7 +477,12 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
 
   _generateTalentTreeHtml(treeName, talentGraph) {
     // Check if deflect/block should be grouped (houserule)
-    const groupDeflectBlock = game.settings.get('foundryvtt-swse', "groupDeflectBlock") || false;
+    let groupDeflectBlock = false;
+    try {
+      groupDeflectBlock = game.settings.get('foundryvtt-swse', "groupDeflectBlock") || false;
+    } catch (err) {
+      groupDeflectBlock = false;
+    }
 
     let html = `
       <div class="talent-tree-container">
