@@ -41,13 +41,21 @@ export function registerSuggestionHooks() {
       const actor = app?.actor;
       if (!actor) return;
 
-      const container = html.find('.sheet-body, .tab[data-tab="main"], form');
-      if (!container?.length) return;
+      // V2 API: html may be HTMLElement or jQuery - normalize to HTMLElement
+      const root = html instanceof HTMLElement ? html : html[0];
+      if (!root) return;
+
+      const container = root.querySelector('.sheet-body, .tab[data-tab="main"], form');
+      if (!container) return;
 
       const panelId = `swse-mentor-notes-${actor.id}`;
-      if (html.find(`#${panelId}`).length) return;
+      if (root.querySelector(`#${panelId}`)) return;
 
-      const wrapper = $(`<section id="${panelId}" class="swse-mentor-notes">
+      // Create wrapper using native DOM
+      const wrapper = document.createElement('section');
+      wrapper.id = panelId;
+      wrapper.className = 'swse-mentor-notes';
+      wrapper.innerHTML = `
         <header class="swse-mentor-notes__header">
           <h3>Mentor Notes</h3>
           <a class="swse-mentor-notes__toggle">toggle</a>
@@ -55,23 +63,22 @@ export function registerSuggestionHooks() {
         <div class="swse-mentor-notes__body" style="display:none;">
           <div class="swse-mentor-notes__loading">Loading suggestions…</div>
         </div>
-      </section>`);
+      `;
 
       container.prepend(wrapper);
 
-      wrapper.find('.swse-mentor-notes__toggle').on('click', () => {
-        const body = wrapper.find('.swse-mentor-notes__body');
-        body.toggle();
+      const body = wrapper.querySelector('.swse-mentor-notes__body');
+      wrapper.querySelector('.swse-mentor-notes__toggle').addEventListener('click', () => {
+        body.style.display = body.style.display === 'none' ? '' : 'none';
       });
 
       const sugs = await SuggestionService.getSuggestions(actor, 'sheet', { persist: true });
       const top = (sugs ?? []).slice(0, 6);
 
-      const body = wrapper.find('.swse-mentor-notes__body');
-      body.empty();
+      body.innerHTML = '';
 
       if (!top.length) {
-        body.append(`<div class="swse-mentor-notes__empty">No suggestions right now.</div>`);
+        body.innerHTML = `<div class="swse-mentor-notes__empty">No suggestions right now.</div>`;
         return;
       }
 
@@ -80,18 +87,24 @@ export function registerSuggestionHooks() {
         const why = s?.explanation?.short || s?.suggestion?.reason || '';
         const pack = s?.targetRef?.pack || '';
         const id = s?.targetRef?.id || '';
-        body.append(`<div class="swse-mentor-notes__row" data-pack="${pack}" data-id="${id}">
+        const row = document.createElement('div');
+        row.className = 'swse-mentor-notes__row';
+        row.dataset.pack = pack;
+        row.dataset.id = id;
+        row.innerHTML = `
           <div class="swse-mentor-notes__name">${name}</div>
           <div class="swse-mentor-notes__why">${why}</div>
-        </div>`);
+        `;
+        body.appendChild(row);
       }
 
       // Open suggested item on click when a compendium reference exists
-      body.off('click.swseMentorNotes').on('click.swseMentorNotes', '.swse-mentor-notes__row', async (ev) => {
+      body.addEventListener('click', async (ev) => {
+        const row = ev.target.closest('.swse-mentor-notes__row');
+        if (!row) return;
         try {
-          const el = ev.currentTarget;
-          const packName = el.dataset.pack;
-          const docId = el.dataset.id;
+          const packName = row.dataset.pack;
+          const docId = row.dataset.id;
           if (!packName || !docId) return;
           const pack = game.packs.get(packName);
           if (!pack) return;

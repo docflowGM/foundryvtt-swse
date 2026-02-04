@@ -14,16 +14,18 @@ export function registerLevelUpSheetHooks() {
     // Only add button to character sheets
     if (data.actor.type !== "character") return;
 
-    // Create the level-up button
-    const btn = $(`
-      <button class="swse-levelup-btn" title="Start level-up process">
-        <i class="fas fa-level-up-alt"></i>
-        Level Up
-      </button>
-    `);
+    // V2 API: html may be HTMLElement or jQuery - normalize to HTMLElement
+    const root = html instanceof HTMLElement ? html : html[0];
+    if (!root) return;
+
+    // Create the level-up button using native DOM
+    const btn = document.createElement('button');
+    btn.className = 'swse-levelup-btn';
+    btn.title = 'Start level-up process';
+    btn.innerHTML = '<i class="fas fa-level-up-alt"></i> Level Up';
 
     // Add click handler
-    btn.on("click", async (ev) => {
+    btn.addEventListener("click", async (ev) => {
       ev.preventDefault();
       try {
         new SWSELevelUpEnhanced(sheet.actor).render(true);
@@ -35,12 +37,13 @@ export function registerLevelUpSheetHooks() {
     });
 
     // Insert button into header (after title, before other buttons)
-    const titleEl = html.find(".window-title");
-    if (titleEl.length) {
-      titleEl.after(btn);
+    const titleEl = root.querySelector(".window-title");
+    if (titleEl) {
+      titleEl.insertAdjacentElement('afterend', btn);
     } else {
       // Fallback: add to header if structure is different
-      html.find(".sheet-header").prepend(btn);
+      const header = root.querySelector(".sheet-header");
+      if (header) header.prepend(btn);
     }
 
     SWSELogger.debug(`Added level-up button to ${sheet.actor.name} sheet`);
