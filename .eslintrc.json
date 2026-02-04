@@ -61,6 +61,57 @@
     "space-in-parens": ["warn", "never"],
     "object-curly-spacing": ["warn", "always"],
     "array-bracket-spacing": ["warn", "never"],
-    "no-multiple-empty-lines": ["warn", { "max": 2, "maxEOF": 1 }]
+    "no-multiple-empty-lines": ["warn", { "max": 2, "maxEOF": 1 }],
+
+    /* =================================================================
+       V13 COMPATIBILITY RULES (Strict Enforcement)
+       Prevent jQuery patterns and deprecated Foundry v12 DOM access.
+       ================================================================= */
+
+    "no-restricted-properties": ["error", {
+      "object": "HTMLElement",
+      "property": "find",
+      "message": "jQuery .find() not available on HTMLElement in v13+. Use .querySelector() instead."
+    }, {
+      "object": "HTMLElement",
+      "property": "text",
+      "message": "jQuery .text() not available in v13+. Use .textContent instead."
+    }, {
+      "object": "HTMLElement",
+      "property": "show",
+      "message": "jQuery .show() not available in v13+. Use .style.display = 'block' instead."
+    }, {
+      "object": "HTMLElement",
+      "property": "hide",
+      "message": "jQuery .hide() not available in v13+. Use .style.display = 'none' instead."
+    }, {
+      "object": "HTMLElement",
+      "property": "empty",
+      "message": "jQuery .empty() not available in v13+. Use .innerHTML = '' instead."
+    }, {
+      "object": "HTMLElement",
+      "property": "append",
+      "message": "jQuery .append() not available on HTMLElement. Use .appendChild() or .insertAdjacentHTML()."
+    }, {
+      "object": "HTMLElement",
+      "property": "click",
+      "message": "jQuery .click() not available in v13+. Use .addEventListener('click', ...) instead."
+    }, {
+      "object": "HTMLElement",
+      "property": "change",
+      "message": "jQuery .change() not available in v13+. Use .addEventListener('change', ...) instead."
+    }],
+
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "MemberExpression[object.property.name='element'][property.name=0]",
+        "message": "this.element[0] is no longer valid in v13+. Use this.element directly (it's already an HTMLElement)."
+      },
+      {
+        "selector": "CallExpression[callee.property.name='find'][callee.object.object.property.name='element']",
+        "message": "this.element.find() not available in v13+. Use this.element.querySelector() instead."
+      }
+    ]
   }
 }
