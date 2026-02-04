@@ -164,14 +164,15 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
   /**
    * Override render to preserve scroll position during updates
+   * V2 API: this.element is HTMLElement, not jQuery
    * @override
    */
   async render(force = false, options = {}) {
     // Store scroll positions before render
     const scrollPositions = {};
-    if (this.element?.length > 0 && this.element[0]) {
-      for (const selector of this.constructor.defaultOptions?.scrollY || []) {
-        const el = this.element[0]?.querySelector(selector);
+    if (this.element instanceof HTMLElement) {
+      for (const selector of this.constructor.DEFAULT_OPTIONS?.scrollY || []) {
+        const el = this.element.querySelector(selector);
         if (el) {
           scrollPositions[selector] = el.scrollTop;
         }
@@ -182,9 +183,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const result = await super.render(force, options);
 
     // Restore scroll positions after render
-    if (this.element?.length > 0 && this.element[0]) {
+    if (this.element instanceof HTMLElement) {
       for (const [selector, scrollTop] of Object.entries(scrollPositions)) {
-        const el = this.element[0]?.querySelector(selector);
+        const el = this.element.querySelector(selector);
         if (el) {
           el.scrollTop = scrollTop;
         }
@@ -1378,158 +1379,197 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
 
 
-  async _onRender(html, options) {
-    await super._onRender(html, options);
+  /**
+   * V2 API: _onRender receives (context, options), NOT html
+   * All DOM access via this.element (HTMLElement)
+   * @param {Object} context - The prepared context data
+   * @param {Object} options - Render options
+   */
+  async _onRender(context, options) {
+    await super._onRender(context, options);
 
-    // Ensure html is jQuery object for compatibility
-    const $html = html instanceof jQuery ? html : $(html);
+    // V2: Access DOM via this.element (HTMLElement, not jQuery)
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
     // Activate Foundry tooltips for feat descriptions
-    if (this.element instanceof HTMLElement && game.tooltip) {
-      game.tooltip.activate(this.element, {
-        selector: '[data-tooltip]'
-      });
+    if (game.tooltip) {
+      game.tooltip.activate(root, { selector: '[data-tooltip]' });
     }
 
+    // Helper to bind click events to multiple elements
+    const bindClick = (selector, handler) => {
+      for (const el of root.querySelectorAll(selector)) {
+        el.addEventListener('click', handler.bind(this));
+      }
+    };
+
+    // Helper to bind change events to multiple elements
+    const bindChange = (selector, handler) => {
+      for (const el of root.querySelectorAll(selector)) {
+        el.addEventListener('change', handler.bind(this));
+      }
+    };
+
     // Free Build toggle
-    $html.find('.free-build-toggle').change(this._onToggleFreeBuild.bind(this));
+    bindChange('.free-build-toggle', this._onToggleFreeBuild);
 
     // Navigation
-    $html.find('.next-step').click(this._onNextStep.bind(this));
-    $html.find('.prev-step').click(this._onPrevStep.bind(this));
-    $html.find('.skip-step').click(this._onSkipStep.bind(this));
-    $html.find('.build-later-droid').click(this._onBuildLater.bind(this));
+    bindClick('.next-step', this._onNextStep);
+    bindClick('.prev-step', this._onPrevStep);
+    bindClick('.skip-step', this._onSkipStep);
+    bindClick('.build-later-droid', this._onBuildLater);
 
     // Chevron step navigation (all steps now clickable with confirmation)
-    $html.find('.chevron-step').click(this._onJumpToStep.bind(this));
-    $html.find('.finish').click(this._onFinish.bind(this));
+    bindClick('.chevron-step', this._onJumpToStep);
+    bindClick('.finish', this._onFinish);
 
     // Selections
-    $html.find('.select-type').click(this._onSelectType.bind(this));
-    $html.find('.select-degree').click(this._onSelectDegree.bind(this));
-    $html.find('.select-size').click(this._onSelectSize.bind(this));
-    $html.find('.import-droid-btn').click(this._onImportDroid.bind(this));
+    bindClick('.select-type', this._onSelectType);
+    bindClick('.select-degree', this._onSelectDegree);
+    bindClick('.select-size', this._onSelectSize);
+    bindClick('.import-droid-btn', this._onImportDroid);
 
     // Species preview and selection (expanded card flow)
-    $html.find('.preview-species').click(this._onPreviewSpecies.bind(this));
-    $html.find('#species-confirm-btn').click(this._onConfirmSpecies.bind(this));
-    $html.find('#species-back-btn, #species-close-btn').click(this._onCloseSpeciesOverlay.bind(this));
-    $html.find('#species-overlay').click(this._onSpeciesOverlayBackdropClick.bind(this));
+    bindClick('.preview-species', this._onPreviewSpecies);
+    bindClick('#species-confirm-btn', this._onConfirmSpecies);
+    bindClick('#species-back-btn, #species-close-btn', this._onCloseSpeciesOverlay);
+    bindClick('#species-overlay', this._onSpeciesOverlayBackdropClick);
 
     // Near-Human builder
-    $html.find('.open-near-human-builder').click(this._onOpenNearHumanBuilder.bind(this));
-    // $html.find('.adaptation-btn').click(this._onSelectNearHumanAdaptation.bind(this)); // Method not implemented
-    $html.find('.sacrifice-btn').click(this._onSelectNearHumanSacrifice.bind(this));
-    // $html.find('.attr-plus, .attr-minus').click(this._onAdjustNearHumanAttribute.bind(this)); // Use _onAdjustNearHumanAbility instead (see line 522)
-    $html.find('.trait-btn').click(this._onSelectNearHumanTrait.bind(this));
-    $html.find('.sacrifice-radio').change(this._onSelectNearHumanSacrifice.bind(this));
-    $html.find('.variant-checkbox').change(this._onToggleNearHumanVariant.bind(this));
-    $html.find('.ability-plus-btn, .ability-minus-btn').click(this._onAdjustNearHumanAbility.bind(this));
-    $html.find('#near-human-randomize-btn').click(this._onRandomizeNearHuman.bind(this));
-    $html.find('#near-human-confirm-btn').click(this._onConfirmNearHuman.bind(this));
-    $html.find('#near-human-back-btn, #near-human-close-btn').click(this._onCloseNearHumanOverlay.bind(this));
-    $html.find('#near-human-overlay').click(this._onNearHumanOverlayBackdropClick.bind(this));
+    bindClick('.open-near-human-builder', this._onOpenNearHumanBuilder);
+    bindClick('.sacrifice-btn', this._onSelectNearHumanSacrifice);
+    bindClick('.trait-btn', this._onSelectNearHumanTrait);
+    bindChange('.sacrifice-radio', this._onSelectNearHumanSacrifice);
+    bindChange('.variant-checkbox', this._onToggleNearHumanVariant);
+    bindClick('.ability-plus-btn, .ability-minus-btn', this._onAdjustNearHumanAbility);
+    bindClick('#near-human-randomize-btn', this._onRandomizeNearHuman);
+    bindClick('#near-human-confirm-btn', this._onConfirmNearHuman);
+    bindClick('#near-human-back-btn, #near-human-close-btn', this._onCloseNearHumanOverlay);
+    bindClick('#near-human-overlay', this._onNearHumanOverlayBackdropClick);
 
     // Species filters
-    $html.find('.species-filter-select').change(this._onSpeciesFilterChange.bind(this));
-    $html.find('.clear-species-filters').click(this._onClearSpeciesFilters.bind(this));
-    $html.find('.select-class').click(this._onSelectClass.bind(this));
-    $html.find('.class-choice-btn').click(this._onSelectClass.bind(this));
-    $html.find('.select-feat').click(this._onSelectFeat.bind(this));
-    $html.find('.remove-feat').click(this._onRemoveFeat.bind(this));
-    $html.find('.filter-valid-feats').change(this._onToggleFeatFilter.bind(this));
-    $html.find('.select-talent-tree').click(this._onSelectTalentTree.bind(this));
-    $html.find('.back-to-talent-trees').click(this._onBackToTalentTrees.bind(this));
-    $html.find('.select-talent').click(this._onSelectTalent.bind(this));
-    $html.find('.remove-talent').click(this._onRemoveTalent.bind(this));
+    bindChange('.species-filter-select', this._onSpeciesFilterChange);
+    bindClick('.clear-species-filters', this._onClearSpeciesFilters);
+    bindClick('.select-class', this._onSelectClass);
+    bindClick('.class-choice-btn', this._onSelectClass);
+    bindClick('.select-feat', this._onSelectFeat);
+    bindClick('.remove-feat', this._onRemoveFeat);
+    bindChange('.filter-valid-feats', this._onToggleFeatFilter);
+    bindClick('.select-talent-tree', this._onSelectTalentTree);
+    bindClick('.back-to-talent-trees', this._onBackToTalentTrees);
+    bindClick('.select-talent', this._onSelectTalent);
+    bindClick('.remove-talent', this._onRemoveTalent);
 
     // Talent tree view toggle (Graph/List)
-    $html.find('.talent-view-btn').click(this._onTalentViewToggle.bind(this));
+    bindClick('.talent-view-btn', this._onTalentViewToggle);
 
     // Render talent tree graph if on talents step with selected tree
     if (this.currentStep === 'talents' && this.selectedTalentTree) {
-      this._renderTalentTreeGraph($html);
+      this._renderTalentTreeGraph(root);
     }
-    $html.find('.select-power').click(this._onSelectForcePower.bind(this));
-    $html.find('.remove-power').click(this._onRemoveForcePower.bind(this));
-    $html.find('.ask-mentor-force-power-suggestion').click(this._onAskMentorForcePowerSuggestion.bind(this));
-    $html.find('.select-maneuver').click(this._onSelectStarshipManeuver.bind(this));
-    $html.find('.remove-maneuver').click(this._onRemoveStarshipManeuver.bind(this));
-    $html.find('.skill-select').change(this._onSkillSelect.bind(this));
-    $html.find('.train-skill-btn').click(this._onTrainSkill.bind(this));
-    $html.find('.untrain-skill-btn').click(this._onUntrainSkill.bind(this));
-    $html.find('.reset-skills-btn').click(this._onResetSkills.bind(this));
+
+    bindClick('.select-power', this._onSelectForcePower);
+    bindClick('.remove-power', this._onRemoveForcePower);
+    bindClick('.ask-mentor-force-power-suggestion', this._onAskMentorForcePowerSuggestion);
+    bindClick('.select-maneuver', this._onSelectStarshipManeuver);
+    bindClick('.remove-maneuver', this._onRemoveStarshipManeuver);
+    bindChange('.skill-select', this._onSkillSelect);
+    bindClick('.train-skill-btn', this._onTrainSkill);
+    bindClick('.untrain-skill-btn', this._onUntrainSkill);
+    bindClick('.reset-skills-btn', this._onResetSkills);
 
     // Language selection
-    $html.find('.select-language').click(this._onSelectLanguage.bind(this));
-    $html.find('.remove-language').click(this._onRemoveLanguage.bind(this));
-    $html.find('.reset-languages-btn').click(this._onResetLanguages.bind(this));
-    $html.find('.add-custom-language-btn').click(this._onAddCustomLanguage.bind(this));
+    bindClick('.select-language', this._onSelectLanguage);
+    bindClick('.remove-language', this._onRemoveLanguage);
+    bindClick('.reset-languages-btn', this._onResetLanguages);
+    bindClick('.add-custom-language-btn', this._onAddCustomLanguage);
 
     // Background selection
-    $html.find('.random-background-btn').click(this._onRandomBackground.bind(this));
-    $html.find('.change-background-btn').click(this._onChangeBackground.bind(this));
+    bindClick('.random-background-btn', this._onRandomBackground);
+    bindClick('.change-background-btn', this._onChangeBackground);
 
     // Mentor "Ask Your Mentor" button
-    $html.find('.ask-mentor-btn, .ask-mentor-skills-btn').click(this._onAskMentor.bind(this));
+    bindClick('.ask-mentor-btn, .ask-mentor-skills-btn', this._onAskMentor);
 
     // Droid builder/shop
-    $html.find('.shop-tab').click(this._onShopTabClick.bind(this));
-    $html.find('.accessory-tab').click(this._onAccessoryTabClick.bind(this));
-    $html.on('click', '.purchase-system', this._onPurchaseSystem.bind(this));
-    $html.on('click', '.remove-system', this._onRemoveSystem.bind(this));
-    $html.on('click', '.add-enhancement', this._onPurchaseSystem.bind(this));
-    $html.on('click', '.remove-enhancement', this._onRemoveSystem.bind(this));
+    bindClick('.shop-tab', this._onShopTabClick);
+    bindClick('.accessory-tab', this._onAccessoryTabClick);
+
+    // Delegated events for dynamically added droid shop elements
+    root.addEventListener('click', (ev) => {
+      const purchaseBtn = ev.target.closest('.purchase-system, .add-enhancement');
+      if (purchaseBtn) {
+        this._onPurchaseSystem(ev);
+        return;
+      }
+      const removeBtn = ev.target.closest('.remove-system, .remove-enhancement');
+      if (removeBtn) {
+        this._onRemoveSystem(ev);
+      }
+    });
 
     // Name input - use 'input' event to capture changes in real-time
-    $html.find('input[name="character-name"]').on('input change', (ev) => {
-      const patch = buildNamePatch(this.characterData, ev.target.value);
-      this.characterData = applyProgressionPatch(this.characterData, patch);
-    });
+    const nameInput = root.querySelector('input[name="character-name"]');
+    if (nameInput) {
+      const handleNameChange = (ev) => {
+        const patch = buildNamePatch(this.characterData, ev.target.value);
+        this.characterData = applyProgressionPatch(this.characterData, patch);
+      };
+      nameInput.addEventListener('input', handleNameChange);
+      nameInput.addEventListener('change', handleNameChange);
+    }
 
     // Random name button
-    $html.find('.random-name-btn').click(this._onRandomName.bind(this));
+    bindClick('.random-name-btn', this._onRandomName);
 
     // Random droid name button
-    $html.find('.random-droid-name-btn').click(this._onRandomDroidName.bind(this));
+    bindClick('.random-droid-name-btn', this._onRandomDroidName);
 
     // Level input
-    $html.find('input[name="target-level"]').on('input change', (ev) => {
-      this.targetLevel = parseInt(ev.target.value, 10) || 1;
-    });
+    const levelInput = root.querySelector('input[name="target-level"]');
+    if (levelInput) {
+      const handleLevelChange = (ev) => {
+        this.targetLevel = parseInt(ev.target.value, 10) || 1;
+      };
+      levelInput.addEventListener('input', handleLevelChange);
+      levelInput.addEventListener('change', handleLevelChange);
+    }
 
     // Shop button
-    $html.find('.open-shop-btn').click(this._onOpenShop.bind(this));
+    bindClick('.open-shop-btn', this._onOpenShop);
 
     // Starting Credits
-    $html.find('.roll-credits-btn').click(this._onRollCredits.bind(this));
-    $html.find('.take-max-credits-btn').click(this._onTakeMaxCredits.bind(this));
-    $html.find('.reroll-credits-btn').click(this._onRerollCredits.bind(this));
+    bindClick('.roll-credits-btn', this._onRollCredits);
+    bindClick('.take-max-credits-btn', this._onTakeMaxCredits);
+    bindClick('.reroll-credits-btn', this._onRerollCredits);
 
     // Abilities UI
     if (this.currentStep === "abilities") {
-      this._bindAbilitiesUI($html[0]);
+      this._bindAbilitiesUI(root);
     }
-
 
     // Droid Builder UI
     if (this.currentStep === "droid-builder") {
-      this._populateDroidBuilder($html[0]);
+      this._populateDroidBuilder(root);
     }
 
     // Final Droid Customization UI (after class/background for final credits)
     if (this.currentStep === "droid-final") {
-      this._populateFinalDroidBuilder($html[0]);
+      this._populateFinalDroidBuilder(root);
     }
 
     // Class change
-    $html.find('[name="class_select"]').change(async (ev) => {
-      await this._onClassChanged(ev, $html[0]);
-    });
+    const classSelect = root.querySelector('[name="class_select"]');
+    if (classSelect) {
+      classSelect.addEventListener('change', async (ev) => {
+        await this._onClassChanged(ev, root);
+      });
+    }
 
     // Background step - render cards if on background step
     if (this.currentStep === "background") {
-      const bgContainer = $html.find('#background-selection-grid')[0];
+      const bgContainer = root.querySelector('#background-selection-grid');
       if (bgContainer && !this.characterData.background) {
         this._renderBackgroundCards(bgContainer);
       }
@@ -1549,34 +1589,37 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       // Mark the active category tab
       const activeCategory = this.characterData.backgroundCategory || 'events';
-      $html.find('.background-category-tab').each((i, tab) => {
+      for (const tab of root.querySelectorAll('.background-category-tab')) {
         if (tab.dataset.category === activeCategory) {
           tab.classList.add('active');
         } else {
           tab.classList.remove('active');
         }
-      });
+      }
 
       // Background category tab clicks
-      $html.find('.background-category-tab').click(this._onBackgroundCategoryClick.bind(this));
+      bindClick('.background-category-tab', this._onBackgroundCategoryClick);
 
       // Background skill filter button
-      $html.find('.background-filter-btn').click(this._onBackgroundFilterClick.bind(this));
+      bindClick('.background-filter-btn', this._onBackgroundFilterClick);
 
       // Ask mentor button for background suggestions
-      $html.find('.ask-mentor-background-btn').click(this._onAskMentorBackgroundSuggestion.bind(this));
+      bindClick('.ask-mentor-background-btn', this._onAskMentorBackgroundSuggestion);
 
       // Homebrew planets toggle
-      $html.find('.allow-homebrew-toggle').change((ev) => {
-        this.characterData.allowHomebrewPlanets = ev.currentTarget.checked;
-        // Re-render if on planets category
-        if (activeCategory === 'planets') {
-          const bgContainer = $html.find('#background-selection-grid')[0];
-          if (bgContainer) {
-            this._renderBackgroundCards(bgContainer);
+      const homebrewToggle = root.querySelector('.allow-homebrew-toggle');
+      if (homebrewToggle) {
+        homebrewToggle.addEventListener('change', (ev) => {
+          this.characterData.allowHomebrewPlanets = ev.currentTarget.checked;
+          // Re-render if on planets category
+          if (activeCategory === 'planets') {
+            const bgGrid = root.querySelector('#background-selection-grid');
+            if (bgGrid) {
+              this._renderBackgroundCards(bgGrid);
+            }
           }
-        }
-      });
+        });
+      }
     }
 
     /* =================================================================
@@ -1585,7 +1628,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Verify that the current step rendered content
     if (this.currentStep) {
-      const stepContainer = this.element.querySelector(`[data-step="${this.currentStep}"]`);
+      const stepContainer = root.querySelector(`[data-step="${this.currentStep}"]`);
       if (stepContainer && stepContainer.children.length === 0) {
         console.warn(
           `[SWSE CharGen] Step "${this.currentStep}" rendered no content.`,
@@ -3408,38 +3451,45 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
   /**
    * Handle talent view toggle (Graph/List)
+   * V2 API: Uses native DOM instead of jQuery
    */
   _onTalentViewToggle(event) {
     event.preventDefault();
     const btn = event.currentTarget;
     const view = btn.dataset.view;
 
-    // Update button states
-    const $buttons = $(btn).closest('.talent-view-toggle').find('.talent-view-btn');
-    $buttons.removeClass('active');
-    $(btn).addClass('active');
+    // Update button states using native DOM
+    const toggleContainer = btn.closest('.talent-view-toggle');
+    if (toggleContainer) {
+      for (const viewBtn of toggleContainer.querySelectorAll('.talent-view-btn')) {
+        viewBtn.classList.remove('active');
+      }
+    }
+    btn.classList.add('active');
 
-    // Toggle visibility
-    const $form = $(btn).closest('form');
-    const $graphContainer = $form.find('.talent-tree-graph-container');
-    const $listView = $form.find('.talents-list-view');
+    // Toggle visibility using native DOM
+    const form = btn.closest('form') || this.element;
+    const graphContainer = form.querySelector('.talent-tree-graph-container');
+    const listView = form.querySelector('.talents-list-view');
 
     if (view === 'graph') {
-      $graphContainer.show();
-      $listView.hide();
+      if (graphContainer) graphContainer.style.display = '';
+      if (listView) listView.style.display = 'none';
       // Re-render graph
-      this._renderTalentTreeGraph($form);
+      this._renderTalentTreeGraph(form);
     } else {
-      $graphContainer.hide();
-      $listView.show();
+      if (graphContainer) graphContainer.style.display = 'none';
+      if (listView) listView.style.display = '';
     }
   }
 
   /**
    * Render the talent tree graph visualization
+   * V2 API: Accepts HTMLElement instead of jQuery
+   * @param {HTMLElement} root - The root element to search within
    */
-  _renderTalentTreeGraph($html) {
-    const container = $html.find('.talent-tree-graph-container')[0];
+  _renderTalentTreeGraph(root) {
+    const container = root.querySelector('.talent-tree-graph-container');
     if (!container || !this.selectedTalentTree) return;
 
     const treeName = this.selectedTalentTree;

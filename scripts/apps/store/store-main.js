@@ -78,10 +78,8 @@ export class SWSEStore extends ApplicationV2 {
     this._loaded = false;
   }
 
-  async _renderHTML(context, options) {
-    if (!this._loaded) await this._initialize();
-    return super._renderHTML(context, options);
-  }
+  // NOTE: V2 API - Do NOT override _renderHTML or _replaceHTML
+  // Initialization is handled in _prepareContext which is the correct V2 pattern
 
   async _prepareContext(_options) {
     if (!this._loaded) await this._initialize();
