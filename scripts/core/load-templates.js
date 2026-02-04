@@ -48,6 +48,18 @@
  */
 import { SWSELogger } from '../utils/logger.js';
 
+/**
+ * Safe accessor for devMode setting
+ * Safely checks if core.devMode is registered before accessing
+ */
+function getDevMode() {
+  try {
+    return game.settings.get('core', 'devMode');
+  } catch {
+    return false;
+  }
+}
+
 // ============================================
 // EXPLICIT PARTIAL REGISTRATION
 // ============================================
@@ -262,7 +274,7 @@ export function getTemplatePaths() {
  * @returns {void}
  */
 export function assertPartialsResolved() {
-  if (!game.settings.get('core', 'devMode')) {return;}
+  if (!getDevMode()) {return;}
 
   const missingPartials = [];
   for (const path of SWSE_PARTIALS) {
