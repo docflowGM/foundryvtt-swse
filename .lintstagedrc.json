@@ -1,0 +1,6 @@
+{
+  "*.js": ["eslint --fix"],
+  "*.hbs": ["node scripts/validate/validate-icon-keys.js"],
+  "*.json": ["prettier --write"],
+  "*.md": ["prettier --write"]
+}

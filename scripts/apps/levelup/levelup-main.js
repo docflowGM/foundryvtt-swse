@@ -943,7 +943,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
               ${skillOptions}
             </select>
             <p class="hint-text" style="margin-top: 10px;">
-              <i class="fas fa-info-circle"></i>
+              <i class="fas fa-circle-info"></i>
               You gain training in this skill, making it a class skill and allowing you to use it untrained.
             </p>
           </div>
@@ -1037,7 +1037,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
               ${optionsHTML}
             </select>
             <p class="hint-text" style="margin-top: 10px;">
-              <i class="fas fa-info-circle"></i>
+              <i class="fas fa-circle-info"></i>
               ${feat.system.benefit || ''}
             </p>
           </div>

@@ -1,4 +1,4 @@
-/* ==========================================================================  
+/* ==========================================================================
    SWSE SYSTEM INDEX.JS (CLEAN, SAFE REBUILD - OPTION A)
    Fully drop-in compatible. Fixes:
    - Fatal "Missing helper: let" error
@@ -12,20 +12,20 @@
    ========================= */
 
 /* HARD ERROR */
-window.addEventListener("error", (event) => {
-  console.group("%c🔥 HARD ERROR DETECTED", "color:red; font-size:16px;");
-  console.error("Message:", event.message);
-  console.error("Source:", event.filename + ":" + event.lineno);
-  console.error("Error Object:", event.error);
-  console.error("Stack:", event.error?.stack);
+window.addEventListener('error', (event) => {
+  console.group('%c🔥 HARD ERROR DETECTED', 'color:red; font-size:16px;');
+  console.error('Message:', event.message);
+  console.error('Source:', event.filename + ':' + event.lineno);
+  console.error('Error Object:', event.error);
+  console.error('Stack:', event.error?.stack);
   console.groupEnd();
 });
 
 /* UNHANDLED PROMISE REJECTIONS */
-window.addEventListener("unhandledrejection", (event) => {
-  console.group("%c🔥 UNHANDLED PROMISE REJECTION", "color:orange; font-size:16px;");
-  console.error("Reason:", event.reason);
-  console.error("Stack:", event.reason?.stack);
+window.addEventListener('unhandledrejection', (event) => {
+  console.group('%c🔥 UNHANDLED PROMISE REJECTION', 'color:orange; font-size:16px;');
+  console.error('Reason:', event.reason);
+  console.error('Stack:', event.reason?.stack);
   console.groupEnd();
 });
 
@@ -37,10 +37,10 @@ if (!globalThis.__swse_import_wrapped__) {
     try {
       return await realImport(path);
     } catch (err) {
-      console.group("%c💥 ES MODULE IMPORT FAILED", "color:red; font-size:18px;");
-      console.error("Import Path:", path);
-      console.error("Message:", err.message);
-      console.error("Stack:", err.stack);
+      console.group('%c💥 ES MODULE IMPORT FAILED', 'color:red; font-size:18px;');
+      console.error('Import Path:', path);
+      console.error('Message:', err.message);
+      console.error('Stack:', err.stack);
       console.groupEnd();
       throw err;
     }
@@ -52,19 +52,19 @@ if (!globalThis.__swse_import_wrapped__) {
    =================================================== */
 setTimeout(() => {
   const BAD_PATTERNS = [/\.bak$/, /\.backup/i, /\.old$/, /\.tmp$/];
-  const scripts = Array.from(document.querySelectorAll("script")).map(s => s.src);
+  const scripts = Array.from(document.querySelectorAll('script')).map(s => s.src);
   for (const s of scripts) {
     if (BAD_PATTERNS.some(p => p.test(s))) {
-      console.group("%c⚠️ WARNING: BACKUP JS FILE LOADED!", "color:yellow; font-size:16px;");
-      console.error("Backup JS executed:", s);
-      console.error("This WILL break SWSE initialization.");
+      console.group('%c⚠️ WARNING: BACKUP JS FILE LOADED!', 'color:yellow; font-size:16px;');
+      console.error('Backup JS executed:', s);
+      console.error('This WILL break SWSE initialization.');
       console.groupEnd();
     }
   }
 }, 2000);
 
 
-/* ==========================================================================  
+/* ==========================================================================
    IMPORTS
    ========================================================================== */
 
@@ -140,7 +140,9 @@ import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
 
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
 import { registerSWSEPartials } from './helpers/handlebars/partials-auto.js';
-import { preloadHandlebarsTemplates } from './scripts/core/load-templates.js';
+import { preloadHandlebarsTemplates, assertPartialsResolved } from './scripts/core/load-templates.js';
+import { SWSEAPI } from './scripts/core/swse-api.js';
+import { initMigrationAuditor, setupNoWindowSentinel } from './scripts/core/migration-auditor.js';
 
 import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 import { createItemMacro } from './scripts/macros/item-macro.js';
@@ -249,12 +251,34 @@ import { registerSuggestionSettings } from './scripts/engine/suggestion-settings
 import { registerSuggestionHooks } from './scripts/hooks/suggestion-hooks.js';
 import { SuggestionService } from './scripts/engine/SuggestionService.js';
 
-/* ==========================================================================  
+/* ==========================================================================
+   UI INVARIANTS (V13+ COMPATIBILITY GUARDRAILS)
+   ========================================================================== */
+
+/**
+ * Enforce strict no-jQuery rules for Foundry v13+
+ * HTML Elements no longer support jQuery methods.
+ * This catches regressions early instead of silent failures.
+ */
+if (game.settings.get('core', 'devMode')) {
+  if (typeof HTMLElement !== 'undefined') {
+    if (HTMLElement.prototype.find || HTMLElement.prototype.text || HTMLElement.prototype.show || HTMLElement.prototype.hide) {
+      console.warn(
+        '%c⚠️ SWSE: jQuery-style methods detected on HTMLElement',
+        'color: #ff6600; font-size: 14px; font-weight: bold;'
+      );
+      console.warn('This will break rendering in v13+. Update to standard DOM APIs.');
+      console.warn('Bad patterns: .find(), .text(), .show(), .hide(), .element[0]');
+    }
+  }
+}
+
+/* ==========================================================================
    INIT HOOK
    ========================================================================== */
 
-Hooks.once("init", async function () {
-    swseLogger.log("SWSE | Initializing Star Wars Saga Edition System");
+Hooks.once('init', async function () {
+    swseLogger.log('SWSE | Initializing Star Wars Saga Edition System');
 
     /* ---------------------------------------------------------
        EARLY HANDLEBARS HELPER REGISTRATION  (CRASH FIX)
@@ -263,14 +287,14 @@ Hooks.once("init", async function () {
         registerHandlebarsHelpers();
 
         // Add missing #let helper
-        Handlebars.registerHelper("let", function(context, options) {
+        Handlebars.registerHelper('let', function(context, options) {
             const merged = Object.assign({}, this, context);
             return options.fn(merged);
         });
 
-        swseLogger.log("SWSE | Handlebars Helpers Registered Early");
+        swseLogger.log('SWSE | Handlebars Helpers Registered Early');
     } catch (err) {
-        swseLogger.error("SWSE | Failed to register Handlebars helpers:", err);
+        swseLogger.error('SWSE | Failed to register Handlebars helpers:', err);
     }
 
     /* ---------------------------------------------------------
@@ -296,13 +320,16 @@ Hooks.once("init", async function () {
        --------------------------------------------------------- */
     try {
         await preloadHandlebarsTemplates();
-        swseLogger.log("SWSE | Handlebars Templates Preloaded Early");
+        swseLogger.log('SWSE | Handlebars Templates Preloaded Early');
 
         // Register named partials for Handlebars
         await registerSWSEPartials();
-        swseLogger.log("SWSE | Named Partials Registered");
+        swseLogger.log('SWSE | Named Partials Registered');
+
+        // Validate partial registration (dev-only)
+        assertPartialsResolved();
     } catch (err) {
-        swseLogger.error("SWSE | Template Preloading Failed:", err);
+        swseLogger.error('SWSE | Template Preloading Failed:', err);
     }
 
     /* ---------------------------------------------------------
@@ -324,7 +351,7 @@ Hooks.once("init", async function () {
         talent: TalentDataModel,
         talenttree: TalentTreeDataModel,
         forcepower: ForcePowerDataModel,
-        "force-power": ForcePowerDataModel,
+        'force-power': ForcePowerDataModel,
         class: ClassDataModel,
         species: SpeciesDataModel
     };
@@ -352,16 +379,16 @@ Hooks.once("init", async function () {
     /* ---------------------------------------------------------
        Sheet Registration
        --------------------------------------------------------- */
-    foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
-    foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
+    foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet);
+    foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet);
 
-    foundry.documents.collections.Actors.registerSheet("swse", SWSEV2CharacterSheet, { types: ["character"], makeDefault: true });
-    foundry.documents.collections.Actors.registerSheet("swse", SWSEV2NpcSheet, { types: ["npc"], makeDefault: true });
-    foundry.documents.collections.Actors.registerSheet("swse", SWSEV2DroidSheet, { types: ["droid"], makeDefault: true });
-    foundry.documents.collections.Actors.registerSheet("swse", SWSEV2VehicleSheet, { types: ["vehicle"], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet('swse', SWSEV2CharacterSheet, { types: ['character'], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet('swse', SWSEV2NpcSheet, { types: ['npc'], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet('swse', SWSEV2DroidSheet, { types: ['droid'], makeDefault: true });
+    foundry.documents.collections.Actors.registerSheet('swse', SWSEV2VehicleSheet, { types: ['vehicle'], makeDefault: true });
 
-    foundry.documents.collections.Items.registerSheet("swse", SWSEItemSheet, {
-        types: ["weapon","armor","equipment","feat","talent","forcepower","force-power","class","species","talenttree","skill","combat-action","condition"],
+    foundry.documents.collections.Items.registerSheet('swse', SWSEItemSheet, {
+        types: ['weapon','armor','equipment','feat','talent','forcepower','force-power','class','species','talenttree','skill','combat-action','condition'],
         makeDefault: true
     });
 
@@ -405,12 +432,18 @@ Hooks.once("init", async function () {
 });
 
 
-/* ==========================================================================  
+/* ==========================================================================
    READY HOOK
    ========================================================================== */
 
-Hooks.once("ready", async function () {
-    swseLogger.log("SWSE | System Ready");
+Hooks.once('ready', async function () {
+    swseLogger.log('SWSE | System Ready');
+
+    // Initialize migration auditor (v1→v2 ghost detection)
+    initMigrationAuditor();
+
+    // Setup catastrophic failure sentinel
+    setupNoWindowSentinel();
 
     // Suggestion service (single entry) initialization
     try {
@@ -451,7 +484,7 @@ Hooks.once("ready", async function () {
     lazyLoader.setupLazyImages();
     swseLogger.log('Lazy image loading initialized');
 
-    if (game.user.isGM) await WorldDataLoader.autoLoad();
+    if (game.user.isGM) {await WorldDataLoader.autoLoad();}
 
     SWSECombat.init();
     SWSEActiveEffectsManager.init();
@@ -471,9 +504,9 @@ Hooks.once("ready", async function () {
 
     try {
         CanvasUIManager.initialize();
-        swseLogger.log("SWSE | Canvas UI Tools initialized");
+        swseLogger.log('SWSE | Canvas UI Tools initialized');
     } catch (err) {
-        swseLogger.warn("SWSE | CanvasUIManager.initialize() failed:", err);
+        swseLogger.warn('SWSE | CanvasUIManager.initialize() failed:', err);
     }
 
     /* ---------------------------------------------------------
@@ -523,6 +556,7 @@ Hooks.once("ready", async function () {
         validateUserInput,
         hookMonitor,
         compendiumLoader,
+        ...SWSEAPI,  // Public API (frozen)
         ...game.swse
     });
 
@@ -538,26 +572,24 @@ Hooks.once("ready", async function () {
 
         swseLogger.log('SWSE | Progression UI templates preloaded');
     } catch (err) {
-        swseLogger.warn("SWSE | Progression bootstrap error", err);
+        swseLogger.warn('SWSE | Progression bootstrap error', err);
     }
 
-    swseLogger.log("SWSE | Enhanced System Fully Loaded");
+    swseLogger.log('SWSE | Enhanced System Fully Loaded');
 });
 
 
-/* ==========================================================================  
+/* ==========================================================================
    CANVAS REPAIR — Fix hidden canvas issues
    ========================================================================== */
 
-Hooks.on("canvasReady", () => {
-    const board = document.querySelector("#board");
+Hooks.on('canvasReady', () => {
+    const board = document.querySelector('#board');
     if (board) {
-        board.style.display = "block";
-        board.style.visibility = "visible";
-        board.style.opacity = "1";
-        board.style.height = "";
+        board.style.display = 'block';
+        board.style.visibility = 'visible';
+        board.style.opacity = '1';
+        board.style.height = '';
     }
 });
-
-
 

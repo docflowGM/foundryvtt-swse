@@ -370,8 +370,8 @@ export async function _onAddCustomLanguage(event) {
       </div>
     `,
     callback: (html) => {
-      const input = html.find('input[name="customLanguage"]');
-      return input.val()?.trim();
+      const input = html instanceof jQuery ? html.find('input[name="customLanguage"]')[0] : html.querySelector('input[name="customLanguage"]');
+      return input?.value?.trim();
     },
     rejectClose: false,
     options: { width: 400 }

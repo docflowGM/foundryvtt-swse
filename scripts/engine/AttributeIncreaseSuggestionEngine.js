@@ -280,7 +280,7 @@ export class AttributeIncreaseSuggestionEngine {
   static _getTierIcon(tier) {
     const icons = {
       5: 'fas fa-star',           // Primary + Breakpoint
-      4: 'fas fa-plus-circle',    // Secondary + Breakpoint
+      4: 'fas fa-circle-plus',    // Secondary + Breakpoint
       3: 'fas fa-arrow-up',       // Modifier Breakpoint
       2: 'fas fa-bolt',           // Build synergy
       1: 'fas fa-book',           // Skill match

@@ -701,8 +701,8 @@ export async function rollCriticalConfirmation({ actor, weapon, attackBonus, tar
       </div>
       <div class="crit-outcome ${confirmed ? 'success' : 'failure'}">
         ${confirmed
-          ? '<i class="fas fa-check-circle"></i> CRITICAL HIT CONFIRMED!'
-          : '<i class="fas fa-times-circle"></i> Critical not confirmed (normal hit)'}
+          ? '<i class="fas fa-circle-check"></i> CRITICAL HIT CONFIRMED!'
+          : '<i class="fas fa-circle-xmark"></i> Critical not confirmed (normal hit)'}
       </div>
     </div>
     <style>

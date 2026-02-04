@@ -157,7 +157,7 @@ function getServicesData() {
         },
         {
             name: "Medical Care",
-            icon: "fas fa-heartbeat",
+            icon: "fas fa-heart-pulse",
             items: [
                 { id: "medical-medpac", name: "Medpac Treatment", cost: 300, notes: "Professional medical attention" },
                 { id: "medical-bacta", name: "Bacta Tank (per hour)", cost: 300, notes: "Advanced healing immersion" },

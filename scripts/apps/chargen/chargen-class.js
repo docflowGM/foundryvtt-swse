@@ -400,7 +400,7 @@ export async function _onClassChanged(event, htmlRoot, initial = false) {
     // Critical packs missing, chargen will close
     return;
   }
-  const classNode = (htmlRoot || this.element[0]).querySelector('[name="class_select"]');
+  const classNode = (htmlRoot || this.element).querySelector('[name="class_select"]');
   if (!classNode) return;
 
   const cls = classNode.value;

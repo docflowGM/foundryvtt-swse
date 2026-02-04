@@ -22,28 +22,28 @@
         <ol class="role-priority-list" data-name="initiativeRolePriority">
           {{#each initiativeRolePriority}}
           <li data-role="{{this}}" draggable="true">
-            <i class="fas fa-grip-vertical"></i>
+            <i class="{{getIconClass 'gripVertical'}}"></i>
             <span>{{capitalize this}}</span>
           </li>
           {{else}}
           <li data-role="pilot" draggable="true">
-            <i class="fas fa-grip-vertical"></i>
+            <i class="{{getIconClass 'gripVertical'}}"></i>
             <span>Pilot</span>
           </li>
           <li data-role="shields" draggable="true">
-            <i class="fas fa-grip-vertical"></i>
+            <i class="{{getIconClass 'gripVertical'}}"></i>
             <span>Shield Operator</span>
           </li>
           <li data-role="weapons" draggable="true">
-            <i class="fas fa-grip-vertical"></i>
+            <i class="{{getIconClass 'gripVertical'}}"></i>
             <span>Weapons</span>
           </li>
           <li data-role="engineering" draggable="true">
-            <i class="fas fa-grip-vertical"></i>
+            <i class="{{getIconClass 'gripVertical'}}"></i>
             <span>Engineering</span>
           </li>
           <li data-role="other" draggable="true">
-            <i class="fas fa-grip-vertical"></i>
+            <i class="{{getIconClass 'gripVertical'}}"></i>
             <span>Everyone Else</span>
           </li>
           {{/each}}
@@ -63,6 +63,6 @@
   </section>
   
   <footer class="sheet-footer">
-    <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+    <button type="submit"><i class="{{getIconClass 'save'}}"></i> Save Changes</button>
   </footer>
 </form>

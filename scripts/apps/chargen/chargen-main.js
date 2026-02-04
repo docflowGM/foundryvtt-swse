@@ -1578,6 +1578,22 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         }
       });
     }
+
+    /* =================================================================
+       RENDER ASSERTION (V13+ SAFETY NET)
+       ================================================================= */
+
+    // Verify that the current step rendered content
+    if (this.currentStep) {
+      const stepContainer = this.element.querySelector(`[data-step="${this.currentStep}"]`);
+      if (stepContainer && stepContainer.children.length === 0) {
+        console.warn(
+          `[SWSE CharGen] Step "${this.currentStep}" rendered no content.`,
+          `Selector: [data-step="${this.currentStep}"]`,
+          `Container:`, stepContainer
+        );
+      }
+    }
   }
 
   _getSteps() {
@@ -2031,7 +2047,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         title: "Class Required",
         content: `
           <div style="margin-bottom: 10px;">
-            <p><i class="fas fa-info-circle" style="color: #00d9ff;"></i> <strong>You must select a class before choosing ${targetStep === 'talents' ? 'talents' : 'skills'}.</strong></p>
+            <p><i class="fas fa-circle-info" style="color: #00d9ff;"></i> <strong>You must select a class before choosing ${targetStep === 'talents' ? 'talents' : 'skills'}.</strong></p>
             <p>You have two options:</p>
             <ul style="margin-left: 20px; margin-top: 5px;">
               <li><strong>Go Back:</strong> Return to the class selection step</li>
@@ -3077,7 +3093,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       'Jedi Master': { icon: 'fa-star', description: 'Elite Jedi who have achieved mastery of the Force' },
       'Martial Arts Master': { icon: 'fa-fist-raised', description: 'Unarmed combat specialists and fighters' },
       'Master Privateer': { icon: 'fa-ship', description: 'Legendary spacers and ship captains' },
-      'Medic': { icon: 'fa-medkit', description: 'Healers skilled in medicine and first aid' },
+      'Medic': { icon: 'fa-kit-medical', description: 'Healers skilled in medicine and first aid' },
       'Melee Duelist': { icon: 'fa-skull-crossbones', description: 'Masters of one-on-one melee combat' },
       'Military Engineer': { icon: 'fa-hard-hat', description: 'Combat engineers and demolitions experts' },
       'Officer': { icon: 'fa-medal', description: 'Military leaders and tactical commanders' },

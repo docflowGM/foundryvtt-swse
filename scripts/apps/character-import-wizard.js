@@ -53,7 +53,7 @@ export class CharacterImportWizard extends Dialog {
             <input type="file" id="character-file" accept=".json,.txt" />
           </div>
           <p class="hint">
-            <i class="fas fa-info-circle"></i>
+            <i class="fas fa-circle-info"></i>
             Upload a .json file exported from this system or a .txt file containing valid JSON data.
           </p>
         </div>
@@ -64,7 +64,7 @@ export class CharacterImportWizard extends Dialog {
             <textarea id="character-json" rows="10" placeholder='Paste your character JSON data here...'></textarea>
           </div>
           <p class="hint">
-            <i class="fas fa-info-circle"></i>
+            <i class="fas fa-circle-info"></i>
             Paste the complete JSON data for your character.
           </p>
         </div>

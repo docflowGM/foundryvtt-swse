@@ -142,7 +142,7 @@ export class TalentTreeVisualizer {
       html += `
         <li class="preview-talent-item ${isOwned ? 'owned' : ''}">
           <span class="talent-name">
-            ${isOwned ? '<i class="fas fa-check-circle"></i>' : ''}
+            ${isOwned ? '<i class="fas fa-circle-check"></i>' : ''}
             ${talent.name}
           </span>
           ${hasPrereq ? '<span class="prereq-marker"><i class="fas fa-link"></i></span>' : ''}
@@ -216,7 +216,7 @@ export class TalentTreeVisualizer {
       <div class="tree-loading-overlay">
         <div class="loading-content">
           <div class="loading-spinner">
-            <i class="fas fa-sync fa-spin"></i>
+            <i class="fas fa-arrows-rotate fa-spin"></i>
           </div>
           <h3>Loading ${treeName}...</h3>
           <div class="loading-bar">

@@ -39,7 +39,7 @@
     <div class="header-right">
       {{!-- Export Control --}}
       <button class="export-character-json-btn vehicle-export-btn" title="Export Ship to JSON" role="button" tabindex="0">
-        <i class="fas fa-download" aria-hidden="true"></i> Export
+        <i class="{{getIconClass 'download'}}" aria-hidden="true"></i> Export
       </button>
     </div>
   </header>
@@ -177,7 +177,7 @@
       Crew Positions
       {{#if pilotSoloMode}}
       <span class="solo-mode-badge" title="{{pilotSoloMode.message}}">
-        <i class="fas fa-star"></i> Solo Pilot
+        <i class="{{getIconClass 'star'}}"></i> Solo Pilot
       </span>
       {{/if}}
     </h3>
@@ -199,7 +199,7 @@
           {{#if posData.crew}}
             <span class="crew-name">{{posData.crew.name}}</span>
             <button class="crew-remove" type="button" title="Remove crew member">
-              <i class="fas fa-times"></i>
+              <i class="{{getIconClass 'times'}}"></i>
             </button>
           {{else}}
             <span class="crew-empty">Drop actor here</span>
@@ -231,7 +231,7 @@
         {{#if posData.maneuverSuite.hasStartshipTactics}}
         <div class="crew-maneuvers">
           <button class="crew-maneuvers-toggle" type="button" title="Starship Maneuver Suite">
-            <i class="fas fa-chevron-right"></i> Maneuver Suite ({{posData.maneuverSuite.total}})
+            <i class="{{getIconClass 'chevronRight'}}"></i> Maneuver Suite ({{posData.maneuverSuite.total}})
           </button>
           <div class="crew-maneuvers-list" style="display: none;">
             {{#if posData.maneuverSuite.total}}
@@ -337,7 +337,7 @@
         {{#if posData.actions}}
         {{#if (or posData.actions.swift.length posData.actions.move.length posData.actions.standard.length posData.actions.fullRound.length posData.actions.reaction.length)}}
         <button class="crew-actions-toggle" type="button">
-          <i class="fas fa-chevron-down"></i> Actions
+          <i class="{{getIconClass 'chevronDown'}}"></i> Actions
         </button>
         <div class="crew-actions-panel" style="display: none;">
           {{> "crew-action-cards" actions=posData.actions position=posKey}}
@@ -355,7 +355,7 @@
     <h3>
       Weapons
       <button class="weapon-add" type="button" title="Add weapon">
-        <i class="fas fa-plus"></i> Add Weapon
+        <i class="{{getIconClass 'plus'}}"></i> Add Weapon
       </button>
     </h3>
     <div class="weapons-list">
@@ -376,11 +376,11 @@
         <input type="text" name="system.weapons.{{index}}.range" value="{{weapon.range}}" placeholder="Close" class="weapon-range"/>
 
         <button class="weapon-roll" data-index="{{index}}" type="button" title="Roll attack">
-          <i class="fas fa-dice-d20"></i>
+          <i class="{{getIconClass 'diceD20'}}"></i>
         </button>
 
         <button class="weapon-remove" data-index="{{index}}" type="button" title="Remove weapon">
-          <i class="fas fa-trash"></i>
+          <i class="{{getIconClass 'trash'}}"></i>
         </button>
       </div>
       {{/each}}

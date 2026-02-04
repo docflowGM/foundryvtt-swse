@@ -1,6 +1,6 @@
 <form class="meta-tuning-config">
   <header class="config-header">
-    <h2><i class="fas fa-sliders-h"></i> Suggestion Engine Configuration</h2>
+    <h2><i class="{{getIconClass 'slidersH'}}"></i> Suggestion Engine Configuration</h2>
     <p class="config-description">
       Customize how the suggestion engine weights feats, talents, and classes.
     </p>
@@ -11,28 +11,28 @@
     <label>Quick Presets:</label>
     <div class="preset-buttons">
       <button type="button" class="preset-btn" data-preset="balanced" title="Default balanced settings">
-        <i class="fas fa-balance-scale"></i> Balanced
+        <i class="{{getIconClass 'balanceScale'}}"></i> Balanced
       </button>
       <button type="button" class="preset-btn" data-preset="prestigeFocused" title="Prioritize prestige class progression">
-        <i class="fas fa-crown"></i> Prestige Focus
+        <i class="{{getIconClass 'crown'}}"></i> Prestige Focus
       </button>
       <button type="button" class="preset-btn" data-preset="combatOptimized" title="Emphasize combat effectiveness">
-        <i class="fas fa-sword"></i> Combat
+        <i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Combat
       </button>
       <button type="button" class="preset-btn" data-preset="forceUser" title="Prioritize Force-related options">
-        <i class="fas fa-jedi"></i> Force User
+        <i class="{{getIconClass 'jedi'}}"></i> Force User
       </button>
       <button type="button" class="preset-btn" data-preset="roleplay" title="Emphasize roleplay and social options">
-        <i class="fas fa-theater-masks"></i> Roleplay
+        <i class="{{getIconClass 'th'}}eater-masks"></i> Roleplay
       </button>
     </div>
   </div>
 
   <nav class="config-tabs">
-    <a class="tab" data-tab="tiers"><i class="fas fa-layer-group"></i> Tier Weights</a>
-    <a class="tab" data-tab="themes"><i class="fas fa-tags"></i> Themes</a>
-    <a class="tab" data-tab="display"><i class="fas fa-eye"></i> Display</a>
-    <a class="tab" data-tab="advanced"><i class="fas fa-cog"></i> Advanced</a>
+    <a class="tab" data-tab="tiers"><i class="{{getIconClass 'layerGroup'}}"></i> Tier Weights</a>
+    <a class="tab" data-tab="themes"><i class="{{getIconClass 'tag'}}s"></i> Themes</a>
+    <a class="tab" data-tab="display"><i class="{{getIconClass 'eye'}}"></i> Display</a>
+    <a class="tab" data-tab="advanced"><i class="{{getIconClass 'cog'}}"></i> Advanced</a>
   </nav>
 
   <div class="config-content">
@@ -44,7 +44,7 @@
       <div class="slider-group">
         <div class="slider-row">
           <label>
-            <i class="fas fa-crown tier-prestige"></i>
+            <i class="{{getIconClass 'crown'}} tier-prestige"></i>
             Prestige Prerequisite
           </label>
           <div class="slider-control">
@@ -56,7 +56,7 @@
 
         <div class="slider-row">
           <label>
-            <i class="fas fa-link tier-chain"></i>
+            <i class="{{getIconClass 'link'}} tier-chain"></i>
             Chain Continuation
           </label>
           <div class="slider-control">
@@ -68,7 +68,7 @@
 
         <div class="slider-row">
           <label>
-            <i class="fas fa-bullseye tier-skill"></i>
+            <i class="{{getIconClass 'bullseye'}} tier-skill"></i>
             Skill Match
           </label>
           <div class="slider-control">
@@ -80,7 +80,7 @@
 
         <div class="slider-row">
           <label>
-            <i class="fas fa-fist-raised tier-ability"></i>
+            <i class="{{getIconClass 'fist'}} tier-ability"></i>
             Ability Match
           </label>
           <div class="slider-control">
@@ -92,7 +92,7 @@
 
         <div class="slider-row">
           <label>
-            <i class="fas fa-users-cog tier-class"></i>
+            <i class="{{getIconClass 'users'}}-cog tier-class"></i>
             Class Synergy
           </label>
           <div class="slider-control">
@@ -109,7 +109,7 @@
       <div class="slider-group">
         <div class="slider-row">
           <label>
-            <i class="fas fa-star"></i>
+            <i class="{{getIconClass 'star'}}"></i>
             Prestige Qualified Now
           </label>
           <div class="slider-control">
@@ -121,7 +121,7 @@
 
         <div class="slider-row">
           <label>
-            <i class="fas fa-route"></i>
+            <i class="{{getIconClass 'route'}}"></i>
             Path Continuation
           </label>
           <div class="slider-control">
@@ -133,7 +133,7 @@
 
         <div class="slider-row">
           <label>
-            <i class="fas fa-unlock"></i>
+            <i class="{{getIconClass 'unlock'}}"></i>
             Prestige Soon
           </label>
           <div class="slider-control">
@@ -145,7 +145,7 @@
 
         <div class="slider-row">
           <label>
-            <i class="fas fa-cogs"></i>
+            <i class="{{getIconClass 'PLACEHOLDER_'}}"></i>
             Mechanical Synergy
           </label>
           <div class="slider-control">
@@ -157,7 +157,7 @@
 
         <div class="slider-row">
           <label>
-            <i class="fas fa-heart"></i>
+            <i class="{{getIconClass 'heart'}}"></i>
             Thematic Fit
           </label>
           <div class="slider-control">
@@ -170,7 +170,7 @@
 
       <div class="slider-row prestige-priority">
         <label>
-          <i class="fas fa-crown"></i>
+          <i class="{{getIconClass 'crown'}}"></i>
           Overall Prestige Priority
         </label>
         <div class="slider-control wide">
@@ -192,84 +192,84 @@
 
       <div class="theme-grid">
         <div class="theme-slider">
-          <label><i class="fas fa-jedi theme-force"></i> Force</label>
+          <label><i class="{{getIconClass 'jedi'}} theme-force"></i> Force</label>
           <input type="range" name="themeEmphasis.force" min="0" max="2" step="0.1"
                  value="{{config.themeEmphasis.force}}">
           <span class="slider-value">{{config.themeEmphasis.force}}</span>
         </div>
 
         <div class="theme-slider">
-          <label><i class="fas fa-crosshairs theme-ranged"></i> Ranged</label>
+          <label><i class="{{getIconClass 'target'}} theme-ranged"></i> Ranged</label>
           <input type="range" name="themeEmphasis.ranged" min="0" max="2" step="0.1"
                  value="{{config.themeEmphasis.ranged}}">
           <span class="slider-value">{{config.themeEmphasis.ranged}}</span>
         </div>
 
         <div class="theme-slider">
-          <label><i class="fas fa-fist-raised theme-melee"></i> Melee</label>
+          <label><i class="{{getIconClass 'fist'}} theme-melee"></i> Melee</label>
           <input type="range" name="themeEmphasis.melee" min="0" max="2" step="0.1"
                  value="{{config.themeEmphasis.melee}}">
           <span class="slider-value">{{config.themeEmphasis.melee}}</span>
         </div>
 
         <div class="theme-slider">
-          <label><i class="fas fa-user-ninja theme-stealth"></i> Stealth</label>
+          <label><i class="{{getIconClass 'user'}}-ninja theme-stealth"></i> Stealth</label>
           <input type="range" name="themeEmphasis.stealth" min="0" max="2" step="0.1"
                  value="{{config.themeEmphasis.stealth}}">
           <span class="slider-value">{{config.themeEmphasis.stealth}}</span>
         </div>
 
         <div class="theme-slider">
-          <label><i class="fas fa-comments theme-social"></i> Social</label>
+          <label><i class="{{getIconClass 'comment'}}s theme-social"></i> Social</label>
           <input type="range" name="themeEmphasis.social" min="0" max="2" step="0.1"
                  value="{{config.themeEmphasis.social}}">
           <span class="slider-value">{{config.themeEmphasis.social}}</span>
         </div>
 
         <div class="theme-slider">
-          <label><i class="fas fa-microchip theme-tech"></i> Tech</label>
+          <label><i class="{{getIconClass 'microchip'}} theme-tech"></i> Tech</label>
           <input type="range" name="themeEmphasis.tech" min="0" max="2" step="0.1"
                  value="{{config.themeEmphasis.tech}}">
           <span class="slider-value">{{config.themeEmphasis.tech}}</span>
         </div>
 
         <div class="theme-slider">
-          <label><i class="fas fa-users theme-leadership"></i> Leadership</label>
+          <label><i class="{{getIconClass 'users'}} theme-leadership"></i> Leadership</label>
           <input type="range" name="themeEmphasis.leadership" min="0" max="2" step="0.1"
                  value="{{config.themeEmphasis.leadership}}">
           <span class="slider-value">{{config.themeEmphasis.leadership}}</span>
         </div>
 
         <div class="theme-slider">
-          <label><i class="fas fa-compass theme-exploration"></i> Exploration</label>
+          <label><i class="{{getIconClass 'compass'}} theme-exploration"></i> Exploration</label>
           <input type="range" name="themeEmphasis.exploration" min="0" max="2" step="0.1"
                  value="{{config.themeEmphasis.exploration}}">
           <span class="slider-value">{{config.themeEmphasis.exploration}}</span>
         </div>
 
         <div class="theme-slider">
-          <label><i class="fas fa-space-shuttle theme-vehicle"></i> Vehicle</label>
+          <label><i class="{{getIconClass 'shuttle'}} theme-vehicle"></i> Vehicle</label>
           <input type="range" name="themeEmphasis.vehicle" min="0" max="2" step="0.1"
                  value="{{config.themeEmphasis.vehicle}}">
           <span class="slider-value">{{config.themeEmphasis.vehicle}}</span>
         </div>
 
         <div class="theme-slider">
-          <label><i class="fas fa-hand-holding-heart theme-support"></i> Support</label>
+          <label><i class="{{getIconClass 'handHoldingHeart'}} theme-support"></i> Support</label>
           <input type="range" name="themeEmphasis.support" min="0" max="2" step="0.1"
                  value="{{config.themeEmphasis.support}}">
           <span class="slider-value">{{config.themeEmphasis.support}}</span>
         </div>
 
         <div class="theme-slider">
-          <label><i class="fas fa-swords theme-combat"></i> Combat</label>
+          <label><i class="{{getIconClass 'swords'}} theme-combat"></i> Combat</label>
           <input type="range" name="themeEmphasis.combat" min="0" max="2" step="0.1"
                  value="{{config.themeEmphasis.combat}}">
           <span class="slider-value">{{config.themeEmphasis.combat}}</span>
         </div>
 
         <div class="theme-slider">
-          <label><i class="fas fa-search-location theme-tracking"></i> Tracking</label>
+          <label><i class="{{getIconClass 'search'}}-location theme-tracking"></i> Tracking</label>
           <input type="range" name="themeEmphasis.tracking" min="0" max="2" step="0.1"
                  value="{{config.themeEmphasis.tracking}}">
           <span class="slider-value">{{config.themeEmphasis.tracking}}</span>
@@ -373,10 +373,10 @@
 
   <footer class="config-footer">
     <button type="button" class="reset-defaults">
-      <i class="fas fa-undo"></i> Reset to Defaults
+      <i class="fas fa-rotate-left"></i> Reset to Defaults
     </button>
     <button type="submit" class="save-config">
-      <i class="fas fa-save"></i> Save Configuration
+      <i class="{{getIconClass 'save'}}"></i> Save Configuration
     </button>
   </footer>
 </form>

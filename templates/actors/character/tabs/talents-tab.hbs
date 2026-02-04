@@ -4,13 +4,13 @@
  {{!-- Talent Abilities Section (NEW) --}}
  <section class="talent-abilities-section">
   <h3 class="section-header">
-   <i class="fas fa-magic"></i> Talent Abilities
+   <i class="{{getIconClass 'magic'}}"></i> Talent Abilities
    <span class="abilities-count">({{talentAbilities.all.length}} abilities)</span>
   </h3>
   {{> "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs" talentAbilities=talentAbilities}}
  </section>
 
- <h3 class="section-header"><i class="fas fa-sitemap"></i> Talent Trees</h3>
+ <h3 class="section-header"><i class="{{getIconClass 'sitemap'}}"></i> Talent Trees</h3>
 
  <div class="talents-controls flexrow">
  <div class="filter-buttons">
@@ -33,7 +33,7 @@
  <div class="tree-header">
  <h3 class="tree-name">{{tree.name}}</h3>
  <button class="tree-toggle" data-action="toggleTree" type="button">
- <i class="fas fa-chevron-down"></i>
+ <i class="{{getIconClass 'chevronDown'}}"></i>
  </button>
  </div>
  
@@ -59,19 +59,19 @@
  
  {{#if talent.prerequisite}}
  <div class="talent-prereq">
- <i class="fas fa-link"></i>
+ <i class="{{getIconClass 'link'}}"></i>
  </div>
  {{/if}}
  
  {{#if (eq talent.state "locked")}}
  <div class="talent-lock">
- <i class="fas fa-lock"></i>
+ <i class="{{getIconClass 'lock'}}"></i>
  </div>
  {{/if}}
  
  {{#if (eq talent.state "acquired")}}
  <div class="talent-check">
- <i class="fas fa-check-circle"></i>
+ <i class="{{getIconClass 'success'}}"></i>
  </div>
  {{/if}}
  </div>
@@ -98,14 +98,14 @@
  {{talent.summary}}
  </div>
  <a class="talent-view" data-action="viewTalent" data-talent-id="{{talent._id}}">
- <i class="fas fa-eye"></i>
+ <i class="{{getIconClass 'eye'}}"></i>
  </a>
  </div>
  {{/each}}
  </div>
 
  <button class="add-custom-talent" data-action="create" data-type="talent" title="Add Talent">
- <i class="fas fa-plus"></i> Add Talent
+ <i class="{{getIconClass 'plus'}}"></i> Add Talent
  </button>
  </section>
 

@@ -148,7 +148,7 @@ export class DamageSystem {
       ? game.i18n.localize("SWSE.Dialogs.Healing.ButtonRepair")
       : game.i18n.localize("SWSE.Dialogs.Healing.ButtonHeal");
 
-    const icon = isDroid ? "fa-wrench" : "fa-medkit";
+    const icon = isDroid ? "fa-wrench" : "fa-kit-medical";
 
     return new Promise(resolve => {
       new Dialog({

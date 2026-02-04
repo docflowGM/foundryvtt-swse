@@ -45,16 +45,16 @@
 
  <div class="force-actions flexrow">
  <button class="force-action" data-action="spendForcePoint" data-type="reroll">
- <i class="fas fa-dice"></i> Reroll
+ <i class="{{getIconClass 'diceD6'}}"></i> Reroll
  </button>
  <button class="force-action" data-action="spendForcePoint" data-type="avoid-death">
- <i class="fas fa-heart"></i> Avoid Death
+ <i class="{{getIconClass 'heart'}}"></i> Avoid Death
  </button>
  <button class="force-action" data-action="spendForcePoint" data-type="reduce-dark">
- <i class="fas fa-moon"></i> Reduce Dark Side
+ <i class="{{getIconClass 'moon'}}"></i> Reduce Dark Side
  </button>
  <button class="force-action" data-action="restForce">
- <i class="fas fa-bed"></i> Rest (Regain All)
+ <i class="{{getIconClass 'bed'}}"></i> Rest (Regain All)
  </button>
  </div>
 
@@ -72,7 +72,7 @@
  <span class="power-name">{{power.name}}</span>
  <div class="power-controls">
  <a class="add-to-suite" data-action="addToSuite" data-item-id="{{power._id}}">
- <i class="fas fa-arrow-right"></i>
+ <i class="{{getIconClass 'arrowRight'}}"></i>
  </a>
  </div>
  </div>
@@ -80,12 +80,12 @@
  </div>
 
  <button class="add-power" data-action="createItem" data-type="forcepower">
- <i class="fas fa-plus"></i> Add Power
+ <i class="{{getIconClass 'plus'}}"></i> Add Power
  </button>
  </div>
 
  <div class="suite-arrow">
- <i class="fas fa-exchange-alt"></i>
+ <i class="{{getIconClass 'arrowsHorizontal'}}"></i>
  </div>
 
  <div class="powers-column active-suite">
@@ -100,15 +100,15 @@
  <div class="power-controls">
  {{#if power.system.spent}}
  <a class="regain-power" data-action="regainForcePower" data-item-id="{{power._id}}" title="Spend Force Point to regain">
- <i class="fas fa-redo"></i>
+ <i class="{{getIconClass 'redo'}}"></i>
  </a>
  {{else}}
  <a class="use-power" data-action="usePower" data-item-id="{{power._id}}">
- <i class="fas fa-hand-sparkles"></i>
+ <i class="{{getIconClass 'handSparkles'}}"></i>
  </a>
  {{/if}}
  <a class="remove-from-suite" data-action="removeFromSuite" data-item-id="{{power._id}}">
- <i class="fas fa-arrow-left"></i>
+ <i class="{{getIconClass 'arrowLeft'}}"></i>
  </a>
  </div>
  </div>
@@ -132,10 +132,10 @@
  <span class="secret-name">{{secret.name}}</span>
  <div class="item-controls">
  <a class="item-control item-edit" data-action="edit" title="Edit Secret">
- <i class="fas fa-edit"></i>
+ <i class="{{getIconClass 'edit'}}"></i>
  </a>
  <a class="item-control item-delete" data-action="delete" title="Delete Secret">
- <i class="fas fa-trash"></i>
+ <i class="{{getIconClass 'trash'}}"></i>
  </a>
  </div>
  </div>
@@ -148,7 +148,7 @@
  {{/each}}
  </div>
  <button class="add-secret" data-action="createItem" data-type="feat" title="Add Force Secret">
- <i class="fas fa-plus"></i> Add Force Secret
+ <i class="{{getIconClass 'plus'}}"></i> Add Force Secret
  </button>
  </div>
 
@@ -163,10 +163,10 @@
  <span class="technique-name">{{technique.name}}</span>
  <div class="item-controls">
  <a class="item-control item-edit" data-action="edit" title="Edit Technique">
- <i class="fas fa-edit"></i>
+ <i class="{{getIconClass 'edit'}}"></i>
  </a>
  <a class="item-control item-delete" data-action="delete" title="Delete Technique">
- <i class="fas fa-trash"></i>
+ <i class="{{getIconClass 'trash'}}"></i>
  </a>
  </div>
  </div>
@@ -179,7 +179,7 @@
  {{/each}}
  </div>
  <button class="add-technique" data-action="createItem" data-type="feat" title="Add Force Technique">
- <i class="fas fa-plus"></i> Add Force Technique
+ <i class="{{getIconClass 'plus'}}"></i> Add Force Technique
  </button>
  </div>
 
@@ -194,10 +194,10 @@
  <span class="form-name">{{form.name}}</span>
  <div class="item-controls">
  <a class="item-control item-edit" data-action="edit" title="Edit Form">
- <i class="fas fa-edit"></i>
+ <i class="{{getIconClass 'edit'}}"></i>
  </a>
  <a class="item-control item-delete" data-action="delete" title="Delete Form">
- <i class="fas fa-trash"></i>
+ <i class="{{getIconClass 'trash'}}"></i>
  </a>
  </div>
  </div>

@@ -16,11 +16,11 @@
     <div class="qty-controls">
       <span class="qty-label">Qty:</span>
       <button class="qty-btn qty-dec" data-item-id="{{id}}" data-condition="{{condition}}">
-        <i class="fas fa-minus"></i>
+        <i class="{{getIconClass 'minus'}}"></i>
       </button>
       <input class="qty-input" type="number" value="{{quantity}}" min="1" data-item-id="{{id}}" />
       <button class="qty-btn qty-inc" data-item-id="{{id}}" data-condition="{{condition}}">
-        <i class="fas fa-plus"></i>
+        <i class="{{getIconClass 'plus'}}"></i>
       </button>
     </div>
   </div>
@@ -35,6 +35,6 @@
 
   <!-- Remove Button -->
   <button class="cart-remove-btn" data-item-id="{{id}}" data-condition="{{condition}}" title="Remove from cart">
-    <i class="fas fa-trash"></i>
+    <i class="{{getIconClass 'trash'}}"></i>
   </button>
 </div>

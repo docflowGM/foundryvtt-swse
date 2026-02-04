@@ -4,7 +4,7 @@
   {{#if actions.swift.length}}
   <div class="action-economy-section">
     <h5 class="action-economy-title swift-economy">
-      <i class="fas fa-bolt"></i> Swift Actions
+      <i class="{{getIconClass 'bolt'}}"></i> Swift Actions
     </h5>
     <div class="action-cards-grid">
       {{#each actions.swift as |action|}}
@@ -30,7 +30,7 @@
                     data-action-name="{{../action.name}}"
                     data-dc="{{#if skill.dc.value}}{{skill.dc.value}}{{/if}}"
                     title="Roll {{skill.skill}} check">
-              <i class="fas fa-dice-d20"></i> Roll
+              <i class="{{getIconClass 'diceD20'}}"></i> Roll
             </button>
             {{#if skill.dc.value}}
             <span class="dc-value">DC {{skill.dc.value}}</span>
@@ -52,7 +52,7 @@
   {{#if actions.move.length}}
   <div class="action-economy-section">
     <h5 class="action-economy-title move-economy">
-      <i class="fas fa-arrow-right"></i> Move Actions
+      <i class="{{getIconClass 'arrowRight'}}"></i> Move Actions
     </h5>
     <div class="action-cards-grid">
       {{#each actions.move as |action|}}
@@ -78,7 +78,7 @@
                     data-action-name="{{../action.name}}"
                     data-dc="{{#if skill.dc.value}}{{skill.dc.value}}{{/if}}"
                     title="Roll {{skill.skill}} check">
-              <i class="fas fa-dice-d20"></i> Roll
+              <i class="{{getIconClass 'diceD20'}}"></i> Roll
             </button>
             {{#if skill.dc.value}}
             <span class="dc-value">DC {{skill.dc.value}}</span>
@@ -100,7 +100,7 @@
   {{#if actions.standard.length}}
   <div class="action-economy-section">
     <h5 class="action-economy-title standard-economy">
-      <i class="fas fa-hand-paper"></i> Standard Actions
+      <i class="{{getIconClass 'handPaper'}}"></i> Standard Actions
     </h5>
     <div class="action-cards-grid">
       {{#each actions.standard as |action|}}
@@ -126,7 +126,7 @@
                     data-action-name="{{../action.name}}"
                     data-dc="{{#if skill.dc.value}}{{skill.dc.value}}{{/if}}"
                     title="Roll {{skill.skill}} check">
-              <i class="fas fa-dice-d20"></i> Roll
+              <i class="{{getIconClass 'diceD20'}}"></i> Roll
             </button>
             {{#if skill.dc.value}}
             <span class="dc-value">DC {{skill.dc.value}}</span>
@@ -148,7 +148,7 @@
   {{#if actions.fullRound.length}}
   <div class="action-economy-section">
     <h5 class="action-economy-title fullround-economy">
-      <i class="fas fa-hourglass"></i> Full-Round Actions
+      <i class="{{getIconClass 'hourglass'}}"></i> Full-Round Actions
     </h5>
     <div class="action-cards-grid">
       {{#each actions.fullRound as |action|}}
@@ -174,7 +174,7 @@
                     data-action-name="{{../action.name}}"
                     data-dc="{{#if skill.dc.value}}{{skill.dc.value}}{{/if}}"
                     title="Roll {{skill.skill}} check">
-              <i class="fas fa-dice-d20"></i> Roll
+              <i class="{{getIconClass 'diceD20'}}"></i> Roll
             </button>
             {{#if skill.dc.value}}
             <span class="dc-value">DC {{skill.dc.value}}</span>
@@ -196,7 +196,7 @@
   {{#if actions.reaction.length}}
   <div class="action-economy-section">
     <h5 class="action-economy-title reaction-economy">
-      <i class="fas fa-shield-alt"></i> Reaction Actions
+      <i class="{{getIconClass 'shieldAlt'}}"></i> Reaction Actions
     </h5>
     <div class="action-cards-grid">
       {{#each actions.reaction as |action|}}
@@ -222,7 +222,7 @@
                     data-action-name="{{../action.name}}"
                     data-dc="{{#if skill.dc.value}}{{skill.dc.value}}{{/if}}"
                     title="Roll {{skill.skill}} check">
-              <i class="fas fa-dice-d20"></i> Roll
+              <i class="{{getIconClass 'diceD20'}}"></i> Roll
             </button>
             {{#if skill.dc.value}}
             <span class="dc-value">DC {{skill.dc.value}}</span>

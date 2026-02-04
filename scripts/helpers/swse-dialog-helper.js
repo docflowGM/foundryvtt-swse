@@ -160,7 +160,7 @@ export default class SWSEDialogHelper {
     static async error(title, message, options = {}) {
         return this.alert(
             title,
-            `<div class="error"><i class="fas fa-times-circle"></i> ${message}</div>`,
+            `<div class="error"><i class="fas fa-circle-xmark"></i> ${message}</div>`,
             this.getDefaultOptions({
                 width: 450,
                 ...options

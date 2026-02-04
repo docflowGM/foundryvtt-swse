@@ -298,7 +298,7 @@ export async function _handleSkillFocusFeat(feat) {
             ${skillOptions}
           </select>
           <p class="hint-text" style="margin-top: 10px;">
-            <i class="fas fa-info-circle"></i>
+            <i class="fas fa-circle-info"></i>
             Skill Focus grants a +5 bonus to the selected skill.
           </p>
         </div>

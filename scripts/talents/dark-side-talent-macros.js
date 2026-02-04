@@ -47,7 +47,7 @@ export class DarkSideTalentMacros {
             ${powerOptions}
           </select>
           <p class="hint-text" style="margin-top: 10px;">
-            <i class="fas fa-info-circle"></i>
+            <i class="fas fa-circle-info"></i>
             This can be used once per day. It allows using a Force Power that normally takes a Standard or Move action as a Swift Action instead.
           </p>
         </div>

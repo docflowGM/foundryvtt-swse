@@ -3,23 +3,23 @@
     <h2>Level Up: {{actor.name}}</h2>
     <div class="level-indicator">
       <span>Current Level: <strong>{{currentLevel}}</strong></span>
-      <i class="fas fa-arrow-right"></i>
+      <i class="{{getIconClass 'arrowRight'}}"></i>
       <span>New Level: <strong>{{newLevel}}</strong></span>
     </div>
     <div class="free-build-controls">
       <label class="free-build-label">
         <input type="checkbox" class="free-build-toggle" {{checked freeBuild}}>
-        <i class="fas fa-unlock-alt"></i> <strong>Free Build Mode</strong>
+        <i class="{{getIconClass 'unlockAlt'}}"></i> <strong>Free Build Mode</strong>
         <span class="hint-text">Skip validation and build freely</span>
       </label>
     </div>
     <div class="suggestion-tools">
       <button type="button" class="show-prestige-roadmap" title="View prestige class progress and recommendations">
-        <i class="fas fa-route"></i> Prestige Roadmap
+        <i class="{{getIconClass 'route'}}"></i> Prestige Roadmap
       </button>
       {{#if isGM}}
       <button type="button" class="show-gm-debug-panel" title="View BuildIntent analysis (GM only)">
-        <i class="fas fa-bug"></i> Debug
+        <i class="{{getIconClass 'bug'}}"></i> Debug
       </button>
       {{/if}}
     </div>
@@ -83,13 +83,13 @@
     </div>
     <div class="mentor-message">
       <div class="mentor-greeting">
-        <i class="fas fa-quote-left"></i>
+        <i class="{{getIconClass 'quoteLeft'}}"></i>
         <p>{{mentorGreeting}}</p>
-        <i class="fas fa-quote-right"></i>
+        <i class="{{getIconClass 'quoteRight'}}"></i>
       </div>
       {{#if mentorGuidance}}
       <div class="mentor-guidance">
-        <i class="fas fa-lightbulb"></i>
+        <i class="{{getIconClass 'lightbulb'}}"></i>
         <p>{{mentorGuidance}}</p>
       </div>
       {{/if}}
@@ -134,7 +134,7 @@
           </div>
           {{/if}}
           <button class="select-species-btn btn-primary" data-species-id="{{this.id}}" data-species-name="{{this.name}}">
-            <i class="fas fa-dna"></i> Select
+            <i class="{{getIconClass 'dna'}}"></i> Select
           </button>
         </div>
         {{/each}}
@@ -151,13 +151,13 @@
       {{!-- Reuse the ability generation UI from chargen --}}
       <div class="ability-methods">
         <button type="button" id="pb-init" class="method-button active">
-          <i class="fas fa-calculator"></i> Point Buy (32 points)
+          <i class="{{getIconClass 'calculator'}}"></i> Point Buy (32 points)
         </button>
         <button type="button" id="std-roll-btn" class="method-button">
-          <i class="fas fa-dice"></i> Standard Roll (4d6 drop lowest)
+          <i class="{{getIconClass 'diceD6'}}"></i> Standard Roll (4d6 drop lowest)
         </button>
         <button type="button" id="org-roll-btn" class="method-button">
-          <i class="fas fa-dice-d20"></i> Organic Roll (24d6)
+          <i class="{{getIconClass 'diceD20'}}"></i> Organic Roll (24d6)
         </button>
       </div>
 
@@ -235,7 +235,7 @@
 
       <div class="form-actions">
         <button type="button" class="confirm-attributes-btn btn-primary">
-          Confirm Attributes <i class="fas fa-arrow-right"></i>
+          Confirm Attributes <i class="{{getIconClass 'arrowRight'}}"></i>
         </button>
       </div>
     </section>
@@ -245,7 +245,7 @@
     {{#if (eq currentStep "class")}}
     <section class="step-class-selection">
       <header class="creator-header">
-        <h1><i class="fas fa-star"></i> Choose Your Path</h1>
+        <h1><i class="{{getIconClass 'star'}}"></i> Choose Your Path</h1>
         <p class="subtitle">Select a class to advance your character</p>
       </header>
 
@@ -262,23 +262,23 @@
       {{#if hasSuggestedClasses}}
       <div class="class-selection-container suggested-classes-section">
         <h4 class="class-category-title suggested-title">
-          <i class="fas fa-lightbulb"></i> Suggested for Your Build
+          <i class="{{getIconClass 'lightbulb'}}"></i> Suggested for Your Build
         </h4>
         <div class="class-suggestion-legend">
           <div class="class-suggestion-legend-item tier-prestige">
-            <span class="legend-icon"><i class="fas fa-star"></i></span>
+            <span class="legend-icon"><i class="{{getIconClass 'star'}}"></i></span>
             <span>Qualified Prestige</span>
           </div>
           <div class="class-suggestion-legend-item tier-path">
-            <span class="legend-icon"><i class="fas fa-route"></i></span>
+            <span class="legend-icon"><i class="{{getIconClass 'route'}}"></i></span>
             <span>Continue Path</span>
           </div>
           <div class="class-suggestion-legend-item tier-unlock">
-            <span class="legend-icon"><i class="fas fa-unlock"></i></span>
+            <span class="legend-icon"><i class="{{getIconClass 'unlock'}}"></i></span>
             <span>Near Prestige</span>
           </div>
           <div class="class-suggestion-legend-item tier-synergy">
-            <span class="legend-icon"><i class="fas fa-cogs"></i></span>
+            <span class="legend-icon"><i class="{{getIconClass 'PLACEHOLDER_'}}"></i></span>
             <span>Build Synergy</span>
           </div>
         </div>
@@ -307,7 +307,7 @@
               {{!-- Missing Prerequisites Tooltip --}}
               {{#if this.suggestion.hasMissingPrereqs}}
               <div class="missing-prereqs-hint">
-                <i class="fas fa-exclamation-triangle"></i>
+                <i class="{{getIconClass 'exclamation'}}"></i>
                 <span>{{#each this.suggestion.missingPrereqs}}{{#if @index}}, {{/if}}{{this.shortDisplay}}{{/each}}</span>
               </div>
               {{/if}}
@@ -360,7 +360,7 @@
         {{#if (or (gte newLevel 7) freeBuild)}}
         <div class="prestige-section">
           <button class="show-prestige-btn btn-prestige">
-            <i class="fas fa-crown"></i> Explore Prestige Classes
+            <i class="{{getIconClass 'crown'}}"></i> Explore Prestige Classes
             <span class="prestige-hint">Advanced classes for experienced heroes{{#if freeBuild}} (Free Build){{/if}}</span>
           </button>
         </div>
@@ -369,7 +369,7 @@
         {{!-- Ask Mentor Button for Class Selection --}}
         <div class="class-mentor-actions">
           <button class="ask-mentor-class-suggestion btn-mentor" title="Get a suggestion from your mentor">
-            <i class="fas fa-lightbulb"></i> Ask {{mentor.name}} for Guidance
+            <i class="{{getIconClass 'lightbulb'}}"></i> Ask {{mentor.name}} for Guidance
           </button>
         </div>
       </div>
@@ -380,22 +380,22 @@
     {{#if (eq currentStep "prestige")}}
     <section class="step-prestige-selection">
       <header class="creator-header">
-        <h1><i class="fas fa-crown"></i> Prestige Classes</h1>
+        <h1><i class="{{getIconClass 'crown'}}"></i> Prestige Classes</h1>
         <p class="subtitle">Advanced classes for experienced heroes (Level 7+)</p>
       </header>
 
       {{!-- Suggestion Legend for Prestige Classes --}}
       <div class="class-suggestion-legend prestige-legend">
         <div class="class-suggestion-legend-item tier-prestige">
-          <span class="legend-icon"><i class="fas fa-star"></i></span>
+          <span class="legend-icon"><i class="{{getIconClass 'star'}}"></i></span>
           <span>You Qualify Now</span>
         </div>
         <div class="class-suggestion-legend-item tier-unlock">
-          <span class="legend-icon"><i class="fas fa-unlock"></i></span>
+          <span class="legend-icon"><i class="{{getIconClass 'unlock'}}"></i></span>
           <span>Almost Qualified</span>
         </div>
         <div class="class-suggestion-legend-item tier-synergy">
-          <span class="legend-icon"><i class="fas fa-cogs"></i></span>
+          <span class="legend-icon"><i class="{{getIconClass 'PLACEHOLDER_'}}"></i></span>
           <span>Build Synergy</span>
         </div>
       </div>
@@ -427,7 +427,7 @@
             {{!-- Missing Prerequisites Hint --}}
             {{#if this.suggestion.hasMissingPrereqs}}
             <div class="missing-prereqs-hint">
-              <i class="fas fa-exclamation-triangle"></i>
+              <i class="{{getIconClass 'exclamation'}}"></i>
               <span>Missing: {{#each this.suggestion.missingPrereqs}}{{#if @index}}, {{/if}}{{this.shortDisplay}}{{/each}}</span>
             </div>
             {{/if}}
@@ -441,7 +441,7 @@
 
       <div class="form-actions">
         <button class="back-to-base-classes btn-secondary">
-          <i class="fas fa-arrow-left"></i> Back to Base Classes
+          <i class="{{getIconClass 'arrowLeft'}}"></i> Back to Base Classes
         </button>
       </div>
     </section>
@@ -462,7 +462,7 @@
               {{#each selectedClass.system.startingFeatures}}
                 {{#if (eq this.type "feat_grant")}}
                 <button class="select-feat-btn choice-button" data-feat-id="{{this.name}}">
-                  <i class="fas fa-star"></i> {{this.name}}
+                  <i class="{{getIconClass 'star'}}"></i> {{this.name}}
                 </button>
                 {{/if}}
               {{/each}}
@@ -478,7 +478,7 @@
             <div class="skill-selection">
               {{#each selectedClass.system.classSkills}}
               <button class="select-skill-btn choice-button" data-skill="{{this}}">
-                <i class="fas fa-check-circle"></i> {{this}}
+                <i class="{{getIconClass 'success'}}"></i> {{this}}
               </button>
               {{/each}}
             </div>
@@ -489,7 +489,7 @@
         {{#if (eq multiclassBonusChoice "all_feats")}}
         <p>You will receive ALL starting feats from {{selectedClass.name}}!</p>
         <button class="next-step btn-primary">
-          Continue <i class="fas fa-arrow-right"></i>
+          Continue <i class="{{getIconClass 'arrowRight'}}"></i>
         </button>
         {{/if}}
       </div>
@@ -510,7 +510,7 @@
       </p>
       <div class="ability-increase-actions">
         <button type="button" class="ask-mentor-attribute btn-info" title="Get mentor suggestion for which attribute to increase">
-          <i class="fas fa-lightbulb"></i> Ask Mentor
+          <i class="{{getIconClass 'lightbulb'}}"></i> Ask Mentor
         </button>
       </div>
 
@@ -523,7 +523,7 @@
             <span>Mod: {{#if (gte this.mod 0)}}+{{/if}}{{this.mod}}</span>
           </div>
           <button class="ability-increase-btn btn-primary" data-ability="{{@key}}">
-            <i class="fas fa-plus-circle"></i> Add +1
+            <i class="{{getIconClass 'circle'}}-plus"></i> Add +1
           </button>
           {{#if (lookup ../abilityIncreases @key)}}
           <div class="ability-allocated">
@@ -540,13 +540,13 @@
 
       <div class="form-actions">
         <button class="prev-step btn-secondary">
-          <i class="fas fa-arrow-left"></i> Back
+          <i class="{{getIconClass 'arrowLeft'}}"></i> Back
         </button>
         <button class="skip-step btn-warning" title="Skip this step (you'll need to add missing selections later)">
-          <i class="fas fa-forward"></i> Skip
+          <i class="{{getIconClass 'forward'}}"></i> Skip
         </button>
         <button class="next-step btn-primary">
-          Continue <i class="fas fa-arrow-right"></i>
+          Continue <i class="{{getIconClass 'arrowRight'}}"></i>
         </button>
       </div>
     </section>
@@ -572,10 +572,10 @@
       {{!-- FEAT SEARCH AND FILTER CONTROLS --}}
       <div class="feat-controls">
         <div class="feat-search-bar">
-          <i class="fas fa-search"></i>
+          <i class="{{getIconClass 'search'}}"></i>
           <input type="text" class="feat-search-input" placeholder="Search feats by name or tag..." />
           <button class="clear-search-btn" title="Clear search" style="display: none;">
-            <i class="fas fa-times"></i>
+            <i class="{{getIconClass 'times'}}"></i>
           </button>
         </div>
 
@@ -586,7 +586,7 @@
           </label>
 
           <button class="clear-filters-btn">
-            <i class="fas fa-redo"></i> Clear All Filters
+            <i class="{{getIconClass 'redo'}}"></i> Clear All Filters
           </button>
         </div>
       </div>
@@ -601,19 +601,19 @@
       {{!-- Suggestion Legend --}}
       <div class="suggestion-legend">
         <div class="suggestion-legend-item tier-chain">
-          <span class="legend-icon"><i class="fas fa-link"></i></span>
+          <span class="legend-icon"><i class="{{getIconClass 'link'}}"></i></span>
           <span>Chain Continuation</span>
         </div>
         <div class="suggestion-legend-item tier-skill">
-          <span class="legend-icon"><i class="fas fa-bullseye"></i></span>
+          <span class="legend-icon"><i class="{{getIconClass 'bullseye'}}"></i></span>
           <span>Uses Trained Skill</span>
         </div>
         <div class="suggestion-legend-item tier-ability">
-          <span class="legend-icon"><i class="fas fa-fist-raised"></i></span>
+          <span class="legend-icon"><i class="{{getIconClass 'fist'}}"></i></span>
           <span>Matches Highest Ability</span>
         </div>
         <div class="suggestion-legend-item tier-class">
-          <span class="legend-icon"><i class="fas fa-users-cog"></i></span>
+          <span class="legend-icon"><i class="{{getIconClass 'users'}}-cog"></i></span>
           <span>Class Synergy</span>
         </div>
       </div>
@@ -623,7 +623,7 @@
         {{#if futureAvailableFeats}}
         <div class="feat-category future-available-category">
           <div class="category-header">
-            <div class="category-icon"><i class="fas fa-hourglass-end"></i></div>
+            <div class="category-icon"><i class="{{getIconClass 'hourglassEnd'}}"></i></div>
             <div class="category-info">
               <h4>Future Available</h4>
               <p class="category-description">Feats that will become available with continued progression</p>
@@ -632,7 +632,7 @@
               <span class="count-badge">{{futureAvailableFeats.length}}</span>
             </div>
             <button class="category-toggle-btn">
-              <i class="fas fa-chevron-down"></i>
+              <i class="{{getIconClass 'chevronDown'}}"></i>
             </button>
           </div>
 
@@ -657,7 +657,7 @@
 
                 {{#if this.suggestion.unmetRequirements}}
                 <div class="feat-unmet-prereqs" style="color: #f59e0b; margin: 0.5em 0; font-weight: bold; font-size: 0.9em;">
-                  <i class="fas fa-hourglass-end"></i> Available in {{this.suggestion.levelsToQualify}} level(s)
+                  <i class="{{getIconClass 'hourglassEnd'}}"></i> Available in {{this.suggestion.levelsToQualify}} level(s)
                   {{#if this.suggestion.recommendations}}
                   <ul style="margin: 0.3em 0 0 1.2em; padding: 0;">
                   {{#each this.suggestion.recommendations}}
@@ -669,7 +669,7 @@
                 {{/if}}
 
                 <button class="select-bonus-feat choice-button" disabled title="Prerequisites not yet met">
-                  <i class="fas fa-hourglass-end"></i> Coming Soon
+                  <i class="{{getIconClass 'hourglassEnd'}}"></i> Coming Soon
                 </button>
               </div>
               {{/each}}
@@ -690,7 +690,7 @@
               <span class="count-badge">{{this.count}}</span>
             </div>
             <button class="category-toggle-btn">
-              <i class="fas fa-chevron-down"></i>
+              <i class="{{getIconClass 'chevronDown'}}"></i>
             </button>
           </div>
 
@@ -708,7 +708,7 @@
                    data-tooltip="{{this.system.benefit}}">
                 {{#if this.isOwned}}
                 <div class="feat-owned-badge {{#if this.isRepeatable}}repeatable{{/if}}">
-                  <i class="fas fa-check-circle"></i> {{#if this.isRepeatable}}Owned (Repeatable){{else}}Owned{{/if}}
+                  <i class="{{getIconClass 'success'}}"></i> {{#if this.isRepeatable}}Owned (Repeatable){{else}}Owned{{/if}}
                 </div>
                 {{/if}}
                 {{#if this.isSuggested}}
@@ -720,7 +720,7 @@
 
                 {{#if this.chain}}
                 <div class="feat-chain-badge">
-                  <i class="fas fa-link"></i> {{this.chain}}
+                  <i class="{{getIconClass 'link'}}"></i> {{this.chain}}
                 </div>
                 {{/if}}
 
@@ -753,7 +753,7 @@
                         data-feat-id="{{this._id}}"
                         {{#if this.isUnavailable}}disabled title="Prerequisites not met"{{/if}}
                         {{#if this.isOwned}}{{#unless this.isRepeatable}}disabled title="Already owned"{{/unless}}{{/if}}>
-                  <i class="fas {{#if this.isOwned}}fa-check-circle{{else}}fa-star{{/if}}"></i> {{#if this.isOwned}}{{#if this.isRepeatable}}Select Again{{else}}Owned{{/if}}{{else if this.isUnavailable}}Unavailable{{else}}Select{{/if}}
+                  <i class="fas {{#if this.isOwned}}fa-circle-check{{else}}fa-star{{/if}}"></i> {{#if this.isOwned}}{{#if this.isRepeatable}}Select Again{{else}}Owned{{/if}}{{else if this.isUnavailable}}Unavailable{{else}}Select{{/if}}
                 </button>
               </div>
               {{/each}}
@@ -765,16 +765,16 @@
 
       <div class="form-actions">
         <button class="prev-step btn-secondary">
-          <i class="fas fa-arrow-left"></i> Back
+          <i class="{{getIconClass 'arrowLeft'}}"></i> Back
         </button>
         <button class="ask-mentor-feat-suggestion btn-mentor" title="Get a suggestion from your mentor">
-          <i class="fas fa-star"></i> Ask {{mentor.name}}
+          <i class="{{getIconClass 'star'}}"></i> Ask {{mentor.name}}
         </button>
         <button class="skip-step btn-warning" title="Skip this step (you'll need to add missing selections later)">
-          <i class="fas fa-forward"></i> Skip
+          <i class="{{getIconClass 'forward'}}"></i> Skip
         </button>
         <button class="next-step btn-primary">
-          Continue <i class="fas fa-arrow-right"></i>
+          Continue <i class="{{getIconClass 'arrowRight'}}"></i>
         </button>
       </div>
     </section>
@@ -808,12 +808,12 @@
           </div>
           {{else}}
           <div class="power-image no-image">
-            <i class="fas fa-star"></i>
+            <i class="{{getIconClass 'star'}}"></i>
           </div>
           {{/if}}
           <h4 class="power-name">{{this.name}}</h4>
           <button class="select-force-power choice-button" data-power-id="{{this.id}}">
-            <i class="fas {{#if (eq this.id ../selectedForcePowers.*.id)}}fa-check-circle{{else}}fa-plus-circle{{/if}}"></i> {{#if (eq this.id ../selectedForcePowers.*.id)}}Selected{{else}}Select{{/if}}
+            <i class="fas {{#if (eq this.id ../selectedForcePowers.*.id)}}fa-circle-check{{else}}fa-circle-plus{{/if}}"></i> {{#if (eq this.id ../selectedForcePowers.*.id)}}Selected{{else}}Select{{/if}}
           </button>
         </div>
         {{/each}}
@@ -825,7 +825,7 @@
         <div class="selected-powers-list">
           {{#each selectedForcePowers}}
           <div class="selected-power-item">
-            <i class="fas fa-check-circle"></i>
+            <i class="{{getIconClass 'success'}}"></i>
             <strong>{{this.name}}</strong>
           </div>
           {{/each}}
@@ -835,13 +835,13 @@
 
       <div class="form-actions">
         <button class="prev-step btn-secondary">
-          <i class="fas fa-arrow-left"></i> Back
+          <i class="{{getIconClass 'arrowLeft'}}"></i> Back
         </button>
         <button class="ask-mentor-force-power-suggestion btn-mentor" title="Get a suggestion from your mentor">
-          <i class="fas fa-lightbulb"></i> Ask {{mentor.name}}
+          <i class="{{getIconClass 'lightbulb'}}"></i> Ask {{mentor.name}}
         </button>
         <button class="next-step btn-primary">
-          Continue <i class="fas fa-arrow-right"></i>
+          Continue <i class="{{getIconClass 'arrowRight'}}"></i>
         </button>
       </div>
     </section>
@@ -856,7 +856,7 @@
       {{#if talentState}}
       <div class="talent-progress-indicator">
         <div class="progress-item {{#if selectedTalents.heroic}}completed{{/if}} {{#if talentState.needsHeroicTalent}}required{{/if}}">
-          <i class="fas {{#if selectedTalents.heroic}}fa-check-circle{{else}}fa-circle{{/if}}"></i>
+          <i class="fas {{#if selectedTalents.heroic}}fa-circle-check{{else}}fa-circle{{/if}}"></i>
           <span>Heroic Talent</span>
           {{#if selectedTalents.heroic}}
             <small>{{selectedTalents.heroic.name}}</small>
@@ -867,7 +867,7 @@
         {{/if}}
         {{#if talentState.needsClassTalent}}
         <div class="progress-item {{#if selectedTalents.class}}completed{{/if}} required">
-          <i class="fas {{#if selectedTalents.class}}fa-check-circle{{else}}fa-circle{{/if}}"></i>
+          <i class="fas {{#if selectedTalents.class}}fa-circle-check{{else}}fa-circle{{/if}}"></i>
           <span>Class Talent ({{selectedClass.name}})</span>
           {{#if selectedTalents.class}}
             <small>{{selectedTalents.class.name}}</small>
@@ -882,7 +882,7 @@
       <div class="talent-selection-block heroic-talent">
         <div class="talent-block-header">
           <h4>
-            <i class="fas fa-crown"></i> Heroic Talent
+            <i class="{{getIconClass 'crown'}}"></i> Heroic Talent
             {{#if selectedTalents.heroic}}<span class="badge-success">Selected</span>{{/if}}
           </h4>
           <p class="talent-block-description">
@@ -892,7 +892,7 @@
 
         {{#if selectedTalents.heroic}}
         <div class="selected-talent-card">
-          <div class="talent-check"><i class="fas fa-check-circle"></i></div>
+          <div class="talent-check"><i class="{{getIconClass 'success'}}"></i></div>
           <div class="talent-details">
             <h5>{{selectedTalents.heroic.name}}</h5>
             <p class="talent-tree">{{selectedTalents.heroic.system.tree}}</p>
@@ -903,12 +903,12 @@
         <div class="talent-selection-intro">
           <div class="talent-intro-card">
             <div class="talent-intro-icon">
-              <i class="fas fa-project-diagram"></i>
+              <i class="{{getIconClass 'projectDiagram'}}"></i>
             </div>
             <h4>Explore Talent Trees</h4>
             <p>View an interactive visualization of available talent trees. Hover to preview, click to explore in detail.</p>
             <button class="select-talent-tree btn-primary-large" data-talent-type="heroic">
-              <i class="fas fa-search-plus"></i>
+              <i class="{{getIconClass 'search'}}-plus"></i>
               Browse Talent Trees
             </button>
           </div>
@@ -919,7 +919,7 @@
             <div class="talent-tree-grid">
               {{#each heroicTalentTrees}}
               <button class="select-talent-tree choice-button" data-tree="{{this}}" data-talent-type="heroic" title="{{lookup @root.talentTreeDescriptions this}}">
-                <i class="fas fa-tree"></i>
+                <i class="{{getIconClass 'tree'}}"></i>
                 <span>{{this}}</span>
               </button>
               {{/each}}
@@ -936,7 +936,7 @@
       <div class="talent-selection-block class-talent">
         <div class="talent-block-header">
           <h4>
-            <i class="fas fa-shield-alt"></i> Class Talent
+            <i class="{{getIconClass 'shieldAlt'}}"></i> Class Talent
             {{#if selectedTalents.class}}<span class="badge-success">Selected</span>{{/if}}
           </h4>
           <p class="talent-block-description">
@@ -946,7 +946,7 @@
 
         {{#if selectedTalents.class}}
         <div class="selected-talent-card">
-          <div class="talent-check"><i class="fas fa-check-circle"></i></div>
+          <div class="talent-check"><i class="{{getIconClass 'success'}}"></i></div>
           <div class="talent-details">
             <h5>{{selectedTalents.class.name}}</h5>
             <p class="talent-tree">{{selectedTalents.class.system.tree}}</p>
@@ -957,12 +957,12 @@
         <div class="talent-selection-intro">
           <div class="talent-intro-card">
             <div class="talent-intro-icon">
-              <i class="fas fa-project-diagram"></i>
+              <i class="{{getIconClass 'projectDiagram'}}"></i>
             </div>
             <h4>Explore Talent Trees</h4>
             <p>View an interactive visualization of {{selectedClass.name}}'s talent trees. Hover to preview, click to explore in detail.</p>
             <button class="select-talent-tree btn-primary-large" data-talent-type="class">
-              <i class="fas fa-search-plus"></i>
+              <i class="{{getIconClass 'search'}}-plus"></i>
               Browse Talent Trees
             </button>
           </div>
@@ -973,7 +973,7 @@
             <div class="talent-tree-grid">
               {{#each classTalentTrees}}
               <button class="select-talent-tree choice-button" data-tree="{{this}}" data-talent-type="class" title="{{lookup @root.talentTreeDescriptions this}}">
-                <i class="fas fa-tree"></i>
+                <i class="{{getIconClass 'tree'}}"></i>
                 <span>{{this}}</span>
               </button>
               {{/each}}
@@ -987,16 +987,16 @@
 
       <div class="form-actions">
         <button class="prev-step btn-secondary">
-          <i class="fas fa-arrow-left"></i> Back
+          <i class="{{getIconClass 'arrowLeft'}}"></i> Back
         </button>
         <button class="ask-mentor-talent-suggestion btn-mentor" title="Get a suggestion from your mentor">
-          <i class="fas fa-star"></i> Ask {{mentor.name}}
+          <i class="{{getIconClass 'star'}}"></i> Ask {{mentor.name}}
         </button>
         <button class="skip-step btn-warning" title="Skip this step (you'll need to add missing selections later)">
-          <i class="fas fa-forward"></i> Skip
+          <i class="{{getIconClass 'forward'}}"></i> Skip
         </button>
         <button class="next-step btn-primary">
-          Continue <i class="fas fa-arrow-right"></i>
+          Continue <i class="{{getIconClass 'arrowRight'}}"></i>
         </button>
       </div>
     </section>
@@ -1048,10 +1048,10 @@
 
       <div class="form-actions">
         <button class="prev-step btn-secondary">
-          <i class="fas fa-arrow-left"></i> Back
+          <i class="{{getIconClass 'arrowLeft'}}"></i> Back
         </button>
         <button class="complete-levelup btn-success">
-          <i class="fas fa-check"></i> Complete Level Up
+          <i class="{{getIconClass 'check'}}"></i> Complete Level Up
         </button>
       </div>
     </section>

@@ -1,25 +1,25 @@
 <div class="gm-debug-panel">
   <header class="debug-header">
     <div class="header-info">
-      <h2><i class="fas fa-bug"></i> BuildIntent Analysis</h2>
+      <h2><i class="{{getIconClass 'bug'}}"></i> BuildIntent Analysis</h2>
       <p class="character-name">{{actor.name}} (Level {{actor.system.level}})</p>
     </div>
     <div class="header-actions">
       <button class="refresh-analysis" title="Refresh Analysis">
-        <i class="fas fa-sync-alt"></i>
+        <i class="fas fa-arrows-rotate"></i>
       </button>
       <button class="copy-json" title="Copy JSON to Clipboard">
-        <i class="fas fa-copy"></i>
+        <i class="{{getIconClass 'PLACEHOLDER_'}}"></i>
       </button>
     </div>
   </header>
 
   <nav class="debug-tabs">
-    <a class="tab" data-tab="overview"><i class="fas fa-chart-pie"></i> Overview</a>
-    <a class="tab" data-tab="prestige"><i class="fas fa-crown"></i> Prestige</a>
-    <a class="tab" data-tab="signals"><i class="fas fa-signal"></i> Signals</a>
-    <a class="tab" data-tab="classes"><i class="fas fa-users"></i> Classes</a>
-    <a class="tab" data-tab="raw"><i class="fas fa-code"></i> Raw JSON</a>
+    <a class="tab" data-tab="overview"><i class="{{getIconClass 'chartPie'}}"></i> Overview</a>
+    <a class="tab" data-tab="prestige"><i class="{{getIconClass 'crown'}}"></i> Prestige</a>
+    <a class="tab" data-tab="signals"><i class="{{getIconClass 'signal'}}"></i> Signals</a>
+    <a class="tab" data-tab="classes"><i class="{{getIconClass 'users'}}"></i> Classes</a>
+    <a class="tab" data-tab="raw"><i class="{{getIconClass 'code'}}"></i> Raw JSON</a>
   </nav>
 
   <div class="debug-content">
@@ -29,35 +29,35 @@
       <div class="overview-grid">
         {{!-- Combat Style --}}
         <div class="overview-card">
-          <h3><i class="fas fa-sword"></i> Combat Style</h3>
+          <h3><i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Combat Style</h3>
           <div class="combat-style {{combatStyle}}">
             {{#if (eq combatStyle "lightsaber")}}
-            <i class="fas fa-jedi"></i> Lightsaber
+            <i class="{{getIconClass 'jedi'}}"></i> Lightsaber
             {{else if (eq combatStyle "ranged")}}
-            <i class="fas fa-crosshairs"></i> Ranged
+            <i class="{{getIconClass 'target'}}"></i> Ranged
             {{else if (eq combatStyle "melee")}}
-            <i class="fas fa-fist-raised"></i> Melee
+            <i class="{{getIconClass 'fist'}}"></i> Melee
             {{else}}
-            <i class="fas fa-random"></i> Mixed
+            <i class="{{getIconClass 'random'}}"></i> Mixed
             {{/if}}
           </div>
         </div>
 
         {{!-- Force Focus --}}
         <div class="overview-card">
-          <h3><i class="fas fa-atom"></i> Force Focus</h3>
+          <h3><i class="{{getIconClass 'atom'}}"></i> Force Focus</h3>
           <div class="force-focus {{#if forceFocus}}active{{/if}}">
             {{#if forceFocus}}
-            <i class="fas fa-check-circle"></i> Force-Focused
+            <i class="{{getIconClass 'success'}}"></i> Force-Focused
             {{else}}
-            <i class="fas fa-times-circle"></i> Non-Force
+            <i class="{{getIconClass 'error'}}"></i> Non-Force
             {{/if}}
           </div>
         </div>
 
         {{!-- Primary Themes --}}
         <div class="overview-card wide">
-          <h3><i class="fas fa-tags"></i> Primary Themes</h3>
+          <h3><i class="{{getIconClass 'tag'}}s"></i> Primary Themes</h3>
           <div class="primary-themes">
             {{#each buildIntent.primaryThemes}}
             <span class="theme-badge primary">{{this}}</span>
@@ -71,15 +71,15 @@
       {{!-- Theme Scores --}}
       <div class="collapsible-section">
         <div class="collapsible-header">
-          <h3><i class="fas fa-chart-bar"></i> Theme Scores</h3>
-          <i class="fas fa-chevron-down"></i>
+          <h3><i class="{{getIconClass 'chartBar'}}"></i> Theme Scores</h3>
+          <i class="{{getIconClass 'chevronDown'}}"></i>
         </div>
         <div class="collapsible-content">
           <div class="theme-scores">
             {{#each themeScores}}
             <div class="theme-score-row {{#if isPrimary}}is-primary{{/if}}">
               <span class="theme-name">
-                {{#if isPrimary}}<i class="fas fa-star"></i>{{/if}}
+                {{#if isPrimary}}<i class="{{getIconClass 'star'}}"></i>{{/if}}
                 {{name}}
               </span>
               <div class="theme-bar-container">
@@ -97,8 +97,8 @@
       {{!-- Priority Prerequisites --}}
       <div class="collapsible-section">
         <div class="collapsible-header">
-          <h3><i class="fas fa-exclamation-triangle"></i> Priority Prerequisites</h3>
-          <i class="fas fa-chevron-down"></i>
+          <h3><i class="{{getIconClass 'exclamation'}}"></i> Priority Prerequisites</h3>
+          <i class="{{getIconClass 'chevronDown'}}"></i>
         </div>
         <div class="collapsible-content">
           <div class="priority-prereqs">
@@ -118,7 +118,7 @@
       </div>
       {{else}}
       <div class="error-state">
-        <i class="fas fa-exclamation-triangle"></i>
+        <i class="{{getIconClass 'exclamation'}}"></i>
         <p>Failed to analyze build intent. Check console for errors.</p>
       </div>
       {{/if}}
@@ -126,7 +126,7 @@
 
     {{!-- PRESTIGE TAB --}}
     <section class="tab-section" data-tab="prestige">
-      <h3><i class="fas fa-crown"></i> Prestige Class Affinities</h3>
+      <h3><i class="{{getIconClass 'crown'}}"></i> Prestige Class Affinities</h3>
       <p class="tab-description">Classes ranked by how well they match the character's build direction.</p>
 
       <div class="prestige-affinities">
@@ -166,14 +166,14 @@
 
     {{!-- SIGNALS TAB --}}
     <section class="tab-section" data-tab="signals">
-      <h3><i class="fas fa-signal"></i> Detected Signals</h3>
+      <h3><i class="{{getIconClass 'signal'}}"></i> Detected Signals</h3>
       <p class="tab-description">Individual choices that influenced the build intent analysis.</p>
 
       {{#if signals}}
       <div class="signals-grid">
         {{!-- Feat Signals --}}
         <div class="signal-group">
-          <h4><i class="fas fa-star"></i> Feats ({{signals.feats.length}})</h4>
+          <h4><i class="{{getIconClass 'star'}}"></i> Feats ({{signals.feats.length}})</h4>
           <div class="signal-list">
             {{#each signals.feats}}
             <div class="signal-item">
@@ -188,7 +188,7 @@
 
         {{!-- Skill Signals --}}
         <div class="signal-group">
-          <h4><i class="fas fa-book"></i> Skills ({{signals.skills.length}})</h4>
+          <h4><i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Skills ({{signals.skills.length}})</h4>
           <div class="signal-list">
             {{#each signals.skills}}
             <div class="signal-item">
@@ -203,7 +203,7 @@
 
         {{!-- Class Signals --}}
         <div class="signal-group">
-          <h4><i class="fas fa-users"></i> Classes ({{signals.classes.length}})</h4>
+          <h4><i class="{{getIconClass 'users'}}"></i> Classes ({{signals.classes.length}})</h4>
           <div class="signal-list">
             {{#each signals.classes}}
             <div class="signal-item">
@@ -223,7 +223,7 @@
 
     {{!-- CLASSES TAB --}}
     <section class="tab-section" data-tab="classes">
-      <h3><i class="fas fa-users"></i> Prestige Class Qualification</h3>
+      <h3><i class="{{getIconClass 'users'}}"></i> Prestige Class Qualification</h3>
       <p class="tab-description">Detailed prerequisite status for each prestige class.</p>
 
       <div class="class-analysis">
@@ -231,7 +231,7 @@
         <div class="class-analysis-card {{#if qualified}}qualified{{else}}not-qualified{{/if}}">
           <div class="class-header">
             <h4>
-              {{#if qualified}}<i class="fas fa-check-circle"></i>{{else}}<i class="fas fa-times-circle"></i>{{/if}}
+              {{#if qualified}}<i class="{{getIconClass 'success'}}"></i>{{else}}<i class="{{getIconClass 'error'}}"></i>{{/if}}
               {{name}}
             </h4>
             <span class="synergy-score">Synergy: {{synergyScore}}</span>
@@ -258,7 +258,7 @@
 
     {{!-- RAW JSON TAB --}}
     <section class="tab-section" data-tab="raw">
-      <h3><i class="fas fa-code"></i> Raw BuildIntent JSON</h3>
+      <h3><i class="{{getIconClass 'code'}}"></i> Raw BuildIntent JSON</h3>
       <p class="tab-description">Complete BuildIntent data for debugging and export.</p>
       <pre class="json-output">{{rawBuildIntent}}</pre>
     </section>

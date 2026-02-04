@@ -3,7 +3,7 @@
  <div class="skill-row flexrow" draggable="true">
  <div class="skill-favorite-btn">
  <button class="skill-favorite-toggle" data-skill="{{key}}" title="Favorite this skill">
- <i class="fas fa-star {{#if skill}}{{#if skill.favorite}}active{{/if}}{{/if}}" aria-hidden="true"></i>
+ <i class="{{getIconClass 'star'}} {{#if skill}}{{#if skill.favorite}}active{{/if}}{{/if}}" aria-hidden="true"></i>
  </button>
  </div>
 
@@ -13,7 +13,7 @@
  data-roll="1d20+@skills.{{key}}.total"
  data-label="{{label}}"
  title="Roll {{label}}">
- <i class="fas fa-dice-d20" aria-hidden="true"></i>
+ <i class="{{getIconClass 'diceD20'}}" aria-hidden="true"></i>
  </button>
  </div>
 
@@ -71,7 +71,7 @@
  {{#let (lookup @root.skillActions key)}}
  {{#if hasActions}}
  <button type="button" class="skill-actions-toggle" data-skill="{{../key}}" title="Show available actions">
- <i class="fas fa-chevron-down" aria-hidden="true"></i>
+ <i class="{{getIconClass 'chevronDown'}}" aria-hidden="true"></i>
  </button>
  {{/if}}
  {{/let}}
@@ -87,12 +87,12 @@
 
  {{#if combatActions}}
  <div class="actions-category">
- <h4><i class="fas fa-fist-raised" aria-hidden="true"></i> Combat Actions</h4>
+ <h4><i class="{{getIconClass 'fist'}}" aria-hidden="true"></i> Combat Actions</h4>
  <div class="actions-list">
  {{#each combatActions}}
  <div class="action-item skill-use-rollable" data-skill="{{../../key}}" data-action-name="{{name}}" data-dc="{{dc.value}}" data-dc-type="{{dc.type}}" data-action-type="{{actionType}}" data-outcome="{{outcome}}" data-when="{{when}}">
  <div class="action-header">
- <strong class="action-name"><i class="fas fa-dice-d20" aria-hidden="true"></i> {{name}}</strong>
+ <strong class="action-name"><i class="{{getIconClass 'diceD20'}}" aria-hidden="true"></i> {{name}}</strong>
  <span class="action-type">{{actionType}}</span>
  {{#if cost}}
  <span class="action-cost">Cost: {{cost}}</span>
@@ -100,7 +100,7 @@
  </div>
  {{#if dc}}
  <div class="action-dc">
- <i class="fas fa-dice-d20" aria-hidden="true"></i>
+ <i class="{{getIconClass 'diceD20'}}" aria-hidden="true"></i>
  DC:
  {{#if dc.value}}
  {{dc.value}}
@@ -131,22 +131,22 @@
  {{#if this}}
  <div class="actions-category extra-uses-category collapsible">
  <h4 class="category-header collapsible-toggle" data-skill="{{../../key}}">
- <i class="fas fa-book" aria-hidden="true"></i> Other Skill Uses <i class="fas fa-arrow-right" aria-hidden="true"></i>
+ <i class="fas fa-book" aria-hidden="true"></i> Other Skill Uses <i class="{{getIconClass 'arrowRight'}}" aria-hidden="true"></i>
  <span class="use-count">({{this.length}})</span>
- <i class="fas fa-chevron-down collapse-icon" aria-hidden="true"></i>
+ <i class="{{getIconClass 'chevronDown'}} collapse-icon" aria-hidden="true"></i>
  </h4>
  <div class="actions-list collapsible-content collapsed">
  {{#each this}}
  <div class="action-item skill-use-rollable" data-skill="{{../../../key}}" data-action-name="{{name}}" data-dc="{{dc}}" data-effect="{{effect}}">
  <div class="action-header">
- <strong class="action-name"><i class="fas fa-dice-d20" aria-hidden="true"></i> {{name}}</strong>
+ <strong class="action-name"><i class="{{getIconClass 'diceD20'}}" aria-hidden="true"></i> {{name}}</strong>
  {{#if time}}
  <span class="action-type">{{time}}</span>
  {{/if}}
  </div>
  {{#if dc}}
  <div class="action-dc">
- <i class="fas fa-dice-d20" aria-hidden="true"></i>
+ <i class="{{getIconClass 'diceD20'}}" aria-hidden="true"></i>
  DC: {{dc}}
  </div>
  {{/if}}

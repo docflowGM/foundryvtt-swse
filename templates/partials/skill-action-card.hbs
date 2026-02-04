@@ -9,7 +9,7 @@
   <div class="card-header">
 
     <div class="action-icon">
-      <i class="fas fa-dice-d20"></i>
+      <i class="{{getIconClass 'diceD20'}}"></i>
     </div>
 
     <div class="action-title">
@@ -21,12 +21,12 @@
             data-skill="{{skillKey}}"
             data-action="{{action.name}}"
             title="Favorite this action">
-      <i class="fas fa-star"></i>
+      <i class="{{getIconClass 'star'}}"></i>
     </button>
 
     {{!-- Expand button --}}
     <div class="action-expand">
-      <i class="fas fa-chevron-down"></i>
+      <i class="{{getIconClass 'chevronDown'}}"></i>
     </div>
 
   </div>
@@ -49,7 +49,7 @@
     <button class="skill-action-roll"
             data-skill="{{skillKey}}"
             data-action="{{action.name}}">
-      <i class="fas fa-dice-d20"></i> Roll
+      <i class="{{getIconClass 'diceD20'}}"></i> Roll
     </button>
 
   </div>

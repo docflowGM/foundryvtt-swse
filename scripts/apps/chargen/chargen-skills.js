@@ -112,7 +112,7 @@ export async function _onResetSkills(event) {
  * Bind skills UI (deprecated simple version)
  */
 export function _bindSkillsUI(root) {
-  const doc = root || this.element[0];
+  const doc = root || this.element;
   // Template uses class="skills-list-chargen", not id="skills-list"
   const skillsContainer = root.querySelector(".skills-list-chargen");
   SWSELogger.log(`[CHARGEN-SKILLS] _bindSkillsUI: START - skillsContainer:`, skillsContainer ? 'FOUND' : 'NOT FOUND');

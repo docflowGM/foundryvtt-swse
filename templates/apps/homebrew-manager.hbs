@@ -24,7 +24,7 @@
         <div class="tab-header">
           <h3>Custom Feats</h3>
           <button type="button" class="create-button" data-action="createFeat">
-            <i class="fas fa-plus"></i> Create Feat
+            <i class="{{getIconClass 'plus'}}"></i> Create Feat
           </button>
         </div>
         <div class="homebrew-list">
@@ -37,7 +37,7 @@
                   <div class="prerequisite">Prerequisite: {{this.prerequisite}}</div>
                 {{/if}}
                 <button type="button" class="delete-button" data-action="delete" data-type="feats" data-id="{{this.id}}">
-                  <i class="fas fa-trash"></i>
+                  <i class="{{getIconClass 'trash'}}"></i>
                 </button>
               </div>
             {{/each}}
@@ -54,7 +54,7 @@
         <div class="tab-header">
           <h3>Custom Talents</h3>
           <button type="button" class="create-button" data-action="createTalent">
-            <i class="fas fa-plus"></i> Create Talent
+            <i class="{{getIconClass 'plus'}}"></i> Create Talent
           </button>
         </div>
         <div class="homebrew-list">
@@ -67,7 +67,7 @@
                   <div class="talent-tree">Tree: {{this.tree}}</div>
                 {{/if}}
                 <button type="button" class="delete-button" data-action="delete" data-type="talents" data-id="{{this.id}}">
-                  <i class="fas fa-trash"></i>
+                  <i class="{{getIconClass 'trash'}}"></i>
                 </button>
               </div>
             {{/each}}
@@ -84,7 +84,7 @@
         <div class="tab-header">
           <h3>Custom Force Powers</h3>
           <button type="button" class="create-button" data-action="createForcePower">
-            <i class="fas fa-plus"></i> Create Force Power
+            <i class="{{getIconClass 'plus'}}"></i> Create Force Power
           </button>
         </div>
         <div class="homebrew-list">
@@ -100,7 +100,7 @@
                   <div class="power-check">Check: {{this.checkType}}</div>
                 {{/if}}
                 <button type="button" class="delete-button" data-action="delete" data-type="forcePowers" data-id="{{this.id}}">
-                  <i class="fas fa-trash"></i>
+                  <i class="{{getIconClass 'trash'}}"></i>
                 </button>
               </div>
             {{/each}}
@@ -117,7 +117,7 @@
         <div class="tab-header">
           <h3>Custom Species</h3>
           <button type="button" class="create-button" data-action="createSpecies" disabled>
-            <i class="fas fa-plus"></i> Create Species
+            <i class="{{getIconClass 'plus'}}"></i> Create Species
           </button>
         </div>
         <div class="homebrew-list">
@@ -132,7 +132,7 @@
         <div class="tab-header">
           <h3>Custom Classes</h3>
           <button type="button" class="create-button" data-action="createClass" disabled>
-            <i class="fas fa-plus"></i> Create Class
+            <i class="{{getIconClass 'plus'}}"></i> Create Class
           </button>
         </div>
         <div class="homebrew-list">
@@ -147,10 +147,10 @@
     {{!-- Footer --}}
     <footer class="sheet-footer">
       <button type="button" class="export-button" data-action="export">
-        <i class="fas fa-file-export"></i> Export Homebrew
+        <i class="{{getIconClass 'fileExport'}}"></i> Export Homebrew
       </button>
       <button type="button" class="import-button" data-action="import">
-        <i class="fas fa-file-import"></i> Import Homebrew
+        <i class="{{getIconClass 'fileImport'}}"></i> Import Homebrew
       </button>
     </footer>
 

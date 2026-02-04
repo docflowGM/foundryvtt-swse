@@ -24,7 +24,7 @@
               <span class="maneuver-name">{{maneuver.name}}</span>
               <div class="maneuver-controls">
                 <a class="add-to-suite" data-action="addToSuite" data-item-id="{{maneuver._id}}" title="Add to suite">
-                  <i class="fas fa-arrow-right"></i>
+                  <i class="{{getIconClass 'arrowRight'}}"></i>
                 </a>
               </div>
             </div>
@@ -33,7 +33,7 @@
         </div>
 
         <div class="suite-arrow">
-          <i class="fas fa-exchange-alt"></i>
+          <i class="{{getIconClass 'arrowsHorizontal'}}"></i>
         </div>
 
         <div class="maneuvers-column active-suite">
@@ -48,15 +48,15 @@
               <div class="maneuver-controls">
                 {{#if maneuver.system.spent}}
                 <a class="regain-maneuver" data-action="regainManeuver" data-item-id="{{maneuver._id}}" title="Rest to regain maneuver">
-                  <i class="fas fa-redo"></i>
+                  <i class="{{getIconClass 'redo'}}"></i>
                 </a>
                 {{else}}
                 <a class="use-maneuver" data-action="useManeuver" data-item-id="{{maneuver._id}}" title="Mark as used">
-                  <i class="fas fa-fighter-jet"></i>
+                  <i class="{{getIconClass 'fighterJet'}}"></i>
                 </a>
                 {{/if}}
                 <a class="remove-from-suite" data-action="removeFromSuite" data-item-id="{{maneuver._id}}" title="Remove from suite">
-                  <i class="fas fa-arrow-left"></i>
+                  <i class="{{getIconClass 'arrowLeft'}}"></i>
                 </a>
               </div>
             </div>
@@ -69,7 +69,7 @@
 
           <div class="suite-actions">
             <button class="rest-maneuvers" data-action="restManeuvers" title="Rest to regain all maneuvers">
-              <i class="fas fa-bed"></i> Rest (Regain All)
+              <i class="{{getIconClass 'bed'}}"></i> Rest (Regain All)
             </button>
           </div>
         </div>
@@ -143,7 +143,7 @@
   {{else}}
     <div class="no-feature-message">
       <div class="feature-locked">
-        <i class="fas fa-lock"></i>
+        <i class="{{getIconClass 'lock'}}"></i>
         <h3>Starship Maneuvers Locked</h3>
         <p>Take the <strong>Starship Tactics Feat</strong> to learn Starship Maneuvers.</p>
         <p class="description">
