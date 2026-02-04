@@ -7,6 +7,13 @@
 
 import CharacterGenerator from '../apps/chargen/chargen-main.js';
 import { auditCSSHealth } from './css-auditor.js';
+import {
+  v2Assert,
+  enableStrictV2,
+  disableStrictV2,
+  generateMigrationReport,
+  generateUIFailureReport
+} from './migration-auditor.js';
 
 /**
  * Smoke Test Suite - Basic validation that SWSE loads correctly
@@ -121,10 +128,18 @@ function cssHealth() {
 /**
  * SWSE Public API - Frozen to prevent mutation
  *
- * Safe to use:
- * - window.SWSE.openCharGen() - Open character generator
+ * Diagnostic Commands:
  * - window.SWSE.smokeTest() - Validate system initialization
  * - window.SWSE.cssHealth() - Validate CSS assumptions
+ * - window.SWSE.migrationReport() - Check v1→v2 migration issues
+ * - window.SWSE.uiFailureReport() - Correlate pipeline failures
+ *
+ * Dev Mode Commands:
+ * - window.SWSE.enableStrictV2() - Throw on v2 assertion failures
+ * - window.SWSE.disableStrictV2() - Warn only on v2 assertion failures
+ *
+ * User Commands:
+ * - window.SWSE.openCharGen() - Open character generator
  *
  * Not safe:
  * - Modifying this object
@@ -134,5 +149,10 @@ export const SWSEAPI = Object.freeze({
   openCharGen,
   smokeTest,
   cssHealth,
+  migrationReport: generateMigrationReport,
+  uiFailureReport: generateUIFailureReport,
+  enableStrictV2,
+  disableStrictV2,
+  v2Assert,
   version: '1.2.0'
 });

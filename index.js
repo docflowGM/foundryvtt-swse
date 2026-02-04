@@ -142,6 +142,7 @@ import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
 import { registerSWSEPartials } from './helpers/handlebars/partials-auto.js';
 import { preloadHandlebarsTemplates, assertPartialsResolved } from './scripts/core/load-templates.js';
 import { SWSEAPI } from './scripts/core/swse-api.js';
+import { initMigrationAuditor, setupNoWindowSentinel } from './scripts/core/migration-auditor.js';
 
 import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 import { createItemMacro } from './scripts/macros/item-macro.js';
@@ -437,6 +438,12 @@ Hooks.once('init', async function () {
 
 Hooks.once('ready', async function () {
     swseLogger.log('SWSE | System Ready');
+
+    // Initialize migration auditor (v1→v2 ghost detection)
+    initMigrationAuditor();
+
+    // Setup catastrophic failure sentinel
+    setupNoWindowSentinel();
 
     // Suggestion service (single entry) initialization
     try {
