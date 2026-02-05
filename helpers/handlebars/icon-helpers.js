@@ -19,6 +19,7 @@ export const iconHelpers = {
         type: typeof iconKey,
         context: this,
       });
+      return '';
     }
     return getIconClass(iconKey);
   },
@@ -36,6 +37,7 @@ export const iconHelpers = {
         type: typeof iconKey,
         context: this,
       });
+      return '';
     }
     const el = createIcon(iconKey);
     return el.outerHTML;
