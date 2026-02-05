@@ -45,15 +45,36 @@ export class SWSEV2DroidSheet extends HandlebarsApplicationMixin(foundry.applica
 
     console.log(`📦 SWSEV2DroidSheet _prepareContext CALLED for ${this.document.name}`);
 
-    // Return SWSE-specific context for the template
+    // AppV2 Compatibility: Only pass serializable data
+    // V13 AppV2 calls structuredClone() on render context - Document objects,
+    // Collections, and User objects cannot be cloned. Extract only primitives and data.
     const actor = this.document;
     return {
-      actor,
+      // Actor header data (serializable primitives only)
+      actor: {
+        id: actor.id,
+        name: actor.name,
+        type: actor.type,
+        img: actor.img,
+        _id: actor._id
+      },
       system: actor.system,
       derived: actor.system?.derived ?? {},
-      items: actor.items,
+      // Items: map to plain objects to avoid Collection serialization issues
+      items: actor.items.map(item => ({
+        id: item.id,
+        name: item.name,
+        type: item.type,
+        img: item.img,
+        system: item.system
+      })),
       editable: this.isEditable,
-      user: game.user,
+      // User data (serializable primitives only)
+      user: {
+        id: game.user.id,
+        name: game.user.name,
+        role: game.user.role
+      },
       config: CONFIG.SWSE
     };
   }

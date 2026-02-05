@@ -87,31 +87,52 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
 
     // Build context from actor data
     const actor = this.document;
-    const context = {
-      actor,
-      system: actor.system,
-      derived: actor.system?.derived ?? {},
-      items: actor.items,
-      editable: this.isEditable,
-      user: game.user,
-      config: CONFIG.SWSE
-    };
 
     // DATA VALIDATION (catches 80% of blank sheet issues)
     if (getDevMode()) {
-      if (!context.system) {
+      if (!actor.system) {
         throw new Error(
           `${this.constructor.name}: getData() missing system data. Template will be blank.`
         );
       }
-      if (!context.actor) {
+      if (!actor.id) {
         throw new Error(`${this.constructor.name}: getData() missing actor. Template will be blank.`);
       }
     }
 
-    // CONTEXT IMMUTABILITY: Freeze context to prevent mutations during render
-    // V2 renders are batched. If you mutate context, changes are lost in the next render.
-    return structuredClone(context);
+    // AppV2 Compatibility: Only pass serializable data
+    // V13 AppV2 calls structuredClone() on render context - Document objects,
+    // Collections, and User objects cannot be cloned. Extract only primitives and data.
+    const context = {
+      // Actor header data (serializable primitives only)
+      actor: {
+        id: actor.id,
+        name: actor.name,
+        type: actor.type,
+        img: actor.img,
+        _id: actor._id
+      },
+      system: actor.system,
+      derived: actor.system?.derived ?? {},
+      // Items: map to plain objects to avoid Collection serialization issues
+      items: actor.items.map(item => ({
+        id: item.id,
+        name: item.name,
+        type: item.type,
+        img: item.img,
+        system: item.system
+      })),
+      editable: this.isEditable,
+      // User data (serializable primitives only)
+      user: {
+        id: game.user.id,
+        name: game.user.name,
+        role: game.user.role
+      },
+      config: CONFIG.SWSE
+    };
+
+    return context;
   }
 
   /**
