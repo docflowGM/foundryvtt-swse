@@ -14,11 +14,6 @@ export const iconHelpers = {
    */
   getIconClass: function(iconKey) {
     if (typeof iconKey !== 'string') {
-      console.error('[SWSE Icons] getIconClass received non-string:', {
-        received: iconKey,
-        type: typeof iconKey,
-        context: this,
-      });
       return '';
     }
     return getIconClass(iconKey);
@@ -32,11 +27,6 @@ export const iconHelpers = {
    */
   icon: function(iconKey) {
     if (typeof iconKey !== 'string') {
-      console.error('[SWSE Icons] icon helper received non-string:', {
-        received: iconKey,
-        type: typeof iconKey,
-        context: this,
-      });
       return '';
     }
     const el = createIcon(iconKey);
