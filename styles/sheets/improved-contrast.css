@@ -1,476 +1,205 @@
-/* ============================================================================
-   FROZEN LEGACY CSS - DO NOT EDIT
+/* swse-holo-v13.css - Holo cyber-theme for SWSE (Foundry VTT v13) */
 
-   This file has been frozen as part of the CSS architecture refactoring.
-   New contrast improvements should use the --swse-* variables in:
-   - styles/core/variables.css (for theme variants)
-
-   Migration: These styles may be selectively merged into the new system.
-   Date frozen: 2026-01-15
-   ============================================================================ */
-
-/* ==========================================================================
-   SWSE Enhanced Sheet Improvements (LEGACY)
-   Improves contrast, visibility, and usability across all sheets
-   ========================================================================== */
-
-/* =========================
-   IMPROVED CONTRAST & VISIBILITY
-   ========================= */
-
-/* Better text contrast for readability */
-.swse-app input[type="text"],
-.swse-app input[type="number"],
-.swse-app select,
-.swse-app textarea {
-  background: rgba(0, 0, 0, 0.6);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 13px;
+/*--------------------------------*/
+/* Root Theme Variables (swse)    */
+/*--------------------------------*/
+:root {
+  /* Core colors: neon cyan accent on dark background */
+  --swse-bg-color: #011;             /* Dark bluish background */
+  --swse-fg-color: #fff;             /* Light text */
+  --swse-accent-color: #0ff;         /* Bright cyan accent */
+  --swse-accent-contrast: #033;      /* Darker accent (contrasting background) */
+  --swse-highlight-color: #0af;      /* Secondary highlight (blue-cyan) */
+  --swse-glow-color: rgba(0, 255, 255, 0.5); /* Glow effect color */
+  --swse-input-bg: #002;             /* Input field background */
+  --swse-input-border: #0af;         /* Input field border color */
 }
 
-.swse-app input[type="text"]:focus,
-.swse-app input[type="number"]:focus,
-.swse-app select:focus,
-.swse-app textarea:focus {
-  background: rgba(0, 0, 0, 0.7);
-  border-color: var(--holo-cyan, #00d9ff);
-  box-shadow: 0 0 8px rgba(0, 217, 255, 0.4);
-  outline: none;
-  color: #ffffff;
+/*--------------------------------*/
+/* Window & Application Styling   */
+/*--------------------------------*/
+/* Style SWSE application windows with holo theme */
+.application.swse .window,
+.application.swse .window-content {
+  background-color: var(--swse-bg-color);
+  color: var(--swse-fg-color);
 }
 
-/* Placeholder text visibility */
-.swse-app input::placeholder,
-.swse-app textarea::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-  opacity: 1;
+/* Window header uses accent color for sci-fi look */
+.application.swse .window-header {
+  background-color: var(--swse-accent-color);
+  border-bottom: 1px solid var(--swse-accent-contrast);
+  color: var(--swse-accent-contrast);
 }
 
-/* Disabled inputs - keep them visible but distinct */
-.swse-app input[type="text"]:disabled,
-.swse-app input[type="number"]:disabled,
-.swse-app select:disabled,
-.swse-app textarea:disabled {
-  background: rgba(0, 0, 0, 0.3);
-  color: rgba(255, 255, 255, 0.5);
-  border-color: rgba(255, 255, 255, 0.1);
-  cursor: not-allowed;
+/* Window borders glow softly */
+.application.swse .window {
+  border: 1px solid var(--swse-accent-contrast);
+  box-shadow: 0 0 8px var(--swse-glow-color);
 }
 
-/* Improved button visibility */
-.swse-app button,
-.swse-app .button,
-.swse-app button[type="button"] {
-  background: linear-gradient(135deg, rgba(0, 168, 204, 0.3), rgba(0, 217, 255, 0.2));
-  color: #e0e0e0;
-  border: 1px solid rgba(0, 217, 255, 0.5);
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+/*--------------------------------*/
+/* Form Inputs                    */
+/*--------------------------------*/
+/* Text inputs, selects, and textareas */
+.application.swse input[type="text"],
+.application.swse input[type="number"],
+.application.swse select,
+.application.swse textarea {
+  background-color: var(--swse-input-bg);
+  border: 1px solid var(--swse-input-border);
+  color: var(--swse-fg-color);
+  box-shadow: inset 0 0 5px var(--swse-glow-color);
 }
 
-.swse-app button:hover,
-.swse-app .button:hover {
-  background: linear-gradient(135deg, rgba(0, 168, 204, 0.5), rgba(0, 217, 255, 0.3));
-  border-color: var(--holo-cyan, #00d9ff);
-  box-shadow: 0 0 12px rgba(0, 217, 255, 0.5);
-  transform: translateY(-1px);
+/* Focus outline for inputs */
+.application.swse input:focus,
+.application.swse select:focus,
+.application.swse textarea:focus {
+  outline-color: var(--swse-highlight-color);
+  outline-offset: 0;
 }
 
-.swse-app button:active {
-  transform: translateY(0);
-  box-shadow: 0 0 8px rgba(0, 217, 255, 0.3);
+/* Placeholder text should be slightly subdued */
+.application.swse ::placeholder {
+  color: var(--swse-accent-contrast);
 }
 
-.swse-app button i {
-  font-size: 14px;
+/*--------------------------------*/
+/* Buttons                        */
+/*--------------------------------*/
+/* Standard button styling in SWSE dialogs */
+.application.swse button,
+.application.swse input[type="button"],
+.application.swse input[type="submit"],
+.application.swse input[type="reset"] {
+  background-color: var(--swse-accent-color);
+  border: 1px solid var(--swse-accent-contrast);
+  color: var(--swse-accent-contrast);
+  box-shadow: 0 0 6px var(--swse-glow-color);
+  text-shadow: 0 0 4px var(--swse-glow-color);
 }
 
-/* Section headers with better visibility */
-.swse-app .section-header,
-.swse-app h3.section-header {
-  color: #00d9ff;
-  text-transform: uppercase;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  padding: 8px 12px;
-  margin: 12px 0 8px;
-  background: linear-gradient(90deg, rgba(0, 217, 255, 0.15), transparent);
-  border-left: 3px solid var(--holo-cyan, #00d9ff);
-  text-shadow: 0 0 8px rgba(0, 217, 255, 0.6);
+/* Button hover and active for interactive feel */
+.application.swse button:hover,
+.application.swse input[type="button"]:hover,
+.application.swse input[type="submit"]:hover,
+.application.swse input[type="reset"]:hover,
+.application.swse button:active {
+  background-color: var(--swse-highlight-color);
 }
 
-/* Rollable elements - make them obvious */
-.swse-app .rollable,
-.swse-app [data-roll] {
-  cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 2px 6px;
-  border-radius: 3px;
-  background: rgba(0, 217, 255, 0.05);
-  border: 1px solid transparent;
+/* Dialog button bar styling */
+.application.swse .dialog-buttons {
+  background-color: var(--swse-bg-color);
+  border-top: 1px solid var(--swse-accent-contrast);
 }
 
-.swse-app .rollable:hover,
-.swse-app [data-roll]:hover {
-  background: rgba(0, 217, 255, 0.2);
-  border-color: rgba(0, 217, 255, 0.5);
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.4);
-  color: #fff;
+/*--------------------------------*/
+/* Tabs                           */
+/*--------------------------------*/
+/* Tab labels */
+.application.swse .tabs .item a {
+  color: var(--swse-fg-color);
+  background: none;
+  border-bottom: 1px solid transparent;
 }
 
-/* Tab navigation improvements */
-.swse-app .sheet-tabs {
-  border-bottom: 2px solid rgba(0, 217, 255, 0.3);
-  margin-bottom: 12px;
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
+/* Active tab */
+.application.swse .tabs .item.active a {
+  background-color: var(--swse-highlight-color);
+  color: var(--swse-accent-contrast);
 }
 
-.swse-app .sheet-tabs .item {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #9fb6c9;
-  padding: 8px 16px;
-  border-radius: 4px 4px 0 0;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
-  text-transform: uppercase;
-  font-size: 12px;
-  letter-spacing: 0.5px;
+/* Tab container */
+.application.swse .tabs {
+  border-bottom: 1px solid var(--swse-accent-contrast);
 }
 
-.swse-app .sheet-tabs .item:hover {
-  background: rgba(0, 217, 255, 0.1);
-  border-color: rgba(0, 217, 255, 0.3);
-  color: #e0e0e0;
+/*--------------------------------*/
+/* List & Directory Rows          */
+/*--------------------------------*/
+/* Directory/combatant list items */
+.application.swse .directory-list .directory-item,
+.application.swse .combatant-list .combatant {
+  background-color: var(--swse-bg-color);
+  border-bottom: 1px solid var(--swse-accent-contrast);
+  color: var(--swse-fg-color);
 }
 
-.swse-app .sheet-tabs .item.active {
-  background: linear-gradient(180deg, rgba(0, 217, 255, 0.3), rgba(0, 217, 255, 0.1));
-  border-color: var(--holo-cyan, #00d9ff);
-  color: #ffffff;
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.4);
+/* Hover state for list items */
+.application.swse .directory-list .directory-item:hover,
+.application.swse .combatant-list .combatant:hover {
+  background-color: var(--swse-accent-color);
+  color: var(--swse-accent-contrast);
 }
 
-/* =========================
-   IMPROVED ITEM ROWS & LISTS
-   ========================= */
-
-/* Weapons, armor, equipment rows */
-.swse-app .weapon-row,
-.swse-app .armor-row,
-.swse-app .item-row,
-.swse-app .feat-row,
-.swse-app .skill-row {
-  padding: 8px;
-  margin: 4px 0;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Selected item */
+.application.swse .directory-list .directory-item.active,
+.application.swse .combatant-list .combatant.active {
+  background-color: var(--swse-highlight-color);
+  color: var(--swse-accent-contrast);
 }
 
-.swse-app .weapon-row:hover,
-.swse-app .armor-row:hover,
-.swse-app .item-row:hover,
-.swse-app .feat-row:hover,
-.swse-app .skill-row:hover {
-  background: rgba(0, 217, 255, 0.05);
-  border-color: rgba(0, 217, 255, 0.3);
+/*--------------------------------*/
+/* Resource Bars                  */
+/*--------------------------------*/
+/* Outer container of a resource bar */
+.application.swse .resource-bar-outer {
+  background-color: var(--swse-accent-contrast);
 }
 
-/* Item controls */
-.swse-app .item-controls {
-  display: flex;
-  gap: 6px;
-  margin-left: auto;
+/* Inner (filled) part of a resource bar */
+.application.swse .resource-bar-inner {
+  background-color: var(--swse-accent-color);
 }
 
-.swse-app .item-control {
-  color: #9fb6c9;
-  cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 3px;
-  transition: all 0.2s ease;
-  font-size: 14px;
+/* Resource text */
+.application.swse .resource-bar .bar-label {
+  color: var(--swse-fg-color);
 }
 
-.swse-app .item-control:hover {
-  color: #00d9ff;
-  background: rgba(0, 217, 255, 0.1);
+/*--------------------------------*/
+/* Icon Controls (Sidebar/Toolbar)*/
+/*--------------------------------*/
+/* Apply SVG mask and tint from CSS variables */
+button.ui-control.icon {
+  mask-image: var(--control-icon);
+  -webkit-mask-image: var(--control-icon);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  background-color: var(--control-icon-color);
+  width: 36px;
+  height: 36px;
 }
 
-.swse-app .item-control.delete:hover {
-  color: #ff6b6b;
-  background: rgba(255, 107, 107, 0.1);
-}
-
-/* =========================
-   SKILLS TAB IMPROVEMENTS
-   ========================= */
-
-.swse-app .skills-header {
-  background: rgba(0, 217, 255, 0.1);
-  padding: 6px 8px;
-  border-radius: 4px;
-  margin-bottom: 8px;
-  font-weight: 600;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: #00d9ff;
-  border: 1px solid rgba(0, 217, 255, 0.2);
-}
-
-.swse-app .skills-header > div {
-  text-align: center;
-}
-
-.swse-app .skill-row.trained {
-  background: rgba(0, 255, 136, 0.05);
-  border-left: 3px solid var(--success, #00ff88);
-}
-
-.swse-app .skill-total {
-  font-weight: 700;
-  color: #00ff88;
-  font-size: 14px;
-  min-width: 40px;
-  text-align: center;
-}
-
-/* =========================
-   COMBAT TAB IMPROVEMENTS
-   ========================= */
-
-.swse-app .weapons-header,
-.swse-app .armor-section {
-  margin-top: 12px;
-}
-
-.swse-app .weapon-col-name,
-.swse-app .weapon-name {
-  flex: 2;
-  font-weight: 500;
-}
-
-.swse-app .weapon-attack,
-.swse-app .weapon-damage {
-  font-weight: 600;
-  color: #ffd66b;
-  min-width: 60px;
-  text-align: center;
-}
-
-.swse-app .armor-bonus,
-.swse-app .armor-max-dex {
-  font-weight: 600;
-  color: #00d9ff;
-  margin: 0 8px;
-}
-
-/* =========================
-   DEFENSE VALUES
-   ========================= */
-
-.swse-app .defense-value,
-.swse-app .stat-value {
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffffff;
-  text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
-}
-
-.swse-app .defense-breakdown {
-  font-size: 10px;
-  color: #9fb6c9;
-  margin-top: 4px;
-}
-
-/* =========================
-   RESOURCE BARS (HP, FORCE)
-   ========================= */
-
-.swse-app .resource-bar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.swse-app .resource-input {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 700;
-  text-align: center;
-  width: 60px;
-  padding: 4px;
-  border-radius: 4px;
-}
-
-.swse-app .resource-max {
-  font-size: 16px;
-  font-weight: 600;
-  color: #9fb6c9;
-}
-
-.swse-app .separator {
-  color: #9fb6c9;
-  font-size: 16px;
-}
-
-/* =========================
-   INVENTORY TAB
-   ========================= */
-
-.swse-app .credits-input {
-  background: rgba(255, 215, 0, 0.1);
-  border: 2px solid rgba(255, 215, 0, 0.3);
-  color: #ffd700;
-  font-size: 18px;
-  font-weight: 700;
-  padding: 8px 12px;
-  text-align: center;
-  width: 150px;
-}
-
-.swse-app .credits-input:focus {
-  border-color: #ffd700;
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
-}
-
-/* =========================
-   FORCE TAB
-   ========================= */
-
-.swse-app .force-action {
-  background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(75, 0, 130, 0.2));
-  border-color: rgba(138, 43, 226, 0.5);
-  flex: 1;
-  justify-content: center;
-}
-
-.swse-app .force-action:hover {
-  background: linear-gradient(135deg, rgba(138, 43, 226, 0.5), rgba(75, 0, 130, 0.3));
-  border-color: #8a2be2;
-  box-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
-}
-
-.swse-app .power-card {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(138, 43, 226, 0.3);
-  padding: 8px;
-  border-radius: 6px;
-  margin: 4px 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s ease;
-}
-
-.swse-app .power-card:hover {
-  background: rgba(138, 43, 226, 0.1);
-  border-color: rgba(138, 43, 226, 0.6);
-  box-shadow: 0 0 10px rgba(138, 43, 226, 0.4);
-}
-
-/* =========================
-   RESPONSIVE & UTILITY
-   ========================= */
-
-.swse-app .flexrow {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-}
-
-.swse-app .flexcol {
-  display: flex;
-  flex-direction: column;
-}
-
-.swse-app .grid {
-  display: grid;
-  gap: 8px;
-}
-
-.swse-app .grid-2col {
-  grid-template-columns: 1fr 1fr;
-}
-
-.swse-app .grid-3col {
-  grid-template-columns: 1fr 1fr 1fr;
-}
-
-/* =========================
-   SCROLLBARS
-   ========================= */
-
-.swse-app ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.swse-app ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
-}
-
-.swse-app ::-webkit-scrollbar-thumb {
-  background: rgba(0, 217, 255, 0.3);
-  border-radius: 4px;
-}
-
-.swse-app ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 217, 255, 0.5);
-}
-
-/* =========================
-   PRINT & ACCESSIBILITY
-   ========================= */
-
-@media print {
-  .swse-app button,
-  .swse-app .item-control,
-  .swse-app .sheet-tabs {
-    display: none;
+/*--------------------------------*/
+/* High-Contrast / Forced Colors  */
+/*--------------------------------*/
+@media (forced-colors: active) {
+  /* Use system colors for legibility */
+  .application.swse .window,
+  .application.swse .window-content,
+  .application.swse button,
+  .application.swse input,
+  .application.swse select,
+  .application.swse textarea {
+    background-color: CanvasText;
+    color: Canvas;
+    border-color: Canvas;
   }
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-  .swse-app {
-    border: 2px solid #00d9ff;
+  /* Active tab highlight to system highlight colors */
+  .application.swse .tabs .item.active a {
+    background-color: Highlight;
+    color: HighlightText;
   }
-
-  .swse-app input,
-  .swse-app select,
-  .swse-app textarea {
-    border-width: 2px;
-  }
-
-  .swse-app .rollable {
-    border: 2px solid currentColor;
+  /* Remove any remaining glows (user agent forces box-shadow none) */
+  .application.swse * {
+    box-shadow: none;
+    text-shadow: none;
   }
 }

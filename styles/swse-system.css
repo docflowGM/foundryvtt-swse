@@ -168,3 +168,14 @@
     border-width: 2px;
   }
 }
+/* SAFETY RAILS */
+.swse-app-app {
+  position: relative;
+}
+
+.swse-app-app button:not(.ui-control):not(.icon) {
+  background: linear-gradient(180deg, var(--swse-secondary), var(--swse-primary));
+  border-radius: 6px;
+  padding: 4px 12px;
+  cursor: pointer;
+}

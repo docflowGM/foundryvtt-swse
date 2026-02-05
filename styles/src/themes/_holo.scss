@@ -1,20 +1,115 @@
-// ============================================================================
-// HOLO THEME
-// Classic holographic blue aesthetic - Default theme
-// ============================================================================
+/* ==========================================================================
+   SWSE HOLO THEME — CONTAINED, FOUNDRY-SAFE
+   ========================================================================== */
 
-// Import theme-specific tokens
-@import '../tokens/theme-holo';
+/* --------------------------------------------------------------------------
+   1. ROOT VARIABLES (visual only, no layout)
+   -------------------------------------------------------------------------- */
 
-// Theme-specific component overrides (if any)
-// The base theme uses default token values, so minimal overrides needed
+:root {
+  --swse-holo-bg: rgba(10, 14, 18, 0.65);
+  --swse-holo-panel: rgba(18, 22, 28, 0.55);
+  --swse-holo-border: rgba(80, 160, 255, 0.35);
+  --swse-holo-accent: rgba(38, 160, 255, 0.85);
+  --swse-holo-text: #dfefff;
+}
 
-.swse {
-  // Theme-specific styles go here
-  // Example: special glow effects, unique borders, etc.
+/* --------------------------------------------------------------------------
+   2. SWSE UI ROOTS ONLY (NEVER style outside these)
+   -------------------------------------------------------------------------- */
 
-  [data-theme="holo"] & {
-    // Holo-specific component overrides
-    // Most styles will use CSS custom properties from tokens
-  }
+.swse-sheet,
+.swse-dialog,
+.swse-chargen,
+.swse-levelup {
+  color: var(--swse-holo-text);
+  background: var(--swse-holo-bg);
+  backdrop-filter: blur(6px);
+}
+
+/* Panels / sections */
+.swse-sheet .panel,
+.swse-dialog .panel,
+.swse-chargen .panel {
+  background: var(--swse-holo-panel);
+  border: 1px solid var(--swse-holo-border);
+  border-radius: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   3. BUTTONS — SAFE BY CONSTRUCTION
+   -------------------------------------------------------------------------- */
+
+.swse-sheet button,
+.swse-dialog button,
+.swse-chargen button,
+.swse-levelup button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 12px;
+  border-radius: 4px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(38, 160, 255, 0.35),
+    rgba(38, 160, 255, 0.15)
+  );
+
+  color: var(--swse-holo-text);
+  border: 1px solid var(--swse-holo-border);
+
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.swse-sheet button:hover,
+.swse-dialog button:hover,
+.swse-chargen button:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(38, 160, 255, 0.55),
+    rgba(38, 160, 255, 0.25)
+  );
+}
+
+/* --------------------------------------------------------------------------
+   4. ICONS INSIDE SWSE UI (SVG-BASED ONLY)
+   -------------------------------------------------------------------------- */
+
+.swse-sheet .swse-icon,
+.swse-dialog .swse-icon,
+.swse-chargen .swse-icon {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  fill: currentColor;
+}
+
+/* --------------------------------------------------------------------------
+   5. HARD EXCLUSIONS — PROTECT FOUNDRY CORE UI
+   -------------------------------------------------------------------------- */
+
+/* Never touch Foundry controls */
+.ui-control,
+.ui-control.icon,
+#sidebar,
+#sidebar-tabs,
+#controls,
+#hotbar {
+  all: unset;
+}
+
+/* Restore Foundry icon buttons explicitly */
+button.ui-control.icon {
+  display: flex;
+  padding: 0;
+  background-color: var(--control-icon-color);
+  -webkit-mask-image: var(--control-icon);
+  mask-image: var(--control-icon);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
