@@ -13,6 +13,11 @@ export const iconHelpers = {
    *   <i class="{{getIconClass 'info'}}"></i>
    */
   getIconClass: function(iconKey) {
+    // Handle Handlebars options object (when called without arguments or from wrong context)
+    if (iconKey && typeof iconKey === 'object' && (iconKey.fn || iconKey.hash !== undefined)) {
+      return '';
+    }
+
     if (typeof iconKey !== 'string') {
       console.error('[SWSE Icons] getIconClass received non-string:', {
         received: iconKey,
@@ -31,6 +36,11 @@ export const iconHelpers = {
    *   {{{icon 'warning'}}}
    */
   icon: function(iconKey) {
+    // Handle Handlebars options object (when called without arguments or from wrong context)
+    if (iconKey && typeof iconKey === 'object' && (iconKey.fn || iconKey.hash !== undefined)) {
+      return '';
+    }
+
     if (typeof iconKey !== 'string') {
       console.error('[SWSE Icons] icon helper received non-string:', {
         received: iconKey,
