@@ -74,6 +74,7 @@ import { SkillSystem } from './scripts/engine/SkillSystem.js';
 import { TalentAbilitiesEngine } from './scripts/engine/TalentAbilitiesEngine.js';
 import TalentActionLinker from './scripts/engine/talent-action-linker.js';
 import { SWSELanguageModule } from './scripts/progression/modules/language-module.js';
+import { runJsonBackedIdsMigration } from './scripts/migrations/json-backed-ids-migration.js';
 import { initializeLevelUpUI } from './scripts/progression/ui/levelup-module-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
 
@@ -482,6 +483,9 @@ Hooks.once('ready', async function () {
     await initializeLevelUpUI();
 
     SWSELanguageModule.init();
+
+    // One-time backfill for deterministic IDs on JSON-backed data
+    await runJsonBackedIdsMigration();
 
     lazyLoader.setupLazyImages();
     swseLogger.log('Lazy image loading initialized');

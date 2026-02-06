@@ -12,8 +12,24 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { LanguageRegistry } from '../../registries/language-registry.js';
 
 export class LanguageEngine {
+
+    static async _toLanguageId(name) {
+        const rec = await LanguageRegistry.getByName(name);
+        return rec?.internalId || null;
+    }
+
+    static async _syncLanguageIds(actor, names) {
+        const ids = [];
+        for (const n of names) {
+            const id = await this._toLanguageId(n);
+            if (id) ids.push(id);
+        }
+        await actor.update({ "system.languageIds": ids }).catch(() => {});
+        return ids;
+    }
 
     /**
      * Get all known languages for an actor
@@ -39,6 +55,7 @@ export class LanguageEngine {
         await actor.update({
             "system.languages": updated
         });
+        await this._syncLanguageIds(actor, updated);
 
         SWSELogger.log(`Granted language: ${language}`);
         return true;
@@ -165,7 +182,14 @@ export class LanguageEngine {
                 "system.languages": unique
             });
 
+            await this._syncLanguageIds(actor, unique);
+
             SWSELogger.log(`Deduplicated languages (${known.length} → ${unique.length})`);
+        }
+
+        // Keep IDs in sync even when no changes occurred
+        if (!Array.isArray(actor.system.languageIds) || actor.system.languageIds.length !== unique.length) {
+            await this._syncLanguageIds(actor, unique);
         }
 
         SWSELogger.log(`Actor knows ${unique.length} languages`);

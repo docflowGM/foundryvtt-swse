@@ -17,6 +17,7 @@ import { ForcePowerEngine } from "./force-power-engine.js";
 import { PROGRESSION_RULES } from "../data/progression-data.js";
 import { ActorProgressionUpdater } from "./progression-actor-updater.js";
 import { TemplateEngine } from "./template-engine.js";
+import { BackgroundRegistry } from "../../registries/background-registry.js";
 
 export class ProgressionEngine {
   /**
@@ -283,8 +284,11 @@ static async _triggerForcePowers(actor) {
   static async _applyBackground(actor, { backgroundId } = {}) {
     const rules = PROGRESSION_RULES.backgrounds || {};
     if (!rules[backgroundId]) throw new Error(`Unknown background: ${backgroundId}`);
+    const rec = await BackgroundRegistry.getBySlug(backgroundId);
     await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      "system.progression.background": backgroundId
+      "system.progression.background": backgroundId,
+      "system.progression.backgroundInternalId": rec?.internalId || "",
+      "system.backgroundId": rec?.internalId || ""
     });
   }
 

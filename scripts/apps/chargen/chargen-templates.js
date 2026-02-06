@@ -5,6 +5,7 @@ import { ProgressionEngine } from "../../progression/engine/progression-engine.j
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
+import { BackgroundRegistry } from '../../registries/background-registry.js';
 
 export class CharacterTemplates {
   static _templates = null;
@@ -110,15 +111,8 @@ export class CharacterTemplates {
 
     // Validate background ID
     if (template.backgroundId) {
-      const bgPack = game.packs.get('foundryvtt-swse.backgrounds');
-      if (!bgPack) {
-        errors.push('Backgrounds compendium not found');
-      } else {
-        const doc = await bgPack.getDocument(template.backgroundId).catch(() => null);
-        if (!doc) {
-          errors.push(`Background ID not found: ${template.backgroundId}`);
-        }
-      }
+      const rec = await BackgroundRegistry.getBySlug(template.backgroundId);
+      if (!rec) errors.push(`Background ID not found: ${template.backgroundId}`);
     }
 
     // Validate class ID

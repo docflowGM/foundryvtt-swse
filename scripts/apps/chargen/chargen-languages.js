@@ -3,6 +3,17 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
+import { LanguageRegistry } from '../../registries/language-registry.js';
+
+async function _syncLanguageIds() {
+  const names = Array.isArray(this.characterData.languages) ? this.characterData.languages : [];
+  const ids = [];
+  for (const name of names) {
+    const rec = await LanguageRegistry.getByName(name);
+    if (rec?.internalId) ids.push(rec.internalId);
+  }
+  this.characterData.languageIds = ids;
+}
 
 /**
  * Load languages data from JSON file
@@ -240,6 +251,8 @@ export async function _initializeLanguages() {
       SWSELogger.log(`CharGen | Added bonus language from background: ${bonusLang}`);
     }
   }
+
+  await _syncLanguageIds.call(this);
 }
 
 /**
@@ -275,6 +288,7 @@ export async function _onSelectLanguage(event) {
 
   // Add the language
   this.characterData.languages.push(language);
+  await _syncLanguageIds.call(this);
   SWSELogger.log(`CharGen | Selected language: ${language}`);
 
   await this.render();
@@ -304,6 +318,7 @@ export async function _onRemoveLanguage(event) {
   const index = this.characterData.languages.indexOf(language);
   if (index > -1) {
     this.characterData.languages.splice(index, 1);
+    await _syncLanguageIds.call(this);
     SWSELogger.log(`CharGen | Removed language: ${language}`);
   }
 
@@ -321,6 +336,7 @@ export async function _onResetLanguages(event) {
   const granted = [...(languageData?.granted || ["Basic"])];
   const backgroundBonus = [...(languageData?.backgroundBonus || [])];
   this.characterData.languages = [...granted, ...backgroundBonus];
+  await _syncLanguageIds.call(this);
 
   SWSELogger.log("CharGen | Reset language selections");
   ui.notifications.info("Language selections have been reset to granted languages and background bonuses.");
@@ -390,6 +406,7 @@ export async function _onAddCustomLanguage(event) {
 
   // Add the custom language
   this.characterData.languages.push(customLanguage);
+  await _syncLanguageIds.call(this);
   SWSELogger.log(`CharGen | Added custom language: ${customLanguage}`);
   ui.notifications.info(`Added custom language: ${customLanguage}`);
 

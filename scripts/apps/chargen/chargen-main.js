@@ -17,6 +17,8 @@ import { MentorSurvey } from '../mentor-survey.js';
 import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
 import { MENTORS } from '../mentor-dialogues.js';
 import { getMentorMemory, setMentorMemory, setTargetClass } from '../../engine/mentor-memory.js';
+import { BackgroundRegistry } from '../../registries/background-registry.js';
+import { LanguageRegistry } from '../../registries/language-registry.js';
 
 // SSOT Data Layer
 import { ClassesDB } from '../../data/classes-db.js';
@@ -566,8 +568,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     // AppV2: Build chargen-specific context from scratch (not from super._prepareContext)
     const context = {
       editable: this.isEditable,
-      user: game.user,
-      config: CONFIG.SWSE
+      user: { id: game.user?.id, name: game.user?.name, isGM: game.user?.isGM },
+      config: { systemId: game.system?.id }
     };
 
     if (!this._packs.species) {
@@ -2806,6 +2808,20 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     // Build progression structure for level-up compatibility
+    const backgroundSlug = this.characterData.background?.id || "";
+    const bgRecord = backgroundSlug ? await BackgroundRegistry.getBySlug(backgroundSlug) : null;
+    const backgroundInternalId = bgRecord?.internalId || "";
+    const backgroundUuid = bgRecord?.uuid || "";
+
+    const languageNames = Array.isArray(this.characterData.languages) ? this.characterData.languages : [];
+    const languageInternalIds = [];
+    const languageUuids = [];
+    for (const name of languageNames) {
+      const rec = await LanguageRegistry.getByName(name);
+      if (rec?.internalId) languageInternalIds.push(rec.internalId);
+      if (rec?.uuid) languageUuids.push(rec.uuid);
+    }
+
     const progression = {
       classLevels: (this.characterData.classes || []).map(cls => ({
         class: cls.name,
@@ -2813,7 +2829,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         choices: {}
       })),
       species: this.characterData.species || "",
-      background: this.characterData.background?.id || "",
+      background: backgroundSlug,
+      backgroundInternalId,
       backgroundTrainedSkills: this.characterData.background?.trainedSkills || [],
       feats: (this.characterData.feats || []).map(feat => feat.name || feat),
       talents: (this.characterData.talents || []).map(talent => talent.name || talent),
@@ -2845,7 +2862,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       weapons: [],
       // Species data
       specialAbilities: this.characterData.specialAbilities || [],
-      languages: this.characterData.languages || [],
+      languages: languageNames,
+      languageIds: languageInternalIds,
+      backgroundId: backgroundInternalId,
+      languageUuids,
+      backgroundUuid,
       racialSkillBonuses: this.characterData.racialSkillBonuses || [],
       speciesSource: this.characterData.speciesSource || "",
       // Background data for biography tab
@@ -3306,95 +3327,15 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    * Load backgrounds from progression rules
    */
   async _loadBackgroundsFromProgression() {
-    try {
-      // Load comprehensive backgrounds from backgrounds.json
-      // Try multiple URL formats to handle different Foundry configurations
-      const urlFormats = [
-        'systems/foundryvtt-swse/data/backgrounds.json',
-        '/systems/foundryvtt-swse/data/backgrounds.json',
-        'data/backgrounds.json'
-      ];
+// Prefer BackgroundRegistry (compendium-backed) for canonical IDs/UUIDs.
+    const all = await BackgroundRegistry.all();
+    this.allBackgrounds = Array.isArray(all) ? all : [];
 
-      let response = null;
-      let fetchUrl = null;
-      let lastError = null;
+    // Backwards compatibility: maintain `backgrounds` as initial category list.
+    this.backgrounds = this.allBackgrounds.filter(bg => bg.category === 'event');
 
-      for (const url of urlFormats) {
-        try {
-          SWSELogger.log(`SWSE | Attempting to load backgrounds from: ${url}`);
-          response = await fetch(url);
-          if (response.ok) {
-            fetchUrl = url;
-            SWSELogger.log(`SWSE | Successfully fetched from: ${url}`);
-            break;
-          }
-        } catch (err) {
-          lastError = err;
-          SWSELogger.warn(`SWSE | Failed to load from ${url}: ${err.message}`);
-        }
-      }
-
-      if (!response || !response.ok) {
-        throw new Error(`Failed to fetch backgrounds from any URL. Last error: ${lastError?.message || 'Unknown error'}`);
-      }
-
-      const backgroundsData = await response.json();
-      SWSELogger.log(`SWSE | Successfully parsed backgrounds JSON from ${fetchUrl}`, {
-        hasEvents: Array.isArray(backgroundsData.events),
-        hasOccupations: Array.isArray(backgroundsData.occupations),
-        hasPlanetCore: Array.isArray(backgroundsData.planets_core),
-        hasPlanetHomebrew: Array.isArray(backgroundsData.planets_homebrew)
-      });
-
-      // Flatten all backgrounds from all categories
-      this.allBackgrounds = [];
-
-      // Process events (events is an array directly in the JSON)
-      if (backgroundsData.events && Array.isArray(backgroundsData.events)) {
-        this.allBackgrounds.push(...backgroundsData.events.map(bg => ({
-          ...bg,
-          category: 'event',
-          homebrew: false
-        })));
-      }
-
-      // Process occupations (occupations is an array directly in the JSON)
-      if (backgroundsData.occupations && Array.isArray(backgroundsData.occupations)) {
-        this.allBackgrounds.push(...backgroundsData.occupations.map(bg => ({
-          ...bg,
-          category: 'occupation',
-          homebrew: false
-        })));
-      }
-
-      // Process core planets (planets_core is an array directly in the JSON)
-      if (backgroundsData.planets_core && Array.isArray(backgroundsData.planets_core)) {
-        this.allBackgrounds.push(...backgroundsData.planets_core.map(bg => ({
-          ...bg,
-          category: 'planet',
-          homebrew: false
-        })));
-      }
-
-      // Process homebrew planets (planets_homebrew is an array directly in the JSON)
-      if (backgroundsData.planets_homebrew && Array.isArray(backgroundsData.planets_homebrew)) {
-        this.allBackgrounds.push(...backgroundsData.planets_homebrew.map(bg => ({
-          ...bg,
-          category: 'planet',
-          homebrew: true
-        })));
-      }
-
-      // For backwards compatibility, also set this.backgrounds to initial category
-      this.backgrounds = this.allBackgrounds.filter(bg => bg.category === 'event');
-
-      SWSELogger.log(`SWSE | Loaded ${this.allBackgrounds.length} backgrounds total (${this.backgrounds.length} events)`);
-    } catch (error) {
-      SWSELogger.error('SWSE | Failed to load backgrounds:', error);
-      this.allBackgrounds = [];
-      this.backgrounds = [];
-    }
-  }
+    SWSELogger.log(`SWSE | Loaded ${this.allBackgrounds.length} backgrounds from BackgroundRegistry (${this.backgrounds.length} events)`);
+}
 
   /**
    * Get default skills list when skills.json fails to load

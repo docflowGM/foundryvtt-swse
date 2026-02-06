@@ -14,6 +14,8 @@
  */
 
 import { swseLogger } from './logger.js';
+import { BackgroundRegistry } from '../registries/background-registry.js';
+import { slugify } from './stable-id.js';
 
 export class TemplateIdMapper {
   /**
@@ -44,7 +46,8 @@ export class TemplateIdMapper {
 
       // Converted to compendium IDs
       speciesId: await this._getSpeciesId(oldTemplate.species),
-      backgroundId: await this._getBackgroundId(oldTemplate.background),
+      backgroundId: (await this._getBackgroundId(oldTemplate.background))?.id || null,
+      backgroundUuid: (await this._getBackgroundId(oldTemplate.background))?.uuid || "",
       classId: await this._getClassId(oldTemplate.className || oldTemplate.class),
 
       featIds: oldTemplate.feat
@@ -128,22 +131,21 @@ export class TemplateIdMapper {
     if (!backgroundName) return null;
 
     try {
-      const bgPack = game.packs.get('foundryvtt-swse.backgrounds');
-      if (!bgPack) {
-        throw new Error('Backgrounds compendium not found');
+      const all = await BackgroundRegistry.all();
+      const exact = all.find(b => (b.name || '').toLowerCase() === String(backgroundName).toLowerCase());
+      if (exact?.id) {
+        swseLogger.log(`[TEMPLATE-MAPPER] Background found: ${backgroundName} → ${exact.id}`);
+        return { id: exact.internalId || exact.id, uuid: exact.uuid || "" };
       }
 
-      const index = await bgPack.getIndex();
-      const bgEntry = Array.from(index).find(e =>
-        e.name.toLowerCase() === backgroundName.toLowerCase()
-      );
-
-      if (!bgEntry) {
-        throw new Error(`Background not found: "${backgroundName}"`);
+      const slug = slugify(backgroundName);
+      const bySlug = await BackgroundRegistry.getBySlug(slug);
+      if (bySlug?.id) {
+        swseLogger.log(`[TEMPLATE-MAPPER] Background found by slug: ${backgroundName} → ${bySlug.id}`);
+        return bySlug.id;
       }
 
-      swseLogger.log(`[TEMPLATE-MAPPER] Background found: ${backgroundName} → ${bgEntry._id}`);
-      return bgEntry._id;
+      throw new Error(`Background not found: "${backgroundName}"`);
     } catch (err) {
       swseLogger.error(`[TEMPLATE-MAPPER] Error finding background "${backgroundName}":`, err);
       throw err;

@@ -118,7 +118,15 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       size: new fields.StringField({ required: false, initial: "medium" }),
 
       // Speed
-      speed: new fields.NumberField({ required: true, initial: 6, min: 0 })
+      speed: new fields.NumberField({ required: true, initial: 6, min: 0 }),
+
+      // JSON-backed + progression-owned fields (kept permissive)
+      languages: new fields.ArrayField(new fields.StringField({ required: true, initial: "" }), { required: true, initial: [] }),
+      languageIds: new fields.ArrayField(new fields.StringField({ required: true, initial: "" }), { required: true, initial: [] }),
+      languageUuids: new fields.ArrayField(new fields.StringField({ required: true, initial: "" }), { required: true, initial: [] }),
+      backgroundId: new fields.StringField({ required: false, initial: "" }),
+      backgroundUuid: new fields.StringField({ required: false, initial: "" }),
+      progression: new fields.ObjectField({ required: true, initial: {} })
     };
   }
 

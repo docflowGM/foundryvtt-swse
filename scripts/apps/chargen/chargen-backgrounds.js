@@ -5,6 +5,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { SuggestionService } from '../../engine/SuggestionService.js';
+import { BackgroundRegistry } from '../../registries/background-registry.js';
 
 /**
  * Get filtered backgrounds for the current category
@@ -57,7 +58,7 @@ export function _getFilteredBackgrounds() {
 
 // Render selectable background cards based on current category
 export async function _renderBackgroundCards(container) {
-  const backgrounds = this._getFilteredBackgrounds();
+const backgrounds = this._getFilteredBackgrounds();
 
   if (!backgrounds || backgrounds.length === 0) {
     container.innerHTML = "<p>No backgrounds available in this category.</p>";
@@ -69,35 +70,101 @@ export async function _renderBackgroundCards(container) {
   for (const bg of backgrounds) {
     const div = document.createElement("div");
     div.classList.add("background-card");
-    div.dataset.id = bg.id;
+    div.dataset.bgId = bg.id || bg.slug || "";
+    div.dataset.uuid = bg.uuid || "";
 
-    const skillsText = bg.relevantSkills && bg.relevantSkills.length > 0
-      ? bg.relevantSkills.join(", ")
-      : (bg.trainedSkills && bg.trainedSkills.length > 0 ? bg.trainedSkills.join(", ") : "None");
+    const name = bg.name || bg.slug || "Unknown";
+    const icon = bg.icon ? `<div class="background-icon">${bg.icon}</div>` : "";
+    const narrative = (bg.narrativeDescription || bg.description || "").trim();
+    const narrativeShort = narrative.length > 180 ? `${narrative.slice(0, 177)}…` : narrative;
 
-    const iconHtml = bg.icon ? `<div class="background-icon">${bg.icon}</div>` : '';
+    const skills = Array.isArray(bg.relevantSkills) && bg.relevantSkills.length
+      ? bg.relevantSkills
+      : (Array.isArray(bg.trainedSkills) ? bg.trainedSkills : []);
+    const skillsText = skills.length ? skills.join(", ") : "None";
+
+    const special = (bg.specialAbility || "").trim();
+    const language = (bg.bonusLanguage || "").trim();
 
     div.innerHTML = `
-      ${iconHtml}
-      <h3>${bg.name}</h3>
-      <p><strong>Trained Skills:</strong> ${skillsText}</p>
-      <button class="select-background" data-bg-id="${bg.id}" type="button">Select</button>
+      <div class="background-card-inner">
+        <div class="background-card-face background-card-front">
+          ${icon}
+          <h3>${name}</h3>
+          ${narrativeShort ? `<p class="bg-narrative">${narrativeShort}</p>` : ""}
+          <p class="bg-meta"><strong>Skills:</strong> ${skillsText}</p>
+          ${language ? `<p class="bg-meta"><strong>Language:</strong> ${language}</p>` : ""}
+        </div>
+
+        <div class="background-card-face background-card-back">
+          <h4>${name}</h4>
+          ${narrative ? `<p class="bg-narrative">${narrative}</p>` : ""}
+          <div class="bg-benefits">
+            <strong>Benefits</strong>
+            <ul>
+              <li><strong>Skills:</strong> ${skillsText}</li>
+              ${language ? `<li><strong>Language:</strong> ${language}</li>` : ""}
+              ${special ? `<li><strong>Special:</strong> ${special}</li>` : ""}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="background-card-actions">
+        <button type="button" class="background-details-toggle btn-tertiary">
+          Details
+        </button>
+        <button type="button" class="background-read btn-secondary" ${bg.uuid ? "" : "disabled"}>
+          Read
+        </button>
+        <button type="button" class="select-background btn-primary" data-bg-id="${div.dataset.bgId}">
+          Select
+        </button>
+      </div>
     `;
 
     container.appendChild(div);
   }
 
-  // Re-bind event listeners using jQuery for consistency with rest of chargen
-  const $container = $(container);
-  $container.find(".select-background")
-    .off("click")
-    .on("click", this._onSelectBackground.bind(this));
+  // Event delegation (AppV2-safe, no jQuery).
+  container.onclick = async (ev) => {
+    const btn = ev.target.closest("button");
+    if (!btn) return;
+
+    const card = btn.closest(".background-card");
+    const bgId = btn.dataset.bgId || card?.dataset?.bgId;
+
+    if (btn.classList.contains("select-background")) {
+      ev.preventDefault();
+      if (bgId) await this._onSelectBackground(bgId);
+      return;
+    }
+
+    if (btn.classList.contains("background-details-toggle")) {
+      ev.preventDefault();
+      if (card) card.classList.toggle("is-flipped");
+      return;
+    }
+
+    if (btn.classList.contains("background-read")) {
+      ev.preventDefault();
+      const uuid = card?.dataset?.uuid;
+      if (!uuid) return;
+      const doc = await fromUuid(uuid);
+      if (doc?.sheet) doc.sheet.render(true);
+      return;
+    }
+  };
 }
 
 // Selection handler
-export async function _onSelectBackground(event) {
-  event.preventDefault();
-  const id = event.currentTarget.dataset.bgId;
+export async function _onSelectBackground(eventOrId) {
+const id = typeof eventOrId === "string"
+    ? eventOrId
+    : eventOrId?.currentTarget?.dataset?.bgId;
+
+  if (eventOrId?.preventDefault) eventOrId.preventDefault();
+  if (!id) return;
 
   const selected = this.allBackgrounds.find(b => b.id === id);
   if (!selected) {
@@ -116,7 +183,10 @@ export async function _onSelectBackground(event) {
     icon: selected.icon || ''
   };
 
-  // Store skills from background for later use
+  const record = await BackgroundRegistry.getBySlug(selected.id);
+  this.characterData.backgroundId = record?.internalId || "";
+  this.characterData.backgroundUuid = record?.uuid || "";
+
   this.characterData.backgroundSkills = selected.relevantSkills || selected.trainedSkills || [];
 
   ui.notifications.info("Background selected: " + selected.name);
@@ -181,6 +251,7 @@ export async function _onChangeBackground(event) {
   // Clear the current background selection
   this.characterData.background = null;
   this.characterData.backgroundSkills = [];
+  this.characterData.backgroundId = "";
 
   ui.notifications.info("Background cleared. Please select a new background.");
   await this.render();
