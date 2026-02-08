@@ -48,7 +48,7 @@
     <div class="defenses grid grid-4col">
 
       {{!-- Fortitude --}}
-      <div class="defense fortitude-defense">
+      <div class="defense fortitude-defense" data-swse-tooltip="FortitudeDefense">
         <div class="defense-header">
           <label class="defense-label">Fort</label>
           <select class="defense-ability-select" name="system.defenses.fort.ability" data-defense="fort">
@@ -71,7 +71,7 @@
       </div>
 
       {{!-- Reflex --}}
-      <div class="defense reflex-defense">
+      <div class="defense reflex-defense" data-swse-tooltip="ReflexDefense">
         <div class="defense-header">
           <label class="defense-label">Ref</label>
           <span class="defense-ability-fixed" title="Reflex always uses Dexterity">DEX</span>
@@ -91,7 +91,7 @@
       </div>
 
       {{!-- Will --}}
-      <div class="defense will-defense">
+      <div class="defense will-defense" data-swse-tooltip="WillDefense">
         <div class="defense-header">
           <label class="defense-label">Will</label>
           <span class="defense-ability-fixed" title="Will always uses Wisdom">WIS</span>
@@ -111,7 +111,7 @@
       </div>
 
       {{!-- Flat-Footed --}}
-      <div class="defense flatfooted-defense">
+      <div class="defense flatfooted-defense" data-swse-tooltip="FlatFooted">
         <div class="defense-header">
           <label class="defense-label">Flat-Footed</label>
         </div>
@@ -130,7 +130,7 @@
     <div class="resources flexrow">
 
       {{!-- HP --}}
-      <div class="resource hp flex1">
+      <div class="resource hp flex1" data-swse-tooltip="HitPoints">
         <label>Hit Points</label>
         <div class="resource-bar flexrow">
           <input type="text"
@@ -163,7 +163,7 @@
       </div>
 
       {{!-- Force Points --}}
-      <div class="resource force-points flex1">
+      <div class="resource force-points flex1" data-swse-tooltip="ForcePoints">
         <label>Force Points</label>
 
         <div class="resource-content flexrow">
@@ -204,7 +204,7 @@
 
       {{!-- Destiny Points --}}
       {{#if system.destiny.hasDestiny}}
-      <div class="resource destiny-points flex1">
+      <div class="resource destiny-points flex1" data-swse-tooltip="DestinyPoints">
         <label>Destiny Points</label>
 
         <div class="resource-content flexrow">

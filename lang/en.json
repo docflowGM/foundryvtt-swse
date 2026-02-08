@@ -362,6 +362,212 @@
         "Formula": "Formula",
         "Breakdown": "Breakdown"
       }
+    },
+    "Discovery": {
+      "Settings": {
+        "DisableCallouts": {
+          "Name": "Disable Guided Callouts",
+          "Hint": "Turn off first-use hint callouts that appear when opening features for the first time"
+        },
+        "DisableTour": {
+          "Name": "Disable First-Launch Tour",
+          "Hint": "Turn off the feature overview that appears on first launch"
+        },
+        "DisableTooltips": {
+          "Name": "Disable Discovery Tooltips",
+          "Hint": "Turn off contextual tooltips on UI elements"
+        }
+      },
+      "Tooltip": {
+        "HitPoints": {
+          "Title": "Hit Points",
+          "Body": "Your current and maximum HP. Reaching 0 means you are unconscious or dying."
+        },
+        "DamageThreshold": {
+          "Title": "Damage Threshold",
+          "Body": "If a single attack deals this much damage or more, you move down the condition track."
+        },
+        "ForcePoints": {
+          "Title": "Force Points",
+          "Body": "Spend to add a bonus die to any d20 roll, activate certain abilities, or avoid death."
+        },
+        "DestinyPoints": {
+          "Title": "Destiny Points",
+          "Body": "Rare points that let you automatically succeed on a roll or trigger special destiny effects."
+        },
+        "ConditionTrack": {
+          "Title": "Condition Track",
+          "Body": "Tracks penalties from taking heavy hits. Each step down applies cumulative -1 to all rolls and defenses."
+        },
+        "BaseAttackBonus": {
+          "Title": "Base Attack Bonus",
+          "Body": "Added to attack rolls. Determined by class and level."
+        },
+        "Grapple": {
+          "Title": "Grapple",
+          "Body": "Used for grab and grapple checks. Based on BAB and size modifier."
+        },
+        "Initiative": {
+          "Title": "Initiative",
+          "Body": "Determines turn order in combat. Based on Dexterity and any bonuses."
+        },
+        "ReflexDefense": {
+          "Title": "Reflex Defense",
+          "Body": "Targeted by most attacks. Based on class, level, Dexterity or armor bonus."
+        },
+        "FortitudeDefense": {
+          "Title": "Fortitude Defense",
+          "Body": "Resists physical effects like poison and stun. Based on class, level, and Constitution."
+        },
+        "WillDefense": {
+          "Title": "Will Defense",
+          "Body": "Resists mental effects and Force powers. Based on class, level, and Wisdom."
+        },
+        "FlatFooted": {
+          "Title": "Flat-Footed",
+          "Body": "Defense when caught off guard. Does not include Dexterity or dodge bonuses."
+        },
+        "AbilityScore": {
+          "Title": "Ability Score",
+          "Body": "The raw score. The modifier (score minus 10, divided by 2) is what applies to rolls."
+        },
+        "AbilityModifier": {
+          "Title": "Ability Modifier",
+          "Body": "Derived from the ability score. Added to relevant rolls, skills, and defenses."
+        },
+        "SkillTrained": {
+          "Title": "Trained Skill",
+          "Body": "Trained skills receive a +5 bonus and may unlock special uses not available untrained."
+        },
+        "SkillRoll": {
+          "Title": "Skill Check",
+          "Body": "Click to roll this skill. The roll adds your modifier and training bonus."
+        },
+        "PassiveTalent": {
+          "Title": "Passive Talent",
+          "Body": "Always active. No action required to benefit from this talent."
+        },
+        "ActiveTalent": {
+          "Title": "Active Talent",
+          "Body": "Requires an action to use. Check the talent description for action type."
+        },
+        "UsageLimit": {
+          "Title": "Limited Use",
+          "Body": "This ability can only be used a set number of times per encounter or per day."
+        },
+        "WeaponAttack": {
+          "Title": "Attack Roll",
+          "Body": "Click to roll an attack with this weapon against a target's Reflex Defense."
+        },
+        "WeaponDamage": {
+          "Title": "Damage Roll",
+          "Body": "Click to roll damage for this weapon after a successful attack."
+        },
+        "ArmorPenalty": {
+          "Title": "Armor Penalty",
+          "Body": "This armor applies a penalty to Reflex Defense beyond the armor bonus and may restrict Dexterity."
+        },
+        "ActionPalette": {
+          "Title": "Action Palette",
+          "Body": "Quick access to common combat and narrative actions for your character."
+        },
+        "PaletteMode": {
+          "Title": "Palette Mode",
+          "Body": "Switches between combat actions and narrative/exploration actions."
+        },
+        "ActionDisabled": {
+          "Title": "Action Unavailable",
+          "Body": "This action cannot be used right now. Check prerequisites and available resources."
+        },
+        "ChargenNarrative": {
+          "Title": "Narrative Mode",
+          "Body": "Build your character through guided story choices instead of manual stat selection."
+        },
+        "ChargenMentor": {
+          "Title": "Mentor Selection",
+          "Body": "Choose a mentor whose guidance shapes your character creation experience."
+        },
+        "ChargenRollMethod": {
+          "Title": "Ability Score Method",
+          "Body": "Select how to generate ability scores: roll dice, point buy, or standard array."
+        },
+        "ChargenSpecies": {
+          "Title": "Species",
+          "Body": "Your species determines base traits, ability adjustments, and available features."
+        },
+        "ChargenClass": {
+          "Title": "Class",
+          "Body": "Your class determines hit points, defenses, trained skills, and talent access."
+        },
+        "ChargenLockin": {
+          "Title": "Finalize Character",
+          "Body": "Confirms your choices. Most selections can still be adjusted after creation."
+        },
+        "MentorDialogue": {
+          "Title": "Mentor Guidance",
+          "Body": "Your mentor offers context and suggestions. This is advisory, not mandatory."
+        },
+        "AurebeshTranslation": {
+          "Title": "Aurebesh Translation",
+          "Body": "Text appears in Aurebesh first, then translates. Click to skip the effect."
+        },
+        "TacticalOverlay": {
+          "Title": "Tactical Overlay",
+          "Body": "Shows range bands, threat areas, and tactical information on the map."
+        },
+        "GMSuggestion": {
+          "Title": "GM Suggestion",
+          "Body": "Advisory insight from the suggestion engine. Not applied automatically."
+        },
+        "GMPaletteMode": {
+          "Title": "GM Mode",
+          "Body": "Switches the palette to GM tools: NPC spawning, healing, condition management."
+        }
+      },
+      "Callout": {
+        "Dismiss": "Got it",
+        "actionPaletteFirstOpen": {
+          "Title": "Action Palette",
+          "Body": "This is your quick-access action menu. It adapts to combat and narrative contexts. You can customize it to fit your playstyle."
+        },
+        "tacticalOverlayFirstOpen": {
+          "Title": "Tactical Overlay",
+          "Body": "Toggle map overlays showing range bands, threat zones, and positioning data. Each layer can be toggled independently."
+        },
+        "mentorTranslationFirst": {
+          "Title": "Mentor Dialogue",
+          "Body": "Mentor text appears with an Aurebesh translation effect. Click anywhere on the text to skip the animation and read immediately."
+        },
+        "gmSuggestionPanelFirst": {
+          "Title": "GM Suggestions",
+          "Body": "These are advisory insights based on the current encounter. Nothing is applied automatically. Use them as you see fit."
+        },
+        "chargenNarrativeFirst": {
+          "Title": "Character Creation Modes",
+          "Body": "You can build your character through narrative choices or direct mechanical selection. Both paths produce a fully valid character."
+        }
+      },
+      "Tour": {
+        "Skip": "Skip",
+        "Player": {
+          "Title": "Welcome to Star Wars Saga Edition",
+          "Subtitle": "Here are a few things to help you get started. All features are optional.",
+          "Item1": "Character creation supports both narrative and mechanical modes",
+          "Item2": "The Action Palette provides quick access to combat and narrative actions",
+          "Item3": "Mentors can guide your choices during character creation",
+          "Item4": "Hover over any highlighted UI element for a quick explanation",
+          "Item5": "All guided hints can be turned off in your client settings"
+        },
+        "GM": {
+          "Title": "Welcome to Star Wars Saga Edition (GM Tools)",
+          "Subtitle": "Your GM toolkit includes several optional systems. Nothing runs unless you enable it.",
+          "Item1": "The Tactical Overlay adds range and threat visualization to scenes",
+          "Item2": "GM Suggestions offer advisory encounter insights, never automatic",
+          "Item3": "Scene tools and NPC management are available from the sidebar and palette",
+          "Item4": "All automation (damage threshold, condition recovery) can be toggled in settings",
+          "Item5": "Discovery hints can be reset or disabled from system settings"
+        }
+      }
     }
   }
 }

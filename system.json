@@ -75,7 +75,8 @@
     "styles/npc-level3.css",
     "styles/species/species-traits.css",
     "styles/components/talent-abilities.css",
-    "styles/gm/suggestion-panel.css"
+    "styles/gm/suggestion-panel.css",
+    "styles/components/discovery.css"
   ],
   "languages": [
     {

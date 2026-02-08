@@ -1,0 +1,228 @@
+/* ==========================================================================
+   SWSE Discovery System Styles
+   Tooltips, Callouts, Feature Tour
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   MICRO TOOLTIPS
+   -------------------------------------------------------------------------- */
+.swse-discovery-tooltip {
+  position: fixed;
+  z-index: 100010;
+  max-width: 280px;
+  padding: 8px 12px;
+  background: var(--swse-tooltip-bg, #1a1a2e);
+  color: var(--swse-tooltip-color, #e0e0e0);
+  border: 1px solid var(--swse-tooltip-border, rgba(100, 180, 255, 0.3));
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  font-family: var(--swse-font-body, inherit);
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: 0;
+  animation: swse-tooltip-fade-in 150ms ease-out forwards;
+}
+
+.swse-discovery-tooltip--below {
+  /* Flip indicator for positioning logic */
+}
+
+.swse-discovery-tooltip__title {
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 2px;
+  color: var(--swse-tooltip-title-color, #8ecfff);
+}
+
+.swse-discovery-tooltip__body {
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--swse-tooltip-body-color, #c0c0c0);
+}
+
+@keyframes swse-tooltip-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Elements with tooltip get subtle indicator */
+[data-swse-tooltip] {
+  cursor: help;
+}
+
+/* --------------------------------------------------------------------------
+   GUIDED CALLOUTS
+   -------------------------------------------------------------------------- */
+.swse-discovery-callout {
+  position: fixed;
+  z-index: 100005;
+  max-width: 320px;
+  padding: 14px 16px;
+  background: var(--swse-callout-bg, #0f1a2e);
+  color: var(--swse-callout-color, #e0e0e0);
+  border: 1px solid var(--swse-callout-border, rgba(100, 180, 255, 0.4));
+  border-left: 3px solid var(--swse-callout-accent, #4a9eff);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  font-family: var(--swse-font-body, inherit);
+  font-size: 13px;
+  line-height: 1.5;
+  opacity: 0;
+  animation: swse-callout-slide-in 200ms ease-out forwards;
+}
+
+.swse-discovery-callout__title {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+  color: var(--swse-callout-title-color, #8ecfff);
+}
+
+.swse-discovery-callout__body {
+  font-size: 12px;
+  margin-bottom: 10px;
+  color: var(--swse-callout-body-color, #b0b8c8);
+}
+
+.swse-discovery-callout__dismiss {
+  display: inline-block;
+  padding: 4px 14px;
+  background: transparent;
+  color: var(--swse-callout-accent, #4a9eff);
+  border: 1px solid var(--swse-callout-accent, #4a9eff);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background 120ms ease;
+}
+
+.swse-discovery-callout__dismiss:hover {
+  background: rgba(74, 158, 255, 0.15);
+}
+
+.swse-discovery-callout__dismiss:focus-visible {
+  outline: 2px solid var(--swse-callout-accent, #4a9eff);
+  outline-offset: 2px;
+}
+
+@keyframes swse-callout-slide-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --------------------------------------------------------------------------
+   FEATURE TOUR MODAL
+   -------------------------------------------------------------------------- */
+.swse-discovery-tour__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100020;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.swse-discovery-tour {
+  position: relative;
+  max-width: 460px;
+  width: 90%;
+  padding: 28px 32px;
+  background: var(--swse-tour-bg, #0f1a2e);
+  color: var(--swse-tour-color, #e0e0e0);
+  border: 1px solid var(--swse-tour-border, rgba(100, 180, 255, 0.3));
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  font-family: var(--swse-font-body, inherit);
+  opacity: 0;
+  animation: swse-tour-appear 250ms ease-out forwards;
+}
+
+.swse-discovery-tour__title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: var(--swse-tour-title-color, #8ecfff);
+}
+
+.swse-discovery-tour__subtitle {
+  font-size: 13px;
+  margin: 0 0 16px 0;
+  color: var(--swse-tour-subtitle-color, #8899aa);
+}
+
+.swse-discovery-tour__list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+.swse-discovery-tour__list li {
+  position: relative;
+  padding: 6px 0 6px 20px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--swse-tour-item-color, #c8d0dc);
+}
+
+.swse-discovery-tour__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--swse-tour-bullet-color, #4a9eff);
+}
+
+.swse-discovery-tour__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.swse-discovery-tour__skip {
+  padding: 6px 20px;
+  background: transparent;
+  color: var(--swse-tour-skip-color, #8899aa);
+  border: 1px solid var(--swse-tour-skip-border, rgba(136, 153, 170, 0.4));
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.swse-discovery-tour__skip:hover {
+  background: rgba(136, 153, 170, 0.1);
+  color: #c8d0dc;
+}
+
+.swse-discovery-tour__skip:focus-visible {
+  outline: 2px solid var(--swse-callout-accent, #4a9eff);
+  outline-offset: 2px;
+}
+
+@keyframes swse-tour-appear {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* --------------------------------------------------------------------------
+   ACCESSIBILITY: Reduced motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .swse-discovery-tooltip,
+  .swse-discovery-callout,
+  .swse-discovery-tour {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
