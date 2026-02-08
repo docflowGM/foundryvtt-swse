@@ -50,6 +50,8 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       forceTechniques: []
     };
   }
+
+  render(force, options) {
     return super.render(force, options);
   }
 
