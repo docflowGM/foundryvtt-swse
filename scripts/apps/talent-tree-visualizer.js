@@ -183,7 +183,7 @@ export class TalentTreeVisualizer {
         actor,
         onSelectTalent
       );
-    });
+    }));
   }
 
   /**
