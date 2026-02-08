@@ -9,6 +9,7 @@
 
 import { SWSELogger } from "../utils/logger.js";
 
+import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 export class BurstFire {
   /**
    * Execute a burst fire attack
@@ -57,7 +58,7 @@ export class BurstFire {
       const abilityMod = attacker.system?.attributes[weapon?.system?.attackAttribute || "dex"]?.mod || 0;
       const bab = attacker.system?.bab || 0;
       const lvl = attacker.system?.level || 1;
-      const halfLvl = Math.floor(lvl / 2);
+      const halfLvl = getEffectiveHalfLevel(actor);
       const weaponBonus = weapon?.system?.attackBonus || 0;
       const burstFirePenalty = -5;
 

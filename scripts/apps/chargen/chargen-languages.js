@@ -8,10 +8,17 @@ import { LanguageRegistry } from '../../registries/language-registry.js';
 async function _syncLanguageIds() {
   const names = Array.isArray(this.characterData.languages) ? this.characterData.languages : [];
   const ids = [];
+  const uuids = [];
+
   for (const name of names) {
     const rec = await LanguageRegistry.getByName(name);
     if (rec?.internalId) ids.push(rec.internalId);
+    if (rec?.uuid) uuids.push(rec.uuid);
   }
+
+  this.characterData.languageIds = ids;
+  this.characterData.languageUuids = uuids;
+}
   this.characterData.languageIds = ids;
 }
 
@@ -153,61 +160,94 @@ export async function _getStartingLanguages() {
  * @returns {Promise<Object>} Languages organized by category
  */
 export async function _getAvailableLanguages() {
+  const systemId = game?.system?.id || 'foundryvtt-swse';
+  const packKey = `${systemId}.languages`;
+
+  // Prefer compendium pack (stable _id + uuid + descriptions).
   try {
-    // Try to load from compendium first
-    const pack = game?.packs?.get('foundryvtt-swse.languages');
+    const pack = game?.packs?.get(packKey);
     if (pack) {
-      const docs = await pack.getDocuments();
+      const idx = await pack.getIndex({ fields: ['name', 'img', 'system'] });
 
-      if (docs.length > 0) {
-        // Organize languages by category
-        const widelyUsed = [];
-        const localTrade = [];
+      const widelyUsed = [];
+      const localTrade = [];
 
-        for (const doc of docs) {
-          const category = doc.system.category || 'local-trade';
-          if (category === 'widely-used') {
-            widelyUsed.push(doc.name);
-          } else {
-            localTrade.push(doc.name);
-          }
-        }
+      for (const e of idx) {
+        const sys = e.system || {};
+        const category = sys.category || 'local-trade';
 
-        SWSELogger.log(`chargen: Loaded ${docs.length} languages from compendium`);
-
-        return {
-          widelyUsed: {
-            name: "Widely Used Languages",
-            description: "Common languages spoken throughout the galaxy",
-            languages: widelyUsed.sort()
-          },
-          localTrade: {
-            name: "Local/Trade Languages",
-            description: "Regional languages and trade tongues",
-            languages: localTrade.sort()
-          }
+        const record = {
+          _id: e._id,
+          uuid: `Compendium.${pack.collection}.${e._id}`,
+          name: e.name,
+          img: e.img,
+          description: sys.description || '',
+          isLocal: !!sys.isLocal,
+          category
         };
+
+        if (category === 'widely-used') widelyUsed.push(record);
+        else localTrade.push(record);
       }
+
+      widelyUsed.sort((a, b) => a.name.localeCompare(b.name));
+      localTrade.sort((a, b) => a.name.localeCompare(b.name));
+
+      SWSELogger.log(`chargen: Loaded ${idx.length} languages from compendium ${packKey}`);
+
+      return {
+        widelyUsed: {
+          name: 'Widely Used Languages',
+          description: 'Common languages spoken throughout the galaxy',
+          languages: widelyUsed
+        },
+        localTrade: {
+          name: 'Local/Trade Languages',
+          description: 'Regional languages and trade tongues',
+          languages: localTrade
+        }
+      };
     }
   } catch (e) {
-    SWSELogger.warn("chargen: Failed to load languages from compendium, falling back to JSON", e);
+    SWSELogger.warn('chargen: Failed to load languages from compendium, falling back to JSON', e);
   }
 
-  // Fallback to JSON
+  // Fallback: JSON, mapped through registry when possible.
   const languagesData = await _loadLanguagesData.call(this);
+  const categories = languagesData?.categories || {};
 
-  if (!languagesData) {
-    // Final fallback to a basic list
-    return {
-      widelyUsed: {
-        name: "Widely Used Languages",
-        languages: ["Basic", "Binary", "Bocce", "Huttese"]
-      }
-    };
-  }
+  const toRecords = async (names, fallbackCategory) => {
+    const out = [];
+    for (const name of names || []) {
+      const rec = await LanguageRegistry.getByName(name);
+      out.push({
+        _id: rec?.internalId || '',
+        uuid: rec?.uuid || '',
+        name,
+        img: rec?.img,
+        description: rec?.description || '',
+        isLocal: !!rec?.isLocal,
+        category: rec?.category || fallbackCategory
+      });
+    }
+    out.sort((a, b) => a.name.localeCompare(b.name));
+    return out;
+  };
 
-  return languagesData.categories;
+  return {
+    widelyUsed: {
+      name: categories?.widelyUsed?.name || 'Widely Used Languages',
+      description: categories?.widelyUsed?.description || '',
+      languages: await toRecords(categories?.widelyUsed?.languages, 'widely-used')
+    },
+    localTrade: {
+      name: categories?.localTrade?.name || 'Local/Trade Languages',
+      description: categories?.localTrade?.description || '',
+      languages: await toRecords(categories?.localTrade?.languages, 'local-trade')
+    }
+  };
 }
+
 
 /**
  * Initialize languages for character based on species, INT modifier, and feats
@@ -411,4 +451,74 @@ export async function _onAddCustomLanguage(event) {
   ui.notifications.info(`Added custom language: ${customLanguage}`);
 
   await this.render();
+}
+
+
+function _applyLanguageCardFilters(stepEl, query, category) {
+  const q = String(query || '').trim().toLowerCase();
+  const cat = String(category || '').trim();
+
+  for (const card of stepEl.querySelectorAll('.language-card')) {
+    const name = String(card.dataset.language || '').toLowerCase();
+    const matchesQuery = !q || name.includes(q);
+    const matchesCategory = !cat || card.dataset.category === cat;
+    card.style.display = (matchesQuery && matchesCategory) ? '' : 'none';
+  }
+
+  for (const chip of stepEl.querySelectorAll('.language-chip')) {
+    const target = chip.dataset.category || '';
+    chip.classList.toggle('active', target === cat);
+  }
+}
+
+/**
+ * Bind card UX (flip + read) and inline filters for the Languages step.
+ * Safe for AppV2: uses event delegation and idempotent binding per render.
+ */
+export function _bindLanguageCardUI(root) {
+  const step = root.querySelector('.step-languages');
+  if (!step) return;
+
+  const search = step.querySelector('.language-search-input');
+  const initialQuery = this.characterData.languageSearch || '';
+  const initialCategory = this.characterData.languageCategoryFilter || '';
+
+  if (search) {
+    search.value = initialQuery;
+    search.oninput = (ev) => {
+      this.characterData.languageSearch = ev.currentTarget.value || '';
+      _applyLanguageCardFilters(step, this.characterData.languageSearch, this.characterData.languageCategoryFilter);
+    };
+  }
+
+  step.onclick = async (ev) => {
+    const btn = ev.target.closest('button');
+    if (!btn) return;
+
+    const card = btn.closest('.language-card');
+
+    if (btn.classList.contains('language-details-toggle')) {
+      ev.preventDefault();
+      if (card) card.classList.toggle('is-flipped');
+      return;
+    }
+
+    if (btn.classList.contains('language-read')) {
+      ev.preventDefault();
+      const uuid = card?.dataset?.uuid;
+      if (!uuid) return;
+      const doc = await fromUuid(uuid);
+      if (doc?.sheet) doc.sheet.render(true);
+      return;
+    }
+
+    if (btn.classList.contains('language-chip')) {
+      ev.preventDefault();
+      const next = btn.dataset.category || '';
+      this.characterData.languageCategoryFilter = next;
+      _applyLanguageCardFilters(step, this.characterData.languageSearch, this.characterData.languageCategoryFilter);
+    }
+  };
+
+  _applyLanguageCardFilters(step, initialQuery, initialCategory);
 }

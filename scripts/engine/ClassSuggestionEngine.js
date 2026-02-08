@@ -17,6 +17,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { BASE_CLASSES, calculateTotalBAB } from '../apps/levelup/levelup-shared.js';
+import { isEpicActor, getPlannedHeroicLevel } from '../actors/derived/level-split.js';
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (ORDER MATTERS - HIGHER = BETTER)
@@ -327,6 +328,20 @@ export class ClassSuggestionEngine {
      * @returns {Promise<Array>} Classes with suggestion metadata attached
      */
     static async suggestClasses(classes, actor, pendingData = {}, options = {}) {
+        const planned = getPlannedHeroicLevel(actor, pendingData);
+        if (pendingData?.epicAdvisory || isEpicActor(actor, planned)) {
+            return classes.map(cls => ({
+                ...cls,
+                suggestion: {
+                    tier: CLASS_SUGGESTION_TIERS.FALLBACK,
+                    reason: 'Epic advisory mode (no ranking)',
+                    icon: CLASS_TIER_ICONS[0]
+                },
+                isSuggested: false,
+                advisory: true
+            }));
+        }
+
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: START - Actor: ${actor.id} (${actor.name}), classes: ${classes.length}`);
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Class names:`, classes.map(c => c.name));
 

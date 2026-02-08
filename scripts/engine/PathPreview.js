@@ -12,6 +12,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { isEpicActor, getPlannedHeroicLevel } from '../actors/derived/level-split.js';
 import { ClassSuggestionEngine } from './ClassSuggestionEngine.js';
 import { BuildIntent, PRESTIGE_SIGNALS } from './BuildIntent.js';
 
@@ -52,6 +53,8 @@ export class PathPreview {
      * @returns {Promise<Array>} Array of path preview objects
      */
     static async generatePreviews(actor, pendingData = {}) {
+        const planned = getPlannedHeroicLevel(actor, pendingData);
+        if (pendingData?.epicAdvisory || isEpicActor(actor, planned)) return [];
         const previews = [];
         const actorState = await ClassSuggestionEngine._buildActorState(actor, pendingData);
         const prestigePrereqs = await ClassSuggestionEngine._loadPrestigePrerequisites();

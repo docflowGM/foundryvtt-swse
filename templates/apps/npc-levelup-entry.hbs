@@ -1,0 +1,58 @@
+<div class="swse npc-levelup-entry">
+  <header class="swse-header">
+    <h2>{{actorName}}</h2>
+    <p>
+      Current Level: <b>{{totalLevel}}</b> —
+      Mode: <b>{{mode}}</b>
+    </p>
+    <p class="hint">
+      Heroic uses the standard progression engine. Nonheroic applies deterministic nonheroic rules.
+    </p>
+  </header>
+
+  {{#if heroicBlocked}}
+    <p class="warning"><strong>Heroic:</strong> Epic Override required to take Heroic levels beyond 20.</p>
+  {{/if}}
+  {{#if nonheroicBlocked}}
+    <p class="warning"><strong>Nonheroic:</strong> Epic Override required to take Nonheroic levels beyond 20.</p>
+  {{/if}}
+  {{#if heroicAdvisory}}
+    <p class="hint"><strong>Heroic Epic Advisory:</strong> Suggestions are informational only.</p>
+  {{/if}}
+  {{#if nonheroicAdvisory}}
+    <p class="hint"><strong>Nonheroic Epic Advisory:</strong> Suggestions are informational only.</p>
+  {{/if}}
+
+  {{#unless isGM}}
+    <p class="warning">GM only.</p>
+  {{/unless}}
+
+  <div class="swse-grid">
+    <section class="swse-card">
+      <h3>Heroic Level</h3>
+      <p class="hint">Level like a PC (class + talent/feat choices).</p>
+      <button type="button" data-action="heroic" {{#unless isGM}}disabled{{/unless}} {{#if heroicBlocked}}disabled{{/if}}>Heroic{{#if heroicBlocked}} (Epic Override required){{/if}}</button>
+    </section>
+
+    <section class="swse-card">
+      <h3>Nonheroic Level</h3>
+      <p class="hint">Auto: +1 Nonheroic level, HP gain, feat at 3rd/6th/…, +1 ability at 4th/8th/… (pure nonheroic).</p>
+      <button type="button" data-action="nonheroic" {{#unless isGM}}disabled{{/unless}} {{#if nonheroicBlocked}}disabled{{/if}}>Nonheroic{{#if nonheroicBlocked}} (Epic Override required){{/if}}</button>
+    </section>
+  </div>
+
+  <footer class="swse-footer">
+    {{#if hasSnapshot}}
+      <button type="button" data-action="revert" {{#unless isGM}}disabled{{/unless}}>Revert to Statblock</button>
+    {{/if}}
+    <button type="button" data-action="cancel">Cancel</button>
+  </footer>
+</div>
+
+<style>
+  .npc-levelup-entry .hint { opacity: 0.8; }
+  .npc-levelup-entry .warning { color: var(--color-text-danger); }
+  .npc-levelup-entry .swse-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .npc-levelup-entry .swse-card { padding: 12px; border: 1px solid var(--color-border-light-primary); border-radius: 10px; }
+  .npc-levelup-entry .swse-footer { display:flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
+</style>

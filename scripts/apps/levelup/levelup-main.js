@@ -14,6 +14,8 @@
 
 import { SWSEProgressionEngine } from '../../engine/progression.js';
 import { SWSELogger, swseLogger } from '../../utils/logger.js';
+import { isEpicOverrideEnabled } from '../../settings/epic-override.js';
+import { getLevelSplit } from '../../actors/derived/level-split.js';
 import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from '../mentor-dialogues.js';
 import { MentorSurvey } from '../mentor-survey.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
@@ -230,16 +232,31 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     }
 
     data.actor = actor;
+
+    const { heroicLevel, totalLevel } = getLevelSplit(actor);
+    data.heroicLevel = heroicLevel;
+    data.totalLevel = totalLevel || Number(actor.system.level) || heroicLevel;
+
     data.currentLevel = actor.system.level;
     data.newLevel = actor.system.level + 1;
     data.currentStep = this.currentStep;
+
+    data.epicOverrideEnabled = isEpicOverrideEnabled();
+    data.epicBlocked = (Number(data.newLevel) || 0) > 20 && !data.epicOverrideEnabled;
+    data.epicAdvisory = (Number(data.newLevel) || 0) > 20 && data.epicOverrideEnabled;
+
+    this._epicBlocked = data.epicBlocked;
+    this._epicAdvisory = data.epicAdvisory;
 
     // Get available classes
     const pendingData = {
       selectedFeats: this.selectedFeats,
       selectedClass: this.selectedClass,
       abilityIncreases: this.abilityIncreases,
-      selectedSkills: this.selectedSkills
+      selectedSkills: this.selectedSkills,
+      newLevel: data.newLevel,
+      plannedHeroicLevel: data.newLevel,
+      epicAdvisory: data.epicAdvisory
     };
     data.availableClasses = await getAvailableClasses(this.actor, pendingData);
 
@@ -357,6 +374,12 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
   async _onRender(html, options) {
     await super._onRender(html, options);
+
+    if (this._epicBlocked) {
+      html.find("button").prop("disabled", true);
+      html.find(".cancel-levelup, .close").prop("disabled", false);
+      return;
+    }
 
     // Class selection (old and new styles)
     html.find('.select-class-btn').click(this._onSelectClass.bind(this));
@@ -814,7 +837,10 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       selectedFeats: this.selectedFeats,
       selectedClass: this.selectedClass,
       abilityIncreases: this.abilityIncreases,
-      selectedSkills: this.selectedSkills
+      selectedSkills: this.selectedSkills,
+      newLevel: data.newLevel,
+      plannedHeroicLevel: data.newLevel,
+      epicAdvisory: data.epicAdvisory
     };
 
     this.featData = await loadFeats(this.actor, this.selectedClass, pendingData);

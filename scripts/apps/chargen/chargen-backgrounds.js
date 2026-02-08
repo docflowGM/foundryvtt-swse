@@ -53,6 +53,18 @@ export function _getFilteredBackgrounds() {
     });
   }
 
+  // Apply free-text search (name, description, skills, language)
+  const q = String(this.characterData.backgroundSearch || '').trim().toLowerCase();
+  if (q) {
+    filtered = filtered.filter((bg) => {
+      const name = String(bg.name || bg.slug || '').toLowerCase();
+      const desc = String(bg.narrativeDescription || bg.description || '').toLowerCase();
+      const skills = [...(bg.trainedSkills || []), ...(bg.relevantSkills || [])].join(' ').toLowerCase();
+      const lang = String(bg.bonusLanguage || '').toLowerCase();
+      return name.includes(q) || desc.includes(q) || skills.includes(q) || lang.includes(q);
+    });
+  }
+
   return filtered;
 }
 
@@ -436,61 +448,15 @@ export async function _onBackgroundCategoryClick(event) {
 export async function _onBackgroundFilterClick(event) {
   event.preventDefault();
 
-  // Collect all unique skills from backgrounds
-  const skills = [...new Set(this.allBackgrounds.flatMap(bg => [...(bg.trainedSkills || []), ...(bg.relevantSkills || [])]))].sort();
+  const panel = document.querySelector('.background-filter-panel');
+  if (!panel) return;
 
-  // Collect all unique languages from backgrounds
-  const languages = [...new Set(this.allBackgrounds
-    .filter(bg => bg.bonusLanguage)
-    .map(bg => bg.bonusLanguage)
-    .flatMap(lang => lang.split(' or ').map(l => l.trim()))
-  )].sort();
+  panel.classList.toggle('collapsed');
 
-  const skillOptions = skills
-    .map(skill => `<option value="skill:${skill}">${skill}</option>`)
-    .join('');
-
-  const languageOptions = languages
-    .map(lang => `<option value="language:${lang}">${lang}</option>`)
-    .join('');
-
-  const content = `
-    <div style="margin-bottom: 1rem;">
-      <p><strong>Filter by Trained Skill:</strong></p>
-      <select id="skill-filter-select" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;">
-        <option value="">-- Any Skill --</option>
-        ${skillOptions}
-      </select>
-    </div>
-    <div>
-      <p><strong>Filter by Bonus Language:</strong></p>
-      <select id="language-filter-select" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;">
-        <option value="">-- Any Language --</option>
-        ${languageOptions}
-      </select>
-    </div>
-  `;
-
-  new Dialog({
-    title: "Filter Backgrounds",
-    content,
-    buttons: {
-      search: {
-        icon: '<i class="fas fa-search"></i>',
-        label: "Filter",
-        callback: (html) => {
-          const selectedSkill = html.find('#skill-filter-select').val();
-          const selectedLanguage = html.find('#language-filter-select').val();
-          this._applyBackgroundFilters(selectedSkill, selectedLanguage);
-        }
-      },
-      cancel: {
-        icon: '<i class="fas fa-times"></i>',
-        label: "Cancel"
-      }
-    },
-    default: "search"
-  }).render(true);
+  const search = panel.querySelector('.background-search-input');
+  if (search && !panel.classList.contains('collapsed')) {
+    search.focus();
+  }
 }
 
 /**
@@ -618,4 +584,110 @@ export async function _applyBackgroundToActor(actor) {
   }
 
   console.log(`SWSE | Applied background ${bg.name} to actor ${actor.name}`);
+}
+
+
+function _collectBackgroundFilters(backgrounds) {
+  const skills = [...new Set(backgrounds.flatMap((bg) => [...(bg.trainedSkills || []), ...(bg.relevantSkills || [])]))]
+    .map((s) => String(s || '').trim())
+    .filter(Boolean)
+    .sort();
+
+  const languages = [...new Set(backgrounds
+    .filter((bg) => bg.bonusLanguage)
+    .flatMap((bg) => String(bg.bonusLanguage).split(' or ').map((l) => l.trim()))
+  )]
+    .filter(Boolean)
+    .sort();
+
+  return { skills, languages };
+}
+
+function _renderChipRow(rowEl, items, type, activeValue) {
+  if (!rowEl) return;
+  const parts = [];
+  parts.push(`<button type="button" class="bg-chip ${!activeValue ? 'active' : ''}" data-type="${type}" data-value="">Any</button>`);
+  for (const v of items) {
+    const active = activeValue === v ? 'active' : '';
+    parts.push(`<button type="button" class="bg-chip ${active}" data-type="${type}" data-value="${v}">${v}</button>`);
+  }
+  rowEl.innerHTML = parts.join('');
+}
+
+function _refreshBackgroundFilterPanel(panelEl, backgrounds) {
+  const { skills, languages } = _collectBackgroundFilters(backgrounds);
+
+  _renderChipRow(
+    panelEl.querySelector('#background-skill-chips'),
+    skills,
+    'skill',
+    this.characterData.skillFilter || ''
+  );
+
+  _renderChipRow(
+    panelEl.querySelector('#background-language-chips'),
+    languages,
+    'language',
+    this.characterData.languageFilter || ''
+  );
+}
+
+/**
+ * Render + bind inline filters for Backgrounds (search + skill/language chips).
+ * AppV2 safe: uses delegated listeners; safe to call every render.
+ */
+export function _renderBackgroundFilterPanel(root) {
+  const panel = root.querySelector('.background-filter-panel');
+  if (!panel || this.characterData.background) return;
+
+  // Ensure defaults exist
+  if (typeof this.characterData.backgroundSearch !== 'string') this.characterData.backgroundSearch = '';
+  if (typeof this.characterData.skillFilter !== 'string') this.characterData.skillFilter = '';
+  if (typeof this.characterData.languageFilter !== 'string') this.characterData.languageFilter = '';
+
+  const search = panel.querySelector('.background-search-input');
+  if (search) {
+    search.value = this.characterData.backgroundSearch || '';
+    search.oninput = () => {
+      this.characterData.backgroundSearch = search.value || '';
+      const grid = root.querySelector('#background-selection-grid');
+      if (grid) this._renderBackgroundCards(grid);
+      _refreshBackgroundFilterPanel.call(this, panel, this.allBackgrounds || []);
+    };
+  }
+
+  const clearBtn = panel.querySelector('.clear-background-filters');
+  if (clearBtn) {
+    clearBtn.onclick = () => {
+      this.characterData.backgroundSearch = '';
+      this.characterData.skillFilter = '';
+      this.characterData.languageFilter = '';
+      if (search) search.value = '';
+      const grid = root.querySelector('#background-selection-grid');
+      if (grid) this._renderBackgroundCards(grid);
+      _refreshBackgroundFilterPanel.call(this, panel, this.allBackgrounds || []);
+    };
+  }
+
+  panel.onclick = (ev) => {
+    const btn = ev.target.closest('button.bg-chip');
+    if (!btn) return;
+
+    const type = btn.dataset.type;
+    const value = btn.dataset.value || '';
+
+    if (type === 'skill') {
+      this.characterData.skillFilter = (this.characterData.skillFilter === value) ? '' : value;
+    } else if (type === 'language') {
+      this.characterData.languageFilter = (this.characterData.languageFilter === value) ? '' : value;
+    } else {
+      return;
+    }
+
+    const grid = root.querySelector('#background-selection-grid');
+    if (grid) this._renderBackgroundCards(grid);
+    _refreshBackgroundFilterPanel.call(this, panel, this.allBackgrounds || []);
+  };
+
+  _refreshBackgroundFilterPanel.call(this, panel, this.allBackgrounds || []);
 }

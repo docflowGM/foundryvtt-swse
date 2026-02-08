@@ -1,5 +1,7 @@
 import { SWSELogger } from '../utils/logger.js';
 
+import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
+
 export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
   static defineSchema() {
@@ -258,7 +260,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
   /* -------------------------------------------------------------------------- */
 
   _calculateSkills() {
-    const half = Math.floor(this.level / 2);
+    const half = this.parent ? getEffectiveHalfLevel(this.parent) : Math.floor((Number(this.level) || 0) / 2);
     const map = {
       endurance: 'str'
     };

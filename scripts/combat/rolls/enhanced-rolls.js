@@ -1,6 +1,7 @@
 import { swseLogger } from "../../utils/logger.js";
 import { rollDamage } from "./damage.js";
 import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance } from "../utils/combat-utils.js";
+import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
 import {
   ROLL_HOOKS,
   callPreRollHook,
@@ -1230,7 +1231,7 @@ export class SWSERoll {
 
       // Breakdown components
       const parts = [];
-      const halfLevel = Math.floor(actor.system.level / 2);
+      const halfLevel = getEffectiveHalfLevel(actor);
       parts.push(`½ Level +${halfLevel}`);
 
       if (skill.trained) parts.push(`Trained +5`);
@@ -1800,7 +1801,7 @@ export class SWSERoll {
       }
 
       const parts = [];
-      const halfLevel = Math.floor(actor.system.level / 2);
+      const halfLevel = getEffectiveHalfLevel(actor);
       parts.push(`½ Level +${halfLevel}`);
       if (skill.trained) parts.push(`Trained +5`);
       if (skill.focused) parts.push(`Skill Focus +5`);

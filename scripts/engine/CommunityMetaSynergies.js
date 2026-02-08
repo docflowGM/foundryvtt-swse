@@ -15,6 +15,7 @@
  */
 
 import { MetaTuning } from './MetaTuning.js';
+import { isEpicActor, getPlannedHeroicLevel } from '../actors/derived/level-split.js';
 
 // ──────────────────────────────────────────────────────────────
 // SYNERGY DEFINITIONS
@@ -553,6 +554,8 @@ export function buildSynergyState(actor, pendingData = {}) {
  * @returns {Array} Active synergy rules with suggestions
  */
 export function findActiveSynergies(actor, pendingData = {}) {
+    const planned = getPlannedHeroicLevel(actor, pendingData);
+    if (pendingData?.epicAdvisory || isEpicActor(actor, planned)) return [];
     const state = buildSynergyState(actor, pendingData);
     const config = MetaTuning.getConfig();
     const activeSynergies = [];

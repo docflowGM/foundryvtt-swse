@@ -248,6 +248,66 @@ export async function _onSelectFeat(event) {
 }
 
 /**
+ * Bind Feat card UX (flip + read).
+ * AppV2-safe: assigns onclick on the step per render.
+ */
+export function _bindFeatCardUI(root) {
+  const step = root.querySelector('.step-feats');
+  if (!step) return;
+
+  step.onclick = async (ev) => {
+    const btn = ev.target.closest('button');
+    if (!btn) return;
+
+    const card = btn.closest('.feat-card');
+
+    if (btn.classList.contains('feat-details-toggle')) {
+      ev.preventDefault();
+      card?.classList.toggle('is-flipped');
+      return;
+    }
+
+    if (btn.classList.contains('feat-read')) {
+      ev.preventDefault();
+      const uuid = card?.dataset?.uuid;
+      if (!uuid) return;
+      const doc = await fromUuid(uuid);
+      doc?.sheet?.render(true);
+    }
+  };
+}
+
+/**
+ * Bind Talent card UX (flip + read) for the list view.
+ */
+export function _bindTalentCardUI(root) {
+  const step = root.querySelector('.step-talents');
+  if (!step) return;
+
+  step.onclick = async (ev) => {
+    const btn = ev.target.closest('button');
+    if (!btn) return;
+
+    const card = btn.closest('.talent-card');
+    if (!card) return;
+
+    if (btn.classList.contains('talent-details-toggle')) {
+      ev.preventDefault();
+      card.classList.toggle('is-flipped');
+      return;
+    }
+
+    if (btn.classList.contains('talent-read')) {
+      ev.preventDefault();
+      const uuid = card.dataset.uuid;
+      if (!uuid) return;
+      const doc = await fromUuid(uuid);
+      doc?.sheet?.render(true);
+    }
+  };
+}
+
+/**
  * Handle Skill Focus feat selection in chargen
  */
 export async function _handleSkillFocusFeat(feat) {

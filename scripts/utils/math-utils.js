@@ -71,7 +71,7 @@ export function calculateDamageThreshold(fortitudeDefense, size = "medium") {
  * @returns {number} Half level (rounded down)
  */
 export function halfLevel(level) {
-    return Math.floor(level / 2);
+    return Math.trunc(level / 2);
 }
 
 /**

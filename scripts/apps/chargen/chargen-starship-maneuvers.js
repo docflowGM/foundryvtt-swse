@@ -138,3 +138,22 @@ export async function _getAvailableStarshipManeuvers() {
 
   return availableManeuvers;
 }
+
+/**
+ * Bind Starship Maneuver card UX (flip).
+ */
+export function _bindManeuverCardUI(root) {
+  const step = root.querySelector('.step-starship-maneuvers');
+  if (!step) return;
+
+  step.onclick = (ev) => {
+    const btn = ev.target.closest('button');
+    if (!btn) return;
+
+    if (!btn.classList.contains('maneuver-details-toggle')) return;
+
+    ev.preventDefault();
+    const card = btn.closest('.maneuver-card');
+    card?.classList.toggle('is-flipped');
+  };
+}

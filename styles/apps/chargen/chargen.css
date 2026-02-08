@@ -3427,3 +3427,420 @@
 .background-card-actions .btn-primary {
   flex: 1.2 1 auto;
 }
+
+
+/* ==========================================================
+   Inline Background Filters (Search + Chips)
+   ========================================================== */
+
+.background-filter-panel {
+  margin: 1rem 0 0.5rem;
+  padding: 0.85rem;
+  border: 1px solid rgba(0, 170, 255, 0.55);
+  border-radius: 10px;
+  background: rgba(0, 20, 40, 0.55);
+}
+
+.background-filter-panel.collapsed .background-filter-groups {
+  display: none;
+}
+
+.background-filter-top {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.background-search-input {
+  flex: 1;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 170, 255, 0.35);
+  background: rgba(0, 10, 20, 0.6);
+  color: #e6f6ff;
+}
+
+.background-filter-groups {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.filter-group-title {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-bottom: 0.35rem;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.bg-chip,
+.language-chip {
+  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 170, 255, 0.35);
+  background: rgba(0, 30, 60, 0.45);
+  color: #e6f6ff;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.bg-chip.active,
+.language-chip.active {
+  border-color: rgba(0, 255, 255, 0.9);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.25);
+  background: rgba(0, 80, 120, 0.55);
+}
+
+/* ==========================================================
+   Language Cards (flip + read)
+   ========================================================== */
+
+.language-filter-bar {
+  margin: 0.75rem 0 1rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.language-search-input {
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 170, 255, 0.35);
+  background: rgba(0, 10, 20, 0.6);
+  color: #e6f6ff;
+}
+
+.languages-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.language-card {
+  border: 1px solid rgba(0, 170, 255, 0.45);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(0, 35, 65, 0.75), rgba(0, 85, 120, 0.45));
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.language-card-inner {
+  position: relative;
+  width: 100%;
+  min-height: 170px;
+  transform-style: preserve-3d;
+  transition: transform 0.45s ease;
+}
+
+.language-card:hover .language-card-inner,
+.language-card.is-flipped .language-card-inner {
+  transform: rotateY(180deg);
+}
+
+.language-card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.language-card-front {
+  transform: rotateY(0deg);
+}
+
+.language-card-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, rgba(0, 25, 45, 0.92), rgba(0, 70, 105, 0.75));
+  overflow: auto;
+}
+
+.language-name {
+  margin: 0;
+  color: #0af;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.language-description {
+  color: #d6eaff;
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+
+.language-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-top: 1px solid rgba(0, 170, 255, 0.25);
+}
+
+.language-card-actions button {
+  flex: 1;
+}
+
+.badge.badge-local {
+  display: inline-block;
+  padding: 0.18rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 220, 0, 0.15);
+  border: 1px solid rgba(255, 220, 0, 0.35);
+  color: rgba(255, 240, 170, 0.95);
+  font-size: 0.75rem;
+  width: fit-content;
+}
+
+/* =========================
+   V2 CARD UI (Chargen)
+   Classes / Talents / Powers / Maneuvers / Skills / Feats
+   ========================= */
+
+.class-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.skills-card-grid,
+.force-powers-list,
+.maneuvers-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.talent-trees-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.class-card,
+.talent-card,
+.talent-tree-card,
+.power-card,
+.maneuver-card,
+.skill-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0, 170, 255, 0.22);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  position: relative;
+}
+
+.class-card.selected {
+  border-color: rgba(76, 175, 80, 0.75);
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.25), 0 8px 22px rgba(0, 0, 0, 0.4);
+}
+
+.class-card.disabled,
+.maneuver-card.disabled {
+  opacity: 0.65;
+}
+
+.class-card-inner,
+.feat-card-inner,
+.talent-card-inner,
+.power-card-inner,
+.maneuver-card-inner,
+.skill-card-inner {
+  position: relative;
+  width: 100%;
+  min-height: 175px;
+  transform-style: preserve-3d;
+  transition: transform 0.55s ease;
+  perspective: 1000px;
+}
+
+.feat-card-inner {
+  min-height: 190px;
+}
+
+.skill-card-inner {
+  min-height: 165px;
+}
+
+.class-card-face,
+.feat-card-face,
+.talent-card-face,
+.power-card-face,
+.maneuver-card-face,
+.skill-card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  padding: 0.85rem;
+  box-sizing: border-box;
+}
+
+.class-card-back,
+.feat-card-back,
+.talent-card-back,
+.power-card-back,
+.maneuver-card-back,
+.skill-card-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, rgba(0, 25, 45, 0.92), rgba(0, 70, 105, 0.55));
+  overflow: auto;
+}
+
+.class-card.is-flipped .class-card-inner,
+.feat-card.is-flipped .feat-card-inner,
+.talent-card.is-flipped .talent-card-inner,
+.power-card.is-flipped .power-card-inner,
+.maneuver-card.is-flipped .maneuver-card-inner,
+.skill-card.is-flipped .skill-card-inner {
+  transform: rotateY(180deg);
+}
+
+.class-card-actions,
+.feat-card-actions,
+.talent-card-actions,
+.power-card-actions,
+.maneuver-card-actions,
+.skill-card-actions,
+.talent-tree-card-actions {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-top: 1px solid rgba(0, 170, 255, 0.18);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.class-card-actions button,
+.feat-card-actions button,
+.talent-card-actions button,
+.power-card-actions button,
+.maneuver-card-actions button,
+.talent-tree-card-actions button {
+  flex: 1;
+}
+
+.skill-card-actions {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.skill-train-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(214, 234, 255, 0.95);
+  font-size: 0.9rem;
+  user-select: none;
+}
+
+.skill-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.skill-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.skill-total {
+  font-weight: 800;
+  color: rgba(214, 234, 255, 0.95);
+}
+
+.skill-total.trained-total {
+  color: rgba(76, 175, 80, 0.95);
+}
+
+.skill-card-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.skill-stat {
+  border: 1px solid rgba(0, 170, 255, 0.18);
+  border-radius: 10px;
+  padding: 0.45rem 0.55rem;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.skill-stat .stat-label {
+  display: block;
+  font-size: 0.7rem;
+  color: rgba(160, 200, 235, 0.9);
+}
+
+.skill-stat .stat-value {
+  display: block;
+  font-weight: 700;
+  margin-top: 0.15rem;
+}
+
+.skill-suggestion {
+  margin-top: 0.75rem;
+  color: rgba(255, 220, 0, 0.9);
+}
+
+.talent-tree-card-body {
+  padding: 1rem;
+}
+
+.talent-tree-card h4 {
+  margin: 0 0 0.35rem;
+}
+
+.talent-tree-card p {
+  margin: 0;
+  color: rgba(214, 234, 255, 0.85);
+}
+
+.class-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.class-meta-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 170, 255, 0.22);
+  background: rgba(0, 0, 0, 0.25);
+  color: rgba(214, 234, 255, 0.92);
+  font-size: 0.8rem;
+}
+
+.class-desc {
+  color: rgba(214, 234, 255, 0.88);
+  font-size: 0.9rem;
+  line-height: 1.25;
+  margin: 0.55rem 0 0;
+}
+
+.power-description,
+.maneuver-description {
+  color: rgba(214, 234, 255, 0.9);
+  font-size: 0.9rem;
+  line-height: 1.25;
+}

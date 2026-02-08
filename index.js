@@ -145,6 +145,7 @@ import { preloadHandlebarsTemplates, assertPartialsResolved } from './scripts/co
 import { SWSEAPI } from './scripts/core/swse-api.js';
 import { initMigrationAuditor, setupNoWindowSentinel } from './scripts/core/migration-auditor.js';
 
+import { initAppV2RenderContractValidator } from './scripts/debug/appv2-contract-validator.js';
 import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 import { createItemMacro } from './scripts/macros/item-macro.js';
 
@@ -283,6 +284,9 @@ if (typeof game !== 'undefined' && game.settings) {
 Hooks.once('init', async function () {
     swseLogger.log('SWSE | Initializing Star Wars Saga Edition System');
 
+
+    // DEV: AppV2 render-contract validator (fails fast on null templates)
+    initAppV2RenderContractValidator();
     /* ---------------------------------------------------------
        EARLY HANDLEBARS HELPER REGISTRATION  (CRASH FIX)
        --------------------------------------------------------- */

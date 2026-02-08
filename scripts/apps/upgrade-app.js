@@ -28,6 +28,16 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
     window: { resizable: true }
   };
 
+  static get defaultOptions() {
+    const base = super.defaultOptions ?? super.DEFAULT_OPTIONS ?? {};
+    const legacy = this.DEFAULT_OPTIONS ?? {};
+    const clone = foundry.utils?.deepClone?.(base)
+      ?? foundry.utils?.duplicate?.(base)
+      ?? { ...base };
+    return foundry.utils.mergeObject(clone, legacy);
+  }
+
+
   static PARTS = {
     content: {
       template: "systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs"

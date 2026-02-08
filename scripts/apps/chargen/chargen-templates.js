@@ -130,7 +130,7 @@ export class CharacterTemplates {
 
     // Validate feat IDs
     if (template.featIds && Array.isArray(template.featIds)) {
-      const featPack = game.packs.get(featPackName);
+      const featPack = game.packs.get('foundryvtt-swse.feats');
       if (!featPack) {
         errors.push('Feats compendium not found');
       } else {
@@ -145,7 +145,7 @@ export class CharacterTemplates {
 
     // Validate talent IDs
     if (template.talentIds && Array.isArray(template.talentIds)) {
-      const talentPack = game.packs.get(talentPackName);
+      const talentPack = game.packs.get('foundryvtt-swse.talents');
       if (!talentPack) {
         errors.push('Talents compendium not found');
       } else {

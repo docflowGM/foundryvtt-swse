@@ -1,6 +1,7 @@
 import { swseLogger } from "../../utils/logger.js";
 import { TalentAbilitiesEngine } from "../../engine/TalentAbilitiesEngine.js";
 
+import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
 /**
  * Determine if a weapon is a melee weapon
  * @param {Item} weapon - The weapon item
@@ -131,7 +132,7 @@ function hasDexToDamageTalent(actor) {
  */
 function computeDamageBonus(actor, weapon, options = {}) {
   const lvl = actor.system.level ?? 1;
-  const halfLvl = Math.floor(lvl / 2);
+  const halfLvl = getEffectiveHalfLevel(actor);
 
   let bonus = halfLvl + (weapon.system?.attackBonus ?? 0);
 
@@ -216,6 +217,23 @@ export async function rollDamage(actor, weapon, context = {}) {
     ui.notifications.error("Missing actor or weapon for damage roll.");
     return null;
   }
+
+  // Statblock NPCs can roll printed damage formula until explicitly leveled.
+  if (actor.type === "npc") {
+    const mode = actor.getFlag?.("swse", "npcLevelUp.mode") ?? "statblock";
+    const npc = weapon?.flags?.swse?.npc;
+    const flatFormula = npc?.flatDamageFormula;
+
+    if (mode !== "progression" && npc?.useFlat === true && typeof flatFormula === "string" && flatFormula.trim()) {
+      const roll = await new Roll(flatFormula).evaluate({ async: true });
+      await roll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        flavor: `${actor.name} — ${weapon.name} Damage`
+      }, { create: true });
+      return roll;
+    }
+  }
+
 
   const baseFormula = weapon.system?.damage ?? "1d6";
   const dmgBonus = computeDamageBonus(actor, weapon, {

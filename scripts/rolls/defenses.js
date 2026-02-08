@@ -1,3 +1,4 @@
+import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 // ============================================
 // FILE: rolls/defenses.js
 // Defense calculations using SWSE utils
@@ -16,8 +17,7 @@ export function calculateDefense(actor, type) {
   if (!def) return 10;
 
   const base = 10;
-  const lvl = actor.system.level || 1;
-
+  
   // Use abilityKey if available, otherwise fall back to default abilities by type
   let abilityKey = def.abilityKey;
   if (!abilityKey) {
@@ -74,11 +74,10 @@ export function getDefenseWithCover(actor, type, coverType = "none") {
  */
 export function calculateFlatFooted(actor) {
   const base = 10;
-  const lvl = actor.system.level || 1;
-  const cls = actor.system.defenses.reflex?.classBonus || 0;
+    const cls = actor.system.defenses.reflex?.classBonus || 0;
   const misc = actor.system.defenses.reflex?.misc || 0;
 
-  return base + Math.floor(lvl / 2) + cls + misc;
+  return base + getEffectiveHalfLevel(actor) + cls + misc;
 }
 
 /**

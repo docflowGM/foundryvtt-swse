@@ -6,6 +6,17 @@
     <div class="step-indicator">Step: {{step}}</div>
   </header>
 
+  {{#if epicBlocked}}
+  <div class="swse-epic-banner epic-blocked">
+    <strong>Epic Override required.</strong> Levels beyond 20 are not officially supported.
+    Enable <em>System Settings → Epic Override (Allow Level 21+)</em> to proceed.
+  </div>
+  {{else if epicAdvisory}}
+  <div class="swse-epic-banner epic-advisory">
+    <strong>Epic Advisory Mode.</strong> Suggestions are informational only (no ranking / synergy scoring).
+  </div>
+  {{/if}}
+
   {{!-- STEP: CLASS --}}
   {{#if (eq step "class")}}
   <section>
@@ -147,14 +158,14 @@
     <h4>Force Powers</h4>
     <pre>{{json pending.forcePowers}}</pre>
 
-    <button class="finalize-levelup">Finalize Level Up</button>
+    <button class="finalize-levelup" {{#if epicBlocked}}disabled{{/if}}>Finalize Level Up</button>
     <button class="rollback-levelup">Rollback</button>
   </section>
   {{/if}}
 
   <footer class="nav-buttons">
-    <button class="prev-step">Back</button>
-    <button class="next-step">Next</button>
+    <button class="prev-step" {{#if epicBlocked}}disabled{{/if}}>Back</button>
+    <button class="next-step" {{#if epicBlocked}}disabled{{/if}}>Next</button>
   </footer>
 
 </div>

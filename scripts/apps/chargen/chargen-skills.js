@@ -199,3 +199,23 @@ export function _bindSkillsUI(root) {
     skillsContainer.appendChild(row);
   }
 }
+
+/**
+ * Bind Skill card UX (flip).
+ * AppV2-safe: assigns onclick on the step per render.
+ */
+export function _bindSkillCardUI(root) {
+  const step = root.querySelector('.step-skills');
+  if (!step) return;
+
+  step.onclick = (ev) => {
+    const btn = ev.target.closest('button');
+    if (!btn) return;
+
+    if (!btn.classList.contains('skill-details-toggle')) return;
+
+    ev.preventDefault();
+    const card = btn.closest('.skill-card');
+    card?.classList.toggle('is-flipped');
+  };
+}

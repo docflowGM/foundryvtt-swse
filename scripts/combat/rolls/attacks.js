@@ -1,3 +1,4 @@
+import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
 // - Uses new Active Effects engine
@@ -14,8 +15,17 @@
  * @returns {number}
  */
 function computeAttackBonus(actor, weapon, actionId = null) {
+  // Statblock NPCs can use stored totals until explicitly leveled.
+  if (actor?.type === 'npc') {
+    const mode = actor.getFlag?.('swse', 'npcLevelUp.mode') ?? 'statblock';
+    const npc = weapon?.flags?.swse?.npc;
+    if (mode !== 'progression' && npc?.useFlat === true && Number.isFinite(npc.flatAttackBonus)) {
+      return Number(npc.flatAttackBonus) || 0;
+    }
+  }
+
   const lvl = actor.system.level ?? 1;
-  const halfLvl = Math.floor(lvl / 2);
+  const halfLvl = getEffectiveHalfLevel(actor);
 
   const bab = actor.system.bab ?? 0;
 
@@ -86,7 +96,7 @@ export async function rollAttack(actor, weapon) {
  */
 function computeDamageBonus(actor, weapon) {
   const lvl = actor.system.level ?? 1;
-  const halfLvl = Math.floor(lvl / 2);
+  const halfLvl = getEffectiveHalfLevel(actor);
 
   let bonus = halfLvl + (weapon.system?.attackBonus ?? 0);
 

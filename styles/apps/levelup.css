@@ -651,3 +651,64 @@
     flex: 1;
   }
 }
+
+
+/* ================================================================= */
+/* EPIC LEVEL UP (UI)                                                */
+/* ================================================================= */
+
+.swse-epic-banner {
+  position: relative;
+  margin: 0.75rem 0 0.5rem;
+  padding: 0.75rem 0.85rem 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.swse-epic-banner::before {
+  content: "EPIC LEVEL UP";
+  display: inline-block;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  margin-right: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.swse-epic-banner.epic-blocked {
+  border-color: rgba(255, 80, 80, 0.45);
+  background: rgba(255, 80, 80, 0.10);
+}
+
+.swse-epic-banner.epic-blocked::before {
+  border-color: rgba(255, 80, 80, 0.55);
+  background: rgba(255, 80, 80, 0.18);
+}
+
+.swse-epic-banner.epic-advisory {
+  border-color: rgba(255, 200, 0, 0.45);
+  background: rgba(255, 200, 0, 0.10);
+}
+
+.swse-epic-banner.epic-advisory::before {
+  border-color: rgba(255, 200, 0, 0.55);
+  background: rgba(255, 200, 0, 0.18);
+}
+
+/* Small inline badge used in header buttons */
+.swse-epic-required {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.08rem 0.35rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border: 1px solid rgba(255, 80, 80, 0.55);
+  background: rgba(255, 80, 80, 0.18);
+}
+

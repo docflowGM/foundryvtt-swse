@@ -7,7 +7,7 @@ import { SKILL_ABILITY_MAP } from '../../scripts/core/constants.js';
 export function calculateSkills(actor) {
   const sys = actor.system;
   const level = sys.level || 1;
-  const halfLevel = Math.floor(level / 2);
+  const halfLevel = Math.trunc(level / 2);
   const penalty = actor.conditionPenalty || 0;
   
   for (const [skillKey, skill] of Object.entries(sys.skills)) {

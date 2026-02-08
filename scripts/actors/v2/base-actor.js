@@ -6,6 +6,7 @@ import { computeCharacterDerived } from "./character-actor.js";
 import { computeNpcDerived } from "./npc-actor.js";
 import { computeDroidDerived } from "./droid-actor.js";
 import { computeVehicleDerived } from "./vehicle-actor.js";
+import { shouldSkipDerivedData } from "../../utils/hardening.js";
 
 /**
  * SWSE V2 Base Actor
@@ -29,8 +30,9 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     system.derived.meta ??= {};
 
     // v2: Compute HP, BAB, and defenses from progression data
+    // Statblock NPCs must NOT be re-derived during AppV2 renders.
     // This is async but we fire-and-forget since Foundry doesn't await prepareDerivedData
-    this._computeDerivedAsync(system);
+    if (!shouldSkipDerivedData(this)) this._computeDerivedAsync(system);
 
     switch (this.type) {
       case "character":

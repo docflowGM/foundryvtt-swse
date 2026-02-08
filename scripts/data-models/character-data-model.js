@@ -2,6 +2,7 @@ import { DefenseSystem } from "../engine/DefenseSystem.js";
 import { SWSELogger } from '../utils/logger.js';
 import { SWSEActorDataModel } from './actor-data-model.js';
 import { SpeciesTraitEngine } from '../species/species-trait-engine.js';
+import { warnIfMixedTracks } from "../utils/hardening.js";
 
 export class SWSECharacterDataModel extends SWSEActorDataModel {
 
@@ -166,6 +167,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
   }
 
   prepareDerivedData() {
+    const actor = this.parent;
+
     // Ensure attributes exist
     if (!this.attributes) {
       this.attributes = {
@@ -202,10 +205,6 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       };
     }
 
-    // Calculate half level (for skills and other calculations)
-    const level = this.level || 1;
-    this.halfLevel = Math.floor(level / 2);
-
     // Calculate Condition Track penalty
     // Official SWSE: Normal(0), -1(1), -2(2), -5(3), -10(4), Helpless(5)
     if (this.conditionTrack) {
@@ -233,6 +232,12 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Calculate multiclass BAB and defenses BEFORE calling parent
     this._calculateMulticlassStats();
+    // Calculate half level (heroic-only in progression mode; preserve legacy total level in NPC statblock mode)
+    const isNpc = actor?.type === 'npc';
+    const npcMode = isNpc ? (actor.getFlag?.('swse', 'npcLevelUp.mode') ?? 'statblock') : 'progression';
+    const effectiveLevel = (isNpc && npcMode !== 'progression') ? (this.level || 1) : (this.heroicLevel || 0);
+    this.halfLevel = Math.floor((Number(effectiveLevel) || 0) / 2);
+
 
     // Call parent methods individually (skip parent's prepareDerivedData to avoid wrong level usage)
     this._calculateAbilities();
@@ -620,6 +625,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Set calculated values
     this.bab = totalBAB;
+    warnIfMixedTracks(actor, "_calculateMulticlassStats");
     this.baseAttack = totalBAB; // For compatibility
     this.heroicLevel = heroicLevel; // Store for defense calculations
     this.nonheroicLevel = nonheroicLevel; // Store for reference

@@ -13,6 +13,7 @@
 import { HooksRegistry } from './hooks-registry.js';
 import { SWSELogger } from '../utils/logger.js';
 import { createItemMacro } from '../macros/item-macro.js';
+import registerLevelUpSheetHooks from './levelup-sheet-hooks.js';
 
 /**
  * Register all UI-related hooks
@@ -98,6 +99,9 @@ export function registerUIHooks() {
         description: 'Create macros from hotbar drops',
         category: 'ui'
     });
+
+    // Actor sheet header integration (Level Up)
+    registerLevelUpSheetHooks();
 
     SWSELogger.log("SWSE | UI hooks initialized");
 }

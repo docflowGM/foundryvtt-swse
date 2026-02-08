@@ -26,7 +26,23 @@ export default class SWSEFormApplication extends HandlebarsApplicationMixin(Form
         }
     );
 
-    /**
+    
+
+  /**
+   * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
+   * This bridges legacy apps to the V2 accessor.
+   * @returns {object}
+   */
+  static get defaultOptions() {
+    const base = super.defaultOptions ?? super.DEFAULT_OPTIONS ?? {};
+    const legacy = this.DEFAULT_OPTIONS ?? {};
+    const clone = foundry.utils?.deepClone?.(base)
+      ?? foundry.utils?.duplicate?.(base)
+      ?? { ...base };
+    return foundry.utils.mergeObject(clone, legacy);
+  }
+
+/**
      * Check if running in Forge environment
      * @returns {boolean} True if Forge is active
      */
@@ -59,8 +75,13 @@ export default class SWSEFormApplication extends HandlebarsApplicationMixin(Form
      * @param {*} data - Optional data to log
      */
     _log(message, data = null) {
-        if (game.settings.get('foundryvtt-swse', 'debugMode')) {
-            swseLogger.log(`[SWSE FormApplication: ${this.constructor.name}] ${message}`, data || '');
+        try {
+            if (game.settings.get('foundryvtt-swse', 'debugMode')) {
+                const logger = globalThis.swseLogger ?? console;
+                logger.log(`[SWSE FormApplication: ${this.constructor.name}] ${message}`, data || '');
+            }
+        } catch {
+            // Ignore logging failures in early init or missing settings.
         }
     }
 

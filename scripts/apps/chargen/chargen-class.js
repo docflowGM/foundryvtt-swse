@@ -544,3 +544,35 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
 
 // ============================================================
 
+/**
+ * Bind Class card UX (flip + read).
+ * AppV2-safe: replaces onclick each render.
+ */
+export function _bindClassCardUI(root) {
+  const step = root.querySelector('.step-class');
+  if (!step) return;
+
+  step.onclick = async (ev) => {
+    const btn = ev.target.closest('button');
+    if (!btn) return;
+
+    const card = btn.closest('.class-card');
+
+    if (btn.classList.contains('class-details-toggle')) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      card?.classList.toggle('is-flipped');
+      return;
+    }
+
+    if (btn.classList.contains('class-read')) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const uuid = card?.dataset?.uuid;
+      if (!uuid) return;
+      const doc = await fromUuid(uuid);
+      doc?.sheet?.render(true);
+    }
+  };
+}
+

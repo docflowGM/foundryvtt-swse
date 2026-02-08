@@ -18,6 +18,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 
+import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 export class NobleTalentMechanics {
 
   /**
@@ -277,7 +278,7 @@ export class NobleTalentMechanics {
       };
     }
 
-    const tempHP = Math.max(5, Math.floor(actor.system.attributes.level / 2) * 5);
+    const tempHP = Math.max(5, getEffectiveHalfLevel(actor) * 5);
 
     return {
       success: true,

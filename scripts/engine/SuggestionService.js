@@ -20,6 +20,7 @@ import { getReasonRelevance } from '../suggestions/reason-relevance.js';
 import { ReasonFactory } from './ReasonFactory.js';
 import { ConfidenceScoring } from './ConfidenceScoring.js';
 import { SnapshotBuilder } from './SnapshotBuilder.js';
+import { getPlannedHeroicLevel, isEpicActor } from '../actors/derived/level-split.js';
 
 import { FeatEngine } from '../progression/feats/feat-engine.js';
 import { ForcePowerEngine } from '../progression/engine/force-power-engine.js';
@@ -142,6 +143,10 @@ export class SuggestionService {
     const actor = await _ensureActorDoc(actorOrData);
     const pendingData = options.pendingData ?? {};
     const focus = options.focus ?? null;
+
+    const plannedHeroicLevel = getPlannedHeroicLevel(actor, pendingData);
+    const epicAdvisory = isEpicActor(actor, plannedHeroicLevel);
+    options.epicAdvisory = epicAdvisory;
 
     // Build canonical snapshot and compute stable hash
     // Hash includes: level, abilities, items, focus, and pending selections
@@ -490,6 +495,18 @@ export class SuggestionService {
         } catch (err) {
           suggestion.confidence = 0.5; // Default moderate confidence on error
         }
+      }
+
+      if (options.epicAdvisory) {
+        // Epic Advisory Mode: tolerate epic play without implying mechanical support.
+        suggestion.isSuggested = false;
+        if (suggestion?.suggestion) {
+          suggestion.suggestion.tier = 0;
+          suggestion.suggestion.reason = "Epic advisory mode (no ranking)";
+          suggestion.suggestion.confidence = 0.25;
+        }
+        suggestion.confidence = 0.25;
+        suggestion.advisory = true;
       }
 
       // Explanation: prefer SuggestionExplainer (mentor-safe, build-aware). Fallback to minimal.

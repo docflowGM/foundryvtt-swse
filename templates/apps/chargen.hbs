@@ -866,7 +866,7 @@
  {{!-- Filter and Random Background Buttons --}}
  <div class="background-controls">
  <button type="button" class="background-filter-btn btn-secondary">
- <i class="{{getIconClass 'search'}}"></i> Filter by Skill
+ <i class="{{getIconClass 'search'}}"></i> Filters
  </button>
  {{#unless characterData.background}}
  <button type="button" class="random-background-btn btn-secondary">
@@ -936,6 +936,29 @@
  </div>
  </div>
  {{else}}
+
+ {{!-- Inline Filters (no modal) --}}
+ <div class="background-filter-panel collapsed">
+   <div class="background-filter-top">
+     <input type="search" class="background-search-input" placeholder="Search backgrounds…" value="{{characterData.backgroundSearch}}" />
+     <button type="button" class="clear-background-filters btn-secondary" title="Clear filters">
+       <i class="{{getIconClass 'times'}}"></i>
+     </button>
+   </div>
+
+   <div class="background-filter-groups">
+     <div class="filter-group">
+       <div class="filter-group-title">Skills</div>
+       <div class="chip-row" id="background-skill-chips"></div>
+     </div>
+
+     <div class="filter-group">
+       <div class="filter-group-title">Languages</div>
+       <div class="chip-row" id="background-language-chips"></div>
+     </div>
+   </div>
+ </div>
+
  {{!-- Background Selection Grid --}}
  <div class="background-selection-grid" id="background-selection-grid">
  {{!-- Cards will be populated by JavaScript based on selected category --}}
@@ -1084,19 +1107,36 @@
 
  <div class="class-grid">
  {{#each packs.classes}}
- <div class="class-choice-btn {{#if (eq this.name ../characterData.classes.[0].name)}}selected{{/if}}" data-class="{{this.name}}">
- <div class="class-icon">
- <i class="fas {{this.icon}}"></i>
- </div>
- <h3>{{this.name}}</h3>
- <p class="class-desc">{{this.description}}</p>
- <div class="class-stats">
- <span>Hit Die: {{this.displayHitDie}}</span>
- <span>{{this.displayBAB}}</span>
- </div>
- <div class="select-overlay">
- <span>Select {{this.name}}</span>
- </div>
+ <div class="class-card {{#if (eq this.name ../characterData.classes.[0].name)}}selected{{/if}}" data-uuid="{{this.uuid}}">
+   <div class="class-card-inner">
+     <div class="class-card-face class-card-front">
+       <div class="class-icon">
+         <i class="fas {{this.icon}}"></i>
+       </div>
+       <h3>{{this.name}}</h3>
+       <p class="class-desc">{{this.description}}</p>
+       <div class="class-stats">
+         <span>Hit Die: {{this.displayHitDie}}</span>
+         <span>{{this.displayBAB}}</span>
+         {{#if this.system.trainedSkills}}<span>Trained Skills: {{this.system.trainedSkills}}</span>{{/if}}
+       </div>
+     </div>
+     <div class="class-card-face class-card-back">
+       <h3>{{this.name}}</h3>
+       <p class="class-desc-long">{{this.description}}</p>
+       <div class="class-stats">
+         <span>Hit Die: {{this.displayHitDie}}</span>
+         <span>{{this.displayBAB}}</span>
+         {{#if this.system.trainedSkills}}<span>Trained Skills: {{this.system.trainedSkills}}</span>{{/if}}
+         {{#if this.system.forceSensitive}}<span>Force: Yes</span>{{/if}}
+       </div>
+     </div>
+   </div>
+   <div class="class-card-actions">
+     <button type="button" class="class-details-toggle btn-secondary">Details</button>
+     <button type="button" class="class-read btn-secondary" {{#unless this.uuid}}disabled{{/unless}}>Read</button>
+     <button type="button" class="select-class btn-primary" data-class="{{this.name}}">Select</button>
+   </div>
  </div>
  {{/each}}
  </div>
@@ -1160,44 +1200,67 @@
  <p class="category-description">{{../description}}</p>
  <div class="feats-grid">
  {{#each this.feats}}
- <div class="feat-card {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.featLevel}}feat-level-{{this.featLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" data-feat-id="{{this._id}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
-<button type="button" class="feat-icon-btn select-feat" data-featid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
-<div class="feat-icon-wrapper">
-<img src="systems/foundryvtt-swse/assets/feats/{{this.name}}.png" alt="{{this.name}}" class="feat-icon" onerror="this.style.display='none'">
-{{#if this.suggestion.iconClass}}
-<span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
-<i class="{{this.suggestion.iconClass}}"></i>
-</span>
-{{/if}}
-{{#if this.metadata.chain}}
-<span class="feat-chain-indicator">{{this.featLevel}}</span>
-{{/if}}
-</div>
-<div class="feat-name">{{this.name}}</div>
-</button>
-<div class="feat-tooltip">
-<div class="feat-tooltip-title">{{this.name}}</div>
-{{#if this.system.benefit}}
-<div class="feat-tooltip-benefit">{{this.system.benefit}}</div>
-{{/if}}
-{{#if this.system.prerequisites}}
-<div class="feat-tooltip-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</div>
-{{/if}}
-{{#if this.prereqReasons}}
-<div class="feat-tooltip-unmet-prereqs" style="color: #ff5555; margin-top: 0.5em;">
-  <strong>⚠ Cannot take:</strong>
-  <ul style="margin: 0.3em 0 0 1.2em; padding: 0;">
-  {{#each this.prereqReasons}}
-    <li style="font-size: 0.9em;">{{this}}</li>
-  {{/each}}
-  </ul>
-</div>
-{{/if}}
-{{#if this.suggestion.reason}}
-<div class="feat-tooltip-suggestion">💡 {{this.suggestion.reason}}</div>
-{{/if}}
-</div>
-</div>
+ <div class="feat-card {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.featLevel}}feat-level-{{this.featLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" data-feat-id="{{this._id}}" data-uuid="{{this.uuid}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+  <div class="feat-card-inner">
+    <div class="feat-card-face feat-card-front">
+      <button type="button" class="feat-icon-btn select-feat" data-featid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
+        <div class="feat-icon-wrapper">
+          <img src="systems/foundryvtt-swse/assets/feats/{{this.name}}.png" alt="{{this.name}}" class="feat-icon" onerror="this.style.display='none'">
+          {{#if this.suggestion.iconClass}}
+          <span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+            <i class="{{this.suggestion.iconClass}}"></i>
+          </span>
+          {{/if}}
+          {{#if this.metadata.chain}}
+          <span class="feat-chain-indicator">{{this.featLevel}}</span>
+          {{/if}}
+        </div>
+        <div class="feat-name">{{this.name}}</div>
+      </button>
+      <div class="feat-tooltip">
+        <div class="feat-tooltip-title">{{this.name}}</div>
+        {{#if this.system.benefit}}
+        <div class="feat-tooltip-benefit">{{this.system.benefit}}</div>
+        {{/if}}
+        {{#if this.system.prerequisites}}
+        <div class="feat-tooltip-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</div>
+        {{/if}}
+        {{#if this.prereqReasons}}
+        <div class="feat-tooltip-unmet-prereqs" style="color: #ff5555; margin-top: 0.5em;">
+          <strong>⚠ Cannot take:</strong>
+          <ul style="margin: 0.3em 0 0 1.2em; padding: 0;">
+          {{#each this.prereqReasons}}
+            <li style="font-size: 0.9em;">{{this}}</li>
+          {{/each}}
+          </ul>
+        </div>
+        {{/if}}
+        {{#if this.suggestion.reason}}
+        <div class="feat-tooltip-suggestion">💡 {{this.suggestion.reason}}</div>
+        {{/if}}
+      </div>
+    </div>
+    <div class="feat-card-face feat-card-back">
+      <div class="feat-back-title">{{this.name}}</div>
+      {{#if this.system.prerequisites}}<div class="feat-back-row"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</div>{{/if}}
+      {{#if this.system.benefit}}<div class="feat-back-row"><strong>Benefit:</strong> {{this.system.benefit}}</div>{{/if}}
+      {{#if this.system.special}}<div class="feat-back-row"><strong>Special:</strong> {{this.system.special}}</div>{{/if}}
+      {{#if this.prereqReasons}}
+      <div class="feat-back-row unmet">
+        <strong>Cannot take:</strong>
+        <ul>
+        {{#each this.prereqReasons}}<li>{{this}}</li>{{/each}}
+        </ul>
+      </div>
+      {{/if}}
+      {{#if this.suggestion.reason}}<div class="feat-back-row suggestion">💡 {{this.suggestion.reason}}</div>{{/if}}
+    </div>
+  </div>
+  <div class="feat-card-actions">
+    <button type="button" class="feat-details-toggle btn-secondary">Details</button>
+    <button type="button" class="feat-read btn-secondary" {{#unless this.uuid}}disabled{{/unless}}>Read</button>
+  </div>
+ </div>
 {{/each}}
  </div>
  </div>
@@ -1208,44 +1271,67 @@
  {{else}}
  <div class="feats-list">
  {{#each packs.feats}}
- <div class="feat-card {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.featLevel}}feat-level-{{this.featLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" data-feat-id="{{this._id}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
-<button type="button" class="feat-icon-btn select-feat" data-featid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
-<div class="feat-icon-wrapper">
-<img src="systems/foundryvtt-swse/assets/feats/{{this.name}}.png" alt="{{this.name}}" class="feat-icon" onerror="this.style.display='none'">
-{{#if this.suggestion.iconClass}}
-<span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
-<i class="{{this.suggestion.iconClass}}"></i>
-</span>
-{{/if}}
-{{#if this.metadata.chain}}
-<span class="feat-chain-indicator">{{this.featLevel}}</span>
-{{/if}}
-</div>
-<div class="feat-name">{{this.name}}</div>
-</button>
-<div class="feat-tooltip">
-<div class="feat-tooltip-title">{{this.name}}</div>
-{{#if this.system.benefit}}
-<div class="feat-tooltip-benefit">{{this.system.benefit}}</div>
-{{/if}}
-{{#if this.system.prerequisites}}
-<div class="feat-tooltip-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</div>
-{{/if}}
-{{#if this.prereqReasons}}
-<div class="feat-tooltip-unmet-prereqs" style="color: #ff5555; margin-top: 0.5em;">
-  <strong>⚠ Cannot take:</strong>
-  <ul style="margin: 0.3em 0 0 1.2em; padding: 0;">
-  {{#each this.prereqReasons}}
-    <li style="font-size: 0.9em;">{{this}}</li>
-  {{/each}}
-  </ul>
-</div>
-{{/if}}
-{{#if this.suggestion.reason}}
-<div class="feat-tooltip-suggestion">💡 {{this.suggestion.reason}}</div>
-{{/if}}
-</div>
-</div>
+ <div class="feat-card {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.featLevel}}feat-level-{{this.featLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}} {{#unless this.isQualified}}unqualified{{/unless}}" data-feat-id="{{this._id}}" data-uuid="{{this.uuid}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+  <div class="feat-card-inner">
+    <div class="feat-card-face feat-card-front">
+      <button type="button" class="feat-icon-btn select-feat" data-featid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
+        <div class="feat-icon-wrapper">
+          <img src="systems/foundryvtt-swse/assets/feats/{{this.name}}.png" alt="{{this.name}}" class="feat-icon" onerror="this.style.display='none'">
+          {{#if this.suggestion.iconClass}}
+          <span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+            <i class="{{this.suggestion.iconClass}}"></i>
+          </span>
+          {{/if}}
+          {{#if this.metadata.chain}}
+          <span class="feat-chain-indicator">{{this.featLevel}}</span>
+          {{/if}}
+        </div>
+        <div class="feat-name">{{this.name}}</div>
+      </button>
+      <div class="feat-tooltip">
+        <div class="feat-tooltip-title">{{this.name}}</div>
+        {{#if this.system.benefit}}
+        <div class="feat-tooltip-benefit">{{this.system.benefit}}</div>
+        {{/if}}
+        {{#if this.system.prerequisites}}
+        <div class="feat-tooltip-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</div>
+        {{/if}}
+        {{#if this.prereqReasons}}
+        <div class="feat-tooltip-unmet-prereqs" style="color: #ff5555; margin-top: 0.5em;">
+          <strong>⚠ Cannot take:</strong>
+          <ul style="margin: 0.3em 0 0 1.2em; padding: 0;">
+          {{#each this.prereqReasons}}
+            <li style="font-size: 0.9em;">{{this}}</li>
+          {{/each}}
+          </ul>
+        </div>
+        {{/if}}
+        {{#if this.suggestion.reason}}
+        <div class="feat-tooltip-suggestion">💡 {{this.suggestion.reason}}</div>
+        {{/if}}
+      </div>
+    </div>
+    <div class="feat-card-face feat-card-back">
+      <div class="feat-back-title">{{this.name}}</div>
+      {{#if this.system.prerequisites}}<div class="feat-back-row"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</div>{{/if}}
+      {{#if this.system.benefit}}<div class="feat-back-row"><strong>Benefit:</strong> {{this.system.benefit}}</div>{{/if}}
+      {{#if this.system.special}}<div class="feat-back-row"><strong>Special:</strong> {{this.system.special}}</div>{{/if}}
+      {{#if this.prereqReasons}}
+      <div class="feat-back-row unmet">
+        <strong>Cannot take:</strong>
+        <ul>
+        {{#each this.prereqReasons}}<li>{{this}}</li>{{/each}}
+        </ul>
+      </div>
+      {{/if}}
+      {{#if this.suggestion.reason}}<div class="feat-back-row suggestion">💡 {{this.suggestion.reason}}</div>{{/if}}
+    </div>
+  </div>
+  <div class="feat-card-actions">
+    <button type="button" class="feat-details-toggle btn-secondary">Details</button>
+    <button type="button" class="feat-read btn-secondary" {{#unless this.uuid}}disabled{{/unless}}>Read</button>
+  </div>
+ </div>
 {{/each}}
  </div>
  {{/if}}
@@ -1301,10 +1387,15 @@
  {{#if (gt availableTalentTrees.length 0)}}
  <div class="talent-trees-grid">
  {{#each availableTalentTrees}}
- <button type="button" class="select-talent-tree choice-button" data-tree="{{this}}">
- <h4>{{this}}</h4>
- <p>Click to view talents in this tree</p>
- </button>
+ <div class="talent-tree-card">
+   <div class="talent-tree-card-body">
+     <h4>{{this}}</h4>
+     <p>Click to view talents in this tree</p>
+   </div>
+   <div class="talent-tree-card-actions">
+     <button type="button" class="select-talent-tree btn-primary" data-tree="{{this}}">View</button>
+   </div>
+ </div>
  {{/each}}
  </div>
  {{else}}
@@ -1339,24 +1430,32 @@
  {{!-- List View (hidden by default) --}}
  <div class="talents-list-view" style="display: none;">
  {{#each packs.talentsInTree}}
- <div class="talent-list-item {{#unless this.isQualified}}locked{{else}}available{{/unless}}">
- <button type="button" class="select-talent choice-button" data-talentid="{{this._id}}" {{#unless this.isQualified}}disabled{{/unless}}>
- <h4>{{this.name}}</h4>
- {{#if this.system.description}}
- <p class="talent-description">{{this.system.description}}</p>
- {{/if}}
- {{#if this.system.prerequisites}}
- <p class="talent-prereqs"><em>Prerequisites: {{this.system.prerequisites}}</em></p>
- {{/if}}
- {{#if this.prereqReasons}}
- <p class="talent-unmet-prereqs" style="color: #ff5555; margin: 0.3em 0; font-weight: bold; font-size: 0.9em;">
- ⚠ Cannot take:
- {{#each this.prereqReasons}}
-   {{#unless @first}}<br>{{/unless}}{{this}}
- {{/each}}
- </p>
- {{/if}}
- </button>
+ <div class="talent-card {{#unless this.isQualified}}locked{{else}}available{{/unless}}" data-uuid="{{this.uuid}}" data-talent-id="{{this._id}}">
+   <div class="talent-card-inner">
+     <div class="talent-card-face talent-card-front">
+       <h4 class="talent-title">{{this.name}}</h4>
+       {{#if this.system.description}}
+       <p class="talent-description">{{this.system.description}}</p>
+       {{/if}}
+     </div>
+     <div class="talent-card-face talent-card-back">
+       <h4 class="talent-title">{{this.name}}</h4>
+       {{#if this.system.prerequisites}}<p class="talent-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</p>{{/if}}
+       {{#if this.prereqReasons}}
+       <div class="talent-unmet">
+         <strong>Cannot take:</strong>
+         <ul>
+         {{#each this.prereqReasons}}<li>{{this}}</li>{{/each}}
+         </ul>
+       </div>
+       {{/if}}
+     </div>
+   </div>
+   <div class="talent-card-actions">
+     <button type="button" class="talent-details-toggle btn-secondary">Details</button>
+     <button type="button" class="talent-read btn-secondary" {{#unless this.uuid}}disabled{{/unless}}>Read</button>
+     <button type="button" class="select-talent btn-primary" data-talentid="{{this._id}}" data-talentname="{{this.name}}" {{#unless this.isQualified}}disabled{{/unless}}>Select</button>
+   </div>
  </div>
  {{/each}}
  </div>
@@ -1409,16 +1508,24 @@
 
  <div class="force-powers-list">
  {{#each availableForcePowers}}
- <div class="power-item power-with-tooltip" data-tooltip="{{this.system.description}}">
- <button type="button" class="select-power choice-button" data-powerid="{{this._id}}">
- <h4>{{this.name}}</h4>
- {{#if this.system.powerLevel}}
- <p class="power-level"><strong>Power Level:</strong> {{this.system.powerLevel}}</p>
- {{/if}}
- {{#if this.system.prerequisites}}
- <p class="power-prereqs"><em>Prerequisites: {{this.system.prerequisites}}</em></p>
- {{/if}}
- </button>
+ <div class="power-card" data-uuid="{{this.uuid}}">
+   <div class="power-card-inner">
+     <div class="power-card-face power-card-front">
+       <h4>{{this.name}}</h4>
+       {{#if this.system.powerLevel}}<p class="power-level"><strong>Power Level:</strong> {{this.system.powerLevel}}</p>{{/if}}
+       {{#if this.system.prerequisites}}<p class="power-prereqs"><em>Prerequisites: {{this.system.prerequisites}}</em></p>{{/if}}
+     </div>
+     <div class="power-card-face power-card-back">
+       <h4>{{this.name}}</h4>
+       {{#if this.system.description}}<p class="power-description">{{this.system.description}}</p>{{/if}}
+       {{#if this.system.prerequisites}}<p class="power-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</p>{{/if}}
+     </div>
+   </div>
+   <div class="power-card-actions">
+     <button type="button" class="power-details-toggle btn-secondary">Details</button>
+     <button type="button" class="power-read btn-secondary" {{#unless this.uuid}}disabled{{/unless}}>Read</button>
+     <button type="button" class="select-power btn-primary" data-powerid="{{this._id}}">Select</button>
+   </div>
  </div>
  {{/each}}
  </div>
@@ -1464,16 +1571,27 @@
 
  <div class="maneuvers-list">
  {{#each availableStarshipManeuvers}}
- <div class="maneuver-item maneuver-with-tooltip {{#unless this.prerequisitesMet}}disabled{{/unless}}" data-tooltip="{{this.description}}">
- <button type="button" class="select-maneuver choice-button {{#unless this.prerequisitesMet}}disabled{{/unless}}" data-maneuverid="{{this.name}}" {{#unless this.prerequisitesMet}}disabled{{/unless}}>
- <h4>{{this.name}}</h4>
- {{#if this.actionType}}
- <p class="maneuver-action"><strong>Action:</strong> {{this.actionType}}</p>
- {{/if}}
- {{#if this.prerequisiteReasons.length}}
- <p class="maneuver-prereqs"><em style="color: #d32f2f;">{{#each this.prerequisiteReasons}}{{this}}{{#unless @last}}<br/>{{/unless}}{{/each}}</em></p>
- {{/if}}
- </button>
+ <div class="maneuver-card {{#unless this.prerequisitesMet}}disabled{{/unless}}">
+   <div class="maneuver-card-inner">
+     <div class="maneuver-card-face maneuver-card-front">
+       <h4>{{this.name}}</h4>
+       {{#if this.actionType}}<p class="maneuver-action"><strong>Action:</strong> {{this.actionType}}</p>{{/if}}
+       {{#if this.prerequisiteReasons.length}}
+       <p class="maneuver-prereqs"><em style="color: #d32f2f;">{{#each this.prerequisiteReasons}}{{this}}{{#unless @last}}<br/>{{/unless}}{{/each}}</em></p>
+       {{/if}}
+     </div>
+     <div class="maneuver-card-face maneuver-card-back">
+       <h4>{{this.name}}</h4>
+       {{#if this.description}}<p class="maneuver-description">{{this.description}}</p>{{/if}}
+       {{#if this.prerequisiteReasons.length}}
+       <p class="maneuver-prereqs"><strong>Prerequisites:</strong><br/>{{#each this.prerequisiteReasons}}{{this}}{{#unless @last}}<br/>{{/unless}}{{/each}}</p>
+       {{/if}}
+     </div>
+   </div>
+   <div class="maneuver-card-actions">
+     <button type="button" class="maneuver-details-toggle btn-secondary">Details</button>
+     <button type="button" class="select-maneuver btn-primary {{#unless this.prerequisitesMet}}disabled{{/unless}}" data-maneuverid="{{this.name}}" {{#unless this.prerequisitesMet}}disabled{{/unless}}>Select</button>
+   </div>
  </div>
  {{/each}}
  </div>
@@ -1506,42 +1624,48 @@
  </button>
  </div>
 
- <div class="skills-list-chargen">
- <div class="skills-header-row">
- <div class="skill-name-header">Skill</div>
- <div class="skill-train-header">Train</div>
- <div class="skill-ability-header">Ability</div>
- <div class="skill-racial-header">Racial</div>
- <div class="skill-total-header">Total</div>
- </div>
+ <div class="skills-card-grid">
  {{#each availableSkills}}
  {{#if this.isClassSkill}}
- <div class="skill-row-chargen {{#if this.trained}}trained{{/if}}" data-skill="{{this.key}}">
- <div class="skill-name-col">
- {{#if this.suggestion.iconClass}}
- <span class="skill-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
- <i class="{{this.suggestion.iconClass}}"></i>
- </span>
- {{/if}}
- <span class="skill-name">{{this.name}}</span>
- <span class="skill-ability-abbrev">({{uppercase (ternary (and ../characterData.isDroid (eq this.ability 'con')) 'str' this.ability)}})</span>
- </div>
- <div class="skill-train-col">
- <input type="checkbox"
- class="skill-select"
- data-skill="{{this.key}}"
- {{checked this.trained}}
- {{#if (and (not this.trained) (gte ../characterData.trainedSkillsCount ../characterData.trainedSkillsAllowed))}}disabled{{/if}}/>
- </div>
- <div class="skill-ability-col">
- {{#if (gte this.abilityMod 0)}}+{{/if}}{{this.abilityMod}}
- </div>
- <div class="skill-racial-col">
- {{#if (gt this.speciesBonus 0)}}+{{this.speciesBonus}}{{else}}—{{/if}}
- </div>
- <div class="skill-total-col">
- <span class="skill-total {{#if this.trained}}trained-total{{/if}}">{{#if (gte this.currentBonus 0)}}+{{/if}}{{this.currentBonus}}</span>
- </div>
+ <div class="skill-card {{#if this.trained}}trained{{/if}}" data-skill="{{this.key}}">
+   <div class="skill-card-inner">
+     <div class="skill-card-face skill-card-front">
+       <div class="skill-card-header">
+         <div class="skill-card-title">
+           {{#if this.suggestion.iconClass}}
+           <span class="skill-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+             <i class="{{this.suggestion.iconClass}}"></i>
+           </span>
+           {{/if}}
+           <span class="skill-name">{{this.name}}</span>
+           <span class="skill-ability-abbrev">({{uppercase (ternary (and ../characterData.isDroid (eq this.ability 'con')) 'str' this.ability)}})</span>
+         </div>
+         <span class="skill-total {{#if this.trained}}trained-total{{/if}}">{{#if (gte this.currentBonus 0)}}+{{/if}}{{this.currentBonus}}</span>
+       </div>
+       <div class="skill-card-stats">
+         <div class="skill-stat"><span class="stat-label">Ability</span><span class="stat-value">{{#if (gte this.abilityMod 0)}}+{{/if}}{{this.abilityMod}}</span></div>
+         <div class="skill-stat"><span class="stat-label">Racial</span><span class="stat-value">{{#if (gt this.speciesBonus 0)}}+{{this.speciesBonus}}{{else}}—{{/if}}</span></div>
+         <div class="skill-stat"><span class="stat-label">Trained</span><span class="stat-value">{{#if this.trained}}Yes{{else}}No{{/if}}</span></div>
+       </div>
+     </div>
+     <div class="skill-card-face skill-card-back">
+       <h4>{{this.name}}</h4>
+       <p><strong>Key Ability:</strong> {{uppercase (ternary (and ../characterData.isDroid (eq this.ability 'con')) 'STR' this.ability)}}</p>
+       <p><strong>Formula:</strong> {{#if (gte this.abilityMod 0)}}+{{/if}}{{this.abilityMod}} (ability) + {{#if this.trained}}+5{{else}}0{{/if}} (trained) + {{#if (gt this.speciesBonus 0)}}+{{this.speciesBonus}}{{else}}0{{/if}} (racial) = {{#if (gte this.currentBonus 0)}}+{{/if}}{{this.currentBonus}}</p>
+       {{#if this.suggestion.reason}}<p class="skill-suggestion">💡 {{this.suggestion.reason}}</p>{{/if}}
+     </div>
+   </div>
+   <div class="skill-card-actions">
+     <button type="button" class="skill-details-toggle btn-secondary">Details</button>
+     <label class="skill-train-toggle">
+       <input type="checkbox"
+         class="skill-select"
+         data-skill="{{this.key}}"
+         {{checked this.trained}}
+         {{#if (and (not this.trained) (gte ../characterData.trainedSkillsCount ../characterData.trainedSkillsAllowed))}}disabled{{/if}}/>
+       Train
+     </label>
+   </div>
  </div>
  {{/if}}
  {{/each}}
@@ -1639,49 +1763,92 @@
  <div class="available-languages-section">
  <h4><i class="{{getIconClass 'globe'}}"></i> Available Languages</h4>
 
+ <div class="language-filter-bar">
+   <input type="search" class="language-search-input" placeholder="Search languages…" value="{{characterData.languageSearch}}" />
+   <div class="chip-row language-category-chips">
+     <button type="button" class="language-chip" data-category="">All</button>
+     <button type="button" class="language-chip" data-category="widelyUsed">Widely Used</button>
+     <button type="button" class="language-chip" data-category="localTrade">Local/Trade</button>
+   </div>
+ </div>
+
  {{!-- Widely Used Languages First --}}
  {{#if languageCategories.widelyUsed}}
- <div class="language-category">
+ <div class="language-category" data-category="widelyUsed">
  <h5 class="category-name">
  <i class="{{getIconClass 'star'}}"></i> {{languageCategories.widelyUsed.name}}
  </h5>
  <p class="category-description">{{languageCategories.widelyUsed.description}}</p>
- <div class="languages-grid">
+ <div class="languages-card-grid" data-lang-category="widelyUsed">
  {{#each languageCategories.widelyUsed.languages}}
- {{!-- Exclude both already-selected languages and granted species languages --}}
- {{#unless (or (contains ../../characterData.languages this) (contains ../../characterData.languageData.granted this))}}
- <button
- type="button"
- class="select-language language-button"
- data-language="{{this}}">
- {{this}}
- </button>
+ {{#unless (or (contains ../../characterData.languages this.name) (contains ../../characterData.languageData.granted this.name))}}
+ <div class="language-card" data-language="{{this.name}}" data-uuid="{{this.uuid}}" data-category="widelyUsed">
+   <div class="language-card-inner">
+     <div class="language-card-face language-card-front">
+       <h5 class="language-name">{{this.name}}</h5>
+       <div class="language-badges">
+         {{#if this.isLocal}}<span class="badge badge-local">Local</span>{{/if}}
+       </div>
+     </div>
+     <div class="language-card-face language-card-back">
+       <h5 class="language-name">{{this.name}}</h5>
+       {{#if this.description}}
+         <div class="language-description">{{{this.description}}}</div>
+       {{else}}
+         <div class="language-description"><em>No description available.</em></div>
+       {{/if}}
+     </div>
+   </div>
+
+   <div class="language-card-actions">
+     <button type="button" class="language-details-toggle btn-tertiary">Details</button>
+     <button type="button" class="language-read btn-secondary" {{#unless this.uuid}}disabled{{/unless}}>Read</button>
+     <button type="button" class="select-language btn-primary" data-language="{{this.name}}">Select</button>
+   </div>
+ </div>
  {{/unless}}
  {{/each}}
- </div>
+</div>
  </div>
  {{/if}}
 
  {{!-- Local/Trade Languages Second --}}
  {{#if languageCategories.localTrade}}
- <div class="language-category">
+ <div class="language-category" data-category="localTrade">
  <h5 class="category-name">
  <i class="{{getIconClass 'mapMarkedAlt'}}"></i> {{languageCategories.localTrade.name}}
  </h5>
  <p class="category-description">{{languageCategories.localTrade.description}}</p>
- <div class="languages-grid">
+ <div class="languages-card-grid" data-lang-category="localTrade">
  {{#each languageCategories.localTrade.languages}}
- {{!-- Exclude both already-selected languages and granted species languages --}}
- {{#unless (or (contains ../../characterData.languages this) (contains ../../characterData.languageData.granted this))}}
- <button
- type="button"
- class="select-language language-button"
- data-language="{{this}}">
- {{this}}
- </button>
+ {{#unless (or (contains ../../characterData.languages this.name) (contains ../../characterData.languageData.granted this.name))}}
+ <div class="language-card" data-language="{{this.name}}" data-uuid="{{this.uuid}}" data-category="localTrade">
+   <div class="language-card-inner">
+     <div class="language-card-face language-card-front">
+       <h5 class="language-name">{{this.name}}</h5>
+       <div class="language-badges">
+         {{#if this.isLocal}}<span class="badge badge-local">Local</span>{{/if}}
+       </div>
+     </div>
+     <div class="language-card-face language-card-back">
+       <h5 class="language-name">{{this.name}}</h5>
+       {{#if this.description}}
+         <div class="language-description">{{{this.description}}}</div>
+       {{else}}
+         <div class="language-description"><em>No description available.</em></div>
+       {{/if}}
+     </div>
+   </div>
+
+   <div class="language-card-actions">
+     <button type="button" class="language-details-toggle btn-tertiary">Details</button>
+     <button type="button" class="language-read btn-secondary" {{#unless this.uuid}}disabled{{/unless}}>Read</button>
+     <button type="button" class="select-language btn-primary" data-language="{{this.name}}">Select</button>
+   </div>
+ </div>
  {{/unless}}
  {{/each}}
- </div>
+</div>
  </div>
  {{/if}}
  </div>

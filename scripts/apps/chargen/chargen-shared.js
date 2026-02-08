@@ -147,6 +147,8 @@ export class ChargenDataCache {
             // Create plain object from document, preserving all properties
             const obj = {
               _id: d._id,
+              // Stable UUID for "Read" actions (opens compendium sheet)
+              uuid: `Compendium.${packName}.${d._id}`,
               name: d.name,
               type: d.type,
               system: systemData,
@@ -172,6 +174,7 @@ export class ChargenDataCache {
             const fallbackSystem = d.system?.toObject?.() ?? (d.system ? { ...d.system } : {});
             return {
               _id: d._id,
+              uuid: `Compendium.${packName}.${d._id}`,
               name: d.name,
               type: d.type,
               system: fallbackSystem

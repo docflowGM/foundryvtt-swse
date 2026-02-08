@@ -188,3 +188,33 @@ export async function _getAvailableForcePowers() {
 
   return availablePowers;
 }
+
+/**
+ * Bind Force Power card UX (flip + read).
+ */
+export function _bindForcePowerCardUI(root) {
+  const step = root.querySelector('.step-force-powers');
+  if (!step) return;
+
+  step.onclick = async (ev) => {
+    const btn = ev.target.closest('button');
+    if (!btn) return;
+
+    const card = btn.closest('.power-card');
+    if (!card) return;
+
+    if (btn.classList.contains('power-details-toggle')) {
+      ev.preventDefault();
+      card.classList.toggle('is-flipped');
+      return;
+    }
+
+    if (btn.classList.contains('power-read')) {
+      ev.preventDefault();
+      const uuid = card.dataset.uuid;
+      if (!uuid) return;
+      const doc = await fromUuid(uuid);
+      doc?.sheet?.render(true);
+    }
+  };
+}

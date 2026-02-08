@@ -8,6 +8,8 @@ import { SkillRegistry } from "../../progression/skills/skill-registry-ui.js";
 import { FeatRegistry } from "../../progression/feats/feat-registry-ui.js";
 import { TalentRegistry } from "../../progression/talents/talent-registry-ui.js";
 import { ForceRegistry } from "../../progression/force/force-registry-ui.js";
+import { isEpicOverrideEnabled } from "../../settings/epic-override.js";
+import { getLevelSplit } from "../../actors/derived/level-split.js";
 
 // V2 API base class
 import SWSEFormApplicationV2 from '../base/swse-form-application-v2.js';
@@ -20,6 +22,23 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     this.actor = actor;
     this.engine = new ProgressionEngine(actor, "levelup");
 
+    const { heroicLevel, totalLevel } = getLevelSplit(this.actor);
+    const level = Number(heroicLevel) || Number(this.actor?.system?.level) || 1;
+    this._heroicLevel = level;
+    this._totalLevel = Number(totalLevel) || Number(this.actor?.system?.level) || level;
+    // Advisory metadata for downstream suggestion engines (if used)
+    try {
+      this.engine.pending = this.engine.pending || {};
+      this.engine.pending.newLevel = level + 1;
+      this.engine.pending.newHeroicLevel = level + 1;
+      this.engine.pending.plannedHeroicLevel = level + 1;
+      this.engine.pending.epicAdvisory = (level + 1) > 20 && isEpicOverrideEnabled();
+    } catch (err) {
+      // Non-fatal
+    }
+
+    this._epicBlocked = level >= 20 && !isEpicOverrideEnabled();
+
     this.currentStep = "class";
     this.available = {
       classes: [],
@@ -30,6 +49,8 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       forceSecrets: [],
       forceTechniques: []
     };
+  }
+    return super.render(force, options);
   }
 
   /** UI template */
@@ -45,8 +66,10 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
   /** UI title */
   get title() {
-    let lvl = this.actor.system.level;
-    return `Level Up — ${this.actor.name} (Level ${lvl} → ${lvl + 1})`;
+    const heroic = Number(this._heroicLevel) || Number(this.actor?.system?.level) || 1;
+    const total = Number(this._totalLevel) || heroic;
+    const totalLabel = total !== heroic ? ` • Total ${total}` : "";
+    return `Level Up — ${this.actor.name} (Heroic ${heroic} → ${heroic + 1}${totalLabel})`;
   }
 
   async _prepareContext() {
@@ -57,11 +80,23 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     data.available = this.available;
     data.pending = this.engine.pending;
 
+    data.epicOverrideEnabled = isEpicOverrideEnabled();
+    data.epicBlocked = this._epicBlocked;
+    data.heroicLevel = Number(this._heroicLevel) || Number(this.actor?.system?.level) || 1;
+    data.totalLevel = Number(this._totalLevel) || data.heroicLevel;
+    data.epicAdvisory = !this._epicBlocked && (Number(data.heroicLevel) || 0) >= 20 && data.epicOverrideEnabled;
+
     return data;
   }
 
   async _onRender(html, options) {
     await super._onRender(html, options);
+
+    if (this._epicBlocked) {
+      html.find(".swse-levelup-wrapper button").prop("disabled", true);
+      html.find(".rollback-levelup").prop("disabled", false);
+      return;
+    }
 
     html.find(".select-class").on("click", this._onSelectClass.bind(this));
     html.find(".select-skill").on("click", this._onSelectSkill.bind(this));

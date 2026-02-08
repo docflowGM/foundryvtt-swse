@@ -31,7 +31,22 @@ export class VehicleModificationApp extends SWSEApplication {
     }
   );
 
-  async _prepareContext(options) {
+  
+
+  /**
+   * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
+   * This bridges legacy apps to the V2 accessor.
+   * @returns {object}
+   */
+  static get defaultOptions() {
+    const base = super.defaultOptions ?? super.DEFAULT_OPTIONS ?? {};
+    const legacy = this.DEFAULT_OPTIONS ?? {};
+    const clone = foundry.utils?.deepClone?.(base)
+      ?? foundry.utils?.duplicate?.(base)
+      ?? { ...base };
+    return foundry.utils.mergeObject(clone, legacy);
+  }
+async _prepareContext(options) {
     const context = {};
 
     context.actor = this.actor;

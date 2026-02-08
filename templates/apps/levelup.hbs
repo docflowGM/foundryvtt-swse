@@ -14,16 +14,27 @@
       </label>
     </div>
     <div class="suggestion-tools">
-      <button type="button" class="show-prestige-roadmap" title="View prestige class progress and recommendations">
+      <button type="button" class="show-prestige-roadmap" {{#if epicBlocked}}disabled{{/if}} title="View prestige class progress and recommendations">
         <i class="{{getIconClass 'route'}}"></i> Prestige Roadmap
       </button>
       {{#if isGM}}
-      <button type="button" class="show-gm-debug-panel" title="View BuildIntent analysis (GM only)">
+      <button type="button" class="show-gm-debug-panel" {{#if epicBlocked}}disabled{{/if}} title="View BuildIntent analysis (GM only)">
         <i class="{{getIconClass 'bug'}}"></i> Debug
       </button>
       {{/if}}
     </div>
   </header>
+
+    {{#if epicBlocked}}
+    <div class="swse-epic-banner epic-blocked">
+      <strong>Epic Override required.</strong> Levels beyond 20 are not officially supported.
+      Enable <em>System Settings → Epic Override (Allow Level 21+)</em> to proceed.
+    </div>
+    {{else if epicAdvisory}}
+    <div class="swse-epic-banner epic-advisory">
+      <strong>Epic Advisory Mode.</strong> Suggestions are informational only (no ranking / synergy scoring).
+    </div>
+    {{/if}}
 
   {{!-- PROGRESS INDICATOR --}}
   <div class="progress-indicator">
@@ -488,7 +499,7 @@
 
         {{#if (eq multiclassBonusChoice "all_feats")}}
         <p>You will receive ALL starting feats from {{selectedClass.name}}!</p>
-        <button class="next-step btn-primary">
+        <button class="next-step btn-primary" {{#if epicBlocked}}disabled{{/if}}>
           Continue <i class="{{getIconClass 'arrowRight'}}"></i>
         </button>
         {{/if}}
@@ -545,7 +556,7 @@
         <button class="skip-step btn-warning" title="Skip this step (you'll need to add missing selections later)">
           <i class="{{getIconClass 'forward'}}"></i> Skip
         </button>
-        <button class="next-step btn-primary">
+        <button class="next-step btn-primary" {{#if epicBlocked}}disabled{{/if}}>
           Continue <i class="{{getIconClass 'arrowRight'}}"></i>
         </button>
       </div>
@@ -773,7 +784,7 @@
         <button class="skip-step btn-warning" title="Skip this step (you'll need to add missing selections later)">
           <i class="{{getIconClass 'forward'}}"></i> Skip
         </button>
-        <button class="next-step btn-primary">
+        <button class="next-step btn-primary" {{#if epicBlocked}}disabled{{/if}}>
           Continue <i class="{{getIconClass 'arrowRight'}}"></i>
         </button>
       </div>
@@ -840,7 +851,7 @@
         <button class="ask-mentor-force-power-suggestion btn-mentor" title="Get a suggestion from your mentor">
           <i class="{{getIconClass 'lightbulb'}}"></i> Ask {{mentor.name}}
         </button>
-        <button class="next-step btn-primary">
+        <button class="next-step btn-primary" {{#if epicBlocked}}disabled{{/if}}>
           Continue <i class="{{getIconClass 'arrowRight'}}"></i>
         </button>
       </div>
@@ -995,7 +1006,7 @@
         <button class="skip-step btn-warning" title="Skip this step (you'll need to add missing selections later)">
           <i class="{{getIconClass 'forward'}}"></i> Skip
         </button>
-        <button class="next-step btn-primary">
+        <button class="next-step btn-primary" {{#if epicBlocked}}disabled{{/if}}>
           Continue <i class="{{getIconClass 'arrowRight'}}"></i>
         </button>
       </div>

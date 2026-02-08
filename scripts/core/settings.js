@@ -1,5 +1,6 @@
 import { SWSELogger } from '../utils/logger.js';
 import { registerMetaTuningSettings } from '../engine/MetaTuning.js';
+import { registerEpicOverrideSetting } from '../settings/epic-override.js';
 
 /**
  * System settings for SWSE
@@ -69,6 +70,9 @@ export function registerSystemSettings() {
     type: Boolean,
     default: false
   });
+
+  // Epic Override
+  registerEpicOverrideSetting();
 
   // Theme Settings
   game.settings.register('foundryvtt-swse', "sheetTheme", {

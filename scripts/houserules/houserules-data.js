@@ -270,7 +270,7 @@ export function getSkillFocusBonus(level) {
 
   switch (variant) {
     case "scaled":
-      return Math.min(5, Math.floor(level / 2));
+      return Math.min(5, Math.trunc(level / 2));
 
     case "delayed": {
       const activation = getSafe("skillFocusActivationLevel", 7);

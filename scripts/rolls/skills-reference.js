@@ -1,3 +1,4 @@
+import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 /**
  * ==============================================
  * SWSE SKILLS - DATA MODEL & CALCULATIONS
@@ -175,8 +176,7 @@ const SKILLS_DATA_MODEL = {
  * Call this in your Actor's prepareData() method
  */
 function calculateSkills(actor) {
-  const level = actor.system.level || 1;
-  const halfLevel = Math.floor(level / 2);
+  const halfLevel = getEffectiveHalfLevel(actor);
   const abilities = actor.system.attributes;
   
   // Ability name mapping (convert skill ability to actual ability key)
@@ -249,7 +249,7 @@ class SWSEActor extends Actor {
 
     // Calculate half level
     const level = this.system.level || 1;
-    this.system.halfLevel = Math.floor(level / 2);
+    this.system.halfLevel = getEffectiveHalfLevel(this);
 
     // Calculate ability modifiers
     for (let [key, ability] of Object.entries(this.system.attributes)) {

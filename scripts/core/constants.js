@@ -43,7 +43,7 @@ export const BAB_PROGRESSIONS = {
 
 export const SAVE_PROGRESSIONS = {
   "slow": level => Math.floor(level / 3),
-  "fast": level => Math.floor(level / 2) + 2
+  "fast": level => Math.trunc(level / 2) + 2
 };
 
 export const SKILL_ABILITY_MAP = {

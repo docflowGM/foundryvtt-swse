@@ -9,6 +9,8 @@ import { SWSELogger } from '../utils/logger.js';
 import { resolveSkillKey, resolveSkillName } from '../utils/skill-resolver.js';
 import CharacterTemplates from './chargen/chargen-templates.js';
 
+
+const TEMPLATE_PATH = 'systems/foundryvtt-swse/templates/apps/template-creator.hbs';
 /**
  * Creates a character from a template with class-first selection
  */
@@ -16,20 +18,44 @@ export class TemplateCharacterCreator extends SWSEFormApplication {
 
   constructor(options = {}) {
     super(options);
+    // AppV2 render contract: template must be a non-null string.
+    const tpl = this.options?.template;
+    if (typeof tpl !== "string" || !tpl.trim()) {
+      console.error("[SWSE] TemplateCharacterCreator: invalid template option, using fallback.", {
+        template: tpl,
+        options: this.options
+      });
+      this.options.template = TEMPLATE_PATH;
+    }
     this.selectedClass = null;
     this.mentorDialogues = null;
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(SWSEFormApplication.DEFAULT_OPTIONS ?? {}, {
     classes: ['swse', 'template-creator', "swse-app"],
-    template: 'systems/foundryvtt-swse/templates/apps/template-creator.hbs',
+    template: TEMPLATE_PATH,
     width: 1000,
     height: 700,
     title: 'Character Template Creator',
     resizable: true
   });
 
-  async _prepareContext(options) {
+  
+
+  /**
+   * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
+   * This bridges legacy apps to the V2 accessor.
+   * @returns {object}
+   */
+  static get defaultOptions() {
+    const base = super.defaultOptions ?? super.DEFAULT_OPTIONS ?? {};
+    const legacy = this.DEFAULT_OPTIONS ?? {};
+    const clone = foundry.utils?.deepClone?.(base)
+      ?? foundry.utils?.duplicate?.(base)
+      ?? { ...base };
+    return foundry.utils.mergeObject(clone, legacy);
+  }
+async _prepareContext(options) {
     const context = await super._prepareContext(options);
 
     // Load mentor dialogues

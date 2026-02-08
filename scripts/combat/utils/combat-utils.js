@@ -1,3 +1,4 @@
+import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
 /**
  * Modern SWSE Combat Utilities (v13+)
  * - Condition Track integer-based penalties
@@ -33,8 +34,17 @@ export function getConditionPenalty(ctStep) {
  * @returns {number} Final attack bonus
  */
 export function computeAttackBonus(actor, weapon) {
+  // Statblock NPCs can use stored totals until explicitly leveled.
+  if (actor?.type === 'npc') {
+    const mode = actor.getFlag?.('swse', 'npcLevelUp.mode') ?? 'statblock';
+    const npc = weapon?.flags?.swse?.npc;
+    if (mode !== 'progression' && npc?.useFlat === true && Number.isFinite(npc.flatAttackBonus)) {
+      return Number(npc.flatAttackBonus) || 0;
+    }
+  }
+
   const level = actor.system.level ?? 1;
-  const halfLvl = Math.floor(level / 2);
+  const halfLvl = getEffectiveHalfLevel(actor);
 
   const bab = actor.system.bab ?? 0;
 
@@ -200,9 +210,7 @@ export function hasDexToDamageTalent(actor) {
  * @returns {number}
  */
 export function computeDamageBonus(actor, weapon, options = {}) {
-  const lvl = actor.system.level ?? 1;
-  const halfLvl = Math.floor(lvl / 2);
-
+  const halfLvl = getEffectiveHalfLevel(actor);
   let bonus = halfLvl + (weapon.system?.attackBonus ?? 0);
 
   const strMod = actor.system.attributes?.str?.mod ?? 0;

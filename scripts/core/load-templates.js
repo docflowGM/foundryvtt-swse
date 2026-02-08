@@ -167,6 +167,9 @@ export async function preloadHandlebarsTemplates() {
     // Item sheets
     'systems/foundryvtt-swse/templates/items/base/item-sheet.hbs',
 
+    // Apps / dialogs
+    'systems/foundryvtt-swse/templates/apps/npc-levelup-entry.hbs',
+
     // Less common partials
     'systems/foundryvtt-swse/templates/partials/ability-block.hbs',
     'systems/foundryvtt-swse/templates/partials/ability-scores.hbs',

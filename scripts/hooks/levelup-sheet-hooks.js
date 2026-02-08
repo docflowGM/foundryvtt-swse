@@ -1,34 +1,56 @@
 /**
  * Actor Sheet Integration for Level-Up UI
- * Adds a "Level Up" button to the actor sheet header
+ * Adds a "Level Up" button to actor sheet headers.
+ *
+ * Characters -> SWSELevelUpEnhanced
+ * NPCs        -> SWSENpcLevelUpEntry (heroic vs nonheroic)
  */
 
 import { SWSELevelUpEnhanced } from "../apps/levelup/levelup-enhanced.js";
+import { SWSENpcLevelUpEntry } from "../apps/levelup/npc-levelup-entry.js";
 import { SWSELogger } from "../utils/logger.js";
+import { isEpicOverrideEnabled } from "../settings/epic-override.js";
 
 /**
- * Register the level-up sheet hooks
+ * Register the level-up sheet hooks.
  */
 export function registerLevelUpSheetHooks() {
   Hooks.on("renderActorSheet", (sheet, html, data) => {
-    // Only add button to character sheets
-    if (data.actor.type !== "character") return;
+    const _isEpicBlocked = (actor) => {
+      const level = Number(actor?.system?.level) || 0;
+      return level >= 20 && !isEpicOverrideEnabled();
+    };
+    const actorType = data?.actor?.type;
+    if (actorType !== "character" && actorType !== "npc") return;
 
-    // V2 API: html may be HTMLElement or jQuery - normalize to HTMLElement
-    const root = html instanceof HTMLElement ? html : html[0];
+    const root = html instanceof HTMLElement ? html : html?.[0];
     if (!root) return;
 
-    // Create the level-up button using native DOM
-    const btn = document.createElement('button');
-    btn.className = 'swse-levelup-btn';
-    btn.title = 'Start level-up process';
-    btn.innerHTML = '<i class="fas fa-level-up-alt"></i> Level Up';
+    const titleEl = root.querySelector(".window-title");
+    const existing = root.querySelector(".swse-levelup-btn");
+    if (existing) return;
 
-    // Add click handler
+    const btn = document.createElement("button");
+    btn.className = "swse-levelup-btn";
+    const epicBlocked = actorType === "character" ? _isEpicBlocked(sheet.actor) : false;
+    btn.disabled = epicBlocked;
+    btn.title = epicBlocked
+      ? "Epic Override required to proceed beyond level 20 (System Settings → Epic Override)"
+      : "Start level-up process";
+    btn.innerHTML = epicBlocked
+      ? '<i class="fas fa-level-up-alt"></i> Level Up <span class="swse-epic-required">(Epic Override required)</span>'
+      : '<i class="fas fa-level-up-alt"></i> Level Up';
+
     btn.addEventListener("click", async (ev) => {
+      if (btn.disabled) return;
       ev.preventDefault();
       try {
-        new SWSELevelUpEnhanced(sheet.actor).render(true);
+        if (actorType === "character") {
+          new SWSELevelUpEnhanced(sheet.actor).render(true);
+        } else {
+          if (!game.user?.isGM) return ui.notifications.warn("GM only.");
+          new SWSENpcLevelUpEntry(sheet.actor).render(true);
+        }
         SWSELogger.log(`Opened level-up UI for ${sheet.actor.name}`);
       } catch (err) {
         SWSELogger.error("Failed to open level-up UI:", err);
@@ -36,12 +58,9 @@ export function registerLevelUpSheetHooks() {
       }
     });
 
-    // Insert button into header (after title, before other buttons)
-    const titleEl = root.querySelector(".window-title");
     if (titleEl) {
-      titleEl.insertAdjacentElement('afterend', btn);
+      titleEl.insertAdjacentElement("afterend", btn);
     } else {
-      // Fallback: add to header if structure is different
       const header = root.querySelector(".sheet-header");
       if (header) header.prepend(btn);
     }

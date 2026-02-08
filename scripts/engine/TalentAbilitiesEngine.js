@@ -18,6 +18,7 @@ import { SWSELogger } from '../utils/logger.js';
 import { SWSEActiveEffectsManager } from '../combat/active-effects-manager.js';
 import talentAbilitiesData from '../../data/talent-granted-abilities.json' with { type: 'json' };
 
+import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 /**
  * Active Effect definitions for toggleable talent abilities
  */
@@ -986,8 +987,7 @@ export class TalentAbilitiesEngine {
         // Check Melee Smash
         if (talentNames.has('melee-smash') &&
             this.checkCondition(actor, 'oneHandedOrUnarmed', context)) {
-            const level = actor.system?.level || 1;
-            const bonus = Math.floor(level / 2);
+            const bonus = getEffectiveHalfLevel(actor);
             if (bonus > 0) {
                 result.flatBonus += bonus;
                 result.breakdown.push(`Melee Smash: +${bonus}`);

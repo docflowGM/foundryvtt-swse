@@ -67,6 +67,16 @@ export class SWSEStore extends ApplicationV2 {
     template: "systems/foundryvtt-swse/templates/apps/store/store.hbs"
   };
 
+  static get defaultOptions() {
+    const base = super.defaultOptions ?? super.DEFAULT_OPTIONS ?? {};
+    const legacy = this.DEFAULT_OPTIONS ?? {};
+    const clone = foundry.utils?.deepClone?.(base)
+      ?? foundry.utils?.duplicate?.(base)
+      ?? { ...base };
+    return foundry.utils.mergeObject(clone, legacy);
+  }
+
+
   constructor(actor = null, options = {}) {
     super(options);
     this.actor = actor ?? null;

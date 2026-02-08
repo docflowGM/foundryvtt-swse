@@ -20,6 +20,7 @@
 import { SWSELogger } from '../utils/logger.js';
 import { BuildIdentityAnchor, ANCHOR_STATE } from './BuildIdentityAnchor.js';
 
+import { getLevelSplit } from '../actors/derived/level-split.js';
 export class ConfidenceScoring {
   /**
    * Compute confidence for a suggestion
@@ -143,7 +144,8 @@ export class ConfidenceScoring {
 
       // Expected items per level (ballpark)
       const expectedFeats = Math.max(1, level - 1); // 1st level gets 0
-      const expectedTalents = Math.floor(level / 2); // 1 talent per 2 levels
+      const { heroicLevel } = getLevelSplit(actor);
+      const expectedTalents = Math.floor((Number(heroicLevel) || 0) / 2); // heroic-only
       const expectedSkills = Math.max(1, level); // Should train at least 1 skill
 
       // Completeness = how close to expected

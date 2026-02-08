@@ -15,6 +15,7 @@
 
 import { SWSELogger } from "../utils/logger.js";
 
+import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 export class BlockMechanicalAlternative {
   /**
    * Initialize Block Mechanic Alternative
@@ -116,8 +117,7 @@ export class BlockMechanicalAlternative {
       const blockPenalty = this.getBlockPenalty(actor);
       const abilityMod = actor.system?.attributes[weapon.system?.attackAttribute || "str"]?.mod || 0;
       const bab = actor.system?.bab || 0;
-      const lvl = actor.system?.level || 1;
-      const halfLvl = Math.floor(lvl / 2);
+      const halfLvl = getEffectiveHalfLevel(actor);
       const weaponBonus = weapon.system?.attackBonus || 0;
 
       const totalBonus = bab + halfLvl + abilityMod + weaponBonus + blockPenalty;

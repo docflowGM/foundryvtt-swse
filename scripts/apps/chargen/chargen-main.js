@@ -1038,7 +1038,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           for (const category in context.languageCategories) {
             if (context.languageCategories[category].languages) {
               context.languageCategories[category].languages =
-                context.languageCategories[category].languages.filter(lang => !grantedLanguages.has(lang));
+                context.languageCategories[category].languages.filter((entry) => !grantedLanguages.has(entry?.name || entry));
             }
           }
         }
@@ -1467,7 +1467,6 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     bindChange('.species-filter-select', this._onSpeciesFilterChange);
     bindClick('.clear-species-filters', this._onClearSpeciesFilters);
     bindClick('.select-class', this._onSelectClass);
-    bindClick('.class-choice-btn', this._onSelectClass);
     bindClick('.select-feat', this._onSelectFeat);
     bindClick('.remove-feat', this._onRemoveFeat);
     bindChange('.filter-valid-feats', this._onToggleFeatFilter);
@@ -1499,6 +1498,18 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     bindClick('.remove-language', this._onRemoveLanguage);
     bindClick('.reset-languages-btn', this._onResetLanguages);
     bindClick('.add-custom-language-btn', this._onAddCustomLanguage);
+
+    if (this.currentStep === 'languages') {
+      this._bindLanguageCardUI(root);
+    }
+
+    // Card UX helpers (flip/read)
+    if (this.currentStep === 'class') this._bindClassCardUI(root);
+    if (this.currentStep === 'feats') this._bindFeatCardUI(root);
+    if (this.currentStep === 'talents') this._bindTalentCardUI(root);
+    if (this.currentStep === 'skills') this._bindSkillCardUI(root);
+    if (this.currentStep === 'force-powers') this._bindForcePowerCardUI(root);
+    if (this.currentStep === 'starship-maneuvers') this._bindManeuverCardUI(root);
 
     // Background selection
     bindClick('.random-background-btn', this._onRandomBackground);
@@ -1588,6 +1599,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       if (bgContainer && !this.characterData.background) {
         this._renderBackgroundCards(bgContainer);
       }
+
+      this._renderBackgroundFilterPanel(root);
 
       // Update narrator comment from mentor guidance
       if (!this.characterData.backgroundNarratorComment) {

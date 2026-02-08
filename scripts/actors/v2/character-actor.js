@@ -134,7 +134,7 @@ function mirrorAttacks(actor, system) {
       id: w.id,
       name: w.name,
       damage: data.damage ?? '',
-      range: data.rangeFormatted ?? data.range?.value ?? 'Melee',
+      range: data.rangeFormatted ?? (typeof data.range === "string" ? data.range : data.range?.value) ?? 'Melee',
       type: data.weaponType ?? data.category ?? '',
       notes: data.notes ?? '',
       actionId: `item:${w.id}:attack`,
