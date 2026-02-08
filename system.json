@@ -18,6 +18,7 @@
   "readme": "https://github.com/docflowGM/foundryvtt-swse/blob/main/README.md",
   "bugs": "https://github.com/docflowGM/foundryvtt-swse/issues",
   "changelog": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/CHANGELOG.md",
+  "discord": "https://discord.gg/Sdwd7CgmaJ",
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.2.0/foundryvtt-swse.zip",
@@ -75,7 +76,15 @@
     "styles/species/species-traits.css",
     "styles/components/talent-abilities.css",
     "styles/gm/suggestion-panel.css",
-    "styles/components/discovery.css"
+    "styles/components/discovery.css",
+    "styles/components/panels.css",
+    "styles/components/tabs.css",
+    "styles/core/variables.css",
+    "styles/fonts.css",
+    "styles/layout/sheet-layout.css",
+    "styles/sheets/themes/legacy/high-contrast.css",
+    "styles/sheets/themes/legacy/holo-default.css",
+    "styles/ui/wishlist.css"
   ],
   "languages": [
     {
@@ -120,7 +129,7 @@
     },
     {
       "type": "icon",
-      "url": "assets/ui/title-logo.png"
+      "url": "assets/ui/swse-logo.png"
     }
   ],
   "flagScopes": [
@@ -427,6 +436,27 @@
       "type": "Item",
       "system": "foundryvtt-swse",
       "path": "packs/talent-enhancements"
+    },
+    {
+      "name": "armor-shields",
+      "label": "Armor - Shields",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/armor-shields"
+    },
+    {
+      "name": "heroic",
+      "label": "Heroic Classes",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/heroic"
+    },
+    {
+      "name": "nonheroic",
+      "label": "Nonheroic Classes",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/nonheroic"
     },
     {
       "name": "npc",

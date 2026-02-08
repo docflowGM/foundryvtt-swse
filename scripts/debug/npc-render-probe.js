@@ -2,7 +2,7 @@
 import { HooksRegistry } from '../hooks/hooks-registry.js';
 import { DEBUG_SETTINGS } from './debug-settings.js';
 import { getLevelSplit } from '../actors/derived/level-split.js';
-import { getEffectiveHalfLevel } from '../actors/derived/half-level.js';
+import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 
 function isEnabled() {
   try {
