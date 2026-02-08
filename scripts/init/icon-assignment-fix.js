@@ -1,52 +1,47 @@
 /**
- * Icon Assignment Fix for SWSE
+ * Icon Assignment Fix for SWSE (v13-idiomatic)
  *
- * Foundry v13 expects scene control buttons to have inline --control-icon CSS variables,
- * but the assignment JS may not run or may fail. This hook manually assigns them.
- *
- * When scene controls are rendered, we iterate through all button.ui-control.icon elements
- * and assign --control-icon from CONFIG.controlIcons using the button's data-tool attribute.
+ * In Foundry v13, core tools define their own icons inline — no CSS var patching needed.
+ * This module only patches SWSE custom scene controls that are missing icons.
  */
 
 /**
- * Assign --control-icon CSS variables to all control buttons
- * Called from hooks when controls are rendered
+ * Patch icon CSS vars only for SWSE custom controls that lack an icon element.
  */
 function assignControlIcons() {
-  const buttons = document.querySelectorAll("button.ui-control.icon");
+  try {
+    const buttons = document.querySelectorAll("button.ui-control.icon");
 
-  if (buttons.length === 0) {
-    console.warn("SWSE Icon Fix: No .ui-control.icon buttons found");
-    return;
-  }
+    let inspected = 0;
+    let patched = 0;
 
-  let assigned = 0;
-  let failed = 0;
+    for (const btn of buttons) {
+      inspected++;
 
-  for (const btn of buttons) {
-    const tool = btn.dataset.tool;
-    const iconPath = CONFIG.controlIcons?.[tool];
+      // If the button already has an icon element, skip — v13 handles these
+      if (btn.querySelector("i, svg")) continue;
 
-    if (!iconPath) {
-      console.warn(`SWSE Icon Fix: No icon path found for tool "${tool}"`);
-      failed++;
-      continue;
+      const tool = btn.dataset.tool;
+      if (!tool) continue;
+
+      // Only attempt SWSE custom tools
+      if (!tool.startsWith("swse-")) continue;
+
+      const iconPath = CONFIG.controlIcons?.[tool];
+      if (!iconPath) {
+        console.warn(`SWSE | Missing icon for custom tool "${tool}"`);
+        continue;
+      }
+
+      btn.style.setProperty("--control-icon", `url("${iconPath}")`);
+      patched++;
     }
 
-    // Assign the CSS variable
-    btn.style.setProperty("--control-icon", `url("${iconPath}")`);
-    assigned++;
-
-    // Log on first few for diagnostics
-    if (assigned <= 3) {
-      console.log(`✅ Icon assigned: ${tool} → ${iconPath}`);
+    if (patched > 0) {
+      console.log(`SWSE | IconFix | Patched ${patched} custom controls`);
     }
-  }
-
-  console.log(`SWSE Icon Fix: Assigned ${assigned}/${buttons.length} icons`);
-
-  if (failed > 0) {
-    console.warn(`SWSE Icon Fix: Failed to assign ${failed} icons (missing from CONFIG.controlIcons)`);
+  } catch (err) {
+    console.error("SWSE | IconFix | assignControlIcons failed", err);
   }
 }
 
@@ -54,44 +49,12 @@ function assignControlIcons() {
  * Hook into scene control rendering
  */
 Hooks.on("renderSceneControls", () => {
-  console.log("SWSE: renderSceneControls hook fired, assigning icons...");
-  setTimeout(() => assignControlIcons(), 100); // Small delay to ensure DOM is settled
-});
-
-/**
- * Also hook into canvasReady as a fallback
- */
-Hooks.on("canvasReady", () => {
-  console.log("SWSE: canvasReady hook fired, assigning icons...");
   setTimeout(() => assignControlIcons(), 100);
 });
 
 /**
- * Hook into getSceneControlButtons to inspect what's being passed
+ * Fallback on canvas ready
  */
-Hooks.on("getSceneControlButtons", (controls) => {
-  try {
-    if (game.settings.get("core", "devMode")) {
-      console.log("SWSE Icon Fix: getSceneControlButtons hook", {
-        controlGroups: controls.length,
-        sample: controls.slice(0, 2).map(g => ({
-          name: g.name,
-          tools: g.tools?.length || 0,
-          hasIcons: g.tools?.every(t => t.icon) || false
-        }))
-      });
-    }
-  } catch (e) { /* devMode setting not registered */ }
-});
-
-/**
- * If dev mode is enabled, expose the function globally for manual testing
- */
-Hooks.once("ready", () => {
-  try {
-    if (game.settings.get("core", "devMode")) {
-      window.SWSE_AssignControlIcons = assignControlIcons;
-      console.log("SWSE Icon Fix: Dev mode enabled. Manual assignment available at window.SWSE_AssignControlIcons()");
-    }
-  } catch (e) { /* devMode setting not registered */ }
+Hooks.on("canvasReady", () => {
+  setTimeout(() => assignControlIcons(), 100);
 });
