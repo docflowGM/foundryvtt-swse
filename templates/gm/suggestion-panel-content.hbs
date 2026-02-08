@@ -1,0 +1,75 @@
+<main class="swse-gm-panel-content">
+  {{#if isEmpty}}
+    <div class="empty-state">
+      <i class="fa-solid fa-lightbulb"></i>
+      <p>No active insights. Suggestions will appear here as the suggestion engine detects conditions.</p>
+    </div>
+  {{else}}
+    <div class="insights-summary">
+      <span class="insight-count">{{summary.activeCount}} active insight(s)</span>
+      <span class="severity-badge severity-{{summary.highestSeverity}}">
+        {{summary.highestSeverity}}
+      </span>
+    </div>
+
+    {{#each insights as |insight|}}
+      <div class="insight-card insight-{{insight.type}} severity-{{insight.severity}}" data-insight-id="{{insight.id}}">
+        <div class="insight-header">
+          <h3 class="insight-title">{{insight.title}}</h3>
+          <span class="severity-badge severity-{{insight.severity}}">{{insight.severity}}</span>
+        </div>
+
+        <div class="insight-summary">
+          {{insight.summary}}
+        </div>
+
+        {{#if insight.evidence}}
+          <div class="insight-evidence">
+            <strong>Evidence:</strong>
+            <ul>
+              {{#each insight.evidence as |item|}}
+                <li>{{item}}</li>
+              {{/each}}
+            </ul>
+          </div>
+        {{/if}}
+
+        {{#if insight.additionalData.state}}
+          <div class="insight-state">
+            <strong>State:</strong> {{insight.additionalData.state}}
+          </div>
+        {{/if}}
+
+        {{#if insight.additionalData.confidence}}
+          <div class="insight-confidence">
+            <strong>Confidence:</strong> {{multiply insight.additionalData.confidence 100}}%
+          </div>
+        {{/if}}
+
+        {{#if insight.levers}}
+          <div class="insight-levers">
+            <strong>Suggested Levers:</strong>
+            {{#if insight.isAdjustment}}
+              <ul>
+                {{#each insight.levers as |adjustment|}}
+                  <li>
+                    <strong>{{adjustment.category}}:</strong> {{adjustment.action}}
+                  </li>
+                {{/each}}
+              </ul>
+            {{else}}
+              <ul>
+                {{#each insight.levers as |lever|}}
+                  <li>
+                    <input type="checkbox" class="lever-checkbox" data-lever="{{lever}}" />
+                    {{lever}}
+                  </li>
+                {{/each}}
+              </ul>
+            {{/if}}
+          </div>
+        {{/if}}
+      </div>
+    {{/each}}
+  {{/if}}
+</main>
