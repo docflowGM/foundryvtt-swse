@@ -1,0 +1,153 @@
+{
+  "id": "foundryvtt-swse",
+  "title": "Star Wars Saga Edition",
+  "description": "Complete Star Wars Saga Edition implementation for FoundryVTT with automated character sheets, combat mechanics, Force powers, vehicles, and comprehensive game rules.",
+  "version": "1.2.0",
+  "compatibility": {
+    "minimum": "12",
+    "verified": "13",
+    "maximum": "13"
+  },
+  "authors": [
+    {
+      "name": "Doc Flow",
+      "url": "https://github.com/docflowGM",
+      "discord": "DocFlow#0001"
+    }
+  ],
+  "license": "MIT",
+  "readme": "https://github.com/docflowGM/foundryvtt-swse/blob/main/README.md",
+  "bugs": "https://github.com/docflowGM/foundryvtt-swse/issues",
+  "changelog": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/CHANGELOG.md",
+  "url": "https://github.com/docflowGM/foundryvtt-swse",
+  "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
+  "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.2.0/foundryvtt-swse.zip",
+
+  "esmodules": [
+    "index.js",
+    "scripts/progression/talents/TalentNode.js",
+    "scripts/progression/talents/TalentTreeGraph.js",
+    "scripts/progression/utils/PrerequisiteEnricher.js",
+    "scripts/progression/RuleEngine.js",
+    "scripts/progression/talents/TalentTreeRegistry.js",
+    "scripts/talents/DarkSidePowers.js",
+    "scripts/talents/dark-side-powers-init.js",
+    "scripts/talents/light-side-init.js"
+  ],
+
+  "styles": [
+    "styles/swse-system.css",
+    "styles/core/swse-base.css",
+    "styles/core/canvas-safety.css",
+    "styles/fixes/canvas-viewport-fix.css",
+    "styles/themes/swse-theme-holo.css",
+    "styles/themes/swse-theme-high-contrast.css",
+    "styles/themes/swse-theme-starship.css",
+    "styles/themes/swse-theme-sand-people.css",
+    "styles/themes/swse-theme-jedi.css",
+    "styles/themes/swse-theme-high-republic.css",
+    "styles/apps/chargen/chargen.css",
+    "styles/apps/chargen/chargen-templates.css",
+    "styles/apps/chargen/chargen-talent-tree.css",
+    "styles/apps/combat-action-browser.css",
+    "styles/apps/force-power-picker.css",
+    "styles/apps/vehicle-modification.css",
+    "styles/apps/upgrade-app.css",
+    "styles/apps/houserules.css",
+    "styles/apps/custom-item-dialog.css",
+    "styles/apps/store.css",
+    "styles/apps/levelup.css",
+    "styles/sheets/character-sheet.css",
+    "styles/sheets/vehicle-sheet.css",
+    "styles/sheets/unified-sheets.css",
+    "styles/sheets/v2-sheet.css",
+    "styles/sheets/skill-actions.css",
+    "styles/sheets/feat-actions.css",
+    "styles/sheets/sheet-improvements.css",
+    "styles/sheets/improved-contrast.css",
+    "styles/combat/combat-enhancements.css",
+    "styles/combat/vehicle-combat.css",
+    "styles/components/assets-tab.css",
+    "styles/progression/ability-rolling.css",
+    "styles/progression/suggestion-engine.css",
+    "styles/mentor.css",
+    "styles/dialogs/holo-dialogs.css",
+    "styles/sheets/droid-level3.css",
+    "styles/sheets/vehicle-level3.css",
+    "styles/npc-level3.css",
+    "styles/species/species-traits.css",
+    "styles/components/talent-abilities.css",
+    "styles/gm/suggestion-panel.css",
+    "styles/components/discovery.css"
+  ],
+
+  "languages": [
+    { "lang": "en", "name": "English", "path": "lang/en.json" },
+    { "lang": "es", "name": "Español", "path": "lang/es.json" },
+    { "lang": "fr", "name": "Français", "path": "lang/fr.json" },
+    { "lang": "de", "name": "Deutsch", "path": "lang/de.json" },
+    { "lang": "ru", "name": "Русский", "path": "lang/ru.json" }
+  ],
+
+  "socket": true,
+
+  "initiative": "1d20 + @abilities.dex.mod + @initiative.misc",
+
+  "grid": {
+    "distance": 1.5,
+    "units": "m",
+    "type": 1
+  },
+
+  "primaryTokenAttribute": "hp",
+  "secondaryTokenAttribute": "defenses.reflex",
+
+  "background": "assets/backgrounds/swse-bg.webp",
+
+  "media": [
+    { "type": "cover", "url": "assets/ui/swse-cover.webp" },
+    { "type": "icon", "url": "assets/ui/title-logo.png" }
+  ],
+
+  "flagScopes": ["swse"],
+
+  "packs": [
+    { "name": "species", "label": "Species", "type": "Item", "system": "foundryvtt-swse", "path": "packs/species.db" },
+    { "name": "classes", "label": "Classes", "type": "Item", "system": "foundryvtt-swse", "path": "packs/classes.db" },
+    { "name": "talent_trees", "label": "Talent Trees", "type": "Item", "system": "foundryvtt-swse", "path": "packs/talent_trees.db" },
+    { "name": "talents", "label": "Talents", "type": "Item", "system": "foundryvtt-swse", "path": "packs/talents.db" },
+    { "name": "feats", "label": "Feats", "type": "Item", "system": "foundryvtt-swse", "path": "packs/feats.db" },
+    { "name": "forcepowers", "label": "Force Powers", "type": "Item", "system": "foundryvtt-swse", "path": "packs/forcepowers.db" },
+    { "name": "forcesecrets", "label": "Force Secrets", "type": "Item", "system": "foundryvtt-swse", "path": "packs/forcesecrets.db" },
+    { "name": "forcetechniques", "label": "Force Techniques", "type": "Item", "system": "foundryvtt-swse", "path": "packs/forcetechniques.db" },
+    { "name": "lightsaberformpowers", "label": "Lightsaber Form Powers", "type": "Item", "system": "foundryvtt-swse", "path": "packs/lightsaberformpowers.db" },
+    { "name": "skills", "label": "Skills", "type": "Item", "system": "foundryvtt-swse", "path": "packs/skills.db" },
+    { "name": "backgrounds", "label": "Backgrounds", "type": "Item", "system": "foundryvtt-swse", "path": "packs/backgrounds.db" },
+    { "name": "languages", "label": "Languages", "type": "Item", "system": "foundryvtt-swse", "path": "packs/languages.db" },
+
+    { "name": "npc", "label": "NPCs", "type": "Actor", "system": "foundryvtt-swse", "path": "packs/npc.db" },
+    { "name": "droids", "label": "Droids", "type": "Actor", "system": "foundryvtt-swse", "path": "packs/droids.db" },
+    { "name": "beasts", "label": "Beasts & Mounts", "type": "Actor", "system": "foundryvtt-swse", "path": "packs/beasts.db" }
+  ],
+
+  "settings": {
+    "forceCompendiumsPopulation": {
+      "scope": "world",
+      "config": false,
+      "type": "Boolean",
+      "default": false
+    },
+    "talentEffectValidationMigration": {
+      "scope": "world",
+      "config": false,
+      "type": "String",
+      "default": ""
+    },
+    "speciesTraitsUpdate": {
+      "scope": "world",
+      "config": false,
+      "type": "String",
+      "default": ""
+    }
+  }
+}
