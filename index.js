@@ -249,6 +249,7 @@ import './scripts/chat/chat-commands.js';
 import { initializeSceneControls } from './scripts/scene-controls/init.js';
 import { initializeGMSuggestions } from './scripts/gm-suggestions/init.js';
 import { initializeActionPalette } from './scripts/ui/action-palette/init.js';
+import { MentorTranslationSettings } from './scripts/ui/dialogue/mentor-translation-settings.js';
 
 import { registerInitHooks, registerDestinyHooks } from './scripts/hooks/index.js';
 import { SystemInitHooks } from './scripts/progression/hooks/system-init-hooks.js';
@@ -315,6 +316,7 @@ Hooks.once('init', async function () {
        --------------------------------------------------------- */
     registerSystemSettings();
     registerHouseruleSettings();
+    MentorTranslationSettings.registerSettings();
 
     /* ---------------------------------------------------------
        Hook Registration (must be before async operations)
@@ -513,6 +515,9 @@ Hooks.once('ready', async function () {
     await initializeLevelUpUI();
 
     SWSELanguageModule.init();
+
+    // Load Mentor Translation settings for Aurebesh dialogue
+    MentorTranslationSettings.loadSettings();
 
     // One-time backfill for deterministic IDs on JSON-backed data
     await runJsonBackedIdsMigration();

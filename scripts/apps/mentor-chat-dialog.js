@@ -19,6 +19,7 @@ import { MentorStoryResolver } from '../engine/mentor-story-resolver.js';
 import { selectMentorResponse, buildJudgmentContext } from '../mentor/mentor-judgment-engine.js';
 import { renderJudgmentAtom } from '../mentor/mentor-judgment-renderer.js';
 import { getReasonTexts } from '../mentor/mentor-reason-renderer.js';
+import { MentorTranslationIntegration } from '../ui/dialogue/mentor-translation-integration.js';
 
 // V2 API base class
 import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';
@@ -199,6 +200,33 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     // Navigation
     html.find('.back-to-mentors').click(this._onBackToMentors.bind(this));
     html.find('.back-to-topics').click(this._onBackToTopics.bind(this));
+
+    // Apply Aurebesh translation to mentor dialogue
+    if (this.selectedMentor) {
+      this._applyDialogueTranslation(html);
+    }
+  }
+
+  /**
+   * Apply Aurebesh translation effect to mentor dialogue boxes
+   */
+  async _applyDialogueTranslation(html) {
+    const mentorName = this.selectedMentor.mentor.name;
+    const dialogueLines = html.find('.dialogue-line, .dialogue-suggestions');
+
+    for (const line of dialogueLines) {
+      const text = line.textContent.trim();
+      if (text) {
+        // Clear the line and apply translation
+        line.innerHTML = '';
+        await MentorTranslationIntegration.render({
+          text,
+          container: line,
+          mentor: mentorName,
+          topic: this.currentTopic?.key || 'default'
+        });
+      }
+    }
   }
 
   async _onSelectMentor(event) {

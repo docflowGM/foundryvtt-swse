@@ -136,8 +136,33 @@ export const TRANSLATION_PRESETS = {
 /**
  * Mentor Name → Preset Mapping
  * Maps specific mentor names to their voice presets
+ * Includes both actual system mentors and generic type mappings
  */
 export const MENTOR_PRESET_MAP = {
+  // === ACTUAL SYSTEM MENTORS (from mentor-dialogues.data.js) ===
+
+  // Jedi Path (wise, measured, calm)
+  'miraj': 'jedi',              // Jedi Master - all Jedi classes
+  'kyber': 'mentor',            // Pacifist Combat Medic - warm, caring
+
+  // Sith Path (aggressive, dangerous)
+  'darth miedo': 'sith',        // Dark Lord of the Sith - masterful, cunning
+  'darth malbada': 'sith',      // Sith Lord - sadistic, cruel
+
+  // Scoundrel/Rogue Path (quick, witty, cunning)
+  'ol\' salty': 'scoundrel',   // Space Pirate Captain - colorful, energetic
+  'mayu': 'scoundrel',          // Ace Pilot & Rogue Smuggler - cocky, skilled
+  'lead': 'scoundrel',          // Argent Squad Commander - hardened, tactical
+
+  // Droid Mentor (mechanical, clinical, precise)
+  'j0-n1': 'droid',            // Protocol Droid & Personal Butler - formal, efficient
+
+  // Military Path (warriors and knights)
+  'breach': 'scoundrel',        // Mandalorian Mercenary - direct, pragmatic
+  'dezmin': 'jedi',             // Imperial Knight Grandmaster - balanced, disciplined
+
+  // === GENERIC TYPE MAPPINGS (fallback patterns) ===
+
   // Jedi Order mentors
   'master-yoda': 'mentor',
   'yoda': 'mentor',
