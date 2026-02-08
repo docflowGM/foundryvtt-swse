@@ -70,22 +70,28 @@ Hooks.on("canvasReady", () => {
  * Hook into getSceneControlButtons to inspect what's being passed
  */
 Hooks.on("getSceneControlButtons", (controls) => {
-  if (game.settings.get("core", "devMode")) {
-    console.log("SWSE Icon Fix: getSceneControlButtons hook", {
-      controlGroups: controls.length,
-      sample: controls.slice(0, 2).map(g => ({
-        name: g.name,
-        tools: g.tools?.length || 0,
-        hasIcons: g.tools?.every(t => t.icon) || false
-      }))
-    });
-  }
+  try {
+    if (game.settings.get("core", "devMode")) {
+      console.log("SWSE Icon Fix: getSceneControlButtons hook", {
+        controlGroups: controls.length,
+        sample: controls.slice(0, 2).map(g => ({
+          name: g.name,
+          tools: g.tools?.length || 0,
+          hasIcons: g.tools?.every(t => t.icon) || false
+        }))
+      });
+    }
+  } catch (e) { /* devMode setting not registered */ }
 });
 
 /**
  * If dev mode is enabled, expose the function globally for manual testing
  */
-if (game.settings.get("core", "devMode")) {
-  window.SWSE_AssignControlIcons = assignControlIcons;
-  console.log("SWSE Icon Fix: Dev mode enabled. Manual assignment available at window.SWSE_AssignControlIcons()");
-}
+Hooks.once("ready", () => {
+  try {
+    if (game.settings.get("core", "devMode")) {
+      window.SWSE_AssignControlIcons = assignControlIcons;
+      console.log("SWSE Icon Fix: Dev mode enabled. Manual assignment available at window.SWSE_AssignControlIcons()");
+    }
+  } catch (e) { /* devMode setting not registered */ }
+});
