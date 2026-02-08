@@ -1235,7 +1235,8 @@ export class TalentAbilitiesEngine {
                         icon: '<i class="fas fa-check"></i>',
                         label: 'Confirm',
                         callback: async (html) => {
-                            const selected = html.find('input[name="reaction"]:checked').val();
+                            const root = html instanceof HTMLElement ? html : html?.[0];
+                            const selected = root?.querySelector?.('input[name="reaction"]:checked')?.value;
                             if (selected === 'none') {
                                 resolve(null);
                                 return;

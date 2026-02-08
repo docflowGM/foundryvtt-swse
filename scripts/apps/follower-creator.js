@@ -126,15 +126,15 @@ export class FollowerCreator {
                 default: "create",
                 render: (html) => {
                     // Add event listeners for dynamic updates
-                    const speciesSelect = html.find('[name="species"]');
-                    const humanBonusDiv = html.find('.human-bonus-section');
+                    const speciesSelect = root.querySelector('[name="species"]');
+                    const humanBonusDiv = root.querySelector('.human-bonus-section');
 
-                    speciesSelect.on('change', (event) => {
+                    speciesSelect?.addEventListener('change', (event) => {
                         const selectedSpeciesName = event.target.options[event.target.selectedIndex].text;
                         if (selectedSpeciesName === 'Human') {
-                            humanBonusDiv.show();
+                            if (humanBonusDiv) humanBonusDiv.style.display = '';
                         } else {
-                            humanBonusDiv.hide();
+                            if (humanBonusDiv) humanBonusDiv.style.display = 'none';
                         }
                     });
 

@@ -455,29 +455,30 @@ export class CharacterTemplates {
       buttons: {},
       render: (html) => {
         // Tab switching
-        html.find('.template-tab').click(function() {
+        root.querySelectorAll('.template-tab').click(function() {
           const tab = $(this).data('tab');
-          html.find('.template-tab').removeClass('active');
+          (root.querySelectorAll('.template-tab')||[]).forEach(el=>el.classList.remove('active'));
           $(this).addClass('active');
-          html.find('.template-tab-content').hide();
-          html.find(`.template-tab-content[data-tab="${tab}"]`).show();
+          root.querySelectorAll('.template-tab-content').hide();
+          const root = html instanceof HTMLElement ? html : html?.[0];
+            root?.querySelectorAll?.(`.template-tab-content[data-tab="${tab}"]`)?.forEach(el=>{el.style.display='';});
         });
 
         // Template selection
-        html.find('.template-select-btn').click(function() {
+        root.querySelectorAll('.template-select-btn').click(function() {
           const templateId = $(this).data('template-id');
           dialog.close();
           onSelect(templateId);
         });
 
         // Custom build
-        html.find('.custom-build-btn').click(function() {
+        root.querySelectorAll('.custom-build-btn').click(function() {
           dialog.close();
           onSelect(null); // null means custom build
         });
 
         // Card hover effect
-        html.find('.template-card').hover(
+        root.querySelectorAll('.template-card').hover(
           function() { $(this).addClass('hover'); },
           function() { $(this).removeClass('hover'); }
         );

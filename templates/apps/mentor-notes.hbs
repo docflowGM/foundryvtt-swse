@@ -1,0 +1,34 @@
+<section class="swse-mentor-notes-app">
+  <header class="swse-mentor-notes-app__header">
+    <div class="swse-mentor-notes-app__header-left">
+      <h2 class="swse-mentor-notes-app__title">Mentor Notes</h2>
+      <div class="swse-mentor-notes-app__subtitle">{{actorName}}</div>
+    </div>
+    <div class="swse-mentor-notes-app__header-right">
+      <button type="button" class="refresh-btn"><i class="fa-solid fa-rotate"></i> Refresh</button>
+    </div>
+  </header>
+
+  {{#if suggestions.length}}
+    <ol class="swse-mentor-notes-app__list">
+      {{#each suggestions}}
+        <li class="swse-mentor-notes-app__row" data-pack="{{pack}}" data-id="{{id}}">
+          <div class="swse-mentor-notes-app__row-title">
+            <span class="swse-mentor-notes-app__name">{{name}}</span>
+            {{#if tier}}
+              <span class="swse-mentor-notes-app__tier">Tier {{tier}}</span>
+            {{/if}}
+          </div>
+          {{#if why}}
+            <div class="swse-mentor-notes-app__why">{{why}}</div>
+          {{/if}}
+          {{#unless pack}}
+            <div class="swse-mentor-notes-app__meta">No compendium link</div>
+          {{/unless}}
+        </li>
+      {{/each}}
+    </ol>
+  {{else}}
+    <div class="swse-mentor-notes-app__empty">No suggestions right now.</div>
+  {{/if}}
+</section>

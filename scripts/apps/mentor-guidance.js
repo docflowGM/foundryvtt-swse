@@ -88,7 +88,8 @@ export class MentorGuidanceUI {
             default: "ok",
             render: (html) => {
                 // Add typing animation to guidance text
-                const guidanceElement = html.find('.mentor-guidance-text')[0];
+                const root = this.element;
+                const guidanceElement = root?.querySelector?.('.mentor-guidance-text');
                 if (guidanceElement) {
                     TypingAnimation.typeText(guidanceElement, text, {
                         speed: 45,

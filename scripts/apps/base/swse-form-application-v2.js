@@ -1,100 +1,49 @@
+// scripts/apps/base/swse-form-application-v2.js
+import SWSEApplicationV2 from './swse-application-v2.js';
+
 /**
- * Base FormApplication class for SWSE system - Foundry V2 API compliant
- * Extends HandlebarsApplicationMixin for proper V2 rendering lifecycle
- * Use for progression UI that handles form submission
+ * SWSE FormApplicationV2 base
+ *
+ * AppV2 contract:
+ * - No jQuery in render lifecycle
+ * - Forms are handled via ApplicationV2 `form.handler`
+ * - Subclasses may still implement legacy `_updateObject(event, data)` for convenience
  */
-const { HandlebarsApplicationMixin } = foundry.applications.api;
-
-import { guardOnRender, validateTemplate } from '../../debug/appv2-probe.js';
-
-// FormApplication is available globally in Foundry
-
-export default class SWSEFormApplicationV2 extends HandlebarsApplicationMixin(FormApplication) {
-    /**
-     * Default options for SWSE V2 FormApplications
-     */
-    static get defaultOptions() {
-        return foundry.utils.mergeObject(super.defaultOptions, {
-            classes: ['swse', 'swse-form', 'swse-app'],
-            tag: 'form',
-            width: 600,
-            height: 'auto',
-            resizable: true,
-            draggable: true,
-            closeOnSubmit: false,
-            submitOnChange: false,
-            submitOnClose: false,
-            popOut: true
-        });
+export default class SWSEFormApplicationV2 extends SWSEApplicationV2 {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+    tag: 'form',
+    window: {
+      contentClasses: ['standard-form']
+    },
+    form: {
+      handler: SWSEFormApplicationV2.#onSubmit,
+      submitOnChange: false,
+      closeOnSubmit: false
     }
+  });
 
-    /**
-     * V2 API: Prepare context for rendering
-     * Override in subclasses to provide template context
-     * @returns {Promise<Object>} Context object for template
-     */
-    async _prepareContext() {
-        try {
-            return {};
-        } catch (error) {
-            this._handleError('_prepareContext', error);
-            return {};
-        }
+  /**
+   * V2 form handler.
+   *
+   * Bridges to legacy `_updateObject(event, data)` where `data` is an expanded object.
+   * @param {SubmitEvent} event
+   * @param {HTMLFormElement} form
+   * @param {FormDataExtended} formData
+   */
+  static async #onSubmit(event, form, formData) {
+    try {
+      const expanded = foundry.utils.expandObject(formData?.object ?? {});
+      if (typeof this._updateObject === 'function') {
+        return await this._updateObject(event, expanded);
+      }
+      if (typeof this._onSubmit === 'function') {
+        return await this._onSubmit(event, form, expanded, formData);
+      }
+      return null;
+    } catch (err) {
+      console.error(`[${this.constructor?.name ?? 'SWSEFormApplicationV2'}] Form submit failed`, err);
+      ui?.notifications?.error?.(err?.message ?? 'Form submit failed');
+      return null;
     }
-
-    /**
-     * V2 API: Called after render to set up event listeners
-     * Scope all listeners to this.element
-     * @param {Object} context - Prepared context data
-     * @param {Object} options - Render options
-     */
-    async _onRender(context, options) {
-        try {
-            // Guard against V1 patterns
-            guardOnRender(context, options, this);
-            validateTemplate(this);
-
-            // Override in subclasses for event binding
-            // All DOM queries MUST be scoped to this.element
-        } catch (error) {
-            this._handleError('_onRender', error);
-        }
-    }
-
-    /**
-     * Handle form submission
-     * DO NOT mutate actor data directly - call progression engine APIs
-     * @param {Event} event - Form submission event
-     * @param {Object} formData - Processed form data
-     * @returns {Promise<void>}
-     */
-    async _updateObject(event, formData) {
-        try {
-            // Override in subclasses
-            this._log('Form submitted', formData);
-        } catch (error) {
-            this._handleError('_updateObject', error);
-        }
-    }
-
-    /**
-     * Debug logging helper
-     * @param {string} message - Log message
-     * @param {*} data - Optional data
-     */
-    _log(message, data = null) {
-        if (game.settings?.get('foundryvtt-swse', 'debugMode')) {
-            console.log(`[${this.constructor.name}] ${message}`, data || '');
-        }
-    }
-
-    /**
-     * Safe error handling wrapper
-     * @param {string} context - Where error occurred
-     * @param {Error} error - The error
-     */
-    _handleError(context, error) {
-        console.error(`[${this.constructor.name}:${context}]`, error);
-        ui.notifications?.error(`Error in ${this.constructor.name}: ${error.message}`);
-    }
+  }
 }

@@ -368,7 +368,7 @@ export async function _handleSkillFocusFeat(feat) {
           icon: '<i class="fas fa-check"></i>',
           label: "Select",
           callback: (html) => {
-            const selectedSkill = html.find('#skill-focus-selection').val();
+            const selectedSkill = (root?.querySelector?.('#skill-focus-selection')?.value ?? null);
 
             // Mark the skill as focused in character data
             if (!this.characterData.skills) {

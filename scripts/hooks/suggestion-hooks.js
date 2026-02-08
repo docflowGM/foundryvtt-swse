@@ -1,185 +1,110 @@
+// scripts/hooks/suggestion-hooks.js
 /**
- * Suggestion system hooks
+ * Suggestion system hooks (AppV2-safe)
  *
- * - Cache invalidation on actor changes
- * - Character sheet Mentor Notes panel
+ * - Cache invalidation on actor/item changes
+ * - Mentor Notes access via ActorSheetV2 header control (no DOM injection)
  * - Proactive suggestion triggers for decision steps
  */
+import { HooksRegistry } from './hooks-registry.js';
 import { SuggestionService } from '../engine/SuggestionService.js';
-import { SWSELogger } from '../utils/logger.js';
 import { SuggestionEngineCoordinator } from '../engine/SuggestionEngineCoordinator.js';
+import { SWSELogger } from '../utils/logger.js';
+import MentorNotesApp from '../apps/mentor-notes/mentor-notes-app.js';
 
-function _safeGetActorId(doc) {
+function safeGetActorId(doc) {
   return doc?.actor?.id || doc?.parent?.id || doc?.id || null;
 }
 
+function isMentorNotesEnabled() {
+  try {
+    return game.settings.get('foundryvtt-swse', 'enableMentorNotesPanel') ?? true;
+  } catch {
+    return true;
+  }
+}
+
 export function registerSuggestionHooks() {
-  Hooks.on('updateActor', (actor) => {
+  HooksRegistry.register('updateActor', 'swse-sugs-invalidate', (actor) => {
     SuggestionService.invalidate(actor.id);
   });
 
-  Hooks.on('createItem', (item) => {
-    const actorId = _safeGetActorId(item);
+  HooksRegistry.register('createItem', 'swse-sugs-invalidate', (item) => {
+    const actorId = safeGetActorId(item);
     if (actorId) SuggestionService.invalidate(actorId);
   });
 
-  Hooks.on('updateItem', (item) => {
-    const actorId = _safeGetActorId(item);
+  HooksRegistry.register('updateItem', 'swse-sugs-invalidate', (item) => {
+    const actorId = safeGetActorId(item);
     if (actorId) SuggestionService.invalidate(actorId);
   });
 
-  Hooks.on('deleteItem', (item) => {
-    const actorId = _safeGetActorId(item);
+  HooksRegistry.register('deleteItem', 'swse-sugs-invalidate', (item) => {
+    const actorId = safeGetActorId(item);
     if (actorId) SuggestionService.invalidate(actorId);
   });
 
-  Hooks.on('renderActorSheet', async (app, html) => {
-    try {
-      const enabled = game.settings.get('foundryvtt-swse', 'enableMentorNotesPanel') ?? true;
-      if (!enabled) return;
+  // Mentor Notes header control (AppV2)
+  HooksRegistry.register('getHeaderControlsApplicationV2', 'swse-mentor-notes', (app, controls) => {
+    if (!isMentorNotesEnabled()) return;
+    const actor = app?.actor ?? app?.document;
+    if (!actor || actor.documentName !== 'Actor') return;
 
-      const actor = app?.actor;
-      if (!actor) return;
+    if (Array.isArray(controls) && controls.some(c => c?.action === 'swse-mentor-notes')) return;
 
-      // V2 API: html may be HTMLElement or jQuery - normalize to HTMLElement
-      const root = html instanceof HTMLElement ? html : html[0];
-      if (!root) return;
-
-      const container = root.querySelector('.sheet-body, .tab[data-tab="main"], form');
-      if (!container) return;
-
-      const panelId = `swse-mentor-notes-${actor.id}`;
-      if (root.querySelector(`#${panelId}`)) return;
-
-      // Create wrapper using native DOM
-      const wrapper = document.createElement('section');
-      wrapper.id = panelId;
-      wrapper.className = 'swse-mentor-notes';
-      wrapper.innerHTML = `
-        <header class="swse-mentor-notes__header">
-          <h3>Mentor Notes</h3>
-          <a class="swse-mentor-notes__toggle">toggle</a>
-        </header>
-        <div class="swse-mentor-notes__body" style="display:none;">
-          <div class="swse-mentor-notes__loading">Loading suggestions…</div>
-        </div>
-      `;
-
-      container.prepend(wrapper);
-
-      const body = wrapper.querySelector('.swse-mentor-notes__body');
-      wrapper.querySelector('.swse-mentor-notes__toggle').addEventListener('click', () => {
-        body.style.display = body.style.display === 'none' ? '' : 'none';
-      });
-
-      const sugs = await SuggestionService.getSuggestions(actor, 'sheet', { persist: true });
-      const top = (sugs ?? []).slice(0, 6);
-
-      body.innerHTML = '';
-
-      if (!top.length) {
-        body.innerHTML = `<div class="swse-mentor-notes__empty">No suggestions right now.</div>`;
-        return;
-      }
-
-      for (const s of top) {
-        const name = s?.name || s?.label || s?.targetRef?.name || 'Suggestion';
-        const why = s?.explanation?.short || s?.suggestion?.reason || '';
-        const pack = s?.targetRef?.pack || '';
-        const id = s?.targetRef?.id || '';
-        const row = document.createElement('div');
-        row.className = 'swse-mentor-notes__row';
-        row.dataset.pack = pack;
-        row.dataset.id = id;
-        row.innerHTML = `
-          <div class="swse-mentor-notes__name">${name}</div>
-          <div class="swse-mentor-notes__why">${why}</div>
-        `;
-        body.appendChild(row);
-      }
-
-      // Open suggested item on click when a compendium reference exists
-      body.addEventListener('click', async (ev) => {
-        const row = ev.target.closest('.swse-mentor-notes__row');
-        if (!row) return;
-        try {
-          const packName = row.dataset.pack;
-          const docId = row.dataset.id;
-          if (!packName || !docId) return;
-          const pack = game.packs.get(packName);
-          if (!pack) return;
-          const doc = await pack.getDocument(docId);
-          if (doc?.sheet) doc.sheet.render(true);
-        } catch (err) {
-          console.warn('SWSE | Mentor Notes open failed:', err);
-        }
-      });
-    } catch (err) {
-      SWSELogger.error('[SuggestionHooks] Mentor Notes failed:', err);
-    }
+    controls.push({
+      action: 'swse-mentor-notes',
+      icon: 'fa-solid fa-lightbulb',
+      label: 'Mentor Notes',
+      ownership: CONST?.DOCUMENT_OWNERSHIP_LEVELS?.LIMITED ?? 1,
+      visible: () => true,
+      onClick: () => MentorNotesApp.openForActor(actor)
+    });
   });
 
-  // Hook for proactive suggestion triggers when entering decision steps
-  // UI components can call: Hooks.callAll('swse:decision-step-entered', { actor, step, pendingData })
-  Hooks.on('swse:decision-step-entered', async ({ actor, step, pendingData, callback }) => {
+  HooksRegistry.register('swse:decision-step-entered', 'swse-sugs-step', async ({ actor, step, pendingData, callback }) => {
     try {
       if (!actor) return;
 
-      // Determine domain based on step
       const stepToDomain = {
-        'feats': 'feats',
-        'talents': 'talents',
-        'class': 'classes',
-        'skills': 'skills_l1',
-        'forcepowers': 'forcepowers',
-        'attributes': 'attributes'
+        feats: 'feats',
+        talents: 'talents',
+        class: 'classes',
+        skills: 'skills_l1',
+        forcepowers: 'forcepowers',
+        attributes: 'attributes'
       };
 
       const domain = stepToDomain[step];
       if (!domain) return;
 
-      SWSELogger.log(`[SuggestionHooks] Decision step entered: ${step}, fetching proactive suggestions`);
-
-      // Get suggestions for this step
       const suggestions = await SuggestionService.getSuggestions(actor, 'decision-step', {
         domain,
         pendingData: pendingData || {}
       });
 
-      // Find strong suggestions (tier 4+)
-      const strongSuggestions = (suggestions || []).filter(s => {
-        const tier = s?.suggestion?.tier ?? s?.tier ?? 0;
-        return tier >= 4;
+      const strong = (suggestions || []).filter(s => (s?.suggestion?.tier ?? s?.tier ?? 0) >= 4);
+      if (!strong.length) return;
+
+      if (typeof callback === 'function') callback(strong);
+
+      Hooks.callAll('swse:strong-suggestions-available', {
+        actor,
+        step,
+        suggestions: strong
       });
-
-      // If we have strong suggestions, notify the callback or emit an event
-      if (strongSuggestions.length > 0) {
-        SWSELogger.log(`[SuggestionHooks] Found ${strongSuggestions.length} strong suggestions for ${step}`);
-
-        if (typeof callback === 'function') {
-          callback(strongSuggestions);
-        }
-
-        // Also emit hook for UI to react
-        Hooks.callAll('swse:strong-suggestions-available', {
-          actor,
-          step,
-          suggestions: strongSuggestions
-        });
-      }
     } catch (err) {
       SWSELogger.error('[SuggestionHooks] Decision step handler failed:', err);
     }
   });
 
-  // Hook for invalidating suggestions when pending data changes
-  Hooks.on('swse:pending-selection-changed', ({ actorId }) => {
-    if (actorId) {
-      SuggestionService.invalidate(actorId);
-      SuggestionEngineCoordinator.clearBuildIntentCache(actorId);
-      SWSELogger.log(`[SuggestionHooks] Invalidated caches for actor ${actorId} due to pending selection change`);
-    }
+  HooksRegistry.register('swse:pending-selection-changed', 'swse-sugs-pending', ({ actorId }) => {
+    if (!actorId) return;
+    SuggestionService.invalidate(actorId);
+    SuggestionEngineCoordinator.clearBuildIntentCache(actorId);
   });
 
-  SWSELogger.log('[SuggestionHooks] Registered');
+  SWSELogger.log('[SuggestionHooks] Registered (V2-safe)');
 }
+
+export default registerSuggestionHooks;

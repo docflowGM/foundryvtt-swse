@@ -121,25 +121,27 @@ export class CharacterImportWizard extends Dialog {
   }
 
   activateListeners(html) {
+    const root = html?.[0] ?? html;
     super.activateListeners(html);
 
     // Method toggle
-    html.find('#import-method').on('change', (e) => {
+    root.querySelector('#import-method').addEventListener('change', (e) => {
       const method = e.target.value;
-      const fileSection = html.find('.file-upload-section');
-      const pasteSection = html.find('.paste-section');
+      const fileSection = root.querySelector('.file-upload-section');
+      const pasteSection = root.querySelector('.paste-section');
 
       if (method === 'file') {
-        fileSection.show();
-        pasteSection.hide();
+        if (fileSection) fileSection.style.display = '';
+        if (pasteSection) pasteSection.style.display = 'none';
       } else {
-        fileSection.hide();
-        pasteSection.show();
+        if (fileSection) fileSection.style.display = 'none';
+        if (pasteSection) pasteSection.style.display = '';
       }
     });
 
     // File preview
-    html.find('#character-file').on('change', async (e) => {
+    const fileInput = root.querySelector('#character-file');
+    fileInput?.addEventListener('change', async (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
 
@@ -156,7 +158,7 @@ export class CharacterImportWizard extends Dialog {
     });
 
     // Paste preview
-    html.find('#character-json').on('blur', (e) => {
+    root.querySelector('#character-json').addEventListener('blur', (e) => {
       try {
         const data = JSON.parse(e.target.value);
         this._showPreview(html, data);
@@ -170,7 +172,7 @@ export class CharacterImportWizard extends Dialog {
    * Show preview of character data
    */
   _showPreview(html, data) {
-    const preview = html.find('#import-preview');
+    const preview = root.querySelector('#import-preview');
     const previewContent = preview.find('.preview-content');
 
     let content = `
@@ -197,14 +199,14 @@ export class CharacterImportWizard extends Dialog {
    */
   async _processImport(html) {
     try {
-      const method = html.find('#import-method').val();
-      const createNew = html.find('#create-new-actor').is(':checked');
+      const method = (root?.querySelector?.('#import-method')?.value ?? null);
+      const createNew = root.querySelector('#create-new-actor').is(':checked');
 
       let characterData;
 
       // Get data based on method
       if (method === 'file') {
-        const file = html.find('#character-file')[0]?.files?.[0];
+        const file = root.querySelector('#character-file')[0]?.files?.[0];
         if (!file) {
           ui.notifications.warn('Please select a file to import.');
           return;
@@ -212,7 +214,7 @@ export class CharacterImportWizard extends Dialog {
 
         characterData = await this._readFile(file);
       } else {
-        const jsonText = html.find('#character-json').val();
+        const jsonText = (root?.querySelector?.('#character-json')?.value ?? null);
         if (!jsonText) {
           ui.notifications.warn('Please paste character JSON data.');
           return;

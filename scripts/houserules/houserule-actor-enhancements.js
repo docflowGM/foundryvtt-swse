@@ -16,7 +16,9 @@ export class ActorSheetEnhancements {
    */
   static initialize() {
     // Hook into actor sheet rendering to add house rule information
-    Hooks.on("renderActorSheet", (app, html, data) => {
+    Hooks.on("renderApplicationV2", (app) => {
+      const html = app.element;
+      const data = {};
       this.enhanceActorSheet(app, html, data);
     });
 
@@ -47,8 +49,9 @@ export class ActorSheetEnhancements {
     const maxPerSkill = game.settings.get(NS, "skillTrainingCap");
 
     // Find or create house rules section in skills tab
-    const skillsTab = html.find("[data-tab='skills']");
-    if (skillsTab.length === 0) return;
+    const root = html?.[0] ?? html;
+      const skillsTab = root?.querySelector?.("[data-tab='skills']");
+    if (!skillsTab) return;
 
     // Create training points display
     const trainingDisplay = `
@@ -120,7 +123,7 @@ export class ActorSheetEnhancements {
   static _addHealingCooldownDisplay(app, html, actor) {
     if (!game.settings.get(NS, "healingSkillEnabled")) return;
 
-    const bioTab = html.find("[data-tab='bio']");
+    const bioTab = root.querySelector("[data-tab='bio']");
     if (bioTab.length === 0) return;
 
     const cooldowns = HealingSkillIntegration.getHealingCooldownInfo(actor);
@@ -153,7 +156,7 @@ export class ActorSheetEnhancements {
   static _addConditionTrackDisplay(app, html, actor) {
     if (!game.settings.get(NS, "conditionTrackEnabled")) return;
 
-    const bioTab = html.find("[data-tab='bio']");
+    const bioTab = root.querySelector("[data-tab='bio']");
     if (bioTab.length === 0) return;
 
     const trackLevel = ConditionTrackMechanics.getConditionTrackLevel(actor);

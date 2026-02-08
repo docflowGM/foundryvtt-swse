@@ -68,13 +68,15 @@ export class MentorSuggestionDialog extends Dialog {
           default: "apply",
           render: (html) => {
             // Style the dialog
-            html.find('.dialog-content').addClass('mentor-suggestion-dialog');
-            html.find('button[data-button="apply"]').addClass('btn-success');
-            html.find('button[data-button="dismiss"]').addClass('btn-secondary');
+            const root = html instanceof HTMLElement ? html : html?.[0];
+            root?.querySelector?.('.dialog-content')?.classList?.add('mentor-suggestion-dialog');
+            root?.querySelector?.('button[data-button="apply"]')?.classList?.add('btn-success');
+            root?.querySelector?.('button[data-button="dismiss"]')?.classList?.add('btn-secondary');
 
             // Animate mentor text with typing effect
-            const introElement = html.find('.mentor-intro')[0];
-            const explanationElement = html.find('.mentor-explanation')[0];
+            const root = html instanceof HTMLElement ? html : html?.[0];
+            const introElement = root?.querySelector?.('.mentor-intro');
+            const explanationElement = root.querySelector('.mentor-explanation')[0];
 
             if (introElement && explanationElement) {
               // Store original text

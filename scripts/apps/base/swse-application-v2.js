@@ -1,79 +1,72 @@
+// scripts/apps/base/swse-application-v2.js
 /**
- * Base Application class for SWSE system - Foundry V2 API compliant
- * Extends HandlebarsApplicationMixin for proper V2 rendering lifecycle
- * All progression UI classes must extend this
+ * Base Application class for SWSE system - Foundry ApplicationV2 compliant
+ *
+ * AppV2 contract:
+ * - No jQuery in render lifecycle
+ * - Use `_prepareContext` + `_onRender`
+ * - Scope DOM queries to `this.element`
+ *
+ * This base keeps a small legacy-compat shim (`defaultOptions`) so older subclasses
+ * can continue to override `static get defaultOptions()` while we finish migrations.
  */
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 import { guardOnRender, validateTemplate } from '../../debug/appv2-probe.js';
 
 export default class SWSEApplicationV2 extends HandlebarsApplicationMixin(ApplicationV2) {
-    /**
-     * Default options for SWSE V2 Applications
-     */
-    static get defaultOptions() {
-        return foundry.utils.mergeObject(super.defaultOptions, {
-            classes: ['swse', 'swse-window', 'swse-app'],
-            tag: 'form',
-            width: 600,
-            height: 'auto',
-            resizable: true,
-            draggable: true,
-            popOut: true
-        });
-    }
+  static DEFAULT_OPTIONS = {
+    classes: ['swse', 'swse-window', 'swse-app'],
+    tag: 'div',
+    position: {
+      width: 600,
+      height: 'auto'
+    },
+    window: {
+      resizable: true,
+      draggable: true,
+      frame: true
+    },
+    actions: {}
+  };
 
-    /**
-     * V2 API: Prepare context for rendering
-     * Override in subclasses to provide template context
-     * @returns {Promise<Object>} Context object for template
-     */
-    async _prepareContext() {
-        try {
-            return {};
-        } catch (error) {
-            this._handleError('_prepareContext', error);
-            return {};
-        }
-    }
+  static get defaultOptions() {
+    const base = super.defaultOptions ?? {};
+    const o = foundry.utils.mergeObject({}, this.DEFAULT_OPTIONS);
 
-    /**
-     * V2 API: Called after render to set up event listeners
-     * Scope all listeners to this.element
-     * @param {Object} context - Prepared context data
-     * @param {Object} options - Render options
-     */
-    async _onRender(context, options) {
-        try {
-            // Guard against V1 patterns
-            guardOnRender(context, options, this);
-            validateTemplate(this);
+    // Legacy v1-style aliases used by older subclasses.
+    if (o.position?.width !== undefined) o.width = o.position.width;
+    if (o.position?.height !== undefined) o.height = o.position.height;
+    if (o.window?.resizable !== undefined) o.resizable = o.window.resizable;
+    if (o.window?.draggable !== undefined) o.draggable = o.window.draggable;
+    if (o.window?.frame !== undefined) o.popOut = o.window.frame;
 
-            // Override in subclasses for event binding
-            // All DOM queries MUST be scoped to this.element
-        } catch (error) {
-            this._handleError('_onRender', error);
-        }
-    }
+    return foundry.utils.mergeObject(base, o);
+  }
 
-    /**
-     * Debug logging helper
-     * @param {string} message - Log message
-     * @param {*} data - Optional data
-     */
-    _log(message, data = null) {
-        if (game.settings?.get('foundryvtt-swse', 'debugMode')) {
-            console.log(`[${this.constructor.name}] ${message}`, data || '');
-        }
-    }
+  async _prepareContext() {
+    return {};
+  }
 
-    /**
-     * Safe error handling wrapper
-     * @param {string} context - Where error occurred
-     * @param {Error} error - The error
-     */
-    _handleError(context, error) {
-        console.error(`[${this.constructor.name}:${context}]`, error);
-        ui.notifications?.error(`Error in ${this.constructor.name}: ${error.message}`);
+  async _onRender(context, options) {
+    try {
+      guardOnRender(context, options, this);
+      validateTemplate(this);
+    } catch (error) {
+      this._handleError('_onRender', error);
     }
+  }
+
+  _log(message, data = null) {
+    if (game.settings?.get?.('foundryvtt-swse', 'debugMode')) {
+      // eslint-disable-next-line no-console
+      console.log(`[${this.constructor.name}] ${message}`, data ?? '');
+    }
+  }
+
+  _handleError(context, error) {
+    // eslint-disable-next-line no-console
+    console.error(`[${this.constructor.name}:${context}]`, error);
+    ui?.notifications?.error?.(`Error in ${this.constructor.name}: ${error?.message ?? error}`);
+  }
 }

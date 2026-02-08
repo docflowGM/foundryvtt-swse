@@ -447,7 +447,8 @@ export async function showRollModifiersDialog(options = {}) {
           icon: '<i class="fas fa-dice-d20"></i>',
           label: 'Roll',
           callback: html => {
-            const form = html.find('form')[0];
+            const root = html instanceof HTMLElement ? html : html?.[0];
+      const form = root?.querySelector?.('form');
             const data = new FormDataEntries(form);
 
             const result = {

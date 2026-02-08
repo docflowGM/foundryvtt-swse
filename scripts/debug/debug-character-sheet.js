@@ -208,7 +208,7 @@
   let successfulRenders = 0;
   let failedRenders = 0;
 
-  Hooks.on('renderActorSheet', (app, html, data) => {
+  Hooks.on('renderApplicationV2', (app, html, data) => {
     renderAttempts++;
 
     debugLog('─'.repeat(60));
@@ -235,8 +235,8 @@
       }
 
       // Check for specific elements
-      const tabs = html.find('.sheet-tabs');
-      const body = html.find('.sheet-body');
+      const tabs = root.querySelectorAll('.sheet-tabs');
+      const body = root.querySelectorAll('.sheet-body');
 
       debugLog('Sheet Structure Check:');
       debugLog('  Tabs found:', tabs.length > 0 ? `Yes (${tabs.length})` : 'No');
@@ -426,7 +426,7 @@
     checkHooks() {
       console.group('Hook Registration Check');
 
-      const hooksToCheck = ['init', 'ready', 'renderActorSheet', 'preUpdateActor'];
+      const hooksToCheck = ['init', 'ready', 'renderApplicationV2', 'preUpdateActor'];
 
       hooksToCheck.forEach(hookName => {
         const hooks = Hooks._hooks[hookName];

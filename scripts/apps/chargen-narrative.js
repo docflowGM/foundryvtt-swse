@@ -444,27 +444,27 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
       default: "close",
       render: (html) => {
         // Add click handlers for talent selection
-        html.find('.talent-node').click((e) => {
-          const talentName = $(e.currentTarget).data('talent-name');
+        root.querySelectorAll('.talent-node').forEach(el => el.addEventListener('click', (e) => {
+          const talentName = e.currentTarget?.dataset?.talentName;
           this._selectTalent(talentName);
         });
 
         // Highlight prerequisites
-        html.find('.talent-node').hover(
+        root.querySelectorAll('.talent-node').forEach(el => { el.addEventListener('mouseenter',
           (e) => {
-            const talentName = $(e.currentTarget).data('talent-name');
+            const talentName = e.currentTarget?.dataset?.talentName;
             const node = talentGraph[talentName];
             if (node) {
               node.prereqs.forEach(prereq => {
-                html.find(`[data-talent-name="${prereq}"]`).addClass('highlight-prereq');
+                root.querySelectorAll(`[data-talent-name=\"${prereq}\"]`).forEach(el => el.classList.add('highlight-prereq'));
               });
               node.dependents.forEach(dep => {
-                html.find(`[data-talent-name="${dep}"]`).addClass('highlight-dependent');
+                root.querySelectorAll(`[data-talent-name=\"${dep}\"]`).forEach(el => el.classList.add('highlight-dependent'));
               });
             }
           },
           () => {
-            html.find('.talent-node').removeClass('highlight-prereq highlight-dependent');
+            root?.querySelectorAll?.('.talent-node')?.forEach(el => el.classList.remove('highlight-prereq', 'highlight-dependent'));
           }
         );
       }

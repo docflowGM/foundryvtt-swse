@@ -19,7 +19,6 @@ import { MentorStoryResolver } from '../engine/mentor-story-resolver.js';
 import { selectMentorResponse, buildJudgmentContext } from '../mentor/mentor-judgment-engine.js';
 import { renderJudgmentAtom } from '../mentor/mentor-judgment-renderer.js';
 import { getReasonTexts } from '../mentor/mentor-reason-renderer.js';
-import { MentorTranslationIntegration } from '../ui/dialogue/mentor-translation-integration.js';
 
 // V2 API base class
 import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';
@@ -100,8 +99,7 @@ const CHAT_TOPICS = [
 ];
 
 export class MentorChatDialog extends SWSEFormApplicationV2 {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
       id: "mentor-chat-dialog",
       classes: ["swse", "mentor-chat-dialog"],
       template: "systems/foundryvtt-swse/templates/apps/mentor-chat-dialog.hbs",
@@ -111,10 +109,9 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
       draggable: true,
       scrollY: [".mentor-list", ".chat-content"]
     });
-  }
 
   constructor(actor, options = {}) {
-    super({}, options);
+    super(options);
     this.actor = actor;
     this.selectedMentor = null;
     this.currentTopic = null;
@@ -188,45 +185,15 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     });
   }
 
-  async _onRender(html, options) {
-    await super._onRender(html, options);
+  async _onRender(context, options) {
+    await super._onRender(context, options);
 
-    // Mentor selection
-    html.find('.mentor-card').click(this._onSelectMentor.bind(this));
+    const root = this.element;
+    root?.querySelectorAll?.('.mentor-card')?.forEach(el => el.addEventListener('click', this._onSelectMentor.bind(this)));
+    root?.querySelectorAll?.('.topic-button')?.forEach(el => el.addEventListener('click', this._onSelectTopic.bind(this)));
+    root?.querySelectorAll?.('.back-to-mentors')?.forEach(el => el.addEventListener('click', this._onBackToMentors.bind(this)));
+    root?.querySelectorAll?.('.back-to-topics')?.forEach(el => el.addEventListener('click', this._onBackToTopics.bind(this)));
 
-    // Topic selection
-    html.find('.topic-button').click(this._onSelectTopic.bind(this));
-
-    // Navigation
-    html.find('.back-to-mentors').click(this._onBackToMentors.bind(this));
-    html.find('.back-to-topics').click(this._onBackToTopics.bind(this));
-
-    // Apply Aurebesh translation to mentor dialogue
-    if (this.selectedMentor) {
-      this._applyDialogueTranslation(html);
-    }
-  }
-
-  /**
-   * Apply Aurebesh translation effect to mentor dialogue boxes
-   */
-  async _applyDialogueTranslation(html) {
-    const mentorName = this.selectedMentor.mentor.name;
-    const dialogueLines = html.find('.dialogue-line, .dialogue-suggestions');
-
-    for (const line of dialogueLines) {
-      const text = line.textContent.trim();
-      if (text) {
-        // Clear the line and apply translation
-        line.innerHTML = '';
-        await MentorTranslationIntegration.render({
-          text,
-          container: line,
-          mentor: mentorName,
-          topic: this.currentTopic?.key || 'default'
-        });
-      }
-    }
   }
 
   async _onSelectMentor(event) {

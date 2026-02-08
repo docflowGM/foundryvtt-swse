@@ -19,6 +19,8 @@ async function _syncLanguageIds() {
   this.characterData.languageIds = ids;
   this.characterData.languageUuids = uuids;
 }
+  this.characterData.languageIds = ids;
+}
 
 /**
  * Load languages data from JSON file
@@ -424,7 +426,7 @@ export async function _onAddCustomLanguage(event) {
       </div>
     `,
     callback: (html) => {
-      const input = html instanceof jQuery ? html.find('input[name="customLanguage"]')[0] : html.querySelector('input[name="customLanguage"]');
+      const input = html instanceof jQuery ? root.querySelector('input[name="customLanguage"]') : html.querySelector('input[name="customLanguage"]');
       return input?.value?.trim();
     },
     rejectClose: false,

@@ -708,7 +708,8 @@ export class MentorSurvey {
             render: (html) => {
               swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Dialog render callback fired, html:`, { hasHtml: !!html, length: html?.length });
               // Add typing animation to the greeting
-              const greetingElement = html.find('.mentor-greeting')[0];
+              const root = this.element;
+              const greetingElement = root?.querySelector?.('.mentor-greeting');
               if (greetingElement) {
                 swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Starting typing animation...`);
                 const greetingText = greetingElement.textContent;
@@ -805,7 +806,7 @@ export class MentorSurvey {
             default: "continue",
             render: (html) => {
               // Add typing animation to mentor's skip message
-              const skipElement = html.find('.mentor-skip-text')[0];
+              const skipElement = root?.querySelector?.('.mentor-skip-text');
               if (skipElement) {
                 const skipText = skipElement.textContent;
                 TypingAnimation.typeText(skipElement, skipText, {
@@ -869,7 +870,8 @@ export class MentorSurvey {
             default: "begin",
             render: (html) => {
               // Add typing animation to mentor's greeting
-              const greetingElement = html.find('.mentor-greeting')[0];
+              const root = this.element;
+              const greetingElement = root?.querySelector?.('.mentor-greeting');
               if (greetingElement) {
                 const greetingText = greetingElement.textContent;
                 TypingAnimation.typeText(greetingElement, greetingText, {
@@ -916,7 +918,8 @@ export class MentorSurvey {
             default: "finish",
             render: (html) => {
               // Add typing animation to mentor's conclusion
-              const conclusionElement = html.find('.mentor-conclusion-text')[0];
+              const root = this.element;
+              const conclusionElement = root?.querySelector?.('.mentor-conclusion-text');
               if (conclusionElement) {
                 const conclusionText = conclusionElement.textContent;
                 TypingAnimation.typeText(conclusionElement, conclusionText, {
@@ -976,7 +979,7 @@ export class MentorSurvey {
                 icon: '<i class="fas fa-arrow-right"></i>',
                 label: index === questionIds.length - 1 ? "Finish" : "Next",
                 callback: (html) => {
-                  const selectedIndex = parseInt(html.find('input[name="answer"]:checked').val(), 10);
+                  const selectedIndex = parseInt((root?.querySelector?.('input[name="answer"]:checked')?.value ?? null), 10);
                   swseLogger.log(`[MENTOR-SURVEY] showSurvey: Answer selected for question ${index + 1} - index: ${selectedIndex}`);
                   if (selectedIndex !== undefined) {
                     answers[questionId] = {
@@ -1005,7 +1008,7 @@ export class MentorSurvey {
             default: "next",
             render: (html) => {
               // Add typing animation to the question
-              const questionElement = html.find('.mentor-question')[0];
+              const questionElement = root.querySelector('.mentor-question')[0];
               if (questionElement) {
                 const questionText = questionElement.textContent;
                 TypingAnimation.typeText(questionElement, questionText, {

@@ -301,14 +301,14 @@ export class PrestigeRoadmap extends SWSEApplicationV2 {
         await super._onRender(html, options);
 
         // Class card selection
-        html.find('.roadmap-class-card').click(event => {
+        root.querySelectorAll('.roadmap-class-card').click(event => {
             const className = $(event.currentTarget).data('class-name');
             this.selectedClass = this.selectedClass === className ? null : className;
             this.render();
         });
 
         // Collapse/expand sections
-        html.find('.section-header').click(event => {
+        root.querySelectorAll('.section-header').click(event => {
             const section = $(event.currentTarget).closest('.roadmap-section');
             section.toggleClass('collapsed');
         });

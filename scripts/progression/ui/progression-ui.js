@@ -20,10 +20,11 @@ export class ProgressionUI {
         content,
         buttons: { cancel: { label: "Cancel" } },
         render: (html) => {
-          html.find('[data-choice]').click((ev) => {
+          const root = html?.[0] ?? html;
+  root.querySelectorAll('[data-choice]').forEach(el => el.addEventListener('click', (ev) => {
             resolve(ev.currentTarget.dataset.choice);
             dlg.close();
-          });
+          }));
         }
       });
       dlg.render(true);
@@ -66,8 +67,8 @@ export class ProgressionUI {
         ok: {
           label: "Build",
           callback: async (html) => {
-            const tpl = html.find('[name="template"]').val();
-            const bg = html.find('[name="background"]').val() || null;
+            const tpl = (root?.querySelector?.('[name="template"]')?.value ?? null);
+            const bg = (root?.querySelector?.('[name="background"]')?.value ?? null) || null;
             await ProgressionEngine.applyTemplateBuild(actor, tpl, { background: bg });
           }
         },
@@ -75,10 +76,10 @@ export class ProgressionUI {
       },
       render: (html) => {
         // Add change listener to template dropdown to show/hide background selector
-        html.find('[name="template"]').on('change', function() {
+        root.querySelectorAll('[name="template"]').on('change', function() {
           const selectedTemplateId = $(this).val();
           const selectedTemplate = templates[selectedTemplateId];
-          const backgroundSelector = html.find('.background-selector');
+          const backgroundSelector = root.querySelectorAll('.background-selector');
 
           // Only show background selector if template doesn't have a predefined background
           if (selectedTemplate && !selectedTemplate.background) {
@@ -89,7 +90,7 @@ export class ProgressionUI {
         });
 
         // Trigger change on initial load to set correct visibility
-        html.find('[name="template"]').trigger('change');
+        root.querySelectorAll('[name="template"]').trigger('change');
       }
     }).render(true);
   }

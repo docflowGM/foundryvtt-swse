@@ -6,9 +6,7 @@
  * - Complete statblock snapshot + rollback (system + embedded docs)
  * - AppV2 lifecycle guards (skip derived calc for statblock NPCs)
  *
- * Notes:
- * - Snapshot is stored in flags.swse.npcLevelUp.snapshot to preserve existing UI integration.
- * - Rollback restores system + Items + ActiveEffects (most common statblock inputs).
+ * Snapshot is stored in flags.swse.npcLevelUp.snapshot (back-compat with existing UI).
  */
 
 const SYSTEM_SCOPE_COMPAT = "swse";
@@ -39,8 +37,8 @@ export function shouldSkipDerivedData(actor) {
 }
 
 /**
- * Lightweight level split from embedded class items.
- * We treat "class items" as the canonical class map.
+ * Treat embedded class items as the canonical "class map".
+ * @param {Actor} actor
  */
 export function getLevelSplitFromItems(actor) {
   const classes = actor?.items?.filter?.((i) => i?.type === "class") ?? [];
@@ -72,24 +70,15 @@ export function warnIfMixedTracks(actor, context = "unknown") {
     console.warn(
       `[SWSE] Mixed progression tracks detected (${context}). ` +
         `Actor="${actor?.name ?? key}" heroic=${heroicLevel} nonheroic=${nonheroicLevel}. ` +
-        `Heroic math should always use heroic levels only (derived from class items).`
+        `Heroic math should use heroic levels only (derived from class items).`
     );
   } catch {
-    // Fail-soft: never block play.
+    // fail-soft
   }
 }
 
-/**
- * Ensure a complete statblock snapshot exists (taken once).
- * Snapshot captures:
- * - actor.system
- * - embedded Items
- * - embedded ActiveEffects
- * - minimal document metadata used by sheets (name/img/prototypeToken)
- */
 export async function ensureNpcStatblockSnapshot(actor) {
   if (!actor) return;
-
   const existing = actor.getFlag?.(SYSTEM_SCOPE_COMPAT, FLAG_SNAPSHOT);
   if (existing) return;
 
@@ -109,14 +98,6 @@ export async function ensureNpcStatblockSnapshot(actor) {
   await actor.setFlag(SYSTEM_SCOPE_COMPAT, FLAG_SNAPSHOT, snapshot);
 }
 
-/**
- * Roll back to statblock snapshot.
- * Restores:
- * - system
- * - Items
- * - ActiveEffects
- * Also resets progression flags back to statblock mode.
- */
 export async function rollbackNpcToStatblockSnapshot(actor) {
   const snap = actor?.getFlag?.(SYSTEM_SCOPE_COMPAT, FLAG_SNAPSHOT);
   if (!snap) {
@@ -124,55 +105,50 @@ export async function rollbackNpcToStatblockSnapshot(actor) {
     return;
   }
 
-  // Back-compat: older snapshot stored raw actor.toObject()
-  const isV1 = snap?.version === 1;
-  const src = isV1 ? snap : snap;
-
-  const system = foundry.utils.deepClone(src.system ?? src.data?.data ?? {});
-  const name = src.name ?? actor.name;
-  const img = src.img ?? actor.img;
-  const prototypeToken = foundry.utils.deepClone(src.prototypeToken ?? {});
+  const system = foundry.utils.deepClone(snap.system ?? {});
+  const name = snap.name ?? actor.name;
+  const img = snap.img ?? actor.img;
+  const prototypeToken = foundry.utils.deepClone(snap.prototypeToken ?? {});
 
   await actor.update(
-    {
-      name,
-      img,
-      system,
-      prototypeToken
-    },
+    { name, img, system, prototypeToken },
     { diff: false, [SYSTEM_SCOPE_COMPAT]: { skipProgression: true } }
   );
 
-  // Items
   const currentItemIds = actor.items?.map?.((i) => i.id) ?? [];
   if (currentItemIds.length) {
-    await actor.deleteEmbeddedDocuments("Item", currentItemIds, { [SYSTEM_SCOPE_COMPAT]: { skipProgression: true } });
+    await actor.deleteEmbeddedDocuments("Item", currentItemIds, {
+      [SYSTEM_SCOPE_COMPAT]: { skipProgression: true }
+    });
   }
 
-  const items = (src.items ?? []).map((i) => {
+  const items = (snap.items ?? []).map((i) => {
     const copy = foundry.utils.deepClone(i);
     delete copy._id;
     return copy;
   });
-
   if (items.length) {
-    await actor.createEmbeddedDocuments("Item", items, { [SYSTEM_SCOPE_COMPAT]: { skipProgression: true } });
+    await actor.createEmbeddedDocuments("Item", items, {
+      [SYSTEM_SCOPE_COMPAT]: { skipProgression: true }
+    });
   }
 
-  // Active Effects
   const currentEffectIds = actor.effects?.map?.((e) => e.id) ?? [];
   if (currentEffectIds.length) {
-    await actor.deleteEmbeddedDocuments("ActiveEffect", currentEffectIds, { [SYSTEM_SCOPE_COMPAT]: { skipProgression: true } });
+    await actor.deleteEmbeddedDocuments("ActiveEffect", currentEffectIds, {
+      [SYSTEM_SCOPE_COMPAT]: { skipProgression: true }
+    });
   }
 
-  const effects = (src.effects ?? []).map((e) => {
+  const effects = (snap.effects ?? []).map((e) => {
     const copy = foundry.utils.deepClone(e);
     delete copy._id;
     return copy;
   });
-
   if (effects.length) {
-    await actor.createEmbeddedDocuments("ActiveEffect", effects, { [SYSTEM_SCOPE_COMPAT]: { skipProgression: true } });
+    await actor.createEmbeddedDocuments("ActiveEffect", effects, {
+      [SYSTEM_SCOPE_COMPAT]: { skipProgression: true }
+    });
   }
 
   await actor.setFlag(SYSTEM_SCOPE_COMPAT, FLAG_MODE, "statblock");

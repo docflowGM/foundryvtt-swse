@@ -16,6 +16,7 @@ import { SWSELogger } from '../utils/logger.js';
 import { FeatEffectsEngine } from '../engine/FeatEffectsEngine.js';
 import { initializeStarshipManeuverHooks } from './starship-maneuver-hooks.js';
 import { initializeForcePowerHooks } from './force-power-hooks.js';
+import { qs, qsa, setVisible, isVisible, text } from '../utils/dom-utils.js';
 
 /**
  * Register all actor-related hooks
@@ -213,7 +214,7 @@ async function handleItemCreate(item, options, userId) {
                 icon: '<i class="fas fa-check"></i>',
                 label: "Select",
                 callback: async (html) => {
-                    const selectedSkill = html.find('#skill-focus-selection').val();
+                    const selectedSkill = (root?.querySelector?.('#skill-focus-selection')?.value ?? null);
 
                     // Update the skill to be focused
                     const updateData = {
@@ -433,7 +434,8 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
                 icon: '<i class="fas fa-check"></i>',
                 label: "Confirm Selection",
                 callback: async (html) => {
-                    const selected = html.find('input[name="skill-selection"]:checked');
+                    const root = html instanceof HTMLElement ? html : html?.[0];
+        const selected = root?.querySelector?.('input[name="skill-selection"]:checked');
 
                     if (selected.length !== skillsToGain) {
                         ui.notifications.warn(`Please select exactly ${skillsToGain} skill${skillsToGain > 1 ? 's' : ''}.`);
@@ -463,12 +465,12 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
         default: "confirm",
         render: (html) => {
             // Limit checkbox selection to skillsToGain
-            html.find('input[name="skill-selection"]').change(function() {
-                const checked = html.find('input[name="skill-selection"]:checked');
+            root.querySelector('input[name="skill-selection"]').change(function() {
+                const checked = root.querySelector('input[name="skill-selection"]:checked');
                 if (checked.length >= skillsToGain) {
-                    html.find('input[name="skill-selection"]:not(:checked)').prop('disabled', true);
+                    qsa(root, 'input[name="skill-selection"]:not(:checked)').forEach(b => { b.disabled = true; });
                 } else {
-                    html.find('input[name="skill-selection"]').prop('disabled', false);
+                    qsa(root, 'input[name="skill-selection"]').forEach(b => { b.disabled = false; });
                 }
             });
         }

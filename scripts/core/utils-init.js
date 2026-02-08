@@ -12,15 +12,16 @@ import * as DataUtils from "../utils/data-utils.js";
 import * as UIUtils from "../utils/ui-utils.js";
 import * as ValidationUtils from "../utils/validation-utils.js";
 import * as DiceUtils from "../utils/dice-utils.js";
+import * as DebugTools from "../debug/debug-tools.js";
 
 /**
  * Initialize utilities and expose them on game.swse.utils
  */
 export function initializeUtils() {
   SWSELogger.log("SWSE | Initializing utilities...");
-  
+
   if (!game.swse) game.swse = {};
-  
+
   game.swse.utils = {
     math: MathUtils,
     string: StringUtils,
@@ -31,6 +32,9 @@ export function initializeUtils() {
     validation: ValidationUtils,
     dice: DiceUtils
   };
-  
+
+  // Dev helpers (macros / smoke tests / toggles)
+  game.swse.debug = DebugTools;
+
   SWSELogger.log("SWSE | ✓ Utils initialized:", Object.keys(game.swse.utils));
 }

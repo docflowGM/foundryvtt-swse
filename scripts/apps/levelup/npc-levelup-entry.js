@@ -11,19 +11,12 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     main: { template: "systems/foundryvtt-swse/templates/apps/npc-levelup-entry.hbs" }
   };
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      id: "swse-npc-levelup-entry",
-      width: 560,
-      height: "auto",
-      window: { title: "NPC Level Up" }
-    });
-  }
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+    id: "swse-npc-levelup-entry",
+    position: { width: 560, height: "auto" },
+    window: { title: "NPC Level Up", resizable: true, draggable: true, frame: true }
+  });
 
-  /**
-   * @param {Actor} actor
-   * @param {object} [options]
-   */
   constructor(actor, options = {}) {
     super(options);
     this.actor = actor;
@@ -71,14 +64,12 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     const el = this.element;
     if (!el) return;
 
-    // AppV2 re-renders can happen frequently; bind once per element instance.
     if (this._boundElement === el) return;
     this._boundElement = el;
 
     el.addEventListener("click", async (ev) => {
       const btn = ev?.target?.closest?.("[data-action]");
       if (!btn) return;
-
       ev?.preventDefault?.();
 
       const action = String(btn.dataset.action ?? "").trim();

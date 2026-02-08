@@ -240,17 +240,17 @@ export class GMDebugPanel extends SWSEApplicationV2 {
         await super._onRender(html, options);
 
         // Refresh button
-        html.find('.refresh-analysis').click(() => this.render(true));
+        root.querySelectorAll('.refresh-analysis').click(() => this.render(true));
 
         // Copy JSON button
-        html.find('.copy-json').click(() => {
+        root.querySelectorAll('.copy-json').click(() => {
             const json = JSON.stringify(this.buildIntent, null, 2);
             navigator.clipboard.writeText(json);
             ui.notifications.info('BuildIntent JSON copied to clipboard');
         });
 
         // Collapsible sections
-        html.find('.collapsible-header').click(event => {
+        root.querySelectorAll('.collapsible-header').click(event => {
             const section = $(event.currentTarget).closest('.collapsible-section');
             section.toggleClass('collapsed');
         });

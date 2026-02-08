@@ -214,7 +214,10 @@ async function promptAndGrantFeat(actor) {
       buttons: {
         ok: {
           label: "Grant Feat",
-          callback: (html) => resolve(html.find('[name="feat"]').val() || null)
+          callback: (html) => {
+            const root = html instanceof HTMLElement ? html : html?.[0];
+            resolve(root?.querySelector?.('[name="feat"]')?.value || null);
+          }
         },
         cancel: { label: "Skip", callback: () => resolve(null) }
       },
@@ -252,7 +255,10 @@ async function promptAndApplyAbilityIncrease(actor, count) {
           </form>
         `,
         buttons: {
-          ok: { label: "Apply", callback: (html) => resolve(html.find('[name="ability"]').val() || null) },
+          ok: { label: "Apply", callback: (html) => {
+              const root = html instanceof HTMLElement ? html : html?.[0];
+              resolve(root?.querySelector?.('[name="ability"]')?.value || null);
+            } },
           cancel: { label: "Cancel", callback: () => resolve(null) }
         },
         default: "ok",

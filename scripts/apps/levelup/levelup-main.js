@@ -20,6 +20,7 @@ import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class
 import { MentorSurvey } from '../mentor-survey.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { TypingAnimation } from '../../utils/typing-animation.js';
+import { qs, qsa, setVisible, isVisible } from '../../utils/dom-utils.js';
 
 // Import shared utilities
 import {
@@ -110,8 +111,7 @@ import SWSEFormApplicationV2 from '../base/swse-form-application-v2.js';
 
 export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
       classes: ['swse', 'levelup-dialog', "swse-app"],
       template: 'systems/foundryvtt-swse/templates/apps/levelup.hbs',
       width: 800,
@@ -125,7 +125,6 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       left: null,  // Allow Foundry to center
       top: null    // Allow Foundry to center
     });
-  }
 
   /**
    * Detect if character is incomplete and determine which step to start at
@@ -163,7 +162,8 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   }
 
   constructor(actor, options = {}) {
-    super(actor, options);
+    super(options);
+    this.actor = actor;
     this.actor = actor;
 
     // Check if character is incomplete and redirect to character generator
@@ -372,94 +372,96 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     return getMentorGuidance(this.mentor, choiceType);
   }
 
-  async _onRender(html, options) {
-    await super._onRender(html, options);
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+
+    const root = this.element;
 
     if (this._epicBlocked) {
-      html.find("button").prop("disabled", true);
-      html.find(".cancel-levelup, .close").prop("disabled", false);
+      qsa(root, 'button').forEach(b => { b.disabled = true; });
+      qsa(root, '.cancel-levelup, .close').forEach(b => { b.disabled = false; });
       return;
     }
 
     // Class selection (old and new styles)
-    html.find('.select-class-btn').click(this._onSelectClass.bind(this));
-    html.find('.class-choice-btn').click(this._onSelectClass.bind(this));
+    qsa(root, '.select-class-btn').forEach(el => el.addEventListener('click', this._onSelectClass.bind(this)));
+    qsa(root, '.class-choice-btn').forEach(el => el.addEventListener('click', this._onSelectClass.bind(this)));
 
     // Prestige class navigation
-    html.find('.show-prestige-btn').click(this._onShowPrestigeClasses.bind(this));
-    html.find('.back-to-base-classes').click(this._onBackToBaseClasses.bind(this));
+    qsa(root, '.show-prestige-btn').forEach(el => el.addEventListener('click', this._onShowPrestigeClasses.bind(this)));
+    qsa(root, '.back-to-base-classes').forEach(el => el.addEventListener('click', this._onBackToBaseClasses.bind(this)));
 
     // Multiclass bonus selection
-    html.find('.select-feat-btn').click(this._onSelectMulticlassFeat.bind(this));
-    html.find('.select-skill-btn').click(this._onSelectMulticlassSkill.bind(this));
+    qsa(root, '.select-feat-btn').forEach(el => el.addEventListener('click', this._onSelectMulticlassFeat.bind(this)));
+    qsa(root, '.select-skill-btn').forEach(el => el.addEventListener('click', this._onSelectMulticlassSkill.bind(this)));
 
     // Ability score increases
-    html.find('.ability-increase-btn').click(this._onAbilityIncrease.bind(this));
-    html.find('.ask-mentor-attribute').click(this._onAskMentorAttributeSuggestion.bind(this));
+    qsa(root, '.ability-increase-btn').forEach(el => el.addEventListener('click', this._onAbilityIncrease.bind(this)));
+    qsa(root, '.ask-mentor-attribute').forEach(el => el.addEventListener('click', this._onAskMentorAttributeSuggestion.bind(this)));
 
     // Bonus feat selection
-    html.find('.select-bonus-feat').click(this._onSelectBonusFeat.bind(this));
+    qsa(root, '.select-bonus-feat').forEach(el => el.addEventListener('click', this._onSelectBonusFeat.bind(this)));
 
     // Force power selection
-    html.find('.select-force-power').click(this._onSelectForcePower.bind(this));
+    qsa(root, '.select-force-power').forEach(el => el.addEventListener('click', this._onSelectForcePower.bind(this)));
 
     // Talent tree selection
-    html.find('.select-talent-tree').click(this._onSelectTalentTree.bind(this));
+    qsa(root, '.select-talent-tree').forEach(el => el.addEventListener('click', this._onSelectTalentTree.bind(this)));
 
     // Navigation
-    html.find('.next-step').click(this._onNextStep.bind(this));
-    html.find('.prev-step').click(this._onPrevStep.bind(this));
-    html.find('.skip-step').click(this._onSkipStep.bind(this));
+    qsa(root, '.next-step').forEach(el => el.addEventListener('click', this._onNextStep.bind(this)));
+    qsa(root, '.prev-step').forEach(el => el.addEventListener('click', this._onPrevStep.bind(this)));
+    qsa(root, '.skip-step').forEach(el => el.addEventListener('click', this._onSkipStep.bind(this)));
 
     // Free Build mode toggle
-    html.find('.free-build-toggle').change(this._onToggleFreeBuild.bind(this));
+    qsa(root, '.free-build-toggle').forEach(el => el.addEventListener('change', this._onToggleFreeBuild.bind(this)));
 
     // Final level up
-    html.find('.complete-levelup').click(this._onCompleteLevelUp.bind(this));
+    qsa(root, '.complete-levelup').forEach(el => el.addEventListener('click', this._onCompleteLevelUp.bind(this)));
 
     // Feat category toggle
-    html.find('.category-header').click(this._onToggleFeatCategory.bind(this));
+    qsa(root, '.category-header').forEach(el => el.addEventListener('click', this._onToggleFeatCategory.bind(this)));
 
     // Feat search and filtering
-    html.find('.feat-search-input').on('input', this._onFeatSearch.bind(this));
-    html.find('.clear-search-btn').click(this._onClearSearch.bind(this));
-    html.find('.clear-filters-btn').click(this._onClearAllFilters.bind(this));
-    html.find('.show-unavailable-toggle').change(this._onToggleShowUnavailable.bind(this));
+    qsa(root, '.feat-search-input').forEach(el => el.addEventListener('input', this._onFeatSearch.bind(this)));
+    qsa(root, '.clear-search-btn').forEach(el => el.addEventListener('click', this._onClearSearch.bind(this)));
+    qsa(root, '.clear-filters-btn').forEach(el => el.addEventListener('click', this._onClearAllFilters.bind(this)));
+    qsa(root, '.show-unavailable-toggle').forEach(el => el.addEventListener('change', this._onToggleShowUnavailable.bind(this)));
 
     // Tag filtering
-    html.find('.feat-tag').click(this._onClickFeatTag.bind(this));
+    qsa(root, '.feat-tag').forEach(el => el.addEventListener('click', this._onClickFeatTag.bind(this)));
 
     // Prestige Roadmap and Debug Panel
-    html.find('.show-prestige-roadmap').click(this._onShowPrestigeRoadmap.bind(this));
-    html.find('.show-gm-debug-panel').click(this._onShowGMDebugPanel.bind(this));
+    qsa(root, '.show-prestige-roadmap').forEach(el => el.addEventListener('click', this._onShowPrestigeRoadmap.bind(this)));
+    qsa(root, '.show-gm-debug-panel').forEach(el => el.addEventListener('click', this._onShowGMDebugPanel.bind(this)));
 
     // Mentor suggestion buttons
-    html.find('.ask-mentor-class-suggestion').click(this._onAskMentorClassSuggestion.bind(this));
-    html.find('.ask-mentor-feat-suggestion').click(this._onAskMentorFeatSuggestion.bind(this));
-    html.find('.ask-mentor-talent-suggestion').click(this._onAskMentorTalentSuggestion.bind(this));
-    html.find('.ask-mentor-force-power-suggestion').click(this._onAskMentorForcePowerSuggestion.bind(this));
+    qsa(root, '.ask-mentor-class-suggestion').forEach(el => el.addEventListener('click', this._onAskMentorClassSuggestion.bind(this)));
+    qsa(root, '.ask-mentor-feat-suggestion').forEach(el => el.addEventListener('click', this._onAskMentorFeatSuggestion.bind(this)));
+    qsa(root, '.ask-mentor-talent-suggestion').forEach(el => el.addEventListener('click', this._onAskMentorTalentSuggestion.bind(this)));
+    qsa(root, '.ask-mentor-force-power-suggestion').forEach(el => el.addEventListener('click', this._onAskMentorForcePowerSuggestion.bind(this)));
 
     // Animate mentor text with typing effect
-    this._animateMentorText(html);
+    this._animateMentorText();
   
     // Suggestion diff (optional learning aid)
     try {
       const enabled = game.settings.get('foundryvtt-swse', 'showSuggestionDiffOnLevelUp') ?? false;
       if (enabled) {
-        const panel = html.find('.swse-suggestion-diff');
-        if (panel.length === 0) {
-          html.find('.window-content').prepend(`<div class="swse-suggestion-diff"><h4>Recommendation changes</h4><div class="swse-suggestion-diff__body">Loading…</div></div>`);
+        const panel = qs(root, '.swse-suggestion-diff');
+        if (!panel) {
+          (qs(root, '.window-content') ?? root).insertAdjacentHTML('afterbegin', `<div class="swse-suggestion-diff"><h4>Recommendation changes</h4><div class="swse-suggestion-diff__body">Loading…</div></div>`);
         }
         (async () => {
           const sugs = await SuggestionService.getSuggestions(this.actor, 'levelup', { persist: false });
           const diff = await SuggestionService.getSuggestionDiff(this.actor, 'levelup', sugs);
-          const body = html.find('.swse-suggestion-diff__body');
-          body.empty();
+          const body = qs(root, '.swse-suggestion-diff__body');
+          if (body) body.innerHTML = '';
           if (!diff.added.length && !diff.removed.length) {
-            body.append(`<div>No changes since last time.</div>`);
+            if (body) body.insertAdjacentHTML('beforeend', `<div>No changes since last time.</div>`);
           } else {
-            if (diff.added.length) body.append(`<div><strong>New:</strong> ${diff.added.slice(0,8).join(', ')}</div>`);
-            if (diff.removed.length) body.append(`<div><strong>Gone:</strong> ${diff.removed.slice(0,8).join(', ')}</div>`);
+            if (diff.added.length && body) body.insertAdjacentHTML('beforeend', `<div><strong>New:</strong> ${diff.added.slice(0,8).join(', ')}</div>`);
+            if (diff.removed.length && body) body.insertAdjacentHTML('beforeend', `<div><strong>Gone:</strong> ${diff.removed.slice(0,8).join(', ')}</div>`);
           }
         })();
       }
@@ -473,9 +475,9 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
    * Animate mentor greeting and guidance text with typing effect
    * @private
    */
-  _animateMentorText(html) {
-    const greetingElement = html.find('.mentor-greeting p')[0];
-    const guidanceElement = html.find('.mentor-guidance p')[0];
+  _animateMentorText() {
+    const greetingElement = qs(this.element, '.mentor-greeting p');
+    const guidanceElement = qs(this.element, '.mentor-guidance p');
 
     // Animate greeting first
     if (greetingElement && this.mentorGreeting) {
@@ -979,7 +981,8 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
             icon: '<i class="fas fa-check"></i>',
             label: "Select",
             callback: (html) => {
-              const selectedSkill = html.find('#skill-training-selection').val();
+              const root = html instanceof HTMLElement ? html : html?.[0];
+    const selectedSkill = root?.querySelector?.('#skill-training-selection')?.value;
               const skillName = skills.find(s => s.key === selectedSkill)?.name || selectedSkill;
 
               // Create a modified feat with the skill choice noted
@@ -1073,7 +1076,8 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
             icon: '<i class="fas fa-check"></i>',
             label: "Select",
             callback: (html) => {
-              const selectedWeapon = html.find('#weapon-choice-selection').val();
+              const root = html instanceof HTMLElement ? html : html?.[0];
+    const selectedWeapon = root?.querySelector?.('#weapon-choice-selection')?.value;
               const weaponLabel = weaponOptions.find(w => w.value === selectedWeapon)?.label || selectedWeapon;
 
               // Create a modified feat with the weapon choice noted
@@ -1108,281 +1112,149 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   // ========================================
 
   _onToggleFeatCategory(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const categoryElement = $(event.currentTarget).closest('.feat-category');
-    const categoryFeats = categoryElement.find('.category-feats');
+    const root = this.element;
+    const header = event.currentTarget;
+    const categoryElement = header?.closest?.('.feat-category');
+    if (!categoryElement) return;
 
-    categoryElement.toggleClass('expanded');
-    categoryFeats.slideToggle(200);
+    categoryElement.classList.toggle('expanded');
+    const feats = qs(categoryElement, '.category-feats');
+    if (feats) setVisible(feats, categoryElement.classList.contains('expanded'));
   }
 
   _onFeatSearch(event) {
-    const searchTerm = event.target.value.toLowerCase().trim();
-    const html = $(this.element);
-    const clearBtn = html.find('.clear-search-btn');
+    const root = this.element;
+    const input = event.currentTarget;
+    this._featSearchTerm = (input?.value ?? '').toLowerCase().trim();
 
-    // Show/hide clear button
-    clearBtn.toggle(searchTerm.length > 0);
+    const clearBtn = qs(root, '.clear-search-btn');
+    setVisible(clearBtn, this._featSearchTerm.length > 0);
 
-    // Get all feat cards
-    const featCards = html.find('.feat-card');
-
-    if (!searchTerm) {
-      // Show all feats if search is empty
-      featCards.show();
-      this._updateCategoryCounts(html);
-      return;
-    }
-
-    // Filter feats by name or tags
-    featCards.each((i, card) => {
-      const $card = $(card);
-      const featName = $card.data('feat-name')?.toLowerCase() || '';
-      const featTags = $card.data('feat-tags')?.toLowerCase() || '';
-
-      const matches = featName.includes(searchTerm) || featTags.includes(searchTerm);
-      $card.toggle(matches);
-    });
-
-    // Update category counts
-    this._updateCategoryCounts(html);
-
-    // Expand categories that have visible feats
-    html.find('.feat-category').each((i, category) => {
-      const $category = $(category);
-      const visibleFeats = $category.find('.feat-card:visible').length;
-      if (visibleFeats > 0 && searchTerm) {
-        $category.addClass('expanded');
-        $category.find('.category-feats').show();
-      }
-    });
+    this._applyFeatFilters();
   }
 
-  _onClearSearch(event) {
-    event.preventDefault();
-    const html = $(this.element);
-    const searchInput = html.find('.feat-search-input');
-
-    searchInput.val('');
-    html.find('.clear-search-btn').hide();
-    html.find('.feat-card').show();
-
-    this._updateCategoryCounts(html);
+  _onClearSearch() {
+    const root = this.element;
+    const input = qs(root, '.feat-search-input');
+    if (input) input.value = '';
+    this._featSearchTerm = '';
+    const clearBtn = qs(root, '.clear-search-btn');
+    setVisible(clearBtn, false);
+    this._applyFeatFilters();
   }
 
-  _onClearAllFilters(event) {
-    event.preventDefault();
-    const html = $(this.element);
+  _onClearAllFilters() {
+    const root = this.element;
 
-    // Clear search
-    html.find('.feat-search-input').val('');
-    html.find('.clear-search-btn').hide();
+    const input = qs(root, '.feat-search-input');
+    if (input) input.value = '';
+    this._featSearchTerm = '';
+    setVisible(qs(root, '.clear-search-btn'), false);
 
-    // Clear active tags
     this.activeTags = [];
-    html.find('.active-tag-filters').hide();
-    html.find('.active-tags-container').empty();
+    this._updateActiveTagsDisplay();
 
-    // Show all feats
-    html.find('.feat-card').show();
+    const toggle = qs(root, '.show-unavailable-toggle');
+    if (toggle) toggle.checked = false;
 
-    this._updateCategoryCounts(html);
+    this._applyFeatFilters();
   }
 
-  _onToggleShowUnavailable(event) {
-    const html = $(this.element);
-    const showUnavailable = event.target.checked;
-
-    // CSS handles the visibility via the checkbox state
-    // Just need to update counts
-    this._updateCategoryCounts(html);
+  _onToggleShowUnavailable() {
+    this._applyFeatFilters();
   }
 
   _onClickFeatTag(event) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    const tag = $(event.currentTarget).data('tag');
+    const tag = event.currentTarget?.dataset?.tag;
     if (!tag) return;
 
-    const html = $(this.element);
+    if (!Array.isArray(this.activeTags)) this.activeTags = [];
+    if (!this.activeTags.includes(tag)) this.activeTags.push(tag);
 
-    // Initialize active tags if needed
-    if (!this.activeTags) {
-      this.activeTags = [];
-    }
-
-    // Toggle tag
-    const tagIndex = this.activeTags.indexOf(tag);
-    if (tagIndex > -1) {
-      this.activeTags.splice(tagIndex, 1);
-    } else {
-      this.activeTags.push(tag);
-    }
-
-    // Update active tags display
-    this._updateActiveTagsDisplay(html);
-
-    // Filter feats by active tags
-    this._filterByActiveTags(html);
+    this._updateActiveTagsDisplay();
+    this._applyFeatFilters();
   }
 
-  _updateActiveTagsDisplay(html) {
-    const activeFilters = html.find('.active-tag-filters');
-    const container = html.find('.active-tags-container');
+  _applyFeatFilters() {
+    const root = this.element;
+    const term = (this._featSearchTerm ?? '').toLowerCase().trim();
+    const filtersActive = !!term || (Array.isArray(this.activeTags) && this.activeTags.length > 0);
 
-    if (!this.activeTags || this.activeTags.length === 0) {
-      activeFilters.hide();
-      container.empty();
-      return;
-    }
+    const showUnavailable = !!qs(root, '.show-unavailable-toggle')?.checked;
 
-    activeFilters.show();
-    container.empty();
+    qsa(root, '.feat-card').forEach(card => {
+      const name = (card.dataset?.featName ?? '').toLowerCase();
+      const tags = (card.dataset?.featTags ?? '').toLowerCase();
 
-    this.activeTags.forEach(tag => {
-      const badge = $(`
-        <span class="active-tag-badge">
-          ${tag}
-          <i class="fas fa-times" data-remove-tag="${tag}"></i>
-        </span>
-      `);
+      const matchesText = !term || name.includes(term) || tags.includes(term);
+      const matchesUnavailable = showUnavailable || !card.classList.contains('unavailable');
 
-      badge.find('i').click((e) => {
-        e.preventDefault();
-        const tagToRemove = $(e.currentTarget).data('remove-tag');
-        const index = this.activeTags.indexOf(tagToRemove);
-        if (index > -1) {
-          this.activeTags.splice(index, 1);
-        }
-        this._updateActiveTagsDisplay(html);
-        this._filterByActiveTags(html);
+      let matchesTags = true;
+      if (Array.isArray(this.activeTags) && this.activeTags.length > 0) {
+        const featTags = (card.dataset?.featTags ?? '').split(',').map(t => t.trim());
+        matchesTags = this.activeTags.every(t => featTags.includes(t));
+      }
+
+      setVisible(card, matchesText && matchesUnavailable && matchesTags);
+    });
+
+    qsa(root, '.feat-category').forEach(category => {
+      const featsContainer = qs(category, '.category-feats');
+      const visibleFeats = qsa(category, '.feat-card').filter(isVisible).length;
+
+      const badge = qs(category, '.count-badge');
+      if (badge) badge.textContent = String(visibleFeats);
+
+      category.classList.toggle('empty-category', visibleFeats === 0);
+
+      if (filtersActive) category.classList.toggle('expanded', visibleFeats > 0);
+
+      if (featsContainer) {
+        const show = category.classList.contains('expanded') && visibleFeats > 0;
+        setVisible(featsContainer, show);
+      }
+    });
+
+    const totalVisible = qsa(root, '.feat-card').filter(isVisible).length;
+    const totalBadge = qs(root, '.total-count-badge');
+    if (totalBadge) totalBadge.textContent = String(totalVisible);
+  }
+
+  _updateActiveTagsDisplay() {
+    const root = this.element;
+    const container = qs(root, '.active-tags-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    const active = Array.isArray(this.activeTags) ? this.activeTags : [];
+    active.forEach(tag => {
+      const badge = document.createElement('span');
+      badge.className = 'active-tag-badge';
+      badge.dataset.tag = tag;
+      badge.innerHTML = `${tag} <i class="fas fa-times remove-tag"></i>`;
+      container.appendChild(badge);
+
+      badge.addEventListener('click', (ev) => {
+        if (!ev.target?.classList?.contains('remove-tag')) return;
+        this.activeTags = (this.activeTags || []).filter(t => t !== tag);
+        this._updateActiveTagsDisplay();
+        this._applyFeatFilters();
       });
-
-      container.append(badge);
-    });
-  }
-
-  _filterByActiveTags(html) {
-    if (!this.activeTags || this.activeTags.length === 0) {
-      // No active tags - show all feats
-      html.find('.feat-card').show();
-      this._updateCategoryCounts(html);
-      return;
-    }
-
-    // Filter feats: show only if they have ALL active tags
-    html.find('.feat-card').each((i, card) => {
-      const $card = $(card);
-      const featTags = ($card.data('feat-tags') || '').split(',').filter(t => t);
-
-      const hasAllTags = this.activeTags.every(activeTag =>
-        featTags.includes(activeTag)
-      );
-
-      $card.toggle(hasAllTags);
     });
 
-    // Update category counts
-    this._updateCategoryCounts(html);
-
-    // Expand categories that have visible feats
-    html.find('.feat-category').each((i, category) => {
-      const $category = $(category);
-      const visibleFeats = $category.find('.feat-card:visible').length;
-      if (visibleFeats > 0) {
-        $category.addClass('expanded');
-        $category.find('.category-feats').show();
-      }
-    });
+    setVisible(qs(root, '.active-filters'), active.length > 0);
   }
 
-  _updateCategoryCounts(html) {
-    html.find('.feat-category').each((i, category) => {
-      const $category = $(category);
-      const visibleCount = $category.find('.feat-card:visible').length;
-      const totalCount = $category.find('.feat-card').length;
-
-      $category.find('.count-badge').text(visibleCount === totalCount ? totalCount : `${visibleCount}/${totalCount}`);
-    });
+  _filterByActiveTags() {
+    this._applyFeatFilters();
   }
 
-  // ========================================
-  // CLASS SELECTION
-  // ========================================
-
-  async _onSelectClass(event) {
-    event.preventDefault();
-    const classId = event.currentTarget.dataset.classId;
-
-    const context = {
-      mentor: this.mentor,
-      currentMentorClass: this.currentMentorClass,
-      mentorGreeting: this.mentorGreeting
-    };
-
-    const classDoc = await selectClass(classId, this.actor, context);
-    if (!classDoc) return;
-
-    this.selectedClass = classDoc;
-    this.mentor = context.mentor;
-    this.currentMentorClass = context.currentMentorClass;
-    this.mentorGreeting = context.mentorGreeting;
-
-    // Calculate HP gain
-    const newLevel = this.actor.system.level + 1;
-    this.hpGain = calculateHPGain(classDoc, this.actor, newLevel);
-
-    // Determine next step
-    const currentClasses = getCharacterClasses(this.actor);
-    const isMulticlassing = Object.keys(currentClasses).length > 0 && !currentClasses[classDoc.name];
-    const isBase = isBaseClass(classDoc);
-    const getsAbilityIncr = getsAbilityIncrease(newLevel);
-    const getsBonusFt = getsBonusFeat(classDoc, this.actor);
-    const getsTal = getsTalent(classDoc, this.actor);
-
-    if (isMulticlassing && isBase) {
-      // Taking a new base class - offer multiclass bonus
-      this.currentStep = 'multiclass-bonus';
-    } else if (getsAbilityIncr) {
-      // This level grants ability score increases
-      this.currentStep = 'ability-increase';
-    } else if (getsBonusFt) {
-      // This level grants a bonus feat from this class
-      this.currentStep = 'feat';
-    } else if (getsTal) {
-      // This level grants a talent from this class
-      this.currentStep = 'talent';
-    } else {
-      // No special selections - go to summary
-      this.currentStep = 'summary';
-    }
-
-    // Apply prestige class level 1 features if applicable
-    if (!isBase) {
-      await applyPrestigeClassFeatures(classDoc);
-    }
-
-    // Offer mentor survey at level 1 if not yet completed
-    if (newLevel === 1 && isBase && !MentorSurvey.hasSurveyBeenCompleted(this.actor)) {
-      const acceptSurvey = await MentorSurvey.promptSurvey(this.actor, this.mentor);
-      if (acceptSurvey) {
-        const surveyAnswers = await MentorSurvey.showSurvey(this.actor, classDoc.name, this.mentor);
-        if (surveyAnswers) {
-          const biases = MentorSurvey.processSurveyAnswers(surveyAnswers);
-          await MentorSurvey.storeSurveyData(this.actor, surveyAnswers, biases);
-          ui.notifications.info("Survey completed! Your mentor will use this to personalize suggestions.");
-        }
-      }
-    }
-
-    this.render();
+  _updateCategoryCounts() {
+    this._applyFeatFilters();
   }
 
-  /**
-   * Navigate to prestige class selection screen
-   */
+
   _onShowPrestigeClasses(event) {
     event.preventDefault();
     this.currentStep = 'prestige';

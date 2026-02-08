@@ -1,3 +1,4 @@
+import { warnIfMixedTracks } from "../../utils/hardening.js";
 /**
  * Level split utilities (Heroic vs Nonheroic)
  *
@@ -6,7 +7,6 @@
  * - In statblock mode for NPCs, we preserve legacy behavior by using total level for half-level.
  */
 
-import { warnIfMixedTracks } from "../../utils/hardening.js";
 export function getLevelSplit(actor) {
   const classes = actor?.items?.filter((i) => i.type === "class") ?? [];
 

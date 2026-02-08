@@ -255,7 +255,8 @@ export class PrerequisiteCompactBuilder {
       if (html instanceof HTMLElement) {
         return html.querySelector(selector)?.value ?? '';
       }
-      return html.find(selector).val();
+      const root = html instanceof HTMLElement ? html : html?.[0];
+      return root?.querySelector?.(selector)?.value ?? '';
     };
 
     const type = getVal('[name="type"]');

@@ -158,36 +158,14 @@ export class TalentTreeVisualizer {
    * Bind event listeners for tree selection
    */
   static _bindTreeSelectionListeners(html, talentTrees, talentsByTree, ownedTalents, talentData, actor, onSelectTalent, dialog) {
-    const previewSidebar = html.find('.preview-content');
+    const root = html?.[0] ?? html;
+    const previewSidebar = root.querySelector('.preview-content');
 
     // Hover to show preview
-    html.find('.tree-card').hover(
-      function() {
-        const treeName = $(this).data('tree-name');
-        const talents = talentsByTree[treeName] || [];
-
-        // Update sidebar preview
-        previewSidebar.html(`
-          <div class="preview-active">
-            <h4>${treeName}</h4>
-            <div class="preview-stats">
-              <span><i class="fas fa-layer-group"></i> ${talents.length} Total Talents</span>
-              <span><i class="fas fa-check"></i> ${talents.filter(t => ownedTalents.has(t.name)).length} Owned</span>
-            </div>
-            ${TalentTreeVisualizer._generateTalentPreviewList(talents, ownedTalents)}
-          </div>
-        `);
-
-        $(this).addClass('tree-card-hover');
-      },
-      function() {
-        $(this).removeClass('tree-card-hover');
-      }
-    );
-
+    // hover migrated to mouseenter/mouseleave
     // Click to open full tree with animation
-    html.find('.tree-card').click(async function() {
-      const treeName = $(this).data('tree-name');
+    root.querySelectorAll('.tree-card').forEach(card => card.addEventListener('click', async function() {
+      const treeName = this?.dataset?.treeName;
 
       // Show loading animation
       TalentTreeVisualizer._showLoadingAnimation(html, treeName);
@@ -227,11 +205,12 @@ export class TalentTreeVisualizer {
       </div>
     `;
 
-    html.find('.talent-tree-selection-container').append(loadingHtml);
+    const root = html?.[0] ?? html;
+    root?.querySelector?.('.talent-tree-selection-container')?.insertAdjacentHTML?.('beforeend', loadingHtml);
 
     // Animate loading bar
     setTimeout(() => {
-      html.find('.loading-progress').css('width', '100%');
+      root.querySelectorAll('.loading-progress').css('width', '100%');
     }, 100);
   }
 
@@ -594,8 +573,8 @@ export class TalentTreeVisualizer {
    */
   static _bindEnhancedTreeListeners(html, talentGraph, ownedTalents, actor, onSelectTalent) {
     // Click to select talent
-    html.find('.talent-node').click(function(e) {
-      const talentName = $(this).data('talent-name');
+    root.querySelectorAll('.talent-node').click(function(e) {
+      const talentName = this?.dataset?.talentName;
       const node = talentGraph[talentName];
 
       if (!node) return;
@@ -626,30 +605,30 @@ export class TalentTreeVisualizer {
     });
 
     // Hover to highlight prerequisites and dependents
-    html.find('.talent-node').hover(
+    root.querySelectorAll('.talent-node').hover(
       function() {
-        const talentName = $(this).data('talent-name');
+        const talentName = this?.dataset?.talentName;
         const node = talentGraph[talentName];
 
         if (node) {
           // Highlight prerequisites (green)
           node.prereqs.forEach(prereq => {
-            html.find(`[data-talent-name="${prereq}"]`).addClass('highlight-prereq');
-            html.find(`line[data-from="${prereq}"][data-to="${talentName}"]`).addClass('line-highlight-prereq');
+            (root.querySelectorAll(`[data-talent-name="${prereq}"]`)||[]).forEach(el=>el.classList.add('highlight-prereq'));
+            (root.querySelectorAll(`line[data-from="${prereq}"][data-to="${talentName}"]`)||[]).forEach(el=>el.classList.add('line-highlight-prereq'));
           });
 
           // Highlight dependents (purple)
           node.dependents.forEach(dep => {
-            html.find(`[data-talent-name="${dep}"]`).addClass('highlight-dependent');
-            html.find(`line[data-from="${talentName}"][data-to="${dep}"]`).addClass('line-highlight-dependent');
+            (root.querySelectorAll(`[data-talent-name="${dep}"]`)||[]).forEach(el=>el.classList.add('highlight-dependent'));
+            (root.querySelectorAll(`line[data-from="${talentName}"][data-to="${dep}"]`)||[]).forEach(el=>el.classList.add('line-highlight-dependent'));
           });
 
           $(this).addClass('highlight-current');
         }
       },
       function() {
-        html.find('.talent-node').removeClass('highlight-prereq highlight-dependent highlight-current');
-        html.find('line').removeClass('line-highlight-prereq line-highlight-dependent');
+        root.querySelectorAll('.talent-node').removeClass('highlight-prereq highlight-dependent highlight-current');
+        root.querySelectorAll('line').removeClass('line-highlight-prereq line-highlight-dependent');
       }
     );
   }

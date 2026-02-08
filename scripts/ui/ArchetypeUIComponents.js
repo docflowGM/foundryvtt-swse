@@ -256,7 +256,7 @@ export function renderExplanationTooltip(explanation, options = {}) {
  *
  * Usage:
  * ```javascript
- * Hooks.on('renderActorSheet', async (sheet) => {
+ * Hooks.on('renderApplicationV2', async (sheet) => {
  *   registerArchetypeUISection(sheet);
  * });
  * ```

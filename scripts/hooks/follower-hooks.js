@@ -112,6 +112,29 @@ export function initializeFollowerHooks() {
     /**
      * Hook: When actor is updated (level changes)
      */
+
+    /**
+     * AppV2: Add follower manager header control (no DOM injection).
+     */
+    Hooks.on('getHeaderControlsApplicationV2', (app, controls) => {
+        const actor = app?.actor ?? app?.document;
+        if (!actor || actor.type !== 'character') return;
+
+        const followerTalents = actor.items.filter(i => i.type === 'talent' && FOLLOWER_TALENTS[i.name]);
+        if (!followerTalents.length) return;
+
+        if (controls.some(c => c?.action === 'swse-followers')) return;
+
+        controls.push({
+            action: 'swse-followers',
+            icon: 'fa-solid fa-users',
+            label: 'Followers',
+            visible: () => true,
+            onClick: () => new FollowerManager(actor).render(true)
+        });
+    });
+
+
     Hooks.on('updateActor', async (actor, changes, options, userId) => {
         // Only process for the user who updated the actor
         if (game.user.id !== userId) return;
@@ -120,23 +143,6 @@ export function initializeFollowerHooks() {
         if (changes.system?.level) {
             await FollowerManager.updateFollowerStats(actor);
         }
-    });
-
-    /**
-     * Hook: Add follower creation button to character sheet
-     */
-    Hooks.on('renderActorSheet', async (app, html, data) => {
-        const actor = app.actor;
-
-        // Check if actor has any follower-granting talents
-        const followerTalents = actor.items.filter(i =>
-            i.type === 'talent' && FOLLOWER_TALENTS[i.name]
-        );
-
-        if (followerTalents.length === 0) return;
-
-        // Add follower management section to the sheet
-        addFollowerManagementUI(html, actor, followerTalents);
     });
 }
 
@@ -202,7 +208,8 @@ async function showFollowerTemplateSelection(actor, grantingTalent, talentConfig
                     icon: '<i class="fas fa-check"></i>',
                     label: "Continue",
                     callback: async (html) => {
-                        const formData = new FormData(html[0].querySelector('form'));
+                        const root = html instanceof HTMLElement ? html : html?.[0];
+                        const formData = new FormData(root.querySelector('form'));
                         const templateType = formData.get('templateType');
 
                         if (!templateType) {
@@ -240,7 +247,8 @@ async function showFollowerTemplateSelection(actor, grantingTalent, talentConfig
  */
 function addFollowerManagementUI(html, actor, followerTalents) {
     // Find talents tab or a suitable location
-    const talentsTab = html.find('.tab[data-tab="talents"]');
+    const root = html?.[0] ?? html;
+    const talentsTab = root?.querySelector?.('.tab[data-tab="talents"]');
     if (!talentsTab.length) return;
 
     // Get current followers
@@ -342,7 +350,7 @@ function addFollowerManagementUI(html, actor, followerTalents) {
     talentsTab.prepend(followerHTML);
 
     // Add event listeners
-    html.find('.create-follower-btn').on('click', async (event) => {
+    root.querySelector('.create-follower-btn').on('click', async (event) => {
         event.preventDefault();
 
         // Show talent selection if multiple talents grant followers
@@ -360,7 +368,7 @@ function addFollowerManagementUI(html, actor, followerTalents) {
         actor.sheet.render(false);
     });
 
-    html.find('.open-follower-sheet').on('click', async (event) => {
+    root.querySelector('.open-follower-sheet').on('click', async (event) => {
         event.preventDefault();
         const followerId = $(event.currentTarget).closest('.follower-item').data('follower-id');
         const follower = game.actors.get(followerId);
@@ -369,7 +377,7 @@ function addFollowerManagementUI(html, actor, followerTalents) {
         }
     });
 
-    html.find('.remove-follower').on('click', async (event) => {
+    root.querySelector('.remove-follower').on('click', async (event) => {
         event.preventDefault();
         const followerId = $(event.currentTarget).closest('.follower-item').data('follower-id');
         const follower = game.actors.get(followerId);
@@ -404,7 +412,8 @@ async function selectFollowerTalent(talents) {
                     icon: '<i class="fas fa-check"></i>',
                     label: "Select",
                     callback: (html) => {
-                        const formData = new FormData(html[0].querySelector('form'));
+                        const root = html instanceof HTMLElement ? html : html?.[0];
+                        const formData = new FormData(root.querySelector('form'));
                         const talentId = formData.get('talentId');
                         const talent = talents.find(t => t.id === talentId);
                         resolve(talent);

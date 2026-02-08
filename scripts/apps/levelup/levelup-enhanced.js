@@ -10,6 +10,7 @@ import { TalentRegistry } from "../../progression/talents/talent-registry-ui.js"
 import { ForceRegistry } from "../../progression/force/force-registry-ui.js";
 import { isEpicOverrideEnabled } from "../../settings/epic-override.js";
 import { getLevelSplit } from "../../actors/derived/level-split.js";
+import { qs, qsa } from '../../utils/dom-utils.js';
 
 // V2 API base class
 import SWSEFormApplicationV2 from '../base/swse-form-application-v2.js';
@@ -17,7 +18,7 @@ import SWSEFormApplicationV2 from '../base/swse-form-application-v2.js';
 export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
   constructor(actor, opts = {}) {
-    super(actor, opts);
+    super(opts);
 
     this.actor = actor;
     this.engine = new ProgressionEngine(actor, "levelup");
@@ -50,21 +51,17 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       forceTechniques: []
     };
   }
-
-  render(force, options) {
     return super.render(force, options);
   }
 
   /** UI template */
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
       classes: ["swse", "levelup-engine-ui"],
       template: "systems/foundryvtt-swse/templates/apps/levelup-engine-ui.hbs",
       width: 760,
       height: 680,
       resizable: true
     });
-  }
 
   /** UI title */
   get title() {
@@ -91,29 +88,31 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     return data;
   }
 
-  async _onRender(html, options) {
-    await super._onRender(html, options);
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+
+    const root = this.element;
 
     if (this._epicBlocked) {
-      html.find(".swse-levelup-wrapper button").prop("disabled", true);
-      html.find(".rollback-levelup").prop("disabled", false);
+      qsa(root, '.swse-levelup-wrapper button').forEach(b => { b.disabled = true; });
+      qsa(root, '.rollback-levelup').forEach(b => { b.disabled = false; });
       return;
     }
 
-    html.find(".select-class").on("click", this._onSelectClass.bind(this));
-    html.find(".select-skill").on("click", this._onSelectSkill.bind(this));
-    html.find(".select-feat").on("click", this._onSelectFeat.bind(this));
-    html.find(".select-talent").on("click", this._onSelectTalent.bind(this));
+    qsa(root, '.select-class').forEach(el => el.addEventListener('click', this._onSelectClass.bind(this)));
+    qsa(root, '.select-skill').forEach(el => el.addEventListener('click', this._onSelectSkill.bind(this)));
+    qsa(root, '.select-feat').forEach(el => el.addEventListener('click', this._onSelectFeat.bind(this)));
+    qsa(root, '.select-talent').forEach(el => el.addEventListener('click', this._onSelectTalent.bind(this)));
 
-    html.find(".select-force-power").on("click", this._onSelectForcePower.bind(this));
-    html.find(".select-force-secret").on("click", this._onSelectForceSecret.bind(this));
-    html.find(".select-force-technique").on("click", this._onSelectForceTechnique.bind(this));
+    qsa(root, '.select-force-power').forEach(el => el.addEventListener('click', this._onSelectForcePower.bind(this)));
+    qsa(root, '.select-force-secret').forEach(el => el.addEventListener('click', this._onSelectForceSecret.bind(this)));
+    qsa(root, '.select-force-technique').forEach(el => el.addEventListener('click', this._onSelectForceTechnique.bind(this)));
 
-    html.find(".next-step").on("click", this._next.bind(this));
-    html.find(".prev-step").on("click", this._prev.bind(this));
+    qsa(root, '.next-step').forEach(el => el.addEventListener('click', this._next.bind(this)));
+    qsa(root, '.prev-step').forEach(el => el.addEventListener('click', this._prev.bind(this)));
 
-    html.find(".finalize-levelup").on("click", this._onFinalize.bind(this));
-    html.find(".rollback-levelup").on("click", this._rollback.bind(this));
+    qsa(root, '.finalize-levelup').forEach(el => el.addEventListener('click', this._onFinalize.bind(this)));
+    qsa(root, '.rollback-levelup').forEach(el => el.addEventListener('click', this._rollback.bind(this)));
   }
 
   /* ------------------------

@@ -113,7 +113,8 @@ export class CustomItemDialog {
             icon: '<i class="fas fa-check"></i>',
             label: "Create Weapon",
             callback: async (html) => {
-              const form = html.find('form')[0];
+              const root = html instanceof HTMLElement ? html : html?.[0];
+              const form = root?.querySelector?.('form');
               const formData = new FormDataExtended(form).object;
 
               // Parse properties from comma-separated string
@@ -264,7 +265,8 @@ export class CustomItemDialog {
             icon: '<i class="fas fa-check"></i>',
             label: "Create Armor",
             callback: async (html) => {
-              const form = html.find('form')[0];
+              const root = html instanceof HTMLElement ? html : html?.[0];
+              const form = root?.querySelector?.('form');
               const formData = new FormDataExtended(form).object;
 
               // Handle maxDexBonus - null if blank, otherwise parse as number
@@ -367,7 +369,8 @@ export class CustomItemDialog {
             icon: '<i class="fas fa-check"></i>',
             label: "Create Equipment",
             callback: async (html) => {
-              const form = html.find('form')[0];
+              const root = html instanceof HTMLElement ? html : html?.[0];
+              const form = root?.querySelector?.('form');
               const formData = new FormDataExtended(form).object;
 
               const itemData = {
@@ -479,7 +482,8 @@ export class CustomItemDialog {
             icon: '<i class="fas fa-check"></i>',
             label: "Create Feat",
             callback: async (html) => {
-              const form = html.find('form')[0];
+              const root = html instanceof HTMLElement ? html : html?.[0];
+              const form = root?.querySelector?.('form');
               const formData = new FormDataExtended(form).object;
 
               // Parse bonus feat classes from comma-separated string
@@ -590,7 +594,8 @@ export class CustomItemDialog {
             icon: '<i class="fas fa-check"></i>',
             label: "Create Talent",
             callback: async (html) => {
-              const form = html.find('form')[0];
+              const root = html instanceof HTMLElement ? html : html?.[0];
+              const form = root?.querySelector?.('form');
               const formData = new FormDataExtended(form).object;
 
               const itemData = {
@@ -825,22 +830,24 @@ export class CustomItemDialog {
             icon: '<i class="fas fa-check"></i>',
             label: "Create Force Power",
             callback: async (html) => {
-              const form = html.find('form')[0];
+              const root = html instanceof HTMLElement ? html : html?.[0];
+              const form = root?.querySelector?.('form');
               const formData = new FormDataExtended(form).object;
 
               // Gather tags from checkboxes
               const tags = [];
-              html.find('input[name="tags"]:checked').each(function() {
-                tags.push($(this).val());
+              const root = html instanceof HTMLElement ? html : html?.[0];
+            root?.querySelectorAll?.('input[name="tags"]:checked')?.forEach((el) => {
+                tags.push(el.value);
               });
 
               // Gather DC Chart rows
               const dcChart = [];
-              html.find('.dc-chart-row').each(function() {
+              root.querySelectorAll('.dc-chart-row').each(function() {
                 const index = $(this).data('index');
-                const dcValue = html.find(`input[name="dc-${index}"]`).val();
-                const effect = html.find(`input[name="effect-${index}"]`).val();
-                const description = html.find(`input[name="description-${index}"]`).val();
+                const dcValue = root.querySelectorAll(`input[name="dc-${index}"]`).val();
+                const effect = root.querySelectorAll(`input[name="effect-${index}"]`).val();
+                const description = root.querySelectorAll(`input[name="description-${index}"]`).val();
 
                 const dc = parseInt(dcValue, 10);
                 const hasValidDC = !isNaN(dc) && dc > 0;

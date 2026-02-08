@@ -191,11 +191,12 @@ export class ProficiencySelectionDialog {
         close: () => resolve(null),
         render: (html) => {
           // Add click handlers to category buttons
-          html.find('.category-btn').on('click', (event) => {
+          const root = html?.[0] ?? html;
+          root.querySelectorAll('.category-btn').forEach(btn => btn.addEventListener('click', (event) => {
             const category = event.currentTarget.dataset.category;
             resolve(category);
             dialog.close();
-          });
+          }));
         }
       }, {
         width: 400
