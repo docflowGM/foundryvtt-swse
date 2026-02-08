@@ -139,27 +139,57 @@ export const TRANSLATION_PRESETS = {
  * Includes both actual system mentors and generic type mappings
  */
 export const MENTOR_PRESET_MAP = {
-  // === ACTUAL SYSTEM MENTORS (from mentor-dialogues.data.js) ===
+  // === SYSTEM MENTORS BY ARCHETYPE ===
+  // Complete mapping of all ~37 mentors from mentor-dialogues.data.js
 
-  // Jedi Path (wise, measured, calm)
-  'miraj': 'jedi',              // Jedi Master - all Jedi classes
-  'kyber': 'mentor',            // Pacifist Combat Medic - warm, caring
-
-  // Sith Path (aggressive, dangerous)
-  'darth miedo': 'sith',        // Dark Lord of the Sith - masterful, cunning
-  'darth malbada': 'sith',      // Sith Lord - sadistic, cruel
-
-  // Scoundrel/Rogue Path (quick, witty, cunning)
-  'ol\' salty': 'scoundrel',   // Space Pirate Captain - colorful, energetic
-  'mayu': 'scoundrel',          // Ace Pilot & Rogue Smuggler - cocky, skilled
-  'lead': 'scoundrel',          // Argent Squad Commander - hardened, tactical
-
-  // Droid Mentor (mechanical, clinical, precise)
-  'j0-n1': 'droid',            // Protocol Droid & Personal Butler - formal, efficient
-
-  // Military Path (warriors and knights)
-  'breach': 'scoundrel',        // Mandalorian Mercenary - direct, pragmatic
+  // JEDI PATH (wise, measured, calm - blue glow)
+  'miraj': 'jedi',              // Jedi Master, Jedi Knight, Jedi Master classes
   'dezmin': 'jedi',             // Imperial Knight Grandmaster - balanced, disciplined
+
+  // SITH PATH (aggressive, dangerous - red glow)
+  'darth miedo': 'sith',        // Dark Lord of the Sith - masterful, cunning
+  'darth malbada': 'sith',      // Sith Apprentice - sadistic, cruel
+
+  // MENTOR ARCHETYPE (wise, caring mentors - cyan glow)
+  'kyber': 'mentor',            // Combat Medic - warm, pragmatic healer
+  'seeker venn': 'mentor',      // Force Adept Mystic - mysterious, understanding
+  'master zhen': 'mentor',      // Martial Arts Master - disciplined, honorable
+  'blade master kharjo': 'mentor', // Melee Duelist - skilled, honorable warrior
+  'chief engineer rax': 'mentor',  // Military Engineer - analytical, methodical
+  'admiral korr': 'mentor',     // Officer - tactical, leadership-focused
+  'shaper urza': 'mentor',      // Shaper - scientific, creative mind
+  'shield captain theron': 'mentor', // Vanguard - protective, disciplined
+
+  // SCOUNDREL PATH (quick, witty, cunning - yellow glow)
+  'ol\' salty': 'scoundrel',    // Space Pirate Captain - colorful, energetic
+  'lead': 'scoundrel',          // Argent Squad Commander - hardened, mercenary
+  'mayu': 'scoundrel',          // Ace Pilot & Rogue Smuggler - cocky, skilled
+  'breach': 'scoundrel',        // Mandalorian Mercenary - direct, pragmatic
+  'delta': 'scoundrel',         // Assassin/Sniper - quick, street-smart
+  'kex varon': 'scoundrel',     // Bounty Hunter - professional, adaptable
+  'silvertongue sela': 'scoundrel', // Charlatan Con Artist - charming deceiver
+  'tío the hutt': 'scoundrel',  // Crime Lord Kingpin - aggressive, powerful
+  'rajma': 'scoundrel',         // Gunslinger - cocky, flirtatious
+  'lucky jack': 'scoundrel',    // Improviser - chaotic, energetic
+  'the captain': 'scoundrel',   // Master Privateer - pirate captain
+  'rogue': 'scoundrel',         // Outlaw - free-spirited, dangerous
+  'spark': 'scoundrel',         // Saboteur - explosive, precise chaos
+
+  // DROID PATH (mechanical, clinical, precise - blue monospace)
+  'j0-n1': 'droid',             // Protocol Droid - formal, efficient butler
+  'seraphim': 'droid',          // Independent Droid AI - self-aware, direct
+
+  // FORCE DISCIPLE (mysterious, otherworldly - cyan flicker)
+  'riquis': 'forcevision',      // Force Disciple Shaman - cryptic, ancient knowledge
+
+  // SPECIAL MENTIONS - Gladiator/Warrior (can use scoundrel for aggressive style)
+  'pegar': 'scoundrel',         // Gladiator Champion - aggressive, ancient warrior
+
+  // SPECIAL MENTIONS - Military types
+  'general axiom': 'droid',     // Droid Commander - cold, calculated
+
+  // SPECIAL MENTIONS - Corporate/Spy (scoundrel fits cunning style)
+  'marl skindar': 'scoundrel',  // Corporate Agent Spy - cunning, manipulative
 
   // === GENERIC TYPE MAPPINGS (fallback patterns) ===
 
@@ -204,7 +234,6 @@ export const MENTOR_PRESET_MAP = {
   'scoundrel': 'scoundrel',
   'smuggler': 'scoundrel',
   'han-solo': 'scoundrel',
-  'rogue': 'scoundrel',
 
   // Default
   default: 'mentor'
