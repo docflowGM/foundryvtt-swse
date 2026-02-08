@@ -24,7 +24,6 @@
   "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.2.0/foundryvtt-swse.zip",
   "esmodules": [
     "index.js",
-    "scripts/init/icon-assignment-fix.js",
     "scripts/progression/talents/TalentNode.js",
     "scripts/progression/talents/TalentTreeGraph.js",
     "scripts/progression/utils/PrerequisiteEnricher.js",
