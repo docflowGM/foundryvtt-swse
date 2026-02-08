@@ -248,6 +248,7 @@ import { DropHandler } from './scripts/drag-drop/drop-handler.js';
 import './scripts/chat/chat-commands.js';
 import { initializeSceneControls } from './scripts/scene-controls/init.js';
 import { initializeGMSuggestions } from './scripts/gm-suggestions/init.js';
+import { initializeActionPalette } from './scripts/ui/action-palette/init.js';
 
 import { registerInitHooks, registerDestinyHooks } from './scripts/hooks/index.js';
 import { SystemInitHooks } from './scripts/progression/hooks/system-init-hooks.js';
@@ -326,6 +327,11 @@ Hooks.once('init', async function () {
        Scene Control Initialization (Foundry v13 native)
        --------------------------------------------------------- */
     initializeSceneControls();
+
+    /* ---------------------------------------------------------
+       Action Palette (Radial Menu UI)
+       --------------------------------------------------------- */
+    initializeActionPalette();
 
     /* ---------------------------------------------------------
        GM Suggestion System (attached to SuggestionService)

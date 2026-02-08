@@ -180,7 +180,10 @@ export async function preloadHandlebarsTemplates() {
     'systems/foundryvtt-swse/templates/partials/item-controls.hbs',
 
     // Canvas UI
-    'systems/foundryvtt-swse/templates/canvas-ui/toolbar.hbs'
+    'systems/foundryvtt-swse/templates/canvas-ui/toolbar.hbs',
+
+    // UI Applications
+    'systems/foundryvtt-swse/templates/ui/action-palette.hbs'
   ];
 
   SWSELogger.log(`SWSE | Preloading ${criticalTemplates.length} critical templates...`);

@@ -1,0 +1,61 @@
+{{!-- SWSE Action Palette - Radial Menu Template --}}
+<div class="action-palette-wrapper">
+
+  {{!-- Header with mode toggle --}}
+  <div class="action-palette-header">
+    <span class="mode-label">{{#if (eq mode 'gm')}}GM Mode{{else}}Player Mode{{/if}}</span>
+    {{#if isGM}}
+      <button class="toggle-mode-btn" data-action="toggleMode" title="Switch mode">
+        <i class="fa-solid fa-shuffle"></i>
+      </button>
+    {{/if}}
+  </div>
+
+  {{!-- Placeholder for empty state --}}
+  {{#if showPlaceholder}}
+    <div class="action-palette-placeholder">
+      <i class="fa-solid fa-circle-info"></i>
+      <p>Select a token to act</p>
+    </div>
+  {{else}}
+    {{!-- Radial menu --}}
+    <div class="action-palette-radial">
+      <div class="radial-center">
+        {{#if (eq mode 'gm')}}
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+        {{else}}
+          <i class="fa-solid fa-gamepad"></i>
+        {{/if}}
+      </div>
+
+      {{!-- Tool buttons arranged in circle --}}
+      <div class="radial-tools" data-tool-count="{{tools.length}}">
+        {{#each tools}}
+          <button
+            class="radial-tool {{#unless enabled}}disabled{{/unless}}"
+            data-tool="{{this.name}}"
+            data-action="executeTool"
+            {{#unless enabled}}disabled{{/unless}}
+            title="{{this.title}}"
+          >
+            <i class="{{this.icon}}"></i>
+            <span class="tool-label">{{this.title}}</span>
+          </button>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- GM Suggestions summary (GM mode only) --}}
+    {{#if (eq mode 'gm')}}
+      {{#if suggestionsAvailable}}
+        <div class="action-palette-suggestions">
+          <button class="open-panel-btn" title="Open detailed suggestions">
+            <i class="fa-solid fa-lightbulb"></i>
+            Suggestions Available
+          </button>
+        </div>
+      {{/if}}
+    {{/if}}
+  {{/if}}
+
+</div>

@@ -1,0 +1,263 @@
+/**
+ * SWSE Action Palette - Radial Menu Styling
+ * Floating, draggable, resizable window with circular tool arrangement
+ */
+
+#swse-action-palette {
+  min-width: 300px;
+  min-height: 300px;
+  width: 320px;
+  height: 320px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  overflow: hidden;
+}
+
+/* Header */
+.action-palette-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #e0e0e0;
+}
+
+.mode-label {
+  flex: 1;
+  text-align: left;
+}
+
+.toggle-mode-btn {
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: #00d4ff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 10px;
+  transition: all 0.2s ease;
+}
+
+.toggle-mode-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #00ffff;
+}
+
+.toggle-mode-btn:active {
+  transform: scale(0.95);
+}
+
+/* Content wrapper */
+.action-palette-content {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.action-palette-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+/* Placeholder state */
+.action-palette-placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #888;
+  opacity: 0.7;
+}
+
+.action-palette-placeholder i {
+  font-size: 32px;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+
+.action-palette-placeholder p {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Radial menu container */
+.action-palette-radial {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+}
+
+/* Center circle */
+.radial-center {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.15), transparent);
+  border: 2px solid rgba(0, 212, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00d4ff;
+  font-size: 20px;
+  z-index: 2;
+}
+
+/* Tool buttons container */
+.radial-tools {
+  position: relative;
+  width: 260px;
+  height: 260px;
+}
+
+/* Individual tool button */
+.radial-tool {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 100, 200, 0.1));
+  color: #00d4ff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 18px;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+  transform-origin: 130px 130px; /* Center of container */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+/* Position tools in circle */
+.radial-tool:nth-child(1) { transform: translate(-50%, -50%) rotate(0deg) translateY(-115px) rotate(0deg); }
+.radial-tool:nth-child(2) { transform: translate(-50%, -50%) rotate(45deg) translateY(-115px) rotate(-45deg); }
+.radial-tool:nth-child(3) { transform: translate(-50%, -50%) rotate(90deg) translateY(-115px) rotate(-90deg); }
+.radial-tool:nth-child(4) { transform: translate(-50%, -50%) rotate(135deg) translateY(-115px) rotate(-135deg); }
+.radial-tool:nth-child(5) { transform: translate(-50%, -50%) rotate(180deg) translateY(-115px) rotate(-180deg); }
+.radial-tool:nth-child(6) { transform: translate(-50%, -50%) rotate(225deg) translateY(-115px) rotate(-225deg); }
+.radial-tool:nth-child(7) { transform: translate(-50%, -50%) rotate(270deg) translateY(-115px) rotate(-270deg); }
+.radial-tool:nth-child(8) { transform: translate(-50%, -50%) rotate(315deg) translateY(-115px) rotate(-315deg); }
+
+/* Hover state */
+.radial-tool:not(.disabled):hover {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.4), rgba(0, 150, 255, 0.2));
+  border-color: rgba(0, 212, 255, 0.6);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+  transform: translate(-50%, -50%) rotate(var(--tool-rotation, 0deg)) translateY(-125px) rotate(var(--tool-counter-rotation, 0deg)) scale(1.1);
+}
+
+/* Active/Click state */
+.radial-tool:not(.disabled):active {
+  transform: translate(-50%, -50%) rotate(var(--tool-rotation, 0deg)) translateY(-110px) rotate(var(--tool-counter-rotation, 0deg)) scale(0.95);
+}
+
+/* Disabled state */
+.radial-tool.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.05);
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(0, 100, 200, 0.02));
+  color: #666;
+}
+
+.radial-tool.disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Tool label (show on hover via tooltip pattern) */
+.tool-label {
+  position: absolute;
+  bottom: -28px;
+  white-space: nowrap;
+  font-size: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  color: #ccc;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.radial-tool:not(.disabled):hover .tool-label {
+  opacity: 1;
+}
+
+/* Suggestions section */
+.action-palette-suggestions {
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.open-panel-btn {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 200, 0, 0.3);
+  background: rgba(255, 200, 0, 0.05);
+  color: #ffc800;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.open-panel-btn:hover {
+  background: rgba(255, 200, 0, 0.15);
+  border-color: rgba(255, 200, 0, 0.6);
+  box-shadow: 0 0 10px rgba(255, 200, 0, 0.3);
+}
+
+.open-panel-btn i {
+  font-size: 10px;
+}
+
+/* Responsive for smaller windows */
+@media (max-width: 400px) {
+  .radial-tool:nth-child(n+5) {
+    display: none;
+  }
+
+  .radial-tools {
+    width: 200px;
+    height: 200px;
+  }
+
+  .radial-tool {
+    transform-origin: 100px 100px;
+  }
+
+  .radial-tool:nth-child(1) { transform: translate(-50%, -50%) rotate(0deg) translateY(-85px) rotate(0deg); }
+  .radial-tool:nth-child(2) { transform: translate(-50%, -50%) rotate(90deg) translateY(-85px) rotate(-90deg); }
+  .radial-tool:nth-child(3) { transform: translate(-50%, -50%) rotate(180deg) translateY(-85px) rotate(-180deg); }
+  .radial-tool:nth-child(4) { transform: translate(-50%, -50%) rotate(270deg) translateY(-85px) rotate(-270deg); }
+}
