@@ -14,6 +14,7 @@ import { createSuggestionReport, generateReportId, validateSuggestionReport } fr
 import { emitSuggestionReport } from '../gm-suggestions/init.js';
 import { getCurrentPhase } from '../state/phase.js';
 import { SWSELogger } from '../utils/logger.js';
+import { TacticalEvaluator } from './tactical-evaluator.js';
 
 export class CombatSuggestionEngine {
   /**
@@ -112,34 +113,7 @@ export class CombatSuggestionEngine {
    * @private
    */
   static _evaluatePartyAggregate(combat) {
-    const combatants = combat?.combatants || [];
-    const pcCombatants = combatants.filter(c => c.actor && !c.actor.type.includes('npc'));
-    const npcCombatants = combatants.filter(c => c.actor && c.actor.type.includes('npc'));
-
-    // Simple placeholder metrics
-    const hpRatios = combatants
-      .map(c => c.actor?.system?.hp?.value / c.actor?.system?.hp?.max || 0.5)
-      .filter(Boolean);
-
-    const avgHP = hpRatios.length > 0 ? hpRatios.reduce((a, b) => a + b) / hpRatios.length : 0.5;
-
-    // Pressure: higher when PCs are low HP and enemies are fresh
-    const pressureIndex = Math.max(0, Math.min(1, (1 - avgHP) * (npcCombatants.length / Math.max(1, pcCombatants.length))));
-
-    return {
-      optionEntropy: 0.5,              // Placeholder
-      convergenceScore: 0.3,           // Placeholder
-      pressureIndex,
-      confidenceMean: 0.6,             // Placeholder
-      confidenceVariance: 0.1,         // Placeholder
-      intentDistribution: { defensive: 0.4, offensive: 0.3, utility: 0.3 },
-      roleCoverage: {
-        tank: { expected: 1, actual: 1 },
-        striker: { expected: 2, actual: 1 },
-        support: { expected: 1, actual: 0 }
-      },
-      spotlightImbalance: 0.2          // Placeholder
-    };
+    return TacticalEvaluator.evaluatePartyAggregate(combat);
   }
 
   /**
@@ -147,23 +121,15 @@ export class CombatSuggestionEngine {
    * @private
    */
   static _evaluateDiagnostics(combat) {
-    return {
-      fallbackRate: 0.15,              // Placeholder: % of fallback suggestions
-      repeatedSuggestionRate: 0.1,     // Placeholder: % repetition
-      defensiveBias: 0.25,             // Placeholder: defensive suggestion bias
-      perceptionMismatch: false,       // Placeholder
-      evaluationWarnings: []
-    };
+    return TacticalEvaluator.evaluateDiagnostics(combat);
   }
 
   /**
-   * Generate placeholder tactical suggestions
+   * Generate tactical suggestions
    * @private
    */
   static _generateSuggestions(actor, combat) {
-    // For now: return empty array (placeholder)
-    // Future: connect to tactical AI or decision tree
-    return [];
+    return TacticalEvaluator.generateSuggestions(actor, combat);
   }
 
   /**
@@ -171,12 +137,7 @@ export class CombatSuggestionEngine {
    * @private
    */
   static _calculateConfidence(actor, combat) {
-    const hpPercent = actor?.system?.hp?.value / actor?.system?.hp?.max || 0.5;
-
-    if (hpPercent > 0.75) return 'STRONG';
-    if (hpPercent > 0.5) return 'MODERATE';
-    if (hpPercent > 0.25) return 'WEAK';
-    return 'FALLBACK';
+    return TacticalEvaluator.calculateConfidenceBand(actor, combat);
   }
 
   /**
@@ -184,8 +145,7 @@ export class CombatSuggestionEngine {
    * @private
    */
   static _getRoleTags(actor) {
-    // Placeholder: extract from class, feats, etc.
-    return ['unknown'];
+    return TacticalEvaluator.getRoleTags(actor);
   }
 
   /**
@@ -193,7 +153,6 @@ export class CombatSuggestionEngine {
    * @private
    */
   static _getIntentVector(combatant) {
-    // Placeholder: infer from last action, positioning, etc.
-    return ['unknown'];
+    return TacticalEvaluator.getIntentVector(combatant);
   }
 }
