@@ -1,7 +1,7 @@
 // scripts/debug/smoke-test.js
 import { ensureNpcProgressionMode, revertNpcToStatblock } from '../engine/npc-levelup.js';
 import { getLevelSplit } from '../actors/derived/level-split.js';
-import { getEffectiveHalfLevel } from '../actors/derived/half-level.js';
+import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 import { isStatblockNpc, shouldSkipDerivedData } from '../utils/hardening.js';
 import { isEpicOverrideEnabled } from '../settings/epic-override.js';
 
