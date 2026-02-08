@@ -1,0 +1,207 @@
+/**
+ * SWSE Aurebesh Dialogue Translation Effects
+ * Holo theme styling for Aurebesh → English reveal animation
+ */
+
+@font-face {
+  font-family: "Aurebesh";
+  src: url("systems/foundryvtt-swse/assets/fonts/Starjedi.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Main wrapper */
+.aurebesh-dialogue-wrapper {
+  line-height: 1.6;
+  word-wrap: break-word;
+  user-select: text;
+  position: relative;
+  min-height: 1em;
+}
+
+/* Aurebesh font (unrevealed text) */
+.aurebesh-font {
+  font-family: Aurebesh, monospace;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+  color: var(--swse-text-muted, #999);
+}
+
+/* Revealed text (English) */
+.revealed-text {
+  font-family: inherit;
+  color: var(--swse-primary, #9ed0ff);
+  font-weight: 500;
+  text-shadow: 0 0 6px rgba(0, 170, 255, 0.3);
+}
+
+/* Cursor indicator */
+.aurebesh-cursor {
+  display: inline-block;
+  animation: cursor-blink 1s infinite;
+  margin-left: 2px;
+}
+
+.cursor-block {
+  width: 0.6em;
+  height: 1em;
+  background: var(--swse-accent, #00d9ff);
+  opacity: 0.7;
+}
+
+.cursor-underline {
+  width: 0.8em;
+  height: 2px;
+  background: var(--swse-accent, #00d9ff);
+  margin-top: 0.8em;
+  opacity: 0.8;
+}
+
+@keyframes cursor-blink {
+  0%, 50% {
+    opacity: 0.7;
+  }
+  51%, 100% {
+    opacity: 0.2;
+  }
+}
+
+/* ===== PRESET STYLES ===== */
+
+/* MENTOR: Wise, measured, calm */
+.aurebesh-mentor {
+  color: var(--swse-text-muted);
+  opacity: 0.5;
+  letter-spacing: 0.08em;
+}
+
+.revealed-mentor {
+  color: var(--swse-primary);
+  text-shadow: 0 0 8px rgba(0, 170, 255, 0.25);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* SITH: Urgent, aggressive, dangerous */
+.aurebesh-sith {
+  color: #ff6b6b;
+  opacity: 0.4;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.revealed-sith {
+  color: #ff6b6b;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.4), 0 0 20px rgba(255, 107, 107, 0.2);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* DROID: Mechanical, clinical, precise */
+.aurebesh-droid {
+  font-family: 'Courier New', monospace;
+  color: #00c6ff;
+  opacity: 0.5;
+  letter-spacing: 0.1em;
+}
+
+.revealed-droid {
+  font-family: 'Courier New', monospace;
+  color: #00c6ff;
+  text-shadow: 0 0 8px rgba(0, 198, 255, 0.3);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* HOLOCRON: Ancient, mystical, layered */
+.aurebesh-holocron {
+  color: #b366ff;
+  opacity: 0.4;
+  letter-spacing: 0.12em;
+  font-style: italic;
+}
+
+.revealed-holocron {
+  color: #b366ff;
+  text-shadow: 0 0 12px rgba(179, 102, 255, 0.4), 0 0 24px rgba(0, 170, 255, 0.2);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* FORCEVISION: Fragmented, ethereal */
+.aurebesh-forcevision {
+  color: #7fb3d5;
+  opacity: 0.35;
+  letter-spacing: 0.08em;
+  animation: forcevision-flicker 0.15s infinite;
+}
+
+@keyframes forcevision-flicker {
+  0%, 100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.revealed-forcevision {
+  color: #00d9ff;
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.4), 0 0 20px rgba(127, 179, 213, 0.2);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  animation: forcevision-glow 0.3s ease-in-out;
+}
+
+@keyframes forcevision-glow {
+  0% {
+    opacity: 0;
+    text-shadow: 0 0 2px rgba(0, 217, 255, 0.2);
+  }
+  100% {
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(0, 217, 255, 0.4), 0 0 20px rgba(127, 179, 213, 0.2);
+  }
+}
+
+/* ===== INTERACTIVE STATES ===== */
+
+.aurebesh-dialogue-wrapper[data-skippable="true"] {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.aurebesh-dialogue-wrapper[data-skippable="true"]:hover {
+  filter: brightness(1.05);
+}
+
+/* Accessibility: reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .aurebesh-cursor {
+    animation: none;
+    opacity: 0.5;
+  }
+
+  .aurebesh-mentor,
+  .aurebesh-sith,
+  .aurebesh-droid,
+  .aurebesh-holocron,
+  .aurebesh-forcevision {
+    animation: none;
+  }
+
+  .revealed-forcevision {
+    animation: none;
+  }
+
+  .aurebesh-dialogue-wrapper {
+    /* Show everything instantly */
+  }
+}
+
+/* Print styles (hide animation indicators) */
+@media print {
+  .aurebesh-cursor {
+    display: none;
+  }
+}
