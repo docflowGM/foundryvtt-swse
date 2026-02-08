@@ -70,10 +70,7 @@ export function normalizeClassData(rawClass) {
     const babMap = {
         '0.5': 'slow',
         '0.75': 'medium',
-        '1.0': 'fast',
-        0.5: 'slow',
-        0.75: 'medium',
-        1.0: 'fast'
+        '1.0': 'fast'
     };
 
     if (babMap[cls.system.babProgression]) {

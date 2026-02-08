@@ -132,7 +132,7 @@ export const ICONS = Object.freeze({
   ban: 'fa-solid fa-ban',
   running: 'fa-solid fa-person-running',
   hand: 'fa-solid fa-hand',
-  handHolding: 'fa-solid fa-hand',
+  handHolding: 'fa-solid fa-hand-holding',
 
   // Files & Documents
   fileExport: 'fa-solid fa-file-export',

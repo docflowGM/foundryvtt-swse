@@ -54,7 +54,7 @@ export function getProperty(obj, propertyName, defaultValue = null, warnOnMissin
   const variants = PROPERTY_MAPPINGS[propertyName] || [propertyName];
 
   for (const variant of variants) {
-    if (obj.hasOwnProperty(variant) && obj[variant] !== undefined) {
+    if (Object.prototype.hasOwnProperty.call(obj, variant) && obj[variant] !== undefined) {
       // Log if we found a non-preferred variant
       if (variant !== propertyName && variant !== variants[0]) {
         SWSELogger.log(`CharGen | Property accessor found "${variant}" instead of preferred "${propertyName}"`);

@@ -117,7 +117,7 @@ export function initAppV2RenderContractValidator() {
         'foundryvtt-swse',
         'Application.prototype.render',
         function (wrapped, ...args) {
-          try { validateOnce(this); } catch (e) { throw e; }
+          validateOnce(this);
           return wrapped(...args);
         },
         'WRAPPER'

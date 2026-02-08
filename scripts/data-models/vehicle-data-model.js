@@ -611,13 +611,6 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       // Sensors
       senses: new fields.StringField({ required: false, initial: '' }),
 
-      // Cover provided to occupants
-      cover: new fields.StringField({
-        required: true,
-        initial: 'total',
-        choices: ['none', 'normal', 'improved', 'total']
-      }),
-
       // Emplacement Points for vehicle modifications
       emplacementPoints: new fields.NumberField({
         required: true,
