@@ -89,7 +89,6 @@ export const ICONS = Object.freeze({
   user: 'fa-solid fa-user',
   users: 'fa-solid fa-users',
   handshake: 'fa-solid fa-handshake',
-  hand: 'fa-solid fa-hand-paper',
   handPaper: 'fa-solid fa-hand-paper',
   handSparkles: 'fa-solid fa-hand-sparkles',
   fist: 'fa-solid fa-fist-raised',

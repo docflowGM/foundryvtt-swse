@@ -333,18 +333,20 @@ export class FollowerCreator {
                     [`system.attributes.${abilityChoice}.base`]: currentAbility + template.abilityBonus
                 });
                 break;
-            case 'feat':
+            case 'feat': {
                 const feats = template.feats || template.featChoices || [];
                 if (feats.length > 0) {
                     await this._addFeatByName(follower, feats[0]);
                 }
                 break;
-            case 'skill':
+            }
+            case 'skill': {
                 const skills = template.trainedSkills || [];
                 if (skills.length > 0) {
                     await this._trainSkill(follower, skills[0]);
                 }
                 break;
+            }
         }
     }
 

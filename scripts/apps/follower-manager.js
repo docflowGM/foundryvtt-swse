@@ -186,11 +186,12 @@ export class FollowerManager {
                 await this.removeFeatFromAllFollowers(followers, 'Toughness');
                 break;
 
-            case 'speed-bonus':
+            case 'speed-bonus': {
                 const currentBonuses = owner.getFlag('swse', 'followerSpeedBonuses') || {};
                 delete currentBonuses['Get Into Position'];
                 await owner.setFlag('swse', 'followerSpeedBonuses', currentBonuses);
                 break;
+            }
 
             case 'reconnaissance-actions':
             case 'protector-actions':
@@ -198,7 +199,7 @@ export class FollowerManager {
             case 'bodyguard-redirect':
             case 'bodyguard-defense':
             case 'bodyguard-counterattack':
-            case 'shelter':
+            case 'shelter': {
                 const tacticalAbilities = owner.getFlag('swse', 'followerTacticalAbilities') || [];
                 const index = tacticalAbilities.indexOf(talent.name);
                 if (index > -1) {
@@ -206,6 +207,7 @@ export class FollowerManager {
                     await owner.setFlag('swse', 'followerTacticalAbilities', tacticalAbilities);
                 }
                 break;
+            }
         }
     }
 

@@ -67,7 +67,7 @@ export class SkillTrainingMechanics {
         return 2;
       case 'three':
         return 3;
-      case 'standard':
+      case 'standard': {
         const intMod = actor?.system?.attributes?.int?.mod || 0;
         return 5 + Math.max(0, intMod);
       default:
@@ -164,6 +164,7 @@ export class SkillTrainingMechanics {
     const scale = game.settings.get(NS, 'trainingCostScale');
 
     switch (scale) {
+      }
       case 'linear':
         return spent; // 1:1 mapping
       case 'exponential':

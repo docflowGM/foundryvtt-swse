@@ -187,33 +187,37 @@ export function applySorting(doc, sortValue, itemsById) {
             const bData = itemsById.get(bId);
 
             switch (sortValue) {
-                case 'name-asc':
+                case 'name-asc': {
                     const aName = a.querySelector('.product-name')?.textContent || '';
                     const bName = b.querySelector('.product-name')?.textContent || '';
                     return aName.localeCompare(bName);
 
-                case 'name-desc':
+                }
+                case 'name-desc': {
                     const aNameDesc = a.querySelector('.product-name')?.textContent || '';
                     const bNameDesc = b.querySelector('.product-name')?.textContent || '';
                     return bNameDesc.localeCompare(aNameDesc);
 
-                case 'price-asc':
+                }
+                case 'price-asc': {
                     const aPrice = aData?.finalCost || 0;
                     const bPrice = bData?.finalCost || 0;
                     return aPrice - bPrice;
 
-                case 'price-desc':
+                }
+                case 'price-desc': {
                     const aPriceDesc = aData?.finalCost || 0;
                     const bPriceDesc = bData?.finalCost || 0;
                     return bPriceDesc - aPriceDesc;
 
+                }
                 case 'damage-desc':
                     // Parse damage values (e.g., "3d6", "2d8+1")
                     const aDamage = parseDamage(aData?.system?.damage || '');
                     const bDamage = parseDamage(bData?.system?.damage || '');
                     return bDamage - aDamage;
 
-                case 'availability':
+                case 'availability': {
                     const aAvail = aData?.system?.availability || '';
                     const bAvail = bData?.system?.availability || '';
                     const availOrder = ['Standard', 'Licensed', 'Restricted', 'Military', 'Illegal', 'Rare'];

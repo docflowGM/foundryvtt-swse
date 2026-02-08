@@ -7,6 +7,7 @@
  * This file preserves the legacy "path" shape expected by mentor modules.
  */
 
+// eslint-disable-next-line
 import CLASS_ARCHETYPES from '../../data/class-archetypes.json' with { type: 'json' };
 
 function normalizeClassKey(className) {

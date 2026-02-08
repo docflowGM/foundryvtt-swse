@@ -335,11 +335,12 @@ export function calculateHPGain(classDoc, actor, newLevel) {
       case 'roll':
         hpGain = Math.floor(Math.random() * hitDie) + 1 + conMod;
         break;
-      case 'average_minimum':
+      case 'average_minimum': {
         const rolled = Math.floor(Math.random() * hitDie) + 1;
         const average = Math.floor(hitDie / 2) + 1;
         hpGain = Math.max(rolled, average) + conMod;
         break;
+      }
       default:
         hpGain = Math.floor(hitDie / 2) + 1 + conMod;
     }

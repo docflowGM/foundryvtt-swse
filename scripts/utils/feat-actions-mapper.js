@@ -5,6 +5,7 @@ import { ActorEngine } from '../actors/engine/actor-engine.js';
  * Maps feat-granted combat actions to character abilities
  */
 
+// eslint-disable-next-line
 import featActions from '../../data/feat-combat-actions.json' with { type: 'json' };
 
 export class FeatActionsMapper {

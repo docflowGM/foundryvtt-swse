@@ -196,7 +196,7 @@ export class PathPreview {
             }
 
             switch (prereq.type) {
-                case 'level':
+                case 'level': {
                     const levelsForLevel = prereq.required - actorState.characterLevel;
                     breakdown.level = levelsForLevel;
                     maxLevelsNeeded = Math.max(maxLevelsNeeded, levelsForLevel);
@@ -207,6 +207,7 @@ export class PathPreview {
                         levelsNeeded: levelsForLevel
                     });
                     break;
+                }
 
                 case 'bab':
                     // Estimate levels needed based on BAB progression

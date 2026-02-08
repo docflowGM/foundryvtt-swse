@@ -26,6 +26,7 @@ import { BUILD_THEMES } from './BuildIntent.js';
 
 
 // === ARCHETYPE_JSON_WIRING_START ===
+// eslint-disable-next-line
 import CLASS_ARCHETYPES from '../../data/class-archetypes.json' with { type: 'json' };
 
 function initializeArchetypes(buildState, classKey) {
