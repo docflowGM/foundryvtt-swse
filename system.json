@@ -5,8 +5,7 @@
   "version": "1.2.0",
   "compatibility": {
     "minimum": "12",
-    "verified": "13",
-    "maximum": "13"
+    "verified": "13"
   },
   "authors": [
     {
@@ -22,7 +21,6 @@
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.2.0/foundryvtt-swse.zip",
-
   "esmodules": [
     "index.js",
     "scripts/progression/talents/TalentNode.js",
@@ -34,7 +32,6 @@
     "scripts/talents/dark-side-powers-init.js",
     "scripts/talents/light-side-init.js"
   ],
-
   "styles": [
     "styles/swse-system.css",
     "styles/core/swse-base.css",
@@ -80,70 +77,399 @@
     "styles/gm/suggestion-panel.css",
     "styles/components/discovery.css"
   ],
-
   "languages": [
-    { "lang": "en", "name": "English", "path": "lang/en.json" },
-    { "lang": "es", "name": "Español", "path": "lang/es.json" },
-    { "lang": "fr", "name": "Français", "path": "lang/fr.json" },
-    { "lang": "de", "name": "Deutsch", "path": "lang/de.json" },
-    { "lang": "ru", "name": "Русский", "path": "lang/ru.json" }
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "es",
+      "name": "Espa\u00f1ol",
+      "path": "lang/es.json"
+    },
+    {
+      "lang": "fr",
+      "name": "Fran\u00e7ais",
+      "path": "lang/fr.json"
+    },
+    {
+      "lang": "de",
+      "name": "Deutsch",
+      "path": "lang/de.json"
+    },
+    {
+      "lang": "ru",
+      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "path": "lang/ru.json"
+    }
   ],
-
   "socket": true,
-
   "initiative": "1d20 + @abilities.dex.mod + @initiative.misc",
-
   "grid": {
     "distance": 1.5,
-    "units": "m",
-    "type": 1
+    "units": "m"
   },
-
   "primaryTokenAttribute": "hp",
   "secondaryTokenAttribute": "defenses.reflex",
-
   "background": "assets/backgrounds/swse-bg.webp",
-
   "media": [
-    { "type": "cover", "url": "assets/ui/swse-cover.webp" },
-    { "type": "icon", "url": "assets/ui/title-logo.png" }
+    {
+      "type": "cover",
+      "url": "assets/ui/swse-cover.webp"
+    },
+    {
+      "type": "icon",
+      "url": "assets/ui/title-logo.png"
+    }
   ],
-
-  "flagScopes": ["swse"],
-
+  "flagScopes": [
+    "swse"
+  ],
   "packs": [
-    { "name": "species", "label": "Species", "type": "Item", "system": "foundryvtt-swse", "path": "packs/species.db" },
-    { "name": "classes", "label": "Classes", "type": "Item", "system": "foundryvtt-swse", "path": "packs/classes.db" },
-    { "name": "talent_trees", "label": "Talent Trees", "type": "Item", "system": "foundryvtt-swse", "path": "packs/talent_trees.db" },
-    { "name": "talents", "label": "Talents", "type": "Item", "system": "foundryvtt-swse", "path": "packs/talents.db" },
-    { "name": "feats", "label": "Feats", "type": "Item", "system": "foundryvtt-swse", "path": "packs/feats.db" },
-    { "name": "forcepowers", "label": "Force Powers", "type": "Item", "system": "foundryvtt-swse", "path": "packs/forcepowers.db" },
-    { "name": "forcesecrets", "label": "Force Secrets", "type": "Item", "system": "foundryvtt-swse", "path": "packs/forcesecrets.db" },
-    { "name": "forcetechniques", "label": "Force Techniques", "type": "Item", "system": "foundryvtt-swse", "path": "packs/forcetechniques.db" },
-    { "name": "lightsaberformpowers", "label": "Lightsaber Form Powers", "type": "Item", "system": "foundryvtt-swse", "path": "packs/lightsaberformpowers.db" },
-    { "name": "skills", "label": "Skills", "type": "Item", "system": "foundryvtt-swse", "path": "packs/skills.db" },
-    { "name": "backgrounds", "label": "Backgrounds", "type": "Item", "system": "foundryvtt-swse", "path": "packs/backgrounds.db" },
-    { "name": "languages", "label": "Languages", "type": "Item", "system": "foundryvtt-swse", "path": "packs/languages.db" },
-
-    { "name": "npc", "label": "NPCs", "type": "Actor", "system": "foundryvtt-swse", "path": "packs/npc.db" },
-    { "name": "droids", "label": "Droids", "type": "Actor", "system": "foundryvtt-swse", "path": "packs/droids.db" },
-    { "name": "beasts", "label": "Beasts & Mounts", "type": "Actor", "system": "foundryvtt-swse", "path": "packs/beasts.db" }
+    {
+      "name": "species",
+      "label": "Species",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/species"
+    },
+    {
+      "name": "classes",
+      "label": "Classes",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/classes"
+    },
+    {
+      "name": "talent_trees",
+      "label": "Talent Trees",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/talent_trees"
+    },
+    {
+      "name": "talents",
+      "label": "Talents",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/talents"
+    },
+    {
+      "name": "feats",
+      "label": "Feats",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/feats"
+    },
+    {
+      "name": "forcepowers",
+      "label": "Force Powers",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/forcepowers"
+    },
+    {
+      "name": "forcesecrets",
+      "label": "Force Secrets",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/forcesecrets"
+    },
+    {
+      "name": "forcetechniques",
+      "label": "Force Techniques",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/forcetechniques"
+    },
+    {
+      "name": "lightsaberformpowers",
+      "label": "Lightsaber Form Powers",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/lightsaberformpowers"
+    },
+    {
+      "name": "skills",
+      "label": "Skills",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/skills"
+    },
+    {
+      "name": "backgrounds",
+      "label": "Backgrounds",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/backgrounds"
+    },
+    {
+      "name": "languages",
+      "label": "Languages",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/languages"
+    },
+    {
+      "name": "weapons-pistols",
+      "label": "Weapons - Pistols",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/weapons-pistols"
+    },
+    {
+      "name": "weapons-rifles",
+      "label": "Weapons - Rifles",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/weapons-rifles"
+    },
+    {
+      "name": "weapons-heavy",
+      "label": "Weapons - Heavy",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/weapons-heavy"
+    },
+    {
+      "name": "weapons-grenades",
+      "label": "Weapons - Grenades & Explosives",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/weapons-grenades"
+    },
+    {
+      "name": "weapons-exotic",
+      "label": "Weapons - Exotic",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/weapons-exotic"
+    },
+    {
+      "name": "weapons-simple",
+      "label": "Weapons - Simple/Melee",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/weapons-simple"
+    },
+    {
+      "name": "weapons",
+      "label": "Weapons (All)",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/weapons"
+    },
+    {
+      "name": "armor-light",
+      "label": "Armor - Light",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/armor-light"
+    },
+    {
+      "name": "armor-medium",
+      "label": "Armor - Medium",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/armor-medium"
+    },
+    {
+      "name": "armor-heavy",
+      "label": "Armor - Heavy",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/armor-heavy"
+    },
+    {
+      "name": "armor",
+      "label": "Armor (All)",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/armor"
+    },
+    {
+      "name": "vehicles-starships",
+      "label": "Vehicles - Starships",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/vehicles-starships"
+    },
+    {
+      "name": "vehicles-stations",
+      "label": "Vehicles - Stations",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/vehicles-stations"
+    },
+    {
+      "name": "vehicles-walkers",
+      "label": "Vehicles - Walkers",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/vehicles-walkers"
+    },
+    {
+      "name": "vehicles-speeders",
+      "label": "Vehicles - Speeders",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/vehicles-speeders"
+    },
+    {
+      "name": "vehicles",
+      "label": "Vehicles (All)",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/vehicles"
+    },
+    {
+      "name": "equipment-comlinks",
+      "label": "Equipment - Communications",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/equipment-comlinks"
+    },
+    {
+      "name": "equipment-tools",
+      "label": "Equipment - Tools & Kits",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/equipment-tools"
+    },
+    {
+      "name": "equipment-survival",
+      "label": "Equipment - Survival Gear",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/equipment-survival"
+    },
+    {
+      "name": "equipment-medical",
+      "label": "Equipment - Medical",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/equipment-medical"
+    },
+    {
+      "name": "equipment-tech",
+      "label": "Equipment - Technology",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/equipment-tech"
+    },
+    {
+      "name": "equipment-security",
+      "label": "Equipment - Security",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/equipment-security"
+    },
+    {
+      "name": "equipment-other",
+      "label": "Equipment - Other",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/equipment-other"
+    },
+    {
+      "name": "equipment",
+      "label": "Equipment (All)",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/equipment"
+    },
+    {
+      "name": "conditions",
+      "label": "Conditions",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/conditions"
+    },
+    {
+      "name": "special-combat-condition",
+      "label": "Combat Conditions",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/special-combat-condition"
+    },
+    {
+      "name": "attributes",
+      "label": "Attributes",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/attributes"
+    },
+    {
+      "name": "extraskilluses",
+      "label": "Extra Skill Uses",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/extraskilluses"
+    },
+    {
+      "name": "combat-actions",
+      "label": "Combat Actions",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/combat-actions"
+    },
+    {
+      "name": "ship-combat-actions",
+      "label": "Ship Combat Actions",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/ship-combat-actions"
+    },
+    {
+      "name": "talent-enhancements",
+      "label": "Talent Enhancements",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/talent-enhancements"
+    },
+    {
+      "name": "npc",
+      "label": "NPCs",
+      "type": "Actor",
+      "system": "foundryvtt-swse",
+      "path": "packs/npc"
+    },
+    {
+      "name": "droids",
+      "label": "Droids",
+      "type": "Actor",
+      "system": "foundryvtt-swse",
+      "path": "packs/droids"
+    },
+    {
+      "name": "beasts",
+      "label": "Beasts & Mounts",
+      "type": "Actor",
+      "path": "packs/beasts",
+      "system": "foundryvtt-swse",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
+    }
   ],
-
   "settings": {
-    "forceCompendiumsPopulation": {
+    "foundryvtt-swse.forceCompendiumsPopulation": {
       "scope": "world",
       "config": false,
       "type": "Boolean",
       "default": false
     },
-    "talentEffectValidationMigration": {
+    "foundryvtt-swse.talentEffectValidationMigration": {
       "scope": "world",
       "config": false,
       "type": "String",
       "default": ""
     },
-    "speciesTraitsUpdate": {
+    "foundryvtt-swse.speciesTraitsUpdate": {
       "scope": "world",
       "config": false,
       "type": "String",
