@@ -28,14 +28,14 @@
  </div>
  </div>
  
- <div class="stat-block base-attack">
+ <div class="stat-block base-attack" data-swse-tooltip="BaseAttackBonus">
  <label>Base Attack Bonus</label>
  <div class="stat-value">
  {{numberFormat (safeNumber system.bab) sign=true}}
  </div>
  </div>
 
- <div class="stat-block damage-threshold">
+ <div class="stat-block damage-threshold" data-swse-tooltip="DamageThreshold">
  <label>Damage Threshold</label>
  <div class="stat-value" title="Equal to Fortitude Defense">
  {{safeNumber system.defenses.fort.total 10}}

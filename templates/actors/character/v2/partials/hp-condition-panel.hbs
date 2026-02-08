@@ -8,7 +8,7 @@
   </div>
 
   <div class="swse-v2-hp-row">
-    <div class="swse-v2-hp-block">
+    <div class="swse-v2-hp-block" data-swse-tooltip="HitPoints">
       <div class="label">HP</div>
       <div class="value">{{derived.hp.value}} / {{derived.hp.max}}</div>
       {{#if derived.hp.temp}}
@@ -16,7 +16,7 @@
       {{/if}}
     </div>
 
-    <div class="swse-v2-condition-block">
+    <div class="swse-v2-condition-block" data-swse-tooltip="ConditionTrack">
       <div class="condition-row">
         <button type="button" class="swse-v2-condition-improve">Improve</button>
         <div class="condition-steps">

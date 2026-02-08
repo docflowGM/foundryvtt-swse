@@ -252,6 +252,7 @@ import { initializeActionPalette } from './scripts/ui/action-palette/init.js';
 import { MentorTranslationSettings } from './scripts/ui/dialogue/mentor-translation-settings.js';
 
 import { registerInitHooks, registerDestinyHooks } from './scripts/hooks/index.js';
+import { initializeDiscoverySystem, onDiscoveryReady } from './scripts/ui/discovery/index.js';
 import { SystemInitHooks } from './scripts/progression/hooks/system-init-hooks.js';
 import { registerSuggestionSettings } from './scripts/engine/suggestion-settings.js';
 import { registerSuggestionHooks } from './scripts/hooks/suggestion-hooks.js';
@@ -317,6 +318,7 @@ Hooks.once('init', async function () {
     registerSystemSettings();
     registerHouseruleSettings();
     MentorTranslationSettings.registerSettings();
+    initializeDiscoverySystem();
 
     /* ---------------------------------------------------------
        Hook Registration (must be before async operations)
@@ -618,6 +620,11 @@ Hooks.once('ready', async function () {
     } catch (err) {
         swseLogger.warn('SWSE | Progression bootstrap error', err);
     }
+
+    /* ---------------------------------------------------------
+       Discovery & Onboarding System
+       --------------------------------------------------------- */
+    onDiscoveryReady();
 
     swseLogger.log('SWSE | Enhanced System Fully Loaded');
 });
