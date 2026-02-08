@@ -67,7 +67,7 @@ export function checkIntModifierIncrease(actor, oldIntMod, newIntMod, newLevel) 
   if (newIntMod > oldIntMod) {
     const increase = newIntMod - oldIntMod;
     SWSELogger.log(`[LEVELUP-SKILLS] checkIntModifierIncrease: INT modifier increased by ${increase} - granting bonus skill(s)`);
-    ui.notifications.info("Intelligence increased! You may train an additional skill.");
+    ui.notifications.info('Intelligence increased! You may train an additional skill.');
     return true;
   }
 

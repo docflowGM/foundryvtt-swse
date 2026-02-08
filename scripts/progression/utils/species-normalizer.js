@@ -9,7 +9,7 @@
  */
 
 export function normalizeSpeciesData(rawSpecies) {
-    if (!rawSpecies?.system) return rawSpecies;
+    if (!rawSpecies?.system) {return rawSpecies;}
 
     const sp = foundry.utils.deepClone(rawSpecies);
 
@@ -23,7 +23,7 @@ export function normalizeSpeciesData(rawSpecies) {
         {};
 
     // Ensure all ability keys exist
-    const ab = ["str", "dex", "con", "int", "wis", "cha"];
+    const ab = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
     ab.forEach(a => {
         sp.system.abilityMods[a] = Number(sp.system.abilityMods[a] || 0);
     });
@@ -70,10 +70,10 @@ export function normalizeSpeciesData(rawSpecies) {
     // --------------------------------------------
     // 5. Normalize Speed & Size
     // --------------------------------------------
-    sp.system.size = sp.system.size || sp.system.category || "Medium";
+    sp.system.size = sp.system.size || sp.system.category || 'Medium';
 
     sp.system.speed = Number(sp.system.speed || sp.system.movement || 6);
-    if (isNaN(sp.system.speed)) sp.system.speed = 6;
+    if (isNaN(sp.system.speed)) {sp.system.speed = 6;}
 
     return sp;
 }

@@ -26,7 +26,7 @@ export class MentorVoiceFilter {
 
     // Fall back to generic mentor filter
     SWSELogger.warn(`No specific filter for ${mentorName} on ${topic}, using generic`);
-    return data.generic || "I have thoughts on this, but they escape me at the moment.";
+    return data.generic || 'I have thoughts on this, but they escape me at the moment.';
   }
 
   static _sanitizeMentorName(name) {
@@ -45,15 +45,15 @@ export class MentorVoiceFilter {
 
     if (themes.length > 0) {
       response += `Your choices whisper of **${themes[0]}**`;
-      if (themes[1]) response += ` and **${themes[1]}**`;
+      if (themes[1]) {response += ` and **${themes[1]}**`;}
       response += `. These are not accidents. They are reflections of your inner nature.\n\n`;
     }
 
-    if (combatStyle === "melee") {
+    if (combatStyle === 'melee') {
       response += `You face conflict directly, blade to blade. The way of the Guardian. Courage, but remember—true strength is knowing when *not* to fight.`;
-    } else if (combatStyle === "ranged") {
+    } else if (combatStyle === 'ranged') {
       response += `You strike from distance, patient and precise. The way of the hunter. Wisdom, but remember—distance can also mean disconnection.`;
-    } else if (combatStyle === "caster") {
+    } else if (combatStyle === 'caster') {
       response += `The Force flows through you as both weapon and companion. The way of the Consular. Power, but remember—the Force serves those who serve it.`;
     } else {
       response += `You refuse simple labels. Adaptability is strength, but also a test—will you master many paths, or walk none fully?`;
@@ -74,13 +74,13 @@ export class MentorVoiceFilter {
     let response = `Level ${level}. Not bad. You're shaping up as a **${inferredRole}**. `;
     response += `That's not me blowing smoke—that's what your choices say about you.\n\n`;
 
-    if (combatStyle === "melee") {
+    if (combatStyle === 'melee') {
       response += `You fight up close. Aggressive. Direct. That takes guts, but it also takes *discipline*. `;
       response += `Charging in without a plan gets you ventilated. Know when to press and when to fall back.`;
-    } else if (combatStyle === "ranged") {
+    } else if (combatStyle === 'ranged') {
       response += `You engage from range. Smart. Controlled. That's scout thinking—take your shots, stay mobile, don't get pinned. `;
       response += `Keep those firing lanes open and you'll outlast the brawlers every time.`;
-    } else if (combatStyle === "caster") {
+    } else if (combatStyle === 'caster') {
       response += `Force user, huh? Not my specialty, but I respect it. You're a force multiplier—literally. `;
       response += `Just don't get so caught up in the mystical stuff that you forget basic tactics.`;
     } else {
@@ -102,13 +102,13 @@ export class MentorVoiceFilter {
     let response = `Har har! Level ${level} and still kickin', are ye? `;
     response += `The galaxy's got ye pegged as a **${inferredRole}**, savvy? That's what yer choices be sayin' about ye!\n\n`;
 
-    if (combatStyle === "melee") {
+    if (combatStyle === 'melee') {
       response += `Blimey! Ye like gettin' yer hands dirty in close quarters! Brave or daft, hard to tell which. `;
       response += `Just remember—dead heroes don't spend their credits, matey!`;
-    } else if (combatStyle === "ranged") {
+    } else if (combatStyle === 'ranged') {
       response += `Smart! Ye shoot first and ask questions from a safe distance! That's proper pirate thinkin', that is! `;
       response += `Why risk yer hide when a good blaster does the talkin'?`;
-    } else if (combatStyle === "caster") {
+    } else if (combatStyle === 'caster') {
       response += `Oho! Ye be one o' them Force-flingers! Fancy tricks and space magic! `;
       response += `I seen it work wonders, but don't go thinkin' it makes ye invincible, savvy?`;
     } else {
@@ -130,13 +130,13 @@ export class MentorVoiceFilter {
     let response = `Level ${level}. You're becoming a **${inferredRole}**. `;
     response += `Your record speaks for itself.\n\n`;
 
-    if (combatStyle === "melee") {
+    if (combatStyle === 'melee') {
       response += `Close quarters fighter. Good. That's where battles are won—face to face, no room for cowards. `;
       response += `Hit hard, hit first, and don't stop until the threat is neutralized.`;
-    } else if (combatStyle === "ranged") {
+    } else if (combatStyle === 'ranged') {
       response += `Ranged combatant. Effective, but keep your armor up. `;
       response += `Enemies *will* close distance. Make sure you can handle it when they do.`;
-    } else if (combatStyle === "caster") {
+    } else if (combatStyle === 'caster') {
       response += `Force powers. Not my area, but I've seen them work. `;
       response += `Just remember—when the blasters start firing, you need more than mysticism.`;
     } else {
@@ -155,14 +155,14 @@ export class MentorVoiceFilter {
     let response = `<Observation> You have achieved level ${level}. `;
     response += `<Analysis> Your behavioral patterns indicate development as a **${inferredRole}**.</Analysis>\n\n`;
 
-    if (combatStyle === "melee") {
+    if (combatStyle === 'melee') {
       response += `<Assessment> Close-quarters combat specialization detected. `;
       response += `While effective, this approach carries elevated risk coefficients. `;
       response += `<Suggestion> Consider supplementing with diplomatic protocols to avoid unnecessary confrontation.</Suggestion>`;
-    } else if (combatStyle === "ranged") {
+    } else if (combatStyle === 'ranged') {
       response += `<Assessment> Ranged engagement preference noted. A tactically sound approach that minimizes personal risk exposure. `;
       response += `<Commendation> This demonstrates rational tactical planning.</Commendation>`;
-    } else if (combatStyle === "caster") {
+    } else if (combatStyle === 'caster') {
       response += `<Fascination> Force manipulation capabilities detected. `;
       response += `An elegant solution set that transcends conventional combat parameters. `;
       response += `<Query> Have you considered non-violent applications?</Query>`;
@@ -180,13 +180,13 @@ export class MentorVoiceFilter {
     let response = `<Status Update: Level ${level} achieved.> `;
     response += `<Identity Matrix: You are becoming a **${inferredRole}**.>\n\n`;
 
-    if (combatStyle === "melee") {
+    if (combatStyle === 'melee') {
       response += `<Combat Analysis: Melee specialization.> `;
       response += `<Commentary: Direct confrontation. Inefficient but psychologically effective. Organics respect visible strength.>`;
-    } else if (combatStyle === "ranged") {
+    } else if (combatStyle === 'ranged') {
       response += `<Combat Analysis: Ranged optimization.> `;
       response += `<Approval: Superior tactical positioning. Calculated engagement ranges. This is logical combat.>`;
-    } else if (combatStyle === "caster") {
+    } else if (combatStyle === 'caster') {
       response += `<Force Sensitivity: Confirmed.> `;
       response += `<Philosophical Query: Can independent thought coexist with Force manipulation? Curious.>`;
     } else {
@@ -205,13 +205,13 @@ export class MentorVoiceFilter {
     let response = `Ah, level ${level}. I remember when I was level ${level}. Or was it ${level + 100}? `;
     response += `The centuries blur. But I digress—you're becoming a **${inferredRole}**.\n\n`;
 
-    if (combatStyle === "melee") {
+    if (combatStyle === 'melee') {
       response += `A brawler! Excellent! I've fought in the pits for... how long now? Doesn't matter. `;
       response += `Close combat is pure, honest, visceral. Just remember—I've tried dying in melee. It's surprisingly difficult. For me, anyway.`;
-    } else if (combatStyle === "ranged") {
+    } else if (combatStyle === 'ranged') {
       response += `Distance fighter? Practical. I used a blaster once. Or was it a crossbow? Different bodies, different eras. `;
       response += `The principle remains—stay alive long enough to win.`;
-    } else if (combatStyle === "caster") {
+    } else if (combatStyle === 'caster') {
       response += `Force powers! I've never quite mastered those. Hard to channel the Force when you're not entirely sure which species you are at any given moment. `;
       response += `But I've *faced* Force users. Formidable, when they know what they're doing.`;
     } else {
@@ -233,7 +233,7 @@ export class MentorVoiceFilter {
 
     let response = `The Force reveals many paths, young one. Each demands sacrifice—what you gain in one area, you surrender in another. This is balance.\n\n`;
 
-    if (mentorClass === "Jedi") {
+    if (mentorClass === 'Jedi') {
       response += `**The Guardian's Path** — You become the shield. Protect the weak, confront the wicked. `;
       response += `Your lightsaber is an extension of your commitment. But this path narrows—few Guardians master diplomacy.\n\n`;
 
@@ -257,7 +257,7 @@ export class MentorVoiceFilter {
 
     let response = `Listen up. Every class has specializations. Each one trades something for something else. No free lunches.\n\n`;
 
-    if (mentorClass === "Scout") {
+    if (mentorClass === 'Scout') {
       response += `**Tracker** — You hunt targets through hostile terrain. Master of wilderness survival and pursuit. `;
       response += `But you'll sacrifice urban ops skills and social finesse. You're a specialist, not a smooth-talker.\n\n`;
 
@@ -281,7 +281,7 @@ export class MentorVoiceFilter {
 
     let response = `Har har! So ye want to know what kinds o' scallywag ye can become? Let ol' Salty tell ye!\n\n`;
 
-    if (mentorClass === "Scoundrel") {
+    if (mentorClass === 'Scoundrel') {
       response += `**The Charmer** — Ye talk yer way to riches! Master o' persuasion and smooth dealin'. `;
       response += `But ye'll be rubbish in a straight fight. Charm don't stop blaster bolts, savvy?\n\n`;
 
@@ -326,11 +326,11 @@ export class MentorVoiceFilter {
   static _mirajVoiceStrength(strength) {
     const voicings = {
       high_str: "Your physical strength serves your commitment to protection. The body is the Force's vessel.",
-      high_dex: "Your agility reflects inner balance. Movement and stillness, both are one.",
-      high_wis: "Your wisdom deepens. The Force speaks to those who listen.",
-      high_cha: "Your presence grows. The Force flows through those who inspire.",
-      skill_diversity: "You expand your understanding beyond combat. A Jedi must know many paths.",
-      defense_solid: "Your defenses hold firm. You cannot serve others if you cannot endure."
+      high_dex: 'Your agility reflects inner balance. Movement and stillness, both are one.',
+      high_wis: 'Your wisdom deepens. The Force speaks to those who listen.',
+      high_cha: 'Your presence grows. The Force flows through those who inspire.',
+      skill_diversity: 'You expand your understanding beyond combat. A Jedi must know many paths.',
+      defense_solid: 'Your defenses hold firm. You cannot serve others if you cannot endure.'
     };
     return voicings[strength.key] || strength.description;
   }
@@ -351,11 +351,11 @@ export class MentorVoiceFilter {
 
   static _leadVoiceStrength(strength) {
     const voicings = {
-      high_str: "Solid combat stats. You can dish it out.",
-      high_dex: "Good reflexes. Keeps you alive when things go sideways.",
-      high_wis: "Sharp awareness. You see threats before they see you.",
-      high_cha: "Leadership quality. People follow competent operators.",
-      skill_diversity: "Versatile skill set. Makes you valuable on any team.",
+      high_str: 'Solid combat stats. You can dish it out.',
+      high_dex: 'Good reflexes. Keeps you alive when things go sideways.',
+      high_wis: 'Sharp awareness. You see threats before they see you.',
+      high_cha: 'Leadership quality. People follow competent operators.',
+      skill_diversity: 'Versatile skill set. Makes you valuable on any team.',
       defense_solid: "Defenses are holding. You're hard to kill. That's job one."
     };
     return voicings[strength.key] || strength.description;
@@ -378,9 +378,9 @@ export class MentorVoiceFilter {
   static _saltyVoiceStrength(strength) {
     const voicings = {
       high_str: "Strong as a Wookiee! Good for crackin' skulls and haulin' loot!",
-      high_dex: "Quick as a Kowakian monkey-lizard! Slippery, ye are!",
+      high_dex: 'Quick as a Kowakian monkey-lizard! Slippery, ye are!',
       high_wis: "Sharp eyes and sharper wits! That's what keeps pirates alive!",
-      high_cha: "Smooth talker! Ye could sell sand to Tuskens!",
+      high_cha: 'Smooth talker! Ye could sell sand to Tuskens!',
       skill_diversity: "Ye know a bit o' everything! Proper scoundrel trainin'!",
       defense_solid: "Hard to hit, hard to kill! That's the pirate way!"
     };

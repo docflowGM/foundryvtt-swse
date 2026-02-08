@@ -36,48 +36,48 @@ export class RuleEngine {
 
   _checkRequirement(req) {
     switch (req.type) {
-      case "ability":
+      case 'ability':
         return this._checkAbility(req);
 
-      case "bab":
+      case 'bab':
         return this._checkBAB(req);
 
-      case "skill_trained":
+      case 'skill_trained':
         return this._checkSkillTrained(req);
 
-      case "skill_ranks":
+      case 'skill_ranks':
         return this._checkSkillRanks(req);
 
-      case "feat":
+      case 'feat':
         return this._checkFeat(req);
 
-      case "talent":
+      case 'talent':
         return this._checkTalent(req);
 
-      case "force_secret":
+      case 'force_secret':
         return this._hasForceSecret();
 
-      case "force_technique":
+      case 'force_technique':
         return this._hasForceTechnique();
 
-      case "force_sensitive":
+      case 'force_sensitive':
         return this._hasForceSensitive();
 
-      case "class_level":
+      case 'class_level':
         return this._checkClassLevel(req);
 
-      case "alignment":
+      case 'alignment':
         return this._checkAlignment(req);
 
       default:
-        console.warn("[RuleEngine] Unknown prerequisite type:", req);
+        console.warn('[RuleEngine] Unknown prerequisite type:', req);
         return false;
     }
   }
 
   _checkAbility(req) {
     const ability = this.actor.system?.abilities?.[req.ability];
-    if (!ability) return false;
+    if (!ability) {return false;}
     return (ability?.total ?? 10) >= req.minimum;
   }
 
@@ -88,7 +88,7 @@ export class RuleEngine {
 
   _checkSkillTrained(req) {
     const skill = this.actor.items.find(i =>
-      i.type === "skill" &&
+      i.type === 'skill' &&
       i.system?.key?.toLowerCase() === req.skill
     );
     return Boolean(skill && skill.system?.trained);
@@ -96,14 +96,14 @@ export class RuleEngine {
 
   _checkSkillRanks(req) {
     const skill = this.actor.items.find(i =>
-      i.type === "skill" &&
+      i.type === 'skill' &&
       i.system?.key?.toLowerCase() === req.skill
     );
     return Boolean(skill && (skill.system?.ranks ?? 0) >= req.ranks);
   }
 
   _checkFeat(req) {
-    const feats = this.actor.items.filter(i => i.type === "feat");
+    const feats = this.actor.items.filter(i => i.type === 'feat');
     const names = feats.map(f => f.name.toLowerCase());
     return names.includes(req.name.toLowerCase());
   }
@@ -114,7 +114,7 @@ export class RuleEngine {
       p.name.toLowerCase()
     );
 
-    const talents = this.actor.items.filter(i => i.type === "talent");
+    const talents = this.actor.items.filter(i => i.type === 'talent');
     const names = talents.map(t => t.name.toLowerCase());
 
     return names.includes(req.name.toLowerCase()) ||
@@ -122,20 +122,20 @@ export class RuleEngine {
   }
 
   _hasForceSecret() {
-    return Boolean(this.actor.items.find(i => i.type === "force_secret"));
+    return Boolean(this.actor.items.find(i => i.type === 'force_secret'));
   }
 
   _hasForceTechnique() {
-    return Boolean(this.actor.items.find(i => i.type === "force_technique"));
+    return Boolean(this.actor.items.find(i => i.type === 'force_technique'));
   }
 
   _hasForceSensitive() {
-    return Boolean(this.actor.items.find(i => i.type === "feat" &&
-      i.name.toLowerCase().includes("force sensitive")));
+    return Boolean(this.actor.items.find(i => i.type === 'feat' &&
+      i.name.toLowerCase().includes('force sensitive')));
   }
 
   _checkClassLevel(req) {
-    const levels = this.actor.items.filter(i => i.type === "class");
+    const levels = this.actor.items.filter(i => i.type === 'class');
     for (const cls of levels) {
       if (cls.name.toLowerCase() === req.className.toLowerCase()) {
         return (cls.system?.level ?? 0) >= req.minimum;
@@ -147,7 +147,7 @@ export class RuleEngine {
   _checkAlignment(req) {
     const align = this.actor.system?.alignment ??
                   this.actor.system?.forceAlignment ??
-                  "";
+                  '';
     return align.toLowerCase().includes(req.alignment.toLowerCase());
   }
 }

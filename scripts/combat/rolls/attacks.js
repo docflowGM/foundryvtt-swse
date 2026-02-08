@@ -30,7 +30,7 @@ function computeAttackBonus(actor, weapon, actionId = null) {
   const bab = actor.system.bab ?? 0;
 
   // Use new data model: abilities[xxx].mod
-  const abilityMod = actor.system.attributes[weapon.system?.attackAttribute ?? "str"]?.mod ?? 0;
+  const abilityMod = actor.system.attributes[weapon.system?.attackAttribute ?? 'str']?.mod ?? 0;
 
   const miscBonus = weapon.system?.attackBonus ?? 0;
 
@@ -74,7 +74,7 @@ function computeAttackBonus(actor, weapon, actionId = null) {
  */
 export async function rollAttack(actor, weapon) {
   if (!actor || !weapon) {
-    ui.notifications.error("Missing actor or weapon for attack roll.");
+    ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
   }
 
@@ -85,7 +85,7 @@ export async function rollAttack(actor, weapon) {
 
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({ actor }),
-    flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? "+" : ""}${atkBonus})`
+    flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`
   } , { create: true });
 
   return roll;
@@ -105,10 +105,10 @@ function computeDamageBonus(actor, weapon) {
   const dexMod = actor.system.attributes.dex?.mod ?? 0;
 
   switch (weapon.system?.attackAttribute) {
-    case "str": bonus += strMod; break;
-    case "dex": bonus += dexMod; break;
-    case "2str": bonus += strMod * 2; break;
-    case "2dex": bonus += dexMod * 2; break;
+    case 'str': bonus += strMod; break;
+    case 'dex': bonus += dexMod; break;
+    case '2str': bonus += strMod * 2; break;
+    case '2dex': bonus += dexMod * 2; break;
   }
 
   return bonus;
@@ -119,13 +119,13 @@ function computeDamageBonus(actor, weapon) {
  */
 export async function rollDamage(actor, weapon) {
   if (!actor || !weapon) {
-    ui.notifications.error("Missing actor or weapon for damage roll.");
+    ui.notifications.error('Missing actor or weapon for damage roll.');
     return null;
   }
 
   const dmgBonus = computeDamageBonus(actor, weapon);
 
-  const base = weapon.system?.damage ?? weapon.damage ?? "1d6";
+  const base = weapon.system?.damage ?? weapon.damage ?? '1d6';
   const formula = `${base} + ${dmgBonus}`;
 
   const roll = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
@@ -143,7 +143,7 @@ export async function rollDamage(actor, weapon) {
  */
 export async function rollFullAttack(actor, weapon) {
   const attack = await rollAttack(actor, weapon);
-  if (!attack) return null;
+  if (!attack) {return null;}
 
   const result = { attack, damage: null };
 
@@ -152,7 +152,7 @@ export async function rollFullAttack(actor, weapon) {
   const isThreat = attack.dice[0]?.results?.some(r => r.result >= critRange);
 
   if (isThreat) {
-    ui.notifications.info("Critical Threat!");
+    ui.notifications.info('Critical Threat!');
   }
 
   return result;

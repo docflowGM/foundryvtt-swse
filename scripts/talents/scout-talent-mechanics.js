@@ -1185,7 +1185,7 @@ export class ScoutTalentMechanics {
     }
 
     return canvas.tokens.placeables.filter(token => {
-      if (!token.actor || token.actor.id === actor.id) return false;
+      if (!token.actor || token.actor.id === actor.id) {return false;}
       return token.document.disposition === actorToken.document.disposition;
     });
   }
@@ -1206,7 +1206,7 @@ export class ScoutTalentMechanics {
     // Followers are typically marked with a specific flag or relationship
     // This is a simplified implementation
     return canvas.tokens.placeables.filter(token => {
-      if (!token.actor || token.actor.id === actor.id) return false;
+      if (!token.actor || token.actor.id === actor.id) {return false;}
       // Check if this is a follower of the actor
       const followerFlag = token.actor.getFlag('swse', 'followerOfActor');
       return followerFlag === actor.id;
@@ -1459,7 +1459,7 @@ Hooks.on('weavingStrideTriggered', async (actor) => {
 Hooks.on('deleteCombat', async (combat) => {
   for (const combatant of combat.combatants) {
     const actor = combatant.actor;
-    if (!actor) continue;
+    if (!actor) {continue;}
 
     // Clear all scout talent encounter flags
     const combatId = combat.id;

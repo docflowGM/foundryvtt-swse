@@ -21,14 +21,14 @@ export function getsForcePowers(actor, selectedFeats = []) {
     // If this is level 2, they were level 1. Check if they're Jedi
     const characterClasses = actor.items.filter(i => i.type === 'class');
     const hasJedi = characterClasses.some(c => c.name === 'Jedi');
-    if (hasJedi) return true;
+    if (hasJedi) {return true;}
   }
 
   // Check if Force Training is in selected feats
   const hasForceTraining = selectedFeats.some(f =>
     typeof f === 'string' ? f === 'Force Training' : f.name === 'Force Training'
   );
-  if (hasForceTraining) return true;
+  if (hasForceTraining) {return true;}
 
   return false;
 }
@@ -47,7 +47,7 @@ export async function countForcePowersGained(actor, selectedFeats = []) {
   if (newLevel === 2) {
     const characterClasses = actor.items.filter(i => i.type === 'class');
     const hasJedi = characterClasses.some(c => c.name === 'Jedi');
-    if (hasJedi) count += 1;
+    if (hasJedi) {count += 1;}
   }
 
   // Check for Force Training feat
@@ -91,7 +91,7 @@ export async function loadForcePowers() {
  */
 export function selectForcePower(powerId, availablePowers, selectedPowers = []) {
   const power = availablePowers.find(p => (p.id || p._id || p.name) === powerId);
-  if (!power) return selectedPowers;
+  if (!power) {return selectedPowers;}
 
   const powersWithoutThis = selectedPowers.filter(p => (p.id || p._id || p.name) !== powerId);
 

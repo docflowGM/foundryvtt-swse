@@ -91,12 +91,12 @@ export class ActionPaletteApp extends foundry.applications.api.ApplicationV2 {
     for (const group of groups) {
       for (const tool of group.tools) {
         // Check visibility predicate
-        if (tool.visible && !tool.visible(canvas)) continue;
+        if (tool.visible && !tool.visible(canvas)) {continue;}
 
         // Mode-specific filtering
         if (this.mode === 'player') {
           // Player mode: require token selection
-          if (!this._hasSelectedToken()) continue;
+          if (!this._hasSelectedToken()) {continue;}
         }
 
         tools.push({
@@ -123,7 +123,7 @@ export class ActionPaletteApp extends foundry.applications.api.ApplicationV2 {
    */
   async executeTool(event) {
     const toolName = event.target.closest('[data-tool]')?.dataset.tool;
-    if (!toolName) return;
+    if (!toolName) {return;}
 
     const groups = sceneControlRegistry.groups.values();
     for (const group of groups) {
@@ -140,13 +140,13 @@ export class ActionPaletteApp extends foundry.applications.api.ApplicationV2 {
    */
   async executeSlot(event) {
     const slot = event.target.closest('[data-zone]');
-    if (!slot) return;
+    if (!slot) {return;}
 
     const zone = slot.dataset.zone;
     const slotIndex = parseInt(slot.dataset.slot);
     const item = this.gmZones[zone]?.[slotIndex]?.item;
 
-    if (!item) return;
+    if (!item) {return;}
 
     // Validate item is still valid
     if (item.type === 'actor') {
@@ -188,7 +188,7 @@ export class ActionPaletteApp extends foundry.applications.api.ApplicationV2 {
    * Toggle between Player and GM mode
    */
   async toggleMode(event) {
-    if (!game.user.isGM) return;
+    if (!game.user.isGM) {return;}
     this.mode = this.mode === 'player' ? 'gm' : 'player';
     await this.render();
   }
@@ -291,9 +291,9 @@ export class ActionPaletteApp extends foundry.applications.api.ApplicationV2 {
     } else if (placement === 'edge') {
       const edge = Math.floor(Math.random() * 4);
       const pos = Math.random();
-      if (edge === 0) return { x: pos * canvas.dimensions.width, y: 0 };
-      if (edge === 1) return { x: pos * canvas.dimensions.width, y: canvas.dimensions.height };
-      if (edge === 2) return { x: 0, y: pos * canvas.dimensions.height };
+      if (edge === 0) {return { x: pos * canvas.dimensions.width, y: 0 };}
+      if (edge === 1) {return { x: pos * canvas.dimensions.width, y: canvas.dimensions.height };}
+      if (edge === 2) {return { x: 0, y: pos * canvas.dimensions.height };}
       return { x: canvas.dimensions.width, y: pos * canvas.dimensions.height };
     }
 
@@ -406,7 +406,7 @@ export class ActionPaletteApp extends foundry.applications.api.ApplicationV2 {
    */
   _attachDragAndDrop() {
     const slots = this.element?.querySelectorAll('.ap-slot');
-    if (!slots) return;
+    if (!slots) {return;}
 
     for (const slot of slots) {
       slot.addEventListener('dragover', (e) => this._onDragOver(e));
@@ -440,7 +440,7 @@ export class ActionPaletteApp extends foundry.applications.api.ApplicationV2 {
   async _onDrop(event) {
     event.preventDefault();
     const slot = event.target.closest('.ap-slot');
-    if (!slot) return;
+    if (!slot) {return;}
 
     slot.classList.remove('dragover');
 

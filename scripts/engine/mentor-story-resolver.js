@@ -9,7 +9,7 @@
  * Pure read-only logic with no state mutations.
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 export class MentorStoryResolver {
   /**
@@ -85,10 +85,10 @@ export class MentorStoryResolver {
    * Tier 5: 100% (requires additional conditions)
    */
   static _resolveTier(progress) {
-    if (progress >= 1.0) return 5;
-    if (progress >= 0.75) return 4;
-    if (progress >= 0.5) return 3;
-    if (progress >= 0.25) return 2;
+    if (progress >= 1.0) {return 5;}
+    if (progress >= 0.75) {return 4;}
+    if (progress >= 0.5) {return 3;}
+    if (progress >= 0.25) {return 2;}
     return 1;
   }
 
@@ -97,10 +97,10 @@ export class MentorStoryResolver {
    * Returns { allowed: bool, reason: string }
    */
   static _checkDspGating(actor, mentor, storyData) {
-    const sensitivity = storyData.dspSensitivity || "none";
+    const sensitivity = storyData.dspSensitivity || 'none';
 
     // DSP sensitivity "none" → always allowed
-    if (sensitivity === "none") {
+    if (sensitivity === 'none') {
       return { allowed: true };
     }
 
@@ -111,20 +111,20 @@ export class MentorStoryResolver {
     const tolerance = storyData.dspTolerance ?? 0.25;
 
     // Inverted sensitivity (evil mentors) → prefer corruption
-    if (sensitivity === "inverted") {
+    if (sensitivity === 'inverted') {
       // Block if *too close* to light (inverse logic)
       const invrtedDistance = 1.0 - dspDistance;
       if (invrtedDistance > tolerance) {
-        return { allowed: false, reason: "dsp_misaligned" };
+        return { allowed: false, reason: 'dsp_misaligned' };
       }
       return { allowed: true };
     }
 
     // Strict/Loose sensitivity → block if distance too great
-    if (sensitivity === "strict" || sensitivity === "loose") {
-      const allowance = sensitivity === "loose" ? tolerance * 1.5 : tolerance;
+    if (sensitivity === 'strict' || sensitivity === 'loose') {
+      const allowance = sensitivity === 'loose' ? tolerance * 1.5 : tolerance;
       if (dspDistance > allowance) {
-        return { allowed: false, reason: "dsp_distance" };
+        return { allowed: false, reason: 'dsp_distance' };
       }
       return { allowed: true };
     }
@@ -141,7 +141,7 @@ export class MentorStoryResolver {
     const dsp = actor.system.darkSidePoints || 0;
     const wisdom = actor.system.attributes?.wis?.base || 10;
 
-    if (wisdom === 0) return 0;
+    if (wisdom === 0) {return 0;}
 
     const saturation = dsp / wisdom;
     return Math.min(saturation, 1.0); // Cap at 100%
@@ -151,7 +151,7 @@ export class MentorStoryResolver {
    * Select dialogue from array, function, or string
    */
   static _selectDialogue(content) {
-    if (typeof content === "function") {
+    if (typeof content === 'function') {
       return content();
     }
 
@@ -169,7 +169,7 @@ export class MentorStoryResolver {
    * Fallback response when story data unavailable
    */
   static _getFallbackResponse(mentorName, tier = null) {
-    const tierSuffix = tier ? ` (Tier ${tier})` : "";
+    const tierSuffix = tier ? ` (Tier ${tier})` : '';
     return (
       `*${mentorName} pauses thoughtfully${tierSuffix}*\n\n` +
       "I'm not quite ready to talk about that yet. Ask me something else."

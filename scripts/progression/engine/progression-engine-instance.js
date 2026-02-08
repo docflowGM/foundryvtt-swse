@@ -22,7 +22,7 @@ export class ProgressionEngine {
    * @param {Actor} actor - The actor being leveled up
    * @param {string} mode - "levelup" or "chargen"
    */
-  constructor(actor, mode = "levelup") {
+  constructor(actor, mode = 'levelup') {
     this.actor = actor;
     this.mode = mode;
 

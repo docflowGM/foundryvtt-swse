@@ -7,7 +7,7 @@ import { parseVehicleSpeedText, formatSquares } from '../../utils/movement-norma
  */
 
 export class SWSEVehicleHandler {
-  
+
   /**
    * Apply a vehicle template Item to a vehicle Actor
    * This transforms the actor into the templated vehicle
@@ -45,16 +45,16 @@ export class SWSEVehicleHandler {
     });
 
     // Normalize SWSE speed strings into flags + schema-safe strings
-    const speedInfo = parseVehicleSpeedText(template.speed ?? template.speedText ?? "");
+    const speedInfo = parseVehicleSpeedText(template.speed ?? template.speedText ?? '');
 
     const speedString = formatSquares(
       speedInfo.character?.squares ?? template.speed,
-      typeof template.speed === "string" ? template.speed : "12 squares"
+      typeof template.speed === 'string' ? template.speed : '12 squares'
     );
 
     const starshipSpeedString = template.starshipSpeed
-      ? (typeof template.starshipSpeed === "string" ? template.starshipSpeed : formatSquares(template.starshipSpeed, ""))
-      : (speedInfo.starship?.squares != null ? formatSquares(speedInfo.starship.squares, "") : null);
+      ? (typeof template.starshipSpeed === 'string' ? template.starshipSpeed : formatSquares(template.starshipSpeed, ''))
+      : (speedInfo.starship?.squares != null ? formatSquares(speedInfo.starship.squares, '') : null);
 
     // Build update object - the template now uses the migrated schema
     const updates = {
@@ -199,25 +199,25 @@ export class SWSEVehicleHandler {
       return false;
     }
   }
-  
+
   /**
    * Extract size from crew_size string
    * e.g., "1 (Expert Crew Quality)" -> try to infer size
    */
   static _extractSize(crewString) {
     // This is a heuristic - you may want to add size explicitly to your JSON
-    if (!crewString) return 'Colossal';
-    
+    if (!crewString) {return 'Colossal';}
+
     // Could add logic here to infer size from crew requirements
     // For now, return a default
     return 'Colossal';
   }
-  
+
   /**
    * Check if an item is a vehicle template
    */
   static isVehicleTemplate(item) {
-    if (!item) return false;
+    if (!item) {return false;}
 
     // Check if it has vehicle-specific properties (migrated schema)
     const sys = item.system;

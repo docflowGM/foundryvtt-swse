@@ -17,7 +17,7 @@ import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
  * @returns {number} Penalty value
  */
 export function getConditionPenalty(ctStep) {
-  const penalties = [0, -1, -2, -5, -10, -10]; 
+  const penalties = [0, -1, -2, -5, -10, -10];
   return penalties[Math.clamp(ctStep, 0, 5)] ?? 0;
 }
 
@@ -49,7 +49,7 @@ export function computeAttackBonus(actor, weapon) {
   const bab = actor.system.bab ?? 0;
 
   // Ability mod used for attack
-  const attr = weapon.system?.attackAttribute ?? "str";
+  const attr = weapon.system?.attackAttribute ?? 'str';
   const abilityMod = actor.system.attributes[attr]?.mod ?? 0;
 
   // Weapon-based bonuses
@@ -103,7 +103,7 @@ export function isMeleeWeapon(weapon) {
  */
 export function isLightWeapon(weapon, actor) {
   // Check explicit light weapon flag
-  if (weapon.system?.isLight === true) return true;
+  if (weapon.system?.isLight === true) {return true;}
 
   // Check weapon size vs actor size
   const weaponSize = (weapon.system?.size || '').toLowerCase();
@@ -135,8 +135,8 @@ export function isLightWeapon(weapon, actor) {
  */
 export function isTwoHandedWeapon(weapon, actor) {
   // Check explicit flag
-  if (weapon.system?.twoHanded === true) return true;
-  if (weapon.system?.hands === 2) return true;
+  if (weapon.system?.twoHanded === true) {return true;}
+  if (weapon.system?.hands === 2) {return true;}
 
   // Check weapon category/type
   const category = (weapon.system?.category || weapon.system?.subcategory || '').toLowerCase();
@@ -186,7 +186,7 @@ export function hasDexToDamageTalent(actor) {
   ];
 
   for (const item of actor.items) {
-    if (item.type !== 'talent' && item.type !== 'feat') continue;
+    if (item.type !== 'talent' && item.type !== 'feat') {continue;}
     const name = (item.name || '').toLowerCase();
     if (dexDamageTalents.some(t => name.includes(t))) {
       return true;
@@ -222,10 +222,10 @@ export function computeDamageBonus(actor, weapon, options = {}) {
   if (attackAttr) {
     // Use explicit attribute setting
     switch (attackAttr) {
-      case "str": bonus += strMod; break;
-      case "dex": bonus += dexMod; break;
-      case "2str": bonus += strMod * 2; break;
-      case "2dex": bonus += dexMod * 2; break;
+      case 'str': bonus += strMod; break;
+      case 'dex': bonus += dexMod; break;
+      case '2str': bonus += strMod * 2; break;
+      case '2dex': bonus += dexMod * 2; break;
     }
   } else {
     // Auto-detect based on weapon type
@@ -344,17 +344,17 @@ export function getEffectModifier(actor, key) {
   let total = 0;
 
   for (const effect of actor.effects ?? []) {
-    if (effect.disabled) continue;
+    if (effect.disabled) {continue;}
 
     for (const [path, update] of Object.entries(effect.updates ?? {})) {
-      if (path !== key) continue;
+      if (path !== key) {continue;}
 
       const value = Number(update.value ?? 0);
 
       switch (update.mode) {
-        case "ADD": total += value; break;
-        case "MULTIPLY": total *= value; break;
-        case "OVERRIDE": total = value; break;
+        case 'ADD': total += value; break;
+        case 'MULTIPLY': total *= value; break;
+        case 'OVERRIDE': total = value; break;
       }
     }
   }
@@ -373,7 +373,7 @@ export function getEffectModifier(actor, key) {
  */
 export function resolveAttackAgainstTarget(attackRoll, target, options = {}) {
   const ref = target.system.defenses?.reflex?.total ?? 10;
-  const cover = getCoverBonus(options.coverType ?? "none");
+  const cover = getCoverBonus(options.coverType ?? 'none');
 
   const finalRef = ref + cover;
 

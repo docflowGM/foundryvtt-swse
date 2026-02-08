@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "../../progression/engine/progression-engine.js";
+import { ProgressionEngine } from '../../progression/engine/progression-engine.js';
 // ============================================
 // Character Generation Templates Module
 // Loads and applies pre-configured character templates
@@ -15,7 +15,7 @@ export class CharacterTemplates {
    * Validates ID-based templates (v2 format) against compendiums
    */
   static async loadTemplates() {
-    if (this._templates) return this._templates;
+    if (this._templates) {return this._templates;}
 
     const response = await fetch('systems/foundryvtt-swse/data/character-templates.json');
     if (!response.ok) {
@@ -112,7 +112,7 @@ export class CharacterTemplates {
     // Validate background ID
     if (template.backgroundId) {
       const rec = await BackgroundRegistry.getBySlug(template.backgroundId);
-      if (!rec) errors.push(`Background ID not found: ${template.backgroundId}`);
+      if (!rec) {errors.push(`Background ID not found: ${template.backgroundId}`);}
     }
 
     // Validate class ID
@@ -457,11 +457,11 @@ export class CharacterTemplates {
         // Tab switching
         root.querySelectorAll('.template-tab').click(function() {
           const tab = $(this).data('tab');
-          (root.querySelectorAll('.template-tab')||[]).forEach(el=>el.classList.remove('active'));
+          (root.querySelectorAll('.template-tab')||[]).forEach(el => el.classList.remove('active'));
           $(this).addClass('active');
           root.querySelectorAll('.template-tab-content').hide();
           const root = html instanceof HTMLElement ? html : html?.[0];
-            root?.querySelectorAll?.(`.template-tab-content[data-tab="${tab}"]`)?.forEach(el=>{el.style.display='';});
+            root?.querySelectorAll?.(`.template-tab-content[data-tab="${tab}"]`)?.forEach(el => {el.style.display='';});
         });
 
         // Template selection
@@ -498,7 +498,7 @@ export class CharacterTemplates {
    * @param {string} featName - The feat name to add
    */
   static async applyTemplateFeat(actor, featRef) {
-    if (!featRef) return;
+    if (!featRef) {return;}
 
     const featName = typeof featRef === 'string' ? featRef : (featRef.displayName || featRef.name);
     const featPackName = typeof featRef === 'object' && featRef.pack ? featRef.pack : 'foundryvtt-swse.feats';
@@ -728,7 +728,7 @@ export class CharacterTemplates {
    * @param {Array<string>} powerNames - Array of Force power names
    */
   static async applyTemplateForcePowers(actor, powerNames) {
-    if (!powerNames || powerNames.length === 0) return;
+    if (!powerNames || powerNames.length === 0) {return;}
 
     try {
       const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
@@ -774,7 +774,7 @@ export class CharacterTemplates {
    * @param {Object} templateData - Template metadata from characterData._appliedTemplate
    */
   static async finalizeTemplate(actor, templateData) {
-    if (!templateData) return;
+    if (!templateData) {return;}
 
     SWSELogger.log(`SWSE | Finalizing template application: ${templateData.name}`);
 

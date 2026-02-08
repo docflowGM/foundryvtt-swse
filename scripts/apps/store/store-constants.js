@@ -55,7 +55,7 @@ export const STORE_CONFIG = {
     MAX_MARKUP: 1000,
     MIN_DISCOUNT: 0,
     MAX_DISCOUNT: 100,
-    LOADING_MESSAGE: "Loading store inventory...",
+    LOADING_MESSAGE: 'Loading store inventory...',
     CHECKOUT_ANIMATION_MS: 700
 };
 

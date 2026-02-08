@@ -37,34 +37,34 @@ export const MENTOR_REASON_JUDGMENT_RULES = [
 
   // Prestige fully unlocked — defining moment
   {
-    when: ["prestige_prerequisites_met"],
+    when: ['prestige_prerequisites_met'],
     judgment: JUDGMENT_ATOMS.GRAVITY,
     intensity: INTENSITY_ATOMS.very_high,
-    label: "Prestige ready"
+    label: 'Prestige ready'
   },
 
   // Prestige almost unlocked — strong anticipation
   {
-    when: ["prestige_prerequisites_nearly_met"],
+    when: ['prestige_prerequisites_nearly_met'],
     judgment: JUDGMENT_ATOMS.THRESHOLD,
     intensity: INTENSITY_ATOMS.high,
-    label: "Prestige nearly ready"
+    label: 'Prestige nearly ready'
   },
 
   // Prestige direction consistent over time
   {
-    when: ["prestige_path_consistency", "prestige_specialization_threshold"],
+    when: ['prestige_path_consistency', 'prestige_specialization_threshold'],
     judgment: JUDGMENT_ATOMS.CONFIRMATION,
     intensity: INTENSITY_ATOMS.high,
-    label: "Prestige path locked"
+    label: 'Prestige path locked'
   },
 
   // Prestige identity shift (intentional divergence)
   {
-    when: ["prestige_identity_shift"],
+    when: ['prestige_identity_shift'],
     judgment: JUDGMENT_ATOMS.REVELATION,
     intensity: INTENSITY_ATOMS.high,
-    label: "Identity shift"
+    label: 'Identity shift'
   },
 
   // ========================================================================
@@ -73,34 +73,34 @@ export const MENTOR_REASON_JUDGMENT_RULES = [
 
   // Clear risk + exposure (compound danger)
   {
-    when: ["risk_increased", "exposure"],
+    when: ['risk_increased', 'exposure'],
     judgment: JUDGMENT_ATOMS.WARNING,
     intensity: INTENSITY_ATOMS.high,
-    label: "Risk + exposure"
+    label: 'Risk + exposure'
   },
 
   // Risk present but without exposure
   {
-    when: ["risk_increased"],
+    when: ['risk_increased'],
     judgment: JUDGMENT_ATOMS.RISK_ACKNOWLEDGMENT,
     intensity: INTENSITY_ATOMS.medium,
-    label: "Risk acknowledged"
+    label: 'Risk acknowledged'
   },
 
   // Vulnerability reduced / defensive choice
   {
-    when: ["risk_mitigated"],
+    when: ['risk_mitigated'],
     judgment: JUDGMENT_ATOMS.ENCOURAGEMENT,
     intensity: INTENSITY_ATOMS.medium,
-    label: "Risk mitigated"
+    label: 'Risk mitigated'
   },
 
   // Clear tradeoff introduced
   {
-    when: ["opportunity_cost_incurred"],
+    when: ['opportunity_cost_incurred'],
     judgment: JUDGMENT_ATOMS.CONSEQUENTIAL_AWARENESS,
     intensity: INTENSITY_ATOMS.medium,
-    label: "Tradeoff visible"
+    label: 'Tradeoff visible'
   },
 
   // ========================================================================
@@ -109,26 +109,26 @@ export const MENTOR_REASON_JUDGMENT_RULES = [
 
   // Goal conflict detected (compound signal)
   {
-    when: ["goal_deviation", "pattern_conflict"],
+    when: ['goal_deviation', 'pattern_conflict'],
     judgment: JUDGMENT_ATOMS.REASSESSMENT,
     intensity: INTENSITY_ATOMS.medium,
-    label: "Drift detected"
+    label: 'Drift detected'
   },
 
   // Commitment ignored repeatedly
   {
-    when: ["commitment_ignored"],
+    when: ['commitment_ignored'],
     judgment: JUDGMENT_ATOMS.REORIENTATION,
     intensity: INTENSITY_ATOMS.medium,
-    label: "Commitment shift"
+    label: 'Commitment shift'
   },
 
   // Pattern conflict without explicit goal (softer)
   {
-    when: ["pattern_conflict"],
+    when: ['pattern_conflict'],
     judgment: JUDGMENT_ATOMS.REFLECTION,
     intensity: INTENSITY_ATOMS.low,
-    label: "Pattern mismatch"
+    label: 'Pattern mismatch'
   },
 
   // ========================================================================
@@ -137,34 +137,34 @@ export const MENTOR_REASON_JUDGMENT_RULES = [
 
   // Strong synergy + readiness (compound positive)
   {
-    when: ["synergy_present", "readiness_met"],
+    when: ['synergy_present', 'readiness_met'],
     judgment: JUDGMENT_ATOMS.AFFIRMATION,
     intensity: INTENSITY_ATOMS.medium,
-    label: "Strong fit"
+    label: 'Strong fit'
   },
 
   // Core strength reinforced (specialization)
   {
-    when: ["feat_reinforces_core_strength"],
+    when: ['feat_reinforces_core_strength'],
     judgment: JUDGMENT_ATOMS.ENCOURAGEMENT,
     intensity: INTENSITY_ATOMS.medium,
-    label: "Core strength reinforced"
+    label: 'Core strength reinforced'
   },
 
   // Role identity reinforced
   {
-    when: ["class_role_alignment", "class_identity_reinforced"],
+    when: ['class_role_alignment', 'class_identity_reinforced'],
     judgment: JUDGMENT_ATOMS.AFFIRMATION,
     intensity: INTENSITY_ATOMS.medium,
-    label: "Role identity"
+    label: 'Role identity'
   },
 
   // Specialization clearly forming
   {
-    when: ["specialization_forming"],
+    when: ['specialization_forming'],
     judgment: JUDGMENT_ATOMS.EMERGENCE,
     intensity: INTENSITY_ATOMS.medium,
-    label: "Specialization forming"
+    label: 'Specialization forming'
   },
 
   // ========================================================================
@@ -173,18 +173,18 @@ export const MENTOR_REASON_JUDGMENT_RULES = [
 
   // Ready for significant next step
   {
-    when: ["readiness_met", "growth_stage_shift"],
+    when: ['readiness_met', 'growth_stage_shift'],
     judgment: JUDGMENT_ATOMS.INSIGHT,
     intensity: INTENSITY_ATOMS.medium,
-    label: "Ready for growth"
+    label: 'Ready for growth'
   },
 
   // Not yet ready (patience needed)
   {
-    when: ["readiness_lacking"],
+    when: ['readiness_lacking'],
     judgment: JUDGMENT_ATOMS.PATIENCE,
     intensity: INTENSITY_ATOMS.low,
-    label: "Not yet ready"
+    label: 'Not yet ready'
   },
 
   // ========================================================================
@@ -193,26 +193,26 @@ export const MENTOR_REASON_JUDGMENT_RULES = [
 
   // Active exploration (no correction)
   {
-    when: ["exploration_signal"],
+    when: ['exploration_signal'],
     judgment: JUDGMENT_ATOMS.REFLECTION,
     intensity: INTENSITY_ATOMS.low,
-    label: "Exploring"
+    label: 'Exploring'
   },
 
   // Rare choice at this stage
   {
-    when: ["rare_choice"],
+    when: ['rare_choice'],
     judgment: JUDGMENT_ATOMS.PERSPECTIVE,
     intensity: INTENSITY_ATOMS.low,
-    label: "Unusual choice"
+    label: 'Unusual choice'
   },
 
   // New option unlocked
   {
-    when: ["new_option_revealed"],
+    when: ['new_option_revealed'],
     judgment: JUDGMENT_ATOMS.CONTEXTUALIZATION,
     intensity: INTENSITY_ATOMS.low,
-    label: "New option"
+    label: 'New option'
   },
 
   // ========================================================================
@@ -221,10 +221,10 @@ export const MENTOR_REASON_JUDGMENT_RULES = [
 
   // Maturation visible
   {
-    when: ["growth_stage_shift", "pattern_alignment"],
+    when: ['growth_stage_shift', 'pattern_alignment'],
     judgment: JUDGMENT_ATOMS.MATURATION,
     intensity: INTENSITY_ATOMS.medium,
-    label: "Maturation"
+    label: 'Maturation'
   },
 
   // ========================================================================
@@ -236,7 +236,7 @@ export const MENTOR_REASON_JUDGMENT_RULES = [
     when: [],
     judgment: JUDGMENT_ATOMS.RECOGNITION,
     intensity: INTENSITY_ATOMS.low,
-    label: "Default observation"
+    label: 'Default observation'
   }
 ];
 
@@ -274,7 +274,7 @@ export function findMatchingRule(reasons) {
   return {
     judgment: JUDGMENT_ATOMS.RECOGNITION,
     intensity: INTENSITY_ATOMS.low,
-    label: "ERROR: No rule matched"
+    label: 'ERROR: No rule matched'
   };
 }
 

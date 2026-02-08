@@ -17,12 +17,12 @@ export class MentorHelpStrings {
    * Load strings from JSON data file
    */
   static async init() {
-    if (this._strings) return;
+    if (this._strings) {return;}
     try {
-      const response = await fetch("systems/foundryvtt-swse/data/mentor-ui-strings.json");
+      const response = await fetch('systems/foundryvtt-swse/data/mentor-ui-strings.json');
       this._strings = await response.json();
     } catch (err) {
-      console.error("Failed to load mentor help strings:", err);
+      console.error('Failed to load mentor help strings:', err);
       this._strings = this._getDefaultStrings();
     }
   }
@@ -65,7 +65,7 @@ export class MentorHelpStrings {
   static getTopicDescription(topicKey) {
     this._ensureLoaded();
     const topic = this._strings.dialogueTopics[topicKey];
-    return topic ? topic.description : "Talk to your mentor about this.";
+    return topic ? topic.description : 'Talk to your mentor about this.';
   }
 
   /**
@@ -74,7 +74,7 @@ export class MentorHelpStrings {
   static getTopicTooltip(topicKey) {
     this._ensureLoaded();
     const topic = this._strings.dialogueTopics[topicKey];
-    return topic ? topic.tooltip : "";
+    return topic ? topic.tooltip : '';
   }
 
   /**
@@ -100,7 +100,7 @@ export class MentorHelpStrings {
   static getMentorBio(mentorKey) {
     this._ensureLoaded();
     const mentor = this._strings.mentors[mentorKey];
-    return mentor ? mentor.shortBio : "A mentor with their own perspective";
+    return mentor ? mentor.shortBio : 'A mentor with their own perspective';
   }
 
   /**
@@ -109,7 +109,7 @@ export class MentorHelpStrings {
   static getMentorPhilosophy(mentorKey) {
     this._ensureLoaded();
     const mentor = this._strings.mentors[mentorKey];
-    return mentor ? mentor.philosophy : "Everyone has their own way.";
+    return mentor ? mentor.philosophy : 'Everyone has their own way.';
   }
 
   /**
@@ -118,7 +118,7 @@ export class MentorHelpStrings {
   static getMentorVoiceStyle(mentorKey) {
     this._ensureLoaded();
     const mentor = this._strings.mentors[mentorKey];
-    return mentor ? mentor.voiceStyle : "Unique and authentic";
+    return mentor ? mentor.voiceStyle : 'Unique and authentic';
   }
 
   /**
@@ -127,7 +127,7 @@ export class MentorHelpStrings {
   static getMentorValues(mentorKey) {
     this._ensureLoaded();
     const mentor = this._strings.mentors[mentorKey];
-    return mentor ? mentor.values : "Their own principles";
+    return mentor ? mentor.values : 'Their own principles';
   }
 
   /**
@@ -136,7 +136,7 @@ export class MentorHelpStrings {
   static getMentorTooltip(mentorKey) {
     this._ensureLoaded();
     const mentor = this._strings.mentors[mentorKey];
-    return mentor ? mentor.tooltip : "";
+    return mentor ? mentor.tooltip : '';
   }
 
   /**
@@ -153,7 +153,7 @@ export class MentorHelpStrings {
   static getFAQAnswer(faqKey) {
     this._ensureLoaded();
     const faq = this._strings.faqs[faqKey];
-    return faq ? faq.answer : "";
+    return faq ? faq.answer : '';
   }
 
   /**
@@ -196,10 +196,10 @@ export class MentorHelpStrings {
   static _getDefaultStrings() {
     return {
       system: {
-        title: "Mentor System",
+        title: 'Mentor System',
         shortDescription: "Mentors don't give orders. They give perspective.",
         fullDescription: "Mentors exist to help you understand your character — not to control them. When you speak with a mentor, they reflect your choices back to you: how your abilities, talents, and actions are shaping who you are becoming. Different mentors value different things, so the same character may be seen very differently depending on who you ask. Talking to a mentor never costs anything and never forces a decision. You aren't being told what to do — you're being shown how your character currently appears, and what paths that suggest. What you do with that insight is always up to you.",
-        firstRunMessage: "Welcome to the Mentor System. Your mentors are here to help you understand your character through their own experience and values. Nothing is required, nothing is locked—only perspective. Click any mentor to begin.",
+        firstRunMessage: 'Welcome to the Mentor System. Your mentors are here to help you understand your character through their own experience and values. Nothing is required, nothing is locked—only perspective. Click any mentor to begin.',
         footerText: "Mentors are mirrors, not masters. You're always in control."
       },
       dialogueTopics: {},
@@ -213,6 +213,6 @@ export class MentorHelpStrings {
 /**
  * Hook to initialize strings when game is ready
  */
-Hooks.once("ready", () => {
+Hooks.once('ready', () => {
   MentorHelpStrings.init();
 });

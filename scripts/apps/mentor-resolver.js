@@ -19,10 +19,10 @@ import { SWSELogger } from '../utils/logger.js';
  * When a mentor can't be resolved, use the appropriate phase default
  */
 const PHASE_DEFAULTS = {
-  chargen: "Scoundrel",       // Ol' Salty - narrative guide for new characters
-  levelup: "Scoundrel",        // Class mentor preferred, Ol' Salty if no class yet
-  prestige: "Scoundrel",       // Prestige mentor preferred, Ol' Salty fallback
-  dialogue: "Scoundrel"        // Mentor chat, use last active mentor
+  chargen: 'Scoundrel',       // Ol' Salty - narrative guide for new characters
+  levelup: 'Scoundrel',        // Class mentor preferred, Ol' Salty if no class yet
+  prestige: 'Scoundrel',       // Prestige mentor preferred, Ol' Salty fallback
+  dialogue: 'Scoundrel'        // Mentor chat, use last active mentor
 };
 
 export const MentorResolver = {
@@ -52,7 +52,7 @@ export const MentorResolver = {
     SWSELogger.log(`[MENTOR-RESOLVER] resolveFor: Resolving mentor for "${actor.name}" (phase: ${phase})`);
 
     // Priority 1: Manual override (always respected)
-    const override = actor.getFlag("swse", "mentorOverride");
+    const override = actor.getFlag('swse', 'mentorOverride');
     if (override && MENTORS[override]) {
       SWSELogger.log(`[MENTOR-RESOLVER] resolveFor: Using mentor override: "${MENTORS[override].name}"`);
       return MENTORS[override];
@@ -156,7 +156,7 @@ export const MentorResolver = {
    * @returns {Object|null} The mentor object or null if not found
    */
   get(mentorKey) {
-    if (!mentorKey) return null;
+    if (!mentorKey) {return null;}
     return MENTORS[mentorKey] ?? null;
   },
 

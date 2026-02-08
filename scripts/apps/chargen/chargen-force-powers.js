@@ -14,15 +14,15 @@ export async function _onSelectForcePower(event) {
   const id = event.currentTarget.dataset.powerid;
 
   if (!this._packs.forcePowers || this._packs.forcePowers.length === 0) {
-    ui.notifications.error("Force Powers data not loaded!");
-    SWSELogger.error("CharGen | Force Powers pack is null or empty");
+    ui.notifications.error('Force Powers data not loaded!');
+    SWSELogger.error('CharGen | Force Powers pack is null or empty');
     return;
   }
 
   const power = this._packs.forcePowers.find(p => p._id === id || p.name === id);
 
   if (!power) {
-    ui.notifications.warn("Force Power not found!");
+    ui.notifications.warn('Force Power not found!');
     return;
   }
 
@@ -87,7 +87,7 @@ export async function _onSelectForcePower(event) {
     const canonical = PrerequisiteChecker.checkFeatPrerequisites(tempActor, power, pendingData);
     const legacy = PrerequisiteValidator.checkFeatPrerequisites(power, tempActor, pendingData);
     if (canonical.met !== legacy.valid) {
-      console.warn("Prereq mismatch (force power) detected", { power: power.name, canonical, legacy });
+      console.warn('Prereq mismatch (force power) detected', { power: power.name, canonical, legacy });
     }
     if (!canonical.met) {
       ui.notifications.warn(`Cannot select "${power.name}": ${canonical.missing.join(', ')}`);
@@ -111,7 +111,7 @@ export async function _onRemoveForcePower(event) {
   const id = event.currentTarget.dataset.powerid;
 
   this.characterData.powers = this.characterData.powers.filter(p => p._id !== id && p.name !== id);
-  ui.notifications.info("Force power removed");
+  ui.notifications.info('Force power removed');
   await this.render();
 }
 
@@ -194,14 +194,14 @@ export async function _getAvailableForcePowers() {
  */
 export function _bindForcePowerCardUI(root) {
   const step = root.querySelector('.step-force-powers');
-  if (!step) return;
+  if (!step) {return;}
 
   step.onclick = async (ev) => {
     const btn = ev.target.closest('button');
-    if (!btn) return;
+    if (!btn) {return;}
 
     const card = btn.closest('.power-card');
-    if (!card) return;
+    if (!card) {return;}
 
     if (btn.classList.contains('power-details-toggle')) {
       ev.preventDefault();
@@ -212,7 +212,7 @@ export function _bindForcePowerCardUI(root) {
     if (btn.classList.contains('power-read')) {
       ev.preventDefault();
       const uuid = card.dataset.uuid;
-      if (!uuid) return;
+      if (!uuid) {return;}
       const doc = await fromUuid(uuid);
       doc?.sheet?.render(true);
     }

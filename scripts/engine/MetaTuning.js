@@ -131,7 +131,7 @@ export class MetaTuning {
         const parts = path.split('.');
         let value = config;
         for (const part of parts) {
-            if (value === undefined) return undefined;
+            if (value === undefined) {return undefined;}
             value = value[part];
         }
         return value;
@@ -252,7 +252,6 @@ export class MetaTuningConfig extends SWSEFormApplication {
         }
     );
 
-    
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
@@ -282,7 +281,7 @@ async _prepareContext(options) {
 
     async _onRender(context, options) {
         const root = this.element;
-        if (!(root instanceof HTMLElement)) return;
+        if (!(root instanceof HTMLElement)) {return;}
 
         // Reset button
         const resetBtn = root.querySelector('.reset-defaults');
@@ -377,7 +376,7 @@ async _prepareContext(options) {
                         input.value = value;
                         if (input.type === 'range') {
                             const valueDisplay = input.parentElement.querySelector('.slider-value');
-                            if (valueDisplay) valueDisplay.textContent = value;
+                            if (valueDisplay) {valueDisplay.textContent = value;}
                         }
                     }
                 }

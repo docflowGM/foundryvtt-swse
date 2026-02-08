@@ -38,7 +38,7 @@ export class CacheManager {
   clear(name) {
     if (name) {
       const cache = this._caches.get(name);
-      if (cache) cache.clear();
+      if (cache) {cache.clear();}
     } else {
       for (const cache of this._caches.values()) {
         cache.clear();
@@ -210,7 +210,7 @@ class Cache {
    * @private
    */
   _evictLRU() {
-    if (this._lruTimestamps.size === 0) return;
+    if (this._lruTimestamps.size === 0) {return;}
 
     // Find the least recently used key (oldest timestamp)
     let oldestKey = null;

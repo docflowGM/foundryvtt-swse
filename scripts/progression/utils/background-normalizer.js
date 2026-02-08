@@ -4,7 +4,7 @@
  */
 
 export function normalizeBackgroundData(rawBackground) {
-    if (!rawBackground?.system) return rawBackground;
+    if (!rawBackground?.system) {return rawBackground;}
 
     const bg = foundry.utils.deepClone(rawBackground);
 

@@ -104,7 +104,7 @@ export async function _onResetSkills(event) {
   }
 
   SWSELogger.log(`[CHARGEN-SKILLS] _onResetSkills: Reset ${previousTrained} previously trained skills`);
-  ui.notifications.info("All skill selections have been reset.");
+  ui.notifications.info('All skill selections have been reset.');
   await this.render();
 }
 
@@ -114,7 +114,7 @@ export async function _onResetSkills(event) {
 export function _bindSkillsUI(root) {
   const doc = root || this.element;
   // Template uses class="skills-list-chargen", not id="skills-list"
-  const skillsContainer = root.querySelector(".skills-list-chargen");
+  const skillsContainer = root.querySelector('.skills-list-chargen');
   SWSELogger.log(`[CHARGEN-SKILLS] _bindSkillsUI: START - skillsContainer:`, skillsContainer ? 'FOUND' : 'NOT FOUND');
   if (!skillsContainer) {
     // This is expected on non-skills steps - only warn if we're on the skills step
@@ -144,24 +144,24 @@ export function _bindSkillsUI(root) {
 
   // Update counter display
   const updateCounter = () => {
-    const counter = root.querySelector("#trained-counter");
-    if (counter) counter.textContent = `${trainedCount} / ${maxTrained}`;
+    const counter = root.querySelector('#trained-counter');
+    if (counter) {counter.textContent = `${trainedCount} / ${maxTrained}`;}
   };
   updateCounter();
 
   // Render skills
-  skillsContainer.innerHTML = "";
+  skillsContainer.innerHTML = '';
   for (const skill of this._skillsJson) {
     const skillData = this.characterData.skills[skill.key] || { trained: false, focus: false, misc: 0 };
 
-    const row = document.createElement("div");
-    row.className = "skill-row";
+    const row = document.createElement('div');
+    row.className = 'skill-row';
 
-    const label = document.createElement("label");
+    const label = document.createElement('label');
     label.textContent = skill.name;
 
-    const trainedCheck = document.createElement("input");
-    trainedCheck.type = "checkbox";
+    const trainedCheck = document.createElement('input');
+    trainedCheck.type = 'checkbox';
     trainedCheck.checked = skillData.trained;
     trainedCheck.onchange = (ev) => {
       if (ev.target.checked && trainedCount >= maxTrained) {
@@ -170,8 +170,7 @@ export function _bindSkillsUI(root) {
         return;
       }
 
-      if (ev.target.checked) trainedCount++;
-      else trainedCount--;
+      if (ev.target.checked) {trainedCount++;} else {trainedCount--;}
 
       if (!this.characterData.skills[skill.key]) {
         this.characterData.skills[skill.key] = {};
@@ -180,8 +179,8 @@ export function _bindSkillsUI(root) {
       updateCounter();
     };
 
-    const focusCheck = document.createElement("input");
-    focusCheck.type = "checkbox";
+    const focusCheck = document.createElement('input');
+    focusCheck.type = 'checkbox';
     focusCheck.checked = skillData.focus;
     focusCheck.onchange = (ev) => {
       if (!this.characterData.skills[skill.key]) {
@@ -191,9 +190,9 @@ export function _bindSkillsUI(root) {
     };
 
     row.appendChild(label);
-    row.appendChild(document.createTextNode(" Trained: "));
+    row.appendChild(document.createTextNode(' Trained: '));
     row.appendChild(trainedCheck);
-    row.appendChild(document.createTextNode(" Focus: "));
+    row.appendChild(document.createTextNode(' Focus: '));
     row.appendChild(focusCheck);
 
     skillsContainer.appendChild(row);
@@ -206,13 +205,13 @@ export function _bindSkillsUI(root) {
  */
 export function _bindSkillCardUI(root) {
   const step = root.querySelector('.step-skills');
-  if (!step) return;
+  if (!step) {return;}
 
   step.onclick = (ev) => {
     const btn = ev.target.closest('button');
-    if (!btn) return;
+    if (!btn) {return;}
 
-    if (!btn.classList.contains('skill-details-toggle')) return;
+    if (!btn.classList.contains('skill-details-toggle')) {return;}
 
     ev.preventDefault();
     const card = btn.closest('.skill-card');

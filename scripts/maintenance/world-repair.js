@@ -9,7 +9,7 @@
  */
 
 export async function repairWorld() {
-  console.group("🔧 SWSE World Repair - Starting");
+  console.group('🔧 SWSE World Repair - Starting');
 
   const report = {
     deletedActors: [],
@@ -21,7 +21,7 @@ export async function repairWorld() {
   // ============================================
   // 1. PURGE NON-ACTOR DOCUMENTS FROM ACTORS
   // ============================================
-  console.log("Phase 1: Validating actor documents...");
+  console.log('Phase 1: Validating actor documents...');
   for (const actor of game.actors.contents) {
     try {
       if (!(actor instanceof Actor)) {
@@ -38,8 +38,8 @@ export async function repairWorld() {
   // ============================================
   // 2. ENFORCE VALID ACTOR TYPES & SCHEMAS
   // ============================================
-  console.log("Phase 2: Repairing actor schemas...");
-  const validTypes = ["character", "droid", "vehicle", "npc"];
+  console.log('Phase 2: Repairing actor schemas...');
+  const validTypes = ['character', 'droid', 'vehicle', 'npc'];
 
   for (const actor of game.actors.contents) {
     try {
@@ -60,14 +60,14 @@ export async function repairWorld() {
       }
 
       // Normalize size (to lowercase)
-      if (typeof actor.system.size === "string" && actor.system.size !== actor.system.size.toLowerCase()) {
-        fixes["system.size"] = actor.system.size.toLowerCase();
+      if (typeof actor.system.size === 'string' && actor.system.size !== actor.system.size.toLowerCase()) {
+        fixes['system.size'] = actor.system.size.toLowerCase();
         needsUpdate = true;
       }
 
       // Enforce numeric combat fields
-      for (const key of ["bab", "baseAttack", "initiative"]) {
-        if (typeof actor.system[key] !== "number") {
+      for (const key of ['bab', 'baseAttack', 'initiative']) {
+        if (typeof actor.system[key] !== 'number') {
           const val = Number(actor.system[key]);
           if (!isNaN(val)) {
             fixes[`system.${key}`] = val;
@@ -79,21 +79,21 @@ export async function repairWorld() {
       }
 
       // Ensure defenses structure
-      if (!actor.system.defenses || typeof actor.system.defenses !== "object") {
-        fixes["system.defenses"] = {
+      if (!actor.system.defenses || typeof actor.system.defenses !== 'object') {
+        fixes['system.defenses'] = {
           reflex: { ability: 0, misc: 0 },
           fort: { ability: 0, misc: 0 },
           will: { ability: 0, misc: 0 }
         };
         needsUpdate = true;
       } else {
-        for (const def of ["reflex", "fort", "will"]) {
+        for (const def of ['reflex', 'fort', 'will']) {
           if (!actor.system.defenses[def]) {
             fixes[`system.defenses.${def}`] = { ability: 0, misc: 0 };
             needsUpdate = true;
           } else if (
-            typeof actor.system.defenses[def].ability !== "number" ||
-            typeof actor.system.defenses[def].misc !== "number"
+            typeof actor.system.defenses[def].ability !== 'number' ||
+            typeof actor.system.defenses[def].misc !== 'number'
           ) {
             fixes[`system.defenses.${def}.ability`] = Number(actor.system.defenses[def].ability) || 0;
             fixes[`system.defenses.${def}.misc`] = Number(actor.system.defenses[def].misc) || 0;
@@ -116,7 +116,7 @@ export async function repairWorld() {
   // ============================================
   // 3. VALIDATE ITEM DOCUMENTS
   // ============================================
-  console.log("Phase 3: Validating items...");
+  console.log('Phase 3: Validating items...');
   let itemErrors = 0;
   for (const item of game.items.contents) {
     try {
@@ -132,32 +132,32 @@ export async function repairWorld() {
   // ============================================
   // REPORT
   // ============================================
-  console.log("\n📊 REPAIR SUMMARY:");
+  console.log('\n📊 REPAIR SUMMARY:');
   console.table({
-    "Deleted (non-Actors)": report.deletedActors.length,
-    "Repaired": report.repairedActors.length,
-    "Skipped": report.skippedActors.length,
-    "Errors": report.errors.length,
-    "Item validation issues": itemErrors
+    'Deleted (non-Actors)': report.deletedActors.length,
+    'Repaired': report.repairedActors.length,
+    'Skipped': report.skippedActors.length,
+    'Errors': report.errors.length,
+    'Item validation issues': itemErrors
   });
 
   if (report.deletedActors.length > 0) {
-    console.log("\n🗑️  Deleted:");
+    console.log('\n🗑️  Deleted:');
     report.deletedActors.forEach(name => console.log(`  - ${name}`));
   }
 
   if (report.repairedActors.length > 0) {
-    console.log("\n✅ Repaired:");
+    console.log('\n✅ Repaired:');
     report.repairedActors.forEach(name => console.log(`  - ${name}`));
   }
 
   if (report.skippedActors.length > 0) {
-    console.log("\n⏭️  Skipped:");
+    console.log('\n⏭️  Skipped:');
     report.skippedActors.forEach(name => console.log(`  - ${name}`));
   }
 
   if (report.errors.length > 0) {
-    console.log("\n❌ Errors:");
+    console.log('\n❌ Errors:');
     report.errors.forEach(err => console.log(`  - ${err}`));
   }
 

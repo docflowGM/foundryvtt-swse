@@ -12,14 +12,12 @@ async function _syncLanguageIds() {
 
   for (const name of names) {
     const rec = await LanguageRegistry.getByName(name);
-    if (rec?.internalId) ids.push(rec.internalId);
-    if (rec?.uuid) uuids.push(rec.uuid);
+    if (rec?.internalId) {ids.push(rec.internalId);}
+    if (rec?.uuid) {uuids.push(rec.uuid);}
   }
 
   this.characterData.languageIds = ids;
   this.characterData.languageUuids = uuids;
-}
-  this.characterData.languageIds = ids;
 }
 
 /**
@@ -32,17 +30,17 @@ async function _loadLanguagesData() {
   }
 
   try {
-    const resp = await fetch("systems/foundryvtt-swse/data/languages.json");
+    const resp = await fetch('systems/foundryvtt-swse/data/languages.json');
     if (resp.ok) {
       this._languagesJson = await resp.json();
-      SWSELogger.log("chargen: languages.json loaded successfully");
+      SWSELogger.log('chargen: languages.json loaded successfully');
       return this._languagesJson;
     } else {
-      SWSELogger.warn("chargen: failed to fetch languages.json");
+      SWSELogger.warn('chargen: failed to fetch languages.json');
       return null;
     }
   } catch (e) {
-    SWSELogger.error("chargen: error loading languages.json:", e);
+    SWSELogger.error('chargen: error loading languages.json:', e);
     return null;
   }
 }
@@ -57,17 +55,17 @@ async function _loadSpeciesLanguagesData() {
   }
 
   try {
-    const resp = await fetch("systems/foundryvtt-swse/data/species-languages.json");
+    const resp = await fetch('systems/foundryvtt-swse/data/species-languages.json');
     if (resp.ok) {
       this._speciesLanguagesJson = await resp.json();
-      SWSELogger.log("chargen: species-languages.json loaded successfully");
+      SWSELogger.log('chargen: species-languages.json loaded successfully');
       return this._speciesLanguagesJson;
     } else {
-      SWSELogger.warn("chargen: failed to fetch species-languages.json");
+      SWSELogger.warn('chargen: failed to fetch species-languages.json');
       return null;
     }
   } catch (e) {
-    SWSELogger.error("chargen: error loading species-languages.json:", e);
+    SWSELogger.error('chargen: error loading species-languages.json:', e);
     return null;
   }
 }
@@ -117,7 +115,7 @@ export async function _getStartingLanguages() {
   const speciesLanguagesData = await _loadSpeciesLanguagesData.call(this);
 
   // Get species name
-  let speciesName = this.characterData.species;
+  const speciesName = this.characterData.species;
 
   // Calculate language budget (includes INT + Linguist feat if applicable)
   const languageBudget = _calculateLanguageBudget.call(this);
@@ -125,7 +123,7 @@ export async function _getStartingLanguages() {
   // Handle droids specially
   if (this.characterData.isDroid) {
     return {
-      granted: ["Binary", "Basic"],
+      granted: ['Binary', 'Basic'],
       additional: languageBudget,
       canSpeakAll: true,
       understands: []
@@ -139,7 +137,7 @@ export async function _getStartingLanguages() {
     SWSELogger.warn(`No language data found for species: ${speciesName}`);
     // Default to Basic + calculated language budget
     return {
-      granted: ["Basic"],
+      granted: ['Basic'],
       additional: languageBudget,
       canSpeakAll: true,
       understands: []
@@ -147,7 +145,7 @@ export async function _getStartingLanguages() {
   }
 
   return {
-    granted: speciesInfo.languages || ["Basic"],
+    granted: speciesInfo.languages || ['Basic'],
     additional: languageBudget,
     canSpeakAll: speciesInfo.canSpeakAll !== false,
     understands: speciesInfo.understands || []
@@ -186,8 +184,7 @@ export async function _getAvailableLanguages() {
           category
         };
 
-        if (category === 'widely-used') widelyUsed.push(record);
-        else localTrade.push(record);
+        if (category === 'widely-used') {widelyUsed.push(record);} else {localTrade.push(record);}
       }
 
       widelyUsed.sort((a, b) => a.name.localeCompare(b.name));
@@ -373,13 +370,13 @@ export async function _onResetLanguages(event) {
 
   // Reset to granted languages + background bonus languages
   const languageData = this.characterData.languageData;
-  const granted = [...(languageData?.granted || ["Basic"])];
+  const granted = [...(languageData?.granted || ['Basic'])];
   const backgroundBonus = [...(languageData?.backgroundBonus || [])];
   this.characterData.languages = [...granted, ...backgroundBonus];
   await _syncLanguageIds.call(this);
 
-  SWSELogger.log("CharGen | Reset language selections");
-  ui.notifications.info("Language selections have been reset to granted languages and background bonuses.");
+  SWSELogger.log('CharGen | Reset language selections');
+  ui.notifications.info('Language selections have been reset to granted languages and background bonuses.');
   await this.render();
 }
 
@@ -405,7 +402,7 @@ export async function _onAddCustomLanguage(event) {
 
   // Show dialog to enter custom language name
   const customLanguage = await Dialog.prompt({
-    title: "Add Custom Language",
+    title: 'Add Custom Language',
     content: `
       <div style="margin-bottom: 1rem;">
         <p>Enter the name of your custom language:</p>
@@ -477,7 +474,7 @@ function _applyLanguageCardFilters(stepEl, query, category) {
  */
 export function _bindLanguageCardUI(root) {
   const step = root.querySelector('.step-languages');
-  if (!step) return;
+  if (!step) {return;}
 
   const search = step.querySelector('.language-search-input');
   const initialQuery = this.characterData.languageSearch || '';
@@ -493,22 +490,22 @@ export function _bindLanguageCardUI(root) {
 
   step.onclick = async (ev) => {
     const btn = ev.target.closest('button');
-    if (!btn) return;
+    if (!btn) {return;}
 
     const card = btn.closest('.language-card');
 
     if (btn.classList.contains('language-details-toggle')) {
       ev.preventDefault();
-      if (card) card.classList.toggle('is-flipped');
+      if (card) {card.classList.toggle('is-flipped');}
       return;
     }
 
     if (btn.classList.contains('language-read')) {
       ev.preventDefault();
       const uuid = card?.dataset?.uuid;
-      if (!uuid) return;
+      if (!uuid) {return;}
       const doc = await fromUuid(uuid);
-      if (doc?.sheet) doc.sheet.render(true);
+      if (doc?.sheet) {doc.sheet.render(true);}
       return;
     }
 

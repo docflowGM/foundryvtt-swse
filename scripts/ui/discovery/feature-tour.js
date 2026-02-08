@@ -23,7 +23,7 @@ function _getItems() {
     const key = `${prefix}.Item${i}`;
     const text = _loc(key);
     // If the key returns itself, the entry doesn't exist
-    if (text !== key) items.push(text);
+    if (text !== key) {items.push(text);}
   }
   return items;
 }
@@ -87,10 +87,10 @@ export const FeatureTour = {
   async show() {
     // Check disabled setting
     try {
-      if (game.settings.get(SYSTEM_ID, 'disableTour')) return;
+      if (game.settings.get(SYSTEM_ID, 'disableTour')) {return;}
     } catch { /* setting not registered yet, continue */ }
 
-    if (DiscoveryUserState.isTourCompleted()) return;
+    if (DiscoveryUserState.isTourCompleted()) {return;}
 
     const { overlay, skipBtn } = _createModal();
     document.body.appendChild(overlay);
@@ -117,7 +117,7 @@ export const FeatureTour = {
 
     // Click outside modal closes
     overlay.addEventListener('click', (ev) => {
-      if (ev.target === overlay) close();
+      if (ev.target === overlay) {close();}
     });
   }
 };

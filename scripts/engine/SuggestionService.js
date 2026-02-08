@@ -27,7 +27,7 @@ import { ForcePowerEngine } from '../progression/engine/force-power-engine.js';
 
 function _hashString(s) {
   let h = 0;
-  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  for (let i = 0; i < s.length; i++) {h = ((h << 5) - h + s.charCodeAt(i)) | 0;}
   return String(h);
 }
 
@@ -42,7 +42,7 @@ function _hashString(s) {
  * Kept for reference only. No longer called by SuggestionService.
  */
 function _pendingDataHash(pendingData) {
-  if (!pendingData || typeof pendingData !== 'object') return '';
+  if (!pendingData || typeof pendingData !== 'object') {return '';}
 
   // Extract selection arrays and normalize to names
   const parts = [];
@@ -52,19 +52,19 @@ function _pendingDataHash(pendingData) {
   }
   if (Array.isArray(pendingData.selectedFeats)) {
     const feats = pendingData.selectedFeats.map(f => f.name || f).sort().join(',');
-    if (feats) parts.push(`feats:${feats}`);
+    if (feats) {parts.push(`feats:${feats}`);}
   }
   if (Array.isArray(pendingData.selectedTalents)) {
     const talents = pendingData.selectedTalents.map(t => t.name || t).sort().join(',');
-    if (talents) parts.push(`talents:${talents}`);
+    if (talents) {parts.push(`talents:${talents}`);}
   }
   if (Array.isArray(pendingData.selectedSkills)) {
     const skills = pendingData.selectedSkills.map(s => s.key || s.name || s).sort().join(',');
-    if (skills) parts.push(`skills:${skills}`);
+    if (skills) {parts.push(`skills:${skills}`);}
   }
   if (Array.isArray(pendingData.selectedPowers)) {
     const powers = pendingData.selectedPowers.map(p => p.name || p).sort().join(',');
-    if (powers) parts.push(`powers:${powers}`);
+    if (powers) {parts.push(`powers:${powers}`);}
   }
 
   return parts.length > 0 ? _hashString(parts.join('|')) : '';
@@ -99,17 +99,17 @@ function _actorRevisionKey(actor, pendingData = null) {
 }
 
 function _domainToResolverDomain(domain) {
-  if (domain === 'feats') return 'feat';
-  if (domain === 'talents') return 'talent';
-  if (domain === 'forcepowers') return 'forcepowers';
-  if (domain === 'classes') return 'class';
+  if (domain === 'feats') {return 'feat';}
+  if (domain === 'talents') {return 'talent';}
+  if (domain === 'forcepowers') {return 'forcepowers';}
+  if (domain === 'classes') {return 'class';}
   return domain;
 }
 
 
 async function _ensureActorDoc(actorOrData) {
   // Foundry Actor document
-  if (actorOrData?.documentName === 'Actor' || actorOrData?.constructor?.name === 'Actor') return actorOrData;
+  if (actorOrData?.documentName === 'Actor' || actorOrData?.constructor?.name === 'Actor') {return actorOrData;}
 
   // Try to create a temporary actor from data (chargen often uses raw actor data)
   try {
@@ -127,7 +127,7 @@ export class SuggestionService {
   static _initialized = false;
 
   static initialize({ systemJSON }) {
-    if (this._initialized) return;
+    if (this._initialized) {return;}
     this._initialized = true;
     CompendiumResolver.initializeFromSystemJSON(systemJSON);
     SWSELogger.log('[SuggestionService] Initialized');
@@ -135,7 +135,7 @@ export class SuggestionService {
 
   static invalidate(actorId) {
     for (const key of this._cache.keys()) {
-      if (key.startsWith(`${actorId}::`)) this._cache.delete(key);
+      if (key.startsWith(`${actorId}::`)) {this._cache.delete(key);}
     }
   }
 
@@ -157,12 +157,12 @@ export class SuggestionService {
     const key = `${actor?.id ?? 'temp'}::${context}::${options.domain ?? 'all'}`;
 
     const cached = this._cache.get(key);
-    if (cached?.rev === revision) return cached.suggestions;
+    if (cached?.rev === revision) {return cached.suggestions;}
 
     const trace = game.settings.get('foundryvtt-swse', 'enableSuggestionTrace') ?? false;
 
     let suggestions = [];
-    let debug = null;
+    const debug = null;
 
     if (options.domain === 'feats') {
       const availableFeats = options.available ?? FeatEngine.getAvailableFeats(actor, options.className ?? null);
@@ -256,7 +256,7 @@ export class SuggestionService {
    * @param {string} inputsHash - Hash of inputs that produced this advice
    */
   static async storeMentorAdvice(actor, step, advice, inputsHash) {
-    if (!actor?.id) return;
+    if (!actor?.id) {return;}
 
     const state = (await actor.getFlag('foundryvtt-swse', 'suggestionState')) || {};
     state.lastMentorAdvice = state.lastMentorAdvice || {};
@@ -281,12 +281,12 @@ export class SuggestionService {
    * @returns {Object|null} Previous advice if still valid, null otherwise
    */
   static async getLastMentorAdvice(actor, step, currentInputsHash) {
-    if (!actor?.id) return null;
+    if (!actor?.id) {return null;}
 
     const state = await actor.getFlag('foundryvtt-swse', 'suggestionState');
     const lastAdvice = state?.lastMentorAdvice?.[step];
 
-    if (!lastAdvice) return null;
+    if (!lastAdvice) {return null;}
 
     // Only return if inputs haven't changed
     if (lastAdvice.inputsHash === currentInputsHash) {
@@ -302,7 +302,7 @@ export class SuggestionService {
    * @param {string} step - The decision step to clear, or null to clear all
    */
   static async clearMentorAdvice(actor, step = null) {
-    if (!actor?.id) return;
+    if (!actor?.id) {return;}
 
     const state = (await actor.getFlag('foundryvtt-swse', 'suggestionState')) || {};
 
@@ -319,7 +319,7 @@ export class SuggestionService {
 
 
   static sortBySuggestion(items) {
-    if (!Array.isArray(items)) return items;
+    if (!Array.isArray(items)) {return items;}
     // Sort by suggestion tier descending when available (compatible with legacy engine output)
     return items.slice().sort((a, b) => {
       const ta = a?.suggestion?.tier ?? a?.tier ?? 0;
@@ -362,13 +362,13 @@ export class SuggestionService {
       return {
         hasSuggestions: true,
         hasStrongSuggestions: true,
-        reasonCode: "STRONG_FIT",
+        reasonCode: 'STRONG_FIT',
         confidence,
         count: strongSuggestions.length,
         suggestions: strongSuggestions,
         mentorMessage: confidence >= 0.85
-          ? "I have a strong recommendation for you."
-          : "I have a suggestion that fits your path well."
+          ? 'I have a strong recommendation for you.'
+          : 'I have a suggestion that fits your path well.'
       };
     }
 
@@ -376,11 +376,11 @@ export class SuggestionService {
       return {
         hasSuggestions: true,
         hasStrongSuggestions: false,
-        reasonCode: "MODERATE_FIT",
+        reasonCode: 'MODERATE_FIT',
         confidence: 0.5,
         count: moderateSuggestions.length,
         suggestions: moderateSuggestions,
-        mentorMessage: "Several options could work for your build. Consider what feels right."
+        mentorMessage: 'Several options could work for your build. Consider what feels right.'
       };
     }
 
@@ -388,11 +388,11 @@ export class SuggestionService {
       return {
         hasSuggestions: true,
         hasStrongSuggestions: false,
-        reasonCode: "WEAK_FIT",
+        reasonCode: 'WEAK_FIT',
         confidence: 0.3,
         count: totalSuggestions.length,
         suggestions: totalSuggestions,
-        mentorMessage: "All options are viable at this stage. Choose what resonates with your vision."
+        mentorMessage: 'All options are viable at this stage. Choose what resonates with your vision.'
       };
     }
 
@@ -400,11 +400,11 @@ export class SuggestionService {
     return {
       hasSuggestions: false,
       hasStrongSuggestions: false,
-      reasonCode: "NO_STRONG_FIT",
+      reasonCode: 'NO_STRONG_FIT',
       confidence: 0,
       count: 0,
       suggestions: [],
-      mentorMessage: "At this point, any path is open to you. Trust your instincts and choose what feels right."
+      mentorMessage: 'At this point, any path is open to you. Trust your instincts and choose what feels right.'
     };
   }
 
@@ -419,7 +419,7 @@ export class SuggestionService {
 
   static validateSuggestionDTO(suggestions, { context = null, domain = null } = {}) {
     const trace = game.settings.get('foundryvtt-swse', 'enableSuggestionTrace') ?? false;
-    if (!trace) return;
+    if (!trace) {return;}
 
     const bad = [];
     for (const s of suggestions ?? []) {
@@ -447,7 +447,7 @@ export class SuggestionService {
   }
 
   static async _enrichSuggestions(actor, suggestions, { trace } = {}) {
-    if (!Array.isArray(suggestions)) return [];
+    if (!Array.isArray(suggestions)) {return [];}
 
     const out = [];
     for (const s of suggestions) {
@@ -463,7 +463,7 @@ export class SuggestionService {
         const resolverDomain = _domainToResolverDomain(domainKey);
         if (resolverDomain && name) {
           const ref = await CompendiumResolver.resolveByName({ domain: resolverDomain, name });
-          if (ref) suggestion.targetRef = ref;
+          if (ref) {suggestion.targetRef = ref;}
         }
       }
 
@@ -502,7 +502,7 @@ export class SuggestionService {
         suggestion.isSuggested = false;
         if (suggestion?.suggestion) {
           suggestion.suggestion.tier = 0;
-          suggestion.suggestion.reason = "Epic advisory mode (no ranking)";
+          suggestion.suggestion.reason = 'Epic advisory mode (no ranking)';
           suggestion.suggestion.confidence = 0.25;
         }
         suggestion.confidence = 0.25;
@@ -513,8 +513,8 @@ export class SuggestionService {
       if (!suggestion.explanation || !suggestion.explanation.short) {
         try {
           const explained = SuggestionExplainer.explain(suggestion, actor);
-          if (explained?.explanation) suggestion.explanation = explained.explanation;
-          if (explained?.tone) suggestion.tone = explained.tone;
+          if (explained?.explanation) {suggestion.explanation = explained.explanation;}
+          if (explained?.tone) {suggestion.tone = explained.tone;}
         } catch (err) {
           const tier = suggestion?.suggestion?.tier ?? suggestion?.tier ?? 0;
           suggestion.explanation = {

@@ -108,7 +108,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   _getNarratorComment() {
     const step = this.currentStep;
 
-    switch(step) {
+    switch (step) {
       case 'name':
         return this._getNameComment();
       case 'species':
@@ -132,9 +132,9 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     const comments = [
       "Arr, every great spacer needs a name that strikes fear in the hearts of Imperials! What'll it be?",
       "A name, ye say? Choose one that'll look good on a bounty poster, har har!",
-      "Pick a name that the cantina singers will remember when they sing yer shanties!",
+      'Pick a name that the cantina singers will remember when they sing yer shanties!',
       "What shall we call ye, me young buccaneer? Make it memorable like 'Ol' Salty himself!",
-      "Arr! First things first - what name will echo through the spaceways when ye plunder and pillage?"
+      'Arr! First things first - what name will echo through the spaceways when ye plunder and pillage?'
     ];
 
     return this._getUniqueComment('name', comments);
@@ -156,7 +156,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     const abilityComments = {
       str: "Arr! Strong as a Wookiee, ye are! Perfect for smashin' skulls and liftin' treasure chests!",
       dex: "Quick as a Mynock in a power coupling! Ye'll be dodgin' blaster bolts like a true spacer!",
-      con: "Tough as durasteel hull plating! Takes more than a few shots to sink this ship!",
+      con: 'Tough as durasteel hull plating! Takes more than a few shots to sink this ship!',
       int: "Smart as a protocol droid! Ye'll be hackin' security systems and outsmartin' Imps in no time!",
       wis: "Perceptive like a scanner! Ye won't fall for no Jedi mind tricks or smuggler's cons!",
       cha: "Charmin' as a Corellian con artist! Ye could talk a Hutt out of his credits, har har!"
@@ -171,7 +171,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
 
   _getClassComment() {
     const classes = this.characterData.classes;
-    if (classes.length === 0) return '';
+    if (classes.length === 0) {return '';}
 
     const narrator = this.narrator;
 
@@ -190,7 +190,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   _getTalentsComment() {
     const comments = [
       "Talents, ye say? Pick the ones that'll help ye plunder more loot and survive more battles!",
-      "Special abilities make the difference between a dead pirate and a RICH pirate, savvy?",
+      'Special abilities make the difference between a dead pirate and a RICH pirate, savvy?',
       "Choose yer talents wisely, matey! They're yer secret weapons in the battle for survival!",
       "Arr! These talents are like tools in a smuggler's kit - pick the best for the job!"
     ];
@@ -200,9 +200,9 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   _getSkillsComment() {
     const comments = [
       "Skills! Can't pilot a ship, slice a computer, or talk yer way past guards without 'em!",
-      "A good scoundrel needs to know how to do EVERYTHING! Pick yer skills carefully, matey!",
-      "Skills are what separate the professional pirates from the dead ones, har har!",
-      "Arr! Ye need skills to survive in the galaxy - piloting, shooting, sweet-talking, the works!"
+      'A good scoundrel needs to know how to do EVERYTHING! Pick yer skills carefully, matey!',
+      'Skills are what separate the professional pirates from the dead ones, har har!',
+      'Arr! Ye need skills to survive in the galaxy - piloting, shooting, sweet-talking, the works!'
     ];
     return this._getUniqueComment('skills', comments);
   }
@@ -250,7 +250,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
       "BLOW ME DOWN! Look at those stats! Ye're gonna be a LEGEND across the galaxy, ye magnificent scoundrel!",
       "Shiver me hyperdrives! That's one powerful character! The Empire itself should be shakin' in their boots!",
       "HAR HAR! With stats like those, ye'll be the most feared pirate from here to the Corporate Sector!",
-      "Arr! Ye rolled better than a Sabacc champion! This character is destined for GREATNESS!"
+      'Arr! Ye rolled better than a Sabacc champion! This character is destined for GREATNESS!'
     ];
     return comments[Math.floor(Math.random() * comments.length)];
   }
@@ -258,8 +258,8 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   _getTerribleSummaryComment() {
     const comments = [
       "Oof... those stats are rougher than a space slug's belly. But hey, underdogs make the best stories, savvy?",
-      "Arr... well... at least ye have HEART, right? Right? ...May the Force be with ye, ye poor soul.",
-      "Those numbers are lower than me expectations for Imperial intelligence! But a true pirate survives anyway!",
+      'Arr... well... at least ye have HEART, right? Right? ...May the Force be with ye, ye poor soul.',
+      'Those numbers are lower than me expectations for Imperial intelligence! But a true pirate survives anyway!',
       "Har... not the best rolls, but Ol' Salty's seen worse. Grab a blaster and hope for the best!"
     ];
     return comments[Math.floor(Math.random() * comments.length)];
@@ -438,20 +438,20 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
       buttons: {
         close: {
           icon: '<i class="fas fa-times"></i>',
-          label: "Close"
+          label: 'Close'
         }
       },
-      default: "close",
+      default: 'close',
       render: (html) => {
         // Add click handlers for talent selection
         root.querySelectorAll('.talent-node').forEach(el => el.addEventListener('click', (e) => {
           const talentName = e.currentTarget?.dataset?.talentName;
           this._selectTalent(talentName);
-        });
+        }));
 
         // Highlight prerequisites
-        root.querySelectorAll('.talent-node').forEach(el => { el.addEventListener('mouseenter',
-          (e) => {
+        root.querySelectorAll('.talent-node').forEach(el => {
+          el.addEventListener('mouseenter', (e) => {
             const talentName = e.currentTarget?.dataset?.talentName;
             const node = talentGraph[talentName];
             if (node) {
@@ -462,11 +462,11 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
                 root.querySelectorAll(`[data-talent-name=\"${dep}\"]`).forEach(el => el.classList.add('highlight-dependent'));
               });
             }
-          },
-          () => {
+          });
+          el.addEventListener('mouseleave', () => {
             root?.querySelectorAll?.('.talent-node')?.forEach(el => el.classList.remove('highlight-prereq', 'highlight-dependent'));
-          }
-        );
+          });
+        });
       }
     }, {
       width: 800,
@@ -479,7 +479,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     // Check if deflect/block should be grouped (houserule)
     let groupDeflectBlock = false;
     try {
-      groupDeflectBlock = game.settings.get('foundryvtt-swse', "groupDeflectBlock") || false;
+      groupDeflectBlock = game.settings.get('foundryvtt-swse', 'groupDeflectBlock') || false;
     } catch (err) {
       groupDeflectBlock = false;
     }
@@ -494,7 +494,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     // Draw connection lines
     let svgLines = '';
     let yPos = 50;
-    let talentPositions = {};
+    const talentPositions = {};
 
     // Organize talents into tiers (by prerequisite depth)
     const tiers = this._organizeTalentsIntoTiers(talentGraph);
@@ -512,11 +512,11 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     // Draw connection lines between prerequisites
     Object.entries(talentGraph).forEach(([talentName, node]) => {
       const talentPos = talentPositions[talentName];
-      if (!talentPos) return;
+      if (!talentPos) {return;}
 
       node.prereqs.forEach(prereqName => {
         const prereqPos = talentPositions[prereqName];
-        if (!prereqPos) return;
+        if (!prereqPos) {return;}
 
         svgLines += `
           <line
@@ -688,7 +688,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
 
   _selectTalent(talentName) {
     const talent = this.talentData.find(t => t.name === talentName);
-    if (!talent) return;
+    if (!talent) {return;}
 
     // Check if already selected
     if (this.characterData.talents.find(t => t.name === talentName)) {

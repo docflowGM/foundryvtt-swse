@@ -8,19 +8,19 @@ import {
     getMentorForClass,
     getMentorGuidance,
     getLevel1Class
-} from "./mentor-dialogues.js";
+} from './mentor-dialogues.js';
 
-import { swseLogger } from "../utils/logger.js";
-import { TypingAnimation } from "../utils/typing-animation.js";
+import { swseLogger } from '../utils/logger.js';
+import { TypingAnimation } from '../utils/typing-animation.js';
 
 export class MentorGuidanceUI {
 
     static initialize() {
-        Hooks.on("swse:mentor:guidance", (data) => {
+        Hooks.on('swse:mentor:guidance', (data) => {
             try {
                 MentorGuidanceUI._handleGuidance(data.actor, data.step);
             } catch (e) {
-                swseLogger.warn("MentorGuidanceUI step failed:", e);
+                swseLogger.warn('MentorGuidanceUI step failed:', e);
             }
         });
     }
@@ -31,13 +31,13 @@ export class MentorGuidanceUI {
         const mentor = getMentorForClass(startingClass);
 
         const choiceType = MentorGuidanceUI._mapStepToGuidance(stepId);
-        if (!choiceType) return; // No guidance for this step
+        if (!choiceType) {return;} // No guidance for this step
 
         const guidance = getMentorGuidance(mentor, choiceType);
-        if (!guidance) return;
+        if (!guidance) {return;}
 
         // Check if guidance popups are enabled
-        if (!game.settings.get("foundryvtt-swse", "mentorGuidanceEnabled")) {
+        if (!game.settings.get('foundryvtt-swse', 'mentorGuidanceEnabled')) {
             // Fallback: send to chat if popups disabled
             await ChatMessage.create({
                 speaker: ChatMessage.getSpeaker({ actor: actor }),
@@ -52,12 +52,12 @@ export class MentorGuidanceUI {
 
     static _mapStepToGuidance(stepId) {
         return {
-            "class": "classGuidance",
-            "skills": "skillGuidance",
-            "feats": "talentGuidance",
-            "talents": "talentGuidance",
-            "hp": "hpGuidance",
-            "abilities": "abilityGuidance",
+            'class': 'classGuidance',
+            'skills': 'skillGuidance',
+            'feats': 'talentGuidance',
+            'talents': 'talentGuidance',
+            'hp': 'hpGuidance',
+            'abilities': 'abilityGuidance'
         }[stepId] || null;
     }
 
@@ -81,11 +81,11 @@ export class MentorGuidanceUI {
             `,
             buttons: {
                 ok: {
-                    label: "Understood",
+                    label: 'Understood',
                     icon: '<i class="far fa-circle-check"></i>'
                 }
             },
-            default: "ok",
+            default: 'ok',
             render: (html) => {
                 // Add typing animation to guidance text
                 const root = this.element;
@@ -102,6 +102,6 @@ export class MentorGuidanceUI {
 }
 
 // Activate on init hook
-Hooks.once("init", () => {
+Hooks.once('init', () => {
     MentorGuidanceUI.initialize();
 });

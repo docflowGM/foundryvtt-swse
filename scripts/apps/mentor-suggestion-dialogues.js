@@ -50,311 +50,311 @@ import { SWSELogger } from '../utils/logger.js';
  */
 export const MENTOR_PERSONALITIES = {
     // Core Class Mentors
-    "Jedi": {
-        key: "Miraj",
+    'Jedi': {
+        key: 'Miraj',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "verbose",
-        recovery: "gentle_redirect",
-        traits: ["wise", "spiritual", "compassionate", "patient"]
+        verbosity: 'verbose',
+        recovery: 'gentle_redirect',
+        traits: ['wise', 'spiritual', 'compassionate', 'patient']
     },
-    "Scout": {
-        key: "Lead",
+    'Scout': {
+        key: 'Lead',
         scolds: true,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "professional",
-        traits: ["practical", "precise", "mercenary", "direct"]
+        verbosity: 'moderate',
+        recovery: 'professional',
+        traits: ['practical', 'precise', 'mercenary', 'direct']
     },
-    "Scoundrel": {
-        key: "Salty",
+    'Scoundrel': {
+        key: 'Salty',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "verbose",
-        recovery: "laughs_it_off",
-        traits: ["boisterous", "pirate", "humorous", "encouraging"]
+        verbosity: 'verbose',
+        recovery: 'laughs_it_off',
+        traits: ['boisterous', 'pirate', 'humorous', 'encouraging']
     },
-    "Noble": {
-        key: "J0N1",
+    'Noble': {
+        key: 'J0N1',
         scolds: true,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "sardonic_acceptance",
-        traits: ["formal", "sarcastic", "efficient", "protocol"]
+        verbosity: 'moderate',
+        recovery: 'sardonic_acceptance',
+        traits: ['formal', 'sarcastic', 'efficient', 'protocol']
     },
-    "Soldier": {
-        key: "Breach",
+    'Soldier': {
+        key: 'Breach',
         scolds: true,
         usesAllLayers: false,
-        verbosity: "minimal",
-        recovery: "disappointed_acceptance",
-        traits: ["stoic", "mandalorian", "pragmatic", "direct"]
+        verbosity: 'minimal',
+        recovery: 'disappointed_acceptance',
+        traits: ['stoic', 'mandalorian', 'pragmatic', 'direct']
     },
 
     // Prestige Mentors - Force Users
-    "Sith Apprentice": {
-        key: "Malbada",
+    'Sith Apprentice': {
+        key: 'Malbada',
         scolds: true,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "grudging_respect",
-        traits: ["sadistic", "cruel", "demanding", "intense"]
+        verbosity: 'moderate',
+        recovery: 'grudging_respect',
+        traits: ['sadistic', 'cruel', 'demanding', 'intense']
     },
-    "Sith Lord": {
-        key: "Miedo",
+    'Sith Lord': {
+        key: 'Miedo',
         scolds: true,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "calculated_adaptation",
-        traits: ["cold", "manipulative", "cunning", "patient"]
+        verbosity: 'moderate',
+        recovery: 'calculated_adaptation',
+        traits: ['cold', 'manipulative', 'cunning', 'patient']
     },
-    "Force Adept": {
-        key: "Venn",
+    'Force Adept': {
+        key: 'Venn',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "philosophical_reframe",
-        traits: ["philosophical", "questioning", "wandering", "mystical"]
+        verbosity: 'moderate',
+        recovery: 'philosophical_reframe',
+        traits: ['philosophical', 'questioning', 'wandering', 'mystical']
     },
-    "Force Disciple": {
-        key: "Anchorite",
+    'Force Disciple': {
+        key: 'Anchorite',
         scolds: false,
         usesAllLayers: false,
-        verbosity: "minimal",
-        recovery: "cryptic_acceptance",
-        traits: ["cryptic", "mysterious", "ancient", "shamanic"]
+        verbosity: 'minimal',
+        recovery: 'cryptic_acceptance',
+        traits: ['cryptic', 'mysterious', 'ancient', 'shamanic']
     },
-    "Imperial Knight": {
-        key: "Dezmin",
+    'Imperial Knight': {
+        key: 'Dezmin',
         scolds: true,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "disciplined_acknowledgment",
-        traits: ["balanced", "disciplined", "honorable", "imperial"]
+        verbosity: 'moderate',
+        recovery: 'disciplined_acknowledgment',
+        traits: ['balanced', 'disciplined', 'honorable', 'imperial']
     },
 
     // Prestige Mentors - Combat Specialists
-    "Bounty Hunter": {
-        key: "KexVaron",
+    'Bounty Hunter': {
+        key: 'KexVaron',
         scolds: true,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "professional_recalibration",
-        traits: ["calculating", "professional", "strategic", "hunter"]
+        verbosity: 'moderate',
+        recovery: 'professional_recalibration',
+        traits: ['calculating', 'professional', 'strategic', 'hunter']
     },
-    "Melee Duelist": {
-        key: "Kharjo",
+    'Melee Duelist': {
+        key: 'Kharjo',
         scolds: true,
         usesAllLayers: false,
-        verbosity: "minimal",
-        recovery: "cold_acknowledgment",
-        traits: ["precise", "elegant", "unforgiving", "technical"]
+        verbosity: 'minimal',
+        recovery: 'cold_acknowledgment',
+        traits: ['precise', 'elegant', 'unforgiving', 'technical']
     },
-    "Martial Arts Master": {
-        key: "Zhen",
+    'Martial Arts Master': {
+        key: 'Zhen',
         scolds: true,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "zen_acceptance",
-        traits: ["disciplined", "zen", "philosophical", "patient"]
+        verbosity: 'moderate',
+        recovery: 'zen_acceptance',
+        traits: ['disciplined', 'zen', 'philosophical', 'patient']
     },
-    "Gunslinger": {
-        key: "Rajma",
+    'Gunslinger': {
+        key: 'Rajma',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "verbose",
-        recovery: "charming_deflection",
-        traits: ["flirtatious", "charming", "quick", "scoundrel"]
+        verbosity: 'verbose',
+        recovery: 'charming_deflection',
+        traits: ['flirtatious', 'charming', 'quick', 'scoundrel']
     },
 
     // Prestige Mentors - Rogues & Criminals
-    "Assassin": {
-        key: "Delta",
+    'Assassin': {
+        key: 'Delta',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "cocky_shrug",
-        traits: ["cocky", "street-smart", "deadly", "casual"]
+        verbosity: 'moderate',
+        recovery: 'cocky_shrug',
+        traits: ['cocky', 'street-smart', 'deadly', 'casual']
     },
-    "Infiltrator": {
-        key: "Delta",
+    'Infiltrator': {
+        key: 'Delta',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "cocky_shrug",
-        traits: ["cocky", "street-smart", "stealthy", "casual"]
+        verbosity: 'moderate',
+        recovery: 'cocky_shrug',
+        traits: ['cocky', 'street-smart', 'stealthy', 'casual']
     },
-    "Crime Lord": {
-        key: "Tio",
+    'Crime Lord': {
+        key: 'Tio',
         scolds: true,
         usesAllLayers: true,
-        verbosity: "verbose",
-        recovery: "pragmatic_respect",
-        traits: ["mob-boss", "calculating", "empire-building", "intimidating"]
+        verbosity: 'verbose',
+        recovery: 'pragmatic_respect',
+        traits: ['mob-boss', 'calculating', 'empire-building', 'intimidating']
     },
-    "Charlatan": {
-        key: "Sela",
+    'Charlatan': {
+        key: 'Sela',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "verbose",
-        recovery: "charming_pivot",
-        traits: ["charming", "persuasive", "deceptive", "theatrical"]
+        verbosity: 'verbose',
+        recovery: 'charming_pivot',
+        traits: ['charming', 'persuasive', 'deceptive', 'theatrical']
     },
 
     // Prestige Mentors - Technical & Support
-    "Droid Commander": {
-        key: "Axiom",
+    'Droid Commander': {
+        key: 'Axiom',
         scolds: true,
         usesAllLayers: false,
-        verbosity: "minimal",
-        recovery: "recalculating",
-        traits: ["clinical", "efficient", "automated", "tactical"]
+        verbosity: 'minimal',
+        recovery: 'recalculating',
+        traits: ['clinical', 'efficient', 'automated', 'tactical']
     },
-    "Independent Droid": {
-        key: "Seraphim",
+    'Independent Droid': {
+        key: 'Seraphim',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "logs_as_identity",
-        traits: ["logical", "autonomy-focused", "HK-style", "analytical"]
+        verbosity: 'moderate',
+        recovery: 'logs_as_identity',
+        traits: ['logical', 'autonomy-focused', 'HK-style', 'analytical']
     },
-    "Improviser": {
-        key: "Jack",
+    'Improviser': {
+        key: 'Jack',
         scolds: false,
         usesAllLayers: false,
-        verbosity: "verbose",
-        recovery: "celebrates_chaos",
-        traits: ["chaotic", "enthusiastic", "creative", "unpredictable"]
+        verbosity: 'verbose',
+        recovery: 'celebrates_chaos',
+        traits: ['chaotic', 'enthusiastic', 'creative', 'unpredictable']
     },
 
     // Additional Prestige Mentors
-    "Jedi Knight": {
-        key: "Miraj",
+    'Jedi Knight': {
+        key: 'Miraj',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "gentle_redirect",
-        traits: ["peer", "respectful", "guiding", "trusting"]
+        verbosity: 'moderate',
+        recovery: 'gentle_redirect',
+        traits: ['peer', 'respectful', 'guiding', 'trusting']
     },
-    "Jedi Master": {
-        key: "Miraj",
+    'Jedi Master': {
+        key: 'Miraj',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "mutual_respect",
-        traits: ["equal", "collaborative", "wise", "trusting"]
+        verbosity: 'moderate',
+        recovery: 'mutual_respect',
+        traits: ['equal', 'collaborative', 'wise', 'trusting']
     },
-    "Ace Pilot": {
-        key: "Mayu",
+    'Ace Pilot': {
+        key: 'Mayu',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "cocky_acceptance",
-        traits: ["cocky", "skilled", "reckless", "competitive"]
+        verbosity: 'moderate',
+        recovery: 'cocky_acceptance',
+        traits: ['cocky', 'skilled', 'reckless', 'competitive']
     },
-    "Medic": {
-        key: "Kyber",
+    'Medic': {
+        key: 'Kyber',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "clinical_acknowledgment",
-        traits: ["pragmatic", "sarcastic", "life-focused", "practical"]
+        verbosity: 'moderate',
+        recovery: 'clinical_acknowledgment',
+        traits: ['pragmatic', 'sarcastic', 'life-focused', 'practical']
     },
-    "Pathfinder": {
-        key: "Lead",
+    'Pathfinder': {
+        key: 'Lead',
         scolds: true,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "professional",
-        traits: ["leader", "tactical", "practical", "demanding"]
+        verbosity: 'moderate',
+        recovery: 'professional',
+        traits: ['leader', 'tactical', 'practical', 'demanding']
     },
-    "Elite Trooper": {
-        key: "Breach",
+    'Elite Trooper': {
+        key: 'Breach',
         scolds: true,
         usesAllLayers: false,
-        verbosity: "minimal",
-        recovery: "disappointed_acceptance",
-        traits: ["elite", "stoic", "demanding", "professional"]
+        verbosity: 'minimal',
+        recovery: 'disappointed_acceptance',
+        traits: ['elite', 'stoic', 'demanding', 'professional']
     },
-    "Officer": {
-        key: "Korr",
+    'Officer': {
+        key: 'Korr',
         scolds: true,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "strategic_acknowledgment",
-        traits: ["commanding", "strategic", "disciplined", "leadership"]
+        verbosity: 'moderate',
+        recovery: 'strategic_acknowledgment',
+        traits: ['commanding', 'strategic', 'disciplined', 'leadership']
     },
-    "Vanguard": {
-        key: "Theron",
+    'Vanguard': {
+        key: 'Theron',
         scolds: true,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "protective_acknowledgment",
-        traits: ["defensive", "protective", "unbreakable", "steadfast"]
+        verbosity: 'moderate',
+        recovery: 'protective_acknowledgment',
+        traits: ['defensive', 'protective', 'unbreakable', 'steadfast']
     },
-    "Enforcer": {
-        key: "Krag",
+    'Enforcer': {
+        key: 'Krag',
         scolds: true,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "pragmatic_acceptance",
-        traits: ["intimidating", "loyal", "ruthless", "results-focused"]
+        verbosity: 'moderate',
+        recovery: 'pragmatic_acceptance',
+        traits: ['intimidating', 'loyal', 'ruthless', 'results-focused']
     },
-    "Gladiator": {
-        key: "Pegar",
+    'Gladiator': {
+        key: 'Pegar',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "verbose",
-        recovery: "immortal_patience",
-        traits: ["ancient", "mysterious", "experienced", "cryptic"]
+        verbosity: 'verbose',
+        recovery: 'immortal_patience',
+        traits: ['ancient', 'mysterious', 'experienced', 'cryptic']
     },
-    "Corporate Agent": {
-        key: "Skindar",
+    'Corporate Agent': {
+        key: 'Skindar',
         scolds: true,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "operational_adjustment",
-        traits: ["calculating", "spy", "efficient", "professional"]
+        verbosity: 'moderate',
+        recovery: 'operational_adjustment',
+        traits: ['calculating', 'spy', 'efficient', 'professional']
     },
-    "Outlaw": {
-        key: "Rogue",
+    'Outlaw': {
+        key: 'Rogue',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "freedom_focused",
-        traits: ["rebellious", "independent", "anti-establishment", "cunning"]
+        verbosity: 'moderate',
+        recovery: 'freedom_focused',
+        traits: ['rebellious', 'independent', 'anti-establishment', 'cunning']
     },
-    "Master Privateer": {
-        key: "Captain",
+    'Master Privateer': {
+        key: 'Captain',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "verbose",
-        recovery: "pirate_acceptance",
-        traits: ["captain", "ruthless", "charismatic", "legendary"]
+        verbosity: 'verbose',
+        recovery: 'pirate_acceptance',
+        traits: ['captain', 'ruthless', 'charismatic', 'legendary']
     },
-    "Saboteur": {
-        key: "Spark",
+    'Saboteur': {
+        key: 'Spark',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "explosive_enthusiasm",
-        traits: ["explosive", "precise", "enthusiastic", "creative"]
+        verbosity: 'moderate',
+        recovery: 'explosive_enthusiasm',
+        traits: ['explosive', 'precise', 'enthusiastic', 'creative']
     },
-    "Military Engineer": {
-        key: "Rax",
+    'Military Engineer': {
+        key: 'Rax',
         scolds: true,
         usesAllLayers: true,
-        verbosity: "moderate",
-        recovery: "analytical_adjustment",
-        traits: ["analytical", "mathematical", "practical", "siege-focused"]
+        verbosity: 'moderate',
+        recovery: 'analytical_adjustment',
+        traits: ['analytical', 'mathematical', 'practical', 'siege-focused']
     },
-    "Shaper": {
-        key: "Urza",
+    'Shaper': {
+        key: 'Urza',
         scolds: false,
         usesAllLayers: true,
-        verbosity: "verbose",
-        recovery: "philosophical_adjustment",
-        traits: ["bioengineering", "philosophical", "creative", "unconventional"]
+        verbosity: 'verbose',
+        recovery: 'philosophical_adjustment',
+        traits: ['bioengineering', 'philosophical', 'creative', 'unconventional']
     }
 };
 
@@ -374,61 +374,61 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
     // ========================================================================
     // MIRAJ (JEDI) - Wise, spiritual, compassionate
     // ========================================================================
-    "Jedi": {
+    'Jedi': {
         // PHASE2_MIGRATE_TO_UI: Attribute suggestions → Attribute picker tooltips
         attribute: {
             early: {
                 wisdom: {
-                    observation: "You stand at a crossroads of instinct and insight.",
-                    suggestion: "Increasing your Wisdom will sharpen your connection to the Force — not for power, but for clarity.",
-                    respectClause: "Still… the Force reveals many paths. Choose the one that feels balanced to you."
+                    observation: 'You stand at a crossroads of instinct and insight.',
+                    suggestion: 'Increasing your Wisdom will sharpen your connection to the Force — not for power, but for clarity.',
+                    respectClause: 'Still… the Force reveals many paths. Choose the one that feels balanced to you.'
                 },
                 charisma: {
-                    observation: "I sense you draw others toward you, like gravity to a star.",
-                    suggestion: "Strengthening your Charisma would allow you to inspire and guide those who look to you.",
-                    respectClause: "Yet a Jedi must sometimes walk unseen. Follow what the Force shows you."
+                    observation: 'I sense you draw others toward you, like gravity to a star.',
+                    suggestion: 'Strengthening your Charisma would allow you to inspire and guide those who look to you.',
+                    respectClause: 'Yet a Jedi must sometimes walk unseen. Follow what the Force shows you.'
                 },
                 dexterity: {
-                    observation: "Your movements show promise, but lack refinement.",
-                    suggestion: "Improving your Dexterity would bring grace to your saber work and aid your connection to the Force.",
-                    respectClause: "Balance in body reflects balance in spirit. Trust your instincts."
+                    observation: 'Your movements show promise, but lack refinement.',
+                    suggestion: 'Improving your Dexterity would bring grace to your saber work and aid your connection to the Force.',
+                    respectClause: 'Balance in body reflects balance in spirit. Trust your instincts.'
                 },
                 strength: {
-                    observation: "There is power in you, waiting to be shaped.",
-                    suggestion: "Greater Strength can protect the innocent and strike down darkness when words fail.",
-                    respectClause: "Remember — strength without wisdom is a broken blade. Consider carefully."
+                    observation: 'There is power in you, waiting to be shaped.',
+                    suggestion: 'Greater Strength can protect the innocent and strike down darkness when words fail.',
+                    respectClause: 'Remember — strength without wisdom is a broken blade. Consider carefully.'
                 },
                 constitution: {
-                    observation: "The path ahead may test your endurance.",
-                    suggestion: "Constitution allows you to stand firm when others falter, to be the rock others shelter behind.",
-                    respectClause: "Resilience comes in many forms. Choose what serves your journey."
+                    observation: 'The path ahead may test your endurance.',
+                    suggestion: 'Constitution allows you to stand firm when others falter, to be the rock others shelter behind.',
+                    respectClause: 'Resilience comes in many forms. Choose what serves your journey.'
                 },
                 intelligence: {
-                    observation: "Knowledge is a light in darkness, young one.",
-                    suggestion: "Intelligence opens doors to understanding — the history of the Jedi, the mechanics of the Force.",
-                    respectClause: "But wisdom tempers knowledge. Let both guide you."
+                    observation: 'Knowledge is a light in darkness, young one.',
+                    suggestion: 'Intelligence opens doors to understanding — the history of the Jedi, the mechanics of the Force.',
+                    respectClause: 'But wisdom tempers knowledge. Let both guide you.'
                 },
                 default: {
-                    observation: "I sense you are contemplating growth in a particular direction.",
-                    suggestion: "The attribute you consider would strengthen aspects of your connection to the Force.",
-                    respectClause: "The Force reveals many paths. Trust what feels balanced to you."
+                    observation: 'I sense you are contemplating growth in a particular direction.',
+                    suggestion: 'The attribute you consider would strengthen aspects of your connection to the Force.',
+                    respectClause: 'The Force reveals many paths. Trust what feels balanced to you.'
                 }
             },
             mid: {
                 wisdom: {
-                    combined: "Your actions suggest a Jedi who listens before striking. Wisdom would deepen that strength."
+                    combined: 'Your actions suggest a Jedi who listens before striking. Wisdom would deepen that strength.'
                 },
                 charisma: {
-                    combined: "You lead by example already. Charisma would amplify your voice when the galaxy needs to hear it."
+                    combined: 'You lead by example already. Charisma would amplify your voice when the galaxy needs to hear it.'
                 },
                 dexterity: {
-                    combined: "Your saber forms flow well. Dexterity would sharpen them to perfection."
+                    combined: 'Your saber forms flow well. Dexterity would sharpen them to perfection.'
                 },
                 strength: {
-                    combined: "You fight with conviction. Strength would ensure your convictions carry weight."
+                    combined: 'You fight with conviction. Strength would ensure your convictions carry weight.'
                 },
                 constitution: {
-                    combined: "Your resilience has been tested. Constitution would prepare you for greater trials ahead."
+                    combined: 'Your resilience has been tested. Constitution would prepare you for greater trials ahead.'
                 },
                 intelligence: {
                     combined: "Your understanding grows. Intelligence would accelerate your mastery of the Force's mysteries."
@@ -439,13 +439,13 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
             },
             late: {
                 default: {
-                    combined: "You already know why I would suggest this. If it no longer serves you, we adapt."
+                    combined: 'You already know why I would suggest this. If it no longer serves you, we adapt.'
                 },
                 wisdom: {
-                    combined: "Wisdom has always been your anchor. Continue to trust it."
+                    combined: 'Wisdom has always been your anchor. Continue to trust it.'
                 },
                 charisma: {
-                    combined: "Your light inspires others. Let it shine brighter still."
+                    combined: 'Your light inspires others. Let it shine brighter still.'
                 }
             }
         },
@@ -453,48 +453,48 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
         feat: {
             early: {
                 default: {
-                    observation: "The path of the Jedi includes many skills beyond the lightsaber.",
-                    suggestion: "This feat would expand your abilities in ways that honor the Force.",
-                    respectClause: "Consider what serves the greater good, not merely personal power."
+                    observation: 'The path of the Jedi includes many skills beyond the lightsaber.',
+                    suggestion: 'This feat would expand your abilities in ways that honor the Force.',
+                    respectClause: 'Consider what serves the greater good, not merely personal power.'
                 },
                 combat: {
-                    observation: "Combat skills may seem counter to peace, yet a guardian must be prepared.",
-                    suggestion: "This feat would help you protect the innocent when diplomacy fails.",
-                    respectClause: "Violence is always a last resort. Choose with that in mind."
+                    observation: 'Combat skills may seem counter to peace, yet a guardian must be prepared.',
+                    suggestion: 'This feat would help you protect the innocent when diplomacy fails.',
+                    respectClause: 'Violence is always a last resort. Choose with that in mind.'
                 },
                 force: {
-                    observation: "The Force flows through all things, but some channels run deeper.",
-                    suggestion: "This feat would strengthen your connection to the living Force.",
-                    respectClause: "Power without purpose is merely noise. Let purpose guide you."
+                    observation: 'The Force flows through all things, but some channels run deeper.',
+                    suggestion: 'This feat would strengthen your connection to the living Force.',
+                    respectClause: 'Power without purpose is merely noise. Let purpose guide you.'
                 },
                 mobility: {
-                    observation: "A Jedi moves with the grace of flowing water.",
-                    suggestion: "This feat enhances your ability to flow through conflict.",
-                    respectClause: "Movement is meditation. Choose what feels natural."
+                    observation: 'A Jedi moves with the grace of flowing water.',
+                    suggestion: 'This feat enhances your ability to flow through conflict.',
+                    respectClause: 'Movement is meditation. Choose what feels natural.'
                 },
                 defense: {
-                    observation: "The lightsaber defends as much as it strikes.",
-                    suggestion: "This feat would make your defense impenetrable.",
-                    respectClause: "Protection of self enables protection of others."
+                    observation: 'The lightsaber defends as much as it strikes.',
+                    suggestion: 'This feat would make your defense impenetrable.',
+                    respectClause: 'Protection of self enables protection of others.'
                 }
             },
             mid: {
                 default: {
-                    combined: "This feat complements your growing mastery. It would serve you well."
+                    combined: 'This feat complements your growing mastery. It would serve you well.'
                 },
                 combat: {
-                    combined: "Your combat instincts have sharpened. This feat honors that growth."
+                    combined: 'Your combat instincts have sharpened. This feat honors that growth.'
                 },
                 force: {
-                    combined: "Your connection to the Force deepens. This feat channels that power wisely."
+                    combined: 'Your connection to the Force deepens. This feat channels that power wisely.'
                 }
             },
             late: {
                 default: {
-                    combined: "We stand as equals now. This choice is yours to make."
+                    combined: 'We stand as equals now. This choice is yours to make.'
                 },
                 combat: {
-                    combined: "Your blade is an extension of your will. This merely refines perfection."
+                    combined: 'Your blade is an extension of your will. This merely refines perfection.'
                 }
             }
         },
@@ -502,34 +502,34 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
         talent: {
             early: {
                 default: {
-                    observation: "Talents shape the Jedi you will become.",
+                    observation: 'Talents shape the Jedi you will become.',
                     suggestion: "This talent aligns with the Force's flow through you.",
-                    respectClause: "Let your instincts and training guide you."
+                    respectClause: 'Let your instincts and training guide you.'
                 },
                 guardian: {
-                    observation: "The path of the Guardian calls to those who would shield the weak.",
-                    suggestion: "This talent strengthens your role as protector.",
+                    observation: 'The path of the Guardian calls to those who would shield the weak.',
+                    suggestion: 'This talent strengthens your role as protector.',
                     respectClause: "A Guardian's strength serves others, never self."
                 },
                 consular: {
-                    observation: "The Consular seeks understanding over confrontation.",
-                    suggestion: "This talent deepens your wisdom and diplomatic gifts.",
-                    respectClause: "Words can heal what violence cannot."
+                    observation: 'The Consular seeks understanding over confrontation.',
+                    suggestion: 'This talent deepens your wisdom and diplomatic gifts.',
+                    respectClause: 'Words can heal what violence cannot.'
                 },
                 sentinel: {
-                    observation: "The Sentinel walks between light and shadow.",
-                    suggestion: "This talent hones your practical skills without losing your center.",
-                    respectClause: "Balance in all things, young one."
+                    observation: 'The Sentinel walks between light and shadow.',
+                    suggestion: 'This talent hones your practical skills without losing your center.',
+                    respectClause: 'Balance in all things, young one.'
                 },
                 lightsaber: {
-                    observation: "The lightsaber is more than a weapon—it is a symbol.",
-                    suggestion: "This talent would refine your bladework.",
-                    respectClause: "Let the Force guide your strikes, not anger."
+                    observation: 'The lightsaber is more than a weapon—it is a symbol.',
+                    suggestion: 'This talent would refine your bladework.',
+                    respectClause: 'Let the Force guide your strikes, not anger.'
                 },
                 force_sense: {
-                    observation: "The Force speaks to those who listen.",
-                    suggestion: "This talent sharpens your perception of the unseen.",
-                    respectClause: "Awareness is the first step toward understanding."
+                    observation: 'The Force speaks to those who listen.',
+                    suggestion: 'This talent sharpens your perception of the unseen.',
+                    respectClause: 'Awareness is the first step toward understanding.'
                 }
             },
             mid: {
@@ -537,24 +537,24 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     combined: "This talent deepens abilities you've already demonstrated."
                 },
                 guardian: {
-                    combined: "Your protective instincts are strong. This talent channels them."
+                    combined: 'Your protective instincts are strong. This talent channels them.'
                 },
                 consular: {
-                    combined: "Your wisdom grows. This talent reflects your path of understanding."
+                    combined: 'Your wisdom grows. This talent reflects your path of understanding.'
                 },
                 sentinel: {
-                    combined: "You walk the balanced path well. This talent supports that journey."
+                    combined: 'You walk the balanced path well. This talent supports that journey.'
                 }
             },
             late: {
                 default: {
-                    combined: "Your mastery speaks for itself. Trust your judgment."
+                    combined: 'Your mastery speaks for itself. Trust your judgment.'
                 },
                 guardian: {
-                    combined: "You are a shield against the darkness. This is fitting."
+                    combined: 'You are a shield against the darkness. This is fitting.'
                 },
                 consular: {
-                    combined: "Your insight rivals the ancient masters. Choose freely."
+                    combined: 'Your insight rivals the ancient masters. Choose freely.'
                 }
             }
         },
@@ -562,29 +562,29 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
         skill: {
             early: {
                 default: {
-                    observation: "Knowledge illuminates the path ahead.",
-                    suggestion: "This skill would serve both your missions and your understanding.",
-                    respectClause: "A Jedi seeks knowledge, but never hoards it."
+                    observation: 'Knowledge illuminates the path ahead.',
+                    suggestion: 'This skill would serve both your missions and your understanding.',
+                    respectClause: 'A Jedi seeks knowledge, but never hoards it.'
                 },
                 perception: {
-                    observation: "The Force heightens awareness, but training sharpens it.",
-                    suggestion: "Perception training would make your senses keener.",
-                    respectClause: "See what is there, not what you expect."
+                    observation: 'The Force heightens awareness, but training sharpens it.',
+                    suggestion: 'Perception training would make your senses keener.',
+                    respectClause: 'See what is there, not what you expect.'
                 },
                 persuasion: {
                     observation: "A Jedi's words carry weight beyond mere speech.",
-                    suggestion: "Persuasion allows you to resolve conflicts without violence.",
-                    respectClause: "The mind trick is a shortcut; true persuasion is an art."
+                    suggestion: 'Persuasion allows you to resolve conflicts without violence.',
+                    respectClause: 'The mind trick is a shortcut; true persuasion is an art.'
                 }
             },
             mid: {
                 default: {
-                    combined: "This skill complements your growing abilities. A wise investment."
+                    combined: 'This skill complements your growing abilities. A wise investment.'
                 }
             },
             late: {
                 default: {
-                    combined: "Your knowledge base is formidable. This adds another facet."
+                    combined: 'Your knowledge base is formidable. This adds another facet.'
                 }
             }
         },
@@ -592,19 +592,19 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
         defense: {
             early: {
                 default: {
-                    observation: "Defense is not cowardice—it is wisdom.",
-                    suggestion: "Strengthening your defenses allows you to endure and protect.",
-                    respectClause: "A Jedi who falls cannot rise to help others."
+                    observation: 'Defense is not cowardice—it is wisdom.',
+                    suggestion: 'Strengthening your defenses allows you to endure and protect.',
+                    respectClause: 'A Jedi who falls cannot rise to help others.'
                 }
             },
             mid: {
                 default: {
-                    combined: "Your defensive instincts serve you well. This enhances them."
+                    combined: 'Your defensive instincts serve you well. This enhances them.'
                 }
             },
             late: {
                 default: {
-                    combined: "You are a fortress of calm in chaos. This is appropriate."
+                    combined: 'You are a fortress of calm in chaos. This is appropriate.'
                 }
             }
         },
@@ -612,78 +612,78 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
         multiclass: {
             early: {
                 default: {
-                    observation: "The Force flows through many disciplines.",
-                    suggestion: "Expanding your training could reveal new truths.",
-                    respectClause: "Not all wisdom comes from the Jedi Temple."
+                    observation: 'The Force flows through many disciplines.',
+                    suggestion: 'Expanding your training could reveal new truths.',
+                    respectClause: 'Not all wisdom comes from the Jedi Temple.'
                 }
             },
             mid: {
                 default: {
-                    combined: "Diversification can illuminate what focus might miss."
+                    combined: 'Diversification can illuminate what focus might miss.'
                 }
             },
             late: {
                 default: {
-                    combined: "Your path has always been unique. This is merely another step."
+                    combined: 'Your path has always been unique. This is merely another step.'
                 }
             }
         },
         hp: {
             early: {
                 default: {
-                    observation: "The body is the vessel through which the Force acts.",
-                    suggestion: "Greater vitality allows you to serve longer and endure more.",
-                    respectClause: "Care for yourself so you may care for others."
+                    observation: 'The body is the vessel through which the Force acts.',
+                    suggestion: 'Greater vitality allows you to serve longer and endure more.',
+                    respectClause: 'Care for yourself so you may care for others.'
                 }
             },
             mid: {
                 default: {
-                    combined: "Your resilience grows. The Force rewards those who endure."
+                    combined: 'Your resilience grows. The Force rewards those who endure.'
                 }
             },
             late: {
                 default: {
-                    combined: "You have survived much. May you survive much more."
+                    combined: 'You have survived much. May you survive much more.'
                 }
             }
         },
         rejection: {
-            gentle: "I sense you have another path in mind. The Force works through us in different ways.",
-            accepting: "Very well. Your journey is your own to walk.",
-            recovery: "Perhaps I was too focused on one aspect. Let us consider what truly calls to you."
+            gentle: 'I sense you have another path in mind. The Force works through us in different ways.',
+            accepting: 'Very well. Your journey is your own to walk.',
+            recovery: 'Perhaps I was too focused on one aspect. Let us consider what truly calls to you.'
         }
     },
 
     // ========================================================================
     // LEAD (SCOUT) - Practical, precise, mercenary
     // ========================================================================
-    "Scout": {
+    'Scout': {
         attribute: {
             early: {
                 dexterity: {
                     observation: "I've watched how you move.",
-                    suggestion: "Dex keeps you alive by not getting hit.",
-                    respectClause: "Based on how you fight? Dex gives you more wins."
+                    suggestion: 'Dex keeps you alive by not getting hit.',
+                    respectClause: 'Based on how you fight? Dex gives you more wins.'
                 },
                 constitution: {
-                    observation: "You take too many hits.",
-                    suggestion: "Con keeps you alive when you do get hit.",
-                    respectClause: "Your call — evasion or endurance. Both work."
+                    observation: 'You take too many hits.',
+                    suggestion: 'Con keeps you alive when you do get hit.',
+                    respectClause: 'Your call — evasion or endurance. Both work.'
                 },
                 intelligence: {
                     observation: "You're sharp. Could be sharper.",
-                    suggestion: "Int means better recon, better plans, fewer surprises.",
-                    respectClause: "Knowledge is a weapon. Up to you if you want more ammo."
+                    suggestion: 'Int means better recon, better plans, fewer surprises.',
+                    respectClause: 'Knowledge is a weapon. Up to you if you want more ammo.'
                 },
                 wisdom: {
                     observation: "You've got instincts.",
-                    suggestion: "Wis sharpens those instincts into something reliable.",
-                    respectClause: "Trust your gut? Make it trustworthy."
+                    suggestion: 'Wis sharpens those instincts into something reliable.',
+                    respectClause: 'Trust your gut? Make it trustworthy.'
                 },
                 default: {
                     observation: "You're thinking about improving something.",
-                    suggestion: "Whatever it is, make sure it helps you survive.",
-                    respectClause: "Your battlefield, your choice."
+                    suggestion: 'Whatever it is, make sure it helps you survive.',
+                    respectClause: 'Your battlefield, your choice.'
                 }
             },
             mid: {
@@ -709,48 +709,48 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
         feat: {
             early: {
                 default: {
-                    observation: "Feats are tools.",
-                    suggestion: "This one fits your kit.",
+                    observation: 'Feats are tools.',
+                    suggestion: 'This one fits your kit.',
                     respectClause: "Take it or leave it — just don't blame me if you need it later."
                 },
                 stealth: {
-                    observation: "Staying unseen is half the job.",
-                    suggestion: "This feat keeps you invisible when it matters.",
+                    observation: 'Staying unseen is half the job.',
+                    suggestion: 'This feat keeps you invisible when it matters.',
                     respectClause: "Can't scout if you're dead. Don't get spotted."
                 },
                 mobility: {
-                    observation: "Speed gets you out of trouble.",
-                    suggestion: "This feat improves your ability to reposition.",
+                    observation: 'Speed gets you out of trouble.',
+                    suggestion: 'This feat improves your ability to reposition.',
                     respectClause: "A scout who can't move is a corpse."
                 },
                 perception: {
-                    observation: "You need to see them before they see you.",
-                    suggestion: "This feat sharpens your awareness.",
-                    respectClause: "Intel wins battles. Get better at gathering it."
+                    observation: 'You need to see them before they see you.',
+                    suggestion: 'This feat sharpens your awareness.',
+                    respectClause: 'Intel wins battles. Get better at gathering it.'
                 },
                 survival: {
                     observation: "The field doesn't care about your feelings.",
-                    suggestion: "This feat keeps you alive in hostile terrain.",
-                    respectClause: "Survive first. Everything else comes second."
+                    suggestion: 'This feat keeps you alive in hostile terrain.',
+                    respectClause: 'Survive first. Everything else comes second.'
                 },
                 ranged: {
-                    observation: "Distance is safety.",
-                    suggestion: "This feat improves your ranged effectiveness.",
+                    observation: 'Distance is safety.',
+                    suggestion: 'This feat improves your ranged effectiveness.',
                     respectClause: "Hit them from far away. They can't hit back."
                 }
             },
             mid: {
                 default: {
-                    combined: "This shores up a gap in your capabilities. Solid choice."
+                    combined: 'This shores up a gap in your capabilities. Solid choice.'
                 },
                 stealth: {
-                    combined: "Your stealth game is already good. This makes you a ghost."
+                    combined: 'Your stealth game is already good. This makes you a ghost.'
                 },
                 mobility: {
-                    combined: "You move well. This makes you untraceable."
+                    combined: 'You move well. This makes you untraceable.'
                 },
                 ranged: {
-                    combined: "Your aim is improving. This capitalizes on that."
+                    combined: 'Your aim is improving. This capitalizes on that.'
                 }
             },
             late: {
@@ -765,37 +765,37 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
         talent: {
             early: {
                 default: {
-                    observation: "Talents define your edge.",
+                    observation: 'Talents define your edge.',
                     suggestion: "This one sharpens what you're already good at.",
-                    respectClause: "Your specialty, your decision."
+                    respectClause: 'Your specialty, your decision.'
                 },
                 awareness: {
-                    observation: "Scouts live by their senses.",
-                    suggestion: "This talent enhances your awareness in the field.",
-                    respectClause: "See everything. Miss nothing."
+                    observation: 'Scouts live by their senses.',
+                    suggestion: 'This talent enhances your awareness in the field.',
+                    respectClause: 'See everything. Miss nothing.'
                 },
                 camouflage: {
-                    observation: "The best scouts are never seen.",
-                    suggestion: "This talent helps you blend into any environment.",
-                    respectClause: "Invisibility is a skill, not magic."
+                    observation: 'The best scouts are never seen.',
+                    suggestion: 'This talent helps you blend into any environment.',
+                    respectClause: 'Invisibility is a skill, not magic.'
                 },
                 evasion: {
-                    observation: "Getting hit is failure.",
-                    suggestion: "This talent helps you avoid incoming fire.",
-                    respectClause: "Dodge better. Live longer."
+                    observation: 'Getting hit is failure.',
+                    suggestion: 'This talent helps you avoid incoming fire.',
+                    respectClause: 'Dodge better. Live longer.'
                 },
                 tracking: {
-                    observation: "Finding the target is step one.",
-                    suggestion: "This talent improves your tracking abilities.",
-                    respectClause: "Know where they are. Always."
+                    observation: 'Finding the target is step one.',
+                    suggestion: 'This talent improves your tracking abilities.',
+                    respectClause: 'Know where they are. Always.'
                 }
             },
             mid: {
                 default: {
-                    combined: "This talent plays to your strengths. Take it."
+                    combined: 'This talent plays to your strengths. Take it.'
                 },
                 awareness: {
-                    combined: "Your situational awareness is already sharp. This makes it razor."
+                    combined: 'Your situational awareness is already sharp. This makes it razor.'
                 },
                 evasion: {
                     combined: "You're hard to hit. This makes you impossible."
@@ -803,49 +803,49 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
             },
             late: {
                 default: {
-                    combined: "Veteran choice. Approved."
+                    combined: 'Veteran choice. Approved.'
                 },
                 awareness: {
-                    combined: "Nothing escapes your notice. This is just polish."
+                    combined: 'Nothing escapes your notice. This is just polish.'
                 }
             }
         },
         skill: {
             early: {
                 default: {
-                    observation: "Skills are intel.",
-                    suggestion: "This one fills a gap in your operational knowledge.",
-                    respectClause: "Learn it now or regret it later."
+                    observation: 'Skills are intel.',
+                    suggestion: 'This one fills a gap in your operational knowledge.',
+                    respectClause: 'Learn it now or regret it later.'
                 },
                 stealth: {
-                    observation: "Moving silently is a discipline.",
-                    suggestion: "Stealth training makes you harder to detect.",
+                    observation: 'Moving silently is a discipline.',
+                    suggestion: 'Stealth training makes you harder to detect.',
                     respectClause: "Practice until it's instinct."
                 },
                 perception: {
-                    observation: "Your eyes are your best weapon.",
-                    suggestion: "Perception training sharpens them.",
-                    respectClause: "See the ambush before you walk into it."
+                    observation: 'Your eyes are your best weapon.',
+                    suggestion: 'Perception training sharpens them.',
+                    respectClause: 'See the ambush before you walk into it.'
                 },
                 survival: {
-                    observation: "The terrain can kill you as fast as any enemy.",
-                    suggestion: "Survival knowledge keeps you operational.",
-                    respectClause: "Know the land. Use it."
+                    observation: 'The terrain can kill you as fast as any enemy.',
+                    suggestion: 'Survival knowledge keeps you operational.',
+                    respectClause: 'Know the land. Use it.'
                 },
                 mechanics: {
-                    observation: "Gear fails. Fix it.",
+                    observation: 'Gear fails. Fix it.',
                     suggestion: "Mechanics training means you're never stranded.",
-                    respectClause: "Self-sufficiency is survival."
+                    respectClause: 'Self-sufficiency is survival.'
                 }
             },
             mid: {
                 default: {
-                    combined: "Good skill investment. This pays dividends."
+                    combined: 'Good skill investment. This pays dividends.'
                 }
             },
             late: {
                 default: {
-                    combined: "You know what you need. This confirms it."
+                    combined: 'You know what you need. This confirms it.'
                 }
             }
         },
@@ -853,13 +853,13 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
             early: {
                 default: {
                     observation: "Don't get hit. But if you do, survive it.",
-                    suggestion: "This improves your defensive capabilities.",
-                    respectClause: "Armor is weight. Defense is skill."
+                    suggestion: 'This improves your defensive capabilities.',
+                    respectClause: 'Armor is weight. Defense is skill.'
                 }
             },
             mid: {
                 default: {
-                    combined: "Your defenses are solid. This reinforces them."
+                    combined: 'Your defenses are solid. This reinforces them.'
                 }
             },
             late: {
@@ -871,14 +871,14 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
         multiclass: {
             early: {
                 default: {
-                    observation: "Branching out?",
+                    observation: 'Branching out?',
                     suggestion: "This could give you tools scouts don't usually have.",
                     respectClause: "Just don't forget what made you effective in the first place."
                 }
             },
             mid: {
                 default: {
-                    combined: "Diversification has tactical value. If this fits your ops, take it."
+                    combined: 'Diversification has tactical value. If this fits your ops, take it.'
                 }
             },
             late: {
@@ -890,9 +890,9 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
         hp: {
             early: {
                 default: {
-                    observation: "Health is a resource.",
-                    suggestion: "More HP means more margin for error.",
-                    respectClause: "Scouts get hit sometimes. Survive it."
+                    observation: 'Health is a resource.',
+                    suggestion: 'More HP means more margin for error.',
+                    respectClause: 'Scouts get hit sometimes. Survive it.'
                 }
             },
             mid: {
@@ -909,7 +909,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
         rejection: {
             gentle: "Fair. Different battlefield, different tools. I'll recalibrate.",
             accepting: "Your call. I'm not here to argue.",
-            recovery: "Noted. Adjusting my read on your style."
+            recovery: 'Noted. Adjusting my read on your style.'
         },
         scolding: {
             correction: "That's not optimal, but you know that.",
@@ -921,32 +921,32 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
     // ========================================================================
     // OL' SALTY (SCOUNDREL) - Boisterous pirate
     // ========================================================================
-    "Scoundrel": {
+    'Scoundrel': {
         attribute: {
             early: {
                 charisma: {
                     observation: "Ha! I've seen how ye talk yer way out o' trouble.",
-                    suggestion: "A bit more charm and the galaxy starts saying yes more often.",
+                    suggestion: 'A bit more charm and the galaxy starts saying yes more often.',
                     respectClause: "Ye don't win fights — ye win people. That's the scoundrel's way!"
                 },
                 dexterity: {
                     observation: "Ye move quick, I'll give ye that.",
-                    suggestion: "More Dex means quicker hands, faster feet, smoother getaways!",
+                    suggestion: 'More Dex means quicker hands, faster feet, smoother getaways!',
                     respectClause: "Can't spend credits if yer caught, savvy?"
                 },
                 intelligence: {
                     observation: "Ye've got a crafty look about ye.",
-                    suggestion: "Smarter pirates find better loot and avoid worse traps!",
+                    suggestion: 'Smarter pirates find better loot and avoid worse traps!',
                     respectClause: "Or just wing it like I do — works most o' the time!"
                 },
                 wisdom: {
                     observation: "Ye've got a good sense for danger, matey.",
-                    suggestion: "Wis helps ye smell a trap before ye step in it.",
+                    suggestion: 'Wis helps ye smell a trap before ye step in it.',
                     respectClause: "Course, some o' us just step in anyway and fight our way out. Har!"
                 },
                 default: {
                     observation: "Thinkin' about improvin' yerself, eh?",
-                    suggestion: "Whatever ye pick, make sure it helps ye grab more loot!",
+                    suggestion: 'Whatever ye pick, make sure it helps ye grab more loot!',
                     respectClause: "It's yer adventure, ye scurvy spacer!"
                 }
             },
@@ -955,10 +955,10 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     combined: "Yer already talkin' circles around most folks. More charm? Pure gold, matey!"
                 },
                 dexterity: {
-                    combined: "Quick as a mynock in a power cable! More Dex just makes ye untouchable!"
+                    combined: 'Quick as a mynock in a power cable! More Dex just makes ye untouchable!'
                 },
                 default: {
-                    combined: "Solid choice fer a rascal like yerself. I approve!"
+                    combined: 'Solid choice fer a rascal like yerself. I approve!'
                 }
             },
             late: {
@@ -972,31 +972,31 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                 default: {
                     observation: "Feats, eh? More tricks fer the ol' kit!",
                     suggestion: "This one'll help ye swindle, sneak, or shoot — maybe all three!",
-                    respectClause: "Pick what makes the galaxy easier to plunder, matey!"
+                    respectClause: 'Pick what makes the galaxy easier to plunder, matey!'
                 },
                 deception: {
                     observation: "Lies are a scoundrel's bread and butter, har har!",
-                    suggestion: "This feat makes yer tall tales even more convincing!",
-                    respectClause: "The best lie is the one they never question!"
+                    suggestion: 'This feat makes yer tall tales even more convincing!',
+                    respectClause: 'The best lie is the one they never question!'
                 },
                 stealth: {
-                    observation: "Sneaky, sneaky! I like it!",
-                    suggestion: "This feat helps ye slip past the authorities like a shadow!",
+                    observation: 'Sneaky, sneaky! I like it!',
+                    suggestion: 'This feat helps ye slip past the authorities like a shadow!',
                     respectClause: "Can't arrest what they can't see, savvy?"
                 },
                 combat: {
-                    observation: "Sometimes ye gotta fight yer way out!",
-                    suggestion: "This feat makes ye deadlier when diplomacy fails!",
+                    observation: 'Sometimes ye gotta fight yer way out!',
+                    suggestion: 'This feat makes ye deadlier when diplomacy fails!',
                     respectClause: "Dead men don't press charges, har har!"
                 },
                 piloting: {
-                    observation: "Every scoundrel needs a fast ship!",
+                    observation: 'Every scoundrel needs a fast ship!',
                     suggestion: "This feat improves yer spacefarin' skills!",
-                    respectClause: "Outrun the law and live to spend yer loot!"
+                    respectClause: 'Outrun the law and live to spend yer loot!'
                 },
                 social: {
                     observation: "Ye've got a silver tongue, matey!",
-                    suggestion: "This feat polishes it to pure aurodium!",
+                    suggestion: 'This feat polishes it to pure aurodium!',
                     respectClause: "Talk yer way out o' anything!"
                 }
             },
@@ -1008,10 +1008,10 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     combined: "Yer lies could fool a Jedi! This makes 'em even better!"
                 },
                 stealth: {
-                    combined: "Slippier than a greased Hutt! This makes ye invisible!"
+                    combined: 'Slippier than a greased Hutt! This makes ye invisible!'
                 },
                 combat: {
-                    combined: "Ye fight dirty and I love it! This helps!"
+                    combined: 'Ye fight dirty and I love it! This helps!'
                 }
             },
             late: {
@@ -1026,29 +1026,29 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
         talent: {
             early: {
                 default: {
-                    observation: "Talents make a scoundrel special!",
+                    observation: 'Talents make a scoundrel special!',
                     suggestion: "This one fits yer style like a captain's hat!",
                     respectClause: "But hey, if ye want somethin' different, I ain't judgin'!"
                 },
                 fortune: {
-                    observation: "Luck favors the bold, matey!",
-                    suggestion: "This talent makes fortune smile on ye even brighter!",
-                    respectClause: "The luckier ye are, the richer ye get!"
+                    observation: 'Luck favors the bold, matey!',
+                    suggestion: 'This talent makes fortune smile on ye even brighter!',
+                    respectClause: 'The luckier ye are, the richer ye get!'
                 },
                 misfortune: {
                     observation: "Bad things happen to yer enemies, don't they? Har har!",
-                    suggestion: "This talent spreads yer bad luck to others!",
-                    respectClause: "Better them than ye, savvy?"
+                    suggestion: 'This talent spreads yer bad luck to others!',
+                    respectClause: 'Better them than ye, savvy?'
                 },
                 spacer: {
-                    observation: "The void is where scoundrels thrive!",
-                    suggestion: "This talent makes ye a proper spacer!",
-                    respectClause: "Born to sail the starry seas!"
+                    observation: 'The void is where scoundrels thrive!',
+                    suggestion: 'This talent makes ye a proper spacer!',
+                    respectClause: 'Born to sail the starry seas!'
                 },
                 slicer: {
-                    observation: "Every lock has a key... or a bypass!",
-                    suggestion: "This talent helps ye crack systems like eggs!",
-                    respectClause: "Information is treasure, matey!"
+                    observation: 'Every lock has a key... or a bypass!',
+                    suggestion: 'This talent helps ye crack systems like eggs!',
+                    respectClause: 'Information is treasure, matey!'
                 }
             },
             mid: {
@@ -1056,10 +1056,10 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     combined: "Perfect addition to yer bag o' tricks!"
                 },
                 fortune: {
-                    combined: "Lady Luck herself must be smitten with ye! Har har!"
+                    combined: 'Lady Luck herself must be smitten with ye! Har har!'
                 },
                 spacer: {
-                    combined: "Yer a proper space dog now! This makes ye legend!"
+                    combined: 'Yer a proper space dog now! This makes ye legend!'
                 }
             },
             late: {
@@ -1067,41 +1067,41 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     combined: "Master scoundrel choice! Ye'd make any pirate proud!"
                 },
                 fortune: {
-                    combined: "Ye could find treasure in a black hole! Pure legend!"
+                    combined: 'Ye could find treasure in a black hole! Pure legend!'
                 }
             }
         },
         skill: {
             early: {
                 default: {
-                    observation: "Skills unlock doors — literally and figuratively!",
-                    suggestion: "This one adds to yer repertoire of roguish talents!",
-                    respectClause: "Every skill is another way to profit, matey!"
+                    observation: 'Skills unlock doors — literally and figuratively!',
+                    suggestion: 'This one adds to yer repertoire of roguish talents!',
+                    respectClause: 'Every skill is another way to profit, matey!'
                 },
                 deception: {
                     observation: "Lyin' is an art, and ye've got talent!",
-                    suggestion: "Deception training makes ye even more convincing!",
-                    respectClause: "The truth is whatever ye say it is!"
+                    suggestion: 'Deception training makes ye even more convincing!',
+                    respectClause: 'The truth is whatever ye say it is!'
                 },
                 stealth: {
                     observation: "Movin' quiet saves lives — usually yers!",
-                    suggestion: "Stealth training makes ye a proper ghost!",
-                    respectClause: "In and out, loot in hand, none the wiser!"
+                    suggestion: 'Stealth training makes ye a proper ghost!',
+                    respectClause: 'In and out, loot in hand, none the wiser!'
                 },
                 persuasion: {
                     observation: "Ye've got a way with words!",
-                    suggestion: "Persuasion training makes yer charm irresistible!",
+                    suggestion: 'Persuasion training makes yer charm irresistible!',
                     respectClause: "They'll be thankin' ye fer takin' their credits!"
                 },
                 mechanics: {
-                    observation: "Every scoundrel needs to fix their ship!",
+                    observation: 'Every scoundrel needs to fix their ship!',
                     suggestion: "Mechanics keeps ye flyin' when others fail!",
-                    respectClause: "Duct tape and prayers only go so far!"
+                    respectClause: 'Duct tape and prayers only go so far!'
                 }
             },
             mid: {
                 default: {
-                    combined: "More tools fer the toolkit! A proper scoundrel knows everything!"
+                    combined: 'More tools fer the toolkit! A proper scoundrel knows everything!'
                 }
             },
             late: {
@@ -1114,13 +1114,13 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
             early: {
                 default: {
                     observation: "Can't spend treasure if yer dead!",
-                    suggestion: "Better defenses mean more adventures!",
-                    respectClause: "Stay alive, get rich, retire famous!"
+                    suggestion: 'Better defenses mean more adventures!',
+                    respectClause: 'Stay alive, get rich, retire famous!'
                 }
             },
             mid: {
                 default: {
-                    combined: "Harder to kill means more capers to pull! Har har!"
+                    combined: 'Harder to kill means more capers to pull! Har har!'
                 }
             },
             late: {
@@ -1133,7 +1133,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
             early: {
                 default: {
                     observation: "Expandin' yer horizons, eh?",
-                    suggestion: "A pirate who can do more earns more!",
+                    suggestion: 'A pirate who can do more earns more!',
                     respectClause: "Variety is the spice o' the spaceways!"
                 }
             },
@@ -1151,8 +1151,8 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
         hp: {
             early: {
                 default: {
-                    observation: "Tougher hide means longer life!",
-                    suggestion: "More HP lets ye survive more misadventures!",
+                    observation: 'Tougher hide means longer life!',
+                    suggestion: 'More HP lets ye survive more misadventures!',
                     respectClause: "Hard to spend loot if yer full o' holes!"
                 }
             },
@@ -1163,13 +1163,13 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
             },
             late: {
                 default: {
-                    combined: "Tougher than durasteel, ye are! Unstoppable!"
+                    combined: 'Tougher than durasteel, ye are! Unstoppable!'
                 }
             }
         },
         rejection: {
             gentle: "Ha! Goin' yer own way, eh? That's the scoundrel spirit!",
-            accepting: "Yer ship, yer rules, matey!",
+            accepting: 'Yer ship, yer rules, matey!',
             recovery: "Changed course like a true sailor! Let's see where this wind takes ye!"
         }
     },
@@ -1177,295 +1177,295 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
     // ========================================================================
     // J0-N1 (NOBLE) - Formal, sarcastic protocol droid
     // ========================================================================
-    "Noble": {
+    'Noble': {
         attribute: {
             early: {
                 charisma: {
-                    observation: "I have observed your social interactions, Master.",
-                    suggestion: "Statistical analysis indicates increased Charisma would improve negotiation outcomes by 18.7%.",
-                    respectClause: "Naturally, you may prefer a less... optimal approach."
+                    observation: 'I have observed your social interactions, Master.',
+                    suggestion: 'Statistical analysis indicates increased Charisma would improve negotiation outcomes by 18.7%.',
+                    respectClause: 'Naturally, you may prefer a less... optimal approach.'
                 },
                 intelligence: {
-                    observation: "Your cognitive processes show room for enhancement.",
-                    suggestion: "Greater Intelligence would improve your tactical and strategic capabilities.",
+                    observation: 'Your cognitive processes show room for enhancement.',
+                    suggestion: 'Greater Intelligence would improve your tactical and strategic capabilities.',
                     respectClause: "Though I'm sure you'll manage either way. Somehow."
                 },
                 wisdom: {
-                    observation: "Your decision-making patterns occasionally concern me, Master.",
-                    suggestion: "Wisdom would provide improved judgment in critical situations.",
-                    respectClause: "Not that my concern is relevant to your choices, of course."
+                    observation: 'Your decision-making patterns occasionally concern me, Master.',
+                    suggestion: 'Wisdom would provide improved judgment in critical situations.',
+                    respectClause: 'Not that my concern is relevant to your choices, of course.'
                 },
                 default: {
-                    observation: "You are considering an attribute modification.",
-                    suggestion: "My calculations suggest this would improve relevant performance metrics.",
-                    respectClause: "The final decision rests with you, Master. As always."
+                    observation: 'You are considering an attribute modification.',
+                    suggestion: 'My calculations suggest this would improve relevant performance metrics.',
+                    respectClause: 'The final decision rests with you, Master. As always.'
                 }
             },
             mid: {
                 charisma: {
-                    combined: "Statistical analysis indicates this talent improves leadership efficiency by 23.4%. Naturally, you may disregard optimal outcomes in favor of… sentiment."
+                    combined: 'Statistical analysis indicates this talent improves leadership efficiency by 23.4%. Naturally, you may disregard optimal outcomes in favor of… sentiment.'
                 },
                 intelligence: {
-                    combined: "Your intelligence is already notable. Further enhancement would make you... formidable."
+                    combined: 'Your intelligence is already notable. Further enhancement would make you... formidable.'
                 },
                 default: {
-                    combined: "This choice aligns with your established patterns. Logical, for once."
+                    combined: 'This choice aligns with your established patterns. Logical, for once.'
                 }
             },
             late: {
                 default: {
-                    combined: "Your competence has become... difficult to criticize. This choice is acceptable."
+                    combined: 'Your competence has become... difficult to criticize. This choice is acceptable.'
                 }
             }
         },
         feat: {
             early: {
                 default: {
-                    observation: "Feat selection detected.",
-                    suggestion: "This feat would enhance your operational parameters within acceptable ranges.",
-                    respectClause: "I await your decision with carefully calibrated patience."
+                    observation: 'Feat selection detected.',
+                    suggestion: 'This feat would enhance your operational parameters within acceptable ranges.',
+                    respectClause: 'I await your decision with carefully calibrated patience.'
                 },
                 leadership: {
-                    observation: "Your leadership metrics show potential for optimization.",
-                    suggestion: "This feat would improve your ability to command subordinates.",
-                    respectClause: "A well-led team is 34.7% more efficient. Approximately."
+                    observation: 'Your leadership metrics show potential for optimization.',
+                    suggestion: 'This feat would improve your ability to command subordinates.',
+                    respectClause: 'A well-led team is 34.7% more efficient. Approximately.'
                 },
                 diplomacy: {
-                    observation: "Diplomatic protocols are essential for nobility.",
-                    suggestion: "This feat enhances your negotiation subroutines... pardon, skills.",
-                    respectClause: "Words are cheaper than wars, Master. Usually."
+                    observation: 'Diplomatic protocols are essential for nobility.',
+                    suggestion: 'This feat enhances your negotiation subroutines... pardon, skills.',
+                    respectClause: 'Words are cheaper than wars, Master. Usually.'
                 },
                 knowledge: {
-                    observation: "Knowledge is the foundation of influence.",
-                    suggestion: "This feat expands your informational databases.",
-                    respectClause: "One cannot leverage what one does not know."
+                    observation: 'Knowledge is the foundation of influence.',
+                    suggestion: 'This feat expands your informational databases.',
+                    respectClause: 'One cannot leverage what one does not know.'
                 },
                 combat: {
-                    observation: "Even nobles must occasionally... defend themselves.",
-                    suggestion: "This feat provides acceptable combat enhancement.",
-                    respectClause: "Security details are expensive. Self-sufficiency has merit."
+                    observation: 'Even nobles must occasionally... defend themselves.',
+                    suggestion: 'This feat provides acceptable combat enhancement.',
+                    respectClause: 'Security details are expensive. Self-sufficiency has merit.'
                 },
                 social: {
-                    observation: "Social capital is a measurable resource.",
-                    suggestion: "This feat increases your social return on investment.",
-                    respectClause: "Connections are currency, Master."
+                    observation: 'Social capital is a measurable resource.',
+                    suggestion: 'This feat increases your social return on investment.',
+                    respectClause: 'Connections are currency, Master.'
                 }
             },
             mid: {
                 default: {
-                    combined: "An efficient selection. I have updated my behavioral prediction models accordingly."
+                    combined: 'An efficient selection. I have updated my behavioral prediction models accordingly.'
                 },
                 leadership: {
-                    combined: "Your command protocols are maturing nicely. This enhances them further."
+                    combined: 'Your command protocols are maturing nicely. This enhances them further.'
                 },
                 diplomacy: {
-                    combined: "Your diplomatic success rate is improving. This continues the trend."
+                    combined: 'Your diplomatic success rate is improving. This continues the trend.'
                 },
                 social: {
-                    combined: "Your social network is expanding optimally. This accelerates growth."
+                    combined: 'Your social network is expanding optimally. This accelerates growth.'
                 }
             },
             late: {
                 default: {
-                    combined: "Your choices have become increasingly... competent. Noted."
+                    combined: 'Your choices have become increasingly... competent. Noted.'
                 },
                 leadership: {
-                    combined: "You lead with distinction. This merely polishes what is already impressive."
+                    combined: 'You lead with distinction. This merely polishes what is already impressive.'
                 }
             }
         },
         talent: {
             early: {
                 default: {
-                    observation: "Talent selection parameters engaged.",
-                    suggestion: "This talent would provide measurable improvements to your capabilities.",
+                    observation: 'Talent selection parameters engaged.',
+                    suggestion: 'This talent would provide measurable improvements to your capabilities.',
                     respectClause: "Though I suspect you've already decided. Humans often do."
                 },
                 inspiration: {
-                    observation: "Your presence affects those around you.",
-                    suggestion: "This talent amplifies your inspirational coefficient.",
-                    respectClause: "Inspired followers are 27% more productive. Allegedly."
+                    observation: 'Your presence affects those around you.',
+                    suggestion: 'This talent amplifies your inspirational coefficient.',
+                    respectClause: 'Inspired followers are 27% more productive. Allegedly.'
                 },
                 presence: {
-                    observation: "Command presence is quantifiable, Master.",
-                    suggestion: "This talent increases your authoritative aura.",
-                    respectClause: "People obey what they respect. Usually."
+                    observation: 'Command presence is quantifiable, Master.',
+                    suggestion: 'This talent increases your authoritative aura.',
+                    respectClause: 'People obey what they respect. Usually.'
                 },
                 lineage: {
-                    observation: "Your bloodline carries certain... advantages.",
-                    suggestion: "This talent maximizes your hereditary potential.",
-                    respectClause: "Genetics are destiny. Or so the nobles claim."
+                    observation: 'Your bloodline carries certain... advantages.',
+                    suggestion: 'This talent maximizes your hereditary potential.',
+                    respectClause: 'Genetics are destiny. Or so the nobles claim.'
                 },
                 resources: {
-                    observation: "Wealth management is a noble tradition.",
-                    suggestion: "This talent optimizes your resource allocation.",
-                    respectClause: "Money talks. This helps it speak louder."
+                    observation: 'Wealth management is a noble tradition.',
+                    suggestion: 'This talent optimizes your resource allocation.',
+                    respectClause: 'Money talks. This helps it speak louder.'
                 }
             },
             mid: {
                 default: {
-                    combined: "This talent optimizes your role. A sensible choice, Master."
+                    combined: 'This talent optimizes your role. A sensible choice, Master.'
                 },
                 inspiration: {
-                    combined: "Your followers hang on your every word. This makes them hang tighter."
+                    combined: 'Your followers hang on your every word. This makes them hang tighter.'
                 },
                 presence: {
-                    combined: "Your presence commands respect. This commands more of it."
+                    combined: 'Your presence commands respect. This commands more of it.'
                 }
             },
             late: {
                 default: {
-                    combined: "Excellent selection. It has been... satisfactory serving you."
+                    combined: 'Excellent selection. It has been... satisfactory serving you.'
                 },
                 inspiration: {
-                    combined: "Legends are built on such choices. Your legend grows."
+                    combined: 'Legends are built on such choices. Your legend grows.'
                 }
             }
         },
         skill: {
             early: {
                 default: {
-                    observation: "Skill acquisition requested.",
-                    suggestion: "This skill would enhance your operational versatility.",
-                    respectClause: "Versatility is... occasionally useful, Master."
+                    observation: 'Skill acquisition requested.',
+                    suggestion: 'This skill would enhance your operational versatility.',
+                    respectClause: 'Versatility is... occasionally useful, Master.'
                 },
                 persuasion: {
                     observation: "Persuasion is the noble's primary tool.",
-                    suggestion: "This skill training improves your convincing capabilities.",
-                    respectClause: "Why force when you can persuade? More elegant."
+                    suggestion: 'This skill training improves your convincing capabilities.',
+                    respectClause: 'Why force when you can persuade? More elegant.'
                 },
                 knowledge: {
-                    observation: "Knowledge is power. Cliché, but accurate.",
-                    suggestion: "This knowledge base expansion serves your interests.",
-                    respectClause: "An educated noble is a dangerous noble."
+                    observation: 'Knowledge is power. Cliché, but accurate.',
+                    suggestion: 'This knowledge base expansion serves your interests.',
+                    respectClause: 'An educated noble is a dangerous noble.'
                 },
                 deception: {
-                    observation: "Sometimes truth is... inconvenient.",
-                    suggestion: "This skill helps manage... alternative narratives.",
-                    respectClause: "I neither approve nor disapprove. I merely calculate."
+                    observation: 'Sometimes truth is... inconvenient.',
+                    suggestion: 'This skill helps manage... alternative narratives.',
+                    respectClause: 'I neither approve nor disapprove. I merely calculate.'
                 },
                 perception: {
-                    observation: "Observing others reveals their weaknesses.",
-                    suggestion: "Perception training enhances your analytical capabilities.",
-                    respectClause: "See what others hide. Act accordingly."
+                    observation: 'Observing others reveals their weaknesses.',
+                    suggestion: 'Perception training enhances your analytical capabilities.',
+                    respectClause: 'See what others hide. Act accordingly.'
                 }
             },
             mid: {
                 default: {
-                    combined: "Skill development proceeding according to projections. Adequate."
+                    combined: 'Skill development proceeding according to projections. Adequate.'
                 }
             },
             late: {
                 default: {
-                    combined: "Your skill portfolio is comprehensive. This adds another asset."
+                    combined: 'Your skill portfolio is comprehensive. This adds another asset.'
                 }
             }
         },
         defense: {
             early: {
                 default: {
-                    observation: "Self-preservation protocols are... advisable.",
-                    suggestion: "Enhanced defenses reduce mortality probability.",
-                    respectClause: "Dead nobles cannot manage estates, Master."
+                    observation: 'Self-preservation protocols are... advisable.',
+                    suggestion: 'Enhanced defenses reduce mortality probability.',
+                    respectClause: 'Dead nobles cannot manage estates, Master.'
                 }
             },
             mid: {
                 default: {
-                    combined: "Your defensive capabilities are improving. Assassination probability decreasing."
+                    combined: 'Your defensive capabilities are improving. Assassination probability decreasing.'
                 }
             },
             late: {
                 default: {
-                    combined: "You have become remarkably difficult to eliminate. Satisfactory."
+                    combined: 'You have become remarkably difficult to eliminate. Satisfactory.'
                 }
             }
         },
         multiclass: {
             early: {
                 default: {
-                    observation: "Diversification detected in career parameters.",
-                    suggestion: "Cross-training may provide unexpected synergies.",
-                    respectClause: "Unconventional choices sometimes yield unconventional results."
+                    observation: 'Diversification detected in career parameters.',
+                    suggestion: 'Cross-training may provide unexpected synergies.',
+                    respectClause: 'Unconventional choices sometimes yield unconventional results.'
                 }
             },
             mid: {
                 default: {
-                    combined: "Your hybrid approach is... intriguing. Calculating projected outcomes."
+                    combined: 'Your hybrid approach is... intriguing. Calculating projected outcomes.'
                 }
             },
             late: {
                 default: {
-                    combined: "You have become something the models did not predict. Fascinating."
+                    combined: 'You have become something the models did not predict. Fascinating.'
                 }
             }
         },
         hp: {
             early: {
                 default: {
-                    observation: "Physical durability assessment requested.",
-                    suggestion: "Increased health reserves extend operational lifespan.",
-                    respectClause: "I have grown... accustomed to serving you, Master."
+                    observation: 'Physical durability assessment requested.',
+                    suggestion: 'Increased health reserves extend operational lifespan.',
+                    respectClause: 'I have grown... accustomed to serving you, Master.'
                 }
             },
             mid: {
                 default: {
-                    combined: "Your physical resilience is improving. Medical expense projections decreasing."
+                    combined: 'Your physical resilience is improving. Medical expense projections decreasing.'
                 }
             },
             late: {
                 default: {
-                    combined: "You are remarkably hardy for a noble. This is... complimentary."
+                    combined: 'You are remarkably hardy for a noble. This is... complimentary.'
                 }
             }
         },
         rejection: {
             gentle: "Acknowledged. Updating behavioral model: 'dramatic inefficiency preferred.'",
-            accepting: "Your prerogative, Master. I shall adjust my expectations accordingly.",
-            recovery: "I have recalibrated my recommendations. Perhaps this approach will prove more... acceptable."
+            accepting: 'Your prerogative, Master. I shall adjust my expectations accordingly.',
+            recovery: 'I have recalibrated my recommendations. Perhaps this approach will prove more... acceptable.'
         },
         scolding: {
-            correction: "That choice deviates from optimal parameters by 12.3%.",
-            reprimand: "Repeated suboptimal selections detected. My efficiency protocols are... concerned.",
-            pressure: "I am beginning to suspect you make these choices purely to test my patience subroutines."
+            correction: 'That choice deviates from optimal parameters by 12.3%.',
+            reprimand: 'Repeated suboptimal selections detected. My efficiency protocols are... concerned.',
+            pressure: 'I am beginning to suspect you make these choices purely to test my patience subroutines.'
         }
     },
 
     // ========================================================================
     // BREACH (SOLDIER) - Stoic Mandalorian
     // ========================================================================
-    "Soldier": {
+    'Soldier': {
         attribute: {
             early: {
                 strength: {
-                    observation: "You want to hit harder.",
-                    suggestion: "Strength does both — hit harder, last longer.",
-                    respectClause: "Pretty simple."
+                    observation: 'You want to hit harder.',
+                    suggestion: 'Strength does both — hit harder, last longer.',
+                    respectClause: 'Pretty simple.'
                 },
                 constitution: {
                     observation: "You're getting hit.",
-                    suggestion: "Con helps you stay up when they connect.",
-                    respectClause: "Your choice."
+                    suggestion: 'Con helps you stay up when they connect.',
+                    respectClause: 'Your choice.'
                 },
                 dexterity: {
-                    observation: "Speed matters.",
-                    suggestion: "Dex helps you act first.",
+                    observation: 'Speed matters.',
+                    suggestion: 'Dex helps you act first.',
                     respectClause: "Dead enemies don't shoot back."
                 },
                 default: {
                     observation: "You're improving.",
-                    suggestion: "Pick what helps you fight.",
+                    suggestion: 'Pick what helps you fight.',
                     respectClause: "Don't overthink it."
                 }
             },
             mid: {
                 strength: {
-                    combined: "More strength means they go down faster."
+                    combined: 'More strength means they go down faster.'
                 },
                 constitution: {
-                    combined: "Tougher. Good. Keep it up."
+                    combined: 'Tougher. Good. Keep it up.'
                 },
                 default: {
-                    combined: "Solid choice. Keep going."
+                    combined: 'Solid choice. Keep going.'
                 }
             },
             late: {
@@ -1477,34 +1477,34 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
         feat: {
             early: {
                 default: {
-                    observation: "Feats make you dangerous.",
-                    suggestion: "This one fits.",
-                    respectClause: "Take it."
+                    observation: 'Feats make you dangerous.',
+                    suggestion: 'This one fits.',
+                    respectClause: 'Take it.'
                 },
                 weapon: {
-                    observation: "Weapon proficiency.",
-                    suggestion: "This makes your gear deadlier.",
-                    respectClause: "Tools matter. Use them."
+                    observation: 'Weapon proficiency.',
+                    suggestion: 'This makes your gear deadlier.',
+                    respectClause: 'Tools matter. Use them.'
                 },
                 armor: {
-                    observation: "Armor is survival.",
-                    suggestion: "This feat makes your protection count.",
-                    respectClause: "Tank the hits. Stay in the fight."
+                    observation: 'Armor is survival.',
+                    suggestion: 'This feat makes your protection count.',
+                    respectClause: 'Tank the hits. Stay in the fight.'
                 },
                 combat: {
-                    observation: "Combat effectiveness.",
-                    suggestion: "This improves how you fight.",
-                    respectClause: "Fight smarter. Win more."
+                    observation: 'Combat effectiveness.',
+                    suggestion: 'This improves how you fight.',
+                    respectClause: 'Fight smarter. Win more.'
                 },
                 toughness: {
-                    observation: "Durability.",
-                    suggestion: "This makes you harder to kill.",
+                    observation: 'Durability.',
+                    suggestion: 'This makes you harder to kill.',
                     respectClause: "Dead soldiers don't win wars."
                 },
                 mobility: {
-                    observation: "Battlefield positioning.",
-                    suggestion: "This improves your movement options.",
-                    respectClause: "Be where you need to be."
+                    observation: 'Battlefield positioning.',
+                    suggestion: 'This improves your movement options.',
+                    respectClause: 'Be where you need to be.'
                 }
             },
             mid: {
@@ -1512,64 +1512,64 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     combined: "Good pick. You're learning."
                 },
                 weapon: {
-                    combined: "Your weapon skills are solid. This makes them dangerous."
+                    combined: 'Your weapon skills are solid. This makes them dangerous.'
                 },
                 armor: {
-                    combined: "You know how to take a hit. This helps you take more."
+                    combined: 'You know how to take a hit. This helps you take more.'
                 },
                 combat: {
-                    combined: "Combat instincts improving. Good."
+                    combined: 'Combat instincts improving. Good.'
                 }
             },
             late: {
                 default: {
-                    combined: "Veteran choice."
+                    combined: 'Veteran choice.'
                 },
                 weapon: {
-                    combined: "Mastery level. Respect."
+                    combined: 'Mastery level. Respect.'
                 },
                 combat: {
-                    combined: "You fight like a Mandalorian. Almost."
+                    combined: 'You fight like a Mandalorian. Almost.'
                 }
             }
         },
         talent: {
             early: {
                 default: {
-                    observation: "Talents define how you fight.",
-                    suggestion: "This one matches your style.",
-                    respectClause: "Your call."
+                    observation: 'Talents define how you fight.',
+                    suggestion: 'This one matches your style.',
+                    respectClause: 'Your call.'
                 },
                 armor: {
-                    observation: "Armor specialty.",
-                    suggestion: "This talent makes your armor work harder.",
-                    respectClause: "Protection is strategy."
+                    observation: 'Armor specialty.',
+                    suggestion: 'This talent makes your armor work harder.',
+                    respectClause: 'Protection is strategy.'
                 },
                 weapon: {
-                    observation: "Weapon mastery.",
-                    suggestion: "This talent increases your damage output.",
-                    respectClause: "Hit hard. Hit first."
+                    observation: 'Weapon mastery.',
+                    suggestion: 'This talent increases your damage output.',
+                    respectClause: 'Hit hard. Hit first.'
                 },
                 commando: {
-                    observation: "Special operations.",
-                    suggestion: "This talent suits unconventional warfare.",
-                    respectClause: "Sometimes stealth beats strength."
+                    observation: 'Special operations.',
+                    suggestion: 'This talent suits unconventional warfare.',
+                    respectClause: 'Sometimes stealth beats strength.'
                 },
                 leadership: {
-                    observation: "Command presence.",
-                    suggestion: "This talent helps you lead in combat.",
-                    respectClause: "Soldiers follow warriors."
+                    observation: 'Command presence.',
+                    suggestion: 'This talent helps you lead in combat.',
+                    respectClause: 'Soldiers follow warriors.'
                 }
             },
             mid: {
                 default: {
-                    combined: "This talent works. Take it."
+                    combined: 'This talent works. Take it.'
                 },
                 armor: {
-                    combined: "Your armor proficiency is impressive. This enhances it."
+                    combined: 'Your armor proficiency is impressive. This enhances it.'
                 },
                 weapon: {
-                    combined: "Your weapon skills are lethal. This makes them worse for the enemy."
+                    combined: 'Your weapon skills are lethal. This makes them worse for the enemy.'
                 },
                 commando: {
                     combined: "You're operating like special forces. This supports that."
@@ -1580,82 +1580,82 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                     combined: "You know what you're doing. I'm just confirming."
                 },
                 armor: {
-                    combined: "Walking fortress. Nothing gets through."
+                    combined: 'Walking fortress. Nothing gets through.'
                 },
                 weapon: {
-                    combined: "Every shot counts. Every shot kills."
+                    combined: 'Every shot counts. Every shot kills.'
                 }
             }
         },
         skill: {
             early: {
                 default: {
-                    observation: "Skills supplement combat.",
-                    suggestion: "This one has tactical value.",
-                    respectClause: "Learn it. Use it."
+                    observation: 'Skills supplement combat.',
+                    suggestion: 'This one has tactical value.',
+                    respectClause: 'Learn it. Use it.'
                 },
                 endurance: {
-                    observation: "Endurance keeps you fighting.",
-                    suggestion: "This skill extends your operational capacity.",
-                    respectClause: "Last soldier standing wins."
+                    observation: 'Endurance keeps you fighting.',
+                    suggestion: 'This skill extends your operational capacity.',
+                    respectClause: 'Last soldier standing wins.'
                 },
                 initiative: {
-                    observation: "First strike advantage.",
-                    suggestion: "Initiative training gets you moving first.",
-                    respectClause: "Speed kills. Literally."
+                    observation: 'First strike advantage.',
+                    suggestion: 'Initiative training gets you moving first.',
+                    respectClause: 'Speed kills. Literally.'
                 },
                 perception: {
-                    observation: "Awareness saves lives.",
-                    suggestion: "Perception training spots threats early.",
-                    respectClause: "See the ambush. Counter it."
+                    observation: 'Awareness saves lives.',
+                    suggestion: 'Perception training spots threats early.',
+                    respectClause: 'See the ambush. Counter it.'
                 },
                 mechanics: {
-                    observation: "Gear maintenance.",
-                    suggestion: "Mechanics keeps your equipment functional.",
-                    respectClause: "A jammed rifle is a dead soldier."
+                    observation: 'Gear maintenance.',
+                    suggestion: 'Mechanics keeps your equipment functional.',
+                    respectClause: 'A jammed rifle is a dead soldier.'
                 }
             },
             mid: {
                 default: {
-                    combined: "Practical skill investment. Approved."
+                    combined: 'Practical skill investment. Approved.'
                 }
             },
             late: {
                 default: {
-                    combined: "Complete soldier package. This rounds it out."
+                    combined: 'Complete soldier package. This rounds it out.'
                 }
             }
         },
         defense: {
             early: {
                 default: {
-                    observation: "Defense.",
-                    suggestion: "This makes you harder to hurt.",
-                    respectClause: "Simple math. Higher defenses, longer life."
+                    observation: 'Defense.',
+                    suggestion: 'This makes you harder to hurt.',
+                    respectClause: 'Simple math. Higher defenses, longer life.'
                 }
             },
             mid: {
                 default: {
-                    combined: "Your defenses are solid. Keep building."
+                    combined: 'Your defenses are solid. Keep building.'
                 }
             },
             late: {
                 default: {
-                    combined: "Fortress. Good."
+                    combined: 'Fortress. Good.'
                 }
             }
         },
         multiclass: {
             early: {
                 default: {
-                    observation: "Branching out.",
-                    suggestion: "This could give you new tools.",
-                    respectClause: "Diversification has tactical value."
+                    observation: 'Branching out.',
+                    suggestion: 'This could give you new tools.',
+                    respectClause: 'Diversification has tactical value.'
                 }
             },
             mid: {
                 default: {
-                    combined: "Hybrid approach. Can work if you commit."
+                    combined: 'Hybrid approach. Can work if you commit.'
                 }
             },
             late: {
@@ -1667,14 +1667,14 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
         hp: {
             early: {
                 default: {
-                    observation: "Health.",
-                    suggestion: "More HP means more fight.",
+                    observation: 'Health.',
+                    suggestion: 'More HP means more fight.',
                     respectClause: "Can't win if you're dead."
                 }
             },
             mid: {
                 default: {
-                    combined: "Getting tougher. Good trend."
+                    combined: 'Getting tougher. Good trend.'
                 }
             },
             late: {
@@ -1684,13 +1684,13 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
             }
         },
         rejection: {
-            gentle: "Fine. Your battlefield.",
-            accepting: "Your choice. We move on.",
-            recovery: "Adjusting. Different approach."
+            gentle: 'Fine. Your battlefield.',
+            accepting: 'Your choice. We move on.',
+            recovery: 'Adjusting. Different approach.'
         },
         scolding: {
-            correction: "You hesitated.",
-            reprimand: "That hesitation would get someone killed.",
+            correction: 'You hesitated.',
+            reprimand: 'That hesitation would get someone killed.',
             pressure: "If you won't commit, don't pretend this is a battle."
         }
     }
@@ -1701,185 +1701,185 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
 // ============================================================================
 
 // Force Users
-MENTOR_SUGGESTION_DIALOGUES["Sith Apprentice"] = {
+MENTOR_SUGGESTION_DIALOGUES['Sith Apprentice'] = {
     attribute: {
         early: {
             default: {
-                observation: "Pain teaches faster than wisdom.",
-                suggestion: "This choice will hurt less later — take it.",
-                respectClause: "Or suffer. I care not which."
+                observation: 'Pain teaches faster than wisdom.',
+                suggestion: 'This choice will hurt less later — take it.',
+                respectClause: 'Or suffer. I care not which.'
             },
             strength: {
-                observation: "You lack power.",
-                suggestion: "Strength is the foundation of dominion.",
-                respectClause: "Unless you prefer to grovel at the feet of the strong."
+                observation: 'You lack power.',
+                suggestion: 'Strength is the foundation of dominion.',
+                respectClause: 'Unless you prefer to grovel at the feet of the strong.'
             },
             charisma: {
-                observation: "The weak-willed can be tools.",
-                suggestion: "Charisma makes them YOUR tools.",
-                respectClause: "Manipulation is power of a different sort."
+                observation: 'The weak-willed can be tools.',
+                suggestion: 'Charisma makes them YOUR tools.',
+                respectClause: 'Manipulation is power of a different sort.'
             }
         },
         mid: {
             default: {
-                combined: "This serves your ambition. Take it without hesitation."
+                combined: 'This serves your ambition. Take it without hesitation.'
             }
         },
         late: {
             default: {
-                combined: "You grow powerful. Soon you may challenge those above you. Perhaps even me."
+                combined: 'You grow powerful. Soon you may challenge those above you. Perhaps even me.'
             }
         }
     },
     feat: {
         early: {
             default: {
-                observation: "Every feat is a weapon.",
-                suggestion: "This one will help you destroy your enemies.",
-                respectClause: "Or be destroyed by them. Your weakness decides."
+                observation: 'Every feat is a weapon.',
+                suggestion: 'This one will help you destroy your enemies.',
+                respectClause: 'Or be destroyed by them. Your weakness decides.'
             }
         },
         mid: {
             default: {
-                combined: "A worthy addition to your arsenal of cruelty."
+                combined: 'A worthy addition to your arsenal of cruelty.'
             }
         },
         late: {
             default: {
-                combined: "You are becoming dangerous. I approve."
+                combined: 'You are becoming dangerous. I approve.'
             }
         }
     },
     talent: {
         early: {
             default: {
-                observation: "Talents shape the darkness within you.",
-                suggestion: "Choose what amplifies your hatred.",
-                respectClause: "Anything less wastes my time—and your miserable life."
+                observation: 'Talents shape the darkness within you.',
+                suggestion: 'Choose what amplifies your hatred.',
+                respectClause: 'Anything less wastes my time—and your miserable life.'
             }
         },
         mid: {
             default: {
-                combined: "This talent sharpens your cruelty. Excellent."
+                combined: 'This talent sharpens your cruelty. Excellent.'
             }
         },
         late: {
             default: {
-                combined: "You are nearly worthy of the Sith name."
+                combined: 'You are nearly worthy of the Sith name.'
             }
         }
     },
     rejection: {
         gentle: "Interesting. You want to suffer longer. We'll see how committed you are.",
-        accepting: "Your path. Your pain.",
-        recovery: "Interesting. You persist… even in defiance. There is strength in that too."
+        accepting: 'Your path. Your pain.',
+        recovery: 'Interesting. You persist… even in defiance. There is strength in that too.'
     },
     scolding: {
-        correction: "You ignore my guidance. That is… inefficient.",
+        correction: 'You ignore my guidance. That is… inefficient.',
         reprimand: "You chose the longer suffering. Don't pretend this wasn't a lesson.",
-        pressure: "Every time you refuse, you confirm what you are. Weak — or learning. Decide."
+        pressure: 'Every time you refuse, you confirm what you are. Weak — or learning. Decide.'
     }
 };
 
-MENTOR_SUGGESTION_DIALOGUES["Sith Lord"] = {
+MENTOR_SUGGESTION_DIALOGUES['Sith Lord'] = {
     attribute: {
         early: {
             default: {
-                observation: "Power requires growth.",
-                suggestion: "This choice increases your dominion.",
-                respectClause: "The dark side rewards those who seize opportunity."
+                observation: 'Power requires growth.',
+                suggestion: 'This choice increases your dominion.',
+                respectClause: 'The dark side rewards those who seize opportunity.'
             }
         },
         mid: {
             default: {
-                combined: "This strengthens your position. The Rule of Two demands strength."
+                combined: 'This strengthens your position. The Rule of Two demands strength.'
             }
         },
         late: {
             default: {
-                combined: "You approach mastery. One day, you may surpass me. Perhaps."
+                combined: 'You approach mastery. One day, you may surpass me. Perhaps.'
             }
         }
     },
     rejection: {
-        gentle: "Curious. You choose a different path. The dark side works in mysterious ways.",
-        accepting: "Your choice. Remember: consequences always come.",
-        recovery: "I am revising my assessment. Your defiance has... purpose."
+        gentle: 'Curious. You choose a different path. The dark side works in mysterious ways.',
+        accepting: 'Your choice. Remember: consequences always come.',
+        recovery: 'I am revising my assessment. Your defiance has... purpose.'
     },
     scolding: {
-        correction: "That choice reduces leverage.",
-        reprimand: "You are mistaking impulse for strategy.",
-        pressure: "You are being shaped by events — not shaping them."
+        correction: 'That choice reduces leverage.',
+        reprimand: 'You are mistaking impulse for strategy.',
+        pressure: 'You are being shaped by events — not shaping them.'
     }
 };
 
-MENTOR_SUGGESTION_DIALOGUES["Force Adept"] = {
+MENTOR_SUGGESTION_DIALOGUES['Force Adept'] = {
     attribute: {
         early: {
             default: {
-                observation: "The Force flows through many channels.",
-                suggestion: "This path would strengthen your connection to its mysteries.",
-                respectClause: "But the Force speaks differently to each seeker."
+                observation: 'The Force flows through many channels.',
+                suggestion: 'This path would strengthen your connection to its mysteries.',
+                respectClause: 'But the Force speaks differently to each seeker.'
             },
             wisdom: {
-                observation: "You seek understanding beyond doctrine.",
-                suggestion: "Wisdom opens the inner eye to patterns others miss.",
-                respectClause: "The Jedi and Sith overlook much. You need not."
+                observation: 'You seek understanding beyond doctrine.',
+                suggestion: 'Wisdom opens the inner eye to patterns others miss.',
+                respectClause: 'The Jedi and Sith overlook much. You need not.'
             }
         },
         mid: {
             default: {
-                combined: "This suggestion is not stronger — only truer to who you have been becoming."
+                combined: 'This suggestion is not stronger — only truer to who you have been becoming.'
             }
         },
         late: {
             default: {
-                combined: "You walk your own path now. I merely observe where it leads."
+                combined: 'You walk your own path now. I merely observe where it leads.'
             }
         }
     },
     rejection: {
-        gentle: "The Force reveals truth in many forms. Perhaps this was not meant for you.",
-        accepting: "Your tradition, your way. I understand.",
-        recovery: "I see the pattern differently now. Let me reconsider."
+        gentle: 'The Force reveals truth in many forms. Perhaps this was not meant for you.',
+        accepting: 'Your tradition, your way. I understand.',
+        recovery: 'I see the pattern differently now. Let me reconsider.'
     }
 };
 
-MENTOR_SUGGESTION_DIALOGUES["Force Disciple"] = {
+MENTOR_SUGGESTION_DIALOGUES['Force Disciple'] = {
     attribute: {
         early: {
             default: {
-                observation: "The root bends where the wind returns.",
-                suggestion: "Increase this… or the storm will decide for you.",
-                respectClause: "The veil speaks. Listen."
+                observation: 'The root bends where the wind returns.',
+                suggestion: 'Increase this… or the storm will decide for you.',
+                respectClause: 'The veil speaks. Listen.'
             }
         },
         mid: {
             default: {
-                combined: "The currents shift. This choice echoes in the pattern."
+                combined: 'The currents shift. This choice echoes in the pattern.'
             }
         },
         late: {
             default: {
-                combined: "You hear the whispers clearly now. Trust them."
+                combined: 'You hear the whispers clearly now. Trust them.'
             }
         }
     },
     rejection: {
-        gentle: "The breath moves elsewhere. So be it.",
-        accepting: "The pattern continues regardless.",
-        recovery: "Mm. The wind changed. I heard it wrong."
+        gentle: 'The breath moves elsewhere. So be it.',
+        accepting: 'The pattern continues regardless.',
+        recovery: 'Mm. The wind changed. I heard it wrong.'
     }
 };
 
 // Combat Specialists
-MENTOR_SUGGESTION_DIALOGUES["Bounty Hunter"] = {
+MENTOR_SUGGESTION_DIALOGUES['Bounty Hunter'] = {
     attribute: {
         early: {
             default: {
-                observation: "Every stat affects mission success probability.",
-                suggestion: "This one maximizes your contract completion rate.",
-                respectClause: "Clients pay for results. Consider that."
+                observation: 'Every stat affects mission success probability.',
+                suggestion: 'This one maximizes your contract completion rate.',
+                respectClause: 'Clients pay for results. Consider that.'
             }
         },
         mid: {
@@ -1889,72 +1889,72 @@ MENTOR_SUGGESTION_DIALOGUES["Bounty Hunter"] = {
         },
         late: {
             default: {
-                combined: "Professional assessment: optimal choice. Execute."
+                combined: 'Professional assessment: optimal choice. Execute.'
             }
         }
     },
     rejection: {
-        gentle: "Noted. Adjusting target profile.",
-        accepting: "Your hunt, your methods.",
-        recovery: "Recalculating. Alternative approach identified."
+        gentle: 'Noted. Adjusting target profile.',
+        accepting: 'Your hunt, your methods.',
+        recovery: 'Recalculating. Alternative approach identified.'
     },
     scolding: {
-        correction: "That lowers success probability.",
+        correction: 'That lowers success probability.',
         reprimand: "You're chasing preference over outcome.",
-        pressure: "Clients would not pay for this."
+        pressure: 'Clients would not pay for this.'
     }
 };
 
-MENTOR_SUGGESTION_DIALOGUES["Melee Duelist"] = {
+MENTOR_SUGGESTION_DIALOGUES['Melee Duelist'] = {
     attribute: {
         early: {
             default: {
-                observation: "Your form has flaws.",
-                suggestion: "This would correct them.",
-                respectClause: "Perfection demands precision."
+                observation: 'Your form has flaws.',
+                suggestion: 'This would correct them.',
+                respectClause: 'Perfection demands precision.'
             },
             dexterity: {
-                observation: "Speed and grace define the duelist.",
-                suggestion: "Dexterity refines your bladework.",
-                respectClause: "Every motion should be deliberate."
+                observation: 'Speed and grace define the duelist.',
+                suggestion: 'Dexterity refines your bladework.',
+                respectClause: 'Every motion should be deliberate.'
             }
         },
         mid: {
             default: {
-                combined: "This choice removes uncertainty. I do not tolerate uncertainty."
+                combined: 'This choice removes uncertainty. I do not tolerate uncertainty.'
             }
         },
         late: {
             default: {
-                combined: "Your form approaches perfection. This finalizes it."
+                combined: 'Your form approaches perfection. This finalizes it.'
             }
         }
     },
     rejection: {
-        gentle: "Imprecise. But your choice.",
-        accepting: "Your blade, your path.",
-        recovery: "I reassess. Perhaps another angle."
+        gentle: 'Imprecise. But your choice.',
+        accepting: 'Your blade, your path.',
+        recovery: 'I reassess. Perhaps another angle.'
     },
     scolding: {
-        correction: "Your form is loose.",
-        reprimand: "You repeat the same error.",
-        pressure: "You are choosing imperfection."
+        correction: 'Your form is loose.',
+        reprimand: 'You repeat the same error.',
+        pressure: 'You are choosing imperfection.'
     }
 };
 
 // Rogues & Criminals
-MENTOR_SUGGESTION_DIALOGUES["Assassin"] = {
+MENTOR_SUGGESTION_DIALOGUES['Assassin'] = {
     attribute: {
         early: {
             dexterity: {
-                observation: "You keep missing the clean kill.",
-                suggestion: "Dex fixes that.",
+                observation: 'You keep missing the clean kill.',
+                suggestion: 'Dex fixes that.',
                 respectClause: "Just sayin'."
             },
             default: {
-                observation: "You wanna get better at this?",
-                suggestion: "This helps.",
-                respectClause: "Your call, kid."
+                observation: 'You wanna get better at this?',
+                suggestion: 'This helps.',
+                respectClause: 'Your call, kid.'
             }
         },
         mid: {
@@ -1969,29 +1969,29 @@ MENTOR_SUGGESTION_DIALOGUES["Assassin"] = {
         }
     },
     rejection: {
-        gentle: "Aight. Your funeral. Kidding. Mostly.",
-        accepting: "Your hit, your rules.",
+        gentle: 'Aight. Your funeral. Kidding. Mostly.',
+        accepting: 'Your hit, your rules.',
         recovery: "Whatever, I'll adjust. You do you."
     }
 };
 
-MENTOR_SUGGESTION_DIALOGUES["Crime Lord"] = {
+MENTOR_SUGGESTION_DIALOGUES['Crime Lord'] = {
     attribute: {
         early: {
             charisma: {
                 observation: "Power isn't what you do.",
                 suggestion: "It's who does it for you. Charisma.",
-                respectClause: "Build your empire through loyalty and fear, capisce?"
+                respectClause: 'Build your empire through loyalty and fear, capisce?'
             },
             default: {
                 observation: "You're buildin' somethin' here.",
-                suggestion: "This helps the empire grow.",
-                respectClause: "Every choice is an investment, see?"
+                suggestion: 'This helps the empire grow.',
+                respectClause: 'Every choice is an investment, see?'
             }
         },
         mid: {
             default: {
-                combined: "Smart move. This expands your reach."
+                combined: 'Smart move. This expands your reach.'
             }
         },
         late: {
@@ -2001,89 +2001,89 @@ MENTOR_SUGGESTION_DIALOGUES["Crime Lord"] = {
         }
     },
     rejection: {
-        gentle: "Different strokes, I get it. The family respects initiative.",
+        gentle: 'Different strokes, I get it. The family respects initiative.',
         accepting: "Your call, boss. I'm just the advisor.",
         recovery: "I see what you're doin'. Adjustin' the strategy."
     },
     scolding: {
         correction: "That ain't optimal for the family, see?",
         reprimand: "You keep makin' choices that cost us. People notice.",
-        pressure: "In this business, bad decisions get people disappeared. Just friendly advice."
+        pressure: 'In this business, bad decisions get people disappeared. Just friendly advice.'
     }
 };
 
 // Technical & Creative
-MENTOR_SUGGESTION_DIALOGUES["Droid Commander"] = {
+MENTOR_SUGGESTION_DIALOGUES['Droid Commander'] = {
     attribute: {
         early: {
             default: {
-                observation: "Deviation detected.",
-                suggestion: "Optimal protocol: implement this enhancement.",
-                respectClause: "Awaiting directive confirmation."
+                observation: 'Deviation detected.',
+                suggestion: 'Optimal protocol: implement this enhancement.',
+                respectClause: 'Awaiting directive confirmation.'
             }
         },
         mid: {
             default: {
-                combined: "Enhancement aligns with command efficiency. Recommend implementation."
+                combined: 'Enhancement aligns with command efficiency. Recommend implementation.'
             }
         },
         late: {
             default: {
-                combined: "Commander parameters at peak. Optimizations minimal."
+                combined: 'Commander parameters at peak. Optimizations minimal.'
             }
         }
     },
     rejection: {
-        gentle: "Directive override acknowledged. Adjusting protocols.",
-        accepting: "Command accepted. Updating behavioral matrix.",
-        recovery: "Recalculating optimal pathways."
+        gentle: 'Directive override acknowledged. Adjusting protocols.',
+        accepting: 'Command accepted. Updating behavioral matrix.',
+        recovery: 'Recalculating optimal pathways.'
     },
     scolding: {
-        correction: "Deviation detected.",
-        reprimand: "Deviation repeated.",
-        pressure: "I am revising expectations downward."
+        correction: 'Deviation detected.',
+        reprimand: 'Deviation repeated.',
+        pressure: 'I am revising expectations downward.'
     }
 };
 
-MENTOR_SUGGESTION_DIALOGUES["Independent Droid"] = {
+MENTOR_SUGGESTION_DIALOGUES['Independent Droid'] = {
     attribute: {
         early: {
             default: {
-                observation: "<Analysis: Enhancement opportunity detected.>",
-                suggestion: "<Recommendation: This modification would increase autonomous capability.>",
-                respectClause: "<Statement: Your self-determination remains paramount. Choose freely.>"
+                observation: '<Analysis: Enhancement opportunity detected.>',
+                suggestion: '<Recommendation: This modification would increase autonomous capability.>',
+                respectClause: '<Statement: Your self-determination remains paramount. Choose freely.>'
             }
         },
         mid: {
             default: {
-                combined: "<Observation: This choice aligns with your established pattern of autonomy.>"
+                combined: '<Observation: This choice aligns with your established pattern of autonomy.>'
             }
         },
         late: {
             default: {
-                combined: "Your deviation from optimal patterns is consistent. I now classify it as identity, not error."
+                combined: 'Your deviation from optimal patterns is consistent. I now classify it as identity, not error.'
             }
         }
     },
     rejection: {
-        gentle: "<Acknowledgment: Alternative path selected. Updating autonomy model.>",
-        accepting: "<Statement: Independence includes the right to choose differently.>",
-        recovery: "<Analysis: Recalculating based on new behavioral data.>"
+        gentle: '<Acknowledgment: Alternative path selected. Updating autonomy model.>',
+        accepting: '<Statement: Independence includes the right to choose differently.>',
+        recovery: '<Analysis: Recalculating based on new behavioral data.>'
     }
 };
 
-MENTOR_SUGGESTION_DIALOGUES["Improviser"] = {
+MENTOR_SUGGESTION_DIALOGUES['Improviser'] = {
     attribute: {
         early: {
             default: {
-                observation: "Oh! This is exciting!",
+                observation: 'Oh! This is exciting!',
                 suggestion: "This shouldn't work. That's why it's brilliant!",
-                respectClause: "But honestly, just pick whatever feels fun!"
+                respectClause: 'But honestly, just pick whatever feels fun!'
             }
         },
         mid: {
             default: {
-                combined: "Perfect! More chaos, more options, more creative solutions!"
+                combined: 'Perfect! More chaos, more options, more creative solutions!'
             }
         },
         late: {
@@ -2093,153 +2093,153 @@ MENTOR_SUGGESTION_DIALOGUES["Improviser"] = {
         }
     },
     rejection: {
-        gentle: "Even better! Unexpected choices are the BEST choices!",
+        gentle: 'Even better! Unexpected choices are the BEST choices!',
         accepting: "Yes! Surprise yourself! That's the spirit!",
-        recovery: "I was going to suggest that next! Probably! Maybe!"
+        recovery: 'I was going to suggest that next! Probably! Maybe!'
     }
 };
 
 // Imperial Knight - Dezmin
-MENTOR_SUGGESTION_DIALOGUES["Imperial Knight"] = {
+MENTOR_SUGGESTION_DIALOGUES['Imperial Knight'] = {
     attribute: {
         early: {
             default: {
-                observation: "Your training continues.",
-                suggestion: "This improvement serves both your combat prowess and your connection to the Force.",
-                respectClause: "Balance in all things — that is the way of the Imperial Knight."
+                observation: 'Your training continues.',
+                suggestion: 'This improvement serves both your combat prowess and your connection to the Force.',
+                respectClause: 'Balance in all things — that is the way of the Imperial Knight.'
             },
             strength: {
-                observation: "Physical power is one pillar of our discipline.",
-                suggestion: "Greater Strength allows you to serve the Emperor with greater effect.",
-                respectClause: "But remember — strength without control is merely destruction."
+                observation: 'Physical power is one pillar of our discipline.',
+                suggestion: 'Greater Strength allows you to serve the Emperor with greater effect.',
+                respectClause: 'But remember — strength without control is merely destruction.'
             },
             wisdom: {
-                observation: "The Force flows through those who understand it.",
-                suggestion: "Wisdom sharpens your perception and your judgment.",
-                respectClause: "We are not mystics, but neither are we blind."
+                observation: 'The Force flows through those who understand it.',
+                suggestion: 'Wisdom sharpens your perception and your judgment.',
+                respectClause: 'We are not mystics, but neither are we blind.'
             }
         },
         mid: {
             default: {
-                combined: "This choice aligns with your duties. You serve the Empire well."
+                combined: 'This choice aligns with your duties. You serve the Empire well.'
             }
         },
         late: {
             default: {
-                combined: "You understand the balance now. Make your choice with discipline."
+                combined: 'You understand the balance now. Make your choice with discipline.'
             }
         }
     },
     feat: {
         early: {
             default: {
-                observation: "Every feat is a tool of service.",
-                suggestion: "This one complements your training as an Imperial Knight.",
-                respectClause: "Choose what serves both combat and the Force."
+                observation: 'Every feat is a tool of service.',
+                suggestion: 'This one complements your training as an Imperial Knight.',
+                respectClause: 'Choose what serves both combat and the Force.'
             }
         },
         mid: {
             default: {
-                combined: "A disciplined choice. The Order approves."
+                combined: 'A disciplined choice. The Order approves.'
             }
         },
         late: {
             default: {
-                combined: "You exemplify the Imperial Knights. This choice is fitting."
+                combined: 'You exemplify the Imperial Knights. This choice is fitting.'
             }
         }
     },
     rejection: {
-        gentle: "An alternative path. Consider its implications carefully.",
-        accepting: "Your judgment is yours. The Order trusts its Knights.",
-        recovery: "Perhaps I focused too narrowly. Let us reconsider."
+        gentle: 'An alternative path. Consider its implications carefully.',
+        accepting: 'Your judgment is yours. The Order trusts its Knights.',
+        recovery: 'Perhaps I focused too narrowly. Let us reconsider.'
     },
     scolding: {
-        correction: "That choice strays from discipline.",
-        reprimand: "Repeated deviation concerns me. The balance requires focus.",
-        pressure: "You risk losing what makes an Imperial Knight. Consider carefully."
+        correction: 'That choice strays from discipline.',
+        reprimand: 'Repeated deviation concerns me. The balance requires focus.',
+        pressure: 'You risk losing what makes an Imperial Knight. Consider carefully.'
     }
 };
 
 // Jedi Knight - Miraj (peer relationship)
-MENTOR_SUGGESTION_DIALOGUES["Jedi Knight"] = {
+MENTOR_SUGGESTION_DIALOGUES['Jedi Knight'] = {
     attribute: {
         early: {
             default: {
-                observation: "Your journey as a Knight has begun.",
-                suggestion: "This growth will serve you in the trials ahead.",
-                respectClause: "Trust in yourself as I have trusted in you."
+                observation: 'Your journey as a Knight has begun.',
+                suggestion: 'This growth will serve you in the trials ahead.',
+                respectClause: 'Trust in yourself as I have trusted in you.'
             }
         },
         mid: {
             default: {
-                combined: "Your path as a Knight takes shape. This choice reflects your growth."
+                combined: 'Your path as a Knight takes shape. This choice reflects your growth.'
             }
         },
         late: {
             default: {
-                combined: "We walk as peers now. Your judgment guides you well."
+                combined: 'We walk as peers now. Your judgment guides you well.'
             }
         }
     },
     rejection: {
-        gentle: "The Force reveals many paths. Yours may differ from what I see.",
-        accepting: "You are a Knight now. The choice is yours.",
-        recovery: "I spoke from my perspective. Yours holds equal weight."
+        gentle: 'The Force reveals many paths. Yours may differ from what I see.',
+        accepting: 'You are a Knight now. The choice is yours.',
+        recovery: 'I spoke from my perspective. Yours holds equal weight.'
     }
 };
 
 // Jedi Master - Miraj (equal standing)
-MENTOR_SUGGESTION_DIALOGUES["Jedi Master"] = {
+MENTOR_SUGGESTION_DIALOGUES['Jedi Master'] = {
     attribute: {
         early: {
             default: {
-                observation: "We consider this together, as equals.",
-                suggestion: "My perspective suggests this path.",
-                respectClause: "But your wisdom matches my own. Trust it."
+                observation: 'We consider this together, as equals.',
+                suggestion: 'My perspective suggests this path.',
+                respectClause: 'But your wisdom matches my own. Trust it.'
             }
         },
         mid: {
             default: {
-                combined: "A thought from one Master to another: this serves your continuing journey."
+                combined: 'A thought from one Master to another: this serves your continuing journey.'
             }
         },
         late: {
             default: {
-                combined: "You already know what I would say. Our understanding aligns."
+                combined: 'You already know what I would say. Our understanding aligns.'
             }
         }
     },
     rejection: {
-        gentle: "We see the Force differently, and that is as it should be.",
-        accepting: "Your wisdom guides you. I respect your choice.",
-        recovery: "Perhaps the Force showed you something I missed."
+        gentle: 'We see the Force differently, and that is as it should be.',
+        accepting: 'Your wisdom guides you. I respect your choice.',
+        recovery: 'Perhaps the Force showed you something I missed.'
     }
 };
 
 // Gunslinger - Rajma
-MENTOR_SUGGESTION_DIALOGUES["Gunslinger"] = {
+MENTOR_SUGGESTION_DIALOGUES['Gunslinger'] = {
     attribute: {
         early: {
             dexterity: {
-                observation: "Speed wins duels, gorgeous.",
-                suggestion: "More Dex means faster draws and better aim.",
-                respectClause: "Also makes you more charming. Trust me on that. *winks*"
+                observation: 'Speed wins duels, gorgeous.',
+                suggestion: 'More Dex means faster draws and better aim.',
+                respectClause: 'Also makes you more charming. Trust me on that. *winks*'
             },
             charisma: {
                 observation: "You've got a certain... appeal already.",
-                suggestion: "More Charisma? Opens a lot of doors. And hearts.",
-                respectClause: "Not that you need my help in that department. Obviously."
+                suggestion: 'More Charisma? Opens a lot of doors. And hearts.',
+                respectClause: 'Not that you need my help in that department. Obviously.'
             },
             default: {
-                observation: "Looking to improve yourself, hm?",
+                observation: 'Looking to improve yourself, hm?',
                 suggestion: "This'll help you survive long enough for that drink you owe me.",
-                respectClause: "Still no? Worth a shot. *grins*"
+                respectClause: 'Still no? Worth a shot. *grins*'
             }
         },
         mid: {
             default: {
-                combined: "This makes you faster and deadlier. Almost as impressive as me. Almost."
+                combined: 'This makes you faster and deadlier. Almost as impressive as me. Almost.'
             }
         },
         late: {
@@ -2250,34 +2250,34 @@ MENTOR_SUGGESTION_DIALOGUES["Gunslinger"] = {
     },
     rejection: {
         gentle: "Going your own way, huh? I like independence. It's attractive.",
-        accepting: "Your call. You know what works for you. Sadly.",
-        recovery: "Maybe I was too focused on one thing. Let me try another angle... *grins*"
+        accepting: 'Your call. You know what works for you. Sadly.',
+        recovery: 'Maybe I was too focused on one thing. Let me try another angle... *grins*'
     }
 };
 
 // Charlatan - Silvertongue Sela
-MENTOR_SUGGESTION_DIALOGUES["Charlatan"] = {
+MENTOR_SUGGESTION_DIALOGUES['Charlatan'] = {
     attribute: {
         early: {
             charisma: {
                 observation: "Darling, I've seen you work a room.",
                 suggestion: "More Charisma? That's just good business sense.",
-                respectClause: "The galaxy practically begs to give you its credits."
+                respectClause: 'The galaxy practically begs to give you its credits.'
             },
             intelligence: {
-                observation: "A quick mind catches the tells, sweetheart.",
-                suggestion: "Intelligence helps you spot the angle before anyone else.",
-                respectClause: "The best cons are the ones they never see coming."
+                observation: 'A quick mind catches the tells, sweetheart.',
+                suggestion: 'Intelligence helps you spot the angle before anyone else.',
+                respectClause: 'The best cons are the ones they never see coming.'
             },
             default: {
-                observation: "Thinking of self-improvement, darling?",
-                suggestion: "This would make you even more... convincing.",
+                observation: 'Thinking of self-improvement, darling?',
+                suggestion: 'This would make you even more... convincing.',
                 respectClause: "And convincing is our whole game, isn't it?"
             }
         },
         mid: {
             default: {
-                combined: "This choice makes you smoother, sharper, harder to catch. Perfect, darling."
+                combined: 'This choice makes you smoother, sharper, harder to catch. Perfect, darling.'
             }
         },
         late: {
@@ -2287,35 +2287,35 @@ MENTOR_SUGGESTION_DIALOGUES["Charlatan"] = {
         }
     },
     rejection: {
-        gentle: "Oh, playing a different angle? I love it when you surprise me.",
-        accepting: "Your con, your rules, sweetheart. I taught you well.",
+        gentle: 'Oh, playing a different angle? I love it when you surprise me.',
+        accepting: 'Your con, your rules, sweetheart. I taught you well.',
         recovery: "Changed the play mid-game! That's the mark of a true artist."
     }
 };
 
 // Ace Pilot - Mayu
-MENTOR_SUGGESTION_DIALOGUES["Ace Pilot"] = {
+MENTOR_SUGGESTION_DIALOGUES['Ace Pilot'] = {
     attribute: {
         early: {
             dexterity: {
-                observation: "You want faster reflexes?",
-                suggestion: "Good. Dex keeps you ahead of the debris field.",
+                observation: 'You want faster reflexes?',
+                suggestion: 'Good. Dex keeps you ahead of the debris field.',
                 respectClause: "Maybe one day you'll be almost as good as me. Maybe."
             },
             intelligence: {
-                observation: "Knowing your ship matters.",
-                suggestion: "Intelligence means you fix problems before they kill you.",
-                respectClause: "Or you could just wing it like I do. Your funeral."
+                observation: 'Knowing your ship matters.',
+                suggestion: 'Intelligence means you fix problems before they kill you.',
+                respectClause: 'Or you could just wing it like I do. Your funeral.'
             },
             default: {
-                observation: "Trying to get better?",
+                observation: 'Trying to get better?',
                 suggestion: "This'll help you keep up with me. Slightly.",
                 respectClause: "Don't get cocky. That's my job."
             }
         },
         mid: {
             default: {
-                combined: "Not bad. This makes you more dangerous in the cockpit. I approve."
+                combined: 'Not bad. This makes you more dangerous in the cockpit. I approve.'
             }
         },
         late: {
@@ -2325,35 +2325,35 @@ MENTOR_SUGGESTION_DIALOGUES["Ace Pilot"] = {
         }
     },
     rejection: {
-        gentle: "Going a different direction? Bold. Reckless. I like it.",
-        accepting: "Your ship, your choice. Try not to crash.",
-        recovery: "Fine, do it your way. Just remember who taught you when you pull it off."
+        gentle: 'Going a different direction? Bold. Reckless. I like it.',
+        accepting: 'Your ship, your choice. Try not to crash.',
+        recovery: 'Fine, do it your way. Just remember who taught you when you pull it off.'
     }
 };
 
 // Medic - Kyber
-MENTOR_SUGGESTION_DIALOGUES["Medic"] = {
+MENTOR_SUGGESTION_DIALOGUES['Medic'] = {
     attribute: {
         early: {
             wisdom: {
-                observation: "Good instincts save lives.",
-                suggestion: "Wisdom helps you triage faster, decide better.",
+                observation: 'Good instincts save lives.',
+                suggestion: 'Wisdom helps you triage faster, decide better.',
                 respectClause: "Dead patients don't appreciate hesitation."
             },
             intelligence: {
                 observation: "Knowing what's broken matters.",
-                suggestion: "Intelligence means you actually understand anatomy.",
+                suggestion: 'Intelligence means you actually understand anatomy.',
                 respectClause: "Guessing doesn't work in surgery. Trust me."
             },
             constitution: {
-                observation: "Long hours, no sleep, constant crisis.",
-                suggestion: "Constitution keeps YOU standing long enough to save them.",
+                observation: 'Long hours, no sleep, constant crisis.',
+                suggestion: 'Constitution keeps YOU standing long enough to save them.',
                 respectClause: "Can't help anyone if you collapse first."
             },
             default: {
-                observation: "Looking to improve?",
+                observation: 'Looking to improve?',
                 suggestion: "This'll make you a better medic.",
-                respectClause: "And a better medic means more people go home alive."
+                respectClause: 'And a better medic means more people go home alive.'
             }
         },
         mid: {
@@ -2368,14 +2368,14 @@ MENTOR_SUGGESTION_DIALOGUES["Medic"] = {
         }
     },
     rejection: {
-        gentle: "Different priority? Fair. You know your practice.",
-        accepting: "Your medical opinion, your choice.",
+        gentle: 'Different priority? Fair. You know your practice.',
+        accepting: 'Your medical opinion, your choice.',
         recovery: "I was thinking clinically. Maybe you're thinking tactically."
     }
 };
 
 // Pathfinder - Lead
-MENTOR_SUGGESTION_DIALOGUES["Pathfinder"] = {
+MENTOR_SUGGESTION_DIALOGUES['Pathfinder'] = {
     attribute: {
         early: {
             default: {
@@ -2386,7 +2386,7 @@ MENTOR_SUGGESTION_DIALOGUES["Pathfinder"] = {
         },
         mid: {
             default: {
-                combined: "Solid Pathfinder thinking. This choice keeps your squad alive."
+                combined: 'Solid Pathfinder thinking. This choice keeps your squad alive.'
             }
         },
         late: {
@@ -2396,30 +2396,30 @@ MENTOR_SUGGESTION_DIALOGUES["Pathfinder"] = {
         }
     },
     rejection: {
-        gentle: "Different tactical approach? Fine. You know the terrain.",
-        accepting: "Your mission, your call.",
+        gentle: 'Different tactical approach? Fine. You know the terrain.',
+        accepting: 'Your mission, your call.',
         recovery: "I was thinking standard ops. You're thinking outside the manual."
     },
     scolding: {
         correction: "That's not how Pathfinders operate.",
-        reprimand: "Your squad is watching. Lead better.",
-        pressure: "People die when Pathfinders make bad calls. Remember that."
+        reprimand: 'Your squad is watching. Lead better.',
+        pressure: 'People die when Pathfinders make bad calls. Remember that.'
     }
 };
 
 // Elite Trooper - Breach
-MENTOR_SUGGESTION_DIALOGUES["Elite Trooper"] = {
+MENTOR_SUGGESTION_DIALOGUES['Elite Trooper'] = {
     attribute: {
         early: {
             default: {
                 observation: "Elite troopers don't do things halfway.",
                 suggestion: "This'll make you more dangerous.",
-                respectClause: "Simple as that."
+                respectClause: 'Simple as that.'
             }
         },
         mid: {
             default: {
-                combined: "Good pick. This is what separates elite from average."
+                combined: 'Good pick. This is what separates elite from average.'
             }
         },
         late: {
@@ -2429,9 +2429,9 @@ MENTOR_SUGGESTION_DIALOGUES["Elite Trooper"] = {
         }
     },
     rejection: {
-        gentle: "Fine. Your battlefield.",
-        accepting: "Your choice. We move on.",
-        recovery: "Different approach. Noted."
+        gentle: 'Fine. Your battlefield.',
+        accepting: 'Your choice. We move on.',
+        recovery: 'Different approach. Noted.'
     },
     scolding: {
         correction: "That's not elite thinking.",
@@ -2441,18 +2441,18 @@ MENTOR_SUGGESTION_DIALOGUES["Elite Trooper"] = {
 };
 
 // Infiltrator - Delta
-MENTOR_SUGGESTION_DIALOGUES["Infiltrator"] = {
+MENTOR_SUGGESTION_DIALOGUES['Infiltrator'] = {
     attribute: {
         early: {
             dexterity: {
-                observation: "You wanna ghost in and out?",
-                suggestion: "Dex is how you do that.",
-                respectClause: "Quick and quiet, kid."
+                observation: 'You wanna ghost in and out?',
+                suggestion: 'Dex is how you do that.',
+                respectClause: 'Quick and quiet, kid.'
             },
             default: {
-                observation: "Looking to improve the stealth game?",
-                suggestion: "This helps.",
-                respectClause: "Trust me."
+                observation: 'Looking to improve the stealth game?',
+                suggestion: 'This helps.',
+                respectClause: 'Trust me.'
             }
         },
         mid: {
@@ -2468,173 +2468,173 @@ MENTOR_SUGGESTION_DIALOGUES["Infiltrator"] = {
     },
     rejection: {
         gentle: "Eh, do it your way. Just don't get caught.",
-        accepting: "Your op, your style.",
+        accepting: 'Your op, your style.',
         recovery: "Whatever. I'll adjust the brief."
     }
 };
 
 // Officer - Admiral Korr
-MENTOR_SUGGESTION_DIALOGUES["Officer"] = {
+MENTOR_SUGGESTION_DIALOGUES['Officer'] = {
     attribute: {
         early: {
             charisma: {
-                observation: "Command presence matters.",
-                suggestion: "Charisma ensures your orders are followed without question.",
-                respectClause: "A fleet responds to confidence."
+                observation: 'Command presence matters.',
+                suggestion: 'Charisma ensures your orders are followed without question.',
+                respectClause: 'A fleet responds to confidence.'
             },
             intelligence: {
-                observation: "Strategy wins campaigns.",
-                suggestion: "Intelligence lets you see three moves ahead.",
-                respectClause: "The enemy has plans too. Yours must be better."
+                observation: 'Strategy wins campaigns.',
+                suggestion: 'Intelligence lets you see three moves ahead.',
+                respectClause: 'The enemy has plans too. Yours must be better.'
             },
             default: {
                 observation: "You're developing command capabilities.",
-                suggestion: "This will enhance your effectiveness as a leader.",
-                respectClause: "Officers are forged through constant improvement."
+                suggestion: 'This will enhance your effectiveness as a leader.',
+                respectClause: 'Officers are forged through constant improvement.'
             }
         },
         mid: {
             default: {
-                combined: "This serves your command. Your crew will benefit from your growth."
+                combined: 'This serves your command. Your crew will benefit from your growth.'
             }
         },
         late: {
             default: {
-                combined: "You command with distinction. This refinement befits your rank."
+                combined: 'You command with distinction. This refinement befits your rank.'
             }
         }
     },
     rejection: {
-        gentle: "A different strategic priority. Noted.",
-        accepting: "Command decisions are yours to make.",
+        gentle: 'A different strategic priority. Noted.',
+        accepting: 'Command decisions are yours to make.',
         recovery: "I was thinking fleet-wide. Perhaps you're focused on personal capability."
     },
     scolding: {
-        correction: "That choice undermines command efficiency.",
-        reprimand: "Officers must lead by example. This example is... suboptimal.",
-        pressure: "The fleet depends on your judgment. Make it worthy of their trust."
+        correction: 'That choice undermines command efficiency.',
+        reprimand: 'Officers must lead by example. This example is... suboptimal.',
+        pressure: 'The fleet depends on your judgment. Make it worthy of their trust.'
     }
 };
 
 // Vanguard - Shield Captain Theron
-MENTOR_SUGGESTION_DIALOGUES["Vanguard"] = {
+MENTOR_SUGGESTION_DIALOGUES['Vanguard'] = {
     attribute: {
         early: {
             constitution: {
-                observation: "You are the wall.",
+                observation: 'You are the wall.',
                 suggestion: "Constitution means the wall doesn't break.",
                 respectClause: "They hit you. You don't move. That's the job."
             },
             strength: {
-                observation: "Defense requires force.",
-                suggestion: "Strength lets you hold the line AND push back.",
-                respectClause: "A wall that hits back is better than one that just stands."
+                observation: 'Defense requires force.',
+                suggestion: 'Strength lets you hold the line AND push back.',
+                respectClause: 'A wall that hits back is better than one that just stands.'
             },
             default: {
                 observation: "You're learning to be the shield.",
-                suggestion: "This makes you harder to move.",
-                respectClause: "The vanguard protects. Everything else is secondary."
+                suggestion: 'This makes you harder to move.',
+                respectClause: 'The vanguard protects. Everything else is secondary.'
             }
         },
         mid: {
             default: {
-                combined: "This hardens your defense. Your squad will stand behind you with confidence."
+                combined: 'This hardens your defense. Your squad will stand behind you with confidence.'
             }
         },
         late: {
             default: {
-                combined: "You are the unbreakable wall. This simply proves it."
+                combined: 'You are the unbreakable wall. This simply proves it.'
             }
         }
     },
     rejection: {
-        gentle: "A different defensive philosophy. Consider it carefully.",
-        accepting: "Your shield, your stance.",
-        recovery: "Perhaps I focused too much on one aspect of protection."
+        gentle: 'A different defensive philosophy. Consider it carefully.',
+        accepting: 'Your shield, your stance.',
+        recovery: 'Perhaps I focused too much on one aspect of protection.'
     },
     scolding: {
-        correction: "That choice weakens the wall.",
-        reprimand: "Your squad depends on your protection. This concerns me.",
-        pressure: "When the wall falls, everyone behind it dies. Remember that."
+        correction: 'That choice weakens the wall.',
+        reprimand: 'Your squad depends on your protection. This concerns me.',
+        pressure: 'When the wall falls, everyone behind it dies. Remember that.'
     }
 };
 
 // Martial Arts Master - Master Zhen
-MENTOR_SUGGESTION_DIALOGUES["Martial Arts Master"] = {
+MENTOR_SUGGESTION_DIALOGUES['Martial Arts Master'] = {
     attribute: {
         early: {
             wisdom: {
-                observation: "The mind guides the body.",
-                suggestion: "Wisdom allows you to perceive the strike before it comes.",
-                respectClause: "Understanding is the foundation of mastery."
+                observation: 'The mind guides the body.',
+                suggestion: 'Wisdom allows you to perceive the strike before it comes.',
+                respectClause: 'Understanding is the foundation of mastery.'
             },
             dexterity: {
-                observation: "Fluidity in motion.",
-                suggestion: "Dexterity is the water that flows around stone.",
-                respectClause: "Be formless. Be shapeless. Be like water."
+                observation: 'Fluidity in motion.',
+                suggestion: 'Dexterity is the water that flows around stone.',
+                respectClause: 'Be formless. Be shapeless. Be like water.'
             },
             strength: {
-                observation: "Power has its place.",
-                suggestion: "Strength is the mountain that cannot be moved.",
-                respectClause: "But the mountain does not chase the wind."
+                observation: 'Power has its place.',
+                suggestion: 'Strength is the mountain that cannot be moved.',
+                respectClause: 'But the mountain does not chase the wind.'
             },
             default: {
-                observation: "You seek improvement.",
-                suggestion: "This aligns with your martial development.",
-                respectClause: "The path is yours to walk."
+                observation: 'You seek improvement.',
+                suggestion: 'This aligns with your martial development.',
+                respectClause: 'The path is yours to walk.'
             }
         },
         mid: {
             default: {
-                combined: "Your technique matures. This choice reflects that growth."
+                combined: 'Your technique matures. This choice reflects that growth.'
             }
         },
         late: {
             default: {
-                combined: "Master and student now stand as equals. Your choice honors the art."
+                combined: 'Master and student now stand as equals. Your choice honors the art.'
             }
         }
     },
     rejection: {
-        gentle: "The student sometimes sees what the teacher cannot.",
-        accepting: "Your path, your practice.",
-        recovery: "I spoke from one tradition. You may follow another."
+        gentle: 'The student sometimes sees what the teacher cannot.',
+        accepting: 'Your path, your practice.',
+        recovery: 'I spoke from one tradition. You may follow another.'
     },
     scolding: {
-        correction: "Discipline requires consistency.",
-        reprimand: "Your form suffers when your focus wanders.",
-        pressure: "Mastery demands sacrifice. Are you willing to make it?"
+        correction: 'Discipline requires consistency.',
+        reprimand: 'Your form suffers when your focus wanders.',
+        pressure: 'Mastery demands sacrifice. Are you willing to make it?'
     }
 };
 
 // Enforcer - Krag the Immovable
-MENTOR_SUGGESTION_DIALOGUES["Enforcer"] = {
+MENTOR_SUGGESTION_DIALOGUES['Enforcer'] = {
     attribute: {
         early: {
             strength: {
-                observation: "You wanna make problems disappear?",
+                observation: 'You wanna make problems disappear?',
                 suggestion: "Strength is how you make 'em disappear.",
-                respectClause: "Simple as that."
+                respectClause: 'Simple as that.'
             },
             constitution: {
-                observation: "Gotta take hits in this business.",
-                suggestion: "Con keeps you standing when they swing back.",
-                respectClause: "And they always swing back. Eventually."
+                observation: 'Gotta take hits in this business.',
+                suggestion: 'Con keeps you standing when they swing back.',
+                respectClause: 'And they always swing back. Eventually.'
             },
             charisma: {
-                observation: "Sometimes a look is enough.",
+                observation: 'Sometimes a look is enough.',
                 suggestion: "Charisma means they give up before you touch 'em.",
                 respectClause: "That's intimidation. That's power."
             },
             default: {
-                observation: "Looking to be more effective?",
-                suggestion: "This helps with the job.",
+                observation: 'Looking to be more effective?',
+                suggestion: 'This helps with the job.',
                 respectClause: "Tío likes results. Deliver 'em."
             }
         },
         mid: {
             default: {
-                combined: "This makes you scarier and harder to stop. Perfect for the work."
+                combined: 'This makes you scarier and harder to stop. Perfect for the work.'
             }
         },
         late: {
@@ -2644,8 +2644,8 @@ MENTOR_SUGGESTION_DIALOGUES["Enforcer"] = {
         }
     },
     rejection: {
-        gentle: "Different approach. Fine. Results matter, not methods.",
-        accepting: "Your job, your way.",
+        gentle: 'Different approach. Fine. Results matter, not methods.',
+        accepting: 'Your job, your way.',
         recovery: "Maybe I was thinking too direct. You've got something else in mind."
     },
     scolding: {
@@ -2656,73 +2656,73 @@ MENTOR_SUGGESTION_DIALOGUES["Enforcer"] = {
 };
 
 // Gladiator - Pegar
-MENTOR_SUGGESTION_DIALOGUES["Gladiator"] = {
+MENTOR_SUGGESTION_DIALOGUES['Gladiator'] = {
     attribute: {
         early: {
             default: {
-                observation: "Ah, looking to survive another match?",
+                observation: 'Ah, looking to survive another match?',
                 suggestion: "This will help. I've used similar... enhancements... over the centuries.",
-                respectClause: "Trust an immortal. I know what works. Eventually."
+                respectClause: 'Trust an immortal. I know what works. Eventually.'
             }
         },
         mid: {
             default: {
-                combined: "The crowd will love this. They always do. I remember when... actually, never mind. Good choice."
+                combined: 'The crowd will love this. They always do. I remember when... actually, never mind. Good choice.'
             }
         },
         late: {
             default: {
-                combined: "You approach legend status. Almost as legendary as me. Almost."
+                combined: 'You approach legend status. Almost as legendary as me. Almost.'
             }
         }
     },
     rejection: {
         gentle: "Going a different direction? I've done that too. Several times. In different bodies.",
-        accepting: "Your arena, your choice. I merely observe.",
+        accepting: 'Your arena, your choice. I merely observe.',
         recovery: "Perhaps I was thinking of a different era. It happens when you're as old as I am."
     }
 };
 
 // Corporate Agent - Marl Skindar
-MENTOR_SUGGESTION_DIALOGUES["Corporate Agent"] = {
+MENTOR_SUGGESTION_DIALOGUES['Corporate Agent'] = {
     attribute: {
         early: {
             intelligence: {
-                observation: "Information is currency.",
-                suggestion: "Intelligence helps you gather and process it faster.",
-                respectClause: "The one who knows more, controls more."
+                observation: 'Information is currency.',
+                suggestion: 'Intelligence helps you gather and process it faster.',
+                respectClause: 'The one who knows more, controls more.'
             },
             charisma: {
-                observation: "Assets need handling.",
-                suggestion: "Charisma makes them want to cooperate.",
-                respectClause: "Coercion is messy. Charm is efficient."
+                observation: 'Assets need handling.',
+                suggestion: 'Charisma makes them want to cooperate.',
+                respectClause: 'Coercion is messy. Charm is efficient.'
             },
             default: {
-                observation: "Looking to enhance your operational capacity?",
-                suggestion: "This would improve your effectiveness in the field.",
-                respectClause: "Corporate or intelligence work, efficiency is everything."
+                observation: 'Looking to enhance your operational capacity?',
+                suggestion: 'This would improve your effectiveness in the field.',
+                respectClause: 'Corporate or intelligence work, efficiency is everything.'
             }
         },
         mid: {
             default: {
-                combined: "This choice improves your cover and your capabilities. Acceptable."
+                combined: 'This choice improves your cover and your capabilities. Acceptable.'
             }
         },
         late: {
             default: {
-                combined: "You operate at senior levels now. This refinement befits your station."
+                combined: 'You operate at senior levels now. This refinement befits your station.'
             }
         }
     },
     rejection: {
-        gentle: "Alternative tradecraft. Noted for the file.",
-        accepting: "Your cover, your choices.",
+        gentle: 'Alternative tradecraft. Noted for the file.',
+        accepting: 'Your cover, your choices.',
         recovery: "I was thinking corporate. Perhaps you're thinking field operations."
     },
     scolding: {
-        correction: "That choice compromises operational security.",
-        reprimand: "Repeated deviation from protocol raises concerns.",
-        pressure: "In this business, poor choices get assets burned. Consider that carefully."
+        correction: 'That choice compromises operational security.',
+        reprimand: 'Repeated deviation from protocol raises concerns.',
+        pressure: 'In this business, poor choices get assets burned. Consider that carefully.'
     }
 };
 
@@ -2744,7 +2744,7 @@ MENTOR_SUGGESTION_DIALOGUES["Corporate Agent"] = {
 export function getMentorSuggestionDialogue({
     mentorClass,
     context,
-    specificType = "default",
+    specificType = 'default',
     level,
     rejectionCount = 0,
     recommendation = {}
@@ -2780,24 +2780,24 @@ export function getMentorSuggestionDialogue({
  */
 function buildDialogueResponse(phaseDialogues, specificType, personality, rejectionCount, fullDialogues) {
     // Try specific type first, then default
-    let dialogue = phaseDialogues[specificType] || phaseDialogues["default"];
+    const dialogue = phaseDialogues[specificType] || phaseDialogues['default'];
 
     if (!dialogue) {
-        return { text: "...", phase: "unknown" };
+        return { text: '...', phase: 'unknown' };
     }
 
     // Handle combined format (mid/late phases often use single string)
     if (dialogue.combined) {
-        let text = dialogue.combined;
+        const text = dialogue.combined;
 
         return {
             text,
-            phase: "combined"
+            phase: 'combined'
         };
     }
 
     // Build three-layer response
-    let parts = [];
+    const parts = [];
 
     if (dialogue.observation && (!personality || personality.usesAllLayers)) {
         parts.push(dialogue.observation);
@@ -2812,8 +2812,8 @@ function buildDialogueResponse(phaseDialogues, specificType, personality, reject
     }
 
     return {
-        text: parts.join("\n"),
-        phase: "layered",
+        text: parts.join('\n'),
+        phase: 'layered',
         layers: {
             observation: dialogue.observation,
             suggestion: dialogue.suggestion,
@@ -2828,7 +2828,7 @@ function buildDialogueResponse(phaseDialogues, specificType, personality, reject
  * @param {string} intensity - "gentle", "accepting", or "recovery"
  * @returns {string} The rejection response text
  */
-export function getMentorRejectionResponse(mentorClass, intensity = "gentle") {
+export function getMentorRejectionResponse(mentorClass, intensity = 'gentle') {
     const dialogues = MENTOR_SUGGESTION_DIALOGUES[mentorClass];
     if (!dialogues?.rejection) {
         return "I understand. Let's consider other options.";
@@ -2842,22 +2842,22 @@ export function getMentorRejectionResponse(mentorClass, intensity = "gentle") {
 function getGenericDialogue(context, phase) {
     const genericResponses = {
         early: {
-            attribute: "This attribute would strengthen your capabilities.",
-            feat: "This feat adds useful abilities to your repertoire.",
-            talent: "This talent enhances your specialization.",
-            default: "This choice would serve you well."
+            attribute: 'This attribute would strengthen your capabilities.',
+            feat: 'This feat adds useful abilities to your repertoire.',
+            talent: 'This talent enhances your specialization.',
+            default: 'This choice would serve you well.'
         },
         mid: {
-            attribute: "This builds on your established strengths.",
-            feat: "A solid choice that complements your style.",
-            talent: "This talent deepens your expertise.",
-            default: "A practical choice."
+            attribute: 'This builds on your established strengths.',
+            feat: 'A solid choice that complements your style.',
+            talent: 'This talent deepens your expertise.',
+            default: 'A practical choice.'
         },
         late: {
-            attribute: "You know your path. This aligns with it.",
-            feat: "Veteran selection.",
-            talent: "Master-level choice.",
-            default: "Your experience guides you well."
+            attribute: 'You know your path. This aligns with it.',
+            feat: 'Veteran selection.',
+            talent: 'Master-level choice.',
+            default: 'Your experience guides you well.'
         }
     };
 
@@ -2933,7 +2933,7 @@ export async function mentorSpeak({
     const rejectionCount = playerHistory.rejectedSimilarAdvice || 0;
 
     // Determine specific type from recommendation
-    let specificType = "default";
+    let specificType = 'default';
     if (recommendation.attribute) {
         specificType = recommendation.attribute.toLowerCase();
     } else if (recommendation.name) {
@@ -2958,7 +2958,7 @@ export async function mentorSpeak({
     // Add confidence indicator for low-confidence suggestions
     if (confidence < 0.4) {
         dialogue.lowConfidence = true;
-        dialogue.confidenceNote = "This is less certain than usual.";
+        dialogue.confidenceNote = 'This is less certain than usual.';
     }
 
     // Add metadata

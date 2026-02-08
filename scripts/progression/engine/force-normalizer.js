@@ -91,7 +91,7 @@ export const ForceNormalizer = {
      */
     _normalizePowerLevel(level) {
         const num = Number(level ?? 1);
-        if (isNaN(num)) return 1;
+        if (isNaN(num)) {return 1;}
         return Math.max(1, Math.min(9, num));
     },
 
@@ -115,7 +115,7 @@ export const ForceNormalizer = {
      * @private
      */
     _normalizeRange(range) {
-        if (!range) return 'Personal';
+        if (!range) {return 'Personal';}
         return String(range).trim();
     },
 
@@ -124,7 +124,7 @@ export const ForceNormalizer = {
      * @private
      */
     _normalizeDuration(duration) {
-        if (!duration) return 'Instantaneous';
+        if (!duration) {return 'Instantaneous';}
         return String(duration).trim();
     },
 
@@ -133,7 +133,7 @@ export const ForceNormalizer = {
      * @private
      */
     _normalizeTargets(targets) {
-        if (!targets) return 'One living creature';
+        if (!targets) {return 'One living creature';}
         return String(targets).trim();
     },
 
@@ -157,7 +157,7 @@ export const ForceNormalizer = {
      * @private
      */
     _normalizePrerequisites(prereq) {
-        if (!prereq) return '';
+        if (!prereq) {return '';}
         return String(prereq).trim().replace(/\s+/g, ' ');
     },
 

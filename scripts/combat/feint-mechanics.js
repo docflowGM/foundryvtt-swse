@@ -149,7 +149,7 @@ export class FeintMechanics {
    * Colossal/Gargantuan: -10/-5, Huge: -2, Large: -1, else: 0
    */
   static _getVehicleSizeModifier(vehicle) {
-    if (vehicle.type !== 'vehicle') return 0;
+    if (vehicle.type !== 'vehicle') {return 0;}
 
     const size = vehicle.system.size || 'Medium';
 
@@ -166,7 +166,7 @@ export class FeintMechanics {
    * Check if a target is humanoid
    */
   static _isHumanoid(actor) {
-    if (!actor.system) return true; // Assume humanoid if unknown
+    if (!actor.system) {return true;} // Assume humanoid if unknown
 
     // Check species/type
     const species = actor.system.race || actor.system.species || '';

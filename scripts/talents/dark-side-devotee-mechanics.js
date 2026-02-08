@@ -229,7 +229,7 @@ export class DarkSideDevoteeMechanics {
    */
   static isCurrentlyRaging(actor) {
     const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
-    if (!rageInfo) return false;
+    if (!rageInfo) {return false;}
 
     // Check if rage duration has expired
     const currentRound = game.combat?.round || 0;
@@ -319,7 +319,7 @@ export class DarkSideDevoteeMechanics {
    */
   static checkCripplingStrikeExpiry(targetActor) {
     const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
-    if (!crippledInfo) return false;
+    if (!crippledInfo) {return false;}
 
     // Check if fully healed
     if (targetActor.system.hp.value >= crippledInfo.maxHpWhenCrippled) {
@@ -335,7 +335,7 @@ export class DarkSideDevoteeMechanics {
    */
   static async removeCripplingStrike(targetActor) {
     const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
-    if (!crippledInfo) return;
+    if (!crippledInfo) {return;}
 
     // Restore original speed
     await targetActor.update({
@@ -535,7 +535,7 @@ export class DarkSideDevoteeMechanics {
    */
   static canCreateNewTalisman(actor) {
     const cooldown = actor.getFlag('swse', 'darkSideTalismanCooldown');
-    if (!cooldown) return true;
+    if (!cooldown) {return true;}
 
     const cooldownTime = new Date(cooldown);
     const now = new Date();

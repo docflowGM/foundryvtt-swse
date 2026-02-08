@@ -35,11 +35,11 @@ export default class SWSEApplicationV2 extends HandlebarsApplicationMixin(Applic
     const o = foundry.utils.mergeObject({}, this.DEFAULT_OPTIONS);
 
     // Legacy v1-style aliases used by older subclasses.
-    if (o.position?.width !== undefined) o.width = o.position.width;
-    if (o.position?.height !== undefined) o.height = o.position.height;
-    if (o.window?.resizable !== undefined) o.resizable = o.window.resizable;
-    if (o.window?.draggable !== undefined) o.draggable = o.window.draggable;
-    if (o.window?.frame !== undefined) o.popOut = o.window.frame;
+    if (o.position?.width !== undefined) {o.width = o.position.width;}
+    if (o.position?.height !== undefined) {o.height = o.position.height;}
+    if (o.window?.resizable !== undefined) {o.resizable = o.window.resizable;}
+    if (o.window?.draggable !== undefined) {o.draggable = o.window.draggable;}
+    if (o.window?.frame !== undefined) {o.popOut = o.window.frame;}
 
     return foundry.utils.mergeObject(base, o);
   }

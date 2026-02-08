@@ -12,6 +12,6 @@ export function warnGM(message) {
   // Send GM chat whisper
   ChatMessage.create({
     content: `<p style="color:orange;"><strong>SWSE Warning:</strong> ${message}</p>`,
-    whisper: ChatMessage.getWhisperRecipients("GM")
+    whisper: ChatMessage.getWhisperRecipients('GM')
   });
 }

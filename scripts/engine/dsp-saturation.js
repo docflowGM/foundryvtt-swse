@@ -37,17 +37,17 @@ export function calculateDspSaturation(actor) {
  */
 export function getDspBand(saturation) {
   if (saturation < 0.2) {
-    return "touched";
+    return 'touched';
   } else if (saturation < 0.4) {
-    return "strained";
+    return 'strained';
   } else if (saturation < 0.6) {
-    return "slipping";
+    return 'slipping';
   } else if (saturation < 0.8) {
-    return "tainted";
+    return 'tainted';
   } else if (saturation < 1.0) {
-    return "edge";
+    return 'edge';
   } else {
-    return "fallen";
+    return 'fallen';
   }
 }
 
@@ -59,15 +59,15 @@ export function getDspBand(saturation) {
  */
 export function getBandDescription(band) {
   const descriptions = {
-    touched: "You have been touched by the dark side.",
-    strained: "The darkness strains at your resolve.",
-    slipping: "You are slipping toward the darkness.",
-    tainted: "The darkness has tainted your spirit.",
-    edge: "You stand on the edge of the abyss.",
-    fallen: "You have fallen to the darkness."
+    touched: 'You have been touched by the dark side.',
+    strained: 'The darkness strains at your resolve.',
+    slipping: 'You are slipping toward the darkness.',
+    tainted: 'The darkness has tainted your spirit.',
+    edge: 'You stand on the edge of the abyss.',
+    fallen: 'You have fallen to the darkness.'
   };
 
-  return descriptions[band] || "Unknown state.";
+  return descriptions[band] || 'Unknown state.';
 }
 
 /**
@@ -79,15 +79,15 @@ export function getBandDescription(band) {
  */
 export function getToneModifier(band) {
   const tones = {
-    touched: "measured",
-    strained: "concerned",
-    slipping: "firm",
-    tainted: "grave",
-    edge: "severe",
-    fallen: "cold"
+    touched: 'measured',
+    strained: 'concerned',
+    slipping: 'firm',
+    tainted: 'grave',
+    edge: 'severe',
+    fallen: 'cold'
   };
 
-  return tones[band] || "measured";
+  return tones[band] || 'measured';
 }
 
 /**
@@ -97,7 +97,7 @@ export function getToneModifier(band) {
  * @param {string} contextType - Type of context: "ability", "choice", "suggestion"
  * @returns {boolean} Whether a warning should be issued
  */
-export function shouldWarn(saturation, contextType = "choice") {
+export function shouldWarn(saturation, contextType = 'choice') {
   // No warnings for touched state
   if (saturation < 0.2) {
     return false;

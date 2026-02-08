@@ -98,12 +98,12 @@ export async function loadGeneralistArchetype() {
   } catch (err) {
     SWSELogger.warn('[ArchetypeAffinityEngine] Unable to load generalist archetype; will use default fallback.', err);
     return {
-      name: "Generalist",
-      status: "active",
-      preferredTags: ["defense", "skills", "evasion", "condition-removal"],
-      secondaryTags: ["support", "perception", "leadership"],
-      avoidTags: ["burst-damage"],
-      notes: "Default generalist fallback"
+      name: 'Generalist',
+      status: 'active',
+      preferredTags: ['defense', 'skills', 'evasion', 'condition-removal'],
+      secondaryTags: ['support', 'perception', 'leadership'],
+      avoidTags: ['burst-damage'],
+      notes: 'Default generalist fallback'
     };
   }
 }
@@ -770,4 +770,4 @@ export async function initializeArchetypeData() {
 }
 
 // Lazy initialization (will be called on first use or by setup hook)
-export let ARCHETYPE_DATA = { valid: false, errors: [], stats: {}, archetypes: {} };
+export const ARCHETYPE_DATA = { valid: false, errors: [], stats: {}, archetypes: {} };

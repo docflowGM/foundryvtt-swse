@@ -35,7 +35,7 @@ export const FeatState = {
      * Add a feat to progression state
      */
     async addFeat(actor, featName) {
-        if (!featName) return false;
+        if (!featName) {return false;}
 
         const feats = this.getFeats(actor);
         const featList = Array.isArray(feats) ? [...feats] : [];
@@ -58,7 +58,7 @@ export const FeatState = {
      * Remove a feat from progression state
      */
     async removeFeat(actor, featName) {
-        if (!featName) return false;
+        if (!featName) {return false;}
 
         const feats = this.getFeats(actor);
         const featList = Array.isArray(feats) ? [...feats] : [];
@@ -118,8 +118,8 @@ export const FeatState = {
      * Normalize feats list
      */
     normalize(feats) {
-        if (!feats) return [];
-        if (!Array.isArray(feats)) return [];
+        if (!feats) {return [];}
+        if (!Array.isArray(feats)) {return [];}
 
         return feats
             .map(feat => String(feat).trim())

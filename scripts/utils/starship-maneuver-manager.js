@@ -25,7 +25,7 @@ export class StarshipManeuverManager {
 
     for (const maneuver of allManeuvers) {
       // Skip already learned
-      if (learned.has(maneuver.name)) continue;
+      if (learned.has(maneuver.name)) {continue;}
 
       // Check prerequisites
       const prerequisiteCheck = await this._checkManeuverPrerequisites(actor, maneuver);

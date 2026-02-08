@@ -26,7 +26,6 @@ export class PrerequisiteBuilderDialog extends SWSEFormApplication {
     }
   );
 
-  
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
@@ -56,7 +55,7 @@ async _prepareContext(options) {
 
   async _onRender(context, options) {
     const root = this.element;
-    if (!(root instanceof HTMLElement)) return;
+    if (!(root instanceof HTMLElement)) {return;}
 
     // Mode toggle
     root.querySelectorAll('input[name="mode"]').forEach(el => {

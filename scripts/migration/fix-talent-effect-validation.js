@@ -13,8 +13,8 @@ import { SWSELogger } from '../utils/logger.js';
 
 export class TalentEffectValidationMigration {
 
-  static MIGRATION_VERSION = "1.1.140";
-  static MIGRATION_KEY = "talentEffectValidationMigration";
+  static MIGRATION_VERSION = '1.1.140';
+  static MIGRATION_KEY = 'talentEffectValidationMigration';
 
   /**
    * Check if migration has been run for current version
@@ -47,7 +47,7 @@ export class TalentEffectValidationMigration {
    * Custom types like "talent-effect" are not valid in v13+
    */
   static isInvalidEffectType(effectType) {
-    if (effectType === undefined || effectType === null) return false;
+    if (effectType === undefined || effectType === null) {return false;}
 
     // These are potentially valid custom types, but in v13+ we should avoid them
     // Valid Foundry types are typically not set or are specific system types
@@ -120,18 +120,18 @@ export class TalentEffectValidationMigration {
   static async run() {
     // Only GMs can run migrations
     if (!game.user.isGM) {
-      SWSELogger.log("SWSE | Skipping talent effect validation migration (not GM)");
+      SWSELogger.log('SWSE | Skipping talent effect validation migration (not GM)');
       return;
     }
 
     // Check if migration needed
     if (!(await this.needsMigration())) {
-      SWSELogger.log("SWSE | Talent effect validation migration already complete");
+      SWSELogger.log('SWSE | Talent effect validation migration already complete');
       return;
     }
 
-    SWSELogger.log("SWSE | Starting talent effect validation migration...");
-    ui.notifications.info("Fixing talent effect validation issues, please wait...");
+    SWSELogger.log('SWSE | Starting talent effect validation migration...');
+    ui.notifications.info('Fixing talent effect validation issues, please wait...');
 
     let fixedItems = 0;
     let fixedActors = 0;
@@ -141,7 +141,7 @@ export class TalentEffectValidationMigration {
     // ============================================
     // Fix effects on standalone items in the world
     // ============================================
-    SWSELogger.log("SWSE | Checking world items for invalid effect types...");
+    SWSELogger.log('SWSE | Checking world items for invalid effect types...');
     for (const item of game.items) {
       try {
         const { fixedCount, needsUpdate } = await this.fixItemEffects(item);
@@ -160,7 +160,7 @@ export class TalentEffectValidationMigration {
     // ============================================
     // Fix effects on items embedded in actors
     // ============================================
-    SWSELogger.log("SWSE | Checking actor items for invalid effect types...");
+    SWSELogger.log('SWSE | Checking actor items for invalid effect types...');
     for (const actor of game.actors) {
       try {
         let actorFixed = 0;
@@ -187,7 +187,7 @@ export class TalentEffectValidationMigration {
     // ============================================
     // Fix effects directly on actors
     // ============================================
-    SWSELogger.log("SWSE | Checking actors for invalid effect types...");
+    SWSELogger.log('SWSE | Checking actors for invalid effect types...');
     for (const actor of game.actors) {
       try {
         if (actor.effects && actor.effects.size > 0) {
@@ -217,15 +217,15 @@ export class TalentEffectValidationMigration {
       }
     }
 
-    SWSELogger.log("=".repeat(60));
-    SWSELogger.log("SWSE | Talent Effect Validation Migration Complete");
+    SWSELogger.log('='.repeat(60));
+    SWSELogger.log('SWSE | Talent Effect Validation Migration Complete');
     SWSELogger.log(`✓ Fixed: ${fixedItems} effects on world items`);
     SWSELogger.log(`✓ Fixed: ${fixedActors} actors with corrected effects`);
     SWSELogger.log(`○ Skipped: ${skippedItems} items (no invalid effects)`);
     if (errors > 0) {
       SWSELogger.log(`✗ Errors: ${errors} items/actors`);
     }
-    SWSELogger.log("=".repeat(60));
+    SWSELogger.log('='.repeat(60));
 
     // Mark migration as complete
     await this.markComplete();
@@ -234,7 +234,7 @@ export class TalentEffectValidationMigration {
     if (total > 0) {
       ui.notifications.info(`Talent effect validation fixed! Corrected ${total} effect(s).`);
     } else {
-      ui.notifications.info("Talent effect validation migration complete! No fixes needed.");
+      ui.notifications.info('Talent effect validation migration complete! No fixes needed.');
     }
 
     return { fixedItems, fixedActors, skippedItems, errors };
@@ -243,8 +243,8 @@ export class TalentEffectValidationMigration {
 
 // Register globally for manual runs
 Hooks.once('init', () => {
-  if (!game.swse) game.swse = {};
-  if (!game.swse.migrations) game.swse.migrations = {};
+  if (!game.swse) {game.swse = {};}
+  if (!game.swse.migrations) {game.swse.migrations = {};}
   game.swse.migrations.fixTalentEffectValidation = TalentEffectValidationMigration.run.bind(TalentEffectValidationMigration);
 });
 
@@ -254,10 +254,10 @@ Hooks.once('ready', async () => {
     try {
       await TalentEffectValidationMigration.run();
     } catch (err) {
-      SWSELogger.error("SWSE | Talent effect validation migration failed:", err);
+      SWSELogger.error('SWSE | Talent effect validation migration failed:', err);
       ui.notifications.error(`Talent effect validation migration failed: ${err.message || err}`, { permanent: true });
     }
   }
 });
 
-SWSELogger.log("SWSE | Talent effect validation migration script loaded. Manual run: await game.swse.migrations.fixTalentEffectValidation()");
+SWSELogger.log('SWSE | Talent effect validation migration script loaded. Manual run: await game.swse.migrations.fixTalentEffectValidation()');

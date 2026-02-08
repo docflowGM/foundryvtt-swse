@@ -16,7 +16,7 @@ export const mathHelpers = {
 
   divide: (a, b) => {
     const divisor = Number(b ?? 0);
-    if (!divisor) return 0;
+    if (!divisor) {return 0;}
     return Number(a ?? 0) / divisor;
   },
 
@@ -47,7 +47,7 @@ export const mathHelpers = {
 
   average: (...args) => {
     const values = args.slice(0, -1).map(v => Number(v ?? 0));
-    if (!values.length) return 0;
+    if (!values.length) {return 0;}
     const sum = values.reduce((a, b) => a + b, 0);
     return sum / values.length;
   },

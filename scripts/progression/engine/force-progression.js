@@ -47,7 +47,7 @@ export class ForceProgressionEngine {
         // Sum force points from all Force-using class levels
         for (const classLevel of classLevels) {
             const classData = progression[`${classLevel.class}_data`]; // Cached class data
-            if (!classData) continue;
+            if (!classData) {continue;}
 
             const levelFeatures = classData.levelProgression?.[classLevel.level];
             if (levelFeatures && levelFeatures.forcePoints) {
@@ -120,7 +120,7 @@ export class ForceProgressionEngine {
      */
     static async createForcePowerChoice(actor, count = 1, filters = {}) {
         const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-        if (!powerPack) return [];
+        if (!powerPack) {return [];}
 
         const allPowers = await powerPack.getDocuments();
         let availablePowers = allPowers.filter(p => {
@@ -133,7 +133,7 @@ export class ForceProgressionEngine {
             const hasIt = actor.items.some(i =>
                 i.type === 'forcepower' && i.name === p.name
             );
-            if (hasIt) return false;
+            if (hasIt) {return false;}
 
             return true;
         });
@@ -145,7 +145,7 @@ export class ForceProgressionEngine {
                 const canonical = PrerequisiteChecker.checkFeatPrerequisites(actor, p);
                 const legacy = PrerequisiteValidator.checkFeatPrerequisites(p, actor);
                 if (canonical.met !== legacy.valid) {
-                    console.warn("Force power prereq mismatch detected", { power: p.name, canonical, legacy });
+                    console.warn('Force power prereq mismatch detected', { power: p.name, canonical, legacy });
                 }
                 return canonical.met;
             });
@@ -161,7 +161,7 @@ export class ForceProgressionEngine {
         const current = actor.system.force?.pointPool || 0;
 
         await actor.update({
-            "system.force.pointPool": current + amount
+            'system.force.pointPool': current + amount
         });
 
         SWSELogger.log(`Force point pool increased by ${amount} (now ${current + amount})`);
@@ -197,7 +197,7 @@ export class ForceProgressionEngine {
         }
 
         const featDoc = await featPack.getDocument(featIndex._id);
-        if (!featDoc) return false;
+        if (!featDoc) {return false;}
 
         await ApplyHandlers.applyFeat(actor, featDoc.toObject());
         SWSELogger.log(`Granted force technique: ${techniqueName}`);
@@ -234,7 +234,7 @@ export class ForceProgressionEngine {
         }
 
         const talentDoc = await talentPack.getDocument(talentIndex._id);
-        if (!talentDoc) return false;
+        if (!talentDoc) {return false;}
 
         await ApplyHandlers.applyTalent(actor, talentDoc.toObject());
         SWSELogger.log(`Granted force secret: ${secretName}`);
@@ -246,7 +246,7 @@ export class ForceProgressionEngine {
      */
     static async createForceTechniqueChoice(actor, count = 1) {
         const featPack = game.packs.get('foundryvtt-swse.feats');
-        if (!featPack) return [];
+        if (!featPack) {return [];}
 
         const allFeats = await featPack.getDocuments();
         const techniques = allFeats.filter(f =>
@@ -262,7 +262,7 @@ export class ForceProgressionEngine {
      */
     static async createForceSecretChoice(actor, count = 1) {
         const talentPack = game.packs.get('foundryvtt-swse.talents');
-        if (!talentPack) return [];
+        if (!talentPack) {return [];}
 
         const allTalents = await talentPack.getDocuments();
         const secrets = allTalents.filter(t =>
@@ -278,7 +278,7 @@ export class ForceProgressionEngine {
      */
     static async selectForceRegimen(actor, regimenName) {
         await actor.update({
-            "system.force.regimen": regimenName
+            'system.force.regimen': regimenName
         });
 
         SWSELogger.log(`Selected Force regimen: ${regimenName}`);
@@ -321,7 +321,7 @@ export class ForceProgressionEngine {
         // Recalculate force points
         const forcePoints = this.calculateForcePoints(actor);
         await actor.update({
-            "system.force.pointsMax": forcePoints
+            'system.force.pointsMax': forcePoints
         });
 
         SWSELogger.log(`Finalized force progression: ${forcePoints} force points available`);

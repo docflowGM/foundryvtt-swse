@@ -33,8 +33,8 @@ export class PressureMonitor {
 
     // Determine severity
     let severity = INSIGHT_SEVERITY.MEDIUM;
-    if (pressureHigh && fallbackHigh) severity = INSIGHT_SEVERITY.HIGH;
-    if (pressureHigh && fallbackHigh && defensiveBiasHigh) severity = INSIGHT_SEVERITY.CRITICAL;
+    if (pressureHigh && fallbackHigh) {severity = INSIGHT_SEVERITY.HIGH;}
+    if (pressureHigh && fallbackHigh && defensiveBiasHigh) {severity = INSIGHT_SEVERITY.CRITICAL;}
 
     // Build evidence array
     const evidence = [];

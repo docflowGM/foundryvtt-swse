@@ -46,8 +46,8 @@ export const ProgressionStateNormalizer = {
      * @private
      */
     _normalizeClassLevels(classLevels) {
-        if (!classLevels) return [];
-        if (!Array.isArray(classLevels)) return [];
+        if (!classLevels) {return [];}
+        if (!Array.isArray(classLevels)) {return [];}
 
         return classLevels
             .filter(cl => cl && cl.class)
@@ -63,8 +63,8 @@ export const ProgressionStateNormalizer = {
      * @private
      */
     _normalizeStringArray(arr) {
-        if (!arr) return [];
-        if (!Array.isArray(arr)) return [];
+        if (!arr) {return [];}
+        if (!Array.isArray(arr)) {return [];}
 
         return arr
             .map(item => String(item).trim())
@@ -77,8 +77,8 @@ export const ProgressionStateNormalizer = {
      * @private
      */
     _normalizeTrainedSkills(skills) {
-        if (!skills) return {};
-        if (typeof skills !== 'object') return {};
+        if (!skills) {return {};}
+        if (typeof skills !== 'object') {return {};}
 
         const normalized = {};
         for (const [skillKey, trained] of Object.entries(skills)) {

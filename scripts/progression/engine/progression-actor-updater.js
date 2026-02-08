@@ -31,16 +31,16 @@ export class ActorProgressionUpdater {
       // Set total level
       const classLevels = prog.classLevels || [];
       if (classLevels.length > 0) {
-        updates["system.level"] = classLevels.length;
+        updates['system.level'] = classLevels.length;
       }
 
       // Apply species data
       if (prog.species) {
         const speciesData = PROGRESSION_RULES.species[prog.species];
         if (speciesData) {
-          updates["system.race"] = prog.species;
-          if (speciesData.size) updates["system.size"] = speciesData.size;
-          if (speciesData.speed !== undefined) updates["system.speed"] = speciesData.speed;
+          updates['system.race'] = prog.species;
+          if (speciesData.size) {updates['system.size'] = speciesData.size;}
+          if (speciesData.speed !== undefined) {updates['system.speed'] = speciesData.speed;}
         }
       }
 
@@ -70,13 +70,13 @@ export class ActorProgressionUpdater {
       );
 
       if (isForceSensitive || hasForceTrainingFeat || hasForceStartingFeat) {
-        updates["system.forceSensitive"] = true;
+        updates['system.forceSensitive'] = true;
       }
 
       // Track progression state in flags (for auditing)
-      updates["flags.swse.appliedFeats"] = prog.feats || [];
-      updates["flags.swse.appliedTalents"] = prog.talents || [];
-      updates["flags.swse.trainedSkills"] = prog.trainedSkills || [];
+      updates['flags.swse.appliedFeats'] = prog.feats || [];
+      updates['flags.swse.appliedTalents'] = prog.talents || [];
+      updates['flags.swse.trainedSkills'] = prog.trainedSkills || [];
 
       // Apply updates
       if (Object.keys(updates).length > 0) {

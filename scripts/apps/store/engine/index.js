@@ -18,10 +18,10 @@
  * }
  */
 
-import { loadRawStoreData } from "./loader.js";
-import { normalizeStoreItem } from "./normalizer.js";
-import { categorizeItem } from "./categorizer.js";
-import { applyPricing } from "./pricing.js";
+import { loadRawStoreData } from './loader.js';
+import { normalizeStoreItem } from './normalizer.js';
+import { categorizeItem } from './categorizer.js';
+import { applyPricing } from './pricing.js';
 
 /* ----------------------------------------------------------- */
 /* CATEGORY STRUCTURE BUILDER                                   */
@@ -104,8 +104,8 @@ export async function buildStoreIndex({ useCache = true } = {}) {
     typeGroup.push(item);
 
     // Category grouping
-    const cat = item.category || "Other";
-    const sub = item.subcategory || "Misc";
+    const cat = item.category || 'Other';
+    const sub = item.subcategory || 'Misc';
 
     const subMap = ensureCategoryStructure(index, cat, sub);
     subMap.get(sub).push(item);
@@ -120,7 +120,7 @@ export async function buildStoreIndex({ useCache = true } = {}) {
       arr.sort((a, b) => {
         const ac = a.finalCost ?? Infinity;
         const bc = b.finalCost ?? Infinity;
-        if (ac !== bc) return ac - bc;
+        if (ac !== bc) {return ac - bc;}
         return a.name.localeCompare(b.name);
       });
     }

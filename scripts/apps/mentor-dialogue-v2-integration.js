@@ -71,53 +71,53 @@ export class MentorDialogueV2Integration {
       dspSaturation,
       dsp,
       dspMax,
-      inferredRole: buildIntent?.inferredRole || "adventurer",
+      inferredRole: buildIntent?.inferredRole || 'adventurer',
       primaryThemes: buildIntent?.primaryThemes || [],
-      combatStyle: buildIntent?.combatStyle || "mixed",
+      combatStyle: buildIntent?.combatStyle || 'mixed',
       abilities
     };
 
     // Topic-specific data
     switch (topic) {
-      case "who_am_i_becoming":
+      case 'who_am_i_becoming':
         return {
           ...baseData,
           primaryThemes: buildIntent?.primaryThemes || []
         };
 
-      case "paths_open":
+      case 'paths_open':
         return {
           ...baseData,
           mentorClass: buildIntent?.mentorClass
         };
 
-      case "doing_well":
+      case 'doing_well':
         return {
           ...baseData,
           strengths: buildIntent?.strengths || [],
           prestigeAffinities: buildIntent?.prestigeAffinities || []
         };
 
-      case "doing_wrong":
+      case 'doing_wrong':
         return {
           ...baseData,
           gaps: buildIntent?.gaps || []
         };
 
-      case "how_should_i_fight":
+      case 'how_should_i_fight':
         return {
           ...baseData,
-          combatStyle: buildIntent?.combatStyle || "mixed"
+          combatStyle: buildIntent?.combatStyle || 'mixed'
         };
 
-      case "be_careful":
+      case 'be_careful':
         return {
           ...baseData,
           risks: buildIntent?.risks || [],
-          combatStyle: buildIntent?.combatStyle || "mixed"
+          combatStyle: buildIntent?.combatStyle || 'mixed'
         };
 
-      case "what_lies_ahead":
+      case 'what_lies_ahead':
         return {
           ...baseData,
           targetClass: buildIntent?.targetPrestigeClass,
@@ -125,7 +125,7 @@ export class MentorDialogueV2Integration {
           prestigeAffinities: buildIntent?.prestigeAffinities || []
         };
 
-      case "how_would_you_play":
+      case 'how_would_you_play':
         return baseData;
 
       default:

@@ -102,7 +102,7 @@ export class FollowerCreator {
                 buttons: {
                     create: {
                         icon: '<i class="fas fa-check"></i>',
-                        label: "Create Follower",
+                        label: 'Create Follower',
                         callback: async (html) => {
                             const formData = new FormData(html[0].querySelector('form'));
                             const data = {
@@ -119,11 +119,11 @@ export class FollowerCreator {
                     },
                     cancel: {
                         icon: '<i class="fas fa-times"></i>',
-                        label: "Cancel",
+                        label: 'Cancel',
                         callback: () => resolve(null)
                     }
                 },
-                default: "create",
+                default: 'create',
                 render: (html) => {
                     // Add event listeners for dynamic updates
                     const speciesSelect = root.querySelector('[name="species"]');
@@ -132,9 +132,9 @@ export class FollowerCreator {
                     speciesSelect?.addEventListener('change', (event) => {
                         const selectedSpeciesName = event.target.options[event.target.selectedIndex].text;
                         if (selectedSpeciesName === 'Human') {
-                            if (humanBonusDiv) humanBonusDiv.style.display = '';
+                            if (humanBonusDiv) {humanBonusDiv.style.display = '';}
                         } else {
-                            if (humanBonusDiv) humanBonusDiv.style.display = 'none';
+                            if (humanBonusDiv) {humanBonusDiv.style.display = 'none';}
                         }
                     });
 
@@ -318,7 +318,7 @@ export class FollowerCreator {
         const [templateType, bonusType] = bonusChoice.split(':');
         const template = templates[templateType];
 
-        if (!template) return;
+        if (!template) {return;}
 
         switch (bonusType) {
             case 'defense':
@@ -490,7 +490,7 @@ export class FollowerCreator {
      * @private
      */
     static async _applyDefenseBonuses(follower, template) {
-        if (!template.defenseBonus) return;
+        if (!template.defenseBonus) {return;}
 
         const updates = {};
 
@@ -552,7 +552,7 @@ export class FollowerCreator {
 
         // Optionally delete the follower actor
         const shouldDelete = await Dialog.confirm({
-            title: "Delete Follower?",
+            title: 'Delete Follower?',
             content: `<p>Do you want to permanently delete ${follower.name}?</p>`,
             yes: () => true,
             no: () => false
@@ -573,7 +573,7 @@ export class FollowerCreator {
         const ownerLevel = owner.system.level || 1;
 
         for (const follower of followers) {
-            if (!follower.system.isFollower) continue;
+            if (!follower.system.isFollower) {continue;}
 
             // Get follower's template for BAB progression
             const templateType = follower.flags?.swse?.follower?.templateType;

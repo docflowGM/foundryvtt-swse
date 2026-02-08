@@ -201,7 +201,7 @@ export class SaberLockMechanics {
    * Searches for an unarmed attack item or creates a reference to one
    */
   static _getUnarmedWeapon(actor) {
-    if (!actor.items) return null;
+    if (!actor.items) {return null;}
 
     // Look for an existing unarmed weapon
     const unarmed = actor.items.find(item =>

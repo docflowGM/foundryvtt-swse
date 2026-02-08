@@ -85,9 +85,9 @@ export class SuggestionConfidence {
 
       // Categorize into confidence level
       const confidenceLevel =
-        confidence >= 0.7 ? "Strong" :
-        confidence >= 0.4 ? "Suggested" :
-        "Possible";
+        confidence >= 0.7 ? 'Strong' :
+        confidence >= 0.4 ? 'Suggested' :
+        'Possible';
 
       SWSELogger.log(
         `[ConfidenceCalculator] ${item?.name || 'unknown'}: ${confidence.toFixed(2)} (${confidenceLevel})`
@@ -109,7 +109,7 @@ export class SuggestionConfidence {
       // Safe fallback: neutral score on error
       return {
         confidence: 0.5,
-        confidenceLevel: "Suggested",
+        confidenceLevel: 'Suggested',
         breakdown: {
           mentorAlignment: 0.5,
           classSynergy: 0.5,
@@ -143,8 +143,8 @@ export class SuggestionConfidence {
    * @returns {string} "Strong" | "Suggested" | "Possible"
    */
   static getConfidenceLevel(confidence) {
-    if (confidence >= 0.7) return "Strong";
-    if (confidence >= 0.4) return "Suggested";
-    return "Possible";
+    if (confidence >= 0.7) {return 'Strong';}
+    if (confidence >= 0.4) {return 'Suggested';}
+    return 'Possible';
   }
 }

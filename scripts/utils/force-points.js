@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "../progression/engine/progression-engine.js";
+import { ProgressionEngine } from '../progression/engine/progression-engine.js';
 /**
  * Force Points utility functions for rolling and spending Force Points
  */
@@ -16,7 +16,7 @@ export class ForcePointsUtil {
   static async rollForcePoint(actor, options = {}) {
     // Guard: Ensure SWSE engine is loaded
     if (!globalThis.SWSE?.RollEngine) {
-      ui.notifications?.error("Force Point roll failed: SWSE system not fully loaded.");
+      ui.notifications?.error('Force Point roll failed: SWSE system not fully loaded.');
       return 0;
     }
 
@@ -67,7 +67,7 @@ export class ForcePointsUtil {
     });
 
     await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({actor}),
+      speaker: ChatMessage.getSpeaker({ actor }),
       content: messageContent,
       style: CONST.CHAT_MESSAGE_STYLES.OTHER,
       sound: CONFIG.sounds.dice
@@ -76,7 +76,7 @@ export class ForcePointsUtil {
     // Increase Dark Side Score if using Dark Side
     if (darkSideUsed) {
       const currentDarkSide = actor.system.darkSideScore || 0;
-      await globalThis.SWSE?.ActorEngine?.updateActor(actor, {'system.darkSideScore': currentDarkSide + 1});
+      await globalThis.SWSE?.ActorEngine?.updateActor(actor, { 'system.darkSideScore': currentDarkSide + 1 });
     }
 
     return totalBonus;
@@ -90,7 +90,7 @@ export class ForcePointsUtil {
   static canUseDarkSide(actor) {
     // Check if Dark Side Temptation is enabled
     const darkSideTemptation = game.settings.get('foundryvtt-swse', 'darkSideTemptation');
-    if (darkSideTemptation === 'narrative') return false;
+    if (darkSideTemptation === 'narrative') {return false;}
 
     // Check if Dark Side Score <= half Wisdom
     const darkSideScore = actor.system.darkSideScore || 0;
@@ -171,7 +171,7 @@ export class ForcePointsUtil {
   static async _createForcePointMessage(actor, data) {
     const { reason, roll, bonus, darkSideRoll, totalBonus, numDice } = data;
 
-    let html = `
+    const html = `
       <div class="swse force-point-roll">
         <h3><i class="fas fa-hand-sparkles"></i> Force Point Spent</h3>
         <div class="dice-roll">
@@ -216,10 +216,10 @@ export class ForcePointsUtil {
 
     // Spend the Force Point
     const spent = await actor.spendForcePoint('reducing Dark Side Score');
-    if (!spent) return false;
+    if (!spent) {return false;}
 
     // Reduce Dark Side Score
-    await globalThis.SWSE?.ActorEngine?.updateActor(actor, {'system.darkSideScore': currentDarkSide - 1});
+    await globalThis.SWSE?.ActorEngine?.updateActor(actor, { 'system.darkSideScore': currentDarkSide - 1 });
     ui.notifications.info(`Dark Side Score reduced to ${currentDarkSide - 1}`);
     return true;
   }
@@ -232,7 +232,7 @@ export class ForcePointsUtil {
   static async avoidDeath(actor) {
     // Spend the Force Point
     const spent = await actor.spendForcePoint('avoiding death');
-    if (!spent) return false;
+    if (!spent) {return false;}
 
     // Set HP to 0 and set condition track to helpless but alive
     await globalThis.SWSE?.ActorEngine?.updateActor(actor, {
@@ -242,7 +242,7 @@ export class ForcePointsUtil {
 
 
     ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({actor}),
+      speaker: ChatMessage.getSpeaker({ actor }),
       content: `<p><strong>${actor.name}</strong> spends a Force Point to avoid death and falls unconscious!</p>`
     });
 

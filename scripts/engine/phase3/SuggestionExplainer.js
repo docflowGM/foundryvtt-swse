@@ -119,7 +119,7 @@ export class SuggestionExplainer {
    * Add soft opportunity cost warning
    */
   static _addOpportunityCostWarning(explanation, reasons) {
-    if (!reasons?.length) return explanation;
+    if (!reasons?.length) {return explanation;}
 
     const warningText = reasons.length === 1
       ? reasons[0]

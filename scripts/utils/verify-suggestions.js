@@ -47,7 +47,7 @@ export function verifySuggestions() {
   let endpointsOk = 0;
   expectedEndpoints.forEach(endpoint => {
     const exists = typeof game?.swse?.suggestions?.[endpoint] === 'function';
-    if (exists) endpointsOk++;
+    if (exists) {endpointsOk++;}
     results.apiEndpoints[endpoint] = exists;
     console.log(`  ${endpoint}: ${exists ? '✅' : '❌'}`);
   });
@@ -83,14 +83,14 @@ export function verifySuggestions() {
     console.log('  3. Direct engine imports - Advanced usage');
     console.log('');
     console.log('Example usage in UI components:');
-    console.log('  const feats = await SuggestionService.getSuggestions(actor, 'verify', { domain: 'feats', available: feats, pendingData: pendingData, persist: false });');
-    console.log('  const attrs = await SuggestionService.getSuggestions(actor, 'verify', { domain: 'attributes', pendingData: pendingData, persist: false });');
+    console.log('  const feats = await SuggestionService.getSuggestions(actor, \'verify\', { domain: \'feats\', available: feats, pendingData: pendingData, persist: false });');
+    console.log('  const attrs = await SuggestionService.getSuggestions(actor, \'verify\', { domain: \'attributes\', pendingData: pendingData, persist: false });');
     results.statusMessage = 'SUCCESS';
   } else {
     console.log('❌ FAILURE: Some endpoints are missing or unavailable.');
     console.log('');
     console.log('Missing components:');
-    if (!coordinatorOk) console.log('  - SuggestionEngineCoordinator not initialized');
+    if (!coordinatorOk) {console.log('  - SuggestionEngineCoordinator not initialized');}
     if (!apiOk) {
       const missing = expectedEndpoints.filter(ep => !results.apiEndpoints[ep]);
       missing.forEach(ep => console.log(`  - ${ep}`));

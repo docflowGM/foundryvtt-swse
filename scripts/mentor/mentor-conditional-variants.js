@@ -22,7 +22,7 @@ import { SWSELogger } from '../utils/logger.js';
  * @returns {boolean} True if condition is met
  */
 export function evaluateCondition(conditionKey, actor, context = {}) {
-  if (!conditionKey) return true; // No condition = always valid
+  if (!conditionKey) {return true;} // No condition = always valid
 
   switch (conditionKey) {
     case 'high_ability': {
@@ -134,11 +134,11 @@ export function selectDialogueVariant(dialogueKeys, actor, context = {}) {
  * @returns {Object} Selected dialogue object or null
  */
 export function resolveDialogueWithConditions(dialogueSet, possibleKeys, actor, context = {}) {
-  if (!dialogueSet) return null;
+  if (!dialogueSet) {return null;}
 
   const { selectedKey, fallback } = selectDialogueVariant(possibleKeys, actor, context);
 
-  if (!selectedKey) return null;
+  if (!selectedKey) {return null;}
 
   // Try exact match
   if (dialogueSet[selectedKey]) {

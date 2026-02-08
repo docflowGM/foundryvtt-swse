@@ -13,7 +13,7 @@ export class CustomItemDialog {
   static async createWeapon(actor) {
     return new Promise((resolve) => {
       const dialog = new Dialog({
-        title: "Create Custom Weapon",
+        title: 'Create Custom Weapon',
         content: `
           <form class="swse-custom-item-form">
             <div class="form-group">
@@ -111,7 +111,7 @@ export class CustomItemDialog {
         buttons: {
           create: {
             icon: '<i class="fas fa-check"></i>',
-            label: "Create Weapon",
+            label: 'Create Weapon',
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
               const form = root?.querySelector?.('form');
@@ -127,22 +127,22 @@ export class CustomItemDialog {
                 type: 'weapon',
                 img: 'icons/weapons/swords/sword-broad-worn.webp',
                 system: {
-                  damage: formData.damage || "1d8",
-                  damageType: formData.damageType || "energy",
-                  range: formData.range || "melee",
-                  attackAttribute: formData.attackAttribute || "str",
+                  damage: formData.damage || '1d8',
+                  damageType: formData.damageType || 'energy',
+                  range: formData.range || 'melee',
+                  attackAttribute: formData.attackAttribute || 'str',
                   attackBonus: parseInt(formData.attackBonus, 10) || 0,
                   weight: parseFloat(formData.weight) || 0,
                   cost: parseInt(formData.cost, 10) || 0,
                   properties: properties,
                   ammunition: {
-                    type: formData.ammoType || "none",
+                    type: formData.ammoType || 'none',
                     current: parseInt(formData.ammoCurrent, 10) || 0,
                     max: parseInt(formData.ammoMax, 10) || 0
                   },
                   upgradeSlots: parseInt(formData.upgradeSlots, 10) ?? 1,
                   installedUpgrades: [],
-                  description: formData.description || "",
+                  description: formData.description || '',
                   equipped: false
                 }
               };
@@ -153,11 +153,11 @@ export class CustomItemDialog {
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
-            label: "Cancel",
+            label: 'Cancel',
             callback: () => resolve(null)
           }
         },
-        default: "create",
+        default: 'create',
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
@@ -180,7 +180,7 @@ export class CustomItemDialog {
   static async createArmor(actor) {
     return new Promise((resolve) => {
       const dialog = new Dialog({
-        title: "Create Custom Armor",
+        title: 'Create Custom Armor',
         content: `
           <form class="swse-custom-item-form">
             <div class="form-group">
@@ -263,7 +263,7 @@ export class CustomItemDialog {
         buttons: {
           create: {
             icon: '<i class="fas fa-check"></i>',
-            label: "Create Armor",
+            label: 'Create Armor',
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
               const form = root?.querySelector?.('form');
@@ -271,7 +271,7 @@ export class CustomItemDialog {
 
               // Handle maxDexBonus - null if blank, otherwise parse as number
               let maxDexBonus = null;
-              if (formData.maxDexBonus && formData.maxDexBonus !== "") {
+              if (formData.maxDexBonus && formData.maxDexBonus !== '') {
                 const parsed = parseInt(formData.maxDexBonus, 10);
                 if (!isNaN(parsed)) {
                   maxDexBonus = parsed;
@@ -283,7 +283,7 @@ export class CustomItemDialog {
                 type: 'armor',
                 img: 'icons/equipment/chest/breastplate-cuirass-steel.webp',
                 system: {
-                  armorType: formData.armorType || "light",
+                  armorType: formData.armorType || 'light',
                   defenseBonus: parseInt(formData.defenseBonus, 10) || 0,
                   equipmentBonus: parseInt(formData.equipmentBonus, 10) || 0,
                   fortBonus: parseInt(formData.fortBonus, 10) || 0,
@@ -294,7 +294,7 @@ export class CustomItemDialog {
                   cost: parseInt(formData.cost, 10) || 0,
                   upgradeSlots: parseInt(formData.upgradeSlots, 10) ?? 1,
                   installedUpgrades: [],
-                  description: formData.description || "",
+                  description: formData.description || '',
                   equipped: false
                 }
               };
@@ -305,11 +305,11 @@ export class CustomItemDialog {
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
-            label: "Cancel",
+            label: 'Cancel',
             callback: () => resolve(null)
           }
         },
-        default: "create",
+        default: 'create',
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
@@ -332,7 +332,7 @@ export class CustomItemDialog {
   static async createEquipment(actor) {
     return new Promise((resolve) => {
       const dialog = new Dialog({
-        title: "Create Custom Equipment",
+        title: 'Create Custom Equipment',
         content: `
           <form class="swse-custom-item-form">
             <div class="form-group">
@@ -367,7 +367,7 @@ export class CustomItemDialog {
         buttons: {
           create: {
             icon: '<i class="fas fa-check"></i>',
-            label: "Create Equipment",
+            label: 'Create Equipment',
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
               const form = root?.querySelector?.('form');
@@ -382,7 +382,7 @@ export class CustomItemDialog {
                   cost: parseInt(formData.cost, 10) || 0,
                   upgradeSlots: parseInt(formData.upgradeSlots, 10) ?? 1,
                   installedUpgrades: [],
-                  description: formData.description || ""
+                  description: formData.description || ''
                 }
               };
 
@@ -392,11 +392,11 @@ export class CustomItemDialog {
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
-            label: "Cancel",
+            label: 'Cancel',
             callback: () => resolve(null)
           }
         },
-        default: "create",
+        default: 'create',
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
@@ -419,7 +419,7 @@ export class CustomItemDialog {
   static async createFeat(actor) {
     return new Promise((resolve) => {
       const dialog = new Dialog({
-        title: "Create Custom Feat",
+        title: 'Create Custom Feat',
         content: `
           <form class="swse-custom-item-form">
             <div class="form-group">
@@ -480,7 +480,7 @@ export class CustomItemDialog {
         buttons: {
           create: {
             icon: '<i class="fas fa-check"></i>',
-            label: "Create Feat",
+            label: 'Create Feat',
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
               const form = root?.querySelector?.('form');
@@ -496,11 +496,11 @@ export class CustomItemDialog {
                 type: 'feat',
                 img: 'icons/sundries/scrolls/scroll-bound-ruby-red.webp',
                 system: {
-                  featType: formData.featType || "general",
-                  prerequisite: formData.prerequisite || "",
-                  benefit: formData.benefit || "",
-                  special: formData.special || "",
-                  normalText: formData.normalText || "",
+                  featType: formData.featType || 'general',
+                  prerequisite: formData.prerequisite || '',
+                  benefit: formData.benefit || '',
+                  special: formData.special || '',
+                  normalText: formData.normalText || '',
                   bonusFeatFor: bonusFeatFor,
                   uses: {
                     current: 0,
@@ -516,11 +516,11 @@ export class CustomItemDialog {
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
-            label: "Cancel",
+            label: 'Cancel',
             callback: () => resolve(null)
           }
         },
-        default: "create",
+        default: 'create',
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
@@ -543,7 +543,7 @@ export class CustomItemDialog {
   static async createTalent(actor) {
     return new Promise((resolve) => {
       const dialog = new Dialog({
-        title: "Create Custom Talent",
+        title: 'Create Custom Talent',
         content: `
           <form class="swse-custom-item-form">
             <div class="form-group">
@@ -592,7 +592,7 @@ export class CustomItemDialog {
         buttons: {
           create: {
             icon: '<i class="fas fa-check"></i>',
-            label: "Create Talent",
+            label: 'Create Talent',
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
               const form = root?.querySelector?.('form');
@@ -603,10 +603,10 @@ export class CustomItemDialog {
                 type: 'talent',
                 img: 'icons/magic/symbols/runes-star-pentagon-orange.webp',
                 system: {
-                  tree: formData.tree || "Custom",
-                  prerequisite: formData.prerequisite || "",
-                  benefit: formData.benefit || "",
-                  special: formData.special || "",
+                  tree: formData.tree || 'Custom',
+                  prerequisite: formData.prerequisite || '',
+                  benefit: formData.benefit || '',
+                  special: formData.special || '',
                   uses: {
                     current: 0,
                     max: parseInt(formData.usesMax, 10) || 0,
@@ -622,11 +622,11 @@ export class CustomItemDialog {
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
-            label: "Cancel",
+            label: 'Cancel',
             callback: () => resolve(null)
           }
         },
-        default: "create",
+        default: 'create',
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
@@ -649,7 +649,7 @@ export class CustomItemDialog {
   static async createForcePower(actor) {
     return new Promise((resolve) => {
       const dialog = new Dialog({
-        title: "Create Custom Force Power",
+        title: 'Create Custom Force Power',
         content: `
           <form class="swse-custom-item-form force-power-form">
             <div class="form-row">
@@ -828,7 +828,7 @@ export class CustomItemDialog {
         buttons: {
           create: {
             icon: '<i class="fas fa-check"></i>',
-            label: "Create Force Power",
+            label: 'Create Force Power',
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
               const form = root?.querySelector?.('form');
@@ -836,7 +836,6 @@ export class CustomItemDialog {
 
               // Gather tags from checkboxes
               const tags = [];
-              const root = html instanceof HTMLElement ? html : html?.[0];
             root?.querySelectorAll?.('input[name="tags"]:checked')?.forEach((el) => {
                 tags.push(el.value);
               });
@@ -855,7 +854,7 @@ export class CustomItemDialog {
                 const hasDCValue = dcValue && dcValue.trim();
 
                 if (hasValidDC && hasEffect) {
-                  dcChart.push({ dc, effect, description: (description && description.trim()) || "" });
+                  dcChart.push({ dc, effect, description: (description && description.trim()) || '' });
                 } else if (hasEffect && hasDCValue && !hasValidDC) {
                   ui.notifications.warn(`Invalid DC value in power chart row: DC must be a positive number`);
                 } else if (hasValidDC && !hasEffect) {
@@ -869,20 +868,20 @@ export class CustomItemDialog {
                 img: 'icons/magic/light/orb-lightbulb-gray.webp',
                 system: {
                   powerLevel: parseInt(formData.powerLevel, 10) || 1,
-                  discipline: formData.discipline || "telekinetic",
+                  discipline: formData.discipline || 'telekinetic',
                   useTheForce: parseInt(formData.useTheForce, 10) || 15,
-                  time: formData.time || "Standard Action",
-                  range: formData.range || "6 squares",
-                  target: formData.target || "One target",
-                  duration: formData.duration || "Instantaneous",
-                  effect: formData.effect || "",
-                  special: formData.special || "",
+                  time: formData.time || 'Standard Action',
+                  range: formData.range || '6 squares',
+                  target: formData.target || 'One target',
+                  duration: formData.duration || 'Instantaneous',
+                  effect: formData.effect || '',
+                  special: formData.special || '',
                   tags: tags,
                   dcChart: dcChart,
                   maintainable: formData.maintainable === 'on',
                   forcePointCost: parseInt(formData.forcePointCost, 10) || 0,
-                  forcePointEffect: formData.forcePointEffect || "",
-                  sourcebook: formData.sourcebook || "Homebrew",
+                  forcePointEffect: formData.forcePointEffect || '',
+                  sourcebook: formData.sourcebook || 'Homebrew',
                   page: parseInt(formData.page, 10) || null,
                   uses: {
                     current: 0,
@@ -899,11 +898,11 @@ export class CustomItemDialog {
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
-            label: "Cancel",
+            label: 'Cancel',
             callback: () => resolve(null)
           }
         },
-        default: "create",
+        default: 'create',
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog', 'force-power-dialog'],
@@ -926,7 +925,7 @@ export class CustomItemDialog {
    * @returns {Promise<Item|null>}
    */
   static async create(actor, type) {
-    switch(type) {
+    switch (type) {
       case 'weapon':
         return this.createWeapon(actor);
       case 'armor':

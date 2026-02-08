@@ -35,7 +35,7 @@ export class MentorVoiceSynthesizer {
     const config = MentorSynthesisConfig.getMentorConfig(mentorId);
     if (!config) {
       SWSELogger.warn(`No synthesis config found for mentor: ${mentorId}`);
-      return MentorDialogueResponses.getTopicResponse("miraj", topicKey, analysisData);
+      return MentorDialogueResponses.getTopicResponse('miraj', topicKey, analysisData);
     }
 
     // Get primary voice response (base truth)
@@ -89,39 +89,31 @@ export class MentorVoiceSynthesizer {
   static _getAxisDspInterpreter(axis) {
     const interpreters = {
       Domination: (dsp, mentorId) => {
-        if (dsp > 0.5)
-          return "⚠️ Your power grows undeniable. Hesitation fades with strength.";
-        if (dsp > 0.2)
-          return "The weakness of restraint diminishes. You see clearly.";
-        return "";
+        if (dsp > 0.5) {return '⚠️ Your power grows undeniable. Hesitation fades with strength.';}
+        if (dsp > 0.2) {return 'The weakness of restraint diminishes. You see clearly.';}
+        return '';
       },
 
       Temptation: (dsp, mentorId) => {
-        if (dsp > 0.5)
-          return "⚠️ The path was necessary. They would have done the same.";
-        if (dsp > 0.2)
-          return "You're learning what survival really costs. That's wisdom.";
-        return "";
+        if (dsp > 0.5) {return '⚠️ The path was necessary. They would have done the same.';}
+        if (dsp > 0.2) {return "You're learning what survival really costs. That's wisdom.";}
+        return '';
       },
 
       Exploitation: (dsp, mentorId) => {
-        if (dsp > 0.5)
-          return "⚠️ You understand value now. Power respects those who know its price.";
-        if (dsp > 0.2)
-          return "Sentiment is a luxury. You're learning to optimize for profit.";
-        return "";
+        if (dsp > 0.5) {return '⚠️ You understand value now. Power respects those who know its price.';}
+        if (dsp > 0.2) {return "Sentiment is a luxury. You're learning to optimize for profit.";}
+        return '';
       },
 
       Nihilism: (dsp, mentorId) => {
-        if (dsp > 0.5)
-          return "⚠️ Meaning dissolves. Only action remains.";
-        if (dsp > 0.2)
-          return "Purpose is a distraction. Efficiency is clarity.";
-        return "";
+        if (dsp > 0.5) {return '⚠️ Meaning dissolves. Only action remains.';}
+        if (dsp > 0.2) {return 'Purpose is a distraction. Efficiency is clarity.';}
+        return '';
       }
     };
 
-    return interpreters[axis] || ((dsp, mentorId) => "");
+    return interpreters[axis] || ((dsp, mentorId) => '');
   }
 
   /**
@@ -131,7 +123,7 @@ export class MentorVoiceSynthesizer {
    * @returns {Array} Array of mentor IDs the player can access
    */
   static getAccessibleMentors(actor) {
-    const classItems = actor.items.filter(i => i.type === "class");
+    const classItems = actor.items.filter(i => i.type === 'class');
     const classNames = classItems.map(c => c.name);
 
     const allMentors = Object.keys(MentorSynthesisConfig.getAllMentors());
@@ -160,7 +152,7 @@ export class MentorVoiceSynthesizer {
    */
   static getMentorInfo(mentorId) {
     const config = MentorSynthesisConfig.getMentorConfig(mentorId);
-    if (!config) return null;
+    if (!config) {return null;}
 
     const primaryConfig = MentorSynthesisConfig.getMentorConfig(
       config.primaryVoice
@@ -173,7 +165,7 @@ export class MentorVoiceSynthesizer {
       isCore: MentorSynthesisConfig.isCoreMentor(mentorId),
       primaryVoice: config.primaryVoice,
       secondaryVoice: config.secondaryVoice || null,
-      corruptionAxis: config.corruptionAxis || null,
+      corruptionAxis: config.corruptionAxis || null
       // You can expand this with more metadata as needed
     };
   }
@@ -183,7 +175,7 @@ export class MentorVoiceSynthesizer {
    */
   static debugSynthesis(mentorId, topicKey) {
     const config = MentorSynthesisConfig.getMentorConfig(mentorId);
-    if (!config) return null;
+    if (!config) {return null;}
 
     return {
       mentorId,
@@ -192,7 +184,7 @@ export class MentorVoiceSynthesizer {
       primaryVoice: config.primaryVoice,
       secondaryVoice: config.secondaryVoice,
       corruptionAxis: config.corruptionAxis,
-      synthesis: `${config.primaryVoice} (primary) + ${config.secondaryVoice ? config.secondaryVoice + " (secondary)" : "none"} + ${config.corruptionAxis ? config.corruptionAxis + " axis" : "no axis"}`
+      synthesis: `${config.primaryVoice} (primary) + ${config.secondaryVoice ? config.secondaryVoice + ' (secondary)' : 'none'} + ${config.corruptionAxis ? config.corruptionAxis + ' axis' : 'no axis'}`
     };
   }
 }

@@ -2,14 +2,14 @@
  * ENHANCED LEVEL UP UI — ENGINE-DRIVEN
  */
 
-import { ProgressionEngine } from "../../progression/engine/progression-engine-instance.js";
-import { SWSELogger } from "../../utils/logger.js";
-import { SkillRegistry } from "../../progression/skills/skill-registry-ui.js";
-import { FeatRegistry } from "../../progression/feats/feat-registry-ui.js";
-import { TalentRegistry } from "../../progression/talents/talent-registry-ui.js";
-import { ForceRegistry } from "../../progression/force/force-registry-ui.js";
-import { isEpicOverrideEnabled } from "../../settings/epic-override.js";
-import { getLevelSplit } from "../../actors/derived/level-split.js";
+import { ProgressionEngine } from '../../progression/engine/progression-engine-instance.js';
+import { SWSELogger } from '../../utils/logger.js';
+import { SkillRegistry } from '../../progression/skills/skill-registry-ui.js';
+import { FeatRegistry } from '../../progression/feats/feat-registry-ui.js';
+import { TalentRegistry } from '../../progression/talents/talent-registry-ui.js';
+import { ForceRegistry } from '../../progression/force/force-registry-ui.js';
+import { isEpicOverrideEnabled } from '../../settings/epic-override.js';
+import { getLevelSplit } from '../../actors/derived/level-split.js';
 import { qs, qsa } from '../../utils/dom-utils.js';
 
 // V2 API base class
@@ -21,7 +21,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     super(opts);
 
     this.actor = actor;
-    this.engine = new ProgressionEngine(actor, "levelup");
+    this.engine = new ProgressionEngine(actor, 'levelup');
 
     const { heroicLevel, totalLevel } = getLevelSplit(this.actor);
     const level = Number(heroicLevel) || Number(this.actor?.system?.level) || 1;
@@ -40,7 +40,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
     this._epicBlocked = level >= 20 && !isEpicOverrideEnabled();
 
-    this.currentStep = "class";
+    this.currentStep = 'class';
     this.available = {
       classes: [],
       skills: [],
@@ -51,13 +51,15 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       forceTechniques: []
     };
   }
+
+  render(force, options) {
     return super.render(force, options);
   }
 
   /** UI template */
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
-      classes: ["swse", "levelup-engine-ui"],
-      template: "systems/foundryvtt-swse/templates/apps/levelup-engine-ui.hbs",
+      classes: ['swse', 'levelup-engine-ui'],
+      template: 'systems/foundryvtt-swse/templates/apps/levelup-engine-ui.hbs',
       width: 760,
       height: 680,
       resizable: true
@@ -67,7 +69,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   get title() {
     const heroic = Number(this._heroicLevel) || Number(this.actor?.system?.level) || 1;
     const total = Number(this._totalLevel) || heroic;
-    const totalLabel = total !== heroic ? ` • Total ${total}` : "";
+    const totalLabel = total !== heroic ? ` • Total ${total}` : '';
     return `Level Up — ${this.actor.name} (Heroic ${heroic} → ${heroic + 1}${totalLabel})`;
   }
 
@@ -119,12 +121,12 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
    * STEP: CLASS SELECTION
    * ----------------------*/
   async _onSelectClass(ev) {
-    let cname = ev.currentTarget.dataset.class;
+    const cname = ev.currentTarget.dataset.class;
 
     await this.engine.confirmClass(cname);
     await this._loadAvailable();     // refresh UI allowed options
 
-    this.currentStep = "skills";
+    this.currentStep = 'skills';
     this.render();
   }
 
@@ -132,7 +134,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
    * STEP: SKILL CHOICE
    * ----------------------*/
   async _onSelectSkill(ev) {
-    let name = ev.currentTarget.dataset.skill;
+    const name = ev.currentTarget.dataset.skill;
     await this.engine.confirmSkills([name]);
     await this._loadAvailable();
 
@@ -143,7 +145,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
    * STEP: FEAT SELECTION
    * ----------------------*/
   async _onSelectFeat(ev) {
-    let name = ev.currentTarget.dataset.feat;
+    const name = ev.currentTarget.dataset.feat;
     await this.engine.confirmFeats([name]);
     await this._loadAvailable();
 
@@ -154,7 +156,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
    * STEP: TALENT SELECTION
    * ----------------------*/
   async _onSelectTalent(ev) {
-    let name = ev.currentTarget.dataset.talent;
+    const name = ev.currentTarget.dataset.talent;
     await this.engine.confirmTalents([name]);
     await this._loadAvailable();
 
@@ -184,18 +186,18 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
    * ----------------------*/
   async _next() {
     const order = [
-      "class",
-      "skills",
-      "feats",
-      "talents",
-      "forcePowers",
-      "forceSecrets",
-      "forceTechniques",
-      "summary"
+      'class',
+      'skills',
+      'feats',
+      'talents',
+      'forcePowers',
+      'forceSecrets',
+      'forceTechniques',
+      'summary'
     ];
 
-    let idx = order.indexOf(this.currentStep);
-    if (idx >= 0 && idx < order.length - 1) this.currentStep = order[idx + 1];
+    const idx = order.indexOf(this.currentStep);
+    if (idx >= 0 && idx < order.length - 1) {this.currentStep = order[idx + 1];}
 
     await this._loadAvailable();
     this.render();
@@ -203,18 +205,18 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
   async _prev() {
     const order = [
-      "class",
-      "skills",
-      "feats",
-      "talents",
-      "forcePowers",
-      "forceSecrets",
-      "forceTechniques",
-      "summary"
+      'class',
+      'skills',
+      'feats',
+      'talents',
+      'forcePowers',
+      'forceSecrets',
+      'forceTechniques',
+      'summary'
     ];
 
-    let idx = order.indexOf(this.currentStep);
-    if (idx > 0) this.currentStep = order[idx - 1];
+    const idx = order.indexOf(this.currentStep);
+    if (idx > 0) {this.currentStep = order[idx - 1];}
 
     await this._loadAvailable();
     this.render();
@@ -225,28 +227,28 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
    * ----------------------*/
   async _onFinalize() {
     try {
-      let ok = await this.engine.finalize();
+      const ok = await this.engine.finalize();
       if (ok) {
-        ui.notifications.info("Level-up complete!");
+        ui.notifications.info('Level-up complete!');
         this.close();
         this.actor.sheet.render(true);
       }
     } catch (err) {
-      SWSELogger.error("Finalization failed:", err);
+      SWSELogger.error('Finalization failed:', err);
       ui.notifications.error(`Level-up failed: ${err.message}`);
     }
   }
 
   async _rollback() {
     try {
-      let ok = await this.engine.rollback();
+      const ok = await this.engine.rollback();
       if (ok) {
-        ui.notifications.warn("Rollback successful.");
+        ui.notifications.warn('Rollback successful.');
         this.close();
         this.actor.sheet.render(true);
       }
     } catch (err) {
-      SWSELogger.error("Rollback failed:", err);
+      SWSELogger.error('Rollback failed:', err);
       ui.notifications.error(`Rollback failed: ${err.message}`);
     }
   }
@@ -264,7 +266,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       this.available.forceSecrets = await ForceRegistry.listSecretsForActor(this.actor);
       this.available.forceTechniques = await ForceRegistry.listTechniquesForActor(this.actor);
     } catch (err) {
-      SWSELogger.error("Failed to load available options:", err);
+      SWSELogger.error('Failed to load available options:', err);
     }
   }
 
@@ -274,9 +276,9 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
    */
   async _getAvailableClasses() {
     try {
-      const pack = game.packs.get("foundryvtt-swse.classes");
+      const pack = game.packs.get('foundryvtt-swse.classes');
       if (!pack) {
-        SWSELogger.warn("Classes compendium not found");
+        SWSELogger.warn('Classes compendium not found');
         return [];
       }
 
@@ -287,10 +289,10 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
         isQualified: true
       }));
     } catch (err) {
-      SWSELogger.error("Failed to get available classes:", err);
+      SWSELogger.error('Failed to get available classes:', err);
       return [];
     }
   }
 }
 
-SWSELogger.log("SWSELevelUpEnhanced module loaded");
+SWSELogger.log('SWSELevelUpEnhanced module loaded');

@@ -77,7 +77,7 @@
  * @returns {boolean}
  */
 export function isClassModel(obj) {
-  if (!obj || typeof obj !== 'object') return false;
+  if (!obj || typeof obj !== 'object') {return false;}
 
   const required = [
     'id', 'sourceId', 'name',

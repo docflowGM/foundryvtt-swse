@@ -3,15 +3,15 @@
  * Handles HP and Vitality recovery during rest
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
-const NS = "foundryvtt-swse";
+const NS = 'foundryvtt-swse';
 
 export class RecoveryMechanics {
   static initialize() {
     // Hook into rest functionality
-    Hooks.on("restCompleted", (data) => this.onRestCompleted(data));
-    SWSELogger.debug("Recovery mechanics initialized");
+    Hooks.on('restCompleted', (data) => this.onRestCompleted(data));
+    SWSELogger.debug('Recovery mechanics initialized');
   }
 
   /**
@@ -20,22 +20,22 @@ export class RecoveryMechanics {
    * @returns {number} - HP to recover
    */
   static calculateRecoveryHP(actor) {
-    const recoveryType = game.settings.get(NS, "recoveryHPType");
-    const customAmount = game.settings.get(NS, "customRecoveryHP");
+    const recoveryType = game.settings.get(NS, 'recoveryHPType');
+    const customAmount = game.settings.get(NS, 'customRecoveryHP');
 
-    if (!actor) return 0;
+    if (!actor) {return 0;}
 
     const hitDie = actor.system?.details?.hitDie || 8;
     const conMod = actor.system?.attributes?.con?.mod || 0;
 
     switch (recoveryType) {
-      case "standard":
+      case 'standard':
         return hitDie;
-      case "slow":
+      case 'slow':
         return Math.ceil(hitDie / 2);
-      case "fast":
+      case 'fast':
         return hitDie + Math.max(0, conMod);
-      case "custom":
+      case 'custom':
         return customAmount;
       default:
         return 0;
@@ -48,10 +48,10 @@ export class RecoveryMechanics {
    * @returns {number} - Vitality to recover (0 if disabled)
    */
   static calculateVitalityRecovery(actor) {
-    const recoveryVitality = game.settings.get(NS, "recoveryVitality");
-    if (!recoveryVitality) return 0;
+    const recoveryVitality = game.settings.get(NS, 'recoveryVitality');
+    if (!recoveryVitality) {return 0;}
 
-    return game.settings.get(NS, "recoveryVitalityAmount");
+    return game.settings.get(NS, 'recoveryVitalityAmount');
   }
 
   /**
@@ -60,12 +60,12 @@ export class RecoveryMechanics {
    * @returns {Promise<Object>} - Recovery result
    */
   static async performRecovery(actor) {
-    if (!game.settings.get(NS, "recoveryEnabled")) {
-      return { success: false, message: "Recovery is not enabled" };
+    if (!game.settings.get(NS, 'recoveryEnabled')) {
+      return { success: false, message: 'Recovery is not enabled' };
     }
 
     if (!actor || actor.isToken) {
-      return { success: false, message: "Invalid actor" };
+      return { success: false, message: 'Invalid actor' };
     }
 
     const hpRecovery = this.calculateRecoveryHP(actor);
@@ -79,7 +79,7 @@ export class RecoveryMechanics {
         const newHP = Math.min(currentHP + hpRecovery, maxHP);
 
         await actor.update({
-          "system.hp.value": newHP
+          'system.hp.value': newHP
         });
       }
 
@@ -90,7 +90,7 @@ export class RecoveryMechanics {
         const newVitality = Math.min(currentVitality + vitalityRecovery, maxVitality);
 
         await actor.update({
-          "system.vp.value": newVitality
+          'system.vp.value': newVitality
         });
       }
 
@@ -101,7 +101,7 @@ export class RecoveryMechanics {
         actor
       };
     } catch (err) {
-      SWSELogger.error("Recovery failed", err);
+      SWSELogger.error('Recovery failed', err);
       return { success: false, message: err.message };
     }
   }
@@ -111,18 +111,18 @@ export class RecoveryMechanics {
    * @private
    */
   static async onRestCompleted(data) {
-    if (!game.settings.get(NS, "recoveryEnabled")) return;
+    if (!game.settings.get(NS, 'recoveryEnabled')) {return;}
 
-    const requiresFullRest = game.settings.get(NS, "recoveryRequiresFullRest");
+    const requiresFullRest = game.settings.get(NS, 'recoveryRequiresFullRest');
     const isFullRest = data.isFullRest || data.duration >= 480; // 8 hours in minutes
 
-    if (requiresFullRest && !isFullRest) return;
+    if (requiresFullRest && !isFullRest) {return;}
 
-    const timing = game.settings.get(NS, "recoveryTiming");
-    if (timing === "afterRest" || timing === "both") {
+    const timing = game.settings.get(NS, 'recoveryTiming');
+    if (timing === 'afterRest' || timing === 'both') {
       // Recover all actors
       for (const actor of game.actors) {
-        if (actor.type === "character") {
+        if (actor.type === 'character') {
           await this.performRecovery(actor);
         }
       }

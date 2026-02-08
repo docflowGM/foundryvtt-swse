@@ -33,39 +33,39 @@ export const CLASS_SUGGESTION_TIERS = {
 };
 
 export const CLASS_TIER_REASONS = {
-    5: "You qualify for this prestige class now",
-    4: "Strong continuation of your current class path",
-    3: "Helps you qualify for a prestige class soon",
-    2: "Strong mechanical synergy with your build",
+    5: 'You qualify for this prestige class now',
+    4: 'Strong continuation of your current class path',
+    3: 'Helps you qualify for a prestige class soon',
+    2: 'Strong mechanical synergy with your build',
     1: "Fits your character's theme or role",
-    0: "Legal option"
+    0: 'Legal option'
 };
 
 export const CLASS_TIER_ICONS = {
-    5: "fa-star",           // Star for prestige qualification
-    4: "fa-route",          // Path for continuation
-    3: "fa-unlock",         // Unlock for near-prestige
-    2: "fa-gears",           // Gears for mechanical synergy
-    1: "fa-masks-theater",  // Theater masks for thematic
-    0: ""                   // No icon for fallback
+    5: 'fa-star',           // Star for prestige qualification
+    4: 'fa-route',          // Path for continuation
+    3: 'fa-unlock',         // Unlock for near-prestige
+    2: 'fa-gears',           // Gears for mechanical synergy
+    1: 'fa-masks-theater',  // Theater masks for thematic
+    0: ''                   // No icon for fallback
 };
 
 export const CLASS_TIER_ICON_CLASSES = {
-    5: "fas fa-star class-suggestion-prestige",
-    4: "fas fa-route class-suggestion-path",
-    3: "fas fa-unlock class-suggestion-unlock",
-    2: "fas fa-gears class-suggestion-synergy",
-    1: "fas fa-masks-theater class-suggestion-thematic",
-    0: ""
+    5: 'fas fa-star class-suggestion-prestige',
+    4: 'fas fa-route class-suggestion-path',
+    3: 'fas fa-unlock class-suggestion-unlock',
+    2: 'fas fa-gears class-suggestion-synergy',
+    1: 'fas fa-masks-theater class-suggestion-thematic',
+    0: ''
 };
 
 export const CLASS_TIER_CSS_CLASSES = {
-    5: "class-suggestion-tier-prestige",
-    4: "class-suggestion-tier-path",
-    3: "class-suggestion-tier-unlock",
-    2: "class-suggestion-tier-synergy",
-    1: "class-suggestion-tier-thematic",
-    0: ""
+    5: 'class-suggestion-tier-prestige',
+    4: 'class-suggestion-tier-path',
+    3: 'class-suggestion-tier-unlock',
+    2: 'class-suggestion-tier-synergy',
+    1: 'class-suggestion-tier-thematic',
+    0: ''
 };
 
 // Prestige bias - prestige classes get a bonus when sorting
@@ -82,231 +82,231 @@ export const PRESTIGE_BIAS = {
 
 export const CLASS_SYNERGY_DATA = {
     // Base Classes
-    "Jedi": {
-        abilities: ["wis", "cha"],
-        skills: ["useTheForce", "perception"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    'Jedi': {
+        abilities: ['wis', 'cha'],
+        skills: ['useTheForce', 'perception'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
         talents: [],
-        talentTrees: ["Lightsaber Combat", "Jedi Mind Tricks", "Telekinetic Savant"],
-        theme: "force"
+        talentTrees: ['Lightsaber Combat', 'Jedi Mind Tricks', 'Telekinetic Savant'],
+        theme: 'force'
     },
-    "Noble": {
-        abilities: ["cha", "int"],
-        skills: ["persuasion", "deception", "gatherInformation"],
-        feats: ["Linguist", "Skill Focus"],
+    'Noble': {
+        abilities: ['cha', 'int'],
+        skills: ['persuasion', 'deception', 'gatherInformation'],
+        feats: ['Linguist', 'Skill Focus'],
         talents: [],
-        talentTrees: ["Inspiration", "Influence", "Leadership"],
-        theme: "social"
+        talentTrees: ['Inspiration', 'Influence', 'Leadership'],
+        theme: 'social'
     },
-    "Scoundrel": {
-        abilities: ["dex", "cha"],
-        skills: ["deception", "stealth", "mechanics"],
-        feats: ["Point-Blank Shot", "Precise Shot"],
+    'Scoundrel': {
+        abilities: ['dex', 'cha'],
+        skills: ['deception', 'stealth', 'mechanics'],
+        feats: ['Point-Blank Shot', 'Precise Shot'],
         talents: [],
-        talentTrees: ["Fortune", "Misfortune", "Slicer"],
-        theme: "ranged"
+        talentTrees: ['Fortune', 'Misfortune', 'Slicer'],
+        theme: 'ranged'
     },
-    "Scout": {
-        abilities: ["dex", "wis"],
-        skills: ["survival", "perception", "stealth"],
-        feats: ["Armor Proficiency (Light)"],
+    'Scout': {
+        abilities: ['dex', 'wis'],
+        skills: ['survival', 'perception', 'stealth'],
+        feats: ['Armor Proficiency (Light)'],
         talents: [],
-        talentTrees: ["Awareness", "Camouflage", "Fringer"],
-        theme: "exploration"
+        talentTrees: ['Awareness', 'Camouflage', 'Fringer'],
+        theme: 'exploration'
     },
-    "Soldier": {
-        abilities: ["str", "con"],
-        skills: ["endurance", "mechanics", "initiative"],
-        feats: ["Armor Proficiency (Medium)", "Armor Proficiency (Heavy)", "Weapon Focus"],
+    'Soldier': {
+        abilities: ['str', 'con'],
+        skills: ['endurance', 'mechanics', 'initiative'],
+        feats: ['Armor Proficiency (Medium)', 'Armor Proficiency (Heavy)', 'Weapon Focus'],
         talents: [],
-        talentTrees: ["Armor Specialist", "Commando", "Weapon Specialist"],
-        theme: "combat"
+        talentTrees: ['Armor Specialist', 'Commando', 'Weapon Specialist'],
+        theme: 'combat'
     },
 
     // Prestige Classes
-    "Ace Pilot": {
-        abilities: ["dex", "int"],
-        skills: ["pilot"],
-        feats: ["Vehicular Combat", "Skill Focus (Pilot)"],
+    'Ace Pilot': {
+        abilities: ['dex', 'int'],
+        skills: ['pilot'],
+        feats: ['Vehicular Combat', 'Skill Focus (Pilot)'],
         talents: [],
-        talentTrees: ["Spacer"],
-        theme: "vehicle"
+        talentTrees: ['Spacer'],
+        theme: 'vehicle'
     },
-    "Assassin": {
-        abilities: ["dex", "int"],
-        skills: ["stealth"],
-        feats: ["Sniper", "Point-Blank Shot"],
-        talents: ["Dastardly Strike"],
-        talentTrees: ["Misfortune"],
-        theme: "stealth"
+    'Assassin': {
+        abilities: ['dex', 'int'],
+        skills: ['stealth'],
+        feats: ['Sniper', 'Point-Blank Shot'],
+        talents: ['Dastardly Strike'],
+        talentTrees: ['Misfortune'],
+        theme: 'stealth'
     },
-    "Bounty Hunter": {
-        abilities: ["wis", "dex"],
-        skills: ["survival", "perception"],
+    'Bounty Hunter': {
+        abilities: ['wis', 'dex'],
+        skills: ['survival', 'perception'],
         feats: [],
         talents: [],
-        talentTrees: ["Awareness"],
-        theme: "tracking"
+        talentTrees: ['Awareness'],
+        theme: 'tracking'
     },
-    "Crime Lord": {
-        abilities: ["cha", "int"],
-        skills: ["deception", "persuasion"],
+    'Crime Lord': {
+        abilities: ['cha', 'int'],
+        skills: ['deception', 'persuasion'],
         feats: [],
         talents: [],
-        talentTrees: ["Fortune", "Lineage", "Misfortune"],
-        theme: "social"
+        talentTrees: ['Fortune', 'Lineage', 'Misfortune'],
+        theme: 'social'
     },
-    "Elite Trooper": {
-        abilities: ["str", "con"],
-        skills: ["endurance"],
-        feats: ["Armor Proficiency (Medium)", "Martial Arts I", "Point-Blank Shot"],
+    'Elite Trooper': {
+        abilities: ['str', 'con'],
+        skills: ['endurance'],
+        feats: ['Armor Proficiency (Medium)', 'Martial Arts I', 'Point-Blank Shot'],
         talents: [],
-        talentTrees: ["Armor Specialist", "Commando", "Weapon Specialist"],
-        theme: "combat"
+        talentTrees: ['Armor Specialist', 'Commando', 'Weapon Specialist'],
+        theme: 'combat'
     },
-    "Force Adept": {
-        abilities: ["wis", "cha"],
-        skills: ["useTheForce"],
-        feats: ["Force Sensitivity"],
+    'Force Adept': {
+        abilities: ['wis', 'cha'],
+        skills: ['useTheForce'],
+        feats: ['Force Sensitivity'],
         talents: [],
-        talentTrees: ["Alter", "Control", "Sense"],
-        theme: "force"
+        talentTrees: ['Alter', 'Control', 'Sense'],
+        theme: 'force'
     },
-    "Force Disciple": {
-        abilities: ["wis", "cha"],
-        skills: ["useTheForce"],
-        feats: ["Force Sensitivity"],
+    'Force Disciple': {
+        abilities: ['wis', 'cha'],
+        skills: ['useTheForce'],
+        feats: ['Force Sensitivity'],
         talents: [],
-        talentTrees: ["Dark Side Devotee", "Force Adept", "Force Item"],
-        theme: "force"
+        talentTrees: ['Dark Side Devotee', 'Force Adept', 'Force Item'],
+        theme: 'force'
     },
-    "Gladiator": {
-        abilities: ["str", "con"],
+    'Gladiator': {
+        abilities: ['str', 'con'],
         skills: [],
-        feats: ["Improved Damage Threshold", "Weapon Proficiency (Advanced Melee Weapons)"],
+        feats: ['Improved Damage Threshold', 'Weapon Proficiency (Advanced Melee Weapons)'],
         talents: [],
         talentTrees: [],
-        theme: "melee"
+        theme: 'melee'
     },
-    "Gunslinger": {
-        abilities: ["dex"],
+    'Gunslinger': {
+        abilities: ['dex'],
         skills: [],
-        feats: ["Point-Blank Shot", "Precise Shot", "Quick Draw", "Weapon Proficiency (Pistols)"],
+        feats: ['Point-Blank Shot', 'Precise Shot', 'Quick Draw', 'Weapon Proficiency (Pistols)'],
         talents: [],
-        talentTrees: ["Fortune"],
-        theme: "ranged"
+        talentTrees: ['Fortune'],
+        theme: 'ranged'
     },
-    "Imperial Knight": {
-        abilities: ["str", "wis"],
-        skills: ["useTheForce"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)", "Armor Proficiency (Medium)"],
+    'Imperial Knight': {
+        abilities: ['str', 'wis'],
+        skills: ['useTheForce'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)', 'Armor Proficiency (Medium)'],
         talents: [],
-        talentTrees: ["Lightsaber Combat"],
-        theme: "force"
+        talentTrees: ['Lightsaber Combat'],
+        theme: 'force'
     },
-    "Infiltrator": {
-        abilities: ["dex", "int"],
-        skills: ["perception", "stealth"],
-        feats: ["Skill Focus (Stealth)"],
+    'Infiltrator': {
+        abilities: ['dex', 'int'],
+        skills: ['perception', 'stealth'],
+        feats: ['Skill Focus (Stealth)'],
         talents: [],
-        talentTrees: ["Camouflage", "Spy"],
-        theme: "stealth"
+        talentTrees: ['Camouflage', 'Spy'],
+        theme: 'stealth'
     },
-    "Jedi Knight": {
-        abilities: ["wis", "cha"],
-        skills: ["useTheForce"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    'Jedi Knight': {
+        abilities: ['wis', 'cha'],
+        skills: ['useTheForce'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
         talents: [],
-        talentTrees: ["Lightsaber Combat", "Jedi Mind Tricks"],
-        theme: "force"
+        talentTrees: ['Lightsaber Combat', 'Jedi Mind Tricks'],
+        theme: 'force'
     },
-    "Jedi Master": {
-        abilities: ["wis", "cha"],
-        skills: ["useTheForce"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    'Jedi Master': {
+        abilities: ['wis', 'cha'],
+        skills: ['useTheForce'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
         talents: [],
-        talentTrees: ["Lightsaber Combat", "Jedi Mind Tricks"],
-        theme: "force"
+        talentTrees: ['Lightsaber Combat', 'Jedi Mind Tricks'],
+        theme: 'force'
     },
-    "Martial Arts Master": {
-        abilities: ["str", "dex"],
+    'Martial Arts Master': {
+        abilities: ['str', 'dex'],
         skills: [],
-        feats: ["Martial Arts II", "Melee Defense"],
+        feats: ['Martial Arts II', 'Melee Defense'],
         talents: [],
-        talentTrees: ["Brawler", "Survivor"],
-        theme: "melee"
+        talentTrees: ['Brawler', 'Survivor'],
+        theme: 'melee'
     },
-    "Medic": {
-        abilities: ["int", "wis"],
-        skills: ["treatInjury", "knowledge"],
-        feats: ["Surgical Expertise"],
+    'Medic': {
+        abilities: ['int', 'wis'],
+        skills: ['treatInjury', 'knowledge'],
+        feats: ['Surgical Expertise'],
         talents: [],
         talentTrees: [],
-        theme: "support"
+        theme: 'support'
     },
-    "Melee Duelist": {
-        abilities: ["str", "dex"],
+    'Melee Duelist': {
+        abilities: ['str', 'dex'],
         skills: [],
-        feats: ["Melee Defense", "Rapid Strike", "Weapon Focus"],
+        feats: ['Melee Defense', 'Rapid Strike', 'Weapon Focus'],
         talents: [],
         talentTrees: [],
-        theme: "melee"
+        theme: 'melee'
     },
-    "Military Engineer": {
-        abilities: ["int"],
-        skills: ["mechanics", "useComputer"],
-        feats: [],
-        talents: [],
-        talentTrees: [],
-        theme: "tech"
-    },
-    "Officer": {
-        abilities: ["cha", "int"],
-        skills: ["knowledge"],
-        feats: [],
-        talents: [],
-        talentTrees: ["Leadership", "Commando", "Veteran"],
-        theme: "leadership"
-    },
-    "Pathfinder": {
-        abilities: ["wis", "con"],
-        skills: ["perception", "survival"],
-        feats: [],
-        talents: [],
-        talentTrees: ["Awareness", "Camouflage", "Survivor"],
-        theme: "exploration"
-    },
-    "Saboteur": {
-        abilities: ["int", "dex"],
-        skills: ["deception", "mechanics", "useComputer"],
+    'Military Engineer': {
+        abilities: ['int'],
+        skills: ['mechanics', 'useComputer'],
         feats: [],
         talents: [],
         talentTrees: [],
-        theme: "tech"
+        theme: 'tech'
     },
-    "Sith Apprentice": {
-        abilities: ["cha", "str"],
-        skills: ["useTheForce"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
-        talents: [],
-        talentTrees: ["Dark Side", "Lightsaber Combat"],
-        theme: "force"
-    },
-    "Sith Lord": {
-        abilities: ["cha", "str"],
-        skills: ["useTheForce"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
-        talents: [],
-        talentTrees: ["Dark Side", "Lightsaber Combat"],
-        theme: "force"
-    },
-    "Vanguard": {
-        abilities: ["dex", "con"],
-        skills: ["perception", "stealth"],
+    'Officer': {
+        abilities: ['cha', 'int'],
+        skills: ['knowledge'],
         feats: [],
         talents: [],
-        talentTrees: ["Camouflage", "Commando"],
-        theme: "combat"
+        talentTrees: ['Leadership', 'Commando', 'Veteran'],
+        theme: 'leadership'
+    },
+    'Pathfinder': {
+        abilities: ['wis', 'con'],
+        skills: ['perception', 'survival'],
+        feats: [],
+        talents: [],
+        talentTrees: ['Awareness', 'Camouflage', 'Survivor'],
+        theme: 'exploration'
+    },
+    'Saboteur': {
+        abilities: ['int', 'dex'],
+        skills: ['deception', 'mechanics', 'useComputer'],
+        feats: [],
+        talents: [],
+        talentTrees: [],
+        theme: 'tech'
+    },
+    'Sith Apprentice': {
+        abilities: ['cha', 'str'],
+        skills: ['useTheForce'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
+        talents: [],
+        talentTrees: ['Dark Side', 'Lightsaber Combat'],
+        theme: 'force'
+    },
+    'Sith Lord': {
+        abilities: ['cha', 'str'],
+        skills: ['useTheForce'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
+        talents: [],
+        talentTrees: ['Dark Side', 'Lightsaber Combat'],
+        theme: 'force'
+    },
+    'Vanguard': {
+        abilities: ['dex', 'con'],
+        skills: ['perception', 'stealth'],
+        feats: [],
+        talents: [],
+        talentTrees: ['Camouflage', 'Commando'],
+        theme: 'combat'
     }
 };
 
@@ -781,7 +781,7 @@ export class ClassSuggestionEngine {
                 CLASS_SUGGESTION_TIERS.PRESTIGE_NOW,
                 cls.name,
                 prereqCheck.missing,
-                "You meet all prerequisites for this prestige class!"
+                'You meet all prerequisites for this prestige class!'
             );
         }
 
@@ -792,7 +792,7 @@ export class ClassSuggestionEngine {
                 ? CLASS_SUGGESTION_TIERS.PRESTIGE_NOW
                 : CLASS_SUGGESTION_TIERS.PRESTIGE_SOON;
             const reason = prereqCheck.met
-                ? "This matches your character goal and you qualify now!"
+                ? 'This matches your character goal and you qualify now!'
                 : `This matches your character goal - you're almost there! Missing: ${prereqCheck.missing.filter(m => !m.unverifiable).map(m => m.shortDisplay).join(', ')}`;
             return this._buildSuggestion(
                 tier,
@@ -921,7 +921,7 @@ export class ClassSuggestionEngine {
      */
     static _calculateSynergyScore(cls, actorState) {
         const synergy = CLASS_SYNERGY_DATA[cls.name];
-        if (!synergy) return 0;
+        if (!synergy) {return 0;}
 
         let score = 0;
 
@@ -983,15 +983,15 @@ export class ClassSuggestionEngine {
      */
     static _getSynergyReason(cls, actorState) {
         const synergy = CLASS_SYNERGY_DATA[cls.name];
-        if (!synergy) return "General synergy with your build";
+        if (!synergy) {return 'General synergy with your build';}
 
         const reasons = [];
 
         // Check highest ability
         if (synergy.abilities && synergy.abilities.includes(actorState.highestAbility)) {
             const abilityNames = {
-                str: "Strength", dex: "Dexterity", con: "Constitution",
-                int: "Intelligence", wis: "Wisdom", cha: "Charisma"
+                str: 'Strength', dex: 'Dexterity', con: 'Constitution',
+                int: 'Intelligence', wis: 'Wisdom', cha: 'Charisma'
             };
             reasons.push(`Uses your high ${abilityNames[actorState.highestAbility]}`);
         }
@@ -1028,7 +1028,7 @@ export class ClassSuggestionEngine {
 
         return reasons.length > 0
             ? reasons.join('; ')
-            : "Strong mechanical synergy with your build";
+            : 'Strong mechanical synergy with your build';
     }
 
     /**

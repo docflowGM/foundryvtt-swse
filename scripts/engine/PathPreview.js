@@ -54,7 +54,7 @@ export class PathPreview {
      */
     static async generatePreviews(actor, pendingData = {}) {
         const planned = getPlannedHeroicLevel(actor, pendingData);
-        if (pendingData?.epicAdvisory || isEpicActor(actor, planned)) return [];
+        if (pendingData?.epicAdvisory || isEpicActor(actor, planned)) {return [];}
         const previews = [];
         const actorState = await ClassSuggestionEngine._buildActorState(actor, pendingData);
         const prestigePrereqs = await ClassSuggestionEngine._loadPrestigePrerequisites();
@@ -65,7 +65,7 @@ export class PathPreview {
 
         for (const target of targets) {
             const prereqData = prestigePrereqs[target.className];
-            if (!prereqData) continue;
+            if (!prereqData) {continue;}
 
             // Check current qualification status
             const prereqCheck = ClassSuggestionEngine._checkPrerequisites(
@@ -121,8 +121,8 @@ export class PathPreview {
 
         // Sort by levels away (qualified first, then closest)
         previews.sort((a, b) => {
-            if (a.status === 'qualified' && b.status !== 'qualified') return -1;
-            if (b.status === 'qualified' && a.status !== 'qualified') return 1;
+            if (a.status === 'qualified' && b.status !== 'qualified') {return -1;}
+            if (b.status === 'qualified' && a.status !== 'qualified') {return 1;}
             return a.levelsAway - b.levelsAway;
         });
 

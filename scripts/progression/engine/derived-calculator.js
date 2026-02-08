@@ -26,16 +26,16 @@ export class DerivedCalculator {
         this._calculators = new Map();
 
         // Register all built-in calculators
-        this.registerCalculation("bab", this._calculateBAB.bind(this));
-        this.registerCalculation("saves", this._calculateSaves.bind(this));
-        this.registerCalculation("skills", this._calculateSkills.bind(this));
-        this.registerCalculation("forcePoints", this._calculateForcePoints.bind(this));
-        this.registerCalculation("initiative", this._calculateInitiative.bind(this));
-        this.registerCalculation("speed", this._calculateSpeed.bind(this));
-        this.registerCalculation("ac", this._calculateAC.bind(this));
-        this.registerCalculation("damageThreshold", this._calculateDamageThreshold.bind(this));
+        this.registerCalculation('bab', this._calculateBAB.bind(this));
+        this.registerCalculation('saves', this._calculateSaves.bind(this));
+        this.registerCalculation('skills', this._calculateSkills.bind(this));
+        this.registerCalculation('forcePoints', this._calculateForcePoints.bind(this));
+        this.registerCalculation('initiative', this._calculateInitiative.bind(this));
+        this.registerCalculation('speed', this._calculateSpeed.bind(this));
+        this.registerCalculation('ac', this._calculateAC.bind(this));
+        this.registerCalculation('damageThreshold', this._calculateDamageThreshold.bind(this));
 
-        SWSELogger.log("Derived calculator initialized with 8 default calculators");
+        SWSELogger.log('Derived calculator initialized with 8 default calculators');
     }
 
     /**
@@ -86,8 +86,8 @@ export class DerivedCalculator {
         const fastBabClasses = ['Soldier', 'Ace Pilot', 'Bounty Hunter'];
         const slowBabClasses = ['Noble', 'Scoundrel', 'Force Adept'];
 
-        if (fastBabClasses.includes(className)) return 1.0;
-        if (slowBabClasses.includes(className)) return 0.5;
+        if (fastBabClasses.includes(className)) {return 1.0;}
+        if (slowBabClasses.includes(className)) {return 0.5;}
         return 0.75; // medium (default)
     }
 
@@ -160,9 +160,9 @@ export class DerivedCalculator {
         // Check for feats that grant save bonuses
         // Example: Iron Will +2 will saves
         feats.forEach(feat => {
-            if (feat.name.includes('Iron Will')) bonuses.will += 2;
-            if (feat.name.includes('Dodge')) bonuses.reflex += 1;
-            if (feat.name.includes('Toughness')) bonuses.fortitude += 1;
+            if (feat.name.includes('Iron Will')) {bonuses.will += 2;}
+            if (feat.name.includes('Dodge')) {bonuses.reflex += 1;}
+            if (feat.name.includes('Toughness')) {bonuses.fortitude += 1;}
         });
 
         return bonuses;
@@ -283,7 +283,7 @@ export class DerivedCalculator {
 
         // Check for speed-affecting feats
         feats.forEach(feat => {
-            if (feat.name.includes('Run')) speed += 2;
+            if (feat.name.includes('Run')) {speed += 2;}
         });
 
         return speed;
@@ -392,15 +392,15 @@ export class DerivedCalculator {
         const calculated = this.recalculate(actor);
 
         const updates = {
-            "system.bab": calculated.bab || 0,
-            "system.saves.reflex": calculated.saves?.reflex || 0,
-            "system.saves.fortitude": calculated.saves?.fortitude || 0,
-            "system.saves.will": calculated.saves?.will || 0,
-            "system.force.pointsMax": calculated.forcePoints || 0,
-            "system.initiative": calculated.initiative || 0,
-            "system.speed": calculated.speed || 6,
-            "system.ac": calculated.ac || 10,
-            "system.damageThreshold": calculated.damageThreshold || 0
+            'system.bab': calculated.bab || 0,
+            'system.saves.reflex': calculated.saves?.reflex || 0,
+            'system.saves.fortitude': calculated.saves?.fortitude || 0,
+            'system.saves.will': calculated.saves?.will || 0,
+            'system.force.pointsMax': calculated.forcePoints || 0,
+            'system.initiative': calculated.initiative || 0,
+            'system.speed': calculated.speed || 6,
+            'system.ac': calculated.ac || 10,
+            'system.damageThreshold': calculated.damageThreshold || 0
         };
 
         await actor.update(updates);

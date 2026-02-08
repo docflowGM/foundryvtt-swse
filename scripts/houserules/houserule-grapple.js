@@ -3,13 +3,13 @@
  * Handles grapple combat actions and checks
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
-const NS = "foundryvtt-swse";
+const NS = 'foundryvtt-swse';
 
 export class GrappleMechanics {
   static initialize() {
-    SWSELogger.debug("Grapple mechanics initialized");
+    SWSELogger.debug('Grapple mechanics initialized');
   }
 
   /**
@@ -18,10 +18,10 @@ export class GrappleMechanics {
    * @returns {number} - The DC to beat
    */
   static getGrappleDC(target) {
-    const grappleVariant = game.settings.get(NS, "grappleVariant");
-    const dcBonus = game.settings.get(NS, "grappleDCBonus");
+    const grappleVariant = game.settings.get(NS, 'grappleVariant');
+    const dcBonus = game.settings.get(NS, 'grappleDCBonus');
 
-    if (!target) return 10;
+    if (!target) {return 10;}
 
     let baseDC = 10;
     const targetBAB = target.system?.attributes?.bab?.value || 0;
@@ -36,7 +36,7 @@ export class GrappleMechanics {
    * @returns {boolean}
    */
   static canGrapple(actor) {
-    return game.settings.get(NS, "grappleEnabled") && actor && !actor.isToken;
+    return game.settings.get(NS, 'grappleEnabled') && actor && !actor.isToken;
   }
 
   /**
@@ -47,16 +47,16 @@ export class GrappleMechanics {
    */
   static async performGrappleCheck(grappler, target) {
     if (!this.canGrapple(grappler)) {
-      return { success: false, message: "Grapple is not enabled" };
+      return { success: false, message: 'Grapple is not enabled' };
     }
 
-    const variant = game.settings.get(NS, "grappleVariant");
+    const variant = game.settings.get(NS, 'grappleVariant');
     const grappleDC = this.getGrappleDC(target);
 
     // Roll grapple check (typically STR + BAB)
     const grappleBonus = (grappler.system?.attributes?.bab?.value || 0) +
                          (grappler.system?.attributes?.str?.mod || 0);
-    const roll = new Roll("1d20", { bonus: grappleBonus });
+    const roll = new Roll('1d20', { bonus: grappleBonus });
     await roll.evaluate({ async: true });
 
     const total = roll.total;

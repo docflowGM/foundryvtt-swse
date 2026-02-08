@@ -105,7 +105,7 @@ export class MentorTranslationIntegration {
    * Render without translation (plain text)
    */
   static renderPlain(text, container, onComplete = () => {}) {
-    if (!text || !container) return container;
+    if (!text || !container) {return container;}
     container.innerHTML = this._escapeHtml(text);
     onComplete();
     return container;

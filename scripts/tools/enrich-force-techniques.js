@@ -11,27 +11,27 @@
  * Usage: node enrich-force-techniques.js
  */
 
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import {
   normalize,
   extractCategoriesFromDescriptors,
-  findMatchingPowers,
-} from "./force-suggestion-utils.js";
+  findMatchingPowers
+} from './force-suggestion-utils.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dbPath = path.join(__dirname, "../../packs/forcetechniques.db");
-const powersDbPath = path.join(__dirname, "../../packs/forcepowers.db");
-const outputPath = path.join(__dirname, "../../data/forcetechniques.enriched.json");
+const dbPath = path.join(__dirname, '../../packs/forcetechniques.db');
+const powersDbPath = path.join(__dirname, '../../packs/forcepowers.db');
+const outputPath = path.join(__dirname, '../../data/forcetechniques.enriched.json');
 
 /**
  * Load items from Foundry JSON-lines database
  */
 function loadDb(filePath) {
   return fs
-    .readFileSync(filePath, "utf8")
-    .split("\n")
+    .readFileSync(filePath, 'utf8')
+    .split('\n')
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line) => {
@@ -56,43 +56,43 @@ function getArchetypeBiasForCategories(categories = []) {
     vitality: {
       jedi_healer: 1.6,
       jedi_mentor: 1.3,
-      sith_alchemist: 1.2,
+      sith_alchemist: 1.2
     },
     defense: {
       jedi_guardian: 1.5,
       emperors_shield: 1.6,
-      sith_juggernaut: 1.2,
+      sith_juggernaut: 1.2
     },
     control: {
       jedi_consular: 1.4,
       jedi_mentor: 1.3,
-      sith_mastermind: 1.5,
+      sith_mastermind: 1.5
     },
     awareness: {
       jedi_seer: 1.6,
       jedi_mentor: 1.4,
-      jedi_archivist: 1.3,
+      jedi_archivist: 1.3
     },
     precision: {
       jedi_weapon_master: 1.5,
       jedi_battlemaster: 1.3,
-      sith_assassin: 1.4,
+      sith_assassin: 1.4
     },
     aggression: {
       sith_marauder: 1.6,
       sith_juggernaut: 1.5,
-      jedi_battlemaster: 1.1,
+      jedi_battlemaster: 1.1
     },
     support: {
       jedi_healer: 1.5,
       jedi_mentor: 1.4,
-      jedi_consular: 1.2,
+      jedi_consular: 1.2
     },
     mobility: {
       jedi_sentinel: 1.3,
       sith_assassin: 1.4,
-      jedi_ace_pilot: 1.2,
-    },
+      jedi_ace_pilot: 1.2
+    }
   };
 
   // Aggregate biases across all categories
@@ -124,7 +124,7 @@ function enrichTechnique(technique, powers) {
 
   // First, check explicit prerequisite/relatedPower field
   const explicitPower = technique.system?.relatedPower ||
-    technique.system?.prerequisite || "";
+    technique.system?.prerequisite || '';
 
   if (explicitPower) {
     const matchedPower = powers.find(
@@ -152,7 +152,7 @@ function enrichTechnique(technique, powers) {
     confidence,
     categories,
     powerSynergyWeight: 2.0, // Techniques get significant boost if power is known
-    archetypeBias,
+    archetypeBias
   };
 
   return technique;
@@ -162,7 +162,7 @@ function enrichTechnique(technique, powers) {
  * Main enrichment process
  */
 async function main() {
-  console.log("🔄 Loading Force Technique and Power databases...");
+  console.log('🔄 Loading Force Technique and Power databases...');
 
   const techniques = loadDb(dbPath);
   const powers = loadDb(powersDbPath);
@@ -170,7 +170,7 @@ async function main() {
   console.log(`✅ Loaded ${techniques.length} Force Techniques`);
   console.log(`✅ Loaded ${powers.length} Force Powers`);
 
-  console.log("\n🔄 Enriching Force Techniques with suggestion metadata...");
+  console.log('\n🔄 Enriching Force Techniques with suggestion metadata...');
 
   let enriched = 0;
   const enrichedTechniques = techniques.map((technique) => {
@@ -193,7 +193,7 @@ async function main() {
   fs.writeFileSync(outputPath, JSON.stringify(enrichedTechniques, null, 2));
 
   // Print summary statistics
-  console.log("\n📊 Enrichment Summary:");
+  console.log('\n📊 Enrichment Summary:');
 
   const withPowers = enrichedTechniques.filter(
     (t) => t.suggestion?.associatedPowers?.length > 0
@@ -209,10 +209,10 @@ async function main() {
   console.log(`  - ${withCategories} techniques with inferred categories`);
   console.log(`  - ${withArchetypeBias} techniques with archetype bias`);
 
-  console.log("\n✨ Enrichment complete!");
+  console.log('\n✨ Enrichment complete!');
 }
 
 main().catch((err) => {
-  console.error("❌ Enrichment failed:", err);
+  console.error('❌ Enrichment failed:', err);
   process.exit(1);
 });

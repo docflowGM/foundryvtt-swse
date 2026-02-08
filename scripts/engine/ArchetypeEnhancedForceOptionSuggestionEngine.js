@@ -72,7 +72,7 @@ export class ArchetypeEnhancedForceOptionSuggestionEngine {
       enhanced.sort((a, b) => {
         // Primary sort: archetype-weighted tier (descending)
         const tierDiff = (b.archetypeWeightedTier || 0) - (a.archetypeWeightedTier || 0);
-        if (tierDiff !== 0) return tierDiff;
+        if (tierDiff !== 0) {return tierDiff;}
 
         // Secondary sort: base tier (descending)
         return (b.tier || 0) - (a.tier || 0);

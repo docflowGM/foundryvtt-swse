@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "../progression/engine/progression-engine.js";
+import { ProgressionEngine } from '../progression/engine/progression-engine.js';
 /**
  * Actor Lifecycle Hooks
  * All actor-related hook handlers consolidated here
@@ -23,7 +23,7 @@ import { qs, qsa, setVisible, isVisible, text } from '../utils/dom-utils.js';
  * Called during system initialization
  */
 export function registerActorHooks() {
-    SWSELogger.log("Registering actor hooks");
+    SWSELogger.log('Registering actor hooks');
 
     // Pre-update actor validation
     HooksRegistry.register('preUpdateActor', handleActorPreUpdate, {
@@ -66,10 +66,10 @@ export function registerActorHooks() {
     });
 
     // Initialize special progression hooks
-    SWSELogger.log("Initializing Force Power hooks");
+    SWSELogger.log('Initializing Force Power hooks');
     initializeForcePowerHooks();
 
-    SWSELogger.log("Initializing Starship Maneuver hooks");
+    SWSELogger.log('Initializing Starship Maneuver hooks');
     initializeStarshipManeuverHooks();
 }
 
@@ -115,10 +115,10 @@ async function handleActorSheetDrop(actor, sheet, data) {
  */
 async function handleItemCreate(item, options, userId) {
     // Only process for the current user's actions
-    if (game.user.id !== userId) return;
+    if (game.user.id !== userId) {return;}
 
     const actor = item.parent;
-    if (!actor) return;
+    if (!actor) {return;}
 
     // =========================================================================
     // SHIELD GENERATOR INSTALLATION (For Droids)
@@ -128,7 +128,7 @@ async function handleItemCreate(item, options, userId) {
         if (sr > 0) {
             // Set shield rating on the actor
             await actor.update({
-                "system.shields": {
+                'system.shields': {
                     value: sr,      // Current shield rating
                     max: sr,        // Maximum shield rating
                     rating: sr      // Display rating
@@ -142,14 +142,14 @@ async function handleItemCreate(item, options, userId) {
     // SKILL FOCUS FEAT HANDLING (Character-only)
     // =========================================================================
     // Only process feats on character actors
-    if (item.type !== 'feat' || actor.type !== 'character') return;
+    if (item.type !== 'feat' || actor.type !== 'character') {return;}
 
     // Apply automatic feat effects for permanent bonuses
     await FeatEffectsEngine.applyEffectsToFeat(item);
 
     // Check if this is a Skill Focus feat (or Greater Skill Focus)
     const featName = item.name.toLowerCase();
-    if (!featName.includes('skill focus')) return;
+    if (!featName.includes('skill focus')) {return;}
 
     SWSELogger.log('SWSE | Skill Focus feat detected, prompting for skill selection');
 
@@ -162,7 +162,7 @@ async function handleItemCreate(item, options, userId) {
     }
 
     if (Object.keys(trainedSkills).length === 0) {
-        ui.notifications.warn("You must have at least one trained skill to select Skill Focus. Please train a skill first.");
+        ui.notifications.warn('You must have at least one trained skill to select Skill Focus. Please train a skill first.');
         // Delete the feat since requirements aren't met
         await item.delete();
         return;
@@ -170,23 +170,23 @@ async function handleItemCreate(item, options, userId) {
 
     // Build skill list for dialog
     const skillNames = {
-        acrobatics: "Acrobatics",
-        climb: "Climb",
-        deception: "Deception",
-        endurance: "Endurance",
-        gatherInfo: "Gather Information",
-        initiative: "Initiative",
-        jump: "Jump",
-        mechanics: "Mechanics",
-        perception: "Perception",
-        persuasion: "Persuasion",
-        pilot: "Pilot",
-        stealth: "Stealth",
-        survival: "Survival",
-        swim: "Swim",
-        treatInjury: "Treat Injury",
-        useComputer: "Use Computer",
-        useTheForce: "Use the Force"
+        acrobatics: 'Acrobatics',
+        climb: 'Climb',
+        deception: 'Deception',
+        endurance: 'Endurance',
+        gatherInfo: 'Gather Information',
+        initiative: 'Initiative',
+        jump: 'Jump',
+        mechanics: 'Mechanics',
+        perception: 'Perception',
+        persuasion: 'Persuasion',
+        pilot: 'Pilot',
+        stealth: 'Stealth',
+        survival: 'Survival',
+        swim: 'Swim',
+        treatInjury: 'Treat Injury',
+        useComputer: 'Use Computer',
+        useTheForce: 'Use the Force'
     };
 
     // Create options HTML
@@ -212,7 +212,7 @@ async function handleItemCreate(item, options, userId) {
         buttons: {
             select: {
                 icon: '<i class="fas fa-check"></i>',
-                label: "Select",
+                label: 'Select',
                 callback: async (html) => {
                     const selectedSkill = (root?.querySelector?.('#skill-focus-selection')?.value ?? null);
 
@@ -232,18 +232,18 @@ async function handleItemCreate(item, options, userId) {
             },
             cancel: {
                 icon: '<i class="fas fa-times"></i>',
-                label: "Cancel",
+                label: 'Cancel',
                 callback: async () => {
                     // Delete the feat if cancelled
                     await item.delete();
-                    ui.notifications.warn("Skill Focus feat removed. Select a skill to apply the feat.");
+                    ui.notifications.warn('Skill Focus feat removed. Select a skill to apply the feat.');
                 }
             }
         },
-        default: "select",
+        default: 'select',
         close: async () => {
             // If dialog is closed without selection, delete the feat
-            if (!actor.system.skills) return;
+            if (!actor.system.skills) {return;}
 
             let hasFocusedSkill = false;
             for (const skill of Object.values(actor.system.skills)) {
@@ -272,10 +272,10 @@ async function handleItemCreate(item, options, userId) {
  */
 async function handleItemDelete(item, options, userId) {
     // Only process for the current user's actions
-    if (game.user.id !== userId) return;
+    if (game.user.id !== userId) {return;}
 
     const actor = item.parent;
-    if (!actor) return;
+    if (!actor) {return;}
 
     // =========================================================================
     // SHIELD GENERATOR REMOVAL (For Droids)
@@ -283,7 +283,7 @@ async function handleItemDelete(item, options, userId) {
     if (item.type === 'shieldGenerator' && actor.type === 'droid') {
         // Clear shield rating when shield is removed
         await actor.update({
-            "system.shields": {
+            'system.shields': {
                 value: 0,
                 max: 0,
                 rating: 0
@@ -297,11 +297,11 @@ async function handleItemDelete(item, options, userId) {
     // SKILL FOCUS FEAT HANDLING (Character-only)
     // =========================================================================
     // Only process feats on character actors
-    if (item.type !== 'feat' || actor.type !== 'character') return;
+    if (item.type !== 'feat' || actor.type !== 'character') {return;}
 
     // Check if this is a Skill Focus feat
     const featName = item.name.toLowerCase();
-    if (!featName.includes('skill focus')) return;
+    if (!featName.includes('skill focus')) {return;}
 
     SWSELogger.log('SWSE | Skill Focus feat deleted, removing focus from skill');
 
@@ -312,23 +312,23 @@ async function handleItemDelete(item, options, userId) {
 
         // Find the skill key by name
         const skillNames = {
-            "Acrobatics": "acrobatics",
-            "Climb": "climb",
-            "Deception": "deception",
-            "Endurance": "endurance",
-            "Gather Information": "gatherInfo",
-            "Initiative": "initiative",
-            "Jump": "jump",
-            "Mechanics": "mechanics",
-            "Perception": "perception",
-            "Persuasion": "persuasion",
-            "Pilot": "pilot",
-            "Stealth": "stealth",
-            "Survival": "survival",
-            "Swim": "swim",
-            "Treat Injury": "treatInjury",
-            "Use Computer": "useComputer",
-            "Use the Force": "useTheForce"
+            'Acrobatics': 'acrobatics',
+            'Climb': 'climb',
+            'Deception': 'deception',
+            'Endurance': 'endurance',
+            'Gather Information': 'gatherInfo',
+            'Initiative': 'initiative',
+            'Jump': 'jump',
+            'Mechanics': 'mechanics',
+            'Perception': 'perception',
+            'Persuasion': 'persuasion',
+            'Pilot': 'pilot',
+            'Stealth': 'stealth',
+            'Survival': 'survival',
+            'Swim': 'swim',
+            'Treat Injury': 'treatInjury',
+            'Use Computer': 'useComputer',
+            'Use the Force': 'useTheForce'
         };
 
         const skillKey = skillNames[focusedSkillName];
@@ -353,40 +353,40 @@ async function handleItemDelete(item, options, userId) {
  */
 async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain }) {
     // Only process if there are skills to select
-    if (skillsToGain <= 0) return;
+    if (skillsToGain <= 0) {return;}
 
     // Only process for the owning user
-    if (!actor.isOwner) return;
+    if (!actor.isOwner) {return;}
 
     SWSELogger.log(`SWSE | INT increase: Showing skill selection for ${actor.name} (${skillsToGain} skills)`);
 
     // Get all available skills that aren't already trained
     const skillNames = {
-        acrobatics: "Acrobatics",
-        climb: "Climb",
-        deception: "Deception",
-        endurance: "Endurance",
-        gatherInformation: "Gather Information",
-        initiative: "Initiative",
-        jump: "Jump",
-        knowledgeBureaucracy: "Knowledge (Bureaucracy)",
-        knowledgeGalacticLore: "Knowledge (Galactic Lore)",
-        knowledgeLifeSciences: "Knowledge (Life Sciences)",
-        knowledgePhysicalSciences: "Knowledge (Physical Sciences)",
-        knowledgeSocialSciences: "Knowledge (Social Sciences)",
-        knowledgeTactics: "Knowledge (Tactics)",
-        knowledgeTechnology: "Knowledge (Technology)",
-        mechanics: "Mechanics",
-        perception: "Perception",
-        persuasion: "Persuasion",
-        pilot: "Pilot",
-        ride: "Ride",
-        stealth: "Stealth",
-        survival: "Survival",
-        swim: "Swim",
-        treatInjury: "Treat Injury",
-        useComputer: "Use Computer",
-        useTheForce: "Use the Force"
+        acrobatics: 'Acrobatics',
+        climb: 'Climb',
+        deception: 'Deception',
+        endurance: 'Endurance',
+        gatherInformation: 'Gather Information',
+        initiative: 'Initiative',
+        jump: 'Jump',
+        knowledgeBureaucracy: 'Knowledge (Bureaucracy)',
+        knowledgeGalacticLore: 'Knowledge (Galactic Lore)',
+        knowledgeLifeSciences: 'Knowledge (Life Sciences)',
+        knowledgePhysicalSciences: 'Knowledge (Physical Sciences)',
+        knowledgeSocialSciences: 'Knowledge (Social Sciences)',
+        knowledgeTactics: 'Knowledge (Tactics)',
+        knowledgeTechnology: 'Knowledge (Technology)',
+        mechanics: 'Mechanics',
+        perception: 'Perception',
+        persuasion: 'Persuasion',
+        pilot: 'Pilot',
+        ride: 'Ride',
+        stealth: 'Stealth',
+        survival: 'Survival',
+        swim: 'Swim',
+        treatInjury: 'Treat Injury',
+        useComputer: 'Use Computer',
+        useTheForce: 'Use the Force'
     };
 
     // Filter to untrained skills only
@@ -399,7 +399,7 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
     }
 
     if (Object.keys(untrainedSkills).length === 0) {
-        ui.notifications.info("All skills are already trained! No additional skills to select.");
+        ui.notifications.info('All skills are already trained! No additional skills to select.');
         // Clear pending gains
         const { AttributeIncreaseHandler } = await import('../progression/engine/attribute-increase-handler.js');
         await AttributeIncreaseHandler.clearPendingGains(actor, 'trainedSkills');
@@ -432,7 +432,7 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
         buttons: {
             confirm: {
                 icon: '<i class="fas fa-check"></i>',
-                label: "Confirm Selection",
+                label: 'Confirm Selection',
                 callback: async (html) => {
                     const root = html instanceof HTMLElement ? html : html?.[0];
         const selected = root?.querySelector?.('input[name="skill-selection"]:checked');
@@ -462,7 +462,7 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
                 }
             }
         },
-        default: "confirm",
+        default: 'confirm',
         render: (html) => {
             // Limit checkbox selection to skillsToGain
             root.querySelector('input[name="skill-selection"]').change(function() {

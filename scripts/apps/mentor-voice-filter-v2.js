@@ -27,21 +27,21 @@ export class MentorVoiceFilterV2 {
   static applyVoice(mentorName, topicKey, analysisData = {}) {
     const response = MentorDialogueResponses.getTopicResponse(mentorName, topicKey, analysisData);
 
-    let voicedResponse = "";
+    let voicedResponse = '';
 
     // Opening wrapper
     if (response.opening) {
-      voicedResponse += response.opening + "\n\n";
+      voicedResponse += response.opening + '\n\n';
     }
 
     // Canonical analysis
     if (response.analysis) {
-      voicedResponse += response.analysis + "\n\n";
+      voicedResponse += response.analysis + '\n\n';
     }
 
     // DSP warning (if applicable)
     if (response.dspWarning) {
-      voicedResponse += response.dspWarning + "\n\n";
+      voicedResponse += response.dspWarning + '\n\n';
     }
 
     // Closing wrapper
@@ -57,7 +57,7 @@ export class MentorVoiceFilterV2 {
    */
   static getOpening(mentorName, topicKey, analysisData = {}) {
     const response = MentorDialogueResponses.getTopicResponse(mentorName, topicKey, analysisData);
-    return response.opening || "Let me share my thoughts.";
+    return response.opening || 'Let me share my thoughts.';
   }
 
   /**
@@ -65,7 +65,7 @@ export class MentorVoiceFilterV2 {
    */
   static getClosing(mentorName, topicKey, analysisData = {}) {
     const response = MentorDialogueResponses.getTopicResponse(mentorName, topicKey, analysisData);
-    return response.closing || "Consider your path carefully.";
+    return response.closing || 'Consider your path carefully.';
   }
 
   /**
@@ -73,7 +73,7 @@ export class MentorVoiceFilterV2 {
    */
   static hasCoverage(mentorName, topicKey) {
     const responses = MentorDialogueResponses.TOPIC_RESPONSES[topicKey];
-    if (!responses) return false;
+    if (!responses) {return false;}
 
     const sanitized = mentorName.toLowerCase().replace(/[^a-z0-9]/g, '_');
     return !!responses.mentors[sanitized];

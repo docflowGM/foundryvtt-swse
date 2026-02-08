@@ -4,8 +4,8 @@
  * Handles trigger detection, collection, and selection of force secrets.
  */
 
-import { ForceSecretPicker } from "../ui/force-secret-picker.js";
-import { swseLogger } from "../../utils/logger.js";
+import { ForceSecretPicker } from '../ui/force-secret-picker.js';
+import { swseLogger } from '../../utils/logger.js';
 
 export class ForceSecretEngine {
   /**
@@ -43,7 +43,7 @@ export class ForceSecretEngine {
 
       return docs ?? [];
     } catch (e) {
-      swseLogger.error("ForceSecretEngine: Failed to collect secrets from compendium", e);
+      swseLogger.error('ForceSecretEngine: Failed to collect secrets from compendium', e);
       return [];
     }
   }
@@ -89,19 +89,19 @@ export class ForceSecretEngine {
           toCreate.push(it.document.toObject());
         } else {
           toCreate.push({
-            name: it.name || "Force Secret",
-            type: "feat",
-            img: it.img || "icons/svg/mystery-man.svg",
+            name: it.name || 'Force Secret',
+            type: 'feat',
+            img: it.img || 'icons/svg/mystery-man.svg',
             system: it.system || {}
           });
         }
       }
 
       if (toCreate.length) {
-        await actor.createEmbeddedDocuments("Item", toCreate);
+        await actor.createEmbeddedDocuments('Item', toCreate);
       }
     } catch (e) {
-      swseLogger.error("ForceSecretEngine.applySelected error", e);
+      swseLogger.error('ForceSecretEngine.applySelected error', e);
     }
   }
 }

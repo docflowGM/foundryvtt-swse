@@ -35,10 +35,10 @@ export const LEVEL1_SKILL_TIERS = {
 };
 
 export const TIER_REASONS = {
-  3: "Core skill with strong attribute synergy",
-  2: "Good synergy with your abilities",
-  1: "Class skill for your chosen class",
-  0: "Available for training"
+  3: 'Core skill with strong attribute synergy',
+  2: 'Good synergy with your abilities',
+  1: 'Class skill for your chosen class',
+  0: 'Available for training'
 };
 
 // Attribute-to-Skill Synergy Mapping
@@ -80,8 +80,8 @@ export class Level1SkillSuggestionEngine {
           ...skill,
           suggestion: {
             tier: LEVEL1_SKILL_TIERS.AVAILABLE,
-            reason: "Level 1 suggestions only",
-            icon: ""
+            reason: 'Level 1 suggestions only',
+            icon: ''
           },
           isSuggested: false
         }));
@@ -138,11 +138,11 @@ export class Level1SkillSuggestionEngine {
         if (classSkills.includes(normalizedSkill) || classSkills.includes(skillKey)) {
           tier = Math.max(tier, LEVEL1_SKILL_TIERS.CLASS_SKILL);
           if (!reasons.length) {
-            reasons.push("Class skill for your chosen class");
+            reasons.push('Class skill for your chosen class');
           }
         }
 
-        const reason = reasons.length > 0 ? reasons.join("; ") : TIER_REASONS[tier];
+        const reason = reasons.length > 0 ? reasons.join('; ') : TIER_REASONS[tier];
 
         return {
           ...skill,
@@ -159,8 +159,8 @@ export class Level1SkillSuggestionEngine {
       // Sort by tier (descending) then by name
       return suggestedSkills.sort((a, b) => {
         const tierDiff = (b.suggestion?.tier ?? 0) - (a.suggestion?.tier ?? 0);
-        if (tierDiff !== 0) return tierDiff;
-        return (a.name || "").localeCompare(b.name || "");
+        if (tierDiff !== 0) {return tierDiff;}
+        return (a.name || '').localeCompare(b.name || '');
       });
     } catch (err) {
       SWSELogger.error('Level 1 skill suggestion failed:', err);
@@ -168,8 +168,8 @@ export class Level1SkillSuggestionEngine {
         ...skill,
         suggestion: {
           tier: LEVEL1_SKILL_TIERS.AVAILABLE,
-          reason: "Available",
-          icon: ""
+          reason: 'Available',
+          icon: ''
         },
         isSuggested: false
       }));
@@ -181,7 +181,7 @@ export class Level1SkillSuggestionEngine {
    * @private
    */
   static _normalizeSkillName(name) {
-    if (!name) return '';
+    if (!name) {return '';}
     return name
       .toLowerCase()
       .replace(/\s+/g, '')

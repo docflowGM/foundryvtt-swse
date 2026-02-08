@@ -1,5 +1,5 @@
-import { ForceEnhancementDialog } from "../utils/force-enhancement-dialog.js";
-import { escapeHTML } from "../utils/security-utils.js";
+import { ForceEnhancementDialog } from '../utils/force-enhancement-dialog.js';
+import { escapeHTML } from '../utils/security-utils.js';
 
 /**
  * Force Suite Component (RAW SWSE Accurate)
@@ -29,7 +29,7 @@ export class ForceSuiteComponent {
    * -------------------------- */
 
   static _getPowers(actor) {
-    const all = actor.items.filter(i => i.type === "forcepower");
+    const all = actor.items.filter(i => i.type === 'forcepower');
 
     return {
       ready: all.filter(p => !p.system.spent),
@@ -59,7 +59,7 @@ export class ForceSuiteComponent {
           <div class="fs-column ready" data-zone="ready">
             <h3>Ready Powers</h3>
             <div class="fs-list">
-              ${ready.map(p => this._cardHTML(p, false)).join("")}
+              ${ready.map(p => this._cardHTML(p, false)).join('')}
             </div>
           </div>
 
@@ -74,7 +74,7 @@ export class ForceSuiteComponent {
             <div class="fs-list spent-zone">
               ${spent.length === 0
                 ? `<div class="fs-empty">No spent powers</div>`
-                : spent.map(p => this._cardHTML(p, true)).join("")
+                : spent.map(p => this._cardHTML(p, true)).join('')
               }
             </div>
           </div>
@@ -93,12 +93,12 @@ export class ForceSuiteComponent {
 
   static _cardHTML(power, spent) {
     const cls = [
-      "fs-card",
-      power.system.discipline === "light-side" ? "light" : "",
-      power.system.discipline === "dark-side" ? "dark" : "",
-      power.system.discipline === "universal" ? "universal" : "",
-      spent ? "spent" : "ready"
-    ].join(" ");
+      'fs-card',
+      power.system.discipline === 'light-side' ? 'light' : '',
+      power.system.discipline === 'dark-side' ? 'dark' : '',
+      power.system.discipline === 'universal' ? 'universal' : '',
+      spent ? 'spent' : 'ready'
+    ].join(' ');
 
     const badge = spent
       ? `<span class="fs-badge spent">SPENT</span>`
@@ -159,33 +159,33 @@ export class ForceSuiteComponent {
     const $c = $(container);
 
     // Drag start
-    $c.find(".fs-card").on("dragstart", evt => {
+    $c.find('.fs-card').on('dragstart', evt => {
       evt.originalEvent.dataTransfer.setData(
-        "power",
+        'power',
         evt.currentTarget.dataset.power
       );
     });
 
     // Ready → Spent
-    $c.find("[data-zone='spent']").on("dragover", evt => evt.preventDefault());
+    $c.find("[data-zone='spent']").on('dragover', evt => evt.preventDefault());
 
-    $c.find("[data-zone='spent']").on("drop", async evt => {
-      const id = evt.originalEvent.dataTransfer.getData("power");
+    $c.find("[data-zone='spent']").on('drop', async evt => {
+      const id = evt.originalEvent.dataTransfer.getData('power');
       await this._moveToSpent(actor, id);
       this.refresh(actor, container);
     });
 
     // Spent → Ready
-    $c.find("[data-zone='ready']").on("dragover", evt => evt.preventDefault());
+    $c.find("[data-zone='ready']").on('dragover', evt => evt.preventDefault());
 
-    $c.find("[data-zone='ready']").on("drop", async evt => {
-      const id = evt.originalEvent.dataTransfer.getData("power");
+    $c.find("[data-zone='ready']").on('drop', async evt => {
+      const id = evt.originalEvent.dataTransfer.getData('power');
       await this._moveToReady(actor, id);
       this.refresh(actor, container);
     });
 
     // Button actions
-    $c.find("[data-act]").on("click", async evt => {
+    $c.find('[data-act]').on('click', async evt => {
       const act = evt.currentTarget.dataset.act;
       const id = evt.currentTarget.dataset.power;
       await this._dispatchAction(actor, act, id);
@@ -214,16 +214,16 @@ export class ForceSuiteComponent {
    * -------------------------- */
 
   static async _moveToSpent(actor, id) {
-    return await actor.items.get(id)?.update({ "system.spent": true });
+    return await actor.items.get(id)?.update({ 'system.spent': true });
   }
 
   static async _moveToReady(actor, id) {
-    return await actor.items.get(id)?.update({ "system.spent": false });
+    return await actor.items.get(id)?.update({ 'system.spent': false });
   }
 
   static async _usePower(actor, id) {
     const power = actor.items.get(id);
-    if (!power) return;
+    if (!power) {return;}
 
     // Check for applicable force techniques and secrets
     const enhancements = await ForceEnhancementDialog.checkAndPrompt(actor, power);
@@ -233,8 +233,8 @@ export class ForceSuiteComponent {
 
     // Nat 20 → regain all at end of turn
     if (result?.diceTotal === 20) {
-      ui.notifications.info("Natural 20! You will regain ALL powers at end of turn.");
-      await actor.setFlag("swse", "pendingFullRegain", true);
+      ui.notifications.info('Natural 20! You will regain ALL powers at end of turn.');
+      await actor.setFlag('swse', 'pendingFullRegain', true);
     }
 
     return this._moveToSpent(actor, id);
@@ -245,26 +245,25 @@ export class ForceSuiteComponent {
   }
 
   static async _restoreAll(actor) {
-    const all = actor.items.filter(i => i.type === "forcepower");
+    const all = actor.items.filter(i => i.type === 'forcepower');
     for (const p of all) {
-      await p.update({ "system.spent": false });
+      await p.update({ 'system.spent': false });
     }
   }
 
   static async _fpRegain(actor) {
-    if (actor.system.forcePoints?.value < 1)
-      return ui.notifications.warn("No Force Points left!");
+    if (actor.system.forcePoints?.value < 1) {return ui.notifications.warn('No Force Points left!');}
 
     // Spend FP
     await actor.update({
-      "system.forcePoints.value": actor.system.forcePoints.value - 1
+      'system.forcePoints.value': actor.system.forcePoints.value - 1
     });
 
     // Find one spent power
-    const spent = actor.items.find(i => i.type === "forcepower" && i.system.spent);
-    if (!spent) return ui.notifications.info("No spent powers to regain.");
+    const spent = actor.items.find(i => i.type === 'forcepower' && i.system.spent);
+    if (!spent) {return ui.notifications.info('No spent powers to regain.');}
 
-    await spent.update({ "system.spent": false });
+    await spent.update({ 'system.spent': false });
 
     ui.notifications.info(`Force Point spent → ${escapeHTML(spent.name)} regained.`);
   }

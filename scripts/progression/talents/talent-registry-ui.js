@@ -3,8 +3,8 @@
  * Loads and organizes talents by tree
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { PrerequisiteChecker } from "../../data/prerequisite-checker.js";
+import { SWSELogger } from '../../utils/logger.js';
+import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 
 export const TalentRegistry = {
   _trees: {},
@@ -14,7 +14,7 @@ export const TalentRegistry = {
    */
   async build() {
     try {
-      const pack = game.packs.get("foundryvtt-swse.talents");
+      const pack = game.packs.get('foundryvtt-swse.talents');
       if (!pack) {
         SWSELogger.warn("Talents compendium 'foundryvtt-swse.talents' not found");
         this._trees = {};
@@ -25,7 +25,7 @@ export const TalentRegistry = {
       this._trees = {};
 
       docs.forEach(t => {
-        let tree = t.system.talent_tree || "Unknown";
+        const tree = t.system.talent_tree || 'Unknown';
         if (!this._trees[tree]) {
           this._trees[tree] = [];
         }
@@ -35,7 +35,7 @@ export const TalentRegistry = {
       const totalTalents = Object.values(this._trees).reduce((sum, arr) => sum + arr.length, 0);
       SWSELogger.log(`TalentRegistry built: ${Object.keys(this._trees).length} trees, ${totalTalents} talents`);
     } catch (err) {
-      SWSELogger.error("Failed to build TalentRegistry:", err);
+      SWSELogger.error('Failed to build TalentRegistry:', err);
       this._trees = {};
     }
   },
@@ -46,7 +46,7 @@ export const TalentRegistry = {
   async listTreesForActor(actor, pending = {}) {
     const list = [];
 
-    for (let tree in this._trees) {
+    for (const tree in this._trees) {
       const talents = [];
 
       for (const talent of this._trees[tree]) {
@@ -83,9 +83,9 @@ export const TalentRegistry = {
    */
   get(name) {
     const lower = name.toLowerCase();
-    for (let tree in this._trees) {
+    for (const tree in this._trees) {
       const found = this._trees[tree].find(t => t.name.toLowerCase() === lower);
-      if (found) return found;
+      if (found) {return found;}
     }
     return null;
   },
@@ -112,4 +112,4 @@ export const TalentRegistry = {
   }
 };
 
-SWSELogger.log("TalentRegistry (UI) module loaded");
+SWSELogger.log('TalentRegistry (UI) module loaded');

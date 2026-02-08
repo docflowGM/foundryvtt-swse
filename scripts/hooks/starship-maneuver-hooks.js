@@ -13,13 +13,13 @@ export function initializeStarshipManeuverHooks() {
    */
   Hooks.on('createItem', async (item, options, userId) => {
     // Only process on the creating user's client
-    if (game.user.id !== userId) return;
+    if (game.user.id !== userId) {return;}
 
     // Only process feats
-    if (item.type !== 'feat') return;
+    if (item.type !== 'feat') {return;}
 
     // Only process if item has a parent actor
-    if (!item.parent || item.parent.documentName !== 'Actor') return;
+    if (!item.parent || item.parent.documentName !== 'Actor') {return;}
 
     const actor = item.parent;
     const featName = item.name.toLowerCase();
@@ -38,10 +38,10 @@ export function initializeStarshipManeuverHooks() {
    */
   Hooks.on('preUpdateActor', async (actor, changes, options, userId) => {
     // Only process on the updating user's client
-    if (game.user.id !== userId) return;
+    if (game.user.id !== userId) {return;}
 
     // Check if abilities are being updated
-    if (!changes.system?.abilities) return;
+    if (!changes.system?.abilities) {return;}
 
     // Store old abilities for comparison
     options.oldAbilities = foundry.utils.deepClone(actor.system.attributes);
@@ -49,16 +49,16 @@ export function initializeStarshipManeuverHooks() {
 
   Hooks.on('updateActor', async (actor, changes, options, userId) => {
     // Only process on the updating user's client
-    if (game.user.id !== userId) return;
+    if (game.user.id !== userId) {return;}
 
     // Check if abilities were updated and we have old values
-    if (!changes.system?.abilities || !options.oldAbilities) return;
+    if (!changes.system?.abilities || !options.oldAbilities) {return;}
 
     // Check if actor has Starship Tactics feat
     const hasStartshipTactics = actor.items.some(item =>
       item.type === 'feat' && (item.name === 'Starship Tactics' || item.name.includes('Starship Tactics'))
     );
-    if (!hasStartshipTactics) return;
+    if (!hasStartshipTactics) {return;}
 
     const oldAbilities = options.oldAbilities;
     const newAbilities = actor.system.attributes;
@@ -76,7 +76,7 @@ export function initializeStarshipManeuverHooks() {
 
     // Regain Starship Maneuvers for all actors who were in combat
     for (const combatant of combat.combatants) {
-      if (!combatant.actor) continue;
+      if (!combatant.actor) {continue;}
 
       const spentManeuvers = combatant.actor.items.filter(i =>
         i.type === 'maneuver' && i.system.spent
@@ -84,7 +84,7 @@ export function initializeStarshipManeuverHooks() {
 
       if (spentManeuvers.length > 0) {
         for (const maneuver of spentManeuvers) {
-          await maneuver.update({'system.spent': false});
+          await maneuver.update({ 'system.spent': false });
         }
         SWSELogger.log(`SWSE | Starship Maneuvers | Regained ${spentManeuvers.length} maneuvers for ${combatant.actor.name}`);
       }

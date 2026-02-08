@@ -1,6 +1,6 @@
-import { PROGRESSION_RULES } from "../data/progression-data.js";
-import { SWSEProgressionEngine } from "../../engine/progression.js";
-import { swseLogger } from "../../utils/logger.js";
+import { PROGRESSION_RULES } from '../data/progression-data.js';
+import { SWSEProgressionEngine } from '../../engine/progression.js';
+import { swseLogger } from '../../utils/logger.js';
 
 /**
  * TemplateEngine.applyTemplate(actor, templateId, options)
@@ -24,7 +24,7 @@ export class TemplateEngine {
   static async applyTemplate(actor, templateId, options = {}) {
     const templates = PROGRESSION_RULES.templates || {};
     const tpl = templates[templateId];
-    if (!tpl) throw new Error(`Unknown template: ${templateId}`);
+    if (!tpl) {throw new Error(`Unknown template: ${templateId}`);}
 
     swseLogger.log(`TemplateEngine: Applying template "${templateId}" to ${actor.name}`);
 
@@ -134,13 +134,13 @@ export class TemplateEngine {
       }
 
       // Record template application for audit
-      const pkgs = actor.getFlag("swse", "appliedTemplatePackages") || [];
+      const pkgs = actor.getFlag('swse', 'appliedTemplatePackages') || [];
       pkgs.push({
         templateId,
         templateName: tpl.name || templateId,
         appliedAt: new Date().toISOString()
       });
-      await actor.setFlag("swse", "appliedTemplatePackages", pkgs);
+      await actor.setFlag('swse', 'appliedTemplatePackages', pkgs);
 
       // Apply any explicit item grants that aren't handled by progression
       if (Array.isArray(tpl.items) && tpl.items.length > 0) {
@@ -151,9 +151,9 @@ export class TemplateEngine {
 
       // Hook for additional system-specific behavior (optional)
       try {
-        Hooks.callAll("swse.templateApplied", actor, templateId, tpl, options);
+        Hooks.callAll('swse.templateApplied', actor, templateId, tpl, options);
       } catch (e) {
-        swseLogger.warn("TemplateEngine: hook swse.templateApplied threw:", e);
+        swseLogger.warn('TemplateEngine: hook swse.templateApplied threw:', e);
       }
 
     } catch (err) {
@@ -167,7 +167,7 @@ export class TemplateEngine {
    * @private
    */
   static async _applyExplicitItems(actor, items) {
-    if (!items || items.length === 0) return;
+    if (!items || items.length === 0) {return;}
 
     const itemsToCreate = [];
 
@@ -207,7 +207,7 @@ export class TemplateEngine {
 
     for (const packName of compendiumNames) {
       const pack = game.packs.get(packName);
-      if (!pack) continue;
+      if (!pack) {continue;}
 
       try {
         if (!pack.indexed) {

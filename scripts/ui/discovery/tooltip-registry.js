@@ -81,7 +81,7 @@ const TOOLTIP_DEFS = {
  */
 function resolve(id) {
   const prefix = TOOLTIP_DEFS[id];
-  if (!prefix) return null;
+  if (!prefix) {return null;}
   return {
     title: game.i18n.localize(`${prefix}.Title`),
     body: game.i18n.localize(`${prefix}.Body`)
@@ -150,10 +150,10 @@ export const TooltipRegistry = {
    * @param {HTMLElement} root
    */
   bind(root) {
-    if (!(root instanceof HTMLElement)) return;
+    if (!(root instanceof HTMLElement)) {return;}
     const els = root.querySelectorAll(`[${ATTR}]`);
     for (const el of els) {
-      if (el._swseTooltipBound) continue;
+      if (el._swseTooltipBound) {continue;}
       el._swseTooltipBound = true;
 
       // Ensure keyboard focusable
@@ -183,8 +183,8 @@ export const TooltipRegistry = {
 
 function _onEnter(ev) {
   const id = ev.currentTarget.getAttribute(ATTR);
-  if (!id) return;
+  if (!id) {return;}
   const content = resolve(id);
-  if (!content) return;
+  if (!content) {return;}
   showTooltip(ev.currentTarget, content);
 }

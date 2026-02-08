@@ -13,11 +13,11 @@ export class TacticalEvaluator {
    * @returns {Array} Suggestion entries
    */
   static generateSuggestions(actor, combat) {
-    if (!actor || !combat) return [];
+    if (!actor || !combat) {return [];}
 
     const suggestions = [];
     const combatant = combat.combatants.find(c => c.actor?.id === actor.id);
-    if (!combatant) return [];
+    if (!combatant) {return [];}
 
     // 1. Ranged attack suggestions
     const rangedAttacks = this._getRangedAttackSuggestions(actor, combat);
@@ -217,7 +217,7 @@ export class TacticalEvaluator {
    * @private
    */
   static _scoreTarget(actor, enemy, rangeType) {
-    if (!enemy) return 0;
+    if (!enemy) {return 0;}
 
     const enemyHPPercent = enemy.system?.hp?.value / enemy.system?.hp?.max || 0.5;
     const isCriticalHealth = enemyHPPercent < 0.25;
@@ -226,11 +226,10 @@ export class TacticalEvaluator {
     let score = 0.6;
 
     // Bonus: low enemy HP
-    if (isCriticalHealth) score += 0.25;
-    else if (enemyHPPercent < 0.5) score += 0.15;
+    if (isCriticalHealth) {score += 0.25;} else if (enemyHPPercent < 0.5) {score += 0.15;}
 
     // Bonus: ranged > melee (safer)
-    if (rangeType === 'ranged') score += 0.05;
+    if (rangeType === 'ranged') {score += 0.05;}
 
     return Math.min(1, score);
   }
@@ -251,9 +250,9 @@ export class TacticalEvaluator {
   static calculateConfidenceBand(actor, combat) {
     const hpPercent = actor.system?.hp?.value / actor.system?.hp?.max || 0.5;
 
-    if (hpPercent > 0.75) return 'STRONG';
-    if (hpPercent > 0.5) return 'MODERATE';
-    if (hpPercent > 0.25) return 'WEAK';
+    if (hpPercent > 0.75) {return 'STRONG';}
+    if (hpPercent > 0.5) {return 'MODERATE';}
+    if (hpPercent > 0.25) {return 'WEAK';}
     return 'FALLBACK';
   }
 
@@ -271,9 +270,9 @@ export class TacticalEvaluator {
 
     // Check for specific talent markers
     const talents = actor.items.filter(i => i.type === 'talent');
-    if (talents.some(t => t.name.includes('Sniper'))) tags.push('ranged-specialist');
-    if (talents.some(t => t.name.includes('Duelist'))) tags.push('melee-specialist');
-    if (talents.some(t => t.name.includes('Medic'))) tags.push('support');
+    if (talents.some(t => t.name.includes('Sniper'))) {tags.push('ranged-specialist');}
+    if (talents.some(t => t.name.includes('Duelist'))) {tags.push('melee-specialist');}
+    if (talents.some(t => t.name.includes('Medic'))) {tags.push('support');}
 
     return tags.length > 0 ? tags : ['unknown'];
   }
@@ -287,10 +286,10 @@ export class TacticalEvaluator {
     const intents = [];
 
     const token = combatant.token;
-    if (!token) return ['unknown'];
+    if (!token) {return ['unknown'];}
 
     // Check token status
-    if (token.document?.hidden) intents.push('evasion');
+    if (token.document?.hidden) {intents.push('evasion');}
 
     return intents.length > 0 ? intents : ['tactical'];
   }

@@ -1,5 +1,5 @@
 // scripts/houserules/houserule-presets.js
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 /**
  * CENTRAL DEFINITIONS FOR PRESET BUNDLES
@@ -9,27 +9,27 @@ import { SWSELogger } from "../utils/logger.js";
 
 export const HOUSERULE_PRESETS = {
   coreRules: {
-    name: "Core Rules Only",
-    description: "Vanilla SWSE rules as written",
+    name: 'Core Rules Only',
+    description: 'Vanilla SWSE rules as written',
     settings: {
       characterCreation: {
-        abilityScoreMethod: "4d6drop",
+        abilityScoreMethod: '4d6drop',
         pointBuyPool: 25,
         pointBuyMin: 8,
         pointBuyMax: 18,
         arrayValues: [15, 14, 13, 12, 10, 8],
         allowReroll: false,
         rerollThreshold: 0,
-        hpGeneration: "roll",
+        hpGeneration: 'roll',
         maxHPLevels: 0
       },
       secondWindImproved: false,
       talentEveryLevel: false,
       deathSystem: {
-        system: "standard",
+        system: 'standard',
         strikesUntilDeath: 3,
         returnToHP: 0,
-        strikeRemoval: "never",
+        strikeRemoval: 'never',
         displayStrikes: false
       },
       crossClassSkillTraining: false,
@@ -37,40 +37,40 @@ export const HOUSERULE_PRESETS = {
       armoredDefenseForAll: false,
       weaponRangeMultiplier: 1.0,
       athleticsConsolidation: false,
-      knowledgeSkillMode: "standard",
+      knowledgeSkillMode: 'standard',
       trackBlasterCharges: false,
-      diagonalMovement: "swse",
-      forcePointRecovery: "level",
+      diagonalMovement: 'swse',
+      forcePointRecovery: 'level',
       conditionTrackCap: 0,
-      darkSideTemptation: "strict",
+      darkSideTemptation: 'strict',
       darkSidePowerIncreaseScore: true,
-      criticalHitVariant: "standard",
+      criticalHitVariant: 'standard',
       retrainingEnabled: false
     }
   },
 
   balanced: {
-    name: "Balanced Campaign",
-    description: "Community-recommended balance fixes.",
+    name: 'Balanced Campaign',
+    description: 'Community-recommended balance fixes.',
     settings: {
       characterCreation: {
-        abilityScoreMethod: "4d6drop",
+        abilityScoreMethod: '4d6drop',
         pointBuyPool: 28,
         pointBuyMin: 8,
         pointBuyMax: 18,
         arrayValues: [15, 14, 13, 12, 10, 8],
         allowReroll: true,
         rerollThreshold: 8,
-        hpGeneration: "average_minimum",
+        hpGeneration: 'average_minimum',
         maxHPLevels: 1
       },
       secondWindImproved: true,
       talentEveryLevel: false,
       deathSystem: {
-        system: "standard",
+        system: 'standard',
         strikesUntilDeath: 3,
         returnToHP: 0,
-        strikeRemoval: "never",
+        strikeRemoval: 'never',
         displayStrikes: true
       },
       crossClassSkillTraining: false,
@@ -78,40 +78,40 @@ export const HOUSERULE_PRESETS = {
       armoredDefenseForAll: true,
       weaponRangeMultiplier: 0.5,
       athleticsConsolidation: false,
-      knowledgeSkillMode: "consolidated",
+      knowledgeSkillMode: 'consolidated',
       trackBlasterCharges: false,
-      diagonalMovement: "alternating",
-      forcePointRecovery: "session",
+      diagonalMovement: 'alternating',
+      forcePointRecovery: 'session',
       conditionTrackCap: 3,
-      darkSideTemptation: "lenient",
+      darkSideTemptation: 'lenient',
       darkSidePowerIncreaseScore: true,
-      criticalHitVariant: "standard",
+      criticalHitVariant: 'standard',
       retrainingEnabled: true
     }
   },
 
   heroic: {
-    name: "Heroic Campaign",
-    description: "High-powered cinematic Star Wars.",
+    name: 'Heroic Campaign',
+    description: 'High-powered cinematic Star Wars.',
     settings: {
       characterCreation: {
-        abilityScoreMethod: "4d6drop",
+        abilityScoreMethod: '4d6drop',
         pointBuyPool: 32,
         pointBuyMin: 8,
         pointBuyMax: 18,
         arrayValues: [16, 14, 14, 12, 10, 8],
         allowReroll: true,
         rerollThreshold: 8,
-        hpGeneration: "maximum",
+        hpGeneration: 'maximum',
         maxHPLevels: 20
       },
       secondWindImproved: true,
       talentEveryLevel: true,
       deathSystem: {
-        system: "threeStrikes",
+        system: 'threeStrikes',
         strikesUntilDeath: 3,
         returnToHP: 1,
-        strikeRemoval: "long_rest",
+        strikeRemoval: 'long_rest',
         displayStrikes: true
       },
       crossClassSkillTraining: true,
@@ -119,14 +119,14 @@ export const HOUSERULE_PRESETS = {
       armoredDefenseForAll: true,
       weaponRangeMultiplier: 0.5,
       athleticsConsolidation: true,
-      knowledgeSkillMode: "simplified",
+      knowledgeSkillMode: 'simplified',
       trackBlasterCharges: true,
-      diagonalMovement: "simplified",
-      forcePointRecovery: "session",
+      diagonalMovement: 'simplified',
+      forcePointRecovery: 'session',
       conditionTrackCap: 2,
-      darkSideTemptation: "narrative",
+      darkSideTemptation: 'narrative',
       darkSidePowerIncreaseScore: false,
-      criticalHitVariant: "maxplus",
+      criticalHitVariant: 'maxplus',
       retrainingEnabled: true
     }
   }
@@ -142,7 +142,7 @@ export const HOUSERULE_PRESETS = {
  */
 function deepMerge(target, source) {
   for (const [k, v] of Object.entries(source)) {
-    if (v && typeof v === "object" && !Array.isArray(v)) {
+    if (v && typeof v === 'object' && !Array.isArray(v)) {
       target[k] = deepMerge(target[k] ?? {}, v);
     } else {
       target[k] = v;
@@ -157,7 +157,7 @@ function deepMerge(target, source) {
  */
 function isValidSetting(key) {
   const fullPath = `foundryvtt-swse.${key}`;
-  return game.settings.storage.get("world")?.has(fullPath);
+  return game.settings.storage.get('world')?.has(fullPath);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -183,12 +183,12 @@ export async function applyPreset(presetName) {
     }
 
     try {
-      const current = game.settings.get("foundryvtt-swse", key);
-      const merged = typeof value === "object" && !Array.isArray(value)
+      const current = game.settings.get('foundryvtt-swse', key);
+      const merged = typeof value === 'object' && !Array.isArray(value)
         ? deepMerge(structuredClone(current ?? {}), value)
         : value;
 
-      await game.settings.set("foundryvtt-swse", key, merged);
+      await game.settings.set('foundryvtt-swse', key, merged);
     } catch (err) {
       SWSELogger.error(`Failed to set preset key "${key}"`, err);
     }
@@ -210,31 +210,31 @@ export async function applyPreset(presetName) {
 
 export function exportSettings() {
   const allowedKeys = [
-    "characterCreation",
-    "secondWindImproved",
-    "talentEveryLevel",
-    "deathSystem",
-    "crossClassSkillTraining",
-    "skillFocusRestriction",
-    "armoredDefenseForAll",
-    "weaponRangeMultiplier",
-    "athleticsConsolidation",
-    "knowledgeSkillMode",
-    "trackBlasterCharges",
-    "diagonalMovement",
-    "forcePointRecovery",
-    "conditionTrackCap",
-    "darkSideTemptation",
-    "darkSidePowerIncreaseScore",
-    "criticalHitVariant",
-    "retrainingEnabled"
+    'characterCreation',
+    'secondWindImproved',
+    'talentEveryLevel',
+    'deathSystem',
+    'crossClassSkillTraining',
+    'skillFocusRestriction',
+    'armoredDefenseForAll',
+    'weaponRangeMultiplier',
+    'athleticsConsolidation',
+    'knowledgeSkillMode',
+    'trackBlasterCharges',
+    'diagonalMovement',
+    'forcePointRecovery',
+    'conditionTrackCap',
+    'darkSideTemptation',
+    'darkSidePowerIncreaseScore',
+    'criticalHitVariant',
+    'retrainingEnabled'
   ];
 
   const out = {};
 
   for (const key of allowedKeys) {
     try {
-      out[key] = game.settings.get("foundryvtt-swse", key);
+      out[key] = game.settings.get('foundryvtt-swse', key);
     } catch (err) {
       SWSELogger.warn(`Skipping unknown houserule key during export: ${key}`);
     }

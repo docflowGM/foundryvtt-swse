@@ -1,4 +1,4 @@
-import { warnIfMixedTracks } from "../../utils/hardening.js";
+import { warnIfMixedTracks } from '../../utils/hardening.js';
 /**
  * Level split utilities (Heroic vs Nonheroic)
  *
@@ -8,7 +8,7 @@ import { warnIfMixedTracks } from "../../utils/hardening.js";
  */
 
 export function getLevelSplit(actor) {
-  const classes = actor?.items?.filter((i) => i.type === "class") ?? [];
+  const classes = actor?.items?.filter((i) => i.type === 'class') ?? [];
 
   const heroicLevel = classes
     .filter((c) => c?.system?.isNonheroic !== true)
@@ -20,7 +20,7 @@ export function getLevelSplit(actor) {
 
   const totalLevel = heroicLevel + nonheroicLevel;
 
-  warnIfMixedTracks(actor, "getLevelSplit");
+  warnIfMixedTracks(actor, 'getLevelSplit');
 
   return { heroicLevel, nonheroicLevel, totalLevel };
 }
@@ -61,9 +61,9 @@ export function getEffectiveHalfLevel(actor) {
   const totalLevel = Number(actor?.system?.level) || 1;
   const type = actor?.type;
 
-  if (type === "npc") {
-    const mode = actor.getFlag?.("swse", "npcLevelUp.mode") ?? "statblock";
-    if (mode !== "progression") return Math.floor(totalLevel / 2);
+  if (type === 'npc') {
+    const mode = actor.getFlag?.('swse', 'npcLevelUp.mode') ?? 'statblock';
+    if (mode !== 'progression') {return Math.floor(totalLevel / 2);}
     return getHeroicHalfLevel(actor);
   }
 
@@ -79,10 +79,10 @@ export function getEffectiveHalfLevel(actor) {
 
 export function getPlannedHeroicLevel(actor, pendingData = {}) {
   const planned = Number(pendingData?.plannedHeroicLevel ?? pendingData?.newHeroicLevel ?? pendingData?.newLevel);
-  if (Number.isFinite(planned) && planned > 0) return planned;
+  if (Number.isFinite(planned) && planned > 0) {return planned;}
   return null;
 }
 
 export function isEpicOverrideEnabled() {
-  return game.settings?.get("foundryvtt-swse", "epicOverride") === true;
+  return game.settings?.get('foundryvtt-swse', 'epicOverride') === true;
 }

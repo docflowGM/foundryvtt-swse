@@ -17,15 +17,15 @@ export class UpgradeRulesEngine {
    * Used for equipment size calculations.
    */
   static EQUIPMENT_SIZES = [
-    "fine",
-    "diminutive",
-    "tiny",
-    "small",
-    "medium",
-    "large",
-    "huge",
-    "gargantuan",
-    "colossal"
+    'fine',
+    'diminutive',
+    'tiny',
+    'small',
+    'medium',
+    'large',
+    'huge',
+    'gargantuan',
+    'colossal'
   ];
 
   /**
@@ -33,11 +33,11 @@ export class UpgradeRulesEngine {
    * A weapon is two categories smaller than its Object Size.
    */
   static WEAPON_SIZES = [
-    "tiny",
-    "small",
-    "medium",
-    "large",
-    "huge"
+    'tiny',
+    'small',
+    'medium',
+    'large',
+    'huge'
   ];
 
   /**
@@ -45,9 +45,9 @@ export class UpgradeRulesEngine {
    * Armor doesn't increase in size but in weight class when enlarged.
    */
   static ARMOR_WEIGHTS = [
-    "light",
-    "medium",
-    "heavy"
+    'light',
+    'medium',
+    'heavy'
   ];
 
   /**
@@ -55,13 +55,13 @@ export class UpgradeRulesEngine {
    * When a weapon is stripped of damage, its dice reduce one step.
    */
   static DAMAGE_DICE_PROGRESSION = [
-    "d2",
-    "d3",
-    "d4",
-    "d6",
-    "d8",
-    "d10",
-    "d12"
+    'd2',
+    'd3',
+    'd4',
+    'd6',
+    'd8',
+    'd10',
+    'd12'
   ];
 
   /**
@@ -69,22 +69,22 @@ export class UpgradeRulesEngine {
    * When a weapon is stripped of range, it reduces one step.
    */
   static RANGE_PROGRESSION = [
-    "melee",
-    "thrown",
-    "pistol",
-    "rifle",
-    "heavy"
+    'melee',
+    'thrown',
+    'pistol',
+    'rifle',
+    'heavy'
   ];
 
   /**
    * Restriction levels for equipment and upgrades.
    */
   static RESTRICTIONS = {
-    COMMON: "common",
-    LICENSED: "licensed",
-    RESTRICTED: "restricted",
-    MILITARY: "military",
-    ILLEGAL: "illegal"
+    COMMON: 'common',
+    LICENSED: 'licensed',
+    RESTRICTED: 'restricted',
+    MILITARY: 'military',
+    ILLEGAL: 'illegal'
   };
 
   /* ============================================================== */
@@ -111,7 +111,7 @@ export class UpgradeRulesEngine {
     }
 
     // Check if item is Powered Armor
-    if (item.type === "armor" && this.isPoweredArmor(item)) {
+    if (item.type === 'armor' && this.isPoweredArmor(item)) {
       return 2;
     }
 
@@ -130,18 +130,18 @@ export class UpgradeRulesEngine {
    * @returns {boolean} True if this is powered armor
    */
   static isPoweredArmor(armor) {
-    if (armor.type !== "armor") return false;
+    if (armor.type !== 'armor') {return false;}
 
     // Check name for "power" variant
-    const name = (armor.name || "").toLowerCase();
+    const name = (armor.name || '').toLowerCase();
     const isPoweredByName = /power(ed)?/i.test(name);
 
     // Check for explicit powered armor flag
     const isPoweredExplicit = armor.system.isPoweredArmor === true;
 
     // Check description for "powered armor" text
-    const description = (armor.system.description || "").toLowerCase();
-    const isPoweredInDesc = description.includes("powered armor");
+    const description = (armor.system.description || '').toLowerCase();
+    const isPoweredInDesc = description.includes('powered armor');
 
     return isPoweredByName || isPoweredExplicit || isPoweredInDesc;
   }
@@ -158,9 +158,9 @@ export class UpgradeRulesEngine {
    * @returns {string} Size category
    */
   static getEquipmentSize(item) {
-    if (item.type === "weapon") {
+    if (item.type === 'weapon') {
       return this.getWeaponSize(item);
-    } else if (item.type === "armor") {
+    } else if (item.type === 'armor') {
       return this.getArmorSize(item);
     } else {
       return this.getGeneralEquipmentSize(item);
@@ -180,7 +180,7 @@ export class UpgradeRulesEngine {
       return weapon.system.size.toLowerCase();
     }
     // Default weapon size
-    return "small";
+    return 'small';
   }
 
   /**
@@ -196,7 +196,7 @@ export class UpgradeRulesEngine {
       return armor.system.size.toLowerCase();
     }
     // Default to Medium for human-sized armor
-    return "medium";
+    return 'medium';
   }
 
   /**
@@ -224,15 +224,15 @@ export class UpgradeRulesEngine {
 
     const weight = Number(equipment.system.weight ?? 0);
 
-    if (weight < 1) return "fine";
-    if (weight < 2) return "diminutive";
-    if (weight < 5) return "tiny";
-    if (weight < 50) return "small";
-    if (weight < 500) return "medium";
-    if (weight < 5000) return "large";
-    if (weight < 50000) return "huge";
-    if (weight < 500000) return "gargantuan";
-    return "colossal";
+    if (weight < 1) {return 'fine';}
+    if (weight < 2) {return 'diminutive';}
+    if (weight < 5) {return 'tiny';}
+    if (weight < 50) {return 'small';}
+    if (weight < 500) {return 'medium';}
+    if (weight < 5000) {return 'large';}
+    if (weight < 50000) {return 'huge';}
+    if (weight < 500000) {return 'gargantuan';}
+    return 'colossal';
   }
 
   /**
@@ -252,23 +252,23 @@ export class UpgradeRulesEngine {
     if (item.system.sizeIncreaseApplied === true) {
       return {
         canIncrease: false,
-        reason: "This item has already had its size increased."
+        reason: 'This item has already had its size increased.'
       };
     }
 
     const currentCost = Number(item.system.cost ?? 0);
     const newCost = currentCost * 2;
 
-    if (item.type === "armor") {
+    if (item.type === 'armor') {
       // Armor increases in weight class, not size
       const weights = this.ARMOR_WEIGHTS;
-      const currentWeight = item.system.armorType?.toLowerCase() ?? "light";
+      const currentWeight = item.system.armorType?.toLowerCase() ?? 'light';
       const currentIndex = weights.indexOf(currentWeight);
 
       if (currentIndex === -1 || currentIndex >= weights.length - 1) {
         return {
           canIncrease: false,
-          reason: "Heavy armor cannot be enlarged further."
+          reason: 'Heavy armor cannot be enlarged further.'
         };
       }
 
@@ -287,7 +287,7 @@ export class UpgradeRulesEngine {
       if (currentIndex === -1 || currentIndex >= sizes.length - 1) {
         return {
           canIncrease: false,
-          reason: "This item cannot be enlarged further."
+          reason: 'This item cannot be enlarged further.'
         };
       }
 
@@ -318,10 +318,10 @@ export class UpgradeRulesEngine {
    * @returns {Object} Validation result with: valid {boolean}, newSlots {number}, effects {Object}, dc {number}, cost {number}, hoursRequired {number}
    */
   static stripWeapon(weapon, stripType) {
-    if (weapon.type !== "weapon") {
+    if (weapon.type !== 'weapon') {
       return {
         valid: false,
-        reason: "Only weapons can be stripped."
+        reason: 'Only weapons can be stripped.'
       };
     }
 
@@ -330,52 +330,52 @@ export class UpgradeRulesEngine {
 
     const stripTypes = {
       damage: {
-        label: "Damage",
+        label: 'Damage',
         check: () => {
-          if (stripped.damage) return "Damage already stripped from this weapon.";
+          if (stripped.damage) {return 'Damage already stripped from this weapon.';}
           return null;
         },
         effect: () => this._stripWeaponDamage(weapon)
       },
       range: {
-        label: "Range",
+        label: 'Range',
         check: () => {
-          if (stripped.range) return "Range already stripped from this weapon.";
-          const range = weapon.system.range?.toLowerCase() ?? "melee";
-          if (range === "melee") return "Melee weapons cannot have range stripped.";
+          if (stripped.range) {return 'Range already stripped from this weapon.';}
+          const range = weapon.system.range?.toLowerCase() ?? 'melee';
+          if (range === 'melee') {return 'Melee weapons cannot have range stripped.';}
           return null;
         },
         effect: () => this._stripWeaponRange(weapon)
       },
       design: {
-        label: "Design (Exotic)",
+        label: 'Design (Exotic)',
         check: () => {
-          if (stripped.design) return "Design already stripped from this weapon.";
+          if (stripped.design) {return 'Design already stripped from this weapon.';}
           // Check if already exotic
-          if (weapon.system.properties?.includes("exotic")) {
-            return "Weapon is already Exotic.";
+          if (weapon.system.properties?.includes('exotic')) {
+            return 'Weapon is already Exotic.';
           }
           return null;
         },
         effect: () => ({ exoticWeapon: true })
       },
       stun: {
-        label: "Stun Setting",
+        label: 'Stun Setting',
         check: () => {
-          if (stripped.stun) return "Stun setting already stripped.";
-          if (!weapon.system.properties?.includes("stun")) {
-            return "Weapon does not have a Stun setting.";
+          if (stripped.stun) {return 'Stun setting already stripped.';}
+          if (!weapon.system.properties?.includes('stun')) {
+            return 'Weapon does not have a Stun setting.';
           }
           return null;
         },
         effect: () => ({ stunSettingRemoved: true })
       },
       autofire: {
-        label: "Autofire",
+        label: 'Autofire',
         check: () => {
-          if (stripped.autofire) return "Autofire already stripped.";
-          if (!weapon.system.properties?.includes("autofire")) {
-            return "Weapon does not have Autofire.";
+          if (stripped.autofire) {return 'Autofire already stripped.';}
+          if (!weapon.system.properties?.includes('autofire')) {
+            return 'Weapon does not have Autofire.';
           }
           return null;
         },
@@ -410,7 +410,7 @@ export class UpgradeRulesEngine {
       cost: stripCost,
       hoursRequired: 8,
       newSlots: 1,
-      note: "On failure, weapon is broken and must be repaired before attempting again."
+      note: 'On failure, weapon is broken and must be repaired before attempting again.'
     };
   }
 
@@ -423,11 +423,11 @@ export class UpgradeRulesEngine {
    * @returns {Object} Effect details
    */
   static _stripWeaponDamage(weapon) {
-    const damage = weapon.system.damage ?? "1d8";
+    const damage = weapon.system.damage ?? '1d8';
     // Extract dice type from damage string (e.g., "3d10" -> "d10")
     const diceMatch = damage.match(/d(\d+)/);
     if (!diceMatch) {
-      return { error: "Could not parse damage dice" };
+      return { error: 'Could not parse damage dice' };
     }
 
     const currentDice = Number(diceMatch[1]);
@@ -435,16 +435,16 @@ export class UpgradeRulesEngine {
     const currentIndex = progression.indexOf(currentDice);
 
     if (currentIndex <= 0) {
-      return { error: "Damage cannot be stripped further." };
+      return { error: 'Damage cannot be stripped further.' };
     }
 
     const newDice = progression[currentIndex - 1];
-    const diceCount = damage.match(/^(\d+)d/)?.[1] ?? "1";
+    const diceCount = damage.match(/^(\d+)d/)?.[1] ?? '1';
 
     return {
       newDamage: `${diceCount}d${newDice}`,
       oldDamage: damage,
-      restriction: "Cannot use upgrade slots to enhance damage once stripped."
+      restriction: 'Cannot use upgrade slots to enhance damage once stripped.'
     };
   }
 
@@ -457,19 +457,19 @@ export class UpgradeRulesEngine {
    * @returns {Object} Effect details
    */
   static _stripWeaponRange(weapon) {
-    const range = weapon.system.range?.toLowerCase() ?? "melee";
-    const progression = ["melee", "thrown", "pistol", "rifle", "heavy"];
+    const range = weapon.system.range?.toLowerCase() ?? 'melee';
+    const progression = ['melee', 'thrown', 'pistol', 'rifle', 'heavy'];
     const currentIndex = progression.indexOf(range);
 
     if (currentIndex <= 0) {
-      return { error: "Range cannot be stripped further." };
+      return { error: 'Range cannot be stripped further.' };
     }
 
     const newRange = progression[currentIndex - 1];
     return {
       newRange,
       oldRange: range,
-      restriction: "Cannot use upgrade slots to enhance range once stripped."
+      restriction: 'Cannot use upgrade slots to enhance range once stripped.'
     };
   }
 
@@ -486,10 +486,10 @@ export class UpgradeRulesEngine {
    * @returns {Object} Validation result
    */
   static stripArmor(armor, stripType) {
-    if (armor.type !== "armor") {
+    if (armor.type !== 'armor') {
       return {
         valid: false,
-        reason: "Only armor can be stripped."
+        reason: 'Only armor can be stripped.'
       };
     }
 
@@ -497,14 +497,14 @@ export class UpgradeRulesEngine {
 
     const stripTypes = {
       defensiveMaterial: {
-        label: "Defensive Material",
+        label: 'Defensive Material',
         check: () => {
           if (stripped.defensiveMaterial) {
-            return "Defensive material already stripped.";
+            return 'Defensive material already stripped.';
           }
           const defBonus = Number(armor.system.defenseBonus ?? 0);
           if (defBonus <= 0) {
-            return "Cannot strip defensive material further.";
+            return 'Cannot strip defensive material further.';
           }
           return null;
         },
@@ -514,10 +514,10 @@ export class UpgradeRulesEngine {
         })
       },
       jointProtection: {
-        label: "Joint Protection",
+        label: 'Joint Protection',
         check: () => {
           if (stripped.jointProtection) {
-            return "Joint protection already stripped.";
+            return 'Joint protection already stripped.';
           }
           return null;
         },
@@ -581,7 +581,7 @@ export class UpgradeRulesEngine {
         dc: scratchBuilt ? 15 : 10,
         minutesRequired: scratchBuilt ? 60 : 10,
         hoursRequired: scratchBuilt ? 1 : 0.167,
-        label: scratchBuilt ? "1 Hour" : "10 Minutes"
+        label: scratchBuilt ? '1 Hour' : '10 Minutes'
       };
     }
 
@@ -590,7 +590,7 @@ export class UpgradeRulesEngine {
         dc: scratchBuilt ? 25 : 20,
         minutesRequired: scratchBuilt ? 8 * 60 : 60,
         hoursRequired: scratchBuilt ? 8 : 1,
-        label: scratchBuilt ? "1 Day (8 Hours)" : "1 Hour"
+        label: scratchBuilt ? '1 Day (8 Hours)' : '1 Hour'
       };
     }
 
@@ -599,7 +599,7 @@ export class UpgradeRulesEngine {
       dc: scratchBuilt ? 35 : 30,
       minutesRequired: scratchBuilt ? 5 * 8 * 60 : 8 * 60,
       hoursRequired: scratchBuilt ? 40 : 8,
-      label: scratchBuilt ? "1 Week (5 Days)" : "1 Day (8 Hours)"
+      label: scratchBuilt ? '1 Week (5 Days)' : '1 Day (8 Hours)'
     };
   }
 
@@ -626,14 +626,14 @@ export class UpgradeRulesEngine {
    */
   static calculateRemovalTime(slotsRequired, scratchBuilt = false, destructive = false) {
     const slots = Number(slotsRequired ?? 1);
-    let timeMultiplier = destructive ? 0.5 : 1;
+    const timeMultiplier = destructive ? 0.5 : 1;
 
     if (slots === 0) {
       return {
         dc: destructive ? -1 : (scratchBuilt ? 10 : 5),
         minutesRequired: destructive ? 5 : (scratchBuilt ? 60 : 10),
         hoursRequired: destructive ? 0.083 : (scratchBuilt ? 1 : 0.167),
-        label: destructive ? "5 Minutes (Destroyed)" : (scratchBuilt ? "1 Hour" : "10 Minutes"),
+        label: destructive ? '5 Minutes (Destroyed)' : (scratchBuilt ? '1 Hour' : '10 Minutes'),
         destructive
       };
     }
@@ -643,7 +643,7 @@ export class UpgradeRulesEngine {
         dc: destructive ? -1 : (scratchBuilt ? 20 : 15),
         minutesRequired: destructive ? 30 : (scratchBuilt ? 8 * 60 : 60),
         hoursRequired: destructive ? 0.5 : (scratchBuilt ? 8 : 1),
-        label: destructive ? "30 Minutes (Destroyed)" : (scratchBuilt ? "1 Day (8 Hours)" : "1 Hour"),
+        label: destructive ? '30 Minutes (Destroyed)' : (scratchBuilt ? '1 Day (8 Hours)' : '1 Hour'),
         destructive
       };
     }
@@ -653,7 +653,7 @@ export class UpgradeRulesEngine {
       dc: destructive ? -1 : (scratchBuilt ? 30 : 25),
       minutesRequired: destructive ? 4 * 60 : (scratchBuilt ? 5 * 8 * 60 : 8 * 60),
       hoursRequired: destructive ? 4 : (scratchBuilt ? 40 : 8),
-      label: destructive ? "4 Hours (Destroyed)" : (scratchBuilt ? "1 Week (5 Days)" : "1 Day (8 Hours)"),
+      label: destructive ? '4 Hours (Destroyed)' : (scratchBuilt ? '1 Week (5 Days)' : '1 Day (8 Hours)'),
       destructive
     };
   }
@@ -680,7 +680,7 @@ export class UpgradeRulesEngine {
     if (!this._typeMatches(item, upgrade)) {
       return {
         valid: false,
-        reason: "This upgrade is not compatible with this item type."
+        reason: 'This upgrade is not compatible with this item type.'
       };
     }
 
@@ -737,16 +737,16 @@ export class UpgradeRulesEngine {
    */
   static _checkStrippedAreaConflict(item, upgrade) {
     const stripped = item.system.strippedFeatures ?? {};
-    const upgradeName = upgrade.name?.toLowerCase() ?? "";
+    const upgradeName = upgrade.name?.toLowerCase() ?? '';
 
     // Check for damage enhancements on stripped damage
-    if (stripped.damage && this._isUpgradeType(upgradeName, "damage")) {
-      return "Cannot install damage upgrades on equipment with stripped damage.";
+    if (stripped.damage && this._isUpgradeType(upgradeName, 'damage')) {
+      return 'Cannot install damage upgrades on equipment with stripped damage.';
     }
 
     // Check for range enhancements on stripped range
-    if (stripped.range && this._isUpgradeType(upgradeName, "range")) {
-      return "Cannot install range upgrades on equipment with stripped range.";
+    if (stripped.range && this._isUpgradeType(upgradeName, 'range')) {
+      return 'Cannot install range upgrades on equipment with stripped range.';
     }
 
     // More conflict checks can be added as needed
@@ -771,12 +771,12 @@ export class UpgradeRulesEngine {
    * @private
    */
   static _typeMatches(item, upgrade) {
-    const upgradeType = upgrade.system.upgradeType?.toLowerCase() ?? "";
+    const upgradeType = upgrade.system.upgradeType?.toLowerCase() ?? '';
 
-    if (upgradeType.includes("universal")) return true;
-    if (item.type === "weapon" && upgradeType.includes("weapon")) return true;
-    if (item.type === "armor" && upgradeType.includes("armor")) return true;
-    if (item.type === "equipment" && upgradeType.includes("equipment")) return true;
+    if (upgradeType.includes('universal')) {return true;}
+    if (item.type === 'weapon' && upgradeType.includes('weapon')) {return true;}
+    if (item.type === 'armor' && upgradeType.includes('armor')) {return true;}
+    if (item.type === 'equipment' && upgradeType.includes('equipment')) {return true;}
 
     return false;
   }
@@ -810,13 +810,13 @@ export class UpgradeRulesEngine {
     }
 
     // Return most restrictive (ordered by restrictiveness)
-    const order = ["illegal", "military", "restricted", "licensed", "common"];
+    const order = ['illegal', 'military', 'restricted', 'licensed', 'common'];
     for (const level of order) {
       if (restrictions.includes(level)) {
         return level;
       }
     }
 
-    return "common";
+    return 'common';
   }
 }

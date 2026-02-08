@@ -22,7 +22,7 @@ import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_e
  * @returns {number} Number of talents available at current heroic level (0 or 1)
  */
 export function getTalentCountAtHeroicLevel(actor) {
-  if (!actor) return 0;
+  if (!actor) {return 0;}
 
   const totalLevel = actor.system?.details?.level || 1;
   const isOddLevel = totalLevel % 2 === 1;
@@ -40,7 +40,7 @@ export function getTalentCountAtHeroicLevel(actor) {
  * @returns {number} Number of talents from this class at its current level
  */
 export function getTalentCountAtClassLevel(selectedClass, actor) {
-  if (!selectedClass) return 0;
+  if (!selectedClass) {return 0;}
 
   const classLevel = getClassLevel(actor, selectedClass.name) + 1; // +1 for pending level
   const isOddLevel = classLevel % 2 === 1;
@@ -123,7 +123,7 @@ export async function getAvailableTalentTreesForHeroicTalent(actor) {
         const canCanonical = await PrerequisiteChecker.canAccessTalentTree(actor, treeConfig.treeId);
         const canLegacy = await PrerequisiteRequirements.canAccessTalentTree(actor, treeConfig.treeId);
         if (canCanonical !== canLegacy) {
-          console.warn("Tree access mismatch detected", { treeId: treeConfig.treeId, canonical: canCanonical, legacy: canLegacy });
+          console.warn('Tree access mismatch detected', { treeId: treeConfig.treeId, canonical: canCanonical, legacy: canLegacy });
         }
         if (canCanonical) {
           allTrees.add(treeConfig.treeId);
@@ -145,7 +145,7 @@ export async function getAvailableTalentTreesForHeroicTalent(actor) {
  * @returns {Array<string>} Talent trees available to this specific class
  */
 export function getAvailableTalentTreesForClassTalent(selectedClass) {
-  if (!selectedClass) return [];
+  if (!selectedClass) {return [];}
 
   const trees = getTalentTrees(selectedClass) || [];
   SWSELogger.log(`[DUAL-TALENTS] getAvailableTalentTreesForClassTalent: class "${selectedClass.name}" has ${trees.length} trees:`, trees);
@@ -207,7 +207,7 @@ export function countAcquiredTalents(actor) {
       heroic.push(talent.name);
     } else if (source && source.startsWith('Class:')) {
       const className = source.replace('Class:', '').trim();
-      if (!byClass[className]) byClass[className] = [];
+      if (!byClass[className]) {byClass[className] = [];}
       byClass[className].push(talent.name);
     }
   }

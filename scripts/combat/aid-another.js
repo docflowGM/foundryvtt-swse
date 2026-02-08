@@ -9,7 +9,7 @@
  * This is a core RAW mechanic always available in SWSE
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 export class AidAnother {
@@ -19,13 +19,13 @@ export class AidAnother {
   static initialize() {
     try {
       // Register hook to cleanup expired aid bonuses/penalties at turn changes
-      Hooks.on("combatTurn", (combat, updateData, options) => {
+      Hooks.on('combatTurn', (combat, updateData, options) => {
         this._cleanupExpiredAids(combat);
       });
 
-      SWSELogger.info("AidAnother | Initialized - Core RAW Mechanic");
+      SWSELogger.info('AidAnother | Initialized - Core RAW Mechanic');
     } catch (err) {
-      SWSELogger.error("AidAnother initialization failed", err);
+      SWSELogger.error('AidAnother initialization failed', err);
     }
   }
 
@@ -39,7 +39,7 @@ export class AidAnother {
   static async aidSkillCheck(aidingActor, aidedActor, skillId) {
     try {
       if (!aidingActor || !aidedActor) {
-        throw new Error("Missing aiding or aided actor");
+        throw new Error('Missing aiding or aided actor');
       }
 
       const skillData = aidingActor.system?.skills?.[skillId];
@@ -83,7 +83,7 @@ export class AidAnother {
 
       return { success, bonus: aidBonus, roll, skillId };
     } catch (err) {
-      SWSELogger.error("Aid skill check failed", err);
+      SWSELogger.error('Aid skill check failed', err);
       throw err;
     }
   }
@@ -99,11 +99,11 @@ export class AidAnother {
   static async aidAttackRoll(aidingActor, aidedActor, targetActor, weapon) {
     try {
       if (!aidingActor || !aidedActor || !targetActor) {
-        throw new Error("Missing aiding, aided, or target actor");
+        throw new Error('Missing aiding, aided, or target actor');
       }
 
       // Attack Reflex Defense of 10
-      const abilityMod = aidingActor.system?.attributes[weapon?.system?.attackAttribute || "str"]?.mod || 0;
+      const abilityMod = aidingActor.system?.attributes[weapon?.system?.attackAttribute || 'str']?.mod || 0;
       const bab = aidingActor.system?.bab || 0;
       const lvl = aidingActor.system?.level || 1;
       const halfLvl = getEffectiveHalfLevel(actor);
@@ -143,7 +143,7 @@ export class AidAnother {
 
       return { success, bonus: success ? 2 : 0, roll, targetId: targetActor.id };
     } catch (err) {
-      SWSELogger.error("Aid attack roll failed", err);
+      SWSELogger.error('Aid attack roll failed', err);
       throw err;
     }
   }
@@ -158,11 +158,11 @@ export class AidAnother {
   static async suppressEnemy(suppressingActor, targetActor, weapon) {
     try {
       if (!suppressingActor || !targetActor) {
-        throw new Error("Missing suppressing or target actor");
+        throw new Error('Missing suppressing or target actor');
       }
 
       // Attack target's Reflex Defense of 10
-      const abilityMod = suppressingActor.system?.attributes[weapon?.system?.attackAttribute || "dex"]?.mod || 0;
+      const abilityMod = suppressingActor.system?.attributes[weapon?.system?.attackAttribute || 'dex']?.mod || 0;
       const bab = suppressingActor.system?.bab || 0;
       const lvl = suppressingActor.system?.level || 1;
       const halfLvl = getEffectiveHalfLevel(actor);
@@ -202,7 +202,7 @@ export class AidAnother {
 
       return { success, penalty: success ? -2 : 0, roll };
     } catch (err) {
-      SWSELogger.error("Suppress enemy failed", err);
+      SWSELogger.error('Suppress enemy failed', err);
       throw err;
     }
   }
@@ -212,13 +212,13 @@ export class AidAnother {
    * @private
    */
   static async _grantSkillAid(actor, aidedBy, skillId, bonus) {
-    const aidFlags = actor.getFlag("foundryvtt-swse", "skillAids") || {};
+    const aidFlags = actor.getFlag('foundryvtt-swse', 'skillAids') || {};
     aidFlags[skillId] = {
       bonus,
       grantedBy: aidedBy,
       expiresNextCheck: true
     };
-    await actor.setFlag("foundryvtt-swse", "skillAids", aidFlags);
+    await actor.setFlag('foundryvtt-swse', 'skillAids', aidFlags);
   }
 
   /**
@@ -226,7 +226,7 @@ export class AidAnother {
    * @private
    */
   static async _grantAttackAid(actor, aidedBy, targetActor, bonus) {
-    const attackAids = actor.getFlag("foundryvtt-swse", "attackAids") || {};
+    const attackAids = actor.getFlag('foundryvtt-swse', 'attackAids') || {};
     if (!attackAids[targetActor.id]) {
       attackAids[targetActor.id] = [];
     }
@@ -235,7 +235,7 @@ export class AidAnother {
       grantedBy: aidedBy,
       expiresNextAttack: true
     });
-    await actor.setFlag("foundryvtt-swse", "attackAids", attackAids);
+    await actor.setFlag('foundryvtt-swse', 'attackAids', attackAids);
   }
 
   /**
@@ -243,11 +243,11 @@ export class AidAnother {
    * @private
    */
   static async _applySuppressionPenalty(actor, suppressedBy, penalty) {
-    const suppressions = actor.getFlag("foundryvtt-swse", "suppressionPenalties") || {};
+    const suppressions = actor.getFlag('foundryvtt-swse', 'suppressionPenalties') || {};
     suppressions.penalty = penalty;
     suppressions.appliedBy = suppressedBy;
     suppressions.expiresNextAttack = true;
-    await actor.setFlag("foundryvtt-swse", "suppressionPenalties", suppressions);
+    await actor.setFlag('foundryvtt-swse', 'suppressionPenalties', suppressions);
   }
 
   /**
@@ -257,11 +257,11 @@ export class AidAnother {
   static async _cleanupExpiredAids(combat) {
     for (const combatant of combat.combatants) {
       const actor = combatant.actor;
-      if (!actor) continue;
+      if (!actor) {continue;}
 
       // Clean up after this actor's turn ends
-      await actor.unsetFlag("foundryvtt-swse", "skillAids");
-      await actor.unsetFlag("foundryvtt-swse", "suppressionPenalties");
+      await actor.unsetFlag('foundryvtt-swse', 'skillAids');
+      await actor.unsetFlag('foundryvtt-swse', 'suppressionPenalties');
     }
   }
 
@@ -272,26 +272,26 @@ export class AidAnother {
   static _getSkillName(skillId) {
     const skillNames = {
       // Heroic
-      acrobatics: "Acrobatics",
-      athletics: "Athletics",
-      deception: "Deception",
-      insight: "Insight",
-      intimidate: "Intimidate",
-      medicine: "Medicine",
-      perception: "Perception",
-      persuasion: "Persuasion",
-      piloting: "Piloting",
-      stealth: "Stealth",
-      survival: "Survival",
-      knowledge_bureaucracy: "Knowledge (Bureaucracy)",
-      knowledge_galaxies: "Knowledge (Galaxies)",
-      knowledge_life_sciences: "Knowledge (Life Sciences)",
-      knowledge_physical_sciences: "Knowledge (Physical Sciences)",
-      knowledge_social_sciences: "Knowledge (Social Sciences)",
-      knowledge_tactics: "Knowledge (Tactics)",
-      knowledge_technology: "Knowledge (Technology)",
-      mechanics: "Mechanics",
-      use_computer: "Use Computer"
+      acrobatics: 'Acrobatics',
+      athletics: 'Athletics',
+      deception: 'Deception',
+      insight: 'Insight',
+      intimidate: 'Intimidate',
+      medicine: 'Medicine',
+      perception: 'Perception',
+      persuasion: 'Persuasion',
+      piloting: 'Piloting',
+      stealth: 'Stealth',
+      survival: 'Survival',
+      knowledge_bureaucracy: 'Knowledge (Bureaucracy)',
+      knowledge_galaxies: 'Knowledge (Galaxies)',
+      knowledge_life_sciences: 'Knowledge (Life Sciences)',
+      knowledge_physical_sciences: 'Knowledge (Physical Sciences)',
+      knowledge_social_sciences: 'Knowledge (Social Sciences)',
+      knowledge_tactics: 'Knowledge (Tactics)',
+      knowledge_technology: 'Knowledge (Technology)',
+      mechanics: 'Mechanics',
+      use_computer: 'Use Computer'
     };
     return skillNames[skillId] || skillId.charAt(0).toUpperCase() + skillId.slice(1);
   }
@@ -302,7 +302,7 @@ export class AidAnother {
    * @returns {Object}
    */
   static getSkillAids(actor) {
-    return actor?.getFlag("foundryvtt-swse", "skillAids") || {};
+    return actor?.getFlag('foundryvtt-swse', 'skillAids') || {};
   }
 
   /**
@@ -312,7 +312,7 @@ export class AidAnother {
    * @returns {Array}
    */
   static getAttackAids(actor, targetId) {
-    const aids = actor?.getFlag("foundryvtt-swse", "attackAids") || {};
+    const aids = actor?.getFlag('foundryvtt-swse', 'attackAids') || {};
     return aids[targetId] || [];
   }
 
@@ -322,7 +322,7 @@ export class AidAnother {
    * @returns {number}
    */
   static getSuppressionPenalty(actor) {
-    const suppression = actor?.getFlag("foundryvtt-swse", "suppressionPenalties");
+    const suppression = actor?.getFlag('foundryvtt-swse', 'suppressionPenalties');
     return suppression?.penalty || 0;
   }
 }

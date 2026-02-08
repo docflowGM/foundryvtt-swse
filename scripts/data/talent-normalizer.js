@@ -27,7 +27,7 @@
  * @returns {Array<Object>} - Normalized prerequisite objects
  */
 function parsePrerequisites(prereqValue) {
-    if (!prereqValue) return [];
+    if (!prereqValue) {return [];}
 
     // Already an array
     if (Array.isArray(prereqValue)) {
@@ -42,7 +42,7 @@ function parsePrerequisites(prereqValue) {
     // String format (legacy)
     if (typeof prereqValue === 'string') {
         return [{
-            type: "text",
+            type: 'text',
             value: prereqValue
         }];
     }
@@ -60,14 +60,14 @@ function parsePrerequisites(prereqValue) {
  * @returns {Object} - Normalized talent definition
  */
 export function normalizeTalent(rawTalent, treeMap = null) {
-    const name = rawTalent.name || "Unknown Talent";
+    const name = rawTalent.name || 'Unknown Talent';
     const sys = rawTalent.system || {};
 
     // SSOT: treeId is derived from the tree's talentIds array
     // (authoritative source is in talent_trees.db, not here)
     // Read the derived treeId that was written by the Python reconciliation script
     let treeId = sys.treeId || null;
-    let treeName = sys.talent_tree || sys.talentTree;
+    const treeName = sys.talent_tree || sys.talentTree;
 
     if (!treeId && treeName && treeMap) {
         // Fallback for backwards compatibility (migration safety)
@@ -94,18 +94,18 @@ export function normalizeTalent(rawTalent, treeMap = null) {
 
         // Mechanics
         prerequisites: parsePrerequisites(sys.prerequisites),
-        benefit: sys.benefit || "",
-        special: sys.special || "",
+        benefit: sys.benefit || '',
+        special: sys.special || '',
 
         // Effects (Active Effects for automation)
         effects: rawTalent.effects || [],
 
         // Metadata
-        description: sys.description || "",
-        img: rawTalent.img || "icons/svg/item-bag.svg",
+        description: sys.description || '',
+        img: rawTalent.img || 'icons/svg/item-bag.svg',
 
         // Flags (for system extensions)
-        flags: rawTalent.flags?.swse || {},
+        flags: rawTalent.flags?.swse || {}
 
         // DEPRECATED FIELDS (intentionally ignored)
         // - sys.class: Class eligibility is derived from tree, not stored here
@@ -123,7 +123,7 @@ export function normalizeTalent(rawTalent, treeMap = null) {
  * @returns {Array<Object>} - Talents belonging to this tree
  */
 export function getTalentsByTree(treeId, allTalents) {
-    if (!treeId || !allTalents) return [];
+    if (!treeId || !allTalents) {return [];}
 
     return allTalents.filter(talent => talent.treeId === treeId);
 }
@@ -190,10 +190,10 @@ export function validateTalent(normalizedTalent) {
  * @returns {Array<Object>} - Filtered talents
  */
 export function filterTalentsByRole(talents, role, treeMap) {
-    if (!role || !treeMap) return talents;
+    if (!role || !treeMap) {return talents;}
 
     return talents.filter(talent => {
-        if (!talent.treeId) return false;
+        if (!talent.treeId) {return false;}
 
         const tree = treeMap.get(talent.treeId);
         return tree && tree.role === role;

@@ -191,7 +191,7 @@ export class HooksRegistry {
      */
     static get(id) {
         const registration = this.#registered.get(id);
-        if (!registration) return null;
+        if (!registration) {return null;}
 
         return {
             id: registration.id,

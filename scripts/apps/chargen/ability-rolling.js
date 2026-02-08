@@ -23,13 +23,13 @@ export class AbilityRollingController {
     this._init();
   }
 
-  _init(){
+  _init() {
     this._bindUI();
     this.render();
-    if (this.method === 'organic' || this.method === 'standard') this.rollInitial();
+    if (this.method === 'organic' || this.method === 'standard') {this.rollInitial();}
   }
 
-  async rollInitial(){
+  async rollInitial() {
     if (this.method === 'standard') {
       await this._rollStandard();
     } else if (this.method === 'organic') {
@@ -39,38 +39,38 @@ export class AbilityRollingController {
     this.render();
   }
 
-  async _rollStandard(){
+  async _rollStandard() {
     this.pool = [];
-    for (let i=0;i<6;i++){
+    for (let i=0;i<6;i++) {
       const r = await this._rollFormula('4d6');
       // Prefer dice terms when available
-      const results = (r.dice && r.dice.length>0 && r.dice[0].results) ? r.dice[0].results.map(x=>x.result) : (r.results || [r.total]);
-      const sorted = results.slice().sort((a,b)=>a-b);
+      const results = (r.dice && r.dice.length>0 && r.dice[0].results) ? r.dice[0].results.map(x => x.result) : (r.results || [r.total]);
+      const sorted = results.slice().sort((a,b) => a-b);
       const drop = sorted.shift();
-      const total = sorted.reduce((a,b)=>a+b,0);
+      const total = sorted.reduce((a,b) => a+b,0);
       this.pool.push(this._makeDie({ value: total, tooltip: `Rolled: ${results.join(', ')} (dropped ${drop})`, origin: 'standard' }));
     }
   }
 
-  async _rollOrganic(){
+  async _rollOrganic() {
     // Roll 21d6, drop lowest 3 overall, chunk into 6 groups of 3 and sum each
     const r = await this._rollFormula('21d6');
-    const results = (r.dice && r.dice[0] && r.dice[0].results) ? r.dice[0].results.map(x=>x.result) : (r.results || []);
+    const results = (r.dice && r.dice[0] && r.dice[0].results) ? r.dice[0].results.map(x => x.result) : (r.results || []);
     const filled = results.slice();
-    while (filled.length < 21) filled.push(Math.ceil(Math.random()*6));
-    const sortedAll = filled.slice().sort((a,b)=>a-b);
+    while (filled.length < 21) {filled.push(Math.ceil(Math.random()*6));}
+    const sortedAll = filled.slice().sort((a,b) => a-b);
     const dropped = sortedAll.splice(0,3);
     const remaining = sortedAll.slice(); // already sorted ascending -> we'll chunk descending for nicer distribution
     remaining.reverse();
     this.pool = [];
-    for (let i=0;i<6;i++){
+    for (let i=0;i<6;i++) {
       const chunk = remaining.splice(0,3);
-      const sum = chunk.reduce((a,b)=>a+b,0);
+      const sum = chunk.reduce((a,b) => a+b,0);
       this.pool.push(this._makeDie({ value: sum, tooltip: `Rolled group: ${chunk.join(', ')} (dropped global: ${dropped.join(', ')})`, origin: 'organic' }));
     }
   }
 
-  _makeDie({ value, tooltip = '', origin = 'organic' }){
+  _makeDie({ value, tooltip = '', origin = 'organic' }) {
     return { id: `d${this._nextId++}`, value, tooltip, origin, locked:false };
   }
 
@@ -79,11 +79,11 @@ export class AbilityRollingController {
       if (typeof Roll === 'function') {
         const roll = new Roll(formula);
         // Foundry V10+ prefers evaluate/evaluateSync over roll({async:false})
-        if (typeof roll.evaluateSync === "function") {
+        if (typeof roll.evaluateSync === 'function') {
           roll.evaluateSync();
-        } else if (typeof roll.evaluate === "function") {
+        } else if (typeof roll.evaluate === 'function') {
           await roll.evaluate({ async: true });
-        } else if (typeof roll.roll === "function") {
+        } else if (typeof roll.roll === 'function') {
           await roll.roll();
         }
         return roll;
@@ -96,7 +96,7 @@ export class AbilityRollingController {
     if (match) {
       const n = parseInt(match[1], 10);
       const s = parseInt(match[2], 10);
-      for (let i = 0; i < n; i++) results.push(Math.ceil(Math.random() * s));
+      for (let i = 0; i < n; i++) {results.push(Math.ceil(Math.random() * s));}
       return {
         dice: [{ results: results.map(r => ({ result: r })) }],
         results,
@@ -107,14 +107,14 @@ export class AbilityRollingController {
   }
 
 
-  _bindUI(){
-    if (!this.root) return;
+  _bindUI() {
+    if (!this.root) {return;}
     const rerollBtn = this.root.querySelector('.btn-reroll-all');
     const undoBtn = this.root.querySelector('.btn-undo');
     const confirmBtn = this.root.querySelector('.btn-confirm');
-    if (rerollBtn) rerollBtn.addEventListener('click', ()=>this.handleRerollAll());
-    if (undoBtn) undoBtn.addEventListener('click', ()=>this.undo());
-    if (confirmBtn) confirmBtn.addEventListener('click', ()=>this.confirm());
+    if (rerollBtn) {rerollBtn.addEventListener('click', () => this.handleRerollAll());}
+    if (undoBtn) {undoBtn.addEventListener('click', () => this.undo());}
+    if (confirmBtn) {confirmBtn.addEventListener('click', () => this.confirm());}
 
     this.root.addEventListener('click', (ev) => {
       const menu = ev.target.closest('.die-menu');
@@ -126,14 +126,14 @@ export class AbilityRollingController {
 
     this.root.addEventListener('dragstart', (ev) => {
       const card = ev.target.closest('.die-card');
-      if (!card) return;
+      if (!card) {return;}
       const id = card.dataset.dieId;
       ev.dataTransfer.setData('text/swse-die', id);
       card.classList.add('dragging');
     });
     this.root.addEventListener('dragend', (ev) => {
       const card = ev.target.closest('.die-card');
-      if (card) card.classList.remove('dragging');
+      if (card) {card.classList.remove('dragging');}
     });
 
     this.root.querySelectorAll('.stat-box').forEach(box => {
@@ -144,24 +144,24 @@ export class AbilityRollingController {
         box.classList.remove('dragover');
         const dieId = ev.dataTransfer.getData('text/swse-die');
         const stat = box.dataset.stat;
-        if (dieId && stat) this.assignDieToStat(dieId, stat);
+        if (dieId && stat) {this.assignDieToStat(dieId, stat);}
       });
     });
 
     const pool = this.root.querySelector('.dice-pool');
     if (pool) {
-      pool.addEventListener('dragover', (ev)=>ev.preventDefault());
+      pool.addEventListener('dragover', (ev) => ev.preventDefault());
       pool.addEventListener('drop', (ev) => {
         ev.preventDefault();
         const id = ev.dataTransfer.getData('text/swse-die');
-        if (id) this.returnToPool(id);
+        if (id) {this.returnToPool(id);}
       });
     }
   }
 
   _openDieMenu(id, btn) {
     const die = this._findDie(id);
-    if (!die) return;
+    if (!die) {return;}
     const menu = document.createElement('div');
     menu.className = 'swse-die-menu';
     menu.innerHTML = `<button data-action="return">Return to Pool</button>
@@ -170,14 +170,14 @@ export class AbilityRollingController {
     document.body.appendChild(menu);
     const onClick = async (ev) => {
       const action = ev.target.dataset.action;
-      if (!action) return;
-      if (action === 'return') this.returnToPool(id);
+      if (!action) {return;}
+      if (action === 'return') {this.returnToPool(id);}
       if (action === 'toggleLock') { die.locked = !die.locked; this.render(); }
       if (action === 'reroll') { await this._rerollSingle(id); }
       menu.remove();
       document.removeEventListener('click', onClick);
     };
-    setTimeout(()=>document.addEventListener('click', onClick));
+    setTimeout(() => document.addEventListener('click', onClick));
     const rect = btn.getBoundingClientRect();
     menu.style.position='fixed';
     menu.style.left = `${rect.left}px`;
@@ -186,8 +186,8 @@ export class AbilityRollingController {
 
   _findDie(id) {
     // find in pool
-    let d = this.pool.find(p => p.id === id);
-    if (d) return d;
+    const d = this.pool.find(p => p.id === id);
+    if (d) {return d;}
     // find if assigned
     const assignedEntry = Object.entries(this.assigned).find(([k,v]) => v === id);
     if (assignedEntry) {
@@ -196,7 +196,7 @@ export class AbilityRollingController {
     return null;
   }
 
-  returnToPool(id){
+  returnToPool(id) {
     for (const k of Object.keys(this.assigned)) {
       if (this.assigned[k] === id) {
         this._pushHistory({ action:'unassign', stat:k, dieId:id });
@@ -208,9 +208,9 @@ export class AbilityRollingController {
   }
 
   assignDieToStat(dieId, stat) {
-    if (this.confirmed) return;
-    const die = this.pool.find(d=>d.id===dieId);
-    if (!die) return;
+    if (this.confirmed) {return;}
+    const die = this.pool.find(d => d.id===dieId);
+    if (!die) {return;}
 
     // Find where this die is currently assigned (if anywhere)
     const oldStat = Object.keys(this.assigned).find(k => this.assigned[k] === dieId);
@@ -248,13 +248,13 @@ export class AbilityRollingController {
     this.render();
   }
 
-  async handleRerollAll(){
-    if (this.confirmed) return;
+  async handleRerollAll() {
+    if (this.confirmed) {return;}
     const hasAssigned = Object.values(this.assigned).some(Boolean);
     if (hasAssigned) {
-      if (!confirm("Rerolling will clear your current assignments. Continue?")) return;
+      if (!confirm('Rerolling will clear your current assignments. Continue?')) {return;}
       this._pushHistory({ action:'rerollAll', prevPool: JSON.parse(JSON.stringify(this.pool)), prevAssigned: JSON.parse(JSON.stringify(this.assigned)) });
-      for (const k of Object.keys(this.assigned)) this.assigned[k] = null;
+      for (const k of Object.keys(this.assigned)) {this.assigned[k] = null;}
     } else {
       this._pushHistory({ action:'rerollAll', prevPool: JSON.parse(JSON.stringify(this.pool)), prevAssigned: {} });
     }
@@ -267,22 +267,22 @@ export class AbilityRollingController {
   }
 
   async _rerollSingle(dieId) {
-    if (this.confirmed) return;
-    const die = this.pool.find(d=>d.id===dieId);
-    if (!die) return;
+    if (this.confirmed) {return;}
+    const die = this.pool.find(d => d.id===dieId);
+    if (!die) {return;}
     this._pushHistory({ action:'rerollSingle', dieId, prev: JSON.parse(JSON.stringify(die)) });
     if (this.method === 'standard') {
       const r = await this._rollFormula('4d6');
-      const results = (r.dice && r.dice[0] && r.dice[0].results) ? r.dice[0].results.map(x=>x.result) : [];
-      const sorted = results.slice().sort((a,b)=>a-b);
+      const results = (r.dice && r.dice[0] && r.dice[0].results) ? r.dice[0].results.map(x => x.result) : [];
+      const sorted = results.slice().sort((a,b) => a-b);
       const drop = sorted.shift();
-      const total = sorted.reduce((a,b)=>a+b,0);
+      const total = sorted.reduce((a,b) => a+b,0);
       die.value = total;
       die.tooltip = `Rolled: ${results.join(', ')} (dropped ${drop})`;
     } else {
       const r = await this._rollFormula('3d6');
-      const results = (r.dice && r.dice[0] && r.dice[0].results) ? r.dice[0].results.map(x=>x.result) : [];
-      die.value = results.reduce((a,b)=>a+b,0);
+      const results = (r.dice && r.dice[0] && r.dice[0].results) ? r.dice[0].results.map(x => x.result) : [];
+      die.value = results.reduce((a,b) => a+b,0);
       die.tooltip = `Rolled group: ${results.join(', ')}`;
     }
     this.render();
@@ -291,13 +291,13 @@ export class AbilityRollingController {
   _pushHistory(entry) {
     this.history.push(entry);
     const undoBtn = this.root.querySelector('.btn-undo');
-    if (undoBtn) undoBtn.disabled = false;
+    if (undoBtn) {undoBtn.disabled = false;}
   }
 
   undo() {
-    if (!this.history.length) return;
+    if (!this.history.length) {return;}
     const last = this.history.pop();
-    if (!last) return;
+    if (!last) {return;}
     if (last.action === 'assign') {
       this.assigned[last.stat] = last.prev || null;
     } else if (last.action === 'unassign') {
@@ -314,8 +314,8 @@ export class AbilityRollingController {
       this.pool = last.prevPool || this.pool;
       this.assigned = last.prevAssigned || { STR:null, DEX:null, CON:null, INT:null, WIS:null, CHA:null };
     } else if (last.action === 'rerollSingle') {
-      const die = this.pool.find(d=>d.id===last.dieId);
-      if (die) Object.assign(die, last.prev);
+      const die = this.pool.find(d => d.id===last.dieId);
+      if (die) {Object.assign(die, last.prev);}
     } else if (last.action === 'initialRoll') {
       this.pool = last.pool || this.pool;
       this.assigned = last.assigned || this.assigned;
@@ -324,11 +324,11 @@ export class AbilityRollingController {
   }
 
   render() {
-    if (!this.root) return;
+    if (!this.root) {return;}
     const poolEl = this.root.querySelector('.dice-pool');
     const statsEls = {};
-    for (const s of this.root.querySelectorAll('.stat-box')) statsEls[s.dataset.stat] = s;
-    if (poolEl) poolEl.innerHTML = '';
+    for (const s of this.root.querySelectorAll('.stat-box')) {statsEls[s.dataset.stat] = s;}
+    if (poolEl) {poolEl.innerHTML = '';}
     for (const die of this.pool) {
       const assignedTo = Object.keys(this.assigned).find(k => this.assigned[k] === die.id);
       const el = document.createElement('div');
@@ -352,11 +352,11 @@ export class AbilityRollingController {
 
     for (const stat of Object.keys(this.assigned)) {
       const slot = statsEls[stat]?.querySelector('.assigned-slot');
-      if (!slot) continue;
+      if (!slot) {continue;}
       slot.innerHTML = '';
       const dieId = this.assigned[stat];
       if (dieId) {
-        const die = this.pool.find(d=>d.id===dieId);
+        const die = this.pool.find(d => d.id===dieId);
         if (die) {
           const el = document.createElement('div');
           el.className='assigned-die';
@@ -375,32 +375,32 @@ export class AbilityRollingController {
     }
 
     const undoBtn = this.root.querySelector('.btn-undo');
-    if (undoBtn) undoBtn.disabled = this.history.length === 0;
+    if (undoBtn) {undoBtn.disabled = this.history.length === 0;}
   }
 
   async confirm() {
-    if (this.confirmed) return;
+    if (this.confirmed) {return;}
     if (!Object.values(this.assigned).every(Boolean)) {
-      ui.notifications?.warn("Please assign all ability scores before confirming.");
+      ui.notifications?.warn('Please assign all ability scores before confirming.');
       return;
     }
     const mapping = {};
     const keys = ['STR','DEX','CON','INT','WIS','CHA'];
     for (const k of keys) {
       const dieId = this.assigned[k];
-      const die = this.pool.find(d=>d.id===dieId);
+      const die = this.pool.find(d => d.id===dieId);
       const val = die ? die.value : 0;
       mapping[`system.attributes.${k.toLowerCase()}.value`] = val;
     }
     try {
       await this.actor.update(mapping);
       this.confirmed = true;
-      this.root.querySelectorAll('.die-card').forEach(c=>c.draggable=false);
-      ui.notifications?.info("Abilities confirmed and saved.");
+      this.root.querySelectorAll('.die-card').forEach(c => c.draggable=false);
+      ui.notifications?.info('Abilities confirmed and saved.');
       Hooks.call('swse:abilities:confirmed', { actor: this.actor, assigned: this.assigned, method: this.method });
-    } catch(e) {
-      console.error("Failed to save abilities:", e);
-      ui.notifications?.error("Failed to save ability scores. See console.");
+    } catch (e) {
+      console.error('Failed to save abilities:', e);
+      ui.notifications?.error('Failed to save ability scores. See console.');
     }
   }
 }

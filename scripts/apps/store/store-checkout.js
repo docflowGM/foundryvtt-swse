@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "../../progression/engine/progression-engine.js";
+import { ProgressionEngine } from '../../progression/engine/progression-engine.js';
 /**
  * Purchase and checkout functionality for SWSE Store
  * Handles item purchases, cart management, and checkout
@@ -19,8 +19,8 @@ import { SWSEVehicleHandler } from '../../actors/vehicle/swse-vehicle-handler.js
  */
 export async function addItemToCart(store, itemId, updateDialogueCallback) {
     if (!itemId) {
-        ui.notifications.warn("Invalid item selection. The item may be missing an ID.");
-        SWSELogger.error("SWSE Store | addItemToCart called with empty itemId");
+        ui.notifications.warn('Invalid item selection. The item may be missing an ID.');
+        SWSELogger.error('SWSE Store | addItemToCart called with empty itemId');
         return;
     }
 
@@ -44,7 +44,7 @@ export async function addItemToCart(store, itemId, updateDialogueCallback) {
     if (!item) {
         // Check if this is a fallback ID (generated for items without proper IDs)
         if (itemId.startsWith('fallback-')) {
-            ui.notifications.error("This item has an invalid ID and cannot be purchased. Please contact the GM.");
+            ui.notifications.error('This item has an invalid ID and cannot be purchased. Please contact the GM.');
             SWSELogger.error(`SWSE Store | Item with fallback ID cannot be purchased: ${itemId}`);
         } else {
             ui.notifications.error(`Item not found: ${itemId}`);
@@ -85,7 +85,7 @@ export async function addItemToCart(store, itemId, updateDialogueCallback) {
  */
 export async function addDroidToCart(store, actorId, updateDialogueCallback) {
     if (!actorId) {
-        ui.notifications.warn("Invalid droid selection.");
+        ui.notifications.warn('Invalid droid selection.');
         return;
     }
 
@@ -101,7 +101,7 @@ export async function addDroidToCart(store, actorId, updateDialogueCallback) {
     }
 
     if (!droidTemplate) {
-        ui.notifications.error("Droid not found.");
+        ui.notifications.error('Droid not found.');
         return;
     }
 
@@ -134,20 +134,20 @@ export async function addDroidToCart(store, actorId, updateDialogueCallback) {
  */
 export async function addVehicleToCart(store, templateId, condition, updateDialogueCallback) {
     if (!templateId) {
-        ui.notifications.warn("Invalid vehicle selection.");
+        ui.notifications.warn('Invalid vehicle selection.');
         return;
     }
 
     // Vehicles are stored as Item templates in store-loaded compendiums.
     const vehicleTemplate = store.itemsById?.get(templateId);
 
-    if (!vehicleTemplate || vehicleTemplate.type !== "vehicle") {
-        ui.notifications.error("Vehicle template not found.");
+    if (!vehicleTemplate || vehicleTemplate.type !== 'vehicle') {
+        ui.notifications.error('Vehicle template not found.');
         return;
     }
 
     const baseCost = Number(vehicleTemplate.system?.cost) || 0;
-    const conditionMultiplier = condition === "used" ? 0.5 : 1.0;
+    const conditionMultiplier = condition === 'used' ? 0.5 : 1.0;
     const finalCost = calculateFinalCost(baseCost * conditionMultiplier);
 
     store.cart.vehicles.push({
@@ -158,7 +158,7 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
         template: vehicleTemplate
     });
 
-    ui.notifications.info(`${condition === "used" ? "Used" : "New"} ${vehicleTemplate.name} added to cart.`);
+    ui.notifications.info(`${condition === 'used' ? 'Used' : 'New'} ${vehicleTemplate.name} added to cart.`);
 
     const dialogue = getRandomDialogue('purchase');
     if (updateDialogueCallback) {
@@ -176,14 +176,14 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
  */
 export async function buyService(actor, serviceName, serviceCost, updateDialogueCallback, rerenderCallback) {
     if (!serviceName) {
-        ui.notifications.warn("Invalid service selection.");
+        ui.notifications.warn('Invalid service selection.');
         return;
     }
 
     // Check if SWSE system is initialized
     if (!globalThis.SWSE?.ActorEngine) {
-        SWSELogger.error("SWSE ActorEngine not initialized");
-        ui.notifications.error("Character system not ready. Please refresh and try again.");
+        SWSELogger.error('SWSE ActorEngine not initialized');
+        ui.notifications.error('Character system not ready. Please refresh and try again.');
         return;
     }
 
@@ -197,7 +197,7 @@ export async function buyService(actor, serviceName, serviceCost, updateDialogue
 
     // Deduct credits immediately
     const newCredits = currentCredits - serviceCost;
-    await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": newCredits });
+    await globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.credits': newCredits });
     ui.notifications.info(`${serviceName} purchased for ${serviceCost} credits.`);
 
     // Update Rendarr's dialogue
@@ -219,14 +219,14 @@ export async function buyService(actor, serviceName, serviceCost, updateDialogue
  */
 export async function buyDroid(store, actorId) {
     if (!actorId) {
-        ui.notifications.warn("Invalid droid selection.");
+        ui.notifications.warn('Invalid droid selection.');
         return;
     }
 
     // Check if SWSE system is initialized
     if (!globalThis.SWSE?.ActorEngine) {
-        SWSELogger.error("SWSE ActorEngine not initialized");
-        ui.notifications.error("Character system not ready. Please refresh and try again.");
+        SWSELogger.error('SWSE ActorEngine not initialized');
+        ui.notifications.error('Character system not ready. Please refresh and try again.');
         return;
     }
 
@@ -242,7 +242,7 @@ export async function buyDroid(store, actorId) {
     }
 
     if (!droidTemplate) {
-        ui.notifications.error("Droid not found.");
+        ui.notifications.error('Droid not found.');
         return;
     }
 
@@ -259,17 +259,17 @@ export async function buyDroid(store, actorId) {
 
     // Confirm purchase
     const confirmed = await Dialog.confirm({
-        title: "Confirm Droid Purchase",
+        title: 'Confirm Droid Purchase',
         content: `<p>Purchase <strong>${droidTemplate.name}</strong> for <strong>${finalCost.toLocaleString()}</strong> credits?</p>
                  <p>A new droid actor will be created and assigned to you.</p>`,
         defaultYes: true
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
     try {
         // Deduct credits
-        await globalThis.SWSE.ActorEngine.updateActor(store.actor, { "system.credits": credits - finalCost });
+        await globalThis.SWSE.ActorEngine.updateActor(store.actor, { 'system.credits': credits - finalCost });
         // Create droid actor with player ownership
         const droidData = droidTemplate.toObject();
         droidData.name = `${droidTemplate.name} (${store.actor.name}'s)`;
@@ -283,8 +283,8 @@ export async function buyDroid(store, actorId) {
         ui.notifications.info(`${droidTemplate.name} purchased! Check your actors list.`);
         store.render();
     } catch (err) {
-        SWSELogger.error("SWSE Store | Droid purchase failed:", err);
-        ui.notifications.error("Failed to complete droid purchase.");
+        SWSELogger.error('SWSE Store | Droid purchase failed:', err);
+        ui.notifications.error('Failed to complete droid purchase.');
     }
 }
 
@@ -296,14 +296,14 @@ export async function buyDroid(store, actorId) {
  */
 export async function buyVehicle(store, actorId, condition) {
     if (!actorId) {
-        ui.notifications.warn("Invalid vehicle selection.");
+        ui.notifications.warn('Invalid vehicle selection.');
         return;
     }
 
     // Check if SWSE system is initialized
     if (!globalThis.SWSE?.ActorEngine) {
-        SWSELogger.error("SWSE ActorEngine not initialized");
-        ui.notifications.error("Character system not ready. Please refresh and try again.");
+        SWSELogger.error('SWSE ActorEngine not initialized');
+        ui.notifications.error('Character system not ready. Please refresh and try again.');
         return;
     }
 
@@ -319,12 +319,12 @@ export async function buyVehicle(store, actorId, condition) {
     }
 
     if (!vehicleTemplate) {
-        ui.notifications.error("Vehicle not found.");
+        ui.notifications.error('Vehicle not found.');
         return;
     }
 
     const baseCost = Number(vehicleTemplate.system.cost) || 0;
-    const conditionMultiplier = condition === "used" ? 0.5 : 1.0;
+    const conditionMultiplier = condition === 'used' ? 0.5 : 1.0;
     const finalCost = calculateFinalCost(baseCost * conditionMultiplier);
     const credits = Number(store.actor.system.credits) || 0;
 
@@ -337,28 +337,28 @@ export async function buyVehicle(store, actorId, condition) {
 
     // Confirm purchase
     const confirmed = await Dialog.confirm({
-        title: "Confirm Vehicle Purchase",
-        content: `<p>Purchase <strong>${condition === "used" ? "Used" : "New"} ${vehicleTemplate.name}</strong> for <strong>${finalCost.toLocaleString()}</strong> credits?</p>
+        title: 'Confirm Vehicle Purchase',
+        content: `<p>Purchase <strong>${condition === 'used' ? 'Used' : 'New'} ${vehicleTemplate.name}</strong> for <strong>${finalCost.toLocaleString()}</strong> credits?</p>
                  <p>A new vehicle actor will be created and assigned to you.</p>`,
         defaultYes: true
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
     try {
         // Deduct credits
-        await globalThis.SWSE.ActorEngine.updateActor(store.actor, { "system.credits": credits - finalCost });
+        await globalThis.SWSE.ActorEngine.updateActor(store.actor, { 'system.credits': credits - finalCost });
         // Create vehicle actor with player ownership
         const vehicleData = vehicleTemplate.toObject();
-        vehicleData.name = `${condition === "used" ? "(Used) " : ""}${vehicleTemplate.name}`;
+        vehicleData.name = `${condition === 'used' ? '(Used) ' : ''}${vehicleTemplate.name}`;
         vehicleData.ownership = {
             default: 0,
             [game.user.id]: 3  // Owner permission
         };
 
         // Mark as used if applicable
-        if (condition === "used" && vehicleData.system) {
-            vehicleData.system.condition = "used";
+        if (condition === 'used' && vehicleData.system) {
+            vehicleData.system.condition = 'used';
         }
 
         const newVehicle = await Actor.create(vehicleData);
@@ -366,8 +366,8 @@ export async function buyVehicle(store, actorId, condition) {
         ui.notifications.info(`${vehicleTemplate.name} purchased! Check your actors list.`);
         store.render();
     } catch (err) {
-        SWSELogger.error("SWSE Store | Vehicle purchase failed:", err);
-        ui.notifications.error("Failed to complete vehicle purchase.");
+        SWSELogger.error('SWSE Store | Vehicle purchase failed:', err);
+        ui.notifications.error('Failed to complete vehicle purchase.');
     }
 }
 
@@ -377,7 +377,7 @@ export async function buyVehicle(store, actorId, condition) {
  * @param {Function} closeCallback - Callback to close the store
  */
 export async function createCustomDroid(actor, closeCallback) {
-    const baseCredits = game.settings.get('foundryvtt-swse', "droidConstructionCredits") || 1000;
+    const baseCredits = game.settings.get('foundryvtt-swse', 'droidConstructionCredits') || 1000;
     const credits = Number(actor.system.credits) || 0;
 
     if (credits < baseCredits) {
@@ -387,14 +387,14 @@ export async function createCustomDroid(actor, closeCallback) {
 
     // Confirm
     const confirmed = await Dialog.confirm({
-        title: "Build Custom Droid",
+        title: 'Build Custom Droid',
         content: `<p>Enter the droid construction system?</p>
                  <p>You will design a non-heroic droid at level ${actor.system.level || 1}.</p>
                  <p><strong>Minimum cost:</strong> ${baseCredits.toLocaleString()} credits</p>`,
         defaultYes: true
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
     try {
         // Close this store window
@@ -413,8 +413,8 @@ export async function createCustomDroid(actor, closeCallback) {
 
         chargen.render(true);
     } catch (err) {
-        SWSELogger.error("SWSE Store | Failed to launch droid builder:", err);
-        ui.notifications.error("Failed to open droid builder.");
+        SWSELogger.error('SWSE Store | Failed to launch droid builder:', err);
+        ui.notifications.error('Failed to open droid builder.');
     }
 }
 
@@ -427,13 +427,13 @@ export async function createCustomStarship(actor, closeCallback) {
     const credits = Number(actor.system.credits) || 0;
 
     if (credits < 5000) {
-        ui.notifications.warn("You need at least 5,000 credits to build a custom starship.");
+        ui.notifications.warn('You need at least 5,000 credits to build a custom starship.');
         return;
     }
 
     // Confirm
     const confirmed = await Dialog.confirm({
-        title: "Build Custom Starship",
+        title: 'Build Custom Starship',
         content: `<p>Enter the starship modification system with Marl Skindar?</p>
                  <p>You will select a stock ship and customize it with modifications.</p>
                  <p><strong>Minimum cost:</strong> 5,000 credits (Light Fighter)</p>
@@ -441,7 +441,7 @@ export async function createCustomStarship(actor, closeCallback) {
         defaultYes: true
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
     try {
         // Close this store window
@@ -452,8 +452,8 @@ export async function createCustomStarship(actor, closeCallback) {
         // Launch vehicle modification app
         await VehicleModificationApp.open(actor);
     } catch (err) {
-        SWSELogger.error("SWSE Store | Failed to launch starship builder:", err);
-        ui.notifications.error("Failed to open starship builder.");
+        SWSELogger.error('SWSE Store | Failed to launch starship builder:', err);
+        ui.notifications.error('Failed to open starship builder.');
     }
 }
 
@@ -464,24 +464,24 @@ export async function createCustomStarship(actor, closeCallback) {
  * @param {string} itemId - ID of the item to remove
  */
 export function removeFromCartById(cart, type, itemId) {
-    const t = String(type || "").toLowerCase();
-    const norm = t.endsWith("s") ? t.slice(0, -1) : t;
+    const t = String(type || '').toLowerCase();
+    const norm = t.endsWith('s') ? t.slice(0, -1) : t;
 
-    if (norm === "item") {
+    if (norm === 'item') {
         const index = cart.items.findIndex(item => item.id === itemId);
-        if (index !== -1) cart.items.splice(index, 1);
+        if (index !== -1) {cart.items.splice(index, 1);}
         return;
     }
 
-    if (norm === "droid") {
+    if (norm === 'droid') {
         const index = cart.droids.findIndex(droid => droid.id === itemId);
-        if (index !== -1) cart.droids.splice(index, 1);
+        if (index !== -1) {cart.droids.splice(index, 1);}
         return;
     }
 
-    if (norm === "vehicle") {
+    if (norm === 'vehicle') {
         const index = cart.vehicles.findIndex(vehicle => vehicle.id === itemId);
-        if (index !== -1) cart.vehicles.splice(index, 1);
+        if (index !== -1) {cart.vehicles.splice(index, 1);}
     }
 }
 
@@ -502,9 +502,9 @@ export function clearCart(cart) {
  */
 export function calculateCartTotal(cart) {
     let total = 0;
-    for (const item of cart.items) total += item.cost;
-    for (const droid of cart.droids) total += droid.cost;
-    for (const vehicle of cart.vehicles) total += vehicle.cost;
+    for (const item of cart.items) {total += item.cost;}
+    for (const droid of cart.droids) {total += droid.cost;}
+    for (const vehicle of cart.vehicles) {total += vehicle.cost;}
     return total;
 }
 
@@ -518,8 +518,8 @@ export async function checkout(store, animateNumberCallback) {
 
     // Check if SWSE system is initialized
     if (!globalThis.SWSE?.ActorEngine) {
-        SWSELogger.error("SWSE ActorEngine not initialized");
-        ui.notifications.error("Character system not ready. Please refresh and try again.");
+        SWSELogger.error('SWSE ActorEngine not initialized');
+        ui.notifications.error('Character system not ready. Please refresh and try again.');
         return;
     }
 
@@ -529,7 +529,7 @@ export async function checkout(store, animateNumberCallback) {
     const total = calculateCartTotal(store.cart);
 
     if (total === 0) {
-        ui.notifications.warn("Your cart is empty.");
+        ui.notifications.warn('Your cart is empty.');
         return;
     }
 
@@ -542,13 +542,13 @@ export async function checkout(store, animateNumberCallback) {
 
     // Confirm purchase
     const confirmed = await Dialog.confirm({
-        title: "Complete Purchase",
+        title: 'Complete Purchase',
         content: `<p>Complete purchase for <strong>${total.toLocaleString()}</strong> credits?</p>
                  <p>This will add ${store.cart.items.length} item(s), ${store.cart.droids.length} droid(s), and ${store.cart.vehicles.length} vehicle(s).</p>`,
         defaultYes: true
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
     // Track if credits were deducted for rollback
     let creditsDeducted = false;
@@ -561,7 +561,7 @@ export async function checkout(store, animateNumberCallback) {
         }
 
         // Deduct credits FIRST and track it
-        await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - total });
+        await globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.credits': credits - total });
         creditsDeducted = true;
 
         // Add regular items to actor
@@ -573,7 +573,7 @@ export async function checkout(store, animateNumberCallback) {
             return item.toObject ? item.toObject() : item;
         });
         if (itemsToCreate.length > 0) {
-            await actor.createEmbeddedDocuments("Item", itemsToCreate);
+            await actor.createEmbeddedDocuments('Item', itemsToCreate);
         }
 
         // Create droid actors
@@ -595,9 +595,9 @@ export async function checkout(store, animateNumberCallback) {
             }
 
             const vehicleActor = await Actor.create({
-                name: `${vehicle.condition === "used" ? "(Used) " : ""}${vehicle.name}`,
-                type: "vehicle",
-                img: template.img || "icons/svg/anchor.svg",
+                name: `${vehicle.condition === 'used' ? '(Used) ' : ''}${vehicle.name}`,
+                type: 'vehicle',
+                img: template.img || 'icons/svg/anchor.svg',
                 ownership: {
                     default: 0,
                     [game.user.id]: 3
@@ -621,20 +621,20 @@ export async function checkout(store, animateNumberCallback) {
         // Wait for animation to complete before re-rendering
         setTimeout(() => store.render(), 700);
     } catch (err) {
-        SWSELogger.error("SWSE Store | Checkout failed:", err);
+        SWSELogger.error('SWSE Store | Checkout failed:', err);
 
         // Rollback: Refund credits if they were deducted
         if (creditsDeducted) {
             try {
-                await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits });
-                ui.notifications.error("Purchase failed! Credits have been refunded.");
-                SWSELogger.info("SWSE Store | Credits refunded after failed checkout");
+                await globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.credits': credits });
+                ui.notifications.error('Purchase failed! Credits have been refunded.');
+                SWSELogger.info('SWSE Store | Credits refunded after failed checkout');
             } catch (refundErr) {
-                SWSELogger.error("SWSE Store | Failed to refund credits:", refundErr);
-                ui.notifications.error("Purchase failed and credit refund failed! Please contact GM to restore credits.");
+                SWSELogger.error('SWSE Store | Failed to refund credits:', refundErr);
+                ui.notifications.error('Purchase failed and credit refund failed! Please contact GM to restore credits.');
             }
         } else {
-            ui.notifications.error("Purchase failed before credits were deducted.");
+            ui.notifications.error('Purchase failed before credits were deducted.');
         }
 
         // Re-render to show correct credit amount
@@ -679,9 +679,9 @@ async function logPurchaseToHistory(actor, cart, total) {
         history.push(purchase);
         await actor.setFlag('swse', 'purchaseHistory', history);
 
-        SWSELogger.log("SWSE Store | Purchase logged to history:", purchase);
+        SWSELogger.log('SWSE Store | Purchase logged to history:', purchase);
     } catch (err) {
-        SWSELogger.error("SWSE Store | Failed to log purchase to history:", err);
+        SWSELogger.error('SWSE Store | Failed to log purchase to history:', err);
         // Don't throw error - this is non-critical
     }
 }

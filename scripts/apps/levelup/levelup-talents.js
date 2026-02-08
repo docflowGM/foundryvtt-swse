@@ -80,12 +80,12 @@ export function getsTalent(selectedClass, actor) {
 export async function getAvailableTalentTrees(selectedClass, actor) {
   SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: START - Class: "${selectedClass?.name}", Actor: ${actor?.id}`);
 
-  const talentTreeRestriction = game.settings.get('foundryvtt-swse', "talentTreeRestriction");
+  const talentTreeRestriction = game.settings.get('foundryvtt-swse', 'talentTreeRestriction');
   SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: talentTreeRestriction setting: "${talentTreeRestriction}"`);
 
   let availableTrees = [];
 
-  if (talentTreeRestriction === "unrestricted") {
+  if (talentTreeRestriction === 'unrestricted') {
     // Free build mode: all talent trees from all talents
     SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Unrestricted mode - loading all talent trees`);
     const talentPack = game.packs.get('foundryvtt-swse.talents');
@@ -103,7 +103,7 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
     } else {
       SWSELogger.error(`[LEVELUP-TALENTS] ERROR: Talents compendium not found`);
     }
-  } else if (talentTreeRestriction === "current") {
+  } else if (talentTreeRestriction === 'current') {
     // Only talent trees from the selected class
     SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Current mode - using selected class trees only`);
     if (!selectedClass) {
@@ -156,7 +156,7 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
   // Dark Side talent tree requires DSP > 0
   const darkSideScore = actor?.system?.darkSideScore || 0;
   if (darkSideScore === 0) {
-    availableTrees = availableTrees.filter(tree => tree !== "Dark Side");
+    availableTrees = availableTrees.filter(tree => tree !== 'Dark Side');
   }
 
   // -----------------------------------------------------------
@@ -212,7 +212,7 @@ export async function loadTalentData(actor = null, pendingData = {}) {
   if (!talentPack) {
     SWSELogger.error(`[LEVELUP-TALENTS] ERROR: Talents compendium pack not found!`);
     SWSELogger.error(`[LEVELUP-TALENTS] Available packs:`, Array.from(game.packs.keys()));
-    ui.notifications.error("Failed to load talents compendium. Talents will not be available.", { permanent: true });
+    ui.notifications.error('Failed to load talents compendium. Talents will not be available.', { permanent: true });
     return [];
   }
 
@@ -222,7 +222,7 @@ export async function loadTalentData(actor = null, pendingData = {}) {
 
   if (!talents || talents.length === 0) {
     SWSELogger.error(`[LEVELUP-TALENTS] ERROR: Talents compendium is empty!`);
-    ui.notifications.error("Talents compendium is empty. Please check your SWSE installation.", { permanent: true });
+    ui.notifications.error('Talents compendium is empty. Please check your SWSE installation.', { permanent: true });
     return [];
   }
 
@@ -242,7 +242,7 @@ export async function loadTalentData(actor = null, pendingData = {}) {
       const canonical = PrerequisiteChecker.checkTalentPrerequisites(actor, talent, pendingData);
       const legacy = PrerequisiteRequirements.checkTalentPrerequisites(actor, talent, pendingData);
       if (canonical.met !== legacy.valid) {
-        console.warn("Prereq mismatch (talent) detected", { talent: talent.name, canonical, legacy });
+        console.warn('Prereq mismatch (talent) detected', { talent: talent.name, canonical, legacy });
       }
       return {
         ...talent,
@@ -340,10 +340,10 @@ export async function showTalentTreeDialog(treeName, talentData, actor, selectCa
     buttons: {
       close: {
         icon: '<i class="fas fa-times"></i>',
-        label: "Close"
+        label: 'Close'
       }
     },
-    default: "close",
+    default: 'close',
     render: (html) => {
       // Add click handlers for talent selection
       html.find('.talent-node').click((e) => {
@@ -418,7 +418,7 @@ function buildTalentGraph(talents) {
  * @returns {string} HTML string
  */
 function generateTalentTreeHtml(treeName, talentGraph) {
-  const groupDeflectBlock = game.settings.get('foundryvtt-swse', "groupDeflectBlock") || false;
+  const groupDeflectBlock = game.settings.get('foundryvtt-swse', 'groupDeflectBlock') || false;
 
   let html = `
     <div class="talent-tree-container">
@@ -447,11 +447,11 @@ function generateTalentTreeHtml(treeName, talentGraph) {
   let svgLines = '';
   Object.entries(talentGraph).forEach(([talentName, node]) => {
     const talentPos = talentPositions[talentName];
-    if (!talentPos) return;
+    if (!talentPos) {return;}
 
     node.prereqs.forEach(prereqName => {
       const prereqPos = talentPositions[prereqName];
-      if (!prereqPos) return;
+      if (!prereqPos) {return;}
 
       svgLines += `
         <line
@@ -646,7 +646,7 @@ function organizeTalentsIntoTiers(talentGraph) {
  */
 export function selectTalent(talentName, talentData, actor, pendingData) {
   const talent = talentData.find(t => t.name === talentName);
-  if (!talent) return null;
+  if (!talent) {return null;}
 
   // Check prerequisites
   const check = checkTalentPrerequisites(talent, actor, pendingData);

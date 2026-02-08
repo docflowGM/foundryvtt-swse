@@ -10,7 +10,7 @@
  * @returns {boolean} - True if the feat can be taken, false if already present
  */
 export function canTakeFeat(actor, featName) {
-  if (!actor || !featName) return false;
+  if (!actor || !featName) {return false;}
 
   // Normalize feat name for comparison (trim whitespace, case-insensitive)
   const normalizedName = featName.trim().toLowerCase();
@@ -21,7 +21,7 @@ export function canTakeFeat(actor, featName) {
     item.name.trim().toLowerCase() === normalizedName
   );
 
-  if (hasFeatItem) return false;
+  if (hasFeatItem) {return false;}
 
   // Check progression data
   const progression = actor.system.progression || {};
@@ -31,14 +31,14 @@ export function canTakeFeat(actor, featName) {
     f => f.trim().toLowerCase() === normalizedName
   );
 
-  if (hasInStartingFeats) return false;
+  if (hasInStartingFeats) {return false;}
 
   // Check chosen feats
   const hasInChosenFeats = (progression.feats || []).some(
     f => f.trim().toLowerCase() === normalizedName
   );
 
-  if (hasInChosenFeats) return false;
+  if (hasInChosenFeats) {return false;}
 
   return true;
 }
@@ -49,7 +49,7 @@ export function canTakeFeat(actor, featName) {
  * @returns {string[]} - Array of feat names
  */
 export function getActorFeats(actor) {
-  if (!actor) return [];
+  if (!actor) {return [];}
 
   const feats = new Set();
 

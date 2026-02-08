@@ -2,7 +2,7 @@
  * force-power-picker.js
  * Simple, clean Force Power picker UI using FormApplication + HBS template.
  */
-import SWSEFormApplication from "../../apps/base/swse-form-application.js";
+import SWSEFormApplication from '../../apps/base/swse-form-application.js';
 
 export class ForcePowerPicker extends SWSEFormApplication {
   /**
@@ -30,15 +30,14 @@ export class ForcePowerPicker extends SWSEFormApplication {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
     SWSEFormApplication.DEFAULT_OPTIONS ?? {},
     {
-      id: "force-power-picker",
-      classes: ["swse-app", "force-power-picker"],
-      template: "systems/foundryvtt-swse/scripts/progression/ui/templates/force-power-picker.hbs",
+      id: 'force-power-picker',
+      classes: ['swse-app', 'force-power-picker'],
+      template: 'systems/foundryvtt-swse/scripts/progression/ui/templates/force-power-picker.hbs',
       position: { width: 720, height: 620 },
       resizable: true
     }
   );
 
-  
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
@@ -64,11 +63,11 @@ export class ForcePowerPicker extends SWSEFormApplication {
         return {
           id,
           name: p.name || id,
-          img: p.img || (p.document?.img) || "icons/svg/mystery-man.svg",
+          img: p.img || (p.document?.img) || 'icons/svg/mystery-man.svg',
           description:
             p.system?.description ||
             p.document?.system?.description ||
-            "",
+            '',
           selected: this.selectedSet.has(id)
         };
       }),
@@ -82,13 +81,13 @@ export class ForcePowerPicker extends SWSEFormApplication {
    */
   async _onRender(context, options) {
     const root = this.element;
-    if (!(root instanceof HTMLElement)) return;
+    if (!(root instanceof HTMLElement)) {return;}
 
     // Toggle selection
-    root.querySelectorAll(".power-card").forEach(card => {
-      card.addEventListener("click", ev => {
+    root.querySelectorAll('.power-card').forEach(card => {
+      card.addEventListener('click', ev => {
         const id = ev.currentTarget.dataset.id;
-        if (!id) return;
+        if (!id) {return;}
 
         if (this.selectedSet.has(id)) {
           this.selectedSet.delete(id);
@@ -101,15 +100,15 @@ export class ForcePowerPicker extends SWSEFormApplication {
     });
 
     // Confirm selection
-    const confirmBtn = root.querySelector(".confirm");
+    const confirmBtn = root.querySelector('.confirm');
     if (confirmBtn) {
-      confirmBtn.addEventListener("click", ev => {
+      confirmBtn.addEventListener('click', ev => {
         const result = [];
         const sel = new Set(this.selectedSet);
 
         for (const p of this.powers) {
           const id = p.id || p._id || p.name;
-          if (sel.has(id)) result.push(p);
+          if (sel.has(id)) {result.push(p);}
         }
 
         this.resolve(result);
@@ -118,9 +117,9 @@ export class ForcePowerPicker extends SWSEFormApplication {
     }
 
     // Cancel selection
-    const cancelBtn = root.querySelector(".cancel");
+    const cancelBtn = root.querySelector('.cancel');
     if (cancelBtn) {
-      cancelBtn.addEventListener("click", ev => {
+      cancelBtn.addEventListener('click', ev => {
         this.resolve([]);
         this.close();
       });

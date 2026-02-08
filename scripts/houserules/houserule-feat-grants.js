@@ -4,7 +4,7 @@
  * Automatically grants feats and talents to characters when house rule settings
  * enable them. Handles duplicates by offering replacement feat selection.
  */
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 /**
  * Mapping of house rule settings to feats/talents they grant
@@ -12,22 +12,22 @@ import { SWSELogger } from "../utils/logger.js";
 const GRANT_MAPPINGS = {
   // Setting: [{ type, name, id }]
   armoredDefenseForAll: [
-    { type: "talent", name: "Armored Defense", id: "4c236343b01ea763" }
+    { type: 'talent', name: 'Armored Defense', id: '4c236343b01ea763' }
   ],
   weaponFinesseDefault: [
-    { type: "feat", name: "Weapon Finesse", id: "252b67d6e31c377e" }
+    { type: 'feat', name: 'Weapon Finesse', id: '252b67d6e31c377e' }
   ],
   pointBlankShotDefault: [
-    { type: "feat", name: "Point Blank Shot", id: "c301a0f533f15ce4" }
+    { type: 'feat', name: 'Point Blank Shot', id: 'c301a0f533f15ce4' }
   ],
   powerAttackDefault: [
-    { type: "feat", name: "Power Attack", id: "3f76464c43c73f84" }
+    { type: 'feat', name: 'Power Attack', id: '3f76464c43c73f84' }
   ],
   preciseShotDefault: [
-    { type: "feat", name: "Precise Shot", id: "c180eee7d3bc29b2" }
+    { type: 'feat', name: 'Precise Shot', id: 'c180eee7d3bc29b2' }
   ],
   dodgeDefault: [
-    { type: "feat", name: "Dodge", id: "45366d4f3a5e443d" }
+    { type: 'feat', name: 'Dodge', id: '45366d4f3a5e443d' }
   ]
 };
 
@@ -36,36 +36,36 @@ export class HouseRuleFeatGrants {
    * Initialize the feat grant system
    */
   static initialize() {
-    SWSELogger.info("HouseRuleFeatGrants | Initializing…");
+    SWSELogger.info('HouseRuleFeatGrants | Initializing…');
 
     // Monitor setting changes
-    Hooks.on("updateSetting", (setting, value, options) => {
-      if (setting.key.startsWith("foundryvtt-swse.")) {
+    Hooks.on('updateSetting', (setting, value, options) => {
+      if (setting.key.startsWith('foundryvtt-swse.')) {
         this._onSettingChanged(setting, value, options);
       }
     });
 
     // Grant feats to newly created actors
-    Hooks.on("createActor", (actor, options, userId) => {
+    Hooks.on('createActor', (actor, options, userId) => {
       if (game.user.id === userId) {
         this._grantFeatsToActor(actor);
       }
     });
 
-    SWSELogger.info("HouseRuleFeatGrants | Ready.");
+    SWSELogger.info('HouseRuleFeatGrants | Ready.');
   }
 
   /**
    * Called when a house rule setting changes
    */
   static async _onSettingChanged(setting, value, options) {
-    const settingName = setting.key.split(".").pop();
+    const settingName = setting.key.split('.').pop();
 
     // Only process if it's a setting that grants feats
-    if (!GRANT_MAPPINGS[settingName]) return;
+    if (!GRANT_MAPPINGS[settingName]) {return;}
 
     // If setting is being disabled, don't process
-    if (!value || value === false) return;
+    if (!value || value === false) {return;}
 
     // Grant to all actors
     for (const actor of game.actors) {
@@ -79,7 +79,7 @@ export class HouseRuleFeatGrants {
   static async _grantFeatsToActor(actor, specificSetting = null) {
     try {
       // Skip non-character actors
-      if (!actor.isToken && actor.type !== "character") return;
+      if (!actor.isToken && actor.type !== 'character') {return;}
 
       const grantsToProcess = specificSetting
         ? { [specificSetting]: GRANT_MAPPINGS[specificSetting] }
@@ -87,8 +87,8 @@ export class HouseRuleFeatGrants {
 
       for (const [settingName, grants] of Object.entries(grantsToProcess)) {
         // Check if this setting is enabled
-        const isEnabled = game.settings.get("foundryvtt-swse", settingName);
-        if (!isEnabled) continue;
+        const isEnabled = game.settings.get('foundryvtt-swse', settingName);
+        if (!isEnabled) {continue;}
 
         for (const grant of grants) {
           await this._grantFeatToActor(actor, grant, settingName);
@@ -143,14 +143,14 @@ export class HouseRuleFeatGrants {
     let itemData = {
       name,
       type,
-      img: "icons/svg/upgrade.svg"
+      img: 'icons/svg/upgrade.svg'
     };
 
     try {
       const packName =
-        type === "feat"
-          ? "foundryvtt-swse.feats"
-          : "foundryvtt-swse.talents";
+        type === 'feat'
+          ? 'foundryvtt-swse.feats'
+          : 'foundryvtt-swse.talents';
       const pack = game.packs.get(packName);
 
       if (pack) {
@@ -163,7 +163,7 @@ export class HouseRuleFeatGrants {
       SWSELogger.warn(`Could not load ${type} from compendium, using basic data`);
     }
 
-    await actor.createEmbeddedDocuments("Item", [itemData]);
+    await actor.createEmbeddedDocuments('Item', [itemData]);
   }
 
   /**
@@ -171,7 +171,7 @@ export class HouseRuleFeatGrants {
    */
   static async _offerReplacement(actor, type, name, settingName) {
     return new Promise((resolve) => {
-      const typeLabel = type === "feat" ? "feat" : "talent";
+      const typeLabel = type === 'feat' ? 'feat' : 'talent';
       const dialog = new Dialog(
         {
           title: `${settingName} Granted: ${name}`,
@@ -192,14 +192,14 @@ export class HouseRuleFeatGrants {
           `,
           buttons: {
             yes: {
-              label: "Yes, Choose Replacement",
+              label: 'Yes, Choose Replacement',
               callback: () => {
                 this._openReplacementDialog(actor, type, name);
                 resolve();
               }
             },
             no: {
-              label: "No, Keep My Choices",
+              label: 'No, Keep My Choices',
               callback: () => {
                 SWSELogger.info(
                   `${actor.name} declined replacement for ${name}`
@@ -208,7 +208,7 @@ export class HouseRuleFeatGrants {
               }
             }
           },
-          default: "yes"
+          default: 'yes'
         },
         { top: 400, left: 400 }
       );
@@ -223,9 +223,9 @@ export class HouseRuleFeatGrants {
   static async _openReplacementDialog(actor, type, rejectedName) {
     try {
       const packName =
-        type === "feat"
-          ? "foundryvtt-swse.feats"
-          : "foundryvtt-swse.talents";
+        type === 'feat'
+          ? 'foundryvtt-swse.feats'
+          : 'foundryvtt-swse.talents';
       const pack = game.packs.get(packName);
 
       if (!pack) {
@@ -268,7 +268,7 @@ export class HouseRuleFeatGrants {
    * Show the actual replacement selection dialog with list of feats
    */
   static _showReplacementSelectionDialog(actor, type, availableItems, rejectedName) {
-    const typeLabel = type === "feat" ? "Feat" : "Talent";
+    const typeLabel = type === 'feat' ? 'Feat' : 'Talent';
 
     // Create HTML for selection
     let content = `
@@ -312,7 +312,7 @@ export class HouseRuleFeatGrants {
                 .val();
 
               if (!selectedId) {
-                ui.notifications.warn("Please select a replacement");
+                ui.notifications.warn('Please select a replacement');
                 return;
               }
 
@@ -321,7 +321,7 @@ export class HouseRuleFeatGrants {
             }
           },
           cancel: {
-            label: "Cancel",
+            label: 'Cancel',
             callback: () => {
               SWSELogger.info(
                 `${actor.name} cancelled replacement selection`
@@ -329,7 +329,7 @@ export class HouseRuleFeatGrants {
             }
           }
         },
-        default: "apply"
+        default: 'apply'
       },
       { width: 500, height: 600, top: 300, left: 400 }
     );
@@ -343,9 +343,9 @@ export class HouseRuleFeatGrants {
   static async _grantReplacementFeat(actor, type, itemId) {
     try {
       const packName =
-        type === "feat"
-          ? "foundryvtt-swse.feats"
-          : "foundryvtt-swse.talents";
+        type === 'feat'
+          ? 'foundryvtt-swse.feats'
+          : 'foundryvtt-swse.talents';
       const pack = game.packs.get(packName);
 
       if (!pack) {
@@ -360,7 +360,7 @@ export class HouseRuleFeatGrants {
       }
 
       const itemData = item.toObject();
-      await actor.createEmbeddedDocuments("Item", [itemData]);
+      await actor.createEmbeddedDocuments('Item', [itemData]);
 
       ui.notifications.info(
         `Granted ${type} "${item.name}" to ${actor.name}`

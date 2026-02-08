@@ -10,7 +10,7 @@
  * The authoritative sheet surface is the v2 ApplicationV2 sheet.
  */
 
-import { SWSEV2CharacterSheet } from "../../sheets/v2/character-sheet.js";
+import { SWSEV2CharacterSheet } from '../../sheets/v2/character-sheet.js';
 
 /**
  * @deprecated Use {@link SWSEV2CharacterSheet}.

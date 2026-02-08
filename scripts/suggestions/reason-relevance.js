@@ -22,13 +22,13 @@ export const REASON_RELEVANCE = {
   // Rank explanations by: class requirements > ability synergies > previous training > flavor
   skills(reason, context) {
     switch (reason.domain) {
-      case "class":
+      case 'class':
         return 1.0;      // Class requirements are primary explanation
-      case "attributes":
+      case 'attributes':
         return 0.9;      // Ability synergies matter
-      case "trained_skills":
+      case 'trained_skills':
         return 0.8;      // Previous training is relevant context
-      case "synergy":
+      case 'synergy':
         return 0.7;      // Synergy is secondary flavor
       default:
         return 0.2;      // Other domains are de-emphasized
@@ -39,11 +39,11 @@ export const REASON_RELEVANCE = {
   // Rank explanations by: BAB gating > ability requirements > skill synergies
   feats(reason, context) {
     switch (reason.domain) {
-      case "bab":
+      case 'bab':
         return 1.0;      // BAB is primary gating reason
-      case "attributes":
+      case 'attributes':
         return 0.9;      // Ability requirements matter
-      case "trained_skills":
+      case 'trained_skills':
         return 0.6;      // Skill synergies are secondary
       default:
         return 0.3;      // Other domains are de-emphasized
@@ -54,11 +54,11 @@ export const REASON_RELEVANCE = {
   // Rank explanations by: class locks > ability alignment > role fit
   classes(reason, context) {
     switch (reason.domain) {
-      case "previous_class":
+      case 'previous_class':
         return 1.0;      // Class locks are critical explanation
-      case "attributes":
+      case 'attributes':
         return 0.8;      // Ability alignment matters
-      case "role_alignment":
+      case 'role_alignment':
         return 0.7;      // Role fit is secondary
       default:
         return 0.3;      // Other domains are de-emphasized
@@ -69,11 +69,11 @@ export const REASON_RELEVANCE = {
   // Rank explanations by: class gates > level gates > prerequisites
   talents(reason, context) {
     switch (reason.domain) {
-      case "class":
+      case 'class':
         return 1.0;      // Class requirements are primary
-      case "level":
+      case 'level':
         return 0.9;      // Level gating is critical
-      case "prerequisites":
+      case 'prerequisites':
         return 0.8;      // Talent prereqs matter
       default:
         return 0.3;      // Other domains are de-emphasized
@@ -84,9 +84,9 @@ export const REASON_RELEVANCE = {
   // Rank explanations by: class alignment > role requirements
   attributes(reason, context) {
     switch (reason.domain) {
-      case "class":
+      case 'class':
         return 1.0;      // Class alignment is primary
-      case "role_alignment":
+      case 'role_alignment':
         return 0.9;      // Role requirements matter
       default:
         return 0.3;      // Other domains are de-emphasized
@@ -106,7 +106,7 @@ export function getReasonRelevance(focus, reason, context = {}) {
   const fn = REASON_RELEVANCE[focus];
 
   // Unknown focus = all equal weight
-  if (!fn) return 1.0;
+  if (!fn) {return 1.0;}
 
   try {
     let weight = fn(reason, context);

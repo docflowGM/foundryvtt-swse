@@ -21,8 +21,8 @@ function hookEntries() {
   const entries = [];
   const events = Hooks?.events ?? {};
   for (const [event, fns] of Object.entries(events)) {
-    if (!Array.isArray(fns)) continue;
-    for (const fn of fns) entries.push({ event, fn });
+    if (!Array.isArray(fns)) {continue;}
+    for (const fn of fns) {entries.push({ event, fn });}
   }
   return entries;
 }
@@ -31,7 +31,7 @@ function scanFn(fn, patterns = DEFAULT_PATTERNS) {
   const src = String(fn ?? '');
   const hits = [];
   for (const p of patterns) {
-    if (p.re.test(src)) hits.push(p.id);
+    if (p.re.test(src)) {hits.push(p.id);}
   }
   return hits;
 }
@@ -47,16 +47,16 @@ export function reportV2Slippage(patterns = DEFAULT_PATTERNS) {
 
   for (const { event, fn } of hookEntries()) {
     const hits = scanFn(fn, patterns);
-    if (hits.length) rows.push({ where: 'Hook handler', what: hits.join(', '), detail: event });
+    if (hits.length) {rows.push({ where: 'Hook handler', what: hits.join(', '), detail: event });}
   }
 
   // Sheet classes
   const sheetClasses = Object.values(CONFIG?.Actor?.sheetClasses ?? {}).flatMap(m => Object.values(m ?? {}));
   for (const sc of sheetClasses) {
     const cls = sc?.cls;
-    if (!cls) continue;
+    if (!cls) {continue;}
     const hits = scanFn(cls, patterns);
-    if (hits.length) rows.push({ where: 'Actor sheet class', what: hits.join(', '), detail: cls.name });
+    if (hits.length) {rows.push({ where: 'Actor sheet class', what: hits.join(', '), detail: cls.name });}
   }
 
   // Report

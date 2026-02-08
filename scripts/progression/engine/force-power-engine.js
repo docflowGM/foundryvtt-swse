@@ -18,9 +18,9 @@
  * The engine will prefer compendium data but fallback to progression-data.js
  */
 
-import { FORCE_POWER_DATA } from "../data/progression-data.js";
-import { ForcePowerPicker } from "../ui/force-power-picker.js";
-import { swseLogger } from "../../utils/logger.js";
+import { FORCE_POWER_DATA } from '../data/progression-data.js';
+import { ForcePowerPicker } from '../ui/force-power-picker.js';
+import { swseLogger } from '../../utils/logger.js';
 
 export class ForcePowerEngine {
   /**
@@ -64,10 +64,10 @@ export class ForcePowerEngine {
 
     // Fallback to hardcoded data
     const f = FORCE_POWER_DATA.feats[featName];
-    if (!f) return 0;
+    if (!f) {return 0;}
 
     // Handle ability modifier-based grants (Force Training)
-    if (f.grants === "ability_mod") {
+    if (f.grants === 'ability_mod') {
       return this._countFromAbilityMod(actor);
     }
 
@@ -117,7 +117,7 @@ static async _countFromClassLevel(className, level) {
   }
 
   const c = FORCE_POWER_DATA.classes[className];
-  if (!c) return 0;
+  if (!c) {return 0;}
   const L = String(level);
   return (c[L] && c[L].powers) ? c[L].powers : 0;
 }
@@ -173,7 +173,7 @@ static async collectAvailablePowers(actor) {
 
     return docs ?? [];
   } catch (e) {
-    swseLogger.error("ForcePowerEngine: Failed to collect powers from compendium", e);
+    swseLogger.error('ForcePowerEngine: Failed to collect powers from compendium', e);
     return [];
   }
 }
@@ -208,19 +208,19 @@ static async applySelected(actor, selectedItems = []) {
         toCreate.push(it.document.toObject());
       } else {
         toCreate.push({
-          name: it.name || "Force Power",
-          type: "forcePower",
-          img: it.img || "icons/svg/mystery-man.svg",
+          name: it.name || 'Force Power',
+          type: 'forcePower',
+          img: it.img || 'icons/svg/mystery-man.svg',
           system: it.system || {}
         });
       }
     }
 
     if (toCreate.length) {
-      await actor.createEmbeddedDocuments("Item", toCreate);
+      await actor.createEmbeddedDocuments('Item', toCreate);
     }
   } catch (e) {
-    swseLogger.error("ForcePowerEngine.applySelected error", e);
+    swseLogger.error('ForcePowerEngine.applySelected error', e);
   }
 }
 }

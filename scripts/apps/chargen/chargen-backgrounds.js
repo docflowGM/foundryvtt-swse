@@ -48,7 +48,7 @@ export function _getFilteredBackgrounds() {
   if (this.characterData.languageFilter) {
     const language = this.characterData.languageFilter;
     filtered = filtered.filter(bg => {
-      if (!bg.bonusLanguage) return false;
+      if (!bg.bonusLanguage) {return false;}
       return bg.bonusLanguage.split(' or ').map(l => l.trim()).includes(language);
     });
   }
@@ -73,50 +73,50 @@ export async function _renderBackgroundCards(container) {
 const backgrounds = this._getFilteredBackgrounds();
 
   if (!backgrounds || backgrounds.length === 0) {
-    container.innerHTML = "<p>No backgrounds available in this category.</p>";
+    container.innerHTML = '<p>No backgrounds available in this category.</p>';
     return;
   }
 
-  container.innerHTML = "";
+  container.innerHTML = '';
 
   for (const bg of backgrounds) {
-    const div = document.createElement("div");
-    div.classList.add("background-card");
-    div.dataset.bgId = bg.id || bg.slug || "";
-    div.dataset.uuid = bg.uuid || "";
+    const div = document.createElement('div');
+    div.classList.add('background-card');
+    div.dataset.bgId = bg.id || bg.slug || '';
+    div.dataset.uuid = bg.uuid || '';
 
-    const name = bg.name || bg.slug || "Unknown";
-    const icon = bg.icon ? `<div class="background-icon">${bg.icon}</div>` : "";
-    const narrative = (bg.narrativeDescription || bg.description || "").trim();
+    const name = bg.name || bg.slug || 'Unknown';
+    const icon = bg.icon ? `<div class="background-icon">${bg.icon}</div>` : '';
+    const narrative = (bg.narrativeDescription || bg.description || '').trim();
     const narrativeShort = narrative.length > 180 ? `${narrative.slice(0, 177)}…` : narrative;
 
     const skills = Array.isArray(bg.relevantSkills) && bg.relevantSkills.length
       ? bg.relevantSkills
       : (Array.isArray(bg.trainedSkills) ? bg.trainedSkills : []);
-    const skillsText = skills.length ? skills.join(", ") : "None";
+    const skillsText = skills.length ? skills.join(', ') : 'None';
 
-    const special = (bg.specialAbility || "").trim();
-    const language = (bg.bonusLanguage || "").trim();
+    const special = (bg.specialAbility || '').trim();
+    const language = (bg.bonusLanguage || '').trim();
 
     div.innerHTML = `
       <div class="background-card-inner">
         <div class="background-card-face background-card-front">
           ${icon}
           <h3>${name}</h3>
-          ${narrativeShort ? `<p class="bg-narrative">${narrativeShort}</p>` : ""}
+          ${narrativeShort ? `<p class="bg-narrative">${narrativeShort}</p>` : ''}
           <p class="bg-meta"><strong>Skills:</strong> ${skillsText}</p>
-          ${language ? `<p class="bg-meta"><strong>Language:</strong> ${language}</p>` : ""}
+          ${language ? `<p class="bg-meta"><strong>Language:</strong> ${language}</p>` : ''}
         </div>
 
         <div class="background-card-face background-card-back">
           <h4>${name}</h4>
-          ${narrative ? `<p class="bg-narrative">${narrative}</p>` : ""}
+          ${narrative ? `<p class="bg-narrative">${narrative}</p>` : ''}
           <div class="bg-benefits">
             <strong>Benefits</strong>
             <ul>
               <li><strong>Skills:</strong> ${skillsText}</li>
-              ${language ? `<li><strong>Language:</strong> ${language}</li>` : ""}
-              ${special ? `<li><strong>Special:</strong> ${special}</li>` : ""}
+              ${language ? `<li><strong>Language:</strong> ${language}</li>` : ''}
+              ${special ? `<li><strong>Special:</strong> ${special}</li>` : ''}
             </ul>
           </div>
         </div>
@@ -126,7 +126,7 @@ const backgrounds = this._getFilteredBackgrounds();
         <button type="button" class="background-details-toggle btn-tertiary">
           Details
         </button>
-        <button type="button" class="background-read btn-secondary" ${bg.uuid ? "" : "disabled"}>
+        <button type="button" class="background-read btn-secondary" ${bg.uuid ? '' : 'disabled'}>
           Read
         </button>
         <button type="button" class="select-background btn-primary" data-bg-id="${div.dataset.bgId}">
@@ -140,30 +140,30 @@ const backgrounds = this._getFilteredBackgrounds();
 
   // Event delegation (AppV2-safe, no jQuery).
   container.onclick = async (ev) => {
-    const btn = ev.target.closest("button");
-    if (!btn) return;
+    const btn = ev.target.closest('button');
+    if (!btn) {return;}
 
-    const card = btn.closest(".background-card");
+    const card = btn.closest('.background-card');
     const bgId = btn.dataset.bgId || card?.dataset?.bgId;
 
-    if (btn.classList.contains("select-background")) {
+    if (btn.classList.contains('select-background')) {
       ev.preventDefault();
-      if (bgId) await this._onSelectBackground(bgId);
+      if (bgId) {await this._onSelectBackground(bgId);}
       return;
     }
 
-    if (btn.classList.contains("background-details-toggle")) {
+    if (btn.classList.contains('background-details-toggle')) {
       ev.preventDefault();
-      if (card) card.classList.toggle("is-flipped");
+      if (card) {card.classList.toggle('is-flipped');}
       return;
     }
 
-    if (btn.classList.contains("background-read")) {
+    if (btn.classList.contains('background-read')) {
       ev.preventDefault();
       const uuid = card?.dataset?.uuid;
-      if (!uuid) return;
+      if (!uuid) {return;}
       const doc = await fromUuid(uuid);
-      if (doc?.sheet) doc.sheet.render(true);
+      if (doc?.sheet) {doc.sheet.render(true);}
       return;
     }
   };
@@ -171,16 +171,16 @@ const backgrounds = this._getFilteredBackgrounds();
 
 // Selection handler
 export async function _onSelectBackground(eventOrId) {
-const id = typeof eventOrId === "string"
+const id = typeof eventOrId === 'string'
     ? eventOrId
     : eventOrId?.currentTarget?.dataset?.bgId;
 
-  if (eventOrId?.preventDefault) eventOrId.preventDefault();
-  if (!id) return;
+  if (eventOrId?.preventDefault) {eventOrId.preventDefault();}
+  if (!id) {return;}
 
   const selected = this.allBackgrounds.find(b => b.id === id);
   if (!selected) {
-    ui.notifications.error("Unknown background");
+    ui.notifications.error('Unknown background');
     return;
   }
 
@@ -196,18 +196,18 @@ const id = typeof eventOrId === "string"
   };
 
   const record = await BackgroundRegistry.getBySlug(selected.id);
-  this.characterData.backgroundId = record?.internalId || "";
-  this.characterData.backgroundUuid = record?.uuid || "";
+  this.characterData.backgroundId = record?.internalId || '';
+  this.characterData.backgroundUuid = record?.uuid || '';
 
   this.characterData.backgroundSkills = selected.relevantSkills || selected.trainedSkills || [];
 
-  ui.notifications.info("Background selected: " + selected.name);
+  ui.notifications.info('Background selected: ' + selected.name);
   await this.render();
 }
 
 // Used to mark skills as class skills due to background
 export function _getBackgroundClassSkills() {
-  if (!this.characterData.background) return [];
+  if (!this.characterData.background) {return [];}
   return (this.characterData.background.trainedSkills || [])
     .map(s => s.replace(/\s+/g, '').toLowerCase());
 }
@@ -215,10 +215,10 @@ export function _getBackgroundClassSkills() {
 // Flavor text for narrator
 export function _getBackgroundNarratorComment(cat) {
   switch (cat) {
-    case "events": return "Your past experiences shape your destiny.";
-    case "occupation": return "Your trade helped form your skills.";
-    case "planet": return "Your world molded your upbringing.";
-    default: return "";
+    case 'events': return 'Your past experiences shape your destiny.';
+    case 'occupation': return 'Your trade helped form your skills.';
+    case 'planet': return 'Your world molded your upbringing.';
+    default: return '';
   }
 }
 
@@ -230,7 +230,7 @@ export async function _onRandomBackground(event) {
   event.preventDefault();
 
   if (!this.backgrounds || this.backgrounds.length === 0) {
-    ui.notifications.warn("No backgrounds available to choose from.");
+    ui.notifications.warn('No backgrounds available to choose from.');
     return;
   }
 
@@ -246,7 +246,7 @@ export async function _onRandomBackground(event) {
     specialAbility: selected.specialAbility || null,
     bonusLanguage: selected.bonusLanguage || null,
     trainedSkills: selected.trainedSkills || [],
-    category: this.characterData.backgroundCategory || "events"
+    category: this.characterData.backgroundCategory || 'events'
   };
 
   ui.notifications.info(`Random background selected: ${selected.name}`);
@@ -263,9 +263,9 @@ export async function _onChangeBackground(event) {
   // Clear the current background selection
   this.characterData.background = null;
   this.characterData.backgroundSkills = [];
-  this.characterData.backgroundId = "";
+  this.characterData.backgroundId = '';
 
-  ui.notifications.info("Background cleared. Please select a new background.");
+  ui.notifications.info('Background cleared. Please select a new background.');
   await this.render();
 }
 
@@ -282,17 +282,17 @@ export async function _onAskMentorBackgroundSuggestion(event) {
     const availableBackgrounds = this._getFilteredBackgrounds();
 
     if (!availableBackgrounds || availableBackgrounds.length === 0) {
-      ui.notifications.warn("No backgrounds available in this category.");
+      ui.notifications.warn('No backgrounds available in this category.');
       return;
     }
 
     // Show loading indicator
-    ui.notifications.info("Consulting with your mentor...");
+    ui.notifications.info('Consulting with your mentor...');
 
     // Get suggestion engine via coordinator
     if (!SuggestionService) {
-      ui.notifications.error("Suggestion engine not available. Please reload the page.");
-      SWSELogger.error("BackgroundSuggestion | Suggestion engine not available");
+      ui.notifications.error('Suggestion engine not available. Please reload the page.');
+      SWSELogger.error('BackgroundSuggestion | Suggestion engine not available');
       return;
     }
 
@@ -311,7 +311,7 @@ export async function _onAskMentorBackgroundSuggestion(event) {
     const topSuggestion = suggestedBackgrounds.find(bg => bg.suggestion?.tier > 0) || suggestedBackgrounds[0];
 
     if (!topSuggestion) {
-      ui.notifications.warn("Unable to generate a suggestion.");
+      ui.notifications.warn('Unable to generate a suggestion.');
       return;
     }
 
@@ -324,12 +324,12 @@ export async function _onAskMentorBackgroundSuggestion(event) {
     const mentor = getMentorForClass(className);
 
     if (!mentor) {
-      ui.notifications.error("Mentor not found for this class.");
+      ui.notifications.error('Mentor not found for this class.');
       return;
     }
 
     // Create suggestion dialog with mentor voice
-    const reason = topSuggestion.suggestion?.reason || "This seems like a good fit for your character";
+    const reason = topSuggestion.suggestion?.reason || 'This seems like a good fit for your character';
     const mentorMessage = `${mentor.name} suggests: "${topSuggestion.name}" - ${reason}`;
 
     // Show the mentor suggestion dialog
@@ -359,7 +359,7 @@ export async function _onAskMentorBackgroundSuggestion(event) {
         buttons: {
           apply: {
             icon: '<i class="fas fa-check"></i>',
-            label: "Accept Suggestion",
+            label: 'Accept Suggestion',
             callback: async () => {
               // Apply the suggested background
               this.characterData.background = {
@@ -380,13 +380,13 @@ export async function _onAskMentorBackgroundSuggestion(event) {
           },
           decline: {
             icon: '<i class="fas fa-times"></i>',
-            label: "Browse Manually",
+            label: 'Browse Manually',
             callback: () => {
               // Just close the dialog
             }
           }
         },
-        default: "apply"
+        default: 'apply'
       },
       { classes: ['mentor-suggestion-dialog'] }
     );
@@ -394,8 +394,8 @@ export async function _onAskMentorBackgroundSuggestion(event) {
     dialog.render(true);
 
   } catch (err) {
-    SWSELogger.error("BackgroundSuggestion | Error suggesting backgrounds:", err);
-    ui.notifications.error("Failed to get mentor suggestion. Check console for details.");
+    SWSELogger.error('BackgroundSuggestion | Error suggesting backgrounds:', err);
+    ui.notifications.error('Failed to get mentor suggestion. Check console for details.');
   }
 }
 
@@ -407,7 +407,7 @@ export async function _onBackgroundCategoryClick(event) {
   event.preventDefault();
 
   const newCategory = event.currentTarget.dataset.category;
-  if (!newCategory) return;
+  if (!newCategory) {return;}
 
   // Clear background selection when switching categories
   this.characterData.background = null;
@@ -449,7 +449,7 @@ export async function _onBackgroundFilterClick(event) {
   event.preventDefault();
 
   const panel = document.querySelector('.background-filter-panel');
-  if (!panel) return;
+  if (!panel) {return;}
 
   panel.classList.toggle('collapsed');
 
@@ -473,7 +473,7 @@ export async function _applyBackgroundFilters(skillFilter, languageFilter) {
     // Reset filters
     this.characterData.skillFilter = null;
     this.characterData.languageFilter = null;
-    ui.notifications.info("Showing all backgrounds");
+    ui.notifications.info('Showing all backgrounds');
   } else {
     // Validate filters
     const currentCategory = this.characterData.backgroundCategory || 'events';
@@ -495,7 +495,7 @@ export async function _applyBackgroundFilters(skillFilter, languageFilter) {
 
     if (language) {
       categoryBackgrounds = categoryBackgrounds.filter(bg => {
-        if (!bg.bonusLanguage) return false;
+        if (!bg.bonusLanguage) {return false;}
         // Check if the selected language is in the bonus language string
         return bg.bonusLanguage.split(' or ').map(l => l.trim()).includes(language);
       });
@@ -503,15 +503,15 @@ export async function _applyBackgroundFilters(skillFilter, languageFilter) {
 
     if (categoryBackgrounds.length === 0) {
       const filters = [];
-      if (skill) filters.push(`skill: ${skill}`);
-      if (language) filters.push(`language: ${language}`);
+      if (skill) {filters.push(`skill: ${skill}`);}
+      if (language) {filters.push(`language: ${language}`);}
       ui.notifications.warn(`No backgrounds found with ${filters.join(' and ')}`);
       return;
     }
 
     const filters = [];
-    if (skill) filters.push(`skill: ${skill}`);
-    if (language) filters.push(`language: ${language}`);
+    if (skill) {filters.push(`skill: ${skill}`);}
+    if (language) {filters.push(`language: ${language}`);}
     ui.notifications.info(`Found ${categoryBackgrounds.length} backgrounds with ${filters.join(' and ')}`);
 
     // Store the filters
@@ -532,7 +532,7 @@ export async function _applyBackgroundFilters(skillFilter, languageFilter) {
  */
 export async function _applyBackgroundToActor(actor) {
   const bg = this.characterData.background;
-  if (!bg) return;
+  if (!bg) {return;}
 
   const updateData = {};
 
@@ -604,7 +604,7 @@ function _collectBackgroundFilters(backgrounds) {
 }
 
 function _renderChipRow(rowEl, items, type, activeValue) {
-  if (!rowEl) return;
+  if (!rowEl) {return;}
   const parts = [];
   parts.push(`<button type="button" class="bg-chip ${!activeValue ? 'active' : ''}" data-type="${type}" data-value="">Any</button>`);
   for (const v of items) {
@@ -638,12 +638,12 @@ function _refreshBackgroundFilterPanel(panelEl, backgrounds) {
  */
 export function _renderBackgroundFilterPanel(root) {
   const panel = root.querySelector('.background-filter-panel');
-  if (!panel || this.characterData.background) return;
+  if (!panel || this.characterData.background) {return;}
 
   // Ensure defaults exist
-  if (typeof this.characterData.backgroundSearch !== 'string') this.characterData.backgroundSearch = '';
-  if (typeof this.characterData.skillFilter !== 'string') this.characterData.skillFilter = '';
-  if (typeof this.characterData.languageFilter !== 'string') this.characterData.languageFilter = '';
+  if (typeof this.characterData.backgroundSearch !== 'string') {this.characterData.backgroundSearch = '';}
+  if (typeof this.characterData.skillFilter !== 'string') {this.characterData.skillFilter = '';}
+  if (typeof this.characterData.languageFilter !== 'string') {this.characterData.languageFilter = '';}
 
   const search = panel.querySelector('.background-search-input');
   if (search) {
@@ -651,7 +651,7 @@ export function _renderBackgroundFilterPanel(root) {
     search.oninput = () => {
       this.characterData.backgroundSearch = search.value || '';
       const grid = root.querySelector('#background-selection-grid');
-      if (grid) this._renderBackgroundCards(grid);
+      if (grid) {this._renderBackgroundCards(grid);}
       _refreshBackgroundFilterPanel.call(this, panel, this.allBackgrounds || []);
     };
   }
@@ -662,16 +662,16 @@ export function _renderBackgroundFilterPanel(root) {
       this.characterData.backgroundSearch = '';
       this.characterData.skillFilter = '';
       this.characterData.languageFilter = '';
-      if (search) search.value = '';
+      if (search) {search.value = '';}
       const grid = root.querySelector('#background-selection-grid');
-      if (grid) this._renderBackgroundCards(grid);
+      if (grid) {this._renderBackgroundCards(grid);}
       _refreshBackgroundFilterPanel.call(this, panel, this.allBackgrounds || []);
     };
   }
 
   panel.onclick = (ev) => {
     const btn = ev.target.closest('button.bg-chip');
-    if (!btn) return;
+    if (!btn) {return;}
 
     const type = btn.dataset.type;
     const value = btn.dataset.value || '';
@@ -685,7 +685,7 @@ export function _renderBackgroundFilterPanel(root) {
     }
 
     const grid = root.querySelector('#background-selection-grid');
-    if (grid) this._renderBackgroundCards(grid);
+    if (grid) {this._renderBackgroundCards(grid);}
     _refreshBackgroundFilterPanel.call(this, panel, this.allBackgrounds || []);
   };
 

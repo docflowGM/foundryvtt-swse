@@ -18,7 +18,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
-import { ActorEngine } from "../actors/engine/actor-engine.js";
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class LightSideTalentMechanics {
 
@@ -300,9 +300,9 @@ export class LightSideTalentMechanics {
     // Create effect on ally
     await ally.createEmbeddedDocuments('ActiveEffect', [{
       name: "Consular's Wisdom",
-      icon: "icons/svg/angel.svg",
+      icon: 'icons/svg/angel.svg',
       changes: [{
-        key: "system.defenses.will.bonus",
+        key: 'system.defenses.will.bonus',
         mode: 2, // ADD
         value: wisdomBonus,
         priority: 20
@@ -365,12 +365,12 @@ export class LightSideTalentMechanics {
     };
 
     await targetActor.createEmbeddedDocuments('ActiveEffect', [{
-      name: "Exposing Strike - Flat-Footed",
-      icon: "icons/svg/daze.svg",
+      name: 'Exposing Strike - Flat-Footed',
+      icon: 'icons/svg/daze.svg',
       changes: [{
-        key: "system.condition.flatFooted",
+        key: 'system.condition.flatFooted',
         mode: 5, // OVERRIDE
-        value: "true",
+        value: 'true',
         priority: 50
       }],
       duration: duration,
@@ -585,7 +585,7 @@ export class LightSideTalentMechanics {
     // Create temporary effect on ally
     await ally.createEmbeddedDocuments('ActiveEffect', [{
       name: `Skilled Advisor - ${skillName}`,
-      icon: "icons/svg/book.svg",
+      icon: 'icons/svg/book.svg',
       changes: [{
         key: `system.skills.${skillName}.bonus`,
         mode: 2, // ADD
@@ -820,7 +820,7 @@ export class LightSideTalentMechanics {
     // Create temporary effect on ally granting the Force Secret
     await ally.createEmbeddedDocuments('ActiveEffect', [{
       name: `Shared ${forceSecret.name}`,
-      icon: forceSecret.img || "icons/svg/mystery-man.svg",
+      icon: forceSecret.img || 'icons/svg/mystery-man.svg',
       changes: [], // Force Secrets might need specific effect changes
       duration: {
         rounds: 1
@@ -896,7 +896,7 @@ export class LightSideTalentMechanics {
     // Create active effect that lasts until start of next turn
     const effectData = {
       name: `Steel Resolve (-${penaltyAmount} attack, +${willBonus} Will)`,
-      icon: "icons/svg/shield.svg",
+      icon: 'icons/svg/shield.svg',
       duration: {
         rounds: 1,
         startRound: game.combat?.round,
@@ -904,13 +904,13 @@ export class LightSideTalentMechanics {
       },
       changes: [
         {
-          key: "system.attackPenalty",
+          key: 'system.attackPenalty',
           mode: 2, // ADD
           value: -penaltyAmount,
           priority: 20
         },
         {
-          key: "system.defenses.will.bonus",
+          key: 'system.defenses.will.bonus',
           mode: 2, // ADD
           value: willBonus,
           priority: 20
@@ -1165,8 +1165,8 @@ export class LightSideTalentMechanics {
     }
 
     return canvas.tokens.placeables.filter(token => {
-      if (!token.actor || token.actor.id === actor.id) return false;
-      if (token.document.disposition !== actorToken.document.disposition) return false;
+      if (!token.actor || token.actor.id === actor.id) {return false;}
+      if (token.document.disposition !== actorToken.document.disposition) {return false;}
 
       const distance = canvas.grid.measureDistance(actorToken, token);
       return distance <= range;
@@ -1187,8 +1187,8 @@ export class LightSideTalentMechanics {
     }
 
     return canvas.tokens.placeables.filter(token => {
-      if (!token.actor || token.actor.id === actor.id) return false;
-      if (token.document.disposition !== actorToken.document.disposition) return false;
+      if (!token.actor || token.actor.id === actor.id) {return false;}
+      if (token.document.disposition !== actorToken.document.disposition) {return false;}
 
       // Simple LOS check - in a real implementation you'd check for walls/obstacles
       return true;
@@ -1209,7 +1209,7 @@ export class LightSideTalentMechanics {
     }
 
     return canvas.tokens.placeables.filter(token => {
-      if (!token.actor || token.actor.id === actor.id) return false;
+      if (!token.actor || token.actor.id === actor.id) {return false;}
       return token.document.disposition === actorToken.document.disposition;
     });
   }
@@ -1443,7 +1443,7 @@ Hooks.on('darkSidePowerTargeted', async (targetActor, darkSidePower, sourceActor
 Hooks.on('deleteCombat', async (combat) => {
   for (const combatant of combat.combatants) {
     const actor = combatant.actor;
-    if (!actor) continue;
+    if (!actor) {continue;}
 
     // Clear all light side talent encounter flags
     const combatId = combat.id;

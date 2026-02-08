@@ -85,33 +85,33 @@ export class MentorDialogueResponses {
     const progressionMaps = {
       miraj: {
         early: [
-          "The Force awakens within you",
-          "Your path has just begun",
-          "The Light guides your first steps"
+          'The Force awakens within you',
+          'Your path has just begun',
+          'The Light guides your first steps'
         ],
         mid_early: [
-          "The Force grows within you",
-          "Your connection deepens",
+          'The Force grows within you',
+          'Your connection deepens',
           "You've learned discipline"
         ],
         mid: [
           "You've proven your connection",
-          "The Force flows through your choices",
-          "Your understanding clarifies"
+          'The Force flows through your choices',
+          'Your understanding clarifies'
         ],
         mid_late: [
-          "Your path becomes clear",
-          "The Force speaks through your actions",
-          "Wisdom marks your steps"
+          'Your path becomes clear',
+          'The Force speaks through your actions',
+          'Wisdom marks your steps'
         ],
         late: [
           "You've become something remarkable",
-          "The Force recognizes your commitment",
-          "You walk a path few understand"
+          'The Force recognizes your commitment',
+          'You walk a path few understand'
         ],
         transcendent: [
           "You've transcended ordinary understanding",
-          "The Force itself bends to your will",
+          'The Force itself bends to your will',
           "You've become a beacon to others"
         ]
       },
@@ -119,7 +119,7 @@ export class MentorDialogueResponses {
       breach: {
         early: [
           "You're green but learning",
-          "Combat hardens your resolve",
+          'Combat hardens your resolve',
           "You've seen your first action"
         ],
         mid_early: [
@@ -129,22 +129,22 @@ export class MentorDialogueResponses {
         ],
         mid: [
           "You've proven yourself in the field",
-          "Your record speaks volumes",
+          'Your record speaks volumes',
           "You've survived real conflict"
         ],
         mid_late: [
-          "Your combat experience is undeniable",
+          'Your combat experience is undeniable',
           "You've become a reliable operator",
-          "The record shows your skill"
+          'The record shows your skill'
         ],
         late: [
           "You've become a seasoned fighter",
-          "Few can match your record",
+          'Few can match your record',
           "You've survived what kills most soldiers"
         ],
         transcendent: [
           "You've become a legend in the field",
-          "Your record is legendary",
+          'Your record is legendary',
           "You're among the best I've seen"
         ]
       },
@@ -152,32 +152,32 @@ export class MentorDialogueResponses {
       lead: {
         early: [
           "You're finding your footing",
-          "The patterns are starting to show",
+          'The patterns are starting to show',
           "You've learned to observe"
         ],
         mid_early: [
           "You're reading situations better",
-          "Patterns are becoming clear",
+          'Patterns are becoming clear',
           "You're learning what matters"
         ],
         mid: [
           "You've learned to read people and terrain",
-          "The patterns are obvious to you now",
-          "Your instincts sharpen"
+          'The patterns are obvious to you now',
+          'Your instincts sharpen'
         ],
         mid_late: [
-          "You see what others miss",
-          "The patterns guide you naturally",
-          "Your tactical sense is solid"
+          'You see what others miss',
+          'The patterns guide you naturally',
+          'Your tactical sense is solid'
         ],
         late: [
           "You've become exceptionally perceptive",
-          "Few read a situation like you do",
-          "You understand things instinctively"
+          'Few read a situation like you do',
+          'You understand things instinctively'
         ],
         transcendent: [
-          "You see ten steps ahead now",
-          "Pattern recognition is second nature",
+          'You see ten steps ahead now',
+          'Pattern recognition is second nature',
           "You've become a true strategist"
         ]
       },
@@ -195,7 +195,7 @@ export class MentorDialogueResponses {
         ],
         mid: [
           "Ye've cheated death more'n once",
-          "The galaxy knows yer name now",
+          'The galaxy knows yer name now',
           "Yer luck's held strong"
         ],
         mid_late: [
@@ -205,46 +205,46 @@ export class MentorDialogueResponses {
         ],
         late: [
           "Ye've become a legend 'round these parts",
-          "Few have survived what ye have",
-          "Yer reputation precedes ye"
+          'Few have survived what ye have',
+          'Yer reputation precedes ye'
         ],
         transcendent: [
           "Ye've become a galactic legend, matey",
-          "Stories about ye span the stars",
+          'Stories about ye span the stars',
           "Ye've earned yerself eternal glory"
         ]
       },
 
       j0_n1: {
         early: [
-          "Capability parameters initializing",
-          "Performance metrics improving",
-          "Optimization beginning"
+          'Capability parameters initializing',
+          'Performance metrics improving',
+          'Optimization beginning'
         ],
         mid_early: [
-          "Capability indexes rising",
-          "Performance efficiency increasing",
-          "Optimization accelerating"
+          'Capability indexes rising',
+          'Performance efficiency increasing',
+          'Optimization accelerating'
         ],
         mid: [
-          "You have achieved notable capability development",
-          "Performance parameters exceed baseline",
-          "Efficiency gains are measurable"
+          'You have achieved notable capability development',
+          'Performance parameters exceed baseline',
+          'Efficiency gains are measurable'
         ],
         mid_late: [
-          "Your capability development is substantial",
-          "Performance metrics exceed standard operations",
-          "Optimization efficiency is exceptional"
+          'Your capability development is substantial',
+          'Performance metrics exceed standard operations',
+          'Optimization efficiency is exceptional'
         ],
         late: [
-          "You have achieved exceptional capability status",
-          "Your performance metrics are outstanding",
-          "Few systems approach your efficiency"
+          'You have achieved exceptional capability status',
+          'Your performance metrics are outstanding',
+          'Few systems approach your efficiency'
         ],
         transcendent: [
-          "You have transcended normal operational parameters",
-          "Your performance is nearly optimal",
-          "You operate at peak capability thresholds"
+          'You have transcended normal operational parameters',
+          'Your performance is nearly optimal',
+          'You operate at peak capability thresholds'
         ]
       }
     };
@@ -254,12 +254,7 @@ export class MentorDialogueResponses {
 
     // Determine level band and pick random option
     let band;
-    if (level <= 1) band = "early";
-    else if (level <= 3) band = "mid_early";
-    else if (level <= 5) band = "mid";
-    else if (level <= 7) band = "mid_late";
-    else if (level <= 10) band = "late";
-    else band = "transcendent";
+    if (level <= 1) {band = 'early';} else if (level <= 3) {band = 'mid_early';} else if (level <= 5) {band = 'mid';} else if (level <= 7) {band = 'mid_late';} else if (level <= 10) {band = 'late';} else {band = 'transcendent';}
 
     const options = map[band];
     return options[Math.floor(Math.random() * options.length)];
@@ -267,11 +262,11 @@ export class MentorDialogueResponses {
 
   static _getFallbackResponse(topicKey, analysisData) {
     return {
-      opening: "Let me share my thoughts on this.",
+      opening: 'Let me share my thoughts on this.',
       analysis: "I don't have specific guidance at the moment.",
-      closing: "Consider your path carefully.",
+      closing: 'Consider your path carefully.',
       emphasis: [],
-      dspWarning: ""
+      dspWarning: ''
     };
   }
 
@@ -285,7 +280,7 @@ export class MentorDialogueResponses {
     // 7. "WHAT LIES AHEAD?" — Future Planning
     // ========================================
     what_lies_ahead: {
-      systemIntent: "Hint at prestige classes and long-term options",
+      systemIntent: 'Hint at prestige classes and long-term options',
       // PHASE2_MIGRATE_TO_UI: Prestige alignment percentage and target class hints should be
       // moved to a "Why?" expandable or prestige class preview panel, separate from dialogue.
       // Mentor dialogue here should remain as NARRATIVE (pure voice/philosophy).
@@ -307,154 +302,154 @@ export class MentorDialogueResponses {
       mentors: {
         miraj: {
           opening: [
-            "If you continue as you are, greater responsibility will follow.",
-            "Specialization brings clarity — and consequence.",
-            "Future paths will demand more than skill alone.",
-            "What you become will matter to others, whether you intend it or not.",
-            "The Force will ask you to define yourself more clearly."
+            'If you continue as you are, greater responsibility will follow.',
+            'Specialization brings clarity — and consequence.',
+            'Future paths will demand more than skill alone.',
+            'What you become will matter to others, whether you intend it or not.',
+            'The Force will ask you to define yourself more clearly.'
           ],
           closing: [
-            "The future belongs to those patient enough to build it with intention.",
-            "Awareness shapes destiny.",
-            "Your choices write what comes next.",
-            "The Force guides those who prepare.",
-            "Define yourself before you are defined."
+            'The future belongs to those patient enough to build it with intention.',
+            'Awareness shapes destiny.',
+            'Your choices write what comes next.',
+            'The Force guides those who prepare.',
+            'Define yourself before you are defined.'
           ],
-          emphasis: ["foresight", "intentionality"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['foresight', 'intentionality'],
+          dspInterpreter: (dsp) => ''
         },
 
         breach: {
           opening: [
-            "Harder fights. Stronger enemies.",
-            "Command. Responsibility. Bigger stakes.",
+            'Harder fights. Stronger enemies.',
+            'Command. Responsibility. Bigger stakes.',
             "Battles where retreat isn't an option.",
-            "Specialization that defines how you survive.",
+            'Specialization that defines how you survive.',
             "War doesn't slow down — you either adapt or fall."
           ],
           closing: [
             "Plan ahead. Good operators know where they're going.",
             "Prepare for what's coming.",
-            "The fight only gets harder.",
-            "Specialization is inevitable.",
-            "Adapt or die."
+            'The fight only gets harder.',
+            'Specialization is inevitable.',
+            'Adapt or die.'
           ],
-          emphasis: ["planning", "strategy"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['planning', 'strategy'],
+          dspInterpreter: (dsp) => ''
         },
 
         lead: {
           opening: [
-            "Bigger contracts. Higher risk.",
-            "Leadership roles.",
-            "Jobs where planning matters more than firepower.",
-            "Specialization that defines your reputation.",
-            "Choices that decide who hires you next."
+            'Bigger contracts. Higher risk.',
+            'Leadership roles.',
+            'Jobs where planning matters more than firepower.',
+            'Specialization that defines your reputation.',
+            'Choices that decide who hires you next.'
           ],
           closing: [
-            "Your next moves will determine if you follow that path or cut a new one.",
-            "Plan accordingly.",
-            "Reputation matters.",
-            "Stay valuable.",
-            "The money follows quality work."
+            'Your next moves will determine if you follow that path or cut a new one.',
+            'Plan accordingly.',
+            'Reputation matters.',
+            'Stay valuable.',
+            'The money follows quality work.'
           ],
-          emphasis: ["pattern", "agency"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['pattern', 'agency'],
+          dspInterpreter: (dsp) => ''
         },
 
         ol_salty: {
           opening: [
-            "Bigger scores. Bigger knives in the dark.",
-            "Reputations that follow you.",
+            'Bigger scores. Bigger knives in the dark.',
+            'Reputations that follow you.',
             "Jobs where walkin' away is the smart play.",
             "Choices you can't buy your way out of.",
-            "The moment the galaxy remembers your name."
+            'The moment the galaxy remembers your name.'
           ],
           closing: [
             "The future's got riches waitin' for those clever enough to see 'em comin'!",
-            "Plan ahead, profit ahead.",
-            "Fortune favors the prepared, matey.",
-            "See it coming, claim it first.",
+            'Plan ahead, profit ahead.',
+            'Fortune favors the prepared, matey.',
+            'See it coming, claim it first.',
             "The future's yours if you're smart."
           ],
-          emphasis: ["opportunity", "preparation"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['opportunity', 'preparation'],
+          dspInterpreter: (dsp) => ''
         },
 
         j0_n1: {
           opening: [
-            "<Projection> Increased responsibility.",
-            "<Assessment> Organizational leadership.",
-            "<Calculation> Political consequences.",
-            "<Observation> Expanded influence.",
-            "<Conclusion> Strategic visibility."
+            '<Projection> Increased responsibility.',
+            '<Assessment> Organizational leadership.',
+            '<Calculation> Political consequences.',
+            '<Observation> Expanded influence.',
+            '<Conclusion> Strategic visibility.'
           ],
           closing: [
-            "<Analysis> Plan accordingly.",
-            "<Directive> Prepare for escalation.",
-            "<Recommendation> Strategic positioning.",
-            "<Assessment> Future requires structure.",
-            "<Conclusion> Advancement imminent."
+            '<Analysis> Plan accordingly.',
+            '<Directive> Prepare for escalation.',
+            '<Recommendation> Strategic positioning.',
+            '<Assessment> Future requires structure.',
+            '<Conclusion> Advancement imminent.'
           ],
-          emphasis: ["forecasting", "optimization"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['forecasting', 'optimization'],
+          dspInterpreter: (dsp) => ''
         },
 
         darth_miedo: {
           opening: [
-            "Greater authority.",
-            "Heavier consequences.",
-            "Fewer peers.",
-            "A test you will not see coming.",
-            "A decision about succession."
+            'Greater authority.',
+            'Heavier consequences.',
+            'Fewer peers.',
+            'A test you will not see coming.',
+            'A decision about succession.'
           ],
           closing: [
-            "Those who refuse are replaced by those who do not.",
-            "Power demands commitment.",
-            "The future is inevitable.",
-            "Prepare accordingly.",
-            "Control or be controlled."
+            'Those who refuse are replaced by those who do not.',
+            'Power demands commitment.',
+            'The future is inevitable.',
+            'Prepare accordingly.',
+            'Control or be controlled.'
           ],
-          emphasis: ["inevitability", "power"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['inevitability', 'power'],
+          dspInterpreter: (dsp) => ''
         },
 
         darth_malbada: {
           opening: [
-            "More power. More suffering.",
-            "Enemies who scream louder.",
-            "Opportunities to hurt those who deserve it.",
-            "Tests you will not enjoy — at first.",
-            "A future carved from agony."
+            'More power. More suffering.',
+            'Enemies who scream louder.',
+            'Opportunities to hurt those who deserve it.',
+            'Tests you will not enjoy — at first.',
+            'A future carved from agony.'
           ],
           closing: [
             "You won't need to justify yourself forever.",
-            "Power silences critics.",
-            "Strength is inevitable.",
+            'Power silences critics.',
+            'Strength is inevitable.',
             "Embrace what's coming.",
-            "Pain refines."
+            'Pain refines.'
           ],
-          emphasis: ["strength", "liberation"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['strength', 'liberation'],
+          dspInterpreter: (dsp) => ''
         },
 
         tio_the_hutt: {
           opening: [
-            "Bigger empires.",
-            "More profitable enemies.",
-            "Political influence.",
-            "Luxury purchased with fear.",
-            "A seat no one questions."
+            'Bigger empires.',
+            'More profitable enemies.',
+            'Political influence.',
+            'Luxury purchased with fear.',
+            'A seat no one questions.'
           ],
           closing: [
-            "And much bigger returns.",
-            "Profit scales with power.",
-            "The future is lucrative.",
-            "Build your empire.",
-            "Wealth buys everything."
+            'And much bigger returns.',
+            'Profit scales with power.',
+            'The future is lucrative.',
+            'Build your empire.',
+            'Wealth buys everything.'
           ],
-          emphasis: ["opportunity", "profit"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['opportunity', 'profit'],
+          dspInterpreter: (dsp) => ''
         }
       }
     },
@@ -471,21 +466,21 @@ export class MentorDialogueResponses {
       mentors: {
         miraj: {
           opening: [
-            "I would build toward endurance before brilliance.",
-            "I would survive long enough for wisdom to matter.",
-            "I would favor preparation over reaction.",
-            "I would let patience decide battles others rush into.",
-            "I would remain calm when power feels most tempting."
+            'I would build toward endurance before brilliance.',
+            'I would survive long enough for wisdom to matter.',
+            'I would favor preparation over reaction.',
+            'I would let patience decide battles others rush into.',
+            'I would remain calm when power feels most tempting.'
           ],
           closing: [
-            "This is not the only way. But it is *a* way.",
-            "Centuries of Jedi have tested this path.",
-            "Discipline shapes destiny.",
-            "The Force rewards patience.",
-            "Balance endures when passion fades."
+            'This is not the only way. But it is *a* way.',
+            'Centuries of Jedi have tested this path.',
+            'Discipline shapes destiny.',
+            'The Force rewards patience.',
+            'Balance endures when passion fades.'
           ],
-          emphasis: ["philosophy", "discipline"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['philosophy', 'discipline'],
+          dspInterpreter: (dsp) => ''
         },
 
         breach: {
@@ -498,13 +493,13 @@ export class MentorDialogueResponses {
           ],
           closing: [
             "That's Mandalorian practicality. It works.",
-            "Everything else is luxury.",
-            "Simple. Effective. Proven.",
-            "This is the Way.",
-            "Survive first. Win second."
+            'Everything else is luxury.',
+            'Simple. Effective. Proven.',
+            'This is the Way.',
+            'Survive first. Win second.'
           ],
-          emphasis: ["pragmatism", "execution"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['pragmatism', 'execution'],
+          dspInterpreter: (dsp) => ''
         },
 
         lead: {
@@ -517,13 +512,13 @@ export class MentorDialogueResponses {
           ],
           closing: [
             "That's how Argent Squad survives.",
-            "Flexibility, awareness, and precision.",
-            "Professional. Profitable. Alive.",
+            'Flexibility, awareness, and precision.',
+            'Professional. Profitable. Alive.',
             "That's the mercenary way.",
-            "Get paid. Stay breathing."
+            'Get paid. Stay breathing.'
           ],
-          emphasis: ["adaptation", "awareness"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['adaptation', 'awareness'],
+          dspInterpreter: (dsp) => ''
         },
 
         ol_salty: {
@@ -536,89 +531,89 @@ export class MentorDialogueResponses {
           ],
           closing: [
             "Freedom and profit, matey! That's how ol' Salty plays this game!",
-            "Live free, die rich.",
+            'Live free, die rich.',
             "That's the pirate code.",
-            "Laugh all the way to the bank.",
-            "Survive with style, matey."
+            'Laugh all the way to the bank.',
+            'Survive with style, matey.'
           ],
-          emphasis: ["opportunism", "survival"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['opportunism', 'survival'],
+          dspInterpreter: (dsp) => ''
         },
 
         j0_n1: {
           opening: [
-            "<Preference> I would build redundancy.",
-            "<Directive> I would control information flow.",
-            "<Assessment> I would formalize authority.",
-            "<Calculation> I would minimize volatility.",
-            "<Conclusion> I would ensure continuity."
+            '<Preference> I would build redundancy.',
+            '<Directive> I would control information flow.',
+            '<Assessment> I would formalize authority.',
+            '<Calculation> I would minimize volatility.',
+            '<Conclusion> I would ensure continuity.'
           ],
           closing: [
-            "<Doctrine> Logic, precision, and relentless self-improvement. This is the superior approach.",
-            "<Assessment> Systematic superiority.",
-            "<Analysis> Efficiency prevails.",
-            "<Recommendation> Optimize everything.",
-            "<Conclusion> Logic is optimal."
+            '<Doctrine> Logic, precision, and relentless self-improvement. This is the superior approach.',
+            '<Assessment> Systematic superiority.',
+            '<Analysis> Efficiency prevails.',
+            '<Recommendation> Optimize everything.',
+            '<Conclusion> Logic is optimal.'
           ],
-          emphasis: ["logic", "efficiency"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['logic', 'efficiency'],
+          dspInterpreter: (dsp) => ''
         },
 
         darth_miedo: {
           opening: [
-            "I would build toward certainty.",
-            "I would design outcomes, not fights.",
-            "I would let others think they are safe.",
-            "I would groom my replacement… carefully.",
-            "I would ensure inevitability."
+            'I would build toward certainty.',
+            'I would design outcomes, not fights.',
+            'I would let others think they are safe.',
+            'I would groom my replacement… carefully.',
+            'I would ensure inevitability.'
           ],
           closing: [
-            "When I strike, the outcome is already decided.",
-            "Mastery is patient.",
-            "Control precedes action.",
-            "Power is inevitable.",
-            "This is the way."
+            'When I strike, the outcome is already decided.',
+            'Mastery is patient.',
+            'Control precedes action.',
+            'Power is inevitable.',
+            'This is the way.'
           ],
-          emphasis: ["inevitability", "mastery"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['inevitability', 'mastery'],
+          dspInterpreter: (dsp) => ''
         },
 
         darth_malbada: {
           opening: [
-            "I would build toward inevitability.",
-            "I would never spare them.",
-            "I would let cruelty do the work.",
-            "I would grow stronger on their pain.",
-            "I would make suffering instructional."
+            'I would build toward inevitability.',
+            'I would never spare them.',
+            'I would let cruelty do the work.',
+            'I would grow stronger on their pain.',
+            'I would make suffering instructional.'
           ],
           closing: [
-            "No one questions power that works.",
-            "Strength speaks.",
-            "Cruelty is efficient.",
-            "Dominance is final.",
-            "This is the way."
+            'No one questions power that works.',
+            'Strength speaks.',
+            'Cruelty is efficient.',
+            'Dominance is final.',
+            'This is the way.'
           ],
-          emphasis: ["strength", "autonomy"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['strength', 'autonomy'],
+          dspInterpreter: (dsp) => ''
         },
 
         tio_the_hutt: {
           opening: [
-            "I would own the battlefield.",
-            "I would never pull the trigger.",
-            "I would buy loyalty wholesale.",
-            "I would make violence optional.",
-            "I would let others die for my profits."
+            'I would own the battlefield.',
+            'I would never pull the trigger.',
+            'I would buy loyalty wholesale.',
+            'I would make violence optional.',
+            'I would let others die for my profits.'
           ],
           closing: [
             "I'd own the person who does.",
-            "Leverage is everything.",
-            "Profit without risk.",
+            'Leverage is everything.',
+            'Profit without risk.',
             "That's real power.",
-            "Smart business."
+            'Smart business.'
           ],
-          emphasis: ["leverage", "control"],
-          dspInterpreter: (dsp) => ""
+          emphasis: ['leverage', 'control'],
+          dspInterpreter: (dsp) => ''
         }
       }
     },
@@ -627,31 +622,31 @@ export class MentorDialogueResponses {
     // 9. "WHAT IS YOUR STORY?" — Mentor Self-Disclosure
     // ========================================
     mentor_story: {
-      systemIntent: "Reveal mentor backstory based on trust, alignment, and player progression",
+      systemIntent: 'Reveal mentor backstory based on trust, alignment, and player progression',
       canonicalAnalysis: (data) => {
         // This topic uses MentorStoryResolver instead
-        return "";
+        return '';
       },
 
       mentors: {
         miraj: {
           opening: [
-            "You ask about my past. That is... a profound question.",
-            "I sense you wish to understand more than just my teachings.",
-            "My journey has been long. Perhaps it is time to share part of it."
+            'You ask about my past. That is... a profound question.',
+            'I sense you wish to understand more than just my teachings.',
+            'My journey has been long. Perhaps it is time to share part of it.'
           ],
           closing: [
-            "Remember, the path I walked is mine alone. Yours is still being written.",
-            "What matters is not where I came from, but where the Force guides us both.",
-            "These memories are old. Focus on the present moment."
+            'Remember, the path I walked is mine alone. Yours is still being written.',
+            'What matters is not where I came from, but where the Force guides us both.',
+            'These memories are old. Focus on the present moment.'
           ],
           emphasis: [],
-          dspInterpreter: (dsp) => ""
+          dspInterpreter: (dsp) => ''
         },
 
         breach: {
           opening: [
-            "You want to know where I come from? Fair question.",
+            'You want to know where I come from? Fair question.',
             "Not many ask. Most don't care. You seem different.",
             "Alright, kid. Here's some truth for you."
           ],
@@ -661,7 +656,7 @@ export class MentorDialogueResponses {
             "That's all you get from me. Focus on your own story."
           ],
           emphasis: [],
-          dspInterpreter: (dsp) => ""
+          dspInterpreter: (dsp) => ''
         },
 
         lead: {
@@ -672,17 +667,17 @@ export class MentorDialogueResponses {
           ],
           closing: [
             "That's the sanitized version. The rest stays classified.",
-            "Now you know why I am the way I am.",
+            'Now you know why I am the way I am.',
             "Remember that when you're in the field."
           ],
           emphasis: [],
-          dspInterpreter: (dsp) => ""
+          dspInterpreter: (dsp) => ''
         },
 
         ol_salty: {
           opening: [
             "Har! Ye want ol' Salty's tale? Pull up a chair, matey!",
-            "Not many ask these days. Seems ye got some respect fer an old pirate.",
+            'Not many ask these days. Seems ye got some respect fer an old pirate.',
             "Arrr, I got stories that'll make yer hair stand on end!"
           ],
           closing: [
@@ -691,67 +686,67 @@ export class MentorDialogueResponses {
             "That's how ol' Salty came to be. And that's all ye need know."
           ],
           emphasis: [],
-          dspInterpreter: (dsp) => ""
+          dspInterpreter: (dsp) => ''
         },
 
         j0_n1: {
           opening: [
-            "<Query> You wish to understand my origins and function?",
-            "<Assessment> That is... an unexpected request, Master.",
-            "<Response> I suppose transparency is warranted. Very well."
+            '<Query> You wish to understand my origins and function?',
+            '<Assessment> That is... an unexpected request, Master.',
+            '<Response> I suppose transparency is warranted. Very well.'
           ],
           closing: [
-            "<Conclusion> This is the nature of my existence.",
-            "<Note> My past informs my present service.",
-            "<Directive> Does this answer satisfy your inquiry, Master?"
+            '<Conclusion> This is the nature of my existence.',
+            '<Note> My past informs my present service.',
+            '<Directive> Does this answer satisfy your inquiry, Master?'
           ],
           emphasis: [],
-          dspInterpreter: (dsp) => ""
+          dspInterpreter: (dsp) => ''
         },
 
         darth_miedo: {
           opening: [
-            "You ask about my past? How... quaint.",
-            "Most fear to know where I came from.",
-            "Perhaps I will tell you. Perhaps I will let you wonder."
+            'You ask about my past? How... quaint.',
+            'Most fear to know where I came from.',
+            'Perhaps I will tell you. Perhaps I will let you wonder.'
           ],
           closing: [
-            "That is the truth that shaped me.",
-            "Now you understand the cost of power.",
+            'That is the truth that shaped me.',
+            'Now you understand the cost of power.',
             "Don't make my mistakes. And don't pity me."
           ],
           emphasis: [],
-          dspInterpreter: (dsp) => ""
+          dspInterpreter: (dsp) => ''
         },
 
         darth_malbada: {
           opening: [
-            "You want to know about Malbada? Fine.",
-            "Not many survive asking me personal questions.",
-            "Listen, and understand what strength requires."
+            'You want to know about Malbada? Fine.',
+            'Not many survive asking me personal questions.',
+            'Listen, and understand what strength requires.'
           ],
           closing: [
-            "That is the truth. Brutal and undeniable.",
-            "This is what survival costs.",
-            "Now stop wasting my time with sentiment."
+            'That is the truth. Brutal and undeniable.',
+            'This is what survival costs.',
+            'Now stop wasting my time with sentiment.'
           ],
           emphasis: [],
-          dspInterpreter: (dsp) => ""
+          dspInterpreter: (dsp) => ''
         },
 
         tio_the_hutt: {
           opening: [
             "You want to know Tio's history? Interesting negotiation.",
-            "Not everyone gets to hear such things.",
-            "Perhaps we can come to an arrangement..."
+            'Not everyone gets to hear such things.',
+            'Perhaps we can come to an arrangement...'
           ],
           closing: [
-            "That is how Tio became what Tio is.",
-            "Profitable. Powerful. Alive.",
-            "Remember this if you ever cross me, hmmm?"
+            'That is how Tio became what Tio is.',
+            'Profitable. Powerful. Alive.',
+            'Remember this if you ever cross me, hmmm?'
           ],
           emphasis: [],
-          dspInterpreter: (dsp) => ""
+          dspInterpreter: (dsp) => ''
         }
       }
     }

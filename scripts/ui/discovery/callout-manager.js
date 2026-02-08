@@ -51,8 +51,8 @@ function _i18n(calloutId, suffix) {
 }
 
 function _isRoleMatch(role) {
-  if (role === 'both') return true;
-  if (role === 'gm') return game.user.isGM;
+  if (role === 'both') {return true;}
+  if (role === 'gm') {return game.user.isGM;}
   return !game.user.isGM;
 }
 
@@ -120,16 +120,16 @@ export const CalloutManager = {
    * @param {HTMLElement} root - rendered container
    */
   evaluate(root) {
-    if (!(root instanceof HTMLElement)) return;
+    if (!(root instanceof HTMLElement)) {return;}
 
     // Check setting
     try {
-      if (game.settings.get(SYSTEM_ID, 'disableCallouts')) return;
+      if (game.settings.get(SYSTEM_ID, 'disableCallouts')) {return;}
     } catch { /* setting not registered yet, continue */ }
 
     for (const def of CALLOUT_DEFS) {
-      if (!_isRoleMatch(def.role)) continue;
-      if (DiscoveryUserState.isCalloutDismissed(def.id)) continue;
+      if (!_isRoleMatch(def.role)) {continue;}
+      if (DiscoveryUserState.isCalloutDismissed(def.id)) {continue;}
 
       const anchor = root.querySelector(def.selector) || document.querySelector(def.selector);
       if (anchor) {
@@ -146,14 +146,14 @@ export const CalloutManager = {
    */
   trigger(calloutId) {
     try {
-      if (game.settings.get(SYSTEM_ID, 'disableCallouts')) return;
+      if (game.settings.get(SYSTEM_ID, 'disableCallouts')) {return;}
     } catch { /* continue */ }
 
-    if (DiscoveryUserState.isCalloutDismissed(calloutId)) return;
+    if (DiscoveryUserState.isCalloutDismissed(calloutId)) {return;}
 
     const def = CALLOUT_DEFS.find(d => d.id === calloutId);
-    if (!def) return;
-    if (!_isRoleMatch(def.role)) return;
+    if (!def) {return;}
+    if (!_isRoleMatch(def.role)) {return;}
 
     const anchor = document.querySelector(def.selector);
     if (anchor) {
@@ -172,8 +172,8 @@ export const CalloutManager = {
    * @param {object} def - { id, selector, role }
    */
   register(def) {
-    if (!def?.id || !def?.selector) return;
-    if (CALLOUT_DEFS.some(d => d.id === def.id)) return;
+    if (!def?.id || !def?.selector) {return;}
+    if (CALLOUT_DEFS.some(d => d.id === def.id)) {return;}
     CALLOUT_DEFS.push({ role: 'both', ...def });
   }
 };

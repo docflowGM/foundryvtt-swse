@@ -8,7 +8,6 @@ async function loadJSON(url) {
 }
 
 
-
 // ======================================================================
 // TalentTreeRegistry.js
 // Backend registry that builds enriched talent trees using:
@@ -16,11 +15,11 @@ async function loadJSON(url) {
 //  - PrerequisiteEnricher
 // ======================================================================
 
-import { TalentTreeGraph } from "./TalentTreeGraph.js";
-import { PrerequisiteEnricher } from "../utils/PrerequisiteEnricher.js";
-import { SWSELogger } from "../../utils/logger.js";
-import { TalentTreeDB } from "../../data/talent-tree-db.js";
-import { normalizeTalentTreeId } from "../../data/talent-tree-normalizer.js";
+import { TalentTreeGraph } from './TalentTreeGraph.js';
+import { PrerequisiteEnricher } from '../utils/PrerequisiteEnricher.js';
+import { SWSELogger } from '../../utils/logger.js';
+import { TalentTreeDB } from '../../data/talent-tree-db.js';
+import { normalizeTalentTreeId } from '../../data/talent-tree-normalizer.js';
 
 export class TalentTreeRegistry {
   static trees = new Map(); // treeName → TalentTreeGraph
@@ -31,8 +30,8 @@ export class TalentTreeRegistry {
   static async build() {
     SWSELogger.log(`[TALENT-TREE-REGISTRY] build: START - Building talent tree registry`);
 
-    const talentsPack = game.packs.get("foundryvtt-swse.talents");
-    const treesPack = game.packs.get("foundryvtt-swse.talent_trees");
+    const talentsPack = game.packs.get('foundryvtt-swse.talents');
+    const treesPack = game.packs.get('foundryvtt-swse.talent_trees');
 
     if (!talentsPack) {
       SWSELogger.error(`[TALENT-TREE-REGISTRY] ERROR: Talents compendium pack not found`);
@@ -51,12 +50,12 @@ export class TalentTreeRegistry {
 
     const extractTalentNamesFromPrereq = (pr) => {
       const names = [];
-      if (!pr) return names;
+      if (!pr) {return names;}
       if (Array.isArray(pr)) {
-        for (const p of pr) names.push(...extractTalentNamesFromPrereq(p));
+        for (const p of pr) {names.push(...extractTalentNamesFromPrereq(p));}
         return names;
       }
-      if (typeof pr !== 'object') return names;
+      if (typeof pr !== 'object') {return names;}
 
       if (pr.type === 'talent' && pr.name) {
         names.push(pr.name);
@@ -64,7 +63,7 @@ export class TalentTreeRegistry {
       }
 
       if (pr.type === 'or' && Array.isArray(pr.conditions)) {
-        for (const c of pr.conditions) names.push(...extractTalentNamesFromPrereq(c));
+        for (const c of pr.conditions) {names.push(...extractTalentNamesFromPrereq(c));}
         return names;
       }
 
@@ -100,13 +99,13 @@ export class TalentTreeRegistry {
 
       // Link edges for all nodes (talent prerequisites only)
       const idByName = new Map();
-      for (const n of graph.nodes.values()) idByName.set(normalizeName(n.name), n.id);
+      for (const n of graph.nodes.values()) {idByName.set(normalizeName(n.name), n.id);}
 
       for (const n of graph.nodes.values()) {
         const prereqNames = extractTalentNamesFromPrereq(n.prereq);
         for (const prereqName of prereqNames) {
           const reqId = idByName.get(normalizeName(prereqName));
-          if (reqId) graph.linkRequirement(n.id, reqId);
+          if (reqId) {graph.linkRequirement(n.id, reqId);}
         }
       }
 this.trees.set(treeName, graph);
@@ -130,15 +129,15 @@ this.trees.set(treeName, graph);
     const unassignedTalents = [];
     for (const d of talentDocs) {
       const sys = d.system || {};
-      let rawTree = sys.talent_tree || sys.tree || sys.treeId || null;
+      const rawTree = sys.talent_tree || sys.tree || sys.treeId || null;
       let tree = rawTree ? String(rawTree).trim().replace(/\s+/g, ' ') : null;
 
       if (!tree) {
         unassignedTalents.push(d.name);
-        tree = "Unassigned";
+        tree = 'Unassigned';
       }
 
-      if (!grouped[tree]) grouped[tree] = [];
+      if (!grouped[tree]) {grouped[tree] = [];}
       grouped[tree].push(d);
     }
 
@@ -154,13 +153,13 @@ this.trees.set(treeName, graph);
       }
       // Link edges for all nodes (talent prerequisites only)
       const idByName = new Map();
-      for (const n of graph.nodes.values()) idByName.set(normalizeName(n.name), n.id);
+      for (const n of graph.nodes.values()) {idByName.set(normalizeName(n.name), n.id);}
 
       for (const n of graph.nodes.values()) {
         const prereqNames = extractTalentNamesFromPrereq(n.prereq);
         for (const prereqName of prereqNames) {
           const reqId = idByName.get(normalizeName(prereqName));
-          if (reqId) graph.linkRequirement(n.id, reqId);
+          if (reqId) {graph.linkRequirement(n.id, reqId);}
         }
       }
       this.trees.set(treeName, graph);
@@ -204,15 +203,14 @@ this.trees.set(treeName, graph);
 }
 
 
-
 // ============================================================
 // GENERATED TALENT TREE REGISTRY INTEGRATION
 // ============================================================
 
-let generatedTalentTrees = await loadJSON('../../../systems/foundryvtt-swse/data/generated/talent-trees.registry.json');
+const generatedTalentTrees = await loadJSON('../../../systems/foundryvtt-swse/data/generated/talent-trees.registry.json');
 
 export function loadGeneratedTalentTrees(registry) {
-  if (!Array.isArray(generatedTalentTrees)) return false;
+  if (!Array.isArray(generatedTalentTrees)) {return false;}
 
   for (const tree of generatedTalentTrees) {
     registry.registerTree(tree.id, tree);

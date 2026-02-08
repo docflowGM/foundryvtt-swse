@@ -1,4 +1,4 @@
-import { swseLogger } from "../utils/logger.js";
+import { swseLogger } from '../utils/logger.js';
 
 /**
  * SWSE Combat Document (v13+)
@@ -21,7 +21,7 @@ export class SWSECombatDocument extends Combat {
    */
   _getInitiativeFormula(combatant) {
     const actor = combatant.actor;
-    if (!actor) return "1d20";
+    if (!actor) {return '1d20';}
 
     let initTotal = actor.system.skills?.initiative?.total ?? 0;
 
@@ -63,14 +63,14 @@ export class SWSECombatDocument extends Combat {
   /* -------------------------------------------- */
 
   async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
-    ids = typeof ids === "string" ? [ids] : ids;
+    ids = typeof ids === 'string' ? [ids] : ids;
 
     const updates = [];
     const messages = [];
 
     for (const id of ids) {
       const combatant = this.combatants.get(id);
-      if (!combatant?.isOwner) continue;
+      if (!combatant?.isOwner) {continue;}
 
       const actor = combatant.actor;
       const rollFormula = formula || this._getInitiativeFormula(combatant);
@@ -82,17 +82,17 @@ export class SWSECombatDocument extends Combat {
 
       const chatData = await roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor, token: combatant.token, alias: combatant.name }),
-        flavor: game.i18n.format("COMBAT.RollsInitiative", { name: combatant.name }),
-        flags: { "core.initiativeRoll": true },
+        flavor: game.i18n.format('COMBAT.RollsInitiative', { name: combatant.name }),
+        flags: { 'core.initiativeRoll': true },
         ...messageOptions
       }, { create: true,  create: false });
 
-      if (roll.dice.length) chatData.sound = CONFIG.sounds.dice;
+      if (roll.dice.length) {chatData.sound = CONFIG.sounds.dice;}
       messages.push(chatData);
     }
 
     if (updates.length) {
-      await this.updateEmbeddedDocuments("Combatant", updates);
+      await this.updateEmbeddedDocuments('Combatant', updates);
       await ChatMessage.implementation.create(messages);
     }
 
@@ -135,14 +135,14 @@ export class SWSECombatDocument extends Combat {
     if (game.user.isGM) {
       for (const combatant of this.combatants) {
         const actor = combatant.actor;
-        if (!actor) continue;
+        if (!actor) {continue;}
 
         // Reset Second Wind (RAW: once per day, but many tables want per encounter)
-        await actor.update({ "system.secondWind.used": false }, { diff: true });
+        await actor.update({ 'system.secondWind.used': false }, { diff: true });
 
         // Reset action economy
         await actor.update({
-          "system.actionEconomy": {
+          'system.actionEconomy': {
             swift: true,
             move: true,
             standard: true,
@@ -170,7 +170,7 @@ export class SWSECombatDocument extends Combat {
 
       if (actor) {
         await actor.update({
-          "system.actionEconomy": {
+          'system.actionEconomy': {
             swift: true,
             move: true,
             standard: true,

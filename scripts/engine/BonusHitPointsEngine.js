@@ -66,10 +66,10 @@ export class BonusHitPointsEngine {
    * @param {Actor} actor - The actor to reset
    */
   static async resetBonusHP(actor) {
-    if (!actor) return false;
+    if (!actor) {return false;}
 
     const currentBonus = actor.system.hp.bonus || 0;
-    if (currentBonus === 0) return false;
+    if (currentBonus === 0) {return false;}
 
     await actor.update({ 'system.hp.bonus': 0 }, { diff: true });
 
@@ -116,11 +116,11 @@ export class BonusHitPointsEngine {
 
     const effectData = {
       name: config.name || `Bonus Hit Points (${config.amount})`,
-      icon: "icons/svg/shield.svg",
+      icon: 'icons/svg/shield.svg',
       changes: [
         {
-          key: "system.hp.bonus",
-          mode: "OVERRIDE", // Use OVERRIDE to take max, not sum
+          key: 'system.hp.bonus',
+          mode: 'OVERRIDE', // Use OVERRIDE to take max, not sum
           value: config.amount,
           priority: 100 // High priority to ensure bonus HP is set
         }
@@ -154,7 +154,7 @@ export class BonusHitPointsEngine {
    * @returns {number} The final bonus HP amount (maximum of all sources)
    */
   static consolidateBonusHP(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
 
     // Get all active effects that grant bonus HP
     const bonusHPEffects = actor.effects?.filter(eff =>
@@ -184,7 +184,7 @@ export class BonusHitPointsEngine {
 Hooks.on('deleteCombat', async (combat) => {
   for (const combatant of combat.combatants) {
     const actor = combatant.actor;
-    if (!actor) continue;
+    if (!actor) {continue;}
 
     // Reset bonus HP for all actors in combat
     await BonusHitPointsEngine.resetBonusHP(actor);
@@ -196,7 +196,7 @@ Hooks.on('deleteCombat', async (combat) => {
  * This runs during derived data preparation to ensure only the maximum bonus HP is applied
  */
 Hooks.on('prepareDerivedData', (actor) => {
-  if (!actor.system?.hp) return;
+  if (!actor.system?.hp) {return;}
 
   // Consolidate bonus HP from effects (take maximum, not sum)
   const maxBonus = BonusHitPointsEngine.consolidateBonusHP(actor);

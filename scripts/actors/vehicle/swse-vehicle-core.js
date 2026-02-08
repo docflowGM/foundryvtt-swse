@@ -8,7 +8,7 @@
  * ============================================================
  */
 
-import { SWSELogger } from "../../utils/logger.js";
+import { SWSELogger } from '../../utils/logger.js';
 
 export class SWSEVehicleCore {
 
@@ -71,9 +71,9 @@ export class SWSEVehicleCore {
     }
 
     const crew = vehicle.system?.crewPositions?.[slot];
-    if (!crew) return;
+    if (!crew) {return;}
 
-    const name = crew?.name ?? "Unknown Crew";
+    const name = crew?.name ?? 'Unknown Crew';
 
     try {
       await vehicle.update({
@@ -107,7 +107,7 @@ export class SWSEVehicleCore {
 
     for (const key of Object.keys(systemData.crewPositions)) {
       const v = systemData.crewPositions[key];
-      if (typeof v === "string") {
+      if (typeof v === 'string') {
         systemData.crewPositions[key] = { name: v, uuid: null };
       }
     }
@@ -129,7 +129,7 @@ export class SWSEVehicleCore {
 
     const old = vehicle.system?.weapons;
 
-    if (!Array.isArray(old) || old.length === 0) return true;
+    if (!Array.isArray(old) || old.length === 0) {return true;}
 
     SWSELogger.log(`SWSE | Migrating ${old.length} legacy weapons → embedded items`);
 
@@ -137,25 +137,25 @@ export class SWSEVehicleCore {
       const newItems = [];
 
       for (const w of old) {
-        if (!w) continue; // Skip null/undefined entries
+        if (!w) {continue;} // Skip null/undefined entries
 
         newItems.push({
-          name: w.name || "Vehicle Weapon",
-          type: "vehicle-weapon",
+          name: w.name || 'Vehicle Weapon',
+          type: 'vehicle-weapon',
           system: {
-            arc: w.arc ?? "Forward",
-            attackBonus: w.attackBonus ?? "+0",
-            damage: w.damage ?? "0d0",
-            range: w.range ?? "Close"
+            arc: w.arc ?? 'Forward',
+            attackBonus: w.attackBonus ?? '+0',
+            damage: w.damage ?? '0d0',
+            range: w.range ?? 'Close'
           }
         });
       }
 
       if (newItems.length > 0) {
-        await vehicle.createEmbeddedDocuments("Item", newItems);
+        await vehicle.createEmbeddedDocuments('Item', newItems);
       }
 
-      await vehicle.update({ "system.weapons": [] });
+      await vehicle.update({ 'system.weapons': [] });
 
       SWSELogger.log(`SWSE | Weapon migration complete`);
       return true;
@@ -182,9 +182,9 @@ export class SWSEVehicleCore {
     try {
       const data = weaponItem.toObject();
       data._id = undefined;
-      data.type = "vehicle-weapon";
+      data.type = 'vehicle-weapon';
 
-      await vehicle.createEmbeddedDocuments("Item", [data]);
+      await vehicle.createEmbeddedDocuments('Item', [data]);
       ui.notifications.info(`${weaponItem.name} added to vehicle weapons.`);
       return true;
     } catch (error) {
@@ -209,7 +209,7 @@ export class SWSEVehicleCore {
     }
 
     try {
-      await vehicle.deleteEmbeddedDocuments("Item", [itemId]);
+      await vehicle.deleteEmbeddedDocuments('Item', [itemId]);
       ui.notifications.info(`Weapon removed from vehicle.`);
       return true;
     } catch (error) {
@@ -240,11 +240,11 @@ export class SWSEVehicleCore {
     }
 
     try {
-      const rollMode = game.settings?.get("core", "rollMode") ?? "public";
+      const rollMode = game.settings?.get('core', 'rollMode') ?? 'public';
       const rollData = vehicle.getRollData();
 
-      const bonus = weaponItem.system.attackBonus || "+0";
-      const damage = weaponItem.system.damage || "0d0";
+      const bonus = weaponItem.system.attackBonus || '+0';
+      const damage = weaponItem.system.damage || '0d0';
 
       // Attack roll
       const attack = await game.swse.RollEngine.safeRoll(`1d20${bonus}`, rollData);
@@ -256,8 +256,8 @@ export class SWSEVehicleCore {
 
       // Confirm → damage
       const hit = await Dialog.confirm({
-        title: "Roll Damage?",
-        content: "<p>Did the attack hit?</p>"
+        title: 'Roll Damage?',
+        content: '<p>Did the attack hit?</p>'
       });
 
       if (hit) {
@@ -283,14 +283,14 @@ export class SWSEVehicleCore {
 
   static _mapSkillName(skill) {
     const map = {
-      "Pilot": "pilot",
-      "Mechanics": "mechanics",
-      "Use Computer": "use_computer",
-      "Perception": "perception",
-      "Persuasion": "persuasion",
-      "Knowledge (Tactics)": "knowledge_tactics"
+      'Pilot': 'pilot',
+      'Mechanics': 'mechanics',
+      'Use Computer': 'use_computer',
+      'Perception': 'perception',
+      'Persuasion': 'persuasion',
+      'Knowledge (Tactics)': 'knowledge_tactics'
     };
-    return map[skill] || skill.toLowerCase().replace(/\s+/g, "_");
+    return map[skill] || skill.toLowerCase().replace(/\s+/g, '_');
   }
 
   static async rollCrewSkill(vehicle, position, skillName, config = {}) {
@@ -327,7 +327,7 @@ export class SWSEVehicleCore {
 
       const skillKey = this._mapSkillName(skillName);
 
-      const { SWSERoll } = await import("../../combat/rolls/enhanced-rolls.js");
+      const { SWSERoll } = await import('../../combat/rolls/enhanced-rolls.js');
 
       await SWSERoll.rollSkillCheck(actor, skillKey, {
         ...config,

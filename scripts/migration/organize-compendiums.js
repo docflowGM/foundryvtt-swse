@@ -5,7 +5,7 @@
  */
 
 async function organizeCompendiums() {
-  console.log("SWSE Compendium Organization: Starting migration...");
+  console.log('SWSE Compendium Organization: Starting migration...');
 
   // Weapon organization mapping
   const weaponMappings = {
@@ -39,7 +39,7 @@ async function organizeCompendiums() {
   // Armor heavy - names containing "Heavy"
   const armorHeavyKeywords = ['Heavy', 'Powered', 'Dreadnaught'];
 
-  let stats = {
+  const stats = {
     weapons: { organized: 0, total: 0, failures: [] },
     equipment: { organized: 0, total: 0, failures: [] },
     vehicles: { organized: 0, total: 0, failures: [] },
@@ -47,7 +47,7 @@ async function organizeCompendiums() {
   };
 
   // ==================== WEAPONS ====================
-  console.log("Processing weapons...");
+  console.log('Processing weapons...');
   const weaponsPack = game.packs.get('foundryvtt-swse.weapons');
   if (weaponsPack) {
     const weapons = await weaponsPack.getDocuments();
@@ -89,7 +89,7 @@ async function organizeCompendiums() {
   }
 
   // ==================== EQUIPMENT ====================
-  console.log("Processing equipment...");
+  console.log('Processing equipment...');
   const equipmentPack = game.packs.get('foundryvtt-swse.equipment');
   if (equipmentPack) {
     const equipment = await equipmentPack.getDocuments();
@@ -102,7 +102,7 @@ async function organizeCompendiums() {
 
         // Find matching pack
         for (const [packName, keywords] of Object.entries(equipmentMappings)) {
-          if (packName === 'equipment-other') continue;
+          if (packName === 'equipment-other') {continue;}
           if (keywords.some(kw => itemName.includes(kw))) {
             targetPack = packName;
             break;
@@ -127,7 +127,7 @@ async function organizeCompendiums() {
   }
 
   // ==================== VEHICLES ====================
-  console.log("Processing vehicles...");
+  console.log('Processing vehicles...');
   const vehiclesPack = game.packs.get('foundryvtt-swse.vehicles');
   if (vehiclesPack) {
     const vehicles = await vehiclesPack.getDocuments();
@@ -165,7 +165,7 @@ async function organizeCompendiums() {
   }
 
   // ==================== ARMOR ====================
-  console.log("Processing armor...");
+  console.log('Processing armor...');
   const armorPack = game.packs.get('foundryvtt-swse.armor');
   if (armorPack) {
     const armors = await armorPack.getDocuments();
@@ -203,7 +203,7 @@ async function organizeCompendiums() {
   }
 
   // ==================== RESULTS ====================
-  console.log("\n========== MIGRATION COMPLETE ==========");
+  console.log('\n========== MIGRATION COMPLETE ==========');
   console.log(`Weapons: ${stats.weapons.organized}/${stats.weapons.total} organized`);
   console.log(`Equipment: ${stats.equipment.organized}/${stats.equipment.total} organized`);
   console.log(`Vehicles: ${stats.vehicles.organized}/${stats.vehicles.total} organized`);
@@ -222,17 +222,17 @@ async function organizeCompendiums() {
     console.warn(`\nArmor failures:`, stats.armor.failures);
   }
 
-  ui.notifications.info("Compendium organization complete! Check console for details.");
+  ui.notifications.info('Compendium organization complete! Check console for details.');
   return stats;
 }
 
 // Execute if run from console
 if (typeof game !== 'undefined' && game.ready) {
   organizeCompendiums().then(stats => {
-    console.log("Migration results:", stats);
+    console.log('Migration results:', stats);
   }).catch(err => {
-    console.error("Migration failed:", err);
-    ui.notifications.error("Compendium organization failed! Check console for details.");
+    console.error('Migration failed:', err);
+    ui.notifications.error('Compendium organization failed! Check console for details.');
   });
 }
 

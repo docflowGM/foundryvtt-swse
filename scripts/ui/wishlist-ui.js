@@ -27,7 +27,7 @@ export class WishlistUI {
    * @param {Object} item - Feat or talent document
    */
   static showPrerequisiteStatus(el, actor, item) {
-    if (!actor || !item) return;
+    if (!actor || !item) {return;}
 
     const analysis = WishlistEngine.analyzePrerequisiteFulfillment(actor, item);
 
@@ -104,7 +104,7 @@ export class WishlistUI {
 
   static _handleContextMenu(event) {
     const target = event.target.closest('[data-feat-id], [data-talent-id]');
-    if (!target) return;
+    if (!target) {return;}
 
     const featId = target.dataset.featId;
     const talentId = target.dataset.talentId;
@@ -129,7 +129,7 @@ export class WishlistUI {
 
     // Get actor
     const actor = game?.user?.character;
-    if (!actor) return;
+    if (!actor) {return;}
 
     const isWishlisted = WishlistEngine.isWishlisted(actor, itemId, itemType);
 
@@ -178,14 +178,14 @@ export class WishlistUI {
 
   static _handleWishlistClick(event) {
     const wishlistBtn = event.target.closest('[data-wishlist-action]');
-    if (!wishlistBtn) return;
+    if (!wishlistBtn) {return;}
 
     const action = wishlistBtn.dataset.wishlistAction;
     const itemId = wishlistBtn.dataset.itemId;
     const itemType = wishlistBtn.dataset.itemType || 'feat';
 
     const actor = game?.user?.character;
-    if (!actor) return;
+    if (!actor) {return;}
 
     if (action === 'add') {
       // Implementation for add button

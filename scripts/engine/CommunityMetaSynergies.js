@@ -39,9 +39,9 @@ export const COMMUNITY_SYNERGIES = [
         id: 'aim_ct_killer',
         name: 'Aim CT-Killer Combo',
         archetype: 'ranged',
-        trigger: (state) => state.hasTalent("Hunter's Mark") && !state.hasTalent("Debilitating Shot"),
+        trigger: (state) => state.hasTalent("Hunter's Mark") && !state.hasTalent('Debilitating Shot'),
         suggestions: [{
-            name: "Debilitating Shot",
+            name: 'Debilitating Shot',
             type: 'talent',
             reason: "Doubles condition track damage on aimed attacks (Hunter's Mark synergy)",
             priority: 'critical'
@@ -52,11 +52,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'aim_setup',
         name: 'Aim Foundation',
         archetype: 'ranged',
-        trigger: (state) => state.hasTalent("Debilitating Shot") && !state.hasTalent("Hunter's Mark"),
+        trigger: (state) => state.hasTalent('Debilitating Shot') && !state.hasTalent("Hunter's Mark"),
         suggestions: [{
             name: "Hunter's Mark",
             type: 'talent',
-            reason: "Adds +1 CT damage to Debilitating Shot, stacking for 2x effect",
+            reason: 'Adds +1 CT damage to Debilitating Shot, stacking for 2x effect',
             priority: 'critical'
         }],
         priority: 'critical'
@@ -65,18 +65,18 @@ export const COMMUNITY_SYNERGIES = [
         id: 'ct_sniper_extended',
         name: 'CT Sniper Extension',
         archetype: 'ranged',
-        trigger: (state) => state.hasTalent("Hunter's Mark") && state.hasTalent("Debilitating Shot"),
+        trigger: (state) => state.hasTalent("Hunter's Mark") && state.hasTalent('Debilitating Shot'),
         suggestions: [
             {
-                name: "Devastating Attack",
+                name: 'Devastating Attack',
                 type: 'talent',
-                reason: "Apply additional -1 CT on attacks for triple CT damage",
+                reason: 'Apply additional -1 CT on attacks for triple CT damage',
                 priority: 'high'
             },
             {
-                name: "Precision",
+                name: 'Precision',
                 type: 'talent',
-                reason: "+1 damage on critical = more CT damage potential",
+                reason: '+1 damage on critical = more CT damage potential',
                 priority: 'medium'
             }
         ],
@@ -90,11 +90,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'triple_attack_finisher',
         name: 'Triple Attack Finisher',
         archetype: 'melee',
-        trigger: (state) => state.hasFeat("Triple Attack") && !state.hasTalent("Unrelenting Assault"),
+        trigger: (state) => state.hasFeat('Triple Attack') && !state.hasTalent('Unrelenting Assault'),
         suggestions: [{
-            name: "Unrelenting Assault",
+            name: 'Unrelenting Assault',
             type: 'talent',
-            reason: "Convert last Triple Attack hit to free attack if you drop target",
+            reason: 'Convert last Triple Attack hit to free attack if you drop target',
             priority: 'critical'
         }],
         priority: 'critical'
@@ -103,11 +103,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'double_to_triple',
         name: 'Attack Chain Upgrade',
         archetype: 'melee',
-        trigger: (state) => state.hasFeat("Double Attack") && !state.hasFeat("Triple Attack"),
+        trigger: (state) => state.hasFeat('Double Attack') && !state.hasFeat('Triple Attack'),
         suggestions: [{
-            name: "Triple Attack",
+            name: 'Triple Attack',
             type: 'feat',
-            reason: "Third attack at -10 for massive damage potential",
+            reason: 'Third attack at -10 for massive damage potential',
             priority: 'high'
         }],
         priority: 'high'
@@ -116,11 +116,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'power_attack_multi',
         name: 'Power Multi-Attack',
         archetype: 'melee',
-        trigger: (state) => (state.hasFeat("Double Attack") || state.hasFeat("Triple Attack")) && !state.hasFeat("Power Attack"),
+        trigger: (state) => (state.hasFeat('Double Attack') || state.hasFeat('Triple Attack')) && !state.hasFeat('Power Attack'),
         suggestions: [{
-            name: "Power Attack",
+            name: 'Power Attack',
             type: 'feat',
-            reason: "Trade accuracy for damage on multiple attacks",
+            reason: 'Trade accuracy for damage on multiple attacks',
             priority: 'high'
         }],
         priority: 'high'
@@ -129,11 +129,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'cleave_chain',
         name: 'Cleave Chain',
         archetype: 'melee',
-        trigger: (state) => state.hasFeat("Cleave") && !state.hasFeat("Great Cleave"),
+        trigger: (state) => state.hasFeat('Cleave') && !state.hasFeat('Great Cleave'),
         suggestions: [{
-            name: "Great Cleave",
+            name: 'Great Cleave',
             type: 'feat',
-            reason: "Multiple cleave attacks per round instead of one",
+            reason: 'Multiple cleave attacks per round instead of one',
             priority: 'medium'
         }],
         priority: 'medium'
@@ -146,11 +146,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'pin_to_crush',
         name: 'Pin to Crush Combo',
         archetype: 'melee',
-        trigger: (state) => state.hasFeat("Pin") && !state.hasTalent("Crush"),
+        trigger: (state) => state.hasFeat('Pin') && !state.hasTalent('Crush'),
         suggestions: [{
-            name: "Crush",
+            name: 'Crush',
             type: 'talent',
-            reason: "Deal 1d6+STR damage per round when pinning",
+            reason: 'Deal 1d6+STR damage per round when pinning',
             priority: 'critical'
         }],
         priority: 'critical'
@@ -159,11 +159,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'crush_upgrade',
         name: 'Crush Upgrade',
         archetype: 'melee',
-        trigger: (state) => state.hasTalent("Crush") && !state.hasTalent("Rancor Crush"),
+        trigger: (state) => state.hasTalent('Crush') && !state.hasTalent('Rancor Crush'),
         suggestions: [{
-            name: "Rancor Crush",
+            name: 'Rancor Crush',
             type: 'talent',
-            reason: "Upgrade Crush to 2d6+STR damage",
+            reason: 'Upgrade Crush to 2d6+STR damage',
             priority: 'high'
         }],
         priority: 'high'
@@ -172,11 +172,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'grapple_foundation',
         name: 'Grapple Foundation',
         archetype: 'melee',
-        trigger: (state) => state.hasTalent("Crush") && !state.hasFeat("Pin"),
+        trigger: (state) => state.hasTalent('Crush') && !state.hasFeat('Pin'),
         suggestions: [{
-            name: "Pin",
+            name: 'Pin',
             type: 'feat',
-            reason: "Required to use Crush damage (grapple prerequisite)",
+            reason: 'Required to use Crush damage (grapple prerequisite)',
             priority: 'critical'
         }],
         priority: 'critical'
@@ -189,11 +189,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'dastardly_setup',
         name: 'Dastardly Strike Setup',
         archetype: 'stealth',
-        trigger: (state) => state.hasTalent("Dastardly Strike") && !state.hasFeat("Steadying Position"),
+        trigger: (state) => state.hasTalent('Dastardly Strike') && !state.hasFeat('Steadying Position'),
         suggestions: [{
-            name: "Steadying Position",
+            name: 'Steadying Position',
             type: 'feat',
-            reason: "Guarantees flat-footed target for Dastardly Strike damage",
+            reason: 'Guarantees flat-footed target for Dastardly Strike damage',
             priority: 'critical'
         }],
         priority: 'critical'
@@ -202,11 +202,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'sneak_attack_chain',
         name: 'Sneak Attack Chain',
         archetype: 'stealth',
-        trigger: (state) => state.hasTalent("Sneak Attack") && !state.hasTalent("Dastardly Strike"),
+        trigger: (state) => state.hasTalent('Sneak Attack') && !state.hasTalent('Dastardly Strike'),
         suggestions: [{
-            name: "Dastardly Strike",
+            name: 'Dastardly Strike',
             type: 'talent',
-            reason: "Add +1 CT damage to sneak attacks against flat-footed targets",
+            reason: 'Add +1 CT damage to sneak attacks against flat-footed targets',
             priority: 'high'
         }],
         priority: 'high'
@@ -215,11 +215,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'hidden_strike',
         name: 'Hidden Strike Combo',
         archetype: 'stealth',
-        trigger: (state) => state.hasSkill("Stealth") && !state.hasTalent("Hidden Movement"),
+        trigger: (state) => state.hasSkill('Stealth') && !state.hasTalent('Hidden Movement'),
         suggestions: [{
-            name: "Hidden Movement",
+            name: 'Hidden Movement',
             type: 'talent',
-            reason: "Maintain stealth while moving for ambush positioning",
+            reason: 'Maintain stealth while moving for ambush positioning',
             priority: 'medium'
         }],
         priority: 'medium'
@@ -232,11 +232,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'force_training_basics',
         name: 'Force Training Foundation',
         archetype: 'force',
-        trigger: (state) => state.hasFeat("Force Sensitivity") && !state.hasFeat("Force Training"),
+        trigger: (state) => state.hasFeat('Force Sensitivity') && !state.hasFeat('Force Training'),
         suggestions: [{
-            name: "Force Training",
+            name: 'Force Training',
             type: 'feat',
-            reason: "Core feat for Force users - take multiple times",
+            reason: 'Core feat for Force users - take multiple times',
             priority: 'critical'
         }],
         priority: 'critical'
@@ -245,11 +245,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'utf_mastery',
         name: 'UTF Mastery',
         archetype: 'force',
-        trigger: (state) => state.hasFeat("Force Training") && !state.hasFeat("Skill Focus (Use the Force)"),
+        trigger: (state) => state.hasFeat('Force Training') && !state.hasFeat('Skill Focus (Use the Force)'),
         suggestions: [{
-            name: "Skill Focus (Use the Force)",
+            name: 'Skill Focus (Use the Force)',
             type: 'feat',
-            reason: "+5 to UTF checks - essential for Force casters",
+            reason: '+5 to UTF checks - essential for Force casters',
             priority: 'critical'
         }],
         priority: 'critical'
@@ -258,11 +258,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'force_focus_combo',
         name: 'Force Focus Combo',
         archetype: 'force',
-        trigger: (state) => state.hasFeat("Skill Focus (Use the Force)") && !state.hasTalent("Force Focus"),
+        trigger: (state) => state.hasFeat('Skill Focus (Use the Force)') && !state.hasTalent('Force Focus'),
         suggestions: [{
-            name: "Force Focus",
+            name: 'Force Focus',
             type: 'talent',
-            reason: "Add half heroic level to UTF for powers - stacks with Skill Focus",
+            reason: 'Add half heroic level to UTF for powers - stacks with Skill Focus',
             priority: 'critical'
         }],
         priority: 'critical'
@@ -271,11 +271,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'enlighten_combo',
         name: 'Enlighten Combo',
         archetype: 'force',
-        trigger: (state) => state.hasTalent("Force Focus") && !state.hasTalent("Enlighten"),
+        trigger: (state) => state.hasTalent('Force Focus') && !state.hasTalent('Enlighten'),
         suggestions: [{
-            name: "Enlighten",
+            name: 'Enlighten',
             type: 'talent',
-            reason: "Spend Force Point to add Force Focus bonus again",
+            reason: 'Spend Force Point to add Force Focus bonus again',
             priority: 'high'
         }],
         priority: 'high'
@@ -284,14 +284,14 @@ export const COMMUNITY_SYNERGIES = [
         id: 'lightsaber_form_1',
         name: 'Lightsaber Form Foundation',
         archetype: 'force',
-        trigger: (state) => state.hasFeat("Weapon Proficiency (lightsabers)") && !state.hasAnyTalent([
-            "Ataru", "Djem So", "Form I", "Form II", "Form III", "Form IV", "Form V", "Form VI", "Form VII",
-            "Makashi", "Niman", "Shien", "Shii-Cho", "Soresu", "Juyo", "Vaapad"
+        trigger: (state) => state.hasFeat('Weapon Proficiency (lightsabers)') && !state.hasAnyTalent([
+            'Ataru', 'Djem So', 'Form I', 'Form II', 'Form III', 'Form IV', 'Form V', 'Form VI', 'Form VII',
+            'Makashi', 'Niman', 'Shien', 'Shii-Cho', 'Soresu', 'Juyo', 'Vaapad'
         ]),
         suggestions: [{
-            name: "Form III (Soresu)",
+            name: 'Form III (Soresu)',
             type: 'talent',
-            reason: "Defensive form - +1 deflect, redirect at -5",
+            reason: 'Defensive form - +1 deflect, redirect at -5',
             priority: 'high'
         }],
         priority: 'high'
@@ -304,11 +304,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'born_leader_upgrade',
         name: 'Born Leader Upgrade',
         archetype: 'leadership',
-        trigger: (state) => state.hasTalent("Born Leader") && !state.hasTalent("Grand Leader"),
+        trigger: (state) => state.hasTalent('Born Leader') && !state.hasTalent('Grand Leader'),
         suggestions: [{
-            name: "Grand Leader",
+            name: 'Grand Leader',
             type: 'talent',
-            reason: "Upgrade Born Leader to affect all allies in line of sight",
+            reason: 'Upgrade Born Leader to affect all allies in line of sight',
             priority: 'critical'
         }],
         priority: 'critical'
@@ -317,11 +317,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'draw_fire_combo',
         name: 'Draw Fire Combo',
         archetype: 'leadership',
-        trigger: (state) => state.hasTalent("Draw Fire") && !state.hasTalent("Tough as Nails"),
+        trigger: (state) => state.hasTalent('Draw Fire') && !state.hasTalent('Tough as Nails'),
         suggestions: [{
-            name: "Tough as Nails",
+            name: 'Tough as Nails',
             type: 'talent',
-            reason: "Survive the attacks you draw with damage reduction",
+            reason: 'Survive the attacks you draw with damage reduction',
             priority: 'high'
         }],
         priority: 'high'
@@ -330,11 +330,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'command_foundation',
         name: 'Command Foundation',
         archetype: 'leadership',
-        trigger: (state) => state.hasClass("Noble") && !state.hasTalent("Born Leader"),
+        trigger: (state) => state.hasClass('Noble') && !state.hasTalent('Born Leader'),
         suggestions: [{
-            name: "Born Leader",
+            name: 'Born Leader',
             type: 'talent',
-            reason: "Grant allies +1 attack - core commander ability",
+            reason: 'Grant allies +1 attack - core commander ability',
             priority: 'high'
         }],
         priority: 'high'
@@ -343,11 +343,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'coordinate_chain',
         name: 'Coordinate Chain',
         archetype: 'leadership',
-        trigger: (state) => state.hasTalent("Coordinate") && !state.hasTalent("Distant Command"),
+        trigger: (state) => state.hasTalent('Coordinate') && !state.hasTalent('Distant Command'),
         suggestions: [{
-            name: "Distant Command",
+            name: 'Distant Command',
             type: 'talent',
-            reason: "Extend Coordinate range to long distance",
+            reason: 'Extend Coordinate range to long distance',
             priority: 'medium'
         }],
         priority: 'medium'
@@ -360,11 +360,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'tech_spec_upgrade',
         name: 'Tech Specialist Upgrade',
         archetype: 'tech',
-        trigger: (state) => state.hasFeat("Tech Specialist") && !state.hasTalent("Superior Tech"),
+        trigger: (state) => state.hasFeat('Tech Specialist') && !state.hasTalent('Superior Tech'),
         suggestions: [{
-            name: "Superior Tech",
+            name: 'Superior Tech',
             type: 'talent',
-            reason: "Apply Tech Specialist bonus twice for doubled effect",
+            reason: 'Apply Tech Specialist bonus twice for doubled effect',
             priority: 'critical'
         }],
         priority: 'critical'
@@ -373,11 +373,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'mechanics_foundation',
         name: 'Mechanics Foundation',
         archetype: 'tech',
-        trigger: (state) => state.hasSkill("Mechanics") && !state.hasFeat("Tech Specialist"),
+        trigger: (state) => state.hasSkill('Mechanics') && !state.hasFeat('Tech Specialist'),
         suggestions: [{
-            name: "Tech Specialist",
+            name: 'Tech Specialist',
             type: 'feat',
-            reason: "Core feat for equipment modifiers - multiple applications",
+            reason: 'Core feat for equipment modifiers - multiple applications',
             priority: 'high'
         }],
         priority: 'high'
@@ -386,11 +386,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'jury_rig_combo',
         name: 'Jury Rig Combo',
         archetype: 'tech',
-        trigger: (state) => state.hasFeat("Tech Specialist") && !state.hasTalent("Quick Fix"),
+        trigger: (state) => state.hasFeat('Tech Specialist') && !state.hasTalent('Quick Fix'),
         suggestions: [{
-            name: "Quick Fix",
+            name: 'Quick Fix',
             type: 'talent',
-            reason: "Faster repairs and modifications in the field",
+            reason: 'Faster repairs and modifications in the field',
             priority: 'medium'
         }],
         priority: 'medium'
@@ -403,11 +403,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'armor_proficiency_chain',
         name: 'Armor Proficiency Chain',
         archetype: 'defense',
-        trigger: (state) => state.hasFeat("Armor Proficiency (light)") && !state.hasFeat("Armor Proficiency (medium)"),
+        trigger: (state) => state.hasFeat('Armor Proficiency (light)') && !state.hasFeat('Armor Proficiency (medium)'),
         suggestions: [{
-            name: "Armor Proficiency (medium)",
+            name: 'Armor Proficiency (medium)',
             type: 'feat',
-            reason: "Unlock medium armor for better defense",
+            reason: 'Unlock medium armor for better defense',
             priority: 'medium'
         }],
         priority: 'medium'
@@ -416,11 +416,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'dodge_chain',
         name: 'Dodge Chain',
         archetype: 'defense',
-        trigger: (state) => state.hasFeat("Dodge") && !state.hasFeat("Mobility"),
+        trigger: (state) => state.hasFeat('Dodge') && !state.hasFeat('Mobility'),
         suggestions: [{
-            name: "Mobility",
+            name: 'Mobility',
             type: 'feat',
-            reason: "+5 Reflex vs attacks of opportunity when moving",
+            reason: '+5 Reflex vs attacks of opportunity when moving',
             priority: 'medium'
         }],
         priority: 'medium'
@@ -433,11 +433,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'vehicular_combat_chain',
         name: 'Vehicular Combat Chain',
         archetype: 'vehicle',
-        trigger: (state) => state.hasFeat("Vehicular Combat") && !state.hasFeat("Starship Tactics"),
+        trigger: (state) => state.hasFeat('Vehicular Combat') && !state.hasFeat('Starship Tactics'),
         suggestions: [{
-            name: "Starship Tactics",
+            name: 'Starship Tactics',
             type: 'feat',
-            reason: "Apply combat maneuvers to starship combat",
+            reason: 'Apply combat maneuvers to starship combat',
             priority: 'high'
         }],
         priority: 'high'
@@ -446,11 +446,11 @@ export const COMMUNITY_SYNERGIES = [
         id: 'pilot_ace',
         name: 'Pilot Ace Build',
         archetype: 'vehicle',
-        trigger: (state) => state.hasSkill("Pilot") && state.hasFeat("Skill Focus (Pilot)") && !state.hasTalent("Ace Pilot"),
+        trigger: (state) => state.hasSkill('Pilot') && state.hasFeat('Skill Focus (Pilot)') && !state.hasTalent('Ace Pilot'),
         suggestions: [{
-            name: "Ace Pilot",
+            name: 'Ace Pilot',
             type: 'talent',
-            reason: "Adds +5 to Pilot checks in vehicles",
+            reason: 'Adds +5 to Pilot checks in vehicles',
             priority: 'high'
         }],
         priority: 'high'
@@ -555,7 +555,7 @@ export function buildSynergyState(actor, pendingData = {}) {
  */
 export function findActiveSynergies(actor, pendingData = {}) {
     const planned = getPlannedHeroicLevel(actor, pendingData);
-    if (pendingData?.epicAdvisory || isEpicActor(actor, planned)) return [];
+    if (pendingData?.epicAdvisory || isEpicActor(actor, planned)) {return [];}
     const state = buildSynergyState(actor, pendingData);
     const config = MetaTuning.getConfig();
     const activeSynergies = [];
@@ -589,7 +589,7 @@ export function findActiveSynergies(actor, pendingData = {}) {
     activeSynergies.sort((a, b) => {
         const pA = priorityOrder[a.priority] || 3;
         const pB = priorityOrder[b.priority] || 3;
-        if (pA !== pB) return pA - pB;
+        if (pA !== pB) {return pA - pB;}
         return (b.weight || 1) - (a.weight || 1);
     });
 

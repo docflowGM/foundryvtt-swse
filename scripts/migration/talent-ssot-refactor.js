@@ -16,8 +16,8 @@ import { SWSELogger } from '../utils/logger.js';
  */
 
 export class TalentSSOTRefactorMigration {
-  static MIGRATION_KEY = "talentSSOTRefactor";
-  static MIGRATION_VERSION = "1.0.0";
+  static MIGRATION_KEY = 'talentSSOTRefactor';
+  static MIGRATION_VERSION = '1.0.0';
 
   /**
    * Verify and finalize talent tree SSOT refactor
@@ -25,12 +25,12 @@ export class TalentSSOTRefactorMigration {
   static async rebuildTalentTreeOwnership() {
     // Guard: Ensure SWSE engine is loaded
     if (!globalThis.SWSE?.TalentTreeDB) {
-      SWSELogger.error("SWSE | Migration failed: TalentTreeDB not available. Please wait for the system to fully load.");
-      ui.notifications?.error("Migration failed: SWSE system not fully loaded.");
+      SWSELogger.error('SWSE | Migration failed: TalentTreeDB not available. Please wait for the system to fully load.');
+      ui.notifications?.error('Migration failed: SWSE system not fully loaded.');
       return;
     }
 
-    SWSELogger.log("SWSE | Starting Talent SSOT Refactor validation...");
+    SWSELogger.log('SWSE | Starting Talent SSOT Refactor validation...');
 
     const TreeDB = globalThis.SWSE.TalentTreeDB;
     const TalentDB = globalThis.SWSE.TalentDB;
@@ -38,7 +38,7 @@ export class TalentSSOTRefactorMigration {
     let trees = 0;
     let talents = 0;
     let warnings = 0;
-    let errors = 0;
+    const errors = 0;
 
     // Verify trees have talentIds
     for (const tree of TreeDB.all()) {
@@ -65,8 +65,8 @@ export class TalentSSOTRefactorMigration {
     }
 
     // Log summary
-    SWSELogger.log("=".repeat(60));
-    SWSELogger.log("SWSE | Talent SSOT Refactor Validation Complete");
+    SWSELogger.log('='.repeat(60));
+    SWSELogger.log('SWSE | Talent SSOT Refactor Validation Complete');
     SWSELogger.log(`✓ Trees validated: ${trees}`);
     SWSELogger.log(`✓ Talents validated: ${talents}`);
     if (warnings > 0) {
@@ -75,7 +75,7 @@ export class TalentSSOTRefactorMigration {
     if (errors > 0) {
       SWSELogger.log(`✗ Errors: ${errors}`);
     }
-    SWSELogger.log("=".repeat(60));
+    SWSELogger.log('='.repeat(60));
 
     // Mark migration as complete
     const migrationKey = `foundryvtt-swse.${this.MIGRATION_KEY}`;
@@ -92,8 +92,8 @@ export class TalentSSOTRefactorMigration {
 }
 
 // Register globally
-if (!game.swse) game.swse = {};
-if (!game.swse.migrations) game.swse.migrations = {};
+if (!game.swse) {game.swse = {};}
+if (!game.swse.migrations) {game.swse.migrations = {};}
 game.swse.migrations.rebuildTalentTreeOwnership = TalentSSOTRefactorMigration.rebuildTalentTreeOwnership.bind(TalentSSOTRefactorMigration);
 
-SWSELogger.log("SWSE | Talent SSOT Refactor migration script loaded. Run: await game.swse.migrations.rebuildTalentTreeOwnership()");
+SWSELogger.log('SWSE | Talent SSOT Refactor migration script loaded. Run: await game.swse.migrations.rebuildTalentTreeOwnership()');

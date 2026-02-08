@@ -13,7 +13,7 @@ import { getTalentTreeName } from './chargen-property-accessor.js';
  * @returns {string[]} Array of talent names that are prerequisites
  */
 function parsePrerequisites(prereqString) {
-  if (!prereqString) return [];
+  if (!prereqString) {return [];}
 
   const talentPrereqs = [];
 
@@ -114,7 +114,7 @@ function calculateLevels(nodes) {
     }
 
     const node = nodes.get(nodeId);
-    if (!node) return;
+    if (!node) {return;}
 
     if (visited.has(nodeId)) {
       node.level = Math.max(node.level, level);
@@ -194,10 +194,10 @@ function getNodeState(talent, characterData, allTalents) {
     t._id === talent._id || t.name === talent.name
   );
 
-  if (isSelected) return 'selected';
+  if (isSelected) {return 'selected';}
 
   const prereqString = talent.system?.prerequisites || talent.system?.prerequisite || '';
-  if (!prereqString) return 'available';
+  if (!prereqString) {return 'available';}
 
   const selectedTalentNames = new Set(
     (characterData.talents || []).map(t => t.name.toLowerCase())
@@ -406,7 +406,7 @@ export function renderTalentTreeGraph(container, talents, characterData, onSelec
   // Draw nodes as hexagons
   for (const [nodeId, node] of nodes) {
     const pos = positions.get(nodeId);
-    if (!pos) continue;
+    if (!pos) {continue;}
 
     const state = getNodeState(node.talent, characterData, talents);
     const isRoot = node.prerequisites.length === 0 && node.level === 0;
@@ -619,7 +619,7 @@ export function getTalentsInTree(allTalents, treeName) {
     const allTrees = new Set();
     allTalents.forEach(t => {
       const tree = getTalentTreeName(t);
-      if (tree) allTrees.add(tree);
+      if (tree) {allTrees.add(tree);}
     });
     SWSELogger.warn(`[TALENT-TREE-GRAPH] No talents found for tree "${treeName}". Available trees in data:`, Array.from(allTrees).sort());
 

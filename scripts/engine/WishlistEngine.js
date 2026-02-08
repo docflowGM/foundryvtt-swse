@@ -18,7 +18,7 @@ export class WishlistEngine {
    */
   static async addToWishlist(actor, item, itemType = 'feat') {
     try {
-      if (!actor || !item) return false;
+      if (!actor || !item) {return false;}
 
       const wishlist = this._getWishlist(actor);
       const itemId = item._id || item.id;
@@ -61,7 +61,7 @@ export class WishlistEngine {
       const key = itemType === 'feat' ? 'feats' : 'talents';
 
       const index = wishlist[key].findIndex(w => w.id === itemId);
-      if (index === -1) return false;
+      if (index === -1) {return false;}
 
       const removed = wishlist[key].splice(index, 1)[0];
       await actor.setFlag('swse', 'wishlist', wishlist);
@@ -106,7 +106,7 @@ export class WishlistEngine {
     const canonical = PrerequisiteChecker.getUnmetRequirements(actor, item);
     const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
     if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
-      console.warn("getUnmetRequirements mismatch (analyze fulfillment)", { item: item.name, canonical, legacy });
+      console.warn('getUnmetRequirements mismatch (analyze fulfillment)', { item: item.name, canonical, legacy });
     }
     const unmetReqs = canonical;
     const allReqs = this._extractAllRequirements(item);
@@ -151,7 +151,7 @@ export class WishlistEngine {
     const canonical = PrerequisiteChecker.getUnmetRequirements(actor, item);
     const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
     if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
-      console.warn("getUnmetRequirements mismatch (wishlisted prereqs)", { item: item.name, canonical, legacy });
+      console.warn('getUnmetRequirements mismatch (wishlisted prereqs)', { item: item.name, canonical, legacy });
     }
     const unmetReqs = canonical;
 
@@ -179,7 +179,7 @@ export class WishlistEngine {
     const canonical = PrerequisiteChecker.getUnmetRequirements(actor, item);
     const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
     if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
-      console.warn("getUnmetRequirements mismatch (analyze path)", { item: item.name, canonical, legacy });
+      console.warn('getUnmetRequirements mismatch (analyze path)', { item: item.name, canonical, legacy });
     }
     const unmetReqs = canonical;
     const analysis = this.analyzePrerequisiteFulfillment(actor, item);
@@ -211,7 +211,7 @@ export class WishlistEngine {
     // Analyze each wishlisted item
     for (const wishedItem of [...wishlist.feats, ...wishlist.talents]) {
       const item = allItems.find(i => i._id === wishedItem.id || i.id === wishedItem.id);
-      if (!item) continue;
+      if (!item) {continue;}
 
       const analysis = this.analyzePrerequisiteFulfillment(actor, item);
       progress.push({
@@ -238,7 +238,7 @@ export class WishlistEngine {
     const canonical = PrerequisiteChecker.getUnmetRequirements(actor, item);
     const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
     if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
-      console.warn("getUnmetRequirements mismatch (recommendations)", { item: item.name, canonical, legacy });
+      console.warn('getUnmetRequirements mismatch (recommendations)', { item: item.name, canonical, legacy });
     }
     const unmetReqs = canonical;
     const recommendations = [];
@@ -350,12 +350,12 @@ export class WishlistEngine {
     for (const req of unmetReqs) {
       if (req.includes('BAB')) {
         const match = req.match(/\+(\d+)/);
-        if (match) levels = Math.max(levels, Math.ceil(parseInt(match[1]) / 0.75));
+        if (match) {levels = Math.max(levels, Math.ceil(parseInt(match[1]) / 0.75));}
       }
 
       if (req.includes('Character Level')) {
         const match = req.match(/(\d+)/);
-        if (match) levels = Math.max(levels, parseInt(match[1]));
+        if (match) {levels = Math.max(levels, parseInt(match[1]));}
       }
 
       // Assume 1 level for feat/talent/skill prerequisites (can be selected next level-up)

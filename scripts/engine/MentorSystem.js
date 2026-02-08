@@ -158,11 +158,11 @@ export class MentorSystem {
    * @private
    */
   _unregisterHooks() {
-    if (this._hookClassSelected) Hooks.off('swse:classSelected', this._hookClassSelected);
-    if (this._hookTalentSelected) Hooks.off('swse:talentSelected', this._hookTalentSelected);
-    if (this._hookFeatSelected) Hooks.off('swse:featSelected', this._hookFeatSelected);
-    if (this._hookLevelUpCompleted) Hooks.off('swse:levelUp:committed', this._hookLevelUpCompleted);
-    if (this._hookChargenCompleted) Hooks.off('swse:chargen:sessionCompleted', this._hookChargenCompleted);
+    if (this._hookClassSelected) {Hooks.off('swse:classSelected', this._hookClassSelected);}
+    if (this._hookTalentSelected) {Hooks.off('swse:talentSelected', this._hookTalentSelected);}
+    if (this._hookFeatSelected) {Hooks.off('swse:featSelected', this._hookFeatSelected);}
+    if (this._hookLevelUpCompleted) {Hooks.off('swse:levelUp:committed', this._hookLevelUpCompleted);}
+    if (this._hookChargenCompleted) {Hooks.off('swse:chargen:sessionCompleted', this._hookChargenCompleted);}
 
     swseLogger.log('[MENTOR] Unregistered hook listeners');
   }
@@ -176,7 +176,7 @@ export class MentorSystem {
    * @private
    */
   async _onClassSelected(data) {
-    if (!this.enabled) return;
+    if (!this.enabled) {return;}
 
     try {
       const context = {
@@ -200,7 +200,7 @@ export class MentorSystem {
    * @private
    */
   async _onTalentSelected(data) {
-    if (!this.enabled) return;
+    if (!this.enabled) {return;}
 
     try {
       const context = {
@@ -224,7 +224,7 @@ export class MentorSystem {
    * @private
    */
   async _onFeatSelected(data) {
-    if (!this.enabled) return;
+    if (!this.enabled) {return;}
 
     try {
       const context = {
@@ -247,7 +247,7 @@ export class MentorSystem {
    * @private
    */
   async _onLevelUpCompleted(data) {
-    if (!this.enabled) return;
+    if (!this.enabled) {return;}
 
     try {
       const context = {
@@ -272,7 +272,7 @@ export class MentorSystem {
    * @private
    */
   async _onChargenCompleted(data) {
-    if (!this.enabled) return;
+    if (!this.enabled) {return;}
 
     try {
       const context = {
@@ -344,7 +344,7 @@ export class MentorSystem {
     try {
       // Look up authored content for this event type
       const eventContent = this.authoredContent[context.event];
-      if (!eventContent) return null;
+      if (!eventContent) {return null;}
 
       // Match by class/talent/feat if applicable
       let matchedContent = null;
@@ -359,7 +359,7 @@ export class MentorSystem {
         matchedContent = eventContent.generic;
       }
 
-      if (!matchedContent) return null;
+      if (!matchedContent) {return null;}
 
       // If it's an array, pick a random one
       const text = Array.isArray(matchedContent)
@@ -401,7 +401,7 @@ export class MentorSystem {
 
       const text = await Promise.race([generationPromise, timeoutPromise]);
 
-      if (!text) return null;
+      if (!text) {return null;}
 
       return {
         type: 'ai',
@@ -422,8 +422,8 @@ export class MentorSystem {
     const genericMessages = [
       "An interesting choice. Let's see where this path leads.",
       "I see you're forging your own path. Bold move.",
-      "Your build is taking shape nicely.",
-      "This choice shows promise.",
+      'Your build is taking shape nicely.',
+      'This choice shows promise.',
       "I'm curious to see how this develops."
     ];
 
@@ -578,15 +578,15 @@ export class MentorSystem {
       this.authoredContent = {
         classSelected: {
           jedi: [
-            "The Force is strong with you. This path requires discipline and wisdom.",
+            'The Force is strong with you. This path requires discipline and wisdom.',
             "A Jedi's journey is never easy, but it is always meaningful."
           ],
           soldier: [
-            "A solid choice. Combat training will serve you well.",
-            "Every great warrior started where you stand now."
+            'A solid choice. Combat training will serve you well.',
+            'Every great warrior started where you stand now.'
           ],
           scout: [
-            "The wilderness calls to you. Trust your instincts.",
+            'The wilderness calls to you. Trust your instincts.',
             "A scout's eyes see what others miss. Remember that."
           ],
           generic: [
@@ -596,27 +596,27 @@ export class MentorSystem {
         },
         talentSelected: {
           generic: [
-            "That talent will serve you well.",
-            "A wise choice for your build."
+            'That talent will serve you well.',
+            'A wise choice for your build.'
           ]
         },
         featSelected: {
           generic: [
-            "That feat complements your abilities nicely.",
-            "I see the strategy behind that choice."
+            'That feat complements your abilities nicely.',
+            'I see the strategy behind that choice.'
           ]
         },
         levelUpCompleted: {
           generic: [
             "You've grown stronger. Well done.",
-            "Each level brings new challenges and new strengths.",
-            "Your journey continues. Stay vigilant."
+            'Each level brings new challenges and new strengths.',
+            'Your journey continues. Stay vigilant.'
           ]
         },
         chargenCompleted: {
           generic: [
-            "Your path begins here. May the Force be with you.",
-            "Remember this moment. This is where your legend begins.",
+            'Your path begins here. May the Force be with you.',
+            'Remember this moment. This is where your legend begins.',
             "You're ready. Trust in your training."
           ]
         }
@@ -649,7 +649,7 @@ export class MentorSystem {
    * @private
    */
   async _postSuggestion(suggestion) {
-    if (!suggestion) return;
+    if (!suggestion) {return;}
 
     try {
       const mentorVoice = this._getMentorVoice();

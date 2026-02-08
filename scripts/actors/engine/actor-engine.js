@@ -1,6 +1,6 @@
 // scripts/actors/engine/actor-engine.js
-import { swseLogger } from "../../utils/logger.js";
-import { applyActorUpdateAtomic } from "../../utils/actor-utils.js";
+import { swseLogger } from '../../utils/logger.js';
+import { applyActorUpdateAtomic } from '../../utils/actor-utils.js';
 
 /**
  * ActorEngine
@@ -14,7 +14,7 @@ export const ActorEngine = {
    */
   async recalcAll(actor) {
     try {
-      if (!actor) throw new Error("recalcAll() called with no actor");
+      if (!actor) {throw new Error('recalcAll() called with no actor');}
 
       const systemData = actor.system;
       if (!systemData) {
@@ -26,17 +26,17 @@ export const ActorEngine = {
       swseLogger.debug(`Recalculating derived data for: ${actor.name}`);
 
       // If system implements a prepareDerivedData hook, call it safely.
-      if (typeof actor.prepareDerivedData === "function") {
+      if (typeof actor.prepareDerivedData === 'function') {
         actor.prepareDerivedData();
       }
 
       // Optionally refresh effects, bonuses, etc.
-      if (typeof actor.prepareSynthetics === "function") {
+      if (typeof actor.prepareSynthetics === 'function') {
         actor.prepareSynthetics();
       }
 
     } catch (err) {
-      swseLogger.error("ActorEngine.recalcAll failed:", err);
+      swseLogger.error('ActorEngine.recalcAll failed:', err);
     }
   },
 
@@ -46,13 +46,13 @@ export const ActorEngine = {
    */
   async applyTemplate(actor, templateData) {
     try {
-      if (!actor) throw new Error("applyTemplate() called with no actor");
+      if (!actor) {throw new Error('applyTemplate() called with no actor');}
 
       await this.updateActor(actor, templateData);
       await this.recalcAll(actor);
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.applyTemplate failed on ${actor?.name ?? "unknown actor"}`, err);
+      swseLogger.error(`ActorEngine.applyTemplate failed on ${actor?.name ?? 'unknown actor'}`, err);
     }
   },
 
@@ -63,9 +63,9 @@ export const ActorEngine = {
    */
   async updateActor(actor, updateData, options = {}) {
     try {
-      if (!actor) throw new Error("updateActor() called with no actor");
+      if (!actor) {throw new Error('updateActor() called with no actor');}
 
-      if (!updateData || typeof updateData !== "object") {
+      if (!updateData || typeof updateData !== 'object') {
         throw new Error(`Invalid updateData passed to updateActor for ${actor.name}`);
       }
 
@@ -89,7 +89,7 @@ export const ActorEngine = {
       return result;
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.updateActor failed for ${actor?.name ?? "unknown actor"}`, {
+      swseLogger.error(`ActorEngine.updateActor failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         updateData
       });
@@ -109,9 +109,9 @@ export const ActorEngine = {
    */
   async updateEmbeddedDocuments(actor, embeddedName, updates, options = {}) {
     try {
-      if (!actor) throw new Error("updateEmbeddedDocuments() called with no actor");
-      if (!embeddedName) throw new Error("updateEmbeddedDocuments() called without embeddedName");
-      if (!Array.isArray(updates)) throw new Error("updateEmbeddedDocuments() requires updates array");
+      if (!actor) {throw new Error('updateEmbeddedDocuments() called with no actor');}
+      if (!embeddedName) {throw new Error('updateEmbeddedDocuments() called without embeddedName');}
+      if (!Array.isArray(updates)) {throw new Error('updateEmbeddedDocuments() requires updates array');}
 
       swseLogger.debug(`ActorEngine.updateEmbeddedDocuments → ${actor.name}`, {
         embeddedName,
@@ -131,7 +131,7 @@ export const ActorEngine = {
 
       return result;
     } catch (err) {
-      swseLogger.error(`ActorEngine.updateEmbeddedDocuments failed for ${actor?.name ?? "unknown actor"}`, {
+      swseLogger.error(`ActorEngine.updateEmbeddedDocuments failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         embeddedName,
         updates
@@ -144,10 +144,10 @@ export const ActorEngine = {
    * Convenience wrapper for updating owned Items through ActorEngine.
    * @param {Actor} actor
    * @param {object[]} updates
-   * @param {object} [options={}] 
+   * @param {object} [options={}]
    */
   async updateOwnedItems(actor, updates, options = {}) {
-    return this.updateEmbeddedDocuments(actor, "Item", updates, options);
+    return this.updateEmbeddedDocuments(actor, 'Item', updates, options);
   },
 
   /**
@@ -156,15 +156,15 @@ export const ActorEngine = {
    */
   async createEmbeddedDocuments(actor, embeddedName, data, options = {}) {
     try {
-      if (!actor) throw new Error("createEmbeddedDocuments() called with no actor");
-      if (!embeddedName) throw new Error("createEmbeddedDocuments() called without embeddedName");
-      if (!Array.isArray(data)) throw new Error("createEmbeddedDocuments() requires data array");
+      if (!actor) {throw new Error('createEmbeddedDocuments() called with no actor');}
+      if (!embeddedName) {throw new Error('createEmbeddedDocuments() called without embeddedName');}
+      if (!Array.isArray(data)) {throw new Error('createEmbeddedDocuments() requires data array');}
 
       const result = await actor.createEmbeddedDocuments(embeddedName, data, options);
       setTimeout(() => this.recalcAll(actor), 0);
       return result;
     } catch (err) {
-      swseLogger.error(`ActorEngine.createEmbeddedDocuments failed for ${actor?.name ?? "unknown actor"}`, err);
+      swseLogger.error(`ActorEngine.createEmbeddedDocuments failed for ${actor?.name ?? 'unknown actor'}`, err);
       throw err;
     }
   },
@@ -174,15 +174,15 @@ export const ActorEngine = {
    */
   async deleteEmbeddedDocuments(actor, embeddedName, ids, options = {}) {
     try {
-      if (!actor) throw new Error("deleteEmbeddedDocuments() called with no actor");
-      if (!embeddedName) throw new Error("deleteEmbeddedDocuments() called without embeddedName");
-      if (!Array.isArray(ids)) throw new Error("deleteEmbeddedDocuments() requires ids array");
+      if (!actor) {throw new Error('deleteEmbeddedDocuments() called with no actor');}
+      if (!embeddedName) {throw new Error('deleteEmbeddedDocuments() called without embeddedName');}
+      if (!Array.isArray(ids)) {throw new Error('deleteEmbeddedDocuments() requires ids array');}
 
       const result = await actor.deleteEmbeddedDocuments(embeddedName, ids, options);
       setTimeout(() => this.recalcAll(actor), 0);
       return result;
     } catch (err) {
-      swseLogger.error(`ActorEngine.deleteEmbeddedDocuments failed for ${actor?.name ?? "unknown actor"}`, err);
+      swseLogger.error(`ActorEngine.deleteEmbeddedDocuments failed for ${actor?.name ?? 'unknown actor'}`, err);
       throw err;
     }
   },
@@ -203,26 +203,26 @@ export const ActorEngine = {
    */
   async applyDelta(actor, delta) {
     try {
-      if (!actor) throw new Error("applyDelta() called with no actor");
-      if (!delta) return; // noop
+      if (!actor) {throw new Error('applyDelta() called with no actor');}
+      if (!delta) {return;} // noop
 
       // ---- GUARDRAIL 1: Reject derived writes ----
       if (delta.derived) {
         throw new Error(
-          "ARCHITECTURE VIOLATION: Progression attempted to write to derived fields. " +
-          "Math computation belongs in prepareDerivedData(), not progression."
+          'ARCHITECTURE VIOLATION: Progression attempted to write to derived fields. ' +
+          'Math computation belongs in prepareDerivedData(), not progression.'
         );
       }
 
       // ---- GUARDRAIL 2: Validate delta structure ----
-      if (delta.set && typeof delta.set !== "object") {
-        throw new Error("Invalid delta.set: must be object { path: value }");
+      if (delta.set && typeof delta.set !== 'object') {
+        throw new Error('Invalid delta.set: must be object { path: value }');
       }
-      if (delta.add && typeof delta.add !== "object") {
-        throw new Error("Invalid delta.add: must be object with feature arrays");
+      if (delta.add && typeof delta.add !== 'object') {
+        throw new Error('Invalid delta.add: must be object with feature arrays');
       }
-      if (delta.delete && typeof delta.delete !== "object") {
-        throw new Error("Invalid delta.delete: must be object with feature arrays");
+      if (delta.delete && typeof delta.delete !== 'object') {
+        throw new Error('Invalid delta.delete: must be object with feature arrays');
       }
 
       swseLogger.debug(`ActorEngine.applyDelta → ${actor.name}`, { delta });
@@ -231,7 +231,7 @@ export const ActorEngine = {
       const updates = {};
       if (delta.set) {
         for (const [path, value] of Object.entries(delta.set)) {
-          if (path.startsWith("system.derived")) {
+          if (path.startsWith('system.derived')) {
             throw new Error(`ILLEGAL: applyDelta cannot write ${path} (derived field)`);
           }
           updates[path] = value;
@@ -246,24 +246,24 @@ export const ActorEngine = {
       // ---- Phase 4: Apply ADD operations (create items) ----
       if (delta.add?.talents && delta.add.talents.length > 0) {
         const talentItems = delta.add.talents.map(talentId => ({
-          type: "talent",
+          type: 'talent',
           name: talentId, // Will be enriched by sheet
           system: {
             ssotId: talentId // Pointer to SSOT, not rules
           }
         }));
-        await this.createEmbeddedDocuments(actor, "Item", talentItems);
+        await this.createEmbeddedDocuments(actor, 'Item', talentItems);
       }
 
       if (delta.add?.feats && delta.add.feats.length > 0) {
         const featItems = delta.add.feats.map(featId => ({
-          type: "feat",
+          type: 'feat',
           name: featId,
           system: {
             ssotId: featId
           }
         }));
-        await this.createEmbeddedDocuments(actor, "Item", featItems);
+        await this.createEmbeddedDocuments(actor, 'Item', featItems);
       }
 
       if (delta.add?.skills && delta.add.skills.length > 0) {
@@ -278,31 +278,31 @@ export const ActorEngine = {
       // ---- Phase 4: Apply DELETE operations (remove items) ----
       if (delta.delete?.talents && delta.delete.talents.length > 0) {
         const talentsToDelete = actor.items
-          .filter(item => item.type === "talent" && delta.delete.talents.includes(item.system.ssotId))
+          .filter(item => item.type === 'talent' && delta.delete.talents.includes(item.system.ssotId))
           .map(item => item.id);
         if (talentsToDelete.length > 0) {
-          await this.deleteEmbeddedDocuments(actor, "Item", talentsToDelete);
+          await this.deleteEmbeddedDocuments(actor, 'Item', talentsToDelete);
         }
       }
 
       if (delta.delete?.feats && delta.delete.feats.length > 0) {
         const featsToDelete = actor.items
-          .filter(item => item.type === "feat" && delta.delete.feats.includes(item.system.ssotId))
+          .filter(item => item.type === 'feat' && delta.delete.feats.includes(item.system.ssotId))
           .map(item => item.id);
         if (featsToDelete.length > 0) {
-          await this.deleteEmbeddedDocuments(actor, "Item", featsToDelete);
+          await this.deleteEmbeddedDocuments(actor, 'Item', featsToDelete);
         }
       }
 
       swseLogger.log(`ActorEngine.applyDelta completed for ${actor.name}`);
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.applyDelta failed for ${actor?.name ?? "unknown actor"}`, {
+      swseLogger.error(`ActorEngine.applyDelta failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         delta
       });
       throw err;
     }
-  },
+  }
 
 };

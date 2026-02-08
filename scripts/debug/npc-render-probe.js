@@ -14,9 +14,9 @@ function isEnabled() {
 
 export function registerNpcRenderProbeHooks() {
   HooksRegistry.register('renderApplicationV2', 'swse-npc-render-probe', (app) => {
-    if (!isEnabled()) return;
+    if (!isEnabled()) {return;}
     const actor = app?.actor ?? app?.document;
-    if (!actor || actor.type !== 'npc') return;
+    if (!actor || actor.type !== 'npc') {return;}
 
     const mode = actor.getFlag('swse', 'npcLevelUp.mode') ?? 'statblock';
     const { heroicLevel, nonheroicLevel, totalLevel } = getLevelSplit(actor);

@@ -14,7 +14,7 @@ export class SkillUseFilter {
    * @returns {boolean} True if the actor can access this skill use
    */
   static canAccessSkillUse(actor, skillUse) {
-    if (!actor || !skillUse) return false;
+    if (!actor || !skillUse) {return false;}
 
     const applicationName = skillUse.application || '';
 
@@ -99,7 +99,7 @@ export class SkillUseFilter {
    * @returns {Array} Filtered array of skill uses the actor can access
    */
   static filterSkillUses(actor, skillUses) {
-    if (!actor || !skillUses) return [];
+    if (!actor || !skillUses) {return [];}
 
     return skillUses.filter(skillUse => this.canAccessSkillUse(actor, skillUse));
   }
@@ -110,7 +110,7 @@ export class SkillUseFilter {
    * @returns {string} The skill key to use for rolling (e.g., 'useTheForce', 'mechanics')
    */
   static getSkillKeyForApplication(skillUse) {
-    if (!skillUse || !skillUse.application) return null;
+    if (!skillUse || !skillUse.application) {return null;}
 
     const applicationName = skillUse.application;
 
@@ -211,23 +211,23 @@ export class SkillUseFilter {
     const abilityMod = Math.floor((abilityScore - 10) / 2);
 
     let modifier = halfLevel + abilityMod;
-    if (skill.trained) modifier += 5;
-    if (skill.focused) modifier += 5;
+    if (skill.trained) {modifier += 5;}
+    if (skill.focused) {modifier += 5;}
     modifier += (skill.miscMod || 0);
     modifier += (actor.conditionPenalty || 0);
 
     // Add any situational modifiers from options
-    if (options.situational) modifier += options.situational;
+    if (options.situational) {modifier += options.situational;}
 
     // Create and evaluate the roll
-    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${modifier}`).evaluate({async: true});
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${modifier}`).evaluate({ async: true });
 
     // Prepare flavor text
     const dc = skillUse.DC || 'varies';
     const actionTime = skillUse.time || 'varies';
     const effect = skillUse.effect || '';
 
-    let flavor = `<div class="skill-use-application">
+    const flavor = `<div class="skill-use-application">
       <h3>${skillUse.application}</h3>
       <p><strong>DC:</strong> ${dc}</p>
       <p><strong>Time:</strong> ${actionTime}</p>
@@ -237,7 +237,7 @@ export class SkillUseFilter {
 
     // Send to chat
     await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({actor}),
+      speaker: ChatMessage.getSpeaker({ actor }),
       flavor: flavor
     } , { create: true });
 
@@ -278,8 +278,8 @@ export class SkillUseFilter {
 
 // Make available globally
 Hooks.once('init', () => {
-  if (!game.swse) game.swse = {};
-  if (!game.swse.utils) game.swse.utils = {};
+  if (!game.swse) {game.swse = {};}
+  if (!game.swse.utils) {game.swse.utils = {};}
   game.swse.utils.SkillUseFilter = SkillUseFilter;
 });
 

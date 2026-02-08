@@ -16,7 +16,7 @@ let _olSaltyDialogues = null;
  * Load Ol' Salty species dialogues from JSON
  */
 async function loadOlSaltyDialogues() {
-  if (_olSaltyDialogues) return _olSaltyDialogues;
+  if (_olSaltyDialogues) {return _olSaltyDialogues;}
 
   try {
     const response = await fetch('systems/foundryvtt-swse/data/ol-salty-species-dialogues.json');
@@ -38,7 +38,7 @@ async function loadOlSaltyDialogues() {
  * Get Ol' Salty dialogue for a species
  */
 function getOlSaltyDialogue(speciesName) {
-  if (!_olSaltyDialogues) return null;
+  if (!_olSaltyDialogues) {return null;}
 
   // Try exact match first
   if (_olSaltyDialogues[speciesName]) {
@@ -69,9 +69,9 @@ export async function _onPreviewSpecies(event) {
 
   const button = event.currentTarget;
   const speciesName = button.dataset.species;
-  const size = button.dataset.size || "Medium";
-  const speed = button.dataset.speed || "6";
-  const abilities = button.dataset.abilities || "";
+  const size = button.dataset.size || 'Medium';
+  const speed = button.dataset.speed || '6';
+  const abilities = button.dataset.abilities || '';
 
   // Parse JSON data attributes
   let skillBonuses = [];
@@ -79,19 +79,19 @@ export async function _onPreviewSpecies(event) {
   let racialTraits = [];
 
   try {
-    skillBonuses = JSON.parse(button.dataset.skillBonuses || "[]") || [];
+    skillBonuses = JSON.parse(button.dataset.skillBonuses || '[]') || [];
   } catch (e) {
     skillBonuses = [];
   }
 
   try {
-    special = JSON.parse(button.dataset.special || "[]") || [];
+    special = JSON.parse(button.dataset.special || '[]') || [];
   } catch (e) {
     special = [];
   }
 
   try {
-    racialTraits = JSON.parse(button.dataset.racialTraits || "[]") || [];
+    racialTraits = JSON.parse(button.dataset.racialTraits || '[]') || [];
   } catch (e) {
     racialTraits = [];
   }
@@ -134,7 +134,7 @@ export async function _onPreviewSpecies(event) {
         span.className = 'ability-bonus';
       }
       span.textContent = trimmed;
-      if (trimmed) abilitiesContainer.appendChild(span);
+      if (trimmed) {abilitiesContainer.appendChild(span);}
     });
   } else {
     const span = document.createElement('span');
@@ -190,7 +190,7 @@ export async function _onPreviewSpecies(event) {
     const summary = [];
 
     // Ability modifiers
-    if (abilities && abilities !== "None") {
+    if (abilities && abilities !== 'None') {
       summary.push(`Attributes: ${abilities}`);
     }
 
@@ -200,7 +200,7 @@ export async function _onPreviewSpecies(event) {
     }
 
     // Size
-    if (size && size !== "Medium") {
+    if (size && size !== 'Medium') {
       summary.push(`Size: ${size}`);
     }
 
@@ -225,8 +225,8 @@ export async function _onConfirmSpecies(event) {
   event.stopPropagation();
 
   if (!_previewedSpeciesName) {
-    SWSELogger.warn("CharGen | No species previewed to confirm");
-    ui.notifications.error("Please select a species first");
+    SWSELogger.warn('CharGen | No species previewed to confirm');
+    ui.notifications.error('Please select a species first');
     return;
   }
 
@@ -283,7 +283,7 @@ export function _onCloseSpeciesOverlay(event) {
 
   _previewedSpeciesName = null;
 
-  SWSELogger.log("CharGen | Closed species preview overlay");
+  SWSELogger.log('CharGen | Closed species preview overlay');
 }
 
 /**
@@ -304,9 +304,9 @@ export async function _onSelectSpecies(event) {
   const speciesKey = event.currentTarget.dataset.species;
 
   // Ensure we have a valid species key
-  if (!speciesKey || speciesKey.trim() === "") {
-    SWSELogger.error("CharGen | Species key is empty or missing");
-    ui.notifications.error("Invalid species selected. Please try again.");
+  if (!speciesKey || speciesKey.trim() === '') {
+    SWSELogger.error('CharGen | Species key is empty or missing');
+    ui.notifications.error('Invalid species selected. Please try again.');
     return;
   }
 
@@ -315,7 +315,7 @@ export async function _onSelectSpecies(event) {
   // If changing species after initial selection, confirm with user
   if (this.characterData.species && this.characterData.species !== speciesKey) {
     const confirmed = await Dialog.confirm({
-      title: "Change Species?",
+      title: 'Change Species?',
       content: `
         <p>Changing your species will reset:</p>
         <ul>
@@ -328,7 +328,7 @@ export async function _onSelectSpecies(event) {
       `,
       defaultYes: false
     });
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
     // Clear previous species data
     this._clearSpeciesData();
@@ -336,7 +336,7 @@ export async function _onSelectSpecies(event) {
 
   // Find the species document
   if (!this._packs.species) {
-    SWSELogger.log("CharGen | Species pack not loaded, loading now...");
+    SWSELogger.log('CharGen | Species pack not loaded, loading now...');
     const loaded = await this._loadData();
     if (loaded === false) {
       // Critical packs missing, chargen will close
@@ -347,8 +347,8 @@ export async function _onSelectSpecies(event) {
   SWSELogger.log(`CharGen | Species pack contains ${this._packs.species?.length || 0} species`);
 
   if (!this._packs.species || this._packs.species.length === 0) {
-    SWSELogger.error("CharGen | Species pack is empty or failed to load!");
-    ui.notifications.error("Species data failed to load. Please refresh the page.");
+    SWSELogger.error('CharGen | Species pack is empty or failed to load!');
+    ui.notifications.error('Species data failed to load. Please refresh the page.');
     return;
   }
 
@@ -384,17 +384,17 @@ export async function _onSelectSpecies(event) {
 export function _applySpeciesData(speciesDoc) {
   // Validate species document
   if (!speciesDoc || typeof speciesDoc !== 'object') {
-    SWSELogger.error("CharGen | Invalid species document provided to _applySpeciesData");
-    throw new Error("Invalid species document");
+    SWSELogger.error('CharGen | Invalid species document provided to _applySpeciesData');
+    throw new Error('Invalid species document');
   }
 
   const system = speciesDoc.system || {};
-  const speciesName = speciesDoc.name || "Unknown";
+  const speciesName = speciesDoc.name || 'Unknown';
 
   try {
     // 1. Apply ability score modifiers
     // NOTE: Species data stores ability modifiers in 'abilities' field, not 'attributes'
-    const abilityBonuses = this._parseAbilityString(system.abilities || "None");
+    const abilityBonuses = this._parseAbilityString(system.abilities || 'None');
 
     // Validate that bonuses are reasonable (SWSE standard is ±2 to ±4)
     for (const [ability, bonus] of Object.entries(abilityBonuses)) {
@@ -417,7 +417,7 @@ export function _applySpeciesData(speciesDoc) {
     }
 
     // 3. Store size and apply size modifiers
-    this.characterData.size = system.size || "Medium";
+    this.characterData.size = system.size || 'Medium';
     this._applySizeModifiers(this.characterData.size);
 
     // 4. Store special abilities (ensure it's an array)
@@ -425,8 +425,8 @@ export function _applySpeciesData(speciesDoc) {
                                           (system.special ? [system.special] : []);
 
     // 5. Check for Human racial bonuses and NPC status
-    const isNPC = this.actorType === "npc";
-    const isHuman = speciesName.toLowerCase() === "human";
+    const isNPC = this.actorType === 'npc';
+    const isHuman = speciesName.toLowerCase() === 'human';
 
     if (isNPC) {
       // NONHEROIC RULE: Nonheroic characters get 3 starting feats
@@ -452,7 +452,7 @@ export function _applySpeciesData(speciesDoc) {
 
     // 8. Store source
     if (this.characterData.speciesSource == null) {
-      this.characterData.speciesSource = system.source || "";
+      this.characterData.speciesSource = system.source || '';
     }
 
     SWSELogger.log(`CharGen | Successfully applied species data for ${speciesName}:`, {
@@ -475,7 +475,7 @@ export function _applySpeciesData(speciesDoc) {
  * @param {Array<string>} bonuses - Array of skill bonus strings like ["+2 Perception", "+2 Stealth"]
  */
 export function _applyRacialSkillBonuses(bonuses) {
-  if (!bonuses || bonuses.length === 0) return;
+  if (!bonuses || bonuses.length === 0) {return;}
 
   // Skill name mapping from display names to skill keys
   const skillNameMap = {
@@ -504,7 +504,7 @@ export function _applyRacialSkillBonuses(bonuses) {
   for (const bonusString of bonuses) {
     // Parse bonus string like "+2 Perception" or "+2 Knowledge (Galactic Lore)"
     const match = bonusString.match(/([+-]?\d+)\s+(.+)/i);
-    if (!match) continue;
+    if (!match) {continue;}
 
     const bonusValue = parseInt(match[1], 10);
     const skillName = match[2].trim().toLowerCase();
@@ -539,18 +539,18 @@ export function _applyRacialSkillBonuses(bonuses) {
 export function _applySizeModifiers(size) {
   // Size modifiers per SWSE rules
   const sizeModifiers = {
-    "Fine": { reflex: 8, stealth: 16 },
-    "Diminutive": { reflex: 4, stealth: 12 },
-    "Tiny": { reflex: 2, stealth: 8 },
-    "Small": { reflex: 1, stealth: 5 },
-    "Medium": { reflex: 0, stealth: 0 },
-    "Large": { reflex: -1, stealth: -5 },
-    "Huge": { reflex: -2, stealth: -10 },
-    "Gargantuan": { reflex: -5, stealth: -12 },
-    "Colossal": { reflex: -10, stealth: -16 }
+    'Fine': { reflex: 8, stealth: 16 },
+    'Diminutive': { reflex: 4, stealth: 12 },
+    'Tiny': { reflex: 2, stealth: 8 },
+    'Small': { reflex: 1, stealth: 5 },
+    'Medium': { reflex: 0, stealth: 0 },
+    'Large': { reflex: -1, stealth: -5 },
+    'Huge': { reflex: -2, stealth: -10 },
+    'Gargantuan': { reflex: -5, stealth: -12 },
+    'Colossal': { reflex: -10, stealth: -16 }
   };
 
-  const modifiers = sizeModifiers[size] || sizeModifiers["Medium"];
+  const modifiers = sizeModifiers[size] || sizeModifiers['Medium'];
 
   // Apply Reflex Defense modifier
   if (this.characterData.defenses && this.characterData.defenses.reflex) {
@@ -585,7 +585,7 @@ export function _parseAbilityString(abilityString) {
     cha: 0
   };
 
-  if (!abilityString || abilityString === "None" || abilityString === "none") {
+  if (!abilityString || abilityString === 'None' || abilityString === 'none') {
     return bonuses;
   }
 
@@ -603,7 +603,7 @@ export function _parseAbilityString(abilityString) {
   const parts = abilityString.split(',').map(p => p.trim());
 
   for (const part of parts) {
-    if (!part) continue;
+    if (!part) {continue;}
 
     // Try multiple patterns to handle various ability string formats
     // Pattern 1: "+2 Dex", "-2 Con", "+4 Str", etc. (value before ability)
@@ -657,7 +657,7 @@ export async function _getRacialBonuses(speciesName) {
   }
 
   if (!this._packs.species || this._packs.species.length === 0) {
-    SWSELogger.error("CharGen | Species pack is empty in _getRacialBonuses");
+    SWSELogger.error('CharGen | Species pack is empty in _getRacialBonuses');
     return {};
   }
 
@@ -668,7 +668,7 @@ export async function _getRacialBonuses(speciesName) {
   }
 
   // Parse the abilities string to get bonuses
-  return this._parseAbilityString(found.system.abilities || "None");
+  return this._parseAbilityString(found.system.abilities || 'None');
 }
 
 /**
@@ -683,13 +683,13 @@ export function _clearSpeciesData() {
   }
 
   // Reset other species-specific data
-  this.characterData.size = "Medium";
+  this.characterData.size = 'Medium';
   this.characterData.speed = 6;
   this.characterData.specialAbilities = [];
   this.characterData.languages = [];
 
   // Clear size modifiers
-  this._applySizeModifiers("Medium");
+  this._applySizeModifiers('Medium');
 }
 
 // Cache for chargen config
@@ -700,7 +700,7 @@ let _chargenConfig = null;
  * @returns {Promise<Object>} Configuration object
  */
 async function _loadChargenConfig() {
-  if (_chargenConfig) return _chargenConfig;
+  if (_chargenConfig) {return _chargenConfig;}
 
   try {
     const response = await fetch('systems/foundryvtt-swse/data/chargen-config.json');
@@ -718,12 +718,12 @@ async function _loadChargenConfig() {
   // Fallback to default config
   _chargenConfig = {
     speciesSourcePriority: [
-      "Core", "Core Rulebook",
-      "Knights of the Old Republic", "KotOR", "KOTOR",
-      "Clone Wars", "Rebellion Era", "Legacy Era",
-      "The Force Unleashed", "Galaxy at War",
-      "Unknown Regions", "Scum and Villainy",
-      "Threats of the Galaxy", "Jedi Academy"
+      'Core', 'Core Rulebook',
+      'Knights of the Old Republic', 'KotOR', 'KOTOR',
+      'Clone Wars', 'Rebellion Era', 'Legacy Era',
+      'The Force Unleashed', 'Galaxy at War',
+      'Unknown Regions', 'Scum and Villainy',
+      'Threats of the Galaxy', 'Jedi Academy'
     ]
   };
 
@@ -736,11 +736,11 @@ async function _loadChargenConfig() {
  * @returns {Array} Sorted species array
  */
 export function _sortSpeciesBySource(species) {
-  if (!species || species.length === 0) return species;
+  if (!species || species.length === 0) {return species;}
 
   // Load config synchronously from cache (should be pre-loaded)
   const config = _chargenConfig || {
-    speciesSourcePriority: ["Core", "Core Rulebook"]
+    speciesSourcePriority: ['Core', 'Core Rulebook']
   };
 
   // Build source priority map from config
@@ -751,27 +751,27 @@ export function _sortSpeciesBySource(species) {
 
   // Sort species
   return species.sort((a, b) => {
-    const nameA = a.name || "";
-    const nameB = b.name || "";
+    const nameA = a.name || '';
+    const nameB = b.name || '';
 
     // PRIORITY 1: Human always comes first
-    const isHumanA = nameA.toLowerCase() === "human";
-    const isHumanB = nameB.toLowerCase() === "human";
+    const isHumanA = nameA.toLowerCase() === 'human';
+    const isHumanB = nameB.toLowerCase() === 'human';
 
-    if (isHumanA && !isHumanB) return -1;
-    if (!isHumanA && isHumanB) return 1;
+    if (isHumanA && !isHumanB) {return -1;}
+    if (!isHumanA && isHumanB) {return 1;}
 
     // PRIORITY 2: Near-Human comes second (but not if it's the actual Near-Human from compendium)
     // Note: Near-Human builder is injected via template, but compendium also has Near-Human species
     // We want the manual builder first, so deprioritize compendium Near-Human
-    const isNearHumanA = nameA.toLowerCase() === "near-human";
-    const isNearHumanB = nameB.toLowerCase() === "near-human";
+    const isNearHumanA = nameA.toLowerCase() === 'near-human';
+    const isNearHumanB = nameB.toLowerCase() === 'near-human';
 
     // Keep Near-Human in list for completeness but let template injection handle display
     // (The template injects the Near-Human builder button right after Human)
 
-    const sourceA = a.system?.source || "Unknown";
-    const sourceB = b.system?.source || "Unknown";
+    const sourceA = a.system?.source || 'Unknown';
+    const sourceB = b.system?.source || 'Unknown';
 
     // Get priority (default to 999 for unknown sources)
     const priorityA = sourcePriority[sourceA] ?? 999;
@@ -799,8 +799,8 @@ export function _sortSpeciesBySource(species) {
  * @returns {Array} Filtered species array
  */
 export function _filterSpecies(species, filters) {
-  if (!species || species.length === 0) return species;
-  if (!filters) return species;
+  if (!species || species.length === 0) {return species;}
+  if (!filters) {return species;}
 
   const { attributeBonus, attributePenalty, size } = filters;
 
@@ -820,7 +820,7 @@ export function _filterSpecies(species, filters) {
     // Parse abilities to check bonuses and penalties
     if (attributeBonus || attributePenalty) {
       // Use shared parsing function to avoid duplication
-      const abilityString = system.abilities || "None";
+      const abilityString = system.abilities || 'None';
       const abilities = _parseAbilityString.call(this, abilityString);
 
       // Filter by attribute bonus
@@ -852,8 +852,8 @@ function _applySpeciesFiltersDOM() {
   const speciesCards = document.querySelectorAll('.species-grid .preview-species');
 
   speciesCards.forEach(card => {
-    const size = card.dataset.size || "Medium";
-    const abilityString = card.dataset.abilities || "None";
+    const size = card.dataset.size || 'Medium';
+    const abilityString = card.dataset.abilities || 'None';
     const abilities = _parseAbilityString.call(this, abilityString);
 
     let matches = true;
@@ -880,7 +880,7 @@ function _applySpeciesFiltersDOM() {
     }
 
     // Show/hide the card
-    card.style.display = matches ? "" : "none";
+    card.style.display = matches ? '' : 'none';
   });
 }
 
@@ -956,7 +956,7 @@ export async function _onClearSpeciesFilters(event) {
 
   // Show all species cards
   document.querySelectorAll('.species-grid .preview-species').forEach(card => {
-    card.style.display = "";
+    card.style.display = '';
   });
 }
 
@@ -988,18 +988,18 @@ let _nearHumanHouseRulesData = null;
  * Load official Near-Human traits from JSON and optional house rules
  */
 async function loadNearHumanTraitsData() {
-  if (_nearHumanTraitsData) return _nearHumanTraitsData;
+  if (_nearHumanTraitsData) {return _nearHumanTraitsData;}
 
   try {
     // Load official traits
     const response = await fetch('systems/foundryvtt-swse/data/near-human-traits.json');
     if (!response.ok) {
-      SWSELogger.error("CharGen | Failed to load near-human-traits.json");
+      SWSELogger.error('CharGen | Failed to load near-human-traits.json');
       return { traits: [], variants: [] };
     }
 
     _nearHumanTraitsData = await response.json();
-    SWSELogger.log("CharGen | Loaded official Near-Human traits data");
+    SWSELogger.log('CharGen | Loaded official Near-Human traits data');
 
     // Load house rules if available
     await loadNearHumanHouseRules();
@@ -1025,7 +1025,7 @@ async function loadNearHumanTraitsData() {
 
     return _nearHumanTraitsData;
   } catch (err) {
-    SWSELogger.error("CharGen | Error loading near-human-traits.json:", err);
+    SWSELogger.error('CharGen | Error loading near-human-traits.json:', err);
     return { traits: [], variants: [] };
   }
 }
@@ -1034,16 +1034,16 @@ async function loadNearHumanTraitsData() {
  * Load house rules configuration for Near-Human traits
  */
 async function loadNearHumanHouseRules() {
-  if (_nearHumanHouseRulesData) return _nearHumanHouseRulesData;
+  if (_nearHumanHouseRulesData) {return _nearHumanHouseRulesData;}
 
   try {
     const response = await fetch('systems/foundryvtt-swse/data/near-human-houserules.json');
     if (response.ok) {
       _nearHumanHouseRulesData = await response.json();
       if (_nearHumanHouseRulesData.enabled) {
-        SWSELogger.log("CharGen | House rules enabled for Near-Human traits");
+        SWSELogger.log('CharGen | House rules enabled for Near-Human traits');
       } else {
-        SWSELogger.log("CharGen | House rules available but disabled for Near-Human traits");
+        SWSELogger.log('CharGen | House rules available but disabled for Near-Human traits');
       }
       return _nearHumanHouseRulesData;
     } else {
@@ -1051,7 +1051,7 @@ async function loadNearHumanHouseRules() {
       return _nearHumanHouseRulesData;
     }
   } catch (err) {
-    SWSELogger.warn("CharGen | House rules file not found or error loading", err);
+    SWSELogger.warn('CharGen | House rules file not found or error loading', err);
     _nearHumanHouseRulesData = { enabled: false, traits: [], variants: [] };
     return _nearHumanHouseRulesData;
   }
@@ -1061,7 +1061,7 @@ async function loadNearHumanHouseRules() {
  * Get a trait by ID
  */
 function getNearHumanTrait(traitId) {
-  if (!_nearHumanTraitsData) return null;
+  if (!_nearHumanTraitsData) {return null;}
   return _nearHumanTraitsData.traits.find(t => t.id === traitId);
 }
 
@@ -1069,7 +1069,7 @@ function getNearHumanTrait(traitId) {
  * Get a variant by ID
  */
 function getNearHumanVariant(variantId) {
-  if (!_nearHumanTraitsData) return null;
+  if (!_nearHumanTraitsData) {return null;}
   return _nearHumanTraitsData.variants.find(v => v.id === variantId);
 }
 
@@ -1140,8 +1140,8 @@ function updateNearHumanUI(overlay) {
   // Update selected sacrifice display
   const sacrificeDisplay = overlay.find('#selected-sacrifice');
   const sacrificeLabels = {
-    feat: "Lose your bonus Feat at 1st level",
-    skill: "Lose your bonus Trained Skill"
+    feat: 'Lose your bonus Feat at 1st level',
+    skill: 'Lose your bonus Trained Skill'
   };
   if (_nearHumanState.sacrifice) {
     sacrificeDisplay.html(`<strong>${_nearHumanState.sacrifice === 'feat' ? 'Bonus Feat' : 'Bonus Trained Skill'}:</strong> ${sacrificeLabels[_nearHumanState.sacrifice]}`);
@@ -1168,8 +1168,8 @@ function updateNearHumanUI(overlay) {
     overlay.find('#near-human-confirm-btn').prop('disabled', false);
   } else {
     const missing = [];
-    if (!validation.hasTrait) missing.push('trait');
-    if (!validation.hasSacrifice) missing.push('sacrifice');
+    if (!validation.hasTrait) {missing.push('trait');}
+    if (!validation.hasSacrifice) {missing.push('sacrifice');}
     if (_nearHumanState.traitId === 'abilityAdjustment' && !validation.abilityAdjustmentsValid) {
       missing.push('ability adjustments must sum to 0');
     }
@@ -1207,14 +1207,14 @@ export async function _onOpenNearHumanBuilder(event) {
   // Show overlay
   overlay.addClass('active');
 
-  SWSELogger.log("CharGen | Opened Near-Human builder with official SWSE traits");
+  SWSELogger.log('CharGen | Opened Near-Human builder with official SWSE traits');
 }
 
 /**
  * Render traits UI from loaded data
  */
 function _renderNearHumanTraits(overlay) {
-  if (!_nearHumanTraitsData || !_nearHumanTraitsData.traits) return;
+  if (!_nearHumanTraitsData || !_nearHumanTraitsData.traits) {return;}
 
   const traitsList = overlay.find('#traits-list');
   traitsList.empty();
@@ -1270,7 +1270,7 @@ function _renderNearHumanTraits(overlay) {
  * Render variants UI from loaded data
  */
 function _renderNearHumanVariants(overlay) {
-  if (!_nearHumanTraitsData || !_nearHumanTraitsData.variants) return;
+  if (!_nearHumanTraitsData || !_nearHumanTraitsData.variants) {return;}
 
   const variantsList = overlay.find('#variants-list');
   variantsList.empty();
@@ -1358,7 +1358,7 @@ export function _onAdjustNearHumanAbility(event) {
   const ability = button.dataset.ability;
   const isPlus = button.classList.contains('ability-plus-btn');
 
-  if (!ability) return;
+  if (!ability) {return;}
 
   // Adjust the value (allow -1 to +1 range only)
   const current = _nearHumanState.abilityAdjustments[ability] || 0;
@@ -1368,7 +1368,7 @@ export function _onAdjustNearHumanAbility(event) {
   if (newValue >= -1 && newValue <= 1) {
     _nearHumanState.abilityAdjustments[ability] = newValue;
   } else {
-    ui.notifications.warn("Ability adjustments must be between -1 and +1");
+    ui.notifications.warn('Ability adjustments must be between -1 and +1');
     return;
   }
 
@@ -1392,7 +1392,7 @@ export function _onSelectNearHumanTrait(event) {
   const button = event.currentTarget;
   const traitId = button.dataset.traitId;
 
-  if (!traitId) return;
+  if (!traitId) {return;}
 
   // Single selection - only one trait allowed
   const overlay = this.element.find('#near-human-overlay');
@@ -1446,7 +1446,7 @@ export function _onToggleNearHumanVariant(event) {
     } else if (_nearHumanState.variants.length >= 3) {
       // Revert checkbox if limit exceeded
       checkbox.checked = false;
-      ui.notifications.warn("Near-Human variants limited to 3 maximum");
+      ui.notifications.warn('Near-Human variants limited to 3 maximum');
       return;
     }
   } else {
@@ -1467,7 +1467,7 @@ export function _onRandomizeNearHuman(event) {
   const overlay = this.element.find('#near-human-overlay');
 
   if (!_nearHumanTraitsData || !_nearHumanTraitsData.traits || _nearHumanTraitsData.traits.length === 0) {
-    ui.notifications.warn("Trait data not loaded yet");
+    ui.notifications.warn('Trait data not loaded yet');
     return;
   }
 
@@ -1506,7 +1506,7 @@ export function _onRandomizeNearHuman(event) {
   // Update UI display
   updateNearHumanUI(overlay);
 
-  SWSELogger.log("CharGen | Randomized Near-Human selection", _nearHumanState);
+  SWSELogger.log('CharGen | Randomized Near-Human selection', _nearHumanState);
 }
 
 /**
@@ -1518,14 +1518,14 @@ export async function _onConfirmNearHuman(event) {
 
   const validation = validateNearHuman();
   if (!validation.isValid) {
-    ui.notifications.warn("Please select a trait and sacrifice before confirming.");
+    ui.notifications.warn('Please select a trait and sacrifice before confirming.');
     return;
   }
 
   // Get the selected trait
   const selectedTrait = getNearHumanTrait(_nearHumanState.traitId);
   if (!selectedTrait) {
-    ui.notifications.error("Selected trait not found in Near-Human traits data.");
+    ui.notifications.error('Selected trait not found in Near-Human traits data.');
     return;
   }
 
@@ -1533,7 +1533,7 @@ export async function _onConfirmNearHuman(event) {
   const selectedVariants = _nearHumanState.variants.map(vid => getNearHumanVariant(vid)).filter(v => v !== null);
 
   // Store the official Near-Human data per SWSE rules
-  this.characterData.species = "Near-Human";
+  this.characterData.species = 'Near-Human';
   this.characterData.nearHumanData = {
     // Official SWSE Near-Human structure
     trait: {
@@ -1555,7 +1555,7 @@ export async function _onConfirmNearHuman(event) {
 
   // Near-Humans use standard Human traits unless modified by their selected trait
   // For now, apply default human parameters and let character sheet apply trait effects
-  this.characterData.size = "Medium";
+  this.characterData.size = 'Medium';
   this.characterData.speed = 6;
   this.characterData.specialAbilities = [];  // Handled by character sheet
 
@@ -1584,7 +1584,7 @@ export async function _onConfirmNearHuman(event) {
   this._recalcAbilities();
   await this._onNextStep(event);
 
-  SWSELogger.log("CharGen | Confirmed official SWSE Near-Human species", this.characterData.nearHumanData);
+  SWSELogger.log('CharGen | Confirmed official SWSE Near-Human species', this.characterData.nearHumanData);
 }
 
 /**
@@ -1597,7 +1597,7 @@ export function _onCloseNearHumanOverlay(event) {
   const overlay = this.element.find('#near-human-overlay');
   overlay.removeClass('active');
 
-  SWSELogger.log("CharGen | Closed Near-Human builder");
+  SWSELogger.log('CharGen | Closed Near-Human builder');
 }
 
 /**

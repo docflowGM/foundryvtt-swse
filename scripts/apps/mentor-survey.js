@@ -17,29 +17,29 @@ import { seedMentorMemoryFromSurvey, getMentorMemory, setMentorMemory } from '..
  * Each class has 4-5 questions that get voiced by the mentor
  */
 export const MENTOR_VOICED_SURVEY = {
-  "Jedi": {
+  'Jedi': {
     jedi_archetype_path: {
       question: (mentor) => `${mentor.name} asks: "Which path calls to you as a Jedi?"`,
       answers: [
         {
-          text: "Guardian - Frontline protector who endures and controls space",
-          biases: { archetype: "guardian", guardian: 0.4, survivability: 0.3 }
+          text: 'Guardian - Frontline protector who endures and controls space',
+          biases: { archetype: 'guardian', guardian: 0.4, survivability: 0.3 }
         },
         {
-          text: "Consular - Force-focused specialist emphasizing control and mastery",
-          biases: { archetype: "consular", forceFocus: 0.4, control: 0.3 }
+          text: 'Consular - Force-focused specialist emphasizing control and mastery',
+          biases: { archetype: 'consular', forceFocus: 0.4, control: 0.3 }
         },
         {
-          text: "Sentinel - Balanced operative blending combat, awareness, and versatility",
-          biases: { archetype: "sentinel", balance: 0.3 }
+          text: 'Sentinel - Balanced operative blending combat, awareness, and versatility',
+          biases: { archetype: 'sentinel', balance: 0.3 }
         },
         {
-          text: "Duelist - Precision combatant who ends threats decisively",
-          biases: { archetype: "duelist", striker: 0.4, melee: 0.3 }
+          text: 'Duelist - Precision combatant who ends threats decisively',
+          biases: { archetype: 'duelist', striker: 0.4, melee: 0.3 }
         },
         {
-          text: "Healer - Support-focused Force user dedicated to preservation and recovery",
-          biases: { archetype: "healer", forceFocus: 0.3, support: 0.3 }
+          text: 'Healer - Support-focused Force user dedicated to preservation and recovery',
+          biases: { archetype: 'healer', forceFocus: 0.3, support: 0.3 }
         }
       ]
     },
@@ -47,19 +47,19 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "How do you view the Force?"`,
       answers: [
         {
-          text: "The Force is the source of all power - master it first",
+          text: 'The Force is the source of all power - master it first',
           biases: { forceFocus: 0.4 }
         },
         {
-          text: "The Force is a tool to enhance my combat abilities",
+          text: 'The Force is a tool to enhance my combat abilities',
           biases: { melee: 0.2, forceFocus: 0.2 }
         },
         {
-          text: "The Force guides my awareness and perception",
+          text: 'The Force guides my awareness and perception',
           biases: { awareness: 0.3 }
         },
         {
-          text: "Not yet decided",
+          text: 'Not yet decided',
           biases: {}
         }
       ]
@@ -68,19 +68,19 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "In a group, what's your strongest contribution?"`,
       answers: [
         {
-          text: "Standing between allies and harm",
+          text: 'Standing between allies and harm',
           biases: { guardian: 0.3, survivability: 0.2 }
         },
         {
-          text: "Controlling the battle through positioning and precision",
+          text: 'Controlling the battle through positioning and precision',
           biases: { control: 0.3 }
         },
         {
-          text: "Dealing decisive damage to threats",
+          text: 'Dealing decisive damage to threats',
           biases: { striker: 0.3, damage: 0.2 }
         },
         {
-          text: "Supporting and enabling team success",
+          text: 'Supporting and enabling team success',
           biases: { support: 0.3 }
         },
         {
@@ -93,23 +93,23 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "Which path calls to you as you grow in power?"`,
       answers: [
         {
-          text: "Jedi Knight/Master - A great defender of the light and keeper of peace",
-          biases: { order: 0.4, guardian: 0.2, prestigeClass: "Jedi Knight" }
+          text: 'Jedi Knight/Master - A great defender of the light and keeper of peace',
+          biases: { order: 0.4, guardian: 0.2, prestigeClass: 'Jedi Knight' }
         },
         {
-          text: "Sith Apprentice/Lord - Embracing power and dominion through the dark side",
-          biases: { riskTolerance: 0.4, striker: 0.3, prestigeClass: "Sith Apprentice" }
+          text: 'Sith Apprentice/Lord - Embracing power and dominion through the dark side',
+          biases: { riskTolerance: 0.4, striker: 0.3, prestigeClass: 'Sith Apprentice' }
         },
         {
-          text: "Force Adept/Disciple - Independent mastery beyond the Order",
-          biases: { pragmatic: 0.3, balance: 0.3, prestigeClass: "Force Adept" }
+          text: 'Force Adept/Disciple - Independent mastery beyond the Order',
+          biases: { pragmatic: 0.3, balance: 0.3, prestigeClass: 'Force Adept' }
         },
         {
-          text: "Imperial Knight - Serving empire and authority with the Force",
-          biases: { authority: 0.3, control: 0.2, prestigeClass: "Imperial Knight" }
+          text: 'Imperial Knight - Serving empire and authority with the Force',
+          biases: { authority: 0.3, control: 0.2, prestigeClass: 'Imperial Knight' }
         },
         {
-          text: "Still uncertain of my destiny",
+          text: 'Still uncertain of my destiny',
           biases: {}
         }
       ]
@@ -118,47 +118,47 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "What Force disciplines fascinate you most?"`,
       answers: [
         {
-          text: "Telekinesis and moving objects with will alone",
+          text: 'Telekinesis and moving objects with will alone',
           biases: { forceFocus: 0.3, control: 0.2 }
         },
         {
-          text: "Lightning and deadly Force techniques",
+          text: 'Lightning and deadly Force techniques',
           biases: { forceFocus: 0.3, damage: 0.2 }
         },
         {
-          text: "Healing, protection, and defense",
+          text: 'Healing, protection, and defense',
           biases: { forceFocus: 0.2, support: 0.3 }
         },
         {
-          text: "Enhancing physical prowess - speed, strength, resilience",
+          text: 'Enhancing physical prowess - speed, strength, resilience',
           biases: { melee: 0.3, forceFocus: 0.2 }
         },
         {
-          text: "Many different disciplines equally",
+          text: 'Many different disciplines equally',
           biases: { balance: 0.2 }
         }
       ]
     }
   },
 
-  "Soldier": {
+  'Soldier': {
     soldier_archetype_path: {
       question: (mentor) => `${mentor.name} asks: "What's your Soldier's fighting philosophy?"`,
       answers: [
         {
-          text: "Commando - Front-line assault specialist with heavy firepower",
-          biases: { archetype: "commando", striker: 0.4, damage: 0.3 }
+          text: 'Commando - Front-line assault specialist with heavy firepower',
+          biases: { archetype: 'commando', striker: 0.4, damage: 0.3 }
         },
         {
-          text: "Gunner - Master of ranged weapons and tactical positioning",
-          biases: { archetype: "gunner", ranged: 0.4 }
+          text: 'Gunner - Master of ranged weapons and tactical positioning',
+          biases: { archetype: 'gunner', ranged: 0.4 }
         },
         {
-          text: "Guardian - Defender who holds the line and protects allies",
-          biases: { archetype: "guardian", guardian: 0.4, survivability: 0.3 }
+          text: 'Guardian - Defender who holds the line and protects allies',
+          biases: { archetype: 'guardian', guardian: 0.4, survivability: 0.3 }
         },
         {
-          text: "Not quite sure",
+          text: 'Not quite sure',
           biases: {}
         }
       ]
@@ -167,19 +167,19 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "On the battlefield, you prefer to…"`,
       answers: [
         {
-          text: "Charge in and overwhelm enemies with force",
+          text: 'Charge in and overwhelm enemies with force',
           biases: { striker: 0.3, melee: 0.2 }
         },
         {
-          text: "Rain fire from a secure position",
+          text: 'Rain fire from a secure position',
           biases: { ranged: 0.3 }
         },
         {
-          text: "Control the space and protect your team",
+          text: 'Control the space and protect your team',
           biases: { guardian: 0.3, survivability: 0.2 }
         },
         {
-          text: "Adapt to what the moment demands",
+          text: 'Adapt to what the moment demands',
           biases: { balance: 0.2 }
         },
         {
@@ -192,19 +192,19 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "What matters most to you?"`,
       answers: [
         {
-          text: "Dealing massive damage",
+          text: 'Dealing massive damage',
           biases: { damage: 0.3 }
         },
         {
-          text: "Never falling in battle",
+          text: 'Never falling in battle',
           biases: { survivability: 0.3 }
         },
         {
-          text: "Commanding respect and leading others",
+          text: 'Commanding respect and leading others',
           biases: { leadership: 0.3 }
         },
         {
-          text: "Being effective in any situation",
+          text: 'Being effective in any situation',
           biases: { balance: 0.2 }
         }
       ]
@@ -213,24 +213,24 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "What does mastery look like for you?"`,
       answers: [
         {
-          text: "Elite Soldier - Specialized operative at the peak of tactical combat",
-          biases: { striker: 0.3, damage: 0.3, prestigeClass: "Elite Trooper" }
+          text: 'Elite Soldier - Specialized operative at the peak of tactical combat',
+          biases: { striker: 0.3, damage: 0.3, prestigeClass: 'Elite Trooper' }
         },
         {
-          text: "Vanguard - Tank and frontline powerhouse who controls the battlefield",
-          biases: { guardian: 0.4, survivability: 0.2, prestigeClass: "Vanguard" }
+          text: 'Vanguard - Tank and frontline powerhouse who controls the battlefield',
+          biases: { guardian: 0.4, survivability: 0.2, prestigeClass: 'Vanguard' }
         },
         {
-          text: "Ace Pilot - Master of vehicles and aerial/vehicle combat",
-          biases: { striker: 0.3, control: 0.2, prestigeClass: "Ace Pilot" }
+          text: 'Ace Pilot - Master of vehicles and aerial/vehicle combat',
+          biases: { striker: 0.3, control: 0.2, prestigeClass: 'Ace Pilot' }
         },
         {
-          text: "Martial Arts Master - Legendary unarmed and melee combatant",
-          biases: { striker: 0.4, melee: 0.3, prestigeClass: "Martial Arts Master" }
+          text: 'Martial Arts Master - Legendary unarmed and melee combatant',
+          biases: { striker: 0.4, melee: 0.3, prestigeClass: 'Martial Arts Master' }
         },
         {
-          text: "Gladiator - Arena legend whose name strikes fear in hearts",
-          biases: { striker: 0.3, damage: 0.3, prestigeClass: "Gladiator" }
+          text: 'Gladiator - Arena legend whose name strikes fear in hearts',
+          biases: { striker: 0.3, damage: 0.3, prestigeClass: 'Gladiator' }
         }
       ]
     },
@@ -238,47 +238,47 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "Which weapon system do you want to master?"`,
       answers: [
         {
-          text: "Heavy weapons - Rockets, grenades, explosive firepower",
+          text: 'Heavy weapons - Rockets, grenades, explosive firepower',
           biases: { ranged: 0.3, damage: 0.2 }
         },
         {
-          text: "Precision rifles - Accuracy and controlled fire",
+          text: 'Precision rifles - Accuracy and controlled fire',
           biases: { ranged: 0.3, control: 0.2 }
         },
         {
-          text: "Automatic carbines - Rate of fire and suppression",
+          text: 'Automatic carbines - Rate of fire and suppression',
           biases: { ranged: 0.3, mobility: 0.2 }
         },
         {
-          text: "Melee weapons - Blades and hand-to-hand combat",
+          text: 'Melee weapons - Blades and hand-to-hand combat',
           biases: { melee: 0.3, striker: 0.2 }
         },
         {
-          text: "Mastery of all weapon types",
+          text: 'Mastery of all weapon types',
           biases: { balance: 0.2 }
         }
       ]
     }
   },
 
-  "Scout": {
+  'Scout': {
     scout_archetype_path: {
       question: (mentor) => `${mentor.name} asks: "Which Scout archetype calls to you?"`,
       answers: [
         {
-          text: "Tracker - Pursuit specialist who hunts across terrain and finds prey",
-          biases: { archetype: "tracker", striker: 0.4, survival: 0.2 }
+          text: 'Tracker - Pursuit specialist who hunts across terrain and finds prey',
+          biases: { archetype: 'tracker', striker: 0.4, survival: 0.2 }
         },
         {
-          text: "Infiltrator - Stealth operative who moves unseen through hostile territory",
-          biases: { archetype: "infiltrator", controller: 0.4, stealth: 0.3 }
+          text: 'Infiltrator - Stealth operative who moves unseen through hostile territory',
+          biases: { archetype: 'infiltrator', controller: 0.4, stealth: 0.3 }
         },
         {
-          text: "Striker - Swift combatant who hits hard and vanishes",
-          biases: { archetype: "striker", striker: 0.5, mobility: 0.2 }
+          text: 'Striker - Swift combatant who hits hard and vanishes',
+          biases: { archetype: 'striker', striker: 0.5, mobility: 0.2 }
         },
         {
-          text: "Still deciding",
+          text: 'Still deciding',
           biases: {}
         }
       ]
@@ -287,15 +287,15 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "In the field, your strength is…"`,
       answers: [
         {
-          text: "Seeing what others miss - awareness and perception",
+          text: 'Seeing what others miss - awareness and perception',
           biases: { awareness: 0.3 }
         },
         {
-          text: "Moving faster and further than enemies expect",
+          text: 'Moving faster and further than enemies expect',
           biases: { mobility: 0.3 }
         },
         {
-          text: "Finding a way to survive anything",
+          text: 'Finding a way to survive anything',
           biases: { survival: 0.3 }
         },
         {
@@ -312,19 +312,19 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "When you engage, you prefer to…"`,
       answers: [
         {
-          text: "Deal swift, overwhelming damage",
+          text: 'Deal swift, overwhelming damage',
           biases: { striker: 0.3, damage: 0.2 }
         },
         {
-          text: "Attack and reposition before counterattack",
+          text: 'Attack and reposition before counterattack',
           biases: { mobility: 0.3 }
         },
         {
-          text: "Stay hidden and undetected",
+          text: 'Stay hidden and undetected',
           biases: { stealth: 0.3 }
         },
         {
-          text: "Read the situation and adapt",
+          text: 'Read the situation and adapt',
           biases: { balance: 0.2 }
         },
         {
@@ -337,24 +337,24 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "Which prestige calls to you as a Scout?"`,
       answers: [
         {
-          text: "Pathfinder - Master explorer and guide through any wilderness or ruin",
-          biases: { striker: 0.4, survival: 0.3, prestigeClass: "Pathfinder" }
+          text: 'Pathfinder - Master explorer and guide through any wilderness or ruin',
+          biases: { striker: 0.4, survival: 0.3, prestigeClass: 'Pathfinder' }
         },
         {
-          text: "Bounty Hunter - Tracker and professional who brings targets to justice",
-          biases: { striker: 0.4, awareness: 0.2, prestigeClass: "Bounty Hunter" }
+          text: 'Bounty Hunter - Tracker and professional who brings targets to justice',
+          biases: { striker: 0.4, awareness: 0.2, prestigeClass: 'Bounty Hunter' }
         },
         {
-          text: "Infiltrator - Shadow operative moving unseen through enemy territory",
-          biases: { stealth: 0.4, control: 0.2, prestigeClass: "Infiltrator" }
+          text: 'Infiltrator - Shadow operative moving unseen through enemy territory',
+          biases: { stealth: 0.4, control: 0.2, prestigeClass: 'Infiltrator' }
         },
         {
-          text: "Saboteur - Expert in destruction and disabling critical systems",
-          biases: { striker: 0.3, control: 0.2, prestigeClass: "Saboteur" }
+          text: 'Saboteur - Expert in destruction and disabling critical systems',
+          biases: { striker: 0.3, control: 0.2, prestigeClass: 'Saboteur' }
         },
         {
-          text: "Military Engineer - Tactical genius of terrain, fortifications, and combat infrastructure",
-          biases: { control: 0.4, leadership: 0.2, prestigeClass: "Military Engineer" }
+          text: 'Military Engineer - Tactical genius of terrain, fortifications, and combat infrastructure',
+          biases: { control: 0.4, leadership: 0.2, prestigeClass: 'Military Engineer' }
         }
       ]
     },
@@ -362,47 +362,47 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "What kind of Scout expertise fascinates you?"`,
       answers: [
         {
-          text: "Tracking and hunting - Following any prey across any terrain",
+          text: 'Tracking and hunting - Following any prey across any terrain',
           biases: { survival: 0.3, awareness: 0.2 }
         },
         {
-          text: "Infiltration - Bypassing defenses and moving unseen",
+          text: 'Infiltration - Bypassing defenses and moving unseen',
           biases: { stealth: 0.3, control: 0.2 }
         },
         {
-          text: "Swift strikes - Hit fast and hard before enemies react",
+          text: 'Swift strikes - Hit fast and hard before enemies react',
           biases: { striker: 0.3, mobility: 0.2 }
         },
         {
-          text: "Environmental mastery - Excellence in wilderness and dangerous places",
+          text: 'Environmental mastery - Excellence in wilderness and dangerous places',
           biases: { survival: 0.3, awareness: 0.2 }
         },
         {
-          text: "All of the above equally",
+          text: 'All of the above equally',
           biases: { balance: 0.2 }
         }
       ]
     }
   },
 
-  "Scoundrel": {
+  'Scoundrel': {
     scoundrel_archetype_path: {
       question: (mentor) => `${mentor.name} asks: "What kind of Scoundrel speaks to your heart?"`,
       answers: [
         {
-          text: "Charmer - Persuasion specialist who talks their way out of anything",
-          biases: { archetype: "charmer", controller: 0.4, social: 0.3 }
+          text: 'Charmer - Persuasion specialist who talks their way out of anything',
+          biases: { archetype: 'charmer', controller: 0.4, social: 0.3 }
         },
         {
-          text: "Gambler - Risk-taker who makes luck and reads probability better than most",
-          biases: { archetype: "gambler", striker: 0.4 }
+          text: 'Gambler - Risk-taker who makes luck and reads probability better than most',
+          biases: { archetype: 'gambler', striker: 0.4 }
         },
         {
           text: "Thief - Precision specialist who takes what's not theirs with surgical skill",
-          biases: { archetype: "thief", striker: 0.4, stealth: 0.3 }
+          biases: { archetype: 'thief', striker: 0.4, stealth: 0.3 }
         },
         {
-          text: "Still deciding",
+          text: 'Still deciding',
           biases: {}
         }
       ]
@@ -411,19 +411,19 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "Your Scoundrel's strongest tool is…"`,
       answers: [
         {
-          text: "Words and persuasion",
+          text: 'Words and persuasion',
           biases: { social: 0.3 }
         },
         {
-          text: "Speed and precision",
+          text: 'Speed and precision',
           biases: { striker: 0.3 }
         },
         {
-          text: "Stealth and invisibility",
+          text: 'Stealth and invisibility',
           biases: { stealth: 0.3 }
         },
         {
-          text: "Quick thinking and improvisation",
+          text: 'Quick thinking and improvisation',
           biases: { balance: 0.2 }
         },
         {
@@ -436,19 +436,19 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "In a tight spot, you…"`,
       answers: [
         {
-          text: "Talk or manipulate your way out",
+          text: 'Talk or manipulate your way out',
           biases: { social: 0.3 }
         },
         {
-          text: "Make a daring play and hope it works",
+          text: 'Make a daring play and hope it works',
           biases: { riskTolerance: 0.3 }
         },
         {
-          text: "Use preparation and cunning",
+          text: 'Use preparation and cunning',
           biases: { control: 0.3 }
         },
         {
-          text: "Adapt based on the moment",
+          text: 'Adapt based on the moment',
           biases: { balance: 0.2 }
         },
         {
@@ -461,24 +461,24 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "Which prestige speaks to your Scoundrel's heart?"`,
       answers: [
         {
-          text: "Assassin - Master of stealth killing and professional elimination",
-          biases: { stealth: 0.4, striker: 0.3, prestigeClass: "Assassin" }
+          text: 'Assassin - Master of stealth killing and professional elimination',
+          biases: { stealth: 0.4, striker: 0.3, prestigeClass: 'Assassin' }
         },
         {
-          text: "Outlaw - Legendary fugitive feared by authorities across the galaxy",
-          biases: { striker: 0.3, pragmatic: 0.3, prestigeClass: "Outlaw" }
+          text: 'Outlaw - Legendary fugitive feared by authorities across the galaxy',
+          biases: { striker: 0.3, pragmatic: 0.3, prestigeClass: 'Outlaw' }
         },
         {
-          text: "Master Privateer - Pirate captain commanding ships and plundering wealth",
-          biases: { leadership: 0.3, striker: 0.2, prestigeClass: "Master Privateer" }
+          text: 'Master Privateer - Pirate captain commanding ships and plundering wealth',
+          biases: { leadership: 0.3, striker: 0.2, prestigeClass: 'Master Privateer' }
         },
         {
-          text: "Gunslinger - Fastest draw and deadliest shot in known space",
-          biases: { striker: 0.4, ranged: 0.3, prestigeClass: "Gunslinger" }
+          text: 'Gunslinger - Fastest draw and deadliest shot in known space',
+          biases: { striker: 0.4, ranged: 0.3, prestigeClass: 'Gunslinger' }
         },
         {
-          text: "Ace Pilot - Master of ships and aerial combat supremacy",
-          biases: { striker: 0.3, control: 0.2, prestigeClass: "Ace Pilot" }
+          text: 'Ace Pilot - Master of ships and aerial combat supremacy',
+          biases: { striker: 0.3, control: 0.2, prestigeClass: 'Ace Pilot' }
         }
       ]
     },
@@ -486,47 +486,47 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "What's your specialty as a Scoundrel?"`,
       answers: [
         {
-          text: "Charisma and social engineering - Talking my way in and out",
+          text: 'Charisma and social engineering - Talking my way in and out',
           biases: { social: 0.3 }
         },
         {
-          text: "Deception and disguise - Becoming someone else entirely",
+          text: 'Deception and disguise - Becoming someone else entirely',
           biases: { stealth: 0.2, social: 0.2 }
         },
         {
-          text: "Theft and infiltration - Taking what I want undetected",
+          text: 'Theft and infiltration - Taking what I want undetected',
           biases: { stealth: 0.3 }
         },
         {
-          text: "Explosives and direct action - When subtlety fails",
+          text: 'Explosives and direct action - When subtlety fails',
           biases: { striker: 0.3, damage: 0.2 }
         },
         {
-          text: "A mix of all approaches",
+          text: 'A mix of all approaches',
           biases: { balance: 0.2 }
         }
       ]
     }
   },
 
-  "Noble": {
+  'Noble': {
     noble_archetype_path: {
       question: (mentor) => `${mentor.name} asks: "What kind of Noble will you become?"`,
       answers: [
         {
-          text: "Diplomat - Persuasion specialist who builds consensus and finds common ground",
-          biases: { archetype: "diplomat", controller: 0.4, social: 0.3 }
+          text: 'Diplomat - Persuasion specialist who builds consensus and finds common ground',
+          biases: { archetype: 'diplomat', controller: 0.4, social: 0.3 }
         },
         {
-          text: "Leader - Inspirational figure who commands respect and unites others",
-          biases: { archetype: "leader", leadership: 0.4 }
+          text: 'Leader - Inspirational figure who commands respect and unites others',
+          biases: { archetype: 'leader', leadership: 0.4 }
         },
         {
-          text: "Scoundrel - Cunning operator who plays by different rules",
-          biases: { archetype: "scoundrel", striker: 0.3, social: 0.2 }
+          text: 'Scoundrel - Cunning operator who plays by different rules',
+          biases: { archetype: 'scoundrel', striker: 0.3, social: 0.2 }
         },
         {
-          text: "Still finding my path",
+          text: 'Still finding my path',
           biases: {}
         }
       ]
@@ -535,19 +535,19 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "How do you wield your power?"`,
       answers: [
         {
-          text: "Through inspiration and unity",
+          text: 'Through inspiration and unity',
           biases: { leadership: 0.3 }
         },
         {
-          text: "Through negotiation and understanding",
+          text: 'Through negotiation and understanding',
           biases: { social: 0.3 }
         },
         {
-          text: "Through cunning and unconventional means",
+          text: 'Through cunning and unconventional means',
           biases: { control: 0.2, social: 0.2 }
         },
         {
-          text: "Through presence and command",
+          text: 'Through presence and command',
           biases: { authority: 0.3 }
         },
         {
@@ -560,19 +560,19 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "In the chaos of battle, you…"`,
       answers: [
         {
-          text: "Lead from the front and inspire allies",
+          text: 'Lead from the front and inspire allies',
           biases: { leadership: 0.3 }
         },
         {
-          text: "Direct from the back with strategy",
+          text: 'Direct from the back with strategy',
           biases: { control: 0.3 }
         },
         {
-          text: "Support and enable others to succeed",
+          text: 'Support and enable others to succeed',
           biases: { support: 0.3 }
         },
         {
-          text: "Stay out of direct harm if possible",
+          text: 'Stay out of direct harm if possible',
           biases: { avoidance: 0.3 }
         },
         {
@@ -585,24 +585,24 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "Which prestige path calls to you?"`,
       answers: [
         {
-          text: "Officer - Military leader commanding troops and controlling strategy",
-          biases: { leadership: 0.4, guardian: 0.2, prestigeClass: "Officer" }
+          text: 'Officer - Military leader commanding troops and controlling strategy',
+          biases: { leadership: 0.4, guardian: 0.2, prestigeClass: 'Officer' }
         },
         {
-          text: "Melee Duelist - Master combatant of blade and personal prowess",
-          biases: { striker: 0.4, melee: 0.3, prestigeClass: "Melee Duelist" }
+          text: 'Melee Duelist - Master combatant of blade and personal prowess',
+          biases: { striker: 0.4, melee: 0.3, prestigeClass: 'Melee Duelist' }
         },
         {
-          text: "Corporate Agent - Power through business, networks, and resources",
-          biases: { control: 0.3, social: 0.3, prestigeClass: "Corporate Agent" }
+          text: 'Corporate Agent - Power through business, networks, and resources',
+          biases: { control: 0.3, social: 0.3, prestigeClass: 'Corporate Agent' }
         },
         {
-          text: "Crime Lord - Building empire through cunning and shadow networks",
-          biases: { striker: 0.2, control: 0.3, prestigeClass: "Crime Lord" }
+          text: 'Crime Lord - Building empire through cunning and shadow networks',
+          biases: { striker: 0.2, control: 0.3, prestigeClass: 'Crime Lord' }
         },
         {
-          text: "Charlatan - Master manipulator and con artist of legendary skill",
-          biases: { social: 0.4, pragmatic: 0.2, prestigeClass: "Charlatan" }
+          text: 'Charlatan - Master manipulator and con artist of legendary skill',
+          biases: { social: 0.4, pragmatic: 0.2, prestigeClass: 'Charlatan' }
         }
       ]
     },
@@ -610,23 +610,23 @@ export const MENTOR_VOICED_SURVEY = {
       question: (mentor) => `${mentor.name} asks: "What value guides your Noble heart?"`,
       answers: [
         {
-          text: "Honor and duty - Serving a cause greater than myself",
+          text: 'Honor and duty - Serving a cause greater than myself',
           biases: { order: 0.3, leadership: 0.2 }
         },
         {
-          text: "Pragmatism and survival - Power and influence above all",
+          text: 'Pragmatism and survival - Power and influence above all',
           biases: { pragmatic: 0.3, riskTolerance: 0.2 }
         },
         {
-          text: "Building connections - My network is my strength",
+          text: 'Building connections - My network is my strength',
           biases: { social: 0.3, leadership: 0.2 }
         },
         {
-          text: "Personal ambition - Achieving excellence and recognition",
+          text: 'Personal ambition - Achieving excellence and recognition',
           biases: { striker: 0.2, authority: 0.2 }
         },
         {
-          text: "Still discovering who I am",
+          text: 'Still discovering who I am',
           biases: {}
         }
       ]
@@ -645,7 +645,7 @@ export class MentorSurvey {
    * @param {string} playerName - The player's character name
    * @returns {Promise<boolean>} true if player accepts survey, false otherwise
    */
-  static async promptSurvey(actor, mentorName, playerName = "") {
+  static async promptSurvey(actor, mentorName, playerName = '') {
     swseLogger.log(`[MENTOR-SURVEY] promptSurvey: START - Actor: ${actor.id} (${actor.name}), Mentor: "${mentorName}"`);
     const mentor = MENTORS[mentorName];
     if (!mentor) {
@@ -677,7 +677,7 @@ export class MentorSurvey {
                     <h2>${mentor.name}</h2>
                     <p class="mentor-title">${mentor.title}</p>
                     <p class="mentor-greeting">${mentor.description}</p>
-                    ${playerName ? `<p class="mentor-address"><em>"Welcome, ${playerName}. I can help guide your journey."</em></p>` : ""}
+                    ${playerName ? `<p class="mentor-address"><em>"Welcome, ${playerName}. I can help guide your journey."</em></p>` : ''}
                     <p class="survey-prompt">
                       I'd like to understand your character's goals and design philosophy better.
                       Would you be willing to answer a few quick questions? It will help me provide better mentorship.
@@ -697,14 +697,14 @@ export class MentorSurvey {
               },
               decline: {
                 icon: '<i class="fas fa-times"></i>',
-                label: "Maybe later",
+                label: 'Maybe later',
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] promptSurvey: ✓ User clicked DECLINE button`);
                   resolve(false);
                 }
               }
             },
-            default: "accept",
+            default: 'accept',
             render: (html) => {
               swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Dialog render callback fired, html:`, { hasHtml: !!html, length: html?.length });
               // Add typing animation to the greeting
@@ -796,14 +796,14 @@ export class MentorSurvey {
             buttons: {
               continue: {
                 icon: '<i class="fas fa-arrow-right"></i>',
-                label: "Continue",
+                label: 'Continue',
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] showSurvey: User acknowledged skip confirmation`);
                   resolve(null);
                 }
               }
             },
-            default: "continue",
+            default: 'continue',
             render: (html) => {
               // Add typing animation to mentor's skip message
               const skipElement = root?.querySelector?.('.mentor-skip-text');
@@ -843,8 +843,8 @@ export class MentorSurvey {
                   <p class="mentor-greeting" style="margin: 1.5rem 0; font-size: 1.1em;">${mentorGreeting}</p>
                   <p style="margin-top: 1.5rem; color: #999; font-size: 0.9em;">
                     ${isResuming
-                      ? "Take your time. We have all the questions ahead of us still."
-                      : "Take your time answering the questions ahead. There are no wrong answers—only the truth of who you are and who you wish to become."}
+                      ? 'Take your time. We have all the questions ahead of us still.'
+                      : 'Take your time answering the questions ahead. There are no wrong answers—only the truth of who you are and who you wish to become.'}
                   </p>
                 </div>
               </div>
@@ -852,7 +852,7 @@ export class MentorSurvey {
             buttons: {
               begin: {
                 icon: '<i class="fas fa-arrow-right"></i>',
-                label: isResuming ? "Continue Survey" : "Begin Survey",
+                label: isResuming ? 'Continue Survey' : 'Begin Survey',
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] showSurvey: User ${isResuming ? 'resumed' : 'began'} survey`);
                   renderQuestion(0);
@@ -860,14 +860,14 @@ export class MentorSurvey {
               },
               skip: {
                 icon: '<i class="fas fa-forward"></i>',
-                label: "Skip Survey",
+                label: 'Skip Survey',
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] showSurvey: User skipped survey at ${isResuming ? 'resume' : 'introduction'}`);
                   showSkipConfirmation(!isResuming);
                 }
               }
             },
-            default: "begin",
+            default: 'begin',
             render: (html) => {
               // Add typing animation to mentor's greeting
               const root = this.element;
@@ -908,14 +908,14 @@ export class MentorSurvey {
             buttons: {
               finish: {
                 icon: '<i class="fas fa-check"></i>',
-                label: "Continue",
+                label: 'Continue',
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] showSurvey: User finished survey`);
                   resolve(answers);
                 }
               }
             },
-            default: "finish",
+            default: 'finish',
             render: (html) => {
               // Add typing animation to mentor's conclusion
               const root = this.element;
@@ -977,7 +977,7 @@ export class MentorSurvey {
             buttons: {
               next: {
                 icon: '<i class="fas fa-arrow-right"></i>',
-                label: index === questionIds.length - 1 ? "Finish" : "Next",
+                label: index === questionIds.length - 1 ? 'Finish' : 'Next',
                 callback: (html) => {
                   const selectedIndex = parseInt((root?.querySelector?.('input[name="answer"]:checked')?.value ?? null), 10);
                   swseLogger.log(`[MENTOR-SURVEY] showSurvey: Answer selected for question ${index + 1} - index: ${selectedIndex}`);
@@ -992,20 +992,20 @@ export class MentorSurvey {
                     renderQuestion(index + 1);
                   } else {
                     swseLogger.warn(`[MENTOR-SURVEY] WARNING: No answer selected for question ${index + 1}`);
-                    ui.notifications.warn("Please select an answer before continuing.");
+                    ui.notifications.warn('Please select an answer before continuing.');
                   }
                 }
               },
               skip: {
                 icon: '<i class="fas fa-forward"></i>',
-                label: "Skip Survey",
+                label: 'Skip Survey',
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] showSurvey: User skipped survey at question ${index + 1}/${questionIds.length}`);
                   showSkipConfirmation(false);
                 }
               }
             },
-            default: "next",
+            default: 'next',
             render: (html) => {
               // Add typing animation to the question
               const questionElement = root.querySelector('.mentor-question')[0];
@@ -1087,9 +1087,9 @@ export class MentorSurvey {
     swseLogger.log(`[MENTOR-SURVEY] storeSurveyData: Storing biases:`, biases);
 
     const updates = {
-      "system.swse.mentorBuildIntentBiases": biases,
-      "system.swse.mentorSurveyCompleted": true,
-      "system.swse.surveyResponses": surveyAnswers
+      'system.swse.mentorBuildIntentBiases': biases,
+      'system.swse.mentorSurveyCompleted': true,
+      'system.swse.surveyResponses': surveyAnswers
     };
 
     try {
@@ -1139,26 +1139,24 @@ export class MentorSurvey {
 }
 
 
-
 // ============================================================
 // EXPANDED MENTOR DIALOGUE OPTIONS (AUTO-GENERATED)
 // ============================================================
 
 export const EXPANDED_MENTOR_OPTIONS = [
   {
-    key: "strengths",
-    label: "What am I doing well"
+    key: 'strengths',
+    label: 'What am I doing well'
   },
   {
-    key: "weaknesses",
-    label: "What am I neglecting"
+    key: 'weaknesses',
+    label: 'What am I neglecting'
   },
   {
-    key: "next_steps",
-    label: "What should I prepare for next"
+    key: 'next_steps',
+    label: 'What should I prepare for next'
   }
 ];
-
 
 
 // ============================================================
@@ -1173,23 +1171,23 @@ function getContextAwareFallback(actor, mentorKey) {
     null;
 
   switch (mentorKey) {
-    case "story":
+    case 'story':
       if (background) {
         return `Before you ever chose this path, your life was shaped by your background as ${background}. That history still echoes in how you act, what you fear, and what you strive to protect.`;
       }
-      return "Every journey begins before the moment you recognize it. Even if you cannot name it yet, your past still guides you.";
+      return 'Every journey begins before the moment you recognize it. Even if you cannot name it yet, your past still guides you.';
 
-    case "strengths":
-      return "Your recent choices show focus and intent. You are building a foundation that will support you when the path grows difficult.";
+    case 'strengths':
+      return 'Your recent choices show focus and intent. You are building a foundation that will support you when the path grows difficult.';
 
-    case "weaknesses":
-      return "Every path leaves something unattended. Look closely at what you have not invested in — that is often where growth waits.";
+    case 'weaknesses':
+      return 'Every path leaves something unattended. Look closely at what you have not invested in — that is often where growth waits.';
 
-    case "next_steps":
-      return "Think beyond your next choice. Preparation now determines which paths will still be open to you later.";
+    case 'next_steps':
+      return 'Think beyond your next choice. Preparation now determines which paths will still be open to you later.';
 
     default:
-      return "Your path is still forming. With reflection and commitment, clarity will come.";
+      return 'Your path is still forming. With reflection and commitment, clarity will come.';
   }
 }
 
@@ -1206,7 +1204,7 @@ MentorSurvey.getResponse = function(actor, mentorKey, context) {
 
   if (
     !response ||
-    typeof response !== "string" ||
+    typeof response !== 'string' ||
     response.includes("I don't have any specific guidance")
   ) {
     return getContextAwareFallback(actor, mentorKey);
@@ -1222,8 +1220,8 @@ export function maybeOpenMentorSurvey(actor) {
   const hasSurvey = MentorSurvey.hasSurveyBeenCompleted(actor);
   if (!hasSurvey) {
     // Get mentor name from actor metadata or default
-    const mentorName = actor.flags?.swse?.mentorMemory?.mentorName || "Your Mentor";
-    const playerName = actor.name || "";
+    const mentorName = actor.flags?.swse?.mentorMemory?.mentorName || 'Your Mentor';
+    const playerName = actor.name || '';
     return MentorSurvey.promptSurvey(actor, mentorName, playerName);
   }
   return Promise.resolve();

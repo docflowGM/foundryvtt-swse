@@ -19,7 +19,7 @@ export class InsightBus {
    * Initialize all GM modules and register hooks
    */
   static initialize() {
-    if (this._initialized) return;
+    if (this._initialized) {return;}
     this._initialized = true;
 
     // Register all monitor modules
@@ -41,7 +41,7 @@ export class InsightBus {
    * @private
    */
   static _addInsight(insight) {
-    if (!insight || !insight.type) return;
+    if (!insight || !insight.type) {return;}
 
     // Remove older insights of same type (keep latest only per type)
     this._activeInsights = this._activeInsights.filter(i => i.type !== insight.type);

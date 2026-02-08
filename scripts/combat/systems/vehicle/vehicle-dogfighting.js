@@ -14,16 +14,16 @@
  *  - vehicle-calculations (dogfighting modifiers)
  */
 
-import { SWSERoll } from "../../rolls/enhanced-rolls.js";
-import { computeDogfightingModifier } from "./vehicle-calculations.js";
-import { measureSquares, facingTowards } from "./vehicle-shared.js";
+import { SWSERoll } from '../../rolls/enhanced-rolls.js';
+import { computeDogfightingModifier } from './vehicle-calculations.js';
+import { measureSquares, facingTowards } from './vehicle-shared.js';
 
 export class SWSEDogfighting {
 
   static getSelectedVehicles() {
     return [...canvas.tokens.controlled]
       .map(t => t.actor)
-      .filter(a => a?.type === "vehicle");
+      .filter(a => a?.type === 'vehicle');
   }
 
   // ---------------------------------------------------------------------------
@@ -35,13 +35,13 @@ export class SWSEDogfighting {
     const targetToken = target.getActiveTokens()[0];
 
     if (!attackerToken || !targetToken) {
-      ui.notifications.warn("Both attacker and target must be present on canvas.");
+      ui.notifications.warn('Both attacker and target must be present on canvas.');
       return null;
     }
 
     const dist = measureSquares(attackerToken, targetToken);
     if (dist > 6) {
-      ui.notifications.warn("Vehicles must be within 6 squares to enter dogfight range.");
+      ui.notifications.warn('Vehicles must be within 6 squares to enter dogfight range.');
       return null;
     }
 
@@ -116,33 +116,33 @@ export class SWSEDogfighting {
     await this._clearTailingEffect(tailed);
 
     const aeTailer = {
-      label: "Tailing",
-      icon: "icons/svg/arrow-right.svg",
+      label: 'Tailing',
+      icon: 'icons/svg/arrow-right.svg',
       origin: tailed.uuid,
       changes: [
-        { key: "system.attackBonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 2 }
+        { key: 'system.attackBonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 2 }
       ],
-      flags: { swse: { vehicleDogfight: "tailing", target: tailed.id } }
+      flags: { swse: { vehicleDogfight: 'tailing', target: tailed.id } }
     };
 
     const aeTailed = {
-      label: "Being Tailed",
-      icon: "icons/svg/arrow-left.svg",
+      label: 'Being Tailed',
+      icon: 'icons/svg/arrow-left.svg',
       origin: tailer.uuid,
       changes: [
-        { key: "system.defenses.reflex.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -2 }
+        { key: 'system.defenses.reflex.bonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -2 }
       ],
-      flags: { swse: { vehicleDogfight: "tailed", source: tailer.id } }
+      flags: { swse: { vehicleDogfight: 'tailed', source: tailer.id } }
     };
 
-    await tailer.createEmbeddedDocuments("ActiveEffect", [aeTailer]);
-    await tailed.createEmbeddedDocuments("ActiveEffect", [aeTailed]);
+    await tailer.createEmbeddedDocuments('ActiveEffect', [aeTailer]);
+    await tailed.createEmbeddedDocuments('ActiveEffect', [aeTailed]);
   }
 
   static async _clearTailingEffect(actor) {
     const effects = actor.effects.filter(e => e.flags?.swse?.vehicleDogfight);
     if (effects.length) {
-      await actor.deleteEmbeddedDocuments("ActiveEffect", effects.map(e => e.id));
+      await actor.deleteEmbeddedDocuments('ActiveEffect', effects.map(e => e.id));
     }
   }
 
@@ -153,7 +153,7 @@ export class SWSEDogfighting {
   static async _createDogfightMessage(result) {
     const { attacker, defender, atkTotal, defTotal, atkRoll, defRoll, attackerWins, isTie, initiating, breakingFree } = result;
 
-    const verb = initiating ? "Initiates Dogfight" : breakingFree ? "Attempts Break Free" : "Dogfight Maneuver";
+    const verb = initiating ? 'Initiates Dogfight' : breakingFree ? 'Attempts Break Free' : 'Dogfight Maneuver';
 
     let html = `
       <div class="swse-dogfight-card">
@@ -167,8 +167,8 @@ export class SWSEDogfighting {
     if (isTie) {
       html += `<div class="tie-result">Tie — No Change in Position.</div>`;
     } else {
-      html += `<div class="result ${attackerWins ? "success" : "failure"}">
-        ${attackerWins ? attacker.name + " Wins the Maneuver!" : defender.name + " Prevails!"}
+      html += `<div class="result ${attackerWins ? 'success' : 'failure'}">
+        ${attackerWins ? attacker.name + ' Wins the Maneuver!' : defender.name + ' Prevails!'}
       </div>`;
     }
 
@@ -204,8 +204,8 @@ export async function initiateDogfight(initiator, target, options = {}) {
   const initiatorBonus = getPilotBonus(initiator, initiatorPilot) - 5;
   const targetBonus = getPilotBonus(target, targetPilot);
 
-  const initiatorRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${initiatorBonus}`).evaluate({async: true});
-  const targetRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${targetBonus}`).evaluate({async: true});
+  const initiatorRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${initiatorBonus}`).evaluate({ async: true });
+  const targetRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${targetBonus}`).evaluate({ async: true });
 
   const result = {
     initiator,
@@ -251,8 +251,8 @@ export async function attackInDogfight(attacker, defender, weapon, rollAttack) {
   const attackerBonus = getPilotBonus(attacker, attackerPilot);
   const defenderBonus = getPilotBonus(defender, defenderPilot);
 
-  const attackerRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackerBonus}`).evaluate({async: true});
-  const defenderRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${defenderBonus}`).evaluate({async: true});
+  const attackerRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackerBonus}`).evaluate({ async: true });
+  const defenderRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${defenderBonus}`).evaluate({ async: true });
 
   const success = attackerRoll.total > defenderRoll.total;
 
@@ -291,8 +291,8 @@ export async function disengageFromDogfight(vehicle, opponent) {
   const vehicleBonus = getPilotBonus(vehicle, vehiclePilot);
   const opponentBonus = getPilotBonus(opponent, opponentPilot);
 
-  const vehicleRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${vehicleBonus}`).evaluate({async: true});
-  const opponentRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${opponentBonus}`).evaluate({async: true});
+  const vehicleRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${vehicleBonus}`).evaluate({ async: true });
+  const opponentRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${opponentBonus}`).evaluate({ async: true });
 
   const success = vehicleRoll.total > opponentRoll.total;
 
@@ -355,7 +355,7 @@ export async function createDogfightMessage(result) {
   `;
 
   await ChatMessage.create({
-    speaker: ChatMessage.getSpeaker({actor: initiator}),
+    speaker: ChatMessage.getSpeaker({ actor: initiator }),
     content,
     style: CONST.CHAT_MESSAGE_STYLES.OTHER
   });

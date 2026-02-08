@@ -3,8 +3,8 @@
  * Loads and indexes feats with prerequisite validation
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { PrerequisiteChecker } from "../../data/prerequisite-checker.js";
+import { SWSELogger } from '../../utils/logger.js';
+import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 
 export const FeatRegistry = {
   _feats: [],
@@ -14,7 +14,7 @@ export const FeatRegistry = {
    */
   async build() {
     try {
-      const pack = game.packs.get("foundryvtt-swse.feats");
+      const pack = game.packs.get('foundryvtt-swse.feats');
       if (!pack) {
         SWSELogger.warn("Feats compendium 'foundryvtt-swse.feats' not found");
         this._feats = [];
@@ -24,7 +24,7 @@ export const FeatRegistry = {
       this._feats = await pack.getDocuments();
       SWSELogger.log(`FeatRegistry built: ${this._feats.length} feats loaded`);
     } catch (err) {
-      SWSELogger.error("Failed to build FeatRegistry:", err);
+      SWSELogger.error('Failed to build FeatRegistry:', err);
       this._feats = [];
     }
   },
@@ -72,8 +72,8 @@ export const FeatRegistry = {
    */
   getBonusFeats() {
     return this._feats.filter(f => {
-      const type = f.system.type || "";
-      return type.includes("bonus") || type === "feat";
+      const type = f.system.type || '';
+      return type.includes('bonus') || type === 'feat';
     });
   },
 
@@ -82,7 +82,7 @@ export const FeatRegistry = {
    */
   canBeBonusFeatFor(featName, className) {
     const feat = this.get(featName);
-    if (!feat) return false;
+    if (!feat) {return false;}
     // Most feats can be taken as bonus feats, so default to true
     return true;
   },
@@ -95,4 +95,4 @@ export const FeatRegistry = {
   }
 };
 
-SWSELogger.log("FeatRegistry (UI) module loaded");
+SWSELogger.log('FeatRegistry (UI) module loaded');

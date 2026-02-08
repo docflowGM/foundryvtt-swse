@@ -47,7 +47,7 @@ export class TemplateIdMapper {
       // Converted to compendium IDs
       speciesId: await this._getSpeciesId(oldTemplate.species),
       backgroundId: (await this._getBackgroundId(oldTemplate.background))?.id || null,
-      backgroundUuid: (await this._getBackgroundId(oldTemplate.background))?.uuid || "",
+      backgroundUuid: (await this._getBackgroundId(oldTemplate.background))?.uuid || '',
       classId: await this._getClassId(oldTemplate.className || oldTemplate.class),
 
       featIds: oldTemplate.feat
@@ -86,7 +86,7 @@ export class TemplateIdMapper {
    * @returns {Promise<string>} Species ID
    */
   static async _getSpeciesId(speciesName) {
-    if (!speciesName) return null;
+    if (!speciesName) {return null;}
 
     try {
       // Species uses slug format: species-lowercase-name
@@ -128,14 +128,14 @@ export class TemplateIdMapper {
    * @returns {Promise<string>} Background ID
    */
   static async _getBackgroundId(backgroundName) {
-    if (!backgroundName) return null;
+    if (!backgroundName) {return null;}
 
     try {
       const all = await BackgroundRegistry.all();
       const exact = all.find(b => (b.name || '').toLowerCase() === String(backgroundName).toLowerCase());
       if (exact?.id) {
         swseLogger.log(`[TEMPLATE-MAPPER] Background found: ${backgroundName} → ${exact.id}`);
-        return { id: exact.internalId || exact.id, uuid: exact.uuid || "" };
+        return { id: exact.internalId || exact.id, uuid: exact.uuid || '' };
       }
 
       const slug = slugify(backgroundName);
@@ -158,14 +158,14 @@ export class TemplateIdMapper {
    * @returns {Promise<string>} Class ID
    */
   static async _getClassId(className) {
-    if (!className) return null;
+    if (!className) {return null;}
 
     try {
       // Import ClassesDB
       const { ClassesDB } = await import('../data/classes-db.js');
 
       // Try exact match first
-      let classData = ClassesDB.getByName(className);
+      const classData = ClassesDB.getByName(className);
       if (classData) {
         swseLogger.log(`[TEMPLATE-MAPPER] Class found: ${className} → ${classData._id}`);
         return classData._id;
@@ -210,7 +210,7 @@ export class TemplateIdMapper {
    * @returns {Promise<string>} Feat ID
    */
   static async _getFeatId(featName) {
-    if (!featName) return null;
+    if (!featName) {return null;}
 
     try {
       // Try FeatureIndex first (SSOT for indexed features)
@@ -250,14 +250,14 @@ export class TemplateIdMapper {
    * @returns {Promise<string>} Talent ID
    */
   static async _getTalentId(talentName) {
-    if (!talentName) return null;
+    if (!talentName) {return null;}
 
     try {
       // Import TalentDB
       const { TalentDB } = await import('../data/talent-db.js');
 
       // Try exact match first
-      let talent = TalentDB.getByName(talentName);
+      const talent = TalentDB.getByName(talentName);
       if (talent) {
         swseLogger.log(`[TEMPLATE-MAPPER] Talent found: ${talentName} → ${talent._id}`);
         return talent._id;
@@ -302,14 +302,14 @@ export class TemplateIdMapper {
    * @returns {Promise<string>} Talent tree ID
    */
   static async _getTalentTreeId(treeName) {
-    if (!treeName) return null;
+    if (!treeName) {return null;}
 
     try {
       // Import TalentTreeDB
       const { TalentTreeDB } = await import('../data/talent-tree-db.js');
 
       // Try exact match first
-      let tree = TalentTreeDB.getByName(treeName);
+      const tree = TalentTreeDB.getByName(treeName);
       if (tree) {
         swseLogger.log(`[TEMPLATE-MAPPER] Talent tree found: ${treeName} → ${tree._id}`);
         return tree._id;
@@ -354,7 +354,7 @@ export class TemplateIdMapper {
    * @returns {Promise<string>} Force power ID
    */
   static async _getForcePowerId(powerName) {
-    if (!powerName) return null;
+    if (!powerName) {return null;}
 
     try {
       // Try FeatureIndex first (SSOT for indexed features)
@@ -395,14 +395,14 @@ export class TemplateIdMapper {
    * @returns {Promise<string>} Item ID
    */
   static async _getItemId(itemName) {
-    if (!itemName) return null;
+    if (!itemName) {return null;}
 
     try {
       const packNames = ['foundryvtt-swse.equipment', 'foundryvtt-swse.weapons', 'foundryvtt-swse.armor'];
 
       for (const packName of packNames) {
         const pack = game.packs.get(packName);
-        if (!pack) continue;
+        if (!pack) {continue;}
 
         const index = await pack.getIndex();
         const entry = Array.from(index).find(e =>

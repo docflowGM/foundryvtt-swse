@@ -287,10 +287,4 @@ export async function forceAffinityRecalculation(actor) {
  */
 
 // ─────────────────────────────────────────────────────────────
-// EXPORT FOR USE IN OTHER MODULES
-// ─────────────────────────────────────────────────────────────
-
-export {
-  onCharacterLevelUp,
-  forceAffinityRecalculation
-};
+// Note: onCharacterLevelUp and forceAffinityRecalculation are already exported above

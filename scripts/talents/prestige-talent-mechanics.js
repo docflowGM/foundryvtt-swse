@@ -54,7 +54,7 @@ export class PrestigeTalentMechanics {
    * Check if actor meets Force Adept requirements: 3 Force talents
    */
   static hasForceAdeptTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     const forceTalents = actor.items.filter(item =>
       item.type === 'talent' &&
@@ -69,7 +69,7 @@ export class PrestigeTalentMechanics {
    * Get count of Force talents actor has
    */
   static getForceTalentCount(actor) {
-    if (!actor?.items) return 0;
+    if (!actor?.items) {return 0;}
 
     return actor.items.filter(item =>
       item.type === 'talent' &&
@@ -87,7 +87,7 @@ export class PrestigeTalentMechanics {
    * 2 talents from Dark Side Devotee, Force Adept, or Force Item trees
    */
   static hasForceDiscipleRequiredTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     const disccipleTalents = actor.items.filter(item =>
       item.type === 'talent' &&
@@ -110,7 +110,7 @@ export class PrestigeTalentMechanics {
    * Check if actor meets Bounty Hunter requirements: 2 Awareness talents
    */
   static hasBountyHunterTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     const awarenessTalents = actor.items.filter(item =>
       item.type === 'talent' &&
@@ -125,7 +125,7 @@ export class PrestigeTalentMechanics {
    * Get count of Awareness talents
    */
   static getAwarenessTalentCount(actor) {
-    if (!actor?.items) return 0;
+    if (!actor?.items) {return 0;}
 
     return actor.items.filter(item =>
       item.type === 'talent' &&
@@ -142,7 +142,7 @@ export class PrestigeTalentMechanics {
    * Check if actor meets Crime Lord requirements
    */
   static hasCrimeLordTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     const crimeTalents = actor.items.filter(item =>
       item.type === 'talent' &&
@@ -166,7 +166,7 @@ export class PrestigeTalentMechanics {
    * 1 talent from Armor Specialist, Commando, Mercenary, and Weapon Specialist
    */
   static hasEliteTrooperTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     const trees = ['Armor Specialist', 'Commando', 'Mercenary', 'Weapon Specialist'];
 
@@ -188,7 +188,7 @@ export class PrestigeTalentMechanics {
    * Get breakdown of Elite Trooper talent coverage
    */
   static getEliteTrooperTalentStatus(actor) {
-    if (!actor?.items) return [];
+    if (!actor?.items) {return [];}
 
     const trees = ['Armor Specialist', 'Commando', 'Mercenary', 'Weapon Specialist'];
     const status = {};
@@ -211,7 +211,7 @@ export class PrestigeTalentMechanics {
    * Check if actor meets Officer requirements
    */
   static hasOfficerTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     const trees = ['Leadership', 'Commando', 'Veteran'];
 
@@ -237,7 +237,7 @@ export class PrestigeTalentMechanics {
    * Check if actor meets Infiltrator requirements
    */
   static hasInfiltratorTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     const infiltratorTalents = actor.items.filter(item =>
       item.type === 'talent' &&
@@ -258,7 +258,7 @@ export class PrestigeTalentMechanics {
    * Check if actor meets Master Privateer requirements
    */
   static hasMasterPrivateerTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     const privateerTalents = actor.items.filter(item =>
       item.type === 'talent' &&
@@ -294,7 +294,7 @@ export class PrestigeTalentMechanics {
    * Check if actor meets Charlatan requirements
    */
   static hasCharlatanTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     const charlatanTalents = actor.items.filter(item =>
       item.type === 'talent' &&
@@ -317,7 +317,7 @@ export class PrestigeTalentMechanics {
    * Check if actor meets Outlaw requirements
    */
   static hasOutlawTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     const outlawTalents = actor.items.filter(item =>
       item.type === 'talent' &&
@@ -338,7 +338,7 @@ export class PrestigeTalentMechanics {
    * Check if actor meets Droid Commander requirements
    */
   static hasDroidCommanderTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     const commanderTalents = actor.items.filter(item =>
       item.type === 'talent' &&
@@ -359,7 +359,7 @@ export class PrestigeTalentMechanics {
    * Check if actor meets Vanguard requirements
    */
   static hasVanguardTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     const vanguardTalents = actor.items.filter(item =>
       item.type === 'talent' &&
@@ -380,7 +380,7 @@ export class PrestigeTalentMechanics {
    * Check if actor meets Pathfinder requirements
    */
   static hasPathfinderTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     const pathfinderTalents = actor.items.filter(item =>
       item.type === 'talent' &&
@@ -403,7 +403,7 @@ export class PrestigeTalentMechanics {
    * Check if actor meets Martial Arts Master requirements
    */
   static hasMartialArtsMasterTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     const martialTalents = actor.items.filter(item =>
       item.type === 'talent' &&
@@ -424,7 +424,7 @@ export class PrestigeTalentMechanics {
    * Check if actor meets Enforcer requirements
    */
   static hasEnforcerTalents(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     return actor.items.some(item =>
       item.type === 'talent' &&

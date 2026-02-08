@@ -21,7 +21,7 @@ import { registerRerollListeners } from '../species/species-reroll-handler.js';
  * Called from index.js during the init hook - executes immediately since init is already running
  */
 export function registerInitHooks() {
-    SWSELogger.log("Registering SWSE hook categories");
+    SWSELogger.log('Registering SWSE hook categories');
 
     // Register all hook categories - called directly since we're already in init hook
     registerCombatHooks();
@@ -31,7 +31,7 @@ export function registerInitHooks() {
     // Activate all registered hooks
     HooksRegistry.activateAll();
 
-    SWSELogger.log("SWSE Hooks activated");
+    SWSELogger.log('SWSE Hooks activated');
 
     /**
      * Ready hook - runs once after all systems are initialized
@@ -40,7 +40,7 @@ export function registerInitHooks() {
     Hooks.once('ready', async function() {
         // Initialize species reroll system
         registerRerollListeners();
-        SWSELogger.log("Species Trait Engine initialized");
+        SWSELogger.log('Species Trait Engine initialized');
 
         // Log hook statistics
         const stats = HooksRegistry.getStats();

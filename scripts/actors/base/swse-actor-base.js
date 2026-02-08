@@ -16,21 +16,21 @@ export class SWSEActorBase extends Actor {
   /* -------------------------------------------------------------------------- */
 
   getFlag(scope, key) {
-    if (scope === "swse") {
-      const val = super.getFlag("foundryvtt-swse", key);
-      if (val !== undefined) return val;
+    if (scope === 'swse') {
+      const val = super.getFlag('foundryvtt-swse', key);
+      if (val !== undefined) {return val;}
       return this.flags?.swse?.[key];
     }
     return super.getFlag(scope, key);
   }
 
   async setFlag(scope, key, value) {
-    if (scope === "swse") scope = "foundryvtt-swse";
+    if (scope === 'swse') {scope = 'foundryvtt-swse';}
     return super.setFlag(scope, key, value);
   }
 
   async unsetFlag(scope, key) {
-    if (scope === "swse") scope = "foundryvtt-swse";
+    if (scope === 'swse') {scope = 'foundryvtt-swse';}
     return super.unsetFlag(scope, key);
   }
 
@@ -53,15 +53,15 @@ export class SWSEActorBase extends Actor {
 
   _applyActiveEffects() {
     const effects = this.effects ?? [];
-    if (!effects.length) return;
+    if (!effects.length) {return;}
 
     for (const effect of effects) {
-      if (effect.disabled || !effect.updates) continue;
+      if (effect.disabled || !effect.updates) {continue;}
 
       for (const [path, config] of Object.entries(effect.updates)) {
-        if (!config || typeof config.value === "undefined") continue;
+        if (!config || typeof config.value === 'undefined') {continue;}
 
-        const mode = config.mode ?? "ADD";
+        const mode = config.mode ?? 'ADD';
         const value = config.value;
 
         let current = foundry.utils.getProperty(this, path);
@@ -73,11 +73,11 @@ export class SWSEActorBase extends Actor {
         let result = current;
 
         switch (mode) {
-          case "ADD": result = current + value; break;
-          case "MULTIPLY": result = current * value; break;
-          case "OVERRIDE": result = value; break;
-          case "BASE":
-            if (current === 0 || current === null) result = value;
+          case 'ADD': result = current + value; break;
+          case 'MULTIPLY': result = current * value; break;
+          case 'OVERRIDE': result = value; break;
+          case 'BASE':
+            if (current === 0 || current === null) {result = value;}
             break;
         }
 
@@ -91,7 +91,7 @@ export class SWSEActorBase extends Actor {
   /* -------------------------------------------------------------------------- */
 
   async applyDamage(amount, options = {}) {
-    if (typeof amount !== "number" || amount < 0) return;
+    if (typeof amount !== 'number' || amount < 0) {return;}
 
     const hp = this.system.hp;
     const isDroid = this.system.traits?.isDroid === true;
@@ -103,14 +103,14 @@ export class SWSEActorBase extends Actor {
     if (hp.bonus > 0 && !options.ignoreBonus) {
       const used = Math.min(hp.bonus, remaining);
       remaining -= used;
-      updates["system.hp.bonus"] = hp.bonus - used;
+      updates['system.hp.bonus'] = hp.bonus - used;
     }
 
     // Temp HP (from Active Effects)
     if (hp.temp > 0 && !options.ignoreTemp) {
       const used = Math.min(hp.temp, remaining);
       remaining -= used;
-      updates["system.hp.temp"] = hp.temp - used;
+      updates['system.hp.temp'] = hp.temp - used;
     }
 
     // Real HP
@@ -120,15 +120,15 @@ export class SWSEActorBase extends Actor {
       // Droid destruction rule
       if (isDroid && options.checkThreshold !== false) {
         if (amount >= this.system.damageThreshold) {
-          updates["system.hp.value"] = -1;
+          updates['system.hp.value'] = -1;
           await ActorEngine.updateActor(this, updates, { diff: true });
           ui.notifications.error(`${this.name} is DESTROYED!`);
           return amount;
         }
       }
 
-      if (!isDroid) newHP = Math.max(0, newHP);
-      updates["system.hp.value"] = newHP;
+      if (!isDroid) {newHP = Math.max(0, newHP);}
+      updates['system.hp.value'] = newHP;
     }
 
     await ActorEngine.updateActor(this, updates, { diff: true });
@@ -136,7 +136,7 @@ export class SWSEActorBase extends Actor {
   }
 
   async applyHealing(amount, options = {}) {
-    if (typeof amount !== "number" || amount < 0) return 0;
+    if (typeof amount !== 'number' || amount < 0) {return 0;}
 
     const hp = this.system.hp;
     const isDroid = this.system.traits?.isDroid === true;
@@ -146,10 +146,10 @@ export class SWSEActorBase extends Actor {
       return 0;
     }
 
-    if (hp.value <= -1) return 0;
+    if (hp.value <= -1) {return 0;}
 
     const newHP = Math.min(hp.max, hp.value + amount);
-    await ActorEngine.updateActor(this, { "system.hp.value": newHP }, { diff: true });
+    await ActorEngine.updateActor(this, { 'system.hp.value': newHP }, { diff: true });
     return newHP - hp.value;
   }
 
@@ -166,7 +166,7 @@ export class SWSEActorBase extends Actor {
    * @param {object} [options={}] - forwarded to updateEmbeddedDocuments
    */
   async updateOwnedItem(item, changes, options = {}) {
-    if (!item) return null;
+    if (!item) {return null;}
 
     // Unowned items (directory) update normally.
     if (!item.isOwned || item.parent?.id !== this.id) {
@@ -206,7 +206,7 @@ export class SWSEActorBase extends Actor {
    * Shields consume one charge on activation and reset SR to max.
    */
   async activateItem(item, options = {}) {
-    if (!item) return null;
+    if (!item) {return null;}
 
     // Shield special-case (armorType === 'shield')
     if (item.type === 'armor' && item.system?.armorType === 'shield') {
@@ -239,7 +239,7 @@ export class SWSEActorBase extends Actor {
   }
 
   async deactivateItem(item, options = {}) {
-    if (!item) return null;
+    if (!item) {return null;}
 
     const updated = await this.updateOwnedItem(item, { 'system.activated': false }, options);
     ui.notifications.info(`${item.name} deactivated!`);
@@ -274,7 +274,7 @@ export class SWSEActorBase extends Actor {
    * @param {object} [options={}] - Use options (type-specific)
    */
   async useItem(item, options = {}) {
-    if (!item) return null;
+    if (!item) {return null;}
 
     switch (item.type) {
       case 'weapon':
@@ -359,10 +359,10 @@ export class SWSEActorBase extends Actor {
     }
 
     // Decrement Destiny Points
-    await ActorEngine.updateActor(this, { "system.destinyPoints.value": dp.value - 1 });
+    await ActorEngine.updateActor(this, { 'system.destinyPoints.value': dp.value - 1 });
 
     // Fire hook for other systems to respond
-    Hooks.callAll("swse.destinyPointSpent", this, type, options);
+    Hooks.callAll('swse.destinyPointSpent', this, type, options);
 
     // Create chat message
     this._createDestinyPointMessage(type, options);
@@ -376,7 +376,7 @@ export class SWSEActorBase extends Actor {
    */
   _createDestinyPointMessage(type, options = {}) {
     const effectLabel = options.effectLabel || type;
-    const reason = options.reason || "used a Destiny Point";
+    const reason = options.reason || 'used a Destiny Point';
 
     const message = `
       <div class="destiny-point-message">
@@ -390,7 +390,7 @@ export class SWSEActorBase extends Actor {
       actor: this,
       content: message,
       style: CONST.CHAT_MESSAGE_STYLES.OOC,
-      flags: { swse: { source: "destinyPoint" } }
+      flags: { swse: { source: 'destinyPoint' } }
     });
   }
 
@@ -442,7 +442,7 @@ export class SWSEActorBase extends Actor {
       await SWSEChat.postHTML({
         actor: this,
         content: message,
-        flags: { swse: { source: "forcePoint" } }
+        flags: { swse: { source: 'forcePoint' } }
       });
     }
 
@@ -459,7 +459,7 @@ export class SWSEActorBase extends Actor {
    */
   async regainForcePoints(amount = null) {
     const fp = this.system.forcePoints;
-    if (!fp) return 0;
+    if (!fp) {return 0;}
 
     const newValue = amount !== null
       ? Math.min(fp.max, fp.value + amount)

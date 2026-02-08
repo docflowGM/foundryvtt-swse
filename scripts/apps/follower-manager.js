@@ -69,7 +69,7 @@ export class FollowerManager {
      */
     static async applyEnhancement(owner, talent) {
         const enhancement = this.ENHANCEMENT_TALENTS[talent.name];
-        if (!enhancement) return;
+        if (!enhancement) {return;}
 
         // Get all followers
         const followers = FollowerCreator.getFollowers(owner);
@@ -171,7 +171,7 @@ export class FollowerManager {
      */
     static async removeEnhancement(owner, talent) {
         const enhancement = this.ENHANCEMENT_TALENTS[talent.name];
-        if (!enhancement) return;
+        if (!enhancement) {return;}
 
         // Get all followers
         const followers = FollowerCreator.getFollowers(owner);
@@ -232,7 +232,7 @@ export class FollowerManager {
 
         for (const follower of followers) {
             const followerFlags = follower.flags?.swse?.follower;
-            if (!followerFlags) continue;
+            if (!followerFlags) {continue;}
 
             // Update level
             await follower.update({
@@ -291,10 +291,10 @@ export class FollowerManager {
      */
     static getFollowerEnhancements(follower) {
         const ownerFlags = follower.flags?.swse?.follower;
-        if (!ownerFlags) return [];
+        if (!ownerFlags) {return [];}
 
         const owner = game.actors.get(ownerFlags.ownerId);
-        if (!owner) return [];
+        if (!owner) {return [];}
 
         const enhancements = [];
         for (const talent of owner.items.filter(i => i.type === 'talent')) {

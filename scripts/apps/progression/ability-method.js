@@ -7,21 +7,21 @@ export class SWSEAbilityMethod {
     const container = document.querySelector(containerSelector) ?? document.body;
     try {
       await foundry.applications.handlebars.loadTemplates(['systems/foundryvtt-swse/templates/apps/progression/attribute-method.hbs']);
-      const html = await renderTemplate('systems/foundryvtt-swse/templates/apps/progression/attribute-method.hbs', { title: "Choose attribute method" });
+      const html = await renderTemplate('systems/foundryvtt-swse/templates/apps/progression/attribute-method.hbs', { title: 'Choose attribute method' });
       const wrapper = document.createElement('div');
       wrapper.className = 'swse-attribute-method-wrapper';
       wrapper.innerHTML = html;
       container.prepend(wrapper);
 
-      wrapper.querySelectorAll('.btn-select').forEach(btn=>{
-        btn.addEventListener('click', (ev)=>{
+      wrapper.querySelectorAll('.btn-select').forEach(btn => {
+        btn.addEventListener('click', (ev) => {
           const method = btn.dataset.method;
           Hooks.call('swse:attribute-method:selected', method);
         });
       });
 
-    } catch(e) {
-      console.warn("SWSE AbilityMethod mount failed:", e);
+    } catch (e) {
+      console.warn('SWSE AbilityMethod mount failed:', e);
     }
   }
 }

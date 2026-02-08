@@ -18,21 +18,21 @@ export const BACKGROUND_SUGGESTION_TIERS = {
 };
 
 export const BACKGROUND_TIER_REASONS = {
-  3: "Perfect fit for your class",
-  2.5: "Excellent synergy with your abilities and build",
-  2: "Strong thematic alignment with your abilities or build",
-  1.5: "Fits your species and narrative",
-  1: "Offers a relevant bonus language",
-  0: "Valid option"
+  3: 'Perfect fit for your class',
+  2.5: 'Excellent synergy with your abilities and build',
+  2: 'Strong thematic alignment with your abilities or build',
+  1.5: 'Fits your species and narrative',
+  1: 'Offers a relevant bonus language',
+  0: 'Valid option'
 };
 
 export const BACKGROUND_TIER_ICONS = {
-  3: "fas fa-star suggestion-prestige",
-  2.5: "fas fa-fire suggestion-synergy",
-  2: "fas fa-lightbulb suggestion-theme",
-  1.5: "fas fa-dna suggestion-species",
-  1: "fas fa-language suggestion-language",
-  0: ""
+  3: 'fas fa-star suggestion-prestige',
+  2.5: 'fas fa-fire suggestion-synergy',
+  2: 'fas fa-lightbulb suggestion-theme',
+  1.5: 'fas fa-dna suggestion-species',
+  1: 'fas fa-language suggestion-language',
+  0: ''
 };
 
 export class BackgroundSuggestionEngine {
@@ -44,7 +44,7 @@ export class BackgroundSuggestionEngine {
    * @returns {Promise<Array>} Backgrounds with suggestion metadata
    */
   static async suggestBackgrounds(backgrounds, actor, pendingData = {}) {
-    if (!backgrounds || backgrounds.length === 0) return [];
+    if (!backgrounds || backgrounds.length === 0) {return [];}
 
     try {
       // Build character profile from actor + pending data
@@ -189,9 +189,9 @@ export class BackgroundSuggestionEngine {
     }
 
     // Apply mentor biases to influence scoring
-    if (profile.mentorBiases?.control) score += 0.2;
-    if (profile.mentorBiases?.pragmatic) score += 0.15;
-    if (profile.mentorBiases?.riskTolerance) score += 0.1;
+    if (profile.mentorBiases?.control) {score += 0.2;}
+    if (profile.mentorBiases?.pragmatic) {score += 0.15;}
+    if (profile.mentorBiases?.riskTolerance) {score += 0.1;}
 
     return {
       tier,
@@ -259,7 +259,7 @@ export class BackgroundSuggestionEngine {
    */
   static _checkThemeAlignment(background, mentorBiases) {
     // Simple check: does background have relevant skills for mentor's emphasized areas
-    if (!background.relevantSkills) return false;
+    if (!background.relevantSkills) {return false;}
 
     const hasSocialBias = mentorBiases.social || mentorBiases.persuasion;
     const hasStealthBias = mentorBiases.stealth;
@@ -267,9 +267,9 @@ export class BackgroundSuggestionEngine {
 
     const skillSet = background.relevantSkills.map(s => s.toLowerCase()).join(' ');
 
-    if (hasSocialBias && (skillSet.includes('persuasion') || skillSet.includes('deception'))) return true;
-    if (hasStealthBias && skillSet.includes('stealth')) return true;
-    if (hasTechBias && (skillSet.includes('mechanics') || skillSet.includes('computer'))) return true;
+    if (hasSocialBias && (skillSet.includes('persuasion') || skillSet.includes('deception'))) {return true;}
+    if (hasStealthBias && skillSet.includes('stealth')) {return true;}
+    if (hasTechBias && (skillSet.includes('mechanics') || skillSet.includes('computer'))) {return true;}
 
     return Object.keys(mentorBiases).some(bias => skillSet.includes(bias.toLowerCase()));
   }
@@ -309,7 +309,7 @@ export class BackgroundSuggestionEngine {
   static sortBySuggestion(backgrounds) {
     return backgrounds.sort((a, b) => {
       const tierDiff = (b.suggestion?.tier || 0) - (a.suggestion?.tier || 0);
-      if (tierDiff !== 0) return tierDiff;
+      if (tierDiff !== 0) {return tierDiff;}
       return (b.suggestion?.score || 0) - (a.suggestion?.score || 0);
     });
   }
