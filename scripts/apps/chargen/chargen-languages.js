@@ -19,8 +19,6 @@ async function _syncLanguageIds() {
   this.characterData.languageIds = ids;
   this.characterData.languageUuids = uuids;
 }
-  this.characterData.languageIds = ids;
-}
 
 /**
  * Load languages data from JSON file
