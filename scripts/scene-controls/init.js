@@ -14,23 +14,23 @@ export function initializeSceneControls() {
   // Register control groups
   sceneControlRegistry.registerGroup('force', {
     title: 'Force Abilities',
-    icon: 'fas fa-burst'
+    icon: 'fa-solid fa-burst'
   });
 
   sceneControlRegistry.registerGroup('tech', {
     title: 'Tech & Gadgets',
-    icon: 'fas fa-microchip'
+    icon: 'fa-solid fa-microchip'
   });
 
   sceneControlRegistry.registerGroup('combat', {
     title: 'Combat Actions',
-    icon: 'fas fa-crosshairs'
+    icon: 'fa-solid fa-crosshairs'
   });
 
   // Register Force tools
   sceneControlRegistry.registerTool('force', 'force-push', {
     title: 'Force Push',
-    icon: 'fas fa-hand-paper',
+    icon: 'fa-solid fa-hand-paper',
     onClick: () => console.log('Force Push activated'),
     visible: () => _hasSelectedToken(),
     enabled: () => _isPhase(SWSE_PHASES.NARRATIVE) && _hasSelectedToken()
@@ -38,7 +38,7 @@ export function initializeSceneControls() {
 
   sceneControlRegistry.registerTool('force', 'force-move', {
     title: 'Force Move',
-    icon: 'fas fa-arrow-up',
+    icon: 'fa-solid fa-arrow-up',
     onClick: () => console.log('Force Move activated'),
     visible: () => _hasSelectedToken(),
     enabled: () => _isPhase(SWSE_PHASES.NARRATIVE) && _hasSelectedToken()
@@ -46,7 +46,7 @@ export function initializeSceneControls() {
 
   sceneControlRegistry.registerTool('force', 'force-sense', {
     title: 'Force Sense',
-    icon: 'fas fa-eye',
+    icon: 'fa-solid fa-eye',
     onClick: () => console.log('Force Sense activated'),
     visible: () => _hasSelectedToken(),
     enabled: () => _hasSelectedToken()
@@ -55,7 +55,7 @@ export function initializeSceneControls() {
   // Register Tech tools
   sceneControlRegistry.registerTool('tech', 'slice', {
     title: 'Slice Terminal',
-    icon: 'fas fa-lock-open',
+    icon: 'fa-solid fa-lock-open',
     onClick: () => console.log('Slice activated'),
     visible: () => _hasSelectedToken(),
     enabled: () => _isPhase(SWSE_PHASES.NARRATIVE) && _hasSelectedToken()
@@ -63,7 +63,7 @@ export function initializeSceneControls() {
 
   sceneControlRegistry.registerTool('tech', 'deploy-gadget', {
     title: 'Deploy Gadget',
-    icon: 'fas fa-cube',
+    icon: 'fa-solid fa-cube',
     onClick: () => console.log('Deploy Gadget activated'),
     visible: () => _hasSelectedToken(),
     enabled: () => _hasSelectedToken()
@@ -72,7 +72,7 @@ export function initializeSceneControls() {
   // Register Combat tools (combat phase only)
   sceneControlRegistry.registerTool('combat', 'aim', {
     title: 'Aim',
-    icon: 'fas fa-bullseye',
+    icon: 'fa-solid fa-bullseye',
     onClick: () => console.log('Aim activated'),
     visible: () => _isPhase(SWSE_PHASES.COMBAT),
     enabled: () => _isPhase(SWSE_PHASES.COMBAT) && _hasSelectedToken()
@@ -80,7 +80,7 @@ export function initializeSceneControls() {
 
   sceneControlRegistry.registerTool('combat', 'full-attack', {
     title: 'Full Attack',
-    icon: 'fas fa-burst',
+    icon: 'fa-solid fa-burst',
     onClick: () => console.log('Full Attack activated'),
     visible: () => _isPhase(SWSE_PHASES.COMBAT),
     enabled: () => _isPhase(SWSE_PHASES.COMBAT) && _hasSelectedToken()
