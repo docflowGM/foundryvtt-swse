@@ -1,0 +1,141 @@
+{{!-- SWSE Action Palette - Radial Menu Template --}}
+<div class="action-palette-wrapper">
+
+  {{!-- Header with mode toggle --}}
+  <div class="action-palette-header">
+    <span class="mode-label">{{#if (eq mode 'gm')}}GM ZONE{{else}}PLAYER ZONE{{/if}}</span>
+    {{#if isGM}}
+      <button class="toggle-mode-btn" data-action="toggleMode" title="Switch mode">
+        <i class="fa-solid fa-shuffle"></i>
+      </button>
+    {{/if}}
+  </div>
+
+  {{!-- Player Mode: Placeholder + Radial --}}
+  {{#if (eq mode 'player')}}
+    {{#if showPlaceholder}}
+      <div class="action-palette-placeholder">
+        <i class="fa-solid fa-circle-info"></i>
+        <p>Select a token to act</p>
+      </div>
+    {{else}}
+      {{!-- Radial menu for players --}}
+      <div class="action-palette-radial">
+        <div class="radial-center">
+          <i class="fa-solid fa-gamepad"></i>
+        </div>
+
+        {{!-- Tool buttons arranged in circle --}}
+        <div class="radial-tools" data-tool-count="{{tools.length}}">
+          {{#each tools}}
+            <button
+              class="radial-tool {{#unless enabled}}disabled{{/unless}}"
+              data-tool="{{this.name}}"
+              data-action="executeTool"
+              {{#unless enabled}}disabled{{/unless}}
+              title="{{this.title}}"
+            >
+              <i class="{{this.icon}}"></i>
+              <span class="tool-label">{{this.title}}</span>
+            </button>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+  {{/if}}
+
+  {{!-- GM Mode: Zones with customizable slots --}}
+  {{#if (eq mode 'gm')}}
+    <div class="action-palette-zones">
+
+      {{!-- Zone 1: NPC/Encounter Spawners --}}
+      <div class="ap-zone">
+        <div class="ap-zone-title">
+          <i class="fa-solid fa-users ap-zone-icon"></i>
+          Spawners
+        </div>
+        {{#each gmZones.spawners}}
+          <div class="ap-slot" data-zone="spawners" data-slot="{{@index}}" data-action="executeSlot">
+            {{#if this.item}}
+              <span class="ap-slot-item">
+                <i class="{{this.icon}}"></i>
+                {{this.label}}
+              </span>
+              <button class="ap-slot-remove" data-action="removeSlot" data-zone="spawners" data-slot="{{@index}}" title="Clear">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            {{else}}
+              <span class="ap-slot-item" style="opacity: 0.5;">
+                <i class="fa-solid fa-circle-plus"></i>
+                Drag NPC here
+              </span>
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+
+      {{!-- Zone 2: Scene Commands --}}
+      <div class="ap-zone">
+        <div class="ap-zone-title">
+          <i class="fa-solid fa-sliders ap-zone-icon"></i>
+          Commands
+        </div>
+        {{#each gmZones.commands}}
+          <div class="ap-slot" data-zone="commands" data-slot="{{@index}}" data-action="executeSlot">
+            {{#if this.item}}
+              <span class="ap-slot-item">
+                <i class="{{this.icon}}"></i>
+                {{this.label}}
+              </span>
+              <button class="ap-slot-remove" data-action="removeSlot" data-zone="commands" data-slot="{{@index}}" title="Clear">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            {{else}}
+              <span class="ap-slot-item" style="opacity: 0.5;">
+                <i class="fa-solid fa-circle-plus"></i>
+                Drag command here
+              </span>
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+
+      {{!-- Zone 3: Utilities & Insight Hooks --}}
+      <div class="ap-zone">
+        <div class="ap-zone-title">
+          <i class="fa-solid fa-wand-magic-sparkles ap-zone-icon"></i>
+          Utilities
+        </div>
+        {{#each gmZones.utilities}}
+          <div class="ap-slot" data-zone="utilities" data-slot="{{@index}}" data-action="executeSlot">
+            {{#if this.item}}
+              <span class="ap-slot-item">
+                <i class="{{this.icon}}"></i>
+                {{this.label}}
+              </span>
+              <button class="ap-slot-remove" data-action="removeSlot" data-zone="utilities" data-slot="{{@index}}" title="Clear">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            {{else}}
+              <span class="ap-slot-item" style="opacity: 0.5;">
+                <i class="fa-solid fa-circle-plus"></i>
+                Drag utility here
+              </span>
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+
+      {{!-- GM Suggestions summary --}}
+      {{#if suggestionsAvailable}}
+        <div class="action-palette-suggestions">
+          <button class="open-panel-btn" data-action="openGMPanel" title="Open detailed suggestions">
+            <i class="fa-solid fa-lightbulb"></i>
+            Suggestions Available
+          </button>
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
+
+</div>

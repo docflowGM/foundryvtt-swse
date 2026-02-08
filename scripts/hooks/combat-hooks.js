@@ -75,7 +75,7 @@ export function registerCombatHooks() {
 
 /**
  * Handle combat creation
- * Initializes combat tracking
+ * Initializes combat tracking and emits phase change
  *
  * @param {Combat} combat - The combat being created
  * @param {Object} options - Creation options
@@ -83,6 +83,8 @@ export function registerCombatHooks() {
  */
 function handleCombatCreate(combat, options, userId) {
     SWSELogger.log("Combat created:", combat.name);
+    // Emit phase-changed hook so scene controls can re-filter
+    Hooks.callAll('swse:phase-changed', 'combat');
 }
 
 /**
@@ -193,4 +195,7 @@ async function handleCombatEnd(combat, options, userId) {
             SWSELogger.error(`Error resetting species traits for ${actor.name}:`, err);
         }
     }
+
+    // Emit phase-changed hook so scene controls can re-filter
+    Hooks.callAll('swse:phase-changed', 'narrative');
 }
