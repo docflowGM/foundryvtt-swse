@@ -253,6 +253,9 @@ import { registerInitHooks, registerDestinyHooks } from './scripts/hooks/index.j
 import { SystemInitHooks } from './scripts/progression/hooks/system-init-hooks.js';
 import { registerSuggestionSettings } from './scripts/engine/suggestion-settings.js';
 import { registerSuggestionHooks } from './scripts/hooks/suggestion-hooks.js';
+import { registerCombatSuggestionHooks, requestCombatEvaluation } from './scripts/suggestion-engine/combat-hooks.js';
+import { CombatSuggestionEngine } from './scripts/suggestion-engine/combat-engine.js';
+import { testHarness } from './scripts/suggestion-engine/test-harness.js';
 import { SuggestionService } from './scripts/engine/SuggestionService.js';
 
 /* ==========================================================================
@@ -328,6 +331,11 @@ Hooks.once('init', async function () {
        GM Suggestion System (attached to SuggestionService)
        --------------------------------------------------------- */
     initializeGMSuggestions();
+
+    /* ---------------------------------------------------------
+       Combat Suggestion Hooks (tactical evaluation triggers)
+       --------------------------------------------------------- */
+    registerCombatSuggestionHooks();
 
     /* ---------------------------------------------------------
        Theme System Initialization (Early)
@@ -578,6 +586,9 @@ Hooks.once('ready', async function () {
         validateUserInput,
         hookMonitor,
         compendiumLoader,
+        CombatSuggestionEngine,
+        requestCombatEvaluation,
+        testHarness,
         ...SWSEAPI,  // Public API (frozen)
         ...game.swse
     });
