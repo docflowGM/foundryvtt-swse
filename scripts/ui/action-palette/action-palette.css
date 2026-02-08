@@ -4,9 +4,17 @@
  * Floating, draggable, resizable with circular tool arrangement
  */
 
+@font-face {
+  font-family: "Aurebesh";
+  src: url("systems/foundryvtt-swse/assets/fonts/Starjedi.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --ap-transition: 0.2s ease-out;
   --ap-radius: 10px;
+  --swse-aurebesh: "Aurebesh", monospace;
 }
 
 #swse-action-palette {
@@ -40,6 +48,10 @@
 .mode-label {
   flex: 1;
   text-align: left;
+  font-family: var(--swse-aurebesh);
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-weight: 700;
 }
 
 .toggle-mode-btn {
