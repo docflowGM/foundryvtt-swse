@@ -74,7 +74,6 @@ export class MentorSuggestionDialog extends Dialog {
             root?.querySelector?.('button[data-button="dismiss"]')?.classList?.add('btn-secondary');
 
             // Animate mentor text with typing effect
-            const root = html instanceof HTMLElement ? html : html?.[0];
             const introElement = root?.querySelector?.('.mentor-intro');
             const explanationElement = root.querySelector('.mentor-explanation')[0];
 
