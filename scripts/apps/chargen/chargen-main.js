@@ -2413,7 +2413,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       case 'background':
         // Background is optional in SWSE rules, allow skipping
         break;
-      case 'skills':
+      case 'skills': {
         const trainedCount = Object.values(this.characterData.skills || {}).filter(s => s.trained).length;
         const requiredCount = this.characterData.trainedSkillsAllowed || 0;
         if (trainedCount < requiredCount) {
@@ -2425,10 +2425,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           return false;
         }
         break;
+      }
       case 'languages':
         // Languages validation handled by auto-skip logic in _onNextStep
         break;
-      case 'feats':
+      case 'feats': {
         const selectedFeatsCount = (this.characterData.feats || []).length;
         const requiredFeats = this.characterData.featsRequired || 1;
         if (selectedFeatsCount < requiredFeats) {
@@ -2436,7 +2437,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           return false;
         }
         break;
-      case 'talents':
+      }
+      case 'talents': {
         const selectedTalentsCount = (this.characterData.talents || []).length;
         const requiredTalents = this.characterData.talentsRequired || 1;
         if (selectedTalentsCount < requiredTalents) {
@@ -2444,7 +2446,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           return false;
         }
         break;
-      case 'force-powers':
+      }
+      case 'force-powers': {
         const selectedPowersCount = (this.characterData.powers || []).length;
         const requiredPowers = this._getForcePowersNeeded();
         if (selectedPowersCount < requiredPowers) {
@@ -2452,7 +2455,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           return false;
         }
         break;
-      case 'starship-maneuvers':
+      }
+      case 'starship-maneuvers': {
         const selectedManeuversCount = (this.characterData.starshipManeuvers || []).length;
         const requiredManeuvers = this._getStarshipManeuversNeeded();
         if (selectedManeuversCount < requiredManeuvers) {
@@ -2460,6 +2464,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           return false;
         }
         break;
+      }
       case 'summary':
         // Auto-select maximum credits if formula exists but not chosen
         if (this.characterData.startingCreditsFormula && !this.characterData.creditsChosen) {

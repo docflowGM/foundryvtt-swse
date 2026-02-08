@@ -66,17 +66,17 @@ export function _recalcDefenses() {
 
   // Ensure each defense type has classBonus
   if (!this.characterData.defenses.fort) {
-    this.characterData.defenses.fort = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10, ability: 'con' };
+    this.characterData.defenses.fort = { base: 10, armor: 0, abilityMod: 0, classBonus: 0, misc: 0, total: 10, ability: 'con' };
   } else if (!this.characterData.defenses.fort.ability) {
     this.characterData.defenses.fort.ability = 'con';
   }
   if (!this.characterData.defenses.reflex) {
-    this.characterData.defenses.reflex = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 12, ability: 'dex' };
+    this.characterData.defenses.reflex = { base: 10, armor: 0, abilityMod: 0, classBonus: 0, misc: 0, total: 12, ability: 'dex' };
   } else if (!this.characterData.defenses.reflex.ability) {
     this.characterData.defenses.reflex.ability = 'dex';
   }
   if (!this.characterData.defenses.will) {
-    this.characterData.defenses.will = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 11, ability: 'wis' };
+    this.characterData.defenses.will = { base: 10, armor: 0, abilityMod: 0, classBonus: 0, misc: 0, total: 11, ability: 'wis' };
   } else if (!this.characterData.defenses.will.ability) {
     this.characterData.defenses.will.ability = 'wis';
   }

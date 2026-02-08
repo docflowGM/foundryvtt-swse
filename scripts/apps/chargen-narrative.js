@@ -456,10 +456,10 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
             const node = talentGraph[talentName];
             if (node) {
               node.prereqs.forEach(prereq => {
-                root.querySelectorAll(`[data-talent-name=\"${prereq}\"]`).forEach(el => el.classList.add('highlight-prereq'));
+                root.querySelectorAll(`[data-talent-name="${prereq}"]`).forEach(el => el.classList.add('highlight-prereq'));
               });
               node.dependents.forEach(dep => {
-                root.querySelectorAll(`[data-talent-name=\"${dep}\"]`).forEach(el => el.classList.add('highlight-dependent'));
+                root.querySelectorAll(`[data-talent-name="${dep}"]`).forEach(el => el.classList.add('highlight-dependent'));
               });
             }
           });

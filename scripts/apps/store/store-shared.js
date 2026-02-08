@@ -24,7 +24,7 @@ export function normalizeNumber(value) {
   let cleaned = s.replace(/[,¢$€£₹]/g,'');
   cleaned = cleaned.replace(/\s*cr\b/i,'');
   cleaned = cleaned.replace(/\(.+\)/g,'');
-  cleaned = cleaned.replace(/[^\d.\-]/g,'');
+  cleaned = cleaned.replace(/[^\d.-]/g,'');
   if (cleaned === '' || cleaned === '-' || cleaned === '—') {return null;}
   const n = Number(cleaned);
   return Number.isFinite(n) ? n : null;

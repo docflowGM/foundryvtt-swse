@@ -34,7 +34,7 @@ function normalizeMode(token) {
 
 function extractMaxVelocity(raw) {
   const s = String(raw || '');
-  const m = s.match(/Maximum\s+Velocity\s*[:=]?\s*([^\)\];]+)/i);
+  const m = s.match(/Maximum\s+Velocity\s*[:=]?\s*([^)];]+)/i);
   return m ? m[1].trim() : null;
 }
 
