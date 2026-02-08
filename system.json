@@ -74,7 +74,8 @@
     "styles/sheets/vehicle-level3.css",
     "styles/npc-level3.css",
     "styles/species/species-traits.css",
-    "styles/components/talent-abilities.css"
+    "styles/components/talent-abilities.css",
+    "styles/gm/suggestion-panel.css"
   ],
   "languages": [
     {

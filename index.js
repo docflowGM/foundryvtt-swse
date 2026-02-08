@@ -247,11 +247,15 @@ import { CanvasUIManager } from './scripts/canvas-ui/canvas-ui-manager.js';
 import { DropHandler } from './scripts/drag-drop/drop-handler.js';
 import './scripts/chat/chat-commands.js';
 import { initializeSceneControls } from './scripts/scene-controls/init.js';
+import { initializeGMSuggestions } from './scripts/gm-suggestions/init.js';
 
 import { registerInitHooks, registerDestinyHooks } from './scripts/hooks/index.js';
 import { SystemInitHooks } from './scripts/progression/hooks/system-init-hooks.js';
 import { registerSuggestionSettings } from './scripts/engine/suggestion-settings.js';
 import { registerSuggestionHooks } from './scripts/hooks/suggestion-hooks.js';
+import { registerCombatSuggestionHooks, requestCombatEvaluation } from './scripts/suggestion-engine/combat-hooks.js';
+import { CombatSuggestionEngine } from './scripts/suggestion-engine/combat-engine.js';
+import { testHarness } from './scripts/suggestion-engine/test-harness.js';
 import { SuggestionService } from './scripts/engine/SuggestionService.js';
 
 /* ==========================================================================
@@ -322,6 +326,16 @@ Hooks.once('init', async function () {
        Scene Control Initialization (Foundry v13 native)
        --------------------------------------------------------- */
     initializeSceneControls();
+
+    /* ---------------------------------------------------------
+       GM Suggestion System (attached to SuggestionService)
+       --------------------------------------------------------- */
+    initializeGMSuggestions();
+
+    /* ---------------------------------------------------------
+       Combat Suggestion Hooks (tactical evaluation triggers)
+       --------------------------------------------------------- */
+    registerCombatSuggestionHooks();
 
     /* ---------------------------------------------------------
        Theme System Initialization (Early)
@@ -572,6 +586,9 @@ Hooks.once('ready', async function () {
         validateUserInput,
         hookMonitor,
         compendiumLoader,
+        CombatSuggestionEngine,
+        requestCombatEvaluation,
+        testHarness,
         ...SWSEAPI,  // Public API (frozen)
         ...game.swse
     });
