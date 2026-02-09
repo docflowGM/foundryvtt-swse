@@ -125,7 +125,7 @@ import { ThemeLoader } from './scripts/theme-loader.js';
 import { initializeSceneControls } from './scripts/scene-controls/init.js';
 import { initializeActionPalette } from './scripts/ui/action-palette/init.js';
 import { initializeGMSuggestions } from './scripts/gm-suggestions/init.js';
-import { MentorTranslationSettings } from './scripts/ui/dialogue/mentor-translation-settings.js';
+import { MentorTranslationSettings } from './scripts/mentor/mentor-translation-settings.js';
 
 // ---- suggestions / discovery ----
 import { SuggestionService } from './scripts/engine/SuggestionService.js';

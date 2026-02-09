@@ -14,7 +14,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { CLASS_SYNERGY_DATA } from './ClassSuggestionEngine.js';
-import { MentorSurvey } from '../apps/mentor-survey.js';
+import { MentorSurvey } from '../mentor/mentor-survey.js';
 
 // ──────────────────────────────────────────────────────────────
 // BUILD THEME DEFINITIONS

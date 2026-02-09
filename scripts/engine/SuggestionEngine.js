@@ -27,7 +27,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { BuildIntent } from './BuildIntent.js';
-import { MentorSurvey } from '../apps/mentor-survey.js';
+import { MentorSurvey } from '../mentor/mentor-survey.js';
 import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies.js';
 import { PrerequisiteChecker } from '../data/prerequisite-checker.js';
 import { WishlistEngine } from './WishlistEngine.js';

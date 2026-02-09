@@ -9,7 +9,7 @@ import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-co
 import { ClassesDB } from '../../data/classes-db.js';
 import { SuggestionService } from '../../engine/SuggestionService.js';
 import { BuildIntent } from '../../engine/BuildIntent.js';
-import { MentorSurvey } from '../mentor-survey.js';
+import { MentorSurvey } from '../mentor/mentor-survey.js';
 
 /**
  * Calculate feat/talent suggestions during chargen

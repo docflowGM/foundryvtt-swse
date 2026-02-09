@@ -74,9 +74,9 @@
  *   - silence: No response
  */
 
-import { INTENSITY_ATOMS, getIntensityScale, incrementIntensity, decrementIntensity } from './mentor-intensity-atoms.js';
-import { isValidReasonKey } from './mentor-reason-renderer.js';
-import { logMentorDecision, isMentorLoggingEnabled } from './mentor-decision-logger.js';
+import { INTENSITY_ATOMS, getIntensityScale, incrementIntensity, decrementIntensity } from '../../mentor/mentor-intensity-atoms.js';
+import { isValidReasonKey } from '../../mentor/mentor-reason-renderer.js';
+import { logMentorDecision, isMentorLoggingEnabled } from '../../mentor/mentor-decision-logger.js';
 
 export const JUDGMENT_ATOMS = {
   // Recognition & Observation

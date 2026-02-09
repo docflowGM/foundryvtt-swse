@@ -10,7 +10,7 @@
 import { MENTORS } from './mentor-dialogues.js';
 import { TypingAnimation } from '../utils/typing-animation.js';
 import { swseLogger } from '../utils/logger.js';
-import { seedMentorMemoryFromSurvey, getMentorMemory, setMentorMemory } from '../engine/mentor-memory.js';
+import { seedMentorMemoryFromSurvey, getMentorMemory, setMentorMemory } from './mentor-memory.js';
 
 /**
  * Survey questions with mentor voice variants

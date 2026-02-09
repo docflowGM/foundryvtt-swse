@@ -12,7 +12,7 @@
  * Much simpler, much more scalable.
  */
 
-import { MentorDialogueResponses } from '../engine/mentor-dialogue-responses.js';
+import { MentorDialogueResponses } from './mentor-dialogue-responses.js';
 import { SWSELogger } from '../utils/logger.js';
 
 export class MentorVoiceFilterV2 {

@@ -15,10 +15,10 @@ import { BuildIntent } from '../engine/BuildIntent.js';
 import { SWSELogger } from '../utils/logger.js';
 import { MentorVoiceFilterV2 } from './mentor-voice-filter-v2.js';
 import { MentorDialogueV2Integration } from './mentor-dialogue-v2-integration.js';
-import { MentorStoryResolver } from '../engine/mentor-story-resolver.js';
-import { selectMentorResponse, buildJudgmentContext } from '../mentor/mentor-judgment-engine.js';
-import { renderJudgmentAtom } from '../mentor/mentor-judgment-renderer.js';
-import { getReasonTexts } from '../mentor/mentor-reason-renderer.js';
+import { MentorStoryResolver } from './mentor-story-resolver.js';
+import { selectMentorResponse, buildJudgmentContext } from '../engine/systems/mentor/mentor-judgment-engine.js';
+import { renderJudgmentAtom } from './mentor-judgment-renderer.js';
+import { getReasonTexts } from './mentor-reason-renderer.js';
 
 // V2 API base class
 import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';

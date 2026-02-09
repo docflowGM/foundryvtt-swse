@@ -12,7 +12,7 @@ import {
   getTalentTrees,
   validateClassDocument
 } from './chargen-property-accessor.js';
-import { MentorSurvey } from '../mentor-survey.js';
+import { MentorSurvey } from '../mentor/mentor-survey.js';
 import { isBaseClass } from '../levelup/levelup-shared.js';
 
 // SSOT Data Layer

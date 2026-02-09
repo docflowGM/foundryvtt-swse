@@ -13,10 +13,10 @@ import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from '
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { BuildIntent } from '../../engine/BuildIntent.js';
 import { SuggestionService } from '../../engine/SuggestionService.js';
-import { MentorSurvey } from '../mentor-survey.js';
-import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
-import { MENTORS } from '../mentor-dialogues.js';
-import { getMentorMemory, setMentorMemory, setTargetClass } from '../../engine/mentor-memory.js';
+import { MentorSurvey } from '../mentor/mentor-survey.js';
+import { MentorSuggestionDialog } from '../mentor/mentor-suggestion-dialog.js';
+import { MENTORS } from '../mentor/mentor-dialogues.js';
+import { getMentorMemory, setMentorMemory, setTargetClass } from '../../mentor/mentor-memory.js';
 import { BackgroundRegistry } from '../../registries/background-registry.js';
 import { LanguageRegistry } from '../../registries/language-registry.js';
 
