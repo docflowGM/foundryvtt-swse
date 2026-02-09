@@ -332,7 +332,8 @@ Hooks.on('darkSideSavantTriggered', async (actor) => {
         select: {
           label: 'Return to Suite',
           callback: async (html) => {
-            const powerIdToReturn = html.find('#power-select').val();
+            const root = html?.[0] ?? html;
+            const powerIdToReturn = root?.querySelector?.('#power-select')?.value ?? null;
             await DarkSideTalentMechanics.completeDarkSideSavantSelection(
               actor,
               powerIdToReturn,
