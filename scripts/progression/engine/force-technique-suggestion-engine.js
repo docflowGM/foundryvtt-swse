@@ -12,6 +12,14 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import {
+  PRESTIGE_ARCHETYPE_MAP,
+  BASE_ARCHETYPE_MAP,
+  DEFAULT_ARCHETYPE,
+  FORCE_TECHNIQUE_ARCHETYPE_THRESHOLDS,
+  FORCE_TECHNIQUE_NO_POWER_PENALTY,
+  ITEM_TYPES
+} from './suggestion-constants.js';
 
 export const FORCE_TECHNIQUE_TIERS = {
   POWER_SYNERGY_HIGH: 5,    // Known power + strong archetype match
@@ -141,18 +149,18 @@ export class ForceTechniqueSuggestionEngine {
       }
 
       // Set tier based on synergy strength
-      if (archetypeBonus >= 1.5) {
+      if (archetypeBonus >= FORCE_TECHNIQUE_ARCHETYPE_THRESHOLDS.HIGH_SYNERGY_MIN) {
         tier = FORCE_TECHNIQUE_TIERS.POWER_SYNERGY_HIGH;
-      } else if (archetypeBonus >= 1.2) {
+      } else if (archetypeBonus >= FORCE_TECHNIQUE_ARCHETYPE_THRESHOLDS.MED_SYNERGY_MIN) {
         tier = FORCE_TECHNIQUE_TIERS.POWER_SYNERGY_MED;
-      } else if (archetypeBonus > 1.0) {
+      } else if (archetypeBonus > FORCE_TECHNIQUE_ARCHETYPE_THRESHOLDS.LOW_SYNERGY_MIN) {
         tier = FORCE_TECHNIQUE_TIERS.POWER_SYNERGY_LOW;
       } else {
         tier = FORCE_TECHNIQUE_TIERS.POWER_SYNERGY_LOW;
       }
     } else {
       // No known power: apply heavy penalty but check archetype
-      score *= 0.5;
+      score *= FORCE_TECHNIQUE_NO_POWER_PENALTY;
       reasons.push(`Requires known Force Power`);
 
       const archetypeBonus = archBias[archetype] || 1.0;
@@ -182,7 +190,7 @@ export class ForceTechniqueSuggestionEngine {
     if (actor) {
       // From full actor (levelup/play mode)
       actor.items
-        .filter(item => item.type === 'forcepower')
+        .filter(item => item.type === ITEM_TYPES.FORCE_POWER)
         .forEach(power => powers.push(power.name));
     }
 
@@ -208,7 +216,7 @@ export class ForceTechniqueSuggestionEngine {
       return this._getArchetypeForBaseClass(baseClass);
     }
 
-    return 'neutral';
+    return DEFAULT_ARCHETYPE;
   }
 
   /**
@@ -216,30 +224,7 @@ export class ForceTechniqueSuggestionEngine {
    * @private
    */
   static _getArchetypeForPrestigeClass(prestige = '') {
-    const prestigeArchetypeMap = {
-      'Jedi Guardian': 'jedi_guardian',
-      'Jedi Sentinel': 'jedi_sentinel',
-      'Jedi Consular': 'jedi_consular',
-      'Jedi Ace Pilot': 'jedi_ace_pilot',
-      'Jedi Healer': 'jedi_healer',
-      'Jedi Battlemaster': 'jedi_battlemaster',
-      'Jedi Shadow': 'jedi_shadow',
-      'Jedi Weapon Master': 'jedi_weapon_master',
-      'Jedi Mentor': 'jedi_mentor',
-      'Jedi Seer': 'jedi_seer',
-      'Jedi Archivist': 'jedi_archivist',
-      'Sith Marauder': 'sith_marauder',
-      'Sith Assassin': 'sith_assassin',
-      'Sith Acolyte': 'sith_acolyte',
-      'Sith Alchemist': 'sith_alchemist',
-      'Sith Mastermind': 'sith_mastermind',
-      'Sith Juggernaut': 'sith_juggernaut',
-      'Emperor\'s Shield': 'emperors_shield',
-      'Imperial Knight Errant': 'imperial_knight_errant',
-      'Imperial Knight Inquisitor': 'imperial_knight_inquisitor'
-    };
-
-    return prestigeArchetypeMap[prestige] || 'neutral';
+    return PRESTIGE_ARCHETYPE_MAP[prestige] || DEFAULT_ARCHETYPE;
   }
 
   /**
@@ -247,15 +232,7 @@ export class ForceTechniqueSuggestionEngine {
    * @private
    */
   static _getArchetypeForBaseClass(baseClass = '') {
-    const baseArchetypeMap = {
-      'Jedi': 'jedi_consular',
-      'Soldier': 'jedi_guardian',
-      'Scout': 'jedi_sentinel',
-      'Scoundrel': 'jedi_shadow',
-      'Noble': 'jedi_mentor'
-    };
-
-    return baseArchetypeMap[baseClass] || 'neutral';
+    return BASE_ARCHETYPE_MAP[baseClass] || DEFAULT_ARCHETYPE;
   }
 
   /**

@@ -4,6 +4,13 @@
  * Suggests based on Piloting skill, maneuver complexity, and combat role
  */
 
+import {
+  FORCE_IDENTIFIERS,
+  MANEUVER_NAMES,
+  MANEUVER_SCORING,
+  MANEUVER_SKILL_THRESHOLDS
+} from './suggestion-constants.js';
+
 export class StarshipManeuverSuggestionEngine {
   static MANEUVER_DIFFICULTY = {
     'Evasive Action': 1,
@@ -67,7 +74,7 @@ export class StarshipManeuverSuggestionEngine {
     // Get pilot's Piloting skill bonus
     const pilotingSkill = actor.system?.skills?.piloting?.bonus || 0;
     const wisdomMod = actor.system?.abilities?.wis?.mod || 0;
-    const hasForceTraining = actor.items?.some(i => i.name === 'Use the Force' || i.system?.tags?.includes('force_trained'));
+    const hasForceTraining = actor.items?.some(i => i.name === FORCE_IDENTIFIERS.USE_THE_FORCE || i.system?.tags?.includes(FORCE_IDENTIFIERS.FORCE_TRAINED_TAG));
 
     // Score each available maneuver
     const scored = available.map(maneuver => {
@@ -82,28 +89,28 @@ export class StarshipManeuverSuggestionEngine {
       score += (5 - difficulty);
 
       // Skill affinity: pilots with high Piloting bonus can handle harder maneuvers
-      if (pilotingSkill >= difficulty * 2) {
-        score += 3;
+      if (pilotingSkill >= difficulty * MANEUVER_SCORING.SKILL_THRESHOLD_MULTIPLIER) {
+        score += MANEUVER_SCORING.SKILL_AFFINITY_BOOST;
       }
 
       // Formation maneuvers for higher-level pilots
-      if (name.includes('Formation') && pilotingSkill >= 4) {
-        score += 2;
+      if (name.includes(MANEUVER_NAMES.FORMATION) && pilotingSkill >= MANEUVER_SKILL_THRESHOLDS.HIGH_PILOTING_MIN) {
+        score += MANEUVER_SCORING.FORMATION_BOOST;
       }
 
       // Force maneuvers only if Force trained
-      if (name === 'Target Sense' && !hasForceTraining) {
-        score -= 10; // Heavily discourage if not qualified
+      if (name === MANEUVER_NAMES.TARGET_SENSE && !hasForceTraining) {
+        score += MANEUVER_SCORING.TARGET_SENSE_PENALTY; // Heavily discourage if not qualified
       }
 
       // Evasive action is always useful for low-level pilots
-      if (name === 'Evasive Action' && pilotingSkill < 3) {
-        score += 3;
+      if (name === MANEUVER_NAMES.EVASIVE_ACTION && pilotingSkill < MANEUVER_SKILL_THRESHOLDS.LOW_PILOTING_MAX) {
+        score += MANEUVER_SCORING.EVASIVE_BOOST;
       }
 
       // Encourage defensive maneuvers based on WIS
-      if (name.includes('Deflector') && wisdomMod > 0) {
-        score += wisdomMod;
+      if (name.includes(MANEUVER_NAMES.DEFLECTOR) && wisdomMod > 0) {
+        score += wisdomMod * MANEUVER_SCORING.DEFLECTOR_BOOST_PER_WIS;
       }
 
       return { maneuver, score };

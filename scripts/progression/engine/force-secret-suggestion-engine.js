@@ -14,6 +14,15 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import {
+  PRESTIGE_ARCHETYPE_MAP,
+  BASE_ARCHETYPE_MAP,
+  DEFAULT_ARCHETYPE,
+  FORCE_SECRET_ARCHETYPE_THRESHOLDS,
+  FORCE_SECRET_INSTITUTION_THRESHOLDS,
+  FORCE_SECRET_DSP_THRESHOLDS,
+  ITEM_TYPES
+} from './suggestion-constants.js';
 
 export const FORCE_SECRET_TIERS = {
   PERFECT_FIT: 6,          // All conditions met + high archetype match
@@ -166,13 +175,13 @@ export class ForceSecretSuggestionEngine {
     const archetypeBonus = archetypeBias[archetype] || 1.0;
     score *= archetypeBonus;
 
-    if (archetypeBonus >= 1.7) {
+    if (archetypeBonus >= FORCE_SECRET_ARCHETYPE_THRESHOLDS.PERFECT_FIT_MIN) {
       tier = FORCE_SECRET_TIERS.PERFECT_FIT;
       reasons.push(`${archetype} path perfected`);
-    } else if (archetypeBonus >= 1.4) {
+    } else if (archetypeBonus >= FORCE_SECRET_ARCHETYPE_THRESHOLDS.EXCELLENT_MATCH_MIN) {
       tier = FORCE_SECRET_TIERS.EXCELLENT_MATCH;
       reasons.push(`Strong ${archetype} alignment`);
-    } else if (archetypeBonus > 1.0) {
+    } else if (archetypeBonus > FORCE_SECRET_ARCHETYPE_THRESHOLDS.GOOD_MATCH_MIN) {
       tier = Math.max(tier, FORCE_SECRET_TIERS.GOOD_MATCH);
       reasons.push(`${archetype} compatible`);
     }
@@ -181,10 +190,10 @@ export class ForceSecretSuggestionEngine {
     const institutionBonus = institutionBias[institution] || 1.0;
     score *= institutionBonus;
 
-    if (institutionBonus < 0.5) {
-      score *= 0.3; // Heavily discourage anti-alignment (dark secret for Jedi, etc)
+    if (institutionBonus < FORCE_SECRET_INSTITUTION_THRESHOLDS.ANTI_ALIGNMENT_MAX) {
+      score *= FORCE_SECRET_INSTITUTION_THRESHOLDS.ANTI_ALIGNMENT_PENALTY; // Heavily discourage anti-alignment (dark secret for Jedi, etc)
       reasons.push(`⚠️ Warning: Conflicts with ${institution} philosophy`);
-    } else if (institutionBonus > 1.2) {
+    } else if (institutionBonus > FORCE_SECRET_INSTITUTION_THRESHOLDS.ALIGNED_MIN) {
       reasons.push(`Aligned with ${institution} teachings`);
     }
 
@@ -206,7 +215,7 @@ export class ForceSecretSuggestionEngine {
     if (actor) {
       // From full actor (levelup/play mode)
       actor.items
-        .filter(item => item.type === 'forcepower')
+        .filter(item => item.type === ITEM_TYPES.FORCE_POWER)
         .forEach(power => powers.push(power.name));
     }
 
@@ -223,7 +232,7 @@ export class ForceSecretSuggestionEngine {
     if (actor) {
       // From full actor (levelup/play mode)
       actor.items
-        .filter(item => item.type === 'feat' && item.system?.featType === 'force')
+        .filter(item => item.type === ITEM_TYPES.FEAT && item.system?.featType === ITEM_TYPES.FEAT_TYPE_FORCE)
         .forEach(tech => techniques.push(tech.name));
     }
 
@@ -249,7 +258,7 @@ export class ForceSecretSuggestionEngine {
       return this._getArchetypeForBaseClass(baseClass);
     }
 
-    return 'neutral';
+    return DEFAULT_ARCHETYPE;
   }
 
   /**
@@ -268,9 +277,9 @@ export class ForceSecretSuggestionEngine {
 
     // Infer from dark side points
     const dspPercent = maxDSP > 0 ? dsp / maxDSP : 0;
-    if (dspPercent > 0.6) {return 'sith';}
-    if (dspPercent < 0.3) {return 'jedi';}
-    return 'neutral';
+    if (dspPercent > FORCE_SECRET_DSP_THRESHOLDS.SITH_RATIO) {return 'sith';}
+    if (dspPercent < FORCE_SECRET_DSP_THRESHOLDS.JEDI_RATIO) {return 'jedi';}
+    return DEFAULT_ARCHETYPE;
   }
 
   /**
@@ -278,30 +287,7 @@ export class ForceSecretSuggestionEngine {
    * @private
    */
   static _getArchetypeForPrestigeClass(prestige = '') {
-    const prestigeArchetypeMap = {
-      'Jedi Guardian': 'jedi_guardian',
-      'Jedi Sentinel': 'jedi_sentinel',
-      'Jedi Consular': 'jedi_consular',
-      'Jedi Ace Pilot': 'jedi_ace_pilot',
-      'Jedi Healer': 'jedi_healer',
-      'Jedi Battlemaster': 'jedi_battlemaster',
-      'Jedi Shadow': 'jedi_shadow',
-      'Jedi Weapon Master': 'jedi_weapon_master',
-      'Jedi Mentor': 'jedi_mentor',
-      'Jedi Seer': 'jedi_seer',
-      'Jedi Archivist': 'jedi_archivist',
-      'Sith Marauder': 'sith_marauder',
-      'Sith Assassin': 'sith_assassin',
-      'Sith Acolyte': 'sith_acolyte',
-      'Sith Alchemist': 'sith_alchemist',
-      'Sith Mastermind': 'sith_mastermind',
-      'Sith Juggernaut': 'sith_juggernaut',
-      'Emperor\'s Shield': 'emperors_shield',
-      'Imperial Knight Errant': 'imperial_knight_errant',
-      'Imperial Knight Inquisitor': 'imperial_knight_inquisitor'
-    };
-
-    return prestigeArchetypeMap[prestige] || 'neutral';
+    return PRESTIGE_ARCHETYPE_MAP[prestige] || DEFAULT_ARCHETYPE;
   }
 
   /**
@@ -309,15 +295,7 @@ export class ForceSecretSuggestionEngine {
    * @private
    */
   static _getArchetypeForBaseClass(baseClass = '') {
-    const baseArchetypeMap = {
-      'Jedi': 'jedi_consular',
-      'Soldier': 'jedi_guardian',
-      'Scout': 'jedi_sentinel',
-      'Scoundrel': 'jedi_shadow',
-      'Noble': 'jedi_mentor'
-    };
-
-    return baseArchetypeMap[baseClass] || 'neutral';
+    return BASE_ARCHETYPE_MAP[baseClass] || DEFAULT_ARCHETYPE;
   }
 
   /**
