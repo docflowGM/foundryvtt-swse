@@ -98,8 +98,6 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
       );
     }
 
-    console.log(`📦 SWSEV2CharacterSheet _prepareContext CALLED for ${this.document.name}`);
-
     // Build context from actor data
     const actor = this.document;
 
@@ -165,8 +163,6 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
    * which triggers a re-render with new _prepareContext() data.
    */
   async _onRender(_context, _options) {
-    console.log(`🖼️ SWSEV2CharacterSheet _onRender CALLED for ${this.document.name}`, { hasElement: !!this.element, childCount: this.element?.children?.length });
-
     // AppV2 invariant: all DOM access must use this.element
     const root = this.element;
     if (!(root instanceof HTMLElement)) {return;}

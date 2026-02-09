@@ -57,8 +57,6 @@ async _prepareContext(options) {
       );
     }
 
-    console.log(`📦 SWSEV2DroidSheet _prepareContext CALLED for ${this.document.name}`);
-
     // AppV2 Compatibility: Only pass serializable data
     // V13 AppV2 calls structuredClone() on render context - Document objects,
     // Collections, and User objects cannot be cloned. Extract only primitives and data.
@@ -94,8 +92,6 @@ async _prepareContext(options) {
   }
 
   async _onRender(context, options) {
-    console.log(`🖼️ SWSEV2DroidSheet _onRender CALLED for ${this.document.name}`, { hasElement: !!this.element, childCount: this.element?.children?.length });
-
     // AppV2 invariant: all DOM access must use this.element
     const root = this.element;
     if (!(root instanceof HTMLElement)) {return;}
