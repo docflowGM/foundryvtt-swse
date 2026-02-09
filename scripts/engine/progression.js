@@ -11,7 +11,16 @@ import { createChatMessage } from '../core/document-api-v13.js';
  * Single source of truth for character generation and level-up
  */
 export class SWSEProgressionEngine {
-  constructor(actor, mode = 'chargen') {
+  static MODES = {
+    CHARGEN: 'chargen',
+    LEVELUP: 'levelup'
+  };
+
+  static PHASES = {
+    FINALIZE: 'finalize'
+  };
+
+  constructor(actor, mode = SWSEProgressionEngine.MODES.CHARGEN) {
     swseLogger.log(`[PROGRESSION] ====== ENGINE CONSTRUCTOR START ======`);
     swseLogger.log(`[PROGRESSION] Constructor params: mode="${mode}", actor="${actor?.name || 'UNKNOWN'}", actor.id="${actor?.id || 'UNKNOWN'}"`);
 
@@ -66,7 +75,7 @@ export class SWSEProgressionEngine {
   _initializeSteps() {
     swseLogger.log(`[PROGRESSION-STEPS] _initializeSteps() called with mode: "${this.mode}"`);
 
-    if (this.mode === 'chargen') {
+    if (this.mode === SWSEProgressionEngine.MODES.CHARGEN) {
       swseLogger.log(`[PROGRESSION-STEPS] Setting up CHARGEN steps...`);
       this.chargenSteps = [
         {
@@ -216,7 +225,7 @@ export class SWSEProgressionEngine {
  */
 getSteps() {
   swseLogger.log(`[PROGRESSION-STEPS] getSteps() called - mode: ${this.mode}`);
-  const base = this.mode === 'chargen'
+  const base = this.mode === SWSEProgressionEngine.MODES.CHARGEN
     ? this.chargenSteps
     : this.levelUpSteps;
 
@@ -286,7 +295,7 @@ getSelectedClassLevel() {
  * For chargen, returns 1; for level-up, returns current level + 1
  */
 getNewCharacterLevel() {
-  if (this.mode === 'chargen') {
+  if (this.mode === SWSEProgressionEngine.MODES.CHARGEN) {
     return 1;
   }
   return (this.actor.system.level || 0) + 1;
@@ -405,13 +414,13 @@ async applyScalingFeature(feature) {
    */
   _isStepAvailable(id) {
     // First step is always available
-    const steps = this.mode === 'chargen' ? this.chargenSteps : this.levelUpSteps;
+    const steps = this.mode === SWSEProgressionEngine.MODES.CHARGEN ? this.chargenSteps : this.levelUpSteps;
     if (id === steps[0]?.id) {
       return true;
     }
 
     // Chargen specific logic
-    if (this.mode === 'chargen') {
+    if (this.mode === SWSEProgressionEngine.MODES.CHARGEN) {
       if (id === 'background') {return this.completedSteps.includes('species');}
       if (id === 'attributes') {return this.completedSteps.includes('background');}
       if (id === 'class') {return this.completedSteps.includes('attributes');}
@@ -425,7 +434,7 @@ async applyScalingFeature(feature) {
     }
 
     // Level-up specific logic
-    if (this.mode === 'levelup') {
+    if (this.mode === SWSEProgressionEngine.MODES.LEVELUP) {
       if (id === 'hp') {return this.completedSteps.includes('class');}
       if (id === 'skills') {return this.completedSteps.includes('hp');}
       if (id === 'feats') {return this.completedSteps.includes('skills');}
@@ -605,7 +614,7 @@ async applyScalingFeature(feature) {
 
     // For levelup mode, store the previous state so we can track what's new
     // This prevents double-granting force powers on subsequent finalize calls
-    if (this.mode === 'levelup') {
+    if (this.mode === SWSEProgressionEngine.MODES.LEVELUP) {
       swseLogger.log(`[PROGRESSION-STATE] Levelup mode detected - loading previous state...`);
       const progression = this.actor.system.progression || {};
       this.data._previousClassLevels = [...(progression.classLevels || [])];
@@ -689,7 +698,7 @@ async applyScalingFeature(feature) {
         if (progression.classLevels && progression.classLevels.length > 0) {
           // For chargen mode, include all class levels since they're all new
           // For levelup mode, we track which class levels are new in this session
-          if (this.mode === 'chargen') {
+          if (this.mode === SWSEProgressionEngine.MODES.CHARGEN) {
             // All class levels are new during character generation
             updateSummary.classLevelsAdded = progression.classLevels.map(cl => ({
               class: cl.class,
@@ -709,7 +718,7 @@ async applyScalingFeature(feature) {
 
         // Add ONLY newly selected feats (not all feats from progression)
         // This prevents double-granting force powers on subsequent finalize calls
-        if (this.mode === 'chargen') {
+        if (this.mode === SWSEProgressionEngine.MODES.CHARGEN) {
           // For chargen, all feats are new
           if (progression.feats && progression.feats.length > 0) {
             updateSummary.featsAdded = [...progression.feats];
@@ -960,7 +969,7 @@ async applyScalingFeature(feature) {
           type: 'feat',
           system: {
             description: `Granted by progression`,
-            source: this.mode === 'chargen' ? 'Starting Feat' : 'Level Up'
+            source: this.mode === SWSEProgressionEngine.MODES.CHARGEN ? 'Starting Feat' : 'Level Up'
           }
         });
       }

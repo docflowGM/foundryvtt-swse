@@ -523,114 +523,37 @@ export class SuggestionEngine {
 
         const biases = buildIntent.mentorBiases;
 
-        // Combat style matches
-        if (biases.melee > 0 && this._isMeleeItem(itemName)) {
-            return {
-                sourceId: 'mentor_bias:melee'
-            };
-        }
-        if (biases.ranged > 0 && this._isRangedItem(itemName)) {
-            return {
-                sourceId: 'mentor_bias:ranged'
-            };
-        }
+        // Check each bias type against item keywords
+        const biasTypes = ['melee', 'ranged', 'force', 'stealth', 'social', 'tech', 'leadership', 'support', 'survival'];
 
-        // Force focus
-        if (biases.forceFocus > 0 && this._isForceItem(itemName)) {
-            return {
-                sourceId: 'mentor_bias:force'
-            };
-        }
-
-        // Stealth/sneaky
-        if (biases.stealth > 0 && this._isStealthItem(itemName)) {
-            return {
-                sourceId: 'mentor_bias:stealth'
-            };
-        }
-
-        // Social/charisma
-        if (biases.social > 0 && this._isSocialItem(itemName)) {
-            return {
-                sourceId: 'mentor_bias:social'
-            };
-        }
-
-        // Tech/mechanical
-        if (biases.tech > 0 && this._isTechItem(itemName)) {
-            return {
-                sourceId: 'mentor_bias:tech'
-            };
-        }
-
-        // Leadership
-        if (biases.leadership > 0 && this._isLeadershipItem(itemName)) {
-            return {
-                sourceId: 'mentor_bias:leadership'
-            };
-        }
-
-        // Support/defensive
-        if (biases.support > 0 && this._isSupportItem(itemName)) {
-            return {
-                sourceId: 'mentor_bias:support'
-            };
-        }
-
-        // Survival/exploration
-        if (biases.survival > 0 && this._isSurvivalItem(itemName)) {
-            return {
-                sourceId: 'mentor_bias:survival'
-            };
+        for (const biasType of biasTypes) {
+            if (biases[biasType] > 0 && this._checkBiasKeyword(itemName, biasType)) {
+                return {
+                    sourceId: `mentor_bias:${biasType}`
+                };
+            }
         }
 
         return null;
     }
 
     // Helper methods for bias matching
-    static _isMeleeItem(name) {
-        const meleeKeywords = ['melee', 'sword', 'blade', 'lightsaber', 'staff', 'club', 'axe', 'hammer', 'martial arts', 'close combat', 'hand-to-hand'];
-        return meleeKeywords.some(k => name.toLowerCase().includes(k));
-    }
+    static BIAS_KEYWORDS = {
+        melee: ['melee', 'sword', 'blade', 'lightsaber', 'staff', 'club', 'axe', 'hammer', 'martial arts', 'close combat', 'hand-to-hand'],
+        ranged: ['blaster', 'rifle', 'pistol', 'bow', 'gun', 'ranged', 'throwing', 'launcher', 'sniper', 'marksman'],
+        force: ['force', 'jedi', 'sith', 'darksider', 'lightsaber', 'telekinesis', 'mind trick'],
+        stealth: ['stealth', 'hide', 'shadow', 'sneak', 'escape', 'evasion', 'cloak', 'invisible', 'shadow walker'],
+        social: ['persuasion', 'deception', 'bluff', 'diplomacy', 'charm', 'inspire', 'charisma', 'gather information', 'social'],
+        tech: ['computer', 'mechanics', 'tech', 'droid', 'repair', 'construct', 'protocol', 'hacking', 'engineering'],
+        leadership: ['command', 'leadership', 'rally', 'inspire', 'authority', 'control', 'master', 'superior'],
+        support: ['defense', 'protect', 'shield', 'guard', 'block', 'deflect', 'barrier', 'ally', 'heal'],
+        survival: ['survival', 'endurance', 'track', 'scout', 'wilderness', 'climb', 'swim', 'journey']
+    };
 
-    static _isRangedItem(name) {
-        const rangedKeywords = ['blaster', 'rifle', 'pistol', 'bow', 'gun', 'ranged', 'throwing', 'launcher', 'sniper', 'marksman'];
-        return rangedKeywords.some(k => name.toLowerCase().includes(k));
-    }
-
-    static _isForceItem(name) {
-        const forceKeywords = ['force', 'jedi', 'sith', 'darksider', 'lightsaber', 'telekinesis', 'mind trick'];
-        return forceKeywords.some(k => name.toLowerCase().includes(k));
-    }
-
-    static _isStealthItem(name) {
-        const stealthKeywords = ['stealth', 'hide', 'shadow', 'sneak', 'escape', 'evasion', 'cloak', 'invisible', 'shadow walker'];
-        return stealthKeywords.some(k => name.toLowerCase().includes(k));
-    }
-
-    static _isSocialItem(name) {
-        const socialKeywords = ['persuasion', 'deception', 'bluff', 'diplomacy', 'charm', 'inspire', 'charisma', 'gather information', 'social'];
-        return socialKeywords.some(k => name.toLowerCase().includes(k));
-    }
-
-    static _isTechItem(name) {
-        const techKeywords = ['computer', 'mechanics', 'tech', 'droid', 'repair', 'construct', 'protocol', 'hacking', 'engineering'];
-        return techKeywords.some(k => name.toLowerCase().includes(k));
-    }
-
-    static _isLeadershipItem(name) {
-        const leadershipKeywords = ['command', 'leadership', 'rally', 'inspire', 'authority', 'control', 'master', 'superior'];
-        return leadershipKeywords.some(k => name.toLowerCase().includes(k));
-    }
-
-    static _isSupportItem(name) {
-        const supportKeywords = ['defense', 'protect', 'shield', 'guard', 'block', 'deflect', 'barrier', 'ally', 'heal'];
-        return supportKeywords.some(k => name.toLowerCase().includes(k));
-    }
-
-    static _isSurvivalItem(name) {
-        const survivalKeywords = ['survival', 'endurance', 'track', 'scout', 'wilderness', 'climb', 'swim', 'journey'];
-        return survivalKeywords.some(k => name.toLowerCase().includes(k));
+    static _checkBiasKeyword(name, biasType) {
+        const keywords = this.BIAS_KEYWORDS[biasType];
+        if (!keywords) return false;
+        return keywords.some(k => name.toLowerCase().includes(k));
     }
 
     // ──────────────────────────────────────────────────────────────
