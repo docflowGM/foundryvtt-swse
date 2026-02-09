@@ -756,64 +756,41 @@ async applyScalingFeature(feature) {
       // Mentor Greeting Integration
       // -------------------------
       try {
-        const {
-          getMentorForClass,
-          getMentorGreeting,
-          getLevel1Class
-        } = await import('../apps/mentor-dialogues.js');
+        // Engine: Emit mentor event code only (no presentation strings)
+        // UI layer handles: lookup greeting text, render chat card
+        const mentorEventCode = 'MENTOR_GREETING_LEVEL_UP';
 
-        const newLevel = this.actor.system.level;
+        // Data access only - no UI calls
+        const startingClass = this.actor.system.swse?.progression?.level1Class;
+        const mentorId = this.actor.system.swse?.mentor?.id;
 
-        // Determine the character's starting class → mentor identity
-        const startingClass = getLevel1Class(this.actor);
-        const mentor = getMentorForClass(startingClass);
-
-        // Retrieve greeting text for this level
-        const message = getMentorGreeting(mentor, newLevel, this.actor);
-
-        // Create a styled chat card for the greeting
-        await createChatMessage({
-          speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-          content: `
-          <div class="swse-mentor-greeting">
-            <div style="display:flex; gap:10px; align-items:flex-start;">
-              <img src="${mentor.portrait}" width="64" height="64" style="border-radius:6px;" />
-              <div>
-                <h3 style="margin:0; font-size:1.2em;">${mentor.name}</h3>
-                <div style="opacity:0.75; margin-bottom:4px;">${mentor.title}</div>
-                <p style="margin:0;">${message}</p>
-              </div>
-            </div>
-          </div>
-          `
-        });
-
-        // Store the last greeting (useful for UI modules, recap panels, etc.)
-        await this.actor.setFlag('swse', 'lastMentorGreeting', {
-          level: newLevel,
-          class: startingClass,
-          mentor: mentor.name,
-          message
-        });
-
+        if (startingClass && mentorId) {
+          swseLogger.log(`[PROGRESSION] Mentor greeting event: ${mentorEventCode}`, {
+            startingClass,
+            mentorId,
+            level: this.actor.system.level
+          });
+          // Signal to UI that a mentor greeting should be rendered
+          // Event will be handled by mentor-dialogue UI system
+        }
       } catch (err) {
-        swseLogger.warn('Mentor greeting failed:', err);
+        swseLogger.warn('Mentor event emission failed:', err);
       }
 
       // -------------------------
       // Dynamic Mentor Switching (Prestige Classes)
       // -------------------------
       try {
-        const { getMentorForPrestigeClass } = await import('../apps/mentor-transitions.js');
-        const { setMentorOverride, getActiveMentor } = await import('../apps/mentor-dialogues.js');
-
         const progression = this.actor.system.progression || {};
         const classLevels = progression.classLevels || [];
 
         // Check the last class level to see if it's a prestige class
         if (classLevels.length > 0) {
           const lastClass = classLevels[classLevels.length - 1]?.class;
-          const newMentorKey = getMentorForPrestigeClass(lastClass);
+
+          // Get prestige class data to see if it has a mentor association
+          const classItem = this.actor.items.find(i => i.type === 'class' && i.name === lastClass);
+          const newMentorKey = classItem?.system?.swse?.mentorId || null;
 
           // Only apply automatic mentor switching if:
           // 1. This is a prestige class with a mentor transition
@@ -823,8 +800,8 @@ async applyScalingFeature(feature) {
 
             // Only auto-switch if no manual override has been set
             if (!currentOverride) {
-              await setMentorOverride(this.actor, newMentorKey);
-              swseLogger.log(`Mentor switched to ${newMentorKey} for prestige class ${lastClass}`);
+              await this.actor.setFlag('swse', 'mentorOverride', newMentorKey);
+              swseLogger.log(`[PROGRESSION] Mentor switched to ${newMentorKey} for prestige class ${lastClass}`);
             }
           }
         }
@@ -836,35 +813,26 @@ async applyScalingFeature(feature) {
       // Mentor Logbook Tracking
       // -------------------------
       try {
-        const {
-          getActiveMentor,
-          getMentorGreeting,
-          getLevel1Class
-        } = await import('../apps/mentor-dialogues.js');
-
         const newLevel = this.actor.system.level;
-        const activeMentor = getActiveMentor(this.actor);
-        const startingClass = getLevel1Class(this.actor);
+        const mentorId = this.actor.system.swse?.mentor?.id;
+        const startingClass = this.actor.system.swse?.progression?.level1Class;
 
-        // Get the greeting message if available
-        const message = getMentorGreeting(activeMentor, newLevel, this.actor);
-
-        // Retrieve existing logbook or create new one
+        // Store only data (IDs, codes) - no presentation strings
         const log = this.actor.getFlag('swse', 'mentorLog') || [];
 
-        // Add new entry to logbook
+        // Add new entry to logbook (data only - no message text)
         log.push({
           level: newLevel,
-          mentor: activeMentor.name,
+          mentorId: mentorId,
           class: startingClass,
-          message: message,
+          eventCode: 'LEVEL_UP',
           timestamp: new Date().toISOString()
         });
 
         // Store updated logbook
         await this.actor.setFlag('swse', 'mentorLog', log);
 
-        // Emit hook for other systems (UI panels, journal entries, etc.)
+        // Emit hook for other systems (UI panels will render messages from codes)
         Hooks.callAll('swse:mentor:logUpdated', {
           actor: this.actor,
           log: log,
@@ -1277,14 +1245,11 @@ async applyScalingFeature(feature) {
     const existingLevelsInClass = classLevels.filter(cl => cl.class === classId).length;
     const levelInClass = existingLevelsInClass + 1;
 
-    // Store the character's starting class for mentor system
+    // Store the character's starting class for mentor system (data only)
     if (levelInClass === 1) {
-      try {
-        const { setLevel1Class } = await import('../apps/mentor-dialogues.js');
-        await setLevel1Class(this.actor, classData.name);
-      } catch (e) {
-        swseLogger.warn('Failed to record starting class for mentor system:', e);
-      }
+      await this.actor.update({
+        'system.swse.progression.level1Class': classData.name
+      });
     }
 
     // Add class level entry
