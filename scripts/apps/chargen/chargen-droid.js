@@ -1187,49 +1187,61 @@ export async function _onImportDroid(event) {
         icon: '<i class="fas fa-times"></i>',
         label: 'Cancel'
       }
-    },
-    render: (html) => {
-      const htmlElement = html instanceof jQuery ? html[0] : html;
-      const searchInput = htmlElement.querySelector('#droid-search');
-      const resultsDiv = htmlElement.querySelector('#droid-results');
-
-      const renderResults = (query) => {
-        const filtered = query
-          ? droidList.filter(d => d.name.toLowerCase().includes(query.toLowerCase()))
-          : droidList;
-
-        const resultsHTML = filtered.map(d => `
-          <div class="droid-result-item" data-droid-id="${d.id}">
-            <strong>${d.name}</strong>
-          </div>
-        `).join('');
-
-        resultsDiv.innerHTML = resultsHTML || '<p>No droids found</p>';
-
-        // Add click handlers to results
-        resultsDiv.querySelectorAll('.droid-result-item').forEach(item => {
-          item.addEventListener('click', async (e) => {
-            const droidId = e.currentTarget.dataset.droidId;
-            const droid = droidList.find(d => d.id === droidId);
-            if (droid) {
-              await self._importDroidType(droid);
-              dialog.close();
-            }
-          });
-        });
-      };
-
-      // Initial render
-      renderResults('');
-
-      // Search on input
-      searchInput.on('input', (e) => {
-        renderResults(e.target.value);
-      });
     }
   }, {
     width: 500
   });
+
+  // Override render to bind event handlers after DOM is ready
+  const originalRender = dialog.render.bind(dialog);
+  dialog.render = async function(force = false, options = {}) {
+    const result = await originalRender(force, options);
+
+    // Get DOM elements
+    const root = this.element;
+    if (!root) return result;
+
+    const searchInput = root.querySelector('#droid-search');
+    const resultsDiv = root.querySelector('#droid-results');
+
+    if (!searchInput || !resultsDiv) return result;
+
+    const renderResults = (query) => {
+      const filtered = query
+        ? droidList.filter(d => d.name.toLowerCase().includes(query.toLowerCase()))
+        : droidList;
+
+      const resultsHTML = filtered.map(d => `
+        <div class="droid-result-item" data-droid-id="${d.id}">
+          <strong>${d.name}</strong>
+        </div>
+      `).join('');
+
+      resultsDiv.innerHTML = resultsHTML || '<p>No droids found</p>';
+
+      // Add click handlers to results
+      resultsDiv.querySelectorAll('.droid-result-item').forEach(item => {
+        item.addEventListener('click', async (e) => {
+          const droidId = e.currentTarget.dataset.droidId;
+          const droid = droidList.find(d => d.id === droidId);
+          if (droid) {
+            await self._importDroidType(droid);
+            dialog.close();
+          }
+        });
+      });
+    };
+
+    // Initial render
+    renderResults('');
+
+    // Search on input
+    searchInput.addEventListener('input', (e) => {
+      renderResults(e.target.value);
+    });
+
+    return result;
+  };
 
   dialog.render(true);
 }

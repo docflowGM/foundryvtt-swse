@@ -959,10 +959,10 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     context.skillsJson = context.skillsJson || this._skillsJson || [];
-    context.availableSkills = context.availableSkills || context.skillsJson;
+    context.availableSkills = context.availableSkills || context.skillsJson || [];
 
     // Filter out "Use the Force" skill for droids (droids cannot use the Force)
-    if (this.characterData.isDroid) {
+    if (this.characterData.isDroid && Array.isArray(context.availableSkills)) {
       context.availableSkills = context.availableSkills.filter(skill =>
         skill.key !== 'usetheforce' && skill.name !== 'Use the Force'
       );
@@ -975,8 +975,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const abilities = this.characterData.abilities || {};
     const speciesSkillBonuses = this.characterData.speciesSkillBonuses || {};
 
-    // Add modifier data to each skill
-    context.availableSkills = context.availableSkills.map(skill => {
+    // Add modifier data to each skill (guard against null/undefined)
+    if (Array.isArray(context.availableSkills)) {
+      context.availableSkills = context.availableSkills.map(skill => {
       // Get the ability modifier for this skill's associated ability
       let abilityKey = (skill.ability || '').toLowerCase();
       // For droids, CON-based skills use STR instead
@@ -1004,7 +1005,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         currentBonus,
         trainedBonus
       };
-    });
+      });
+    }
 
     // Calculate trainedSkillsCount for display in template
     const trainedCount = Object.values(this.characterData.skills || {})
@@ -1037,7 +1039,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         // Filter out granted languages from each category
         if (context.languageCategories) {
           for (const category in context.languageCategories) {
-            if (context.languageCategories[category].languages) {
+            if (context.languageCategories[category]?.languages) {
               context.languageCategories[category].languages =
                 context.languageCategories[category].languages.filter((entry) => !grantedLanguages.has(entry?.name || entry));
             }
@@ -1365,32 +1367,55 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
   /**
    * Get the current mentor based on selected class
-   * @returns {Object} Mentor data including name, portrait, title
+   * Returns only serializable properties for structuredClone safety
+   * @returns {Object|null} Mentor data including name, portrait, title, or null if none
    */
   _getCurrentMentor() {
     const classes = this.characterData.classes || [];
+    let mentor = null;
+
     if (classes.length === 0) {
       // Default to Scoundrel mentor (Ol' Salty) before class is selected
       SWSELogger.log(`[CHARGEN-MENTOR] _getCurrentMentor: No class selected, using default (Scoundrel)`);
-      return MENTORS.Scoundrel || { name: "Ol' Salty", portrait: 'systems/foundryvtt-swse/assets/mentors/salty.webp' };
+      mentor = MENTORS.Scoundrel;
+    } else {
+      const className = classes[0].name;
+      SWSELogger.log(`[CHARGEN-MENTOR] _getCurrentMentor: Looking up mentor for class "${className}"`, {
+        availableKeys: Object.keys(MENTORS),
+        className: className,
+        found: !!MENTORS[className]
+      });
+
+      mentor = MENTORS[className];
+      if (mentor) {
+        SWSELogger.log(`[CHARGEN-MENTOR] _getCurrentMentor: Found mentor "${mentor.name}" for class "${className}"`);
+      } else {
+        // Fallback to Scoundrel mentor
+        SWSELogger.warn(`[CHARGEN-MENTOR] _getCurrentMentor: No mentor found for class "${className}", using fallback (Scoundrel)`);
+        mentor = MENTORS.Scoundrel;
+      }
     }
 
-    const className = classes[0].name;
-    SWSELogger.log(`[CHARGEN-MENTOR] _getCurrentMentor: Looking up mentor for class "${className}"`, {
-      availableKeys: Object.keys(MENTORS),
-      className: className,
-      found: !!MENTORS[className]
-    });
-
-    const mentor = MENTORS[className];
-    if (mentor) {
-      SWSELogger.log(`[CHARGEN-MENTOR] _getCurrentMentor: Found mentor "${mentor.name}" for class "${className}"`);
-      return mentor;
+    if (!mentor) {
+      return null;
     }
 
-    // Fallback to Scoundrel mentor
-    SWSELogger.warn(`[CHARGEN-MENTOR] _getCurrentMentor: No mentor found for class "${className}", using fallback (Scoundrel)`);
-    return MENTORS.Scoundrel || { name: "Ol' Salty", portrait: 'systems/foundryvtt-swse/assets/mentors/salty.webp' };
+    // Return only serializable properties (structuredClone safe)
+    // Exclude levelGreetings which may contain functions, exclude mentorStory
+    return {
+      name: mentor.name || '',
+      title: mentor.title || '',
+      portrait: mentor.portrait || '',
+      classGuidance: mentor.classGuidance || '',
+      backgroundGuidance: mentor.backgroundGuidance || '',
+      talentGuidance: mentor.talentGuidance || '',
+      abilityGuidance: mentor.abilityGuidance || '',
+      skillGuidance: mentor.skillGuidance || '',
+      languageGuidance: mentor.languageGuidance || '',
+      multiclassGuidance: mentor.multiclassGuidance || '',
+      forcePowerGuidance: mentor.forcePowerGuidance || '',
+      hpGuidance: mentor.hpGuidance || ''
+    };
   }
 
 
