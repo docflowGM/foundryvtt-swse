@@ -102,7 +102,7 @@ export class MentorSelectorWindow {
                     label: 'Confirm',
                     icon: '<i class="fas fa-check"></i>',
                     callback: async (html) => {
-                        const selectedMentor = html.find('#selected-mentor').val();
+                        const selectedMentor = (html?.[0] ?? html)?.querySelector('#selected-mentor')?.value;
 
                         if (!selectedMentor) {
                             ui.notifications.warn('Please select a mentor');

@@ -14,7 +14,6 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { CLASS_SYNERGY_DATA } from './ClassSuggestionEngine.js';
-import { MentorSurvey } from '../apps/mentor-survey.js';
 
 // ──────────────────────────────────────────────────────────────
 // BUILD THEME DEFINITIONS
@@ -931,7 +930,7 @@ export class BuildIntent {
         SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() START - Actor: ${actor.id} (${actor.name})`);
 
         // Try to get biases from actor first, then fall back to pendingData (for chargen flow)
-        let mentorBiases = MentorSurvey.getMentorBiases(actor);
+        let mentorBiases = actor.system?.swse?.mentorBuildIntentBiases || {};
         SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - Retrieved actor biases:`, mentorBiases);
 
         // Fallback to pendingData.mentorBiases if actor doesn't have biases (chargen scenario)

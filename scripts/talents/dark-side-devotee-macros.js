@@ -171,7 +171,7 @@ export class DarkSideDevoteeMacros {
           create: {
             label: 'Create Talisman (Full-Round Action, 1 FP)',
             callback: async (html) => {
-              const defense = html.find('#defense-select').val();
+              const defense = (html?.[0] ?? html)?.querySelector('#defense-select')?.value;
               const result = await DarkSideDevoteeMechanics.createDarkSideTalisman(
                 selectedActor,
                 defense

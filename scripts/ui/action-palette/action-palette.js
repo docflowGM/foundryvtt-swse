@@ -232,8 +232,8 @@ export class ActionPaletteApp extends foundry.applications.api.ApplicationV2 {
             icon: '<i class="fas fa-check"></i>',
             label: 'Spawn',
             callback: (html) => {
-              const quantity = parseInt(html.find('input[name="quantity"]').val()) || 1;
-              const placement = html.find('select[name="placement"]').val() || 'cursor';
+              const quantity = parseInt((html?.[0] ?? html)?.querySelector('input[name="quantity"]')?.value) || 1;
+              const placement = (html?.[0] ?? html)?.querySelector('select[name="placement"]')?.value || 'cursor';
               this._spawnActors(item, quantity, placement);
               resolve();
             }

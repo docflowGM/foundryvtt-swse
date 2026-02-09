@@ -30,6 +30,39 @@ window.addEventListener('unhandledrejection', (event) => {
 });
 
 /* =========================
+   JQUERY RUNTIME GUARD (v13 compliance)
+   ========================= */
+
+if (typeof $ !== 'undefined' || typeof jQuery !== 'undefined') {
+  const jq = globalThis.$ || globalThis.jQuery;
+  if (jq) {
+    const originalFind = jq.fn?.find;
+    const originalOn = jq.fn?.on;
+
+    // Override jQuery methods to prevent v1 slippage
+    if (jq.fn) {
+      jq.fn.find = function() {
+        const stack = new Error().stack;
+        console.error('🔥 SWSE | jQuery.find() detected at runtime (v1 pattern). Use element.querySelector() instead.\n', stack);
+        throw new Error('SWSE: jQuery methods are not permitted in AppV2. Use DOM APIs instead.');
+      };
+
+      jq.fn.on = function() {
+        const stack = new Error().stack;
+        console.error('🔥 SWSE | jQuery.on() detected at runtime (v1 pattern). Use addEventListener() instead.\n', stack);
+        throw new Error('SWSE: jQuery event binding is not permitted in AppV2. Use addEventListener instead.');
+      };
+    }
+  }
+}
+
+/* =========================
+   PHASE 3: RUNTIME CONTRACT (must be first)
+   ========================= */
+
+import { RuntimeContract } from './scripts/contracts/runtime-contract.js';
+
+/* =========================
    IMPORTS
    ========================= */
 
@@ -42,6 +75,9 @@ import { initializeRolls } from './scripts/core/rolls-init.js';
 // ---- v13 hardening ----
 import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from './scripts/core/hardening-init.js';
 
+// ---- phase 3 contracts ----
+import { DiagnosticMode } from './scripts/contracts/diagnostic-mode.js';
+
 // ---- logging / perf ----
 import { swseLogger } from './scripts/utils/logger.js';
 import { perfMonitor, debounce, throttle } from './scripts/utils/performance-utils.js';
@@ -50,6 +86,7 @@ import { errorHandler, errorCommands, logError } from './scripts/core/error-hand
 // ---- data / preload ----
 import { dataPreloader } from './scripts/core/data-preloader.js';
 import { runJsonBackedIdsMigration } from './scripts/migrations/json-backed-ids-migration.js';
+import { CompendiumVerification } from './scripts/core/compendium-verification.js';
 
 // ---- actors / items ----
 import { SWSEV2BaseActor } from './scripts/actors/v2/base-actor.js';
@@ -88,7 +125,7 @@ import { ThemeLoader } from './scripts/theme-loader.js';
 import { initializeSceneControls } from './scripts/scene-controls/init.js';
 import { initializeActionPalette } from './scripts/ui/action-palette/init.js';
 import { initializeGMSuggestions } from './scripts/gm-suggestions/init.js';
-import { MentorTranslationSettings } from './scripts/ui/dialogue/mentor-translation-settings.js';
+import { MentorTranslationSettings } from './scripts/mentor/mentor-translation-settings.js';
 
 // ---- suggestions / discovery ----
 import { SuggestionService } from './scripts/engine/SuggestionService.js';
@@ -184,7 +221,13 @@ Hooks.once('ready', async () => {
   errorHandler.initialize();
   initializeRolls();
 
+  /* ---------- phase 3: diagnostic mode ---------- */
+  await DiagnosticMode.initialize();
+
   /* ---------- data & progression ---------- */
+  // Verify compendium integrity first (fail-fast if missing)
+  await CompendiumVerification.verifyCompendiums();
+
   await Promise.all([
     dataPreloader.preload({
       priority: ['classes', 'skills'],

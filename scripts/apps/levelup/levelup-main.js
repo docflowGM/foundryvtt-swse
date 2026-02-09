@@ -16,8 +16,8 @@ import { SWSEProgressionEngine } from '../../engine/progression.js';
 import { SWSELogger, swseLogger } from '../../utils/logger.js';
 import { isEpicOverrideEnabled } from '../../settings/epic-override.js';
 import { getLevelSplit } from '../../actors/derived/level-split.js';
-import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from '../mentor-dialogues.js';
-import { MentorSurvey } from '../mentor-survey.js';
+import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from '../mentor/mentor-dialogues.js';
+import { MentorSurvey } from '../mentor/mentor-survey.js';
 import { createChatMessage } from '../../core/document-api-v13.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { TypingAnimation } from '../../utils/typing-animation.js';
@@ -96,13 +96,13 @@ import { showPrestigeRoadmap } from './prestige-roadmap.js';
 import { showGMDebugPanel } from './debug-panel.js';
 import { PathPreview } from '../../engine/PathPreview.js';
 import { findActiveSynergies } from '../../engine/CommunityMetaSynergies.js';
-import { MentorSuggestionVoice } from '../mentor-suggestion-voice.js';
-import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
+import { MentorSuggestionVoice } from '../mentor/mentor-suggestion-voice.js';
+import { MentorSuggestionDialog } from '../mentor/mentor-suggestion-dialog.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 
 // Import mentor memory system
-import { decayAllMentorCommitments, updateAllMentorMemories } from '../../engine/mentor-memory.js';
+import { decayAllMentorCommitments, updateAllMentorMemories } from '../../mentor/mentor-memory.js';
 
 // Import mentor wishlist integration
 import { MentorWishlistIntegration } from '../../engine/MentorWishlistIntegration.js';

@@ -174,8 +174,12 @@ export class CharacterImportWizard extends Dialog {
    * Show preview of character data
    */
   _showPreview(html, data) {
-    const preview = root.querySelector('#import-preview');
-    const previewContent = preview.find('.preview-content');
+    const root = html?.[0] ?? html;
+    const preview = root?.querySelector('#import-preview');
+    if (!preview) {return;}
+
+    const previewContent = preview.querySelector('.preview-content');
+    if (!previewContent) {return;}
 
     let content = `
       <p><strong>Name:</strong> ${data.name || 'Unknown'}</p>
@@ -192,8 +196,8 @@ export class CharacterImportWizard extends Dialog {
       content += `<p><strong>Items:</strong> ${data.items.length}</p>`;
     }
 
-    previewContent.html(content);
-    preview.show();
+    previewContent.innerHTML = content;
+    preview.style.display = '';
   }
 
   /**
@@ -201,14 +205,17 @@ export class CharacterImportWizard extends Dialog {
    */
   async _processImport(html) {
     try {
-      const method = (root?.querySelector?.('#import-method')?.value ?? null);
-      const createNew = root.querySelector('#create-new-actor').is(':checked');
+      const root = html?.[0] ?? html;
+      const method = root?.querySelector?.('#import-method')?.value ?? null;
+      const createNewCheckbox = root?.querySelector?.('#create-new-actor');
+      const createNew = createNewCheckbox?.checked ?? true;
 
       let characterData;
 
       // Get data based on method
       if (method === 'file') {
-        const file = root.querySelector('#character-file')[0]?.files?.[0];
+        const fileInput = root?.querySelector?.('#character-file');
+        const file = fileInput?.files?.[0];
         if (!file) {
           ui.notifications.warn('Please select a file to import.');
           return;

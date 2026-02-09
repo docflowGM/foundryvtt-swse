@@ -594,7 +594,7 @@ Hooks.on('cunningStrategistTriggered', async (actor) => {
         strategize: {
           label: 'Grant Bonus',
           callback: async (html) => {
-            const allyId = html.find('#ally-select').val();
+            const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
             await ScoundrelTalentMechanics.completeCunningStrategist(actor, allyId, result.combatId, result.usageFlag);
           }
         },

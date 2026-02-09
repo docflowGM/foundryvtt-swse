@@ -133,9 +133,9 @@ export class MentorTranslationSettings {
           icon: '<i class="fas fa-check"></i>',
           label: 'Save',
           callback: (html) => {
-            const enabled = html.find('#translation-enabled').is(':checked');
-            const skipOnClick = html.find('#skip-on-click').is(':checked');
-            const speed = parseInt(html.find('#animation-speed').val());
+            const enabled = html.querySelector('#translation-enabled')?.checked;
+            const skipOnClick = html.querySelector('#skip-on-click')?.checked;
+            const speed = parseInt(html.querySelector('#animation-speed')?.value);
 
             game.settings.set('foundryvtt-swse', 'mentorTranslationEnabled', enabled);
             game.settings.set('foundryvtt-swse', 'mentorTranslationSkipOnClick', skipOnClick);
