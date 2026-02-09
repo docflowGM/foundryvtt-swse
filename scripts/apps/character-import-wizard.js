@@ -3,6 +3,8 @@
  * Allows players to import characters from .json or .txt files
  */
 
+import { createActor } from '../core/document-api-v13.js';
+
 export class CharacterImportWizard extends Dialog {
   constructor(options = {}) {
     const dialogData = {
@@ -329,8 +331,8 @@ export class CharacterImportWizard extends Dialog {
       };
 
       if (createNew) {
-        // Create a new actor
-        const actor = await Actor.create(actorData);
+        // Create a new actor using v13-safe wrapper
+        const actor = await createActor(actorData);
 
         if (actor) {
           ui.notifications.info(`Successfully imported ${actor.name}`);

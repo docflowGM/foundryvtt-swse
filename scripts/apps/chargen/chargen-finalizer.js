@@ -12,6 +12,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { EffectSanitizer } from '../../core/effect-sanitizer.js';
+import { createActor, createItemInActor } from '../../core/document-api-v13.js';
 
 export class ChargenFinalizer {
 
@@ -38,7 +39,7 @@ export class ChargenFinalizer {
 
       if (!actor) {
         SWSELogger.log('[CHARGEN FINALIZER] Creating new character actor');
-        finalActor = await Actor.create(actorData, { temporary: false });
+        finalActor = await createActor(actorData, { temporary: false });
       } else {
         SWSELogger.log('[CHARGEN FINALIZER] Updating existing actor');
         await finalActor.update(actorData);
