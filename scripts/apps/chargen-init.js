@@ -2,6 +2,7 @@ import { SWSELogger } from '../utils/logger.js';
 import CharacterGeneratorNarrative from './chargen-narrative.js';
 import CharacterGeneratorImproved from './chargen-improved.js';
 import { TemplateCharacterCreator } from './template-character-creator.js';
+import { createActor } from '../core/document-api-v13.js';
 
 // Single hook to handle both create button interception and header button addition
 Hooks.on('renderActorDirectory', (app, html, data) => {
@@ -92,8 +93,8 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                 buttons.manual = {
                     icon: '<i class="fas fa-user"></i>',
                     label: 'Create Manually',
-                    callback: () => {
-                        Actor.create({
+                    callback: async () => {
+                        await createActor({
                             name: 'New Character',
                             type: 'character',
                             img: 'systems/foundryvtt-swse/assets/icons/default-character.png'

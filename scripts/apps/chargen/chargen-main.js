@@ -26,6 +26,9 @@ import { ClassesDB } from '../../data/classes-db.js';
 // V2 API base class
 import SWSEApplicationV2 from '../base/swse-application-v2.js';
 
+// v13 Hardening
+import { createActor } from '../../core/document-api-v13.js';
+
 // Import all module functions
 import * as SharedModule from './chargen-shared.js';
 import { ChargenDataCache } from './chargen-shared.js';
@@ -2935,8 +2938,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     let created = null;
     try {
-      // Create the actor
-      created = await Actor.create(actorData);
+      // Create the actor using v13-safe wrapper
+      created = await createActor(actorData);
 
       if (!created) {
         throw new Error('Actor creation returned null or undefined');

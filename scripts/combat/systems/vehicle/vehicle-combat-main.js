@@ -17,6 +17,7 @@ import { SWSEDogfighting } from './vehicle-dogfighting.js';
 import { SWSEVehicleCollisions } from './vehicle-collisions.js';
 import { SWSEVehicleWeapons } from './vehicle-weapons.js';
 import { measureSquares, createVehicleCTEffect } from './vehicle-shared.js';
+import { createChatMessage } from '../../../../core/document-api-v13.js';
 import { SWSERoll } from '../../rolls/enhanced-rolls.js';
 import { DamageSystem } from '../../damage-system.js';
 
@@ -71,7 +72,7 @@ export class SWSEVehicleCombat {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
       rolls: [attackRoll.roll]
@@ -101,7 +102,7 @@ export class SWSEVehicleCombat {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
       rolls: [roll]

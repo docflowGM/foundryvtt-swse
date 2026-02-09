@@ -18,6 +18,7 @@ import { isEpicOverrideEnabled } from '../../settings/epic-override.js';
 import { getLevelSplit } from '../../actors/derived/level-split.js';
 import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from '../mentor-dialogues.js';
 import { MentorSurvey } from '../mentor-survey.js';
+import { createChatMessage } from '../../core/document-api-v13.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { TypingAnimation } from '../../utils/typing-animation.js';
 import { qs, qsa, setVisible, isVisible } from '../../utils/dom-utils.js';
@@ -1930,7 +1931,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
         </div>
       `;
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         content: chatContent,
         style: CONST.CHAT_MESSAGE_STYLES.OTHER

@@ -1,6 +1,7 @@
 // scripts/engine/ProgressionSession.js
 import { swseLogger } from '../utils/logger.js';
 import { applyActorUpdateAtomic } from '../utils/actor-utils.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 /**
  * ProgressionSession - Session-level transaction wrapper for character progression
@@ -706,7 +707,7 @@ export class ProgressionSession {
         changes: this.stagedChanges
       });
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         content,
         flags: {

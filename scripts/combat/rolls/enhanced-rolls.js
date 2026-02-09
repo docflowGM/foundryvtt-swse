@@ -16,6 +16,7 @@ import {
 import {
   getEquippedWeapons,
   calculateFullAttackConfig,
+import { createChatMessage } from '../../../core/document-api-v13.js';
   showFullAttackDialog,
   generateFullAttackCard
 } from '../multi-attack.js';
@@ -174,7 +175,7 @@ export class SWSERoll {
       });
 
       // Chat message (use calculated value instead of stale reference)
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: `
           <div class="swse-forcepoint-roll">
@@ -449,7 +450,7 @@ export class SWSERoll {
         </style>
       `;
 
-      const message = await ChatMessage.create({
+      const message = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
         rolls: [roll]
@@ -496,7 +497,7 @@ export class SWSERoll {
     const results = [];
 
     // Show summary header
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `
         <div class="swse-bulk-attack-header">
@@ -831,7 +832,7 @@ export class SWSERoll {
         </div>
       `;
 
-      const message = await ChatMessage.create({
+      const message = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
         rolls: [roll]
@@ -1040,7 +1041,7 @@ export class SWSERoll {
       const cardHtml = generateFullAttackCard(actor, results, config);
 
       // Create chat message
-      const message = await ChatMessage.create({
+      const message = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: cardHtml
       });
@@ -1305,7 +1306,7 @@ export class SWSERoll {
         </style>
       `;
 
-      const msg = await ChatMessage.create({
+      const msg = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
         rolls: [roll],
@@ -1405,7 +1406,7 @@ export class SWSERoll {
         </div>
       `;
 
-      const msg = await ChatMessage.create({
+      const msg = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
         rolls: [roll]
@@ -1482,7 +1483,7 @@ export class SWSERoll {
         </div>
       `;
 
-      const msg = await ChatMessage.create({
+      const msg = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
         rolls: [roll]
@@ -1855,7 +1856,7 @@ export class SWSERoll {
         </div>
       `;
 
-      const message = await ChatMessage.create({
+      const message = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
         rolls: [roll]

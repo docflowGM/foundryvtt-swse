@@ -1,3 +1,4 @@
+import { createChatMessage } from '../../core/document-api-v13.js';
 import { SWSELogger } from '../utils/logger.js';
 
 /**
@@ -74,7 +75,7 @@ export class SWSECombatAutomation {
 
     if (damage < threshold) {return false;}
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `
       <div class="swse threshold-exceeded">
@@ -88,7 +89,7 @@ export class SWSECombatAutomation {
     await actor.moveConditionTrack(1);
 
     if (actor.system.hp.value === 0 && actor.isHelpless) {
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: `
         <div class="swse death-notification">
@@ -135,7 +136,7 @@ export class SWSECombatAutomation {
             callback: async () => {
               await actor.moveConditionTrack(-1);
 
-              ChatMessage.create({
+              createChatMessage({
                 speaker: ChatMessage.getSpeaker({ actor }),
                 content: `<strong>${actor.name}</strong> recovers one step on the Condition Track.`
               });

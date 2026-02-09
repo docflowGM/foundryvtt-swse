@@ -206,13 +206,13 @@ export async function _onPreviewSpecies(event) {
 
     if (summary.length > 0) {
       summary.forEach(item => {
-        summaryList.append(`<li><strong>${item}</strong></li>`);
+        summaryList.insertAdjacentHTML('beforeend', `<li><strong>${item}</strong></li>`);
       });
     }
   }
 
   // Show the overlay with animation
-  overlay.addClass('active');
+  overlay.classList.add('active');
 
   SWSELogger.log(`CharGen | Previewing species: ${speciesName}`);
 }
@@ -278,8 +278,8 @@ export function _onCloseSpeciesOverlay(event) {
   event.preventDefault();
   event.stopPropagation();
 
-  const overlay = this.element.find('#species-overlay');
-  overlay.removeClass('active');
+  const overlay = this.element.querySelector('#species-overlay');
+  overlay?.classList.remove('active');
 
   _previewedSpeciesName = null;
 
@@ -1127,54 +1127,68 @@ function updateNearHumanUI(overlay) {
   const validation = validateNearHuman();
 
   // Update selected trait display
-  const traitDisplay = overlay.find('#selected-trait');
-  if (_nearHumanState.traitId) {
-    const trait = getNearHumanTrait(_nearHumanState.traitId);
-    if (trait) {
-      traitDisplay.html(`<strong>${trait.name}</strong> (${trait.type})<br/><em>${trait.description}</em>`);
+  const traitDisplay = overlay.querySelector('#selected-trait');
+  if (traitDisplay) {
+    if (_nearHumanState.traitId) {
+      const trait = getNearHumanTrait(_nearHumanState.traitId);
+      if (trait) {
+        traitDisplay.innerHTML = `<strong>${trait.name}</strong> (${trait.type})<br/><em>${trait.description}</em>`;
+      }
+    } else {
+      traitDisplay.innerHTML = '<span class="placeholder">Select a trait above</span>';
     }
-  } else {
-    traitDisplay.html('<span class="placeholder">Select a trait above</span>');
   }
 
   // Update selected sacrifice display
-  const sacrificeDisplay = overlay.find('#selected-sacrifice');
-  const sacrificeLabels = {
-    feat: 'Lose your bonus Feat at 1st level',
-    skill: 'Lose your bonus Trained Skill'
-  };
-  if (_nearHumanState.sacrifice) {
-    sacrificeDisplay.html(`<strong>${_nearHumanState.sacrifice === 'feat' ? 'Bonus Feat' : 'Bonus Trained Skill'}:</strong> ${sacrificeLabels[_nearHumanState.sacrifice]}`);
-  } else {
-    sacrificeDisplay.html('<span class="placeholder">Choose which human bonus to trade</span>');
+  const sacrificeDisplay = overlay.querySelector('#selected-sacrifice');
+  if (sacrificeDisplay) {
+    const sacrificeLabels = {
+      feat: 'Lose your bonus Feat at 1st level',
+      skill: 'Lose your bonus Trained Skill'
+    };
+    if (_nearHumanState.sacrifice) {
+      sacrificeDisplay.innerHTML = `<strong>${_nearHumanState.sacrifice === 'feat' ? 'Bonus Feat' : 'Bonus Trained Skill'}:</strong> ${sacrificeLabels[_nearHumanState.sacrifice]}`;
+    } else {
+      sacrificeDisplay.innerHTML = '<span class="placeholder">Choose which human bonus to trade</span>';
+    }
   }
 
   // Update variant display
-  const variantDisplay = overlay.find('#selected-variants');
-  if (_nearHumanState.variants.length > 0) {
-    const variantNames = _nearHumanState.variants.map(vid => {
-      const v = getNearHumanVariant(vid);
-      return v ? v.name : vid;
-    }).join(', ');
-    variantDisplay.html(`<strong>Selected (${_nearHumanState.variants.length}/3):</strong> ${variantNames}`);
-  } else {
-    variantDisplay.html('<span class="placeholder">No variants selected (optional)</span>');
+  const variantDisplay = overlay.querySelector('#selected-variants');
+  if (variantDisplay) {
+    if (_nearHumanState.variants.length > 0) {
+      const variantNames = _nearHumanState.variants.map(vid => {
+        const v = getNearHumanVariant(vid);
+        return v ? v.name : vid;
+      }).join(', ');
+      variantDisplay.innerHTML = `<strong>Selected (${_nearHumanState.variants.length}/3):</strong> ${variantNames}`;
+    } else {
+      variantDisplay.innerHTML = '<span class="placeholder">No variants selected (optional)</span>';
+    }
   }
 
   // Update validation message
-  const validationEl = overlay.find('.validation-message');
-  if (validation.isValid) {
-    validationEl.text('Near-Human is ready!').removeClass('error').addClass('success');
-    overlay.find('#near-human-confirm-btn').prop('disabled', false);
-  } else {
-    const missing = [];
-    if (!validation.hasTrait) {missing.push('trait');}
-    if (!validation.hasSacrifice) {missing.push('sacrifice');}
-    if (_nearHumanState.traitId === 'abilityAdjustment' && !validation.abilityAdjustmentsValid) {
-      missing.push('ability adjustments must sum to 0');
+  const validationEl = overlay.querySelector('.validation-message');
+  const confirmBtn = overlay.querySelector('#near-human-confirm-btn');
+
+  if (validationEl) {
+    validationEl.textContent = validation.isValid ? 'Near-Human is ready!' : '';
+    validationEl.classList.remove('error', 'success');
+    validationEl.classList.add(validation.isValid ? 'success' : 'error');
+
+    if (!validation.isValid) {
+      const missing = [];
+      if (!validation.hasTrait) {missing.push('trait');}
+      if (!validation.hasSacrifice) {missing.push('sacrifice');}
+      if (_nearHumanState.traitId === 'abilityAdjustment' && !validation.abilityAdjustmentsValid) {
+        missing.push('ability adjustments must sum to 0');
+      }
+      validationEl.textContent = `Missing: ${missing.join(', ')}`;
     }
-    validationEl.text(`Missing: ${missing.join(', ')}`).removeClass('success').addClass('error');
-    overlay.find('#near-human-confirm-btn').prop('disabled', true);
+  }
+
+  if (confirmBtn) {
+    confirmBtn.disabled = !validation.isValid;
   }
 }
 
@@ -1190,7 +1204,8 @@ export async function _onOpenNearHumanBuilder(event) {
 
   resetNearHumanState();
 
-  const overlay = this.element.find('#near-human-overlay');
+  const overlay = this.element.querySelector('#near-human-overlay');
+  if (!overlay) {return;}
 
   // Populate traits list
   _renderNearHumanTraits(overlay);
@@ -1199,13 +1214,16 @@ export async function _onOpenNearHumanBuilder(event) {
   _renderNearHumanVariants(overlay);
 
   // Clear previous selections
-  overlay.find('.trait-btn, .sacrifice-radio, .variant-checkbox').prop('checked', false).removeClass('selected');
+  overlay.querySelectorAll('.trait-btn, .sacrifice-radio, .variant-checkbox').forEach(el => {
+    el.checked = false;
+    el.classList.remove('selected');
+  });
 
   // Reset display
   updateNearHumanUI(overlay);
 
   // Show overlay
-  overlay.addClass('active');
+  overlay.classList.add('active');
 
   SWSELogger.log('CharGen | Opened Near-Human builder with official SWSE traits');
 }
@@ -1216,8 +1234,9 @@ export async function _onOpenNearHumanBuilder(event) {
 function _renderNearHumanTraits(overlay) {
   if (!_nearHumanTraitsData || !_nearHumanTraitsData.traits) {return;}
 
-  const traitsList = overlay.find('#traits-list');
-  traitsList.empty();
+  const traitsList = overlay.querySelector('#traits-list');
+  if (!traitsList) return;
+  traitsList.innerHTML = '';
 
   // Group traits by type for better organization
   const traitsByType = {};
@@ -1245,24 +1264,24 @@ function _renderNearHumanTraits(overlay) {
 
   for (const [type, traits] of Object.entries(traitsByType)) {
     const typeLabel = typeLabels[type] || type;
-    const typeGroup = $('<div class="trait-type-group"></div>');
-    typeGroup.append(`<h4 class="trait-type-header">${typeLabel}</h4>`);
-
-    for (const trait of traits) {
-      const isHouseRule = trait.category === 'houserule';
-      const badge = isHouseRule ? '<span class="houserule-badge" title="House Rule - Optional">⚙️ HR</span>' : '';
-
-      const btn = $(`
-        <button type="button" class="trait-btn ${isHouseRule ? 'houserule-trait' : ''}" data-trait-id="${trait.id}">
-          ${badge}
-          <strong>${trait.name}</strong>
-          <span class="trait-description">${trait.description}</span>
-        </button>
-      `);
-      typeGroup.append(btn);
-    }
-
-    traitsList.append(typeGroup);
+    // TODO: Convert jQuery DOM construction to document.createElement()
+    const typeGroupHtml = `
+      <div class="trait-type-group">
+        <h4 class="trait-type-header">${typeLabel}</h4>
+        ${traits.map(trait => {
+          const isHouseRule = trait.category === 'houserule';
+          const badge = isHouseRule ? '<span class="houserule-badge" title="House Rule - Optional">⚙️ HR</span>' : '';
+          return `
+            <button type="button" class="trait-btn ${isHouseRule ? 'houserule-trait' : ''}" data-trait-id="${trait.id}">
+              ${badge}
+              <strong>${trait.name}</strong>
+              <span class="trait-description">${trait.description}</span>
+            </button>
+          `;
+        }).join('')}
+      </div>
+    `;
+    traitsList.insertAdjacentHTML('beforeend', typeGroupHtml);
   }
 }
 
@@ -1272,32 +1291,35 @@ function _renderNearHumanTraits(overlay) {
 function _renderNearHumanVariants(overlay) {
   if (!_nearHumanTraitsData || !_nearHumanTraitsData.variants) {return;}
 
-  const variantsList = overlay.find('#variants-list');
-  variantsList.empty();
+  const variantsList = overlay.querySelector('#variants-list');
+  if (!variantsList) return;
+  variantsList.innerHTML = '';
 
-  for (const variant of _nearHumanTraitsData.variants) {
+  const variantsHtml = _nearHumanTraitsData.variants.map(variant => {
     const isHouseRule = variant.category === 'houserule';
     const badge = isHouseRule ? '<span class="houserule-badge" title="House Rule - Optional">⚙️ HR</span>' : '';
 
-    const label = $(`
+    return `
       <label class="variant-checkbox-label ${isHouseRule ? 'houserule-variant' : ''}">
         <input type="checkbox" class="variant-checkbox" value="${variant.id}">
         ${badge}
         <strong>${variant.name}</strong>
         <span class="variant-description">${variant.description}</span>
       </label>
-    `);
-    variantsList.append(label);
-  }
+    `;
+  }).join('');
+
+  variantsList.insertAdjacentHTML('beforeend', variantsHtml);
 }
 
 /**
  * Render ability adjustment controls for Ability Adjustment trait
  */
 function _renderAbilityAdjustments(overlay) {
-  const section = overlay.find('#ability-adjustment-section');
-  const container = overlay.find('#ability-adjustments');
-  container.empty();
+  const section = overlay.querySelector('#ability-adjustment-section');
+  const container = overlay.querySelector('#ability-adjustments');
+  if (!section || !container) return;
+  container.innerHTML = '';
 
   const abilityLabels = {
     str: 'Strength',
@@ -1308,11 +1330,11 @@ function _renderAbilityAdjustments(overlay) {
     cha: 'Charisma'
   };
 
-  for (const [ability, label] of Object.entries(abilityLabels)) {
+  const adjustmentsHtml = Object.entries(abilityLabels).map(([ability, label]) => {
     const adjustment = _nearHumanState.abilityAdjustments[ability] || 0;
     const displayValue = adjustment >= 0 ? `+${adjustment}` : `${adjustment}`;
 
-    const row = $(`
+    return `
       <div class="ability-adjustment-row">
         <label class="ability-label">${label}</label>
         <div class="adjustment-controls">
@@ -1325,16 +1347,17 @@ function _renderAbilityAdjustments(overlay) {
           </button>
         </div>
       </div>
-    `);
-    container.append(row);
-  }
+    `;
+  }).join('');
+
+  container.insertAdjacentHTML('beforeend', adjustmentsHtml);
 
   // Show section if Ability Adjustment trait is selected
   const isAbilityAdjustmentSelected = _nearHumanState.traitId === 'abilityAdjustment';
   if (isAbilityAdjustmentSelected) {
-    section.show();
+    section.style.display = 'block';
   } else {
-    section.hide();
+    section.style.display = 'none';
   }
 }
 
@@ -1344,7 +1367,10 @@ function _renderAbilityAdjustments(overlay) {
 function _updateAbilityAdjustmentTotal(overlay) {
   const adjustments = _nearHumanState.abilityAdjustments;
   const total = Object.values(adjustments).reduce((sum, val) => sum + val, 0);
-  overlay.find('#adjustment-total-value').text(total);
+  const totalEl = overlay.querySelector('#adjustment-total-value');
+  if (totalEl) {
+    totalEl.textContent = total;
+  }
 }
 
 /**
@@ -1372,14 +1398,19 @@ export function _onAdjustNearHumanAbility(event) {
     return;
   }
 
-  const overlay = this.element.find('#near-human-overlay');
+  const overlay = this.element.querySelector('#near-human-overlay');
+  if (!overlay) return;
 
   // Re-render adjustment controls to show new values
   _renderAbilityAdjustments(overlay);
   _updateAbilityAdjustmentTotal(overlay);
 
   // Reattach event listeners to new buttons
-  overlay.find('.ability-plus-btn, .ability-minus-btn').off('click').click(this._onAdjustNearHumanAbility.bind(this));
+  const buttons = overlay.querySelectorAll('.ability-plus-btn, .ability-minus-btn');
+  buttons.forEach(btn => {
+    btn.removeEventListener('click', this._onAdjustNearHumanAbility.bind(this));
+    btn.addEventListener('click', this._onAdjustNearHumanAbility.bind(this));
+  });
 }
 
 /**
@@ -1395,15 +1426,19 @@ export function _onSelectNearHumanTrait(event) {
   if (!traitId) {return;}
 
   // Single selection - only one trait allowed
-  const overlay = this.element.find('#near-human-overlay');
-  overlay.find('.trait-btn').removeClass('selected');
+  const overlay = this.element.querySelector('#near-human-overlay');
+  if (!overlay) return;
+
+  overlay.querySelectorAll('.trait-btn').forEach(btn => {
+    btn.classList.remove('selected');
+  });
 
   if (_nearHumanState.traitId === traitId) {
     _nearHumanState.traitId = null;
-    $(button).removeClass('selected');
+    button.classList.remove('selected');
   } else {
     _nearHumanState.traitId = traitId;
-    $(button).addClass('selected');
+    button.classList.add('selected');
   }
 
   // Show/hide ability adjustment section based on trait selection
@@ -1411,7 +1446,11 @@ export function _onSelectNearHumanTrait(event) {
   _updateAbilityAdjustmentTotal(overlay);
 
   // Reattach event listeners to ability adjustment buttons
-  overlay.find('.ability-plus-btn, .ability-minus-btn').off('click').click(this._onAdjustNearHumanAbility.bind(this));
+  const buttons = overlay.querySelectorAll('.ability-plus-btn, .ability-minus-btn');
+  buttons.forEach(btn => {
+    btn.removeEventListener('click', this._onAdjustNearHumanAbility.bind(this));
+    btn.addEventListener('click', this._onAdjustNearHumanAbility.bind(this));
+  });
 
   updateNearHumanUI(overlay);
 }
@@ -1423,8 +1462,18 @@ export function _onSelectNearHumanSacrifice(event) {
   const radio = event.currentTarget;
   _nearHumanState.sacrifice = radio.value;
 
-  const overlay = this.element.closest('#near-human-overlay') || $(document).find('#near-human-overlay');
-  updateNearHumanUI(overlay);
+  // Find overlay starting from this.element or fallback to document
+  let overlay = null;
+  if (this.element) {
+    overlay = this.element.querySelector('#near-human-overlay');
+  }
+  if (!overlay) {
+    overlay = document.querySelector('#near-human-overlay');
+  }
+
+  if (overlay) {
+    updateNearHumanUI(overlay);
+  }
 }
 
 /**
@@ -1437,7 +1486,7 @@ export function _onToggleNearHumanVariant(event) {
   const checkbox = event.currentTarget;
   const variantId = checkbox.value;
 
-  const overlay = this.element.find('#near-human-overlay');
+  const overlay = this.element?.querySelector('#near-human-overlay');
 
   if (checkbox.checked) {
     // Add variant if not already selected and limit not exceeded
@@ -1464,7 +1513,8 @@ export function _onRandomizeNearHuman(event) {
   event.preventDefault();
   event.stopPropagation();
 
-  const overlay = this.element.find('#near-human-overlay');
+  const overlay = this.element?.querySelector('#near-human-overlay');
+  if (!overlay) return;
 
   if (!_nearHumanTraitsData || !_nearHumanTraitsData.traits || _nearHumanTraitsData.traits.length === 0) {
     ui.notifications.warn('Trait data not loaded yet');
@@ -1490,17 +1540,32 @@ export function _onRandomizeNearHuman(event) {
   }
 
   // Update trait button selections
-  overlay.find('.trait-btn').removeClass('selected');
-  overlay.find(`.trait-btn[data-trait-id="${_nearHumanState.traitId}"]`).addClass('selected');
+  overlay.querySelectorAll('.trait-btn').forEach(btn => {
+    btn.classList.remove('selected');
+  });
+  const selectedTraitBtn = overlay.querySelector(`.trait-btn[data-trait-id="${_nearHumanState.traitId}"]`);
+  if (selectedTraitBtn) {
+    selectedTraitBtn.classList.add('selected');
+  }
 
   // Update sacrifice radio buttons
-  overlay.find('.sacrifice-radio').prop('checked', false);
-  overlay.find(`.sacrifice-radio[value="${_nearHumanState.sacrifice}"]`).prop('checked', true);
+  overlay.querySelectorAll('.sacrifice-radio').forEach(radio => {
+    radio.checked = false;
+  });
+  const selectedSacrificeRadio = overlay.querySelector(`.sacrifice-radio[value="${_nearHumanState.sacrifice}"]`);
+  if (selectedSacrificeRadio) {
+    selectedSacrificeRadio.checked = true;
+  }
 
   // Update variant checkboxes
-  overlay.find('.variant-checkbox').prop('checked', false);
+  overlay.querySelectorAll('.variant-checkbox').forEach(checkbox => {
+    checkbox.checked = false;
+  });
   for (const variantId of _nearHumanState.variants) {
-    overlay.find(`.variant-checkbox[value="${variantId}"]`).prop('checked', true);
+    const checkbox = overlay.querySelector(`.variant-checkbox[value="${variantId}"]`);
+    if (checkbox) {
+      checkbox.checked = true;
+    }
   }
 
   // Update UI display
@@ -1594,8 +1659,10 @@ export function _onCloseNearHumanOverlay(event) {
   event.preventDefault();
   event.stopPropagation();
 
-  const overlay = this.element.find('#near-human-overlay');
-  overlay.removeClass('active');
+  const overlay = this.element?.querySelector('#near-human-overlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+  }
 
   SWSELogger.log('CharGen | Closed Near-Human builder');
 }

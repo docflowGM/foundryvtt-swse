@@ -10,6 +10,7 @@ import { VehicleModificationApp } from '../vehicle-modification-app.js';
 import { calculateFinalCost } from './store-pricing.js';
 import { getRandomDialogue } from './store-shared.js';
 import { SWSEVehicleHandler } from '../../actors/vehicle/swse-vehicle-handler.js';
+import { createActor } from '../../core/document-api-v13.js';
 
 /**
  * Add item to shopping cart
@@ -278,7 +279,7 @@ export async function buyDroid(store, actorId) {
             [game.user.id]: 3  // Owner permission
         };
 
-        const newDroid = await Actor.create(droidData);
+        const newDroid = await createActor(droidData);
 
         ui.notifications.info(`${droidTemplate.name} purchased! Check your actors list.`);
         store.render();
@@ -361,7 +362,7 @@ export async function buyVehicle(store, actorId, condition) {
             vehicleData.system.condition = 'used';
         }
 
-        const newVehicle = await Actor.create(vehicleData);
+        const newVehicle = await createActor(vehicleData);
 
         ui.notifications.info(`${vehicleTemplate.name} purchased! Check your actors list.`);
         store.render();
@@ -585,7 +586,7 @@ export async function checkout(store, animateNumberCallback) {
                 default: 0,
                 [game.user.id]: 3
             };
-            await Actor.create(droidData);
+            await createActor(droidData);
         }
         // Create vehicle actors from Item templates
         for (const vehicle of store.cart.vehicles) {
@@ -594,7 +595,7 @@ export async function checkout(store, animateNumberCallback) {
                 throw new Error(`Vehicle template not found for id=${vehicle.id}`);
             }
 
-            const vehicleActor = await Actor.create({
+            const vehicleActor = await createActor({
                 name: `${vehicle.condition === 'used' ? '(Used) ' : ''}${vehicle.name}`,
                 type: 'vehicle',
                 img: template.img || 'icons/svg/anchor.svg',

@@ -10,6 +10,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 export class DarkSidePowers {
 
@@ -242,7 +243,7 @@ export class DarkSidePowers {
         </div>
       `;
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: { actor: actor },
         content: messageContent,
         flavor: 'Wrath of the Dark Side - Delayed Damage',
@@ -319,7 +320,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Channel Aggression - Bonus Damage',
@@ -395,7 +396,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Channel Anger - Rage Activated'
@@ -434,7 +435,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Channel Anger - Rage Ended'
@@ -503,7 +504,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Crippling Strike - Speed Reduced'
@@ -547,7 +548,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: targetActor },
       content: chatContent,
       flavor: 'Crippling Strike - Effect Ended'
@@ -665,7 +666,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: `${talismanName} Created`
@@ -711,7 +712,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Dark Side Talisman - Destroyed'
@@ -824,7 +825,7 @@ export class DarkSidePowers {
         </div>
       `;
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: { actor: actor },
         content: chatContent,
         flavor: 'Dark Healing - Life Drained',
@@ -844,7 +845,7 @@ export class DarkSidePowers {
         </div>
       `;
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: { actor: actor },
         content: chatContent,
         flavor: 'Dark Healing - Resisted',
@@ -931,7 +932,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Improved Dark Healing - Life Drained',
@@ -1076,7 +1077,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Dark Healing Field - Mass Life Drain',
@@ -1143,7 +1144,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Wicked Strike - Critical Blow'
@@ -1205,7 +1206,7 @@ export class DarkSidePowers {
         </div>
       `;
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: { actor: targetActor },
         content: chatContent,
         flavor: 'Affliction - Dark Taint Damage',
@@ -1296,7 +1297,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Drain Force - Force Siphoned'
@@ -1393,7 +1394,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Sith Talisman Created'
@@ -1439,7 +1440,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Sith Talisman - Destroyed'
@@ -1563,7 +1564,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Sith Alchemical Weapon Enhanced'
@@ -1640,7 +1641,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Sith Alchemical Power Activated'
@@ -1749,7 +1750,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Stolen Form - Jedi Technique Acquired'

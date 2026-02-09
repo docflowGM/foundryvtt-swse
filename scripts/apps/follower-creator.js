@@ -12,6 +12,7 @@
 
 import { swseLogger } from '../utils/logger.js';
 import { resolveSkillKey } from '../utils/skill-resolver.js';
+import { createActor } from '../core/document-api-v13.js';
 
 export class FollowerCreator {
 
@@ -227,8 +228,8 @@ export class FollowerCreator {
             }
         };
 
-        // Create the actor
-        const follower = await Actor.create(actorData);
+        // Create the actor using v13-safe wrapper
+        const follower = await createActor(actorData);
 
         // Apply species (creates species item)
         if (speciesDoc) {

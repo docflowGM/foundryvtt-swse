@@ -1,5 +1,6 @@
 // scripts/engine/roll-engine.js
 import { swseLogger } from '../utils/logger.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 export const RollEngine = {
   /**
@@ -41,7 +42,7 @@ export const RollEngine = {
         chatData,
         { inplace: false }
       );
-      return ChatMessage.create(message);
+      return createChatMessage(message);
     } catch (err) {
       swseLogger.error('RollEngine.rollToChat failed', err);
       return null;
@@ -138,7 +139,7 @@ export const RollEngine = {
         action: options.action ?? null
       });
 
-      ChatMessage.create({
+      createChatMessage({
         user: game.user?.id,
         speaker: ChatMessage.getSpeaker({ actor }),
         content: card,
@@ -226,7 +227,7 @@ export const RollEngine = {
 
     const result = myRoll.total - oppRoll.total;
 
-    ChatMessage.create({
+    createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `
         <div class="swse-holo-card">

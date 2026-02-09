@@ -16,6 +16,7 @@
 
 import { SWSERoll } from '../../rolls/enhanced-rolls.js';
 import { computeDogfightingModifier } from './vehicle-calculations.js';
+import { createChatMessage } from '../../../../core/document-api-v13.js';
 import { measureSquares, facingTowards } from './vehicle-shared.js';
 
 export class SWSEDogfighting {
@@ -174,7 +175,7 @@ export class SWSEDogfighting {
 
     html += `</div>`;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html
     });
@@ -354,7 +355,7 @@ export async function createDogfightMessage(result) {
     </div>
   `;
 
-  await ChatMessage.create({
+  await createChatMessage({
     speaker: ChatMessage.getSpeaker({ actor: initiator }),
     content,
     style: CONST.CHAT_MESSAGE_STYLES.OTHER

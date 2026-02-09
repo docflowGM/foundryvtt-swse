@@ -1,5 +1,6 @@
 import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance, checkConcealmentHit, getFlankingBonus } from '../utils/combat-utils.js';
 import { SWSERoll } from '../rolls/enhanced-rolls.js';
+import { createChatMessage } from '../../../core/document-api-v13.js';
 import { DamageSystem } from '../damage-system.js';
 
 export class SWSECombat {
@@ -160,7 +161,7 @@ export class SWSECombat {
 
     html += `</div>`;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
       style: CONST.CHAT_MESSAGE_STYLES.OTHER,
@@ -191,7 +192,7 @@ export class SWSECombat {
 
     html += `</div>`;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
       rolls: [roll]

@@ -9,6 +9,7 @@
  */
 
 import { measureDistance, facingTowards } from './vehicle-shared.js';
+import { createChatMessage } from '../../../../core/document-api-v13.js';
 import { SWSERoll } from '../../rolls/enhanced-rolls.js';
 
 export class SWSEVehicleWeapons {
@@ -32,7 +33,7 @@ export class SWSEVehicleWeapons {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
       roll: roll.roll
@@ -92,7 +93,7 @@ export class SWSEVehicleWeapons {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
       roll: attackRoll.roll
@@ -328,7 +329,7 @@ export async function createBatteryMessage(result) {
     </div>
   `;
 
-  await ChatMessage.create({
+  await createChatMessage({
     speaker: ChatMessage.getSpeaker({ actor: vehicle }),
     content,
     style: CONST.CHAT_MESSAGE_STYLES.OTHER

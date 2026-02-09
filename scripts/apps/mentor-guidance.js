@@ -12,6 +12,7 @@ import {
 
 import { swseLogger } from '../utils/logger.js';
 import { TypingAnimation } from '../utils/typing-animation.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 export class MentorGuidanceUI {
 
@@ -39,7 +40,7 @@ export class MentorGuidanceUI {
         // Check if guidance popups are enabled
         if (!game.settings.get('foundryvtt-swse', 'mentorGuidanceEnabled')) {
             // Fallback: send to chat if popups disabled
-            await ChatMessage.create({
+            await createChatMessage({
                 speaker: ChatMessage.getSpeaker({ actor: actor }),
                 content: `<div class="swse-mentor-chat"><strong>${mentor.name}:</strong> ${guidance}</div>`
             });

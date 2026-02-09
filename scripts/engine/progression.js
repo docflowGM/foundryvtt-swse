@@ -4,6 +4,7 @@ import { applyActorUpdateAtomic } from '../utils/actor-utils.js';
 import { FinalizeIntegration } from '../progression/integration/finalize-integration.js';
 import { ProgressionSession } from './ProgressionSession.js';
 import { SuggestionService } from './SuggestionService.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 /**
  * Unified SWSE Progression Engine
@@ -771,7 +772,7 @@ async applyScalingFeature(feature) {
         const message = getMentorGreeting(mentor, newLevel, this.actor);
 
         // Create a styled chat card for the greeting
-        await ChatMessage.create({
+        await createChatMessage({
           speaker: ChatMessage.getSpeaker({ actor: this.actor }),
           content: `
           <div class="swse-mentor-greeting">
@@ -2489,7 +2490,7 @@ async applyScalingFeature(feature) {
         choices
       });
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         content,
         flags: {

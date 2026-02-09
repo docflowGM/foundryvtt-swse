@@ -1,6 +1,7 @@
 import { SWSEActiveEffectsManager } from '../combat/active-effects-manager.js';
 import { SWSECombat } from '../combat/systems/enhanced-combat-system.js';
 import { escapeHTML } from '../utils/security-utils.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 /**
  * Modernized Combat Action Bar
@@ -265,7 +266,7 @@ export class CombatActionBar {
       'system.secondWind.uses': uses - 1
     });
 
-    ChatMessage.create({
+    createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `<b>${escapeHTML(actor.name)}</b> regains <strong>${heal}</strong> HP!`
     });

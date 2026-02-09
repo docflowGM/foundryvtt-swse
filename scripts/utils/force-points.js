@@ -1,4 +1,5 @@
 import { ProgressionEngine } from '../progression/engine/progression-engine.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 /**
  * Force Points utility functions for rolling and spending Force Points
  */
@@ -66,7 +67,7 @@ export class ForcePointsUtil {
       numDice
     });
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: messageContent,
       style: CONST.CHAT_MESSAGE_STYLES.OTHER,
@@ -241,7 +242,7 @@ export class ForcePointsUtil {
     });
 
 
-    ChatMessage.create({
+    createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `<p><strong>${actor.name}</strong> spends a Force Point to avoid death and falls unconscious!</p>`
     });

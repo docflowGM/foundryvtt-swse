@@ -1,5 +1,6 @@
 // ============================================
 import { SWSELogger } from '../utils/logger.js';
+import { createActor } from './document-api-v13.js';
 // FILE: scripts/world-data-loader.js
 // FIXED: Validates all data before importing
 // ============================================
@@ -114,6 +115,7 @@ export class WorldDataLoader {
         return existing;
       }
 
+      // TODO: Create world-item wrapper for Item.create() - currently uses deprecated API
       return await Item.create(itemData);
     } catch (error) {
       SWSELogger.error(`SWSE | Failed to create ${itemType}:`, itemData.name, error);
@@ -124,7 +126,7 @@ export class WorldDataLoader {
   /**
    * Safe actor creation with validation
    */
-  static async createActor(actorData, actorType) {
+  static async createActorDoc(actorData, actorType) {
     const errors = this.validateActor(actorData, actorType);
 
     if (errors.length > 0) {
@@ -142,7 +144,7 @@ export class WorldDataLoader {
         return existing;
       }
 
-      return await Actor.create(actorData);
+      return await createActor(actorData);
     } catch (error) {
       SWSELogger.error(`SWSE | Failed to create ${actorType}:`, actorData.name, error);
       return null;

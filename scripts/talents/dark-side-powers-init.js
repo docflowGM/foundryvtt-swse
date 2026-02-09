@@ -6,6 +6,7 @@
 
 import DarkSidePowers from './DarkSidePowers.js';
 import { SWSELogger } from '../utils/logger.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 /**
  * Initialize Dark Side Powers systems when the world loads
@@ -61,7 +62,7 @@ Hooks.once('ready', () => {
             const power = actor.items.get(powerId);
             const success = await DarkSidePowers.triggerSwiftPower(actor, power);
             if (success) {
-              await ChatMessage.create({
+              await createChatMessage({
                 speaker: { actor: actor },
                 content: `<h3><img src="icons/svg/item-bag.svg" style="width: 20px; height: 20px;"> Swift Power</h3>
                           <p><strong>${actor.name}</strong> uses ${power.name} as a <strong>Swift Action</strong> instead of a Standard or Move Action!</p>`,
