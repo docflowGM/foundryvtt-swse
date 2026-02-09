@@ -24,6 +24,7 @@
     "Roll": "readonly",
     "Dialog": "readonly",
     "Application": "readonly",
+    "ApplicationV2": "readonly",
     "FormApplication": "readonly",
     "ChatMessage": "readonly",
     "foundry": "readonly",
@@ -134,6 +135,18 @@
       {
         "selector": "CallExpression[callee.property.name='find'][callee.object.object.property.name='element']",
         "message": "this.element.find() not available in v13+. Use this.element.querySelector() instead."
+      },
+      {
+        "selector": "CallExpression[callee.object.name='Actor'][callee.property.name='create']",
+        "message": "Actor.create() is deprecated in v13+. Use createActor() from core/document-api-v13.js instead."
+      },
+      {
+        "selector": "CallExpression[callee.object.name='Item'][callee.property.name='create']",
+        "message": "Item.create() is deprecated in v13+. Use createItemInActor() from core/document-api-v13.js instead."
+      },
+      {
+        "selector": "CallExpression[callee.object.name='ChatMessage'][callee.property.name='create']",
+        "message": "Consider using createChatMessage() wrapper from core/document-api-v13.js for consistency with v13 patterns."
       }
     ]
   }
