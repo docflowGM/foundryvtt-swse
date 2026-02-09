@@ -57,6 +57,12 @@ if (typeof $ !== 'undefined' || typeof jQuery !== 'undefined') {
 }
 
 /* =========================
+   PHASE 3: RUNTIME CONTRACT (must be first)
+   ========================= */
+
+import { RuntimeContract } from './scripts/contracts/runtime-contract.js';
+
+/* =========================
    IMPORTS
    ========================= */
 
@@ -68,6 +74,9 @@ import { initializeRolls } from './scripts/core/rolls-init.js';
 
 // ---- v13 hardening ----
 import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from './scripts/core/hardening-init.js';
+
+// ---- phase 3 contracts ----
+import { DiagnosticMode } from './scripts/contracts/diagnostic-mode.js';
 
 // ---- logging / perf ----
 import { swseLogger } from './scripts/utils/logger.js';
@@ -211,6 +220,9 @@ Hooks.once('ready', async () => {
 
   errorHandler.initialize();
   initializeRolls();
+
+  /* ---------- phase 3: diagnostic mode ---------- */
+  await DiagnosticMode.initialize();
 
   /* ---------- data & progression ---------- */
   // Verify compendium integrity first (fail-fast if missing)
