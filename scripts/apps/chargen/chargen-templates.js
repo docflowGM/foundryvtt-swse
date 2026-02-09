@@ -452,42 +452,60 @@ export class CharacterTemplates {
     const dialog = new Dialog({
       title: 'Character Template Selection',
       content: content,
-      buttons: {},
-      render: (html) => {
-        // Tab switching
-        root.querySelectorAll('.template-tab').click(function() {
-          const tab = $(this).data('tab');
-          (root.querySelectorAll('.template-tab')||[]).forEach(el => el.classList.remove('active'));
-          $(this).addClass('active');
-          root.querySelectorAll('.template-tab-content').hide();
-          const root = html instanceof HTMLElement ? html : html?.[0];
-            root?.querySelectorAll?.(`.template-tab-content[data-tab="${tab}"]`)?.forEach(el => {el.style.display='';});
-        });
-
-        // Template selection
-        root.querySelectorAll('.template-select-btn').click(function() {
-          const templateId = $(this).data('template-id');
-          dialog.close();
-          onSelect(templateId);
-        });
-
-        // Custom build
-        root.querySelectorAll('.custom-build-btn').click(function() {
-          dialog.close();
-          onSelect(null); // null means custom build
-        });
-
-        // Card hover effect
-        root.querySelectorAll('.template-card').hover(
-          function() { $(this).addClass('hover'); },
-          function() { $(this).removeClass('hover'); }
-        );
-      }
+      buttons: {}
     }, {
       width: 900,
       height: 700,
       classes: ['swse', 'template-selection-dialog']
     });
+
+    // Hook into dialog opened event to bind native event listeners
+    const originalRender = dialog.render.bind(dialog);
+    dialog.render = async function(force = false, options = {}) {
+      const result = await originalRender(force, options);
+
+      // Get root element
+      const root = this.element;
+      if (!root) return result;
+
+      // Tab switching with native event listeners
+      root.querySelectorAll('.template-tab').forEach(tabBtn => {
+        tabBtn.addEventListener('click', (e) => {
+          const tab = tabBtn.dataset.tab;
+          root.querySelectorAll('.template-tab').forEach(el => el.classList.remove('active'));
+          tabBtn.classList.add('active');
+          root.querySelectorAll('.template-tab-content').forEach(el => el.style.display = 'none');
+          root.querySelectorAll(`.template-tab-content[data-tab="${tab}"]`).forEach(el => {
+            el.style.display = '';
+          });
+        });
+      });
+
+      // Template selection with native event listeners
+      root.querySelectorAll('.template-select-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const templateId = btn.dataset.templateId;
+          dialog.close();
+          onSelect(templateId);
+        });
+      });
+
+      // Custom build with native event listeners
+      root.querySelectorAll('.custom-build-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          dialog.close();
+          onSelect(null); // null means custom build
+        });
+      });
+
+      // Card hover effect with native listeners
+      root.querySelectorAll('.template-card').forEach(card => {
+        card.addEventListener('mouseenter', () => card.classList.add('hover'));
+        card.addEventListener('mouseleave', () => card.classList.remove('hover'));
+      });
+
+      return result;
+    };
 
     dialog.render(true);
   }
