@@ -41,11 +41,6 @@ export const BAB_PROGRESSIONS = {
   'fast': 1.0
 };
 
-export const SAVE_PROGRESSIONS = {
-  'slow': level => Math.floor(level / 3),
-  'fast': level => Math.trunc(level / 2) + 2
-};
-
 export const SKILL_ABILITY_MAP = {
   acrobatics: 'dex',
   climb: 'str',
@@ -94,7 +89,6 @@ export const SWSE_CONSTANTS = {
   SIZE_MODIFIERS,
   SIZE_AC_MODIFIERS,
   BAB_PROGRESSIONS,
-  SAVE_PROGRESSIONS,
   SKILL_ABILITY_MAP,
   FORCE_POWER_LEVELS,
   CARRYING_CAPACITY_MULTIPLIERS
