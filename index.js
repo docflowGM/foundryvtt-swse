@@ -30,6 +30,33 @@ window.addEventListener('unhandledrejection', (event) => {
 });
 
 /* =========================
+   JQUERY RUNTIME GUARD (v13 compliance)
+   ========================= */
+
+if (typeof $ !== 'undefined' || typeof jQuery !== 'undefined') {
+  const jq = globalThis.$ || globalThis.jQuery;
+  if (jq) {
+    const originalFind = jq.fn?.find;
+    const originalOn = jq.fn?.on;
+
+    // Override jQuery methods to prevent v1 slippage
+    if (jq.fn) {
+      jq.fn.find = function() {
+        const stack = new Error().stack;
+        console.error('🔥 SWSE | jQuery.find() detected at runtime (v1 pattern). Use element.querySelector() instead.\n', stack);
+        throw new Error('SWSE: jQuery methods are not permitted in AppV2. Use DOM APIs instead.');
+      };
+
+      jq.fn.on = function() {
+        const stack = new Error().stack;
+        console.error('🔥 SWSE | jQuery.on() detected at runtime (v1 pattern). Use addEventListener() instead.\n', stack);
+        throw new Error('SWSE: jQuery event binding is not permitted in AppV2. Use addEventListener instead.');
+      };
+    }
+  }
+}
+
+/* =========================
    IMPORTS
    ========================= */
 
@@ -50,6 +77,7 @@ import { errorHandler, errorCommands, logError } from './scripts/core/error-hand
 // ---- data / preload ----
 import { dataPreloader } from './scripts/core/data-preloader.js';
 import { runJsonBackedIdsMigration } from './scripts/migrations/json-backed-ids-migration.js';
+import { CompendiumVerification } from './scripts/core/compendium-verification.js';
 
 // ---- actors / items ----
 import { SWSEV2BaseActor } from './scripts/actors/v2/base-actor.js';
@@ -185,6 +213,9 @@ Hooks.once('ready', async () => {
   initializeRolls();
 
   /* ---------- data & progression ---------- */
+  // Verify compendium integrity first (fail-fast if missing)
+  await CompendiumVerification.verifyCompendiums();
+
   await Promise.all([
     dataPreloader.preload({
       priority: ['classes', 'skills'],
