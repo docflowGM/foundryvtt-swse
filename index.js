@@ -39,6 +39,9 @@ import { registerSystemSettings } from './scripts/core/settings.js';
 import { initializeUtils } from './scripts/core/utils-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
 
+// ---- v13 hardening ----
+import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from './scripts/core/hardening-init.js';
+
 // ---- logging / perf ----
 import { swseLogger } from './scripts/utils/logger.js';
 import { perfMonitor, debounce, throttle } from './scripts/utils/performance-utils.js';
@@ -128,6 +131,10 @@ Hooks.once('init', async () => {
 
   swseLogger.log('SWSE | Init start');
 
+  /* ---------- PHASE -1: v13 hardening (must be first) ---------- */
+  await initializeHardeningSystem();
+  registerHardeningHooks();
+
   /* ---------- PHASE 0: invariants ---------- */
   registerHandlebarsHelpers();
   Handlebars.registerHelper('let', (ctx, opts) => opts.fn({ ...this, ...ctx }));
@@ -170,6 +177,9 @@ Hooks.once('ready', async () => {
   console.time('SWSE Ready');
 
   swseLogger.log('SWSE | Ready start');
+
+  /* ---------- v13 hardening validation ---------- */
+  await validateSystemReady();
 
   errorHandler.initialize();
   initializeRolls();

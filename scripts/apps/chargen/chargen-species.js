@@ -206,13 +206,13 @@ export async function _onPreviewSpecies(event) {
 
     if (summary.length > 0) {
       summary.forEach(item => {
-        summaryList.append(`<li><strong>${item}</strong></li>`);
+        summaryList.insertAdjacentHTML('beforeend', `<li><strong>${item}</strong></li>`);
       });
     }
   }
 
   // Show the overlay with animation
-  overlay.addClass('active');
+  overlay.classList.add('active');
 
   SWSELogger.log(`CharGen | Previewing species: ${speciesName}`);
 }
@@ -278,8 +278,8 @@ export function _onCloseSpeciesOverlay(event) {
   event.preventDefault();
   event.stopPropagation();
 
-  const overlay = this.element.find('#species-overlay');
-  overlay.removeClass('active');
+  const overlay = this.element.querySelector('#species-overlay');
+  overlay?.classList.remove('active');
 
   _previewedSpeciesName = null;
 
@@ -1190,7 +1190,8 @@ export async function _onOpenNearHumanBuilder(event) {
 
   resetNearHumanState();
 
-  const overlay = this.element.find('#near-human-overlay');
+  const overlay = this.element.querySelector('#near-human-overlay');
+  if (!overlay) {return;}
 
   // Populate traits list
   _renderNearHumanTraits(overlay);
@@ -1199,13 +1200,16 @@ export async function _onOpenNearHumanBuilder(event) {
   _renderNearHumanVariants(overlay);
 
   // Clear previous selections
-  overlay.find('.trait-btn, .sacrifice-radio, .variant-checkbox').prop('checked', false).removeClass('selected');
+  overlay.querySelectorAll('.trait-btn, .sacrifice-radio, .variant-checkbox').forEach(el => {
+    el.checked = false;
+    el.classList.remove('selected');
+  });
 
   // Reset display
   updateNearHumanUI(overlay);
 
   // Show overlay
-  overlay.addClass('active');
+  overlay.classList.add('active');
 
   SWSELogger.log('CharGen | Opened Near-Human builder with official SWSE traits');
 }
