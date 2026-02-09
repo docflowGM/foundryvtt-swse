@@ -5,7 +5,7 @@ export class RollManager {
   static async safeRoll(formula, data = {}, options = {}) {
     try {
       const roll = globalThis.SWSE.RollEngine.safeRoll(formula, data);
-      await roll.evaluate({async: true});
+      await roll.evaluate({ async: true });
       return roll;
     } catch (err) {
       swseLogger.error('SWSE | Roll failed:', formula, err);
@@ -15,7 +15,7 @@ export class RollManager {
   }
 
   static async rollToChat(roll, chatData = {}) {
-    if (!roll) return null;
+    if (!roll) {return null;}
     try {
       const speaker = chatData.speaker || ChatMessage.getSpeaker();
       const content = roll.render(); // default rendering

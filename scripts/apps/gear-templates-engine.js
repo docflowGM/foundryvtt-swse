@@ -9,6 +9,7 @@ async function _updateOwnedItemOrDocument(item, updates) {
   if (actor?.updateOwnedItem) return actor.updateOwnedItem(item, updates);
   return item.update(updates);
 }
+// eslint-disable-next-line
 import TEMPLATES from '../../data/gear-templates.json' with { type: 'json' };
 
 export class GearTemplatesEngine {

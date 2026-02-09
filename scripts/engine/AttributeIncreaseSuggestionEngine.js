@@ -29,12 +29,12 @@ export const ATTRIBUTE_TIERS = {
 };
 
 export const TIER_REASONS = {
-  5: "Modifier breakpoint + primary ability match",
-  4: "Modifier breakpoint + secondary ability match",
-  3: "Reaches new modifier breakpoint",
-  2: "Primary ability for your build",
-  1: "Improves trained skills",
-  0: "Available for increase"
+  5: 'Modifier breakpoint + primary ability match',
+  4: 'Modifier breakpoint + secondary ability match',
+  3: 'Reaches new modifier breakpoint',
+  2: 'Primary ability for your build',
+  1: 'Improves trained skills',
+  0: 'Available for increase'
 };
 
 // Role associations for each ability (used for BuildIntent matching)
@@ -180,10 +180,10 @@ export class AttributeIncreaseSuggestionEngine {
           // Step 2: Check against build intent primary/secondary
           if (buildIntent?.primaryAbility === abbrev) {
             tier = ATTRIBUTE_TIERS.MODIFIER_PRIMARY;
-            reasons.push("Primary ability for your build");
+            reasons.push('Primary ability for your build');
           } else if (buildIntent?.secondaryAbility === abbrev) {
             tier = ATTRIBUTE_TIERS.MODIFIER_SECONDARY;
-            reasons.push("Secondary ability for your build");
+            reasons.push('Secondary ability for your build');
           } else {
             tier = ATTRIBUTE_TIERS.MODIFIER_GENERAL;
           }
@@ -191,7 +191,7 @@ export class AttributeIncreaseSuggestionEngine {
           // Step 3: If no breakpoint, check for other synergies
           if (buildIntent?.primaryAbility === abbrev) {
             tier = ATTRIBUTE_TIERS.PRIMARY_SYNERGY;
-            reasons.push("Primary ability for your build (no modifier increase)");
+            reasons.push('Primary ability for your build (no modifier increase)');
           }
         }
 
@@ -208,7 +208,7 @@ export class AttributeIncreaseSuggestionEngine {
         if (buildIntent?.forceFocus && (abbrev === 'wis' || abbrev === 'cha')) {
           tier = Math.max(tier, ATTRIBUTE_TIERS.PRIMARY_SYNERGY);
           if (!reasons.some(r => r.includes('Force'))) {
-            reasons.push("Supports Force-based abilities");
+            reasons.push('Supports Force-based abilities');
           }
         }
 
@@ -236,7 +236,7 @@ export class AttributeIncreaseSuggestionEngine {
           }
         }
 
-        const reason = reasons.length > 0 ? reasons.join("; ") : TIER_REASONS[tier];
+        const reason = reasons.length > 0 ? reasons.join('; ') : TIER_REASONS[tier];
         const fullAbilityName = this._getAbilityName(abbrev);
 
         suggestions.push({
@@ -259,7 +259,7 @@ export class AttributeIncreaseSuggestionEngine {
       // Sort by tier (descending) then by modifier breakpoint
       return suggestions.sort((a, b) => {
         const tierDiff = (b.suggestion?.tier ?? 0) - (a.suggestion?.tier ?? 0);
-        if (tierDiff !== 0) return tierDiff;
+        if (tierDiff !== 0) {return tierDiff;}
 
         if (a.isModifierBreakpoint !== b.isModifierBreakpoint) {
           return a.isModifierBreakpoint ? -1 : 1;
@@ -310,7 +310,7 @@ export class AttributeIncreaseSuggestionEngine {
    * @private
    */
   static _normalizeSkillName(name) {
-    if (!name) return '';
+    if (!name) {return '';}
     return name
       .toLowerCase()
       .replace(/\s+/g, '')

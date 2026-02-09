@@ -186,14 +186,14 @@ export function decayCommitments(memory, decayRate = 0.15) {
  * @param {string} commitmentType - "path" or "targetClass"
  * @returns {MentorMemory} Updated memory
  */
-export function reinforceCommitment(memory, commitmentType = "path") {
+export function reinforceCommitment(memory, commitmentType = 'path') {
   if (!memory) {
     return new MentorMemory();
   }
 
-  if (commitmentType === "path") {
+  if (commitmentType === 'path') {
     memory.commitmentStrength = 1.0;
-  } else if (commitmentType === "targetClass") {
+  } else if (commitmentType === 'targetClass') {
     memory.targetCommitment = 1.0;
   }
 
@@ -356,7 +356,7 @@ export function getAllMentorMemories(actor) {
  */
 export function formatMentorMemory(memory) {
   if (!memory) {
-    return "No memory";
+    return 'No memory';
   }
 
   let output = `Trust: ${Math.round(memory.trust * 100)}%\n`;
@@ -399,7 +399,7 @@ export function detectPathDivergence(memory, roleInfo) {
     return {
       hasDivergence: true,
       severity: 1, // subtle
-      reason: "shifting"
+      reason: 'shifting'
     };
   }
 
@@ -407,7 +407,7 @@ export function detectPathDivergence(memory, roleInfo) {
   return {
     hasDivergence: true,
     severity: 2, // evident
-    reason: "clear"
+    reason: 'clear'
   };
 }
 
@@ -441,13 +441,13 @@ export function seedMentorMemoryFromSurvey(biases) {
 
   // Determine primary combat archetype
   if (damageScore > controlScore && damageScore > survivalScore) {
-    memory.committedPath = "striker";
+    memory.committedPath = 'striker';
     console.log(`[MENTOR-MEMORY] seedMentorMemoryFromSurvey() - Committed path determined: "striker"`);
   } else if (survivalScore > damageScore && survivalScore > controlScore) {
-    memory.committedPath = "guardian";
+    memory.committedPath = 'guardian';
     console.log(`[MENTOR-MEMORY] seedMentorMemoryFromSurvey() - Committed path determined: "guardian"`);
   } else if (controlScore > damageScore && controlScore > survivalScore) {
-    memory.committedPath = "controller";
+    memory.committedPath = 'controller';
     console.log(`[MENTOR-MEMORY] seedMentorMemoryFromSurvey() - Committed path determined: "controller"`);
   } else {
     console.log(`[MENTOR-MEMORY] seedMentorMemoryFromSurvey() - No clear path winner, committedPath remains null`);

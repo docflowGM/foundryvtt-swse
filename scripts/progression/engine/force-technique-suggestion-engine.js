@@ -89,7 +89,7 @@ export class ForceTechniqueSuggestionEngine {
 
     // Sort by tier (descending) then score (descending)
     suggestions.sort((a, b) => {
-      if (b.tier !== a.tier) return b.tier - a.tier;
+      if (b.tier !== a.tier) {return b.tier - a.tier;}
       return b.score - a.score;
     });
 
@@ -109,7 +109,7 @@ export class ForceTechniqueSuggestionEngine {
     let tier = FORCE_TECHNIQUE_TIERS.AVAILABLE;
     const reasons = [];
 
-    if (!technique) return null;
+    if (!technique) {return null;}
 
     // Load enriched technique data if available
     const enrichedData = technique.flags?.swse?.suggestion ||

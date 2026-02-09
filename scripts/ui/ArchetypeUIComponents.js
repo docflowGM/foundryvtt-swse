@@ -154,7 +154,7 @@ export async function showPrestigePathDialog(actor, options = {}) {
     const primaryHints = allHints.filter(h => h.strength === 'primary');
     const secondaryHints = allHints.filter(h => h.strength === 'secondary');
 
-    let html = `
+    const html = `
       <div class="prestige-path-dialog">
         <h2>Prestige Path Recommendations</h2>
 

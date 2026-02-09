@@ -117,17 +117,17 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       skills: new fields.SchemaField({}),
 
       // Size
-      size: new fields.StringField({ required: false, initial: "medium" }),
+      size: new fields.StringField({ required: false, initial: 'medium' }),
 
       // Speed
       speed: new fields.NumberField({ required: true, initial: 6, min: 0 }),
 
       // JSON-backed + progression-owned fields (kept permissive)
-      languages: new fields.ArrayField(new fields.StringField({ required: true, initial: "" }), { required: true, initial: [] }),
-      languageIds: new fields.ArrayField(new fields.StringField({ required: true, initial: "" }), { required: true, initial: [] }),
-      languageUuids: new fields.ArrayField(new fields.StringField({ required: true, initial: "" }), { required: true, initial: [] }),
-      backgroundId: new fields.StringField({ required: false, initial: "" }),
-      backgroundUuid: new fields.StringField({ required: false, initial: "" }),
+      languages: new fields.ArrayField(new fields.StringField({ required: true, initial: '' }), { required: true, initial: [] }),
+      languageIds: new fields.ArrayField(new fields.StringField({ required: true, initial: '' }), { required: true, initial: [] }),
+      languageUuids: new fields.ArrayField(new fields.StringField({ required: true, initial: '' }), { required: true, initial: [] }),
+      backgroundId: new fields.StringField({ required: false, initial: '' }),
+      backgroundUuid: new fields.StringField({ required: false, initial: '' }),
       progression: new fields.ObjectField({ required: true, initial: {} })
     };
   }
@@ -140,7 +140,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
     this._calculateAbilities();
     this._applyConditionPenalties();
 
-    if (this.parent?.type === "droid") {
+    if (this.parent?.type === 'droid') {
       this._calculateDroidDerivedData();
     }
 
@@ -196,7 +196,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
     const builtIn = system.droidArmor?.installed ? system.droidArmor : null;
     const worn = this.parent.items.find(
-      i => i.type === "armor" && i.system?.equipped
+      i => i.type === 'armor' && i.system?.equipped
     )?.system;
 
     const source =
@@ -219,8 +219,8 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
     // Apply ACP to skills + attacks
     const acpSkills = [
-      "acrobatics", "climb", "endurance", "initiative",
-      "jump", "stealth", "swim"
+      'acrobatics', 'climb', 'endurance', 'initiative',
+      'jump', 'stealth', 'swim'
     ];
 
     for (const skill of acpSkills) {

@@ -29,7 +29,7 @@ export async function autoGrantForceTrainingPowers(actor, pending) {
   // Select first N available powers
   for (let i = 0; i < count && i < available.length; i++) {
     const next = available[i];
-    if (!next) break;
+    if (!next) {break;}
     chosen.push(next.name);
   }
 
@@ -54,7 +54,7 @@ export async function autoGrantForceTrainingPowers(actor, pending) {
  * @returns {boolean}
  */
 export function isTakingForceTraining(pending) {
-  if (!pending || !pending.feats) return false;
+  if (!pending || !pending.feats) {return false;}
 
   return pending.feats.some(f =>
     typeof f === 'string' && f.toLowerCase().includes('force training')

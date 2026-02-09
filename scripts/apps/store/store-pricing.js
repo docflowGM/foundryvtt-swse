@@ -14,8 +14,8 @@ const swseLogger = globalThis.swseLogger || console;
  * @returns {number} Final cost after markup and discount
  */
 export function calculateFinalCost(baseCost) {
-    const markup = Number(game.settings.get('foundryvtt-swse', "storeMarkup")) || 0;
-    const discount = Number(game.settings.get('foundryvtt-swse', "storeDiscount")) || 0;
+    const markup = Number(game.settings.get('foundryvtt-swse', 'storeMarkup')) || 0;
+    const discount = Number(game.settings.get('foundryvtt-swse', 'storeDiscount')) || 0;
     return Math.round(baseCost * (1 + markup / 100) * (1 - discount / 100));
 }
 
@@ -111,7 +111,7 @@ export function addActorFinalCost(actor, includeUsed = false) {
  * @returns {number} Markup percentage
  */
 export function getStoreMarkup() {
-    return Number(game.settings.get('foundryvtt-swse', "storeMarkup")) || 0;
+    return Number(game.settings.get('foundryvtt-swse', 'storeMarkup')) || 0;
 }
 
 /**
@@ -119,5 +119,5 @@ export function getStoreMarkup() {
  * @returns {number} Discount percentage
  */
 export function getStoreDiscount() {
-    return Number(game.settings.get('foundryvtt-swse', "storeDiscount")) || 0;
+    return Number(game.settings.get('foundryvtt-swse', 'storeDiscount')) || 0;
 }

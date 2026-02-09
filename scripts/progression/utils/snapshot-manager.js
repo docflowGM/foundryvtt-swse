@@ -14,7 +14,7 @@ export class SnapshotManager {
      * @param {string} label - Description of snapshot (e.g. "Before Level-Up")
      * @returns {Promise<Object>} The snapshot object
      */
-    static async createSnapshot(actor, label = "Character Snapshot") {
+    static async createSnapshot(actor, label = 'Character Snapshot') {
         try {
             const snapshot = {
                 timestamp: Date.now(),
@@ -26,7 +26,7 @@ export class SnapshotManager {
             };
 
             // Store in actor flags (persistent across sessions)
-            const history = actor.getFlag("foundryvtt-swse", "snapshots") || [];
+            const history = actor.getFlag('foundryvtt-swse', 'snapshots') || [];
 
             // Keep only last 10 snapshots to avoid bloat
             if (history.length >= 10) {
@@ -35,7 +35,7 @@ export class SnapshotManager {
 
             history.push(snapshot);
 
-            await actor.setFlag("foundryvtt-swse", "snapshots", history);
+            await actor.setFlag('foundryvtt-swse', 'snapshots', history);
 
             SWSELogger.log(`Snapshot created: "${label}" for ${actor.name}`);
             return snapshot;
@@ -51,7 +51,7 @@ export class SnapshotManager {
      * @returns {Array} Array of snapshot objects
      */
     static getSnapshots(actor) {
-        return actor.getFlag("foundryvtt-swse", "snapshots") || [];
+        return actor.getFlag('foundryvtt-swse', 'snapshots') || [];
     }
 
     /**
@@ -63,11 +63,11 @@ export class SnapshotManager {
     static getSnapshot(actor, identifier) {
         const snapshots = this.getSnapshots(actor);
 
-        if (typeof identifier === "number" && identifier < snapshots.length) {
+        if (typeof identifier === 'number' && identifier < snapshots.length) {
             return snapshots[identifier];
         }
 
-        if (typeof identifier === "number") {
+        if (typeof identifier === 'number') {
             return snapshots.find(s => s.timestamp === identifier);
         }
 
@@ -96,7 +96,7 @@ export class SnapshotManager {
 
             if (!snapshot) {
                 SWSELogger.warn(`Snapshot not found for actor ${actor.name}`);
-                ui.notifications?.error("Snapshot not found.");
+                ui.notifications?.error('Snapshot not found.');
                 return false;
             }
 
@@ -105,13 +105,13 @@ export class SnapshotManager {
             const actorDataToRestore = foundry.utils.deepClone(snapshot.actorData);
 
             // Preserve the snapshots flag so we don't lose history
-            const preservedSnapshots = actor.getFlag("foundryvtt-swse", "snapshots");
+            const preservedSnapshots = actor.getFlag('foundryvtt-swse', 'snapshots');
 
             await actor.update(actorDataToRestore);
 
             // Restore snapshots flag
             if (preservedSnapshots) {
-                await actor.setFlag("foundryvtt-swse", "snapshots", preservedSnapshots);
+                await actor.setFlag('foundryvtt-swse', 'snapshots', preservedSnapshots);
             }
 
             const dateStr = new Date(snapshot.timestamp).toLocaleString();
@@ -135,7 +135,7 @@ export class SnapshotManager {
     static async deleteSnapshot(actor, identifier) {
         try {
             const snapshots = this.getSnapshots(actor);
-            const index = typeof identifier === "number" && identifier < snapshots.length
+            const index = typeof identifier === 'number' && identifier < snapshots.length
                 ? identifier
                 : snapshots.findIndex(s => s.timestamp === identifier);
 
@@ -144,7 +144,7 @@ export class SnapshotManager {
             }
 
             snapshots.splice(index, 1);
-            await actor.setFlag("foundryvtt-swse", "snapshots", snapshots);
+            await actor.setFlag('foundryvtt-swse', 'snapshots', snapshots);
 
             SWSELogger.log(`Snapshot deleted for ${actor.name}`);
             return true;
@@ -161,7 +161,7 @@ export class SnapshotManager {
      */
     static async clearSnapshots(actor) {
         try {
-            await actor.setFlag("foundryvtt-swse", "snapshots", []);
+            await actor.setFlag('foundryvtt-swse', 'snapshots', []);
             SWSELogger.log(`Snapshots cleared for ${actor.name}`);
             return true;
         } catch (err) {

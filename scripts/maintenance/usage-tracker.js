@@ -96,7 +96,7 @@ export class UsageTracker {
 
 // Export global reference
 if (typeof window !== 'undefined') {
-  if (!window.SWSE) window.SWSE = {};
+  if (!window.SWSE) {window.SWSE = {};}
   window.SWSE.usage = UsageTracker;
 }
 

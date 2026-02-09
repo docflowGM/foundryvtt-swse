@@ -24,10 +24,10 @@ export class SpeciesTraitEngine {
    */
   static computeTraitBonuses(actor) {
     const species = this.getActorSpecies(actor);
-    if (!species) return this._emptyBonuses();
+    if (!species) {return this._emptyBonuses();}
 
     const traitsData = this.getSpeciesTraitsData(species);
-    if (!traitsData || traitsData.length === 0) return this._emptyBonuses();
+    if (!traitsData || traitsData.length === 0) {return this._emptyBonuses();}
 
     const bonuses = this._emptyBonuses();
     const context = this._buildContext(actor);
@@ -49,7 +49,7 @@ export class SpeciesTraitEngine {
    * @returns {Item|null} The species item or null
    */
   static getActorSpecies(actor) {
-    if (!actor?.items) return null;
+    if (!actor?.items) {return null;}
     return actor.items.find(i => i.type === 'species');
   }
 
@@ -59,7 +59,7 @@ export class SpeciesTraitEngine {
    * @returns {Array} Array of trait data objects
    */
   static getSpeciesTraitsData(species) {
-    if (!species?.system) return [];
+    if (!species?.system) {return [];}
 
     // First check for structured speciesTraitsData
     if (species.system.speciesTraitsData && Array.isArray(species.system.speciesTraitsData)) {
@@ -115,7 +115,7 @@ export class SpeciesTraitEngine {
    * @returns {Object|null} Parsed trait data or null if not parseable
    */
   static _parseTraitText(traitText, speciesName) {
-    if (!traitText || typeof traitText !== 'string') return null;
+    if (!traitText || typeof traitText !== 'string') {return null;}
 
     const text = traitText.toLowerCase();
     const originalText = traitText;
@@ -133,67 +133,67 @@ export class SpeciesTraitEngine {
 
     // Defense bonuses: "+X species bonus to [Defense] Defense"
     parsed = this._tryParseDefenseBonus(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Defense penalties: "-X species penalty to [Defense] Defense"
     parsed = this._tryParseDefensePenalty(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Skill bonuses: "+X species bonus on [Skill] checks"
     parsed = this._tryParseSkillBonus(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Rerolls: "may reroll any [Skill] check"
     parsed = this._tryParseReroll(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Conditional bonuses: "when reduced to half hit points"
     parsed = this._tryParseConditionalBonus(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Movement: "may fly with a speed of X squares"
     parsed = this._tryParseMovement(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Senses: "darkvision", "blindsense"
     parsed = this._tryParseSense(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Natural weapons: "natural claw attacks"
     parsed = this._tryParseNaturalWeapon(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Immunities: "immune to poison", "immune to Force powers"
     parsed = this._tryParseImmunity(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Resistance: "gains a +X species bonus to [Defense] against Force powers"
     parsed = this._tryParseResistance(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Regeneration: "regains hit points"
     parsed = this._tryParseRegeneration(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Amphibious/Environmental: "can breathe both air and water"
     parsed = this._tryParseEnvironmental(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Once per encounter: "once per encounter"
     parsed = this._tryParseOncePerEncounter(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Proficiency: "gains proficiency"
     parsed = this._tryParseProficiency(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Bonus feat (Human)
     parsed = this._tryParseFeatGrant(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // Bonus trained skill (Human)
     parsed = this._tryParseSkillGrant(text, id, traitName, originalText);
-    if (parsed) return parsed;
+    if (parsed) {return parsed;}
 
     // If no pattern matched, return as a special action (narrative trait)
     return {
@@ -329,10 +329,7 @@ export class SpeciesTraitEngine {
         let target = bonusMatch[2].trim().toLowerCase();
 
         // Normalize targets
-        if (target.includes('melee attack')) target = 'meleeAttack';
-        else if (target.includes('melee damage')) target = 'meleeDamage';
-        else if (target.includes('attack')) target = 'meleeAttack';
-        else if (target.includes('damage')) target = 'meleeDamage';
+        if (target.includes('melee attack')) {target = 'meleeAttack';} else if (target.includes('melee damage')) {target = 'meleeDamage';} else if (target.includes('attack')) {target = 'meleeAttack';} else if (target.includes('damage')) {target = 'meleeDamage';}
 
         return {
           type: SPECIES_TRAIT_TYPES.CONDITIONAL_BONUS,
@@ -352,8 +349,7 @@ export class SpeciesTraitEngine {
       const bonusMatch = text.match(/\+(\d+)\s+(?:species\s+)?bonus\s+(?:on|to)\s+([a-z\s]+?)(?:\s+rolls?)?/i);
       if (bonusMatch) {
         let target = bonusMatch[2].trim().toLowerCase();
-        if (target.includes('damage')) target = 'meleeDamage';
-        else if (target.includes('attack')) target = 'meleeAttack';
+        if (target.includes('damage')) {target = 'meleeDamage';} else if (target.includes('attack')) {target = 'meleeAttack';}
 
         return {
           type: SPECIES_TRAIT_TYPES.CONDITIONAL_BONUS,
@@ -373,7 +369,7 @@ export class SpeciesTraitEngine {
       const bonusMatch = text.match(/\+(\d+)\s+(?:species\s+)?bonus\s+(?:on|to)\s+([a-z\s]+?)(?:\s+rolls?)?/i);
       if (bonusMatch) {
         let target = bonusMatch[2].trim().toLowerCase();
-        if (target.includes('damage')) target = 'meleeDamage';
+        if (target.includes('damage')) {target = 'meleeDamage';}
 
         return {
           type: SPECIES_TRAIT_TYPES.CONDITIONAL_BONUS,
@@ -516,9 +512,7 @@ export class SpeciesTraitEngine {
       let effect = immunityMatch[1].trim().toLowerCase();
 
       // Normalize effect names
-      if (effect.includes('force power')) effect = 'force';
-      else if (effect.includes('poison')) effect = 'poison';
-      else if (effect.includes('disease')) effect = 'disease';
+      if (effect.includes('force power')) {effect = 'force';} else if (effect.includes('poison')) {effect = 'poison';} else if (effect.includes('disease')) {effect = 'disease';}
 
       return {
         type: SPECIES_TRAIT_TYPES.IMMUNITY,
@@ -537,7 +531,7 @@ export class SpeciesTraitEngine {
     const match = text.match(/\+(\d+)\s+species\s+bonus\s+to\s+(fortitude|reflex|will)\s+defense\s+against\s+([a-z\s]+)/i);
     if (match) {
       let againstType = match[3].trim().toLowerCase();
-      if (againstType.includes('force power')) againstType = 'force';
+      if (againstType.includes('force power')) {againstType = 'force';}
 
       return {
         type: SPECIES_TRAIT_TYPES.RESISTANCE,
@@ -557,11 +551,11 @@ export class SpeciesTraitEngine {
     // Pattern: "regains hit points equal to its level"
     if (text.includes('regains') && text.includes('hit points')) {
       const exceptions = [];
-      if (text.includes('fire')) exceptions.push('fire');
-      if (text.includes('acid')) exceptions.push('acid');
+      if (text.includes('fire')) {exceptions.push('fire');}
+      if (text.includes('acid')) {exceptions.push('acid');}
 
       const amountMatch = text.match(/regains?\s+(?:hit\s+points?\s+equal\s+to\s+its?\s+)?(\d+|level)/i);
-      let amount = amountMatch ? amountMatch[1] : 'level';
+      const amount = amountMatch ? amountMatch[1] : 'level';
 
       const isPerEncounter = text.includes('once per encounter');
       const isPerTurn = text.includes('start of each turn') || text.includes('at the start');
@@ -637,12 +631,7 @@ export class SpeciesTraitEngine {
     if (text.includes('proficiency') || text.includes('proficient')) {
       let category = 'unknown';
 
-      if (text.includes('primitive weapon')) category = 'primitiveWeapons';
-      else if (text.includes('simple weapon')) category = 'simpleWeapons';
-      else if (text.includes('martial weapon')) category = 'martialWeapons';
-      else if (text.includes('light armor')) category = 'lightArmor';
-      else if (text.includes('medium armor')) category = 'mediumArmor';
-      else if (text.includes('heavy armor')) category = 'heavyArmor';
+      if (text.includes('primitive weapon')) {category = 'primitiveWeapons';} else if (text.includes('simple weapon')) {category = 'simpleWeapons';} else if (text.includes('martial weapon')) {category = 'martialWeapons';} else if (text.includes('light armor')) {category = 'lightArmor';} else if (text.includes('medium armor')) {category = 'mediumArmor';} else if (text.includes('heavy armor')) {category = 'heavyArmor';}
 
       return {
         type: SPECIES_TRAIT_TYPES.PROFICIENCY,
@@ -689,12 +678,12 @@ export class SpeciesTraitEngine {
    */
   static _parseSkillBonusText(bonusString, speciesName) {
     const match = bonusString.match(/([+-]?\d+)\s+(.+)/i);
-    if (!match) return null;
+    if (!match) {return null;}
 
     const value = parseInt(match[1], 10);
     const skillKey = this._normalizeSkillName(match[2].trim());
 
-    if (!skillKey) return null;
+    if (!skillKey) {return null;}
 
     return {
       type: value >= 0 ? SPECIES_TRAIT_TYPES.BONUS : SPECIES_TRAIT_TYPES.PENALTY,
@@ -769,7 +758,7 @@ export class SpeciesTraitEngine {
    * Process a single trait and add bonuses to the accumulator
    */
   static _processTrait(trait, bonuses, context, actor) {
-    if (!trait.automated) return; // Skip non-automated traits
+    if (!trait.automated) {return;} // Skip non-automated traits
 
     switch (trait.type) {
       case SPECIES_TRAIT_TYPES.BONUS:
@@ -829,7 +818,7 @@ export class SpeciesTraitEngine {
 
   static _handleConditionalBonus(trait, bonuses, context, actor) {
     // Check if condition is met
-    if (!this._checkCondition(trait.condition, actor)) return;
+    if (!this._checkCondition(trait.condition, actor)) {return;}
 
     // Apply the bonus
     this._handleBonus(trait, bonuses, context);
@@ -837,7 +826,7 @@ export class SpeciesTraitEngine {
 
   static _handleResistance(trait, bonuses, context) {
     // Resistances are stored separately for conditional application
-    if (!bonuses.resistances) bonuses.resistances = [];
+    if (!bonuses.resistances) {bonuses.resistances = [];}
     bonuses.resistances.push({
       defense: trait.defense,
       effect: trait.effect,
@@ -918,7 +907,7 @@ export class SpeciesTraitEngine {
    */
   static getAutomatedTraits(actor) {
     const species = this.getActorSpecies(actor);
-    if (!species) return [];
+    if (!species) {return [];}
 
     const traits = this.getSpeciesTraitsData(species);
     return traits.filter(t => t.automated);
@@ -930,7 +919,7 @@ export class SpeciesTraitEngine {
    */
   static getNarrativeTraits(actor) {
     const species = this.getActorSpecies(actor);
-    if (!species) return [];
+    if (!species) {return [];}
 
     const traits = this.getSpeciesTraitsData(species);
     return traits.filter(t => !t.automated);
@@ -941,7 +930,7 @@ export class SpeciesTraitEngine {
    */
   static getUsableTraits(actor) {
     const species = this.getActorSpecies(actor);
-    if (!species) return [];
+    if (!species) {return [];}
 
     const traits = this.getSpeciesTraitsData(species);
     return traits.filter(t =>
@@ -956,7 +945,7 @@ export class SpeciesTraitEngine {
    */
   static getRerollTraitsForSkill(actor, skillKey) {
     const species = this.getActorSpecies(actor);
-    if (!species) return [];
+    if (!species) {return [];}
 
     const traits = this.getSpeciesTraitsData(species);
     return traits.filter(t =>
@@ -970,7 +959,7 @@ export class SpeciesTraitEngine {
    */
   static getFeatGrantTraits(actor) {
     const species = this.getActorSpecies(actor);
-    if (!species) return [];
+    if (!species) {return [];}
 
     const traits = this.getSpeciesTraitsData(species);
     return traits.filter(t => t.type === SPECIES_TRAIT_TYPES.FEAT_GRANT);
@@ -981,7 +970,7 @@ export class SpeciesTraitEngine {
    */
   static getSkillGrantTraits(actor) {
     const species = this.getActorSpecies(actor);
-    if (!species) return [];
+    if (!species) {return [];}
 
     const traits = this.getSpeciesTraitsData(species);
     return traits.filter(t => t.type === SPECIES_TRAIT_TYPES.SKILL_GRANT);

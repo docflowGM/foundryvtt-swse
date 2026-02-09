@@ -10,11 +10,11 @@
  *  - defense bonuses
  */
 
-import { normalizeClassFeatureList } from "./class-feature-normalizer.js";
+import { normalizeClassFeatureList } from './class-feature-normalizer.js';
 
 export function normalizeClassData(rawClass) {
 
-    if (!rawClass || !rawClass.system) return rawClass;
+    if (!rawClass || !rawClass.system) {return rawClass;}
 
     const cls = foundry.utils.deepClone(rawClass);
 
@@ -50,7 +50,7 @@ export function normalizeClassData(rawClass) {
     cls.system.hitDie =
         cls.system.hitDie ||
         cls.system.hit_die ||
-        "1d6";
+        '1d6';
 
     // If numeric, convert to "1dX"
     if (typeof cls.system.hitDie === 'number') {
@@ -64,16 +64,13 @@ export function normalizeClassData(rawClass) {
         cls.system.babProgression ||
         cls.system.bab_progression ||
         cls.system.bab ||
-        "medium";
+        'medium';
 
     // Standardize to slow / medium / fast
     const babMap = {
-        "0.5": "slow",
-        "0.75": "medium",
-        "1.0": "fast",
-        0.5: "slow",
-        0.75: "medium",
-        1.0: "fast"
+        '0.5': 'slow',
+        '0.75': 'medium',
+        '1.0': 'fast'
     };
 
     if (babMap[cls.system.babProgression]) {
@@ -90,7 +87,7 @@ export function normalizeClassData(rawClass) {
     };
 
     // fallback: if defenses exist at root
-    if (typeof cls.system.fortitude === "number") {
+    if (typeof cls.system.fortitude === 'number') {
         cls.system.defenses.fortitude = cls.system.fortitude;
     }
 

@@ -21,21 +21,21 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
     // Get GM's ability generation method from houserules (with safe fallback)
     try {
-      context.abilityMethod = game.settings.get('foundryvtt-swse', "abilityScoreMethod") || "pointbuy";
+      context.abilityMethod = game.settings.get('foundryvtt-swse', 'abilityScoreMethod') || 'pointbuy';
     } catch (err) {
-      context.abilityMethod = "pointbuy";
+      context.abilityMethod = 'pointbuy';
     }
 
     // Use droid or living point buy pool based on character type
     if (this.characterData.isDroid) {
       try {
-        context.pointBuyPool = game.settings.get('foundryvtt-swse', "droidPointBuyPool") || 20;
+        context.pointBuyPool = game.settings.get('foundryvtt-swse', 'droidPointBuyPool') || 20;
       } catch (err) {
         context.pointBuyPool = 20;
       }
     } else {
       try {
-        context.pointBuyPool = game.settings.get('foundryvtt-swse', "livingPointBuyPool") || 25;
+        context.pointBuyPool = game.settings.get('foundryvtt-swse', 'livingPointBuyPool') || 25;
       } catch (err) {
         context.pointBuyPool = 25;
       }
@@ -46,12 +46,12 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
     // Add ability method labels
     context.methodLabels = {
-      "4d6drop": "4d6 Drop Lowest",
-      "organic": "Organic (24d6)",
-      "pointbuy": "Point Buy",
-      "array": "Standard Array",
-      "3d6": "3d6 Straight",
-      "2d6plus6": "2d6+6"
+      '4d6drop': '4d6 Drop Lowest',
+      'organic': 'Organic (24d6)',
+      'pointbuy': 'Point Buy',
+      'array': 'Standard Array',
+      '3d6': '3d6 Straight',
+      '2d6plus6': '2d6+6'
     };
 
     return context;
@@ -65,7 +65,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     // All DOM access must use this.element (HTMLElement).
 
     const root = this.element;
-    if (!(root instanceof HTMLElement)) return;
+    if (!(root instanceof HTMLElement)) {return;}
 
     // Level selection
     const levelInput = root.querySelector('#target-level-input');
@@ -95,7 +95,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     // Warn user about multi-level limitations
     if (newLevel > 1 && this.targetLevel === 1) {
       const confirmed = await Dialog.confirm({
-        title: "Multi-Level Character Creation",
+        title: 'Multi-Level Character Creation',
         content: `
           <div style="margin-bottom: 10px;">
             <p><strong>Creating a level ${newLevel} character</strong></p>
@@ -137,7 +137,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     event.preventDefault();
 
     const root = this.element;
-    const ablist = ["str", "dex", "con", "int", "wis", "cha"];
+    const ablist = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
     // Enable all inputs for manual entry
     ablist.forEach(ab => {
@@ -163,7 +163,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     root.querySelectorAll('.ability-mode').forEach(el => el.style.display = 'none');
     root.querySelector('#free-mode').style.display = 'block';
 
-    ui.notifications.info("Free Build enabled - manually enter any ability scores (3-25)");
+    ui.notifications.info('Free Build enabled - manually enter any ability scores (3-25)');
   }
 
   _updateAbilityDisplay(html, ability) {
@@ -260,7 +260,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     const className = event.currentTarget.dataset.class;
     const classDoc = this._packs.classes.find(c => c.name === className);
 
-    if (!classDoc) return;
+    if (!classDoc) {return;}
 
     const hitDie = getHitDie(classDoc);
     const babProgression = getClassProperty(classDoc, 'babProgression', 0);
@@ -298,7 +298,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
       const actor = await this._createCharacterActor();
 
       if (!actor) {
-        ui.notifications.error("Failed to create character!");
+        ui.notifications.error('Failed to create character!');
         return;
       }
 
@@ -332,7 +332,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
       actor.sheet.render(true);
 
     } catch (err) {
-      SWSELogger.error("SWSE CharGen | Error creating character:", err);
+      SWSELogger.error('SWSE CharGen | Error creating character:', err);
       ui.notifications.error(`Character creation failed: ${err.message}`);
     }
   }
@@ -347,11 +347,11 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
     // Build actor data
     const actorData = {
-      name: this.characterData.name || "New Character",
-      type: "character",
+      name: this.characterData.name || 'New Character',
+      type: 'character',
       system: {
         isDroid: this.characterData.isDroid || false,
-        droidDegree: this.characterData.droidDegree || "",
+        droidDegree: this.characterData.droidDegree || '',
         species: this.characterData.isDroid ? this.characterData.droidDegree : this.characterData.species,
         abilities: {
           str: { base: this.characterData.abilities.str.base || 10, racial: this.characterData.abilities.str.racial || 0 },
@@ -378,7 +378,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
       }
     };
 
-    SWSELogger.log("SWSE CharGen | Creating actor with data:", actorData);
+    SWSELogger.log('SWSE CharGen | Creating actor with data:', actorData);
 
     const actor = await Actor.create(actorData);
     return actor;
@@ -390,7 +390,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
   async _addImportedDroidEquipment(actor, droid) {
     try {
       if (!droid.system || !droid.system.equipment) {
-        SWSELogger.log("SWSE CharGen | No equipment found for imported droid");
+        SWSELogger.log('SWSE CharGen | No equipment found for imported droid');
         return;
       }
 
@@ -399,12 +399,12 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
         : Object.values(droid.system.equipment || {});
 
       if (items.length > 0) {
-        await actor.createEmbeddedDocuments("Item", items);
+        await actor.createEmbeddedDocuments('Item', items);
         SWSELogger.log(`SWSE CharGen | Added ${items.length} equipment items from imported droid`);
         ui.notifications.info(`Added ${items.length} equipment items from droid template`);
       }
     } catch (err) {
-      SWSELogger.error("SWSE CharGen | Error adding imported droid equipment:", err);
+      SWSELogger.error('SWSE CharGen | Error adding imported droid equipment:', err);
     }
   }
 
@@ -415,37 +415,37 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     // Auto-grant Weapon Finesse if houserule is enabled
     let weaponFinesseDefault = false;
     try {
-      weaponFinesseDefault = game.settings.get('foundryvtt-swse', "weaponFinesseDefault");
+      weaponFinesseDefault = game.settings.get('foundryvtt-swse', 'weaponFinesseDefault');
     } catch (err) {
       weaponFinesseDefault = false;
     }
 
     if (weaponFinesseDefault) {
-      SWSELogger.log("SWSE CharGen | Auto-granting Weapon Finesse (houserule)");
+      SWSELogger.log('SWSE CharGen | Auto-granting Weapon Finesse (houserule)');
 
       // Find Weapon Finesse feat in compendium
       const featPack = game.packs.get('foundryvtt-swse.feats');
       if (featPack) {
         const feats = await featPack.getDocuments();
-        const weaponFinesse = feats.find(f => f.name === "Weapon Finesse");
+        const weaponFinesse = feats.find(f => f.name === 'Weapon Finesse');
 
         if (weaponFinesse) {
-          await actor.createEmbeddedDocuments("Item", [weaponFinesse.toObject()]);
-          ui.notifications.info("Weapon Finesse feat automatically granted!");
+          await actor.createEmbeddedDocuments('Item', [weaponFinesse.toObject()]);
+          ui.notifications.info('Weapon Finesse feat automatically granted!');
         }
       }
     }
 
     // Log block/deflect houserule setting for reference
-    let blockDeflectTalents = "separate";
+    let blockDeflectTalents = 'separate';
     try {
-      blockDeflectTalents = game.settings.get('foundryvtt-swse', "blockDeflectTalents");
+      blockDeflectTalents = game.settings.get('foundryvtt-swse', 'blockDeflectTalents');
     } catch (err) {
-      blockDeflectTalents = "separate";
+      blockDeflectTalents = 'separate';
     }
 
-    if (blockDeflectTalents === "combined") {
-      SWSELogger.log("SWSE CharGen | Block/Deflect set to combined (houserule)");
+    if (blockDeflectTalents === 'combined') {
+      SWSELogger.log('SWSE CharGen | Block/Deflect set to combined (houserule)');
     }
   }
 
@@ -472,13 +472,13 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     const conMod = this.characterData.isDroid ? 0 : (this.characterData.abilities.con.mod || 0);
 
     // Calculate HP gain based on houserule settings
-    let hpGeneration = "average";
+    let hpGeneration = 'average';
     let maxHPLevels = 1;
     try {
-      hpGeneration = game.settings.get('foundryvtt-swse', "hpGeneration") || "average";
-      maxHPLevels = game.settings.get('foundryvtt-swse', "maxHPLevels") || 1;
+      hpGeneration = game.settings.get('foundryvtt-swse', 'hpGeneration') || 'average';
+      maxHPLevels = game.settings.get('foundryvtt-swse', 'maxHPLevels') || 1;
     } catch (err) {
-      hpGeneration = "average";
+      hpGeneration = 'average';
       maxHPLevels = 1;
     }
 
@@ -492,20 +492,21 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     } else {
       // Apply HP generation method
       switch (hpGeneration) {
-        case "maximum":
+        case 'maximum':
           hpGain = hitDie + conMod;
           break;
-        case "average":
+        case 'average':
           hpGain = Math.floor(hitDie / 2) + 1 + conMod;
           break;
-        case "roll":
+        case 'roll':
           hpGain = Math.floor(Math.random() * hitDie) + 1 + conMod;
           break;
-        case "average_minimum":
+        case 'average_minimum': {
           const rolled = Math.floor(Math.random() * hitDie) + 1;
           const average = Math.floor(hitDie / 2) + 1;
           hpGain = Math.max(rolled, average) + conMod;
           break;
+        }
         default:
           hpGain = Math.floor(hitDie / 2) + 1 + conMod;
       }
@@ -517,9 +518,9 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     const newHP = currentHP + hpGain;
 
     await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      "system.level": newLevel,
-      "system.hp.max": newHP,
-      "system.hp.value": newHP
+      'system.level': newLevel,
+      'system.hp.max': newHP,
+      'system.hp.value': newHP
     });
 
     SWSELogger.log(`SWSE CharGen | Level ${newLevel} complete. HP: ${currentHP} -> ${newHP}`);

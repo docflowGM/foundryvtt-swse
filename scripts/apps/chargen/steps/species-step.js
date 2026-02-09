@@ -12,8 +12,8 @@ import { concatPatches, makePatch, patchSpecies, setField } from '../../../progr
  * @returns {number}
  */
 export function computeStartingFeatsRequired({ isHuman, isNPC, isDroid }) {
-  if (isDroid) return 0;
-  if (isNPC) return isHuman ? 3 : 2;
+  if (isDroid) {return 0;}
+  if (isNPC) {return isHuman ? 3 : 2;}
   return isHuman ? 2 : 1;
 }
 

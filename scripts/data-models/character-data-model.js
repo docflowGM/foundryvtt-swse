@@ -1,8 +1,8 @@
-import { DefenseSystem } from "../engine/DefenseSystem.js";
+import { DefenseSystem } from '../engine/DefenseSystem.js';
 import { SWSELogger } from '../utils/logger.js';
 import { SWSEActorDataModel } from './actor-data-model.js';
 import { SpeciesTraitEngine } from '../species/species-trait-engine.js';
-import { warnIfMixedTracks } from "../utils/hardening.js";
+import { warnIfMixedTracks } from '../utils/hardening.js';
 
 export class SWSECharacterDataModel extends SWSEActorDataModel {
 
@@ -15,10 +15,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     }
     const fields = foundry.data.fields;
     return {
-      base: new fields.NumberField({required: true, initial: 10, integer: true}),
-      racial: new fields.NumberField({required: true, initial: 0, integer: true}),
-      enhancement: new fields.NumberField({required: true, initial: 0, integer: true}),
-      temp: new fields.NumberField({required: true, initial: 0, integer: true})
+      base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+      racial: new fields.NumberField({ required: true, initial: 0, integer: true }),
+      enhancement: new fields.NumberField({ required: true, initial: 0, integer: true }),
+      temp: new fields.NumberField({ required: true, initial: 0, integer: true })
     };
   }
 
@@ -31,11 +31,11 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     }
     const fields = foundry.data.fields;
     return {
-      trained: new fields.BooleanField({required: true, initial: false}),
-      focused: new fields.BooleanField({required: true, initial: false}),
-      miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-      selectedAbility: new fields.StringField({required: true, initial: defaultAbility}),
-      favorite: new fields.BooleanField({required: true, initial: false})
+      trained: new fields.BooleanField({ required: true, initial: false }),
+      focused: new fields.BooleanField({ required: true, initial: false }),
+      miscMod: new fields.NumberField({ required: true, initial: 0, integer: true }),
+      selectedAbility: new fields.StringField({ required: true, initial: defaultAbility }),
+      favorite: new fields.BooleanField({ required: true, initial: false })
     };
   }
 
@@ -96,8 +96,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       ...parentSchema, // Inherit all parent fields (size, defenses, abilities, etc.)
 
       // Droid Status
-      isDroid: new fields.BooleanField({required: true, initial: false}),
-      droidDegree: new fields.StringField({required: false, initial: ""}),
+      isDroid: new fields.BooleanField({ required: true, initial: false }),
+      droidDegree: new fields.StringField({ required: false, initial: '' }),
 
       // Attributes (override parent abilities with enhanced attributes)
       attributes: new fields.SchemaField(attributeSchema),
@@ -107,18 +107,18 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
       // HP
       hp: new fields.SchemaField({
-        value: new fields.NumberField({required: true, initial: 30, min: 0, integer: true}),
-        max: new fields.NumberField({required: true, initial: 30, min: 1, integer: true}),
-        temp: new fields.NumberField({required: true, initial: 0, integer: true}),
-        bonus: new fields.NumberField({required: true, initial: 0, integer: true})
+        value: new fields.NumberField({ required: true, initial: 30, min: 0, integer: true }),
+        max: new fields.NumberField({ required: true, initial: 30, min: 1, integer: true }),
+        temp: new fields.NumberField({ required: true, initial: 0, integer: true }),
+        bonus: new fields.NumberField({ required: true, initial: 0, integer: true })
       }),
 
 
       // Condition Track
       conditionTrack: new fields.SchemaField({
-        current: new fields.NumberField({required: true, initial: 0, min: 0, max: 5, integer: true}),
-        persistent: new fields.BooleanField({required: true, initial: false}),
-        penalty: new fields.NumberField({required: true, initial: 0, integer: true})
+        current: new fields.NumberField({ required: true, initial: 0, min: 0, max: 5, integer: true }),
+        persistent: new fields.BooleanField({ required: true, initial: false }),
+        penalty: new fields.NumberField({ required: true, initial: 0, integer: true })
       }),
 
       // Level
@@ -129,7 +129,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
         max: 20,
         integer: true,
         clean: value => {
-          if (value === null || value === undefined || value === "") return 1;
+          if (value === null || value === undefined || value === '') {return 1;}
           const num = Number(value);
           return Number.isNaN(num) ? 1 : Math.floor(num);
         }
@@ -137,31 +137,31 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
       // Destiny Points
       destinyPoints: new fields.SchemaField({
-        value: new fields.NumberField({required: true, initial: 0, min: 0, integer: true}),
-        max: new fields.NumberField({required: true, initial: 0, min: 0, integer: true})
+        value: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
+        max: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true })
       }),
 
       // Destiny
       destiny: new fields.SchemaField({
-        hasDestiny: new fields.BooleanField({required: true, initial: false}),
-        type: new fields.StringField({required: false, initial: ""}),
-        fulfilled: new fields.BooleanField({required: true, initial: false}),
-        secret: new fields.BooleanField({required: true, initial: false})
+        hasDestiny: new fields.BooleanField({ required: true, initial: false }),
+        type: new fields.StringField({ required: false, initial: '' }),
+        fulfilled: new fields.BooleanField({ required: true, initial: false }),
+        secret: new fields.BooleanField({ required: true, initial: false })
       }),
 
       // Biography
-      biography: new fields.StringField({required: false, initial: ""}),
+      biography: new fields.StringField({ required: false, initial: '' }),
 
       // Background information for Biography tab
-      event: new fields.StringField({required: false, initial: ""}),
-      profession: new fields.StringField({required: false, initial: ""}),
-      planetOfOrigin: new fields.StringField({required: false, initial: ""}),
+      event: new fields.StringField({ required: false, initial: '' }),
+      profession: new fields.StringField({ required: false, initial: '' }),
+      planetOfOrigin: new fields.StringField({ required: false, initial: '' }),
 
       // SWSE-specific system data (mentor survey, build intent, etc.)
       swse: new fields.SchemaField({
-        mentorSurveyCompleted: new fields.BooleanField({required: true, initial: false}),
-        mentorBuildIntentBiases: new fields.ObjectField({required: true, initial: {}}),
-        surveyResponses: new fields.ObjectField({required: true, initial: {}})
+        mentorSurveyCompleted: new fields.BooleanField({ required: true, initial: false }),
+        mentorBuildIntentBiases: new fields.ObjectField({ required: true, initial: {} }),
+        surveyResponses: new fields.ObjectField({ required: true, initial: {} })
       })
     };
   }
@@ -297,9 +297,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     let isProficient = false;
     for (const prof of armorProficiencies) {
       const profName = prof.name.toLowerCase();
-      if (profName.includes('light') && armorType === 'light') isProficient = true;
-      if (profName.includes('medium') && (armorType === 'light' || armorType === 'medium')) isProficient = true;
-      if (profName.includes('heavy')) isProficient = true; // Heavy includes all armor
+      if (profName.includes('light') && armorType === 'light') {isProficient = true;}
+      if (profName.includes('medium') && (armorType === 'light' || armorType === 'medium')) {isProficient = true;}
+      if (profName.includes('heavy')) {isProficient = true;} // Heavy includes all armor
     }
 
     // Store proficiency status for use in defense calculations
@@ -510,7 +510,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
    * @returns {number} - Total misc bonuses
    */
   _computeDefenseMisc(defense) {
-    if (!defense?.misc) return 0;
+    if (!defense?.misc) {return 0;}
 
     let total = 0;
 
@@ -535,7 +535,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
    * @returns {number} - Per-level BAB multiplier
    */
   _convertBabProgression(progression) {
-    if (typeof progression === 'number') return progression;
+    if (typeof progression === 'number') {return progression;}
 
     const progressionMap = {
       'slow': 0.5,
@@ -557,7 +557,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
   _calculateMulticlassStats() {
     // Get actor instance to access items
     const actor = this.parent;
-    if (!actor || !actor.items) return;
+    if (!actor || !actor.items) {return;}
 
     // Get all class items
     const classItems = actor.items.filter(i => i.type === 'class');
@@ -625,7 +625,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Set calculated values
     this.bab = totalBAB;
-    warnIfMixedTracks(actor, "_calculateMulticlassStats");
+    warnIfMixedTracks(actor, '_calculateMulticlassStats');
     this.baseAttack = totalBAB; // For compatibility
     this.heroicLevel = heroicLevel; // Store for defense calculations
     this.nonheroicLevel = nonheroicLevel; // Store for reference
@@ -721,7 +721,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     for (const [skillKey, skill] of Object.entries(this.skills)) {
       const data = skillData[skillKey];
-      if (!data) continue;
+      if (!data) {continue;}
 
       // Use selectedAbility if set, otherwise use default
       const abilityKey = skill.selectedAbility || data.defaultAbility;
@@ -791,7 +791,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
    */
   _applySpeciesTraitBonuses() {
     const actor = this.parent;
-    if (!actor) return;
+    if (!actor) {return;}
 
     try {
       // Get computed bonuses from species traits
@@ -827,8 +827,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
         for (const defKey of ['reflex', 'fortitude', 'will']) {
           const defBonus = bonuses.defenses[defKey] || 0;
           if (defBonus !== 0) {
-            if (!this.defenses[defKey]) this.defenses[defKey] = {};
-            if (!this.defenses[defKey].misc) this.defenses[defKey].misc = 0;
+            if (!this.defenses[defKey]) {this.defenses[defKey] = {};}
+            if (!this.defenses[defKey].misc) {this.defenses[defKey].misc = 0;}
             // Store the species bonus to be added in defense calculation
             this.defenses[defKey].speciesBonus = defBonus;
           }
@@ -857,7 +857,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
   _calculateForcePoints() {
     // Ensure forcePoints exists
     if (!this.forcePoints) {
-      this.forcePoints = { value: 0, max: 0, die: "1d6" };
+      this.forcePoints = { value: 0, max: 0, die: '1d6' };
     }
 
     // NONHEROIC RULE: Nonheroic characters do not gain Force Points
@@ -868,7 +868,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     if (heroicLevel === 0) {
       this.forcePoints.max = 0;
       this.forcePoints.value = Math.min(this.forcePoints.value, 0);
-      this.forcePoints.die = "1d6";
+      this.forcePoints.die = '1d6';
       return;
     }
 
@@ -895,11 +895,11 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Calculate Force Point die based on heroic level
     // 1-7: 1d6, 8-14: 2d6 (take highest), 15+: 3d6 (take highest)
     if (heroicLevel >= 15) {
-      this.forcePoints.die = "3d6";
+      this.forcePoints.die = '3d6';
     } else if (heroicLevel >= 8) {
-      this.forcePoints.die = "2d6";
+      this.forcePoints.die = '2d6';
     } else {
-      this.forcePoints.die = "1d6";
+      this.forcePoints.die = '1d6';
     }
   }
 
@@ -913,7 +913,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     if (!this.destiny) {
       this.destiny = {
         hasDestiny: false,
-        type: "",
+        type: '',
         fulfilled: false,
         secret: false
       };

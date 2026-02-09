@@ -151,7 +151,7 @@ export class SuggestionExplainer {
    * @private
    */
   static _adjustForFocus(explanation, focus, suggestion) {
-    if (!focus) return explanation;
+    if (!focus) {return explanation;}
 
     const focusAdjustments = {
       skills: {
@@ -302,7 +302,7 @@ export class SuggestionExplainer {
     };
 
     const tierInfo = TIER_REASONS[tier];
-    if (!tierInfo) return null;
+    if (!tierInfo) {return null;}
 
     return ReasonFactory.create({
       domain: tierInfo.domain,
@@ -344,7 +344,7 @@ export class SuggestionExplainer {
    * Check if suggestion's theme matches an archetype
    */
   static _suggestionMatchesArchetype(suggestion, archetypeKey) {
-    if (!suggestion.theme) return false;
+    if (!suggestion.theme) {return false;}
 
     // Import theme mapping (avoid circular dependency)
     // This will be resolved at runtime when module loads

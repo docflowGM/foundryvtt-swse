@@ -292,7 +292,7 @@ export const SystemInitHooks = {
 
             for (const actor of actors) {
                 const progression = actor.system?.progression;
-                if (!progression) continue;
+                if (!progression) {continue;}
 
                 const normalized = ProgressionStateNormalizer.normalize(progression);
                 const valid = ProgressionStateNormalizer.validate(normalized);

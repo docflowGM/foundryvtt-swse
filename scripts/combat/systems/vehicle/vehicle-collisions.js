@@ -7,8 +7,8 @@
  *  - Integration with DamageSystem + Active Effects
  */
 
-import { measureDistance, getVehicleCTPenalty, createVehicleCTEffect } from "./vehicle-shared.js";
-import { DamageSystem } from "../../damage-system.js";
+import { measureDistance, getVehicleCTPenalty, createVehicleCTEffect } from './vehicle-shared.js';
+import { DamageSystem } from '../../damage-system.js';
 
 export class SWSEVehicleCollisions {
 
@@ -19,12 +19,12 @@ export class SWSEVehicleCollisions {
    *  - Damage based on vehicle speed & size category
    */
   static async ram(attacker, target) {
-    if (!attacker || !target) return;
+    if (!attacker || !target) {return;}
 
     const atkTok = attacker.getActiveTokens()[0];
     const tgtTok = target.getActiveTokens()[0];
     if (!atkTok || !tgtTok) {
-      ui.notifications.warn("Tokens must be present on the scene.");
+      ui.notifications.warn('Tokens must be present on the scene.');
       return null;
     }
 
@@ -70,7 +70,7 @@ export class SWSEVehicleCollisions {
 
     const ae = createVehicleCTEffect(next, vehicleActor.uuid);
     await this._removeOldVCT(vehicleActor);
-    await vehicleActor.createEmbeddedDocuments("ActiveEffect", [ae]);
+    await vehicleActor.createEmbeddedDocuments('ActiveEffect', [ae]);
 
     if (next >= 5) {
       ui.notifications.error(`${vehicleActor.name} has been DESTROYED in a crash!`);
@@ -84,7 +84,7 @@ export class SWSEVehicleCollisions {
    */
   static async _removeOldVCT(actor) {
     const effects = actor.effects.filter(e => e.flags?.swse?.vehicleCT !== undefined);
-    if (effects.length) await actor.deleteEmbeddedDocuments("ActiveEffect", effects.map(e => e.id));
+    if (effects.length) {await actor.deleteEmbeddedDocuments('ActiveEffect', effects.map(e => e.id));}
   }
 
   /**
@@ -134,7 +134,7 @@ export async function handleCollision(vehicle, object, options = {}, applyDamage
   // Pilot can attempt to avoid collision (DC 15 Pilot check)
   const pilot = getDefaultPilot(vehicle);
   const pilotBonus = getPilotBonus(vehicle, pilot);
-  const avoidRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${pilotBonus}`).evaluate({async: true});
+  const avoidRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${pilotBonus}`).evaluate({ async: true });
 
   result.avoidRoll = avoidRoll;
   result.avoided = avoidRoll.total >= 15;
@@ -195,7 +195,7 @@ export async function createCollisionMessage(result) {
   `;
 
   await ChatMessage.create({
-    speaker: ChatMessage.getSpeaker({actor: vehicle}),
+    speaker: ChatMessage.getSpeaker({ actor: vehicle }),
     content,
     style: CONST.CHAT_MESSAGE_STYLES.OTHER
   });

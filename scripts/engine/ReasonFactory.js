@@ -92,8 +92,8 @@ export class ReasonFactory {
    * @returns {Array} Filtered reasons
    */
   static filterBySafety(reasons, onlySafe = true) {
-    if (!Array.isArray(reasons)) return [];
-    if (!onlySafe) return reasons;
+    if (!Array.isArray(reasons)) {return [];}
+    if (!onlySafe) {return reasons;}
     return reasons.filter(r => r?.safe !== false);
   }
 
@@ -103,7 +103,7 @@ export class ReasonFactory {
    * @returns {Array} Sorted reasons
    */
   static sortByStrength(reasons) {
-    if (!Array.isArray(reasons)) return [];
+    if (!Array.isArray(reasons)) {return [];}
     return [...reasons].sort((a, b) => (b?.strength ?? 0) - (a?.strength ?? 0));
   }
 
@@ -114,7 +114,7 @@ export class ReasonFactory {
    * @returns {Array} Limited reasons, sorted by strength
    */
   static limitByStrength(reasons, limit = 3) {
-    if (!Array.isArray(reasons) || limit <= 0) return [];
+    if (!Array.isArray(reasons) || limit <= 0) {return [];}
     return this.sortByStrength(reasons).slice(0, Math.max(1, limit));
   }
 
@@ -125,12 +125,12 @@ export class ReasonFactory {
    * @returns {Array} Deduplicated reasons
    */
   static deduplicate(reasons) {
-    if (!Array.isArray(reasons)) return [];
+    if (!Array.isArray(reasons)) {return [];}
 
     const seen = new Map();
     for (const reason of reasons) {
       const code = reason?.code;
-      if (!code) continue;
+      if (!code) {continue;}
 
       const existing = seen.get(code);
       if (!existing || (reason?.strength ?? 0) > (existing?.strength ?? 0)) {
@@ -148,7 +148,7 @@ export class ReasonFactory {
    * @returns {Array} Array of {code1, code2, reason1, reason2} conflicts
    */
   static detectConflicts(reasons) {
-    if (!Array.isArray(reasons)) return [];
+    if (!Array.isArray(reasons)) {return [];}
 
     const CONFLICT_PAIRS = [
       { a: 'RISK_INCREASED', b: 'RISK_MITIGATED' },
@@ -179,10 +179,10 @@ export class ReasonFactory {
    * @returns {Array} Reasons with domain consolidated
    */
   static consolidateDomain(reasons, domain, mergedCode, mergedText) {
-    if (!Array.isArray(reasons)) return [];
+    if (!Array.isArray(reasons)) {return [];}
 
     const sameD = reasons.filter(r => r?.domain === domain);
-    if (sameD.length <= 1) return reasons; // Nothing to consolidate
+    if (sameD.length <= 1) {return reasons;} // Nothing to consolidate
 
     // Average strength across all reasons in this domain
     const avgStrength = sameD.reduce((sum, r) => sum + (r?.strength ?? 0), 0) / sameD.length;

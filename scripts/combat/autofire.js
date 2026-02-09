@@ -5,7 +5,7 @@
  * Autofire is treated as an Area Attack targeting a 2x2-square area.
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 export class Autofire {
@@ -19,7 +19,7 @@ export class Autofire {
   static async executeAutofire(attacker, weapon, targetActors = []) {
     try {
       if (!attacker || !weapon) {
-        throw new Error("Missing attacker or weapon");
+        throw new Error('Missing attacker or weapon');
       }
 
       // Check if weapon has autofire capability
@@ -43,11 +43,11 @@ export class Autofire {
       }
 
       // Check if weapon is braced (get penalty bonus)
-      const isBraced = attacker.getFlag("foundryvtt-swse", "brace_weapon_" + weapon.id);
+      const isBraced = attacker.getFlag('foundryvtt-swse', 'brace_weapon_' + weapon.id);
       const basePenalty = isBraced ? -2 : -5;
 
       // Calculate attack bonus with autofire penalty
-      const abilityMod = attacker.system?.attributes[weapon?.system?.attackAttribute || "dex"]?.mod || 0;
+      const abilityMod = attacker.system?.attributes[weapon?.system?.attackAttribute || 'dex']?.mod || 0;
       const bab = attacker.system?.bab || 0;
       const lvl = attacker.system?.level || 1;
       const halfLvl = getEffectiveHalfLevel(actor);
@@ -75,14 +75,14 @@ export class Autofire {
               id: target.id,
               name: target.name,
               defense: reflexDefense,
-              damage: "full"
+              damage: 'full'
             });
           } else {
             misses.push({
               id: target.id,
               name: target.name,
               defense: reflexDefense,
-              damage: "half"
+              damage: 'half'
             });
           }
         }
@@ -93,7 +93,7 @@ export class Autofire {
 
       // Clear brace status if it was used
       if (isBraced) {
-        await attacker.unsetFlag("foundryvtt-swse", "brace_weapon_" + weapon.id);
+        await attacker.unsetFlag('foundryvtt-swse', 'brace_weapon_' + weapon.id);
       }
 
       return {
@@ -108,7 +108,7 @@ export class Autofire {
         message: `${attacker.name} fires ${weapon.name} on Autofire! Hits ${hits.length} target(s), ${misses.length} take half damage.`
       };
     } catch (err) {
-      SWSELogger.error("Autofire attack failed", err);
+      SWSELogger.error('Autofire attack failed', err);
       throw err;
     }
   }
@@ -118,18 +118,18 @@ export class Autofire {
    * @private
    */
   static _hasAutofireMode(weapon) {
-    if (!weapon) return false;
+    if (!weapon) {return false;}
 
     const modes = weapon.system?.modes || weapon.system?.weaponModes || [];
-    const name = (weapon.name || "").toLowerCase();
+    const name = (weapon.name || '').toLowerCase();
 
     if (Array.isArray(modes)) {
-      return modes.some(m => m.toLowerCase().includes("autofire"));
+      return modes.some(m => m.toLowerCase().includes('autofire'));
     }
 
-    return Object.keys(modes).some(k => k.toLowerCase().includes("autofire")) ||
-           name.includes("autofire") ||
-           name.includes("auto-fire");
+    return Object.keys(modes).some(k => k.toLowerCase().includes('autofire')) ||
+           name.includes('autofire') ||
+           name.includes('auto-fire');
   }
 
   /**
@@ -150,19 +150,19 @@ export class Autofire {
    * @private
    */
   static async _consumeAmmunition(weapon, amount = 10) {
-    if (!weapon) return;
+    if (!weapon) {return;}
 
     try {
       const current = weapon.system?.ammunition || weapon.system?.ammo || 0;
       const remaining = Math.max(0, current - amount);
 
       const updatePath = weapon.system?.ammunition !== undefined
-        ? "system.ammunition"
-        : "system.ammo";
+        ? 'system.ammunition'
+        : 'system.ammo';
 
       await weapon.update({ [updatePath]: remaining });
     } catch (err) {
-      SWSELogger.error("Failed to consume ammunition", err);
+      SWSELogger.error('Failed to consume ammunition', err);
     }
   }
 
@@ -182,7 +182,7 @@ export class Autofire {
       }
 
       // Update weapon current mode
-      await weapon.update({ "system.currentMode": "Autofire" });
+      await weapon.update({ 'system.currentMode': 'Autofire' });
 
       return {
         success: true,
@@ -190,7 +190,7 @@ export class Autofire {
         message: `${weapon.name} is now set to Autofire mode`
       };
     } catch (err) {
-      SWSELogger.error("Failed to set autofire mode", err);
+      SWSELogger.error('Failed to set autofire mode', err);
       throw err;
     }
   }
@@ -201,16 +201,16 @@ export class Autofire {
    * @returns {boolean} - True if weapon only has autofire mode
    */
   static isAutofireOnly(weapon) {
-    if (!weapon) return false;
+    if (!weapon) {return false;}
 
     const modes = weapon.system?.modes || weapon.system?.weaponModes || [];
-    const name = (weapon.name || "").toLowerCase();
+    const name = (weapon.name || '').toLowerCase();
 
     if (Array.isArray(modes)) {
-      return modes.length === 1 && modes[0].toLowerCase().includes("autofire");
+      return modes.length === 1 && modes[0].toLowerCase().includes('autofire');
     }
 
-    return Object.keys(modes).length === 1 && Object.keys(modes)[0].toLowerCase().includes("autofire");
+    return Object.keys(modes).length === 1 && Object.keys(modes)[0].toLowerCase().includes('autofire');
   }
 
   /**
@@ -220,7 +220,7 @@ export class Autofire {
    */
   static canBrace(weapon) {
     if (!weapon) {
-      return { canBrace: false, reason: "No weapon provided" };
+      return { canBrace: false, reason: 'No weapon provided' };
     }
 
     // Must be autofire-only
@@ -229,18 +229,18 @@ export class Autofire {
     }
 
     // Must be Heavy Weapon, Rifle, or Pistol with Retractable Stock
-    const category = (weapon.system?.category || weapon.system?.type || "").toLowerCase();
-    const name = (weapon.name || "").toLowerCase();
-    const hasRetractableStock = weapon.system?.retractableStock || name.includes("retractable stock");
+    const category = (weapon.system?.category || weapon.system?.type || '').toLowerCase();
+    const name = (weapon.name || '').toLowerCase();
+    const hasRetractableStock = weapon.system?.retractableStock || name.includes('retractable stock');
 
-    const validCategories = ["heavy", "rifle", "pistol"];
+    const validCategories = ['heavy', 'rifle', 'pistol'];
     const isValidCategory = validCategories.some(cat => category.includes(cat));
 
     if (!isValidCategory) {
       return { canBrace: false, reason: `${weapon.name} must be a Heavy Weapon, Rifle, or Pistol with Retractable Stock` };
     }
 
-    if (category.includes("pistol") && !hasRetractableStock) {
+    if (category.includes('pistol') && !hasRetractableStock) {
       return { canBrace: false, reason: `${weapon.name} (Pistol) must have Retractable Stock to be braced` };
     }
 

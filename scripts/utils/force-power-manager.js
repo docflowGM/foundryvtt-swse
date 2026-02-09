@@ -76,7 +76,7 @@ export class ForcePowerManager {
 
         if (cachedIndex) {
           const pack = game.packs.get('foundryvtt-swse.forcepowers');
-          if (!pack) return [];
+          if (!pack) {return [];}
 
           const powers = await pack.getDocuments();
           return powers.map(p => p.toObject());
@@ -105,7 +105,7 @@ export class ForcePowerManager {
    * @param {string} reason - Reason for selection (for dialogue title)
    * @returns {Promise<Array>} Selected power IDs
    */
-  static async selectForcePowers(actor, count, reason = "Select Force Powers") {
+  static async selectForcePowers(actor, count, reason = 'Select Force Powers') {
     const availablePowers = await this.getAvailablePowers();
 
     if (availablePowers.length === 0) {
@@ -222,7 +222,7 @@ export class ForcePowerManager {
         buttons: {
           ok: {
             icon: '<i class="fas fa-check"></i>',
-            label: "Confirm Selection",
+            label: 'Confirm Selection',
             callback: (html) => {
               const selected = [];
               selectedPowers.forEach((count, powerId) => {
@@ -235,21 +235,21 @@ export class ForcePowerManager {
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
-            label: "Cancel",
+            label: 'Cancel',
             callback: () => resolve([])
           }
         },
-        default: "ok",
+        default: 'ok',
         render: (html) => {
           // Convert to DOM element if needed
           const element = html instanceof HTMLElement ? html : html[0];
-          if (!element) return;
+          if (!element) {return;}
 
           const updateRemaining = () => {
             const total = Array.from(selectedPowers.values()).reduce((sum, val) => sum + val, 0);
             const remaining = count - total;
             const remainingElement = element.querySelector('.remaining-count');
-            if (remainingElement) remainingElement.textContent = remaining;
+            if (remainingElement) {remainingElement.textContent = remaining;}
 
             // Disable increase buttons if at limit
             const disableIncrease = remaining <= 0;
@@ -268,7 +268,7 @@ export class ForcePowerManager {
               if (total < count) {
                 selectedPowers.set(powerId, current + 1);
                 const countElement = element.querySelector(`.power-count[data-power-id="${powerId}"]`);
-                if (countElement) countElement.textContent = current + 1;
+                if (countElement) {countElement.textContent = current + 1;}
                 updateRemaining();
               }
             });
@@ -288,7 +288,7 @@ export class ForcePowerManager {
                   selectedPowers.set(powerId, newCount);
                 }
                 const countElement = element.querySelector(`.power-count[data-power-id="${powerId}"]`);
-                if (countElement) countElement.textContent = newCount;
+                if (countElement) {countElement.textContent = newCount;}
                 updateRemaining();
               }
             });
@@ -309,7 +309,7 @@ export class ForcePowerManager {
    * @returns {Promise<void>}
    */
   static async grantForcePowers(actor, powerIds) {
-    if (!powerIds || powerIds.length === 0) return;
+    if (!powerIds || powerIds.length === 0) {return;}
 
     const availablePowers = await this.getAvailablePowers();
     const powersToCreate = [];
@@ -337,7 +337,7 @@ export class ForcePowerManager {
    */
   static async handleForceSensitivity(actor) {
     // Force Sensitivity grants 1 force power
-    const selectedPowers = await this.selectForcePowers(actor, 1, "Force Sensitivity - Select 1 Power");
+    const selectedPowers = await this.selectForcePowers(actor, 1, 'Force Sensitivity - Select 1 Power');
 
     if (selectedPowers.length > 0) {
       await this.grantForcePowers(actor, selectedPowers);

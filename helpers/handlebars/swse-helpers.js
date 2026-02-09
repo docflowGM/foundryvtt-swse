@@ -17,15 +17,15 @@ export const swseHelpers = {
 
   forceRerollDice: (level) => {
     const l = Number(level || 1);
-    if (l >= 15) return '+3d6';
-    if (l >= 8) return '+2d6';
+    if (l >= 15) {return '+3d6';}
+    if (l >= 8) {return '+2d6';}
     return '+1d6';
   },
 
   skillTotal: (skill, halfLevel, abilityMod, conditionPenalty) => {
     let total = Number(halfLevel || 0) + Number(abilityMod || 0);
-    if (skill?.trained) total += 5;
-    if (skill?.focused) total += 5;
+    if (skill?.trained) {total += 5;}
+    if (skill?.focused) {total += 5;}
     total += Number(skill?.misc || 0);
     total += Number(conditionPenalty || 0);
     return total;
@@ -38,7 +38,7 @@ export const swseHelpers = {
 
   times: function(n, block) {
     let result = '';
-    for(let i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
       result += block.fn(i);
     }
     return result;
@@ -109,29 +109,28 @@ export const swseHelpers = {
 };
 
 swseHelpers.extractHitDie = (value) => {
-  if (value == null) return "";
+  if (value == null) {return '';}
   const str = String(value);
   const match = str.match(/d(\d+)/i);
-  if (match) return match[1];
+  if (match) {return match[1];}
   const fallback = str.match(/(\d+)/);
   return fallback ? fallback[1] : str;
 };
 
 
-
 swseHelpers.formatBAB = (bab) => {
-  if (bab == null) return "";
+  if (bab == null) {return '';}
   // If it's an array or similar, normalize and join.
   if (Array.isArray(bab)) {
     const parts = bab
       .map(v => Number(v))
       .filter(v => !Number.isNaN(v))
       .sort((a, b) => b - a); // highest to lowest, typical BAB display
-    if (!parts.length) return "";
-    return parts.map(v => (v >= 0 ? `+${v}` : `${v}`)).join("/");
+    if (!parts.length) {return '';}
+    return parts.map(v => (v >= 0 ? `+${v}` : `${v}`)).join('/');
   }
   const num = Number(bab);
-  if (Number.isNaN(num)) return String(bab);
+  if (Number.isNaN(num)) {return String(bab);}
   return num >= 0 ? `+${num}` : `${num}`;
 };
 

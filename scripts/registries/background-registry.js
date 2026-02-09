@@ -14,7 +14,7 @@ export class BackgroundRegistry {
   static _byId = new Map();
 
   static async ensureLoaded() {
-    if (this._loaded) return;
+    if (this._loaded) {return;}
     this._loaded = true;
 
     // Prefer compendium pack at runtime.
@@ -63,7 +63,7 @@ export class BackgroundRegistry {
         flat.push(...data);
       } else if (data && typeof data === 'object') {
         for (const group of Object.values(data)) {
-          if (!group) continue;
+          if (!group) {continue;}
           if (Array.isArray(group)) {
             flat.push(...group);
           } else if (typeof group === 'object') {
@@ -73,7 +73,7 @@ export class BackgroundRegistry {
       }
 
       for (const bg of flat) {
-        if (!bg) continue;
+        if (!bg) {continue;}
         const slug = bg.id || slugify(bg.name);
         const internalId = stableJsonId('background', slug);
         const record = {

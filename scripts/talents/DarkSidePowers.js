@@ -9,7 +9,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
-import { ActorEngine } from "../actors/engine/actor-engine.js";
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class DarkSidePowers {
 
@@ -447,7 +447,7 @@ export class DarkSidePowers {
 
   static isCurrentlyRaging(actor) {
     const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
-    if (!rageInfo) return false;
+    if (!rageInfo) {return false;}
 
     const currentRound = game.combat?.round || 0;
     return currentRound <= rageInfo.endRound;
@@ -520,7 +520,7 @@ export class DarkSidePowers {
 
   static checkCripplingStrikeExpiry(targetActor) {
     const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
-    if (!crippledInfo) return false;
+    if (!crippledInfo) {return false;}
 
     if (targetActor.system.hp.value >= crippledInfo.maxHpWhenCrippled) {
       return false;
@@ -531,7 +531,7 @@ export class DarkSidePowers {
 
   static async removeCripplingStrike(targetActor) {
     const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
-    if (!crippledInfo) return;
+    if (!crippledInfo) {return;}
 
     await targetActor.update({
       'system.speed.current': crippledInfo.originalSpeed
@@ -724,7 +724,7 @@ export class DarkSidePowers {
 
   static canCreateNewTalisman(actor) {
     const cooldown = actor.getFlag('swse', 'darkSideTalismanCooldown');
-    if (!cooldown) return true;
+    if (!cooldown) {return true;}
 
     const cooldownTime = new Date(cooldown);
     const now = new Date();
@@ -1186,7 +1186,7 @@ export class DarkSidePowers {
     const targetActor = targetToken.actor;
     const afflictions = targetActor.getFlag('swse', 'afflictions') || [];
 
-    if (afflictions.length === 0) return;
+    if (afflictions.length === 0) {return;}
 
     for (const affliction of afflictions) {
       const damageRoll = new Roll('2d6');
@@ -1452,7 +1452,7 @@ export class DarkSidePowers {
 
   static canCreateNewSithTalisman(actor) {
     const cooldown = actor.getFlag('swse', 'sithTalismanCooldown');
-    if (!cooldown) return true;
+    if (!cooldown) {return true;}
 
     const cooldownTime = new Date(cooldown);
     const now = new Date();
@@ -1674,7 +1674,7 @@ export class DarkSidePowers {
   }
 
   static getDarkScourgeBonus(actor, targetActor) {
-    if (!this.hasDarkScourge(actor)) return 0;
+    if (!this.hasDarkScourge(actor)) {return 0;}
 
     // Check if target is a Jedi (has Jedi class)
     const isJedi = targetActor.items.some(item =>

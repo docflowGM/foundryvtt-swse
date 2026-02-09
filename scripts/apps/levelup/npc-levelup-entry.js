@@ -1,20 +1,20 @@
 // scripts/apps/levelup/npc-levelup-entry.js
-import SWSEApplicationV2 from "../base/swse-application-v2.js";
-import { SWSELogger } from "../../utils/logger.js";
-import { isEpicOverrideEnabled } from "../../settings/epic-override.js";
-import { getLevelSplit } from "../../actors/derived/level-split.js";
-import { ensureNpcProgressionMode, revertNpcToStatblock, levelUpNpcNonheroic } from "../../engine/npc-levelup.js";
-import { SWSELevelUpEnhanced } from "./levelup-enhanced.js";
+import SWSEApplicationV2 from '../base/swse-application-v2.js';
+import { SWSELogger } from '../../utils/logger.js';
+import { isEpicOverrideEnabled } from '../../settings/epic-override.js';
+import { getLevelSplit } from '../../actors/derived/level-split.js';
+import { ensureNpcProgressionMode, revertNpcToStatblock, levelUpNpcNonheroic } from '../../engine/npc-levelup.js';
+import { SWSELevelUpEnhanced } from './levelup-enhanced.js';
 
 export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
   static PARTS = {
-    main: { template: "systems/foundryvtt-swse/templates/apps/npc-levelup-entry.hbs" }
+    main: { template: 'systems/foundryvtt-swse/templates/apps/npc-levelup-entry.hbs' }
   };
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
-    id: "swse-npc-levelup-entry",
-    position: { width: 560, height: "auto" },
-    window: { title: "NPC Level Up", resizable: true, draggable: true, frame: true }
+    id: 'swse-npc-levelup-entry',
+    position: { width: 560, height: 'auto' },
+    window: { title: 'NPC Level Up', resizable: true, draggable: true, frame: true }
   });
 
   constructor(actor, options = {}) {
@@ -38,11 +38,11 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     const nonheroicBlocked = nonheroicNext > 20 && !epicOverrideEnabled;
     const nonheroicAdvisory = nonheroicNext > 20 && epicOverrideEnabled;
 
-    const mode = actor?.getFlag("swse", "npcLevelUp.mode") ?? "statblock";
-    const hasSnapshot = !!actor?.getFlag("swse", "npcLevelUp.snapshot");
+    const mode = actor?.getFlag('swse', 'npcLevelUp.mode') ?? 'statblock';
+    const hasSnapshot = !!actor?.getFlag('swse', 'npcLevelUp.snapshot');
 
     return {
-      actorName: actor?.name ?? "NPC",
+      actorName: actor?.name ?? 'NPC',
       totalLevel: Number(actor?.system?.level) || Number(totalLevel) || 1,
       heroicLevels: Number(heroicLevels) || 0,
       nonheroicLevels: Number(nonheroicLevels) || 0,
@@ -62,97 +62,97 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     await super._onRender(context, options);
 
     const el = this.element;
-    if (!el) return;
+    if (!el) {return;}
 
-    if (this._boundElement === el) return;
+    if (this._boundElement === el) {return;}
     this._boundElement = el;
 
-    el.addEventListener("click", async (ev) => {
-      const btn = ev?.target?.closest?.("[data-action]");
-      if (!btn) return;
+    el.addEventListener('click', async (ev) => {
+      const btn = ev?.target?.closest?.('[data-action]');
+      if (!btn) {return;}
       ev?.preventDefault?.();
 
-      const action = String(btn.dataset.action ?? "").trim();
-      if (!action) return;
+      const action = String(btn.dataset.action ?? '').trim();
+      if (!action) {return;}
 
       try {
         switch (action) {
-          case "heroic":
+          case 'heroic':
             await this._handleHeroic();
             break;
-          case "nonheroic":
+          case 'nonheroic':
             await this._handleNonheroic();
             break;
-          case "revert":
+          case 'revert':
             await this._handleRevert();
             break;
-          case "cancel":
+          case 'cancel':
             this.close();
             break;
         }
       } catch (err) {
-        SWSELogger.error("NPC level-up entry action failed:", err);
-        ui.notifications.error("NPC level-up action failed.");
+        SWSELogger.error('NPC level-up entry action failed:', err);
+        ui.notifications.error('NPC level-up action failed.');
       }
     });
   }
 
   async _handleHeroic() {
-    if (!game.user?.isGM) return ui.notifications.warn("GM only.");
+    if (!game.user?.isGM) {return ui.notifications.warn('GM only.');}
 
     const { heroicLevel, nonheroicLevel } = getLevelSplit(this.actor);
     const epicOverrideEnabled = isEpicOverrideEnabled();
     const heroicNext = (Number(heroicLevel) || 0) + 1;
 
     if (heroicNext > 20 && !epicOverrideEnabled) {
-      return ui.notifications.warn("Epic Override required to take Heroic levels beyond 20.");
+      return ui.notifications.warn('Epic Override required to take Heroic levels beyond 20.');
     }
 
     if ((Number(nonheroicLevel) || 0) > 0) {
       const ok = await Dialog.confirm({
-        title: "Add Heroic Level?",
-        content: "<p>This NPC already has nonheroic levels. Mixed progression is legal but uncommon. Continue?</p>"
+        title: 'Add Heroic Level?',
+        content: '<p>This NPC already has nonheroic levels. Mixed progression is legal but uncommon. Continue?</p>'
       });
-      if (!ok) return;
+      if (!ok) {return;}
     }
 
-    await ensureNpcProgressionMode(this.actor, { track: "heroic" });
+    await ensureNpcProgressionMode(this.actor, { track: 'heroic' });
     this.close();
     new SWSELevelUpEnhanced(this.actor).render(true);
   }
 
   async _handleNonheroic() {
-    if (!game.user?.isGM) return ui.notifications.warn("GM only.");
+    if (!game.user?.isGM) {return ui.notifications.warn('GM only.');}
 
     const { heroicLevel, nonheroicLevel } = getLevelSplit(this.actor);
     const epicOverrideEnabled = isEpicOverrideEnabled();
     const nonheroicNext = (Number(nonheroicLevel) || 0) + 1;
 
     if (nonheroicNext > 20 && !epicOverrideEnabled) {
-      return ui.notifications.warn("Epic Override required to take Nonheroic levels beyond 20.");
+      return ui.notifications.warn('Epic Override required to take Nonheroic levels beyond 20.');
     }
 
     if ((Number(heroicLevel) || 0) > 0) {
       const ok = await Dialog.confirm({
-        title: "Add Nonheroic Level?",
-        content: "<p>This NPC already has heroic levels. Mixed progression is legal but uncommon. Continue?</p>"
+        title: 'Add Nonheroic Level?',
+        content: '<p>This NPC already has heroic levels. Mixed progression is legal but uncommon. Continue?</p>'
       });
-      if (!ok) return;
+      if (!ok) {return;}
     }
 
-    await ensureNpcProgressionMode(this.actor, { track: "nonheroic" });
+    await ensureNpcProgressionMode(this.actor, { track: 'nonheroic' });
     this.close();
     await levelUpNpcNonheroic(this.actor);
   }
 
   async _handleRevert() {
-    if (!game.user?.isGM) return ui.notifications.warn("GM only.");
+    if (!game.user?.isGM) {return ui.notifications.warn('GM only.');}
 
     const ok = await Dialog.confirm({
-      title: "Revert NPC to Statblock Snapshot",
-      content: "<p>This restores the NPC exactly to the snapshot taken before the first level-up (including items and effects).</p>"
+      title: 'Revert NPC to Statblock Snapshot',
+      content: '<p>This restores the NPC exactly to the snapshot taken before the first level-up (including items and effects).</p>'
     });
-    if (!ok) return;
+    if (!ok) {return;}
 
     await revertNpcToStatblock(this.actor);
     this.close();

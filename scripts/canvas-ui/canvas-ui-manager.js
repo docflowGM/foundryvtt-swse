@@ -5,7 +5,7 @@
 
 export class CanvasUIManager {
   static init() {
-    console.warn("SWSE: CanvasUIManager disabled for canvas stability");
+    console.warn('SWSE: CanvasUIManager disabled for canvas stability');
   }
 
   static initialize() {

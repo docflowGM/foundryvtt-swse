@@ -156,7 +156,7 @@ export class StatBonusRule extends RuleElement {
     const stat = this.data.stat;
     const bonuses = actor.system.bonuses || {};
 
-    if (!bonuses[stat]) return;
+    if (!bonuses[stat]) {return;}
 
     // Remove bonus with this key
     bonuses[stat] = bonuses[stat].filter(b => b.key !== this.key);

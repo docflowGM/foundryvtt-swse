@@ -19,21 +19,21 @@ export class SWSEChat {
     actor = null,
     token = null,
     speaker = null,
-    flavor = "",
+    flavor = '',
     flags = {},
     rollMode = null,
     whisper = null,
     blind = false
   } = {}) {
-    if (!roll) throw new Error("SWSEChat.postRoll requires a Roll.");
+    if (!roll) {throw new Error('SWSEChat.postRoll requires a Roll.');}
 
     const msgSpeaker = speaker ?? this.speaker({ actor, token });
 
     const messageData = { speaker: msgSpeaker, flavor, flags, blind };
-    if (Array.isArray(whisper)) messageData.whisper = whisper;
+    if (Array.isArray(whisper)) {messageData.whisper = whisper;}
 
     const options = { create: true };
-    if (rollMode) options.rollMode = rollMode;
+    if (rollMode) {options.rollMode = rollMode;}
 
     return roll.toMessage(messageData, options);
   }
@@ -60,8 +60,8 @@ export class SWSEChat {
       blind
     };
 
-    if (sound) messageData.sound = sound;
-    if (Array.isArray(whisper)) messageData.whisper = whisper;
+    if (sound) {messageData.sound = sound;}
+    if (Array.isArray(whisper)) {messageData.whisper = whisper;}
 
     return ChatMessage.create(messageData);
   }

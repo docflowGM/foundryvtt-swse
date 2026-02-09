@@ -15,7 +15,7 @@ import { getRandomDialogue } from './store-shared.js';
 export function applyAvailabilityFilter(doc, filterValue, itemsById) {
     // Get the active panel
     const activePanel = doc.querySelector('.shop-panel.active');
-    if (!activePanel) return;
+    if (!activePanel) {return;}
 
     // Get all product items in the active panel
     const productItems = activePanel.querySelectorAll('.product-item');
@@ -91,7 +91,7 @@ export function applyAvailabilityFilter(doc, filterValue, itemsById) {
 export function applySearchFilter(doc, searchTerm) {
     // Get the active panel
     const activePanel = doc.querySelector('.shop-panel.active');
-    if (!activePanel) return;
+    if (!activePanel) {return;}
 
     // Get all product items in the active panel
     const productItems = activePanel.querySelectorAll('.product-item');
@@ -146,7 +146,7 @@ export function switchToPanel(doc, tabName, itemsById, updateDialogueCallback) {
     // Switch active panel
     doc.querySelectorAll('.shop-panel').forEach(p => p.classList.remove('active'));
     const panel = doc.querySelector(`[data-panel="${tabName}"]`);
-    if (panel) panel.classList.add('active');
+    if (panel) {panel.classList.add('active');}
 
     // Update Rendarr's dialogue based on the category
     const dialogue = getRandomDialogue(tabName);
@@ -155,7 +155,7 @@ export function switchToPanel(doc, tabName, itemsById, updateDialogueCallback) {
     }
 
     // Apply availability filter to the new panel
-    const availabilityFilter = doc.querySelector("#shop-availability-filter")?.value || "all";
+    const availabilityFilter = doc.querySelector('#shop-availability-filter')?.value || 'all';
     applyAvailabilityFilter(doc, availabilityFilter, itemsById);
 }
 
@@ -168,7 +168,7 @@ export function switchToPanel(doc, tabName, itemsById, updateDialogueCallback) {
 export function applySorting(doc, sortValue, itemsById) {
     // Get the active panel
     const activePanel = doc.querySelector('.shop-panel.active');
-    if (!activePanel) return;
+    if (!activePanel) {return;}
 
     // Get all product lists in the active panel (there may be multiple for weapon subcategories)
     const productsLists = activePanel.querySelectorAll('.products-list');
@@ -176,7 +176,7 @@ export function applySorting(doc, sortValue, itemsById) {
     productsLists.forEach(productsList => {
         // Get all product items in this list
         const productItems = Array.from(productsList.querySelectorAll('.product-item'));
-        if (productItems.length === 0) return;
+        if (productItems.length === 0) {return;}
 
         // Sort the items based on the sort value
         productItems.sort((a, b) => {
@@ -187,33 +187,37 @@ export function applySorting(doc, sortValue, itemsById) {
             const bData = itemsById.get(bId);
 
             switch (sortValue) {
-                case 'name-asc':
+                case 'name-asc': {
                     const aName = a.querySelector('.product-name')?.textContent || '';
                     const bName = b.querySelector('.product-name')?.textContent || '';
                     return aName.localeCompare(bName);
 
-                case 'name-desc':
+                }
+                case 'name-desc': {
                     const aNameDesc = a.querySelector('.product-name')?.textContent || '';
                     const bNameDesc = b.querySelector('.product-name')?.textContent || '';
                     return bNameDesc.localeCompare(aNameDesc);
 
-                case 'price-asc':
+                }
+                case 'price-asc': {
                     const aPrice = aData?.finalCost || 0;
                     const bPrice = bData?.finalCost || 0;
                     return aPrice - bPrice;
 
-                case 'price-desc':
+                }
+                case 'price-desc': {
                     const aPriceDesc = aData?.finalCost || 0;
                     const bPriceDesc = bData?.finalCost || 0;
                     return bPriceDesc - aPriceDesc;
 
+                }
                 case 'damage-desc':
                     // Parse damage values (e.g., "3d6", "2d8+1")
                     const aDamage = parseDamage(aData?.system?.damage || '');
                     const bDamage = parseDamage(bData?.system?.damage || '');
                     return bDamage - aDamage;
 
-                case 'availability':
+                case 'availability': {
                     const aAvail = aData?.system?.availability || '';
                     const bAvail = bData?.system?.availability || '';
                     const availOrder = ['Standard', 'Licensed', 'Restricted', 'Military', 'Illegal', 'Rare'];
@@ -237,11 +241,11 @@ export function applySorting(doc, sortValue, itemsById) {
  * @returns {number} Approximate damage value
  */
 function parseDamage(damageStr) {
-    if (!damageStr) return 0;
+    if (!damageStr) {return 0;}
 
     // Extract dice notation (e.g., "3d6+2" -> 3, 6, 2)
     const match = damageStr.match(/(\d+)d(\d+)([+-]\d+)?/);
-    if (!match) return 0;
+    if (!match) {return 0;}
 
     const numDice = parseInt(match[1], 10);
     const diceSize = parseInt(match[2], 10);

@@ -1,45 +1,44 @@
 // ============================================
-// Ability scores and defenses for CharGen  
+// Ability scores and defenses for CharGen
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
 
 
-
-const _SPECIES_MOD_CLASSES = ["mod-positive", "mod-negative", "mod-neutral"];
+const _SPECIES_MOD_CLASSES = ['mod-positive', 'mod-negative', 'mod-neutral'];
 
 function _formatSigned(n) {
   const v = Number(n || 0);
-  return `${v > 0 ? "+" : ""}${v}`;
+  return `${v > 0 ? '+' : ''}${v}`;
 }
 
 function _speciesModClass(n) {
   const v = Number(n || 0);
-  if (v > 0) return "mod-positive";
-  if (v < 0) return "mod-negative";
-  return "mod-neutral";
+  if (v > 0) {return 'mod-positive';}
+  if (v < 0) {return 'mod-negative';}
+  return 'mod-neutral';
 }
 
 function _applySpeciesModDisplay(speciesNumEl, mod) {
-  if (!speciesNumEl) return;
+  if (!speciesNumEl) {return;}
   speciesNumEl.textContent = _formatSigned(mod);
   _SPECIES_MOD_CLASSES.forEach(c => speciesNumEl.classList.remove(c));
   speciesNumEl.classList.add(_speciesModClass(mod));
 }
 
 function _updateAbilityBreakdown(containerEl, { base, speciesMod, total, mod }) {
-  if (!containerEl) return;
+  if (!containerEl) {return;}
 
-  const baseEl = containerEl.querySelector(".base-num");
-  const speciesEl = containerEl.querySelector(".species-num");
-  const totalEl = containerEl.querySelector(".total-num");
-  const modEl = containerEl.querySelector(".mod-num");
+  const baseEl = containerEl.querySelector('.base-num');
+  const speciesEl = containerEl.querySelector('.species-num');
+  const totalEl = containerEl.querySelector('.total-num');
+  const modEl = containerEl.querySelector('.mod-num');
 
-  if (baseEl) baseEl.textContent = base ?? "--";
+  if (baseEl) {baseEl.textContent = base ?? '--';}
   _applySpeciesModDisplay(speciesEl, speciesMod);
 
-  if (totalEl) totalEl.textContent = total ?? "--";
-  if (modEl) modEl.textContent = typeof mod === "number" ? _formatSigned(mod) : "--";
+  if (totalEl) {totalEl.textContent = total ?? '--';}
+  if (modEl) {modEl.textContent = typeof mod === 'number' ? _formatSigned(mod) : '--';}
 }
 
 /**
@@ -67,17 +66,17 @@ export function _recalcDefenses() {
 
   // Ensure each defense type has classBonus
   if (!this.characterData.defenses.fort) {
-    this.characterData.defenses.fort = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10, ability: 'con' };
+    this.characterData.defenses.fort = { base: 10, armor: 0, abilityMod: 0, classBonus: 0, misc: 0, total: 10, ability: 'con' };
   } else if (!this.characterData.defenses.fort.ability) {
     this.characterData.defenses.fort.ability = 'con';
   }
   if (!this.characterData.defenses.reflex) {
-    this.characterData.defenses.reflex = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 12, ability: 'dex' };
+    this.characterData.defenses.reflex = { base: 10, armor: 0, abilityMod: 0, classBonus: 0, misc: 0, total: 12, ability: 'dex' };
   } else if (!this.characterData.defenses.reflex.ability) {
     this.characterData.defenses.reflex.ability = 'dex';
   }
   if (!this.characterData.defenses.will) {
-    this.characterData.defenses.will = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 11, ability: 'wis' };
+    this.characterData.defenses.will = { base: 10, armor: 0, abilityMod: 0, classBonus: 0, misc: 0, total: 11, ability: 'wis' };
   } else if (!this.characterData.defenses.will.ability) {
     this.characterData.defenses.will.ability = 'wis';
   }
@@ -115,16 +114,16 @@ export function _bindAbilitiesUI(root) {
     const chargen = this;
     // Droids don't have CON ability
     const ablist = chargen.characterData.isDroid
-        ? ["str", "dex", "int", "wis", "cha"]
-        : ["str", "dex", "con", "int", "wis", "cha"];
+        ? ['str', 'dex', 'int', 'wis', 'cha']
+        : ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
-    SWSELogger.log("SWSE | Binding abilities UI, root:", root);
+    SWSELogger.log('SWSE | Binding abilities UI, root:', root);
 
     // Point buy system
     // Get the correct point buy pool from settings
     const pointBuyPool = chargen.characterData.isDroid
-      ? (game.settings.get('foundryvtt-swse', "droidPointBuyPool") || 20)
-      : (game.settings.get('foundryvtt-swse', "livingPointBuyPool") || 25);
+      ? (game.settings.get('foundryvtt-swse', 'droidPointBuyPool') || 20)
+      : (game.settings.get('foundryvtt-swse', 'livingPointBuyPool') || 25);
 
     let pool = pointBuyPool;
     // Cumulative cost table: score -> total cost from 8
@@ -139,19 +138,19 @@ export function _bindAbilitiesUI(root) {
     };
 
     const updatePointRemaining = () => {
-      const el = root.querySelector("#point-remaining");
-      if (el) el.textContent = pool;
+      const el = root.querySelector('#point-remaining');
+      if (el) {el.textContent = pool;}
     };
 
     const initPointBuy = () => {
       pool = pointBuyPool;
       ablist.forEach(a => {
         const inp = root.querySelector(`[name="ability_${a}"]`);
-        if (inp) inp.value = 8;
+        if (inp) {inp.value = 8;}
         const plus = root.querySelector(`[data-plus="${a}"]`);
         const minus = root.querySelector(`[data-minus="${a}"]`);
-        if (plus) plus.onclick = () => adjustAttribute(a, +1);
-        if (minus) minus.onclick = () => adjustAttribute(a, -1);
+        if (plus) {plus.onclick = () => adjustAttribute(a, +1);}
+        if (minus) {minus.onclick = () => adjustAttribute(a, -1);}
       });
       updatePointRemaining();
       recalcPreview();
@@ -159,19 +158,19 @@ export function _bindAbilitiesUI(root) {
 
     const adjustAttribute = (ab, delta) => {
       const el = root.querySelector(`[name="ability_${ab}"]`);
-      if (!el) return;
-      
-      let cur = Number(el.value || 8);
+      if (!el) {return;}
+
+      const cur = Number(el.value || 8);
       const newVal = Math.max(8, Math.min(18, cur + delta));
       const costNow = pointCosts(8, cur);
       const costNew = pointCosts(8, newVal);
       const deltaCost = costNew - costNow;
-      
+
       if (deltaCost > pool) {
-        ui.notifications.warn("Not enough point-buy points remaining.");
+        ui.notifications.warn('Not enough point-buy points remaining.');
         return;
       }
-      
+
       pool -= deltaCost;
       el.value = newVal;
       chargen.characterData.abilities[ab].base = newVal;
@@ -183,20 +182,20 @@ export function _bindAbilitiesUI(root) {
     const rollStandard = async () => {
       const results = [];
       for (let i = 0; i < 6; i++) {
-        const r = await globalThis.SWSE.RollEngine.safeRoll("4d6kh3");
+        const r = await globalThis.SWSE.RollEngine.safeRoll('4d6kh3');
         if (!r || !r.dice || !r.dice[0] || !r.dice[0].results) {
-          ui.notifications.error("Failed to roll dice. Please try again.");
-          SWSELogger.error("SWSE | Standard roll failed:", r);
+          ui.notifications.error('Failed to roll dice. Please try again.');
+          SWSELogger.error('SWSE | Standard roll failed:', r);
           return;
         }
-        const dice = r.dice[0].results.map(d => ({value: d.result, discarded: d.discarded}));
+        const dice = r.dice[0].results.map(d => ({ value: d.result, discarded: d.discarded }));
         results.push({ total: r.total, dice });
       }
 
-      const container = root.querySelector("#roll-results");
-      if (!container) return;
+      const container = root.querySelector('#roll-results');
+      if (!container) {return;}
 
-      container.dataset.locked = "false";
+      container.dataset.locked = 'false';
 
       container.innerHTML = `
         <div class="roll-4d6-container">
@@ -234,10 +233,10 @@ export function _bindAbilitiesUI(root) {
       `;
 
       // Add draggable roll results
-      const pool = container.querySelector("#roll-pool");
+      const pool = container.querySelector('#roll-pool');
       results.forEach((res, idx) => {
-        const rollDiv = document.createElement("div");
-        rollDiv.className = "draggable-roll";
+        const rollDiv = document.createElement('div');
+        rollDiv.className = 'draggable-roll';
         rollDiv.draggable = true;
         rollDiv.dataset.value = res.total;
         rollDiv.dataset.index = idx;
@@ -274,7 +273,7 @@ export function _bindAbilitiesUI(root) {
 
       const _clearSlot = (ability) => {
         const z = container.querySelector(`.ability-drop-zone[data-ability="${ability}"]`);
-        if (!z) return;
+        if (!z) {return;}
         z.querySelector('.drop-placeholder').style.display = 'block';
         const dv = z.querySelector('.dropped-value');
         if (dv) { dv.style.display = 'none'; dv.textContent = ''; }
@@ -296,7 +295,7 @@ export function _bindAbilitiesUI(root) {
 
       const _setSlot = (ability, base) => {
         const z = container.querySelector(`.ability-drop-zone[data-ability="${ability}"]`);
-        if (!z) return;
+        if (!z) {return;}
         z.querySelector('.drop-placeholder').style.display = 'none';
         const dv = z.querySelector('.dropped-value');
         if (dv) { dv.style.display = 'block'; dv.textContent = String(base); }
@@ -306,7 +305,7 @@ export function _bindAbilitiesUI(root) {
         const total = base + speciesMod;
         const mod = Math.floor((total - 10) / 2);
 
-        if (slot) _updateAbilityBreakdown(slot, { base, speciesMod, total, mod });
+        if (slot) {_updateAbilityBreakdown(slot, { base, speciesMod, total, mod });}
 
         chargen.characterData.abilities[ability].base = base;
         chargen.characterData.abilities[ability].total = total;
@@ -328,14 +327,14 @@ export function _bindAbilitiesUI(root) {
           e.preventDefault();
           zone.classList.remove('drag-over');
 
-          if (container.dataset.locked === 'true') return;
+          if (container.dataset.locked === 'true') {return;}
 
           const value = parseInt(e.dataTransfer.getData('text/plain'), 10);
           const index = String(e.dataTransfer.getData('index'));
           const targetAbility = zone.dataset.ability;
 
           const dragged = pool.querySelector(`.draggable-roll[data-index="${index}"]`);
-          if (!dragged || Number.isNaN(value)) return;
+          if (!dragged || Number.isNaN(value)) {return;}
 
           const oldAbility = assignedByIndex.get(index);
           const prevIndex = assignedByAbility.get(targetAbility);
@@ -343,7 +342,7 @@ export function _bindAbilitiesUI(root) {
           // Swap if both sides are occupied and the dragged item is already assigned elsewhere.
           if (oldAbility && prevIndex && oldAbility !== targetAbility) {
             const prevDiv = pool.querySelector(`.draggable-roll[data-index="${prevIndex}"]`);
-            const prevVal = parseInt(prevDiv?.dataset.value ?? "", 10);
+            const prevVal = parseInt(prevDiv?.dataset.value ?? '', 10);
 
             assignedByAbility.set(targetAbility, index);
             assignedByIndex.set(index, targetAbility);
@@ -351,7 +350,7 @@ export function _bindAbilitiesUI(root) {
 
             assignedByAbility.set(oldAbility, prevIndex);
             assignedByIndex.set(prevIndex, oldAbility);
-            if (!Number.isNaN(prevVal)) _setSlot(oldAbility, prevVal);
+            if (!Number.isNaN(prevVal)) {_setSlot(oldAbility, prevVal);}
 
             return;
           }
@@ -366,7 +365,7 @@ export function _bindAbilitiesUI(root) {
           // If target already had a different score, free it.
           if (prevIndex && prevIndex !== index) {
             const prevDiv = pool.querySelector(`.draggable-roll[data-index="${prevIndex}"]`);
-            if (prevDiv) prevDiv.classList.remove('used');
+            if (prevDiv) {prevDiv.classList.remove('used');}
             assignedByIndex.delete(prevIndex);
             assignedByAbility.delete(targetAbility);
           }
@@ -388,14 +387,14 @@ export function _bindAbilitiesUI(root) {
         });
 
         if (!allAssigned) {
-          ui.notifications.warn("Please assign all ability scores before confirming.");
+          ui.notifications.warn('Please assign all ability scores before confirming.');
           return;
         }
 
         recalcPreview();
-        container.dataset.locked = "true";
-        container.querySelectorAll(".draggable-roll").forEach(el => (el.draggable = false));
-        ui.notifications.info("Ability scores confirmed and locked!");
+        container.dataset.locked = 'true';
+        container.querySelectorAll('.draggable-roll').forEach(el => (el.draggable = false));
+        ui.notifications.info('Ability scores confirmed and locked!');
       };
 
       // Reset button
@@ -406,20 +405,20 @@ export function _bindAbilitiesUI(root) {
 
     // Organic roll - IMPROVED WITH DRAG & DROP
     const rollOrganic = async () => {
-      const r = await globalThis.SWSE.RollEngine.safeRoll("24d6");
+      const r = await globalThis.SWSE.RollEngine.safeRoll('24d6');
       if (!r.dice || !r.dice[0] || !r.dice[0].results) {
-        ui.notifications.error("Failed to roll dice. Please try again.");
-        SWSELogger.error("SWSE | Roll failed:", r);
+        ui.notifications.error('Failed to roll dice. Please try again.');
+        SWSELogger.error('SWSE | Roll failed:', r);
         return;
       }
       const allRolls = r.dice[0].results.map(x => x.result);
       const kept = allRolls.sort((a, b) => b - a).slice(0, 18);
       const discarded = allRolls.sort((a, b) => b - a).slice(18);
 
-      const container = root.querySelector("#organic-groups");
-      if (!container) return;
+      const container = root.querySelector('#organic-groups');
+      if (!container) {return;}
 
-      container.dataset.locked = "false";
+      container.dataset.locked = 'false';
 
       container.innerHTML = `
         <div class="organic-roll-container">
@@ -481,10 +480,10 @@ export function _bindAbilitiesUI(root) {
       `;
 
       // Add draggable dice
-      const dicePool = container.querySelector("#organic-dice-pool");
+      const dicePool = container.querySelector('#organic-dice-pool');
       kept.forEach((val, idx) => {
-        const die = document.createElement("div");
-        die.className = "organic-die";
+        const die = document.createElement('div');
+        die.className = 'organic-die';
         die.draggable = true;
         die.dataset.value = val;
         die.dataset.index = idx;
@@ -546,7 +545,7 @@ export function _bindAbilitiesUI(root) {
               const groupDiv = zone.closest('.dice-group');
               if (groupDiv) {
                 const totalSpan = groupDiv.querySelector('.group-total span');
-                if (totalSpan) totalSpan.textContent = total;
+                if (totalSpan) {totalSpan.textContent = total;}
                 groupDiv.dataset.total = total;
                 groupDiv.classList.add('complete');
                 groupDiv.draggable = true;
@@ -573,7 +572,7 @@ export function _bindAbilitiesUI(root) {
 
       const _clearOrganicSlot = (ability) => {
         const z = container.querySelector(`.ability-drop-zone[data-ability="${ability}"]`);
-        if (!z) return;
+        if (!z) {return;}
         z.querySelector('.drop-placeholder').style.display = 'block';
         const dv = z.querySelector('.dropped-value');
         if (dv) { dv.style.display = 'none'; dv.textContent = ''; }
@@ -594,7 +593,7 @@ export function _bindAbilitiesUI(root) {
 
       const _setOrganicSlot = (ability, base) => {
         const z = container.querySelector(`.ability-drop-zone[data-ability="${ability}"]`);
-        if (!z) return;
+        if (!z) {return;}
         z.querySelector('.drop-placeholder').style.display = 'none';
         const dv = z.querySelector('.dropped-value');
         if (dv) { dv.style.display = 'block'; dv.textContent = String(base); }
@@ -604,7 +603,7 @@ export function _bindAbilitiesUI(root) {
         const total = base + speciesMod;
         const mod = Math.floor((total - 10) / 2);
 
-        if (slot) _updateAbilityBreakdown(slot, { base, speciesMod, total, mod });
+        if (slot) {_updateAbilityBreakdown(slot, { base, speciesMod, total, mod });}
 
         chargen.characterData.abilities[ability].base = base;
         chargen.characterData.abilities[ability].total = total;
@@ -613,7 +612,7 @@ export function _bindAbilitiesUI(root) {
 
       const _setGroupAssigned = (groupIdx, isAssigned) => {
         const g = container.querySelector(`.dice-group[data-group="${groupIdx}"]`);
-        if (g) g.classList.toggle('assigned', isAssigned);
+        if (g) {g.classList.toggle('assigned', isAssigned);}
       };
 
       container.querySelectorAll('.ability-drop-zone').forEach(zone => {
@@ -630,14 +629,14 @@ export function _bindAbilitiesUI(root) {
           e.preventDefault();
           zone.classList.remove('drag-over');
 
-          if (container.dataset.locked === 'true') return;
+          if (container.dataset.locked === 'true') {return;}
 
           const value = parseInt(e.dataTransfer.getData('group-total'), 10);
           const groupIndex = String(e.dataTransfer.getData('group-index'));
           const targetAbility = zone.dataset.ability;
 
           const groupDiv = container.querySelector(`.dice-group[data-group="${groupIndex}"]`);
-          if (!groupDiv || !groupDiv.classList.contains('complete') || Number.isNaN(value)) return;
+          if (!groupDiv || !groupDiv.classList.contains('complete') || Number.isNaN(value)) {return;}
 
           const oldAbility = assignedAbilityByGroup.get(groupIndex);
           const prevGroupIndex = assignedGroupByAbility.get(targetAbility);
@@ -645,7 +644,7 @@ export function _bindAbilitiesUI(root) {
           // Swap: group was assigned elsewhere AND target already has a group.
           if (oldAbility && prevGroupIndex && oldAbility !== targetAbility) {
             const prevGroupDiv = container.querySelector(`.dice-group[data-group="${prevGroupIndex}"]`);
-            const prevTotal = parseInt(prevGroupDiv?.dataset.total ?? "", 10);
+            const prevTotal = parseInt(prevGroupDiv?.dataset.total ?? '', 10);
 
             assignedGroupByAbility.set(targetAbility, groupIndex);
             assignedAbilityByGroup.set(groupIndex, targetAbility);
@@ -654,7 +653,7 @@ export function _bindAbilitiesUI(root) {
 
             assignedGroupByAbility.set(oldAbility, prevGroupIndex);
             assignedAbilityByGroup.set(prevGroupIndex, oldAbility);
-            if (!Number.isNaN(prevTotal)) _setOrganicSlot(oldAbility, prevTotal);
+            if (!Number.isNaN(prevTotal)) {_setOrganicSlot(oldAbility, prevTotal);}
             _setGroupAssigned(prevGroupIndex, true);
 
             return;
@@ -691,19 +690,19 @@ export function _bindAbilitiesUI(root) {
         });
 
         if (!allGroupsComplete) {
-          ui.notifications.warn("Please complete all 6 dice groups first.");
+          ui.notifications.warn('Please complete all 6 dice groups first.');
           return;
         }
 
         if (!allAssigned) {
-          ui.notifications.warn("Please assign all groups to ability scores.");
+          ui.notifications.warn('Please assign all groups to ability scores.');
           return;
         }
 
         recalcPreview();
-        container.dataset.locked = "true";
-        container.querySelectorAll(".draggable-roll").forEach(el => (el.draggable = false));
-        ui.notifications.info("Ability scores confirmed and locked!");
+        container.dataset.locked = 'true';
+        container.querySelectorAll('.draggable-roll').forEach(el => (el.draggable = false));
+        ui.notifications.info('Ability scores confirmed and locked!');
       };
 
       // Reset button
@@ -724,8 +723,8 @@ export function _bindAbilitiesUI(root) {
             standard: { name: 'Standard Array', values: [15, 14, 13, 12, 10, 8] }
           };
 
-      const container = root.querySelector("#array-selection");
-      if (!container) return;
+      const container = root.querySelector('#array-selection');
+      if (!container) {return;}
 
       // Show array selection first
       container.innerHTML = `
@@ -759,10 +758,10 @@ export function _bindAbilitiesUI(root) {
 
     // Show array assignment interface
     const showArrayAssignment = (arrayData) => {
-      const container = root.querySelector("#array-selection");
-      if (!container) return;
+      const container = root.querySelector('#array-selection');
+      if (!container) {return;}
 
-      container.dataset.locked = "false";
+      container.dataset.locked = 'false';
 
       container.innerHTML = `
         <div class="array-assignment-container">
@@ -804,10 +803,10 @@ export function _bindAbilitiesUI(root) {
       `;
 
       // Add draggable array values
-      const pool = container.querySelector("#array-pool");
+      const pool = container.querySelector('#array-pool');
       arrayData.values.forEach((value, idx) => {
-        const scoreDiv = document.createElement("div");
-        scoreDiv.className = "draggable-roll";
+        const scoreDiv = document.createElement('div');
+        scoreDiv.className = 'draggable-roll';
         scoreDiv.draggable = true;
         scoreDiv.dataset.value = value;
         scoreDiv.dataset.index = idx;
@@ -836,7 +835,7 @@ export function _bindAbilitiesUI(root) {
 
       const _clearSlot = (ability) => {
         const z = container.querySelector(`.ability-drop-zone[data-ability="${ability}"]`);
-        if (!z) return;
+        if (!z) {return;}
         z.querySelector('.drop-placeholder').style.display = 'block';
         const dv = z.querySelector('.dropped-value');
         if (dv) { dv.style.display = 'none'; dv.textContent = ''; }
@@ -857,7 +856,7 @@ export function _bindAbilitiesUI(root) {
 
       const _setSlot = (ability, base) => {
         const z = container.querySelector(`.ability-drop-zone[data-ability="${ability}"]`);
-        if (!z) return;
+        if (!z) {return;}
         z.querySelector('.drop-placeholder').style.display = 'none';
         const dv = z.querySelector('.dropped-value');
         if (dv) { dv.style.display = 'block'; dv.textContent = String(base); }
@@ -867,7 +866,7 @@ export function _bindAbilitiesUI(root) {
         const total = base + speciesMod;
         const mod = Math.floor((total - 10) / 2);
 
-        if (slot) _updateAbilityBreakdown(slot, { base, speciesMod, total, mod });
+        if (slot) {_updateAbilityBreakdown(slot, { base, speciesMod, total, mod });}
 
         chargen.characterData.abilities[ability].base = base;
         chargen.characterData.abilities[ability].total = total;
@@ -923,14 +922,14 @@ export function _bindAbilitiesUI(root) {
               const prevValue = zone.querySelector('.dropped-value');
               if (prevValue?.textContent) {
                 const oldDragged = pool.querySelector(`.draggable-roll.used[data-value="${prevValue.textContent}"]`);
-                if (oldDragged) oldDragged.classList.remove('used');
+                if (oldDragged) {oldDragged.classList.remove('used');}
               }
             }
 
             // Set new value
             const placeholder = zone.querySelector('.drop-placeholder');
             const droppedValue = zone.querySelector('.dropped-value');
-            if (placeholder) placeholder.style.display = 'none';
+            if (placeholder) {placeholder.style.display = 'none';}
             if (droppedValue) {
               droppedValue.style.display = 'block';
               droppedValue.textContent = value;
@@ -963,14 +962,14 @@ export function _bindAbilitiesUI(root) {
         });
 
         if (!allAssigned) {
-          ui.notifications.warn("Please assign all ability scores before confirming.");
+          ui.notifications.warn('Please assign all ability scores before confirming.');
           return;
         }
 
         recalcPreview();
-        container.dataset.locked = "true";
-        container.querySelectorAll(".draggable-roll").forEach(el => (el.draggable = false));
-        ui.notifications.info("Ability scores confirmed and locked!");
+        container.dataset.locked = 'true';
+        container.querySelectorAll('.draggable-roll').forEach(el => (el.draggable = false));
+        ui.notifications.info('Ability scores confirmed and locked!');
       };
 
       // Reset button
@@ -1009,8 +1008,8 @@ export function _bindAbilitiesUI(root) {
       const heal = Math.max(Math.floor(hpMax / 4), conMod) + misc;
       chargen.characterData.secondWind.healing = heal;
 
-      const swPreview = root.querySelector("#sw_heal_preview");
-      if (swPreview) swPreview.textContent = heal;
+      const swPreview = root.querySelector('#sw_heal_preview');
+      if (swPreview) {swPreview.textContent = heal;}
     };
 
     // Mode switching function
@@ -1019,12 +1018,12 @@ export function _bindAbilitiesUI(root) {
       const modes = ['point-mode', 'standard-mode', 'organic-mode', 'array-mode', 'free-mode'];
       modes.forEach(mode => {
         const modeDiv = root.querySelector(`#${mode}`);
-        if (modeDiv) modeDiv.style.display = 'none';
+        if (modeDiv) {modeDiv.style.display = 'none';}
       });
 
       // Show selected mode
       const selectedMode = root.querySelector(`#${modeName}`);
-      if (selectedMode) selectedMode.style.display = 'block';
+      if (selectedMode) {selectedMode.style.display = 'block';}
 
       // Update button states
       const buttons = root.querySelectorAll('.method-button');
@@ -1035,56 +1034,56 @@ export function _bindAbilitiesUI(root) {
     };
 
     // Wire buttons with mode switching
-    const stdBtn = root.querySelector("#std-roll-btn");
+    const stdBtn = root.querySelector('#std-roll-btn');
     if (stdBtn) {
-      SWSELogger.log("SWSE | Standard roll button found, attaching handler");
+      SWSELogger.log('SWSE | Standard roll button found, attaching handler');
       stdBtn.onclick = () => {
-        SWSELogger.log("SWSE | Standard roll button clicked");
+        SWSELogger.log('SWSE | Standard roll button clicked');
         switchMode('standard-mode');
         stdBtn.classList.add('active');
         rollStandard();
       };
     } else {
-      SWSELogger.warn("SWSE | Standard roll button not found in DOM");
+      SWSELogger.warn('SWSE | Standard roll button not found in DOM');
     }
 
-    const orgBtn = root.querySelector("#org-roll-btn");
+    const orgBtn = root.querySelector('#org-roll-btn');
     if (orgBtn) {
-      SWSELogger.log("SWSE | Organic roll button found, attaching handler");
+      SWSELogger.log('SWSE | Organic roll button found, attaching handler');
       orgBtn.onclick = () => {
-        SWSELogger.log("SWSE | Organic roll button clicked");
+        SWSELogger.log('SWSE | Organic roll button clicked');
         switchMode('organic-mode');
         orgBtn.classList.add('active');
         rollOrganic();
       };
     } else {
-      SWSELogger.warn("SWSE | Organic roll button not found in DOM");
+      SWSELogger.warn('SWSE | Organic roll button not found in DOM');
     }
 
-    const arrayBtn = root.querySelector("#array-btn");
+    const arrayBtn = root.querySelector('#array-btn');
     if (arrayBtn) {
-      SWSELogger.log("SWSE | Array button found, attaching handler");
+      SWSELogger.log('SWSE | Array button found, attaching handler');
       arrayBtn.onclick = () => {
-        SWSELogger.log("SWSE | Array button clicked");
+        SWSELogger.log('SWSE | Array button clicked');
         switchMode('array-mode');
         arrayBtn.classList.add('active');
         rollArray();
       };
     } else {
-      SWSELogger.warn("SWSE | Array button not found in DOM");
+      SWSELogger.warn('SWSE | Array button not found in DOM');
     }
 
-    const pbInit = root.querySelector("#pb-init");
+    const pbInit = root.querySelector('#pb-init');
     if (pbInit) {
-      SWSELogger.log("SWSE | Point buy button found, attaching handler");
+      SWSELogger.log('SWSE | Point buy button found, attaching handler');
       pbInit.onclick = () => {
-        SWSELogger.log("SWSE | Point buy button clicked");
+        SWSELogger.log('SWSE | Point buy button clicked');
         switchMode('point-mode');
         pbInit.classList.add('active');
         initPointBuy();
       };
     } else {
-      SWSELogger.warn("SWSE | Point buy button not found in DOM");
+      SWSELogger.warn('SWSE | Point buy button not found in DOM');
     }
 
     // Wire up free-mode inputs to recalc on change
@@ -1095,6 +1094,6 @@ export function _bindAbilitiesUI(root) {
 
     // Initialize
     switchMode('point-mode');
-    if (pbInit) pbInit.classList.add('active');
+    if (pbInit) {pbInit.classList.add('active');}
     initPointBuy();
 }

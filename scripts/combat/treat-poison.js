@@ -5,7 +5,7 @@
  * Make a Treat Injury check; if result >= Poison's DC, detoxify the poison.
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 export class TreatPoison {
   /**
@@ -18,7 +18,7 @@ export class TreatPoison {
   static async treatPoison(healerActor, victimActor, poisonDC = 15) {
     try {
       if (!healerActor || !victimActor) {
-        throw new Error("Missing healer or victim actor");
+        throw new Error('Missing healer or victim actor');
       }
 
       // Check if healer is trained in Treat Injury
@@ -76,7 +76,7 @@ export class TreatPoison {
         message: `${healerActor.name} successfully detoxifies the poison in ${victimActor.name}'s system! All poison effects have been removed.`
       };
     } catch (err) {
-      SWSELogger.error("Treat poison action failed", err);
+      SWSELogger.error('Treat poison action failed', err);
       throw err;
     }
   }
@@ -86,12 +86,12 @@ export class TreatPoison {
    * @private
    */
   static _hasMedicalKit(actor) {
-    if (!actor) return false;
+    if (!actor) {return false;}
 
     // Check for medical kit item
     const medKit = actor.items?.find(item => {
-      const name = (item.name || "").toLowerCase();
-      return name.includes("medical kit") || name.includes("medkit") || name.includes("med kit");
+      const name = (item.name || '').toLowerCase();
+      return name.includes('medical kit') || name.includes('medkit') || name.includes('med kit');
     });
 
     return !!medKit;
@@ -102,28 +102,28 @@ export class TreatPoison {
    * @private
    */
   static async _removePoisonCondition(victim) {
-    if (!victim) return;
+    if (!victim) {return;}
 
     try {
       // Remove poison flag
-      await victim.unsetFlag("foundryvtt-swse", "isPoisoned");
-      await victim.unsetFlag("foundryvtt-swse", "poisonDetails");
+      await victim.unsetFlag('foundryvtt-swse', 'isPoisoned');
+      await victim.unsetFlag('foundryvtt-swse', 'poisonDetails');
 
       // Remove any persistent conditions caused by poison
-      const persistentConditions = victim.getFlag("foundryvtt-swse", "persistentConditions") || {};
+      const persistentConditions = victim.getFlag('foundryvtt-swse', 'persistentConditions') || {};
       const filteredConditions = Object.fromEntries(
-        Object.entries(persistentConditions).filter(([_, condition]) => condition.source !== "poison")
+        Object.entries(persistentConditions).filter(([_, condition]) => condition.source !== 'poison')
       );
 
       if (Object.keys(filteredConditions).length > 0) {
-        await victim.setFlag("foundryvtt-swse", "persistentConditions", filteredConditions);
+        await victim.setFlag('foundryvtt-swse', 'persistentConditions', filteredConditions);
       } else {
-        await victim.unsetFlag("foundryvtt-swse", "persistentConditions");
+        await victim.unsetFlag('foundryvtt-swse', 'persistentConditions');
       }
 
       SWSELogger.info(`${victim.name} has been detoxified of poison`);
     } catch (err) {
-      SWSELogger.error("Failed to remove poison condition", err);
+      SWSELogger.error('Failed to remove poison condition', err);
     }
   }
 
@@ -133,18 +133,18 @@ export class TreatPoison {
    * @param {Object} poisonData - Poison details { name, dc, effect, duration }
    */
   static async applyPoison(victim, poisonData = {}) {
-    if (!victim) return;
+    if (!victim) {return;}
 
     try {
       const {
-        name = "Unknown Poison",
+        name = 'Unknown Poison',
         dc = 15,
-        effect = "Ongoing damage",
-        duration = "1 minute"
+        effect = 'Ongoing damage',
+        duration = '1 minute'
       } = poisonData;
 
-      await victim.setFlag("foundryvtt-swse", "isPoisoned", true);
-      await victim.setFlag("foundryvtt-swse", "poisonDetails", {
+      await victim.setFlag('foundryvtt-swse', 'isPoisoned', true);
+      await victim.setFlag('foundryvtt-swse', 'poisonDetails', {
         name,
         dc,
         effect,
@@ -154,7 +154,7 @@ export class TreatPoison {
 
       SWSELogger.info(`${victim.name} has been poisoned with ${name}`);
     } catch (err) {
-      SWSELogger.error("Failed to apply poison condition", err);
+      SWSELogger.error('Failed to apply poison condition', err);
     }
   }
 
@@ -164,9 +164,9 @@ export class TreatPoison {
    * @returns {Object|boolean} - False if not poisoned, poison details if poisoned
    */
   static isPoisoned(actor) {
-    if (!actor) return false;
-    return actor.getFlag("foundryvtt-swse", "isPoisoned")
-      ? actor.getFlag("foundryvtt-swse", "poisonDetails")
+    if (!actor) {return false;}
+    return actor.getFlag('foundryvtt-swse', 'isPoisoned')
+      ? actor.getFlag('foundryvtt-swse', 'poisonDetails')
       : false;
   }
 }

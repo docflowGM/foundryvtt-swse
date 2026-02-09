@@ -26,7 +26,7 @@ export class DevModeValidator {
    * Validate house rules configuration
    */
   validateHouseRules() {
-    if (!this._devMode) return [];
+    if (!this._devMode) {return [];}
 
     const issues = [];
     const namespace = 'foundryvtt-swse';
@@ -60,7 +60,7 @@ export class DevModeValidator {
    * Validate character generation data
    */
   validateChargenData(characterData) {
-    if (!this._devMode || !characterData) return [];
+    if (!this._devMode || !characterData) {return [];}
 
     const issues = [];
 
@@ -115,7 +115,7 @@ export class DevModeValidator {
    * Validate species list for bans
    */
   validateSpeciesList(allSpecies, bannedSpecies) {
-    if (!this._devMode || !allSpecies || !bannedSpecies) return [];
+    if (!this._devMode || !allSpecies || !bannedSpecies) {return [];}
 
     const issues = [];
 
@@ -138,7 +138,7 @@ export class DevModeValidator {
    * Run all validation checks
    */
   runValidation(context = {}) {
-    if (!this._devMode) return;
+    if (!this._devMode) {return;}
 
     const allIssues = [];
 
@@ -200,7 +200,7 @@ export class DevModeValidator {
    * Validate that a setting value is reasonable
    */
   validateSettingValue(settingKey, value) {
-    if (!this._devMode) return true;
+    if (!this._devMode) {return true;}
 
     // Type checking for numeric settings
     const numericSettings = [

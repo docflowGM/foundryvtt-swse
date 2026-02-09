@@ -17,11 +17,11 @@ export function calculateAbilityModifier(score) {
  * @param {string} progression - "fast", "medium", or "slow"
  * @returns {number} Base Attack Bonus
  */
-export function calculateBAB(level, progression = "medium") {
-    const rates = { 
-        fast: 1.0, 
-        medium: 0.75, 
-        slow: 0.5 
+export function calculateBAB(level, progression = 'medium') {
+    const rates = {
+        fast: 1.0,
+        medium: 0.75,
+        slow: 0.5
     };
     return Math.floor(level * (rates[progression] || 0.75));
 }
@@ -45,7 +45,7 @@ export function calculateDefense(base = 10, abilityMod = 0, armorBonus = 0, othe
  * @param {string} size - Creature size
  * @returns {number} Damage threshold
  */
-export function calculateDamageThreshold(fortitudeDefense, size = "medium") {
+export function calculateDamageThreshold(fortitudeDefense, size = 'medium') {
     const sizeMods = {
         fine: -10,
         diminutive: -5,
@@ -56,11 +56,11 @@ export function calculateDamageThreshold(fortitudeDefense, size = "medium") {
         huge: 10,
         gargantuan: 20,
         colossal: 50,
-        "colossal (frigate)": 100,
-        "colossal (crassets/uiser)": 150,
-        "colossal (station)": 200
+        'colossal (frigate)': 100,
+        'colossal (crassets/uiser)': 150,
+        'colossal (station)': 200
     };
-    
+
     const sizeMod = sizeMods[size.toLowerCase()] || 0;
     return fortitudeDefense + sizeMod;
 }
@@ -80,7 +80,7 @@ export function halfLevel(level) {
  * @param {string} size - Creature size
  * @returns {object} Carrying capacity limits
  */
-export function calculateCarryingCapacity(strength, size = "medium") {
+export function calculateCarryingCapacity(strength, size = 'medium') {
     const baseCapacity = strength * 10;
     const sizeMultipliers = {
         fine: 0.125,
@@ -93,10 +93,10 @@ export function calculateCarryingCapacity(strength, size = "medium") {
         gargantuan: 8,
         colossal: 16
     };
-    
+
     const multiplier = sizeMultipliers[size.toLowerCase()] || 1;
     const capacity = baseCapacity * multiplier;
-    
+
     return {
         light: capacity,
         medium: capacity * 2,

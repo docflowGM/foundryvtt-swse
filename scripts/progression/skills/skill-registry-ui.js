@@ -3,7 +3,7 @@
  * Loads and indexes skills for the level-up UI
  */
 
-import { SWSELogger } from "../../utils/logger.js";
+import { SWSELogger } from '../../utils/logger.js';
 
 export const SkillRegistry = {
   _skills: [],
@@ -13,7 +13,7 @@ export const SkillRegistry = {
    */
   async build() {
     try {
-      const pack = game.packs.get("foundryvtt-swse.skills");
+      const pack = game.packs.get('foundryvtt-swse.skills');
       if (!pack) {
         SWSELogger.warn("Skills compendium 'foundryvtt-swse.skills' not found");
         this._skills = [];
@@ -24,7 +24,7 @@ export const SkillRegistry = {
       this._skills = docs.map(s => ({
         key: s.system.key ?? s.name.slugify(),
         name: s.name,
-        ability: s.system.ability || "cha",
+        ability: s.system.ability || 'cha',
         classSkills: s.system.classes || [],
         id: s.id,
         data: s
@@ -32,7 +32,7 @@ export const SkillRegistry = {
 
       SWSELogger.log(`SkillRegistry built: ${this._skills.length} skills loaded`);
     } catch (err) {
-      SWSELogger.error("Failed to build SkillRegistry:", err);
+      SWSELogger.error('Failed to build SkillRegistry:', err);
       this._skills = [];
     }
   },
@@ -84,4 +84,4 @@ export const SkillRegistry = {
   }
 };
 
-SWSELogger.log("SkillRegistry (UI) module loaded");
+SWSELogger.log('SkillRegistry (UI) module loaded');

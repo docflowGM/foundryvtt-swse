@@ -14,7 +14,7 @@ export async function toggleNpcRenderProbe() {
 
 export function openMentorNotes(actor) {
   const a = actor ?? canvas?.tokens?.controlled?.[0]?.actor;
-  if (!a) return ui?.notifications?.warn?.('Select an actor first.');
+  if (!a) {return ui?.notifications?.warn?.('Select an actor first.');}
   MentorNotesApp.openForActor(a);
 }
 

@@ -20,7 +20,7 @@ export class MentorProfile {
    */
   static getBias(actor, dimension) {
     // TODO: Phase 1C - Retrieve from actor.system.suggestionEngine.mentorProfile.biases
-    if (!actor.system.suggestionEngine?.mentorProfile?.biases) return 0;
+    if (!actor.system.suggestionEngine?.mentorProfile?.biases) {return 0;}
     return actor.system.suggestionEngine.mentorProfile.biases[dimension] || 0;
   }
 
@@ -31,7 +31,7 @@ export class MentorProfile {
    */
   static getAllBiases(actor) {
     // TODO: Phase 1C - Return entire bias profile
-    if (!actor.system.suggestionEngine?.mentorProfile?.biases) return {};
+    if (!actor.system.suggestionEngine?.mentorProfile?.biases) {return {};}
     return actor.system.suggestionEngine.mentorProfile.biases;
   }
 
@@ -44,7 +44,7 @@ export class MentorProfile {
    */
   static async setBias(actor, dimension, weight) {
     // TODO: Phase 1C - Update and save
-    if (!actor.system.suggestionEngine?.mentorProfile) return;
+    if (!actor.system.suggestionEngine?.mentorProfile) {return;}
     actor.system.suggestionEngine.mentorProfile.biases[dimension] = weight;
     SWSELogger.log(`[MentorProfile] Bias updated: ${dimension} = ${weight}`);
   }

@@ -52,68 +52,68 @@ export const SUGGESTION_TIERS = {
 
 export const TIER_REASONS = {
     6: "Prerequisite for a prestige class you're building toward",
-    5.5: "Prerequisite for a goal on your wishlist",
-    5: "Strong recommendation for your build",
-    4.5: "Excellent species feat for your level",
-    4: "Builds directly on a feat or talent you already have",
-    3.5: "Aligns with your mentor survey answers",
-    3: "Uses a trained skill you possess",
-    2: "Scales with your highest ability score",
-    1: "Strong synergy with your class",
-    0: "Legal option"
+    5.5: 'Prerequisite for a goal on your wishlist',
+    5: 'Strong recommendation for your build',
+    4.5: 'Excellent species feat for your level',
+    4: 'Builds directly on a feat or talent you already have',
+    3.5: 'Aligns with your mentor survey answers',
+    3: 'Uses a trained skill you possess',
+    2: 'Scales with your highest ability score',
+    1: 'Strong synergy with your class',
+    0: 'Legal option'
 };
 
 export const TIER_ICONS = {
-    6: "fa-crown",          // Crown for prestige prereq
-    5.5: "fa-star",         // Star for wishlist/player goal
-    5: "fa-fire",           // Fire for strong recommendations
-    4.5: "fa-dna",          // DNA for species feats
-    4: "fa-link",           // Chain link icon for chain continuation
-    3.5: "fa-user-tie",     // Mentor guidance from survey
-    3: "fa-bullseye",       // Target for skill match
-    2: "fa-fist-raised",    // Strength for ability match
-    1: "fa-users-cog",      // Class synergy
-    0: ""                   // No icon for fallback
+    6: 'fa-crown',          // Crown for prestige prereq
+    5.5: 'fa-star',         // Star for wishlist/player goal
+    5: 'fa-fire',           // Fire for strong recommendations
+    4.5: 'fa-dna',          // DNA for species feats
+    4: 'fa-link',           // Chain link icon for chain continuation
+    3.5: 'fa-user-tie',     // Mentor guidance from survey
+    3: 'fa-bullseye',       // Target for skill match
+    2: 'fa-fist-raised',    // Strength for ability match
+    1: 'fa-users-cog',      // Class synergy
+    0: ''                   // No icon for fallback
 };
 
 // FontAwesome classes for rendering
 export const TIER_ICON_CLASSES = {
-    6: "fas fa-crown suggestion-prestige",
-    5.5: "fas fa-star suggestion-wishlist",
-    5: "fas fa-fire suggestion-synergy",
-    4.5: "fas fa-dna suggestion-species",
-    4: "fas fa-link suggestion-chain",
-    3: "fas fa-bullseye suggestion-skill",
-    2: "fas fa-fist-raised suggestion-ability",
-    1: "fas fa-users-cog suggestion-class",
-    0: ""
+    6: 'fas fa-crown suggestion-prestige',
+    5.5: 'fas fa-star suggestion-wishlist',
+    5: 'fas fa-fire suggestion-synergy',
+    4.5: 'fas fa-dna suggestion-species',
+    4: 'fas fa-link suggestion-chain',
+    3: 'fas fa-bullseye suggestion-skill',
+    2: 'fas fa-fist-raised suggestion-ability',
+    1: 'fas fa-users-cog suggestion-class',
+    0: ''
 };
 
 // CSS classes for styling suggestion badges
 export const TIER_CSS_CLASSES = {
-    6: "suggestion-tier-prestige",
-    5.5: "suggestion-tier-wishlist",
-    5: "suggestion-tier-synergy",
-    4.5: "suggestion-tier-species",
-    4: "suggestion-tier-chain",
-    3: "suggestion-tier-skill",
-    2: "suggestion-tier-ability",
-    1: "suggestion-tier-class",
-    0: ""
+    6: 'suggestion-tier-prestige',
+    5.5: 'suggestion-tier-wishlist',
+    5: 'suggestion-tier-synergy',
+    4.5: 'suggestion-tier-species',
+    4: 'suggestion-tier-chain',
+    3: 'suggestion-tier-skill',
+    2: 'suggestion-tier-ability',
+    1: 'suggestion-tier-class',
+    0: ''
 };
 
 // Machine-readable reason codes for UI icon-tagging and programmatic use
 export const TIER_REASON_CODES = {
-    6: "PRESTIGE_PREREQ",
-    5.5: "WISHLIST_PATH",
-    5: "META_SYNERGY",
-    4.5: "SPECIES_EARLY",
-    4: "CHAIN_CONTINUATION",
-    3.5: "MENTOR_BIAS_MATCH",
-    3: "SKILL_PREREQ_MATCH",
-    2: "ABILITY_PREREQ_MATCH",
-    1: "CLASS_SYNERGY",
-    0: "FALLBACK"
+    6: 'PRESTIGE_PREREQ',
+    5.5: 'WISHLIST_PATH',
+    5: 'META_SYNERGY',
+    4.5: 'SPECIES_EARLY',
+    4: 'CHAIN_CONTINUATION',
+    3.5: 'MENTOR_BIAS_MATCH',
+    3: 'SKILL_PREREQ_MATCH',
+    2: 'ABILITY_PREREQ_MATCH',
+    1: 'CLASS_SYNERGY',
+    0: 'FALLBACK'
 };
 
 // Confidence levels based on tier (for mentor tone modulation)
@@ -737,7 +737,7 @@ export class SuggestionEngine {
             return this._buildSuggestion(
                 SUGGESTION_TIERS.MARTIAL_ARTS,
                 feat.name,
-                "Martial arts feat - highly recommended when prerequisites are met"
+                'Martial arts feat - highly recommended when prerequisites are met'
             );
         }
 
@@ -930,7 +930,7 @@ export class SuggestionEngine {
         return {
             name: itemName,
             tier,
-            reasonCode: customReasonCode || TIER_REASON_CODES[tierKey] || "FALLBACK",
+            reasonCode: customReasonCode || TIER_REASON_CODES[tierKey] || 'FALLBACK',
             confidence: TIER_CONFIDENCE[tierKey] || 0.2,
             icon: TIER_ICONS[tier],
             iconClass: TIER_ICON_CLASSES[tier],
@@ -967,7 +967,7 @@ export class SuggestionEngine {
 
         for (let part of parts) {
             part = part.trim();
-            if (!part || part === 'null') continue;
+            if (!part || part === 'null') {continue;}
 
             // Skip ability score requirements (e.g., "Dex 13")
             if (/^(str|dex|con|int|wis|cha|strength|dexterity|constitution|intelligence|wisdom|charisma)\s+\d+/i.test(part)) {
@@ -1189,9 +1189,9 @@ export class SuggestionEngine {
         return {
             name: item.name,
             tier: futureScore.tier,
-            icon: "fa-hourglass-end",
-            iconClass: "fas fa-hourglass-end suggestion-future",
-            cssClass: "suggestion-future-available",
+            icon: 'fa-hourglass-end',
+            iconClass: 'fas fa-hourglass-end suggestion-future',
+            cssClass: 'suggestion-future-available',
             reason: reason,
             isSuggested: true,
             futureAvailable: true,
@@ -1224,7 +1224,7 @@ export class SuggestionEngine {
         // Analyze each unmet requirement
         for (const req of unmetReqs) {
             // BAB requirements
-            if (req.includes("BAB") && req.includes("you have")) {
+            if (req.includes('BAB') && req.includes('you have')) {
                 const match = req.match(/(\+\d+).*you have.*(\+\d+)/);
                 if (match) {
                     const needed = parseInt(match[1]);
@@ -1237,7 +1237,7 @@ export class SuggestionEngine {
             }
 
             // Character level requirements
-            if (req.includes("Character Level") && req.includes("you are")) {
+            if (req.includes('Character Level') && req.includes('you are')) {
                 const match = req.match(/(\d+).*you are level (\d+)/);
                 if (match) {
                     const needed = parseInt(match[1]);
@@ -1249,9 +1249,9 @@ export class SuggestionEngine {
             }
 
             // Attribute requirements
-            if (req.includes("Requires") && req.includes("you have") &&
-                (req.includes("STR") || req.includes("DEX") || req.includes("CON") ||
-                 req.includes("INT") || req.includes("WIS") || req.includes("CHA"))) {
+            if (req.includes('Requires') && req.includes('you have') &&
+                (req.includes('STR') || req.includes('DEX') || req.includes('CON') ||
+                 req.includes('INT') || req.includes('WIS') || req.includes('CHA'))) {
                 const match = req.match(/(\d+).*you have (\d+)/);
                 if (match) {
                     const needed = parseInt(match[1]);
@@ -1265,7 +1265,7 @@ export class SuggestionEngine {
             }
 
             // Feat prerequisites
-            if (req.includes("feat") && !req.includes("martial arts")) {
+            if (req.includes('feat') && !req.includes('martial arts')) {
                 const featName = req.replace(/.*requires.*feat\s+/i, '').trim();
                 if (featName) {
                     pathway.obtainableFeatReqs.push(featName);
@@ -1274,7 +1274,7 @@ export class SuggestionEngine {
             }
 
             // Talent prerequisites
-            if (req.includes("talent")) {
+            if (req.includes('talent')) {
                 const talentName = req.replace(/.*requires.*talent\s+/i, '').trim();
                 if (talentName) {
                     pathway.obtainableTalentReqs.push(talentName);
@@ -1283,7 +1283,7 @@ export class SuggestionEngine {
             }
 
             // Skill training requirements
-            if (req.includes("trained in")) {
+            if (req.includes('trained in')) {
                 const skillName = req.replace(/.*trained in\s+/i, '').trim();
                 if (skillName) {
                     pathway.obtainableSkillReqs.push(skillName);
@@ -1311,7 +1311,7 @@ export class SuggestionEngine {
      * @returns {Object|null} Tier score object or null if too far away
      */
     static _calcFutureAvailabilityTier(pathway, item, actorState) {
-        if (pathway.levelsToQualify === 0) return null;  // Already qualified
+        if (pathway.levelsToQualify === 0) {return null;}  // Already qualified
 
         // NEW TIER LEVELS FOR FUTURE AVAILABILITY
         let tier;
@@ -1351,13 +1351,13 @@ export class SuggestionEngine {
                     ? game.packs.get('foundryvtt-swse.feats')
                     : game.packs.get('foundryvtt-swse.talents');
 
-                if (!itemPack) continue;
+                if (!itemPack) {continue;}
 
                 // For now, match by name - could be improved with proper lookups
                 if (wishedItem.name.toLowerCase().includes(item.name.toLowerCase()) ||
                     item.name.toLowerCase().includes(wishedItem.name.toLowerCase())) {
                     // Skip if this item is itself wishlisted
-                    if (item._id === wishedItem.id || item.id === wishedItem.id) continue;
+                    if (item._id === wishedItem.id || item.id === wishedItem.id) {continue;}
                 }
 
                 // Check if this item's unmet prerequisites include the wished-for item

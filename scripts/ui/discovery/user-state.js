@@ -45,7 +45,7 @@ export const DiscoveryUserState = {
 
   /** @returns {object} current state (read-only copy) */
   get() {
-    if (!_state) this.load();
+    if (!_state) {this.load();}
     return { ..._state };
   },
 
@@ -61,14 +61,14 @@ export const DiscoveryUserState = {
    * @returns {boolean} true if this callout was already dismissed
    */
   isCalloutDismissed(calloutId) {
-    if (!_state) this.load();
+    if (!_state) {this.load();}
     return _state.dismissedCallouts.includes(calloutId);
   },
 
   /** Mark a callout as dismissed and persist. */
   async dismissCallout(calloutId) {
-    if (!_state) this.load();
-    if (_state.dismissedCallouts.includes(calloutId)) return;
+    if (!_state) {this.load();}
+    if (_state.dismissedCallouts.includes(calloutId)) {return;}
     _state.dismissedCallouts.push(calloutId);
     await this._save();
   },
@@ -77,12 +77,12 @@ export const DiscoveryUserState = {
 
   /** @returns {boolean} */
   isTourCompleted() {
-    if (!_state) this.load();
+    if (!_state) {this.load();}
     return _state.tourCompleted;
   },
 
   async completeTour() {
-    if (!_state) this.load();
+    if (!_state) {this.load();}
     _state.tourCompleted = true;
     await this._save();
   },

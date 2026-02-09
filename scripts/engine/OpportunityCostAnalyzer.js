@@ -126,19 +126,19 @@ export class OpportunityCostAnalyzer {
 
         // Signal 1: Prereq Progress (has any prerequisite feat)
         const hasPrereqFeat = prestigeData.feats?.some(f => ownedFeats.has(f));
-        if (hasPrereqFeat) signalCount++;
+        if (hasPrereqFeat) {signalCount++;}
 
         // Signal 2: Talent Clustering (has any talent tree from prestige)
         const hasTalentCluster = prestigeData.talentTrees?.some(t =>
           ownedTalents.has(t.toLowerCase())
         );
-        if (hasTalentCluster) signalCount++;
+        if (hasTalentCluster) {signalCount++;}
 
         // Signal 3: Attribute Alignment (top 2 abilities match prestige abilities)
         const topAbilityMatch = prestigeData.abilities?.some(a =>
           topAbilities.has(a.toLowerCase())
         );
-        if (topAbilityMatch) signalCount++;
+        if (topAbilityMatch) {signalCount++;}
 
         // Keep the prestige class with strongest signal
         if (signalCount >= 2 && signalCount > bestMatch.signals) {
@@ -310,7 +310,7 @@ export class OpportunityCostAnalyzer {
         // Check if actor already has any conflicting items
         const ownedItems = new Set(actor.items.map(i => i.name));
 
-        let lockedOut = [];
+        const lockedOut = [];
         for (const conflict of conflicts) {
           const conflictName = typeof conflict === 'string' ? conflict : conflict.name;
           if (ownedItems.has(conflictName)) {

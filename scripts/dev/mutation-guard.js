@@ -19,11 +19,11 @@ function deepClone(value) {
 
 function stableSerialize(value) {
   const t = typeof value;
-  if (value === null) return 'null';
-  if (t === 'undefined') return 'undefined';
-  if (t === 'number' || t === 'boolean' || t === 'string') return JSON.stringify(value);
-  if (t === 'bigint') return JSON.stringify(value.toString());
-  if (t === 'function' || t === 'symbol') return JSON.stringify(`[${t}]`);
+  if (value === null) {return 'null';}
+  if (t === 'undefined') {return 'undefined';}
+  if (t === 'number' || t === 'boolean' || t === 'string') {return JSON.stringify(value);}
+  if (t === 'bigint') {return JSON.stringify(value.toString());}
+  if (t === 'function' || t === 'symbol') {return JSON.stringify(`[${t}]`);}
 
   if (Array.isArray(value)) {
     return `[${value.map(stableSerialize).join(',')}]`;
@@ -49,7 +49,7 @@ function stableSerialize(value) {
  * @returns {F}
  */
 export function guardAgainstMutation(fn, label = fn?.name ?? 'anonymous') {
-  if (!isDevMode()) return fn;
+  if (!isDevMode()) {return fn;}
 
   // @ts-ignore - we keep signature stable
   return function guarded(characterData, ...args) {

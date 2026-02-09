@@ -16,7 +16,7 @@ export function calculateStartingHP(className, conModifier) {
         scout: 24,
         soldier: 30
     };
-    
+
     const baseHP = classHP[className.toLowerCase()] || 24;
     return baseHP + conModifier;
 }
@@ -28,14 +28,14 @@ export function calculateStartingHP(className, conModifier) {
  */
 export function getStartingCredits(className) {
     const credits = {
-        jedi: "3d4 x 100",
-        noble: "3d4 x 400",
-        scoundrel: "3d4 x 250",
-        scout: "3d4 x 250",
-        soldier: "3d4 x 250"
+        jedi: '3d4 x 100',
+        noble: '3d4 x 400',
+        scoundrel: '3d4 x 250',
+        scout: '3d4 x 250',
+        soldier: '3d4 x 250'
     };
-    
-    return credits[className.toLowerCase()] || "3d4 x 250";
+
+    return credits[className.toLowerCase()] || '3d4 x 250';
 }
 
 /**
@@ -69,18 +69,18 @@ export function getAbilityScoreCost(score) {
  */
 export function validateAbilityScores(scores, pointBudget = 25) {
     if (scores.length !== 6) {
-        return { valid: false, message: "Must have exactly 6 ability scores" };
+        return { valid: false, message: 'Must have exactly 6 ability scores' };
     }
-    
+
     const totalCost = scores.reduce((sum, score) => sum + getAbilityScoreCost(score), 0);
-    
+
     if (totalCost > pointBudget) {
-        return { 
-            valid: false, 
-            message: `Total cost (${totalCost}) exceeds budget (${pointBudget})` 
+        return {
+            valid: false,
+            message: `Total cost (${totalCost}) exceeds budget (${pointBudget})`
         };
     }
-    
+
     return { valid: true, cost: totalCost, remaining: pointBudget - totalCost };
 }
 

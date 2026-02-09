@@ -27,7 +27,7 @@ export const REASON_ATOMS = {
    * primary archetype or build direction.
    * Example: Choosing a feat that synergizes with detected Jedi path.
    */
-  PatternAlignment: "PatternAlignment",
+  PatternAlignment: 'PatternAlignment',
 
   /**
    * PatternConflict
@@ -35,7 +35,7 @@ export const REASON_ATOMS = {
    * build direction or established archetype.
    * Example: Taking a feat that contradicts detected Scout specialization.
    */
-  PatternConflict: "PatternConflict",
+  PatternConflict: 'PatternConflict',
 
   // ========================================================================
   // COMMITMENT & MEMORY - Recent choices and stated direction
@@ -46,7 +46,7 @@ export const REASON_ATOMS = {
    * The choice has a direct mechanical impact based on recent character decisions.
    * Example: Synergizes with talent taken two levels ago.
    */
-  RecentChoiceImpact: "RecentChoiceImpact",
+  RecentChoiceImpact: 'RecentChoiceImpact',
 
   /**
    * CommitmentDeclared
@@ -54,14 +54,14 @@ export const REASON_ATOMS = {
    * (e.g., archetype or prestige class direction).
    * Example: Continuing down Jedi prestige class path.
    */
-  CommitmentDeclared: "CommitmentDeclared",
+  CommitmentDeclared: 'CommitmentDeclared',
 
   /**
    * CommitmentIgnored
    * The choice ignores or contradicts a detected soft commitment.
    * Example: Abandoning a prestige class trajectory mid-stream.
    */
-  CommitmentIgnored: "CommitmentIgnored",
+  CommitmentIgnored: 'CommitmentIgnored',
 
   // ========================================================================
   // SYNERGY & MECHANICS - How options interact
@@ -72,14 +72,14 @@ export const REASON_ATOMS = {
    * The choice synergizes strongly with existing abilities, feats, or talents.
    * Example: Choosing a talent that amplifies existing feat benefits.
    */
-  SynergyPresent: "SynergyPresent",
+  SynergyPresent: 'SynergyPresent',
 
   /**
    * SynergyMissing
    * The choice lacks synergy with existing abilities or leaves a gap.
    * Example: Choosing a feat without supporting skills or abilities.
    */
-  SynergyMissing: "SynergyMissing",
+  SynergyMissing: 'SynergyMissing',
 
   /**
    * DependencyChain
@@ -87,14 +87,14 @@ export const REASON_ATOMS = {
    * Example: Force Training enabling Jedi prestige class.
    * Note: Never enumerate prerequisites in dialogue. Reason may appear in UI only.
    */
-  DependencyChain: "DependencyChain",
+  DependencyChain: 'DependencyChain',
 
   /**
    * OpportunityCostIncurred
    * The choice forecloses or reduces other viable build paths.
    * Example: Heavy commitment to Force Powers reduces tech specialization.
    */
-  OpportunityCostIncurred: "OpportunityCostIncurred",
+  OpportunityCostIncurred: 'OpportunityCostIncurred',
 
   // ========================================================================
   // RISK & RESOURCE - Vulnerability and sustainability
@@ -105,28 +105,28 @@ export const REASON_ATOMS = {
    * The choice increases exposure to certain damage types or combat scenarios.
    * Example: Low DEX choices in a party without tank.
    */
-  RiskIncreased: "RiskIncreased",
+  RiskIncreased: 'RiskIncreased',
 
   /**
    * RiskMitigated
    * The choice reduces vulnerability or addresses a detected weakness.
    * Example: Improving a defense that was previously weak.
    */
-  RiskMitigated: "RiskMitigated",
+  RiskMitigated: 'RiskMitigated',
 
   /**
    * ThresholdApproaching
    * The character is approaching a mechanical threshold or capacity limit.
    * Example: DSP approaching saturation, or skill points limited.
    */
-  ThresholdApproaching: "ThresholdApproaching",
+  ThresholdApproaching: 'ThresholdApproaching',
 
   /**
    * ThresholdCrossed
    * The choice crosses or violates a mechanical threshold or constraint.
    * Example: Taking a feat that exceeds prestige class feat limits.
    */
-  ThresholdCrossed: "ThresholdCrossed",
+  ThresholdCrossed: 'ThresholdCrossed',
 
   // ========================================================================
   // GROWTH & READINESS - Progression and competence
@@ -137,21 +137,21 @@ export const REASON_ATOMS = {
    * The character's level, stats, or prior choices prepare them for this step.
    * Example: Sufficient Wisdom for Force powers at this level.
    */
-  ReadinessMet: "ReadinessMet",
+  ReadinessMet: 'ReadinessMet',
 
   /**
    * ReadinessLacking
    * The character lacks necessary prerequisites or foundational abilities.
    * Example: Low ability scores for a demanding prestige class.
    */
-  ReadinessLacking: "ReadinessLacking",
+  ReadinessLacking: 'ReadinessLacking',
 
   /**
    * GrowthStageShift
    * The character is entering a new phase of gameplay (e.g., level 6, prestige).
    * Example: Level 6 unlock of prestige class options.
    */
-  GrowthStageShift: "GrowthStageShift",
+  GrowthStageShift: 'GrowthStageShift',
 
   // ========================================================================
   // PLAYER INTENT & EXPLORATION - Goals and variance
@@ -162,42 +162,42 @@ export const REASON_ATOMS = {
    * The choice progresses toward an inferred or stated character goal.
    * Example: Moving closer to detected prestige class aspiration.
    */
-  GoalAdvancement: "GoalAdvancement",
+  GoalAdvancement: 'GoalAdvancement',
 
   /**
    * GoalDeviation
    * The choice moves away from an inferred goal or stated commitment.
    * Example: Abandoning prestige class trajectory.
    */
-  GoalDeviation: "GoalDeviation",
+  GoalDeviation: 'GoalDeviation',
 
   /**
    * ExplorationSignal
    * The choice suggests the player is exploring new build directions.
    * Example: Taking feats from an unexpected theme.
    */
-  ExplorationSignal: "ExplorationSignal",
+  ExplorationSignal: 'ExplorationSignal',
 
   /**
    * IndecisionSignal
    * The choice pattern suggests uncertainty or vacillation.
    * Example: Repeated backing-and-filling between contradictory paths.
    */
-  IndecisionSignal: "IndecisionSignal",
+  IndecisionSignal: 'IndecisionSignal',
 
   /**
    * NewOptionRevealed
    * A prestige class or major option just became available.
    * Example: Just hit level 6 and new prestige classes unlocked.
    */
-  NewOptionRevealed: "NewOptionRevealed",
+  NewOptionRevealed: 'NewOptionRevealed',
 
   /**
    * RareChoice
    * The choice is unusual or uncommon for this character or archetype.
    * Example: Jedi taking heavy Tech skill investment.
    */
-  RareChoice: "RareChoice"
+  RareChoice: 'RareChoice'
 };
 
 /**

@@ -7,12 +7,12 @@
  */
 
 export const VEHICLE_CT_STATES = [
-  { step: 0, label: "Normal", penalty: 0 },
-  { step: 1, label: "-2", penalty: -2 },
-  { step: 2, label: "-5", penalty: -5 },
-  { step: 3, label: "-10", penalty: -10 },
-  { step: 4, label: "-20", penalty: -20 },
-  { step: 5, label: "Destroyed", penalty: -99 }
+  { step: 0, label: 'Normal', penalty: 0 },
+  { step: 1, label: '-2', penalty: -2 },
+  { step: 2, label: '-5', penalty: -5 },
+  { step: 3, label: '-10', penalty: -10 },
+  { step: 4, label: '-20', penalty: -20 },
+  { step: 5, label: 'Destroyed', penalty: -99 }
 ];
 
 /**
@@ -29,19 +29,19 @@ export function getVehicleCTPenalty(step) {
  */
 export function createVehicleCTEffect(step, originUUID = null) {
   const s = VEHICLE_CT_STATES[Math.clamp(step, 0, 5)];
-  if (!s) return null;
+  if (!s) {return null;}
 
   if (step === 5) {
     // Destroyed AE
     return {
-      label: "Destroyed",
-      icon: "icons/svg/skull.svg",
+      label: 'Destroyed',
+      icon: 'icons/svg/skull.svg',
       origin: originUUID,
       disabled: false,
       changes: [
-        { key: "system.vehicle.speed", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: 0 },
-        { key: "system.vehicle.operational", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: false },
-        { key: "system.defenses.reflex.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -20 }
+        { key: 'system.vehicle.speed', mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: 0 },
+        { key: 'system.vehicle.operational', mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: false },
+        { key: 'system.defenses.reflex.bonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -20 }
       ],
       flags: { swse: { vehicleCT: step } }
     };
@@ -49,12 +49,12 @@ export function createVehicleCTEffect(step, originUUID = null) {
 
   return {
     label: `Vehicle Condition Track ${s.label}`,
-    icon: "icons/svg/hazard.svg",
+    icon: 'icons/svg/hazard.svg',
     origin: originUUID,
     disabled: false,
     changes: [
-      { key: "system.defenses.reflex.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: s.penalty },
-      { key: "system.vehicle.handling", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: s.penalty }
+      { key: 'system.defenses.reflex.bonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: s.penalty },
+      { key: 'system.vehicle.handling', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: s.penalty }
     ],
     flags: { swse: { vehicleCT: step } }
   };
@@ -72,7 +72,7 @@ export function vehicleIsDestroyed(actor) {
  * Measure distance (in squares) between two tokens.
  */
 export function measureSquares(aToken, bToken) {
-  if (!aToken || !bToken || !canvas.grid) return 0;
+  if (!aToken || !bToken || !canvas.grid) {return 0;}
   const dist = canvas.grid.measureDistance(aToken, bToken);
   const perSq = canvas.scene.grid.distance || 5;
   return Math.round(dist / perSq);
@@ -82,7 +82,7 @@ export function measureSquares(aToken, bToken) {
  * Measure 2D distance in world units.
  */
 export function measureDistance(aToken, bToken) {
-  if (!aToken || !bToken) return 0;
+  if (!aToken || !bToken) {return 0;}
   const dx = aToken.center.x - bToken.center.x;
   const dy = aToken.center.y - bToken.center.y;
   return Math.sqrt(dx * dx + dy * dy);
@@ -92,7 +92,7 @@ export function measureDistance(aToken, bToken) {
  * Compute angle from token A to token B (for dogfighting).
  */
 export function computeAngle(aToken, bToken) {
-  if (!aToken || !bToken) return 0;
+  if (!aToken || !bToken) {return 0;}
   return Math.atan2(bToken.center.y - aToken.center.y, bToken.center.x - aToken.center.x);
 }
 
@@ -119,7 +119,7 @@ export function normalizeAngle(a) {
 export function facingTowards(attacker, target, toleranceDeg = 60) {
   const aTok = attacker.getActiveTokens()[0];
   const tTok = target.getActiveTokens()[0];
-  if (!aTok || !tTok) return false;
+  if (!aTok || !tTok) {return false;}
 
   const facing = normalizeAngle(aTok.document.rotation * (Math.PI / 180));
   const angleToTarget = computeAngle(aTok, tTok);

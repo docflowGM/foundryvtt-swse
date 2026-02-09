@@ -47,7 +47,7 @@ export const TalentTreeNormalizer = {
             || sys?.flags?.swse?.tree
             || '';
 
-        if (!rawTree) return '';
+        if (!rawTree) {return '';}
 
         const normalized = String(rawTree)
             .trim()
@@ -61,7 +61,7 @@ export const TalentTreeNormalizer = {
      * @private
      */
     _normalizePrerequisites(prereq) {
-        if (!prereq) return '';
+        if (!prereq) {return '';}
 
         return String(prereq)
             .trim()
@@ -73,7 +73,7 @@ export const TalentTreeNormalizer = {
      * @private
      */
     _normalizeBenefit(benefit) {
-        if (!benefit) return '';
+        if (!benefit) {return '';}
 
         return String(benefit)
             .trim()
@@ -84,7 +84,7 @@ export const TalentTreeNormalizer = {
      * Validate talent tree name format
      */
     validateTreeName(treeName) {
-        if (!treeName || typeof treeName !== 'string') return false;
+        if (!treeName || typeof treeName !== 'string') {return false;}
 
         // Allow alphanumeric, spaces, hyphens, apostrophes, parentheses
         return /^[A-Za-z0-9\s\-'()]+$/.test(treeName);

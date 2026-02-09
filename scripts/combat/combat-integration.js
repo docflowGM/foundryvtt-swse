@@ -32,10 +32,10 @@ export class ConditionTrackComponent {
     const persistent = actor.system.conditionTrack.persistent ?? false;
 
     const steps = this._defineSteps();
-    const penaltyText = steps[ct]?.penalty || "";
+    const penaltyText = steps[ct]?.penalty || '';
 
     // Do not show recover button if actor disabled popups "forever" feature
-    const skipForever = actor.getFlag("foundryvtt-swse", "skipCtPromptsForever") === true;
+    const skipForever = actor.getFlag('foundryvtt-swse', 'skipCtPromptsForever') === true;
 
     return `
       <div class="swse-condition-track">
@@ -43,11 +43,11 @@ export class ConditionTrackComponent {
         ${this._headerHTML(persistent)}
 
         <div class="ct-track">
-          ${steps.map(s => this._stepHTML(s, ct)).join("")}
+          ${steps.map(s => this._stepHTML(s, ct)).join('')}
         </div>
 
         <div class="ct-controls">
-          <button class="ct-btn improve" data-ct="improve" ${skipForever ? "disabled" : ""}>
+          <button class="ct-btn improve" data-ct="improve" ${skipForever ? 'disabled' : ''}>
             <i class="fas fa-arrow-up"></i> Recover
           </button>
 
@@ -56,7 +56,7 @@ export class ConditionTrackComponent {
           </button>
 
           <label class="ct-persistent">
-            <input type="checkbox" data-ct="persistent" ${persistent ? "checked" : ""}/>
+            <input type="checkbox" data-ct="persistent" ${persistent ? 'checked' : ''}/>
             Persistent
           </label>
         </div>
@@ -65,13 +65,13 @@ export class ConditionTrackComponent {
           <div class="ct-penalty">
             <strong>Penalty:</strong> ${penaltyText}
           </div>
-        ` : ""}
+        ` : ''}
         
         ${skipForever ? `
           <div class="ct-skip-info">
             <em>Condition prompts are disabled for this actor.</em>
           </div>
-        ` : ""}
+        ` : ''}
       </div>
     `;
   }
@@ -82,12 +82,12 @@ export class ConditionTrackComponent {
 
   static _defineSteps() {
     return [
-      { index: 0, label: "Normal", penalty: "", css: "normal" },
-      { index: 1, label: "-1", penalty: "-1 to Attacks, Defenses, Ability & Skill Checks", css: "ct-1" },
-      { index: 2, label: "-2", penalty: "-2 to Attacks, Defenses, Ability & Skill Checks", css: "ct-2" },
-      { index: 3, label: "-5", penalty: "-5 to Attacks, Defenses, Ability & Skill Checks", css: "ct-5" },
-      { index: 4, label: "-10", penalty: "-10 to all above, Half Speed", css: "ct-10" },
-      { index: 5, label: "Helpless", penalty: "Unconscious / Disabled", css: "ct-helpless" }
+      { index: 0, label: 'Normal', penalty: '', css: 'normal' },
+      { index: 1, label: '-1', penalty: '-1 to Attacks, Defenses, Ability & Skill Checks', css: 'ct-1' },
+      { index: 2, label: '-2', penalty: '-2 to Attacks, Defenses, Ability & Skill Checks', css: 'ct-2' },
+      { index: 3, label: '-5', penalty: '-5 to Attacks, Defenses, Ability & Skill Checks', css: 'ct-5' },
+      { index: 4, label: '-10', penalty: '-10 to all above, Half Speed', css: 'ct-10' },
+      { index: 5, label: 'Helpless', penalty: 'Unconscious / Disabled', css: 'ct-helpless' }
     ];
   }
 
@@ -99,14 +99,14 @@ export class ConditionTrackComponent {
     return `
       <div class="ct-header">
         <h3><i class="fas fa-heart-crack"></i> Condition Track</h3>
-        ${persistent ? `<span class="ct-tag">PERSISTENT</span>` : ""}
+        ${persistent ? `<span class="ct-tag">PERSISTENT</span>` : ''}
       </div>
     `;
   }
 
   static _stepHTML(step, currentIndex) {
-    const active = currentIndex === step.index ? "active" : "";
-    const marker = active ? `<div class="ct-marker">▼</div>` : "";
+    const active = currentIndex === step.index ? 'active' : '';
+    const marker = active ? `<div class="ct-marker">▼</div>` : '';
 
     return `
       <div class="ct-step ${step.css} ${active}"
@@ -114,7 +114,7 @@ export class ConditionTrackComponent {
            data-step="${step.index}"
            title="Set condition to ${step.label}">
         <span class="ct-label">${step.label}</span>
-        ${step.penalty ? `<span class="ct-pen">${step.penalty}</span>` : ""}
+        ${step.penalty ? `<span class="ct-pen">${step.penalty}</span>` : ''}
         ${marker}
       </div>
     `;
@@ -130,41 +130,41 @@ export class ConditionTrackComponent {
     /* --------------------------- */
     /* Direct GM-Only CT Set       */
     /* --------------------------- */
-    $c.find('[data-ct="set"]').on("click", async ev => {
+    $c.find('[data-ct="set"]').on('click', async ev => {
       if (!game.user.isGM) {
-        return ui.notifications.warn("Only the GM may directly set the Condition Track.");
+        return ui.notifications.warn('Only the GM may directly set the Condition Track.');
       }
       const step = Number(ev.currentTarget.dataset.step);
-      await actor.update({ "system.conditionTrack.current": Math.clamp(step, 0, 5) });
+      await actor.update({ 'system.conditionTrack.current': Math.clamp(step, 0, 5) });
     });
 
     /* --------------------------- */
     /* Recover (Improve)           */
     /* --------------------------- */
-    $c.find('[data-ct="improve"]').on("click", async () => {
+    $c.find('[data-ct="improve"]').on('click', async () => {
 
       // If actor chose "never show CT prompts" — reflect that here too
-      const skipForever = actor.getFlag("foundryvtt-swse", "skipCtPromptsForever") === true;
+      const skipForever = actor.getFlag('foundryvtt-swse', 'skipCtPromptsForever') === true;
       if (skipForever) {
-        return ui.notifications.info("CT recovery prompts disabled for this actor.");
+        return ui.notifications.info('CT recovery prompts disabled for this actor.');
       }
 
       const ct = actor.system.conditionTrack.current ?? 0;
       const persistent = actor.system.conditionTrack.persistent === true;
 
       if (ct === 5) {
-        return ui.notifications.warn("A Helpless creature cannot perform a Recover action.");
+        return ui.notifications.warn('A Helpless creature cannot perform a Recover action.');
       }
 
       if (persistent) {
-        return ui.notifications.warn("This condition is Persistent and cannot be removed by natural recovery.");
+        return ui.notifications.warn('This condition is Persistent and cannot be removed by natural recovery.');
       }
 
       // Optional future action economy check
       if (actor.system.actionEconomy?.swift !== undefined) {
         const swift = actor.system.actionEconomy.swift;
         if (!swift) {
-          return ui.notifications.warn("Not enough Swift Actions remaining to Recover.");
+          return ui.notifications.warn('Not enough Swift Actions remaining to Recover.');
         }
       }
 
@@ -175,22 +175,22 @@ export class ConditionTrackComponent {
     /* --------------------------- */
     /* Worsen (+1 Step)            */
     /* --------------------------- */
-    $c.find('[data-ct="worsen"]').on("click", async () => {
+    $c.find('[data-ct="worsen"]').on('click', async () => {
       await actor.moveConditionTrack(1);
     });
 
     /* --------------------------- */
     /* Persistent Toggle (GM Only) */
     /* --------------------------- */
-    $c.find('[data-ct="persistent"]').on("change", async ev => {
+    $c.find('[data-ct="persistent"]').on('change', async ev => {
       if (!game.user.isGM) {
         ev.preventDefault();
-        ui.notifications.warn("Only the GM may toggle Persistent Conditions.");
+        ui.notifications.warn('Only the GM may toggle Persistent Conditions.');
         // revert toggle
         ev.target.checked = actor.system.conditionTrack.persistent;
         return;
       }
-      await actor.update({ "system.conditionTrack.persistent": ev.target.checked });
+      await actor.update({ 'system.conditionTrack.persistent': ev.target.checked });
     });
   }
 }

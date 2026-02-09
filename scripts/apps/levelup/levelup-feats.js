@@ -167,8 +167,8 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
         }
         return a.chain.localeCompare(b.chain);
       }
-      if (a.chain) return -1;
-      if (b.chain) return 1;
+      if (a.chain) {return -1;}
+      if (b.chain) {return 1;}
       // Then alphabetically
       return a.name.localeCompare(b.name);
     });
@@ -191,7 +191,7 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
         currentPrereq = prereqFeat?.prerequisiteFeat;
 
         // Safety check to prevent infinite loops
-        if (indentLevel > 10) break;
+        if (indentLevel > 10) {break;}
       }
 
       feat.indentLevel = indentLevel;
@@ -212,16 +212,16 @@ export async function loadFeats(actor, selectedClass, pendingData) {
   try {
     const featPack = game.packs.get('foundryvtt-swse.feats');
     if (!featPack) {
-      SWSELogger.error("SWSE LevelUp | Feats compendium pack not found!");
-      ui.notifications.error("Failed to load feats compendium. Feats will not be available.", { permanent: true });
+      SWSELogger.error('SWSE LevelUp | Feats compendium pack not found!');
+      ui.notifications.error('Failed to load feats compendium. Feats will not be available.', { permanent: true });
       return { categories: [], feats: [] };
     }
 
     const allFeats = await featPack.getDocuments();
 
     if (!allFeats || allFeats.length === 0) {
-      SWSELogger.error("SWSE LevelUp | Feats compendium is empty!");
-      ui.notifications.error("Feats compendium is empty. Please check your SWSE installation.", { permanent: true });
+      SWSELogger.error('SWSE LevelUp | Feats compendium is empty!');
+      ui.notifications.error('Feats compendium is empty. Please check your SWSE installation.', { permanent: true });
       return { categories: [], feats: [] };
     }
 
@@ -245,7 +245,7 @@ export async function loadFeats(actor, selectedClass, pendingData) {
             // Filter feats based on RAW rule (Option C)
             featObjects = featObjects.filter(f => {
               const allowed = f.system?.bonus_feat_for || [];
-              return allowed.includes(className) || allowed.includes("all");
+              return allowed.includes(className) || allowed.includes('all');
             });
 
             SWSELogger.log(
@@ -305,8 +305,8 @@ export async function loadFeats(actor, selectedClass, pendingData) {
       futureAvailableFeats  // Array of feats that will become available soon
     };
   } catch (err) {
-    SWSELogger.error("SWSE LevelUp | Failed to load feats:", err);
-    ui.notifications.error("Failed to load feats. Check the console for details.");
+    SWSELogger.error('SWSE LevelUp | Failed to load feats:', err);
+    ui.notifications.error('Failed to load feats. Check the console for details.');
     return { categories: [], feats: [] };
   }
 }
@@ -318,16 +318,16 @@ export async function loadFeats(actor, selectedClass, pendingData) {
  * @returns {boolean}
  */
 export function getsBonusFeat(selectedClass, actor) {
-  if (!selectedClass) return false;
+  if (!selectedClass) {return false;}
 
   const classLevel = getClassLevel(actor, selectedClass.name) + 1;
 
   // Check level_progression for this class level
   const levelProgression = getClassProperty(selectedClass, 'levelProgression', []);
-  if (!levelProgression || !Array.isArray(levelProgression)) return false;
+  if (!levelProgression || !Array.isArray(levelProgression)) {return false;}
 
   const levelData = levelProgression.find(lp => lp.level === classLevel);
-  if (!levelData || !levelData.features) return false;
+  if (!levelData || !levelData.features) {return false;}
 
   // Check if this level grants a feat_choice feature
   return levelData.features.some(f => f.type === 'feat_choice');

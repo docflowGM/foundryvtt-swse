@@ -377,7 +377,7 @@ export class NobleTalentMechanics {
     // Apply bonuses to all allies
     for (const allyToken of allies) {
       const ally = allyToken.actor;
-      if (!ally) continue;
+      if (!ally) {continue;}
 
       await ally.createEmbeddedDocuments('ActiveEffect', [{
         name: 'Ignite Fervor - Attack and Damage Bonus',
@@ -520,7 +520,7 @@ export class NobleTalentMechanics {
     }
 
     return canvas.tokens.placeables.filter(token => {
-      if (!token.actor || token.actor.id === actor.id) return false;
+      if (!token.actor || token.actor.id === actor.id) {return false;}
       return token.document.disposition === actorToken.document.disposition;
     });
   }

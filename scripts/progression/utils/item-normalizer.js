@@ -3,9 +3,9 @@
  * so the Progression Engine and PrerequisiteValidator always see consistent data.
  */
 
-import { normalizePrerequisiteString } from "./prerequisite-normalizer.js";
-import { normalizeSpeciesData } from "./species-normalizer.js";
-import { normalizeBackgroundData } from "./background-normalizer.js";
+import { normalizePrerequisiteString } from './prerequisite-normalizer.js';
+import { normalizeSpeciesData } from './species-normalizer.js';
+import { normalizeBackgroundData } from './background-normalizer.js';
 
 // ============================================================
 // FEAT NORMALIZATION
@@ -17,11 +17,11 @@ export function normalizeFeatData(rawFeat) {
     feat.system.featType =
         feat.system.featType ||
         feat.system.type ||
-        "general";
+        'general';
 
     // Always an array
     feat.system.bonus_feat_for = feat.system.bonus_feat_for || [];
-    if (typeof feat.system.bonus_feat_for === "string") {
+    if (typeof feat.system.bonus_feat_for === 'string') {
         feat.system.bonus_feat_for = [feat.system.bonus_feat_for];
     }
 
@@ -45,7 +45,7 @@ export function normalizeTalentData(rawTalent) {
     }
 
     // Preserve existing tree name or set to empty
-    const treeValue = talent.system.tree || talent.system.talent_tree || talent.system.talentTree || "";
+    const treeValue = talent.system.tree || talent.system.talent_tree || talent.system.talentTree || '';
     talent.system.tree = treeValue;
     talent.system.talent_tree = treeValue;
 
@@ -97,19 +97,19 @@ export function normalizeForcePowerData(rawPower) {
 // ============================================================
 
 export function normalizeItemByType(item) {
-    if (!item?.type) return item;
+    if (!item?.type) {return item;}
 
     switch (item.type) {
-        case "feat":
+        case 'feat':
             return normalizeFeatData(item);
-        case "talent":
+        case 'talent':
             return normalizeTalentData(item);
-        case "forcepower":
-        case "force-power":
+        case 'forcepower':
+        case 'force-power':
             return normalizeForcePowerData(item);
-        case "species":
+        case 'species':
             return normalizeSpeciesData(item);
-        case "background":
+        case 'background':
             return normalizeBackgroundData(item);
         default:
             return item;

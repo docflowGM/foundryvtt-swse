@@ -14,8 +14,11 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+// eslint-disable-next-line
 import CLASS_ARCHETYPES from '../../data/class-archetypes.json' with { type: 'json' };
+// eslint-disable-next-line
 import GENERIC_ARCHETYPES from '../../data/generic-archetypes.json' with { type: 'json' };
+// eslint-disable-next-line
 import DEFAULT_WEIGHTS from '../../data/default-archetype-weights.json' with { type: 'json' };
 
 export const DEFAULT_ARCHETYPE_WEIGHTS = DEFAULT_WEIGHTS;

@@ -2,7 +2,7 @@
  * force-technique-picker.js
  * Force Technique picker UI using FormApplication + HBS template.
  */
-import SWSEFormApplication from "../../apps/base/swse-form-application.js";
+import SWSEFormApplication from '../../apps/base/swse-form-application.js';
 
 export class ForceTechniquePicker extends SWSEFormApplication {
   /**
@@ -28,15 +28,14 @@ export class ForceTechniquePicker extends SWSEFormApplication {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
     SWSEFormApplication.DEFAULT_OPTIONS ?? {},
     {
-      id: "force-technique-picker",
-      classes: ["swse-app", "force-technique-picker"],
-      template: "systems/foundryvtt-swse/scripts/progression/ui/templates/force-technique-picker.hbs",
+      id: 'force-technique-picker',
+      classes: ['swse-app', 'force-technique-picker'],
+      template: 'systems/foundryvtt-swse/scripts/progression/ui/templates/force-technique-picker.hbs',
       position: { width: 720, height: 620 },
       resizable: true
     }
   );
 
-  
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
@@ -58,8 +57,8 @@ async _prepareContext(options) {
         return {
           id,
           name: t.name || id,
-          img: t.img || (t.document?.img) || "icons/svg/mystery-man.svg",
-          description: t.system?.description || t.document?.system?.description || "",
+          img: t.img || (t.document?.img) || 'icons/svg/mystery-man.svg',
+          description: t.system?.description || t.document?.system?.description || '',
           prerequisites: t.system?.prerequisites || t.document?.system?.prerequisites || [],
           selected: this.selectedSet.has(id)
         };
@@ -71,12 +70,12 @@ async _prepareContext(options) {
 
   async _onRender(context, options) {
     const root = this.element;
-    if (!(root instanceof HTMLElement)) return;
+    if (!(root instanceof HTMLElement)) {return;}
 
-    root.querySelectorAll(".technique-card").forEach(card => {
-      card.addEventListener("click", ev => {
+    root.querySelectorAll('.technique-card').forEach(card => {
+      card.addEventListener('click', ev => {
         const id = ev.currentTarget.dataset.id;
-        if (!id) return;
+        if (!id) {return;}
 
         if (this.selectedSet.has(id)) {
           this.selectedSet.delete(id);
@@ -88,20 +87,20 @@ async _prepareContext(options) {
       });
     });
 
-    const mentorBtn = root.querySelector(".ask-mentor-force-technique-suggestion");
+    const mentorBtn = root.querySelector('.ask-mentor-force-technique-suggestion');
     if (mentorBtn) {
-      mentorBtn.addEventListener("click", () => this._askMentor());
+      mentorBtn.addEventListener('click', () => this._askMentor());
     }
 
-    const confirmBtn = root.querySelector(".confirm");
+    const confirmBtn = root.querySelector('.confirm');
     if (confirmBtn) {
-      confirmBtn.addEventListener("click", ev => {
+      confirmBtn.addEventListener('click', ev => {
         const result = [];
         const sel = new Set(this.selectedSet);
 
         for (const t of this.techniques) {
           const id = t.id || t._id || t.name;
-          if (sel.has(id)) result.push(t);
+          if (sel.has(id)) {result.push(t);}
         }
 
         this.resolve(result);
@@ -109,9 +108,9 @@ async _prepareContext(options) {
       });
     }
 
-    const cancelBtn = root.querySelector(".cancel");
+    const cancelBtn = root.querySelector('.cancel');
     if (cancelBtn) {
-      cancelBtn.addEventListener("click", ev => {
+      cancelBtn.addEventListener('click', ev => {
         this.resolve([]);
         this.close();
       });
@@ -122,7 +121,7 @@ async _prepareContext(options) {
     try {
       const { ForceTechniqueSuggestionEngine } = await import('../../progression/engine/force-technique-suggestion-engine.js');
 
-      if (!this.actor) return;
+      if (!this.actor) {return;}
 
       const suggestion = await ForceTechniqueSuggestionEngine.suggestTechnique(this.actor, this.techniques, this.selectedSet);
       if (suggestion && suggestion.id) {

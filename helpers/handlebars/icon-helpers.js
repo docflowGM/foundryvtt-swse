@@ -22,7 +22,7 @@ export const iconHelpers = {
       console.error('[SWSE Icons] getIconClass received non-string:', {
         received: iconKey,
         type: typeof iconKey,
-        context: this,
+        context: this
       });
       return '';
     }
@@ -45,7 +45,7 @@ export const iconHelpers = {
       console.error('[SWSE Icons] icon helper received non-string:', {
         received: iconKey,
         type: typeof iconKey,
-        context: this,
+        context: this
       });
       return '';
     }

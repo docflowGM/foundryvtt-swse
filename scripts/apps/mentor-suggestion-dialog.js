@@ -46,7 +46,7 @@ export class MentorSuggestionDialog extends Dialog {
           buttons: {
             apply: {
               icon: '<i class="fas fa-check"></i>',
-              label: "Apply Suggestion",
+              label: 'Apply Suggestion',
               callback: () => {
                 resolve({
                   applied: true,
@@ -56,7 +56,7 @@ export class MentorSuggestionDialog extends Dialog {
             },
             dismiss: {
               icon: '<i class="fas fa-times"></i>',
-              label: "Dismiss",
+              label: 'Dismiss',
               callback: () => {
                 resolve({
                   applied: false,
@@ -65,7 +65,7 @@ export class MentorSuggestionDialog extends Dialog {
               }
             }
           },
-          default: "apply",
+          default: 'apply',
           render: (html) => {
             // Style the dialog
             const root = html instanceof HTMLElement ? html : html?.[0];
@@ -154,14 +154,14 @@ export class MentorSuggestionDialog extends Dialog {
    */
   static _getTierLabel(tier) {
     const tierLabels = {
-      0: "Fallback",
-      1: "Class Synergy",
-      2: "Ability Match",
-      3: "Skill Match",
-      4: "Chain Link",
-      5: "Meta Synergy",
-      6: "Prestige Prereq"
+      0: 'Fallback',
+      1: 'Class Synergy',
+      2: 'Ability Match',
+      3: 'Skill Match',
+      4: 'Chain Link',
+      5: 'Meta Synergy',
+      6: 'Prestige Prereq'
     };
-    return tierLabels[tier] || "";
+    return tierLabels[tier] || '';
   }
 }

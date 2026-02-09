@@ -28,7 +28,7 @@ export class EffectSanitizer {
    * Check if an effect type is invalid
    */
   static isInvalidType(type) {
-    if (type === undefined || type === null) return false;
+    if (type === undefined || type === null) {return false;}
     return this.INVALID_TYPES.includes(type);
   }
 
@@ -36,7 +36,7 @@ export class EffectSanitizer {
    * Sanitize a single effect object
    */
   static sanitizeEffect(effect) {
-    if (!effect) return effect;
+    if (!effect) {return effect;}
 
     const sanitized = { ...effect };
 
@@ -53,7 +53,7 @@ export class EffectSanitizer {
    * Sanitize an array of effects
    */
   static sanitizeEffects(effects) {
-    if (!Array.isArray(effects)) return effects;
+    if (!Array.isArray(effects)) {return effects;}
     return effects.map(effect => this.sanitizeEffect(effect));
   }
 
@@ -61,7 +61,7 @@ export class EffectSanitizer {
    * Sanitize embedded effects in item/actor data
    */
   static sanitizeDocumentData(data) {
-    if (!data) return data;
+    if (!data) {return data;}
 
     const sanitized = { ...data };
 
@@ -121,7 +121,7 @@ export class EffectSanitizer {
       }
     });
 
-    SWSELogger.log("EffectSanitizer | Initialization complete - effect sanitization hooks registered");
+    SWSELogger.log('EffectSanitizer | Initialization complete - effect sanitization hooks registered');
   }
 }
 

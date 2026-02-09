@@ -18,9 +18,9 @@
  * }
  */
 
-import { STORE_PACKS } from "../store-constants.js";
+import { STORE_PACKS } from '../store-constants.js';
 
-const CACHE_KEY = "swse-store-cache-v1";   // bump this to invalidate all caches
+const CACHE_KEY = 'swse-store-cache-v1';   // bump this to invalidate all caches
 const CACHE_TTL = 1000 * 60 * 60 * 24;     // 24 hours
 
 /* ------------------------------------------- */
@@ -30,7 +30,7 @@ const CACHE_TTL = 1000 * 60 * 60 * 24;     // 24 hours
 function loadCache() {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
-    if (!raw) return null;
+    if (!raw) {return null;}
 
     const parsed = JSON.parse(raw);
 
@@ -42,7 +42,7 @@ function loadCache() {
 
     return parsed;
   } catch (err) {
-    console.warn("SWSE Store | Cache load failed:", err);
+    console.warn('SWSE Store | Cache load failed:', err);
     return null;
   }
 }
@@ -51,7 +51,7 @@ function saveCache(data) {
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(data));
   } catch (err) {
-    console.warn("SWSE Store | Cache save failed:", err);
+    console.warn('SWSE Store | Cache save failed:', err);
   }
 }
 
@@ -91,7 +91,7 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   // Check cache
   if (useCache) {
     const cached = loadCache();
-    if (cached) return cached;
+    if (cached) {return cached;}
   }
 
   /* ------------------------------------------- */
@@ -108,7 +108,7 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   const packItemDocs = [
     ...(await safeGetPackDocuments(STORE_PACKS.WEAPONS)),
     ...(await safeGetPackDocuments(STORE_PACKS.ARMOR)),
-    ...(await safeGetPackDocuments(STORE_PACKS.EQUIPMENT)),
+    ...(await safeGetPackDocuments(STORE_PACKS.EQUIPMENT))
   ];
 
   /* ------------------------------------------- */
@@ -117,7 +117,7 @@ export async function loadRawStoreData({ useCache = true } = {}) {
 
   const packActorDocs = [
     ...(await safeGetPackDocuments(STORE_PACKS.DROIDS)),
-    ...(await safeGetPackDocuments(STORE_PACKS.VEHICLES)),
+    ...(await safeGetPackDocuments(STORE_PACKS.VEHICLES))
   ];
 
   /* ------------------------------------------- */
@@ -136,7 +136,7 @@ export async function loadRawStoreData({ useCache = true } = {}) {
     loadedAt: Date.now(),
     packsUsed: Object.values(STORE_PACKS),
     itemCount: allItems.length,
-    actorCount: allActors.length,
+    actorCount: allActors.length
   };
 
   const result = {
@@ -156,8 +156,8 @@ export async function loadRawStoreData({ useCache = true } = {}) {
 export function clearStoreCache() {
   try {
     localStorage.removeItem(CACHE_KEY);
-    ui.notifications.info("SWSE Store cache cleared. The store will rebuild next time it opens.");
+    ui.notifications.info('SWSE Store cache cleared. The store will rebuild next time it opens.');
   } catch (err) {
-    console.warn("SWSE Store | Failed to clear cache:", err);
+    console.warn('SWSE Store | Failed to clear cache:', err);
   }
 }

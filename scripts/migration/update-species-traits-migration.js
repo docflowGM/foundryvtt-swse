@@ -11,8 +11,8 @@ import { SWSELogger } from '../utils/logger.js';
 
 export class UpdateSpeciesTraitsMigration {
 
-  static MIGRATION_VERSION = "1.1.216"; // Bumped to re-run with improved update logic
-  static MIGRATION_KEY = "speciesTraitsUpdate";
+  static MIGRATION_VERSION = '1.1.216'; // Bumped to re-run with improved update logic
+  static MIGRATION_KEY = 'speciesTraitsUpdate';
 
   /**
    * Check if migration has been run for current version
@@ -45,18 +45,18 @@ export class UpdateSpeciesTraitsMigration {
   static async run() {
     // Only GMs can run migrations
     if (!game.user.isGM) {
-      SWSELogger.log("SWSE | Skipping species traits update (not GM)");
+      SWSELogger.log('SWSE | Skipping species traits update (not GM)');
       return;
     }
 
     // Check if migration needed
     if (!(await this.needsMigration())) {
-      SWSELogger.log("SWSE | Species traits already updated");
+      SWSELogger.log('SWSE | Species traits already updated');
       return;
     }
 
-    SWSELogger.log("SWSE | Starting species traits update...");
-    ui.notifications.info("Updating species traits, please wait...");
+    SWSELogger.log('SWSE | Starting species traits update...');
+    ui.notifications.info('Updating species traits, please wait...');
 
     let totalUpdated = 0;
     let totalNotFound = 0;
@@ -150,13 +150,13 @@ export class UpdateSpeciesTraitsMigration {
       }
 
     } catch (err) {
-      SWSELogger.error("SWSE | Species traits update failed:", err);
+      SWSELogger.error('SWSE | Species traits update failed:', err);
       totalErrors++;
     }
 
     // Summary
-    SWSELogger.log("=".repeat(60));
-    SWSELogger.log("SWSE | Species Traits Update Complete");
+    SWSELogger.log('='.repeat(60));
+    SWSELogger.log('SWSE | Species Traits Update Complete');
     SWSELogger.log(`✓ Updated: ${totalUpdated} species`);
     SWSELogger.log(`⚠ Not Found: ${totalNotFound} species`);
     if (totalErrors > 0) {
@@ -165,19 +165,19 @@ export class UpdateSpeciesTraitsMigration {
 
     if (notFoundSpecies.length > 0) {
       if (notFoundSpecies.length <= 5) {
-        SWSELogger.log("Species not found in compendium:");
+        SWSELogger.log('Species not found in compendium:');
         notFoundSpecies.forEach(name => SWSELogger.log(`  - ${name}`));
       }
     }
 
     if (errorSpecies.length > 0) {
       if (errorSpecies.length <= 5) {
-        SWSELogger.log("Species with update errors:");
+        SWSELogger.log('Species with update errors:');
         errorSpecies.forEach(({ name, error }) => SWSELogger.log(`  - ${name}: ${error}`));
       }
     }
 
-    SWSELogger.log("=".repeat(60));
+    SWSELogger.log('='.repeat(60));
 
     // Mark migration as complete
     await this.markComplete();
@@ -195,8 +195,8 @@ export class UpdateSpeciesTraitsMigration {
 // Register migration to run on ready
 Hooks.once('init', () => {
   // Make migration available via game.swse.migrations
-  if (!game.swse) game.swse = {};
-  if (!game.swse.migrations) game.swse.migrations = {};
+  if (!game.swse) {game.swse = {};}
+  if (!game.swse.migrations) {game.swse.migrations = {};}
   game.swse.migrations.updateSpeciesTraits = UpdateSpeciesTraitsMigration.run.bind(UpdateSpeciesTraitsMigration);
 });
 
@@ -206,7 +206,7 @@ Hooks.once('ready', async () => {
     try {
       await UpdateSpeciesTraitsMigration.run();
     } catch (err) {
-      SWSELogger.error("SWSE | Species traits update migration failed:", err);
+      SWSELogger.error('SWSE | Species traits update migration failed:', err);
     }
   }
 });

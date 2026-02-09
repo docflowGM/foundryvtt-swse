@@ -18,14 +18,14 @@ export const MentorSynthesisConfig = {
   // CORE MENTORS (Fully Authored)
   // ========================================
   core: [
-    "miraj",
-    "breach",
-    "lead",
-    "ol_salty",
-    "j0_n1",
-    "darth_miedo",
-    "darth_malbada",
-    "tio_the_hutt"
+    'miraj',
+    'breach',
+    'lead',
+    'ol_salty',
+    'j0_n1',
+    'darth_miedo',
+    'darth_malbada',
+    'tio_the_hutt'
   ],
 
   // ========================================
@@ -33,39 +33,39 @@ export const MentorSynthesisConfig = {
   // ========================================
   force_mentors: {
     anchorite: {
-      title: "The Anchorite",
-      primaryVoice: "miraj",
-      secondaryVoice: "venn",
+      title: 'The Anchorite',
+      primaryVoice: 'miraj',
+      secondaryVoice: 'venn',
       corruptionAxis: null,
-      description: "Ascetic mystic. Withdrawal from conflict, deep communion with Force."
+      description: 'Ascetic mystic. Withdrawal from conflict, deep communion with Force.'
     },
     venn: {
-      title: "Venn",
-      primaryVoice: "miraj",
-      secondaryVoice: "j0_n1",
+      title: 'Venn',
+      primaryVoice: 'miraj',
+      secondaryVoice: 'j0_n1',
       corruptionAxis: null,
-      description: "Seeker. Philosophical curiosity, questions all assumptions."
+      description: 'Seeker. Philosophical curiosity, questions all assumptions.'
     },
     seraphim: {
-      title: "Seraphim",
-      primaryVoice: "miraj",
-      secondaryVoice: "anchorite",
+      title: 'Seraphim',
+      primaryVoice: 'miraj',
+      secondaryVoice: 'anchorite',
       corruptionAxis: null,
-      description: "Idealized Force morality. Almost religious in conviction."
+      description: 'Idealized Force morality. Almost religious in conviction.'
     },
     urza: {
-      title: "Urza",
-      primaryVoice: "miraj",
-      secondaryVoice: "darth_miedo",
-      corruptionAxis: "Domination",
-      description: "Zealous Force absolutism. Power through conviction."
+      title: 'Urza',
+      primaryVoice: 'miraj',
+      secondaryVoice: 'darth_miedo',
+      corruptionAxis: 'Domination',
+      description: 'Zealous Force absolutism. Power through conviction.'
     },
     axiom: {
-      title: "Axiom",
-      primaryVoice: "miraj",
-      secondaryVoice: "darth_miedo",
-      corruptionAxis: "Domination",
-      description: "Force-as-law. Inevitability framing."
+      title: 'Axiom',
+      primaryVoice: 'miraj',
+      secondaryVoice: 'darth_miedo',
+      corruptionAxis: 'Domination',
+      description: 'Force-as-law. Inevitability framing.'
     }
   },
 
@@ -74,25 +74,25 @@ export const MentorSynthesisConfig = {
   // ========================================
   sith_mentors: {
     korr: {
-      title: "Korr",
-      primaryVoice: "darth_miedo",
-      secondaryVoice: "breach",
-      corruptionAxis: "Domination",
-      description: "Brutal dark enforcer. Strength through violence."
+      title: 'Korr',
+      primaryVoice: 'darth_miedo',
+      secondaryVoice: 'breach',
+      corruptionAxis: 'Domination',
+      description: 'Brutal dark enforcer. Strength through violence.'
     },
     delta_assassin: {
-      title: "Delta Assassin",
-      primaryVoice: "darth_malbada",
-      secondaryVoice: "lead",
-      corruptionAxis: "Nihilism",
-      description: "Surgical killer. Moral emptiness, perfect execution."
+      title: 'Delta Assassin',
+      primaryVoice: 'darth_malbada',
+      secondaryVoice: 'lead',
+      corruptionAxis: 'Nihilism',
+      description: 'Surgical killer. Moral emptiness, perfect execution.'
     },
     infiltrator: {
-      title: "Infiltrator",
-      primaryVoice: "darth_malbada",
-      secondaryVoice: "lead",
-      corruptionAxis: "Temptation",
-      description: "Dark operative. Pragmatism over ideology."
+      title: 'Infiltrator',
+      primaryVoice: 'darth_malbada',
+      secondaryVoice: 'lead',
+      corruptionAxis: 'Temptation',
+      description: 'Dark operative. Pragmatism over ideology.'
     }
   },
 
@@ -101,32 +101,32 @@ export const MentorSynthesisConfig = {
   // ========================================
   military_mentors: {
     captain: {
-      title: "Captain",
-      primaryVoice: "j0_n1",
-      secondaryVoice: "breach",
+      title: 'Captain',
+      primaryVoice: 'j0_n1',
+      secondaryVoice: 'breach',
       corruptionAxis: null,
-      description: "Command authority. Discipline and order."
+      description: 'Command authority. Discipline and order.'
     },
     krag: {
-      title: "Krag",
-      primaryVoice: "breach",
-      secondaryVoice: "darth_miedo",
-      corruptionAxis: "Domination",
-      description: "Heavy assault specialist. Brute force pragmatism."
+      title: 'Krag',
+      primaryVoice: 'breach',
+      secondaryVoice: 'darth_miedo',
+      corruptionAxis: 'Domination',
+      description: 'Heavy assault specialist. Brute force pragmatism.'
     },
     theron: {
-      title: "Theron",
-      primaryVoice: "breach",
-      secondaryVoice: "lead",
+      title: 'Theron',
+      primaryVoice: 'breach',
+      secondaryVoice: 'lead',
       corruptionAxis: null,
-      description: "Veteran tactician. Measured aggression."
+      description: 'Veteran tactician. Measured aggression.'
     },
     zhen: {
-      title: "Zhen",
-      primaryVoice: "breach",
-      secondaryVoice: "miraj",
+      title: 'Zhen',
+      primaryVoice: 'breach',
+      secondaryVoice: 'miraj',
       corruptionAxis: null,
-      description: "Elite warrior. Honor through combat mastery."
+      description: 'Elite warrior. Honor through combat mastery.'
     }
   },
 
@@ -135,25 +135,25 @@ export const MentorSynthesisConfig = {
   // ========================================
   scout_mentors: {
     rogue: {
-      title: "Rogue",
-      primaryVoice: "lead",
-      secondaryVoice: "ol_salty",
+      title: 'Rogue',
+      primaryVoice: 'lead',
+      secondaryVoice: 'ol_salty',
       corruptionAxis: null,
-      description: "Lone operator. Distrustful survivalist."
+      description: 'Lone operator. Distrustful survivalist.'
     },
     spark: {
-      title: "Spark",
-      primaryVoice: "lead",
-      secondaryVoice: "ol_salty",
+      title: 'Spark',
+      primaryVoice: 'lead',
+      secondaryVoice: 'ol_salty',
       corruptionAxis: null,
-      description: "Speed specialist. Improvisation under control."
+      description: 'Speed specialist. Improvisation under control.'
     },
     whisper: {
-      title: "Whisper",
-      primaryVoice: "lead",
-      secondaryVoice: "darth_malbada",
-      corruptionAxis: "Nihilism",
-      description: "Psychological stealth. Erasure and invisibility."
+      title: 'Whisper',
+      primaryVoice: 'lead',
+      secondaryVoice: 'darth_malbada',
+      corruptionAxis: 'Nihilism',
+      description: 'Psychological stealth. Erasure and invisibility.'
     }
   },
 
@@ -162,46 +162,46 @@ export const MentorSynthesisConfig = {
   // ========================================
   criminal_mentors: {
     skindar: {
-      title: "Skindar",
-      primaryVoice: "tio_the_hutt",
-      secondaryVoice: "breach",
-      corruptionAxis: "Exploitation",
-      description: "Crime lord. Intimidation as currency."
+      title: 'Skindar',
+      primaryVoice: 'tio_the_hutt',
+      secondaryVoice: 'breach',
+      corruptionAxis: 'Exploitation',
+      description: 'Crime lord. Intimidation as currency.'
     },
     pegar: {
-      title: "Pegár",
-      primaryVoice: "ol_salty",
-      secondaryVoice: "lead",
+      title: 'Pegár',
+      primaryVoice: 'ol_salty',
+      secondaryVoice: 'lead',
       corruptionAxis: null,
-      description: "Smuggler. Pragmatic adaptability."
+      description: 'Smuggler. Pragmatic adaptability.'
     },
     jack: {
-      title: "Jack",
-      primaryVoice: "ol_salty",
-      secondaryVoice: "breach",
+      title: 'Jack',
+      primaryVoice: 'ol_salty',
+      secondaryVoice: 'breach',
       corruptionAxis: null,
-      description: "Opportunist gunman. Wit and quick reflexes."
+      description: 'Opportunist gunman. Wit and quick reflexes.'
     },
     rax: {
-      title: "Rax",
-      primaryVoice: "tio_the_hutt",
-      secondaryVoice: "j0_n1",
-      corruptionAxis: "Exploitation",
-      description: "Ruthless fixer. Everything solves for profit."
+      title: 'Rax',
+      primaryVoice: 'tio_the_hutt',
+      secondaryVoice: 'j0_n1',
+      corruptionAxis: 'Exploitation',
+      description: 'Ruthless fixer. Everything solves for profit.'
     },
     kex_varon: {
-      title: "Kex Varon",
-      primaryVoice: "tio_the_hutt",
-      secondaryVoice: "j0_n1",
-      corruptionAxis: "Exploitation",
-      description: "Crime strategist. Systemic exploitation."
+      title: 'Kex Varon',
+      primaryVoice: 'tio_the_hutt',
+      secondaryVoice: 'j0_n1',
+      corruptionAxis: 'Exploitation',
+      description: 'Crime strategist. Systemic exploitation.'
     },
     rajma: {
-      title: "Rajma",
-      primaryVoice: "j0_n1",
-      secondaryVoice: "tio_the_hutt",
-      corruptionAxis: "Exploitation",
-      description: "Information broker. Data as leverage."
+      title: 'Rajma',
+      primaryVoice: 'j0_n1',
+      secondaryVoice: 'tio_the_hutt',
+      corruptionAxis: 'Exploitation',
+      description: 'Information broker. Data as leverage.'
     }
   },
 
@@ -210,25 +210,25 @@ export const MentorSynthesisConfig = {
   // ========================================
   social_mentors: {
     sela: {
-      title: "Sela",
-      primaryVoice: "j0_n1",
-      secondaryVoice: "miraj",
+      title: 'Sela',
+      primaryVoice: 'j0_n1',
+      secondaryVoice: 'miraj',
       corruptionAxis: null,
-      description: "Diplomat. Ethical leadership and coalition."
+      description: 'Diplomat. Ethical leadership and coalition.'
     },
     mayu: {
-      title: "Mayu",
-      primaryVoice: "j0_n1",
-      secondaryVoice: "ol_salty",
+      title: 'Mayu',
+      primaryVoice: 'j0_n1',
+      secondaryVoice: 'ol_salty',
       corruptionAxis: null,
-      description: "Political operator. Maneuvering and advantage."
+      description: 'Political operator. Maneuvering and advantage.'
     },
     kyber: {
-      title: "Kyber",
-      primaryVoice: "j0_n1",
-      secondaryVoice: "miraj",
+      title: 'Kyber',
+      primaryVoice: 'j0_n1',
+      secondaryVoice: 'miraj',
       corruptionAxis: null,
-      description: "Medic. Pragmatic healing and triage."
+      description: 'Medic. Pragmatic healing and triage.'
     }
   },
 

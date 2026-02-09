@@ -212,9 +212,7 @@ export class ReasonInspector {
 
         // Strength
         const str = reason.strength ?? 0;
-        if (str < 0.6) distribution.strengthDistribution.weak++;
-        else if (str < 0.8) distribution.strengthDistribution.moderate++;
-        else distribution.strengthDistribution.strong++;
+        if (str < 0.6) {distribution.strengthDistribution.weak++;} else if (str < 0.8) {distribution.strengthDistribution.moderate++;} else {distribution.strengthDistribution.strong++;}
       }
     }
 

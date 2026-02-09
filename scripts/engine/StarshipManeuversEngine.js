@@ -157,7 +157,7 @@ export class StarshipManeuversEngine {
    * Private: Check if actor has Starship Tactics feat
    */
   static _hasStartshipTacticsFeat(actor) {
-    if (!actor?.items) return false;
+    if (!actor?.items) {return false;}
 
     // Check for "Starship Tactics" feat in actor's items
     const feats = actor.items.filter(item => item.type === 'feat');
@@ -171,11 +171,11 @@ export class StarshipManeuversEngine {
    * Private: Filter abilities to only include Starship Maneuvers
    */
   static _filterManeuvers(abilities) {
-    if (!abilities) return [];
+    if (!abilities) {return [];}
 
     // Filter ability cards from talents that are in the maneuvers list
     return abilities.filter(ability => {
-      if (!ability.talentName) return false;
+      if (!ability.talentName) {return false;}
       return this.ALL_MANEUVERS.includes(ability.talentName);
     });
   }
@@ -219,7 +219,7 @@ export class StarshipManeuversEngine {
    * @returns {Number} Number of maneuvers learned
    */
   static getManeuverCount(actor) {
-    if (!actor?.items) return 0;
+    if (!actor?.items) {return 0;}
 
     // 1 + WIS modifier per Starship Tactics feat taken
     const wisValue = actor.system?.attributes?.wis?.value ?? 10;

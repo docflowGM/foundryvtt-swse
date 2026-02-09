@@ -2,8 +2,8 @@
  * Minimal Progression UI helpers. Replace Dialog skeletons with Applications/HBS for full UX.
  */
 
-import { ProgressionEngine } from "../engine/progression-engine.js";
-import { PROGRESSION_RULES } from "../data/progression-data.js";
+import { ProgressionEngine } from '../engine/progression-engine.js';
+import { PROGRESSION_RULES } from '../data/progression-data.js';
 
 export class ProgressionUI {
   static async openStartSelector(actor) {
@@ -16,9 +16,9 @@ export class ProgressionUI {
           <button type="button" data-choice="template">Template Build</button>
         </div>`;
       const dlg = new Dialog({
-        title: "Create Character",
+        title: 'Create Character',
         content,
-        buttons: { cancel: { label: "Cancel" } },
+        buttons: { cancel: { label: 'Cancel' } },
         render: (html) => {
           const root = html?.[0] ?? html;
   root.querySelectorAll('[data-choice]').forEach(el => el.addEventListener('click', (ev) => {
@@ -33,7 +33,7 @@ export class ProgressionUI {
 
   static async openTemplateQuickBuild(actor) {
     const templates = PROGRESSION_RULES.templates || {};
-    const tplList = Object.entries(templates).map(([id, t]) => `<option value="${id}">${t.name}</option>`).join("");
+    const tplList = Object.entries(templates).map(([id, t]) => `<option value="${id}">${t.name}</option>`).join('');
 
     // Check if backgrounds are enabled via houserule
     const enableBackgrounds = game.settings.get('foundryvtt-swse', 'enableBackgrounds');
@@ -44,7 +44,7 @@ export class ProgressionUI {
       const backgrounds = PROGRESSION_RULES.backgrounds || {};
       const bgList = Object.entries(backgrounds)
         .map(([id, bg]) => `<option value="${id}">${bg.name}</option>`)
-        .join("");
+        .join('');
       backgroundField = `
         <div class="form-group background-selector" style="display: none;">
           <label>Background (optional)</label>
@@ -61,18 +61,18 @@ export class ProgressionUI {
         ${backgroundField}
       </form>`;
     new Dialog({
-      title: "Template Quick Build",
+      title: 'Template Quick Build',
       content,
       buttons: {
         ok: {
-          label: "Build",
+          label: 'Build',
           callback: async (html) => {
             const tpl = (root?.querySelector?.('[name="template"]')?.value ?? null);
             const bg = (root?.querySelector?.('[name="background"]')?.value ?? null) || null;
             await ProgressionEngine.applyTemplateBuild(actor, tpl, { background: bg });
           }
         },
-        cancel: { label: "Cancel" }
+        cancel: { label: 'Cancel' }
       },
       render: (html) => {
         // Add change listener to template dropdown to show/hide background selector

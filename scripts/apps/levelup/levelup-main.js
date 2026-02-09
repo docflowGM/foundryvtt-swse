@@ -112,13 +112,13 @@ import SWSEFormApplicationV2 from '../base/swse-form-application-v2.js';
 export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
-      classes: ['swse', 'levelup-dialog', "swse-app"],
+      classes: ['swse', 'levelup-dialog', 'swse-app'],
       template: 'systems/foundryvtt-swse/templates/apps/levelup.hbs',
       width: 800,
       height: 600,
       resizable: true,
       draggable: true,
-      scrollY: [".tab-content", ".window-content"],
+      scrollY: ['.tab-content', '.window-content'],
       tabs: [{ navSelector: '.tabs', contentSelector: '.tab-content', initial: 'class' }],
       submitOnChange: false,
       closeOnSubmit: false,
@@ -169,7 +169,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     // Check if character is incomplete and redirect to character generator
     const incompleteStep = this._detectIncompleteCharacter(actor);
     if (incompleteStep) {
-      ui.notifications.info("Character appears incomplete. Opening Character Generator to complete setup...");
+      ui.notifications.info('Character appears incomplete. Opening Character Generator to complete setup...');
       // Import CharacterGenerator dynamically to avoid circular dependency
       import('../chargen/chargen-main.js').then(module => {
         const CharacterGenerator = module.default;
@@ -177,7 +177,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
         chargen.currentStep = incompleteStep;
         chargen.render(true);
       });
-      throw new Error("Character incomplete - redirecting to character generator");
+      throw new Error('Character incomplete - redirecting to character generator');
     }
 
     this.currentStep = 'class'; // class, multiclass-bonus, ability-increase, feat, force-powers, talent, skills, summary
@@ -267,19 +267,19 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     data.characterClasses = getCharacterClasses(this.actor);
 
     // Multi-class bonus choice from houserules
-    data.multiclassBonusChoice = game.settings.get('foundryvtt-swse', "multiclassBonusChoice");
+    data.multiclassBonusChoice = game.settings.get('foundryvtt-swse', 'multiclassBonusChoice');
 
     // Talent tree restriction from houserules
-    data.talentTreeRestriction = game.settings.get('foundryvtt-swse', "talentTreeRestriction");
+    data.talentTreeRestriction = game.settings.get('foundryvtt-swse', 'talentTreeRestriction');
 
     // Ability increase settings
-    data.abilityIncreaseMethod = game.settings.get('foundryvtt-swse', "abilityIncreaseMethod") || "flexible";
+    data.abilityIncreaseMethod = game.settings.get('foundryvtt-swse', 'abilityIncreaseMethod') || 'flexible';
     data.getsAbilityIncrease = getsAbilityIncrease(data.newLevel);
     data.abilityIncreases = this.abilityIncreases;
 
     // Debug logging for ability scores
     if (data.getsAbilityIncrease) {
-      SWSELogger.log("SWSE LevelUp | Current ability scores:", actor.system.attributes);
+      SWSELogger.log('SWSE LevelUp | Current ability scores:', actor.system.attributes);
     }
 
     // Feat selection
@@ -443,7 +443,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
     // Animate mentor text with typing effect
     this._animateMentorText();
-  
+
     // Suggestion diff (optional learning aid)
     try {
       const enabled = game.settings.get('foundryvtt-swse', 'showSuggestionDiffOnLevelUp') ?? false;
@@ -456,12 +456,12 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
           const sugs = await SuggestionService.getSuggestions(this.actor, 'levelup', { persist: false });
           const diff = await SuggestionService.getSuggestionDiff(this.actor, 'levelup', sugs);
           const body = qs(root, '.swse-suggestion-diff__body');
-          if (body) body.innerHTML = '';
+          if (body) {body.innerHTML = '';}
           if (!diff.added.length && !diff.removed.length) {
-            if (body) body.insertAdjacentHTML('beforeend', `<div>No changes since last time.</div>`);
+            if (body) {body.insertAdjacentHTML('beforeend', `<div>No changes since last time.</div>`);}
           } else {
-            if (diff.added.length && body) body.insertAdjacentHTML('beforeend', `<div><strong>New:</strong> ${diff.added.slice(0,8).join(', ')}</div>`);
-            if (diff.removed.length && body) body.insertAdjacentHTML('beforeend', `<div><strong>Gone:</strong> ${diff.removed.slice(0,8).join(', ')}</div>`);
+            if (diff.added.length && body) {body.insertAdjacentHTML('beforeend', `<div><strong>New:</strong> ${diff.added.slice(0,8).join(', ')}</div>`);}
+            if (diff.removed.length && body) {body.insertAdjacentHTML('beforeend', `<div><strong>Gone:</strong> ${diff.removed.slice(0,8).join(', ')}</div>`);}
           }
         })();
       }
@@ -539,7 +539,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       .filter(feat => !feat.isUnavailable && !feat.isSelected);
 
     if (availableFeats.length === 0) {
-      ui.notifications.warn("No available feats to suggest.");
+      ui.notifications.warn('No available feats to suggest.');
       return;
     }
 
@@ -549,7 +549,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       let suggestions = await SuggestionService.getSuggestions(this.actor, 'levelup', { domain: 'feats', available: availableFeats, pendingData, persist: true });
 
       if (!suggestions || suggestions.length === 0) {
-        ui.notifications.warn("No feat suggestions available at this time.");
+        ui.notifications.warn('No feat suggestions available at this time.');
         return;
       }
 
@@ -579,7 +579,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       }
     } catch (err) {
       console.error('Error getting feat suggestion:', err);
-      ui.notifications.error("Error getting mentor suggestion. Check console.");
+      ui.notifications.error('Error getting mentor suggestion. Check console.');
     }
   }
 
@@ -594,7 +594,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       const availableClasses = await getAvailableClasses(this.actor, pendingData, { includeSuggestions: true });
 
       if (!availableClasses || availableClasses.length === 0) {
-        ui.notifications.warn("No available classes to suggest.");
+        ui.notifications.warn('No available classes to suggest.');
         return;
       }
 
@@ -607,7 +607,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.name}`);
     } catch (err) {
       console.error('Error getting class suggestion:', err);
-      ui.notifications.error("Error getting mentor suggestion. Check console.");
+      ui.notifications.error('Error getting mentor suggestion. Check console.');
     }
   }
 
@@ -627,7 +627,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       const availableTrees = await getAvailableTalentTrees(this.selectedClass, this.actor);
 
       if (!availableTrees || availableTrees.length === 0) {
-        ui.notifications.warn("No talent trees available for this class.");
+        ui.notifications.warn('No talent trees available for this class.');
         return;
       }
 
@@ -639,7 +639,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       });
 
       if (availableTalents.length === 0) {
-        ui.notifications.warn("No available talents to suggest.");
+        ui.notifications.warn('No available talents to suggest.');
         return;
       }
 
@@ -648,7 +648,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       let suggestions = await SuggestionService.getSuggestions(this.actor, 'levelup', { domain: 'talents', available: availableTalents, pendingData, persist: true });
 
       if (!suggestions || suggestions.length === 0) {
-        ui.notifications.warn("No talent suggestions available at this time.");
+        ui.notifications.warn('No talent suggestions available at this time.');
         return;
       }
 
@@ -677,7 +677,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       }
     } catch (err) {
       console.error('Error getting talent suggestion:', err);
-      ui.notifications.error("Error getting mentor suggestion. Check console.");
+      ui.notifications.error('Error getting mentor suggestion. Check console.');
     }
   }
 
@@ -694,7 +694,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       const availablePowers = await getAvailableForcePowers(this.actor, {});
 
       if (!availablePowers || availablePowers.length === 0) {
-        ui.notifications.warn("No available Force powers to suggest.");
+        ui.notifications.warn('No available Force powers to suggest.');
         return;
       }
 
@@ -722,7 +722,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       const topSuggestion = suggestions.find(s => s.suggestion?.tier >= 4) || suggestions[0];
 
       if (!topSuggestion) {
-        ui.notifications.warn("No Force power suggestions available at this time.");
+        ui.notifications.warn('No Force power suggestions available at this time.');
         return;
       }
 
@@ -732,7 +732,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.name}`);
     } catch (err) {
       console.error('Error getting Force power suggestion:', err);
-      ui.notifications.error("Error getting mentor suggestion. Check console.");
+      ui.notifications.error('Error getting mentor suggestion. Check console.');
     }
   }
 
@@ -756,7 +756,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       });
 
       if (!suggestions || suggestions.length === 0) {
-        ui.notifications.warn("No attribute suggestions available at this time.");
+        ui.notifications.warn('No attribute suggestions available at this time.');
         return;
       }
 
@@ -764,7 +764,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       const topSuggestion = suggestions.find(s => s.suggestion?.tier >= 3) || suggestions[0];
 
       if (!topSuggestion) {
-        ui.notifications.warn("No suitable attribute suggestions found.");
+        ui.notifications.warn('No suitable attribute suggestions found.');
         return;
       }
 
@@ -798,7 +798,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       }
     } catch (err) {
       console.error('Error getting attribute suggestion:', err);
-      ui.notifications.error("Error getting mentor suggestion. Check console.");
+      ui.notifications.error('Error getting mentor suggestion. Check console.');
     }
   }
 
@@ -815,7 +815,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     const canonical = PrerequisiteChecker.getAllGrantedFeats(this.actor, this.selectedClass);
     const legacy = PrerequisiteValidator.getAllGrantedFeats(this.actor, this.selectedClass);
     if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
-      console.warn("getAllGrantedFeats mismatch detected", { canonical, legacy });
+      console.warn('getAllGrantedFeats mismatch detected', { canonical, legacy });
     }
     const grantedFeats = canonical;
 
@@ -865,7 +865,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
     const featData = this.featData?.feats || [];
     const feat = selectBonusFeat(featId, featData, this.selectedFeats);
-    if (!feat) return;
+    if (!feat) {return;}
 
     // Check for duplicates - character already has this feat (allow for repeatable feats)
     const alreadyHas = this.actor.items.some(i =>
@@ -979,7 +979,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
         buttons: {
           select: {
             icon: '<i class="fas fa-check"></i>',
-            label: "Select",
+            label: 'Select',
             callback: (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
     const selectedSkill = root?.querySelector?.('#skill-training-selection')?.value;
@@ -998,15 +998,15 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
-            label: "Cancel",
+            label: 'Cancel',
             callback: () => {
-              ui.notifications.warn("Skill Training feat cancelled.");
+              ui.notifications.warn('Skill Training feat cancelled.');
               dialog.close();
               resolve(false);
             }
           }
         },
-        default: "select"
+        default: 'select'
       }, { width: 400 });
       dialog.render(true);
     });
@@ -1074,7 +1074,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
         buttons: {
           select: {
             icon: '<i class="fas fa-check"></i>',
-            label: "Select",
+            label: 'Select',
             callback: (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
     const selectedWeapon = root?.querySelector?.('#weapon-choice-selection')?.value;
@@ -1093,15 +1093,15 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
-            label: "Cancel",
+            label: 'Cancel',
             callback: () => {
-              ui.notifications.warn("Feat selection cancelled.");
+              ui.notifications.warn('Feat selection cancelled.');
               dialog.close();
               resolve(false);
             }
           }
         },
-        default: "select"
+        default: 'select'
       }, { width: 400 });
       dialog.render(true);
     });
@@ -1115,11 +1115,11 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     const root = this.element;
     const header = event.currentTarget;
     const categoryElement = header?.closest?.('.feat-category');
-    if (!categoryElement) return;
+    if (!categoryElement) {return;}
 
     categoryElement.classList.toggle('expanded');
     const feats = qs(categoryElement, '.category-feats');
-    if (feats) setVisible(feats, categoryElement.classList.contains('expanded'));
+    if (feats) {setVisible(feats, categoryElement.classList.contains('expanded'));}
   }
 
   _onFeatSearch(event) {
@@ -1136,7 +1136,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   _onClearSearch() {
     const root = this.element;
     const input = qs(root, '.feat-search-input');
-    if (input) input.value = '';
+    if (input) {input.value = '';}
     this._featSearchTerm = '';
     const clearBtn = qs(root, '.clear-search-btn');
     setVisible(clearBtn, false);
@@ -1147,7 +1147,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     const root = this.element;
 
     const input = qs(root, '.feat-search-input');
-    if (input) input.value = '';
+    if (input) {input.value = '';}
     this._featSearchTerm = '';
     setVisible(qs(root, '.clear-search-btn'), false);
 
@@ -1155,7 +1155,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     this._updateActiveTagsDisplay();
 
     const toggle = qs(root, '.show-unavailable-toggle');
-    if (toggle) toggle.checked = false;
+    if (toggle) {toggle.checked = false;}
 
     this._applyFeatFilters();
   }
@@ -1166,10 +1166,10 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
   _onClickFeatTag(event) {
     const tag = event.currentTarget?.dataset?.tag;
-    if (!tag) return;
+    if (!tag) {return;}
 
-    if (!Array.isArray(this.activeTags)) this.activeTags = [];
-    if (!this.activeTags.includes(tag)) this.activeTags.push(tag);
+    if (!Array.isArray(this.activeTags)) {this.activeTags = [];}
+    if (!this.activeTags.includes(tag)) {this.activeTags.push(tag);}
 
     this._updateActiveTagsDisplay();
     this._applyFeatFilters();
@@ -1203,11 +1203,11 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       const visibleFeats = qsa(category, '.feat-card').filter(isVisible).length;
 
       const badge = qs(category, '.count-badge');
-      if (badge) badge.textContent = String(visibleFeats);
+      if (badge) {badge.textContent = String(visibleFeats);}
 
       category.classList.toggle('empty-category', visibleFeats === 0);
 
-      if (filtersActive) category.classList.toggle('expanded', visibleFeats > 0);
+      if (filtersActive) {category.classList.toggle('expanded', visibleFeats > 0);}
 
       if (featsContainer) {
         const show = category.classList.contains('expanded') && visibleFeats > 0;
@@ -1217,13 +1217,13 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
     const totalVisible = qsa(root, '.feat-card').filter(isVisible).length;
     const totalBadge = qs(root, '.total-count-badge');
-    if (totalBadge) totalBadge.textContent = String(totalVisible);
+    if (totalBadge) {totalBadge.textContent = String(totalVisible);}
   }
 
   _updateActiveTagsDisplay() {
     const root = this.element;
     const container = qs(root, '.active-tags-container');
-    if (!container) return;
+    if (!container) {return;}
 
     container.innerHTML = '';
 
@@ -1236,7 +1236,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       container.appendChild(badge);
 
       badge.addEventListener('click', (ev) => {
-        if (!ev.target?.classList?.contains('remove-tag')) return;
+        if (!ev.target?.classList?.contains('remove-tag')) {return;}
         this.activeTags = (this.activeTags || []).filter(t => t !== tag);
         this._updateActiveTagsDisplay();
         this._applyFeatFilters();
@@ -1279,7 +1279,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     const featId = event.currentTarget.dataset.featId;
 
     const feat = await selectMulticlassFeat(featId);
-    if (!feat) return;
+    if (!feat) {return;}
 
     // Check for duplicates - character already has this feat
     const alreadyHas = this.actor.items.some(i =>
@@ -1314,7 +1314,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   async _onAbilityIncrease(event) {
     event.preventDefault();
     const ability = event.currentTarget.dataset.ability;
-    const abilityIncreaseMethod = game.settings.get('foundryvtt-swse', "abilityIncreaseMethod");
+    const abilityIncreaseMethod = game.settings.get('foundryvtt-swse', 'abilityIncreaseMethod');
 
     if (!this.abilityIncreases[ability]) {
       this.abilityIncreases[ability] = 0;
@@ -1323,7 +1323,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     // Calculate total points allocated
     const totalAllocated = Object.values(this.abilityIncreases).reduce((sum, val) => sum + val, 0);
 
-    if (abilityIncreaseMethod === "flexible") {
+    if (abilityIncreaseMethod === 'flexible') {
       // Flexible: Can do 1+1 or 2 to one attribute
       if (totalAllocated >= 2) {
         ui.notifications.warn("You've already allocated 2 ability points!");
@@ -1347,7 +1347,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       }
 
       if (this.abilityIncreases[ability] >= 1) {
-        ui.notifications.warn("Standard method: You must allocate to 2 different attributes!");
+        ui.notifications.warn('Standard method: You must allocate to 2 different attributes!');
         return;
       }
 
@@ -1515,7 +1515,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
         // Check if they've allocated all 2 points (unless in Free Build mode)
         const totalAllocated = Object.values(this.abilityIncreases).reduce((sum, val) => sum + val, 0);
         if (!this.freeBuild && totalAllocated < 2) {
-          ui.notifications.warn("You must allocate all 2 ability points before continuing! (Or enable Free Build mode to skip)");
+          ui.notifications.warn('You must allocate all 2 ability points before continuing! (Or enable Free Build mode to skip)');
           return;
         }
         if (getsBonusFt) {
@@ -1529,7 +1529,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       case 'feat': {
         // Check if they selected a feat (unless in Free Build mode)
         if (!this.freeBuild && this.selectedFeats.length === 0) {
-          ui.notifications.warn("You must select a feat before continuing! (Or enable Free Build mode to skip)");
+          ui.notifications.warn('You must select a feat before continuing! (Or enable Free Build mode to skip)');
           return;
         }
         // Check if Force Powers step applies
@@ -1565,9 +1565,9 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
         if (!this.freeBuild && (!heroicDone || !classDone)) {
           const missing = [];
-          if (!heroicDone) missing.push("Heroic Talent");
-          if (!classDone) missing.push("Class Talent");
-          ui.notifications.warn(`You must select the following before continuing: ${missing.join(", ")}. (Or enable Free Build mode to skip)`);
+          if (!heroicDone) {missing.push('Heroic Talent');}
+          if (!classDone) {missing.push('Class Talent');}
+          ui.notifications.warn(`You must select the following before continuing: ${missing.join(', ')}. (Or enable Free Build mode to skip)`);
           return;
         }
         this.currentStep = 'summary';
@@ -1664,7 +1664,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       `
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
     // Temporarily enable freeBuild to skip validation
     const wasFreeBuild = this.freeBuild;
@@ -1723,7 +1723,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
     // Validation before attempting level up
     if (!this.selectedClass) {
-      ui.notifications.error("You must select a class before completing level up.");
+      ui.notifications.error('You must select a class before completing level up.');
       return;
     }
 
@@ -1866,8 +1866,8 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
           // Apply retroactive HP
           const currentHP = this.actor.system.hp.max || 0;
           await this.actor.update({
-            "system.hp.max": currentHP + retroactiveHPGain,
-            "system.hp.value": (this.actor.system.hp.value || 0) + retroactiveHPGain
+            'system.hp.max': currentHP + retroactiveHPGain,
+            'system.hp.value': (this.actor.system.hp.value || 0) + retroactiveHPGain
           });
           swseLogger.log(`SWSE LevelUp | CON modifier increased - granting ${retroactiveHPGain} retroactive HP`);
           ui.notifications.info(`Constitution increased! You gain ${retroactiveHPGain} retroactive HP!`);
@@ -1943,23 +1943,23 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       this.actor.sheet.render(true);
 
     } catch (err) {
-      swseLogger.error("SWSE LevelUp | Error completing level up:", err);
+      swseLogger.error('SWSE LevelUp | Error completing level up:', err);
 
       // Provide specific error message based on error type
-      let errorMessage = "Failed to complete level up";
+      let errorMessage = 'Failed to complete level up';
       if (err.message) {
         // Extract meaningful error messages
-        if (err.message.includes("talent")) {
+        if (err.message.includes('talent')) {
           errorMessage = `Talent Error: ${err.message}`;
-        } else if (err.message.includes("feat")) {
+        } else if (err.message.includes('feat')) {
           errorMessage = `Feat Error: ${err.message}`;
-        } else if (err.message.includes("class")) {
+        } else if (err.message.includes('class')) {
           errorMessage = `Class Error: ${err.message}`;
-        } else if (err.message.includes("skill")) {
+        } else if (err.message.includes('skill')) {
           errorMessage = `Skill Error: ${err.message}`;
-        } else if (err.message.includes("ability")) {
+        } else if (err.message.includes('ability')) {
           errorMessage = `Ability Score Error: ${err.message}`;
-        } else if (err.message.includes("prerequisite") || err.message.includes("requires")) {
+        } else if (err.message.includes('prerequisite') || err.message.includes('requires')) {
           errorMessage = `Prerequisite Error: ${err.message}`;
         } else {
           errorMessage = `${errorMessage}: ${err.message}`;
@@ -1967,7 +1967,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       }
 
       ui.notifications.error(errorMessage, { permanent: true });
-      ui.notifications.warn("Your character may be in an inconsistent state. Please check your character sheet and contact the GM if needed.");
+      ui.notifications.warn('Your character may be in an inconsistent state. Please check your character sheet and contact the GM if needed.');
 
       // Re-render to show current state
       this.render();

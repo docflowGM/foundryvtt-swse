@@ -629,7 +629,7 @@ export async function selectMentorResponse(context) {
   // LOGGING (Dev-only): Trace the complete decision flow
   if (isMentorLoggingEnabled()) {
     logMentorDecision({
-      characterName: context.actor?.name || "Unknown",
+      characterName: context.actor?.name || 'Unknown',
       mentorId: context.mentorId,
       reasons,
       ruleLabel: rule.label,

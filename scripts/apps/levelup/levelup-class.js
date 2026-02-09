@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "../../progression/engine/progression-engine.js";
+import { ProgressionEngine } from '../../progression/engine/progression-engine.js';
 /**
  * Class selection and species handling for SWSE Level Up system
  * Includes level 0 character creation (species, attributes)
@@ -81,7 +81,7 @@ export async function getAvailableClasses(actor, pendingData, options = {}) {
   if (!classPack) {
     SWSELogger.error(`[LEVELUP-CLASS] ERROR: Classes compendium pack not found!`);
     SWSELogger.error(`[LEVELUP-CLASS] Available packs:`, Array.from(game.packs.keys()));
-    ui.notifications.error("Failed to load classes compendium. Classes will not be available.");
+    ui.notifications.error('Failed to load classes compendium. Classes will not be available.');
     return [];
   }
 
@@ -194,7 +194,7 @@ export async function getAvailableSpecies() {
   const speciesPack = game.packs.get('foundryvtt-swse.species');
   if (!speciesPack) {
     SWSELogger.error('SWSE LevelUp | Species compendium not found!');
-    ui.notifications.error("Failed to load species compendium. Species will not be available.");
+    ui.notifications.error('Failed to load species compendium. Species will not be available.');
     return [];
   }
 
@@ -227,40 +227,40 @@ export async function getAvailableSpecies() {
  * @returns {Array} Sorted species array
  */
 function sortSpeciesBySource(species) {
-  if (!species || species.length === 0) return species;
+  if (!species || species.length === 0) {return species;}
 
   // Define source priority order (Core first, then alphabetically)
   const sourcePriority = {
-    "Core": 0,
-    "Core Rulebook": 0,
-    "Knights of the Old Republic": 1,
-    "KotOR": 1,
-    "KOTOR": 1,
-    "Clone Wars": 2,
-    "Rebellion Era": 3,
-    "Legacy Era": 4,
-    "The Force Unleashed": 5,
-    "Galaxy at War": 6,
-    "Unknown Regions": 7,
-    "Scum and Villainy": 8,
-    "Threats of the Galaxy": 9,
-    "Jedi Academy": 10
+    'Core': 0,
+    'Core Rulebook': 0,
+    'Knights of the Old Republic': 1,
+    'KotOR': 1,
+    'KOTOR': 1,
+    'Clone Wars': 2,
+    'Rebellion Era': 3,
+    'Legacy Era': 4,
+    'The Force Unleashed': 5,
+    'Galaxy at War': 6,
+    'Unknown Regions': 7,
+    'Scum and Villainy': 8,
+    'Threats of the Galaxy': 9,
+    'Jedi Academy': 10
   };
 
   // Sort species
   return species.sort((a, b) => {
-    const nameA = a.name || "";
-    const nameB = b.name || "";
+    const nameA = a.name || '';
+    const nameB = b.name || '';
 
     // PRIORITY 1: Human always comes first
-    const isHumanA = nameA.toLowerCase() === "human";
-    const isHumanB = nameB.toLowerCase() === "human";
+    const isHumanA = nameA.toLowerCase() === 'human';
+    const isHumanB = nameB.toLowerCase() === 'human';
 
-    if (isHumanA && !isHumanB) return -1;
-    if (!isHumanA && isHumanB) return 1;
+    if (isHumanA && !isHumanB) {return -1;}
+    if (!isHumanA && isHumanB) {return 1;}
 
-    const sourceA = a.system?.source || "Unknown";
-    const sourceB = b.system?.source || "Unknown";
+    const sourceA = a.system?.source || 'Unknown';
+    const sourceB = b.system?.source || 'Unknown';
 
     // Get priority (default to 999 for unknown sources)
     const priorityA = sourcePriority[sourceA] ?? 999;
@@ -293,7 +293,7 @@ export async function selectSpecies(speciesId, speciesName) {
   const speciesPack = game.packs.get('foundryvtt-swse.species');
   if (!speciesPack) {
     SWSELogger.error('SWSE LevelUp | Species compendium not found!');
-    ui.notifications.error("Species compendium not found! Please check that the foundryvtt-swse.species compendium exists.");
+    ui.notifications.error('Species compendium not found! Please check that the foundryvtt-swse.species compendium exists.');
     return null;
   }
 
@@ -332,7 +332,7 @@ export async function selectClass(classId, actor, context) {
   const classDoc = await classPack.getDocument(classId);
 
   if (!classDoc) {
-    ui.notifications.error("Class not found!");
+    ui.notifications.error('Class not found!');
     return null;
   }
 
@@ -344,7 +344,7 @@ export async function selectClass(classId, actor, context) {
   // If multiclassing and not already confirmed, show confirmation dialog
   if (isMulticlassing && context.selectedClass?.name !== classDoc.name) {
     const confirmed = await Dialog.confirm({
-      title: "Multiclass Confirmation",
+      title: 'Multiclass Confirmation',
       content: `
         <p>You are about to multiclass into <strong>${classDoc.name}</strong>.</p>
         <p><strong>Current class(es):</strong> ${classNames.join(', ')}</p>
@@ -428,10 +428,10 @@ export async function applyPrestigeClassFeatures(classDoc) {
  */
 export async function applyClassFeatures(classDoc, classLevel, actor) {
   const levelProgression = getClassProperty(classDoc, 'levelProgression', null);
-  if (!levelProgression || !Array.isArray(levelProgression)) return;
+  if (!levelProgression || !Array.isArray(levelProgression)) {return;}
 
   const levelData = levelProgression.find(lp => lp.level === classLevel);
-  if (!levelData) return;
+  if (!levelData) {return;}
 
   SWSELogger.log(`SWSE LevelUp | Applying class features for ${classDoc.name} level ${classLevel}:`, levelData);
 
@@ -443,8 +443,8 @@ export async function applyClassFeatures(classDoc, classLevel, actor) {
     const newValue = currentValue + levelData.forcePoints;
 
     await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      "system.forcePoints.max": newMax,
-      "system.forcePoints.value": newValue
+      'system.forcePoints.max': newMax,
+      'system.forcePoints.value': newValue
     });
 
     SWSELogger.log(`SWSE LevelUp | Increased Force Points by ${levelData.forcePoints} (${currentMax} → ${newMax})`);
@@ -460,8 +460,8 @@ export async function applyClassFeatures(classDoc, classLevel, actor) {
         // Create a feature item on the actor
         const featureItem = {
           name: feature.name,
-          type: "feat", // Use feat type for class features
-          img: "icons/svg/upgrade.svg",
+          type: 'feat', // Use feat type for class features
+          img: 'icons/svg/upgrade.svg',
           system: {
             description: `Class feature from ${classDoc.name} level ${classLevel}`,
             source: `${classDoc.name} ${classLevel}`,
@@ -475,7 +475,7 @@ export async function applyClassFeatures(classDoc, classLevel, actor) {
         );
 
         if (!existingFeature) {
-          await actor.createEmbeddedDocuments("Item", [featureItem]);
+          await actor.createEmbeddedDocuments('Item', [featureItem]);
           ui.notifications.info(`Gained class feature: ${feature.name}`);
         }
       }
@@ -515,7 +515,7 @@ export async function createOrUpdateClassItem(classDoc, actor) {
 
     const classItem = {
       name: classDoc.name,
-      type: "class",
+      type: 'class',
       img: classDoc.img,
       system: {
         level: 1,
@@ -535,7 +535,7 @@ export async function createOrUpdateClassItem(classDoc, actor) {
 
     SWSELogger.log(`SWSE LevelUp | Creating ${classItem.name} with defense bonuses: Fort +${classItem.system.defenses.fortitude}, Ref +${classItem.system.defenses.reflex}, Will +${classItem.system.defenses.will}`);
 
-    await actor.createEmbeddedDocuments("Item", [classItem]);
+    await actor.createEmbeddedDocuments('Item', [classItem]);
   }
 
   return classLevel;
@@ -548,35 +548,35 @@ export async function createOrUpdateClassItem(classDoc, actor) {
  */
 export function bindAbilitiesUI(root) {
   const doc = root || this.element[0];
-  const ablist = ["str", "dex", "con", "int", "wis", "cha"];
+  const ablist = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
   // Point buy system
   let pool = 32;
   const pointCosts = (from, to) => {
     const costForIncrement = (v) => {
-      if (v < 12) return 1;
-      if (v < 14) return 2;
+      if (v < 12) {return 1;}
+      if (v < 14) {return 2;}
       return 3;
     };
     let cost = 0;
-    for (let v = from; v < to; v++) cost += costForIncrement(v);
+    for (let v = from; v < to; v++) {cost += costForIncrement(v);}
     return cost;
   };
 
   const updatePointRemaining = () => {
-    const el = doc.querySelector("#point-remaining");
-    if (el) el.textContent = pool;
+    const el = doc.querySelector('#point-remaining');
+    if (el) {el.textContent = pool;}
   };
 
   const initPointBuy = () => {
     pool = 32;
     ablist.forEach(a => {
       const inp = doc.querySelector(`[name="ability_${a}"]`);
-      if (inp) inp.value = 8;
+      if (inp) {inp.value = 8;}
       const plus = doc.querySelector(`[data-plus="${a}"]`);
       const minus = doc.querySelector(`[data-minus="${a}"]`);
-      if (plus) plus.onclick = () => adjustAttribute(a, +1);
-      if (minus) minus.onclick = () => adjustAttribute(a, -1);
+      if (plus) {plus.onclick = () => adjustAttribute(a, +1);}
+      if (minus) {minus.onclick = () => adjustAttribute(a, -1);}
     });
     updatePointRemaining();
     recalcPreview();
@@ -584,16 +584,16 @@ export function bindAbilitiesUI(root) {
 
   const adjustAttribute = (ab, delta) => {
     const el = doc.querySelector(`[name="ability_${ab}"]`);
-    if (!el) return;
+    if (!el) {return;}
 
-    let cur = Number(el.value || 8);
+    const cur = Number(el.value || 8);
     const newVal = Math.max(8, Math.min(18, cur + delta));
     const costNow = pointCosts(8, cur);
     const costNew = pointCosts(8, newVal);
     const deltaCost = costNew - costNow;
 
     if (deltaCost > pool) {
-      ui.notifications.warn("Not enough point-buy points remaining.");
+      ui.notifications.warn('Not enough point-buy points remaining.');
       return;
     }
 
@@ -607,29 +607,29 @@ export function bindAbilitiesUI(root) {
   const rollStandard = async () => {
     const results = [];
     for (let i = 0; i < 6; i++) {
-      const r = await globalThis.SWSE.RollEngine.safeRoll("4d6kh3").evaluate();
+      const r = await globalThis.SWSE.RollEngine.safeRoll('4d6kh3').evaluate();
       const total = r.total;
       results.push({ total });
     }
 
-    const container = doc.querySelector("#roll-results");
+    const container = doc.querySelector('#roll-results');
     if (container) {
-      container.innerHTML = "";
+      container.innerHTML = '';
       results.forEach(res => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "assign-roll";
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'assign-roll';
         btn.textContent = `${res.total}`;
         btn.dataset.value = res.total;
         btn.onclick = () => assignRollToNext(res.total);
         container.appendChild(btn);
       });
-      ui.notifications.info("Standard rolls generated — click a result then click an ability to assign.");
+      ui.notifications.info('Standard rolls generated — click a result then click an ability to assign.');
     }
   };
 
   const assignRollToNext = (val) => {
-    let target = doc.querySelector(".ability-input:focus");
+    let target = doc.querySelector('.ability-input:focus');
     if (!target) {
       const inputs = ablist.map(a => doc.querySelector(`[name="ability_${a}"]`)).filter(Boolean);
       inputs.sort((x, y) => Number(x.value) - Number(y.value));
@@ -643,10 +643,10 @@ export function bindAbilitiesUI(root) {
 
   // Organic roll
   const rollOrganic = async () => {
-    const r = await globalThis.SWSE.RollEngine.safeRoll("24d6").evaluate();
+    const r = await globalThis.SWSE.RollEngine.safeRoll('24d6').evaluate();
     if (!r.dice || !r.dice[0] || !r.dice[0].results) {
-      ui.notifications.error("Failed to roll dice. Please try again.");
-      SWSELogger.error("SWSE | Roll failed:", r);
+      ui.notifications.error('Failed to roll dice. Please try again.');
+      SWSELogger.error('SWSE | Roll failed:', r);
       return;
     }
     const rolls = r.dice[0].results.map(x => x.result).sort((a, b) => b - a);
@@ -657,36 +657,36 @@ export function bindAbilitiesUI(root) {
       groups.push(kept.slice(i * 3, (i + 1) * 3));
     }
 
-    const container = doc.querySelector("#organic-groups");
+    const container = doc.querySelector('#organic-groups');
     if (container) {
-      container.innerHTML = "";
+      container.innerHTML = '';
       groups.forEach((g, idx) => {
-        const div = document.createElement("div");
-        div.className = "organic-group";
+        const div = document.createElement('div');
+        div.className = 'organic-group';
         const s = g.reduce((a, b) => a + b, 0);
-        div.textContent = `${g.join(", ")} = ${s}`;
+        div.textContent = `${g.join(', ')} = ${s}`;
         div.dataset.sum = s;
         div.onclick = () => selectOrganicGroup(div);
         container.appendChild(div);
       });
-      ui.notifications.info("Organic roll completed — click a group, then click an ability to assign.");
+      ui.notifications.info('Organic roll completed — click a group, then click an ability to assign.');
     }
     doc._selectedOrganic = null;
   };
 
   const selectOrganicGroup = (div) => {
-    doc.querySelectorAll(".organic-group").forEach(d => d.classList.remove("selected-group"));
-    div.classList.add("selected-group");
+    doc.querySelectorAll('.organic-group').forEach(d => d.classList.remove('selected-group'));
+    div.classList.add('selected-group');
     doc._selectedOrganic = Number(div.dataset.sum);
 
     ablist.forEach(a => {
       const input = doc.querySelector(`[name="ability_${a}"]`);
       if (input) {
         input.onclick = () => {
-          if (doc._selectedOrganic == null) return;
+          if (doc._selectedOrganic == null) {return;}
           input.value = doc._selectedOrganic;
           recalcPreview();
-          doc.querySelectorAll(".organic-group").forEach(d => d.classList.remove("selected-group"));
+          doc.querySelectorAll('.organic-group').forEach(d => d.classList.remove('selected-group'));
           doc._selectedOrganic = null;
         };
       }
@@ -701,7 +701,7 @@ export function bindAbilitiesUI(root) {
       const total = base;
       const mod = Math.floor((total - 10) / 2);
 
-      if (display) display.textContent = `Total: ${total} (Mod: ${mod >= 0 ? "+" : ""}${mod})`;
+      if (display) {display.textContent = `Total: ${total} (Mod: ${mod >= 0 ? '+' : ''}${mod})`;}
     });
   };
 
@@ -711,12 +711,12 @@ export function bindAbilitiesUI(root) {
     const modes = ['point-mode', 'standard-mode', 'organic-mode', 'free-mode'];
     modes.forEach(mode => {
       const modeDiv = doc.querySelector(`#${mode}`);
-      if (modeDiv) modeDiv.style.display = 'none';
+      if (modeDiv) {modeDiv.style.display = 'none';}
     });
 
     // Show selected mode
     const selectedMode = doc.querySelector(`#${modeName}`);
-    if (selectedMode) selectedMode.style.display = 'block';
+    if (selectedMode) {selectedMode.style.display = 'block';}
 
     // Update button states
     const buttons = doc.querySelectorAll('.method-button');
@@ -724,7 +724,7 @@ export function bindAbilitiesUI(root) {
   };
 
   // Wire buttons with mode switching
-  const stdBtn = doc.querySelector("#std-roll-btn");
+  const stdBtn = doc.querySelector('#std-roll-btn');
   if (stdBtn) {
     stdBtn.onclick = () => {
       switchMode('standard-mode');
@@ -733,7 +733,7 @@ export function bindAbilitiesUI(root) {
     };
   }
 
-  const orgBtn = doc.querySelector("#org-roll-btn");
+  const orgBtn = doc.querySelector('#org-roll-btn');
   if (orgBtn) {
     orgBtn.onclick = () => {
       switchMode('organic-mode');
@@ -742,7 +742,7 @@ export function bindAbilitiesUI(root) {
     };
   }
 
-  const pbInit = doc.querySelector("#pb-init");
+  const pbInit = doc.querySelector('#pb-init');
   if (pbInit) {
     pbInit.onclick = () => {
       switchMode('point-mode');
@@ -753,6 +753,6 @@ export function bindAbilitiesUI(root) {
 
   // Initialize
   switchMode('point-mode');
-  if (pbInit) pbInit.classList.add('active');
+  if (pbInit) {pbInit.classList.add('active');}
   initPointBuy();
 }

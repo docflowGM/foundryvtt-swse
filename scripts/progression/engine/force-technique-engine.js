@@ -4,8 +4,8 @@
  * Handles trigger detection, collection, and selection of force techniques.
  */
 
-import { ForceTechniquePicker } from "../ui/force-technique-picker.js";
-import { swseLogger } from "../../utils/logger.js";
+import { ForceTechniquePicker } from '../ui/force-technique-picker.js';
+import { swseLogger } from '../../utils/logger.js';
 
 export class ForceTechniqueEngine {
   /**
@@ -43,7 +43,7 @@ export class ForceTechniqueEngine {
 
       return docs ?? [];
     } catch (e) {
-      swseLogger.error("ForceTechniqueEngine: Failed to collect techniques from compendium", e);
+      swseLogger.error('ForceTechniqueEngine: Failed to collect techniques from compendium', e);
       return [];
     }
   }
@@ -89,19 +89,19 @@ export class ForceTechniqueEngine {
           toCreate.push(it.document.toObject());
         } else {
           toCreate.push({
-            name: it.name || "Force Technique",
-            type: "feat",
-            img: it.img || "icons/svg/mystery-man.svg",
+            name: it.name || 'Force Technique',
+            type: 'feat',
+            img: it.img || 'icons/svg/mystery-man.svg',
             system: it.system || {}
           });
         }
       }
 
       if (toCreate.length) {
-        await actor.createEmbeddedDocuments("Item", toCreate);
+        await actor.createEmbeddedDocuments('Item', toCreate);
       }
     } catch (e) {
-      swseLogger.error("ForceTechniqueEngine.applySelected error", e);
+      swseLogger.error('ForceTechniqueEngine.applySelected error', e);
     }
   }
 }

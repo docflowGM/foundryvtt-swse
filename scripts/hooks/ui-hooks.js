@@ -20,7 +20,7 @@ import registerLevelUpSheetHooks from './levelup-sheet-hooks.js';
  * Called during system initialization
  */
 export function registerUIHooks() {
-    SWSELogger.log("Registering UI hooks");
+    SWSELogger.log('Registering UI hooks');
 
     // Application V1 rendering (legacy support)
     HooksRegistry.register('renderApplication', handleRenderApplication, {
@@ -103,7 +103,7 @@ export function registerUIHooks() {
     // Actor sheet header integration (Level Up)
     registerLevelUpSheetHooks();
 
-    SWSELogger.log("SWSE | UI hooks initialized");
+    SWSELogger.log('SWSE | UI hooks initialized');
 }
 
 /**
@@ -111,12 +111,12 @@ export function registerUIHooks() {
  * @returns {Object} Boundaries object with min/max coordinates
  */
 function getViewportBounds() {
-    const sidebar = document.getElementById("sidebar");
-    const controls = document.getElementById("controls");
-    const navigation = document.getElementById("navigation");
-    const hotbar = document.getElementById("hotbar");
+    const sidebar = document.getElementById('sidebar');
+    const controls = document.getElementById('controls');
+    const navigation = document.getElementById('navigation');
+    const hotbar = document.getElementById('hotbar');
 
-    const sidebarCollapsed = sidebar?.classList.contains("collapsed");
+    const sidebarCollapsed = sidebar?.classList.contains('collapsed');
 
     return {
         minX: (controls?.offsetWidth || 80) + 10,
@@ -157,11 +157,11 @@ function constrainPosition(position, bounds) {
  */
 function handleRenderApplication(app, html, data) {
     // Only process pop-out windows
-    if (!app.options?.popOut && !app.options?.window?.frame) return;
+    if (!app.options?.popOut && !app.options?.window?.frame) {return;}
 
     // Skip certain application types that handle their own positioning
     const skipClasses = ['Sidebar', 'Hotbar', 'SceneNavigation', 'MainMenu'];
-    if (skipClasses.some(cls => app.constructor.name.includes(cls))) return;
+    if (skipClasses.some(cls => app.constructor.name.includes(cls))) {return;}
 
     const bounds = getViewportBounds();
     const currentPos = app.position || {};
@@ -218,7 +218,7 @@ function handleRenderChatMessage(message, html, data) {
  * @returns {boolean} False to prevent default handling
  */
 async function handleHotbarDrop(bar, data, slot) {
-    if (data.type === "Item") {
+    if (data.type === 'Item') {
         await createItemMacro(data, slot);
         return false;
     }

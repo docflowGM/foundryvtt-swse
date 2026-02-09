@@ -36,7 +36,7 @@ export const SkillState = {
      * Add a trained skill
      */
     async addTrained(actor, skillName) {
-        if (!skillName) return false;
+        if (!skillName) {return false;}
 
         const trained = this.getTrainedSkills(actor);
         if (trained[skillName] === true) {
@@ -57,7 +57,7 @@ export const SkillState = {
      * Remove a trained skill
      */
     async removeTrained(actor, skillName) {
-        if (!skillName) return false;
+        if (!skillName) {return false;}
 
         const trained = this.getTrainedSkills(actor);
         if (!trained[skillName]) {
@@ -78,7 +78,7 @@ export const SkillState = {
      * Add multiple trained skills
      */
     async addMultiple(actor, skillNames) {
-        if (!Array.isArray(skillNames)) return [];
+        if (!Array.isArray(skillNames)) {return [];}
 
         const results = [];
         for (const skillName of skillNames) {
@@ -111,8 +111,8 @@ export const SkillState = {
      * Normalize trained skills state
      */
     normalize(state) {
-        if (!state) return {};
-        if (typeof state !== 'object') return {};
+        if (!state) {return {};}
+        if (typeof state !== 'object') {return {};}
 
         const normalized = {};
         for (const [skillName, trained] of Object.entries(state)) {

@@ -11,13 +11,13 @@
  *  const opts = ProgressionEngine.getAvailableOptions(actor, stepId)
  */
 
-import { swseLogger } from "../../utils/logger.js";
-import { SWSEProgressionEngine } from "../../engine/progression.js";
-import { ForcePowerEngine } from "./force-power-engine.js";
-import { PROGRESSION_RULES } from "../data/progression-data.js";
-import { ActorProgressionUpdater } from "./progression-actor-updater.js";
-import { TemplateEngine } from "./template-engine.js";
-import { BackgroundRegistry } from "../../registries/background-registry.js";
+import { swseLogger } from '../../utils/logger.js';
+import { SWSEProgressionEngine } from '../../engine/progression.js';
+import { ForcePowerEngine } from './force-power-engine.js';
+import { PROGRESSION_RULES } from '../data/progression-data.js';
+import { ActorProgressionUpdater } from './progression-actor-updater.js';
+import { TemplateEngine } from './template-engine.js';
+import { BackgroundRegistry } from '../../registries/background-registry.js';
 
 export class ProgressionEngine {
   /**
@@ -26,12 +26,12 @@ export class ProgressionEngine {
    */
   static async acquireLock(actor) {
     swseLogger.log(`[PROGRESSION-ENGINE] acquireLock: Acquiring lock for actor ${actor.id} (${actor.name})`);
-    const flag = actor.getFlag("swse", "progressionLock");
+    const flag = actor.getFlag('swse', 'progressionLock');
     if (flag) {
       swseLogger.error(`[PROGRESSION-ENGINE] ERROR: acquireLock failed - lock already held for actor ${actor.id}`);
-      throw new Error("Progression lock held");
+      throw new Error('Progression lock held');
     }
-    await actor.setFlag("swse", "progressionLock", true);
+    await actor.setFlag('swse', 'progressionLock', true);
     swseLogger.log(`[PROGRESSION-ENGINE] acquireLock: Lock acquired successfully for actor ${actor.id}`);
   }
 
@@ -40,7 +40,7 @@ export class ProgressionEngine {
    */
   static async releaseLock(actor) {
     swseLogger.log(`[PROGRESSION-ENGINE] releaseLock: Releasing lock for actor ${actor.id}`);
-    await actor.unsetFlag("swse", "progressionLock");
+    await actor.unsetFlag('swse', 'progressionLock');
     swseLogger.log(`[PROGRESSION-ENGINE] releaseLock: Lock released successfully for actor ${actor.id}`);
   }
 
@@ -48,7 +48,7 @@ export class ProgressionEngine {
    * Get or create a progression engine instance for an actor
    * @private
    */
-  static _getEngine(actor, mode = "chargen") {
+  static _getEngine(actor, mode = 'chargen') {
     swseLogger.log(`[PROGRESSION-ENGINE] _getEngine: Getting/creating engine for actor ${actor.id} (${actor.name}), mode: ${mode}`);
 
     // Check if actor already has an active engine
@@ -70,12 +70,12 @@ export class ProgressionEngine {
    * Delegates to new engine with backward compatibility
    */
   static async applyChargenStep(actor, stepId, payload = {}) {
-    console.group("🚀 SWSE | PROGRESSION ENGINE ENTRY");
-    console.log("Actor:", actor?.name, actor?.id);
-    console.log("Actor type:", actor?.type);
-    console.log("Step ID:", stepId);
-    console.log("Payload:", payload);
-    console.trace("Invocation stack");
+    console.group('🚀 SWSE | PROGRESSION ENGINE ENTRY');
+    console.log('Actor:', actor?.name, actor?.id);
+    console.log('Actor type:', actor?.type);
+    console.log('Step ID:', stepId);
+    console.log('Payload:', payload);
+    console.trace('Invocation stack');
     console.groupEnd();
 
     swseLogger.log(`[PROGRESSION-ENGINE] applyChargenStep: START - actor: ${actor.id} (${actor.name}), stepId: ${stepId}, payload:`, payload);
@@ -83,18 +83,18 @@ export class ProgressionEngine {
     try {
       // Get or create engine instance
       swseLogger.log(`[PROGRESSION-ENGINE] applyChargenStep: Getting engine instance for chargen mode...`);
-      const engine = this._getEngine(actor, "chargen");
+      const engine = this._getEngine(actor, 'chargen');
       swseLogger.log(`[PROGRESSION-ENGINE] applyChargenStep: Engine obtained successfully`);
 
       // Map old step names to new action names
       const actionMap = {
-        "species": "confirmSpecies",
-        "background": "confirmBackground",
-        "abilities": "confirmAbilities",
-        "class": "confirmClass",
-        "skills": "confirmSkills",
-        "feats": "confirmFeats",
-        "talents": "confirmTalents"
+        'species': 'confirmSpecies',
+        'background': 'confirmBackground',
+        'abilities': 'confirmAbilities',
+        'class': 'confirmClass',
+        'skills': 'confirmSkills',
+        'feats': 'confirmFeats',
+        'talents': 'confirmTalents'
       };
 
       const action = actionMap[stepId];
@@ -138,12 +138,12 @@ export class ProgressionEngine {
     try {
       // Get or create engine instance
       swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Getting engine instance for levelup mode...`);
-      const engine = this._getEngine(actor, "levelup");
+      const engine = this._getEngine(actor, 'levelup');
       swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Engine obtained successfully`);
 
       // Apply class level through new engine
       swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Applying class level - classId: ${classId}...`);
-      await engine.doAction("confirmClass", { classId });
+      await engine.doAction('confirmClass', { classId });
       swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Class level applied successfully`);
 
       // Apply selections
@@ -151,17 +151,17 @@ export class ProgressionEngine {
 
       if (selections.skills) {
         swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Applying ${selections.skills.length} skill selections...`);
-        await engine.doAction("confirmSkills", { skills: selections.skills });
+        await engine.doAction('confirmSkills', { skills: selections.skills });
         swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Skills applied successfully`);
       }
       if (selections.feats) {
         swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Applying ${selections.feats.length} feat selections...`);
-        await engine.doAction("confirmFeats", { featIds: selections.feats });
+        await engine.doAction('confirmFeats', { featIds: selections.feats });
         swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Feats applied successfully`);
       }
       if (selections.talents) {
         swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Applying ${selections.talents.length} talent selections...`);
-        await engine.doAction("confirmTalents", { talentIds: selections.talents });
+        await engine.doAction('confirmTalents', { talentIds: selections.talents });
         swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Talents applied successfully`);
       }
 
@@ -203,15 +203,15 @@ export class ProgressionEngine {
     let result = [];
 
     switch (stepId) {
-      case "species":
+      case 'species':
         result = Object.keys(PROGRESSION_RULES.species || {});
         swseLogger.log(`[PROGRESSION-ENGINE] getAvailableOptions: Species options found: ${result.length}`, result);
         break;
-      case "background":
+      case 'background':
         result = Object.keys(PROGRESSION_RULES.backgrounds || {});
         swseLogger.log(`[PROGRESSION-ENGINE] getAvailableOptions: Background options found: ${result.length}`, result);
         break;
-      case "class":
+      case 'class':
         result = Object.keys(PROGRESSION_RULES.classes || {});
         swseLogger.log(`[PROGRESSION-ENGINE] getAvailableOptions: Class options found: ${result.length}`, result);
         if (result.length === 0) {
@@ -236,16 +236,16 @@ export class ProgressionEngine {
  */
 static async _triggerForcePowers(actor) {
   try {
-    if (typeof ForcePowerEngine === "undefined") return;
+    if (typeof ForcePowerEngine === 'undefined') {return;}
 
     const summary = {};
 
     actor._swseLastProgressionUpdate = summary;
-    await actor.setFlag("swse", "lastProgressionUpdate", summary);
+    await actor.setFlag('swse', 'lastProgressionUpdate', summary);
 
     ForcePowerEngine.handleForcePowerTriggers(actor, summary);
   } catch (e) {
-    swseLogger.warn("ForcePowerEngine trigger failed", e);
+    swseLogger.warn('ForcePowerEngine trigger failed', e);
   }
 }
 
@@ -256,13 +256,13 @@ static async _triggerForcePowers(actor) {
    */
   static async _applyStepLegacy(actor, stepId, payload) {
     switch (stepId) {
-      case "species": await this._applySpecies(actor, payload); break;
-      case "background": await this._applyBackground(actor, payload); break;
-      case "abilities": await this._applyAbilities(actor, payload); break;
-      case "class": await this._applyClass(actor, payload); break;
-      case "skills": await this._applySkills(actor, payload); break;
-      case "feats": await this._applyFeats(actor, payload); break;
-      case "talents": await this._applyTalents(actor, payload); break;
+      case 'species': await this._applySpecies(actor, payload); break;
+      case 'background': await this._applyBackground(actor, payload); break;
+      case 'abilities': await this._applyAbilities(actor, payload); break;
+      case 'class': await this._applyClass(actor, payload); break;
+      case 'skills': await this._applySkills(actor, payload); break;
+      case 'feats': await this._applyFeats(actor, payload); break;
+      case 'talents': await this._applyTalents(actor, payload); break;
       default: throw new Error(`Unknown step: ${stepId}`);
     }
   }
@@ -275,26 +275,26 @@ static async _triggerForcePowers(actor) {
 
   static async _applySpecies(actor, { speciesId } = {}) {
     const rules = PROGRESSION_RULES.species || {};
-    if (!rules[speciesId]) throw new Error(`Unknown species: ${speciesId}`);
+    if (!rules[speciesId]) {throw new Error(`Unknown species: ${speciesId}`);}
     await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      "system.progression.species": speciesId
+      'system.progression.species': speciesId
     });
   }
 
   static async _applyBackground(actor, { backgroundId } = {}) {
     const rules = PROGRESSION_RULES.backgrounds || {};
-    if (!rules[backgroundId]) throw new Error(`Unknown background: ${backgroundId}`);
+    if (!rules[backgroundId]) {throw new Error(`Unknown background: ${backgroundId}`);}
     const rec = await BackgroundRegistry.getBySlug(backgroundId);
     await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      "system.progression.background": backgroundId,
-      "system.progression.backgroundInternalId": rec?.internalId || "",
-      "system.backgroundId": rec?.internalId || ""
+      'system.progression.background': backgroundId,
+      'system.progression.backgroundInternalId': rec?.internalId || '',
+      'system.backgroundId': rec?.internalId || ''
     });
   }
 
   static async _applyAbilities(actor, { method, values } = {}) {
     await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      "system.progression.abilities": values || {}
+      'system.progression.abilities': values || {}
     });
   }
 
@@ -319,7 +319,7 @@ static async _triggerForcePowers(actor) {
 
     try {
       await globalThis.SWSE.ActorEngine.updateActor(actor, {
-        "system.progression.classLevels": classLevels
+        'system.progression.classLevels': classLevels
       });
       swseLogger.log(`[PROGRESSION-ENGINE] _applyClass: Class applied successfully`);
     } catch (err) {
@@ -333,13 +333,13 @@ static async _triggerForcePowers(actor) {
     const classLevels = Array.from(progression.classLevels || []);
     classLevels.push({ class: classId, level, selections });
     await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      "system.progression.classLevels": classLevels
+      'system.progression.classLevels': classLevels
     });
   }
 
   static async _applySkills(actor, payload) {
     await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      "system.progression.skills": payload.skills || []
+      'system.progression.skills': payload.skills || []
     });
   }
 
@@ -347,7 +347,7 @@ static async _triggerForcePowers(actor) {
     const progression = actor.system.progression || {};
     const feats = Array.from(new Set([...(progression.feats || []), ...featIds]));
     await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      "system.progression.feats": feats
+      'system.progression.feats': feats
     });
   }
 
@@ -355,12 +355,12 @@ static async _triggerForcePowers(actor) {
     const progression = actor.system.progression || {};
     const talents = Array.from(new Set([...(progression.talents || []), ...talentIds]));
     await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      "system.progression.talents": talents
+      'system.progression.talents': talents
     });
   }
 }
 
 // Also export the new engine for direct access
-export { SWSEProgressionEngine } from "../../engine/progression.js";
+export { SWSEProgressionEngine } from '../../engine/progression.js';
 
-swseLogger.log("Progression Engine (compatibility layer) loaded");
+swseLogger.log('Progression Engine (compatibility layer) loaded');

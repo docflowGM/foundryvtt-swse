@@ -107,7 +107,7 @@
           name: template.name,
           displayName: 40, // HOVER
           actorLink: false,
-          disposition: -1, // HOSTILE
+          disposition: -1 // HOSTILE
         }
       };
 

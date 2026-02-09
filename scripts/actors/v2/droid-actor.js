@@ -1,5 +1,5 @@
 // scripts/actors/v2/droid-actor.js
-import { computeCharacterDerived } from "./character-actor.js";
+import { computeCharacterDerived } from './character-actor.js';
 
 /**
  * Droids share the same defenses/DT/condition derived contract for Phase 2.

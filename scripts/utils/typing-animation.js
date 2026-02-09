@@ -68,7 +68,7 @@ export class TypingAnimation {
 
     // Skip function
     const skip = () => {
-      if (isComplete) return;
+      if (isComplete) {return;}
 
       isSkipped = true;
       if (animationId) {
@@ -126,7 +126,7 @@ export class TypingAnimation {
    */
   static injectStyles() {
     // Check if already injected
-    if (document.getElementById('typing-animation-styles')) return;
+    if (document.getElementById('typing-animation-styles')) {return;}
 
     const style = document.createElement('style');
     style.id = 'typing-animation-styles';
@@ -237,7 +237,7 @@ export class TypingAnimation {
     };
 
     const skip = () => {
-      if (isComplete) return;
+      if (isComplete) {return;}
 
       isSkipped = true;
       if (animationId) {

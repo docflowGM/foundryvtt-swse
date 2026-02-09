@@ -10,7 +10,7 @@ import { SuggestionService } from './SuggestionService.js';
  * Single source of truth for character generation and level-up
  */
 export class SWSEProgressionEngine {
-  constructor(actor, mode = "chargen") {
+  constructor(actor, mode = 'chargen') {
     swseLogger.log(`[PROGRESSION] ====== ENGINE CONSTRUCTOR START ======`);
     swseLogger.log(`[PROGRESSION] Constructor params: mode="${mode}", actor="${actor?.name || 'UNKNOWN'}", actor.id="${actor?.id || 'UNKNOWN'}"`);
 
@@ -65,143 +65,143 @@ export class SWSEProgressionEngine {
   _initializeSteps() {
     swseLogger.log(`[PROGRESSION-STEPS] _initializeSteps() called with mode: "${this.mode}"`);
 
-    if (this.mode === "chargen") {
+    if (this.mode === 'chargen') {
       swseLogger.log(`[PROGRESSION-STEPS] Setting up CHARGEN steps...`);
       this.chargenSteps = [
         {
-          id: "species",
-          label: "Species",
-          subtitle: "Choose your species",
-          icon: "glyph-species"
+          id: 'species',
+          label: 'Species',
+          subtitle: 'Choose your species',
+          icon: 'glyph-species'
         },
         {
-          id: "background",
-          label: "Background",
-          subtitle: "Choose your background",
-          icon: "glyph-background"
+          id: 'background',
+          label: 'Background',
+          subtitle: 'Choose your background',
+          icon: 'glyph-background'
         },
         {
-          id: "attributes",
-          label: "Attributes",
-          subtitle: "Set your ability scores",
-          icon: "glyph-attributes"
+          id: 'attributes',
+          label: 'Attributes',
+          subtitle: 'Set your ability scores',
+          icon: 'glyph-attributes'
         },
         {
-          id: "class",
-          label: "Class",
-          subtitle: "Choose your class",
-          icon: "glyph-class"
+          id: 'class',
+          label: 'Class',
+          subtitle: 'Choose your class',
+          icon: 'glyph-class'
         },
         {
-          id: "skills",
-          label: "Skills",
-          subtitle: "Train your skills",
-          icon: "glyph-skills"
+          id: 'skills',
+          label: 'Skills',
+          subtitle: 'Train your skills',
+          icon: 'glyph-skills'
         },
         {
-          id: "feats",
-          label: "Feats",
-          subtitle: "Select your feats",
-          icon: "glyph-feats"
+          id: 'feats',
+          label: 'Feats',
+          subtitle: 'Select your feats',
+          icon: 'glyph-feats'
         },
         {
-          id: "force-techniques",
-          label: "Force Techniques",
-          subtitle: "Select Force Techniques",
-          icon: "glyph-force-techniques",
+          id: 'force-techniques',
+          label: 'Force Techniques',
+          subtitle: 'Select Force Techniques',
+          icon: 'glyph-force-techniques',
           conditional: true
         },
         {
-          id: "force-secrets",
-          label: "Force Secrets",
-          subtitle: "Select Force Secrets",
-          icon: "glyph-force-secrets",
+          id: 'force-secrets',
+          label: 'Force Secrets',
+          subtitle: 'Select Force Secrets',
+          icon: 'glyph-force-secrets',
           conditional: true
         },
         {
-          id: "starship-maneuvers",
-          label: "Starship Maneuvers",
-          subtitle: "Select Maneuvers",
-          icon: "glyph-starship-maneuvers",
+          id: 'starship-maneuvers',
+          label: 'Starship Maneuvers',
+          subtitle: 'Select Maneuvers',
+          icon: 'glyph-starship-maneuvers',
           conditional: true
         },
         {
-          id: "talents",
-          label: "Talents",
-          subtitle: "Choose your talents",
-          icon: "glyph-talents"
+          id: 'talents',
+          label: 'Talents',
+          subtitle: 'Choose your talents',
+          icon: 'glyph-talents'
         },
         {
-          id: "finalize",
-          label: "Finalize",
-          subtitle: "Review and confirm",
-          icon: "glyph-finalize"
+          id: 'finalize',
+          label: 'Finalize',
+          subtitle: 'Review and confirm',
+          icon: 'glyph-finalize'
         }
       ];
     } else {
       this.levelUpSteps = [
         {
-          id: "class",
-          label: "Class",
-          subtitle: "Choose class for this level",
-          icon: "glyph-class"
+          id: 'class',
+          label: 'Class',
+          subtitle: 'Choose class for this level',
+          icon: 'glyph-class'
         },
         {
-          id: "hp",
-          label: "Hit Points",
-          subtitle: "Roll or take average",
-          icon: "glyph-hp"
+          id: 'hp',
+          label: 'Hit Points',
+          subtitle: 'Roll or take average',
+          icon: 'glyph-hp'
         },
         {
-          id: "skills",
-          label: "Skills",
-          subtitle: "Allocate skill points",
-          icon: "glyph-skills"
+          id: 'skills',
+          label: 'Skills',
+          subtitle: 'Allocate skill points',
+          icon: 'glyph-skills'
         },
         {
-          id: "feats",
-          label: "Feats",
-          subtitle: "Select new feats",
-          icon: "glyph-feats"
+          id: 'feats',
+          label: 'Feats',
+          subtitle: 'Select new feats',
+          icon: 'glyph-feats'
         },
         {
-          id: "force-techniques",
-          label: "Force Techniques",
-          subtitle: "Select Force Techniques",
-          icon: "glyph-force-techniques",
+          id: 'force-techniques',
+          label: 'Force Techniques',
+          subtitle: 'Select Force Techniques',
+          icon: 'glyph-force-techniques',
           conditional: true
         },
         {
-          id: "force-secrets",
-          label: "Force Secrets",
-          subtitle: "Select Force Secrets",
-          icon: "glyph-force-secrets",
+          id: 'force-secrets',
+          label: 'Force Secrets',
+          subtitle: 'Select Force Secrets',
+          icon: 'glyph-force-secrets',
           conditional: true
         },
         {
-          id: "starship-maneuvers",
-          label: "Starship Maneuvers",
-          subtitle: "Select Maneuvers",
-          icon: "glyph-starship-maneuvers",
+          id: 'starship-maneuvers',
+          label: 'Starship Maneuvers',
+          subtitle: 'Select Maneuvers',
+          icon: 'glyph-starship-maneuvers',
           conditional: true
         },
         {
-          id: "talents",
-          label: "Talents",
-          subtitle: "Choose new talents",
-          icon: "glyph-talents"
+          id: 'talents',
+          label: 'Talents',
+          subtitle: 'Choose new talents',
+          icon: 'glyph-talents'
         },
         {
-          id: "abilities",
-          label: "Abilities",
-          subtitle: "Increase ability score (if applicable)",
-          icon: "glyph-attributes"
+          id: 'abilities',
+          label: 'Abilities',
+          subtitle: 'Increase ability score (if applicable)',
+          icon: 'glyph-attributes'
         },
         {
-          id: "finalize",
-          label: "Finalize",
-          subtitle: "Review and apply",
-          icon: "glyph-finalize"
+          id: 'finalize',
+          label: 'Finalize',
+          subtitle: 'Review and apply',
+          icon: 'glyph-finalize'
         }
       ];
       swseLogger.log(`[PROGRESSION-STEPS] Setting up LEVELUP steps...`);
@@ -215,7 +215,7 @@ export class SWSEProgressionEngine {
  */
 getSteps() {
   swseLogger.log(`[PROGRESSION-STEPS] getSteps() called - mode: ${this.mode}`);
-  const base = this.mode === "chargen"
+  const base = this.mode === 'chargen'
     ? this.chargenSteps
     : this.levelUpSteps;
 
@@ -256,9 +256,9 @@ get steps() {
 normalizeSteps(steps) {
   return steps.map((s, i) => ({
     id: s.id ?? `step-${i}`,
-    label: s.label ?? "",
-    subtitle: s.subtitle ?? "",
-    icon: s.icon ?? "glyph-generic",
+    label: s.label ?? '',
+    subtitle: s.subtitle ?? '',
+    icon: s.icon ?? 'glyph-generic',
     locked: !this._isStepAvailable(s.id),
     completed: this._isStepCompleted(s.id),
     current: s.id === this.current
@@ -352,7 +352,7 @@ async grantLanguage(name) {
  * Grant equipment to the actor
  */
 async grantEquipment(items) {
-  if (!items || !Array.isArray(items)) return;
+  if (!items || !Array.isArray(items)) {return;}
   const { EquipmentEngine } = await import('../progression/engine/equipment-engine.js');
   for (const item of items) {
     const itemObj = typeof item === 'string' ? { name: item, type: 'equipment' } : item;
@@ -385,11 +385,11 @@ async applyScalingFeature(feature) {
    */
   _shouldShowConditionalStep(id) {
     switch (id) {
-      case "force-techniques":
+      case 'force-techniques':
         return this.data?.forceTechniqueChoices?.length > 0;
-      case "force-secrets":
+      case 'force-secrets':
         return this.data?.forceSecretChoices?.length > 0;
-      case "starship-maneuvers":
+      case 'starship-maneuvers':
         return this.data?.starshipManeuverChoices?.length > 0;
       default:
         return false;
@@ -404,36 +404,36 @@ async applyScalingFeature(feature) {
    */
   _isStepAvailable(id) {
     // First step is always available
-    const steps = this.mode === "chargen" ? this.chargenSteps : this.levelUpSteps;
+    const steps = this.mode === 'chargen' ? this.chargenSteps : this.levelUpSteps;
     if (id === steps[0]?.id) {
       return true;
     }
 
     // Chargen specific logic
-    if (this.mode === "chargen") {
-      if (id === "background") return this.completedSteps.includes("species");
-      if (id === "attributes") return this.completedSteps.includes("background");
-      if (id === "class") return this.completedSteps.includes("attributes");
-      if (id === "skills") return this.completedSteps.includes("class");
-      if (id === "feats") return this.completedSteps.includes("skills");
-      if (id === "force-techniques") return this.completedSteps.includes("feats");
-      if (id === "force-secrets") return this.completedSteps.includes("force-techniques") || !this._shouldShowConditionalStep("force-techniques");
-      if (id === "starship-maneuvers") return this.completedSteps.includes("force-secrets") || !this._shouldShowConditionalStep("force-secrets");
-      if (id === "talents") return this.completedSteps.includes("starship-maneuvers") || !this._shouldShowConditionalStep("starship-maneuvers");
-      if (id === "finalize") return this.completedSteps.includes("talents");
+    if (this.mode === 'chargen') {
+      if (id === 'background') {return this.completedSteps.includes('species');}
+      if (id === 'attributes') {return this.completedSteps.includes('background');}
+      if (id === 'class') {return this.completedSteps.includes('attributes');}
+      if (id === 'skills') {return this.completedSteps.includes('class');}
+      if (id === 'feats') {return this.completedSteps.includes('skills');}
+      if (id === 'force-techniques') {return this.completedSteps.includes('feats');}
+      if (id === 'force-secrets') {return this.completedSteps.includes('force-techniques') || !this._shouldShowConditionalStep('force-techniques');}
+      if (id === 'starship-maneuvers') {return this.completedSteps.includes('force-secrets') || !this._shouldShowConditionalStep('force-secrets');}
+      if (id === 'talents') {return this.completedSteps.includes('starship-maneuvers') || !this._shouldShowConditionalStep('starship-maneuvers');}
+      if (id === 'finalize') {return this.completedSteps.includes('talents');}
     }
 
     // Level-up specific logic
-    if (this.mode === "levelup") {
-      if (id === "hp") return this.completedSteps.includes("class");
-      if (id === "skills") return this.completedSteps.includes("hp");
-      if (id === "feats") return this.completedSteps.includes("skills");
-      if (id === "force-techniques") return this.completedSteps.includes("feats");
-      if (id === "force-secrets") return this.completedSteps.includes("force-techniques") || !this._shouldShowConditionalStep("force-techniques");
-      if (id === "starship-maneuvers") return this.completedSteps.includes("force-secrets") || !this._shouldShowConditionalStep("force-secrets");
-      if (id === "talents") return this.completedSteps.includes("starship-maneuvers") || !this._shouldShowConditionalStep("starship-maneuvers");
-      if (id === "abilities") return this.completedSteps.includes("talents");
-      if (id === "finalize") return this.completedSteps.includes("abilities");
+    if (this.mode === 'levelup') {
+      if (id === 'hp') {return this.completedSteps.includes('class');}
+      if (id === 'skills') {return this.completedSteps.includes('hp');}
+      if (id === 'feats') {return this.completedSteps.includes('skills');}
+      if (id === 'force-techniques') {return this.completedSteps.includes('feats');}
+      if (id === 'force-secrets') {return this.completedSteps.includes('force-techniques') || !this._shouldShowConditionalStep('force-techniques');}
+      if (id === 'starship-maneuvers') {return this.completedSteps.includes('force-secrets') || !this._shouldShowConditionalStep('force-secrets');}
+      if (id === 'talents') {return this.completedSteps.includes('starship-maneuvers') || !this._shouldShowConditionalStep('starship-maneuvers');}
+      if (id === 'abilities') {return this.completedSteps.includes('talents');}
+      if (id === 'finalize') {return this.completedSteps.includes('abilities');}
     }
 
     return true;
@@ -464,12 +464,12 @@ async applyScalingFeature(feature) {
 
     // Mentor guidance integration
     try {
-      Hooks.call("swse:mentor:guidance", {
+      Hooks.call('swse:mentor:guidance', {
         actor: this.actor,
         step: id
       });
     } catch (e) {
-      swseLogger.warn("Mentor guidance hook failed:", e);
+      swseLogger.warn('Mentor guidance hook failed:', e);
     }
 
     // Emit events
@@ -498,7 +498,7 @@ async applyScalingFeature(feature) {
     }
 
     // Auto-advance to next step if not at finalize
-    if (id !== "finalize") {
+    if (id !== 'finalize') {
       const steps = this.getSteps();
       const currentIndex = steps.findIndex(s => s.id === id);
       const nextStep = steps[currentIndex + 1];
@@ -516,13 +516,13 @@ async applyScalingFeature(feature) {
    * @returns {Promise<*>} Action result
    */
   async doAction(action, payload) {
-    console.group("🚀 SWSE | doAction ENTRY");
-    console.log("Action:", action);
-    console.log("Engine mode:", this.mode);
-    console.log("Actor:", this.actor?.name, this.actor?.id);
-    console.log("Current step:", this.current);
-    console.log("Payload:", payload);
-    console.trace("Invocation stack");
+    console.group('🚀 SWSE | doAction ENTRY');
+    console.log('Action:', action);
+    console.log('Engine mode:', this.mode);
+    console.log('Actor:', this.actor?.name, this.actor?.id);
+    console.log('Current step:', this.current);
+    console.log('Payload:', payload);
+    console.trace('Invocation stack');
     console.groupEnd();
 
     swseLogger.log(`[PROGRESSION-ACTION] ======== ACTION START: "${action}" ========`);
@@ -533,7 +533,7 @@ async applyScalingFeature(feature) {
 
     const fn = this[`_action_${action}`];
 
-    if (typeof fn === "function") {
+    if (typeof fn === 'function') {
       swseLogger.log(`[PROGRESSION-ACTION] Found action handler: _action_${action}`);
       try {
         swseLogger.log(`[PROGRESSION-ACTION] Calling _action_${action}...`);
@@ -545,7 +545,7 @@ async applyScalingFeature(feature) {
         Hooks.call('swse:progression:updated');
 
         swseLogger.log(`[PROGRESSION-ACTION] ======== ACTION END: "${action}" ========`);
-        console.warn("✅ SWSE | Action executing successfully, returning result");
+        console.warn('✅ SWSE | Action executing successfully, returning result');
         return result;
       } catch (err) {
         swseLogger.error(`[PROGRESSION-ACTION] FATAL ERROR in action "${action}":`, err);
@@ -556,9 +556,9 @@ async applyScalingFeature(feature) {
       }
     } else {
       const msg = `Unknown progression action: ${action}`;
-      console.warn("⛔ SWSE | KILLER GUARD: Action handler not found");
-      console.warn("⛔ Requested action:", action);
-      console.warn("⛔ Available methods:", Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter(m => m.startsWith('_action_')));
+      console.warn('⛔ SWSE | KILLER GUARD: Action handler not found');
+      console.warn('⛔ Requested action:', action);
+      console.warn('⛔ Available methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter(m => m.startsWith('_action_')));
       swseLogger.warn(`[PROGRESSION-ACTION] ${msg}`);
       swseLogger.warn(`[PROGRESSION-ACTION] Available methods:`, Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter(m => m.startsWith('_action_')));
       ui.notifications?.warn(msg);
@@ -788,7 +788,7 @@ async applyScalingFeature(feature) {
         });
 
         // Store the last greeting (useful for UI modules, recap panels, etc.)
-        await this.actor.setFlag("swse", "lastMentorGreeting", {
+        await this.actor.setFlag('swse', 'lastMentorGreeting', {
           level: newLevel,
           class: startingClass,
           mentor: mentor.name,
@@ -796,7 +796,7 @@ async applyScalingFeature(feature) {
         });
 
       } catch (err) {
-        swseLogger.warn("Mentor greeting failed:", err);
+        swseLogger.warn('Mentor greeting failed:', err);
       }
 
       // -------------------------
@@ -818,7 +818,7 @@ async applyScalingFeature(feature) {
           // 1. This is a prestige class with a mentor transition
           // 2. No manual override is already set
           if (newMentorKey) {
-            const currentOverride = this.actor.getFlag("swse", "mentorOverride");
+            const currentOverride = this.actor.getFlag('swse', 'mentorOverride');
 
             // Only auto-switch if no manual override has been set
             if (!currentOverride) {
@@ -828,7 +828,7 @@ async applyScalingFeature(feature) {
           }
         }
       } catch (err) {
-        swseLogger.warn("Mentor transition failed:", err);
+        swseLogger.warn('Mentor transition failed:', err);
       }
 
       // -------------------------
@@ -849,7 +849,7 @@ async applyScalingFeature(feature) {
         const message = getMentorGreeting(activeMentor, newLevel, this.actor);
 
         // Retrieve existing logbook or create new one
-        const log = this.actor.getFlag("swse", "mentorLog") || [];
+        const log = this.actor.getFlag('swse', 'mentorLog') || [];
 
         // Add new entry to logbook
         log.push({
@@ -861,17 +861,17 @@ async applyScalingFeature(feature) {
         });
 
         // Store updated logbook
-        await this.actor.setFlag("swse", "mentorLog", log);
+        await this.actor.setFlag('swse', 'mentorLog', log);
 
         // Emit hook for other systems (UI panels, journal entries, etc.)
-        Hooks.callAll("swse:mentor:logUpdated", {
+        Hooks.callAll('swse:mentor:logUpdated', {
           actor: this.actor,
           log: log,
           lastEntry: log[log.length - 1]
         });
 
       } catch (err) {
-        swseLogger.warn("Mentor logbook tracking failed:", err);
+        swseLogger.warn('Mentor logbook tracking failed:', err);
       }
 
       // Auto-recalculate derived stats after finalization
@@ -879,7 +879,7 @@ async applyScalingFeature(feature) {
         const { recalcDerivedStats } = await import('../progression/engine/autocalc/derived-stats.js');
         await recalcDerivedStats(this.actor);
       } catch (err) {
-        swseLogger.warn("Derived stats recalculation failed:", err);
+        swseLogger.warn('Derived stats recalculation failed:', err);
       }
 
       swseLogger.log(`Progression finalized for ${this.actor.name}`);
@@ -1034,7 +1034,7 @@ async applyScalingFeature(feature) {
     }
 
     const updates = {
-      "system.progression.species": speciesId
+      'system.progression.species': speciesId
     };
 
     // Apply species ability modifiers
@@ -1049,16 +1049,16 @@ async applyScalingFeature(feature) {
     // Handle human ability choice (+2 to any one ability)
     if (speciesData.abilityChoice && abilityChoice) {
       updates[`system.attributes.${abilityChoice}.racial`] = 2;
-      updates["system.progression.speciesAbilityChoice"] = abilityChoice;
+      updates['system.progression.speciesAbilityChoice'] = abilityChoice;
     }
 
     // Apply size and speed
-    if (speciesData.size) updates["system.size"] = speciesData.size;
-    if (speciesData.speed !== undefined) updates["system.speed"] = speciesData.speed;
+    if (speciesData.size) {updates['system.size'] = speciesData.size;}
+    if (speciesData.speed !== undefined) {updates['system.speed'] = speciesData.speed;}
 
     await applyActorUpdateAtomic(this.actor, updates);
     this.data.species = speciesId;
-    await this.completeStep("species");
+    await this.completeStep('species');
   }
 
   async _action_confirmBackground(payload) {
@@ -1071,11 +1071,11 @@ async applyScalingFeature(feature) {
     }
 
     await applyActorUpdateAtomic(this.actor, {
-      "system.progression.background": backgroundId,
-      "system.progression.backgroundTrainedSkills": backgroundData.trainedSkills || []
+      'system.progression.background': backgroundId,
+      'system.progression.backgroundTrainedSkills': backgroundData.trainedSkills || []
     });
     this.data.background = backgroundId;
-    await this.completeStep("background");
+    await this.completeStep('background');
   }
 
   async _action_confirmAbilities(payload) {
@@ -1102,7 +1102,7 @@ async applyScalingFeature(feature) {
       }
 
       // Track ability increases in progression data
-      updates["system.progression.abilityIncreases"] = increases;
+      updates['system.progression.abilityIncreases'] = increases;
 
       await applyActorUpdateAtomic(this.actor, updates);
       this.data.abilityIncreases = increases;
@@ -1112,7 +1112,7 @@ async applyScalingFeature(feature) {
 
     // Handle chargen ability score setting (point buy, roll, etc.)
     // Validate point buy if using that method
-    if (method === "pointBuy") {
+    if (method === 'pointBuy') {
       const cost = this._calculatePointBuyCost(values);
       // Get point buy pool from house rules (default 25 for living, 20 for droids)
       const isDroid = this.actor.system?.isDroid || this.data.species === 'Droid';
@@ -1128,7 +1128,7 @@ async applyScalingFeature(feature) {
       }
     }
 
-    updates["system.progression.abilityMethod"] = method;
+    updates['system.progression.abilityMethod'] = method;
 
     // Update base ability scores
     for (const [ability, data] of Object.entries(values)) {
@@ -1138,13 +1138,13 @@ async applyScalingFeature(feature) {
 
     await applyActorUpdateAtomic(this.actor, updates);
     this.data.abilities = { method, values };
-    await this.completeStep("attributes");
+    await this.completeStep('attributes');
   }
 
   async _action_confirmClass(payload) {
-    console.group("🎯 SWSE | confirmClass ACTION ENTRY");
-    console.log("Payload:", payload);
-    console.trace("Stack trace");
+    console.group('🎯 SWSE | confirmClass ACTION ENTRY');
+    console.log('Payload:', payload);
+    console.trace('Stack trace');
     console.groupEnd();
 
     swseLogger.log(`[PROGRESSION-CLASS] ======== CONFIRM CLASS START ========`);
@@ -1161,24 +1161,24 @@ async applyScalingFeature(feature) {
     const { PROGRESSION_RULES, REQUIRED_PRESTIGE_LEVEL } = await import('../progression/data/progression-data.js');
     const { getClassData } = await import('../progression/utils/class-data-loader.js');
 
-    console.group("📦 SWSE | CLASS LOAD ATTEMPT");
-    console.log("PROGRESSION_RULES.classes exists:", !!PROGRESSION_RULES.classes);
-    console.log("Classes available:", Object.keys(PROGRESSION_RULES.classes || {}).length);
+    console.group('📦 SWSE | CLASS LOAD ATTEMPT');
+    console.log('PROGRESSION_RULES.classes exists:', !!PROGRESSION_RULES.classes);
+    console.log('Classes available:', Object.keys(PROGRESSION_RULES.classes || {}).length);
 
-    const pack = game.packs.get("foundryvtt-swse.classes");
-    console.log("Pack exists:", !!pack);
+    const pack = game.packs.get('foundryvtt-swse.classes');
+    console.log('Pack exists:', !!pack);
     if (!pack) {
-      console.error("❌ Class compendium not found");
+      console.error('❌ Class compendium not found');
     } else {
       try {
         const classes = await pack.getDocuments();
-        console.log("Classes loaded from pack:", classes.length);
+        console.log('Classes loaded from pack:', classes.length);
         console.table(classes.map(c => ({
           name: c.name,
           base: c.system?.base_class
         })));
       } catch (e) {
-        console.error("Error loading pack documents:", e);
+        console.error('Error loading pack documents:', e);
       }
     }
     console.groupEnd();
@@ -1282,7 +1282,7 @@ async applyScalingFeature(feature) {
         const { setLevel1Class } = await import('../apps/mentor-dialogues.js');
         await setLevel1Class(this.actor, classData.name);
       } catch (e) {
-        swseLogger.warn("Failed to record starting class for mentor system:", e);
+        swseLogger.warn('Failed to record starting class for mentor system:', e);
       }
     }
 
@@ -1326,7 +1326,7 @@ async applyScalingFeature(feature) {
     if (classLevels.length === 1) {
       const speciesData = PROGRESSION_RULES.species[progression.species];
       featBudget = 1; // Everyone gets 1 feat at level 1
-      if (speciesData?.bonusFeat) featBudget++; // Humans get +1
+      if (speciesData?.bonusFeat) {featBudget++;} // Humans get +1
     }
 
     // Add bonus feats from this class level
@@ -1380,10 +1380,10 @@ async applyScalingFeature(feature) {
     const defenseUpdates = await this._recalculateDefenseClassBonuses(classLevels);
 
     await applyActorUpdateAtomic(this.actor, {
-      "system.progression.classLevels": classLevels,
-      "system.progression.startingFeats": allStartingFeats,
-      "system.progression.featBudget": featBudget,
-      "system.progression.talentBudget": talentBudget,
+      'system.progression.classLevels': classLevels,
+      'system.progression.startingFeats': allStartingFeats,
+      'system.progression.featBudget': featBudget,
+      'system.progression.talentBudget': talentBudget,
       ...defenseUpdates
     });
 
@@ -1397,7 +1397,7 @@ async applyScalingFeature(feature) {
     }
 
     this.data.class = classId;
-    await this.completeStep("class");
+    await this.completeStep('class');
   }
 
   async _action_confirmSkills(payload) {
@@ -1411,7 +1411,7 @@ async applyScalingFeature(feature) {
     // Validate skill structure
     if (!Array.isArray(skills)) {
       swseLogger.error(`[PROGRESSION-SKILLS] FATAL: skills is not an array`);
-      throw new Error("Skills must be an array");
+      throw new Error('Skills must be an array');
     }
 
     swseLogger.log(`[PROGRESSION-SKILLS] Selected skills: ${skills.length} items`, skills);
@@ -1424,14 +1424,14 @@ async applyScalingFeature(feature) {
 
     if (classLevels.length === 0) {
       swseLogger.error(`[PROGRESSION-SKILLS] FATAL: No class levels found`);
-      throw new Error("Must select a class before selecting skills");
+      throw new Error('Must select a class before selecting skills');
     }
 
     // Get class data (try hardcoded first, then compendium)
     const firstClass = classLevels[0];
     if (!firstClass || !firstClass.class) {
       swseLogger.error(`[PROGRESSION-SKILLS] FATAL: Invalid class level data`, firstClass);
-      throw new Error("Invalid class level data");
+      throw new Error('Invalid class level data');
     }
 
     swseLogger.log(`[PROGRESSION-SKILLS] Looking up class: ${firstClass.class}`);
@@ -1471,8 +1471,8 @@ async applyScalingFeature(feature) {
     // Normalize skills to strings and filter out invalid entries
     const selectedSkills = skills
       .map(s => {
-        if (typeof s === 'string') return s;
-        if (s && typeof s === 'object') return s.key || s.name || null;
+        if (typeof s === 'string') {return s;}
+        if (s && typeof s === 'object') {return s.key || s.name || null;}
         return null;
       })
       .filter(s => s !== null && typeof s === 'string' && s.trim() !== '');
@@ -1494,8 +1494,8 @@ async applyScalingFeature(feature) {
 
     // Check for Miraluka conditional bonus feat
     // Miraluka who have Use the Force as a trained skill gain Force Training as a bonus feat
-    let updateData = {
-      "system.progression.trainedSkills": trainedSkills
+    const updateData = {
+      'system.progression.trainedSkills': trainedSkills
     };
 
     if (progression.species === 'Miraluka' && trainedSkills.includes('useTheForce')) {
@@ -1504,7 +1504,7 @@ async applyScalingFeature(feature) {
 
       // Add Force Training if not already there
       if (!currentFeats.includes('Force Training')) {
-        updateData["system.progression.feats"] = [...currentFeats, 'Force Training'];
+        updateData['system.progression.feats'] = [...currentFeats, 'Force Training'];
       }
 
       swseLogger.log(`Progression: Miraluka has Use the Force trained - granting Force Training bonus feat`);
@@ -1512,7 +1512,7 @@ async applyScalingFeature(feature) {
 
     await applyActorUpdateAtomic(this.actor, updateData);
     this.data.skills = trainedSkills;
-    await this.completeStep("skills");
+    await this.completeStep('skills');
   }
 
   async _action_confirmFeats(payload) {
@@ -1544,10 +1544,10 @@ async applyScalingFeature(feature) {
     const feats = Array.from(new Set([...currentFeats, ...featIds]));
 
     await applyActorUpdateAtomic(this.actor, {
-      "system.progression.feats": feats
+      'system.progression.feats': feats
     });
     this.data.feats = featIds;
-    await this.completeStep("feats");
+    await this.completeStep('feats');
   }
 
   async _action_confirmTalents(payload) {
@@ -1558,7 +1558,7 @@ async applyScalingFeature(feature) {
 
     if (!Array.isArray(talentIds)) {
       swseLogger.error(`[PROGRESSION-TALENTS] FATAL: talentIds is not an array`);
-      throw new Error("talentIds must be an array");
+      throw new Error('talentIds must be an array');
     }
 
     const progression = this.actor.system.progression || {};
@@ -1592,17 +1592,17 @@ async applyScalingFeature(feature) {
     swseLogger.log(`[PROGRESSION-TALENTS] Final talents array: ${talents.length}`, talents);
 
     await applyActorUpdateAtomic(this.actor, {
-      "system.progression.talents": talents
+      'system.progression.talents': talents
     });
     this.data.talents = talentIds;
-    await this.completeStep("talents");
+    await this.completeStep('talents');
     swseLogger.log(`[PROGRESSION-TALENTS] Completed step: talents`);
   }
 
   async _action_rollHP(payload) {
     const { roll, value } = payload;
     this.data.hp = { roll, value };
-    await this.completeStep("hp");
+    await this.completeStep('hp');
   }
 
   async _action_increaseAbility(payload) {
@@ -1613,7 +1613,7 @@ async applyScalingFeature(feature) {
       [`system.attributes.${ability}.base`]: currentBase + 1
     });
     this.data.abilityIncrease = ability;
-    await this.completeStep("abilities");
+    await this.completeStep('abilities');
   }
 
   /* ========================
@@ -1770,9 +1770,9 @@ async applyScalingFeature(feature) {
     );
 
     return {
-      "system.defenses.fort.classBonus": fortBonus,
-      "system.defenses.reflex.classBonus": refBonus,
-      "system.defenses.will.classBonus": willBonus
+      'system.defenses.fort.classBonus': fortBonus,
+      'system.defenses.reflex.classBonus': refBonus,
+      'system.defenses.will.classBonus': willBonus
     };
   }
 
@@ -1791,9 +1791,9 @@ async applyScalingFeature(feature) {
       return;
     }
 
-    const featPack = game.packs.get("foundryvtt-swse.feats");
+    const featPack = game.packs.get('foundryvtt-swse.feats');
     if (!featPack) {
-      swseLogger.warn("Feats compendium not found, skipping auto-grants");
+      swseLogger.warn('Feats compendium not found, skipping auto-grants');
       return;
     }
 
@@ -1817,7 +1817,7 @@ async applyScalingFeature(feature) {
       try {
         // Get the feat document and create it on the actor
         const doc = await featPack.getDocument(entry._id);
-        await this.actor.createEmbeddedDocuments("Item", [doc.toObject()]);
+        await this.actor.createEmbeddedDocuments('Item', [doc.toObject()]);
         swseLogger.log(`Auto-granted feat: ${name}`);
       } catch (err) {
         swseLogger.error(`Failed to auto-grant feat ${name}:`, err);
@@ -2174,7 +2174,7 @@ async applyScalingFeature(feature) {
       const { recalcDerivedStats } = await import('../progression/engine/autocalc/derived-stats.js');
       await recalcDerivedStats(this.actor);
     } catch (err) {
-      swseLogger.warn("Derived stats recalculation failed:", err);
+      swseLogger.warn('Derived stats recalculation failed:', err);
     }
 
     // Emit hook for other systems
@@ -2396,7 +2396,7 @@ async applyScalingFeature(feature) {
   async _getAvailableForcePowers(classId) {
     try {
       const pack = game.packs.get('foundryvtt-swse.force_powers');
-      if (!pack) return [];
+      if (!pack) {return [];}
 
       const docs = await pack.getDocuments();
       return docs.map(doc => ({
@@ -2417,7 +2417,7 @@ async applyScalingFeature(feature) {
   async _getAvailableForceTechniques() {
     try {
       const pack = game.packs.get('foundryvtt-swse.force_techniques');
-      if (!pack) return [];
+      if (!pack) {return [];}
 
       const docs = await pack.getDocuments();
       return docs.map(doc => ({
@@ -2437,7 +2437,7 @@ async applyScalingFeature(feature) {
   async _getAvailableForceSecrets() {
     try {
       const pack = game.packs.get('foundryvtt-swse.force_secrets');
-      if (!pack) return [];
+      if (!pack) {return [];}
 
       const docs = await pack.getDocuments();
       return docs.map(doc => ({
@@ -2457,7 +2457,7 @@ async applyScalingFeature(feature) {
   async _getAvailableStarshipManeuvers() {
     try {
       const pack = game.packs.get('foundryvtt-swse.starship_maneuvers');
-      if (!pack) return [];
+      if (!pack) {return [];}
 
       const docs = await pack.getDocuments();
       return docs.map(doc => ({
@@ -2848,11 +2848,11 @@ async applyScalingFeature(feature) {
  */
 export function initializeProgressionHooks() {
   // Navigation hook
-  Hooks.on("swse:sidebar:navigate", (id) => {
+  Hooks.on('swse:sidebar:navigate', (id) => {
     try {
       game.swse.progression?.goToStep(id);
     } catch (e) {
-      swseLogger.warn("SWSE progression navigation failed:", e);
+      swseLogger.warn('SWSE progression navigation failed:', e);
     }
   });
 

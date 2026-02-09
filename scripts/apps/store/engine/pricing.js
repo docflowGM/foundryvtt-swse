@@ -15,11 +15,11 @@
 /* -------------------------------------------------------------- */
 
 function getMarkupPercent() {
-  return Number(game.settings.get("foundryvtt-swse", "storeMarkup") ?? 0);
+  return Number(game.settings.get('foundryvtt-swse', 'storeMarkup') ?? 0);
 }
 
 function getDiscountPercent() {
-  return Number(game.settings.get("foundryvtt-swse", "storeDiscount") ?? 0);
+  return Number(game.settings.get('foundryvtt-swse', 'storeDiscount') ?? 0);
 }
 
 /* -------------------------------------------------------------- */
@@ -31,7 +31,7 @@ function getDiscountPercent() {
  * Applies markup and discount.
  */
 export function calculateFinalCost(base) {
-  if (!base || isNaN(base) || base < 0) return null;
+  if (!base || isNaN(base) || base < 0) {return null;}
 
   const markup = getMarkupPercent();     // +%
   const discount = getDiscountPercent(); // -%
@@ -82,7 +82,7 @@ export function applyPricing(item) {
   }
 
   // Vehicles get both new + used prices
-  if (item.type === "vehicle" && base != null) {
+  if (item.type === 'vehicle' && base != null) {
     item.finalCostUsed = calculateUsedCost(base);
   }
 

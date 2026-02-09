@@ -79,7 +79,7 @@ export class CombatSuggestionEngine {
     const combatants = combat?.combatants || [];
 
     combatants.forEach(combatant => {
-      if (!combatant.actor) return;
+      if (!combatant.actor) {return;}
 
       const actorId = combatant.actor.id;
 

@@ -93,8 +93,8 @@ export async function scanForInvalidIds() {
  */
 export async function fixInvalidIds(report) {
     if (!game.user.isGM) {
-        ui.notifications.error("Only GMs can repair item IDs.");
-        return { success: false, message: "Permission denied" };
+        ui.notifications.error('Only GMs can repair item IDs.');
+        return { success: false, message: 'Permission denied' };
     }
 
     const results = {

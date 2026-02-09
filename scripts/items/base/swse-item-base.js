@@ -11,7 +11,7 @@
 import { getWeaponRangeInfo } from '../weapon-ranges.js';
 
 export class SWSEItemBase extends Item {
-  
+
   /**
    * Prepare derived data for the item
    */
@@ -82,7 +82,7 @@ export class SWSEItemBase extends Item {
    */
   _prepareArmorData() {
     const data = this.system;
-    
+
     // Calculate total armor bonus (reflex defense bonus)
     if (data.armorBonus !== undefined && data.equipBonus !== undefined) {
       data.totalBonus = (data.armorBonus || 0) + (data.equipBonus || 0);
@@ -174,12 +174,12 @@ export class SWSEItemBase extends Item {
    */
   getRollData() {
     const rollData = { ...this.system };
-    
+
     // Add actor data if available
     if (this.actor) {
       rollData.actor = this.actor.getRollData?.() ?? {};
     }
-    
+
     return rollData;
   }
 }

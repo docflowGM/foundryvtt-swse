@@ -1,12 +1,12 @@
 // scripts/actors/v2/base-actor.js
-import { SWSEActorBase } from "../base/swse-actor-base.js";
-import { ActorEngine } from "../engine/actor-engine.js";
-import { DerivedCalculator } from "../derived/derived-calculator.js";
-import { computeCharacterDerived } from "./character-actor.js";
-import { computeNpcDerived } from "./npc-actor.js";
-import { computeDroidDerived } from "./droid-actor.js";
-import { computeVehicleDerived } from "./vehicle-actor.js";
-import { shouldSkipDerivedData } from "../../utils/hardening.js";
+import { SWSEActorBase } from '../base/swse-actor-base.js';
+import { ActorEngine } from '../engine/actor-engine.js';
+import { DerivedCalculator } from '../derived/derived-calculator.js';
+import { computeCharacterDerived } from './character-actor.js';
+import { computeNpcDerived } from './npc-actor.js';
+import { computeDroidDerived } from './droid-actor.js';
+import { computeVehicleDerived } from './vehicle-actor.js';
+import { shouldSkipDerivedData } from '../../utils/hardening.js';
 
 /**
  * SWSE V2 Base Actor
@@ -32,19 +32,19 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     // v2: Compute HP, BAB, and defenses from progression data
     // Statblock NPCs must NOT be re-derived during AppV2 renders.
     // This is async but we fire-and-forget since Foundry doesn't await prepareDerivedData
-    if (!shouldSkipDerivedData(this)) this._computeDerivedAsync(system);
+    if (!shouldSkipDerivedData(this)) {this._computeDerivedAsync(system);}
 
     switch (this.type) {
-      case "character":
+      case 'character':
         computeCharacterDerived(this, system);
         break;
-      case "npc":
+      case 'npc':
         computeNpcDerived(this, system);
         break;
-      case "droid":
+      case 'droid':
         computeDroidDerived(this, system);
         break;
-      case "vehicle":
+      case 'vehicle':
         computeVehicleDerived(this, system);
         break;
       default:
@@ -97,27 +97,27 @@ export class SWSEV2BaseActor extends SWSEActorBase {
    * @param {object} [options]
    */
   async useAction(actionId, options = {}) {
-    const id = String(actionId ?? "").trim();
-    if (!id) return null;
+    const id = String(actionId ?? '').trim();
+    if (!id) {return null;}
 
     const action = this.system?.derived?.actions?.map?.[id];
-    if (!action || action.executable !== true) return null;
+    if (!action || action.executable !== true) {return null;}
 
     const exec = action.execute ?? {};
-    const kind = String(exec.kind ?? "");
+    const kind = String(exec.kind ?? '');
 
-    if (kind === "item") {
+    if (kind === 'item') {
       const item = this.items?.get(exec.itemId);
       return this.useItem(item, { ...options, actionId: id });
     }
 
-    if (kind === "itemToggleActivated") {
+    if (kind === 'itemToggleActivated') {
       const item = this.items?.get(exec.itemId);
       return this.toggleItemActivated(item, { ...options, actionId: id });
     }
 
-    if (kind === "featActionToggle") {
-      const mod = await import("../../utils/feat-actions-mapper.js");
+    if (kind === 'featActionToggle') {
+      const mod = await import('../../utils/feat-actions-mapper.js');
       return mod.FeatActionsMapper.toggleAction(this, exec.actionKey);
     }
 
@@ -157,10 +157,10 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     const persistent = ct.persistent === true;
 
     // If persistent and improving (lowering step), block unless forced.
-    if (!force && persistent && next < current) return false;
+    if (!force && persistent && next < current) {return false;}
 
     await ActorEngine.updateActor(this, {
-      "system.conditionTrack.current": next
+      'system.conditionTrack.current': next
     });
 
     return true;
@@ -183,7 +183,7 @@ export class SWSEV2BaseActor extends SWSEActorBase {
 
   async setConditionTrackPersistent(flag) {
     await ActorEngine.updateActor(this, {
-      "system.conditionTrack.persistent": flag === true
+      'system.conditionTrack.persistent': flag === true
     });
     return true;
   }
@@ -204,7 +204,7 @@ export class SWSEV2BaseActor extends SWSEActorBase {
 
 function clampInt(value, min, max) {
   const n = Number(value);
-  if (!Number.isFinite(n)) return min;
+  if (!Number.isFinite(n)) {return min;}
   const i = Math.trunc(n);
   return Math.max(min, Math.min(max, i));
 }

@@ -24,27 +24,27 @@ import { TalentTreeDB } from '../../data/talent-tree-db.js';
  * Keep this in sync with actual database.
  */
 const TALENT_TREE_IDS = {
-    "Awareness": "1c48d1cd9ab1f5c8",
-    "Armor Specialist": "17cec542331cb4e4",
-    "Brawler": "67fdd8dce9abd6c1",
-    "Camouflage": "3926d582d2077489",
-    "Commando": "798ed0945cbdac1c",
-    "Dark Side Devotee": "96ef43a3054dcb58",
-    "Disgrace": "e91cc675fbf9ba6e",
-    "Force Adept": "e35ee41362604227",
-    "Force Item": "01e443d93e47f9c4",
-    "Fortune": "cee9b9398682b7d0",
-    "Influence": "8375b9b26b679901",
-    "Leadership": "5964237d22681dc0",
-    "Lineage": "b5bb4154688c66ab",
-    "Mercenary": "4007fa87192b5884",
-    "Misfortune": "67b59e020c1660eb",
-    "Smuggling": "9f7ca12cc084737a",
-    "Spacer": "5ea8c79492d40713",
-    "Spy": "7c42882a1347ef18",
-    "Survivor": "9b06340233eb3cdd",
-    "Veteran": "96c390430d7a4975",
-    "Weapon Specialist": "2e9265a596cc43f7"
+    'Awareness': '1c48d1cd9ab1f5c8',
+    'Armor Specialist': '17cec542331cb4e4',
+    'Brawler': '67fdd8dce9abd6c1',
+    'Camouflage': '3926d582d2077489',
+    'Commando': '798ed0945cbdac1c',
+    'Dark Side Devotee': '96ef43a3054dcb58',
+    'Disgrace': 'e91cc675fbf9ba6e',
+    'Force Adept': 'e35ee41362604227',
+    'Force Item': '01e443d93e47f9c4',
+    'Fortune': 'cee9b9398682b7d0',
+    'Influence': '8375b9b26b679901',
+    'Leadership': '5964237d22681dc0',
+    'Lineage': 'b5bb4154688c66ab',
+    'Mercenary': '4007fa87192b5884',
+    'Misfortune': '67b59e020c1660eb',
+    'Smuggling': '9f7ca12cc084737a',
+    'Spacer': '5ea8c79492d40713',
+    'Spy': '7c42882a1347ef18',
+    'Survivor': '9b06340233eb3cdd',
+    'Veteran': '96c390430d7a4975',
+    'Weapon Specialist': '2e9265a596cc43f7'
 };
 
 /**
@@ -52,31 +52,31 @@ const TALENT_TREE_IDS = {
  * Includes only feats used in prestige class prerequisites.
  */
 const FEAT_IDS = {
-    "Vehicular Combat": "1f2f70d34a17667d",
-    "Sniper": "56367f3943ee8c17",
-    "Martial Arts I": "92f927c92ded9fcf",
-    "Armor Proficiency (Medium)": "d445051370a88a7f",
-    "Armor Proficiency (medium)": "d445051370a88a7f",
-    "Point-Blank Shot": "05459ac4d439f229",
-    "Precise Shot": "c180eee7d3bc29b2",
-    "Quick Draw": "44705a692e2f01a6",
-    "Weapon Proficiency (Pistols)": "e5d361d01d1b44e4",
-    "Force Sensitivity": "ddbeb23013d9e917",
-    "Improved Damage Threshold": "96666de28ba99b64",
-    "Advanced Melee Weapon Proficiency": "cf28ec45cabaff59",
-    "Weapon Proficiency (Advanced Melee Weapons)": "cf28ec45cabaff59",
-    "Melee Defense": "3a847230d573a623",
-    "Rapid Strike": "ccb33e58342499a3",
-    "Surgical Expertise": "f9ae5b531ae01fd0",
-    "Skill Focus (Knowledge (Bureaucracy))": "1592aaedf4b6e40a",
-    "Skill Focus (Stealth)": "1592aaedf4b6e40a",
-    "Skill Focus (Mechanics)": "1592aaedf4b6e40a",
-    "Weapon Focus (Melee Weapon)": "c41814601364b643",
-    "Martial Arts II": "5bedd71f0eead6b9",
-    "Biotech Specialist": "bf6c01fa590a3f75",
-    "Flurry": "0536f81eff886234",
+    'Vehicular Combat': '1f2f70d34a17667d',
+    'Sniper': '56367f3943ee8c17',
+    'Martial Arts I': '92f927c92ded9fcf',
+    'Armor Proficiency (Medium)': 'd445051370a88a7f',
+    'Armor Proficiency (medium)': 'd445051370a88a7f',
+    'Point-Blank Shot': '05459ac4d439f229',
+    'Precise Shot': 'c180eee7d3bc29b2',
+    'Quick Draw': '44705a692e2f01a6',
+    'Weapon Proficiency (Pistols)': 'e5d361d01d1b44e4',
+    'Force Sensitivity': 'ddbeb23013d9e917',
+    'Improved Damage Threshold': '96666de28ba99b64',
+    'Advanced Melee Weapon Proficiency': 'cf28ec45cabaff59',
+    'Weapon Proficiency (Advanced Melee Weapons)': 'cf28ec45cabaff59',
+    'Melee Defense': '3a847230d573a623',
+    'Rapid Strike': 'ccb33e58342499a3',
+    'Surgical Expertise': 'f9ae5b531ae01fd0',
+    'Skill Focus (Knowledge (Bureaucracy))': '1592aaedf4b6e40a',
+    'Skill Focus (Stealth)': '1592aaedf4b6e40a',
+    'Skill Focus (Mechanics)': '1592aaedf4b6e40a',
+    'Weapon Focus (Melee Weapon)': 'c41814601364b643',
+    'Martial Arts II': '5bedd71f0eead6b9',
+    'Biotech Specialist': 'bf6c01fa590a3f75',
+    'Flurry': '0536f81eff886234',
     // Lightsaber-related (talent IDs, not feats)
-    "Weapon Proficiency (Lightsabers)": "6fe17dc4f0f03c12"  // Lightsaber Specialist talent
+    'Weapon Proficiency (Lightsabers)': '6fe17dc4f0f03c12'  // Lightsaber Specialist talent
 };
 
 /**
@@ -181,7 +181,7 @@ export function normalizeClassPrerequisites(classDoc) {
  * These feats are identified by a flag on the feat document, not by ID.
  */
 const FEAT_FLAGS = {
-    "Martial Arts Feat": "martialArtsFeat"
+    'Martial Arts Feat': 'martialArtsFeat'
 };
 
 /**

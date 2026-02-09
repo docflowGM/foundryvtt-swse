@@ -27,13 +27,13 @@ export async function recalcDerivedStats(actor) {
   const con = sys.abilities?.con?.mod ?? 0;
 
   const updates = {
-    "system.combat.meleeAttack": bab + str,
-    "system.combat.rangedAttack": bab + dex,
-    "system.skills.perception.miscMod": wis,
-    "system.skills.initiative.miscMod": dex,
-    "system.defenses.reflex.base": dex,
-    "system.defenses.will.base": wis,
-    "system.defenses.fortitude.base": con
+    'system.combat.meleeAttack': bab + str,
+    'system.combat.rangedAttack': bab + dex,
+    'system.skills.perception.miscMod': wis,
+    'system.skills.initiative.miscMod': dex,
+    'system.defenses.reflex.base': dex,
+    'system.defenses.will.base': wis,
+    'system.defenses.fortitude.base': con
   };
 
   try {

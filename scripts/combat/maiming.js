@@ -6,7 +6,7 @@
  * If the attack reduces the target to 0 HP, they are maimed but alive.
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 export class MaimingMechanic {
@@ -21,11 +21,11 @@ export class MaimingMechanic {
   static async attemptMaim(attacker, target, weapon, damageRoll) {
     try {
       if (!attacker || !target || !weapon) {
-        throw new Error("Missing attacker, target, or weapon");
+        throw new Error('Missing attacker, target, or weapon');
       }
 
       // Calculate maiming attack bonus (BAB + modifiers - 5 penalty)
-      const abilityMod = attacker.system?.attributes[weapon?.system?.attackAttribute || "str"]?.mod || 0;
+      const abilityMod = attacker.system?.attributes[weapon?.system?.attackAttribute || 'str']?.mod || 0;
       const bab = attacker.system?.bab || 0;
       const lvl = attacker.system?.level || 1;
       const halfLvl = getEffectiveHalfLevel(actor);
@@ -70,7 +70,7 @@ export class MaimingMechanic {
           : `${attacker.name} wounds ${target.name} with ${weapon.name}! (${halfDamage} damage)`
       };
     } catch (err) {
-      SWSELogger.error("Maiming attack failed", err);
+      SWSELogger.error('Maiming attack failed', err);
       throw err;
     }
   }
@@ -81,18 +81,18 @@ export class MaimingMechanic {
    * @param {Actor} target - The maimed character
    * @param {string} maimType - Type of maiming (e.g., "severed_arm", "crippled_leg", "blinded")
    */
-  static async applyMaimingCondition(target, maimType = "maimed") {
-    if (!target) return;
+  static async applyMaimingCondition(target, maimType = 'maimed') {
+    if (!target) {return;}
 
     try {
       // Set flag indicating character is maimed
-      await target.setFlag("foundryvtt-swse", "isMaimed", true);
-      await target.setFlag("foundryvtt-swse", "maimType", maimType);
+      await target.setFlag('foundryvtt-swse', 'isMaimed', true);
+      await target.setFlag('foundryvtt-swse', 'maimType', maimType);
 
       // Could apply status effect here if needed
       SWSELogger.info(`${target.name} has been maimed: ${maimType}`);
     } catch (err) {
-      SWSELogger.error("Failed to apply maiming condition", err);
+      SWSELogger.error('Failed to apply maiming condition', err);
     }
   }
 
@@ -102,8 +102,8 @@ export class MaimingMechanic {
    * @returns {boolean|string} - False if not maimed, string describing maim type if maimed
    */
   static isMaimed(actor) {
-    if (!actor) return false;
-    return actor.getFlag("foundryvtt-swse", "isMaimed") ? actor.getFlag("foundryvtt-swse", "maimType") : false;
+    if (!actor) {return false;}
+    return actor.getFlag('foundryvtt-swse', 'isMaimed') ? actor.getFlag('foundryvtt-swse', 'maimType') : false;
   }
 
   /**
@@ -111,14 +111,14 @@ export class MaimingMechanic {
    * @param {Actor} actor - The character to restore
    */
   static async restoreMaimedCharacter(actor) {
-    if (!actor) return;
+    if (!actor) {return;}
 
     try {
-      await actor.unsetFlag("foundryvtt-swse", "isMaimed");
-      await actor.unsetFlag("foundryvtt-swse", "maimType");
+      await actor.unsetFlag('foundryvtt-swse', 'isMaimed');
+      await actor.unsetFlag('foundryvtt-swse', 'maimType');
       SWSELogger.info(`${actor.name} has been restored from maiming`);
     } catch (err) {
-      SWSELogger.error("Failed to restore maimed character", err);
+      SWSELogger.error('Failed to restore maimed character', err);
     }
   }
 }

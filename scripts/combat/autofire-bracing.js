@@ -6,7 +6,7 @@
  * When braced, autofire penalty is -2 instead of -5.
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 export class AutofireBracing {
   /**
@@ -19,7 +19,7 @@ export class AutofireBracing {
   static async braceWeapon(actor, weapon) {
     try {
       if (!actor || !weapon) {
-        throw new Error("Missing actor or weapon");
+        throw new Error('Missing actor or weapon');
       }
 
       // Check if weapon can be braced
@@ -34,7 +34,7 @@ export class AutofireBracing {
       }
 
       // Set bracing flag on actor tied to this weapon
-      await actor.setFlag("foundryvtt-swse", "brace_weapon_" + weapon.id, {
+      await actor.setFlag('foundryvtt-swse', 'brace_weapon_' + weapon.id, {
         weaponId: weapon.id,
         weaponName: weapon.name,
         timestamp: new Date().toISOString(),
@@ -42,10 +42,10 @@ export class AutofireBracing {
       });
 
       // Also track braced weapons on actor for reference
-      const bracedWeapons = actor.getFlag("foundryvtt-swse", "braced_weapons") || [];
+      const bracedWeapons = actor.getFlag('foundryvtt-swse', 'braced_weapons') || [];
       if (!bracedWeapons.includes(weapon.id)) {
         bracedWeapons.push(weapon.id);
-        await actor.setFlag("foundryvtt-swse", "braced_weapons", bracedWeapons);
+        await actor.setFlag('foundryvtt-swse', 'braced_weapons', bracedWeapons);
       }
 
       return {
@@ -55,7 +55,7 @@ export class AutofireBracing {
         message: `${actor.name} braces ${weapon.name} (2 Swift Actions spent). Autofire penalty reduced to -2 on next attack.`
       };
     } catch (err) {
-      SWSELogger.error("Failed to brace weapon", err);
+      SWSELogger.error('Failed to brace weapon', err);
       throw err;
     }
   }
@@ -67,32 +67,32 @@ export class AutofireBracing {
    */
   static _canBraceWeapon(weapon) {
     if (!weapon) {
-      return { canBrace: false, reason: "No weapon provided" };
+      return { canBrace: false, reason: 'No weapon provided' };
     }
 
     // Check if autofire-only
     const modes = weapon.system?.modes || weapon.system?.weaponModes || [];
     const isAutofireOnly = Array.isArray(modes)
-      ? modes.length === 1 && modes[0].toLowerCase().includes("autofire")
-      : Object.keys(modes).length === 1 && Object.keys(modes)[0].toLowerCase().includes("autofire");
+      ? modes.length === 1 && modes[0].toLowerCase().includes('autofire')
+      : Object.keys(modes).length === 1 && Object.keys(modes)[0].toLowerCase().includes('autofire');
 
     if (!isAutofireOnly) {
       return { canBrace: false, reason: `${weapon.name} must be an autofire-only weapon to be braced` };
     }
 
     // Check weapon category
-    const category = (weapon.system?.category || weapon.system?.type || "").toLowerCase();
-    const name = (weapon.name || "").toLowerCase();
-    const hasRetractableStock = weapon.system?.retractableStock || name.includes("retractable stock");
+    const category = (weapon.system?.category || weapon.system?.type || '').toLowerCase();
+    const name = (weapon.name || '').toLowerCase();
+    const hasRetractableStock = weapon.system?.retractableStock || name.includes('retractable stock');
 
-    const validCategories = ["heavy", "rifle", "pistol"];
+    const validCategories = ['heavy', 'rifle', 'pistol'];
     const isValidCategory = validCategories.some(cat => category.includes(cat));
 
     if (!isValidCategory) {
       return { canBrace: false, reason: `${weapon.name} must be a Heavy Weapon or Rifle to be braced` };
     }
 
-    if (category.includes("pistol") && !hasRetractableStock) {
+    if (category.includes('pistol') && !hasRetractableStock) {
       return { canBrace: false, reason: `${weapon.name} must have Retractable Stock to be braced` };
     }
 
@@ -106,9 +106,9 @@ export class AutofireBracing {
    * @returns {boolean} - True if weapon is braced
    */
   static isWeaponBraced(actor, weapon) {
-    if (!actor || !weapon) return false;
+    if (!actor || !weapon) {return false;}
 
-    const braceFlag = actor.getFlag("foundryvtt-swse", "brace_weapon_" + weapon.id);
+    const braceFlag = actor.getFlag('foundryvtt-swse', 'brace_weapon_' + weapon.id);
     return braceFlag?.active === true;
   }
 
@@ -118,9 +118,9 @@ export class AutofireBracing {
    * @returns {Array<string>} - Array of weapon IDs that are braced
    */
   static getBracedWeapons(actor) {
-    if (!actor) return [];
+    if (!actor) {return [];}
 
-    return actor.getFlag("foundryvtt-swse", "braced_weapons") || [];
+    return actor.getFlag('foundryvtt-swse', 'braced_weapons') || [];
   }
 
   /**
@@ -129,24 +129,24 @@ export class AutofireBracing {
    * @param {Item} weapon - The weapon to unbrace
    */
   static async unbraceWeapon(actor, weapon) {
-    if (!actor || !weapon) return;
+    if (!actor || !weapon) {return;}
 
     try {
-      await actor.unsetFlag("foundryvtt-swse", "brace_weapon_" + weapon.id);
+      await actor.unsetFlag('foundryvtt-swse', 'brace_weapon_' + weapon.id);
 
       // Remove from braced weapons list
-      const bracedWeapons = actor.getFlag("foundryvtt-swse", "braced_weapons") || [];
+      const bracedWeapons = actor.getFlag('foundryvtt-swse', 'braced_weapons') || [];
       const filtered = bracedWeapons.filter(id => id !== weapon.id);
 
       if (filtered.length > 0) {
-        await actor.setFlag("foundryvtt-swse", "braced_weapons", filtered);
+        await actor.setFlag('foundryvtt-swse', 'braced_weapons', filtered);
       } else {
-        await actor.unsetFlag("foundryvtt-swse", "braced_weapons");
+        await actor.unsetFlag('foundryvtt-swse', 'braced_weapons');
       }
 
       SWSELogger.info(`${actor.name} removed brace from ${weapon.name}`);
     } catch (err) {
-      SWSELogger.error("Failed to unbrace weapon", err);
+      SWSELogger.error('Failed to unbrace weapon', err);
     }
   }
 
@@ -155,20 +155,20 @@ export class AutofireBracing {
    * @param {Actor} actor - The character
    */
   static async unbraceAll(actor) {
-    if (!actor) return;
+    if (!actor) {return;}
 
     try {
-      const bracedWeapons = actor.getFlag("foundryvtt-swse", "braced_weapons") || [];
+      const bracedWeapons = actor.getFlag('foundryvtt-swse', 'braced_weapons') || [];
 
       for (const weaponId of bracedWeapons) {
-        await actor.unsetFlag("foundryvtt-swse", "brace_weapon_" + weaponId);
+        await actor.unsetFlag('foundryvtt-swse', 'brace_weapon_' + weaponId);
       }
 
-      await actor.unsetFlag("foundryvtt-swse", "braced_weapons");
+      await actor.unsetFlag('foundryvtt-swse', 'braced_weapons');
 
       SWSELogger.info(`${actor.name} removed all weapon braces`);
     } catch (err) {
-      SWSELogger.error("Failed to remove all weapon braces", err);
+      SWSELogger.error('Failed to remove all weapon braces', err);
     }
   }
 

@@ -44,7 +44,7 @@ class TalentActionLinker {
    * @returns {Array} Array of talent names and their bonuses
    */
   static getTalentsForAction(actor, actionId) {
-    if (!actor.items) return [];
+    if (!actor.items) {return [];}
 
     const linkedTalents = [];
     const talentNames = actor.items
@@ -122,7 +122,7 @@ class TalentActionLinker {
    * @private
    */
   static _findAbilityForTalent(talentName) {
-    if (!this.ABILITIES?.abilities) return null;
+    if (!this.ABILITIES?.abilities) {return null;}
 
     // Search by talent name (abilities are keyed by ID, but have talentName property)
     for (const [id, ability] of Object.entries(this.ABILITIES.abilities)) {
@@ -142,7 +142,7 @@ class TalentActionLinker {
    * @returns {Object} Enhanced action data with talent bonuses
    */
   static enhanceActionCard(actionData, actor) {
-    if (!actionData.id || !actor) return actionData;
+    if (!actionData.id || !actor) {return actionData;}
 
     const linkedTalentData = this.calculateBonusForAction(actor, actionData.id);
 

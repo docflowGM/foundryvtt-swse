@@ -35,14 +35,14 @@ export function initializeFollowerHooks() {
      */
     Hooks.on('createItem', async (item, options, userId) => {
         // Only process for the user who created the item
-        if (game.user.id !== userId) return;
+        if (game.user.id !== userId) {return;}
 
         // Only process talents
-        if (item.type !== 'talent') return;
+        if (item.type !== 'talent') {return;}
 
         // Get the actor
         const actor = item.actor;
-        if (!actor) return;
+        if (!actor) {return;}
 
         // Check if this is a follower-granting talent
         const talentConfig = FOLLOWER_TALENTS[item.name];
@@ -82,14 +82,14 @@ export function initializeFollowerHooks() {
      */
     Hooks.on('deleteItem', async (item, options, userId) => {
         // Only process for the user who deleted the item
-        if (game.user.id !== userId) return;
+        if (game.user.id !== userId) {return;}
 
         // Only process talents
-        if (item.type !== 'talent') return;
+        if (item.type !== 'talent') {return;}
 
         // Get the actor
         const actor = item.actor;
-        if (!actor) return;
+        if (!actor) {return;}
 
         // Check if this is an enhancement talent
         const enhancement = FollowerManager.ENHANCEMENT_TALENTS[item.name];
@@ -118,12 +118,12 @@ export function initializeFollowerHooks() {
      */
     Hooks.on('getHeaderControlsApplicationV2', (app, controls) => {
         const actor = app?.actor ?? app?.document;
-        if (!actor || actor.type !== 'character') return;
+        if (!actor || actor.type !== 'character') {return;}
 
         const followerTalents = actor.items.filter(i => i.type === 'talent' && FOLLOWER_TALENTS[i.name]);
-        if (!followerTalents.length) return;
+        if (!followerTalents.length) {return;}
 
-        if (controls.some(c => c?.action === 'swse-followers')) return;
+        if (controls.some(c => c?.action === 'swse-followers')) {return;}
 
         controls.push({
             action: 'swse-followers',
@@ -137,7 +137,7 @@ export function initializeFollowerHooks() {
 
     Hooks.on('updateActor', async (actor, changes, options, userId) => {
         // Only process for the user who updated the actor
-        if (game.user.id !== userId) return;
+        if (game.user.id !== userId) {return;}
 
         // Check if level changed
         if (changes.system?.level) {
@@ -206,7 +206,7 @@ async function showFollowerTemplateSelection(actor, grantingTalent, talentConfig
             buttons: {
                 create: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "Continue",
+                    label: 'Continue',
                     callback: async (html) => {
                         const root = html instanceof HTMLElement ? html : html?.[0];
                         const formData = new FormData(root.querySelector('form'));
@@ -230,11 +230,11 @@ async function showFollowerTemplateSelection(actor, grantingTalent, talentConfig
                 },
                 cancel: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel",
+                    label: 'Cancel',
                     callback: () => resolve(null)
                 }
             },
-            default: "create"
+            default: 'create'
         }, {
             width: 600,
             classes: ['swse-dialog', 'follower-template-selection-dialog']
@@ -249,7 +249,7 @@ function addFollowerManagementUI(html, actor, followerTalents) {
     // Find talents tab or a suitable location
     const root = html?.[0] ?? html;
     const talentsTab = root?.querySelector?.('.tab[data-tab="talents"]');
-    if (!talentsTab.length) return;
+    if (!talentsTab.length) {return;}
 
     // Get current followers
     const currentFollowers = FollowerCreator.getFollowers(actor);
@@ -358,7 +358,7 @@ function addFollowerManagementUI(html, actor, followerTalents) {
 
         if (followerTalents.length > 1) {
             selectedTalent = await selectFollowerTalent(followerTalents);
-            if (!selectedTalent) return;
+            if (!selectedTalent) {return;}
         }
 
         const talentConfig = FOLLOWER_TALENTS[selectedTalent.name];
@@ -405,12 +405,12 @@ async function selectFollowerTalent(talents) {
 
     return new Promise((resolve) => {
         new Dialog({
-            title: "Select Talent",
+            title: 'Select Talent',
             content: html,
             buttons: {
                 select: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "Select",
+                    label: 'Select',
                     callback: (html) => {
                         const root = html instanceof HTMLElement ? html : html?.[0];
                         const formData = new FormData(root.querySelector('form'));
@@ -421,11 +421,11 @@ async function selectFollowerTalent(talents) {
                 },
                 cancel: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel",
+                    label: 'Cancel',
                     callback: () => resolve(null)
                 }
             },
-            default: "select"
+            default: 'select'
         }).render(true);
     });
 }

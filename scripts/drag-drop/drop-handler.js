@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "../progression/engine/progression-engine.js";
+import { ProgressionEngine } from '../progression/engine/progression-engine.js';
 /**
  * Centralized Drag-Drop Handler for SWSE
  * Handles dropping Items onto Actors with automatic stat application
@@ -14,10 +14,10 @@ export class DropHandler {
       return this.handleNPCTemplateDrop(actor, data);
     }
 
-    if (data.type !== 'Item') return;
+    if (data.type !== 'Item') {return;}
 
     const item = await Item.implementation.fromDropData(data);
-    if (!item) return;
+    if (!item) {return;}
 
     switch (item.type) {
       case 'species':
@@ -60,7 +60,7 @@ export class DropHandler {
                 <p><strong>This cannot be undone!</strong></p>`
     });
 
-    if (!confirm) return false;
+    if (!confirm) {return false;}
 
     // Build update object
     const updates = {
@@ -89,15 +89,15 @@ export class DropHandler {
     }
 
     // Update other stats - ensure all numeric values are proper integers
-    if (template.level) updates['system.level'] = parseInt(template.level, 10) || 1;
-    if (template.challengeLevel) updates['system.challengeLevel'] = parseInt(template.challengeLevel, 10) || 1;
-    if (template.size) updates['system.size'] = template.size;
-    if (template.speed !== undefined) updates['system.speed'] = parseInt(template.speed, 10) || 6;
-    if (template.bab !== undefined) updates['system.bab'] = parseInt(template.bab, 10) || 0;
-    if (template.initiative !== undefined) updates['system.initiative'] = parseInt(template.initiative, 10) || 0;
-    if (template.damageThreshold) updates['system.damageThreshold'] = parseInt(template.damageThreshold, 10) || 10;
-    if (template.perception !== undefined) updates['system.perception'] = parseInt(template.perception, 10) || 0;
-    if (template.senses) updates['system.senses'] = template.senses;
+    if (template.level) {updates['system.level'] = parseInt(template.level, 10) || 1;}
+    if (template.challengeLevel) {updates['system.challengeLevel'] = parseInt(template.challengeLevel, 10) || 1;}
+    if (template.size) {updates['system.size'] = template.size;}
+    if (template.speed !== undefined) {updates['system.speed'] = parseInt(template.speed, 10) || 6;}
+    if (template.bab !== undefined) {updates['system.bab'] = parseInt(template.bab, 10) || 0;}
+    if (template.initiative !== undefined) {updates['system.initiative'] = parseInt(template.initiative, 10) || 0;}
+    if (template.damageThreshold) {updates['system.damageThreshold'] = parseInt(template.damageThreshold, 10) || 10;}
+    if (template.perception !== undefined) {updates['system.perception'] = parseInt(template.perception, 10) || 0;}
+    if (template.senses) {updates['system.senses'] = template.senses;}
 
     // Update condition track
     if (template.conditionTrack) {
@@ -194,10 +194,10 @@ export class DropHandler {
     // Add notes to biography if available
     if (template.skillsText || template.equipment || template.abilitiesText) {
       let bioNotes = '<h2>Template Notes</h2>';
-      if (template.skillsText) bioNotes += `<h3>Skills</h3><p>${template.skillsText}</p>`;
-      if (template.equipment) bioNotes += `<h3>Equipment</h3><p>${template.equipment}</p>`;
-      if (template.abilitiesText) bioNotes += `<h3>Special Abilities</h3><p>${template.abilitiesText}</p>`;
-      if (template.speciesTraits) bioNotes += `<h3>Species Traits</h3><p>${template.speciesTraits}</p>`;
+      if (template.skillsText) {bioNotes += `<h3>Skills</h3><p>${template.skillsText}</p>`;}
+      if (template.equipment) {bioNotes += `<h3>Equipment</h3><p>${template.equipment}</p>`;}
+      if (template.abilitiesText) {bioNotes += `<h3>Special Abilities</h3><p>${template.abilitiesText}</p>`;}
+      if (template.speciesTraits) {bioNotes += `<h3>Species Traits</h3><p>${template.speciesTraits}</p>`;}
 
       await globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.biography': (actor.system.biography || '') + bioNotes
@@ -207,7 +207,7 @@ export class DropHandler {
     ui.notifications.info(`Applied ${template.name} template to ${actor.name}`);
     return true;
   }
-  
+
   static async handleSpeciesDrop(actor, species) {
     // Apply species bonuses:
     // - Ability score modifiers
@@ -227,14 +227,14 @@ export class DropHandler {
         })
       });
 
-      if (!replace) return;
+      if (!replace) {return;}
       await existingSpecies.delete();
     }
 
     await actor.createEmbeddedDocuments('Item', [species.toObject()]);
 
     // Parse racial ability bonuses from string format (e.g., "+2 Dex, -2 Con")
-    const abilityMods = this._parseAbilityString(species.system.attributes || "None");
+    const abilityMods = this._parseAbilityString(species.system.attributes || 'None');
 
     const updates = {
       'system.attributes.str.racial': abilityMods.str || 0,
@@ -250,7 +250,7 @@ export class DropHandler {
 
     await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
 
-    ui.notifications.info(game.i18n.format('SWSE.Notifications.Items.SpeciesApplied', {species: species.name, actor: actor.name}));
+    ui.notifications.info(game.i18n.format('SWSE.Notifications.Items.SpeciesApplied', { species: species.name, actor: actor.name }));
     return true;
   }
 
@@ -269,7 +269,7 @@ export class DropHandler {
       cha: 0
     };
 
-    if (!abilityString || abilityString === "None" || abilityString === "none") {
+    if (!abilityString || abilityString === 'None' || abilityString === 'none') {
       return bonuses;
     }
 
@@ -302,30 +302,30 @@ export class DropHandler {
 
     return bonuses;
   }
-  
+
   static async handleClassDrop(actor, classItem) {
     // Add class level:
     // - Grant class features for this level
     // - Update BAB progression
     // - Update defense bonuses
     // - Add class skills
-    
+
     // Check if this class already exists
-    const existingClass = actor.items.find(i => 
+    const existingClass = actor.items.find(i =>
       i.type === 'class' && i.name === classItem.name
     );
-    
+
     if (existingClass) {
-      ui.notifications.warn(game.i18n.format('SWSE.Notifications.Items.AlreadyHasClass', {actor: actor.name, class: classItem.name}));
+      ui.notifications.warn(game.i18n.format('SWSE.Notifications.Items.AlreadyHasClass', { actor: actor.name, class: classItem.name }));
       return false;
     }
-    
+
     await actor.createEmbeddedDocuments('Item', [classItem.toObject()]);
-    
+
     ui.notifications.info(`Added ${classItem.name} class to ${actor.name}`);
     return true;
   }
-  
+
   static async handleDroidChassisDrop(actor, chassis) {
     // Apply droid chassis template:
     // - Replace ALL actor stats with chassis stats
@@ -334,20 +334,20 @@ export class DropHandler {
     // - Set HP
     // - Set speed
     // - Add system slots
-    
+
     if (actor.type !== 'droid') {
       ui.notifications.warn('Droid chassis can only be applied to droid actors!');
       return false;
     }
-    
+
     const confirm = await Dialog.confirm({
       title: 'Apply Droid Chassis?',
       content: `<p>This will replace <strong>${actor.name}</strong>'s stats with the ${chassis.name} chassis.</p>
                 <p><strong>This cannot be undone!</strong></p>`
     });
-    
-    if (!confirm) return false;
-    
+
+    if (!confirm) {return false;}
+
     const updates = {
       'system.attributes.str.base': chassis.system.attributes?.str || 10,
       'system.attributes.dex.base': chassis.system.attributes?.dex || 10,
@@ -361,11 +361,11 @@ export class DropHandler {
     };
 
     await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
-    
+
     ui.notifications.info(`Applied ${chassis.name} droid chassis to ${actor.name}`);
     return true;
   }
-  
+
   static async handleVehicleTemplateDrop(actor, template) {
     // Apply vehicle template:
     // - Replace ALL vehicle stats
@@ -373,19 +373,19 @@ export class DropHandler {
     // - Set weapons
     // - Set crew requirements
     // - Set cargo capacity
-    
+
     if (actor.type !== 'vehicle') {
       ui.notifications.warn('Vehicle templates can only be applied to vehicle actors!');
       return false;
     }
-    
+
     const confirm = await Dialog.confirm({
       title: 'Apply Vehicle Template?',
       content: `<p>This will replace <strong>${actor.name}</strong>'s stats with the ${template.name} template.</p>
                 <p><strong>This cannot be undone!</strong></p>`
     });
-    
-    if (!confirm) return false;
+
+    if (!confirm) {return false;}
 
     await globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.vehicleType': template.system.vehicleType || 'starfighter',
@@ -397,28 +397,28 @@ export class DropHandler {
     ui.notifications.info(`Applied ${template.name} vehicle template to ${actor.name}`);
     return true;
   }
-  
+
   static async handleForcePowerDrop(actor, power) {
     // Add to known powers:
     // - Check prerequisites
     // - Add to Force Powers list
     // - Optionally add to active suite
-    
+
     // Check if already known
-    const existingPower = actor.items.find(i => 
+    const existingPower = actor.items.find(i =>
       i.type === 'forcepower' && i.name === power.name
     );
-    
+
     if (existingPower) {
       ui.notifications.warn(`${actor.name} already knows ${power.name}`);
       return false;
     }
-    
+
     await actor.createEmbeddedDocuments('Item', [power.toObject()]);
     ui.notifications.info(`${actor.name} learned ${power.name}`);
     return true;
   }
-  
+
   static async handleFeatDrop(actor, feat) {
     // Add feat:
     // - Check prerequisites
@@ -453,37 +453,37 @@ export class DropHandler {
     ui.notifications.info(`${actor.name} gained feat: ${feat.name}`);
     return true;
   }
-  
+
   static async handleTalentDrop(actor, talent) {
     // Add talent:
     // - Check tree prerequisites
     // - Validate class access
     // - Apply bonuses
-    
+
     // Check if already has talent
-    const existingTalent = actor.items.find(i => 
+    const existingTalent = actor.items.find(i =>
       i.type === 'talent' && i.name === talent.name
     );
-    
+
     if (existingTalent) {
       ui.notifications.warn(`${actor.name} already has ${talent.name}`);
       return false;
     }
-    
+
     await actor.createEmbeddedDocuments('Item', [talent.toObject()]);
     ui.notifications.info(`${actor.name} gained talent: ${talent.name}`);
     return true;
   }
-  
+
   static async handleDefaultDrop(actor, item) {
     // Standard item addition
     const created = await actor.createEmbeddedDocuments('Item', [item.toObject()]);
-    
+
     if (created && created.length > 0) {
       ui.notifications.info(`Added ${item.name} to ${actor.name}`);
       return true;
     }
-    
+
     return false;
   }
 }

@@ -128,7 +128,7 @@ export function applyMentorBias(baseScore, bias, suggestionItem) {
  * @returns {string|null} The role (guardian, striker, controller) or null
  */
 function detectItemRole(item) {
-  if (!item) return null;
+  if (!item) {return null;}
 
   const name = (item.name || '').toLowerCase();
   const desc = ((item.system?.description || '') + (item.system?.benefit || '')).toLowerCase();
@@ -158,7 +158,7 @@ function detectItemRole(item) {
  * @returns {boolean} True if dark-side aligned
  */
 function isSuggestionDarkSideAligned(item) {
-  if (!item) return false;
+  if (!item) {return false;}
 
   const fullText = ((item.name || '') + (item.system?.description || '')).toLowerCase();
 

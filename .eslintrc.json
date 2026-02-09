@@ -25,6 +25,7 @@
     "Dialog": "readonly",
     "Application": "readonly",
     "FormApplication": "readonly",
+    "ChatMessage": "readonly",
     "foundry": "readonly",
     "Handlebars": "readonly",
     "CONST": "readonly",
@@ -37,7 +38,11 @@
     "hasProperty": "readonly",
     "expandObject": "readonly",
     "flattenObject": "readonly",
-    "globalThis": "readonly"
+    "globalThis": "readonly",
+    "fromUuid": "readonly",
+    "jQuery": "readonly",
+    "$": "readonly",
+    "process": "readonly"
   },
   "rules": {
     "no-unused-vars": [

@@ -62,7 +62,7 @@ export class StarshipManeuverSuggestionEngine {
    * @private
    */
   static _intelligentSuggest(actor, available = [], selected = new Set()) {
-    if (!available.length) return null;
+    if (!available.length) {return null;}
 
     // Get pilot's Piloting skill bonus
     const pilotingSkill = actor.system?.skills?.piloting?.bonus || 0;
@@ -72,7 +72,7 @@ export class StarshipManeuverSuggestionEngine {
     // Score each available maneuver
     const scored = available.map(maneuver => {
       const id = maneuver.id || maneuver._id || maneuver.name;
-      if (selected.has(id)) return null;
+      if (selected.has(id)) {return null;}
 
       let score = 0;
       const name = maneuver.name || '';
@@ -110,7 +110,7 @@ export class StarshipManeuverSuggestionEngine {
     }).filter(x => x);
 
     // Return highest scored maneuver
-    if (scored.length === 0) return this._simpleSuggest(actor, available, selected);
+    if (scored.length === 0) {return this._simpleSuggest(actor, available, selected);}
 
     scored.sort((a, b) => b.score - a.score);
     return scored[0].maneuver;

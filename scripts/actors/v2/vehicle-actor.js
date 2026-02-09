@@ -1,6 +1,6 @@
 // scripts/actors/v2/vehicle-actor.js
 
-import { computeCharacterDerived } from "./character-actor.js";
+import { computeCharacterDerived } from './character-actor.js';
 
 /**
  * Vehicles have their own derived rules in later phases.
@@ -15,5 +15,5 @@ export function computeVehicleDerived(actor, system) {
 
   // Vehicle-specific identity mirrors (safe defaults).
   system.derived.identity ??= {};
-  system.derived.identity.typeLabel = system.derived.identity.typeLabel ?? "Vehicle";
+  system.derived.identity.typeLabel = system.derived.identity.typeLabel ?? 'Vehicle';
 }

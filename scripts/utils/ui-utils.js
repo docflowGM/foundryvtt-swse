@@ -4,7 +4,7 @@
 
 /* ---------------------- Notifications ---------------------- */
 
-export function notify(message, type = "info") {
+export function notify(message, type = 'info') {
     ui.notifications[type](message);
 }
 
@@ -22,7 +22,7 @@ export async function confirm(title, content) {
 
 /* ---------------------- Prompt Input Dialog ---------------------- */
 
-export async function prompt(title, label, defaultValue = "") {
+export async function prompt(title, label, defaultValue = '') {
     const safeDefault = foundry.utils.escapeHTML(defaultValue);
 
     return new Promise((resolve) => {
@@ -38,7 +38,7 @@ export async function prompt(title, label, defaultValue = "") {
             `,
             buttons: {
                 ok: {
-                    label: "OK",
+                    label: 'OK',
                     callback: (html) => {
                         const element = html instanceof HTMLElement ? html : html[0];
                         const input = element?.querySelector('[name="input"]');
@@ -46,11 +46,11 @@ export async function prompt(title, label, defaultValue = "") {
                     }
                 },
                 cancel: {
-                    label: "Cancel",
+                    label: 'Cancel',
                     callback: () => resolve(null)
                 }
             },
-            default: "ok",
+            default: 'ok',
             close: () => resolve(null)
         }).render(true);
     });
@@ -73,20 +73,20 @@ export async function createDialog(title, content, buttons) {
 
 /* ---------------------- Element Highlight ---------------------- */
 
-export function highlightElement(element, duration = 1000, className = "highlight") {
-    if (!element) return;
+export function highlightElement(element, duration = 1000, className = 'highlight') {
+    if (!element) {return;}
     element.classList.add(className);
     setTimeout(() => {
-        if (element) element.classList.remove(className);
+        if (element) {element.classList.remove(className);}
     }, duration);
 }
 
 /* ---------------------- Scroll to Element ---------------------- */
 
 export function scrollToElement(element) {
-    if (!element) return;
+    if (!element) {return;}
     element.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest"
+        behavior: 'smooth',
+        block: 'nearest'
     });
 }

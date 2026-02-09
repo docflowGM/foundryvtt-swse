@@ -206,7 +206,7 @@
 
   let renderAttempts = 0;
   let successfulRenders = 0;
-  let failedRenders = 0;
+  const failedRenders = 0;
 
   Hooks.on('renderApplicationV2', (app, html, data) => {
     renderAttempts++;

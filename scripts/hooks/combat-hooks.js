@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "../progression/engine/progression-engine.js";
+import { ProgressionEngine } from '../progression/engine/progression-engine.js';
 /**
  * Combat Lifecycle Hooks
  * All combat-related hook handlers consolidated here
@@ -21,7 +21,7 @@ import { SpeciesRerollHandler } from '../species/species-reroll-handler.js';
  * Called during system initialization
  */
 export function registerCombatHooks() {
-    SWSELogger.log("Registering combat hooks");
+    SWSELogger.log('Registering combat hooks');
 
     // Check if automation is enabled
     const automationEnabled = game.settings.get('foundryvtt-swse', 'enableAutomation');
@@ -82,7 +82,7 @@ export function registerCombatHooks() {
  * @param {string} userId - The user ID creating the combat
  */
 function handleCombatCreate(combat, options, userId) {
-    SWSELogger.log("Combat created:", combat.name);
+    SWSELogger.log('Combat created:', combat.name);
     // Emit phase-changed hook so scene controls can re-filter
     Hooks.callAll('swse:phase-changed', 'combat');
 }
@@ -124,15 +124,15 @@ function handleCombatTurn(combat, updateData, updateOptions) {
  */
 async function handleConditionRecovery(combat, updateData, updateOptions) {
     const combatant = combat.combatant;
-    if (!combatant) return;
+    if (!combatant) {return;}
 
     const actor = combatant.actor;
-    if (!actor) return;
+    if (!actor) {return;}
 
     // Check if actor is on condition track
     const conditionTrack = actor.system.conditionTrack;
-    if (!conditionTrack || conditionTrack.current <= 0) return;
-    if (conditionTrack.persistent) return;
+    if (!conditionTrack || conditionTrack.current <= 0) {return;}
+    if (conditionTrack.persistent) {return;}
 
     // Prompt for recovery
     const recover = await Dialog.confirm({
@@ -143,7 +143,7 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
         })
     });
 
-    if (!recover) return;
+    if (!recover) {return;}
 
     // Make recovery check
     const endurance = actor.system.skills?.endurance;
@@ -180,12 +180,12 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
  * @param {string} userId - The user ID deleting the combat
  */
 async function handleCombatEnd(combat, options, userId) {
-    SWSELogger.log("Combat ended - resetting species encounter traits");
+    SWSELogger.log('Combat ended - resetting species encounter traits');
 
     // Get all combatants from the combat
     for (const combatant of combat.combatants) {
         const actor = combatant.actor;
-        if (!actor) continue;
+        if (!actor) {continue;}
 
         try {
             // Reset species encounter traits

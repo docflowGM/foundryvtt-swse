@@ -2,7 +2,7 @@
  * starship-maneuver-picker.js
  * Starship Maneuver picker UI using FormApplication + HBS template.
  */
-import SWSEFormApplication from "../../apps/base/swse-form-application.js";
+import SWSEFormApplication from '../../apps/base/swse-form-application.js';
 
 export class StarshipManeuverPicker extends SWSEFormApplication {
   /**
@@ -28,15 +28,14 @@ export class StarshipManeuverPicker extends SWSEFormApplication {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
     SWSEFormApplication.DEFAULT_OPTIONS ?? {},
     {
-      id: "starship-maneuver-picker",
-      classes: ["swse-app", "starship-maneuver-picker"],
-      template: "systems/foundryvtt-swse/scripts/progression/ui/templates/starship-maneuver-picker.hbs",
+      id: 'starship-maneuver-picker',
+      classes: ['swse-app', 'starship-maneuver-picker'],
+      template: 'systems/foundryvtt-swse/scripts/progression/ui/templates/starship-maneuver-picker.hbs',
       position: { width: 720, height: 620 },
       resizable: true
     }
   );
 
-  
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
@@ -58,8 +57,8 @@ async _prepareContext(options) {
         return {
           id,
           name: m.name || id,
-          img: m.img || (m.document?.img) || "icons/svg/mystery-man.svg",
-          description: m.system?.description || m.document?.system?.description || "",
+          img: m.img || (m.document?.img) || 'icons/svg/mystery-man.svg',
+          description: m.system?.description || m.document?.system?.description || '',
           prerequisites: m.system?.prerequisites || m.document?.system?.prerequisites || [],
           selected: this.selectedSet.has(id)
         };
@@ -71,12 +70,12 @@ async _prepareContext(options) {
 
   async _onRender(context, options) {
     const root = this.element;
-    if (!(root instanceof HTMLElement)) return;
+    if (!(root instanceof HTMLElement)) {return;}
 
-    root.querySelectorAll(".maneuver-card").forEach(card => {
-      card.addEventListener("click", ev => {
+    root.querySelectorAll('.maneuver-card').forEach(card => {
+      card.addEventListener('click', ev => {
         const id = ev.currentTarget.dataset.id;
-        if (!id) return;
+        if (!id) {return;}
 
         if (this.selectedSet.has(id)) {
           this.selectedSet.delete(id);
@@ -88,20 +87,20 @@ async _prepareContext(options) {
       });
     });
 
-    const mentorBtn = root.querySelector(".ask-mentor-starship-maneuver-suggestion");
+    const mentorBtn = root.querySelector('.ask-mentor-starship-maneuver-suggestion');
     if (mentorBtn) {
-      mentorBtn.addEventListener("click", () => this._askMentor());
+      mentorBtn.addEventListener('click', () => this._askMentor());
     }
 
-    const confirmBtn = root.querySelector(".confirm");
+    const confirmBtn = root.querySelector('.confirm');
     if (confirmBtn) {
-      confirmBtn.addEventListener("click", ev => {
+      confirmBtn.addEventListener('click', ev => {
         const result = [];
         const sel = new Set(this.selectedSet);
 
         for (const m of this.maneuvers) {
           const id = m.id || m._id || m.name;
-          if (sel.has(id)) result.push(m);
+          if (sel.has(id)) {result.push(m);}
         }
 
         this.resolve(result);
@@ -109,9 +108,9 @@ async _prepareContext(options) {
       });
     }
 
-    const cancelBtn = root.querySelector(".cancel");
+    const cancelBtn = root.querySelector('.cancel');
     if (cancelBtn) {
-      cancelBtn.addEventListener("click", ev => {
+      cancelBtn.addEventListener('click', ev => {
         this.resolve([]);
         this.close();
       });
@@ -122,7 +121,7 @@ async _prepareContext(options) {
     try {
       const { StarshipManeuverSuggestionEngine } = await import('../../progression/engine/starship-maneuver-suggestion-engine.js');
 
-      if (!this.actor) return;
+      if (!this.actor) {return;}
 
       const suggestion = await StarshipManeuverSuggestionEngine.suggestManeuver(this.actor, this.maneuvers, this.selectedSet);
       if (suggestion && suggestion.id) {

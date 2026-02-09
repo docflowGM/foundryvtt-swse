@@ -87,8 +87,8 @@ for (const talent of talents) {
 }
 
 let updated = 0;
-let notFound = [];
-let errors = [];
+const notFound = [];
+const errors = [];
 
 for (const [talentName, treeNameOrId] of Object.entries(classificationMapping.talents)) {
   // Find the talent
@@ -99,7 +99,7 @@ for (const [talentName, treeNameOrId] of Object.entries(classificationMapping.ta
   }
 
   // Find the tree ID
-  let treeId = treeNameToId[treeNameOrId] || treeNameToId[treeNameOrId.toLowerCase().replace(/\s+/g, '_')];
+  const treeId = treeNameToId[treeNameOrId] || treeNameToId[treeNameOrId.toLowerCase().replace(/\s+/g, '_')];
 
   if (!treeId) {
     errors.push(`  ✗ Tree not found for "${treeNameOrId}" (talent: "${talentName}")`);

@@ -30,7 +30,7 @@ export class SpeciesRerollHandler {
    */
   static getAvailableRerolls(actor, rollType = 'any') {
     const species = SpeciesTraitEngine.getActorSpecies(actor);
-    if (!species) return [];
+    if (!species) {return [];}
 
     const traits = SpeciesTraitEngine.getSpeciesTraitsData(species);
 
@@ -46,9 +46,9 @@ export class SpeciesRerollHandler {
       }
 
       // Check scope matches
-      if (t.scope === 'any') return true;
-      if (t.scope === rollType) return true;
-      if (rollType === 'any') return true;
+      if (t.scope === 'any') {return true;}
+      if (t.scope === rollType) {return true;}
+      if (rollType === 'any') {return true;}
 
       return false;
     });
@@ -145,7 +145,7 @@ export class SpeciesRerollHandler {
    */
   static async _markTraitUsed(actor, traitId) {
     const species = SpeciesTraitEngine.getActorSpecies(actor);
-    if (!species) return;
+    if (!species) {return;}
 
     // Store used traits in actor flags
     const usedTraits = actor.getFlag('foundryvtt-swse', 'usedSpeciesTraits') || [];

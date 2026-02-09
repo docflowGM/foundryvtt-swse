@@ -16,6 +16,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { SWSEActiveEffectsManager } from '../combat/active-effects-manager.js';
+// eslint-disable-next-line
 import talentAbilitiesData from '../../data/talent-granted-abilities.json' with { type: 'json' };
 
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';

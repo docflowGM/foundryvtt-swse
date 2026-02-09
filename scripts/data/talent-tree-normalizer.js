@@ -26,13 +26,13 @@
  * @returns {string} - Normalized ID (lowercase, underscored)
  */
 export function normalizeTalentTreeId(name) {
-    if (!name) return "unknown";
+    if (!name) {return 'unknown';}
 
     return name
         .toLowerCase()
-        .replace(/['']/g, "")      // Remove apostrophes (handles encoding issues)
-        .replace(/\W+/g, "_")       // Replace non-word chars with underscore
-        .replace(/^_|_$/g, "");     // Trim leading/trailing underscores
+        .replace(/['']/g, '')      // Remove apostrophes (handles encoding issues)
+        .replace(/\W+/g, '_')       // Replace non-word chars with underscore
+        .replace(/^_|_$/g, '');     // Trim leading/trailing underscores
 }
 
 /**
@@ -45,28 +45,28 @@ export function normalizeTalentTreeId(name) {
 function inferTreeRole(name) {
     const n = name.toLowerCase();
 
-    if (n.includes("jedi") || n.includes("force") || n.includes("sith") ||
-        n.includes("lightsaber") || n.includes("vitality")) {
-        return "force";
+    if (n.includes('jedi') || n.includes('force') || n.includes('sith') ||
+        n.includes('lightsaber') || n.includes('vitality')) {
+        return 'force';
     }
 
-    if (n.includes("commando") || n.includes("trooper") || n.includes("weapon") ||
-        n.includes("armor") || n.includes("duelist") || n.includes("gunslinger") ||
-        n.includes("soldier") || n.includes("guardian") || n.includes("gladiator")) {
-        return "combat";
+    if (n.includes('commando') || n.includes('trooper') || n.includes('weapon') ||
+        n.includes('armor') || n.includes('duelist') || n.includes('gunslinger') ||
+        n.includes('soldier') || n.includes('guardian') || n.includes('gladiator')) {
+        return 'combat';
     }
 
-    if (n.includes("slicer") || n.includes("tech") || n.includes("engineer") ||
-        n.includes("mechanic") || n.includes("droid") || n.includes("saboteur")) {
-        return "tech";
+    if (n.includes('slicer') || n.includes('tech') || n.includes('engineer') ||
+        n.includes('mechanic') || n.includes('droid') || n.includes('saboteur')) {
+        return 'tech';
     }
 
-    if (n.includes("leadership") || n.includes("influence") || n.includes("inspiration") ||
-        n.includes("noble") || n.includes("officer") || n.includes("diplomat")) {
-        return "leader";
+    if (n.includes('leadership') || n.includes('influence') || n.includes('inspiration') ||
+        n.includes('noble') || n.includes('officer') || n.includes('diplomat')) {
+        return 'leader';
     }
 
-    return "general";
+    return 'general';
 }
 
 /**
@@ -79,17 +79,17 @@ function inferTreeRole(name) {
 function inferTreeCategory(name) {
     const n = name.toLowerCase();
 
-    if (n.includes("jedi")) return "jedi";
-    if (n.includes("sith")) return "sith";
-    if (n.includes("droid")) return "droid";
-    if (n.includes("force") && !n.includes("jedi") && !n.includes("sith")) return "force";
-    if (n.includes("bounty hunter")) return "bounty_hunter";
-    if (n.includes("soldier") || n.includes("trooper")) return "military";
-    if (n.includes("noble") || n.includes("officer")) return "leadership";
-    if (n.includes("scoundrel") || n.includes("outlaw")) return "scoundrel";
-    if (n.includes("scout") || n.includes("fringer")) return "scout";
+    if (n.includes('jedi')) {return 'jedi';}
+    if (n.includes('sith')) {return 'sith';}
+    if (n.includes('droid')) {return 'droid';}
+    if (n.includes('force') && !n.includes('jedi') && !n.includes('sith')) {return 'force';}
+    if (n.includes('bounty hunter')) {return 'bounty_hunter';}
+    if (n.includes('soldier') || n.includes('trooper')) {return 'military';}
+    if (n.includes('noble') || n.includes('officer')) {return 'leadership';}
+    if (n.includes('scoundrel') || n.includes('outlaw')) {return 'scoundrel';}
+    if (n.includes('scout') || n.includes('fringer')) {return 'scout';}
 
-    return "universal";
+    return 'universal';
 }
 
 /**
@@ -101,7 +101,7 @@ function inferTreeCategory(name) {
  * @returns {Object} - Normalized talent tree definition
  */
 export function normalizeTalentTree(rawTree) {
-    const name = rawTree.name || "Unknown Tree";
+    const name = rawTree.name || 'Unknown Tree';
     const sys = rawTree.system || {};
 
     return {
@@ -127,8 +127,8 @@ export function normalizeTalentTree(rawTree) {
         compendiumName: sys.talent_tree || name,
 
         // Metadata
-        description: sys.description || "",
-        img: rawTree.img || "icons/svg/item-bag.svg"
+        description: sys.description || '',
+        img: rawTree.img || 'icons/svg/item-bag.svg'
     };
 }
 
@@ -143,7 +143,7 @@ export function normalizeTalentTree(rawTree) {
  * @returns {Object|null} - Tree if exact ID found, null otherwise (never fuzzy matches)
  */
 export function findTalentTreeByName(name, treeMap) {
-    if (!name || !treeMap) return null;
+    if (!name || !treeMap) {return null;}
 
     // Only exact ID match - no fuzzy matching (removed in SSOT stabilization)
     const id = normalizeTalentTreeId(name);

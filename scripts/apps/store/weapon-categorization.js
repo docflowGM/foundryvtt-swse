@@ -146,7 +146,7 @@ const MANUAL_OVERRIDES = {
     'Mandalorian Ripper': 'ranged-exotic', // Thrown blade
     'Wrist Laser': 'ranged-exotic',    // Wrist-mounted blaster
     'Wrist Rocket Launcher': 'ranged-exotic', // Wrist-mounted launcher
-    'Lightfoil': 'melee',              // Fencing lightsaber (DEX-based but still melee)
+    'Lightfoil': 'melee'              // Fencing lightsaber (DEX-based but still melee)
 };
 
 /**

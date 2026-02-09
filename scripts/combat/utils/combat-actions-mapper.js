@@ -11,8 +11,8 @@
  *  - Middleware extension hooks
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import TalentActionLinker from "../../engine/talent-action-linker.js";
+import { SWSELogger } from '../../utils/logger.js';
+import TalentActionLinker from '../../engine/talent-action-linker.js';
 
 export class CombatActionsMapper {
 
@@ -31,30 +31,30 @@ export class CombatActionsMapper {
    * Load and cache compendium data with JSON fallback
    */
   static async init() {
-    if (this._initialized) return;
+    if (this._initialized) {return;}
 
     try {
       // Load combat actions - try compendium first, fall back to JSON
       this._combatActions =
-        await this._loadCompendiumItems("foundryvtt-swse.combat-actions");
+        await this._loadCompendiumItems('foundryvtt-swse.combat-actions');
       if (!this._combatActions.length) {
-        this._combatActions = await this._loadJsonFallback("data/combat-actions.json", "combatAction");
-        SWSELogger.log("SWSE | Loaded combat actions from JSON fallback");
+        this._combatActions = await this._loadJsonFallback('data/combat-actions.json', 'combatAction');
+        SWSELogger.log('SWSE | Loaded combat actions from JSON fallback');
       }
 
       // Load extra skill uses - use correct pack ID (extraskilluses not extra-skill-uses)
       this._extraSkillUses =
-        await this._loadCompendiumItems("foundryvtt-swse.extraskilluses");
+        await this._loadCompendiumItems('foundryvtt-swse.extraskilluses');
       if (!this._extraSkillUses.length) {
-        this._extraSkillUses = await this._loadJsonFallback("data/extraskilluses.json", "extraskilluse");
-        SWSELogger.log("SWSE | Loaded extra skill uses from JSON fallback");
+        this._extraSkillUses = await this._loadJsonFallback('data/extraskilluses.json', 'extraskilluse');
+        SWSELogger.log('SWSE | Loaded extra skill uses from JSON fallback');
       }
 
       this._shipCombatActions =
-        await this._loadCompendiumItems("foundryvtt-swse.ship-combat-actions");
+        await this._loadCompendiumItems('foundryvtt-swse.ship-combat-actions');
 
       const enhancementsArray =
-        await this._loadCompendiumItems("foundryvtt-swse.talent-enhancements");
+        await this._loadCompendiumItems('foundryvtt-swse.talent-enhancements');
 
       this._talentEnhancements = this._indexEnhancements(enhancementsArray);
 
@@ -62,7 +62,7 @@ export class CombatActionsMapper {
       SWSELogger.log(`SWSE | CombatActionsMapper initialized: ${this._combatActions.length} combat actions, ${this._extraSkillUses.length} extra uses`);
 
     } catch (err) {
-      SWSELogger.error("SWSE | Failed to load combat action packs:", err);
+      SWSELogger.error('SWSE | Failed to load combat action packs:', err);
       this._combatActions = [];
       this._extraSkillUses = [];
       this._shipCombatActions = [];
@@ -125,13 +125,13 @@ export class CombatActionsMapper {
     const result = {};
     for (const item of items) {
       const key = item.system?.actionKey;
-      if (!key) continue;
+      if (!key) {continue;}
 
-      if (!result[key]) result[key] = [];
+      if (!result[key]) {result[key] = [];}
       result[key].push({
         name: item.name,
         requiredTalent: item.system?.requiredTalent,
-        effect: item.system?.effect,
+        effect: item.system?.effect
       });
     }
     return result;
@@ -142,7 +142,7 @@ export class CombatActionsMapper {
   // ---------------------------------------------------------------------------
 
   static getActionsForSkill(skillKey) {
-    if (!this._initialized) return this._notReady();
+    if (!this._initialized) {return this._notReady();}
 
     const displayName = this._getSkillDisplayName(skillKey).toLowerCase();
 
@@ -167,7 +167,7 @@ export class CombatActionsMapper {
    */
   static getAllActionsBySkill() {
     if (!this._initialized) {
-      SWSELogger.warn("CombatActionsMapper used before initialization completed.");
+      SWSELogger.warn('CombatActionsMapper used before initialization completed.');
       return {};
     }
 
@@ -196,7 +196,7 @@ export class CombatActionsMapper {
    */
   static getAllCombatActions() {
     if (!this._initialized) {
-      SWSELogger.warn("CombatActionsMapper used before initialization completed.");
+      SWSELogger.warn('CombatActionsMapper used before initialization completed.');
       return [];
     }
     return this._combatActions.map(a => this._normalizeAction(a));
@@ -207,14 +207,14 @@ export class CombatActionsMapper {
   // ---------------------------------------------------------------------------
 
   static getActionsForCrewPosition(position) {
-    if (!this._initialized) return [];
+    if (!this._initialized) {return [];}
 
     const pos = position.toLowerCase();
 
     return this._shipCombatActions
       .filter(a => {
-        const role = a.system?.crewPosition?.toLowerCase() ?? "";
-        return role === pos || role === "any";
+        const role = a.system?.crewPosition?.toLowerCase() ?? '';
+        return role === pos || role === 'any';
       })
       .map(a => this._normalizeShipAction(a));
   }
@@ -224,7 +224,7 @@ export class CombatActionsMapper {
    * @returns {Object} Map of crew positions to their available actions
    */
   static getAllShipActionsByPosition() {
-    if (!this._initialized) return {};
+    if (!this._initialized) {return {};}
 
     const positions = ['pilot', 'copilot', 'gunner', 'engineer', 'shields', 'commander'];
     const result = {};
@@ -241,13 +241,13 @@ export class CombatActionsMapper {
   // ---------------------------------------------------------------------------
 
   static getEnhancementsForAction(actionKey, actor) {
-    if (!this._initialized) return [];
+    if (!this._initialized) {return [];}
 
     const enhancements = this._talentEnhancements[actionKey] ?? [];
-    if (!enhancements.length) return [];
+    if (!enhancements.length) {return [];}
 
     const actorTalents = new Set(
-      actor.items.filter(i => i.type === "talent").map(i => i.name)
+      actor.items.filter(i => i.type === 'talent').map(i => i.name)
     );
 
     return enhancements.filter(e => actorTalents.has(e.requiredTalent));
@@ -347,35 +347,35 @@ export class CombatActionsMapper {
   // ---------------------------------------------------------------------------
 
   static _matchesSkill(relatedSkills, skillKey, displayNameLower) {
-    if (!relatedSkills) return false;
+    if (!relatedSkills) {return false;}
 
     return relatedSkills.some(skill => {
-      const name = skill?.toLowerCase() ?? "";
+      const name = skill?.toLowerCase() ?? '';
       return name.includes(displayNameLower) || name.includes(skillKey.toLowerCase());
     });
   }
 
   static _getSkillDisplayName(skillKey) {
     const map = {
-      acrobatics: "Acrobatics",
-      climb: "Climb",
-      deception: "Deception",
-      endurance: "Endurance",
-      gatherInformation: "Gather Information",
-      initiative: "Initiative",
-      jump: "Jump",
-      knowledge: "Knowledge",
-      mechanics: "Mechanics",
-      perception: "Perception",
-      persuasion: "Persuasion",
-      pilot: "Pilot",
-      ride: "Ride",
-      stealth: "Stealth",
-      survival: "Survival",
-      swim: "Swim",
-      treatInjury: "Treat Injury",
-      useComputer: "Use Computer",
-      useTheForce: "Use the Force"
+      acrobatics: 'Acrobatics',
+      climb: 'Climb',
+      deception: 'Deception',
+      endurance: 'Endurance',
+      gatherInformation: 'Gather Information',
+      initiative: 'Initiative',
+      jump: 'Jump',
+      knowledge: 'Knowledge',
+      mechanics: 'Mechanics',
+      perception: 'Perception',
+      persuasion: 'Persuasion',
+      pilot: 'Pilot',
+      ride: 'Ride',
+      stealth: 'Stealth',
+      survival: 'Survival',
+      swim: 'Swim',
+      treatInjury: 'Treat Injury',
+      useComputer: 'Use Computer',
+      useTheForce: 'Use the Force'
     };
     return map[skillKey] ?? skillKey;
   }
@@ -385,7 +385,7 @@ export class CombatActionsMapper {
   // ---------------------------------------------------------------------------
 
   static _notReady() {
-    SWSELogger.warn("CombatActionsMapper used before initialization completed.");
+    SWSELogger.warn('CombatActionsMapper used before initialization completed.');
     return { combatActions: [], extraUses: [], hasActions: false };
   }
 }

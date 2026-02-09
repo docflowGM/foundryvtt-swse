@@ -6,20 +6,20 @@
 export class CharacterImportWizard extends Dialog {
   constructor(options = {}) {
     const dialogData = {
-      title: "Import Character",
+      title: 'Import Character',
       content: CharacterImportWizard.getTemplate(),
       buttons: {
         import: {
           icon: '<i class="fas fa-upload"></i>',
-          label: "Import",
+          label: 'Import',
           callback: html => this._processImport(html)
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
-          label: "Cancel"
+          label: 'Cancel'
         }
       },
-      default: "import"
+      default: 'import'
     };
 
     super(dialogData, options);
@@ -27,9 +27,9 @@ export class CharacterImportWizard extends Dialog {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "dialog", "character-import"],
+      classes: ['swse', 'dialog', 'character-import'],
       width: 600,
-      height: "auto"
+      height: 'auto'
     });
   }
 
@@ -131,11 +131,11 @@ export class CharacterImportWizard extends Dialog {
       const pasteSection = root.querySelector('.paste-section');
 
       if (method === 'file') {
-        if (fileSection) fileSection.style.display = '';
-        if (pasteSection) pasteSection.style.display = 'none';
+        if (fileSection) {fileSection.style.display = '';}
+        if (pasteSection) {pasteSection.style.display = 'none';}
       } else {
-        if (fileSection) fileSection.style.display = 'none';
-        if (pasteSection) pasteSection.style.display = '';
+        if (fileSection) {fileSection.style.display = 'none';}
+        if (pasteSection) {pasteSection.style.display = '';}
       }
     });
 
@@ -143,7 +143,7 @@ export class CharacterImportWizard extends Dialog {
     const fileInput = root.querySelector('#character-file');
     fileInput?.addEventListener('change', async (e) => {
       const file = e.target.files?.[0];
-      if (!file) return;
+      if (!file) {return;}
 
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -237,7 +237,7 @@ export class CharacterImportWizard extends Dialog {
       await this._importCharacter(characterData, createNew);
 
     } catch (error) {
-      console.error("Error importing character:", error);
+      console.error('Error importing character:', error);
       ui.notifications.error('Failed to import character. See console for details.');
     }
   }
@@ -295,7 +295,7 @@ export class CharacterImportWizard extends Dialog {
    * Clean item/effect data for import by removing IDs that would cause conflicts
    */
   _cleanEmbeddedData(documents) {
-    if (!Array.isArray(documents)) return [];
+    if (!Array.isArray(documents)) {return [];}
 
     return documents.map(doc => {
       const cleaned = foundry.utils.deepClone(doc);
@@ -348,11 +348,11 @@ export class CharacterImportWizard extends Dialog {
 
         // Confirm overwrite
         const confirmed = await Dialog.confirm({
-          title: "Overwrite Actor",
+          title: 'Overwrite Actor',
           content: `<p>This will replace <strong>${targetActor.name}</strong> with the imported character data. Continue?</p>`
         });
 
-        if (!confirmed) return;
+        if (!confirmed) {return;}
 
         // Update the actor
         await targetActor.update({
@@ -363,15 +363,15 @@ export class CharacterImportWizard extends Dialog {
         });
 
         // Clear existing items and effects
-        await targetActor.deleteEmbeddedDocuments("Item", targetActor.items.map(i => i.id));
-        await targetActor.deleteEmbeddedDocuments("ActiveEffect", targetActor.effects.map(e => e.id));
+        await targetActor.deleteEmbeddedDocuments('Item', targetActor.items.map(i => i.id));
+        await targetActor.deleteEmbeddedDocuments('ActiveEffect', targetActor.effects.map(e => e.id));
 
         // Add new items and effects (using already cleaned data)
         if (cleanedItems.length > 0) {
-          await targetActor.createEmbeddedDocuments("Item", cleanedItems);
+          await targetActor.createEmbeddedDocuments('Item', cleanedItems);
         }
         if (cleanedEffects.length > 0) {
-          await targetActor.createEmbeddedDocuments("ActiveEffect", cleanedEffects);
+          await targetActor.createEmbeddedDocuments('ActiveEffect', cleanedEffects);
         }
 
         ui.notifications.info(`Successfully updated ${targetActor.name}`);
@@ -379,7 +379,7 @@ export class CharacterImportWizard extends Dialog {
       }
 
     } catch (error) {
-      console.error("Error creating/updating actor:", error);
+      console.error('Error creating/updating actor:', error);
       ui.notifications.error('Failed to import character. See console for details.');
     }
   }

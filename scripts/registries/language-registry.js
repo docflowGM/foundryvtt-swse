@@ -14,7 +14,7 @@ export class LanguageRegistry {
   static _byId = new Map();
 
   static async ensureLoaded() {
-    if (this._loaded) return;
+    if (this._loaded) {return;}
     this._loaded = true;
 
     // Prefer compendium pack at runtime.
@@ -27,7 +27,7 @@ export class LanguageRegistry {
         for (const e of idx) {
           const sys = e.system || {};
           const cleanName = String(e.name || '').trim();
-          if (!cleanName) continue;
+          if (!cleanName) {continue;}
           const slug = sys.slug || sys.id || slugify(cleanName);
           const id = e._id;
           const uuid = `Compendium.${pack.collection}.${id}`;
@@ -65,8 +65,8 @@ export class LanguageRegistry {
       const seen = new Set();
       const addLanguage = (name, categoryKey) => {
         const cleanName = String(name || '').trim();
-        if (!cleanName) return;
-        if (seen.has(cleanName)) return;
+        if (!cleanName) {return;}
+        if (seen.has(cleanName)) {return;}
         seen.add(cleanName);
 
         const slug = slugify(cleanName);
@@ -87,7 +87,7 @@ export class LanguageRegistry {
 
       for (const [key, cat] of Object.entries(categories)) {
         const langs = cat?.languages || [];
-        for (const name of langs) addLanguage(name, key);
+        for (const name of langs) {addLanguage(name, key);}
       }
 
       SWSELogger.log(`LanguageRegistry: loaded ${this._byName.size} from JSON`);

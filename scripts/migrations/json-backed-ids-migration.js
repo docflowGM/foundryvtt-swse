@@ -8,7 +8,7 @@ async function _deriveLanguageIds(names) {
   const ids = [];
   for (const name of (Array.isArray(names) ? names : [])) {
     const rec = await LanguageRegistry.getByName(name);
-    if (rec?.internalId) ids.push(rec.internalId);
+    if (rec?.internalId) {ids.push(rec.internalId);}
   }
   return ids;
 }
@@ -17,20 +17,20 @@ async function _deriveLanguageUuids(names) {
   const uuids = [];
   for (const name of (Array.isArray(names) ? names : [])) {
     const rec = await LanguageRegistry.getByName(name);
-    if (rec?.uuid) uuids.push(rec.uuid);
+    if (rec?.uuid) {uuids.push(rec.uuid);}
   }
   return uuids;
 }
 
 
 async function _deriveBackgroundUuid(backgroundSlugOrName) {
-  if (!backgroundSlugOrName) return '';
+  if (!backgroundSlugOrName) {return '';}
   const rec = await BackgroundRegistry.getBySlug(String(backgroundSlugOrName));
   return rec?.uuid || '';
 }
 
 async function _deriveBackgroundId(backgroundSlugOrName) {
-  if (!backgroundSlugOrName) return '';
+  if (!backgroundSlugOrName) {return '';}
   const rec = await BackgroundRegistry.getBySlug(String(backgroundSlugOrName));
   return rec?.internalId || '';
 }
@@ -44,10 +44,10 @@ async function _deriveBackgroundId(backgroundSlugOrName) {
  * - system.progression.languageIds (from system.languages)
  */
 export async function runJsonBackedIdsMigration() {
-  if (!game.user?.isGM) return;
+  if (!game.user?.isGM) {return;}
 
   const current = game.settings.get('foundryvtt-swse', 'jsonBackedIdsMigration');
-  if (current === MIGRATION_VERSION) return;
+  if (current === MIGRATION_VERSION) {return;}
 
   SWSELogger.log(`[MIGRATION] JSON-backed IDs migration starting (${MIGRATION_VERSION})`);
 
@@ -64,8 +64,8 @@ export async function runJsonBackedIdsMigration() {
     if (!sys.backgroundId || !prog.backgroundInternalId) {
       const bgId = await _deriveBackgroundId(bgSlug);
       if (bgId) {
-        if (!sys.backgroundId) update['system.backgroundId'] = bgId;
-        if (!prog.backgroundInternalId) update['system.progression.backgroundInternalId'] = bgId;
+        if (!sys.backgroundId) {update['system.backgroundId'] = bgId;}
+        if (!prog.backgroundInternalId) {update['system.progression.backgroundInternalId'] = bgId;}
       }
     }
 

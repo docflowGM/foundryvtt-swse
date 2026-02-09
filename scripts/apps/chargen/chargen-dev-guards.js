@@ -22,7 +22,7 @@ export class ChargenDevGuards {
    * @throws {Error} if condition is false and dev mode is enabled
    */
   static assert(condition, message) {
-    if (!this.enabled) return;
+    if (!this.enabled) {return;}
 
     if (!condition) {
       const error = new Error(`[CHARGEN DEV] ${message}`);
@@ -49,7 +49,7 @@ export class ChargenDevGuards {
    * @param {ChargenMainDialog} chargen - The chargen instance
    */
   static guardRenderLogic(chargen) {
-    if (!this.enabled) return;
+    if (!this.enabled) {return;}
 
     const originalRender = chargen._onRender;
     chargen._onRender = async function(...args) {
@@ -83,10 +83,10 @@ export class ChargenDevGuards {
    * Enforces that character modifications go through ProgressionEngine
    */
   static guardPatchOnlyModification(chargen) {
-    if (!this.enabled) return;
+    if (!this.enabled) {return;}
 
     const originalUpdate = chargen.characterData ? Object.getPrototypeOf(chargen.characterData).update : null;
-    if (!originalUpdate) return;
+    if (!originalUpdate) {return;}
 
     // Track that modifications go through proper channels
     chargen._patchApplicationCount = 0;
@@ -98,7 +98,7 @@ export class ChargenDevGuards {
    * @param {string} details - Details about the violation
    */
   static logInvariantViolation(invariant, details) {
-    if (!this.enabled) return;
+    if (!this.enabled) {return;}
 
     const violations = chargen._invariantViolations || [];
     violations.push({ invariant, details, timestamp: Date.now() });
@@ -112,7 +112,7 @@ export class ChargenDevGuards {
    * Should be called right before character is finalized
    */
   static verifyInvariants(chargen) {
-    if (!this.enabled) return;
+    if (!this.enabled) {return;}
 
     const violations = chargen._invariantViolations || [];
     if (violations.length > 0) {
@@ -127,7 +127,7 @@ export class ChargenDevGuards {
  * Call this in ChargenMainDialog constructor
  */
 export function initializeChargenDevGuards(chargen) {
-  if (!ChargenDevGuards.enabled) return;
+  if (!ChargenDevGuards.enabled) {return;}
 
   ChargenDevGuards.guardRenderLogic(chargen);
   ChargenDevGuards.guardPatchOnlyModification(chargen);

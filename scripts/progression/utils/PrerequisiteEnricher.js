@@ -5,7 +5,7 @@
 // Integrates the existing prerequisite-normalizer.js
 // ======================================================================
 
-import { normalizePrerequisiteString } from "./prerequisite-normalizer.js";
+import { normalizePrerequisiteString } from './prerequisite-normalizer.js';
 
 export class PrerequisiteEnricher {
   /**

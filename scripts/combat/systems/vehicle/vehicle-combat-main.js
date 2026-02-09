@@ -11,14 +11,14 @@
  *  - Weapons → vehicle-weapons.js
  */
 
-import { computeVehicleAttackBonus, computeVehicleReflexDefense, computeVehicleDamage } from "./vehicle-calculations.js";
-import { computeVehicleDefensiveStats } from "./vehicle-calculations.js";
-import { SWSEDogfighting } from "./vehicle-dogfighting.js";
-import { SWSEVehicleCollisions } from "./vehicle-collisions.js";
-import { SWSEVehicleWeapons } from "./vehicle-weapons.js";
-import { measureSquares, createVehicleCTEffect } from "./vehicle-shared.js";
-import { SWSERoll } from "../../rolls/enhanced-rolls.js";
-import { DamageSystem } from "../../damage-system.js";
+import { computeVehicleAttackBonus, computeVehicleReflexDefense, computeVehicleDamage } from './vehicle-calculations.js';
+import { computeVehicleDefensiveStats } from './vehicle-calculations.js';
+import { SWSEDogfighting } from './vehicle-dogfighting.js';
+import { SWSEVehicleCollisions } from './vehicle-collisions.js';
+import { SWSEVehicleWeapons } from './vehicle-weapons.js';
+import { measureSquares, createVehicleCTEffect } from './vehicle-shared.js';
+import { SWSERoll } from '../../rolls/enhanced-rolls.js';
+import { DamageSystem } from '../../damage-system.js';
 
 export class SWSEVehicleCombat {
 
@@ -39,7 +39,7 @@ export class SWSEVehicleCombat {
     const total = attackRoll.roll.total;
 
     const defData = computeVehicleReflexDefense(target);
-    let defense = defData.reflex;
+    const defense = defData.reflex;
 
     const ctx = {
       attacker,
@@ -47,12 +47,12 @@ export class SWSEVehicleCombat {
       weapon,
       roll: attackRoll.roll,
       totalAttack: total,
-      defenseType: "reflex",
+      defenseType: 'reflex',
       defenseValue: defense,
       hit: null
     };
 
-    Hooks.callAll("swse.preVehicleHitResolution", ctx);
+    Hooks.callAll('swse.preVehicleHitResolution', ctx);
 
     if (ctx.hit === null) {
       ctx.hit = (d20 === 20) || (total >= ctx.defenseValue);
@@ -63,18 +63,18 @@ export class SWSEVehicleCombat {
         <h3>${attacker.name} fires ${weapon.name} at ${target.name}</h3>
         <div>Attack: ${total} (d20=${d20})</div>
         <div>Defense (Reflex): ${ctx.defenseValue}</div>
-        <div class="${ctx.hit ? "success" : "failure"}">${ctx.hit ? "HIT!" : "MISS"}</div>
+        <div class="${ctx.hit ? 'success' : 'failure'}">${ctx.hit ? 'HIT!' : 'MISS'}</div>
         ${ctx.hit ? `<button class="swse-vehicle-roll-dmg"
                             data-att="${attacker.id}"
                             data-tgt="${target.id}"
-                            data-wpn="${weapon.id}">Roll Damage</button>` : ""}
+                            data-wpn="${weapon.id}">Roll Damage</button>` : ''}
       </div>
     `;
 
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
-      rolls: [attackRoll.roll],
+      rolls: [attackRoll.roll]
     });
 
     return ctx;
@@ -104,7 +104,7 @@ export class SWSEVehicleCombat {
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
-      rolls: [roll],
+      rolls: [roll]
     });
 
     return roll;
@@ -117,10 +117,10 @@ export class SWSEVehicleCombat {
   static async applyVehicleDamage(attackerId, targetId, amount) {
     const attacker = game.actors.get(attackerId);
     const target = game.actors.get(targetId);
-    if (!attacker || !target) return;
+    if (!attacker || !target) {return;}
 
     if (!(game.user.isGM || attacker.isOwner)) {
-      return ui.notifications.warn("You do not have permission to apply this damage.");
+      return ui.notifications.warn('You do not have permission to apply this damage.');
     }
 
     await DamageSystem.applyToSelected(amount, { checkThreshold: true });
@@ -147,8 +147,8 @@ export class SWSEVehicleCombat {
   // ---------------------------------------------------------------------------
 
   static init() {
-    Hooks.on("renderChatMessageHTML", (msg, html, user) => {
-      html.querySelector(".swse-vehicle-roll-dmg")?.addEventListener("click", async ev => {
+    Hooks.on('renderChatMessageHTML', (msg, html, user) => {
+      html.querySelector('.swse-vehicle-roll-dmg')?.addEventListener('click', async ev => {
         const btn = ev.currentTarget;
         const att = game.actors.get(btn.dataset.att);
         const tgt = game.actors.get(btn.dataset.tgt);
@@ -156,7 +156,7 @@ export class SWSEVehicleCombat {
         await SWSEVehicleCombat.vehicleDamage(att, wpn, tgt);
       });
 
-      html.querySelector(".swse-vehicle-apply-dmg")?.addEventListener("click", async ev => {
+      html.querySelector('.swse-vehicle-apply-dmg')?.addEventListener('click', async ev => {
         const btn = ev.currentTarget;
         await SWSEVehicleCombat.applyVehicleDamage(
           btn.dataset.att,

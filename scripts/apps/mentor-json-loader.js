@@ -3,7 +3,7 @@
  * Provides unified mentor interface with personalities, dialogues, and metadata
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 /**
  * Cache for loaded mentors
@@ -142,10 +142,10 @@ export async function getReasons() {
  * @returns {Promise<string>} The reason text (e.g., "because your wisdom...")
  */
 export async function getReasonText(reasonCode) {
-    if (!reasonCode) return "";
+    if (!reasonCode) {return '';}
 
     const reasons = await getReasons();
-    return reasons[reasonCode] || "";
+    return reasons[reasonCode] || '';
 }
 
 /**
@@ -156,7 +156,7 @@ export async function getReasonText(reasonCode) {
  */
 export async function selectBestReason(reasonCodes, context = {}) {
     if (!reasonCodes || reasonCodes.length === 0) {
-        return "because this aligns with your path";
+        return 'because this aligns with your path';
     }
 
     const reasons = await getReasons();
@@ -167,7 +167,7 @@ export async function selectBestReason(reasonCodes, context = {}) {
 
     for (const code of reasonCodes) {
         const reasonText = reasons[code];
-        if (!reasonText) continue;
+        if (!reasonText) {continue;}
 
         let score = 0;
 
@@ -205,7 +205,7 @@ export async function selectBestReason(reasonCodes, context = {}) {
         }
     }
 
-    return bestReason || reasons[reasonCodes[0]] || "because this suits your development";
+    return bestReason || reasons[reasonCodes[0]] || 'because this suits your development';
 }
 
 /**
@@ -219,7 +219,7 @@ export async function selectBestReason(reasonCodes, context = {}) {
 export async function getMentorDialogueFromJSON(mentorKey, context, phase, specificType) {
     const mentor = await getMentor(mentorKey);
     if (!mentor) {
-        return { observation: "", suggestion: "", respectClause: "" };
+        return { observation: '', suggestion: '', respectClause: '' };
     }
 
     // Navigate the dialogue structure
@@ -243,7 +243,7 @@ export async function getMentorDialogueFromJSON(mentorKey, context, phase, speci
         SWSELogger.warn(`[MENTOR-JSON-LOADER] Error retrieving dialogue for ${mentorKey}:`, err);
     }
 
-    return { observation: "", suggestion: "", respectClause: "" };
+    return { observation: '', suggestion: '', respectClause: '' };
 }
 
 export default {

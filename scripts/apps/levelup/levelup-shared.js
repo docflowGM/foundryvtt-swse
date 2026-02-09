@@ -108,7 +108,7 @@ export async function getClassDefenseBonuses(className) {
  * @returns {number} - Per-level BAB multiplier
  */
 function convertBabProgression(progression) {
-  if (typeof progression === 'number') return progression;
+  if (typeof progression === 'number') {return progression;}
 
   const progressionMap = {
     'slow': 0.5,
@@ -310,15 +310,15 @@ export function calculateHPGain(classDoc, actor, newLevel) {
     if (!hitDie) {
       // Fallback: parse from class data
       const hitDieString = getClassProperty(classDoc, 'hitDie', '1d6');
-      hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6", 10);
+      hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || '6', 10);
       SWSELogger.warn(`SWSE LevelUp | Class "${className}" not in hit dice map, using ${hitDie} from class data`);
     }
   }
   // Droids don't have Constitution and receive no HP from CON modifier
   const isDroid = actor.system.isDroid || false;
   const conMod = isDroid ? 0 : (actor.system.attributes.con?.mod || 0);
-  const hpGeneration = game.settings.get('foundryvtt-swse', "hpGeneration") || "average";
-  const maxHPLevels = game.settings.get('foundryvtt-swse', "maxHPLevels") || 1;
+  const hpGeneration = game.settings.get('foundryvtt-swse', 'hpGeneration') || 'average';
+  const maxHPLevels = game.settings.get('foundryvtt-swse', 'maxHPLevels') || 1;
 
   let hpGain = 0;
 
@@ -326,20 +326,21 @@ export function calculateHPGain(classDoc, actor, newLevel) {
     hpGain = hitDie + conMod;
   } else {
     switch (hpGeneration) {
-      case "maximum":
+      case 'maximum':
         hpGain = hitDie + conMod;
         break;
-      case "average":
+      case 'average':
         hpGain = Math.floor(hitDie / 2) + 1 + conMod;
         break;
-      case "roll":
+      case 'roll':
         hpGain = Math.floor(Math.random() * hitDie) + 1 + conMod;
         break;
-      case "average_minimum":
+      case 'average_minimum': {
         const rolled = Math.floor(Math.random() * hitDie) + 1;
         const average = Math.floor(hitDie / 2) + 1;
         hpGain = Math.max(rolled, average) + conMod;
         break;
+      }
       default:
         hpGain = Math.floor(hitDie / 2) + 1 + conMod;
     }

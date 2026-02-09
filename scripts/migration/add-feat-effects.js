@@ -88,12 +88,12 @@ export class FeatEffectsMigration {
         `;
 
         new Dialog({
-            title: "Feat Effects Migration Results",
+            title: 'Feat Effects Migration Results',
             content: message,
             buttons: {
                 ok: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "OK"
+                    label: 'OK'
                 }
             }
         }, {
@@ -129,7 +129,7 @@ export class FeatEffectsMigration {
         };
 
         for (const actor of game.actors) {
-            if (actor.type !== 'character') continue;
+            if (actor.type !== 'character') {continue;}
 
             try {
                 const created = await FeatEffectsEngine.scanAndApplyEffects(actor);

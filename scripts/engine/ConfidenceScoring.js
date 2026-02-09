@@ -166,10 +166,10 @@ export class ConfidenceScoring {
    * @returns {string} Description like "high", "moderate", "low"
    */
   static getConfidenceLabel(confidence) {
-    if (confidence >= 0.8) return 'very high';
-    if (confidence >= 0.65) return 'high';
-    if (confidence >= 0.5) return 'moderate';
-    if (confidence >= 0.35) return 'low';
+    if (confidence >= 0.8) {return 'very high';}
+    if (confidence >= 0.65) {return 'high';}
+    if (confidence >= 0.5) {return 'moderate';}
+    if (confidence >= 0.35) {return 'low';}
     return 'very low';
   }
 
@@ -179,10 +179,10 @@ export class ConfidenceScoring {
    * @returns {string} CSS color class or hex
    */
   static getConfidenceColor(confidence) {
-    if (confidence >= 0.8) return '#22c55e'; // green
-    if (confidence >= 0.65) return '#3b82f6'; // blue
-    if (confidence >= 0.5) return '#f59e0b'; // amber
-    if (confidence >= 0.35) return '#f97316'; // orange
+    if (confidence >= 0.8) {return '#22c55e';} // green
+    if (confidence >= 0.65) {return '#3b82f6';} // blue
+    if (confidence >= 0.5) {return '#f59e0b';} // amber
+    if (confidence >= 0.35) {return '#f97316';} // orange
     return '#ef4444'; // red
   }
 
@@ -193,7 +193,7 @@ export class ConfidenceScoring {
    * @returns {string} Message with confidence-adjusted tone
    */
   static adjustToneForConfidence(confidence, baseMessage) {
-    if (!baseMessage) return baseMessage;
+    if (!baseMessage) {return baseMessage;}
 
     if (confidence >= 0.8) {
       // High confidence: assertive tone

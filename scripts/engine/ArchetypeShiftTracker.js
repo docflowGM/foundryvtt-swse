@@ -66,7 +66,7 @@ export async function detectArchetypeShift(actor, newArchetypeId, newConfidence 
  * @returns {Object} Modified scores with stability bonus applied
  */
 export function applyStabilityBonus(archetypeScores, actor) {
-  if (!actor) return archetypeScores;
+  if (!actor) {return archetypeScores;}
 
   try {
     const stored = actor.flags?.swse?.previousArchetype || {};
@@ -128,24 +128,24 @@ function _selectAcknowledgement(fromId, toId) {
 export function getAcknowledgementLines(acknowledgementKey, fromId, toId) {
   const lines = {
     major_shift_force: [
-      "Your path is shifting—adapt, but do so with purpose.",
-      "A new direction calls. Walk it with intention.",
-      "What was once clear now changes. Trust your instincts."
+      'Your path is shifting—adapt, but do so with purpose.',
+      'A new direction calls. Walk it with intention.',
+      'What was once clear now changes. Trust your instincts.'
     ],
     shift_combat_style: [
-      "Your methods evolve. Master this new approach.",
-      "From one way to another—refocus your training.",
-      "The blade speaks differently now. Listen."
+      'Your methods evolve. Master this new approach.',
+      'From one way to another—refocus your training.',
+      'The blade speaks differently now. Listen.'
     ],
     shift_role: [
-      "Your burden changes. Carry it well.",
-      "The group looks to you differently now.",
-      "Your place in the struggle shifts. Accept it."
+      'Your burden changes. Carry it well.',
+      'The group looks to you differently now.',
+      'Your place in the struggle shifts. Accept it.'
     ],
     archetype_shift_generic: [
-      "Your character defines itself anew.",
-      "What you were and what you become—both have value.",
-      "Evolution is the path of those who survive."
+      'Your character defines itself anew.',
+      'What you were and what you become—both have value.',
+      'Evolution is the path of those who survive.'
     ]
   };
 

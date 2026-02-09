@@ -58,7 +58,7 @@ export async function loadInventoryData(itemsById) {
 
     // Get all actors from world that could be droids or vehicles
     const worldActors = game.actors.filter(a => {
-        return (a.type === "droid" || a.type === "vehicle" || a.system?.isDroid)
+        return (a.type === 'droid' || a.type === 'vehicle' || a.system?.isDroid)
             && (a.system?.cost ?? 0) > 0;
     });
 
@@ -108,21 +108,21 @@ export async function loadInventoryData(itemsById) {
     });
 
     // Get equipment items and categorize them
-    const equipmentItems = validItems.filter(i => i.type === "equipment" || i.type === "item");
+    const equipmentItems = validItems.filter(i => i.type === 'equipment' || i.type === 'item');
 
     // Categorize items and add final costs
     const categories = {
-        weapons: sortWeapons(validItems.filter(i => i.type === "weapon").map(addFinalCost)),
-        armor: sortArmor(validItems.filter(i => i.type === "armor").map(addFinalCost)),
-        grenades: equipmentItems.filter(i => categorizeEquipment(i) === "grenades").map(addFinalCost),
-        medical: equipmentItems.filter(i => categorizeEquipment(i) === "medical").map(addFinalCost),
-        tech: equipmentItems.filter(i => categorizeEquipment(i) === "tech").map(addFinalCost),
-        security: equipmentItems.filter(i => categorizeEquipment(i) === "security").map(addFinalCost),
-        survival: equipmentItems.filter(i => categorizeEquipment(i) === "survival").map(addFinalCost),
-        tools: equipmentItems.filter(i => categorizeEquipment(i) === "tools").map(addFinalCost),
-        equipment: equipmentItems.filter(i => categorizeEquipment(i) === "equipment").map(addFinalCost),
-        vehicles: validActors.filter(a => a.type === "vehicle" || a.system?.isVehicle).map(a => addActorFinalCost(a, true)),
-        droids: validActors.filter(a => a.type === "droid" || a.system?.isDroid).map(a => addActorFinalCost(a, false)),
+        weapons: sortWeapons(validItems.filter(i => i.type === 'weapon').map(addFinalCost)),
+        armor: sortArmor(validItems.filter(i => i.type === 'armor').map(addFinalCost)),
+        grenades: equipmentItems.filter(i => categorizeEquipment(i) === 'grenades').map(addFinalCost),
+        medical: equipmentItems.filter(i => categorizeEquipment(i) === 'medical').map(addFinalCost),
+        tech: equipmentItems.filter(i => categorizeEquipment(i) === 'tech').map(addFinalCost),
+        security: equipmentItems.filter(i => categorizeEquipment(i) === 'security').map(addFinalCost),
+        survival: equipmentItems.filter(i => categorizeEquipment(i) === 'survival').map(addFinalCost),
+        tools: equipmentItems.filter(i => categorizeEquipment(i) === 'tools').map(addFinalCost),
+        equipment: equipmentItems.filter(i => categorizeEquipment(i) === 'equipment').map(addFinalCost),
+        vehicles: validActors.filter(a => a.type === 'vehicle' || a.system?.isVehicle).map(a => addActorFinalCost(a, true)),
+        droids: validActors.filter(a => a.type === 'droid' || a.system?.isDroid).map(a => addActorFinalCost(a, false)),
         services: getServicesData()
     };
 
@@ -136,73 +136,73 @@ export async function loadInventoryData(itemsById) {
 function getServicesData() {
     return [
         {
-            name: "Dining",
-            icon: "fas fa-utensils",
+            name: 'Dining',
+            icon: 'fas fa-utensils',
             items: [
-                { id: "dining-budget", name: "Budget Meal", cost: 2, notes: "Simple rations or cheap cantina fare" },
-                { id: "dining-average", name: "Average Meal", cost: 10, notes: "Standard restaurant or cantina meal" },
-                { id: "dining-upscale", name: "Upscale Meal", cost: 50, notes: "Fine dining experience" },
-                { id: "dining-luxurious", name: "Luxurious Meal", cost: 150, notes: "Premium culinary experience" }
+                { id: 'dining-budget', name: 'Budget Meal', cost: 2, notes: 'Simple rations or cheap cantina fare' },
+                { id: 'dining-average', name: 'Average Meal', cost: 10, notes: 'Standard restaurant or cantina meal' },
+                { id: 'dining-upscale', name: 'Upscale Meal', cost: 50, notes: 'Fine dining experience' },
+                { id: 'dining-luxurious', name: 'Luxurious Meal', cost: 150, notes: 'Premium culinary experience' }
             ]
         },
         {
-            name: "Lodging",
-            icon: "fas fa-bed",
+            name: 'Lodging',
+            icon: 'fas fa-bed',
             items: [
-                { id: "lodging-budget", name: "Budget Lodging (per day)", cost: 20, notes: "Basic sleeping quarters" },
-                { id: "lodging-average", name: "Average Lodging (per day)", cost: 50, notes: "Standard hotel room" },
-                { id: "lodging-upscale", name: "Upscale Lodging (per day)", cost: 100, notes: "Comfortable accommodations" },
-                { id: "lodging-luxurious", name: "Luxurious Lodging (per day)", cost: 200, notes: "Premium suite with amenities" }
+                { id: 'lodging-budget', name: 'Budget Lodging (per day)', cost: 20, notes: 'Basic sleeping quarters' },
+                { id: 'lodging-average', name: 'Average Lodging (per day)', cost: 50, notes: 'Standard hotel room' },
+                { id: 'lodging-upscale', name: 'Upscale Lodging (per day)', cost: 100, notes: 'Comfortable accommodations' },
+                { id: 'lodging-luxurious', name: 'Luxurious Lodging (per day)', cost: 200, notes: 'Premium suite with amenities' }
             ]
         },
         {
-            name: "Medical Care",
-            icon: "fas fa-heart-pulse",
+            name: 'Medical Care',
+            icon: 'fas fa-heart-pulse',
             items: [
-                { id: "medical-medpac", name: "Medpac Treatment", cost: 300, notes: "Professional medical attention" },
-                { id: "medical-bacta", name: "Bacta Tank (per hour)", cost: 300, notes: "Advanced healing immersion" },
-                { id: "medical-surgery", name: "Surgery (per hour)", cost: 500, notes: "Surgical procedures" },
-                { id: "medical-longterm", name: "Long-term Care (per day)", cost: 300, notes: "Extended medical monitoring" },
-                { id: "medical-disease", name: "Treat Disease (per day)", cost: 500, notes: "Disease treatment regimen" },
-                { id: "medical-radiation", name: "Treat Radiation (per day)", cost: 1000, notes: "Radiation sickness treatment" },
-                { id: "medical-poison", name: "Treat Poison (per hour)", cost: 100, notes: "Antitoxin and monitoring" }
+                { id: 'medical-medpac', name: 'Medpac Treatment', cost: 300, notes: 'Professional medical attention' },
+                { id: 'medical-bacta', name: 'Bacta Tank (per hour)', cost: 300, notes: 'Advanced healing immersion' },
+                { id: 'medical-surgery', name: 'Surgery (per hour)', cost: 500, notes: 'Surgical procedures' },
+                { id: 'medical-longterm', name: 'Long-term Care (per day)', cost: 300, notes: 'Extended medical monitoring' },
+                { id: 'medical-disease', name: 'Treat Disease (per day)', cost: 500, notes: 'Disease treatment regimen' },
+                { id: 'medical-radiation', name: 'Treat Radiation (per day)', cost: 1000, notes: 'Radiation sickness treatment' },
+                { id: 'medical-poison', name: 'Treat Poison (per hour)', cost: 100, notes: 'Antitoxin and monitoring' }
             ]
         },
         {
-            name: "Transportation",
-            icon: "fas fa-shuttle-van",
+            name: 'Transportation',
+            icon: 'fas fa-shuttle-van',
             items: [
-                { id: "transport-taxi", name: "Local Taxi", cost: 10, notes: "Short-distance local transport" },
-                { id: "transport-steerage", name: "Passage: Steerage (up to 5 days)", cost: 500, notes: "Basic interplanetary travel" },
-                { id: "transport-average", name: "Passage: Average (up to 5 days)", cost: 1000, notes: "Standard passenger transport" },
-                { id: "transport-upscale", name: "Passage: Upscale (5 days)", cost: 2000, notes: "Comfortable travel accommodations" },
-                { id: "transport-luxurious", name: "Passage: Luxurious (5 days)", cost: 5000, notes: "First-class travel experience" },
-                { id: "transport-charter", name: "Chartered Space Transport (up to 5 days)", cost: 10000, notes: "Private vessel charter" }
+                { id: 'transport-taxi', name: 'Local Taxi', cost: 10, notes: 'Short-distance local transport' },
+                { id: 'transport-steerage', name: 'Passage: Steerage (up to 5 days)', cost: 500, notes: 'Basic interplanetary travel' },
+                { id: 'transport-average', name: 'Passage: Average (up to 5 days)', cost: 1000, notes: 'Standard passenger transport' },
+                { id: 'transport-upscale', name: 'Passage: Upscale (5 days)', cost: 2000, notes: 'Comfortable travel accommodations' },
+                { id: 'transport-luxurious', name: 'Passage: Luxurious (5 days)', cost: 5000, notes: 'First-class travel experience' },
+                { id: 'transport-charter', name: 'Chartered Space Transport (up to 5 days)', cost: 10000, notes: 'Private vessel charter' }
             ]
         },
         {
-            name: "Monthly Upkeep / Lifestyle",
-            icon: "fas fa-home",
+            name: 'Monthly Upkeep / Lifestyle',
+            icon: 'fas fa-home',
             items: [
-                { id: "upkeep-selfsufficient", name: "Self-Sufficient", cost: 100, notes: "Minimal expenses, living off the land" },
-                { id: "upkeep-impoverished", name: "Impoverished", cost: 200, notes: "Barely scraping by" },
-                { id: "upkeep-struggling", name: "Struggling", cost: 500, notes: "Making ends meet with difficulty" },
-                { id: "upkeep-average", name: "Average", cost: 1000, notes: "Standard middle-class lifestyle" },
-                { id: "upkeep-comfortable", name: "Comfortable", cost: 2000, notes: "Above-average quality of life" },
-                { id: "upkeep-wealthy", name: "Wealthy", cost: 5000, notes: "Affluent lifestyle" },
-                { id: "upkeep-luxurious", name: "Luxurious", cost: 10000, notes: "Elite upper-class living" }
+                { id: 'upkeep-selfsufficient', name: 'Self-Sufficient', cost: 100, notes: 'Minimal expenses, living off the land' },
+                { id: 'upkeep-impoverished', name: 'Impoverished', cost: 200, notes: 'Barely scraping by' },
+                { id: 'upkeep-struggling', name: 'Struggling', cost: 500, notes: 'Making ends meet with difficulty' },
+                { id: 'upkeep-average', name: 'Average', cost: 1000, notes: 'Standard middle-class lifestyle' },
+                { id: 'upkeep-comfortable', name: 'Comfortable', cost: 2000, notes: 'Above-average quality of life' },
+                { id: 'upkeep-wealthy', name: 'Wealthy', cost: 5000, notes: 'Affluent lifestyle' },
+                { id: 'upkeep-luxurious', name: 'Luxurious', cost: 10000, notes: 'Elite upper-class living' }
             ]
         },
         {
-            name: "Vehicle Rental",
-            icon: "fas fa-car",
+            name: 'Vehicle Rental',
+            icon: 'fas fa-car',
             items: [
-                { id: "rental-speederbike", name: "Speeder Bike (per day)", cost: 20, notes: "Fast personal transport" },
-                { id: "rental-landspeeder", name: "Landspeeder: Average (per day)", cost: 50, notes: "Standard ground vehicle" },
-                { id: "rental-landspeeder-luxury", name: "Landspeeder: Luxury (per day)", cost: 100, notes: "High-end ground vehicle" },
-                { id: "rental-airspeeder", name: "Airspeeder (per day)", cost: 500, notes: "Flying vehicle rental" },
-                { id: "rental-shuttle-interplanetary", name: "Shuttle: Interplanetary (per day)", cost: 1000, notes: "Short-range space transport" },
-                { id: "rental-shuttle-interstellar", name: "Shuttle: Interstellar (per day)", cost: 2000, notes: "Long-range space transport" }
+                { id: 'rental-speederbike', name: 'Speeder Bike (per day)', cost: 20, notes: 'Fast personal transport' },
+                { id: 'rental-landspeeder', name: 'Landspeeder: Average (per day)', cost: 50, notes: 'Standard ground vehicle' },
+                { id: 'rental-landspeeder-luxury', name: 'Landspeeder: Luxury (per day)', cost: 100, notes: 'High-end ground vehicle' },
+                { id: 'rental-airspeeder', name: 'Airspeeder (per day)', cost: 500, notes: 'Flying vehicle rental' },
+                { id: 'rental-shuttle-interplanetary', name: 'Shuttle: Interplanetary (per day)', cost: 1000, notes: 'Short-range space transport' },
+                { id: 'rental-shuttle-interstellar', name: 'Shuttle: Interstellar (per day)', cost: 2000, notes: 'Long-range space transport' }
             ]
         }
     ];

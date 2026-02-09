@@ -59,9 +59,7 @@ export class ProgressionAdvisor {
 
       // Determine combat style
       let combatStyle = 'mixed';
-      if (forceFocus) combatStyle = 'force-caster';
-      else if (meleeBias) combatStyle = 'melee';
-      else if (rangedBias) combatStyle = 'ranged';
+      if (forceFocus) {combatStyle = 'force-caster';} else if (meleeBias) {combatStyle = 'melee';} else if (rangedBias) {combatStyle = 'ranged';}
 
       // Confidence score (how optimized the build is)
       const maxScore = Math.max(...Object.values(scores));
@@ -120,9 +118,9 @@ export class ProgressionAdvisor {
     }
 
     // Apply secondary weighting modifiers
-    if (options.isCoreOption) weightBonus += 1;
-    if (options.isPrestigeAligned) weightBonus += 1;
-    if (options.confidence && buildIntent.confidence >= 0.75) weightBonus += 1;
+    if (options.isCoreOption) {weightBonus += 1;}
+    if (options.isPrestigeAligned) {weightBonus += 1;}
+    if (options.confidence && buildIntent.confidence >= 0.75) {weightBonus += 1;}
 
     // Return weighted tier (clamped to reasonable range)
     return Math.min(baseTier + weightBonus, 6);
@@ -189,7 +187,7 @@ export class ProgressionAdvisor {
   static _getAttributeForSkill(skillName) {
     // Import the mapping from Level1SkillSuggestionEngine
     const { ATTRIBUTE_SKILL_MAP } = Level1SkillSuggestionEngine;
-    if (!ATTRIBUTE_SKILL_MAP) return null;
+    if (!ATTRIBUTE_SKILL_MAP) {return null;}
 
     const normalized = this._normalizeSkillName(skillName);
 
@@ -209,7 +207,7 @@ export class ProgressionAdvisor {
    * @private
    */
   static _normalizeSkillName(name) {
-    if (!name) return '';
+    if (!name) {return '';}
     return name
       .toLowerCase()
       .replace(/\s+/g, '')

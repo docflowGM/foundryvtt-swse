@@ -25,9 +25,9 @@ export class LanguageEngine {
         const ids = [];
         for (const n of names) {
             const id = await this._toLanguageId(n);
-            if (id) ids.push(id);
+            if (id) {ids.push(id);}
         }
-        await actor.update({ "system.languageIds": ids }).catch(() => {});
+        await actor.update({ 'system.languageIds': ids }).catch(() => {});
         return ids;
     }
 
@@ -53,7 +53,7 @@ export class LanguageEngine {
         const updated = [...known, language];
 
         await actor.update({
-            "system.languages": updated
+            'system.languages': updated
         });
         await this._syncLanguageIds(actor, updated);
 
@@ -80,7 +80,7 @@ export class LanguageEngine {
      */
     static async applySpeciesLanguages(actor, speciesName) {
         const speciesPack = game.packs.get('foundryvtt-swse.species');
-        if (!speciesPack) return [];
+        if (!speciesPack) {return [];}
 
         const speciesIndex = speciesPack.index.find(s => s.name === speciesName);
         if (!speciesIndex) {
@@ -89,7 +89,7 @@ export class LanguageEngine {
         }
 
         const speciesDoc = await speciesPack.getDocument(speciesIndex._id);
-        if (!speciesDoc) return [];
+        if (!speciesDoc) {return [];}
 
         const languages = speciesDoc.system?.languages || [];
         const results = await this.grantLanguages(actor, languages);
@@ -103,7 +103,7 @@ export class LanguageEngine {
      */
     static async applyBackgroundLanguages(actor, backgroundName) {
         const bgPack = game.packs.get('foundryvtt-swse.backgrounds');
-        if (!bgPack) return [];
+        if (!bgPack) {return [];}
 
         const bgIndex = bgPack.index.find(b => b.name === backgroundName);
         if (!bgIndex) {
@@ -112,7 +112,7 @@ export class LanguageEngine {
         }
 
         const bgDoc = await bgPack.getDocument(bgIndex._id);
-        if (!bgDoc) return [];
+        if (!bgDoc) {return [];}
 
         const languages = bgDoc.system?.languages || [];
         const results = await this.grantLanguages(actor, languages);
@@ -179,7 +179,7 @@ export class LanguageEngine {
 
         if (unique.length !== known.length) {
             await actor.update({
-                "system.languages": unique
+                'system.languages': unique
             });
 
             await this._syncLanguageIds(actor, unique);
@@ -203,19 +203,19 @@ export class LanguageEngine {
         // This would need to come from your language list
         // Common SWSE languages:
         const commonLanguages = [
-            "Basic",
-            "Shyriiwook",
-            "Ewokese",
-            "Mon Calamari",
-            "Neimodian",
-            "Gunganese",
-            "Bothan",
-            "Wookiee",
-            "Droid Binary",
-            "Old Corellian",
-            "Lianorm",
-            "Kel Dor",
-            "Sullustan"
+            'Basic',
+            'Shyriiwook',
+            'Ewokese',
+            'Mon Calamari',
+            'Neimodian',
+            'Gunganese',
+            'Bothan',
+            'Wookiee',
+            'Droid Binary',
+            'Old Corellian',
+            'Lianorm',
+            'Kel Dor',
+            'Sullustan'
         ];
 
         return commonLanguages;
@@ -260,7 +260,7 @@ export class LanguageEngine {
         const updated = known.filter(l => l !== language);
 
         await actor.update({
-            "system.languages": updated
+            'system.languages': updated
         });
 
         SWSELogger.log(`Removed language: ${language}`);

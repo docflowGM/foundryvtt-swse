@@ -13,24 +13,24 @@ function calculateAbilityMod(score) {
 
 // Helper function to extract numeric value from string
 function extractNumber(str) {
-  if (!str || str === "") return null;
+  if (!str || str === '') {return null;}
   const match = str.toString().match(/-?\d+/);
   return match ? parseInt(match[0], 10) : null;
 }
 
 // Helper function to parse size
 function parseSize(sizeStr) {
-  if (!sizeStr || sizeStr === "") return "medium";
+  if (!sizeStr || sizeStr === '') {return 'medium';}
   const size = sizeStr.toLowerCase().trim();
-  const validSizes = ["fine", "diminutive", "tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"];
-  return validSizes.includes(size) ? size : "medium";
+  const validSizes = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
+  return validSizes.includes(size) ? size : 'medium';
 }
 
 // Helper function to clean and parse feats/talents
 function parseFeatureList(str) {
-  if (!str || str === "") return [];
+  if (!str || str === '') {return [];}
   // Remove leading colons and extra whitespace
-  let cleaned = str.replace(/^:\s*/, '').trim();
+  const cleaned = str.replace(/^:\s*/, '').trim();
   // Split by comma, clean up each entry
   return cleaned
     .split(',')
@@ -40,13 +40,13 @@ function parseFeatureList(str) {
 
 // Helper function to clean up text fields
 function cleanTextField(str) {
-  if (!str || str === "") return "";
+  if (!str || str === '') {return '';}
   return str.trim();
 }
 
 // Helper function to extract speed value
 function extractSpeed(speedStr) {
-  if (!speedStr || speedStr === "") return 6; // Default
+  if (!speedStr || speedStr === '') {return 6;} // Default
   const match = speedStr.match(/(\d+)\s*Squares?/i);
   return match ? parseInt(match[1], 10) : 6;
 }
@@ -62,13 +62,13 @@ function sanitizeNPCEntry(rawEntry) {
   const cha = rawEntry.cha || 10;
 
   const sanitized = {
-    name: rawEntry.name || "Unnamed NPC",
-    type: "npc",
+    name: rawEntry.name || 'Unnamed NPC',
+    type: 'npc',
 
     // Only include non-empty metadata
     ...(rawEntry.cl && { challengeLevel: extractNumber(rawEntry.cl) }),
-    ...(rawEntry.size && rawEntry.size !== "" && { size: parseSize(rawEntry.size) }),
-    ...(rawEntry.species_type && rawEntry.species_type !== "" && { speciesType: rawEntry.species_type }),
+    ...(rawEntry.size && rawEntry.size !== '' && { size: parseSize(rawEntry.size) }),
+    ...(rawEntry.species_type && rawEntry.species_type !== '' && { speciesType: rawEntry.species_type }),
 
     // Ability scores (transform to proper structure)
     abilities: {
@@ -152,41 +152,41 @@ function sanitizeNPCEntry(rawEntry) {
     },
 
     // Core stats
-    ...(rawEntry.level && rawEntry.level !== "" && { level: extractNumber(rawEntry.level) || 1 }),
-    ...(rawEntry.bab && rawEntry.bab !== "" && { bab: extractNumber(rawEntry.bab) }),
-    ...(rawEntry.initiative && rawEntry.initiative !== "" && { initiative: extractNumber(rawEntry.initiative) }),
-    ...(rawEntry.damage_threshold && rawEntry.damage_threshold !== "" && { damageThreshold: extractNumber(rawEntry.damage_threshold) }),
+    ...(rawEntry.level && rawEntry.level !== '' && { level: extractNumber(rawEntry.level) || 1 }),
+    ...(rawEntry.bab && rawEntry.bab !== '' && { bab: extractNumber(rawEntry.bab) }),
+    ...(rawEntry.initiative && rawEntry.initiative !== '' && { initiative: extractNumber(rawEntry.initiative) }),
+    ...(rawEntry.damage_threshold && rawEntry.damage_threshold !== '' && { damageThreshold: extractNumber(rawEntry.damage_threshold) }),
 
     speed: extractSpeed(rawEntry.speed),
 
     // Senses and perception
-    ...(rawEntry.senses && rawEntry.senses !== "" && { senses: cleanTextField(rawEntry.senses) }),
-    ...(rawEntry.perception && rawEntry.perception !== "" && { perception: extractNumber(rawEntry.perception) }),
+    ...(rawEntry.senses && rawEntry.senses !== '' && { senses: cleanTextField(rawEntry.senses) }),
+    ...(rawEntry.perception && rawEntry.perception !== '' && { perception: extractNumber(rawEntry.perception) }),
 
     // Features
     feats: parseFeatureList(rawEntry.feats),
     talents: parseFeatureList(rawEntry.talents),
 
     // Skills (keep as unparsed string for now, can be manually added)
-    ...(rawEntry.skills && rawEntry.skills !== "" && { skillsText: cleanTextField(rawEntry.skills) }),
+    ...(rawEntry.skills && rawEntry.skills !== '' && { skillsText: cleanTextField(rawEntry.skills) }),
 
     // Equipment/Possessions (keep first 500 chars, remove excess description)
-    ...(rawEntry.possessions && rawEntry.possessions !== "" && {
+    ...(rawEntry.possessions && rawEntry.possessions !== '' && {
       equipment: cleanTextField(rawEntry.possessions.substring(0, 500))
     }),
 
     // Abilities text
-    ...(rawEntry.abilities_text && rawEntry.abilities_text !== "" && {
+    ...(rawEntry.abilities_text && rawEntry.abilities_text !== '' && {
       abilitiesText: cleanTextField(rawEntry.abilities_text)
     }),
 
     // Species traits
-    ...(rawEntry.species_traits && rawEntry.species_traits !== "" && {
+    ...(rawEntry.species_traits && rawEntry.species_traits !== '' && {
       speciesTraits: cleanTextField(rawEntry.species_traits)
     }),
 
     // Force powers
-    ...(rawEntry.force_powers && rawEntry.force_powers !== "" && {
+    ...(rawEntry.force_powers && rawEntry.force_powers !== '' && {
       forcePowers: cleanTextField(rawEntry.force_powers),
       forceSensitive: true
     }),
@@ -223,7 +223,7 @@ function main() {
       const rawEntry = JSON.parse(line);
 
       // Skip entries with no name or all zero ability scores
-      if (!rawEntry.name || rawEntry.name === "") {
+      if (!rawEntry.name || rawEntry.name === '') {
         skipped++;
         return;
       }

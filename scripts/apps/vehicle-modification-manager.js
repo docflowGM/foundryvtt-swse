@@ -18,7 +18,7 @@ export class VehicleModificationManager {
    * Initialize by loading all modification data
    */
   static async init() {
-    if (this._initialized) return;
+    if (this._initialized) {return;}
 
     try {
       // Load all modification data
@@ -73,7 +73,7 @@ export class VehicleModificationManager {
   static getModificationsByCategory(category) {
     // Normalize category to lowercase for comparison
     const normalizedCategory = (category || '').toLowerCase();
-    switch(normalizedCategory) {
+    switch (normalizedCategory) {
       case 'movement':
         return this._movementSystems || [];
       case 'defense':
@@ -116,8 +116,8 @@ export class VehicleModificationManager {
    * @returns {number} - The calculated cost in credits
    */
   static calculateModificationCost(modification, stockShip, isNonstandard = false) {
-    if (!modification) return 0;
-    if (!stockShip) return modification.cost || 0;
+    if (!modification) {return 0;}
+    if (!stockShip) {return modification.cost || 0;}
 
     let baseCost = modification.cost || 0;
 
@@ -299,8 +299,8 @@ export class VehicleModificationManager {
    * @returns {number} - Total cost in credits
    */
   static calculateTotalCost(modifications, stockShip) {
-    if (!stockShip) return 0;
-    if (!Array.isArray(modifications)) return stockShip.cost || 0;
+    if (!stockShip) {return 0;}
+    if (!Array.isArray(modifications)) {return stockShip.cost || 0;}
 
     const modCost = modifications.reduce((sum, mod) => {
       return sum + this.calculateModificationCost(mod, stockShip);
@@ -318,8 +318,8 @@ export class VehicleModificationManager {
    * @returns {number} - Installation time in days
    */
   static calculateInstallationTime(modification, stockShip, workers = null, lacksEmplacementPoints = 0) {
-    if (!modification) return 1;
-    if (!stockShip) return Math.max(1, Math.ceil(modification.emplacementPoints || 0));
+    if (!modification) {return 1;}
+    if (!stockShip) {return Math.max(1, Math.ceil(modification.emplacementPoints || 0));}
 
     // Minimum work force by size (normalized to lowercase)
     const minWorkForce = {
@@ -399,7 +399,7 @@ export class VehicleModificationManager {
    */
   static getModificationsByAvailability(category, availability) {
     const mods = this.getModificationsByCategory(category);
-    if (!availability || availability === 'all') return mods;
+    if (!availability || availability === 'all') {return mods;}
     return mods.filter(mod => mod.availability === availability);
   }
 }

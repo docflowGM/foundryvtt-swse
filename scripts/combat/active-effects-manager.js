@@ -7,7 +7,7 @@
  * - Preps for custom SWSE actor effect engine
  */
 
-import { swseLogger } from "../utils/logger.js";
+import { swseLogger } from '../utils/logger.js';
 
 export class SWSEActiveEffectsManager {
 
@@ -34,7 +34,7 @@ export class SWSEActiveEffectsManager {
       disabled: false,
       updates,               // B3 format
       flags: {
-        swse: { ...flags },
+        swse: { ...flags }
       }
     };
   }
@@ -51,7 +51,7 @@ export class SWSEActiveEffectsManager {
   /**
    * Remove all condition-related icons from tokens
    */
-  static async _removeTokenStatus(actor, pattern = "conditions/") {
+  static async _removeTokenStatus(actor, pattern = 'conditions/') {
     for (const token of actor.getActiveTokens()) {
       const current = token.document.texture?.effects ?? token.document.effects ?? [];
       const filtered = current.filter(icon => !icon.includes(pattern));
@@ -65,50 +65,50 @@ export class SWSEActiveEffectsManager {
 
   static CONDITION_EFFECTS = {
     normal: {
-      name: "Normal",
-      icon: "systems/foundryvtt-swse/icons/conditions/normal.svg",
+      name: 'Normal',
+      icon: 'systems/foundryvtt-swse/icons/conditions/normal.svg',
       updates: {}
     },
-    "-1": {
-      name: "Injured (-1)",
-      icon: "systems/foundryvtt-swse/icons/conditions/injured-1.svg",
+    '-1': {
+      name: 'Injured (-1)',
+      icon: 'systems/foundryvtt-swse/icons/conditions/injured-1.svg',
       updates: {
-        "system.conditionPenalty": { mode: "ADD", value: -1 }
+        'system.conditionPenalty': { mode: 'ADD', value: -1 }
       },
-      flags: { conditionTrack: "-1", statusId: "condition-1" }
+      flags: { conditionTrack: '-1', statusId: 'condition-1' }
     },
-    "-2": {
-      name: "Wounded (-2)",
-      icon: "systems/foundryvtt-swse/icons/conditions/injured-2.svg",
+    '-2': {
+      name: 'Wounded (-2)',
+      icon: 'systems/foundryvtt-swse/icons/conditions/injured-2.svg',
       updates: {
-        "system.conditionPenalty": { mode: "ADD", value: -2 }
+        'system.conditionPenalty': { mode: 'ADD', value: -2 }
       },
-      flags: { conditionTrack: "-2", statusId: "condition-2" }
+      flags: { conditionTrack: '-2', statusId: 'condition-2' }
     },
-    "-5": {
-      name: "Severely Wounded (-5)",
-      icon: "systems/foundryvtt-swse/icons/conditions/injured-5.svg",
+    '-5': {
+      name: 'Severely Wounded (-5)',
+      icon: 'systems/foundryvtt-swse/icons/conditions/injured-5.svg',
       updates: {
-        "system.conditionPenalty": { mode: "ADD", value: -5 }
+        'system.conditionPenalty': { mode: 'ADD', value: -5 }
       },
-      flags: { conditionTrack: "-5", statusId: "condition-5" }
+      flags: { conditionTrack: '-5', statusId: 'condition-5' }
     },
-    "-10": {
-      name: "Critical (-10)",
-      icon: "systems/foundryvtt-swse/icons/conditions/injured-10.svg",
+    '-10': {
+      name: 'Critical (-10)',
+      icon: 'systems/foundryvtt-swse/icons/conditions/injured-10.svg',
       updates: {
-        "system.conditionPenalty": { mode: "ADD", value: -10 }
+        'system.conditionPenalty': { mode: 'ADD', value: -10 }
       },
-      flags: { conditionTrack: "-10", statusId: "condition-10" }
+      flags: { conditionTrack: '-10', statusId: 'condition-10' }
     },
     helpless: {
-      name: "Helpless",
-      icon: "systems/foundryvtt-swse/icons/conditions/helpless.svg",
+      name: 'Helpless',
+      icon: 'systems/foundryvtt-swse/icons/conditions/helpless.svg',
       updates: {
-        "system.conditionPenalty": { mode: "ADD", value: -10 },
-        "system.defenses.reflex.bonus": { mode: "ADD", value: -10 }
+        'system.conditionPenalty': { mode: 'ADD', value: -10 },
+        'system.defenses.reflex.bonus': { mode: 'ADD', value: -10 }
       },
-      flags: { conditionTrack: "helpless", statusId: "helpless" }
+      flags: { conditionTrack: 'helpless', statusId: 'helpless' }
     }
   };
 
@@ -121,89 +121,89 @@ export class SWSEActiveEffectsManager {
   /* -------------------------------------------------------------------------- */
 
   static DESTINY_EFFECTS = {
-    "destiny-attack-bonus": {
-      name: "Destiny: Attack Bonus",
-      icon: "icons/svg/sword.svg",
+    'destiny-attack-bonus': {
+      name: 'Destiny: Attack Bonus',
+      icon: 'icons/svg/sword.svg',
       duration: { hours: 24 },
       updates: {
-        "system.attackBonus": { mode: "ADD", value: 2 }
+        'system.attackBonus': { mode: 'ADD', value: 2 }
       },
-      flags: { destinyEffect: "attack-bonus", duration: "24h" }
+      flags: { destinyEffect: 'attack-bonus', duration: '24h' }
     },
-    "destiny-defense-bonus": {
-      name: "Destiny: Defense Bonus",
-      icon: "icons/svg/shield.svg",
+    'destiny-defense-bonus': {
+      name: 'Destiny: Defense Bonus',
+      icon: 'icons/svg/shield.svg',
       duration: { hours: 24 },
       updates: {
-        "system.defenses.reflex.misc": { mode: "ADD", value: 2 },
-        "system.defenses.fortitude.misc": { mode: "ADD", value: 2 },
-        "system.defenses.will.misc": { mode: "ADD", value: 2 }
+        'system.defenses.reflex.misc': { mode: 'ADD', value: 2 },
+        'system.defenses.fortitude.misc': { mode: 'ADD', value: 2 },
+        'system.defenses.will.misc': { mode: 'ADD', value: 2 }
       },
-      flags: { destinyEffect: "defense-bonus", duration: "24h" }
+      flags: { destinyEffect: 'defense-bonus', duration: '24h' }
     },
-    "noble-sacrifice": {
-      name: "Noble Sacrifice",
-      icon: "icons/svg/heart.svg",
+    'noble-sacrifice': {
+      name: 'Noble Sacrifice',
+      icon: 'icons/svg/heart.svg',
       duration: { hours: 24 },
       updates: {},
-      flags: { destinyEffect: "noble-sacrifice", duration: "24h" }
+      flags: { destinyEffect: 'noble-sacrifice', duration: '24h' }
     },
-    "vengeance": {
-      name: "Vengeance",
-      icon: "icons/svg/explosion.svg",
+    'vengeance': {
+      name: 'Vengeance',
+      icon: 'icons/svg/explosion.svg',
       duration: { hours: 24 },
       updates: {
-        "system.attackBonus": { mode: "ADD", value: 3 }
+        'system.attackBonus': { mode: 'ADD', value: 3 }
       },
-      flags: { destinyEffect: "vengeance", duration: "24h" }
+      flags: { destinyEffect: 'vengeance', duration: '24h' }
     }
   };
 
   static COMBAT_ACTION_EFFECTS = {
-    "fighting-defensively": {
-      name: "Fighting Defensively",
-      icon: "icons/svg/shield.svg",
+    'fighting-defensively': {
+      name: 'Fighting Defensively',
+      icon: 'icons/svg/shield.svg',
       duration: { rounds: 1 },
       updates: {
-        "system.defenses.reflex.bonus": { mode: "ADD", value: 2 },
-        "system.attackPenalty": { mode: "ADD", value: -5 }
+        'system.defenses.reflex.bonus': { mode: 'ADD', value: 2 },
+        'system.attackPenalty': { mode: 'ADD', value: -5 }
       },
-      flags: { combatAction: "fighting-defensively" }
+      flags: { combatAction: 'fighting-defensively' }
     },
-    "total-defense": {
-      name: "Total Defense",
-      icon: "icons/svg/shield.svg",
+    'total-defense': {
+      name: 'Total Defense',
+      icon: 'icons/svg/shield.svg',
       duration: { rounds: 1 },
       updates: {
-        "system.defenses.reflex.bonus": { mode: "ADD", value: 5 },
-        "system.defenses.fortitude.bonus": { mode: "ADD", value: 5 },
-        "system.defenses.will.bonus": { mode: "ADD", value: 5 }
+        'system.defenses.reflex.bonus': { mode: 'ADD', value: 5 },
+        'system.defenses.fortitude.bonus': { mode: 'ADD', value: 5 },
+        'system.defenses.will.bonus': { mode: 'ADD', value: 5 }
       },
-      flags: { combatAction: "total-defense" }
+      flags: { combatAction: 'total-defense' }
     },
-    "cover-partial": {
-      name: "Partial Cover",
-      icon: "icons/svg/wall.svg",
+    'cover-partial': {
+      name: 'Partial Cover',
+      icon: 'icons/svg/wall.svg',
       updates: {
-        "system.defenses.reflex.bonus": { mode: "ADD", value: 2 }
+        'system.defenses.reflex.bonus': { mode: 'ADD', value: 2 }
       },
-      flags: { combatAction: "cover-partial" }
+      flags: { combatAction: 'cover-partial' }
     },
-    "cover-full": {
-      name: "Full Cover",
-      icon: "icons/svg/wall.svg",
+    'cover-full': {
+      name: 'Full Cover',
+      icon: 'icons/svg/wall.svg',
       updates: {
-        "system.defenses.reflex.bonus": { mode: "ADD", value: 5 }
+        'system.defenses.reflex.bonus': { mode: 'ADD', value: 5 }
       },
-      flags: { combatAction: "cover-full" }
+      flags: { combatAction: 'cover-full' }
     },
-    "cover-improved": {
-      name: "Improved Cover",
-      icon: "icons/svg/wall.svg",
+    'cover-improved': {
+      name: 'Improved Cover',
+      icon: 'icons/svg/wall.svg',
       updates: {
-        "system.defenses.reflex.bonus": { mode: "ADD", value: 10 }
+        'system.defenses.reflex.bonus': { mode: 'ADD', value: 10 }
       },
-      flags: { combatAction: "cover-improved" }
+      flags: { combatAction: 'cover-improved' }
     }
   };
 
@@ -212,25 +212,25 @@ export class SWSEActiveEffectsManager {
   /* -------------------------------------------------------------------------- */
 
   static _mapConditionStep(step) {
-    if (typeof step === "string") return step;
+    if (typeof step === 'string') {return step;}
     return {
-      0: "normal",
-      1: "-1",
-      2: "-2",
-      3: "-5",
-      4: "-10",
-      5: "helpless"
-    }[step] ?? "normal";
+      0: 'normal',
+      1: '-1',
+      2: '-2',
+      3: '-5',
+      4: '-10',
+      5: 'helpless'
+    }[step] ?? 'normal';
   }
 
   static async applyConditionEffect(actor, condition) {
     await this.removeConditionEffects(actor);
 
     const key = this._mapConditionStep(condition);
-    if (key === "normal") return;
+    if (key === 'normal') {return;}
 
     const data = this.CONDITION_EFFECTS[key];
-    if (!data) return;
+    if (!data) {return;}
 
     const effect = this._buildEffect(actor, {
       name: data.name,
@@ -263,7 +263,7 @@ export class SWSEActiveEffectsManager {
     }
 
     const data = this.COMBAT_ACTION_EFFECTS[action];
-    if (!data) return;
+    if (!data) {return;}
 
     const effect = this._buildEffect(actor, {
       name: data.name,
@@ -331,38 +331,37 @@ export class SWSEActiveEffectsManager {
   /* -------------------------------------------------------------------------- */
 
   static init() {
-    swseLogger.log("SWSE | Initializing Active Effects Manager");
+    swseLogger.log('SWSE | Initializing Active Effects Manager');
 
     // Register status effects for HUD
     this._registerStatusEffects();
 
     // Update conditions when CT changes
-    Hooks.on("updateActor", (actor, changes) => {
+    Hooks.on('updateActor', (actor, changes) => {
       const ct = changes?.system?.conditionTrack?.current;
-      if (ct !== undefined) this.applyConditionEffect(actor, ct);
+      if (ct !== undefined) {this.applyConditionEffect(actor, ct);}
     });
 
     // Remove expired effects at turn end
-    Hooks.on("combatTurn", combat => {
+    Hooks.on('combatTurn', combat => {
       const actor = combat.combatant?.actor;
-      if (!actor) return;
+      if (!actor) {return;}
 
       const expired = actor.effects.filter(e =>
         e.duration?.rounds === 1 && !e.flags?.swse?.persistent
       );
 
-      if (expired.length)
-        actor.deleteEmbeddedDocuments('ActiveEffect', expired.map(e => e.id));
+      if (expired.length) {actor.deleteEmbeddedDocuments('ActiveEffect', expired.map(e => e.id));}
     });
 
-    swseLogger.log("SWSE | Active Effects Manager Ready");
+    swseLogger.log('SWSE | Active Effects Manager Ready');
   }
 
   static _registerStatusEffects() {
     const effects = [];
 
     for (const [key, data] of Object.entries(this.CONDITION_EFFECTS)) {
-      if (key === "normal") continue;
+      if (key === 'normal') {continue;}
       effects.push({
         id: data.flags?.statusId ?? key,
         label: data.name,

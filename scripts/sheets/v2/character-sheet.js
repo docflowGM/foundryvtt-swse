@@ -61,7 +61,6 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
     }
   );
 
-  
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.

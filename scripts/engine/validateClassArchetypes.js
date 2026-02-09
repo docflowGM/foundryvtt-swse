@@ -75,9 +75,7 @@ export function validateClassArchetypes(data) {
       }
 
       const status = arch.status;
-      if (status === 'active') activeCount++;
-      else if (status === 'stub') stubCount++;
-      else errors.push(`[ARCH:${classKey}.${archKey}] Invalid status: ${String(status)} (expected "active"|"stub")`);
+      if (status === 'active') {activeCount++;} else if (status === 'stub') {stubCount++;} else {errors.push(`[ARCH:${classKey}.${archKey}] Invalid status: ${String(status)} (expected "active"|"stub")`);}
 
       if (typeof arch.name !== 'string' || !arch.name.trim()) {
         errors.push(`[ARCH:${classKey}.${archKey}] "name" must be a non-empty string`);

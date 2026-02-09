@@ -101,7 +101,7 @@ class CompendiumLoader {
    * @private
    */
   _sanitizeDocument(doc) {
-    if (!doc) return doc;
+    if (!doc) {return doc;}
 
     // Sanitize name field if present and it's an item type
     if (doc.name && ['weapon', 'armor', 'equipment', 'upgrade', 'feat', 'talent', 'power'].includes(doc.type)) {
@@ -122,7 +122,7 @@ class CompendiumLoader {
    * @private
    */
   _validateDocument(doc) {
-    if (!doc) return;
+    if (!doc) {return;}
 
     if (!isNonEmptyString(doc.name)) {
       swseLogger.warn(`Document in compendium has missing or empty name`, doc);
@@ -151,7 +151,7 @@ class CompendiumLoader {
    * @private
    */
   _validateWeapon(weapon) {
-    if (!weapon.system) return;
+    if (!weapon.system) {return;}
 
     const sys = weapon.system;
 
@@ -174,7 +174,7 @@ class CompendiumLoader {
    * @private
    */
   _validateArmor(armor) {
-    if (!armor.system) return;
+    if (!armor.system) {return;}
 
     const sys = armor.system;
 
@@ -207,7 +207,7 @@ class CompendiumLoader {
    * @private
    */
   _validateEquipment(equipment) {
-    if (!equipment.system) return;
+    if (!equipment.system) {return;}
 
     const sys = equipment.system;
     const validSizes = ['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
@@ -231,7 +231,7 @@ class CompendiumLoader {
    * @private
    */
   _validateDroid(droid) {
-    if (!droid.system) return;
+    if (!droid.system) {return;}
 
     const sys = droid.system;
 

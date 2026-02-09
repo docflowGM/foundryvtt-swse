@@ -5,7 +5,7 @@
  * Switching to another weapon mode takes a Swift Action.
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 export class WeaponMode {
   /**
@@ -18,7 +18,7 @@ export class WeaponMode {
   static async switchWeaponMode(actor, weapon, newMode) {
     try {
       if (!actor || !weapon) {
-        throw new Error("Missing actor or weapon");
+        throw new Error('Missing actor or weapon');
       }
 
       // Check if weapon has modes
@@ -37,7 +37,7 @@ export class WeaponMode {
       if (!validModes.includes(newMode)) {
         return {
           success: false,
-          message: `Invalid mode "${newMode}" for ${weapon.name}. Valid modes: ${validModes.join(", ")}`,
+          message: `Invalid mode "${newMode}" for ${weapon.name}. Valid modes: ${validModes.join(', ')}`,
           error: true,
           weaponName: weapon.name,
           validModes
@@ -57,7 +57,7 @@ export class WeaponMode {
       }
 
       // Update weapon mode
-      await weapon.update({ "system.currentMode": newMode });
+      await weapon.update({ 'system.currentMode': newMode });
 
       // Store mode change in flags
       await this._logModeChange(actor, weapon, currentMode, newMode);
@@ -71,7 +71,7 @@ export class WeaponMode {
         message: `${actor.name} switches ${weapon.name} from ${currentMode} mode to ${newMode} mode`
       };
     } catch (err) {
-      SWSELogger.error("Weapon mode switch failed", err);
+      SWSELogger.error('Weapon mode switch failed', err);
       throw err;
     }
   }
@@ -82,7 +82,7 @@ export class WeaponMode {
    * @returns {Array<string>} - Array of available mode names
    */
   static getWeaponModes(weapon) {
-    if (!weapon) return [];
+    if (!weapon) {return [];}
 
     const modes = weapon.system?.modes || weapon.system?.weaponModes || [];
     return Array.isArray(modes) ? modes : Object.keys(modes);
@@ -94,7 +94,7 @@ export class WeaponMode {
    * @returns {string} - Current mode name
    */
   static getCurrentMode(weapon) {
-    if (!weapon) return null;
+    if (!weapon) {return null;}
 
     const modes = this.getWeaponModes(weapon);
     return weapon.system?.currentMode || modes[0] || null;
@@ -107,7 +107,7 @@ export class WeaponMode {
    * @returns {Object|null} - Mode details if available
    */
   static getModeDetails(weapon, mode) {
-    if (!weapon) return null;
+    if (!weapon) {return null;}
 
     const modes = weapon.system?.modes || weapon.system?.weaponModes || {};
     if (Array.isArray(modes)) {
@@ -122,10 +122,10 @@ export class WeaponMode {
    * @private
    */
   static async _logModeChange(actor, weapon, oldMode, newMode) {
-    if (!actor) return;
+    if (!actor) {return;}
 
     try {
-      const modeChanges = actor.getFlag("foundryvtt-swse", "weaponModeChanges") || {};
+      const modeChanges = actor.getFlag('foundryvtt-swse', 'weaponModeChanges') || {};
       if (!modeChanges[weapon.id]) {
         modeChanges[weapon.id] = [];
       }
@@ -137,9 +137,9 @@ export class WeaponMode {
         timestamp: new Date().toISOString()
       });
 
-      await actor.setFlag("foundryvtt-swse", "weaponModeChanges", modeChanges);
+      await actor.setFlag('foundryvtt-swse', 'weaponModeChanges', modeChanges);
     } catch (err) {
-      SWSELogger.error("Failed to log mode change", err);
+      SWSELogger.error('Failed to log mode change', err);
     }
   }
 
@@ -150,9 +150,9 @@ export class WeaponMode {
    * @returns {Array} - Array of mode change history
    */
   static getModeHistory(actor, weapon) {
-    if (!actor || !weapon) return [];
+    if (!actor || !weapon) {return [];}
 
-    const modeChanges = actor.getFlag("foundryvtt-swse", "weaponModeChanges") || {};
+    const modeChanges = actor.getFlag('foundryvtt-swse', 'weaponModeChanges') || {};
     return modeChanges[weapon.id] || [];
   }
 
@@ -160,12 +160,12 @@ export class WeaponMode {
    * Common weapon modes (for reference/validation)
    */
   static COMMON_MODES = {
-    BLASTER_PISTOL: ["Lethal", "Stun"],
-    BLASTER_CARBINE: ["Single-shot", "Autofire"],
-    BLASTER_RIFLE: ["Single-shot", "Autofire"],
-    LIGHTSABER: ["Active", "Inactive"],
-    VIBROBLADE: ["Normal", "Pulse"],
-    ELECTROSTAFF: ["Normal", "High Power"]
+    BLASTER_PISTOL: ['Lethal', 'Stun'],
+    BLASTER_CARBINE: ['Single-shot', 'Autofire'],
+    BLASTER_RIFLE: ['Single-shot', 'Autofire'],
+    LIGHTSABER: ['Active', 'Inactive'],
+    VIBROBLADE: ['Normal', 'Pulse'],
+    ELECTROSTAFF: ['Normal', 'High Power']
   };
 
   /**
@@ -174,12 +174,12 @@ export class WeaponMode {
    * @returns {string|null} - The weapon type key or null
    */
   static identifyWeaponType(weapon) {
-    if (!weapon) return null;
+    if (!weapon) {return null;}
 
-    const name = (weapon.name || "").toLowerCase();
+    const name = (weapon.name || '').toLowerCase();
 
     for (const [type, _modes] of Object.entries(this.COMMON_MODES)) {
-      if (name.includes(type.toLowerCase().replace(/_/g, " "))) {
+      if (name.includes(type.toLowerCase().replace(/_/g, ' '))) {
         return type;
       }
     }

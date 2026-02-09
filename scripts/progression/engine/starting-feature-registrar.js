@@ -83,7 +83,7 @@ export const StartingFeatureRegistrar = {
      */
     _registerLevelFeatures(className, level, features) {
         for (const feature of features) {
-            if (!feature) continue;
+            if (!feature) {continue;}
 
             const featureName = feature.name || feature.title || String(feature);
             FeatureIndex.registerClassFeature(className, `${level}_${featureName}`, {

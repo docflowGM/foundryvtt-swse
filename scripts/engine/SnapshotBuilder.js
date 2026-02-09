@@ -240,13 +240,13 @@ export class SnapshotBuilder {
    * @private
    */
   static _pendingIds(items) {
-    if (!Array.isArray(items)) return [];
+    if (!Array.isArray(items)) {return [];}
 
     return items
       .map(item => {
-        if (!item) return null;
-        if (typeof item === 'string') return item;
-        if (typeof item === 'object') return item.id || item.name || null;
+        if (!item) {return null;}
+        if (typeof item === 'string') {return item;}
+        if (typeof item === 'object') {return item.id || item.name || null;}
         return null;
       })
       .filter(Boolean);

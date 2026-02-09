@@ -3,20 +3,20 @@ import { SWSELogger } from './logger.js';
  * Macro functions for SWSE
  */
 export function registerMacroFunctions() {
-  SWSELogger.log("SWSE | Registering macro functions...");
-  
+  SWSELogger.log('SWSE | Registering macro functions...');
+
   game.swse.rollSkill = async function(actorId, skillKey) {
     const actor = game.actors.get(actorId);
-    if (!actor) return;
-    
+    if (!actor) {return;}
+
     const skill = actor.system.skills[skillKey];
-    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${skill.total}`).evaluate({async: true});
-    
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${skill.total}`).evaluate({ async: true });
+
     await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({actor}),
+      speaker: ChatMessage.getSpeaker({ actor }),
       flavor: `${skillKey} Check`
     } , { create: true });
   };
-  
-  SWSELogger.log("SWSE | Macro functions registered");
+
+  SWSELogger.log('SWSE | Macro functions registered');
 }

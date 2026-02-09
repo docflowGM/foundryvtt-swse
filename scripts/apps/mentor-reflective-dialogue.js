@@ -52,7 +52,7 @@ import { MENTORS } from './mentor-dialogues.js';
  */
 export async function generateReflectiveDialogue(actor, mentorId, topicKey) {
   if (!actor || !mentorId) {
-    return { observation: "", suggestion: "", respectClause: "" };
+    return { observation: '', suggestion: '', respectClause: '' };
   }
 
   const mentor = MENTORS[mentorId];
@@ -70,7 +70,7 @@ export async function generateReflectiveDialogue(actor, mentorId, topicKey) {
 
   const dialogue = {
     topic: topicKey,
-    mentorName: mentor?.name || "Your Mentor",
+    mentorName: mentor?.name || 'Your Mentor',
     personality: personality,
     dspContext: dspInfo,
     showPathCommitment: topicKey === 'paths_open',
@@ -80,7 +80,7 @@ export async function generateReflectiveDialogue(actor, mentorId, topicKey) {
   // NOTE: Topic-specific dialogue functions have been removed as part of Phase 1
   // Judgment Atom system now handles mentor reactions.
   // This file is maintained for backward compatibility but is no longer the primary dialogue path.
-  dialogue.content = { observation: "", suggestion: "", respectClause: "" };
+  dialogue.content = { observation: '', suggestion: '', respectClause: '' };
 
   // Save updated memory
   await setMentorMemory(actor, mentorId.toLowerCase(), memory);
@@ -96,32 +96,32 @@ export async function generateReflectiveDialogue(actor, mentorId, topicKey) {
  * Get the phase of progression (Early, Mid, Late)
  */
 function getPhase(level) {
-  if (level <= 5) return "early";
-  if (level <= 12) return "mid";
-  return "late";
+  if (level <= 5) {return 'early';}
+  if (level <= 12) {return 'mid';}
+  return 'late';
 }
 
 /**
  * Apply mentor personality to dialogue generation
  */
 function getMentorVoice(personality, layer, baseText) {
-  if (!personality) return baseText;
+  if (!personality) {return baseText;}
 
   const traits = personality.traits || [];
 
   // Minimal mentors: shorter text
-  if (personality.verbosity === "minimal") {
+  if (personality.verbosity === 'minimal') {
     if (baseText.length > 100) {
-      return baseText.substring(0, 80) + "...";
+      return baseText.substring(0, 80) + '...';
     }
   }
 
   // Verbose mentors: add flourish
-  if (personality.verbosity === "verbose" && layer === "observation") {
-    if (traits.includes("philosophical")) {
+  if (personality.verbosity === 'verbose' && layer === 'observation') {
+    if (traits.includes('philosophical')) {
       return `${baseText} I have walked this road before, and I see patterns you have yet to perceive.`;
     }
-    if (traits.includes("spiritual")) {
+    if (traits.includes('spiritual')) {
       return `${baseText} The Force speaks to me of your nature.`;
     }
   }
@@ -138,22 +138,22 @@ function detectBuildGaps(actor, memory) {
   const gaps = [];
 
   if (!memory.inferredRole) {
-    gaps.push("Your build lacks coherent identity. Consider what role you wish to play.");
+    gaps.push('Your build lacks coherent identity. Consider what role you wish to play.');
   }
 
   const talents = actor.items.filter(i => i.type === 'talent').length;
   const feats = actor.items.filter(i => i.type === 'feat').length;
 
   if (talents === 0 && actor.system.level >= 6) {
-    gaps.push("You have few talents for your level. Consider developing a talent tree.");
+    gaps.push('You have few talents for your level. Consider developing a talent tree.');
   }
 
   if (feats === 0 && actor.system.level >= 3) {
-    gaps.push("Limited feat selection limits your options. Diversify your abilities.");
+    gaps.push('Limited feat selection limits your options. Diversify your abilities.');
   }
 
   return {
-    summary: gaps.length > 0 ? gaps[0] : "Your path shows some inconsistencies.",
+    summary: gaps.length > 0 ? gaps[0] : 'Your path shows some inconsistencies.',
     details: gaps
   };
 }
@@ -165,7 +165,7 @@ function identifyRisks(actor, memory, dspInfo) {
   const risks = [];
 
   if (dspInfo.saturation >= 0.4) {
-    risks.push("The darkness presses upon you. Each choice risks drawing you further into shadow.");
+    risks.push('The darkness presses upon you. Each choice risks drawing you further into shadow.');
   }
 
   // Over-specialization
@@ -175,12 +175,12 @@ function identifyRisks(actor, memory, dspInfo) {
   }
 
   if (role === 'guardian' && (actor.system.attributes?.wis?.base || 10) <= 10) {
-    risks.push("You stand as guardian, yet lack wisdom to read threats. This is dangerous.");
+    risks.push('You stand as guardian, yet lack wisdom to read threats. This is dangerous.');
   }
 
   return {
-    summary: risks.length > 0 ? risks[0] : "Be mindful of imbalance.",
-    primary: risks[0] || "Stay vigilant against complacency."
+    summary: risks.length > 0 ? risks[0] : 'Be mindful of imbalance.',
+    primary: risks[0] || 'Stay vigilant against complacency.'
   };
 }
 
@@ -189,7 +189,7 @@ function identifyRisks(actor, memory, dspInfo) {
  */
 function getTopSkill(actor) {
   const skills = actor.system.skills || {};
-  let topSkill = "a learned skill";
+  let topSkill = 'a learned skill';
   let topMod = 0;
 
   for (const [key, skill] of Object.entries(skills)) {

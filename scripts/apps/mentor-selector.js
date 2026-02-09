@@ -3,8 +3,8 @@
  * Allows players to choose or change their mentor
  */
 
-import { MENTORS, setMentorOverride, getActiveMentor } from "./mentor-dialogues.js";
-import { swseLogger } from "../utils/logger.js";
+import { MENTORS, setMentorOverride, getActiveMentor } from './mentor-dialogues.js';
+import { swseLogger } from '../utils/logger.js';
 
 export class MentorSelectorWindow {
     /**
@@ -99,13 +99,13 @@ export class MentorSelectorWindow {
             content: content,
             buttons: {
                 ok: {
-                    label: "Confirm",
+                    label: 'Confirm',
                     icon: '<i class="fas fa-check"></i>',
                     callback: async (html) => {
                         const selectedMentor = html.find('#selected-mentor').val();
 
                         if (!selectedMentor) {
-                            ui.notifications.warn("Please select a mentor");
+                            ui.notifications.warn('Please select a mentor');
                             return;
                         }
 
@@ -114,17 +114,17 @@ export class MentorSelectorWindow {
                             ui.notifications.info(`Mentor changed to ${MENTORS[selectedMentor].name}`);
                             swseLogger.log(`Mentor changed to ${selectedMentor} for ${actor.name}`);
                         } catch (err) {
-                            swseLogger.error("Failed to change mentor:", err);
+                            swseLogger.error('Failed to change mentor:', err);
                             ui.notifications.error(`Failed to change mentor: ${err.message}`);
                         }
                     }
                 },
                 cancel: {
-                    label: "Cancel",
+                    label: 'Cancel',
                     icon: '<i class="fas fa-times"></i>'
                 }
             },
-            default: "ok",
+            default: 'ok',
             width: 600,
             resizable: true
         }).render(true);
@@ -132,7 +132,7 @@ export class MentorSelectorWindow {
 }
 
 // Add UI command registration for opening mentor selector
-Hooks.once("init", () => {
+Hooks.once('init', () => {
     // Make available globally for use in macros/tools
     window.SWSE = window.SWSE || {};
     window.SWSE.MentorSelectorWindow = MentorSelectorWindow;

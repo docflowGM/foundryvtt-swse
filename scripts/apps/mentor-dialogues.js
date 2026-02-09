@@ -1,5 +1,5 @@
-import { ProgressionEngine } from "../progression/engine/progression-engine.js";
-import { SWSELogger } from "../utils/logger.js";
+import { ProgressionEngine } from '../progression/engine/progression-engine.js';
+import { SWSELogger } from '../utils/logger.js';
 
 /**
  * SWSE Mentor Dialogue System
@@ -69,7 +69,7 @@ export function getMentorGuidance(mentor, choiceType) {
         'hp': mentor.hpGuidance
     };
 
-    const guidance = guidanceMap[choiceType] || "Make your choice wisely.";
+    const guidance = guidanceMap[choiceType] || 'Make your choice wisely.';
     SWSELogger.log(`[MENTOR-DIALOGUES] getMentorGuidance: Found guidance:`, guidance.substring(0, 50) + (guidance.length > 50 ? '...' : ''));
     return guidance;
 }
@@ -143,14 +143,14 @@ export async function setMentorOverride(actor, mentorKey) {
     SWSELogger.log(`[MENTOR-DIALOGUES] setMentorOverride: Mentor key validated - "${MENTORS[mentorKey].name}"`);
 
     try {
-        await actor.setFlag("swse", "mentorOverride", mentorKey);
+        await actor.setFlag('swse', 'mentorOverride', mentorKey);
         SWSELogger.log(`[MENTOR-DIALOGUES] setMentorOverride: Successfully set mentor override flag`);
 
         // Emit hook for other systems to react to mentor change
-        Hooks.callAll("swse:mentor:changed", {
+        Hooks.callAll('swse:mentor:changed', {
             actor: actor,
             newMentor: mentorKey,
-            source: "manual-override"
+            source: 'manual-override'
         });
         SWSELogger.log(`[MENTOR-DIALOGUES] setMentorOverride: Emitted swse:mentor:changed hook`);
     } catch (err) {
@@ -170,7 +170,7 @@ export function getActiveMentor(actor) {
     SWSELogger.log(`[MENTOR-DIALOGUES] getActiveMentor: Determining active mentor for actor "${actor.name}"`);
 
     // Check for manual override first
-    const override = actor.getFlag("swse", "mentorOverride");
+    const override = actor.getFlag('swse', 'mentorOverride');
     if (override && MENTORS[override]) {
         SWSELogger.log(`[MENTOR-DIALOGUES] getActiveMentor: Using mentor override: "${MENTORS[override].name}"`);
         return MENTORS[override];
@@ -183,7 +183,7 @@ export function getActiveMentor(actor) {
     const mentor = getMentorForClass(startClass);
     SWSELogger.log(`[MENTOR-DIALOGUES] getActiveMentor: Active mentor is "${mentor?.name}"`);
 
-    return mentor || MENTORS["Scoundrel"]; // Ultimate fallback
+    return mentor || MENTORS['Scoundrel']; // Ultimate fallback
 }
 
 /**
@@ -195,12 +195,12 @@ export async function clearMentorOverride(actor) {
     SWSELogger.log(`[MENTOR-DIALOGUES] clearMentorOverride: Clearing mentor override for actor "${actor.name}"`);
 
     try {
-        await actor.unsetFlag("swse", "mentorOverride");
+        await actor.unsetFlag('swse', 'mentorOverride');
         SWSELogger.log(`[MENTOR-DIALOGUES] clearMentorOverride: Successfully cleared mentor override flag`);
 
-        Hooks.callAll("swse:mentor:changed", {
+        Hooks.callAll('swse:mentor:changed', {
             actor: actor,
-            source: "override-cleared"
+            source: 'override-cleared'
         });
         SWSELogger.log(`[MENTOR-DIALOGUES] clearMentorOverride: Emitted swse:mentor:changed hook`);
     } catch (err) {
@@ -220,9 +220,9 @@ export async function clearMentorOverride(actor) {
  * Used for contextual mentor responses
  */
 export const DIALOGUE_PHASES = {
-    EARLY: { min: 1, max: 5, name: "early", style: "instructional" },
-    MID: { min: 6, max: 12, name: "mid", style: "advisory" },
-    LATE: { min: 13, max: 20, name: "late", style: "peer" }
+    EARLY: { min: 1, max: 5, name: 'early', style: 'instructional' },
+    MID: { min: 6, max: 12, name: 'mid', style: 'advisory' },
+    LATE: { min: 13, max: 20, name: 'late', style: 'peer' }
 };
 
 /**
@@ -231,9 +231,9 @@ export const DIALOGUE_PHASES = {
  * @returns {string} Phase name: "early", "mid", or "late"
  */
 export function getDialoguePhase(level) {
-    if (level <= DIALOGUE_PHASES.EARLY.max) return "early";
-    if (level <= DIALOGUE_PHASES.MID.max) return "mid";
-    return "late";
+    if (level <= DIALOGUE_PHASES.EARLY.max) {return 'early';}
+    if (level <= DIALOGUE_PHASES.MID.max) {return 'mid';}
+    return 'late';
 }
 
 /**
@@ -241,12 +241,12 @@ export function getDialoguePhase(level) {
  * Categorizes the type of guidance being sought
  */
 export const SUGGESTION_CONTEXTS = {
-    ATTRIBUTE: "attribute",      // Ability score increases
-    FEAT: "feat",                // Feat selection
-    TALENT: "talent",            // Talent selection
-    DEFENSE: "defense",          // Defensive choices
-    STYLE: "style",              // Combat/playstyle choices
-    SKILL: "skill",              // Skill selection
-    MULTICLASS: "multiclass",    // Multiclass decisions
-    HP: "hp"                     // Health/survivability
+    ATTRIBUTE: 'attribute',      // Ability score increases
+    FEAT: 'feat',                // Feat selection
+    TALENT: 'talent',            // Talent selection
+    DEFENSE: 'defense',          // Defensive choices
+    STYLE: 'style',              // Combat/playstyle choices
+    SKILL: 'skill',              // Skill selection
+    MULTICLASS: 'multiclass',    // Multiclass decisions
+    HP: 'hp'                     // Health/survivability
 };

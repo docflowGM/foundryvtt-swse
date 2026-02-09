@@ -13,22 +13,21 @@ import {
   SpaceCombatMenu,
   PresetsMenu,
   CharacterRestrictionsMenu
-} from "./houserule-menus.js";
+} from './houserule-menus.js';
 
 export class HouserulesConfig extends SWSEFormApplication {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
     SWSEFormApplication.DEFAULT_OPTIONS ?? {},
     {
-      id: "swse-houserules-config",
-      title: "SWSE House Rules Configuration",
-      template: "systems/foundryvtt-swse/templates/apps/houserules/houserules-config.hbs",
+      id: 'swse-houserules-config',
+      title: 'SWSE House Rules Configuration',
+      template: 'systems/foundryvtt-swse/templates/apps/houserules/houserules-config.hbs',
       position: { width: 700, height: 600 },
       resizable: true,
-      classes: ["swse", "houserules"]
+      classes: ['swse', 'houserules']
     }
   );
 
-  
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
@@ -50,52 +49,52 @@ export class HouserulesConfig extends SWSEFormApplication {
       isGM: game.user.isGM,
       menus: [
         {
-          id: "character-creation",
-          icon: "fas fa-user-plus",
-          title: "Character Creation",
-          description: "Ability scores, hit points, and starting character rules"
+          id: 'character-creation',
+          icon: 'fas fa-user-plus',
+          title: 'Character Creation',
+          description: 'Ability scores, hit points, and starting character rules'
         },
         {
-          id: "character-restrictions",
-          icon: "fas fa-ban",
-          title: "Character Restrictions",
-          description: "Ban races, disable backgrounds"
+          id: 'character-restrictions',
+          icon: 'fas fa-ban',
+          title: 'Character Restrictions',
+          description: 'Ban races, disable backgrounds'
         },
         {
-          id: "skills-feats",
-          icon: "fas fa-dice-d20",
-          title: "Skills & Feats",
-          description: "Skill checks, feat variants, feint mechanics"
+          id: 'skills-feats',
+          icon: 'fas fa-dice-d20',
+          title: 'Skills & Feats',
+          description: 'Skill checks, feat variants, feint mechanics'
         },
         {
-          id: "advancement",
-          icon: "fas fa-arrow-up",
-          title: "Advancement",
-          description: "Level-up rules, talents, retraining"
+          id: 'advancement',
+          icon: 'fas fa-arrow-up',
+          title: 'Advancement',
+          description: 'Level-up rules, talents, retraining'
         },
         {
-          id: "combat",
-          icon: "fas fa-fist-raised",
-          title: "Combat",
-          description: "Death, diagonal movement, critical hits, condition track"
+          id: 'combat',
+          icon: 'fas fa-fist-raised',
+          title: 'Combat',
+          description: 'Death, diagonal movement, critical hits, condition track'
         },
         {
-          id: "force",
-          icon: "fas fa-hand-sparkles",
-          title: "Force & Destiny",
-          description: "Force powers, dark side rules, destiny mechanics"
+          id: 'force',
+          icon: 'fas fa-hand-sparkles',
+          title: 'Force & Destiny',
+          description: 'Force powers, dark side rules, destiny mechanics'
         },
         {
-          id: "space-combat",
-          icon: "fas fa-rocket",
-          title: "Space Combat",
-          description: "Ship combat, initiative, role priority"
+          id: 'space-combat',
+          icon: 'fas fa-rocket',
+          title: 'Space Combat',
+          description: 'Ship combat, initiative, role priority'
         },
         {
-          id: "presets",
-          icon: "fas fa-file-import",
-          title: "Presets",
-          description: "Load, apply, and export ruleset presets"
+          id: 'presets',
+          icon: 'fas fa-file-import',
+          title: 'Presets',
+          description: 'Load, apply, and export ruleset presets'
         }
       ]
     };
@@ -103,13 +102,13 @@ export class HouserulesConfig extends SWSEFormApplication {
 
   async _onRender(context, options) {
     const root = this.element;
-    if (!(root instanceof HTMLElement)) return;
+    if (!(root instanceof HTMLElement)) {return;}
 
-    root.querySelectorAll(".houserule-menu-button").forEach((button) =>
-      button.addEventListener("click", (ev) =>
+    root.querySelectorAll('.houserule-menu-button').forEach((button) =>
+      button.addEventListener('click', (ev) =>
         this._onOpenMenu(ev).catch((err) => {
-          console.error("SWSE | Failed to open houserule menu:", err);
-          ui.notifications.error("Failed to open menu. See console.");
+          console.error('SWSE | Failed to open houserule menu:', err);
+          ui.notifications.error('Failed to open menu. See console.');
         })
       )
     );
@@ -120,7 +119,7 @@ export class HouserulesConfig extends SWSEFormApplication {
    */
   async _onOpenMenu(event) {
     if (!game.user.isGM) {
-      ui.notifications.warn("Only GMs may configure houserules.");
+      ui.notifications.warn('Only GMs may configure houserules.');
       return;
     }
 
@@ -128,13 +127,13 @@ export class HouserulesConfig extends SWSEFormApplication {
 
     // More maintainable lookup table
     const menuMap = {
-      "character-creation": CharacterCreationMenu,
-      "character-restrictions": CharacterRestrictionsMenu,
-      "skills-feats": SkillsFeatsMenu,
+      'character-creation': CharacterCreationMenu,
+      'character-restrictions': CharacterRestrictionsMenu,
+      'skills-feats': SkillsFeatsMenu,
       advancement: AdvancementMenu,
       combat: CombatMenu,
       force: ForceMenu,
-      "space-combat": SpaceCombatMenu,
+      'space-combat': SpaceCombatMenu,
       presets: PresetsMenu
     };
 
@@ -163,12 +162,12 @@ export class HouserulesConfig extends SWSEFormApplication {
 /*                       REGISTER MENU IN FOUNDRY SETTINGS                    */
 /* -------------------------------------------------------------------------- */
 
-Hooks.once("ready", () => {
-  game.settings.registerMenu("foundryvtt-swse", "houserulesConfig", {
-    name: "House Rules Configuration",
-    label: "Configure House Rules",
-    hint: "Open the unified configuration menu for all SWSE houserules.",
-    icon: "fas fa-cog",
+Hooks.once('ready', () => {
+  game.settings.registerMenu('foundryvtt-swse', 'houserulesConfig', {
+    name: 'House Rules Configuration',
+    label: 'Configure House Rules',
+    hint: 'Open the unified configuration menu for all SWSE houserules.',
+    icon: 'fas fa-cog',
     type: HouserulesConfig,
     restricted: true
   });

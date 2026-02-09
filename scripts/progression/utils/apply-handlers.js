@@ -11,21 +11,21 @@ export const ApplyHandlers = {
     // ────────────────────────────────────────────
     async applyClass(actor, classDoc, level) {
         // Create or update class item
-        const item = actor.items.find(i => i.type === "class" && i.name === classDoc.name);
+        const item = actor.items.find(i => i.type === 'class' && i.name === classDoc.name);
 
         if (item) {
-            await actor.updateOwnedItem(item, { "system.level": level });
+            await actor.updateOwnedItem(item, { 'system.level': level });
         } else {
-            await actor.createEmbeddedDocuments("Item", [{
+            await actor.createEmbeddedDocuments('Item', [{
                 name: classDoc.name,
-                type: "class",
+                type: 'class',
                 img: classDoc.img,
                 system: {
                     level,
                     hitDie: classDoc.system.hitDie,
                     babProgression: classDoc.system.babProgression,
                     defenses: classDoc.system.defenses,
-                    description: classDoc.system.description || "",
+                    description: classDoc.system.description || '',
                     talentTrees: classDoc.system.talentTrees || [],
                     classSkills: classDoc.system.classSkills || [],
                     forceSensitive: classDoc.system.forceSensitive || false
@@ -38,9 +38,9 @@ export const ApplyHandlers = {
     // APPLY FEAT
     // ────────────────────────────────────────────
     async applyFeat(actor, featObj) {
-        const exists = actor.items.some(i => i.type === "feat" && i.name === featObj.name);
+        const exists = actor.items.some(i => i.type === 'feat' && i.name === featObj.name);
         if (!exists || featObj.repeatable) {
-            await actor.createEmbeddedDocuments("Item", [featObj]);
+            await actor.createEmbeddedDocuments('Item', [featObj]);
         }
     },
 
@@ -48,12 +48,12 @@ export const ApplyHandlers = {
     // APPLY TALENT
     // ────────────────────────────────────────────
     async applyTalent(actor, talent) {
-        const exists = actor.items.some(i => i.type === "talent" && i.name === talent.name);
-        if (exists) return;
+        const exists = actor.items.some(i => i.type === 'talent' && i.name === talent.name);
+        if (exists) {return;}
 
-        await actor.createEmbeddedDocuments("Item", [{
+        await actor.createEmbeddedDocuments('Item', [{
             name: talent.name,
-            type: "talent",
+            type: 'talent',
             img: talent.img,
             system: talent.system
         }]);
@@ -63,12 +63,12 @@ export const ApplyHandlers = {
     // APPLY FORCE POWER
     // ────────────────────────────────────────────
     async applyForcePower(actor, power) {
-        const exists = actor.items.some(i => i.type === "forcepower" && i.name === power.name);
-        if (exists) return;
+        const exists = actor.items.some(i => i.type === 'forcepower' && i.name === power.name);
+        if (exists) {return;}
 
-        await actor.createEmbeddedDocuments("Item", [{
+        await actor.createEmbeddedDocuments('Item', [{
             name: power.name,
-            type: "forcepower",
+            type: 'forcepower',
             img: power.img,
             system: power.system
         }]);
@@ -79,7 +79,7 @@ export const ApplyHandlers = {
     // e.g. Trusty Sidearm +3, Precision Aim +2
     // ────────────────────────────────────────────
     async applyScalingFeature(actor, feature, className) {
-        const key = `${className}-${feature.name}`.replace(/\s+/g, "-").toLowerCase();
+        const key = `${className}-${feature.name}`.replace(/\s+/g, '-').toLowerCase();
 
         await actor.update({
             [`system.scaling.${key}.value`]: feature.value,
@@ -93,15 +93,15 @@ export const ApplyHandlers = {
     // ────────────────────────────────────────────
     async applyClassFeature(actor, feature, className) {
         const exists = actor.items.some(i =>
-            (i.type === "feat" || i.type === "classfeature") &&
+            (i.type === 'feat' || i.type === 'classfeature') &&
             i.name === feature.name
         );
 
         if (!exists) {
-            await actor.createEmbeddedDocuments("Item", [{
+            await actor.createEmbeddedDocuments('Item', [{
                 name: feature.name,
-                type: "classfeature",
-                img: "icons/svg/upgrade.svg",
+                type: 'classfeature',
+                img: 'icons/svg/upgrade.svg',
                 system: {
                     description: `Class Feature from ${className}`
                 }
@@ -141,8 +141,8 @@ export const ApplyHandlers = {
     async applyHPGain(actor, hpGain) {
         if (hpGain > 0) {
             await actor.update({
-                "system.hp.max": (actor.system.hp?.max || 0) + hpGain,
-                "system.hp.value": (actor.system.hp?.value || 0) + hpGain
+                'system.hp.max': (actor.system.hp?.max || 0) + hpGain,
+                'system.hp.value': (actor.system.hp?.value || 0) + hpGain
             });
         }
     },

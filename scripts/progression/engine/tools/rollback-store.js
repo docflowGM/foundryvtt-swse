@@ -61,12 +61,12 @@ export class RollbackStore {
       // Delete all current items
       const currentItemIds = actor.items.map(i => i.id);
       if (currentItemIds.length > 0) {
-        await actor.deleteEmbeddedDocuments("Item", currentItemIds);
+        await actor.deleteEmbeddedDocuments('Item', currentItemIds);
       }
 
       // Recreate items from snapshot
       if (state.items && state.items.length > 0) {
-        await actor.createEmbeddedDocuments("Item", state.items);
+        await actor.createEmbeddedDocuments('Item', state.items);
       }
 
       swseLogger.log(`RollbackStore: Restored state (${this.stack.length} remaining)`);
@@ -85,7 +85,7 @@ export class RollbackStore {
    * @returns {Object|null} - Most recent state snapshot
    */
   peek() {
-    if (this.stack.length === 0) return null;
+    if (this.stack.length === 0) {return null;}
     return this.stack[this.stack.length - 1];
   }
 

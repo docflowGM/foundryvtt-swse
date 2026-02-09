@@ -28,7 +28,7 @@ export const INTENSITY_ATOMS = {
    * - Optional or exploratory choices
    * - Low-impact decisions
    */
-  very_low: "very_low",
+  very_low: 'very_low',
 
   /**
    * low
@@ -42,7 +42,7 @@ export const INTENSITY_ATOMS = {
    * - Exploratory choices that fit but don't strongly align
    * - Soft observations or curiosities
    */
-  low: "low",
+  low: 'low',
 
   /**
    * medium
@@ -57,7 +57,7 @@ export const INTENSITY_ATOMS = {
    * - Meaningful but not critical decisions
    * - Standard mentor guidance
    */
-  medium: "medium",
+  medium: 'medium',
 
   /**
    * high
@@ -72,7 +72,7 @@ export const INTENSITY_ATOMS = {
    * - On-path decisions
    * - Significant warnings or risks
    */
-  high: "high",
+  high: 'high',
 
   /**
    * very_high
@@ -88,7 +88,7 @@ export const INTENSITY_ATOMS = {
    * - Critical path confirmations
    * - Severe risks or dark side warnings
    */
-  very_high: "very_high"
+  very_high: 'very_high'
 };
 
 /**

@@ -51,30 +51,30 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
   constructor(actor = null, options = {}) {
     super(options);
     this.actor = actor;
-    this.actorType = options.actorType || "character"; // "character" for PCs, "npc" for NPCs
+    this.actorType = options.actorType || 'character'; // "character" for PCs, "npc" for NPCs
     this.mentor = null; // Mentor character for survey prompts (initialized when needed)
     this.singleStepMode = options.singleStepMode || false; // Close after confirming single step
     this._creatingActor = false; // Re-entry guard for character creation
     this.characterData = {
-      name: "",
+      name: '',
       isDroid: false,
-      droidDegree: "",
-      droidSize: "medium",
-      species: "",
-      size: "Medium",  // Character size (Small, Medium, Large)
+      droidDegree: '',
+      droidSize: 'medium',
+      species: '',
+      size: 'Medium',  // Character size (Small, Medium, Large)
       specialAbilities: [],  // Racial special abilities
       languages: [],  // Known languages
       racialSkillBonuses: [],  // Racial skill bonuses (e.g., "+2 Perception")
-      speciesSource: "",  // Source book for species
+      speciesSource: '',  // Source book for species
       speciesFilters: {  // Filters for species selection
         attributeBonus: null,  // Filter by attribute bonus (str, dex, con, int, wis, cha)
         attributePenalty: null,  // Filter by attribute penalty
         size: null  // Filter by size category
       },
       background: null,  // Selected background (Event, Occupation, or Planet)
-      backgroundCategory: "events",  // Current background category tab
+      backgroundCategory: 'events',  // Current background category tab
       backgroundSkills: [],  // Skills selected from background
-      backgroundNarratorComment: "",  // Ol' Salty's comment for current category
+      backgroundNarratorComment: '',  // Ol' Salty's comment for current category
       skillFilter: null,  // Active skill filter for backgrounds
       languageFilter: null,  // Active language filter for backgrounds
       allowHomebrewPlanets: false,  // Toggle for homebrew planets
@@ -83,10 +83,10 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       preselectedSkills: [],
       droidSystems: {
         locomotion: null,
-        processor: { name: "Heuristic Processor", cost: 0, weight: 5 }, // Free
+        processor: { name: 'Heuristic Processor', cost: 0, weight: 5 }, // Free
         appendages: [
-          { name: "Hand", cost: 0, weight: 5 }, // Free
-          { name: "Hand", cost: 0, weight: 5 }  // Free
+          { name: 'Hand', cost: 0, weight: 5 }, // Free
+          { name: 'Hand', cost: 0, weight: 5 }  // Free
         ],
         accessories: [],
         totalCost: 0,
@@ -121,7 +121,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       starshipManeuversRequired: 0, // Calculated based on Starship Tactics feats
       level: 1,
       hp: { value: 1, max: 1, temp: 0 },
-      forcePoints: { value: 5, max: 5, die: "1d6" },
+      forcePoints: { value: 5, max: 5, die: '1d6' },
       destinyPoints: { value: 1 },
       secondWind: { uses: 1, max: 1, misc: 0, healing: 0 },
       defenses: {
@@ -134,7 +134,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       damageThresholdMisc: 0,
       credits: 1000  // Starting credits
     };
-    this.currentStep = "name";
+    this.currentStep = 'name';
     this.selectedTalentTree = null;  // For two-step talent selection
     this.freeBuild = false;  // Free build mode bypasses validation
     this.skippedSteps = new Set();  // Track which steps have been skipped
@@ -206,7 +206,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const system = actor.system;
 
     // Load basic info
-    this.characterData.name = actor.name || "";
+    this.characterData.name = actor.name || '';
     this.characterData.level = system.level || 0;
 
     // Load species/droid status
@@ -216,8 +216,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
     if (system.isDroid) {
       this.characterData.isDroid = true;
-      this.characterData.droidDegree = system.droidDegree || "";
-      this.characterData.droidSize = system.size || "medium";
+      this.characterData.droidDegree = system.droidDegree || '';
+      this.characterData.droidSize = system.size || 'medium';
     }
 
     // Load abilities
@@ -261,14 +261,14 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "chargen", "swse-app"],
-      template: "systems/foundryvtt-swse/templates/apps/chargen.hbs",
+      classes: ['swse', 'chargen', 'swse-app'],
+      template: 'systems/foundryvtt-swse/templates/apps/chargen.hbs',
       width: 900,
       height: 700,
-      title: "Character Generator",
+      title: 'Character Generator',
       resizable: true,
       draggable: true,
-      scrollY: [".chargen-content", ".step-content", ".window-content"],
+      scrollY: ['.chargen-content', '.step-content', '.window-content'],
       left: null,  // Allow Foundry to center
       top: null    // Allow Foundry to center
     });
@@ -280,97 +280,97 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    */
   static RANDOM_NAMES = [
     // Human-esque masculine names
-    "Lando Virex Tal", "Jarek Solan Marr", "Torvan Kree Ossik", "Malric Dorne Valen",
-    "Daxen Vor Kell", "Brask Talor Kain", "Rynar Vex Holt", "Kael Orrix Juno",
-    "Voren Thal Kryss", "Zarek Mon Daal", "Korrin Vel Ashur", "Talos Ren Virek",
-    "Drel Kavos Morn", "Jaxel Prynn Tor", "Saren Kol Dravik", "Varek Ion Threx",
-    "Halder Rune Sol", "Brex Kal Vonn", "Narek Silar Quen", "Morlan Dex Ro",
-    "Cassik Vale Jorr", "Fenro Tharn Lux", "Orrin Kaas Vire", "Kelvan Drik Noor",
-    "Xarno Ul Tessik", "Torik Val Marr", "Zorin Fal Dax", "Ronik Kree Val",
-    "Ulric Vorin Taal", "Jorin Pell Strax", "Balrik Thorn Vex", "Raxen Sol Marrik",
-    "Irek Dal Vonn", "Corvek Ash Draal", "Threx Om Vull", "Lorik Sen Korr",
-    "Kyros Dune Val", "Brax Fen Dorr", "Alren Tosk Vire", "Dexar Nol Renn",
-    "Harkin Void Kaal", "Varos Kyne Jorr", "Pellis Vorn Tak", "Kavor Rin Sol",
-    "Draven Oss Kree", "Zarn Mal Virek", "Taryn Kol Voss", "Rellix Zho Marr",
-    "Kress Daal Tor", "Yarek Phos Val",
+    'Lando Virex Tal', 'Jarek Solan Marr', 'Torvan Kree Ossik', 'Malric Dorne Valen',
+    'Daxen Vor Kell', 'Brask Talor Kain', 'Rynar Vex Holt', 'Kael Orrix Juno',
+    'Voren Thal Kryss', 'Zarek Mon Daal', 'Korrin Vel Ashur', 'Talos Ren Virek',
+    'Drel Kavos Morn', 'Jaxel Prynn Tor', 'Saren Kol Dravik', 'Varek Ion Threx',
+    'Halder Rune Sol', 'Brex Kal Vonn', 'Narek Silar Quen', 'Morlan Dex Ro',
+    'Cassik Vale Jorr', 'Fenro Tharn Lux', 'Orrin Kaas Vire', 'Kelvan Drik Noor',
+    'Xarno Ul Tessik', 'Torik Val Marr', 'Zorin Fal Dax', 'Ronik Kree Val',
+    'Ulric Vorin Taal', 'Jorin Pell Strax', 'Balrik Thorn Vex', 'Raxen Sol Marrik',
+    'Irek Dal Vonn', 'Corvek Ash Draal', 'Threx Om Vull', 'Lorik Sen Korr',
+    'Kyros Dune Val', 'Brax Fen Dorr', 'Alren Tosk Vire', 'Dexar Nol Renn',
+    'Harkin Void Kaal', 'Varos Kyne Jorr', 'Pellis Vorn Tak', 'Kavor Rin Sol',
+    'Draven Oss Kree', 'Zarn Mal Virek', 'Taryn Kol Voss', 'Rellix Zho Marr',
+    'Kress Daal Tor', 'Yarek Phos Val',
     // Additional masculine names
-    "Xar Vel Daal", "Torren Ash Vire", "Kalos Renn Thal", "Darek Mon Kree",
-    "Vorn Sol Marr", "Jex Tal Noor", "Rovan Pell Ash", "Kellan Dorr Vex",
-    "Sarn Kyne Val", "Brevin Tor Sol", "Malrex Vire Daal", "Orrik Juno Korr",
-    "Fen Tal Marr", "Korr Ash Sol", "Zarik Venn Daal", "Dex Thorne Val",
-    "Hal Vire Kess", "Jorin Sol Taal", "Varrek Daal Ash", "Rel Tor Kree",
-    "Karesh Val Sol", "Rell Korr Marr", "Bronn Virex Tal", "Yorin Ash Kaal",
-    "Talrek Voss Daal", "Sorek Pell Sol", "Nixor Marr Val", "Kave Tor Ash",
-    "Drak Vire Sol", "Orr Tal Kess", "Zarnis Val Taal", "Krix Sol Dorr",
-    "Mal Tor Vire", "Vorik Ash Marr", "Rax Pell Kaal", "Jast Val Sol",
-    "Fenrik Daal Marr", "Tor Val Ash", "Kell Vire Taal", "Dexan Sol Noor",
-    "Korrik Marr Ash", "Brask Daal Kree", "Varek Tor Sol", "Sarn Ash Val",
-    "Orren Vire Marr", "Talrik Sol Kess", "Yex Daal Taal", "Kor Val Marr",
-    "Rellin Ash Sol", "Jor Vire Noor",
+    'Xar Vel Daal', 'Torren Ash Vire', 'Kalos Renn Thal', 'Darek Mon Kree',
+    'Vorn Sol Marr', 'Jex Tal Noor', 'Rovan Pell Ash', 'Kellan Dorr Vex',
+    'Sarn Kyne Val', 'Brevin Tor Sol', 'Malrex Vire Daal', 'Orrik Juno Korr',
+    'Fen Tal Marr', 'Korr Ash Sol', 'Zarik Venn Daal', 'Dex Thorne Val',
+    'Hal Vire Kess', 'Jorin Sol Taal', 'Varrek Daal Ash', 'Rel Tor Kree',
+    'Karesh Val Sol', 'Rell Korr Marr', 'Bronn Virex Tal', 'Yorin Ash Kaal',
+    'Talrek Voss Daal', 'Sorek Pell Sol', 'Nixor Marr Val', 'Kave Tor Ash',
+    'Drak Vire Sol', 'Orr Tal Kess', 'Zarnis Val Taal', 'Krix Sol Dorr',
+    'Mal Tor Vire', 'Vorik Ash Marr', 'Rax Pell Kaal', 'Jast Val Sol',
+    'Fenrik Daal Marr', 'Tor Val Ash', 'Kell Vire Taal', 'Dexan Sol Noor',
+    'Korrik Marr Ash', 'Brask Daal Kree', 'Varek Tor Sol', 'Sarn Ash Val',
+    'Orren Vire Marr', 'Talrik Sol Kess', 'Yex Daal Taal', 'Kor Val Marr',
+    'Rellin Ash Sol', 'Jor Vire Noor',
     // Rimward/Exotic masculine names
-    "Raxen Thorn Vaal", "Lyrix Venn Dorr", "Korr Tal Marrik", "Nyssa Pell Vael",
-    "Jarek Sol Threx", "Kaela Voss Taal", "Fenro Marr Kaal", "Lira Dorr Sol",
-    "Varos Thal Kree", "Xara Vire Pell", "Torik Kaal Marr", "Nyrix Sol Dorr",
-    "Brask Thorn Vire", "Elra Vael Korr", "Rellin Daal Kree", "Kaelin Thorn Sol",
-    "Jex Marr Vael", "Lyssa Korr Thal", "Fenrik Dorr Sol", "Xera Pell Marr",
-    "Zarik Kree Thal", "Nyssa Vael Sol", "Torren Marr Kaal", "Lira Thorn Dorr",
-    "Varrek Sol Vael", "Elin Kree Thal", "Rax Marr Dorr", "Lyrix Sol Kaal",
-    "Jorin Vael Marr", "Xessa Thorn Kree",
+    'Raxen Thorn Vaal', 'Lyrix Venn Dorr', 'Korr Tal Marrik', 'Nyssa Pell Vael',
+    'Jarek Sol Threx', 'Kaela Voss Taal', 'Fenro Marr Kaal', 'Lira Dorr Sol',
+    'Varos Thal Kree', 'Xara Vire Pell', 'Torik Kaal Marr', 'Nyrix Sol Dorr',
+    'Brask Thorn Vire', 'Elra Vael Korr', 'Rellin Daal Kree', 'Kaelin Thorn Sol',
+    'Jex Marr Vael', 'Lyssa Korr Thal', 'Fenrik Dorr Sol', 'Xera Pell Marr',
+    'Zarik Kree Thal', 'Nyssa Vael Sol', 'Torren Marr Kaal', 'Lira Thorn Dorr',
+    'Varrek Sol Vael', 'Elin Kree Thal', 'Rax Marr Dorr', 'Lyrix Sol Kaal',
+    'Jorin Vael Marr', 'Xessa Thorn Kree',
     // Final 200 consolidated names (human to alien)
-    "Rax Venn Daal", "Lyra Korr Sol", "Tarek Mon Vire", "Nyssa Val Marr",
-    "Jorik Ash Taal", "Kaela Vire Noor", "Dax Pell Korr", "Mira Sol Daal",
-    "Voren Kess Marr", "Elra Venn Ash", "Zarek Tor Sol", "Kira Daal Voss",
-    "Malrek Ash Noor", "Talia Mon Korr", "Fen Val Marr", "Lyss Vire Sol",
-    "Orrin Daal Ash", "Nyra Kess Val", "Jex Tor Marr", "Saela Sol Noor",
-    "Korr Ash Daal", "Rysa Val Sol", "Brask Marr Korr", "Elin Vire Ash",
-    "Tor Sol Daal", "Mira Korr Val", "Dex Ash Noor", "Lyra Marr Sol",
-    "Varrek Daal Kess", "Nyx Vire Val", "Soren Sol Marr", "Kaelin Ash Korr",
-    "Jora Daal Sol", "Taryn Val Noor", "Rell Korr Ash", "Lyssa Marr Daal",
-    "Fenrik Sol Val", "Elara Vire Kess", "Korrin Ash Noor", "Mira Sol Marr",
-    "Zella Val Daal", "Torrek Korr Sol", "Nyra Ash Marr", "Dexan Vire Noor",
-    "Sael Kess Val", "Lyra Sol Korr", "Orr Daal Ash", "Kira Marr Sol",
-    "Bronn Val Noor", "Elin Korr Ash",
+    'Rax Venn Daal', 'Lyra Korr Sol', 'Tarek Mon Vire', 'Nyssa Val Marr',
+    'Jorik Ash Taal', 'Kaela Vire Noor', 'Dax Pell Korr', 'Mira Sol Daal',
+    'Voren Kess Marr', 'Elra Venn Ash', 'Zarek Tor Sol', 'Kira Daal Voss',
+    'Malrek Ash Noor', 'Talia Mon Korr', 'Fen Val Marr', 'Lyss Vire Sol',
+    'Orrin Daal Ash', 'Nyra Kess Val', 'Jex Tor Marr', 'Saela Sol Noor',
+    'Korr Ash Daal', 'Rysa Val Sol', 'Brask Marr Korr', 'Elin Vire Ash',
+    'Tor Sol Daal', 'Mira Korr Val', 'Dex Ash Noor', 'Lyra Marr Sol',
+    'Varrek Daal Kess', 'Nyx Vire Val', 'Soren Sol Marr', 'Kaelin Ash Korr',
+    'Jora Daal Sol', 'Taryn Val Noor', 'Rell Korr Ash', 'Lyssa Marr Daal',
+    'Fenrik Sol Val', 'Elara Vire Kess', 'Korrin Ash Noor', 'Mira Sol Marr',
+    'Zella Val Daal', 'Torrek Korr Sol', 'Nyra Ash Marr', 'Dexan Vire Noor',
+    'Sael Kess Val', 'Lyra Sol Korr', 'Orr Daal Ash', 'Kira Marr Sol',
+    'Bronn Val Noor', 'Elin Korr Ash',
     // Alien-forward names
     "Xor'ven Thul Marr", "Lyx'ara Vaash Sol", "Korr'tek Ul Daal", "Nyx'ira Phal Marr",
     "Torq'ith Krexx Sol", "Ka'thra Vaash Daal", "Fen'orr Ul Marr", "Lir'iss Phal Sol",
     "Vrek'mon Thul Daal", "Xyra'tek Ul Marr", "Orr'ka Phess Sol", "Zuun'ara Vaash Daal",
     "Threx'lin Ul Marr", "Ka'ira Phal Sol", "Xorr'mon Krexx Daal", "Lyx'ira Vaash Marr",
-    "Khaal'tek Ul Sol", "Torq'mon Thul Marr", "Xera'li Ul Sol", "Orryx Vaash Daal",
+    "Khaal'tek Ul Sol", "Torq'mon Thul Marr", "Xera'li Ul Sol", 'Orryx Vaash Daal',
     "Zhekk'ira Phal Marr", "Korr'uun Krexx Sol", "Lyra'thul Daal", "Fen'tek Ul Marr",
     // Deep alien names
     "Xor'vaq Thul Krexx", "Kha'driss Ul Phal", "Zuun'tek Vaash Daal", "Orr'kess Krexx Sol",
-    "Threx'uun Ul Marr", "Lyx'ara Phess Kaal", "Xhekk Thul Ul", "Ka'mon Vaash Krexx",
-    "Orryx Phal Daal", "Zha'ira Ul Sol", "Xurr'tek Krexx Marr", "Khaal'iss Phal Ul",
+    "Threx'uun Ul Marr", "Lyx'ara Phess Kaal", 'Xhekk Thul Ul', "Ka'mon Vaash Krexx",
+    'Orryx Phal Daal', "Zha'ira Ul Sol", "Xurr'tek Krexx Marr", "Khaal'iss Phal Ul",
     "Threx'ira Vaash Daal", "Orr'uun Krexx Sol", "Zuun'mon Ul Marr", "Lyx'tek Phess Sol",
     "Xhekk'ira Thul Daal", "Ka'drin Vaash Ul", "X'qorr Thul'kresh", "Ka'zhir Ul-Vaash",
     "Orr'xeth Phal'uun", "Zuun'kra Krexx'ith", "Threx'qa Ul-Sol",
     // Feminine names
-    "Lira Venn Solari", "Kaela Rynn Voss", "Mira Tal Kree", "Jessa Orin Val",
-    "Nyx Solenne Marr", "Aria Virex Daal", "Talia Ren Korr", "Selene Ash Vire",
-    "Vexa Thorn Lux", "Rina Kel Sol", "Sora Valen Jex", "Kyra Noa Pell",
-    "Elin Dorne Marr", "Zara Venn Kaal", "Lyra Tess Sol", "Cira Mon Val",
-    "Anya Kree Voss", "Thessa Rune Daal", "Rhea Sol Korr", "Kessa Vire Lux",
-    "Nira Tal Ash", "Velis Dorne Quen", "Phaela Rin Sol", "Jynra Kaas Vire",
-    "Orria Mon Vale", "Taryn Lys Daal", "Saela Thorn Kree", "Mysa Venn Val",
-    "Elara Korr Sol", "Zella Ash Marr", "Kaelin Virex Noor", "Rysa Pell Kree",
-    "Nyra Sol Taal", "Vala Renn Ash", "Jora Kess Val", "Thalia Daal Korr",
-    "Sira Vex Sol", "Kora Mon Tal", "Alis Thorn Marr", "Lyssa Vire Noor",
-    "Lyra Venn Daal", "Kaela Sol Marr", "Nira Ash Val", "Tessa Korr Sol",
-    "Vela Mon Noor", "Jyn Sol Vire", "Rysa Daal Ash", "Elin Tor Marr",
-    "Kira Sol Taal", "Zella Vire Ash",
+    'Lira Venn Solari', 'Kaela Rynn Voss', 'Mira Tal Kree', 'Jessa Orin Val',
+    'Nyx Solenne Marr', 'Aria Virex Daal', 'Talia Ren Korr', 'Selene Ash Vire',
+    'Vexa Thorn Lux', 'Rina Kel Sol', 'Sora Valen Jex', 'Kyra Noa Pell',
+    'Elin Dorne Marr', 'Zara Venn Kaal', 'Lyra Tess Sol', 'Cira Mon Val',
+    'Anya Kree Voss', 'Thessa Rune Daal', 'Rhea Sol Korr', 'Kessa Vire Lux',
+    'Nira Tal Ash', 'Velis Dorne Quen', 'Phaela Rin Sol', 'Jynra Kaas Vire',
+    'Orria Mon Vale', 'Taryn Lys Daal', 'Saela Thorn Kree', 'Mysa Venn Val',
+    'Elara Korr Sol', 'Zella Ash Marr', 'Kaelin Virex Noor', 'Rysa Pell Kree',
+    'Nyra Sol Taal', 'Vala Renn Ash', 'Jora Kess Val', 'Thalia Daal Korr',
+    'Sira Vex Sol', 'Kora Mon Tal', 'Alis Thorn Marr', 'Lyssa Vire Noor',
+    'Lyra Venn Daal', 'Kaela Sol Marr', 'Nira Ash Val', 'Tessa Korr Sol',
+    'Vela Mon Noor', 'Jyn Sol Vire', 'Rysa Daal Ash', 'Elin Tor Marr',
+    'Kira Sol Taal', 'Zella Vire Ash',
     // Alien-forward feminine
     "Xyra'li Vesh Taal", "Sha'renn Ul Korr", "Vexa'na Thul Marr", "Lir'iss Phal Vire",
-    "Ka'thra Zuun Sol", "Nyxara Vaal Krexx", "Orr'la Phess Daal", "Zheela Va'resh",
+    "Ka'thra Zuun Sol", 'Nyxara Vaal Krexx', "Orr'la Phess Daal", "Zheela Va'resh",
     "Tiss'ka Norr Val", "Xala'mon Ruun", "Kree'la Vith Sol", "Phex'ari Ul Marr",
     "Shaq'ra Zaal Kess", "Lyx Venn'thra", "Vaela'qen Dorr", "Nesh'ira Karesh",
-    "Zira Kaal'eth", "Threx'a Sol Marr", "Orryx Phal'na", "Xyss Ul-Kree",
+    "Zira Kaal'eth", "Threx'a Sol Marr", "Orryx Phal'na", 'Xyss Ul-Kree',
     "Xyra'na Vesh Sol", "Sha'la Ul Marr", "Vexa'li Thul Daal", "Lir'iss Phal Noor",
     "Kree'la Vith Sol", "Phex'ari Ul Marr",
     // Deep alien feminine
     "Xa'li Thress Ul", "Kheera'mon Vaash", "Orr'issa Phal Daal", "Zuun'ira Krexx",
-    "Thala'qen Mol Sol", "Vrixa Ul'mon", "Sha'tek Naash Dorr", "Lyrr Phess Vaal",
-    "Xess'ka Orr Marr", "Kaal'ira Thul", "Zhaela Krell Sol", "Orr'ith Vaash Noor",
-    "Xyraxx Phal'mon", "Thiss Ul Kaal", "Vaela Skorr Daal", "Zhekk'ira Sol",
+    "Thala'qen Mol Sol", "Vrixa Ul'mon", "Sha'tek Naash Dorr", 'Lyrr Phess Vaal',
+    "Xess'ka Orr Marr", "Kaal'ira Thul", 'Zhaela Krell Sol', "Orr'ith Vaash Noor",
+    "Xyraxx Phal'mon", 'Thiss Ul Kaal', 'Vaela Skorr Daal', "Zhekk'ira Sol",
     "Lur'na Krexx Marr", "Orryx'a Vaal", "Kress'li Phal Noor", "Xuun'ara Thul"
   ];
 
@@ -380,55 +380,55 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    */
   static RANDOM_DROID_NAMES = [
     // Standard alphanumeric designations (basic series)
-    "A1-K7", "B4-T9", "C7-R4", "D2-M8", "E9-K3", "F3-L6", "G8-P1", "H2-V7",
-    "I5-X9", "J4-D2", "K9-R8", "L3-T5", "M7-Q1", "N4-Z6", "O2-K9", "P6-R3",
-    "Q8-D5", "R5-M1", "S7-K4", "T1-V9", "U3-R6", "V8-D2", "W5-K7", "X4-P9",
-    "Y9-M3", "Z2-R8", "A7-D9", "B2-K4", "C5-M8", "D9-R1", "E3-V7", "F6-K2",
-    "G4-T9", "H8-R5", "I1-M7", "J9-D4", "K5-V3", "L7-R8", "M2-K6", "N9-T4",
-    "O6-D1", "P3-M8", "Q5-R9", "R7-K2", "S4-V6", "T8-D5", "U1-M9", "V6-K4",
-    "W9-R2", "X3-T7",
+    'A1-K7', 'B4-T9', 'C7-R4', 'D2-M8', 'E9-K3', 'F3-L6', 'G8-P1', 'H2-V7',
+    'I5-X9', 'J4-D2', 'K9-R8', 'L3-T5', 'M7-Q1', 'N4-Z6', 'O2-K9', 'P6-R3',
+    'Q8-D5', 'R5-M1', 'S7-K4', 'T1-V9', 'U3-R6', 'V8-D2', 'W5-K7', 'X4-P9',
+    'Y9-M3', 'Z2-R8', 'A7-D9', 'B2-K4', 'C5-M8', 'D9-R1', 'E3-V7', 'F6-K2',
+    'G4-T9', 'H8-R5', 'I1-M7', 'J9-D4', 'K5-V3', 'L7-R8', 'M2-K6', 'N9-T4',
+    'O6-D1', 'P3-M8', 'Q5-R9', 'R7-K2', 'S4-V6', 'T8-D5', 'U1-M9', 'V6-K4',
+    'W9-R2', 'X3-T7',
     // Astromech / Utility Feel
-    "R8-K5", "D7-P3", "T4-M9", "K2-R6", "V9-D1", "M5-T8", "P7-K4", "R1-D9",
-    "Q6-M3", "S8-K2", "T9-R4", "D3-V7", "K6-M1", "P4-R8", "M9-D2", "V1-K5",
-    "R7-T3", "Q2-D6", "S5-M8", "T6-K9", "D1-R4", "K8-P7", "M3-V9", "R6-D5",
-    "Q9-K2", "S1-T8", "V4-M7", "P5-D3", "R2-K6", "T7-M9",
+    'R8-K5', 'D7-P3', 'T4-M9', 'K2-R6', 'V9-D1', 'M5-T8', 'P7-K4', 'R1-D9',
+    'Q6-M3', 'S8-K2', 'T9-R4', 'D3-V7', 'K6-M1', 'P4-R8', 'M9-D2', 'V1-K5',
+    'R7-T3', 'Q2-D6', 'S5-M8', 'T6-K9', 'D1-R4', 'K8-P7', 'M3-V9', 'R6-D5',
+    'Q9-K2', 'S1-T8', 'V4-M7', 'P5-D3', 'R2-K6', 'T7-M9',
     // Military / Security Droids
-    "BX-9R", "DT-7K", "MK-4D", "SX-8T", "VR-6M", "HK-5Q", "TX-9D", "KR-2S",
-    "PX-7M", "AX-4D", "BX-1K", "DT-9R", "MK-6S", "SX-3D", "VR-8T", "HK-2M",
-    "TX-5Q", "KR-7D", "PX-9S", "AX-6M", "BX-4D", "DT-2K", "MK-8T", "SX-5M",
-    "VR-3D", "HK-9Q", "TX-1D", "KR-4S", "PX-3M", "AX-9D", "BX-7K", "DT-4R",
-    "MK-2D", "SX-6T", "VR-1M", "HK-7Q", "TX-8D", "KR-9S", "PX-2M", "AX-3D",
-    "BX-5T", "DT-6K", "MK-3S", "SX-9D", "VR-4M",
+    'BX-9R', 'DT-7K', 'MK-4D', 'SX-8T', 'VR-6M', 'HK-5Q', 'TX-9D', 'KR-2S',
+    'PX-7M', 'AX-4D', 'BX-1K', 'DT-9R', 'MK-6S', 'SX-3D', 'VR-8T', 'HK-2M',
+    'TX-5Q', 'KR-7D', 'PX-9S', 'AX-6M', 'BX-4D', 'DT-2K', 'MK-8T', 'SX-5M',
+    'VR-3D', 'HK-9Q', 'TX-1D', 'KR-4S', 'PX-3M', 'AX-9D', 'BX-7K', 'DT-4R',
+    'MK-2D', 'SX-6T', 'VR-1M', 'HK-7Q', 'TX-8D', 'KR-9S', 'PX-2M', 'AX-3D',
+    'BX-5T', 'DT-6K', 'MK-3S', 'SX-9D', 'VR-4M',
     // Protocol / Civilian Models
-    "P3-L9", "C7-M4", "H2-T8", "V5-P1", "L9-D7", "M4-K2", "S8-R3", "T6-P9",
-    "D1-M5", "K7-L4", "P5-T2", "C1-D9", "H9-M6", "V3-L8", "L2-P4", "M7-T9",
-    "S4-K1", "T8-D6", "D5-P3", "K9-M2", "P8-L1", "C9-M7", "H1-T5", "V9-P8",
-    "L4-D2", "M6-K9", "S2-R7", "T1-P4", "D8-M3", "K4-L6", "P1-T4", "C4-D1",
-    "H6-M9", "V2-L3", "L7-P5", "M1-T8", "S9-K6", "T3-D2", "D4-P7", "K2-M5",
+    'P3-L9', 'C7-M4', 'H2-T8', 'V5-P1', 'L9-D7', 'M4-K2', 'S8-R3', 'T6-P9',
+    'D1-M5', 'K7-L4', 'P5-T2', 'C1-D9', 'H9-M6', 'V3-L8', 'L2-P4', 'M7-T9',
+    'S4-K1', 'T8-D6', 'D5-P3', 'K9-M2', 'P8-L1', 'C9-M7', 'H1-T5', 'V9-P8',
+    'L4-D2', 'M6-K9', 'S2-R7', 'T1-P4', 'D8-M3', 'K4-L6', 'P1-T4', 'C4-D1',
+    'H6-M9', 'V2-L3', 'L7-P5', 'M1-T8', 'S9-K6', 'T3-D2', 'D4-P7', 'K2-M5',
     // Assassin / Black Ops Feel
-    "X9-KR", "Z7-DX", "Q5-HK", "R8-VX", "S3-ZT", "M7-XR", "K4-QD", "D9-SX",
-    "T2-VR", "P6-ZK", "X1-DQ", "Z9-KT", "Q7-XM", "R3-SD", "S8-VK", "M2-ZR",
-    "K6-XT", "D4-QS", "T9-ZX", "P1-VR", "X6-KQ", "Z2-DM", "Q1-HX", "R9-VT",
-    "S6-ZD", "M9-XK", "K1-QM", "D7-SX", "T5-VD", "P8-ZM", "X4-KD", "Z6-XT",
-    "Q9-HM", "R2-VK", "S1-ZR", "M4-XD", "K7-QX", "D2-SM", "T8-VX", "P3-ZT",
-    "X7-KM", "Z4-DX", "Q6-HK", "R5-VR",
+    'X9-KR', 'Z7-DX', 'Q5-HK', 'R8-VX', 'S3-ZT', 'M7-XR', 'K4-QD', 'D9-SX',
+    'T2-VR', 'P6-ZK', 'X1-DQ', 'Z9-KT', 'Q7-XM', 'R3-SD', 'S8-VK', 'M2-ZR',
+    'K6-XT', 'D4-QS', 'T9-ZX', 'P1-VR', 'X6-KQ', 'Z2-DM', 'Q1-HX', 'R9-VT',
+    'S6-ZD', 'M9-XK', 'K1-QM', 'D7-SX', 'T5-VD', 'P8-ZM', 'X4-KD', 'Z6-XT',
+    'Q9-HM', 'R2-VK', 'S1-ZR', 'M4-XD', 'K7-QX', 'D2-SM', 'T8-VX', 'P3-ZT',
+    'X7-KM', 'Z4-DX', 'Q6-HK', 'R5-VR',
     // Industrial / Labor Droids
-    "L8-T3", "G5-M9", "R6-H2", "K1-P7", "T9-L4", "M3-G8", "P6-H5", "R2-T9",
-    "L7-K4", "G9-M1", "H4-P8", "T6-G2", "M9-L5", "R3-K7", "P1-H6", "G8-T4",
-    "L2-M9", "K5-P3", "T7-H1", "R9-G6", "L1-T8", "G3-M7", "R8-H9", "K9-P2",
-    "T4-L1", "M6-G5", "P9-H3", "R1-T6", "L5-K2", "G7-M4", "H8-P9", "T2-G1",
-    "M1-L8", "R7-K5", "P4-H2", "G2-T9", "L9-M3", "K8-P1", "T5-H7", "R4-G8",
+    'L8-T3', 'G5-M9', 'R6-H2', 'K1-P7', 'T9-L4', 'M3-G8', 'P6-H5', 'R2-T9',
+    'L7-K4', 'G9-M1', 'H4-P8', 'T6-G2', 'M9-L5', 'R3-K7', 'P1-H6', 'G8-T4',
+    'L2-M9', 'K5-P3', 'T7-H1', 'R9-G6', 'L1-T8', 'G3-M7', 'R8-H9', 'K9-P2',
+    'T4-L1', 'M6-G5', 'P9-H3', 'R1-T6', 'L5-K2', 'G7-M4', 'H8-P9', 'T2-G1',
+    'M1-L8', 'R7-K5', 'P4-H2', 'G2-T9', 'L9-M3', 'K8-P1', 'T5-H7', 'R4-G8',
     // Mixed / Obscure Rim Models
-    "A9-RK", "B3-TD", "C8-MX", "D6-QP", "E1-KV", "F9-RD", "G2-TM", "H7-XK",
-    "I4-QD", "J8-MP", "K3-VR", "L6-QT", "M1-XD", "N9-KP", "O4-RX", "P8-QM",
-    "Q6-TK", "R1-XP", "S9-MD", "T3-VQ", "U7-RK", "V2-TD", "W5-MX", "X9-QP",
-    "Y4-KV", "Z8-RD", "A3-TM", "B6-XK", "C1-QD", "D5-MP", "E9-VR", "F2-QT",
-    "G7-XD", "H3-KP", "I8-RX", "J1-QM", "K5-TK", "L9-XP", "M4-MD", "N8-VQ",
-    "O2-RK", "P7-TD", "Q1-MX", "R6-QP", "S3-KV", "T9-RD", "U4-TM", "V8-XK",
+    'A9-RK', 'B3-TD', 'C8-MX', 'D6-QP', 'E1-KV', 'F9-RD', 'G2-TM', 'H7-XK',
+    'I4-QD', 'J8-MP', 'K3-VR', 'L6-QT', 'M1-XD', 'N9-KP', 'O4-RX', 'P8-QM',
+    'Q6-TK', 'R1-XP', 'S9-MD', 'T3-VQ', 'U7-RK', 'V2-TD', 'W5-MX', 'X9-QP',
+    'Y4-KV', 'Z8-RD', 'A3-TM', 'B6-XK', 'C1-QD', 'D5-MP', 'E9-VR', 'F2-QT',
+    'G7-XD', 'H3-KP', 'I8-RX', 'J1-QM', 'K5-TK', 'L9-XP', 'M4-MD', 'N8-VQ',
+    'O2-RK', 'P7-TD', 'Q1-MX', 'R6-QP', 'S3-KV', 'T9-RD', 'U4-TM', 'V8-XK',
     // Additional variety
-    "C-3PO", "2-1B", "BB-8", "K-2SO", "GNK-7", "IG-88", "TC-14", "WED-15",
-    "EV-9D9", "0-0-0", "BT-1", "HK-47", "R-3PO", "L3-37", "Q9-X8", "V-5D7",
-    "Z-6K4", "X-1T9", "W-7M2", "Y-4P5", "U-8R3", "T-2K6", "S-9D1", "R-4V8"
+    'C-3PO', '2-1B', 'BB-8', 'K-2SO', 'GNK-7', 'IG-88', 'TC-14', 'WED-15',
+    'EV-9D9', '0-0-0', 'BT-1', 'HK-47', 'R-3PO', 'L3-37', 'Q9-X8', 'V-5D7',
+    'Z-6K4', 'X-1T9', 'W-7M2', 'Y-4P5', 'U-8R3', 'T-2K6', 'S-9D1', 'R-4V8'
   ];
 
   /**
@@ -444,14 +444,14 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     return items.filter(item => {
-      const prereqs = item.system?.prerequisites || "";
+      const prereqs = item.system?.prerequisites || '';
       const preqsLower = prereqs.toLowerCase();
       // Exclude items that require Force Sensitivity, Force Techniques, Force Secrets, or Force Points
       return !(
-        preqsLower.includes("force sensitivity") ||
-        preqsLower.includes("force technique") ||
-        preqsLower.includes("force secret") ||
-        preqsLower.includes("force point")
+        preqsLower.includes('force sensitivity') ||
+        preqsLower.includes('force technique') ||
+        preqsLower.includes('force secret') ||
+        preqsLower.includes('force point')
       );
     });
   }
@@ -460,7 +460,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     // Show loading notification (only if cache is empty)
     const showLoading = !ChargenDataCache.isCached();
     const loadingNotif = showLoading ? ui.notifications.info(
-      "Loading character generation data...",
+      'Loading character generation data...',
       { permanent: true }
     ) : null;
 
@@ -500,33 +500,33 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       // Load skills
       try {
-        const resp = await fetch("systems/foundryvtt-swse/data/skills.json");
+        const resp = await fetch('systems/foundryvtt-swse/data/skills.json');
         if (resp.ok) {
           this._skillsJson = await resp.json();
-          SWSELogger.log("chargen: skills.json loaded successfully");
+          SWSELogger.log('chargen: skills.json loaded successfully');
         } else {
-          SWSELogger.warn("chargen: failed to fetch skills.json, using defaults");
+          SWSELogger.warn('chargen: failed to fetch skills.json, using defaults');
           this._skillsJson = this._getDefaultSkills();
-          ui.notifications.warn("Failed to load skills data. Using defaults.");
+          ui.notifications.warn('Failed to load skills data. Using defaults.');
         }
       } catch (e) {
-        SWSELogger.error("chargen: error loading skills.json:", e);
+        SWSELogger.error('chargen: error loading skills.json:', e);
         this._skillsJson = this._getDefaultSkills();
-        ui.notifications.warn("Failed to load skills data. Using defaults.");
+        ui.notifications.warn('Failed to load skills data. Using defaults.');
       }
 
       // Load feat metadata
       try {
-        const resp = await fetch("systems/foundryvtt-swse/data/feat-metadata.json");
+        const resp = await fetch('systems/foundryvtt-swse/data/feat-metadata.json');
         if (resp.ok) {
           this._featMetadata = await resp.json();
-          SWSELogger.log("chargen: feat-metadata.json loaded successfully");
+          SWSELogger.log('chargen: feat-metadata.json loaded successfully');
         } else {
-          SWSELogger.warn("chargen: failed to fetch feat-metadata.json");
+          SWSELogger.warn('chargen: failed to fetch feat-metadata.json');
           this._featMetadata = null;
         }
       } catch (e) {
-        SWSELogger.error("chargen: error loading feat-metadata.json:", e);
+        SWSELogger.error('chargen: error loading feat-metadata.json:', e);
         this._featMetadata = null;
       }
 
@@ -539,9 +539,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
   }
 
-  
-  
-  
+
   async _prepareContext() {
     // DIAGNOSTIC LOGGING: Track class data state throughout chargen
     SWSELogger.log(`CharGen | _prepareContext() called - currentStep: ${this.currentStep}`, {
@@ -560,7 +558,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       try {
         await this._loadBackgroundsFromProgression();
       } catch (err) {
-        console.error("Failed to load backgrounds:", err);
+        console.error('Failed to load backgrounds:', err);
         this.backgrounds = [];
       }
     }
@@ -574,7 +572,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     if (!this._packs.species) {
       const ok = await this._loadData();
-      if (!ok) return context;
+      if (!ok) {return context;}
     }
 
     context.characterData = this.characterData;
@@ -600,13 +598,13 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     // PERFORMANCE: Only clone packs that will be modified on this step
     // Use shallow reference sharing for read-only packs
     const packsToClone = {};
-    if (this.currentStep === "class") {
+    if (this.currentStep === 'class') {
       packsToClone.classes = true;
-    } else if (this.currentStep === "species") {
+    } else if (this.currentStep === 'species') {
       packsToClone.species = true;
-    } else if (this.currentStep === "feats") {
+    } else if (this.currentStep === 'feats') {
       packsToClone.feats = true;
-    } else if (this.currentStep === "talents") {
+    } else if (this.currentStep === 'talents') {
       packsToClone.talents = true;
     }
 
@@ -628,7 +626,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     });
 
     // Filter classes based on character type
-    if (this.currentStep === "class" && context.packs.classes) {
+    if (this.currentStep === 'class' && context.packs.classes) {
       SWSELogger.log(`CharGen | Classes BEFORE filtering:`, {
         count: context.packs.classes.length,
         names: context.packs.classes.map(c => c.name)
@@ -636,7 +634,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       if (this.characterData.isDroid) {
         // Droids: only base 4 non-Force classes (no Jedi, no Force powers, no Gunslinger - prestige class)
-        const droidBaseClasses = ["Soldier", "Scout", "Scoundrel", "Noble"];
+        const droidBaseClasses = ['Soldier', 'Scout', 'Scoundrel', 'Noble'];
         SWSELogger.log(`CharGen | Filtering for droid - allowed classes:`, droidBaseClasses);
         context.packs.classes = context.packs.classes.filter(c => droidBaseClasses.includes(c.name));
         if (this.characterData.classes.length === 0 || !droidBaseClasses.includes(this.characterData.classes[0]?.name)) {
@@ -645,7 +643,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       } else {
         // Normal characters: only the 5 core classes at level 1 (prestige classes available at higher levels)
         // Noble, Scout, Scoundrel, Soldier, and Jedi (Gunslinger is prestige only)
-        const coreClasses = ["Noble", "Scout", "Scoundrel", "Soldier", "Jedi"];
+        const coreClasses = ['Noble', 'Scout', 'Scoundrel', 'Soldier', 'Jedi'];
         SWSELogger.log(`CharGen | Filtering for living - allowed classes:`, coreClasses);
         context.packs.classes = context.packs.classes.filter(c => coreClasses.includes(c.name));
         if (this.characterData.classes.length === 0 || !coreClasses.includes(this.characterData.classes[0]?.name)) {
@@ -688,7 +686,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     // Apply species filters and sorting if on species step
-    if (this.currentStep === "species" && context.packs.species) {
+    if (this.currentStep === 'species' && context.packs.species) {
       // First filter by user criteria
       context.packs.species = _filterSpecies(
         context.packs.species,
@@ -697,11 +695,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       // Apply banned species filter (only if not GM)
       if (!game.user.isGM) {
-        let bannedSpeciesStr = "";
+        let bannedSpeciesStr = '';
         try {
-          bannedSpeciesStr = game.settings.get("foundryvtt-swse", "bannedSpecies") || "";
+          bannedSpeciesStr = game.settings.get('foundryvtt-swse', 'bannedSpecies') || '';
         } catch (err) {
-          bannedSpeciesStr = "";
+          bannedSpeciesStr = '';
         }
 
         const bannedSpecies = bannedSpeciesStr
@@ -722,7 +720,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     // Add suggestion engine integration for feats and talents
-    if ((this.currentStep === "feats" || this.currentStep === "talents") && context.packs) {
+    if ((this.currentStep === 'feats' || this.currentStep === 'talents') && context.packs) {
       const tempActor = this.actor || this._createTempActorForValidation();
       const pendingData = {
         selectedFeats: this.characterData.feats || [],
@@ -748,7 +746,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       }
 
       // Add suggestion engine suggestions to feats
-      if (this.currentStep === "feats" && context.packs.feats) {
+      if (this.currentStep === 'feats' && context.packs.feats) {
         try {
           SWSELogger.log(`[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.feats.length} feats with BuildIntent context...`);
           let featsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', { domain: 'feats', available:
@@ -779,7 +777,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
             const canonical = PrerequisiteChecker.checkFeatPrerequisites(tempActor, feat, pendingDataForFeats);
             const legacy = PrerequisiteRequirements.checkFeatPrerequisites(tempActor, feat, pendingDataForFeats);
             if (canonical.met !== legacy.valid) {
-              console.warn("Prereq mismatch (feat) detected", { feat: feat.name, canonical, legacy });
+              console.warn('Prereq mismatch (feat) detected', { feat: feat.name, canonical, legacy });
             }
             return {
               ...feat,
@@ -803,7 +801,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       }
 
       // Add suggestion engine suggestions to talents
-      if (this.currentStep === "talents" && context.packs.talents) {
+      if (this.currentStep === 'talents' && context.packs.talents) {
         try {
           SWSELogger.log(`[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.talents.length} talents with BuildIntent context...`);
           let talentsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', { domain: 'talents', available: context.packs.talents, pendingData, engineOptions: { buildIntent, includeFutureAvailability: true }, persist: true });
@@ -830,7 +828,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
             const canonical = PrerequisiteChecker.checkTalentPrerequisites(tempActor, talent, pendingDataForTalents);
             const legacy = PrerequisiteRequirements.checkTalentPrerequisites(tempActor, talent, pendingDataForTalents);
             if (canonical.met !== legacy.valid) {
-              console.warn("Prereq mismatch (talent) detected", { talent: talent.name, canonical, legacy });
+              console.warn('Prereq mismatch (talent) detected', { talent: talent.name, canonical, legacy });
             }
             return {
               ...talent,
@@ -845,7 +843,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     // Add suggestion engine integration for skills
-    if (this.currentStep === "skills" && context.packs) {
+    if (this.currentStep === 'skills' && context.packs) {
       const tempActor = this._createTempActorForValidation();
 
       // Get the canonical (adapted) class data from ClassesDB
@@ -861,7 +859,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           if (classData) {
             classSkills = classData.classSkills ?? [];
             const intMod = this.characterData.abilities.int.mod || 0;
-            const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
+            const humanBonus = (this.characterData.species === 'Human' || this.characterData.species === 'human') ? 1 : 0;
             trainedSkillsAllowed = Math.max(1, (classData.trainedSkills ?? 0) + intMod + humanBonus);
           }
         }
@@ -882,7 +880,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           // Last resort fallback to legacy properties
           classSkills = this.characterData.classSkillsList || [];
           trainedSkillsAllowed = this.characterData.trainedSkillsAllowed || 0;
-          console.error("[CHARGEN-SKILLS] No class data found at all", this.characterData);
+          console.error('[CHARGEN-SKILLS] No class data found at all', this.characterData);
         }
       }
 
@@ -890,7 +888,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       SWSELogger.log(`[CHARGEN-SKILLS] Skills step rendering - DATA SOURCE CHECK:`, {
         selectedClassName,
         classDataFound: !!classData,
-        classDataSource: classData ? "ClassesDB" : "characterData fallback",
+        classDataSource: classData ? 'ClassesDB' : 'characterData fallback',
         classSkills,
         classSkillsLength: classSkills?.length ?? 0,
         trainedSkillsAllowed,
@@ -1012,7 +1010,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     this.characterData.trainedSkillsCount = trainedCount;
 
     // Prepare languages for template
-    if (this.currentStep === "languages") {
+    if (this.currentStep === 'languages') {
       try {
         // Get starting languages based on species
         this.characterData.languageData = await this._getStartingLanguages();
@@ -1052,30 +1050,30 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         SWSELogger.error('CharGen | Failed to load languages:', err);
         context.languageCategories = {
           widelyUsed: {
-            name: "Widely Used Languages",
-            languages: ["Basic", "Binary", "Bocce", "Bothese"]
+            name: 'Widely Used Languages',
+            languages: ['Basic', 'Binary', 'Bocce', 'Bothese']
           },
           localTrade: {
-            name: "Local/Trade Languages",
-            languages: ["Ewokese", "Gamorrean", "Gungan"]
+            name: 'Local/Trade Languages',
+            languages: ['Ewokese', 'Gamorrean', 'Gungan']
           }
         };
       }
     }
 
     // Prepare force powers and starship maneuvers for template
-    if (this.currentStep === "force-powers") {
+    if (this.currentStep === 'force-powers') {
       context.availableForcePowers = await this._getAvailableForcePowers();
       context.characterData.forcePowersRequired = this._getForcePowersNeeded();
     }
 
-    if (this.currentStep === "starship-maneuvers") {
+    if (this.currentStep === 'starship-maneuvers') {
       context.availableStarshipManeuvers = await this._getAvailableStarshipManeuvers();
       context.characterData.starshipManeuversRequired = this._getStarshipManeuversNeeded();
     }
 
     // Prepare talents for template
-    if (this.currentStep === "talents") {
+    if (this.currentStep === 'talents') {
       // Calculate talentsRequired based on class and houserules
       const selectedClass = this.characterData.classes?.[0];
       let talentsRequired = 1; // Default: 1 talent at level 1
@@ -1084,8 +1082,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       let talentEveryLevel = false;
       let talentEveryLevelExtraL1 = false;
       try {
-        talentEveryLevel = game.settings.get('foundryvtt-swse', "talentEveryLevel");
-        talentEveryLevelExtraL1 = game.settings.get('foundryvtt-swse', "talentEveryLevelExtraL1");
+        talentEveryLevel = game.settings.get('foundryvtt-swse', 'talentEveryLevel');
+        talentEveryLevelExtraL1 = game.settings.get('foundryvtt-swse', 'talentEveryLevelExtraL1');
       } catch (err) {
         talentEveryLevel = false;
         talentEveryLevelExtraL1 = false;
@@ -1133,37 +1131,37 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     context.mentor = this._getCurrentMentor();
 
     // Add droid degrees for degree selection step
-    if (this.currentStep === "degree") {
+    if (this.currentStep === 'degree') {
       context.droidDegrees = [
         {
-          key: "1st-degree",
-          name: "1st-Degree",
-          bonuses: "INT +2, WIS +2, STR -2",
-          description: "Medical and scientific droid. Specialized in analysis and knowledge."
+          key: '1st-degree',
+          name: '1st-Degree',
+          bonuses: 'INT +2, WIS +2, STR -2',
+          description: 'Medical and scientific droid. Specialized in analysis and knowledge.'
         },
         {
-          key: "2nd-degree",
-          name: "2nd-Degree",
-          bonuses: "INT +2, CHA -2",
-          description: "Engineering droid. Technical expertise and system integration."
+          key: '2nd-degree',
+          name: '2nd-Degree',
+          bonuses: 'INT +2, CHA -2',
+          description: 'Engineering droid. Technical expertise and system integration.'
         },
         {
-          key: "3rd-degree",
-          name: "3rd-Degree",
-          bonuses: "WIS +2, CHA +2, STR -2",
-          description: "Protocol and service droid. Social interface and communication."
+          key: '3rd-degree',
+          name: '3rd-Degree',
+          bonuses: 'WIS +2, CHA +2, STR -2',
+          description: 'Protocol and service droid. Social interface and communication.'
         },
         {
-          key: "4th-degree",
-          name: "4th-Degree",
-          bonuses: "DEX +2, INT -2, CHA -2",
-          description: "Security and military droid. Combat and threat elimination."
+          key: '4th-degree',
+          name: '4th-Degree',
+          bonuses: 'DEX +2, INT -2, CHA -2',
+          description: 'Security and military droid. Combat and threat elimination.'
         },
         {
-          key: "5th-degree",
-          name: "5th-Degree",
-          bonuses: "STR +4, INT -4, CHA -4",
-          description: "Labor and utility droid. Physical tasks and heavy operations."
+          key: '5th-degree',
+          name: '5th-Degree',
+          bonuses: 'STR +4, INT -4, CHA -4',
+          description: 'Labor and utility droid. Physical tasks and heavy operations.'
         }
       ];
 
@@ -1183,25 +1181,25 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
   _getNarratorComment() {
     // Get current mentor based on selected class
     const mentor = this._getCurrentMentor();
-    if (!mentor) return null;
+    if (!mentor) {return null;}
 
     // Return step-specific guidance from the mentor
     switch (this.currentStep) {
-      case "class":
+      case 'class':
         return mentor.classGuidance || null;
-      case "background":
+      case 'background':
         return mentor.backgroundGuidance || null;
-      case "abilities":
+      case 'abilities':
         return mentor.abilityGuidance || null;
-      case "skills":
+      case 'skills':
         return mentor.skillGuidance || null;
-      case "languages":
+      case 'languages':
         return mentor.languageGuidance || null;
-      case "feats":
+      case 'feats':
         return mentor.featGuidance || null;
-      case "talents":
+      case 'talents':
         return mentor.talentGuidance || null;
-      case "summary":
+      case 'summary':
         // Get level-appropriate greeting with character overview
         return this._getMentorSummaryCommentary(mentor);
       default:
@@ -1220,7 +1218,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Opening line with level-appropriate greeting
     const level = characterData.level || 1;
-    const levelGreeting = mentor.levelGreetings?.[level] || "Your path takes shape.";
+    const levelGreeting = mentor.levelGreetings?.[level] || 'Your path takes shape.';
     components.push(levelGreeting);
 
     // Commentary on background (if selected)
@@ -1256,7 +1254,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const conclusionComment = this._getMentorConclusionComment(mentor, characterData);
     components.push(conclusionComment);
 
-    return components.join(" ");
+    return components.join(' ');
   }
 
   /**
@@ -1264,32 +1262,32 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    */
   _getMentorBackgroundComment(mentor, background) {
     const comments = {
-      "Jedi": {
-        "Smuggler": "Your past as a smuggler brings experience with survival and cunning. Interesting foundations for a Jedi's path.",
-        "Soldier": "A military background suggests discipline and tactical thinking. These serve the Force well.",
-        "Scout": "The skills of a scout—observation, tracking, adaptation. These will serve you in ways you cannot yet imagine.",
-        "default": "Your background shapes who you become. Use that wisdom in your journey ahead."
+      'Jedi': {
+        'Smuggler': "Your past as a smuggler brings experience with survival and cunning. Interesting foundations for a Jedi's path.",
+        'Soldier': 'A military background suggests discipline and tactical thinking. These serve the Force well.',
+        'Scout': 'The skills of a scout—observation, tracking, adaptation. These will serve you in ways you cannot yet imagine.',
+        'default': 'Your background shapes who you become. Use that wisdom in your journey ahead.'
       },
-      "Soldier": {
-        "Smuggler": "A smuggler's instincts paired with military discipline? That combination could be dangerous in the right ways.",
-        "Scout": "Scout training mixed with soldier's training makes you adaptable. Good—the battlefield demands flexibility.",
-        "Jedi": "A strange path, mixing Force and firearms. But unconventional approaches sometimes succeed where tradition fails.",
-        "default": "Your background prepares you for what lies ahead. Trust that preparation."
+      'Soldier': {
+        'Smuggler': "A smuggler's instincts paired with military discipline? That combination could be dangerous in the right ways.",
+        'Scout': "Scout training mixed with soldier's training makes you adaptable. Good—the battlefield demands flexibility.",
+        'Jedi': 'A strange path, mixing Force and firearms. But unconventional approaches sometimes succeed where tradition fails.',
+        'default': 'Your background prepares you for what lies ahead. Trust that preparation.'
       },
-      "Scoundrel": {
-        "Soldier": "Soldier discipline with scoundrel instincts? You'll survive things that would break others.",
-        "Smuggler": "A smuggler among scoundrels—you'll fit right in. Just remember what you value.",
-        "Scout": "Scout cunning wrapped in scoundrel charm. You'll move through the galaxy just fine.",
-        "default": "Your past is your credential. Use it wisely."
+      'Scoundrel': {
+        'Soldier': "Soldier discipline with scoundrel instincts? You'll survive things that would break others.",
+        'Smuggler': "A smuggler among scoundrels—you'll fit right in. Just remember what you value.",
+        'Scout': "Scout cunning wrapped in scoundrel charm. You'll move through the galaxy just fine.",
+        'default': 'Your past is your credential. Use it wisely.'
       },
-      "default": {
-        "default": "Your background informs who you are. Do not forget where you came from."
+      'default': {
+        'default': 'Your background informs who you are. Do not forget where you came from.'
       }
     };
 
-    const className = (this.characterData.classes?.[0]?.name) || "Jedi";
-    const mentorComments = comments[mentor.name] || comments["default"];
-    return mentorComments[background] || mentorComments["default"];
+    const className = (this.characterData.classes?.[0]?.name) || 'Jedi';
+    const mentorComments = comments[mentor.name] || comments['default'];
+    return mentorComments[background] || mentorComments['default'];
   }
 
   /**
@@ -1297,17 +1295,17 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    */
   _getMentorSkillsComment(mentor, trainedSkills) {
     const skillCount = trainedSkills.length;
-    const skillList = trainedSkills.slice(0, 2).join(", "); // List first 2 skills
-    const moreSkills = skillCount > 2 ? ` and ${skillCount - 2} more` : "";
+    const skillList = trainedSkills.slice(0, 2).join(', '); // List first 2 skills
+    const moreSkills = skillCount > 2 ? ` and ${skillCount - 2} more` : '';
 
     const skillComments = {
-      "Jedi": `You have trained yourself in ${skillList}${moreSkills}. Knowledge is a tool of the Force as much as intuition.`,
-      "Soldier": `Your choice to master ${skillList}${moreSkills} shows strategic thinking. Every skill is a weapon if wielded correctly.`,
-      "Scoundrel": `${skillList}${moreSkills}—practical choices. You know what skills keep you alive in the field.`,
-      "default": `You have developed proficiency in ${skillList}${moreSkills}. These skills will serve you well.`
+      'Jedi': `You have trained yourself in ${skillList}${moreSkills}. Knowledge is a tool of the Force as much as intuition.`,
+      'Soldier': `Your choice to master ${skillList}${moreSkills} shows strategic thinking. Every skill is a weapon if wielded correctly.`,
+      'Scoundrel': `${skillList}${moreSkills}—practical choices. You know what skills keep you alive in the field.`,
+      'default': `You have developed proficiency in ${skillList}${moreSkills}. These skills will serve you well.`
     };
 
-    return skillComments[mentor.name] || skillComments["default"];
+    return skillComments[mentor.name] || skillComments['default'];
   }
 
   /**
@@ -1315,17 +1313,17 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    */
   _getMentorTalentsComment(mentor, talents) {
     const talentCount = talents.length;
-    const talentList = talents.slice(0, 2).map(t => t.name).join(", ");
-    const moreTalents = talentCount > 2 ? ` and ${talentCount - 2} others` : "";
+    const talentList = talents.slice(0, 2).map(t => t.name).join(', ');
+    const moreTalents = talentCount > 2 ? ` and ${talentCount - 2} others` : '';
 
     const talentComments = {
-      "Jedi": `Your talents—${talentList}${moreTalents}—show connection to deeper aspects of the Force. You are developing awareness.`,
-      "Soldier": `The talents you've chosen—${talentList}${moreTalents}—show you understand combat's nuances. Good.`,
-      "Scoundrel": `${talentList}${moreTalents}. Talents that keep you one step ahead. That's the scoundrel's way.`,
-      "default": `You have selected talents that will define your capabilities. Use them well.`
+      'Jedi': `Your talents—${talentList}${moreTalents}—show connection to deeper aspects of the Force. You are developing awareness.`,
+      'Soldier': `The talents you've chosen—${talentList}${moreTalents}—show you understand combat's nuances. Good.`,
+      'Scoundrel': `${talentList}${moreTalents}. Talents that keep you one step ahead. That's the scoundrel's way.`,
+      'default': `You have selected talents that will define your capabilities. Use them well.`
     };
 
-    return talentComments[mentor.name] || talentComments["default"];
+    return talentComments[mentor.name] || talentComments['default'];
   }
 
   /**
@@ -1333,33 +1331,33 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    */
   _getMentorFeatsComment(mentor, feats) {
     const featCount = feats.length;
-    const featList = feats.slice(0, 2).map(f => f.name).join(", ");
-    const moreFeats = featCount > 2 ? ` and ${featCount - 2} others` : "";
+    const featList = feats.slice(0, 2).map(f => f.name).join(', ');
+    const moreFeats = featCount > 2 ? ` and ${featCount - 2} others` : '';
 
     const featComments = {
-      "Jedi": `Through ${featList}${moreFeats}, you build your foundation. Each feat is a step toward mastery.`,
-      "Soldier": `${featList}${moreFeats}—solid choices for a warrior. You are building practical strength.`,
-      "Scoundrel": `${featList}${moreFeats}. You know which advantages make the difference between freedom and chains.`,
-      "default": `Your chosen feats demonstrate your priorities. Stand by them.`
+      'Jedi': `Through ${featList}${moreFeats}, you build your foundation. Each feat is a step toward mastery.`,
+      'Soldier': `${featList}${moreFeats}—solid choices for a warrior. You are building practical strength.`,
+      'Scoundrel': `${featList}${moreFeats}. You know which advantages make the difference between freedom and chains.`,
+      'default': `Your chosen feats demonstrate your priorities. Stand by them.`
     };
 
-    return featComments[mentor.name] || featComments["default"];
+    return featComments[mentor.name] || featComments['default'];
   }
 
   /**
    * Get mentor's final conclusion about the completed character
    */
   _getMentorConclusionComment(mentor, characterData) {
-    const className = characterData.classes?.[0]?.name || "unknown";
+    const className = characterData.classes?.[0]?.name || 'unknown';
 
     const conclusionComments = {
-      "Jedi": `You have begun. The path ahead is long, but I sense you are ready to walk it with awareness and purpose.`,
-      "Soldier": `You have the foundation. What you build upon it—that is what matters. Go forward with clarity.`,
-      "Scoundrel": `You're ready to make your own way in this galaxy. Just remember—survival isn't everything.`,
-      "default": `The character you have created is ready to face what comes. May your choices serve you well.`
+      'Jedi': `You have begun. The path ahead is long, but I sense you are ready to walk it with awareness and purpose.`,
+      'Soldier': `You have the foundation. What you build upon it—that is what matters. Go forward with clarity.`,
+      'Scoundrel': `You're ready to make your own way in this galaxy. Just remember—survival isn't everything.`,
+      'default': `The character you have created is ready to face what comes. May your choices serve you well.`
     };
 
-    return conclusionComments[mentor.name] || conclusionComments["default"];
+    return conclusionComments[mentor.name] || conclusionComments['default'];
   }
 
   /**
@@ -1371,7 +1369,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     if (classes.length === 0) {
       // Default to Scoundrel mentor (Ol' Salty) before class is selected
       SWSELogger.log(`[CHARGEN-MENTOR] _getCurrentMentor: No class selected, using default (Scoundrel)`);
-      return MENTORS.Scoundrel || { name: "Ol' Salty", portrait: "systems/foundryvtt-swse/assets/mentors/salty.webp" };
+      return MENTORS.Scoundrel || { name: "Ol' Salty", portrait: 'systems/foundryvtt-swse/assets/mentors/salty.webp' };
     }
 
     const className = classes[0].name;
@@ -1389,9 +1387,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Fallback to Scoundrel mentor
     SWSELogger.warn(`[CHARGEN-MENTOR] _getCurrentMentor: No mentor found for class "${className}", using fallback (Scoundrel)`);
-    return MENTORS.Scoundrel || { name: "Ol' Salty", portrait: "systems/foundryvtt-swse/assets/mentors/salty.webp" };
+    return MENTORS.Scoundrel || { name: "Ol' Salty", portrait: 'systems/foundryvtt-swse/assets/mentors/salty.webp' };
   }
-
 
 
   /**
@@ -1405,7 +1402,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // V2: Access DOM via this.element (HTMLElement, not jQuery)
     const root = this.element;
-    if (!(root instanceof HTMLElement)) return;
+    if (!(root instanceof HTMLElement)) {return;}
 
     // Activate Foundry tooltips for feat descriptions
     if (game.tooltip) {
@@ -1504,12 +1501,12 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     // Card UX helpers (flip/read)
-    if (this.currentStep === 'class') this._bindClassCardUI(root);
-    if (this.currentStep === 'feats') this._bindFeatCardUI(root);
-    if (this.currentStep === 'talents') this._bindTalentCardUI(root);
-    if (this.currentStep === 'skills') this._bindSkillCardUI(root);
-    if (this.currentStep === 'force-powers') this._bindForcePowerCardUI(root);
-    if (this.currentStep === 'starship-maneuvers') this._bindManeuverCardUI(root);
+    if (this.currentStep === 'class') {this._bindClassCardUI(root);}
+    if (this.currentStep === 'feats') {this._bindFeatCardUI(root);}
+    if (this.currentStep === 'talents') {this._bindTalentCardUI(root);}
+    if (this.currentStep === 'skills') {this._bindSkillCardUI(root);}
+    if (this.currentStep === 'force-powers') {this._bindForcePowerCardUI(root);}
+    if (this.currentStep === 'starship-maneuvers') {this._bindManeuverCardUI(root);}
 
     // Background selection
     bindClick('.random-background-btn', this._onRandomBackground);
@@ -1571,17 +1568,17 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     bindClick('.reroll-credits-btn', this._onRerollCredits);
 
     // Abilities UI
-    if (this.currentStep === "abilities") {
+    if (this.currentStep === 'abilities') {
       this._bindAbilitiesUI(root);
     }
 
     // Droid Builder UI
-    if (this.currentStep === "droid-builder") {
+    if (this.currentStep === 'droid-builder') {
       this._populateDroidBuilder(root);
     }
 
     // Final Droid Customization UI (after class/background for final credits)
-    if (this.currentStep === "droid-final") {
+    if (this.currentStep === 'droid-final') {
       this._populateFinalDroidBuilder(root);
     }
 
@@ -1594,7 +1591,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     // Background step - render cards if on background step
-    if (this.currentStep === "background") {
+    if (this.currentStep === 'background') {
       const bgContainer = root.querySelector('#background-selection-grid');
       if (bgContainer && !this.characterData.background) {
         this._renderBackgroundCards(bgContainer);
@@ -1669,60 +1666,60 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
   _getSteps() {
     if (this.actor) {
-      return ["abilities", "class", "background", "feats", "talents", "skills", "languages", "summary"];
+      return ['abilities', 'class', 'background', 'feats', 'talents', 'skills', 'languages', 'summary'];
     }
 
     // Include type selection (living/droid) after name
-    const steps = ["name", "type"];
+    const steps = ['name', 'type'];
 
     // If droid, show degree and size selection; if living, show species
     if (this.characterData.isDroid) {
-      steps.push("degree", "size", "droid-builder");
+      steps.push('degree', 'size', 'droid-builder');
     } else {
-      steps.push("species");
+      steps.push('species');
     }
 
     // NPC workflow: skip class and talents, go straight to abilities/skills/languages/feats
-    if (this.actorType === "npc") {
-      steps.push("abilities", "skills", "languages", "feats", "summary");
+    if (this.actorType === 'npc') {
+      steps.push('abilities', 'skills', 'languages', 'feats', 'summary');
     } else {
       // PC workflow: normal flow with class and talents
       // Note: skills before feats to allow Skill Focus validation
       // Note: languages after skills (INT-dependent) for both living and droid characters
-      steps.push("abilities", "class");
+      steps.push('abilities', 'class');
 
       // Add background step only if enabled
       let backgroundsEnabled = true;
       try {
-        backgroundsEnabled = game.settings.get("foundryvtt-swse", "enableBackgrounds") ?? true;
+        backgroundsEnabled = game.settings.get('foundryvtt-swse', 'enableBackgrounds') ?? true;
       } catch (err) {
         backgroundsEnabled = true;
       }
 
       if (backgroundsEnabled) {
-        steps.push("background");
+        steps.push('background');
       }
 
-      steps.push("skills", "languages", "feats", "talents");
+      steps.push('skills', 'languages', 'feats', 'talents');
 
       // Add force powers step if character is Force-sensitive
       // Note: Droids cannot be Force-sensitive in SWSE
       if (this.characterData.forceSensitive && !this.characterData.isDroid && this._getForcePowersNeeded() > 0) {
-        steps.push("force-powers");
+        steps.push('force-powers');
       }
 
       // Add starship maneuvers step if character has Starship Tactics feat
       if (this._getStarshipManeuversNeeded() > 0) {
-        steps.push("starship-maneuvers");
+        steps.push('starship-maneuvers');
       }
 
       // Add final droid customization step if droid character
       // This allows player to finalize droid after class/background selection for final credit total
       if (this.characterData.isDroid) {
-        steps.push("droid-final");
+        steps.push('droid-final');
       }
 
-      steps.push("summary", "shop");
+      steps.push('summary', 'shop');
     }
     return steps;
   }
@@ -1735,7 +1732,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     event.preventDefault();
 
     if (!CharacterGenerator.RANDOM_NAMES || CharacterGenerator.RANDOM_NAMES.length === 0) {
-      ui.notifications.warn("No names available to choose from.");
+      ui.notifications.warn('No names available to choose from.');
       return;
     }
 
@@ -1759,7 +1756,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     event.preventDefault();
 
     if (!CharacterGenerator.RANDOM_DROID_NAMES || CharacterGenerator.RANDOM_DROID_NAMES.length === 0) {
-      ui.notifications.warn("No droid names available to choose from.");
+      ui.notifications.warn('No droid names available to choose from.');
       return;
     }
 
@@ -1784,7 +1781,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     SWSELogger.log(`[CHARGEN] _onAskMentor: Activating suggestion engine for current step: ${this.currentStep}`);
 
     // Special handling for feats - show popup with top 5 suggestions
-    if (this.currentStep === "feats") {
+    if (this.currentStep === 'feats') {
       SWSELogger.log(`[CHARGEN] _onAskMentor: FEATS step - showing suggestion dialog`);
 
       // Save filter state
@@ -1816,7 +1813,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           });
 
         if (suggestions.length > 0) {
-          const mentorName = mentor?.name || "Your Mentor";
+          const mentorName = mentor?.name || 'Your Mentor';
           const content = `
             <div class="feat-suggestions-container">
               <div class="mentor-intro">
@@ -1840,7 +1837,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
               buttons: {
                 accept: {
                   icon: '<i class="fas fa-check"></i>',
-                  label: "Show Suggestions Inline",
+                  label: 'Show Suggestions Inline',
                   callback: async () => {
                     SWSELogger.log(`[CHARGEN] _onAskMentor: User accepted - enabling suggestions`);
                     this.suggestionEngine = true;
@@ -1849,7 +1846,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
                 },
                 cancel: {
                   icon: '<i class="fas fa-times"></i>',
-                  label: "Cancel",
+                  label: 'Cancel',
                   callback: () => {
                     // Restore filter state
                     if (wasFilterActive) {
@@ -1862,7 +1859,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
                   }
                 }
               },
-              default: "accept"
+              default: 'accept'
             },
             { classes: ['feat-suggestions-dialog', 'holo-window'] }
           );
@@ -1876,7 +1873,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // For other steps, enable suggestion engine and re-render
     this.suggestionEngine = true;
-    ui.notifications.info("Your mentor is now providing suggestions for this step.");
+    ui.notifications.info('Your mentor is now providing suggestions for this step.');
     await this.render();
   }
 
@@ -1886,7 +1883,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     try {
       // Check if actor exists for suggestions (may not exist during chargen)
       if (!this.actor) {
-        ui.notifications.warn("Character not yet created. Complete character generation first.");
+        ui.notifications.warn('Character not yet created. Complete character generation first.');
         return;
       }
 
@@ -1897,7 +1894,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       const availablePowers = await getAvailableForcePowers(this.actor, this.characterData);
 
       if (!availablePowers || availablePowers.length === 0) {
-        ui.notifications.warn("No available Force powers to suggest.");
+        ui.notifications.warn('No available Force powers to suggest.');
         return;
       }
 
@@ -1923,7 +1920,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       const topSuggestion = suggestions.find(s => s.suggestion?.tier >= 4) || suggestions[0];
 
       if (!topSuggestion) {
-        ui.notifications.warn("No Force power suggestions available at this time.");
+        ui.notifications.warn('No Force power suggestions available at this time.');
         return;
       }
 
@@ -1935,7 +1932,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       ui.notifications.info(`${mentor?.name || 'Your mentor'} suggests: ${topSuggestion.name}`);
     } catch (err) {
       console.error('Error getting Force power suggestion:', err);
-      ui.notifications.error("Error getting mentor suggestion. Check console.");
+      ui.notifications.error('Error getting mentor suggestion. Check console.');
     }
   }
 
@@ -1950,7 +1947,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const type = button?.dataset?.type;
 
     if (!type || !['living', 'droid'].includes(type)) {
-      ui.notifications.warn("Invalid character type selected.");
+      ui.notifications.warn('Invalid character type selected.');
       return;
     }
 
@@ -1967,7 +1964,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     event.preventDefault();
 
     // Capture name from input before validation (in case the input event hasn't fired yet)
-    if (this.currentStep === "name") {
+    if (this.currentStep === 'name') {
       const form = event.currentTarget.closest('.chargen-app');
       const nameInput = form?.querySelector('input[name="character-name"]');
       if (nameInput) {
@@ -1983,13 +1980,13 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     const steps = this._getSteps();
-    let idx = steps.indexOf(this.currentStep);
+    const idx = steps.indexOf(this.currentStep);
 
     // If current step is not in steps array (due to dynamic changes), find it
     if (idx < 0) {
-      const allPossibleSteps = ["name", "type", "degree", "size", "droid-builder", "species",
-        "abilities", "class", "background", "skills", "languages", "feats", "talents",
-        "force-powers", "starship-maneuvers", "droid-final", "summary", "shop"];
+      const allPossibleSteps = ['name', 'type', 'degree', 'size', 'droid-builder', 'species',
+        'abilities', 'class', 'background', 'skills', 'languages', 'feats', 'talents',
+        'force-powers', 'starship-maneuvers', 'droid-final', 'summary', 'shop'];
       const currentIdx = allPossibleSteps.indexOf(this.currentStep);
       // Find the next valid step after current position
       for (let i = currentIdx + 1; i < allPossibleSteps.length; i++) {
@@ -2009,13 +2006,13 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       let nextStep = steps[idx + 1];
 
       // Auto-skip languages step if no additional languages to select
-      if (nextStep === "languages") {
+      if (nextStep === 'languages') {
         await this._initializeLanguages();
         const languageData = this.characterData.languageData;
         if (languageData && languageData.additional <= 0) {
           // Skip languages step - move to next step
-          SWSELogger.log("CharGen | Auto-skipping languages step (no additional languages to select)");
-          const languagesIdx = steps.indexOf("languages");
+          SWSELogger.log('CharGen | Auto-skipping languages step (no additional languages to select)');
+          const languagesIdx = steps.indexOf('languages');
           if (languagesIdx >= 0 && languagesIdx < steps.length - 1) {
             nextStep = steps[languagesIdx + 1];
           }
@@ -2023,7 +2020,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       }
 
       // Create character when moving from summary to shop
-      if (this.currentStep === "summary" && nextStep === "shop" && !this._creatingActor) {
+      if (this.currentStep === 'summary' && nextStep === 'shop' && !this._creatingActor) {
         this._creatingActor = true;
         try {
           this._finalizeCharacter();
@@ -2051,7 +2048,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       this.currentStep = nextStep;
 
       // Auto-calculate derived values when moving forward
-      if (this.currentStep === "summary") {
+      if (this.currentStep === 'summary') {
         this._finalizeCharacter();
       }
 
@@ -2067,9 +2064,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     // If current step is not in steps array (due to dynamic changes), find nearest valid step
     if (idx < 0) {
       // Find the last completed step before the current position
-      const allPossibleSteps = ["name", "type", "degree", "size", "droid-builder", "species",
-        "abilities", "class", "background", "skills", "languages", "feats", "talents",
-        "force-powers", "starship-maneuvers", "droid-final", "summary", "shop"];
+      const allPossibleSteps = ['name', 'type', 'degree', 'size', 'droid-builder', 'species',
+        'abilities', 'class', 'background', 'skills', 'languages', 'feats', 'talents',
+        'force-powers', 'starship-maneuvers', 'droid-final', 'summary', 'shop'];
       const currentIdx = allPossibleSteps.indexOf(this.currentStep);
       for (let i = currentIdx - 1; i >= 0; i--) {
         if (steps.includes(allPossibleSteps[i])) {
@@ -2110,18 +2107,18 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Cannot jump to future steps unless in free build mode
     if (!this.freeBuild && targetIndex > currentIndex) {
-      ui.notifications.warn("You cannot jump forward to future steps. You can skip the current step or enable Free Build mode.");
+      ui.notifications.warn('You cannot jump forward to future steps. You can skip the current step or enable Free Build mode.');
       return;
     }
 
     // Special check: talents/skills require a class to be selected
-    const requiresClass = ["talents", "skills"].includes(targetStep);
+    const requiresClass = ['talents', 'skills'].includes(targetStep);
     const classSelected = this.characterData.classes && this.characterData.classes.length > 0;
 
     if (requiresClass && !classSelected && !this.freeBuild) {
       // Show dialog with options
       await new Dialog({
-        title: "Class Required",
+        title: 'Class Required',
         content: `
           <div style="margin-bottom: 10px;">
             <p><i class="fas fa-circle-info" style="color: #00d9ff;"></i> <strong>You must select a class before choosing ${targetStep === 'talents' ? 'talents' : 'skills'}.</strong></p>
@@ -2134,23 +2131,23 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         `,
         buttons: {
           goback: {
-            label: "Go Back",
+            label: 'Go Back',
             callback: async () => {
-              this.currentStep = "class";
+              this.currentStep = 'class';
               await this.render();
             }
           },
           freebuild: {
-            label: "Enable Free Build",
+            label: 'Enable Free Build',
             callback: async () => {
               this.freeBuild = true;
               this.currentStep = targetStep;
-              ui.notifications.info("Free Build Mode enabled. You can now select without class restrictions.");
+              ui.notifications.info('Free Build Mode enabled. You can now select without class restrictions.');
               await this.render();
             }
           }
         },
-        default: "goback"
+        default: 'goback'
       }).render(true);
       return;
     }
@@ -2159,7 +2156,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     if (targetIndex > currentIndex && !this.freeBuild) {
       const stepLabel = this._getStepLabel(targetStep);
       const confirmed = await Dialog.confirm({
-        title: "Skip Steps?",
+        title: 'Skip Steps?',
         content: `
           <div style="margin-bottom: 10px;">
             <p><i class="fas fa-exclamation-triangle" style="color: #ff9800;"></i> <strong>Skip to ${stepLabel}?</strong></p>
@@ -2200,7 +2197,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Show warning dialog
     const confirmed = await Dialog.confirm({
-      title: "Skip This Step?",
+      title: 'Skip This Step?',
       content: `
         <div style="margin-bottom: 10px;">
           <p><i class="fas fa-exclamation-triangle" style="color: #ff9800;"></i> <strong>Skip this step?</strong></p>
@@ -2226,7 +2223,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const nextStep = steps[currentIndex + 1];
 
     if (!nextStep) {
-      ui.notifications.warn("You are at the final step. Cannot skip.");
+      ui.notifications.warn('You are at the final step. Cannot skip.');
       return;
     }
 
@@ -2276,7 +2273,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     // If enabling, ask for confirmation first
     if (wantsToEnable && !this.freeBuild) {
       const confirmed = await Dialog.confirm({
-        title: "Enable Free Build Mode?",
+        title: 'Enable Free Build Mode?',
         content: `
           <div style="margin-bottom: 10px;">
             <p><i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i> <strong>Enable Free Build Mode?</strong></p>
@@ -2306,11 +2303,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       // User confirmed, enable free build
       this.freeBuild = true;
-      ui.notifications.info("Free Build Mode enabled. All restrictions removed.");
+      ui.notifications.info('Free Build Mode enabled. All restrictions removed.');
     } else if (!wantsToEnable && this.freeBuild) {
       // Disabling free build mode
       this.freeBuild = false;
-      ui.notifications.info("Free Build Mode disabled. Validation rules will now apply.");
+      ui.notifications.info('Free Build Mode disabled. Validation rules will now apply.');
     }
 
     await this.render();
@@ -2322,41 +2319,41 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       return true;
     }
     switch (this.currentStep) {
-      case "name":
-        if (!this.characterData.name || this.characterData.name.trim() === "") {
-          ui.notifications.warn("Please enter a character name.");
+      case 'name':
+        if (!this.characterData.name || this.characterData.name.trim() === '') {
+          ui.notifications.warn('Please enter a character name.');
           return false;
         }
         break;
-      case "type":
+      case 'type':
         // Type is set by button click, isDroid will be true or false
         break;
-      case "degree":
+      case 'degree':
         if (!this.characterData.droidDegree) {
-          ui.notifications.warn("Please select a droid degree.");
+          ui.notifications.warn('Please select a droid degree.');
           return false;
         }
         break;
-      case "size":
+      case 'size':
         if (!this.characterData.droidSize) {
-          ui.notifications.warn("Please select a droid size.");
+          ui.notifications.warn('Please select a droid size.');
           return false;
         }
         break;
-      case "droid-builder":
+      case 'droid-builder':
         // Droid builder is optional - player can skip and build later
         // Always return true to allow proceeding
         return true;
-      case "droid-final":
+      case 'droid-final':
         // Final droid step is required - must have built the droid or be skipping to it
         return this._validateDroidBuilder();
-      case "species":
+      case 'species':
         if (!this.characterData.species) {
-          ui.notifications.warn("Please select a species.");
+          ui.notifications.warn('Please select a species.');
           return false;
         }
         break;
-      case "abilities":
+      case 'abilities':
         // Validate that ability scores are properly set
         // Droids don't have Constitution ability
         const abilities = this.characterData.isDroid
@@ -2368,7 +2365,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         });
 
         if (!allSet) {
-          ui.notifications.warn("Please set all ability scores.");
+          ui.notifications.warn('Please set all ability scores.');
           return false;
         }
 
@@ -2389,8 +2386,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           let pointBuyPool = 25;
           try {
             pointBuyPool = this.characterData.isDroid
-              ? (game.settings.get('foundryvtt-swse', "droidPointBuyPool") || 20)
-              : (game.settings.get('foundryvtt-swse', "livingPointBuyPool") || 25);
+              ? (game.settings.get('foundryvtt-swse', 'droidPointBuyPool') || 20)
+              : (game.settings.get('foundryvtt-swse', 'livingPointBuyPool') || 25);
           } catch (err) {
             pointBuyPool = this.characterData.isDroid ? 20 : 25;
           }
@@ -2407,16 +2404,16 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           }
         }
         break;
-      case "class":
+      case 'class':
         if (this.characterData.classes.length === 0) {
-          ui.notifications.warn("Please select a class.");
+          ui.notifications.warn('Please select a class.');
           return false;
         }
         break;
-      case "background":
+      case 'background':
         // Background is optional in SWSE rules, allow skipping
         break;
-      case "skills":
+      case 'skills': {
         const trainedCount = Object.values(this.characterData.skills || {}).filter(s => s.trained).length;
         const requiredCount = this.characterData.trainedSkillsAllowed || 0;
         if (trainedCount < requiredCount) {
@@ -2428,10 +2425,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           return false;
         }
         break;
-      case "languages":
+      }
+      case 'languages':
         // Languages validation handled by auto-skip logic in _onNextStep
         break;
-      case "feats":
+      case 'feats': {
         const selectedFeatsCount = (this.characterData.feats || []).length;
         const requiredFeats = this.characterData.featsRequired || 1;
         if (selectedFeatsCount < requiredFeats) {
@@ -2439,7 +2437,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           return false;
         }
         break;
-      case "talents":
+      }
+      case 'talents': {
         const selectedTalentsCount = (this.characterData.talents || []).length;
         const requiredTalents = this.characterData.talentsRequired || 1;
         if (selectedTalentsCount < requiredTalents) {
@@ -2447,7 +2446,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           return false;
         }
         break;
-      case "force-powers":
+      }
+      case 'force-powers': {
         const selectedPowersCount = (this.characterData.powers || []).length;
         const requiredPowers = this._getForcePowersNeeded();
         if (selectedPowersCount < requiredPowers) {
@@ -2455,7 +2455,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           return false;
         }
         break;
-      case "starship-maneuvers":
+      }
+      case 'starship-maneuvers': {
         const selectedManeuversCount = (this.characterData.starshipManeuvers || []).length;
         const requiredManeuvers = this._getStarshipManeuversNeeded();
         if (selectedManeuversCount < requiredManeuvers) {
@@ -2463,7 +2464,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           return false;
         }
         break;
-      case "summary":
+      }
+      case 'summary':
         // Auto-select maximum credits if formula exists but not chosen
         if (this.characterData.startingCreditsFormula && !this.characterData.creditsChosen) {
           this.characterData.credits = this.characterData.startingCreditsFormula.maxPossible;
@@ -2481,7 +2483,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    */
   async _revalidateSelectionsOnNavigation() {
     // Re-validate feats when going back to feats step
-    if (this.currentStep === "feats" && this.characterData.feats && this.characterData.feats.length > 0) {
+    if (this.currentStep === 'feats' && this.characterData.feats && this.characterData.feats.length > 0) {
       const validFeats = [];
       for (const feat of this.characterData.feats) {
         const tempActor = this._createTempActorForValidation();
@@ -2489,7 +2491,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         if (prereqCheck.met) {
           validFeats.push(feat);
         } else {
-          SWSELogger.warn(`[CHARGEN] Removing feat "${feat.name}" - no longer meets prerequisites: ${prereqCheck.reasons.join(", ")}`);
+          SWSELogger.warn(`[CHARGEN] Removing feat "${feat.name}" - no longer meets prerequisites: ${prereqCheck.reasons.join(', ')}`);
           ui.notifications.info(`Removed feat "${feat.name}" - no longer meets requirements after class change.`);
         }
       }
@@ -2497,7 +2499,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     // Re-validate talents when going back to talents step
-    if (this.currentStep === "talents" && this.characterData.talents && this.characterData.talents.length > 0) {
+    if (this.currentStep === 'talents' && this.characterData.talents && this.characterData.talents.length > 0) {
       const validTalents = [];
       for (const talent of this.characterData.talents) {
         const tempActor = this._createTempActorForValidation();
@@ -2505,7 +2507,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         if (prereqCheck.met) {
           validTalents.push(talent);
         } else {
-          SWSELogger.warn(`[CHARGEN] Removing talent "${talent.name}" - no longer meets prerequisites: ${prereqCheck.reasons.join(", ")}`);
+          SWSELogger.warn(`[CHARGEN] Removing talent "${talent.name}" - no longer meets prerequisites: ${prereqCheck.reasons.join(', ')}`);
           ui.notifications.info(`Removed talent "${talent.name}" - no longer meets requirements after class change.`);
         }
       }
@@ -2523,30 +2525,30 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Always required: Character name
     if (!this.characterData.name || this.characterData.name.trim() === '') {
-      errors.push("Character must have a name");
+      errors.push('Character must have a name');
     }
 
     // Droid-specific minimum validation
     if (this.characterData.isDroid) {
       if (!this.characterData.droidSystems?.locomotion) {
-        errors.push("Droids must have a locomotion system");
+        errors.push('Droids must have a locomotion system');
       }
       if (!this.characterData.droidSystems?.processor) {
-        errors.push("Droids must have a processor");
+        errors.push('Droids must have a processor');
       }
       if (!this.characterData.droidDegree) {
-        errors.push("Droids must have a degree selected");
+        errors.push('Droids must have a degree selected');
       }
     }
 
     // Living beings need a species
     if (!this.characterData.isDroid && !this.characterData.species) {
-      errors.push("Living characters must have a species");
+      errors.push('Living characters must have a species');
     }
 
     // Class required for all characters
     if (!this.characterData.classes || this.characterData.classes.length === 0) {
-      errors.push("Character must have at least one class");
+      errors.push('Character must have at least one class');
     }
 
     // Starting credits - auto-select if formula exists but not chosen
@@ -2564,7 +2566,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       } else {
         // In free build mode, show a confirmation dialog
         const confirmed = await Dialog.confirm({
-          title: "Validation Warnings",
+          title: 'Validation Warnings',
           content: `
             <p><strong>The following issues were found:</strong></p>
             <ul>
@@ -2612,7 +2614,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Required: Character name
     if (!this.characterData.name || this.characterData.name.trim() === '') {
-      errors.push("Character name is required");
+      errors.push('Character name is required');
     }
 
     // Required: Abilities (all 6 must be defined)
@@ -2626,24 +2628,24 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Required: Class (living or droid)
     if (!this.characterData.classes || this.characterData.classes.length === 0) {
-      errors.push("At least one class is required");
+      errors.push('At least one class is required');
     }
 
     // Required: Species (for non-droids)
     if (!this.characterData.isDroid && !this.characterData.species) {
-      errors.push("Species is required for non-droid characters");
+      errors.push('Species is required for non-droid characters');
     }
 
     // Required: Droid systems (for droids)
     if (this.characterData.isDroid) {
       if (!this.characterData.droidSystems?.locomotion) {
-        errors.push("Droid locomotion system is required");
+        errors.push('Droid locomotion system is required');
       }
       if (!this.characterData.droidSystems?.processor) {
-        errors.push("Droid processor is required");
+        errors.push('Droid processor is required');
       }
       if (!this.characterData.droidDegree) {
-        errors.push("Droid degree is required");
+        errors.push('Droid degree is required');
       }
     }
 
@@ -2698,8 +2700,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       const store = new SWSEStore(this.actor);
       store.render(true);
     } catch (err) {
-      SWSELogger.error("SWSE | Failed to open store:", err);
-      ui.notifications.error("Failed to open the shop. You can access it from your character sheet.");
+      SWSELogger.error('SWSE | Failed to open store:', err);
+      ui.notifications.error('Failed to open the shop. You can access it from your character sheet.');
     }
   }
 
@@ -2710,7 +2712,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     event.preventDefault();
 
     if (!this.characterData.startingCreditsFormula) {
-      ui.notifications.warn("No starting credits formula available.");
+      ui.notifications.warn('No starting credits formula available.');
       return;
     }
 
@@ -2727,7 +2729,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     // Show the roll in chat
     await roll.toMessage({
       flavor: `<h3>Starting Credits Roll</h3><p><strong>${this.characterData.name}</strong> rolls ${rollFormula} × ${multiplier.toLocaleString()}</p>`,
-      speaker: ChatMessage.getSpeaker({ alias: this.characterData.name || "Character" })
+      speaker: ChatMessage.getSpeaker({ alias: this.characterData.name || 'Character' })
     } , { create: true });
 
     // Set credits and mark as chosen
@@ -2748,7 +2750,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     event.preventDefault();
 
     if (!this.characterData.startingCreditsFormula) {
-      ui.notifications.warn("No starting credits formula available.");
+      ui.notifications.warn('No starting credits formula available.');
       return;
     }
 
@@ -2773,12 +2775,12 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Confirm with user
     const confirmed = await Dialog.confirm({
-      title: "Change Starting Credits?",
-      content: "<p>Are you sure you want to change your starting credits selection?</p>",
+      title: 'Change Starting Credits?',
+      content: '<p>Are you sure you want to change your starting credits selection?</p>',
       defaultYes: false
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
     // Reset credits choice
     this.characterData.credits = null;
@@ -2821,18 +2823,18 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     // Build progression structure for level-up compatibility
-    const backgroundSlug = this.characterData.background?.id || "";
+    const backgroundSlug = this.characterData.background?.id || '';
     const bgRecord = backgroundSlug ? await BackgroundRegistry.getBySlug(backgroundSlug) : null;
-    const backgroundInternalId = bgRecord?.internalId || "";
-    const backgroundUuid = bgRecord?.uuid || "";
+    const backgroundInternalId = bgRecord?.internalId || '';
+    const backgroundUuid = bgRecord?.uuid || '';
 
     const languageNames = Array.isArray(this.characterData.languages) ? this.characterData.languages : [];
     const languageInternalIds = [];
     const languageUuids = [];
     for (const name of languageNames) {
       const rec = await LanguageRegistry.getByName(name);
-      if (rec?.internalId) languageInternalIds.push(rec.internalId);
-      if (rec?.uuid) languageUuids.push(rec.uuid);
+      if (rec?.internalId) {languageInternalIds.push(rec.internalId);}
+      if (rec?.uuid) {languageUuids.push(rec.uuid);}
     }
 
     const progression = {
@@ -2841,7 +2843,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         level: cls.level || 1,
         choices: {}
       })),
-      species: this.characterData.species || "",
+      species: this.characterData.species || '',
       background: backgroundSlug,
       backgroundInternalId,
       backgroundTrainedSkills: this.characterData.background?.trainedSkills || [],
@@ -2854,9 +2856,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const system = {
       level: this.characterData.level,
       species: this.characterData.species,  // Use consistent 'species' property
-      size: this.characterData.size || "medium", // Lowercase for DataModel schema
+      size: this.characterData.size || 'medium', // Lowercase for DataModel schema
       isDroid: this.characterData.isDroid || false, // DataModel requires this field
-      droidDegree: this.characterData.droidDegree || "", // DataModel field for droids
+      droidDegree: this.characterData.droidDegree || '', // DataModel field for droids
       attributes: attributes, // Use attributes instead of abilities
       skills: skills, // Normalized skills with DataModel structure
       hp: this.characterData.hp,
@@ -2881,11 +2883,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       languageUuids,
       backgroundUuid,
       racialSkillBonuses: this.characterData.racialSkillBonuses || [],
-      speciesSource: this.characterData.speciesSource || "",
+      speciesSource: this.characterData.speciesSource || '',
       // Background data for biography tab
-      event: this.characterData.background && this.characterData.background.category === 'event' ? this.characterData.background.name : "",
-      profession: this.characterData.background && this.characterData.background.category === 'occupation' ? this.characterData.background.name : "",
-      planetOfOrigin: this.characterData.background && this.characterData.background.category === 'planet' ? this.characterData.background.name : "",
+      event: this.characterData.background && this.characterData.background.category === 'event' ? this.characterData.background.name : '',
+      profession: this.characterData.background && this.characterData.background.category === 'occupation' ? this.characterData.background.name : '',
+      planetOfOrigin: this.characterData.background && this.characterData.background.category === 'planet' ? this.characterData.background.name : '',
       // Progression structure for level-up system
       progression: progression,
       // Mentor system data for suggestion engine
@@ -2896,16 +2898,16 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     };
 
     // For NPCs, auto-create a Nonheroic class
-    if (this.actorType === "npc" && (!this.characterData.classes || this.characterData.classes.length === 0)) {
-      this.characterData.classes = [{ name: "Nonheroic", level: 1 }];
+    if (this.actorType === 'npc' && (!this.characterData.classes || this.characterData.classes.length === 0)) {
+      this.characterData.classes = [{ name: 'Nonheroic', level: 1 }];
     }
 
     const actorData = {
-      name: this.characterData.name || "Unnamed Character",
+      name: this.characterData.name || 'Unnamed Character',
       type: this.actorType, // Use the actorType passed in constructor
       system: system,
       prototypeToken: {
-        name: this.characterData.name || "Unnamed Character",
+        name: this.characterData.name || 'Unnamed Character',
         actorLink: true
       }
     };
@@ -2937,7 +2939,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       created = await Actor.create(actorData);
 
       if (!created) {
-        throw new Error("Actor creation returned null or undefined");
+        throw new Error('Actor creation returned null or undefined');
       }
 
       // Create embedded items (feats, talents, powers)
@@ -2955,7 +2957,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       // Create class items for player characters (matching level-up behavior)
       // This ensures talent trees and other class data are available on the character sheet
-      if (this.actorType !== "npc" && this.characterData.classes) {
+      if (this.actorType !== 'npc' && this.characterData.classes) {
         for (const classData of this.characterData.classes) {
           const classDoc = this._packs.classes.find(c => c.name === classData.name);
           if (classDoc) {
@@ -2971,7 +2973,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
             // All class mechanics are derived from ClassesDB at runtime
             const classItem = {
               name: classDoc.name,
-              type: "class",
+              type: 'class',
               img: classDoc.img,
               system: {
                 classId: classDef.id,      // Stable ID for ClassesDB lookup
@@ -2987,14 +2989,14 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       }
 
       // For NPCs, create a Nonheroic class item
-      if (this.actorType === "npc") {
+      if (this.actorType === 'npc') {
         const nonheroicClass = {
-          name: "Nonheroic",
-          type: "class",
+          name: 'Nonheroic',
+          type: 'class',
           system: {
             level: 1,
-            hitDie: "1d4",
-            babProgression: "medium", // Will be overridden by nonheroic BAB table
+            hitDie: '1d4',
+            babProgression: 'medium', // Will be overridden by nonheroic BAB table
             isNonheroic: true,
             defenses: {
               fortitude: 0,
@@ -3002,14 +3004,14 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
               will: 0
             },
             classSkills: [
-              "acrobatics", "climb", "deception", "endurance",
-              "gatherInformation", "initiative", "jump",
-              "knowledgeBureaucracy", "knowledgeGalacticLore",
-              "knowledgeLifeSciences", "knowledgePhysicalSciences",
-              "knowledgeSocialSciences", "knowledgeTactics",
-              "knowledgeTechnology", "mechanics", "perception",
-              "persuasion", "pilot", "ride", "stealth", "survival",
-              "swim", "treatInjury", "useComputer"
+              'acrobatics', 'climb', 'deception', 'endurance',
+              'gatherInformation', 'initiative', 'jump',
+              'knowledgeBureaucracy', 'knowledgeGalacticLore',
+              'knowledgeLifeSciences', 'knowledgePhysicalSciences',
+              'knowledgeSocialSciences', 'knowledgeTactics',
+              'knowledgeTechnology', 'mechanics', 'perception',
+              'persuasion', 'pilot', 'ride', 'stealth', 'survival',
+              'swim', 'treatInjury', 'useComputer'
             ],
             forceSensitive: false,
             talentTrees: []
@@ -3021,7 +3023,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       // Create embedded documents with error handling
       if (items.length > 0) {
         try {
-          const createdItems = await created.createEmbeddedDocuments("Item", items);
+          const createdItems = await created.createEmbeddedDocuments('Item', items);
           if (!createdItems || createdItems.length !== items.length) {
             throw new Error(`Item creation mismatch: expected ${items.length}, got ${createdItems?.length || 0}`);
           }
@@ -3042,24 +3044,24 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         try {
           await this._applyBackgroundToActor(created);
         } catch (backgroundError) {
-          SWSELogger.warn("Failed to apply background features:", backgroundError);
-          ui.notifications.warn("Character created, but background features may not have been applied correctly.");
+          SWSELogger.warn('Failed to apply background features:', backgroundError);
+          ui.notifications.warn('Character created, but background features may not have been applied correctly.');
           // Non-critical error, continue
         }
       }
 
       // Save character generation data to flags for reference
       try {
-        await created.setFlag("swse", "chargenData", this.characterData);
+        await created.setFlag('swse', 'chargenData', this.characterData);
       } catch (flagError) {
-        SWSELogger.warn("Failed to save chargen data to flags:", flagError);
+        SWSELogger.warn('Failed to save chargen data to flags:', flagError);
         // Non-critical error, continue
       }
 
       // Verify the actor has the expected structure
       if (!created.system || !created.name) {
         await created.delete();
-        throw new Error("Created actor has invalid structure");
+        throw new Error('Created actor has invalid structure');
       }
 
       // Store the actor reference
@@ -3077,16 +3079,16 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       ui.notifications.info(`Character ${this.characterData.name} created successfully!`);
     } catch (err) {
-      SWSELogger.error("chargen: actor creation failed", err);
+      SWSELogger.error('chargen: actor creation failed', err);
       ui.notifications.error(`Failed to create character: ${err.message}. See console for details.`);
 
       // Ensure we clean up if something went wrong and actor exists
       if (created && !this.actor) {
         try {
           await created.delete();
-          SWSELogger.log("Rolled back partial actor creation");
+          SWSELogger.log('Rolled back partial actor creation');
         } catch (deleteError) {
-          SWSELogger.error("Failed to rollback actor creation:", deleteError);
+          SWSELogger.error('Failed to rollback actor creation:', deleteError);
         }
       }
     }
@@ -3101,7 +3103,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       const items = [];
       const classItem = {
         name: selectedClassName,
-        type: "class",
+        type: 'class',
         img: this.characterData.classes[0].img,
         system: {
           classId: this.characterData.classes[0].classId,
@@ -3111,7 +3113,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       items.push(classItem);
 
       if (items.length > 0) {
-        await this.actor.createEmbeddedDocuments("Item", items);
+        await this.actor.createEmbeddedDocuments('Item', items);
       }
 
       // Update mentor with new class target
@@ -3124,7 +3126,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           SWSELogger.log(`CharGen | Updated mentor memory for ${mentorId} with target class: ${selectedClassName}`);
         }
       } catch (err) {
-        SWSELogger.warn("Failed to update mentor memory for new class:", err);
+        SWSELogger.warn('Failed to update mentor memory for new class:', err);
       }
 
       ui.notifications.info(`${this.actor.name} learned the ${selectedClassName} class!`);
@@ -3133,7 +3135,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Full level-up: increment level and add new items
     const newLevel = (this.actor.system.level || 1) + 1;
-    const updates = { "system.level": newLevel };
+    const updates = { 'system.level': newLevel };
 
     // Recalculate HP for new level
     const conMod = this.actor.system.attributes.con.mod || 0;
@@ -3142,19 +3144,19 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     );
     const hitDie = classDoc?.system?.hitDie || 6;
     const hpGain = Math.floor(hitDie / 2) + 1 + conMod;
-    updates["system.hp.max"] = this.actor.system.hp.max + hpGain;
-    updates["system.hp.value"] = this.actor.system.hp.value + hpGain;
+    updates['system.hp.max'] = this.actor.system.hp.max + hpGain;
+    updates['system.hp.value'] = this.actor.system.hp.value + hpGain;
 
     await globalThis.SWSE.ActorEngine.updateActor(this.actor, updates);
 
     // Add new feats/talents/powers
     const items = [];
-    for (const f of (this.characterData.feats || [])) items.push(f);
-    for (const t of (this.characterData.talents || [])) items.push(t);
-    for (const p of (this.characterData.powers || [])) items.push(p);
+    for (const f of (this.characterData.feats || [])) {items.push(f);}
+    for (const t of (this.characterData.talents || [])) {items.push(t);}
+    for (const p of (this.characterData.powers || [])) {items.push(p);}
 
     if (items.length > 0) {
-      await this.actor.createEmbeddedDocuments("Item", items);
+      await this.actor.createEmbeddedDocuments('Item', items);
     }
 
     ui.notifications.info(`${this.actor.name} leveled up to level ${newLevel}!`);
@@ -3249,7 +3251,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Sort feats within each category and calculate indent levels
     for (const category of Object.values(categorized)) {
-      if (!category.feats) continue;
+      if (!category.feats) {continue;}
 
       // Sort by chain and chain order
       category.feats.sort((a, b) => {
@@ -3259,8 +3261,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           }
           return a.chain.localeCompare(b.chain);
         }
-        if (a.chain) return -1;
-        if (b.chain) return 1;
+        if (a.chain) {return -1;}
+        if (b.chain) {return 1;}
         return a.name.localeCompare(b.name);
       });
 
@@ -3279,7 +3281,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           const prereqFeat = category.feats.find(f => f.name === currentPrereq);
           currentPrereq = prereqFeat?.prerequisiteFeat;
 
-          if (indentLevel > 10) break;
+          if (indentLevel > 10) {break;}
         }
 
         feat.indentLevel = indentLevel;
@@ -3289,9 +3291,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     // Add uncategorized if any exist
     if (uncategorized.length > 0) {
       categorized.uncategorized = {
-        name: "Other Feats",
-        description: "Feats without a specific category",
-        icon: "📋",
+        name: 'Other Feats',
+        description: 'Feats without a specific category',
+        icon: '📋',
         order: 999,
         feats: uncategorized
       };
@@ -3356,25 +3358,25 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    */
   _getDefaultSkills() {
     return [
-      { key: "acrobatics", name: "Acrobatics", ability: "dex", trained: false, armorCheck: true },
-      { key: "climb", name: "Climb", ability: "str", trained: false, armorCheck: true },
-      { key: "deception", name: "Deception", ability: "cha", trained: false },
-      { key: "endurance", name: "Endurance", ability: "con", trained: false, armorCheck: true },
-      { key: "gatherInformation", name: "Gather Information", ability: "cha", trained: false },
-      { key: "initiative", name: "Initiative", ability: "dex", trained: false },
-      { key: "jump", name: "Jump", ability: "str", trained: false, armorCheck: true },
-      { key: "knowledge", name: "Knowledge", ability: "int", trained: true },
-      { key: "mechanics", name: "Mechanics", ability: "int", trained: true },
-      { key: "perception", name: "Perception", ability: "wis", trained: false },
-      { key: "persuasion", name: "Persuasion", ability: "cha", trained: false },
-      { key: "pilot", name: "Pilot", ability: "dex", trained: false },
-      { key: "ride", name: "Ride", ability: "dex", trained: false },
-      { key: "stealth", name: "Stealth", ability: "dex", trained: false, armorCheck: true },
-      { key: "survival", name: "Survival", ability: "wis", trained: false },
-      { key: "swim", name: "Swim", ability: "str", trained: false, armorCheck: true },
-      { key: "treatInjury", name: "Treat Injury", ability: "wis", trained: false },
-      { key: "useComputer", name: "Use Computer", ability: "int", trained: true },
-      { key: "useTheForce", name: "Use the Force", ability: "cha", trained: true }
+      { key: 'acrobatics', name: 'Acrobatics', ability: 'dex', trained: false, armorCheck: true },
+      { key: 'climb', name: 'Climb', ability: 'str', trained: false, armorCheck: true },
+      { key: 'deception', name: 'Deception', ability: 'cha', trained: false },
+      { key: 'endurance', name: 'Endurance', ability: 'con', trained: false, armorCheck: true },
+      { key: 'gatherInformation', name: 'Gather Information', ability: 'cha', trained: false },
+      { key: 'initiative', name: 'Initiative', ability: 'dex', trained: false },
+      { key: 'jump', name: 'Jump', ability: 'str', trained: false, armorCheck: true },
+      { key: 'knowledge', name: 'Knowledge', ability: 'int', trained: true },
+      { key: 'mechanics', name: 'Mechanics', ability: 'int', trained: true },
+      { key: 'perception', name: 'Perception', ability: 'wis', trained: false },
+      { key: 'persuasion', name: 'Persuasion', ability: 'cha', trained: false },
+      { key: 'pilot', name: 'Pilot', ability: 'dex', trained: false },
+      { key: 'ride', name: 'Ride', ability: 'dex', trained: false },
+      { key: 'stealth', name: 'Stealth', ability: 'dex', trained: false, armorCheck: true },
+      { key: 'survival', name: 'Survival', ability: 'wis', trained: false },
+      { key: 'swim', name: 'Swim', ability: 'str', trained: false, armorCheck: true },
+      { key: 'treatInjury', name: 'Treat Injury', ability: 'wis', trained: false },
+      { key: 'useComputer', name: 'Use Computer', ability: 'int', trained: true },
+      { key: 'useTheForce', name: 'Use the Force', ability: 'cha', trained: true }
     ];
   }
 
@@ -3404,7 +3406,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const match = featName.match(/^(.+?)\s+([IVX]+)$/);
 
     if (!match) {
-      return { level: 0, roman: "", baseName: featName };
+      return { level: 0, roman: '', baseName: featName };
     }
 
     const baseName = match[1].trim();
@@ -3424,7 +3426,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       return { level: value, roman: romanStr, baseName };
     }
 
-    return { level: 0, roman: "", baseName: featName };
+    return { level: 0, roman: '', baseName: featName };
   }
 
   /**
@@ -3451,13 +3453,13 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const listView = form.querySelector('.talents-list-view');
 
     if (view === 'graph') {
-      if (graphContainer) graphContainer.style.display = '';
-      if (listView) listView.style.display = 'none';
+      if (graphContainer) {graphContainer.style.display = '';}
+      if (listView) {listView.style.display = 'none';}
       // Re-render graph
       this._renderTalentTreeGraph(form);
     } else {
-      if (graphContainer) graphContainer.style.display = 'none';
-      if (listView) listView.style.display = '';
+      if (graphContainer) {graphContainer.style.display = 'none';}
+      if (listView) {listView.style.display = '';}
     }
   }
 
@@ -3468,7 +3470,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    */
   _renderTalentTreeGraph(root) {
     const container = root.querySelector('.talent-tree-graph-container');
-    if (!container || !this.selectedTalentTree) return;
+    if (!container || !this.selectedTalentTree) {return;}
 
     const treeName = this.selectedTalentTree;
     const allTalents = this._packs?.talents || [];

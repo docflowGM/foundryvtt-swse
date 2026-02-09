@@ -175,29 +175,29 @@ async function handleSkillChoice(feature, actor, engine) {
 
 export const FEATURE_DISPATCH_TABLE = {
     // Choice features (require UI selection)
-    "talent_choice": handleTalentChoice,
-    "feat_choice": handleFeatChoice,
-    "skill_choice": handleSkillChoice,
-    "force_technique_choice": handleForceTechniqueChoice,
-    "force_secret_choice": handleForceSecretChoice,
-    "starship_maneuver_choice": handleStarshipManeuverChoice,
-    "medical_secret_choice": handleMedicalSecretChoice,
+    'talent_choice': handleTalentChoice,
+    'feat_choice': handleFeatChoice,
+    'skill_choice': handleSkillChoice,
+    'force_technique_choice': handleForceTechniqueChoice,
+    'force_secret_choice': handleForceSecretChoice,
+    'starship_maneuver_choice': handleStarshipManeuverChoice,
+    'medical_secret_choice': handleMedicalSecretChoice,
 
     // Grant features (automatic)
-    "feat_grant": applyGrantedFeat,
-    "force_power_grant": applyForcePowerGrant,
-    "language_grant": applyLanguageGrant,
-    "equipment_grant": applyEquipmentGrant,
-    "force_point_grant": applyForcePointGrant,
-    "skill_grant": applySkillGranted,
+    'feat_grant': applyGrantedFeat,
+    'force_power_grant': applyForcePowerGrant,
+    'language_grant': applyLanguageGrant,
+    'equipment_grant': applyEquipmentGrant,
+    'force_point_grant': applyForcePointGrant,
+    'skill_grant': applySkillGranted,
 
     // Passive features
-    "class_feature": applyClassFeature,
-    "scaling_feature": applyScalingFeature,
+    'class_feature': applyClassFeature,
+    'scaling_feature': applyScalingFeature,
 
     // Aliases for backward compatibility
-    "choice": handleFeatChoice,  // Default to feat choice
-    "grant": applyGrantedFeat     // Default to feat grant
+    'choice': handleFeatChoice,  // Default to feat choice
+    'grant': applyGrantedFeat     // Default to feat grant
 };
 
 // ============================================================

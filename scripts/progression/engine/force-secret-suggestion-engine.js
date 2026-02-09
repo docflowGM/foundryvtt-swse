@@ -99,7 +99,7 @@ export class ForceSecretSuggestionEngine {
 
     // Sort by tier (descending) then score (descending)
     suggestions.sort((a, b) => {
-      if (b.tier !== a.tier) return b.tier - a.tier;
+      if (b.tier !== a.tier) {return b.tier - a.tier;}
       return b.score - a.score;
     });
 
@@ -268,8 +268,8 @@ export class ForceSecretSuggestionEngine {
 
     // Infer from dark side points
     const dspPercent = maxDSP > 0 ? dsp / maxDSP : 0;
-    if (dspPercent > 0.6) return 'sith';
-    if (dspPercent < 0.3) return 'jedi';
+    if (dspPercent > 0.6) {return 'sith';}
+    if (dspPercent < 0.3) {return 'jedi';}
     return 'neutral';
   }
 

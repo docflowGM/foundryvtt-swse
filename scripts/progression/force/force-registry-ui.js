@@ -3,8 +3,8 @@
  * Loads and indexes Force powers, techniques, and secrets
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { PrerequisiteChecker } from "../../data/prerequisite-checker.js";
+import { SWSELogger } from '../../utils/logger.js';
+import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 
 export const ForceRegistry = {
   _powers: [],
@@ -16,9 +16,9 @@ export const ForceRegistry = {
    */
   async build() {
     try {
-      const powerPack = game.packs.get("foundryvtt-swse.forcepowers");
-      const secretPack = game.packs.get("foundryvtt-swse.forcesecrets");
-      const techPack = game.packs.get("foundryvtt-swse.forcetechniques");
+      const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
+      const secretPack = game.packs.get('foundryvtt-swse.forcesecrets');
+      const techPack = game.packs.get('foundryvtt-swse.forcetechniques');
 
       this._powers = powerPack ? await powerPack.getDocuments() : [];
       this._secrets = secretPack ? await secretPack.getDocuments() : [];
@@ -29,7 +29,7 @@ export const ForceRegistry = {
         `${this._secrets.length} secrets, ${this._techniques.length} techniques`
       );
     } catch (err) {
-      SWSELogger.error("Failed to build ForceRegistry:", err);
+      SWSELogger.error('Failed to build ForceRegistry:', err);
       this._powers = [];
       this._secrets = [];
       this._techniques = [];
@@ -137,4 +137,4 @@ export const ForceRegistry = {
   }
 };
 
-SWSELogger.log("ForceRegistry (UI) module loaded");
+SWSELogger.log('ForceRegistry (UI) module loaded');

@@ -51,10 +51,10 @@ export function registerCombatSuggestionHooks() {
    */
   let debounceTimer = null;
   Hooks.on('updateToken', async (token, update, context) => {
-    if (!game.user.isGM || !game.combat?.started) return;
+    if (!game.user.isGM || !game.combat?.started) {return;}
 
     // Clear previous timer
-    if (debounceTimer) clearTimeout(debounceTimer);
+    if (debounceTimer) {clearTimeout(debounceTimer);}
 
     // Debounce evaluation: 500ms after last token change
     debounceTimer = setTimeout(() => {

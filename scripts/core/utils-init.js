@@ -4,23 +4,23 @@ import { SWSELogger } from '../utils/logger.js';
 // Initialize SWSE utility functions
 // ============================================
 
-import * as MathUtils from "../utils/math-utils.js";
-import * as StringUtils from "../utils/string-utils.js";
-import * as CombatUtils from "../combat/utils/combat-utils.js";
-import * as CharacterUtils from "../utils/character-utils.js";
-import * as DataUtils from "../utils/data-utils.js";
-import * as UIUtils from "../utils/ui-utils.js";
-import * as ValidationUtils from "../utils/validation-utils.js";
-import * as DiceUtils from "../utils/dice-utils.js";
-import * as DebugTools from "../debug/debug-tools.js";
+import * as MathUtils from '../utils/math-utils.js';
+import * as StringUtils from '../utils/string-utils.js';
+import * as CombatUtils from '../combat/utils/combat-utils.js';
+import * as CharacterUtils from '../utils/character-utils.js';
+import * as DataUtils from '../utils/data-utils.js';
+import * as UIUtils from '../utils/ui-utils.js';
+import * as ValidationUtils from '../utils/validation-utils.js';
+import * as DiceUtils from '../utils/dice-utils.js';
+import * as DebugTools from '../debug/debug-tools.js';
 
 /**
  * Initialize utilities and expose them on game.swse.utils
  */
 export function initializeUtils() {
-  SWSELogger.log("SWSE | Initializing utilities...");
+  SWSELogger.log('SWSE | Initializing utilities...');
 
-  if (!game.swse) game.swse = {};
+  if (!game.swse) {game.swse = {};}
 
   game.swse.utils = {
     math: MathUtils,
@@ -36,5 +36,5 @@ export function initializeUtils() {
   // Dev helpers (macros / smoke tests / toggles)
   game.swse.debug = DebugTools;
 
-  SWSELogger.log("SWSE | ✓ Utils initialized:", Object.keys(game.swse.utils));
+  SWSELogger.log('SWSE | ✓ Utils initialized:', Object.keys(game.swse.utils));
 }

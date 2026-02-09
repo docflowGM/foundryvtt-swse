@@ -12,7 +12,7 @@ import { escapeHtml } from '../../utils/string-utils.js';
 export async function _onSelectType(event) {
   event.preventDefault();
   const type = event.currentTarget.dataset.type;
-  this.characterData.isDroid = (type === "droid");
+  this.characterData.isDroid = (type === 'droid');
 
   SWSELogger.log(`SWSE CharGen | Selected type: ${type} (isDroid: ${this.characterData.isDroid})`);
   await this._onNextStep(event);
@@ -54,13 +54,13 @@ export async function _onSelectSize(event) {
 
   // Apply size modifiers to abilities (in addition to degree bonuses)
   const sizeModifiers = {
-    "tiny": { dex: 4, str: -4 },
-    "small": { dex: 2, str: -2 },
-    "medium": {},
-    "large": { str: 4, dex: -2 },
-    "huge": { str: 8, dex: -4 },
-    "gargantuan": { str: 12, dex: -4 },
-    "colossal": { str: 16, dex: -4 }
+    'tiny': { dex: 4, str: -4 },
+    'small': { dex: 2, str: -2 },
+    'medium': {},
+    'large': { str: 4, dex: -2 },
+    'huge': { str: 8, dex: -4 },
+    'gargantuan': { str: 12, dex: -4 },
+    'colossal': { str: 16, dex: -4 }
   };
 
   const mods = sizeModifiers[size] || {};
@@ -77,11 +77,11 @@ export async function _onSelectSize(event) {
  */
 export function _getDroidDegreeBonuses(degree) {
   const bonuses = {
-    "1st-degree": { int: 2, wis: 2, str: -2 },
-    "2nd-degree": { int: 2, cha: -2 },
-    "3rd-degree": { wis: 2, cha: 2, str: -2 },
-    "4th-degree": { dex: 2, int: -2, cha: -2 },
-    "5th-degree": { str: 4, int: -4, cha: -4 }
+    '1st-degree': { int: 2, wis: 2, str: -2 },
+    '2nd-degree': { int: 2, cha: -2 },
+    '3rd-degree': { wis: 2, cha: 2, str: -2 },
+    '4th-degree': { dex: 2, int: -2, cha: -2 },
+    '5th-degree': { str: 4, int: -4, cha: -4 }
   };
   return bonuses[degree] || {};
 }
@@ -90,15 +90,15 @@ export function _getDroidDegreeBonuses(degree) {
  * Get cost factor based on droid size
  */
 export function _getCostFactor() {
-  const size = this.characterData.droidSize || "medium";
+  const size = this.characterData.droidSize || 'medium';
   const costFactors = {
-    "tiny": 5,
-    "small": 2,
-    "medium": 1,
-    "large": 2,
-    "huge": 5,
-    "gargantuan": 10,
-    "colossal": 20
+    'tiny': 5,
+    'small': 2,
+    'medium': 1,
+    'large': 2,
+    'huge': 5,
+    'gargantuan': 10,
+    'colossal': 20
   };
   return costFactors[size] || 1;
 }
@@ -112,21 +112,21 @@ export function _getCostFactor() {
  */
 export function _populateDroidBuilder(root) {
   const doc = root || this.element;
-  if (!doc) return;
+  if (!doc) {return;}
 
   // Mark that droid was built (at least attempted) in initial step if we're in droid-builder step
-  if (this.currentStep === "droid-builder") {
+  if (this.currentStep === 'droid-builder') {
     this.characterData.droidBuiltInInitial = true;
   }
 
   // Get house rule settings for credits
-  const baseCredits = game.settings.get('foundryvtt-swse', "droidConstructionCredits") || 1000;
+  const baseCredits = game.settings.get('foundryvtt-swse', 'droidConstructionCredits') || 1000;
   this.characterData.droidCredits.base = baseCredits;
   this.characterData.droidCredits.remaining = baseCredits - this.characterData.droidCredits.spent;
 
   // Initialize default locomotion (Walking) if not already set
   if (!this.characterData.droidSystems.locomotion) {
-    const walkingSystem = DROID_SYSTEMS.locomotion.find(l => l.id === "walking");
+    const walkingSystem = DROID_SYSTEMS.locomotion.find(l => l.id === 'walking');
     if (walkingSystem) {
       const costFactor = this._getCostFactor();
       const size = this.characterData.droidSize;
@@ -150,7 +150,7 @@ export function _populateDroidBuilder(root) {
 
   // Initialize default processor (Basic - free with all droids) if not already set
   if (!this.characterData.droidSystems.processor) {
-    const basicSystem = DROID_SYSTEMS.processors.find(p => p.id === "basic");
+    const basicSystem = DROID_SYSTEMS.processors.find(p => p.id === 'basic');
     if (basicSystem) {
       this.characterData.droidSystems.processor = {
         id: basicSystem.id,
@@ -180,7 +180,7 @@ export function _populateDroidBuilder(root) {
  */
 export function _populateLocomotionSystems(doc) {
   const container = doc.querySelector('#locomotion-list');
-  if (!container) return;
+  if (!container) {return;}
 
   const costFactor = this._getCostFactor();
   const size = this.characterData.droidSize;
@@ -225,12 +225,12 @@ export function _populateLocomotionSystems(doc) {
  */
 function _buildLocomotionEnhancements(doc) {
   const selectedLocomotion = this.characterData.droidSystems.locomotion?.id;
-  if (!selectedLocomotion) return '';
+  if (!selectedLocomotion) {return '';}
 
   const costFactor = this._getCostFactor();
   const size = this.characterData.droidSize;
   const selectedSystem = DROID_SYSTEMS.locomotion.find(l => l.id === selectedLocomotion);
-  if (!selectedSystem) return '';
+  if (!selectedSystem) {return '';}
 
   let html = '<div class="enhancements-section">';
   html += '<h4>Locomotion Enhancements</h4>';
@@ -281,7 +281,7 @@ function _buildLocomotionEnhancements(doc) {
  */
 export function _populateProcessorSystems(doc) {
   const container = doc.querySelector('#processor-list');
-  if (!container) return;
+  if (!container) {return;}
 
   const costFactor = this._getCostFactor();
   let html = '<div class="systems-grid">';
@@ -345,7 +345,7 @@ export function _populateProcessorSystems(doc) {
  */
 export function _populateAppendageSystems(doc) {
   const container = doc.querySelector('#appendages-list');
-  if (!container) return;
+  if (!container) {return;}
 
   const costFactor = this._getCostFactor();
   let html = '<div class="systems-grid">';
@@ -400,7 +400,7 @@ export function _populateAppendageSystems(doc) {
  */
 function _buildAppendageEnhancements(doc) {
   const selectedAppendages = this.characterData.droidSystems.appendages || [];
-  if (selectedAppendages.length === 0) return '';
+  if (selectedAppendages.length === 0) {return '';}
 
   let html = '<div class="enhancements-section"><h4>Appendage Enhancements</h4>';
   html += '<p class="enhancement-info">Add enhancements to your appendages for improved functionality.</p>';
@@ -410,11 +410,11 @@ function _buildAppendageEnhancements(doc) {
 
   for (const appendageRef of selectedAppendages) {
     const appendageDef = DROID_SYSTEMS.appendages.find(a => a.id === appendageRef.id);
-    if (!appendageDef) continue;
+    if (!appendageDef) {continue;}
 
     // Find enhancements for this appendage
     for (const enhancement of DROID_SYSTEMS.appendageEnhancements) {
-      if (!enhancement.requiresAppendage) continue;
+      if (!enhancement.requiresAppendage) {continue;}
 
       const required = Array.isArray(enhancement.requiresAppendage)
         ? enhancement.requiresAppendage
@@ -489,7 +489,7 @@ export function _populateAccessories(doc) {
  */
 export function _populateAccessoryCategory(doc, category, items) {
   const container = doc.querySelector(`#accessories-${category}`);
-  if (!container) return;
+  if (!container) {return;}
 
   const costFactor = this._getCostFactor();
   let html = '<div class="systems-grid">';
@@ -545,7 +545,7 @@ export function _onShopTabClick(event) {
   // Switch active panel
   doc.querySelectorAll('.shop-panel').forEach(p => p.classList.remove('active'));
   const panel = doc.querySelector(`[data-panel="${tabName}"]`);
-  if (panel) panel.classList.add('active');
+  if (panel) {panel.classList.add('active');}
 
   // Update cart if switching to cart tab
   if (tabName === 'cart') {
@@ -568,7 +568,7 @@ export function _onAccessoryTabClick(event) {
   // Switch active accessory panel
   doc.querySelectorAll('.accessory-panel').forEach(p => p.classList.remove('active'));
   const panel = doc.querySelector(`[data-accessory-panel="${tabName}"]`);
-  if (panel) panel.classList.add('active');
+  if (panel) {panel.classList.add('active');}
 }
 
 /**
@@ -585,7 +585,7 @@ export function _onPurchaseSystem(event) {
 
   // Check if can afford
   if (cost > this.characterData.droidCredits.remaining) {
-    ui.notifications.warn("Not enough credits!");
+    ui.notifications.warn('Not enough credits!');
     return;
   }
 
@@ -721,8 +721,8 @@ export function _onRemoveSystem(event) {
       this.characterData.droidCredits.spent -= system.cost;
       const heuristic = DROID_SYSTEMS.processors.find(p => p.id === 'heuristic');
       this.characterData.droidSystems.processor = {
-        name: heuristic?.name || "Heuristic Processor",
-        id: "heuristic",
+        name: heuristic?.name || 'Heuristic Processor',
+        id: 'heuristic',
         cost: 0,
         weight: heuristic?.weight || 5
       };
@@ -833,13 +833,13 @@ export function _updateDroidCreditsDisplay(doc) {
     } else {
       // Remove note if class has been selected
       const noteEl = baseEl.parentElement.querySelector('.pending-credits-note');
-      if (noteEl) noteEl.remove();
+      if (noteEl) {noteEl.remove();}
     }
   }
 
   // Update spent credits
   const spentEl = doc.querySelector('.spent-credits');
-  if (spentEl) spentEl.textContent = this.characterData.droidCredits.spent.toLocaleString();
+  if (spentEl) {spentEl.textContent = this.characterData.droidCredits.spent.toLocaleString();}
 
   // Update remaining credits
   const remainingEl = doc.querySelector('.remaining-credits');
@@ -856,7 +856,7 @@ export function _updateDroidCreditsDisplay(doc) {
 
   // Update total weight
   const weightEl = doc.querySelector('.total-weight');
-  if (weightEl) weightEl.textContent = this.characterData.droidSystems.totalWeight.toLocaleString();
+  if (weightEl) {weightEl.textContent = this.characterData.droidSystems.totalWeight.toLocaleString();}
 
   // Update cart count
   this._updateCartCount(doc);
@@ -870,10 +870,10 @@ export function _updateCartCount(doc) {
   let count = 0;
 
   // Locomotion (always counts if present)
-  if (this.characterData.droidSystems.locomotion) count++;
+  if (this.characterData.droidSystems.locomotion) {count++;}
 
   // Processor (always free Heuristic, but still counts as a system)
-  if (this.characterData.droidSystems.processor) count++;
+  if (this.characterData.droidSystems.processor) {count++;}
 
   // Appendages (all count, including the 2 free hands)
   count += this.characterData.droidSystems.appendages.length;
@@ -882,7 +882,7 @@ export function _updateCartCount(doc) {
   count += this.characterData.droidSystems.accessories.length;
 
   const cartCountEl = doc.querySelector('#cart-count');
-  if (cartCountEl) cartCountEl.textContent = count;
+  if (cartCountEl) {cartCountEl.textContent = count;}
 }
 
 /**
@@ -890,7 +890,7 @@ export function _updateCartCount(doc) {
  */
 export function _updateCartDisplay(doc) {
   const cartItemsList = doc.querySelector('#cart-items-list');
-  if (!cartItemsList) return;
+  if (!cartItemsList) {return;}
 
   // Clear cart (safe - emptying element)
   cartItemsList.innerHTML = '';
@@ -978,7 +978,7 @@ export function _updateCartDisplay(doc) {
  */
 export function _updateCartValidation(doc) {
   const validationContainer = doc.querySelector('#cart-validation');
-  if (!validationContainer) return;
+  if (!validationContainer) {return;}
 
   const issues = [];
 
@@ -1018,25 +1018,25 @@ export function _updateCartValidation(doc) {
 export function _validateDroidBuilder() {
   // Must have locomotion
   if (!this.characterData.droidSystems.locomotion) {
-    ui.notifications.warn("Droids must have a locomotion system!");
+    ui.notifications.warn('Droids must have a locomotion system!');
     return false;
   }
 
   // Must have processor (always true since Heuristic is free)
   if (!this.characterData.droidSystems.processor) {
-    ui.notifications.warn("Droids must have a processor!");
+    ui.notifications.warn('Droids must have a processor!');
     return false;
   }
 
   // Must have at least one appendage
   if (this.characterData.droidSystems.appendages.length === 0) {
-    ui.notifications.warn("Droids must have at least one appendage!");
+    ui.notifications.warn('Droids must have at least one appendage!');
     return false;
   }
 
   // Can't be over budget
   if (this.characterData.droidCredits.remaining < 0) {
-    ui.notifications.warn("You are over budget! Remove some systems.");
+    ui.notifications.warn('You are over budget! Remove some systems.');
     return false;
   }
 
@@ -1052,10 +1052,10 @@ export async function _onBuildLater(event) {
   // Mark that player skipped initial droid building
   this.characterData.droidBuiltInInitial = false;
 
-  SWSELogger.log("SWSE CharGen | Player deferred droid building until final step");
+  SWSELogger.log('SWSE CharGen | Player deferred droid building until final step');
 
   // Show info message
-  ui.notifications.info("You can customize your droid after selecting your class and background!");
+  ui.notifications.info('You can customize your droid after selecting your class and background!');
 
   // Proceed to next step
   await this._onNextStep(event);
@@ -1066,7 +1066,7 @@ export async function _onBuildLater(event) {
  */
 export function _populateFinalDroidBuilder(root) {
   const doc = root || this.element;
-  if (!doc) return;
+  if (!doc) {return;}
 
   // Get equipment engine to calculate final credits
   const EquipmentEngine = globalThis.SWSE?.EquipmentEngine;
@@ -1180,12 +1180,12 @@ export async function _onImportDroid(event) {
   const self = this;
 
   const dialog = new Dialog({
-    title: "Import Droid Type",
+    title: 'Import Droid Type',
     content: dialogContent,
     buttons: {
       cancel: {
         icon: '<i class="fas fa-times"></i>',
-        label: "Cancel"
+        label: 'Cancel'
       }
     },
     render: (html) => {
@@ -1297,7 +1297,7 @@ export async function _importDroidType(droid) {
   // Guard against undefined droid
   if (!droid) {
     SWSELogger.error(`SWSE CharGen | Cannot import droid: droid is undefined or null`);
-    ui.notifications.error("Failed to import droid. The droid data is missing.");
+    ui.notifications.error('Failed to import droid. The droid data is missing.');
     return;
   }
 
@@ -1323,7 +1323,7 @@ export async function _importDroidType(droid) {
 
   // Set as droid
   this.characterData.isDroid = true;
-  this.characterData.droidDegree = droid.system.droidDegree || "2nd-degree";
+  this.characterData.droidDegree = droid.system.droidDegree || '2nd-degree';
   this.characterData.importedDroidData = droid; // Store for later use
 
   // Droids don't have CON
@@ -1343,7 +1343,7 @@ export async function _importDroidType(droid) {
   ui.notifications.success(`${droid.name} template loaded! Continue with class selection.`);
 
   // Continue to class selection
-  this.currentStep = "class";
+  this.currentStep = 'class';
   await this.render();
 }
 

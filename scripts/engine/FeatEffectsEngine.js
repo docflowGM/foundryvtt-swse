@@ -120,7 +120,7 @@ export class FeatEffectsEngine {
 
             effects.push({
                 name: `${featName} (Defense Bonus)`,
-                icon: "icons/svg/upgrade.svg",
+                icon: 'icons/svg/upgrade.svg',
                 changes: [{
                     key: `system.defenses.${defenseType}.misc`,
                     mode: 2, // ADD
@@ -183,7 +183,7 @@ export class FeatEffectsEngine {
 
                 effects.push({
                     name: `${featName} (${conditionalInfo.label} ${condition})`,
-                    icon: "icons/svg/upgrade.svg",
+                    icon: 'icons/svg/upgrade.svg',
                     changes: [{
                         key: `system.defenses.${defenseType}.misc`,
                         mode: 2, // ADD
@@ -287,7 +287,7 @@ export class FeatEffectsEngine {
 
             effects.push({
                 name: `${featName} (Skill Bonus)`,
-                icon: "icons/svg/upgrade.svg",
+                icon: 'icons/svg/upgrade.svg',
                 changes: [{
                     key: `system.skills.${skillKey}.miscMod`,
                     mode: 2, // ADD
@@ -377,7 +377,7 @@ export class FeatEffectsEngine {
 
                 effects.push({
                     name: `${featName} (${conditionalInfo.label} ${condition})`,
-                    icon: "icons/svg/upgrade.svg",
+                    icon: 'icons/svg/upgrade.svg',
                     changes: [{
                         key: `system.skills.${skillKey}.miscMod`,
                         mode: 2, // ADD
@@ -435,7 +435,7 @@ export class FeatEffectsEngine {
 
             effects.push({
                 name: `${featName} (Attack Bonus)`,
-                icon: "icons/svg/upgrade.svg",
+                icon: 'icons/svg/upgrade.svg',
                 changes: [{
                     key: changeKey,
                     mode: 2, // ADD
@@ -490,7 +490,7 @@ export class FeatEffectsEngine {
 
             effects.push({
                 name: `${featName} (Damage Bonus)`,
-                icon: "icons/svg/upgrade.svg",
+                icon: 'icons/svg/upgrade.svg',
                 changes: [{
                     key: changeKey,
                     mode: 2, // ADD
@@ -536,7 +536,7 @@ export class FeatEffectsEngine {
 
             effects.push({
                 name: `${featName} (Hit Points)`,
-                icon: "icons/svg/upgrade.svg",
+                icon: 'icons/svg/upgrade.svg',
                 changes: [{
                     key: 'system.hitPoints.bonusPerLevel',
                     mode: 2, // ADD
