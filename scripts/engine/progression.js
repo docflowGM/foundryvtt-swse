@@ -20,6 +20,25 @@ export class SWSEProgressionEngine {
     FINALIZE: 'finalize'
   };
 
+  static STEPS = {
+    // Shared steps
+    CLASS: 'class',
+    SKILLS: 'skills',
+    FEATS: 'feats',
+    FORCE_TECHNIQUES: 'force-techniques',
+    FORCE_SECRETS: 'force-secrets',
+    STARSHIP_MANEUVERS: 'starship-maneuvers',
+    TALENTS: 'talents',
+    FINALIZE: 'finalize',
+    // Chargen only
+    SPECIES: 'species',
+    BACKGROUND: 'background',
+    ATTRIBUTES: 'attributes',
+    // Levelup only
+    HP: 'hp',
+    ABILITIES: 'abilities'
+  };
+
   constructor(actor, mode = SWSEProgressionEngine.MODES.CHARGEN) {
     swseLogger.log(`[PROGRESSION] ====== ENGINE CONSTRUCTOR START ======`);
     swseLogger.log(`[PROGRESSION] Constructor params: mode="${mode}", actor="${actor?.name || 'UNKNOWN'}", actor.id="${actor?.id || 'UNKNOWN'}"`);
@@ -79,70 +98,70 @@ export class SWSEProgressionEngine {
       swseLogger.log(`[PROGRESSION-STEPS] Setting up CHARGEN steps...`);
       this.chargenSteps = [
         {
-          id: 'species',
+          id: SWSEProgressionEngine.STEPS.SPECIES,
           label: 'Species',
           subtitle: 'Choose your species',
           icon: 'glyph-species'
         },
         {
-          id: 'background',
+          id: SWSEProgressionEngine.STEPS.BACKGROUND,
           label: 'Background',
           subtitle: 'Choose your background',
           icon: 'glyph-background'
         },
         {
-          id: 'attributes',
+          id: SWSEProgressionEngine.STEPS.ATTRIBUTES,
           label: 'Attributes',
           subtitle: 'Set your ability scores',
           icon: 'glyph-attributes'
         },
         {
-          id: 'class',
+          id: SWSEProgressionEngine.STEPS.CLASS,
           label: 'Class',
           subtitle: 'Choose your class',
           icon: 'glyph-class'
         },
         {
-          id: 'skills',
+          id: SWSEProgressionEngine.STEPS.SKILLS,
           label: 'Skills',
           subtitle: 'Train your skills',
           icon: 'glyph-skills'
         },
         {
-          id: 'feats',
+          id: SWSEProgressionEngine.STEPS.FEATS,
           label: 'Feats',
           subtitle: 'Select your feats',
           icon: 'glyph-feats'
         },
         {
-          id: 'force-techniques',
+          id: SWSEProgressionEngine.STEPS.FORCE_TECHNIQUES,
           label: 'Force Techniques',
           subtitle: 'Select Force Techniques',
           icon: 'glyph-force-techniques',
           conditional: true
         },
         {
-          id: 'force-secrets',
+          id: SWSEProgressionEngine.STEPS.FORCE_SECRETS,
           label: 'Force Secrets',
           subtitle: 'Select Force Secrets',
           icon: 'glyph-force-secrets',
           conditional: true
         },
         {
-          id: 'starship-maneuvers',
+          id: SWSEProgressionEngine.STEPS.STARSHIP_MANEUVERS,
           label: 'Starship Maneuvers',
           subtitle: 'Select Maneuvers',
           icon: 'glyph-starship-maneuvers',
           conditional: true
         },
         {
-          id: 'talents',
+          id: SWSEProgressionEngine.STEPS.TALENTS,
           label: 'Talents',
           subtitle: 'Choose your talents',
           icon: 'glyph-talents'
         },
         {
-          id: 'finalize',
+          id: SWSEProgressionEngine.STEPS.FINALIZE,
           label: 'Finalize',
           subtitle: 'Review and confirm',
           icon: 'glyph-finalize'
@@ -151,64 +170,64 @@ export class SWSEProgressionEngine {
     } else {
       this.levelUpSteps = [
         {
-          id: 'class',
+          id: SWSEProgressionEngine.STEPS.CLASS,
           label: 'Class',
           subtitle: 'Choose class for this level',
           icon: 'glyph-class'
         },
         {
-          id: 'hp',
+          id: SWSEProgressionEngine.STEPS.HP,
           label: 'Hit Points',
           subtitle: 'Roll or take average',
           icon: 'glyph-hp'
         },
         {
-          id: 'skills',
+          id: SWSEProgressionEngine.STEPS.SKILLS,
           label: 'Skills',
           subtitle: 'Allocate skill points',
           icon: 'glyph-skills'
         },
         {
-          id: 'feats',
+          id: SWSEProgressionEngine.STEPS.FEATS,
           label: 'Feats',
           subtitle: 'Select new feats',
           icon: 'glyph-feats'
         },
         {
-          id: 'force-techniques',
+          id: SWSEProgressionEngine.STEPS.FORCE_TECHNIQUES,
           label: 'Force Techniques',
           subtitle: 'Select Force Techniques',
           icon: 'glyph-force-techniques',
           conditional: true
         },
         {
-          id: 'force-secrets',
+          id: SWSEProgressionEngine.STEPS.FORCE_SECRETS,
           label: 'Force Secrets',
           subtitle: 'Select Force Secrets',
           icon: 'glyph-force-secrets',
           conditional: true
         },
         {
-          id: 'starship-maneuvers',
+          id: SWSEProgressionEngine.STEPS.STARSHIP_MANEUVERS,
           label: 'Starship Maneuvers',
           subtitle: 'Select Maneuvers',
           icon: 'glyph-starship-maneuvers',
           conditional: true
         },
         {
-          id: 'talents',
+          id: SWSEProgressionEngine.STEPS.TALENTS,
           label: 'Talents',
           subtitle: 'Choose new talents',
           icon: 'glyph-talents'
         },
         {
-          id: 'abilities',
+          id: SWSEProgressionEngine.STEPS.ABILITIES,
           label: 'Abilities',
           subtitle: 'Increase ability score (if applicable)',
           icon: 'glyph-attributes'
         },
         {
-          id: 'finalize',
+          id: SWSEProgressionEngine.STEPS.FINALIZE,
           label: 'Finalize',
           subtitle: 'Review and apply',
           icon: 'glyph-finalize'
@@ -421,29 +440,29 @@ async applyScalingFeature(feature) {
 
     // Chargen specific logic
     if (this.mode === SWSEProgressionEngine.MODES.CHARGEN) {
-      if (id === 'background') {return this.completedSteps.includes('species');}
-      if (id === 'attributes') {return this.completedSteps.includes('background');}
-      if (id === 'class') {return this.completedSteps.includes('attributes');}
-      if (id === 'skills') {return this.completedSteps.includes('class');}
-      if (id === 'feats') {return this.completedSteps.includes('skills');}
-      if (id === 'force-techniques') {return this.completedSteps.includes('feats');}
-      if (id === 'force-secrets') {return this.completedSteps.includes('force-techniques') || !this._shouldShowConditionalStep('force-techniques');}
-      if (id === 'starship-maneuvers') {return this.completedSteps.includes('force-secrets') || !this._shouldShowConditionalStep('force-secrets');}
-      if (id === 'talents') {return this.completedSteps.includes('starship-maneuvers') || !this._shouldShowConditionalStep('starship-maneuvers');}
-      if (id === 'finalize') {return this.completedSteps.includes('talents');}
+      if (id === SWSEProgressionEngine.STEPS.BACKGROUND) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.SPECIES);}
+      if (id === SWSEProgressionEngine.STEPS.ATTRIBUTES) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.BACKGROUND);}
+      if (id === SWSEProgressionEngine.STEPS.CLASS) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.ATTRIBUTES);}
+      if (id === SWSEProgressionEngine.STEPS.SKILLS) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.CLASS);}
+      if (id === SWSEProgressionEngine.STEPS.FEATS) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.SKILLS);}
+      if (id === SWSEProgressionEngine.STEPS.FORCE_TECHNIQUES) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.FEATS);}
+      if (id === SWSEProgressionEngine.STEPS.FORCE_SECRETS) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.FORCE_TECHNIQUES) || !this._shouldShowConditionalStep(SWSEProgressionEngine.STEPS.FORCE_TECHNIQUES);}
+      if (id === SWSEProgressionEngine.STEPS.STARSHIP_MANEUVERS) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.FORCE_SECRETS) || !this._shouldShowConditionalStep(SWSEProgressionEngine.STEPS.FORCE_SECRETS);}
+      if (id === SWSEProgressionEngine.STEPS.TALENTS) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.STARSHIP_MANEUVERS) || !this._shouldShowConditionalStep(SWSEProgressionEngine.STEPS.STARSHIP_MANEUVERS);}
+      if (id === SWSEProgressionEngine.STEPS.FINALIZE) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.TALENTS);}
     }
 
     // Level-up specific logic
     if (this.mode === SWSEProgressionEngine.MODES.LEVELUP) {
-      if (id === 'hp') {return this.completedSteps.includes('class');}
-      if (id === 'skills') {return this.completedSteps.includes('hp');}
-      if (id === 'feats') {return this.completedSteps.includes('skills');}
-      if (id === 'force-techniques') {return this.completedSteps.includes('feats');}
-      if (id === 'force-secrets') {return this.completedSteps.includes('force-techniques') || !this._shouldShowConditionalStep('force-techniques');}
-      if (id === 'starship-maneuvers') {return this.completedSteps.includes('force-secrets') || !this._shouldShowConditionalStep('force-secrets');}
-      if (id === 'talents') {return this.completedSteps.includes('starship-maneuvers') || !this._shouldShowConditionalStep('starship-maneuvers');}
-      if (id === 'abilities') {return this.completedSteps.includes('talents');}
-      if (id === 'finalize') {return this.completedSteps.includes('abilities');}
+      if (id === SWSEProgressionEngine.STEPS.HP) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.CLASS);}
+      if (id === SWSEProgressionEngine.STEPS.SKILLS) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.HP);}
+      if (id === SWSEProgressionEngine.STEPS.FEATS) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.SKILLS);}
+      if (id === SWSEProgressionEngine.STEPS.FORCE_TECHNIQUES) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.FEATS);}
+      if (id === SWSEProgressionEngine.STEPS.FORCE_SECRETS) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.FORCE_TECHNIQUES) || !this._shouldShowConditionalStep(SWSEProgressionEngine.STEPS.FORCE_TECHNIQUES);}
+      if (id === SWSEProgressionEngine.STEPS.STARSHIP_MANEUVERS) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.FORCE_SECRETS) || !this._shouldShowConditionalStep(SWSEProgressionEngine.STEPS.FORCE_SECRETS);}
+      if (id === SWSEProgressionEngine.STEPS.TALENTS) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.STARSHIP_MANEUVERS) || !this._shouldShowConditionalStep(SWSEProgressionEngine.STEPS.STARSHIP_MANEUVERS);}
+      if (id === SWSEProgressionEngine.STEPS.ABILITIES) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.TALENTS);}
+      if (id === SWSEProgressionEngine.STEPS.FINALIZE) {return this.completedSteps.includes(SWSEProgressionEngine.STEPS.ABILITIES);}
     }
 
     return true;
@@ -508,7 +527,7 @@ async applyScalingFeature(feature) {
     }
 
     // Auto-advance to next step if not at finalize
-    if (id !== 'finalize') {
+    if (id !== SWSEProgressionEngine.STEPS.FINALIZE) {
       const steps = this.getSteps();
       const currentIndex = steps.findIndex(s => s.id === id);
       const nextStep = steps[currentIndex + 1];
@@ -2834,7 +2853,7 @@ export function initializeProgressionHooks() {
   // Reopen last step on ready (if in progress)
   Hooks.once('ready', () => {
     const engine = game.swse?.progression;
-    if (engine?.current && engine.completedSteps.length > 0 && !engine.completedSteps.includes('finalize')) {
+    if (engine?.current && engine.completedSteps.length > 0 && !engine.completedSteps.includes(SWSEProgressionEngine.STEPS.FINALIZE)) {
       swseLogger.log(`Resuming progression at step: ${engine.current}`);
       Hooks.call('swse:progression:resume', engine.current);
     }
