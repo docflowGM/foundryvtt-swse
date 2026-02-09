@@ -8,6 +8,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 export class DarkSideTalentMechanics {
 
@@ -260,7 +261,7 @@ export class DarkSideTalentMechanics {
         </div>
       `;
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: { actor: actor },
         content: messageContent,
         flavor: 'Wrath of the Dark Side - Delayed Damage',

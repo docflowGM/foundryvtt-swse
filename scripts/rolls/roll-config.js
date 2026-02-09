@@ -4,6 +4,7 @@
  * @module rolls/roll-config
  */
 
+import { createChatMessage } from '../core/document-api-v13.js';
 import { SWSELogger } from '../utils/logger.js';
 
 /* ============================================================================
@@ -752,7 +753,7 @@ export async function rollCriticalConfirmation({ actor, weapon, attackBonus, tar
     </style>
   `;
 
-  await ChatMessage.create({
+  await createChatMessage({
     speaker: ChatMessage.getSpeaker({ actor }),
     content: html,
     rolls: [roll]
@@ -836,7 +837,7 @@ export async function rollConcealmentCheck(missChance, actor = null) {
     </style>
   `;
 
-  await ChatMessage.create({
+  await createChatMessage({
     speaker: actor ? ChatMessage.getSpeaker({ actor }) : ChatMessage.getSpeaker(),
     content: html,
     rolls: [roll]

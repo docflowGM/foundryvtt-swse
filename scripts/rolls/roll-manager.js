@@ -1,3 +1,4 @@
+import { createChatMessage } from '../core/document-api-v13.js';
 /* scripts/rolls/roll-manager.js
    Centralized roll creation/evaluation and message helpers.
 */
@@ -25,7 +26,7 @@ export class RollManager {
         content,
         flags: { swse: { roll: true } }
       }, chatData, { inplace: false });
-      return ChatMessage.create(messageData);
+      return createChatMessage(messageData);
     } catch (err) {
       swseLogger.error('SWSE | rollToChat failed', err);
       return null;

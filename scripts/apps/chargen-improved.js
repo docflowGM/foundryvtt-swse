@@ -7,6 +7,7 @@ import { SWSELogger } from '../utils/logger.js';
 
 import CharacterGenerator from './chargen/chargen-main.js';
 import { getClassProperty, getHitDie, getTrainedSkills, getTalentTrees } from './chargen/chargen-property-accessor.js';
+import { createActor } from '../core/document-api-v13.js';
 
 export default class CharacterGeneratorImproved extends CharacterGenerator {
 
@@ -380,7 +381,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
     SWSELogger.log('SWSE CharGen | Creating actor with data:', actorData);
 
-    const actor = await Actor.create(actorData);
+    const actor = await createActor(actorData);
     return actor;
   }
 

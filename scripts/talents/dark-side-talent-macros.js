@@ -6,6 +6,7 @@
 
 import DarkSideTalentMechanics from './dark-side-talent-mechanics.js';
 import { SWSELogger } from '../utils/logger.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 export class DarkSideTalentMacros {
 
@@ -61,7 +62,7 @@ export class DarkSideTalentMacros {
 
             const success = await DarkSideTalentMechanics.triggerSwiftPower(selectedActor, power);
             if (success) {
-              await ChatMessage.create({
+              await createChatMessage({
                 speaker: { actor: selectedActor },
                 content: `<h3><img src="icons/svg/item-bag.svg" style="width: 20px; height: 20px;"> Swift Power</h3>
                           <p><strong>${selectedActor.name}</strong> uses ${power.name} as a <strong>Swift Action</strong> instead of a Standard or Move Action!</p>`,

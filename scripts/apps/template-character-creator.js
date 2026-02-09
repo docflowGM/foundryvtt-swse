@@ -1,5 +1,6 @@
 import SWSEFormApplication from './base/swse-form-application.js';
 import { ProgressionEngine } from '../progression/engine/progression-engine.js';
+import { createActor } from '../core/document-api-v13.js';
 // ============================================
 // Template Character Creator
 // Class-first selection with playing card UI
@@ -358,7 +359,7 @@ async _prepareContext(options) {
       };
 
       // Create the actor
-      const actor = await Actor.create(actorData);
+      const actor = await createActor(actorData);
 
       if (!actor) {
         ui.notifications.error('Failed to create character');

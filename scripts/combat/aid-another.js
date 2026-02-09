@@ -10,6 +10,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { createChatMessage } from '../../core/document-api-v13.js';
 
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 export class AidAnother {
@@ -76,7 +77,7 @@ export class AidAnother {
         </div>
       `;
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor: aidingActor }),
         content: message
       });
@@ -136,7 +137,7 @@ export class AidAnother {
         </div>
       `;
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor: aidingActor }),
         content: message
       });
@@ -195,7 +196,7 @@ export class AidAnother {
         </div>
       `;
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor: suppressingActor }),
         content: message
       });

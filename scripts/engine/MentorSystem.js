@@ -1,5 +1,6 @@
 // scripts/engine/MentorSystem.js
 import { swseLogger } from '../utils/logger.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 /**
  * MentorSystem - Async, fault-tolerant narrative guidance system
@@ -666,7 +667,7 @@ export class MentorSystem {
         </div>
       `;
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: { alias: mentorVoice.name },
         content,
         whisper: [game.user.id], // Only to the player

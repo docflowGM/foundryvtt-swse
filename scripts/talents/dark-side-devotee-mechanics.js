@@ -10,6 +10,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 export class DarkSideDevoteeMechanics {
 
@@ -69,7 +70,7 @@ export class DarkSideDevoteeMechanics {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Channel Aggression - Bonus Damage',
@@ -169,7 +170,7 @@ export class DarkSideDevoteeMechanics {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Channel Anger - Rage Activated'
@@ -213,7 +214,7 @@ export class DarkSideDevoteeMechanics {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Channel Anger - Rage Ended'
@@ -299,7 +300,7 @@ export class DarkSideDevoteeMechanics {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Crippling Strike - Speed Reduced'
@@ -353,7 +354,7 @@ export class DarkSideDevoteeMechanics {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: targetActor },
       content: chatContent,
       flavor: 'Crippling Strike - Effect Ended'
@@ -477,7 +478,7 @@ export class DarkSideDevoteeMechanics {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: `${isGreater ? 'Greater ' : ''}Dark Side Talisman Created`
@@ -519,7 +520,7 @@ export class DarkSideDevoteeMechanics {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Dark Side Talisman - Destroyed'

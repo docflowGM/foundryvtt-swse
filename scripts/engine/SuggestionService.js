@@ -14,6 +14,7 @@
 import { SWSELogger } from '../utils/logger.js';
 import { SuggestionEngineCoordinator } from './SuggestionEngineCoordinator.js';
 import { CompendiumResolver } from './CompendiumResolver.js';
+import { createActor } from '../core/document-api-v13.js';
 import { SuggestionExplainer } from './SuggestionExplainer.js';
 import { getAllowedReasonDomains } from '../suggestions/suggestion-focus-map.js';
 import { getReasonRelevance } from '../suggestions/reason-relevance.js';
@@ -113,8 +114,8 @@ async function _ensureActorDoc(actorOrData) {
 
   // Try to create a temporary actor from data (chargen often uses raw actor data)
   try {
-    if (globalThis.Actor?.create && actorOrData && typeof actorOrData === 'object') {
-      return await Actor.create(actorOrData, { temporary: true });
+    if (actorOrData && typeof actorOrData === 'object') {
+      return await createActor(actorOrData, { temporary: true });
     }
   } catch (err) {
     console.warn('[SuggestionService] Failed to create temporary actor for suggestions', err);

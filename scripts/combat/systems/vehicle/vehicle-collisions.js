@@ -8,6 +8,7 @@
  */
 
 import { measureDistance, getVehicleCTPenalty, createVehicleCTEffect } from './vehicle-shared.js';
+import { createChatMessage } from '../../../../core/document-api-v13.js';
 import { DamageSystem } from '../../damage-system.js';
 
 export class SWSEVehicleCollisions {
@@ -41,7 +42,7 @@ export class SWSEVehicleCollisions {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html
     });
@@ -194,7 +195,7 @@ export async function createCollisionMessage(result) {
     </div>
   `;
 
-  await ChatMessage.create({
+  await createChatMessage({
     speaker: ChatMessage.getSpeaker({ actor: vehicle }),
     content,
     style: CONST.CHAT_MESSAGE_STYLES.OTHER

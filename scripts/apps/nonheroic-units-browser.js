@@ -4,6 +4,7 @@
  */
 
 import SWSEApplication from './base/swse-application.js';
+import { createActor } from '../core/document-api-v13.js';
 
 export class NonheroicUnitsBrowser extends SWSEApplication {
   constructor(options = {}) {
@@ -258,7 +259,7 @@ async _prepareContext(options) {
       };
 
       // Create actor in compendium
-      const actor = await Actor.create(actorData, { pack: npcPack.collection });
+      const actor = await createActor(actorData, { pack: npcPack.collection });
 
       ui.notifications.info(`Imported ${unit.name} to NPC compendium!`);
 

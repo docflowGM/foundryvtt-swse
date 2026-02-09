@@ -5,6 +5,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { HealingMechanics } from './houserule-healing.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 const NS = 'foundryvtt-swse';
 
@@ -121,11 +122,11 @@ export class HealingSkillIntegration {
             if (result?.success) {
               // Display success message
               const message = this.createHealingMessage(actor, targetActor, application, result);
-              ChatMessage.create(message);
+              createChatMessage(message);
             } else if (result) {
               // Display failure or partial result
               const message = this.createFailureMessage(actor, targetActor, application, result);
-              ChatMessage.create(message);
+              createChatMessage(message);
             }
           }
         },

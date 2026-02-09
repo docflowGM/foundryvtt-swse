@@ -7,6 +7,7 @@
  * everything in a single, organized file.
  */
 
+import { createChatMessage } from '../core/document-api-v13.js';
 import { SWSELogger } from '../utils/logger.js';
 
 // ============================================================================
@@ -383,7 +384,7 @@ export class KnowledgeUses {
     const checkResult = roll.total + tacticsBonus;
     const success = checkResult >= dc;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Battlefield Tactics</strong> - Unit Command<br>Reference: Clone Wars Campaign Guide<br>Unit: ${unitName}<br>DC: ${dc}<br>Activation Round: ${activationRound} of 3<br>Knowledge (Tactics) Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Swift Action`
     });
