@@ -560,7 +560,7 @@ Hooks.on('inspireConfidenceTriggered', async (actor) => {
         inspire: {
           label: 'Inspire',
           callback: async (html) => {
-            const allyId = html.find('#ally-select').val();
+            const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
             await NobleTalentMechanics.completeInspireConfidence(actor, allyId, result.combatId, result.usageFlag);
           }
         },
@@ -604,7 +604,7 @@ Hooks.on('bolsterAllyTriggered', async (actor) => {
         bolster: {
           label: 'Bolster',
           callback: async (html) => {
-            const allyId = html.find('#ally-select').val();
+            const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
             await NobleTalentMechanics.completeBolsterAlly(actor, allyId, result.tempHP, result.combatId, result.usageFlag);
           }
         },

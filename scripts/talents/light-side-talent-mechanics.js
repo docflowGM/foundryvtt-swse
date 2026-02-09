@@ -1250,7 +1250,7 @@ Hooks.on('directTriggered', async (actor) => {
         select: {
           label: 'Next',
           callback: async (html) => {
-            const allyId = html.find('#ally-select').val();
+            const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
             const ally = game.actors.get(allyId);
 
             // Get spent Force Powers from ally
@@ -1341,7 +1341,7 @@ Hooks.on('consularsWisdomTriggered', async (actor) => {
         grant: {
           label: 'Grant Wisdom Bonus',
           callback: async (html) => {
-            const allyId = html.find('#ally-select').val();
+            const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
             await LightSideTalentMechanics.completeConsularsWisdomSelection(
               actor,
               allyId,
@@ -1409,7 +1409,7 @@ Hooks.on('darkSidePowerTargeted', async (targetActor, darkSidePower, sourceActor
         activate: {
           label: 'Activate (Spend FP)',
           callback: async (html) => {
-            const powerId = html.find('#power-select').val();
+            const powerId = (html?.[0] ?? html)?.querySelector('#power-select')?.value;
             const power = targetActor.items.get(powerId);
             await LightSideTalentMechanics.completeDarkRetaliationSelection(
               targetActor,

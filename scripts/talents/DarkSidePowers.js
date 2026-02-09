@@ -1823,7 +1823,7 @@ Hooks.on('darkSideSavantTriggered', async (actor) => {
         select: {
           label: 'Return to Suite',
           callback: async (html) => {
-            const powerIdToReturn = html.find('#power-select').val();
+            const powerIdToReturn = (html?.[0] ?? html)?.querySelector('#power-select')?.value;
             await DarkSidePowers.completeDarkSideSavantSelection(
               actor,
               powerIdToReturn,

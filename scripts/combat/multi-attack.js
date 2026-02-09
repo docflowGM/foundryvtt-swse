@@ -560,9 +560,9 @@ export async function showFullAttackDialog(actor, equippedWeapons) {
           label: `Attack (${config.attacks.length}x)`,
           callback: html => {
             // Get selected weapon for Double/Triple Attack
-            const select = html.find('select[name="doubleAttackWeapon"]');
-            if (select.length) {
-              selectedDoubleAttackWeapon = select.val();
+            const select = html?.querySelector('select[name="doubleAttackWeapon"]');
+            if (select) {
+              selectedDoubleAttackWeapon = select.value;
               config = calculateFullAttackConfig(actor, primary, offhand, {
                 doubleAttackWeapon: selectedDoubleAttackWeapon
               });
@@ -579,12 +579,12 @@ export async function showFullAttackDialog(actor, equippedWeapons) {
       default: 'attack',
       render: html => {
         // Update attack list when weapon selection changes
-        html.find('select[name="doubleAttackWeapon"]').on('change', (ev) => {
+        html?.querySelector('select[name="doubleAttackWeapon"]')?.addEventListener('change', (ev) => {
           selectedDoubleAttackWeapon = ev.target.value;
           const newConfig = calculateFullAttackConfig(actor, primary, offhand, {
             doubleAttackWeapon: selectedDoubleAttackWeapon
           });
-          html.find('#attack-list').html(buildAttackList(newConfig));
+          html?.querySelector('#attack-list').innerHTML = buildAttackList(newConfig);
         });
       }
     });

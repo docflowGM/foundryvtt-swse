@@ -102,9 +102,9 @@ export class DamageSystem {
             icon: '<i class="fas fa-heart-broken"></i>',
             label: game.i18n.localize('SWSE.Dialogs.ApplyDamage.Button'),
             callback: async html => {
-              const amount = Math.max(0, Number(html.find('[name="amount"]').val() || 0));
-              const checkThreshold = html.find('[name="threshold"]').is(':checked');
-              const ignoreTemp = html.find('[name="ignoreTemp"]').is(':checked');
+              const amount = Math.max(0, Number((html?.[0] ?? html)?.querySelector('[name="amount"]')?.value || 0));
+              const checkThreshold = (html?.[0] ?? html)?.querySelector('[name="threshold"]')?.checked;
+              const ignoreTemp = (html?.[0] ?? html)?.querySelector('[name="ignoreTemp"]')?.checked;
 
               try {
                 await target.applyDamage(amount, { checkThreshold, ignoreTemp });
@@ -173,7 +173,7 @@ export class DamageSystem {
             icon: `<i class="fas ${icon}"></i>`,
             label,
             callback: async html => {
-              const amount = Math.max(0, Number(html.find('[name="amount"]').val() || 0));
+              const amount = Math.max(0, Number((html?.[0] ?? html)?.querySelector('[name="amount"]')?.value || 0));
 
               try {
                 await target.applyHealing(amount, { isRepair: isDroid });
@@ -230,7 +230,7 @@ export class DamageSystem {
             icon: '<i class="fas fa-check"></i>',
             label: 'Apply',
             callback: async html => {
-              const newCT = Number(html.find('[name="ct"]').val());
+              const newCT = Number((html?.[0] ?? html)?.querySelector('[name="ct"]')?.value);
               await target.update({ 'system.conditionTrack.current': newCT });
               resolve(newCT);
             }

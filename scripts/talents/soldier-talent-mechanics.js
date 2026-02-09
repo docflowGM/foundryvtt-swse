@@ -781,7 +781,7 @@ Hooks.on('coverFireTriggered', async (actor) => {
         cover: {
           label: 'Provide Cover',
           callback: async (html) => {
-            const allyId = html.find('#ally-select').val();
+            const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
             await SoldierTalentMechanics.completeCoverFire(actor, allyId, result.combatId, result.usageFlag);
           }
         },

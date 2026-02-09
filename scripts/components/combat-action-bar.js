@@ -165,9 +165,12 @@ export class CombatActionBar {
    * ------------------------------ */
 
   static _activateListeners(html, actor) {
-    html.find('button[data-action]').off('click').on('click', async event => {
-      const action = event.currentTarget.dataset.action;
-      await this._dispatchAction(actor, action);
+    const buttons = (html?.[0] ?? html).querySelectorAll('button[data-action]');
+    buttons.forEach(button => {
+      button.addEventListener('click', async event => {
+        const action = event.currentTarget.dataset.action;
+        await this._dispatchAction(actor, action);
+      });
     });
   }
 
@@ -294,7 +297,7 @@ export class CombatActionBar {
         <select name="weapon">
           ${weapons.map(w => `<option value="${w.id}">${escapeHTML(w.name)}</option>`).join('')}
         </select>`,
-      callback: html => weapons.find(w => w.id === html.find('select').val())
+      callback: html => weapons.find(w => w.id === (html?.[0] ?? html)?.querySelector('select')?.value)
     });
   }
 }

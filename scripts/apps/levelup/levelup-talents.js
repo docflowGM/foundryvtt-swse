@@ -345,31 +345,38 @@ export async function showTalentTreeDialog(treeName, talentData, actor, selectCa
     },
     default: 'close',
     render: (html) => {
+      // Get the DOM element (handle both jQuery and DOM element inputs)
+      const htmlElement = html instanceof jQuery ? html[0] : html;
+
       // Add click handlers for talent selection
-      html.find('.talent-node').click((e) => {
-        const talentName = $(e.currentTarget).data('talent-name');
-        selectCallback(talentName);
-        $(e.currentTarget).closest('.dialog').find('.window-close').click();
+      htmlElement.querySelectorAll('.talent-node').forEach(el => {
+        el.addEventListener('click', (e) => {
+          const talentName = e.currentTarget.dataset.talentName;
+          selectCallback(talentName);
+          e.currentTarget.closest('.dialog').querySelector('.window-close').click();
+        });
       });
 
       // Highlight prerequisites on hover
-      html.find('.talent-node').hover(
-        (e) => {
-          const talentName = $(e.currentTarget).data('talent-name');
+      htmlElement.querySelectorAll('.talent-node').forEach(el => {
+        el.addEventListener('mouseenter', (e) => {
+          const talentName = e.currentTarget.dataset.talentName;
           const node = talentGraph[talentName];
           if (node) {
             node.prereqs.forEach(prereq => {
-              html.find(`[data-talent-name="${prereq}"]`).addClass('highlight-prereq');
+              htmlElement.querySelector(`[data-talent-name="${prereq}"]`)?.classList.add('highlight-prereq');
             });
             node.dependents.forEach(dep => {
-              html.find(`[data-talent-name="${dep}"]`).addClass('highlight-dependent');
+              htmlElement.querySelector(`[data-talent-name="${dep}"]`)?.classList.add('highlight-dependent');
             });
           }
-        },
-        () => {
-          html.find('.talent-node').removeClass('highlight-prereq highlight-dependent');
-        }
-      );
+        });
+        el.addEventListener('mouseleave', () => {
+          htmlElement.querySelectorAll('.talent-node').forEach(node => {
+            node.classList.remove('highlight-prereq', 'highlight-dependent');
+          });
+        });
+      });
     }
   }, {
     width: 800,

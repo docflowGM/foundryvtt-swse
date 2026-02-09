@@ -108,7 +108,7 @@ export class LightSideTalentMacros {
               use: {
                 label: 'Use Exposing Strike',
                 callback: async (html) => {
-                  const weaponId = html.find('#weapon-select').val();
+                  const weaponId = (html?.[0] ?? html)?.querySelector('#weapon-select')?.value;
                   selectedWeapon = selectedActor.items.get(weaponId);
                   await LightSideTalentMechanics.triggerExposingStrike(
                     selectedActor,
@@ -179,7 +179,7 @@ export class LightSideTalentMacros {
           activate: {
             label: 'Activate Power',
             callback: async (html) => {
-              const powerId = html.find('#power-select').val();
+              const powerId = (html?.[0] ?? html)?.querySelector('#power-select')?.value;
               const power = selectedActor.items.get(powerId);
               await LightSideTalentMechanics.completeDarkRetaliationSelection(
                 selectedActor,
@@ -256,8 +256,8 @@ export class LightSideTalentMacros {
           advise: {
             label: 'Grant Bonus',
             callback: async (html) => {
-              const allyId = html.find('#ally-select').val();
-              const skillName = html.find('#skill-select').val();
+              const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
+              const skillName = (html?.[0] ?? html)?.querySelector('#skill-select')?.value;
               await LightSideTalentMechanics.completeSkilledAdvisorSelection(
                 selectedActor,
                 allyId,
@@ -324,7 +324,7 @@ export class LightSideTalentMacros {
           grant: {
             label: 'Grant Boon',
             callback: async (html) => {
-              const allyId = html.find('#ally-select').val();
+              const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
               await LightSideTalentMechanics.completeApprenticeBoonSelection(
                 selectedActor,
                 allyId
@@ -416,8 +416,8 @@ export class LightSideTalentMacros {
           share: {
             label: 'Share Secret',
             callback: async (html) => {
-              const allyId = html.find('#ally-select').val();
-              const secretId = html.find('#secret-select').val();
+              const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
+              const secretId = (html?.[0] ?? html)?.querySelector('#secret-select')?.value;
               await LightSideTalentMechanics.completeShareForceSecretSelection(
                 selectedActor,
                 allyId,
@@ -485,7 +485,7 @@ export class LightSideTalentMacros {
           activate: {
             label: 'Activate Steel Resolve',
             callback: async (html) => {
-              const penalty = parseInt(html.find('#penalty-select').val());
+              const penalty = parseInt((html?.[0] ?? html)?.querySelector('#penalty-select')?.value);
               await LightSideTalentMechanics.completeSteelResolveSelection(
                 selectedActor,
                 penalty

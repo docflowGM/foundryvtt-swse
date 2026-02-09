@@ -1290,7 +1290,7 @@ Hooks.on('guidanceTriggered', async (actor) => {
         guide: {
           label: 'Grant Guidance',
           callback: async (html) => {
-            const allyId = html.find('#ally-select').val();
+            const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
             await ScoutTalentMechanics.completeGuidanceSelection(actor, allyId);
           }
         },
@@ -1334,7 +1334,7 @@ Hooks.on('getIntoPosTriggered', async (actor) => {
         position: {
           label: 'Position',
           callback: async (html) => {
-            const followerId = html.find('#follower-select').val();
+            const followerId = (html?.[0] ?? html)?.querySelector('#follower-select')?.value;
             await ScoutTalentMechanics.completeGetIntoPosition(actor, followerId);
           }
         },
@@ -1391,7 +1391,7 @@ Hooks.on('suddenAssaultTriggered', async (actor, targetToken) => {
         confirm: {
           label: 'Confirm',
           callback: async (html) => {
-            const hitValue = html.find('#hit-select').val() === 'true';
+            const hitValue = (html?.[0] ?? html)?.querySelector('#hit-select')?.value === 'true';
             await ScoutTalentMechanics.completeSuddenAssault(
               actor,
               result.targetActor,
@@ -1435,7 +1435,7 @@ Hooks.on('weavingStrideTriggered', async (actor) => {
       confirm: {
         label: 'Confirm',
         callback: async (html) => {
-          const aooCount = parseInt(html.find('#aoo-count').val()) || 0;
+          const aooCount = parseInt((html?.[0] ?? html)?.querySelector('#aoo-count')?.value) || 0;
           await ScoutTalentMechanics.completeWeavingStride(
             actor,
             aooCount,

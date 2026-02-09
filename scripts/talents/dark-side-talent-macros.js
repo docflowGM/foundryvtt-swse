@@ -57,7 +57,7 @@ export class DarkSideTalentMacros {
         use: {
           label: 'Use as Swift Action',
           callback: async (html) => {
-            const powerId = html.find('#power-select').val();
+            const powerId = (html?.[0] ?? html)?.querySelector('#power-select')?.value;
             const power = selectedActor.items.get(powerId);
 
             const success = await DarkSideTalentMechanics.triggerSwiftPower(selectedActor, power);
@@ -135,7 +135,7 @@ export class DarkSideTalentMacros {
           select: {
             label: 'Return to Suite',
             callback: (html) => {
-              resolve(html.find('#power-select').val());
+              resolve((html?.[0] ?? html)?.querySelector('#power-select')?.value);
             }
           },
           cancel: {
