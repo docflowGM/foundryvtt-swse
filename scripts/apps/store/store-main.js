@@ -84,6 +84,7 @@ export class SWSEStore extends ApplicationV2 {
     this.itemsById = new Map();      // Engine provides this
     this.storeInventory = null;      // Engine inventory cache
     this.suggestions = new Map();    // Item ID → suggestion score
+    this.reviewsData = null;         // Loaded reviews pack
 
     this.cart = emptyCart();
     this._loaded = false;
@@ -113,9 +114,23 @@ export class SWSEStore extends ApplicationV2 {
     // DELEGATED TO ENGINE: Load inventory
     await this._loadStoreInventory();
 
+    // Load reviews pack
+    await this._loadReviewsData();
+
     // Wire suggestion engine for all items
     if (this.actor) {
       await this._generateSuggestionsForAllItems();
+    }
+  }
+
+  async _loadReviewsData() {
+    try {
+      const response = await fetch('systems/foundryvtt-swse/data/reviews/reviews.json');
+      if (response.ok) {
+        this.reviewsData = await response.json();
+      }
+    } catch (err) {
+      console.warn('[SWSE Store] Failed to load reviews data:', err);
     }
   }
 
@@ -819,41 +834,92 @@ export class SWSEStore extends ApplicationV2 {
   }
 
   _generateFlavorReviews(item, itemType) {
-    // Pool of flavor reviews by item type
-    const flavorPools = {
-      armor: [
-        { name: 'Marketplace Trader', text: 'Solid gear. Keeps you standing.' },
-        { name: 'Docking Bay Manager', text: 'Popular among our regular customers.' },
-        { name: 'Spaceport Gossip', text: 'I\'ve seen this protect people in tough spots.' }
-      ],
-      weapon: [
-        { name: 'Weapons Master', text: 'Well-balanced. Good choice for most situations.' },
-        { name: 'Bounty Hunter', text: 'Gets the job done. Reliable in the field.' },
-        { name: 'Collector', text: 'Craftsmanship is solid on this one.' }
-      ],
-      equipment: [
-        { name: 'Survivalist', text: 'Practical. You\'ll find yourself using this often.' },
-        { name: 'Tech Specialist', text: 'Does what it\'s supposed to do, no frills.' },
-        { name: 'Experienced Trader', text: 'Good value for what you\'re getting.' }
-      ]
-    };
+    if (!this.reviewsData) {
+      return null;
+    }
 
-    const pool = flavorPools[itemType] || flavorPools.equipment;
+    // Map item types to review pools
+    const reviewPoolKey = itemType === 'armor' ? 'armorReviews' :
+                         itemType === 'weapon' ? 'weaponReviews' :
+                         itemType === 'equipment' ? 'gearReviews' : null;
 
-    // Pick 2-3 random reviews from the pool
-    const shuffled = [...pool].sort(() => Math.random() - 0.5);
-    const selected = shuffled.slice(0, Math.min(2, shuffled.length));
+    if (!reviewPoolKey) {
+      return null;
+    }
 
-    return selected.map(review => `
-      <div class="flavor-review" style="margin-bottom: 8px; padding: 8px; background: rgba(0, 0, 0, 0.2); border-left: 2px solid rgba(0, 217, 255, 0.3); border-radius: 2px;">
-        <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); font-weight: bold; margin-bottom: 4px;">
-          ${review.name}
+    const reviewPool = this.reviewsData[reviewPoolKey];
+    if (!reviewPool || !reviewPool.short) {
+      return null;
+    }
+
+    // Randomly pick between short and long stories (if available)
+    const useShort = !reviewPool.longStories || Math.random() > 0.3;
+    const pool = useShort ? reviewPool.short : (reviewPool.longStories || reviewPool.short);
+
+    // Also occasionally mix in Neeko or Rendarr reviews
+    const includeNeeko = Math.random() > 0.7 && this.reviewsData.neekoReviews?.selfPromo;
+    const includeRendarr = Math.random() > 0.75 && this.reviewsData.rendarrReviews?.toxicPositive;
+
+    let selected = [];
+
+    // Pick 1-2 regular reviews
+    const regularCount = Math.floor(Math.random() * 2) + 1;
+    for (let i = 0; i < regularCount; i++) {
+      const review = pool[Math.floor(Math.random() * pool.length)];
+      selected.push({
+        name: 'Marketplace Customer',
+        text: review,
+        type: 'customer'
+      });
+    }
+
+    // Maybe add Neeko commentary
+    if (includeNeeko) {
+      const neekoReview = this.reviewsData.neekoReviews.selfPromo[
+        Math.floor(Math.random() * this.reviewsData.neekoReviews.selfPromo.length)
+      ];
+      selected.push({
+        name: 'Neeko',
+        text: neekoReview,
+        type: 'competitor'
+      });
+    }
+
+    // Maybe add Rendarr defense
+    if (includeRendarr && selected.some(r => r.type === 'competitor')) {
+      const rendarrReply = this.reviewsData.rendarrRepliesToNeeko[
+        Math.floor(Math.random() * this.reviewsData.rendarrRepliesToNeeko.length)
+      ];
+      selected.push({
+        name: 'Rendarr (Response)',
+        text: rendarrReply,
+        type: 'seller'
+      });
+    }
+
+    // Truncate to max 3 reviews
+    selected = selected.slice(0, 3);
+
+    return selected.map((review, idx) => {
+      const bgColor = review.type === 'competitor' ? 'rgba(100, 255, 100, 0.1)' :
+                      review.type === 'seller' ? 'rgba(255, 100, 100, 0.1)' :
+                      'rgba(0, 0, 0, 0.2)';
+
+      const borderColor = review.type === 'competitor' ? 'rgba(100, 255, 100, 0.3)' :
+                         review.type === 'seller' ? 'rgba(255, 100, 100, 0.3)' :
+                         'rgba(0, 217, 255, 0.3)';
+
+      return `
+        <div class="flavor-review" style="margin-bottom: 8px; padding: 8px; background: ${bgColor}; border-left: 2px solid ${borderColor}; border-radius: 2px;">
+          <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); font-weight: bold; margin-bottom: 4px;">
+            ${review.name}
+          </div>
+          <p style="margin: 0; font-size: 12px; line-height: 1.4; color: rgba(255, 255, 255, 0.8);">
+            "${review.text}"
+          </p>
         </div>
-        <p style="margin: 0; font-size: 12px; line-height: 1.4; color: rgba(255, 255, 255, 0.8);">
-          "${review.text}"
-        </p>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
   _renderCartUI() {

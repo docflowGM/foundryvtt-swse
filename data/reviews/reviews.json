@@ -1,0 +1,136 @@
+{
+  "meta": {
+    "version": "1.0",
+    "description": "SWSE Store Marketplace Dialogue Pack",
+    "notes": "All dialogue is intentionally unreliable, in-universe, and non-mechanical."
+  },
+
+  "armorReviews": {
+    "short": [
+      "Heavy. Does what it says. Don't expect to sprint.",
+      "Blaster bolts hurt less. Knees still hurt.",
+      "Looks intimidating. That alone scared off two idiots.",
+      "Good armor. Terrible for stairs.",
+      "Saved my life once. Still dents easily.",
+      "Maintenance is a pain but so is dying.",
+      "Not subtle. Not quiet. Very sturdy.",
+      "Everyone shoots you first.",
+      "Armor worked. Plan didn't.",
+      "Not worth it unless you're expecting real danger."
+    ],
+
+    "longStories": [
+      "I ordered this armor because Rendarr said it was 'battle proven.' What he did NOT say was that the battle was apparently against gravity. The crate arrived three days late, upside down, and the delivery droid wouldn't explain why it was smoking. Wore the armor anyway. Got shot once. Did not die. Fell down twice. Died a little inside.",
+      "Delivery took so long I forgot I ordered this. I thought someone sent me a prank crate. Opened it, boom, armor. Tried it on. Armor good. Helmet smells like someone else's head. Rendarr says 'previous owner was careful.' I do not believe him.",
+      "I wore this armor on a job where the plan was 'walk in confidently and hope no one shoots us.' They shot us. A lot. Armor held. Confidence held. My legs did not."
+    ]
+  },
+
+  "weaponReviews": {
+    "general": [
+      "Shoots faster than I expected. Missed a lot at first.",
+      "Powerful enough that I immediately reconsidered firing indoors.",
+      "Grip is comfortable but the recoil is not.",
+      "Fire rate surprised me in a bad way.",
+      "Feels balanced until you actually start shooting.",
+      "Trigger is sensitive. Too sensitive.",
+      "Weapon feels solid, but awkward to carry.",
+      "Sound alone scared off one target.",
+      "This thing heats up fast.",
+      "Not a quiet weapon. At all."
+    ],
+
+    "chaotic": [
+      "Why can't I return this?? Rendarr explain.",
+      "Recoil surprised me spiritually.",
+      "Dropped it once. Floor lost.",
+      "Why is this heavier AFTER firing.",
+      "This weapon is rude.",
+      "Trigger pull requires commitment.",
+      "My shoulder has filed a complaint.",
+      "Weapon fired. Soul left body.",
+      "No refunds?? What if my arms fall off.",
+      "Weapon makes a noise that feels illegal."
+    ]
+  },
+
+  "gearReviews": {
+    "general": [
+      "Why is this so heavy. It's a box.",
+      "Works great now that I hit it twice.",
+      "Smelled weird straight out of the crate.",
+      "Arrived late and already warm.",
+      "Pretty sure this was used.",
+      "Too expensive. Neeko's had it cheaper.",
+      "Works too well. Won't turn off.",
+      "Shipping took forever.",
+      "Feels overengineered.",
+      "I'd buy it again. Somewhere else."
+    ]
+  },
+
+  "neekoReviews": {
+    "selfPromo": [
+      "Thisss product hass been at Neeko'sss for three yearsss and never exploded once.",
+      "Neeko sellsss thessse cheaper, jussst saying.",
+      "Why wait for shipping when Neeko hass it right now?",
+      "Neeko testsss everything personally. With glove.",
+      "At Neeko'sss you can see it, touch it, drop it, then buy it.",
+      "If Rendarr sayysss 'delay', Neeko sayysss 'today'.",
+      "Neeko hass thessse in back. Rendarr hass excuses.",
+      "Neeko'sss price iss better. Alwayysss.",
+      "Next time, jussst come to Neeko firssst."
+    ]
+  },
+
+  "rendarrReviews": {
+    "toxicPositive": [
+      "This product performs exactly as intended under normal use.",
+      "Minor delays are normal in today's hyperspace economy.",
+      "Scratches add character and do not affect performance.",
+      "Works perfectly when used correctly.",
+      "We rarely see problems with this item.",
+      "Negative reviews often come from improper handling.",
+      "Our return policy is clearly stated.",
+      "We have sold this for years without incident.",
+      "Customer expectations vary.",
+      "Thank you for choosing Rendarr's."
+    ]
+  },
+
+  "rendarrRepliesToNeeko": [
+    "Thank you for your input, Neeko. We prefer not to comment on unverified claims.",
+    "We cannot confirm Neeko's statements regarding pricing accuracy.",
+    "This item has not been 'at Neeko's' as claimed.",
+    "Customers are encouraged to compare products responsibly.",
+    "We do not comment on competitor hygiene practices.",
+    "Product odor is a normal part of manufacturing.",
+    "This product performs consistently under standard conditions."
+  ],
+
+  "reviewerReplies": [
+    "Skill issue.",
+    "Had the opposite experience tbh.",
+    "Why would you even use it like that.",
+    "Mine didn't do that.",
+    "This review convinced me not to buy.",
+    "This review convinced me TO buy.",
+    "Lmao same.",
+    "Stop blaming the product.",
+    "Neeko warned about this.",
+    "Rendarr won't respond either."
+  ],
+
+  "responsesToReplies": [
+    "That's not what I said at all.",
+    "You're missing the point.",
+    "Okay but that's still not acceptable.",
+    "Why are you defending this.",
+    "Found the seller.",
+    "That doesn't excuse the smell.",
+    "Agree to disagree.",
+    "I regret replying now.",
+    "This escalated fast.",
+    "Still wouldn't buy it again."
+  ]
+}
