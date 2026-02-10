@@ -26,6 +26,10 @@ import {
   registerFeatureSettings,
   registerFeatureFlagsConsole
 } from './feature-flags.js';
+import {
+  registerTooltipSettings,
+  registerTooltipDiscoveryConsole
+} from './tooltip-discovery.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -44,8 +48,10 @@ export async function initializeHardeningSystem() {
     // Phase 6: Register settings and console helpers
     registerFirstRunSettings();
     registerFeatureSettings();
+    registerTooltipSettings();
     registerFirstRunConsoleHelpers();
     registerFeatureFlagsConsole();
+    registerTooltipDiscoveryConsole();
 
     // Create system namespace
     window.game.swse = window.game.swse || {};
@@ -56,7 +62,7 @@ export async function initializeHardeningSystem() {
     };
 
     log.info('SWSE | v13 hardening systems initialized');
-    log.info('SWSE | Phase 6 (First-run & Feature Flags) ready');
+    log.info('SWSE | Phase 6 (First-run, Feature Flags, Tooltip Discovery) ready');
     return true;
   } catch (err) {
     log.error('Failed to initialize hardening systems:', err.message);

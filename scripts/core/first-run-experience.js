@@ -10,6 +10,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { initializeTooltipDiscovery } from './tooltip-discovery.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const SETTING_KEY = 'welcomeShown';
@@ -176,6 +177,8 @@ async function showWelcomeDialog() {
               if (noAgain) {
                 await markWelcomeShown();
               }
+              // Start tooltip discovery after welcome closes
+              await initializeTooltipDiscovery();
               resolve(true);
             }
           }
