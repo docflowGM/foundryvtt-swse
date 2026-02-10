@@ -166,6 +166,51 @@
 }
 
 /* ============================================================ */
+/* PHASE GLYPH DISPLAY (VISUAL FEEDBACK)                        */
+/* ============================================================ */
+
+.overlay-phase-glyph {
+  font-family: 'Aurebesh', monospace;
+  font-size: 2.5rem;
+  color: #00ff88;
+  opacity: 0.6;
+  text-shadow:
+    0 0 8px rgba(0, 255, 136, 0.5),
+    0 0 16px rgba(0, 255, 136, 0.2);
+  margin: 0.5rem 0;
+  text-align: center;
+  letter-spacing: 0.15em;
+
+  /* Subtle pulsing to indicate phase change */
+  animation: phase-glyph-pulse 1s ease-in-out infinite;
+}
+
+@keyframes phase-glyph-pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay-phase-glyph {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .overlay-phase-glyph {
+    color: #1a4d2e;
+    text-shadow:
+      0 0 6px rgba(26, 77, 46, 0.3),
+      0 0 12px rgba(26, 77, 46, 0.1);
+  }
+}
+
+/* ============================================================ */
 /* TYPOGRAPHY: STATUS MESSAGES (SMALL, CYCLING)                 */
 /* ============================================================ */
 

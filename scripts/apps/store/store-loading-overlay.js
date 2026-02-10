@@ -8,6 +8,7 @@
  * - Manage lifecycle phases
  * - Update status messages (rotating through curated list)
  * - Drive progress bar fill
+ * - Display phase-relevant glyphs (Aurebesh glyph reuse)
  * - Respect accessibility settings
  * - Fade out and remove when complete
  *
@@ -16,6 +17,8 @@
  * - Font selection (CSS classes only)
  * - Timing of phases (driven by external events)
  */
+
+import { STORE_GLYPHS } from './store-glyph-map.js';
 
 const STATUS_MESSAGES = [
   'SYNCHRONIZING VENDOR MANIFESTS',
@@ -37,11 +40,24 @@ const SUBTITLE_DESCRIPTORS = [
   'BLACK MARKET INTERFACE ACTIVE'
 ];
 
+/**
+ * Phase-specific glyphs for visual feedback during boot.
+ * Reinforces glyph identity without adding new concepts.
+ */
+const PHASE_GLYPHS = [
+  STORE_GLYPHS.melee_weapon.aurebesh,      // Phase 1: cart load
+  STORE_GLYPHS.ranged_weapon.aurebesh,     // Phase 2: inventory load
+  STORE_GLYPHS.armor.aurebesh,             // Phase 3: reviews load
+  STORE_GLYPHS.droid.aurebesh,             // Phase 4: suggestions
+  STORE_GLYPHS.gear.aurebesh               // Phase 5: render complete
+];
+
 export class StoreLoadingOverlay {
   constructor(options = {}) {
     this.container = null;
     this.statusElement = null;
     this.progressBar = null;
+    this.phaseGlyphElement = null;
 
     this.useAurebesh = options.useAurebesh ?? true;
     this.reduceMotion = options.reduceMotion ?? false;
@@ -104,6 +120,13 @@ export class StoreLoadingOverlay {
     progressContainer.appendChild(progressFill);
     this.progressBar = progressFill;
 
+    // Phase-specific glyph (visual feedback on current phase)
+    const phaseGlyph = document.createElement('div');
+    phaseGlyph.className = 'overlay-phase-glyph';
+    phaseGlyph.textContent = PHASE_GLYPHS[0];
+    phaseGlyph.setAttribute('aria-hidden', 'true');
+    this.phaseGlyphElement = phaseGlyph;
+
     // Progress label (optional)
     const progressLabel = document.createElement('p');
     progressLabel.className = 'overlay-progress-label';
@@ -111,6 +134,7 @@ export class StoreLoadingOverlay {
 
     overlay.appendChild(title);
     overlay.appendChild(subtitle);
+    overlay.appendChild(phaseGlyph);
     overlay.appendChild(status);
     overlay.appendChild(progressContainer);
     overlay.appendChild(progressLabel);
@@ -139,13 +163,24 @@ export class StoreLoadingOverlay {
   }
 
   /**
-   * Advance to next phase and update progress bar
+   * Advance to next phase and update progress bar + phase glyph
    */
   advancePhase() {
     if (this.currentPhase < this.totalPhases) {
       this.currentPhase++;
       this._updateProgressBar();
+      this._updatePhaseGlyph();
     }
+  }
+
+  /**
+   * Update phase-specific glyph display
+   */
+  _updatePhaseGlyph() {
+    if (!this.phaseGlyphElement || this.currentPhase >= PHASE_GLYPHS.length) {
+      return;
+    }
+    this.phaseGlyphElement.textContent = PHASE_GLYPHS[this.currentPhase];
   }
 
   /**
