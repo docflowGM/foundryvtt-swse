@@ -159,6 +159,18 @@ export class SWSEStore extends ApplicationV2 {
           // Overflow pack is optional, don't fail if missing
           console.debug('[SWSE Store] Overflow reviews not found (optional)', overflowErr.message);
         }
+
+        // Try to load usernames pack
+        try {
+          const usernamesResponse = await fetch('systems/foundryvtt-swse/data/reviews/usernames.json');
+          if (usernamesResponse.ok) {
+            const usernamesData = await usernamesResponse.json();
+            this.reviewsData.usernames = usernamesData.usernames || [];
+          }
+        } catch (usernamesErr) {
+          // Usernames pack is optional, don't fail if missing
+          console.debug('[SWSE Store] Usernames not found (optional)', usernamesErr.message);
+        }
       }
     } catch (err) {
       console.warn('[SWSE Store] Failed to load reviews data:', err);
@@ -897,8 +909,11 @@ export class SWSEStore extends ApplicationV2 {
     const regularCount = Math.floor(Math.random() * 2) + 1;
     for (let i = 0; i < regularCount; i++) {
       const review = pool[Math.floor(Math.random() * pool.length)];
+      const username = this.reviewsData.usernames && this.reviewsData.usernames.length > 0
+        ? this.reviewsData.usernames[Math.floor(Math.random() * this.reviewsData.usernames.length)]
+        : 'Marketplace Customer';
       selected.push({
-        name: 'Marketplace Customer',
+        name: username,
         text: review,
         type: 'customer'
       });
