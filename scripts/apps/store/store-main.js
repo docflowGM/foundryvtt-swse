@@ -186,6 +186,32 @@ export class SWSEStore extends ApplicationV2 {
           // Vehicle pack is optional, don't fail if missing
           console.debug('[SWSE Store] Vehicle reviews not found (optional)', vehicleErr.message);
         }
+
+        // Try to load droid reviews pack
+        try {
+          const droidResponse = await fetch('systems/foundryvtt-swse/data/reviews/droid-reviews.json');
+          if (droidResponse.ok) {
+            const droidData = await droidResponse.json();
+            if (droidData.firstDegreeDroids) {
+              this.reviewsData.firstDegreeDroids = droidData.firstDegreeDroids;
+            }
+            if (droidData.secondDegreeDroids) {
+              this.reviewsData.secondDegreeDroids = droidData.secondDegreeDroids;
+            }
+            if (droidData.thirdDegreeDroids) {
+              this.reviewsData.thirdDegreeDroids = droidData.thirdDegreeDroids;
+            }
+            if (droidData.fourthDegreeDroids) {
+              this.reviewsData.fourthDegreeDroids = droidData.fourthDegreeDroids;
+            }
+            if (droidData.fifthDegreeDroids) {
+              this.reviewsData.fifthDegreeDroids = droidData.fifthDegreeDroids;
+            }
+          }
+        } catch (droidErr) {
+          // Droid pack is optional, don't fail if missing
+          console.debug('[SWSE Store] Droid reviews not found (optional)', droidErr.message);
+        }
       }
     } catch (err) {
       console.warn('[SWSE Store] Failed to load reviews data:', err);

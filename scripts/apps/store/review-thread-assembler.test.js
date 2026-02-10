@@ -53,6 +53,26 @@ const createMockDialoguePacks = () => ({
       'Handles well in open terrain',
       'Fuel consumption is concerning'
     ],
+    firstDegreeDroids: [
+      'Very helpful. Very judgmental.',
+      'This medical droid knows too much about me.'
+    ],
+    secondDegreeDroids: [
+      'Fixed the engine. Broke something else.',
+      'Keeps muttering about inefficiency.'
+    ],
+    thirdDegreeDroids: [
+      'Won\'t stop correcting my grammar.',
+      'Very polite. Too polite.'
+    ],
+    fourthDegreeDroids: [
+      'Too eager to engage.',
+      'Keeps requesting combat scenarios.'
+    ],
+    fifthDegreeDroids: [
+      'Lifts things. Sometimes people.',
+      'Very strong. Very literal.'
+    ],
     neekoReviews: {
       selfPromo: [
         'Neeko has better price'
@@ -466,6 +486,49 @@ export const reviewThreadAssemblerTests = {
     }
 
     console.log(`✓ testVehicleReviews passed (${customerReviews.length} reviews)`);
+    return true;
+  },
+
+  /**
+   * Droid reviews are properly assembled from all degree pools
+   */
+  testDroidReviews() {
+    const packs = createMockDialoguePacks();
+    const thread = ReviewThreadAssembler.build({
+      itemType: 'droid',
+      dialoguePacks: packs,
+      hasMentorReview: false,
+      mentorText: null
+    });
+
+    if (!thread.isValid) {
+      console.warn('[TEST FAIL] Droid thread validation failed');
+      return false;
+    }
+
+    const customerReviews = thread.reviews.filter(r => r.type === 'customer');
+    if (customerReviews.length < 6 || customerReviews.length > 12) {
+      console.warn(`[TEST FAIL] Droid review count out of bounds: ${customerReviews.length}`);
+      return false;
+    }
+
+    // Verify reviews come from droid packs (all degrees mixed)
+    const droidPool = [
+      ...packs.main.firstDegreeDroids,
+      ...packs.main.secondDegreeDroids,
+      ...packs.main.thirdDegreeDroids,
+      ...packs.main.fourthDegreeDroids,
+      ...packs.main.fifthDegreeDroids
+    ];
+
+    for (const review of customerReviews) {
+      if (!droidPool.includes(review.text)) {
+        console.warn(`[TEST FAIL] Review not from droid pack: "${review.text}"`);
+        return false;
+      }
+    }
+
+    console.log(`✓ testDroidReviews passed (${customerReviews.length} reviews from mixed droid degrees)`);
     return true;
   }
 };

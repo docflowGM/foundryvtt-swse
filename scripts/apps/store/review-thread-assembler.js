@@ -217,6 +217,17 @@ export class ReviewThreadAssembler {
     if (itemType === 'vehicle') {
       return main.vehicleReviews || [];
     }
+    if (itemType === 'droid') {
+      // Mix all droid degrees for variety
+      const allDroids = [
+        ...(main.firstDegreeDroids || []),
+        ...(main.secondDegreeDroids || []),
+        ...(main.thirdDegreeDroids || []),
+        ...(main.fourthDegreeDroids || []),
+        ...(main.fifthDegreeDroids || [])
+      ];
+      return allDroids.length > 0 ? allDroids : [];
+    }
 
     return [];
   }
@@ -245,6 +256,10 @@ export class ReviewThreadAssembler {
     if (itemType === 'vehicle') {
       // Vehicles don't have overflow yet, but gracefully handle if they do
       return overflow.vehicleReviewsOverflow || [];
+    }
+    if (itemType === 'droid') {
+      // Droids don't have overflow yet, but gracefully handle if they do
+      return overflow.droidReviewsOverflow || [];
     }
 
     return [];
