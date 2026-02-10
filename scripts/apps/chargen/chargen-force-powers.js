@@ -5,6 +5,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
+import { _findClassItem } from './chargen-shared.js';
 
 /**
  * Handle force power selection
@@ -70,8 +71,8 @@ export async function _onSelectForcePower(event) {
     // Calculate force levels from classes - look up class docs to check force sensitivity
     const forceLevels = (this.characterData.classes || [])
       .filter(c => {
-        // Look up the class document to check if it's force-sensitive
-        const classDoc = this._packs?.classes?.find(cd => cd.name === c.name);
+        // Defensive lookup: try ID first, fall back to name
+        const classDoc = _findClassItem(this._packs?.classes || [], c);
         return classDoc?.system?.forceSensitive === true;
       })
       .reduce((sum, cls) => sum + (cls.level || 1), 0);
@@ -172,8 +173,8 @@ export async function _getAvailableForcePowers() {
   // Calculate force levels from classes - look up class docs to check force sensitivity
   const forceLevels = (this.characterData.classes || [])
     .filter(c => {
-      // Look up the class document to check if it's force-sensitive
-      const classDoc = this._packs?.classes?.find(cd => cd.name === c.name);
+      // Defensive lookup: try ID first, fall back to name
+      const classDoc = _findClassItem(this._packs?.classes || [], c);
       return classDoc?.system?.forceSensitive === true;
     })
     .reduce((sum, cls) => sum + (cls.level || 1), 0);
