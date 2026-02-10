@@ -1,38 +1,25 @@
 /**
  * Background Suggestion Engine for Character Generation
+ * (PHASE 5D: UNIFIED_TIERS Refactor)
  *
  * Suggests backgrounds based on character's current class, species, abilities, and build direction.
  * Used in character generation to help players choose narratively and mechanically appropriate backgrounds.
+ * Now uses UNIFIED_TIERS system for consistent tier definitions.
  */
 
 import { SWSELogger } from '../utils/logger.js';
 import { BuildIntent } from './BuildIntent.js';
+import { UNIFIED_TIERS, getTierMetadata } from './suggestion-unified-tiers.js';
 
+// DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
+// Use UNIFIED_TIERS from suggestion-unified-tiers.js instead
 export const BACKGROUND_SUGGESTION_TIERS = {
-  CLASS_SYNERGY: 3,          // Background works well with character's class
-  ABILITY_SYNERGY: 2,        // Background's relevant skills match high abilities
-  THEME_SYNERGY: 2,          // Background aligns with character's build themes
-  SPECIES_SYNERGY: 1.5,      // Background fits the character's species narrative
-  LANGUAGE_BONUS: 1,         // Background offers relevant bonus language
-  FALLBACK: 0                // Legal option
-};
-
-export const BACKGROUND_TIER_REASONS = {
-  3: 'Perfect fit for your class',
-  2.5: 'Excellent synergy with your abilities and build',
-  2: 'Strong thematic alignment with your abilities or build',
-  1.5: 'Fits your species and narrative',
-  1: 'Offers a relevant bonus language',
-  0: 'Valid option'
-};
-
-export const BACKGROUND_TIER_ICONS = {
-  3: 'fas fa-star suggestion-prestige',
-  2.5: 'fas fa-fire suggestion-synergy',
-  2: 'fas fa-lightbulb suggestion-theme',
-  1.5: 'fas fa-dna suggestion-species',
-  1: 'fas fa-language suggestion-language',
-  0: ''
+  CLASS_SYNERGY: UNIFIED_TIERS.CATEGORY_SYNERGY,    // 3
+  ABILITY_SYNERGY: UNIFIED_TIERS.ABILITY_SYNERGY,   // 2
+  THEME_SYNERGY: UNIFIED_TIERS.ABILITY_SYNERGY,     // 2
+  SPECIES_SYNERGY: UNIFIED_TIERS.THEMATIC_FIT,      // 1
+  LANGUAGE_BONUS: UNIFIED_TIERS.THEMATIC_FIT,       // 1
+  FALLBACK: UNIFIED_TIERS.AVAILABLE                 // 0
 };
 
 export class BackgroundSuggestionEngine {
@@ -129,19 +116,18 @@ export class BackgroundSuggestionEngine {
 
   /**
    * Score a background based on character profile
+   * Uses UNIFIED_TIERS for consistent tier metadata
    * @private
    */
   static _scoringBackground(background, profile) {
-    let tier = BACKGROUND_SUGGESTION_TIERS.FALLBACK;
-    let reason = BACKGROUND_TIER_REASONS[0];
+    let tier = UNIFIED_TIERS.AVAILABLE;  // Start at lowest tier
     let score = 0;
 
     // CLASS SYNERGY: Check if background's relevant skills match class
     if (profile.class && background.relevantSkills) {
       const classSkillMatches = this._countClassSkillMatches(profile.class, background.relevantSkills);
       if (classSkillMatches > 0) {
-        tier = Math.max(tier, BACKGROUND_SUGGESTION_TIERS.CLASS_SYNERGY);
-        reason = BACKGROUND_TIER_REASONS[3];
+        tier = Math.max(tier, UNIFIED_TIERS.CATEGORY_SYNERGY);
         score += classSkillMatches * 0.5;
       }
     }
@@ -150,10 +136,7 @@ export class BackgroundSuggestionEngine {
     if (background.relevantSkills) {
       const abilityMatches = this._countAbilityMatches(background.relevantSkills, profile.highestAbility);
       if (abilityMatches > 0) {
-        tier = Math.max(tier, BACKGROUND_SUGGESTION_TIERS.ABILITY_SYNERGY);
-        if (tier >= BACKGROUND_SUGGESTION_TIERS.ABILITY_SYNERGY) {
-          reason = BACKGROUND_TIER_REASONS[2];
-        }
+        tier = Math.max(tier, UNIFIED_TIERS.ABILITY_SYNERGY);
         score += abilityMatches * 0.3;
       }
     }
@@ -162,29 +145,20 @@ export class BackgroundSuggestionEngine {
     if (profile.mentorBiases && Object.keys(profile.mentorBiases).length > 0) {
       const themeMatch = this._checkThemeAlignment(background, profile.mentorBiases);
       if (themeMatch) {
-        tier = Math.max(tier, BACKGROUND_SUGGESTION_TIERS.THEME_SYNERGY);
-        if (tier >= BACKGROUND_SUGGESTION_TIERS.THEME_SYNERGY && reason === BACKGROUND_TIER_REASONS[0]) {
-          reason = BACKGROUND_TIER_REASONS[2];
-        }
+        tier = Math.max(tier, UNIFIED_TIERS.ABILITY_SYNERGY);
         score += 0.4;
       }
     }
 
     // SPECIES SYNERGY: Check if background fits species narrative
     if (profile.species && this._isSpeciesBackground(background, profile.species)) {
-      tier = Math.max(tier, BACKGROUND_SUGGESTION_TIERS.SPECIES_SYNERGY);
-      if (tier === BACKGROUND_SUGGESTION_TIERS.SPECIES_SYNERGY) {
-        reason = BACKGROUND_TIER_REASONS[1.5];
-      }
+      tier = Math.max(tier, UNIFIED_TIERS.THEMATIC_FIT);
       score += 0.2;
     }
 
     // LANGUAGE BONUS: If background offers bonus language
     if (background.bonusLanguage) {
-      tier = Math.max(tier, BACKGROUND_SUGGESTION_TIERS.LANGUAGE_BONUS);
-      if (tier === BACKGROUND_SUGGESTION_TIERS.LANGUAGE_BONUS) {
-        reason = BACKGROUND_TIER_REASONS[1];
-      }
+      tier = Math.max(tier, UNIFIED_TIERS.THEMATIC_FIT);
       score += 0.1;
     }
 
@@ -193,11 +167,14 @@ export class BackgroundSuggestionEngine {
     if (profile.mentorBiases?.pragmatic) {score += 0.15;}
     if (profile.mentorBiases?.riskTolerance) {score += 0.1;}
 
+    const tierMetadata = getTierMetadata(tier);
     return {
       tier,
-      reason,
+      reason: tierMetadata.description,
       score,
-      icon: BACKGROUND_TIER_ICONS[tier] || ''
+      icon: tierMetadata.icon,
+      color: tierMetadata.color,
+      label: tierMetadata.label
     };
   }
 
