@@ -1,0 +1,474 @@
+/* ============================================================ */
+/* GM STORE DASHBOARD (AppV2)                                   */
+/* ============================================================ */
+
+.gm-store-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+}
+
+.dashboard-header {
+  padding: 1.5rem;
+  border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+  background: rgba(0, 20, 40, 0.4);
+}
+
+.dashboard-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: rgba(0, 255, 150, 0.95);
+  letter-spacing: 1px;
+  font-family: 'Aurebesh', sans-serif;
+}
+
+.dashboard-header .subtitle {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.85rem;
+  color: rgba(150, 150, 180, 0.7);
+  font-style: italic;
+}
+
+/* ============================================================ */
+/* TAB NAVIGATION                                               */
+/* ============================================================ */
+
+.dashboard-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+  background: rgba(0, 15, 30, 0.5);
+  padding: 0 1rem;
+}
+
+.tab-button {
+  flex: 0 0 auto;
+  padding: 0.8rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: rgba(150, 150, 180, 0.6);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  color: rgba(200, 200, 220, 0.8);
+}
+
+.tab-button.active {
+  border-bottom-color: rgba(0, 255, 150, 0.9);
+  color: rgba(0, 255, 150, 0.95);
+}
+
+/* ============================================================ */
+/* TAB CONTENT                                                  */
+/* ============================================================ */
+
+.dashboard-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.dashboard-tab {
+  display: none;
+  min-height: 100%;
+}
+
+.dashboard-tab.active {
+  display: block;
+}
+
+.dashboard-tab h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  color: rgba(0, 255, 150, 0.95);
+  letter-spacing: 0.5px;
+}
+
+.tab-description {
+  color: rgba(150, 150, 180, 0.7);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  padding: 0.8rem;
+  background: rgba(0, 255, 136, 0.05);
+  border-left: 3px solid rgba(0, 255, 136, 0.3);
+}
+
+/* ============================================================ */
+/* FILTERS & CONTROLS                                           */
+/* ============================================================ */
+
+.filters-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-select,
+.filters-row input,
+.control-section input[type="checkbox"],
+.control-section input[type="range"] {
+  background: rgba(0, 20, 40, 0.6);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  color: rgba(200, 200, 220, 0.9);
+  padding: 0.5rem 0.8rem;
+  border-radius: 2px;
+  font-size: 0.9rem;
+}
+
+.filter-select:focus,
+.filters-row input:focus {
+  outline: none;
+  border-color: rgba(0, 255, 150, 0.6);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+}
+
+.checkbox-group {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: rgba(150, 150, 180, 0.8);
+  font-size: 0.9rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* ============================================================ */
+/* TABLES                                                       */
+/* ============================================================ */
+
+.transactions-table,
+.pending-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.transactions-table thead,
+.pending-table thead {
+  background: rgba(0, 255, 136, 0.08);
+  border-top: 1px solid rgba(0, 255, 136, 0.2);
+  border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.transactions-table th,
+.pending-table th {
+  padding: 0.8rem;
+  text-align: left;
+  color: rgba(0, 255, 150, 0.85);
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+
+.transactions-table th:hover,
+.pending-table th:hover {
+  background: rgba(0, 255, 136, 0.12);
+}
+
+.transactions-table td,
+.pending-table td {
+  padding: 0.7rem 0.8rem;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+  color: rgba(200, 200, 220, 0.85);
+}
+
+.transactions-table tr:hover,
+.pending-table tr:hover {
+  background: rgba(0, 255, 136, 0.04);
+}
+
+.type-badge {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.type-badge.buy {
+  background: rgba(0, 150, 255, 0.2);
+  color: rgba(0, 200, 255, 0.9);
+}
+
+.type-badge.sell {
+  background: rgba(0, 255, 100, 0.2);
+  color: rgba(0, 255, 150, 0.9);
+}
+
+.source-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  background: rgba(100, 150, 180, 0.2);
+  border-radius: 2px;
+  font-size: 0.8rem;
+  color: rgba(150, 180, 220, 0.8);
+}
+
+.amount {
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+}
+
+.amount.positive {
+  color: rgba(0, 255, 100, 0.85);
+}
+
+.amount.negative {
+  color: rgba(255, 100, 100, 0.85);
+}
+
+.no-price {
+  color: rgba(255, 150, 50, 0.8);
+  font-style: italic;
+}
+
+/* ============================================================ */
+/* CONTROLS SECTION                                             */
+/* ============================================================ */
+
+.control-section {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: rgba(0, 255, 136, 0.04);
+  border-left: 3px solid rgba(0, 255, 136, 0.2);
+}
+
+.control-section h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  color: rgba(0, 255, 150, 0.85);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.control-section h5 {
+  margin: 1rem 0 0.7rem 0;
+  font-size: 0.9rem;
+  color: rgba(150, 150, 180, 0.8);
+}
+
+.control-section label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+  color: rgba(200, 200, 220, 0.85);
+  font-size: 0.9rem;
+}
+
+.control-section input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.toggle-text {
+  color: rgba(0, 255, 150, 0.9);
+}
+
+.tooltip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: rgba(0, 255, 136, 0.2);
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  border-radius: 50%;
+  color: rgba(0, 255, 150, 0.8);
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: help;
+  transition: all 0.2s ease;
+}
+
+.tooltip-icon:hover {
+  background: rgba(0, 255, 136, 0.3);
+  border-color: rgba(0, 255, 136, 0.6);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.slider-container.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.slider {
+  flex: 1;
+  max-width: 300px;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right,
+    rgba(255, 100, 100, 0.3) 0%,
+    rgba(0, 255, 136, 0.3) 50%,
+    rgba(0, 255, 100, 0.3) 100%);
+  outline: none;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(0, 255, 150, 0.9);
+  border: 2px solid rgba(0, 255, 200, 0.5);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(0, 255, 150, 0.9);
+  border: 2px solid rgba(0, 255, 200, 0.5);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+}
+
+.slider-value {
+  min-width: 50px;
+  text-align: right;
+  color: rgba(0, 255, 150, 0.85);
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+}
+
+.visibility-subsection {
+  margin-bottom: 1.2rem;
+  padding-left: 1rem;
+}
+
+.tooltip-text {
+  color: rgba(150, 150, 180, 0.6);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.helper-text {
+  color: rgba(150, 150, 180, 0.6);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.warning-text {
+  color: rgba(255, 150, 50, 0.85);
+  background: rgba(255, 150, 50, 0.1);
+  padding: 0.6rem;
+  border-left: 3px solid rgba(255, 150, 50, 0.4);
+  margin-top: 0.8rem;
+  font-size: 0.9rem;
+}
+
+/* ============================================================ */
+/* ACTION BUTTONS                                               */
+/* ============================================================ */
+
+.action-btn {
+  padding: 0.5rem 1rem;
+  background: rgba(0, 255, 136, 0.2);
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  color: rgba(0, 255, 150, 0.9);
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.action-btn:hover {
+  background: rgba(0, 255, 136, 0.4);
+  border-color: rgba(0, 255, 150, 0.6);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+}
+
+.action-btn.secondary {
+  background: rgba(150, 150, 180, 0.1);
+  border-color: rgba(150, 150, 180, 0.3);
+  color: rgba(150, 150, 180, 0.8);
+}
+
+.action-btn.secondary:hover {
+  background: rgba(150, 150, 180, 0.2);
+  border-color: rgba(150, 150, 180, 0.5);
+}
+
+/* ============================================================ */
+/* FOOTER                                                       */
+/* ============================================================ */
+
+.control-footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.credit-contract {
+  color: rgba(150, 150, 180, 0.6);
+  font-size: 0.85rem;
+  margin: 0;
+  font-style: italic;
+}
+
+/* ============================================================ */
+/* EMPTY STATE                                                  */
+/* ============================================================ */
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(150, 150, 180, 0.6);
+  font-style: italic;
+}
+
+/* ============================================================ */
+/* RESPONSIVE                                                   */
+/* ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .tooltip-icon,
+  .action-btn,
+  .tab-button {
+    transition: none;
+  }
+}

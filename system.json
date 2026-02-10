@@ -57,6 +57,7 @@
     "styles/apps/store-card-grid.css",
     "styles/apps/store-cards.css",
     "styles/apps/store-loading-overlay.css",
+    "styles/apps/gm-store-dashboard.css",
     "styles/apps/levelup.css",
     "styles/sheets/character-sheet.css",
     "styles/sheets/vehicle-sheet.css",
@@ -544,6 +545,71 @@
         "max": 100,
         "step": 5
       }
+    },
+    "foundryvtt-swse.disallowAutoSellNoPrice": {
+      "scope": "world",
+      "config": true,
+      "type": "Boolean",
+      "default": true,
+      "name": "Disallow Auto-Selling Items with No Base Price",
+      "hint": "Items without a defined base price will always require GM approval, even when automatic selling is enabled."
+    },
+    "foundryvtt-swse.storeOpen": {
+      "scope": "world",
+      "config": true,
+      "type": "Boolean",
+      "default": true,
+      "name": "Store Open",
+      "hint": "Controls whether players can purchase items from the store. When disabled, the store becomes view-only."
+    },
+    "foundryvtt-swse.globalBuyModifier": {
+      "scope": "world",
+      "config": true,
+      "type": "Number",
+      "default": 0,
+      "name": "Global Buy Price Modifier (%)",
+      "hint": "Applies a global percentage modifier to all store purchase prices. Positive values increase prices; negative values reduce prices.",
+      "range": {
+        "min": -50,
+        "max": 200,
+        "step": 5
+      }
+    },
+    "foundryvtt-swse.visibleRarities": {
+      "scope": "world",
+      "config": false,
+      "type": "Object",
+      "default": {
+        "common": true,
+        "uncommon": true,
+        "rare": false,
+        "restricted": false,
+        "illegal": false
+      }
+    },
+    "foundryvtt-swse.visibleItemTypes": {
+      "scope": "world",
+      "config": false,
+      "type": "Object",
+      "default": {
+        "weapons": true,
+        "armor": true,
+        "gear": true,
+        "droids": true,
+        "vehicles": true
+      }
+    },
+    "foundryvtt-swse.blacklistedItems": {
+      "scope": "world",
+      "config": false,
+      "type": "Array",
+      "default": []
+    },
+    "foundryvtt-swse.pendingSales": {
+      "scope": "world",
+      "config": false,
+      "type": "Array",
+      "default": []
     }
   }
 }
