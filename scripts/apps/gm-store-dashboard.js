@@ -60,6 +60,7 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
     super(options);
     this.transactions = [];
     this.pendingSales = [];
+    this.pendingApprovals = [];
   }
 
   async _prepareContext(options) {
@@ -71,6 +72,7 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
     // Load transaction history from all actors
     await this._loadTransactionHistory();
     await this._loadPendingSales();
+    await this._loadPendingApprovals();
 
     const storeOpen = game.settings.get('foundryvtt-swse', 'storeOpen') ?? true;
     const buyModifier = game.settings.get('foundryvtt-swse', 'globalBuyModifier') ?? 0;
@@ -100,6 +102,7 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
     return {
       transactions: this.transactions,
       pendingSales: this.pendingSales,
+      pendingApprovals: this.pendingApprovals,
       storeOpen,
       buyModifier,
       autoAcceptSelling,
@@ -141,6 +144,18 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
   async _loadPendingSales() {
     // Load pending sales from world flag (if implemented)
     this.pendingSales = game.settings.get('foundryvtt-swse', 'pendingSales') ?? [];
+  }
+
+  async _loadPendingApprovals() {
+    // Load pending custom droid/vehicle purchases from world flag
+    this.pendingApprovals = game.settings.get('foundryvtt-swse', 'pendingCustomPurchases') ?? [];
+
+    // Enrich each approval with actor name
+    for (const approval of this.pendingApprovals) {
+      const ownerActor = game.actors.get(approval.ownerActorId);
+      approval.ownerActorName = ownerActor?.name || 'Unknown Player';
+      approval.timeSubmitted = new Date(approval.requestedAt).toLocaleString();
+    }
   }
 
   async _onRender(context, options) {
@@ -250,6 +265,35 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
         }
       });
     }
+
+    // Pending custom purchase approval actions
+    for (const btn of root.querySelectorAll('[data-action="preview-approval"]')) {
+      btn.addEventListener('click', async (ev) => {
+        const approvalIndex = Number(ev.currentTarget.dataset.index);
+        await this._previewPendingCustom(approvalIndex);
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="edit-approval"]')) {
+      btn.addEventListener('click', async (ev) => {
+        const approvalIndex = Number(ev.currentTarget.dataset.index);
+        await this._editPendingCustom(approvalIndex);
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="approve-custom"]')) {
+      btn.addEventListener('click', async (ev) => {
+        const approvalIndex = Number(ev.currentTarget.dataset.index);
+        await this._approvePendingCustom(approvalIndex);
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="deny-custom"]')) {
+      btn.addEventListener('click', async (ev) => {
+        const approvalIndex = Number(ev.currentTarget.dataset.index);
+        await this._denyPendingCustom(approvalIndex);
+      });
+    }
   }
 
   async _reverseTransaction(index) {
@@ -299,5 +343,182 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
     // Placeholder for pending sale resolution
     // This would reuse the selling system's resolution logic
     ui.notifications.info(`Pending sale ${action} (placeholder).`);
+  }
+
+  /**
+   * Preview a pending custom droid/vehicle (read-only actor sheet)
+   */
+  async _previewPendingCustom(index) {
+    const approval = this.pendingApprovals[index];
+    if (!approval) return;
+
+    const draftActor = game.actors.get(approval.draftActorId);
+    if (!draftActor) {
+      ui.notifications.error('Draft actor not found.');
+      return;
+    }
+
+    // Mark as preview-mode so sheet renders read-only
+    this.previewingApprovalId = approval.id;
+    draftActor.sheet.render(true);
+  }
+
+  /**
+   * Edit a pending custom droid/vehicle (open in chargen if droid)
+   */
+  async _editPendingCustom(index) {
+    const approval = this.pendingApprovals[index];
+    if (!approval) return;
+
+    if (approval.type === 'droid' && approval.chargenSnapshot) {
+      // Re-launch CharGen with edit mode
+      const CharacterGenerator = (await import('../chargen/chargen-main.js')).default;
+      const chargen = new CharacterGenerator(null, {
+        droidBuilderMode: true,
+        editMode: true,
+        editSnapshot: approval.chargenSnapshot,
+        ownerActor: game.actors.get(approval.ownerActorId),
+        doidConstructionCredits: approval.costCredits,
+        approvalRequestId: approval.id
+      });
+      chargen.render(true);
+    } else if (approval.type === 'vehicle') {
+      ui.notifications.info('Vehicle modification editing not yet implemented.');
+    }
+  }
+
+  /**
+   * Approve a pending custom droid/vehicle purchase
+   * Deducts credits, transfers actor ownership, removes draft flags
+   */
+  async _approvePendingCustom(index) {
+    const approval = this.pendingApprovals[index];
+    if (!approval) return;
+
+    const ownerActor = game.actors.get(approval.ownerActorId);
+    if (!ownerActor) {
+      ui.notifications.error('Owner actor not found.');
+      return;
+    }
+
+    // Confirm approval
+    const confirmed = await Dialog.confirm({
+      title: 'Approve Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle'),
+      content: `
+        <p><strong>${approval.draftData.name}</strong></p>
+        <p>For: ${ownerActor.name}</p>
+        <p>Cost: <strong>${approval.costCredits.toLocaleString()} credits</strong></p>
+        <p>Approve this purchase?</p>
+      `,
+      defaultYes: false
+    });
+
+    if (!confirmed) return;
+
+    try {
+      // 1. Validate credits
+      const currentCredits = normalizeCredits(ownerActor.system?.credits ?? 0);
+      if (currentCredits < approval.costCredits) {
+        ui.notifications.warn(`Insufficient credits. ${ownerActor.name} has ${currentCredits.toLocaleString()} but needs ${approval.costCredits.toLocaleString()}.`);
+        return;
+      }
+
+      // 2. Deduct credits
+      const newCredits = normalizeCredits(currentCredits - approval.costCredits);
+      await ownerActor.update({ 'system.credits': newCredits });
+
+      // 3. Transfer draft actor to owner
+      const draftActor = game.actors.get(approval.draftActorId);
+      if (draftActor) {
+        // Set ownership to the player who owns the character
+        const ownerUser = game.users.find(u => u.character?.id === ownerActor.id);
+        const ownership = { default: 0 };
+        if (ownerUser) {
+          ownership[ownerUser.id] = 3;  // Owner level
+        }
+        // Also grant GM ownership
+        ownership[game.user.id] = 3;
+
+        await draftActor.update({ ownership });
+
+        // Remove draft flags
+        await draftActor.unsetFlag('swse', 'pendingApproval');
+        await draftActor.unsetFlag('swse', 'draftOnly');
+        await draftActor.unsetFlag('swse', 'ownerPlayerId');
+      }
+
+      // 4. Log transaction
+      const history = ownerActor.getFlag('swse', 'purchaseHistory') || [];
+      const purchase = {
+        timestamp: Date.now(),
+        items: [],
+        droids: approval.type === 'droid' ? [{
+          id: approval.draftActorId,
+          name: approval.draftData.name,
+          cost: approval.costCredits
+        }] : [],
+        vehicles: approval.type === 'vehicle' ? [{
+          id: approval.draftActorId,
+          name: approval.draftData.name,
+          cost: approval.costCredits
+        }] : [],
+        total: approval.costCredits,
+        source: 'Store - Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle') + ' Approval'
+      };
+      history.push(purchase);
+      await ownerActor.setFlag('swse', 'purchaseHistory', history);
+
+      // 5. Remove from pending queue
+      const pendingPurchases = game.settings.get('foundryvtt-swse', 'pendingCustomPurchases') || [];
+      pendingPurchases.splice(index, 1);
+      await game.settings.set('foundryvtt-swse', 'pendingCustomPurchases', pendingPurchases);
+
+      ui.notifications.info(`Approved: ${approval.draftData.name} for ${ownerActor.name}`);
+      SWSELogger.log('SWSE Store | Custom purchase approved:', approval);
+      this.render();
+    } catch (err) {
+      SWSELogger.error('Failed to approve custom purchase:', err);
+      ui.notifications.error('Approval failed. See console for details.');
+    }
+  }
+
+  /**
+   * Deny a pending custom droid/vehicle purchase
+   * Deletes draft actor, removes from queue
+   */
+  async _denyPendingCustom(index) {
+    const approval = this.pendingApprovals[index];
+    if (!approval) return;
+
+    const confirmed = await Dialog.confirm({
+      title: 'Deny Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle'),
+      content: `
+        <p><strong>${approval.draftData.name}</strong></p>
+        <p>Deny this purchase? It will be deleted permanently.</p>
+      `,
+      defaultYes: false
+    });
+
+    if (!confirmed) return;
+
+    try {
+      // Delete draft actor
+      const draftActor = game.actors.get(approval.draftActorId);
+      if (draftActor) {
+        await draftActor.delete();
+      }
+
+      // Remove from pending queue
+      const pendingPurchases = game.settings.get('foundryvtt-swse', 'pendingCustomPurchases') || [];
+      pendingPurchases.splice(index, 1);
+      await game.settings.set('foundryvtt-swse', 'pendingCustomPurchases', pendingPurchases);
+
+      ui.notifications.info(`Denied: ${approval.draftData.name}`);
+      SWSELogger.log('SWSE Store | Custom purchase denied:', approval);
+      this.render();
+    } catch (err) {
+      SWSELogger.error('Failed to deny custom purchase:', err);
+      ui.notifications.error('Denial failed. See console for details.');
+    }
   }
 }

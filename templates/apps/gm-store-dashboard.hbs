@@ -8,6 +8,7 @@
   <nav class="dashboard-tabs">
     <button class="tab-button" data-tab="transactions" title="Review all completed buy and sell transactions. Transactions may be reversed here if a correction is required.">Transactions</button>
     <button class="tab-button" data-tab="pending" title="View and resolve sell offers that have not yet been accepted or denied.">Pending Sales</button>
+    <button class="tab-button" data-tab="approvals" title="Review and approve custom droid and vehicle purchases awaiting GM authorization.">Pending Approvals</button>
     <button class="tab-button" data-tab="controls" title="Configure store availability, pricing modifiers, item visibility, and selling house rules.">Store Controls</button>
   </nav>
 
@@ -134,7 +135,47 @@
       {{/if}}
     </div>
 
-    {{!-- TAB 3: STORE CONTROLS --}}
+    {{!-- TAB 3: PENDING APPROVALS --}}
+    <div class="dashboard-tab" data-tab="approvals">
+      <h3>PENDING CUSTOM PURCHASES</h3>
+      <p class="tab-description" title="Custom droid and vehicle builds awaiting GM approval. Preview the finished product, edit if needed, or approve/deny the purchase.">Pending custom droid and vehicle purchases awaiting GM review and approval.</p>
+
+      {{#if (eq pendingApprovals.length 0)}}
+        <p class="empty-state">No pending custom purchases.</p>
+      {{else}}
+        <table class="approvals-table">
+          <thead>
+            <tr>
+              <th title="When the custom build was submitted.">Submitted</th>
+              <th title="The character building the custom asset.">Player / Character</th>
+              <th title="Droid or Vehicle.">Type</th>
+              <th title="Name of the custom asset.">Asset Name</th>
+              <th title="The final cost in credits.">Cost</th>
+              <th title="Actions to review or approve this purchase.">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each pendingApprovals}}
+              <tr class="approval-row">
+                <td><span class="timestamp">{{this.timeSubmitted}}</span></td>
+                <td><span class="actor-name">{{this.ownerActorName}}</span></td>
+                <td><span class="type-badge {{this.type}}">{{capitalize this.type}}</span></td>
+                <td><strong>{{this.draftData.name}}</strong></td>
+                <td><span class="credit-amount">{{this.costCredits}}</span></td>
+                <td class="action-cell">
+                  <button class="action-btn icon-btn" data-action="preview-approval" data-index="{{@index}}" title="View the finalized actor sheet as it will appear if approved. No changes can be made.">👁️</button>
+                  <button class="action-btn icon-btn" data-action="edit-approval" data-index="{{@index}}" title="Edit the draft before approval. Changes apply only if the purchase is approved.">✏️</button>
+                  <button class="action-btn icon-btn approve" data-action="approve-custom" data-index="{{@index}}" title="Approve this purchase. Credits will be deducted and the actor will be granted to the player.">✓</button>
+                  <button class="action-btn icon-btn deny" data-action="deny-custom" data-index="{{@index}}" title="Deny this purchase. No credits or actors will be created.">✕</button>
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      {{/if}}
+    </div>
+
+    {{!-- TAB 4: STORE CONTROLS --}}
     <div class="dashboard-tab" data-tab="controls">
       <h3>STORE CONTROLS</h3>
 

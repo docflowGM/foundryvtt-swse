@@ -610,6 +610,14 @@
       "config": false,
       "type": "Array",
       "default": []
+    },
+    "foundryvtt-swse.pendingCustomPurchases": {
+      "scope": "world",
+      "config": false,
+      "type": "Array",
+      "default": [],
+      "name": "Pending Custom Droid and Vehicle Purchases",
+      "hint": "Stores pending approvals for custom-built droids and vehicles awaiting GM review."
     }
   }
 }

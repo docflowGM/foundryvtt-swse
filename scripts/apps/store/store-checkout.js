@@ -745,3 +745,158 @@ async function logPurchaseToHistory(actor, cart, total) {
         // Don't throw error - this is non-critical
     }
 }
+
+/**
+ * Submit draft droid for GM approval
+ * Creates an unpublished draft actor and adds to pending approvals queue
+ * @param {Object} chargenSnapshot - Complete chargen state (characterData, choices, etc.)
+ * @param {Actor} ownerActor - The character who requested the build
+ * @param {number} costCredits - Total cost (normalized integer)
+ * @returns {Promise<boolean>} Success/failure
+ */
+export async function submitDraftDroidForApproval(chargenSnapshot, ownerActor, costCredits) {
+    if (!chargenSnapshot || !ownerActor) {
+        ui.notifications.error('Invalid draft submission: missing data.');
+        return false;
+    }
+
+    const normalizedCost = normalizeCredits(costCredits);
+
+    try {
+        // 1. Create draft droid actor (not published, not owned by player)
+        const draftDroid = await createActor({
+            name: chargenSnapshot.characterData?.name || 'Custom Droid',
+            type: 'droid',
+            ownership: {
+                default: 0  // Players cannot see
+            }
+        });
+
+        if (!draftDroid) {
+            ui.notifications.error('Failed to create draft droid.');
+            return false;
+        }
+
+        // 2. Mark as draft (pending approval)
+        await draftDroid.setFlag('swse', 'pendingApproval', true);
+        await draftDroid.setFlag('swse', 'draftOnly', true);
+        await draftDroid.setFlag('swse', 'ownerPlayerId', game.user.id);
+
+        // 3. Build pending purchase record
+        const pendingRecord = {
+            id: `pending_droid_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            type: 'droid',
+            draftActorId: draftDroid.id,
+            chargenSnapshot: chargenSnapshot,
+            ownerPlayerId: game.user.id,
+            ownerActorId: ownerActor.id,
+            costCredits: normalizedCost,
+            requestedAt: Date.now(),
+            draftData: {
+                name: chargenSnapshot.characterData?.name || 'Custom Droid',
+                type: 'droid',
+                droidDegree: chargenSnapshot.characterData?.droidDegree || 'Unknown',
+                droidSize: chargenSnapshot.characterData?.droidSize || 'medium',
+                cost: normalizedCost,
+                description: `Custom ${chargenSnapshot.characterData?.droidDegree || 'Droid'} built by ${ownerActor.name}`
+            }
+        };
+
+        // 4. Add to pending queue (world flag)
+        const pendingPurchases = game.settings.get('foundryvtt-swse', 'pendingCustomPurchases') || [];
+        pendingPurchases.push(pendingRecord);
+        await game.settings.set('foundryvtt-swse', 'pendingCustomPurchases', pendingPurchases);
+
+        // 5. Notify player
+        ui.notifications.info(`Droid design submitted for GM approval. Awaiting review...`);
+        SWSELogger.log('SWSE Store | Draft droid submitted for approval:', {
+            droidName: pendingRecord.draftData.name,
+            cost: normalizedCost,
+            owner: ownerActor.name
+        });
+
+        return true;
+    } catch (err) {
+        SWSELogger.error('SWSE Store | Failed to submit draft droid:', err);
+        ui.notifications.error('Failed to submit droid for approval.');
+        return false;
+    }
+}
+
+/**
+ * Submit draft vehicle for GM approval
+ * Creates an unpublished draft actor and adds to pending approvals queue
+ * @param {Object} modificationData - Vehicle modification state
+ * @param {Actor} vehicleTemplate - Base vehicle template
+ * @param {Actor} ownerActor - The character who requested the build
+ * @param {number} costCredits - Total cost (normalized integer)
+ * @returns {Promise<boolean>} Success/failure
+ */
+export async function submitDraftVehicleForApproval(modificationData, vehicleTemplate, ownerActor, costCredits) {
+    if (!modificationData || !vehicleTemplate || !ownerActor) {
+        ui.notifications.error('Invalid vehicle draft submission: missing data.');
+        return false;
+    }
+
+    const normalizedCost = normalizeCredits(costCredits);
+
+    try {
+        // 1. Create draft vehicle actor (not published, not owned by player)
+        const draftVehicle = await createActor({
+            name: vehicleTemplate.name || 'Custom Vehicle',
+            type: 'vehicle',
+            ownership: {
+                default: 0  // Players cannot see
+            }
+        });
+
+        if (!draftVehicle) {
+            ui.notifications.error('Failed to create draft vehicle.');
+            return false;
+        }
+
+        // 2. Mark as draft (pending approval)
+        await draftVehicle.setFlag('swse', 'pendingApproval', true);
+        await draftVehicle.setFlag('swse', 'draftOnly', true);
+        await draftVehicle.setFlag('swse', 'ownerPlayerId', game.user.id);
+
+        // 3. Build pending purchase record
+        const pendingRecord = {
+            id: `pending_vehicle_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            type: 'vehicle',
+            draftActorId: draftVehicle.id,
+            modificationData: modificationData,
+            vehicleTemplateName: vehicleTemplate.name,
+            ownerPlayerId: game.user.id,
+            ownerActorId: ownerActor.id,
+            costCredits: normalizedCost,
+            requestedAt: Date.now(),
+            draftData: {
+                name: vehicleTemplate.name || 'Custom Vehicle',
+                type: 'vehicle',
+                baseTemplate: vehicleTemplate.name,
+                cost: normalizedCost,
+                description: `Modified ${vehicleTemplate.name} built by ${ownerActor.name}`
+            }
+        };
+
+        // 4. Add to pending queue (world flag)
+        const pendingPurchases = game.settings.get('foundryvtt-swse', 'pendingCustomPurchases') || [];
+        pendingPurchases.push(pendingRecord);
+        await game.settings.set('foundryvtt-swse', 'pendingCustomPurchases', pendingPurchases);
+
+        // 5. Notify player
+        ui.notifications.info(`Vehicle design submitted for GM approval. Awaiting review...`);
+        SWSELogger.log('SWSE Store | Draft vehicle submitted for approval:', {
+            vehicleName: pendingRecord.draftData.name,
+            cost: normalizedCost,
+            owner: ownerActor.name
+        });
+
+        return true;
+    } catch (err) {
+        SWSELogger.error('SWSE Store | Failed to submit draft vehicle:', err);
+        ui.notifications.error('Failed to submit vehicle for approval.');
+        return false;
+    }
+}
