@@ -652,6 +652,19 @@ export class DroidBuilderApp extends SWSEApplication {
       // Mark state as FINALIZED
       this.droidSystems.stateMode = 'FINALIZED';
 
+      // Phase 5: Track in build history
+      const buildHistory = this.droidSystems.buildHistory || [];
+      buildHistory.push({
+        timestamp: new Date().toISOString(),
+        action: this.mode === 'EDIT' ? 'modified' : 'created',
+        mode: this.mode,
+        before: this.mode === 'EDIT' ? this.sourceActor?.system?.droidSystems : null,
+        after: foundry.utils.deepClone(this.droidSystems),
+        costDelta: costDelta || 0
+      });
+
+      this.droidSystems.buildHistory = buildHistory;
+
       await this.actor.update({
         'system.droidSystems': this.droidSystems
       });

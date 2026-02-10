@@ -1,0 +1,147 @@
+{{!-- Phase 5: Build History Panel --}}
+<div class="holo-panel">
+  <div class="section-bar">
+    <h3 class="section-header">Build History</h3>
+  </div>
+
+  {{#if system.droidSystems.buildHistory.length}}
+    <div class="build-history-timeline">
+      {{#each system.droidSystems.buildHistory as |entry index|}}
+        <div class="history-entry">
+          <div class="history-marker"></div>
+          <div class="history-content">
+            <div class="entry-header">
+              <span class="action-badge {{entry.action}}">
+                {{#if (eq entry.action 'created')}}Created{{/if}}
+                {{#if (eq entry.action 'modified')}}Modified{{/if}}
+                {{#if (eq entry.action 'approved_by_gm')}}Approved{{/if}}
+                {{#if (eq entry.action 'rejected_by_gm')}}Rejected{{/if}}
+              </span>
+              <span class="timestamp">{{entry.timestamp}}</span>
+            </div>
+
+            {{#if entry.mode}}
+              <div class="entry-detail">
+                <small><strong>Mode:</strong> {{entry.mode}}</small>
+              </div>
+            {{/if}}
+
+            {{#if entry.costDelta}}
+              <div class="entry-detail cost-delta">
+                <small><strong>Cost Delta:</strong> {{#if (gt entry.costDelta 0)}}+{{/if}}{{entry.costDelta}} credits</small>
+              </div>
+            {{/if}}
+
+            {{#if entry.detail}}
+              <div class="entry-detail">
+                <small>{{entry.detail}}</small>
+              </div>
+            {{/if}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="empty-state">
+      <p><em>No build history yet.</em></p>
+    </div>
+  {{/if}}
+</div>
+
+<style scoped>
+  .build-history-timeline {
+    position: relative;
+    padding: 20px 0;
+  }
+
+  .history-entry {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 15px;
+  }
+
+  .history-entry:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 25px;
+    bottom: -15px;
+    width: 2px;
+    background: #ddd;
+  }
+
+  .history-marker {
+    position: absolute;
+    left: -5px;
+    top: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #5e35b1;
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px #5e35b1;
+  }
+
+  .history-content {
+    background: #f9f9f9;
+    border-left: 3px solid #5e35b1;
+    padding: 10px 12px;
+    border-radius: 3px;
+  }
+
+  .entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .action-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: white;
+  }
+
+  .action-badge.created {
+    background: #4caf50;
+  }
+
+  .action-badge.modified {
+    background: #2196f3;
+  }
+
+  .action-badge.approved_by_gm {
+    background: #8bc34a;
+  }
+
+  .action-badge.rejected_by_gm {
+    background: #f44336;
+  }
+
+  .timestamp {
+    font-size: 11px;
+    color: #999;
+    font-family: monospace;
+  }
+
+  .entry-detail {
+    font-size: 12px;
+    color: #666;
+    margin: 4px 0;
+  }
+
+  .entry-detail.cost-delta {
+    font-weight: bold;
+    color: #f57c00;
+  }
+
+  .empty-state {
+    padding: 15px;
+    text-align: center;
+    color: #999;
+  }
+</style>

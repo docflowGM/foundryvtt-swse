@@ -1,0 +1,277 @@
+<div class="gm-approval-container">
+  <header class="approval-header">
+    <h1>Droid Approval Queue</h1>
+    <p class="subtitle">Review and approve pending custom droids</p>
+  </header>
+
+  {{#if hasPending}}
+    <div class="pending-droids-list">
+      {{#each pendingDroids}}
+        <div class="droid-approval-card">
+          <div class="card-header">
+            <div class="droid-name">
+              <strong>{{actorName}}</strong>
+              <span class="owner-tag">by {{ownerName}}</span>
+            </div>
+            <div class="card-actions">
+              <button class="view-droid-details-btn holo-btn small secondary" data-actor-id="{{actorId}}" title="View full droid sheet">
+                <i class="fas fa-eye"></i> Details
+              </button>
+              <button class="approve-droid-btn holo-btn small" data-actor-id="{{actorId}}" title="Approve and deduct credits">
+                <i class="fas fa-check"></i> Approve
+              </button>
+              <button class="reject-droid-btn holo-btn small secondary" data-actor-id="{{actorId}}" title="Reject and revert to draft">
+                <i class="fas fa-times"></i> Reject
+              </button>
+            </div>
+          </div>
+
+          <div class="card-config">
+            <div class="config-row">
+              <div class="config-item">
+                <span class="label">Degree:</span>
+                <span class="value">{{degree}}</span>
+              </div>
+              <div class="config-item">
+                <span class="label">Size:</span>
+                <span class="value">{{size}}</span>
+              </div>
+              <div class="config-item">
+                <span class="label">Locomotion:</span>
+                <span class="value">{{locomotion}}</span>
+              </div>
+            </div>
+
+            <div class="config-row">
+              <div class="config-item">
+                <span class="label">Processor:</span>
+                <span class="value">{{processor}}</span>
+              </div>
+              <div class="config-item">
+                <span class="label">Armor:</span>
+                <span class="value">{{armor}}</span>
+              </div>
+              <div class="config-item cost-highlight">
+                <span class="label">Cost:</span>
+                <span class="value">{{cost}} credits</span>
+              </div>
+            </div>
+
+            <div class="config-row">
+              <div class="config-item">
+                <span class="label">Appendages:</span>
+                <span class="value">{{appendages}}</span>
+              </div>
+              <div class="config-item">
+                <span class="label">Sensors:</span>
+                <span class="value">{{sensors}}</span>
+              </div>
+              <div class="config-item">
+                <span class="label">Weapons:</span>
+                <span class="value">{{weapons}}</span>
+              </div>
+              <div class="config-item">
+                <span class="label">Accessories:</span>
+                <span class="value">{{accessories}}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <small class="submitted-date">Submitted: {{createdAt}}</small>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="empty-queue">
+      <i class="fas fa-check-circle"></i>
+      <h2>No Pending Droids</h2>
+      <p>All droid requests have been processed.</p>
+    </div>
+  {{/if}}
+</div>
+
+<style>
+  .gm-approval-container {
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    min-height: 100vh;
+  }
+
+  .approval-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #333;
+  }
+
+  .approval-header h1 {
+    margin: 0 0 5px 0;
+    color: #222;
+  }
+
+  .approval-header .subtitle {
+    margin: 0;
+    color: #666;
+    font-size: 13px;
+  }
+
+  .pending-droids-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .droid-approval-card {
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+  }
+
+  .droid-approval-card:hover {
+    border-color: #5e35b1;
+    box-shadow: 0 4px 12px rgba(94, 53, 177, 0.2);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .droid-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .droid-name strong {
+    font-size: 16px;
+    color: #222;
+  }
+
+  .owner-tag {
+    background: #e0e0e0;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    color: #666;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .holo-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    border: none;
+    border-radius: 3px;
+    transition: all 0.2s;
+  }
+
+  .holo-btn.small {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .holo-btn.small.secondary {
+    background: #ccc;
+    color: #333;
+  }
+
+  .holo-btn.small.secondary:hover {
+    background: #aaa;
+  }
+
+  .holo-btn:not(.secondary) {
+    background: #388e3c;
+    color: white;
+  }
+
+  .holo-btn:not(.secondary):hover {
+    background: #2e7d32;
+  }
+
+  .card-config {
+    margin: 12px 0;
+  }
+
+  .config-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .config-item {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    padding: 8px;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .config-item.cost-highlight {
+    background: #fff9c4;
+    border-color: #f9a825;
+    font-weight: bold;
+  }
+
+  .config-item .label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+  }
+
+  .config-item .value {
+    font-size: 13px;
+    color: #333;
+  }
+
+  .card-footer {
+    text-align: right;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    color: #999;
+  }
+
+  .submitted-date {
+    font-size: 11px;
+  }
+
+  .empty-queue {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 4px;
+    border: 2px dashed #ccc;
+  }
+
+  .empty-queue i {
+    font-size: 48px;
+    color: #4caf50;
+    margin-bottom: 15px;
+  }
+
+  .empty-queue h2 {
+    margin: 0 0 10px 0;
+    color: #333;
+  }
+
+  .empty-queue p {
+    margin: 0;
+    color: #999;
+  }
+</style>
