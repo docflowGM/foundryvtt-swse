@@ -185,4 +185,231 @@ export class DroidValidationEngine {
     };
     return constraints[degree] || { min: 0, max: 0 };
   }
+
+  // ─────────────────────────────────────────────────────────────────
+  // PHASE 2: STEP-SPECIFIC VALIDATION FUNCTIONS
+  // ─────────────────────────────────────────────────────────────────
+
+  /**
+   * Validate Locomotion step
+   * Single-select system (user must choose exactly one)
+   *
+   * @param {Object} selectedValue - Locomotion object { id, name, cost, speed }
+   * @param {Object} droidSystems - Full droid configuration
+   * @param {Object} config - Step configuration
+   * @returns {Object} { errors: string[], warnings: string[] }
+   */
+  static validateLocomotion(selectedValue, droidSystems, config) {
+    const errors = [];
+    const warnings = [];
+
+    // Hard validation: required
+    if (!selectedValue?.id) {
+      errors.push('Locomotion system is required');
+    }
+
+    // Hard validation: must fit budget
+    const budget = this.calculateBudget(droidSystems);
+    if (selectedValue?.cost && selectedValue.cost > budget.remaining) {
+      errors.push(
+        `Locomotion cost ${selectedValue.cost} exceeds remaining budget ${budget.remaining}`
+      );
+    }
+
+    return { errors, warnings };
+  }
+
+  /**
+   * Validate Manipulators/Appendages step
+   * Multi-select system (user must choose 1+ based on degree)
+   *
+   * @param {Array} selectedValue - Array of appendage objects
+   * @param {Object} droidSystems - Full droid configuration
+   * @param {Object} config - Step configuration
+   * @returns {Object} { errors: string[], warnings: string[] }
+   */
+  static validateAppendages(selectedValue, droidSystems, config) {
+    const errors = [];
+    const warnings = [];
+
+    const items = Array.isArray(selectedValue) ? selectedValue : [];
+
+    // Hard validation: at least one required
+    if (items.length === 0) {
+      errors.push('Must select at least one manipulator');
+    }
+
+    // Hard validation: degree constraint
+    const maxByDegree = {
+      'Third-Degree': 4,
+      'Second-Degree': 6,
+      'First-Degree': 8
+    };
+    const max = maxByDegree[droidSystems.degree];
+    if (max && items.length > max) {
+      errors.push(
+        `${droidSystems.degree} droids can have at most ${max} manipulators, selected ${items.length}`
+      );
+    }
+
+    // Hard validation: budget
+    const budget = this.calculateBudget(droidSystems);
+    const totalCost = items.reduce((sum, item) => sum + (item.cost || 0), 0);
+    if (totalCost > budget.remaining) {
+      errors.push(
+        `Manipulators cost ${totalCost} exceeds remaining budget ${budget.remaining}`
+      );
+    }
+
+    return { errors, warnings };
+  }
+
+  /**
+   * Validate Sensors step
+   * Multi-select, optional system
+   *
+   * @param {Array} selectedValue - Array of sensor objects
+   * @param {Object} droidSystems - Full droid configuration
+   * @param {Object} config - Step configuration
+   * @returns {Object} { errors: string[], warnings: string[] }
+   */
+  static validateSensors(selectedValue, droidSystems, config) {
+    const errors = [];
+    const warnings = [];
+
+    const items = Array.isArray(selectedValue) ? selectedValue : [];
+
+    // Soft validation: warn if no sensors
+    if (items.length === 0) {
+      warnings.push('No sensors selected; droid will have limited perception');
+    }
+
+    // Hard validation: budget
+    const budget = this.calculateBudget(droidSystems);
+    const totalCost = items.reduce((sum, item) => sum + (item.cost || 0), 0);
+    if (totalCost > budget.remaining) {
+      errors.push(
+        `Sensors cost ${totalCost} exceeds remaining budget ${budget.remaining}`
+      );
+    }
+
+    return { errors, warnings };
+  }
+
+  /**
+   * Validate Processor step
+   * Single-select system (user must choose exactly one)
+   *
+   * @param {Object} selectedValue - Processor object { id, name, cost, bonus }
+   * @param {Object} droidSystems - Full droid configuration
+   * @param {Object} config - Step configuration
+   * @returns {Object} { errors: string[], warnings: string[] }
+   */
+  static validateProcessor(selectedValue, droidSystems, config) {
+    const errors = [];
+    const warnings = [];
+
+    // Hard validation: required
+    if (!selectedValue?.id) {
+      errors.push('Processor is required');
+    }
+
+    // Hard validation: budget
+    const budget = this.calculateBudget(droidSystems);
+    if (selectedValue?.cost && selectedValue.cost > budget.remaining) {
+      errors.push(
+        `Processor cost ${selectedValue.cost} exceeds remaining budget ${budget.remaining}`
+      );
+    }
+
+    return { errors, warnings };
+  }
+
+  /**
+   * Validate Armor step
+   * Single-select system (user must choose exactly one)
+   *
+   * @param {Object} selectedValue - Armor object { id, name, cost, bonus }
+   * @param {Object} droidSystems - Full droid configuration
+   * @param {Object} config - Step configuration
+   * @returns {Object} { errors: string[], warnings: string[] }
+   */
+  static validateArmor(selectedValue, droidSystems, config) {
+    const errors = [];
+    const warnings = [];
+
+    // Hard validation: required
+    if (!selectedValue?.id) {
+      errors.push('Armor is required');
+    }
+
+    // Hard validation: budget
+    const budget = this.calculateBudget(droidSystems);
+    if (selectedValue?.cost && selectedValue.cost > budget.remaining) {
+      errors.push(
+        `Armor cost ${selectedValue.cost} exceeds remaining budget ${budget.remaining}`
+      );
+    }
+
+    return { errors, warnings };
+  }
+
+  /**
+   * Validate Weapons step
+   * Multi-select, optional system
+   *
+   * @param {Array} selectedValue - Array of weapon objects
+   * @param {Object} droidSystems - Full droid configuration
+   * @param {Object} config - Step configuration
+   * @returns {Object} { errors: string[], warnings: string[] }
+   */
+  static validateWeapons(selectedValue, droidSystems, config) {
+    const errors = [];
+    const warnings = [];
+
+    const items = Array.isArray(selectedValue) ? selectedValue : [];
+
+    // Soft validation: warn if no weapons
+    if (items.length === 0) {
+      warnings.push('No weapons selected; droid will be defenseless in combat');
+    }
+
+    // Hard validation: budget
+    const budget = this.calculateBudget(droidSystems);
+    const totalCost = items.reduce((sum, item) => sum + (item.cost || 0), 0);
+    if (totalCost > budget.remaining) {
+      errors.push(
+        `Weapons cost ${totalCost} exceeds remaining budget ${budget.remaining}`
+      );
+    }
+
+    return { errors, warnings };
+  }
+
+  /**
+   * Validate Accessories/Enhancements step
+   * Multi-select, optional system
+   *
+   * @param {Array} selectedValue - Array of accessory objects
+   * @param {Object} droidSystems - Full droid configuration
+   * @param {Object} config - Step configuration
+   * @returns {Object} { errors: string[], warnings: string[] }
+   */
+  static validateAccessories(selectedValue, droidSystems, config) {
+    const errors = [];
+    const warnings = [];
+
+    const items = Array.isArray(selectedValue) ? selectedValue : [];
+
+    // Hard validation: budget
+    const budget = this.calculateBudget(droidSystems);
+    const totalCost = items.reduce((sum, item) => sum + (item.cost || 0), 0);
+    if (totalCost > budget.remaining) {
+      errors.push(
+        `Accessories cost ${totalCost} exceeds remaining budget ${budget.remaining}`
+      );
+    }
+
+    return { errors, warnings };
+  }
 }

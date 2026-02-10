@@ -53,6 +53,186 @@
     </div>
   {{/if}}
 
+  {{!-- Phase 2: Locomotion Selection --}}
+  {{#if (eq this.currentStep 'locomotion')}}
+    <div class="builder-step phase2-step">
+      <h2>{{this.stepConfig.label}} (Step {{this.stepNumber}}/{{this.totalSteps}})</h2>
+
+      <div class="step-info">
+        <p><strong>Degree:</strong> {{this.droidSystems.degree}} | <strong>Size:</strong> {{this.droidSystems.size}}</p>
+      </div>
+
+      {{> droid-builder-budget budget=this.budget}}
+
+      <div class="systems-selector">
+        <div class="available-systems">
+          <h3>Available Systems</h3>
+          {{#each this.availableItems as |item|}}
+            <label class="system-item single-select">
+              <input
+                type="radio"
+                name="system-select"
+                value="{{item.id}}"
+                {{#if (eq this.selectedItems.id item.id)}}checked{{/if}}
+                {{#unless item.canAfford}}disabled{{/unless}}
+                data-step="locomotion"
+              />
+              <span class="system-name">{{item.name}}</span>
+              <span class="system-cost">[{{item.cost}} credits]</span>
+              {{#if item.speed}}
+                <span class="system-stat">Speed: {{item.speed}}</span>
+              {{/if}}
+              {{#unless item.canAfford}}
+                <span class="system-unavailable">✗ Insufficient credits</span>
+              {{/unless}}
+            </label>
+          {{/each}}
+        </div>
+
+        {{#if this.selectedItems.id}}
+          <div class="selected-systems">
+            <h3>Selected</h3>
+            <div class="selected-item">
+              <span class="system-name">{{this.selectedItems.name}}</span>
+              <span class="system-cost">[{{this.selectedItems.cost}} credits]</span>
+              {{#if this.selectedItems.speed}}
+                <span class="system-stat">Speed: {{this.selectedItems.speed}}</span>
+              {{/if}}
+            </div>
+          </div>
+        {{/if}}
+      </div>
+
+      <div class="action-buttons">
+        {{#if this.canGoBack}}
+          <button class="back-step btn btn-secondary">← Back</button>
+        {{/if}}
+        {{#if this.selectedItems.id}}
+          <button class="next-step btn btn-primary">Next →</button>
+        {{/if}}
+      </div>
+    </div>
+  {{/if}}
+
+  {{!-- Phase 2: Generic multi-select step (manipulators, sensors, weapons, accessories) --}}
+  {{#if (or (eq this.currentStep 'manipulators') (eq this.currentStep 'sensors') (eq this.currentStep 'weapons') (eq this.currentStep 'accessories'))}}
+    <div class="builder-step phase2-step">
+      <h2>{{this.stepConfig.label}} (Step {{this.stepNumber}}/{{this.totalSteps}})</h2>
+
+      <div class="step-info">
+        <p><strong>Degree:</strong> {{this.droidSystems.degree}} | <strong>Size:</strong> {{this.droidSystems.size}}</p>
+        {{#if (eq this.stepConfig.selectionType 'multiple')}}
+          <p class="selection-count">Selected: {{this.selectedItems.length}}</p>
+        {{/if}}
+      </div>
+
+      {{> droid-builder-budget budget=this.budget}}
+
+      <div class="systems-selector">
+        <div class="available-systems">
+          <h3>Available Systems</h3>
+          {{#each this.availableItems as |item|}}
+            <label class="system-item multi-select">
+              <input
+                type="checkbox"
+                name="system-select"
+                value="{{item.id}}"
+                {{#if (find this.selectedItems 'id' item.id)}}checked{{/if}}
+                {{#unless item.canAfford}}disabled{{/unless}}
+                data-step="{{../this.currentStep}}"
+              />
+              <span class="system-name">{{item.name}}</span>
+              <span class="system-cost">[{{item.cost}} credits]</span>
+              {{#unless item.canAfford}}
+                <span class="system-unavailable">✗ Insufficient credits</span>
+              {{/unless}}
+            </label>
+          {{/each}}
+        </div>
+
+        {{#if this.selectedItems.length}}
+          <div class="selected-systems">
+            <h3>Selected ({{this.selectedItems.length}})</h3>
+            {{#each this.selectedItems as |item|}}
+              <div class="selected-item">
+                <span class="system-name">{{item.name}}</span>
+                <span class="system-cost">[{{item.cost}} credits]</span>
+              </div>
+            {{/each}}
+          </div>
+        {{/if}}
+      </div>
+
+      <div class="action-buttons">
+        {{#if this.canGoBack}}
+          <button class="back-step btn btn-secondary">← Back</button>
+        {{/if}}
+        <button class="next-step btn btn-primary">Next →</button>
+      </div>
+    </div>
+  {{/if}}
+
+  {{!-- Phase 2: Single-select steps (processor, armor) --}}
+  {{#if (or (eq this.currentStep 'processor') (eq this.currentStep 'armor'))}}
+    <div class="builder-step phase2-step">
+      <h2>{{this.stepConfig.label}} (Step {{this.stepNumber}}/{{this.totalSteps}})</h2>
+
+      <div class="step-info">
+        <p><strong>Degree:</strong> {{this.droidSystems.degree}} | <strong>Size:</strong> {{this.droidSystems.size}}</p>
+      </div>
+
+      {{> droid-builder-budget budget=this.budget}}
+
+      <div class="systems-selector">
+        <div class="available-systems">
+          <h3>Available Systems</h3>
+          {{#each this.availableItems as |item|}}
+            <label class="system-item single-select">
+              <input
+                type="radio"
+                name="system-select"
+                value="{{item.id}}"
+                {{#if (eq this.selectedItems.id item.id)}}checked{{/if}}
+                {{#unless item.canAfford}}disabled{{/unless}}
+                data-step="{{../this.currentStep}}"
+              />
+              <span class="system-name">{{item.name}}</span>
+              <span class="system-cost">[{{item.cost}} credits]</span>
+              {{#if this.selectedItems.bonus}}
+                <span class="system-stat">Bonus: +{{item.bonus}}</span>
+              {{/if}}
+              {{#unless item.canAfford}}
+                <span class="system-unavailable">✗ Insufficient credits</span>
+              {{/unless}}
+            </label>
+          {{/each}}
+        </div>
+
+        {{#if this.selectedItems.id}}
+          <div class="selected-systems">
+            <h3>Selected</h3>
+            <div class="selected-item">
+              <span class="system-name">{{this.selectedItems.name}}</span>
+              <span class="system-cost">[{{this.selectedItems.cost}} credits]</span>
+              {{#if this.selectedItems.bonus}}
+                <span class="system-stat">Bonus: +{{this.selectedItems.bonus}}</span>
+              {{/if}}
+            </div>
+          </div>
+        {{/if}}
+      </div>
+
+      <div class="action-buttons">
+        {{#if this.canGoBack}}
+          <button class="back-step btn btn-secondary">← Back</button>
+        {{/if}}
+        {{#if this.selectedItems.id}}
+          <button class="next-step btn btn-primary">Next →</button>
+        {{/if}}
+      </div>
+    </div>
+  {{/if}}
+
   {{#if (eq this.currentStep 'review')}}
     <div class="builder-step review-step">
       <h2>Configuration Review</h2>
@@ -60,7 +240,20 @@
       <div class="config-summary">
         <p><strong>Degree:</strong> {{this.droidSystems.degree}}</p>
         <p><strong>Size:</strong> {{this.droidSystems.size}}</p>
-        <p><strong>Budget:</strong> {{this.budget.spent}} / {{this.budget.total}} credits remaining</p>
+        <p><strong>Locomotion:</strong> {{this.droidSystems.locomotion.name}}</p>
+        <p><strong>Manipulators:</strong> {{this.droidSystems.appendages.length}}</p>
+        {{#if this.droidSystems.sensors.length}}
+          <p><strong>Sensors:</strong> {{this.droidSystems.sensors.length}}</p>
+        {{/if}}
+        <p><strong>Processor:</strong> {{this.droidSystems.processor.name}}</p>
+        <p><strong>Armor:</strong> {{this.droidSystems.armor.name}}</p>
+        {{#if this.droidSystems.weapons.length}}
+          <p><strong>Weapons:</strong> {{this.droidSystems.weapons.length}}</p>
+        {{/if}}
+        {{#if this.droidSystems.accessories.length}}
+          <p><strong>Accessories:</strong> {{this.droidSystems.accessories.length}}</p>
+        {{/if}}
+        <p><strong>Budget:</strong> {{this.budget.spent}} / {{this.budget.total}} credits</p>
       </div>
 
       {{#if this.isValid}}
@@ -73,17 +266,32 @@
         </div>
       {{/if}}
 
-      <button class="reset-droid btn btn-secondary">
-        Reset Builder
-      </button>
+      <button class="back-step btn btn-secondary">← Back</button>
+      <button class="reset-droid btn btn-secondary">Reset</button>
     </div>
   {{/if}}
 </div>
 
+<template id="droid-builder-budget">
+  <div class="budget-display">
+    <div class="budget-bar-label">
+      Credits: {{this.spent}} / {{this.total}}
+      {{#if (gte this.remaining 0)}}
+        <span class="budget-remaining">({{this.remaining}} remaining)</span>
+      {{else}}
+        <span class="budget-over">OVER BUDGET: {{math this.remaining "*" -1}} over</span>
+      {{/if}}
+    </div>
+    <div class="budget-bar">
+      <div class="budget-spent" style="width: {{math this.spent "/" this.total "*" 100}}%"></div>
+    </div>
+  </div>
+</template>
+
 <style>
   .droid-builder-container {
     padding: 20px;
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
   }
 
@@ -95,6 +303,7 @@
     margin: 0 0 15px 0;
   }
 
+  /* Phase 1: Degree/Size Selection */
   .degree-selection,
   .size-selection {
     display: flex;
@@ -128,6 +337,173 @@
     font-weight: bold;
   }
 
+  /* Phase 2: System Selection */
+  .phase2-step {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .step-info {
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-size: 13px;
+  }
+
+  .step-info p {
+    margin: 4px 0;
+  }
+
+  .selection-count {
+    font-weight: bold;
+    color: #2a9d00;
+  }
+
+  /* Budget Display */
+  .budget-display {
+    background: #f0f4f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .budget-bar-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .budget-remaining {
+    color: #2a9d00;
+    font-weight: bold;
+  }
+
+  .budget-over {
+    color: #c62828;
+    font-weight: bold;
+  }
+
+  .budget-bar {
+    width: 100%;
+    height: 20px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .budget-spent {
+    height: 100%;
+    background: linear-gradient(90deg, #2a9d00, #4caf50);
+    transition: width 0.3s ease;
+  }
+
+  /* Systems Selector */
+  .systems-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .available-systems,
+  .selected-systems {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    background: #fafafa;
+  }
+
+  .available-systems h3,
+  .selected-systems h3 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .system-item {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    margin-bottom: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 3px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .system-item:hover {
+    border-color: #2a9d00;
+    background: #f5fff5;
+  }
+
+  .system-item input[type="radio"],
+  .system-item input[type="checkbox"] {
+    margin-right: 8px;
+    margin-bottom: 4px;
+  }
+
+  .system-item input[type="radio"]:checked + .system-name,
+  .system-item input[type="checkbox"]:checked + .system-name {
+    font-weight: bold;
+    color: #2a9d00;
+  }
+
+  .system-item input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .system-name {
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .system-cost {
+    font-size: 12px;
+    color: #666;
+  }
+
+  .system-stat {
+    font-size: 11px;
+    color: #999;
+    margin-top: 2px;
+  }
+
+  .system-unavailable {
+    font-size: 11px;
+    color: #c62828;
+    font-weight: bold;
+  }
+
+  .selected-item {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    margin-bottom: 8px;
+    border: 2px solid #2a9d00;
+    border-radius: 3px;
+    background: #e8f5e9;
+  }
+
+  .selected-item .system-name {
+    color: #1b5e20;
+  }
+
+  /* Action Buttons */
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+
+  /* Review Step */
   .config-summary {
     background: #f9f9f9;
     border-left: 4px solid #2a9d00;
@@ -138,8 +514,10 @@
 
   .config-summary p {
     margin: 8px 0;
+    font-size: 13px;
   }
 
+  /* Alerts */
   .alert {
     padding: 12px;
     margin-bottom: 15px;
@@ -158,6 +536,7 @@
     color: #bf360c;
   }
 
+  /* Buttons */
   .btn {
     padding: 10px 16px;
     margin-top: 10px;
@@ -170,22 +549,27 @@
     margin-right: 8px;
   }
 
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   .btn-primary {
     background: #2a9d00;
     color: white;
   }
 
-  .btn-primary:hover {
+  .btn-primary:hover:not(:disabled) {
     background: #1e7e34;
   }
 
   .btn-success {
     background: #4caf50;
     color: white;
-    width: 100%;
+    flex: 1;
   }
 
-  .btn-success:hover {
+  .btn-success:hover:not(:disabled) {
     background: #388e3c;
   }
 
@@ -194,7 +578,24 @@
     color: white;
   }
 
-  .btn-secondary:hover {
+  .btn-secondary:hover:not(:disabled) {
     background: #616161;
+  }
+
+  /* Responsive: On smaller screens, stack the systems selector */
+  @media (max-width: 700px) {
+    .systems-selector {
+      grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+      flex-direction: column-reverse;
+    }
+
+    .btn {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 8px;
+    }
   }
 </style>
