@@ -64,7 +64,7 @@ export class EquipmentEngine {
      */
     static async setCredits(actor, amount) {
         await actor.update({
-            "system.credits": amount
+            'system.credits': amount
         });
 
         SWSELogger.log(`Credits set to: ${amount}`);
@@ -86,13 +86,13 @@ export class EquipmentEngine {
      */
     static async getClassStartingEquipment(className) {
         const classPack = game.packs.get('foundryvtt-swse.classes');
-        if (!classPack) return [];
+        if (!classPack) {return [];}
 
         const classIndex = classPack.index.find(c => c.name === className);
-        if (!classIndex) return [];
+        if (!classIndex) {return [];}
 
         const classDoc = await classPack.getDocument(classIndex._id);
-        if (!classDoc) return [];
+        if (!classDoc) {return [];}
 
         return classDoc.system?.startingEquipment || [];
     }
@@ -102,13 +102,13 @@ export class EquipmentEngine {
      */
     static async getBackgroundStartingEquipment(backgroundName) {
         const bgPack = game.packs.get('foundryvtt-swse.backgrounds');
-        if (!bgPack) return [];
+        if (!bgPack) {return [];}
 
         const bgIndex = bgPack.index.find(b => b.name === backgroundName);
-        if (!bgIndex) return [];
+        if (!bgIndex) {return [];}
 
         const bgDoc = await bgPack.getDocument(bgIndex._id);
-        if (!bgDoc) return [];
+        if (!bgDoc) {return [];}
 
         return bgDoc.system?.startingEquipment || [];
     }

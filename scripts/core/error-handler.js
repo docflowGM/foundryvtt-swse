@@ -98,7 +98,7 @@ export class ErrorHandler {
    * Checks for common issues that might not throw errors but indicate problems
    */
   validateSystem() {
-    if (!this._devMode) return;
+    if (!this._devMode) {return;}
 
     const issues = [];
 

@@ -6,6 +6,7 @@
  *
  * USAGE:
  * Run this as a macro in Foundry VTT (as a GM) or via the console.
+ * NOTE: When used as a macro in Foundry, ensure createActor is available globally or replace with Actor.createDocuments()
  *
  * Steps:
  * 1. Copy this entire file content
@@ -13,6 +14,17 @@
  * 3. Paste the content
  * 4. Execute the macro
  */
+
+// For module usage, import createActor
+let createActor;
+try {
+  const module = await import('../core/document-api-v13.js');
+  createActor = module.createActor;
+} catch (e) {
+  // Fallback for macro context where imports don't work
+  // In Foundry console, Actor.createDocuments is used instead
+  createActor = null;
+}
 
 (async function importNonheroicUnits() {
   // Load the JSON data
@@ -107,12 +119,14 @@
           name: template.name,
           displayName: 40, // HOVER
           actorLink: false,
-          disposition: -1, // HOSTILE
+          disposition: -1 // HOSTILE
         }
       };
 
       // Create the actor document in the compendium
-      const actor = await Actor.create(actorData, { pack: npcPack.collection });
+      const actor = createActor
+        ? await createActor(actorData, { pack: npcPack.collection })
+        : await Actor.create(actorData, { pack: npcPack.collection });
 
       // Now add items (feats, talents) to the actor
       const itemsToAdd = [];

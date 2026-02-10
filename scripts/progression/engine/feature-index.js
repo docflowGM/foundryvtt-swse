@@ -105,7 +105,7 @@ export const FeatureIndex = {
     async _tryLoadPack(packId, map) {
         try {
             const pack = game.packs.get(packId);
-            if (!pack) return; // Silent fail for optional packs
+            if (!pack) {return;} // Silent fail for optional packs
 
             const docs = await pack.getDocuments();
             for (const doc of docs) {
@@ -125,27 +125,27 @@ export const FeatureIndex = {
      * Lookup methods
      */
     getFeat(name) {
-        if (!this.isBuilt) this._warnNotBuilt();
+        if (!this.isBuilt) {this._warnNotBuilt();}
         return this.feats.get(this._normalize(name)) || null;
     },
 
     getTalent(name) {
-        if (!this.isBuilt) this._warnNotBuilt();
+        if (!this.isBuilt) {this._warnNotBuilt();}
         return this.talents.get(this._normalize(name)) || null;
     },
 
     getPower(name) {
-        if (!this.isBuilt) this._warnNotBuilt();
+        if (!this.isBuilt) {this._warnNotBuilt();}
         return this.powers.get(this._normalize(name)) || null;
     },
 
     getSecret(name) {
-        if (!this.isBuilt) this._warnNotBuilt();
+        if (!this.isBuilt) {this._warnNotBuilt();}
         return this.secrets.get(this._normalize(name)) || null;
     },
 
     getTechnique(name) {
-        if (!this.isBuilt) this._warnNotBuilt();
+        if (!this.isBuilt) {this._warnNotBuilt();}
         return this.techniques.get(this._normalize(name)) || null;
     },
 
@@ -153,7 +153,7 @@ export const FeatureIndex = {
      * Get class feature registered for a specific class
      */
     getClassFeature(className, featureName) {
-        if (!this.isBuilt) this._warnNotBuilt();
+        if (!this.isBuilt) {this._warnNotBuilt();}
         const key = `${className}:${featureName}`.toLowerCase();
         return this.classFeatures.get(key) || null;
     },
@@ -231,7 +231,7 @@ export const FeatureIndex = {
      * @private
      */
     _normalize(name) {
-        if (!name || typeof name !== 'string') return '';
+        if (!name || typeof name !== 'string') {return '';}
         return name.trim().toLowerCase();
     },
 

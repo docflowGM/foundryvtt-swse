@@ -48,7 +48,7 @@ export class AurebeshTranslator {
     // Create skip handler
     const skipHandler = () => {
       isSkipped = true;
-      if (enableSkip) wrapper.removeEventListener('click', skipHandler);
+      if (enableSkip) {wrapper.removeEventListener('click', skipHandler);}
     };
 
     if (enableSkip) {
@@ -86,7 +86,7 @@ export class AurebeshTranslator {
 
     for (let i = 0; i < chars.length; i++) {
       // If skipped, stop animating and let parent handle reveal
-      if (skipRef) break;
+      if (skipRef) {break;}
 
       const char = chars[i];
       const revealed = chars.slice(0, i + 1).join('');

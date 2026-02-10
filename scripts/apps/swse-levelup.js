@@ -9,7 +9,7 @@
  */
 
 import { SWSELogger, swseLogger } from '../utils/logger.js';
-import { SWSELevelUpEnhanced } from "./swse-levelup-enhanced.js";
+import { SWSELevelUpEnhanced } from './swse-levelup-enhanced.js';
 
 export class SWSELevelUp {
     /**
@@ -19,7 +19,7 @@ export class SWSELevelUp {
      */
     static async openEnhanced(actor) {
         if (!actor) {
-            ui.notifications.error("No actor provided for level up.");
+            ui.notifications.error('No actor provided for level up.');
             return false;
         }
 
@@ -30,11 +30,11 @@ export class SWSELevelUp {
         } catch (err) {
             // If the enhanced dialog fails (e.g., incomplete character redirect),
             // the error is expected and handled internally
-            if (err.message?.includes("redirecting to character generator")) {
+            if (err.message?.includes('redirecting to character generator')) {
                 return false;
             }
-            swseLogger.error("SWSE Level Up | Error opening enhanced dialog:", err);
-            ui.notifications.error("Failed to open level up dialog.");
+            swseLogger.error('SWSE Level Up | Error opening enhanced dialog:', err);
+            ui.notifications.error('Failed to open level up dialog.');
             return false;
         }
     }

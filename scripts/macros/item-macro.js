@@ -9,10 +9,10 @@
  * @param {number} slot - The hotbar slot number
  */
 export async function createItemMacro(data, slot) {
-  if (!data.uuid) return;
+  if (!data.uuid) {return;}
 
   const item = await fromUuid(data.uuid);
-  if (!item) return;
+  if (!item) {return;}
 
   // Create the macro command
   const command = `
@@ -33,10 +33,10 @@ export async function createItemMacro(data, slot) {
   if (!macro) {
     macro = await Macro.create({
       name: item.name,
-      type: "script",
+      type: 'script',
       img: item.img,
       command: command,
-      flags: { "swse.itemMacro": true }
+      flags: { 'swse.itemMacro': true }
     });
   }
 

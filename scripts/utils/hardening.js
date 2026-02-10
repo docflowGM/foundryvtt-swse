@@ -9,13 +9,13 @@
  * Snapshot is stored in flags.swse.npcLevelUp.snapshot (back-compat with existing UI).
  */
 
-const SYSTEM_SCOPE_COMPAT = "swse";
-const FLAG_SNAPSHOT = "npcLevelUp.snapshot";
-const FLAG_MODE = "npcLevelUp.mode";
-const FLAG_TRACK = "npcLevelUp.track";
-const FLAG_STARTED_AT = "npcLevelUp.startedAt";
+const SYSTEM_SCOPE_COMPAT = 'swse';
+const FLAG_SNAPSHOT = 'npcLevelUp.snapshot';
+const FLAG_MODE = 'npcLevelUp.mode';
+const FLAG_TRACK = 'npcLevelUp.track';
+const FLAG_STARTED_AT = 'npcLevelUp.startedAt';
 
-const MIXED_WARN_KEY = "__swseMixedTrackWarned__";
+const MIXED_WARN_KEY = '__swseMixedTrackWarned__';
 
 function _warnCache() {
   globalThis[MIXED_WARN_KEY] ??= new Set();
@@ -23,13 +23,13 @@ function _warnCache() {
 }
 
 function _actorKey(actor) {
-  return actor?.uuid ?? actor?.id ?? actor?.name ?? "unknown";
+  return actor?.uuid ?? actor?.id ?? actor?.name ?? 'unknown';
 }
 
 export function isStatblockNpc(actor) {
-  if (!actor || actor.type !== "npc") return false;
-  const mode = actor.getFlag?.(SYSTEM_SCOPE_COMPAT, FLAG_MODE) ?? "statblock";
-  return mode !== "progression";
+  if (!actor || actor.type !== 'npc') {return false;}
+  const mode = actor.getFlag?.(SYSTEM_SCOPE_COMPAT, FLAG_MODE) ?? 'statblock';
+  return mode !== 'progression';
 }
 
 export function shouldSkipDerivedData(actor) {
@@ -41,7 +41,7 @@ export function shouldSkipDerivedData(actor) {
  * @param {Actor} actor
  */
 export function getLevelSplitFromItems(actor) {
-  const classes = actor?.items?.filter?.((i) => i?.type === "class") ?? [];
+  const classes = actor?.items?.filter?.((i) => i?.type === 'class') ?? [];
   const heroicLevel = classes
     .filter((c) => c?.system?.isNonheroic !== true)
     .reduce((sum, c) => sum + (Number(c?.system?.level) || 0), 0);
@@ -57,14 +57,14 @@ export function getLevelSplitFromItems(actor) {
   };
 }
 
-export function warnIfMixedTracks(actor, context = "unknown") {
+export function warnIfMixedTracks(actor, context = 'unknown') {
   try {
     const { heroicLevel, nonheroicLevel } = getLevelSplitFromItems(actor);
-    if (!(heroicLevel > 0 && nonheroicLevel > 0)) return;
+    if (!(heroicLevel > 0 && nonheroicLevel > 0)) {return;}
 
     const cache = _warnCache();
     const key = _actorKey(actor);
-    if (cache.has(key)) return;
+    if (cache.has(key)) {return;}
     cache.add(key);
 
     console.warn(
@@ -78,15 +78,15 @@ export function warnIfMixedTracks(actor, context = "unknown") {
 }
 
 export async function ensureNpcStatblockSnapshot(actor) {
-  if (!actor) return;
+  if (!actor) {return;}
   const existing = actor.getFlag?.(SYSTEM_SCOPE_COMPAT, FLAG_SNAPSHOT);
-  if (existing) return;
+  if (existing) {return;}
 
   const raw = actor.toObject();
   const snapshot = {
     version: 1,
     createdAt: new Date().toISOString(),
-    actorUuid: actor.uuid ?? "",
+    actorUuid: actor.uuid ?? '',
     name: raw.name,
     img: raw.img,
     system: foundry.utils.deepClone(raw.system ?? {}),
@@ -101,7 +101,7 @@ export async function ensureNpcStatblockSnapshot(actor) {
 export async function rollbackNpcToStatblockSnapshot(actor) {
   const snap = actor?.getFlag?.(SYSTEM_SCOPE_COMPAT, FLAG_SNAPSHOT);
   if (!snap) {
-    ui.notifications.warn("No NPC snapshot found.");
+    ui.notifications.warn('No NPC snapshot found.');
     return;
   }
 
@@ -117,7 +117,7 @@ export async function rollbackNpcToStatblockSnapshot(actor) {
 
   const currentItemIds = actor.items?.map?.((i) => i.id) ?? [];
   if (currentItemIds.length) {
-    await actor.deleteEmbeddedDocuments("Item", currentItemIds, {
+    await actor.deleteEmbeddedDocuments('Item', currentItemIds, {
       [SYSTEM_SCOPE_COMPAT]: { skipProgression: true }
     });
   }
@@ -128,14 +128,14 @@ export async function rollbackNpcToStatblockSnapshot(actor) {
     return copy;
   });
   if (items.length) {
-    await actor.createEmbeddedDocuments("Item", items, {
+    await actor.createEmbeddedDocuments('Item', items, {
       [SYSTEM_SCOPE_COMPAT]: { skipProgression: true }
     });
   }
 
   const currentEffectIds = actor.effects?.map?.((e) => e.id) ?? [];
   if (currentEffectIds.length) {
-    await actor.deleteEmbeddedDocuments("ActiveEffect", currentEffectIds, {
+    await actor.deleteEmbeddedDocuments('ActiveEffect', currentEffectIds, {
       [SYSTEM_SCOPE_COMPAT]: { skipProgression: true }
     });
   }
@@ -146,14 +146,14 @@ export async function rollbackNpcToStatblockSnapshot(actor) {
     return copy;
   });
   if (effects.length) {
-    await actor.createEmbeddedDocuments("ActiveEffect", effects, {
+    await actor.createEmbeddedDocuments('ActiveEffect', effects, {
       [SYSTEM_SCOPE_COMPAT]: { skipProgression: true }
     });
   }
 
-  await actor.setFlag(SYSTEM_SCOPE_COMPAT, FLAG_MODE, "statblock");
+  await actor.setFlag(SYSTEM_SCOPE_COMPAT, FLAG_MODE, 'statblock');
   await actor.unsetFlag(SYSTEM_SCOPE_COMPAT, FLAG_TRACK);
   await actor.unsetFlag(SYSTEM_SCOPE_COMPAT, FLAG_STARTED_AT);
 
-  ui.notifications.info("NPC reverted to statblock snapshot.");
+  ui.notifications.info('NPC reverted to statblock snapshot.');
 }

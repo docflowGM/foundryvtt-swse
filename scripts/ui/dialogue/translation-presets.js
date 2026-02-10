@@ -252,7 +252,7 @@ export function getPreset(name) {
  * Maps mentor names to appropriate presets
  */
 export function getPresetForMentor(mentorName) {
-  if (!mentorName) return TRANSLATION_PRESETS.mentor;
+  if (!mentorName) {return TRANSLATION_PRESETS.mentor;}
 
   const normalized = mentorName.toLowerCase().trim();
 

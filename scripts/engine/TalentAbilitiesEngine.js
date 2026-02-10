@@ -16,7 +16,9 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { SWSEActiveEffectsManager } from '../combat/active-effects-manager.js';
+// eslint-disable-next-line
 import talentAbilitiesData from '../../data/talent-granted-abilities.json' with { type: 'json' };
+import { createChatMessage } from '../core/document-api-v13.js';
 
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 /**
@@ -680,7 +682,7 @@ export class TalentAbilitiesEngine {
         // Build chat message content
         const content = await this._buildAbilityRollMessage(ability, roll, rollData, options);
 
-        await ChatMessage.create({
+        await createChatMessage({
             speaker: ChatMessage.getSpeaker({ actor }),
             content,
             rolls: [roll],
@@ -812,7 +814,7 @@ export class TalentAbilitiesEngine {
             </div>
         `;
 
-        return ChatMessage.create({
+        return createChatMessage({
             speaker: ChatMessage.getSpeaker({ actor }),
             content
         });
@@ -1132,7 +1134,7 @@ export class TalentAbilitiesEngine {
             </div>
         `;
 
-        await ChatMessage.create({
+        await createChatMessage({
             speaker: ChatMessage.getSpeaker({ actor: attacker }),
             content
         });
@@ -1313,7 +1315,7 @@ export class TalentAbilitiesEngine {
             </div>
         `;
 
-        await ChatMessage.create({
+        await createChatMessage({
             speaker: ChatMessage.getSpeaker({ actor: defender }),
             content,
             rolls: [roll],

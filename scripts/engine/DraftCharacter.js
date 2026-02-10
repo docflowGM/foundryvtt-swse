@@ -94,7 +94,7 @@ export class DraftCharacter {
   /**
    * Set ability scores
    */
-  setAbilities(abilities, method = "pointBuy") {
+  setAbilities(abilities, method = 'pointBuy') {
     swseLogger.log(`[DRAFT] Setting abilities via ${method}`);
     this._invalidateDownstream('abilities');
     this.choices.abilities = { abilities, method };
@@ -270,7 +270,7 @@ export class DraftCharacter {
     ];
 
     const changedIndex = dependencyChain.indexOf(changedStep);
-    if (changedIndex === -1) return;
+    if (changedIndex === -1) {return;}
 
     // Clear everything after this step
     for (let i = changedIndex + 1; i < dependencyChain.length; i++) {
@@ -346,8 +346,8 @@ export class DraftCharacter {
         }
 
         // Apply size/speed
-        if (speciesData.size) preview.system.size = speciesData.size;
-        if (speciesData.speed !== undefined) preview.system.speed = speciesData.speed;
+        if (speciesData.size) {preview.system.size = speciesData.size;}
+        if (speciesData.speed !== undefined) {preview.system.speed = speciesData.speed;}
       }
     }
 
@@ -642,7 +642,7 @@ export class DraftCharacter {
     // Create feat items
     if (this.choices.feats.length > 0) {
       const { FeatRegistry } = await import('../progression/feats/feat-registry.js');
-      if (!FeatRegistry.isBuilt) await FeatRegistry.build();
+      if (!FeatRegistry.isBuilt) {await FeatRegistry.build();}
 
       for (const featName of this.choices.feats) {
         const existing = this.actor.items.find(i => i.type === 'feat' && i.name === featName);
@@ -710,8 +710,8 @@ export class DraftCharacter {
    * Load draft choices from a plain object
    */
   fromObject(data) {
-    if (data.draftId) this.draftId = data.draftId;
-    if (data.choices) this.choices = foundry.utils.deepClone(data.choices);
+    if (data.draftId) {this.draftId = data.draftId;}
+    if (data.choices) {this.choices = foundry.utils.deepClone(data.choices);}
     this._markDirty();
   }
 }

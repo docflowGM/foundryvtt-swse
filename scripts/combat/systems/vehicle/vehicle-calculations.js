@@ -14,8 +14,8 @@
  *  - SWSERoll / DamageSystem via SWSEVehicleCombat
  */
 
-import { getVehicleCTPenalty, measureDistance, measureSquares } from "./vehicle-shared.js";
-import { computeAttackBonus } from "../../utils/combat-utils.js";
+import { getVehicleCTPenalty, measureDistance, measureSquares } from './vehicle-shared.js';
+import { computeAttackBonus } from '../../utils/combat-utils.js';
 
 /**
  * Determine which modifier is used for vehicle weapons.
@@ -30,14 +30,14 @@ export function computeVehicleAttackBonus(attacker, weapon, vehicleActor) {
   // Determine if weapon is a "true vehicle weapon" (starship turrets, batteries, etc.)
   const isVehicleWeapon =
     weapon.system?.isVehicleWeapon ||
-    weapon.system?.weaponType === "vehicle" ||
-    weapon.system?.weaponType === "starship";
+    weapon.system?.weaponType === 'vehicle' ||
+    weapon.system?.weaponType === 'starship';
 
   // Pilot modifier for true vehicle weapons
   let pilotMod = 0;
   if (isVehicleWeapon) {
     const pilotSkill = attacker.system.skills?.pilot;
-    if (pilotSkill) pilotMod = pilotSkill.total ?? 0;
+    if (pilotSkill) {pilotMod = pilotSkill.total ?? 0;}
   }
 
   // Normal weapon (mounted personal arms)
@@ -104,10 +104,10 @@ export function computeVehicleReflexDefense(vehicleActor) {
  * Vehicle weapons often deal massive dice, but still obey DR/SR logic.
  */
 export function computeVehicleDamage(attacker, weapon, options = {}) {
-  const baseDamage = weapon.system?.damage ?? "1d10";
+  const baseDamage = weapon.system?.damage ?? '1d10';
   const bonus = weapon.system?.damageBonus ?? 0;
 
-  let multiplier = options.isCrit ? (weapon.system?.critMultiplier || 2) : 1;
+  const multiplier = options.isCrit ? (weapon.system?.critMultiplier || 2) : 1;
 
   const formula =
     multiplier === 1
@@ -145,18 +145,15 @@ export function computeVehicleRangeBand(attackerToken, targetToken, weapon, acto
   const ranges = weapon.system?.ranges;
 
   if (!ranges) {
-    return { band: "unknown", distance: dist, penalty: 0 };
+    return { band: 'unknown', distance: dist, penalty: 0 };
   }
 
-  let band = "out-of-range";
+  let band = 'out-of-range';
   let penalty = -20;
 
   const { pointBlank, short, medium, long } = ranges;
 
-  if (dist <= pointBlank) band = "pointBlank", penalty = 0;
-  else if (dist <= short) band = "short", penalty = -2;
-  else if (dist <= medium) band = "medium", penalty = -5;
-  else if (dist <= long) band = "long", penalty = -10;
+  if (dist <= pointBlank) {band = 'pointBlank', penalty = 0;} else if (dist <= short) {band = 'short', penalty = -2;} else if (dist <= medium) {band = 'medium', penalty = -5;} else if (dist <= long) {band = 'long', penalty = -10;}
 
   return { band, distance: dist, penalty };
 }
@@ -179,13 +176,13 @@ export function computeDogfightingModifier(attacker, target, attackerToken, targ
   const facingRad = facing * (Math.PI / 180);
   const diff = Math.abs((facingRad - angleToTarget + Math.PI * 2) % (Math.PI * 2));
 
-  if (diff < Math.PI / 6) bonus += 2; // Attacking within forward arc
+  if (diff < Math.PI / 6) {bonus += 2;} // Attacking within forward arc
 
   const hasVehicularCombat = attacker.items.some(i =>
-    i.type === "feat" && i.name.toLowerCase().includes("vehicular combat")
+    i.type === 'feat' && i.name.toLowerCase().includes('vehicular combat')
   );
 
-  if (hasVehicularCombat) bonus += 2;
+  if (hasVehicularCombat) {bonus += 2;}
 
   return bonus;
 }

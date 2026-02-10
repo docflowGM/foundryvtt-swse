@@ -68,7 +68,7 @@ export class DroidAppendageUtils {
     for (const appendageRef of appendages) {
       // Find the appendage definition
       const appendageDef = DROID_SYSTEMS.appendages.find(a => a.id === appendageRef.id);
-      if (!appendageDef) continue;
+      if (!appendageDef) {continue;}
 
       // Generate unarmed attack if applicable
       const attack = this.generateUnarmedAttack(appendageDef, droidSize);
@@ -95,7 +95,7 @@ export class DroidAppendageUtils {
    * @param {string} droidSize - The droid size
    */
   static async createAppendageAttackItems(actor, appendages, droidSize) {
-    if (!actor) return;
+    if (!actor) {return;}
 
     const attacks = this.getAllUnarmedAttacks(appendages, droidSize);
 
@@ -122,7 +122,7 @@ export class DroidAppendageUtils {
     const damageType = DROID_SYSTEMS.appendages.find(a => a.id === appendageId)?.damageType || appendageId;
     const damageTable = DROID_SYSTEMS.unarmedDamageTable[damageType];
 
-    if (!damageTable) return null;
+    if (!damageTable) {return null;}
     return damageTable[droidSize] || null;
   }
 
@@ -133,7 +133,7 @@ export class DroidAppendageUtils {
    */
   static getAppendageEnhancements(appendageId) {
     return DROID_SYSTEMS.appendageEnhancements.filter(enhancement => {
-      if (!enhancement.requiresAppendage) return false;
+      if (!enhancement.requiresAppendage) {return false;}
       const required = Array.isArray(enhancement.requiresAppendage)
         ? enhancement.requiresAppendage
         : [enhancement.requiresAppendage];

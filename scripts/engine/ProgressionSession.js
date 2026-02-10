@@ -1,6 +1,7 @@
 // scripts/engine/ProgressionSession.js
 import { swseLogger } from '../utils/logger.js';
 import { applyActorUpdateAtomic } from '../utils/actor-utils.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 /**
  * ProgressionSession - Session-level transaction wrapper for character progression
@@ -24,7 +25,7 @@ import { applyActorUpdateAtomic } from '../utils/actor-utils.js';
  *   await session.commit(); // or session.rollback()
  */
 export class ProgressionSession {
-  constructor(actor, mode = "levelup") {
+  constructor(actor, mode = 'levelup') {
     swseLogger.log(`[SESSION] Creating ProgressionSession - mode: ${mode}, actor: ${actor.name}`);
 
     if (!actor) {
@@ -143,7 +144,7 @@ export class ProgressionSession {
   /**
    * Stage ability scores
    */
-  async setAbilities(abilities, method = "pointBuy") {
+  async setAbilities(abilities, method = 'pointBuy') {
     swseLogger.log(`[SESSION] Staging abilities: ${method}`);
     this.stagedChanges.abilities = { abilities, method };
     return true;
@@ -416,7 +417,7 @@ export class ProgressionSession {
         const { recalcDerivedStats } = await import('../progression/engine/autocalc/derived-stats.js');
         await recalcDerivedStats(this.actor);
       } catch (err) {
-        swseLogger.warn("Derived stats recalculation failed:", err);
+        swseLogger.warn('Derived stats recalculation failed:', err);
       }
 
       // Mark as committed
@@ -577,7 +578,7 @@ export class ProgressionSession {
     }
 
     // First level always grants 1 feat
-    if (this.mode === "chargen") {
+    if (this.mode === 'chargen') {
       grants.bonusFeats += 1;
     }
 
@@ -640,7 +641,7 @@ export class ProgressionSession {
     // Create feat items
     if (this.stagedChanges.feats.length > 0) {
       const { FeatRegistry } = await import('../progression/feats/feat-registry.js');
-      if (!FeatRegistry.isBuilt) await FeatRegistry.build();
+      if (!FeatRegistry.isBuilt) {await FeatRegistry.build();}
 
       for (const featName of this.stagedChanges.feats) {
         const existing = this.actor.items.find(i => i.type === 'feat' && i.name === featName);
@@ -706,7 +707,7 @@ export class ProgressionSession {
         changes: this.stagedChanges
       });
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         content,
         flags: {

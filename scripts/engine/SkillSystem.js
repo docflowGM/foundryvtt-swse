@@ -50,8 +50,8 @@ export class SkillSystem {
        LOAD EXTRA SKILL USES FROM PACK
        ====================================================================== */
     static async _loadExtraSkillUses() {
-        const pack = game.packs.get("foundryvtt-swse.extraskilluses");
-        if (!pack) return [];
+        const pack = game.packs.get('foundryvtt-swse.extraskilluses');
+        if (!pack) {return [];}
 
         const index = await pack.getIndex();
         const docs = await Promise.all(index.map(i => pack.getDocument(i._id)));
@@ -99,7 +99,7 @@ export class SkillSystem {
        ====================================================================== */
     static _mergeCombatActions(actor, actionMap) {
         const CAM = game.swse?.CombatActionsMapper;
-        if (!CAM) return;
+        if (!CAM) {return;}
 
         const map = CAM.getActionsFor(actor) || {};
 
@@ -239,7 +239,7 @@ export class SkillSystem {
         ];
 
         for (const use of programmaticUses) {
-            if (!use.handler) continue; // Skip if handler not available
+            if (!use.handler) {continue;} // Skip if handler not available
 
             // Skip Force-requiring uses if actor doesn't have Force Sensitivity
             if (use.requiresForce && !SkillSystem._canUseTheForce(actor)) {
@@ -271,7 +271,7 @@ export class SkillSystem {
        CHECK FORCE SENSITIVITY
        ====================================================================== */
     static _canUseTheForce(actor) {
-        if (!actor) return false;
+        if (!actor) {return false;}
 
         // Droids can never use the Force
         if (actor.type === 'droid' || actor.system?.isDroid) {
@@ -315,113 +315,113 @@ export class SkillSystem {
        - Supports freeform Knowledge skills
        ====================================================================== */
     static _detectSkill(use) {
-        const text = (use.application + " " + (use.description || "")).toLowerCase();
+        const text = (use.application + ' ' + (use.description || '')).toLowerCase();
 
         // Manual override table - using correct camelCase skill keys
         const MANUAL = {
-            "feint": "deception",
-            "group feint": "deception",
-            "cheat": "deception",
+            'feint': 'deception',
+            'group feint': 'deception',
+            'cheat': 'deception',
 
-            "snipe": "stealth",
-            "sneak": "stealth",
-            "create a diversion": "stealth",
-            "conceal": "stealth",
+            'snipe': 'stealth',
+            'sneak': 'stealth',
+            'create a diversion': 'stealth',
+            'conceal': 'stealth',
 
-            "astrogate": "useComputer",
-            "access information": "useComputer",
-            "issue routine command": "useComputer",
-            "reprogram droid": "useComputer",
+            'astrogate': 'useComputer',
+            'access information': 'useComputer',
+            'issue routine command': 'useComputer',
+            'reprogram droid': 'useComputer',
 
-            "jury-rig": "mechanics",
-            "modify droid": "mechanics",
-            "disable device": "mechanics",
-            "repair": "mechanics",
+            'jury-rig': 'mechanics',
+            'modify droid': 'mechanics',
+            'disable device': 'mechanics',
+            'repair': 'mechanics',
 
-            "first aid": "treatInjury",
-            "long-term care": "treatInjury",
-            "surgery": "treatInjury",
-            "revivify": "treatInjury",
+            'first aid': 'treatInjury',
+            'long-term care': 'treatInjury',
+            'surgery': 'treatInjury',
+            'revivify': 'treatInjury',
 
-            "gather information": "gatherInfo"
+            'gather information': 'gatherInfo'
         };
 
         for (const [kw, result] of Object.entries(MANUAL)) {
-            if (text.includes(kw)) return result;
+            if (text.includes(kw)) {return result;}
         }
 
         // Keyword matching - using correct camelCase skill keys
         const KW = [
-            ["stealth", "stealth"],
-            ["hide", "stealth"],
-            ["pick pocket", "stealth"],
+            ['stealth', 'stealth'],
+            ['hide', 'stealth'],
+            ['pick pocket', 'stealth'],
 
-            ["perception", "perception"],
-            ["spot", "perception"],
-            ["listen", "perception"],
-            ["search", "perception"],
+            ['perception', 'perception'],
+            ['spot', 'perception'],
+            ['listen', 'perception'],
+            ['search', 'perception'],
 
-            ["jump", "jump"],
-            ["long jump", "jump"],
-            ["high jump", "jump"],
+            ['jump', 'jump'],
+            ['long jump', 'jump'],
+            ['high jump', 'jump'],
 
-            ["climb", "climb"],
-            ["climbing", "climb"],
+            ['climb', 'climb'],
+            ['climbing', 'climb'],
 
-            ["swim", "swim"],
-            ["swimming", "swim"],
+            ['swim', 'swim'],
+            ['swimming', 'swim'],
 
-            ["acrobatics", "acrobatics"],
-            ["tumble", "acrobatics"],
-            ["balance", "acrobatics"],
+            ['acrobatics', 'acrobatics'],
+            ['tumble', 'acrobatics'],
+            ['balance', 'acrobatics'],
 
-            ["pilot", "pilot"],
-            ["dogfight", "pilot"],
-            ["drive", "pilot"],
-            ["ram", "pilot"],
+            ['pilot', 'pilot'],
+            ['dogfight', 'pilot'],
+            ['drive', 'pilot'],
+            ['ram', 'pilot'],
 
-            ["use computer", "useComputer"],
-            ["computer", "useComputer"],
+            ['use computer', 'useComputer'],
+            ['computer', 'useComputer'],
 
-            ["treat injury", "treatInjury"],
-            ["treat", "treatInjury"],
-            ["heal", "treatInjury"],
+            ['treat injury', 'treatInjury'],
+            ['treat', 'treatInjury'],
+            ['heal', 'treatInjury'],
 
-            ["droid", "mechanics"],
-            ["tech", "mechanics"],
-            ["mechanics", "mechanics"],
+            ['droid', 'mechanics'],
+            ['tech', 'mechanics'],
+            ['mechanics', 'mechanics'],
 
-            ["persuasion", "persuasion"],
-            ["haggle", "persuasion"],
-            ["intimidate", "persuasion"],
-            ["bribe", "persuasion"],
+            ['persuasion', 'persuasion'],
+            ['haggle', 'persuasion'],
+            ['intimidate', 'persuasion'],
+            ['bribe', 'persuasion'],
 
-            ["deception", "deception"],
-            ["deceive", "deception"],
-            ["lie", "deception"],
+            ['deception', 'deception'],
+            ['deceive', 'deception'],
+            ['lie', 'deception'],
 
-            ["survival", "survival"],
-            ["track", "survival"],
-            ["endure", "endurance"],
-            ["endurance", "endurance"],
+            ['survival', 'survival'],
+            ['track', 'survival'],
+            ['endure', 'endurance'],
+            ['endurance', 'endurance'],
 
-            ["initiative", "initiative"],
+            ['initiative', 'initiative'],
 
-            ["knowledge", "knowledge"],
+            ['knowledge', 'knowledge'],
 
-            ["use the force", "useTheForce"],
-            ["force trance", "useTheForce"],
-            ["telepathy", "useTheForce"],
-            ["move object", "useTheForce"],
-            ["sense", "useTheForce"]
+            ['use the force', 'useTheForce'],
+            ['force trance', 'useTheForce'],
+            ['telepathy', 'useTheForce'],
+            ['move object', 'useTheForce'],
+            ['sense', 'useTheForce']
         ];
 
         for (const [kw, skill] of KW) {
-            if (text.includes(kw)) return skill;
+            if (text.includes(kw)) {return skill;}
         }
 
         // Fallback
-        return "general";
+        return 'general';
     }
 
     /* ======================================================================
@@ -429,20 +429,16 @@ export class SkillSystem {
        - Used for collapsible category cards
        ====================================================================== */
     static _detectCategory(use) {
-        const text = (use.application + " " + (use.description || "")).toLowerCase();
+        const text = (use.application + ' ' + (use.description || '')).toLowerCase();
 
-        if (text.includes("droid")) return "Droid Operations";
-        if (text.includes("vehicle") || text.includes("pilot")) return "Vehicle / Starship";
-        if (text.includes("repair") || text.includes("jury") || text.includes("disable"))
-            return "Tech / Repair";
-        if (text.includes("survival") || text.includes("track") || text.includes("navigate"))
-            return "Environmental";
-        if (text.includes("feint") || text.includes("persuasion") || text.includes("social"))
-            return "Social";
-        if (text.includes("use the force") || text.includes("utf") || text.includes("force"))
-            return "Force-Assisted";
+        if (text.includes('droid')) {return 'Droid Operations';}
+        if (text.includes('vehicle') || text.includes('pilot')) {return 'Vehicle / Starship';}
+        if (text.includes('repair') || text.includes('jury') || text.includes('disable')) {return 'Tech / Repair';}
+        if (text.includes('survival') || text.includes('track') || text.includes('navigate')) {return 'Environmental';}
+        if (text.includes('feint') || text.includes('persuasion') || text.includes('social')) {return 'Social';}
+        if (text.includes('use the force') || text.includes('utf') || text.includes('force')) {return 'Force-Assisted';}
 
-        return "General";
+        return 'General';
     }
 
     /* ======================================================================
@@ -450,16 +446,16 @@ export class SkillSystem {
        - Converts "knowledge_tactics" � "Knowledge (Tactics)"
        ====================================================================== */
     static _labelFromKey(key) {
-        if (key.startsWith("knowledge")) {
-            const parts = key.split("_").slice(1);
+        if (key.startsWith('knowledge')) {
+            const parts = key.split('_').slice(1);
             if (parts.length) {
-                const spec = parts.join(" ").replace(/\b\w/g, c => c.toUpperCase());
+                const spec = parts.join(' ').replace(/\b\w/g, c => c.toUpperCase());
                 return `Knowledge (${spec})`;
             }
-            return "Knowledge";
+            return 'Knowledge';
         }
 
-        return key.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+        return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     }
 
     /* ======================================================================
@@ -467,7 +463,7 @@ export class SkillSystem {
        ====================================================================== */
     static buildBreakdown(actor, skillKey) {
         const s = actor.system.skills?.[skillKey];
-        if (!s) return null;
+        if (!s) {return null;}
 
         const abilityMod = actor.system.attributes?.[s.selectedAbility]?.mod ?? 0;
         const trained    = s.trained ? 5 : 0;
@@ -527,7 +523,7 @@ export class SkillSystem {
        ACTION METADATA (for previews + roll cards)
        ====================================================================== */
     static buildActionMetadata(action) {
-        if (!action) return {};
+        if (!action) {return {};}
 
         return {
             name: action.name,
@@ -535,9 +531,9 @@ export class SkillSystem {
             time: action.time || null,
             effect: action.effect || null,
             summary:
-                (action.dc ? `DC ${action.dc}. ` : "") +
-                (action.time ? `Time: ${action.time}. ` : "") +
-                (action.effect ? `${action.effect}` : "")
+                (action.dc ? `DC ${action.dc}. ` : '') +
+                (action.time ? `Time: ${action.time}. ` : '') +
+                (action.effect ? `${action.effect}` : '')
         };
     }
 
@@ -545,27 +541,26 @@ export class SkillSystem {
        FAVORITES (star icons per action)
        ====================================================================== */
     static toggleFavorite(skillKey, actionName) {
-        const store = game.settings.get("foundryvtt-swse", "skillFavorites") || {};
+        const store = game.settings.get('foundryvtt-swse', 'skillFavorites') || {};
         store[skillKey] = store[skillKey] || [];
 
         const idx = store[skillKey].indexOf(actionName);
-        if (idx >= 0) store[skillKey].splice(idx, 1);
-        else store[skillKey].push(actionName);
+        if (idx >= 0) {store[skillKey].splice(idx, 1);} else {store[skillKey].push(actionName);}
 
-        game.settings.set("foundryvtt-swse", "skillFavorites", store);
+        game.settings.set('foundryvtt-swse', 'skillFavorites', store);
     }
 
     /* ======================================================================
        HOVER PREVIEW METADATA
        ====================================================================== */
     static buildHoverPreview(action) {
-        if (!action) return "";
+        if (!action) {return '';}
 
         return `
             <strong>${action.name}</strong><br>
-            ${action.dc ? `DC: ${action.dc}<br>` : ""}
-            ${action.time ? `Time: ${action.time}<br>` : ""}
-            ${action.effect || ""}
+            ${action.dc ? `DC: ${action.dc}<br>` : ''}
+            ${action.time ? `Time: ${action.time}<br>` : ''}
+            ${action.effect || ''}
         `;
     }
 
@@ -574,9 +569,9 @@ export class SkillSystem {
        ====================================================================== */
     static gmToolsFor(skillKey) {
         return [
-            { name: "Roll Public", type: "public" },
-            { name: "Roll Secret", type: "secret" },
-            { name: "Opposed Check", type: "opposed" }
+            { name: 'Roll Public', type: 'public' },
+            { name: 'Roll Secret', type: 'secret' },
+            { name: 'Opposed Check', type: 'opposed' }
         ];
     }
 
@@ -585,7 +580,7 @@ export class SkillSystem {
        ====================================================================== */
     static summarizeSkill(actor, skillKey) {
         const b = SkillSystem.buildBreakdown(actor, skillKey);
-        if (!b) return "";
+        if (!b) {return '';}
 
         return `
             Ability Mod: ${b.abilityMod}<br>
@@ -613,7 +608,7 @@ export class SkillSystem {
             }
 
             // Favorites: mark actions with a star
-            const favStore = game.settings.get("foundryvtt-swse", "skillFavorites") || {};
+            const favStore = game.settings.get('foundryvtt-swse', 'skillFavorites') || {};
             data.favorites = favStore[key] || [];
 
             // Determine if any actions exist

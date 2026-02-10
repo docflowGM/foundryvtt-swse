@@ -264,7 +264,7 @@ export class PlayerHistoryTracker {
       // Group suggestions by theme
       const themeStats = {};
       for (const entry of history) {
-        if (!entry.theme) continue;
+        if (!entry.theme) {continue;}
 
         if (!themeStats[entry.theme]) {
           themeStats[entry.theme] = {
@@ -307,7 +307,7 @@ export class PlayerHistoryTracker {
           // Calculate decay-weighted ignore count
           let decayedIgnoreCount = 0;
           for (const entry of history) {
-            if (entry.theme !== theme || entry.outcome !== 'mentorIgnored') continue;
+            if (entry.theme !== theme || entry.outcome !== 'mentorIgnored') {continue;}
 
             const ageInLevels = currentLevel - (entry.level || currentLevel);
             let decayFactor = 1.0;  // Last 3 levels: 100%
@@ -376,7 +376,7 @@ export class PlayerHistoryTracker {
   static async pruneOldHistory(actor, maxRecentSize = MAX_RECENT_SIZE) {
     try {
       const history = actor.system.suggestionEngine?.history?.recent;
-      if (!history) return;
+      if (!history) {return;}
 
       const removed = history.length - maxRecentSize;
       if (removed > 0) {

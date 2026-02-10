@@ -2,19 +2,19 @@
  * Main PDF export function.
  * Uses pdf-lib to fill a template PDF with exported actor data.
  */
-import { PDFDocument } from "pdf-lib";
-import { buildExportModel } from "./swse-export-model.js";
-import { PDF_FIELD_MAP } from "./pdf-field-map.js";
-import { get } from "../utils/object-utils.js";
+import { PDFDocument } from 'pdf-lib';
+import { buildExportModel } from './swse-export-model.js';
+import { PDF_FIELD_MAP } from './pdf-field-map.js';
+import { get } from '../utils/object-utils.js';
 
-const PDF_TEMPLATE_PATH = "systems/foundryvtt-swse/assets/pdf/swse-character-sheet-fillable.pdf";
+const PDF_TEMPLATE_PATH = 'systems/foundryvtt-swse/assets/pdf/swse-character-sheet-fillable.pdf';
 
 /**
  * Export an actor to a fillable PDF.
  * Returns a Blob ready for download.
  */
 export async function exportActorToPDF(actor) {
-  if (!actor) throw new Error("Actor required");
+  if (!actor) {throw new Error('Actor required');}
 
   // 1. Build the semantic export model
   const exportModel = buildExportModel(actor);
@@ -29,7 +29,7 @@ export async function exportActorToPDF(actor) {
 
   // 4. Serialize and return
   const filledBytes = await pdfDoc.save();
-  return new Blob([filledBytes], { type: "application/pdf" });
+  return new Blob([filledBytes], { type: 'application/pdf' });
 }
 
 /**
@@ -80,13 +80,13 @@ function fillFormFields(form, exportModel) {
       const pdfFieldName = PDF_FIELD_MAP[listKey];
       const field = form.getTextField(pdfFieldName);
       if (field && items) {
-        let text = "";
+        let text = '';
         if (Array.isArray(items)) {
           // For equipment, join with weight; for others, simple join
-          if (listKey === "equipment") {
-            text = items.map((e) => `${e.name} (${e.weight} lbs)`).join("\n");
+          if (listKey === 'equipment') {
+            text = items.map((e) => `${e.name} (${e.weight} lbs)`).join('\n');
           } else {
-            text = items.join("\n");
+            text = items.join('\n');
           }
         }
         field.setText(text);
@@ -100,9 +100,9 @@ function fillFormFields(form, exportModel) {
  * Converts booleans to checkmarks, handles arrays, etc.
  */
 function formatFieldValue(modelPath, value) {
-  if (value === null || value === undefined) return "";
-  if (typeof value === "boolean") return value ? "✓" : "";
-  if (typeof value === "object") return String(Object.toString(value));
+  if (value === null || value === undefined) {return '';}
+  if (typeof value === 'boolean') {return value ? '✓' : '';}
+  if (typeof value === 'object') {return String(Object.toString(value));}
   return String(value);
 }
 
@@ -112,9 +112,9 @@ function formatFieldValue(modelPath, value) {
  */
 export function downloadPDF(blob, filename) {
   const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
+  const link = document.createElement('a');
   link.href = url;
-  link.download = filename || "character.pdf";
+  link.download = filename || 'character.pdf';
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -125,7 +125,7 @@ export function downloadPDF(blob, filename) {
  * Full export workflow: export actor to PDF and trigger download.
  */
 export async function exportAndDownloadPDF(actor) {
-  const filename = `${actor.name || "character"}.pdf`;
+  const filename = `${actor.name || 'character'}.pdf`;
   const blob = await exportActorToPDF(actor);
   downloadPDF(blob, filename);
 }

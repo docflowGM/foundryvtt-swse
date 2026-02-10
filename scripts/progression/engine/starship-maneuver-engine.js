@@ -4,8 +4,8 @@
  * Handles trigger detection, collection, and selection of starship maneuvers.
  */
 
-import { StarshipManeuverPicker } from "../ui/starship-maneuver-picker.js";
-import { swseLogger } from "../../utils/logger.js";
+import { StarshipManeuverPicker } from '../ui/starship-maneuver-picker.js';
+import { swseLogger } from '../../utils/logger.js';
 
 export class StarshipManeuverEngine {
   /**
@@ -30,7 +30,7 @@ export class StarshipManeuverEngine {
       const maneuvers = actor.items.filter(i => i.type === 'maneuver');
       return maneuvers ?? [];
     } catch (e) {
-      swseLogger.error("StarshipManeuverEngine: Failed to collect maneuvers", e);
+      swseLogger.error('StarshipManeuverEngine: Failed to collect maneuvers', e);
       return [];
     }
   }
@@ -75,7 +75,7 @@ export class StarshipManeuverEngine {
         });
       }
     } catch (e) {
-      swseLogger.error("StarshipManeuverEngine.applySelected error", e);
+      swseLogger.error('StarshipManeuverEngine.applySelected error', e);
     }
   }
 }

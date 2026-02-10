@@ -7,8 +7,8 @@
  * - No actor mutation outside ActorEngine-owned APIs (actor.updateOwnedItem / actor.activateItem / etc.)
  */
 
-import { SWSEUpgradeApp } from "../apps/upgrade-app.js";
-import { SWSELogger } from "../utils/logger.js";
+import { SWSEUpgradeApp } from '../apps/upgrade-app.js';
+import { SWSELogger } from '../utils/logger.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -16,7 +16,7 @@ const { ItemSheetV2 } = foundry.applications.sheets;
 export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   /** @inheritDoc */
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
-    classes: ["swse", "sheet", "item", "swse-app", "swse-theme-holo"],
+    classes: ['swse', 'sheet', 'item', 'swse-app', 'swse-theme-holo'],
     position: { width: 520, height: 600 },
     window: { resizable: true },
     form: {
@@ -26,7 +26,6 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     }
   });
 
-  
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
@@ -45,7 +44,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 /** @inheritDoc */
   static PARTS = {
     form: {
-      template: "systems/foundryvtt-swse/templates/items/base/item-sheet.hbs"
+      template: 'systems/foundryvtt-swse/templates/items/base/item-sheet.hbs'
     }
   };
 
@@ -53,10 +52,10 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   static TABS = {
     primary: {
       tabs: [
-        { id: "data", group: "primary" },
-        { id: "desc", group: "primary" }
+        { id: 'data', group: 'primary' },
+        { id: 'desc', group: 'primary' }
       ],
-      initial: "data"
+      initial: 'data'
     }
   };
 
@@ -68,7 +67,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     context.system = this.item.system;
 
     // Template expects this for the <form class="{{cssClass}} ..."> binding.
-    context.cssClass = this.classList?.value || this.constructor.DEFAULT_OPTIONS.classes.join(" ");
+    context.cssClass = this.classList?.value || this.constructor.DEFAULT_OPTIONS.classes.join(' ');
 
     return context;
   }
@@ -78,21 +77,21 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     super._onRender(context, options);
 
     const root = this.element;
-    if (!root) return;
+    if (!root) {return;}
 
     // Upgrade management
-    root.querySelector(".open-upgrade-app")?.addEventListener("click", (event) => {
+    root.querySelector('.open-upgrade-app')?.addEventListener('click', (event) => {
       event.preventDefault();
       try {
         new SWSEUpgradeApp(this.item).render(true);
       } catch (err) {
-        SWSELogger.error("[SWSEItemSheet] Failed to open UpgradeApp", err);
+        SWSELogger.error('[SWSEItemSheet] Failed to open UpgradeApp', err);
       }
     });
 
     // Shield activation helpers (data-only intent -> actor API)
-    root.querySelector(".activate-shield")?.addEventListener("click", this.#onActivateShield.bind(this));
-    root.querySelector(".deactivate-shield")?.addEventListener("click", this.#onDeactivateShield.bind(this));
+    root.querySelector('.activate-shield')?.addEventListener('click', this.#onActivateShield.bind(this));
+    root.querySelector('.deactivate-shield')?.addEventListener('click', this.#onDeactivateShield.bind(this));
   }
 
   async #onActivateShield(event) {
@@ -109,22 +108,21 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     const shieldRating = Number(this.item.system.shieldRating ?? 0);
 
     if (currentCharges <= 0) {
-      ui.notifications.warn("No charges remaining to activate shield!");
+      ui.notifications.warn('No charges remaining to activate shield!');
       return;
     }
     if (shieldRating <= 0) {
-      ui.notifications.warn("Shield has no rating to activate!");
+      ui.notifications.warn('Shield has no rating to activate!');
       return;
     }
 
     const updates = {
-      "system.charges.current": currentCharges - 1,
-      "system.activated": true,
-      "system.currentSR": shieldRating
+      'system.charges.current': currentCharges - 1,
+      'system.activated': true,
+      'system.currentSR': shieldRating
     };
 
-    if (actor?.updateOwnedItem && this.item?.isEmbedded) await actor.updateOwnedItem(this.item, updates);
-    else await this.item.update(updates);
+    if (actor?.updateOwnedItem && this.item?.isEmbedded) {await actor.updateOwnedItem(this.item, updates);} else {await this.item.update(updates);}
 
     ui.notifications.info(
       `${this.item.name} activated! SR: ${shieldRating}, Charges remaining: ${currentCharges - 1}`
@@ -140,10 +138,9 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       return;
     }
 
-    const updates = { "system.activated": false };
+    const updates = { 'system.activated': false };
 
-    if (actor?.updateOwnedItem && this.item?.isEmbedded) await actor.updateOwnedItem(this.item, updates);
-    else await this.item.update(updates);
+    if (actor?.updateOwnedItem && this.item?.isEmbedded) {await actor.updateOwnedItem(this.item, updates);} else {await this.item.update(updates);}
     ui.notifications.info(`${this.item.name} deactivated!`);
   }
 
@@ -160,16 +157,16 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     const data = foundry.utils.expandObject(formData.object);
 
     // Normalize string lists into arrays.
-    if (typeof data?.system?.properties === "string") {
+    if (typeof data?.system?.properties === 'string') {
       data.system.properties = data.system.properties
-        .split(",")
+        .split(',')
         .map((p) => p.trim())
         .filter(Boolean);
     }
 
-    if (typeof data?.system?.tags === "string") {
+    if (typeof data?.system?.tags === 'string') {
       data.system.tags = data.system.tags
-        .split(",")
+        .split(',')
         .map((t) => t.trim())
         .filter(Boolean);
     }

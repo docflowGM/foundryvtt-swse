@@ -49,12 +49,12 @@ const PROPERTY_MAPPINGS = {
  * @returns {*} The property value or default
  */
 export function getProperty(obj, propertyName, defaultValue = null, warnOnMissing = false) {
-  if (!obj) return defaultValue;
+  if (!obj) {return defaultValue;}
 
   const variants = PROPERTY_MAPPINGS[propertyName] || [propertyName];
 
   for (const variant of variants) {
-    if (obj.hasOwnProperty(variant) && obj[variant] !== undefined) {
+    if (Object.prototype.hasOwnProperty.call(obj, variant) && obj[variant] !== undefined) {
       // Log if we found a non-preferred variant
       if (variant !== propertyName && variant !== variants[0]) {
         SWSELogger.log(`CharGen | Property accessor found "${variant}" instead of preferred "${propertyName}"`);
@@ -108,7 +108,7 @@ export function getTalentProperty(talentDoc, propertyName, defaultValue = null) 
  * @returns {string} The normalized skill key
  */
 export function normalizeSkillKey(skillKey) {
-  if (!skillKey) return '';
+  if (!skillKey) {return '';}
 
   // Check if this is a mapped skill name
   for (const [standardKey, variants] of Object.entries(PROPERTY_MAPPINGS)) {

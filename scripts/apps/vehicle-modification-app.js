@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "../progression/engine/progression-engine.js";
+import { ProgressionEngine } from '../progression/engine/progression-engine.js';
 /**
  * Vehicle Modification Application
  * Interactive starship builder with Marl Skindar, Republic Spy narrator
@@ -22,16 +22,15 @@ export class VehicleModificationApp extends SWSEApplication {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
     SWSEApplication.DEFAULT_OPTIONS ?? {},
     {
-      classes: ['swse', 'vehicle-modification-app', "swse-app"],
+      classes: ['swse', 'vehicle-modification-app', 'swse-app'],
       template: 'systems/foundryvtt-swse/templates/apps/vehicle-modification.hbs',
       position: { width: 900, height: 700 },
-      title: "Starship Acquisition & Modification",
+      title: 'Starship Acquisition & Modification',
       resizable: true,
       draggable: true
     }
   );
 
-  
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
@@ -56,7 +55,7 @@ async _prepareContext(options) {
     // Check if vehicle data loaded successfully
     if (!VehicleModificationManager._initialized) {
       context.loadError = true;
-      context.errorMessage = "Failed to load vehicle modification data. Check the browser console for details.";
+      context.errorMessage = 'Failed to load vehicle modification data. Check the browser console for details.';
       return context;
     }
 
@@ -107,7 +106,7 @@ async _prepareContext(options) {
 
   async _onRender(context, options) {
     const root = this.element;
-    if (!(root instanceof HTMLElement)) return;
+    if (!(root instanceof HTMLElement)) {return;}
 
     // Start selection button
     const startBtn = root.querySelector('.start-selection');
@@ -300,7 +299,7 @@ The Republic is going to execute me for this. They're going to space me. And I'l
 
   _getModificationCommentary() {
     const lastMod = this.modifications[this.modifications.length - 1];
-    if (!lastMod) return this._getDefaultDialogue();
+    if (!lastMod) {return this._getDefaultDialogue();}
 
     // Get category-specific commentary
     if (lastMod.category === 'Movement') {
@@ -590,7 +589,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
     const modId = event.currentTarget.dataset.modId;
     const modification = VehicleModificationManager.getModification(modId);
 
-    if (!modification) return;
+    if (!modification) {return;}
 
     // Check if can install
     const check = VehicleModificationManager.canInstallModification(
@@ -637,7 +636,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
     const modId = event.currentTarget.dataset.modId;
     const modification = VehicleModificationManager.getModification(modId);
 
-    if (!modification) return;
+    if (!modification) {return;}
 
     const cost = VehicleModificationManager.calculateModificationCost(
       modification,
@@ -666,7 +665,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
       buttons: {
         close: {
           icon: '<i class="fas fa-times"></i>',
-          label: "Close"
+          label: 'Close'
         }
       }
     }).render(true);
@@ -679,19 +678,19 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
     event.preventDefault();
 
     if (!this.stockShip) {
-      ui.notifications.warn("Please select a stock ship first!");
+      ui.notifications.warn('Please select a stock ship first!');
       return;
     }
 
     const totalCost = VehicleModificationManager.calculateTotalCost(this.modifications, this.stockShip);
 
     if (!isFinite(totalCost)) {
-      ui.notifications.error("Invalid cost calculation - check modification data");
+      ui.notifications.error('Invalid cost calculation - check modification data');
       return;
     }
 
     const confirmed = await Dialog.confirm({
-      title: "Finalize Starship?",
+      title: 'Finalize Starship?',
       content: `
         <p>Finalize this starship configuration?</p>
         <p><strong>Ship:</strong> ${this.stockShip.name}</p>
@@ -702,7 +701,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
       `
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
     // Save configuration to actor
     await globalThis.SWSE.ActorEngine.updateActor(this.actor, {
@@ -725,12 +724,12 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
     event.preventDefault();
 
     const confirmed = await Dialog.confirm({
-      title: "Reset Starship?",
+      title: 'Reset Starship?',
       content: `<p>Reset your entire starship configuration?</p>
         <p><em>Marl:</em> "Starting over? That's fine. Most of my best ships came from the fifth or sixth design iteration. Or was it seventh? I've lost count."</p>`
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
     this.stockShip = null;
     this.modifications = [];

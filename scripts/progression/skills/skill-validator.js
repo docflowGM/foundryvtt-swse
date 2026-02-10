@@ -18,7 +18,7 @@ export const SkillValidator = {
      * Check if actor can train a skill
      */
     canTrain(actor, skillName) {
-        if (!skillName || !actor) return false;
+        if (!skillName || !actor) {return false;}
 
         // Get skill document
         const skillDoc = SkillRegistry.get(skillName);
@@ -44,10 +44,10 @@ export const SkillValidator = {
      * Check if a skill is a class skill for actor's classes
      */
     isClassSkill(actor, skillName) {
-        if (!skillName || !actor) return false;
+        if (!skillName || !actor) {return false;}
 
         const skillDoc = SkillRegistry.get(skillName);
-        if (!skillDoc) return false;
+        if (!skillDoc) {return false;}
 
         // Get actor's classes
         const classLevels = actor.system.progression?.classLevels || [];
@@ -70,7 +70,7 @@ export const SkillValidator = {
      */
     getOptimalAbilityMod(actor, skillName) {
         const skillDoc = SkillRegistry.get(skillName);
-        if (!skillDoc) return 0;
+        if (!skillDoc) {return 0;}
 
         const ability = skillDoc.system?.ability || 'cha';
         return actor.system.attributes?.[ability]?.mod ?? 0;
@@ -81,10 +81,10 @@ export const SkillValidator = {
      * Includes ability mod + class skill bonus + trained bonus + misc
      */
     calculateSkillModifier(actor, skillName) {
-        if (!skillName) return 0;
+        if (!skillName) {return 0;}
 
         const skillDoc = SkillRegistry.get(skillName);
-        if (!skillDoc) return 0;
+        if (!skillDoc) {return 0;}
 
         const ability = skillDoc.system?.ability || 'cha';
         const abilityMod = actor.system.attributes?.[ability]?.mod ?? 0;
@@ -180,11 +180,11 @@ export const SkillValidator = {
      * @private
      */
     _getSkillData(actor, skillName) {
-        if (!actor.system.skills) return null;
+        if (!actor.system.skills) {return null;}
 
         // Try direct lookup
         const direct = actor.system.skills[skillName.toLowerCase()];
-        if (direct) return direct;
+        if (direct) {return direct;}
 
         // Try normalized key (remove spaces, parens, etc)
         const normalized = skillName

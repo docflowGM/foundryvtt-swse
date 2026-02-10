@@ -4,13 +4,13 @@
  * Based on SWSE official rules
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
-const NS = "foundryvtt-swse";
+const NS = 'foundryvtt-swse';
 
 export class HealingMechanics {
   static initialize() {
-    SWSELogger.debug("Healing mechanics initialized");
+    SWSELogger.debug('Healing mechanics initialized');
   }
 
   /**
@@ -23,19 +23,19 @@ export class HealingMechanics {
    * @returns {Promise<Object>} - Result of healing
    */
   static async performFirstAid(healer, target, checkResult) {
-    if (!game.settings.get(NS, "healingSkillEnabled")) {
-      return { success: false, message: "Healing skill integration disabled" };
+    if (!game.settings.get(NS, 'healingSkillEnabled')) {
+      return { success: false, message: 'Healing skill integration disabled' };
     }
 
-    if (!game.settings.get(NS, "firstAidEnabled")) {
-      return { success: false, message: "First Aid not enabled in this campaign" };
+    if (!game.settings.get(NS, 'firstAidEnabled')) {
+      return { success: false, message: 'First Aid not enabled in this campaign' };
     }
 
     const dc = 15;
     const success = checkResult >= dc;
 
     if (!success) {
-      return { success: false, checkResult, dc, message: "First Aid check failed" };
+      return { success: false, checkResult, dc, message: 'First Aid check failed' };
     }
 
     // Calculate healing
@@ -47,11 +47,11 @@ export class HealingMechanics {
       const maxHP = target.system?.hp?.max || 0;
       const newHP = Math.min(currentHP + healing, maxHP);
 
-      await target.update({ "system.hp.value": newHP });
+      await target.update({ 'system.hp.value': newHP });
 
       // Mark that this creature received First Aid (24-hour cooldown)
       const now = Date.now();
-      await target.setFlag(NS, "lastFirstAid", now);
+      await target.setFlag(NS, 'lastFirstAid', now);
 
       return {
         success: true,
@@ -64,7 +64,7 @@ export class HealingMechanics {
         target
       };
     } catch (err) {
-      SWSELogger.error("First Aid failed", err);
+      SWSELogger.error('First Aid failed', err);
       return { success: false, message: err.message };
     }
   }
@@ -74,16 +74,16 @@ export class HealingMechanics {
    * @private
    */
   static _calculateFirstAidHealing(target, checkResult, dc) {
-    const formula = game.settings.get(NS, "firstAidHealingType");
+    const formula = game.settings.get(NS, 'firstAidHealingType');
     const level = target.system?.details?.level || 1;
 
     switch (formula) {
-      case "levelOnly":
+      case 'levelOnly':
         return level;
-      case "levelPlusDC":
+      case 'levelPlusDC':
         return level + Math.max(0, checkResult - dc);
-      case "fixed":
-        return game.settings.get(NS, "firstAidFixedAmount");
+      case 'fixed':
+        return game.settings.get(NS, 'firstAidFixedAmount');
       default:
         return level;
     }
@@ -95,9 +95,9 @@ export class HealingMechanics {
    * @returns {boolean}
    */
   static canReceiveLongTermCare(target) {
-    if (!target) return false;
+    if (!target) {return false;}
 
-    const lastCare = target.getFlag(NS, "lastLongTermCare") || 0;
+    const lastCare = target.getFlag(NS, 'lastLongTermCare') || 0;
     const now = Date.now();
     const dayInMs = 24 * 60 * 60 * 1000;
 
@@ -113,17 +113,17 @@ export class HealingMechanics {
    * @returns {Promise<Object>} - Healing results
    */
   static async performLongTermCare(healer, targets) {
-    if (!game.settings.get(NS, "healingSkillEnabled")) {
-      return { success: false, message: "Healing skill integration disabled" };
+    if (!game.settings.get(NS, 'healingSkillEnabled')) {
+      return { success: false, message: 'Healing skill integration disabled' };
     }
 
-    if (!game.settings.get(NS, "longTermCareEnabled")) {
-      return { success: false, message: "Long-Term Care not enabled" };
+    if (!game.settings.get(NS, 'longTermCareEnabled')) {
+      return { success: false, message: 'Long-Term Care not enabled' };
     }
 
-    if (!Array.isArray(targets)) targets = [targets];
+    if (!Array.isArray(targets)) {targets = [targets];}
 
-    const maxTargets = game.settings.get(NS, "longTermCareMultipleTargets");
+    const maxTargets = game.settings.get(NS, 'longTermCareMultipleTargets');
     if (targets.length > maxTargets) {
       return {
         success: false,
@@ -138,7 +138,7 @@ export class HealingMechanics {
         results.push({
           target: target.name,
           success: false,
-          reason: "Already received Long-Term Care today"
+          reason: 'Already received Long-Term Care today'
         });
         continue;
       }
@@ -149,8 +149,8 @@ export class HealingMechanics {
         const maxHP = target.system?.hp?.max || 0;
         const newHP = Math.min(currentHP + healing, maxHP);
 
-        await target.update({ "system.hp.value": newHP });
-        await target.setFlag(NS, "lastLongTermCare", Date.now());
+        await target.update({ 'system.hp.value': newHP });
+        await target.setFlag(NS, 'lastLongTermCare', Date.now());
 
         results.push({
           target: target.name,
@@ -182,17 +182,17 @@ export class HealingMechanics {
    * @private
    */
   static _calculateLongTermCareHealing(target) {
-    const formula = game.settings.get(NS, "longTermCareHealing");
+    const formula = game.settings.get(NS, 'longTermCareHealing');
     const level = target.system?.details?.level || 1;
     const conMod = target.system?.attributes?.con?.mod || 0;
 
     switch (formula) {
-      case "characterLevel":
+      case 'characterLevel':
         return level;
-      case "conBonus":
+      case 'conBonus':
         return Math.max(1, conMod) * level;
-      case "fixed":
-        return game.settings.get(NS, "longTermCareFixedAmount");
+      case 'fixed':
+        return game.settings.get(NS, 'longTermCareFixedAmount');
       default:
         return level;
     }
@@ -208,12 +208,12 @@ export class HealingMechanics {
    * @returns {Promise<Object>}
    */
   static async performSurgery(surgeon, patient, checkResult) {
-    if (!game.settings.get(NS, "healingSkillEnabled")) {
-      return { success: false, message: "Healing skill integration disabled" };
+    if (!game.settings.get(NS, 'healingSkillEnabled')) {
+      return { success: false, message: 'Healing skill integration disabled' };
     }
 
-    if (!game.settings.get(NS, "performSurgeryEnabled")) {
-      return { success: false, message: "Surgery not enabled" };
+    if (!game.settings.get(NS, 'performSurgeryEnabled')) {
+      return { success: false, message: 'Surgery not enabled' };
     }
 
     const dc = 20;
@@ -227,7 +227,7 @@ export class HealingMechanics {
 
     if (success) {
       healing = this._calculateSurgeryHealing(patient);
-    } else if (game.settings.get(NS, "surgeryFailureDamage") && failureMargin >= failureThreshold) {
+    } else if (game.settings.get(NS, 'surgeryFailureDamage') && failureMargin >= failureThreshold) {
       // Calculate damage threshold
       damageFromFailure = patient.system?.traits?.damageThreshold || 5;
     }
@@ -239,7 +239,7 @@ export class HealingMechanics {
         const maxHP = patient.system?.hp?.max || 0;
         const newHP = Math.min(currentHP + healing, maxHP);
 
-        await patient.update({ "system.hp.value": newHP });
+        await patient.update({ 'system.hp.value': newHP });
 
         return {
           success: true,
@@ -257,7 +257,7 @@ export class HealingMechanics {
           const currentHP = patient.system?.hp?.value || 0;
           const newHP = Math.max(0, currentHP - damageFromFailure);
 
-          await patient.update({ "system.hp.value": newHP });
+          await patient.update({ 'system.hp.value': newHP });
 
           // Check if patient dies
           const isDead = newHP <= -(patient.system?.attributes?.con?.score || 10);
@@ -276,14 +276,14 @@ export class HealingMechanics {
           return {
             success: false,
             failure: true,
-            message: "Surgery failed but not catastrophically",
+            message: 'Surgery failed but not catastrophically',
             checkResult,
             dc
           };
         }
       }
     } catch (err) {
-      SWSELogger.error("Surgery failed", err);
+      SWSELogger.error('Surgery failed', err);
       return { success: false, message: err.message };
     }
   }
@@ -293,16 +293,16 @@ export class HealingMechanics {
    * @private
    */
   static _calculateSurgeryHealing(patient) {
-    const formula = game.settings.get(NS, "performSurgeryHealing");
+    const formula = game.settings.get(NS, 'performSurgeryHealing');
     const level = patient.system?.details?.level || 1;
     const conMod = patient.system?.attributes?.con?.mod || 0;
 
     switch (formula) {
-      case "conBonus":
+      case 'conBonus':
         return Math.max(1, conMod) * level;
-      case "fixed":
-        return game.settings.get(NS, "performSurgeryFixedAmount");
-      case "automatic":
+      case 'fixed':
+        return game.settings.get(NS, 'performSurgeryFixedAmount');
+      case 'automatic':
         return 999; // Will be capped at max HP anyway
       default:
         return Math.max(1, conMod) * level;
@@ -318,12 +318,12 @@ export class HealingMechanics {
    * @returns {Promise<Object>}
    */
   static async performRevivify(medic, corpse, checkResult) {
-    if (!game.settings.get(NS, "healingSkillEnabled")) {
-      return { success: false, message: "Healing skill integration disabled" };
+    if (!game.settings.get(NS, 'healingSkillEnabled')) {
+      return { success: false, message: 'Healing skill integration disabled' };
     }
 
-    if (!game.settings.get(NS, "revivifyEnabled")) {
-      return { success: false, message: "Revivify not enabled" };
+    if (!game.settings.get(NS, 'revivifyEnabled')) {
+      return { success: false, message: 'Revivify not enabled' };
     }
 
     const dc = 25;
@@ -334,25 +334,25 @@ export class HealingMechanics {
         success: false,
         checkResult,
         dc,
-        message: "Revivify check failed - creature remains dead"
+        message: 'Revivify check failed - creature remains dead'
       };
     }
 
     try {
       // Bring back to 1 HP
-      await corpse.update({ "system.hp.value": 1 });
+      await corpse.update({ 'system.hp.value': 1 });
 
       // Apply unconscious condition if available
       const unconsciousEffect = corpse.effects.find(e =>
-        e.statuses.includes("unconscious")
+        e.statuses.includes('unconscious')
       );
 
       if (!unconsciousEffect) {
         const effect = {
-          label: "Unconscious",
-          statuses: ["unconscious"]
+          label: 'Unconscious',
+          statuses: ['unconscious']
         };
-        await corpse.createEmbeddedDocuments("ActiveEffect", [effect]);
+        await corpse.createEmbeddedDocuments('ActiveEffect', [effect]);
       }
 
       return {
@@ -364,7 +364,7 @@ export class HealingMechanics {
         corpse
       };
     } catch (err) {
-      SWSELogger.error("Revivify failed", err);
+      SWSELogger.error('Revivify failed', err);
       return { success: false, message: err.message };
     }
   }
@@ -379,19 +379,19 @@ export class HealingMechanics {
    * @returns {Promise<Object>}
    */
   static async performCriticalCare(healer, patient, checkResult) {
-    if (!game.settings.get(NS, "healingSkillEnabled")) {
-      return { success: false, message: "Healing skill integration disabled" };
+    if (!game.settings.get(NS, 'healingSkillEnabled')) {
+      return { success: false, message: 'Healing skill integration disabled' };
     }
 
-    if (!game.settings.get(NS, "criticalCareEnabled")) {
-      return { success: false, message: "Critical Care not enabled" };
+    if (!game.settings.get(NS, 'criticalCareEnabled')) {
+      return { success: false, message: 'Critical Care not enabled' };
     }
 
     const dc = 20;
     const success = checkResult >= dc;
 
     // Get care history
-    const careHistory = patient.getFlag(NS, "criticalCareHistory") || [];
+    const careHistory = patient.getFlag(NS, 'criticalCareHistory') || [];
     const today24hAgo = Date.now() - (24 * 60 * 60 * 1000);
 
     // Filter out old care
@@ -405,7 +405,7 @@ export class HealingMechanics {
         const currentHP = patient.system?.hp?.value || 0;
         const newHP = Math.max(0, currentHP - damageThreshold);
 
-        await patient.update({ "system.hp.value": newHP });
+        await patient.update({ 'system.hp.value': newHP });
 
         return {
           success: false,
@@ -413,10 +413,10 @@ export class HealingMechanics {
           damageFromOverdose: damageThreshold,
           newHP,
           previousCareAttempts: recentCare.length,
-          message: "Patient overdosed from too many Medpac applications!"
+          message: 'Patient overdosed from too many Medpac applications!'
         };
       } catch (err) {
-        SWSELogger.error("Critical Care overdose damage failed", err);
+        SWSELogger.error('Critical Care overdose damage failed', err);
         return { success: false, message: err.message };
       }
     }
@@ -426,7 +426,7 @@ export class HealingMechanics {
         success: false,
         checkResult,
         dc,
-        message: "Critical Care check failed"
+        message: 'Critical Care check failed'
       };
     }
 
@@ -436,11 +436,11 @@ export class HealingMechanics {
       const maxHP = patient.system?.hp?.max || 0;
       const newHP = Math.min(currentHP + healing, maxHP);
 
-      await patient.update({ "system.hp.value": newHP });
+      await patient.update({ 'system.hp.value': newHP });
 
       // Add to care history
       recentCare.push(Date.now());
-      await patient.setFlag(NS, "criticalCareHistory", recentCare);
+      await patient.setFlag(NS, 'criticalCareHistory', recentCare);
 
       return {
         success: true,
@@ -454,7 +454,7 @@ export class HealingMechanics {
         patient
       };
     } catch (err) {
-      SWSELogger.error("Critical Care failed", err);
+      SWSELogger.error('Critical Care failed', err);
       return { success: false, message: err.message };
     }
   }
@@ -464,14 +464,14 @@ export class HealingMechanics {
    * @private
    */
   static _calculateCriticalCareHealing(patient, checkResult, dc) {
-    const formula = game.settings.get(NS, "criticalCareHealing");
+    const formula = game.settings.get(NS, 'criticalCareHealing');
     const level = patient.system?.details?.level || 1;
 
     switch (formula) {
-      case "levelPlusDC":
+      case 'levelPlusDC':
         return level + Math.max(0, checkResult - dc);
-      case "fixed":
-        return game.settings.get(NS, "criticalCareFixedAmount");
+      case 'fixed':
+        return game.settings.get(NS, 'criticalCareFixedAmount');
       default:
         return level + Math.max(0, checkResult - dc);
     }
@@ -484,9 +484,9 @@ export class HealingMechanics {
    * @returns {number} - Penalty to apply
    */
   static getCriticalCarePenalty(patient) {
-    if (!patient) return 0;
+    if (!patient) {return 0;}
 
-    const careHistory = patient.getFlag(NS, "criticalCareHistory") || [];
+    const careHistory = patient.getFlag(NS, 'criticalCareHistory') || [];
     const today24hAgo = Date.now() - (24 * 60 * 60 * 1000);
     const recentCare = careHistory.filter(timestamp => timestamp > today24hAgo);
 

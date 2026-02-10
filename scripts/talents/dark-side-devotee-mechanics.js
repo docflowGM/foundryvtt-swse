@@ -10,6 +10,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 export class DarkSideDevoteeMechanics {
 
@@ -69,7 +70,7 @@ export class DarkSideDevoteeMechanics {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Channel Aggression - Bonus Damage',
@@ -169,7 +170,7 @@ export class DarkSideDevoteeMechanics {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Channel Anger - Rage Activated'
@@ -213,7 +214,7 @@ export class DarkSideDevoteeMechanics {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Channel Anger - Rage Ended'
@@ -229,7 +230,7 @@ export class DarkSideDevoteeMechanics {
    */
   static isCurrentlyRaging(actor) {
     const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
-    if (!rageInfo) return false;
+    if (!rageInfo) {return false;}
 
     // Check if rage duration has expired
     const currentRound = game.combat?.round || 0;
@@ -299,7 +300,7 @@ export class DarkSideDevoteeMechanics {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Crippling Strike - Speed Reduced'
@@ -319,7 +320,7 @@ export class DarkSideDevoteeMechanics {
    */
   static checkCripplingStrikeExpiry(targetActor) {
     const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
-    if (!crippledInfo) return false;
+    if (!crippledInfo) {return false;}
 
     // Check if fully healed
     if (targetActor.system.hp.value >= crippledInfo.maxHpWhenCrippled) {
@@ -335,7 +336,7 @@ export class DarkSideDevoteeMechanics {
    */
   static async removeCripplingStrike(targetActor) {
     const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
-    if (!crippledInfo) return;
+    if (!crippledInfo) {return;}
 
     // Restore original speed
     await targetActor.update({
@@ -353,7 +354,7 @@ export class DarkSideDevoteeMechanics {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: targetActor },
       content: chatContent,
       flavor: 'Crippling Strike - Effect Ended'
@@ -477,7 +478,7 @@ export class DarkSideDevoteeMechanics {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: `${isGreater ? 'Greater ' : ''}Dark Side Talisman Created`
@@ -519,7 +520,7 @@ export class DarkSideDevoteeMechanics {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Dark Side Talisman - Destroyed'
@@ -535,7 +536,7 @@ export class DarkSideDevoteeMechanics {
    */
   static canCreateNewTalisman(actor) {
     const cooldown = actor.getFlag('swse', 'darkSideTalismanCooldown');
-    if (!cooldown) return true;
+    if (!cooldown) {return true;}
 
     const cooldownTime = new Date(cooldown);
     const now = new Date();

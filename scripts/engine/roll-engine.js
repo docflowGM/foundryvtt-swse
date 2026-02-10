@@ -1,5 +1,6 @@
 // scripts/engine/roll-engine.js
-import { swseLogger } from "../utils/logger.js";
+import { swseLogger } from '../utils/logger.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 export const RollEngine = {
   /**
@@ -14,8 +15,8 @@ export const RollEngine = {
       await roll.evaluate(); // ✅ v13-compatible, async evaluation
       return roll;
     } catch (err) {
-      swseLogger.error("RollEngine.safeRoll failed", formula, err);
-      ui.notifications?.error?.("A roll failed; check console.");
+      swseLogger.error('RollEngine.safeRoll failed', formula, err);
+      ui.notifications?.error?.('A roll failed; check console.');
       return null;
     }
   },
@@ -27,7 +28,7 @@ export const RollEngine = {
    * @returns {Promise<ChatMessage|null>}
    */
   async rollToChat(roll, chatData = {}) {
-    if (!roll) return null;
+    if (!roll) {return null;}
     try {
       const content = await roll.render();
       const message = foundry.utils.mergeObject(
@@ -35,15 +36,15 @@ export const RollEngine = {
           user: game.user?.id,
           speaker: chatData.speaker || ChatMessage.getSpeaker(),
           content,
-          flavor: chatData.flavor || "",
+          flavor: chatData.flavor || '',
           flags: { swse: { roll: true } }
         },
         chatData,
         { inplace: false }
       );
-      return ChatMessage.create(message);
+      return createChatMessage(message);
     } catch (err) {
-      swseLogger.error("RollEngine.rollToChat failed", err);
+      swseLogger.error('RollEngine.rollToChat failed', err);
       return null;
     }
   },
@@ -55,12 +56,12 @@ export const RollEngine = {
    * @param {object} data
    */
   async rollAttack(actor, item, data = {}) {
-    const formula = item?.system?.attack?.formula || data.formula || "1d20";
+    const formula = item?.system?.attack?.formula || data.formula || '1d20';
     const roll = await this.safeRoll(formula, data);
     if (roll) {
       await this.rollToChat(roll, {
         speaker: ChatMessage.getSpeaker({ actor: actor?.id }),
-        flavor: `Attack: ${item?.name || ""}`
+        flavor: `Attack: ${item?.name || ''}`
       });
     }
     return roll;
@@ -73,7 +74,7 @@ export const RollEngine = {
    * @param {object} data
    */
   async rollSkill(actor, skillKey, data = {}) {
-    const formula = data.formula || "1d20";
+    const formula = data.formula || '1d20';
     const roll = await this.safeRoll(formula, data);
     if (roll) {
       await this.rollToChat(roll, {
@@ -111,19 +112,19 @@ export const RollEngine = {
 
       const totalMod = ability + trained + focus + misc + halfLevel;
 
-      const roll = await this.safeRoll("1d20 + " + totalMod, {});
+      const roll = await this.safeRoll('1d20 + ' + totalMod, {});
 
-      if (!roll) return;
+      if (!roll) {return;}
 
       const breakdown = {
-        "1d20": roll.results?.[0]?.result ?? roll.total,
-        "Ability": ability,
-        "Half Level": halfLevel,
-        "Trained": trained,
-        "Focus": focus,
-        "Misc": misc,
-        "Total Mod": totalMod,
-        "_rawFormula": "1d20 + " + totalMod
+        '1d20': roll.results?.[0]?.result ?? roll.total,
+        'Ability': ability,
+        'Half Level': halfLevel,
+        'Trained': trained,
+        'Focus': focus,
+        'Misc': misc,
+        'Total Mod': totalMod,
+        '_rawFormula': '1d20 + ' + totalMod
       };
 
       const dcResult = this.compareDC(roll.total, options.dc);
@@ -138,7 +139,7 @@ export const RollEngine = {
         action: options.action ?? null
       });
 
-      ChatMessage.create({
+      createChatMessage({
         user: game.user?.id,
         speaker: ChatMessage.getSpeaker({ actor }),
         content: card,
@@ -148,7 +149,7 @@ export const RollEngine = {
       return roll;
 
     } catch (err) {
-      swseLogger.error("Enhanced skillCheck failed", err);
+      swseLogger.error('Enhanced skillCheck failed', err);
     }
   },
 
@@ -158,7 +159,7 @@ export const RollEngine = {
    *   { success: boolean, margin: number, dc: number|null }
    */
   compareDC(total, dc) {
-    if (!dc || typeof dc === "string") return { success: null, margin: null, dc };
+    if (!dc || typeof dc === 'string') {return { success: null, margin: null, dc };}
     const margin = total - dc;
     return { success: margin >= 0, margin, dc };
   },
@@ -169,29 +170,29 @@ export const RollEngine = {
   async createHoloChatCard({ title, actor, roll, breakdown, dc, dcResult, action }) {
 
     const breakdownHtml = Object.entries(breakdown)
-      .filter(([k]) => !k.startsWith("_"))
+      .filter(([k]) => !k.startsWith('_'))
       .map(([label, val]) =>
         `<tr><td>${label}</td><td>${val}</td></tr>`
       )
-      .join("");
+      .join('');
 
     const dcHtml = dc
       ? `<tr><td>DC</td><td>${dc}</td></tr>`
-      : "";
+      : '';
 
     const resultHtml = dcResult && dcResult.success != null
-      ? `<tr><td>Result</td><td>${dcResult.success ? "Success" : "Failure"}
-           ${dcResult.margin != null ? `(Δ ${dcResult.margin})` : ""}
+      ? `<tr><td>Result</td><td>${dcResult.success ? 'Success' : 'Failure'}
+           ${dcResult.margin != null ? `(Δ ${dcResult.margin})` : ''}
          </td></tr>`
-      : "";
+      : '';
 
     const actionHtml = action
       ? `<div class="swse-holo-action-meta">
            <strong>Action:</strong> ${action.name}<br>
-           ${action.time ? `<strong>Time:</strong> ${action.time}<br>` : ""}
-           ${action.effect ? `<strong>Effect:</strong> ${action.effect}` : ""}
+           ${action.time ? `<strong>Time:</strong> ${action.time}<br>` : ''}
+           ${action.effect ? `<strong>Effect:</strong> ${action.effect}` : ''}
          </div>`
-      : "";
+      : '';
 
     return `
     <div class="swse-holo-card">
@@ -222,11 +223,11 @@ export const RollEngine = {
     const myRoll = await this.skillCheck(actor, skillKey, {});
     const oppRoll = await this.skillCheck(opponent, oppSkillKey, {});
 
-    if (!myRoll || !oppRoll) return null;
+    if (!myRoll || !oppRoll) {return null;}
 
     const result = myRoll.total - oppRoll.total;
 
-    ChatMessage.create({
+    createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `
         <div class="swse-holo-card">

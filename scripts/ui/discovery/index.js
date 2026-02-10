@@ -55,7 +55,7 @@ export function onDiscoveryReady() {
 function _onAppRender(app, html) {
   // html may be HTMLElement (AppV2) or jQuery (AppV1)
   const root = html instanceof HTMLElement ? html : html?.[0];
-  if (!(root instanceof HTMLElement)) return;
+  if (!(root instanceof HTMLElement)) {return;}
 
   // Tooltips
   try {

@@ -21,276 +21,276 @@
 // ============================================
 
 export const PRESTIGE_PREREQUISITES = {
-    "Ace Pilot": {
+    'Ace Pilot': {
         minLevel: 7,
-        skills: ["Pilot"],
-        feats: ["Vehicular Combat"]
+        skills: ['Pilot'],
+        feats: ['Vehicular Combat']
     },
 
-    "Bounty Hunter": {
+    'Bounty Hunter': {
         minLevel: 7,
-        skills: ["Survival"],
+        skills: ['Survival'],
         talents: {
             count: 2,
-            trees: ["Awareness"]
+            trees: ['Awareness']
         }
     },
 
-    "Crime Lord": {
+    'Crime Lord': {
         minLevel: 7,
-        skills: ["Deception", "Persuasion"],
+        skills: ['Deception', 'Persuasion'],
         talents: {
             count: 1,
-            trees: ["Fortune", "Lineage", "Misfortune"]
+            trees: ['Fortune', 'Lineage', 'Misfortune']
         }
     },
 
-    "Elite Trooper": {
+    'Elite Trooper': {
         minBAB: 7,
-        feats: ["Armor Proficiency (Medium)", "Martial Arts I"],
-        featsAny: ["Point-Blank Shot", "Flurry"],
+        feats: ['Armor Proficiency (Medium)', 'Martial Arts I'],
+        featsAny: ['Point-Blank Shot', 'Flurry'],
         talents: {
             count: 1,
-            trees: ["Armor Specialist", "Commando", "Mercenary", "Weapon Specialist"]
+            trees: ['Armor Specialist', 'Commando', 'Mercenary', 'Weapon Specialist']
         }
     },
 
-    "Force Adept": {
+    'Force Adept': {
         minLevel: 7,
-        skills: ["Use the Force"],
-        feats: ["Force Sensitivity"],
+        skills: ['Use the Force'],
+        feats: ['Force Sensitivity'],
         talents: {
             count: 3,
             forceTalentsOnly: true
         }
     },
 
-    "Force Disciple": {
+    'Force Disciple': {
         minLevel: 12,
-        skills: ["Use the Force"],
-        feats: ["Force Sensitivity"],
+        skills: ['Use the Force'],
+        feats: ['Force Sensitivity'],
         talents: {
             count: 2,
-            trees: ["Dark Side Devotee", "Force Adept", "Force Item"]
+            trees: ['Dark Side Devotee', 'Force Adept', 'Force Item']
         },
-        forcePowers: ["Farseeing"],
+        forcePowers: ['Farseeing'],
         forceTechniques: {
             count: 1
         }
     },
 
-    "Gunslinger": {
+    'Gunslinger': {
         minLevel: 7,
-        feats: ["Point-Blank Shot", "Precise Shot", "Quick Draw", "Weapon Proficiency (Pistols)"]
+        feats: ['Point-Blank Shot', 'Precise Shot', 'Quick Draw', 'Weapon Proficiency (Pistols)']
     },
 
-    "Jedi Knight": {
+    'Jedi Knight': {
         minBAB: 7,
-        skills: ["Use the Force"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
-        special: "Must be a member of The Jedi"
+        skills: ['Use the Force'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
+        special: 'Must be a member of The Jedi'
     },
 
-    "Jedi Master": {
+    'Jedi Master': {
         minLevel: 12,
-        skills: ["Use the Force"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+        skills: ['Use the Force'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
         forceTechniques: {
             count: 1
         },
-        special: "Must be a member of The Jedi"
+        special: 'Must be a member of The Jedi'
     },
 
-    "Officer": {
+    'Officer': {
         minLevel: 7,
-        skills: ["Knowledge (Tactics)"],
+        skills: ['Knowledge (Tactics)'],
         talents: {
             count: 1,
-            trees: ["Leadership", "Commando", "Veteran"]
+            trees: ['Leadership', 'Commando', 'Veteran']
         },
-        special: "Must belong to any organization with a military or paramilitary division"
+        special: 'Must belong to any organization with a military or paramilitary division'
     },
 
-    "Sith Apprentice": {
+    'Sith Apprentice': {
         minLevel: 7,
-        skills: ["Use the Force"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
-        darkSideScore: "wisdom", // Must equal Wisdom score
-        special: "Must be a member of The Sith"
+        skills: ['Use the Force'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
+        darkSideScore: 'wisdom', // Must equal Wisdom score
+        special: 'Must be a member of The Sith'
     },
 
-    "Sith Lord": {
+    'Sith Lord': {
         minLevel: 12,
-        skills: ["Use the Force"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+        skills: ['Use the Force'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
         forceTechniques: {
             count: 1
         },
-        darkSideScore: "wisdom",
-        special: "Must be a member of The Sith"
+        darkSideScore: 'wisdom',
+        special: 'Must be a member of The Sith'
     },
 
     // Knights of the Old Republic Campaign Guide
-    "Corporate Agent": {
+    'Corporate Agent': {
         minLevel: 7,
-        skills: ["Gather Information", "Knowledge (Bureaucracy)"],
-        feats: ["Skill Focus (Knowledge (Bureaucracy))"],
-        special: "Must be employed by a major interstellar corporation"
+        skills: ['Gather Information', 'Knowledge (Bureaucracy)'],
+        feats: ['Skill Focus (Knowledge (Bureaucracy))'],
+        special: 'Must be employed by a major interstellar corporation'
     },
 
-    "Gladiator": {
+    'Gladiator': {
         minLevel: 7,
         minBAB: 7,
-        feats: ["Improved Damage Threshold", "Weapon Proficiency (Advanced Melee Weapons)"]
+        feats: ['Improved Damage Threshold', 'Weapon Proficiency (Advanced Melee Weapons)']
     },
 
-    "Melee Duelist": {
+    'Melee Duelist': {
         minLevel: 7,
         minBAB: 7,
-        feats: ["Melee Defense", "Rapid Strike", "Weapon Focus (Melee Weapon)"]
+        feats: ['Melee Defense', 'Rapid Strike', 'Weapon Focus (Melee Weapon)']
     },
 
     // Force Unleashed Campaign Guide
-    "Enforcer": {
+    'Enforcer': {
         minLevel: 7,
-        skills: ["Gather Information", "Perception"],
+        skills: ['Gather Information', 'Perception'],
         talents: {
             count: 1,
-            trees: ["Survivor"]
+            trees: ['Survivor']
         },
-        special: "Must belong to a law enforcement or similar security organization"
+        special: 'Must belong to a law enforcement or similar security organization'
     },
 
-    "Independent Droid": {
+    'Independent Droid': {
         minLevel: 3,
-        skills: ["Use Computer"],
-        droidSystems: ["Heuristic Processor"]
+        skills: ['Use Computer'],
+        droidSystems: ['Heuristic Processor']
     },
 
-    "Infiltrator": {
+    'Infiltrator': {
         minLevel: 7,
-        skills: ["Perception", "Stealth"],
-        feats: ["Skill Focus (Stealth)"],
+        skills: ['Perception', 'Stealth'],
+        feats: ['Skill Focus (Stealth)'],
         talents: {
             count: 2,
-            trees: ["Camouflage", "Spy"]
+            trees: ['Camouflage', 'Spy']
         }
     },
 
-    "Master Privateer": {
+    'Master Privateer': {
         minLevel: 7,
-        skills: ["Deception", "Pilot"],
-        feats: ["Vehicular Combat"],
+        skills: ['Deception', 'Pilot'],
+        feats: ['Vehicular Combat'],
         talents: {
             count: 2,
-            trees: ["Misfortune", "Smuggling", "Spacer"]
+            trees: ['Misfortune', 'Smuggling', 'Spacer']
         }
     },
 
-    "Medic": {
+    'Medic': {
         minLevel: 7,
-        skills: ["Knowledge (Life Sciences)", "Treat Injury"],
-        feats: ["Surgical Expertise"]
+        skills: ['Knowledge (Life Sciences)', 'Treat Injury'],
+        feats: ['Surgical Expertise']
     },
 
-    "Saboteur": {
+    'Saboteur': {
         minLevel: 7,
-        skills: ["Deception", "Mechanics", "Use Computer"]
+        skills: ['Deception', 'Mechanics', 'Use Computer']
     },
 
     // Scum and Villainy
-    "Assassin": {
+    'Assassin': {
         minLevel: 7,
-        skills: ["Stealth"],
-        feats: ["Sniper"],
+        skills: ['Stealth'],
+        feats: ['Sniper'],
         talents: {
-            specific: ["Dastardly Strike"]
+            specific: ['Dastardly Strike']
         }
     },
 
-    "Charlatan": {
+    'Charlatan': {
         minLevel: 7,
-        skills: ["Deception", "Persuasion"],
+        skills: ['Deception', 'Persuasion'],
         talents: {
             count: 1,
-            trees: ["Disgrace", "Influence", "Lineage"]
+            trees: ['Disgrace', 'Influence', 'Lineage']
         }
     },
 
-    "Outlaw": {
+    'Outlaw': {
         minLevel: 7,
-        skills: ["Stealth", "Survival"],
+        skills: ['Stealth', 'Survival'],
         talents: {
             count: 1,
-            trees: ["Disgrace", "Misfortune"]
+            trees: ['Disgrace', 'Misfortune']
         },
-        special: "You must be wanted by the authorities in at least one star system"
+        special: 'You must be wanted by the authorities in at least one star system'
     },
 
     // Clone Wars Campaign Guide
-    "Droid Commander": {
+    'Droid Commander': {
         minLevel: 7,
-        skills: ["Knowledge (Tactics)", "Use Computer"],
+        skills: ['Knowledge (Tactics)', 'Use Computer'],
         talents: {
             count: 1,
-            trees: ["Leadership", "Commando"]
+            trees: ['Leadership', 'Commando']
         },
-        special: "Must be a Droid"
+        special: 'Must be a Droid'
     },
 
-    "Military Engineer": {
+    'Military Engineer': {
         minBAB: 7,
-        skills: ["Mechanics", "Use Computer"]
+        skills: ['Mechanics', 'Use Computer']
     },
 
-    "Vanguard": {
+    'Vanguard': {
         minLevel: 7,
-        skills: ["Perception", "Stealth"],
+        skills: ['Perception', 'Stealth'],
         talents: {
             count: 2,
-            trees: ["Camouflage", "Commando"]
+            trees: ['Camouflage', 'Commando']
         }
     },
 
     // Legacy Era Campaign Guide
-    "Imperial Knight": {
+    'Imperial Knight': {
         minBAB: 7,
-        skills: ["Use the Force"],
-        feats: ["Armor Proficiency (Medium)", "Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
-        special: "Must be a sworn defender of The Fel Empire"
+        skills: ['Use the Force'],
+        feats: ['Armor Proficiency (Medium)', 'Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
+        special: 'Must be a sworn defender of The Fel Empire'
     },
 
-    "Shaper": {
+    'Shaper': {
         minLevel: 7,
-        species: ["Yuuzhan Vong"],
-        skills: ["Knowledge (Life Sciences)", "Treat Injury"],
-        feats: ["Biotech Specialist"]
+        species: ['Yuuzhan Vong'],
+        skills: ['Knowledge (Life Sciences)', 'Treat Injury'],
+        feats: ['Biotech Specialist']
     },
 
     // Rebellion Era Campaign Guide
-    "Improviser": {
+    'Improviser': {
         minLevel: 7,
-        skills: ["Mechanics", "Use Computer"],
-        feats: ["Skill Focus (Mechanics)"]
+        skills: ['Mechanics', 'Use Computer'],
+        feats: ['Skill Focus (Mechanics)']
     },
 
-    "Pathfinder": {
+    'Pathfinder': {
         minLevel: 7,
-        skills: ["Perception", "Survival"],
+        skills: ['Perception', 'Survival'],
         talents: {
             count: 2,
-            trees: ["Awareness", "Camouflage", "Survivor"]
+            trees: ['Awareness', 'Camouflage', 'Survivor']
         }
     },
 
     // Galaxy at War
-    "Martial Arts Master": {
+    'Martial Arts Master': {
         minBAB: 7,
-        feats: ["Martial Arts II", "Melee Defense"],
-        featsAny: ["Martial Arts Feat"], // Any one Martial Arts feat
+        feats: ['Martial Arts II', 'Melee Defense'],
+        featsAny: ['Martial Arts Feat'], // Any one Martial Arts feat
         talents: {
             count: 1,
-            trees: ["Brawler", "Survivor"]
+            trees: ['Brawler', 'Survivor']
         }
     }
 };

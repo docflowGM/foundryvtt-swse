@@ -3,15 +3,15 @@
  * Handles flanking bonuses and positioning
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
-const NS = "foundryvtt-swse";
+const NS = 'foundryvtt-swse';
 
 export class FlankingMechanics {
   static initialize() {
     // Hook into attack roll to apply flanking bonus
-    Hooks.on("preRollAttack", (actor, target, roll) => this.applyFlankingBonus(actor, target, roll));
-    SWSELogger.debug("Flanking mechanics initialized");
+    Hooks.on('preRollAttack', (actor, target, roll) => this.applyFlankingBonus(actor, target, roll));
+    SWSELogger.debug('Flanking mechanics initialized');
   }
 
   /**
@@ -21,8 +21,8 @@ export class FlankingMechanics {
    * @returns {boolean} - True if flanking conditions are met
    */
   static isFlanking(attacker, target) {
-    if (!game.settings.get(NS, "flankingEnabled")) return false;
-    if (!attacker || !target || !attacker.scene || !target.scene) return false;
+    if (!game.settings.get(NS, 'flankingEnabled')) {return false;}
+    if (!attacker || !target || !attacker.scene || !target.scene) {return false;}
 
     // Get flanking allies
     const allies = this.getFlankerCount(target, attacker);
@@ -36,21 +36,21 @@ export class FlankingMechanics {
    * @returns {number} - Number of flanking allies
    */
   static getFlankerCount(target, attacker) {
-    if (!target) return 0;
+    if (!target) {return 0;}
 
-    const requiresConsciousness = game.settings.get(NS, "flankingRequiresConsciousness");
-    const allowDiagonal = game.settings.get(NS, "flankingDiagonalCounts");
-    const largeCreatureRule = game.settings.get(NS, "flankingLargeCreatures");
+    const requiresConsciousness = game.settings.get(NS, 'flankingRequiresConsciousness');
+    const allowDiagonal = game.settings.get(NS, 'flankingDiagonalCounts');
+    const largeCreatureRule = game.settings.get(NS, 'flankingLargeCreatures');
 
     let flankers = 0;
 
     // Check if target can be flanked based on size
-    if (largeCreatureRule !== "all") {
-      const targetSize = target.actor?.system?.traits?.size || "medium";
-      if (largeCreatureRule === "mediumOrSmaller" && !["tiny", "small", "medium"].includes(targetSize)) {
+    if (largeCreatureRule !== 'all') {
+      const targetSize = target.actor?.system?.traits?.size || 'medium';
+      if (largeCreatureRule === 'mediumOrSmaller' && !['tiny', 'small', 'medium'].includes(targetSize)) {
         return 0;
       }
-      if (largeCreatureRule === "sameSizeOnly" && !this._isSameSize(target, attacker)) {
+      if (largeCreatureRule === 'sameSizeOnly' && !this._isSameSize(target, attacker)) {
         return 0;
       }
     }
@@ -58,14 +58,14 @@ export class FlankingMechanics {
     // Find allies adjacent to target and on opposite side of attacker
     const combatants = target.scene?.tokens || [];
     for (const token of combatants) {
-      if (!token.actor) continue;
-      if (token.id === target.id) continue; // Skip the target
-      if (token.id === attacker?.token?.id) continue; // Skip the attacker
+      if (!token.actor) {continue;}
+      if (token.id === target.id) {continue;} // Skip the target
+      if (token.id === attacker?.token?.id) {continue;} // Skip the attacker
 
       // Check if conscious/aware
       if (requiresConsciousness) {
         const hp = token.actor?.system?.health?.hp?.value || 0;
-        if (hp <= 0) continue;
+        if (hp <= 0) {continue;}
       }
 
       // Check if adjacent
@@ -103,7 +103,7 @@ export class FlankingMechanics {
    * @private
    */
   static _isOpposite(flanker, attacker, target) {
-    if (!flanker || !attacker || !target) return false;
+    if (!flanker || !attacker || !target) {return false;}
 
     // Simple check: tokens are on opposite sides if they're on opposite sides of target
     const flankerOnLeft = flanker.x < target.x;
@@ -117,8 +117,8 @@ export class FlankingMechanics {
    * @private
    */
   static _isSameSize(token1, actor2) {
-    const size1 = token1.actor?.system?.traits?.size || "medium";
-    const size2 = actor2?.system?.traits?.size || "medium";
+    const size1 = token1.actor?.system?.traits?.size || 'medium';
+    const size2 = actor2?.system?.traits?.size || 'medium';
     return size1 === size2;
   }
 
@@ -127,22 +127,22 @@ export class FlankingMechanics {
    * @private
    */
   static applyFlankingBonus(actor, target, roll) {
-    if (!this.isFlanking(actor, target)) return;
+    if (!this.isFlanking(actor, target)) {return;}
 
-    const bonus = game.settings.get(NS, "flankingBonus");
+    const bonus = game.settings.get(NS, 'flankingBonus');
     let modifier = 0;
 
     switch (bonus) {
-      case "plusTwo":
+      case 'plusTwo':
         modifier = 2;
         break;
-      case "plusThree":
+      case 'plusThree':
         modifier = 3;
         break;
-      case "halfDamageReduction":
+      case 'halfDamageReduction':
         // This is handled separately in damage calculation
         break;
-      case "acBonus":
+      case 'acBonus':
         // AC penalty is applied differently
         break;
     }
@@ -159,14 +159,14 @@ export class FlankingMechanics {
    * @returns {number} - Bonus to apply to attack
    */
   static getFlankingBonus(attacker, target) {
-    if (!this.isFlanking(attacker, target)) return 0;
+    if (!this.isFlanking(attacker, target)) {return 0;}
 
-    const bonus = game.settings.get(NS, "flankingBonus");
+    const bonus = game.settings.get(NS, 'flankingBonus');
 
     switch (bonus) {
-      case "plusTwo":
+      case 'plusTwo':
         return 2;
-      case "plusThree":
+      case 'plusThree':
         return 3;
       default:
         return 0;

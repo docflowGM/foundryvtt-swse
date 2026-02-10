@@ -151,7 +151,7 @@ export class SynergyEvaluator {
       let matches = 0;
       for (const className of ownedClasses) {
         const classData = CLASS_SYNERGY_DATA[className];
-        if (!classData) continue;
+        if (!classData) {continue;}
 
         // Check feats
         if (classData.feats?.includes(itemName)) {
@@ -221,7 +221,7 @@ export class SynergyEvaluator {
               break;
             }
           }
-          if (synergy) break;
+          if (synergy) {break;}
         }
       }
 

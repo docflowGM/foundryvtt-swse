@@ -7,6 +7,7 @@
  * everything in a single, organized file.
  */
 
+import { createChatMessage } from '../core/document-api-v13.js';
 import { SWSELogger } from '../utils/logger.js';
 
 // ============================================================================
@@ -186,12 +187,12 @@ export class JumpUses {
   }
 
   static getJumpBonus(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.jump?.total || 0;
   }
 
   static getArmorPenalty(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.jump?.armor || 0;
   }
 }
@@ -328,7 +329,7 @@ export class KnowledgeUses {
       };
     }
 
-    let dc = targetWillDefense || (10 + (target.system.details?.level?.value || 1));
+    const dc = targetWillDefense || (10 + (target.system.details?.level?.value || 1));
     const roll = await new Roll('1d20').evaluate({ async: true });
     const checkResult = roll.total + tacticsBonus;
     const success = checkResult >= dc;
@@ -383,7 +384,7 @@ export class KnowledgeUses {
     const checkResult = roll.total + tacticsBonus;
     const success = checkResult >= dc;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `<strong>Battlefield Tactics</strong> - Unit Command<br>Reference: Clone Wars Campaign Guide<br>Unit: ${unitName}<br>DC: ${dc}<br>Activation Round: ${activationRound} of 3<br>Knowledge (Tactics) Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Swift Action`
     });
@@ -424,13 +425,13 @@ export class KnowledgeUses {
   }
 
   static getKnowledgeBonus(actor, field) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     const skillKey = `knowledge-${field.toLowerCase()}`;
     return actor.system.skills?.[skillKey]?.total || 0;
   }
 
   static isTrained(actor, field) {
-    if (!actor) return false;
+    if (!actor) {return false;}
     const skillKey = `knowledge-${field.toLowerCase()}`;
     return actor.system.skills?.[skillKey]?.trained || false;
   }
@@ -663,14 +664,14 @@ export class MechanicsUses {
   }
 
   static getMechanicsBonus(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.mechanics?.total || 0;
   }
 
   static getPlacementDamageBonus(checkResult) {
-    if (checkResult >= 35) return 3;
-    if (checkResult >= 25) return 2;
-    if (checkResult >= 15) return 1;
+    if (checkResult >= 35) {return 3;}
+    if (checkResult >= 25) {return 2;}
+    if (checkResult >= 15) {return 1;}
     return 0;
   }
 }
@@ -826,7 +827,7 @@ export class PerceptionUses {
 
     const perceptionBonus = actor.system.skills?.perception?.total || 0;
 
-    let dc = 15;
+    const dc = 15;
     let penalty = 0;
 
     if (areaSize === '5-square') {
@@ -973,12 +974,12 @@ export class PerceptionUses {
   }
 
   static getPerceptionBonus(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.perception?.total || 0;
   }
 
   static isTrained(actor) {
-    if (!actor) return false;
+    if (!actor) {return false;}
     return actor.system.skills?.perception?.trained || false;
   }
 }
@@ -1236,7 +1237,7 @@ export class PersuasionUses {
   }
 
   static getPersuasionBonus(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.persuasion?.total || 0;
   }
 }
@@ -1450,7 +1451,7 @@ export class PilotUses {
   }
 
   static getPilotBonus(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.pilot?.total || 0;
   }
 
@@ -1463,7 +1464,7 @@ export class PilotUses {
   }
 
   static isTrained(actor) {
-    if (!actor) return false;
+    if (!actor) {return false;}
     return actor.system.skills?.pilot?.trained || false;
   }
 }
@@ -1774,12 +1775,12 @@ export class RideUses {
   }
 
   static getRideBonus(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.ride?.total || 0;
   }
 
   static getArmorCheckPenalty(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.ride?.armor || 0;
   }
 }
@@ -2078,12 +2079,12 @@ export class SurvivalUses {
   }
 
   static getSurvivalBonus(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.survival?.total || 0;
   }
 
   static isTrained(actor) {
-    if (!actor) return false;
+    if (!actor) {return false;}
     return actor.system.skills?.survival?.trained || false;
   }
 }
@@ -2188,12 +2189,12 @@ export class SwimUses {
   }
 
   static getSwimBonus(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.swim?.total || 0;
   }
 
   static getArmorCheckPenalty(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.swim?.armor || 0;
   }
 }
@@ -2450,12 +2451,12 @@ export class TreatInjuryUses {
   }
 
   static getTreatInjuryBonus(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.['treat-injury']?.total || 0;
   }
 
   static isTrained(actor) {
-    if (!actor) return false;
+    if (!actor) {return false;}
     return actor.system.skills?.['treat-injury']?.trained || false;
   }
 }
@@ -2670,12 +2671,12 @@ export class UseComputerUses {
   }
 
   static getUseComputerBonus(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.['use-computer']?.total || 0;
   }
 
   static isTrained(actor) {
-    if (!actor) return false;
+    if (!actor) {return false;}
     return actor.system.skills?.['use-computer']?.trained || false;
   }
 }
@@ -3093,17 +3094,17 @@ export class UseTheForceUses {
   }
 
   static getUseTheForceBonus(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.['use-the-force']?.total || 0;
   }
 
   static isTrained(actor) {
-    if (!actor) return false;
+    if (!actor) {return false;}
     return actor.system.skills?.['use-the-force']?.trained || false;
   }
 
   static hasForceStensitivity(actor) {
-    if (!actor) return false;
+    if (!actor) {return false;}
     return actor.items?.some(item => item.name === 'Force Sensitivity') || false;
   }
 }
@@ -3114,11 +3115,11 @@ export class UseTheForceUses {
 
 export class AcrobaticsUses {
   static async balance(actor, surfaceWidth = 'medium', isSlippery = false) {
-    if (!actor) return { success: false, message: 'Invalid actor' };
+    if (!actor) {return { success: false, message: 'Invalid actor' };}
     const acrobaticsBonus = actor.system.skills?.acrobatics?.total || 0;
     const dcByWidth = { 'wide': 10, 'medium': 15, 'narrow': 20, 'very-narrow': 25 };
     let dc = dcByWidth[surfaceWidth.toLowerCase()] || 15;
-    if (isSlippery) dc += 5;
+    if (isSlippery) {dc += 5;}
     const roll = await new Roll('1d20').evaluate({ async: true });
     const checkResult = roll.total + acrobaticsBonus;
     const success = checkResult >= dc;
@@ -3131,10 +3132,10 @@ export class AcrobaticsUses {
   }
 
   static async tumble(actor, squaresMoved = 1) {
-    if (!actor) return { success: false, message: 'Invalid actor' };
+    if (!actor) {return { success: false, message: 'Invalid actor' };}
     const acrobaticsBonus = actor.system.skills?.acrobatics?.total || 0;
     const isTrained = actor.system.skills?.acrobatics?.trained || false;
-    if (!isTrained) return { success: false, message: 'Must be Trained in Acrobatics', trained: false };
+    if (!isTrained) {return { success: false, message: 'Must be Trained in Acrobatics', trained: false };}
     const dc = 15;
     const roll = await new Roll('1d20').evaluate({ async: true });
     const checkResult = roll.total + acrobaticsBonus;
@@ -3162,13 +3163,13 @@ export class AcrobaticsUses {
 
 export class ClimbUses {
   static async climbSurface(actor, surfaceType = 'rough-wall', distance = 30, isAccelerated = false) {
-    if (!actor) return { success: false, message: 'Invalid actor' };
+    if (!actor) {return { success: false, message: 'Invalid actor' };}
     const climbBonus = actor.system.skills?.climb?.total || 0;
     const dcBySurface = {
       'slope': 0, 'knotted-rope-with-wall': 0, 'rope-or-knotted-rope': 5, 'rough-wall': 10,
       'natural-rock': 15, 'unknotted-rope': 15, 'narrow-handholds': 20, 'rough-surface': 25, 'overhanging': 25
     };
-    let dc = dcBySurface[surfaceType.toLowerCase()] || 15;
+    const dc = dcBySurface[surfaceType.toLowerCase()] || 15;
     const penalty = isAccelerated ? -5 : 0;
     const roll = await new Roll('1d20').evaluate({ async: true });
     const checkResult = roll.total + climbBonus + penalty;
@@ -3201,7 +3202,7 @@ export class ClimbUses {
 
 export class DeceptionUses {
   static async makeDeceptionCheck(actor, target, difficulty = 'moderate') {
-    if (!actor || !target) return { success: false, message: 'Invalid actor or target' };
+    if (!actor || !target) {return { success: false, message: 'Invalid actor or target' };}
     const deceptionBonus = actor.system.skills?.deception?.total || 0;
     const difficultyMod = this._getDifficultyModifier(difficulty);
     const roll = await new Roll('1d20').evaluate({ async: true });
@@ -3228,7 +3229,7 @@ export class DeceptionUses {
 
 export class EnduranceUses {
   static async forcedMarch(actor, hoursMarched = 1) {
-    if (!actor) return { success: false, message: 'Invalid actor' };
+    if (!actor) {return { success: false, message: 'Invalid actor' };}
     const enduranceBonus = actor.system.skills?.endurance?.total || 0;
     const dc = 10 + (Math.max(0, hoursMarched - 1) * 2);
     const roll = await new Roll('1d20').evaluate({ async: true });
@@ -3243,7 +3244,7 @@ export class EnduranceUses {
   }
 
   static async holdBreathe(actor, roundsHolding = null) {
-    if (!actor) return { success: false, message: 'Invalid actor' };
+    if (!actor) {return { success: false, message: 'Invalid actor' };}
     const conScore = actor.system.attributes?.con?.score || 10;
     const enduranceBonus = actor.system.skills?.endurance?.total || 0;
     if (roundsHolding === null) {
@@ -3279,7 +3280,7 @@ export class EnduranceUses {
 
 export class GatherInformationUses {
   static async learnNewsAndRumors(actor, difficulty = 'basic', useQuickIntel = false) {
-    if (!actor) return { success: false, message: 'Invalid actor' };
+    if (!actor) {return { success: false, message: 'Invalid actor' };}
     const gatherBonus = actor.system.skills?.['gather-information']?.total || 0;
     const isTrained = actor.system.skills?.['gather-information']?.trained || false;
     let dc = difficulty.toLowerCase() === 'detailed' ? 20 : 10;
@@ -3287,7 +3288,7 @@ export class GatherInformationUses {
     if (useQuickIntel && !isTrained) {
       return { success: false, message: 'Must be Trained for Quick Intel', trained: false };
     }
-    if (useQuickIntel) dc += 10;
+    if (useQuickIntel) {dc += 10;}
     const roll = await new Roll('1d20').evaluate({ async: true });
     const checkResult = roll.total + gatherBonus;
     const success = checkResult >= dc;
@@ -3302,7 +3303,7 @@ export class GatherInformationUses {
   }
 
   static async locateIndividual(actor, targetName = 'unknown', isWellKnown = true) {
-    if (!actor) return { success: false, message: 'Invalid actor' };
+    if (!actor) {return { success: false, message: 'Invalid actor' };}
     const gatherBonus = actor.system.skills?.['gather-information']?.total || 0;
     const dc = isWellKnown ? 15 : 25;
     const cost = isWellKnown ? 0 : 500;

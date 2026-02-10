@@ -26,190 +26,190 @@ import { SWSELogger } from '../utils/logger.js';
 export const FORCE_POWER_CATEGORIES = {
   // Vital / Preservation Powers
   vital_transfer: {
-    name: "Vital Transfer",
-    categories: ["vitality", "support", "risk"],
-    philosophy: "Healing through sacrifice",
-    moralSlant: "jedi_favored"
+    name: 'Vital Transfer',
+    categories: ['vitality', 'support', 'risk'],
+    philosophy: 'Healing through sacrifice',
+    moralSlant: 'jedi_favored'
   },
   force_body: {
-    name: "Force Body",
-    categories: ["vitality", "defense"],
-    philosophy: "Physical resilience and endurance",
-    moralSlant: "neutral"
+    name: 'Force Body',
+    categories: ['vitality', 'defense'],
+    philosophy: 'Physical resilience and endurance',
+    moralSlant: 'neutral'
   },
   malacia: {
-    name: "Malacia",
-    categories: ["vitality", "control"],
-    philosophy: "Exhaustion through Force manipulation",
-    moralSlant: "neutral"
+    name: 'Malacia',
+    categories: ['vitality', 'control'],
+    philosophy: 'Exhaustion through Force manipulation',
+    moralSlant: 'neutral'
   },
 
   // Awareness / Insight Powers
   force_sense: {
-    name: "Force Sense",
-    categories: ["awareness"],
-    philosophy: "Passive awareness of danger and presence",
-    moralSlant: "jedi_favored"
+    name: 'Force Sense',
+    categories: ['awareness'],
+    philosophy: 'Passive awareness of danger and presence',
+    moralSlant: 'jedi_favored'
   },
   farseeing: {
-    name: "Farseeing",
-    categories: ["awareness", "control"],
-    philosophy: "Strategic foresight",
-    moralSlant: "jedi_favored"
+    name: 'Farseeing',
+    categories: ['awareness', 'control'],
+    philosophy: 'Strategic foresight',
+    moralSlant: 'jedi_favored'
   },
   force_track: {
-    name: "Force Track",
-    categories: ["awareness", "control"],
-    philosophy: "Persistent pursuit and location",
-    moralSlant: "neutral"
+    name: 'Force Track',
+    categories: ['awareness', 'control'],
+    philosophy: 'Persistent pursuit and location',
+    moralSlant: 'neutral'
   },
 
   // Defense / Protection
   negate_energy: {
-    name: "Negate Energy",
-    categories: ["defense", "control"],
-    philosophy: "Reactive protection against energy attacks",
-    moralSlant: "jedi_favored"
+    name: 'Negate Energy',
+    categories: ['defense', 'control'],
+    philosophy: 'Reactive protection against energy attacks',
+    moralSlant: 'jedi_favored'
   },
   force_defense: {
-    name: "Force Defense",
-    categories: ["defense"],
-    philosophy: "Internalized resistance and shielding",
-    moralSlant: "jedi_favored"
+    name: 'Force Defense',
+    categories: ['defense'],
+    philosophy: 'Internalized resistance and shielding',
+    moralSlant: 'jedi_favored'
   },
 
   // Precision / Martial Augmentation
   battle_strike: {
-    name: "Battle Strike",
-    categories: ["precision", "aggression"],
-    philosophy: "One decisive Force-enhanced blow",
-    moralSlant: "neutral"
+    name: 'Battle Strike',
+    categories: ['precision', 'aggression'],
+    philosophy: 'One decisive Force-enhanced blow',
+    moralSlant: 'neutral'
   },
   force_strike: {
-    name: "Force Strike",
-    categories: ["precision", "aggression"],
-    philosophy: "Raw telekinetic damage",
-    moralSlant: "neutral"
+    name: 'Force Strike',
+    categories: ['precision', 'aggression'],
+    philosophy: 'Raw telekinetic damage',
+    moralSlant: 'neutral'
   },
   force_weapon: {
-    name: "Force Weapon",
-    categories: ["precision", "support"],
-    philosophy: "Weapon empowerment and enhancement",
-    moralSlant: "jedi_favored"
+    name: 'Force Weapon',
+    categories: ['precision', 'support'],
+    philosophy: 'Weapon empowerment and enhancement',
+    moralSlant: 'jedi_favored'
   },
 
   // Control / Battlefield Manipulation
   move_object: {
-    name: "Move Object",
-    categories: ["control", "precision"],
-    philosophy: "Environmental control and manipulation",
-    moralSlant: "jedi_favored"
+    name: 'Move Object',
+    categories: ['control', 'precision'],
+    philosophy: 'Environmental control and manipulation',
+    moralSlant: 'jedi_favored'
   },
   force_slam: {
-    name: "Force Slam",
-    categories: ["control", "aggression"],
-    philosophy: "Area denial and forced repositioning",
-    moralSlant: "sith_favored"
+    name: 'Force Slam',
+    categories: ['control', 'aggression'],
+    philosophy: 'Area denial and forced repositioning',
+    moralSlant: 'sith_favored'
   },
   force_thrust: {
-    name: "Force Thrust",
-    categories: ["control"],
-    philosophy: "Tactical repositioning of targets",
-    moralSlant: "jedi_favored"
+    name: 'Force Thrust',
+    categories: ['control'],
+    philosophy: 'Tactical repositioning of targets',
+    moralSlant: 'jedi_favored'
   },
   force_disarm: {
-    name: "Force Disarm",
-    categories: ["control"],
-    philosophy: "Non-lethal dominance through disarmament",
-    moralSlant: "jedi_favored"
+    name: 'Force Disarm',
+    categories: ['control'],
+    philosophy: 'Non-lethal dominance through disarmament',
+    moralSlant: 'jedi_favored'
   },
   battlemind: {
-    name: "Battlemind",
-    categories: ["support", "control"],
-    philosophy: "Combat focus and clarity",
-    moralSlant: "neutral"
+    name: 'Battlemind',
+    categories: ['support', 'control'],
+    philosophy: 'Combat focus and clarity',
+    moralSlant: 'neutral'
   },
   battle_meditation: {
-    name: "Battle Meditation",
-    categories: ["support", "control"],
-    philosophy: "Strategic Force leadership and team coordination",
-    moralSlant: "jedi_favored"
+    name: 'Battle Meditation',
+    categories: ['support', 'control'],
+    philosophy: 'Strategic Force leadership and team coordination',
+    moralSlant: 'jedi_favored'
   },
   inspire: {
-    name: "Inspire",
-    categories: ["support"],
-    philosophy: "Emotional reinforcement and morale",
-    moralSlant: "jedi_favored"
+    name: 'Inspire',
+    categories: ['support'],
+    philosophy: 'Emotional reinforcement and morale',
+    moralSlant: 'jedi_favored'
   },
 
   // Stealth / Deception
   force_cloak: {
-    name: "Force Cloak",
-    categories: ["control", "mobility"],
-    philosophy: "Obfuscation and stealth",
-    moralSlant: "jedi_favored"
+    name: 'Force Cloak',
+    categories: ['control', 'mobility'],
+    philosophy: 'Obfuscation and stealth',
+    moralSlant: 'jedi_favored'
   },
   mind_trick: {
-    name: "Mind Trick",
-    categories: ["control"],
-    philosophy: "Nonviolent persuasion and obfuscation",
-    moralSlant: "jedi_favored"
+    name: 'Mind Trick',
+    categories: ['control'],
+    philosophy: 'Nonviolent persuasion and obfuscation',
+    moralSlant: 'jedi_favored'
   },
   force_stun: {
-    name: "Force Stun",
-    categories: ["control"],
-    philosophy: "Temporary disablement without harm",
-    moralSlant: "jedi_favored"
+    name: 'Force Stun',
+    categories: ['control'],
+    philosophy: 'Temporary disablement without harm',
+    moralSlant: 'jedi_favored'
   },
   rebuke: {
-    name: "Rebuke",
-    categories: ["control", "defense"],
-    philosophy: "Psychological resistance and defiance",
-    moralSlant: "jedi_favored"
+    name: 'Rebuke',
+    categories: ['control', 'defense'],
+    philosophy: 'Psychological resistance and defiance',
+    moralSlant: 'jedi_favored'
   },
 
   // Dark Side / Aggression
   force_lightning: {
-    name: "Force Lightning",
-    categories: ["aggression", "precision", "control"],
-    philosophy: "Domination through pain and fear",
-    moralSlant: "sith_favored"
+    name: 'Force Lightning',
+    categories: ['aggression', 'precision', 'control'],
+    philosophy: 'Domination through pain and fear',
+    moralSlant: 'sith_favored'
   },
   force_scream: {
-    name: "Force Scream",
-    categories: ["aggression", "control"],
-    philosophy: "Terror weapon and area denial",
-    moralSlant: "sith_favored"
+    name: 'Force Scream',
+    categories: ['aggression', 'control'],
+    philosophy: 'Terror weapon and area denial',
+    moralSlant: 'sith_favored'
   },
   drain_life: {
-    name: "Drain Life",
-    categories: ["aggression", "vitality", "risk"],
-    philosophy: "Predatory survival through life theft",
-    moralSlant: "sith_only"
+    name: 'Drain Life',
+    categories: ['aggression', 'vitality', 'risk'],
+    philosophy: 'Predatory survival through life theft',
+    moralSlant: 'sith_only'
   },
   drain_energy: {
-    name: "Drain Energy",
-    categories: ["control", "aggression"],
-    philosophy: "Resource denial and depletion",
-    moralSlant: "sith_favored"
+    name: 'Drain Energy',
+    categories: ['control', 'aggression'],
+    philosophy: 'Resource denial and depletion',
+    moralSlant: 'sith_favored'
   },
   sever_force: {
-    name: "Sever Force",
-    categories: ["control", "aggression"],
-    philosophy: "Suppression of Force identity",
-    moralSlant: "sith_favored"
+    name: 'Sever Force',
+    categories: ['control', 'aggression'],
+    philosophy: 'Suppression of Force identity',
+    moralSlant: 'sith_favored'
   },
   force_storm: {
-    name: "Force Storm",
-    categories: ["aggression"],
-    philosophy: "Catastrophic area destruction",
-    moralSlant: "sith_only"
+    name: 'Force Storm',
+    categories: ['aggression'],
+    philosophy: 'Catastrophic area destruction',
+    moralSlant: 'sith_only'
   },
   force_grip: {
-    name: "Force Grip",
-    categories: ["control", "aggression"],
-    philosophy: "Dominion and immobilization",
-    moralSlant: "sith_favored"
+    name: 'Force Grip',
+    categories: ['control', 'aggression'],
+    philosophy: 'Dominion and immobilization',
+    moralSlant: 'sith_favored'
   }
 };
 
@@ -321,13 +321,13 @@ export function validateForcePowerCategories() {
     if (!powerData.philosophy) {
       errors.push(`${powerId}: missing philosophy description`);
     }
-    if (!powerData.moralSlant || !["jedi_favored", "sith_favored", "neutral", "jedi_only", "sith_only"].includes(powerData.moralSlant)) {
+    if (!powerData.moralSlant || !['jedi_favored', 'sith_favored', 'neutral', 'jedi_only', 'sith_only'].includes(powerData.moralSlant)) {
       errors.push(`${powerId}: invalid moralSlant value`);
     }
 
     // Validate categories are real
     if (powerData.categories) {
-      const validCategories = ["vitality", "defense", "control", "awareness", "precision", "aggression", "support", "mobility", "risk"];
+      const validCategories = ['vitality', 'defense', 'control', 'awareness', 'precision', 'aggression', 'support', 'mobility', 'risk'];
       for (const cat of powerData.categories) {
         if (!validCategories.includes(cat)) {
           errors.push(`${powerId}: unknown category "${cat}"`);
@@ -337,9 +337,9 @@ export function validateForcePowerCategories() {
   }
 
   if (errors.length > 0) {
-    console.error("❌ Force Power Category Validation Failed:");
+    console.error('❌ Force Power Category Validation Failed:');
     errors.forEach(e => console.error(`  - ${e}`));
-    throw new Error("Invalid Force power category data");
+    throw new Error('Invalid Force power category data');
   }
 
   console.log(`✅ Force Power Category Validation Passed (${Object.keys(FORCE_POWER_CATEGORIES).length} powers)`);
@@ -356,26 +356,26 @@ export function validateForcePowerCategories() {
  */
 export function generateForcePowerArchetypeWeights(categories = []) {
   const archetypes = [
-    "jedi_guardian",
-    "jedi_sentinel",
-    "jedi_consular",
-    "jedi_ace_pilot",
-    "jedi_healer",
-    "jedi_battlemaster",
-    "jedi_shadow",
-    "jedi_weapon_master",
-    "jedi_mentor",
-    "jedi_seer",
-    "jedi_archivist",
-    "sith_marauder",
-    "sith_assassin",
-    "sith_acolyte",
-    "sith_alchemist",
-    "sith_mastermind",
-    "sith_juggernaut",
-    "emperors_shield",
-    "imperial_knight_errant",
-    "imperial_knight_inquisitor"
+    'jedi_guardian',
+    'jedi_sentinel',
+    'jedi_consular',
+    'jedi_ace_pilot',
+    'jedi_healer',
+    'jedi_battlemaster',
+    'jedi_shadow',
+    'jedi_weapon_master',
+    'jedi_mentor',
+    'jedi_seer',
+    'jedi_archivist',
+    'sith_marauder',
+    'sith_assassin',
+    'sith_acolyte',
+    'sith_alchemist',
+    'sith_mastermind',
+    'sith_juggernaut',
+    'emperors_shield',
+    'imperial_knight_errant',
+    'imperial_knight_inquisitor'
   ];
 
   const weights = {};

@@ -102,8 +102,8 @@ export class PrestigeRoadmap extends SWSEApplicationV2 {
 
         // Sort by qualification, then progress, then affinity
         classes.sort((a, b) => {
-            if (a.qualified !== b.qualified) return a.qualified ? -1 : 1;
-            if (a.progressPercent !== b.progressPercent) return b.progressPercent - a.progressPercent;
+            if (a.qualified !== b.qualified) {return a.qualified ? -1 : 1;}
+            if (a.progressPercent !== b.progressPercent) {return b.progressPercent - a.progressPercent;}
             return b.affinity - a.affinity;
         });
 
@@ -132,15 +132,15 @@ export class PrestigeRoadmap extends SWSEApplicationV2 {
      */
     _countTotalPrereqs(prereqData) {
         let count = 0;
-        if (prereqData.level) count++;
-        if (prereqData.bab) count++;
-        if (prereqData.skills) count += prereqData.skills.length;
-        if (prereqData.feats) count += prereqData.feats.length;
-        if (prereqData.featsOr) count++;
-        if (prereqData.talents && Array.isArray(prereqData.talents)) count += prereqData.talents.length;
-        if (prereqData.talents && typeof prereqData.talents === 'number') count++;
-        if (prereqData.techniques) count++;
-        if (prereqData.powers) count += prereqData.powers.length;
+        if (prereqData.level) {count++;}
+        if (prereqData.bab) {count++;}
+        if (prereqData.skills) {count += prereqData.skills.length;}
+        if (prereqData.feats) {count += prereqData.feats.length;}
+        if (prereqData.featsOr) {count++;}
+        if (prereqData.talents && Array.isArray(prereqData.talents)) {count += prereqData.talents.length;}
+        if (prereqData.talents && typeof prereqData.talents === 'number') {count++;}
+        if (prereqData.techniques) {count++;}
+        if (prereqData.powers) {count += prereqData.powers.length;}
         return count;
     }
 
@@ -240,7 +240,7 @@ export class PrestigeRoadmap extends SWSEApplicationV2 {
             const validTrees = prereqData.talentTrees.map(t => t.toLowerCase());
             let count = 0;
             for (const tree of actorState.talentTrees) {
-                if (validTrees.some(vt => tree.includes(vt))) count++;
+                if (validTrees.some(vt => tree.includes(vt))) {count++;}
             }
             breakdown.push({
                 type: 'talent_count',

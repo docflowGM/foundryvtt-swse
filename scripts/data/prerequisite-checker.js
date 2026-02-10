@@ -32,12 +32,35 @@ import { TalentTreeDB } from './talent-tree-db.js';
 import { normalizeTalentTreeId } from './talent-tree-normalizer.js';
 import { SWSELogger } from '../utils/logger.js';
 import { normalizeClassPrerequisites } from '../progression/prerequisites/class-prereq-normalizer.js';
+import { ClassesDB } from './classes-db.js';
 
 /**
  * MAIN CLASS: PrerequisiteChecker
  * The unified, canonical prerequisite validator for ALL types of prerequisites.
  */
 export class PrerequisiteChecker {
+    // ============================================================
+    // DEFENSIVE LOOKUP HELPERS (v2 ID-first, name-fallback)
+    // ============================================================
+
+    /**
+     * Find class item on actor by classId or className (defensive).
+     * Tries classId first (v2), falls back to name-based lookup (v1 compat).
+     * @private
+     */
+    static _findClassItem(actor, classIdOrName) {
+        if (!actor?.items) return null;
+
+        // Try classId lookup first (v2 standard)
+        if (classIdOrName && classIdOrName.length === 16) {
+            const byId = actor.items.find(i => i.type === 'class' && i.system?.classId === classIdOrName);
+            if (byId) return byId;
+        }
+
+        // Fallback to name lookup (v1 compat + prestige prereq data format)
+        return actor.items.find(i => i.type === 'class' && i.name === classIdOrName);
+    }
+
     /**
      * Check prerequisites for ANY item (feat, talent, class, etc.)
      * Routes to appropriate checker based on type.
@@ -78,7 +101,7 @@ export class PrerequisiteChecker {
             feat = { name: feat, system: {} };
         }
 
-        const prereqData = feat.system?.prerequisite || feat.system?.prerequisites || "";
+        const prereqData = feat.system?.prerequisite || feat.system?.prerequisites || '';
 
         // Try structured format first (if exists)
         if (feat.system?.prerequisitesStructured && Array.isArray(feat.system.prerequisitesStructured)) {
@@ -130,7 +153,7 @@ export class PrerequisiteChecker {
             talent = { name: talent, system: {} };
         }
 
-        const prereqData = talent.system?.prerequisites || talent.system?.prerequisitesStructured || "";
+        const prereqData = talent.system?.prerequisites || talent.system?.prerequisitesStructured || '';
 
         // Try structured format first (if exists)
         if (Array.isArray(talent.system?.prerequisitesStructured)) {
@@ -181,7 +204,7 @@ export class PrerequisiteChecker {
             classDoc = { name: classDoc, system: {} };
         }
 
-        const prereqData = classDoc.system?.prerequisites || "";
+        const prereqData = classDoc.system?.prerequisites || '';
 
         // Try structured format first
         if (Array.isArray(classDoc.system?.prerequisitesStructured)) {
@@ -399,7 +422,7 @@ export class PrerequisiteChecker {
         const details = {};
 
         for (const prereq of parsed) {
-            if (!prereq.type) continue;
+            if (!prereq.type) {continue;}
 
             const result = this._checkStructuredCondition(prereq, actor, pending);
             if (!result.met) {
@@ -451,7 +474,7 @@ export class PrerequisiteChecker {
      * @private
      */
     static _evaluateLegacyStringPrerequisites(prereqString, actor, pending, nameForError, type) {
-        if (!prereqString || prereqString.trim() === "" || prereqString === "null") {
+        if (!prereqString || prereqString.trim() === '' || prereqString === 'null') {
             return { met: true, missing: [], details: {} };
         }
 
@@ -575,7 +598,7 @@ export class PrerequisiteChecker {
                 };
             }
             case 'feat': {
-                const hasFeat = actor.items?.some(i => i.type === "feat" && i.name === prereq.name) ||
+                const hasFeat = actor.items?.some(i => i.type === 'feat' && i.name === prereq.name) ||
                     (pending.selectedFeats || []).some(f => f.name === prereq.name) ||
                     (pending.grantedFeats || []).includes(prereq.name) ||
                     this.getHouseruleGrantedFeats().includes(prereq.name);
@@ -585,7 +608,7 @@ export class PrerequisiteChecker {
                 };
             }
             case 'talent': {
-                const hasTalent = actor.items?.some(i => i.type === "talent" && i.name === prereq.name) ||
+                const hasTalent = actor.items?.some(i => i.type === 'talent' && i.name === prereq.name) ||
                     (pending.selectedTalents || []).some(t => t.name === prereq.name);
                 return {
                     met: hasTalent,
@@ -593,17 +616,17 @@ export class PrerequisiteChecker {
                 };
             }
             case 'force_sensitive': {
-                const hasFS = actor.items?.some(i => i.type === "feat" && i.name === "Force Sensitivity") ||
-                    (pending.selectedFeats || []).some(f => f.name === "Force Sensitivity") ||
-                    (pending.grantedFeats || []).includes("Force Sensitivity") ||
-                    this.getHouseruleGrantedFeats().includes("Force Sensitivity");
+                const hasFS = actor.items?.some(i => i.type === 'feat' && i.name === 'Force Sensitivity') ||
+                    (pending.selectedFeats || []).some(f => f.name === 'Force Sensitivity') ||
+                    (pending.grantedFeats || []).includes('Force Sensitivity') ||
+                    this.getHouseruleGrantedFeats().includes('Force Sensitivity');
                 return {
                     met: hasFS,
                     message: !hasFS ? `Requires Force Sensitivity` : ''
                 };
             }
             case 'force_technique': {
-                const known = actor.items?.filter(i => i.type === "feat" && i.system?.tags?.includes("force_technique")).length ?? 0;
+                const known = actor.items?.filter(i => i.type === 'feat' && i.system?.tags?.includes('force_technique')).length ?? 0;
                 const met = known >= 1;
                 return {
                     met,
@@ -611,7 +634,7 @@ export class PrerequisiteChecker {
                 };
             }
             case 'force_secret': {
-                const known = actor.items?.filter(i => i.type === "feat" && i.system?.tags?.includes("force_secret")).length ?? 0;
+                const known = actor.items?.filter(i => i.type === 'feat' && i.system?.tags?.includes('force_secret')).length ?? 0;
                 const met = known >= 1;
                 return {
                     met,
@@ -619,7 +642,7 @@ export class PrerequisiteChecker {
                 };
             }
             case 'class_level': {
-                const classItem = actor.items?.find(i => i.type === "class" && i.name === prereq.className);
+                const classItem = this._findClassItem(actor, prereq.className);
                 const level = classItem?.system?.level ?? 0;
                 const met = level >= (prereq.minimum ?? 1);
                 return {
@@ -630,12 +653,12 @@ export class PrerequisiteChecker {
             case 'alignment': {
                 const lightSide = actor.system?.force?.lightSideScore ?? 0;
                 const darkSide = actor.system?.force?.darkSideScore ?? 0;
-                const isDark = prereq.alignment?.includes("Dark");
-                const isLight = prereq.alignment?.includes("Light");
+                const isDark = prereq.alignment?.includes('Dark');
+                const isLight = prereq.alignment?.includes('Light');
 
                 let met = true;
-                if (isDark && lightSide > darkSide) met = false;
-                if (isLight && darkSide > lightSide) met = false;
+                if (isDark && lightSide > darkSide) {met = false;}
+                if (isLight && darkSide > lightSide) {met = false;}
 
                 return {
                     met,
@@ -681,7 +704,7 @@ export class PrerequisiteChecker {
     // ============================================================
 
     static _checkFeatCondition(prereq, actor, pending) {
-        const hasFeat = actor.items?.some(i => i.type === "feat" && i.name === prereq.name) ||
+        const hasFeat = actor.items?.some(i => i.type === 'feat' && i.name === prereq.name) ||
             (pending.selectedFeats || []).some(f => f.name === prereq.name) ||
             this.getHouseruleGrantedFeats().includes(prereq.name);
         return {
@@ -691,7 +714,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkTalentCondition(prereq, actor, pending) {
-        const hasTalent = actor.items?.some(i => i.type === "talent" && i.name === prereq.name) ||
+        const hasTalent = actor.items?.some(i => i.type === 'talent' && i.name === prereq.name) ||
             (pending.selectedTalents || []).some(t => t.name === prereq.name);
         return {
             met: hasTalent,
@@ -701,13 +724,13 @@ export class PrerequisiteChecker {
 
     static _checkTalentFromTreeCondition(prereq, actor, pending) {
         const allTalents = [
-            ...actor.items?.filter(i => i.type === "talent") || [],
+            ...actor.items?.filter(i => i.type === 'talent') || [],
             ...(pending.selectedTalents || [])
         ];
 
         const matchingTalents = allTalents.filter(t => {
             const treeName = t.system?.talentTree || t.system?.talent_tree;
-            if (!treeName) return false;
+            if (!treeName) {return false;}
             const normalized = normalizeTalentTreeId(treeName);
             const required = normalizeTalentTreeId(prereq.tree);
             return normalized === required;
@@ -894,7 +917,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkClassLevelCondition(prereq, actor, pending) {
-        const classItem = actor.items?.find(i => i.type === 'class' && i.name === prereq.className);
+        const classItem = this._findClassItem(actor, prereq.className);
         const level = classItem?.system?.level ?? 0;
         const required = prereq.minimum ?? 1;
         const met = level >= required;
@@ -920,7 +943,7 @@ export class PrerequisiteChecker {
         const conditions = prereq.conditions || [];
         for (const cond of conditions) {
             const result = this._checkStructuredCondition(cond, actor, pending);
-            if (result.met) return { met: true, message: '' };
+            if (result.met) {return { met: true, message: '' };}
         }
         return {
             met: false,
@@ -947,7 +970,7 @@ export class PrerequisiteChecker {
             const parts = prereqString.split(/[,;]|(?:\s+and\s+)/i).map(p => p.trim()).filter(p => p);
             for (const part of parts) {
                 const prereq = this._parseLegacyPrerequisitePart(part);
-                if (prereq) prereqs.push(prereq);
+                if (prereq) {prereqs.push(prereq);}
             }
             return prereqs;
         }
@@ -1084,7 +1107,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkClassLevelLegacy(prereq, actor, pending) {
-        const classItem = actor.items?.find(i => i.type === 'class' && i.name === prereq.className);
+        const classItem = this._findClassItem(actor, prereq.className);
         const level = classItem?.system?.level ?? 0;
         const met = level >= prereq.level;
         return {
@@ -1104,7 +1127,7 @@ export class PrerequisiteChecker {
             'use the force': 'useTheForce'
         };
         const skillKey = skillMap[prereq.skillName?.toLowerCase()];
-        if (!skillKey) return { met: true, message: '' };
+        if (!skillKey) {return { met: true, message: '' };}
 
         const isTrained = actor.system?.skills?.[skillKey]?.trained || false;
         const isPending = (pending.selectedSkills || []).some(s => s.key === skillKey);
@@ -1126,7 +1149,7 @@ export class PrerequisiteChecker {
             'use the force': 'useTheForce'
         };
         const skillKey = skillMap[prereq.skillName?.toLowerCase()];
-        if (!skillKey) return { met: true, message: '' };
+        if (!skillKey) {return { met: true, message: '' };}
 
         const currentRanks = actor.system?.skills?.[skillKey]?.ranks ?? 0;
         const pendingRanks = pending.skillRanks?.[skillKey] ?? 0;
@@ -1235,7 +1258,7 @@ export class PrerequisiteChecker {
      */
     static getLevel1GrantedFeats(classDoc) {
         const granted = [];
-        if (!classDoc?.system) return granted;
+        if (!classDoc?.system) {return granted;}
 
         const levelProgression = classDoc.system.levelProgression || [];
         if (levelProgression.length > 0) {
@@ -1305,7 +1328,7 @@ export class PrerequisiteChecker {
      * @returns {Array<string>} Array of unmet requirement strings
      */
     static getUnmetRequirements(actor, doc, pending = {}) {
-        if (!doc) return [];
+        if (!doc) {return [];}
 
         // Detect item type and use appropriate checker
         const type = doc.type || '';
@@ -1320,7 +1343,7 @@ export class PrerequisiteChecker {
         } else {
             // Fallback: try as feat first, then talent
             result = this.checkFeatPrerequisites(actor, doc, pending);
-            if (result.met) return [];
+            if (result.met) {return [];}
             result = this.checkTalentPrerequisites(actor, doc, pending);
         }
 
@@ -1340,7 +1363,7 @@ export function checkPrerequisites(actor, className) {
  * Get total character level.
  */
 function getTotalLevel(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
 
     // v2 Architecture: Trust system.level as source of truth
     // This field is maintained by ActorProgressionUpdater.finalize()
@@ -1352,7 +1375,7 @@ function getTotalLevel(actor) {
  * v2 Architecture: Trusts progression-owned BAB from system.bab
  */
 function getBaseAttackBonus(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
 
     // v2 Architecture: Trust system.bab as source of truth
     // This field is maintained by ActorProgressionUpdater.finalize()
@@ -1390,7 +1413,7 @@ function checkSkills(actor, requiredSkills) {
  * This allows prerequisite checking during progression before updates are applied.
  */
 function getTrainedSkills(actor) {
-    if (!actor) return [];
+    if (!actor) {return [];}
 
     const skills = [];
 
@@ -1497,7 +1520,7 @@ function checkFeatsAny(actor, requiredFeats) {
  * Returns feat objects (with name and system properties) to support flag checking.
  */
 function getActorFeats(actor) {
-    if (!actor) return [];
+    if (!actor) {return [];}
 
     const feats = [];
 
@@ -1590,7 +1613,7 @@ function checkTalents(actor, talentReq) {
 
         for (const talent of allTalents) {
             const treeName = talent.system?.talentTree || talent.system?.talent_tree;
-            if (!treeName) continue;
+            if (!treeName) {continue;}
 
             const normalizedTreeId = normalizeTalentTreeId(treeName);
 
@@ -1683,7 +1706,7 @@ function checkForceTechniques(actor, techniqueReq) {
  * Check Dark Side Score requirement.
  */
 function checkDarkSideScore(actor, requirement) {
-    if (!actor) return { met: true };
+    if (!actor) {return { met: true };}
 
     const darkSideScore = actor.system?.darkSideScore || actor.system?.darksideScore || 0;
     const wisScore = actor.system?.abilities?.wis?.score || 10;

@@ -20,7 +20,7 @@ export class SWSECombatant extends Combatant {
    */
   get initiativeBonus() {
     const actor = this.actor;
-    if (!actor) return 0;
+    if (!actor) {return 0;}
     return actor.system.skills?.initiative?.total ?? 0;
   }
 
@@ -30,12 +30,12 @@ export class SWSECombatant extends Combatant {
 
   get canAct() {
     const actor = this.actor;
-    if (!actor) return false;
+    if (!actor) {return false;}
 
     const ct = actor.system.conditionTrack?.current ?? 0;
 
     // RAW: CT 5 = Helpless = unconscious/disabled
-    if (ct === 5) return false;
+    if (ct === 5) {return false;}
 
     // Additional debilitating effects can be added here later
     // Example: stunned, paralyzed, frozen, etc.
@@ -67,39 +67,39 @@ export class SWSECombatant extends Combatant {
 
   async useAction(type) {
     const actor = this.actor;
-    if (!actor) return;
+    if (!actor) {return;}
     if (!game.user.isGM && !this.isCurrentCombatant) {
-      return ui.notifications.warn("You may only use actions on your turn.");
+      return ui.notifications.warn('You may only use actions on your turn.');
     }
 
     const econ = foundry.utils.deepClone(this.actionEconomy);
 
     switch (type) {
-      case "fullRound":
+      case 'fullRound':
         econ.swift = false;
         econ.move = false;
         econ.standard = false;
         econ.fullRound = false;
         break;
 
-      case "standard":
+      case 'standard':
         econ.standard = false;
         econ.move = false;        // RAW: standard consumes move
         econ.fullRound = false;    // Cannot take full-round afterward
         break;
 
-      case "move":
-      case "swift":
+      case 'move':
+      case 'swift':
         econ[type] = false;
         econ.fullRound = false;
         break;
 
-      case "reaction":
+      case 'reaction':
         econ.reaction = false;
         break;
     }
 
-    await actor.update({ "system.actionEconomy": econ }, { diff: true });
+    await actor.update({ 'system.actionEconomy': econ }, { diff: true });
   }
 
   /* -------------------------------------------- */
@@ -108,11 +108,11 @@ export class SWSECombatant extends Combatant {
 
   async resetActions() {
     const actor = this.actor;
-    if (!actor) return;
+    if (!actor) {return;}
 
     await actor.update(
       {
-        "system.actionEconomy": {
+        'system.actionEconomy': {
           swift: true,
           move: true,
           standard: true,
@@ -143,7 +143,7 @@ export class SWSECombatant extends Combatant {
     const data = super.getResourceData();
     const actor = this.actor;
 
-    if (!actor) return data;
+    if (!actor) {return data;}
 
     const ct = actor.system.conditionTrack?.current ?? 0;
 

@@ -6,6 +6,7 @@
 
 import DarkSideTalentMechanics from './dark-side-talent-mechanics.js';
 import { SWSELogger } from '../utils/logger.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 export class DarkSideTalentMacros {
 
@@ -56,12 +57,12 @@ export class DarkSideTalentMacros {
         use: {
           label: 'Use as Swift Action',
           callback: async (html) => {
-            const powerId = html.find('#power-select').val();
+            const powerId = (html?.[0] ?? html)?.querySelector('#power-select')?.value;
             const power = selectedActor.items.get(powerId);
 
             const success = await DarkSideTalentMechanics.triggerSwiftPower(selectedActor, power);
             if (success) {
-              await ChatMessage.create({
+              await createChatMessage({
                 speaker: { actor: selectedActor },
                 content: `<h3><img src="icons/svg/item-bag.svg" style="width: 20px; height: 20px;"> Swift Power</h3>
                           <p><strong>${selectedActor.name}</strong> uses ${power.name} as a <strong>Swift Action</strong> instead of a Standard or Move Action!</p>`,
@@ -134,7 +135,7 @@ export class DarkSideTalentMacros {
           select: {
             label: 'Return to Suite',
             callback: (html) => {
-              resolve(html.find('#power-select').val());
+              resolve((html?.[0] ?? html)?.querySelector('#power-select')?.value);
             }
           },
           cancel: {

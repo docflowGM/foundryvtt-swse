@@ -27,7 +27,6 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { BuildIntent } from './BuildIntent.js';
-import { MentorSurvey } from '../apps/mentor-survey.js';
 import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies.js';
 import { PrerequisiteChecker } from '../data/prerequisite-checker.js';
 import { WishlistEngine } from './WishlistEngine.js';
@@ -50,70 +49,21 @@ export const SUGGESTION_TIERS = {
     FALLBACK: 0
 };
 
-export const TIER_REASONS = {
-    6: "Prerequisite for a prestige class you're building toward",
-    5.5: "Prerequisite for a goal on your wishlist",
-    5: "Strong recommendation for your build",
-    4.5: "Excellent species feat for your level",
-    4: "Builds directly on a feat or talent you already have",
-    3.5: "Aligns with your mentor survey answers",
-    3: "Uses a trained skill you possess",
-    2: "Scales with your highest ability score",
-    1: "Strong synergy with your class",
-    0: "Legal option"
-};
-
-export const TIER_ICONS = {
-    6: "fa-crown",          // Crown for prestige prereq
-    5.5: "fa-star",         // Star for wishlist/player goal
-    5: "fa-fire",           // Fire for strong recommendations
-    4.5: "fa-dna",          // DNA for species feats
-    4: "fa-link",           // Chain link icon for chain continuation
-    3.5: "fa-user-tie",     // Mentor guidance from survey
-    3: "fa-bullseye",       // Target for skill match
-    2: "fa-fist-raised",    // Strength for ability match
-    1: "fa-users-cog",      // Class synergy
-    0: ""                   // No icon for fallback
-};
-
-// FontAwesome classes for rendering
-export const TIER_ICON_CLASSES = {
-    6: "fas fa-crown suggestion-prestige",
-    5.5: "fas fa-star suggestion-wishlist",
-    5: "fas fa-fire suggestion-synergy",
-    4.5: "fas fa-dna suggestion-species",
-    4: "fas fa-link suggestion-chain",
-    3: "fas fa-bullseye suggestion-skill",
-    2: "fas fa-fist-raised suggestion-ability",
-    1: "fas fa-users-cog suggestion-class",
-    0: ""
-};
-
-// CSS classes for styling suggestion badges
-export const TIER_CSS_CLASSES = {
-    6: "suggestion-tier-prestige",
-    5.5: "suggestion-tier-wishlist",
-    5: "suggestion-tier-synergy",
-    4.5: "suggestion-tier-species",
-    4: "suggestion-tier-chain",
-    3: "suggestion-tier-skill",
-    2: "suggestion-tier-ability",
-    1: "suggestion-tier-class",
-    0: ""
-};
+// MOVED TO UI LAYER: TIER_REASONS, TIER_ICONS, TIER_ICON_CLASSES, TIER_CSS_CLASSES
+// The engine now returns semantic reason codes only (no presentation data)
 
 // Machine-readable reason codes for UI icon-tagging and programmatic use
 export const TIER_REASON_CODES = {
-    6: "PRESTIGE_PREREQ",
-    5.5: "WISHLIST_PATH",
-    5: "META_SYNERGY",
-    4.5: "SPECIES_EARLY",
-    4: "CHAIN_CONTINUATION",
-    3.5: "MENTOR_BIAS_MATCH",
-    3: "SKILL_PREREQ_MATCH",
-    2: "ABILITY_PREREQ_MATCH",
-    1: "CLASS_SYNERGY",
-    0: "FALLBACK"
+    6: 'PRESTIGE_PREREQ',
+    5.5: 'WISHLIST_PATH',
+    5: 'META_SYNERGY',
+    4.5: 'SPECIES_EARLY',
+    4: 'CHAIN_CONTINUATION',
+    3.5: 'MENTOR_BIAS_MATCH',
+    3: 'SKILL_PREREQ_MATCH',
+    2: 'ABILITY_PREREQ_MATCH',
+    1: 'CLASS_SYNERGY',
+    0: 'FALLBACK'
 };
 
 // Confidence levels based on tier (for mentor tone modulation)
@@ -157,7 +107,7 @@ export class SuggestionEngine {
             } catch (err) {
                 SWSELogger.warn('SuggestionEngine | Failed to analyze build intent:', err);
                 // Create minimal fallback buildIntent with mentor biases to preserve mentor-based suggestions
-                const mentorBiases = MentorSurvey.getMentorBiases(actor);
+                const mentorBiases = actor.system?.swse?.mentorBuildIntentBiases || {};
                 buildIntent = mentorBiases && Object.keys(mentorBiases).length > 0
                     ? { mentorBiases }
                     : null;
@@ -217,7 +167,7 @@ export class SuggestionEngine {
             } catch (err) {
                 SWSELogger.warn('SuggestionEngine | Failed to analyze build intent:', err);
                 // Create minimal fallback buildIntent with mentor biases to preserve mentor-based suggestions
-                const mentorBiases = MentorSurvey.getMentorBiases(actor);
+                const mentorBiases = actor.system?.swse?.mentorBuildIntentBiases || {};
                 buildIntent = mentorBiases && Object.keys(mentorBiases).length > 0
                     ? { mentorBiases }
                     : null;
@@ -377,13 +327,13 @@ export class SuggestionEngine {
     // ──────────────────────────────────────────────────────────────
 
     /**
-     * Check if option is a chain continuation (Tier 4)
+     * Check if option is a chain continuation and return the matching prerequisite
      * An option is a chain continuation if an owned feat or talent
      * is a direct prerequisite for this option.
      * @param {Object} option - The feat/talent being evaluated
      * @param {Object} actorState - Actor state
      * @param {Object} metadata - Optional feat metadata with chain info
-     * @returns {boolean}
+     * @returns {string|null} Name of matching prerequisite or null if none
      */
     static _isChainContinuation(option, actorState, metadata = {}) {
         // Check feat metadata for prerequisiteFeat
@@ -391,7 +341,7 @@ export class SuggestionEngine {
         if (featMeta?.prerequisiteFeat) {
             const prereqName = featMeta.prerequisiteFeat.toLowerCase();
             if (actorState.ownedPrereqs.has(prereqName)) {
-                return true;
+                return featMeta.prerequisiteFeat;
             }
         }
 
@@ -401,7 +351,7 @@ export class SuggestionEngine {
                             option.system?.prereqassets || '';
 
         if (!prereqString || prereqString === 'null') {
-            return false;
+            return null;
         }
 
         // Extract feat/talent names from prerequisites
@@ -410,11 +360,11 @@ export class SuggestionEngine {
         // Check if any prerequisite is owned
         for (const prereqName of prereqNames) {
             if (actorState.ownedPrereqs.has(prereqName.toLowerCase())) {
-                return true;
+                return prereqName;
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -520,7 +470,7 @@ export class SuggestionEngine {
      * Returns a weighted tier based on character level (decays with level)
      * @param {Object} feat - The feat being evaluated
      * @param {Object} actorState - Actor state
-     * @returns {Object|null} { tier, reason } or null if no match
+     * @returns {Object|null} { tier, sourceId } or null if no match
      */
     static _checkSpeciesPrerequisite(feat, actorState) {
         if (!actorState.species) {
@@ -548,12 +498,7 @@ export class SuggestionEngine {
 
                 const finalTier = Math.min(adjustedTier + skillBoost, SUGGESTION_TIERS.META_SYNERGY);
 
-                let reason = `Excellent ${actorState.species} feat for your level`;
-                if (usesTrainedSkill) {
-                    reason += ' (uses your trained skill)';
-                }
-
-                return { tier: finalTier, reason };
+                return { tier: finalTier, sourceId: `species:${actorState.species}` };
             }
         }
 
@@ -569,7 +514,7 @@ export class SuggestionEngine {
      * Maps mentor biases to feat/talent characteristics and returns match info
      * @param {string} itemName - Name of feat or talent to check
      * @param {Object} buildIntent - BuildIntent with mentorBiases
-     * @returns {Object|null} Match info with reason, or null if no match
+     * @returns {Object|null} Match info with sourceId, or null if no match
      */
     static _checkMentorBiasMatch(itemName, buildIntent) {
         if (!buildIntent || !buildIntent.mentorBiases) {
@@ -577,116 +522,38 @@ export class SuggestionEngine {
         }
 
         const biases = buildIntent.mentorBiases;
-        const itemLower = itemName.toLowerCase();
 
-        // Combat style matches
-        if (biases.melee > 0 && this._isMeleeItem(itemName)) {
-            return {
-                reason: `Matches your melee combat preference (${Math.round(biases.melee * 100)}%)`
-            };
-        }
-        if (biases.ranged > 0 && this._isRangedItem(itemName)) {
-            return {
-                reason: `Matches your ranged combat preference (${Math.round(biases.ranged * 100)}%)`
-            };
-        }
+        // Check each bias type against item keywords
+        const biasTypes = ['melee', 'ranged', 'force', 'stealth', 'social', 'tech', 'leadership', 'support', 'survival'];
 
-        // Force focus
-        if (biases.forceFocus > 0 && this._isForceItem(itemName)) {
-            return {
-                reason: `Aligns with your Force focus preference (${Math.round(biases.forceFocus * 100)}%)`
-            };
-        }
-
-        // Stealth/sneaky
-        if (biases.stealth > 0 && this._isStealthItem(itemName)) {
-            return {
-                reason: `Matches your stealth preference (${Math.round(biases.stealth * 100)}%)`
-            };
-        }
-
-        // Social/charisma
-        if (biases.social > 0 && this._isSocialItem(itemName)) {
-            return {
-                reason: `Supports your social preference (${Math.round(biases.social * 100)}%)`
-            };
-        }
-
-        // Tech/mechanical
-        if (biases.tech > 0 && this._isTechItem(itemName)) {
-            return {
-                reason: `Matches your tech preference (${Math.round(biases.tech * 100)}%)`
-            };
-        }
-
-        // Leadership
-        if (biases.leadership > 0 && this._isLeadershipItem(itemName)) {
-            return {
-                reason: `Supports your leadership style (${Math.round(biases.leadership * 100)}%)`
-            };
-        }
-
-        // Support/defensive
-        if (biases.support > 0 && this._isSupportItem(itemName)) {
-            return {
-                reason: `Supports your defensive preference (${Math.round(biases.support * 100)}%)`
-            };
-        }
-
-        // Survival/exploration
-        if (biases.survival > 0 && this._isSurvivalItem(itemName)) {
-            return {
-                reason: `Matches your survival preference (${Math.round(biases.survival * 100)}%)`
-            };
+        for (const biasType of biasTypes) {
+            if (biases[biasType] > 0 && this._checkBiasKeyword(itemName, biasType)) {
+                return {
+                    sourceId: `mentor_bias:${biasType}`
+                };
+            }
         }
 
         return null;
     }
 
     // Helper methods for bias matching
-    static _isMeleeItem(name) {
-        const meleeKeywords = ['melee', 'sword', 'blade', 'lightsaber', 'staff', 'club', 'axe', 'hammer', 'martial arts', 'close combat', 'hand-to-hand'];
-        return meleeKeywords.some(k => name.toLowerCase().includes(k));
-    }
+    static BIAS_KEYWORDS = {
+        melee: ['melee', 'sword', 'blade', 'lightsaber', 'staff', 'club', 'axe', 'hammer', 'martial arts', 'close combat', 'hand-to-hand'],
+        ranged: ['blaster', 'rifle', 'pistol', 'bow', 'gun', 'ranged', 'throwing', 'launcher', 'sniper', 'marksman'],
+        force: ['force', 'jedi', 'sith', 'darksider', 'lightsaber', 'telekinesis', 'mind trick'],
+        stealth: ['stealth', 'hide', 'shadow', 'sneak', 'escape', 'evasion', 'cloak', 'invisible', 'shadow walker'],
+        social: ['persuasion', 'deception', 'bluff', 'diplomacy', 'charm', 'inspire', 'charisma', 'gather information', 'social'],
+        tech: ['computer', 'mechanics', 'tech', 'droid', 'repair', 'construct', 'protocol', 'hacking', 'engineering'],
+        leadership: ['command', 'leadership', 'rally', 'inspire', 'authority', 'control', 'master', 'superior'],
+        support: ['defense', 'protect', 'shield', 'guard', 'block', 'deflect', 'barrier', 'ally', 'heal'],
+        survival: ['survival', 'endurance', 'track', 'scout', 'wilderness', 'climb', 'swim', 'journey']
+    };
 
-    static _isRangedItem(name) {
-        const rangedKeywords = ['blaster', 'rifle', 'pistol', 'bow', 'gun', 'ranged', 'throwing', 'launcher', 'sniper', 'marksman'];
-        return rangedKeywords.some(k => name.toLowerCase().includes(k));
-    }
-
-    static _isForceItem(name) {
-        const forceKeywords = ['force', 'jedi', 'sith', 'darksider', 'lightsaber', 'telekinesis', 'mind trick'];
-        return forceKeywords.some(k => name.toLowerCase().includes(k));
-    }
-
-    static _isStealthItem(name) {
-        const stealthKeywords = ['stealth', 'hide', 'shadow', 'sneak', 'escape', 'evasion', 'cloak', 'invisible', 'shadow walker'];
-        return stealthKeywords.some(k => name.toLowerCase().includes(k));
-    }
-
-    static _isSocialItem(name) {
-        const socialKeywords = ['persuasion', 'deception', 'bluff', 'diplomacy', 'charm', 'inspire', 'charisma', 'gather information', 'social'];
-        return socialKeywords.some(k => name.toLowerCase().includes(k));
-    }
-
-    static _isTechItem(name) {
-        const techKeywords = ['computer', 'mechanics', 'tech', 'droid', 'repair', 'construct', 'protocol', 'hacking', 'engineering'];
-        return techKeywords.some(k => name.toLowerCase().includes(k));
-    }
-
-    static _isLeadershipItem(name) {
-        const leadershipKeywords = ['command', 'leadership', 'rally', 'inspire', 'authority', 'control', 'master', 'superior'];
-        return leadershipKeywords.some(k => name.toLowerCase().includes(k));
-    }
-
-    static _isSupportItem(name) {
-        const supportKeywords = ['defense', 'protect', 'shield', 'guard', 'block', 'deflect', 'barrier', 'ally', 'heal'];
-        return supportKeywords.some(k => name.toLowerCase().includes(k));
-    }
-
-    static _isSurvivalItem(name) {
-        const survivalKeywords = ['survival', 'endurance', 'track', 'scout', 'wilderness', 'climb', 'swim', 'journey'];
-        return survivalKeywords.some(k => name.toLowerCase().includes(k));
+    static _checkBiasKeyword(name, biasType) {
+        const keywords = this.BIAS_KEYWORDS[biasType];
+        if (!keywords) return false;
+        return keywords.some(k => name.toLowerCase().includes(k));
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -709,13 +576,14 @@ export class SuggestionEngine {
         // Tier 6: Check if this feat is a priority prerequisite for a prestige class
         if (buildIntent) {
             const alignment = BuildIntent.checkFeatAlignment(feat.name, buildIntent);
-            if (alignment.aligned && buildIntent.priorityPrereqs.some(p =>
+            const prestigePrereq = buildIntent.priorityPrereqs.find(p =>
                 p.type === 'feat' && p.name === feat.name
-            )) {
+            );
+            if (alignment.aligned && prestigePrereq) {
                 return this._buildSuggestion(
                     SUGGESTION_TIERS.PRESTIGE_PREREQ,
-                    feat.name,
-                    alignment.reason
+                    'PRESTIGE_PREREQ',
+                    `prestige:${prestigePrereq.forClass}`
                 );
             }
         }
@@ -726,8 +594,8 @@ export class SuggestionEngine {
             if (wishlistPrereqCheck) {
                 return this._buildSuggestion(
                     SUGGESTION_TIERS.WISHLIST_PATH,
-                    feat.name,
-                    wishlistPrereqCheck.reason
+                    'WISHLIST_PATH',
+                    `wishlist:${wishlistPrereqCheck.itemId || wishlistPrereqCheck.itemName}`
                 );
             }
         }
@@ -736,8 +604,8 @@ export class SuggestionEngine {
         if (this._isMartialArtsFeat(feat)) {
             return this._buildSuggestion(
                 SUGGESTION_TIERS.MARTIAL_ARTS,
-                feat.name,
-                "Martial arts feat - highly recommended when prerequisites are met"
+                'MARTIAL_ARTS',
+                null
             );
         }
 
@@ -747,8 +615,8 @@ export class SuggestionEngine {
             if (synergy) {
                 return this._buildSuggestion(
                     SUGGESTION_TIERS.META_SYNERGY,
-                    feat.name,
-                    synergy.reason
+                    'META_SYNERGY',
+                    null
                 );
             }
         }
@@ -758,42 +626,59 @@ export class SuggestionEngine {
         if (speciesCheck) {
             return this._buildSuggestion(
                 speciesCheck.tier,
-                feat.name,
-                speciesCheck.reason
+                'SPECIES_EARLY',
+                speciesCheck.sourceId
             );
         }
 
         // Tier 4: Chain continuation
-        if (this._isChainContinuation(feat, actorState, metadata)) {
-            return this._buildSuggestion(SUGGESTION_TIERS.CHAIN_CONTINUATION, feat.name);
+        const chainPrereq = this._isChainContinuation(feat, actorState, metadata);
+        if (chainPrereq) {
+            return this._buildSuggestion(
+                SUGGESTION_TIERS.CHAIN_CONTINUATION,
+                'CHAIN_CONTINUATION',
+                `chain:${chainPrereq}`
+            );
         }
 
         // Tier 3.5: MENTOR BIAS - Feat matches L1 survey answer themes
         if (buildIntent && buildIntent.mentorBiases && Object.keys(buildIntent.mentorBiases).length > 0) {
             const mentorMatch = this._checkMentorBiasMatch(feat.name, buildIntent);
             if (mentorMatch) {
-                SWSELogger.log(`[SUGGESTION-ENGINE] Feat "${feat.name}" matches mentor bias:`, mentorMatch.reason);
                 return this._buildSuggestion(
                     SUGGESTION_TIERS.MENTOR_BIAS_MATCH,
-                    feat.name,
-                    mentorMatch.reason
+                    'MENTOR_BIAS_MATCH',
+                    mentorMatch.sourceId
                 );
             }
         }
 
         // Tier 3: Uses trained skill
         if (this._usesTrainedSkill(feat, actorState)) {
-            return this._buildSuggestion(SUGGESTION_TIERS.SKILL_PREREQ_MATCH, feat.name);
+            return this._buildSuggestion(
+                SUGGESTION_TIERS.SKILL_PREREQ_MATCH,
+                'SKILL_PREREQ_MATCH',
+                `skill:${actorState.trainedSkills.values().next().value || 'trained'}`
+            );
         }
 
         // Tier 2: Uses highest ability
         if (this._usesHighestAbility(feat, actorState)) {
-            return this._buildSuggestion(SUGGESTION_TIERS.ABILITY_PREREQ_MATCH, feat.name);
+            return this._buildSuggestion(
+                SUGGESTION_TIERS.ABILITY_PREREQ_MATCH,
+                'ABILITY_PREREQ_MATCH',
+                `ability:${actorState.highestAbility}`
+            );
         }
 
         // Tier 1: Class synergy
         if (this._matchesClass(feat, actorState)) {
-            return this._buildSuggestion(SUGGESTION_TIERS.CLASS_SYNERGY, feat.name);
+            const className = actorState.classes.values().next().value || 'general';
+            return this._buildSuggestion(
+                SUGGESTION_TIERS.CLASS_SYNERGY,
+                'CLASS_SYNERGY',
+                `class:${className}`
+            );
         }
 
         // Check build intent alignment for non-priority feats (still tier 1)
@@ -802,14 +687,14 @@ export class SuggestionEngine {
             if (alignment.aligned) {
                 return this._buildSuggestion(
                     SUGGESTION_TIERS.CLASS_SYNERGY,
-                    feat.name,
-                    alignment.reason
+                    'CLASS_SYNERGY',
+                    null
                 );
             }
         }
 
         // Fallback - still a legal option
-        return this._buildSuggestion(SUGGESTION_TIERS.FALLBACK, feat.name);
+        return this._buildSuggestion(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null);
     }
 
     /**
@@ -831,10 +716,11 @@ export class SuggestionEngine {
             if (alignment.aligned && buildIntent.prestigeAffinities.length > 0 &&
                 buildIntent.prestigeAffinities[0].confidence >= 0.4) {
                 // Only use tier 6 if strongly aligned with top prestige target
+                const prestigeClass = buildIntent.prestigeAffinities[0].className;
                 return this._buildSuggestion(
                     SUGGESTION_TIERS.PRESTIGE_PREREQ,
-                    talent.name,
-                    alignment.reason
+                    'PRESTIGE_PREREQ',
+                    `prestige:${prestigeClass}`
                 );
             }
         }
@@ -845,8 +731,8 @@ export class SuggestionEngine {
             if (wishlistPrereqCheck) {
                 return this._buildSuggestion(
                     SUGGESTION_TIERS.WISHLIST_PATH,
-                    talent.name,
-                    wishlistPrereqCheck.reason
+                    'WISHLIST_PATH',
+                    `wishlist:${wishlistPrereqCheck.itemId || wishlistPrereqCheck.itemName}`
                 );
             }
         }
@@ -857,43 +743,60 @@ export class SuggestionEngine {
             if (synergy) {
                 return this._buildSuggestion(
                     SUGGESTION_TIERS.META_SYNERGY,
-                    talent.name,
-                    synergy.reason
+                    'META_SYNERGY',
+                    null
                 );
             }
         }
 
         // Tier 4: Chain continuation
-        if (this._isChainContinuation(talent, actorState)) {
-            return this._buildSuggestion(SUGGESTION_TIERS.CHAIN_CONTINUATION, talent.name);
+        const chainPrereq = this._isChainContinuation(talent, actorState);
+        if (chainPrereq) {
+            return this._buildSuggestion(
+                SUGGESTION_TIERS.CHAIN_CONTINUATION,
+                'CHAIN_CONTINUATION',
+                `chain:${chainPrereq}`
+            );
         }
 
         // Tier 3.5: MENTOR BIAS - Talent matches L1 survey answer themes
         if (buildIntent && buildIntent.mentorBiases && Object.keys(buildIntent.mentorBiases).length > 0) {
             const mentorMatch = this._checkMentorBiasMatch(talent.name, buildIntent);
             if (mentorMatch) {
-                SWSELogger.log(`[SUGGESTION-ENGINE] Talent "${talent.name}" matches mentor bias:`, mentorMatch.reason);
                 return this._buildSuggestion(
                     SUGGESTION_TIERS.MENTOR_BIAS_MATCH,
-                    talent.name,
-                    mentorMatch.reason
+                    'MENTOR_BIAS_MATCH',
+                    mentorMatch.sourceId
                 );
             }
         }
 
         // Tier 3: Uses trained skill
         if (this._usesTrainedSkill(talent, actorState)) {
-            return this._buildSuggestion(SUGGESTION_TIERS.SKILL_PREREQ_MATCH, talent.name);
+            return this._buildSuggestion(
+                SUGGESTION_TIERS.SKILL_PREREQ_MATCH,
+                'SKILL_PREREQ_MATCH',
+                `skill:${actorState.trainedSkills.values().next().value || 'trained'}`
+            );
         }
 
         // Tier 2: Uses highest ability
         if (this._usesHighestAbility(talent, actorState)) {
-            return this._buildSuggestion(SUGGESTION_TIERS.ABILITY_PREREQ_MATCH, talent.name);
+            return this._buildSuggestion(
+                SUGGESTION_TIERS.ABILITY_PREREQ_MATCH,
+                'ABILITY_PREREQ_MATCH',
+                `ability:${actorState.highestAbility}`
+            );
         }
 
         // Tier 1: Class synergy
         if (this._matchesClass(talent, actorState)) {
-            return this._buildSuggestion(SUGGESTION_TIERS.CLASS_SYNERGY, talent.name);
+            const className = actorState.classes.values().next().value || 'general';
+            return this._buildSuggestion(
+                SUGGESTION_TIERS.CLASS_SYNERGY,
+                'CLASS_SYNERGY',
+                `class:${className}`
+            );
         }
 
         // Check build intent alignment for non-priority talents (still tier 1)
@@ -903,40 +806,35 @@ export class SuggestionEngine {
             if (alignment.aligned) {
                 return this._buildSuggestion(
                     SUGGESTION_TIERS.CLASS_SYNERGY,
-                    talent.name,
-                    alignment.reason
+                    'CLASS_SYNERGY',
+                    null
                 );
             }
         }
 
         // Fallback - still a legal option
-        return this._buildSuggestion(SUGGESTION_TIERS.FALLBACK, talent.name);
+        return this._buildSuggestion(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null);
     }
 
     /**
-     * Build a suggestion metadata object
-     * @param {number} tier - The suggestion tier
-     * @param {string} itemName - Name of the item for logging
-     * @param {string|null} customReason - Optional custom reason (overrides default)
-     * @param {string|null} customReasonCode - Optional custom reason code (overrides default)
-     * @returns {Object} Suggestion metadata
+     * Build a suggestion metadata object (engine output only - no presentation data)
+     * @param {number} tier - The suggestion tier (numeric)
+     * @param {string} itemName - Name of the item (for logging/tracing)
+     * @param {string|null} reasonCode - Semantic reason code (e.g., 'PRESTIGE_PREREQ')
+     * @param {string|null} sourceId - What caused this suggestion (e.g., 'prestige:Jedi', 'skill:stealth')
+     * @returns {Object} Engine-only suggestion metadata
      */
-    static _buildSuggestion(tier, itemName, customReason = null, customReasonCode = null) {
+    static _buildSuggestion(tier, itemName, reasonCode = null, sourceId = null) {
         // Find the closest tier key for lookups (handles decimal tiers like 4.5)
         const tierKey = Object.keys(TIER_REASON_CODES)
             .map(Number)
             .sort((a, b) => Math.abs(a - tier) - Math.abs(b - tier))[0];
 
         return {
-            name: itemName,
             tier,
-            reasonCode: customReasonCode || TIER_REASON_CODES[tierKey] || "FALLBACK",
-            confidence: TIER_CONFIDENCE[tierKey] || 0.2,
-            icon: TIER_ICONS[tier],
-            iconClass: TIER_ICON_CLASSES[tier],
-            cssClass: TIER_CSS_CLASSES[tier],
-            reason: customReason || TIER_REASONS[tier],
-            isSuggested: tier > 0
+            reasonCode: reasonCode || TIER_REASON_CODES[tierKey] || 'FALLBACK',
+            sourceId,
+            confidence: TIER_CONFIDENCE[tierKey] || 0.2
         };
     }
 
@@ -967,7 +865,7 @@ export class SuggestionEngine {
 
         for (let part of parts) {
             part = part.trim();
-            if (!part || part === 'null') continue;
+            if (!part || part === 'null') {continue;}
 
             // Skip ability score requirements (e.g., "Dex 13")
             if (/^(str|dex|con|int|wis|cha|strength|dexterity|constitution|intelligence|wisdom|charisma)\s+\d+/i.test(part)) {
@@ -1060,16 +958,16 @@ export class SuggestionEngine {
     // ──────────────────────────────────────────────────────────────
 
     /**
+     * DEPRECATED: Moved to UI layer
      * Get all tier definitions for UI display
-     * @returns {Object} Tier definitions
+     * @returns {Object} Tier definitions (semantic codes only, no presentation data)
      */
     static getTierDefinitions() {
         return {
             tiers: SUGGESTION_TIERS,
-            reasons: TIER_REASONS,
-            icons: TIER_ICONS,
-            iconClasses: TIER_ICON_CLASSES,
-            cssClasses: TIER_CSS_CLASSES
+            reasonCodes: TIER_REASON_CODES,
+            confidence: TIER_CONFIDENCE
+            // Presentation mapping now lives in UI layer
         };
     }
 
@@ -1101,51 +999,25 @@ export class SuggestionEngine {
     // ──────────────────────────────────────────────────────────────
 
     /**
+     * DEPRECATED: Moved to UI layer
      * Generate HTML for a suggestion badge
-     * @param {Object} suggestion - Suggestion metadata object
-     * @returns {string} HTML string for the badge, or empty string if not suggested
+     * Engine no longer provides presentation data
+     * @param {Object} suggestion - Suggestion metadata object (engine output)
+     * @returns {string} Empty string; UI layer should implement this
      */
     static generateBadgeHtml(suggestion) {
-        if (!suggestion || suggestion.tier <= 0) {
-            return '';
-        }
-
-        const iconClass = suggestion.iconClass || TIER_ICON_CLASSES[suggestion.tier];
-        const cssClass = suggestion.cssClass || TIER_CSS_CLASSES[suggestion.tier];
-        const reason = suggestion.reason || TIER_REASONS[suggestion.tier];
-
-        return `<span class="suggestion-badge ${cssClass}" title="${reason}"><i class="${iconClass}"></i></span>`;
+        // Moved to UI layer - engine provides semantic reasonCode, not presentation
+        return '';
     }
 
     /**
+     * DEPRECATED: Moved to UI layer
      * Generate HTML for suggestion legend
-     * @returns {string} HTML string for the legend
+     * @returns {string} Empty string; UI layer should implement this
      */
     static generateLegendHtml() {
-        return `
-            <div class="suggestion-legend">
-                <div class="suggestion-legend-item tier-prestige">
-                    <span class="legend-icon"><i class="fas fa-crown"></i></span>
-                    <span>Prestige Path</span>
-                </div>
-                <div class="suggestion-legend-item tier-chain">
-                    <span class="legend-icon"><i class="fas fa-link"></i></span>
-                    <span>Chain Continuation</span>
-                </div>
-                <div class="suggestion-legend-item tier-skill">
-                    <span class="legend-icon"><i class="fas fa-bullseye"></i></span>
-                    <span>Uses Trained Skill</span>
-                </div>
-                <div class="suggestion-legend-item tier-ability">
-                    <span class="legend-icon"><i class="fas fa-fist-raised"></i></span>
-                    <span>Matches Highest Ability</span>
-                </div>
-                <div class="suggestion-legend-item tier-class">
-                    <span class="legend-icon"><i class="fas fa-users-cog"></i></span>
-                    <span>Class Synergy</span>
-                </div>
-            </div>
-        `;
+        // Moved to UI layer - engine no longer provides HTML
+        return '';
     }
 
     /**
@@ -1179,21 +1051,13 @@ export class SuggestionEngine {
             return null;
         }
 
-        // Build detailed reason message
-        const recommendations = pathway.recommendations.slice(0, 2).join(', ');
-        let reason = `Can qualify in ${pathway.levelsToQualify} level(s)`;
-        if (recommendations) {
-            reason += `. ${recommendations}`;
-        }
-
+        // Engine output: data only, no presentation
         return {
-            name: item.name,
             tier: futureScore.tier,
-            icon: "fa-hourglass-end",
-            iconClass: "fas fa-hourglass-end suggestion-future",
-            cssClass: "suggestion-future-available",
-            reason: reason,
-            isSuggested: true,
+            reasonCode: 'FUTURE_AVAILABLE',
+            sourceId: `future_availability:${pathway.levelsToQualify}`,
+            confidence: 0.5,
+            // Metadata for UI/pathway analysis (not presentation)
             futureAvailable: true,
             levelsToQualify: pathway.levelsToQualify,
             recommendations: pathway.recommendations,
@@ -1224,7 +1088,7 @@ export class SuggestionEngine {
         // Analyze each unmet requirement
         for (const req of unmetReqs) {
             // BAB requirements
-            if (req.includes("BAB") && req.includes("you have")) {
+            if (req.includes('BAB') && req.includes('you have')) {
                 const match = req.match(/(\+\d+).*you have.*(\+\d+)/);
                 if (match) {
                     const needed = parseInt(match[1]);
@@ -1237,7 +1101,7 @@ export class SuggestionEngine {
             }
 
             // Character level requirements
-            if (req.includes("Character Level") && req.includes("you are")) {
+            if (req.includes('Character Level') && req.includes('you are')) {
                 const match = req.match(/(\d+).*you are level (\d+)/);
                 if (match) {
                     const needed = parseInt(match[1]);
@@ -1249,9 +1113,9 @@ export class SuggestionEngine {
             }
 
             // Attribute requirements
-            if (req.includes("Requires") && req.includes("you have") &&
-                (req.includes("STR") || req.includes("DEX") || req.includes("CON") ||
-                 req.includes("INT") || req.includes("WIS") || req.includes("CHA"))) {
+            if (req.includes('Requires') && req.includes('you have') &&
+                (req.includes('STR') || req.includes('DEX') || req.includes('CON') ||
+                 req.includes('INT') || req.includes('WIS') || req.includes('CHA'))) {
                 const match = req.match(/(\d+).*you have (\d+)/);
                 if (match) {
                     const needed = parseInt(match[1]);
@@ -1265,7 +1129,7 @@ export class SuggestionEngine {
             }
 
             // Feat prerequisites
-            if (req.includes("feat") && !req.includes("martial arts")) {
+            if (req.includes('feat') && !req.includes('martial arts')) {
                 const featName = req.replace(/.*requires.*feat\s+/i, '').trim();
                 if (featName) {
                     pathway.obtainableFeatReqs.push(featName);
@@ -1274,7 +1138,7 @@ export class SuggestionEngine {
             }
 
             // Talent prerequisites
-            if (req.includes("talent")) {
+            if (req.includes('talent')) {
                 const talentName = req.replace(/.*requires.*talent\s+/i, '').trim();
                 if (talentName) {
                     pathway.obtainableTalentReqs.push(talentName);
@@ -1283,7 +1147,7 @@ export class SuggestionEngine {
             }
 
             // Skill training requirements
-            if (req.includes("trained in")) {
+            if (req.includes('trained in')) {
                 const skillName = req.replace(/.*trained in\s+/i, '').trim();
                 if (skillName) {
                     pathway.obtainableSkillReqs.push(skillName);
@@ -1311,7 +1175,7 @@ export class SuggestionEngine {
      * @returns {Object|null} Tier score object or null if too far away
      */
     static _calcFutureAvailabilityTier(pathway, item, actorState) {
-        if (pathway.levelsToQualify === 0) return null;  // Already qualified
+        if (pathway.levelsToQualify === 0) {return null;}  // Already qualified
 
         // NEW TIER LEVELS FOR FUTURE AVAILABILITY
         let tier;
@@ -1351,13 +1215,13 @@ export class SuggestionEngine {
                     ? game.packs.get('foundryvtt-swse.feats')
                     : game.packs.get('foundryvtt-swse.talents');
 
-                if (!itemPack) continue;
+                if (!itemPack) {continue;}
 
                 // For now, match by name - could be improved with proper lookups
                 if (wishedItem.name.toLowerCase().includes(item.name.toLowerCase()) ||
                     item.name.toLowerCase().includes(wishedItem.name.toLowerCase())) {
                     // Skip if this item is itself wishlisted
-                    if (item._id === wishedItem.id || item.id === wishedItem.id) continue;
+                    if (item._id === wishedItem.id || item.id === wishedItem.id) {continue;}
                 }
 
                 // Check if this item's unmet prerequisites include the wished-for item
@@ -1368,7 +1232,8 @@ export class SuggestionEngine {
 
                 if (prereqMentionsThisItem) {
                     return {
-                        reason: `Prerequisite for your goal: ${wishedItem.name}`,
+                        itemId: wishedItem.id,
+                        itemName: wishedItem.name,
                         wishlistedItem: wishedItem
                     };
                 }
@@ -1382,20 +1247,13 @@ export class SuggestionEngine {
     }
 
     /**
+     * DEPRECATED: Moved to UI layer
      * Get CSS classes for an item row based on suggestion
-     * @param {Object} item - Item with suggestion metadata
-     * @returns {string} Space-separated CSS class string
+     * Engine no longer provides presentation data (cssClass)
+     * UI layer should map reasonCode → CSS class
      */
     static getItemCssClasses(item) {
-        const classes = [];
-
-        if (item.suggestion?.tier > 0) {
-            classes.push('is-suggested');
-            if (item.suggestion.cssClass) {
-                classes.push(item.suggestion.cssClass);
-            }
-        }
-
-        return classes.join(' ');
+        // Placeholder: UI layer should implement this
+        return item.suggestion?.tier > 0 ? 'is-suggested' : '';
     }
 }

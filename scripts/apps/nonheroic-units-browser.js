@@ -3,7 +3,8 @@
  * Provides a searchable, filterable interface for browsing and importing nonheroic units
  */
 
-import SWSEApplication from "./base/swse-application.js";
+import SWSEApplication from './base/swse-application.js';
+import { createActor } from '../core/document-api-v13.js';
 
 export class NonheroicUnitsBrowser extends SWSEApplication {
   constructor(options = {}) {
@@ -20,7 +21,7 @@ export class NonheroicUnitsBrowser extends SWSEApplication {
       id: 'nonheroic-units-browser',
       title: 'Nonheroic Units Browser',
       template: 'systems/foundryvtt-swse/templates/apps/nonheroic-units-browser.hbs',
-      classes: ['swse', 'nonheroic-browser', "swse-app"],
+      classes: ['swse', 'nonheroic-browser', 'swse-app'],
       position: { width: 800, height: 700 },
       resizable: true,
       scrollY: ['.units-list'],
@@ -28,7 +29,6 @@ export class NonheroicUnitsBrowser extends SWSEApplication {
     }
   );
 
-  
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
@@ -75,7 +75,7 @@ async _prepareContext(options) {
 
   async _onRender(context, options) {
     const root = this.element;
-    if (!(root instanceof HTMLElement)) return;
+    if (!(root instanceof HTMLElement)) {return;}
 
     // Search functionality
     const searchInput = root.querySelector('#unit-search');
@@ -139,7 +139,7 @@ async _prepareContext(options) {
     const unitIndex = parseInt(event.currentTarget.dataset.index, 10);
     const unit = this.filteredUnits[unitIndex];
 
-    if (!unit) return;
+    if (!unit) {return;}
 
     // Create drag data for NPC template
     const dragData = {
@@ -155,7 +155,7 @@ async _prepareContext(options) {
     const unitIndex = parseInt(event.currentTarget.dataset.index, 10);
     const unit = this.filteredUnits[unitIndex];
 
-    if (!unit) return;
+    if (!unit) {return;}
 
     // Show unit details in a dialog
     const content = `
@@ -215,7 +215,7 @@ async _prepareContext(options) {
     const unitIndex = parseInt(event.currentTarget.closest('.unit-entry').dataset.index, 10);
     const unit = this.filteredUnits[unitIndex];
 
-    if (!unit) return;
+    if (!unit) {return;}
 
     await this._importUnitToCompendium(unit);
   }
@@ -259,7 +259,7 @@ async _prepareContext(options) {
       };
 
       // Create actor in compendium
-      const actor = await Actor.create(actorData, { pack: npcPack.collection });
+      const actor = await createActor(actorData, { pack: npcPack.collection });
 
       ui.notifications.info(`Imported ${unit.name} to NPC compendium!`);
 
@@ -277,7 +277,7 @@ async _prepareContext(options) {
       defaultYes: false
     });
 
-    if (!confirm) return;
+    if (!confirm) {return;}
 
     ui.notifications.info('Starting bulk import... This may take a while.');
 

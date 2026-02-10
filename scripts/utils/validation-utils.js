@@ -65,7 +65,7 @@ export function isValidEmail(email) {
  * @returns {string} Sanitized input
  */
 export function sanitizeInput(input) {
-    if (typeof input !== 'string') return '';
+    if (typeof input !== 'string') {return '';}
     return input
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')

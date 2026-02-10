@@ -91,7 +91,7 @@ export class SWSEHomebrewManager {
     const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
     const json = JSON.stringify(homebrew, null, 2);
 
-    const blob = new Blob([json], {type: 'application/json'});
+    const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -136,13 +136,12 @@ class HomebrewManagerApp extends SWSEFormApplication {
       title: 'SWSE Homebrew Manager',
       template: 'systems/foundryvtt-swse/templates/apps/homebrew-manager.hbs',
       position: { width: 720, height: 600 },
-      tabs: [{navSelector: '.tabs', contentSelector: '.content', initial: 'feats'}],
+      tabs: [{ navSelector: '.tabs', contentSelector: '.content', initial: 'feats' }],
       closeOnSubmit: false,
       submitOnChange: false
     }
   );
 
-  
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
@@ -167,7 +166,7 @@ async _prepareContext(options) {
 
   async _onRender(context, options) {
     const root = this.element;
-    if (!(root instanceof HTMLElement)) return;
+    if (!(root instanceof HTMLElement)) {return;}
 
     // Create buttons
     root.querySelectorAll('[data-action="createFeat"]').forEach(btn =>
@@ -196,7 +195,7 @@ async _prepareContext(options) {
 
   async _createFeat() {
     const name = await this._promptName('Feat');
-    if (!name) return;
+    if (!name) {return;}
 
     await SWSEHomebrewManager.createCustomFeat({
       name,
@@ -208,7 +207,7 @@ async _prepareContext(options) {
 
   async _createTalent() {
     const name = await this._promptName('Talent');
-    if (!name) return;
+    if (!name) {return;}
 
     await SWSEHomebrewManager.createCustomTalent({
       name,
@@ -220,7 +219,7 @@ async _prepareContext(options) {
 
   async _createForcePower() {
     const name = await this._promptName('Force Power');
-    if (!name) return;
+    if (!name) {return;}
 
     await SWSEHomebrewManager.createCustomForcePower({
       name,
@@ -266,7 +265,7 @@ async _prepareContext(options) {
       content: '<p>Are you sure you want to delete this item?</p>'
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
     const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
     homebrew[type] = homebrew[type].filter(item => item.id !== id);

@@ -11,7 +11,7 @@ export class LevelDiffInspector {
     /**
      * Compare two actor states and generate a summary of differences
      */
-    static generateDiff(beforeData, afterData, label = "Character Changes") {
+    static generateDiff(beforeData, afterData, label = 'Character Changes') {
         const diff = {
             label,
             timestamp: Date.now(),
@@ -214,7 +214,7 @@ export class LevelDiffInspector {
         await ChatMessage.create({
             content: html,
             speaker: ChatMessage.getSpeaker({ actor }),
-            whisper: ChatMessage.getWhisperRecipients("GM")
+            whisper: ChatMessage.getWhisperRecipients('GM')
         });
     }
 

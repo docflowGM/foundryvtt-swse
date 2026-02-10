@@ -1,5 +1,6 @@
 /**
  * SWSE Attribute Increase Suggestion Engine
+ * (PHASE 5D: UNIFIED_TIERS Refactor)
  *
  * Provides intelligent ability score increase recommendations at levels 4, 8, 12, 16, 20.
  *
@@ -16,25 +17,19 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { UNIFIED_TIERS, getTierMetadata } from './suggestion-unified-tiers.js';
 
 export const ATTRIBUTE_INCREASE_LEVELS = new Set([4, 8, 12, 16, 20]);
 
+// DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
+// Use UNIFIED_TIERS from suggestion-unified-tiers.js instead
 export const ATTRIBUTE_TIERS = {
-  MODIFIER_PRIMARY: 5,    // Modifier breakpoint + primary ability
-  MODIFIER_SECONDARY: 4,  // Modifier breakpoint + secondary ability
-  MODIFIER_GENERAL: 3,    // Modifier breakpoint (no ability match)
-  PRIMARY_SYNERGY: 2,     // Primary ability but no modifier breakpoint
-  SKILL_SYNERGY: 1,       // Improves trained skills
-  AVAILABLE: 0            // Can be increased but not recommended
-};
-
-export const TIER_REASONS = {
-  5: "Modifier breakpoint + primary ability match",
-  4: "Modifier breakpoint + secondary ability match",
-  3: "Reaches new modifier breakpoint",
-  2: "Primary ability for your build",
-  1: "Improves trained skills",
-  0: "Available for increase"
+  MODIFIER_PRIMARY: UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,    // 5
+  MODIFIER_SECONDARY: UNIFIED_TIERS.PATH_CONTINUATION,       // 4
+  MODIFIER_GENERAL: UNIFIED_TIERS.CATEGORY_SYNERGY,          // 3
+  PRIMARY_SYNERGY: UNIFIED_TIERS.ABILITY_SYNERGY,            // 2
+  SKILL_SYNERGY: UNIFIED_TIERS.THEMATIC_FIT,                 // 1
+  AVAILABLE: UNIFIED_TIERS.AVAILABLE                         // 0
 };
 
 // Role associations for each ability (used for BuildIntent matching)
@@ -180,10 +175,10 @@ export class AttributeIncreaseSuggestionEngine {
           // Step 2: Check against build intent primary/secondary
           if (buildIntent?.primaryAbility === abbrev) {
             tier = ATTRIBUTE_TIERS.MODIFIER_PRIMARY;
-            reasons.push("Primary ability for your build");
+            reasons.push('Primary ability for your build');
           } else if (buildIntent?.secondaryAbility === abbrev) {
             tier = ATTRIBUTE_TIERS.MODIFIER_SECONDARY;
-            reasons.push("Secondary ability for your build");
+            reasons.push('Secondary ability for your build');
           } else {
             tier = ATTRIBUTE_TIERS.MODIFIER_GENERAL;
           }
@@ -191,7 +186,7 @@ export class AttributeIncreaseSuggestionEngine {
           // Step 3: If no breakpoint, check for other synergies
           if (buildIntent?.primaryAbility === abbrev) {
             tier = ATTRIBUTE_TIERS.PRIMARY_SYNERGY;
-            reasons.push("Primary ability for your build (no modifier increase)");
+            reasons.push('Primary ability for your build (no modifier increase)');
           }
         }
 
@@ -208,7 +203,7 @@ export class AttributeIncreaseSuggestionEngine {
         if (buildIntent?.forceFocus && (abbrev === 'wis' || abbrev === 'cha')) {
           tier = Math.max(tier, ATTRIBUTE_TIERS.PRIMARY_SYNERGY);
           if (!reasons.some(r => r.includes('Force'))) {
-            reasons.push("Supports Force-based abilities");
+            reasons.push('Supports Force-based abilities');
           }
         }
 
@@ -236,7 +231,8 @@ export class AttributeIncreaseSuggestionEngine {
           }
         }
 
-        const reason = reasons.length > 0 ? reasons.join("; ") : TIER_REASONS[tier];
+        const tierMetadata = getTierMetadata(tier);
+        const reason = reasons.length > 0 ? reasons.join('; ') : tierMetadata.description;
         const fullAbilityName = this._getAbilityName(abbrev);
 
         suggestions.push({
@@ -250,16 +246,18 @@ export class AttributeIncreaseSuggestionEngine {
           suggestion: {
             tier,
             reason,
-            icon: this._getTierIcon(tier)
+            icon: tierMetadata.icon,
+            color: tierMetadata.color,
+            label: tierMetadata.label
           },
-          isSuggested: tier >= ATTRIBUTE_TIERS.MODIFIER_GENERAL || (isBreakpoint && tier >= ATTRIBUTE_TIERS.SKILL_SYNERGY)
+          isSuggested: tier >= UNIFIED_TIERS.CATEGORY_SYNERGY || (isBreakpoint && tier >= UNIFIED_TIERS.THEMATIC_FIT)
         });
       }
 
       // Sort by tier (descending) then by modifier breakpoint
       return suggestions.sort((a, b) => {
         const tierDiff = (b.suggestion?.tier ?? 0) - (a.suggestion?.tier ?? 0);
-        if (tierDiff !== 0) return tierDiff;
+        if (tierDiff !== 0) {return tierDiff;}
 
         if (a.isModifierBreakpoint !== b.isModifierBreakpoint) {
           return a.isModifierBreakpoint ? -1 : 1;
@@ -271,22 +269,6 @@ export class AttributeIncreaseSuggestionEngine {
       SWSELogger.error('Attribute increase suggestion failed:', err);
       return [];
     }
-  }
-
-  /**
-   * Get tier icon
-   * @private
-   */
-  static _getTierIcon(tier) {
-    const icons = {
-      5: 'fas fa-star',           // Primary + Breakpoint
-      4: 'fas fa-circle-plus',    // Secondary + Breakpoint
-      3: 'fas fa-arrow-up',       // Modifier Breakpoint
-      2: 'fas fa-bolt',           // Build synergy
-      1: 'fas fa-book',           // Skill match
-      0: ''
-    };
-    return icons[tier] || '';
   }
 
   /**
@@ -310,7 +292,7 @@ export class AttributeIncreaseSuggestionEngine {
    * @private
    */
   static _normalizeSkillName(name) {
-    if (!name) return '';
+    if (!name) {return '';}
     return name
       .toLowerCase()
       .replace(/\s+/g, '')

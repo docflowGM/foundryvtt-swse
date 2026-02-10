@@ -17,6 +17,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { createEffectOnActor } from '../core/document-api-v13.js';
 
 export class SoldierTalentMechanics {
 
@@ -221,7 +222,7 @@ export class SoldierTalentMechanics {
     }
 
     // Apply stun effect until start of next turn
-    await targetActor.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(targetActor, {
       name: 'Stunning Strike - Stunned',
       icon: 'icons/svg/daze.svg',
       changes: [{
@@ -242,7 +243,7 @@ export class SoldierTalentMechanics {
           sourceActorId: actor.id
         }
       }
-    }]);
+    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Stunning Strike on ${targetActor.name}`);
     ui.notifications.info(`${targetActor.name} is stunned and can only take a swift action on their next turn!`);
@@ -382,7 +383,7 @@ export class SoldierTalentMechanics {
     await actor.setFlag('swse', usageFlag, true);
 
     // Apply defense bonus
-    await ally.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(ally, {
       name: 'Cover Fire - Defense Bonus',
       icon: 'icons/svg/shield.svg',
       changes: [{
@@ -403,7 +404,7 @@ export class SoldierTalentMechanics {
           sourceActorId: actor.id
         }
       }
-    }]);
+    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Cover Fire on ${ally.name}`);
     ui.notifications.info(`${ally.name} gains +4 to Reflex Defense thanks to ${actor.name}'s cover fire!`);
@@ -741,7 +742,7 @@ export class SoldierTalentMechanics {
     }
 
     return canvas.tokens.placeables.filter(token => {
-      if (!token.actor || token.actor.id === actor.id) return false;
+      if (!token.actor || token.actor.id === actor.id) {return false;}
       return token.document.disposition === actorToken.document.disposition;
     });
   }
@@ -781,7 +782,7 @@ Hooks.on('coverFireTriggered', async (actor) => {
         cover: {
           label: 'Provide Cover',
           callback: async (html) => {
-            const allyId = html.find('#ally-select').val();
+            const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
             await SoldierTalentMechanics.completeCoverFire(actor, allyId, result.combatId, result.usageFlag);
           }
         },

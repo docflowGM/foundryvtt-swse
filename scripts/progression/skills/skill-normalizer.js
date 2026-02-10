@@ -56,8 +56,8 @@ export const SkillNormalizer = {
      * @private
      */
     _normalizeClasses(classes) {
-        if (!classes) return {};
-        if (typeof classes !== 'object') return {};
+        if (!classes) {return {};}
+        if (typeof classes !== 'object') {return {};}
 
         const normalized = {};
         for (const [className, isClass] of Object.entries(classes)) {

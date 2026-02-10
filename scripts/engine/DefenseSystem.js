@@ -1,4 +1,4 @@
-/* ==========================================================================  
+/* ==========================================================================
    SWSE Defense System
    Saga Edition Defense Engine
    - Reflex / Fortitude / Will
@@ -18,7 +18,7 @@ export class DefenseSystem {
        ENTRY POINT
        ----------------------------------------------------------- */
     static calculate(actor) {
-        if (!actor.system?.defenses) return;
+        if (!actor.system?.defenses) {return;}
 
         const sys = actor.system;
 
@@ -33,7 +33,7 @@ export class DefenseSystem {
         // Calculate flat-footed defense (Reflex - Dex bonus)
         DefenseSystem._calcFlatFooted(actor, sys);
 
-        Hooks.call("swse:defenses:updated", actor);
+        Hooks.call('swse:defenses:updated', actor);
     }
 
     /* -----------------------------------------------------------
@@ -41,31 +41,31 @@ export class DefenseSystem {
        Ensures misc auto/user objects exist so HBS never crashes.
        ----------------------------------------------------------- */
     static _initializeDefenseSchema(sys) {
-        const defenseKeys = ["reflex", "fort", "will"];
+        const defenseKeys = ['reflex', 'fort', 'will'];
         for (const key of defenseKeys) {
-            if (!sys.defenses[key]) sys.defenses[key] = {};
+            if (!sys.defenses[key]) {sys.defenses[key] = {};}
 
             const d = sys.defenses[key];
 
             // Ability
-            d.ability ??= "dex";
+            d.ability ??= 'dex';
 
             // Overrides must always exist
             d.classBonus ??= 0;
             d.level ??= sys.level || 0;
 
             // Misc system
-            if (!d.misc) d.misc = {};
-            if (!d.misc.auto) d.misc.auto = {};
-            if (!d.misc.user) d.misc.user = {};
+            if (!d.misc) {d.misc = {};}
+            if (!d.misc.auto) {d.misc.auto = {};}
+            if (!d.misc.user) {d.misc.user = {};}
 
-            const auto = ["size", "species", "feats", "talents", "armor", "equipment", "other"];
-            for (const k of auto) d.misc.auto[k] ??= 0;
+            const auto = ['size', 'species', 'feats', 'talents', 'armor', 'equipment', 'other'];
+            for (const k of auto) {d.misc.auto[k] ??= 0;}
             d.misc.user.extra ??= 0;
         }
     }
 
-    /* ==========================================================================  
+    /* ==========================================================================
        REFLEX DEFENSE
        ========================================================================== */
     static _calcReflex(actor, sys) {
@@ -78,7 +78,7 @@ export class DefenseSystem {
         // ---------------------------------------------------------------------
         // CLASS BONUS (Highest across all classes)
         // ---------------------------------------------------------------------
-        const classBonus = DefenseSystem._getClassBonus(actor, "reflex");
+        const classBonus = DefenseSystem._getClassBonus(actor, 'reflex');
         const classFinal = DefenseSystem._applyOverride(d.classBonus, classBonus);
 
         // ---------------------------------------------------------------------
@@ -90,15 +90,15 @@ export class DefenseSystem {
         let sourceValue = 0;
 
         switch (d.source) {
-            case "armor":
+            case 'armor':
                 sourceValue = armorBonus;
                 break;
 
-            case "armored":
+            case 'armored':
                 sourceValue = Math.max(lvl, armorBonus);
                 break;
 
-            case "improvedArmored":
+            case 'improvedArmored':
                 sourceValue = Math.max(armorBonus, lvl + Math.floor(armorBonus / 2));
                 break;
 
@@ -132,7 +132,7 @@ export class DefenseSystem {
         return d.total;
     }
 
-    /* ==========================================================================  
+    /* ==========================================================================
        FORTITUDE DEFENSE
        ========================================================================== */
     static _calcFortitude(actor, sys) {
@@ -142,7 +142,7 @@ export class DefenseSystem {
         const abilityMod = DefenseSystem._getAbilityMod(actor, d.ability);
 
         const lvl = d.level ?? sys.level ?? 0;
-        const classBonus = DefenseSystem._getClassBonus(actor, "fort");
+        const classBonus = DefenseSystem._getClassBonus(actor, 'fort');
         const classFinal = DefenseSystem._applyOverride(d.classBonus, classBonus);
 
         const equipmentBonus = DefenseSystem._getFortEquipmentBonus(actor);
@@ -163,7 +163,7 @@ export class DefenseSystem {
         const abilityMod = DefenseSystem._getAbilityMod(actor, d.ability);
 
         const lvl = d.level ?? sys.level ?? 0;
-        const classBonus = DefenseSystem._getClassBonus(actor, "will");
+        const classBonus = DefenseSystem._getClassBonus(actor, 'will');
         const classFinal = DefenseSystem._applyOverride(d.classBonus, classBonus);
 
         const misc = DefenseSystem._computeMisc(d);
@@ -204,7 +204,7 @@ export class DefenseSystem {
 
     /* Size Mod */
     static _getSizeMod(actor) {
-        const size = actor.system.size || "medium";
+        const size = actor.system.size || 'medium';
         const table = {
             colossal: -10,
             gargantuan: -5,
@@ -221,17 +221,17 @@ export class DefenseSystem {
 
     /* Armor Reflex Bonus */
     static _getArmorReflexBonus(actor) {
-        const items = actor.items.filter(i => i.type === "armor" && i.system.equipped);
-        if (items.length === 0) return 0;
+        const items = actor.items.filter(i => i.type === 'armor' && i.system.equipped);
+        if (items.length === 0) {return 0;}
         return items[0].system?.defenseBonus || items[0].system?.armorBonus || 0;
     }
 
     /* Equipment Bonus (applies to both Reflex and Fortitude) */
     static _getEquipmentBonus(actor) {
-        const items = actor.items.filter(i => i.type === "armor" && i.system.equipped);
-        if (items.length === 0) return 0;
+        const items = actor.items.filter(i => i.type === 'armor' && i.system.equipped);
+        if (items.length === 0) {return 0;}
         // Only gain equipment bonus if proficient with armor
-        if (!DefenseSystem._isArmorProficient(actor)) return 0;
+        if (!DefenseSystem._isArmorProficient(actor)) {return 0;}
         return items[0].system?.equipmentBonus || 0;
     }
 
@@ -243,7 +243,7 @@ export class DefenseSystem {
     /* Check if character is proficient with equipped armor */
     static _isArmorProficient(actor) {
         const equippedArmor = actor?.items?.find(i => i.type === 'armor' && i.system.equipped);
-        if (!equippedArmor) return true; // No armor, always proficient
+        if (!equippedArmor) {return true;} // No armor, always proficient
 
         const armorType = equippedArmor.system.armorType?.toLowerCase() || 'light';
 
@@ -255,9 +255,9 @@ export class DefenseSystem {
         // SWSE Rule: Each armor proficiency only covers its specific type
         for (const prof of armorProficiencies) {
             const profName = prof.name.toLowerCase();
-            if (profName.includes('light') && armorType === 'light') return true;
-            if (profName.includes('medium') && armorType === 'medium') return true;
-            if (profName.includes('heavy') && armorType === 'heavy') return true;
+            if (profName.includes('light') && armorType === 'light') {return true;}
+            if (profName.includes('medium') && armorType === 'medium') {return true;}
+            if (profName.includes('heavy') && armorType === 'heavy') {return true;}
         }
 
         return false;
@@ -265,13 +265,13 @@ export class DefenseSystem {
 
     /* Class Bonus (max across classes) */
     static _getClassBonus(actor, type) {
-        const classes = actor.items.filter(i => i.type === "class");
+        const classes = actor.items.filter(i => i.type === 'class');
 
         let maxBonus = 0;
 
         for (const cls of classes) {
             const bonus = cls.system?.defenses?.[type] ?? 0;
-            if (bonus > maxBonus) maxBonus = bonus;
+            if (bonus > maxBonus) {maxBonus = bonus;}
         }
 
         return maxBonus;
@@ -279,14 +279,14 @@ export class DefenseSystem {
 
     /* Override Logic */
     static _applyOverride(editValue, autoValue) {
-        if (editValue !== undefined && editValue !== null) return Number(editValue);
+        if (editValue !== undefined && editValue !== null) {return Number(editValue);}
         return autoValue;
     }
 
     /* Misc = sum(auto) + user.extra */
     static _computeMisc(d) {
         let total = 0;
-        for (const k in d.misc.auto) total += Number(d.misc.auto[k] || 0);
+        for (const k in d.misc.auto) {total += Number(d.misc.auto[k] || 0);}
         total += Number(d.misc.user.extra || 0);
         d.miscTotal = total;
         return total;

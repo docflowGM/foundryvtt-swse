@@ -139,7 +139,7 @@ export class SuggestionEngineCoordinator {
    * @private
    */
   static _hashPendingData(pendingData) {
-    if (!pendingData || typeof pendingData !== 'object') return '';
+    if (!pendingData || typeof pendingData !== 'object') {return '';}
 
     const parts = [];
     if (pendingData.selectedClass?.name) {

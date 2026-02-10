@@ -64,7 +64,7 @@ export function calculateMaxForcePoints(actor) {
  * @returns {number} - Total level
  */
 function getTotalCharacterLevel(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
 
     // Try various ways to get level (different actor types may store it differently)
     if (actor.system?.level) {
@@ -101,18 +101,18 @@ function getTotalCharacterLevel(actor) {
  * @returns {number} - Force Point base (5, 6, or 7)
  */
 function getForcePointBase(actor) {
-    if (!actor) return 5;
+    if (!actor) {return 5;}
 
     // Check persistent flags (once unlocked, never downgrades)
     const hasBase7 = actor.getFlag?.('swse', 'hasBase7FP');
-    if (hasBase7) return 7;
+    if (hasBase7) {return 7;}
 
     const hasBase6 = actor.getFlag?.('swse', 'hasPrestigeFPBonus');
-    if (hasBase6) return 6;
+    if (hasBase6) {return 6;}
 
     // Check current classes
     const classItems = actor.items?.filter?.(i => i.type === 'class') || [];
-    if (!Array.isArray(classItems)) return 5;
+    if (!Array.isArray(classItems)) {return 5;}
 
     let highestBase = 5;
 
@@ -165,7 +165,7 @@ function getForcePointBase(actor) {
  * @deprecated Use getForcePointBase() instead
  */
 function hasPrestigeForcePointBonus(actor) {
-    if (!actor) return false;
+    if (!actor) {return false;}
 
     // Check actor flag (persistent marker)
     if (actor.getFlag?.('swse', 'hasPrestigeFPBonus')) {
@@ -211,7 +211,7 @@ function hasPrestigeForcePointBonus(actor) {
  * @returns {Promise<void>}
  */
 export async function updateActorForcePoints(actor) {
-    if (!actor) return;
+    if (!actor) {return;}
 
     const maxFP = calculateMaxForcePoints(actor);
 
@@ -231,7 +231,7 @@ export async function updateActorForcePoints(actor) {
  * @returns {Promise<void>}
  */
 export async function initializeActorForcePoints(actor) {
-    if (!actor) return;
+    if (!actor) {return;}
 
     const maxFP = calculateMaxForcePoints(actor);
 
@@ -253,7 +253,7 @@ export async function initializeActorForcePoints(actor) {
  * @returns {boolean} - True if this class grants the bonus
  */
 export function checksIfClassGrantsPrestigeBonus(classId) {
-    if (!classId) return false;
+    if (!classId) {return false;}
 
     const classDef = ClassesDB.get?.(classId);
     if (!classDef) {
@@ -271,7 +271,7 @@ export function checksIfClassGrantsPrestigeBonus(classId) {
  * @param {Object} actor - Actor document
  */
 export function debugForcePointCalculation(actor) {
-    if (!actor) return;
+    if (!actor) {return;}
 
     const totalLevel = getTotalCharacterLevel(actor);
     const hasPrestige = hasPrestigeForcePointBonus(actor);

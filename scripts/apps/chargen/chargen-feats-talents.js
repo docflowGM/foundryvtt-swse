@@ -9,7 +9,8 @@ import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-co
 import { ClassesDB } from '../../data/classes-db.js';
 import { SuggestionService } from '../../engine/SuggestionService.js';
 import { BuildIntent } from '../../engine/BuildIntent.js';
-import { MentorSurvey } from '../mentor-survey.js';
+import { MentorSurvey } from '../mentor/mentor-survey.js';
+import { _findTalentItem } from './chargen-shared.js';
 
 /**
  * Calculate feat/talent suggestions during chargen
@@ -111,7 +112,7 @@ export async function _onSelectFeat(event) {
 
   if (!this._packs.feats || this._packs.feats.length === 0) {
     SWSELogger.error(`[CHARGEN-FEATS-TALENTS] ERROR: Feats pack is null or empty!`);
-    ui.notifications.error("Feats data not loaded!");
+    ui.notifications.error('Feats data not loaded!');
     return;
   }
   SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Feats pack loaded with ${this._packs.feats.length} feats`);
@@ -121,7 +122,7 @@ export async function _onSelectFeat(event) {
 
   if (!feat) {
     SWSELogger.error(`[CHARGEN-FEATS-TALENTS] ERROR: Feat not found with ID: "${id}"`);
-    ui.notifications.warn("Feat not found!");
+    ui.notifications.warn('Feat not found!');
     return;
   }
 
@@ -162,13 +163,13 @@ export async function _onSelectFeat(event) {
     // Droids cannot select feats that require Force Sensitivity or Force Points
     if (this.characterData.isDroid) {
       SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Character is a droid, checking for Force-related prerequisites...`);
-      const prereqs = feat.system?.prerequisite || "";
+      const prereqs = feat.system?.prerequisite || '';
       const preqsLower = prereqs.toLowerCase();
       if (
-        preqsLower.includes("force sensitivity") ||
-        preqsLower.includes("force technique") ||
-        preqsLower.includes("force secret") ||
-        preqsLower.includes("force point")
+        preqsLower.includes('force sensitivity') ||
+        preqsLower.includes('force technique') ||
+        preqsLower.includes('force secret') ||
+        preqsLower.includes('force point')
       ) {
         SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Droid cannot select Force feat: "${feat.name}"`);
         ui.notifications.warn(`Droids cannot select "${feat.name}" because they cannot be Force-sensitive.`);
@@ -253,11 +254,11 @@ export async function _onSelectFeat(event) {
  */
 export function _bindFeatCardUI(root) {
   const step = root.querySelector('.step-feats');
-  if (!step) return;
+  if (!step) {return;}
 
   step.onclick = async (ev) => {
     const btn = ev.target.closest('button');
-    if (!btn) return;
+    if (!btn) {return;}
 
     const card = btn.closest('.feat-card');
 
@@ -270,7 +271,7 @@ export function _bindFeatCardUI(root) {
     if (btn.classList.contains('feat-read')) {
       ev.preventDefault();
       const uuid = card?.dataset?.uuid;
-      if (!uuid) return;
+      if (!uuid) {return;}
       const doc = await fromUuid(uuid);
       doc?.sheet?.render(true);
     }
@@ -282,14 +283,14 @@ export function _bindFeatCardUI(root) {
  */
 export function _bindTalentCardUI(root) {
   const step = root.querySelector('.step-talents');
-  if (!step) return;
+  if (!step) {return;}
 
   step.onclick = async (ev) => {
     const btn = ev.target.closest('button');
-    if (!btn) return;
+    if (!btn) {return;}
 
     const card = btn.closest('.talent-card');
-    if (!card) return;
+    if (!card) {return;}
 
     if (btn.classList.contains('talent-details-toggle')) {
       ev.preventDefault();
@@ -300,7 +301,7 @@ export function _bindTalentCardUI(root) {
     if (btn.classList.contains('talent-read')) {
       ev.preventDefault();
       const uuid = card.dataset.uuid;
-      if (!uuid) return;
+      if (!uuid) {return;}
       const doc = await fromUuid(uuid);
       doc?.sheet?.render(true);
     }
@@ -317,29 +318,29 @@ export async function _handleSkillFocusFeat(feat) {
     .map(([key, skill]) => key);
 
   if (trainedSkills.length === 0) {
-    ui.notifications.warn("You must train at least one skill before selecting Skill Focus. Please train a skill in the Skills step first.");
+    ui.notifications.warn('You must train at least one skill before selecting Skill Focus. Please train a skill in the Skills step first.');
     return;
   }
 
   // Build skill list for dialog
   const skillNames = {
-    acrobatics: "Acrobatics",
-    climb: "Climb",
-    deception: "Deception",
-    endurance: "Endurance",
-    gatherInfo: "Gather Information",
-    initiative: "Initiative",
-    jump: "Jump",
-    mechanics: "Mechanics",
-    perception: "Perception",
-    persuasion: "Persuasion",
-    pilot: "Pilot",
-    stealth: "Stealth",
-    survival: "Survival",
-    swim: "Swim",
-    treatInjury: "Treat Injury",
-    useComputer: "Use Computer",
-    useTheForce: "Use the Force"
+    acrobatics: 'Acrobatics',
+    climb: 'Climb',
+    deception: 'Deception',
+    endurance: 'Endurance',
+    gatherInfo: 'Gather Information',
+    initiative: 'Initiative',
+    jump: 'Jump',
+    mechanics: 'Mechanics',
+    perception: 'Perception',
+    persuasion: 'Persuasion',
+    pilot: 'Pilot',
+    stealth: 'Stealth',
+    survival: 'Survival',
+    swim: 'Swim',
+    treatInjury: 'Treat Injury',
+    useComputer: 'Use Computer',
+    useTheForce: 'Use the Force'
   };
 
   // Create options HTML
@@ -366,7 +367,7 @@ export async function _handleSkillFocusFeat(feat) {
       buttons: {
         select: {
           icon: '<i class="fas fa-check"></i>',
-          label: "Select",
+          label: 'Select',
           callback: (html) => {
             const selectedSkill = (root?.querySelector?.('#skill-focus-selection')?.value ?? null);
 
@@ -412,15 +413,15 @@ export async function _handleSkillFocusFeat(feat) {
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
-          label: "Cancel",
+          label: 'Cancel',
           callback: () => {
-            ui.notifications.warn("Skill Focus feat cancelled.");
+            ui.notifications.warn('Skill Focus feat cancelled.');
             dialog.close();
             resolve(false);
           }
         }
       },
-      default: "select",
+      default: 'select',
       close: () => resolve(false)
     }, {
       width: 400
@@ -448,23 +449,23 @@ export async function _onRemoveFeat(event) {
 
       // Find the skill key by name
       const skillNames = {
-        "Acrobatics": "acrobatics",
-        "Climb": "climb",
-        "Deception": "deception",
-        "Endurance": "endurance",
-        "Gather Information": "gatherInfo",
-        "Initiative": "initiative",
-        "Jump": "jump",
-        "Mechanics": "mechanics",
-        "Perception": "perception",
-        "Persuasion": "persuasion",
-        "Pilot": "pilot",
-        "Stealth": "stealth",
-        "Survival": "survival",
-        "Swim": "swim",
-        "Treat Injury": "treatInjury",
-        "Use Computer": "useComputer",
-        "Use the Force": "useTheForce"
+        'Acrobatics': 'acrobatics',
+        'Climb': 'climb',
+        'Deception': 'deception',
+        'Endurance': 'endurance',
+        'Gather Information': 'gatherInfo',
+        'Initiative': 'initiative',
+        'Jump': 'jump',
+        'Mechanics': 'mechanics',
+        'Perception': 'perception',
+        'Persuasion': 'persuasion',
+        'Pilot': 'pilot',
+        'Stealth': 'stealth',
+        'Survival': 'survival',
+        'Swim': 'swim',
+        'Treat Injury': 'treatInjury',
+        'Use Computer': 'useComputer',
+        'Use the Force': 'useTheForce'
       };
 
       const skillKey = skillNames[focusedSkillName];
@@ -486,7 +487,7 @@ export function _onToggleFeatFilter(event) {
   const isChecked = event.currentTarget.checked;
   const featsContainer = event.currentTarget.closest('.step-feats');
 
-  if (!featsContainer) return;
+  if (!featsContainer) {return;}
 
   // Toggle the filter class on the feats container
   if (isChecked) {
@@ -527,15 +528,15 @@ export async function _onSelectTalent(event) {
   const id = event.currentTarget.dataset.talentid;
 
   if (!this._packs.talents || this._packs.talents.length === 0) {
-    ui.notifications.error("Talents data not loaded!");
-    SWSELogger.error("CharGen | Talents pack is null or empty");
+    ui.notifications.error('Talents data not loaded!');
+    SWSELogger.error('CharGen | Talents pack is null or empty');
     return;
   }
 
   const tal = this._packs.talents.find(t => t._id === id || t.name === id);
 
   if (!tal) {
-    ui.notifications.warn("Talent not found!");
+    ui.notifications.warn('Talent not found!');
     return;
   }
 
@@ -547,23 +548,28 @@ export async function _onSelectTalent(event) {
 
     // Find each talent and add it
     for (const talentName of talentNamesToGrant) {
-      // Need to load the actual talent from the original data
-      // Since we processed the talents, we need to find the real ones
+      // Defensive lookup: try cached talents first, fall back to name-based
       let actualTalent = null;
 
-      if (talentName === "Block") {
-        actualTalent = await game.packs.get("foundryvtt-swse.talents")?.getDocuments().then(docs => docs.find(d => d.name === "Block"));
-      } else if (talentName === "Deflect") {
-        actualTalent = await game.packs.get("foundryvtt-swse.talents")?.getDocuments().then(docs => docs.find(d => d.name === "Deflect"));
+      // Use cached talents if available (includes defensive ID→name fallback)
+      if (chargenContext._packs?.talents && chargenContext._packs.talents.length > 0) {
+        actualTalent = _findTalentItem(chargenContext._packs.talents, talentName);
+      } else {
+        // Fallback: Load from live pack if cache unavailable
+        actualTalent = await game.packs.get('foundryvtt-swse.talents')?.getDocuments()
+          .then(docs => docs.find(d => d.name === talentName))
+          .catch(() => null);
       }
 
       if (actualTalent) {
-        talentsToAdd.push(actualTalent.toObject());
+        // Convert to plain object if it's a live document
+        const talentObj = actualTalent.toObject ? actualTalent.toObject() : actualTalent;
+        talentsToAdd.push(talentObj);
       }
     }
 
     if (talentsToAdd.length === 0) {
-      ui.notifications.error("Could not find Block or Deflect talents!");
+      ui.notifications.error('Could not find Block or Deflect talents!');
       return;
     }
 
@@ -657,13 +663,13 @@ export async function _onSelectTalent(event) {
     if (!this.freeBuild) {
       // Droids cannot select talents that require Force Sensitivity or Force Points
       if (this.characterData.isDroid) {
-        const prereqs = tal.system?.prerequisites || "";
+        const prereqs = tal.system?.prerequisites || '';
         const preqsLower = prereqs.toLowerCase();
         if (
-          preqsLower.includes("force sensitivity") ||
-          preqsLower.includes("force technique") ||
-          preqsLower.includes("force secret") ||
-          preqsLower.includes("force point")
+          preqsLower.includes('force sensitivity') ||
+          preqsLower.includes('force technique') ||
+          preqsLower.includes('force secret') ||
+          preqsLower.includes('force point')
         ) {
           ui.notifications.warn(`Droids cannot select "${tal.name}" because they cannot be Force-sensitive.`);
           return;
@@ -815,11 +821,11 @@ export function _createTempActorForValidation() {
               type: 'talent',
               name: talent.name || talent,
               system: {
-                tree: getTalentTreeName(talent) || talent.system?.talent_tree || "Unknown",
-                prerequisite: talent.system?.prerequisite || "",
-                benefit: talent.system?.benefit || "",
-                special: talent.system?.special || "",
-                uses: talent.system?.uses || {current: 0, max: 0, perEncounter: false, perDay: false}
+                tree: getTalentTreeName(talent) || talent.system?.talent_tree || 'Unknown',
+                prerequisite: talent.system?.prerequisite || '',
+                benefit: talent.system?.benefit || '',
+                special: talent.system?.special || '',
+                uses: talent.system?.uses || { current: 0, max: 0, perEncounter: false, perDay: false }
               }
             });
           }
@@ -870,11 +876,11 @@ export function _createTempActorForValidation() {
               type: 'talent',
               name: talent.name || talent,
               system: {
-                tree: getTalentTreeName(talent) || talent.system?.talent_tree || "Unknown",
-                prerequisite: talent.system?.prerequisite || "",
-                benefit: talent.system?.benefit || "",
-                special: talent.system?.special || "",
-                uses: talent.system?.uses || {current: 0, max: 0, perEncounter: false, perDay: false}
+                tree: getTalentTreeName(talent) || talent.system?.talent_tree || 'Unknown',
+                prerequisite: talent.system?.prerequisite || '',
+                benefit: talent.system?.benefit || '',
+                special: talent.system?.special || '',
+                uses: talent.system?.uses || { current: 0, max: 0, perEncounter: false, perDay: false }
               }
             });
           }
@@ -925,11 +931,11 @@ export function _createTempActorForValidation() {
               type: 'talent',
               name: talent.name || talent,
               system: {
-                tree: getTalentTreeName(talent) || talent.system?.talent_tree || "Unknown",
-                prerequisite: talent.system?.prerequisite || "",
-                benefit: talent.system?.benefit || "",
-                special: talent.system?.special || "",
-                uses: talent.system?.uses || {current: 0, max: 0, perEncounter: false, perDay: false}
+                tree: getTalentTreeName(talent) || talent.system?.talent_tree || 'Unknown',
+                prerequisite: talent.system?.prerequisite || '',
+                benefit: talent.system?.benefit || '',
+                special: talent.system?.special || '',
+                uses: talent.system?.uses || { current: 0, max: 0, perEncounter: false, perDay: false }
               }
             });
           }
@@ -992,8 +998,8 @@ export function _getStartingClassFeatures() {
         system: {
           description: feature.description || `Starting feature from ${selectedClassName}`,
           source: `${selectedClassName} (Starting)`,
-          featType: "class_feature",
-          prerequisite: feature.prerequisite || "",
+          featType: 'class_feature',
+          prerequisite: feature.prerequisite || '',
           benefit: feature.description || `Starting feature from ${selectedClassName}`
         }
       });
@@ -1022,7 +1028,7 @@ export function _getStartingClassFeatures() {
                 description: feature.description || `Class feature from ${selectedClassName} level 1`,
                 source: `${selectedClassName} 1`,
                 featType: feature.type === 'proficiency' ? 'proficiency' : 'class_feature',
-                prerequisite: feature.prerequisite || "",
+                prerequisite: feature.prerequisite || '',
                 benefit: feature.description || `Class feature from ${selectedClassName} level 1`
               }
             });

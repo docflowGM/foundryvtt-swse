@@ -7,9 +7,9 @@
  * - Actor credits updates route through ActorEngine
  */
 
-import { ActorEngine } from "../actors/engine/actor-engine.js";
-import { GearTemplatesEngine } from "./gear-templates-engine.js";
-import { UpgradeRulesEngine } from "./upgrade-rules-engine.js";
+import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { GearTemplatesEngine } from './gear-templates-engine.js';
+import { UpgradeRulesEngine } from './upgrade-rules-engine.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -22,8 +22,8 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static DEFAULT_OPTIONS = {
-    id: "swse-upgrade-app",
-    classes: ["swse", "swse-app", "swse-upgrade-app", "swse-theme-holo"],
+    id: 'swse-upgrade-app',
+    classes: ['swse', 'swse-app', 'swse-upgrade-app', 'swse-theme-holo'],
     position: { width: 700, height: 600 },
     window: { resizable: true }
   };
@@ -40,7 +40,7 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static PARTS = {
     content: {
-      template: "systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs"
+      template: 'systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs'
     }
   };
 
@@ -50,7 +50,7 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const installedUpgrades = system.installedUpgrades ?? [];
     const totalSlots = UpgradeRulesEngine.getBaseUpgradeSlots(this.item);
     const usedSlots = installedUpgrades.reduce((sum, u) => sum + Number(u.slotsUsed ?? 1), 0);
-    const isPoweredArmor = this.item?.type === "armor" && UpgradeRulesEngine.isPoweredArmor(this.item);
+    const isPoweredArmor = this.item?.type === 'armor' && UpgradeRulesEngine.isPoweredArmor(this.item);
 
     const appliedTemplate = this.#getAppliedTemplate();
     const availableTemplates = this.#getAvailableTemplates();
@@ -80,22 +80,22 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
     super._onRender(context, options);
 
     const root = this.element;
-    if (!root) return;
+    if (!root) {return;}
 
-    root.querySelectorAll(".install-upgrade").forEach((el) =>
-      el.addEventListener("click", this.#onInstallUpgrade.bind(this))
+    root.querySelectorAll('.install-upgrade').forEach((el) =>
+      el.addEventListener('click', this.#onInstallUpgrade.bind(this))
     );
-    root.querySelectorAll(".remove-upgrade").forEach((el) =>
-      el.addEventListener("click", this.#onRemoveUpgrade.bind(this))
+    root.querySelectorAll('.remove-upgrade').forEach((el) =>
+      el.addEventListener('click', this.#onRemoveUpgrade.bind(this))
     );
-    root.querySelectorAll(".apply-template").forEach((el) =>
-      el.addEventListener("click", this.#onApplyTemplate.bind(this))
+    root.querySelectorAll('.apply-template').forEach((el) =>
+      el.addEventListener('click', this.#onApplyTemplate.bind(this))
     );
-    root.querySelectorAll(".remove-template").forEach((el) =>
-      el.addEventListener("click", this.#onRemoveTemplate.bind(this))
+    root.querySelectorAll('.remove-template').forEach((el) =>
+      el.addEventListener('click', this.#onRemoveTemplate.bind(this))
     );
 
-    root.querySelector(".close-btn")?.addEventListener("click", () => this.close());
+    root.querySelector('.close-btn')?.addEventListener('click', () => this.close());
   }
 
   /* ------------------------------------------------------------------ */
@@ -104,38 +104,38 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   #getNPCForItemType(itemType) {
     switch (itemType) {
-      case "weapon":
+      case 'weapon':
         return {
-          name: "Delta",
-          title: "Weapons Specialist",
-          image: "systems/foundryvtt-swse/assets/icons/mentor.webp",
-          upgradeType: "Weapon Upgrade"
+          name: 'Delta',
+          title: 'Weapons Specialist',
+          image: 'systems/foundryvtt-swse/assets/icons/mentor.webp',
+          upgradeType: 'Weapon Upgrade'
         };
-      case "armor":
+      case 'armor':
         return {
-          name: "Breach",
-          title: "Armor Technician",
-          image: "systems/foundryvtt-swse/assets/icons/breach.webp",
-          upgradeType: "Armor Upgrade"
+          name: 'Breach',
+          title: 'Armor Technician',
+          image: 'systems/foundryvtt-swse/assets/icons/breach.webp',
+          upgradeType: 'Armor Upgrade'
         };
       default:
         return {
-          name: "Rendarr",
-          title: "Equipment Merchant",
-          image: "systems/foundryvtt-swse/assets/icons/rendarr.webp",
-          upgradeType: "Universal Upgrade"
+          name: 'Rendarr',
+          title: 'Equipment Merchant',
+          image: 'systems/foundryvtt-swse/assets/icons/rendarr.webp',
+          upgradeType: 'Universal Upgrade'
         };
     }
   }
 
   #getWelcomeMessage() {
-    const name = this.npc?.name ?? "Technician";
-    const itemName = this.item?.name ?? "that";
+    const name = this.npc?.name ?? 'Technician';
+    const itemName = this.item?.name ?? 'that';
     return `${name}: Let's take a look at ${itemName}.`;
   }
 
   #getExamineMessage() {
-    const type = this.item?.type ?? "item";
+    const type = this.item?.type ?? 'item';
     return `Examining ${type} upgrade slots and compatible parts...`;
   }
 
@@ -147,11 +147,11 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const upgrades = [];
 
     const world = game.items.filter((i) => i.system?.isUpgrade === true);
-    const pack = game.packs.get("foundryvtt-swse.equipment");
+    const pack = game.packs.get('foundryvtt-swse.equipment');
     const compendium = pack ? await pack.getDocuments() : [];
 
     for (const upgrade of [...world, ...compendium]) {
-      if (!this.#isCompatibleUpgrade(upgrade)) continue;
+      if (!this.#isCompatibleUpgrade(upgrade)) {continue;}
       upgrades.push(this.#formatUpgrade(upgrade));
     }
 
@@ -171,17 +171,17 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
       cost,
       calculatedCost: cost,
       slotsRequired: Number(upgrade.system.upgradeSlots ?? 1),
-      availability: upgrade.system.availability ?? "Standard",
-      description: upgrade.system.description ?? "",
+      availability: upgrade.system.availability ?? 'Standard',
+      description: upgrade.system.description ?? '',
       notes: null
     };
   }
 
   async #findUpgrade(id) {
     const world = game.items.get(id);
-    if (world) return world;
+    if (world) {return world;}
 
-    const pack = game.packs.get("foundryvtt-swse.equipment");
+    const pack = game.packs.get('foundryvtt-swse.equipment');
     return pack ? await pack.getDocument(id) : null;
   }
 
@@ -196,13 +196,13 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const actor = this.item?.actor;
 
     if (!actor) {
-      ui.notifications.error("Item must be owned to install upgrades.");
+      ui.notifications.error('Item must be owned to install upgrades.');
       return;
     }
 
     const upgrade = await this.#findUpgrade(upgradeId);
     if (!upgrade) {
-      ui.notifications.error("Upgrade not found.");
+      ui.notifications.error('Upgrade not found.');
       return;
     }
 
@@ -216,7 +216,7 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const slots = validation.slotsNeeded;
     const credits = Number(actor.system.credits ?? 0);
 
-    await ActorEngine.updateActor(actor, { "system.credits": credits - cost }, { diff: true });
+    await ActorEngine.updateActor(actor, { 'system.credits': credits - cost }, { diff: true });
 
     const installed = this.item.system.installedUpgrades ?? [];
     const nextInstalled = [
@@ -226,15 +226,14 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
         name: upgrade.name,
         slotsUsed: slots,
         cost,
-        restriction: upgrade.system.restriction ?? "common",
-        description: upgrade.system.description ?? ""
+        restriction: upgrade.system.restriction ?? 'common',
+        description: upgrade.system.description ?? ''
       }
     ];
 
-    if (actor.updateOwnedItem && this.item.isEmbedded) await actor.updateOwnedItem(this.item, { "system.installedUpgrades": nextInstalled });
-    else await this.item.update({ "system.installedUpgrades": nextInstalled });
+    if (actor.updateOwnedItem && this.item.isEmbedded) {await actor.updateOwnedItem(this.item, { 'system.installedUpgrades': nextInstalled });} else {await this.item.update({ 'system.installedUpgrades': nextInstalled });}
 
-    ui.notifications.info("Upgrade installed successfully.");
+    ui.notifications.info('Upgrade installed successfully.');
     this.render({ force: true });
   }
 
@@ -245,14 +244,14 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const index = Number(event.currentTarget?.dataset?.upgradeIndex ?? event.currentTarget?.dataset?.index);
     const installed = this.item.system.installedUpgrades ?? [];
 
-    if (!Number.isInteger(index) || !installed[index]) return;
+    if (!Number.isInteger(index) || !installed[index]) {return;}
 
     const confirmed = await Dialog.confirm({
-      title: "Remove Upgrade",
+      title: 'Remove Upgrade',
       content: `<p>Remove <strong>${installed[index].name}</strong>? No credits will be refunded.</p>`
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
     const nextInstalled = installed.toSpliced ? installed.toSpliced(index, 1) : (() => {
       const copy = [...installed];
@@ -260,10 +259,9 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
       return copy;
     })();
 
-    if (actor?.updateOwnedItem && this.item.isEmbedded) await actor.updateOwnedItem(this.item, { "system.installedUpgrades": nextInstalled });
-    else await this.item.update({ "system.installedUpgrades": nextInstalled });
+    if (actor?.updateOwnedItem && this.item.isEmbedded) {await actor.updateOwnedItem(this.item, { 'system.installedUpgrades': nextInstalled });} else {await this.item.update({ 'system.installedUpgrades': nextInstalled });}
 
-    ui.notifications.info("Upgrade removed.");
+    ui.notifications.info('Upgrade removed.');
     this.render({ force: true });
   }
 
@@ -273,17 +271,17 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   #getAppliedTemplate() {
     const templateKey = this.item.system.gearTemplate;
-    if (!templateKey) return null;
+    if (!templateKey) {return null;}
 
     const template = GearTemplatesEngine._getTemplateByKey(templateKey);
-    if (!template) return null;
+    if (!template) {return null;}
 
     const cost = this.item.system.templateCost || 0;
 
     return {
       key: templateKey,
       name: template.name,
-      manufacturer: template.manufacturer || "N/A",
+      manufacturer: template.manufacturer || 'N/A',
       description: template.description,
       costAdjustment: cost
     };
@@ -299,7 +297,7 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
       return {
         key: template.key,
         name: template.name,
-        manufacturer: template.manufacturer || "N/A",
+        manufacturer: template.manufacturer || 'N/A',
         description: template.description,
         cost: costPreview,
         costPreview,
@@ -311,23 +309,23 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   #formatRestrictions(restrictions) {
-    if (!restrictions || restrictions.length === 0) return null;
+    if (!restrictions || restrictions.length === 0) {return null;}
 
     const restrictionMap = {
-      stunOrIon: "Requires Stun or Ion setting",
-      stun: "Requires Stun setting",
-      advancedMeleeOrSimpleMelee: "Advanced Melee or Simple Melee only",
-      preLegacyPowered: "Pre-Legacy powered weapons only",
-      blaster: "Blaster weapons only",
-      simpleMelee: "Simple Melee weapons only",
-      fortBonus: "Requires Fortitude bonus",
-      rangedEnergy: "Ranged Energy weapons only",
-      meleeSlashingPiercing: "Melee Slashing/Piercing only",
-      meleeNonEnergy: "Melee non-Energy only",
-      rangedStun: "Ranged with Stun only"
+      stunOrIon: 'Requires Stun or Ion setting',
+      stun: 'Requires Stun setting',
+      advancedMeleeOrSimpleMelee: 'Advanced Melee or Simple Melee only',
+      preLegacyPowered: 'Pre-Legacy powered weapons only',
+      blaster: 'Blaster weapons only',
+      simpleMelee: 'Simple Melee weapons only',
+      fortBonus: 'Requires Fortitude bonus',
+      rangedEnergy: 'Ranged Energy weapons only',
+      meleeSlashingPiercing: 'Melee Slashing/Piercing only',
+      meleeNonEnergy: 'Melee non-Energy only',
+      rangedStun: 'Ranged with Stun only'
     };
 
-    return restrictions.map((r) => restrictionMap[r] || r).join(", ");
+    return restrictions.map((r) => restrictionMap[r] || r).join(', ');
   }
 
   async #onApplyTemplate(event) {
@@ -339,7 +337,7 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     const actor = this.item.actor;
     if (!actor) {
-      ui.notifications.warn("Item must be owned by a character to apply templates.");
+      ui.notifications.warn('Item must be owned by a character to apply templates.');
       return;
     }
 
@@ -356,15 +354,15 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     const confirmed = await Dialog.confirm({
-      title: "Apply Gear Template",
+      title: 'Apply Gear Template',
       content: `<p>Apply <strong>${templateName}</strong> template to <strong>${this.item.name}</strong>?</p>
                 <p>Cost: <strong>${templateCost} credits</strong></p>
                 <p class="warning">Templates are rare and represent unique manufacturing. This cannot be reversed without GM intervention.</p>`
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
-    await ActorEngine.updateActor(actor, { "system.credits": credits - templateCost }, { diff: true });
+    await ActorEngine.updateActor(actor, { 'system.credits': credits - templateCost }, { diff: true });
     await GearTemplatesEngine.applyTemplate(this.item, templateKey);
     this.render({ force: true });
   }
@@ -373,12 +371,12 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
     event.preventDefault();
 
     const confirmed = await Dialog.confirm({
-      title: "Remove Gear Template",
+      title: 'Remove Gear Template',
       content: `<p>Remove template from <strong>${this.item.name}</strong>?</p>
                 <p class="warning">No credits will be refunded. This action cannot be undone.</p>`
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
     await GearTemplatesEngine.removeTemplate(this.item);
     this.render({ force: true });

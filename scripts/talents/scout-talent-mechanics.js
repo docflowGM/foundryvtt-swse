@@ -19,6 +19,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
 
 export class ScoutTalentMechanics {
 
@@ -226,7 +227,7 @@ export class ScoutTalentMechanics {
     }
 
     // If attack hits, apply Total Concealment effect until start of next turn
-    await targetActor.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(targetActor, {
       name: 'Blinding Strike - Total Concealment',
       icon: 'icons/svg/blind.svg',
       changes: [{
@@ -247,7 +248,7 @@ export class ScoutTalentMechanics {
           sourceActorId: actor.id
         }
       }
-    }]);
+    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Blinding Strike on ${targetActor.name}, gained Total Concealment`);
     ui.notifications.info(`${actor.name} has Total Concealment against ${targetActor.name} until the start of their next turn!`);
@@ -332,7 +333,7 @@ export class ScoutTalentMechanics {
     }
 
     // If attack hits, apply effect limiting target to Swift Action on next turn
-    await targetActor.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(targetActor, {
       name: 'Confusing Strike - Swift Action Only',
       icon: 'icons/svg/daze.svg',
       changes: [{
@@ -353,7 +354,7 @@ export class ScoutTalentMechanics {
           sourceActorId: actor.id
         }
       }
-    }]);
+    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Confusing Strike on ${targetActor.name}, target limited to Swift Action`);
     ui.notifications.info(`${targetActor.name} can only take a Swift Action on their next turn!`);
@@ -497,7 +498,7 @@ export class ScoutTalentMechanics {
     const movementSpeed = actor.system.movement?.groundSpeed || 30;
 
     // Apply +2 Reflex Defense bonus until end of encounter
-    await actor.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(actor, {
       name: 'Blurring Burst - Reflex Bonus',
       icon: 'icons/svg/aura.svg',
       changes: [{
@@ -516,7 +517,7 @@ export class ScoutTalentMechanics {
           sourceActorId: actor.id
         }
       }
-    }]);
+    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Blurring Burst, moved ${movementSpeed} feet and gained +2 Reflex Defense`);
     ui.notifications.info(`${actor.name} blurs into action! Move ${movementSpeed} feet and gain +2 to Reflex Defense until the end of the encounter!`);
@@ -639,7 +640,7 @@ export class ScoutTalentMechanics {
 
     // If there were any AoOs made, apply bonus
     if (aooCount > 0) {
-      await actor.createEmbeddedDocuments('ActiveEffect', [{
+      await createEffectOnActor(actor, {
         name: `Weaving Stride - Dodge Bonus (${dodgeBonus})`,
         icon: 'icons/svg/daze.svg',
         changes: [{
@@ -661,7 +662,7 @@ export class ScoutTalentMechanics {
             aooCount: aooCount
           }
         }
-      }]);
+      });
 
       SWSELogger.log(`SWSE Talents | ${actor.name} used Weaving Stride, moved ${movementSpeed} feet and gained +${dodgeBonus} dodge bonus from ${aooCount} AoO(s)`);
       ui.notifications.info(`${actor.name} weaves through combat! Move ${movementSpeed} feet and gain +${dodgeBonus} dodge bonus to Reflex Defense from ${aooCount} Attack(s) of Opportunity!`);
@@ -905,7 +906,7 @@ export class ScoutTalentMechanics {
     const currentRound = game.combat?.round;
     const currentTurn = game.combat?.turn;
 
-    await targetActor.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(targetActor, {
       name: 'Weak Point - DR Ignored',
       icon: 'icons/svg/target.svg',
       changes: [{
@@ -926,7 +927,7 @@ export class ScoutTalentMechanics {
           sourceActorId: actor.id
         }
       }
-    }]);
+    });
 
     await actor.setFlag('swse', usageFlag, true);
 
@@ -996,7 +997,7 @@ export class ScoutTalentMechanics {
     }
 
     // Create effect for ignoring difficult terrain
-    await ally.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(ally, {
       name: 'Guidance - Ignore Difficult Terrain',
       icon: 'icons/svg/light.svg',
       changes: [{
@@ -1015,7 +1016,7 @@ export class ScoutTalentMechanics {
           sourceActorId: actor.id
         }
       }
-    }]);
+    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Guidance on ${ally.name}`);
     ui.notifications.info(`${ally.name} ignores difficult terrain until the start of their next turn!`);
@@ -1185,7 +1186,7 @@ export class ScoutTalentMechanics {
     }
 
     return canvas.tokens.placeables.filter(token => {
-      if (!token.actor || token.actor.id === actor.id) return false;
+      if (!token.actor || token.actor.id === actor.id) {return false;}
       return token.document.disposition === actorToken.document.disposition;
     });
   }
@@ -1206,7 +1207,7 @@ export class ScoutTalentMechanics {
     // Followers are typically marked with a specific flag or relationship
     // This is a simplified implementation
     return canvas.tokens.placeables.filter(token => {
-      if (!token.actor || token.actor.id === actor.id) return false;
+      if (!token.actor || token.actor.id === actor.id) {return false;}
       // Check if this is a follower of the actor
       const followerFlag = token.actor.getFlag('swse', 'followerOfActor');
       return followerFlag === actor.id;
@@ -1290,7 +1291,7 @@ Hooks.on('guidanceTriggered', async (actor) => {
         guide: {
           label: 'Grant Guidance',
           callback: async (html) => {
-            const allyId = html.find('#ally-select').val();
+            const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
             await ScoutTalentMechanics.completeGuidanceSelection(actor, allyId);
           }
         },
@@ -1334,7 +1335,7 @@ Hooks.on('getIntoPosTriggered', async (actor) => {
         position: {
           label: 'Position',
           callback: async (html) => {
-            const followerId = html.find('#follower-select').val();
+            const followerId = (html?.[0] ?? html)?.querySelector('#follower-select')?.value;
             await ScoutTalentMechanics.completeGetIntoPosition(actor, followerId);
           }
         },
@@ -1391,7 +1392,7 @@ Hooks.on('suddenAssaultTriggered', async (actor, targetToken) => {
         confirm: {
           label: 'Confirm',
           callback: async (html) => {
-            const hitValue = html.find('#hit-select').val() === 'true';
+            const hitValue = (html?.[0] ?? html)?.querySelector('#hit-select')?.value === 'true';
             await ScoutTalentMechanics.completeSuddenAssault(
               actor,
               result.targetActor,
@@ -1435,7 +1436,7 @@ Hooks.on('weavingStrideTriggered', async (actor) => {
       confirm: {
         label: 'Confirm',
         callback: async (html) => {
-          const aooCount = parseInt(html.find('#aoo-count').val()) || 0;
+          const aooCount = parseInt((html?.[0] ?? html)?.querySelector('#aoo-count')?.value) || 0;
           await ScoutTalentMechanics.completeWeavingStride(
             actor,
             aooCount,
@@ -1459,7 +1460,7 @@ Hooks.on('weavingStrideTriggered', async (actor) => {
 Hooks.on('deleteCombat', async (combat) => {
   for (const combatant of combat.combatants) {
     const actor = combatant.actor;
-    if (!actor) continue;
+    if (!actor) {continue;}
 
     // Clear all scout talent encounter flags
     const combatId = combat.id;

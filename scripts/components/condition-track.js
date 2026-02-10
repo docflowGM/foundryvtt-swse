@@ -5,7 +5,7 @@
  * - Consistent with Actor.moveConditionTrack()
  * - UI safely triggers CT updates without breaking Active Effects
  */
-import { escapeHTML } from "../utils/security-utils.js";
+import { escapeHTML } from '../utils/security-utils.js';
 
 export class ConditionTrackComponent {
 
@@ -31,7 +31,7 @@ export class ConditionTrackComponent {
     const persistent = actor.system.conditionTrack.persistent ?? false;
 
     const steps = this._defineSteps();
-    const penaltyText = steps[current]?.penalty || "";
+    const penaltyText = steps[current]?.penalty || '';
 
     return `
       <div class="swse-condition-track">
@@ -39,7 +39,7 @@ export class ConditionTrackComponent {
         ${this._headerHTML(persistent)}
 
         <div class="ct-track">
-          ${steps.map(step => this._stepHTML(step, current)).join("")}
+          ${steps.map(step => this._stepHTML(step, current)).join('')}
         </div>
 
         <div class="ct-controls">
@@ -52,7 +52,7 @@ export class ConditionTrackComponent {
           </button>
 
           <label class="ct-persistent">
-            <input type="checkbox" data-ct="persistent" ${persistent ? "checked" : ""}/>
+            <input type="checkbox" data-ct="persistent" ${persistent ? 'checked' : ''}/>
             Persistent
           </label>
         </div>
@@ -61,7 +61,7 @@ export class ConditionTrackComponent {
           <div class="ct-penalty">
             Penalty: <strong>${penaltyText}</strong> to Attacks, Defenses, Ability Checks, and Skill Checks
           </div>
-        ` : ""}
+        ` : ''}
       </div>
     `;
   }
@@ -72,12 +72,12 @@ export class ConditionTrackComponent {
 
   static _defineSteps() {
     return [
-      { index: 0, label: "Normal", penalty: "", css: "normal" },
-      { index: 1, label: "-1", penalty: "-1", css: "ct-1" },
-      { index: 2, label: "-2", penalty: "-2", css: "ct-2" },
-      { index: 3, label: "-5", penalty: "-5", css: "ct-5" },
-      { index: 4, label: "-10", penalty: "-10 (Half Speed)", css: "ct-10" },
-      { index: 5, label: "Helpless", penalty: "Unconscious/Disabled", css: "ct-helpless" }
+      { index: 0, label: 'Normal', penalty: '', css: 'normal' },
+      { index: 1, label: '-1', penalty: '-1', css: 'ct-1' },
+      { index: 2, label: '-2', penalty: '-2', css: 'ct-2' },
+      { index: 3, label: '-5', penalty: '-5', css: 'ct-5' },
+      { index: 4, label: '-10', penalty: '-10 (Half Speed)', css: 'ct-10' },
+      { index: 5, label: 'Helpless', penalty: 'Unconscious/Disabled', css: 'ct-helpless' }
     ];
   }
 
@@ -89,14 +89,14 @@ export class ConditionTrackComponent {
     return `
       <div class="ct-header">
         <h3><i class="fas fa-heart-crack"></i> Condition Track</h3>
-        ${persistent ? `<span class="ct-tag">Persistent</span>` : ""}
+        ${persistent ? `<span class="ct-tag">Persistent</span>` : ''}
       </div>
     `;
   }
 
   static _stepHTML(step, currentIndex) {
-    const active = currentIndex === step.index ? "active" : "";
-    const marker = active ? `<div class="ct-marker">▼</div>` : "";
+    const active = currentIndex === step.index ? 'active' : '';
+    const marker = active ? `<div class="ct-marker">▼</div>` : '';
 
     return `
       <div class="ct-step ${step.css} ${active}"
@@ -104,7 +104,7 @@ export class ConditionTrackComponent {
            data-step="${step.index}"
            title="Set condition to ${escapeHTML(step.label)}">
         <span class="ct-label">${escapeHTML(step.label)}</span>
-        ${step.penalty ? `<span class="ct-pen">${escapeHTML(step.penalty)}</span>` : ""}
+        ${step.penalty ? `<span class="ct-pen">${escapeHTML(step.penalty)}</span>` : ''}
         ${marker}
       </div>
     `;
@@ -118,26 +118,26 @@ export class ConditionTrackComponent {
     const $c = $(container);
 
     // Set CT directly
-    $c.find('[data-ct="set"]').on("click", async ev => {
+    $c.find('[data-ct="set"]').on('click', async ev => {
       await this._setCondition(actor, Number(ev.currentTarget.dataset.step));
     });
 
     // Improve CT (respect persistent)
-    $c.find('[data-ct="improve"]').on("click", async () => {
+    $c.find('[data-ct="improve"]').on('click', async () => {
       if (actor.system.conditionTrack.persistent) {
-        return ui.notifications.warn("Condition is Persistent and cannot be removed by the Recover Action.");
+        return ui.notifications.warn('Condition is Persistent and cannot be removed by the Recover Action.');
       }
       await actor.moveConditionTrack(-1);
     });
 
     // Worsen CT
-    $c.find('[data-ct="worsen"]').on("click", async () => {
+    $c.find('[data-ct="worsen"]').on('click', async () => {
       await actor.moveConditionTrack(1);
     });
 
     // Persistent flag
-    $c.find('[data-ct="persistent"]').on("change", async ev => {
-      await actor.update({ "system.conditionTrack.persistent": ev.target.checked });
+    $c.find('[data-ct="persistent"]').on('change', async ev => {
+      await actor.update({ 'system.conditionTrack.persistent': ev.target.checked });
     });
   }
 
@@ -146,6 +146,6 @@ export class ConditionTrackComponent {
   /* ---------------------------------------- */
 
   static async _setCondition(actor, step) {
-    return actor.update({ "system.conditionTrack.current": Math.clamp(step, 0, 5) });
+    return actor.update({ 'system.conditionTrack.current': Math.clamp(step, 0, 5) });
   }
 }

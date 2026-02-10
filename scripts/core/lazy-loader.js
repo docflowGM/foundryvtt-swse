@@ -188,7 +188,7 @@ export class LazyLoader {
   setupLazyTabs(html, callbacks = {}) {
     // Convert to DOM element if needed
     const element = html instanceof HTMLElement ? html : html[0];
-    if (!element) return new Set(['summary']);
+    if (!element) {return new Set(['summary']);}
 
     const tabs = element.querySelectorAll('.sheet-tabs a[data-tab]');
     const loadedTabs = new Set(['summary']); // Summary always loads

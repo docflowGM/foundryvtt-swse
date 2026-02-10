@@ -50,7 +50,7 @@ export const SkillRegistry = {
      * Get a skill by name (case-insensitive)
      */
     get(name) {
-        if (!name) return null;
+        if (!name) {return null;}
         return this.skills.get(name.toLowerCase()) ?? null;
     },
 
@@ -58,7 +58,7 @@ export const SkillRegistry = {
      * Check if a skill exists
      */
     has(name) {
-        if (!name) return false;
+        if (!name) {return false;}
         return this.skills.has(name.toLowerCase());
     },
 
@@ -101,7 +101,7 @@ export const SkillRegistry = {
      * Get skills for a specific class
      */
     getClassSkills(className) {
-        if (!className) return [];
+        if (!className) {return [];}
 
         return this.list().filter(skill => {
             const classSkills = skill.system?.classes || {};

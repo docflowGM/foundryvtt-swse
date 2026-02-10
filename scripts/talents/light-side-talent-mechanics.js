@@ -18,7 +18,8 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
-import { ActorEngine } from "../actors/engine/actor-engine.js";
+import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { createEffectOnActor } from '../core/document-api-v13.js';
 
 export class LightSideTalentMechanics {
 
@@ -298,11 +299,11 @@ export class LightSideTalentMechanics {
     const wisdomBonus = actor.system.attributes?.wis?.mod || 0;
 
     // Create effect on ally
-    await ally.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(ally, {
       name: "Consular's Wisdom",
-      icon: "icons/svg/angel.svg",
+      icon: 'icons/svg/angel.svg',
       changes: [{
-        key: "system.defenses.will.bonus",
+        key: 'system.defenses.will.bonus',
         mode: 2, // ADD
         value: wisdomBonus,
         priority: 20
@@ -317,7 +318,7 @@ export class LightSideTalentMechanics {
           sourceActorId: actor.id
         }
       }
-    }]);
+    });
 
     await actor.setFlag('swse', wisdomUsageFlag, true);
 
@@ -364,13 +365,13 @@ export class LightSideTalentMechanics {
       startTurn: game.combat?.turn
     };
 
-    await targetActor.createEmbeddedDocuments('ActiveEffect', [{
-      name: "Exposing Strike - Flat-Footed",
-      icon: "icons/svg/daze.svg",
+    await createEffectOnActor(targetActor, {
+      name: 'Exposing Strike - Flat-Footed',
+      icon: 'icons/svg/daze.svg',
       changes: [{
-        key: "system.condition.flatFooted",
+        key: 'system.condition.flatFooted',
         mode: 5, // OVERRIDE
-        value: "true",
+        value: 'true',
         priority: 50
       }],
       duration: duration,
@@ -381,7 +382,7 @@ export class LightSideTalentMechanics {
           sourceActorId: actor.id
         }
       }
-    }]);
+    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Exposing Strike on ${targetActor.name}`);
     ui.notifications.info(`${targetActor.name} is flat-footed until the end of your next turn!`);
@@ -583,9 +584,9 @@ export class LightSideTalentMechanics {
     }
 
     // Create temporary effect on ally
-    await ally.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(ally, {
       name: `Skilled Advisor - ${skillName}`,
-      icon: "icons/svg/book.svg",
+      icon: 'icons/svg/book.svg',
       changes: [{
         key: `system.skills.${skillName}.bonus`,
         mode: 2, // ADD
@@ -603,7 +604,7 @@ export class LightSideTalentMechanics {
           oneTimeUse: true
         }
       }
-    }]);
+    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Skilled Advisor on ${ally.name} for ${skillName}, granting +${bonus}`);
     ui.notifications.info(`${ally.name} gains +${bonus} to their next ${skillName} check!`);
@@ -818,9 +819,9 @@ export class LightSideTalentMechanics {
     }
 
     // Create temporary effect on ally granting the Force Secret
-    await ally.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(ally, {
       name: `Shared ${forceSecret.name}`,
-      icon: forceSecret.img || "icons/svg/mystery-man.svg",
+      icon: forceSecret.img || 'icons/svg/mystery-man.svg',
       changes: [], // Force Secrets might need specific effect changes
       duration: {
         rounds: 1
@@ -833,7 +834,7 @@ export class LightSideTalentMechanics {
           sharedForceSecret: forceSecret.name
         }
       }
-    }]);
+    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} shared ${forceSecret.name} with ${ally.name}`);
     ui.notifications.info(`${ally.name} can use ${forceSecret.name} this turn!`);
@@ -896,7 +897,7 @@ export class LightSideTalentMechanics {
     // Create active effect that lasts until start of next turn
     const effectData = {
       name: `Steel Resolve (-${penaltyAmount} attack, +${willBonus} Will)`,
-      icon: "icons/svg/shield.svg",
+      icon: 'icons/svg/shield.svg',
       duration: {
         rounds: 1,
         startRound: game.combat?.round,
@@ -904,13 +905,13 @@ export class LightSideTalentMechanics {
       },
       changes: [
         {
-          key: "system.attackPenalty",
+          key: 'system.attackPenalty',
           mode: 2, // ADD
           value: -penaltyAmount,
           priority: 20
         },
         {
-          key: "system.defenses.will.bonus",
+          key: 'system.defenses.will.bonus',
           mode: 2, // ADD
           value: willBonus,
           priority: 20
@@ -925,7 +926,7 @@ export class LightSideTalentMechanics {
       }
     };
 
-    await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+    await createEffectOnActor(actor, effectData);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Steel Resolve: -${penaltyAmount} attack, +${willBonus} Will Defense`);
     ui.notifications.info(`Steel Resolve activated: -${penaltyAmount} to attack rolls, +${willBonus} to Will Defense until start of your next turn!`);
@@ -1056,7 +1057,7 @@ export class LightSideTalentMechanics {
       // Apply effects based on condition state
       if (currentStep >= 4) {
         // Reached the end - apply "cannot attack you or allies" effect
-        await targetActor.createEmbeddedDocuments('ActiveEffect', [{
+        await createEffectOnActor(targetActor, {
           name: 'Broken Resolve - Cannot Attack',
           icon: 'icons/svg/daze.svg',
           changes: [], // This is primarily a roleplay/rules effect
@@ -1072,12 +1073,12 @@ export class LightSideTalentMechanics {
               condition: 'broken'
             }
           }
-        }]);
+        });
 
         conditionMessage = `${targetActor.name}'s resolve is completely broken! They cannot attack ${actor.name} or their allies for the remainder of the encounter (unless attacked first).`;
       } else {
         // Apply condition effect (shaken, frightened, etc.)
-        await targetActor.createEmbeddedDocuments('ActiveEffect', [{
+        await createEffectOnActor(targetActor, {
           name: `Negotiation - ${currentCondition.name}`,
           icon: 'icons/svg/despair.svg',
           changes: [],
@@ -1093,7 +1094,7 @@ export class LightSideTalentMechanics {
               conditionStep: currentStep
             }
           }
-        }]);
+        });
 
         const masterNote = this.hasMasterNegotiator(actor) ? ' (Master Negotiator +1 additional step)' : '';
         conditionMessage = `${targetActor.name} moves ${stepsMovedBack} step${stepsMovedBack > 1 ? 's' : ''} back on the Condition Track${masterNote}. Current condition: ${currentCondition.name}.`;
@@ -1165,8 +1166,8 @@ export class LightSideTalentMechanics {
     }
 
     return canvas.tokens.placeables.filter(token => {
-      if (!token.actor || token.actor.id === actor.id) return false;
-      if (token.document.disposition !== actorToken.document.disposition) return false;
+      if (!token.actor || token.actor.id === actor.id) {return false;}
+      if (token.document.disposition !== actorToken.document.disposition) {return false;}
 
       const distance = canvas.grid.measureDistance(actorToken, token);
       return distance <= range;
@@ -1187,8 +1188,8 @@ export class LightSideTalentMechanics {
     }
 
     return canvas.tokens.placeables.filter(token => {
-      if (!token.actor || token.actor.id === actor.id) return false;
-      if (token.document.disposition !== actorToken.document.disposition) return false;
+      if (!token.actor || token.actor.id === actor.id) {return false;}
+      if (token.document.disposition !== actorToken.document.disposition) {return false;}
 
       // Simple LOS check - in a real implementation you'd check for walls/obstacles
       return true;
@@ -1209,7 +1210,7 @@ export class LightSideTalentMechanics {
     }
 
     return canvas.tokens.placeables.filter(token => {
-      if (!token.actor || token.actor.id === actor.id) return false;
+      if (!token.actor || token.actor.id === actor.id) {return false;}
       return token.document.disposition === actorToken.document.disposition;
     });
   }
@@ -1250,7 +1251,7 @@ Hooks.on('directTriggered', async (actor) => {
         select: {
           label: 'Next',
           callback: async (html) => {
-            const allyId = html.find('#ally-select').val();
+            const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
             const ally = game.actors.get(allyId);
 
             // Get spent Force Powers from ally
@@ -1341,7 +1342,7 @@ Hooks.on('consularsWisdomTriggered', async (actor) => {
         grant: {
           label: 'Grant Wisdom Bonus',
           callback: async (html) => {
-            const allyId = html.find('#ally-select').val();
+            const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
             await LightSideTalentMechanics.completeConsularsWisdomSelection(
               actor,
               allyId,
@@ -1409,7 +1410,7 @@ Hooks.on('darkSidePowerTargeted', async (targetActor, darkSidePower, sourceActor
         activate: {
           label: 'Activate (Spend FP)',
           callback: async (html) => {
-            const powerId = html.find('#power-select').val();
+            const powerId = (html?.[0] ?? html)?.querySelector('#power-select')?.value;
             const power = targetActor.items.get(powerId);
             await LightSideTalentMechanics.completeDarkRetaliationSelection(
               targetActor,
@@ -1443,7 +1444,7 @@ Hooks.on('darkSidePowerTargeted', async (targetActor, darkSidePower, sourceActor
 Hooks.on('deleteCombat', async (combat) => {
   for (const combatant of combat.combatants) {
     const actor = combatant.actor;
-    if (!actor) continue;
+    if (!actor) {continue;}
 
     // Clear all light side talent encounter flags
     const combatId = combat.id;

@@ -3,23 +3,25 @@
  * Allows players to import characters from .json or .txt files
  */
 
+import { createActor, createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
+
 export class CharacterImportWizard extends Dialog {
   constructor(options = {}) {
     const dialogData = {
-      title: "Import Character",
+      title: 'Import Character',
       content: CharacterImportWizard.getTemplate(),
       buttons: {
         import: {
           icon: '<i class="fas fa-upload"></i>',
-          label: "Import",
+          label: 'Import',
           callback: html => this._processImport(html)
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
-          label: "Cancel"
+          label: 'Cancel'
         }
       },
-      default: "import"
+      default: 'import'
     };
 
     super(dialogData, options);
@@ -27,9 +29,9 @@ export class CharacterImportWizard extends Dialog {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "dialog", "character-import"],
+      classes: ['swse', 'dialog', 'character-import'],
       width: 600,
-      height: "auto"
+      height: 'auto'
     });
   }
 
@@ -131,11 +133,11 @@ export class CharacterImportWizard extends Dialog {
       const pasteSection = root.querySelector('.paste-section');
 
       if (method === 'file') {
-        if (fileSection) fileSection.style.display = '';
-        if (pasteSection) pasteSection.style.display = 'none';
+        if (fileSection) {fileSection.style.display = '';}
+        if (pasteSection) {pasteSection.style.display = 'none';}
       } else {
-        if (fileSection) fileSection.style.display = 'none';
-        if (pasteSection) pasteSection.style.display = '';
+        if (fileSection) {fileSection.style.display = 'none';}
+        if (pasteSection) {pasteSection.style.display = '';}
       }
     });
 
@@ -143,7 +145,7 @@ export class CharacterImportWizard extends Dialog {
     const fileInput = root.querySelector('#character-file');
     fileInput?.addEventListener('change', async (e) => {
       const file = e.target.files?.[0];
-      if (!file) return;
+      if (!file) {return;}
 
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -172,8 +174,12 @@ export class CharacterImportWizard extends Dialog {
    * Show preview of character data
    */
   _showPreview(html, data) {
-    const preview = root.querySelector('#import-preview');
-    const previewContent = preview.find('.preview-content');
+    const root = html?.[0] ?? html;
+    const preview = root?.querySelector('#import-preview');
+    if (!preview) {return;}
+
+    const previewContent = preview.querySelector('.preview-content');
+    if (!previewContent) {return;}
 
     let content = `
       <p><strong>Name:</strong> ${data.name || 'Unknown'}</p>
@@ -190,8 +196,8 @@ export class CharacterImportWizard extends Dialog {
       content += `<p><strong>Items:</strong> ${data.items.length}</p>`;
     }
 
-    previewContent.html(content);
-    preview.show();
+    previewContent.innerHTML = content;
+    preview.style.display = '';
   }
 
   /**
@@ -199,14 +205,17 @@ export class CharacterImportWizard extends Dialog {
    */
   async _processImport(html) {
     try {
-      const method = (root?.querySelector?.('#import-method')?.value ?? null);
-      const createNew = root.querySelector('#create-new-actor').is(':checked');
+      const root = html?.[0] ?? html;
+      const method = root?.querySelector?.('#import-method')?.value ?? null;
+      const createNewCheckbox = root?.querySelector?.('#create-new-actor');
+      const createNew = createNewCheckbox?.checked ?? true;
 
       let characterData;
 
       // Get data based on method
       if (method === 'file') {
-        const file = root.querySelector('#character-file')[0]?.files?.[0];
+        const fileInput = root?.querySelector?.('#character-file');
+        const file = fileInput?.files?.[0];
         if (!file) {
           ui.notifications.warn('Please select a file to import.');
           return;
@@ -237,7 +246,7 @@ export class CharacterImportWizard extends Dialog {
       await this._importCharacter(characterData, createNew);
 
     } catch (error) {
-      console.error("Error importing character:", error);
+      console.error('Error importing character:', error);
       ui.notifications.error('Failed to import character. See console for details.');
     }
   }
@@ -295,7 +304,7 @@ export class CharacterImportWizard extends Dialog {
    * Clean item/effect data for import by removing IDs that would cause conflicts
    */
   _cleanEmbeddedData(documents) {
-    if (!Array.isArray(documents)) return [];
+    if (!Array.isArray(documents)) {return [];}
 
     return documents.map(doc => {
       const cleaned = foundry.utils.deepClone(doc);
@@ -329,8 +338,8 @@ export class CharacterImportWizard extends Dialog {
       };
 
       if (createNew) {
-        // Create a new actor
-        const actor = await Actor.create(actorData);
+        // Create a new actor using v13-safe wrapper
+        const actor = await createActor(actorData);
 
         if (actor) {
           ui.notifications.info(`Successfully imported ${actor.name}`);
@@ -348,11 +357,11 @@ export class CharacterImportWizard extends Dialog {
 
         // Confirm overwrite
         const confirmed = await Dialog.confirm({
-          title: "Overwrite Actor",
+          title: 'Overwrite Actor',
           content: `<p>This will replace <strong>${targetActor.name}</strong> with the imported character data. Continue?</p>`
         });
 
-        if (!confirmed) return;
+        if (!confirmed) {return;}
 
         // Update the actor
         await targetActor.update({
@@ -363,15 +372,21 @@ export class CharacterImportWizard extends Dialog {
         });
 
         // Clear existing items and effects
-        await targetActor.deleteEmbeddedDocuments("Item", targetActor.items.map(i => i.id));
-        await targetActor.deleteEmbeddedDocuments("ActiveEffect", targetActor.effects.map(e => e.id));
+        await targetActor.deleteEmbeddedDocuments('Item', targetActor.items.map(i => i.id));
+        await targetActor.deleteEmbeddedDocuments('ActiveEffect', targetActor.effects.map(e => e.id));
 
         // Add new items and effects (using already cleaned data)
         if (cleanedItems.length > 0) {
-          await targetActor.createEmbeddedDocuments("Item", cleanedItems);
+          const createdItems = await createItemInActor(targetActor, cleanedItems);
+          if (!createdItems || createdItems.length === 0) {
+            console.warn('No items were created');
+          }
         }
         if (cleanedEffects.length > 0) {
-          await targetActor.createEmbeddedDocuments("ActiveEffect", cleanedEffects);
+          const createdEffects = await createEffectOnActor(targetActor, cleanedEffects);
+          if (!createdEffects || createdEffects.length === 0) {
+            console.warn('No effects were created');
+          }
         }
 
         ui.notifications.info(`Successfully updated ${targetActor.name}`);
@@ -379,7 +394,7 @@ export class CharacterImportWizard extends Dialog {
       }
 
     } catch (error) {
-      console.error("Error creating/updating actor:", error);
+      console.error('Error creating/updating actor:', error);
       ui.notifications.error('Failed to import character. See console for details.');
     }
   }

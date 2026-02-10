@@ -28,7 +28,7 @@ export default class SWSEDialogHelper {
      * @param {Object} config.options - Additional dialog options
      * @returns {Promise<boolean>} True if user confirmed, false otherwise
      */
-    static async confirm({title, content, yes, no, options = {}}) {
+    static async confirm({ title, content, yes, no, options = {} }) {
         return Dialog.confirm({
             title,
             content,
@@ -48,7 +48,7 @@ export default class SWSEDialogHelper {
      * @param {Object} config.options - Additional dialog options
      * @returns {Promise} Result from callback
      */
-    static async prompt({title, content, label = "Confirm", callback, options = {}}) {
+    static async prompt({ title, content, label = 'Confirm', callback, options = {} }) {
         return Dialog.prompt({
             title,
             content,
@@ -70,7 +70,7 @@ export default class SWSEDialogHelper {
      * @param {Object} config.options - Additional dialog options
      * @returns {Promise} Result from selected button callback
      */
-    static async show({title, content, buttons, render, close, default: defaultButton, options = {}}) {
+    static async show({ title, content, buttons, render, close, default: defaultButton, options = {} }) {
         return new Promise((resolve) => {
             const dialog = new Dialog({
                 title,
@@ -78,7 +78,7 @@ export default class SWSEDialogHelper {
                 buttons: this._processButtons(buttons, resolve),
                 render,
                 close: () => {
-                    if (close) close();
+                    if (close) {close();}
                     resolve(null);
                 },
                 default: defaultButton
@@ -123,7 +123,7 @@ export default class SWSEDialogHelper {
             buttons: {
                 ok: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "OK"
+                    label: 'OK'
                 }
             },
             options: this.getDefaultOptions(options)

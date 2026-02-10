@@ -60,7 +60,7 @@ export const FeatRegistry = {
      * Get a feat by name (case-insensitive)
      */
     get(name) {
-        if (!name) return null;
+        if (!name) {return null;}
         return this.feats.get(name.toLowerCase()) ?? null;
     },
 
@@ -68,7 +68,7 @@ export const FeatRegistry = {
      * Check if a feat exists
      */
     has(name) {
-        if (!name) return false;
+        if (!name) {return false;}
         return this.feats.has(name.toLowerCase());
     },
 
@@ -149,16 +149,15 @@ export const FeatRegistry = {
 export default FeatRegistry;
 
 
-
 // ============================================================
 // GENERATED FEAT VIEW MODEL INTEGRATION
 // ============================================================
 
-let featViewModel = await loadJSON("systems/foundryvtt-swse/data/generated/feat-view-model.json");
-;
+const featViewModel = await loadJSON('systems/foundryvtt-swse/data/generated/feat-view-model.json');
+
 
 export function loadGeneratedFeats() {
-  if (!featViewModel?.feats) return null;
+  if (!featViewModel?.feats) {return null;}
 
   console.log(`[SWSE] Loaded generated feat view model: ${featViewModel.feats.length} feats`);
   return featViewModel;

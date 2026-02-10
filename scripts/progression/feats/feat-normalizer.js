@@ -77,7 +77,7 @@ export const FeatNormalizer = {
      * @private
      */
     _normalizePrerequisite(prereq) {
-        if (!prereq) return '';
+        if (!prereq) {return '';}
         return String(prereq).trim().replace(/\s+/g, ' ');
     },
 
@@ -86,7 +86,7 @@ export const FeatNormalizer = {
      * @private
      */
     _normalizeBenefit(benefit) {
-        if (!benefit) return '';
+        if (!benefit) {return '';}
         return String(benefit).trim().replace(/\s+/g, ' ');
     },
 
@@ -95,8 +95,8 @@ export const FeatNormalizer = {
      * @private
      */
     _normalizeBonusFor(bonusFor) {
-        if (!bonusFor) return [];
-        if (!Array.isArray(bonusFor)) return [];
+        if (!bonusFor) {return [];}
+        if (!Array.isArray(bonusFor)) {return [];}
 
         return bonusFor
             .map(className => String(className).trim())

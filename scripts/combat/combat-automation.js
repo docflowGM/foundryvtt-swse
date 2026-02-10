@@ -1,4 +1,5 @@
-import { SWSELogger } from "../utils/logger.js";
+import { createChatMessage } from '../../core/document-api-v13.js';
+import { SWSELogger } from '../utils/logger.js';
 
 /**
  * SWSE Combat Automation (v13+)
@@ -12,7 +13,7 @@ import { SWSELogger } from "../utils/logger.js";
 export class SWSECombatAutomation {
 
   static init() {
-    SWSELogger.log("SWSE | Initializing Combat Automation");
+    SWSELogger.log('SWSE | Initializing Combat Automation');
     this._registerHooks();
   }
 
@@ -27,28 +28,28 @@ export class SWSECombatAutomation {
      * If an actor has taken Condition Track steps, prompt them at the start
      * of their turn unless Persistent.
      */
-    Hooks.on("combatTurn", async combat => {
+    Hooks.on('combatTurn', async combat => {
       const combatant = combat?.combatant;
       const actor = combatant?.actor;
-      if (!actor) return;
+      if (!actor) {return;}
 
       const ct = actor.system.conditionTrack?.current ?? 0;
-      if (ct > 0) await this._promptConditionRecovery(actor);
+      if (ct > 0) {await this._promptConditionRecovery(actor);}
     });
 
     /**
      * ⚔ Combat Start — Reset Resources
      * Controlled by SWSE system setting: resetResourcesOnCombat
      */
-    Hooks.on("combatStart", async combat => {
-      if (!game.settings.get("foundryvtt-swse", "resetResourcesOnCombat")) return;
+    Hooks.on('combatStart', async combat => {
+      if (!game.settings.get('foundryvtt-swse', 'resetResourcesOnCombat')) {return;}
 
       for (const combatant of combat.combatants) {
         const actor = combatant.actor;
-        if (!actor) continue;
+        if (!actor) {continue;}
 
-        if (actor.type === "character") {
-          await actor.update({ "system.secondWind.used": false }, { diff: true });
+        if (actor.type === 'character') {
+          await actor.update({ 'system.secondWind.used': false }, { diff: true });
         }
       }
     });
@@ -56,8 +57,8 @@ export class SWSECombatAutomation {
     /**
      * 🧹 Combat End — Cleanup & Logging
      */
-    Hooks.on("combatEnd", () => {
-      SWSELogger.log("SWSE | Combat ended.");
+    Hooks.on('combatEnd', () => {
+      SWSELogger.log('SWSE | Combat ended.');
     });
   }
 
@@ -72,9 +73,9 @@ export class SWSECombatAutomation {
   static async checkDamageThreshold(actor, damage) {
     const threshold = actor.system.damageThreshold;
 
-    if (damage < threshold) return false;
+    if (damage < threshold) {return false;}
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `
       <div class="swse threshold-exceeded">
@@ -88,7 +89,7 @@ export class SWSECombatAutomation {
     await actor.moveConditionTrack(1);
 
     if (actor.system.hp.value === 0 && actor.isHelpless) {
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: `
         <div class="swse death-notification">
@@ -110,7 +111,7 @@ export class SWSECombatAutomation {
     const ct = actor.system.conditionTrack?.current ?? 0;
     const persistent = actor.system.conditionTrack?.persistent === true;
 
-    if (ct === 0) return;
+    if (ct === 0) {return;}
 
     if (persistent) {
       ui.notifications.warn(`${actor.name}'s condition is persistent and does not naturally recover.`);
@@ -131,11 +132,11 @@ export class SWSECombatAutomation {
         buttons: {
           recover: {
             icon: '<i class="fas fa-heart"></i>',
-            label: "Recover Naturally",
+            label: 'Recover Naturally',
             callback: async () => {
               await actor.moveConditionTrack(-1);
 
-              ChatMessage.create({
+              createChatMessage({
                 speaker: ChatMessage.getSpeaker({ actor }),
                 content: `<strong>${actor.name}</strong> recovers one step on the Condition Track.`
               });
@@ -145,10 +146,10 @@ export class SWSECombatAutomation {
           },
           secondWind: {
             icon: '<i class="fas fa-wind"></i>',
-            label: "Use Second Wind",
+            label: 'Use Second Wind',
             callback: async () => {
-              if (actor.type !== "character") {
-                ui.notifications.warn("Only characters can use Second Wind.");
+              if (actor.type !== 'character') {
+                ui.notifications.warn('Only characters can use Second Wind.');
                 return resolve(false);
               }
               const ok = await actor.useSecondWind();
@@ -157,22 +158,22 @@ export class SWSECombatAutomation {
           },
           skip: {
             icon: '<i class="fas fa-times"></i>',
-            label: "Skip",
+            label: 'Skip',
             callback: () => {
               ui.notifications.info(`${actor.name} does not attempt recovery.`);
               resolve(false);
             }
           }
         },
-        default: "recover"
+        default: 'recover'
       }).render(true);
     });
   }
 
   static _conditionLabel(step) {
     return (
-      ["Normal", "-1 Penalty", "-2 Penalty", "-5 Penalty", "-10 Penalty", "Helpless"][step] ??
-      "Unknown"
+      ['Normal', '-1 Penalty', '-2 Penalty', '-5 Penalty', '-10 Penalty', 'Helpless'][step] ??
+      'Unknown'
     );
   }
 

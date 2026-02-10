@@ -8,7 +8,7 @@
  * @returns {string} Slugified text
  */
 export function slugify(text) {
-    if (!text) return "";
+    if (!text) {return '';}
     return text
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
@@ -22,7 +22,7 @@ export function slugify(text) {
  */
 export function formatModifier(value) {
     const num = Number(value);
-    if (isNaN(num)) return "+0";
+    if (isNaN(num)) {return '+0';}
     return num >= 0 ? `+${num}` : `${num}`;
 }
 
@@ -33,7 +33,7 @@ export function formatModifier(value) {
  * @returns {string} Truncated text
  */
 export function truncate(text, length = 50) {
-    if (!text) return "";
+    if (!text) {return '';}
     return text.length > length ? text.substring(0, length) + '...' : text;
 }
 
@@ -43,7 +43,7 @@ export function truncate(text, length = 50) {
  * @returns {string} Capitalized text
  */
 export function capitalize(text) {
-    if (!text) return "";
+    if (!text) {return '';}
     return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
@@ -53,7 +53,7 @@ export function capitalize(text) {
  * @returns {string} Title cased text
  */
 export function titleCase(text) {
-    if (!text) return "";
+    if (!text) {return '';}
     return text.replace(/\w\S*/g, (txt) => {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
@@ -65,7 +65,7 @@ export function titleCase(text) {
  * @returns {string} Escaped HTML-safe text
  */
 export function escapeHtml(text) {
-    if (!text) return "";
+    if (!text) {return '';}
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
@@ -78,7 +78,7 @@ export function escapeHtml(text) {
  * @returns {string} Sanitized HTML
  */
 export function sanitizeHtml(html) {
-    if (!html) return "";
+    if (!html) {return '';}
 
     // Create a temporary element
     const temp = document.createElement('div');
@@ -105,10 +105,10 @@ export function sanitizeHtml(html) {
  * @returns {string} Plain text
  */
 export function stripHtml(html) {
-    if (!html) return "";
-    const tmp = document.createElement("DIV");
+    if (!html) {return '';}
+    const tmp = document.createElement('DIV');
     tmp.innerHTML = html; // This is safe here - we're extracting text, not rendering user content
-    return tmp.textContent || tmp.innerText || "";
+    return tmp.textContent || tmp.innerText || '';
 }
 
 /**
@@ -118,12 +118,12 @@ export function stripHtml(html) {
  */
 export function getAverageDiceValue(diceNotation) {
     const match = diceNotation.match(/(\d+)d(\d+)(?:\+(\d+))?/);
-    if (!match) return 0;
-    
+    if (!match) {return 0;}
+
     const [, numDice, dieSize, modifier] = match;
     const avgPerDie = (parseInt(dieSize, 10) + 1) / 2;
     const avgTotal = parseInt(numDice, 10) * avgPerDie;
     const mod = parseInt(modifier || 0, 10);
-    
+
     return Math.floor(avgTotal + mod);
 }

@@ -1,6 +1,8 @@
 // scripts/sheets/v2/character-sheet.js
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { RenderAssertions } from '../../core/render-assertions.js';
+import { initiateItemSale } from '../../apps/item-selling-system.js';
 
 /**
  * Safe accessor for devMode setting
@@ -61,7 +63,6 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
     }
   );
 
-  
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
@@ -92,6 +93,8 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
   }
 
   async _prepareContext(_options) {
+    RenderAssertions.logCheckpoint('CharacterSheet', 'prepareContext start');
+
     // Fail-fast: this sheet is for characters only
     if (this.document.type !== 'character') {
       throw new Error(
@@ -99,10 +102,11 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
       );
     }
 
-    console.log(`📦 SWSEV2CharacterSheet _prepareContext CALLED for ${this.document.name}`);
-
     // Build context from actor data
     const actor = this.document;
+
+    // ACTOR VALIDATION
+    RenderAssertions.assertActorValid(actor, 'SWSEV2CharacterSheet');
 
     // DATA VALIDATION (catches 80% of blank sheet issues)
     if (getDevMode()) {
@@ -148,6 +152,10 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
       config: CONFIG.SWSE
     };
 
+    // ASSERT: Context must be serializable for AppV2 (structuredClone requirement)
+    RenderAssertions.assertContextSerializable(context, 'SWSEV2CharacterSheet');
+    RenderAssertions.logCheckpoint('CharacterSheet', 'prepareContext complete', { actorId: actor.id });
+
     return context;
   }
 
@@ -166,11 +174,20 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
    * which triggers a re-render with new _prepareContext() data.
    */
   async _onRender(_context, _options) {
-    console.log(`🖼️ SWSEV2CharacterSheet _onRender CALLED for ${this.document.name}`, { hasElement: !!this.element, childCount: this.element?.children?.length });
+    RenderAssertions.logCheckpoint('CharacterSheet', '_onRender start');
 
     // AppV2 invariant: all DOM access must use this.element
     const root = this.element;
-    if (!(root instanceof HTMLElement)) {return;}
+    if (!(root instanceof HTMLElement)) {
+      throw new Error('CharacterSheet: element is not an HTMLElement after render');
+    }
+
+    // ASSERT: Required DOM elements exist (catch template issues early)
+    RenderAssertions.assertDOMElements(
+      root,
+      ['.sheet-tabs', '.sheet-body', '.swse-v2-condition-step'],
+      'SWSEV2CharacterSheet'
+    );
 
     // Highlight the current condition step
     markActiveConditionStep(root, this.actor);
@@ -234,6 +251,21 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
       });
     }
 
+    // Item selling (inventory context action)
+    for (const el of root.querySelectorAll('[data-action="sell"]')) {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const itemRow = ev.currentTarget?.closest('.item-row');
+        const itemId = itemRow?.dataset?.itemId;
+        if (!itemId) {return;}
+        const item = this.actor?.items?.get(itemId);
+        if (item) {
+          await initiateItemSale(item, this.actor);
+        }
+      });
+    }
+
     // Action execution
     for (const el of root.querySelectorAll('.swse-v2-use-action')) {
       el.addEventListener('click', async (ev) => {
@@ -246,6 +278,9 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
         }
       });
     }
+
+    // FINAL CHECKPOINT: Assert render completed successfully
+    RenderAssertions.assertRenderComplete(this, 'SWSEV2CharacterSheet');
   }
 
   async _updateObject(event, formData) {

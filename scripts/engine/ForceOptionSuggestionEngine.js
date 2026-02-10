@@ -1,18 +1,12 @@
 /**
  * SWSE Force Option Suggestion Engine
+ * (PHASE 5D: UNIFIED_TIERS Refactor)
  *
  * Provides intelligent suggestions for Force powers, secrets, and techniques
  * based on character's build direction, combat style, and prestige class targets.
  *
  * Integrates with BuildIntent and RulesetProfile to deliver context-aware recommendations.
- *
- * Suggestion Tiers:
- * TIER 5 - PRESTIGE_ALIGNED: Directly supports prestige class build path
- * TIER 4 - COMBAT_SYNERGY: Enhances character's primary combat style
- * TIER 3 - UNIVERSAL_STRONG: Universally strong Force option
- * TIER 2 - HOUSE_RULE_BONUS: Enhanced by active house rules
- * TIER 1 - COMPATIBLE: Legal option that fits the build
- * TIER 0 - AVAILABLE: Can be selected but not specifically recommended
+ * Now uses UNIFIED_TIERS system for consistent tier definitions.
  */
 
 import { SWSELogger } from '../utils/logger.js';
@@ -21,164 +15,149 @@ import {
   generateForcePowerArchetypeWeights,
   validateForcePowerCategories
 } from './force-power-categories.js';
+import { UNIFIED_TIERS, getTierMetadata } from './suggestion-unified-tiers.js';
 
+// DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
+// Use UNIFIED_TIERS from suggestion-unified-tiers.js instead
 export const FORCE_OPTION_TIERS = {
-  PRESTIGE_ALIGNED: 5,
-  COMBAT_SYNERGY: 4,
-  UNIVERSAL_STRONG: 3,
-  HOUSE_RULE_BONUS: 2,
-  COMPATIBLE: 1,
-  AVAILABLE: 0
-};
-
-export const TIER_REASONS = {
-  5: "Directly supports your prestige class build path",
-  4: "Enhances your primary combat style",
-  3: "Universally strong Force option",
-  2: "Boosted by active house rules",
-  1: "Compatible with your build",
-  0: "Available for selection"
-};
-
-export const TIER_ICONS = {
-  5: "fa-crown",        // Crown for prestige alignment
-  4: "fa-bolt",         // Lightning for combat synergy
-  3: "fa-star",         // Star for universal strength
-  2: "fa-cog",          // Cog for house rules
-  1: "fa-check",        // Check for compatible
-  0: ""                 // No icon for available
+  PRESTIGE_ALIGNED: UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,  // 5
+  COMBAT_SYNERGY: UNIFIED_TIERS.PATH_CONTINUATION,         // 4
+  UNIVERSAL_STRONG: UNIFIED_TIERS.CATEGORY_SYNERGY,        // 3
+  HOUSE_RULE_BONUS: UNIFIED_TIERS.ABILITY_SYNERGY,         // 2
+  COMPATIBLE: UNIFIED_TIERS.THEMATIC_FIT,                  // 1
+  AVAILABLE: UNIFIED_TIERS.AVAILABLE                       // 0
 };
 
 // Force Option Catalog
 export const FORCE_OPTIONS_CATALOG = {
   // Powers
   move_object: {
-    id: "move_object",
-    name: "Move Object",
-    type: "power",
-    category: "control",
-    description: "Telekinetically move or manipulate objects"
+    id: 'move_object',
+    name: 'Move Object',
+    type: 'power',
+    category: 'control',
+    description: 'Telekinetically move or manipulate objects'
   },
   negate_energy: {
-    id: "negate_energy",
-    name: "Negate Energy",
-    type: "power",
-    category: "defense",
-    description: "Create protective barrier against energy attacks"
+    id: 'negate_energy',
+    name: 'Negate Energy',
+    type: 'power',
+    category: 'defense',
+    description: 'Create protective barrier against energy attacks'
   },
   surge: {
-    id: "surge",
-    name: "Surge",
-    type: "power",
-    category: "mobility",
-    description: "Enhanced speed and reflexes through the Force"
+    id: 'surge',
+    name: 'Surge',
+    type: 'power',
+    category: 'mobility',
+    description: 'Enhanced speed and reflexes through the Force'
   },
   force_slam: {
-    id: "force_slam",
-    name: "Force Slam",
-    type: "power",
-    category: "control",
-    description: "Hurl objects or creatures with Force power"
+    id: 'force_slam',
+    name: 'Force Slam',
+    type: 'power',
+    category: 'control',
+    description: 'Hurl objects or creatures with Force power'
   },
   mind_trick: {
-    id: "mind_trick",
-    name: "Mind Trick",
-    type: "power",
-    category: "control",
-    description: "Influence minds and perceptions"
+    id: 'mind_trick',
+    name: 'Mind Trick',
+    type: 'power',
+    category: 'control',
+    description: 'Influence minds and perceptions'
   },
   enlighten: {
-    id: "enlighten",
-    name: "Enlighten",
-    type: "power",
-    category: "support",
-    description: "Grant allies insight and enhanced abilities"
+    id: 'enlighten',
+    name: 'Enlighten',
+    type: 'power',
+    category: 'support',
+    description: 'Grant allies insight and enhanced abilities'
   },
   force_lightning: {
-    id: "force_lightning",
-    name: "Force Lightning",
-    type: "power",
-    category: "damage",
-    description: "Devastating electrical attack powered by the dark side"
+    id: 'force_lightning',
+    name: 'Force Lightning',
+    type: 'power',
+    category: 'damage',
+    description: 'Devastating electrical attack powered by the dark side'
   },
   battle_strike: {
-    id: "battle_strike",
-    name: "Battle Strike",
-    type: "power",
-    category: "melee",
-    description: "Enhance melee attacks with Force power"
+    id: 'battle_strike',
+    name: 'Battle Strike',
+    type: 'power',
+    category: 'melee',
+    description: 'Enhance melee attacks with Force power'
   },
   stun: {
-    id: "stun",
-    name: "Stun",
-    type: "power",
-    category: "control",
-    description: "Stun target through Force manipulation"
+    id: 'stun',
+    name: 'Stun',
+    type: 'power',
+    category: 'control',
+    description: 'Stun target through Force manipulation'
   },
   force_grip: {
-    id: "force_grip",
-    name: "Force Grip",
-    type: "power",
-    category: "control",
-    description: "Immobilize target with telekinetic force"
+    id: 'force_grip',
+    name: 'Force Grip',
+    type: 'power',
+    category: 'control',
+    description: 'Immobilize target with telekinetic force'
   },
 
   // Secrets
   quicken_power: {
-    id: "quicken_power",
-    name: "Quicken Power",
-    type: "secret",
-    description: "Use Force powers as a swift action"
+    id: 'quicken_power',
+    name: 'Quicken Power',
+    type: 'secret',
+    description: 'Use Force powers as a swift action'
   },
   force_regeneration: {
-    id: "force_regeneration",
-    name: "Force Regeneration",
-    type: "secret",
-    description: "Heal yourself through the Force"
+    id: 'force_regeneration',
+    name: 'Force Regeneration',
+    type: 'secret',
+    description: 'Heal yourself through the Force'
   },
   shatterpoint: {
-    id: "shatterpoint",
-    name: "Shatterpoint",
-    type: "secret",
-    description: "Identify critical weaknesses in objects and structures"
+    id: 'shatterpoint',
+    name: 'Shatterpoint',
+    type: 'secret',
+    description: 'Identify critical weaknesses in objects and structures'
   },
   dark_side_mastery: {
-    id: "dark_side_mastery",
-    name: "Dark Side Mastery",
-    type: "secret",
-    description: "Master dark side Force techniques"
+    id: 'dark_side_mastery',
+    name: 'Dark Side Mastery',
+    type: 'secret',
+    description: 'Master dark side Force techniques'
   },
   force_resistance: {
-    id: "force_resistance",
-    name: "Force Resistance",
-    type: "secret",
-    description: "Resist Force powers and effects"
+    id: 'force_resistance',
+    name: 'Force Resistance',
+    type: 'secret',
+    description: 'Resist Force powers and effects'
   },
 
   // Techniques
   telekinetic_savant: {
-    id: "telekinetic_savant",
-    name: "Telekinetic Savant",
-    type: "technique",
-    description: "Master of telekinetic Force powers"
+    id: 'telekinetic_savant',
+    name: 'Telekinetic Savant',
+    type: 'technique',
+    description: 'Master of telekinetic Force powers'
   },
   improved_battle_meditation: {
-    id: "improved_battle_meditation",
-    name: "Improved Battle Meditation",
-    type: "technique",
-    description: "Enhanced tactical awareness through the Force"
+    id: 'improved_battle_meditation',
+    name: 'Improved Battle Meditation',
+    type: 'technique',
+    description: 'Enhanced tactical awareness through the Force'
   },
   power_recovery: {
-    id: "power_recovery",
-    name: "Power Recovery",
-    type: "technique",
-    description: "Regain spent Force points more quickly"
+    id: 'power_recovery',
+    name: 'Power Recovery',
+    type: 'technique',
+    description: 'Regain spent Force points more quickly'
   },
   force_sensitivity_focus: {
-    id: "force_sensitivity_focus",
-    name: "Force Sensitivity Focus",
-    type: "technique",
-    description: "Deepen connection to the Force"
+    id: 'force_sensitivity_focus',
+    name: 'Force Sensitivity Focus',
+    type: 'technique',
+    description: 'Deepen connection to the Force'
   }
 };
 
@@ -189,15 +168,15 @@ export class ForceOptionSuggestionEngine {
    */
   static _getPrestigeClassPowerSuggestions(prestigeClass) {
     const suggestions = {
-      "Jedi Knight": ["battle_strike", "enlighten", "improved_battle_meditation", "surge"],
-      "Jedi Master": ["enlighten", "force_sensitivity_focus", "improved_battle_meditation", "negate_energy"],
-      "Sith Apprentice": ["force_lightning", "force_grip", "dark_side_mastery", "stun"],
-      "Sith Lord": ["force_lightning", "dark_side_mastery", "force_grip", "move_object"],
-      "Force Adept": ["move_object", "force_lightning", "negate_energy", "telekinetic_savant"],
-      "Force Disciple": ["move_object", "enlighten", "force_sensitivity_focus", "telekinetic_savant"],
-      "Imperial Knight": ["battle_strike", "negate_energy", "surge", "mind_trick"],
-      "Imperial Knight Errant": ["surge", "mind_trick", "battle_strike", "quicken_power"],
-      "Imperial Knight Inquisitor": ["mind_trick", "force_grip", "force_lightning", "awareness"]
+      'Jedi Knight': ['battle_strike', 'enlighten', 'improved_battle_meditation', 'surge'],
+      'Jedi Master': ['enlighten', 'force_sensitivity_focus', 'improved_battle_meditation', 'negate_energy'],
+      'Sith Apprentice': ['force_lightning', 'force_grip', 'dark_side_mastery', 'stun'],
+      'Sith Lord': ['force_lightning', 'dark_side_mastery', 'force_grip', 'move_object'],
+      'Force Adept': ['move_object', 'force_lightning', 'negate_energy', 'telekinetic_savant'],
+      'Force Disciple': ['move_object', 'enlighten', 'force_sensitivity_focus', 'telekinetic_savant'],
+      'Imperial Knight': ['battle_strike', 'negate_energy', 'surge', 'mind_trick'],
+      'Imperial Knight Errant': ['surge', 'mind_trick', 'battle_strike', 'quicken_power'],
+      'Imperial Knight Inquisitor': ['mind_trick', 'force_grip', 'force_lightning', 'awareness']
     };
 
     return suggestions[prestigeClass] || [];
@@ -230,29 +209,29 @@ export class ForceOptionSuggestionEngine {
             ...option,
             suggestion: {
               tier: FORCE_OPTION_TIERS.AVAILABLE,
-              reason: "Not Force-focused",
-              icon: ""
+              reason: 'Not Force-focused',
+              icon: ''
             },
             isSuggested: false
           };
         }
 
         // Universal strong options
-        if (["move_object", "negate_energy", "surge"].includes(option.id)) {
+        if (['move_object', 'negate_energy', 'surge'].includes(option.id)) {
           tier = Math.max(tier, FORCE_OPTION_TIERS.UNIVERSAL_STRONG);
-          reasons.push("Universally strong Force option");
+          reasons.push('Universally strong Force option');
         }
 
         // Combat style alignment
-        const combatStyle = buildIntent.combatStyle || "mixed";
-        if (combatStyle === "lightsaber" && ["battle_strike", "force_slam", "surge"].includes(option.id)) {
+        const combatStyle = buildIntent.combatStyle || 'mixed';
+        if (combatStyle === 'lightsaber' && ['battle_strike', 'force_slam', 'surge'].includes(option.id)) {
           tier = Math.max(tier, FORCE_OPTION_TIERS.COMBAT_SYNERGY);
-          reasons.push("Enhances lightsaber combat");
+          reasons.push('Enhances lightsaber combat');
         }
 
-        if (combatStyle === "caster" && ["force_lightning", "mind_trick", "move_object"].includes(option.id)) {
+        if (combatStyle === 'caster' && ['force_lightning', 'mind_trick', 'move_object'].includes(option.id)) {
           tier = Math.max(tier, FORCE_OPTION_TIERS.COMBAT_SYNERGY);
-          reasons.push("Supports Force caster build");
+          reasons.push('Supports Force caster build');
         }
 
         // Prestige class alignment from L1 survey (highest priority)
@@ -269,76 +248,83 @@ export class ForceOptionSuggestionEngine {
 
         // Check top prestige targets (sorted by confidence)
         for (const affinity of prestigeAffinities.slice(0, 3)) {
-          if (affinity.confidence < 0.6) continue; // Only strong targets
+          if (affinity.confidence < 0.6) {continue;} // Only strong targets
 
           const className = affinity.className;
 
-          if (className === "Jedi Knight" && ["battle_strike", "enlighten", "improved_battle_meditation"].includes(option.id)) {
+          if (className === 'Jedi Knight' && ['battle_strike', 'enlighten', 'improved_battle_meditation'].includes(option.id)) {
             tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
             reasons.push(`Supports ${className} path (${Math.round(affinity.confidence * 100)}% confidence)`);
           }
 
-          if (className === "Force Adept" && ["move_object", "force_lightning", "negate_energy", "telekinetic_savant"].includes(option.id)) {
+          if (className === 'Force Adept' && ['move_object', 'force_lightning', 'negate_energy', 'telekinetic_savant'].includes(option.id)) {
             tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
             reasons.push(`Supports ${className} path (${Math.round(affinity.confidence * 100)}% confidence)`);
           }
 
-          if (className === "Sith Lord" && ["force_lightning", "dark_side_mastery", "force_grip"].includes(option.id)) {
+          if (className === 'Sith Lord' && ['force_lightning', 'dark_side_mastery', 'force_grip'].includes(option.id)) {
             tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
             reasons.push(`Supports ${className} path (${Math.round(affinity.confidence * 100)}% confidence)`);
           }
 
-          if (className === "Jedi Master" && ["enlighten", "force_sensitivity_focus", "improved_battle_meditation"].includes(option.id)) {
+          if (className === 'Jedi Master' && ['enlighten', 'force_sensitivity_focus', 'improved_battle_meditation'].includes(option.id)) {
             tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
             reasons.push(`Supports ${className} path (${Math.round(affinity.confidence * 100)}% confidence)`);
           }
         }
 
         // House rules adjustments
-        if (ruleset.talentFrequency === "everyLevel" && option.type === "power") {
+        if (ruleset.talentFrequency === 'everyLevel' && option.type === 'power') {
           tier = Math.max(tier, tier === FORCE_OPTION_TIERS.AVAILABLE ? FORCE_OPTION_TIERS.HOUSE_RULE_BONUS : tier);
-          reasons.push("House rules favor broader Force selections");
+          reasons.push('House rules favor broader Force selections');
         }
 
         // Primary theme alignment
         const primaryThemes = buildIntent.primaryThemes || [];
-        if (primaryThemes.includes("control") && option.category === "control") {
+        if (primaryThemes.includes('control') && option.category === 'control') {
           tier = Math.max(tier, FORCE_OPTION_TIERS.COMPATIBLE);
-          reasons.push("Aligns with control-focused build");
+          reasons.push('Aligns with control-focused build');
         }
 
-        if (primaryThemes.includes("defense") && option.category === "defense") {
+        if (primaryThemes.includes('defense') && option.category === 'defense') {
           tier = Math.max(tier, FORCE_OPTION_TIERS.COMPATIBLE);
-          reasons.push("Supports defensive playstyle");
+          reasons.push('Supports defensive playstyle');
         }
 
-        const reason = reasons.length > 0 ? reasons.join("; ") : TIER_REASONS[tier];
+        const tierMetadata = getTierMetadata(tier);
+        const reason = reasons.length > 0 ? reasons.join('; ') : tierMetadata.description;
 
         return {
           ...option,
           suggestion: {
             tier,
             reason,
-            icon: TIER_ICONS[tier]
+            icon: tierMetadata.icon,
+            color: tierMetadata.color,
+            label: tierMetadata.label
           },
-          isSuggested: tier >= FORCE_OPTION_TIERS.COMBAT_SYNERGY
+          isSuggested: tier >= UNIFIED_TIERS.PATH_CONTINUATION  // TIER 4+
         };
       });
 
       return suggestedOptions.sort((a, b) => {
         const tierDiff = (b.suggestion?.tier ?? 0) - (a.suggestion?.tier ?? 0);
-        if (tierDiff !== 0) return tierDiff;
-        return (a.name || "").localeCompare(b.name || "");
+        if (tierDiff !== 0) {return tierDiff;}
+        return (a.name || '').localeCompare(b.name || '');
       });
     } catch (err) {
       SWSELogger.error('Force option suggestion failed:', err);
       // Return options without suggestions as fallback
+      const tierMetadata = getTierMetadata(UNIFIED_TIERS.AVAILABLE);
       return options.map(opt => ({
         ...opt,
         suggestion: {
-          tier: FORCE_OPTION_TIERS.AVAILABLE,
-          reason: "Available",
-          icon: ""
+          tier: UNIFIED_TIERS.AVAILABLE,
+          reason: tierMetadata.description,
+          icon: tierMetadata.icon,
+          color: tierMetadata.color,
+          label: tierMetadata.label
+          icon: ''
         },
         isSuggested: false
       }));
@@ -403,7 +389,7 @@ export class ForceOptionSuggestionEngine {
    * @returns {number} Score multiplier
    */
   static scorePowerByArchetype(power, archetype) {
-    const powerName = power.name || "";
+    const powerName = power.name || '';
     const powerData = Object.values(FORCE_POWER_CATEGORIES).find(p => p.name === powerName);
 
     if (!powerData || !powerData.categories) {
@@ -421,7 +407,7 @@ export class ForceOptionSuggestionEngine {
    * @returns {{allowed: boolean, penalty: number}} Whether power is allowed and any moral penalty
    */
   static checkMoralAlignment(power, actor) {
-    const powerName = power.name || "";
+    const powerName = power.name || '';
     const powerData = Object.values(FORCE_POWER_CATEGORIES).find(p => p.name === powerName);
 
     if (!powerData) {
@@ -435,18 +421,18 @@ export class ForceOptionSuggestionEngine {
     const isSith = actor.items.some(i => i.type === 'class' && i.name.includes('Sith'));
 
     // Apply moral checks
-    if (powerData.moralSlant === "sith_only" && isJedi) {
+    if (powerData.moralSlant === 'sith_only' && isJedi) {
       return { allowed: false, penalty: 0 };
     }
-    if (powerData.moralSlant === "jedi_only" && isSith) {
+    if (powerData.moralSlant === 'jedi_only' && isSith) {
       return { allowed: false, penalty: 0 };
     }
 
     // Soft penalties for philosophical misalignment
-    if (powerData.moralSlant === "jedi_favored" && isSith) {
+    if (powerData.moralSlant === 'jedi_favored' && isSith) {
       return { allowed: true, penalty: 0.7 };
     }
-    if (powerData.moralSlant === "sith_favored" && isJedi) {
+    if (powerData.moralSlant === 'sith_favored' && isJedi) {
       return { allowed: true, penalty: 0.7 };
     }
 

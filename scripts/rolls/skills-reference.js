@@ -178,7 +178,7 @@ const SKILLS_DATA_MODEL = {
 function calculateSkills(actor) {
   const halfLevel = getEffectiveHalfLevel(actor);
   const abilities = actor.system.attributes;
-  
+
   // Ability name mapping (convert skill ability to actual ability key)
   const abilityMap = {
     'strength': 'str',
@@ -189,7 +189,7 @@ function calculateSkills(actor) {
     'charisma': 'cha'
   };
 
-  for (let [skillKey, skill] of Object.entries(actor.system.skills)) {
+  for (const [skillKey, skill] of Object.entries(actor.system.skills)) {
     // Get the ability modifier
     const abilityKey = abilityMap[skill.selectedAbility] || skill.selectedAbility;
     const ability = abilities[abilityKey];
@@ -222,14 +222,14 @@ function calculateAbilityModifier(abilityScore) {
  */
 function getSkillModifier(actor, skillKey, options = {}) {
   const skill = actor.system.skills[skillKey];
-  if (!skill) return 0;
+  if (!skill) {return 0;}
 
   let total = skill.total;
 
   // Add temporary modifiers
-  if (options.cover) total += 2;  // Cover bonus
-  if (options.concealment) total += 2;  // Concealment bonus
-  if (options.situational) total += (options.situational || 0);
+  if (options.cover) {total += 2;}  // Cover bonus
+  if (options.concealment) {total += 2;}  // Concealment bonus
+  if (options.situational) {total += (options.situational || 0);}
 
   return total;
 }
@@ -252,7 +252,7 @@ class SWSEActor extends Actor {
     this.system.halfLevel = getEffectiveHalfLevel(this);
 
     // Calculate ability modifiers
-    for (let [key, ability] of Object.entries(this.system.attributes)) {
+    for (const [key, ability] of Object.entries(this.system.attributes)) {
       ability.total = (ability.base || 10) + (ability.racial || 0) + (ability.misc || 0);
       ability.mod = Math.floor((ability.total - 10) / 2);
     }
@@ -281,7 +281,7 @@ class SWSEActor extends Actor {
       'charisma': 'cha'
     };
 
-    for (let [skillKey, skill] of Object.entries(this.system.skills)) {
+    for (const [skillKey, skill] of Object.entries(this.system.skills)) {
       const abilityKey = abilityMap[skill.selectedAbility];
       const abilityMod = abilities[abilityKey]?.mod || 0;
 
@@ -307,7 +307,7 @@ class SWSEActor extends Actor {
     // Reflex Defense
     const reflexDef = this.system.defenses.reflex;
     const reflexAbilityMod = abilities[reflexDef.abilityMod]?.mod || 0;
-    reflexDef.total = 
+    reflexDef.total =
       10 +
       (reflexDef.levelArmor || 0) +
       (reflexDef.classBonus || 0) +
@@ -317,7 +317,7 @@ class SWSEActor extends Actor {
     // Fortitude Defense
     const fortDef = this.system.defenses.fortitude;
     const fortAbilityMod = abilities[fortDef.abilityMod]?.mod || 0;
-    fortDef.total = 
+    fortDef.total =
       10 +
       (fortDef.levelArmor || 0) +
       (fortDef.classBonus || 0) +
@@ -327,7 +327,7 @@ class SWSEActor extends Actor {
     // Will Defense
     const willDef = this.system.defenses.will;
     const willAbilityMod = abilities[willDef.abilityMod]?.mod || 0;
-    willDef.total = 
+    willDef.total =
       10 +
       (willDef.levelArmor || 0) +
       (willDef.classBonus || 0) +
@@ -367,14 +367,14 @@ class SWSEActor extends Actor {
    */
   getSkillModifier(skillKey, options = {}) {
     const skill = this.system.skills[skillKey];
-    if (!skill) return 0;
+    if (!skill) {return 0;}
 
     let total = skill.total;
 
     // Add temporary modifiers
-    if (options.cover) total += 2;
-    if (options.concealment) total += 2;
-    if (options.situational) total += options.situational;
+    if (options.cover) {total += 2;}
+    if (options.concealment) {total += 2;}
+    if (options.situational) {total += options.situational;}
 
     return total;
   }

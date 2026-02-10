@@ -12,8 +12,9 @@ import {
   getTalentTrees,
   validateClassDocument
 } from './chargen-property-accessor.js';
-import { MentorSurvey } from '../mentor-survey.js';
+import { MentorSurvey } from '../mentor/mentor-survey.js';
 import { isBaseClass } from '../levelup/levelup-shared.js';
+import { _findItemByIdOrName } from './chargen-shared.js';
 
 // SSOT Data Layer
 import { ClassesDB } from '../../data/classes-db.js';
@@ -35,7 +36,7 @@ export async function _onSelectClass(event) {
     if (currentClass !== className) {
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Class change detected, requesting user confirmation...`);
       const confirmed = await Dialog.confirm({
-        title: "Change Class?",
+        title: 'Change Class?',
         content: `
           <p>Changing your class will reset:</p>
           <ul>
@@ -153,8 +154,8 @@ export async function _onSelectClass(event) {
   SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Using class definition:`, classDef);
 
   // Apply class selection + resets as a single atomic patch
-  const talentEveryLevelRule = game.settings.get("foundryvtt-swse", "talentEveryLevel") ?? false;
-  const talentEveryLevelExtraL1 = game.settings.get("foundryvtt-swse", "talentEveryLevelExtraL1") ?? false;
+  const talentEveryLevelRule = game.settings.get('foundryvtt-swse', 'talentEveryLevel') ?? false;
+  const talentEveryLevelExtraL1 = game.settings.get('foundryvtt-swse', 'talentEveryLevelExtraL1') ?? false;
   const talentsRequired = talentEveryLevelRule ? (talentEveryLevelExtraL1 ? 2 : 1) : 1;
 
   const patch = buildClassAtomicPatch(this.characterData, className, talentsRequired);
@@ -233,7 +234,7 @@ export async function _onSelectClass(event) {
   SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Calculating trained skills...`);
   const classSkills = classDef.trainedSkills;
   const intMod = this.characterData.abilities.int.mod || 0;
-  const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
+  const humanBonus = (this.characterData.species === 'Human' || this.characterData.species === 'human') ? 1 : 0;
   this.characterData.trainedSkillsAllowed = Math.max(1, classSkills + intMod + humanBonus);
   SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: trainedSkills: ${classSkills}, intMod: ${intMod}, humanBonus: ${humanBonus}, total: ${this.characterData.trainedSkillsAllowed}`);
 
@@ -274,7 +275,7 @@ export async function _onSelectClass(event) {
   const maxFP = calculateMaxForcePoints(tempActorData);
   this.characterData.forcePoints.max = maxFP;
   this.characterData.forcePoints.value = maxFP;
-  this.characterData.forcePoints.die = "1d6";
+  this.characterData.forcePoints.die = '1d6';
 
   SWSELogger.log(`CharGen | Force Points calculated: ${maxFP} (base: ${classDef.baseClass ? 5 : (classDef.grantsForcePoints ? 6 : 5)})`);
 
@@ -347,7 +348,7 @@ export async function _onSelectClass(event) {
 
     if (!surveyCompleted && isBaseClassSelection && identityReady) {
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CONDITION MET - Triggering non-optional mentor survey for "${className}"`);
-      const playerName = this.characterData.name || "";
+      const playerName = this.characterData.name || '';
 
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CALLING showSurvey()...`, { className });
       const surveyAnswers = await MentorSurvey.showSurvey(tempActor, className, className);
@@ -358,10 +359,10 @@ export async function _onSelectClass(event) {
         this.characterData.mentorBiases = biases;
         this.characterData.mentorSurveyCompleted = true;
         SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Mentor biases stored`, biases);
-        ui.notifications.info("Survey completed! Your mentor will use this to personalize suggestions.");
+        ui.notifications.info('Survey completed! Your mentor will use this to personalize suggestions.');
       } else {
         SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User skipped mentor survey (can be completed later)`);
-        ui.notifications.info("Survey skipped. You can complete it later to get personalized mentor suggestions.");
+        ui.notifications.info('Survey skipped. You can complete it later to get personalized mentor suggestions.');
         SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Recording mentor survey skip metadata`);
         this.characterData.mentorSurveySkipped = true;
         this.characterData.mentorSurveySkipCount = (this.characterData.mentorSurveySkipCount || 0) + 1;
@@ -401,7 +402,7 @@ export async function _onClassChanged(event, htmlRoot, initial = false) {
     return;
   }
   const classNode = (htmlRoot || this.element).querySelector('[name="class_select"]');
-  if (!classNode) return;
+  if (!classNode) {return;}
 
   const cls = classNode.value;
   const classDoc = this._packs.classes.find(c => c.name === cls || c._id === cls);
@@ -409,10 +410,10 @@ export async function _onClassChanged(event, htmlRoot, initial = false) {
   // Calculate skill trainings (class base + INT modifier, minimum 1)
   const classSkills = classDoc ? getTrainedSkills(classDoc) : 0;
   const intMod = this.characterData.abilities.int.mod || 0;
-  const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
+  const humanBonus = (this.characterData.species === 'Human' || this.characterData.species === 'human') ? 1 : 0;
   this.characterData.trainedSkillsAllowed = Math.max(1, classSkills + intMod + humanBonus);
 
-  if (!initial) await this.render();
+  if (!initial) {await this.render();}
 }
 
 /**
@@ -422,7 +423,7 @@ export async function _onClassChanged(event, htmlRoot, initial = false) {
  */
 export async function _applyStartingClassFeatures(actor, classDoc) {
   if (!classDoc || !classDoc.system) {
-    SWSELogger.warn("CharGen | No class document provided for feature application");
+    SWSELogger.warn('CharGen | No class document provided for feature application');
     return;
   }
 
@@ -438,16 +439,16 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
 
       const featureItem = {
         name: feature.name,
-        type: "feat",
-        img: feature.img || "icons/svg/upgrade.svg",
+        type: 'feat',
+        img: feature.img || 'icons/svg/upgrade.svg',
         system: {
           description: feature.description || `Starting feature from ${classDoc.name}`,
           source: `${classDoc.name} (Starting)`,
-          featType: "class_feature",
-          prerequisite: feature.prerequisite || "",
+          featType: 'class_feature',
+          prerequisite: feature.prerequisite || '',
           benefit: feature.description || `Starting feature from ${classDoc.name}`,
-          special: feature.special || "",
-          normalText: "",
+          special: feature.special || '',
+          normalText: '',
           bonusFeatFor: [],
           uses: {
             current: 0,
@@ -481,15 +482,24 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
           const weaponsPack = game.packs.get('foundryvtt-swse.weapons');
           if (weaponsPack) {
             const docs = await weaponsPack.getDocuments();
-            const lightsaber = docs.find(d => d.name === "Lightsaber");
+            // Defensive lookup: try to find Lightsaber by name
+            // Convert docs to plain format for consistent lookup
+            const lightsaber = _findItemByIdOrName(
+              docs.map(d => ({ _id: d._id, name: d.name })),
+              'Lightsaber'
+            );
             if (lightsaber) {
-              weaponItems.push(lightsaber.toObject());
+              // Find the actual document to get all properties
+              const actualLightsaber = docs.find(d => d._id === lightsaber._id);
+              if (actualLightsaber) {
+                weaponItems.push(actualLightsaber.toObject());
+              }
             } else {
-              SWSELogger.warn("CharGen | Lightsaber weapon not found in compendium");
+              SWSELogger.warn('CharGen | Lightsaber weapon not found in compendium');
             }
           } else {
-            SWSELogger.error("CharGen | Weapons compendium (foundryvtt-swse.weapons) not found");
-            ui.notifications.warn("Weapons compendium not found. Cannot grant starting lightsaber.");
+            SWSELogger.error('CharGen | Weapons compendium (foundryvtt-swse.weapons) not found');
+            ui.notifications.warn('Weapons compendium not found. Cannot grant starting lightsaber.');
           }
           continue; // Don't create a feat for this, we're giving the actual weapon
         }
@@ -500,16 +510,16 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
 
           const featureItem = {
             name: feature.name,
-            type: "feat",
-            img: feature.img || "icons/svg/upgrade.svg",
+            type: 'feat',
+            img: feature.img || 'icons/svg/upgrade.svg',
             system: {
               description: feature.description || `Class feature from ${classDoc.name} level 1`,
               source: `${classDoc.name} 1`,
               featType: feature.type === 'proficiency' ? 'proficiency' : 'class_feature',
-              prerequisite: feature.prerequisite || "",
+              prerequisite: feature.prerequisite || '',
               benefit: feature.description || `Class feature from ${classDoc.name} level 1`,
-              special: feature.special || "",
-              normalText: "",
+              special: feature.special || '',
+              normalText: '',
               bonusFeatFor: [],
               uses: {
                 current: 0,
@@ -528,18 +538,17 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
   // Create all feature items at once
   if (featureItems.length > 0) {
     SWSELogger.log(`CharGen | Creating ${featureItems.length} class feature items`);
-    await actor.createEmbeddedDocuments("Item", featureItems);
+    await actor.createEmbeddedDocuments('Item', featureItems);
     ui.notifications.info(`Granted ${featureItems.length} class features from ${classDoc.name}`);
   }
 
   // Create weapon items
   if (weaponItems.length > 0) {
     SWSELogger.log(`CharGen | Creating ${weaponItems.length} starting weapon items`);
-    await actor.createEmbeddedDocuments("Item", weaponItems);
+    await actor.createEmbeddedDocuments('Item', weaponItems);
     ui.notifications.info(`Granted starting equipment: ${weaponItems.map(w => w.name).join(', ')}`);
   }
 }
-
 
 
 // ============================================================
@@ -550,11 +559,11 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
  */
 export function _bindClassCardUI(root) {
   const step = root.querySelector('.step-class');
-  if (!step) return;
+  if (!step) {return;}
 
   step.onclick = async (ev) => {
     const btn = ev.target.closest('button');
-    if (!btn) return;
+    if (!btn) {return;}
 
     const card = btn.closest('.class-card');
 
@@ -569,7 +578,7 @@ export function _bindClassCardUI(root) {
       ev.preventDefault();
       ev.stopPropagation();
       const uuid = card?.dataset?.uuid;
-      if (!uuid) return;
+      if (!uuid) {return;}
       const doc = await fromUuid(uuid);
       doc?.sheet?.render(true);
     }

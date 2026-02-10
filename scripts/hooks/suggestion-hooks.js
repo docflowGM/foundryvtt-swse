@@ -31,26 +31,26 @@ export function registerSuggestionHooks() {
 
   HooksRegistry.register('createItem', 'swse-sugs-invalidate', (item) => {
     const actorId = safeGetActorId(item);
-    if (actorId) SuggestionService.invalidate(actorId);
+    if (actorId) {SuggestionService.invalidate(actorId);}
   });
 
   HooksRegistry.register('updateItem', 'swse-sugs-invalidate', (item) => {
     const actorId = safeGetActorId(item);
-    if (actorId) SuggestionService.invalidate(actorId);
+    if (actorId) {SuggestionService.invalidate(actorId);}
   });
 
   HooksRegistry.register('deleteItem', 'swse-sugs-invalidate', (item) => {
     const actorId = safeGetActorId(item);
-    if (actorId) SuggestionService.invalidate(actorId);
+    if (actorId) {SuggestionService.invalidate(actorId);}
   });
 
   // Mentor Notes header control (AppV2)
   HooksRegistry.register('getHeaderControlsApplicationV2', 'swse-mentor-notes', (app, controls) => {
-    if (!isMentorNotesEnabled()) return;
+    if (!isMentorNotesEnabled()) {return;}
     const actor = app?.actor ?? app?.document;
-    if (!actor || actor.documentName !== 'Actor') return;
+    if (!actor || actor.documentName !== 'Actor') {return;}
 
-    if (Array.isArray(controls) && controls.some(c => c?.action === 'swse-mentor-notes')) return;
+    if (Array.isArray(controls) && controls.some(c => c?.action === 'swse-mentor-notes')) {return;}
 
     controls.push({
       action: 'swse-mentor-notes',
@@ -64,7 +64,7 @@ export function registerSuggestionHooks() {
 
   HooksRegistry.register('swse:decision-step-entered', 'swse-sugs-step', async ({ actor, step, pendingData, callback }) => {
     try {
-      if (!actor) return;
+      if (!actor) {return;}
 
       const stepToDomain = {
         feats: 'feats',
@@ -76,7 +76,7 @@ export function registerSuggestionHooks() {
       };
 
       const domain = stepToDomain[step];
-      if (!domain) return;
+      if (!domain) {return;}
 
       const suggestions = await SuggestionService.getSuggestions(actor, 'decision-step', {
         domain,
@@ -84,9 +84,9 @@ export function registerSuggestionHooks() {
       });
 
       const strong = (suggestions || []).filter(s => (s?.suggestion?.tier ?? s?.tier ?? 0) >= 4);
-      if (!strong.length) return;
+      if (!strong.length) {return;}
 
-      if (typeof callback === 'function') callback(strong);
+      if (typeof callback === 'function') {callback(strong);}
 
       Hooks.callAll('swse:strong-suggestions-available', {
         actor,
@@ -99,7 +99,7 @@ export function registerSuggestionHooks() {
   });
 
   HooksRegistry.register('swse:pending-selection-changed', 'swse-sugs-pending', ({ actorId }) => {
-    if (!actorId) return;
+    if (!actorId) {return;}
     SuggestionService.invalidate(actorId);
     SuggestionEngineCoordinator.clearBuildIntentCache(actorId);
   });

@@ -31,7 +31,7 @@ export const ProgressionEngineHelpers = {
      */
     async addItemIfMissing(actor, itemData) {
         const exists = actor.items.find(i => i.name === itemData.name && i.type === itemData.type);
-        if (exists) return exists;
+        if (exists) {return exists;}
 
         try {
             const created = await actor.createEmbeddedDocuments('Item', [itemData]);
@@ -66,7 +66,7 @@ export const ProgressionEngineHelpers = {
      */
     resolveScaling(feature, engine) {
         const expr = feature.value || feature.formula || null;
-        if (!expr) return 0;
+        if (!expr) {return 0;}
 
         const context = {
             classLevel: engine.getSelectedClassLevel ? engine.getSelectedClassLevel() : 1,
@@ -93,7 +93,7 @@ export const ProgressionEngineHelpers = {
      * Normalize a feature object to standard structure
      */
     normalizeFeature(feature) {
-        if (!feature) return null;
+        if (!feature) {return null;}
 
         return {
             name: feature.name || '',
@@ -110,7 +110,7 @@ export const ProgressionEngineHelpers = {
      * Normalize a string for comparison
      */
     normalizeString(str) {
-        if (!str || typeof str !== 'string') return '';
+        if (!str || typeof str !== 'string') {return '';}
         return str.trim().toLowerCase();
     },
 
@@ -118,7 +118,7 @@ export const ProgressionEngineHelpers = {
      * Get feature name from various possible properties
      */
     getFeatureName(feature) {
-        if (!feature) return '';
+        if (!feature) {return '';}
         return feature.name || feature.title || feature.label || '';
     },
 
@@ -127,7 +127,7 @@ export const ProgressionEngineHelpers = {
      */
     async removeExistingByName(actor, name, type = null) {
         const matches = actor.items.filter(i => i.name === name && (!type || i.type === type));
-        if (matches.length === 0) return;
+        if (matches.length === 0) {return;}
 
         for (const m of matches) {
             try {
@@ -177,9 +177,9 @@ export const ProgressionEngineHelpers = {
      * - "Feat: Mobility" → "Mobility"
      */
     extractNameAfterColon(str) {
-        if (!str) return '';
+        if (!str) {return '';}
         const idx = str.indexOf(':');
-        if (idx === -1) return str.trim();
+        if (idx === -1) {return str.trim();}
         return str.slice(idx + 1).trim();
     },
 
@@ -187,8 +187,8 @@ export const ProgressionEngineHelpers = {
      * Parse comma-separated list of items
      */
     parseItemList(str) {
-        if (!str) return [];
-        if (Array.isArray(str)) return str;
+        if (!str) {return [];}
+        if (Array.isArray(str)) {return str;}
         return str.split(',').map(s => s.trim()).filter(s => s.length > 0);
     },
 

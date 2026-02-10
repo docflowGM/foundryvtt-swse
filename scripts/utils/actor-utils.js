@@ -2,39 +2,39 @@
 import { swseLogger } from './logger.js';
 
 function toIntOrNull(value) {
-  if (value === null || value === undefined) return null;
-  if (typeof value === 'number' && Number.isFinite(value)) return Math.trunc(value);
+  if (value === null || value === undefined) {return null;}
+  if (typeof value === 'number' && Number.isFinite(value)) {return Math.trunc(value);}
   const m = String(value).match(/-?\d+/);
-  if (!m) return null;
+  if (!m) {return null;}
   const n = Number.parseInt(m[0], 10);
   return Number.isFinite(n) ? n : null;
 }
 
 function coerceSpeedIntegers(actor, changes) {
   // Vehicles use string speed fields; do not coerce.
-  if (!actor || actor.type === 'vehicle') return changes;
+  if (!actor || actor.type === 'vehicle') {return changes;}
 
   const out = foundry.utils.deepClone(changes);
 
   // Dot-notation keys
   for (const [k, v] of Object.entries(out)) {
-    if (!k) continue;
+    if (!k) {continue;}
     if (k === 'system.speed' || k.endsWith('.speed')) {
       const n = toIntOrNull(v);
-      if (n !== null) out[k] = n;
+      if (n !== null) {out[k] = n;}
     }
   }
 
   // Nested shapes
   const walk = (obj) => {
-    if (!obj || typeof obj !== 'object') return;
+    if (!obj || typeof obj !== 'object') {return;}
     for (const [k, v] of Object.entries(obj)) {
       if (k === 'speed') {
         const n = toIntOrNull(v);
-        if (n !== null) obj[k] = n;
+        if (n !== null) {obj[k] = n;}
         continue;
       }
-      if (v && typeof v === 'object') walk(v);
+      if (v && typeof v === 'object') {walk(v);}
     }
   };
   walk(out.system);

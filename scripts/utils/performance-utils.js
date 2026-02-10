@@ -19,7 +19,7 @@ export function debounce(func, wait = 250, immediate = false) {
 
     const later = () => {
       timeout = null;
-      if (!immediate) func.apply(context, args);
+      if (!immediate) {func.apply(context, args);}
     };
 
     const callNow = immediate && !timeout;
@@ -27,7 +27,7 @@ export function debounce(func, wait = 250, immediate = false) {
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
 
-    if (callNow) func.apply(context, args);
+    if (callNow) {func.apply(context, args);}
   };
 }
 
@@ -130,8 +130,8 @@ export function lazy(loader) {
   let loading = null;
 
   return async function() {
-    if (resource) return resource;
-    if (loading) return loading;
+    if (resource) {return resource;}
+    if (loading) {return loading;}
 
     loading = loader();
     resource = await loading;

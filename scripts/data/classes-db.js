@@ -123,7 +123,7 @@ export const ClassesDB = {
      * @returns {Object|null} - Normalized class or null
      */
     get(classId) {
-        if (!classId) return null;
+        if (!classId) {return null;}
 
         // Ensure ID is normalized
         const normalizedId = normalizeClassId(classId);
@@ -138,7 +138,7 @@ export const ClassesDB = {
      * @returns {Object|null} - Normalized class or null
      */
     byName(name) {
-        if (!name) return null;
+        if (!name) {return null;}
 
         const normalizedId = normalizeClassId(name);
         return this.get(normalizedId);
@@ -151,7 +151,7 @@ export const ClassesDB = {
      * @returns {boolean} - True if class exists
      */
     has(classId) {
-        if (!classId) return false;
+        if (!classId) {return false;}
         const normalizedId = normalizeClassId(classId);
         return this.classes.has(normalizedId);
     },
@@ -190,7 +190,7 @@ export const ClassesDB = {
      * @returns {Array<Object>} - Classes matching role
      */
     byRole(role) {
-        if (!role) return [];
+        if (!role) {return [];}
         return this.all().filter(cls => cls.role === role);
     },
 

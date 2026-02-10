@@ -3,8 +3,8 @@
  * Manages skills, actions, and requirements for each crew position
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { StarshipManeuversEngine } from "../../engine/StarshipManeuversEngine.js";
+import { SWSELogger } from '../../utils/logger.js';
+import { StarshipManeuversEngine } from '../../engine/StarshipManeuversEngine.js';
 
 export class VehicleCrewPositions {
   /**
@@ -146,7 +146,7 @@ export class VehicleCrewPositions {
     }
 
     const skill = this._getCrewActorSkill(actor, skillKey);
-    if (!skill) return 0;
+    if (!skill) {return 0;}
 
     // Get ability modifier
     let abilityBonus = 0;
@@ -329,7 +329,7 @@ export class VehicleCrewPositions {
    * @returns {Object|null} Pilot info if pilot is only crew member, null otherwise
    */
   static getPilotSoloMode(positions) {
-    if (!positions) return null;
+    if (!positions) {return null;}
 
     const filledPositions = Object.entries(positions)
       .filter(([, crew]) => crew !== null && crew !== undefined)

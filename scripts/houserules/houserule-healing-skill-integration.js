@@ -3,10 +3,11 @@
  * Connects the HealingMechanics to the skill system for use in combat and roleplay
  */
 
-import { SWSELogger } from "../utils/logger.js";
-import { HealingMechanics } from "./houserule-healing.js";
+import { SWSELogger } from '../utils/logger.js';
+import { HealingMechanics } from './houserule-healing.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
-const NS = "foundryvtt-swse";
+const NS = 'foundryvtt-swse';
 
 export class HealingSkillIntegration {
   /**
@@ -14,22 +15,22 @@ export class HealingSkillIntegration {
    */
   static initialize() {
     // Hook into skill rolls to detect Treat Injury healing applications
-    Hooks.on("rollSkill", (actor, skillKey, rollResult) => {
+    Hooks.on('rollSkill', (actor, skillKey, rollResult) => {
       this.onSkillRoll(actor, skillKey, rollResult);
     });
 
-    SWSELogger.debug("Healing skill integration initialized");
+    SWSELogger.debug('Healing skill integration initialized');
   }
 
   /**
    * Handle skill roll event - check if it's a Treat Injury healing application
    */
   static async onSkillRoll(actor, skillKey, rollResult) {
-    if (!game.settings.get(NS, "healingSkillEnabled")) return;
-    if (skillKey !== "treatInjury") return;
+    if (!game.settings.get(NS, 'healingSkillEnabled')) {return;}
+    if (skillKey !== 'treatInjury') {return;}
 
     // Store the roll result for use in skill action dialogs
-    await actor.setFlag(NS, "lastTreatInjuryRoll", {
+    await actor.setFlag(NS, 'lastTreatInjuryRoll', {
       result: rollResult.total,
       timestamp: Date.now()
     });
@@ -40,8 +41,8 @@ export class HealingSkillIntegration {
    * Called when player clicks a healing action on the character sheet
    */
   static async executeHealingAction(actor, application, targetActor, rollResult) {
-    if (!game.settings.get(NS, "healingSkillEnabled")) {
-      ui.notifications.error("Healing skill integration is not enabled");
+    if (!game.settings.get(NS, 'healingSkillEnabled')) {
+      ui.notifications.error('Healing skill integration is not enabled');
       return null;
     }
 
@@ -49,15 +50,15 @@ export class HealingSkillIntegration {
 
     try {
       // Route to appropriate healing function
-      if (applicationLower.includes("first aid")) {
+      if (applicationLower.includes('first aid')) {
         return await HealingMechanics.performFirstAid(actor, targetActor, rollResult);
-      } else if (applicationLower.includes("long-term care")) {
+      } else if (applicationLower.includes('long-term care')) {
         return await HealingMechanics.performLongTermCare(actor, [targetActor]);
-      } else if (applicationLower.includes("perform surgery") || applicationLower.includes("surgery")) {
+      } else if (applicationLower.includes('perform surgery') || applicationLower.includes('surgery')) {
         return await HealingMechanics.performSurgery(actor, targetActor, rollResult);
-      } else if (applicationLower.includes("revivify")) {
+      } else if (applicationLower.includes('revivify')) {
         return await HealingMechanics.performRevivify(actor, targetActor, rollResult);
-      } else if (applicationLower.includes("critical care")) {
+      } else if (applicationLower.includes('critical care')) {
         return await HealingMechanics.performCriticalCare(actor, targetActor, rollResult);
       }
 
@@ -75,18 +76,18 @@ export class HealingSkillIntegration {
    * Displays options for the medic to choose healing target and apply healing
    */
   static async createHealingDialog(actor, application) {
-    if (!game.settings.get(NS, "healingSkillEnabled")) return;
+    if (!game.settings.get(NS, 'healingSkillEnabled')) {return;}
 
-    const lastRoll = actor.getFlag(NS, "lastTreatInjuryRoll");
+    const lastRoll = actor.getFlag(NS, 'lastTreatInjuryRoll');
     if (!lastRoll) {
-      ui.notifications.warn("Please roll Treat Injury first before applying healing");
+      ui.notifications.warn('Please roll Treat Injury first before applying healing');
       return;
     }
 
     const rollResult = lastRoll.result;
 
     // Get all available targets
-    const targets = game.actors.filter(a => a.type === "character" && a.id !== actor.id);
+    const targets = game.actors.filter(a => a.type === 'character' && a.id !== actor.id);
 
     return new Dialog({
       title: `${application} - Select Target`,
@@ -95,7 +96,7 @@ export class HealingSkillIntegration {
           <div class="form-group">
             <label>Target Character:</label>
             <select name="targetId">
-              ${targets.map(t => `<option value="${t.id}">${t.name}</option>`).join("")}
+              ${targets.map(t => `<option value="${t.id}">${t.name}</option>`).join('')}
             </select>
           </div>
           <p class="notes">
@@ -106,13 +107,13 @@ export class HealingSkillIntegration {
       `,
       buttons: {
         apply: {
-          label: "Apply Healing",
+          label: 'Apply Healing',
           callback: async (html) => {
             const targetId = html[0].querySelector("[name='targetId']").value;
             const targetActor = game.actors.get(targetId);
 
             if (!targetActor) {
-              ui.notifications.error("Target not found");
+              ui.notifications.error('Target not found');
               return;
             }
 
@@ -121,16 +122,16 @@ export class HealingSkillIntegration {
             if (result?.success) {
               // Display success message
               const message = this.createHealingMessage(actor, targetActor, application, result);
-              ChatMessage.create(message);
+              createChatMessage(message);
             } else if (result) {
               // Display failure or partial result
               const message = this.createFailureMessage(actor, targetActor, application, result);
-              ChatMessage.create(message);
+              createChatMessage(message);
             }
           }
         },
         cancel: {
-          label: "Cancel"
+          label: 'Cancel'
         }
       }
     }).render(true);
@@ -162,7 +163,7 @@ export class HealingSkillIntegration {
         alias: healer.name
       },
       content,
-      type: "rp"
+      type: 'rp'
     };
   }
 
@@ -199,7 +200,7 @@ export class HealingSkillIntegration {
         alias: healer.name
       },
       content,
-      type: "rp"
+      type: 'rp'
     };
   }
 
@@ -208,16 +209,16 @@ export class HealingSkillIntegration {
    * Filters based on training and settings
    */
   static getAvailableHealingUses(actor) {
-    if (!game.settings.get(NS, "healingSkillEnabled")) return [];
+    if (!game.settings.get(NS, 'healingSkillEnabled')) {return [];}
 
     const uses = [];
     const treatInjury = actor.system?.skills?.treatInjury;
     const isTrained = treatInjury?.trained || false;
 
     // First Aid - everyone
-    if (game.settings.get(NS, "firstAidEnabled")) {
+    if (game.settings.get(NS, 'firstAidEnabled')) {
       uses.push({
-        name: "First Aid (requires medpac)",
+        name: 'First Aid (requires medpac)',
         dc: 15,
         available: true,
         trained: false
@@ -225,19 +226,19 @@ export class HealingSkillIntegration {
     }
 
     // Long-Term Care - everyone
-    if (game.settings.get(NS, "longTermCareEnabled")) {
+    if (game.settings.get(NS, 'longTermCareEnabled')) {
       uses.push({
-        name: "Long-Term Care (8 hours per day max)",
-        dc: "—",
+        name: 'Long-Term Care (8 hours per day max)',
+        dc: '—',
         available: true,
         trained: false
       });
     }
 
     // Surgery - trained only
-    if (game.settings.get(NS, "performSurgeryEnabled") && isTrained) {
+    if (game.settings.get(NS, 'performSurgeryEnabled') && isTrained) {
       uses.push({
-        name: "Perform Surgery (trained, surgery kit, 1 hour)",
+        name: 'Perform Surgery (trained, surgery kit, 1 hour)',
         dc: 20,
         available: true,
         trained: true
@@ -245,9 +246,9 @@ export class HealingSkillIntegration {
     }
 
     // Revivify - trained only
-    if (game.settings.get(NS, "revivifyEnabled") && isTrained) {
+    if (game.settings.get(NS, 'revivifyEnabled') && isTrained) {
       uses.push({
-        name: "Revivify (trained, medkit, within 1 round of death)",
+        name: 'Revivify (trained, medkit, within 1 round of death)',
         dc: 25,
         available: true,
         trained: true
@@ -255,9 +256,9 @@ export class HealingSkillIntegration {
     }
 
     // Critical Care - optional
-    if (game.settings.get(NS, "criticalCareEnabled") && isTrained) {
+    if (game.settings.get(NS, 'criticalCareEnabled') && isTrained) {
       uses.push({
-        name: "Critical Care (multiple medpacs in 24 hours)",
+        name: 'Critical Care (multiple medpacs in 24 hours)',
         dc: 20,
         available: true,
         trained: true
@@ -274,23 +275,23 @@ export class HealingSkillIntegration {
     const info = [];
 
     // First Aid cooldown
-    const lastFirstAid = targetActor.getFlag(NS, "lastFirstAid") || 0;
+    const lastFirstAid = targetActor.getFlag(NS, 'lastFirstAid') || 0;
     const firstAidCooldown = Date.now() - lastFirstAid;
     const firstAidReady = firstAidCooldown >= (24 * 60 * 60 * 1000);
 
     info.push({
-      type: "First Aid",
+      type: 'First Aid',
       ready: firstAidReady,
       timeRemaining: firstAidReady ? 0 : (24 * 60 * 60 * 1000) - firstAidCooldown
     });
 
     // Long-Term Care cooldown
-    const lastLongTermCare = targetActor.getFlag(NS, "lastLongTermCare") || 0;
+    const lastLongTermCare = targetActor.getFlag(NS, 'lastLongTermCare') || 0;
     const longTermCooldown = Date.now() - lastLongTermCare;
     const longTermReady = longTermCooldown >= (24 * 60 * 60 * 1000);
 
     info.push({
-      type: "Long-Term Care",
+      type: 'Long-Term Care',
       ready: longTermReady,
       timeRemaining: longTermReady ? 0 : (24 * 60 * 60 * 1000) - longTermCooldown
     });
@@ -302,10 +303,10 @@ export class HealingSkillIntegration {
    * Format time remaining for display
    */
   static formatTimeRemaining(ms) {
-    if (ms <= 0) return "Ready";
+    if (ms <= 0) {return 'Ready';}
 
     const hours = Math.ceil(ms / (60 * 60 * 1000));
-    if (hours >= 24) return `${Math.ceil(hours / 24)}d`;
+    if (hours >= 24) {return `${Math.ceil(hours / 24)}d`;}
     return `${hours}h`;
   }
 }

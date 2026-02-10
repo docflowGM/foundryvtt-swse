@@ -4,6 +4,7 @@
  * @module rolls/roll-config
  */
 
+import { createChatMessage } from '../core/document-api-v13.js';
 import { SWSELogger } from '../utils/logger.js';
 
 /* ============================================================================
@@ -232,8 +233,8 @@ export class RollHistory {
       const d20Die = entry.dice?.find(d => d.faces === 20);
       if (d20Die) {
         const d20Result = d20Die.results[0];
-        if (d20Result === 20) stats.criticalHits++;
-        if (d20Result === 1) stats.criticalMisses++;
+        if (d20Result === 20) {stats.criticalHits++;}
+        if (d20Result === 1) {stats.criticalMisses++;}
       }
     }
 
@@ -469,11 +470,11 @@ export async function showRollModifiersDialog(options = {}) {
 
             // Calculate total situational modifier
             result.situationalBonus = 0;
-            if (result.situational.aiming) result.situationalBonus += 2;
-            if (result.situational.charging) result.situationalBonus += 2;
-            if (result.situational.flanking) result.situationalBonus += 2;
-            if (result.situational.higherGround) result.situationalBonus += 1;
-            if (result.situational.pointBlank) result.situationalBonus += 1;
+            if (result.situational.aiming) {result.situationalBonus += 2;}
+            if (result.situational.charging) {result.situationalBonus += 2;}
+            if (result.situational.flanking) {result.situationalBonus += 2;}
+            if (result.situational.higherGround) {result.situationalBonus += 1;}
+            if (result.situational.pointBlank) {result.situationalBonus += 1;}
 
             // Cover bonus (for target's defense)
             result.coverBonus = ROLL_MODIFIERS.cover[result.cover]?.value || 0;
@@ -543,7 +544,7 @@ export class TalentBonusCache {
     const key = this._getCacheKey(actor);
     const cached = this._cache.get(key);
 
-    if (!cached) return null;
+    if (!cached) {return null;}
 
     // Check if cache is still valid
     if (Date.now() - cached.timestamp > this.CACHE_TTL) {
@@ -586,13 +587,13 @@ export class TalentBonusCache {
 
 // Invalidate cache when actor items change
 Hooks.on('createItem', (item) => {
-  if (item.parent) TalentBonusCache.invalidate(item.parent);
+  if (item.parent) {TalentBonusCache.invalidate(item.parent);}
 });
 Hooks.on('deleteItem', (item) => {
-  if (item.parent) TalentBonusCache.invalidate(item.parent);
+  if (item.parent) {TalentBonusCache.invalidate(item.parent);}
 });
 Hooks.on('updateItem', (item) => {
-  if (item.parent) TalentBonusCache.invalidate(item.parent);
+  if (item.parent) {TalentBonusCache.invalidate(item.parent);}
 });
 Hooks.on('updateActor', (actor) => {
   TalentBonusCache.invalidate(actor);
@@ -752,10 +753,10 @@ export async function rollCriticalConfirmation({ actor, weapon, attackBonus, tar
     </style>
   `;
 
-  await ChatMessage.create({
+  await createChatMessage({
     speaker: ChatMessage.getSpeaker({ actor }),
     content: html,
-    rolls: [roll],
+    rolls: [roll]
   });
 
   // Show 3D dice if available
@@ -836,10 +837,10 @@ export async function rollConcealmentCheck(missChance, actor = null) {
     </style>
   `;
 
-  await ChatMessage.create({
+  await createChatMessage({
     speaker: actor ? ChatMessage.getSpeaker({ actor }) : ChatMessage.getSpeaker(),
     content: html,
-    rolls: [roll],
+    rolls: [roll]
   });
 
   return { roll, hit, missChance };

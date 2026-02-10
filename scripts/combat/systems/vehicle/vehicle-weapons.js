@@ -8,8 +8,9 @@
  *  - Weapon batteries (multiple shots as one attack)
  */
 
-import { measureDistance, facingTowards } from "./vehicle-shared.js";
-import { SWSERoll } from "../../rolls/enhanced-rolls.js";
+import { measureDistance, facingTowards } from './vehicle-shared.js';
+import { createChatMessage } from '../../../../core/document-api-v13.js';
+import { SWSERoll } from '../../rolls/enhanced-rolls.js';
 
 export class SWSEVehicleWeapons {
 
@@ -17,7 +18,7 @@ export class SWSEVehicleWeapons {
    * RAW: Missile Lock-On requires an attack roll vs DC 15 (or target Pilot roll).
    */
   static async missileLock(attacker, weapon, target) {
-    const roll = await SWSERoll.rollSkill(attacker, "mechanics");
+    const roll = await SWSERoll.rollSkill(attacker, 'mechanics');
     const dc = weapon.system?.lockDC ?? 15;
 
     const success = roll.roll.total >= dc;
@@ -26,13 +27,13 @@ export class SWSEVehicleWeapons {
       <div class="swse-missile-lock">
         <h3>${weapon.name} — Lock-On Attempt</h3>
         <div>Roll: ${roll.roll.total} vs DC ${dc}</div>
-        <div class="${success ? "success" : "failure"}">
-          ${success ? "Lock Acquired!" : "Lock Failed"}
+        <div class="${success ? 'success' : 'failure'}">
+          ${success ? 'Lock Acquired!' : 'Lock Failed'}
         </div>
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
       roll: roll.roll
@@ -44,10 +45,10 @@ export class SWSEVehicleWeapons {
   /**
    * Fire Arc Check (forward, aft, port, starboard)
    */
-  static inFireArc(attacker, target, arc = "forward", tolerance = 75) {
+  static inFireArc(attacker, target, arc = 'forward', tolerance = 75) {
     const atkTok = attacker.getActiveTokens()[0];
     const tgtTok = target.getActiveTokens()[0];
-    if (!atkTok || !tgtTok) return false;
+    if (!atkTok || !tgtTok) {return false;}
 
     const facing = atkTok.document.rotation * (Math.PI / 180);
     const angleToTarget = Math.atan2(
@@ -58,10 +59,10 @@ export class SWSEVehicleWeapons {
     const deg = ((angleToTarget - facing) * 180) / Math.PI;
 
     switch (arc) {
-      case "forward": return Math.abs(deg) <= tolerance;
-      case "aft": return Math.abs(deg) >= 180 - tolerance;
-      case "port": return deg > tolerance && deg < 180 - tolerance;
-      case "starboard": return deg < -tolerance && deg > -(180 - tolerance);
+      case 'forward': return Math.abs(deg) <= tolerance;
+      case 'aft': return Math.abs(deg) >= 180 - tolerance;
+      case 'port': return deg > tolerance && deg < 180 - tolerance;
+      case 'starboard': return deg < -tolerance && deg > -(180 - tolerance);
     }
 
     return true;
@@ -72,11 +73,11 @@ export class SWSEVehicleWeapons {
    */
   static async fireBattery(attacker, weaponGroup, target) {
     const weapons = attacker.items.filter(
-      w => w.type === "vehicle-weapon" && w.system?.batteryGroup === weaponGroup
+      w => w.type === 'vehicle-weapon' && w.system?.batteryGroup === weaponGroup
     );
 
     if (!weapons.length) {
-      ui.notifications.warn("No weapons found in this battery.");
+      ui.notifications.warn('No weapons found in this battery.');
       return null;
     }
 
@@ -88,11 +89,11 @@ export class SWSEVehicleWeapons {
         <h3>Battery Fire — ${weaponGroup}</h3>
         <div>Weapons Fired: ${weapons.length}</div>
         <div>Attack Total: ${attackRoll.roll.total}</div>
-        <div class="${hits ? "success" : "failure"}">${hits ? "HIT!" : "MISS"}</div>
+        <div class="${hits ? 'success' : 'failure'}">${hits ? 'HIT!' : 'MISS'}</div>
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
       roll: attackRoll.roll
@@ -153,7 +154,7 @@ export async function missileSecondAttack(vehicle, missileState, rollDamage) {
   const { weapon, target, attackBonus } = missileState;
 
   // Roll with -5 penalty
-  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackBonus - 5}`).evaluate({async: true});
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackBonus - 5}`).evaluate({ async: true });
 
   const targetReflex = getTargetReflexDefense(target);
   const hits = roll.total >= targetReflex;
@@ -237,7 +238,7 @@ export async function fireWeaponBattery(vehicle, weapons, target, options = {}, 
         const weaponDamage = weapons[0].damage || '1d10';
         const match = weaponDamage.match(/(\d+)d(\d+)/);
         if (match) {
-          const extraDiceRoll = await globalThis.SWSE.RollEngine.safeRoll(`${result.extraHits}d${match[2]}`).evaluate({async: true});
+          const extraDiceRoll = await globalThis.SWSE.RollEngine.safeRoll(`${result.extraHits}d${match[2]}`).evaluate({ async: true });
           const extraDamage = extraDiceRoll.total * (weapons[0].multiplier || 2);
           result.totalDamage += extraDamage;
           ui.notifications.info(`Battery scores ${result.extraHits} additional hits! +${extraDamage} damage!`);
@@ -328,8 +329,8 @@ export async function createBatteryMessage(result) {
     </div>
   `;
 
-  await ChatMessage.create({
-    speaker: ChatMessage.getSpeaker({actor: vehicle}),
+  await createChatMessage({
+    speaker: ChatMessage.getSpeaker({ actor: vehicle }),
     content,
     style: CONST.CHAT_MESSAGE_STYLES.OTHER
   });

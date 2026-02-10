@@ -1,15 +1,16 @@
 /**
- * SWSE Class Suggestion Engine
+ * SWSE Class Suggestion Engine (PHASE 5D: UNIFIED_TIERS Refactor)
  *
  * A deterministic, explainable system for suggesting classes during level-up.
- * Suggestions are based on a strict tier order of operations:
+ * Uses UNIFIED_TIERS system for consistent cross-engine tier definitions.
  *
- * TIER 5 - PRESTIGE_NOW: Prestige class the character qualifies for now (highest priority)
- * TIER 4 - PATH_CONTINUATION: Continuation of the current class path
- * TIER 3 - PRESTIGE_SOON: Classes that accelerate qualification for a prestige class
- * TIER 2 - MECHANICAL_SYNERGY: Mechanical synergy with feats, talents, skills, abilities
- * TIER 1 - THEMATIC: Thematic or role-based fit
- * TIER 0 - FALLBACK: Legal option (no specific suggestion)
+ * Tier Hierarchy (high→low priority):
+ * - TIER 5: Prestige qualification NOW (character currently qualifies)
+ * - TIER 4: Chain/path continuation (builds on character's existing choices)
+ * - TIER 3: Category synergy (matches class, build intent, or theme)
+ * - TIER 2: Ability/theme synergy (secondary synergy with build goals)
+ * - TIER 1: Thematic fit (should work with character type)
+ * - TIER 0: Fallback/available (anything goes)
  *
  * This engine integrates with the feat/talent SuggestionEngine to provide
  * coherent build direction advice.
@@ -18,54 +19,20 @@
 import { SWSELogger } from '../utils/logger.js';
 import { BASE_CLASSES, calculateTotalBAB } from '../apps/levelup/levelup-shared.js';
 import { isEpicActor, getPlannedHeroicLevel } from '../actors/derived/level-split.js';
+import { UNIFIED_TIERS, getTierMetadata } from './suggestion-unified-tiers.js';
 
 // ──────────────────────────────────────────────────────────────
-// TIER DEFINITIONS (ORDER MATTERS - HIGHER = BETTER)
+// DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
+// Use UNIFIED_TIERS from suggestion-unified-tiers.js instead
 // ──────────────────────────────────────────────────────────────
 
 export const CLASS_SUGGESTION_TIERS = {
-    PRESTIGE_NOW: 5,
-    PATH_CONTINUATION: 4,
-    PRESTIGE_SOON: 3,
-    MECHANICAL_SYNERGY: 2,
-    THEMATIC: 1,
-    FALLBACK: 0
-};
-
-export const CLASS_TIER_REASONS = {
-    5: "You qualify for this prestige class now",
-    4: "Strong continuation of your current class path",
-    3: "Helps you qualify for a prestige class soon",
-    2: "Strong mechanical synergy with your build",
-    1: "Fits your character's theme or role",
-    0: "Legal option"
-};
-
-export const CLASS_TIER_ICONS = {
-    5: "fa-star",           // Star for prestige qualification
-    4: "fa-route",          // Path for continuation
-    3: "fa-unlock",         // Unlock for near-prestige
-    2: "fa-gears",           // Gears for mechanical synergy
-    1: "fa-masks-theater",  // Theater masks for thematic
-    0: ""                   // No icon for fallback
-};
-
-export const CLASS_TIER_ICON_CLASSES = {
-    5: "fas fa-star class-suggestion-prestige",
-    4: "fas fa-route class-suggestion-path",
-    3: "fas fa-unlock class-suggestion-unlock",
-    2: "fas fa-gears class-suggestion-synergy",
-    1: "fas fa-masks-theater class-suggestion-thematic",
-    0: ""
-};
-
-export const CLASS_TIER_CSS_CLASSES = {
-    5: "class-suggestion-tier-prestige",
-    4: "class-suggestion-tier-path",
-    3: "class-suggestion-tier-unlock",
-    2: "class-suggestion-tier-synergy",
-    1: "class-suggestion-tier-thematic",
-    0: ""
+    PRESTIGE_NOW: UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,      // 5
+    PATH_CONTINUATION: UNIFIED_TIERS.PATH_CONTINUATION,      // 4
+    PRESTIGE_SOON: UNIFIED_TIERS.PATH_CONTINUATION,          // 4 (mapped from 3)
+    MECHANICAL_SYNERGY: UNIFIED_TIERS.ABILITY_SYNERGY,       // 2
+    THEMATIC: UNIFIED_TIERS.THEMATIC_FIT,                    // 1
+    FALLBACK: UNIFIED_TIERS.AVAILABLE                        // 0
 };
 
 // Prestige bias - prestige classes get a bonus when sorting
@@ -82,231 +49,231 @@ export const PRESTIGE_BIAS = {
 
 export const CLASS_SYNERGY_DATA = {
     // Base Classes
-    "Jedi": {
-        abilities: ["wis", "cha"],
-        skills: ["useTheForce", "perception"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    'Jedi': {
+        abilities: ['wis', 'cha'],
+        skills: ['useTheForce', 'perception'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
         talents: [],
-        talentTrees: ["Lightsaber Combat", "Jedi Mind Tricks", "Telekinetic Savant"],
-        theme: "force"
+        talentTrees: ['Lightsaber Combat', 'Jedi Mind Tricks', 'Telekinetic Savant'],
+        theme: 'force'
     },
-    "Noble": {
-        abilities: ["cha", "int"],
-        skills: ["persuasion", "deception", "gatherInformation"],
-        feats: ["Linguist", "Skill Focus"],
+    'Noble': {
+        abilities: ['cha', 'int'],
+        skills: ['persuasion', 'deception', 'gatherInformation'],
+        feats: ['Linguist', 'Skill Focus'],
         talents: [],
-        talentTrees: ["Inspiration", "Influence", "Leadership"],
-        theme: "social"
+        talentTrees: ['Inspiration', 'Influence', 'Leadership'],
+        theme: 'social'
     },
-    "Scoundrel": {
-        abilities: ["dex", "cha"],
-        skills: ["deception", "stealth", "mechanics"],
-        feats: ["Point-Blank Shot", "Precise Shot"],
+    'Scoundrel': {
+        abilities: ['dex', 'cha'],
+        skills: ['deception', 'stealth', 'mechanics'],
+        feats: ['Point-Blank Shot', 'Precise Shot'],
         talents: [],
-        talentTrees: ["Fortune", "Misfortune", "Slicer"],
-        theme: "ranged"
+        talentTrees: ['Fortune', 'Misfortune', 'Slicer'],
+        theme: 'ranged'
     },
-    "Scout": {
-        abilities: ["dex", "wis"],
-        skills: ["survival", "perception", "stealth"],
-        feats: ["Armor Proficiency (Light)"],
+    'Scout': {
+        abilities: ['dex', 'wis'],
+        skills: ['survival', 'perception', 'stealth'],
+        feats: ['Armor Proficiency (Light)'],
         talents: [],
-        talentTrees: ["Awareness", "Camouflage", "Fringer"],
-        theme: "exploration"
+        talentTrees: ['Awareness', 'Camouflage', 'Fringer'],
+        theme: 'exploration'
     },
-    "Soldier": {
-        abilities: ["str", "con"],
-        skills: ["endurance", "mechanics", "initiative"],
-        feats: ["Armor Proficiency (Medium)", "Armor Proficiency (Heavy)", "Weapon Focus"],
+    'Soldier': {
+        abilities: ['str', 'con'],
+        skills: ['endurance', 'mechanics', 'initiative'],
+        feats: ['Armor Proficiency (Medium)', 'Armor Proficiency (Heavy)', 'Weapon Focus'],
         talents: [],
-        talentTrees: ["Armor Specialist", "Commando", "Weapon Specialist"],
-        theme: "combat"
+        talentTrees: ['Armor Specialist', 'Commando', 'Weapon Specialist'],
+        theme: 'combat'
     },
 
     // Prestige Classes
-    "Ace Pilot": {
-        abilities: ["dex", "int"],
-        skills: ["pilot"],
-        feats: ["Vehicular Combat", "Skill Focus (Pilot)"],
+    'Ace Pilot': {
+        abilities: ['dex', 'int'],
+        skills: ['pilot'],
+        feats: ['Vehicular Combat', 'Skill Focus (Pilot)'],
         talents: [],
-        talentTrees: ["Spacer"],
-        theme: "vehicle"
+        talentTrees: ['Spacer'],
+        theme: 'vehicle'
     },
-    "Assassin": {
-        abilities: ["dex", "int"],
-        skills: ["stealth"],
-        feats: ["Sniper", "Point-Blank Shot"],
-        talents: ["Dastardly Strike"],
-        talentTrees: ["Misfortune"],
-        theme: "stealth"
+    'Assassin': {
+        abilities: ['dex', 'int'],
+        skills: ['stealth'],
+        feats: ['Sniper', 'Point-Blank Shot'],
+        talents: ['Dastardly Strike'],
+        talentTrees: ['Misfortune'],
+        theme: 'stealth'
     },
-    "Bounty Hunter": {
-        abilities: ["wis", "dex"],
-        skills: ["survival", "perception"],
+    'Bounty Hunter': {
+        abilities: ['wis', 'dex'],
+        skills: ['survival', 'perception'],
         feats: [],
         talents: [],
-        talentTrees: ["Awareness"],
-        theme: "tracking"
+        talentTrees: ['Awareness'],
+        theme: 'tracking'
     },
-    "Crime Lord": {
-        abilities: ["cha", "int"],
-        skills: ["deception", "persuasion"],
+    'Crime Lord': {
+        abilities: ['cha', 'int'],
+        skills: ['deception', 'persuasion'],
         feats: [],
         talents: [],
-        talentTrees: ["Fortune", "Lineage", "Misfortune"],
-        theme: "social"
+        talentTrees: ['Fortune', 'Lineage', 'Misfortune'],
+        theme: 'social'
     },
-    "Elite Trooper": {
-        abilities: ["str", "con"],
-        skills: ["endurance"],
-        feats: ["Armor Proficiency (Medium)", "Martial Arts I", "Point-Blank Shot"],
+    'Elite Trooper': {
+        abilities: ['str', 'con'],
+        skills: ['endurance'],
+        feats: ['Armor Proficiency (Medium)', 'Martial Arts I', 'Point-Blank Shot'],
         talents: [],
-        talentTrees: ["Armor Specialist", "Commando", "Weapon Specialist"],
-        theme: "combat"
+        talentTrees: ['Armor Specialist', 'Commando', 'Weapon Specialist'],
+        theme: 'combat'
     },
-    "Force Adept": {
-        abilities: ["wis", "cha"],
-        skills: ["useTheForce"],
-        feats: ["Force Sensitivity"],
+    'Force Adept': {
+        abilities: ['wis', 'cha'],
+        skills: ['useTheForce'],
+        feats: ['Force Sensitivity'],
         talents: [],
-        talentTrees: ["Alter", "Control", "Sense"],
-        theme: "force"
+        talentTrees: ['Alter', 'Control', 'Sense'],
+        theme: 'force'
     },
-    "Force Disciple": {
-        abilities: ["wis", "cha"],
-        skills: ["useTheForce"],
-        feats: ["Force Sensitivity"],
+    'Force Disciple': {
+        abilities: ['wis', 'cha'],
+        skills: ['useTheForce'],
+        feats: ['Force Sensitivity'],
         talents: [],
-        talentTrees: ["Dark Side Devotee", "Force Adept", "Force Item"],
-        theme: "force"
+        talentTrees: ['Dark Side Devotee', 'Force Adept', 'Force Item'],
+        theme: 'force'
     },
-    "Gladiator": {
-        abilities: ["str", "con"],
+    'Gladiator': {
+        abilities: ['str', 'con'],
         skills: [],
-        feats: ["Improved Damage Threshold", "Weapon Proficiency (Advanced Melee Weapons)"],
+        feats: ['Improved Damage Threshold', 'Weapon Proficiency (Advanced Melee Weapons)'],
         talents: [],
         talentTrees: [],
-        theme: "melee"
+        theme: 'melee'
     },
-    "Gunslinger": {
-        abilities: ["dex"],
+    'Gunslinger': {
+        abilities: ['dex'],
         skills: [],
-        feats: ["Point-Blank Shot", "Precise Shot", "Quick Draw", "Weapon Proficiency (Pistols)"],
+        feats: ['Point-Blank Shot', 'Precise Shot', 'Quick Draw', 'Weapon Proficiency (Pistols)'],
         talents: [],
-        talentTrees: ["Fortune"],
-        theme: "ranged"
+        talentTrees: ['Fortune'],
+        theme: 'ranged'
     },
-    "Imperial Knight": {
-        abilities: ["str", "wis"],
-        skills: ["useTheForce"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)", "Armor Proficiency (Medium)"],
+    'Imperial Knight': {
+        abilities: ['str', 'wis'],
+        skills: ['useTheForce'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)', 'Armor Proficiency (Medium)'],
         talents: [],
-        talentTrees: ["Lightsaber Combat"],
-        theme: "force"
+        talentTrees: ['Lightsaber Combat'],
+        theme: 'force'
     },
-    "Infiltrator": {
-        abilities: ["dex", "int"],
-        skills: ["perception", "stealth"],
-        feats: ["Skill Focus (Stealth)"],
+    'Infiltrator': {
+        abilities: ['dex', 'int'],
+        skills: ['perception', 'stealth'],
+        feats: ['Skill Focus (Stealth)'],
         talents: [],
-        talentTrees: ["Camouflage", "Spy"],
-        theme: "stealth"
+        talentTrees: ['Camouflage', 'Spy'],
+        theme: 'stealth'
     },
-    "Jedi Knight": {
-        abilities: ["wis", "cha"],
-        skills: ["useTheForce"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    'Jedi Knight': {
+        abilities: ['wis', 'cha'],
+        skills: ['useTheForce'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
         talents: [],
-        talentTrees: ["Lightsaber Combat", "Jedi Mind Tricks"],
-        theme: "force"
+        talentTrees: ['Lightsaber Combat', 'Jedi Mind Tricks'],
+        theme: 'force'
     },
-    "Jedi Master": {
-        abilities: ["wis", "cha"],
-        skills: ["useTheForce"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    'Jedi Master': {
+        abilities: ['wis', 'cha'],
+        skills: ['useTheForce'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
         talents: [],
-        talentTrees: ["Lightsaber Combat", "Jedi Mind Tricks"],
-        theme: "force"
+        talentTrees: ['Lightsaber Combat', 'Jedi Mind Tricks'],
+        theme: 'force'
     },
-    "Martial Arts Master": {
-        abilities: ["str", "dex"],
+    'Martial Arts Master': {
+        abilities: ['str', 'dex'],
         skills: [],
-        feats: ["Martial Arts II", "Melee Defense"],
+        feats: ['Martial Arts II', 'Melee Defense'],
         talents: [],
-        talentTrees: ["Brawler", "Survivor"],
-        theme: "melee"
+        talentTrees: ['Brawler', 'Survivor'],
+        theme: 'melee'
     },
-    "Medic": {
-        abilities: ["int", "wis"],
-        skills: ["treatInjury", "knowledge"],
-        feats: ["Surgical Expertise"],
+    'Medic': {
+        abilities: ['int', 'wis'],
+        skills: ['treatInjury', 'knowledge'],
+        feats: ['Surgical Expertise'],
         talents: [],
         talentTrees: [],
-        theme: "support"
+        theme: 'support'
     },
-    "Melee Duelist": {
-        abilities: ["str", "dex"],
+    'Melee Duelist': {
+        abilities: ['str', 'dex'],
         skills: [],
-        feats: ["Melee Defense", "Rapid Strike", "Weapon Focus"],
+        feats: ['Melee Defense', 'Rapid Strike', 'Weapon Focus'],
         talents: [],
         talentTrees: [],
-        theme: "melee"
+        theme: 'melee'
     },
-    "Military Engineer": {
-        abilities: ["int"],
-        skills: ["mechanics", "useComputer"],
-        feats: [],
-        talents: [],
-        talentTrees: [],
-        theme: "tech"
-    },
-    "Officer": {
-        abilities: ["cha", "int"],
-        skills: ["knowledge"],
-        feats: [],
-        talents: [],
-        talentTrees: ["Leadership", "Commando", "Veteran"],
-        theme: "leadership"
-    },
-    "Pathfinder": {
-        abilities: ["wis", "con"],
-        skills: ["perception", "survival"],
-        feats: [],
-        talents: [],
-        talentTrees: ["Awareness", "Camouflage", "Survivor"],
-        theme: "exploration"
-    },
-    "Saboteur": {
-        abilities: ["int", "dex"],
-        skills: ["deception", "mechanics", "useComputer"],
+    'Military Engineer': {
+        abilities: ['int'],
+        skills: ['mechanics', 'useComputer'],
         feats: [],
         talents: [],
         talentTrees: [],
-        theme: "tech"
+        theme: 'tech'
     },
-    "Sith Apprentice": {
-        abilities: ["cha", "str"],
-        skills: ["useTheForce"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
-        talents: [],
-        talentTrees: ["Dark Side", "Lightsaber Combat"],
-        theme: "force"
-    },
-    "Sith Lord": {
-        abilities: ["cha", "str"],
-        skills: ["useTheForce"],
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
-        talents: [],
-        talentTrees: ["Dark Side", "Lightsaber Combat"],
-        theme: "force"
-    },
-    "Vanguard": {
-        abilities: ["dex", "con"],
-        skills: ["perception", "stealth"],
+    'Officer': {
+        abilities: ['cha', 'int'],
+        skills: ['knowledge'],
         feats: [],
         talents: [],
-        talentTrees: ["Camouflage", "Commando"],
-        theme: "combat"
+        talentTrees: ['Leadership', 'Commando', 'Veteran'],
+        theme: 'leadership'
+    },
+    'Pathfinder': {
+        abilities: ['wis', 'con'],
+        skills: ['perception', 'survival'],
+        feats: [],
+        talents: [],
+        talentTrees: ['Awareness', 'Camouflage', 'Survivor'],
+        theme: 'exploration'
+    },
+    'Saboteur': {
+        abilities: ['int', 'dex'],
+        skills: ['deception', 'mechanics', 'useComputer'],
+        feats: [],
+        talents: [],
+        talentTrees: [],
+        theme: 'tech'
+    },
+    'Sith Apprentice': {
+        abilities: ['cha', 'str'],
+        skills: ['useTheForce'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
+        talents: [],
+        talentTrees: ['Dark Side', 'Lightsaber Combat'],
+        theme: 'force'
+    },
+    'Sith Lord': {
+        abilities: ['cha', 'str'],
+        skills: ['useTheForce'],
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
+        talents: [],
+        talentTrees: ['Dark Side', 'Lightsaber Combat'],
+        theme: 'force'
+    },
+    'Vanguard': {
+        abilities: ['dex', 'con'],
+        skills: ['perception', 'stealth'],
+        feats: [],
+        talents: [],
+        talentTrees: ['Camouflage', 'Commando'],
+        theme: 'combat'
     }
 };
 
@@ -330,12 +297,14 @@ export class ClassSuggestionEngine {
     static async suggestClasses(classes, actor, pendingData = {}, options = {}) {
         const planned = getPlannedHeroicLevel(actor, pendingData);
         if (pendingData?.epicAdvisory || isEpicActor(actor, planned)) {
+            const tierMetadata = getTierMetadata(UNIFIED_TIERS.AVAILABLE);
             return classes.map(cls => ({
                 ...cls,
                 suggestion: {
-                    tier: CLASS_SUGGESTION_TIERS.FALLBACK,
+                    tier: UNIFIED_TIERS.AVAILABLE,
                     reason: 'Epic advisory mode (no ranking)',
-                    icon: CLASS_TIER_ICONS[0]
+                    icon: tierMetadata.icon,
+                    label: tierMetadata.label
                 },
                 isSuggested: false,
                 advisory: true
@@ -382,12 +351,12 @@ export class ClassSuggestionEngine {
                 SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige class target match - boosting "${cls.name}" bias`);
             }
 
-            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Class "${cls.name}" - tier: ${suggestion.tier}, bias: ${bias}, isSuggested: ${suggestion.tier >= CLASS_SUGGESTION_TIERS.MECHANICAL_SYNERGY}`);
+            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Class "${cls.name}" - tier: ${suggestion.tier}, bias: ${bias}, isSuggested: ${suggestion.tier >= UNIFIED_TIERS.ABILITY_SYNERGY}`);
 
             suggestions.push({
                 ...cls,
                 suggestion,
-                isSuggested: suggestion.tier >= CLASS_SUGGESTION_TIERS.MECHANICAL_SYNERGY,
+                isSuggested: suggestion.tier >= UNIFIED_TIERS.ABILITY_SYNERGY,  // TIER 2+
                 tierWithBias: suggestion.tier + bias
             });
         }
@@ -778,10 +747,10 @@ export class ClassSuggestionEngine {
         // TIER 5: Prestige class that character qualifies for NOW
         if (isPrestige && prereqCheck.met) {
             return this._buildSuggestion(
-                CLASS_SUGGESTION_TIERS.PRESTIGE_NOW,
+                UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,
                 cls.name,
                 prereqCheck.missing,
-                "You meet all prerequisites for this prestige class!"
+                'You meet all prerequisites for this prestige class!'
             );
         }
 
@@ -789,10 +758,10 @@ export class ClassSuggestionEngine {
         // This gives high priority to classes the player explicitly expressed interest in
         if (isPrestige && cls.name === prestigeClassTarget) {
             const tier = prereqCheck.met
-                ? CLASS_SUGGESTION_TIERS.PRESTIGE_NOW
-                : CLASS_SUGGESTION_TIERS.PRESTIGE_SOON;
+                ? UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW
+                : UNIFIED_TIERS.PATH_CONTINUATION;  // PRESTIGE_SOON mapped to PATH_CONTINUATION (4)
             const reason = prereqCheck.met
-                ? "This matches your character goal and you qualify now!"
+                ? 'This matches your character goal and you qualify now!'
                 : `This matches your character goal - you're almost there! Missing: ${prereqCheck.missing.filter(m => !m.unverifiable).map(m => m.shortDisplay).join(', ')}`;
             return this._buildSuggestion(
                 tier,
@@ -805,7 +774,7 @@ export class ClassSuggestionEngine {
         // TIER 4: Continuation of current class path
         if (actorState.classes[cls.name]) {
             return this._buildSuggestion(
-                CLASS_SUGGESTION_TIERS.PATH_CONTINUATION,
+                UNIFIED_TIERS.PATH_CONTINUATION,
                 cls.name,
                 prereqCheck.missing,
                 `Continue your ${cls.name} progression`
@@ -861,7 +830,7 @@ export class ClassSuggestionEngine {
                 const reason = `${benefits.join('; ')} for ${prestigeClassTarget}`;
 
                 return this._buildSuggestion(
-                    CLASS_SUGGESTION_TIERS.PRESTIGE_SOON,
+                    UNIFIED_TIERS.PATH_CONTINUATION,
                     cls.name,
                     [],
                     reason
@@ -869,26 +838,26 @@ export class ClassSuggestionEngine {
             }
         }
 
-        // TIER 3: Prestige class almost legal (missing <= 2 verifiable prerequisites)
+        // TIER 4/3: Prestige class almost legal (missing <= 2 verifiable prerequisites)
         if (isPrestige && verifiableMissing > 0 && verifiableMissing <= 2) {
             const missingText = prereqCheck.missing
                 .filter(m => !m.unverifiable)
                 .map(m => m.shortDisplay)
                 .join(', ');
             return this._buildSuggestion(
-                CLASS_SUGGESTION_TIERS.PRESTIGE_SOON,
+                UNIFIED_TIERS.CATEGORY_SYNERGY,  // PRESTIGE_SOON mapped to CATEGORY_SYNERGY (3)
                 cls.name,
                 prereqCheck.missing,
                 `Missing only: ${missingText}`
             );
         }
 
-        // TIER 2: Mechanical synergy check
+        // TIER 2: Ability/mechanical synergy check
         const synergyScore = this._calculateSynergyScore(cls, actorState);
         if (synergyScore >= 3) {
             const synergyReason = this._getSynergyReason(cls, actorState);
             return this._buildSuggestion(
-                CLASS_SUGGESTION_TIERS.MECHANICAL_SYNERGY,
+                UNIFIED_TIERS.ABILITY_SYNERGY,
                 cls.name,
                 prereqCheck.missing,
                 synergyReason
@@ -898,7 +867,7 @@ export class ClassSuggestionEngine {
         // TIER 1: Thematic fit (lower synergy but still relevant)
         if (synergyScore >= 1) {
             return this._buildSuggestion(
-                CLASS_SUGGESTION_TIERS.THEMATIC,
+                UNIFIED_TIERS.THEMATIC_FIT,
                 cls.name,
                 prereqCheck.missing,
                 "Fits your character's theme"
@@ -907,7 +876,7 @@ export class ClassSuggestionEngine {
 
         // TIER 0: Fallback
         return this._buildSuggestion(
-            CLASS_SUGGESTION_TIERS.FALLBACK,
+            UNIFIED_TIERS.AVAILABLE,
             cls.name,
             prereqCheck.missing
         );
@@ -921,7 +890,7 @@ export class ClassSuggestionEngine {
      */
     static _calculateSynergyScore(cls, actorState) {
         const synergy = CLASS_SYNERGY_DATA[cls.name];
-        if (!synergy) return 0;
+        if (!synergy) {return 0;}
 
         let score = 0;
 
@@ -983,15 +952,15 @@ export class ClassSuggestionEngine {
      */
     static _getSynergyReason(cls, actorState) {
         const synergy = CLASS_SYNERGY_DATA[cls.name];
-        if (!synergy) return "General synergy with your build";
+        if (!synergy) {return 'General synergy with your build';}
 
         const reasons = [];
 
         // Check highest ability
         if (synergy.abilities && synergy.abilities.includes(actorState.highestAbility)) {
             const abilityNames = {
-                str: "Strength", dex: "Dexterity", con: "Constitution",
-                int: "Intelligence", wis: "Wisdom", cha: "Charisma"
+                str: 'Strength', dex: 'Dexterity', con: 'Constitution',
+                int: 'Intelligence', wis: 'Wisdom', cha: 'Charisma'
             };
             reasons.push(`Uses your high ${abilityNames[actorState.highestAbility]}`);
         }
@@ -1028,27 +997,29 @@ export class ClassSuggestionEngine {
 
         return reasons.length > 0
             ? reasons.join('; ')
-            : "Strong mechanical synergy with your build";
+            : 'Strong mechanical synergy with your build';
     }
 
     /**
      * Build a suggestion metadata object
-     * @param {number} tier - The suggestion tier
+     * Uses UNIFIED_TIERS system for consistent tier metadata
+     * @param {number} tier - The suggestion tier (0-6 from UNIFIED_TIERS)
      * @param {string} className - Name of the class
      * @param {Array} missingPrereqs - Missing prerequisites
      * @param {string} customReason - Optional custom reason
      * @returns {Object} Suggestion metadata
      */
     static _buildSuggestion(tier, className, missingPrereqs = [], customReason = null) {
+        const tierMetadata = getTierMetadata(tier);
         return {
             tier,
-            icon: CLASS_TIER_ICONS[tier],
-            iconClass: CLASS_TIER_ICON_CLASSES[tier],
-            cssClass: CLASS_TIER_CSS_CLASSES[tier],
-            reason: customReason || CLASS_TIER_REASONS[tier],
+            icon: tierMetadata.icon,
+            color: tierMetadata.color,
+            label: tierMetadata.label,
+            reason: customReason || tierMetadata.description,
             missingPrereqs,
             hasMissingPrereqs: missingPrereqs.length > 0,
-            isSuggested: tier >= CLASS_SUGGESTION_TIERS.MECHANICAL_SYNERGY
+            isSuggested: tier >= UNIFIED_TIERS.ABILITY_SYNERGY  // TIER 2+
         };
     }
 
@@ -1115,25 +1086,20 @@ export class ClassSuggestionEngine {
 
     /**
      * Get all tier definitions for UI display
+     * Now uses UNIFIED_TIERS system
      * @returns {Object} Tier definitions
      */
     static getTierDefinitions() {
-        return {
-            tiers: CLASS_SUGGESTION_TIERS,
-            reasons: CLASS_TIER_REASONS,
-            icons: CLASS_TIER_ICONS,
-            iconClasses: CLASS_TIER_ICON_CLASSES,
-            cssClasses: CLASS_TIER_CSS_CLASSES
-        };
+        return UNIFIED_TIERS;
     }
 
     /**
      * Filter classes to only suggested ones
      * @param {Array} classes - Classes with suggestion metadata
-     * @returns {Array} Only classes with tier >= MECHANICAL_SYNERGY
+     * @returns {Array} Only classes with tier >= ABILITY_SYNERGY (2)
      */
     static filterSuggested(classes) {
-        return classes.filter(cls => cls.suggestion?.tier >= CLASS_SUGGESTION_TIERS.MECHANICAL_SYNERGY);
+        return classes.filter(cls => cls.suggestion?.tier >= UNIFIED_TIERS.ABILITY_SYNERGY);
     }
 
     /**
@@ -1146,7 +1112,7 @@ export class ClassSuggestionEngine {
         const other = [];
 
         for (const cls of classes) {
-            if (cls.suggestion?.tier >= CLASS_SUGGESTION_TIERS.MECHANICAL_SYNERGY) {
+            if (cls.suggestion?.tier >= UNIFIED_TIERS.ABILITY_SYNERGY) {  // TIER 2+
                 suggested.push(cls);
             } else {
                 other.push(cls);
@@ -1158,6 +1124,7 @@ export class ClassSuggestionEngine {
 
     /**
      * Generate HTML for a class suggestion badge
+     * Uses UNIFIED_TIERS system for styling
      * @param {Object} suggestion - Suggestion metadata object
      * @returns {string} HTML string for the badge, or empty string if not suggested
      */
@@ -1166,11 +1133,12 @@ export class ClassSuggestionEngine {
             return '';
         }
 
-        const iconClass = suggestion.iconClass || CLASS_TIER_ICON_CLASSES[suggestion.tier];
-        const cssClass = suggestion.cssClass || CLASS_TIER_CSS_CLASSES[suggestion.tier];
-        const reason = suggestion.reason || CLASS_TIER_REASONS[suggestion.tier];
+        const tierMetadata = getTierMetadata(suggestion.tier);
+        const reason = suggestion.reason || tierMetadata.description;
+        const color = tierMetadata.color;
+        const icon = tierMetadata.icon;
 
-        return `<span class="class-suggestion-badge ${cssClass}" title="${reason}"><i class="${iconClass}"></i></span>`;
+        return `<span class="suggestion-tier-badge tier-${suggestion.tier}" style="background-color: ${color};" title="${reason}">${icon} ${tierMetadata.label}</span>`;
     }
 
     /**
@@ -1225,11 +1193,9 @@ export class ClassSuggestionEngine {
     static getClassCssClasses(cls) {
         const classes = [];
 
-        if (cls.suggestion?.tier >= CLASS_SUGGESTION_TIERS.MECHANICAL_SYNERGY) {
+        if (cls.suggestion?.tier >= UNIFIED_TIERS.ABILITY_SYNERGY) {  // TIER 2+
             classes.push('is-suggested');
-            if (cls.suggestion.cssClass) {
-                classes.push(cls.suggestion.cssClass);
-            }
+            classes.push(`suggestion-tier-${cls.suggestion.tier}`);
         }
 
         if (cls.isPrestige) {

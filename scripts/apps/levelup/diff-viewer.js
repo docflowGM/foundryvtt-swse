@@ -231,17 +231,17 @@ export function showDiffDialog(diff) {
   `;
 
   new Dialog({
-    title: "Level-Up Changes Preview",
+    title: 'Level-Up Changes Preview',
     content: html,
     buttons: {
       ok: {
-        label: "OK",
+        label: 'OK',
         callback: () => {
           swseLogger.log('Diff dialog closed');
         }
       }
     },
-    default: "ok"
+    default: 'ok'
   }).render(true);
 }
 

@@ -9,7 +9,8 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
-import { ActorEngine } from "../actors/engine/actor-engine.js";
+import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { createChatMessage, createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
 
 export class DarkSidePowers {
 
@@ -242,7 +243,7 @@ export class DarkSidePowers {
         </div>
       `;
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: { actor: actor },
         content: messageContent,
         flavor: 'Wrath of the Dark Side - Delayed Damage',
@@ -319,7 +320,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Channel Aggression - Bonus Damage',
@@ -395,7 +396,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Channel Anger - Rage Activated'
@@ -434,7 +435,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Channel Anger - Rage Ended'
@@ -447,7 +448,7 @@ export class DarkSidePowers {
 
   static isCurrentlyRaging(actor) {
     const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
-    if (!rageInfo) return false;
+    if (!rageInfo) {return false;}
 
     const currentRound = game.combat?.round || 0;
     return currentRound <= rageInfo.endRound;
@@ -503,7 +504,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Crippling Strike - Speed Reduced'
@@ -520,7 +521,7 @@ export class DarkSidePowers {
 
   static checkCripplingStrikeExpiry(targetActor) {
     const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
-    if (!crippledInfo) return false;
+    if (!crippledInfo) {return false;}
 
     if (targetActor.system.hp.value >= crippledInfo.maxHpWhenCrippled) {
       return false;
@@ -531,7 +532,7 @@ export class DarkSidePowers {
 
   static async removeCripplingStrike(targetActor) {
     const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
-    if (!crippledInfo) return;
+    if (!crippledInfo) {return;}
 
     await targetActor.update({
       'system.speed.current': crippledInfo.originalSpeed
@@ -547,7 +548,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: targetActor },
       content: chatContent,
       flavor: 'Crippling Strike - Effect Ended'
@@ -643,7 +644,11 @@ export class DarkSidePowers {
     };
 
     // Create the item in the actor's inventory
-    const createdItems = await actor.createEmbeddedDocuments('Item', [itemData]);
+    const createdItems = await createItemInActor(actor, itemData);
+    if (!createdItems || !Array.isArray(createdItems) || createdItems.length === 0) {
+      ui.notifications.error('Failed to create Dark Side Talisman item');
+      return { success: false, message: 'Failed to create talisman item' };
+    }
     const itemId = createdItems[0].id;
 
     const talismantInfo = {
@@ -665,7 +670,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: `${talismanName} Created`
@@ -711,7 +716,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Dark Side Talisman - Destroyed'
@@ -724,7 +729,7 @@ export class DarkSidePowers {
 
   static canCreateNewTalisman(actor) {
     const cooldown = actor.getFlag('swse', 'darkSideTalismanCooldown');
-    if (!cooldown) return true;
+    if (!cooldown) {return true;}
 
     const cooldownTime = new Date(cooldown);
     const now = new Date();
@@ -824,7 +829,7 @@ export class DarkSidePowers {
         </div>
       `;
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: { actor: actor },
         content: chatContent,
         flavor: 'Dark Healing - Life Drained',
@@ -844,7 +849,7 @@ export class DarkSidePowers {
         </div>
       `;
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: { actor: actor },
         content: chatContent,
         flavor: 'Dark Healing - Resisted',
@@ -931,7 +936,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Improved Dark Healing - Life Drained',
@@ -1076,7 +1081,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Dark Healing Field - Mass Life Drain',
@@ -1143,7 +1148,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Wicked Strike - Critical Blow'
@@ -1186,7 +1191,7 @@ export class DarkSidePowers {
     const targetActor = targetToken.actor;
     const afflictions = targetActor.getFlag('swse', 'afflictions') || [];
 
-    if (afflictions.length === 0) return;
+    if (afflictions.length === 0) {return;}
 
     for (const affliction of afflictions) {
       const damageRoll = new Roll('2d6');
@@ -1205,7 +1210,7 @@ export class DarkSidePowers {
         </div>
       `;
 
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: { actor: targetActor },
         content: chatContent,
         flavor: 'Affliction - Dark Taint Damage',
@@ -1296,7 +1301,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Drain Force - Force Siphoned'
@@ -1371,7 +1376,11 @@ export class DarkSidePowers {
     };
 
     // Create the item in the actor's inventory
-    const createdItems = await actor.createEmbeddedDocuments('Item', [itemData]);
+    const createdItems = await createItemInActor(actor, itemData);
+    if (!createdItems || !Array.isArray(createdItems) || createdItems.length === 0) {
+      ui.notifications.error('Failed to create Sith Talisman item');
+      return { success: false, message: 'Failed to create talisman item' };
+    }
     const itemId = createdItems[0].id;
 
     const talismantInfo = {
@@ -1393,7 +1402,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Sith Talisman Created'
@@ -1439,7 +1448,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Sith Talisman - Destroyed'
@@ -1452,7 +1461,7 @@ export class DarkSidePowers {
 
   static canCreateNewSithTalisman(actor) {
     const cooldown = actor.getFlag('swse', 'sithTalismanCooldown');
-    if (!cooldown) return true;
+    if (!cooldown) {return true;}
 
     const cooldownTime = new Date(cooldown);
     const now = new Date();
@@ -1563,7 +1572,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Sith Alchemical Weapon Enhanced'
@@ -1640,7 +1649,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Sith Alchemical Power Activated'
@@ -1674,7 +1683,7 @@ export class DarkSidePowers {
   }
 
   static getDarkScourgeBonus(actor, targetActor) {
-    if (!this.hasDarkScourge(actor)) return 0;
+    if (!this.hasDarkScourge(actor)) {return 0;}
 
     // Check if target is a Jedi (has Jedi class)
     const isJedi = targetActor.items.some(item =>
@@ -1749,7 +1758,7 @@ export class DarkSidePowers {
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Stolen Form - Jedi Technique Acquired'
@@ -1822,7 +1831,7 @@ Hooks.on('darkSideSavantTriggered', async (actor) => {
         select: {
           label: 'Return to Suite',
           callback: async (html) => {
-            const powerIdToReturn = html.find('#power-select').val();
+            const powerIdToReturn = (html?.[0] ?? html)?.querySelector('#power-select')?.value;
             await DarkSidePowers.completeDarkSideSavantSelection(
               actor,
               powerIdToReturn,

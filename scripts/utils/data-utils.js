@@ -8,7 +8,7 @@
  * @returns {object} Cloned object
  */
 export function deepClone(obj) {
-    if (obj === null || typeof obj !== 'object') return obj;
+    if (obj === null || typeof obj !== 'object') {return obj;}
     return JSON.parse(JSON.stringify(obj));
 }
 
@@ -42,7 +42,7 @@ export function setNestedProperty(obj, path, value) {
     const keys = path.split('.');
     const lastKey = keys.pop();
     const target = keys.reduce((current, key) => {
-        if (!(key in current)) current[key] = {};
+        if (!(key in current)) {current[key] = {};}
         return current[key];
     }, obj);
     target[lastKey] = value;
@@ -74,9 +74,9 @@ export function sortByProperty(array, property, ascending = true) {
     return [...array].sort((a, b) => {
         const aVal = getNestedProperty(a, property);
         const bVal = getNestedProperty(b, property);
-        
-        if (aVal < bVal) return ascending ? -1 : 1;
-        if (aVal > bVal) return ascending ? 1 : -1;
+
+        if (aVal < bVal) {return ascending ? -1 : 1;}
+        if (aVal > bVal) {return ascending ? 1 : -1;}
         return 0;
     });
 }
@@ -90,7 +90,7 @@ export function sortByProperty(array, property, ascending = true) {
 export function groupBy(array, property) {
     return array.reduce((groups, item) => {
         const key = getNestedProperty(item, property);
-        if (!groups[key]) groups[key] = [];
+        if (!groups[key]) {groups[key] = [];}
         groups[key].push(item);
         return groups;
     }, {});
@@ -106,7 +106,7 @@ export function uniqueBy(array, key) {
     const seen = new Set();
     return array.filter(item => {
         const value = getNestedProperty(item, key);
-        if (seen.has(value)) return false;
+        if (seen.has(value)) {return false;}
         seen.add(value);
         return true;
     });
@@ -141,7 +141,7 @@ export function extractFeatLevel(featName) {
     const match = featName.match(/^(.+?)\s+([IVX]+)$/);
 
     if (!match) {
-        return { level: 0, roman: "", baseName: featName };
+        return { level: 0, roman: '', baseName: featName };
     }
 
     const baseName = match[1].trim();
@@ -164,5 +164,5 @@ export function extractFeatLevel(featName) {
     }
 
     // Not a valid Roman numeral, treat as part of the name
-    return { level: 0, roman: "", baseName: featName };
+    return { level: 0, roman: '', baseName: featName };
 }

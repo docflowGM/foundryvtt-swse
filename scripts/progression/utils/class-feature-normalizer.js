@@ -4,42 +4,42 @@
  */
 
 const CANONICAL_FEATURE_TYPES = {
-    talent_choice: "talent_choice",
-    feat_choice: "feat_choice",
-    feat_grant: "feat_grant",
-    class_feature: "class_feature",
-    scaling_feature: "scaling_feature",
+    talent_choice: 'talent_choice',
+    feat_choice: 'feat_choice',
+    feat_grant: 'feat_grant',
+    class_feature: 'class_feature',
+    scaling_feature: 'scaling_feature',
 
     // Force-related class choices
-    force_technique_choice: "force_technique_choice",
-    force_secret_choice: "force_secret_choice",
-    force_power_grant: "force_power_grant",
+    force_technique_choice: 'force_technique_choice',
+    force_secret_choice: 'force_secret_choice',
+    force_power_grant: 'force_power_grant',
 
     // Special Saga variants
-    medical_secret_choice: "medical_secret_choice",
-    bonus_feat: "feat_choice"
+    medical_secret_choice: 'medical_secret_choice',
+    bonus_feat: 'feat_choice'
 };
 
 export function normalizeClassFeature(rawFeature) {
     // Convert strings → objects
-    if (typeof rawFeature === "string") {
+    if (typeof rawFeature === 'string') {
         return {
             name: rawFeature,
-            type: "class_feature"
+            type: 'class_feature'
         };
     }
 
     const f = foundry.utils.deepClone(rawFeature);
 
     // Always ensure a name exists
-    f.name = f.name || f.feature || "Unnamed Feature";
+    f.name = f.name || f.feature || 'Unnamed Feature';
 
     // Normalize feature type field
     f.type =
         f.type ||
         f.featureType ||
         f.kind ||
-        "class_feature";
+        'class_feature';
 
     f.type = f.type.trim().toLowerCase();
 
@@ -49,18 +49,18 @@ export function normalizeClassFeature(rawFeature) {
     }
 
     // Normalize scaling feature value
-    if (f.type === "scaling_feature") {
+    if (f.type === 'scaling_feature') {
         f.value = Number(f.value || 1);
-        if (isNaN(f.value)) f.value = 1;
+        if (isNaN(f.value)) {f.value = 1;}
     }
 
     // Normalize Force-related features
-    if (f.type.includes("force") && !f.value) {
+    if (f.type.includes('force') && !f.value) {
         f.value = 1; // safe default
     }
 
     // Ensure bonus feat lists exist
-    if (f.type === "feat_choice" && f.list && typeof f.list === "string") {
+    if (f.type === 'feat_choice' && f.list && typeof f.list === 'string') {
         f.list = f.list.trim();
     }
 
@@ -73,7 +73,7 @@ export function normalizeClassFeature(rawFeature) {
  * Used inside class normalization solution.
  */
 export function normalizeClassFeatureList(list) {
-    if (!list) return [];
+    if (!list) {return [];}
 
     if (!Array.isArray(list)) {
         list = [list];

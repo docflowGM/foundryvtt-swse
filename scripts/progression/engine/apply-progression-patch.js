@@ -24,7 +24,7 @@ function deepClone(value) {
  * @param {any} value
  */
 function setAtPath(root, path, value) {
-  if (!path) return;
+  if (!path) {return;}
   const parts = String(path).split('.').filter(Boolean);
   let cursor = root;
 
@@ -58,7 +58,7 @@ export function applyProgressionPatch(current, patch) {
   const ops = patch?.ops ?? [];
 
   for (const op of ops) {
-    if (!op || op.op !== 'set') continue;
+    if (!op || op.op !== 'set') {continue;}
     setAtPath(next, op.path, op.value);
   }
 

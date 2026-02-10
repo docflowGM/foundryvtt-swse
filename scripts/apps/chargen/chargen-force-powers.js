@@ -5,6 +5,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
+import { _findClassItem } from './chargen-shared.js';
 
 /**
  * Handle force power selection
@@ -14,15 +15,15 @@ export async function _onSelectForcePower(event) {
   const id = event.currentTarget.dataset.powerid;
 
   if (!this._packs.forcePowers || this._packs.forcePowers.length === 0) {
-    ui.notifications.error("Force Powers data not loaded!");
-    SWSELogger.error("CharGen | Force Powers pack is null or empty");
+    ui.notifications.error('Force Powers data not loaded!');
+    SWSELogger.error('CharGen | Force Powers pack is null or empty');
     return;
   }
 
   const power = this._packs.forcePowers.find(p => p._id === id || p.name === id);
 
   if (!power) {
-    ui.notifications.warn("Force Power not found!");
+    ui.notifications.warn('Force Power not found!');
     return;
   }
 
@@ -70,8 +71,8 @@ export async function _onSelectForcePower(event) {
     // Calculate force levels from classes - look up class docs to check force sensitivity
     const forceLevels = (this.characterData.classes || [])
       .filter(c => {
-        // Look up the class document to check if it's force-sensitive
-        const classDoc = this._packs?.classes?.find(cd => cd.name === c.name);
+        // Defensive lookup: try ID first, fall back to name
+        const classDoc = _findClassItem(this._packs?.classes || [], c);
         return classDoc?.system?.forceSensitive === true;
       })
       .reduce((sum, cls) => sum + (cls.level || 1), 0);
@@ -87,7 +88,7 @@ export async function _onSelectForcePower(event) {
     const canonical = PrerequisiteChecker.checkFeatPrerequisites(tempActor, power, pendingData);
     const legacy = PrerequisiteValidator.checkFeatPrerequisites(power, tempActor, pendingData);
     if (canonical.met !== legacy.valid) {
-      console.warn("Prereq mismatch (force power) detected", { power: power.name, canonical, legacy });
+      console.warn('Prereq mismatch (force power) detected', { power: power.name, canonical, legacy });
     }
     if (!canonical.met) {
       ui.notifications.warn(`Cannot select "${power.name}": ${canonical.missing.join(', ')}`);
@@ -111,7 +112,7 @@ export async function _onRemoveForcePower(event) {
   const id = event.currentTarget.dataset.powerid;
 
   this.characterData.powers = this.characterData.powers.filter(p => p._id !== id && p.name !== id);
-  ui.notifications.info("Force power removed");
+  ui.notifications.info('Force power removed');
   await this.render();
 }
 
@@ -159,6 +160,86 @@ export function _getForcePowersNeeded() {
 }
 
 /**
+ * Calculate suggestions for force powers during chargen
+ * Adds suggestion tier metadata for UI display
+ * @returns {Promise<Array>} Force powers with suggestion metadata
+ */
+export async function _calculateForcePowerSuggestions(powers) {
+  if (!Array.isArray(powers) || powers.length === 0) {
+    return powers;
+  }
+
+  try {
+    const { SuggestionService } = await import('../../engine/SuggestionService.js');
+    const { UNIFIED_TIERS } = await import('../../engine/suggestion-unified-tiers.js');
+
+    const tempActor = this._createTempActorForValidation();
+    if (!tempActor) {
+      SWSELogger.warn('[CHARGEN-SUGGESTIONS] No temp actor for force power suggestions');
+      return powers;
+    }
+
+    const pendingData = {
+      selectedFeats: this.characterData.feats || [],
+      selectedClass: this.characterData.classes?.[0],
+      selectedTalents: this.characterData.talents || [],
+      selectedSkills: Object.keys(this.characterData.skills || {}).filter(k => this.characterData.skills[k]?.trained),
+      selectedPowers: this.characterData.powers || []
+    };
+
+    // Get suggestions for each power
+    const suggestedPowers = await Promise.all(powers.map(async (power) => {
+      const suggestion = await SuggestionService.getSuggestions(
+        tempActor,
+        'chargen',
+        {
+          domain: 'forcepowers',
+          item: power,
+          pendingData
+        }
+      );
+
+      const tier = suggestion?.[0]?.tier ?? UNIFIED_TIERS.AVAILABLE;
+      const reason = suggestion?.[0]?.reason ?? 'Available';
+
+      return {
+        ...power,
+        suggestion: {
+          tier,
+          reason,
+          cssClass: `tier-${tier}`,
+          iconClass: this._getSuggestionIcon(tier)
+        },
+        isSuggested: tier >= UNIFIED_TIERS.THEMATIC_FIT
+      };
+    }));
+
+    return suggestedPowers;
+  } catch (err) {
+    SWSELogger.error('[CHARGEN-SUGGESTIONS] Error calculating force power suggestions:', err);
+    return powers; // Return without suggestions as fallback
+  }
+}
+
+/**
+ * Get suggestion icon for tier
+ * @param {number} tier - Suggestion tier (0-6)
+ * @returns {string} Icon class for display
+ */
+function _getSuggestionIcon(tier) {
+  const iconMap = {
+    6: 'fas fa-crown',      // Prestige prerequisite
+    5: 'fas fa-star',       // Prestige ready now
+    4: 'fas fa-link',       // Path continuation
+    3: 'fas fa-gem',        // Strong synergy
+    2: 'fas fa-bolt',       // Ability synergy
+    1: 'fas fa-check',      // Thematic fit
+    0: 'fas fa-circle'      // Available
+  };
+  return iconMap[tier] || 'fas fa-circle';
+}
+
+/**
  * Get available force powers for selection during chargen
  */
 export async function _getAvailableForcePowers() {
@@ -172,8 +253,8 @@ export async function _getAvailableForcePowers() {
   // Calculate force levels from classes - look up class docs to check force sensitivity
   const forceLevels = (this.characterData.classes || [])
     .filter(c => {
-      // Look up the class document to check if it's force-sensitive
-      const classDoc = this._packs?.classes?.find(cd => cd.name === c.name);
+      // Defensive lookup: try ID first, fall back to name
+      const classDoc = _findClassItem(this._packs?.classes || [], c);
       return classDoc?.system?.forceSensitive === true;
     })
     .reduce((sum, cls) => sum + (cls.level || 1), 0);
@@ -186,7 +267,13 @@ export async function _getAvailableForcePowers() {
 
   SWSELogger.log(`CharGen | Available force powers: ${availablePowers.length} (character has ${forceLevels} force-using class levels)`);
 
-  return availablePowers;
+  // Add suggestion metadata to force powers
+  try {
+    return await this._calculateForcePowerSuggestions.call(this, availablePowers);
+  } catch (err) {
+    SWSELogger.warn('CharGen | Error calculating force power suggestions:', err);
+    return availablePowers; // Return without suggestions as fallback
+  }
 }
 
 /**
@@ -194,14 +281,14 @@ export async function _getAvailableForcePowers() {
  */
 export function _bindForcePowerCardUI(root) {
   const step = root.querySelector('.step-force-powers');
-  if (!step) return;
+  if (!step) {return;}
 
   step.onclick = async (ev) => {
     const btn = ev.target.closest('button');
-    if (!btn) return;
+    if (!btn) {return;}
 
     const card = btn.closest('.power-card');
-    if (!card) return;
+    if (!card) {return;}
 
     if (btn.classList.contains('power-details-toggle')) {
       ev.preventDefault();
@@ -212,7 +299,7 @@ export function _bindForcePowerCardUI(root) {
     if (btn.classList.contains('power-read')) {
       ev.preventDefault();
       const uuid = card.dataset.uuid;
-      if (!uuid) return;
+      if (!uuid) {return;}
       const doc = await fromUuid(uuid);
       doc?.sheet?.render(true);
     }

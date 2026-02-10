@@ -78,12 +78,12 @@ export class ChargenDataCache {
     SWSELogger.log(`[CACHE-LOAD] SWSE packs:`, Array.from(game.packs.keys()).filter(k => k.includes('swse') || k.includes('SWSE')));
 
     const packNames = {
-      species: "foundryvtt-swse.species",
-      feats: "foundryvtt-swse.feats",
-      talents: "foundryvtt-swse.talents",
-      classes: "foundryvtt-swse.classes",
-      droids: "foundryvtt-swse.droids",
-      forcePowers: "foundryvtt-swse.forcepowers"
+      species: 'foundryvtt-swse.species',
+      feats: 'foundryvtt-swse.feats',
+      talents: 'foundryvtt-swse.talents',
+      classes: 'foundryvtt-swse.classes',
+      droids: 'foundryvtt-swse.droids',
+      forcePowers: 'foundryvtt-swse.forcepowers'
     };
 
     const packs = {};
@@ -293,23 +293,23 @@ export class ChargenDataCache {
  */
 export function _getDefaultSkills() {
   return [
-    { key: "acrobatics", name: "Acrobatics", ability: "dex", trained: false },
-    { key: "climb", name: "Climb", ability: "str", trained: false },
-    { key: "deception", name: "Deception", ability: "cha", trained: false },
-    { key: "endurance", name: "Endurance", ability: "con", trained: false },
-    { key: "gatherInfo", name: "Gather Information", ability: "cha", trained: false },
-    { key: "initiative", name: "Initiative", ability: "dex", trained: false },
-    { key: "jump", name: "Jump", ability: "str", trained: false },
-    { key: "mechanics", name: "Mechanics", ability: "int", trained: false },
-    { key: "perception", name: "Perception", ability: "wis", trained: false },
-    { key: "persuasion", name: "Persuasion", ability: "cha", trained: false },
-    { key: "pilot", name: "Pilot", ability: "dex", trained: false },
-    { key: "stealth", name: "Stealth", ability: "dex", trained: false },
-    { key: "survival", name: "Survival", ability: "wis", trained: false },
-    { key: "swim", name: "Swim", ability: "str", trained: false },
-    { key: "treatInjury", name: "Treat Injury", ability: "wis", trained: false },
-    { key: "useComputer", name: "Use Computer", ability: "int", trained: false },
-    { key: "useTheForce", name: "Use the Force", ability: "cha", trained: false }
+    { key: 'acrobatics', name: 'Acrobatics', ability: 'dex', trained: false },
+    { key: 'climb', name: 'Climb', ability: 'str', trained: false },
+    { key: 'deception', name: 'Deception', ability: 'cha', trained: false },
+    { key: 'endurance', name: 'Endurance', ability: 'con', trained: false },
+    { key: 'gatherInfo', name: 'Gather Information', ability: 'cha', trained: false },
+    { key: 'initiative', name: 'Initiative', ability: 'dex', trained: false },
+    { key: 'jump', name: 'Jump', ability: 'str', trained: false },
+    { key: 'mechanics', name: 'Mechanics', ability: 'int', trained: false },
+    { key: 'perception', name: 'Perception', ability: 'wis', trained: false },
+    { key: 'persuasion', name: 'Persuasion', ability: 'cha', trained: false },
+    { key: 'pilot', name: 'Pilot', ability: 'dex', trained: false },
+    { key: 'stealth', name: 'Stealth', ability: 'dex', trained: false },
+    { key: 'survival', name: 'Survival', ability: 'wis', trained: false },
+    { key: 'swim', name: 'Swim', ability: 'str', trained: false },
+    { key: 'treatInjury', name: 'Treat Injury', ability: 'wis', trained: false },
+    { key: 'useComputer', name: 'Use Computer', ability: 'int', trained: false },
+    { key: 'useTheForce', name: 'Use the Force', ability: 'cha', trained: false }
   ];
 }
 
@@ -319,6 +319,68 @@ export function _getDefaultSkills() {
  */
 export function _getAvailableSkills() {
   return this._skillsJson || this._getDefaultSkills();
+}
+
+/**
+ * Defensive lookup helper for finding items from a pack array
+ * Tries ID first (v2 standard), falls back to name (v1 compat)
+ * @param {Array} packArray - Array of items from cache
+ * @param {string|number} idOrName - 16-char ID or name string
+ * @returns {Object|null} Item object or null if not found
+ */
+export function _findItemByIdOrName(packArray, idOrName) {
+  if (!packArray || !idOrName) return null;
+
+  // Try ID first (16-character hex ID)
+  if (typeof idOrName === 'string' && idOrName.length === 16) {
+    const byId = packArray.find(item => item._id === idOrName);
+    if (byId) return byId;
+  }
+
+  // Fall back to name (v1 compat)
+  return packArray.find(item => item.name === idOrName);
+}
+
+/**
+ * Defensive lookup for classes from cache
+ * @param {Array} classArray - Classes from cache
+ * @param {string|Object} classIdOrNameOrData - Class ID, name, or object with _id/name
+ * @returns {Object|null} Class object or null if not found
+ */
+export function _findClassItem(classArray, classIdOrNameOrData) {
+  if (!classArray || !classIdOrNameOrData) return null;
+
+  // Handle object input (extract ID first, then name)
+  if (typeof classIdOrNameOrData === 'object') {
+    const id = classIdOrNameOrData._id || classIdOrNameOrData.id;
+    const name = classIdOrNameOrData.name;
+
+    // Try ID first
+    if (id && typeof id === 'string' && id.length === 16) {
+      const byId = classArray.find(c => c._id === id);
+      if (byId) return byId;
+    }
+
+    // Try name
+    if (name) {
+      return classArray.find(c => c.name === name);
+    }
+
+    return null;
+  }
+
+  // Handle string input (ID or name)
+  return _findItemByIdOrName(classArray, classIdOrNameOrData);
+}
+
+/**
+ * Defensive lookup for talents from cache
+ * @param {Array} talentArray - Talents from cache
+ * @param {string} talentNameOrId - Talent name or 16-char ID
+ * @returns {Object|null} Talent object or null if not found
+ */
+export function _findTalentItem(talentArray, talentNameOrId) {
+  return _findItemByIdOrName(talentArray, talentNameOrId);
 }
 
 /**
@@ -340,7 +402,8 @@ export function _getAvailableTalentTrees() {
   const talentTreesSet = new Set();
 
   for (const charClass of this.characterData.classes) {
-    const classData = this._packs.classes.find(c => c.name === charClass.name);
+    // Defensive lookup: try ID first, fall back to name
+    const classData = _findClassItem(this._packs.classes, charClass);
 
     if (classData) {
       // Use property accessor to get talent trees

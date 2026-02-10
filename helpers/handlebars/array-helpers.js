@@ -6,7 +6,7 @@ export const arrayHelpers = {
   contains: (array, value) => Array.isArray(array) && array.includes(value),
   isEmpty: (array) => !Array.isArray(array) || array.length === 0,
   sort: (array, key) => {
-    if (!Array.isArray(array)) return [];
+    if (!Array.isArray(array)) {return [];}
     return [...array].sort((a, b) => {
       const aVal = key ? a[key] : a;
       const bVal = key ? b[key] : b;
@@ -14,7 +14,7 @@ export const arrayHelpers = {
     });
   },
   find: (array, key, value) => {
-    if (!Array.isArray(array)) return undefined;
+    if (!Array.isArray(array)) {return undefined;}
     // If only two arguments, treat as (array, value)
     if (value === undefined) {
       return array.find(item => item === key);
@@ -30,9 +30,9 @@ export const arrayHelpers = {
    * @returns {Array} Filtered array of skill uses
    */
   filterExtraUsesByTraining: (extraUses, isTrained) => {
-    if (!Array.isArray(extraUses)) return [];
+    if (!Array.isArray(extraUses)) {return [];}
     // If trained, show all uses; otherwise filter out "Trained Only" items
-    if (isTrained) return extraUses;
+    if (isTrained) {return extraUses;}
     return extraUses.filter(use => !use?.name?.includes('Trained Only'));
   }
 };

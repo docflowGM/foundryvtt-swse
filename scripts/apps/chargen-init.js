@@ -2,6 +2,7 @@ import { SWSELogger } from '../utils/logger.js';
 import CharacterGeneratorNarrative from './chargen-narrative.js';
 import CharacterGeneratorImproved from './chargen-improved.js';
 import { TemplateCharacterCreator } from './template-character-creator.js';
+import { createActor } from '../core/document-api-v13.js';
 
 // Single hook to handle both create button interception and header button addition
 Hooks.on('renderActorDirectory', (app, html, data) => {
@@ -27,34 +28,34 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
         createButton.addEventListener('click', async (event) => {
             const documentName = event.currentTarget.dataset.documentClass || event.currentTarget.dataset.type;
 
-            if (documentName === "Actor") {
+            if (documentName === 'Actor') {
                 event.preventDefault();
                 event.stopPropagation();
 
                 // Check if user can create NPCs (GM or house rule enabled)
                 const isGM = game.user.isGM;
-                const allowPlayersNonheroic = game.settings.get('foundryvtt-swse', "allowPlayersNonheroic");
+                const allowPlayersNonheroic = game.settings.get('foundryvtt-swse', 'allowPlayersNonheroic');
                 const canCreateNPC = isGM || allowPlayersNonheroic;
 
                 // Build dialog buttons
                 const buttons = {
                     template: {
                         icon: '<i class="fas fa-star"></i>',
-                        label: "PC from Template",
+                        label: 'PC from Template',
                         callback: () => {
                             TemplateCharacterCreator.create();
                         }
                     },
                     generator: {
                         icon: '<i class="fas fa-dice-d20"></i>',
-                        label: "Custom PC Generator",
+                        label: 'Custom PC Generator',
                         callback: async () => {
                             // Create temporary actor for consistent initialization and mentor survey handling
                             // Ensures L1 mentor survey fires consistently regardless of entry point
                             const ActorClass = CONFIG.Actor.documentClass;
                             const tempActor = new ActorClass({
-                                name: "New Character (Temp)",
-                                type: "character",
+                                name: 'New Character (Temp)',
+                                type: 'character',
                                 system: {
                                     level: 1,
                                     swse: { mentorSurveyCompleted: false }
@@ -70,20 +71,20 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                 if (canCreateNPC) {
                     buttons.npc = {
                         icon: '<i class="fas fa-users"></i>',
-                        label: "NPC Generator",
+                        label: 'NPC Generator',
                         callback: async () => {
                             // Create temporary NPC actor for consistent initialization
                             const ActorClass = CONFIG.Actor.documentClass;
                             const tempActor = new ActorClass({
-                                name: "New NPC (Temp)",
-                                type: "npc",
+                                name: 'New NPC (Temp)',
+                                type: 'npc',
                                 system: {
                                     level: 1,
                                     swse: { mentorSurveyCompleted: false }
                                 }
                             }, { parent: null });
 
-                            new CharacterGeneratorImproved(tempActor, { actorType: "npc" }).render(true);
+                            new CharacterGeneratorImproved(tempActor, { actorType: 'npc' }).render(true);
                         }
                     };
                 }
@@ -91,19 +92,19 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                 // Always allow manual creation
                 buttons.manual = {
                     icon: '<i class="fas fa-user"></i>',
-                    label: "Create Manually",
-                    callback: () => {
-                        Actor.create({
-                            name: "New Character",
-                            type: "character",
-                            img: "systems/foundryvtt-swse/assets/icons/default-character.png"
+                    label: 'Create Manually',
+                    callback: async () => {
+                        await createActor({
+                            name: 'New Character',
+                            type: 'character',
+                            img: 'systems/foundryvtt-swse/assets/icons/default-character.png'
                         });
                     }
                 };
 
                 // Show dialog asking if they want to use character generator
                 new Dialog({
-                    title: "Create New Actor",
+                    title: 'Create New Actor',
                     content: `
                         <div style="padding: 1rem;">
                             <p style="text-align: center; margin-bottom: 1rem;">Choose what type of actor to create:</p>
@@ -113,7 +114,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                         </div>
                     `,
                     buttons: buttons,
-                    default: "template"
+                    default: 'template'
                 }).render(true);
             }
         });
@@ -143,8 +144,8 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                 // Ensures L1 mentor survey fires consistently regardless of entry point
                 const ActorClass = CONFIG.Actor.documentClass;
                 const tempActor = new ActorClass({
-                    name: "New Character (Temp)",
-                    type: "character",
+                    name: 'New Character (Temp)',
+                    type: 'character',
                     system: {
                         level: 1,
                         swse: { mentorSurveyCompleted: false }

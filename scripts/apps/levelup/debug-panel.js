@@ -81,7 +81,7 @@ export class GMDebugPanel extends SWSEApplicationV2 {
      * Format theme scores with visual indicators
      */
     _formatThemeScores() {
-        if (!this.buildIntent?.themes) return [];
+        if (!this.buildIntent?.themes) {return [];}
 
         const themes = Object.entries(this.buildIntent.themes)
             .map(([theme, score]) => ({
@@ -121,7 +121,7 @@ export class GMDebugPanel extends SWSEApplicationV2 {
      * Format prestige affinities for display
      */
     _formatPrestigeAffinities() {
-        if (!this.buildIntent?.prestigeAffinities) return [];
+        if (!this.buildIntent?.prestigeAffinities) {return [];}
 
         return this.buildIntent.prestigeAffinities.map(affinity => ({
             className: affinity.className,
@@ -136,8 +136,8 @@ export class GMDebugPanel extends SWSEApplicationV2 {
      * Get confidence level label
      */
     _getConfidenceLevel(confidence) {
-        if (confidence >= 0.7) return 'high';
-        if (confidence >= 0.4) return 'medium';
+        if (confidence >= 0.7) {return 'high';}
+        if (confidence >= 0.4) {return 'medium';}
         return 'low';
     }
 
@@ -146,11 +146,11 @@ export class GMDebugPanel extends SWSEApplicationV2 {
      */
     _formatMatchSummary(matches) {
         const parts = [];
-        if (matches.feats?.length) parts.push(`${matches.feats.length} feat(s)`);
-        if (matches.skills?.length) parts.push(`${matches.skills.length} skill(s)`);
-        if (matches.talents?.length) parts.push(`${matches.talents.length} talent(s)`);
-        if (matches.talentTrees?.length) parts.push(`${matches.talentTrees.length} tree(s)`);
-        if (matches.abilities?.length) parts.push(`${matches.abilities.length} ability(s)`);
+        if (matches.feats?.length) {parts.push(`${matches.feats.length} feat(s)`);}
+        if (matches.skills?.length) {parts.push(`${matches.skills.length} skill(s)`);}
+        if (matches.talents?.length) {parts.push(`${matches.talents.length} talent(s)`);}
+        if (matches.talentTrees?.length) {parts.push(`${matches.talentTrees.length} tree(s)`);}
+        if (matches.abilities?.length) {parts.push(`${matches.abilities.length} ability(s)`);}
         return parts.join(', ') || 'No matches';
     }
 
@@ -158,7 +158,7 @@ export class GMDebugPanel extends SWSEApplicationV2 {
      * Format signals for display
      */
     _formatSignals() {
-        if (!this.buildIntent?.signals) return {};
+        if (!this.buildIntent?.signals) {return {};}
 
         return {
             feats: this.buildIntent.signals.feats.map(f => ({
@@ -184,7 +184,7 @@ export class GMDebugPanel extends SWSEApplicationV2 {
      * Format priority prerequisites
      */
     _formatPriorityPrereqs() {
-        if (!this.buildIntent?.priorityPrereqs) return [];
+        if (!this.buildIntent?.priorityPrereqs) {return [];}
 
         return this.buildIntent.priorityPrereqs.map(prereq => ({
             type: prereq.type,
@@ -200,7 +200,7 @@ export class GMDebugPanel extends SWSEApplicationV2 {
      */
     async _analyzeClasses() {
         const classPack = game.packs.get('foundryvtt-swse.classes');
-        if (!classPack) return [];
+        if (!classPack) {return [];}
 
         const allClasses = await classPack.getDocuments();
         const prestigePrereqs = await ClassSuggestionEngine._loadPrestigePrerequisites();
@@ -209,10 +209,10 @@ export class GMDebugPanel extends SWSEApplicationV2 {
         const analysis = [];
         for (const cls of allClasses) {
             const isPrestige = !['Jedi', 'Noble', 'Scoundrel', 'Scout', 'Soldier'].includes(cls.name);
-            if (!isPrestige) continue;
+            if (!isPrestige) {continue;}
 
             const prereqData = prestigePrereqs[cls.name];
-            if (!prereqData) continue;
+            if (!prereqData) {continue;}
 
             const prereqCheck = ClassSuggestionEngine._checkPrerequisites(cls.name, prereqData, actorState);
             const synergyScore = ClassSuggestionEngine._calculateSynergyScore({ name: cls.name }, actorState);
@@ -229,7 +229,7 @@ export class GMDebugPanel extends SWSEApplicationV2 {
 
         // Sort by qualification status, then by missing count
         analysis.sort((a, b) => {
-            if (a.qualified !== b.qualified) return a.qualified ? -1 : 1;
+            if (a.qualified !== b.qualified) {return a.qualified ? -1 : 1;}
             return a.missingCount - b.missingCount;
         });
 
@@ -277,8 +277,8 @@ export function showGMDebugPanel(actor, pendingData = {}) {
 export function registerDebugCommand() {
     // Add a method to actors for easy access
     Hooks.on('getActorSheetHeaderButtons', (sheet, buttons) => {
-        if (!game.user.isGM) return;
-        if (sheet.actor?.type !== 'character') return;
+        if (!game.user.isGM) {return;}
+        if (sheet.actor?.type !== 'character') {return;}
 
         buttons.unshift({
             label: 'Debug BuildIntent',

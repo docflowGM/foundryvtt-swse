@@ -98,7 +98,7 @@ export class PacingMonitor {
    */
   static _calculateNovelty(report) {
     const actors = Object.values(report.perActor || {});
-    if (actors.length === 0) return 0;
+    if (actors.length === 0) {return 0;}
 
     const noveltyScores = actors
       .map(a => a.decisionHealth?.noveltyScore || 0);

@@ -14,10 +14,10 @@ export function calculateDefense(actor, type) {
   const utils = game.swse.utils;
   const def = actor.system.defenses?.[type];
 
-  if (!def) return 10;
+  if (!def) {return 10;}
 
   const base = 10;
-  
+
   // Use abilityKey if available, otherwise fall back to default abilities by type
   let abilityKey = def.abilityKey;
   if (!abilityKey) {
@@ -46,9 +46,9 @@ export function calculateDefense(actor, type) {
  */
 export function calculateAllDefenses(actor) {
   return {
-    fortitude: calculateDefense(actor, "fortitude"),
-    reflex: calculateDefense(actor, "reflex"),
-    will: calculateDefense(actor, "will")
+    fortitude: calculateDefense(actor, 'fortitude'),
+    reflex: calculateDefense(actor, 'reflex'),
+    will: calculateDefense(actor, 'will')
   };
 }
 
@@ -59,11 +59,11 @@ export function calculateAllDefenses(actor) {
  * @param {string} coverType - Cover type (none, partial, cover, improved)
  * @returns {number} Defense with cover
  */
-export function getDefenseWithCover(actor, type, coverType = "none") {
+export function getDefenseWithCover(actor, type, coverType = 'none') {
   const utils = game.swse.utils;
   const baseDefense = calculateDefense(actor, type);
   const coverBonus = utils.combat.getCoverBonus(coverType);
-  
+
   return baseDefense + coverBonus;
 }
 
@@ -87,8 +87,8 @@ export function calculateFlatFooted(actor) {
  */
 export function calculateDamageThreshold(actor) {
   const utils = game.swse.utils;
-  const fortitude = calculateDefense(actor, "fortitude");
-  const size = actor.system.size || "medium";
+  const fortitude = calculateDefense(actor, 'fortitude');
+  const size = actor.system.size || 'medium';
 
   return utils.math.calculateDamageThreshold(fortitude, size);
 }

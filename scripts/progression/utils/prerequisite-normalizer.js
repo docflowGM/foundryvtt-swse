@@ -4,58 +4,58 @@
  */
 
 const ABILITY_MAP = {
-    "str": "str", "strength": "str",
-    "dex": "dex", "dexterity": "dex",
-    "con": "con", "constitution": "con",
-    "int": "int", "intelligence": "int",
-    "wis": "wis", "wisdom": "wis",
-    "cha": "cha", "charisma": "cha"
+    'str': 'str', 'strength': 'str',
+    'dex': 'dex', 'dexterity': 'dex',
+    'con': 'con', 'constitution': 'con',
+    'int': 'int', 'intelligence': 'int',
+    'wis': 'wis', 'wisdom': 'wis',
+    'cha': 'cha', 'charisma': 'cha'
 };
 
 // Common species names (case-insensitive)
 const SPECIES_NAMES = [
-    "Abyssin", "Adnerem", "Aqualish", "Arcona", "Balosar", "Barabel", "Bith",
-    "Bothan", "Caamasi", "Cerean", "Chagrian", "Chalactan", "Chiss", "Clawdite",
-    "Coway", "Defel", "Devaronian", "Drall", "Dressellian", "Duinuogwuin", "Duros",
-    "Echani", "Elomin", "Ewok", "Falleen", "Farghul", "Feeorin", "Ferroan",
-    "Gamorrean", "Gand", "Givin", "Gossam", "Gran", "Gung an", "Hapan", "Human",
-    "Iktotchi", "Ishi Tib", "Ithorian", "Jawa", "Kaleesh", "Kel Dor", "Khil",
-    "Killik", "Klatooinian", "Kubaz", "Kushiban", "Lannik", "Miraluka", "Mon Calamari",
-    "Mustafarian", "Muun", "Nautolan", "Neimoidian", "Nikto", "Noghri", "Nosaurian",
-    "Omwati", "Pau'an", "Quarren", "Rodian", "Sakiyan", "Selkath", "Selonian",
-    "Shistavanen", "Skakoan", "Squib", "Ssi-ruu", "Sullustan", "T'surr", "Talz",
-    "Togorian", "Togruta", "Toydarian", "Trandoshan", "Tusken Raider", "Twi'lek",
-    "Ugnaught", "Umbaran", "Verpine", "Vratix", "Weequay", "Wookiee", "Wroonian",
-    "Yevetha", "Yuzzum", "Zabrak"
+    'Abyssin', 'Adnerem', 'Aqualish', 'Arcona', 'Balosar', 'Barabel', 'Bith',
+    'Bothan', 'Caamasi', 'Cerean', 'Chagrian', 'Chalactan', 'Chiss', 'Clawdite',
+    'Coway', 'Defel', 'Devaronian', 'Drall', 'Dressellian', 'Duinuogwuin', 'Duros',
+    'Echani', 'Elomin', 'Ewok', 'Falleen', 'Farghul', 'Feeorin', 'Ferroan',
+    'Gamorrean', 'Gand', 'Givin', 'Gossam', 'Gran', 'Gung an', 'Hapan', 'Human',
+    'Iktotchi', 'Ishi Tib', 'Ithorian', 'Jawa', 'Kaleesh', 'Kel Dor', 'Khil',
+    'Killik', 'Klatooinian', 'Kubaz', 'Kushiban', 'Lannik', 'Miraluka', 'Mon Calamari',
+    'Mustafarian', 'Muun', 'Nautolan', 'Neimoidian', 'Nikto', 'Noghri', 'Nosaurian',
+    'Omwati', "Pau'an", 'Quarren', 'Rodian', 'Sakiyan', 'Selkath', 'Selonian',
+    'Shistavanen', 'Skakoan', 'Squib', 'Ssi-ruu', 'Sullustan', "T'surr", 'Talz',
+    'Togorian', 'Togruta', 'Toydarian', 'Trandoshan', 'Tusken Raider', "Twi'lek",
+    'Ugnaught', 'Umbaran', 'Verpine', 'Vratix', 'Weequay', 'Wookiee', 'Wroonian',
+    'Yevetha', 'Yuzzum', 'Zabrak'
 ];
 
 // Weapon groups for proficiency/focus/specialization
 const WEAPON_GROUPS = [
-    "advanced melee weapons", "exotic weapons", "heavy weapons", "lightsabers",
-    "pistols", "rifles", "simple weapons"
+    'advanced melee weapons', 'exotic weapons', 'heavy weapons', 'lightsabers',
+    'pistols', 'rifles', 'simple weapons'
 ];
 
 // Armor types
-const ARMOR_TYPES = ["light", "medium", "heavy"];
+const ARMOR_TYPES = ['light', 'medium', 'heavy'];
 
 export function normalizePrerequisiteString(raw) {
-    if (!raw || raw === "null") return { raw: "", parsed: [] };
+    if (!raw || raw === 'null') {return { raw: '', parsed: [] };}
 
     // Ensure raw is a string
     const rawStr = typeof raw === 'string' ? raw : String(raw);
 
     const clean = rawStr
-        .replace(/\n/g, " ")
-        .replace(/\s+/g, " ")
+        .replace(/\n/g, ' ')
+        .replace(/\s+/g, ' ')
         .trim();
 
     // First, handle "&" by converting to commas for proper splitting
-    const withCommas = clean.replace(/\s*&\s*/g, ", ");
+    const withCommas = clean.replace(/\s*&\s*/g, ', ');
     const parts = withCommas.split(/[,;]+/).map(p => p.trim());
 
     const parsed = [];
 
-    for (let p of parts) {
+    for (const p of parts) {
         const lower = p.toLowerCase();
 
         // ----------------------------------------------------------
@@ -64,7 +64,7 @@ export function normalizePrerequisiteString(raw) {
         const abilityMatch = lower.match(/(str|dex|con|int|wis|cha)[^\d]*([\d]+)/);
         if (abilityMatch) {
             parsed.push({
-                type: "ability",
+                type: 'ability',
                 ability: ABILITY_MAP[abilityMatch[1]],
                 minimum: Number(abilityMatch[2])
             });
@@ -77,7 +77,7 @@ export function normalizePrerequisiteString(raw) {
         const babMatch = lower.match(/bab\s*\+?(\d+)/);
         if (babMatch) {
             parsed.push({
-                type: "bab",
+                type: 'bab',
                 minimum: Number(babMatch[1])
             });
             continue;
@@ -90,7 +90,7 @@ export function normalizePrerequisiteString(raw) {
         if (rankMatch) {
             // In SWSE, skills are trained/untrained, so treat rank requirement as trained
             parsed.push({
-                type: "skill_trained",
+                type: 'skill_trained',
                 skill: normalizeSkillName(rankMatch[1])
             });
             continue;
@@ -100,15 +100,15 @@ export function normalizePrerequisiteString(raw) {
         // 4. Skill prerequisite: "Trained in Use the Force"
         // ----------------------------------------------------------
         // Check for OR conditions first
-        if (lower.includes("trained in") && lower.includes(" or ")) {
+        if (lower.includes('trained in') && lower.includes(' or ')) {
             const skillOrMatch = p.match(/Trained in (.+)/i);
             if (skillOrMatch) {
                 const skillsRaw = skillOrMatch[1];
-                const skills = skillsRaw.split(" or ").map(s => s.trim());
+                const skills = skillsRaw.split(' or ').map(s => s.trim());
                 parsed.push({
-                    type: "or",
+                    type: 'or',
                     conditions: skills.map(skill => ({
-                        type: "skill_trained",
+                        type: 'skill_trained',
                         skill: normalizeSkillName(skill)
                     }))
                 });
@@ -120,7 +120,7 @@ export function normalizePrerequisiteString(raw) {
         const skillMatch = lower.match(/trained in ([a-z\s]+)/);
         if (skillMatch) {
             parsed.push({
-                type: "skill_trained",
+                type: 'skill_trained',
                 skill: normalizeSkillName(skillMatch[1])
             });
             continue;
@@ -131,17 +131,17 @@ export function normalizePrerequisiteString(raw) {
         // ----------------------------------------------------------
         // Check for common feat patterns
         const featPatterns = [
-            "feat", "weapon focus", "weapon specialization", "dual weapon",
-            "quick draw", "double attack", "weapon finesse", "force training",
-            "tech specialist", "multiattack", "martial arts", "weapon proficiency",
-            "coordinated attack", "mobility", "two-weapon fighting", "point blank shot",
-            "skill focus", "dodge", "power attack"
+            'feat', 'weapon focus', 'weapon specialization', 'dual weapon',
+            'quick draw', 'double attack', 'weapon finesse', 'force training',
+            'tech specialist', 'multiattack', 'martial arts', 'weapon proficiency',
+            'coordinated attack', 'mobility', 'two-weapon fighting', 'point blank shot',
+            'skill focus', 'dodge', 'power attack'
         ];
 
         const isFeat = featPatterns.some(pattern => lower.includes(pattern));
-        if (isFeat && !lower.includes("trained in")) {
+        if (isFeat && !lower.includes('trained in')) {
             parsed.push({
-                type: "feat",
+                type: 'feat',
                 name: normalizeFeatName(p)
             });
             continue;
@@ -150,27 +150,27 @@ export function normalizePrerequisiteString(raw) {
         // ----------------------------------------------------------
         // 5. OR logic for prerequisites (e.g., "Block or Deflect")
         // ----------------------------------------------------------
-        if (lower.includes(" or ")) {
+        if (lower.includes(' or ')) {
             const orParts = p.split(/\s+or\s+/i).map(s => s.trim());
             if (orParts.length > 1) {
                 // Create OR condition with each part parsed as a potential talent/feat
                 const orConditions = orParts.map(part => {
                     const partLower = part.toLowerCase();
                     // Determine if it's a talent or feat
-                    if (partLower.includes("talent") ||
-                        ["block", "deflect", "friend", "foe", "dual", "single", "weapon"].some(w => partLower.includes(w))) {
+                    if (partLower.includes('talent') ||
+                        ['block', 'deflect', 'friend', 'foe', 'dual', 'single', 'weapon'].some(w => partLower.includes(w))) {
                         return {
-                            type: partLower.includes("talent") ? "talent" : "talent",
+                            type: partLower.includes('talent') ? 'talent' : 'talent',
                             name: normalizeTalentName(part)
                         };
                     }
                     return {
-                        type: "talent",
+                        type: 'talent',
                         name: normalizeTalentName(part)
                     };
                 });
                 parsed.push({
-                    type: "or",
+                    type: 'or',
                     conditions: orConditions
                 });
                 continue;
@@ -180,13 +180,13 @@ export function normalizePrerequisiteString(raw) {
         // ----------------------------------------------------------
         // 6. Talent prerequisite
         // ----------------------------------------------------------
-        if (lower.includes("talent")) {
+        if (lower.includes('talent')) {
             // Skip malformed prerequisite descriptions that start with "Prerequisites:"
-            if (lower.startsWith("prerequisites:")) {
+            if (lower.startsWith('prerequisites:')) {
                 continue;
             }
             parsed.push({
-                type: "talent",
+                type: 'talent',
                 name: normalizeTalentName(p)
             });
             continue;
@@ -197,15 +197,15 @@ export function normalizePrerequisiteString(raw) {
         // ----------------------------------------------------------
         // Check for common force power names
         const forcePowerPatterns = [
-            "vital transfer", "mind trick", "farseeing", "force perception",
-            "illusion", "battle meditation", "healing boost", "soothe",
-            "influence savant", "telekinetic savant"
+            'vital transfer', 'mind trick', 'farseeing', 'force perception',
+            'illusion', 'battle meditation', 'healing boost', 'soothe',
+            'influence savant', 'telekinetic savant'
         ];
 
         const isForcePower = forcePowerPatterns.some(pattern => lower.includes(pattern));
         if (isForcePower) {
             parsed.push({
-                type: "force_power",
+                type: 'force_power',
                 name: p.trim()
             });
             continue;
@@ -214,28 +214,28 @@ export function normalizePrerequisiteString(raw) {
         // ----------------------------------------------------------
         // 8. Force Technique / Secret prerequisites
         // ----------------------------------------------------------
-        if (lower.includes("force secret")) {
-            parsed.push({ type: "force_secret" });
+        if (lower.includes('force secret')) {
+            parsed.push({ type: 'force_secret' });
             continue;
         }
-        if (lower.includes("force technique")) {
-            parsed.push({ type: "force_technique" });
+        if (lower.includes('force technique')) {
+            parsed.push({ type: 'force_technique' });
             continue;
         }
 
         // ----------------------------------------------------------
         // 9. "Any One Force Technique" pattern
         // ----------------------------------------------------------
-        if (lower.includes("any one force technique")) {
-            parsed.push({ type: "any_force_technique" });
+        if (lower.includes('any one force technique')) {
+            parsed.push({ type: 'any_force_technique' });
             continue;
         }
 
         // ----------------------------------------------------------
         // 10. Force-sensitive prerequisite
         // ----------------------------------------------------------
-        if (lower.includes("force sensitive")) {
-            parsed.push({ type: "force_sensitive" });
+        if (lower.includes('force sensitive')) {
+            parsed.push({ type: 'force_sensitive' });
             continue;
         }
 
@@ -245,7 +245,7 @@ export function normalizePrerequisiteString(raw) {
         const classLevelMatch = lower.match(/([a-z\s]+)\s+level\s+(\d+)/);
         if (classLevelMatch) {
             parsed.push({
-                type: "class_level",
+                type: 'class_level',
                 className: capitalizeWords(classLevelMatch[1].trim()),
                 minimum: Number(classLevelMatch[2])
             });
@@ -255,9 +255,9 @@ export function normalizePrerequisiteString(raw) {
         // ----------------------------------------------------------
         // 9. Alignment requirements (rare but exist)
         // ----------------------------------------------------------
-        if (lower.includes("dark side") || lower.includes("light side")) {
+        if (lower.includes('dark side') || lower.includes('light side')) {
             parsed.push({
-                type: "alignment",
+                type: 'alignment',
                 alignment: capitalizeWords(p)
             });
             continue;
@@ -266,19 +266,19 @@ export function normalizePrerequisiteString(raw) {
         // ----------------------------------------------------------
         // 10. Non-Droid requirement
         // ----------------------------------------------------------
-        if (lower === "non-droid") {
-            parsed.push({ type: "non_droid" });
+        if (lower === 'non-droid') {
+            parsed.push({ type: 'non_droid' });
             continue;
         }
 
         // ----------------------------------------------------------
         // 11. Species Trait requirement
         // ----------------------------------------------------------
-        if (lower.includes("species trait")) {
+        if (lower.includes('species trait')) {
             const traitMatch = p.match(/(.+?)\s+Species Trait/i);
             if (traitMatch) {
                 parsed.push({
-                    type: "species_trait",
+                    type: 'species_trait',
                     trait: traitMatch[1].trim()
                 });
             }
@@ -288,11 +288,11 @@ export function normalizePrerequisiteString(raw) {
         // ----------------------------------------------------------
         // 12. Weapon Proficiency
         // ----------------------------------------------------------
-        if (lower.includes("weapon proficiency") || lower.includes("proficient with")) {
+        if (lower.includes('weapon proficiency') || lower.includes('proficient with')) {
             const groupMatch = p.match(/\(([^)]+)\)/);
-            const weaponGroup = groupMatch ? groupMatch[1] : "selected weapon group";
+            const weaponGroup = groupMatch ? groupMatch[1] : 'selected weapon group';
             parsed.push({
-                type: "weapon_proficiency",
+                type: 'weapon_proficiency',
                 group: weaponGroup
             });
             continue;
@@ -301,9 +301,9 @@ export function normalizePrerequisiteString(raw) {
         // ----------------------------------------------------------
         // 13. Weapon Focus
         // ----------------------------------------------------------
-        if (lower.includes("weapon focus")) {
+        if (lower.includes('weapon focus')) {
             // Try to extract from parentheses first
-            let groupMatch = p.match(/\(([^)]+)\)/);
+            const groupMatch = p.match(/\(([^)]+)\)/);
             let weaponGroup;
 
             if (groupMatch) {
@@ -311,11 +311,11 @@ export function normalizePrerequisiteString(raw) {
             } else {
                 // Try "with X" pattern
                 const withMatch = p.match(/with (.+)/i);
-                weaponGroup = withMatch ? withMatch[1].trim() : "selected weapon group";
+                weaponGroup = withMatch ? withMatch[1].trim() : 'selected weapon group';
             }
 
             parsed.push({
-                type: "weapon_focus",
+                type: 'weapon_focus',
                 group: weaponGroup
             });
             continue;
@@ -324,11 +324,11 @@ export function normalizePrerequisiteString(raw) {
         // ----------------------------------------------------------
         // 14. Weapon Specialization
         // ----------------------------------------------------------
-        if (lower.includes("weapon specialization")) {
+        if (lower.includes('weapon specialization')) {
             const groupMatch = p.match(/\(([^)]+)\)/);
-            const weaponGroup = groupMatch ? groupMatch[1] : "selected weapon group";
+            const weaponGroup = groupMatch ? groupMatch[1] : 'selected weapon group';
             parsed.push({
-                type: "weapon_specialization",
+                type: 'weapon_specialization',
                 group: weaponGroup
             });
             continue;
@@ -337,23 +337,23 @@ export function normalizePrerequisiteString(raw) {
         // ----------------------------------------------------------
         // 15. Armor Proficiency
         // ----------------------------------------------------------
-        if (lower.includes("armor proficiency")) {
+        if (lower.includes('armor proficiency')) {
             const typeMatch = p.match(/\(([^)]+)\)/);
             const armorType = typeMatch ? typeMatch[1].toLowerCase() : null;
 
             // Handle "light or medium"
-            if (armorType && armorType.includes(" or ")) {
-                const types = armorType.split(" or ").map(t => t.trim());
+            if (armorType && armorType.includes(' or ')) {
+                const types = armorType.split(' or ').map(t => t.trim());
                 parsed.push({
-                    type: "or",
+                    type: 'or',
                     conditions: types.map(t => ({
-                        type: "armor_proficiency",
+                        type: 'armor_proficiency',
                         armorType: t
                     }))
                 });
             } else if (armorType) {
                 parsed.push({
-                    type: "armor_proficiency",
+                    type: 'armor_proficiency',
                     armorType: armorType
                 });
             }
@@ -363,16 +363,16 @@ export function normalizePrerequisiteString(raw) {
         // ----------------------------------------------------------
         // 16. OR conditions for feats (e.g., "Block or Deflect")
         // ----------------------------------------------------------
-        if (lower.includes(" or ")) {
+        if (lower.includes(' or ')) {
             // Handle feat OR conditions (e.g., "Block or Deflect")
             // Only if it looks like feat names (doesn't contain armor/weapon/skill keywords)
-            if (!lower.includes("armor") && !lower.includes("weapon") && !lower.includes("trained in")) {
-                const parts = p.split(" or ").map(s => s.trim());
+            if (!lower.includes('armor') && !lower.includes('weapon') && !lower.includes('trained in')) {
+                const parts = p.split(' or ').map(s => s.trim());
                 if (parts.length === 2 && parts.every(part => part.length > 0)) {
                     parsed.push({
-                        type: "or",
+                        type: 'or',
                         conditions: parts.map(name => ({
-                            type: "feat",
+                            type: 'feat',
                             name: normalizeFeatName(name)
                         }))
                     });
@@ -387,9 +387,9 @@ export function normalizePrerequisiteString(raw) {
         const anyCountFromTreeMatch = lower.match(/any\s+(?:two|one|three|four|five)\s+(?:s\s+)?from\s+(?:the\s+)?([a-z\s]+)\s+talent\s+tree/i);
         if (anyCountFromTreeMatch) {
             const countMatch = lower.match(/any\s+(two|one|three|four|five)/i);
-            const count = countMatch ? countMatch[1] : "one";
+            const count = countMatch ? countMatch[1] : 'one';
             parsed.push({
-                type: "any_talents_from_tree",
+                type: 'any_talents_from_tree',
                 count: count,
                 tree: capitalizeWords(anyCountFromTreeMatch[1].trim())
             });
@@ -402,7 +402,7 @@ export function normalizePrerequisiteString(raw) {
         const anyOtherMatch = lower.match(/any\s+other\s+([a-z\s]+)\s+talent/i);
         if (anyOtherMatch) {
             parsed.push({
-                type: "any_talent_from_tree",
+                type: 'any_talent_from_tree',
                 tree: capitalizeWords(anyOtherMatch[1].trim())
             });
             continue;
@@ -417,7 +417,7 @@ export function normalizePrerequisiteString(raw) {
         );
         if (speciesMatch) {
             parsed.push({
-                type: "species",
+                type: 'species',
                 name: speciesMatch
             });
             continue;
@@ -427,7 +427,7 @@ export function normalizePrerequisiteString(raw) {
         // 19. Default fallback → treat as feat name
         // ----------------------------------------------------------
         parsed.push({
-            type: "feat",
+            type: 'feat',
             name: normalizeFeatName(p)
         });
     }
@@ -444,15 +444,15 @@ export function normalizePrerequisiteString(raw) {
 // --------------------------------------------------------------
 
 function normalizeSkillName(name) {
-    return name.trim().replace(/\s+/g, "_").toLowerCase();
+    return name.trim().replace(/\s+/g, '_').toLowerCase();
 }
 
 function normalizeFeatName(name) {
-    return capitalizeWords(name.replace(/\s+/g, " ").trim());
+    return capitalizeWords(name.replace(/\s+/g, ' ').trim());
 }
 
 function normalizeTalentName(name) {
-    return capitalizeWords(name.replace(/talent\s*/i, "").trim());
+    return capitalizeWords(name.replace(/talent\s*/i, '').trim());
 }
 
 function capitalizeWords(str) {

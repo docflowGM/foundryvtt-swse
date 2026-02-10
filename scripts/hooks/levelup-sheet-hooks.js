@@ -20,7 +20,7 @@ function isEpicBlocked(actor) {
 
 async function onClickLevelUp(app) {
   const actor = app?.actor ?? app?.document;
-  if (!actor) return;
+  if (!actor) {return;}
 
   if (actor.type === 'character') {
     if (isEpicBlocked(actor)) {
@@ -32,7 +32,7 @@ async function onClickLevelUp(app) {
   }
 
   if (actor.type === 'npc') {
-    if (!game.user?.isGM) return ui?.notifications?.warn?.('GM only.');
+    if (!game.user?.isGM) {return ui?.notifications?.warn?.('GM only.');}
     new SWSENpcLevelUpEntry(actor).render(true);
   }
 }
@@ -40,10 +40,10 @@ async function onClickLevelUp(app) {
 export function registerLevelUpSheetHooks() {
   HooksRegistry.register('getHeaderControlsApplicationV2', 'swse-levelup', (app, controls) => {
     const actor = app?.actor ?? app?.document;
-    if (!actor || actor.documentName !== 'Actor') return;
-    if (actor.type !== 'character' && actor.type !== 'npc') return;
+    if (!actor || actor.documentName !== 'Actor') {return;}
+    if (actor.type !== 'character' && actor.type !== 'npc') {return;}
 
-    if (Array.isArray(controls) && controls.some(c => c?.action === 'swse-levelup')) return;
+    if (Array.isArray(controls) && controls.some(c => c?.action === 'swse-levelup')) {return;}
 
     controls.push({
       action: 'swse-levelup',

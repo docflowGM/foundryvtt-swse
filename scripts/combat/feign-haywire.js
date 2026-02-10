@@ -6,7 +6,7 @@
  * within line of sight. Success makes targets Flat-Footed against you.
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 export class FeignHaywire {
   /**
@@ -18,11 +18,11 @@ export class FeignHaywire {
   static async attemptFeignHaywire(droidActor, targetActors = []) {
     try {
       if (!droidActor) {
-        throw new Error("Missing droid actor");
+        throw new Error('Missing droid actor');
       }
 
       // Check if actor is a droid
-      if (droidActor.type !== "droid") {
+      if (droidActor.type !== 'droid') {
         return {
           success: false,
           targets: [],
@@ -87,7 +87,7 @@ export class FeignHaywire {
           : `${droidActor.name} attempts to feign haywire but fails to deceive anyone.`
       };
     } catch (err) {
-      SWSELogger.error("Feign haywire attempt failed", err);
+      SWSELogger.error('Feign haywire attempt failed', err);
       throw err;
     }
   }
@@ -98,21 +98,21 @@ export class FeignHaywire {
    * @param {Actor} droidActor - The droid that feigned haywire
    */
   static async applyHaywireDeception(targetActor, droidActor) {
-    if (!targetActor || !droidActor) return;
+    if (!targetActor || !droidActor) {return;}
 
     try {
       // Flag target as flat-footed against this specific droid
-      const haywireDeceptions = targetActor.getFlag("foundryvtt-swse", "haywireDeceptions") || {};
+      const haywireDeceptions = targetActor.getFlag('foundryvtt-swse', 'haywireDeceptions') || {};
       haywireDeceptions[droidActor.id] = {
         droidName: droidActor.name,
         timestamp: new Date().toISOString(),
         active: true
       };
-      await targetActor.setFlag("foundryvtt-swse", "haywireDeceptions", haywireDeceptions);
+      await targetActor.setFlag('foundryvtt-swse', 'haywireDeceptions', haywireDeceptions);
 
       SWSELogger.info(`${targetActor.name} is Flat-Footed against ${droidActor.name}'s haywire deception`);
     } catch (err) {
-      SWSELogger.error("Failed to apply haywire deception", err);
+      SWSELogger.error('Failed to apply haywire deception', err);
     }
   }
 
@@ -123,9 +123,9 @@ export class FeignHaywire {
    * @returns {boolean} - True if flat-footed against this droid
    */
   static isAffectedByHaywire(targetActor, droidId) {
-    if (!targetActor || !droidId) return false;
+    if (!targetActor || !droidId) {return false;}
 
-    const haywireDeceptions = targetActor.getFlag("foundryvtt-swse", "haywireDeceptions") || {};
+    const haywireDeceptions = targetActor.getFlag('foundryvtt-swse', 'haywireDeceptions') || {};
     return haywireDeceptions[droidId]?.active === true;
   }
 
@@ -134,7 +134,7 @@ export class FeignHaywire {
    * @param {Actor} droidActor - The droid that was feigning haywire
    */
   static async removeHaywireDeception(droidActor) {
-    if (!droidActor) return;
+    if (!droidActor) {return;}
 
     try {
       // Get all actors and remove the haywire flag for this droid
@@ -142,11 +142,11 @@ export class FeignHaywire {
 
       // In a real scenario, you'd iterate through combat participants
       // For now, log the removal
-      await droidActor.unsetFlag("foundryvtt-swse", "currentHaywireDeception");
+      await droidActor.unsetFlag('foundryvtt-swse', 'currentHaywireDeception');
 
       SWSELogger.info(`${droidActor.name}'s haywire deception has ended`);
     } catch (err) {
-      SWSELogger.error("Failed to remove haywire deception", err);
+      SWSELogger.error('Failed to remove haywire deception', err);
     }
   }
 
@@ -155,12 +155,12 @@ export class FeignHaywire {
    * @param {Actor} targetActor - The target to clear deceptions from
    */
   static async clearHaywireDeceptions(targetActor) {
-    if (!targetActor) return;
+    if (!targetActor) {return;}
 
     try {
-      await targetActor.unsetFlag("foundryvtt-swse", "haywireDeceptions");
+      await targetActor.unsetFlag('foundryvtt-swse', 'haywireDeceptions');
     } catch (err) {
-      SWSELogger.error("Failed to clear haywire deceptions", err);
+      SWSELogger.error('Failed to clear haywire deceptions', err);
     }
   }
 
@@ -170,12 +170,12 @@ export class FeignHaywire {
    * @returns {Array<Actor>} - Array of droids currently feigning haywire
    */
   static getActiveHaywireDroids(combat) {
-    if (!combat || !combat.combatants) return [];
+    if (!combat || !combat.combatants) {return [];}
 
     const haywireDroids = [];
     for (const combatant of combat.combatants) {
       const actor = combatant.actor;
-      if (actor?.type === "droid" && actor.getFlag("foundryvtt-swse", "currentHaywireDeception")) {
+      if (actor?.type === 'droid' && actor.getFlag('foundryvtt-swse', 'currentHaywireDeception')) {
         haywireDroids.push(actor);
       }
     }

@@ -238,7 +238,7 @@ export const testHarness = {
   /**
    * Clear all insights
    */
-  clearInsights() {
+  async clearInsights() {
     const { InsightBus } = await import('./scripts/gm-suggestions/insight-bus.js');
     InsightBus.clear();
     console.log('[Test] All insights cleared');

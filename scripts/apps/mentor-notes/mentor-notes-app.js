@@ -15,7 +15,7 @@ export class MentorNotesApp extends SWSEApplicationV2 {
   });
 
   static openForActor(actor, options = {}) {
-    if (!actor?.id) return null;
+    if (!actor?.id) {return null;}
     const existing = this._instances.get(actor.id);
     if (existing) {
       existing.render({ force: true });
@@ -33,7 +33,7 @@ export class MentorNotesApp extends SWSEApplicationV2 {
   }
 
   async close(options = {}) {
-    if (this.actor?.id) MentorNotesApp._instances.delete(this.actor.id);
+    if (this.actor?.id) {MentorNotesApp._instances.delete(this.actor.id);}
     return super.close(options);
   }
 
@@ -66,11 +66,11 @@ export class MentorNotesApp extends SWSEApplicationV2 {
 
     qs(root, '.swse-mentor-notes-app__list')?.addEventListener('click', async (ev) => {
       const row = ev.target.closest?.('.swse-mentor-notes-app__row');
-      if (!row) return;
+      if (!row) {return;}
 
       const packName = row.dataset.pack;
       const docId = row.dataset.id;
-      if (!packName || !docId) return;
+      if (!packName || !docId) {return;}
 
       try {
         const pack = game.packs.get(packName);

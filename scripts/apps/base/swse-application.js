@@ -13,7 +13,7 @@ export default class SWSEApplication extends ApplicationV2 {
     static DEFAULT_OPTIONS = foundry.utils.mergeObject(
         ApplicationV2.DEFAULT_OPTIONS ?? {},
         {
-            classes: ['swse', 'swse-window', "swse-app"],
+            classes: ['swse', 'swse-window', 'swse-app'],
             position: {
                 width: 600,
                 height: 'auto'
@@ -24,7 +24,6 @@ export default class SWSEApplication extends ApplicationV2 {
         }
     );
 
-    
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.

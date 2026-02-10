@@ -29,8 +29,8 @@ export class ProgressionCompiler {
    * @throws if intent is illegal
    */
   static compile(snapshot, intent) {
-    if (!snapshot) throw new Error('ProgressionCompiler.compile: no snapshot provided');
-    if (!intent) throw new Error('ProgressionCompiler.compile: no intent provided');
+    if (!snapshot) {throw new Error('ProgressionCompiler.compile: no snapshot provided');}
+    if (!intent) {throw new Error('ProgressionCompiler.compile: no intent provided');}
 
     swseLogger.debug('ProgressionCompiler.compile', { intent });
 

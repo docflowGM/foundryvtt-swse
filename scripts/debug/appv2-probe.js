@@ -3,14 +3,14 @@
  * Detects V1 assumptions and contracts violations
  */
 
-export function probeAppV2(app, label = "AppV2") {
+export function probeAppV2(app, label = 'AppV2') {
   console.groupCollapsed(`🧪 ${label} Probe`);
-  console.log("App class:", app.constructor.name);
-  console.log("Base class:", Object.getPrototypeOf(app.constructor)?.name);
-  console.log("Template:", app.options?.template);
-  console.log("Editable:", app.isEditable);
-  console.log("Has _prepareContext:", typeof app._prepareContext === "function");
-  console.log("Has _onRender:", typeof app._onRender === "function");
+  console.log('App class:', app.constructor.name);
+  console.log('Base class:', Object.getPrototypeOf(app.constructor)?.name);
+  console.log('Template:', app.options?.template);
+  console.log('Editable:', app.isEditable);
+  console.log('Has _prepareContext:', typeof app._prepareContext === 'function');
+  console.log('Has _onRender:', typeof app._onRender === 'function');
   console.groupEnd();
 }
 
@@ -19,7 +19,7 @@ export function probeAppV2(app, label = "AppV2") {
  * Detects V1 html.find patterns and other violations
  */
 export function guardOnRender(context, options, app) {
-  const name = app?.constructor?.name || "Unknown";
+  const name = app?.constructor?.name || 'Unknown';
 
   // ❌ V1 jQuery pattern detection
   if (context?.find) {
@@ -44,7 +44,7 @@ export function guardOnRender(context, options, app) {
  * Verifies _prepareContext returns expected keys
  */
 export function verifyPrepareContext(contextObj, app) {
-  const name = app?.constructor?.name || "Unknown";
+  const name = app?.constructor?.name || 'Unknown';
   console.debug(`📦 ${name} _prepareContext:`, Object.keys(contextObj ?? {}));
   return contextObj;
 }
@@ -57,7 +57,7 @@ export function validateTemplate(app) {
   const actorType = app?.document?.type;
 
   if (template && actorType && !template.includes(actorType)) {
-    console.error("🚨 TEMPLATE/ACTOR TYPE MISMATCH", {
+    console.error('🚨 TEMPLATE/ACTOR TYPE MISMATCH', {
       actorType,
       template,
       sheet: app.constructor.name
@@ -72,10 +72,10 @@ export function logChargenRender(app, context) {
   console.groupCollapsed(
     `🧬 Chargen Render: ${app.constructor.name}`
   );
-  console.log("Context keys:", Object.keys(context ?? {}));
-  console.log("Current step:", context?.currentStep);
-  console.log("Character data:", !!context?.characterData);
-  console.log("Root element:", app.element?.tagName);
+  console.log('Context keys:', Object.keys(context ?? {}));
+  console.log('Current step:', context?.currentStep);
+  console.log('Character data:', !!context?.characterData);
+  console.log('Root element:', app.element?.tagName);
   console.groupEnd();
 }
 
@@ -83,15 +83,15 @@ export function logChargenRender(app, context) {
  * Global V1 usage tripwire (dev-mode only)
  */
 export function initV1Tripwire() {
-  if (globalThis.game?.settings?.get?.("swse", "devMode")) {
-    const patterns = ["html.find(", "html.on(", "activateListeners("];
+  if (globalThis.game?.settings?.get?.('swse', 'devMode')) {
+    const patterns = ['html.find(', 'html.on(', 'activateListeners('];
 
-    console.warn("⚠️ V1 tripwire active. Watching for patterns:", patterns);
+    console.warn('⚠️ V1 tripwire active. Watching for patterns:', patterns);
 
     // Override console.warn for V1 patterns
     const origWarn = console.warn;
     console.warn = function(...args) {
-      const msg = args[0]?.toString?.() || "";
+      const msg = args[0]?.toString?.() || '';
       if (patterns.some(p => msg.includes(p))) {
         throw new Error(`❌ V1 PATTERN DETECTED: ${msg}`);
       }
@@ -129,7 +129,7 @@ export function validateSelectors(app, selectors) {
 /**
  * Guard access to actor/document with diagnostics
  */
-export function guardActorAccess(app, property = "document") {
+export function guardActorAccess(app, property = 'document') {
   const doc = app?.document || app?.actor;
   if (!doc) {
     console.error(
@@ -145,7 +145,7 @@ export function guardActorAccess(app, property = "document") {
  * Track async operation phases with timing
  */
 export function trackAsyncPhase(app, phase, promise) {
-  const name = app?.constructor?.name || "Unknown";
+  const name = app?.constructor?.name || 'Unknown';
   console.debug(`⏳ ${name} ${phase}:start`);
 
   return promise
@@ -163,13 +163,13 @@ export function trackAsyncPhase(app, phase, promise) {
  * Log context assembly per key with type info
  */
 export function logContextKey(app, key, value) {
-  const name = app?.constructor?.name || "Unknown";
+  const name = app?.constructor?.name || 'Unknown';
 
   if (value === undefined) {
     console.warn(`⚠️ ${name}._prepareContext["${key}"] is undefined`);
   } else if (value === null) {
     console.warn(`⚠️ ${name}._prepareContext["${key}"] is null`);
-  } else if (typeof value === "object") {
+  } else if (typeof value === 'object') {
     console.debug(`📦 ${name}.${key}:`, {
       type: value.constructor.name,
       keys: Object.keys(value).slice(0, 5)
@@ -183,7 +183,7 @@ export function logContextKey(app, key, value) {
  * Log template rendering start/end
  */
 export function logTemplateRender(app, template) {
-  const name = app?.constructor?.name || "Unknown";
+  const name = app?.constructor?.name || 'Unknown';
   if (!template) {
     console.error(`🚨 ${name} has no template path!`);
     return;

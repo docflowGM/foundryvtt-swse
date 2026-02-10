@@ -1,0 +1,189 @@
+<div class="swse-sheet">
+<form class="swse-store card-grid-store" autocomplete="off">
+  {{!-- Holographic Welcome Banner --}}
+  <div class="holo-banner">
+    <div class="shopkeeper-portrait">
+      <img src="{{rendarrImage}}" alt="Rendarr" class="rendarr-image"/>
+    </div>
+    <div class="holo-content">
+      <div class="holo-speaker">
+        <i class="{{getIconClass 'volumeUp'}}"></i>
+        <span class="speaker-name">RENDARR:</span>
+      </div>
+      <div class="holo-message">
+        "{{rendarrWelcome}}"
+      </div>
+    </div>
+  </div>
+
+  {{!-- Credit Wallet Display --}}
+  <div class="credit-wallet">
+    <div class="wallet-header">
+      <i class="{{getIconClass 'wallet'}}"></i>
+      <span>ACCOUNT BALANCE</span>
+    </div>
+    <div class="wallet-amount">
+      <span class="credits-icon">₢</span>
+      <span class="remaining-credits">{{credits}}</span>
+      <span class="credits-label">credits</span>
+    </div>
+  </div>
+
+  {{!-- Search, Filter, Sort Bar --}}
+  <div class="card-store-controls">
+    <div class="search-container">
+      <input type="text" id="store-search" class="store-search-input" placeholder="Search items..." aria-label="Search store items"/>
+      <i class="fas fa-search"></i>
+    </div>
+
+    <div class="filter-sort-row">
+      {{!-- Category Filter --}}
+      <select id="store-category-filter" class="store-filter" aria-label="Filter by category">
+        <option value="">All Categories</option>
+        <option value="weapons">Weapons</option>
+        <option value="armor">Armor</option>
+        <option value="grenades">Grenades</option>
+        <option value="medical">Medical</option>
+        <option value="tech">Tech</option>
+        <option value="tools">Tools</option>
+        <option value="survival">Survival</option>
+        <option value="security">Security</option>
+        <option value="equipment">Equipment</option>
+        <option value="services">Services</option>
+        <option value="droids">Droids</option>
+        <option value="vehicles">Vehicles</option>
+      </select>
+
+      {{!-- Availability Filter --}}
+      <select id="store-availability-filter" class="store-filter" aria-label="Filter by availability">
+        <option value="">All Availability</option>
+        <option value="Standard">Standard</option>
+        <option value="Licensed">Licensed</option>
+        <option value="Restricted">Restricted</option>
+        <option value="Military">Military</option>
+        <option value="Illegal">Illegal</option>
+        <option value="Rare">Rare</option>
+      </select>
+
+      {{!-- Sort Options --}}
+      <select id="store-sort" class="store-sort" aria-label="Sort items">
+        <option value="suggested">Suggested for You</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="name-asc">Name: A-Z</option>
+      </select>
+
+      {{!-- Cart Button --}}
+      <button type="button" class="view-cart-btn holo-btn" data-action="view-cart" aria-label="View shopping cart">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count" id="cart-count" aria-live="polite">0</span>
+      </button>
+    </div>
+  </div>
+
+  {{!-- Product Cards Grid --}}
+  <div class="card-grid-container">
+    {{#if allItems.length}}
+      <div class="products-grid" id="products-grid">
+        {{#each allItems}}
+          <div class="holo-card product-card" data-item-id="{{this.id}}" data-category="{{this.category}}" data-availability="{{this.availability}}" data-rarity="{{this.rarityClass}}">
+            {{!-- Card Header with Suggestion Badge --}}
+            <div class="card-header">
+              {{#if this.suggestion}}
+                <span class="suggestion-badge tier-{{this.suggestion.tier}}">
+                  {{this.suggestion.tierLabel}}
+                </span>
+              {{/if}}
+            </div>
+
+            {{!-- Card Body --}}
+            <div class="card-body">
+              {{!-- Aurebesh Glyph Panel (replaces image) --}}
+              <div class="glyph-panel">
+                <div class="store-glyph" aria-hidden="true">{{this.glyph}}</div>
+              </div>
+
+              {{!-- Product Name --}}
+              <h4 class="card-title">{{this.name}}</h4>
+
+              {{!-- Suggestion Explanation Bullets --}}
+              {{#if this.suggestion.bullets}}
+                <div class="card-explanations">
+                  {{#each this.suggestion.bullets}}
+                    <div class="explanation-bullet">• {{this}}</div>
+                  {{/each}}
+                </div>
+              {{/if}}
+
+              {{!-- Price Section --}}
+              <div class="card-price">
+                <span class="credits-icon">₢</span>
+                <span class="price-amount">{{this.price}}</span>
+              </div>
+            </div>
+
+            {{!-- Card Footer with Actions --}}
+            <div class="card-footer">
+              <button type="button" class="expand-btn holo-btn" data-action="expand-product" data-item-id="{{this.id}}" aria-label="View details for {{this.name}}">
+                View Details
+              </button>
+              <button type="button" class="add-to-cart-btn holo-btn secondary" data-action="add-to-cart" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="empty-state">
+        <i class="fas fa-box-open"></i>
+        <p>No items match your search.</p>
+      </div>
+    {{/if}}
+  </div>
+
+  {{!-- Cart Sidebar / Modal (populated by JS) --}}
+  <div class="cart-sidebar" id="cart-sidebar" style="display: none;">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button type="button" class="close-cart-btn" data-action="close-cart" aria-label="Close cart">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="cart-items" id="cart-items-list">
+      {{!-- Populated by JavaScript --}}
+    </div>
+    <div class="cart-summary">
+      <div class="summary-line">
+        <span>Subtotal:</span>
+        <span class="credits-icon">₢</span><span id="cart-subtotal">0</span>
+      </div>
+      <div class="summary-line total">
+        <span>Total:</span>
+        <span class="credits-icon">₢</span><span id="cart-total">0</span>
+      </div>
+      <div class="summary-line remaining">
+        <span>Remaining:</span>
+        <span class="credits-icon">₢</span><span id="cart-remaining">{{credits}}</span>
+      </div>
+    </div>
+    <div class="cart-actions">
+      <button type="button" class="checkout-btn holo-btn" id="checkout-cart" aria-label="Complete purchase">
+        Complete Purchase
+      </button>
+      <button type="button" class="cancel-checkout-btn holo-btn secondary" id="cancel-checkout" aria-label="Cancel checkout" style="display: none;">
+        Cancel
+      </button>
+      <button type="button" class="clear-cart-btn holo-btn secondary" id="clear-cart" aria-label="Clear shopping cart">
+        Clear Cart
+      </button>
+    </div>
+  </div>
+
+  {{!-- Expanded Product Page Modal (populated by JS) --}}
+  <div class="product-modal" id="product-modal" style="display: none;">
+    {{!-- Populated by JavaScript --}}
+  </div>
+
+</form>
+</div>

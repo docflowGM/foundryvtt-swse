@@ -14,7 +14,6 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { CLASS_SYNERGY_DATA } from './ClassSuggestionEngine.js';
-import { MentorSurvey } from '../apps/mentor-survey.js';
 
 // ──────────────────────────────────────────────────────────────
 // BUILD THEME DEFINITIONS
@@ -41,188 +40,188 @@ export const BUILD_THEMES = {
 // ──────────────────────────────────────────────────────────────
 
 export const PRESTIGE_SIGNALS = {
-    "Ace Pilot": {
-        feats: ["Vehicular Combat", "Skill Focus (Pilot)"],
-        skills: ["pilot"],
+    'Ace Pilot': {
+        feats: ['Vehicular Combat', 'Skill Focus (Pilot)'],
+        skills: ['pilot'],
         talents: [],
-        talentTrees: ["Spacer"],
-        abilities: ["dex", "int"],
+        talentTrees: ['Spacer'],
+        abilities: ['dex', 'int'],
         weight: { feats: 2, skills: 2, talents: 1, abilities: 1 }
     },
-    "Assassin": {
-        feats: ["Sniper", "Point-Blank Shot", "Precise Shot"],
-        skills: ["stealth"],
-        talents: ["Dastardly Strike"],
-        talentTrees: ["Misfortune"],
-        abilities: ["dex", "int"],
+    'Assassin': {
+        feats: ['Sniper', 'Point-Blank Shot', 'Precise Shot'],
+        skills: ['stealth'],
+        talents: ['Dastardly Strike'],
+        talentTrees: ['Misfortune'],
+        abilities: ['dex', 'int'],
         weight: { feats: 1, skills: 1, talents: 3, abilities: 1 }
     },
-    "Bounty Hunter": {
+    'Bounty Hunter': {
         feats: [],
-        skills: ["survival", "perception"],
+        skills: ['survival', 'perception'],
         talents: [],
-        talentTrees: ["Awareness"],
-        abilities: ["wis", "dex"],
+        talentTrees: ['Awareness'],
+        abilities: ['wis', 'dex'],
         weight: { feats: 1, skills: 2, talents: 2, abilities: 1 }
     },
-    "Crime Lord": {
+    'Crime Lord': {
         feats: [],
-        skills: ["deception", "persuasion"],
+        skills: ['deception', 'persuasion'],
         talents: [],
-        talentTrees: ["Fortune", "Lineage", "Misfortune"],
-        abilities: ["cha", "int"],
+        talentTrees: ['Fortune', 'Lineage', 'Misfortune'],
+        abilities: ['cha', 'int'],
         weight: { feats: 1, skills: 2, talents: 2, abilities: 1 }
     },
-    "Elite Trooper": {
-        feats: ["Armor Proficiency (Medium)", "Martial Arts I", "Point-Blank Shot", "Flurry"],
-        skills: ["endurance"],
+    'Elite Trooper': {
+        feats: ['Armor Proficiency (Medium)', 'Martial Arts I', 'Point-Blank Shot', 'Flurry'],
+        skills: ['endurance'],
         talents: [],
-        talentTrees: ["Armor Specialist", "Commando", "Weapon Specialist"],
-        abilities: ["str", "con"],
+        talentTrees: ['Armor Specialist', 'Commando', 'Weapon Specialist'],
+        abilities: ['str', 'con'],
         weight: { feats: 2, skills: 1, talents: 2, abilities: 1 }
     },
-    "Force Adept": {
-        feats: ["Force Sensitivity", "Force Training"],
-        skills: ["useTheForce"],
+    'Force Adept': {
+        feats: ['Force Sensitivity', 'Force Training'],
+        skills: ['useTheForce'],
         talents: [],
-        talentTrees: ["Alter", "Control", "Sense"],
-        abilities: ["wis", "cha"],
+        talentTrees: ['Alter', 'Control', 'Sense'],
+        abilities: ['wis', 'cha'],
         weight: { feats: 2, skills: 2, talents: 2, abilities: 1 }
     },
-    "Force Disciple": {
-        feats: ["Force Sensitivity", "Force Training"],
-        skills: ["useTheForce"],
+    'Force Disciple': {
+        feats: ['Force Sensitivity', 'Force Training'],
+        skills: ['useTheForce'],
         talents: [],
-        talentTrees: ["Dark Side Devotee", "Force Adept", "Force Item"],
-        abilities: ["wis", "cha"],
+        talentTrees: ['Dark Side Devotee', 'Force Adept', 'Force Item'],
+        abilities: ['wis', 'cha'],
         weight: { feats: 2, skills: 2, talents: 2, abilities: 1 }
     },
-    "Gladiator": {
-        feats: ["Improved Damage Threshold", "Weapon Proficiency (Advanced Melee Weapons)"],
+    'Gladiator': {
+        feats: ['Improved Damage Threshold', 'Weapon Proficiency (Advanced Melee Weapons)'],
         skills: [],
         talents: [],
         talentTrees: [],
-        abilities: ["str", "con"],
+        abilities: ['str', 'con'],
         weight: { feats: 3, skills: 1, talents: 1, abilities: 1 }
     },
-    "Gunslinger": {
-        feats: ["Point-Blank Shot", "Precise Shot", "Quick Draw", "Weapon Proficiency (Pistols)"],
+    'Gunslinger': {
+        feats: ['Point-Blank Shot', 'Precise Shot', 'Quick Draw', 'Weapon Proficiency (Pistols)'],
         skills: [],
         talents: [],
-        talentTrees: ["Fortune"],
-        abilities: ["dex"],
+        talentTrees: ['Fortune'],
+        abilities: ['dex'],
         weight: { feats: 3, skills: 1, talents: 1, abilities: 2 }
     },
-    "Imperial Knight": {
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)", "Armor Proficiency (Medium)"],
-        skills: ["useTheForce"],
+    'Imperial Knight': {
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)', 'Armor Proficiency (Medium)'],
+        skills: ['useTheForce'],
         talents: [],
-        talentTrees: ["Lightsaber Combat"],
-        abilities: ["str", "wis"],
+        talentTrees: ['Lightsaber Combat'],
+        abilities: ['str', 'wis'],
         weight: { feats: 2, skills: 2, talents: 2, abilities: 1 }
     },
-    "Infiltrator": {
-        feats: ["Skill Focus (Stealth)"],
-        skills: ["perception", "stealth"],
+    'Infiltrator': {
+        feats: ['Skill Focus (Stealth)'],
+        skills: ['perception', 'stealth'],
         talents: [],
-        talentTrees: ["Camouflage", "Spy"],
-        abilities: ["dex", "int"],
+        talentTrees: ['Camouflage', 'Spy'],
+        abilities: ['dex', 'int'],
         weight: { feats: 1, skills: 2, talents: 2, abilities: 1 }
     },
-    "Jedi Knight": {
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
-        skills: ["useTheForce"],
+    'Jedi Knight': {
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
+        skills: ['useTheForce'],
         talents: [],
-        talentTrees: ["Lightsaber Combat", "Jedi Mind Tricks"],
-        abilities: ["wis", "cha"],
+        talentTrees: ['Lightsaber Combat', 'Jedi Mind Tricks'],
+        abilities: ['wis', 'cha'],
         weight: { feats: 2, skills: 2, talents: 2, abilities: 1 }
     },
-    "Jedi Master": {
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
-        skills: ["useTheForce"],
+    'Jedi Master': {
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
+        skills: ['useTheForce'],
         talents: [],
-        talentTrees: ["Lightsaber Combat", "Jedi Mind Tricks"],
-        abilities: ["wis", "cha"],
+        talentTrees: ['Lightsaber Combat', 'Jedi Mind Tricks'],
+        abilities: ['wis', 'cha'],
         weight: { feats: 2, skills: 2, talents: 2, abilities: 1 }
     },
-    "Martial Arts Master": {
-        feats: ["Martial Arts I", "Martial Arts II", "Melee Defense"],
+    'Martial Arts Master': {
+        feats: ['Martial Arts I', 'Martial Arts II', 'Melee Defense'],
         skills: [],
         talents: [],
-        talentTrees: ["Brawler", "Survivor"],
-        abilities: ["str", "dex"],
+        talentTrees: ['Brawler', 'Survivor'],
+        abilities: ['str', 'dex'],
         weight: { feats: 3, skills: 1, talents: 1, abilities: 1 }
     },
-    "Medic": {
-        feats: ["Surgical Expertise"],
-        skills: ["treatInjury", "knowledge"],
+    'Medic': {
+        feats: ['Surgical Expertise'],
+        skills: ['treatInjury', 'knowledge'],
         talents: [],
         talentTrees: [],
-        abilities: ["int", "wis"],
+        abilities: ['int', 'wis'],
         weight: { feats: 2, skills: 3, talents: 1, abilities: 1 }
     },
-    "Melee Duelist": {
-        feats: ["Melee Defense", "Rapid Strike", "Weapon Focus"],
+    'Melee Duelist': {
+        feats: ['Melee Defense', 'Rapid Strike', 'Weapon Focus'],
         skills: [],
         talents: [],
         talentTrees: [],
-        abilities: ["str", "dex"],
+        abilities: ['str', 'dex'],
         weight: { feats: 3, skills: 1, talents: 1, abilities: 1 }
     },
-    "Military Engineer": {
+    'Military Engineer': {
         feats: [],
-        skills: ["mechanics", "useComputer"],
+        skills: ['mechanics', 'useComputer'],
         talents: [],
         talentTrees: [],
-        abilities: ["int"],
+        abilities: ['int'],
         weight: { feats: 1, skills: 3, talents: 1, abilities: 2 }
     },
-    "Officer": {
+    'Officer': {
         feats: [],
-        skills: ["knowledge"],
+        skills: ['knowledge'],
         talents: [],
-        talentTrees: ["Leadership", "Commando", "Veteran"],
-        abilities: ["cha", "int"],
+        talentTrees: ['Leadership', 'Commando', 'Veteran'],
+        abilities: ['cha', 'int'],
         weight: { feats: 1, skills: 2, talents: 2, abilities: 1 }
     },
-    "Pathfinder": {
+    'Pathfinder': {
         feats: [],
-        skills: ["perception", "survival"],
+        skills: ['perception', 'survival'],
         talents: [],
-        talentTrees: ["Awareness", "Camouflage", "Survivor"],
-        abilities: ["wis", "con"],
+        talentTrees: ['Awareness', 'Camouflage', 'Survivor'],
+        abilities: ['wis', 'con'],
         weight: { feats: 1, skills: 2, talents: 2, abilities: 1 }
     },
-    "Saboteur": {
+    'Saboteur': {
         feats: [],
-        skills: ["deception", "mechanics", "useComputer"],
+        skills: ['deception', 'mechanics', 'useComputer'],
         talents: [],
         talentTrees: [],
-        abilities: ["int", "dex"],
+        abilities: ['int', 'dex'],
         weight: { feats: 1, skills: 3, talents: 1, abilities: 1 }
     },
-    "Sith Apprentice": {
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
-        skills: ["useTheForce"],
+    'Sith Apprentice': {
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
+        skills: ['useTheForce'],
         talents: [],
-        talentTrees: ["Dark Side", "Lightsaber Combat"],
-        abilities: ["cha", "str"],
+        talentTrees: ['Dark Side', 'Lightsaber Combat'],
+        abilities: ['cha', 'str'],
         weight: { feats: 2, skills: 2, talents: 2, abilities: 1 }
     },
-    "Sith Lord": {
-        feats: ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
-        skills: ["useTheForce"],
+    'Sith Lord': {
+        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
+        skills: ['useTheForce'],
         talents: [],
-        talentTrees: ["Dark Side", "Lightsaber Combat"],
-        abilities: ["cha", "str"],
+        talentTrees: ['Dark Side', 'Lightsaber Combat'],
+        abilities: ['cha', 'str'],
         weight: { feats: 2, skills: 2, talents: 2, abilities: 1 }
     },
-    "Vanguard": {
+    'Vanguard': {
         feats: [],
-        skills: ["perception", "stealth"],
+        skills: ['perception', 'stealth'],
         talents: [],
-        talentTrees: ["Camouflage", "Commando"],
-        abilities: ["dex", "con"],
+        talentTrees: ['Camouflage', 'Commando'],
+        abilities: ['dex', 'con'],
         weight: { feats: 1, skills: 2, talents: 2, abilities: 1 }
     }
 };
@@ -234,59 +233,59 @@ export const PRESTIGE_SIGNALS = {
 
 export const FEAT_THEME_SIGNALS = {
     // Force feats
-    "Force Sensitivity": BUILD_THEMES.FORCE,
-    "Force Training": BUILD_THEMES.FORCE,
-    "Force Boon": BUILD_THEMES.FORCE,
-    "Strong in the Force": BUILD_THEMES.FORCE,
+    'Force Sensitivity': BUILD_THEMES.FORCE,
+    'Force Training': BUILD_THEMES.FORCE,
+    'Force Boon': BUILD_THEMES.FORCE,
+    'Strong in the Force': BUILD_THEMES.FORCE,
 
     // Ranged combat feats
-    "Point-Blank Shot": BUILD_THEMES.RANGED,
-    "Precise Shot": BUILD_THEMES.RANGED,
-    "Rapid Shot": BUILD_THEMES.RANGED,
-    "Sniper": BUILD_THEMES.RANGED,
-    "Far Shot": BUILD_THEMES.RANGED,
-    "Deadeye": BUILD_THEMES.RANGED,
-    "Quick Draw": BUILD_THEMES.RANGED,
+    'Point-Blank Shot': BUILD_THEMES.RANGED,
+    'Precise Shot': BUILD_THEMES.RANGED,
+    'Rapid Shot': BUILD_THEMES.RANGED,
+    'Sniper': BUILD_THEMES.RANGED,
+    'Far Shot': BUILD_THEMES.RANGED,
+    'Deadeye': BUILD_THEMES.RANGED,
+    'Quick Draw': BUILD_THEMES.RANGED,
 
     // Melee combat feats
-    "Martial Arts I": BUILD_THEMES.MELEE,
-    "Martial Arts II": BUILD_THEMES.MELEE,
-    "Martial Arts III": BUILD_THEMES.MELEE,
-    "Melee Defense": BUILD_THEMES.MELEE,
-    "Rapid Strike": BUILD_THEMES.MELEE,
-    "Flurry": BUILD_THEMES.MELEE,
-    "Weapon Proficiency (Lightsabers)": BUILD_THEMES.FORCE,
-    "Weapon Focus (Lightsabers)": BUILD_THEMES.FORCE,
-    "Weapon Proficiency (Advanced Melee Weapons)": BUILD_THEMES.MELEE,
+    'Martial Arts I': BUILD_THEMES.MELEE,
+    'Martial Arts II': BUILD_THEMES.MELEE,
+    'Martial Arts III': BUILD_THEMES.MELEE,
+    'Melee Defense': BUILD_THEMES.MELEE,
+    'Rapid Strike': BUILD_THEMES.MELEE,
+    'Flurry': BUILD_THEMES.MELEE,
+    'Weapon Proficiency (Lightsabers)': BUILD_THEMES.FORCE,
+    'Weapon Focus (Lightsabers)': BUILD_THEMES.FORCE,
+    'Weapon Proficiency (Advanced Melee Weapons)': BUILD_THEMES.MELEE,
 
     // Stealth feats
-    "Skill Focus (Stealth)": BUILD_THEMES.STEALTH,
-    "Stealthy": BUILD_THEMES.STEALTH,
+    'Skill Focus (Stealth)': BUILD_THEMES.STEALTH,
+    'Stealthy': BUILD_THEMES.STEALTH,
 
     // Social feats
-    "Skill Focus (Persuasion)": BUILD_THEMES.SOCIAL,
-    "Skill Focus (Deception)": BUILD_THEMES.SOCIAL,
-    "Linguist": BUILD_THEMES.SOCIAL,
+    'Skill Focus (Persuasion)': BUILD_THEMES.SOCIAL,
+    'Skill Focus (Deception)': BUILD_THEMES.SOCIAL,
+    'Linguist': BUILD_THEMES.SOCIAL,
 
     // Tech feats
-    "Skill Focus (Mechanics)": BUILD_THEMES.TECH,
-    "Skill Focus (Use Computer)": BUILD_THEMES.TECH,
-    "Tech Specialist": BUILD_THEMES.TECH,
+    'Skill Focus (Mechanics)': BUILD_THEMES.TECH,
+    'Skill Focus (Use Computer)': BUILD_THEMES.TECH,
+    'Tech Specialist': BUILD_THEMES.TECH,
 
     // Vehicle feats
-    "Vehicular Combat": BUILD_THEMES.VEHICLE,
-    "Skill Focus (Pilot)": BUILD_THEMES.VEHICLE,
+    'Vehicular Combat': BUILD_THEMES.VEHICLE,
+    'Skill Focus (Pilot)': BUILD_THEMES.VEHICLE,
 
     // Combat general
-    "Armor Proficiency (Light)": BUILD_THEMES.COMBAT,
-    "Armor Proficiency (Medium)": BUILD_THEMES.COMBAT,
-    "Armor Proficiency (Heavy)": BUILD_THEMES.COMBAT,
-    "Toughness": BUILD_THEMES.COMBAT,
-    "Improved Damage Threshold": BUILD_THEMES.COMBAT,
+    'Armor Proficiency (Light)': BUILD_THEMES.COMBAT,
+    'Armor Proficiency (Medium)': BUILD_THEMES.COMBAT,
+    'Armor Proficiency (Heavy)': BUILD_THEMES.COMBAT,
+    'Toughness': BUILD_THEMES.COMBAT,
+    'Improved Damage Threshold': BUILD_THEMES.COMBAT,
 
     // Medical/Support
-    "Surgical Expertise": BUILD_THEMES.SUPPORT,
-    "Skill Focus (Treat Injury)": BUILD_THEMES.SUPPORT
+    'Surgical Expertise': BUILD_THEMES.SUPPORT,
+    'Skill Focus (Treat Injury)': BUILD_THEMES.SUPPORT
 };
 
 // ──────────────────────────────────────────────────────────────
@@ -693,7 +692,7 @@ export class BuildIntent {
 
         for (const target of topTargets) {
             const signals = PRESTIGE_SIGNALS[target.className];
-            if (!signals) continue;
+            if (!signals) {continue;}
 
             // Check missing feats
             for (const feat of signals.feats) {
@@ -756,7 +755,7 @@ export class BuildIntent {
         if (intent.forceFocus && featName.includes('Force')) {
             return {
                 aligned: true,
-                reason: "Supports your Force-focused build"
+                reason: 'Supports your Force-focused build'
             };
         }
 
@@ -764,7 +763,7 @@ export class BuildIntent {
             (featName.includes('Shot') || featName.includes('Pistol') || featName.includes('Rifle'))) {
             return {
                 aligned: true,
-                reason: "Supports your ranged combat style"
+                reason: 'Supports your ranged combat style'
             };
         }
 
@@ -772,7 +771,7 @@ export class BuildIntent {
             (featName.includes('Melee') || featName.includes('Martial'))) {
             return {
                 aligned: true,
-                reason: "Supports your melee combat style"
+                reason: 'Supports your melee combat style'
             };
         }
 
@@ -806,7 +805,7 @@ export class BuildIntent {
             if (forceTrees.includes(treeName.toLowerCase())) {
                 return {
                     aligned: true,
-                    reason: "Supports your Force-focused build"
+                    reason: 'Supports your Force-focused build'
                 };
             }
         }
@@ -841,7 +840,7 @@ export class BuildIntent {
             return `Builds on ${matches.join(' and ')}`;
         }
 
-        return "Aligns with your build direction";
+        return 'Aligns with your build direction';
     }
 
     /**
@@ -931,7 +930,7 @@ export class BuildIntent {
         SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() START - Actor: ${actor.id} (${actor.name})`);
 
         // Try to get biases from actor first, then fall back to pendingData (for chargen flow)
-        let mentorBiases = MentorSurvey.getMentorBiases(actor);
+        let mentorBiases = actor.system?.swse?.mentorBuildIntentBiases || {};
         SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - Retrieved actor biases:`, mentorBiases);
 
         // Fallback to pendingData.mentorBiases if actor doesn't have biases (chargen scenario)
@@ -969,7 +968,7 @@ export class BuildIntent {
             order: null, // Meta-preference
             pragmatic: null, // Meta-preference
             riskTolerance: null, // Meta-preference
-            authority: null, // Meta-preference
+            authority: null // Meta-preference
         };
 
         // Apply biases to themes with small weight (0.05x multiplier)

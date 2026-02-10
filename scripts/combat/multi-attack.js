@@ -10,7 +10,7 @@
  * @module combat/multi-attack
  */
 
-import { swseLogger } from "../utils/logger.js";
+import { swseLogger } from '../utils/logger.js';
 
 /**
  * Weapon groups for Double/Triple Attack feats
@@ -44,7 +44,7 @@ export const MULTI_ATTACK_FEATS = Object.freeze({
  * @returns {string|null} The weapon group or null
  */
 export function getWeaponGroup(weapon) {
-  if (!weapon) return null;
+  if (!weapon) {return null;}
 
   const name = (weapon.name || '').toLowerCase();
   const proficiency = weapon.system?.proficiency?.toLowerCase() || '';
@@ -53,19 +53,19 @@ export function getWeaponGroup(weapon) {
 
   // Check proficiency field first (most reliable)
   if (proficiency) {
-    if (proficiency.includes('simple')) return WEAPON_GROUPS.SIMPLE;
-    if (proficiency.includes('pistol')) return WEAPON_GROUPS.PISTOLS;
-    if (proficiency.includes('rifle')) return WEAPON_GROUPS.RIFLES;
-    if (proficiency.includes('lightsaber')) return WEAPON_GROUPS.LIGHTSABERS;
-    if (proficiency.includes('heavy')) return WEAPON_GROUPS.HEAVY;
-    if (proficiency.includes('advanced') && proficiency.includes('melee')) return WEAPON_GROUPS.ADVANCED_MELEE;
-    if (proficiency.includes('exotic')) return WEAPON_GROUPS.EXOTIC;
+    if (proficiency.includes('simple')) {return WEAPON_GROUPS.SIMPLE;}
+    if (proficiency.includes('pistol')) {return WEAPON_GROUPS.PISTOLS;}
+    if (proficiency.includes('rifle')) {return WEAPON_GROUPS.RIFLES;}
+    if (proficiency.includes('lightsaber')) {return WEAPON_GROUPS.LIGHTSABERS;}
+    if (proficiency.includes('heavy')) {return WEAPON_GROUPS.HEAVY;}
+    if (proficiency.includes('advanced') && proficiency.includes('melee')) {return WEAPON_GROUPS.ADVANCED_MELEE;}
+    if (proficiency.includes('exotic')) {return WEAPON_GROUPS.EXOTIC;}
   }
 
   // Check subcategory
   if (subcategory) {
-    if (subcategory.includes('simple')) return WEAPON_GROUPS.SIMPLE;
-    if (subcategory.includes('exotic')) return WEAPON_GROUPS.EXOTIC;
+    if (subcategory.includes('simple')) {return WEAPON_GROUPS.SIMPLE;}
+    if (subcategory.includes('exotic')) {return WEAPON_GROUPS.EXOTIC;}
   }
 
   // Fallback to name-based detection
@@ -98,8 +98,8 @@ export function getWeaponGroup(weapon) {
   const rangeMatch = range.match(/(\d+)/);
   if (rangeMatch) {
     const rangeNum = parseInt(rangeMatch[1], 10);
-    if (rangeNum <= 20) return WEAPON_GROUPS.PISTOLS;
-    if (rangeNum <= 60) return WEAPON_GROUPS.RIFLES;
+    if (rangeNum <= 20) {return WEAPON_GROUPS.PISTOLS;}
+    if (rangeNum <= 60) {return WEAPON_GROUPS.RIFLES;}
     return WEAPON_GROUPS.HEAVY;
   }
 
@@ -112,7 +112,7 @@ export function getWeaponGroup(weapon) {
  * @returns {boolean}
  */
 export function isDoubleWeapon(weapon) {
-  if (!weapon) return false;
+  if (!weapon) {return false;}
 
   const name = (weapon.name || '').toLowerCase();
   const properties = weapon.system?.properties || [];
@@ -146,7 +146,7 @@ export function isDoubleWeapon(weapon) {
  * @returns {string|null} The weapon group or null
  */
 export function extractWeaponGroupFromFeat(featName) {
-  if (!featName) return null;
+  if (!featName) {return null;}
 
   const lowerName = featName.toLowerCase();
 
@@ -155,17 +155,17 @@ export function extractWeaponGroupFromFeat(featName) {
   const dashMatch = lowerName.match(/[-–]\s*(\w+)/);
 
   let group = parenMatch?.[1]?.trim() || dashMatch?.[1]?.trim();
-  if (!group) return null;
+  if (!group) {return null;}
 
   // Normalize group name
   group = group.toLowerCase();
-  if (group.includes('simple')) return WEAPON_GROUPS.SIMPLE;
-  if (group.includes('pistol')) return WEAPON_GROUPS.PISTOLS;
-  if (group.includes('rifle')) return WEAPON_GROUPS.RIFLES;
-  if (group.includes('lightsaber')) return WEAPON_GROUPS.LIGHTSABERS;
-  if (group.includes('heavy')) return WEAPON_GROUPS.HEAVY;
-  if (group.includes('advanced') || group.includes('melee')) return WEAPON_GROUPS.ADVANCED_MELEE;
-  if (group.includes('exotic')) return WEAPON_GROUPS.EXOTIC;
+  if (group.includes('simple')) {return WEAPON_GROUPS.SIMPLE;}
+  if (group.includes('pistol')) {return WEAPON_GROUPS.PISTOLS;}
+  if (group.includes('rifle')) {return WEAPON_GROUPS.RIFLES;}
+  if (group.includes('lightsaber')) {return WEAPON_GROUPS.LIGHTSABERS;}
+  if (group.includes('heavy')) {return WEAPON_GROUPS.HEAVY;}
+  if (group.includes('advanced') || group.includes('melee')) {return WEAPON_GROUPS.ADVANCED_MELEE;}
+  if (group.includes('exotic')) {return WEAPON_GROUPS.EXOTIC;}
 
   return group;
 }
@@ -179,10 +179,10 @@ export function getDoubleAttackGroups(actor) {
   const groups = new Set();
 
   for (const item of actor.items) {
-    if (item.type !== 'feat') continue;
+    if (item.type !== 'feat') {continue;}
 
     const name = item.name?.toLowerCase() || '';
-    if (!name.includes('double attack')) continue;
+    if (!name.includes('double attack')) {continue;}
 
     const group = extractWeaponGroupFromFeat(item.name);
     if (group) {
@@ -202,10 +202,10 @@ export function getTripleAttackGroups(actor) {
   const groups = new Set();
 
   for (const item of actor.items) {
-    if (item.type !== 'feat') continue;
+    if (item.type !== 'feat') {continue;}
 
     const name = item.name?.toLowerCase() || '';
-    if (!name.includes('triple attack')) continue;
+    if (!name.includes('triple attack')) {continue;}
 
     const group = extractWeaponGroupFromFeat(item.name);
     if (group) {
@@ -225,7 +225,7 @@ export function getDualWeaponMasteryLevel(actor) {
   let level = 0;
 
   for (const item of actor.items) {
-    if (item.type !== 'feat') continue;
+    if (item.type !== 'feat') {continue;}
 
     const name = item.name?.toLowerCase() || '';
 
@@ -264,8 +264,8 @@ export function getDualWeaponPenalty(dwmLevel) {
 export function getOffhandWeapon(actor) {
   // Look for weapons marked as off-hand or secondary
   for (const item of actor.items) {
-    if (item.type !== 'weapon') continue;
-    if (!item.system?.equipped) continue;
+    if (item.type !== 'weapon') {continue;}
+    if (!item.system?.equipped) {continue;}
 
     if (item.system?.isOffhand || item.system?.slot === 'offhand') {
       return item;
@@ -477,7 +477,7 @@ export async function showFullAttackDialog(actor, equippedWeapons) {
   const { primary, offhand, isDoubleWeapon: isDouble } = equippedWeapons;
 
   if (!primary) {
-    ui.notifications.warn("No weapon equipped for Full Attack.");
+    ui.notifications.warn('No weapon equipped for Full Attack.');
     return null;
   }
 
@@ -552,7 +552,7 @@ export async function showFullAttackDialog(actor, equippedWeapons) {
 
   return new Promise(resolve => {
     const dialog = new Dialog({
-      title: "Full Attack",
+      title: 'Full Attack',
       content,
       buttons: {
         attack: {
@@ -560,9 +560,9 @@ export async function showFullAttackDialog(actor, equippedWeapons) {
           label: `Attack (${config.attacks.length}x)`,
           callback: html => {
             // Get selected weapon for Double/Triple Attack
-            const select = html.find('select[name="doubleAttackWeapon"]');
-            if (select.length) {
-              selectedDoubleAttackWeapon = select.val();
+            const select = html?.querySelector('select[name="doubleAttackWeapon"]');
+            if (select) {
+              selectedDoubleAttackWeapon = select.value;
               config = calculateFullAttackConfig(actor, primary, offhand, {
                 doubleAttackWeapon: selectedDoubleAttackWeapon
               });
@@ -572,19 +572,19 @@ export async function showFullAttackDialog(actor, equippedWeapons) {
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
-          label: "Cancel",
+          label: 'Cancel',
           callback: () => resolve(null)
         }
       },
-      default: "attack",
+      default: 'attack',
       render: html => {
         // Update attack list when weapon selection changes
-        html.find('select[name="doubleAttackWeapon"]').on('change', (ev) => {
+        html?.querySelector('select[name="doubleAttackWeapon"]')?.addEventListener('change', (ev) => {
           selectedDoubleAttackWeapon = ev.target.value;
           const newConfig = calculateFullAttackConfig(actor, primary, offhand, {
             doubleAttackWeapon: selectedDoubleAttackWeapon
           });
-          html.find('#attack-list').html(buildAttackList(newConfig));
+          html?.querySelector('#attack-list').innerHTML = buildAttackList(newConfig);
         });
       }
     });

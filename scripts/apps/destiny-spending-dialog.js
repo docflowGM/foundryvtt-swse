@@ -106,7 +106,7 @@ export class DestinySpendingDialog extends Dialog {
         // Close dialog
         const dialog = option.closest('.dialog');
         const cancelBtn = dialog?.querySelector('button[data-button="cancel"]');
-        if (cancelBtn) cancelBtn.click();
+        if (cancelBtn) {cancelBtn.click();}
       });
 
       // Visual feedback
@@ -129,7 +129,7 @@ export class DestinySpendingDialog extends Dialog {
       reason: `spent a Destiny Point on ${this._getEffectLabel(effectKey, allEffects)}`
     });
 
-    if (!success) return;
+    if (!success) {return;}
 
     // Trigger the effect
     try {

@@ -1,5 +1,5 @@
 // scripts/automation/upkeep.js
-import { swseLogger } from "../utils/logger.js";
+import { swseLogger } from '../utils/logger.js';
 
 export const Upkeep = {
   init() {
@@ -9,6 +9,6 @@ export const Upkeep = {
         // iterate combatants and apply upkeep
       }
     });
-    swseLogger.info("Upkeep initialized");
+    swseLogger.info('Upkeep initialized');
   }
 };

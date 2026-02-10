@@ -87,7 +87,7 @@ export class PivotDetector {
       let offThemeCount = 0;
       const themeFreq = {};
       for (const entry of recentPicks) {
-        if (!entry.theme) continue;
+        if (!entry.theme) {continue;}
         themeFreq[entry.theme] = (themeFreq[entry.theme] || 0) + 1;
 
         const archetypes = THEME_TO_ARCHETYPE[entry.theme] || [];
@@ -103,7 +103,7 @@ export class PivotDetector {
       let emergingCount = 0;
       for (const [theme, count] of Object.entries(themeFreq)) {
         const archetypes = THEME_TO_ARCHETYPE[theme] || [];
-        if (archetypes.includes(primaryAnchor.archetype)) continue;  // Skip anchor theme
+        if (archetypes.includes(primaryAnchor.archetype)) {continue;}  // Skip anchor theme
         if (count > emergingCount) {
           emergingTheme = theme;
           emergingCount = count;

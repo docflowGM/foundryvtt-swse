@@ -65,7 +65,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 10,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 10;
+              if (value === null || value === undefined || value === '') {return 10;}
               const num = Number(value);
               return Number.isNaN(num) ? 10 : Math.floor(num);
             }
@@ -76,7 +76,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 0,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 0;
+              if (value === null || value === undefined || value === '') {return 0;}
               const num = Number(value);
               return Number.isNaN(num) ? 0 : Math.floor(num);
             }
@@ -87,7 +87,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 0,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 0;
+              if (value === null || value === undefined || value === '') {return 0;}
               const num = Number(value);
               return Number.isNaN(num) ? 0 : Math.floor(num);
             }
@@ -100,7 +100,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 10,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 10;
+              if (value === null || value === undefined || value === '') {return 10;}
               const num = Number(value);
               return Number.isNaN(num) ? 10 : Math.floor(num);
             }
@@ -111,7 +111,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 0,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 0;
+              if (value === null || value === undefined || value === '') {return 0;}
               const num = Number(value);
               return Number.isNaN(num) ? 0 : Math.floor(num);
             }
@@ -122,7 +122,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 0,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 0;
+              if (value === null || value === undefined || value === '') {return 0;}
               const num = Number(value);
               return Number.isNaN(num) ? 0 : Math.floor(num);
             }
@@ -135,7 +135,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 10,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 10;
+              if (value === null || value === undefined || value === '') {return 10;}
               const num = Number(value);
               return Number.isNaN(num) ? 10 : Math.floor(num);
             }
@@ -146,7 +146,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 0,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 0;
+              if (value === null || value === undefined || value === '') {return 0;}
               const num = Number(value);
               return Number.isNaN(num) ? 0 : Math.floor(num);
             }
@@ -157,7 +157,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 0,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 0;
+              if (value === null || value === undefined || value === '') {return 0;}
               const num = Number(value);
               return Number.isNaN(num) ? 0 : Math.floor(num);
             }
@@ -170,7 +170,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 10,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 10;
+              if (value === null || value === undefined || value === '') {return 10;}
               const num = Number(value);
               return Number.isNaN(num) ? 10 : Math.floor(num);
             }
@@ -181,7 +181,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 0,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 0;
+              if (value === null || value === undefined || value === '') {return 0;}
               const num = Number(value);
               return Number.isNaN(num) ? 0 : Math.floor(num);
             }
@@ -192,7 +192,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 0,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 0;
+              if (value === null || value === undefined || value === '') {return 0;}
               const num = Number(value);
               return Number.isNaN(num) ? 0 : Math.floor(num);
             }
@@ -205,7 +205,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 10,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 10;
+              if (value === null || value === undefined || value === '') {return 10;}
               const num = Number(value);
               return Number.isNaN(num) ? 10 : Math.floor(num);
             }
@@ -216,7 +216,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 0,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 0;
+              if (value === null || value === undefined || value === '') {return 0;}
               const num = Number(value);
               return Number.isNaN(num) ? 0 : Math.floor(num);
             }
@@ -227,7 +227,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 0,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 0;
+              if (value === null || value === undefined || value === '') {return 0;}
               const num = Number(value);
               return Number.isNaN(num) ? 0 : Math.floor(num);
             }
@@ -240,7 +240,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 10,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 10;
+              if (value === null || value === undefined || value === '') {return 10;}
               const num = Number(value);
               return Number.isNaN(num) ? 10 : Math.floor(num);
             }
@@ -251,7 +251,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 0,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 0;
+              if (value === null || value === undefined || value === '') {return 0;}
               const num = Number(value);
               return Number.isNaN(num) ? 0 : Math.floor(num);
             }
@@ -262,7 +262,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             initial: 0,
             integer: true,
             clean: value => {
-              if (value === null || value === undefined || value === "") return 0;
+              if (value === null || value === undefined || value === '') {return 0;}
               const num = Number(value);
               return Number.isNaN(num) ? 0 : Math.floor(num);
             }
@@ -279,7 +279,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
           min: 0,
           integer: true,
           clean: value => {
-            if (value === null || value === undefined || value === "") return 50;
+            if (value === null || value === undefined || value === '') {return 50;}
             const num = Number(value);
             return Number.isNaN(num) ? 50 : Math.floor(num);
           }
@@ -291,7 +291,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
           min: 1,
           integer: true,
           clean: value => {
-            if (value === null || value === undefined || value === "") return 50;
+            if (value === null || value === undefined || value === '') {return 50;}
             const num = Number(value);
             return Number.isNaN(num) ? 50 : Math.floor(num);
           }
@@ -306,7 +306,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
           min: 0,
           integer: true,
           clean: value => {
-            if (value === null || value === undefined || value === "") return 0;
+            if (value === null || value === undefined || value === '') {return 0;}
             const num = Number(value);
             return Number.isNaN(num) ? 0 : Math.floor(num);
           }
@@ -318,7 +318,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
           min: 0,
           integer: true,
           clean: value => {
-            if (value === null || value === undefined || value === "") return 0;
+            if (value === null || value === undefined || value === '') {return 0;}
             const num = Number(value);
             return Number.isNaN(num) ? 0 : Math.floor(num);
           }
@@ -332,7 +332,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         initial: 10,
         integer: true,
         clean: value => {
-          if (value === null || value === undefined || value === "") return 10;
+          if (value === null || value === undefined || value === '') {return 10;}
           const num = Number(value);
           return Number.isNaN(num) ? 10 : Math.floor(num);
         }
@@ -343,7 +343,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         initial: 10,
         integer: true,
         clean: value => {
-          if (value === null || value === undefined || value === "") return 10;
+          if (value === null || value === undefined || value === '') {return 10;}
           const num = Number(value);
           return Number.isNaN(num) ? 10 : Math.floor(num);
         }
@@ -354,7 +354,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         initial: 30,
         integer: true,
         clean: value => {
-          if (value === null || value === undefined || value === "") return 30;
+          if (value === null || value === undefined || value === '') {return 30;}
           const num = Number(value);
           return Number.isNaN(num) ? 30 : Math.floor(num);
         }
@@ -365,7 +365,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         initial: 0,
         integer: true,
         clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
+          if (value === null || value === undefined || value === '') {return 0;}
           const num = Number(value);
           return Number.isNaN(num) ? 0 : Math.floor(num);
         }
@@ -378,12 +378,12 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         initial: 0,
         integer: true,
         clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
+          if (value === null || value === undefined || value === '') {return 0;}
           const num = Number(value);
           return Number.isNaN(num) ? 0 : Math.floor(num);
         }
       }),
-      usePilotLevel: new fields.BooleanField({required: true, initial: true}),
+      usePilotLevel: new fields.BooleanField({ required: true, initial: true }),
 
       // Crew Quality
       crewQuality: new fields.StringField({
@@ -393,44 +393,44 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       }),
 
       // Movement
-      speed: new fields.StringField({required: false, initial: "12 squares"}),
-      starshipSpeed: new fields.StringField({required: false, initial: "4 squares"}),
-      maxVelocity: new fields.StringField({required: false, initial: "800 km/h"}),
-      maneuver: new fields.StringField({required: false, initial: "+0"}),
-      initiative: new fields.StringField({required: false, initial: "+0"}),
-      baseAttackBonus: new fields.StringField({required: false, initial: "+0"}),
+      speed: new fields.StringField({ required: false, initial: '12 squares' }),
+      starshipSpeed: new fields.StringField({ required: false, initial: '4 squares' }),
+      maxVelocity: new fields.StringField({ required: false, initial: '800 km/h' }),
+      maneuver: new fields.StringField({ required: false, initial: '+0' }),
+      initiative: new fields.StringField({ required: false, initial: '+0' }),
+      baseAttackBonus: new fields.StringField({ required: false, initial: '+0' }),
       flatFooted: new fields.NumberField({
         required: true,
         nullable: true,
         initial: 10,
         integer: true,
         clean: value => {
-          if (value === null || value === undefined || value === "") return 10;
+          if (value === null || value === undefined || value === '') {return 10;}
           const num = Number(value);
           return Number.isNaN(num) ? 10 : Math.floor(num);
         }
       }),
 
       // Other vehicle properties
-      type: new fields.StringField({required: false, initial: ""}),
+      type: new fields.StringField({ required: false, initial: '' }),
       size: new fields.StringField({
         required: false,
-        initial: "colossal",
+        initial: 'colossal',
         clean: value => {
           // Normalize capitalized values to lowercase for backwards compatibility
           if (typeof value === 'string') {
             const normalized = value.toLowerCase();
             const validSizes = ['large', 'huge', 'gargantuan', 'colossal', 'colossal (frigate)', 'colossal (cruiser)', 'colossal (station)'];
-            return validSizes.includes(normalized) ? normalized : "colossal";
+            return validSizes.includes(normalized) ? normalized : 'colossal';
           }
-          return "colossal";
+          return 'colossal';
         }
       }),
-      crew: new fields.StringField({required: false, initial: "1"}),
-      passengers: new fields.StringField({required: false, initial: "0"}),
-      cargo: new fields.StringField({required: false, initial: "100 kg"}),
-      consumables: new fields.StringField({required: false, initial: "1 week"}),
-      hyperdrive: new fields.StringField({required: false, initial: "x1"}),
+      crew: new fields.StringField({ required: false, initial: '1' }),
+      passengers: new fields.StringField({ required: false, initial: '0' }),
+      cargo: new fields.StringField({ required: false, initial: '100 kg' }),
+      consumables: new fields.StringField({ required: false, initial: '1 week' }),
+      hyperdrive: new fields.StringField({ required: false, initial: 'x1' }),
 
       // Additional vehicle statistics per SWSE rules
       challengeLevel: new fields.NumberField({
@@ -439,7 +439,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         initial: 1,
         integer: true,
         clean: value => {
-          if (value === null || value === undefined || value === "") return 1;
+          if (value === null || value === undefined || value === '') {return 1;}
           const num = Number(value);
           return Number.isNaN(num) ? 1 : Math.floor(num);
         }
@@ -451,8 +451,8 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         choices: ['none', 'normal', 'improved', 'total']
       }),
 
-      payload: new fields.StringField({required: false, initial: ""}),
-      availability: new fields.StringField({required: false, initial: ""}),
+      payload: new fields.StringField({ required: false, initial: '' }),
+      availability: new fields.StringField({ required: false, initial: '' }),
 
       // Calculated combat statistics
       perception: new fields.NumberField({
@@ -461,7 +461,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         initial: 0,
         integer: true,
         clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
+          if (value === null || value === undefined || value === '') {return 0;}
           const num = Number(value);
           return Number.isNaN(num) ? 0 : Math.floor(num);
         }
@@ -473,7 +473,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         initial: 0,
         integer: true,
         clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
+          if (value === null || value === undefined || value === '') {return 0;}
           const num = Number(value);
           return Number.isNaN(num) ? 0 : Math.floor(num);
         }
@@ -485,7 +485,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         initial: 0,
         integer: true,
         clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
+          if (value === null || value === undefined || value === '') {return 0;}
           const num = Number(value);
           return Number.isNaN(num) ? 0 : Math.floor(num);
         }
@@ -498,7 +498,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
           initial: 0,
           integer: true,
           clean: value => {
-            if (value === null || value === undefined || value === "") return 0;
+            if (value === null || value === undefined || value === '') {return 0;}
             const num = Number(value);
             return Number.isNaN(num) ? 0 : Math.floor(num);
           }
@@ -509,7 +509,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
           initial: 0,
           integer: true,
           clean: value => {
-            if (value === null || value === undefined || value === "") return 0;
+            if (value === null || value === undefined || value === '') {return 0;}
             const num = Number(value);
             return Number.isNaN(num) ? 0 : Math.floor(num);
           }
@@ -526,7 +526,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
           max: 5,
           integer: true,
           clean: value => {
-            if (value === null || value === undefined || value === "") return 0;
+            if (value === null || value === undefined || value === '') {return 0;}
             const num = Number(value);
             return Number.isNaN(num) ? 0 : Math.floor(num);
           }
@@ -537,7 +537,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
           initial: 0,
           integer: true,
           clean: value => {
-            if (value === null || value === undefined || value === "") return 0;
+            if (value === null || value === undefined || value === '') {return 0;}
             const num = Number(value);
             return Number.isNaN(num) ? 0 : Math.floor(num);
           }
@@ -546,77 +546,70 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
 
       // Weapons array
       weapons: new fields.ArrayField(new fields.SchemaField({
-        name: new fields.StringField({required: false, initial: ""}),
-        arc: new fields.StringField({required: false, initial: ""}),
-        attackBonus: new fields.StringField({required: false, initial: ""}),
-        damage: new fields.StringField({required: false, initial: ""}),
-        range: new fields.StringField({required: false, initial: ""})
-      }), {initial: []}),
+        name: new fields.StringField({ required: false, initial: '' }),
+        arc: new fields.StringField({ required: false, initial: '' }),
+        attackBonus: new fields.StringField({ required: false, initial: '' }),
+        damage: new fields.StringField({ required: false, initial: '' }),
+        range: new fields.StringField({ required: false, initial: '' })
+      }), { initial: [] }),
 
       // Crew positions - stores both name and UUID for each crew member
       crewPositions: new fields.SchemaField({
         pilot: new fields.SchemaField({
-          name: new fields.StringField({required: false, nullable: true, initial: null}),
-          uuid: new fields.StringField({required: false, nullable: true, initial: null})
-        }, {required: false, nullable: true, initial: null}),
+          name: new fields.StringField({ required: false, nullable: true, initial: null }),
+          uuid: new fields.StringField({ required: false, nullable: true, initial: null })
+        }, { required: false, nullable: true, initial: null }),
         copilot: new fields.SchemaField({
-          name: new fields.StringField({required: false, nullable: true, initial: null}),
-          uuid: new fields.StringField({required: false, nullable: true, initial: null})
-        }, {required: false, nullable: true, initial: null}),
+          name: new fields.StringField({ required: false, nullable: true, initial: null }),
+          uuid: new fields.StringField({ required: false, nullable: true, initial: null })
+        }, { required: false, nullable: true, initial: null }),
         gunner: new fields.SchemaField({
-          name: new fields.StringField({required: false, nullable: true, initial: null}),
-          uuid: new fields.StringField({required: false, nullable: true, initial: null})
-        }, {required: false, nullable: true, initial: null}),
+          name: new fields.StringField({ required: false, nullable: true, initial: null }),
+          uuid: new fields.StringField({ required: false, nullable: true, initial: null })
+        }, { required: false, nullable: true, initial: null }),
         engineer: new fields.SchemaField({
-          name: new fields.StringField({required: false, nullable: true, initial: null}),
-          uuid: new fields.StringField({required: false, nullable: true, initial: null})
-        }, {required: false, nullable: true, initial: null}),
+          name: new fields.StringField({ required: false, nullable: true, initial: null }),
+          uuid: new fields.StringField({ required: false, nullable: true, initial: null })
+        }, { required: false, nullable: true, initial: null }),
         shields: new fields.SchemaField({
-          name: new fields.StringField({required: false, nullable: true, initial: null}),
-          uuid: new fields.StringField({required: false, nullable: true, initial: null})
-        }, {required: false, nullable: true, initial: null}),
+          name: new fields.StringField({ required: false, nullable: true, initial: null }),
+          uuid: new fields.StringField({ required: false, nullable: true, initial: null })
+        }, { required: false, nullable: true, initial: null }),
         commander: new fields.SchemaField({
-          name: new fields.StringField({required: false, nullable: true, initial: null}),
-          uuid: new fields.StringField({required: false, nullable: true, initial: null})
-        }, {required: false, nullable: true, initial: null})
+          name: new fields.StringField({ required: false, nullable: true, initial: null }),
+          uuid: new fields.StringField({ required: false, nullable: true, initial: null })
+        }, { required: false, nullable: true, initial: null })
       }),
 
       // Crew notes
-      crewNotes: new fields.StringField({required: false, initial: ""}),
+      crewNotes: new fields.StringField({ required: false, initial: '' }),
 
       // Additional details
-      carried_craft: new fields.StringField({required: false, initial: ""}),
-      tags: new fields.ArrayField(new fields.StringField(), {initial: []}),
-      description: new fields.StringField({required: false, initial: ""}),
-      sourcebook: new fields.StringField({required: false, initial: ""}),
+      carried_craft: new fields.StringField({ required: false, initial: '' }),
+      tags: new fields.ArrayField(new fields.StringField(), { initial: [] }),
+      description: new fields.StringField({ required: false, initial: '' }),
+      sourcebook: new fields.StringField({ required: false, initial: '' }),
       page: new fields.NumberField({
         required: false,
         nullable: true,
         initial: null,
         integer: true,
         clean: value => {
-          if (value === null || value === undefined || value === "") return null;
+          if (value === null || value === undefined || value === '') {return null;}
           const num = Number(value);
           return Number.isNaN(num) ? null : Math.floor(num);
         }
       }),
 
       // Hyperdrive classes
-      hyperdrive_class: new fields.StringField({required: false, initial: ""}),
-      backup_class: new fields.StringField({required: false, initial: ""}),
+      hyperdrive_class: new fields.StringField({ required: false, initial: '' }),
+      backup_class: new fields.StringField({ required: false, initial: '' }),
 
       // Cargo capacity (string to allow units)
-      cargo_capacity: new fields.StringField({required: false, initial: ""}),
+      cargo_capacity: new fields.StringField({ required: false, initial: '' }),
 
       // Sensors
-      senses: new fields.StringField({required: false, initial: ""}),
-
-      // Cover provided to occupants
-      cover: new fields.StringField({
-        required: true,
-        initial: 'total',
-        choices: ['none', 'normal', 'improved', 'total']
-      }),
+      senses: new fields.StringField({ required: false, initial: '' }),
 
       // Emplacement Points for vehicle modifications
       emplacementPoints: new fields.NumberField({
@@ -628,7 +621,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         },
         integer: true,
         clean: value => {
-          if (value === null || value === undefined || value === "") return null;
+          if (value === null || value === undefined || value === '') {return null;}
           const num = Number(value);
           return Number.isNaN(num) ? null : Math.floor(num);
         }
@@ -639,7 +632,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         initial: 0,
         integer: true,
         clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
+          if (value === null || value === undefined || value === '') {return 0;}
           const num = Number(value);
           return Number.isNaN(num) ? 0 : Math.floor(num);
         }
@@ -781,11 +774,11 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
    * @private
    */
   _getPilot() {
-    if (!this.crewPositions?.pilot) return null;
+    if (!this.crewPositions?.pilot) {return null;}
 
     const pilot = this.crewPositions.pilot;
     const pilotName = typeof pilot === 'string' ? pilot : pilot?.name;
-    if (!pilotName) return null;
+    if (!pilotName) {return null;}
 
     return game.actors?.getName(pilotName) || null;
   }
@@ -795,11 +788,11 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
    * @private
    */
   _getGunner() {
-    if (!this.crewPositions?.gunner) return null;
+    if (!this.crewPositions?.gunner) {return null;}
 
     const gunner = this.crewPositions.gunner;
     const gunnerName = typeof gunner === 'string' ? gunner : gunner?.name;
-    if (!gunnerName) return null;
+    if (!gunnerName) {return null;}
 
     return game.actors?.getName(gunnerName) || null;
   }
@@ -813,13 +806,13 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
 
     // Check all crew positions for their perception modifier
     for (const [, crewData] of Object.entries(this.crewPositions || {})) {
-      if (!crewData) continue;
+      if (!crewData) {continue;}
 
       const crewName = typeof crewData === 'string' ? crewData : crewData?.name;
-      if (!crewName) continue;
+      if (!crewName) {continue;}
 
       const crewActor = game.actors?.getName(crewName);
-      if (!crewActor) continue;
+      if (!crewActor) {continue;}
 
       const perception = crewActor.system?.skills?.perception?.total || 0;
       if (perception > bestPerception) {

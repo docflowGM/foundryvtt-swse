@@ -10,7 +10,7 @@
  * - Droids/Vehicles/Electronics/Cyborgs: additional effects based on damage
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 export class IonDamage {
   /**
@@ -24,7 +24,7 @@ export class IonDamage {
   static async applyIonDamage(attacker, target, weapon, baseDamage) {
     try {
       if (!attacker || !target || !weapon) {
-        throw new Error("Missing attacker, target, or weapon");
+        throw new Error('Missing attacker, target, or weapon');
       }
 
       // Verify weapon deals ion damage
@@ -72,20 +72,20 @@ export class IonDamage {
       if (halfDamage >= (currentHP) && halfDamage > 0) {
         // This will reduce target to 0 HP - apply -5 CT penalty
         results.effects.push({
-          type: "condition_track_penalty",
+          type: 'condition_track_penalty',
           amount: -5,
-          reason: "Ion damage reduced to 0 HP",
-          result: "Disabled or Knocked Unconscious"
+          reason: 'Ion damage reduced to 0 HP',
+          result: 'Disabled or Knocked Unconscious'
         });
       }
 
       // Check if full (not halved) damage equals or exceeds threshold
       if (baseDamage >= threshold && threshold > 0) {
         results.effects.push({
-          type: "condition_track_penalty",
+          type: 'condition_track_penalty',
           amount: -2,
           reason: `Ion damage (${baseDamage}) >= Damage Threshold (${threshold})`,
-          result: "Condition Track worsens"
+          result: 'Condition Track worsens'
         });
       }
 
@@ -104,14 +104,14 @@ export class IonDamage {
       });
 
       const effectsText = results.effects.length > 0
-        ? ` ${results.effects.map(e => e.reason).join("; ")}.`
-        : "";
+        ? ` ${results.effects.map(e => e.reason).join('; ')}.`
+        : '';
 
       results.message = `${target.name} takes ${halfDamage} ion damage (half of ${baseDamage}).${effectsText}`;
 
       return results;
     } catch (err) {
-      SWSELogger.error("Ion damage application failed", err);
+      SWSELogger.error('Ion damage application failed', err);
       throw err;
     }
   }
@@ -121,12 +121,12 @@ export class IonDamage {
    * @private
    */
   static _isIonWeapon(weapon) {
-    if (!weapon) return false;
+    if (!weapon) {return false;}
 
-    const name = (weapon.name || "").toLowerCase();
-    const damageType = (weapon.system?.damageType || "").toLowerCase();
+    const name = (weapon.name || '').toLowerCase();
+    const damageType = (weapon.system?.damageType || '').toLowerCase();
 
-    return name.includes("ion") || damageType.includes("ion");
+    return name.includes('ion') || damageType.includes('ion');
   }
 
   /**
@@ -134,19 +134,19 @@ export class IonDamage {
    * @private
    */
   static _getTargetType(actor) {
-    if (!actor) return "unknown";
-    if (actor.type === "droid") return "droid";
-    if (actor.type === "vehicle") return "vehicle";
+    if (!actor) {return 'unknown';}
+    if (actor.type === 'droid') {return 'droid';}
+    if (actor.type === 'vehicle') {return 'vehicle';}
 
     // Check if character/NPC has cybernetic prosthetics
     const hasCyberware = actor.items?.some(item => {
-      const name = (item.name || "").toLowerCase();
-      return name.includes("cybernetic") || name.includes("prosthetic") || name.includes("implant");
+      const name = (item.name || '').toLowerCase();
+      return name.includes('cybernetic') || name.includes('prosthetic') || name.includes('implant');
     });
 
-    if (hasCyberware) return "cyborg";
+    if (hasCyberware) {return 'cyborg';}
 
-    return "organic";
+    return 'organic';
   }
 
   /**
@@ -154,10 +154,10 @@ export class IonDamage {
    * @private
    */
   static _isEligibleForIonEffects(actor) {
-    if (!actor) return false;
+    if (!actor) {return false;}
 
     const type = this._getTargetType(actor);
-    return ["droid", "vehicle", "cyborg"].includes(type);
+    return ['droid', 'vehicle', 'cyborg'].includes(type);
   }
 
   /**
@@ -165,7 +165,7 @@ export class IonDamage {
    * @private
    */
   static async _applyConditionTrackPenalties(actor, effects) {
-    if (!actor || !effects || effects.length === 0) return;
+    if (!actor || !effects || effects.length === 0) {return;}
 
     try {
       // Calculate total condition track movement
@@ -180,13 +180,13 @@ export class IonDamage {
 
         // Update actor's condition track
         await actor.update({
-          "system.conditionTrack.current": newCT
+          'system.conditionTrack.current': newCT
         });
 
         SWSELogger.info(`${actor.name} condition track moved ${totalCTPenalty} steps (to ${newCT})`);
       }
     } catch (err) {
-      SWSELogger.error("Failed to apply condition track penalty", err);
+      SWSELogger.error('Failed to apply condition track penalty', err);
     }
   }
 
@@ -195,16 +195,16 @@ export class IonDamage {
    * @private
    */
   static async _setIonDamageFlag(actor, ionData) {
-    if (!actor) return;
+    if (!actor) {return;}
 
     try {
-      const ionDamageHistory = actor.getFlag("foundryvtt-swse", "ionDamageHistory") || [];
+      const ionDamageHistory = actor.getFlag('foundryvtt-swse', 'ionDamageHistory') || [];
       ionDamageHistory.push(ionData);
 
-      await actor.setFlag("foundryvtt-swse", "ionDamageHistory", ionDamageHistory);
-      await actor.setFlag("foundryvtt-swse", "lastIonDamage", ionData);
+      await actor.setFlag('foundryvtt-swse', 'ionDamageHistory', ionDamageHistory);
+      await actor.setFlag('foundryvtt-swse', 'lastIonDamage', ionData);
     } catch (err) {
-      SWSELogger.error("Failed to set ion damage flag", err);
+      SWSELogger.error('Failed to set ion damage flag', err);
     }
   }
 
@@ -214,9 +214,9 @@ export class IonDamage {
    * @returns {Array} - Array of previous ion damage events
    */
   static getIonDamageHistory(actor) {
-    if (!actor) return [];
+    if (!actor) {return [];}
 
-    return actor.getFlag("foundryvtt-swse", "ionDamageHistory") || [];
+    return actor.getFlag('foundryvtt-swse', 'ionDamageHistory') || [];
   }
 
   /**
@@ -225,9 +225,9 @@ export class IonDamage {
    * @returns {Object|null} - Last ion damage data or null
    */
   static getLastIonDamage(actor) {
-    if (!actor) return null;
+    if (!actor) {return null;}
 
-    return actor.getFlag("foundryvtt-swse", "lastIonDamage") || null;
+    return actor.getFlag('foundryvtt-swse', 'lastIonDamage') || null;
   }
 
   /**
@@ -245,12 +245,12 @@ export class IonDamage {
    * @returns {string} - Formatted summary of ion damage effects
    */
   static getSummary(ionDamageResult) {
-    if (!ionDamageResult) return "";
+    if (!ionDamageResult) {return '';}
 
     let summary = `Ion Damage: ${ionDamageResult.halfDamage} HP damage (${ionDamageResult.baseDamage} → half)`;
 
     if (ionDamageResult.effects && ionDamageResult.effects.length > 0) {
-      summary += "\n Effects:\n";
+      summary += '\n Effects:\n';
       for (const effect of ionDamageResult.effects) {
         summary += `  • ${effect.reason}: ${effect.result}\n`;
       }
@@ -264,22 +264,22 @@ export class IonDamage {
    */
   static ION_WEAPONS = {
     PISTOL: {
-      name: "Ion Pistol",
-      baseDamage: "3d6",
-      range: "6 squares",
-      targetType: "Single"
+      name: 'Ion Pistol',
+      baseDamage: '3d6',
+      range: '6 squares',
+      targetType: 'Single'
     },
     RIFLE: {
-      name: "Ion Rifle",
-      baseDamage: "4d6",
-      range: "15 squares",
-      targetType: "Single"
+      name: 'Ion Rifle',
+      baseDamage: '4d6',
+      range: '15 squares',
+      targetType: 'Single'
     },
     CANNON: {
-      name: "Ion Cannon",
-      baseDamage: "6d6",
-      range: "500 squares",
-      targetType: "Single vehicle/structure"
+      name: 'Ion Cannon',
+      baseDamage: '6d6',
+      range: '500 squares',
+      targetType: 'Single vehicle/structure'
     }
   };
 }

@@ -37,14 +37,14 @@ export class MentorWishlistIntegration {
     // Score each suggestion based on wishlist alignment
     const scoredSuggestions = suggestions.map(suggestion => {
       let wishlistBoost = 0;
-      let wishlistContext = [];
+      const wishlistContext = [];
 
       // Check if this suggestion is a prerequisite for any wishlisted item
       for (const wishedItem of allWishlisted) {
         const canonical = PrerequisiteChecker.getUnmetRequirements(actor, wishedItem);
         const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, wishedItem);
         if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
-          console.warn("getUnmetRequirements mismatch (wishlist)", { item: wishedItem.name, canonical, legacy });
+          console.warn('getUnmetRequirements mismatch (wishlist)', { item: wishedItem.name, canonical, legacy });
         }
         const unmetReqs = canonical;
 
@@ -74,7 +74,7 @@ export class MentorWishlistIntegration {
     // Re-sort by original tier, then by wishlist boost
     const enhanced = scoredSuggestions.sort((a, b) => {
       const tierDiff = (b.suggestion?.tier ?? 0) - (a.suggestion?.tier ?? 0);
-      if (tierDiff !== 0) return tierDiff;
+      if (tierDiff !== 0) {return tierDiff;}
       return b.wishlistBoost - a.wishlistBoost;
     });
 
@@ -134,12 +134,12 @@ export class MentorWishlistIntegration {
     for (const wishedItem of allWishlisted) {
       // Find the actual item document
       const itemDoc = allItems.find(i => (i._id || i.id) === wishedItem.id);
-      if (!itemDoc) continue;
+      if (!itemDoc) {continue;}
 
       const canonical = PrerequisiteChecker.getUnmetRequirements(actor, itemDoc);
       const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, itemDoc);
       if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
-        console.warn("getUnmetRequirements mismatch (prerequisites)", { item: itemDoc.name, canonical, legacy });
+        console.warn('getUnmetRequirements mismatch (prerequisites)', { item: itemDoc.name, canonical, legacy });
       }
       const unmetReqs = canonical;
 
@@ -186,7 +186,7 @@ export class MentorWishlistIntegration {
     const req = requirement.toLowerCase();
 
     // Direct name match
-    if (req.includes(name)) return true;
+    if (req.includes(name)) {return true;}
 
     // BAB requirement - check if suggestion increases BAB
     if (req.includes('bab') && (req.includes('feat') || req.includes('talent'))) {
@@ -213,7 +213,7 @@ export class MentorWishlistIntegration {
     const req = requirement.toLowerCase();
 
     // Direct match
-    if (req.includes(itemName)) return true;
+    if (req.includes(itemName)) {return true;}
 
     // Check if acquiring this item gets us closer to the requirement
     const tempItem = {
@@ -227,10 +227,10 @@ export class MentorWishlistIntegration {
     const unmetBeforeLegacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
 
     if (JSON.stringify(unmetAfterCanonical) !== JSON.stringify(unmetAfterLegacy)) {
-      console.warn("getUnmetRequirements mismatch (after item)", { item: item.name, canonical: unmetAfterCanonical, legacy: unmetAfterLegacy });
+      console.warn('getUnmetRequirements mismatch (after item)', { item: item.name, canonical: unmetAfterCanonical, legacy: unmetAfterLegacy });
     }
     if (JSON.stringify(unmetBeforeCanonical) !== JSON.stringify(unmetBeforeLegacy)) {
-      console.warn("getUnmetRequirements mismatch (before item)", { item: item.name, canonical: unmetBeforeCanonical, legacy: unmetBeforeLegacy });
+      console.warn('getUnmetRequirements mismatch (before item)', { item: item.name, canonical: unmetBeforeCanonical, legacy: unmetBeforeLegacy });
     }
 
     return unmetAfterCanonical.length < unmetBeforeCanonical.length;

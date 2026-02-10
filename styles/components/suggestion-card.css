@@ -1,0 +1,317 @@
+/* ============================================
+   Unified Suggestion Card Component Styles
+   ============================================
+
+   Standardized card rendering for all suggestion engines.
+   Uses UNIFIED_TIERS colors, icons, and styling.
+*/
+
+/* ──────────────────────────────────────────
+   Base Card Styles
+   ────────────────────────────────────────── */
+
+.suggestion-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  background: linear-gradient(135deg, #f5f5f5 0%, #fff 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.suggestion-card:hover:not(.disabled) {
+  border-color: #999;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.suggestion-card.compact {
+  flex-direction: row;
+  align-items: center;
+  padding: 8px;
+}
+
+.suggestion-card.selected {
+  border-color: #4ECDC4;
+  background: linear-gradient(135deg, rgba(78, 205, 196, 0.1) 0%, rgba(78, 205, 196, 0.05) 100%);
+  box-shadow: 0 0 12px rgba(78, 205, 196, 0.3);
+}
+
+.suggestion-card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+}
+
+/* ──────────────────────────────────────────
+   Tier Badge
+   ────────────────────────────────────────── */
+
+.tier-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.tier-icon {
+  font-size: 14px;
+  display: inline-flex;
+}
+
+.tier-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+/* Tier-specific badge styling (with colors from UNIFIED_TIERS) */
+
+.tier-badge.tier-6 {
+  /* Red - Prerequisite */
+  background-color: #FF6B6B;
+  color: white;
+  font-weight: 700;
+}
+
+.tier-badge.tier-5 {
+  /* Orange - Prestige Ready Now */
+  background-color: #FF8C00;
+  color: white;
+}
+
+.tier-badge.tier-4 {
+  /* Gold - Path Continuation */
+  background-color: #FFD700;
+  color: #333;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.tier-badge.tier-3 {
+  /* Teal - Category Synergy */
+  background-color: #4ECDC4;
+  color: white;
+}
+
+.tier-badge.tier-2 {
+  /* Sky Blue - Ability Synergy */
+  background-color: #87CEEB;
+  color: #333;
+}
+
+.tier-badge.tier-1 {
+  /* Light Slate - Thematic Fit */
+  background-color: #B0C4DE;
+  color: #333;
+}
+
+.tier-badge.tier-0 {
+  /* Light Gray - Available */
+  background-color: #D3D3D3;
+  color: #666;
+  font-weight: normal;
+}
+
+/* ──────────────────────────────────────────
+   Card Content
+   ────────────────────────────────────────── */
+
+.suggestion-card-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 12px;
+  gap: 8px;
+}
+
+.suggestion-card.compact .suggestion-card-content {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  padding: 0;
+}
+
+/* ──────────────────────────────────────────
+   Card Image
+   ────────────────────────────────────────── */
+
+.suggestion-card-image {
+  width: 100%;
+  height: 120px;
+  overflow: hidden;
+  border-bottom: 1px solid #eee;
+  background: #f5f5f5;
+}
+
+.suggestion-card.compact .suggestion-card-image {
+  width: 40px;
+  height: 40px;
+  border-bottom: none;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ──────────────────────────────────────────
+   Card Title & Info
+   ────────────────────────────────────────── */
+
+.suggestion-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.suggestion-card-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.suggestion-card.compact .suggestion-card-name {
+  font-size: 13px;
+  margin: 0;
+}
+
+.suggestion-card-description {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.suggestion-card.compact .suggestion-card-description {
+  display: none;
+}
+
+/* ──────────────────────────────────────────
+   Card Details
+   ────────────────────────────────────────── */
+
+.suggestion-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: #777;
+  padding-top: 6px;
+  border-top: 1px solid #eee;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.detail-label {
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  text-align: right;
+  flex: 1;
+  word-break: break-word;
+}
+
+/* ──────────────────────────────────────────
+   Disabled Overlay
+   ────────────────────────────────────────── */
+
+.disabled-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  cursor: not-allowed;
+}
+
+.disabled-reason {
+  font-size: 12px;
+  font-weight: 600;
+  color: #999;
+  text-align: center;
+  padding: 8px;
+  word-break: break-word;
+}
+
+/* ──────────────────────────────────────────
+   Responsive Adjustments
+   ────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .suggestion-card {
+    border-radius: 6px;
+  }
+
+  .suggestion-card-content {
+    padding: 10px;
+  }
+
+  .tier-badge {
+    padding: 3px 10px;
+    font-size: 11px;
+  }
+
+  .tier-icon {
+    font-size: 12px;
+  }
+
+  .suggestion-card-name {
+    font-size: 13px;
+  }
+
+  .suggestion-card-description {
+    font-size: 11px;
+  }
+}
+
+/* ──────────────────────────────────────────
+   Grid Layout (for card collections)
+   ────────────────────────────────────────── */
+
+.suggestion-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.suggestion-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Compact list layout */
+.suggestion-cards-list .suggestion-card.compact {
+  min-height: 56px;
+}

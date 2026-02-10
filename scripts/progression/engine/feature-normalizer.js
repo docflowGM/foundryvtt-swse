@@ -23,7 +23,7 @@ export const FeatureNormalizer = {
      * Normalize a single feature to standard structure
      */
     normalize(rawFeature) {
-        if (!rawFeature) return this._empty();
+        if (!rawFeature) {return this._empty();}
 
         try {
             const normalized = {
@@ -67,7 +67,7 @@ export const FeatureNormalizer = {
      * Normalize a list of features
      */
     normalizeList(list) {
-        if (!list) return [];
+        if (!list) {return [];}
         if (!Array.isArray(list)) {
             SWSELogger.warn('FeatureNormalizer.normalizeList: expected array, got', typeof list);
             return [];
@@ -110,7 +110,7 @@ export const FeatureNormalizer = {
      * @private
      */
     _normalizeType(typeStr) {
-        if (!typeStr) return 'class_feature';
+        if (!typeStr) {return 'class_feature';}
 
         const normalized = H.normalizeString(typeStr);
 

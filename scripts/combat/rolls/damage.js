@@ -1,5 +1,5 @@
-import { swseLogger } from "../../utils/logger.js";
-import { TalentAbilitiesEngine } from "../../engine/TalentAbilitiesEngine.js";
+import { swseLogger } from '../../utils/logger.js';
+import { TalentAbilitiesEngine } from '../../engine/TalentAbilitiesEngine.js';
 
 import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
 /**
@@ -21,7 +21,7 @@ function isMeleeWeapon(weapon) {
  */
 function isLightWeapon(weapon, actor) {
   // Check explicit light weapon flag
-  if (weapon.system?.isLight === true) return true;
+  if (weapon.system?.isLight === true) {return true;}
 
   // Check weapon size vs actor size
   const weaponSize = (weapon.system?.size || '').toLowerCase();
@@ -53,8 +53,8 @@ function isLightWeapon(weapon, actor) {
  */
 function isTwoHandedWeapon(weapon, actor) {
   // Check explicit flag
-  if (weapon.system?.twoHanded === true) return true;
-  if (weapon.system?.hands === 2) return true;
+  if (weapon.system?.twoHanded === true) {return true;}
+  if (weapon.system?.hands === 2) {return true;}
 
   // Check weapon category/type
   const category = (weapon.system?.category || weapon.system?.subcategory || '').toLowerCase();
@@ -104,7 +104,7 @@ function hasDexToDamageTalent(actor) {
   ];
 
   for (const item of actor.items) {
-    if (item.type !== 'talent' && item.type !== 'feat') continue;
+    if (item.type !== 'talent' && item.type !== 'feat') {continue;}
     const name = (item.name || '').toLowerCase();
     if (dexDamageTalents.some(t => name.includes(t))) {
       return true;
@@ -146,10 +146,10 @@ function computeDamageBonus(actor, weapon, options = {}) {
   if (attackAttr) {
     // Use explicit attribute setting
     switch (attackAttr) {
-      case "str": bonus += strMod; break;
-      case "dex": bonus += dexMod; break;
-      case "2str": bonus += (strMod * 2); break;
-      case "2dex": bonus += (dexMod * 2); break;
+      case 'str': bonus += strMod; break;
+      case 'dex': bonus += dexMod; break;
+      case '2str': bonus += (strMod * 2); break;
+      case '2dex': bonus += (dexMod * 2); break;
     }
   } else {
     // Auto-detect based on weapon type
@@ -196,7 +196,7 @@ function computeTalentDamageBonus(actor, context = {}) {
   try {
     return TalentAbilitiesEngine.calculateDamageBonus(actor, context);
   } catch (err) {
-    swseLogger.warn("Failed to calculate talent damage bonus:", err);
+    swseLogger.warn('Failed to calculate talent damage bonus:', err);
     return { formula: '', bonusDice: [], flatBonus: 0, breakdown: [], notifications: [] };
   }
 }
@@ -214,17 +214,17 @@ function computeTalentDamageBonus(actor, context = {}) {
  */
 export async function rollDamage(actor, weapon, context = {}) {
   if (!actor || !weapon) {
-    ui.notifications.error("Missing actor or weapon for damage roll.");
+    ui.notifications.error('Missing actor or weapon for damage roll.');
     return null;
   }
 
   // Statblock NPCs can roll printed damage formula until explicitly leveled.
-  if (actor.type === "npc") {
-    const mode = actor.getFlag?.("swse", "npcLevelUp.mode") ?? "statblock";
+  if (actor.type === 'npc') {
+    const mode = actor.getFlag?.('swse', 'npcLevelUp.mode') ?? 'statblock';
     const npc = weapon?.flags?.swse?.npc;
     const flatFormula = npc?.flatDamageFormula;
 
-    if (mode !== "progression" && npc?.useFlat === true && typeof flatFormula === "string" && flatFormula.trim()) {
+    if (mode !== 'progression' && npc?.useFlat === true && typeof flatFormula === 'string' && flatFormula.trim()) {
       const roll = await new Roll(flatFormula).evaluate({ async: true });
       await roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
@@ -235,7 +235,7 @@ export async function rollDamage(actor, weapon, context = {}) {
   }
 
 
-  const baseFormula = weapon.system?.damage ?? "1d6";
+  const baseFormula = weapon.system?.damage ?? '1d6';
   const dmgBonus = computeDamageBonus(actor, weapon, {
     forceTwoHanded: context.twoHanded || false
   });
@@ -245,7 +245,7 @@ export async function rollDamage(actor, weapon, context = {}) {
   const talentBonus = computeTalentDamageBonus(actor, talentContext);
 
   // Build complete formula
-  let formulaParts = [baseFormula];
+  const formulaParts = [baseFormula];
   if (dmgBonus !== 0) {
     formulaParts.push(dmgBonus.toString());
   }
@@ -305,7 +305,7 @@ export async function rollDamage(actor, weapon, context = {}) {
  */
 export async function rollDamageWithEffects(actor, weapon, target, context = {}) {
   const roll = await rollDamage(actor, weapon, { ...context, target });
-  if (!roll) return null;
+  if (!roll) {return null;}
 
   // Apply post-damage effects if we have a target
   if (target) {
@@ -319,7 +319,7 @@ export async function rollDamageWithEffects(actor, weapon, target, context = {})
     try {
       await TalentAbilitiesEngine.applyPostDamageEffects(actor, target, effectContext);
     } catch (err) {
-      swseLogger.warn("Failed to apply post-damage effects:", err);
+      swseLogger.warn('Failed to apply post-damage effects:', err);
     }
 
     // Track last attack target for Skirmisher
@@ -338,9 +338,9 @@ export async function rollDamageWithEffects(actor, weapon, target, context = {})
 /**
  * Roll generic damage (powers, hazards, GM tools)
  */
-export async function rollDamageGeneric(actor, formula = "1d6", label = "Damage") {
+export async function rollDamageGeneric(actor, formula = '1d6', label = 'Damage') {
   if (!actor) {
-    ui.notifications.warn("No actor available for damage roll.");
+    ui.notifications.warn('No actor available for damage roll.');
     return null;
   }
 
@@ -362,12 +362,12 @@ export async function applyDamage(token, amount, options = {}) {
   const actor = token?.actor;
 
   if (!actor) {
-    ui.notifications.warn("No actor found on token.");
+    ui.notifications.warn('No actor found on token.');
     return null;
   }
 
-  if (typeof amount !== "number") {
-    ui.notifications.error("Damage amount must be a number.");
+  if (typeof amount !== 'number') {
+    ui.notifications.error('Damage amount must be a number.');
     return null;
   }
 
@@ -376,7 +376,7 @@ export async function applyDamage(token, amount, options = {}) {
     ui.notifications.info(`${actor.name} takes ${amount} damage!`);
   } catch (err) {
     swseLogger.error(err);
-    ui.notifications.error("Failed to apply damage.");
+    ui.notifications.error('Failed to apply damage.');
   }
 
   return actor;
@@ -387,7 +387,7 @@ export async function applyDamage(token, amount, options = {}) {
  */
 export async function rollAndApplyDamage(actor, weapon, token) {
   const roll = await rollDamage(actor, weapon);
-  if (!roll) return null;
+  if (!roll) {return null;}
 
   await applyDamage(token, roll.total);
   return roll;

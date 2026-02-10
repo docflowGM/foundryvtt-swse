@@ -1,4 +1,4 @@
-import { ForceEnhancementDetector } from "./force-enhancement-detector.js";
+import { ForceEnhancementDetector } from './force-enhancement-detector.js';
 
 /**
  * Force Enhancement Dialog
@@ -27,7 +27,7 @@ export class ForceEnhancementDialog {
         buttons: {
           apply: {
             icon: '<i class="fas fa-check"></i>',
-            label: "Apply Selected",
+            label: 'Apply Selected',
             callback: (html) => {
               const selected = this._parseSelections(html, techniques, secrets);
               resolve(selected);
@@ -35,18 +35,18 @@ export class ForceEnhancementDialog {
           },
           none: {
             icon: '<i class="fas fa-times"></i>',
-            label: "Use Without Enhancements",
+            label: 'Use Without Enhancements',
             callback: () => resolve({ techniques: [], secrets: [] })
           }
         },
-        default: "apply",
+        default: 'apply',
         render: (html) => {
           this._activateListeners(html, actor);
         }
       }, {
         width: 600,
-        height: "auto",
-        classes: ["swse-force-enhancement-dialog"]
+        height: 'auto',
+        classes: ['swse-force-enhancement-dialog']
       });
 
       dialog.render(true);
@@ -109,7 +109,7 @@ export class ForceEnhancementDialog {
 
       secrets.forEach((secret, index) => {
         const description = ForceEnhancementDetector.getEnhancementDescription(secret);
-        const cost = secret.system.cost || "Force Point or Destiny Point";
+        const cost = secret.system.cost || 'Force Point or Destiny Point';
 
         html += `
           <div class="enhancement-item secret">
@@ -284,7 +284,7 @@ export class ForceEnhancementDialog {
 
     // Convert to DOM element if needed
     const element = html instanceof HTMLElement ? html : html[0];
-    if (!element) return selected;
+    if (!element) {return selected;}
 
     // Get all checked technique checkboxes
     element.querySelectorAll('input[data-type="technique"]:checked').forEach(el => {
@@ -312,7 +312,7 @@ export class ForceEnhancementDialog {
   static _activateListeners(html, actor) {
     // Convert to DOM element if needed
     const element = html instanceof HTMLElement ? html : html[0];
-    if (!element) return;
+    if (!element) {return;}
 
     // Add hover effects for descriptions
     element.querySelectorAll('.enhancement-item').forEach(item => {
@@ -332,7 +332,7 @@ export class ForceEnhancementDialog {
           const dp = actor.system.destinyPoints?.value || 0;
 
           if (fp === 0 && dp === 0) {
-            ui.notifications.warn("You have no Force Points or Destiny Points to spend on Force Secrets!");
+            ui.notifications.warn('You have no Force Points or Destiny Points to spend on Force Secrets!');
             event.currentTarget.checked = false;
           }
         }

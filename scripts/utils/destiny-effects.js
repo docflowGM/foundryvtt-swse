@@ -5,6 +5,7 @@
 
 import { SWSELogger } from './logger.js';
 import { SWSEActiveEffectsManager } from '../combat/active-effects-manager.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 export class DestinyEffects {
 
@@ -19,7 +20,7 @@ export class DestinyEffects {
   static async autoCrit(actor) {
     await actor.setFlag('swse', 'destinyAutoCrit', true);
 
-    ChatMessage.create({
+    createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `<p><strong>${actor.name}</strong> uses Destiny to guarantee a critical hit on their next attack!</p>`,
       style: CONST.CHAT_MESSAGE_STYLES.OOC
@@ -33,7 +34,7 @@ export class DestinyEffects {
   static async autoMiss(actor) {
     await actor.setFlag('swse', 'destinyAutoMiss', true);
 
-    ChatMessage.create({
+    createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `<p><strong>${actor.name}</strong> uses Destiny to guarantee an attacker misses their next attack!</p>`,
       style: CONST.CHAT_MESSAGE_STYLES.OOC
@@ -46,7 +47,7 @@ export class DestinyEffects {
   static async actOutOfTurn(actor) {
     await actor.setFlag('swse', 'destinyActOutOfTurn', true);
 
-    ChatMessage.create({
+    createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `<p><strong>${actor.name}</strong> uses Destiny to act out of turn!</p>`,
       style: CONST.CHAT_MESSAGE_STYLES.OOC
@@ -74,7 +75,7 @@ export class DestinyEffects {
 
     await actor.update({ 'system.forcePoints.value': newValue });
 
-    ChatMessage.create({
+    createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `<p><strong>${actor.name}</strong> uses Destiny to gain <strong>${actualGain}</strong> Force Points!</p>
                 <p><strong>Roll:</strong> ${roll.formula} = ${roll.total}</p>
@@ -90,7 +91,7 @@ export class DestinyEffects {
   static async takeDamageForAlly(actor) {
     await actor.setFlag('swse', 'destinyTakeDamageForAlly', true);
 
-    ChatMessage.create({
+    createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `<p><strong>${actor.name}</strong> uses Destiny to take damage for an ally instead!</p>`,
       style: CONST.CHAT_MESSAGE_STYLES.OOC

@@ -154,7 +154,7 @@ export async function showPrestigePathDialog(actor, options = {}) {
     const primaryHints = allHints.filter(h => h.strength === 'primary');
     const secondaryHints = allHints.filter(h => h.strength === 'secondary');
 
-    let html = `
+    const html = `
       <div class="prestige-path-dialog">
         <h2>Prestige Path Recommendations</h2>
 
@@ -273,9 +273,9 @@ export async function registerArchetypeUISection(sheet) {
     }
 
     // Find the target element (adjust selector as needed for your sheet)
-    const targetElement = sheet.element.find('.character-details, .sheet-body, .details-section');
+    const targetElement = sheet.element.querySelector('.character-details, .sheet-body, .details-section');
 
-    if (targetElement.length === 0) {
+    if (!targetElement) {
       SWSELogger.debug('[ArchetypeUIComponents] No suitable target element found for archetype UI');
       return;
     }
@@ -302,7 +302,7 @@ export async function registerArchetypeUISection(sheet) {
     `;
 
     // Append to sheet
-    targetElement.append(fullHtml);
+    targetElement.insertAdjacentHTML('beforeend', fullHtml);
 
     SWSELogger.log(`[ArchetypeUIComponents] Registered archetype UI for ${actor.name}`);
   } catch (err) {

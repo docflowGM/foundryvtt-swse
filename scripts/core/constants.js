@@ -3,47 +3,42 @@
  */
 
 export const CONDITION_PENALTIES = {
-  "normal": 0,
-  "-1": -1,
-  "-2": -2,
-  "-5": -5,
-  "-10": -10,
-  "helpless": -10
+  'normal': 0,
+  '-1': -1,
+  '-2': -2,
+  '-5': -5,
+  '-10': -10,
+  'helpless': -10
 };
 
 export const SIZE_MODIFIERS = {
-  "fine": -8,
-  "diminutive": -4,
-  "tiny": -2,
-  "small": -1,
-  "medium": 0,
-  "large": 1,
-  "huge": 2,
-  "gargantuan": 4,
-  "colossal": 8
+  'fine': -8,
+  'diminutive': -4,
+  'tiny': -2,
+  'small': -1,
+  'medium': 0,
+  'large': 1,
+  'huge': 2,
+  'gargantuan': 4,
+  'colossal': 8
 };
 
 export const SIZE_AC_MODIFIERS = {
-  "fine": 8,
-  "diminutive": 4,
-  "tiny": 2,
-  "small": 1,
-  "medium": 0,
-  "large": -1,
-  "huge": -2,
-  "gargantuan": -4,
-  "colossal": -8
+  'fine': 8,
+  'diminutive': 4,
+  'tiny': 2,
+  'small': 1,
+  'medium': 0,
+  'large': -1,
+  'huge': -2,
+  'gargantuan': -4,
+  'colossal': -8
 };
 
 export const BAB_PROGRESSIONS = {
-  "slow": 0.5,
-  "medium": 0.75,
-  "fast": 1.0
-};
-
-export const SAVE_PROGRESSIONS = {
-  "slow": level => Math.floor(level / 3),
-  "fast": level => Math.trunc(level / 2) + 2
+  'slow': 0.5,
+  'medium': 0.75,
+  'fast': 1.0
 };
 
 export const SKILL_ABILITY_MAP = {
@@ -78,15 +73,15 @@ export const FORCE_POWER_LEVELS = {
 };
 
 export const CARRYING_CAPACITY_MULTIPLIERS = {
-  "fine": 0.125,
-  "diminutive": 0.25,
-  "tiny": 0.5,
-  "small": 0.75,
-  "medium": 1,
-  "large": 2,
-  "huge": 4,
-  "gargantuan": 8,
-  "colossal": 16
+  'fine': 0.125,
+  'diminutive': 0.25,
+  'tiny': 0.5,
+  'small': 0.75,
+  'medium': 1,
+  'large': 2,
+  'huge': 4,
+  'gargantuan': 8,
+  'colossal': 16
 };
 
 export const SWSE_CONSTANTS = {
@@ -94,7 +89,6 @@ export const SWSE_CONSTANTS = {
   SIZE_MODIFIERS,
   SIZE_AC_MODIFIERS,
   BAB_PROGRESSIONS,
-  SAVE_PROGRESSIONS,
   SKILL_ABILITY_MAP,
   FORCE_POWER_LEVELS,
   CARRYING_CAPACITY_MULTIPLIERS

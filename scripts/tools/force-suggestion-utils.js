@@ -11,8 +11,8 @@
  * @param {string} str - String to normalize
  * @returns {string} Normalized string
  */
-export function normalize(str = "") {
-  return str.toLowerCase().replace(/[^a-z0-9]/g, "");
+export function normalize(str = '') {
+  return str.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
 /**
@@ -26,48 +26,48 @@ export function extractCategoriesFromDescriptors(descriptors = []) {
   const d = descriptors.map(x => x.toLowerCase());
 
   // Vitality: healing, restoration, endurance
-  if (d.some(x => ["vital", "healing", "restore", "endurance"].some(k => x.includes(k)))) {
-    cats.add("vitality");
+  if (d.some(x => ['vital', 'healing', 'restore', 'endurance'].some(k => x.includes(k)))) {
+    cats.add('vitality');
   }
 
   // Awareness: sense, vision, foresight, detection
-  if (d.some(x => ["sense", "vision", "aware", "foresight", "detect"].some(k => x.includes(k)))) {
-    cats.add("awareness");
+  if (d.some(x => ['sense', 'vision', 'aware', 'foresight', 'detect'].some(k => x.includes(k)))) {
+    cats.add('awareness');
   }
 
   // Control: telekinetic, move, manipulation, position
-  if (d.some(x => ["telekinetic", "move", "manipul", "position", "control"].some(k => x.includes(k)))) {
-    cats.add("control");
+  if (d.some(x => ['telekinetic', 'move', 'manipul', 'position', 'control'].some(k => x.includes(k)))) {
+    cats.add('control');
   }
 
   // Aggression: dark, fear, lightning, domination, attack
-  if (d.some(x => ["dark", "fear", "lightning", "domina", "attack", "aggress"].some(k => x.includes(k)))) {
-    cats.add("aggression");
+  if (d.some(x => ['dark', 'fear', 'lightning', 'domina', 'attack', 'aggress'].some(k => x.includes(k)))) {
+    cats.add('aggression');
   }
 
   // Precision: strike, focus, accuracy, enhancement, martial
-  if (d.some(x => ["strike", "focus", "accuracy", "enhanc", "martial", "precise"].some(k => x.includes(k)))) {
-    cats.add("precision");
+  if (d.some(x => ['strike', 'focus', 'accuracy', 'enhanc', 'martial', 'precise'].some(k => x.includes(k)))) {
+    cats.add('precision');
   }
 
   // Defense: protect, deflect, shield, barrier, resistance
-  if (d.some(x => ["protect", "deflect", "shield", "barrier", "resist", "defense"].some(k => x.includes(k)))) {
-    cats.add("defense");
+  if (d.some(x => ['protect', 'deflect', 'shield', 'barrier', 'resist', 'defense'].some(k => x.includes(k)))) {
+    cats.add('defense');
   }
 
   // Support: team, buff, morale, cooperation, ally
-  if (d.some(x => ["team", "buff", "morale", "cooper", "ally", "support", "inspir"].some(k => x.includes(k)))) {
-    cats.add("support");
+  if (d.some(x => ['team', 'buff', 'morale', 'cooper', 'ally', 'support', 'inspir'].some(k => x.includes(k)))) {
+    cats.add('support');
   }
 
   // Mobility: speed, movement, teleport, position, flee
-  if (d.some(x => ["speed", "movement", "teleport", "mobility", "flee"].some(k => x.includes(k)))) {
-    cats.add("mobility");
+  if (d.some(x => ['speed', 'movement', 'teleport', 'mobility', 'flee'].some(k => x.includes(k)))) {
+    cats.add('mobility');
   }
 
   // Risk: dangerous, perilous, sacrifice, cost, drawback
-  if (d.some(x => ["dangerous", "perilous", "sacrifice", "cost", "drawback", "risk"].some(k => x.includes(k)))) {
-    cats.add("risk");
+  if (d.some(x => ['dangerous', 'perilous', 'sacrifice', 'cost', 'drawback', 'risk'].some(k => x.includes(k)))) {
+    cats.add('risk');
   }
 
   return [...cats];
@@ -80,14 +80,14 @@ export function extractCategoriesFromDescriptors(descriptors = []) {
  * @param {string} str2 - Second string
  * @returns {number} Similarity score
  */
-export function calculateStringSimilarity(str1 = "", str2 = "") {
+export function calculateStringSimilarity(str1 = '', str2 = '') {
   const n1 = normalize(str1);
   const n2 = normalize(str2);
 
-  if (!n1 || !n2) return 0;
+  if (!n1 || !n2) {return 0;}
 
   // Exact match
-  if (n1 === n2) return 1.0;
+  if (n1 === n2) {return 1.0;}
 
   // Substring match
   if (n1.includes(n2) || n2.includes(n1)) {
@@ -122,8 +122,8 @@ export function findBestPowerMatch(technique, powers = []) {
     score += nameSimilarity * 0.6;
 
     // 2. Discipline/category match (medium signal)
-    const techDiscipline = technique.system?.discipline || "";
-    const powerDiscipline = power.system?.discipline || "";
+    const techDiscipline = technique.system?.discipline || '';
+    const powerDiscipline = power.system?.discipline || '';
     if (techDiscipline && techDiscipline === powerDiscipline) {
       score += 0.25;
     }

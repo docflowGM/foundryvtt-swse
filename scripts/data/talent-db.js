@@ -118,7 +118,7 @@ export const TalentDB = {
      * @returns {Array<Object>} - Talents in this tree
      */
     byTree(treeId) {
-        if (!treeId) return [];
+        if (!treeId) {return [];}
         return this.talentsByTree.get(treeId) || [];
     },
 
@@ -129,7 +129,7 @@ export const TalentDB = {
      * @returns {Object|null} - Normalized talent or null
      */
     get(talentId) {
-        if (!talentId) return null;
+        if (!talentId) {return null;}
         return this.talentsById.get(talentId) ?? null;
     },
 
@@ -142,10 +142,10 @@ export const TalentDB = {
      * @returns {Array<Object>} - All talents available to this class
      */
     forClass(classId, classesDB) {
-        if (!classId || !classesDB) return [];
+        if (!classId || !classesDB) {return [];}
 
         const classDef = classesDB.get(classId);
-        if (!classDef) return [];
+        if (!classDef) {return [];}
 
         // Get all talents from all trees this class has access to
         const talents = [];
@@ -165,7 +165,7 @@ export const TalentDB = {
      * @returns {Array<Object>} - Talents matching role
      */
     byRole(role, talentTreeDB) {
-        if (!role || !talentTreeDB) return [];
+        if (!role || !talentTreeDB) {return [];}
         return filterTalentsByRole(this.talents, role, talentTreeDB.trees);
     },
 
@@ -178,18 +178,18 @@ export const TalentDB = {
      * @returns {Array<Object>} - Available talents
      */
     forActor(actor, classesDB) {
-        if (!actor || !classesDB) return [];
+        if (!actor || !classesDB) {return [];}
 
         // Get all class items
         const classItems = actor.items.filter(i => i.type === 'class');
-        if (classItems.length === 0) return [];
+        if (classItems.length === 0) {return [];}
 
         // Collect all available talents from all classes
         const availableTalents = new Set();
 
         for (const classItem of classItems) {
             const classDef = classesDB.fromItem(classItem);
-            if (!classDef) continue;
+            if (!classDef) {continue;}
 
             // Get talents for this class
             const talents = this.forClass(classDef.id, classesDB);
@@ -206,7 +206,7 @@ export const TalentDB = {
      * @returns {Array<Object>} - Selected talent items
      */
     selectedByActor(actor) {
-        if (!actor) return [];
+        if (!actor) {return [];}
 
         return actor.items.filter(i => i.type === 'talent');
     },

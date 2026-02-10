@@ -3,7 +3,7 @@
  * This is the authoritative representation of character data for export.
  */
 export function buildExportModel(actor) {
-  if (!actor) throw new Error("Actor required");
+  if (!actor) {throw new Error('Actor required');}
 
   const sys = actor.system || {};
 
@@ -28,16 +28,16 @@ export function buildExportModel(actor) {
 
 function buildHeader(actor, sys) {
   return {
-    name: actor.name || "",
-    player: sys.player || "",
-    class: sys.class?.name || sys.className || sys.class || "",
-    species: sys.species?.name || sys.species || "",
+    name: actor.name || '',
+    player: sys.player || '',
+    class: sys.class?.name || sys.className || sys.class || '',
+    species: sys.species?.name || sys.species || '',
     level: sys.level || 1,
-    age: sys.age || "",
-    gender: sys.gender || "",
-    height: sys.height || "",
-    weight: sys.weight || "",
-    destiny: sys.destiny?.type || ""
+    age: sys.age || '',
+    gender: sys.gender || '',
+    height: sys.height || '',
+    weight: sys.weight || '',
+    destiny: sys.destiny?.type || ''
   };
 }
 
@@ -45,7 +45,7 @@ function buildAbilities(sys) {
   const abilities = sys.abilities || sys.attributes || {};
   const out = {};
 
-  for (const key of ["str", "dex", "con", "int", "wis", "cha"]) {
+  for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
     const a = abilities[key] || {};
     const score = a.total ?? a.value ?? a.base ?? 10;
     out[key] = {
@@ -100,35 +100,35 @@ function buildForce(sys) {
 
 function buildCondition(sys) {
   return {
-    state: sys.conditionTrack || "normal",
+    state: sys.conditionTrack || 'normal',
     darkSideScore: Number(sys.darkSideScore || 0)
   };
 }
 
 function buildWeapons(actor) {
   const weapons = (actor?.items || [])
-    .filter((i) => i.type === "weapon" && i.system?.equipped)
+    .filter((i) => i.type === 'weapon' && i.system?.equipped)
     .slice(0, 4); // Max 4 rows on PDF
 
   return weapons.map((w) => {
     const sys = w.system || {};
     return {
-      name: w.name || "",
-      attack: String(sys.attackBonus || sys.attack || ""),
-      damage: String(sys.damage || ""),
-      crit: String(sys.criticalMultiplier || sys.crit || ""),
-      type: String(sys.damageType || sys.type || ""),
-      notes: String(sys.notes || "")
+      name: w.name || '',
+      attack: String(sys.attackBonus || sys.attack || ''),
+      damage: String(sys.damage || ''),
+      crit: String(sys.criticalMultiplier || sys.crit || ''),
+      type: String(sys.damageType || sys.type || ''),
+      notes: String(sys.notes || '')
     };
   });
 }
 
 function buildEquipment(actor) {
   return (actor?.items || [])
-    .filter((i) => i.type === "equipment")
+    .filter((i) => i.type === 'equipment')
     .slice(0, 20)
     .map((e) => ({
-      name: e.name || "",
+      name: e.name || '',
       weight: Number(e.system?.weight || 0)
     }));
 }
@@ -145,33 +145,33 @@ function buildSkills(sys) {
   const buildSkill = (s) => ({
     total: Number(s?.total || 0),
     half: Number(s?.half || 0),
-    ability: String(s?.selectedAbility || s?.ability || ""),
+    ability: String(s?.selectedAbility || s?.ability || ''),
     trained: s?.trained === true,
     focus: s?.focused === true,
     misc: Number(s?.misc || 0)
   });
 
   const skillNames = [
-    "acrobatics",
-    "climb",
-    "deception",
-    "endurance",
-    "gatherInfo",
-    "initiative",
-    "jump",
-    "knowledge1",
-    "knowledge2",
-    "mechanics",
-    "perception",
-    "persuasion",
-    "pilot",
-    "ride",
-    "stealth",
-    "survival",
-    "swim",
-    "treatInjury",
-    "useComputer",
-    "useTheForce"
+    'acrobatics',
+    'climb',
+    'deception',
+    'endurance',
+    'gatherInfo',
+    'initiative',
+    'jump',
+    'knowledge1',
+    'knowledge2',
+    'mechanics',
+    'perception',
+    'persuasion',
+    'pilot',
+    'ride',
+    'stealth',
+    'survival',
+    'swim',
+    'treatInjury',
+    'useComputer',
+    'useTheForce'
   ];
 
   const out = {};
@@ -184,18 +184,18 @@ function buildSkills(sys) {
 
 function buildFeats(actor) {
   return (actor?.items || [])
-    .filter((i) => i.type === "feat")
-    .map((f) => f.name || "");
+    .filter((i) => i.type === 'feat')
+    .map((f) => f.name || '');
 }
 
 function buildTalents(actor) {
   return (actor?.items || [])
-    .filter((i) => i.type === "talent")
-    .map((t) => t.name || "");
+    .filter((i) => i.type === 'talent')
+    .map((t) => t.name || '');
 }
 
 function buildForcePowers(actor) {
   return (actor?.items || [])
-    .filter((i) => i.type === "forcepower" || i.type === "force-power")
-    .map((p) => p.name || "");
+    .filter((i) => i.type === 'forcepower' || i.type === 'force-power')
+    .map((p) => p.name || '');
 }

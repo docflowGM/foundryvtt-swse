@@ -93,7 +93,7 @@ export function getWishlistRecommendations(actor, wishlistedItems = [], allItems
   for (const wishedItem of wishlistedItems) {
     // Find the actual item document
     const itemDoc = allItems.find(i => (i._id || i.id) === wishedItem.id);
-    if (!itemDoc) continue;
+    if (!itemDoc) {continue;}
 
     const itemRecommendations = WishlistEngine.getWishlistRecommendations(actor, itemDoc);
     recommendations.push({

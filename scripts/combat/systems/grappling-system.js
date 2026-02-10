@@ -8,9 +8,10 @@
  * - combat-utils (size modifiers, bonuses)
  */
 
-import { computeAttackBonus } from "../utils/combat-utils.js";
-import { SWSERoll } from "../rolls/enhanced-rolls.js";
-import { DamageSystem } from "../damage-system.js";
+import { computeAttackBonus } from '../utils/combat-utils.js';
+import { SWSERoll } from '../rolls/enhanced-rolls.js';
+import { createChatMessage } from '../../../core/document-api-v13.js';
+import { DamageSystem } from '../damage-system.js';
 
 export class SWSEGrappling {
 
@@ -27,7 +28,7 @@ export class SWSEGrappling {
   // ---------------------------------------------------------------------------
 
   static async attemptGrab(attacker, target) {
-    if (!attacker || !target) return;
+    if (!attacker || !target) {return;}
 
     const weapon = this._getUnarmedAttack(attacker);
     const { roll, total } = await SWSERoll.rollAttack(attacker, weapon);
@@ -39,7 +40,7 @@ export class SWSEGrappling {
     const result = { attacker, target, roll, total, reflex, hit };
 
     if (hit) {
-      await this._applyState(target, "grabbed", attacker);
+      await this._applyState(target, 'grabbed', attacker);
       ui.notifications.info(`${attacker.name} grabs ${target.name}!`);
     }
 
@@ -71,11 +72,11 @@ export class SWSEGrappling {
 
     await this._createGrappleCheckMessage(result);
 
-    if (result.isTie) return result;
+    if (result.isTie) {return result;}
 
     if (attackerWins) {
-      await this._applyState(attacker, "grappled", defender);
-      await this._applyState(defender, "grappled", attacker);
+      await this._applyState(attacker, 'grappled', defender);
+      await this._applyState(defender, 'grappled', attacker);
       ui.notifications.info(`${attacker.name} has grappled ${defender.name}!`);
     }
 
@@ -87,7 +88,7 @@ export class SWSEGrappling {
   // ---------------------------------------------------------------------------
 
   static async attemptPin(attacker, defender) {
-    if (!this._hasFeat(attacker, "Pin")) {
+    if (!this._hasFeat(attacker, 'Pin')) {
       ui.notifications.warn(`${attacker.name} lacks the Pin feat.`);
       return false;
     }
@@ -100,7 +101,7 @@ export class SWSEGrappling {
     const check = await this.grappleCheck(attacker, defender);
 
     if (check.attackerWins) {
-      await this._applyState(defender, "pinned", attacker);
+      await this._applyState(defender, 'pinned', attacker);
       ui.notifications.info(`${attacker.name} pins ${defender.name}!`);
       return true;
     }
@@ -148,9 +149,9 @@ export class SWSEGrappling {
 
   static _getUnarmedAttack(actor) {
     return {
-      name: "Unarmed Grab",
-      img: "icons/svg/punch.svg",
-      system: { attackAttribute: "str", damage: "1d4", ranged: false }
+      name: 'Unarmed Grab',
+      img: 'icons/svg/punch.svg',
+      system: { attackAttribute: 'str', damage: '1d4', ranged: false }
     };
   }
 
@@ -158,62 +159,62 @@ export class SWSEGrappling {
     let effectData;
 
     switch (state) {
-      case "grabbed":
+      case 'grabbed':
         effectData = {
-          label: "Grabbed",
-          icon: "icons/svg/net.svg",
+          label: 'Grabbed',
+          icon: 'icons/svg/net.svg',
           origin: sourceActor.uuid,
           changes: [{
-            key: "system.defenses.reflex.bonus",
+            key: 'system.defenses.reflex.bonus',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
             value: -5
           }],
-          flags: { swse: { grapple: "grabbed", source: sourceActor.id } }
+          flags: { swse: { grapple: 'grabbed', source: sourceActor.id } }
         };
         break;
 
-      case "grappled":
+      case 'grappled':
         effectData = {
-          label: "Grappled",
-          icon: "icons/svg/anchor.svg",
+          label: 'Grappled',
+          icon: 'icons/svg/anchor.svg',
           origin: sourceActor.uuid,
           changes: [{
-            key: "system.defenses.reflex.bonus",
+            key: 'system.defenses.reflex.bonus',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
             value: -5
           }],
-          flags: { swse: { grapple: "grappled", source: sourceActor.id } }
+          flags: { swse: { grapple: 'grappled', source: sourceActor.id } }
         };
         break;
 
-      case "pinned":
+      case 'pinned':
         effectData = {
-          label: "Pinned",
-          icon: "icons/svg/trap.svg",
+          label: 'Pinned',
+          icon: 'icons/svg/trap.svg',
           origin: sourceActor.uuid,
           changes: [
-            { key: "system.defenses.reflex.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -10 },
-            { key: "system.conditionTrack.current", mode: "OVERRIDE", value: 5 }
+            { key: 'system.defenses.reflex.bonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -10 },
+            { key: 'system.conditionTrack.current', mode: 'OVERRIDE', value: 5 }
           ],
-          flags: { swse: { grapple: "pinned", source: sourceActor.id } }
+          flags: { swse: { grapple: 'pinned', source: sourceActor.id } }
         };
         break;
     }
 
-    await actor.createEmbeddedDocuments("ActiveEffect", [effectData]);
+    await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
   }
 
   static async _clearState(actor) {
     const effects = actor.effects.filter(e => e.flags?.swse?.grapple);
-    await actor.deleteEmbeddedDocuments("ActiveEffect", effects.map(e => e.id));
+    await actor.deleteEmbeddedDocuments('ActiveEffect', effects.map(e => e.id));
   }
 
   static _hasFeat(actor, name) {
-    return actor.items.some(i => i.type === "feat" && i.name.toLowerCase().includes(name.toLowerCase()));
+    return actor.items.some(i => i.type === 'feat' && i.name.toLowerCase().includes(name.toLowerCase()));
   }
 
   static _hasGrappledState(actor) {
-    return actor.effects.some(e => e.flags?.swse?.grapple === "grappled");
+    return actor.effects.some(e => e.flags?.swse?.grapple === 'grappled');
   }
 
   // ---------------------------------------------------------------------------
@@ -228,14 +229,14 @@ export class SWSEGrappling {
         <h3>${attacker.name} attempts to Grab ${target.name}</h3>
         <div>Attack Roll: ${total} (d20=${roll.dice[0].results[0].result})</div>
         <div>Target Reflex: ${reflex}</div>
-        <div class="${hit ? "success" : "failure"}">${hit ? "Grabbed!" : "Miss!"}</div>
+        <div class="${hit ? 'success' : 'failure'}">${hit ? 'Grabbed!' : 'Miss!'}</div>
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html,
-      rolls: [roll],
+      rolls: [roll]
     });
   }
 
@@ -247,13 +248,13 @@ export class SWSEGrappling {
         <h3>${attacker.name} vs ${defender.name} — Grapple Check</h3>
         <div>${attacker.name}: ${attackerRoll.total}</div>
         <div>${defender.name}: ${defenderRoll.total}</div>
-        <div class="${attackerWins ? "success" : "failure"}">
+        <div class="${attackerWins ? 'success' : 'failure'}">
           ${attackerWins ? `${attacker.name} wins!` : `${defender.name} wins!`}
         </div>
       </div>
     `;
 
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: html
     });

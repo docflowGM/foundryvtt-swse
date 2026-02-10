@@ -1,6 +1,6 @@
-import { swseLogger } from "../../utils/logger.js";
-import { rollDamage } from "./damage.js";
-import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance } from "../utils/combat-utils.js";
+import { swseLogger } from '../../utils/logger.js';
+import { rollDamage } from './damage.js';
+import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance } from '../utils/combat-utils.js';
 import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
 import {
   ROLL_HOOKS,
@@ -12,13 +12,14 @@ import {
   analyzeCriticalThreat,
   rollCriticalConfirmation,
   rollConcealmentCheck
-} from "../../rolls/roll-config.js";
+} from '../../rolls/roll-config.js';
 import {
   getEquippedWeapons,
   calculateFullAttackConfig,
+import { createChatMessage } from '../../../core/document-api-v13.js';
   showFullAttackDialog,
   generateFullAttackCard
-} from "../multi-attack.js";
+} from '../multi-attack.js';
 
 /**
  * SWSERoll — Unified SWSE Rolling Engine for v13+
@@ -100,33 +101,33 @@ export class SWSERoll {
    * @param {string} [reason=""] - The reason for spending (for display)
    * @returns {Promise<number>} bonus from FP (0 if not spent)
    */
-  static async promptForcePointUse(actor, reason = "") {
+  static async promptForcePointUse(actor, reason = '') {
     const fp = actor.system.forcePoints;
-    if (!fp || fp.value <= 0) return 0;
+    if (!fp || fp.value <= 0) {return 0;}
 
     const confirmed = await new Promise(resolve => {
       new Dialog({
-        title: "Spend a Force Point?",
+        title: 'Spend a Force Point?',
         content: `
           <p>Spend a Force Point to boost your ${reason}?</p>
           <p>FP: ${fp.value}/${fp.max}</p>
-          <p>Die: <strong>${fp.die || "1d6"}</strong></p>
+          <p>Die: <strong>${fp.die || '1d6'}</strong></p>
         `,
         buttons: {
-          yes: { label: "Use Force Point", callback: () => resolve(true) },
-          no:  { label: "No", callback: () => resolve(false) }
+          yes: { label: 'Use Force Point', callback: () => resolve(true) },
+          no:  { label: 'No', callback: () => resolve(false) }
         },
-        default: "no"
+        default: 'no'
       }).render(true);
     });
 
-    if (!confirmed) return 0;
+    if (!confirmed) {return 0;}
 
     // Build FP context (middleware pattern)
     const fpContext = {
       numDice: this._determineBaseFPDice(actor),
-      die: actor.system.forcePoints?.die || "d6",
-      keep: "highest", // RAW
+      die: actor.system.forcePoints?.die || 'd6',
+      keep: 'highest', // RAW
       flatBonus: 0,
       multiplier: 1,
       reason
@@ -139,22 +140,22 @@ export class SWSERoll {
     const formula = `${fpContext.numDice}${fpContext.die}`;
     const roll = await this._safeRoll(formula);
 
-    if (!roll) return 0;
+    if (!roll) {return 0;}
 
     const diceResults = roll.dice[0].results.map(r => r.result);
     let result = 0;
 
     switch (fpContext.keep) {
-      case "lowest":
+      case 'lowest':
         result = Math.min(...diceResults);
         break;
-      case "sum":
+      case 'sum':
         result = diceResults.reduce((a, b) => a + b, 0);
         break;
-      case "all":
+      case 'all':
         result = diceResults; // Developer mode
         break;
-      case "highest":
+      case 'highest':
       default:
         result = Math.max(...diceResults);
         break;
@@ -170,11 +171,11 @@ export class SWSERoll {
     // Spend FP with error handling
     try {
       await actor.update({
-        "system.forcePoints.value": newFP
+        'system.forcePoints.value': newFP
       });
 
       // Chat message (use calculated value instead of stale reference)
-      await ChatMessage.create({
+      await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: `
           <div class="swse-forcepoint-roll">
@@ -189,8 +190,8 @@ export class SWSERoll {
       // Post-roll hook
       Hooks.callAll(ROLL_HOOKS.POST_FORCE_POINT, actor, { roll, result, reason });
     } catch (err) {
-      console.error("Failed to spend Force Point:", err);
-      ui.notifications.error("Failed to spend Force Point. Please try again.");
+      console.error('Failed to spend Force Point:', err);
+      ui.notifications.error('Failed to spend Force Point. Please try again.');
       return 0; // Return 0 since operation failed
     }
 
@@ -205,8 +206,8 @@ export class SWSERoll {
    */
   static _determineBaseFPDice(actor) {
     const lvl = actor.system.level ?? 1;
-    if (lvl >= 15) return 3;
-    if (lvl >= 8) return 2;
+    if (lvl >= 15) {return 3;}
+    if (lvl >= 8) {return 2;}
     return 1;
   }
 
@@ -239,7 +240,7 @@ export class SWSERoll {
   static async rollAttack(actor, weapon, options = {}) {
     // Validate inputs
     if (!actor || !weapon) {
-      ui.notifications.error("Attack failed: missing actor or weapon.");
+      ui.notifications.error('Attack failed: missing actor or weapon.');
       return null;
     }
 
@@ -261,7 +262,7 @@ export class SWSERoll {
           weapon
         });
 
-        if (!dialogResult) return null; // Cancelled
+        if (!dialogResult) {return null;} // Cancelled
         modifiers = { ...modifiers, ...dialogResult };
       }
 
@@ -284,7 +285,7 @@ export class SWSERoll {
       // Force Point before roll
       const fpBonus = (options.skipFP || !modifiers.useForcePoint)
         ? 0
-        : await this.promptForcePointUse(actor, "attack roll");
+        : await this.promptForcePointUse(actor, 'attack roll');
       context.fpBonus = fpBonus;
 
       // Calculate attack bonus
@@ -298,7 +299,7 @@ export class SWSERoll {
 
       // Perform the roll
       const roll = await this._safeRoll(formula);
-      if (!roll) return null;
+      if (!roll) {return null;}
 
       // Get the d20 result
       const d20 = roll.dice[0].results[0].result;
@@ -376,7 +377,7 @@ export class SWSERoll {
       });
 
       // Build chat card
-      const bonusString = `${atkBonus >= 0 ? "+" : ""}${atkBonus}`;
+      const bonusString = `${atkBonus >= 0 ? '+' : ''}${atkBonus}`;
       const hitMissHTML = targetReflex !== null ? `
         <div class="attack-vs-defense">
           <span class="vs-label">vs Reflex</span>
@@ -395,7 +396,7 @@ export class SWSERoll {
       ` : '';
 
       const html = `
-        <div class="swse-attack-card ${critAnalysis.isThreat ? "crit-threat" : ""} ${isHit === false ? "miss" : ""}">
+        <div class="swse-attack-card ${critAnalysis.isThreat ? 'crit-threat' : ''} ${isHit === false ? 'miss' : ''}">
           <div class="attack-header">
             <img src="${weapon.img}" height="40" />
             <h3>${weapon.name} — Attack</h3>
@@ -407,9 +408,9 @@ export class SWSERoll {
             <div class="roll-formula">${formula}</div>
             <div class="roll-bonus">
               Attack Bonus: ${bonusString}
-              ${fpBonus ? `, FP +${fpBonus}` : ""}
-              ${modifiers.situationalBonus ? `, Sit. +${modifiers.situationalBonus}` : ""}
-              ${modifiers.customModifier ? `, Custom ${modifiers.customModifier >= 0 ? '+' : ''}${modifiers.customModifier}` : ""}
+              ${fpBonus ? `, FP +${fpBonus}` : ''}
+              ${modifiers.situationalBonus ? `, Sit. +${modifiers.situationalBonus}` : ''}
+              ${modifiers.customModifier ? `, Custom ${modifiers.customModifier >= 0 ? '+' : ''}${modifiers.customModifier}` : ''}
             </div>
           </div>
 
@@ -421,7 +422,7 @@ export class SWSERoll {
                   : `<i class="fas fa-crosshairs"></i> CRITICAL CONFIRMED! (×${critMultiplier})`)
                 : `<i class="fas fa-crosshairs"></i> Critical Threat (unconfirmed)`}
             </div>
-          ` : ""}
+          ` : ''}
 
           ${hitMissHTML}
 
@@ -449,10 +450,10 @@ export class SWSERoll {
         </style>
       `;
 
-      const message = await ChatMessage.create({
+      const message = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
-        rolls: [roll],
+        rolls: [roll]
       });
 
       result.message = message;
@@ -484,19 +485,19 @@ export class SWSERoll {
    */
   static async rollBulkAttack(actor, weapon, targets, options = {}) {
     if (!actor || !weapon) {
-      ui.notifications.error("Bulk attack failed: missing actor or weapon.");
+      ui.notifications.error('Bulk attack failed: missing actor or weapon.');
       return [];
     }
 
     if (!targets || targets.length === 0) {
-      ui.notifications.warn("No targets selected for bulk attack.");
+      ui.notifications.warn('No targets selected for bulk attack.');
       return [];
     }
 
     const results = [];
 
     // Show summary header
-    await ChatMessage.create({
+    await createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `
         <div class="swse-bulk-attack-header">
@@ -546,7 +547,7 @@ export class SWSERoll {
    */
   static async rollAutofire(actor, weapon, options = {}) {
     if (!actor || !weapon) {
-      ui.notifications.error("Autofire failed: missing actor or weapon.");
+      ui.notifications.error('Autofire failed: missing actor or weapon.');
       return null;
     }
 
@@ -586,7 +587,7 @@ export class SWSERoll {
           weapon
         });
 
-        if (!dialogResult) return null;
+        if (!dialogResult) {return null;}
         modifiers = { ...modifiers, ...dialogResult };
       }
 
@@ -631,13 +632,13 @@ export class SWSERoll {
 
       // Perform the roll
       const roll = await this._safeRoll(formula);
-      if (!roll) return null;
+      if (!roll) {return null;}
 
       // Analyze critical threat (even for autofire)
       const d20 = roll.dice[0].results[0].result;
       const critAnalysis = analyzeCriticalThreat(weapon, d20, roll.total);
       let critConfirmed = false;
-      let critMultiplier = 2;
+      const critMultiplier = 2;
 
       if (critAnalysis.isThreat && !critAnalysis.isNat20) {
         critConfirmed = await rollCriticalConfirmation(actor, weapon, context.attackBonus);
@@ -661,9 +662,9 @@ export class SWSERoll {
           // Burst Fire adds 2 extra damage dice (same type as weapon)
           if (options.burstFire) {
             // Extract the dice type from weapon damage (e.g., "3d10" -> "d10")
-            const baseFormula = weapon.system?.damage ?? "1d6";
+            const baseFormula = weapon.system?.damage ?? '1d6';
             const diceMatch = baseFormula.match(/d(\d+)/);
-            const diceType = diceMatch ? diceMatch[0] : "d6";
+            const diceType = diceMatch ? diceMatch[0] : 'd6';
 
             // Temporarily modify weapon damage for burst fire calculation
             const originalDamage = weapon.system?.damage;
@@ -831,10 +832,10 @@ export class SWSERoll {
         </div>
       `;
 
-      const message = await ChatMessage.create({
+      const message = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
-        rolls: [roll],
+        rolls: [roll]
       });
 
       const result = {
@@ -887,7 +888,7 @@ export class SWSERoll {
    */
   static async rollFullAttack(actor, options = {}) {
     if (!actor) {
-      ui.notifications.error("Full Attack failed: no actor selected.");
+      ui.notifications.error('Full Attack failed: no actor selected.');
       return null;
     }
 
@@ -904,7 +905,7 @@ export class SWSERoll {
       }
 
       if (!equippedWeapons.primary) {
-        ui.notifications.warn("No weapon equipped for Full Attack.");
+        ui.notifications.warn('No weapon equipped for Full Attack.');
         return null;
       }
 
@@ -914,7 +915,7 @@ export class SWSERoll {
         config = calculateFullAttackConfig(actor, equippedWeapons.primary, equippedWeapons.offhand);
       } else {
         config = await showFullAttackDialog(actor, equippedWeapons);
-        if (!config) return null; // User cancelled
+        if (!config) {return null;} // User cancelled
       }
 
       // Get target
@@ -938,7 +939,7 @@ export class SWSERoll {
       }
 
       // Prompt for Force Point once for the entire full attack
-      const fpBonus = await this.promptForcePointUse(actor, "Full Attack");
+      const fpBonus = await this.promptForcePointUse(actor, 'Full Attack');
 
       // Roll each attack
       const results = [];
@@ -956,7 +957,7 @@ export class SWSERoll {
 
         // Roll the attack
         const roll = await this._safeRoll(formula);
-        if (!roll) continue;
+        if (!roll) {continue;}
 
         const d20 = roll.dice[0].results[0].result;
 
@@ -1040,7 +1041,7 @@ export class SWSERoll {
       const cardHtml = generateFullAttackCard(actor, results, config);
 
       // Create chat message
-      const message = await ChatMessage.create({
+      const message = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: cardHtml
       });
@@ -1118,7 +1119,7 @@ export class SWSERoll {
         showConcealment: false
       });
 
-      if (!dialogResult) return null; // Cancelled
+      if (!dialogResult) {return null;} // Cancelled
       modifiers = { ...modifiers, ...dialogResult };
     }
 
@@ -1138,7 +1139,7 @@ export class SWSERoll {
 
     // Force Point if requested
     const fpBonus = modifiers.useForcePoint
-      ? await this.promptForcePointUse(actor, "damage roll")
+      ? await this.promptForcePointUse(actor, 'damage roll')
       : 0;
 
     const result = await rollDamage(actor, weapon, { ...options, fpBonus });
@@ -1196,7 +1197,7 @@ export class SWSERoll {
           showConcealment: false
         });
 
-        if (!dialogResult) return null;
+        if (!dialogResult) {return null;}
         modifiers = { ...modifiers, ...dialogResult };
       }
 
@@ -1225,7 +1226,7 @@ export class SWSERoll {
       const formula = `1d20 + ${total}`;
 
       const roll = await this._safeRoll(formula);
-      if (!roll) return null;
+      if (!roll) {return null;}
 
       const d20 = roll.dice[0].results[0].result;
 
@@ -1234,20 +1235,20 @@ export class SWSERoll {
       const halfLevel = getEffectiveHalfLevel(actor);
       parts.push(`½ Level +${halfLevel}`);
 
-      if (skill.trained) parts.push(`Trained +5`);
-      if (skill.focused) parts.push(`Skill Focus +5`);
+      if (skill.trained) {parts.push(`Trained +5`);}
+      if (skill.focused) {parts.push(`Skill Focus +5`);}
 
       const abilityMod = actor.system.attributes[skill.selectedAbility]?.mod ?? 0;
-      parts.push(`${skill.selectedAbility.toUpperCase()} ${abilityMod >= 0 ? "+" : ""}${abilityMod}`);
+      parts.push(`${skill.selectedAbility.toUpperCase()} ${abilityMod >= 0 ? '+' : ''}${abilityMod}`);
 
       const misc = skill.miscMod ?? 0;
-      if (misc) parts.push(`Misc ${misc >= 0 ? "+" : ""}${misc}`);
+      if (misc) {parts.push(`Misc ${misc >= 0 ? '+' : ''}${misc}`);}
 
       const condition = actor.system.conditionTrack?.penalty ?? 0;
-      if (condition) parts.push(`Condition ${condition}`);
+      if (condition) {parts.push(`Condition ${condition}`);}
 
-      if (fpBonus) parts.push(`FP +${fpBonus}`);
-      if (modifiers.customModifier) parts.push(`Custom ${modifiers.customModifier >= 0 ? '+' : ''}${modifiers.customModifier}`);
+      if (fpBonus) {parts.push(`FP +${fpBonus}`);}
+      if (modifiers.customModifier) {parts.push(`Custom ${modifiers.customModifier >= 0 ? '+' : ''}${modifiers.customModifier}`);}
 
       // DC comparison
       const dc = options.dc;
@@ -1290,7 +1291,7 @@ export class SWSERoll {
           <div class="roll-total">${roll.total}</div>
           <div class="roll-d20">d20: ${d20}${d20 === 20 ? ' <i class="fas fa-star"></i>' : d20 === 1 ? ' <i class="fas fa-skull"></i>' : ''}</div>
           <div class="roll-formula">${formula}</div>
-          <div class="roll-breakdown">${parts.join(", ")}</div>
+          <div class="roll-breakdown">${parts.join(', ')}</div>
           ${dcHTML}
         </div>
         <style>
@@ -1305,7 +1306,7 @@ export class SWSERoll {
         </style>
       `;
 
-      const msg = await ChatMessage.create({
+      const msg = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
         rolls: [roll],
@@ -1364,7 +1365,7 @@ export class SWSERoll {
 
       const formula = `1d20 + ${defense.total}`;
       const roll = await this._safeRoll(formula);
-      if (!roll) return null;
+      if (!roll) {return null;}
 
       const d20 = roll.dice[0].results[0].result;
       const dc = options.dc;
@@ -1405,10 +1406,10 @@ export class SWSERoll {
         </div>
       `;
 
-      const msg = await ChatMessage.create({
+      const msg = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
-        rolls: [roll],
+        rolls: [roll]
       });
 
       result.message = msg;
@@ -1453,7 +1454,7 @@ export class SWSERoll {
 
       const formula = `1d20 + ${total}`;
       const roll = await this._safeRoll(formula);
-      if (!roll) return null;
+      if (!roll) {return null;}
 
       const d20 = roll.dice[0].results[0].result;
 
@@ -1482,10 +1483,10 @@ export class SWSERoll {
         </div>
       `;
 
-      const msg = await ChatMessage.create({
+      const msg = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
-        rolls: [roll],
+        rolls: [roll]
       });
 
       result.message = msg;
@@ -1517,12 +1518,12 @@ export class SWSERoll {
    * @private
    */
   static async _parsePowerDamage(effectText, bonusDice = null) {
-    if (!effectText) return null;
+    if (!effectText) {return null;}
 
     const damagePattern = /(\d+d\d+)(?:\s+(?:lightning|energy|fire|cold|sonic|force)?\s*(?:damage|healing))?/i;
     const match = effectText.match(damagePattern);
 
-    if (!match) return null;
+    if (!match) {return null;}
 
     let formula = match[1];
     let bonusApplied = false;
@@ -1533,16 +1534,10 @@ export class SWSERoll {
     }
 
     const damageRoll = await this._safeRoll(formula);
-    if (!damageRoll) return null;
+    if (!damageRoll) {return null;}
 
-    let damageType = "damage";
-    if (/healing/i.test(effectText)) damageType = "healing";
-    else if (/lightning/i.test(effectText)) damageType = "lightning";
-    else if (/energy/i.test(effectText)) damageType = "energy";
-    else if (/fire/i.test(effectText)) damageType = "fire";
-    else if (/cold/i.test(effectText)) damageType = "cold";
-    else if (/sonic/i.test(effectText)) damageType = "sonic";
-    else if (/force/i.test(effectText)) damageType = "force";
+    let damageType = 'damage';
+    if (/healing/i.test(effectText)) {damageType = 'healing';} else if (/lightning/i.test(effectText)) {damageType = 'lightning';} else if (/energy/i.test(effectText)) {damageType = 'energy';} else if (/fire/i.test(effectText)) {damageType = 'fire';} else if (/cold/i.test(effectText)) {damageType = 'cold';} else if (/sonic/i.test(effectText)) {damageType = 'sonic';} else if (/force/i.test(effectText)) {damageType = 'force';}
 
     return {
       formula,
@@ -1560,7 +1555,7 @@ export class SWSERoll {
    * @private
    */
   static _parseFPMechanics(fpEffect) {
-    if (!fpEffect) return {};
+    if (!fpEffect) {return {};}
 
     const result = {};
 
@@ -1569,7 +1564,7 @@ export class SWSERoll {
 
     if (damageMatch) {
       const numDice = damageMatch[1];
-      const dieSize = damageMatch[2] || "6";
+      const dieSize = damageMatch[2] || '6';
       result.bonusDice = `${numDice}d${dieSize}`;
     }
 
@@ -1608,7 +1603,7 @@ export class SWSERoll {
       additionalTargets: 0,
       techniques: [],
       secrets: [],
-      displayHTML: ""
+      displayHTML: ''
     };
 
     if (!enhancements || (!enhancements.techniques?.length && !enhancements.secrets?.length)) {
@@ -1634,17 +1629,17 @@ export class SWSERoll {
       for (const secret of enhancements.secrets) {
         const useDP = await this._promptSecretCost(actor, secret);
 
-        if (useDP === null) continue;
+        if (useDP === null) {continue;}
 
         if (useDP) {
           const dp = actor.system.destinyPoints?.value || 0;
           if (dp > 0) {
-            await actor.update({ "system.destinyPoints.value": dp - 1 });
+            await actor.update({ 'system.destinyPoints.value': dp - 1 });
           }
         } else {
           const fp = actor.system.forcePoints?.value || 0;
           if (fp > 0) {
-            await actor.update({ "system.forcePoints.value": fp - 1 });
+            await actor.update({ 'system.forcePoints.value': fp - 1 });
           }
         }
 
@@ -1684,8 +1679,8 @@ export class SWSERoll {
     const fp = actor.system.forcePoints?.value || 0;
     const dp = actor.system.destinyPoints?.value || 0;
 
-    if (dp === 0 && fp > 0) return false;
-    if (fp === 0 && dp > 0) return true;
+    if (dp === 0 && fp > 0) {return false;}
+    if (fp === 0 && dp > 0) {return true;}
     if (fp === 0 && dp === 0) {
       ui.notifications.warn(`No Force Points or Destiny Points available for ${secret.name}!`);
       return null;
@@ -1699,11 +1694,11 @@ export class SWSERoll {
           <p>Available: FP: ${fp}, DP: ${dp}</p>
         `,
         buttons: {
-          fp: { label: "Force Point", callback: () => resolve(false) },
-          dp: { label: "Destiny Point", callback: () => resolve(true) },
-          cancel: { label: "Cancel", callback: () => resolve(null) }
+          fp: { label: 'Force Point', callback: () => resolve(false) },
+          dp: { label: 'Destiny Point', callback: () => resolve(true) },
+          cancel: { label: 'Cancel', callback: () => resolve(null) }
         },
-        default: "fp"
+        default: 'fp'
       }).render(true);
     });
   }
@@ -1716,20 +1711,20 @@ export class SWSERoll {
     const name = secret.name;
 
     switch (name) {
-      case "Devastating Power":
+      case 'Devastating Power':
         effects.damageMultiplier *= usedDP ? 2 : 1.5;
         break;
-      case "Distant Power":
+      case 'Distant Power':
         effects.rangeMultiplier *= usedDP ? 999999 : 10;
         break;
-      case "Multitarget Power":
+      case 'Multitarget Power':
         const level = effects.actor?.system?.level || 1;
         effects.additionalTargets += usedDP ? Math.floor(level / 4) : 1;
         break;
-      case "Quicken Power":
-        effects.actionTimeReduction = usedDP ? "reaction" : "swift";
+      case 'Quicken Power':
+        effects.actionTimeReduction = usedDP ? 'reaction' : 'swift';
         break;
-      case "Enlarged Power":
+      case 'Enlarged Power':
         effects.areaMultiplier = usedDP ? 5 : 2;
         break;
     }
@@ -1744,13 +1739,13 @@ export class SWSERoll {
    */
   static async rollUseTheForce(actor, power, enhancements = null) {
     if (!actor || !power) {
-      ui.notifications.error("Use the Force failed: missing actor or power.");
+      ui.notifications.error('Use the Force failed: missing actor or power.');
       return null;
     }
 
     const skill = actor.system.skills.useTheForce;
     if (!skill) {
-      ui.notifications.warn("Use the Force skill not found.");
+      ui.notifications.warn('Use the Force skill not found.');
       return null;
     }
 
@@ -1763,7 +1758,7 @@ export class SWSERoll {
 
       const enhancementEffects = await this._processEnhancements(actor, power, enhancements);
 
-      const fpBonus = await this.promptForcePointUse(actor, "Use the Force check");
+      const fpBonus = await this.promptForcePointUse(actor, 'Use the Force check');
       const fpSpent = fpBonus > 0;
       const total = skill.total + fpBonus;
       const formula = `1d20 + ${total}`;
@@ -1773,7 +1768,7 @@ export class SWSERoll {
         : {};
 
       const roll = await this._safeRoll(formula);
-      if (!roll) return null;
+      if (!roll) {return null;}
 
       const d20 = roll.dice[0].results[0].result;
 
@@ -1803,12 +1798,12 @@ export class SWSERoll {
       const parts = [];
       const halfLevel = getEffectiveHalfLevel(actor);
       parts.push(`½ Level +${halfLevel}`);
-      if (skill.trained) parts.push(`Trained +5`);
-      if (skill.focused) parts.push(`Skill Focus +5`);
+      if (skill.trained) {parts.push(`Trained +5`);}
+      if (skill.focused) {parts.push(`Skill Focus +5`);}
       const abilityMod = actor.system.attributes[skill.selectedAbility]?.mod ?? 0;
-      parts.push(`${skill.selectedAbility.toUpperCase()} ${abilityMod >= 0 ? "+" : ""}${abilityMod}`);
-      if (skill.miscMod) parts.push(`Misc ${skill.miscMod >= 0 ? "+" : ""}${skill.miscMod}`);
-      if (fpBonus) parts.push(`FP +${fpBonus}`);
+      parts.push(`${skill.selectedAbility.toUpperCase()} ${abilityMod >= 0 ? '+' : ''}${abilityMod}`);
+      if (skill.miscMod) {parts.push(`Misc ${skill.miscMod >= 0 ? '+' : ''}${skill.miscMod}`);}
+      if (fpBonus) {parts.push(`FP +${fpBonus}`);}
 
       const result = {
         roll,
@@ -1831,9 +1826,9 @@ export class SWSERoll {
       });
 
       // Build chat card (abbreviated for space)
-      const darkSideWarning = power.system.discipline === "dark-side"
+      const darkSideWarning = power.system.discipline === 'dark-side'
         ? `<div class="dark-side-warning"><i class="fas fa-skull"></i> Dark Side Power</div>`
-        : "";
+        : '';
 
       const html = `
         <div class="swse-force-power-card">
@@ -1849,7 +1844,7 @@ export class SWSERoll {
           <div class="utf-result">
             <div class="roll-total">${roll.total}</div>
             <div class="roll-d20">d20: ${d20}</div>
-            <div class="roll-breakdown">${parts.join(", ")}</div>
+            <div class="roll-breakdown">${parts.join(', ')}</div>
           </div>
           ${resultTier ? `
             <div class="power-result success">
@@ -1861,10 +1856,10 @@ export class SWSERoll {
         </div>
       `;
 
-      const message = await ChatMessage.create({
+      const message = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
-        rolls: [roll],
+        rolls: [roll]
       });
 
       result.message = message;
@@ -1892,8 +1887,8 @@ export class SWSERoll {
 /* CHAT BUTTON HANDLERS                                                         */
 /* ============================================================================ */
 
-Hooks.on("renderChatMessageHTML", (message, html, user) => {
-  html.querySelector(".swse-roll-damage")?.addEventListener("click", async ev => {
+Hooks.on('renderChatMessageHTML', (message, html, user) => {
+  html.querySelector('.swse-roll-damage')?.addEventListener('click', async ev => {
     const btn = ev.currentTarget;
     const weaponId = btn.dataset.weaponId;
     const isCrit = btn.dataset.isCrit === 'true';

@@ -4,7 +4,7 @@
 // Constructs a directed acyclic graph (DAG) of TalentNodes for each tree.
 // ======================================================================
 
-import { TalentNode } from "./TalentNode.js";
+import { TalentNode } from './TalentNode.js';
 
 export class TalentTreeGraph {
   constructor(treeName) {
@@ -25,7 +25,7 @@ export class TalentTreeGraph {
   linkRequirement(talentId, requiredTalentId) {
     const a = this.nodes.get(talentId);
     const b = this.nodes.get(requiredTalentId);
-    if (!a || !b) return;
+    if (!a || !b) {return;}
 
     a.addRequirement(b.id);
     b.addUnlock(a.id);
@@ -47,7 +47,7 @@ export class TalentTreeGraph {
 
     // Zero in-degree → queue
     for (const [id, deg] of inDegree) {
-      if (deg === 0) queue.push(id);
+      if (deg === 0) {queue.push(id);}
     }
 
     while (queue.length > 0) {

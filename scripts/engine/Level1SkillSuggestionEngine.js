@@ -1,9 +1,11 @@
 /**
  * SWSE Level 1 Skill Suggestion Engine
+ * (PHASE 5D: UNIFIED_TIERS Refactor)
  *
  * Provides intelligent skill recommendations for newly created characters (Level 1 only).
  * Analyzes class skills, ability scores, and attribute-skill synergies to suggest
  * which skills best fit the character's natural strengths.
+ * Now uses UNIFIED_TIERS system for consistent tier definitions.
  *
  * Skill-Ability Mapping (from skills.json):
  * - STR: Climb, Jump, Swim
@@ -26,19 +28,15 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { UNIFIED_TIERS, getTierMetadata } from './suggestion-unified-tiers.js';
 
+// DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
+// Use UNIFIED_TIERS from suggestion-unified-tiers.js instead
 export const LEVEL1_SKILL_TIERS = {
-  CORE_SYNERGY: 3,        // Core skill with strong attribute match
-  ATTRIBUTE_MATCH: 2,     // Good synergy with character abilities
-  CLASS_SKILL: 1,         // Valid class skill
-  AVAILABLE: 0            // Can be trained but not specifically recommended
-};
-
-export const TIER_REASONS = {
-  3: "Core skill with strong attribute synergy",
-  2: "Good synergy with your abilities",
-  1: "Class skill for your chosen class",
-  0: "Available for training"
+  CORE_SYNERGY: UNIFIED_TIERS.CATEGORY_SYNERGY,    // 3
+  ATTRIBUTE_MATCH: UNIFIED_TIERS.ABILITY_SYNERGY,  // 2
+  CLASS_SKILL: UNIFIED_TIERS.THEMATIC_FIT,         // 1
+  AVAILABLE: UNIFIED_TIERS.AVAILABLE               // 0
 };
 
 // Attribute-to-Skill Synergy Mapping
@@ -76,12 +74,15 @@ export class Level1SkillSuggestionEngine {
       // Only suggest for level 1 characters
       const level = actor.system?.level || 0;
       if (level !== 0 && level !== 1) {
+        const tierMetadata = getTierMetadata(UNIFIED_TIERS.AVAILABLE);
         return availableSkills.map(skill => ({
           ...skill,
           suggestion: {
-            tier: LEVEL1_SKILL_TIERS.AVAILABLE,
-            reason: "Level 1 suggestions only",
-            icon: ""
+            tier: UNIFIED_TIERS.AVAILABLE,
+            reason: 'Level 1 suggestions only',
+            icon: tierMetadata.icon,
+            color: tierMetadata.color,
+            label: tierMetadata.label
           },
           isSuggested: false
         }));
@@ -138,38 +139,43 @@ export class Level1SkillSuggestionEngine {
         if (classSkills.includes(normalizedSkill) || classSkills.includes(skillKey)) {
           tier = Math.max(tier, LEVEL1_SKILL_TIERS.CLASS_SKILL);
           if (!reasons.length) {
-            reasons.push("Class skill for your chosen class");
+            reasons.push('Class skill for your chosen class');
           }
         }
 
-        const reason = reasons.length > 0 ? reasons.join("; ") : TIER_REASONS[tier];
+        const tierMetadata = getTierMetadata(tier);
+        const reason = reasons.length > 0 ? reasons.join('; ') : tierMetadata.description;
 
         return {
           ...skill,
           suggestion: {
             tier,
             reason,
-            iconClass: this._getTierIcon(tier),
-            cssClass: `tier-${tier}`
+            icon: tierMetadata.icon,
+            color: tierMetadata.color,
+            label: tierMetadata.label
           },
-          isSuggested: tier >= LEVEL1_SKILL_TIERS.ATTRIBUTE_MATCH
+          isSuggested: tier >= UNIFIED_TIERS.ABILITY_SYNERGY  // TIER 2+
         };
       });
 
       // Sort by tier (descending) then by name
       return suggestedSkills.sort((a, b) => {
         const tierDiff = (b.suggestion?.tier ?? 0) - (a.suggestion?.tier ?? 0);
-        if (tierDiff !== 0) return tierDiff;
-        return (a.name || "").localeCompare(b.name || "");
+        if (tierDiff !== 0) {return tierDiff;}
+        return (a.name || '').localeCompare(b.name || '');
       });
     } catch (err) {
       SWSELogger.error('Level 1 skill suggestion failed:', err);
+      const tierMetadata = getTierMetadata(UNIFIED_TIERS.AVAILABLE);
       return availableSkills.map(skill => ({
         ...skill,
         suggestion: {
-          tier: LEVEL1_SKILL_TIERS.AVAILABLE,
-          reason: "Available",
-          icon: ""
+          tier: UNIFIED_TIERS.AVAILABLE,
+          reason: tierMetadata.description,
+          icon: tierMetadata.icon,
+          color: tierMetadata.color,
+          label: tierMetadata.label
         },
         isSuggested: false
       }));
@@ -181,7 +187,7 @@ export class Level1SkillSuggestionEngine {
    * @private
    */
   static _normalizeSkillName(name) {
-    if (!name) return '';
+    if (!name) {return '';}
     return name
       .toLowerCase()
       .replace(/\s+/g, '')
@@ -204,20 +210,6 @@ export class Level1SkillSuggestionEngine {
     }
 
     return null;
-  }
-
-  /**
-   * Get icon for tier
-   * @private
-   */
-  static _getTierIcon(tier) {
-    const icons = {
-      3: 'fas fa-star',
-      2: 'fas fa-circle-plus',
-      1: 'fas fa-circle-check',
-      0: ''
-    };
-    return icons[tier] || '';
   }
 
   /**

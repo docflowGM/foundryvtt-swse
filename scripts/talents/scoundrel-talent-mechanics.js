@@ -16,6 +16,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { createEffectOnActor } from '../core/document-api-v13.js';
 
 export class ScoundrelTalentMechanics {
 
@@ -300,7 +301,7 @@ export class ScoundrelTalentMechanics {
       ? 'system.condition.prone'
       : 'system.condition.disarmed';
 
-    await targetActor.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(targetActor, {
       name: effectName,
       icon: strikeType === 'trip' ? 'icons/svg/daze.svg' : 'icons/svg/target.svg',
       changes: [{
@@ -321,7 +322,7 @@ export class ScoundrelTalentMechanics {
           sourceActorId: actor.id
         }
       }
-    }]);
+    });
 
     const message = strikeType === 'trip'
       ? `${targetActor.name} has been knocked prone!`
@@ -416,7 +417,7 @@ export class ScoundrelTalentMechanics {
     await actor.setFlag('swse', usageFlag, true);
 
     // Apply bonus to next attack
-    await ally.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(ally, {
       name: 'Cunning Strategist - Attack Bonus',
       icon: 'icons/svg/aura.svg',
       changes: [{
@@ -437,7 +438,7 @@ export class ScoundrelTalentMechanics {
           sourceActorId: actor.id
         }
       }
-    }]);
+    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Cunning Strategist on ${ally.name}`);
     ui.notifications.info(`${ally.name} gains +2 to their next attack roll!`);
@@ -554,7 +555,7 @@ export class ScoundrelTalentMechanics {
     }
 
     return canvas.tokens.placeables.filter(token => {
-      if (!token.actor || token.actor.id === actor.id) return false;
+      if (!token.actor || token.actor.id === actor.id) {return false;}
       return token.document.disposition === actorToken.document.disposition;
     });
   }
@@ -594,7 +595,7 @@ Hooks.on('cunningStrategistTriggered', async (actor) => {
         strategize: {
           label: 'Grant Bonus',
           callback: async (html) => {
-            const allyId = html.find('#ally-select').val();
+            const allyId = (html?.[0] ?? html)?.querySelector('#ally-select')?.value;
             await ScoundrelTalentMechanics.completeCunningStrategist(actor, allyId, result.combatId, result.usageFlag);
           }
         },

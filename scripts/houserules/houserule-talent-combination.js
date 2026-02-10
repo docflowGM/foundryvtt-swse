@@ -5,12 +5,12 @@
  * this system combines Block and Deflect into a single "Block & Deflect" talent
  * in the talent selector, but grants both talents when selected.
  */
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 // Talent IDs
-const BLOCK_ID = "9379daa94a228c04";
-const DEFLECT_ID = "72c644f7a09b1186";
-const COMBINED_ID = "block-deflect-combined-" + Date.now();
+const BLOCK_ID = '9379daa94a228c04';
+const DEFLECT_ID = '72c644f7a09b1186';
+const COMBINED_ID = 'block-deflect-combined-' + Date.now();
 
 export class HouseRuleTalentCombination {
   /**
@@ -21,15 +21,15 @@ export class HouseRuleTalentCombination {
   static processBlockDeflectCombination(talents) {
     try {
       var blockDeflectMode = game.settings.get(
-        "foundryvtt-swse",
-        "blockDeflectTalents"
+        'foundryvtt-swse',
+        'blockDeflectTalents'
       );
     } catch (err) {
       // Setting not yet registered, use default
-      blockDeflectMode = "separate";
+      blockDeflectMode = 'separate';
     }
 
-    if (blockDeflectMode !== "combined") {
+    if (blockDeflectMode !== 'combined') {
       return talents;
     }
 
@@ -37,17 +37,17 @@ export class HouseRuleTalentCombination {
     const blockTalent = talents.find(
       (t) =>
         t._id === BLOCK_ID ||
-        t.name.toLowerCase() === "block"
+        t.name.toLowerCase() === 'block'
     );
     const deflectTalent = talents.find(
       (t) =>
         t._id === DEFLECT_ID ||
-        t.name.toLowerCase() === "deflect"
+        t.name.toLowerCase() === 'deflect'
     );
 
     if (!blockTalent || !deflectTalent) {
       SWSELogger.warn(
-        "Block/Deflect combination enabled but talents not found"
+        'Block/Deflect combination enabled but talents not found'
       );
       return talents;
     }
@@ -60,14 +60,14 @@ export class HouseRuleTalentCombination {
       (t) =>
         t._id !== BLOCK_ID &&
         t._id !== DEFLECT_ID &&
-        t.name.toLowerCase() !== "block" &&
-        t.name.toLowerCase() !== "deflect"
+        t.name.toLowerCase() !== 'block' &&
+        t.name.toLowerCase() !== 'deflect'
     );
 
     processed.push(combinedTalent);
 
     SWSELogger.info(
-      "Block/Deflect combination applied - talents combined in selector"
+      'Block/Deflect combination applied - talents combined in selector'
     );
 
     return processed;
@@ -82,10 +82,10 @@ export class HouseRuleTalentCombination {
     const combinedData = foundry.utils.deepClone(blockTalent.toObject?.() || blockTalent);
 
     combinedData._id = COMBINED_ID;
-    combinedData.name = "Block & Deflect";
+    combinedData.name = 'Block & Deflect';
 
-    const blockBenefit = blockTalent.system?.benefit || "Deflect melee attacks.";
-    const deflectBenefit = deflectTalent.system?.benefit || "Deflect ranged attacks.";
+    const blockBenefit = blockTalent.system?.benefit || 'Deflect melee attacks.';
+    const deflectBenefit = deflectTalent.system?.benefit || 'Deflect ranged attacks.';
 
     combinedData.system.benefit =
       `Combined talent that grants both Block and Deflect abilities.\n\n` +
@@ -108,15 +108,15 @@ export class HouseRuleTalentCombination {
    */
   static getActualTalentsToGrant(talentName) {
     const blockDeflectMode = game.settings.get(
-      "foundryvtt-swse",
-      "blockDeflectTalents"
+      'foundryvtt-swse',
+      'blockDeflectTalents'
     );
 
     if (
-      blockDeflectMode === "combined" &&
-      talentName.toLowerCase() === "block & deflect"
+      blockDeflectMode === 'combined' &&
+      talentName.toLowerCase() === 'block & deflect'
     ) {
-      return ["Block", "Deflect"];
+      return ['Block', 'Deflect'];
     }
 
     return [talentName];
@@ -128,10 +128,10 @@ export class HouseRuleTalentCombination {
    * @returns {boolean}
    */
   static isBlockDeflectCombined(talent) {
-    const name = typeof talent === "string" ? talent : talent?.name;
+    const name = typeof talent === 'string' ? talent : talent?.name;
     return (
       name &&
-      name.toLowerCase() === "block & deflect"
+      name.toLowerCase() === 'block & deflect'
     );
   }
 }

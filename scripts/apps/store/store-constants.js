@@ -1,39 +1,12 @@
 /**
- * Constants for SWSE Store
- * Centralized configuration to avoid hardcoded values
+ * UI-only constants for SWSE Store
+ *
+ * SSOT constants (STORE_PACKS, MIN_COSTS) moved to engine/store-constants.js
+ * This file contains only UI configuration.
  */
 
 /**
- * Compendium pack names used by the store
- */
-export const STORE_PACKS = {
-        WEAPONS: 'foundryvtt-swse.weapons',
-    ARMOR: 'foundryvtt-swse.armor',
-    EQUIPMENT: 'foundryvtt-swse.equipment',
-    DROIDS: 'foundryvtt-swse.droids',
-    // Vehicles are split into bucket packs for UI organization.
-    VEHICLE_PACKS: [
-        'foundryvtt-swse.vehicles-walkers',
-        'foundryvtt-swse.vehicles-speeders',
-        'foundryvtt-swse.vehicles-starships',
-        'foundryvtt-swse.vehicles-stations'
-    ],
-    // Canonical vehicles pack retained for compatibility with older references.
-    VEHICLES_CANONICAL: 'foundryvtt-swse.vehicles',
-    VEHICLES: 'foundryvtt-swse.vehicles'
-
-};
-
-/**
- * Valid weapon subcategories
- */
-export const WEAPON_SUBCATEGORIES = {
-    MELEE: ['simple', 'advanced', 'lightsaber', 'exotic'],
-    RANGED: ['simple', 'pistol', 'rifle', 'heavy', 'exotic', 'grenade']
-};
-
-/**
- * Availability types for filtering
+ * Availability types for UI filtering
  */
 export const AVAILABILITY_TYPES = [
     'Standard',
@@ -55,14 +28,6 @@ export const STORE_CONFIG = {
     MAX_MARKUP: 1000,
     MIN_DISCOUNT: 0,
     MAX_DISCOUNT: 100,
-    LOADING_MESSAGE: "Loading store inventory...",
+    LOADING_MESSAGE: 'Loading store inventory...',
     CHECKOUT_ANIMATION_MS: 700
-};
-
-/**
- * Minimum costs for custom creations
- */
-export const MIN_COSTS = {
-    DROID: 1000,
-    STARSHIP: 5000
 };

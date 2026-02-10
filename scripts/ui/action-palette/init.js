@@ -37,10 +37,10 @@ export function initializeActionPalette() {
 function _createSidebarButton() {
   // Find the controls bar or create UI element
   const sidebarControls = document.getElementById('sidebar-tabs');
-  if (!sidebarControls) return;
+  if (!sidebarControls) {return;}
 
   // Check if button already exists
-  if (document.getElementById('action-palette-toggle')) return;
+  if (document.getElementById('action-palette-toggle')) {return;}
 
   const button = document.createElement('button');
   button.id = 'action-palette-toggle';

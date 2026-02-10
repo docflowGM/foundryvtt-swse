@@ -27,13 +27,13 @@
  * @returns {string} - Normalized ID (lowercase, underscored)
  */
 export function normalizeClassId(name) {
-    if (!name) return "unknown";
+    if (!name) {return 'unknown';}
 
     return name
         .toLowerCase()
-        .replace(/['']/g, "")      // Remove apostrophes
-        .replace(/\W+/g, "_")       // Replace non-word chars with underscore
-        .replace(/^_|_$/g, "");     // Trim leading/trailing underscores
+        .replace(/['']/g, '')      // Remove apostrophes
+        .replace(/\W+/g, '_')       // Replace non-word chars with underscore
+        .replace(/^_|_$/g, '');     // Trim leading/trailing underscores
 }
 
 /**
@@ -50,7 +50,7 @@ function parseHitDie(hitDieValue) {
 
     if (typeof hitDieValue === 'string') {
         // Remove "1d" prefix if present
-        const cleaned = hitDieValue.replace(/^1?d/, "").trim();
+        const cleaned = hitDieValue.replace(/^1?d/, '').trim();
         const parsed = parseInt(cleaned, 10);
 
         if (!isNaN(parsed) && [6, 8, 10, 12].includes(parsed)) {
@@ -70,28 +70,28 @@ function parseHitDie(hitDieValue) {
  * @returns {string} - Role: "force", "combat", "tech", "leader", or "general"
  */
 function inferClassRole(talentTrees = []) {
-    const treeStr = talentTrees.join(" ").toLowerCase();
+    const treeStr = talentTrees.join(' ').toLowerCase();
 
-    if (treeStr.includes("jedi") || treeStr.includes("force") || treeStr.includes("sith")) {
-        return "force";
+    if (treeStr.includes('jedi') || treeStr.includes('force') || treeStr.includes('sith')) {
+        return 'force';
     }
 
-    if (treeStr.includes("commando") || treeStr.includes("trooper") ||
-        treeStr.includes("soldier") || treeStr.includes("weapon")) {
-        return "combat";
+    if (treeStr.includes('commando') || treeStr.includes('trooper') ||
+        treeStr.includes('soldier') || treeStr.includes('weapon')) {
+        return 'combat';
     }
 
-    if (treeStr.includes("slicer") || treeStr.includes("tech") ||
-        treeStr.includes("engineer") || treeStr.includes("mechanic")) {
-        return "tech";
+    if (treeStr.includes('slicer') || treeStr.includes('tech') ||
+        treeStr.includes('engineer') || treeStr.includes('mechanic')) {
+        return 'tech';
     }
 
-    if (treeStr.includes("leadership") || treeStr.includes("influence") ||
-        treeStr.includes("inspiration") || treeStr.includes("noble")) {
-        return "leader";
+    if (treeStr.includes('leadership') || treeStr.includes('influence') ||
+        treeStr.includes('inspiration') || treeStr.includes('noble')) {
+        return 'leader';
     }
 
-    return "general";
+    return 'general';
 }
 
 /**
@@ -109,7 +109,7 @@ export function normalizeClass(rawClass) {
     // This ensures properties are properly accessible
     const rawSystem = rawClass.system;
     const sys = rawSystem?.toObject?.() ?? (rawSystem ? { ...rawSystem } : {});
-    const name = rawClass.name || "Unknown Class";
+    const name = rawClass.name || 'Unknown Class';
 
     const baseClass = sys.base_class !== false;  // Default to true
     const prestigeClass = !baseClass;  // Invert for consistency
@@ -146,7 +146,7 @@ export function normalizeClass(rawClass) {
         // Core Mechanics
         // FIX: Check both snake_case and camelCase for hit die to avoid undefined warning
         hitDie: parseHitDie(sys.hit_die ?? sys.hitDie),
-        babProgression: sys.babProgression || "medium",
+        babProgression: sys.babProgression || 'medium',
 
         // Skills
         // NOTE: Data model may migrate snake_case to camelCase, so check both
@@ -185,8 +185,8 @@ export function normalizeClass(rawClass) {
         startingCredits: sys.starting_credits ?? null,
 
         // Metadata
-        description: sys.description || "",
-        img: rawClass.img || "icons/svg/item-bag.svg"
+        description: sys.description || '',
+        img: rawClass.img || 'icons/svg/item-bag.svg'
     };
 }
 

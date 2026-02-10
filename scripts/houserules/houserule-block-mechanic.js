@@ -13,7 +13,7 @@
  * - If weapon is non-cortosis vs lightsaber, GM decides if weapon breaks
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 export class BlockMechanicalAlternative {
@@ -22,13 +22,13 @@ export class BlockMechanicalAlternative {
    */
   static initialize() {
     try {
-      if (!game.settings.get("foundryvtt-swse", "blockMechanicalAlternative")) {
+      if (!game.settings.get('foundryvtt-swse', 'blockMechanicalAlternative')) {
         return;
       }
 
-      SWSELogger.info("BlockMechanicalAlternative | Initialized");
+      SWSELogger.info('BlockMechanicalAlternative | Initialized');
     } catch (err) {
-      SWSELogger.error("BlockMechanicalAlternative initialization failed", err);
+      SWSELogger.error('BlockMechanicalAlternative initialization failed', err);
     }
   }
 
@@ -39,32 +39,32 @@ export class BlockMechanicalAlternative {
    */
   static canActorBlock(actor) {
     if (!actor) {
-      return { canBlock: false, weapon: null, reason: "No actor provided" };
+      return { canBlock: false, weapon: null, reason: 'No actor provided' };
     }
 
     // Check if flat-footed (not aware of attack)
-    const isFlatFooted = actor.system?.conditions?.includes("flatfooted") ||
-                         actor.statuses?.has("flatfooted");
+    const isFlatFooted = actor.system?.conditions?.includes('flatfooted') ||
+                         actor.statuses?.has('flatfooted');
 
     if (isFlatFooted) {
-      return { canBlock: false, weapon: null, reason: "Actor is flat-footed" };
+      return { canBlock: false, weapon: null, reason: 'Actor is flat-footed' };
     }
 
     // Find a melee weapon (exclude unarmed strikes)
     const weapons = actor.items.filter(item => {
-      if (item.type !== "weapon") return false;
-      const isUnarmed = item.system?.isUnarmed || item.name?.toLowerCase().includes("unarmed");
+      if (item.type !== 'weapon') {return false;}
+      const isUnarmed = item.system?.isUnarmed || item.name?.toLowerCase().includes('unarmed');
       return !isUnarmed;
     });
 
     if (weapons.length === 0) {
-      return { canBlock: false, weapon: null, reason: "No melee weapons available" };
+      return { canBlock: false, weapon: null, reason: 'No melee weapons available' };
     }
 
     // Return first suitable melee weapon (prefer melee range)
     const meleWeapon = weapons.find(w => {
-      const range = w.system?.range || "";
-      return range.toLowerCase().includes("melee") || range === "" || range <= 5;
+      const range = w.system?.range || '';
+      return range.toLowerCase().includes('melee') || range === '' || range <= 5;
     }) || weapons[0];
 
     return { canBlock: true, weapon: meleWeapon, reason: null };
@@ -76,10 +76,10 @@ export class BlockMechanicalAlternative {
    * @returns {number} - The cumulative penalty (negative value)
    */
   static getBlockPenalty(actor) {
-    if (!actor) return 0;
+    if (!actor) {return 0;}
 
     // Get the actor's block attempt counter (stored in flags)
-    const blockAttempts = actor.getFlag("foundryvtt-swse", "blockAttemptsThisTurn") || 0;
+    const blockAttempts = actor.getFlag('foundryvtt-swse', 'blockAttemptsThisTurn') || 0;
     return -(blockAttempts * 2);
   }
 
@@ -88,10 +88,10 @@ export class BlockMechanicalAlternative {
    * @param {Actor} actor - The defending actor
    */
   static async incrementBlockAttempts(actor) {
-    if (!actor) return;
+    if (!actor) {return;}
 
-    const current = actor.getFlag("foundryvtt-swse", "blockAttemptsThisTurn") || 0;
-    await actor.setFlag("foundryvtt-swse", "blockAttemptsThisTurn", current + 1);
+    const current = actor.getFlag('foundryvtt-swse', 'blockAttemptsThisTurn') || 0;
+    await actor.setFlag('foundryvtt-swse', 'blockAttemptsThisTurn', current + 1);
   }
 
   /**
@@ -99,9 +99,9 @@ export class BlockMechanicalAlternative {
    * @param {Actor} actor - The actor to reset
    */
   static async resetBlockAttempts(actor) {
-    if (!actor) return;
+    if (!actor) {return;}
 
-    await actor.unsetFlag("foundryvtt-swse", "blockAttemptsThisTurn");
+    await actor.unsetFlag('foundryvtt-swse', 'blockAttemptsThisTurn');
   }
 
   /**
@@ -115,7 +115,7 @@ export class BlockMechanicalAlternative {
     try {
       // Calculate attack bonus
       const blockPenalty = this.getBlockPenalty(actor);
-      const abilityMod = actor.system?.attributes[weapon.system?.attackAttribute || "str"]?.mod || 0;
+      const abilityMod = actor.system?.attributes[weapon.system?.attackAttribute || 'str']?.mod || 0;
       const bab = actor.system?.bab || 0;
       const halfLvl = getEffectiveHalfLevel(actor);
       const weaponBonus = weapon.system?.attackBonus || 0;
@@ -140,7 +140,7 @@ export class BlockMechanicalAlternative {
         actor: actor.name
       };
     } catch (err) {
-      SWSELogger.error("Block action execution failed", err);
+      SWSELogger.error('Block action execution failed', err);
       throw err;
     }
   }
@@ -150,17 +150,17 @@ export class BlockMechanicalAlternative {
  * Hook handler for turn changes to reset block attempt counters
  */
 export function setupBlockMechanicalHooks() {
-  Hooks.on("combatTurn", (combat, updateData, options) => {
+  Hooks.on('combatTurn', (combat, updateData, options) => {
     try {
-      const enabled = game.settings.get("foundryvtt-swse", "blockMechanicalAlternative");
-      if (!enabled) return;
+      const enabled = game.settings.get('foundryvtt-swse', 'blockMechanicalAlternative');
+      if (!enabled) {return;}
 
       // Reset block attempts for all combatants at the start of their turn
       if (combat.current.actor) {
         BlockMechanicalAlternative.resetBlockAttempts(combat.current.actor);
       }
     } catch (err) {
-      SWSELogger.error("Block mechanic turn reset failed", err);
+      SWSELogger.error('Block mechanic turn reset failed', err);
     }
   });
 }

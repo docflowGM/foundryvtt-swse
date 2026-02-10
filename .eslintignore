@@ -1,9 +1,0 @@
-node_modules/
-packs/
-assets/
-lang/
-styles/
-*.min.js
-*.bak
-*.backup
-.git/

@@ -6,6 +6,7 @@
 
 import DarkSidePowers from './DarkSidePowers.js';
 import { SWSELogger } from '../utils/logger.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 /**
  * Initialize Dark Side Powers systems when the world loads
@@ -57,11 +58,11 @@ Hooks.once('ready', () => {
         use: {
           label: 'Use as Swift Action',
           callback: async (html) => {
-            const powerId = html.find('#power-select').val();
+            const powerId = (html?.[0] ?? html)?.querySelector('#power-select')?.value;
             const power = actor.items.get(powerId);
             const success = await DarkSidePowers.triggerSwiftPower(actor, power);
             if (success) {
-              await ChatMessage.create({
+              await createChatMessage({
                 speaker: { actor: actor },
                 content: `<h3><img src="icons/svg/item-bag.svg" style="width: 20px; height: 20px;"> Swift Power</h3>
                           <p><strong>${actor.name}</strong> uses ${power.name} as a <strong>Swift Action</strong> instead of a Standard or Move Action!</p>`,
@@ -211,7 +212,7 @@ Hooks.once('ready', () => {
           create: {
             label: 'Create Talisman (Full-Round Action, 1 FP)',
             callback: async (html) => {
-              const defense = html.find('#defense-select').val();
+              const defense = (html?.[0] ?? html)?.querySelector('#defense-select')?.value;
               const result = await DarkSidePowers.createDarkSideTalisman(actor, defense);
               if (!result.success) {
                 ui.notifications.warn(result.message);
@@ -583,7 +584,7 @@ Hooks.once('ready', () => {
         create: {
           label: 'Create Sith Alchemical Weapon (Full-Round Action)',
           callback: async (html) => {
-            const weaponId = html.find('#weapon-select').val();
+            const weaponId = (html?.[0] ?? html)?.querySelector('#weapon-select')?.value;
             const weapon = actor.items.get(weaponId);
             const result = await DarkSidePowers.createSithAlchemicalWeapon(actor, weapon);
             if (!result.success) {
@@ -647,7 +648,7 @@ Hooks.once('ready', () => {
           activate: {
             label: 'Activate Bonus (Swift Action, 1 FP)',
             callback: async (html) => {
-              const weaponId = html.find('#weapon-select').val();
+              const weaponId = (html?.[0] ?? html)?.querySelector('#weapon-select')?.value;
               const weapon = actor.items.get(weaponId);
               const result = await DarkSidePowers.activateSithAlchemicalBonus(actor, weapon);
               if (!result.success) {
@@ -726,7 +727,7 @@ Hooks.once('ready', () => {
         steal: {
           label: 'Steal This Form/Technique',
           callback: async (html) => {
-            const formName = html.find('#form-select').val();
+            const formName = (html?.[0] ?? html)?.querySelector('#form-select')?.value;
             const selectedForm = availableOptions.find(t => t.name === formName);
 
             if (selectedForm) {
@@ -812,7 +813,7 @@ Hooks.once('ready', () => {
                 enhance: {
                   label: 'Create Sith Alchemical Weapon',
                   callback: async (html) => {
-                    const weaponId = html.find('#weapon-select').val();
+                    const weaponId = (html?.[0] ?? html)?.querySelector('#weapon-select')?.value;
                     const weapon = actor.items.get(weaponId);
                     const result = await DarkSidePowers.createSithAlchemicalWeapon(actor, weapon);
                     if (!result.success) {

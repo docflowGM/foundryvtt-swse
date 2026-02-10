@@ -12,22 +12,22 @@
 export async function rollSkill(actor, skillKey) {
   const utils = game.swse.utils;
   const skill = actor.system.skills?.[skillKey];
-  
+
   if (!skill) {
     ui.notifications.warn(`Skill ${skillKey} not found`);
     return null;
   }
-  
+
   // Get skill modifier (use actor's method if available)
   const mod = actor.getSkillMod ? actor.getSkillMod(skill) : calculateSkillMod(actor, skill);
-  
-  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${mod}`).evaluate({async: true});
-  
+
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${mod}`).evaluate({ async: true });
+
   await roll.toMessage({
-    speaker: ChatMessage.getSpeaker({actor}),
+    speaker: ChatMessage.getSpeaker({ actor }),
     flavor: `${skill.label || skillKey} Check (${utils.string.formatModifier(mod)})`
   } , { create: true });
-  
+
   return roll;
 }
 
@@ -70,17 +70,17 @@ export function calculateSkillMod(actor, skill, actionId = null) {
  */
 export async function rollSkillCheck(actor, skillKey, dc) {
   const roll = await rollSkill(actor, skillKey);
-  
-  if (!roll) return null;
-  
+
+  if (!roll) {return null;}
+
   const success = roll.total >= dc;
-  
+
   if (success) {
     ui.notifications.info(`Success! (${roll.total} vs DC ${dc})`);
   } else {
     ui.notifications.warn(`Failed! (${roll.total} vs DC ${dc})`);
   }
-  
+
   return { roll, success };
 }
 
@@ -95,12 +95,12 @@ export async function rollSkillCheck(actor, skillKey, dc) {
 export async function rollOpposedCheck(actor1, skill1, actor2, skill2) {
   const roll1 = await rollSkill(actor1, skill1);
   const roll2 = await rollSkill(actor2, skill2);
-  
-  if (!roll1 || !roll2) return null;
-  
-  const winner = roll1.total > roll2.total ? actor1 : 
+
+  if (!roll1 || !roll2) {return null;}
+
+  const winner = roll1.total > roll2.total ? actor1 :
                  roll2.total > roll1.total ? actor2 : null;
-  
+
   return {
     roll1,
     roll2,

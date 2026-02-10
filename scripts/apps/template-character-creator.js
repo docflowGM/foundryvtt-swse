@@ -1,5 +1,6 @@
 import SWSEFormApplication from './base/swse-form-application.js';
-import { ProgressionEngine } from "../progression/engine/progression-engine.js";
+import { ProgressionEngine } from '../progression/engine/progression-engine.js';
+import { createActor } from '../core/document-api-v13.js';
 // ============================================
 // Template Character Creator
 // Class-first selection with playing card UI
@@ -20,8 +21,8 @@ export class TemplateCharacterCreator extends SWSEFormApplication {
     super(options);
     // AppV2 render contract: template must be a non-null string.
     const tpl = this.options?.template;
-    if (typeof tpl !== "string" || !tpl.trim()) {
-      console.error("[SWSE] TemplateCharacterCreator: invalid template option, using fallback.", {
+    if (typeof tpl !== 'string' || !tpl.trim()) {
+      console.error('[SWSE] TemplateCharacterCreator: invalid template option, using fallback.', {
         template: tpl,
         options: this.options
       });
@@ -32,7 +33,7 @@ export class TemplateCharacterCreator extends SWSEFormApplication {
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(SWSEFormApplication.DEFAULT_OPTIONS ?? {}, {
-    classes: ['swse', 'template-creator', "swse-app"],
+    classes: ['swse', 'template-creator', 'swse-app'],
     template: TEMPLATE_PATH,
     width: 1000,
     height: 700,
@@ -40,7 +41,6 @@ export class TemplateCharacterCreator extends SWSEFormApplication {
     resizable: true
   });
 
-  
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
@@ -82,7 +82,7 @@ async _prepareContext(options) {
 
     // Add Nonheroic class only if user is GM or house rule allows it
     const isGM = game.user.isGM;
-    const allowPlayersNonheroic = game.settings.get('foundryvtt-swse', "allowPlayersNonheroic");
+    const allowPlayersNonheroic = game.settings.get('foundryvtt-swse', 'allowPlayersNonheroic');
     if (isGM || allowPlayersNonheroic) {
       context.classes.push({
         name: 'Nonheroic',
@@ -359,7 +359,7 @@ async _prepareContext(options) {
       };
 
       // Create the actor
-      const actor = await Actor.create(actorData);
+      const actor = await createActor(actorData);
 
       if (!actor) {
         ui.notifications.error('Failed to create character');
@@ -556,7 +556,7 @@ async _prepareContext(options) {
       const isClassSkill = classSkills.includes(key);
       const isTrained = actor.system.skills[key]?.trained || false;
 
-      if (isTrained) continue; // Skip already trained skills
+      if (isTrained) {continue;} // Skip already trained skills
 
       const starMark = isClassSkill ? 'star-icon' : '';
       html += `
@@ -724,7 +724,7 @@ async _prepareContext(options) {
       const speciesPackName = typeof speciesRefOrName === 'object' && speciesRefOrName.pack ? speciesRefOrName.pack : 'foundryvtt-swse.species';
       const speciesId = typeof speciesRefOrName === 'object' && speciesRefOrName.id ? speciesRefOrName.id : null;
       const speciesPack = game.packs.get(speciesPackName);
-      if (!speciesPack) return;
+      if (!speciesPack) {return;}
 
       if (speciesId) {
         const species = await speciesPack.getDocument(speciesId);
@@ -780,7 +780,7 @@ async _prepareContext(options) {
   async _applyClass(actor, template) {
     try {
       const classPack = game.packs.get('foundryvtt-swse.classes');
-      if (!classPack) return;
+      if (!classPack) {return;}
 
       const classRef = template.classRef || null;
       const className = classRef ? (classRef.displayName || classRef.name) : template.className;
@@ -878,13 +878,13 @@ async _prepareContext(options) {
    * Apply trained skills
    */
   async _applySkills(actor, trainedSkills) {
-    if (!trainedSkills || trainedSkills.length === 0) return;
+    if (!trainedSkills || trainedSkills.length === 0) {return;}
 
     try {
       const updates = {};
       for (const ref of trainedSkills) {
         const skillKey = await resolveSkillKey(ref);
-        if (!skillKey) continue;
+        if (!skillKey) {continue;}
         updates[`system.skills.${skillKey}.trained`] = true;
       }
 
@@ -955,7 +955,7 @@ async _prepareContext(options) {
         // Search through all compendia
         for (const packName of compendiaPacks) {
           const pack = game.packs.get(packName);
-          if (!pack) continue;
+          if (!pack) {continue;}
 
           // Get pack index for faster searching
           const index = await pack.getIndex();

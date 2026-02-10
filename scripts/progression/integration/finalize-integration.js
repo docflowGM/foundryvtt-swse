@@ -82,7 +82,7 @@ export class FinalizeIntegration {
         if (progression.feats && progression.feats.length > 0) {
             const updates = {};
             const uniqueFeats = [...new Set(progression.feats)]; // Deduplicate
-            updates["system.progression.feats"] = uniqueFeats;
+            updates['system.progression.feats'] = uniqueFeats;
             await actor.update(updates);
             SWSELogger.log(`Applied ${uniqueFeats.length} selected feats`);
         }
@@ -91,7 +91,7 @@ export class FinalizeIntegration {
         if (progression.talents && progression.talents.length > 0) {
             const updates = {};
             const uniqueTalents = [...new Set(progression.talents)]; // Deduplicate
-            updates["system.progression.talents"] = uniqueTalents;
+            updates['system.progression.talents'] = uniqueTalents;
             await actor.update(updates);
             SWSELogger.log(`Applied ${uniqueTalents.length} selected talents`);
         }

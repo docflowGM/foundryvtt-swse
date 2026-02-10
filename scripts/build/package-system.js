@@ -28,7 +28,7 @@ const filesToInclude = [
   'assets/',
   'lang/',
   'index.js',
-  'LICENSE',
+  'LICENSE'
 ];
 
 try {

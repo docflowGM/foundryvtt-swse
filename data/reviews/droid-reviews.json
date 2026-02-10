@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "version": "1.0",
+    "description": "SWSE Store Marketplace Droid Reviews",
+    "notes": "In-universe, unreliable, chaotic reviews for droids, organized by Droid Degree. Flavor-only."
+  },
+  "firstDegreeDroids": [
+    "This medical droid knows too much about me.",
+    "Why does it sigh before diagnosing me.",
+    "It keeps saying 'statistically concerning.'",
+    "Very helpful. Very judgmental.",
+    "Refused to treat me until I stopped bleeding on the floor.",
+    "Explained my condition using words I did not like.",
+    "It keeps records. I don't want it to.",
+    "Diagnosed me correctly but made me feel worse.",
+    "Asked me to rate my pain. Did not accept my answer.",
+    "I think it's disappointed in my life choices."
+  ],
+  "secondDegreeDroids": [
+    "Fixed the engine. Broke something else.",
+    "Keeps muttering about inefficiency.",
+    "It welded the wrong thing but insisted it was correct.",
+    "Works nonstop and judges anyone who rests.",
+    "Smells like coolant and confidence.",
+    "It solved the problem. The wrong problem.",
+    "Won't stop recalibrating things that worked fine.",
+    "Asked for tools it already had.",
+    "Very good at repairs. Very bad at explaining.",
+    "I think it likes the ship more than me."
+  ],
+  "thirdDegreeDroids": [
+    "Apologized for things I didn't notice.",
+    "Won't stop correcting my grammar.",
+    "Keeps announcing the weather.",
+    "Very polite. Too polite.",
+    "It narrates every task like a tragedy.",
+    "Corrected a Hutt. That went poorly.",
+    "Reminds me of appointments I was avoiding.",
+    "Asks permission to clean. Cleans anyway.",
+    "It knows too many languages and uses them.",
+    "I caught it judging my posture."
+  ],
+  "fourthDegreeDroids": [
+    "Too eager to engage.",
+    "Asked for permission to use 'maximum force.'",
+    "Keeps requesting combat scenarios.",
+    "Does not understand 'stand down.'",
+    "Feels proud after fights.",
+    "Watches corners aggressively.",
+    "Scares civilians by existing.",
+    "Counts threats out loud.",
+    "Keeps saying 'target acquired' in casual settings.",
+    "I do not trust it near doors."
+  ],
+  "fifthDegreeDroids": [
+    "Lifts things. Sometimes people.",
+    "Doesn't understand 'fragile.'",
+    "Keeps stacking crates creatively.",
+    "Very strong. Very literal.",
+    "Moved everything except what I asked for.",
+    "Gets confused by stairs.",
+    "Won't stop reorganizing.",
+    "Dropped a crate and stared at it.",
+    "Works tirelessly. Thinks slowly.",
+    "I think it enjoys carrying heavy things too much."
+  ]
+}

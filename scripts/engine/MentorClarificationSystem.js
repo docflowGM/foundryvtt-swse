@@ -13,38 +13,38 @@ import { SWSELogger } from '../utils/logger.js';
 
 const CLARIFICATION_QUESTIONS = {
   ranged_vs_melee: {
-    question: "Your path could embrace precision at distance or power in close combat. Which calls to you?",
+    question: 'Your path could embrace precision at distance or power in close combat. Which calls to you?',
     responses: [
-      { text: "Distance and precision", intent: "prefers_ranged" },
-      { text: "Strength in close quarters", intent: "prefers_melee" }
+      { text: 'Distance and precision', intent: 'prefers_ranged' },
+      { text: 'Strength in close quarters', intent: 'prefers_melee' }
     ]
   },
   support_vs_striker: {
-    question: "Do you lead through empowering allies or striking down threats?",
+    question: 'Do you lead through empowering allies or striking down threats?',
     responses: [
-      { text: "Empower allies", intent: "prefers_support" },
-      { text: "Strike threats", intent: "prefers_striker" }
+      { text: 'Empower allies', intent: 'prefers_support' },
+      { text: 'Strike threats', intent: 'prefers_striker' }
     ]
   },
   force_vs_mundane: {
-    question: "Does your strength come from the Force or from discipline and skill?",
+    question: 'Does your strength come from the Force or from discipline and skill?',
     responses: [
-      { text: "The Force flows through me", intent: "prefers_force" },
-      { text: "I rely on skill and training", intent: "prefers_mundane" }
+      { text: 'The Force flows through me', intent: 'prefers_force' },
+      { text: 'I rely on skill and training', intent: 'prefers_mundane' }
     ]
   },
   leadership_vs_solo: {
-    question: "Do you lead others, or trust only yourself?",
+    question: 'Do you lead others, or trust only yourself?',
     responses: [
-      { text: "I inspire others", intent: "prefers_leadership" },
-      { text: "I work alone", intent: "prefers_solo" }
+      { text: 'I inspire others', intent: 'prefers_leadership' },
+      { text: 'I work alone', intent: 'prefers_solo' }
     ]
   },
   stealth_vs_aggressive: {
-    question: "Move unseen, or strike with overwhelming force?",
+    question: 'Move unseen, or strike with overwhelming force?',
     responses: [
-      { text: "Shadows and stealth", intent: "prefers_stealth" },
-      { text: "Overwhelming force", intent: "prefers_aggressive" }
+      { text: 'Shadows and stealth', intent: 'prefers_stealth' },
+      { text: 'Overwhelming force', intent: 'prefers_aggressive' }
     ]
   }
 };
@@ -67,7 +67,7 @@ export function needsClarification(archetypeScores, topScore) {
  * @returns {Object} {questionKey, question, responses}
  */
 export function selectClarificationQuestion(topArchetypes) {
-  if (!topArchetypes || topArchetypes.length < 2) return null;
+  if (!topArchetypes || topArchetypes.length < 2) {return null;}
 
   const [arch1, arch2] = topArchetypes;
 
@@ -133,7 +133,7 @@ export function selectClarificationQuestion(topArchetypes) {
  * @returns {Promise<void>}
  */
 export async function storePlayerIntent(actor, responseIntent) {
-  if (!actor) return;
+  if (!actor) {return;}
 
   try {
     const flags = await actor.getFlag('foundryvtt-swse', 'playerIntent') || {};
@@ -154,7 +154,7 @@ export async function storePlayerIntent(actor, responseIntent) {
  * @returns {Promise<Object>} {intentKey: {selectedAt, level}, ...}
  */
 export async function getPlayerIntent(actor) {
-  if (!actor) return {};
+  if (!actor) {return {};}
 
   try {
     return (await actor.getFlag('foundryvtt-swse', 'playerIntent')) || {};

@@ -20,7 +20,7 @@ export async function _onSelectStarshipManeuver(event) {
   const maneuver = this._packs.maneuvers.find(m => m._id === id || m.name === id);
 
   if (!maneuver) {
-    ui.notifications.warn("Starship Maneuver not found!");
+    ui.notifications.warn('Starship Maneuver not found!');
     return;
   }
 
@@ -70,7 +70,7 @@ export async function _onRemoveStarshipManeuver(event) {
   const id = event.currentTarget.dataset.maneuverid;
 
   this.characterData.starshipManeuvers = this.characterData.starshipManeuvers.filter(m => m._id !== id && m.name !== id);
-  ui.notifications.info("Starship maneuver removed");
+  ui.notifications.info('Starship maneuver removed');
   await this.render();
 }
 
@@ -144,13 +144,13 @@ export async function _getAvailableStarshipManeuvers() {
  */
 export function _bindManeuverCardUI(root) {
   const step = root.querySelector('.step-starship-maneuvers');
-  if (!step) return;
+  if (!step) {return;}
 
   step.onclick = (ev) => {
     const btn = ev.target.closest('button');
-    if (!btn) return;
+    if (!btn) {return;}
 
-    if (!btn.classList.contains('maneuver-details-toggle')) return;
+    if (!btn.classList.contains('maneuver-details-toggle')) {return;}
 
     ev.preventDefault();
     const card = btn.closest('.maneuver-card');

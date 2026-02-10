@@ -1,0 +1,131 @@
+{
+  "meta": {
+    "version": "1.0",
+    "description": "SWSE Store Marketplace Dialogue Overflow Pack",
+    "notes": "Unused, rejected, rare, or extra-chaotic dialogue. Intended for deep scrolls, rare rolls, or special events."
+  },
+
+  "armorReviewsOverflow": [
+    "This armor feels like it was designed by someone who hates knees.",
+    "Arrived late and already smelled like sweat.",
+    "Armor works. My spine disagrees.",
+    "You don't wear this, you negotiate with it.",
+    "I tried to roll. That was a mistake.",
+    "Heavy armor turns stairs into a moral test.",
+    "Looks scary. Sounds scarier when you walk.",
+    "Felt safe until I had to sit down.",
+    "The crate was labeled 'fragile.' I laughed.",
+    "Wearing this makes you everyone's first target."
+  ],
+
+  "weaponReviewsOverflow": {
+    "fireRate": [
+      "Shoots faster than my brain can keep up.",
+      "I was not prepared for how quickly this empties.",
+      "Trigger discipline is not optional with this.",
+      "Fire rate feels personal.",
+      "I fired once and then stopped to rethink my life."
+    ],
+    "power": [
+      "Way more power than I expected.",
+      "This thing ends conversations.",
+      "I hit what I aimed at. Everything else too.",
+      "Overkill is the default setting.",
+      "You feel the power immediately."
+    ],
+    "sound": [
+      "The noise alone made people scatter.",
+      "This weapon screams when it fires.",
+      "Sound echoed longer than the fight.",
+      "Not a quiet solution.",
+      "My ears are still ringing."
+    ],
+    "ergonomics": [
+      "Grip feels wrong but works anyway.",
+      "Balance is questionable.",
+      "This weapon punishes bad posture.",
+      "Comfort was not a design goal.",
+      "Holding this feels like a commitment."
+    ],
+    "returnsShipping": [
+      "Arrived late. No explanation.",
+      "Box looked reused.",
+      "Rendarr laughed when I asked about returns.",
+      "Shipping delay almost made me cancel.",
+      "No refund policy explained aggressively."
+    ]
+  },
+
+  "gearReviewsOverflow": [
+    "Why does this require maintenance.",
+    "Feels heavier than it should be.",
+    "Arrived already powered on.",
+    "Smells like burned plastic.",
+    "Pretty sure this was someone else's.",
+    "Too expensive for what it does.",
+    "Found the same thing cheaper elsewhere.",
+    "Works fine now. Didn't at first.",
+    "Packaging was held together with tape.",
+    "I don't trust this thing."
+  ],
+
+  "neekoOverflow": [
+    "Neeko hass sold thessse sinccce before it wass fashionable.",
+    "Neeko sayysss if it wass broken, Neeko wouldn't sell it.",
+    "Thisss came from Neeko firssst, everyone knowsss.",
+    "Neeko'sss version smellsss better.",
+    "Why trust Rendarr when Neeko iss standing right here?",
+    "Neeko hass better price AND better story.",
+    "Neeko warnsss customer when thing iss weird.",
+    "Neeko never hide problemsss.",
+    "Neeko include free advice, no extra charge.",
+    "Next time, lissten to Neeko."
+  ],
+
+  "rendarrOverflow": [
+    "We regret any misunderstanding.",
+    "This product meets all expectations.",
+    "Customer experiences may vary.",
+    "We have addressed similar concerns previously.",
+    "Delays are beyond our control.",
+    "Our policies are clearly posted.",
+    "This is a high-demand item.",
+    "We appreciate your patience.",
+    "Performance concerns are subjective.",
+    "Thank you for your feedback."
+  ],
+
+  "reviewerRepliesOverflow": [
+    "You're being dramatic.",
+    "That's not what happened to me.",
+    "Why would you even try that.",
+    "Sounds like user error.",
+    "This thread is wild.",
+    "I don't trust this review.",
+    "I had zero issues.",
+    "Mine worked fine.",
+    "Shipping lanes are cursed.",
+    "Neeko warned us."
+  ],
+
+  "responsesToRepliesOverflow": [
+    "That still doesn't explain it.",
+    "You're missing my point.",
+    "Okay but I paid for this.",
+    "Why are you defending the seller.",
+    "That's not reassuring.",
+    "This isn't helpful.",
+    "Agree to disagree.",
+    "I'm done with this thread.",
+    "This escalated fast.",
+    "I regret engaging."
+  ],
+
+  "threadEnders": [
+    "Moderator locked this thread.",
+    "This conversation has been archived.",
+    "Further replies have been disabled.",
+    "Thread closed due to reports.",
+    "Comments removed for civility."
+  ]
+}

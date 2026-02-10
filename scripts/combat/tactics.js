@@ -6,7 +6,7 @@
  * a target and make an opposed check to anticipate their next move.
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from '../utils/logger.js';
 
 export class TacticsAnticipation {
   /**
@@ -18,7 +18,7 @@ export class TacticsAnticipation {
   static async anticipateStrategy(tacticianActor, targetActor) {
     try {
       if (!tacticianActor || !targetActor) {
-        throw new Error("Missing tactician or target actor");
+        throw new Error('Missing tactician or target actor');
       }
 
       // Check if tactician is trained in Knowledge (Tactics)
@@ -70,7 +70,7 @@ export class TacticsAnticipation {
         message: `${tacticianActor.name} successfully anticipates ${targetActor.name}'s strategy!`
       };
     } catch (err) {
-      SWSELogger.error("Anticipate strategy check failed", err);
+      SWSELogger.error('Anticipate strategy check failed', err);
       throw err;
     }
   }
@@ -84,7 +84,7 @@ export class TacticsAnticipation {
       willAttack: true,
       primaryTargets: [],
       likelyActions: [],
-      estimatedMovement: "",
+      estimatedMovement: '',
       specialStrategies: []
     };
 
@@ -95,32 +95,32 @@ export class TacticsAnticipation {
 
     // Determine likely actions based on health
     if (hpPercent <= 25) {
-      anticipation.likelyActions.push("Likely to flee or use defensive tactics");
-      anticipation.specialStrategies.push("May attempt withdrawal or defend");
+      anticipation.likelyActions.push('Likely to flee or use defensive tactics');
+      anticipation.specialStrategies.push('May attempt withdrawal or defend');
     } else if (hpPercent <= 50) {
-      anticipation.likelyActions.push("Likely to fight defensively or focus fire");
+      anticipation.likelyActions.push('Likely to fight defensively or focus fire');
     } else {
-      anticipation.likelyActions.push("Likely to continue aggressive tactics");
+      anticipation.likelyActions.push('Likely to continue aggressive tactics');
     }
 
     // Check for weapons - melee vs ranged
-    const weapons = targetActor.items?.filter(i => i.type === "weapon") || [];
-    const hasMelee = weapons.some(w => !w.system?.range || w.system?.range.toLowerCase().includes("melee"));
-    const hasRanged = weapons.some(w => w.system?.range && w.system?.range.toLowerCase().includes("ranged"));
+    const weapons = targetActor.items?.filter(i => i.type === 'weapon') || [];
+    const hasMelee = weapons.some(w => !w.system?.range || w.system?.range.toLowerCase().includes('melee'));
+    const hasRanged = weapons.some(w => w.system?.range && w.system?.range.toLowerCase().includes('ranged'));
 
     if (hasMelee && hasRanged) {
-      anticipation.likelyActions.push("Will choose weapon based on distance");
+      anticipation.likelyActions.push('Will choose weapon based on distance');
     } else if (hasMelee) {
-      anticipation.likelyActions.push("Likely to move toward melee range");
-      anticipation.estimatedMovement = "Will advance";
+      anticipation.likelyActions.push('Likely to move toward melee range');
+      anticipation.estimatedMovement = 'Will advance';
     } else if (hasRanged) {
-      anticipation.likelyActions.push("Will maintain ranged distance");
-      anticipation.estimatedMovement = "Will hold position or retreat";
+      anticipation.likelyActions.push('Will maintain ranged distance');
+      anticipation.estimatedMovement = 'Will hold position or retreat';
     }
 
     // Check if target has allies nearby - might coordinate
     if (targetActor.system?.allies) {
-      anticipation.specialStrategies.push("May coordinate with allies");
+      anticipation.specialStrategies.push('May coordinate with allies');
     }
 
     return anticipation;
@@ -131,11 +131,11 @@ export class TacticsAnticipation {
    * @private
    */
   static _getTargetType(actor) {
-    if (!actor) return "unknown";
-    if (actor.type === "vehicle") return "vehicle";
-    if (actor.type === "droid") return "droid";
-    if (actor.type === "npc") return "npc";
-    return "character";
+    if (!actor) {return 'unknown';}
+    if (actor.type === 'vehicle') {return 'vehicle';}
+    if (actor.type === 'droid') {return 'droid';}
+    if (actor.type === 'npc') {return 'npc';}
+    return 'character';
   }
 
   /**
@@ -145,18 +145,18 @@ export class TacticsAnticipation {
    * @param {Object} anticipation - The anticipation data
    */
   static async storeAnticipation(tacticianActor, targetActor, anticipation) {
-    if (!tacticianActor) return;
+    if (!tacticianActor) {return;}
 
     try {
-      const anticipations = tacticianActor.getFlag("foundryvtt-swse", "anticipatedStrategies") || {};
+      const anticipations = tacticianActor.getFlag('foundryvtt-swse', 'anticipatedStrategies') || {};
       anticipations[targetActor.id] = {
         targetName: targetActor.name,
         data: anticipation,
         timestamp: new Date().toISOString()
       };
-      await tacticianActor.setFlag("foundryvtt-swse", "anticipatedStrategies", anticipations);
+      await tacticianActor.setFlag('foundryvtt-swse', 'anticipatedStrategies', anticipations);
     } catch (err) {
-      SWSELogger.error("Failed to store anticipation", err);
+      SWSELogger.error('Failed to store anticipation', err);
     }
   }
 
@@ -167,9 +167,9 @@ export class TacticsAnticipation {
    * @returns {Object|null} - The stored anticipation or null
    */
   static getStoredAnticipation(tacticianActor, targetId) {
-    if (!tacticianActor) return null;
+    if (!tacticianActor) {return null;}
 
-    const anticipations = tacticianActor.getFlag("foundryvtt-swse", "anticipatedStrategies") || {};
+    const anticipations = tacticianActor.getFlag('foundryvtt-swse', 'anticipatedStrategies') || {};
     return anticipations[targetId] || null;
   }
 
@@ -178,12 +178,12 @@ export class TacticsAnticipation {
    * @param {Actor} tacticianActor - The tactician
    */
   static async clearAnticipations(tacticianActor) {
-    if (!tacticianActor) return;
+    if (!tacticianActor) {return;}
 
     try {
-      await tacticianActor.unsetFlag("foundryvtt-swse", "anticipatedStrategies");
+      await tacticianActor.unsetFlag('foundryvtt-swse', 'anticipatedStrategies');
     } catch (err) {
-      SWSELogger.error("Failed to clear anticipations", err);
+      SWSELogger.error('Failed to clear anticipations', err);
     }
   }
 }

@@ -14,7 +14,7 @@ function getSelectedActor() {
 
 async function getOrCreateTestNpc() {
   const existing = game.actors?.getName?.(TEST_ACTOR_NAME);
-  if (existing) return existing;
+  if (existing) {return existing;}
 
   const data = {
     name: TEST_ACTOR_NAME,

@@ -72,7 +72,7 @@ export const TalentTreeDB = {
 
                     // Store by ID
                     this.trees.set(normalizedTree.id, normalizedTree);
-                    if (normalizedTree.sourceId) this.sourceIndex.set(normalizedTree.sourceId, normalizedTree);
+                    if (normalizedTree.sourceId) {this.sourceIndex.set(normalizedTree.sourceId, normalizedTree);}
                     count++;
 
                 } catch (err) {
@@ -102,7 +102,7 @@ export const TalentTreeDB = {
      * @returns {Object|null} - Normalized tree or null
      */
     get(treeId) {
-        if (!treeId) return null;
+        if (!treeId) {return null;}
 
         // Ensure ID is normalized
         const normalizedId = normalizeTalentTreeId(treeId);
@@ -116,7 +116,7 @@ export const TalentTreeDB = {
      * @param {string} name - Tree name
      * @returns {Object|null} - Normalized tree or null
      */
-    
+
     /**
      * Lookup a talent tree by its compendium document _id.
      * This prevents drift when display names change.
@@ -125,12 +125,12 @@ export const TalentTreeDB = {
      * @returns {Object|null}
      */
     bySourceId(sourceId) {
-        if (!sourceId) return null;
+        if (!sourceId) {return null;}
         return this.sourceIndex.get(sourceId) || null;
     },
 
 byName(name) {
-        if (!name) return null;
+        if (!name) {return null;}
 
         return findTalentTreeByName(name, this.trees);
     },
@@ -142,7 +142,7 @@ byName(name) {
      * @returns {boolean} - True if tree exists
      */
     has(treeId) {
-        if (!treeId) return false;
+        if (!treeId) {return false;}
         const normalizedId = normalizeTalentTreeId(treeId);
         return this.trees.has(normalizedId);
     },
@@ -163,7 +163,7 @@ byName(name) {
      * @returns {Array<Object>} - Trees matching role
      */
     byRole(role) {
-        if (!role) return [];
+        if (!role) {return [];}
         return this.all().filter(tree => tree.role === role);
     },
 
@@ -174,7 +174,7 @@ byName(name) {
      * @returns {Array<Object>} - Trees matching category
      */
     byCategory(category) {
-        if (!category) return [];
+        if (!category) {return [];}
         return this.all().filter(tree => tree.category === category);
     },
 
@@ -185,7 +185,7 @@ byName(name) {
      * @returns {Array<Object>} - Trees with this tag
      */
     byTag(tag) {
-        if (!tag) return [];
+        if (!tag) {return [];}
         return this.all().filter(tree => (tree.tags || []).includes(tag));
     },
 
@@ -196,7 +196,7 @@ byName(name) {
      * @returns {Array<Object>} - Trees matching any of these tags
      */
     byTags(tags) {
-        if (!tags || tags.length === 0) return [];
+        if (!tags || tags.length === 0) {return [];}
         const tagSet = new Set(tags);
         return this.all().filter(tree =>
             (tree.tags || []).some(tag => tagSet.has(tag))
@@ -215,10 +215,10 @@ byName(name) {
      * @returns {Array<Object>} - Trees for this class
      */
     forClass(classId, classesDB) {
-        if (!classId || !classesDB) return [];
+        if (!classId || !classesDB) {return [];}
 
         const classDef = classesDB.get(classId);
-        if (!classDef) return [];
+        if (!classDef) {return [];}
 
         // Use new ID-based talentTreeIds (PHASE 3)
         const treeIds = classDef.talentTreeIds || [];
@@ -264,7 +264,7 @@ byName(name) {
      * @returns {string|null} - Tree ID or null if talent is unowned
      */
     getTreeForTalent(talentId) {
-        if (!talentId) return null;
+        if (!talentId) {return null;}
         return this.talentToTree.get(talentId) ?? null;
     },
 
@@ -275,7 +275,7 @@ byName(name) {
      * @returns {Array<string>} - Talent IDs in this tree
      */
     getTalentsForTree(treeId) {
-        if (!treeId) return [];
+        if (!treeId) {return [];}
 
         const tree = this.get(treeId);
         return tree?.talentIds ?? [];
@@ -288,7 +288,7 @@ byName(name) {
      * @returns {Array<string>} - Talent IDs from all trees (deduplicated)
      */
     getTalentsForTrees(treeIds) {
-        if (!treeIds || treeIds.length === 0) return [];
+        if (!treeIds || treeIds.length === 0) {return [];}
 
         const talents = new Set();
 
@@ -313,7 +313,7 @@ byName(name) {
      * @returns {Array<Object>} - Available talent trees for this character
      */
     getTalentTreesForCharacter(actor) {
-        if (!actor) return [];
+        if (!actor) {return [];}
 
         const trees = new Set();
 
@@ -322,7 +322,7 @@ byName(name) {
             const classTrees = actor.class.system?.talentTreeIds || [];
             for (const treeId of classTrees) {
                 const tree = this.get(treeId);
-                if (tree) trees.add(tree);
+                if (tree) {trees.add(tree);}
             }
         }
 
@@ -331,7 +331,7 @@ byName(name) {
 
         // Force-sensitive grants access to all force trees
         if (flags.forceSensitive) {
-            const forceTrees = this.byTag("force");
+            const forceTrees = this.byTag('force');
             for (const tree of forceTrees) {
                 trees.add(tree);
             }
@@ -339,7 +339,7 @@ byName(name) {
 
         // Droid grants access to all droid trees
         if (flags.droid) {
-            const droidTrees = this.byTag("droid");
+            const droidTrees = this.byTag('droid');
             for (const tree of droidTrees) {
                 trees.add(tree);
             }
@@ -356,7 +356,7 @@ byName(name) {
      * @returns {Array<string>} - All talent IDs available to this character
      */
     getTalentsForCharacter(actor) {
-        if (!actor) return [];
+        if (!actor) {return [];}
 
         const trees = this.getTalentTreesForCharacter(actor);
         const treeIds = trees.map(t => t.id);

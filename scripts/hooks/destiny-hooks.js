@@ -7,7 +7,7 @@ import { SWSELogger } from '../utils/logger.js';
 import { DestinyEffects } from '../utils/destiny-effects.js';
 
 export function registerDestinyHooks() {
-  SWSELogger.log("SWSE | Registering Destiny Hooks");
+  SWSELogger.log('SWSE | Registering Destiny Hooks');
 
   /**
    * Hook: swse.destinyPointSpent
@@ -21,31 +21,31 @@ export function registerDestinyHooks() {
 
   // Auto-Crit handler
   Hooks.on('swse.destinyPointSpent', async (actor, type, options) => {
-    if (type !== 'auto-crit') return;
+    if (type !== 'auto-crit') {return;}
     SWSELogger.log(`[Destiny] ${actor.name} triggered Auto Crit`);
   });
 
   // Auto-Miss handler
   Hooks.on('swse.destinyPointSpent', async (actor, type, options) => {
-    if (type !== 'auto-miss') return;
+    if (type !== 'auto-miss') {return;}
     SWSELogger.log(`[Destiny] ${actor.name} triggered Auto Miss`);
   });
 
   // Act Out of Turn handler
   Hooks.on('swse.destinyPointSpent', async (actor, type, options) => {
-    if (type !== 'act-out-of-turn') return;
+    if (type !== 'act-out-of-turn') {return;}
     SWSELogger.log(`[Destiny] ${actor.name} triggered Act Out of Turn`);
   });
 
   // Gain Force Points handler
   Hooks.on('swse.destinyPointSpent', async (actor, type, options) => {
-    if (type !== 'gain-force-points') return;
+    if (type !== 'gain-force-points') {return;}
     SWSELogger.log(`[Destiny] ${actor.name} triggered Gain Force Points`);
   });
 
   // Take Damage for Ally handler
   Hooks.on('swse.destinyPointSpent', async (actor, type, options) => {
-    if (type !== 'take-damage-for-ally') return;
+    if (type !== 'take-damage-for-ally') {return;}
     SWSELogger.log(`[Destiny] ${actor.name} triggered Take Damage for Ally`);
   });
 
@@ -54,11 +54,11 @@ export function registerDestinyHooks() {
     // Check if this is a timed effect
     const effectKey = type.replace(/\-/g, '-');
     if (!DestinyEffects.TIMED_EFFECTS[type] &&
-        !DestinyEffects.TIMED_EFFECTS[effectKey]) return;
+        !DestinyEffects.TIMED_EFFECTS[effectKey]) {return;}
 
     // Effects are already applied by the dialog, just log
     SWSELogger.log(`[Destiny] ${actor.name} triggered timed effect: ${type}`);
   });
 
-  SWSELogger.log("SWSE | Destiny Hooks registered");
+  SWSELogger.log('SWSE | Destiny Hooks registered');
 }

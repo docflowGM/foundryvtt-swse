@@ -72,7 +72,7 @@ export class AttributeIncreaseHandler {
    * Grants: 1 trained skill + 1 language (+ additional language per Linguist feat)
    */
   static async _handleIntelligenceIncrease(actor, modIncrease) {
-    if (modIncrease <= 0) return;
+    if (modIncrease <= 0) {return;}
 
     // Count Linguist feats
     const linguistCount = actor.items.filter(i =>
@@ -103,8 +103,8 @@ export class AttributeIncreaseHandler {
         langs.push(SWSELanguageModule.CHOICE_TOKEN);
       }
       const deduped = SWSELanguageModule._dedupe(langs);
-      await actor.update({ "system.languages": deduped }).catch(e => {
-        swseLogger.warn("SWSE | Failed to add language choice tokens:", e);
+      await actor.update({ 'system.languages': deduped }).catch(e => {
+        swseLogger.warn('SWSE | Failed to add language choice tokens:', e);
       });
     }
 
@@ -122,7 +122,7 @@ export class AttributeIncreaseHandler {
    * Grants: Force Powers based on Force Training feat count
    */
   static async _handleWisdomIncrease(actor, modIncrease) {
-    if (modIncrease <= 0) return;
+    if (modIncrease <= 0) {return;}
 
     // Check if using Charisma instead of Wisdom for Force Powers (houserule)
     const useCharisma = game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || false;
@@ -169,7 +169,7 @@ export class AttributeIncreaseHandler {
    * Grants: HP equal to heroic level
    */
   static async _handleConstitutionIncrease(actor, modIncrease) {
-    if (modIncrease <= 0) return;
+    if (modIncrease <= 0) {return;}
 
     // Droids don't have Constitution, skip HP gain
     const isDroid = actor.system.isDroid || false;

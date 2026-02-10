@@ -31,7 +31,7 @@ export class DataPreloader {
    * @returns {Promise<void>}
    */
   async preload(options = {}) {
-    if (this._loaded || this._loading) return;
+    if (this._loaded || this._loading) {return;}
 
     const {
       priority = ['classes', 'skills', 'feats'],
@@ -141,7 +141,7 @@ export class DataPreloader {
    */
   async _preloadClasses() {
     const pack = game.packs.get('foundryvtt-swse.classes');
-    if (!pack) return;
+    if (!pack) {return;}
 
     const index = await pack.getIndex();
     this._classesCache.set('_index', index);
@@ -166,7 +166,7 @@ export class DataPreloader {
    */
   async _preloadFeats() {
     const pack = game.packs.get('foundryvtt-swse.feats');
-    if (!pack) return;
+    if (!pack) {return;}
 
     const index = await pack.getIndex();
     this._featsCache.set('_index', index);
@@ -185,7 +185,7 @@ export class DataPreloader {
    */
   async _preloadTalents() {
     const pack = game.packs.get('foundryvtt-swse.talents');
-    if (!pack) return;
+    if (!pack) {return;}
 
     const index = await pack.getIndex();
     this._talentsCache.set('_index', index);
@@ -208,7 +208,7 @@ export class DataPreloader {
    */
   async _preloadForcePowers() {
     const pack = game.packs.get('foundryvtt-swse.forcepowers');
-    if (!pack) return;
+    if (!pack) {return;}
 
     const index = await pack.getIndex();
     this._forcePowersCache.set('_index', index);
@@ -227,7 +227,7 @@ export class DataPreloader {
    */
   async _preloadSpecies() {
     const pack = game.packs.get('foundryvtt-swse.species');
-    if (!pack) return;
+    if (!pack) {return;}
 
     const index = await pack.getIndex();
     this._speciesCache.set('_index', index);
@@ -256,7 +256,7 @@ export class DataPreloader {
    */
   async _preloadSkills() {
     const pack = game.packs.get('foundryvtt-swse.skills');
-    if (!pack) return;
+    if (!pack) {return;}
 
     const index = await pack.getIndex();
     this._skillsCache.set('_index', index);
@@ -315,7 +315,7 @@ export class DataPreloader {
 
     // Fallback to pack lookup
     const pack = game.packs.get('foundryvtt-swse.talents');
-    if (!pack) return [];
+    if (!pack) {return [];}
 
     const index = await pack.getIndex();
     return Array.from(index).filter(e => e.system?.tree === treeName);
@@ -350,7 +350,7 @@ export class DataPreloader {
 
     // Fallback to pack lookup
     const pack = game.packs.get(packId);
-    if (!pack) return null;
+    if (!pack) {return null;}
 
     const doc = await pack.getDocument(idOrName);
     if (doc) {
