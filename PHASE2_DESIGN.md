@@ -18,14 +18,19 @@ Intro (degree/size) → Review → Finalize
 Intro (degree/size)
   → Locomotion selection
   → Manipulator selection (1+)
-  → Processor selection
   → Sensor selection (0+)
+  → Processor selection
   → Armor selection
   → Weapon selection (0+)
   → Accessory selection (0+)
   → Final Review
   → Finalize
 ```
+
+**Note:** Processor moved earlier (after Sensors, before Armor) because:
+* Processor gates skill availability and advanced sensor interpretation
+* Better conceptual flow (capabilities → intelligence → physical form)
+* Reduces "you must go back" friction if processor selection invalidates later choices
 
 Each step **mutates** `actor.system.droidSystems` and **validates** immediately.
 
@@ -371,10 +376,54 @@ actor.system.droidSystems.accessories = [
 - Can re-select items
 - When user changes previous step, all downstream steps **stay selected** but re-validate
 
+### ⚠️ Back-Navigation Invalidation (HARDENED)
+
+**Rule:** When a user goes back and modifies a step, automatically prune any downstream selections that become invalid.
+
+**Examples:**
+
+| Previous Step Changed | Auto-Prune Result | User Notification |
+|----------------------|-------------------|------------------|
+| Change Processor to lower-tier | Remove advanced sensors | "Advanced Sensor removed (incompatible with new Processor)" |
+| Change Locomotion to budget-heavy | Remove some weapons | "Blaster Rifle removed (insufficient budget)" |
+| Remove Manipulator | Remove manipulator-requiring attachments | "Attachment removed (requires manipulator)" |
+
+**Implementation:**
+
+```javascript
+async _onGoBack(fromStep) {
+  this.currentStep = this._getPreviousStep(fromStep);
+  await this.render(true);  // User can edit previous step
+}
+
+async _onNextAfterBackEdit(fromStep) {
+  // After user finishes editing previous step and clicks Next:
+
+  // 1. Validate current step
+  const validation = DroidValidationEngine.validateStep(fromStep, this.droidSystems);
+  if (!validation.valid) return;  // Stay on this step
+
+  // 2. Auto-prune downstream invalid selections
+  const prunedItems = this._autoPruneDownstream(fromStep, this.droidSystems);
+
+  // 3. Notify user
+  if (prunedItems.length > 0) {
+    ui.notifications.info(
+      `${prunedItems.length} selection(s) removed due to incompatibility.`
+    );
+  }
+
+  // 4. Proceed
+  this.currentStep = this._getNextStep(fromStep);
+  await this.render(true);
+}
+```
+
 ### Budget Constraint
 - If user goes back and changes selection, budget may change
-- If new budget state makes downstream selections invalid, show warnings on Final Review
+- Auto-prune handles budget overflow (above)
 - Final Review shows all errors before finalize
+- User cannot finalize with invalid state
 
 ---
 
@@ -463,13 +512,16 @@ This design is ordered for safe incremental coding:
 
 1. **Step 1 (Locomotion):** Simple radio button, proves pattern
 2. **Step 2 (Manipulators):** First multi-select, proves array mutations
-3. **Step 3 (Processor):** Second radio, confirms pattern
-4. **Steps 4-7:** Repeat steps 2 or 3 pattern (optional or multi)
-5. **Step 8 (Review):** Summary display + error handling
-6. **Backward navigation:** Add "Back" button logic
-7. **Budget recalculation:** Full budget tracking across edits
+3. **Step 3 (Sensors):** Optional multi-select, proves skip logic
+4. **Step 4 (Processor):** Second radio, confirms pattern + gates logic
+5. **Steps 5-7:** Repeat steps 2 or 3 pattern (armor, weapons, accessories)
+6. **Step 8 (Review):** Summary display + error handling
+7. **Backward navigation + Auto-prune:** Full back-edit invalidation logic
+8. **Validation layers:** Hard vs soft + messaging
 
 Each can be coded, tested, and reviewed independently.
+
+**Critical order:** Implement backward navigation + auto-prune **before** releasing Phase 2, not after.
 
 ---
 
@@ -480,19 +532,48 @@ Each can be coded, tested, and reviewed independently.
 - All step navigation works on in-memory copy only
 - If user closes window mid-build, changes are lost (correct behavior)
 
+### Validation Layers
+
+Split validation into two categories:
+
+**Hard Validation** (blocks progression)
+- Over budget
+- Missing required systems (Locomotion, Processor)
+- Manipulator count violations (per degree)
+- Any illegal state per rules
+
+**Soft Warnings** (allowed but flagged)
+- Advanced sensor on low-tier processor
+- No weapons selected
+- No armor selected
+- Missing optional systems
+
+Implementation:
+```javascript
+const validation = DroidValidationEngine.validate(droidSystems);
+// Returns:
+// {
+//   valid: boolean,
+//   hard: string[],    // blocks progression
+//   soft: string[]     // warnings only
+// }
+```
+
 ### Validation Always Runs
 - After each step selection
 - Before progression
 - Before finalize
 - If user goes back and re-edits, re-validate all downstream
+- Auto-prune triggers if back-edit creates downstream invalidity
 
 ### Budget Enforcement
 - No item can be added if cost exceeds remaining
 - Budget recalculated after each step
 - Final review shows total
+- Back-navigation may auto-prune to fit budget
 
 ### Degree Constraints
-- Manipulator count enforced per degree
+- Manipulator count enforced per degree (hard validation)
 - Sensor/weapon/accessory counts budget-limited only
 - No degree-based restrictions elsewhere
 
