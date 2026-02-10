@@ -214,6 +214,9 @@ export class ReviewThreadAssembler {
     if (itemType === 'equipment') {
       return main.gearReviews?.general || [];
     }
+    if (itemType === 'vehicle') {
+      return main.vehicleReviews || [];
+    }
 
     return [];
   }
@@ -238,6 +241,10 @@ export class ReviewThreadAssembler {
     }
     if (itemType === 'equipment') {
       return overflow.gearReviewsOverflow || [];
+    }
+    if (itemType === 'vehicle') {
+      // Vehicles don't have overflow yet, but gracefully handle if they do
+      return overflow.vehicleReviewsOverflow || [];
     }
 
     return [];

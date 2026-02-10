@@ -172,6 +172,20 @@ export class SWSEStore extends ApplicationV2 {
           // Usernames pack is optional, don't fail if missing
           console.debug('[SWSE Store] Usernames not found (optional)', usernamesErr.message);
         }
+
+        // Try to load vehicle reviews pack
+        try {
+          const vehicleResponse = await fetch('systems/foundryvtt-swse/data/reviews/vehicle-reviews.json');
+          if (vehicleResponse.ok) {
+            const vehicleData = await vehicleResponse.json();
+            if (vehicleData.vehicleReviews) {
+              this.reviewsData.vehicleReviews = vehicleData.vehicleReviews;
+            }
+          }
+        } catch (vehicleErr) {
+          // Vehicle pack is optional, don't fail if missing
+          console.debug('[SWSE Store] Vehicle reviews not found (optional)', vehicleErr.message);
+        }
       }
     } catch (err) {
       console.warn('[SWSE Store] Failed to load reviews data:', err);

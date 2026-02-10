@@ -48,6 +48,11 @@ const createMockDialoguePacks = () => ({
         'Decent quality'
       ]
     },
+    vehicleReviews: [
+      'Fast but loud',
+      'Handles well in open terrain',
+      'Fuel consumption is concerning'
+    ],
     neekoReviews: {
       selfPromo: [
         'Neeko has better price'
@@ -81,6 +86,10 @@ const createMockDialoguePacks = () => ({
     },
     gearReviewsOverflow: [
       'Useful equipment'
+    ],
+    vehicleReviewsOverflow: [
+      'Surprisingly efficient',
+      'Turns well'
     ],
     neekoOverflow: [
       'Neeko sellsss cheaper'
@@ -421,6 +430,42 @@ export const reviewThreadAssemblerTests = {
     }
 
     console.log('✓ testValidationPass passed');
+    return true;
+  },
+
+  /**
+   * Vehicle reviews are properly assembled and validated
+   */
+  testVehicleReviews() {
+    const packs = createMockDialoguePacks();
+    const thread = ReviewThreadAssembler.build({
+      itemType: 'vehicle',
+      dialoguePacks: packs,
+      hasMentorReview: false,
+      mentorText: null
+    });
+
+    if (!thread.isValid) {
+      console.warn('[TEST FAIL] Vehicle thread validation failed');
+      return false;
+    }
+
+    const customerReviews = thread.reviews.filter(r => r.type === 'customer');
+    if (customerReviews.length < 6 || customerReviews.length > 12) {
+      console.warn(`[TEST FAIL] Vehicle review count out of bounds: ${customerReviews.length}`);
+      return false;
+    }
+
+    // Verify reviews come from vehicle pack
+    const vehiclePool = [...packs.main.vehicleReviews, ...(packs.overflow.vehicleReviewsOverflow || [])];
+    for (const review of customerReviews) {
+      if (!vehiclePool.includes(review.text)) {
+        console.warn(`[TEST FAIL] Review not from vehicle pack: "${review.text}"`);
+        return false;
+      }
+    }
+
+    console.log(`✓ testVehicleReviews passed (${customerReviews.length} reviews)`);
     return true;
   }
 };
