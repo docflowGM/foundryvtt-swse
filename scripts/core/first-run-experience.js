@@ -1,0 +1,239 @@
+/**
+ * First-Run Experience - GM Onboarding
+ * Phase 6: Product-grade finish
+ *
+ * Triggers on first GM login with system-specific guidance,
+ * feature explanations, and dismissible tooltips.
+ *
+ * Usage:
+ *   Called automatically from hardening-init.js in ready hook
+ */
+
+import { SWSELogger } from '../utils/logger.js';
+
+const SYSTEM_ID = 'foundryvtt-swse';
+const SETTING_KEY = 'welcomeShown';
+
+/**
+ * Check if welcome dialog should show
+ */
+async function shouldShowWelcome() {
+  if (!game?.user?.isGM) return false;
+
+  try {
+    const shown = await game.settings.get(SYSTEM_ID, SETTING_KEY);
+    return !shown;
+  } catch {
+    return true; // Default to showing if setting doesn't exist
+  }
+}
+
+/**
+ * Mark welcome as shown
+ */
+async function markWelcomeShown() {
+  try {
+    await game.settings.set(SYSTEM_ID, SETTING_KEY, true);
+  } catch (err) {
+    SWSELogger.warn('Failed to mark welcome as shown:', err.message);
+  }
+}
+
+/**
+ * Reset welcome (for testing or re-onboarding)
+ */
+export async function resetWelcome() {
+  if (!game?.user?.isGM) return false;
+  try {
+    await game.settings.set(SYSTEM_ID, SETTING_KEY, false);
+    SWSELogger.log('Welcome dialog will show on next page load');
+    return true;
+  } catch (err) {
+    SWSELogger.error('Failed to reset welcome:', err.message);
+    return false;
+  }
+}
+
+/**
+ * Show welcome dialog
+ */
+async function showWelcomeDialog() {
+  const content = `
+    <style>
+      .swse-welcome {
+        font-family: var(--font-family);
+        line-height: 1.6;
+      }
+      .swse-welcome h2 {
+        color: var(--color-primary, #00e5ff);
+        margin-bottom: 1rem;
+      }
+      .swse-welcome h3 {
+        color: var(--color-text-alt, #aaa);
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 1.1em;
+      }
+      .swse-welcome ul {
+        margin-left: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      .swse-welcome li {
+        margin-bottom: 0.5rem;
+      }
+      .swse-welcome .section {
+        margin-bottom: 1.5rem;
+      }
+      .swse-welcome .tip {
+        padding: 0.75rem;
+        background: var(--color-bg-alt, #222);
+        border-left: 3px solid var(--color-primary, #00e5ff);
+        border-radius: 3px;
+        margin: 1rem 0;
+        font-size: 0.95em;
+      }
+      .swse-welcome .checkbox-group {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-border, #444);
+      }
+    </style>
+
+    <div class="swse-welcome">
+      <h2>⭐ Welcome to Star Wars Saga Edition!</h2>
+
+      <div class="section">
+        <p>This system provides comprehensive support for SWSE gameplay on Foundry VTT v13+. Here's what you need to know:</p>
+      </div>
+
+      <div class="section">
+        <h3>🎭 Character Generation</h3>
+        <ul>
+          <li><strong>Guided Chargen:</strong> Use the Character Generation tool to build characters step-by-step</li>
+          <li><strong>Auto-Calculation:</strong> Attributes, skills, defenses, and BAB calculate automatically</li>
+          <li><strong>Mentor System:</strong> Get explanations and recommendations as you build</li>
+          <li><strong>Templates:</strong> Pre-built species, classes, and prestige classes available</li>
+        </ul>
+      </div>
+
+      <div class="tip">
+        <strong>Tip:</strong> First-time GMs should read the Mentor system explanations—they explain SWSE rules in context.
+      </div>
+
+      <div class="section">
+        <h3>🎲 Combat & Progression</h3>
+        <ul>
+          <li><strong>Combat Resolution:</strong> Roll attacks and damage with automatic skill/feat calculations</li>
+          <li><strong>Level-Up System:</strong> Guided advancement with class feature recommendations</li>
+          <li><strong>Force Powers:</strong> Full Force power system with resource tracking</li>
+          <li><strong>Vehicles:</strong> Starship and vehicle rules with crew positions</li>
+        </ul>
+      </div>
+
+      <div class="tip">
+        <strong>Tip:</strong> Hover over buttons and icons to see tooltips explaining each feature.
+      </div>
+
+      <div class="section">
+        <h3>📚 Core Concepts</h3>
+        <ul>
+          <li><strong>System Settings:</strong> Configure rules variants and house rules in System Settings</li>
+          <li><strong>Compendium Packs:</strong> All weapons, armor, feats, and talents are in compendium packs (searchable)</li>
+          <li><strong>Actions & Automation:</strong> Many combat actions are automated—click action buttons for quick resolution</li>
+          <li><strong>Destiny Points:</strong> Tracked per character; spend in combat for bonuses or rerolls</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h3>🔗 Get Help</h3>
+        <ul>
+          <li>Hover over UI elements for tooltips</li>
+          <li>Read the <a href="https://github.com/docflowGM/foundryvtt-swse" target="_blank">system documentation</a></li>
+          <li>Join the <a href="https://discord.gg/Sdwd7CgmaJ" target="_blank">community Discord</a></li>
+        </ul>
+      </div>
+
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" id="swse-no-welcome-again" />
+          Don't show this again
+        </label>
+      </div>
+    </div>
+  `;
+
+  return new Promise((resolve) => {
+    const dialog = new Dialog(
+      {
+        title: '⭐ Welcome to SWSE for Foundry VTT',
+        content,
+        buttons: {
+          ok: {
+            icon: '<i class="fas fa-check"></i>',
+            label: 'Got It!',
+            callback: async (html) => {
+              const noAgain = html.find('#swse-no-welcome-again').is(':checked');
+              if (noAgain) {
+                await markWelcomeShown();
+              }
+              resolve(true);
+            }
+          }
+        },
+        default: 'ok'
+      },
+      {
+        width: 600,
+        classes: ['swse-dialog', 'swse-welcome-dialog']
+      }
+    );
+
+    dialog.render(true);
+  });
+}
+
+/**
+ * Initialize first-run experience
+ * Called from hardening-init.js ready hook
+ */
+export async function initializeFirstRunExperience() {
+  if (!game?.ready || !game?.user?.isGM) {
+    return;
+  }
+
+  try {
+    const show = await shouldShowWelcome();
+    if (show) {
+      SWSELogger.log('Showing first-run welcome dialog');
+      await showWelcomeDialog();
+    }
+  } catch (err) {
+    SWSELogger.error('First-run experience error:', err.message);
+  }
+}
+
+/**
+ * Register settings
+ */
+export function registerFirstRunSettings() {
+  game.settings.register(SYSTEM_ID, SETTING_KEY, {
+    name: 'Welcome Dialog Shown',
+    hint: 'Whether the first-run welcome dialog has been shown to this GM',
+    scope: 'world',
+    config: false,
+    type: Boolean,
+    default: false
+  });
+}
+
+/**
+ * Make available to console for re-onboarding
+ */
+export function registerFirstRunConsoleHelpers() {
+  if (typeof window !== 'undefined') {
+    window.SWSEFirstRun = {
+      resetWelcome,
+      showWelcome: showWelcomeDialog
+    };
+  }
+}
