@@ -226,6 +226,35 @@ export class SWSEStore extends ApplicationV2 {
           // Modification pack is optional, don't fail if missing
           console.debug('[SWSE Store] Modification reviews not found (optional)', modErr.message);
         }
+
+        // Try to load service reviews pack
+        try {
+          const serviceResponse = await fetch('systems/foundryvtt-swse/data/reviews/service-reviews.json');
+          if (serviceResponse.ok) {
+            const serviceData = await serviceResponse.json();
+            if (serviceData.dining) {
+              this.reviewsData.dining = serviceData.dining;
+            }
+            if (serviceData.lodging) {
+              this.reviewsData.lodging = serviceData.lodging;
+            }
+            if (serviceData.medicalCare) {
+              this.reviewsData.medicalCare = serviceData.medicalCare;
+            }
+            if (serviceData.transportation) {
+              this.reviewsData.transportation = serviceData.transportation;
+            }
+            if (serviceData.upkeep) {
+              this.reviewsData.upkeep = serviceData.upkeep;
+            }
+            if (serviceData.vehicleRental) {
+              this.reviewsData.vehicleRental = serviceData.vehicleRental;
+            }
+          }
+        } catch (serviceErr) {
+          // Service pack is optional, don't fail if missing
+          console.debug('[SWSE Store] Service reviews not found (optional)', serviceErr.message);
+        }
       }
     } catch (err) {
       console.warn('[SWSE Store] Failed to load reviews data:', err);

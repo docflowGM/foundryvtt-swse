@@ -231,6 +231,18 @@ export class ReviewThreadAssembler {
     if (itemType === 'modification') {
       return main.modificationReviews || [];
     }
+    if (itemType === 'service') {
+      // Mix all service categories for variety
+      const allServices = [
+        ...(main.dining || []),
+        ...(main.lodging || []),
+        ...(main.medicalCare || []),
+        ...(main.transportation || []),
+        ...(main.upkeep || []),
+        ...(main.vehicleRental || [])
+      ];
+      return allServices.length > 0 ? allServices : [];
+    }
 
     return [];
   }
@@ -267,6 +279,18 @@ export class ReviewThreadAssembler {
     if (itemType === 'modification') {
       // Modifications don't have overflow yet, but gracefully handle if they do
       return overflow.modificationReviewsOverflow || [];
+    }
+    if (itemType === 'service') {
+      // Services don't have overflow yet, but gracefully handle if they do
+      const allServicesOverflow = [
+        ...(overflow.diningOverflow || []),
+        ...(overflow.lodgingOverflow || []),
+        ...(overflow.medicalCareOverflow || []),
+        ...(overflow.transportationOverflow || []),
+        ...(overflow.upkeepOverflow || []),
+        ...(overflow.vehicleRentalOverflow || [])
+      ];
+      return allServicesOverflow;
     }
 
     return [];

@@ -78,6 +78,30 @@ const createMockDialoguePacks = () => ({
       'Works as advertised, mostly.',
       'Why does it make that sound now.'
     ],
+    dining: [
+      'This dining experience was more about presentation than food.',
+      'I ate well, but it took longer than expected.'
+    ],
+    lodging: [
+      'This lodging experience looked great at first, then problems appeared.',
+      'I slept comfortably, which is all I needed.'
+    ],
+    medicalCare: [
+      'This medical service solved the problem, but explanations were minimal.',
+      'I received treatment quickly.'
+    ],
+    transportation: [
+      'This transportation experience got me where I needed to go.',
+      'The trip was uneventful, which I appreciated.'
+    ],
+    upkeep: [
+      'This upkeep service made things easier for a while.',
+      'Maintaining this lifestyle took more effort than expected.'
+    ],
+    vehicleRental: [
+      'This vehicle rental worked as expected.',
+      'The vehicle handled fine for short trips.'
+    ],
     neekoReviews: {
       selfPromo: [
         'Neeko has better price'
@@ -119,6 +143,24 @@ const createMockDialoguePacks = () => ({
     modificationReviewsOverflow: [
       'Installation was stressful.',
       'Feels like a real upgrade.'
+    ],
+    diningOverflow: [
+      'The meal filled me up, which was the goal.'
+    ],
+    lodgingOverflow: [
+      'The room was clean, but smaller than expected.'
+    ],
+    medicalCareOverflow: [
+      'The staff focused on efficiency, not comfort.'
+    ],
+    transportationOverflow: [
+      'This ride took longer than advertised.'
+    ],
+    upkeepOverflow: [
+      'The service covered the basics.'
+    ],
+    vehicleRentalOverflow: [
+      'This rental experience was stressful at times.'
     ],
     neekoOverflow: [
       'Neeko sellsss cheaper'
@@ -574,6 +616,56 @@ export const reviewThreadAssemblerTests = {
     }
 
     console.log(`✓ testModificationReviews passed (${customerReviews.length} reviews)`);
+    return true;
+  },
+
+  /**
+   * Service reviews are properly assembled from all service categories
+   */
+  testServiceReviews() {
+    const packs = createMockDialoguePacks();
+    const thread = ReviewThreadAssembler.build({
+      itemType: 'service',
+      dialoguePacks: packs,
+      hasMentorReview: false,
+      mentorText: null
+    });
+
+    if (!thread.isValid) {
+      console.warn('[TEST FAIL] Service thread validation failed');
+      return false;
+    }
+
+    const customerReviews = thread.reviews.filter(r => r.type === 'customer');
+    if (customerReviews.length < 6 || customerReviews.length > 12) {
+      console.warn(`[TEST FAIL] Service review count out of bounds: ${customerReviews.length}`);
+      return false;
+    }
+
+    // Verify reviews come from service packs (all categories mixed)
+    const servicePool = [
+      ...packs.main.dining,
+      ...packs.main.lodging,
+      ...packs.main.medicalCare,
+      ...packs.main.transportation,
+      ...packs.main.upkeep,
+      ...packs.main.vehicleRental,
+      ...(packs.overflow.diningOverflow || []),
+      ...(packs.overflow.lodgingOverflow || []),
+      ...(packs.overflow.medicalCareOverflow || []),
+      ...(packs.overflow.transportationOverflow || []),
+      ...(packs.overflow.upkeepOverflow || []),
+      ...(packs.overflow.vehicleRentalOverflow || [])
+    ];
+
+    for (const review of customerReviews) {
+      if (!servicePool.includes(review.text)) {
+        console.warn(`[TEST FAIL] Review not from service pack: "${review.text}"`);
+        return false;
+      }
+    }
+
+    console.log(`✓ testServiceReviews passed (${customerReviews.length} reviews from mixed service categories)`);
     return true;
   }
 };
