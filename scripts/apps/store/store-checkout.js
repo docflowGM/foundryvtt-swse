@@ -425,6 +425,7 @@ export async function createCustomDroid(actor, closeCallback) {
         title: 'Build Custom Droid',
         content: `<p>Enter the droid construction system?</p>
                  <p>You will design a non-heroic droid at level ${actor.system.level || 1}.</p>
+                 <p><strong>This build will be submitted for GM approval.</strong></p>
                  <p><strong>Minimum cost:</strong> ${baseCredits.toLocaleString()} credits</p>`,
         defaultYes: true
     });
@@ -437,13 +438,23 @@ export async function createCustomDroid(actor, closeCallback) {
             closeCallback();
         }
 
-        // Launch character generator in droid-building mode
+        // Launch character generator in droid-building mode with draft mode enabled
+        // When chargen completes in draftMode, it will call the draftSubmissionCallback
         const chargen = new CharacterGenerator(null, {
             droidBuilderMode: true,
+            draftMode: true,  // Enable draft submission workflow
             ownerActor: actor,
             droidLevel: actor.system.level || 1,
             availableCredits: credits,
-            droidConstructionCredits: baseCredits
+            droidConstructionCredits: baseCredits,
+            draftSubmissionCallback: async (chargenSnapshot, cost) => {
+                // When chargen completes in draft mode, submit to approval queue
+                const success = await submitDraftDroidForApproval(chargenSnapshot, actor, cost);
+                if (success) {
+                    // Chargen will close itself in draft mode
+                    SWSELogger.log('SWSE Store | Droid draft submitted successfully');
+                }
+            }
         });
 
         chargen.render(true);
