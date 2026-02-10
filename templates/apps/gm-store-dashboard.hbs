@@ -1,4 +1,4 @@
-<div class="gm-store-dashboard-container">
+<div class="gm-store-dashboard-container" title="This dashboard allows the GM to review store transactions, resolve pending sales, and control store availability and pricing. No purchases or sales are initiated from this screen.">
   <div class="dashboard-header">
     <h2>GM STORE CONTROL</h2>
     <p class="subtitle">Commerce oversight, transaction review, and store governance</p>
@@ -6,9 +6,9 @@
 
   {{!-- Tab Navigation --}}
   <nav class="dashboard-tabs">
-    <button class="tab-button" data-tab="transactions">Transactions</button>
-    <button class="tab-button" data-tab="pending">Pending Sales</button>
-    <button class="tab-button" data-tab="controls">Store Controls</button>
+    <button class="tab-button" data-tab="transactions" title="Review all completed buy and sell transactions. Transactions may be reversed here if a correction is required.">Transactions</button>
+    <button class="tab-button" data-tab="pending" title="View and resolve sell offers that have not yet been accepted or denied.">Pending Sales</button>
+    <button class="tab-button" data-tab="controls" title="Configure store availability, pricing modifiers, item visibility, and selling house rules.">Store Controls</button>
   </nav>
 
   {{!-- Tab Content --}}
@@ -17,11 +17,11 @@
     {{!-- TAB 1: TRANSACTIONS LEDGER --}}
     <div class="dashboard-tab" data-tab="transactions">
       <h3>TRANSACTION LEDGER</h3>
-      <p class="tab-description">A chronological record of all finalized store transactions. Use this to audit purchases, identify mistakes, or reverse transactions if necessary.</p>
+      <p class="tab-description" title="A chronological record of all finalized store transactions. This ledger exists for auditing and correction, not for initiating trades.">A chronological record of all finalized store transactions. Use this to audit purchases, identify mistakes, or reverse transactions if necessary.</p>
 
       {{!-- Filters --}}
       <div class="filters-row">
-        <select class="filter-select" id="actor-filter">
+        <select class="filter-select" id="actor-filter" title="Filter transactions by the character involved in the trade.">
           <option value="">All Players</option>
           {{#each actors}}
             <option value="{{this.id}}">{{this.name}}</option>
@@ -29,11 +29,11 @@
         </select>
 
         <div class="checkbox-group">
-          <label><input type="checkbox" checked data-type="Buy"> Buy</label>
-          <label><input type="checkbox" checked data-type="Sell"> Sell</label>
+          <label title="Show transactions where an item was purchased from the store."><input type="checkbox" checked data-type="Buy"> Buy</label>
+          <label title="Show transactions where an item was sold to the store."><input type="checkbox" checked data-type="Sell"> Sell</label>
         </div>
 
-        <select class="filter-select" id="time-filter">
+        <select class="filter-select" id="time-filter" title="Limit the transaction list to a specific time window. Useful for reviewing recent activity or the current session.">
           <option value="">All Time</option>
           <option value="hour">Last Hour</option>
           <option value="day">Today</option>
@@ -45,12 +45,12 @@
       <table class="transactions-table">
         <thead>
           <tr>
-            <th data-sort="timestamp">Time</th>
-            <th data-sort="actor">Actor</th>
-            <th data-sort="type">Type</th>
-            <th data-sort="item">Item</th>
-            <th data-sort="amount">Amount</th>
-            <th data-sort="source">Source</th>
+            <th data-sort="timestamp" title="The time at which the transaction was finalized.">Time</th>
+            <th data-sort="actor" title="The character involved in the transaction.">Actor</th>
+            <th data-sort="type" title="Whether the transaction was a purchase or a sale.">Type</th>
+            <th data-sort="item" title="The item that was exchanged.">Item</th>
+            <th data-sort="amount" title="Credits transferred. Negative values indicate spending; positive values indicate income.">Amount</th>
+            <th data-sort="source" title="How the transaction was resolved (store purchase, automatic selling, or GM override).">Source</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -67,7 +67,7 @@
               <td><span class="source-badge">{{this.source}}</span></td>
               <td>
                 <button class="action-btn" data-action="reverse-transaction" data-index="{{@index}}"
-                        title="Reverse this transaction. Buying reversals remove the item and restore credits. Selling reversals re-add the item and remove credits. Use with care.">
+                        title="Reverse this transaction. Purchases will remove the item and restore credits. Sales will re-add the item and remove credits. Use only to correct mistakes.">
                   Reverse
                 </button>
               </td>
@@ -84,16 +84,16 @@
     {{!-- TAB 2: PENDING SALES --}}
     <div class="dashboard-tab" data-tab="pending">
       <h3>PENDING SELL ATTEMPTS</h3>
-      <p class="tab-description">Sell offers awaiting GM resolution. These appear if a sell request was not immediately resolved or was dismissed earlier.</p>
+      <p class="tab-description" title="Sell offers awaiting GM resolution. Offers appear here if they were not automatically accepted or if the original prompt was dismissed.">Sell offers awaiting GM resolution. These appear if a sell request was not immediately resolved or was dismissed earlier.</p>
 
       {{!-- Pending Sales Table --}}
       <table class="pending-table">
         <thead>
           <tr>
-            <th>Time</th>
-            <th>Actor</th>
-            <th>Item</th>
-            <th>Requested Value</th>
+            <th title="When the sell offer was submitted by the player.">Time</th>
+            <th title="The character offering the item for sale.">Actor</th>
+            <th title="The item the player is attempting to sell.">Item</th>
+            <th title="The proposed credit value. Items without a base price cannot be automatically valued.">Requested Value</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -112,15 +112,15 @@
               </td>
               <td>
                 <button class="action-btn" data-action="accept-pending" data-index="{{@index}}"
-                        title="Accept this sale at the listed value. Credits will be transferred and the item removed.">
+                        title="Accept this sale at the listed value. The item will be removed from the actor and credits will be transferred.">
                   Accept
                 </button>
                 <button class="action-btn secondary" data-action="deny-pending" data-index="{{@index}}"
-                        title="Deny this sale. No changes will be made.">
+                        title="Deny this sale. No inventory or credit changes will occur.">
                   Deny
                 </button>
                 <button class="action-btn" data-action="set-amount-pending" data-index="{{@index}}"
-                        title="Manually set a different credit value for this sale.">
+                        title="Manually specify a different credit value for this sale. This overrides the standard valuation.">
                   Set Amount
                 </button>
               </td>
