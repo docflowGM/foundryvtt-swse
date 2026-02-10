@@ -18,6 +18,7 @@ import { WeaponSuggestions } from '../../suggestion-engine/weapon-suggestions.js
 import { GearSuggestions } from '../../suggestion-engine/gear-suggestions.js';
 import { MentorProseGenerator } from '../../suggestion-engine/mentor-prose-generator.js';
 import { ReviewThreadAssembler } from './review-thread-assembler.js';
+import { StoreLoadingOverlay } from './store-loading-overlay.js';
 import {
   safeString,
   safeImg,
@@ -89,6 +90,17 @@ export class SWSEStore extends ApplicationV2 {
 
     this.cart = emptyCart();
     this._loaded = false;
+
+    // Initialize loading overlay
+    const useAurebesh = game.settings.get('foundryvtt-swse', 'useAurebesh') ?? true;
+    const skipOverlay = game.settings.get('foundryvtt-swse', 'storeSkipLoadingOverlay') ?? false;
+    const reduceMotion = game.user?.getFlag?.('core', 'reduce-motion') ?? false;
+
+    this.loadingOverlay = new StoreLoadingOverlay({
+      useAurebesh,
+      reduceMotion,
+      skipOverlay
+    });
   }
 
   // NOTE: V2 API - Do NOT override _renderHTML or _replaceHTML
@@ -110,18 +122,25 @@ export class SWSEStore extends ApplicationV2 {
     if (this._loaded) {return;}
     this._loaded = true;
 
+    // PHASE 1: Load cart from actor
     this.cart = this._loadCartFromActor();
+    this.loadingOverlay?.advancePhase?.();
 
-    // DELEGATED TO ENGINE: Load inventory
+    // PHASE 2: Load inventory (DELEGATED TO ENGINE)
     await this._loadStoreInventory();
+    this.loadingOverlay?.advancePhase?.();
 
-    // Load reviews pack
+    // PHASE 3: Load reviews pack
     await this._loadReviewsData();
+    this.loadingOverlay?.advancePhase?.();
 
-    // Wire suggestion engine for all items
+    // PHASE 4: Wire suggestion engine for all items
     if (this.actor) {
       await this._generateSuggestionsForAllItems();
     }
+    this.loadingOverlay?.advancePhase?.();
+
+    // PHASE 5: Mark render as complete (handled in _onRender)
   }
 
   async _loadReviewsData() {
@@ -666,6 +685,10 @@ export class SWSEStore extends ApplicationV2 {
 
     // Initial render once DOM exists
     this._renderCartUI();
+
+    // PHASE 5: Complete: All rendering done, fade out overlay
+    this.loadingOverlay?.advancePhase?.();
+    this.loadingOverlay?.complete?.();
   }
 
   _setRendarrLine(line) {

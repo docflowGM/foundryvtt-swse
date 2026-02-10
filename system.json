@@ -55,6 +55,7 @@
     "styles/apps/custom-item-dialog.css",
     "styles/apps/store.css",
     "styles/apps/store-card-grid.css",
+    "styles/apps/store-loading-overlay.css",
     "styles/apps/levelup.css",
     "styles/sheets/character-sheet.css",
     "styles/sheets/vehicle-sheet.css",
@@ -505,6 +506,22 @@
       "config": false,
       "type": "String",
       "default": ""
+    },
+    "foundryvtt-swse.useAurebesh": {
+      "scope": "client",
+      "config": true,
+      "type": "Boolean",
+      "default": true,
+      "name": "Use Aurebesh Typography",
+      "hint": "Render all interface text in Aurebesh fonts. Disable for Consolas/Courier (accessibility fallback)."
+    },
+    "foundryvtt-swse.storeSkipLoadingOverlay": {
+      "scope": "client",
+      "config": true,
+      "type": "Boolean",
+      "default": false,
+      "name": "Skip Store Loading Overlay",
+      "hint": "Disable the Rendarr loading overlay that appears when opening the Store. The store will load normally in the background."
     }
   }
 }
