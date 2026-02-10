@@ -1,5 +1,8 @@
 /* SWSE Store Card Grid — Holo Theme */
 
+/* Aurebesh: Intentional nonsense font for marketplace reviews (stylized/alien aesthetic) */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
 .swse-app-store.card-grid-store {
   --holo-cyan: #00d9ff;
   --holo-amber: #ffa500;

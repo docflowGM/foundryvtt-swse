@@ -786,11 +786,11 @@ export class SWSEStore extends ApplicationV2 {
 
               ${mentorReview ? `
                 <div class="mentor-review" style="margin-bottom: 12px; padding: 12px; background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(255, 165, 0, 0.05)); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 4px;">
-                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-family: Consolas, monospace;">
                     <i class="fas fa-user-circle" style="color: var(--holo-amber); font-size: 16px;"></i>
                     <strong style="color: var(--holo-amber);">Rendarr</strong>
                   </div>
-                  <p style="margin: 0; font-size: 12px; line-height: 1.6; font-style: italic;">
+                  <p style="margin: 0; font-size: 12px; line-height: 1.6; font-style: italic; font-family: Consolas, monospace; color: rgba(255, 255, 255, 0.9);">
                     "${mentorReview}"
                   </p>
                 </div>
@@ -932,12 +932,14 @@ export class SWSEStore extends ApplicationV2 {
       const starDisplay = review.stars ? `<span style="color: #ffc800; font-size: 11px; margin-left: 4px;">★ ${review.stars}/5</span>` : '';
 
       // Build reviews + replies
+      // Username & metadata in Consolas (readable)
+      // Review text in Aurebesh (intentional nonsense marketplace noise)
       let reviewHTML = `
         <div class="flavor-review" style="margin-bottom: 12px; padding: 8px; background: ${bgColor}; border-left: 2px solid ${borderColor}; border-radius: 2px;">
-          <div style="font-size: 11px; color: rgba(255, 255, 255, 0.7); font-weight: bold; margin-bottom: 4px;">
+          <div style="font-size: 11px; color: rgba(255, 255, 255, 0.7); font-weight: bold; margin-bottom: 4px; font-family: Consolas, monospace;">
             ${icon} ${review.author} ${starDisplay}
           </div>
-          <p style="margin: 0; font-size: 12px; line-height: 1.4; color: rgba(255, 255, 255, 0.8);">
+          <p style="margin: 0; font-size: 12px; line-height: 1.5; color: rgba(255, 255, 255, 0.8); font-family: 'Aurebesh', serif; letter-spacing: 0.3px;">
             "${review.text}"
           </p>
       `;
@@ -949,8 +951,8 @@ export class SWSEStore extends ApplicationV2 {
           const replyPrefix = reply.isResponse ? 'Response: ' : 'Reply: ';
           reviewHTML += `
             <div style="margin-bottom: 6px; font-size: 11px;">
-              <strong style="color: rgba(255, 255, 255, 0.6);">${replyPrefix}${reply.author}</strong>
-              <p style="margin: 2px 0 0 0; font-size: 11px; color: rgba(255, 255, 255, 0.6);">
+              <strong style="color: rgba(255, 255, 255, 0.6); font-family: Consolas, monospace;">${replyPrefix}${reply.author}</strong>
+              <p style="margin: 2px 0 0 0; font-size: 11px; color: rgba(255, 255, 255, 0.6); font-family: 'Aurebesh', serif; letter-spacing: 0.3px;">
                 "${reply.text}"
               </p>
             </div>
