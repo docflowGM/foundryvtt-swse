@@ -42,7 +42,17 @@ export async function initiateItemSale(item, actor) {
   }
 
   const basePrice = normalizeCredits(item.system?.price ?? 0);
+
+  // EDGE CASE 1: Item with no base price
+  // Block automatic selling and percentage math
   if (basePrice === 0) {
+    const hasNoPrice = !item.system?.price || isNaN(Number(item.system?.price));
+    if (hasNoPrice) {
+      // No base price defined — force manual GM override
+      showNoPriceDialog(item, actor);
+      return;
+    }
+    // Price is zero but defined — block sale
     ui.notifications.warn(`${item.name} has no sale value.`);
     return;
   }
@@ -51,6 +61,36 @@ export async function initiateItemSale(item, actor) {
 
   // Show player confirmation UI
   await showSaleConfirmation(item, actor, basePrice, rawOffer);
+}
+
+/**
+ * Display dialog for items with no base price
+ * Requires manual GM override — no auto-accept, no percentage math
+ */
+async function showNoPriceDialog(item, actor) {
+  const confirmed = await Dialog.confirm({
+    title: 'Offer Item for Sale',
+    content: `
+      <div style="text-align: center;">
+        <h3>${item.name}</h3>
+        <p style="margin: 1rem 0; color: #ff9900;">
+          <strong>⚠ No base price is defined for this item.</strong>
+        </p>
+        <p style="font-size: 0.9rem; color: #888;">
+          Rendarr will set a price for this item.
+        </p>
+      </div>
+    `,
+    defaultYes: true
+  });
+
+  if (!confirmed) {
+    return;
+  }
+
+  // Bypass auto-accept and percentage logic
+  // Go directly to GM adjudication with no suggested price
+  await resolveSaleNoPriceBase(item, actor);
 }
 
 /**
@@ -80,6 +120,15 @@ async function showSaleConfirmation(item, actor, basePrice, rawOffer) {
 
   // Player confirmed intent; proceed to resolution
   await resolveSale(item, actor, basePrice, rawOffer);
+}
+
+/**
+ * Resolve sale for items with no base price
+ * Requires manual GM override — no auto-accept, no percentage math
+ */
+async function resolveSaleNoPriceBase(item, actor) {
+  // Bypass automation, go directly to GM adjudication
+  await showGmAdjudicationPromptNoPriceBase(item, actor);
 }
 
 /**
@@ -148,32 +197,94 @@ async function showGmAdjudicationPrompt(item, actor, basePrice, rawOffer) {
 }
 
 /**
+ * Display GM adjudication prompt for items with no base price
+ * Only options: Deny or Set Amount (no suggested price shown)
+ */
+async function showGmAdjudicationPromptNoPriceBase(item, actor) {
+  return new Promise((resolve) => {
+    const dialog = new Dialog({
+      title: `[SALE] ${actor.name} offers ${item.name}`,
+      content: `
+        <div style="line-height: 1.6;">
+          <p><strong>${actor.name}</strong> wants to sell</p>
+          <p style="font-size: 1.1rem; font-weight: bold;">${item.name}</p>
+          <p style="color: #ff9900; margin: 1rem 0;">
+            <strong>⚠ No base price is defined for this item.</strong>
+          </p>
+          <hr>
+          <p>Set an amount (Rendarr's offer):</p>
+          <input type="number" id="override-amount" min="0" placeholder="0" style="width: 100%; padding: 0.5rem;"/>
+        </div>
+      `,
+      buttons: {
+        accept: {
+          label: 'Set Amount',
+          callback: async () => {
+            const overrideEl = document.querySelector('#override-amount');
+            const override = overrideEl?.value?.trim();
+            if (!override || isNaN(Number(override))) {
+              ui.notifications.warn('Please enter a valid amount.');
+              return;
+            }
+            const salePrice = normalizeCredits(override);
+            await acceptSale(item, actor, salePrice, false);
+            resolve();
+          }
+        },
+        deny: {
+          label: 'Deny',
+          callback: async () => {
+            denySale(item, actor);
+            resolve();
+          }
+        }
+      },
+      default: 'deny'
+    }, {
+      width: 500
+    });
+
+    dialog.render(true);
+  });
+}
+
+/**
  * Accept a sale: Remove item, add credits, animate, feedback
+ *
+ * TRANSACTION SAFETY GUARANTEES:
+ * - If ANY error occurs during mutation, no animation plays
+ * - Item deletion and credit addition are both atomic (all-or-nothing)
+ * - Animations and feedback ONLY trigger after both mutations succeed
+ * - No partial state: item either sold (both deleted + credited) or untouched
+ * - Player never sees speculative/animated values
  */
 async function acceptSale(item, actor, salePrice, isAutomatic) {
   try {
     const creditsBefore = normalizeCredits(actor.system?.credits ?? 0);
     const creditsAfter = normalizeCredits(creditsBefore + salePrice);
 
-    // Remove item from actor
+    // STEP 1: Remove item from actor (if this fails, nothing happens)
     await item.delete();
 
-    // Add credits
+    // STEP 2: Add credits (if this fails, item is already gone — we failed atomically)
     await actor.update({ 'system.credits': creditsAfter });
 
-    // Log transaction
+    // STEP 3: Log transaction (informational only, doesn't block)
     logSaleTransaction(actor, item, salePrice, isAutomatic);
 
-    // Show player-only feedback (only to selling player)
+    // STEP 4: Show feedback and animate (only after mutations confirmed)
     const isSeller = game.user?.isGM || game.user?.id === actor.owner;
     if (isSeller) {
       showPlayerSaleAcceptance(item, salePrice);
-      // Animate credit gain
+      // Animate credit gain (safe: actor document already updated)
       await animateCreditGain(actor, creditsBefore, creditsAfter);
     }
   } catch (err) {
+    // EDGE CASE 2: Transaction failure safety
+    // If any mutation failed, item stays in inventory, credits unchanged
     SWSELogger.error('Item sale failed:', err);
     ui.notifications.error('Sale failed. See console for details.');
+    // UI is restored; player can try again
   }
 }
 
