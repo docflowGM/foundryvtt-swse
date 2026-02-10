@@ -445,3 +445,206 @@
 .store-glyph[aria-hidden="true"] {
   /* Glyph is purely decorative; ignored by assistive tech */
 }
+
+/* ============================================================ */
+/* CHECKOUT MODE STATE                                          */
+/* ============================================================ */
+
+/**
+ * Checkout mode: Locks cart, dims product grid, focuses on ledger
+ */
+.store.checkout-mode {
+  /* Product grid is dimmed */
+}
+
+.store.checkout-mode .products-grid {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.store.checkout-mode .card-grid-container {
+  position: relative;
+}
+
+/**
+ * Cart sidebar in checkout mode: Transforms to ledger view
+ */
+.store.checkout-mode .cart-sidebar {
+  z-index: 2100;
+}
+
+.store.checkout-mode .cart-header {
+  border-bottom: 2px solid rgba(0, 255, 136, 0.4);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.store.checkout-mode .cart-header h3 {
+  font-size: 1.3rem;
+  color: rgba(0, 255, 136, 0.9);
+  letter-spacing: 1px;
+}
+
+/**
+ * Ledger view: Text-forward, no glyphs, clear amounts
+ */
+.store.checkout-mode .cart-items {
+  font-family: 'Courier New', monospace;
+  background: rgba(0, 20, 40, 0.5);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.store.checkout-mode .cart-items .cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+  font-size: 0.9rem;
+}
+
+.store.checkout-mode .cart-items .cart-item:last-child {
+  border-bottom: none;
+}
+
+.store.checkout-mode .cart-items .cart-item-name {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.store.checkout-mode .cart-items .cart-item-qty {
+  color: rgba(0, 255, 136, 0.7);
+  margin: 0 1rem;
+  min-width: 30px;
+  text-align: center;
+}
+
+.store.checkout-mode .cart-items .cart-item-cost {
+  color: rgba(0, 255, 200, 0.9);
+  min-width: 80px;
+  text-align: right;
+  font-weight: bold;
+}
+
+/**
+ * Cart summary: Ledger-style with clear hierarchy
+ */
+.store.checkout-mode .cart-summary {
+  font-family: 'Courier New', monospace;
+  border-top: 2px solid rgba(0, 255, 136, 0.3);
+  border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+  padding: 1.2rem 0;
+  margin-bottom: 1rem;
+}
+
+.store.checkout-mode .summary-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.store.checkout-mode .summary-line.total {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: rgba(0, 255, 150, 0.95);
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.store.checkout-mode .summary-line.remaining {
+  color: rgba(255, 200, 100, 0.85);
+  padding-top: 0.5rem;
+}
+
+/**
+ * Mentor interpretation (optional): Below ledger, italicized
+ */
+.checkout-mentor-interpretation {
+  font-style: italic;
+  color: rgba(200, 180, 220, 0.7);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  border-left: 2px solid rgba(200, 180, 220, 0.3);
+  padding-left: 1rem;
+}
+
+/**
+ * Cart actions in checkout mode: Show confirm/cancel, hide clear
+ */
+.store.checkout-mode .cart-actions {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.store.checkout-mode .clear-cart-btn {
+  display: none;
+}
+
+.store.checkout-mode #cancel-checkout {
+  display: inline-block !important;
+}
+
+.store.checkout-mode .checkout-btn {
+  flex: 1;
+  background: rgba(0, 255, 136, 0.3);
+  border: 2px solid rgba(0, 255, 136, 0.6);
+  color: rgba(0, 255, 150, 0.95);
+  font-weight: bold;
+  padding: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.store.checkout-mode .checkout-btn:hover:not(:disabled) {
+  background: rgba(0, 255, 136, 0.5);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+}
+
+.store.checkout-mode .checkout-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.store.checkout-mode .clear-cart-btn {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/**
+ * Credit reconciliation animation
+ */
+@keyframes credit-reconciliation {
+  from {
+    color: rgba(255, 200, 100, 1);
+    text-shadow: 0 0 8px rgba(255, 200, 100, 0.6);
+  }
+  to {
+    color: rgba(0, 255, 150, 0.95);
+    text-shadow: none;
+  }
+}
+
+.credits-reconciling {
+  animation: credit-reconciliation 0.6s ease-out forwards;
+}
+
+/**
+ * Reduced motion: No animations
+ */
+@media (prefers-reduced-motion: reduce) {
+  .store.checkout-mode .cart-sidebar {
+    opacity: 1;
+  }
+
+  .credits-reconciling {
+    animation: none;
+    color: rgba(0, 255, 150, 0.95);
+  }
+}

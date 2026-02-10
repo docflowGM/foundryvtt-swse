@@ -572,95 +572,133 @@ export async function checkout(store, animateNumberCallback) {
         return;
     }
 
-    // Confirm purchase
-    const confirmed = await Dialog.confirm({
-        title: 'Complete Purchase',
-        content: `<p>Complete purchase for <strong>${total.toLocaleString()}</strong> credits?</p>
-                 <p>This will add ${store.cart.items.length} item(s), ${store.cart.droids.length} droid(s), and ${store.cart.vehicles.length} vehicle(s).</p>`,
-        defaultYes: true
-    });
+    // PART 3: Enter checkout mode (ledger view)
+    store.enterCheckoutMode();
+    store._showCartSidebar(store.element);
 
-    if (!confirmed) {return;}
-
-    try {
-        // Animate credits countdown in wallet display
-        const walletCreditsEl = store.element[0].querySelector('.remaining-credits');
-        if (walletCreditsEl && animateNumberCallback) {
-            animateNumberCallback(walletCreditsEl, credits, credits - total, 600);
-        }
-
-        // DELEGATED TO ENGINE: Execute purchase with itemGrantCallback
-        const result = await StoreEngine.purchase({
-            actor,
-            items: store.cart,
-            totalCost: total,
-            itemGrantCallback: async (purchasingActor, cartItems) => {
-
-            // Add regular items to actor
-            const itemsToCreate = store.cart.items.map(cartItem => {
-                const item = cartItem.item;
-                return item.toObject ? item.toObject() : item;
-            });
-            if (itemsToCreate.length > 0) {
-                await purchasingActor.createEmbeddedDocuments('Item', itemsToCreate);
-            }
-
-            // Create droid actors
-            for (const droid of store.cart.droids) {
-                const droidData = droid.actor.toObject ? droid.actor.toObject() : droid.actor;
-                droidData.name = `${droid.name} (${purchasingActor.name}'s)`;
-                droidData.ownership = {
-                    default: 0,
-                    [game.user.id]: 3
-                };
-                await createActor(droidData);
-            }
-
-            // Create vehicle actors from Item templates
-            for (const vehicle of store.cart.vehicles) {
-                const template = vehicle.template || store.itemsById?.get(vehicle.id);
-                if (!template) {
-                    throw new Error(`Vehicle template not found for id=${vehicle.id}`);
-                }
-
-                const vehicleActor = await createActor({
-                    name: `${vehicle.condition === 'used' ? '(Used) ' : ''}${vehicle.name}`,
-                    type: 'vehicle',
-                    img: template.img || 'icons/svg/anchor.svg',
-                    ownership: {
-                        default: 0,
-                        [game.user.id]: 3
-                    }
-                }, { renderSheet: false });
-
-                await SWSEVehicleHandler.applyVehicleTemplate(vehicleActor, template, {
-                    condition: vehicle.condition
-                });
-            }
-        });
-
-        if (!result.success) {
-            ui.notifications.error(`Purchase failed: ${result.error}`);
-            store.render();
+    // PART 5: Wait for confirmation (user clicks Confirm Trade or Cancel)
+    return new Promise((resolve) => {
+        const rootEl = store.element;
+        if (!rootEl) {
+            resolve();
             return;
         }
 
-        ui.notifications.info(`Purchase complete! Spent ${total.toLocaleString()} credits.`);
+        const confirmBtn = rootEl.querySelector('.checkout-btn');
+        const cancelBtn = rootEl.querySelector('#cancel-checkout');
 
-        // Log purchase to history
-        await logPurchaseToHistory(actor, store.cart, total);
+        const handleConfirm = async () => {
+            // Disable buttons during transaction
+            if (confirmBtn) confirmBtn.disabled = true;
+            if (cancelBtn) cancelBtn.disabled = true;
 
-        // Clear cart
-        clearCart(store.cart);
-        store.cartTotal = 0;
+            cleanupListeners();
 
-        // Wait for animation to complete before re-rendering
-        setTimeout(() => store.render(), 700);
-    } catch (err) {
-        SWSELogger.error('SWSE Store | Checkout failed:', err);
-        ui.notifications.error('Purchase failed. See console for details.');
-        store.render();
-    }
+            try {
+                // PART 5: Execute engine transaction
+                const result = await StoreEngine.purchase({
+                    actor,
+                    items: store.cart,
+                    totalCost: total,
+                    itemGrantCallback: async (purchasingActor, cartItems) => {
+                        // Add regular items to actor
+                        const itemsToCreate = store.cart.items.map(cartItem => {
+                            const item = cartItem.item;
+                            return item.toObject ? item.toObject() : item;
+                        });
+                        if (itemsToCreate.length > 0) {
+                            await purchasingActor.createEmbeddedDocuments('Item', itemsToCreate);
+                        }
+
+                        // Create droid actors
+                        for (const droid of store.cart.droids) {
+                            const droidData = droid.actor.toObject ? droid.actor.toObject() : droid.actor;
+                            droidData.name = `${droid.name} (${purchasingActor.name}'s)`;
+                            droidData.ownership = {
+                                default: 0,
+                                [game.user.id]: 3
+                            };
+                            await createActor(droidData);
+                        }
+
+                        // Create vehicle actors from Item templates
+                        for (const vehicle of store.cart.vehicles) {
+                            const template = vehicle.template || store.itemsById?.get(vehicle.id);
+                            if (!template) {
+                                throw new Error(`Vehicle template not found for id=${vehicle.id}`);
+                            }
+
+                            const vehicleActor = await createActor({
+                                name: `${vehicle.condition === 'used' ? '(Used) ' : ''}${vehicle.name}`,
+                                type: 'vehicle',
+                                img: template.img || 'icons/svg/anchor.svg',
+                                ownership: {
+                                    default: 0,
+                                    [game.user.id]: 3
+                                }
+                            }, { renderSheet: false });
+
+                            await SWSEVehicleHandler.applyVehicleTemplate(vehicleActor, template, {
+                                condition: vehicle.condition
+                            });
+                        }
+                    }
+                });
+
+                if (!result.success) {
+                    ui.notifications.error(`Purchase failed: ${result.error}`);
+                    store.exitCheckoutMode();
+                    store._renderCartUI();
+                    resolve();
+                    return;
+                }
+
+                // PART 6: Animate credit reconciliation
+                const newCredits = Number(actor.system?.credits ?? 0) || 0;
+                await store.animateCreditReconciliation(credits, newCredits, 600);
+
+                ui.notifications.info(`Purchase complete! Spent ${total.toLocaleString()} credits.`);
+
+                // Log purchase to history
+                await logPurchaseToHistory(actor, store.cart, total);
+
+                // PART 7: Clear cart and exit checkout mode
+                clearCart(store.cart);
+                store.cartTotal = 0;
+                store.exitCheckoutMode();
+                store._renderCartUI();
+
+                resolve();
+            } catch (err) {
+                SWSELogger.error('SWSE Store | Checkout failed:', err);
+                ui.notifications.error('Purchase failed. See console for details.');
+                store.exitCheckoutMode();
+                store._renderCartUI();
+                resolve();
+            }
+        };
+
+        const handleCancel = () => {
+            cleanupListeners();
+            store.exitCheckoutMode();
+            store._renderCartUI();
+            resolve();
+        };
+
+        const cleanupListeners = () => {
+            if (confirmBtn) confirmBtn.removeEventListener('click', handleConfirm);
+            if (cancelBtn) cancelBtn.removeEventListener('click', handleCancel);
+        };
+
+        // Add event listeners
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', handleConfirm);
+        }
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', handleCancel);
+            cancelBtn.style.display = '';  // Show cancel button
+        }
+    });
 }
 
 /**
