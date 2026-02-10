@@ -619,9 +619,38 @@ export class SWSEStore extends ApplicationV2 {
       modal.style.display = 'none';
     });
 
-    // Add to cart from modal
+    // Quantity controls
+    const qtyInput = modal.querySelector('.qty-input');
+    const qtyMinus = modal.querySelector('.qty-minus');
+    const qtyPlus = modal.querySelector('.qty-plus');
+
+    if (qtyMinus) {
+      qtyMinus.addEventListener('click', () => {
+        const val = Math.max(1, (parseInt(qtyInput?.value) || 1) - 1);
+        if (qtyInput) qtyInput.value = val;
+      });
+    }
+
+    if (qtyPlus) {
+      qtyPlus.addEventListener('click', () => {
+        const val = Math.min(999, (parseInt(qtyInput?.value) || 1) + 1);
+        if (qtyInput) qtyInput.value = val;
+      });
+    }
+
+    if (qtyInput) {
+      qtyInput.addEventListener('change', () => {
+        const val = Math.max(1, Math.min(999, parseInt(qtyInput.value) || 1));
+        qtyInput.value = val;
+      });
+    }
+
+    // Add to cart from modal (with quantity)
     modal.querySelector('.modal-add-to-cart')?.addEventListener('click', () => {
-      addItemToCart(this, itemId, line => this._setRendarrLine(line));
+      const qty = parseInt(qtyInput?.value) || 1;
+      for (let i = 0; i < qty; i++) {
+        addItemToCart(this, itemId, i === 0 ? (line => this._setRendarrLine(line)) : null);
+      }
       this._persistCart();
       this._renderCartUI();
       modal.style.display = 'none';
@@ -631,40 +660,110 @@ export class SWSEStore extends ApplicationV2 {
   _buildProductModalContent(item) {
     const sys = safeSystem(item) ?? {};
     const suggestion = this.suggestions.get(item._id);
+    const itemType = item.type || '';
+
+    // Build technical details based on item type
+    const techDetails = this._buildTechnicalDetails(item, sys, itemType);
 
     return `
       <div class="modal-content">
         <button type="button" class="close-modal-btn" style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--holo-cyan); cursor: pointer; font-size: 20px;">
           <i class="fas fa-times"></i>
         </button>
-        <h2 style="color: var(--holo-cyan); margin-top: 0;">${safeString(item.name)}</h2>
-        <img src="${safeImg(item)}" alt="${safeString(item.name)}" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 4px; margin: 16px 0;"/>
 
-        <div style="margin: 16px 0;">
-          <strong>Price:</strong> ₢${getCostValue(item)}
+        <div class="modal-header">
+          <h2 style="color: var(--holo-cyan); margin: 0 0 8px 0;">${safeString(item.name)}</h2>
+          ${suggestion?.combined ? `
+            <span class="suggestion-badge tier-${suggestion.combined.tier.toLowerCase().replace(/_/g, '-')}" style="display: inline-block; padding: 4px 8px; border-radius: 3px; font-size: 11px; font-weight: bold;">
+              ${this._tierToDisplayLabel(suggestion.combined.tier)}
+            </span>
+          ` : ''}
         </div>
 
-        ${suggestion?.combined ? `
-          <div style="margin: 16px 0; padding: 12px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 4px;">
-            <strong>Suggestion: ${this._tierToDisplayLabel(suggestion.combined.tier)}</strong>
-            <ul style="margin: 8px 0 0 20px; font-size: 13px;">
-              ${(suggestion.explanations || []).map(b => `<li>${b}</li>`).join('')}
-            </ul>
+        <div class="modal-body" style="margin-top: 12px;">
+          <div class="modal-image-section">
+            <img src="${safeImg(item)}" alt="${safeString(item.name)}" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(0, 217, 255, 0.3);"/>
           </div>
-        ` : ''}
 
-        <div style="margin: 16px 0;">
-          <strong>Description:</strong>
-          <p>${(sys.description || 'No description available.').slice(0, 400)}</p>
+          <div class="modal-price-section" style="margin: 16px 0; padding: 12px; background: rgba(255, 165, 0, 0.1); border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 4px;">
+            <strong style="color: var(--holo-amber); font-size: 18px;">₢${getCostValue(item)}</strong>
+          </div>
+
+          ${suggestion?.combined ? `
+            <div class="modal-suggestion-section" style="margin: 16px 0; padding: 12px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 4px;">
+              <strong style="color: var(--holo-cyan);">Why This Recommendation</strong>
+              <ul style="margin: 8px 0 0 20px; font-size: 13px; line-height: 1.5;">
+                ${(suggestion.explanations || []).map(b => `<li>${b}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+
+          ${techDetails ? `
+            <div class="modal-tech-section" style="margin: 16px 0; padding: 12px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px;">
+              <strong style="color: var(--holo-cyan);">Technical Specifications</strong>
+              <div style="margin-top: 8px; font-size: 12px; line-height: 1.6;">
+                ${techDetails}
+              </div>
+            </div>
+          ` : ''}
+
+          ${sys.description ? `
+            <div class="modal-description-section" style="margin: 16px 0;">
+              <strong style="color: var(--holo-cyan);">Description</strong>
+              <p style="margin: 8px 0 0 0; font-size: 13px; line-height: 1.5;">${sys.description}</p>
+            </div>
+          ` : ''}
         </div>
 
-        <div style="display: flex; gap: 8px; margin-top: 16px;">
-          <button type="button" class="modal-add-to-cart holo-btn" style="flex: 1; padding: 12px; background: rgba(0, 217, 255, 0.15); border: 1px solid var(--holo-cyan); color: var(--holo-cyan); font-weight: bold; cursor: pointer; border-radius: 4px;">
+        <div class="modal-footer" style="margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(0, 217, 255, 0.2);">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <label style="font-size: 13px; color: rgba(255, 255, 255, 0.8);">Qty:</label>
+            <div style="display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 3px; padding: 4px;">
+              <button type="button" class="qty-minus" style="background: none; border: none; color: var(--holo-cyan); cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">−</button>
+              <input type="number" class="qty-input" value="1" min="1" max="999" style="width: 50px; text-align: center; background: transparent; border: none; color: var(--holo-cyan); font-weight: bold;"/>
+              <button type="button" class="qty-plus" style="background: none; border: none; color: var(--holo-cyan); cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">+</button>
+            </div>
+          </div>
+
+          <button type="button" class="modal-add-to-cart holo-btn" style="width: 100%; padding: 12px; background: rgba(0, 217, 255, 0.15); border: 1px solid var(--holo-cyan); color: var(--holo-cyan); font-weight: bold; cursor: pointer; border-radius: 4px;">
             <i class="fas fa-plus"></i> Add to Cart
           </button>
         </div>
       </div>
     `;
+  }
+
+  _buildTechnicalDetails(item, sys, itemType) {
+    const details = [];
+
+    // Armor specs
+    if (itemType === 'armor') {
+      if (sys.armorBonus) details.push(`<div>Armor Bonus: +${sys.armorBonus}</div>`);
+      if (sys.category) details.push(`<div>Category: ${sys.category}</div>`);
+      if (sys.maxDexBonus !== undefined) details.push(`<div>Max Dex Bonus: ${sys.maxDexBonus === -1 ? 'None' : '+' + sys.maxDexBonus}</div>`);
+      if (sys.checkPenalty) details.push(`<div>Armor Check Penalty: ${sys.checkPenalty}</div>`);
+      if (sys.speed) details.push(`<div>Speed: ${sys.speed}</div>`);
+    }
+
+    // Weapon specs
+    if (itemType === 'weapon') {
+      if (sys.damage) details.push(`<div>Damage: ${sys.damage}</div>`);
+      if (sys.damageType) details.push(`<div>Type: ${sys.damageType}</div>`);
+      if (sys.range) details.push(`<div>Range: ${sys.range}</div>`);
+      if (sys.category) details.push(`<div>Category: ${sys.category}</div>`);
+      if (sys.size) details.push(`<div>Size: ${sys.size}</div>`);
+    }
+
+    // Equipment/Gear specs
+    if (itemType === 'equipment') {
+      if (sys.weight) details.push(`<div>Weight: ${sys.weight}</div>`);
+      if (sys.rarity) details.push(`<div>Rarity: ${sys.rarity}</div>`);
+    }
+
+    // Availability
+    if (sys.availability) details.push(`<div>Availability: ${sys.availability}</div>`);
+
+    return details.length > 0 ? details.join('') : '';
   }
 
   _renderCartUI() {
