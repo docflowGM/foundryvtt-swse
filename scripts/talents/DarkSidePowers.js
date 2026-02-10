@@ -10,7 +10,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { ActorEngine } from '../actors/engine/actor-engine.js';
-import { createChatMessage } from '../core/document-api-v13.js';
+import { createChatMessage, createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
 
 export class DarkSidePowers {
 
@@ -644,7 +644,11 @@ export class DarkSidePowers {
     };
 
     // Create the item in the actor's inventory
-    const createdItems = await actor.createEmbeddedDocuments('Item', [itemData]);
+    const createdItems = await createItemInActor(actor, itemData);
+    if (!createdItems || !Array.isArray(createdItems) || createdItems.length === 0) {
+      ui.notifications.error('Failed to create Dark Side Talisman item');
+      return { success: false, message: 'Failed to create talisman item' };
+    }
     const itemId = createdItems[0].id;
 
     const talismantInfo = {
@@ -1372,7 +1376,11 @@ export class DarkSidePowers {
     };
 
     // Create the item in the actor's inventory
-    const createdItems = await actor.createEmbeddedDocuments('Item', [itemData]);
+    const createdItems = await createItemInActor(actor, itemData);
+    if (!createdItems || !Array.isArray(createdItems) || createdItems.length === 0) {
+      ui.notifications.error('Failed to create Sith Talisman item');
+      return { success: false, message: 'Failed to create talisman item' };
+    }
     const itemId = createdItems[0].id;
 
     const talismantInfo = {

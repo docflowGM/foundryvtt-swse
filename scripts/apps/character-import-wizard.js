@@ -3,7 +3,7 @@
  * Allows players to import characters from .json or .txt files
  */
 
-import { createActor } from '../core/document-api-v13.js';
+import { createActor, createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
 
 export class CharacterImportWizard extends Dialog {
   constructor(options = {}) {
@@ -377,10 +377,16 @@ export class CharacterImportWizard extends Dialog {
 
         // Add new items and effects (using already cleaned data)
         if (cleanedItems.length > 0) {
-          await targetActor.createEmbeddedDocuments('Item', cleanedItems);
+          const createdItems = await createItemInActor(targetActor, cleanedItems);
+          if (!createdItems || createdItems.length === 0) {
+            console.warn('No items were created');
+          }
         }
         if (cleanedEffects.length > 0) {
-          await targetActor.createEmbeddedDocuments('ActiveEffect', cleanedEffects);
+          const createdEffects = await createEffectOnActor(targetActor, cleanedEffects);
+          if (!createdEffects || createdEffects.length === 0) {
+            console.warn('No effects were created');
+          }
         }
 
         ui.notifications.info(`Successfully updated ${targetActor.name}`);

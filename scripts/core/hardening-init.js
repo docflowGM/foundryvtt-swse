@@ -16,6 +16,21 @@ import { registerMutationSafety } from './mutation-safety.js';
 import { registerDiagnosticsCommand } from './v1-api-scanner.js';
 import { log } from './foundry-env.js';
 
+// Phase 6: Product-Grade Finish
+import {
+  initializeFirstRunExperience,
+  registerFirstRunSettings,
+  registerFirstRunConsoleHelpers
+} from './first-run-experience.js';
+import {
+  registerFeatureSettings,
+  registerFeatureFlagsConsole
+} from './feature-flags.js';
+import {
+  registerTooltipSettings,
+  registerTooltipDiscoveryConsole
+} from './tooltip-discovery.js';
+
 const SYSTEM_ID = 'foundryvtt-swse';
 
 /**
@@ -30,6 +45,14 @@ export async function initializeHardeningSystem() {
     registerMutationSafety();
     registerDiagnosticsCommand();
 
+    // Phase 6: Register settings and console helpers
+    registerFirstRunSettings();
+    registerFeatureSettings();
+    registerTooltipSettings();
+    registerFirstRunConsoleHelpers();
+    registerFeatureFlagsConsole();
+    registerTooltipDiscoveryConsole();
+
     // Create system namespace
     window.game.swse = window.game.swse || {};
     window.game.swse.hardening = {
@@ -39,6 +62,7 @@ export async function initializeHardeningSystem() {
     };
 
     log.info('SWSE | v13 hardening systems initialized');
+    log.info('SWSE | Phase 6 (First-run, Feature Flags, Tooltip Discovery) ready');
     return true;
   } catch (err) {
     log.error('Failed to initialize hardening systems:', err.message);
@@ -66,6 +90,10 @@ export async function validateSystemReady() {
     }
 
     log.info('SWSE | Core data validation passed');
+
+    // Phase 6: Show first-run experience for GMs on first login
+    await initializeFirstRunExperience();
+
     return true;
   } catch (err) {
     log.error('System validation failed:', err.message);

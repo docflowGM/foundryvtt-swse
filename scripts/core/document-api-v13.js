@@ -274,6 +274,42 @@ export async function patchDocument(document, patch, options = {}) {
 }
 
 /**
+ * Create world-level item - v13 safe (not embedded in actor)
+ * @param {Object|Array} itemData
+ * @param {Object} options
+ */
+export async function createItem(itemData, options = {}) {
+  if (!itemData || typeof itemData !== 'object') {
+    log.error('createItem: Invalid item data');
+    return null;
+  }
+
+  const dataArray = Array.isArray(itemData) ? itemData : [itemData];
+
+  // Validate all items before creation
+  for (const item of dataArray) {
+    const errors = validateItemForCreation(item);
+    if (errors.length > 0) {
+      log.error(`createItem validation failed:`, errors.join('; '));
+      return null;
+    }
+  }
+
+  try {
+    const created = await Item.createDocuments(dataArray, options);
+    if (!created || created.length === 0) {
+      log.warn('createItem: No items created');
+      return null;
+    }
+
+    return Array.isArray(itemData) ? created : created[0];
+  } catch (err) {
+    log.error('createItem failed:', err.message);
+    return null;
+  }
+}
+
+/**
  * Get or create owned item by name
  * Useful for ensuring required items exist
  */

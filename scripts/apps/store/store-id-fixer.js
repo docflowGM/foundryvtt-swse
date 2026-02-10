@@ -4,7 +4,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
-import { createActor } from '../../core/document-api-v13.js';
+import { createActor, createItem } from '../../core/document-api-v13.js';
 
 /**
  * Scan all store items and actors for missing IDs
@@ -118,8 +118,7 @@ export async function fixInvalidIds(report) {
                     // Delete and recreate the item to generate a new ID
                     const itemData = item.toObject();
                     await item.delete();
-                    // TODO: Create world-item wrapper for Item.create() - currently uses deprecated API
-                    await Item.create(itemData);
+                    await createItem(itemData);
                     results.itemsFixed++;
                     SWSELogger.log(`Fixed item: ${itemInfo.name}`);
                 }

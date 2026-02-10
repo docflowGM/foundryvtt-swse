@@ -8,7 +8,7 @@
  */
 
 import { measureDistance, getVehicleCTPenalty, createVehicleCTEffect } from './vehicle-shared.js';
-import { createChatMessage } from '../../../../core/document-api-v13.js';
+import { createChatMessage, createEffectOnActor } from '../../../../core/document-api-v13.js';
 import { DamageSystem } from '../../damage-system.js';
 
 export class SWSEVehicleCollisions {
@@ -71,7 +71,7 @@ export class SWSEVehicleCollisions {
 
     const ae = createVehicleCTEffect(next, vehicleActor.uuid);
     await this._removeOldVCT(vehicleActor);
-    await vehicleActor.createEmbeddedDocuments('ActiveEffect', [ae]);
+    if (vehicleActor.isOwner) await createEffectOnActor(vehicleActor, ae);
 
     if (next >= 5) {
       ui.notifications.error(`${vehicleActor.name} has been DESTROYED in a crash!`);
