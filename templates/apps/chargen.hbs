@@ -1508,17 +1508,26 @@
 
  <div class="force-powers-list">
  {{#each availableForcePowers}}
- <div class="power-card" data-uuid="{{this.uuid}}">
+ <div class="power-card {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}" data-uuid="{{this.uuid}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
    <div class="power-card-inner">
      <div class="power-card-face power-card-front">
-       <h4>{{this.name}}</h4>
+       <div class="power-header">
+         <h4>{{this.name}}</h4>
+         {{#if this.suggestion.iconClass}}
+         <span class="power-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+           <i class="{{this.suggestion.iconClass}}"></i>
+         </span>
+         {{/if}}
+       </div>
        {{#if this.system.powerLevel}}<p class="power-level"><strong>Power Level:</strong> {{this.system.powerLevel}}</p>{{/if}}
        {{#if this.system.prerequisites}}<p class="power-prereqs"><em>Prerequisites: {{this.system.prerequisites}}</em></p>{{/if}}
+       {{#if this.suggestion.reason}}<p class="power-suggestion-text">💡 {{this.suggestion.reason}}</p>{{/if}}
      </div>
      <div class="power-card-face power-card-back">
        <h4>{{this.name}}</h4>
        {{#if this.system.description}}<p class="power-description">{{this.system.description}}</p>{{/if}}
        {{#if this.system.prerequisites}}<p class="power-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</p>{{/if}}
+       {{#if this.suggestion.reason}}<p class="power-suggestion-back">💡 {{this.suggestion.reason}}</p>{{/if}}
      </div>
    </div>
    <div class="power-card-actions">
