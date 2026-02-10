@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "version": "1.0",
+    "description": "SWSE Store Marketplace Experiential Service Reviews",
+    "notes": "First-person, experiential reviews of services without naming vendors or service tiers."
+  },
+
+  "dining": [
+    "This dining experience was more about presentation than food.",
+    "I ate well, but it took longer than expected.",
+    "The meal filled me up, which was the goal.",
+    "This place focused more on atmosphere than flavor.",
+    "I left satisfied, but not impressed.",
+    "The food was fine, the wait was not.",
+    "This dining experience felt rushed.",
+    "Everything looked better than it tasted.",
+    "I enjoyed the meal, but wouldn't go out of my way for it.",
+    "The experience depended heavily on who was working that day."
+  ],
+
+  "lodging": [
+    "This lodging experience looked great at first, then problems appeared.",
+    "I slept comfortably, which is all I needed.",
+    "The room was clean, but smaller than expected.",
+    "This place felt quiet but impersonal.",
+    "I stayed the night without incident.",
+    "The space was comfortable enough.",
+    "This lodging experience had unexpected charges.",
+    "The room met expectations, nothing more.",
+    "I didn't spend much time there, thankfully.",
+    "Sleeping was possible, but relaxing was harder."
+  ],
+
+  "medicalCare": [
+    "This medical service solved the problem, but explanations were minimal.",
+    "I received treatment quickly.",
+    "The staff focused on efficiency, not comfort.",
+    "This experience felt rushed but effective.",
+    "I recovered, which seems like success.",
+    "The procedure worked, though it was uncomfortable.",
+    "I wasn't told much before it started.",
+    "The results were good, the process less so.",
+    "This medical care felt impersonal.",
+    "I left with fewer problems than I arrived with."
+  ],
+
+  "transportation": [
+    "This transportation experience got me where I needed to go.",
+    "The trip was uneventful, which I appreciated.",
+    "This ride took longer than advertised.",
+    "The journey was smooth until the end.",
+    "I arrived without issue.",
+    "This transport felt crowded.",
+    "The trip was comfortable enough.",
+    "Delays made the experience frustrating.",
+    "This transportation experience depended heavily on timing.",
+    "I would use this again if necessary."
+  ],
+
+  "upkeep": [
+    "This upkeep service made things easier for a while.",
+    "Maintaining this lifestyle took more effort than expected.",
+    "The service covered the basics.",
+    "This upkeep experience had hidden complications.",
+    "Things ran smoothly after this was handled.",
+    "The process felt routine.",
+    "This upkeep required constant attention.",
+    "It worked, but required follow-up.",
+    "The service simplified some problems and created others.",
+    "Overall, it kept things running."
+  ],
+
+  "vehicleRental": [
+    "This vehicle rental worked as expected.",
+    "The vehicle handled fine for short trips.",
+    "This rental experience was stressful at times.",
+    "I returned the vehicle without issue.",
+    "The condition was acceptable.",
+    "This rental felt overpriced for the experience.",
+    "Driving it was easier than maintaining it.",
+    "The vehicle performed well enough.",
+    "This rental experience depended on how carefully it was used.",
+    "I would consider renting again if needed."
+  ]
+}

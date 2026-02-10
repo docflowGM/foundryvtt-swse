@@ -54,6 +54,7 @@
     "styles/apps/houserules.css",
     "styles/apps/custom-item-dialog.css",
     "styles/apps/store.css",
+    "styles/apps/store-card-grid.css",
     "styles/apps/levelup.css",
     "styles/sheets/character-sheet.css",
     "styles/sheets/vehicle-sheet.css",
