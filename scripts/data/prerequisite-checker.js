@@ -32,12 +32,35 @@ import { TalentTreeDB } from './talent-tree-db.js';
 import { normalizeTalentTreeId } from './talent-tree-normalizer.js';
 import { SWSELogger } from '../utils/logger.js';
 import { normalizeClassPrerequisites } from '../progression/prerequisites/class-prereq-normalizer.js';
+import { ClassesDB } from './classes-db.js';
 
 /**
  * MAIN CLASS: PrerequisiteChecker
  * The unified, canonical prerequisite validator for ALL types of prerequisites.
  */
 export class PrerequisiteChecker {
+    // ============================================================
+    // DEFENSIVE LOOKUP HELPERS (v2 ID-first, name-fallback)
+    // ============================================================
+
+    /**
+     * Find class item on actor by classId or className (defensive).
+     * Tries classId first (v2), falls back to name-based lookup (v1 compat).
+     * @private
+     */
+    static _findClassItem(actor, classIdOrName) {
+        if (!actor?.items) return null;
+
+        // Try classId lookup first (v2 standard)
+        if (classIdOrName && classIdOrName.length === 16) {
+            const byId = actor.items.find(i => i.type === 'class' && i.system?.classId === classIdOrName);
+            if (byId) return byId;
+        }
+
+        // Fallback to name lookup (v1 compat + prestige prereq data format)
+        return actor.items.find(i => i.type === 'class' && i.name === classIdOrName);
+    }
+
     /**
      * Check prerequisites for ANY item (feat, talent, class, etc.)
      * Routes to appropriate checker based on type.
@@ -619,7 +642,7 @@ export class PrerequisiteChecker {
                 };
             }
             case 'class_level': {
-                const classItem = actor.items?.find(i => i.type === 'class' && i.name === prereq.className);
+                const classItem = this._findClassItem(actor, prereq.className);
                 const level = classItem?.system?.level ?? 0;
                 const met = level >= (prereq.minimum ?? 1);
                 return {
@@ -894,7 +917,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkClassLevelCondition(prereq, actor, pending) {
-        const classItem = actor.items?.find(i => i.type === 'class' && i.name === prereq.className);
+        const classItem = this._findClassItem(actor, prereq.className);
         const level = classItem?.system?.level ?? 0;
         const required = prereq.minimum ?? 1;
         const met = level >= required;
@@ -1084,7 +1107,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkClassLevelLegacy(prereq, actor, pending) {
-        const classItem = actor.items?.find(i => i.type === 'class' && i.name === prereq.className);
+        const classItem = this._findClassItem(actor, prereq.className);
         const level = classItem?.system?.level ?? 0;
         const met = level >= prereq.level;
         return {

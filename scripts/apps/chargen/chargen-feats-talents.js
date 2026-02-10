@@ -10,6 +10,7 @@ import { ClassesDB } from '../../data/classes-db.js';
 import { SuggestionService } from '../../engine/SuggestionService.js';
 import { BuildIntent } from '../../engine/BuildIntent.js';
 import { MentorSurvey } from '../mentor/mentor-survey.js';
+import { _findTalentItem } from './chargen-shared.js';
 
 /**
  * Calculate feat/talent suggestions during chargen
@@ -547,18 +548,23 @@ export async function _onSelectTalent(event) {
 
     // Find each talent and add it
     for (const talentName of talentNamesToGrant) {
-      // Need to load the actual talent from the original data
-      // Since we processed the talents, we need to find the real ones
+      // Defensive lookup: try cached talents first, fall back to name-based
       let actualTalent = null;
 
-      if (talentName === 'Block') {
-        actualTalent = await game.packs.get('foundryvtt-swse.talents')?.getDocuments().then(docs => docs.find(d => d.name === 'Block'));
-      } else if (talentName === 'Deflect') {
-        actualTalent = await game.packs.get('foundryvtt-swse.talents')?.getDocuments().then(docs => docs.find(d => d.name === 'Deflect'));
+      // Use cached talents if available (includes defensive ID→name fallback)
+      if (chargenContext._packs?.talents && chargenContext._packs.talents.length > 0) {
+        actualTalent = _findTalentItem(chargenContext._packs.talents, talentName);
+      } else {
+        // Fallback: Load from live pack if cache unavailable
+        actualTalent = await game.packs.get('foundryvtt-swse.talents')?.getDocuments()
+          .then(docs => docs.find(d => d.name === talentName))
+          .catch(() => null);
       }
 
       if (actualTalent) {
-        talentsToAdd.push(actualTalent.toObject());
+        // Convert to plain object if it's a live document
+        const talentObj = actualTalent.toObject ? actualTalent.toObject() : actualTalent;
+        talentsToAdd.push(talentObj);
       }
     }
 

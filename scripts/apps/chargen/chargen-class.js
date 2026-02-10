@@ -14,6 +14,7 @@ import {
 } from './chargen-property-accessor.js';
 import { MentorSurvey } from '../mentor/mentor-survey.js';
 import { isBaseClass } from '../levelup/levelup-shared.js';
+import { _findItemByIdOrName } from './chargen-shared.js';
 
 // SSOT Data Layer
 import { ClassesDB } from '../../data/classes-db.js';
@@ -481,9 +482,18 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
           const weaponsPack = game.packs.get('foundryvtt-swse.weapons');
           if (weaponsPack) {
             const docs = await weaponsPack.getDocuments();
-            const lightsaber = docs.find(d => d.name === 'Lightsaber');
+            // Defensive lookup: try to find Lightsaber by name
+            // Convert docs to plain format for consistent lookup
+            const lightsaber = _findItemByIdOrName(
+              docs.map(d => ({ _id: d._id, name: d.name })),
+              'Lightsaber'
+            );
             if (lightsaber) {
-              weaponItems.push(lightsaber.toObject());
+              // Find the actual document to get all properties
+              const actualLightsaber = docs.find(d => d._id === lightsaber._id);
+              if (actualLightsaber) {
+                weaponItems.push(actualLightsaber.toObject());
+              }
             } else {
               SWSELogger.warn('CharGen | Lightsaber weapon not found in compendium');
             }

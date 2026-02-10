@@ -322,6 +322,68 @@ export function _getAvailableSkills() {
 }
 
 /**
+ * Defensive lookup helper for finding items from a pack array
+ * Tries ID first (v2 standard), falls back to name (v1 compat)
+ * @param {Array} packArray - Array of items from cache
+ * @param {string|number} idOrName - 16-char ID or name string
+ * @returns {Object|null} Item object or null if not found
+ */
+export function _findItemByIdOrName(packArray, idOrName) {
+  if (!packArray || !idOrName) return null;
+
+  // Try ID first (16-character hex ID)
+  if (typeof idOrName === 'string' && idOrName.length === 16) {
+    const byId = packArray.find(item => item._id === idOrName);
+    if (byId) return byId;
+  }
+
+  // Fall back to name (v1 compat)
+  return packArray.find(item => item.name === idOrName);
+}
+
+/**
+ * Defensive lookup for classes from cache
+ * @param {Array} classArray - Classes from cache
+ * @param {string|Object} classIdOrNameOrData - Class ID, name, or object with _id/name
+ * @returns {Object|null} Class object or null if not found
+ */
+export function _findClassItem(classArray, classIdOrNameOrData) {
+  if (!classArray || !classIdOrNameOrData) return null;
+
+  // Handle object input (extract ID first, then name)
+  if (typeof classIdOrNameOrData === 'object') {
+    const id = classIdOrNameOrData._id || classIdOrNameOrData.id;
+    const name = classIdOrNameOrData.name;
+
+    // Try ID first
+    if (id && typeof id === 'string' && id.length === 16) {
+      const byId = classArray.find(c => c._id === id);
+      if (byId) return byId;
+    }
+
+    // Try name
+    if (name) {
+      return classArray.find(c => c.name === name);
+    }
+
+    return null;
+  }
+
+  // Handle string input (ID or name)
+  return _findItemByIdOrName(classArray, classIdOrNameOrData);
+}
+
+/**
+ * Defensive lookup for talents from cache
+ * @param {Array} talentArray - Talents from cache
+ * @param {string} talentNameOrId - Talent name or 16-char ID
+ * @returns {Object|null} Talent object or null if not found
+ */
+export function _findTalentItem(talentArray, talentNameOrId) {
+  return _findItemByIdOrName(talentArray, talentNameOrId);
+}
+
+/**
  * Get available talent trees based on character's selected classes
  * @returns {Array} Array of talent tree names
  */
@@ -340,7 +402,8 @@ export function _getAvailableTalentTrees() {
   const talentTreesSet = new Set();
 
   for (const charClass of this.characterData.classes) {
-    const classData = this._packs.classes.find(c => c.name === charClass.name);
+    // Defensive lookup: try ID first, fall back to name
+    const classData = _findClassItem(this._packs.classes, charClass);
 
     if (classData) {
       // Use property accessor to get talent trees
