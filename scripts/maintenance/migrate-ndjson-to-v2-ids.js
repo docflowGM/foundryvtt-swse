@@ -245,6 +245,88 @@ async function cleanupTalentTreeFallbacks() {
 }
 
 /**
+ * FIX #5: feats.db system.bonus_feat_for species names → IDs
+ * Converts 48 feat items that reference species for bonus feats
+ */
+async function migrateFeatBonusSpeciesNames(speciesMap) {
+  console.group('[V2-MIGRATION] FIX #5: Feats bonus_feat_for species → IDs');
+
+  const items = await loadPackItems('feats.db');
+  let fixed = 0;
+  let skipped = 0;
+
+  for (const item of items) {
+    if (!Array.isArray(item.system?.bonus_feat_for)) {
+      skipped++;
+      continue;
+    }
+
+    const bonusFor = item.system.bonus_feat_for;
+    const convertedNames = [];
+    let namesChanged = false;
+
+    for (const speciesName of bonusFor) {
+      const speciesId = speciesMap[speciesName];
+      if (!speciesId) {
+        convertedNames.push(speciesName);
+        continue;
+      }
+      convertedNames.push(speciesId);
+      namesChanged = true;
+    }
+
+    if (namesChanged) {
+      item.system.bonus_feat_for = convertedNames;
+      fixed++;
+    }
+  }
+
+  await writePackItems('feats.db', items);
+  console.log(`  ✅ Fixed: ${fixed}, ⏭️  Skipped: ${skipped}`);
+  console.groupEnd();
+
+  return { fixed, skipped };
+}
+
+/**
+ * FIX #6: forcetechniques.db prerequisite names → IDs
+ * Converts 55+ force techniques that reference powers by name
+ */
+async function migrateForceTechniquePrereqs(powerMap) {
+  console.group('[V2-MIGRATION] FIX #6: Force technique prerequisites → IDs');
+
+  const items = await loadPackItems('forcetechniques.db');
+  let fixed = 0;
+  let skipped = 0;
+
+  for (const item of items) {
+    if (!item.system?.prerequisite || typeof item.system.prerequisite !== 'string') {
+      skipped++;
+      continue;
+    }
+
+    const prereqName = item.system.prerequisite;
+    const powerID = powerMap[prereqName];
+
+    if (!powerID) {
+      skipped++;
+      continue;
+    }
+
+    // Store as structured format
+    item.system.prerequisite_id = powerID;
+    item.system.prerequisite = `[${powerID}]`;
+    fixed++;
+  }
+
+  await writePackItems('forcetechniques.db', items);
+  console.log(`  ✅ Fixed: ${fixed}, ⏭️  Skipped: ${skipped}`);
+  console.groupEnd();
+
+  return { fixed, skipped };
+}
+
+/**
  * Main migration function
  */
 async function migrate() {
@@ -269,6 +351,13 @@ async function migrate() {
     results.fixes.classTrees = await migrateClassTalentTrees(treeMap);
     results.fixes.featBonus = await migrateFeatBonusClassNames(classMap);
     results.fixes.fallbackCleanup = await cleanupTalentTreeFallbacks();
+
+    // ADDITIONAL FIXES FOR REMAINING BLOCKERS
+    const speciesMap = await buildNameToIdMap('species.db');
+    results.fixes.featBonusSpecies = await migrateFeatBonusSpeciesNames(speciesMap);
+
+    const powerMap = await buildNameToIdMap('forcepowers.db');
+    results.fixes.forceTechniquePrereqs = await migrateForceTechniquePrereqs(powerMap);
 
     console.log('\n═══════════════════════════════════════════════════════════');
     console.log('✅ MIGRATION COMPLETE');
