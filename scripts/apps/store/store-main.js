@@ -12,17 +12,12 @@
  * - No direct mutation of actor currency/items here (handled by checkout module)
  */
 
-import { STORE_PACKS } from './store-constants.js';
+import { StoreEngine } from '../../engines/store/store-engine.js';
 import {
-  getCostValue,
   safeString,
   safeImg,
   safeSystem,
   tryRender,
-  isValidItemForStore,
-  categorizeEquipment,
-  sortWeapons,
-  sortArmor,
   getRarityClass,
   getRarityLabel
 } from './store-shared.js';
@@ -81,8 +76,8 @@ export class SWSEStore extends ApplicationV2 {
     super(options);
     this.actor = actor ?? null;
 
-    this.itemsById = new Map();
-    this.droidsById = new Map();
+    this.itemsById = new Map();      // Engine provides this
+    this.storeInventory = null;      // Engine inventory cache
 
     this.cart = emptyCart();
     this._loaded = false;
@@ -109,8 +104,8 @@ export class SWSEStore extends ApplicationV2 {
 
     this.cart = this._loadCartFromActor();
 
-    await this._loadItemPacks();
-    await this._loadDroidPack();
+    // DELEGATED TO ENGINE: Load inventory
+    await this._loadStoreInventory();
   }
 
   _loadCartFromActor() {
@@ -129,46 +124,20 @@ export class SWSEStore extends ApplicationV2 {
     await this.actor.setFlag(CART_FLAG_SCOPE, CART_FLAG_KEY, this.cart);
   }
 
-  async _loadItemPacks() {
-    const vehicleBuckets = (STORE_PACKS.VEHICLE_PACKS ?? []).filter(Boolean);
-    const packIds = [
-      STORE_PACKS.WEAPONS,
-      STORE_PACKS.ARMOR,
-      STORE_PACKS.EQUIPMENT,
-      // Prefer bucketed vehicle packs; fall back to canonical pack if buckets are unavailable.
-      ...(vehicleBuckets.length ? vehicleBuckets : [STORE_PACKS.VEHICLES_CANONICAL])
-    ].filter(Boolean);
+  async _loadStoreInventory() {
+    // DELEGATED TO ENGINE: Get normalized, categorized, priced inventory
+    const result = await StoreEngine.getInventory({ useCache: true });
 
-    for (const collection of packIds) {
-      const pack = game.packs.get(collection);
-      if (!pack || pack.documentName !== 'Item') {continue;}
-
-      try {
-        const docs = await pack.getDocuments();
-        for (const doc of docs) {
-          const item = doc.toObject();
-          if (!isValidItemForStore(item)) {continue;}
-          this.itemsById.set(item._id, item);
-        }
-      } catch (err) {
-        console.warn(`[SWSE Store] Failed to load pack ${collection}`, err);
-      }
+    if (!result.success) {
+      console.error('[SWSE Store] Failed to load inventory from engine:', result.error);
+      return;
     }
-  }
 
-  async _loadDroidPack() {
-    const pack = game.packs.get(STORE_PACKS.DROIDS);
-    if (!pack || pack.documentName !== 'Actor') {return;}
+    this.storeInventory = result.inventory;
 
-    try {
-      const docs = await pack.getDocuments();
-      for (const doc of docs) {
-        const actor = doc.toObject();
-        if (actor.type !== 'droid') {continue;}
-        this.droidsById.set(actor._id, actor);
-      }
-    } catch (err) {
-      console.warn(`[SWSE Store] Failed to load droid pack ${STORE_PACKS.DROIDS}`, err);
+    // Populate itemsById map for checkout (backward compat with addItemToCart, etc.)
+    for (const item of this.storeInventory.allItems) {
+      this.itemsById.set(item.id, item);
     }
   }
 
