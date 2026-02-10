@@ -13,13 +13,17 @@
  */
 
 import { StoreEngine } from '../../engines/store/store-engine.js';
+import { ArmorSuggestions } from '../../suggestion-engine/armor-suggestions.js';
+import { WeaponSuggestions } from '../../suggestion-engine/weapon-suggestions.js';
+import { GearSuggestions } from '../../suggestion-engine/gear-suggestions.js';
 import {
   safeString,
   safeImg,
   safeSystem,
   tryRender,
   getRarityClass,
-  getRarityLabel
+  getRarityLabel,
+  getCostValue
 } from './store-shared.js';
 import { getRendarrLine } from './dialogue/rendarr-dialogue.js';
 import {
@@ -54,12 +58,12 @@ export class SWSEStore extends ApplicationV2 {
     tag: 'section',
     window: {
       title: 'Galactic Trade Exchange',
-      width: 980,
-      height: 700,
+      width: 1200,
+      height: 800,
       resizable: true
     },
-    classes: ['swse', 'store', 'swse-app-store'],
-    template: 'systems/foundryvtt-swse/templates/apps/store/store.hbs'
+    classes: ['swse', 'store', 'swse-app-store', 'card-grid-store'],
+    template: 'systems/foundryvtt-swse/templates/apps/store/store-card-grid.hbs'
   };
 
   static get defaultOptions() {
@@ -78,6 +82,7 @@ export class SWSEStore extends ApplicationV2 {
 
     this.itemsById = new Map();      // Engine provides this
     this.storeInventory = null;      // Engine inventory cache
+    this.suggestions = new Map();    // Item ID → suggestion score
 
     this.cart = emptyCart();
     this._loaded = false;
@@ -90,7 +95,7 @@ export class SWSEStore extends ApplicationV2 {
     if (!this._loaded) {await this._initialize();}
 
     return {
-      categories: this._buildCategoriesForTemplate(),
+      allItems: this._buildItemsWithSuggestions(),
       credits: Number(this.actor?.system?.credits ?? 0) || 0,
       isGM: game.user?.isGM ?? false,
       rendarrWelcome: getRendarrLine('welcome'),
@@ -106,6 +111,124 @@ export class SWSEStore extends ApplicationV2 {
 
     // DELEGATED TO ENGINE: Load inventory
     await this._loadStoreInventory();
+
+    // Wire suggestion engine for all items
+    if (this.actor) {
+      await this._generateSuggestionsForAllItems();
+    }
+  }
+
+  async _generateSuggestionsForAllItems() {
+    if (!this.actor || !this.storeInventory) {return;}
+
+    try {
+      // Separate items by type
+      const armor = this.storeInventory.allItems.filter(i => i.type === 'armor');
+      const weapons = this.storeInventory.allItems.filter(i => i.type === 'weapon');
+      const gear = this.storeInventory.allItems.filter(i => i.type === 'equipment');
+
+      // Generate suggestions for each type
+      if (armor.length > 0) {
+        try {
+          const armorSugg = ArmorSuggestions.generateSuggestions(this.actor, armor, { topCount: 999 });
+          if (armorSugg.allScored) {
+            for (const scored of armorSugg.allScored) {
+              const itemId = scored.armorId || scored.itemId;
+              if (itemId) {
+                this.suggestions.set(itemId, scored);
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('[SWSE Store] Armor suggestion failed:', err);
+        }
+      }
+
+      if (weapons.length > 0) {
+        try {
+          const weaponSugg = WeaponSuggestions.generateSuggestions(this.actor, weapons, { topCount: 999 });
+          if (weaponSugg.allScored) {
+            for (const scored of weaponSugg.allScored) {
+              const itemId = scored.weaponId || scored.itemId;
+              if (itemId) {
+                this.suggestions.set(itemId, scored);
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('[SWSE Store] Weapon suggestion failed:', err);
+        }
+      }
+
+      if (gear.length > 0) {
+        try {
+          const gearSugg = GearSuggestions.generateSuggestions(this.actor, gear, { topCount: 999 });
+          if (gearSugg.allScored) {
+            for (const scored of gearSugg.allScored) {
+              const itemId = scored.equipmentId || scored.itemId;
+              if (itemId) {
+                this.suggestions.set(itemId, scored);
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('[SWSE Store] Gear suggestion failed:', err);
+        }
+      }
+    } catch (err) {
+      console.warn('[SWSE Store] Suggestion generation wrapper failed:', err);
+    }
+  }
+
+  _buildItemsWithSuggestions() {
+    const items = [];
+
+    for (const item of this.storeInventory?.allItems || []) {
+      const suggestion = this.suggestions.get(item._id);
+      const view = this._viewFromItem(item);
+
+      // Add category for filtering
+      view.category = item.type || '';
+      view.availability = (item.system?.availability || '').toString();
+      view.price = view.finalCost;
+
+      // Attach suggestion data
+      if (suggestion?.combined) {
+        view.suggestion = {
+          score: suggestion.combined.finalScore,
+          tier: this._tierToLabel(suggestion.combined.tier),
+          tierLabel: this._tierToDisplayLabel(suggestion.combined.tier),
+          bullets: (suggestion.explanations || []).slice(0, 4) // Max 4 bullets per card
+        };
+      }
+
+      items.push(view);
+    }
+
+    // Sort by suggestion score (descending) by default
+    items.sort((a, b) => {
+      const scoreA = a.suggestion?.score ?? -1;
+      const scoreB = b.suggestion?.score ?? -1;
+      return scoreB - scoreA;
+    });
+
+    return items;
+  }
+
+  _tierToLabel(tier) {
+    // Convert tier string to CSS class: "STRONG_FIT" → "strong-fit"
+    return (tier || '').toLowerCase().replace(/_/g, '-');
+  }
+
+  _tierToDisplayLabel(tier) {
+    // Convert tier to display: "STRONG_FIT" → "Strong Fit"
+    const tierMap = {
+      'STRONG_FIT': 'Strong Fit',
+      'VIABLE': 'Viable',
+      'SITUATIONAL': 'Situational',
+      'OUTPERFORMED': 'Outperformed'
+    };
+    return tierMap[tier] || tier;
   }
 
   _loadCartFromActor() {
@@ -283,7 +406,56 @@ export class SWSEStore extends ApplicationV2 {
     const root = this.element;
     if (!(root instanceof HTMLElement)) {return;}
 
-    // Add to cart buttons
+    // Search functionality
+    const searchInput = root.querySelector('#store-search');
+    const categoryFilter = root.querySelector('#store-category-filter');
+    const availabilityFilter = root.querySelector('#store-availability-filter');
+    const sortSelect = root.querySelector('#store-sort');
+
+    const updateGrid = () => this._filterAndSortGrid(root);
+
+    if (searchInput) {
+      searchInput.addEventListener('input', updateGrid);
+    }
+    if (categoryFilter) {
+      categoryFilter.addEventListener('change', updateGrid);
+    }
+    if (availabilityFilter) {
+      availabilityFilter.addEventListener('change', updateGrid);
+    }
+    if (sortSelect) {
+      sortSelect.addEventListener('change', updateGrid);
+    }
+
+    // Card expand buttons
+    root.querySelectorAll('[data-action="expand-product"]').forEach(btn => {
+      btn.addEventListener('click', ev => {
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (itemId) {
+          this._showProductModal(itemId, root);
+        }
+      });
+    });
+
+    // Add to cart buttons (cards)
+    root.querySelectorAll('[data-action="add-to-cart"]').forEach(btn => {
+      btn.addEventListener('click', ev => {
+        ev.stopPropagation();
+        const id = ev.currentTarget?.dataset?.itemId;
+        if (!id) {return;}
+        addItemToCart(this, id, line => this._setRendarrLine(line));
+        this._persistCart();
+        this._renderCartUI();
+      });
+    });
+
+    // Cart button
+    const viewCartBtn = root.querySelector('[data-action="view-cart"]');
+    if (viewCartBtn) {
+      viewCartBtn.addEventListener('click', () => this._showCartSidebar(root));
+    }
+
+    // Legacy buy item buttons (for backward compat)
     root.querySelectorAll('.buy-item').forEach(btn => {
       btn.addEventListener('click', ev => {
         const id = ev.currentTarget?.dataset?.itemId;
@@ -364,6 +536,135 @@ export class SWSEStore extends ApplicationV2 {
   _animateNumber(el, value) {
     if (!el) {return;}
     el.textContent = value;
+  }
+
+  _filterAndSortGrid(root) {
+    const grid = root.querySelector('#products-grid');
+    if (!grid) {return;}
+
+    const searchTerm = root.querySelector('#store-search')?.value?.toLowerCase() || '';
+    const categoryFilter = root.querySelector('#store-category-filter')?.value || '';
+    const availabilityFilter = root.querySelector('#store-availability-filter')?.value || '';
+    const sortValue = root.querySelector('#store-sort')?.value || 'suggested';
+
+    const cards = grid.querySelectorAll('.product-card');
+    let visibleCards = [];
+
+    // Filter cards
+    cards.forEach(card => {
+      const itemId = card.dataset.itemId;
+      const item = this.itemsById.get(itemId);
+      if (!item) return;
+
+      const name = (item.name || '').toLowerCase();
+      const desc = (item.system?.description || '').toString().toLowerCase();
+      const category = card.dataset.category || '';
+      const availability = card.dataset.availability || '';
+
+      const matchesSearch = !searchTerm || name.includes(searchTerm) || desc.includes(searchTerm);
+      const matchesCategory = !categoryFilter || category === categoryFilter;
+      const matchesAvailability = !availabilityFilter || availability === availabilityFilter;
+
+      if (matchesSearch && matchesCategory && matchesAvailability) {
+        card.style.display = '';
+        visibleCards.push({ card, item });
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    // Sort visible cards
+    if (sortValue === 'price-asc') {
+      visibleCards.sort((a, b) => (a.item.finalCost ?? 0) - (b.item.finalCost ?? 0));
+    } else if (sortValue === 'price-desc') {
+      visibleCards.sort((a, b) => (b.item.finalCost ?? 0) - (a.item.finalCost ?? 0));
+    } else if (sortValue === 'name-asc') {
+      visibleCards.sort((a, b) => (a.item.name || '').localeCompare(b.item.name || ''));
+    }
+    // 'suggested' is default (already sorted by suggestion score)
+
+    // Reorder in DOM
+    visibleCards.forEach(({ card }) => {
+      grid.appendChild(card);
+    });
+
+    // Show/hide empty state
+    const emptyState = grid.parentElement?.querySelector('.empty-state');
+    if (emptyState) {
+      emptyState.style.display = visibleCards.length === 0 ? 'flex' : 'none';
+    }
+  }
+
+  _showCartSidebar(root) {
+    const sidebar = root.querySelector('#cart-sidebar');
+    if (sidebar) {
+      sidebar.style.display = 'flex';
+      this._renderCartUI();
+    }
+  }
+
+  _showProductModal(itemId, root) {
+    const item = this.itemsById.get(itemId);
+    if (!item) {return;}
+
+    const modal = root.querySelector('#product-modal');
+    if (!modal) {return;}
+
+    const modalHTML = this._buildProductModalContent(item);
+    modal.innerHTML = modalHTML;
+    modal.style.display = 'flex';
+
+    // Close button handler
+    modal.querySelector('.close-modal-btn')?.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    // Add to cart from modal
+    modal.querySelector('.modal-add-to-cart')?.addEventListener('click', () => {
+      addItemToCart(this, itemId, line => this._setRendarrLine(line));
+      this._persistCart();
+      this._renderCartUI();
+      modal.style.display = 'none';
+    });
+  }
+
+  _buildProductModalContent(item) {
+    const sys = safeSystem(item) ?? {};
+    const suggestion = this.suggestions.get(item._id);
+
+    return `
+      <div class="modal-content">
+        <button type="button" class="close-modal-btn" style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--holo-cyan); cursor: pointer; font-size: 20px;">
+          <i class="fas fa-times"></i>
+        </button>
+        <h2 style="color: var(--holo-cyan); margin-top: 0;">${safeString(item.name)}</h2>
+        <img src="${safeImg(item)}" alt="${safeString(item.name)}" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 4px; margin: 16px 0;"/>
+
+        <div style="margin: 16px 0;">
+          <strong>Price:</strong> ₢${getCostValue(item)}
+        </div>
+
+        ${suggestion?.combined ? `
+          <div style="margin: 16px 0; padding: 12px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 4px;">
+            <strong>Suggestion: ${this._tierToDisplayLabel(suggestion.combined.tier)}</strong>
+            <ul style="margin: 8px 0 0 20px; font-size: 13px;">
+              ${(suggestion.explanations || []).map(b => `<li>${b}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+
+        <div style="margin: 16px 0;">
+          <strong>Description:</strong>
+          <p>${(sys.description || 'No description available.').slice(0, 400)}</p>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+          <button type="button" class="modal-add-to-cart holo-btn" style="flex: 1; padding: 12px; background: rgba(0, 217, 255, 0.15); border: 1px solid var(--holo-cyan); color: var(--holo-cyan); font-weight: bold; cursor: pointer; border-radius: 4px;">
+            <i class="fas fa-plus"></i> Add to Cart
+          </button>
+        </div>
+      </div>
+    `;
   }
 
   _renderCartUI() {
