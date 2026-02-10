@@ -620,3 +620,132 @@ All decisions are **non-negotiable for Phase 3a**, but GM/world settings allow t
 
 **This design is ready for Phase 3 planning discussion.**
 
+---
+
+## XII. Phase 3b Implementation: GM Approval Flow (COMPLETE)
+
+### World Setting: `store.requireGMApproval`
+
+Registered in `scripts/core/settings.js`:
+```javascript
+game.settings.register('foundryvtt-swse', 'store.requireGMApproval', {
+  name: 'Require GM Approval for Custom Droids',
+  hint: 'When enabled, custom droids must be approved by a GM before credits are deducted.',
+  scope: 'world',
+  config: true,
+  type: Boolean,
+  default: false  // Solo play / casual tables: immediate finalization
+});
+```
+
+### Approval Flow Architecture
+
+#### Flow A: No Approval Required (Default)
+```
+1. Player clicks "Build Droid" in Store
+2. buildDroidWithBuilder() checks minimum credits
+3. DroidBuilderApp launches with requireApproval: false
+4. Player designs droid, clicks Finalize
+5. DroidBuilderApp emits 'swse:droidFinalized' hook
+6. Store's hook listener receives event
+7. deductDroidCredits() is called immediately
+8. Player notified: "Custom droid built! X credits deducted."
+9. Droid marked FINALIZED in actor.system.droidSystems.stateMode
+```
+
+#### Flow B: GM Approval Required (Optional)
+```
+1. Player clicks "Build Droid" in Store
+2. buildDroidWithBuilder() checks minimum credits
+3. DroidBuilderApp launches with requireApproval: true
+4. Player designs droid, clicks Finalize
+5. DroidBuilderApp emits 'swse:droidFinalized' hook
+6. Builder marks droid as stateMode: 'PENDING'
+7. Store's hook listener receives event
+8. Credits are NOT deducted (deferred)
+9. Player notified: "Droid submitted for GM approval. Awaiting review..."
+10. Droid marked PENDING in actor.system.droidSystems.stateMode
+11. [FUTURE] GM approves or rejects via GM dashboard
+12. [FUTURE] On approval: deductDroidCredits() called, stateMode: 'FINALIZED'
+13. [FUTURE] On rejection: stateMode reverts to 'DRAFT', player can edit
+```
+
+### Hook Contract: 'swse:droidFinalized'
+
+Emitted by DroidBuilderApp._onFinalizeDroid():
+```javascript
+Hooks.call('swse:droidFinalized', {
+  actor: Actor,                      // Target actor for droid
+  droidSystems: {...},               // Full droid config
+  mode: 'NEW' | 'EDIT' | 'TEMPLATE', // Builder mode
+  cost: number,                      // Total cost of droid (or delta if EDIT)
+  costDelta: number,                 // 0 for NEW, (new - old) for EDIT
+  requireApproval: boolean           // From world setting
+});
+```
+
+### Hook Listener: buildDroidWithBuilder()
+
+Located in `scripts/apps/store/store-checkout.js`:
+```javascript
+export async function buildDroidWithBuilder(actor, closeCallback) {
+  // ... setup code ...
+
+  // Set up hook listener for droid finalization
+  const hookId = Hooks.on('swse:droidFinalized', async (data) => {
+    if (data.actor.id !== actor.id) return;
+    Hooks.off('swse:droidFinalized', hookId);
+
+    try {
+      if (!data.requireApproval) {
+        // No approval: deduct immediately
+        await deductDroidCredits(actor, data.cost);
+        ui.notifications.info(`Custom droid built! ${data.cost} credits deducted.`);
+      } else {
+        // Approval required: mark pending, hold credits
+        ui.notifications.info('Droid submitted for GM approval. Awaiting review...');
+      }
+    } catch (err) {
+      SWSELogger.error('Error handling droid finalization:', err);
+      ui.notifications.error('Error processing droid.');
+    }
+  });
+
+  // Launch builder
+  await DroidBuilderApp.open(actor, {
+    mode: 'NEW',
+    requireApproval: world.settings.get('foundryvtt-swse', 'store.requireGMApproval')
+  });
+}
+```
+
+### Credit Deduction Helper
+
+```javascript
+async function deductDroidCredits(actor, cost) {
+  const currentCredits = Number(actor.system.credits) || 0;
+  const newCredits = Math.max(0, currentCredits - cost);
+
+  await actor.update({
+    'system.credits': newCredits
+  });
+
+  SWSELogger.log('Credits deducted for droid:', {
+    actor: actor.name,
+    cost: cost,
+    remaining: newCredits
+  });
+}
+```
+
+### Future Enhancement: GM Approval Dashboard
+
+When Phase 3b Step 5 is extended, add a GM tool to:
+1. List pending droids (stateMode: 'PENDING')
+2. Show droid config summary
+3. Preview Seraphim dialogue
+4. Approve button → deductDroidCredits() + stateMode: 'FINALIZED'
+5. Reject button → stateMode: 'DRAFT' + notify player
+
+For now, this is infrastructure-ready. GMs can manually inspect droid sheets and call deductDroidCredits if needed.
+

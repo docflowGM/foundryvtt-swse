@@ -314,7 +314,11 @@
         "ConfirmVehiclePurchase": "Confirm Vehicle Purchase",
         "BuildCustomDroid": "Build Custom Droid",
         "BuildCustomStarship": "Build Custom Starship",
-        "CompletePurchase": "Complete Purchase"
+        "CompletePurchase": "Complete Purchase",
+        "RequireGMApproval": {
+          "Name": "Require GM Approval for Custom Droids",
+          "Hint": "When enabled, custom droids must be approved by a GM before credits are deducted. When disabled, custom droids are immediately finalized."
+        }
       },
       "LevelUp": {
         "Title": "Level Up {name}"

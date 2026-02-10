@@ -217,6 +217,16 @@ export function registerSystemSettings() {
     default: true
   });
 
+  // Phase 3b: Store GM Approval Gate Setting
+  game.settings.register('foundryvtt-swse', 'store.requireGMApproval', {
+    name: 'SWSE.Settings.Store.RequireGMApproval.Name',
+    hint: 'SWSE.Settings.Store.RequireGMApproval.Hint',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   // Register MetaTuning settings for suggestion engine
   registerMetaTuningSettings();
 
