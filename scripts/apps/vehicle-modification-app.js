@@ -603,6 +603,13 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
       return;
     }
 
+    // Check for Vehicle Modification Tokens (if applicable)
+    const tokens = Number(this.actor.system.vehicleModificationTokens ?? 0);
+    if (this.actor.system.vehicleModificationTokens !== undefined && tokens <= 0) {
+      ui.notifications.warn('Insufficient Vehicle Modification Tokens. You need at least 1 token per modification.');
+      return;
+    }
+
     // Add to modifications list
     this.modifications.push(modification);
 
@@ -689,6 +696,16 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
       return;
     }
 
+    // Check for Vehicle Modification Tokens (if applicable)
+    const tokensNeeded = Math.max(0, this.modifications.length);
+    const tokens = Number(this.actor.system.vehicleModificationTokens ?? 0);
+    if (this.actor.system.vehicleModificationTokens !== undefined && tokens < tokensNeeded) {
+      ui.notifications.warn(
+        `Insufficient Vehicle Modification Tokens. Need ${tokensNeeded}, have ${tokens}.`
+      );
+      return;
+    }
+
     const confirmed = await Dialog.confirm({
       title: 'Finalize Starship?',
       content: `
@@ -703,15 +720,22 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
 
     if (!confirmed) {return;}
 
-    // Save configuration to actor
-    await globalThis.SWSE.ActorEngine.updateActor(this.actor, {
+    // Build atomic update: save vehicle config and deduct tokens (if tokens exist)
+    const updateData = {
       'system.vehicle': {
         stockShip: this.stockShip,
         modifications: this.modifications,
         totalCost: totalCost
       }
-    });
+    };
 
+    // Deduct tokens: one token per modification
+    if (this.actor.system.vehicleModificationTokens !== undefined && tokensNeeded > 0) {
+      updateData['system.vehicleModificationTokens'] = Math.max(0, tokens - tokensNeeded);
+    }
+
+    // Save configuration to actor
+    await globalThis.SWSE.ActorEngine.updateActor(this.actor, updateData);
 
     ui.notifications.info(`Starship configuration saved to ${this.actor.name}!`);
     this.close();

@@ -215,8 +215,15 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const cost = validation.cost;
     const slots = validation.slotsNeeded;
     const credits = Number(actor.system.credits ?? 0);
+    const tokens = Number(actor.system.modificationTokens ?? 0);
 
-    await ActorEngine.updateActor(actor, { 'system.credits': credits - cost }, { diff: true });
+    // Build atomic update: deduct credits and tokens (if tokens exist)
+    const updateData = { 'system.credits': credits - cost };
+    if (actor.system.modificationTokens !== undefined) {
+      updateData['system.modificationTokens'] = Math.max(0, tokens - 1);
+    }
+
+    await ActorEngine.updateActor(actor, updateData, { diff: true });
 
     const installed = this.item.system.installedUpgrades ?? [];
     const nextInstalled = [
@@ -348,8 +355,15 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     const credits = Number(actor.system.credits || 0);
+    const tokens = Number(actor.system.modificationTokens ?? 0);
     if (credits < templateCost) {
       ui.notifications.warn(`Not enough credits! Need ${templateCost}, have ${credits}.`);
+      return;
+    }
+
+    // Check tokens if actor has token system
+    if (actor.system.modificationTokens !== undefined && tokens <= 0) {
+      ui.notifications.warn('Insufficient Modification Tokens. You need at least 1 token to apply this template.');
       return;
     }
 
@@ -362,7 +376,13 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     if (!confirmed) {return;}
 
-    await ActorEngine.updateActor(actor, { 'system.credits': credits - templateCost }, { diff: true });
+    // Build atomic update: deduct credits and tokens (if tokens exist)
+    const updateData = { 'system.credits': credits - templateCost };
+    if (actor.system.modificationTokens !== undefined) {
+      updateData['system.modificationTokens'] = Math.max(0, tokens - 1);
+    }
+
+    await ActorEngine.updateActor(actor, updateData, { diff: true });
     await GearTemplatesEngine.applyTemplate(this.item, templateKey);
     this.render({ force: true });
   }

@@ -663,12 +663,44 @@ export class UpgradeRulesEngine {
   /* ============================================================== */
 
   /**
+   * Check if actor has required Modification Tokens for an upgrade.
+   * Tokens are optional (backward compatible): if actor has no token data, allow installation.
+   *
+   * @param {Item} upgrade - The upgrade to check
+   * @param {Actor} actor - The actor attempting installation
+   * @returns {Object} Validation result: valid {boolean}, reason {string}
+   */
+  static checkModificationTokens(upgrade, actor = null) {
+    // No actor = unowned item = no token check
+    if (!actor) {
+      return { valid: true };
+    }
+
+    // If actor has no token data, allow (backward compatible, grandfathered)
+    const tokens = Number(actor.system.modificationTokens ?? 0);
+    if (actor.system.modificationTokens === undefined) {
+      return { valid: true };
+    }
+
+    // Tokens exist and count matters
+    if (tokens <= 0) {
+      return {
+        valid: false,
+        reason: 'Insufficient Modification Tokens. You need at least 1 token to apply this upgrade.'
+      };
+    }
+
+    return { valid: true };
+  }
+
+  /**
    * Validate if an upgrade can be installed on an item.
    * Checks:
    * - Upgrade type matches item type
    * - Enough upgrade slots available
    * - Upgrade requirements met
    * - No conflicts with existing upgrades
+   * - Modification tokens available (if applicable)
    *
    * @param {Item} item - The equipment to upgrade
    * @param {Item} upgrade - The upgrade to install
@@ -719,6 +751,16 @@ export class UpgradeRulesEngine {
       return {
         valid: false,
         reason: strippedConflict,
+        availableSlots
+      };
+    }
+
+    // Check for Modification Tokens (if applicable)
+    const tokenCheck = this.checkModificationTokens(upgrade, actor);
+    if (!tokenCheck.valid) {
+      return {
+        valid: false,
+        reason: tokenCheck.reason,
         availableSlots
       };
     }
