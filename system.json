@@ -523,6 +523,27 @@
       "default": false,
       "name": "Skip Store Loading Overlay",
       "hint": "Disable the Rendarr loading overlay that appears when opening the Store. The store will load normally in the background."
+    },
+    "foundryvtt-swse.autoAcceptItemSales": {
+      "scope": "world",
+      "config": true,
+      "type": "Boolean",
+      "default": false,
+      "name": "Automatically Accept Item Sales",
+      "hint": "Automatically accept item sales without GM approval. Use the 'Automatic Sale Value' setting to control the percentage paid."
+    },
+    "foundryvtt-swse.automaticSalePercentage": {
+      "scope": "world",
+      "config": true,
+      "type": "Number",
+      "default": 50,
+      "name": "Automatic Sale Value (%)",
+      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10–100%)",
+      "range": {
+        "min": 10,
+        "max": 100,
+        "step": 5
+      }
     }
   }
 }

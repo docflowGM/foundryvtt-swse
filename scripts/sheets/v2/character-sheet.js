@@ -2,6 +2,7 @@
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { RenderAssertions } from '../../core/render-assertions.js';
+import { initiateItemSale } from '../../apps/item-selling-system.js';
 
 /**
  * Safe accessor for devMode setting
@@ -247,6 +248,21 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
         if (!itemId) {return;}
         const item = this.actor?.items?.get(itemId);
         item?.sheet?.render(true);
+      });
+    }
+
+    // Item selling (inventory context action)
+    for (const el of root.querySelectorAll('[data-action="sell"]')) {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const itemRow = ev.currentTarget?.closest('.item-row');
+        const itemId = itemRow?.dataset?.itemId;
+        if (!itemId) {return;}
+        const item = this.actor?.items?.get(itemId);
+        if (item) {
+          await initiateItemSale(item, this.actor);
+        }
       });
     }
 

@@ -5975,3 +5975,67 @@ select.action-type-filter {
   padding: 6px 8px;
   font-size: 12px;
 }
+
+/* ============================================================ */
+/* CREDIT ANIMATIONS (SELL & BUY)                               */
+/* ============================================================ */
+
+/**
+ * Credit gain animation (item selling)
+ * Credits animate upward, green color
+ */
+@keyframes credit-gain {
+  from {
+    color: rgba(0, 255, 136, 0.5);
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+  }
+  to {
+    color: rgba(0, 255, 150, 0.95);
+    text-shadow: none;
+  }
+}
+
+.credits-gaining {
+  animation: credit-gain 0.6s ease-out forwards;
+}
+
+/**
+ * Credit loss animation (item buying)
+ * Credits animate downward, amber color
+ */
+@keyframes credit-loss {
+  from {
+    color: rgba(255, 200, 100, 1);
+    text-shadow: 0 0 10px rgba(255, 200, 100, 0.6);
+  }
+  to {
+    color: rgba(0, 255, 150, 0.95);
+    text-shadow: none;
+  }
+}
+
+.credits-reconciling {
+  animation: credit-loss 0.6s ease-out forwards;
+}
+
+/**
+ * Reduced motion: No animations
+ */
+@media (prefers-reduced-motion: reduce) {
+  .credits-gaining,
+  .credits-reconciling {
+    animation: none;
+  }
+}
+
+/**
+ * Item control for selling (sell button style)
+ */
+.item-control.item-sell {
+  color: rgba(0, 255, 136, 0.7);
+}
+
+.item-control.item-sell:hover {
+  color: rgba(0, 255, 150, 1);
+  text-shadow: 0 0 8px rgba(0, 255, 150, 0.4);
+}
