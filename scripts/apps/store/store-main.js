@@ -450,9 +450,9 @@ export class SWSEStore extends ApplicationV2 {
       survival: [],
       security: [],
       equipment: [],
-      services: [],
       droids: [],
       vehicles: []
+      // NOTE: services removed — services are contextual expenses, not store inventory
     };
 
     for (const item of this.itemsById.values()) {
@@ -500,9 +500,7 @@ export class SWSEStore extends ApplicationV2 {
           return;
         }
 
-        if (view.type === 'service') {
-          categories.services.push(view);
-        }
+        // NOTE: Services are not store inventory items (filtered by normalizer.js)
       });
     }
 

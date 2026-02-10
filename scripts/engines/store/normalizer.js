@@ -219,6 +219,10 @@ export function normalizeActors(rawActors) {
  * Filter and validate normalized items.
  * Removes items that shouldn't appear in the store.
  *
+ * CONSTRAINT: Services are NOT store inventory entities.
+ * They are contextual expenses managed separately.
+ * This filter enforces that store items are tangible goods.
+ *
  * @param {Array<StoreItem>} items
  * @returns {Array<StoreItem>}
  */
@@ -233,9 +237,13 @@ export function filterValidStoreItems(items) {
     // Skip items explicitly excluded from store
     if (item.doc?.flags?.swse?.excludeFromStore) {return false;}
 
-    // Must have either a cost or be a service item
+    // Services are not store inventory items
+    // They are contextual expenses, not purchasable goods
+    if (item.type === 'service') {return false;}
+
+    // Must have a cost (all store items must be priced)
     const hasCost = item.cost !== null && item.cost !== undefined && item.cost >= 0;
-    if (!hasCost && item.type !== 'service') {return false;}
+    if (!hasCost) {return false;}
 
     return true;
   });

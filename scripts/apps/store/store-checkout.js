@@ -167,6 +167,13 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
 }
 
 /**
+ * @deprecated Services are not store inventory items.
+ * Services are contextual expenses managed separately by GMs.
+ * Do not use this function — it is dead code.
+ *
+ * Services are filtered out by normalizer.js and do not appear in store inventory.
+ * For service expenses, use a dedicated Services module or manual GM handling.
+ *
  * Purchase a service (immediate credit deduction)
  * DELEGATED TO ENGINE: Business logic moved to StoreEngine.purchase()
  *

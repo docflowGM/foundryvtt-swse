@@ -9,6 +9,10 @@
  * Each item receives:
  *   item.category     = High-level bucket ("Weapons", "Armor", "Tech")
  *   item.subcategory  = Detailed group ("Pistols", "Melee - Simple")
+ *
+ * CONSTRAINT: Services are not processed by this engine.
+ * Services are contextual expenses, not store inventory items.
+ * They are filtered out by normalizer.js before reaching this module.
  */
 
 /* ----------------------------------------------- */
@@ -33,10 +37,10 @@ const Category = {
   SURVIVAL: 'Survival',
   SECURITY: 'Security',
   EQUIPMENT: 'Equipment',
-  SERVICES: 'Services',
   DROIDS: 'Droids',
   VEHICLES: 'Vehicles',
   OTHER: 'Other'
+  // NOTE: SERVICES removed — services are contextual expenses, not store inventory items
 };
 
 /* ---------------------------------------------------------- */
