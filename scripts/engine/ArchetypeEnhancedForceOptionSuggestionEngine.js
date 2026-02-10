@@ -1,5 +1,6 @@
 /**
  * ArchetypeEnhancedForceOptionSuggestionEngine
+ * (PHASE 5D: UNIFIED_TIERS Refactor)
  *
  * Reference implementation showing how to enhance an existing suggestion engine
  * with archetype affinity weighting and explanations.
@@ -15,7 +16,8 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
-import { ForceOptionSuggestionEngine, FORCE_OPTION_TIERS, TIER_REASONS } from './ForceOptionSuggestionEngine.js';
+import { ForceOptionSuggestionEngine, FORCE_OPTION_TIERS } from './ForceOptionSuggestionEngine.js';
+import { getTierMetadata } from './suggestion-unified-tiers.js';
 import {
   enhanceSuggestionWithArchetype,
   getArchetypeExplanation,
@@ -186,7 +188,8 @@ export class ArchetypeEnhancedForceOptionSuggestionEngine {
 
     html += `<div class="force-option-header">`;
     html += `  <span class="force-option-name">${tierIcon} ${suggestion.name} ${archetypeIcon}</span>`;
-    html += `  <span class="force-option-tier">${TIER_REASONS[suggestion.tier] || 'Available'}</span>`;
+    const tierMetadata = getTierMetadata(suggestion.tier);
+    html += `  <span class="force-option-tier">${tierMetadata.description}</span>`;
     html += `</div>`;
 
     // Description
