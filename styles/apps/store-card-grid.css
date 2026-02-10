@@ -1,22 +1,53 @@
 /* SWSE Store Card Grid — Holo Theme */
+/* Visual Contract: Holographic panel interface, dark-first, semantic colors only */
 
 /* Aurebesh: Intentional nonsense font for marketplace reviews (stylized/alien aesthetic) */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
+/* ============================================================================
+   STRICT COLOR TOKENS (Locked to spec)
+   ============================================================================ */
+
 .swse-app-store.card-grid-store {
-  --holo-cyan: #00d9ff;
-  --holo-amber: #ffa500;
-  --holo-dark: #0a0e27;
-  --holo-border: rgba(0, 217, 255, 0.3);
+  /* Background Layer */
+  --bg-dark-primary: #0b0f14;
+  --bg-dark-panel: #111820;
+
+  /* Semantic Accent Colors (meaningful only) */
+  --holo-green: #4cff9e;    /* Positive / Suggested / Confirmed */
+  --holo-amber: #ffb020;    /* Tradeoffs / Warnings / Situational */
+  --holo-yellow: #ffe66d;   /* Neutral highlights / Metadata / Price */
+  --muted-cyan: #4fd1c5;    /* Links / Secondary UI / Dividers */
+  --muted-red: #ff6b6b;     /* Errors / Insufficient / Dangerous */
+
+  /* Legacy (for transition) */
+  --holo-cyan: var(--muted-cyan);
+  --holo-dark: var(--bg-dark-primary);
+  --holo-border: rgba(79, 209, 197, 0.3); /* muted-cyan at 30% */
 }
 
-/* Controls Bar */
+/* ============================================================================
+   REDUCED GLOW MODE (Accessibility)
+   ============================================================================ */
+
+.swse-app-store.card-grid-store.reduce-glow {
+  --glow-strength: 0.1;
+}
+
+.swse-app-store.card-grid-store {
+  --glow-strength: 0.25;
+}
+
+/* ============================================================================
+   CONTROLS BAR
+   ============================================================================ */
+
 .card-store-controls {
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: 16px;
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.05), rgba(255, 165, 0, 0.05));
+  background: var(--bg-dark-panel);
   border: 1px solid var(--holo-border);
   border-radius: 6px;
   margin: 16px;
@@ -34,18 +65,19 @@
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--holo-border);
   border-radius: 4px;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 14px;
+  font-family: Consolas, monospace;
 }
 
 .store-search-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .search-container i {
   position: absolute;
   right: 12px;
-  color: var(--holo-cyan);
+  color: var(--muted-cyan);
   pointer-events: none;
 }
 
@@ -64,15 +96,20 @@
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--holo-border);
   border-radius: 4px;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 13px;
+  font-family: Consolas, monospace;
 }
 
-/* Card Grid Container */
+/* ============================================================================
+   CARD GRID CONTAINER
+   ============================================================================ */
+
 .card-grid-container {
   flex: 1;
   overflow-y: auto;
   padding: 20px;
+  background: var(--bg-dark-primary);
 }
 
 .products-grid {
@@ -87,9 +124,12 @@
   to { opacity: 1; }
 }
 
-/* Holo Card */
+/* ============================================================================
+   HOLO CARD
+   ============================================================================ */
+
 .holo-card.product-card {
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(255, 165, 0, 0.05));
+  background: var(--bg-dark-panel);
   border: 2px solid var(--holo-border);
   border-radius: 8px;
   padding: 12px;
@@ -97,12 +137,12 @@
   flex-direction: column;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 0 20px rgba(0, 217, 255, 0.1);
+  box-shadow: 0 0 20px rgba(79, 209, 197, calc(0.1 * var(--glow-strength)));
 }
 
 .holo-card.product-card:hover {
-  border-color: var(--holo-cyan);
-  box-shadow: 0 0 40px rgba(0, 217, 255, 0.25);
+  border-color: var(--muted-cyan);
+  box-shadow: 0 0 40px rgba(79, 209, 197, calc(0.25 * var(--glow-strength)));
   transform: translateY(-2px);
 }
 
@@ -119,30 +159,31 @@
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-family: Consolas, monospace;
 }
 
 .suggestion-badge.tier-strong-fit {
-  background: rgba(0, 255, 100, 0.2);
-  color: #00ff64;
-  border: 1px solid rgba(0, 255, 100, 0.4);
+  background: rgba(76, 255, 158, 0.15);
+  color: var(--holo-green);
+  border: 1px solid rgba(76, 255, 158, 0.3);
 }
 
 .suggestion-badge.tier-viable {
-  background: rgba(0, 217, 255, 0.2);
-  color: var(--holo-cyan);
+  background: rgba(79, 209, 197, 0.15);
+  color: var(--muted-cyan);
   border: 1px solid var(--holo-border);
 }
 
 .suggestion-badge.tier-situational {
-  background: rgba(255, 200, 0, 0.2);
-  color: #ffc800;
-  border: 1px solid rgba(255, 200, 0, 0.4);
+  background: rgba(255, 176, 32, 0.15);
+  color: var(--holo-amber);
+  border: 1px solid rgba(255, 176, 32, 0.3);
 }
 
 .suggestion-badge.tier-outperformed {
-  background: rgba(255, 100, 100, 0.2);
-  color: #ff6464;
-  border: 1px solid rgba(255, 100, 100, 0.4);
+  background: rgba(255, 107, 107, 0.15);
+  color: var(--muted-red);
+  border: 1px solid rgba(255, 107, 107, 0.3);
 }
 
 .card-body {
@@ -173,7 +214,7 @@
 .card-title {
   font-size: 14px;
   font-weight: bold;
-  color: var(--holo-cyan);
+  color: var(--holo-yellow);
   margin: 0;
   line-height: 1.2;
 }
@@ -183,8 +224,9 @@
   flex-direction: column;
   gap: 4px;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.7);
   line-height: 1.3;
+  font-family: Aurebesh, serif;
 }
 
 .explanation-bullet {
@@ -197,8 +239,9 @@
   gap: 4px;
   font-size: 16px;
   font-weight: bold;
-  color: var(--holo-amber);
+  color: var(--holo-yellow);
   margin-top: auto;
+  font-family: Consolas, monospace;
 }
 
 .credits-icon {
@@ -218,16 +261,17 @@
   font-size: 12px;
   font-weight: bold;
   border-radius: 4px;
-  border: 1px solid var(--holo-cyan);
-  background: rgba(0, 217, 255, 0.1);
-  color: var(--holo-cyan);
+  border: 1px solid var(--muted-cyan);
+  background: rgba(79, 209, 197, 0.1);
+  color: var(--muted-cyan);
   cursor: pointer;
   transition: all 0.15s ease;
+  font-family: Consolas, monospace;
 }
 
 .expand-btn:hover {
-  background: rgba(0, 217, 255, 0.2);
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+  background: rgba(79, 209, 197, 0.2);
+  box-shadow: 0 0 10px rgba(79, 209, 197, calc(0.3 * var(--glow-strength)));
 }
 
 .add-to-cart-btn {
@@ -235,12 +279,16 @@
 }
 
 .add-to-cart-btn:hover {
-  background: rgba(255, 165, 0, 0.2);
+  background: rgba(255, 176, 32, 0.2);
   border-color: var(--holo-amber);
   color: var(--holo-amber);
+  box-shadow: 0 0 10px rgba(255, 176, 32, calc(0.3 * var(--glow-strength)));
 }
 
-/* Empty State */
+/* ============================================================================
+   EMPTY STATE
+   ============================================================================ */
+
 .empty-state {
   grid-column: 1 / -1;
   display: flex;
@@ -248,23 +296,26 @@
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .empty-state i {
   font-size: 48px;
   margin-bottom: 16px;
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
-/* Cart Sidebar */
+/* ============================================================================
+   CART SIDEBAR
+   ============================================================================ */
+
 .cart-sidebar {
   position: fixed;
   right: 0;
   top: 0;
   width: 380px;
   height: 100%;
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.05), rgba(10, 14, 39, 0.95));
+  background: var(--bg-dark-panel);
   border-left: 2px solid var(--holo-border);
   display: flex;
   flex-direction: column;
@@ -278,12 +329,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-family: Consolas, monospace;
+  color: var(--holo-yellow);
 }
 
 .close-cart-btn {
   background: none;
   border: none;
-  color: var(--holo-cyan);
+  color: var(--muted-cyan);
   cursor: pointer;
   font-size: 18px;
 }
@@ -301,6 +354,8 @@
   flex-direction: column;
   gap: 8px;
   font-size: 13px;
+  font-family: Consolas, monospace;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .summary-line {
@@ -311,7 +366,7 @@
 .summary-line.total,
 .summary-line.remaining {
   font-weight: bold;
-  color: var(--holo-amber);
+  color: var(--holo-yellow);
 }
 
 .cart-actions {
@@ -325,30 +380,34 @@
 .clear-cart-btn {
   padding: 10px;
   border-radius: 4px;
-  border: 1px solid var(--holo-cyan);
-  background: rgba(0, 217, 255, 0.15);
-  color: var(--holo-cyan);
+  border: 1px solid var(--muted-cyan);
+  background: rgba(79, 209, 197, 0.15);
+  color: var(--muted-cyan);
   font-weight: bold;
   cursor: pointer;
   transition: all 0.15s ease;
+  font-family: Consolas, monospace;
 }
 
 .checkout-btn:hover {
-  background: rgba(0, 217, 255, 0.3);
-  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+  background: rgba(79, 209, 197, 0.3);
+  box-shadow: 0 0 15px rgba(79, 209, 197, calc(0.4 * var(--glow-strength)));
 }
 
 .clear-cart-btn {
-  background: rgba(255, 100, 100, 0.1);
-  border-color: rgba(255, 100, 100, 0.5);
-  color: rgba(255, 100, 100, 0.8);
+  background: rgba(255, 107, 107, 0.1);
+  border-color: rgba(255, 107, 107, 0.5);
+  color: rgba(255, 107, 107, 0.8);
 }
 
 .clear-cart-btn:hover {
-  background: rgba(255, 100, 100, 0.2);
+  background: rgba(255, 107, 107, 0.2);
 }
 
-/* Product Modal */
+/* ============================================================================
+   PRODUCT MODAL
+   ============================================================================ */
+
 .product-modal {
   position: fixed;
   inset: 0;
@@ -362,7 +421,7 @@
 }
 
 .modal-content {
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(255, 165, 0, 0.05));
+  background: var(--bg-dark-panel);
   border: 2px solid var(--holo-border);
   border-radius: 8px;
   padding: 24px;
@@ -370,7 +429,7 @@
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 0 50px rgba(0, 217, 255, 0.3);
+  box-shadow: 0 0 50px rgba(79, 209, 197, calc(0.3 * var(--glow-strength)));
   position: relative;
 }
 
@@ -384,12 +443,12 @@
 }
 
 .modal-content::-webkit-scrollbar-thumb {
-  background: rgba(0, 217, 255, 0.4);
+  background: rgba(79, 209, 197, 0.4);
   border-radius: 4px;
 }
 
 .modal-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 217, 255, 0.6);
+  background: rgba(79, 209, 197, 0.6);
 }
 
 .modal-header {
@@ -397,10 +456,15 @@
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
+  font-family: Consolas, monospace;
+  color: var(--holo-yellow);
 }
 
 .modal-header h2 {
   flex: 1;
+  margin: 0;
+  color: var(--holo-yellow);
+  font-size: 18px;
 }
 
 .modal-body {
@@ -417,6 +481,8 @@
 
 .modal-price-section {
   font-size: 16px;
+  color: var(--holo-yellow);
+  font-family: Consolas, monospace;
 }
 
 .modal-price-section strong {
@@ -427,6 +493,19 @@
 .modal-tech-section,
 .modal-description-section {
   border-radius: 4px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.modal-suggestion-section {
+  border-top: 1px solid var(--holo-border);
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+.modal-suggestion-section strong,
+.modal-tech-section strong,
+.modal-description-section strong {
+  color: var(--holo-green);
 }
 
 .modal-suggestion-section ul,
@@ -439,4 +518,22 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 16px;
+  border-top: 1px solid var(--holo-border);
+  padding-top: 16px;
+}
+
+/* ============================================================================
+   REVIEW SECTION OVERRIDES
+   ============================================================================ */
+
+.flavor-review {
+  color: rgba(255, 255, 255, 0.6);
+  font-family: Aurebesh, serif;
+  border-left: 2px solid var(--holo-border);
+}
+
+.flavor-review strong {
+  font-family: Consolas, monospace;
+  color: var(--holo-yellow);
 }
