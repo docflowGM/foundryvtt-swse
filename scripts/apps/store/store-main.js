@@ -907,6 +907,14 @@ export class SWSEStore extends ApplicationV2 {
         return '';
       }
 
+      // Normalize seller usernames for consistency
+      let displayAuthor = review.author;
+      if (review.type === 'seller' && review.author === 'Rendarr') {
+        displayAuthor = 'Rendarr_Admin';
+      } else if (review.type === 'competitor' && review.author === 'Neeko') {
+        displayAuthor = 'TotallyNotNeeko';
+      }
+
       // Color-code by reviewer type
       let bgColor, borderColor, icon;
       if (review.type === 'competitor') {
@@ -937,7 +945,7 @@ export class SWSEStore extends ApplicationV2 {
       let reviewHTML = `
         <div class="flavor-review" style="margin-bottom: 12px; padding: 8px; background: ${bgColor}; border-left: 2px solid ${borderColor}; border-radius: 2px;">
           <div style="font-size: 11px; color: rgba(255, 255, 255, 0.7); font-weight: bold; margin-bottom: 4px; font-family: Consolas, monospace;">
-            ${icon} ${review.author} ${starDisplay}
+            ${icon} ${displayAuthor} ${starDisplay}
           </div>
           <p style="margin: 0; font-size: 12px; line-height: 1.5; color: rgba(255, 255, 255, 0.8); font-family: 'Aurebesh', serif; letter-spacing: 0.3px;">
             "${review.text}"
