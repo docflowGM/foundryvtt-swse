@@ -482,6 +482,7 @@ export async function createCustomStarship(actor, closeCallback) {
         title: 'Build Custom Starship',
         content: `<p>Enter the starship modification system with Marl Skindar?</p>
                  <p>You will select a stock ship and customize it with modifications.</p>
+                 <p><strong>This build will be submitted for GM approval.</strong></p>
                  <p><strong>Minimum cost:</strong> 5,000 credits (Light Fighter)</p>
                  <p><em>Warning: Marl will judge your choices harshly.</em></p>`,
         defaultYes: true
