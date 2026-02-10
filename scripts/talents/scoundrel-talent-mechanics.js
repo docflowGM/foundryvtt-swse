@@ -16,6 +16,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { createEffectOnActor } from '../core/document-api-v13.js';
 
 export class ScoundrelTalentMechanics {
 
@@ -300,7 +301,7 @@ export class ScoundrelTalentMechanics {
       ? 'system.condition.prone'
       : 'system.condition.disarmed';
 
-    await targetActor.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(targetActor, {
       name: effectName,
       icon: strikeType === 'trip' ? 'icons/svg/daze.svg' : 'icons/svg/target.svg',
       changes: [{
@@ -321,7 +322,7 @@ export class ScoundrelTalentMechanics {
           sourceActorId: actor.id
         }
       }
-    }]);
+    });
 
     const message = strikeType === 'trip'
       ? `${targetActor.name} has been knocked prone!`
@@ -416,7 +417,7 @@ export class ScoundrelTalentMechanics {
     await actor.setFlag('swse', usageFlag, true);
 
     // Apply bonus to next attack
-    await ally.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(ally, {
       name: 'Cunning Strategist - Attack Bonus',
       icon: 'icons/svg/aura.svg',
       changes: [{
@@ -437,7 +438,7 @@ export class ScoundrelTalentMechanics {
           sourceActorId: actor.id
         }
       }
-    }]);
+    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Cunning Strategist on ${ally.name}`);
     ui.notifications.info(`${ally.name} gains +2 to their next attack roll!`);

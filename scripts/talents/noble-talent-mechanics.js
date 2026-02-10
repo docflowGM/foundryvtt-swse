@@ -17,6 +17,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { createEffectOnActor } from '../core/document-api-v13.js';
 
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 export class NobleTalentMechanics {
@@ -205,7 +206,7 @@ export class NobleTalentMechanics {
     await actor.setFlag('swse', usageFlag, true);
 
     // Create effect for +2 morale bonus
-    await ally.createEmbeddedDocuments('ActiveEffect', [{
+    await createEffectOnActor(ally, {
       name: 'Inspire Confidence - Morale Bonus',
       icon: 'icons/svg/aura.svg',
       changes: [{
@@ -226,7 +227,7 @@ export class NobleTalentMechanics {
           sourceActorId: actor.id
         }
       }
-    }]);
+    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Inspire Confidence on ${ally.name}`);
     ui.notifications.info(`${ally.name} is inspired! Gains +2 morale bonus until the start of their next turn!`);
@@ -379,7 +380,7 @@ export class NobleTalentMechanics {
       const ally = allyToken.actor;
       if (!ally) {continue;}
 
-      await ally.createEmbeddedDocuments('ActiveEffect', [{
+      await createEffectOnActor(ally, {
         name: 'Ignite Fervor - Attack and Damage Bonus',
         icon: 'icons/svg/fire.svg',
         changes: [
@@ -408,7 +409,7 @@ export class NobleTalentMechanics {
             sourceActorId: actor.id
           }
         }
-      }]);
+      });
     }
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Ignite Fervor, granted +1 attack and damage to ${allies.length} allies`);

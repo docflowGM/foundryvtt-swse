@@ -13,6 +13,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { createEffectOnActor } from '../core/document-api-v13.js';
 
 export class FeatEffectsEngine {
 
@@ -582,8 +583,23 @@ export class FeatEffectsEngine {
 
         if (effectsData.length > 0) {
             try {
-                await featItem.createEmbeddedDocuments('ActiveEffect', effectsData);
-                SWSELogger.log(`FeatEffectsEngine | Created ${effectsData.length} effects for ${featItem.name}`);
+                // v13 hardening: Check if feat is owned by an actor and use v13 wrapper if available
+                const actor = featItem.actor;
+                if (actor && actor.isOwner) {
+                    // Use v13 wrapper for ownership-validated effect creation
+                    await createEffectOnActor(actor, effectsData);
+                    SWSELogger.log(`FeatEffectsEngine | Created ${effectsData.length} effects for ${featItem.name} via actor wrapper`);
+                } else if (!actor) {
+                    // Fallback for feat items not in an actor (e.g., compendium items)
+                    if (!featItem.isOwner) {
+                        SWSELogger.warn(`FeatEffectsEngine | Cannot create effects: No ownership on feat ${featItem.name}`);
+                        return;
+                    }
+                    await featItem.createEmbeddedDocuments('ActiveEffect', effectsData);
+                    SWSELogger.log(`FeatEffectsEngine | Created ${effectsData.length} effects for ${featItem.name}`);
+                } else {
+                    SWSELogger.warn(`FeatEffectsEngine | Cannot create effects: Non-owner attempting to modify ${featItem.name}`);
+                }
             } catch (err) {
                 SWSELogger.error(`FeatEffectsEngine | Failed to create effects for ${featItem.name}:`, err);
             }

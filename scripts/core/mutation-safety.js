@@ -8,7 +8,7 @@
  * - Prevention of cascading mutations
  */
 
-import { log } from './foundry-env.js';
+import { log, isGameMaster } from './foundry-env.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const FLAG_MUTATION_LOCK = 'mutationLocked';
@@ -223,7 +223,7 @@ export function validateItemForCreation(itemData) {
  * Get mutation audit trail for an actor (GM only)
  */
 export function getActorMutationAudit(actor) {
-  if (!game.user.isGM) {
+  if (!isGameMaster()) {
     log.warn('getActorMutationAudit: Only GMs can view audit trail');
     return null;
   }
