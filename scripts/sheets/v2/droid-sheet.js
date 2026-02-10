@@ -1,5 +1,6 @@
 // scripts/sheets/v2/droid-sheet.js
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { DroidBuilderApp } from '../../apps/droid-builder-app.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -167,6 +168,31 @@ async _prepareContext(options) {
         if (!actionId) {return;}
         if (typeof this.actor.useAction === 'function') {
           await this.actor.useAction(actionId);
+        }
+      });
+    }
+
+    // Phase 3c: Edit droid systems
+    const editDroidBtn = root.querySelector('.edit-droid-systems');
+    if (editDroidBtn) {
+      editDroidBtn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        // Determine if this is a new config or edit of existing
+        const hasConfig = !!this.actor?.system?.droidSystems?.degree;
+        const mode = hasConfig ? 'EDIT' : 'NEW';
+
+        try {
+          // Launch builder in appropriate mode
+          await DroidBuilderApp.open(this.actor, {
+            mode: mode,
+            sourceActor: hasConfig ? this.actor : null,
+            requireApproval: game.settings.get('foundryvtt-swse', 'store.requireGMApproval') ?? false
+          });
+        } catch (err) {
+          console.error('Failed to open droid builder:', err);
+          ui.notifications.error('Failed to open droid builder.');
         }
       });
     }

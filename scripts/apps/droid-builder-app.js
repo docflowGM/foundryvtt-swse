@@ -22,7 +22,8 @@ export class DroidBuilderApp extends SWSEApplication {
     this.requireApproval = options.requireApproval ?? false; // GM approval gate
 
     // UI state: in-memory copy of droid systems for validation
-    this.droidSystems = this._initializeDroidSystems();
+    // Note: TEMPLATE mode initialization is async, handled in _prepareContext
+    this.droidSystems = this._getInitialDroidSystems();
     this.currentStep = 'intro';
 
     // Initialize StepController for Phase 2
@@ -37,49 +38,57 @@ export class DroidBuilderApp extends SWSEApplication {
   }
 
   /**
-   * Initialize droid systems from actor, template, or create empty
-   * Includes all Phase 2 systems
-   *
-   * Phase 3b: Supports modes
-   * - NEW: Create blank config (default 2000 credits)
-   * - EDIT: Load from existing actor (preserve state mode)
-   * - TEMPLATE: Clone from template actor (start as DRAFT)
+   * Synchronous initialization for constructor
+   * TEMPLATE mode async loading happens in _prepareContext
    */
-  _initializeDroidSystems() {
+  _getInitialDroidSystems() {
     // EDIT mode: load from existing actor
     if (this.mode === 'EDIT' && this.sourceActor?.system?.droidSystems) {
       return foundry.utils.deepClone(this.sourceActor.system.droidSystems);
     }
 
-    // TEMPLATE mode: load from template, but start fresh
-    if (this.mode === 'TEMPLATE' && this.templateId) {
-      // TODO: Load template from compendium when implemented
-      // For now, fall through to default
-    }
-
-    // NEW mode (default): Create blank config
+    // NEW and TEMPLATE: start with blank config (TEMPLATE loads in _prepareContext)
     return {
-      // Degree and size (Phase 1)
       degree: '',
       size: 'Medium',
-
-      // Phase 2 single-select systems
       locomotion: { id: '', name: '', cost: 0, speed: 0 },
       processor: { id: '', name: '', cost: 0, bonus: 0 },
       armor: { id: '', name: '', cost: 0, bonus: 0 },
-
-      // Phase 2 multi-select systems
       appendages: [],
       sensors: [],
       weapons: [],
       accessories: [],
-
-      // Budget tracking
       credits: { total: 2000, spent: 0, remaining: 2000 },
-
-      // Phase 3b: State mode tracking (DRAFT, PENDING, FINALIZED)
       stateMode: 'DRAFT'
     };
+  }
+
+  /**
+   * Phase 3d: Load template from compendium (async)
+   * Called during first render to handle async template loading
+   */
+  async _loadTemplateIfNeeded() {
+    if (this.mode !== 'TEMPLATE' || !this.templateId) return;
+
+    try {
+      const templatePack = game.packs.get('foundryvtt-swse.droid-templates');
+      if (templatePack) {
+        const templateActor = await templatePack.getDocument(this.templateId);
+        if (templateActor?.system?.droidSystems) {
+          this.droidSystems = foundry.utils.deepClone(templateActor.system.droidSystems);
+          this.droidSystems.stateMode = 'DRAFT';
+          // Reinitialize step controller with new config
+          this.stepController = new StepController(
+            this.droidSystems,
+            this.actor,
+            DroidBuilderApp.SYSTEM_CATALOG
+          );
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to load template from compendium:', err);
+      ui.notifications.warn('Failed to load template. Using blank configuration.');
+    }
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
@@ -271,8 +280,16 @@ export class DroidBuilderApp extends SWSEApplication {
   /**
    * Prepare all context from state
    * AppV2 pattern: all rendering context computed here
+   *
+   * Phase 3d: Load templates on first render (async)
    */
   async _prepareContext(options) {
+    // Phase 3d: Load template on first render (one-time)
+    if (this.mode === 'TEMPLATE' && !this._templateLoaded) {
+      await this._loadTemplateIfNeeded();
+      this._templateLoaded = true;
+    }
+
     const context = {};
 
     context.actor = this.actor;

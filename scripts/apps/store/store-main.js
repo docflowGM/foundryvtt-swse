@@ -41,6 +41,7 @@ import {
   checkout,
   createCustomDroid,
   buildDroidWithBuilder,
+  buildDroidFromTemplate,
   createCustomStarship
 } from './store-checkout.js';
 
@@ -672,6 +673,15 @@ export class SWSEStore extends ApplicationV2 {
         if (!this.actor) {return;}
         // Phase 3b: Use new DroidBuilderApp instead of CharacterGenerator
         await buildDroidWithBuilder(this.actor, () => this.render());
+      });
+    }
+
+    // Phase 3d: Build from template
+    const templateDroidBtn = root.querySelector('.build-droid-from-template');
+    if (templateDroidBtn) {
+      templateDroidBtn.addEventListener('click', async () => {
+        if (!this.actor) {return;}
+        await buildDroidFromTemplate(this.actor, () => this.render());
       });
     }
 

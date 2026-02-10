@@ -1028,3 +1028,141 @@ async function deductDroidCredits(actor, cost) {
         newCredits: newCredits
     });
 }
+
+/**
+ * Phase 3d: Build droid from template
+ *
+ * Browse available droid templates from the droid-templates compendium
+ * and launch builder in TEMPLATE mode to clone and customize.
+ *
+ * @param {Actor} actor - The player's actor who will own the droid
+ * @param {Function} closeCallback - Callback to close the Store UI
+ */
+export async function buildDroidFromTemplate(actor, closeCallback) {
+    if (!actor) {
+        ui.notifications.error('No actor provided for droid building.');
+        return;
+    }
+
+    try {
+        // Try to get droid-templates compendium
+        const templatePack = game.packs.get('foundryvtt-swse.droid-templates');
+
+        if (!templatePack) {
+            ui.notifications.warn(
+                'No droid-templates compendium found. ' +
+                'Please ask your GM to create a compendium named "droid-templates" with droid actors.'
+            );
+            return;
+        }
+
+        // Get all droid actors from the compendium
+        const templates = await templatePack.getDocuments();
+        const droidTemplates = templates.filter(d => d.type === 'droid');
+
+        if (droidTemplates.length === 0) {
+            ui.notifications.warn('No droid templates found in the droid-templates compendium.');
+            return;
+        }
+
+        // Create template selection dialog
+        let templateHTML = '<div class="template-browser"><select id="template-select" style="width: 100%; padding: 8px; margin-bottom: 12px;">';
+        templateHTML += '<option value="">Select a template...</option>';
+        droidTemplates.forEach(t => {
+            const degree = t.system?.droidSystems?.degree || 'Unknown';
+            const size = t.system?.droidSystems?.size || 'Medium';
+            templateHTML += `<option value="${t.id}">${t.name} (${degree}, ${size})</option>`;
+        });
+        templateHTML += '</select></div>';
+
+        // Show selection dialog
+        let selectedTemplateId = null;
+        await new Promise(resolve => {
+            const dialog = new Dialog({
+                title: 'Select Droid Template',
+                content: templateHTML,
+                buttons: {
+                    select: {
+                        label: 'Select',
+                        callback: (html) => {
+                            selectedTemplateId = html.find('#template-select').val();
+                            resolve();
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        callback: () => {
+                            resolve();
+                        }
+                    }
+                },
+                default: 'select'
+            });
+            dialog.render(true);
+        });
+
+        // User cancelled
+        if (!selectedTemplateId) return;
+
+        // Find the selected template
+        const selectedTemplate = droidTemplates.find(t => t.id === selectedTemplateId);
+        if (!selectedTemplate) {
+            ui.notifications.error('Selected template not found.');
+            return;
+        }
+
+        // Close store if callback provided
+        if (closeCallback) {
+            closeCallback();
+        }
+
+        // Confirm before launching builder
+        const confirmed = await Dialog.confirm({
+            title: `Clone Droid Template: ${selectedTemplate.name}`,
+            content: `
+                <p>Create a new droid based on <strong>${selectedTemplate.name}</strong>?</p>
+                <p><em>You can customize this template before finalizing.</em></p>
+            `,
+            defaultYes: true
+        });
+
+        if (!confirmed) return;
+
+        // Launch builder in TEMPLATE mode
+        const requireApproval = game.settings.get('foundryvtt-swse', 'store.requireGMApproval') ?? false;
+
+        // Set up hook listener (same as buildDroidWithBuilder)
+        const hookId = Hooks.on('swse:droidFinalized', async (data) => {
+            if (data.actor.id !== actor.id) return;
+            Hooks.off('swse:droidFinalized', hookId);
+
+            try {
+                if (!data.requireApproval) {
+                    await deductDroidCredits(actor, data.cost);
+                    ui.notifications.info(`Droid built! ${data.cost} credits deducted.`);
+                } else {
+                    ui.notifications.info('Droid submitted for GM approval. Awaiting review...');
+                }
+            } catch (err) {
+                SWSELogger.error('SWSE Store | Error handling droid finalization:', err);
+                ui.notifications.error('Error processing droid.');
+            }
+        });
+
+        // Launch builder
+        await DroidBuilderApp.open(actor, {
+            mode: 'TEMPLATE',
+            templateId: selectedTemplate.id,
+            requireApproval: requireApproval
+        });
+
+        SWSELogger.log('SWSE Store | Launched DroidBuilderApp from template:', {
+            actor: actor.name,
+            template: selectedTemplate.name
+        });
+
+    } catch (err) {
+        SWSELogger.error('SWSE Store | Failed to build from template:', err);
+        ui.notifications.error('Failed to load droid templates.');
+    }
+}
