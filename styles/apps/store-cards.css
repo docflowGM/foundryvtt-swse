@@ -253,6 +253,82 @@
 }
 
 /* ============================================================ */
+/* RARITY EFFECTS (COLOR + GLOW ONLY, NO SHAPE CHANGES)         */
+/* ============================================================ */
+
+/* Standard items (default green) */
+.product-card[data-rarity="standard"] .store-glyph {
+  color: #00ff88;
+  text-shadow:
+    0 0 10px rgba(0, 255, 136, 0.6),
+    0 0 20px rgba(0, 255, 136, 0.2);
+}
+
+/* Licensed items (cyan tint) */
+.product-card[data-rarity="licensed"] .store-glyph {
+  color: #00ffdd;
+  text-shadow:
+    0 0 12px rgba(0, 255, 221, 0.7),
+    0 0 24px rgba(0, 255, 221, 0.3);
+}
+
+/* Restricted items (yellow tint) */
+.product-card[data-rarity="restricted"] .store-glyph {
+  color: #ffff00;
+  text-shadow:
+    0 0 12px rgba(255, 255, 0, 0.7),
+    0 0 24px rgba(255, 255, 0, 0.3);
+}
+
+/* Military items (red tint) */
+.product-card[data-rarity="military"] .store-glyph {
+  color: #ff4444;
+  text-shadow:
+    0 0 12px rgba(255, 68, 68, 0.7),
+    0 0 24px rgba(255, 68, 68, 0.3);
+}
+
+/* Illegal items (intense red + flicker) */
+.product-card[data-rarity="illegal"] .store-glyph {
+  color: #ff0000;
+  text-shadow:
+    0 0 15px rgba(255, 0, 0, 0.8),
+    0 0 30px rgba(255, 0, 0, 0.4);
+  animation: rarity-flicker-illegal 1.5s ease-in-out infinite;
+}
+
+@keyframes rarity-flicker-illegal {
+  0%, 100% {
+    opacity: 1;
+    text-shadow:
+      0 0 15px rgba(255, 0, 0, 0.8),
+      0 0 30px rgba(255, 0, 0, 0.4);
+  }
+  50% {
+    opacity: 0.8;
+    text-shadow:
+      0 0 10px rgba(255, 0, 0, 0.5),
+      0 0 20px rgba(255, 0, 0, 0.2);
+  }
+}
+
+/* Rare items (purple/magenta) */
+.product-card[data-rarity="rare"] .store-glyph {
+  color: #ff00ff;
+  text-shadow:
+    0 0 12px rgba(255, 0, 255, 0.7),
+    0 0 24px rgba(255, 0, 255, 0.3);
+}
+
+/* Respect reduced motion for rarity effects */
+@media (prefers-reduced-motion: reduce) {
+  .product-card[data-rarity="illegal"] .store-glyph {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ============================================================ */
 /* ACCESSIBILITY: SCREEN READERS                                */
 /* ============================================================ */
 

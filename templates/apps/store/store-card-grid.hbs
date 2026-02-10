@@ -86,7 +86,7 @@
     {{#if allItems.length}}
       <div class="products-grid" id="products-grid">
         {{#each allItems}}
-          <div class="holo-card product-card" data-item-id="{{this.id}}" data-category="{{this.category}}" data-availability="{{this.availability}}">
+          <div class="holo-card product-card" data-item-id="{{this.id}}" data-category="{{this.category}}" data-availability="{{this.availability}}" data-rarity="{{this.rarityClass}}">
             {{!-- Card Header with Suggestion Badge --}}
             <div class="card-header">
               {{#if this.suggestion}}
