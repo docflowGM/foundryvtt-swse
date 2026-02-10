@@ -18,10 +18,9 @@
  * }
  */
 
-import { STORE_PACKS } from '../store-constants.js';
+import { STORE_PACKS, STORE_RULES } from './store-constants.js';
 
-const CACHE_KEY = 'swse-store-cache-v1';   // bump this to invalidate all caches
-const CACHE_TTL = 1000 * 60 * 60 * 24;     // 24 hours
+const { CACHE_KEY, CACHE_TTL } = STORE_RULES;
 
 /* ------------------------------------------- */
 /* CACHE HELPERS                                */
