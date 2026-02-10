@@ -228,6 +228,9 @@ export class ReviewThreadAssembler {
       ];
       return allDroids.length > 0 ? allDroids : [];
     }
+    if (itemType === 'modification') {
+      return main.modificationReviews || [];
+    }
 
     return [];
   }
@@ -260,6 +263,10 @@ export class ReviewThreadAssembler {
     if (itemType === 'droid') {
       // Droids don't have overflow yet, but gracefully handle if they do
       return overflow.droidReviewsOverflow || [];
+    }
+    if (itemType === 'modification') {
+      // Modifications don't have overflow yet, but gracefully handle if they do
+      return overflow.modificationReviewsOverflow || [];
     }
 
     return [];

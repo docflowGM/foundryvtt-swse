@@ -73,6 +73,11 @@ const createMockDialoguePacks = () => ({
       'Lifts things. Sometimes people.',
       'Very strong. Very literal.'
     ],
+    modificationReviews: [
+      'Installed easily. Removal was harder.',
+      'Works as advertised, mostly.',
+      'Why does it make that sound now.'
+    ],
     neekoReviews: {
       selfPromo: [
         'Neeko has better price'
@@ -110,6 +115,10 @@ const createMockDialoguePacks = () => ({
     vehicleReviewsOverflow: [
       'Surprisingly efficient',
       'Turns well'
+    ],
+    modificationReviewsOverflow: [
+      'Installation was stressful.',
+      'Feels like a real upgrade.'
     ],
     neekoOverflow: [
       'Neeko sellsss cheaper'
@@ -529,6 +538,42 @@ export const reviewThreadAssemblerTests = {
     }
 
     console.log(`✓ testDroidReviews passed (${customerReviews.length} reviews from mixed droid degrees)`);
+    return true;
+  },
+
+  /**
+   * Modification reviews are properly assembled and validated
+   */
+  testModificationReviews() {
+    const packs = createMockDialoguePacks();
+    const thread = ReviewThreadAssembler.build({
+      itemType: 'modification',
+      dialoguePacks: packs,
+      hasMentorReview: false,
+      mentorText: null
+    });
+
+    if (!thread.isValid) {
+      console.warn('[TEST FAIL] Modification thread validation failed');
+      return false;
+    }
+
+    const customerReviews = thread.reviews.filter(r => r.type === 'customer');
+    if (customerReviews.length < 6 || customerReviews.length > 12) {
+      console.warn(`[TEST FAIL] Modification review count out of bounds: ${customerReviews.length}`);
+      return false;
+    }
+
+    // Verify reviews come from modification pack
+    const modPool = [...packs.main.modificationReviews, ...(packs.overflow.modificationReviewsOverflow || [])];
+    for (const review of customerReviews) {
+      if (!modPool.includes(review.text)) {
+        console.warn(`[TEST FAIL] Review not from modification pack: "${review.text}"`);
+        return false;
+      }
+    }
+
+    console.log(`✓ testModificationReviews passed (${customerReviews.length} reviews)`);
     return true;
   }
 };

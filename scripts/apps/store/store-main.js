@@ -212,6 +212,20 @@ export class SWSEStore extends ApplicationV2 {
           // Droid pack is optional, don't fail if missing
           console.debug('[SWSE Store] Droid reviews not found (optional)', droidErr.message);
         }
+
+        // Try to load modification reviews pack
+        try {
+          const modResponse = await fetch('systems/foundryvtt-swse/data/reviews/modification-reviews.json');
+          if (modResponse.ok) {
+            const modData = await modResponse.json();
+            if (modData.modificationReviews) {
+              this.reviewsData.modificationReviews = modData.modificationReviews;
+            }
+          }
+        } catch (modErr) {
+          // Modification pack is optional, don't fail if missing
+          console.debug('[SWSE Store] Modification reviews not found (optional)', modErr.message);
+        }
       }
     } catch (err) {
       console.warn('[SWSE Store] Failed to load reviews data:', err);
