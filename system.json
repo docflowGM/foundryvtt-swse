@@ -55,6 +55,7 @@
     "styles/apps/custom-item-dialog.css",
     "styles/apps/store.css",
     "styles/apps/store-card-grid.css",
+    "styles/apps/store-cards.css",
     "styles/apps/store-loading-overlay.css",
     "styles/apps/levelup.css",
     "styles/sheets/character-sheet.css",

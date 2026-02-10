@@ -19,6 +19,7 @@ import { GearSuggestions } from '../../suggestion-engine/gear-suggestions.js';
 import { MentorProseGenerator } from '../../suggestion-engine/mentor-prose-generator.js';
 import { ReviewThreadAssembler } from './review-thread-assembler.js';
 import { StoreLoadingOverlay } from './store-loading-overlay.js';
+import { resolveStoreGlyph } from './store-glyph-map.js';
 import {
   safeString,
   safeImg,
@@ -344,15 +345,21 @@ export class SWSEStore extends ApplicationV2 {
 
   _buildItemsWithSuggestions() {
     const items = [];
+    const useAurebesh = game.settings.get('foundryvtt-swse', 'useAurebesh') ?? true;
 
     for (const item of this.storeInventory?.allItems || []) {
       const suggestion = this.suggestions.get(item._id);
       const view = this._viewFromItem(item);
 
       // Add category for filtering
-      view.category = item.type || '';
+      view.category = item.category || item.type || '';
       view.availability = (item.system?.availability || '').toString();
       view.price = view.finalCost;
+
+      // RESOLVE GLYPH: Central authority (store-glyph-map.js)
+      const glyphData = resolveStoreGlyph(view.category, item.type, useAurebesh);
+      view.glyph = glyphData.text;
+      view.glyphLabel = glyphData.label;
 
       // Attach suggestion data
       if (suggestion?.combined) {
