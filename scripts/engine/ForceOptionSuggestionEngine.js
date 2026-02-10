@@ -1,18 +1,12 @@
 /**
  * SWSE Force Option Suggestion Engine
+ * (PHASE 5D: UNIFIED_TIERS Refactor)
  *
  * Provides intelligent suggestions for Force powers, secrets, and techniques
  * based on character's build direction, combat style, and prestige class targets.
  *
  * Integrates with BuildIntent and RulesetProfile to deliver context-aware recommendations.
- *
- * Suggestion Tiers:
- * TIER 5 - PRESTIGE_ALIGNED: Directly supports prestige class build path
- * TIER 4 - COMBAT_SYNERGY: Enhances character's primary combat style
- * TIER 3 - UNIVERSAL_STRONG: Universally strong Force option
- * TIER 2 - HOUSE_RULE_BONUS: Enhanced by active house rules
- * TIER 1 - COMPATIBLE: Legal option that fits the build
- * TIER 0 - AVAILABLE: Can be selected but not specifically recommended
+ * Now uses UNIFIED_TIERS system for consistent tier definitions.
  */
 
 import { SWSELogger } from '../utils/logger.js';
@@ -21,32 +15,17 @@ import {
   generateForcePowerArchetypeWeights,
   validateForcePowerCategories
 } from './force-power-categories.js';
+import { UNIFIED_TIERS, getTierMetadata } from './suggestion-unified-tiers.js';
 
+// DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
+// Use UNIFIED_TIERS from suggestion-unified-tiers.js instead
 export const FORCE_OPTION_TIERS = {
-  PRESTIGE_ALIGNED: 5,
-  COMBAT_SYNERGY: 4,
-  UNIVERSAL_STRONG: 3,
-  HOUSE_RULE_BONUS: 2,
-  COMPATIBLE: 1,
-  AVAILABLE: 0
-};
-
-export const TIER_REASONS = {
-  5: 'Directly supports your prestige class build path',
-  4: 'Enhances your primary combat style',
-  3: 'Universally strong Force option',
-  2: 'Boosted by active house rules',
-  1: 'Compatible with your build',
-  0: 'Available for selection'
-};
-
-export const TIER_ICONS = {
-  5: 'fa-crown',        // Crown for prestige alignment
-  4: 'fa-bolt',         // Lightning for combat synergy
-  3: 'fa-star',         // Star for universal strength
-  2: 'fa-cog',          // Cog for house rules
-  1: 'fa-check',        // Check for compatible
-  0: ''                 // No icon for available
+  PRESTIGE_ALIGNED: UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,  // 5
+  COMBAT_SYNERGY: UNIFIED_TIERS.PATH_CONTINUATION,         // 4
+  UNIVERSAL_STRONG: UNIFIED_TIERS.CATEGORY_SYNERGY,        // 3
+  HOUSE_RULE_BONUS: UNIFIED_TIERS.ABILITY_SYNERGY,         // 2
+  COMPATIBLE: UNIFIED_TIERS.THEMATIC_FIT,                  // 1
+  AVAILABLE: UNIFIED_TIERS.AVAILABLE                       // 0
 };
 
 // Force Option Catalog
@@ -312,16 +291,19 @@ export class ForceOptionSuggestionEngine {
           reasons.push('Supports defensive playstyle');
         }
 
-        const reason = reasons.length > 0 ? reasons.join('; ') : TIER_REASONS[tier];
+        const tierMetadata = getTierMetadata(tier);
+        const reason = reasons.length > 0 ? reasons.join('; ') : tierMetadata.description;
 
         return {
           ...option,
           suggestion: {
             tier,
             reason,
-            icon: TIER_ICONS[tier]
+            icon: tierMetadata.icon,
+            color: tierMetadata.color,
+            label: tierMetadata.label
           },
-          isSuggested: tier >= FORCE_OPTION_TIERS.COMBAT_SYNERGY
+          isSuggested: tier >= UNIFIED_TIERS.PATH_CONTINUATION  // TIER 4+
         };
       });
 
@@ -333,11 +315,15 @@ export class ForceOptionSuggestionEngine {
     } catch (err) {
       SWSELogger.error('Force option suggestion failed:', err);
       // Return options without suggestions as fallback
+      const tierMetadata = getTierMetadata(UNIFIED_TIERS.AVAILABLE);
       return options.map(opt => ({
         ...opt,
         suggestion: {
-          tier: FORCE_OPTION_TIERS.AVAILABLE,
-          reason: 'Available',
+          tier: UNIFIED_TIERS.AVAILABLE,
+          reason: tierMetadata.description,
+          icon: tierMetadata.icon,
+          color: tierMetadata.color,
+          label: tierMetadata.label
           icon: ''
         },
         isSuggested: false
