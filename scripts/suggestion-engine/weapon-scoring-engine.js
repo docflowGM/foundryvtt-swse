@@ -10,9 +10,19 @@
  * - Critical multipliers
  * - Feat/talent interactions
  *
+ * Scoring Pipeline:
+ * 1. Extract character context (attributes, roles, playstyle)
+ * 2. Score Axis A (damage-on-hit)
+ * 3. Score Axis B (hit-likelihood bias)
+ * 4. Apply TradeoffResolver OR WeightedScoreEngine for combined score
+ * 5. Apply CategoryNormalization (trap item detection) - LAST
+ * 6. Generate explanations
+ * 7. Rank and return
+ *
  * The engine produces:
  * - Independent axis scores
- * - Combined relevance score
+ * - Bounded, additive weighted score (0-100)
+ * - Category-relative adjustments (-6 to +4)
  * - Human-readable explanations
  * - Tag-driven reasoning
  */
@@ -21,6 +31,8 @@ import { SWSELogger } from '../utils/logger.js';
 import { AxisAEngine } from './scoring/axis-a-engine.js';
 import { AxisBEngine } from './scoring/axis-b-engine.js';
 import { TradeoffResolver } from './scoring/tradeoff-resolver.js';
+import { WeightedScoreEngine } from './scoring/weighted-score-engine.js';
+import { CategoryNormalizationEngine } from './scoring/category-normalization-engine.js';
 import { ExplainabilityGenerator } from './scoring/explainability-generator.js';
 
 export class WeaponScoringEngine {
@@ -130,6 +142,32 @@ export class WeaponScoringEngine {
     const scored = weapons
       .map(weapon => this.scoreWeapon(weapon, character, options))
       .filter(result => result.combined); // Filter out invalid scores
+
+    // Apply category normalization (trap item detection)
+    if (options.applyCategoryNormalization !== false) {
+      const peerGroups = CategoryNormalizationEngine.getPeerGroups(weapons);
+      scored.forEach(result => {
+        const group = weapons.find(w => w.id === result.weaponId);
+        if (group) {
+          const peerGroupKey = Object.keys(peerGroups).find(
+            key => peerGroups[key].some(w => w.id === group.id)
+          );
+          if (peerGroupKey) {
+            const peerGroup = peerGroups[peerGroupKey];
+            const categoryAdj = CategoryNormalizationEngine.computeCategoryAdjustment(
+              group,
+              peerGroup
+            );
+            result.categoryNormalization = categoryAdj;
+            // Apply adjustment to final score (additive)
+            if (result.combined) {
+              result.combined.finalScore += categoryAdj.adjustment;
+              result.combined.finalScore = Math.max(0, Math.min(100, result.combined.finalScore));
+            }
+          }
+        }
+      });
+    }
 
     // Sort by final score (descending)
     scored.sort((a, b) => b.combined.finalScore - a.combined.finalScore);
