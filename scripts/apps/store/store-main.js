@@ -125,9 +125,40 @@ export class SWSEStore extends ApplicationV2 {
 
   async _loadReviewsData() {
     try {
-      const response = await fetch('systems/foundryvtt-swse/data/reviews/reviews.json');
-      if (response.ok) {
-        this.reviewsData = await response.json();
+      // Load primary reviews
+      const primaryResponse = await fetch('systems/foundryvtt-swse/data/reviews/reviews.json');
+      if (primaryResponse.ok) {
+        this.reviewsData = await primaryResponse.json();
+
+        // Try to load overflow pack for additional variety
+        try {
+          const overflowResponse = await fetch('systems/foundryvtt-swse/data/reviews/reviews-overflow.json');
+          if (overflowResponse.ok) {
+            const overflowData = await overflowResponse.json();
+            // Merge overflow pools into main data (append to arrays)
+            if (overflowData.armorReviewsOverflow) {
+              this.reviewsData.armorReviews.short.push(...overflowData.armorReviewsOverflow);
+            }
+            if (overflowData.weaponReviewsOverflow?.fireRate) {
+              this.reviewsData.weaponReviews.general.push(...overflowData.weaponReviewsOverflow.fireRate);
+              this.reviewsData.weaponReviews.chaotic.push(...overflowData.weaponReviewsOverflow.power);
+              this.reviewsData.weaponReviews.chaotic.push(...overflowData.weaponReviewsOverflow.sound);
+              this.reviewsData.weaponReviews.chaotic.push(...overflowData.weaponReviewsOverflow.ergonomics);
+            }
+            if (overflowData.gearReviewsOverflow) {
+              this.reviewsData.gearReviews.general.push(...overflowData.gearReviewsOverflow);
+            }
+            if (overflowData.neekoOverflow) {
+              this.reviewsData.neekoReviews.selfPromo.push(...overflowData.neekoOverflow);
+            }
+            if (overflowData.rendarrOverflow) {
+              this.reviewsData.rendarrReviews.toxicPositive.push(...overflowData.rendarrOverflow);
+            }
+          }
+        } catch (overflowErr) {
+          // Overflow pack is optional, don't fail if missing
+          console.debug('[SWSE Store] Overflow reviews not found (optional)', overflowErr.message);
+        }
       }
     } catch (err) {
       console.warn('[SWSE Store] Failed to load reviews data:', err);
