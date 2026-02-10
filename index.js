@@ -139,6 +139,10 @@ import { initializeDiscoverySystem, onDiscoveryReady } from './scripts/ui/discov
 import { SystemInitHooks } from './scripts/progression/hooks/system-init-hooks.js';
 import { Upkeep } from './scripts/automation/upkeep.js';
 
+// ---- Phase 5: Observability, Testing, Forward Compatibility ----
+import { initializePhase5, getPhaseSummary } from './scripts/core/phase5-init.js';
+import { registerCriticalFlowTests } from './scripts/tests/critical-flow-tests.js';
+
 /* ==========================================================================
    INTERNAL BOOTSTRAP HELPERS
    ========================================================================== */
@@ -224,6 +228,10 @@ Hooks.once('ready', async () => {
   /* ---------- phase 3: diagnostic mode ---------- */
   await DiagnosticMode.initialize();
 
+  /* ---------- Phase 5: Observability, Testing, Forward Compatibility ---------- */
+  initializePhase5();
+  registerCriticalFlowTests();
+
   /* ---------- data & progression ---------- */
   // Verify compendium integrity first (fail-fast if missing)
   await CompendiumVerification.verifyCompendiums();
@@ -272,7 +280,10 @@ Hooks.once('ready', async () => {
     debounce,
     throttle,
     logError,
-    errors: errorCommands
+    errors: errorCommands,
+    phase5: {
+      summary: getPhaseSummary
+    }
   };
 
   window.SWSE = {
