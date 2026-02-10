@@ -16,6 +16,7 @@ import { StoreEngine } from '../../engines/store/store-engine.js';
 import { ArmorSuggestions } from '../../suggestion-engine/armor-suggestions.js';
 import { WeaponSuggestions } from '../../suggestion-engine/weapon-suggestions.js';
 import { GearSuggestions } from '../../suggestion-engine/gear-suggestions.js';
+import { MentorProseGenerator } from '../../suggestion-engine/mentor-prose-generator.js';
 import {
   safeString,
   safeImg,
@@ -665,6 +666,12 @@ export class SWSEStore extends ApplicationV2 {
     // Build technical details based on item type
     const techDetails = this._buildTechnicalDetails(item, sys, itemType);
 
+    // Generate mentor review
+    const mentorReview = this._generateMentorReview(suggestion);
+
+    // Generate flavor reviews
+    const flavorReviews = this._generateFlavorReviews(item, itemType);
+
     return `
       <div class="modal-content">
         <button type="button" class="close-modal-btn" style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--holo-cyan); cursor: pointer; font-size: 20px;">
@@ -711,6 +718,30 @@ export class SWSEStore extends ApplicationV2 {
             <div class="modal-description-section" style="margin: 16px 0;">
               <strong style="color: var(--holo-cyan);">Description</strong>
               <p style="margin: 8px 0 0 0; font-size: 13px; line-height: 1.5;">${sys.description}</p>
+            </div>
+          ` : ''}
+
+          ${mentorReview || flavorReviews ? `
+            <div class="modal-reviews-section" style="margin: 16px 0; padding-top: 12px; border-top: 1px solid rgba(0, 217, 255, 0.2);">
+              <strong style="color: var(--holo-cyan); display: block; margin-bottom: 12px;">Reviews</strong>
+
+              ${mentorReview ? `
+                <div class="mentor-review" style="margin-bottom: 12px; padding: 12px; background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(255, 165, 0, 0.05)); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 4px;">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <i class="fas fa-user-circle" style="color: var(--holo-amber); font-size: 16px;"></i>
+                    <strong style="color: var(--holo-amber);">Rendarr</strong>
+                  </div>
+                  <p style="margin: 0; font-size: 12px; line-height: 1.6; font-style: italic;">
+                    "${mentorReview}"
+                  </p>
+                </div>
+              ` : ''}
+
+              ${flavorReviews ? `
+                <div class="flavor-reviews" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 12px;">
+                  ${flavorReviews}
+                </div>
+              ` : ''}
             </div>
           ` : ''}
         </div>
@@ -764,6 +795,65 @@ export class SWSEStore extends ApplicationV2 {
     if (sys.availability) details.push(`<div>Availability: ${sys.availability}</div>`);
 
     return details.length > 0 ? details.join('') : '';
+  }
+
+  _generateMentorReview(suggestion) {
+    if (!suggestion || !this.actor) {
+      return null;
+    }
+
+    try {
+      // Build character context for mentor prose generator
+      const charContext = {
+        primaryRole: this.actor.system?.role || 'fighter',
+        level: this.actor.system?.level || 1,
+        talents: this.actor.system?.talents || {}
+      };
+
+      const mentorProseGenerator = MentorProseGenerator;
+      return mentorProseGenerator.generateMentorReview(suggestion, charContext);
+    } catch (err) {
+      console.warn('[SWSE Store] Mentor prose generation failed:', err);
+      return null;
+    }
+  }
+
+  _generateFlavorReviews(item, itemType) {
+    // Pool of flavor reviews by item type
+    const flavorPools = {
+      armor: [
+        { name: 'Marketplace Trader', text: 'Solid gear. Keeps you standing.' },
+        { name: 'Docking Bay Manager', text: 'Popular among our regular customers.' },
+        { name: 'Spaceport Gossip', text: 'I\'ve seen this protect people in tough spots.' }
+      ],
+      weapon: [
+        { name: 'Weapons Master', text: 'Well-balanced. Good choice for most situations.' },
+        { name: 'Bounty Hunter', text: 'Gets the job done. Reliable in the field.' },
+        { name: 'Collector', text: 'Craftsmanship is solid on this one.' }
+      ],
+      equipment: [
+        { name: 'Survivalist', text: 'Practical. You\'ll find yourself using this often.' },
+        { name: 'Tech Specialist', text: 'Does what it\'s supposed to do, no frills.' },
+        { name: 'Experienced Trader', text: 'Good value for what you\'re getting.' }
+      ]
+    };
+
+    const pool = flavorPools[itemType] || flavorPools.equipment;
+
+    // Pick 2-3 random reviews from the pool
+    const shuffled = [...pool].sort(() => Math.random() - 0.5);
+    const selected = shuffled.slice(0, Math.min(2, shuffled.length));
+
+    return selected.map(review => `
+      <div class="flavor-review" style="margin-bottom: 8px; padding: 8px; background: rgba(0, 0, 0, 0.2); border-left: 2px solid rgba(0, 217, 255, 0.3); border-radius: 2px;">
+        <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); font-weight: bold; margin-bottom: 4px;">
+          ${review.name}
+        </div>
+        <p style="margin: 0; font-size: 12px; line-height: 1.4; color: rgba(255, 255, 255, 0.8);">
+          "${review.text}"
+        </p>
+      </div>
+    `).join('');
   }
 
   _renderCartUI() {
