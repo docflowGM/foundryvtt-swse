@@ -4,16 +4,15 @@
  *
  * ARCHITECTURE:
  * - Cart management (transient UI state)
- * - Inventory lookup (via store-inventory.js cache)
+ * - Inventory lookup (via engine-provided store.itemsById, with finalCost pre-calculated)
  * - Business logic (ALL delegated to StoreEngine)
  */
 
 import { ProgressionEngine } from '../../progression/engine/progression-engine.js';
-import { StoreEngine } from '../../../engines/store/store-engine.js';
+import { StoreEngine } from '../../engines/store/store-engine.js';
 import { SWSELogger } from '../../utils/logger.js';
 import CharacterGenerator from '../chargen/chargen-main.js';
 import { VehicleModificationApp } from '../vehicle-modification-app.js';
-import { calculateFinalCost } from './store-pricing.js';
 import { getRandomDialogue } from './store-shared.js';
 import { SWSEVehicleHandler } from '../../actors/vehicle/swse-vehicle-handler.js';
 import { createActor } from '../../core/document-api-v13.js';
@@ -63,8 +62,8 @@ export async function addItemToCart(store, itemId, updateDialogueCallback) {
         return;
     }
 
-    const baseCost = Number(item.system?.cost) || 0;
-    const finalCost = calculateFinalCost(baseCost);
+    // Engine provides finalCost already calculated
+    const finalCost = Number(item.finalCost) || 0;
 
     // Add to cart
     store.cart.items.push({
@@ -96,24 +95,17 @@ export async function addDroidToCart(store, actorId, updateDialogueCallback) {
         return;
     }
 
-    // Try to get from world actors first
-    let droidTemplate = game.actors.get(actorId);
-
-    // If not found in world, search compendiums
-    if (!droidTemplate) {
-        const pack = game.packs.get('foundryvtt-swse.droids');
-        if (pack) {
-            droidTemplate = await pack.getDocument(actorId);
-        }
-    }
+    // ENGINE: Lookup from store inventory (which has finalCost pre-calculated)
+    let droidTemplate = store.itemsById.get(actorId);
 
     if (!droidTemplate) {
-        ui.notifications.error('Droid not found.');
+        ui.notifications.error('Droid not found in inventory.');
+        SWSELogger.error('SWSE Store | Droid not found:', { actorId });
         return;
     }
 
-    const baseCost = Number(droidTemplate.system?.cost) || 0;
-    const finalCost = calculateFinalCost(baseCost);
+    // Engine provides finalCost
+    const finalCost = Number(droidTemplate.finalCost) || 0;
 
     // Add to cart
     store.cart.droids.push({
@@ -145,7 +137,7 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
         return;
     }
 
-    // Vehicles are stored as Item templates in store-loaded compendiums.
+    // ENGINE: Vehicles have both finalCost (new) and finalCostUsed (used) pre-calculated
     const vehicleTemplate = store.itemsById?.get(templateId);
 
     if (!vehicleTemplate || vehicleTemplate.type !== 'vehicle') {
@@ -153,9 +145,10 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
         return;
     }
 
-    const baseCost = Number(vehicleTemplate.system?.cost) || 0;
-    const conditionMultiplier = condition === 'used' ? 0.5 : 1.0;
-    const finalCost = calculateFinalCost(baseCost * conditionMultiplier);
+    // Engine provides both prices
+    const finalCost = condition === 'used'
+      ? Number(vehicleTemplate.finalCostUsed) || 0
+      : Number(vehicleTemplate.finalCost) || 0;
 
     store.cart.vehicles.push({
         id: templateId,
@@ -241,24 +234,17 @@ export async function buyDroid(store, actorId) {
         return;
     }
 
-    // Try to get from world actors first
-    let droidTemplate = game.actors.get(actorId);
+    // ENGINE: Lookup from store inventory (which has finalCost pre-calculated)
+    const droidTemplate = store.itemsById?.get(actorId);
 
-    // If not found in world, search compendiums
-    if (!droidTemplate) {
-        const pack = game.packs.get('foundryvtt-swse.droids');
-        if (pack) {
-            droidTemplate = await pack.getDocument(actorId);
-        }
-    }
-
-    if (!droidTemplate) {
-        ui.notifications.error('Droid not found.');
+    if (!droidTemplate || droidTemplate.type !== 'droid') {
+        ui.notifications.error('Droid not found in inventory.');
+        SWSELogger.error('SWSE Store | Droid not found:', { actorId });
         return;
     }
 
-    const baseCost = Number(droidTemplate.system.cost) || 0;
-    const finalCost = calculateFinalCost(baseCost);
+    // Engine provides finalCost
+    const finalCost = Number(droidTemplate.finalCost) || 0;
 
     // DELEGATED TO ENGINE: Check eligibility
     const eligible = StoreEngine.canPurchase({
@@ -348,15 +334,20 @@ export async function buyVehicle(store, actorId, condition) {
         return;
     }
 
-    const baseCost = Number(vehicleTemplate.system.cost) || 0;
-    const conditionMultiplier = condition === 'used' ? 0.5 : 1.0;
-    const finalCost = calculateFinalCost(baseCost * conditionMultiplier);
-    const credits = Number(store.actor.system.credits) || 0;
+    // ENGINE: Vehicles have both finalCost (new) and finalCostUsed (used) pre-calculated
+    const finalCost = condition === 'used'
+      ? Number(vehicleTemplate.finalCostUsed) || 0
+      : Number(vehicleTemplate.finalCost) || 0;
 
-    if (credits < finalCost) {
-        ui.notifications.warn(
-            `Not enough credits! Need ${finalCost.toLocaleString()}, have ${credits.toLocaleString()}.`
-        );
+    // DELEGATED TO ENGINE: Check eligibility
+    const eligible = StoreEngine.canPurchase({
+        actor: store.actor,
+        items: [{ id: vehicleTemplate.id, name: vehicleTemplate.name }],
+        totalCost: finalCost
+    });
+
+    if (!eligible.canPurchase) {
+        ui.notifications.warn(eligible.reason || 'Cannot purchase vehicle.');
         return;
     }
 
@@ -371,22 +362,33 @@ export async function buyVehicle(store, actorId, condition) {
     if (!confirmed) {return;}
 
     try {
-        // Deduct credits
-        await globalThis.SWSE.ActorEngine.updateActor(store.actor, { 'system.credits': credits - finalCost });
-        // Create vehicle actor with player ownership
-        const vehicleData = vehicleTemplate.toObject();
-        vehicleData.name = `${condition === 'used' ? '(Used) ' : ''}${vehicleTemplate.name}`;
-        vehicleData.ownership = {
-            default: 0,
-            [game.user.id]: 3  // Owner permission
-        };
+        // DELEGATED TO ENGINE: Execute purchase (credit deduction)
+        const result = await StoreEngine.purchase({
+            actor: store.actor,
+            items: [vehicleTemplate],
+            totalCost: finalCost,
+            itemGrantCallback: async (actor, items) => {
+                // Create vehicle actor with player ownership (UI responsibility)
+                const vehicleData = vehicleTemplate.toObject();
+                vehicleData.name = `${condition === 'used' ? '(Used) ' : ''}${vehicleTemplate.name}`;
+                vehicleData.ownership = {
+                    default: 0,
+                    [game.user.id]: 3  // Owner permission
+                };
 
-        // Mark as used if applicable
-        if (condition === 'used' && vehicleData.system) {
-            vehicleData.system.condition = 'used';
+                // Mark as used if applicable
+                if (condition === 'used' && vehicleData.system) {
+                    vehicleData.system.condition = 'used';
+                }
+
+                const newVehicle = await createActor(vehicleData);
+            }
+        });
+
+        if (!result.success) {
+            ui.notifications.error(`Purchase failed: ${result.error}`);
+            return;
         }
-
-        const newVehicle = await createActor(vehicleData);
 
         ui.notifications.info(`${vehicleTemplate.name} purchased! Check your actors list.`);
         store.render();

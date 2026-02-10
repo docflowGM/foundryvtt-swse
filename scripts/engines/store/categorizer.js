@@ -3,12 +3,22 @@
  * ----------------
  * Unified Amazon-style department categorization engine.
  *
+ * SSOT Compliant: Uses item.type + system metadata ONLY
+ * NO name-based inference (anti-v1 pattern eliminated)
+ *
  * Each item receives:
  *   item.category     = High-level bucket ("Weapons", "Armor", "Tech")
  *   item.subcategory  = Detailed group ("Pistols", "Melee - Simple")
  */
 
-import { safeString } from '../store-shared.js';
+/* ----------------------------------------------- */
+/* UTILITY                                          */
+/* ----------------------------------------------- */
+
+function safeString(v, fallback = '') {
+  if (v === undefined || v === null) return fallback;
+  return String(v).trim();
+}
 
 /* ---------------------------------------------------------- */
 /* HIGH-LEVEL CATEGORIES                                      */
@@ -30,58 +40,35 @@ const Category = {
 };
 
 /* ---------------------------------------------------------- */
-/* WEAPON SUBCATEGORY LOGIC                                   */
+/* WEAPON SUBCATEGORY LOGIC (SSOT-COMPLIANT)                 */
 /* ---------------------------------------------------------- */
 
+/**
+ * Categorize weapon using system data ONLY (no name inference)
+ * Authority: item.system.category > item.system.range (melee/ranged)
+ *
+ * SSOT Violation Detection:
+ * - If system.category missing, log warning and use fallback
+ * - Never infer category from name (anti-v1 pattern)
+ */
 function categorizeWeapon(item) {
-  const name = item.name.toLowerCase();
+  // PRIMARY: Check if system.category is already defined
+  const sysCategory = safeString(item.system?.category || '').trim();
+  if (sysCategory) {
+    // System data defines it; use as-is
+    return sysCategory;
+  }
+
+  // FALLBACK: Use range field if system.category not available
+  // This is acceptable fallback (structural property, not name-based)
   const range = safeString(item.system?.range || '').toLowerCase();
 
-  // MELEE
-  if (range === 'melee' || name.includes('vibro') || name.includes('sword') || name.includes('blade')) {
-    if (name.includes('light') || name.includes('saber')) {return 'Lightsabers';}
-    if (name.includes('whip') || name.includes('lanvarok') || name.includes('net')) {return 'Exotic Melee';}
-    if (name.includes('advanced')) {return 'Advanced Melee';}
-    return 'Simple Melee';
+  if (range === 'melee') {
+    return 'Simple Melee';  // Default for melee; refinement requires system.category
   }
 
-  // EXPLOSIVES
-  if (name.includes('grenade') || name.includes('detonator') || name.includes('explosive')) {
-    return 'Grenades';
-  }
-
-  // RANGED: Pistols
-  if (name.includes('pistol') || name.includes('hold-out')) {
-    return 'Pistols';
-  }
-
-  // RANGED: Rifles/Carbines
-  if (name.includes('rifle') || name.includes('carbine') || name.includes('bowcaster') || name.includes('sniper')) {
-    return 'Rifles';
-  }
-
-  // RANGED: Heavy
-  if (
-    name.includes('cannon') ||
-    name.includes('launcher') ||
-    name.includes('heavy') ||
-    name.includes('repeating')
-  ) {
-    return 'Heavy Weapons';
-  }
-
-  // RANGED: Exotic
-  if (
-    name.includes('flamethrower') ||
-    name.includes('wrist') ||
-    name.includes('exotic') ||
-    name.includes('lanvarok')
-  ) {
-    return 'Exotic Ranged';
-  }
-
-  // Default fallback
-  return 'Other Weapons';
+  // Treat all ranged as generic unless system.category specifies
+  return 'Ranged Weapons';
 }
 
 /* ---------------------------------------------------------- */

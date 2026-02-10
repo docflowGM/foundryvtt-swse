@@ -5,7 +5,32 @@
  * These normalized objects are the ONLY form the store UI should ever consume.
  */
 
-import { getRarityClass, getRarityLabel } from '../store-shared.js';
+/* ----------------------------------------------- */
+/* RARITY CLASSIFICATION (ENGINE)                   */
+/* ----------------------------------------------- */
+
+function getRarityClass(availability) {
+  if (!availability) return null;
+  const avail = String(availability).toLowerCase();
+  if (avail.includes('illegal')) return 'illegal';
+  if (avail.includes('military')) return 'military';
+  if (avail.includes('restricted')) return 'restricted';
+  if (avail.includes('licensed')) return 'licensed';
+  if (avail.includes('rare')) return 'rare';
+  return 'standard';
+}
+
+function getRarityLabel(rarityClass) {
+  const labels = {
+    illegal: 'Illegal',
+    military: 'Military',
+    restricted: 'Restricted',
+    licensed: 'Licensed',
+    rare: 'Rare',
+    standard: 'Standard'
+  };
+  return labels[rarityClass] || 'Unknown';
+}
 
 /* ----------------------------------------------- */
 /* ID HELPERS                                       */
@@ -15,13 +40,17 @@ function ensureId(obj, prefix = 'item') {
   const id = obj._id || obj.id;
   if (id) {return id;}
 
-  // Fallback ID — stable and readable
-  const generated = `${prefix}-${(obj.name || 'unnamed')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')}-${Math.random().toString(36).slice(2, 9)}`;
+  // STRICT: No fallback ID generation
+  // Missing IDs indicate compendium data quality issues
+  // Engine should fail loudly so GM fixes the source
+  const logger = globalThis.swseLogger || console;
+  logger.error(`[StoreEngine] Item has no canonical ID. Fix compendium data:`, {
+    name: obj.name || 'Unknown',
+    type: obj.type || 'unknown',
+    source: obj.pack || 'world'
+  });
 
-  return generated;
+  throw new Error(`SSOT Violation: Item "${obj.name || 'Unknown'}" (${obj.type || 'unknown'}) has no ID. Compendium data must have canonical id or _id field.`);
 }
 
 /* ----------------------------------------------- */
