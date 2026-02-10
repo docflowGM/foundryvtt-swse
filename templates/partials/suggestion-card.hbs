@@ -1,0 +1,85 @@
+{{!--
+  Unified Suggestion Card Component
+
+  Renders items (feats, talents, powers, classes, etc.) with suggestion tier badge.
+  Uses UNIFIED_TIERS system for consistent tier styling across all suggestion engines.
+
+  Block context:
+    - id: Item ID
+    - name: Item name
+    - img: Item image path
+    - type: Item type (feat, talent, class, etc.)
+    - description: Item description (optional)
+    - tier: Suggestion tier (0-6, from UNIFIED_TIERS)
+    - tierLabel: Human-readable tier label (optional, auto-generated if not provided)
+    - tierIcon: Tier icon emoji (optional, auto-generated if not provided)
+    - tierColor: Tier color hex (optional, auto-generated if not provided)
+    - disabled: If true, show as disabled/unavailable
+    - selected: If true, show as selected
+    - compact: If true, use compact layout
+    - details: Additional metadata object (optional)
+
+  Examples:
+    {{#each suggestions}}
+      {{> suggestion-card this}}
+    {{/each}}
+
+    {{#with feat}}
+      {{> suggestion-card id=id name=name img=img tier=tier tierLabel=label}}
+    {{/with}}
+--}}
+
+<div class="suggestion-card {{#if compact}}compact{{/if}} {{#if selected}}selected{{/if}} {{#if disabled}}disabled{{/if}}"
+     data-item-id="{{id}}"
+     data-item-type="{{type}}"
+     {{#if tier}}data-tier="{{tier}}"{{/if}}>
+
+  <!-- Tier Badge -->
+  {{#if tier}}
+  <div class="tier-badge tier-{{tier}}"
+       style="background-color: {{tierColor}}; color: {{#if (gte tier 4)}}white{{else}}black{{/if}};"
+       title="{{tierLabel}}">
+    <span class="tier-icon">{{tierIcon}}</span>
+    <span class="tier-label">{{tierLabel}}</span>
+  </div>
+  {{/if}}
+
+  <!-- Item Content -->
+  <div class="suggestion-card-content">
+    <!-- Image (if available) -->
+    {{#if img}}
+    <div class="suggestion-card-image">
+      <img src="{{img}}" alt="{{name}}" class="card-img" />
+    </div>
+    {{/if}}
+
+    <!-- Title & Info -->
+    <div class="suggestion-card-info">
+      <h4 class="suggestion-card-name">{{name}}</h4>
+
+      <!-- Description -->
+      {{#if description}}
+      <p class="suggestion-card-description">{{description}}</p>
+      {{/if}}
+
+      <!-- Additional Details -->
+      {{#if details}}
+      <div class="suggestion-card-details">
+        {{#each details as |value key|}}
+        <div class="detail-item" data-key="{{key}}">
+          <span class="detail-label">{{key}}:</span>
+          <span class="detail-value">{{value}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+  </div>
+
+  <!-- Disabled Overlay -->
+  {{#if disabled}}
+  <div class="disabled-overlay">
+    <span class="disabled-reason">{{#if disabledReason}}{{disabledReason}}{{else}}Not available{{/if}}</span>
+  </div>
+  {{/if}}
+</div>
