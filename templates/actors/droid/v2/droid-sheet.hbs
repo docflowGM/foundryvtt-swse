@@ -24,6 +24,7 @@
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-left">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
         </div>
@@ -40,6 +41,11 @@
 
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
+        </div>
+
+        {{!-- Phase 5: Build History Panel --}}
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history.hbs"}}
         </div>
       </div>
     </section>

@@ -162,7 +162,64 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
         mentorSurveyCompleted: new fields.BooleanField({ required: true, initial: false }),
         mentorBuildIntentBiases: new fields.ObjectField({ required: true, initial: {} }),
         surveyResponses: new fields.ObjectField({ required: true, initial: {} })
-      })
+      }),
+
+      // Droid Systems (AppV2-compliant, first-class document data)
+      droidSystems: new fields.SchemaField({
+        // Core droid identity
+        degree: new fields.StringField({
+          required: true,
+          initial: '',
+          choices: ['Third-Degree', 'Second-Degree', 'First-Degree']
+        }),
+        size: new fields.StringField({
+          required: true,
+          initial: 'Medium',
+          choices: ['Tiny', 'Small', 'Medium', 'Large', 'Huge']
+        }),
+
+        // Primary systems (exactly one of each required)
+        locomotion: new fields.SchemaField({
+          id: new fields.StringField({ required: true, initial: '' }),
+          name: new fields.StringField({ required: true, initial: '' }),
+          cost: new fields.NumberField({ required: true, initial: 0 }),
+          speed: new fields.NumberField({ required: true, initial: 0 })
+        }),
+
+        processor: new fields.SchemaField({
+          id: new fields.StringField({ required: true, initial: '' }),
+          name: new fields.StringField({ required: true, initial: '' }),
+          cost: new fields.NumberField({ required: true, initial: 0 }),
+          bonus: new fields.NumberField({ required: true, initial: 0 })
+        }),
+
+        // Array systems
+        appendages: new fields.ArrayField(
+          new fields.SchemaField({
+            id: new fields.StringField({ required: true, initial: '' }),
+            name: new fields.StringField({ required: true, initial: '' }),
+            type: new fields.StringField({ required: true, initial: '' }),
+            cost: new fields.NumberField({ required: true, initial: 0 })
+          }),
+          { required: true, initial: [] }
+        ),
+
+        accessories: new fields.ArrayField(
+          new fields.SchemaField({
+            id: new fields.StringField({ required: true, initial: '' }),
+            name: new fields.StringField({ required: true, initial: '' }),
+            cost: new fields.NumberField({ required: true, initial: 0 })
+          }),
+          { required: true, initial: [] }
+        ),
+
+        // Budget tracking
+        credits: new fields.SchemaField({
+          total: new fields.NumberField({ required: true, initial: 0 }),
+          spent: new fields.NumberField({ required: true, initial: 0 }),
+          remaining: new fields.NumberField({ required: true, initial: 0 })
+        })
+      }, { required: true, initial: {} })
     };
   }
 
