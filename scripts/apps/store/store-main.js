@@ -17,6 +17,7 @@ import { ArmorSuggestions } from '../../suggestion-engine/armor-suggestions.js';
 import { WeaponSuggestions } from '../../suggestion-engine/weapon-suggestions.js';
 import { GearSuggestions } from '../../suggestion-engine/gear-suggestions.js';
 import { MentorProseGenerator } from '../../suggestion-engine/mentor-prose-generator.js';
+import { ReviewThreadAssembler } from './review-thread-assembler.js';
 import {
   safeString,
   safeImg,
@@ -878,93 +879,88 @@ export class SWSEStore extends ApplicationV2 {
 
   _generateFlavorReviews(item, itemType) {
     if (!this.reviewsData) {
+      console.debug('[SWSE Store] No reviews data loaded');
       return null;
     }
 
-    // Map item types to review pools
-    const reviewPoolKey = itemType === 'armor' ? 'armorReviews' :
-                         itemType === 'weapon' ? 'weaponReviews' :
-                         itemType === 'equipment' ? 'gearReviews' : null;
+    // Delegate to ReviewThreadAssembler
+    const thread = ReviewThreadAssembler.build({
+      itemType: itemType,
+      dialoguePacks: {
+        main: this.reviewsData,
+        overflow: this.reviewsData, // Already merged during _loadReviewsData
+        usernames: this.reviewsData.usernames
+      },
+      hasMentorReview: false, // Mentor is separate
+      mentorText: null
+    });
 
-    if (!reviewPoolKey) {
+    if (!thread.isValid || thread.reviews.length === 0) {
+      console.warn('[SWSE Store] Review thread assembly failed', thread);
       return null;
     }
 
-    const reviewPool = this.reviewsData[reviewPoolKey];
-    if (!reviewPool || !reviewPool.short) {
-      return null;
-    }
+    // Render thread as HTML
+    return thread.reviews.map((review) => {
+      // Skip mentor (handled separately in modal)
+      if (review.type === 'mentor') {
+        return '';
+      }
 
-    // Randomly pick between short and long stories (if available)
-    const useShort = !reviewPool.longStories || Math.random() > 0.3;
-    const pool = useShort ? reviewPool.short : (reviewPool.longStories || reviewPool.short);
+      // Color-code by reviewer type
+      let bgColor, borderColor, icon;
+      if (review.type === 'competitor') {
+        bgColor = 'rgba(100, 255, 100, 0.1)';
+        borderColor = 'rgba(100, 255, 100, 0.3)';
+        icon = '<i class="fas fa-user-secret" style="color: #64ff64; margin-right: 4px;"></i>';
+      } else if (review.type === 'seller') {
+        bgColor = 'rgba(255, 100, 100, 0.1)';
+        borderColor = 'rgba(255, 100, 100, 0.3)';
+        icon = '<i class="fas fa-store" style="color: #ff6464; margin-right: 4px;"></i>';
+      } else if (review.type === 'system-message') {
+        bgColor = 'rgba(150, 150, 150, 0.1)';
+        borderColor = 'rgba(150, 150, 150, 0.3)';
+        icon = '<i class="fas fa-info-circle" style="color: #969696; margin-right: 4px;"></i>';
+      } else {
+        // customer
+        bgColor = 'rgba(0, 0, 0, 0.2)';
+        borderColor = 'rgba(0, 217, 255, 0.3)';
+        icon = '<i class="fas fa-user" style="color: #00d9ff; margin-right: 4px;"></i>';
+      }
 
-    // Also occasionally mix in Neeko or Rendarr reviews
-    const includeNeeko = Math.random() > 0.7 && this.reviewsData.neekoReviews?.selfPromo;
-    const includeRendarr = Math.random() > 0.75 && this.reviewsData.rendarrReviews?.toxicPositive;
+      // Star rating display (if present)
+      const starDisplay = review.stars ? `<span style="color: #ffc800; font-size: 11px; margin-left: 4px;">★ ${review.stars}/5</span>` : '';
 
-    let selected = [];
-
-    // Pick 1-2 regular reviews
-    const regularCount = Math.floor(Math.random() * 2) + 1;
-    for (let i = 0; i < regularCount; i++) {
-      const review = pool[Math.floor(Math.random() * pool.length)];
-      const username = this.reviewsData.usernames && this.reviewsData.usernames.length > 0
-        ? this.reviewsData.usernames[Math.floor(Math.random() * this.reviewsData.usernames.length)]
-        : 'Marketplace Customer';
-      selected.push({
-        name: username,
-        text: review,
-        type: 'customer'
-      });
-    }
-
-    // Maybe add Neeko commentary
-    if (includeNeeko) {
-      const neekoReview = this.reviewsData.neekoReviews.selfPromo[
-        Math.floor(Math.random() * this.reviewsData.neekoReviews.selfPromo.length)
-      ];
-      selected.push({
-        name: 'Neeko',
-        text: neekoReview,
-        type: 'competitor'
-      });
-    }
-
-    // Maybe add Rendarr defense
-    if (includeRendarr && selected.some(r => r.type === 'competitor')) {
-      const rendarrReply = this.reviewsData.rendarrRepliesToNeeko[
-        Math.floor(Math.random() * this.reviewsData.rendarrRepliesToNeeko.length)
-      ];
-      selected.push({
-        name: 'Rendarr (Response)',
-        text: rendarrReply,
-        type: 'seller'
-      });
-    }
-
-    // Truncate to max 3 reviews
-    selected = selected.slice(0, 3);
-
-    return selected.map((review, idx) => {
-      const bgColor = review.type === 'competitor' ? 'rgba(100, 255, 100, 0.1)' :
-                      review.type === 'seller' ? 'rgba(255, 100, 100, 0.1)' :
-                      'rgba(0, 0, 0, 0.2)';
-
-      const borderColor = review.type === 'competitor' ? 'rgba(100, 255, 100, 0.3)' :
-                         review.type === 'seller' ? 'rgba(255, 100, 100, 0.3)' :
-                         'rgba(0, 217, 255, 0.3)';
-
-      return `
-        <div class="flavor-review" style="margin-bottom: 8px; padding: 8px; background: ${bgColor}; border-left: 2px solid ${borderColor}; border-radius: 2px;">
-          <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); font-weight: bold; margin-bottom: 4px;">
-            ${review.name}
+      // Build reviews + replies
+      let reviewHTML = `
+        <div class="flavor-review" style="margin-bottom: 12px; padding: 8px; background: ${bgColor}; border-left: 2px solid ${borderColor}; border-radius: 2px;">
+          <div style="font-size: 11px; color: rgba(255, 255, 255, 0.7); font-weight: bold; margin-bottom: 4px;">
+            ${icon} ${review.author} ${starDisplay}
           </div>
           <p style="margin: 0; font-size: 12px; line-height: 1.4; color: rgba(255, 255, 255, 0.8);">
             "${review.text}"
           </p>
-        </div>
       `;
+
+      // Add replies (if any)
+      if (review.replies && review.replies.length > 0) {
+        reviewHTML += '<div style="margin-top: 8px; padding-left: 12px; border-left: 1px solid rgba(255, 255, 255, 0.1);">';
+        for (const reply of review.replies) {
+          const replyPrefix = reply.isResponse ? 'Response: ' : 'Reply: ';
+          reviewHTML += `
+            <div style="margin-bottom: 6px; font-size: 11px;">
+              <strong style="color: rgba(255, 255, 255, 0.6);">${replyPrefix}${reply.author}</strong>
+              <p style="margin: 2px 0 0 0; font-size: 11px; color: rgba(255, 255, 255, 0.6);">
+                "${reply.text}"
+              </p>
+            </div>
+          `;
+        }
+        reviewHTML += '</div>';
+      }
+
+      reviewHTML += '</div>';
+      return reviewHTML;
     }).join('');
   }
 
