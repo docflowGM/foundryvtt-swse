@@ -16,7 +16,7 @@ export class VehicleModificationApp extends SWSEApplication {
     this.modifications = [];
     this.currentStep = 'intro';
     this.selectedCategory = 'movement';
-    this.marlDialogue = '';
+    this.lastAction = null; // 'removed' to show removal dialogue once
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
@@ -159,26 +159,41 @@ async _prepareContext(options) {
   }
 
   /**
-   * Get Marl Skindar's dialogue based on current state
+   * Get Marl Skindar's dialogue based on current state.
+   * Fully derived from state; no stored dialogue state.
+   * AppV2 pattern: all context computed in _prepareContext()
    */
   getMarlDialogue() {
+    // Special: show removal dialogue once after mod is removed
+    if (this.lastAction === 'removed') {
+      this.lastAction = null; // Clear flag so next render shows normal dialogue
+      return `*Marl watches you remove the modification*
+
+"Second thoughts? That's fine. Better to change your mind now than after you're in a firefight and realize you needed those shields after all."`;
+    }
+
+    // Intro step: initial greeting
     if (this.currentStep === 'intro') {
       return this._getIntroDialogue();
     }
 
+    // Ship selection: no ship chosen yet
     if (this.currentStep === 'ship-selection' && !this.stockShip) {
       return this._getShipSelectionDialogue();
     }
 
-    if (this.stockShip && !this.marlDialogue) {
-      return this._getShipChoiceCommentary(this.stockShip.name);
-    }
-
-    if (this.modifications.length > 0) {
+    // Ship chosen: provide commentary on selection
+    if (this.stockShip && this.currentStep === 'modification') {
+      // If no modifications yet, provide ship choice commentary
+      if (this.modifications.length === 0) {
+        return this._getShipChoiceCommentary(this.stockShip.name);
+      }
+      // With modifications: comment on last mod
       return this._getModificationCommentary();
     }
 
-    return this.marlDialogue || this._getDefaultDialogue();
+    // Fallback: random filler dialogue
+    return this._getDefaultDialogue();
   }
 
   _getIntroDialogue() {
@@ -315,12 +330,14 @@ The Republic is going to execute me for this. They're going to space me. And I'l
     return this._getDefaultDialogue();
   }
 
+  /**
+   * Get narration commentary for movement modifications.
+   * Uses explicit metadata (mod.hyperdriveClass) instead of parsing names.
+   */
   _getMovementCommentary(mod) {
     if (mod.id.startsWith('hyperdrive-')) {
-      // Extract class from mod.name (e.g., "Hyperdrive, Class 1.5" -> 1.5)
-      const modName = mod.name || '';
-      const nameMatch = modName.match(/Class\s+([\d.]+)/);
-      const hyperClass = nameMatch ? parseFloat(nameMatch[1]) : 2;
+      // Use explicit metadata if available; fallback to ID parsing only
+      const hyperClass = mod.hyperdriveClass ?? this._extractHyperdriveClass(mod.id);
 
       if (hyperClass <= 1) {
         return `*Marl's jaw drops*
@@ -364,30 +381,43 @@ Not fast enough to be impressive, not slow enough to be memorable. Just... avera
 "${mod.name}. Sure, why not? It's your ship... and your credits."`;
   }
 
+  /**
+   * Extract hyperdrive class from modification ID (fallback if metadata missing).
+   * Only used if mod.hyperdriveClass is not explicitly set.
+   * Pattern: "hyperdrive-1", "hyperdrive-1.5", etc.
+   */
+  _extractHyperdriveClass(modId) {
+    const match = modId.match(/hyperdrive-([\d.]+)/);
+    return match ? parseFloat(match[1]) : 2;
+  }
+
+  /**
+   * Get narration commentary for defense modifications.
+   * Uses explicit metadata (mod.shieldRating) instead of parsing names.
+   */
   _getDefenseCommentary(mod) {
     if (mod.id.startsWith('shields-')) {
-      const modName = mod.name || '';
-      const srMatch = modName.match(/SR (\d+)/);
-      const sr = srMatch ? parseInt(srMatch[1], 10) : 0;
+      // Use explicit metadata if available; fallback to ID parsing only
+      const shieldRating = mod.shieldRating ?? this._extractShieldRating(mod.id);
 
-      if (sr >= 100) {
+      if (shieldRating >= 100) {
         return `*Marl throws his hands up*
 
-"SR ${sr}?! CAPITAL SHIP SHIELDING?! What are you protecting yourself from, the ENTIRE IMPERIAL FLEET?!
+"SR ${shieldRating}?! CAPITAL SHIP SHIELDING?! What are you protecting yourself from, the ENTIRE IMPERIAL FLEET?!
 
 These shields cost more than some planets' defense budgets! You're installing protection designed for BATTLESHIPS onto your... whatever this is! It's like putting blast doors on a speeder bike!
 
 You know what? At this point I don't even care. Waste the credits. Install shields that could deflect asteroids. When the Republic Treasury comes asking where all the money went, I'll just point at you and your flying fortress of fiscal insanity."`;
-      } else if (sr >= 50) {
+      } else if (shieldRating >= 50) {
         return `*Marl shakes his head*
 
-"SR ${sr}. Because apparently regular shields weren't expensive enough for you. No, you need PREMIUM shields. Military-grade. The kind that make accountants weep.
+"SR ${shieldRating}. Because apparently regular shields weren't expensive enough for you. No, you need PREMIUM shields. Military-grade. The kind that make accountants weep.
 
 Sure, you'll survive hits that would vaporize normal ships. But you'll also be bankrupt from the power costs. These things drain fuel like a Hutt drains buffets. Hope you're ready for that maintenance bill."`;
       } else {
         return `*Marl looks unimpressed*
 
-"SR ${sr}. Basic shields. Barely better than flying naked through space. These will stop, what, maybe three hits from a laser cannon before failing?
+"SR ${shieldRating}. Basic shields. Barely better than flying naked through space. These will stop, what, maybe three hits from a laser cannon before failing?
 
 But I guess it's better than nothing. Marginally. It's like wearing a t-shirt in a blizzard and claiming you're 'protected from the elements.' Technically true, practically useless."`;
       }
@@ -414,6 +444,16 @@ But I guess it's better than nothing. Marginally. It's like wearing a t-shirt in
     return `*Marl examines the modification*
 
 "${mod.name}. Thinking about survival. I like it. Most of my clients don't bother with defense. Course, most of them are dead now, so..."`;
+  }
+
+  /**
+   * Extract shield rating from modification ID (fallback if metadata missing).
+   * Only used if mod.shieldRating is not explicitly set.
+   * Pattern: "shields-20", "shields-50", "shields-100", etc.
+   */
+  _extractShieldRating(modId) {
+    const match = modId.match(/shields-(\d+)/);
+    return match ? parseInt(match[1], 10) : 0;
   }
 
   _getWeaponCommentary(mod) {
@@ -560,7 +600,8 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
   }
 
   /**
-   * Select a stock ship
+   * Select a stock ship.
+   * State change triggers render; dialogue derived from state in getMarlDialogue().
    */
   async _onSelectShip(event) {
     event.preventDefault();
@@ -568,7 +609,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
     this.stockShip = VehicleModificationManager.getStockShip(shipName);
     this.modifications = [];
     this.currentStep = 'modification';
-    this.marlDialogue = this._getShipChoiceCommentary(shipName);
+    // No need to set this.marlDialogue — getMarlDialogue() derives it from state
     await this.render(true);
   }
 
@@ -613,24 +654,20 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
     // Add to modifications list
     this.modifications.push(modification);
 
-    // Update Marl's dialogue
-    this.marlDialogue = this._getModificationCommentary();
-
+    // No need to set this.marlDialogue — getMarlDialogue() derives it from state
     await this.render(false);
   }
 
   /**
-   * Remove a modification
+   * Remove a modification.
+   * State change triggers render; dialogue derived from state in getMarlDialogue().
    */
   async _onRemoveModification(event) {
     event.preventDefault();
     const modId = event.currentTarget.dataset.modId;
 
     this.modifications = this.modifications.filter(mod => mod.id !== modId);
-
-    this.marlDialogue = `*Marl watches you remove the modification*
-
-"Second thoughts? That's fine. Better to change your mind now than after you're in a firefight and realize you needed those shields after all."`;
+    this.lastAction = 'removed'; // Flag to show removal dialogue once
 
     await this.render(false);
   }
@@ -742,7 +779,8 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
   }
 
   /**
-   * Reset the ship configuration
+   * Reset the ship configuration.
+   * State change triggers render; dialogue derived from state in getMarlDialogue().
    */
   async _onResetShip(event) {
     event.preventDefault();
@@ -758,7 +796,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
     this.stockShip = null;
     this.modifications = [];
     this.currentStep = 'intro';
-    this.marlDialogue = '';
+    // No need to set this.marlDialogue — getMarlDialogue() derives it from state
     await this.render(true);
   }
 
