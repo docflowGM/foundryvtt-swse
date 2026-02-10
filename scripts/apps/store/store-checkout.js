@@ -14,6 +14,7 @@ import { SWSELogger } from '../../utils/logger.js';
 import { normalizeCredits } from '../../utils/credit-normalization.js';
 import CharacterGenerator from '../chargen/chargen-main.js';
 import { VehicleModificationApp } from '../vehicle-modification-app.js';
+import { DroidBuilderApp } from '../droid-builder-app.js';
 import { getRandomDialogue } from './store-shared.js';
 import { SWSEVehicleHandler } from '../../actors/vehicle/swse-vehicle-handler.js';
 import { createActor } from '../../core/document-api-v13.js';
@@ -911,4 +912,119 @@ export async function submitDraftVehicleForApproval(modificationData, vehicleTem
         ui.notifications.error('Failed to submit vehicle for approval.');
         return false;
     }
+}
+
+/**
+ * Phase 3b: Build custom droid using new DroidBuilderApp
+ *
+ * Launches the builder for a player to design a custom droid.
+ * Handles credit deduction via hook listener.
+ *
+ * @param {Actor} actor - The player's actor who owns the droid
+ * @param {Function} closeCallback - Callback to close the Store UI
+ */
+export async function buildDroidWithBuilder(actor, closeCallback) {
+    if (!actor) {
+        ui.notifications.error('No actor provided for droid building.');
+        return;
+    }
+
+    const baseCredits = game.settings.get('foundryvtt-swse', 'droidConstructionCredits') || 1000;
+    const playerCredits = Number(actor.system.credits) || 0;
+
+    // Check if player has minimum credits
+    if (playerCredits < baseCredits) {
+        ui.notifications.warn(
+            `You need at least ${baseCredits.toLocaleString()} credits to build a custom droid. You have ${playerCredits.toLocaleString()}.`
+        );
+        return;
+    }
+
+    // Confirm droid building
+    const confirmed = await Dialog.confirm({
+        title: 'Build Custom Droid',
+        content: `
+            <p>Design a custom droid using the Droid Builder.</p>
+            <p><strong>Available credits:</strong> ${playerCredits.toLocaleString()}</p>
+            <p><strong>Minimum required:</strong> ${baseCredits.toLocaleString()}</p>
+            <p><em>Your GM may require approval before your droid is finalized.</em></p>
+        `,
+        defaultYes: true
+    });
+
+    if (!confirmed) return;
+
+    // Close store if callback provided
+    if (closeCallback) {
+        closeCallback();
+    }
+
+    try {
+        // Determine if GM approval is required (world setting)
+        const requireApproval = game.settings.get('foundryvtt-swse', 'store.requireGMApproval') ?? false;
+
+        // Set up hook listener for droid finalization
+        const hookId = Hooks.on('swse:droidFinalized', async (data) => {
+            // Only handle our actor's droid
+            if (data.actor.id !== actor.id) return;
+
+            // Unregister this hook listener
+            Hooks.off('swse:droidFinalized', hookId);
+
+            try {
+                // If approval is NOT required, deduct credits immediately
+                if (!data.requireApproval) {
+                    await deductDroidCredits(actor, data.cost);
+                    ui.notifications.info(`Custom droid built! ${data.cost} credits deducted.`);
+                    SWSELogger.log('SWSE Store | Custom droid finalized and credits deducted:', {
+                        droidCost: data.cost,
+                        actor: actor.name
+                    });
+                } else {
+                    // If approval required, mark as pending (handled by GM)
+                    ui.notifications.info('Custom droid submitted for GM approval. Please wait for approval before credits are deducted.');
+                    SWSELogger.log('SWSE Store | Custom droid submitted for GM approval:', {
+                        droidCost: data.cost,
+                        actor: actor.name
+                    });
+                }
+            } catch (err) {
+                SWSELogger.error('SWSE Store | Error handling droid finalization:', err);
+                ui.notifications.error('Error processing droid. Please contact your GM.');
+            }
+        });
+
+        // Launch builder
+        await DroidBuilderApp.open(actor, {
+            mode: 'NEW',
+            requireApproval: requireApproval
+        });
+
+        SWSELogger.log('SWSE Store | Launched DroidBuilderApp for actor:', { actor: actor.name });
+    } catch (err) {
+        SWSELogger.error('SWSE Store | Failed to launch DroidBuilderApp:', err);
+        ui.notifications.error('Failed to open droid builder.');
+    }
+}
+
+/**
+ * Helper: Deduct credits for droid construction
+ *
+ * @param {Actor} actor - The actor to deduct credits from
+ * @param {number} cost - The cost to deduct
+ */
+async function deductDroidCredits(actor, cost) {
+    const currentCredits = Number(actor.system.credits) || 0;
+    const newCredits = Math.max(0, currentCredits - cost);
+
+    await actor.update({
+        'system.credits': newCredits
+    });
+
+    SWSELogger.log('SWSE Store | Credits deducted for droid:', {
+        actor: actor.name,
+        cost: cost,
+        oldCredits: currentCredits,
+        newCredits: newCredits
+    });
 }

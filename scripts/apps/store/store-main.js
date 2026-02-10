@@ -40,6 +40,7 @@ import {
   calculateCartTotal,
   checkout,
   createCustomDroid,
+  buildDroidWithBuilder,
   createCustomStarship
 } from './store-checkout.js';
 
@@ -669,7 +670,8 @@ export class SWSEStore extends ApplicationV2 {
     if (customDroidBtn) {
       customDroidBtn.addEventListener('click', async () => {
         if (!this.actor) {return;}
-        await createCustomDroid(this.actor, () => this.render());
+        // Phase 3b: Use new DroidBuilderApp instead of CharacterGenerator
+        await buildDroidWithBuilder(this.actor, () => this.render());
       });
     }
 
