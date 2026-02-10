@@ -1,6 +1,10 @@
 /**
- * SWSE Store ID Fixer
- * Diagnostic and repair utility for items/actors with missing or invalid IDs
+ * SWSE Store ID Fixer — DIAGNOSTIC ONLY
+ *
+ * V2 Note: Engine now FAILS on missing IDs (no silent fallback generation).
+ * This utility is for GM diagnostics only — to identify compendium data issues.
+ *
+ * Do NOT use for ID repair (IDs must be added to compendiums directly).
  */
 
 import { SWSELogger } from '../../utils/logger.js';
@@ -87,16 +91,23 @@ export async function scanForInvalidIds() {
 }
 
 /**
- * Attempt to fix items/actors with missing IDs
- * This will re-import them from compendium or regenerate IDs
+ * DEPRECATED: fixInvalidIds is no longer recommended
+ *
+ * V2 Change: Engine now FAILS LOUDLY on missing IDs.
+ * Items with missing IDs must be fixed in the SOURCE (compendium).
+ * Do not rely on automatic ID regeneration.
+ *
+ * This function kept for backwards compatibility, but DO NOT USE.
+ *
+ * @deprecated Use engine diagnostics instead
  * @param {Object} report - Report from scanForInvalidIds()
- * @returns {Object} Repair results
+ * @returns {Object} Error message
  */
 export async function fixInvalidIds(report) {
-    if (!game.user.isGM) {
-        ui.notifications.error('Only GMs can repair item IDs.');
-        return { success: false, message: 'Permission denied' };
-    }
+    const message = 'fixInvalidIds is DEPRECATED. Engine now fails on missing IDs to enforce SSOT. Fix items in compendiums directly.';
+    SWSELogger.warn('SWSE Store:', message);
+    ui.notifications.warn(message);
+    return { success: false, message };
 
     const results = {
         itemsFixed: 0,
