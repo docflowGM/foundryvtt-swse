@@ -1,4 +1,4 @@
-import { createChatMessage } from '../../core/document-api-v13.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 import { SWSELogger } from '../utils/logger.js';
 
 /**
