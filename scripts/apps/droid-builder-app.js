@@ -7,6 +7,7 @@
 import { DroidValidationEngine } from '../engine/droid-validation-engine.js';
 import { StepController } from './step-controller.js';
 import SWSEApplication from './base/swse-application.js';
+import { Seraphim } from './seraphim-narrator.js';
 
 export class DroidBuilderApp extends SWSEApplication {
 
@@ -283,6 +284,19 @@ export class DroidBuilderApp extends SWSEApplication {
         isSelected: selectedIds.includes(item.id)
       }));
     }
+
+    // Phase 3: Seraphim Narrator (reads state, reacts, explains trade-offs)
+    // Called after step-specific context is ready
+    context.seraphim = Seraphim.generateDialogue({
+      currentStep: this.currentStep,
+      droidSystems: this.droidSystems,
+      budget: context.budget,
+      isValid: context.isValid,
+      validationErrors: context.validationErrors,
+      stepConfig: stepConfig,
+      selectedItems: context.selectedItems,
+      availableItems: context.availableItems
+    });
 
     // Navigation availability
     context.canGoNext = !!this._getNextStepName(this.currentStep);

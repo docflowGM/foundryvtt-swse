@@ -1,4 +1,45 @@
 <div class="droid-builder-container">
+  {{!-- Seraphim Narrator Section --}}
+  {{#if this.seraphim}}
+    <div class="seraphim-section">
+      <div class="seraphim-header">
+        <span class="seraphim-label">Seraphim</span>
+      </div>
+
+      {{#if this.seraphim.intro}}
+        <div class="seraphim-intro">
+          {{this.seraphim.intro}}
+        </div>
+      {{/if}}
+
+      {{#if this.seraphim.reaction}}
+        <div class="seraphim-reaction">
+          {{this.seraphim.reaction}}
+        </div>
+      {{/if}}
+
+      {{#if this.seraphim.warnings.length}}
+        <div class="seraphim-warnings">
+          {{#each this.seraphim.warnings}}
+            <div class="warning-item">• {{this}}</div>
+          {{/each}}
+        </div>
+      {{/if}}
+
+      {{#if this.seraphim.budget}}
+        <div class="seraphim-budget">
+          {{this.seraphim.budget}}
+        </div>
+      {{/if}}
+
+      {{#if this.seraphim.review}}
+        <div class="seraphim-review">
+          {{this.seraphim.review}}
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
+
   {{#if this.validationErrors.length}}
     <div class="alert alert-error">
       <strong>Validation Errors:</strong>
@@ -293,6 +334,80 @@
     padding: 20px;
     max-width: 800px;
     margin: 0 auto;
+  }
+
+  /* Seraphim Narrator Section */
+  .seraphim-section {
+    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+    border-left: 4px solid #5e35b1;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .seraphim-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #5e35b1;
+  }
+
+  .seraphim-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .seraphim-intro {
+    margin-bottom: 8px;
+    color: #3a3a3a;
+    font-weight: 500;
+  }
+
+  .seraphim-reaction {
+    margin-bottom: 8px;
+    color: #4a4a4a;
+    font-style: italic;
+  }
+
+  .seraphim-warnings {
+    background: #fff3e0;
+    border-left: 3px solid #f57c00;
+    padding: 8px;
+    margin: 8px 0;
+    border-radius: 2px;
+  }
+
+  .warning-item {
+    color: #e65100;
+    font-size: 12px;
+    margin: 3px 0;
+  }
+
+  .seraphim-budget {
+    background: #e8f5e9;
+    border-left: 3px solid #2e7d32;
+    padding: 8px;
+    margin: 8px 0;
+    border-radius: 2px;
+    color: #1b5e20;
+    font-size: 12px;
+  }
+
+  .seraphim-review {
+    background: #f1f8e9;
+    border: 1px solid #9ccc65;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 2px;
+    color: #33691e;
+    font-family: monospace;
+    font-size: 11px;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 
   .builder-step {
