@@ -14,6 +14,13 @@ export class DroidBuilderApp extends SWSEApplication {
   constructor(actor, options = {}) {
     super(options);
     this.actor = actor;
+
+    // Phase 3b: Builder mode and state management
+    this.mode = options.mode || 'NEW'; // 'NEW', 'EDIT', 'TEMPLATE'
+    this.sourceActor = options.sourceActor || null; // For EDIT/TEMPLATE modes
+    this.templateId = options.templateId || null; // For TEMPLATE mode
+    this.requireApproval = options.requireApproval ?? false; // GM approval gate
+
     // UI state: in-memory copy of droid systems for validation
     this.droidSystems = this._initializeDroidSystems();
     this.currentStep = 'intro';
@@ -30,13 +37,27 @@ export class DroidBuilderApp extends SWSEApplication {
   }
 
   /**
-   * Initialize droid systems from actor or create empty
+   * Initialize droid systems from actor, template, or create empty
    * Includes all Phase 2 systems
+   *
+   * Phase 3b: Supports modes
+   * - NEW: Create blank config (default 2000 credits)
+   * - EDIT: Load from existing actor (preserve state mode)
+   * - TEMPLATE: Clone from template actor (start as DRAFT)
    */
   _initializeDroidSystems() {
-    if (this.actor?.system?.droidSystems) {
-      return foundry.utils.deepClone(this.actor.system.droidSystems);
+    // EDIT mode: load from existing actor
+    if (this.mode === 'EDIT' && this.sourceActor?.system?.droidSystems) {
+      return foundry.utils.deepClone(this.sourceActor.system.droidSystems);
     }
+
+    // TEMPLATE mode: load from template, but start fresh
+    if (this.mode === 'TEMPLATE' && this.templateId) {
+      // TODO: Load template from compendium when implemented
+      // For now, fall through to default
+    }
+
+    // NEW mode (default): Create blank config
     return {
       // Degree and size (Phase 1)
       degree: '',
@@ -54,7 +75,10 @@ export class DroidBuilderApp extends SWSEApplication {
       accessories: [],
 
       // Budget tracking
-      credits: { total: 2000, spent: 0, remaining: 2000 }
+      credits: { total: 2000, spent: 0, remaining: 2000 },
+
+      // Phase 3b: State mode tracking (DRAFT, PENDING, FINALIZED)
+      stateMode: 'DRAFT'
     };
   }
 
@@ -64,11 +88,24 @@ export class DroidBuilderApp extends SWSEApplication {
       classes: ['swse', 'droid-builder-app', 'swse-app'],
       template: 'systems/foundryvtt-swse/templates/apps/droid-builder.hbs',
       position: { width: 800, height: 700 },
-      title: 'Droid Builder (Seraphim)',
+      title: 'Droid Builder',
       resizable: true,
       draggable: true
     }
   );
+
+  /**
+   * Compute dynamic title based on mode
+   */
+  get title() {
+    const modeLabel = {
+      'NEW': 'New Droid',
+      'EDIT': 'Edit Droid',
+      'TEMPLATE': 'Clone Droid'
+    };
+    const label = modeLabel[this.mode] || 'Droid Builder';
+    return `${label} (Seraphim)${this.requireApproval ? ' [Approval Required]' : ''}`;
+  }
 
   // ─────────────────────────────────────────────────────────────────
   // PHASE 2 STEP CONFIGURATION
@@ -241,6 +278,10 @@ export class DroidBuilderApp extends SWSEApplication {
     context.actor = this.actor;
     context.currentStep = this.currentStep;
     context.droidSystems = this.droidSystems;
+
+    // Phase 3b: Builder mode context
+    context.mode = this.mode;
+    context.requireApproval = this.requireApproval;
 
     // Available degrees
     context.degrees = [
@@ -538,7 +579,8 @@ export class DroidBuilderApp extends SWSEApplication {
 
   /**
    * Finalize droid configuration
-   * Single atomic mutation to actor
+   * Phase 3b: Emit hook for Store/GM to handle approvals and credits
+   * Single atomic mutation to actor (handled by listener)
    */
   async _onFinalizeDroid(event) {
     event.preventDefault();
@@ -551,6 +593,9 @@ export class DroidBuilderApp extends SWSEApplication {
       );
       return;
     }
+
+    // Calculate cost delta for edits
+    const costDelta = this._calculateCostDelta();
 
     // Confirm
     const confirmed = await Dialog.confirm({
@@ -568,8 +613,28 @@ export class DroidBuilderApp extends SWSEApplication {
 
     if (!confirmed) {return;}
 
+    // Phase 3b: Emit finalize hook for Store to listen
+    // Hook listeners handle approval gates and credit deduction
+    const hookResult = await Hooks.call('swse:droidFinalized', {
+      actor: this.actor,
+      droidSystems: this.droidSystems,
+      mode: this.mode,
+      cost: this.droidSystems.credits.spent,
+      costDelta: costDelta,
+      requireApproval: this.requireApproval
+    });
+
+    // If hook was prevented, don't finalize
+    if (hookResult === false) {
+      ui.notifications.warn('Droid finalization was cancelled.');
+      return;
+    }
+
     // ATOMIC UPDATE: Only mutation in entire builder
     try {
+      // Mark state as FINALIZED
+      this.droidSystems.stateMode = 'FINALIZED';
+
       await this.actor.update({
         'system.droidSystems': this.droidSystems
       });
@@ -579,6 +644,24 @@ export class DroidBuilderApp extends SWSEApplication {
     } catch (err) {
       ui.notifications.error(`Failed to save droid: ${err.message}`);
     }
+  }
+
+  /**
+   * Helper: Calculate cost delta for EDIT mode
+   * Returns 0 for NEW mode (builder is the source of truth)
+   */
+  _calculateCostDelta() {
+    if (this.mode !== 'EDIT' || !this.sourceActor) {
+      return 0;
+    }
+
+    const oldConfig = this.sourceActor.system.droidSystems;
+    const newConfig = this.droidSystems;
+
+    const oldCost = oldConfig?.credits?.spent || 0;
+    const newCost = newConfig?.credits?.spent || 0;
+
+    return newCost - oldCost;
   }
 
   /**
@@ -620,14 +703,35 @@ export class DroidBuilderApp extends SWSEApplication {
 
   /**
    * Static method to open the builder
+   * Phase 3b: Accept options for mode, approval, etc.
+   *
+   * @param {Actor} actor - The target actor to save droid to
+   * @param {Object} options - Builder options
+   *   - mode: 'NEW' | 'EDIT' | 'TEMPLATE' (default 'NEW')
+   *   - sourceActor: Actor (for EDIT mode, load config from this actor)
+   *   - templateId: string (for TEMPLATE mode, clone from template)
+   *   - requireApproval: boolean (default false, GM approval gate)
+   *
+   * @example
+   * // New droid, no approval required
+   * await DroidBuilderApp.open(actor);
+   *
+   * // Edit existing droid
+   * await DroidBuilderApp.open(actor, { mode: 'EDIT', sourceActor: actor });
+   *
+   * // Clone from template
+   * await DroidBuilderApp.open(actor, { mode: 'TEMPLATE', templateId: 'template-123' });
+   *
+   * // New droid, requires GM approval
+   * await DroidBuilderApp.open(actor, { requireApproval: true });
    */
-  static async open(actor) {
+  static async open(actor, options = {}) {
     if (!actor) {
       ui.notifications.error('No actor provided to droid builder');
       return;
     }
 
-    const app = new DroidBuilderApp(actor);
+    const app = new DroidBuilderApp(actor, options);
     app.render(true);
   }
 }
