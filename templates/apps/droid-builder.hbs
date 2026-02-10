@@ -137,7 +137,7 @@
                 type="checkbox"
                 name="system-select"
                 value="{{item.id}}"
-                {{#if (find this.selectedItems 'id' item.id)}}checked{{/if}}
+                {{#if item.isSelected}}checked{{/if}}
                 {{#unless item.canAfford}}disabled{{/unless}}
                 data-step="{{../this.currentStep}}"
               />
@@ -198,7 +198,7 @@
               />
               <span class="system-name">{{item.name}}</span>
               <span class="system-cost">[{{item.cost}} credits]</span>
-              {{#if this.selectedItems.bonus}}
+              {{#if item.bonus}}
                 <span class="system-stat">Bonus: +{{item.bonus}}</span>
               {{/if}}
               {{#unless item.canAfford}}
@@ -279,11 +279,11 @@
       {{#if (gte this.remaining 0)}}
         <span class="budget-remaining">({{this.remaining}} remaining)</span>
       {{else}}
-        <span class="budget-over">OVER BUDGET: {{math this.remaining "*" -1}} over</span>
+        <span class="budget-over">OVER BUDGET by {{this.remaining}} credits</span>
       {{/if}}
     </div>
-    <div class="budget-bar">
-      <div class="budget-spent" style="width: {{math this.spent "/" this.total "*" 100}}%"></div>
+    <div class="budget-bar" data-budget-total="{{this.total}}" data-budget-spent="{{this.spent}}">
+      <div class="budget-spent"></div>
     </div>
   </div>
 </template>

@@ -272,10 +272,15 @@ export class DroidBuilderApp extends SWSEApplication {
       context.availableItems = this.stepController.getAvailable(this.currentStep);
       context.selectedItems = this.stepController.getSelected(stepConfig);
 
-      // Mark items with affordability
+      // Mark items with affordability and selection status
+      const selectedIds = Array.isArray(context.selectedItems)
+        ? context.selectedItems.map(s => s.id)
+        : (context.selectedItems?.id ? [context.selectedItems.id] : []);
+
       context.availableItems = context.availableItems.map(item => ({
         ...item,
-        canAfford: this.stepController.canAddItem(item)
+        canAfford: this.stepController.canAddItem(item),
+        isSelected: selectedIds.includes(item.id)
       }));
     }
 
@@ -339,6 +344,18 @@ export class DroidBuilderApp extends SWSEApplication {
     const resetBtn = root.querySelector('.reset-droid');
     if (resetBtn) {
       resetBtn.addEventListener('click', this._onResetDroid.bind(this));
+    }
+
+    // Update budget bar width
+    const budgetBar = root.querySelector('.budget-bar');
+    if (budgetBar) {
+      const total = parseInt(budgetBar.dataset.budgetTotal) || 1;
+      const spent = parseInt(budgetBar.dataset.budgetSpent) || 0;
+      const percent = Math.min((spent / total) * 100, 100);
+      const spentElement = budgetBar.querySelector('.budget-spent');
+      if (spentElement) {
+        spentElement.style.width = `${percent}%`;
+      }
     }
   }
 
