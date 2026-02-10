@@ -240,6 +240,273 @@ Every weapon suggestion must produce 2–4 reasons:
 
 ---
 
+# CATEGORY NORMALIZATION LAYER (Production Architecture)
+
+## I. Peer Group Taxonomy (Formal Definition)
+
+The goal of peer groups is **fair comparison**, not balance judgment.
+
+### Design Rules for Peer Groups
+
+A peer group **must:**
+- Share the same proficiency expectation
+- Compete for the same tactical niche
+- Be mutually substitutable in real play
+
+A peer group **must NOT:**
+- Span multiple combat roles
+- Mix autofire and non-autofire
+- Mix melee and ranged
+- Mix STR-primary and DEX-primary unless finesse is universal
+
+### Weapon Peer Groups (Minimum Viable Set)
+
+#### Ranged — Pistols
+- `blaster-pistol`
+- `heavy-blaster-pistol`
+- `holdout-pistol`
+- `ion-pistol`
+- `slugthrower-pistol`
+
+#### Ranged — Rifles / Carbines
+- `blaster-rifle`
+- `blaster-carbine`
+- `sniper-rifle`
+- `ion-rifle`
+- `slugthrower-rifle`
+
+#### Ranged — Heavy / Special
+- `autofire-heavy-weapon`
+- `area-launcher`
+- `mounted-heavy-weapon` (usually excluded from PC suggestions)
+
+#### Melee — Simple
+- `simple-melee-light`
+- `simple-melee-heavy`
+
+#### Melee — Advanced
+- `advanced-melee-light`
+- `advanced-melee-heavy`
+
+#### Lightsabers
+- `lightsaber-single`
+- `lightsaber-double`
+- `lightsaber-exotic` (lightwhip, etc.)
+
+**Rule:** Each item belongs to exactly ONE peer group.
+
+If an item is difficult to place, the taxonomy is wrong — not the item.
+
+### Armor Peer Groups
+- `light-armor-dex`
+- `light-armor-balanced`
+- `medium-armor`
+- `heavy-armor`
+- `jedi-compatible-armor`
+
+---
+
+## II. Compensating Traits Model
+
+A weapon that is numerically "worse" may still be valid if it offers compensating value.
+
+### Trait Categories That Count as Compensation
+
+**Only traits that change tactical options count.**
+
+#### 1. Accuracy Modifiers
+- Accurate
+- Inaccurate (negative compensation)
+
+#### 2. Mode Access
+- Autofire
+- Area / Blast
+- Stun mode
+- Ion damage
+- Alternate damage modes
+
+#### 3. Control / Utility
+- Reach
+- Trip
+- Immobilize
+- Persistent effects
+- Environmental interaction
+
+#### 4. Concealability / Size
+- Holdout / easily concealed
+- Can be drawn as swift
+- Easily hidden (narrative but real)
+
+#### 5. Action Economy Advantages
+- Swift action activation
+- Passive effects
+- Free-mode switching
+
+### Traits That Do NOT Count as Compensation
+
+**Explicitly exclude:**
+- Rarity
+- Legality
+- Flavor text
+- Era
+- Who "typically uses" it
+- Price itself (evaluated separately)
+
+### Compensation Scoring (Abstract)
+
+Do NOT score traits individually.
+
+Instead, compute:
+```
+CompensationLevel = none | minor | moderate | major
+
+Guideline:
+  - Minor:    +1 meaningful trait
+  - Moderate: 2-3 meaningful traits
+  - Major:    core identity feature (autofire, area, stun-only)
+```
+
+This keeps the system explainable and avoids overfitting.
+
+---
+
+## III. Category Normalization Algorithm (Conceptual)
+
+Runs **offline or at startup**, not per character.
+Builds a relative baseline per peer group.
+
+### Step 1: Build Peer Group Statistics
+
+For each peer group, compute (descriptive, not prescriptive):
+
+```
+Median average damage
+Median price
+Trait frequency table
+Typical compensation level
+```
+
+### Step 2: Evaluate Each Weapon Relative to Its Group
+
+#### A. Damage Delta
+```
+DamageDelta = WeaponAvgDamage - GroupMedianDamage
+
+Bucketed:
+  - Significantly below  (< 80% of median)
+  - Slightly below       (80-95% of median)
+  - Near median          (95-105% of median)
+  - Above median         (> 105% of median)
+```
+
+#### B. Price Delta
+```
+PriceDelta = WeaponPrice - GroupMedianPrice
+
+Bucketed similarly
+```
+
+#### C. Compensation Check
+```
+Compensation = None | Minor | Moderate | Major
+```
+
+### Step 3: Compute Category Adjustment (Decision Matrix)
+
+```
+┌───────────┬───────┬─────────────┬────────────┐
+│ Damage    │ Price │ Compensation│ Adjustment │
+├───────────┼───────┼─────────────┼────────────┤
+│ Below     │ Above │ None        │ -4 to -6   │
+│ Below     │ Above │ Minor       │ -2 to -4   │
+│ Below     │ Below │ None        │ -1         │
+│ Below     │ Below │ Moderate    │ 0          │
+│ Near      │ Near  │ None        │ 0          │
+│ Near      │ Near  │ Moderate    │ +1         │
+│ Above     │ Above │ Moderate    │ +1         │
+│ Above     │ Above │ Major       │ +2 to +4   │
+│ Above     │ Below │ Any         │ +3 to +4   │
+└───────────┴───────┴─────────────┴────────────┘
+```
+
+**Hard Caps:**
+```
+-6 ≤ CategoryAdjustment ≤ +4
+```
+
+If an item hits -6, it is **NOT banned** — just gently discouraged.
+
+### Step 4: Persist the Adjustment
+
+```
+This adjustment becomes:
+  - A static metadata value
+  - Recomputed when compendiums change
+  - NEVER character-dependent
+```
+
+**Important:** The engine does NOT "decide" this per character.
+
+---
+
+## IV. Integration Into Scoring Pipeline (Canonical Order)
+
+**Non-negotiable ordering:**
+
+```
+1. Base Relevance               (10-20 points)
+2. Role Alignment               (-10 to +25 points)
+3. Axis A — Damage If Hit       (0-16 points)
+4. Axis B — Hit Likelihood      (-15 to +20 points, clamped)
+5. Tradeoff Corrections         (-10 to +10 points)
+6. Category Normalization       (-6 to +4 points, APPLIED LAST)
+7. Price Bias                   (-6 to +4 points)
+
+Total: 0-100
+```
+
+**Category normalization is intentionally late.**
+It is a **polish layer**, not a driver.
+
+---
+
+## V. Explainability Contract (Category Layer)
+
+**Every category adjustment produces ONE sentence, max.**
+
+Examples:
+- "Weaker than most weapons in its category"
+- "Offers fewer benefits than similarly priced pistols"
+- "Outperformed by common alternatives"
+- "Strong option compared to similar weapons"
+
+If multiple reasons exist, pick the strongest one.
+**Never stack explanations.**
+
+---
+
+## VI. Why This Architecture Preserves Player Agency
+
+This system:
+- ✅ Avoids best-in-slot logic
+- ✅ Suppresses trap items without hiding them
+- ✅ Requires zero hand-curation
+- ✅ Scales automatically as compendiums grow
+- ✅ Aligns with SSOT → Engine → UI architecture
+- ✅ Explainable to users and GMs
+
+**Most importantly:**
+
+> The engine never says "this weapon is bad."
+> It says "this weapon is less competitive among peers."
+
+That distinction **preserves player agency**.
+
+Trap items still appear. They just don't float to the top.
+Niche builds can still surface them if context fits.
+
+---
+
 ## Implementation Files
 
 ```
