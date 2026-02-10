@@ -19,6 +19,7 @@ import { GearSuggestions } from '../../suggestion-engine/gear-suggestions.js';
 import { MentorProseGenerator } from '../../suggestion-engine/mentor-prose-generator.js';
 import { ReviewThreadAssembler } from './review-thread-assembler.js';
 import { StoreLoadingOverlay } from './store-loading-overlay.js';
+import { StoreCardInteractions } from './store-card-interactions.js';
 import { resolveStoreGlyph } from './store-glyph-map.js';
 import {
   safeString,
@@ -91,6 +92,8 @@ export class SWSEStore extends ApplicationV2 {
 
     this.cart = emptyCart();
     this._loaded = false;
+
+    this.cardInteractions = null;    // Card floating/expansion controller
 
     // Initialize loading overlay
     const useAurebesh = game.settings.get('foundryvtt-swse', 'useAurebesh') ?? true;
@@ -572,6 +575,12 @@ export class SWSEStore extends ApplicationV2 {
   async _onRender(context, options) {
     const root = this.element;
     if (!(root instanceof HTMLElement)) {return;}
+
+    // Initialize card floating/expansion controller
+    if (this.cardInteractions) {
+      this.cardInteractions.destroy();
+    }
+    this.cardInteractions = new StoreCardInteractions(root);
 
     // Search functionality
     const searchInput = root.querySelector('#store-search');

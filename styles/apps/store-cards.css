@@ -332,6 +332,116 @@
 /* ACCESSIBILITY: SCREEN READERS                                */
 /* ============================================================ */
 
+/* ============================================================ */
+/* FLOATING & EXPANDED CARD STATES                             */
+/* ============================================================ */
+
+/**
+ * Floating effect: Subtle elevation with shadow on hover/expand
+ * Only applies transforms when reduced-motion is NOT enabled
+ */
+.product-card {
+  position: relative;
+  z-index: 10;
+}
+
+.product-card.card-floating {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(0, 255, 136, 0.25),
+              0 0 20px rgba(0, 255, 136, 0.15);
+  z-index: 1000;
+}
+
+/**
+ * Expanded state: Card takes up center viewport space
+ * Positioned fixed to prevent scroll interference
+ */
+.product-card.card-expanded {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1.1);
+  width: 90vw;
+  max-width: 600px;
+  height: auto;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 2000;
+  box-shadow: 0 20px 60px rgba(0, 255, 136, 0.4),
+              0 0 40px rgba(0, 255, 136, 0.2),
+              inset 0 0 20px rgba(0, 255, 136, 0.05);
+  border: 2px solid rgba(0, 255, 150, 0.8);
+}
+
+/**
+ * Expanded card content spacing
+ */
+.product-card.card-expanded .card-body {
+  gap: 1.2rem;
+}
+
+.product-card.card-expanded .glyph-panel {
+  height: 180px;
+}
+
+.product-card.card-expanded .store-glyph {
+  font-size: 6.5rem;
+}
+
+/**
+ * Respect reduced motion: No transforms
+ */
+@media (prefers-reduced-motion: reduce) {
+  .product-card.card-floating {
+    transform: none;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.15);
+  }
+
+  .product-card.card-expanded {
+    transform: translate(-50%, -50%);
+  }
+}
+
+/**
+ * Accessibility: High contrast mode
+ */
+@media (prefers-contrast: more) {
+  .product-card.card-floating {
+    box-shadow: 0 12px 24px rgba(0, 255, 170, 0.4),
+                0 0 20px rgba(0, 255, 170, 0.25);
+  }
+
+  .product-card.card-expanded {
+    border: 3px solid rgba(0, 255, 170, 1);
+    box-shadow: 0 20px 60px rgba(0, 255, 170, 0.6),
+                0 0 40px rgba(0, 255, 170, 0.3);
+  }
+}
+
+/**
+ * Light mode inversion
+ */
+@media (prefers-color-scheme: light) {
+  .product-card.card-floating {
+    box-shadow: 0 12px 24px rgba(45, 125, 92, 0.2),
+                0 0 20px rgba(45, 125, 92, 0.1);
+  }
+
+  .product-card.card-expanded {
+    box-shadow: 0 20px 60px rgba(45, 125, 92, 0.3),
+                0 0 40px rgba(45, 125, 92, 0.15),
+                inset 0 0 20px rgba(45, 125, 92, 0.03);
+    border: 2px solid rgba(45, 125, 92, 0.6);
+  }
+}
+
+/**
+ * Glyph panel clickability hint (visual feedback)
+ */
+.product-card:not(.card-floating) .glyph-panel {
+  cursor: pointer;
+}
+
 .store-glyph[aria-hidden="true"] {
   /* Glyph is purely decorative; ignored by assistive tech */
 }
