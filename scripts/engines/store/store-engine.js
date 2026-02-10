@@ -13,6 +13,7 @@
 import { buildStoreIndex } from './index.js';
 import { STORE_RULES } from './store-constants.js';
 import { SWSELogger } from '../../utils/logger.js';
+import { normalizeCredits } from '../../utils/credit-normalization.js';
 
 const logger = () => SWSELogger || globalThis.swseLogger || console;
 
@@ -169,7 +170,7 @@ export class StoreEngine {
 
     try {
       const currentCredits = Number(actor.system?.credits) ?? 0;
-      const newCredits = currentCredits - totalCost;
+      const newCredits = normalizeCredits(currentCredits - totalCost);
 
       logger().info('StoreEngine: Purchase starting', {
         transactionId,

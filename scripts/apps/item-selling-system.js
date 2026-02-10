@@ -164,8 +164,9 @@ async function acceptSale(item, actor, salePrice, isAutomatic) {
     // Log transaction
     logSaleTransaction(actor, item, salePrice, isAutomatic);
 
-    // Show player-only feedback (only to owner)
-    if (game.user?.id === actor.getUserLevel(game.user.id)) {
+    // Show player-only feedback (only to selling player)
+    const isSeller = game.user?.isGM || game.user?.id === actor.owner;
+    if (isSeller) {
       showPlayerSaleAcceptance(item, salePrice);
       // Animate credit gain
       await animateCreditGain(actor, creditsBefore, creditsAfter);

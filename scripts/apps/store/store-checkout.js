@@ -11,6 +11,7 @@
 import { ProgressionEngine } from '../../progression/engine/progression-engine.js';
 import { StoreEngine } from '../../engines/store/store-engine.js';
 import { SWSELogger } from '../../utils/logger.js';
+import { normalizeCredits } from '../../utils/credit-normalization.js';
 import CharacterGenerator from '../chargen/chargen-main.js';
 import { VehicleModificationApp } from '../vehicle-modification-app.js';
 import { getRandomDialogue } from './store-shared.js';
@@ -63,7 +64,7 @@ export async function addItemToCart(store, itemId, updateDialogueCallback) {
     }
 
     // Engine provides finalCost already calculated
-    const finalCost = Number(item.finalCost) || 0;
+    const finalCost = normalizeCredits(item.finalCost);
 
     // Add to cart
     store.cart.items.push({
@@ -105,7 +106,7 @@ export async function addDroidToCart(store, actorId, updateDialogueCallback) {
     }
 
     // Engine provides finalCost
-    const finalCost = Number(droidTemplate.finalCost) || 0;
+    const finalCost = normalizeCredits(droidTemplate.finalCost);
 
     // Add to cart
     store.cart.droids.push({
@@ -147,8 +148,8 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
 
     // Engine provides both prices
     const finalCost = condition === 'used'
-      ? Number(vehicleTemplate.finalCostUsed) || 0
-      : Number(vehicleTemplate.finalCost) || 0;
+      ? normalizeCredits(vehicleTemplate.finalCostUsed)
+      : normalizeCredits(vehicleTemplate.finalCost);
 
     store.cart.vehicles.push({
         id: templateId,
@@ -539,7 +540,7 @@ export function calculateCartTotal(cart) {
     for (const item of cart.items) {total += item.cost;}
     for (const droid of cart.droids) {total += droid.cost;}
     for (const vehicle of cart.vehicles) {total += vehicle.cost;}
-    return total;
+    return normalizeCredits(total);
 }
 
 /**
