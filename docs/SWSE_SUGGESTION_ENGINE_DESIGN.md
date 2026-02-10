@@ -599,6 +599,162 @@ const score = WeaponScoringEngine.scoreWeapon(weapon, character);
 
 ---
 
+## Engine↔Store Integration Contract (CRITICAL BOUNDARY)
+
+### Architecture Principle
+
+**The store never knows why an item is suggested. It only knows that it was suggested and how to display the explanation provided by the engine.**
+
+```
+Compendiums (SSOT)
+        ↓
+Suggestion Engine
+  (weapons, armor, gear)
+        ↓
+Store UI / Suggestion UI
+```
+
+### Request Shape (Store → Engine)
+
+The store asks the engine for suggestions via a structured request:
+
+```javascript
+suggestArmor({
+  characterId: "actor-id",
+  context: {
+    role: "defender",           // Inferred or player-set
+    proficiencies: [            // Boolean capabilities
+      "light", "medium", "heavy"
+    ],
+    talents: {                  // Talent flags (NOT math)
+      armoredDefense: true,
+      improvedArmoredDefense: false,
+      armorMastery: true
+    }
+  }
+})
+```
+
+### Response Shape (Engine → Store)
+
+The engine returns fully-formed suggestion objects:
+
+```javascript
+{
+  armorId: "heavy-battle-armor",
+  armorName: "Heavy Battle Armor",
+  armorType: "armor",
+
+  score: 42,
+  tier: "strong-fit",
+
+  explanations: [
+    "Improved Armored Defense lets armor scale with your level",
+    "Armor Mastery reduces mobility penalties",
+    "Defender role prioritizes survivability over mobility"
+  ],
+
+  components: {
+    baseRelevance: 10,
+    roleAlignment: 15,
+    axisA: 12,
+    axisB: 5,
+    priceBias: 0
+  },
+
+  meta: {
+    isVirtual: false,
+    computedAt: 1708866000000,
+    engineVersion: "1.0.0"
+  }
+}
+```
+
+### "No Armor" as Virtual Option
+
+"No Armor" is a first-class virtual option always evaluated:
+
+```javascript
+{
+  armorId: "NO_ARMOR",
+  armorName: "No Armor",
+  armorType: "virtual",
+
+  score: 18,
+  tier: "outperformed",
+
+  explanations: [
+    "No soak—relies on Heroic Level defense only",
+    "Your armor talents are unused without equipped armor",
+    "Defender role typically benefits from armor"
+  ],
+
+  meta: {
+    isVirtual: true,
+    computedAt: 1708866000000,
+    engineVersion: "1.0.0"
+  }
+}
+```
+
+This ensures:
+- The engine can say "don't buy anything"
+- The store doesn't feel forced to upsell
+- Players trust the system
+
+### Boundary Rules (Enforce These)
+
+The store NEVER:
+- Calculates armor relevance
+- Checks talent presence or logic
+- Applies role rules
+- Decides proficiency penalties
+- Does math on level/heroic bonus
+- Modifies explanation text
+
+If you ever see store code doing any of these, that's a bug.
+
+The engine ALWAYS:
+- Computes scores independently
+- Generates explanations
+- Handles missing metadata gracefully
+- Evaluates all options (including "No Armor")
+- Returns decision-ready objects
+
+### Integration Examples
+
+**Scenario 1: Character Leveling Up**
+
+Store → Engine: "Character reached level 10"
+Engine → Store: Re-score armor with new context, return updated suggestions
+Store: Display new ranking, highlight changes
+
+**Scenario 2: Talent Acquired**
+
+Store → Engine: "Character acquired Armor Mastery"
+Engine → Store: Rescore all armor, apply talent modifiers
+Store: Display updated explanations with talent context
+
+**Scenario 3: Inventory Purchase**
+
+Store → Engine: (no request—engine already scored all available items)
+Store: Filter by affinity, display price, allow purchase
+(No new engine call needed; scoring is deterministic for given character context)
+
+### Why This Works
+
+1. **Decoupling** - Rules changes don't require UI rewrites
+2. **Reusability** - Engine used in chargen, level-up, NPC tools, telemetry
+3. **Testability** - Engine logic isolated and unit-testable
+4. **Maintainability** - Single source of truth for scoring
+5. **Future-Proof** - Supplements, optional rules, difficulty modifiers can be added cleanly
+
+### One Inviolable Rule
+
+> If the store ever needs to know "why" something was scored, the answer is already in the explanation string provided by the engine.
+
+---
+
 ## Testing Strategy
 
 1. **Unit Tests** - Individual axis engines with synthetic character/weapon data

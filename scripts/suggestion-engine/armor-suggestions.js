@@ -22,14 +22,17 @@ export class ArmorSuggestions {
         return this._invalidSuggestions('Character data missing');
       }
 
-      if (!armorOptions || armorOptions.length === 0) {
-        return this._invalidSuggestions('No armor to evaluate');
-      }
+      // Include "No Armor" as a virtual baseline option
+      const allOptions = armorOptions || [];
+      const noArmorVirtual = this._generateNoArmorVirtual(character);
 
       // Score all armor options
-      const scored = armorOptions
+      const scored = allOptions
         .map(armor => ArmorScoringEngine.scoreArmor(armor, character, options))
         .filter(result => result.combined); // Filter out invalid scores
+
+      // Always include "No Armor" scoring
+      scored.push(noArmorVirtual);
 
       // Sort by final score (descending)
       scored.sort((a, b) => b.combined.finalScore - a.combined.finalScore);
@@ -251,6 +254,102 @@ export class ArmorSuggestions {
       // B is better
       return 'Armor B is the stronger choice';
     }
+  }
+
+  /**
+   * Generate "No Armor" as a virtual option (first-class baseline)
+   * Always evaluated, can win, ensures engine says "don't buy anything" if appropriate
+   * @private
+   */
+  static _generateNoArmorVirtual(character) {
+    const charLevel = character.system?.level?.value ?? 1;
+
+    // "No Armor" scores very low at low levels (Heroic bonus is small)
+    // But at high levels without armor talents, it can be competitive
+    const hasArmorTalents = !!(
+      character.system?.talents?.armoredDefense ||
+      character.system?.talents?.improvedArmoredDefense ||
+      character.system?.talents?.armorMastery
+    );
+
+    // Base score: Heroic Level only (no soak)
+    let score = 5; // Baseline presence
+
+    // If character has armor talents, "No Armor" is penalized (talents are unused)
+    if (hasArmorTalents) {
+      score = Math.max(0, score - 8); // Strong penalty if talents present
+    }
+
+    // Tier assignment
+    let tier = 'outperformed';
+    if (score >= 35) tier = 'viable';
+    if (score >= 45) tier = 'strong-fit';
+
+    return {
+      armorId: 'NO_ARMOR',
+      armorName: 'No Armor',
+      armorType: 'virtual',
+
+      components: {
+        baseRelevance: 5,
+        roleAlignment: hasArmorTalents ? -8 : 0,
+        axisA: 0,
+        axisB: 0,
+        priceBias: 0
+      },
+
+      axisA: {
+        score: 0,
+        band: 'none',
+        withTalents: {
+          armoredDefense: false,
+          improvedArmoredDefense: false
+        }
+      },
+
+      axisB: {
+        score: 0,
+        category: 'none',
+        cost: 0
+      },
+
+      combined: {
+        finalScore: score,
+        tier
+      },
+
+      explanations: this._generateNoArmorExplanations(character, hasArmorTalents),
+
+      meta: {
+        isVirtual: true,
+        computedAt: Date.now(),
+        engineVersion: '1.0.0'
+      }
+    };
+  }
+
+  /**
+   * Generate explanations for "No Armor" option
+   * @private
+   */
+  static _generateNoArmorExplanations(character, hasArmorTalents) {
+    const explanations = [];
+
+    // Primary: always explain the baseline
+    explanations.push('No soak—relies on Heroic Level defense only');
+
+    // Secondary: talent context
+    if (hasArmorTalents) {
+      explanations.push('Your armor talents are unused without equipped armor');
+    }
+
+    // Tertiary: role context
+    const primaryRole = character.system?.class?.name || 'generalist';
+    if (primaryRole.toLowerCase().includes('defender') || primaryRole.toLowerCase().includes('tank')) {
+      explanations.push('Defender role typically benefits from armor');
+    }
+
+    return explanations;
   }
 
   /**
