@@ -18,6 +18,9 @@ import { WeaponSuggestions } from '../../suggestion-engine/weapon-suggestions.js
 import { GearSuggestions } from '../../suggestion-engine/gear-suggestions.js';
 import { MentorProseGenerator } from '../../suggestion-engine/mentor-prose-generator.js';
 import { ReviewThreadAssembler } from './review-thread-assembler.js';
+import { StoreLoadingOverlay } from './store-loading-overlay.js';
+import { StoreCardInteractions } from './store-card-interactions.js';
+import { resolveStoreGlyph } from './store-glyph-map.js';
 import {
   safeString,
   safeImg,
@@ -89,6 +92,20 @@ export class SWSEStore extends ApplicationV2 {
 
     this.cart = emptyCart();
     this._loaded = false;
+
+    this.cardInteractions = null;    // Card floating/expansion controller
+    this.isCheckoutMode = false;     // Checkout mode state (true = ledger view, locked cart)
+
+    // Initialize loading overlay
+    const useAurebesh = game.settings.get('foundryvtt-swse', 'useAurebesh') ?? true;
+    const skipOverlay = game.settings.get('foundryvtt-swse', 'storeSkipLoadingOverlay') ?? false;
+    const reduceMotion = game.user?.getFlag?.('core', 'reduce-motion') ?? false;
+
+    this.loadingOverlay = new StoreLoadingOverlay({
+      useAurebesh,
+      reduceMotion,
+      skipOverlay
+    });
   }
 
   // NOTE: V2 API - Do NOT override _renderHTML or _replaceHTML
@@ -110,18 +127,25 @@ export class SWSEStore extends ApplicationV2 {
     if (this._loaded) {return;}
     this._loaded = true;
 
+    // PHASE 1: Load cart from actor
     this.cart = this._loadCartFromActor();
+    this.loadingOverlay?.advancePhase?.();
 
-    // DELEGATED TO ENGINE: Load inventory
+    // PHASE 2: Load inventory (DELEGATED TO ENGINE)
     await this._loadStoreInventory();
+    this.loadingOverlay?.advancePhase?.();
 
-    // Load reviews pack
+    // PHASE 3: Load reviews pack
     await this._loadReviewsData();
+    this.loadingOverlay?.advancePhase?.();
 
-    // Wire suggestion engine for all items
+    // PHASE 4: Wire suggestion engine for all items
     if (this.actor) {
       await this._generateSuggestionsForAllItems();
     }
+    this.loadingOverlay?.advancePhase?.();
+
+    // PHASE 5: Mark render as complete (handled in _onRender)
   }
 
   async _loadReviewsData() {
@@ -325,15 +349,21 @@ export class SWSEStore extends ApplicationV2 {
 
   _buildItemsWithSuggestions() {
     const items = [];
+    const useAurebesh = game.settings.get('foundryvtt-swse', 'useAurebesh') ?? true;
 
     for (const item of this.storeInventory?.allItems || []) {
       const suggestion = this.suggestions.get(item._id);
       const view = this._viewFromItem(item);
 
       // Add category for filtering
-      view.category = item.type || '';
+      view.category = item.category || item.type || '';
       view.availability = (item.system?.availability || '').toString();
       view.price = view.finalCost;
+
+      // RESOLVE GLYPH: Central authority (store-glyph-map.js)
+      const glyphData = resolveStoreGlyph(view.category, item.type, useAurebesh);
+      view.glyph = glyphData.text;
+      view.glyphLabel = glyphData.label;
 
       // Attach suggestion data
       if (suggestion?.combined) {
@@ -450,9 +480,9 @@ export class SWSEStore extends ApplicationV2 {
       survival: [],
       security: [],
       equipment: [],
-      services: [],
       droids: [],
       vehicles: []
+      // NOTE: services removed — services are contextual expenses, not store inventory
     };
 
     for (const item of this.itemsById.values()) {
@@ -500,9 +530,7 @@ export class SWSEStore extends ApplicationV2 {
           return;
         }
 
-        if (view.type === 'service') {
-          categories.services.push(view);
-        }
+        // NOTE: Services are not store inventory items (filtered by normalizer.js)
       });
     }
 
@@ -548,6 +576,12 @@ export class SWSEStore extends ApplicationV2 {
   async _onRender(context, options) {
     const root = this.element;
     if (!(root instanceof HTMLElement)) {return;}
+
+    // Initialize card floating/expansion controller
+    if (this.cardInteractions) {
+      this.cardInteractions.destroy();
+    }
+    this.cardInteractions = new StoreCardInteractions(root);
 
     // Search functionality
     const searchInput = root.querySelector('#store-search');
@@ -666,8 +700,20 @@ export class SWSEStore extends ApplicationV2 {
       });
     }
 
+    // Escape key: Cancel checkout mode if active (Part 8)
+    const handleEscapeKey = (ev) => {
+      if (ev.key === 'Escape' && this.isCheckoutMode) {
+        this._cancelCheckout();
+      }
+    };
+    document.addEventListener('keydown', handleEscapeKey);
+
     // Initial render once DOM exists
     this._renderCartUI();
+
+    // PHASE 5: Complete: All rendering done, fade out overlay
+    this.loadingOverlay?.advancePhase?.();
+    this.loadingOverlay?.complete?.();
   }
 
   _setRendarrLine(line) {
@@ -1106,5 +1152,186 @@ export class SWSEStore extends ApplicationV2 {
         this._renderCartUI();
       });
     });
+  }
+
+  /**
+   * Enter checkout mode: Transform cart into ledger view
+   * Lock quantities, disable cart editing
+   */
+  enterCheckoutMode() {
+    this.isCheckoutMode = true;
+    const rootEl = this.element;
+    if (rootEl) {
+      rootEl.classList.add('checkout-mode');
+      // Move focus to cart
+      const cartSidebar = rootEl.querySelector('.cart-sidebar');
+      if (cartSidebar) {
+        cartSidebar.setAttribute('aria-expanded', 'true');
+      }
+    }
+    this._renderCheckoutLedger();
+  }
+
+  /**
+   * Exit checkout mode: Return to normal cart view
+   */
+  exitCheckoutMode() {
+    this.isCheckoutMode = false;
+    const rootEl = this.element;
+    if (rootEl) {
+      rootEl.classList.remove('checkout-mode');
+      const cartSidebar = rootEl.querySelector('.cart-sidebar');
+      if (cartSidebar) {
+        cartSidebar.setAttribute('aria-expanded', 'false');
+      }
+    }
+  }
+
+  /**
+   * Render cart as ledger view (checkout mode only)
+   */
+  _renderCheckoutLedger() {
+    const rootEl = this.element;
+    if (!rootEl) {return;}
+
+    const listEl = rootEl.querySelector('#cart-items-list');
+    if (!listEl) {return;}
+
+    listEl.innerHTML = '';
+
+    // Create ledger rows (text-forward, no images)
+    const addLedgerRow = (entry, type, qty = 1) => {
+      const row = document.createElement('div');
+      row.classList.add('cart-item');
+      const cost = entry.cost ?? 0;
+      row.innerHTML = `
+        <span class="cart-item-name">${entry.name || ''}</span>
+        <span class="cart-item-qty">×${qty}</span>
+        <span class="cart-item-cost">₢ ${cost.toLocaleString()}</span>
+      `;
+      listEl.appendChild(row);
+    };
+
+    // Items
+    for (const it of this.cart.items) {
+      addLedgerRow(it, 'items', 1);
+    }
+
+    // Droids
+    for (const it of this.cart.droids) {
+      addLedgerRow(it, 'droids', 1);
+    }
+
+    // Vehicles
+    for (const it of this.cart.vehicles) {
+      addLedgerRow(it, 'vehicles', 1);
+    }
+
+    // Optionally add mentor interpretation below ledger
+    const mentorInterpEl = rootEl.querySelector('.checkout-mentor-interpretation');
+    if (mentorInterpEl) {
+      mentorInterpEl.remove();
+    }
+
+    const interpretation = this._getMentorCheckoutInterpretation();
+    if (interpretation) {
+      const interpEl = document.createElement('div');
+      interpEl.classList.add('checkout-mentor-interpretation');
+      interpEl.textContent = interpretation;
+      rootEl.querySelector('.cart-summary')?.parentElement?.insertBefore(
+        interpEl,
+        rootEl.querySelector('.cart-summary')
+      );
+    }
+
+    // Disable clear cart button in checkout mode
+    const clearBtn = rootEl.querySelector('.clear-cart-btn');
+    if (clearBtn) {
+      clearBtn.disabled = true;
+    }
+
+    // Update checkout button to say "Confirm Trade"
+    const checkoutBtn = rootEl.querySelector('.checkout-btn');
+    if (checkoutBtn) {
+      checkoutBtn.textContent = 'Confirm Trade';
+    }
+  }
+
+  /**
+   * Generate mentor interpretation for checkout based on affordability
+   */
+  _getMentorCheckoutInterpretation() {
+    const actor = this.actor;
+    if (!actor) {return null;}
+
+    const credits = Number(actor.system?.credits ?? 0) || 0;
+    const total = calculateCartTotal(this.cart);
+    const remaining = credits - total;
+
+    if (remaining >= credits * 0.5) {
+      return 'This exchange is well within acceptable limits.';
+    } else if (remaining >= 0) {
+      return 'This purchase leaves you with limited reserves. Proceed with caution.';
+    }
+    return null; // Should not reach here if checkout was allowed
+  }
+
+  /**
+   * Animate credit reconciliation after purchase
+   */
+  async animateCreditReconciliation(fromCredits, toCredits, duration = 600) {
+    const rootEl = this.element;
+    if (!rootEl) {return;}
+
+    const remainingEl = rootEl.querySelector('#cart-remaining');
+    if (!remainingEl) {return;}
+
+    const reduceMotion = game.user?.getFlag?.('core', 'reduce-motion') ?? false;
+
+    if (reduceMotion) {
+      // Skip animation, jump to final value
+      remainingEl.textContent = String(Math.max(0, toCredits));
+      return;
+    }
+
+    // Animate from fromCredits to toCredits
+    remainingEl.classList.add('credits-reconciling');
+
+    // Use requestAnimationFrame for smooth animation
+    const startTime = performance.now();
+    const animate = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Ease-out curve for natural deceleration
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(fromCredits - (fromCredits - toCredits) * easeProgress);
+
+      remainingEl.textContent = String(Math.max(0, current));
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        remainingEl.classList.remove('credits-reconciling');
+        remainingEl.textContent = String(Math.max(0, toCredits));
+      }
+    };
+
+    requestAnimationFrame(animate);
+
+    // Wait for animation to complete
+    return new Promise(resolve => {
+      setTimeout(resolve, duration);
+    });
+  }
+
+  /**
+   * Cancel checkout mode (Part 8: Escape safety)
+   * Restores cart interactivity
+   */
+  _cancelCheckout() {
+    if (!this.isCheckoutMode) {return;}
+    this.exitCheckoutMode();
+    this._renderCartUI();
   }
 }

@@ -1,0 +1,374 @@
+/**
+ * store-loading-overlay.css
+ *
+ * Typography-only styling for Rendarr's loading overlay.
+ *
+ * CORE PRINCIPLE:
+ * - All fonts applied via CSS classes
+ * - No inline styles
+ * - No font choices in JavaScript
+ * - Aurebesh-first with Consolas fallback
+ *
+ * Font selection respects game settings:
+ * - If Aurebesh disabled globally → all text renders in Consolas
+ * - Reduced motion → disable animations, keep static text
+ * - Skip overlay setting → overlay never created
+ */
+
+/* ============================================================ */
+/* ROOT OVERLAY CONTAINER                                       */
+/* ============================================================ */
+
+.swse-store-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 15, 25, 0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  z-index: 10000;
+
+  /* Fade out animation */
+  animation: overlay-fade-out 0.8s ease-out forwards;
+  animation-delay: 0s;
+  animation-fill-mode: forwards;
+}
+
+.swse-store-loading-overlay.hidden {
+  pointer-events: none;
+  display: none;
+}
+
+@keyframes overlay-fade-out {
+  0% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .swse-store-loading-overlay {
+    animation: none;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* ============================================================ */
+/* TYPOGRAPHY: FONT FAMILY CLASSES                              */
+/* ============================================================ */
+
+/**
+ * Primary font: Aurebesh (all text by default)
+ *
+ * Override via .font-consolas for accessibility fallback
+ */
+.overlay-title,
+.overlay-subtitle,
+.overlay-status,
+.overlay-progress-label {
+  font-family: 'Aurebesh', monospace;
+  letter-spacing: 0.08em;
+}
+
+/**
+ * Fallback font: Consolas (when Aurebesh disabled)
+ *
+ * Applied via: game.settings.get('foundryvtt-swse', 'useAurebesh') === false
+ * OR as explicit override class
+ */
+.font-consolas {
+  font-family: 'Consolas', 'Courier New', monospace;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================ */
+/* TYPOGRAPHY: TITLE (LARGEST)                                  */
+/* ============================================================ */
+
+.overlay-title {
+  font-size: 3.2rem;
+  font-weight: bold;
+  color: #00ff88;
+  text-shadow:
+    0 0 10px rgba(0, 255, 136, 0.8),
+    0 0 20px rgba(0, 255, 136, 0.4);
+  text-transform: uppercase;
+  line-height: 1.2;
+  margin: 0;
+  text-align: center;
+
+  /* Subtle entrance animation */
+  animation: title-glow 2s ease-in-out infinite;
+}
+
+@keyframes title-glow {
+  0%, 100% {
+    text-shadow:
+      0 0 10px rgba(0, 255, 136, 0.8),
+      0 0 20px rgba(0, 255, 136, 0.4);
+  }
+  50% {
+    text-shadow:
+      0 0 15px rgba(0, 255, 136, 0.9),
+      0 0 30px rgba(0, 255, 136, 0.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay-title {
+    animation: none;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+  }
+}
+
+/* ============================================================ */
+/* TYPOGRAPHY: SUBTITLE (MEDIUM)                                */
+/* ============================================================ */
+
+.overlay-subtitle {
+  font-size: 1.4rem;
+  color: #00cc66;
+  opacity: 0.8;
+  text-transform: uppercase;
+  margin: 0;
+  text-align: center;
+
+  /* Subtle scan line effect */
+  animation: subtitle-scan 4s ease-in-out infinite;
+}
+
+@keyframes subtitle-scan {
+  0%, 100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay-subtitle {
+    animation: none;
+    opacity: 0.8;
+  }
+}
+
+/* ============================================================ */
+/* PHASE GLYPH DISPLAY (VISUAL FEEDBACK)                        */
+/* ============================================================ */
+
+.overlay-phase-glyph {
+  font-family: 'Aurebesh', monospace;
+  font-size: 2.5rem;
+  color: #00ff88;
+  opacity: 0.6;
+  text-shadow:
+    0 0 8px rgba(0, 255, 136, 0.5),
+    0 0 16px rgba(0, 255, 136, 0.2);
+  margin: 0.5rem 0;
+  text-align: center;
+  letter-spacing: 0.15em;
+
+  /* Subtle pulsing to indicate phase change */
+  animation: phase-glyph-pulse 1s ease-in-out infinite;
+}
+
+@keyframes phase-glyph-pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay-phase-glyph {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .overlay-phase-glyph {
+    color: #1a4d2e;
+    text-shadow:
+      0 0 6px rgba(26, 77, 46, 0.3),
+      0 0 12px rgba(26, 77, 46, 0.1);
+  }
+}
+
+/* ============================================================ */
+/* TYPOGRAPHY: STATUS MESSAGES (SMALL, CYCLING)                 */
+/* ============================================================ */
+
+.overlay-status {
+  font-size: 0.95rem;
+  color: #00ff88;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  min-height: 1.5rem;
+  text-align: center;
+
+  /* Rapid fade cycle */
+  animation: status-cycle 1.2s ease-in-out infinite;
+}
+
+@keyframes status-cycle {
+  0% {
+    opacity: 0.3;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay-status {
+    animation: none;
+    opacity: 0.7;
+  }
+}
+
+/* ============================================================ */
+/* PROGRESS BAR (NO LABEL, PURE INDICATOR)                      */
+/* ============================================================ */
+
+.overlay-progress-bar {
+  width: 300px;
+  height: 6px;
+  background: rgba(0, 100, 60, 0.3);
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 1rem;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+}
+
+.overlay-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    #00ff88,
+    #00ff88 50%,
+    #00cc66 100%
+  );
+  width: 0%;
+  transition: width 0.4s ease-out;
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.8);
+}
+
+/* ============================================================ */
+/* OPTIONAL: PROGRESS LABEL                                     */
+/* ============================================================ */
+
+.overlay-progress-label {
+  font-size: 0.85rem;
+  color: #00cc66;
+  opacity: 0.6;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* ============================================================ */
+/* UTILITY: DISABLE ANIMATIONS FOR PERFORMANCE                  */
+/* ============================================================ */
+
+.overlay-no-animations .overlay-title,
+.overlay-no-animations .overlay-subtitle,
+.overlay-no-animations .overlay-status {
+  animation: none !important;
+}
+
+/* ============================================================ */
+/* ACCESSIBILITY: HIGH CONTRAST MODE                            */
+/* ============================================================ */
+
+@media (prefers-contrast: more) {
+  .overlay-title {
+    font-weight: 900;
+    color: #00ffaa;
+    text-shadow:
+      0 0 5px rgba(0, 255, 170, 1),
+      0 0 15px rgba(0, 255, 170, 0.8);
+  }
+
+  .overlay-subtitle,
+  .overlay-status {
+    color: #00ffaa;
+    opacity: 1;
+  }
+
+  .overlay-progress-bar {
+    border: 2px solid rgba(0, 255, 170, 0.8);
+  }
+
+  .overlay-progress-bar-fill {
+    background: linear-gradient(
+      90deg,
+      #00ffaa,
+      #00ffaa 50%,
+      #00ff88 100%
+    );
+  }
+}
+
+/* ============================================================ */
+/* ACCESSIBILITY: LIGHT MODE INVERSION                          */
+/* ============================================================ */
+
+@media (prefers-color-scheme: light) {
+  .swse-store-loading-overlay {
+    background: rgba(240, 240, 245, 0.95);
+  }
+
+  .overlay-title {
+    color: #1a4d2e;
+    text-shadow:
+      0 0 10px rgba(26, 77, 46, 0.3),
+      0 0 20px rgba(26, 77, 46, 0.1);
+  }
+
+  .overlay-subtitle {
+    color: #2d7d5c;
+  }
+
+  .overlay-status {
+    color: #1a4d2e;
+  }
+
+  .overlay-progress-bar {
+    background: rgba(45, 125, 92, 0.15);
+    border: 1px solid rgba(45, 125, 92, 0.3);
+  }
+
+  .overlay-progress-bar-fill {
+    background: linear-gradient(
+      90deg,
+      #2d7d5c,
+      #2d7d5c 50%,
+      #4a9d7c 100%
+    );
+    box-shadow: 0 0 8px rgba(45, 125, 92, 0.4);
+  }
+}

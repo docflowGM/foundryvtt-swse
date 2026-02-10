@@ -22,6 +22,12 @@
  * - Rendering (output is data structure)
  * - Suggestion logic (input only)
  * - Merchant decision-making (assembly only)
+ *
+ * NOTE ON SERVICES:
+ * Services (itemType === 'service') are NOT store inventory items.
+ * They are contextual expenses managed separately.
+ * Service reviews in this assembler are FLAVOR TEXT ONLY.
+ * Services never have affordability checks, availability restrictions, or mechanical interactions.
  */
 
 export class ReviewThreadAssembler {

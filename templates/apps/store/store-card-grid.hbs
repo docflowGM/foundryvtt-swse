@@ -86,7 +86,7 @@
     {{#if allItems.length}}
       <div class="products-grid" id="products-grid">
         {{#each allItems}}
-          <div class="holo-card product-card" data-item-id="{{this.id}}" data-category="{{this.category}}" data-availability="{{this.availability}}">
+          <div class="holo-card product-card" data-item-id="{{this.id}}" data-category="{{this.category}}" data-availability="{{this.availability}}" data-rarity="{{this.rarityClass}}">
             {{!-- Card Header with Suggestion Badge --}}
             <div class="card-header">
               {{#if this.suggestion}}
@@ -98,9 +98,9 @@
 
             {{!-- Card Body --}}
             <div class="card-body">
-              {{!-- Product Image --}}
-              <div class="card-image">
-                <img src="{{this.img}}" alt="{{this.name}}" loading="lazy"/>
+              {{!-- Aurebesh Glyph Panel (replaces image) --}}
+              <div class="glyph-panel">
+                <div class="store-glyph" aria-hidden="true">{{this.glyph}}</div>
               </div>
 
               {{!-- Product Name --}}
@@ -170,6 +170,9 @@
     <div class="cart-actions">
       <button type="button" class="checkout-btn holo-btn" id="checkout-cart" aria-label="Complete purchase">
         Complete Purchase
+      </button>
+      <button type="button" class="cancel-checkout-btn holo-btn secondary" id="cancel-checkout" aria-label="Cancel checkout" style="display: none;">
+        Cancel
       </button>
       <button type="button" class="clear-cart-btn holo-btn secondary" id="clear-cart" aria-label="Clear shopping cart">
         Clear Cart

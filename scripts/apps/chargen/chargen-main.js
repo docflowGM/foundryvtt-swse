@@ -7,6 +7,7 @@
 // Do not advance steps via render side-effects.
 
 import { SWSELogger } from '../../utils/logger.js';
+import { normalizeCredits } from '../../utils/credit-normalization.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from './chargen-property-accessor.js';
@@ -162,6 +163,19 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Initialize dev guards for architectural constraint enforcement
     initializeChargenDevGuards(this);
+
+    // Handle draft mode options (for GM-governed custom purchases)
+    this.draftMode = options.draftMode || false;  // Submit to approval instead of creating actor
+    this.editMode = options.editMode || false;  // Editing existing draft
+    this.editSnapshot = options.editSnapshot || null;  // Pre-populate from snapshot
+    this.approvalRequestId = options.approvalRequestId || null;  // Track which approval this edits
+    this.draftSubmissionCallback = options.draftSubmissionCallback || null;  // Callback when draft submitted
+
+    // If editing a draft, pre-populate character data from snapshot
+    if (this.editMode && this.editSnapshot && this.editSnapshot.characterData) {
+      this.characterData = foundry.utils.deepClone(this.editSnapshot.characterData);
+      this.currentStep = 'review';  // Skip to review step
+    }
   }
 
   // NOTE: Chargen step transitions MUST be state-driven.
@@ -2963,6 +2977,21 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     let created = null;
     try {
+      // DRAFT MODE: If draftMode is enabled, submit for approval instead of creating directly
+      if (this.draftMode) {
+        // Calculate total cost (droid credits remaining is the final cost)
+        const totalCost = normalizeCredits(this.characterData.droidCredits?.remaining ?? 0);
+
+        // Call submission callback (which will create the draft and queue it)
+        if (this.draftSubmissionCallback) {
+          await this.draftSubmissionCallback(this.characterData, totalCost);
+        }
+
+        // Close chargen window
+        this.close();
+        return;
+      }
+
       // Create the actor using v13-safe wrapper
       created = await createActor(actorData);
 

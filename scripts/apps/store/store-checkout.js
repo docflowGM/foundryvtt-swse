@@ -11,6 +11,7 @@
 import { ProgressionEngine } from '../../progression/engine/progression-engine.js';
 import { StoreEngine } from '../../engines/store/store-engine.js';
 import { SWSELogger } from '../../utils/logger.js';
+import { normalizeCredits } from '../../utils/credit-normalization.js';
 import CharacterGenerator from '../chargen/chargen-main.js';
 import { VehicleModificationApp } from '../vehicle-modification-app.js';
 import { getRandomDialogue } from './store-shared.js';
@@ -63,7 +64,7 @@ export async function addItemToCart(store, itemId, updateDialogueCallback) {
     }
 
     // Engine provides finalCost already calculated
-    const finalCost = Number(item.finalCost) || 0;
+    const finalCost = normalizeCredits(item.finalCost);
 
     // Add to cart
     store.cart.items.push({
@@ -105,7 +106,7 @@ export async function addDroidToCart(store, actorId, updateDialogueCallback) {
     }
 
     // Engine provides finalCost
-    const finalCost = Number(droidTemplate.finalCost) || 0;
+    const finalCost = normalizeCredits(droidTemplate.finalCost);
 
     // Add to cart
     store.cart.droids.push({
@@ -147,8 +148,8 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
 
     // Engine provides both prices
     const finalCost = condition === 'used'
-      ? Number(vehicleTemplate.finalCostUsed) || 0
-      : Number(vehicleTemplate.finalCost) || 0;
+      ? normalizeCredits(vehicleTemplate.finalCostUsed)
+      : normalizeCredits(vehicleTemplate.finalCost);
 
     store.cart.vehicles.push({
         id: templateId,
@@ -167,6 +168,13 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
 }
 
 /**
+ * @deprecated Services are not store inventory items.
+ * Services are contextual expenses managed separately by GMs.
+ * Do not use this function — it is dead code.
+ *
+ * Services are filtered out by normalizer.js and do not appear in store inventory.
+ * For service expenses, use a dedicated Services module or manual GM handling.
+ *
  * Purchase a service (immediate credit deduction)
  * DELEGATED TO ENGINE: Business logic moved to StoreEngine.purchase()
  *
@@ -417,6 +425,7 @@ export async function createCustomDroid(actor, closeCallback) {
         title: 'Build Custom Droid',
         content: `<p>Enter the droid construction system?</p>
                  <p>You will design a non-heroic droid at level ${actor.system.level || 1}.</p>
+                 <p><strong>This build will be submitted for GM approval.</strong></p>
                  <p><strong>Minimum cost:</strong> ${baseCredits.toLocaleString()} credits</p>`,
         defaultYes: true
     });
@@ -429,13 +438,23 @@ export async function createCustomDroid(actor, closeCallback) {
             closeCallback();
         }
 
-        // Launch character generator in droid-building mode
+        // Launch character generator in droid-building mode with draft mode enabled
+        // When chargen completes in draftMode, it will call the draftSubmissionCallback
         const chargen = new CharacterGenerator(null, {
             droidBuilderMode: true,
+            draftMode: true,  // Enable draft submission workflow
             ownerActor: actor,
             droidLevel: actor.system.level || 1,
             availableCredits: credits,
-            droidConstructionCredits: baseCredits
+            droidConstructionCredits: baseCredits,
+            draftSubmissionCallback: async (chargenSnapshot, cost) => {
+                // When chargen completes in draft mode, submit to approval queue
+                const success = await submitDraftDroidForApproval(chargenSnapshot, actor, cost);
+                if (success) {
+                    // Chargen will close itself in draft mode
+                    SWSELogger.log('SWSE Store | Droid draft submitted successfully');
+                }
+            }
         });
 
         chargen.render(true);
@@ -463,6 +482,7 @@ export async function createCustomStarship(actor, closeCallback) {
         title: 'Build Custom Starship',
         content: `<p>Enter the starship modification system with Marl Skindar?</p>
                  <p>You will select a stock ship and customize it with modifications.</p>
+                 <p><strong>This build will be submitted for GM approval.</strong></p>
                  <p><strong>Minimum cost:</strong> 5,000 credits (Light Fighter)</p>
                  <p><em>Warning: Marl will judge your choices harshly.</em></p>`,
         defaultYes: true
@@ -532,7 +552,7 @@ export function calculateCartTotal(cart) {
     for (const item of cart.items) {total += item.cost;}
     for (const droid of cart.droids) {total += droid.cost;}
     for (const vehicle of cart.vehicles) {total += vehicle.cost;}
-    return total;
+    return normalizeCredits(total);
 }
 
 /**
@@ -565,95 +585,133 @@ export async function checkout(store, animateNumberCallback) {
         return;
     }
 
-    // Confirm purchase
-    const confirmed = await Dialog.confirm({
-        title: 'Complete Purchase',
-        content: `<p>Complete purchase for <strong>${total.toLocaleString()}</strong> credits?</p>
-                 <p>This will add ${store.cart.items.length} item(s), ${store.cart.droids.length} droid(s), and ${store.cart.vehicles.length} vehicle(s).</p>`,
-        defaultYes: true
-    });
+    // PART 3: Enter checkout mode (ledger view)
+    store.enterCheckoutMode();
+    store._showCartSidebar(store.element);
 
-    if (!confirmed) {return;}
-
-    try {
-        // Animate credits countdown in wallet display
-        const walletCreditsEl = store.element[0].querySelector('.remaining-credits');
-        if (walletCreditsEl && animateNumberCallback) {
-            animateNumberCallback(walletCreditsEl, credits, credits - total, 600);
-        }
-
-        // DELEGATED TO ENGINE: Execute purchase with itemGrantCallback
-        const result = await StoreEngine.purchase({
-            actor,
-            items: store.cart,
-            totalCost: total,
-            itemGrantCallback: async (purchasingActor, cartItems) => {
-
-            // Add regular items to actor
-            const itemsToCreate = store.cart.items.map(cartItem => {
-                const item = cartItem.item;
-                return item.toObject ? item.toObject() : item;
-            });
-            if (itemsToCreate.length > 0) {
-                await purchasingActor.createEmbeddedDocuments('Item', itemsToCreate);
-            }
-
-            // Create droid actors
-            for (const droid of store.cart.droids) {
-                const droidData = droid.actor.toObject ? droid.actor.toObject() : droid.actor;
-                droidData.name = `${droid.name} (${purchasingActor.name}'s)`;
-                droidData.ownership = {
-                    default: 0,
-                    [game.user.id]: 3
-                };
-                await createActor(droidData);
-            }
-
-            // Create vehicle actors from Item templates
-            for (const vehicle of store.cart.vehicles) {
-                const template = vehicle.template || store.itemsById?.get(vehicle.id);
-                if (!template) {
-                    throw new Error(`Vehicle template not found for id=${vehicle.id}`);
-                }
-
-                const vehicleActor = await createActor({
-                    name: `${vehicle.condition === 'used' ? '(Used) ' : ''}${vehicle.name}`,
-                    type: 'vehicle',
-                    img: template.img || 'icons/svg/anchor.svg',
-                    ownership: {
-                        default: 0,
-                        [game.user.id]: 3
-                    }
-                }, { renderSheet: false });
-
-                await SWSEVehicleHandler.applyVehicleTemplate(vehicleActor, template, {
-                    condition: vehicle.condition
-                });
-            }
-        });
-
-        if (!result.success) {
-            ui.notifications.error(`Purchase failed: ${result.error}`);
-            store.render();
+    // PART 5: Wait for confirmation (user clicks Confirm Trade or Cancel)
+    return new Promise((resolve) => {
+        const rootEl = store.element;
+        if (!rootEl) {
+            resolve();
             return;
         }
 
-        ui.notifications.info(`Purchase complete! Spent ${total.toLocaleString()} credits.`);
+        const confirmBtn = rootEl.querySelector('.checkout-btn');
+        const cancelBtn = rootEl.querySelector('#cancel-checkout');
 
-        // Log purchase to history
-        await logPurchaseToHistory(actor, store.cart, total);
+        const handleConfirm = async () => {
+            // Disable buttons during transaction
+            if (confirmBtn) confirmBtn.disabled = true;
+            if (cancelBtn) cancelBtn.disabled = true;
 
-        // Clear cart
-        clearCart(store.cart);
-        store.cartTotal = 0;
+            cleanupListeners();
 
-        // Wait for animation to complete before re-rendering
-        setTimeout(() => store.render(), 700);
-    } catch (err) {
-        SWSELogger.error('SWSE Store | Checkout failed:', err);
-        ui.notifications.error('Purchase failed. See console for details.');
-        store.render();
-    }
+            try {
+                // PART 5: Execute engine transaction
+                const result = await StoreEngine.purchase({
+                    actor,
+                    items: store.cart,
+                    totalCost: total,
+                    itemGrantCallback: async (purchasingActor, cartItems) => {
+                        // Add regular items to actor
+                        const itemsToCreate = store.cart.items.map(cartItem => {
+                            const item = cartItem.item;
+                            return item.toObject ? item.toObject() : item;
+                        });
+                        if (itemsToCreate.length > 0) {
+                            await purchasingActor.createEmbeddedDocuments('Item', itemsToCreate);
+                        }
+
+                        // Create droid actors
+                        for (const droid of store.cart.droids) {
+                            const droidData = droid.actor.toObject ? droid.actor.toObject() : droid.actor;
+                            droidData.name = `${droid.name} (${purchasingActor.name}'s)`;
+                            droidData.ownership = {
+                                default: 0,
+                                [game.user.id]: 3
+                            };
+                            await createActor(droidData);
+                        }
+
+                        // Create vehicle actors from Item templates
+                        for (const vehicle of store.cart.vehicles) {
+                            const template = vehicle.template || store.itemsById?.get(vehicle.id);
+                            if (!template) {
+                                throw new Error(`Vehicle template not found for id=${vehicle.id}`);
+                            }
+
+                            const vehicleActor = await createActor({
+                                name: `${vehicle.condition === 'used' ? '(Used) ' : ''}${vehicle.name}`,
+                                type: 'vehicle',
+                                img: template.img || 'icons/svg/anchor.svg',
+                                ownership: {
+                                    default: 0,
+                                    [game.user.id]: 3
+                                }
+                            }, { renderSheet: false });
+
+                            await SWSEVehicleHandler.applyVehicleTemplate(vehicleActor, template, {
+                                condition: vehicle.condition
+                            });
+                        }
+                    }
+                });
+
+                if (!result.success) {
+                    ui.notifications.error(`Purchase failed: ${result.error}`);
+                    store.exitCheckoutMode();
+                    store._renderCartUI();
+                    resolve();
+                    return;
+                }
+
+                // PART 6: Animate credit reconciliation
+                const newCredits = Number(actor.system?.credits ?? 0) || 0;
+                await store.animateCreditReconciliation(credits, newCredits, 600);
+
+                ui.notifications.info(`Purchase complete! Spent ${total.toLocaleString()} credits.`);
+
+                // Log purchase to history
+                await logPurchaseToHistory(actor, store.cart, total);
+
+                // PART 7: Clear cart and exit checkout mode
+                clearCart(store.cart);
+                store.cartTotal = 0;
+                store.exitCheckoutMode();
+                store._renderCartUI();
+
+                resolve();
+            } catch (err) {
+                SWSELogger.error('SWSE Store | Checkout failed:', err);
+                ui.notifications.error('Purchase failed. See console for details.');
+                store.exitCheckoutMode();
+                store._renderCartUI();
+                resolve();
+            }
+        };
+
+        const handleCancel = () => {
+            cleanupListeners();
+            store.exitCheckoutMode();
+            store._renderCartUI();
+            resolve();
+        };
+
+        const cleanupListeners = () => {
+            if (confirmBtn) confirmBtn.removeEventListener('click', handleConfirm);
+            if (cancelBtn) cancelBtn.removeEventListener('click', handleCancel);
+        };
+
+        // Add event listeners
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', handleConfirm);
+        }
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', handleCancel);
+            cancelBtn.style.display = '';  // Show cancel button
+        }
+    });
 }
 
 /**
@@ -697,5 +755,160 @@ async function logPurchaseToHistory(actor, cart, total) {
     } catch (err) {
         SWSELogger.error('SWSE Store | Failed to log purchase to history:', err);
         // Don't throw error - this is non-critical
+    }
+}
+
+/**
+ * Submit draft droid for GM approval
+ * Creates an unpublished draft actor and adds to pending approvals queue
+ * @param {Object} chargenSnapshot - Complete chargen state (characterData, choices, etc.)
+ * @param {Actor} ownerActor - The character who requested the build
+ * @param {number} costCredits - Total cost (normalized integer)
+ * @returns {Promise<boolean>} Success/failure
+ */
+export async function submitDraftDroidForApproval(chargenSnapshot, ownerActor, costCredits) {
+    if (!chargenSnapshot || !ownerActor) {
+        ui.notifications.error('Invalid draft submission: missing data.');
+        return false;
+    }
+
+    const normalizedCost = normalizeCredits(costCredits);
+
+    try {
+        // 1. Create draft droid actor (not published, not owned by player)
+        const draftDroid = await createActor({
+            name: chargenSnapshot.characterData?.name || 'Custom Droid',
+            type: 'droid',
+            ownership: {
+                default: 0  // Players cannot see
+            }
+        });
+
+        if (!draftDroid) {
+            ui.notifications.error('Failed to create draft droid.');
+            return false;
+        }
+
+        // 2. Mark as draft (pending approval)
+        await draftDroid.setFlag('swse', 'pendingApproval', true);
+        await draftDroid.setFlag('swse', 'draftOnly', true);
+        await draftDroid.setFlag('swse', 'ownerPlayerId', game.user.id);
+
+        // 3. Build pending purchase record
+        const pendingRecord = {
+            id: `pending_droid_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            type: 'droid',
+            draftActorId: draftDroid.id,
+            chargenSnapshot: chargenSnapshot,
+            ownerPlayerId: game.user.id,
+            ownerActorId: ownerActor.id,
+            costCredits: normalizedCost,
+            requestedAt: Date.now(),
+            draftData: {
+                name: chargenSnapshot.characterData?.name || 'Custom Droid',
+                type: 'droid',
+                droidDegree: chargenSnapshot.characterData?.droidDegree || 'Unknown',
+                droidSize: chargenSnapshot.characterData?.droidSize || 'medium',
+                cost: normalizedCost,
+                description: `Custom ${chargenSnapshot.characterData?.droidDegree || 'Droid'} built by ${ownerActor.name}`
+            }
+        };
+
+        // 4. Add to pending queue (world flag)
+        const pendingPurchases = game.settings.get('foundryvtt-swse', 'pendingCustomPurchases') || [];
+        pendingPurchases.push(pendingRecord);
+        await game.settings.set('foundryvtt-swse', 'pendingCustomPurchases', pendingPurchases);
+
+        // 5. Notify player
+        ui.notifications.info(`Droid design submitted for GM approval. Awaiting review...`);
+        SWSELogger.log('SWSE Store | Draft droid submitted for approval:', {
+            droidName: pendingRecord.draftData.name,
+            cost: normalizedCost,
+            owner: ownerActor.name
+        });
+
+        return true;
+    } catch (err) {
+        SWSELogger.error('SWSE Store | Failed to submit draft droid:', err);
+        ui.notifications.error('Failed to submit droid for approval.');
+        return false;
+    }
+}
+
+/**
+ * Submit draft vehicle for GM approval
+ * Creates an unpublished draft actor and adds to pending approvals queue
+ * @param {Object} modificationData - Vehicle modification state
+ * @param {Actor} vehicleTemplate - Base vehicle template
+ * @param {Actor} ownerActor - The character who requested the build
+ * @param {number} costCredits - Total cost (normalized integer)
+ * @returns {Promise<boolean>} Success/failure
+ */
+export async function submitDraftVehicleForApproval(modificationData, vehicleTemplate, ownerActor, costCredits) {
+    if (!modificationData || !vehicleTemplate || !ownerActor) {
+        ui.notifications.error('Invalid vehicle draft submission: missing data.');
+        return false;
+    }
+
+    const normalizedCost = normalizeCredits(costCredits);
+
+    try {
+        // 1. Create draft vehicle actor (not published, not owned by player)
+        const draftVehicle = await createActor({
+            name: vehicleTemplate.name || 'Custom Vehicle',
+            type: 'vehicle',
+            ownership: {
+                default: 0  // Players cannot see
+            }
+        });
+
+        if (!draftVehicle) {
+            ui.notifications.error('Failed to create draft vehicle.');
+            return false;
+        }
+
+        // 2. Mark as draft (pending approval)
+        await draftVehicle.setFlag('swse', 'pendingApproval', true);
+        await draftVehicle.setFlag('swse', 'draftOnly', true);
+        await draftVehicle.setFlag('swse', 'ownerPlayerId', game.user.id);
+
+        // 3. Build pending purchase record
+        const pendingRecord = {
+            id: `pending_vehicle_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            type: 'vehicle',
+            draftActorId: draftVehicle.id,
+            modificationData: modificationData,
+            vehicleTemplateName: vehicleTemplate.name,
+            ownerPlayerId: game.user.id,
+            ownerActorId: ownerActor.id,
+            costCredits: normalizedCost,
+            requestedAt: Date.now(),
+            draftData: {
+                name: vehicleTemplate.name || 'Custom Vehicle',
+                type: 'vehicle',
+                baseTemplate: vehicleTemplate.name,
+                cost: normalizedCost,
+                description: `Modified ${vehicleTemplate.name} built by ${ownerActor.name}`
+            }
+        };
+
+        // 4. Add to pending queue (world flag)
+        const pendingPurchases = game.settings.get('foundryvtt-swse', 'pendingCustomPurchases') || [];
+        pendingPurchases.push(pendingRecord);
+        await game.settings.set('foundryvtt-swse', 'pendingCustomPurchases', pendingPurchases);
+
+        // 5. Notify player
+        ui.notifications.info(`Vehicle design submitted for GM approval. Awaiting review...`);
+        SWSELogger.log('SWSE Store | Draft vehicle submitted for approval:', {
+            vehicleName: pendingRecord.draftData.name,
+            cost: normalizedCost,
+            owner: ownerActor.name
+        });
+
+        return true;
+    } catch (err) {
+        SWSELogger.error('SWSE Store | Failed to submit draft vehicle:', err);
+        ui.notifications.error('Failed to submit vehicle for approval.');
+        return false;
     }
 }

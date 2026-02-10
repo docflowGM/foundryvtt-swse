@@ -55,6 +55,9 @@
     "styles/apps/custom-item-dialog.css",
     "styles/apps/store.css",
     "styles/apps/store-card-grid.css",
+    "styles/apps/store-cards.css",
+    "styles/apps/store-loading-overlay.css",
+    "styles/apps/gm-store-dashboard.css",
     "styles/apps/levelup.css",
     "styles/sheets/character-sheet.css",
     "styles/sheets/vehicle-sheet.css",
@@ -505,6 +508,116 @@
       "config": false,
       "type": "String",
       "default": ""
+    },
+    "foundryvtt-swse.useAurebesh": {
+      "scope": "client",
+      "config": true,
+      "type": "Boolean",
+      "default": true,
+      "name": "Use Aurebesh Typography",
+      "hint": "Render all interface text in Aurebesh fonts. Disable for Consolas/Courier (accessibility fallback)."
+    },
+    "foundryvtt-swse.storeSkipLoadingOverlay": {
+      "scope": "client",
+      "config": true,
+      "type": "Boolean",
+      "default": false,
+      "name": "Skip Store Loading Overlay",
+      "hint": "Disable the Rendarr loading overlay that appears when opening the Store. The store will load normally in the background."
+    },
+    "foundryvtt-swse.autoAcceptItemSales": {
+      "scope": "world",
+      "config": true,
+      "type": "Boolean",
+      "default": false,
+      "name": "Automatically Accept Item Sales",
+      "hint": "Automatically accept item sales without GM approval. Use the 'Automatic Sale Value' setting to control the percentage paid."
+    },
+    "foundryvtt-swse.automaticSalePercentage": {
+      "scope": "world",
+      "config": true,
+      "type": "Number",
+      "default": 50,
+      "name": "Automatic Sale Value (%)",
+      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10–100%)",
+      "range": {
+        "min": 10,
+        "max": 100,
+        "step": 5
+      }
+    },
+    "foundryvtt-swse.disallowAutoSellNoPrice": {
+      "scope": "world",
+      "config": true,
+      "type": "Boolean",
+      "default": true,
+      "name": "Disallow Auto-Selling Items with No Base Price",
+      "hint": "Items without a defined base price will always require GM approval, even when automatic selling is enabled."
+    },
+    "foundryvtt-swse.storeOpen": {
+      "scope": "world",
+      "config": true,
+      "type": "Boolean",
+      "default": true,
+      "name": "Store Open",
+      "hint": "Controls whether players can purchase items from the store. When disabled, the store becomes view-only."
+    },
+    "foundryvtt-swse.globalBuyModifier": {
+      "scope": "world",
+      "config": true,
+      "type": "Number",
+      "default": 0,
+      "name": "Global Buy Price Modifier (%)",
+      "hint": "Applies a global percentage modifier to all store purchase prices. Positive values increase prices; negative values reduce prices.",
+      "range": {
+        "min": -50,
+        "max": 200,
+        "step": 5
+      }
+    },
+    "foundryvtt-swse.visibleRarities": {
+      "scope": "world",
+      "config": false,
+      "type": "Object",
+      "default": {
+        "common": true,
+        "uncommon": true,
+        "rare": false,
+        "restricted": false,
+        "illegal": false
+      }
+    },
+    "foundryvtt-swse.visibleItemTypes": {
+      "scope": "world",
+      "config": false,
+      "type": "Object",
+      "default": {
+        "weapons": true,
+        "armor": true,
+        "gear": true,
+        "droids": true,
+        "vehicles": true
+      }
+    },
+    "foundryvtt-swse.blacklistedItems": {
+      "scope": "world",
+      "config": false,
+      "type": "Array",
+      "default": []
+    },
+    "foundryvtt-swse.pendingSales": {
+      "scope": "world",
+      "config": false,
+      "type": "Array",
+      "default": []
+    },
+    "foundryvtt-swse.pendingCustomPurchases": {
+      "scope": "world",
+      "config": false,
+      "type": "Array",
+      "default": [],
+      "name": "Pending Custom Droid and Vehicle Purchases",
+      "hint": "Stores pending approvals for custom-built droids and vehicles awaiting GM review."
     }
   }
 }
