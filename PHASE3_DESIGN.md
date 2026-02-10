@@ -356,96 +356,252 @@ Budget is always computed by `DroidValidationEngine.calculateBudget()`.
 
 ---
 
-## VIII. Implementation Phases for Phase 3
+## VIII. Implementation Phases for Phase 3 (READY TO START)
 
-### Phase 3a: Seraphim Narrator (In DroidBuilderApp)
+**Design is LOCKED. Proceeding to Phase 3a implementation.**
+
+### Phase 3a: Seraphim Narrator (In DroidBuilderApp) — NEXT
 
 ```
 Goals:
 - Implement Seraphim.generateDialogue(context)
+  using locked Analyst-Mentor voice
 - Wire into _prepareContext()
-- Display in template
-- Test across all steps
+- Display in template at each step
+- Test across all steps (intro, 7 systems, review)
 
 Success Criteria:
-- Seraphim stays read-only
-- No validation logic in Seraphim
-- Dialogue responds to user choices correctly
+- ✅ Seraphim stays read-only (no mutations)
+- ✅ No validation logic in Seraphim
+- ✅ Dialogue responds to user choices correctly
+- ✅ Tone consistent (advisory, not prescriptive)
+- ✅ No hardcoded rules in dialogue
+
+Time estimate: 3-4 hours
+Blocker risk: None (doesn't depend on other phases)
 ```
 
-### Phase 3b: Store Shell (Entry Points Only)
+### Phase 3b: Store Shell (Entry Points Only) — AFTER 3a
 
 ```
 Goals:
-- Create Store UI (browse templates)
+- Create Store UI (browse droid templates from compendium)
 - Implement DroidBuilderApp.open(actor, options)
 - Wire finalize events
-- Handle credit deduction
+- Handle credit deduction via PlayerEngine
+- Respect world setting: store.requireGMApproval
 
 Success Criteria:
-- Can launch builder from Store
-- Can finalize and save droid
-- Credits deducted correctly
-- No logic forking
+- ✅ Can launch builder from Store (NEW mode)
+- ✅ Can finalize and save droid
+- ✅ Credits deducted on finalize
+- ✅ No logic forking (uses builder API only)
+- ✅ GM approval flow (if enabled)
+
+Time estimate: 4-5 hours
+Blocker risk: Depends on Phase 3a
 ```
 
-### Phase 3c: Edit Mode (Modify Existing Droids)
+### Phase 3c: Edit Mode (Modify Existing Droids) — AFTER 3b
 
 ```
 Goals:
-- Load existing droid config into builder
-- Track modifications
-- Calculate cost delta
+- Load existing droid config into builder (EDIT mode)
+- Track modifications in buildHistory
+- Calculate cost delta (new - old)
 - Test auto-prune on edit
+- Respect droid.locked flag
 
 Success Criteria:
-- Can modify droid without rebuilding
-- Auto-prune works correctly
-- Cost delta calculated
-- Original config preserved if cancel
+- ✅ Can modify droid without rebuilding
+- ✅ Auto-prune works correctly
+- ✅ Cost delta calculated and shown
+- ✅ Original config preserved if cancel
+- ✅ buildHistory tracks changes
+- ✅ Locked droids can't be edited (if GM enables)
+
+Time estimate: 3-4 hours
+Blocker risk: Depends on Phase 3b
 ```
 
 ---
 
-## IX. Questions for Phase 3 Planning Review
+## Summary: Phase 3 is Ready to Execute
 
-**Before implementation, answer these:**
+**Design locked. All ambiguity resolved. Ready for Phase 3a.**
 
-1. **Seraphim Personality:** What is Seraphim's voice? (Analytical? Whimsical? Mentor-like?)
-
-2. **Store Authority:** Can Store create droids without player approval? (GM setting?)
-
-3. **Edit Mode:** Can players freely modify owned droids, or does it require cost/approval?
-
-4. **History Tracking:** Do we track all modifications for audit/balance checking?
-
-5. **Template System:** Where do pre-configured droid templates come from? (Hardcoded? Compendium?)
-
-6. **Credit Source:** How do players earn/spend credits for droid purchases?
+Next step: Implement Seraphim narrator.
 
 ---
 
-## X. Risk Surface (Phase 2 → Phase 3)
+## IX. Answers to Phase 3 Planning Questions (LOCKED)
 
-### Risk 1: Seraphim Creep
+### 1️⃣ Seraphim's Voice
+**Decision:** Analyst-Mentor hybrid (calm, observant, lightly opinionated)
+
+Rationale: Matches "reactive + explanatory + non-authoritative" requirement.
+
+**Tone Rules:**
+- Explains trade-offs, never prescribes
+- Uses neutral language: "This configuration favors…"
+- ❌ No imperative verbs ("You should", "You must")
+- ✅ Always advisory, never enforcement
+
+**Example Dialogue:**
+```
+Step Introduction: "Let's choose your movement system."
+Selection Reaction: "Treads provide stability but reduce speed."
+Trade-off: "This decision favors durability over agility."
+```
+
+---
+
+### 2️⃣ Store Authority (GM Gate)
+**Decision:** GM-configurable, default = NO approval required
+
+Rationale: Respects different table styles without blocking solo play.
+
+**World Setting:** `store.requireGMApproval` (boolean, default false)
+
+**Behavior:**
+- If false: Player finalizes droid → immediate save + credit deduction
+- If true: Player finalizes droid → PENDING state → GM review → APPROVED/REJECTED
+- Builder logic unchanged either way
+
+---
+
+### 3️⃣ Edit Permissions (Player-Owned Droids)
+**Decision:** Yes, players may freely modify owned droids
+
+Constraints:
+- Edit always opens in **EDIT mode** (loads existing config)
+- Cost delta calculated: `(new config cost) - (old config cost)`
+- Auto-prune applies (if edit invalidates downstream steps)
+- GM can lock droids via world setting or actor-level flag
+
+**Rationale:** Respects player agency while honoring constraints.
+
+---
+
+### 4️⃣ History Tracking / Audit
+**Decision:** Lightweight audit only (delta snapshots, GM-visible)
+
+Do NOT implement full event sourcing.
+
+**Model:**
+```javascript
+// In actor.system.droidSystems.buildHistory:
+[
+  {
+    timestamp: "2026-02-10T15:30:00Z",
+    action: "finalized" | "edited",
+    before: { /* full config snapshot */ },
+    after: { /* full config snapshot */ },
+    costDelta: number  // if edited
+  }
+]
+```
+
+**Rationale:** Enough for trust + debugging, not a maintenance burden.
+
+---
+
+### 5️⃣ Template System (Preconfigured Droids)
+**Decision:** Compendium-based, not hardcoded
+
+**Architecture:**
+- Create `droid-templates` compendium
+- Templates = actors in that compendium
+- Store UI: Browse compendium → Select template → Clone actor → Open builder in DRAFT mode
+
+**Rationale:** You already have the abstraction. Enables GM customization. Store UI trivial.
+
+---
+
+### 6️⃣ Credit System Source of Truth
+**Decision:** Actor currency (credits) is authoritative
+
+Rules:
+- ✅ Store checks affordability BEFORE opening builder
+- ❌ Builder does NOT deduct credits
+- ✅ Deduction happens on finalize
+- ✅ Cost delta logic reused for edits
+
+**Signature:**
+```javascript
+async onDroidFinalized(actor, config, costDelta) {
+  // Store responsibility
+  await PlayerEngine.spendCredits(actor, costDelta);
+  await actor.update({ 'system.droidSystems.state': 'finalized' });
+}
+```
+
+---
+
+## Summary: 6 Decisions Locked
+
+| Question | Decision | Override Path |
+|----------|----------|---|
+| **Seraphim voice** | Analyst-Mentor | No override (core design) |
+| **Store gate** | GM-optional, default NO | World setting `store.requireGMApproval` |
+| **Edit perms** | Players free, GM can lock | World/actor flag `droid.locked` |
+| **Audit trail** | Lightweight snapshots | Optional world setting |
+| **Templates** | Compendium-based | Enabled by default |
+| **Credits** | Actor currency | No override (core design) |
+
+All decisions are **non-negotiable for Phase 3a**, but GM/world settings allow table customization.
+
+---
+
+## X. Risk Surface (Phase 2 → Phase 3) — Mitigated
+
+### Risk 1: Seraphim Creep ✅
 **Problem:** Seraphim starts explaining rules → eventually enforcing them → becomes a validator.
 
-**Mitigation:** Code review rule: if Seraphim touches constraint logic, reject.
+**Mitigation:**
+- ✅ Locked voice (Analyst-Mentor, never prescriptive)
+- ✅ Code review rule: if Seraphim touches constraint logic, reject
+- ✅ Builder remains sole authority on validation
 
-### Risk 2: Store Fork
+### Risk 2: Store Fork ✅
 **Problem:** Store implements its own item selection logic → diverges from builder.
 
-**Mitigation:** Store must call `StepController` methods, not reimplement.
+**Mitigation:**
+- ✅ Store uses `DroidBuilderApp.open(actor, options)` API
+- ✅ Store does NOT reimplement step logic
+- ✅ All validation goes through builder
 
-### Risk 3: Persistent State Surprise
+### Risk 3: Persistent State Surprise ✅
 **Problem:** Editing a finalized droid causes unexpected auto-prune or validation failure.
 
-**Mitigation:** Document state transitions clearly, test thoroughly.
+**Mitigation:**
+- ✅ Locked state modes: DRAFT → FINALIZED → MODIFIED
+- ✅ Auto-prune documented and tested
+- ✅ Edit mode explicitly loads existing config
 
-### Risk 4: Budget Calculation Divergence
+### Risk 4: Budget Calculation Divergence ✅
 **Problem:** Store calculates cost differently than validation engine.
 
-**Mitigation:** Single function, same everywhere.
+**Mitigation:**
+- ✅ Single function: `DroidValidationEngine.calculateBudget()`
+- ✅ Store calls same function for affordability check
+- ✅ Cost delta logic reused everywhere
+
+### Risk 5: Approval Flow Ambiguity ✅
+**Problem:** Unclear who can approve droids, when approval is required, what states exist.
+
+**Mitigation:**
+- ✅ Locked world setting: `store.requireGMApproval` (default false)
+- ✅ Explicit approval state model (DRAFT, PENDING, FINALIZED)
+- ✅ Store behavior changes, builder does not
+
+### Risk 6: Credit Economy Confusion ✅
+**Problem:** Unclear how credits flow, when deduction happens, who owns the truth.
+
+**Mitigation:**
+- ✅ Locked authority: `actor.credits` is source of truth
+- ✅ Deduction happens on finalize (not in builder)
+- ✅ Cost delta logic for edits
 
 ---
 
