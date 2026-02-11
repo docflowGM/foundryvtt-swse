@@ -219,16 +219,7 @@ export function showDiffDialog(diff) {
 
   html += '</div>';
 
-  // Add basic styling
-  html += `
-    <style>
-      .swse-diff-viewer { padding: 10px; }
-      .diff-section { margin-bottom: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
-      .diff-section h3 { margin-top: 0; color: #4a90e2; }
-      .delta { color: #27ae60; font-weight: bold; }
-      .swse-diff-viewer ul { margin: 5px 0; padding-left: 20px; }
-    </style>
-  `;
+  // Styling now in styles/apps/diff-viewer.css
 
   new SWSEDialogV2({
     title: 'Level-Up Changes Preview',
