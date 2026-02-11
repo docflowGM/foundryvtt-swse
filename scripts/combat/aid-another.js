@@ -10,7 +10,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
-import { createChatMessage } from '../../core/document-api-v13.js';
+import { createChatMessage } from '../core/document-api-v13.js';
 
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 export class AidAnother {

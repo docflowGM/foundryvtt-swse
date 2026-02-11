@@ -10,7 +10,7 @@
 
 import { computeAttackBonus } from '../utils/combat-utils.js';
 import { SWSERoll } from '../rolls/enhanced-rolls.js';
-import { createChatMessage } from '../../../core/document-api-v13.js';
+import { createChatMessage } from '../../core/document-api-v13.js';
 import { DamageSystem } from '../damage-system.js';
 
 export class SWSEGrappling {

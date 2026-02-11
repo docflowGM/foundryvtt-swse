@@ -9,7 +9,7 @@
  */
 
 import { measureDistance, facingTowards } from './vehicle-shared.js';
-import { createChatMessage } from '../../../../core/document-api-v13.js';
+import { createChatMessage } from '../../../core/document-api-v13.js';
 import { SWSERoll } from '../../rolls/enhanced-rolls.js';
 
 export class SWSEVehicleWeapons {

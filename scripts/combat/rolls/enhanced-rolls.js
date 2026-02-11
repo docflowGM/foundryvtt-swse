@@ -16,7 +16,7 @@ import {
 import {
   getEquippedWeapons,
   calculateFullAttackConfig,
-import { createChatMessage } from '../../../core/document-api-v13.js';
+import { createChatMessage } from '../../core/document-api-v13.js';
   showFullAttackDialog,
   generateFullAttackCard
 } from '../multi-attack.js';
