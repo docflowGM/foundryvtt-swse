@@ -71,8 +71,9 @@ class WelcomeDialog extends foundry.applications.api.ApplicationV2 {
     this.resolveDialog = null;
   }
 
-  _renderHTML(context, options) {
-    return `
+  async _renderHTML(context, options) {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = `
       <style>
         .swse-welcome {
           font-family: var(--font-family);
@@ -188,6 +189,7 @@ class WelcomeDialog extends foundry.applications.api.ApplicationV2 {
         </div>
       </div>
     `;
+    return wrapper;
   }
 
   _replaceHTML(result, content, options) {
