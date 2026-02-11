@@ -781,24 +781,23 @@ class TemplateSelectionDialog extends foundry.applications.api.ApplicationV2 {
     position: { width: 900, height: 700 }
   };
 
+  static PARTS = {
+    content: { template: 'systems/foundryvtt-swse/templates/apps/chargen-template-selection.hbs' }
+  };
+
   constructor(content, onSelect) {
     super();
     this.templateContent = content;
     this.onSelect = onSelect;
   }
 
-  _renderHTML(context, options) {
-    return this.templateContent;
+  _prepareContext(options) {
+    return { templateContent: this.templateContent };
   }
 
-  _replaceHTML(result, content, options) {
-    result.innerHTML = '';
-    result.appendChild(content);
-  }
-
-  _onRender(context, options) {
-    super._onRender(context, options);
-    const root = this.element;
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = html;
     if (!root) return;
 
     // Tab switching
