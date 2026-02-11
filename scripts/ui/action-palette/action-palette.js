@@ -10,7 +10,9 @@
 import { sceneControlRegistry } from '../../scene-controls/api.js';
 import { getCurrentPhase, SWSE_PHASES } from '../../state/phase.js';
 
-export class ActionPaletteApp extends foundry.applications.api.ApplicationV2 {
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
+export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) {
   constructor(options = {}) {
     super(options);
 

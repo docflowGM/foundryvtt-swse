@@ -8,9 +8,9 @@
 
 import { SWSELogger } from '../utils/logger.js';
 
-const { ApplicationV2 } = foundry.applications.api;
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-export class GMDroidApprovalDashboard extends ApplicationV2 {
+export class GMDroidApprovalDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: 'gm-droid-approval',
     tag: 'section',

@@ -791,6 +791,11 @@ class TemplateSelectionDialog extends foundry.applications.api.ApplicationV2 {
     return this.templateContent;
   }
 
+  _replaceHTML(result, content, options) {
+    result.innerHTML = '';
+    result.appendChild(content);
+  }
+
   _onRender(context, options) {
     super._onRender(context, options);
     const root = this.element;

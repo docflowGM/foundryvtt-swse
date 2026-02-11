@@ -3530,6 +3530,11 @@ class FeatSuggestionsDialog extends foundry.applications.api.ApplicationV2 {
     </div>`;
   }
 
+  _replaceHTML(result, content, options) {
+    result.innerHTML = '';
+    result.appendChild(content);
+  }
+
   _onRender(context, options) {
     super._onRender(context, options);
 
@@ -3587,6 +3592,11 @@ class ClassRequiredDialog extends foundry.applications.api.ApplicationV2 {
         <button class="btn btn-warning" data-action="freebuild">Enable Free Build</button>
       </div>
     `;
+  }
+
+  _replaceHTML(result, content, options) {
+    result.innerHTML = '';
+    result.appendChild(content);
   }
 
   _onRender(context, options) {
