@@ -45,7 +45,7 @@ export function registerSuggestionHooks() {
   });
 
   // Mentor Notes header control (AppV2)
-  HooksRegistry.register('getHeaderControlsApplicationV2', 'swse-mentor-notes', (app, controls) => {
+  HooksRegistry.register('getHeaderControlsApplicationV2', (app, controls) => {
     if (!isMentorNotesEnabled()) {return;}
     const actor = app?.actor ?? app?.document;
     if (!actor || actor.documentName !== 'Actor') {return;}
@@ -60,7 +60,7 @@ export function registerSuggestionHooks() {
       visible: () => true,
       onClick: () => MentorNotesApp.openForActor(actor)
     });
-  });
+  }, { id: 'swse-mentor-notes' });
 
   HooksRegistry.register('swse:decision-step-entered', 'swse-sugs-step', async ({ actor, step, pendingData, callback }) => {
     try {
