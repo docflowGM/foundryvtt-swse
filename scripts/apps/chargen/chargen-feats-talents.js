@@ -350,82 +350,7 @@ export async function _handleSkillFocusFeat(feat) {
 
   // Show dialog to select skill - use Promise to wait for selection
   return new Promise((resolve) => {
-    const dialog = new Dialog({
-      title: `${feat.name} - Select Skill`,
-      content: `
-        <div class="form-group">
-          <label>Choose a trained skill to focus:</label>
-          <select id="skill-focus-selection" style="width: 100%; padding: 5px;">
-            ${skillOptions}
-          </select>
-          <p class="hint-text" style="margin-top: 10px;">
-            <i class="fas fa-circle-info"></i>
-            Skill Focus grants a +5 bonus to the selected skill.
-          </p>
-        </div>
-      `,
-      buttons: {
-        select: {
-          icon: '<i class="fas fa-check"></i>',
-          label: 'Select',
-          callback: (html) => {
-            const selectedSkill = (root?.querySelector?.('#skill-focus-selection')?.value ?? null);
-
-            // Mark the skill as focused in character data
-            if (!this.characterData.skills) {
-              this.characterData.skills = {};
-            }
-            if (!this.characterData.skills[selectedSkill]) {
-              this.characterData.skills[selectedSkill] = { trained: true, focused: false };
-            }
-            this.characterData.skills[selectedSkill].focused = true;
-
-            // Update feat description to note which skill
-            const skillName = skillNames[selectedSkill] || selectedSkill;
-            const updatedFeat = {
-              ...feat,
-              system: {
-                ...feat.system,
-                description: `${feat.system.description || ''}\n\n<strong>Focused Skill:</strong> ${skillName}`
-              }
-            };
-
-            this.characterData.feats.push(updatedFeat);
-            ui.notifications.info(`${feat.name} applied to ${skillName}. You gain +5 to this skill.`);
-
-            // If opened from character sheet "Add Feat" button, add to actor and close
-            if (this._parentSheet && this.actor) {
-              this.actor.createEmbeddedDocuments('Item', [{
-                name: updatedFeat.name,
-                type: 'feat',
-                data: updatedFeat.system || updatedFeat.data
-              }]).then(() => {
-                ui.notifications.info(`Added ${updatedFeat.name} to character sheet`);
-                dialog.close();
-                this.close();
-                resolve(true);
-              });
-            } else {
-              dialog.close();
-              resolve(true);
-            }
-          }
-        },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: 'Cancel',
-          callback: () => {
-            ui.notifications.warn('Skill Focus feat cancelled.');
-            dialog.close();
-            resolve(false);
-          }
-        }
-      },
-      default: 'select',
-      close: () => resolve(false)
-    }, {
-      width: 400
-    });
+    const dialog = new SkillFocusDialog(feat, skillOptions, skillNames, this, resolve);
     dialog.render(true);
   });
 }
@@ -1041,4 +966,101 @@ export function _getStartingClassFeatures() {
   }
 
   return features;
+}
+
+/**
+ * Skill Focus Feat Dialog (AppV2-based)
+ * Allows selection of a skill to apply Skill Focus feat to
+ */
+class SkillFocusDialog extends foundry.applications.api.ApplicationV2 {
+  static DEFAULT_OPTIONS = {
+    id: 'swse-skill-focus-dialog',
+    tag: 'div',
+    window: { icon: 'fas fa-graduation-cap', title: 'Select Skill' },
+    position: { width: 400, height: 'auto' }
+  };
+
+  constructor(feat, skillOptions, skillNames, parentChargen, resolvePromise) {
+    super({ window: { title: `${feat.name} - Select Skill` } });
+    this.feat = feat;
+    this.skillOptions = skillOptions;
+    this.skillNames = skillNames;
+    this.parentChargen = parentChargen;
+    this.resolvePromise = resolvePromise;
+  }
+
+  _renderHTML(context, options) {
+    return `
+      <div class="form-group">
+        <label>Choose a trained skill to focus:</label>
+        <select id="skill-focus-selection" style="width: 100%; padding: 5px;">
+          ${this.skillOptions}
+        </select>
+        <p class="hint-text" style="margin-top: 10px;">
+          <i class="fas fa-circle-info"></i>
+          Skill Focus grants a +5 bonus to the selected skill.
+        </p>
+      </div>
+      <div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
+        <button class="btn btn-primary" data-action="select" style="margin-right: 0.5rem;">Select</button>
+        <button class="btn btn-secondary" data-action="cancel">Cancel</button>
+      </div>
+    `;
+  }
+
+  _onRender(context, options) {
+    super._onRender(context, options);
+    const skillSelect = this.element?.querySelector('#skill-focus-selection');
+
+    this.element?.querySelector('[data-action="select"]')?.addEventListener('click', async () => {
+      const selectedSkill = skillSelect?.value;
+      if (!selectedSkill) {
+        ui.notifications.warn('Please select a skill.');
+        return;
+      }
+
+      // Mark the skill as focused in character data
+      if (!this.parentChargen.characterData.skills) {
+        this.parentChargen.characterData.skills = {};
+      }
+      if (!this.parentChargen.characterData.skills[selectedSkill]) {
+        this.parentChargen.characterData.skills[selectedSkill] = { trained: true, focused: false };
+      }
+      this.parentChargen.characterData.skills[selectedSkill].focused = true;
+
+      // Update feat description to note which skill
+      const skillName = this.skillNames[selectedSkill] || selectedSkill;
+      const updatedFeat = {
+        ...this.feat,
+        system: {
+          ...this.feat.system,
+          description: `${this.feat.system.description || ''}\n\n<strong>Focused Skill:</strong> ${skillName}`
+        }
+      };
+
+      this.parentChargen.characterData.feats.push(updatedFeat);
+      ui.notifications.info(`${this.feat.name} applied to ${skillName}. You gain +5 to this skill.`);
+
+      // If opened from character sheet "Add Feat" button, add to actor and close
+      if (this.parentChargen._parentSheet && this.parentChargen.actor) {
+        await this.parentChargen.actor.createEmbeddedDocuments('Item', [{
+          name: updatedFeat.name,
+          type: 'feat',
+          data: updatedFeat.system || updatedFeat.data
+        }]);
+        ui.notifications.info(`Added ${updatedFeat.name} to character sheet`);
+        this.parentChargen.close();
+        if (this.resolvePromise) this.resolvePromise(true);
+      } else {
+        if (this.resolvePromise) this.resolvePromise(true);
+      }
+      this.close();
+    });
+
+    this.element?.querySelector('[data-action="cancel"]')?.addEventListener('click', () => {
+      ui.notifications.warn('Skill Focus feat cancelled.');
+      if (this.resolvePromise) this.resolvePromise(false);
+      this.close();
+    });
+  }
 }

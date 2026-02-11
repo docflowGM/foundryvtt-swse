@@ -333,64 +333,7 @@ export async function _onAskMentorBackgroundSuggestion(event) {
     const mentorMessage = `${mentor.name} suggests: "${topSuggestion.name}" - ${reason}`;
 
     // Show the mentor suggestion dialog
-    const dialog = new Dialog(
-      {
-        title: `${mentor.name}'s Recommendation`,
-        content: `
-          <div class="mentor-suggestion-display">
-            <div class="mentor-portrait" style="display: flex; gap: 15px; margin-bottom: 15px;">
-              <img src="${mentor.portrait}" alt="${mentor.name}" style="width: 80px; height: 80px; border-radius: 6px;" />
-              <div>
-                <h3 style="margin: 0;">${mentor.name}</h3>
-                <p style="margin: 5px 0; opacity: 0.75;">${mentor.title}</p>
-              </div>
-            </div>
-            <div class="suggestion-content" style="margin: 15px 0;">
-              <p style="font-style: italic; font-size: 1.1em;">"${topSuggestion.name} would be an excellent choice for you."</p>
-              <p><strong>Why:</strong> ${reason}</p>
-              <div class="background-preview" style="border: 1px solid #ccc; padding: 10px; border-radius: 4px; margin-top: 10px;">
-                <p>${topSuggestion.narrativeDescription || ''}</p>
-                ${topSuggestion.relevantSkills ? `<p><strong>Skills:</strong> ${topSuggestion.relevantSkills.join(', ')}</p>` : ''}
-                ${topSuggestion.bonusLanguage ? `<p><strong>Bonus Language:</strong> ${topSuggestion.bonusLanguage}</p>` : ''}
-              </div>
-            </div>
-          </div>
-        `,
-        buttons: {
-          apply: {
-            icon: '<i class="fas fa-check"></i>',
-            label: 'Accept Suggestion',
-            callback: async () => {
-              // Apply the suggested background
-              this.characterData.background = {
-                id: topSuggestion.id,
-                name: topSuggestion.name,
-                category: topSuggestion.category,
-                narrativeDescription: topSuggestion.narrativeDescription || '',
-                specialAbility: topSuggestion.specialAbility || null,
-                bonusLanguage: topSuggestion.bonusLanguage || null,
-                relevantSkills: topSuggestion.relevantSkills || [],
-                icon: topSuggestion.icon || ''
-              };
-              this.characterData.backgroundSkills = topSuggestion.relevantSkills || [];
-
-              ui.notifications.info(`${mentor.name} nods approvingly as you select ${topSuggestion.name}.`);
-              await this.render();
-            }
-          },
-          decline: {
-            icon: '<i class="fas fa-times"></i>',
-            label: 'Browse Manually',
-            callback: () => {
-              // Just close the dialog
-            }
-          }
-        },
-        default: 'apply'
-      },
-      { classes: ['mentor-suggestion-dialog'] }
-    );
-
+    const dialog = new BackgroundMentorSuggestionDialog(mentor, topSuggestion, reason, this);
     dialog.render(true);
 
   } catch (err) {
@@ -690,4 +633,79 @@ export function _renderBackgroundFilterPanel(root) {
   };
 
   _refreshBackgroundFilterPanel.call(this, panel, this.allBackgrounds || []);
+}
+
+/**
+ * Background Mentor Suggestion Dialog (AppV2-based)
+ * Displays mentor recommendation for background selection
+ */
+class BackgroundMentorSuggestionDialog extends foundry.applications.api.ApplicationV2 {
+  static DEFAULT_OPTIONS = {
+    id: 'swse-background-mentor-suggestion',
+    tag: 'div',
+    window: { icon: 'fas fa-user-tie', title: 'Mentor Recommendation' },
+    position: { width: 500, height: 'auto' }
+  };
+
+  constructor(mentor, topSuggestion, reason, parentChargen) {
+    super({ window: { title: `${mentor.name}'s Recommendation` } });
+    this.mentor = mentor;
+    this.topSuggestion = topSuggestion;
+    this.reason = reason;
+    this.parentChargen = parentChargen;
+  }
+
+  _renderHTML(context, options) {
+    return `
+      <div class="mentor-suggestion-display">
+        <div class="mentor-portrait" style="display: flex; gap: 15px; margin-bottom: 15px;">
+          <img src="${this.mentor.portrait}" alt="${this.mentor.name}" style="width: 80px; height: 80px; border-radius: 6px;" />
+          <div>
+            <h3 style="margin: 0;">${this.mentor.name}</h3>
+            <p style="margin: 5px 0; opacity: 0.75;">${this.mentor.title}</p>
+          </div>
+        </div>
+        <div class="suggestion-content" style="margin: 15px 0;">
+          <p style="font-style: italic; font-size: 1.1em;">"${this.topSuggestion.name} would be an excellent choice for you."</p>
+          <p><strong>Why:</strong> ${this.reason}</p>
+          <div class="background-preview" style="border: 1px solid #ccc; padding: 10px; border-radius: 4px; margin-top: 10px;">
+            <p>${this.topSuggestion.narrativeDescription || ''}</p>
+            ${this.topSuggestion.relevantSkills ? `<p><strong>Skills:</strong> ${this.topSuggestion.relevantSkills.join(', ')}</p>` : ''}
+            ${this.topSuggestion.bonusLanguage ? `<p><strong>Bonus Language:</strong> ${this.topSuggestion.bonusLanguage}</p>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
+        <button class="btn btn-primary" data-action="apply" style="margin-right: 0.5rem;">Accept Suggestion</button>
+        <button class="btn btn-secondary" data-action="decline">Browse Manually</button>
+      </div>
+    `;
+  }
+
+  _onRender(context, options) {
+    super._onRender(context, options);
+
+    this.element?.querySelector('[data-action="apply"]')?.addEventListener('click', async () => {
+      // Apply the suggested background
+      this.parentChargen.characterData.background = {
+        id: this.topSuggestion.id,
+        name: this.topSuggestion.name,
+        category: this.topSuggestion.category,
+        narrativeDescription: this.topSuggestion.narrativeDescription || '',
+        specialAbility: this.topSuggestion.specialAbility || null,
+        bonusLanguage: this.topSuggestion.bonusLanguage || null,
+        relevantSkills: this.topSuggestion.relevantSkills || [],
+        icon: this.topSuggestion.icon || ''
+      };
+      this.parentChargen.characterData.backgroundSkills = this.topSuggestion.relevantSkills || [];
+
+      ui.notifications.info(`${this.mentor.name} nods approvingly as you select ${this.topSuggestion.name}.`);
+      await this.parentChargen.render();
+      this.close();
+    });
+
+    this.element?.querySelector('[data-action="decline"]')?.addEventListener('click', () => {
+      this.close();
+    });
+  }
 }

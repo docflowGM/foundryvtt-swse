@@ -50,6 +50,7 @@ import { renderTalentTreeGraph, getTalentsInTree } from './chargen-talent-tree-g
 
 import { applyProgressionPatch } from '../../progression/engine/apply-progression-patch.js';
 import { buildNamePatch } from './steps/name-step.js';
+import { confirm } from '../../utils/ui-utils.js';
 
 export default class CharacterGenerator extends SWSEApplicationV2 {
   constructor(actor = null, options = {}) {
@@ -1872,39 +1873,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
             </div>
           `;
 
-          const dialog = new Dialog(
-            {
-              title: `${mentorName}'s Feat Suggestions`,
-              content: content,
-              buttons: {
-                accept: {
-                  icon: '<i class="fas fa-check"></i>',
-                  label: 'Show Suggestions Inline',
-                  callback: async () => {
-                    SWSELogger.log(`[CHARGEN] _onAskMentor: User accepted - enabling suggestions`);
-                    this.suggestionEngine = true;
-                    await this.render();
-                  }
-                },
-                cancel: {
-                  icon: '<i class="fas fa-times"></i>',
-                  label: 'Cancel',
-                  callback: () => {
-                    // Restore filter state
-                    if (wasFilterActive) {
-                      const checkbox = document.querySelector('.filter-valid-feats');
-                      if (checkbox) {
-                        checkbox.checked = true;
-                        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-                      }
-                    }
-                  }
-                }
-              },
-              default: 'accept'
-            },
-            { classes: ['feat-suggestions-dialog', 'holo-window'] }
-          );
+          const dialog = new FeatSuggestionsDialog(mentorName, content, wasFilterActive, this);
           dialog.render(true);
           return;
         }
@@ -2159,47 +2128,17 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     if (requiresClass && !classSelected && !this.freeBuild) {
       // Show dialog with options
-      await new Dialog({
-        title: 'Class Required',
-        content: `
-          <div style="margin-bottom: 10px;">
-            <p><i class="fas fa-circle-info" style="color: #00d9ff;"></i> <strong>You must select a class before choosing ${targetStep === 'talents' ? 'talents' : 'skills'}.</strong></p>
-            <p>You have two options:</p>
-            <ul style="margin-left: 20px; margin-top: 5px;">
-              <li><strong>Go Back:</strong> Return to the class selection step</li>
-              <li><strong>Enable Free Build:</strong> Skip validation and proceed anyway (characters may become illegal)</li>
-            </ul>
-          </div>
-        `,
-        buttons: {
-          goback: {
-            label: 'Go Back',
-            callback: async () => {
-              this.currentStep = 'class';
-              await this.render();
-            }
-          },
-          freebuild: {
-            label: 'Enable Free Build',
-            callback: async () => {
-              this.freeBuild = true;
-              this.currentStep = targetStep;
-              ui.notifications.info('Free Build Mode enabled. You can now select without class restrictions.');
-              await this.render();
-            }
-          }
-        },
-        default: 'goback'
-      }).render(true);
+      const dialog = new ClassRequiredDialog(targetStep, this);
+      dialog.render(true);
       return;
     }
 
     // If jumping forward, show confirmation that character may become illegal
     if (targetIndex > currentIndex && !this.freeBuild) {
       const stepLabel = this._getStepLabel(targetStep);
-      const confirmed = await Dialog.confirm({
-        title: 'Skip Steps?',
-        content: `
+      const confirmed = await confirm(
+        'Skip Steps?',
+        `
           <div style="margin-bottom: 10px;">
             <p><i class="fas fa-exclamation-triangle" style="color: #ff9800;"></i> <strong>Skip to ${stepLabel}?</strong></p>
             <p>You are about to skip ${targetIndex - currentIndex} step(s).</p>
@@ -2207,9 +2146,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
               <strong>Warning:</strong> Skipping steps may make your character illegal and affect your builds. You can return to these steps later.
             </p>
           </div>
-        `,
-        defaultYes: false
-      });
+        `
+      );
 
       if (!confirmed) {
         return;
@@ -2238,9 +2176,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     event.stopPropagation();
 
     // Show warning dialog
-    const confirmed = await Dialog.confirm({
-      title: 'Skip This Step?',
-      content: `
+    const confirmed = await confirm(
+      'Skip This Step?',
+      `
         <div style="margin-bottom: 10px;">
           <p><i class="fas fa-exclamation-triangle" style="color: #ff9800;"></i> <strong>Skip this step?</strong></p>
           <p>This step is important for character creation.</p>
@@ -2248,9 +2186,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
             <strong>Warning:</strong> Skipping this step may make your character illegal and affect your builds. You can always come back later to complete it.
           </p>
         </div>
-      `,
-      defaultYes: false
-    });
+      `
+    );
 
     if (!confirmed) {
       return;
@@ -2314,9 +2251,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // If enabling, ask for confirmation first
     if (wantsToEnable && !this.freeBuild) {
-      const confirmed = await Dialog.confirm({
-        title: 'Enable Free Build Mode?',
-        content: `
+      const confirmed = await confirm(
+        'Enable Free Build Mode?',
+        `
           <div style="margin-bottom: 10px;">
             <p><i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i> <strong>Enable Free Build Mode?</strong></p>
             <p>Free Build Mode removes all validation and restrictions.</p>
@@ -2333,9 +2270,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
               Characters created in Free Build mode may not follow standard rules.
             </p>
           </div>
-        `,
-        defaultYes: false
-      });
+        `
+      );
 
       if (!confirmed) {
         // User cancelled, uncheck the checkbox
@@ -2607,18 +2543,17 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         return false;
       } else {
         // In free build mode, show a confirmation dialog
-        const confirmed = await Dialog.confirm({
-          title: 'Validation Warnings',
-          content: `
+        const confirmed = await confirm(
+          'Validation Warnings',
+          `
             <p><strong>The following issues were found:</strong></p>
             <ul>
               ${errors.map(e => `<li>${e}</li>`).join('')}
             </ul>
             <p>Creating a character with these issues may cause problems.</p>
             <p><strong>Continue anyway?</strong></p>
-          `,
-          defaultYes: false
-        });
+          `
+        );
         return confirmed;
       }
     }
@@ -2816,11 +2751,10 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     event.preventDefault();
 
     // Confirm with user
-    const confirmed = await Dialog.confirm({
-      title: 'Change Starting Credits?',
-      content: '<p>Are you sure you want to change your starting credits selection?</p>',
-      defaultYes: false
-    });
+    const confirmed = await confirm(
+      'Change Starting Credits?',
+      '<p>Are you sure you want to change your starting credits selection?</p>'
+    );
 
     if (!confirmed) {return;}
 
@@ -3567,6 +3501,110 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     };
 
     renderTalentTreeGraph(container, talentsInTree, this.characterData, onSelectTalent);
+  }
+}
+
+/**
+ * Feat Suggestions Dialog (AppV2-based)
+ * Displays mentor feat suggestions with inline toggle
+ */
+class FeatSuggestionsDialog extends foundry.applications.api.ApplicationV2 {
+  static DEFAULT_OPTIONS = {
+    id: 'swse-feat-suggestions-dialog',
+    tag: 'div',
+    window: { icon: 'fas fa-lightbulb', title: 'Feat Suggestions' },
+    position: { width: 600, height: 'auto' }
+  };
+
+  constructor(mentorName, content, wasFilterActive, parentChargen) {
+    super({ window: { title: `${mentorName}'s Feat Suggestions` }, classes: ['feat-suggestions-dialog', 'holo-window'] });
+    this.content = content;
+    this.wasFilterActive = wasFilterActive;
+    this.parentChargen = parentChargen;
+  }
+
+  _renderHTML(context, options) {
+    return `${this.content}<div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
+      <button class="btn btn-primary" data-action="accept" style="margin-right: 0.5rem;">Show Suggestions Inline</button>
+      <button class="btn btn-secondary" data-action="cancel">Cancel</button>
+    </div>`;
+  }
+
+  _onRender(context, options) {
+    super._onRender(context, options);
+
+    this.element?.querySelector('[data-action="accept"]')?.addEventListener('click', async () => {
+      SWSELogger.log(`[CHARGEN] _onAskMentor: User accepted - enabling suggestions`);
+      this.parentChargen.suggestionEngine = true;
+      await this.parentChargen.render();
+      this.close();
+    });
+
+    this.element?.querySelector('[data-action="cancel"]')?.addEventListener('click', () => {
+      // Restore filter state
+      if (this.wasFilterActive) {
+        const checkbox = document.querySelector('.filter-valid-feats');
+        if (checkbox) {
+          checkbox.checked = true;
+          checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
+      this.close();
+    });
+  }
+}
+
+/**
+ * Class Required Dialog (AppV2-based)
+ * Prompts user when class is required but not selected
+ */
+class ClassRequiredDialog extends foundry.applications.api.ApplicationV2 {
+  static DEFAULT_OPTIONS = {
+    id: 'swse-class-required-dialog',
+    tag: 'div',
+    window: { icon: 'fas fa-exclamation-circle', title: 'Class Required' },
+    position: { width: 500, height: 'auto' }
+  };
+
+  constructor(targetStep, parentChargen) {
+    super();
+    this.targetStep = targetStep;
+    this.parentChargen = parentChargen;
+  }
+
+  _renderHTML(context, options) {
+    return `
+      <div style="margin-bottom: 10px;">
+        <p><i class="fas fa-circle-info" style="color: #00d9ff;"></i> <strong>You must select a class before choosing ${this.targetStep === 'talents' ? 'talents' : 'skills'}.</strong></p>
+        <p>You have two options:</p>
+        <ul style="margin-left: 20px; margin-top: 5px;">
+          <li><strong>Go Back:</strong> Return to the class selection step</li>
+          <li><strong>Enable Free Build:</strong> Skip validation and proceed anyway (characters may become illegal)</li>
+        </ul>
+      </div>
+      <div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
+        <button class="btn btn-secondary" data-action="goback" style="margin-right: 0.5rem;">Go Back</button>
+        <button class="btn btn-warning" data-action="freebuild">Enable Free Build</button>
+      </div>
+    `;
+  }
+
+  _onRender(context, options) {
+    super._onRender(context, options);
+
+    this.element?.querySelector('[data-action="goback"]')?.addEventListener('click', async () => {
+      this.parentChargen.currentStep = 'class';
+      await this.parentChargen.render();
+      this.close();
+    });
+
+    this.element?.querySelector('[data-action="freebuild"]')?.addEventListener('click', async () => {
+      this.parentChargen.freeBuild = true;
+      this.parentChargen.currentStep = this.targetStep;
+      ui.notifications.info('Free Build Mode enabled. You can now select without class restrictions.');
+      await this.parentChargen.render();
+      this.close();
+    });
   }
 }
 
