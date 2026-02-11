@@ -1,0 +1,96 @@
+/**
+ * Force Power Manager Styles
+ * UI for managing Force powers and abilities
+ */
+
+.swse-force-power-manager {
+  background: linear-gradient(135deg, #0a0e1a 0%, #16213e 100%);
+  border-radius: 8px;
+  padding: 1.5rem;
+  min-height: 500px;
+}
+
+.swse-force-power-manager h2 {
+  color: #00d9ff;
+  margin: 0 0 1.5rem 0;
+  text-shadow: 0 0 15px rgba(0, 217, 255, 0.6);
+  border-bottom: 2px solid #0a74da;
+  padding-bottom: 0.75rem;
+}
+
+.swse-force-power-manager .power-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.swse-force-power-manager .power-card {
+  background: rgba(10, 116, 218, 0.1);
+  border: 2px solid #0a74da;
+  border-radius: 6px;
+  padding: 1rem;
+  transition: all 0.3s;
+}
+
+.swse-force-power-manager .power-card:hover {
+  background: rgba(0, 217, 255, 0.15);
+  border-color: #00d9ff;
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+}
+
+.swse-force-power-manager .power-name {
+  font-weight: bold;
+  color: #e0e0e0;
+  margin: 0 0 0.5rem 0;
+}
+
+.swse-force-power-manager .power-info {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin: 0.5rem 0;
+}
+
+.swse-force-power-manager .power-cost {
+  color: #ffa500;
+  font-weight: bold;
+}
+
+.swse-force-power-manager .power-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.swse-force-power-manager button {
+  flex: 1;
+  padding: 0.5rem;
+  background: #0a74da;
+  border: none;
+  color: #e0e0e0;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.swse-force-power-manager button:hover {
+  background: #00d9ff;
+  color: #000;
+}
+
+.swse-force-power-manager .filter-section {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+
+.swse-force-power-manager .filter-section select {
+  padding: 0.5rem;
+  background: rgba(10, 116, 218, 0.2);
+  border: 1px solid #0a74da;
+  color: #e0e0e0;
+  border-radius: 3px;
+  margin-right: 0.5rem;
+}

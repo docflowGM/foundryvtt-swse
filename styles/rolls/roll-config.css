@@ -1,0 +1,89 @@
+/**
+ * Roll Configuration Styles
+ * Dialog and display for advanced roll options
+ */
+
+.swse-roll-config-dialog {
+  padding: 15px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 8px;
+}
+
+.swse-roll-config-dialog h3 {
+  color: #00d9ff;
+  margin-top: 0;
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+  border-bottom: 2px solid #0a74da;
+  padding-bottom: 0.5rem;
+}
+
+.swse-roll-config-dialog .config-section {
+  margin: 15px 0;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 3px solid #0a74da;
+  border-radius: 4px;
+}
+
+.swse-roll-config-dialog .config-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.swse-roll-config-dialog .config-item {
+  padding: 10px;
+  background: rgba(10, 116, 218, 0.1);
+  border: 1px solid #0a74da;
+  border-radius: 4px;
+}
+
+.swse-roll-config-dialog .config-item label {
+  display: block;
+  margin-bottom: 5px;
+  color: #e0e0e0;
+  font-weight: bold;
+}
+
+.swse-roll-config-dialog input,
+.swse-roll-config-dialog select {
+  width: 100%;
+  padding: 5px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #0a74da;
+  color: #e0e0e0;
+  border-radius: 3px;
+}
+
+.swse-roll-config-dialog input:focus,
+.swse-roll-config-dialog select:focus {
+  outline: none;
+  border-color: #00d9ff;
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+}
+
+.swse-roll-config-dialog .summary {
+  padding: 10px;
+  margin: 10px 0;
+  background: rgba(0, 217, 102, 0.1);
+  border: 1px solid #00d966;
+  border-radius: 4px;
+  color: #00d966;
+}
+
+.swse-roll-config-dialog button {
+  padding: 8px 15px;
+  margin: 5px;
+  background: #0a74da;
+  border: none;
+  color: #e0e0e0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.swse-roll-config-dialog button:hover {
+  background: #00d9ff;
+  color: #000;
+}
