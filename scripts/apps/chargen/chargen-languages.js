@@ -540,6 +540,11 @@ class CustomLanguageDialog extends foundry.applications.api.ApplicationV2 {
     `;
   }
 
+  _replaceHTML(result, content, options) {
+    result.innerHTML = '';
+    result.appendChild(content);
+  }
+
   _onRender(context, options) {
     super._onRender(context, options);
     const input = this.element?.querySelector('#custom-language-input');

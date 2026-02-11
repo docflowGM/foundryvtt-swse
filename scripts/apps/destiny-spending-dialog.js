@@ -93,6 +93,11 @@ export class DestinySpendingDialog extends foundry.applications.api.ApplicationV
     return html;
   }
 
+  _replaceHTML(result, content, options) {
+    result.innerHTML = '';
+    result.appendChild(content);
+  }
+
   _onRender(context, options) {
     super._onRender(context, options);
     this.activateListeners();

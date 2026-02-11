@@ -118,6 +118,11 @@ export class CharacterImportWizard extends foundry.applications.api.ApplicationV
     `;
   }
 
+  _replaceHTML(result, content, options) {
+    result.innerHTML = '';
+    result.appendChild(content);
+  }
+
   _onRender(context, options) {
     super._onRender(context, options);
     this.activateListeners();

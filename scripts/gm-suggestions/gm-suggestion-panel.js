@@ -8,7 +8,9 @@
 import { InsightBus } from './insight-bus.js';
 import { INSIGHT_TYPES } from './insight-types.js';
 
-export class GMSuggestionPanel extends foundry.applications.api.ApplicationV2 {
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
+export class GMSuggestionPanel extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: 'swse-gm-suggestion-panel',
     tag: 'div',

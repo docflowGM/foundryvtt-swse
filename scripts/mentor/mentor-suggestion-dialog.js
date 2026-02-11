@@ -115,6 +115,11 @@ export class MentorSuggestionDialog extends foundry.applications.api.Application
     `;
   }
 
+  _replaceHTML(result, content, options) {
+    result.innerHTML = '';
+    result.appendChild(content);
+  }
+
   _onRender(context, options) {
     super._onRender(context, options);
     this.activateListeners();
