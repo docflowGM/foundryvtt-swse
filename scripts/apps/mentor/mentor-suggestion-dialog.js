@@ -4,13 +4,29 @@
  * Displays mentor-voiced suggestions during levelup with an "Apply Suggestion" button.
  * Styled to match the rest of the levelup UI.
  * Features typing animation for mentor text for immersion.
+ * AppV2-based implementation
  */
 
 import { MentorSuggestionVoice } from '../../mentor/mentor-suggestion-voice.js';
 import { MENTORS } from './mentor-dialogues.js';
 import { TypingAnimation } from '../../utils/typing-animation.js';
 
-export class MentorSuggestionDialog extends Dialog {
+export class MentorSuggestionDialog extends foundry.applications.api.ApplicationV2 {
+  static DEFAULT_OPTIONS = {
+    id: 'mentor-suggestion-dialog',
+    tag: 'div',
+    window: { icon: 'fas fa-lightbulb', title: 'Mentor Suggestion' },
+    position: { width: 550, height: 'auto' }
+  };
+
+  constructor(mentor, voicedSuggestion, suggestion, options = {}) {
+    super(options);
+    this.mentor = mentor;
+    this.voicedSuggestion = voicedSuggestion;
+    this.suggestion = suggestion;
+    this.resolveDialog = null;
+  }
+
   /**
    * Show a mentor suggestion dialog
    * @param {string} mentorName - The mentor's name (key in MENTORS)
@@ -35,108 +51,120 @@ export class MentorSuggestionDialog extends Dialog {
         context
       );
 
-      const content = this._buildDialogContent(mentor, voicedSuggestion);
+      const dialog = new MentorSuggestionDialog(mentor, voicedSuggestion, suggestion, {
+        window: { title: `${mentorName}'s Suggestion` },
+        ...options
+      });
 
-      const dialog = new MentorSuggestionDialog(
-        {
-          title: `${mentorName}'s Suggestion`,
-          content: content,
-          buttons: {
-            apply: {
-              icon: '<i class="fas fa-check"></i>',
-              label: 'Apply Suggestion',
-              callback: () => {
-                resolve({
-                  applied: true,
-                  suggestion: suggestion
-                });
-              }
-            },
-            dismiss: {
-              icon: '<i class="fas fa-times"></i>',
-              label: 'Dismiss',
-              callback: () => {
-                resolve({
-                  applied: false,
-                  suggestion: null
-                });
-              }
-            }
-          },
-          default: 'apply',
-          render: (html) => {
-            const root = html instanceof HTMLElement ? html : html?.[0];
-            root?.querySelector?.('.dialog-content')?.classList?.add('mentor-suggestion-dialog');
-            root?.querySelector?.('button[data-button="apply"]')?.classList?.add('btn-success');
-            root?.querySelector?.('button[data-button="dismiss"]')?.classList?.add('btn-secondary');
+      dialog.resolveDialog = resolve;
 
-            const introElement = root?.querySelector?.('.mentor-intro');
-            const explanationElement = root.querySelector('.mentor-explanation')[0];
-
-            if (introElement && explanationElement) {
-              const introText = voicedSuggestion.introduction;
-              const explanationText = voicedSuggestion.explanation;
-
-              TypingAnimation.typeText(introElement, introText, {
-                speed: 50,
-                skipOnClick: true,
-                onComplete: () => {
-                  TypingAnimation.typeText(explanationElement, explanationText, {
-                    speed: 45,
-                    skipOnClick: true
-                  });
-                }
-              });
-            }
-          },
-          close: () => {
-            resolve(null);
-          }
-        },
-        options
-      );
+      // Handle close without button press
+      const origClose = dialog.close.bind(dialog);
+      dialog.close = function() {
+        if (dialog.resolveDialog) {
+          dialog.resolveDialog(null);
+          dialog.resolveDialog = null;
+        }
+        return origClose();
+      };
 
       dialog.render(true);
     });
   }
 
-  /**
-   * Build the HTML content for the suggestion dialog
-   * @private
-   * @param {Object} mentor - The mentor object from MENTORS
-   * @param {Object} voicedSuggestion - The voiced suggestion from MentorSuggestionVoice
-   * @returns {string} HTML content
-   */
-  static _buildDialogContent(mentor, voicedSuggestion) {
-    const tierLabel = this._getTierLabel(voicedSuggestion.tier);
+  _renderHTML(context, options) {
+    const tierLabel = this._getTierLabel(this.voicedSuggestion.tier);
 
     return `
       <div class="mentor-suggestion-content">
         <div class="mentor-panel">
           <div class="mentor-portrait">
-            <img src="${mentor.portrait}" alt="${mentor.name}" />
+            <img src="${this.mentor.portrait}" alt="${this.mentor.name}" />
           </div>
           <div class="mentor-info">
-            <h3>${mentor.name}</h3>
-            <p class="mentor-title">${mentor.title}</p>
+            <h3>${this.mentor.name}</h3>
+            <p class="mentor-title">${this.mentor.title}</p>
           </div>
         </div>
 
         <div class="suggestion-body">
-          <p class="mentor-intro">${voicedSuggestion.introduction}</p>
+          <p class="mentor-intro"></p>
 
-          <div class="suggestion-card ${voicedSuggestion.tier ? `tier-${voicedSuggestion.tier}` : ''}">
+          <div class="suggestion-card ${this.voicedSuggestion.tier ? `tier-${this.voicedSuggestion.tier}` : ''}">
             <div class="suggestion-header">
-              ${voicedSuggestion.icon ? `<span class="tier-icon">${voicedSuggestion.icon}</span>` : ''}
-              <span class="suggestion-name">${voicedSuggestion.suggestionName}</span>
+              ${this.voicedSuggestion.icon ? `<span class="tier-icon">${this.voicedSuggestion.icon}</span>` : ''}
+              <span class="suggestion-name">${this.voicedSuggestion.suggestionName}</span>
               ${tierLabel ? `<span class="tier-label">${tierLabel}</span>` : ''}
             </div>
           </div>
 
-          <p class="mentor-explanation">${voicedSuggestion.explanation}</p>
+          <p class="mentor-explanation"></p>
+        </div>
+
+        <div class="mentor-buttons">
+          <button class="btn btn-success" data-action="apply">
+            <i class="fas fa-check"></i> Apply Suggestion
+          </button>
+          <button class="btn btn-secondary" data-action="dismiss">
+            <i class="fas fa-times"></i> Dismiss
+          </button>
         </div>
       </div>
     `;
+  }
+
+  _onRender(context, options) {
+    super._onRender(context, options);
+    this.activateListeners();
+    this.startTypingAnimation();
+  }
+
+  activateListeners() {
+    this.element?.querySelector('[data-action="apply"]')?.addEventListener('click', () => {
+      if (this.resolveDialog) {
+        this.resolveDialog({
+          applied: true,
+          suggestion: this.suggestion
+        });
+        this.resolveDialog = null;
+      }
+      this.close();
+    });
+
+    this.element?.querySelector('[data-action="dismiss"]')?.addEventListener('click', () => {
+      if (this.resolveDialog) {
+        this.resolveDialog({
+          applied: false,
+          suggestion: null
+        });
+        this.resolveDialog = null;
+      }
+      this.close();
+    });
+  }
+
+  /**
+   * Start typing animation for mentor text
+   */
+  startTypingAnimation() {
+    const introElement = this.element?.querySelector('.mentor-intro');
+    const explanationElement = this.element?.querySelector('.mentor-explanation');
+
+    if (introElement && explanationElement) {
+      const introText = this.voicedSuggestion.introduction;
+      const explanationText = this.voicedSuggestion.explanation;
+
+      TypingAnimation.typeText(introElement, introText, {
+        speed: 50,
+        skipOnClick: true,
+        onComplete: () => {
+          TypingAnimation.typeText(explanationElement, explanationText, {
+            speed: 45,
+            skipOnClick: true
+          });
+        }
+      });
+    }
   }
 
   /**
@@ -145,7 +173,7 @@ export class MentorSuggestionDialog extends Dialog {
    * @param {number} tier - The tier number (0-6)
    * @returns {string} The tier label or empty string
    */
-  static _getTierLabel(tier) {
+  _getTierLabel(tier) {
     const tierLabels = {
       0: 'Fallback',
       1: 'Class Synergy',

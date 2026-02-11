@@ -1140,78 +1140,85 @@ export async function _onImportDroid(event) {
     system: d.system
   }));
 
-  const dialogContent = `
-    <div class="droid-import-dialog">
-      <p>Search for a droid type to import:</p>
-      <input type="text" id="droid-search" placeholder="Type droid name..." autofocus />
-      <div id="droid-results" class="droid-results"></div>
-    </div>
-    <style>
-      .droid-import-dialog {
-        padding: 1rem;
-      }
-      #droid-search {
-        width: 100%;
-        padding: 0.5rem;
-        margin-bottom: 1rem;
-        font-size: 1rem;
-      }
-      .droid-results {
-        max-height: 300px;
-        overflow-y: auto;
-      }
-      .droid-result-item {
-        padding: 0.75rem;
-        margin: 0.5rem 0;
-        background: rgba(0, 0, 0, 0.2);
-        border: 1px solid #0a74da;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      .droid-result-item:hover {
-        background: rgba(10, 116, 218, 0.2);
-        transform: translateX(4px);
-      }
-    </style>
-  `;
+  const dialog = new DroidImportDialog(droidList, this);
+  dialog.render(true);
+}
 
-  // Capture `this` context before creating dialog
-  const self = this;
+/**
+ * Validate droid chassis data completeness
+ * @param {Object} droid - The droid data object
+ * @returns {Array} Array of missing field names
+ */
+/**
+ * Droid Import Dialog (AppV2-based)
+ * Handles searchable droid import functionality
+ */
+class DroidImportDialog extends foundry.applications.api.ApplicationV2 {
+  static DEFAULT_OPTIONS = {
+    id: 'swse-droid-import-dialog',
+    tag: 'div',
+    window: { icon: 'fas fa-robot', title: 'Import Droid Type' },
+    position: { width: 500, height: 'auto' }
+  };
 
-  const dialog = new Dialog({
-    title: 'Import Droid Type',
-    content: dialogContent,
-    buttons: {
-      cancel: {
-        icon: '<i class="fas fa-times"></i>',
-        label: 'Cancel'
-      }
-    }
-  }, {
-    width: 500
-  });
+  constructor(droidList, parentChargen) {
+    super();
+    this.droidList = droidList;
+    this.parentChargen = parentChargen;
+    this.filteredResults = droidList;
+  }
 
-  // Override render to bind event handlers after DOM is ready
-  const originalRender = dialog.render.bind(dialog);
-  dialog.render = async function(force = false, options = {}) {
-    const result = await originalRender(force, options);
+  _renderHTML(context, options) {
+    return `
+      <div class="droid-import-dialog">
+        <p>Search for a droid type to import:</p>
+        <input type="text" id="droid-search" placeholder="Type droid name..." autofocus />
+        <div id="droid-results" class="droid-results"></div>
+      </div>
+      <style>
+        .droid-import-dialog {
+          padding: 1rem;
+        }
+        #droid-search {
+          width: 100%;
+          padding: 0.5rem;
+          margin-bottom: 1rem;
+          font-size: 1rem;
+        }
+        .droid-results {
+          max-height: 300px;
+          overflow-y: auto;
+        }
+        .droid-result-item {
+          padding: 0.75rem;
+          margin: 0.5rem 0;
+          background: rgba(0, 0, 0, 0.2);
+          border: 1px solid #0a74da;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .droid-result-item:hover {
+          background: rgba(10, 116, 218, 0.2);
+          transform: translateX(4px);
+        }
+      </style>
+    `;
+  }
 
-    // Get DOM elements
-    const root = this.element;
-    if (!root) return result;
+  _onRender(context, options) {
+    super._onRender(context, options);
+    const searchInput = this.element?.querySelector('#droid-search');
+    const resultsDiv = this.element?.querySelector('#droid-results');
 
-    const searchInput = root.querySelector('#droid-search');
-    const resultsDiv = root.querySelector('#droid-results');
-
-    if (!searchInput || !resultsDiv) return result;
+    if (!searchInput || !resultsDiv) return;
 
     const renderResults = (query) => {
-      const filtered = query
-        ? droidList.filter(d => d.name.toLowerCase().includes(query.toLowerCase()))
-        : droidList;
+      this.filteredResults = query
+        ? this.droidList.filter(d => d.name.toLowerCase().includes(query.toLowerCase()))
+        : this.droidList;
 
-      const resultsHTML = filtered.map(d => `
+      const resultsHTML = this.filteredResults.map(d => `
         <div class="droid-result-item" data-droid-id="${d.id}">
           <strong>${d.name}</strong>
         </div>
@@ -1223,10 +1230,10 @@ export async function _onImportDroid(event) {
       resultsDiv.querySelectorAll('.droid-result-item').forEach(item => {
         item.addEventListener('click', async (e) => {
           const droidId = e.currentTarget.dataset.droidId;
-          const droid = droidList.find(d => d.id === droidId);
-          if (droid) {
-            await self._importDroidType(droid);
-            dialog.close();
+          const droid = this.droidList.find(d => d.id === droidId);
+          if (droid && this.parentChargen) {
+            await this.parentChargen._importDroidType(droid);
+            this.close();
           }
         });
       });
@@ -1239,18 +1246,9 @@ export async function _onImportDroid(event) {
     searchInput.addEventListener('input', (e) => {
       renderResults(e.target.value);
     });
-
-    return result;
-  };
-
-  dialog.render(true);
+  }
 }
 
-/**
- * Validate droid chassis data completeness
- * @param {Object} droid - The droid data object
- * @returns {Array} Array of missing field names
- */
 function _validateDroidChassis(droid) {
   const missingFields = [];
   const validSizes = ['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];

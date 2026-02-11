@@ -1,12 +1,25 @@
 /**
  * Destiny Points Spending Dialog
  * Allows characters to select and spend Destiny Points on various effects
+ * AppV2-based implementation
  */
 
 import { DestinyEffects } from '../utils/destiny-effects.js';
 import { SWSELogger } from '../utils/logger.js';
 
-export class DestinySpendingDialog extends Dialog {
+export class DestinySpendingDialog extends foundry.applications.api.ApplicationV2 {
+  static DEFAULT_OPTIONS = {
+    id: 'destiny-spending-dialog',
+    tag: 'div',
+    window: { icon: 'fas fa-star', title: 'Spend Destiny Point' },
+    position: { width: 500, height: 'auto' }
+  };
+
+  constructor(actor, options = {}) {
+    super(options);
+    this.actor = actor;
+    this.allEffects = DestinyEffects.getAllEffects();
+  }
 
   /**
    * Open the Destiny Points spending dialog for an actor
@@ -27,25 +40,13 @@ export class DestinySpendingDialog extends Dialog {
       return;
     }
 
-    const allEffects = DestinyEffects.getAllEffects();
-    const html = this._buildEffectsList(allEffects);
-
-    return new DestinySpendingDialog({
-      title: `Spend Destiny Point - ${actor.name}`,
-      content: html,
-      actor,
-      allEffects,
-      buttons: {
-        cancel: { label: 'Cancel' }
-      },
-      render: (html) => this._setupEventListeners(html, actor, allEffects)
-    }).render(true);
+    const dialog = new DestinySpendingDialog(actor, {
+      window: { title: `Spend Destiny Point - ${actor.name}` }
+    });
+    dialog.render(true);
   }
 
-  /**
-   * Build HTML for effects list
-   */
-  static _buildEffectsList(allEffects) {
+  _renderHTML(context, options) {
     let html = '<div class="destiny-spending-dialog">';
 
     // Instant Effects Section
@@ -53,7 +54,7 @@ export class DestinySpendingDialog extends Dialog {
     html += '<h3><i class="fas fa-bolt"></i> Instant Effects</h3>';
     html += '<div class="effects-list">';
 
-    for (const [key, effect] of Object.entries(allEffects.instant)) {
+    for (const [key, effect] of Object.entries(this.allEffects.instant)) {
       html += `
         <div class="effect-option" data-effect-key="${key}">
           <div class="effect-header">
@@ -73,7 +74,7 @@ export class DestinySpendingDialog extends Dialog {
     html += '<h3><i class="fas fa-hourglass-end"></i> Timed Bonuses (24h)</h3>';
     html += '<div class="effects-list">';
 
-    for (const [key, effect] of Object.entries(allEffects.timed)) {
+    for (const [key, effect] of Object.entries(this.allEffects.timed)) {
       html += `
         <div class="effect-option" data-effect-key="${key}">
           <div class="effect-header">
@@ -92,21 +93,20 @@ export class DestinySpendingDialog extends Dialog {
     return html;
   }
 
+  _onRender(context, options) {
+    super._onRender(context, options);
+    this.activateListeners();
+  }
+
   /**
    * Setup event listeners for effect selection
    */
-  static _setupEventListeners(htmlElement, actor, allEffects) {
-    const root = htmlElement[0];
-
-    root.querySelectorAll('.effect-option').forEach(option => {
+  activateListeners() {
+    this.element?.querySelectorAll('.effect-option').forEach(option => {
       option.addEventListener('click', async (evt) => {
         const effectKey = option.dataset.effectKey;
-        await this._spendDestinyPoint(actor, effectKey, allEffects);
-
-        // Close dialog
-        const dialog = option.closest('.dialog');
-        const cancelBtn = dialog?.querySelector('button[data-button="cancel"]');
-        if (cancelBtn) {cancelBtn.click();}
+        await this._spendDestinyPoint(effectKey);
+        this.close();
       });
 
       // Visual feedback
@@ -122,18 +122,20 @@ export class DestinySpendingDialog extends Dialog {
   /**
    * Spend a Destiny Point and trigger the selected effect
    */
-  static async _spendDestinyPoint(actor, effectKey, allEffects) {
+  async _spendDestinyPoint(effectKey) {
+    const effectLabel = this._getEffectLabel(effectKey);
+
     // Use the actor's spendDestinyPoint method
-    const success = await actor.spendDestinyPoint(effectKey, {
-      effectLabel: this._getEffectLabel(effectKey, allEffects),
-      reason: `spent a Destiny Point on ${this._getEffectLabel(effectKey, allEffects)}`
+    const success = await this.actor.spendDestinyPoint(effectKey, {
+      effectLabel,
+      reason: `spent a Destiny Point on ${effectLabel}`
     });
 
     if (!success) {return;}
 
     // Trigger the effect
     try {
-      await DestinyEffects.triggerEffect(actor, effectKey);
+      await DestinyEffects.triggerEffect(this.actor, effectKey);
     } catch (err) {
       SWSELogger.error('Error triggering destiny effect:', err);
       ui.notifications.error('Error applying destiny effect.');
@@ -143,10 +145,10 @@ export class DestinySpendingDialog extends Dialog {
   /**
    * Get effect label for display
    */
-  static _getEffectLabel(effectKey, allEffects) {
+  _getEffectLabel(effectKey) {
     return (
-      allEffects.instant[effectKey]?.name ||
-      allEffects.timed[effectKey]?.name ||
+      this.allEffects.instant[effectKey]?.name ||
+      this.allEffects.timed[effectKey]?.name ||
       effectKey
     );
   }
