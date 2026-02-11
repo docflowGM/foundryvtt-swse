@@ -390,16 +390,17 @@ class SeededRandom {
   [Symbol.call]() {
     return this.next();
   }
+
+  // Support apply() method for function-like behavior
+  apply(thisArg) {
+    return this.next();
+  }
+
+  // String tag for debugging
+  get [Symbol.toStringTag]() {
+    return 'SeededRandom';
+  }
 }
-
-// Override call behavior
-SeededRandom.prototype.apply = function(thisArg) {
-  return this.next();
-};
-
-Object.defineProperty(SeededRandom.prototype, Symbol.toStringTag, {
-  value: 'SeededRandom'
-});
 
 // Allow usage as `rng()` directly
 const wrapSeeded = (seeded) => () => seeded.next();
