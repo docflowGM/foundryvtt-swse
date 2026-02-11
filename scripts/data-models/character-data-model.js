@@ -1,7 +1,7 @@
 import { DefenseSystem } from '../engine/DefenseSystem.js';
 import { SWSELogger } from '../utils/logger.js';
 import { SWSEActorDataModel } from './actor-data-model.js';
-import { SpeciesTraitEngine } from '../species/species-trait-engine.js';
+import { SpeciesTraitEngine } from '../engine/systems/species/species-trait-engine.js';
 import { warnIfMixedTracks } from '../utils/hardening.js';
 
 export class SWSECharacterDataModel extends SWSEActorDataModel {
