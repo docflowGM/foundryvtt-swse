@@ -5,127 +5,31 @@
  */
 
 import { createActor, createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
-import { confirm } from '../utils/ui-utils.js';
-import { confirm as uiConfirm, notify } from '../utils/ui-utils.js';
+import { confirm as uiConfirm } from '../utils/ui-utils.js';
 
 export class CharacterImportWizard extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: 'character-import-wizard',
     tag: 'div',
     window: { icon: 'fas fa-upload', title: 'Import Character' },
-    position: { width: 600, height: 'auto' }
+    position: { width: 600, height: 'auto' },
+    form: { handler: CharacterImportWizard.onSave, closeOnSave: false }
+  };
+
+  static PARTS = {
+    main: { template: 'systems/foundryvtt-swse/templates/apps/character-import-wizard.hbs' }
   };
 
   constructor(options = {}) {
     super(options);
   }
 
-  _renderHTML(context, options) {
-    return `
-      <div class="character-import-wizard">
-        <div class="form-group">
-          <label>Import Method:</label>
-          <select id="import-method" class="import-method-select">
-            <option value="file">Upload File (.json or .txt)</option>
-            <option value="paste">Paste JSON Data</option>
-          </select>
-        </div>
-
-        <div class="import-section file-upload-section">
-          <div class="form-group">
-            <label for="character-file">Select Character File:</label>
-            <input type="file" id="character-file" accept=".json,.txt" />
-          </div>
-          <p class="hint">
-            <i class="fas fa-circle-info"></i>
-            Upload a .json file exported from this system or a .txt file containing valid JSON data.
-          </p>
-        </div>
-
-        <div class="import-section paste-section" style="display: none;">
-          <div class="form-group">
-            <label for="character-json">Paste JSON Data:</label>
-            <textarea id="character-json" rows="10" placeholder='Paste your character JSON data here...'></textarea>
-          </div>
-          <p class="hint">
-            <i class="fas fa-circle-info"></i>
-            Paste the complete JSON data for your character.
-          </p>
-        </div>
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="create-new-actor" checked />
-            Create as new actor (leave unchecked to update current selection)
-          </label>
-        </div>
-
-        <div id="import-preview" class="import-preview" style="display: none;">
-          <h3>Preview:</h3>
-          <div class="preview-content"></div>
-        </div>
-
-        <div class="import-buttons">
-          <button class="btn btn-primary" data-action="import">
-            <i class="fas fa-upload"></i> Import
-          </button>
-          <button class="btn btn-secondary" data-action="cancel">
-            <i class="fas fa-times"></i> Cancel
-          </button>
-        </div>
-
-        <style>
-          .character-import-wizard {
-            padding: 10px;
-          }
-          .character-import-wizard .form-group {
-            margin-bottom: 15px;
-          }
-          .character-import-wizard label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-          }
-          .character-import-wizard input[type="file"],
-          .character-import-wizard select,
-          .character-import-wizard textarea {
-            width: 100%;
-            padding: 5px;
-          }
-          .character-import-wizard .hint {
-            font-size: 0.9em;
-            font-style: italic;
-            color: #666;
-            margin-top: 5px;
-          }
-          .character-import-wizard .import-preview {
-            margin-top: 15px;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 4px;
-          }
-          .character-import-wizard .preview-content {
-            font-size: 0.9em;
-          }
-          .character-import-wizard .import-buttons {
-            margin-top: 15px;
-            text-align: right;
-          }
-          .character-import-wizard .import-buttons button {
-            margin-left: 0.5rem;
-          }
-        </style>
-      </div>
-    `;
+  _prepareContext() {
+    return {};
   }
 
-  _replaceHTML(result, content, options) {
-    result.innerHTML = '';
-    result.appendChild(content);
-  }
-
-  _onRender(context, options) {
-    super._onRender(context, options);
+  async _onRender(context, options) {
+    await super._onRender(context, options);
     this.activateListeners();
   }
 

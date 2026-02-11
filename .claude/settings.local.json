@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node tools/swse-scan.mjs:*)",
+      "Bash(npm run build:*)",
+      "Bash(node:*)",
+      "Bash(grep:*)"
+    ]
+  }
+}

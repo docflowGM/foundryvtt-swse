@@ -15,6 +15,10 @@ export class DestinySpendingDialog extends foundry.applications.api.ApplicationV
     position: { width: 500, height: 'auto' }
   };
 
+  static PARTS = {
+    main: { template: 'systems/foundryvtt-swse/templates/apps/destiny-spending-dialog.hbs' }
+  };
+
   constructor(actor, options = {}) {
     super(options);
     this.actor = actor;
@@ -46,60 +50,15 @@ export class DestinySpendingDialog extends foundry.applications.api.ApplicationV
     dialog.render(true);
   }
 
-  _renderHTML(context, options) {
-    let html = '<div class="destiny-spending-dialog">';
-
-    // Instant Effects Section
-    html += '<div class="effects-section">';
-    html += '<h3><i class="fas fa-bolt"></i> Instant Effects</h3>';
-    html += '<div class="effects-list">';
-
-    for (const [key, effect] of Object.entries(this.allEffects.instant)) {
-      html += `
-        <div class="effect-option" data-effect-key="${key}">
-          <div class="effect-header">
-            <i class="fas fa-circle"></i>
-            <span class="effect-name">${effect.name}</span>
-            <span class="effect-duration">${effect.duration}</span>
-          </div>
-          <p class="effect-description">${effect.description}</p>
-        </div>
-      `;
-    }
-
-    html += '</div></div>';
-
-    // Timed Effects Section
-    html += '<div class="effects-section">';
-    html += '<h3><i class="fas fa-hourglass-end"></i> Timed Bonuses (24h)</h3>';
-    html += '<div class="effects-list">';
-
-    for (const [key, effect] of Object.entries(this.allEffects.timed)) {
-      html += `
-        <div class="effect-option" data-effect-key="${key}">
-          <div class="effect-header">
-            <i class="fas fa-star"></i>
-            <span class="effect-name">${effect.name}</span>
-            <span class="effect-duration">${effect.description.match(/\(24 hours?\)/i) || ''}</span>
-          </div>
-          <p class="effect-description">${effect.description}</p>
-        </div>
-      `;
-    }
-
-    html += '</div></div>';
-    html += '</div>';
-
-    return html;
+  _prepareContext() {
+    return {
+      instantEffects: this.allEffects.instant,
+      timedEffects: this.allEffects.timed
+    };
   }
 
-  _replaceHTML(result, content, options) {
-    result.innerHTML = '';
-    result.appendChild(content);
-  }
-
-  _onRender(context, options) {
-    super._onRender(context, options);
+  async _onRender(context, options) {
+    await super._onRender(context, options);
     this.activateListeners();
   }
 

@@ -1,0 +1,34 @@
+<div class="mentor-suggestion-content">
+  <div class="mentor-panel">
+    <div class="mentor-portrait">
+      <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
+    </div>
+    <div class="mentor-info">
+      <h3>{{mentor.name}}</h3>
+      <p class="mentor-title">{{mentor.title}}</p>
+    </div>
+  </div>
+
+  <div class="suggestion-body">
+    <p class="mentor-intro"></p>
+
+    <div class="suggestion-card {{#if voicedSuggestion.tier}}tier-{{voicedSuggestion.tier}}{{/if}}">
+      <div class="suggestion-header">
+        {{#if voicedSuggestion.icon}}<span class="tier-icon">{{{voicedSuggestion.icon}}}</span>{{/if}}
+        <span class="suggestion-name">{{voicedSuggestion.suggestionName}}</span>
+        {{#if tierLabel}}<span class="tier-label">{{tierLabel}}</span>{{/if}}
+      </div>
+    </div>
+
+    <p class="mentor-explanation"></p>
+  </div>
+
+  <div class="mentor-buttons">
+    <button class="btn btn-success" data-action="apply">
+      <i class="fas fa-check"></i> Apply Suggestion
+    </button>
+    <button class="btn btn-secondary" data-action="dismiss">
+      <i class="fas fa-times"></i> Dismiss
+    </button>
+  </div>
+</div>

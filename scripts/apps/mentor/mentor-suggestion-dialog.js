@@ -19,6 +19,10 @@ export class MentorSuggestionDialog extends foundry.applications.api.Application
     position: { width: 550, height: 'auto' }
   };
 
+  static PARTS = {
+    main: { template: 'systems/foundryvtt-swse/templates/apps/mentor-suggestion-dialog.hbs' }
+  };
+
   constructor(mentor, voicedSuggestion, suggestion, options = {}) {
     super(options);
     this.mentor = mentor;
@@ -72,49 +76,16 @@ export class MentorSuggestionDialog extends foundry.applications.api.Application
     });
   }
 
-  _renderHTML(context, options) {
-    const tierLabel = this._getTierLabel(this.voicedSuggestion.tier);
-
-    return `
-      <div class="mentor-suggestion-content">
-        <div class="mentor-panel">
-          <div class="mentor-portrait">
-            <img src="${this.mentor.portrait}" alt="${this.mentor.name}" />
-          </div>
-          <div class="mentor-info">
-            <h3>${this.mentor.name}</h3>
-            <p class="mentor-title">${this.mentor.title}</p>
-          </div>
-        </div>
-
-        <div class="suggestion-body">
-          <p class="mentor-intro"></p>
-
-          <div class="suggestion-card ${this.voicedSuggestion.tier ? `tier-${this.voicedSuggestion.tier}` : ''}">
-            <div class="suggestion-header">
-              ${this.voicedSuggestion.icon ? `<span class="tier-icon">${this.voicedSuggestion.icon}</span>` : ''}
-              <span class="suggestion-name">${this.voicedSuggestion.suggestionName}</span>
-              ${tierLabel ? `<span class="tier-label">${tierLabel}</span>` : ''}
-            </div>
-          </div>
-
-          <p class="mentor-explanation"></p>
-        </div>
-
-        <div class="mentor-buttons">
-          <button class="btn btn-success" data-action="apply">
-            <i class="fas fa-check"></i> Apply Suggestion
-          </button>
-          <button class="btn btn-secondary" data-action="dismiss">
-            <i class="fas fa-times"></i> Dismiss
-          </button>
-        </div>
-      </div>
-    `;
+  _prepareContext() {
+    return {
+      mentor: this.mentor,
+      voicedSuggestion: this.voicedSuggestion,
+      tierLabel: this._getTierLabel(this.voicedSuggestion.tier)
+    };
   }
 
-  _onRender(context, options) {
-    super._onRender(context, options);
+  async _onRender(context, options) {
+    await super._onRender(context, options);
     this.activateListeners();
     this.startTypingAnimation();
   }
