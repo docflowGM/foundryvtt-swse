@@ -4,7 +4,7 @@
  */
 
 import { SpeciesTraitEngine } from '../engine/systems/species/species-trait-engine.js';
-import { SPECIES_TRAIT_TYPES } from './species-trait-types.js';
+import { SPECIES_TRAIT_TYPES } from '../engine/systems/species/species-trait-types.js';
 import { createChatMessage } from '../core/document-api-v13.js';
 import { SWSELogger } from '../utils/logger.js';
 

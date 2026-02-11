@@ -7,7 +7,7 @@ import { SWSELogger } from '../../utils/logger.js';
  * Each starting class has a unique mentor who guides them through all 20 levels
  */
 
-export { MENTORS } from '../mentor-dialogues.data.js';
+export { MENTORS } from './mentor-dialogues.data.js';
 
 /**
  * Get mentor for a given class

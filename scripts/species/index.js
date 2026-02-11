@@ -5,7 +5,7 @@
 
 export { SPECIES_TRAIT_TYPES, TRAIT_TYPE_LIST, BONUS_TARGETS, CONDITIONS,
          MOVEMENT_MODES, SENSE_TYPES, EFFECT_TYPES, FREQUENCIES,
-         SKILL_DISPLAY_NAMES } from './species-trait-types.js';
+         SKILL_DISPLAY_NAMES } from '../engine/systems/species/species-trait-types.js';
 
 export { SpeciesTraitEngine } from '../engine/systems/species/species-trait-engine.js';
 
