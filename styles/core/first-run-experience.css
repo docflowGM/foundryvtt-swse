@@ -1,0 +1,113 @@
+/**
+ * First Run Experience Styles
+ * Welcome and setup flow UI
+ */
+
+.swse-first-run-container {
+  background: linear-gradient(135deg, #0a0e1a 0%, #16213e 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  min-height: 500px;
+  text-align: center;
+}
+
+.swse-first-run-container h2 {
+  color: #00d9ff;
+  font-size: 2.2rem;
+  margin: 0 0 1rem 0;
+  text-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+}
+
+.swse-first-run-container h3 {
+  color: #aaa;
+  font-size: 1.2rem;
+  margin: 1rem 0;
+}
+
+.swse-first-run-container p {
+  color: #e0e0e0;
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 1rem auto;
+}
+
+.swse-first-run-container .welcome-icon {
+  font-size: 4rem;
+  margin: 1rem 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.swse-first-run-container .feature-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.swse-first-run-container .feature-item {
+  padding: 1rem;
+  background: rgba(10, 116, 218, 0.1);
+  border: 1px solid #0a74da;
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.swse-first-run-container .feature-item:hover {
+  background: rgba(0, 217, 255, 0.1);
+  border-color: #00d9ff;
+  transform: translateY(-3px);
+}
+
+.swse-first-run-container .feature-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.swse-first-run-container .action-buttons {
+  margin: 2rem 0;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.swse-first-run-container button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: bold;
+}
+
+.swse-first-run-container .btn-primary {
+  background: #0a74da;
+  color: #e0e0e0;
+}
+
+.swse-first-run-container .btn-primary:hover {
+  background: #00d9ff;
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.6);
+}
+
+.swse-first-run-container .btn-secondary {
+  background: transparent;
+  color: #00d9ff;
+  border: 2px solid #00d9ff;
+}
+
+.swse-first-run-container .btn-secondary:hover {
+  background: #00d9ff;
+  color: #000;
+}

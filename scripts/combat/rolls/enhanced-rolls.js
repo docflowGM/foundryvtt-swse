@@ -430,24 +430,6 @@ export class SWSERoll {
             <i class="fas fa-burst"></i> Roll Damage${critConfirmed ? ` (×${critMultiplier})` : ''}
           </button>
         </div>
-        <style>
-          .swse-attack-card .attack-vs-defense {
-            margin: 8px 0;
-            font-size: 0.95em;
-            color: #aaa;
-          }
-          .swse-attack-card .attack-outcome {
-            font-weight: bold;
-            padding: 6px 10px;
-            border-radius: 4px;
-            margin: 5px 0;
-          }
-          .swse-attack-card .attack-outcome.hit { background: rgba(68, 255, 68, 0.2); color: #4f4; }
-          .swse-attack-card .attack-outcome.critical { background: rgba(255, 215, 0, 0.3); color: #ffd700; }
-          .swse-attack-card .attack-outcome.miss { background: rgba(255, 68, 68, 0.2); color: #f44; }
-          .swse-attack-card .crit-banner.confirmed { background: linear-gradient(90deg, #ffd700, #ff8c00); color: #000; }
-          .swse-attack-card .crit-banner.unconfirmed { background: rgba(255, 215, 0, 0.3); color: #ffd700; }
-        </style>
       `;
 
       const message = await createChatMessage({
@@ -799,36 +781,6 @@ export class SWSERoll {
             ? targetHTMLs
             : '<div class="no-targets">No targets in area</div>'}
 
-          <style>
-            .swse-autofire-card { font-family: monospace; padding: 10px; }
-            .swse-autofire-card .header { margin-bottom: 10px; }
-            .swse-autofire-card h3 { margin: 0; color: #ff6600; }
-            .swse-autofire-card .attack-info { margin: 8px 0; font-size: 0.9em; }
-            .swse-autofire-card .roll-result { display: flex; gap: 8px; }
-            .swse-autofire-card .roll { font-weight: bold; color: #fff; }
-            .swse-autofire-card .formula { color: #aaa; }
-            .swse-autofire-card .attack-penalty { color: #ff6600; margin: 4px 0; }
-            .swse-autofire-card .ammo-consumption { color: #4af; margin: 4px 0; }
-            .swse-autofire-card .targets-header { margin-top: 10px; margin-bottom: 5px; }
-            .swse-autofire-card h4 { margin: 0; }
-            .swse-autofire-card .autofire-target-result {
-              border-left: 2px solid #ff6600;
-              padding-left: 8px;
-              margin: 5px 0;
-            }
-            .swse-autofire-card .target-name { font-weight: bold; margin-bottom: 3px; }
-            .swse-autofire-card .target-vs-defense { color: #aaa; font-size: 0.9em; }
-            .swse-autofire-card .attack-outcome {
-              font-weight: bold;
-              padding: 4px 6px;
-              border-radius: 3px;
-              margin-top: 3px;
-            }
-            .swse-autofire-card .attack-outcome.hit { background: rgba(68, 255, 68, 0.2); color: #4f4; }
-            .swse-autofire-card .attack-outcome.miss { background: rgba(255, 68, 68, 0.2); color: #f44; }
-            .swse-autofire-card .attack-outcome.evaded { background: rgba(100, 200, 255, 0.2); color: #4af; }
-            .swse-autofire-card .no-targets { color: #999; font-style: italic; padding: 5px; }
-          </style>
         </div>
       `;
 
@@ -1294,16 +1246,6 @@ export class SWSERoll {
           <div class="roll-breakdown">${parts.join(', ')}</div>
           ${dcHTML}
         </div>
-        <style>
-          .swse-skill-card .skill-dc {
-            margin-top: 8px;
-            padding: 6px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 4px;
-          }
-          .swse-skill-card .dc-result.success { color: #4f4; }
-          .swse-skill-card .dc-result.failure { color: #f44; }
-        </style>
       `;
 
       const msg = await createChatMessage({
