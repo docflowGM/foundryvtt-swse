@@ -1008,6 +1008,11 @@ class SkillFocusDialog extends foundry.applications.api.ApplicationV2 {
     `;
   }
 
+  _replaceHTML(result, content, options) {
+    result.innerHTML = '';
+    result.appendChild(content);
+  }
+
   _onRender(context, options) {
     super._onRender(context, options);
     const skillSelect = this.element?.querySelector('#skill-focus-selection');
