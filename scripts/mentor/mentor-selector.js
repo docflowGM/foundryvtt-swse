@@ -94,7 +94,7 @@ export class MentorSelectorWindow {
         `;
 
         // Create and show dialog
-        new Dialog({
+        new SWSEDialogV2({
             title: `Select Mentor for ${actor.name}`,
             content: content,
             buttons: {

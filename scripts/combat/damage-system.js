@@ -73,7 +73,7 @@ export class DamageSystem {
     }
 
     return new Promise(resolve => {
-      new Dialog({
+      new SWSEDialogV2({
         title: game.i18n.format('SWSE.Dialogs.ApplyDamage.Title', { name: escapeHTML(target.name) }),
         content: `
           <form>
@@ -151,7 +151,7 @@ export class DamageSystem {
     const icon = isDroid ? 'fa-wrench' : 'fa-kit-medical';
 
     return new Promise(resolve => {
-      new Dialog({
+      new SWSEDialogV2({
         title,
         content: `
           <form>
@@ -211,7 +211,7 @@ export class DamageSystem {
     const labels = ['Normal', '-1', '-2', '-5', '-10', 'Helpless'];
 
     return new Promise(resolve => {
-      new Dialog({
+      new SWSEDialogV2({
         title: `Condition Track: ${target.name}`,
         content: `
           <form>

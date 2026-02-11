@@ -255,7 +255,7 @@ export class SWSEVehicleCore {
       } , { create: true });
 
       // Confirm → damage
-      const hit = await Dialog.confirm({
+      const hit = await SWSEDialogV2.confirm({
         title: 'Roll Damage?',
         content: '<p>Did the attack hit?</p>'
       });

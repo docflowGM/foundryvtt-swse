@@ -170,7 +170,7 @@ export class ProficiencySelectionDialog {
       `).join('');
 
     return new Promise((resolve) => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: title,
         content: `
           <div style="margin-bottom: 15px;">

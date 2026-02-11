@@ -15,7 +15,7 @@ export class ProgressionUI {
           <button type="button" data-choice="droid">Droid</button>
           <button type="button" data-choice="template">Template Build</button>
         </div>`;
-      const dlg = new Dialog({
+      const dlg = new SWSEDialogV2({
         title: 'Create Character',
         content,
         buttons: { cancel: { label: 'Cancel' } },
@@ -60,7 +60,7 @@ export class ProgressionUI {
         <div class="form-group"><label>Template</label><select name="template">${tplList}</select></div>
         ${backgroundField}
       </form>`;
-    new Dialog({
+    new SWSEDialogV2({
       title: 'Template Quick Build',
       content,
       buttons: {
@@ -76,21 +76,21 @@ export class ProgressionUI {
       },
       render: (html) => {
         // Add change listener to template dropdown to show/hide background selector
-        root.querySelectorAll('[name="template"]').on('change', function() {
-          const selectedTemplateId = $(this).val();
+        root.querySelector('[name="template"]')?.addEventListener('change', (event) => {
+            const selectedTemplateId = event.currentTarget?.value;
           const selectedTemplate = templates[selectedTemplateId];
-          const backgroundSelector = root.querySelectorAll('.background-selector');
+            const backgroundSelector = root.querySelector('.background-selector');
 
           // Only show background selector if template doesn't have a predefined background
           if (selectedTemplate && !selectedTemplate.background) {
-            backgroundSelector.show();
+                backgroundSelector?.style && (backgroundSelector.style.display = '');
           } else {
-            backgroundSelector.hide();
+                backgroundSelector?.style && (backgroundSelector.style.display = 'none');
           }
         });
 
         // Trigger change on initial load to set correct visibility
-        root.querySelectorAll('[name="template"]').trigger('change');
+        root.querySelector('[name="template"]')?.dispatchEvent(new Event('change'));
       }
     }).render(true);
   }

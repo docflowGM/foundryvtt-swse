@@ -109,7 +109,7 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     }
 
     if ((Number(nonheroicLevel) || 0) > 0) {
-      const ok = await Dialog.confirm({
+      const ok = await SWSEDialogV2.confirm({
         title: 'Add Heroic Level?',
         content: '<p>This NPC already has nonheroic levels. Mixed progression is legal but uncommon. Continue?</p>'
       });
@@ -133,7 +133,7 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     }
 
     if ((Number(heroicLevel) || 0) > 0) {
-      const ok = await Dialog.confirm({
+      const ok = await SWSEDialogV2.confirm({
         title: 'Add Nonheroic Level?',
         content: '<p>This NPC already has heroic levels. Mixed progression is legal but uncommon. Continue?</p>'
       });
@@ -148,7 +148,7 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
   async _handleRevert() {
     if (!game.user?.isGM) {return ui.notifications.warn('GM only.');}
 
-    const ok = await Dialog.confirm({
+    const ok = await SWSEDialogV2.confirm({
       title: 'Revert NPC to Statblock Snapshot',
       content: '<p>This restores the NPC exactly to the snapshot taken before the first level-up (including items and effects).</p>'
     });

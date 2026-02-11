@@ -197,7 +197,7 @@ async _prepareContext(options) {
  */
 export class PrerequisiteCompactBuilder {
   static async buildCondition(doc, index) {
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: `Edit Condition ${index + 1}`,
       content: this._getTemplate(),
       buttons: {

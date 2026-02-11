@@ -664,7 +664,7 @@ export class MentorSurvey {
           playerName: playerName
         });
 
-        const dialog = new Dialog(
+        const dialog = new SWSEDialogV2(
           {
             title: `${mentor.name} - Mentoring Survey`,
             content: `

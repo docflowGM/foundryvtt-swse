@@ -84,7 +84,7 @@ export class SpeciesRerollHandler {
       </div>
     `;
 
-    const useReroll = await Dialog.confirm({
+    const useReroll = await SWSEDialogV2.confirm({
       title: `Reroll ${skillKey}?`,
       content: content,
       yes: () => true,

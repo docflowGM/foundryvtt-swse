@@ -172,7 +172,7 @@ export class HouseRuleFeatGrants {
   static async _offerReplacement(actor, type, name, settingName) {
     return new Promise((resolve) => {
       const typeLabel = type === 'feat' ? 'feat' : 'talent';
-      const dialog = new Dialog(
+      const dialog = new SWSEDialogV2(
         {
           title: `${settingName} Granted: ${name}`,
           content: `
@@ -299,7 +299,7 @@ export class HouseRuleFeatGrants {
       </div>
     `;
 
-    const dialog = new Dialog(
+    const dialog = new SWSEDialogV2(
       {
         title: `Select Replacement ${typeLabel}`,
         content,

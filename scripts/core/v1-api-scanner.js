@@ -188,7 +188,7 @@ export async function showV1DiagnosticsPanel() {
     </div>
   `;
 
-  const dialog = new Dialog({
+  const dialog = new SWSEDialogV2({
     title: 'SWSE v13 Hardening Status',
     content: html,
     buttons: {

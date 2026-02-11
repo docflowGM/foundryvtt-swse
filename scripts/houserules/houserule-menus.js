@@ -337,7 +337,7 @@ export class PresetsMenu extends SWSEFormApplication {
   async _onApplyPreset(event) {
     const preset = event.currentTarget.dataset.preset;
 
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
       title: 'Apply Preset?',
       content: `<p>Overwrite all current houserule settings with the <strong>${preset}</strong> preset?</p>`
     });
@@ -373,7 +373,7 @@ export class PresetsMenu extends SWSEFormApplication {
   }
 
   async _onImportSettings() {
-    new Dialog({
+    new SWSEDialogV2({
       title: 'Import Houserule Settings',
       content: `
         <form>

@@ -4,7 +4,7 @@
  *
  * What it catches (best-effort):
  * - Hook registrations for legacy 'renderActorSheet'
- * - Functions containing 'html.find', '$(', 'activateListeners('
+ * - Functions containing 'html.find', 'jq-call', 'activateListeners('
  * - Hook handlers using jQuery patterns
  *
  * Usage (macro):
@@ -12,7 +12,7 @@
  */
 const DEFAULT_PATTERNS = [
   { id: 'html.find', re: /\bhtml\.find\b/ },
-  { id: 'jQuery $(', re: /\$\(/ },
+  { id: 'jQuery-call', re: /\$\s*\(/ },
   { id: 'activateListeners', re: /activateListeners\s*\(/ },
   { id: 'renderActorSheet', re: /renderActorSheet/ }
 ];

@@ -94,7 +94,7 @@ export class DarkSideDevoteeMacros {
     }
 
     // Confirm this was a critical hit
-    const confirmDialog = new Dialog({
+    const confirmDialog = new SWSEDialogV2({
       title: 'Crippling Strike - Confirm Critical Hit',
       content: `
         <p>Confirm that you scored a <strong>Critical Hit</strong> against ${selectedTarget.actor.name}.</p>
@@ -154,7 +154,7 @@ export class DarkSideDevoteeMacros {
         .map(d => `<option value="${d}">${d}</option>`)
         .join('');
 
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Dark Side Talisman - Select Defense',
         content: `
           <div class="form-group">
@@ -214,7 +214,7 @@ export class DarkSideDevoteeMacros {
       return;
     }
 
-    const confirmDialog = new Dialog({
+    const confirmDialog = new SWSEDialogV2({
       title: 'Destroy Dark Side Talisman',
       content: `
         <p>This will destroy the active Dark Side Talisman and trigger a 24-hour cooldown before you can create a new one.</p>

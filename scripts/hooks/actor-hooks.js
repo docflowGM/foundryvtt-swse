@@ -195,7 +195,7 @@ async function handleItemCreate(item, options, userId) {
         .join('');
 
     // Show dialog to select skill
-    new Dialog({
+    new SWSEDialogV2({
         title: `${item.name} - Select Skill`,
         content: `
             <div class="form-group">
@@ -417,7 +417,7 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
         .join('');
 
     // Show dialog for skill selection
-    new Dialog({
+    new SWSEDialogV2({
         title: `Intelligence Increase - Select ${skillsToGain} Skill${skillsToGain > 1 ? 's' : ''} to Train`,
         content: `
             <div class="int-increase-skill-dialog">
@@ -435,7 +435,7 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
                 label: 'Confirm Selection',
                 callback: async (html) => {
                     const root = html instanceof HTMLElement ? html : html?.[0];
-        const selected = root?.querySelector?.('input[name="skill-selection"]:checked');
+        const selected = root?.querySelectorAll?.('input[name="skill-selection"]:checked') ?? [];
 
                     if (selected.length !== skillsToGain) {
                         ui.notifications.warn(`Please select exactly ${skillsToGain} skill${skillsToGain > 1 ? 's' : ''}.`);
@@ -446,11 +446,11 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
                     const updates = {};
                     const trainedNames = [];
 
-                    selected.each(function() {
-                        const skillKey = $(this).val();
+                    for (const el of selected) {
+                        const skillKey = el.value;
                         updates[`system.skills.${skillKey}.trained`] = true;
                         trainedNames.push(skillNames[skillKey] || skillKey);
-                    });
+                    }
 
                     await actor.update(updates);
 
@@ -465,14 +465,18 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
         default: 'confirm',
         render: (html) => {
             // Limit checkbox selection to skillsToGain
-            root.querySelector('input[name="skill-selection"]').change(function() {
-                const checked = root.querySelector('input[name="skill-selection"]:checked');
-                if (checked.length >= skillsToGain) {
-                    qsa(root, 'input[name="skill-selection"]:not(:checked)').forEach(b => { b.disabled = true; });
-                } else {
-                    qsa(root, 'input[name="skill-selection"]').forEach(b => { b.disabled = false; });
-                }
-            });
+            const root = html instanceof HTMLElement ? html : html?.[0];
+            if (!(root instanceof HTMLElement)) {return;}
+            for (const input of root.querySelectorAll('input[name="skill-selection"]')) {
+                input.addEventListener('change', () => {
+                    const checked = root.querySelectorAll('input[name="skill-selection"]:checked');
+                    if (checked.length >= skillsToGain) {
+                        qsa(root, 'input[name="skill-selection"]:not(:checked)').forEach(b => { b.disabled = true; });
+                    } else {
+                        qsa(root, 'input[name="skill-selection"]').forEach(b => { b.disabled = false; });
+                    }
+                });
+            }
         }
     }, {
         width: 400,

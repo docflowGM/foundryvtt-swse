@@ -54,7 +54,7 @@ export class DropHandler {
       return false;
     }
 
-    const confirm = await Dialog.confirm({
+    const confirm = await SWSEDialogV2.confirm({
       title: 'Apply NPC Template?',
       content: `<p>This will replace <strong>${actor.name}</strong>'s stats with the <strong>${template.name}</strong> template.</p>
                 <p><strong>This cannot be undone!</strong></p>`
@@ -218,7 +218,7 @@ export class DropHandler {
     // Check if actor already has a species
     const existingSpecies = actor.items.find(i => i.type === 'species');
     if (existingSpecies) {
-      const replace = await Dialog.confirm({
+      const replace = await SWSEDialogV2.confirm({
         title: game.i18n.localize('SWSE.Dialogs.ReplaceSpecies.Title'),
         content: game.i18n.format('SWSE.Dialogs.ReplaceSpecies.Content', {
           actor: actor.name,
@@ -340,7 +340,7 @@ export class DropHandler {
       return false;
     }
 
-    const confirm = await Dialog.confirm({
+    const confirm = await SWSEDialogV2.confirm({
       title: 'Apply Droid Chassis?',
       content: `<p>This will replace <strong>${actor.name}</strong>'s stats with the ${chassis.name} chassis.</p>
                 <p><strong>This cannot be undone!</strong></p>`
@@ -379,7 +379,7 @@ export class DropHandler {
       return false;
     }
 
-    const confirm = await Dialog.confirm({
+    const confirm = await SWSEDialogV2.confirm({
       title: 'Apply Vehicle Template?',
       content: `<p>This will replace <strong>${actor.name}</strong>'s stats with the ${template.name} template.</p>
                 <p><strong>This cannot be undone!</strong></p>`

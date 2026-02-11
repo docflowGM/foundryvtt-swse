@@ -156,41 +156,42 @@ export class ForceSuiteComponent {
    * -------------------------- */
 
   static _activate(container, actor) {
-    const $c = $(container);
+    const root = (container instanceof HTMLElement) ? container : (container?.[0] ?? container);
+    if (!(root instanceof HTMLElement)) {return;}
 
     // Drag start
-    $c.find('.fs-card').on('dragstart', evt => {
-      evt.originalEvent.dataTransfer.setData(
+    root.querySelectorAll('.fs-card').forEach(el => el.addEventListener('dragstart', evt => {
+      evt.dataTransfer.setData(
         'power',
         evt.currentTarget.dataset.power
       );
-    });
+    }));
 
     // Ready → Spent
-    $c.find("[data-zone='spent']").on('dragover', evt => evt.preventDefault());
+    root.querySelectorAll("[data-zone='spent']").forEach(el => el.addEventListener('dragover', evt => evt.preventDefault()));
 
-    $c.find("[data-zone='spent']").on('drop', async evt => {
-      const id = evt.originalEvent.dataTransfer.getData('power');
+    root.querySelectorAll("[data-zone='spent']").forEach(el => el.addEventListener('drop', async evt => {
+      const id = evt.dataTransfer.getData('power');
       await this._moveToSpent(actor, id);
       this.refresh(actor, container);
-    });
+    }));
 
     // Spent → Ready
-    $c.find("[data-zone='ready']").on('dragover', evt => evt.preventDefault());
+    root.querySelectorAll("[data-zone='ready']").forEach(el => el.addEventListener('dragover', evt => evt.preventDefault()));
 
-    $c.find("[data-zone='ready']").on('drop', async evt => {
-      const id = evt.originalEvent.dataTransfer.getData('power');
+    root.querySelectorAll("[data-zone='ready']").forEach(el => el.addEventListener('drop', async evt => {
+      const id = evt.dataTransfer.getData('power');
       await this._moveToReady(actor, id);
       this.refresh(actor, container);
-    });
+    }));
 
     // Button actions
-    $c.find('[data-act]').on('click', async evt => {
+    root.querySelectorAll('[data-act]').forEach(el => el.addEventListener('click', async evt => {
       const act = evt.currentTarget.dataset.act;
       const id = evt.currentTarget.dataset.power;
       await this._dispatchAction(actor, act, id);
       this.refresh(actor, container);
-    });
+    }));
   }
 
 

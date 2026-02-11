@@ -551,7 +551,7 @@ export async function showFullAttackDialog(actor, equippedWeapons) {
   `;
 
   return new Promise(resolve => {
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Full Attack',
       content,
       buttons: {

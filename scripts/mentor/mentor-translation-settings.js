@@ -125,7 +125,7 @@ export class MentorTranslationSettings {
     `;
 
     const speedSlider = null;
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Mentor Translation Settings',
       content,
       buttons: {

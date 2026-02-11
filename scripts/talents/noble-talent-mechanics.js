@@ -547,7 +547,7 @@ Hooks.on('inspireConfidenceTriggered', async (actor) => {
       .map(t => `<option value="${t.actor.id}">${t.actor.name}</option>`)
       .join('');
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Inspire Confidence - Select Ally',
       content: `
         <div class="form-group">
@@ -591,7 +591,7 @@ Hooks.on('bolsterAllyTriggered', async (actor) => {
       .map(t => `<option value="${t.actor.id}">${t.actor.name}</option>`)
       .join('');
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Bolster Ally - Select Ally',
       content: `
         <div class="form-group">

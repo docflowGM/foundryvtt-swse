@@ -125,7 +125,8 @@ export class ConditionTrackComponent {
   /* ---------------------------------------- */
 
   static _activate(container, actor) {
-    const $c = $(container);
+    const root = (container instanceof HTMLElement) ? container : (container?.[0] ?? container);
+    if (!(root instanceof HTMLElement)) {return;}
 
     /* --------------------------- */
     /* Direct GM-Only CT Set       */

@@ -103,7 +103,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                 };
 
                 // Show dialog asking if they want to use character generator
-                new Dialog({
+                new SWSEDialogV2({
                     title: 'Create New Actor',
                     content: `
                         <div style="padding: 1rem;">

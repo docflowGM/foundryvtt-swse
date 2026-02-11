@@ -1277,7 +1277,7 @@ Hooks.on('guidanceTriggered', async (actor) => {
       .map(t => `<option value="${t.actor.id}">${t.actor.name}</option>`)
       .join('');
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Guidance - Select Ally',
       content: `
         <div class="form-group">
@@ -1321,7 +1321,7 @@ Hooks.on('getIntoPosTriggered', async (actor) => {
       .map(t => `<option value="${t.actor.id}">${t.actor.name}</option>`)
       .join('');
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Get Into Position - Select Follower',
       content: `
         <div class="form-group">
@@ -1375,7 +1375,7 @@ Hooks.on('suddenAssaultTriggered', async (actor, targetToken) => {
   }
 
   if (result.requiresRoll) {
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Sudden Assault - Charge Attack',
       content: `
         <div class="form-group">
@@ -1422,7 +1422,7 @@ Hooks.on('weavingStrideTriggered', async (actor) => {
     return;
   }
 
-  const dialog = new Dialog({
+  const dialog = new SWSEDialogV2({
     title: 'Weaving Stride - Movement',
     content: `
       <div class="form-group">

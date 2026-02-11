@@ -232,7 +232,7 @@ async _prepareContext(options) {
 
   async _promptName(type) {
     return new Promise((resolve) => {
-      new Dialog({
+      new SWSEDialogV2({
         title: `Create ${type}`,
         content: `<div class="form-group"><label>Name:</label><input type="text" name="name" autofocus/></div>`,
         buttons: {
@@ -260,7 +260,7 @@ async _prepareContext(options) {
     const type = event.currentTarget.dataset.type;
     const id = event.currentTarget.dataset.id;
 
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
       title: 'Delete Homebrew Item',
       content: '<p>Are you sure you want to delete this item?</p>'
     });
@@ -274,7 +274,7 @@ async _prepareContext(options) {
   }
 
   async _importDialog() {
-    new Dialog({
+    new SWSEDialogV2({
       title: 'Import Homebrew',
       content: `
         <div class="form-group">

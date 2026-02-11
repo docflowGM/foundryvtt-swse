@@ -12,7 +12,7 @@ export class CustomItemDialog {
    */
   static async createWeapon(actor) {
     return new Promise((resolve) => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Create Custom Weapon',
         content: `
           <form class="swse-custom-item-form">
@@ -179,7 +179,7 @@ export class CustomItemDialog {
    */
   static async createArmor(actor) {
     return new Promise((resolve) => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Create Custom Armor',
         content: `
           <form class="swse-custom-item-form">
@@ -331,7 +331,7 @@ export class CustomItemDialog {
    */
   static async createEquipment(actor) {
     return new Promise((resolve) => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Create Custom Equipment',
         content: `
           <form class="swse-custom-item-form">
@@ -418,7 +418,7 @@ export class CustomItemDialog {
    */
   static async createFeat(actor) {
     return new Promise((resolve) => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Create Custom Feat',
         content: `
           <form class="swse-custom-item-form">
@@ -542,7 +542,7 @@ export class CustomItemDialog {
    */
   static async createTalent(actor) {
     return new Promise((resolve) => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Create Custom Talent',
         content: `
           <form class="swse-custom-item-form">
@@ -648,7 +648,7 @@ export class CustomItemDialog {
    */
   static async createForcePower(actor) {
     return new Promise((resolve) => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Create Custom Force Power',
         content: `
           <form class="swse-custom-item-form force-power-form">
@@ -842,12 +842,11 @@ export class CustomItemDialog {
 
               // Gather DC Chart rows
               const dcChart = [];
-              root.querySelectorAll('.dc-chart-row').each(function() {
-                const index = $(this).data('index');
-                const dcValue = root.querySelectorAll(`input[name="dc-${index}"]`).val();
-                const effect = root.querySelectorAll(`input[name="effect-${index}"]`).val();
-                const description = root.querySelectorAll(`input[name="description-${index}"]`).val();
-
+              for (const row of root.querySelectorAll('.dc-chart-row')) {
+                const index = Number(row.dataset.index);
+                const dcValue = root.querySelector(`input[name="dc-${index}"]`)?.value ?? '';
+                const effect = root.querySelector(`input[name="effect-${index}"]`)?.value ?? '';
+                const description = root.querySelector(`input[name="description-${index}"]`)?.value ?? '';
                 const dc = parseInt(dcValue, 10);
                 const hasValidDC = !isNaN(dc) && dc > 0;
                 const hasEffect = effect && effect.trim();
@@ -860,7 +859,7 @@ export class CustomItemDialog {
                 } else if (hasValidDC && !hasEffect) {
                   ui.notifications.warn(`Power chart row has DC but no effect description`);
                 }
-              });
+              }
 
               const itemData = {
                 name: formData.name,

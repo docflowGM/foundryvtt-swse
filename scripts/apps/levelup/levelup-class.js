@@ -343,7 +343,7 @@ export async function selectClass(classId, actor, context) {
 
   // If multiclassing and not already confirmed, show confirmation dialog
   if (isMulticlassing && context.selectedClass?.name !== classDoc.name) {
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
       title: 'Multiclass Confirmation',
       content: `
         <p>You are about to multiclass into <strong>${classDoc.name}</strong>.</p>

@@ -432,7 +432,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     const treeHtml = this._generateTalentTreeHtml(treeName, talentGraph);
 
     // Show dialog
-    new Dialog({
+    new SWSEDialogV2({
       title: `${treeName} Talent Tree`,
       content: treeHtml,
       buttons: {

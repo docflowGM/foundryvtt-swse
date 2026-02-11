@@ -226,7 +226,7 @@ export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) 
     `;
 
     return new Promise((resolve) => {
-      new Dialog({
+      new SWSEDialogV2({
         title: `Spawn ${item.label}`,
         content,
         buttons: {
@@ -311,7 +311,7 @@ export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) 
     const content = this._buildCommandDialog(item);
 
     return new Promise((resolve) => {
-      new Dialog({
+      new SWSEDialogV2({
         title: item.label,
         content,
         buttons: {

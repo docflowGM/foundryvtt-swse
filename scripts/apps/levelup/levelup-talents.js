@@ -334,7 +334,7 @@ export async function showTalentTreeDialog(treeName, talentData, actor, selectCa
   const treeHtml = generateTalentTreeHtml(treeName, talentGraph);
 
   // Show dialog
-  new Dialog({
+  new SWSEDialogV2({
     title: `${treeName} Talent Tree`,
     content: treeHtml,
     buttons: {

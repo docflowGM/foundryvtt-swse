@@ -615,7 +615,7 @@ export class DroidBuilderApp extends SWSEApplication {
     const costDelta = this._calculateCostDelta();
 
     // Confirm
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
       title: 'Finalize Droid Configuration?',
       content: `
         <p><strong>Degree:</strong> ${this.droidSystems.degree}</p>
@@ -700,7 +700,7 @@ export class DroidBuilderApp extends SWSEApplication {
   async _onResetDroid(event) {
     event.preventDefault();
 
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
       title: 'Reset Droid Builder?',
       content: '<p>Discard all changes and start over?</p>'
     });

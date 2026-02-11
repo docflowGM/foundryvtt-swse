@@ -216,7 +216,7 @@ export class ForcePowerManager {
         </style>
       `;
 
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: reason,
         content: dialogContent,
         buttons: {

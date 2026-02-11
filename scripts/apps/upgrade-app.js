@@ -253,7 +253,7 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     if (!Number.isInteger(index) || !installed[index]) {return;}
 
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
       title: 'Remove Upgrade',
       content: `<p>Remove <strong>${installed[index].name}</strong>? No credits will be refunded.</p>`
     });
@@ -367,7 +367,7 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
       return;
     }
 
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
       title: 'Apply Gear Template',
       content: `<p>Apply <strong>${templateName}</strong> template to <strong>${this.item.name}</strong>?</p>
                 <p>Cost: <strong>${templateCost} credits</strong></p>
@@ -390,7 +390,7 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
   async #onRemoveTemplate(event) {
     event.preventDefault();
 
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
       title: 'Remove Gear Template',
       content: `<p>Remove template from <strong>${this.item.name}</strong>?</p>
                 <p class="warning">No credits will be refunded. This action cannot be undone.</p>`

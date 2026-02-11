@@ -202,7 +202,7 @@ export class ProgressionPreview {
     const content = this._formatPreviewHTML(preview);
 
     return new Promise(resolve => {
-      new Dialog({
+      new SWSEDialogV2({
         title: 'Level Up Preview',
         content,
         buttons: {

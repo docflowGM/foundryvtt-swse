@@ -440,7 +440,7 @@ export async function showRollModifiersDialog(options = {}) {
   content += '</form>';
 
   return new Promise(resolve => {
-    new Dialog({
+    new SWSEDialogV2({
       title,
       content,
       buttons: {

@@ -57,7 +57,7 @@ export function initializeFollowerHooks() {
             }
 
             // Ask user if they want to create a follower now
-            const shouldCreate = await Dialog.confirm({
+            const shouldCreate = await SWSEDialogV2.confirm({
                 title: `Create Follower for ${item.name}?`,
                 content: `<p>${talentConfig.description}</p><p>Would you like to create a follower now?</p><p><em>You can create followers later from the character sheet.</em></p>`,
                 yes: () => true,
@@ -386,7 +386,7 @@ function addFollowerManagementUI(html, actor, followerTalents) {
     talentsTab.prepend(followerHTML);
 
     // Add event listeners
-    root.querySelector('.create-follower-btn').on('click', async (event) => {
+    root.querySelector('.create-follower-btn')?.addEventListener('click', async (event) => {
         event.preventDefault();
 
         // Show talent selection if multiple talents grant followers
@@ -404,24 +404,26 @@ function addFollowerManagementUI(html, actor, followerTalents) {
         actor.sheet.render(false);
     });
 
-    root.querySelector('.open-follower-sheet').on('click', async (event) => {
+    root.querySelectorAll('.open-follower-sheet').forEach(btn => btn.addEventListener('click', async (event) => {
         event.preventDefault();
-        const followerId = $(event.currentTarget).closest('.follower-item').data('follower-id');
+        const followerId = event.currentTarget?.closest?.('.follower-item')?.dataset?.followerId;
+        if (!followerId) {return;}
         const follower = game.actors.get(followerId);
         if (follower) {
             follower.sheet.render(true);
         }
-    });
+    }));
 
-    root.querySelector('.remove-follower').on('click', async (event) => {
+    root.querySelectorAll('.remove-follower').forEach(btn => btn.addEventListener('click', async (event) => {
         event.preventDefault();
-        const followerId = $(event.currentTarget).closest('.follower-item').data('follower-id');
+        const followerId = event.currentTarget?.closest?.('.follower-item')?.dataset?.followerId;
+        if (!followerId) {return;}
         const follower = game.actors.get(followerId);
         if (follower) {
             await FollowerCreator.removeFollower(actor, follower);
             actor.sheet.render(false);
         }
-    });
+    }));
 }
 
 /**

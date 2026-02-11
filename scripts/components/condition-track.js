@@ -115,30 +115,31 @@ export class ConditionTrackComponent {
   /* ---------------------------------------- */
 
   static _activate(container, actor) {
-    const $c = $(container);
+    const root = (container instanceof HTMLElement) ? container : (container?.[0] ?? container);
+    if (!(root instanceof HTMLElement)) {return;}
 
     // Set CT directly
-    $c.find('[data-ct="set"]').on('click', async ev => {
+    root.querySelectorAll('[data-ct="set"]').forEach(el => el.addEventListener('click', async ev => {
       await this._setCondition(actor, Number(ev.currentTarget.dataset.step));
-    });
+    }));
 
     // Improve CT (respect persistent)
-    $c.find('[data-ct="improve"]').on('click', async () => {
+    root.querySelectorAll('[data-ct="improve"]').forEach(el => el.addEventListener('click', async () => {
       if (actor.system.conditionTrack.persistent) {
         return ui.notifications.warn('Condition is Persistent and cannot be removed by the Recover Action.');
       }
       await actor.moveConditionTrack(-1);
-    });
+    }));
 
     // Worsen CT
-    $c.find('[data-ct="worsen"]').on('click', async () => {
+    root.querySelectorAll('[data-ct="worsen"]').forEach(el => el.addEventListener('click', async () => {
       await actor.moveConditionTrack(1);
-    });
+    }));
 
     // Persistent flag
-    $c.find('[data-ct="persistent"]').on('change', async ev => {
+    root.querySelectorAll('[data-ct="persistent"]').forEach(el => el.addEventListener('change', async ev => {
       await actor.update({ 'system.conditionTrack.persistent': ev.target.checked });
-    });
+    }));
   }
 
   /* ---------------------------------------- */

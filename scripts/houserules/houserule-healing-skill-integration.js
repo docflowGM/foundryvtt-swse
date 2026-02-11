@@ -89,7 +89,7 @@ export class HealingSkillIntegration {
     // Get all available targets
     const targets = game.actors.filter(a => a.type === 'character' && a.id !== actor.id);
 
-    return new Dialog({
+    return new SWSEDialogV2({
       title: `${application} - Select Target`,
       content: `
         <form>

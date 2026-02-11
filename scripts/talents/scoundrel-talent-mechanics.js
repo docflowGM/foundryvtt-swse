@@ -581,7 +581,7 @@ Hooks.on('cunningStrategistTriggered', async (actor) => {
       .map(t => `<option value="${t.actor.id}">${t.actor.name}</option>`)
       .join('');
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Cunning Strategist - Select Ally',
       content: `
         <div class="form-group">

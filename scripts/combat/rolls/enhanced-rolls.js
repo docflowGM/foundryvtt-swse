@@ -106,7 +106,7 @@ export class SWSERoll {
     if (!fp || fp.value <= 0) {return 0;}
 
     const confirmed = await new Promise(resolve => {
-      new Dialog({
+      new SWSEDialogV2({
         title: 'Spend a Force Point?',
         content: `
           <p>Spend a Force Point to boost your ${reason}?</p>
@@ -1687,7 +1687,7 @@ export class SWSERoll {
     }
 
     return new Promise(resolve => {
-      new Dialog({
+      new SWSEDialogV2({
         title: `Activate ${secret.name}`,
         content: `
           <p><strong>${secret.name}</strong></p>

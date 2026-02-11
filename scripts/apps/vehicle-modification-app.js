@@ -703,7 +703,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
       </div>
     `;
 
-    new Dialog({
+    new SWSEDialogV2({
       title: modification.name,
       content: content,
       buttons: {
@@ -743,7 +743,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
       return;
     }
 
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
       title: 'Finalize Starship?',
       content: `
         <p>Finalize this starship configuration?</p>
@@ -785,7 +785,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
   async _onResetShip(event) {
     event.preventDefault();
 
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
       title: 'Reset Starship?',
       content: `<p>Reset your entire starship configuration?</p>
         <p><em>Marl:</em> "Starting over? That's fine. Most of my best ships came from the fifth or sixth design iteration. Or was it seventh? I've lost count."</p>`

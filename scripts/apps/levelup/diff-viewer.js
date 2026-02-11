@@ -230,7 +230,7 @@ export function showDiffDialog(diff) {
     </style>
   `;
 
-  new Dialog({
+  new SWSEDialogV2({
     title: 'Level-Up Changes Preview',
     content: html,
     buttons: {

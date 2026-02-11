@@ -21,7 +21,7 @@ export class ForceEnhancementDialog {
     }
 
     return new Promise((resolve) => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: `Enhance: ${power.name}`,
         content: this._buildDialogContent(actor, power, techniques, secrets),
         buttons: {

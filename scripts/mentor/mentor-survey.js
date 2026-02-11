@@ -664,7 +664,7 @@ export class MentorSurvey {
           playerName: playerName
         });
 
-        const dialog = new Dialog(
+        const dialog = new SWSEDialogV2(
           {
             title: `${mentor.name} - Mentoring Survey`,
             content: `
@@ -779,7 +779,7 @@ export class MentorSurvey {
           ? `"I understand. Sometimes clarity comes when you need it, not when I ask for it. When you are ready to discuss your path, I will be here. There is no shame in taking your time."`
           : `"There is wisdom in knowing when to pause. Continue when you are ready. I will remember what you have already shared."`;
 
-        const dialog = new Dialog(
+        const dialog = new SWSEDialogV2(
           {
             title: `Survey Deferred`,
             content: `
@@ -833,7 +833,7 @@ export class MentorSurvey {
           mentorGreeting = `"I am here to guide your journey. Before we proceed, I would like to understand your vision for the path ahead. Your answers will help me offer counsel tailored to who you truly wish to become."`;
         }
 
-        const dialog = new Dialog(
+        const dialog = new SWSEDialogV2(
           {
             title: isResuming ? `Resume Your Mentoring` : `Meet Your Mentor`,
             content: `
@@ -891,7 +891,7 @@ export class MentorSurvey {
         const conclusionText = `${mentor.name} nods with understanding.`;
         const mentorConclusion = `"Your answers speak volumes about who you are becoming. I will use what I have learned to guide you toward choices that align with your vision. As we progress, remember: the path is as important as the destination. I am here to help you walk it well."`;
 
-        const dialog = new Dialog(
+        const dialog = new SWSEDialogV2(
           {
             title: `Survey Complete`,
             content: `
@@ -960,7 +960,7 @@ export class MentorSurvey {
           )
           .join('');
 
-        const dialog = new Dialog(
+        const dialog = new SWSEDialogV2(
           {
             title: `${mentorName}'s Mentoring - Question ${index + 1} of ${questionIds.length}`,
             content: `

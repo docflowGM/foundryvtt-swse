@@ -239,11 +239,14 @@ export class GMDebugPanel extends SWSEApplicationV2 {
     async _onRender(html, options) {
         await super._onRender(html, options);
 
+        const root = (this.element instanceof HTMLElement) ? this.element : (html?.[0] ?? html);
+        if (!(root instanceof HTMLElement)) {return;}
+
         // Refresh button
-        root.querySelectorAll('.refresh-analysis').click(() => this.render(true));
+        root.querySelectorAll('.refresh-analysis').forEach(btn => btn.addEventListener('click', () => this.render(true)));
 
         // Copy JSON button
-        root.querySelectorAll('.copy-json').click(() => {
+        root.querySelectorAll('.copy-json').forEach(btn => btn.addEventListener('click', () => {
             const json = JSON.stringify(this.buildIntent, null, 2);
             navigator.clipboard.writeText(json);
             ui.notifications.info('BuildIntent JSON copied to clipboard');
@@ -251,8 +254,8 @@ export class GMDebugPanel extends SWSEApplicationV2 {
 
         // Collapsible sections
         root.querySelectorAll('.collapsible-header').click(event => {
-            const section = $(event.currentTarget).closest('.collapsible-section');
-            section.toggleClass('collapsed');
+            const section = event.currentTarget?.closest?.('.collapsible-section');
+            section?.classList?.toggle('collapsed');
         });
     }
 }

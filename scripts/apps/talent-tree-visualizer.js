@@ -30,7 +30,7 @@ export class TalentTreeVisualizer {
 
     const content = this._generateTreeSelectionHtml(talentTrees, talentsByTree, ownedTalents);
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: "Select a Talent Tree",
       content: content,
       buttons: {
@@ -38,7 +38,8 @@ export class TalentTreeVisualizer {
           icon: '<i class="fas fa-times"></i>',
           label: "Cancel"
         }
-      },
+        });
+        nodeEl.addEventListener('mouseleave', () => {
       render: (html) => {
         this._bindTreeSelectionListeners(html, talentTrees, talentsByTree, ownedTalents, talentData, actor, onSelectTalent, dialog);
       }
@@ -182,7 +183,8 @@ export class TalentTreeVisualizer {
         talentData,
         actor,
         onSelectTalent
-      );
+        });
+      });
     }));
   }
 
@@ -268,7 +270,7 @@ export class TalentTreeVisualizer {
     const treeHtml = this._generateEnhancedTreeHtml(treeName, talentGraph, ownedTalents);
 
     // Show dialog
-    new Dialog({
+    new SWSEDialogV2({
       title: `${treeName} - Talent Tree`,
       content: treeHtml,
       buttons: {
@@ -284,12 +286,14 @@ export class TalentTreeVisualizer {
               onSelectTalent
             );
           }
-        },
+          });
+          nodeEl.addEventListener('mouseleave', () => {
         close: {
           icon: '<i class="fas fa-times"></i>',
           label: "Close"
         }
-      },
+        });
+        nodeEl.addEventListener('mouseleave', () => {
       default: "close",
       render: (html) => {
         this._bindEnhancedTreeListeners(html, talentGraph, ownedTalents, actor, onSelectTalent);
@@ -573,14 +577,14 @@ export class TalentTreeVisualizer {
    */
   static _bindEnhancedTreeListeners(html, talentGraph, ownedTalents, actor, onSelectTalent) {
     // Click to select talent
-    root.querySelectorAll('.talent-node').click(function(e) {
+    root.querySelectorAll('.talent-node').forEach((nodeEl) => nodeEl.addEventListener('click', (e) => {
       const talentName = this?.dataset?.talentName;
       const node = talentGraph[talentName];
 
       if (!node) return;
 
       // Check if talent is unavailable
-      if ($(this).hasClass('unavailable')) {
+      if (nodeEl.classList.contains('unavailable')) {
         const prereqReasons = node.talent.prerequisiteReasons || [];
         const message = prereqReasons.length > 0
           ? `Cannot select ${talentName}:\n${prereqReasons.join('\n')}`
@@ -601,12 +605,12 @@ export class TalentTreeVisualizer {
       }
 
       // Close dialog
-      $(this).closest('.dialog').find('.window-close').click();
-    });
+      nodeEl.closest('.dialog')?.querySelector?.('.window-close')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    }));
 
     // Hover to highlight prerequisites and dependents
-    root.querySelectorAll('.talent-node').hover(
-      function() {
+    root.querySelectorAll('.talent-node').forEach((nodeEl) => {
+      nodeEl.addEventListener('mouseenter', () => {
         const talentName = this?.dataset?.talentName;
         const node = talentGraph[talentName];
 
@@ -623,14 +627,15 @@ export class TalentTreeVisualizer {
             (root.querySelectorAll(`line[data-from="${talentName}"][data-to="${dep}"]`)||[]).forEach(el=>el.classList.add('line-highlight-dependent'));
           });
 
-          $(this).addClass('highlight-current');
+          nodeEl.classList.add('highlight-current');
         }
-      },
-      function() {
-        root.querySelectorAll('.talent-node').removeClass('highlight-prereq highlight-dependent highlight-current');
-        root.querySelectorAll('line').removeClass('line-highlight-prereq line-highlight-dependent');
+        });
+        nodeEl.addEventListener('mouseleave', () => {
+        root.querySelectorAll('.talent-node').forEach(el => el.classList.remove('highlight-prereq', 'highlight-dependent', 'highlight-current'));
+        root.querySelectorAll('line').forEach(el => el.classList.remove('line-highlight-prereq', 'line-highlight-dependent'));
       }
-    );
+      });
+    });
   }
 
   /**

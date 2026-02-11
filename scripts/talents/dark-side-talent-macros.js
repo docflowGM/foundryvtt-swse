@@ -39,7 +39,7 @@ export class DarkSideTalentMacros {
       .map(p => `<option value="${p.id}">${p.name}${p.system?.spent ? ' (Spent)' : ' (Ready)'}</option>`)
       .join('');
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Swift Power - Select Force Power',
       content: `
         <div class="form-group">
@@ -121,7 +121,7 @@ export class DarkSideTalentMacros {
         .map(p => `<option value="${p.id}">${p.name}</option>`)
         .join('');
 
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Dark Side Savant - Select Power',
         content: `
           <div class="form-group">

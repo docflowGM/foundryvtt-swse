@@ -63,7 +63,7 @@ export class MentorGuidanceUI {
     }
 
     static _showPopup(mentor, text) {
-        new Dialog({
+        new SWSEDialogV2({
             title: `${mentor.name} — Guidance`,
             content: `
                 <div class="swse-mentor-guidance">

@@ -10,6 +10,7 @@
  *
  * Defensive: uses Roll API (Foundry) if available.
  */
+import { confirm as uiConfirm } from '../../utils/ui-utils.js';
 export class AbilityRollingController {
   constructor(actor, root, opts = {}) {
     this.actor = actor;
@@ -252,7 +253,8 @@ export class AbilityRollingController {
     if (this.confirmed) {return;}
     const hasAssigned = Object.values(this.assigned).some(Boolean);
     if (hasAssigned) {
-      if (!confirm('Rerolling will clear your current assignments. Continue?')) {return;}
+      const confirmed = await uiConfirm('Reroll All?', `<p>Rerolling will clear your current assignments. Continue?</p>`);
+      if (!confirmed) {return;}
       this._pushHistory({ action:'rerollAll', prevPool: JSON.parse(JSON.stringify(this.pool)), prevAssigned: JSON.parse(JSON.stringify(this.assigned)) });
       for (const k of Object.keys(this.assigned)) {this.assigned[k] = null;}
     } else {

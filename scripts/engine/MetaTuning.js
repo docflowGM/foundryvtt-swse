@@ -287,7 +287,7 @@ async _prepareContext(options) {
         const resetBtn = root.querySelector('.reset-defaults');
         if (resetBtn) {
             resetBtn.addEventListener('click', async () => {
-                const confirmed = await Dialog.confirm({
+                const confirmed = await SWSEDialogV2.confirm({
                     title: 'Reset to Defaults',
                     content: '<p>Reset all suggestion engine settings to defaults?</p>'
                 });

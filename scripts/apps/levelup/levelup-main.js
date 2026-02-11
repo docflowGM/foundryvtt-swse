@@ -963,7 +963,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     }).join('');
 
     return new Promise((resolve) => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: `${feat.name} - Select Skill`,
         content: `
           <div class="form-group">
@@ -1058,7 +1058,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     ).join('');
 
     return new Promise((resolve) => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: title,
         content: `
           <div class="form-group">
@@ -1653,7 +1653,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   async _onSkipStep(event) {
     event.preventDefault();
 
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
       title: 'Skip This Step?',
       content: `
         <div class="skip-warning">
@@ -1683,7 +1683,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     this.freeBuild = event.target.checked;
 
     if (this.freeBuild) {
-      Dialog.confirm({
+      SWSEDialogV2.confirm({
         title: 'Enable Free Build Mode?',
         content: `
           <div class="free-build-warning">

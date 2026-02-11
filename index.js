@@ -60,6 +60,7 @@ if (typeof $ !== 'undefined' || typeof jQuery !== 'undefined') {
    PHASE 3: RUNTIME CONTRACT (must be first)
    ========================= */
 
+import './scripts/apps/dialogs/swse-dialog-v2.js';
 import { RuntimeContract } from './scripts/contracts/runtime-contract.js';
 
 /* =========================

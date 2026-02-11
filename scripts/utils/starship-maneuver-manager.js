@@ -60,7 +60,7 @@ export class StarshipManeuverManager {
       // Create HTML content for dialog
       const html = this._createManeuverSelectionHTML(available, count);
 
-      new Dialog({
+      new SWSEDialogV2({
         title: title,
         content: html,
         buttons: {

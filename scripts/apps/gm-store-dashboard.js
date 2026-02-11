@@ -22,6 +22,7 @@
 import { normalizeCredits } from '../utils/credit-normalization.js';
 import { SWSELogger } from '../utils/logger.js';
 import { calculateCartTotal } from './store/store-checkout.js';
+import { prompt as uiPrompt } from '../utils/ui-utils.js';
 
 const { ApplicationV2 } = foundry.applications.api;
 const { HandlebarsApplicationMixin } = foundry.applications.api;
@@ -259,7 +260,8 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
       btn.addEventListener('click', async (ev) => {
         const saleIndex = Number(ev.currentTarget.dataset.index);
         // Show inline editor (placeholder for now)
-        const amount = prompt('Enter sale amount (credits):');
+        const amount = await uiPrompt('Sale Amount', 'Enter sale amount (credits):', '');
+        if (amount === null) {return;}
         if (amount) {
           await this._resolvePendingSale(saleIndex, 'accept', normalizeCredits(amount));
         }
@@ -302,7 +304,7 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
       return;
     }
 
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
       title: 'Reverse Transaction',
       content: `
         <p>Are you sure you want to reverse this transaction?</p>
@@ -402,7 +404,7 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
     }
 
     // Confirm approval
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
       title: 'Approve Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle'),
       content: `
         <p><strong>${approval.draftData.name}</strong></p>
@@ -490,7 +492,7 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
     const approval = this.pendingApprovals[index];
     if (!approval) return;
 
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
       title: 'Deny Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle'),
       content: `
         <p><strong>${approval.draftData.name}</strong></p>

@@ -53,7 +53,7 @@ export function onDiscoveryReady() {
  * Binds tooltips and evaluates callouts on the rendered element.
  */
 function _onAppRender(app, html) {
-  // html may be HTMLElement (AppV2) or jQuery (AppV1)
+  // html may be HTMLElement (AppV2) or legacy wrapper (AppV1)
   const root = html instanceof HTMLElement ? html : html?.[0];
   if (!(root instanceof HTMLElement)) {return;}
 

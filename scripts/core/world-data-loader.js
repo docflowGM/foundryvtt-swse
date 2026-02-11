@@ -455,7 +455,7 @@ export class WorldDataLoader {
    * Clear all loaded data (for testing)
    */
   static async clearAll() {
-    const confirm = await Dialog.confirm({
+    const confirm = await SWSEDialogV2.confirm({
       title: 'Clear All SWSE Data?',
       content: '<p>This will delete ALL items and actors imported from JSON files. Are you sure?</p>',
       defaultYes: false

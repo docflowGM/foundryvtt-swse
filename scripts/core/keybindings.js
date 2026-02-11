@@ -77,7 +77,7 @@ export function registerKeybindings() {
     hint: 'Show/hide the canvas UI toolbar',
     editable: [{ key: 'KeyT', modifiers: ['Control', 'Alt'] }],
     onDown: () => {
-      $('#swse-canvas-toolbar').toggleClass('collapsed');
+      document.getElementById('swse-canvas-toolbar')?.classList?.toggle('collapsed');
       return true;
     }
   });

@@ -144,7 +144,7 @@ export class SaberLockMechanics {
    * Provides quick access to unarmed attack roll
    */
   static async createUnarmedAttackDialog(winner, loser) {
-    return new Dialog({
+    return new SWSEDialogV2({
       title: `Saber Lock - Free Unarmed Attack`,
       content: `
         <div class="form-group">

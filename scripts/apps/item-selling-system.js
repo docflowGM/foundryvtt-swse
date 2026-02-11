@@ -16,12 +16,13 @@
  * 2. Confirmation panel shows base price, RAW offer (50% floored)
  * 3. Player confirms intent
  * 4. If auto-accept ON: Resolve immediately
- *    If auto-accept OFF: GM prompt (Accept/Deny/Override amount)
+ *    If auto-accept OFF: GM await uiPrompt(Accept/Deny/Override amount)
  * 5. On acceptance: Remove item, add credits, animate gain, show player feedback
  */
 
 import { normalizeCredits, calculateRawSellPrice, calculatePercentageFloor } from '../utils/credit-normalization.js';
 import { SWSELogger } from '../utils/logger.js';
+import { prompt as uiPrompt } from '../utils/ui-utils.js';
 
 /**
  * Initiate item selling process
@@ -68,7 +69,7 @@ export async function initiateItemSale(item, actor) {
  * Requires manual GM override — no auto-accept, no percentage math
  */
 async function showNoPriceDialog(item, actor) {
-  const confirmed = await Dialog.confirm({
+  const confirmed = await SWSEDialogV2.confirm({
     title: 'Offer Item for Sale',
     content: `
       <div style="text-align: center;">
@@ -97,7 +98,7 @@ async function showNoPriceDialog(item, actor) {
  * Display player confirmation panel
  */
 async function showSaleConfirmation(item, actor, basePrice, rawOffer) {
-  const confirmed = await Dialog.confirm({
+  const confirmed = await SWSEDialogV2.confirm({
     title: 'Offer Item for Sale',
     content: `
       <div style="text-align: center;">
@@ -153,7 +154,7 @@ async function resolveSale(item, actor, basePrice, rawOffer) {
  */
 async function showGmAdjudicationPrompt(item, actor, basePrice, rawOffer) {
   return new Promise((resolve) => {
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: `[SALE] ${actor.name} offers ${item.name}`,
       content: `
         <div style="line-height: 1.6;">
@@ -202,7 +203,7 @@ async function showGmAdjudicationPrompt(item, actor, basePrice, rawOffer) {
  */
 async function showGmAdjudicationPromptNoPriceBase(item, actor) {
   return new Promise((resolve) => {
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: `[SALE] ${actor.name} offers ${item.name}`,
       content: `
         <div style="line-height: 1.6;">

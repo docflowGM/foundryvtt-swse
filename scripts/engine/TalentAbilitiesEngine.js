@@ -1229,7 +1229,7 @@ export class TalentAbilitiesEngine {
         `;
 
         return new Promise((resolve) => {
-            new Dialog({
+            new SWSEDialogV2({
                 title: `Reaction - ${defender.name}`,
                 content,
                 buttons: {

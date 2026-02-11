@@ -182,7 +182,7 @@ export class GMDroidApprovalDashboard extends HandlebarsApplicationMixin(Applica
     // Prompt for rejection reason
     let rejectionReason = '';
     await new Promise(resolve => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Reject Droid',
         content: `
           <p>Provide a reason for rejection (optional):</p>

@@ -97,7 +97,7 @@ export class FollowerCreator {
         const html = await renderTemplate('systems/foundryvtt-swse/templates/apps/follower-creator-dialog.html', dialogData);
 
         return new Promise((resolve) => {
-            new Dialog({
+            new SWSEDialogV2({
                 title: `Create ${template.name}`,
                 content: html,
                 buttons: {
@@ -554,7 +554,7 @@ export class FollowerCreator {
         await owner.setFlag('swse', 'followers', updatedFollowers);
 
         // Optionally delete the follower actor
-        const shouldDelete = await Dialog.confirm({
+        const shouldDelete = await SWSEDialogV2.confirm({
             title: 'Delete Follower?',
             content: `<p>Do you want to permanently delete ${follower.name}?</p>`,
             yes: () => true,

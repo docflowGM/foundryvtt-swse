@@ -302,15 +302,15 @@ export class PrestigeRoadmap extends SWSEApplicationV2 {
 
         // Class card selection
         root.querySelectorAll('.roadmap-class-card').click(event => {
-            const className = $(event.currentTarget).data('class-name');
+            const className = event.currentTarget?.dataset?.className;
             this.selectedClass = this.selectedClass === className ? null : className;
             this.render();
         });
 
         // Collapse/expand sections
         root.querySelectorAll('.section-header').click(event => {
-            const section = $(event.currentTarget).closest('.roadmap-section');
-            section.toggleClass('collapsed');
+            const section = event.currentTarget?.closest?.('.roadmap-section');
+            section?.classList?.toggle('collapsed');
         });
     }
 }

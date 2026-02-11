@@ -1237,7 +1237,7 @@ Hooks.on('directTriggered', async (actor) => {
       .map(t => `<option value="${t.actor.id}">${t.actor.name}</option>`)
       .join('');
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Direct - Select Ally',
       content: `
         <div class="form-group">
@@ -1269,7 +1269,7 @@ Hooks.on('directTriggered', async (actor) => {
               .map(p => `<option value="${p.id}">${p.name}</option>`)
               .join('');
 
-            const powerDialog = new Dialog({
+            const powerDialog = new SWSEDialogV2({
               title: 'Direct - Select Force Power',
               content: `
                 <div class="form-group">
@@ -1328,7 +1328,7 @@ Hooks.on('consularsWisdomTriggered', async (actor) => {
       .map(t => `<option value="${t.actor.id}">${t.actor.name}</option>`)
       .join('');
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: "Consular's Wisdom - Select Ally",
       content: `
         <div class="form-group">
@@ -1394,7 +1394,7 @@ Hooks.on('darkSidePowerTargeted', async (targetActor, darkSidePower, sourceActor
       .map(p => `<option value="${p.id}">${p.name}${p.system?.spent ? ' (Spent)' : ''}</option>`)
       .join('');
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Dark Retaliation - React to Dark Side Power',
       content: `
         <div class="form-group">

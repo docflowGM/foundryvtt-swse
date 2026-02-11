@@ -119,7 +119,7 @@ export class SWSECombatAutomation {
     }
 
     return new Promise(resolve => {
-      new Dialog({
+      new SWSEDialogV2({
         title: `${actor.name} — Condition Recovery`,
         content: `
           <div class="swse condition-recovery">

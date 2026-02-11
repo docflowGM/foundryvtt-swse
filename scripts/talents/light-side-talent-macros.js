@@ -94,7 +94,7 @@ export class LightSideTalentMacros {
           .join('');
 
         return new Promise((resolve) => {
-          const dialog = new Dialog({
+          const dialog = new SWSEDialogV2({
             title: 'Exposing Strike - Select Lightsaber',
             content: `
               <div class="form-group">
@@ -165,7 +165,7 @@ export class LightSideTalentMacros {
         .map(p => `<option value="${p.id}">${p.name}</option>`)
         .join('');
 
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Dark Retaliation - Select Force Power',
         content: `
           <div class="form-group">
@@ -237,7 +237,7 @@ export class LightSideTalentMacros {
         .map(s => `<option value="${s}">${s}</option>`)
         .join('');
 
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Skilled Advisor',
         content: `
           <div class="form-group">
@@ -306,7 +306,7 @@ export class LightSideTalentMacros {
         .map(t => `<option value="${t.actor.id}">${t.actor.name} (Use the Force: ${t.actor.system.skills?.useTheForce?.total || 0})</option>`)
         .join('');
 
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Apprentice Boon',
         content: `
           <div class="form-group">
@@ -398,7 +398,7 @@ export class LightSideTalentMacros {
         .map(s => `<option value="${s.id}">${s.name}</option>`)
         .join('');
 
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Share Force Secret',
         content: `
           <div class="form-group">
@@ -467,7 +467,7 @@ export class LightSideTalentMacros {
         penaltyOptions.push(`<option value="${i}">-${i} attack / +${willBonus} Will Defense</option>`);
       }
 
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Steel Resolve',
         content: `
           <div class="form-group">
@@ -562,7 +562,7 @@ export class LightSideTalentMacros {
         </div>
       `;
 
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Adept Negotiator - Weaken Resolve',
         content: dialogContent,
         buttons: {

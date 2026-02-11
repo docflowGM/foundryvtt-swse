@@ -235,7 +235,7 @@ async _prepareContext(options) {
 
     // Wrap dialog in a Promise for proper async/await handling
     return new Promise((resolve) => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: `${template.name} - ${mentor.name}`,
         content: content,
         buttons: {
@@ -447,7 +447,7 @@ async _prepareContext(options) {
     // Build skill selection dialog
     const content = await this._buildSkillSelectionContent(actor, classSkills, remainingPoints);
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: `Train Skills - ${actor.name}`,
       content: content,
       buttons: {
@@ -635,7 +635,7 @@ async _prepareContext(options) {
       `;
     }
 
-    await Dialog.prompt({
+    await SWSEDialogV2.prompt({
         title: `${actor.name} Created!`,
         content: `
           <div style="padding: 1rem;">
@@ -667,7 +667,7 @@ async _prepareContext(options) {
    */
   static async _promptCharacterName(templateName) {
     return new Promise((resolve) => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Character Name',
         content: `
           <div style="padding: 1rem;">
@@ -1084,7 +1084,7 @@ async _prepareContext(options) {
     `;
 
     return new Promise((resolve) => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: `Create ${template.name}`,
         content: content,
         buttons: {

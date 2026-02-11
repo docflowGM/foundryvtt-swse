@@ -95,7 +95,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
     // Warn user about multi-level limitations
     if (newLevel > 1 && this.targetLevel === 1) {
-      const confirmed = await Dialog.confirm({
+      const confirmed = await SWSEDialogV2.confirm({
         title: 'Multi-Level Character Creation',
         content: `
           <div style="margin-bottom: 10px;">

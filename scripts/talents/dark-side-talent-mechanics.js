@@ -318,7 +318,7 @@ Hooks.on('darkSideSavantTriggered', async (actor) => {
       .map(p => `<option value="${p.id}">${p.name}</option>`)
       .join('');
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Dark Side Savant - Select Power to Return',
       content: `
         <div class="form-group">

@@ -202,7 +202,7 @@ export async function showPrestigePathDialog(actor, options = {}) {
       </div>
     `;
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: `Prestige Paths for ${actor.name}`,
       content: html,
       buttons: {

@@ -22,7 +22,7 @@ export class CombatActionBar {
     targetElement.innerHTML = html;
 
     // Activate listeners
-    this._activateListeners($(targetElement), actor);
+    this._activateListeners(targetElement, actor);
   }
 
   static refresh(actor, targetElement) {
@@ -291,7 +291,7 @@ export class CombatActionBar {
   }
 
   static async _weaponDialog(weapons) {
-    return await Dialog.prompt({
+    return await SWSEDialogV2.prompt({
       title: 'Choose Weapon',
       content: `
         <select name="weapon">

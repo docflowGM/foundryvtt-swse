@@ -152,7 +152,7 @@ async function ensureNonheroicClass(actor) {
 
 async function promptHpMode() {
   return new Promise((resolve) => {
-    new Dialog({
+    new SWSEDialogV2({
       title: 'Nonheroic HP Gain',
       content: '<p>Choose how to add HP for this nonheroic level.</p>',
       buttons: {
@@ -201,7 +201,7 @@ async function promptAndGrantFeat(actor) {
     .join('');
 
   const selected = await new Promise((resolve) => {
-    new Dialog({
+    new SWSEDialogV2({
       title: 'Select a Feat',
       content: `
         <form>
@@ -244,7 +244,7 @@ async function promptAndApplyAbilityIncrease(actor, count) {
 
   for (let i = 0; i < count; i++) {
     const chosen = await new Promise((resolve) => {
-      new Dialog({
+      new SWSEDialogV2({
         title: 'Ability Increase',
         content: `
           <form>

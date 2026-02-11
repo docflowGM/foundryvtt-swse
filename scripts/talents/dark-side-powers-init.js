@@ -40,7 +40,7 @@ Hooks.once('ready', () => {
       .map(p => `<option value="${p.id}">${p.name}${p.system?.spent ? ' (Spent)' : ' (Ready)'}</option>`)
       .join('');
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Swift Power - Select Force Power',
       content: `
         <div class="form-group">
@@ -146,7 +146,7 @@ Hooks.once('ready', () => {
       return;
     }
 
-    const confirmDialog = new Dialog({
+    const confirmDialog = new SWSEDialogV2({
       title: 'Crippling Strike - Confirm Critical Hit',
       content: `
         <p>Confirm that you scored a <strong>Critical Hit</strong> against ${targetToken.actor.name}.</p>
@@ -195,7 +195,7 @@ Hooks.once('ready', () => {
         .map(d => `<option value="${d}">${d}</option>`)
         .join('');
 
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Dark Side Talisman - Select Defense',
         content: `
           <div class="form-group">
@@ -241,7 +241,7 @@ Hooks.once('ready', () => {
       return;
     }
 
-    const confirmDialog = new Dialog({
+    const confirmDialog = new SWSEDialogV2({
       title: 'Destroy Dark Side Talisman',
       content: `
         <p>This will destroy the active Dark Side Talisman and trigger a 24-hour cooldown before you can create a new one.</p>
@@ -364,7 +364,7 @@ Hooks.once('ready', () => {
         label: 'Cancel'
       };
 
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Dark Healing - Select Variant',
         content: `
           <div class="form-group">
@@ -428,7 +428,7 @@ Hooks.once('ready', () => {
       return;
     }
 
-    const confirmDialog = new Dialog({
+    const confirmDialog = new SWSEDialogV2({
       title: 'Wicked Strike - Confirm Critical Hit',
       content: `
         <p>Confirm that you scored a <strong>Critical Hit</strong> with a lightsaber against ${targetToken.actor.name}.</p>
@@ -497,7 +497,7 @@ Hooks.once('ready', () => {
       return;
     }
 
-    const confirmDialog = new Dialog({
+    const confirmDialog = new SWSEDialogV2({
       title: 'Destroy Sith Talisman',
       content: `
         <p>This will destroy the active Sith Talisman and trigger a 24-hour cooldown before you can create a new one.</p>
@@ -566,7 +566,7 @@ Hooks.once('ready', () => {
       .map(w => `<option value="${w.id}">${w.name}</option>`)
       .join('');
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Create Sith Alchemical Weapon',
       content: `
         <div class="form-group">
@@ -630,7 +630,7 @@ Hooks.once('ready', () => {
         .map(w => `<option value="${w.id}">${w.name}</option>`)
         .join('');
 
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Activate Sith Alchemical Weapon Bonus',
         content: `
           <div class="form-group">
@@ -709,7 +709,7 @@ Hooks.once('ready', () => {
       .map(t => `<option value="${t.name}">${t.name}</option>`)
       .join('');
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Stolen Form - Select Form or Technique',
       content: `
         <div class="form-group">
@@ -799,7 +799,7 @@ Hooks.once('ready', () => {
               .map(w => `<option value="${w.id}">${w.name}</option>`)
               .join('');
 
-            const weaponDialog = new Dialog({
+            const weaponDialog = new SWSEDialogV2({
               title: 'Select Weapon to Enhance',
               content: `
                 <div class="form-group">
@@ -849,7 +849,7 @@ Hooks.once('ready', () => {
       statusMessage += '<p class="warning-text"><strong>⚠ No melee weapons available.</strong> Sith Alchemical Weapons require a melee weapon to enhance.</p>';
     }
 
-    const dialog = new Dialog({
+    const dialog = new SWSEDialogV2({
       title: 'Sith Alchemy (create) - Choose Creation Type',
       content: `
         <div class="form-group">

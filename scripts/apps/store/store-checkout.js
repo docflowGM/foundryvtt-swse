@@ -268,7 +268,7 @@ export async function buyDroid(store, actorId) {
     }
 
     // Confirm purchase
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
         title: 'Confirm Droid Purchase',
         content: `<p>Purchase <strong>${droidTemplate.name}</strong> for <strong>${finalCost.toLocaleString()}</strong> credits?</p>
                  <p>A new droid actor will be created and assigned to you.</p>`,
@@ -361,7 +361,7 @@ export async function buyVehicle(store, actorId, condition) {
     }
 
     // Confirm purchase
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
         title: 'Confirm Vehicle Purchase',
         content: `<p>Purchase <strong>${condition === 'used' ? 'Used' : 'New'} ${vehicleTemplate.name}</strong> for <strong>${finalCost.toLocaleString()}</strong> credits?</p>
                  <p>A new vehicle actor will be created and assigned to you.</p>`,
@@ -422,7 +422,7 @@ export async function createCustomDroid(actor, closeCallback) {
     }
 
     // Confirm
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
         title: 'Build Custom Droid',
         content: `<p>Enter the droid construction system?</p>
                  <p>You will design a non-heroic droid at level ${actor.system.level || 1}.</p>
@@ -479,7 +479,7 @@ export async function createCustomStarship(actor, closeCallback) {
     }
 
     // Confirm
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
         title: 'Build Custom Starship',
         content: `<p>Enter the starship modification system with Marl Skindar?</p>
                  <p>You will select a stock ship and customize it with modifications.</p>
@@ -941,7 +941,7 @@ export async function buildDroidWithBuilder(actor, closeCallback) {
     }
 
     // Confirm droid building
-    const confirmed = await Dialog.confirm({
+    const confirmed = await SWSEDialogV2.confirm({
         title: 'Build Custom Droid',
         content: `
             <p>Design a custom droid using the Droid Builder.</p>
@@ -1078,7 +1078,7 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
         // Show selection dialog
         let selectedTemplateId = null;
         await new Promise(resolve => {
-            const dialog = new Dialog({
+            const dialog = new SWSEDialogV2({
                 title: 'Select Droid Template',
                 content: templateHTML,
                 buttons: {
@@ -1117,7 +1117,7 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
         }
 
         // Confirm before launching builder
-        const confirmed = await Dialog.confirm({
+        const confirmed = await SWSEDialogV2.confirm({
             title: `Clone Droid Template: ${selectedTemplate.name}`,
             content: `
                 <p>Create a new droid based on <strong>${selectedTemplate.name}</strong>?</p>

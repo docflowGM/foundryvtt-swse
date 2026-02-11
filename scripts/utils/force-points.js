@@ -120,7 +120,7 @@ export class ForcePointsUtil {
     const diceDesc = numDice > 1 ? `${numDice}${diceType} (take highest)` : `${numDice}${diceType}`;
 
     return new Promise((resolve) => {
-      const dialog = new Dialog({
+      const dialog = new SWSEDialogV2({
         title: 'Spend Force Point',
         content: `
           <form>

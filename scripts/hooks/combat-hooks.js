@@ -135,7 +135,7 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
     if (conditionTrack.persistent) {return;}
 
     // Prompt for recovery
-    const recover = await Dialog.confirm({
+    const recover = await SWSEDialogV2.confirm({
         title: game.i18n.localize('SWSE.Dialogs.ConditionRecovery.Title'),
         content: game.i18n.format('SWSE.Dialogs.ConditionRecovery.Content', {
             name: actor.name,

@@ -191,7 +191,7 @@ async _prepareContext(options) {
       </div>
     `;
 
-    new Dialog({
+    new SWSEDialogV2({
       title: unit.name,
       content: content,
       buttons: {
@@ -270,7 +270,7 @@ async _prepareContext(options) {
   }
 
   async _onImportAll() {
-    const confirm = await Dialog.confirm({
+    const confirm = await SWSEDialogV2.confirm({
       title: 'Import All Nonheroic Units',
       content: `<p>This will import all ${this.units.length} nonheroic units to the NPC compendium.</p>
                 <p>This may take several minutes. Continue?</p>`,
