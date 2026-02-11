@@ -8,7 +8,6 @@
 .swse-app-store {
   display: flex;
   flex-direction: column;
-  height: 100%;
   background: rgba(0, 10, 20, 0.95);
   color: #e0e0e0;
 }
@@ -935,16 +934,9 @@
    ====================================================== */
 
 /* Prevent Foundry window-content from stealing scroll */
-.app.window-app .window-content {
-  overflow: hidden;
-  height: 100%;
-}
+/* Window content sizing handled by Foundry */
 
-/* Ensure store root actually has a constrained height */
-.app.window-app .swse-app-store {
-  height: 100%;
-  min-height: 0;
-}
+/* Store root handled by Foundry flex layout */
 
 /* THIS is the actual scrolling container */
 .app.window-app .swse-app-store .shop-body {

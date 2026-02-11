@@ -38,8 +38,7 @@ export class TalentTreeVisualizer {
           icon: '<i class="fas fa-times"></i>',
           label: "Cancel"
         }
-        });
-        nodeEl.addEventListener('mouseleave', () => {
+      },
       render: (html) => {
         this._bindTreeSelectionListeners(html, talentTrees, talentsByTree, ownedTalents, talentData, actor, onSelectTalent, dialog);
       }
@@ -183,8 +182,7 @@ export class TalentTreeVisualizer {
         talentData,
         actor,
         onSelectTalent
-        });
-      });
+      );
     }));
   }
 
@@ -286,14 +284,12 @@ export class TalentTreeVisualizer {
               onSelectTalent
             );
           }
-          });
-          nodeEl.addEventListener('mouseleave', () => {
+        },
         close: {
           icon: '<i class="fas fa-times"></i>',
           label: "Close"
         }
-        });
-        nodeEl.addEventListener('mouseleave', () => {
+      },
       default: "close",
       render: (html) => {
         this._bindEnhancedTreeListeners(html, talentGraph, ownedTalents, actor, onSelectTalent);
@@ -631,10 +627,9 @@ export class TalentTreeVisualizer {
         }
         });
         nodeEl.addEventListener('mouseleave', () => {
-        root.querySelectorAll('.talent-node').forEach(el => el.classList.remove('highlight-prereq', 'highlight-dependent', 'highlight-current'));
-        root.querySelectorAll('line').forEach(el => el.classList.remove('line-highlight-prereq', 'line-highlight-dependent'));
-      }
-      });
+          root.querySelectorAll('.talent-node').forEach(el => el.classList.remove('highlight-prereq', 'highlight-dependent', 'highlight-current'));
+          root.querySelectorAll('line').forEach(el => el.classList.remove('line-highlight-prereq', 'line-highlight-dependent'));
+        });
     });
   }
 

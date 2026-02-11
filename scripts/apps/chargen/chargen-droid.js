@@ -1161,6 +1161,10 @@ class DroidImportDialog extends foundry.applications.api.ApplicationV2 {
     position: { width: 500, height: 'auto' }
   };
 
+  static PARTS = {
+    content: { template: 'systems/foundryvtt-swse/templates/apps/chargen-droid-import.hbs' }
+  };
+
   constructor(droidList, parentChargen) {
     super();
     this.droidList = droidList;
@@ -1168,53 +1172,14 @@ class DroidImportDialog extends foundry.applications.api.ApplicationV2 {
     this.filteredResults = droidList;
   }
 
-  _renderHTML(context, options) {
-    return `
-      <div class="droid-import-dialog">
-        <p>Search for a droid type to import:</p>
-        <input type="text" id="droid-search" placeholder="Type droid name..." autofocus />
-        <div id="droid-results" class="droid-results"></div>
-      </div>
-      <style>
-        .droid-import-dialog {
-          padding: 1rem;
-        }
-        #droid-search {
-          width: 100%;
-          padding: 0.5rem;
-          margin-bottom: 1rem;
-          font-size: 1rem;
-        }
-        .droid-results {
-          max-height: 300px;
-          overflow-y: auto;
-        }
-        .droid-result-item {
-          padding: 0.75rem;
-          margin: 0.5rem 0;
-          background: rgba(0, 0, 0, 0.2);
-          border: 1px solid #0a74da;
-          border-radius: 4px;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-        .droid-result-item:hover {
-          background: rgba(10, 116, 218, 0.2);
-          transform: translateX(4px);
-        }
-      </style>
-    `;
+  _prepareContext(options) {
+    return {};
   }
 
-  _replaceHTML(result, content, options) {
-    result.innerHTML = '';
-    result.appendChild(content);
-  }
-
-  _onRender(context, options) {
-    super._onRender(context, options);
-    const searchInput = this.element?.querySelector('#droid-search');
-    const resultsDiv = this.element?.querySelector('#droid-results');
+  activateListeners(html) {
+    super.activateListeners(html);
+    const searchInput = html.querySelector('#droid-search');
+    const resultsDiv = html.querySelector('#droid-results');
 
     if (!searchInput || !resultsDiv) return;
 

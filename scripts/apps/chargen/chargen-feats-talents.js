@@ -980,6 +980,10 @@ class SkillFocusDialog extends foundry.applications.api.ApplicationV2 {
     position: { width: 400, height: 'auto' }
   };
 
+  static PARTS = {
+    content: { template: 'systems/foundryvtt-swse/templates/apps/chargen-skill-focus.hbs' }
+  };
+
   constructor(feat, skillOptions, skillNames, parentChargen, resolvePromise) {
     super({ window: { title: `${feat.name} - Select Skill` } });
     this.feat = feat;
@@ -989,35 +993,15 @@ class SkillFocusDialog extends foundry.applications.api.ApplicationV2 {
     this.resolvePromise = resolvePromise;
   }
 
-  _renderHTML(context, options) {
-    return `
-      <div class="form-group">
-        <label>Choose a trained skill to focus:</label>
-        <select id="skill-focus-selection" style="width: 100%; padding: 5px;">
-          ${this.skillOptions}
-        </select>
-        <p class="hint-text" style="margin-top: 10px;">
-          <i class="fas fa-circle-info"></i>
-          Skill Focus grants a +5 bonus to the selected skill.
-        </p>
-      </div>
-      <div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
-        <button class="btn btn-primary" data-action="select" style="margin-right: 0.5rem;">Select</button>
-        <button class="btn btn-secondary" data-action="cancel">Cancel</button>
-      </div>
-    `;
+  _prepareContext(options) {
+    return { skillOptions: this.skillOptions };
   }
 
-  _replaceHTML(result, content, options) {
-    result.innerHTML = '';
-    result.appendChild(content);
-  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const skillSelect = html.querySelector('#skill-focus-selection');
 
-  _onRender(context, options) {
-    super._onRender(context, options);
-    const skillSelect = this.element?.querySelector('#skill-focus-selection');
-
-    this.element?.querySelector('[data-action="select"]')?.addEventListener('click', async () => {
+    html.querySelector('[data-action="select"]')?.addEventListener('click', async () => {
       const selectedSkill = skillSelect?.value;
       if (!selectedSkill) {
         ui.notifications.warn('Please select a skill.');
@@ -1062,7 +1046,7 @@ class SkillFocusDialog extends foundry.applications.api.ApplicationV2 {
       this.close();
     });
 
-    this.element?.querySelector('[data-action="cancel"]')?.addEventListener('click', () => {
+    html.querySelector('[data-action="cancel"]')?.addEventListener('click', () => {
       ui.notifications.warn('Skill Focus feat cancelled.');
       if (this.resolvePromise) this.resolvePromise(false);
       this.close();

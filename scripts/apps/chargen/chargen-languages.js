@@ -509,53 +509,30 @@ class CustomLanguageDialog extends foundry.applications.api.ApplicationV2 {
     position: { width: 400, height: 'auto' }
   };
 
+  static PARTS = {
+    content: { template: 'systems/foundryvtt-swse/templates/apps/chargen-custom-language.hbs' }
+  };
+
   constructor(resolve) {
     super();
     this.resolveDialog = resolve;
   }
 
-  _renderHTML(context, options) {
-    return `
-      <div style="margin-bottom: 1rem;">
-        <p>Enter the name of your custom language:</p>
-        <p style="font-size: 0.9rem; color: #888; margin-top: 0.5rem;">
-          This is useful for homebrew campaigns or unique character backgrounds.
-        </p>
-      </div>
-      <div class="form-group">
-        <label for="custom-language-input">Language Name:</label>
-        <input
-          id="custom-language-input"
-          name="customLanguage"
-          type="text"
-          placeholder="e.g., Ancient Sith, Clan Dialect..."
-          autofocus
-          style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;"
-        />
-      </div>
-      <div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
-        <button class="btn btn-primary" data-action="ok" style="margin-right: 0.5rem;">OK</button>
-        <button class="btn btn-secondary" data-action="cancel">Cancel</button>
-      </div>
-    `;
+  _prepareContext(options) {
+    return {};
   }
 
-  _replaceHTML(result, content, options) {
-    result.innerHTML = '';
-    result.appendChild(content);
-  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const input = html.querySelector('#custom-language-input');
 
-  _onRender(context, options) {
-    super._onRender(context, options);
-    const input = this.element?.querySelector('#custom-language-input');
-
-    this.element?.querySelector('[data-action="ok"]')?.addEventListener('click', () => {
+    html.querySelector('[data-action="ok"]')?.addEventListener('click', () => {
       const value = input?.value?.trim();
       if (this.resolveDialog) this.resolveDialog(value || null);
       this.close();
     });
 
-    this.element?.querySelector('[data-action="cancel"]')?.addEventListener('click', () => {
+    html.querySelector('[data-action="cancel"]')?.addEventListener('click', () => {
       if (this.resolveDialog) this.resolveDialog(null);
       this.close();
     });
