@@ -6,7 +6,7 @@ import MentorReflectiveDialog from './mentor-reflective-dialog.js';
  * AppV2: Add Mentor button to ActorSheetV2 header.
  */
 export function registerMentorReflectiveInit() {
-  HooksRegistry.register('getHeaderControlsApplicationV2', 'swse-mentor-reflective', (app, controls) => {
+  HooksRegistry.register('getHeaderControlsApplicationV2', (app, controls) => {
     const actor = app?.actor ?? app?.document;
     if (!actor || actor.type !== 'character') {return;}
 
@@ -19,7 +19,7 @@ export function registerMentorReflectiveInit() {
       visible: () => true,
       onClick: () => new MentorReflectiveDialog(actor).render(true)
     });
-  });
+  }, { id: 'swse-mentor-reflective' });
 }
 
 export default registerMentorReflectiveInit;
