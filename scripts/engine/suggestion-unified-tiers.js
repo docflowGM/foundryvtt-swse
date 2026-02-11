@@ -212,3 +212,17 @@ export function getTierColor(tier) {
 export function compareTiers(tierA, tierB) {
   return tierB - tierA; // Higher tier first (6 > 5 > 4...)
 }
+
+/**
+ * Get all tier metadata (icon, label, color, description) for a given tier
+ * @param {number} tier - Tier number (0-6)
+ * @returns {Object} Metadata object with icon, label, color, description
+ */
+export function getTierMetadata(tier) {
+  return {
+    icon: UNIFIED_TIERS.ICONS[tier] || '◦',
+    label: UNIFIED_TIERS.LABELS[tier] || 'Unknown',
+    color: UNIFIED_TIERS.COLORS[tier] || UNIFIED_TIERS.COLORS[0],
+    description: UNIFIED_TIERS.DESCRIPTIONS[tier] || 'Available to select'
+  };
+}
