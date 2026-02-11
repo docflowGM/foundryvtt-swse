@@ -4,6 +4,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { LanguageRegistry } from '../../registries/language-registry.js';
+import { prompt } from '../../utils/ui-utils.js';
 
 async function _syncLanguageIds() {
   const names = Array.isArray(this.characterData.languages) ? this.characterData.languages : [];
@@ -401,33 +402,9 @@ export async function _onAddCustomLanguage(event) {
   }
 
   // Show dialog to enter custom language name
-  const customLanguage = await Dialog.prompt({
-    title: 'Add Custom Language',
-    content: `
-      <div style="margin-bottom: 1rem;">
-        <p>Enter the name of your custom language:</p>
-        <p style="font-size: 0.9rem; color: #888; margin-top: 0.5rem;">
-          This is useful for homebrew campaigns or unique character backgrounds.
-        </p>
-      </div>
-      <div class="form-group">
-        <label for="custom-language-input">Language Name:</label>
-        <input
-          id="custom-language-input"
-          name="customLanguage"
-          type="text"
-          placeholder="e.g., Ancient Sith, Clan Dialect..."
-          autofocus
-          style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;"
-        />
-      </div>
-    `,
-    callback: (html) => {
-      const input = html instanceof jQuery ? root.querySelector('input[name="customLanguage"]') : html.querySelector('input[name="customLanguage"]');
-      return input?.value?.trim();
-    },
-    rejectClose: false,
-    options: { width: 400 }
+  const customLanguage = await new Promise((resolve) => {
+    const dialog = new CustomLanguageDialog(resolve);
+    dialog.render(true);
   });
 
   // Check if user entered a language name
@@ -518,4 +495,73 @@ export function _bindLanguageCardUI(root) {
   };
 
   _applyLanguageCardFilters(step, initialQuery, initialCategory);
+}
+
+/**
+ * Custom Language Input Dialog (AppV2-based)
+ * Prompts user for a custom language name with explanatory text
+ */
+class CustomLanguageDialog extends foundry.applications.api.ApplicationV2 {
+  static DEFAULT_OPTIONS = {
+    id: 'swse-custom-language-dialog',
+    tag: 'div',
+    window: { icon: 'fas fa-language', title: 'Add Custom Language' },
+    position: { width: 400, height: 'auto' }
+  };
+
+  constructor(resolve) {
+    super();
+    this.resolveDialog = resolve;
+  }
+
+  _renderHTML(context, options) {
+    return `
+      <div style="margin-bottom: 1rem;">
+        <p>Enter the name of your custom language:</p>
+        <p style="font-size: 0.9rem; color: #888; margin-top: 0.5rem;">
+          This is useful for homebrew campaigns or unique character backgrounds.
+        </p>
+      </div>
+      <div class="form-group">
+        <label for="custom-language-input">Language Name:</label>
+        <input
+          id="custom-language-input"
+          name="customLanguage"
+          type="text"
+          placeholder="e.g., Ancient Sith, Clan Dialect..."
+          autofocus
+          style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;"
+        />
+      </div>
+      <div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
+        <button class="btn btn-primary" data-action="ok" style="margin-right: 0.5rem;">OK</button>
+        <button class="btn btn-secondary" data-action="cancel">Cancel</button>
+      </div>
+    `;
+  }
+
+  _onRender(context, options) {
+    super._onRender(context, options);
+    const input = this.element?.querySelector('#custom-language-input');
+
+    this.element?.querySelector('[data-action="ok"]')?.addEventListener('click', () => {
+      const value = input?.value?.trim();
+      if (this.resolveDialog) this.resolveDialog(value || null);
+      this.close();
+    });
+
+    this.element?.querySelector('[data-action="cancel"]')?.addEventListener('click', () => {
+      if (this.resolveDialog) this.resolveDialog(null);
+      this.close();
+    });
+
+    // Allow Enter to submit
+    input?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const value = input.value?.trim();
+        if (this.resolveDialog) this.resolveDialog(value || null);
+        this.close();
+      }
+    });
+  }
 }

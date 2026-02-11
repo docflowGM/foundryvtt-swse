@@ -5,6 +5,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { applyProgressionPatch } from '../../progression/engine/apply-progression-patch.js';
 import { buildSpeciesAtomicPatch } from './steps/species-step.js';
+import { confirm } from '../../utils/ui-utils.js';
 
 // Store the currently previewed species name for confirmation
 let _previewedSpeciesName = null;
@@ -314,7 +315,7 @@ export async function _onSelectSpecies(event) {
 
   // If changing species after initial selection, confirm with user
   if (this.characterData.species && this.characterData.species !== speciesKey) {
-    const confirmed = await Dialog.confirm({
+    const confirmed = await confirm({
       title: 'Change Species?',
       content: `
         <p>Changing your species will reset:</p>

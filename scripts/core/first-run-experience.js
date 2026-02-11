@@ -56,141 +56,173 @@ export async function resetWelcome() {
 }
 
 /**
+ * Welcome Dialog - AppV2 Implementation
+ */
+class WelcomeDialog extends foundry.applications.api.ApplicationV2 {
+  static DEFAULT_OPTIONS = {
+    id: 'swse-welcome-dialog',
+    tag: 'div',
+    window: { icon: 'fas fa-star', title: '⭐ Welcome to SWSE for Foundry VTT' },
+    position: { width: 600, height: 'auto' }
+  };
+
+  constructor(options = {}) {
+    super(options);
+    this.resolveDialog = null;
+  }
+
+  _renderHTML(context, options) {
+    return `
+      <style>
+        .swse-welcome {
+          font-family: var(--font-family);
+          line-height: 1.6;
+        }
+        .swse-welcome h2 {
+          color: var(--color-primary, #00e5ff);
+          margin-bottom: 1rem;
+        }
+        .swse-welcome h3 {
+          color: var(--color-text-alt, #aaa);
+          margin-top: 1.5rem;
+          margin-bottom: 0.5rem;
+          font-size: 1.1em;
+        }
+        .swse-welcome ul {
+          margin-left: 1.5rem;
+          margin-bottom: 1rem;
+        }
+        .swse-welcome li {
+          margin-bottom: 0.5rem;
+        }
+        .swse-welcome .section {
+          margin-bottom: 1.5rem;
+        }
+        .swse-welcome .tip {
+          padding: 0.75rem;
+          background: var(--color-bg-alt, #222);
+          border-left: 3px solid var(--color-primary, #00e5ff);
+          border-radius: 3px;
+          margin: 1rem 0;
+          font-size: 0.95em;
+        }
+        .swse-welcome .checkbox-group {
+          margin-top: 1.5rem;
+          padding-top: 1.5rem;
+          border-top: 1px solid var(--color-border, #444);
+        }
+        .swse-welcome .dialog-buttons {
+          margin-top: 1.5rem;
+          text-align: right;
+        }
+        .swse-welcome .dialog-buttons button {
+          margin-left: 0.5rem;
+        }
+      </style>
+
+      <div class="swse-welcome">
+        <h2>⭐ Welcome to Star Wars Saga Edition!</h2>
+
+        <div class="section">
+          <p>This system provides comprehensive support for SWSE gameplay on Foundry VTT v13+. Here's what you need to know:</p>
+        </div>
+
+        <div class="section">
+          <h3>🎭 Character Generation</h3>
+          <ul>
+            <li><strong>Guided Chargen:</strong> Use the Character Generation tool to build characters step-by-step</li>
+            <li><strong>Auto-Calculation:</strong> Attributes, skills, defenses, and BAB calculate automatically</li>
+            <li><strong>Mentor System:</strong> Get explanations and recommendations as you build</li>
+            <li><strong>Templates:</strong> Pre-built species, classes, and prestige classes available</li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          <strong>Tip:</strong> First-time GMs should read the Mentor system explanations—they explain SWSE rules in context.
+        </div>
+
+        <div class="section">
+          <h3>🎲 Combat & Progression</h3>
+          <ul>
+            <li><strong>Combat Resolution:</strong> Roll attacks and damage with automatic skill/feat calculations</li>
+            <li><strong>Level-Up System:</strong> Guided advancement with class feature recommendations</li>
+            <li><strong>Force Powers:</strong> Full Force power system with resource tracking</li>
+            <li><strong>Vehicles:</strong> Starship and vehicle rules with crew positions</li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          <strong>Tip:</strong> Hover over buttons and icons to see tooltips explaining each feature.
+        </div>
+
+        <div class="section">
+          <h3>📚 Core Concepts</h3>
+          <ul>
+            <li><strong>System Settings:</strong> Configure rules variants and house rules in System Settings</li>
+            <li><strong>Compendium Packs:</strong> All weapons, armor, feats, and talents are in compendium packs (searchable)</li>
+            <li><strong>Actions & Automation:</strong> Many combat actions are automated—click action buttons for quick resolution</li>
+            <li><strong>Destiny Points:</strong> Tracked per character; spend in combat for bonuses or rerolls</li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <h3>🔗 Get Help</h3>
+          <ul>
+            <li>Hover over UI elements for tooltips</li>
+            <li>Read the <a href="https://github.com/docflowGM/foundryvtt-swse" target="_blank">system documentation</a></li>
+            <li>Join the <a href="https://discord.gg/Sdwd7CgmaJ" target="_blank">community Discord</a></li>
+          </ul>
+        </div>
+
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="swse-no-welcome-again" />
+            Don't show this again
+          </label>
+        </div>
+
+        <div class="dialog-buttons">
+          <button class="btn btn-primary" data-action="got-it">
+            <i class="fas fa-check"></i> Got It!
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  _onRender(context, options) {
+    super._onRender(context, options);
+    this.activateListeners();
+  }
+
+  activateListeners() {
+    this.element?.querySelector('[data-action="got-it"]')?.addEventListener('click', async () => {
+      const checkbox = this.element?.querySelector('#swse-no-welcome-again');
+      const noAgain = checkbox?.checked || false;
+
+      if (noAgain) {
+        await markWelcomeShown();
+      }
+
+      // Start tooltip discovery after welcome closes
+      await initializeTooltipDiscovery();
+
+      if (this.resolveDialog) {
+        this.resolveDialog(true);
+      }
+
+      this.close();
+    });
+  }
+}
+
+/**
  * Show welcome dialog
  */
 async function showWelcomeDialog() {
-  const content = `
-    <style>
-      .swse-welcome {
-        font-family: var(--font-family);
-        line-height: 1.6;
-      }
-      .swse-welcome h2 {
-        color: var(--color-primary, #00e5ff);
-        margin-bottom: 1rem;
-      }
-      .swse-welcome h3 {
-        color: var(--color-text-alt, #aaa);
-        margin-top: 1.5rem;
-        margin-bottom: 0.5rem;
-        font-size: 1.1em;
-      }
-      .swse-welcome ul {
-        margin-left: 1.5rem;
-        margin-bottom: 1rem;
-      }
-      .swse-welcome li {
-        margin-bottom: 0.5rem;
-      }
-      .swse-welcome .section {
-        margin-bottom: 1.5rem;
-      }
-      .swse-welcome .tip {
-        padding: 0.75rem;
-        background: var(--color-bg-alt, #222);
-        border-left: 3px solid var(--color-primary, #00e5ff);
-        border-radius: 3px;
-        margin: 1rem 0;
-        font-size: 0.95em;
-      }
-      .swse-welcome .checkbox-group {
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid var(--color-border, #444);
-      }
-    </style>
-
-    <div class="swse-welcome">
-      <h2>⭐ Welcome to Star Wars Saga Edition!</h2>
-
-      <div class="section">
-        <p>This system provides comprehensive support for SWSE gameplay on Foundry VTT v13+. Here's what you need to know:</p>
-      </div>
-
-      <div class="section">
-        <h3>🎭 Character Generation</h3>
-        <ul>
-          <li><strong>Guided Chargen:</strong> Use the Character Generation tool to build characters step-by-step</li>
-          <li><strong>Auto-Calculation:</strong> Attributes, skills, defenses, and BAB calculate automatically</li>
-          <li><strong>Mentor System:</strong> Get explanations and recommendations as you build</li>
-          <li><strong>Templates:</strong> Pre-built species, classes, and prestige classes available</li>
-        </ul>
-      </div>
-
-      <div class="tip">
-        <strong>Tip:</strong> First-time GMs should read the Mentor system explanations—they explain SWSE rules in context.
-      </div>
-
-      <div class="section">
-        <h3>🎲 Combat & Progression</h3>
-        <ul>
-          <li><strong>Combat Resolution:</strong> Roll attacks and damage with automatic skill/feat calculations</li>
-          <li><strong>Level-Up System:</strong> Guided advancement with class feature recommendations</li>
-          <li><strong>Force Powers:</strong> Full Force power system with resource tracking</li>
-          <li><strong>Vehicles:</strong> Starship and vehicle rules with crew positions</li>
-        </ul>
-      </div>
-
-      <div class="tip">
-        <strong>Tip:</strong> Hover over buttons and icons to see tooltips explaining each feature.
-      </div>
-
-      <div class="section">
-        <h3>📚 Core Concepts</h3>
-        <ul>
-          <li><strong>System Settings:</strong> Configure rules variants and house rules in System Settings</li>
-          <li><strong>Compendium Packs:</strong> All weapons, armor, feats, and talents are in compendium packs (searchable)</li>
-          <li><strong>Actions & Automation:</strong> Many combat actions are automated—click action buttons for quick resolution</li>
-          <li><strong>Destiny Points:</strong> Tracked per character; spend in combat for bonuses or rerolls</li>
-        </ul>
-      </div>
-
-      <div class="section">
-        <h3>🔗 Get Help</h3>
-        <ul>
-          <li>Hover over UI elements for tooltips</li>
-          <li>Read the <a href="https://github.com/docflowGM/foundryvtt-swse" target="_blank">system documentation</a></li>
-          <li>Join the <a href="https://discord.gg/Sdwd7CgmaJ" target="_blank">community Discord</a></li>
-        </ul>
-      </div>
-
-      <div class="checkbox-group">
-        <label>
-          <input type="checkbox" id="swse-no-welcome-again" />
-          Don't show this again
-        </label>
-      </div>
-    </div>
-  `;
-
   return new Promise((resolve) => {
-    const dialog = new Dialog(
-      {
-        title: '⭐ Welcome to SWSE for Foundry VTT',
-        content,
-        buttons: {
-          ok: {
-            icon: '<i class="fas fa-check"></i>',
-            label: 'Got It!',
-            callback: async (html) => {
-              const noAgain = html.find('#swse-no-welcome-again').is(':checked');
-              if (noAgain) {
-                await markWelcomeShown();
-              }
-              // Start tooltip discovery after welcome closes
-              await initializeTooltipDiscovery();
-              resolve(true);
-            }
-          }
-        },
-        default: 'ok'
-      },
-      {
-        width: 600,
-        classes: ['swse-dialog', 'swse-welcome-dialog']
-      }
-    );
-
+    const dialog = new WelcomeDialog();
+    dialog.resolveDialog = resolve;
     dialog.render(true);
   });
 }

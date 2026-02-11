@@ -448,65 +448,7 @@ export class CharacterTemplates {
    */
   static async showTemplateDialog(onSelect) {
     const content = await this.renderTemplateSelection();
-
-    const dialog = new Dialog({
-      title: 'Character Template Selection',
-      content: content,
-      buttons: {}
-    }, {
-      width: 900,
-      height: 700,
-      classes: ['swse', 'template-selection-dialog']
-    });
-
-    // Hook into dialog opened event to bind native event listeners
-    const originalRender = dialog.render.bind(dialog);
-    dialog.render = async function(force = false, options = {}) {
-      const result = await originalRender(force, options);
-
-      // Get root element
-      const root = this.element;
-      if (!root) return result;
-
-      // Tab switching with native event listeners
-      root.querySelectorAll('.template-tab').forEach(tabBtn => {
-        tabBtn.addEventListener('click', (e) => {
-          const tab = tabBtn.dataset.tab;
-          root.querySelectorAll('.template-tab').forEach(el => el.classList.remove('active'));
-          tabBtn.classList.add('active');
-          root.querySelectorAll('.template-tab-content').forEach(el => el.style.display = 'none');
-          root.querySelectorAll(`.template-tab-content[data-tab="${tab}"]`).forEach(el => {
-            el.style.display = '';
-          });
-        });
-      });
-
-      // Template selection with native event listeners
-      root.querySelectorAll('.template-select-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const templateId = btn.dataset.templateId;
-          dialog.close();
-          onSelect(templateId);
-        });
-      });
-
-      // Custom build with native event listeners
-      root.querySelectorAll('.custom-build-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          dialog.close();
-          onSelect(null); // null means custom build
-        });
-      });
-
-      // Card hover effect with native listeners
-      root.querySelectorAll('.template-card').forEach(card => {
-        card.addEventListener('mouseenter', () => card.classList.add('hover'));
-        card.addEventListener('mouseleave', () => card.classList.remove('hover'));
-      });
-
-      return result;
-    };
-
+    const dialog = new TemplateSelectionDialog(content, onSelect);
     dialog.render(true);
   }
 
@@ -824,6 +766,71 @@ export class CharacterTemplates {
     });
 
     ui.notifications.info(`Character created from template: ${templateData.name}`);
+  }
+}
+
+/**
+ * Template Selection Dialog (AppV2-based)
+ * Displays template options with tabbed interface and selection buttons
+ */
+class TemplateSelectionDialog extends foundry.applications.api.ApplicationV2 {
+  static DEFAULT_OPTIONS = {
+    id: 'swse-template-selection-dialog',
+    tag: 'div',
+    window: { icon: 'fas fa-clipboard-list', title: 'Character Template Selection' },
+    position: { width: 900, height: 700 }
+  };
+
+  constructor(content, onSelect) {
+    super();
+    this.templateContent = content;
+    this.onSelect = onSelect;
+  }
+
+  _renderHTML(context, options) {
+    return this.templateContent;
+  }
+
+  _onRender(context, options) {
+    super._onRender(context, options);
+    const root = this.element;
+    if (!root) return;
+
+    // Tab switching
+    root.querySelectorAll('.template-tab').forEach(tabBtn => {
+      tabBtn.addEventListener('click', (e) => {
+        const tab = tabBtn.dataset.tab;
+        root.querySelectorAll('.template-tab').forEach(el => el.classList.remove('active'));
+        tabBtn.classList.add('active');
+        root.querySelectorAll('.template-tab-content').forEach(el => el.style.display = 'none');
+        root.querySelectorAll(`.template-tab-content[data-tab="${tab}"]`).forEach(el => {
+          el.style.display = '';
+        });
+      });
+    });
+
+    // Template selection
+    root.querySelectorAll('.template-select-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const templateId = btn.dataset.templateId;
+        if (this.onSelect) this.onSelect(templateId);
+        this.close();
+      });
+    });
+
+    // Custom build
+    root.querySelectorAll('.custom-build-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        if (this.onSelect) this.onSelect(null);
+        this.close();
+      });
+    });
+
+    // Hover effects
+    root.querySelectorAll('.template-card').forEach(card => {
+      card.addEventListener('mouseenter', () => card.classList.add('hover'));
+      card.addEventListener('mouseleave', () => card.classList.remove('hover'));
+    });
   }
 }
 

@@ -15,6 +15,7 @@ import {
 import { MentorSurvey } from '../mentor/mentor-survey.js';
 import { isBaseClass } from '../levelup/levelup-shared.js';
 import { _findItemByIdOrName } from './chargen-shared.js';
+import { confirm } from '../../utils/ui-utils.js';
 
 // SSOT Data Layer
 import { ClassesDB } from '../../data/classes-db.js';
@@ -35,7 +36,7 @@ export async function _onSelectClass(event) {
     SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Current class: "${currentClass}"`);
     if (currentClass !== className) {
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Class change detected, requesting user confirmation...`);
-      const confirmed = await Dialog.confirm({
+      const confirmed = await confirm({
         title: 'Change Class?',
         content: `
           <p>Changing your class will reset:</p>
