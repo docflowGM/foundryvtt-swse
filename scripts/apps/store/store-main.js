@@ -45,7 +45,7 @@ import {
   createCustomStarship
 } from './store-checkout.js';
 
-const { ApplicationV2 } = foundry.applications.api;
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 const CART_FLAG_SCOPE = 'foundryvtt-swse';
 const CART_FLAG_KEY = 'storeCart';
@@ -58,7 +58,7 @@ function asArray(v) {
   return Array.isArray(v) ? v : [];
 }
 
-export class SWSEStore extends ApplicationV2 {
+export class SWSEStore extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static DEFAULT_OPTIONS = {
     id: 'swse-store',
@@ -109,9 +109,6 @@ export class SWSEStore extends ApplicationV2 {
       skipOverlay
     });
   }
-
-  // NOTE: V2 API - Do NOT override _renderHTML or _replaceHTML
-  // Initialization is handled in _prepareContext which is the correct V2 pattern
 
   async _prepareContext(_options) {
     if (!this._loaded) {await this._initialize();}
