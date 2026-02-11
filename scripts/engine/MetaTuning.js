@@ -13,7 +13,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
-import SWSEFormApplication from '../apps/base/swse-form-application.js';
+import SWSEFormApplicationV2 from '../apps/base/swse-form-application-v2.js';
 
 // ──────────────────────────────────────────────────────────────
 // DEFAULT META TUNING VALUES
@@ -236,10 +236,10 @@ export function registerMetaTuningSettings() {
 /**
  * Meta Tuning Configuration Application
  */
-export class MetaTuningConfig extends SWSEFormApplication {
+export class MetaTuningConfig extends SWSEFormApplicationV2 {
 
     static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-        SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+        SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
         {
             id: 'swse-meta-tuning-config',
             classes: ['swse', 'swse-app', 'meta-tuning-config'],

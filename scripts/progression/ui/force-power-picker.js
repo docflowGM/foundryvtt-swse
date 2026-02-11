@@ -2,9 +2,9 @@
  * force-power-picker.js
  * Simple, clean Force Power picker UI using FormApplication + HBS template.
  */
-import SWSEFormApplication from '../../apps/base/swse-form-application.js';
+import SWSEFormApplicationV2 from '../../apps/base/swse-form-application-v2.js';
 
-export class ForcePowerPicker extends SWSEFormApplication {
+export class ForcePowerPicker extends SWSEFormApplicationV2 {
   /**
    * Helper: open a picker and return the selected powers.
    */
@@ -28,7 +28,7 @@ export class ForcePowerPicker extends SWSEFormApplication {
    * Default window configuration for the Force Power Picker.
    */
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
     {
       id: 'force-power-picker',
       classes: ['swse-app', 'force-power-picker'],

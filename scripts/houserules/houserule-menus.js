@@ -4,7 +4,7 @@
  * Includes safety, sanitation, error handling, and maintainability improvements.
  */
 
-import SWSEFormApplication from '../apps/base/swse-form-application.js';
+import SWSEFormApplicationV2 from '../apps/base/swse-form-application-v2.js';
 
 const NAMESPACE = 'foundryvtt-swse';
 
@@ -42,9 +42,9 @@ function _num(v) {
 /*                         CHARACTER CREATION MENU                             */
 /* ========================================================================== */
 
-export class CharacterCreationMenu extends SWSEFormApplication {
+export class CharacterCreationMenu extends SWSEFormApplicationV2 {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
     {
       id: 'swse-character-creation-menu',
       title: 'Character Creation Rules',
@@ -85,9 +85,9 @@ async _prepareContext(options) {
 /*                              ADVANCEMENT MENU                               */
 /* ========================================================================== */
 
-export class AdvancementMenu extends SWSEFormApplication {
+export class AdvancementMenu extends SWSEFormApplicationV2 {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
     {
       id: 'swse-advancement-menu',
       title: 'Advancement Rules',
@@ -145,9 +145,9 @@ export class AdvancementMenu extends SWSEFormApplication {
 /*                                COMBAT MENU                                 */
 /* ========================================================================== */
 
-export class CombatMenu extends SWSEFormApplication {
+export class CombatMenu extends SWSEFormApplicationV2 {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
     {
       id: 'swse-combat-menu',
       title: 'Combat Rules',
@@ -267,9 +267,9 @@ export class CombatMenu extends SWSEFormApplication {
 /*                                FORCE MENU                                  */
 /* ========================================================================== */
 
-export class ForceMenu extends SWSEFormApplication {
+export class ForceMenu extends SWSEFormApplicationV2 {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
     {
       id: 'swse-force-menu',
       title: 'Force & Destiny Rules',
@@ -299,9 +299,9 @@ export class ForceMenu extends SWSEFormApplication {
 /*                               PRESETS MENU                                 */
 /* ========================================================================== */
 
-export class PresetsMenu extends SWSEFormApplication {
+export class PresetsMenu extends SWSEFormApplicationV2 {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
     {
       id: 'swse-presets-menu',
       title: 'Houserule Presets',
@@ -411,9 +411,9 @@ export class PresetsMenu extends SWSEFormApplication {
 /*                        SKILLS & FEATS MENU                                 */
 /* ========================================================================== */
 
-export class SkillsFeatsMenu extends SWSEFormApplication {
+export class SkillsFeatsMenu extends SWSEFormApplicationV2 {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
     {
       id: 'swse-skills-feats-menu',
       title: 'Skills & Feats Rules',
@@ -445,9 +445,9 @@ export class SkillsFeatsMenu extends SWSEFormApplication {
 /*                         SPACE COMBAT MENU                                  */
 /* ========================================================================== */
 
-export class SpaceCombatMenu extends SWSEFormApplication {
+export class SpaceCombatMenu extends SWSEFormApplicationV2 {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
     {
       id: 'swse-space-combat-menu',
       title: 'Space Combat Rules',
@@ -536,9 +536,9 @@ export class SpaceCombatMenu extends SWSEFormApplication {
 /*                        CHARACTER RESTRICTIONS MENU                         */
 /* ========================================================================== */
 
-export class CharacterRestrictionsMenu extends SWSEFormApplication {
+export class CharacterRestrictionsMenu extends SWSEFormApplicationV2 {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
     {
       id: 'swse-character-restrictions-menu',
       title: 'Character Creation - Restrictions & Backgrounds',

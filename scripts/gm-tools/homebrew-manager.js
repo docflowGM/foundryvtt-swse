@@ -1,5 +1,5 @@
 import { SWSELogger } from '../utils/logger.js';
-import SWSEFormApplication from '../apps/base/swse-form-application.js';
+import SWSEFormApplicationV2 from '../apps/base/swse-form-application-v2.js';
 /**
  * GM Homebrew Management
  * Central system for custom rules and options
@@ -128,9 +128,9 @@ export class SWSEHomebrewManager {
 /**
  * Homebrew Manager Application
  */
-class HomebrewManagerApp extends SWSEFormApplication {
+class HomebrewManagerApp extends SWSEFormApplicationV2 {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
     {
       id: 'homebrew-manager',
       title: 'SWSE Homebrew Manager',

@@ -2,9 +2,9 @@
  * starship-maneuver-picker.js
  * Starship Maneuver picker UI using FormApplication + HBS template.
  */
-import SWSEFormApplication from '../../apps/base/swse-form-application.js';
+import SWSEFormApplicationV2 from '../../apps/base/swse-form-application-v2.js';
 
-export class StarshipManeuverPicker extends SWSEFormApplication {
+export class StarshipManeuverPicker extends SWSEFormApplicationV2 {
   /**
    * Helper: open a picker and return the selected maneuvers.
    */
@@ -26,7 +26,7 @@ export class StarshipManeuverPicker extends SWSEFormApplication {
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
     {
       id: 'starship-maneuver-picker',
       classes: ['swse-app', 'starship-maneuver-picker'],

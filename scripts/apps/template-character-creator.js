@@ -1,4 +1,4 @@
-import SWSEFormApplication from './base/swse-form-application.js';
+import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';
 import { ProgressionEngine } from '../progression/engine/progression-engine.js';
 import { createActor } from '../core/document-api-v13.js';
 // ============================================
@@ -15,7 +15,7 @@ const TEMPLATE_PATH = 'systems/foundryvtt-swse/templates/apps/template-creator.h
 /**
  * Creates a character from a template with class-first selection
  */
-export class TemplateCharacterCreator extends SWSEFormApplication {
+export class TemplateCharacterCreator extends SWSEFormApplicationV2 {
 
   constructor(options = {}) {
     super(options);
@@ -32,7 +32,7 @@ export class TemplateCharacterCreator extends SWSEFormApplication {
     this.mentorDialogues = null;
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(SWSEFormApplication.DEFAULT_OPTIONS ?? {}, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}, {
     classes: ['swse', 'template-creator', 'swse-app'],
     template: TEMPLATE_PATH,
     width: 1000,
