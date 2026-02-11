@@ -39,6 +39,11 @@ class ConfirmDialog extends foundry.applications.api.ApplicationV2 {
             </div>`;
     }
 
+    _replaceHTML(result, content, options) {
+        result.innerHTML = '';
+        result.appendChild(content);
+    }
+
     _onRender(context, options) {
         super._onRender(context, options);
         this.element?.querySelector('[data-action="yes"]')?.addEventListener('click', () => {
@@ -91,6 +96,11 @@ class PromptDialog extends foundry.applications.api.ApplicationV2 {
         </div>`;
     }
 
+    _replaceHTML(result, content, options) {
+        result.innerHTML = '';
+        result.appendChild(content);
+    }
+
     _onRender(context, options) {
         super._onRender(context, options);
         this.element?.querySelector('[data-action="ok"]')?.addEventListener('click', () => {
@@ -140,6 +150,11 @@ class CustomDialog extends foundry.applications.api.ApplicationV2 {
             <div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
                 ${buttonHTML}
             </div>`;
+    }
+
+    _replaceHTML(result, content, options) {
+        result.innerHTML = '';
+        result.appendChild(content);
     }
 
     _onRender(context, options) {

@@ -222,6 +222,11 @@ class FollowerTemplateSelectionDialog extends foundry.applications.api.Applicati
         `;
     }
 
+    _replaceHTML(result, content, options) {
+        result.innerHTML = '';
+        result.appendChild(content);
+    }
+
     _onRender(context, options) {
         super._onRender(context, options);
         this.activateListeners();
@@ -455,6 +460,11 @@ class TalentSelectionDialog extends foundry.applications.api.ApplicationV2 {
                 </button>
             </div>
         `;
+    }
+
+    _replaceHTML(result, content, options) {
+        result.innerHTML = '';
+        result.appendChild(content);
     }
 
     _onRender(context, options) {
