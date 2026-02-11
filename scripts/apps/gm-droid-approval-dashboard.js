@@ -192,7 +192,7 @@ export class GMDroidApprovalDashboard extends HandlebarsApplicationMixin(Applica
           reject: {
             label: 'Reject',
             callback: (html) => {
-              rejectionReason = html.find('#rejection-reason').val() || 'No reason provided.';
+              rejectionReason = html.querySelector('#rejection-reason').value || 'No reason provided.';
               resolve();
             }
           },

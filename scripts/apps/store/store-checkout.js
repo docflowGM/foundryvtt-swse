@@ -1085,7 +1085,7 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
                     select: {
                         label: 'Select',
                         callback: (html) => {
-                            selectedTemplateId = html.find('#template-select').val();
+                            selectedTemplateId = html.querySelector('#template-select').value;
                             resolve();
                         }
                     },
