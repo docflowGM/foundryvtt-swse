@@ -324,7 +324,6 @@ export class ForceOptionSuggestionEngine {
           icon: tierMetadata.icon,
           color: tierMetadata.color,
           label: tierMetadata.label
-          icon: ''
         },
         isSuggested: false
       }));
