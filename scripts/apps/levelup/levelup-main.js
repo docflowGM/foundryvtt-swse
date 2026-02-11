@@ -96,7 +96,7 @@ import { showPrestigeRoadmap } from './prestige-roadmap.js';
 import { showGMDebugPanel } from './debug-panel.js';
 import { PathPreview } from '../../engine/PathPreview.js';
 import { findActiveSynergies } from '../../engine/CommunityMetaSynergies.js';
-import { MentorSuggestionVoice } from '../mentor/mentor-suggestion-voice.js';
+import { MentorSuggestionVoice } from '../../mentor/mentor-suggestion-voice.js';
 import { MentorSuggestionDialog } from '../mentor/mentor-suggestion-dialog.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';

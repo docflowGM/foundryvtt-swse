@@ -16,7 +16,7 @@
 
 import { SWSERoll } from '../../rolls/enhanced-rolls.js';
 import { computeDogfightingModifier } from './vehicle-calculations.js';
-import { createChatMessage } from '../../../../core/document-api-v13.js';
+import { createChatMessage } from '../../../core/document-api-v13.js';
 import { measureSquares, facingTowards } from './vehicle-shared.js';
 
 export class SWSEDogfighting {
