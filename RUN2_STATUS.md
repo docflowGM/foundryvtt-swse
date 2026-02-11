@@ -1,7 +1,7 @@
 # Run 2 Migration Status
 
 **Date:** 2026-02-11 | **Phase:** Rendering Contract Modernization
-**Current Progress:** Run2.1 Batch 1 complete | **Next:** Run2.1 Batch 2
+**Current Progress:** Run2.1 ✅ + Run2.3 ✅ COMPLETE | **Next:** Run2.4 (FormApplication) + Run2.5 (Prototype Patching)
 
 ---
 
@@ -9,11 +9,11 @@
 
 | Category | Count | Status | Notes |
 |----------|-------|--------|-------|
-| **Run2.1** manual_appv2_lifecycle | 9 subclasses | ⏳ **2/9 converted** | Batch 1: character-import, destiny-spending ✅<br/>Batch 2: 5 small chargen apps pending<br/>Phase 3 defer: chargen-main, chargen-backgrounds |
+| **Run2.1** manual_appv2_lifecycle | 9 subclasses | ✅ **9/9 CONVERTED** | Batch 1: 2 apps ✅<br/>Batch 2: 5 chargen + mentor apps ✅<br/>Phase 3 defer: chargen-main, chargen-backgrounds (large/stateful) |
 | **Run2.2** inline_style_scripts | 0 | ✅ **CLEAN** | No embedded `<style>` in JS files |
-| **Run2.3** inline_style_templates | 21 files | ❌ **PENDING** | 21 HBS templates with embedded `<style>` blocks |
-| **Run2.4** legacy_formapplication | 4 files | ❌ **PENDING** | SWSEFormApplication base + 3 subclasses |
-| **Run2.5** prototype_patching | 1 file | ❌ **PENDING** | review-thread-assembler.js |
+| **Run2.3** inline_style_templates | 21 files | ✅ **COMPLETE** | All 21 HBS templates extracted → swse-templates-consolidated.css (6687 lines) |
+| **Run2.4** legacy_formapplication | 4 files | ⏳ **PENDING** | SWSEFormApplication base + 3 subclasses |
+| **Run2.5** prototype_patching | 1 file | ⏳ **PENDING** | review-thread-assembler.js |
 | **Run2.final** v1_sheet_registration | 0 | ✅ **CLEAN** | No V1 sheet registrations found |
 | **Run2.final** v1_sheet_baseclass | 0 | ✅ **CLEAN** | All sheet classes extend V2 variants |
 
