@@ -10,7 +10,7 @@
  */
 
 import { SPECIES_TRAIT_TYPES, BONUS_TARGETS, CONDITIONS, SKILL_DISPLAY_NAMES } from './species-trait-types.js';
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 
 /**
  * Main Species Trait Engine class
