@@ -78,6 +78,7 @@ import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks 
 
 // ---- phase 3 contracts ----
 import { DiagnosticMode } from './scripts/contracts/diagnostic-mode.js';
+import { initializeV2RenderGuard } from './scripts/core/v2-render-guard.js';
 
 // ---- logging / perf ----
 import { swseLogger } from './scripts/utils/logger.js';
@@ -204,6 +205,9 @@ Hooks.once('init', async () => {
   foundry.documents.collections.Actors.registerSheet('swse', SWSEV2DroidSheet, { types: ['droid'], makeDefault: true });
   foundry.documents.collections.Actors.registerSheet('swse', SWSEV2VehicleSheet, { types: ['vehicle'], makeDefault: true });
   foundry.documents.collections.Items.registerSheet('swse', SWSEItemSheet, { makeDefault: true });
+
+  /* ---------- PHASE 3: Structural Enforcement Layer ---------- */
+  await initializeV2RenderGuard();
 
   swseLogger.log('SWSE | Init complete');
 });
