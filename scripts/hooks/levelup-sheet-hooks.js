@@ -38,7 +38,7 @@ async function onClickLevelUp(app) {
 }
 
 export function registerLevelUpSheetHooks() {
-  HooksRegistry.register('getHeaderControlsApplicationV2', 'swse-levelup', (app, controls) => {
+  HooksRegistry.register('getHeaderControlsApplicationV2', (app, controls) => {
     const actor = app?.actor ?? app?.document;
     if (!actor || actor.documentName !== 'Actor') {return;}
     if (actor.type !== 'character' && actor.type !== 'npc') {return;}
@@ -53,7 +53,7 @@ export function registerLevelUpSheetHooks() {
       visible: () => (actor.type === 'npc' ? (game.user?.isGM ?? false) : true),
       onClick: () => onClickLevelUp(app)
     });
-  });
+  }, { id: 'swse-levelup' });
 
   SWSELogger.log('Level-up header controls registered (V2)');
 }
