@@ -147,98 +147,129 @@ export function initializeFollowerHooks() {
 }
 
 /**
+ * Follower Template Selection Dialog - AppV2
+ */
+class FollowerTemplateSelectionDialog extends foundry.applications.api.ApplicationV2 {
+    static DEFAULT_OPTIONS = {
+        id: 'follower-template-selection-dialog',
+        tag: 'div',
+        window: { icon: 'fas fa-users', title: 'Choose Follower Template' },
+        position: { width: 600, height: 'auto' }
+    };
+
+    constructor(actor, grantingTalent, talentConfig, templates, resolve) {
+        super({ window: { title: `Choose Follower Template - ${grantingTalent.name}` } });
+        this.actor = actor;
+        this.grantingTalent = grantingTalent;
+        this.talentConfig = talentConfig;
+        this.templates = templates;
+        this.resolveDialog = resolve;
+    }
+
+    _renderHTML(context, options) {
+        const templateChoices = this.talentConfig.templateChoices.map(type => {
+            const template = this.templates[type];
+            return `
+                <div class="follower-template-option">
+                    <input type="radio" name="templateType" value="${type}" id="template-${type}" required>
+                    <label for="template-${type}">
+                        <strong>${template.name}</strong>
+                        <p>${template.description}</p>
+                    </label>
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <form>
+                <div class="form-group">
+                    <h3>Choose Follower Template</h3>
+                    ${templateChoices}
+                </div>
+            </form>
+            <div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
+                <button class="btn btn-primary" data-action="create" style="margin-right: 0.5rem;">
+                    <i class="fas fa-check"></i> Continue
+                </button>
+                <button class="btn btn-secondary" data-action="cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+            <style>
+                .follower-template-option {
+                    margin: 10px 0;
+                    padding: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                }
+                .follower-template-option input[type="radio"] {
+                    margin-right: 10px;
+                }
+                .follower-template-option label {
+                    cursor: pointer;
+                    display: block;
+                }
+                .follower-template-option p {
+                    margin: 5px 0 0 24px;
+                    font-size: 0.9em;
+                    color: #666;
+                }
+                .follower-template-option:has(input:checked) {
+                    background: #e8f4f8;
+                    border-color: #2c5f7c;
+                }
+            </style>
+        `;
+    }
+
+    _onRender(context, options) {
+        super._onRender(context, options);
+        this.activateListeners();
+    }
+
+    activateListeners() {
+        this.element?.querySelector('[data-action="create"]')?.addEventListener('click', async () => {
+            const formData = new FormData(this.element?.querySelector('form'));
+            const templateType = formData.get('templateType');
+
+            if (!templateType) {
+                ui.notifications.error('Please select a follower template.');
+                return;
+            }
+
+            // Create the follower
+            const follower = await FollowerCreator.createFollower(
+                this.actor,
+                templateType,
+                this.grantingTalent
+            );
+
+            if (this.resolveDialog) this.resolveDialog(follower);
+            this.close();
+        });
+
+        this.element?.querySelector('[data-action="cancel"]')?.addEventListener('click', () => {
+            if (this.resolveDialog) this.resolveDialog(null);
+            this.close();
+        });
+    }
+}
+
+/**
  * Show template selection dialog for follower
  */
 async function showFollowerTemplateSelection(actor, grantingTalent, talentConfig) {
     const templates = await FollowerCreator.getFollowerTemplates();
 
-    // Build template choice HTML
-    const templateChoices = talentConfig.templateChoices.map(type => {
-        const template = templates[type];
-        return `
-            <div class="follower-template-option">
-                <input type="radio" name="templateType" value="${type}" id="template-${type}" required>
-                <label for="template-${type}">
-                    <strong>${template.name}</strong>
-                    <p>${template.description}</p>
-                </label>
-            </div>
-        `;
-    }).join('');
-
-    const html = `
-        <form>
-            <div class="form-group">
-                <h3>Choose Follower Template</h3>
-                ${templateChoices}
-            </div>
-        </form>
-        <style>
-            .follower-template-option {
-                margin: 10px 0;
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-            }
-            .follower-template-option input[type="radio"] {
-                margin-right: 10px;
-            }
-            .follower-template-option label {
-                cursor: pointer;
-                display: block;
-            }
-            .follower-template-option p {
-                margin: 5px 0 0 24px;
-                font-size: 0.9em;
-                color: #666;
-            }
-            .follower-template-option:has(input:checked) {
-                background: #e8f4f8;
-                border-color: #2c5f7c;
-            }
-        </style>
-    `;
-
     return new Promise((resolve) => {
-        new Dialog({
-            title: `Choose Follower Template - ${grantingTalent.name}`,
-            content: html,
-            buttons: {
-                create: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: 'Continue',
-                    callback: async (html) => {
-                        const root = html instanceof HTMLElement ? html : html?.[0];
-                        const formData = new FormData(root.querySelector('form'));
-                        const templateType = formData.get('templateType');
-
-                        if (!templateType) {
-                            ui.notifications.error('Please select a follower template.');
-                            resolve(null);
-                            return;
-                        }
-
-                        // Create the follower
-                        const follower = await FollowerCreator.createFollower(
-                            actor,
-                            templateType,
-                            grantingTalent
-                        );
-
-                        resolve(follower);
-                    }
-                },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: 'Cancel',
-                    callback: () => resolve(null)
-                }
-            },
-            default: 'create'
-        }, {
-            width: 600,
-            classes: ['swse-dialog', 'follower-template-selection-dialog']
-        }).render(true);
+        const dialog = new FollowerTemplateSelectionDialog(
+            actor,
+            grantingTalent,
+            talentConfig,
+            templates,
+            resolve
+        );
+        dialog.render(true);
     });
 }
 
@@ -389,44 +420,71 @@ function addFollowerManagementUI(html, actor, followerTalents) {
 }
 
 /**
+ * Talent Selection Dialog - AppV2
+ */
+class TalentSelectionDialog extends foundry.applications.api.ApplicationV2 {
+    static DEFAULT_OPTIONS = {
+        id: 'talent-selection-dialog',
+        tag: 'div',
+        window: { icon: 'fas fa-list', title: 'Select Talent' },
+        position: { width: 500, height: 'auto' }
+    };
+
+    constructor(talents, resolve) {
+        super();
+        this.talents = talents;
+        this.resolveDialog = resolve;
+    }
+
+    _renderHTML(context, options) {
+        return `
+            <form>
+                <div class="form-group">
+                    <label>Which talent do you want to use to create this follower?</label>
+                    <select name="talentId" required style="width: 100%; padding: 0.5rem;">
+                        ${this.talents.map(t => `<option value="${t.id}">${t.name}</option>`).join('')}
+                    </select>
+                </div>
+            </form>
+            <div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
+                <button class="btn btn-primary" data-action="select" style="margin-right: 0.5rem;">
+                    <i class="fas fa-check"></i> Select
+                </button>
+                <button class="btn btn-secondary" data-action="cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        `;
+    }
+
+    _onRender(context, options) {
+        super._onRender(context, options);
+        this.activateListeners();
+    }
+
+    activateListeners() {
+        this.element?.querySelector('[data-action="select"]')?.addEventListener('click', () => {
+            const formData = new FormData(this.element?.querySelector('form'));
+            const talentId = formData.get('talentId');
+            const talent = this.talents.find(t => t.id === talentId);
+            if (this.resolveDialog) this.resolveDialog(talent);
+            this.close();
+        });
+
+        this.element?.querySelector('[data-action="cancel"]')?.addEventListener('click', () => {
+            if (this.resolveDialog) this.resolveDialog(null);
+            this.close();
+        });
+    }
+}
+
+/**
  * Select which talent to use for creating a follower
  */
 async function selectFollowerTalent(talents) {
-    const html = `
-        <form>
-            <div class="form-group">
-                <label>Which talent do you want to use to create this follower?</label>
-                <select name="talentId" required>
-                    ${talents.map(t => `<option value="${t.id}">${t.name}</option>`).join('')}
-                </select>
-            </div>
-        </form>
-    `;
-
     return new Promise((resolve) => {
-        new Dialog({
-            title: 'Select Talent',
-            content: html,
-            buttons: {
-                select: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: 'Select',
-                    callback: (html) => {
-                        const root = html instanceof HTMLElement ? html : html?.[0];
-                        const formData = new FormData(root.querySelector('form'));
-                        const talentId = formData.get('talentId');
-                        const talent = talents.find(t => t.id === talentId);
-                        resolve(talent);
-                    }
-                },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: 'Cancel',
-                    callback: () => resolve(null)
-                }
-            },
-            default: 'select'
-        }).render(true);
+        const dialog = new TalentSelectionDialog(talents, resolve);
+        dialog.render(true);
     });
 }
 

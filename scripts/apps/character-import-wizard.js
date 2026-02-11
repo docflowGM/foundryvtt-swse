@@ -1,44 +1,24 @@
 /**
  * Character Import Wizard
  * Allows players to import characters from .json or .txt files
+ * AppV2-based implementation
  */
 
 import { createActor, createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
 
-export class CharacterImportWizard extends Dialog {
+export class CharacterImportWizard extends foundry.applications.api.ApplicationV2 {
+  static DEFAULT_OPTIONS = {
+    id: 'character-import-wizard',
+    tag: 'div',
+    window: { icon: 'fas fa-upload', title: 'Import Character' },
+    position: { width: 600, height: 'auto' }
+  };
+
   constructor(options = {}) {
-    const dialogData = {
-      title: 'Import Character',
-      content: CharacterImportWizard.getTemplate(),
-      buttons: {
-        import: {
-          icon: '<i class="fas fa-upload"></i>',
-          label: 'Import',
-          callback: html => this._processImport(html)
-        },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: 'Cancel'
-        }
-      },
-      default: 'import'
-    };
-
-    super(dialogData, options);
+    super(options);
   }
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['swse', 'dialog', 'character-import'],
-      width: 600,
-      height: 'auto'
-    });
-  }
-
-  /**
-   * Generate the HTML template for the import dialog
-   */
-  static getTemplate() {
+  _renderHTML(context, options) {
     return `
       <div class="character-import-wizard">
         <div class="form-group">
@@ -82,76 +62,95 @@ export class CharacterImportWizard extends Dialog {
           <h3>Preview:</h3>
           <div class="preview-content"></div>
         </div>
+
+        <div class="import-buttons">
+          <button class="btn btn-primary" data-action="import">
+            <i class="fas fa-upload"></i> Import
+          </button>
+          <button class="btn btn-secondary" data-action="cancel">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+
+        <style>
+          .character-import-wizard {
+            padding: 10px;
+          }
+          .character-import-wizard .form-group {
+            margin-bottom: 15px;
+          }
+          .character-import-wizard label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+          }
+          .character-import-wizard input[type="file"],
+          .character-import-wizard select,
+          .character-import-wizard textarea {
+            width: 100%;
+            padding: 5px;
+          }
+          .character-import-wizard .hint {
+            font-size: 0.9em;
+            font-style: italic;
+            color: #666;
+            margin-top: 5px;
+          }
+          .character-import-wizard .import-preview {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+          }
+          .character-import-wizard .preview-content {
+            font-size: 0.9em;
+          }
+          .character-import-wizard .import-buttons {
+            margin-top: 15px;
+            text-align: right;
+          }
+          .character-import-wizard .import-buttons button {
+            margin-left: 0.5rem;
+          }
+        </style>
       </div>
-
-      <style>
-        .character-import-wizard {
-          padding: 10px;
-        }
-        .character-import-wizard .form-group {
-          margin-bottom: 15px;
-        }
-        .character-import-wizard label {
-          display: block;
-          margin-bottom: 5px;
-          font-weight: bold;
-        }
-        .character-import-wizard input[type="file"],
-        .character-import-wizard select,
-        .character-import-wizard textarea {
-          width: 100%;
-          padding: 5px;
-        }
-        .character-import-wizard .hint {
-          font-size: 0.9em;
-          font-style: italic;
-          color: #666;
-          margin-top: 5px;
-        }
-        .character-import-wizard .import-preview {
-          margin-top: 15px;
-          padding: 10px;
-          background: rgba(0, 0, 0, 0.1);
-          border-radius: 4px;
-        }
-        .character-import-wizard .preview-content {
-          font-size: 0.9em;
-        }
-      </style>
-
     `;
   }
 
-  activateListeners(html) {
-    const root = html?.[0] ?? html;
-    super.activateListeners(html);
+  _onRender(context, options) {
+    super._onRender(context, options);
+    this.activateListeners();
+  }
+
+  activateListeners() {
+    const root = this.element;
 
     // Method toggle
-    root.querySelector('#import-method').addEventListener('change', (e) => {
+    root?.querySelector('#import-method')?.addEventListener('change', (e) => {
       const method = e.target.value;
       const fileSection = root.querySelector('.file-upload-section');
       const pasteSection = root.querySelector('.paste-section');
 
       if (method === 'file') {
-        if (fileSection) {fileSection.style.display = '';}
-        if (pasteSection) {pasteSection.style.display = 'none';}
+        if (fileSection) fileSection.style.display = '';
+        if (pasteSection) pasteSection.style.display = 'none';
       } else {
-        if (fileSection) {fileSection.style.display = 'none';}
-        if (pasteSection) {pasteSection.style.display = '';}
+        if (fileSection) fileSection.style.display = 'none';
+        if (pasteSection) pasteSection.style.display = '';
       }
     });
 
     // File preview
-    const fileInput = root.querySelector('#character-file');
+    const fileInput = root?.querySelector('#character-file');
     fileInput?.addEventListener('change', async (e) => {
       const file = e.target.files?.[0];
-      if (!file) {return;}
+      if (!file) return;
 
       const reader = new FileReader();
       reader.onload = (event) => {
         try {
           const data = JSON.parse(event.target.result);
-          this._showPreview(html, data);
+          this._showPreview(data);
         } catch (err) {
           ui.notifications.error('Invalid JSON file');
         }
@@ -160,26 +159,35 @@ export class CharacterImportWizard extends Dialog {
     });
 
     // Paste preview
-    root.querySelector('#character-json').addEventListener('blur', (e) => {
+    root?.querySelector('#character-json')?.addEventListener('blur', (e) => {
       try {
         const data = JSON.parse(e.target.value);
-        this._showPreview(html, data);
+        this._showPreview(data);
       } catch (err) {
         // Ignore parse errors on blur
       }
+    });
+
+    // Import button
+    root?.querySelector('[data-action="import"]')?.addEventListener('click', async () => {
+      await this._processImport();
+    });
+
+    // Cancel button
+    root?.querySelector('[data-action="cancel"]')?.addEventListener('click', () => {
+      this.close();
     });
   }
 
   /**
    * Show preview of character data
    */
-  _showPreview(html, data) {
-    const root = html?.[0] ?? html;
-    const preview = root?.querySelector('#import-preview');
-    if (!preview) {return;}
+  _showPreview(data) {
+    const preview = this.element?.querySelector('#import-preview');
+    if (!preview) return;
 
     const previewContent = preview.querySelector('.preview-content');
-    if (!previewContent) {return;}
+    if (!previewContent) return;
 
     let content = `
       <p><strong>Name:</strong> ${data.name || 'Unknown'}</p>
@@ -203,18 +211,18 @@ export class CharacterImportWizard extends Dialog {
   /**
    * Process the import
    */
-  async _processImport(html) {
+  async _processImport() {
     try {
-      const root = html?.[0] ?? html;
-      const method = root?.querySelector?.('#import-method')?.value ?? null;
-      const createNewCheckbox = root?.querySelector?.('#create-new-actor');
+      const root = this.element;
+      const method = root?.querySelector('#import-method')?.value ?? null;
+      const createNewCheckbox = root?.querySelector('#create-new-actor');
       const createNew = createNewCheckbox?.checked ?? true;
 
       let characterData;
 
       // Get data based on method
       if (method === 'file') {
-        const fileInput = root?.querySelector?.('#character-file');
+        const fileInput = root?.querySelector('#character-file');
         const file = fileInput?.files?.[0];
         if (!file) {
           ui.notifications.warn('Please select a file to import.');
@@ -223,7 +231,7 @@ export class CharacterImportWizard extends Dialog {
 
         characterData = await this._readFile(file);
       } else {
-        const jsonText = (root?.querySelector?.('#character-json')?.value ?? null);
+        const jsonText = root?.querySelector('#character-json')?.value ?? null;
         if (!jsonText) {
           ui.notifications.warn('Please paste character JSON data.');
           return;
@@ -348,20 +356,19 @@ export class CharacterImportWizard extends Dialog {
       } else {
         // Update selected actor
         const controlled = canvas.tokens?.controlled?.[0]?.actor;
-        const targetActor = controlled || game.user.character;
+        const targetActor = controlled || game.user?.character;
 
         if (!targetActor) {
           ui.notifications.warn('No actor selected. Creating new actor instead.');
           return this._importCharacter(data, true);
         }
 
-        // Confirm overwrite
-        const confirmed = await Dialog.confirm({
-          title: 'Overwrite Actor',
-          content: `<p>This will replace <strong>${targetActor.name}</strong> with the imported character data. Continue?</p>`
-        });
+        // Confirm overwrite using window.confirm (simple approach)
+        const confirmed = window.confirm(
+          `This will replace ${targetActor.name} with the imported character data. Continue?`
+        );
 
-        if (!confirmed) {return;}
+        if (!confirmed) return;
 
         // Update the actor
         await targetActor.update({
@@ -406,3 +413,5 @@ export class CharacterImportWizard extends Dialog {
     new CharacterImportWizard().render(true);
   }
 }
+
+window.CharacterImportWizard = CharacterImportWizard;
