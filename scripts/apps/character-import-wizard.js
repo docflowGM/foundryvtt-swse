@@ -5,6 +5,7 @@
  */
 
 import { createActor, createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
+import { confirm } from '../utils/ui-utils.js';
 
 export class CharacterImportWizard extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
@@ -363,9 +364,10 @@ export class CharacterImportWizard extends foundry.applications.api.ApplicationV
           return this._importCharacter(data, true);
         }
 
-        // Confirm overwrite using window.confirm (simple approach)
-        const confirmed = window.confirm(
-          `This will replace ${targetActor.name} with the imported character data. Continue?`
+        // Confirm overwrite using AppV2 dialog
+        const confirmed = await confirm(
+          'Overwrite Actor',
+          `<p>This will replace <strong>${targetActor.name}</strong> with the imported character data. Continue?</p>`
         );
 
         if (!confirmed) return;
