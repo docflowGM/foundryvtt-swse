@@ -60,6 +60,7 @@
     "styles/apps/gm-store-dashboard.css",
     "styles/apps/levelup.css",
     "styles/sheets/character-sheet.css",
+    "styles/sheets/droid-sheet.css",
     "styles/sheets/vehicle-sheet.css",
     "styles/sheets/unified-sheets.css",
     "styles/sheets/v2-sheet.css",

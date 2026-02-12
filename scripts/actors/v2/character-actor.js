@@ -1,4 +1,8 @@
 // scripts/actors/v2/character-actor.js
+// V2 Contract: Configuration remains in primary state (system.*).
+// Only computed mechanical effects are mirrored into system.derived.
+// Droid configuration stays in system.droidSystems (not derived).
+
 import combatActions from "../../../data/combat-actions.json" with { type: "json" };
 import { FeatActionsMapper } from "../../utils/feat-actions-mapper.js";
 
