@@ -9,7 +9,6 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { normalizeCredits } from '../../utils/credit-normalization.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
-import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from './chargen-property-accessor.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { BuildIntent } from '../../engine/BuildIntent.js';
@@ -797,15 +796,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           };
 
           context.packs.feats = context.packs.feats.map(feat => {
-            const canonical = PrerequisiteChecker.checkFeatPrerequisites(tempActor, feat, pendingDataForFeats);
-            const legacy = PrerequisiteRequirements.checkFeatPrerequisites(tempActor, feat, pendingDataForFeats);
-            if (canonical.met !== legacy.valid) {
-              console.warn('Prereq mismatch (feat) detected', { feat: feat.name, canonical, legacy });
-            }
+            const prereqCheck = PrerequisiteChecker.checkFeatPrerequisites(tempActor, feat, pendingDataForFeats);
             return {
               ...feat,
-              isQualified: canonical.met,
-              prereqReasons: canonical.missing
+              isQualified: prereqCheck.met,
+              prereqReasons: prereqCheck.missing
             };
           });
 
@@ -848,15 +843,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           };
 
           context.packs.talents = context.packs.talents.map(talent => {
-            const canonical = PrerequisiteChecker.checkTalentPrerequisites(tempActor, talent, pendingDataForTalents);
-            const legacy = PrerequisiteRequirements.checkTalentPrerequisites(tempActor, talent, pendingDataForTalents);
-            if (canonical.met !== legacy.valid) {
-              console.warn('Prereq mismatch (talent) detected', { talent: talent.name, canonical, legacy });
-            }
+            const prereqCheck = PrerequisiteChecker.checkTalentPrerequisites(tempActor, talent, pendingDataForTalents);
             return {
               ...talent,
-              isQualified: canonical.met,
-              prereqReasons: canonical.missing
+              isQualified: prereqCheck.met,
+              prereqReasons: prereqCheck.missing
             };
           });
         } catch (err) {

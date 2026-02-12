@@ -99,7 +99,6 @@ import { findActiveSynergies } from '../../engine/CommunityMetaSynergies.js';
 import { MentorSuggestionVoice } from '../../mentor/mentor-suggestion-voice.js';
 import { MentorSuggestionDialog } from '../mentor/mentor-suggestion-dialog.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
-import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 
 // Import mentor memory system
 import { decayAllMentorCommitments, updateAllMentorMemories } from '../../mentor/mentor-memory.js';
@@ -817,13 +816,8 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       .filter(([key, skill]) => skill?.trained)
       .map(([key]) => key);
 
-    // Get granted feats (houserules + level 1 class features) (dual-check for migration safety)
-    const canonical = PrerequisiteChecker.getAllGrantedFeats(this.actor, this.selectedClass);
-    const legacy = PrerequisiteValidator.getAllGrantedFeats(this.actor, this.selectedClass);
-    if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
-      console.warn('getAllGrantedFeats mismatch detected', { canonical, legacy });
-    }
-    const grantedFeats = canonical;
+    // Get granted feats (houserules + level 1 class features)
+    const grantedFeats = PrerequisiteChecker.getAllGrantedFeats(this.actor, this.selectedClass);
 
     return {
       selectedClass: this.selectedClass,
