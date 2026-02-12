@@ -149,13 +149,6 @@ import { registerCriticalFlowTests } from './scripts/tests/critical-flow-tests.j
 import { initializeSheetDiagnostics } from './scripts/core/forensic-sheet-diagnostic.js';
 
 /* ==========================================================================
-   DOCUMENT CLASS REGISTRATION (must be top-level, before any hooks)
-   ========================================================================== */
-
-CONFIG.Actor.documentClass = SWSEV2BaseActor;
-CONFIG.Item.documentClass = SWSEItemBase;
-
-/* ==========================================================================
    INTERNAL BOOTSTRAP HELPERS
    ========================================================================== */
 
@@ -207,6 +200,10 @@ Hooks.once('init', async () => {
 
   /* ---------- PHASE 3: documents & sheets ---------- */
   CONFIG.SWSE = SWSE;
+
+  // Document class registration (v13: must be inside init hook)
+  CONFIG.Actor.documentClass = SWSEV2BaseActor;
+  CONFIG.Item.documentClass = SWSEItemBase;
 
   const systemId = game.system.id;
 
