@@ -50,7 +50,7 @@ function markActiveConditionStep(root, actor) {
  * wipes your changes. Manual DOM work breaks reactivity. Always
  * compute values in getData() and pass to template.
  */
-export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
+export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static PARTS = {
     ...super.PARTS,
     body: {
@@ -64,9 +64,7 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
       classes: ['swse', 'swse-sheet', 'swse-character-sheet', 'v2'],
       template: 'systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs',
       width: 820,
-      height: 920,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'summary' }],
-      scrollY: ['.sheet-body']
+      height: 920
     }
   );
 
