@@ -63,19 +63,16 @@ async _prepareContext(options) {
       );
     }
 
-    // AppV2 Compatibility: Only pass serializable data
+    // Restore inherited context from super (includes cssClass, owner, limited, etc.)
+    const context = await super._prepareContext(options);
+
+    // AppV2 Compatibility: Extend inherited context with SWSE-specific fields
     // V13 AppV2 calls structuredClone() on render context - Document objects,
     // Collections, and User objects cannot be cloned. Extract only primitives and data.
     const actor = this.document;
-    return {
-      // Actor header data (serializable primitives only)
-      actor: {
-        id: actor.id,
-        name: actor.name,
-        type: actor.type,
-        img: actor.img,
-        _id: actor._id
-      },
+    const overrides = {
+      // Full actor object
+      actor,
       system: actor.system,
       derived: actor.system?.derived ?? {},
       // Items: map to plain objects to avoid Collection serialization issues
@@ -95,6 +92,8 @@ async _prepareContext(options) {
       },
       config: CONFIG.SWSE
     };
+
+    return { ...context, ...overrides };
   }
 
   async _onRender(context, options) {

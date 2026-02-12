@@ -99,7 +99,7 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
     }
   }
 
-  async _prepareContext(_options) {
+  async _prepareContext(options) {
     RenderAssertions.logCheckpoint('CharacterSheet', 'prepareContext start');
 
     // Fail-fast: this sheet is for characters only
@@ -127,18 +127,15 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
       }
     }
 
-    // AppV2 Compatibility: Only pass serializable data
+    // Restore inherited context from super (includes cssClass, owner, limited, etc.)
+    const context = await super._prepareContext(options);
+
+    // AppV2 Compatibility: Extend inherited context with SWSE-specific fields
     // V13 AppV2 calls structuredClone() on render context - Document objects,
     // Collections, and User objects cannot be cloned. Extract only primitives and data.
-    const context = {
-      // Actor header data (serializable primitives only)
-      actor: {
-        id: actor.id,
-        name: actor.name,
-        type: actor.type,
-        img: actor.img,
-        _id: actor._id
-      },
+    const overrides = {
+      // Full actor object (serializable after structuredClone)
+      actor,
       system: actor.system,
       derived: actor.system?.derived ?? {},
       // Items: map to plain objects to avoid Collection serialization issues
@@ -160,10 +157,10 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
     };
 
     // ASSERT: Context must be serializable for AppV2 (structuredClone requirement)
-    RenderAssertions.assertContextSerializable(context, 'SWSEV2CharacterSheet');
+    RenderAssertions.assertContextSerializable(overrides, 'SWSEV2CharacterSheet');
     RenderAssertions.logCheckpoint('CharacterSheet', 'prepareContext complete', { actorId: actor.id });
 
-    return context;
+    return { ...context, ...overrides };
   }
 
   /**
