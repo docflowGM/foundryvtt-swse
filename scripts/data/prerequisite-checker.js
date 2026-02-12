@@ -1,6 +1,6 @@
 // ============================================
 // FILE: scripts/data/prerequisite-checker.js
-// UNIFIED Prerequisite Validator (v2)
+// UNIFIED Prerequisite Validator (v3)
 // ============================================
 //
 // THE CANONICAL PREREQUISITE ENGINE
@@ -11,16 +11,40 @@
 // - PrerequisiteRequirements (features: feats, talents)
 // - PrerequisiteValidator (normalized format + legacy strings)
 //
+// ARCHITECTURE: DUAL-MODE UUID-FIRST RESOLUTION
+// ============================================
+// Phase 1 (CURRENT): UUID-first resolution with slug/name fallback
+// - Structured prerequisites can include {uuid?, slug?, name?}
+// - Resolution order: UUID → slug → name (with warnings on fallback)
+// - FULLY backward compatible (all existing prerequisites work)
+// - No compendium data changes required
+// - No breaking changes to schema
+//
+// Phase 2 (FUTURE): Compendium UUID injection
+// - Add UUIDs to prestige-prerequisites.js entries
+// - Migrate legacy prerequisites to include UUIDs
+//
+// Phase 3 (FUTURE): Slug deprecation
+// - Slugs become optional when UUIDs universalized
+// ============================================
+//
 // Validates all prerequisite types:
 // - Character level, BAB, skills, feats, talents, force powers
 // - Force techniques, dark side score, species, droid systems
 // - Structured prerequisites (25+ condition types)
 // - Normalized format prerequisites
-// - Legacy string-based prerequisites
+// - Legacy string-based prerequisites (Tier 3 - UNCHANGED)
 // - Special conditions and houserule grants
 //
 // Return format (unified):
 // { met: boolean, missing: string[], details: object }
+//
+// Backward compatibility:
+// - Tier 3 (legacy string parsing) completely unchanged
+// - Existing slug-based prerequisites work (with fallback warnings)
+// - Existing name-based prerequisites work (with fallback warnings)
+// - No changes to PRESTIGE_PREREQUISITES schema
+// - No compendium file modifications
 //
 // Backward compatibility aliases:
 // - valid: getter returning .met
@@ -39,6 +63,127 @@ import { ClassesDB } from './classes-db.js';
  * The unified, canonical prerequisite validator for ALL types of prerequisites.
  */
 export class PrerequisiteChecker {
+    // ============================================================
+    // UUID-FIRST RESOLUTION SYSTEM (Dual-mode, fully backward compatible)
+    // ============================================================
+
+    /**
+     * Cache for logged resolution warnings to avoid spam.
+     * Key: JSON.stringify(prereq), Value: true
+     * @private
+     */
+    static #resolutionWarningCache = new Set();
+
+    /**
+     * Log a resolution warning once per unique prerequisite.
+     * @private
+     */
+    static _logResolutionWarning(prereq, type, message) {
+        const key = JSON.stringify(prereq);
+        if (!this.#resolutionWarningCache.has(key)) {
+            this.#resolutionWarningCache.add(key);
+            SWSELogger.warn(`[PREREQ-RESOLUTION] ${type} fallback: ${message}`);
+        }
+    }
+
+    /**
+     * UUID-FIRST RESOLUTION for structured prerequisites.
+     *
+     * Resolution order:
+     * 1. UUID (if exists) → resolve via document ID
+     * 2. Slug (if exists) → resolve via slug lookup
+     * 3. Name (if exists) → resolve via case-insensitive name match
+     * 4. No resolution path → return null
+     *
+     * Identity-based comparison:
+     * - Compares via document ID (most reliable)
+     * - Only uses name matching as final fallback
+     *
+     * @param {Object} prereq - Prerequisite object {uuid?, slug?, name}
+     * @param {string} itemType - Item type: 'feat', 'talent', 'class', etc.
+     * @param {Object} actor - Actor document
+     * @param {Object} pending - Pending choices (for chargen)
+     * @returns {Object} - {resolved: null|item, via: 'uuid'|'slug'|'name', fallback: boolean}
+     * @private
+     */
+    static _resolvePrerequisiteByUuid(prereq, itemType, actor, pending) {
+        // PRIMARY PATH: UUID resolution (most reliable)
+        if (prereq.uuid) {
+            const actorItem = actor.items?.find(i =>
+                i.type === itemType && (
+                    i.id === prereq.uuid ||
+                    i.flags?.core?.sourceId === prereq.uuid
+                )
+            );
+            if (actorItem) {
+                return { resolved: actorItem, via: 'uuid', fallback: false };
+            }
+
+            // Check pending items (for chargen)
+            if (pending && pending.selectedFeats && itemType === 'feat') {
+                const pendingItem = pending.selectedFeats.find(i =>
+                    i.uuid === prereq.uuid || i.id === prereq.uuid
+                );
+                if (pendingItem) {
+                    return { resolved: pendingItem, via: 'uuid', fallback: false };
+                }
+            }
+            if (pending && pending.selectedTalents && itemType === 'talent') {
+                const pendingItem = pending.selectedTalents.find(i =>
+                    i.uuid === prereq.uuid || i.id === prereq.uuid
+                );
+                if (pendingItem) {
+                    return { resolved: pendingItem, via: 'uuid', fallback: false };
+                }
+            }
+
+            // UUID resolution failed (item deleted from compendium?)
+            this._logResolutionWarning(prereq, itemType,
+                `UUID ${prereq.uuid} not found, trying slug/name fallback`);
+        }
+
+        // SECONDARY PATH: Slug resolution (if uuid unavailable)
+        if (prereq.slug) {
+            const actorItem = actor.items?.find(i =>
+                i.type === itemType && i.system?.slug === prereq.slug
+            );
+            if (actorItem) {
+                this._logResolutionWarning(prereq, itemType,
+                    `Slug-based resolution (uuid missing from prerequisite)`);
+                return { resolved: actorItem, via: 'slug', fallback: true };
+            }
+        }
+
+        // TERTIARY PATH: Name resolution (legacy compatibility)
+        if (prereq.name) {
+            const actorItem = actor.items?.find(i =>
+                i.type === itemType && i.name?.toLowerCase() === prereq.name?.toLowerCase()
+            );
+            if (actorItem) {
+                this._logResolutionWarning(prereq, itemType,
+                    `Name-based resolution (uuid and slug missing from prerequisite)`);
+                return { resolved: actorItem, via: 'name', fallback: true };
+            }
+
+            // Check pending items (for chargen)
+            if (pending) {
+                let pendingArray = [];
+                if (itemType === 'feat' && pending.selectedFeats) pendingArray = pending.selectedFeats;
+                if (itemType === 'talent' && pending.selectedTalents) pendingArray = pending.selectedTalents;
+
+                const pendingItem = pendingArray.find(i =>
+                    i.name?.toLowerCase() === prereq.name?.toLowerCase()
+                );
+                if (pendingItem) {
+                    return { resolved: pendingItem, via: 'name', fallback: true };
+                }
+            }
+        }
+
+        // NO RESOLUTION PATH FOUND
+        return { resolved: null, via: null, fallback: false };
+    }
+
     // ============================================================
     // DEFENSIVE LOOKUP HELPERS (v2 ID-first, name-fallback)
     // ============================================================
@@ -704,36 +849,52 @@ export class PrerequisiteChecker {
     // ============================================================
 
     static _checkFeatCondition(prereq, actor, pending) {
-        // FIX MEDIUM #1: Make case-insensitive to match Tier 3 (legacy string parsing)
-        // This prevents false negatives when feat case doesn't match exactly
-        const hasActorFeat = actor.items?.some(i =>
-            i.type === 'feat' && i.name?.toLowerCase() === prereq.name?.toLowerCase()
-        );
-        const hasPendingFeat = (pending.selectedFeats || []).some(f =>
-            f.name?.toLowerCase() === prereq.name?.toLowerCase()
-        );
+        // UUID-FIRST RESOLUTION: Try UUID → slug → name fallback
+        const resolution = this._resolvePrerequisiteByUuid(prereq, 'feat', actor, pending);
+
+        if (resolution.resolved) {
+            // Found via UUID/slug/name - use identity-based comparison
+            return {
+                met: true,
+                message: ''
+            };
+        }
+
+        // Not found by UUID/slug/name - check houserule grants (name-based, expected)
         const hasHouseruleFeat = this.getHouseruleGrantedFeats().some(f =>
             f.toLowerCase() === prereq.name?.toLowerCase()
         );
-        const hasFeat = hasActorFeat || hasPendingFeat || hasHouseruleFeat;
+
+        if (hasHouseruleFeat) {
+            return {
+                met: true,
+                message: ''
+            };
+        }
+
+        // Not found anywhere
         return {
-            met: hasFeat,
-            message: !hasFeat ? `Requires feat: ${prereq.name}` : ''
+            met: false,
+            message: `Requires feat: ${prereq.name || prereq.slug || prereq.uuid}`
         };
     }
 
     static _checkTalentCondition(prereq, actor, pending) {
-        // FIX MEDIUM #1: Make case-insensitive for consistency
-        const hasActorTalent = actor.items?.some(i =>
-            i.type === 'talent' && i.name?.toLowerCase() === prereq.name?.toLowerCase()
-        );
-        const hasPendingTalent = (pending.selectedTalents || []).some(t =>
-            t.name?.toLowerCase() === prereq.name?.toLowerCase()
-        );
-        const hasTalent = hasActorTalent || hasPendingTalent;
+        // UUID-FIRST RESOLUTION: Try UUID → slug → name fallback
+        const resolution = this._resolvePrerequisiteByUuid(prereq, 'talent', actor, pending);
+
+        if (resolution.resolved) {
+            // Found via UUID/slug/name - use identity-based comparison
+            return {
+                met: true,
+                message: ''
+            };
+        }
+
+        // Not found anywhere
         return {
-            met: hasTalent,
-            message: !hasTalent ? `Requires talent: ${prereq.name}` : ''
+            met: false,
+            message: `Requires talent: ${prereq.name || prereq.slug || prereq.uuid}`
         };
     }
 
