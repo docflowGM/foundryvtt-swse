@@ -146,6 +146,13 @@ import { initializePhase5, getPhaseSummary } from './scripts/core/phase5-init.js
 import { registerCriticalFlowTests } from './scripts/tests/critical-flow-tests.js';
 
 /* ==========================================================================
+   DOCUMENT CLASS REGISTRATION (must be top-level, before any hooks)
+   ========================================================================== */
+
+CONFIG.Actor.documentClass = SWSEV2BaseActor;
+CONFIG.Item.documentClass = SWSEItemBase;
+
+/* ==========================================================================
    INTERNAL BOOTSTRAP HELPERS
    ========================================================================== */
 
@@ -197,8 +204,6 @@ Hooks.once('init', async () => {
 
   /* ---------- PHASE 3: documents & sheets ---------- */
   CONFIG.SWSE = SWSE;
-  CONFIG.Actor.documentClass = SWSEV2BaseActor;
-  CONFIG.Item.documentClass = SWSEItemBase;
 
   foundry.documents.collections.Actors.registerSheet('swse', SWSEV2CharacterSheet, { types: ['character'], makeDefault: true });
   foundry.documents.collections.Actors.registerSheet('swse', SWSEV2NpcSheet, { types: ['npc'], makeDefault: true });
