@@ -22,6 +22,13 @@ function markActiveConditionStep(root, actor) {
  */
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
+  static PARTS = {
+    ...super.PARTS,
+    body: {
+      template: 'systems/foundryvtt-swse/templates/actors/npc/v2/npc-sheet.hbs'
+    }
+  };
+
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
     super.DEFAULT_OPTIONS,
     {

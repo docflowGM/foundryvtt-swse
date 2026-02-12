@@ -24,6 +24,13 @@ function markActiveConditionStep(root, actor) {
  * - _updateObject routes through ActorEngine
  */
 export class SWSEV2DroidSheet extends HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
+  static PARTS = {
+    ...super.PARTS,
+    body: {
+      template: 'systems/foundryvtt-swse/templates/actors/droid/v2/droid-sheet.hbs'
+    }
+  };
+
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
     super.DEFAULT_OPTIONS,
     {
