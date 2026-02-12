@@ -1283,7 +1283,7 @@ Hooks.on('directTriggered', async (actor) => {
                 return: {
                   label: 'Return to Suite',
                   callback: async (html2) => {
-                    const powerId = html2.find('#power-select').val();
+                    const powerId = html2.querySelector('#power-select').value;
                     await LightSideTalentMechanics.completeDirectSelection(
                       actor,
                       allyId,

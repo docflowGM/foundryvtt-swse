@@ -131,67 +131,78 @@ export class ConditionTrackComponent {
     /* --------------------------- */
     /* Direct GM-Only CT Set       */
     /* --------------------------- */
-    $c.find('[data-ct="set"]').on('click', async ev => {
-      if (!game.user.isGM) {
-        return ui.notifications.warn('Only the GM may directly set the Condition Track.');
-      }
-      const step = Number(ev.currentTarget.dataset.step);
-      await actor.update({ 'system.conditionTrack.current': Math.clamp(step, 0, 5) });
+    root.querySelectorAll('[data-ct="set"]').forEach(btn => {
+      btn.addEventListener('click', async ev => {
+        if (!game.user.isGM) {
+          return ui.notifications.warn('Only the GM may directly set the Condition Track.');
+        }
+        const step = Number(ev.currentTarget.dataset.step);
+        await actor.update({ 'system.conditionTrack.current': Math.clamp(step, 0, 5) });
+      });
     });
 
     /* --------------------------- */
     /* Recover (Improve)           */
     /* --------------------------- */
-    $c.find('[data-ct="improve"]').on('click', async () => {
+    const improveBtn = root.querySelector('[data-ct="improve"]');
+    if (improveBtn) {
+      improveBtn.addEventListener('click', async () => {
 
-      // If actor chose "never show CT prompts" — reflect that here too
-      const skipForever = actor.getFlag('foundryvtt-swse', 'skipCtPromptsForever') === true;
-      if (skipForever) {
-        return ui.notifications.info('CT recovery prompts disabled for this actor.');
-      }
-
-      const ct = actor.system.conditionTrack.current ?? 0;
-      const persistent = actor.system.conditionTrack.persistent === true;
-
-      if (ct === 5) {
-        return ui.notifications.warn('A Helpless creature cannot perform a Recover action.');
-      }
-
-      if (persistent) {
-        return ui.notifications.warn('This condition is Persistent and cannot be removed by natural recovery.');
-      }
-
-      // Optional future action economy check
-      if (actor.system.actionEconomy?.swift !== undefined) {
-        const swift = actor.system.actionEconomy.swift;
-        if (!swift) {
-          return ui.notifications.warn('Not enough Swift Actions remaining to Recover.');
+        // If actor chose "never show CT prompts" — reflect that here too
+        const skipForever = actor.getFlag('foundryvtt-swse', 'skipCtPromptsForever') === true;
+        if (skipForever) {
+          return ui.notifications.info('CT recovery prompts disabled for this actor.');
         }
-      }
 
-      await actor.moveConditionTrack(-1);
-      ui.notifications.info(`${actor.name} improves 1 step on the Condition Track.`);
-    });
+        const ct = actor.system.conditionTrack.current ?? 0;
+        const persistent = actor.system.conditionTrack.persistent === true;
+
+        if (ct === 5) {
+          return ui.notifications.warn('A Helpless creature cannot perform a Recover action.');
+        }
+
+        if (persistent) {
+          return ui.notifications.warn('This condition is Persistent and cannot be removed by natural recovery.');
+        }
+
+        // Optional future action economy check
+        if (actor.system.actionEconomy?.swift !== undefined) {
+          const swift = actor.system.actionEconomy.swift;
+          if (!swift) {
+            return ui.notifications.warn('Not enough Swift Actions remaining to Recover.');
+          }
+        }
+
+        await actor.moveConditionTrack(-1);
+        ui.notifications.info(`${actor.name} improves 1 step on the Condition Track.`);
+      });
+    }
 
     /* --------------------------- */
     /* Worsen (+1 Step)            */
     /* --------------------------- */
-    $c.find('[data-ct="worsen"]').on('click', async () => {
-      await actor.moveConditionTrack(1);
-    });
+    const worsenBtn = root.querySelector('[data-ct="worsen"]');
+    if (worsenBtn) {
+      worsenBtn.addEventListener('click', async () => {
+        await actor.moveConditionTrack(1);
+      });
+    }
 
     /* --------------------------- */
     /* Persistent Toggle (GM Only) */
     /* --------------------------- */
-    $c.find('[data-ct="persistent"]').on('change', async ev => {
-      if (!game.user.isGM) {
-        ev.preventDefault();
-        ui.notifications.warn('Only the GM may toggle Persistent Conditions.');
-        // revert toggle
-        ev.target.checked = actor.system.conditionTrack.persistent;
-        return;
-      }
-      await actor.update({ 'system.conditionTrack.persistent': ev.target.checked });
-    });
+    const persistentCheckbox = root.querySelector('[data-ct="persistent"]');
+    if (persistentCheckbox) {
+      persistentCheckbox.addEventListener('change', async ev => {
+        if (!game.user.isGM) {
+          ev.preventDefault();
+          ui.notifications.warn('Only the GM may toggle Persistent Conditions.');
+          // revert toggle
+          ev.target.checked = actor.system.conditionTrack.persistent;
+          return;
+        }
+        await actor.update({ 'system.conditionTrack.persistent': ev.target.checked });
+      });
+    }
   }
 }

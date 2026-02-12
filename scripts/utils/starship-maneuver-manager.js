@@ -355,18 +355,6 @@ export class StarshipManeuverManager {
     html += `
         </div>
       </div>
-      <style>
-        .maneuver-selection-dialog { padding: 1rem; }
-        .maneuver-list { max-height: 500px; overflow-y: auto; }
-        .maneuver-option { margin-bottom: 1rem; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; }
-        .maneuver-option.disabled { opacity: 0.5; background-color: #f5f5f5; }
-        .maneuver-option label { cursor: pointer; display: flex; flex-direction: column; gap: 0.5rem; margin: 0; }
-        .maneuver-option input[type="checkbox"] { cursor: pointer; }
-        .maneuver-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
-        .tag { background-color: #f0f0f0; padding: 0.2rem 0.5rem; border-radius: 3px; font-size: 0.8rem; }
-        .maneuver-description { font-size: 0.85rem; color: #666; }
-        .prerequisite-reasons { color: #d32f2f; font-size: 0.8rem; margin-top: 0.3rem; }
-      </style>
     `;
 
     return html;

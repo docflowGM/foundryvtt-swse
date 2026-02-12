@@ -74,52 +74,6 @@ class WelcomeDialog extends foundry.applications.api.ApplicationV2 {
   async _renderHTML(context, options) {
     const wrapper = document.createElement('div');
     wrapper.innerHTML = `
-      <style>
-        .swse-welcome {
-          font-family: var(--font-family);
-          line-height: 1.6;
-        }
-        .swse-welcome h2 {
-          color: var(--color-primary, #00e5ff);
-          margin-bottom: 1rem;
-        }
-        .swse-welcome h3 {
-          color: var(--color-text-alt, #aaa);
-          margin-top: 1.5rem;
-          margin-bottom: 0.5rem;
-          font-size: 1.1em;
-        }
-        .swse-welcome ul {
-          margin-left: 1.5rem;
-          margin-bottom: 1rem;
-        }
-        .swse-welcome li {
-          margin-bottom: 0.5rem;
-        }
-        .swse-welcome .section {
-          margin-bottom: 1.5rem;
-        }
-        .swse-welcome .tip {
-          padding: 0.75rem;
-          background: var(--color-bg-alt, #222);
-          border-left: 3px solid var(--color-primary, #00e5ff);
-          border-radius: 3px;
-          margin: 1rem 0;
-          font-size: 0.95em;
-        }
-        .swse-welcome .checkbox-group {
-          margin-top: 1.5rem;
-          padding-top: 1.5rem;
-          border-top: 1px solid var(--color-border, #444);
-        }
-        .swse-welcome .dialog-buttons {
-          margin-top: 1.5rem;
-          text-align: right;
-        }
-        .swse-welcome .dialog-buttons button {
-          margin-left: 0.5rem;
-        }
-      </style>
 
       <div class="swse-welcome">
         <h2>⭐ Welcome to Star Wars Saga Edition!</h2>

@@ -253,9 +253,11 @@ export class GMDebugPanel extends SWSEApplicationV2 {
         });
 
         // Collapsible sections
-        root.querySelectorAll('.collapsible-header').click(event => {
-            const section = event.currentTarget?.closest?.('.collapsible-section');
-            section?.classList?.toggle('collapsed');
+        root.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', event => {
+                const section = event.currentTarget?.closest('.collapsible-section');
+                section?.classList?.toggle('collapsed');
+            });
         });
     }
 }

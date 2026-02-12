@@ -2,9 +2,9 @@
  * force-secret-picker.js
  * Force Secret picker UI using FormApplication + HBS template.
  */
-import SWSEFormApplication from '../../apps/base/swse-form-application.js';
+import SWSEFormApplicationV2 from '../../apps/base/swse-form-application-v2.js';
 
-export class ForceSecretPicker extends SWSEFormApplication {
+export class ForceSecretPicker extends SWSEFormApplicationV2 {
   /**
    * Helper: open a picker and return the selected secrets.
    */
@@ -26,7 +26,7 @@ export class ForceSecretPicker extends SWSEFormApplication {
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
     {
       id: 'force-secret-picker',
       classes: ['swse-app', 'force-secret-picker'],

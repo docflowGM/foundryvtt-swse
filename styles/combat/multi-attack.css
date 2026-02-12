@@ -1,0 +1,176 @@
+/**
+ * Full Attack Combat Styles
+ * Dialog and card display for multiple attack actions
+ */
+
+.swse-full-attack-dialog {
+  padding: 10px;
+}
+
+.swse-full-attack-dialog h4 {
+  margin: 5px 0;
+}
+
+.swse-full-attack-dialog ul {
+  margin: 5px 0;
+  padding-left: 20px;
+}
+
+.swse-full-attack-dialog .penalty {
+  color: #f44;
+  font-weight: bold;
+}
+
+.swse-full-attack-dialog .source {
+  color: #888;
+  font-size: 0.85em;
+}
+
+.swse-full-attack-dialog .no-penalty {
+  color: #4f4;
+}
+
+.swse-full-attack-dialog .breakdown {
+  font-size: 0.9em;
+  color: #aaa;
+  margin-top: 10px;
+}
+
+.swse-full-attack-dialog .form-group {
+  margin: 10px 0;
+}
+
+.swse-full-attack-dialog .form-group label {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.swse-full-attack-dialog .attack-list {
+  margin: 10px 0;
+}
+
+/* ========== FULL ATTACK CARD ========== */
+
+.swse-full-attack-card {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid #ff8c00;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.swse-full-attack-card .card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #ff8c00;
+}
+
+.swse-full-attack-card .card-header::before {
+  content: '✕';
+  font-size: 1.5rem;
+  color: #ff8c00;
+  margin-right: 0.75rem;
+  font-weight: bold;
+}
+
+.swse-full-attack-card .full-attack-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.swse-full-attack-card .full-attack-entry {
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border-left: 3px solid #888;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.swse-full-attack-card .full-attack-entry.hit {
+  border-left-color: #4f4;
+  background: rgba(68, 255, 68, 0.05);
+}
+
+.swse-full-attack-card .full-attack-entry.crit {
+  border-left-color: #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.swse-full-attack-card .full-attack-entry.miss {
+  border-left-color: #f44;
+  background: rgba(255, 68, 68, 0.05);
+}
+
+.swse-full-attack-card .attack-header {
+  font-weight: bold;
+  color: #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.swse-full-attack-card .attack-number {
+  background: rgba(255, 140, 0, 0.2);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #ff8c00;
+  font-weight: bold;
+}
+
+.swse-full-attack-card .attack-penalty {
+  color: #f44;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.swse-full-attack-card .attack-result {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.swse-full-attack-card .attack-outcome {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.swse-full-attack-card .attack-outcome.hit {
+  color: #4f4;
+}
+
+.swse-full-attack-card .attack-outcome.crit {
+  color: #ffd700;
+}
+
+.swse-full-attack-card .attack-outcome.miss {
+  color: #f44;
+}
+
+.swse-full-attack-card .breakdown-info {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 3px solid #0a74da;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.swse-full-attack-card .breakdown-info strong {
+  color: #00d9ff;
+}

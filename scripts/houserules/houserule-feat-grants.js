@@ -307,9 +307,7 @@ export class HouseRuleFeatGrants {
           apply: {
             label: `Apply Replacement`,
             callback: (html) => {
-              const selectedId = html
-                .find("input[name='replacement-feat']:checked")
-                .val();
+              const selectedId = html.querySelector("input[name='replacement-feat']:checked")?.value;
 
               if (!selectedId) {
                 ui.notifications.warn('Please select a replacement');

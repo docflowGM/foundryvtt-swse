@@ -5,9 +5,9 @@
  * Supports all condition types: feats, talents, attributes, skills, Force, etc.
  */
 
-import SWSEFormApplication from './base/swse-form-application.js';
+import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';
 
-export class PrerequisiteBuilderDialog extends SWSEFormApplication {
+export class PrerequisiteBuilderDialog extends SWSEFormApplicationV2 {
   constructor(object = {}, options = {}) {
     super(object, options);
     this.conditions = object.conditions ?? [];
@@ -15,7 +15,7 @@ export class PrerequisiteBuilderDialog extends SWSEFormApplication {
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
     {
       id: 'prerequisite-builder',
       title: 'Prerequisite Builder',

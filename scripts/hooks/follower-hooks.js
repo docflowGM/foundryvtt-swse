@@ -195,30 +195,6 @@ class FollowerTemplateSelectionDialog extends foundry.applications.api.Applicati
                     <i class="fas fa-times"></i> Cancel
                 </button>
             </div>
-            <style>
-                .follower-template-option {
-                    margin: 10px 0;
-                    padding: 10px;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                }
-                .follower-template-option input[type="radio"] {
-                    margin-right: 10px;
-                }
-                .follower-template-option label {
-                    cursor: pointer;
-                    display: block;
-                }
-                .follower-template-option p {
-                    margin: 5px 0 0 24px;
-                    font-size: 0.9em;
-                    color: #666;
-                }
-                .follower-template-option:has(input:checked) {
-                    background: #e8f4f8;
-                    border-color: #2c5f7c;
-                }
-            </style>
         `;
     }
 
@@ -320,66 +296,6 @@ function addFollowerManagementUI(html, actor, followerTalents) {
                 `).join('')}
             </div>
         </div>
-        <style>
-            .follower-management-section {
-                margin: 15px 0;
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                background: #f9f9f9;
-            }
-            .follower-management-section h3 {
-                margin: 0 0 10px 0;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            .create-follower-btn {
-                padding: 4px 8px;
-                font-size: 0.85em;
-            }
-            .followers-list {
-                display: flex;
-                flex-direction: column;
-                gap: 5px;
-            }
-            .follower-item {
-                display: flex;
-                align-items: center;
-                padding: 8px;
-                background: white;
-                border: 1px solid #ddd;
-                border-radius: 3px;
-            }
-            .follower-item img {
-                width: 40px;
-                height: 40px;
-                border-radius: 3px;
-                margin-right: 10px;
-            }
-            .follower-info {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-            }
-            .follower-meta {
-                font-size: 0.85em;
-                color: #666;
-            }
-            .follower-actions {
-                display: flex;
-                gap: 5px;
-            }
-            .follower-actions button {
-                padding: 4px 8px;
-            }
-            .no-followers {
-                color: #666;
-                font-style: italic;
-                text-align: center;
-                padding: 10px;
-            }
-        </style>
     `;
 
     // Insert before talents list

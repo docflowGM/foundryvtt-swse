@@ -315,39 +315,6 @@ export async function showRollModifiersDialog(options = {}) {
   // Build dialog content
   let content = `
     <form class="swse-roll-modifiers-dialog">
-      <style>
-        .swse-roll-modifiers-dialog {
-          display: grid;
-          gap: 10px;
-        }
-        .swse-roll-modifiers-dialog .form-group {
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-        }
-        .swse-roll-modifiers-dialog label {
-          font-weight: bold;
-        }
-        .swse-roll-modifiers-dialog .checkbox-group {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
-        }
-        .swse-roll-modifiers-dialog .checkbox-group label {
-          font-weight: normal;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-        .swse-roll-modifiers-dialog .custom-modifier {
-          display: flex;
-          gap: 8px;
-          align-items: center;
-        }
-        .swse-roll-modifiers-dialog input[type="number"] {
-          width: 60px;
-        }
-      </style>
   `;
 
   // Cover options
@@ -707,50 +674,6 @@ export async function rollCriticalConfirmation({ actor, weapon, attackBonus, tar
           : '<i class="fas fa-circle-xmark"></i> Critical not confirmed (normal hit)'}
       </div>
     </div>
-    <style>
-      .swse-crit-confirm-card {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        border-radius: 8px;
-        padding: 12px;
-        color: #fff;
-        text-align: center;
-      }
-      .swse-crit-confirm-card.confirmed {
-        border: 2px solid #ffd700;
-        box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-      }
-      .swse-crit-confirm-card.failed {
-        border: 2px solid #888;
-      }
-      .crit-header {
-        font-size: 1.2em;
-        font-weight: bold;
-        margin-bottom: 10px;
-        color: #ffd700;
-      }
-      .crit-result .roll-total {
-        font-size: 2em;
-        font-weight: bold;
-      }
-      .crit-vs {
-        margin: 8px 0;
-        color: #aaa;
-      }
-      .crit-outcome {
-        font-weight: bold;
-        padding: 8px;
-        border-radius: 4px;
-        margin-top: 8px;
-      }
-      .crit-outcome.success {
-        background: rgba(255, 215, 0, 0.2);
-        color: #ffd700;
-      }
-      .crit-outcome.failure {
-        background: rgba(150, 150, 150, 0.2);
-        color: #aaa;
-      }
-    </style>
   `;
 
   await createChatMessage({
@@ -808,33 +731,6 @@ export async function rollConcealmentCheck(missChance, actor = null) {
           : '<i class="fas fa-times"></i> Concealment causes miss!'}
       </div>
     </div>
-    <style>
-      .swse-concealment-card {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        border-radius: 8px;
-        padding: 12px;
-        color: #fff;
-        text-align: center;
-      }
-      .swse-concealment-card.miss {
-        border: 2px solid #ff4444;
-      }
-      .swse-concealment-card.hit {
-        border: 2px solid #44ff44;
-      }
-      .concealment-header {
-        font-size: 1.1em;
-        font-weight: bold;
-        margin-bottom: 8px;
-        color: #8888ff;
-      }
-      .concealment-result .roll-total {
-        font-size: 1.8em;
-        font-weight: bold;
-      }
-      .concealment-outcome.success { color: #44ff44; }
-      .concealment-outcome.failure { color: #ff4444; }
-    </style>
   `;
 
   await createChatMessage({

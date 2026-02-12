@@ -3,7 +3,7 @@
  * Main launcher UI for all houserule sub-menus.
  */
 
-import SWSEFormApplication from '../apps/base/swse-form-application.js';
+import SWSEFormApplicationV2 from '../apps/base/swse-form-application-v2.js';
 import {
   CharacterCreationMenu,
   AdvancementMenu,
@@ -15,9 +15,9 @@ import {
   CharacterRestrictionsMenu
 } from './houserule-menus.js';
 
-export class HouserulesConfig extends SWSEFormApplication {
+export class HouserulesConfig extends SWSEFormApplicationV2 {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplication.DEFAULT_OPTIONS ?? {},
+    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
     {
       id: 'swse-houserules-config',
       title: 'SWSE House Rules Configuration',

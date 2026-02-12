@@ -1,0 +1,87 @@
+/**
+ * Force Enhancement Dialog Styles
+ * UI for enhancing Force powers
+ */
+
+.swse-force-enhancement-dialog {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.swse-force-enhancement-dialog h3 {
+  color: #00d9ff;
+  margin: 0 0 1rem 0;
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+.swse-force-enhancement-dialog .enhancement-list {
+  margin: 1rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.swse-force-enhancement-dialog .enhancement-item {
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  background: rgba(10, 116, 218, 0.1);
+  border-left: 3px solid #0a74da;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.swse-force-enhancement-dialog .enhancement-item:hover {
+  background: rgba(0, 217, 255, 0.1);
+  border-left-color: #00d9ff;
+}
+
+.swse-force-enhancement-dialog .enhancement-name {
+  font-weight: bold;
+  color: #e0e0e0;
+  margin-bottom: 0.25rem;
+}
+
+.swse-force-enhancement-dialog .enhancement-cost {
+  font-size: 0.85rem;
+  color: #ffa500;
+}
+
+.swse-force-enhancement-dialog .enhancement-description {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-top: 0.25rem;
+}
+
+.swse-force-enhancement-dialog .confirmation {
+  padding: 1rem;
+  margin: 1rem 0;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid #ffd700;
+  border-radius: 4px;
+  color: #ffd700;
+}
+
+.swse-force-enhancement-dialog button {
+  padding: 0.75rem 1.5rem;
+  margin: 0.5rem;
+  background: #0a74da;
+  border: none;
+  color: #e0e0e0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.swse-force-enhancement-dialog button:hover {
+  background: #00d9ff;
+  color: #000;
+}
+
+.swse-force-enhancement-dialog button.apply {
+  background: #00d966;
+}
+
+.swse-force-enhancement-dialog button.apply:hover {
+  background: #00ff99;
+  color: #000;
+}
