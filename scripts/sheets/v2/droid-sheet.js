@@ -23,7 +23,7 @@ function markActiveConditionStep(root, actor) {
  * - Emit intent via Actor APIs (which route through ActorEngine)
  * - _updateObject routes through ActorEngine
  */
-export class SWSEV2DroidSheet extends HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
+export class SWSEV2DroidSheet extends HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static PARTS = {
     ...super.PARTS,
     body: {
@@ -37,9 +37,7 @@ export class SWSEV2DroidSheet extends HandlebarsApplicationMixin(foundry.applica
       classes: ['swse', 'swse-sheet', 'swse-droid-sheet', 'v2'],
       template: 'systems/foundryvtt-swse/templates/actors/droid/v2/droid-sheet.hbs',
       width: 820,
-      height: 920,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'summary' }],
-      scrollY: ['.sheet-body']
+      height: 920
     }
   );
 

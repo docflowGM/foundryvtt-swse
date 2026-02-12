@@ -21,7 +21,7 @@ function markActiveConditionStep(root, actor) {
  * - _updateObject routes through ActorEngine
  */
 const { HandlebarsApplicationMixin } = foundry.applications.api;
-export class SWSEV2VehicleSheet extends HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
+export class SWSEV2VehicleSheet extends HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static PARTS = {
     ...super.PARTS,
     body: {
@@ -35,9 +35,7 @@ export class SWSEV2VehicleSheet extends HandlebarsApplicationMixin(foundry.appli
       classes: ['swse', 'swse-sheet', 'swse-vehicle-sheet', 'v2'],
       template: 'systems/foundryvtt-swse/templates/actors/vehicle/v2/vehicle-sheet.hbs',
       width: 820,
-      height: 920,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'summary' }],
-      scrollY: ['.sheet-body']
+      height: 920
     }
   );
 
