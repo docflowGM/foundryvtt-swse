@@ -220,7 +220,9 @@ export class SWSEV2DroidSheet extends HandlebarsApplicationMixin(foundry.applica
         ev.preventDefault();
         ev.stopPropagation();
 
-        // Determine if this is a new config or edit of existing
+        // Builder mode reads primary droid configuration state (not derived).
+        // This is intentional: builder determines NEW vs EDIT mode by checking if
+        // configuration exists in system.droidSystems, which is the source of truth.
         const hasConfig = !!this.actor?.system?.droidSystems?.degree;
         const mode = hasConfig ? 'EDIT' : 'NEW';
 
