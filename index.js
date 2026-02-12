@@ -205,11 +205,28 @@ Hooks.once('init', async () => {
   /* ---------- PHASE 3: documents & sheets ---------- */
   CONFIG.SWSE = SWSE;
 
-  foundry.documents.collections.Actors.registerSheet('swse', SWSEV2CharacterSheet, { types: ['character'], makeDefault: true });
-  foundry.documents.collections.Actors.registerSheet('swse', SWSEV2NpcSheet, { types: ['npc'], makeDefault: true });
-  foundry.documents.collections.Actors.registerSheet('swse', SWSEV2DroidSheet, { types: ['droid'], makeDefault: true });
-  foundry.documents.collections.Actors.registerSheet('swse', SWSEV2VehicleSheet, { types: ['vehicle'], makeDefault: true });
-  foundry.documents.collections.Items.registerSheet('swse', SWSEItemSheet, { makeDefault: true });
+  const systemId = game.system.id;
+
+  // Clean unregister any stale registrations
+  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2CharacterSheet);
+  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2NpcSheet);
+  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2DroidSheet);
+  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2VehicleSheet);
+  foundry.documents.collections.Items.unregisterSheet(systemId, SWSEItemSheet);
+
+  // Register and force defaults
+  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2CharacterSheet, { types: ['character'], makeDefault: true });
+  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2NpcSheet, { types: ['npc'], makeDefault: true });
+  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2DroidSheet, { types: ['droid'], makeDefault: true });
+  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2VehicleSheet, { types: ['vehicle'], makeDefault: true });
+  foundry.documents.collections.Items.registerSheet(systemId, SWSEItemSheet, { makeDefault: true });
+
+  // Verify defaults are set
+  const charSheets = CONFIG.Actor.sheetClasses.character || {};
+  const hasDefault = Object.values(charSheets).some(sheet => sheet.default === true);
+  if (!hasDefault) {
+    console.warn('SWSE | Warning: No default character sheet marked after registration');
+  }
 
   /* ---------- PHASE 3: Structural Enforcement Layer ---------- */
   await initializeV2RenderGuard();
