@@ -305,6 +305,8 @@ export class TalentTreeVisualizer {
    * Build talent prerequisite graph
    */
   static _buildTalentGraph(talents) {
+    return `
+      <style>
         .tree-canvas-wrapper {
           position: relative;
           width: 100%;
