@@ -7,6 +7,11 @@
  * Formula (SWSE Core Rulebook):
  * - First level: 3x hit die + CON mod
  * - All other levels: (hit die / 2 + 1) + CON mod
+ *
+ * DROID EXCEPTION:
+ * - Droids do NOT gain CON modifier to HP (mechanical construction, not biological)
+ * - Droids still gain standard hit die rolls from their class levels
+ * - isDroid flag controls CON mod inclusion (see line 31)
  */
 
 import { PROGRESSION_RULES } from '../../progression/data/progression-data.js';

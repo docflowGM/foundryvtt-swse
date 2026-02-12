@@ -10,7 +10,7 @@
  * - Level-up diff generation and display
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { swseLogger as SWSELogger } from '../../utils/logger.js';
 import { SnapshotManager } from '../utils/snapshot-manager.js';
 import { dispatchFeature } from '../engine/feature-dispatcher.js';
 import { ForceProgressionEngine } from '../engine/force-progression.js';
@@ -19,7 +19,7 @@ import { ForceSecretEngine } from '../engine/force-secret-engine.js';
 import { StarshipManeuverEngine } from '../engine/starship-maneuver-engine.js';
 import { LanguageEngine } from '../engine/language-engine.js';
 import { EquipmentEngine } from '../engine/equipment-engine.js';
-import { DerivedCalculator } from '../engine/derived-calculator.js';
+import { DerivedCalculator } from '../../actors/derived/derived-calculator.js';
 import { LevelDiffInspector } from '../utils/level-diff-inspector.js';
 
 export class FinalizeIntegration {
@@ -49,7 +49,10 @@ export class FinalizeIntegration {
             await this._finalizeSpecializedProgressions(actor, mode, engine);
 
             // Step 5: Recalculate derived statistics
-            await DerivedCalculator.updateActor(actor);
+            const derivedUpdates = await DerivedCalculator.computeAll(actor);
+            if (derivedUpdates) {
+                await actor.update(derivedUpdates);
+            }
             SWSELogger.log('Derived statistics recalculated');
 
             // Step 6: Generate and display level-up summary
@@ -220,7 +223,10 @@ export class FinalizeIntegration {
             }
 
             // Recalculate stats
-            await DerivedCalculator.updateActor(actor);
+            const derivedUpdates = await DerivedCalculator.computeAll(actor);
+            if (derivedUpdates) {
+                await actor.update(derivedUpdates);
+            }
 
             // Generate and display diff
             const afterSnapshot = actor.toObject(false);

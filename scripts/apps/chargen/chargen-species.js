@@ -7,8 +7,8 @@ import { applyProgressionPatch } from '../../progression/engine/apply-progressio
 import { buildSpeciesAtomicPatch } from './steps/species-step.js';
 import { confirm } from '../../utils/ui-utils.js';
 
-// Store the currently previewed species name for confirmation
-let _previewedSpeciesName = null;
+// NOTE: _previewedSpeciesName moved to instance property (this.previewedSpeciesName)
+// to prevent race conditions with multiple CharGen windows
 
 // Cache for Ol' Salty dialogues
 let _olSaltyDialogues = null;
@@ -97,8 +97,8 @@ export async function _onPreviewSpecies(event) {
     racialTraits = [];
   }
 
-  // Store for confirmation
-  _previewedSpeciesName = speciesName;
+  // Store for confirmation (instance property, not module-scoped)
+  this.previewedSpeciesName = speciesName;
 
   // Populate the expanded card
   const overlay = this.element.querySelector('#species-overlay');
@@ -225,16 +225,16 @@ export async function _onConfirmSpecies(event) {
   event.preventDefault();
   event.stopPropagation();
 
-  if (!_previewedSpeciesName) {
+  if (!this.previewedSpeciesName) {
     SWSELogger.warn('CharGen | No species previewed to confirm');
     ui.notifications.error('Please select a species first');
     return;
   }
 
-  SWSELogger.log(`CharGen | Confirming species selection: ${_previewedSpeciesName}`);
+  SWSELogger.log(`CharGen | Confirming species selection: ${this.previewedSpeciesName}`);
 
-  // Store the species name BEFORE closing the overlay (which resets _previewedSpeciesName)
-  const speciesNameToSelect = _previewedSpeciesName;
+  // Store the species name BEFORE closing the overlay (which resets previewedSpeciesName)
+  const speciesNameToSelect = this.previewedSpeciesName;
 
   // Close the overlay
   this._onCloseSpeciesOverlay(event);
@@ -269,7 +269,7 @@ export async function _onConfirmSpecies(event) {
     ui.notifications.error(`Failed to select species: ${error.message}`);
   }
 
-  _previewedSpeciesName = null;
+  this.previewedSpeciesName = null;
 }
 
 /**
@@ -282,7 +282,7 @@ export function _onCloseSpeciesOverlay(event) {
   const overlay = this.element.querySelector('#species-overlay');
   overlay?.classList.remove('active');
 
-  _previewedSpeciesName = null;
+  this.previewedSpeciesName = null;
 
   SWSELogger.log('CharGen | Closed species preview overlay');
 }

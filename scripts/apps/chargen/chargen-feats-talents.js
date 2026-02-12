@@ -31,6 +31,16 @@ export async function calculateChargenSuggestions(items, chargenContext, itemTyp
       return items; // Return items without suggestions as fallback
     }
 
+    // FIX #3: Pre-calculate BAB for chargen temp actor before prerequisite checks
+    // This ensures prerequisites that depend on BAB are evaluated correctly during chargen
+    if (!tempActor.system.bab || tempActor.system.bab === 0) {
+      const calculatedBAB = _calculateChargenBAB(chargenContext.characterData);
+      if (calculatedBAB > 0) {
+        tempActor.system.bab = calculatedBAB;
+        SWSELogger.log(`[CHARGEN-SUGGESTIONS] Pre-calculated BAB for temp actor: ${calculatedBAB}`);
+      }
+    }
+
     // Build pending data from chargen character data
     const pendingData = {
       selectedFeats: chargenContext.characterData.feats || [],
@@ -1052,4 +1062,51 @@ class SkillFocusDialog extends foundry.applications.api.ApplicationV2 {
       this.close();
     });
   }
+}
+
+/**
+ * FIX #3 HELPER: Calculate BAB for chargen temp actor
+ *
+ * Uses ClassesDB to quickly calculate multiclass BAB without async overhead.
+ * This ensures prerequisites depending on BAB are evaluated correctly during chargen.
+ *
+ * Formula: Sum of BAB from each class at its current level
+ *
+ * @param {Object} chargenData - Character data (includes classes array)
+ * @returns {number} Total BAB, or 0 if unable to calculate
+ */
+function _calculateChargenBAB(chargenData) {
+  if (!chargenData.classes || chargenData.classes.length === 0) {
+    return 0;
+  }
+
+  let totalBAB = 0;
+
+  for (const classLevel of chargenData.classes) {
+    const className = classLevel.name || classLevel;
+    const level = classLevel.level || 1;
+
+    // Use ClassesDB to get class BAB data synchronously
+    if (!ClassesDB.isBuilt) {
+      SWSELogger.warn(`[CHARGEN] ClassesDB not ready, cannot calculate BAB for prerequisites`);
+      return 0;
+    }
+
+    const classData = ClassesDB.byName(className);
+    if (!classData || !classData.levelProgression) {
+      SWSELogger.warn(`[CHARGEN] Cannot calculate BAB for class "${className}" - class not in ClassesDB`);
+      continue;
+    }
+
+    // Get BAB at this level
+    const levelIndex = Math.min(level - 1, classData.levelProgression.length - 1);
+    if (levelIndex >= 0 && levelIndex < classData.levelProgression.length) {
+      const levelData = classData.levelProgression[levelIndex];
+      const classBAB = levelData.bab || 0;
+      totalBAB += classBAB;
+      SWSELogger.log(`[CHARGEN] BAB calc: ${className} level ${level} = +${classBAB}, running total = +${totalBAB}`);
+    }
+  }
+
+  return totalBAB;
 }

@@ -4,8 +4,6 @@
  */
 
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
-import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
-import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { isBaseClass } from './levelup-shared.js';
 import { evaluateClassEligibility } from '../../progression/prerequisites/class-prerequisites-cache.js';
@@ -72,21 +70,13 @@ export async function meetsClassPrerequisites(classDoc, actor, pendingData) {
   // If we have prerequisites from JSON, use those
   if (prestigePrerequisites) {
     const classDocWithPrereqs = { system: { prerequisites: prestigePrerequisites } };
-    const canonical = PrerequisiteChecker.checkClassLevelPrerequisites(actor, classDocWithPrereqs, pendingData);
-    const legacy = PrerequisiteValidator.checkClassPrerequisites(classDocWithPrereqs, actor, pendingData);
-    if (canonical.met !== legacy.valid) {
-      console.warn('Class prereq mismatch (JSON) detected', { className: classDoc.name, canonical, legacy });
-    }
-    return canonical.met;
+    const result = PrerequisiteChecker.checkClassLevelPrerequisites(actor, classDocWithPrereqs, pendingData);
+    return result.met;
   }
 
   // Fall back to checking classDoc prerequisites
-  const canonical = PrerequisiteChecker.checkClassLevelPrerequisites(actor, classDoc, pendingData);
-  const legacy = PrerequisiteValidator.checkClassPrerequisites(classDoc, actor, pendingData);
-  if (canonical.met !== legacy.valid) {
-    console.warn('Class prereq mismatch detected', { className: classDoc.name, canonical, legacy });
-  }
-  return canonical.met;
+  const result = PrerequisiteChecker.checkClassLevelPrerequisites(actor, classDoc, pendingData);
+  return result.met;
 }
 
 /**
@@ -135,15 +125,11 @@ export function getClassEligibilityDetails(className, actor, pendingData = {}) {
  * @returns {{valid: boolean, reasons: string[]}}
  */
 export function checkTalentPrerequisites(talent, actor, pendingData) {
-  const canonical = PrerequisiteChecker.checkTalentPrerequisites(actor, talent, pendingData);
-  const legacy = PrerequisiteRequirements.checkTalentPrerequisites(actor, talent, pendingData);
-  if (canonical.met !== legacy.valid) {
-    console.warn('Talent prereq mismatch detected', { talent: talent.name, canonical, legacy });
-  }
+  const result = PrerequisiteChecker.checkTalentPrerequisites(actor, talent, pendingData);
   // Return in legacy format for backward compatibility with callers
   return {
-    valid: canonical.met,
-    reasons: canonical.missing
+    valid: result.met,
+    reasons: result.missing
   };
 }
 
@@ -155,17 +141,5 @@ export function checkTalentPrerequisites(talent, actor, pendingData) {
  * @returns {Array} Filtered feats with isQualified flag
  */
 export function filterQualifiedFeats(feats, actor, pendingData) {
-  const canonical = PrerequisiteChecker.filterQualifiedFeats(feats, actor, pendingData);
-  const legacy = PrerequisiteValidator.filterQualifiedFeats(feats, actor, pendingData);
-
-  // Compare result counts for mismatch detection
-  if (canonical.length !== legacy.length) {
-    console.warn('filterQualifiedFeats mismatch detected', {
-      canonicalCount: canonical.length,
-      legacyCount: legacy.length,
-      feats: feats.map(f => f.name)
-    });
-  }
-
-  return canonical;
+  return PrerequisiteChecker.filterQualifiedFeats(feats, actor, pendingData);
 }

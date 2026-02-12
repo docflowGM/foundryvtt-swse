@@ -1,33 +1,47 @@
 // ============================================
 // FILE: scripts/data/prestige-prerequisites.js
-// Prestige Class Prerequisites - Authoritative Data
+// Prestige Class Prerequisites - Authoritative Data (Phase 2: UUID-Injected)
 // ============================================
 //
 // This module defines all prerequisites for prestige classes.
 // Prerequisites are checked during level-up to determine which
 // prestige classes are available to the character.
 //
+// PHASE 2 UPGRADE: Each prestige class now includes a stable uuid field.
+// This enables UUID-first resolution (see prerequisite-checker.js).
+//
 // Prerequisite types:
+// - uuid: Stable unique identifier for this prestige class (NEW - Phase 2)
 // - minLevel: Minimum character level
 // - minBAB: Minimum Base Attack Bonus
 // - skills: Array of required trained skills
-// - feats: Array of required feats
+// - feats: Array of required feats (optionally with uuid fields)
 // - talents: Talent requirements (count + trees)
 // - forcePowers: Required Force powers
 // - forceTechniques: Required Force techniques (count)
 // - darkSideScore: Dark Side Score requirement
 // - species: Required species/race
 // - special: Special conditions (text description)
+//
+// UUID SCHEME:
+// - Prestige classes: swse-prestige-<slug>
+// - Feats: swse-feat-<slug>
+// - Talent trees: swse-talent-<slug>
+// - Force powers: swse-power-<slug>
+//
+// See uuid-map.js for complete UUID reference.
 // ============================================
 
 export const PRESTIGE_PREREQUISITES = {
     'Ace Pilot': {
+        uuid: 'swse-prestige-ace-pilot',
         minLevel: 7,
         skills: ['Pilot'],
         feats: ['Vehicular Combat']
     },
 
     'Bounty Hunter': {
+        uuid: 'swse-prestige-bounty-hunter',
         minLevel: 7,
         skills: ['Survival'],
         talents: {
@@ -37,6 +51,7 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Crime Lord': {
+        uuid: 'swse-prestige-crime-lord',
         minLevel: 7,
         skills: ['Deception', 'Persuasion'],
         talents: {
@@ -46,6 +61,7 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Elite Trooper': {
+        uuid: 'swse-prestige-elite-trooper',
         minBAB: 7,
         feats: ['Armor Proficiency (Medium)', 'Martial Arts I'],
         featsAny: ['Point-Blank Shot', 'Flurry'],
@@ -56,6 +72,7 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Force Adept': {
+        uuid: 'swse-prestige-force-adept',
         minLevel: 7,
         skills: ['Use the Force'],
         feats: ['Force Sensitivity'],
@@ -66,6 +83,7 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Force Disciple': {
+        uuid: 'swse-prestige-force-disciple',
         minLevel: 12,
         skills: ['Use the Force'],
         feats: ['Force Sensitivity'],
@@ -80,11 +98,13 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Gunslinger': {
+        uuid: 'swse-prestige-gunslinger',
         minLevel: 7,
         feats: ['Point-Blank Shot', 'Precise Shot', 'Quick Draw', 'Weapon Proficiency (Pistols)']
     },
 
     'Jedi Knight': {
+        uuid: 'swse-prestige-jedi-knight',
         minBAB: 7,
         skills: ['Use the Force'],
         feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
@@ -92,6 +112,7 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Jedi Master': {
+        uuid: 'swse-prestige-jedi-master',
         minLevel: 12,
         skills: ['Use the Force'],
         feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
@@ -102,6 +123,7 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Officer': {
+        uuid: 'swse-prestige-officer',
         minLevel: 7,
         skills: ['Knowledge (Tactics)'],
         talents: {
@@ -112,6 +134,7 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Sith Apprentice': {
+        uuid: 'swse-prestige-sith-apprentice',
         minLevel: 7,
         skills: ['Use the Force'],
         feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
@@ -120,6 +143,7 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Sith Lord': {
+        uuid: 'swse-prestige-sith-lord',
         minLevel: 12,
         skills: ['Use the Force'],
         feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
@@ -132,6 +156,7 @@ export const PRESTIGE_PREREQUISITES = {
 
     // Knights of the Old Republic Campaign Guide
     'Corporate Agent': {
+        uuid: 'swse-prestige-corporate-agent',
         minLevel: 7,
         skills: ['Gather Information', 'Knowledge (Bureaucracy)'],
         feats: ['Skill Focus (Knowledge (Bureaucracy))'],
@@ -139,12 +164,14 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Gladiator': {
+        uuid: 'swse-prestige-gladiator',
         minLevel: 7,
         minBAB: 7,
         feats: ['Improved Damage Threshold', 'Weapon Proficiency (Advanced Melee Weapons)']
     },
 
     'Melee Duelist': {
+        uuid: 'swse-prestige-melee-duelist',
         minLevel: 7,
         minBAB: 7,
         feats: ['Melee Defense', 'Rapid Strike', 'Weapon Focus (Melee Weapon)']
@@ -152,6 +179,7 @@ export const PRESTIGE_PREREQUISITES = {
 
     // Force Unleashed Campaign Guide
     'Enforcer': {
+        uuid: 'swse-prestige-enforcer',
         minLevel: 7,
         skills: ['Gather Information', 'Perception'],
         talents: {
@@ -162,12 +190,14 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Independent Droid': {
+        uuid: 'swse-prestige-independent-droid',
         minLevel: 3,
         skills: ['Use Computer'],
         droidSystems: ['Heuristic Processor']
     },
 
     'Infiltrator': {
+        uuid: 'swse-prestige-infiltrator',
         minLevel: 7,
         skills: ['Perception', 'Stealth'],
         feats: ['Skill Focus (Stealth)'],
@@ -178,6 +208,7 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Master Privateer': {
+        uuid: 'swse-prestige-master-privateer',
         minLevel: 7,
         skills: ['Deception', 'Pilot'],
         feats: ['Vehicular Combat'],
@@ -188,18 +219,21 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Medic': {
+        uuid: 'swse-prestige-medic',
         minLevel: 7,
         skills: ['Knowledge (Life Sciences)', 'Treat Injury'],
         feats: ['Surgical Expertise']
     },
 
     'Saboteur': {
+        uuid: 'swse-prestige-saboteur',
         minLevel: 7,
         skills: ['Deception', 'Mechanics', 'Use Computer']
     },
 
     // Scum and Villainy
     'Assassin': {
+        uuid: 'swse-prestige-assassin',
         minLevel: 7,
         skills: ['Stealth'],
         feats: ['Sniper'],
@@ -209,6 +243,7 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Charlatan': {
+        uuid: 'swse-prestige-charlatan',
         minLevel: 7,
         skills: ['Deception', 'Persuasion'],
         talents: {
@@ -218,6 +253,7 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Outlaw': {
+        uuid: 'swse-prestige-outlaw',
         minLevel: 7,
         skills: ['Stealth', 'Survival'],
         talents: {
@@ -229,6 +265,7 @@ export const PRESTIGE_PREREQUISITES = {
 
     // Clone Wars Campaign Guide
     'Droid Commander': {
+        uuid: 'swse-prestige-droid-commander',
         minLevel: 7,
         skills: ['Knowledge (Tactics)', 'Use Computer'],
         talents: {
@@ -239,11 +276,13 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Military Engineer': {
+        uuid: 'swse-prestige-military-engineer',
         minBAB: 7,
         skills: ['Mechanics', 'Use Computer']
     },
 
     'Vanguard': {
+        uuid: 'swse-prestige-vanguard',
         minLevel: 7,
         skills: ['Perception', 'Stealth'],
         talents: {
@@ -254,6 +293,7 @@ export const PRESTIGE_PREREQUISITES = {
 
     // Legacy Era Campaign Guide
     'Imperial Knight': {
+        uuid: 'swse-prestige-imperial-knight',
         minBAB: 7,
         skills: ['Use the Force'],
         feats: ['Armor Proficiency (Medium)', 'Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
@@ -261,6 +301,7 @@ export const PRESTIGE_PREREQUISITES = {
     },
 
     'Shaper': {
+        uuid: 'swse-prestige-shaper',
         minLevel: 7,
         species: ['Yuuzhan Vong'],
         skills: ['Knowledge (Life Sciences)', 'Treat Injury'],
@@ -269,12 +310,14 @@ export const PRESTIGE_PREREQUISITES = {
 
     // Rebellion Era Campaign Guide
     'Improviser': {
+        uuid: 'swse-prestige-improviser',
         minLevel: 7,
         skills: ['Mechanics', 'Use Computer'],
         feats: ['Skill Focus (Mechanics)']
     },
 
     'Pathfinder': {
+        uuid: 'swse-prestige-pathfinder',
         minLevel: 7,
         skills: ['Perception', 'Survival'],
         talents: {
@@ -285,6 +328,7 @@ export const PRESTIGE_PREREQUISITES = {
 
     // Galaxy at War
     'Martial Arts Master': {
+        uuid: 'swse-prestige-martial-arts-master',
         minBAB: 7,
         feats: ['Martial Arts II', 'Melee Defense'],
         featsAny: ['Martial Arts Feat'], // Any one Martial Arts feat
