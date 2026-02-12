@@ -14,26 +14,26 @@
     <div class="field"><span class="label">Speed</span><span class="value">{{derived.identity.speed}}</span></div>
   </div>
 
-  {{#if derived.identity.forcePoints.display}}
+  {{#if derived.identity.forcePointsDisplay}}
     <div class="swse-v2-resources" style="margin-top:8px;">
       <div class="swse-v2-resource" data-kind="destiny" title="Destiny Points">
         <span class="label">DP</span>
-        <span class="ticks {{derived.identity.destinyPoints.display.sizeClass}}">
-          {{#each derived.identity.destinyPoints.display.ticks as |t|}}
+        <span class="ticks {{derived.identity.destinyPointsDisplay.sizeClass}}">
+          {{#each derived.identity.destinyPointsDisplay.ticks as |t|}}
             <span class="tick {{#if t.filled}}filled{{/if}}"></span>
           {{/each}}
         </span>
-        <span class="count">{{derived.identity.destinyPoints.display.labelText}}</span>
+        <span class="count">{{derived.identity.destinyPointsDisplay.labelText}}</span>
       </div>
 
       <div class="swse-v2-resource" data-kind="force" title="Force Points">
         <span class="label">FP</span>
-        <span class="ticks {{derived.identity.forcePoints.display.sizeClass}}">
-          {{#each derived.identity.forcePoints.display.ticks as |t|}}
+        <span class="ticks {{derived.identity.forcePointsDisplay.sizeClass}}">
+          {{#each derived.identity.forcePointsDisplay.ticks as |t|}}
             <span class="tick {{#if t.filled}}filled{{/if}}"></span>
           {{/each}}
         </span>
-        <span class="count">{{derived.identity.forcePoints.display.labelText}}</span>
+        <span class="count">{{derived.identity.forcePointsDisplay.labelText}}</span>
       </div>
     </div>
   {{/if}}
