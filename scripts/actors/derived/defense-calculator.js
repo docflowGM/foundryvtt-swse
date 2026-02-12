@@ -6,6 +6,12 @@
  *
  * Formula (SWSE): Defense = 10 + heroic level + class bonus + ability mod
  * Where class bonus = highest bonus from all classes.
+ *
+ * DROID EXCEPTION:
+ * - Fortitude defense: Uses STR mod only (no CON mod, droids are mechanical)
+ * - Reflex defense: Uses DEX mod (same as living creatures)
+ * - Will defense: Uses WIS mod (same as living creatures)
+ * See line 37-38 for isDroid check and conditional ability mod selection.
  */
 
 import { swseLogger } from '../../utils/logger.js';
