@@ -250,7 +250,7 @@ export class GMDebugPanel extends SWSEApplicationV2 {
             const json = JSON.stringify(this.buildIntent, null, 2);
             navigator.clipboard.writeText(json);
             ui.notifications.info('BuildIntent JSON copied to clipboard');
-        });
+        }));
 
         // Collapsible sections
         root.querySelectorAll('.collapsible-header').forEach(header => {
