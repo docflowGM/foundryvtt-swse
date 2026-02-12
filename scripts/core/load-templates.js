@@ -103,12 +103,55 @@ export const SWSE_PARTIALS = [
   // Droid diagnostic
   'systems/foundryvtt-swse/templates/actors/droid/droid-diagnostic.hbs',
 
+  // Droid v1 partials
+  'systems/foundryvtt-swse/templates/actors/droid/droid-image-operational.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/droid-callouts-operational.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/droid-image-blueprint.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/droid-callouts-blueprint.hbs',
+
   // Vehicle partials
   'systems/foundryvtt-swse/templates/actors/vehicle/vehicle-image.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/vehicle-callouts.hbs',
 
+  // NPC partials
+  'systems/foundryvtt-swse/templates/actors/npc/npc-image.hbs',
+  'systems/foundryvtt-swse/templates/actors/npc/npc-core-stats.hbs',
+  'systems/foundryvtt-swse/templates/actors/npc/npc-weapon-block.hbs',
+  'systems/foundryvtt-swse/templates/actors/npc/npc-talent-block.hbs',
+  'systems/foundryvtt-swse/templates/actors/npc/npc-specials-block.hbs',
+  'systems/foundryvtt-swse/templates/actors/npc/npc-diagnostics-block.hbs',
+
+  // Character v2 partials
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs',
+
+  // NPC v2 sheet
+  'systems/foundryvtt-swse/templates/actors/npc/v2/npc-sheet.hbs',
+
+  // Droid v2 partials
+  'systems/foundryvtt-swse/templates/actors/droid/v2/droid-sheet.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history.hbs',
+
+  // Vehicle v2 partials
+  'systems/foundryvtt-swse/templates/actors/vehicle/v2/vehicle-sheet.hbs',
+  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/attacks-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs',
+
+  // Character v2 sheet
+  'systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs',
+
   // Starship maneuvers
-  'systems/foundryvtt-swse/templates/partials/starship-maneuvers-panel.hbs'
+  'systems/foundryvtt-swse/templates/partials/starship-maneuvers-panel.hbs',
+
+  // Suggestion card (recursive partial)
+  'systems/foundryvtt-swse/templates/partials/suggestion-card.hbs'
 ];
 
 // Track background template loading
@@ -120,11 +163,17 @@ export async function preloadHandlebarsTemplates() {
   // These are needed for initial sheet render
   // ============================================
   const criticalTemplates = [
-    // Main sheet templates
+    // V1 Main sheet templates
     'systems/foundryvtt-swse/templates/actors/character/character-sheet.hbs',
     'systems/foundryvtt-swse/templates/actors/droid/droid-sheet.hbs',
     'systems/foundryvtt-swse/templates/actors/npc/npc-sheet.hbs',
     'systems/foundryvtt-swse/templates/actors/vehicle/vehicle-sheet.hbs',
+
+    // V2 Main sheet templates
+    'systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs',
+    'systems/foundryvtt-swse/templates/actors/droid/v2/droid-sheet.hbs',
+    'systems/foundryvtt-swse/templates/actors/npc/v2/npc-sheet.hbs',
+    'systems/foundryvtt-swse/templates/actors/vehicle/v2/vehicle-sheet.hbs',
 
     // Character tabs (all included in main template, must load immediately)
     'systems/foundryvtt-swse/templates/actors/character/tabs/summary-tab.hbs',
@@ -138,6 +187,24 @@ export async function preloadHandlebarsTemplates() {
     'systems/foundryvtt-swse/templates/actors/character/tabs/import-export-tab.hbs',
     'systems/foundryvtt-swse/templates/actors/character/tabs/starship-maneuvers-tab.hbs',
 
+    // V2 Character partials (used by v2 sheets)
+    'systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs',
+    'systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs',
+    'systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs',
+    'systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs',
+    'systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs',
+    'systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs',
+    'systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs',
+    'systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs',
+
+    // V2 Droid partials (used by v2 droid sheet)
+    'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs',
+    'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history.hbs',
+
+    // V2 Vehicle partials (used by v2 vehicle sheet)
+    'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/attacks-panel.hbs',
+    'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs',
+
     // Critical partials (used by critical templates above)
     'systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs',
     'systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs',
@@ -147,16 +214,30 @@ export async function preloadHandlebarsTemplates() {
 
     // Droid-specific partials
     'systems/foundryvtt-swse/templates/actors/droid/droid-diagnostic.hbs',
+    'systems/foundryvtt-swse/templates/actors/droid/droid-image-operational.hbs',
+    'systems/foundryvtt-swse/templates/actors/droid/droid-callouts-operational.hbs',
+    'systems/foundryvtt-swse/templates/actors/droid/droid-image-blueprint.hbs',
+    'systems/foundryvtt-swse/templates/actors/droid/droid-callouts-blueprint.hbs',
 
     // Vehicle-specific partials
     'systems/foundryvtt-swse/templates/actors/vehicle/vehicle-image.hbs',
     'systems/foundryvtt-swse/templates/actors/vehicle/vehicle-callouts.hbs',
     'systems/foundryvtt-swse/templates/partials/crew-action-cards.hbs',
 
+    // NPC-specific partials
+    'systems/foundryvtt-swse/templates/actors/npc/npc-image.hbs',
+    'systems/foundryvtt-swse/templates/actors/npc/npc-core-stats.hbs',
+    'systems/foundryvtt-swse/templates/actors/npc/npc-weapon-block.hbs',
+    'systems/foundryvtt-swse/templates/actors/npc/npc-talent-block.hbs',
+    'systems/foundryvtt-swse/templates/actors/npc/npc-specials-block.hbs',
+    'systems/foundryvtt-swse/templates/actors/npc/npc-diagnostics-block.hbs',
+
     // Additional partials used by actor sheets
     'systems/foundryvtt-swse/templates/partials/skill-actions-panel.hbs',
     'systems/foundryvtt-swse/templates/partials/skill-action-card.hbs',
-    'systems/foundryvtt-swse/templates/partials/assets-panel.hbs'
+    'systems/foundryvtt-swse/templates/partials/assets-panel.hbs',
+    'systems/foundryvtt-swse/templates/partials/suggestion-card.hbs',
+    'systems/foundryvtt-swse/templates/partials/starship-maneuvers-panel.hbs'
   ];
 
   // ============================================
@@ -240,10 +321,17 @@ export async function waitForBackgroundTemplates() {
 export function getTemplatePaths() {
   return {
     critical: [
+      // V1 sheets
       'systems/foundryvtt-swse/templates/actors/character/character-sheet.hbs',
       'systems/foundryvtt-swse/templates/actors/droid/droid-sheet.hbs',
       'systems/foundryvtt-swse/templates/actors/npc/npc-sheet.hbs',
       'systems/foundryvtt-swse/templates/actors/vehicle/vehicle-sheet.hbs',
+      // V2 sheets
+      'systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs',
+      'systems/foundryvtt-swse/templates/actors/droid/v2/droid-sheet.hbs',
+      'systems/foundryvtt-swse/templates/actors/npc/v2/npc-sheet.hbs',
+      'systems/foundryvtt-swse/templates/actors/vehicle/v2/vehicle-sheet.hbs',
+      // Character tabs
       'systems/foundryvtt-swse/templates/actors/character/tabs/summary-tab.hbs',
       'systems/foundryvtt-swse/templates/actors/character/tabs/abilities-tab.hbs',
       'systems/foundryvtt-swse/templates/actors/character/tabs/skills-tab.hbs',
@@ -254,6 +342,16 @@ export function getTemplatePaths() {
       'systems/foundryvtt-swse/templates/actors/character/tabs/biography-tab.hbs',
       'systems/foundryvtt-swse/templates/actors/character/tabs/import-export-tab.hbs',
       'systems/foundryvtt-swse/templates/actors/character/tabs/starship-maneuvers-tab.hbs',
+      // V2 partials
+      'systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs',
+      'systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs',
+      'systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs',
+      'systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs',
+      'systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs',
+      'systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs',
+      'systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs',
+      'systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs',
+      // Other critical partials
       'systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs',
       'systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs',
       'systems/foundryvtt-swse/templates/partials/skill-row-static.hbs',
