@@ -1476,10 +1476,25 @@ async applyScalingFeature(feature) {
       skill => !backgroundTrainings.includes(skill)
     );
 
+    // VALIDATION: Check skill count against budget (before mutation)
     if (nonBackgroundSelections.length > availableTrainings) {
       throw new Error(
         `Too many skill trainings selected: ${nonBackgroundSelections.length}/${availableTrainings} ` +
         `(${backgroundTrainings.length} background trainings are automatic)`
+      );
+    }
+
+    // VALIDATION: Check that selected skills are valid for this class (before mutation)
+    // Prevents invalid skills from entering progression state
+    const classSkills = classData.classSkills || [];
+    const universalSkills = classData.universalSkills || [];
+    const validSkillPool = new Set([...classSkills, ...universalSkills]);
+
+    const invalidSkills = selectedSkills.filter(skill => !validSkillPool.has(skill));
+    if (invalidSkills.length > 0) {
+      throw new Error(
+        `Invalid skills selected for ${classData.name}: ${invalidSkills.join(', ')}. ` +
+        `Valid skills are: ${Array.from(validSkillPool).join(', ')}`
       );
     }
 
@@ -1512,7 +1527,7 @@ async applyScalingFeature(feature) {
   async _action_confirmFeats(payload) {
     const { featIds } = payload;
 
-    // FIXED: Bug #5 - Validate Force Training feat gating
+    // VALIDATION: Check Force Training feat gating (before mutation)
     const { canTakeForceTraining } = await import('../progression/engine/autogrants/force-training.js');
     for (const featId of featIds) {
       const featName = typeof featId === 'string' ? featId : '';
@@ -1529,9 +1544,25 @@ async applyScalingFeature(feature) {
     const progression = this.actor.system.progression || {};
     const currentFeats = progression.feats || [];
 
-    // Validate feat budget (don't count starting feats)
+    // VALIDATION: Check feat budget (before mutation)
     if (currentFeats.length + featIds.length > featBudget) {
       throw new Error(`Too many feats selected: ${currentFeats.length + featIds.length}/${featBudget}`);
+    }
+
+    // VALIDATION: Check feat prerequisites (before mutation)
+    // Build pending data snapshot for prerequisite checking
+    const pendingData = {
+      selectedFeats: [...currentFeats, ...featIds],
+      selectedTalents: progression.talents || [],
+      selectedSkills: progression.trainedSkills || []
+    };
+
+    const { PrerequisiteChecker } = await import('../data/prerequisite-checker.js');
+    for (const featId of featIds) {
+      const prereqCheck = PrerequisiteChecker.checkFeatPrerequisites(this.actor, featId, pendingData);
+      if (!prereqCheck.met) {
+        throw new Error(`Feat "${featId}" prerequisites not met: ${prereqCheck.missing.join(', ')}`);
+      }
     }
 
     // Merge and deduplicate
@@ -1571,6 +1602,7 @@ async applyScalingFeature(feature) {
 
     swseLogger.log(`[PROGRESSION-TALENTS] After selection: ${talentsAfterSelection} talents`);
 
+    // VALIDATION: Check talent budget (before mutation)
     if (talentsAfterSelection > talentBudget) {
       swseLogger.error(`[PROGRESSION-TALENTS] FATAL: Talent budget exceeded!`);
       swseLogger.error(`[PROGRESSION-TALENTS] ${talentsAfterSelection} > ${talentBudget}`);
@@ -1578,6 +1610,21 @@ async applyScalingFeature(feature) {
         `Too many talents selected: ${talentsAfterSelection}/${talentBudget} ` +
         `(${currentTalents.length} already selected, trying to add ${newTalents.length})`
       );
+    }
+
+    // VALIDATION: Check talent prerequisites (before mutation)
+    const pendingData = {
+      selectedTalents: [...currentTalents, ...talentIds],
+      selectedFeats: progression.feats || [],
+      selectedSkills: progression.trainedSkills || []
+    };
+
+    const { PrerequisiteChecker } = await import('../data/prerequisite-checker.js');
+    for (const talentId of newTalents) {
+      const prereqCheck = PrerequisiteChecker.checkTalentPrerequisites(this.actor, talentId, pendingData);
+      if (!prereqCheck.met) {
+        throw new Error(`Talent "${talentId}" prerequisites not met: ${prereqCheck.missing.join(', ')}`);
+      }
     }
 
     // Merge and deduplicate
@@ -1601,6 +1648,13 @@ async applyScalingFeature(feature) {
 
   async _action_increaseAbility(payload) {
     const { ability } = payload;
+
+    // VALIDATION: Droids cannot increase CON (mechanical, not biological)
+    const isDroid = this.actor.system.isDroid || false;
+    if (isDroid && ability.toLowerCase() === 'con') {
+      throw new Error('Droids cannot increase Constitution (mechanical constructs, not biological)');
+    }
+
     const currentBase = this.actor.system.attributes?.[ability]?.base || 10;
 
     await applyActorUpdateAtomic(this.actor, {
