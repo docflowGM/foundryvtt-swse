@@ -38,7 +38,6 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
       resizable: true
     },
     classes: ['swse', 'gm-store-dashboard', 'swse-app-dashboard'],
-    template: 'systems/foundryvtt-swse/templates/apps/gm-store-dashboard.hbs',
     tabs: [
       {
         navSelector: '.dashboard-tabs',
@@ -46,6 +45,12 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
         initial: 'transactions'
       }
     ]
+  };
+
+  static PARTS = {
+    content: {
+      template: 'systems/foundryvtt-swse/templates/apps/gm-store-dashboard.hbs'
+    }
   };
 
   static get defaultOptions() {

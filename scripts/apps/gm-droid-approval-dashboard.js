@@ -20,8 +20,13 @@ export class GMDroidApprovalDashboard extends HandlebarsApplicationMixin(Applica
       height: 700,
       resizable: true
     },
-    classes: ['swse', 'gm-dashboard', 'droid-approval-dashboard'],
-    template: 'systems/foundryvtt-swse/templates/apps/gm-droid-approval-dashboard.hbs'
+    classes: ['swse', 'gm-dashboard', 'droid-approval-dashboard']
+  };
+
+  static PARTS = {
+    content: {
+      template: 'systems/foundryvtt-swse/templates/apps/gm-droid-approval-dashboard.hbs'
+    }
   };
 
   static get defaultOptions() {

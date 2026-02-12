@@ -19,28 +19,23 @@ export class TemplateCharacterCreator extends SWSEFormApplicationV2 {
 
   constructor(options = {}) {
     super(options);
-    // AppV2 render contract: template must be a non-null string.
-    const tpl = this.options?.template;
-    if (typeof tpl !== 'string' || !tpl.trim()) {
-      console.error('[SWSE] TemplateCharacterCreator: invalid template option, using fallback.', {
-        template: tpl,
-        options: this.options
-      });
-      this.options.template = TEMPLATE_PATH;
-    }
     this.selectedClass = null;
     this.mentorDialogues = null;
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}, {
     classes: ['swse', 'template-creator', 'swse-app'],
-    template: TEMPLATE_PATH,
     width: 1000,
     height: 700,
     title: 'Character Template Creator',
     resizable: true
   });
 
+  static PARTS = {
+    content: {
+      template: TEMPLATE_PATH
+    }
+  };
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.

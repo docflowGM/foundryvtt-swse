@@ -114,7 +114,6 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
       classes: ['swse', 'levelup-dialog', 'swse-app'],
-      template: 'systems/foundryvtt-swse/templates/apps/levelup.hbs',
       width: 800,
       height: 600,
       resizable: true,
@@ -126,6 +125,12 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       left: null,  // Allow Foundry to center
       top: null    // Allow Foundry to center
     });
+
+  static PARTS = {
+    content: {
+      template: 'systems/foundryvtt-swse/templates/apps/levelup.hbs'
+    }
+  };
 
   /**
    * Detect if character is incomplete and determine which step to start at
