@@ -2501,6 +2501,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
   /**
    * Validate final character data before creation
    * This runs EVEN in free build mode to prevent broken characters
+   * CRITICAL: Must match _assertCharacterComplete checks for consistency
    * @returns {Promise<boolean>} True if valid, false otherwise
    */
   async _validateFinalCharacter() {
@@ -2509,6 +2510,15 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     // Always required: Character name
     if (!this.characterData.name || this.characterData.name.trim() === '') {
       errors.push('Character must have a name');
+    }
+
+    // CONSISTENCY CHECK: Validate all 6 abilities are defined and valid (matches _assertCharacterComplete)
+    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    for (const key of abilityKeys) {
+      const ability = this.characterData.abilities[key];
+      if (!ability || typeof ability.base !== 'number' || !Number.isFinite(ability.base)) {
+        errors.push(`Ability ${key.toUpperCase()} must be a valid number`);
+      }
     }
 
     // Droid-specific minimum validation
@@ -2579,6 +2589,57 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Damage Threshold = Fortitude Defense
     this.characterData.damageThreshold = this.characterData.defenses.fort.total;
+
+    // CRITICAL: Validate that recalcs produced valid values before passing to actor creation
+    this._validateFinalizedValues();
+  }
+
+  /**
+   * Validate that _finalizeCharacter recalculations produced valid values
+   * Prevents creating actors with NaN or null derived values
+   * @private
+   * @throws {Error} if any critical recalculated values are invalid
+   */
+  _validateFinalizedValues() {
+    const errors = [];
+
+    // Check HP is a finite number
+    if (!Number.isFinite(this.characterData.hp?.max)) {
+      errors.push(`HP max is invalid: ${this.characterData.hp?.max}`);
+    }
+
+    // Check all defenses are finite numbers
+    const defenseKeys = ['fort', 'reflex', 'will'];
+    for (const key of defenseKeys) {
+      const defense = this.characterData.defenses?.[key]?.total;
+      if (!Number.isFinite(defense)) {
+        errors.push(`${key.toUpperCase()} defense is invalid: ${defense}`);
+      }
+    }
+
+    // Check Second Wind healing is finite
+    if (!Number.isFinite(this.characterData.secondWind?.healing)) {
+      errors.push(`Second Wind healing is invalid: ${this.characterData.secondWind?.healing}`);
+    }
+
+    // Check Damage Threshold is finite
+    if (!Number.isFinite(this.characterData.damageThreshold)) {
+      errors.push(`Damage Threshold is invalid: ${this.characterData.damageThreshold}`);
+    }
+
+    // Check BAB is finite (or 0 if not set)
+    if (this.characterData.bab != null && !Number.isFinite(this.characterData.bab)) {
+      errors.push(`Base Attack Bonus is invalid: ${this.characterData.bab}`);
+    }
+
+    // Throw error if any finalization checks failed
+    if (errors.length > 0) {
+      const errorMsg = `Character finalization failed - invalid derived values:\n${errors.map(e => `• ${e}`).join('\n')}`;
+      SWSELogger.error('[CHARGEN] ' + errorMsg.replace(/\n/g, ' '));
+      throw new Error(errorMsg);
+    }
+
+    SWSELogger.log('[CHARGEN] Finalized character values validated successfully');
   }
 
   /**
@@ -2961,8 +3022,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
             const classDef = ClassesDB.byName(classDoc.name);
 
             if (!classDef) {
-              SWSELogger.error(`CharGen | Class not found in ClassesDB: ${classDoc.name}`);
-              continue;
+              const errorMsg = `Class "${classDoc.name}" not found in ClassesDB. Character cannot be created without valid class definitions.`;
+              SWSELogger.error(`CharGen | ${errorMsg}`);
+              throw new Error(errorMsg);
             }
 
             // Create STATE-ONLY class item (no mechanics data stored)
