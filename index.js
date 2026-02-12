@@ -145,6 +145,9 @@ import { Upkeep } from './scripts/automation/upkeep.js';
 import { initializePhase5, getPhaseSummary } from './scripts/core/phase5-init.js';
 import { registerCriticalFlowTests } from './scripts/tests/critical-flow-tests.js';
 
+// ---- Forensic diagnostics ----
+import { initializeSheetDiagnostics } from './scripts/core/forensic-sheet-diagnostic.js';
+
 /* ==========================================================================
    DOCUMENT CLASS REGISTRATION (must be top-level, before any hooks)
    ========================================================================== */
@@ -227,6 +230,9 @@ Hooks.once('init', async () => {
   if (!hasDefault) {
     console.warn('SWSE | Warning: No default character sheet marked after registration');
   }
+
+  /* ---------- FORENSIC SHEET DIAGNOSTIC ---------- */
+  initializeSheetDiagnostics();
 
   /* ---------- PHASE 3: Structural Enforcement Layer ---------- */
   await initializeV2RenderGuard();
