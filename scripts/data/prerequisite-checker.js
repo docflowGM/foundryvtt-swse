@@ -704,9 +704,18 @@ export class PrerequisiteChecker {
     // ============================================================
 
     static _checkFeatCondition(prereq, actor, pending) {
-        const hasFeat = actor.items?.some(i => i.type === 'feat' && i.name === prereq.name) ||
-            (pending.selectedFeats || []).some(f => f.name === prereq.name) ||
-            this.getHouseruleGrantedFeats().includes(prereq.name);
+        // FIX MEDIUM #1: Make case-insensitive to match Tier 3 (legacy string parsing)
+        // This prevents false negatives when feat case doesn't match exactly
+        const hasActorFeat = actor.items?.some(i =>
+            i.type === 'feat' && i.name?.toLowerCase() === prereq.name?.toLowerCase()
+        );
+        const hasPendingFeat = (pending.selectedFeats || []).some(f =>
+            f.name?.toLowerCase() === prereq.name?.toLowerCase()
+        );
+        const hasHouseruleFeat = this.getHouseruleGrantedFeats().some(f =>
+            f.toLowerCase() === prereq.name?.toLowerCase()
+        );
+        const hasFeat = hasActorFeat || hasPendingFeat || hasHouseruleFeat;
         return {
             met: hasFeat,
             message: !hasFeat ? `Requires feat: ${prereq.name}` : ''
@@ -714,8 +723,14 @@ export class PrerequisiteChecker {
     }
 
     static _checkTalentCondition(prereq, actor, pending) {
-        const hasTalent = actor.items?.some(i => i.type === 'talent' && i.name === prereq.name) ||
-            (pending.selectedTalents || []).some(t => t.name === prereq.name);
+        // FIX MEDIUM #1: Make case-insensitive for consistency
+        const hasActorTalent = actor.items?.some(i =>
+            i.type === 'talent' && i.name?.toLowerCase() === prereq.name?.toLowerCase()
+        );
+        const hasPendingTalent = (pending.selectedTalents || []).some(t =>
+            t.name?.toLowerCase() === prereq.name?.toLowerCase()
+        );
+        const hasTalent = hasActorTalent || hasPendingTalent;
         return {
             met: hasTalent,
             message: !hasTalent ? `Requires talent: ${prereq.name}` : ''
@@ -957,17 +972,25 @@ export class PrerequisiteChecker {
 
     static _parseLegacyPrerequisites(prereqString) {
         const prereqs = [];
-        const hasOr = /\s+or\s+/i.test(prereqString);
+
+        // FIX MEDIUM #2: Normalize whitespace before parsing
+        // Collapse multiple spaces to single space for consistent parsing
+        const normalized = prereqString.replace(/\s+/g, ' ');
+
+        // Check for OR logic (case-insensitive, handles multiple spaces)
+        const hasOr = /\s+or\s+/i.test(normalized);
 
         if (hasOr) {
-            const orGroups = prereqString.split(/\s+or\s+/i).map(p => p.trim()).filter(p => p);
+            const orGroups = normalized.split(/\s+or\s+/i).map(p => p.trim()).filter(p => p);
             const parsedGroups = orGroups.map(group => {
-                const andParts = group.split(/[,;]|(?:\s+and\s+)/i).map(p => p.trim()).filter(p => p);
+                // Handle AND/comma/semicolon separation (with normalized whitespace)
+                const andParts = group.split(/[,;]|\s+and\s+/i).map(p => p.trim()).filter(p => p);
                 return andParts.map(part => this._parseLegacyPrerequisitePart(part)).filter(p => p);
             });
             return [{ type: 'or_group', groups: parsedGroups }];
         } else {
-            const parts = prereqString.split(/[,;]|(?:\s+and\s+)/i).map(p => p.trim()).filter(p => p);
+            // Handle AND/comma/semicolon separation (with normalized whitespace)
+            const parts = normalized.split(/[,;]|\s+and\s+/i).map(p => p.trim()).filter(p => p);
             for (const part of parts) {
                 const prereq = this._parseLegacyPrerequisitePart(part);
                 if (prereq) {prereqs.push(prereq);}
@@ -1018,20 +1041,31 @@ export class PrerequisiteChecker {
             };
         }
 
-        // Class level pattern
+        // Class level pattern (FIX #1: Use PRESTIGE_PREREQUISITES as dynamic source of truth)
         const classLevelPattern = /^([A-Za-z\s]+?)\s+(?:level\s+)?(\d+)$/i;
         const classLevelMatch = part.match(classLevelPattern);
         if (classLevelMatch) {
             const className = classLevelMatch[1].trim();
-            const knownClasses = ['Jedi', 'Noble', 'Scoundrel', 'Scout', 'Soldier', 'Beast', 'Force Adept',
-                                 'Ace Pilot', 'Crime Lord', 'Elite Trooper', 'Force Disciple', 'Gunslinger',
-                                 'Jedi Knight', 'Jedi Master', 'Officer', 'Sith Apprentice', 'Sith Lord'];
-            if (knownClasses.some(c => c.toLowerCase() === className.toLowerCase())) {
+
+            // FIX #1: CRITICAL - Use PRESTIGE_PREREQUISITES as dynamic lookup instead of hardcoded array
+            // This ensures all 32 prestige classes (not just 16) are supported without maintenance
+            const isPrestigeClass = className in PRESTIGE_PREREQUISITES;
+
+            // Also check base classes (these are base classes, not prestige, but can appear in legacy strings)
+            const baseClasses = ['Jedi', 'Noble', 'Scoundrel', 'Scout', 'Soldier', 'Beast', 'Officer'];
+            const isBaseClass = baseClasses.some(c => c.toLowerCase() === className.toLowerCase());
+
+            if (isPrestigeClass || isBaseClass) {
                 return {
                     type: 'class',
                     className: className,
                     level: parseInt(classLevelMatch[2], 10)
                 };
+            } else {
+                // FIX #2: Report unrecognized class names instead of silent failure
+                SWSELogger.warn(`[CHARGEN PREREQ] Unrecognized class in legacy prerequisite: "${className}". ` +
+                    `This will be parsed as a feat requirement. Available prestige classes: ` +
+                    `${Object.keys(PRESTIGE_PREREQUISITES).join(', ')}`);
             }
         }
 
@@ -1061,7 +1095,12 @@ export class PrerequisiteChecker {
             return { type: 'force_sensitive' };
         }
 
-        // Default: feat name
+        // FIX #2: Report unrecognized patterns instead of silently parsing as feat names
+        // This helps DMs catch malformed prerequisite data
+        SWSELogger.warn(`[CHARGEN PREREQ] Unrecognized prerequisite pattern: "${part}". ` +
+            `Parsing as feat requirement, but this may indicate a typo or malformed prerequisite.`);
+
+        // Default: feat name (last resort fallback)
         return { type: 'feat', featName: part };
     }
 
