@@ -9,6 +9,7 @@
  *   Called automatically from hardening-init.js in ready hook
  */
 
+import { HandlebarsApplicationMixin } from "foundry/applications/api/handlebars-application.mjs";
 import { SWSELogger } from '../utils/logger.js';
 import { initializeTooltipDiscovery } from './tooltip-discovery.js';
 
@@ -56,117 +57,96 @@ export async function resetWelcome() {
 }
 
 /**
- * Welcome Dialog - AppV2 Implementation
+ * Welcome Dialog - ApplicationV2 Template-Driven Implementation with Sentinel Diagnostics
  */
-class WelcomeDialog extends foundry.applications.api.ApplicationV2 {
+class WelcomeDialog extends HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: 'swse-welcome-dialog',
-    tag: 'div',
-    window: { icon: 'fas fa-star', title: '⭐ Welcome to SWSE for Foundry VTT' },
-    position: { width: 600, height: 'auto' }
+    window: { icon: 'fas fa-star', title: '⭐ Welcome to SWSE for Foundry VTT' }
   };
+
+  static PARTS = {
+    content: {
+      template: 'systems/foundryvtt-swse/templates/dialogs/welcome-dialog.hbs'
+    }
+  };
+
+  // Sentinel Mode: Track render lifecycle
+  static _sentinelRenderCount = 0;
 
   constructor(options = {}) {
     super(options);
     this.resolveDialog = null;
   }
 
-  async _renderHTML(context, options) {
-    const content = document.createElement('div');
-    content.className = 'swse-welcome';
-    content.innerHTML = `
-      <h2>⭐ Welcome to Star Wars Saga Edition!</h2>
-
-      <div class="section">
-        <p>This system provides comprehensive support for SWSE gameplay on Foundry VTT v13+. Here's what you need to know:</p>
-      </div>
-
-      <div class="section">
-        <h3>🎭 Character Generation</h3>
-        <ul>
-          <li><strong>Guided Chargen:</strong> Use the Character Generation tool to build characters step-by-step</li>
-          <li><strong>Auto-Calculation:</strong> Attributes, skills, defenses, and BAB calculate automatically</li>
-          <li><strong>Mentor System:</strong> Get explanations and recommendations as you build</li>
-          <li><strong>Templates:</strong> Pre-built species, classes, and prestige classes available</li>
-        </ul>
-      </div>
-
-      <div class="tip">
-        <strong>Tip:</strong> First-time GMs should read the Mentor system explanations—they explain SWSE rules in context.
-      </div>
-
-      <div class="section">
-        <h3>🎲 Combat & Progression</h3>
-        <ul>
-          <li><strong>Combat Resolution:</strong> Roll attacks and damage with automatic skill/feat calculations</li>
-          <li><strong>Level-Up System:</strong> Guided advancement with class feature recommendations</li>
-          <li><strong>Force Powers:</strong> Full Force power system with resource tracking</li>
-          <li><strong>Vehicles:</strong> Starship and vehicle rules with crew positions</li>
-        </ul>
-      </div>
-
-      <div class="tip">
-        <strong>Tip:</strong> Hover over buttons and icons to see tooltips explaining each feature.
-      </div>
-
-      <div class="section">
-        <h3>📚 Core Concepts</h3>
-        <ul>
-          <li><strong>System Settings:</strong> Configure rules variants and house rules in System Settings</li>
-          <li><strong>Compendium Packs:</strong> All weapons, armor, feats, and talents are in compendium packs (searchable)</li>
-          <li><strong>Actions & Automation:</strong> Many combat actions are automated—click action buttons for quick resolution</li>
-          <li><strong>Destiny Points:</strong> Tracked per character; spend in combat for bonuses or rerolls</li>
-        </ul>
-      </div>
-
-      <div class="section">
-        <h3>🔗 Get Help</h3>
-        <ul>
-          <li>Hover over UI elements for tooltips</li>
-          <li>Read the <a href="https://github.com/docflowGM/foundryvtt-swse" target="_blank">system documentation</a></li>
-          <li>Join the <a href="https://discord.gg/Sdwd7CgmaJ" target="_blank">community Discord</a></li>
-        </ul>
-      </div>
-
-      <div class="checkbox-group">
-        <label>
-          <input type="checkbox" id="swse-no-welcome-again" />
-          Don't show this again
-        </label>
-      </div>
-
-      <div class="dialog-buttons">
-        <button class="btn btn-primary" data-action="got-it">
-          <i class="fas fa-check"></i> Got It!
-        </button>
-      </div>
-    `;
-    return content;
+  async _prepareContext() {
+    return {};
   }
 
-  _onRender(context, options) {
-    super._onRender(context, options);
-    this.activateListeners();
-  }
+  async _onRender(context, options) {
+    const root = this.element;
 
-  activateListeners() {
-    this.element?.querySelector('[data-action="got-it"]')?.addEventListener('click', async () => {
-      const checkbox = this.element?.querySelector('#swse-no-welcome-again');
-      const noAgain = checkbox?.checked || false;
+    // --- SENTINEL CHECK 1: HTMLElement contract ---
+    if (!(root instanceof HTMLElement)) {
+      console.error('SWSE Sentinel: WelcomeDialog root is not HTMLElement.');
+      return;
+    }
 
-      if (noAgain) {
-        await markWelcomeShown();
-      }
+    // --- SENTINEL CHECK 2: Render counter ---
+    this.constructor._sentinelRenderCount++;
+    const renderCount = this.constructor._sentinelRenderCount;
 
-      // Start tooltip discovery after welcome closes
-      await initializeTooltipDiscovery();
+    const isDevMode = game?.settings?.get?.(SYSTEM_ID, 'devMode');
+    if (isDevMode) {
+      console.debug(`SWSE Sentinel: WelcomeDialog render #${renderCount}`);
+    }
 
-      if (this.resolveDialog) {
-        this.resolveDialog(true);
-      }
+    // --- SENTINEL CHECK 3: DOM stability ---
+    const rect = root.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+      console.warn('SWSE Sentinel: WelcomeDialog rendered with zero dimensions.', {
+        width: rect.width,
+        height: rect.height
+      });
+    }
 
-      this.close();
-    });
+    // --- SENTINEL CHECK 4: Duplicate listener detection ---
+    if (root.dataset.sentinelAttached === 'true') {
+      console.warn('SWSE Sentinel: Duplicate _onRender execution detected.');
+    }
+    root.dataset.sentinelAttached = 'true';
+
+    // --- SENTINEL CHECK 5: Header presence ---
+    const header = root.querySelector('.window-header');
+    if (!header) {
+      console.warn('SWSE Sentinel: No window-header found.');
+    }
+
+    if (isDevMode) {
+      console.debug('SWSE Sentinel: WelcomeDialog lifecycle healthy.');
+    }
+
+    // --- EVENT LISTENER ATTACHMENT ---
+    const button = root.querySelector('[data-action="got-it"]');
+    if (button) {
+      button.addEventListener('click', async () => {
+        const checkbox = root.querySelector('#swse-no-welcome-again');
+        const noAgain = checkbox?.checked || false;
+
+        if (noAgain) {
+          await markWelcomeShown();
+        }
+
+        // Start tooltip discovery after welcome closes
+        await initializeTooltipDiscovery();
+
+        if (this.resolveDialog) {
+          this.resolveDialog(true);
+        }
+
+        this.close();
+      });
+    }
   }
 }
 
