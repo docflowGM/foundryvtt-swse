@@ -57,7 +57,7 @@ export async function resetWelcome() {
 }
 
 /**
- * Welcome Dialog - ApplicationV2 Template-Driven Implementation
+ * Welcome Dialog - ApplicationV2 Template-Driven Implementation with Sentinel Diagnostics
  */
 class WelcomeDialog extends HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
@@ -71,6 +71,9 @@ class WelcomeDialog extends HandlebarsApplicationMixin(foundry.applications.api.
     }
   };
 
+  // Sentinel Mode: Track render lifecycle
+  static _sentinelRenderCount = 0;
+
   constructor(options = {}) {
     super(options);
     this.resolveDialog = null;
@@ -82,8 +85,48 @@ class WelcomeDialog extends HandlebarsApplicationMixin(foundry.applications.api.
 
   async _onRender(context, options) {
     const root = this.element;
-    if (!(root instanceof HTMLElement)) return;
 
+    // --- SENTINEL CHECK 1: HTMLElement contract ---
+    if (!(root instanceof HTMLElement)) {
+      console.error('SWSE Sentinel: WelcomeDialog root is not HTMLElement.');
+      return;
+    }
+
+    // --- SENTINEL CHECK 2: Render counter ---
+    this.constructor._sentinelRenderCount++;
+    const renderCount = this.constructor._sentinelRenderCount;
+
+    const isDevMode = game?.settings?.get?.(SYSTEM_ID, 'devMode');
+    if (isDevMode) {
+      console.debug(`SWSE Sentinel: WelcomeDialog render #${renderCount}`);
+    }
+
+    // --- SENTINEL CHECK 3: DOM stability ---
+    const rect = root.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+      console.warn('SWSE Sentinel: WelcomeDialog rendered with zero dimensions.', {
+        width: rect.width,
+        height: rect.height
+      });
+    }
+
+    // --- SENTINEL CHECK 4: Duplicate listener detection ---
+    if (root.dataset.sentinelAttached === 'true') {
+      console.warn('SWSE Sentinel: Duplicate _onRender execution detected.');
+    }
+    root.dataset.sentinelAttached = 'true';
+
+    // --- SENTINEL CHECK 5: Header presence ---
+    const header = root.querySelector('.window-header');
+    if (!header) {
+      console.warn('SWSE Sentinel: No window-header found.');
+    }
+
+    if (isDevMode) {
+      console.debug('SWSE Sentinel: WelcomeDialog lifecycle healthy.');
+    }
+
+    // --- EVENT LISTENER ATTACHMENT ---
     const button = root.querySelector('[data-action="got-it"]');
     if (button) {
       button.addEventListener('click', async () => {
