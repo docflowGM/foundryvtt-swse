@@ -1,0 +1,26 @@
+<div class="mentor-suggestion-display">
+  <div class="mentor-portrait" style="display: flex; gap: 15px; margin-bottom: 15px;">
+    <img src="{{mentor.portrait}}" alt="{{mentor.name}}" style="width: 80px; height: 80px; border-radius: 6px;" />
+    <div>
+      <h3 style="margin: 0;">{{mentor.name}}</h3>
+      <p style="margin: 5px 0; opacity: 0.75;">{{mentor.title}}</p>
+    </div>
+  </div>
+  <div class="suggestion-content" style="margin: 15px 0;">
+    <p style="font-style: italic; font-size: 1.1em;">"{{topSuggestion.name}} would be an excellent choice for you."</p>
+    <p><strong>Why:</strong> {{reason}}</p>
+    <div class="background-preview" style="border: 1px solid #ccc; padding: 10px; border-radius: 4px; margin-top: 10px;">
+      <p>{{topSuggestion.narrativeDescription}}</p>
+      {{#if topSuggestion.relevantSkills}}
+        <p><strong>Skills:</strong> {{join topSuggestion.relevantSkills ", "}}</p>
+      {{/if}}
+      {{#if topSuggestion.bonusLanguage}}
+        <p><strong>Bonus Language:</strong> {{topSuggestion.bonusLanguage}}</p>
+      {{/if}}
+    </div>
+  </div>
+</div>
+<div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
+  <button class="btn btn-primary" data-action="apply" style="margin-right: 0.5rem;">Accept Suggestion</button>
+  <button class="btn btn-secondary" data-action="decline">Browse Manually</button>
+</div>

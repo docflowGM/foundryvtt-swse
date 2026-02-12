@@ -19,13 +19,17 @@ export class PrerequisiteBuilderDialog extends SWSEFormApplicationV2 {
     {
       id: 'prerequisite-builder',
       title: 'Prerequisite Builder',
-      template: 'modules/foundryvtt-swse/templates/prerequisite-builder.html',
       position: { width: 700, height: 800 },
       resizable: true,
       classes: ['swse', 'prerequisite-builder']
     }
   );
 
+  static PARTS = {
+    content: {
+      template: 'modules/foundryvtt-swse/templates/prerequisite-builder.html'
+    }
+  };
 
   /**
    * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.

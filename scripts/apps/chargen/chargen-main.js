@@ -280,7 +280,6 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['swse', 'chargen', 'swse-app'],
-      template: 'systems/foundryvtt-swse/templates/apps/chargen.hbs',
       width: 900,
       height: 700,
       title: 'Character Generator',
@@ -291,6 +290,12 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       top: null    // Allow Foundry to center
     });
   }
+
+  static PARTS = {
+    content: {
+      template: 'systems/foundryvtt-swse/templates/apps/chargen.hbs'
+    }
+  };
 
   /**
    * Comprehensive list of Star Wars-esque character names
@@ -3508,12 +3513,18 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
  * Feat Suggestions Dialog (AppV2-based)
  * Displays mentor feat suggestions with inline toggle
  */
-class FeatSuggestionsDialog extends foundry.applications.api.ApplicationV2 {
+class FeatSuggestionsDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: 'swse-feat-suggestions-dialog',
     tag: 'div',
     window: { icon: 'fas fa-lightbulb', title: 'Feat Suggestions' },
     position: { width: 600, height: 'auto' }
+  };
+
+  static PARTS = {
+    content: {
+      template: 'systems/foundryvtt-swse/templates/apps/chargen-feat-suggestions-dialog.hbs'
+    }
   };
 
   constructor(mentorName, content, wasFilterActive, parentChargen) {
@@ -3523,30 +3534,24 @@ class FeatSuggestionsDialog extends foundry.applications.api.ApplicationV2 {
     this.parentChargen = parentChargen;
   }
 
-  _renderHTML(context, options) {
-    return `${this.content}<div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
-      <button class="btn btn-primary" data-action="accept" style="margin-right: 0.5rem;">Show Suggestions Inline</button>
-      <button class="btn btn-secondary" data-action="cancel">Cancel</button>
-    </div>`;
+  async _prepareContext(options) {
+    return {
+      content: this.content
+    };
   }
 
-  _replaceHTML(result, content, options) {
-    result.innerHTML = '';
-    result.appendChild(content);
-  }
+  async _onRender(context, options) {
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
-  _onRender(context, options) {
-    super._onRender(context, options);
-
-    this.element?.querySelector('[data-action="accept"]')?.addEventListener('click', async () => {
+    root.querySelector('[data-action="accept"]')?.addEventListener('click', async () => {
       SWSELogger.log(`[CHARGEN] _onAskMentor: User accepted - enabling suggestions`);
       this.parentChargen.suggestionEngine = true;
       await this.parentChargen.render();
       this.close();
     });
 
-    this.element?.querySelector('[data-action="cancel"]')?.addEventListener('click', () => {
-      // Restore filter state
+    root.querySelector('[data-action="cancel"]')?.addEventListener('click', () => {
       if (this.wasFilterActive) {
         const checkbox = document.querySelector('.filter-valid-feats');
         if (checkbox) {
@@ -3563,12 +3568,18 @@ class FeatSuggestionsDialog extends foundry.applications.api.ApplicationV2 {
  * Class Required Dialog (AppV2-based)
  * Prompts user when class is required but not selected
  */
-class ClassRequiredDialog extends foundry.applications.api.ApplicationV2 {
+class ClassRequiredDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: 'swse-class-required-dialog',
     tag: 'div',
     window: { icon: 'fas fa-exclamation-circle', title: 'Class Required' },
     position: { width: 500, height: 'auto' }
+  };
+
+  static PARTS = {
+    content: {
+      template: 'systems/foundryvtt-swse/templates/apps/chargen-class-required-dialog.hbs'
+    }
   };
 
   constructor(targetStep, parentChargen) {
@@ -3577,38 +3588,23 @@ class ClassRequiredDialog extends foundry.applications.api.ApplicationV2 {
     this.parentChargen = parentChargen;
   }
 
-  _renderHTML(context, options) {
-    return `
-      <div style="margin-bottom: 10px;">
-        <p><i class="fas fa-circle-info" style="color: #00d9ff;"></i> <strong>You must select a class before choosing ${this.targetStep === 'talents' ? 'talents' : 'skills'}.</strong></p>
-        <p>You have two options:</p>
-        <ul style="margin-left: 20px; margin-top: 5px;">
-          <li><strong>Go Back:</strong> Return to the class selection step</li>
-          <li><strong>Enable Free Build:</strong> Skip validation and proceed anyway (characters may become illegal)</li>
-        </ul>
-      </div>
-      <div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
-        <button class="btn btn-secondary" data-action="goback" style="margin-right: 0.5rem;">Go Back</button>
-        <button class="btn btn-warning" data-action="freebuild">Enable Free Build</button>
-      </div>
-    `;
+  async _prepareContext(options) {
+    return {
+      targetStep: this.targetStep
+    };
   }
 
-  _replaceHTML(result, content, options) {
-    result.innerHTML = '';
-    result.appendChild(content);
-  }
+  async _onRender(context, options) {
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
-  _onRender(context, options) {
-    super._onRender(context, options);
-
-    this.element?.querySelector('[data-action="goback"]')?.addEventListener('click', async () => {
+    root.querySelector('[data-action="goback"]')?.addEventListener('click', async () => {
       this.parentChargen.currentStep = 'class';
       await this.parentChargen.render();
       this.close();
     });
 
-    this.element?.querySelector('[data-action="freebuild"]')?.addEventListener('click', async () => {
+    root.querySelector('[data-action="freebuild"]')?.addEventListener('click', async () => {
       this.parentChargen.freeBuild = true;
       this.parentChargen.currentStep = this.targetStep;
       ui.notifications.info('Free Build Mode enabled. You can now select without class restrictions.');

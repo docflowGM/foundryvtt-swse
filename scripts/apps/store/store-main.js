@@ -69,8 +69,13 @@ export class SWSEStore extends HandlebarsApplicationMixin(ApplicationV2) {
       height: 800,
       resizable: true
     },
-    classes: ['swse', 'store', 'swse-app-store', 'card-grid-store'],
-    template: 'systems/foundryvtt-swse/templates/apps/store/store-card-grid.hbs'
+    classes: ['swse', 'store', 'swse-app-store', 'card-grid-store']
+  };
+
+  static PARTS = {
+    content: {
+      template: 'systems/foundryvtt-swse/templates/apps/store/store-card-grid.hbs'
+    }
   };
 
   static get defaultOptions() {

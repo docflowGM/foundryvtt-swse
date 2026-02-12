@@ -57,31 +57,6 @@ export default class SWSEApplication extends ApplicationV2 {
     }
 
     /**
-     * Render HTML for this application
-     * Called by ApplicationV2 to generate the HTML element
-     * @param {Object} context - The prepared context
-     * @param {Object} options - Render options
-     * @returns {HTMLElement} The rendered HTML element
-     */
-    async _renderHTML(context, options) {
-        const html = document.createElement('div');
-        html.innerHTML = '';
-        return html;
-    }
-
-    /**
-     * Replace HTML in the rendered application
-     * Called by ApplicationV2 to update the DOM
-     * @param {HTMLElement} result - The target element to update
-     * @param {HTMLElement} content - The new content to insert
-     * @param {Object} options - Render options
-     */
-    _replaceHTML(result, content, options) {
-        result.innerHTML = '';
-        result.appendChild(content);
-    }
-
-    /**
      * Called after render to set up event listeners
      * Override in subclasses to bind event handlers
      * @param {Object} context - The prepared context

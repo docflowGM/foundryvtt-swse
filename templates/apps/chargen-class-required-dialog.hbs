@@ -1,0 +1,12 @@
+<div style="margin-bottom: 10px;">
+  <p><i class="fas fa-circle-info" style="color: #00d9ff;"></i> <strong>You must select a class before choosing {{targetStep}} talents{{#if (eq targetStep "skills")}}/skills{{/if}}.</strong></p>
+  <p>You have two options:</p>
+  <ul style="margin-left: 20px; margin-top: 5px;">
+    <li><strong>Go Back:</strong> Return to the class selection step</li>
+    <li><strong>Enable Free Build:</strong> Skip validation and proceed anyway (characters may become illegal)</li>
+  </ul>
+</div>
+<div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
+  <button class="btn btn-secondary" data-action="goback" style="margin-right: 0.5rem;">Go Back</button>
+  <button class="btn btn-warning" data-action="freebuild">Enable Free Build</button>
+</div>

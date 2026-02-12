@@ -639,12 +639,18 @@ export function _renderBackgroundFilterPanel(root) {
  * Background Mentor Suggestion Dialog (AppV2-based)
  * Displays mentor recommendation for background selection
  */
-class BackgroundMentorSuggestionDialog extends foundry.applications.api.ApplicationV2 {
+class BackgroundMentorSuggestionDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: 'swse-background-mentor-suggestion',
     tag: 'div',
     window: { icon: 'fas fa-user-tie', title: 'Mentor Recommendation' },
     position: { width: 500, height: 'auto' }
+  };
+
+  static PARTS = {
+    content: {
+      template: 'systems/foundryvtt-swse/templates/apps/chargen-background-mentor-suggestion.hbs'
+    }
   };
 
   constructor(mentor, topSuggestion, reason, parentChargen) {
@@ -655,43 +661,19 @@ class BackgroundMentorSuggestionDialog extends foundry.applications.api.Applicat
     this.parentChargen = parentChargen;
   }
 
-  _renderHTML(context, options) {
-    return `
-      <div class="mentor-suggestion-display">
-        <div class="mentor-portrait" style="display: flex; gap: 15px; margin-bottom: 15px;">
-          <img src="${this.mentor.portrait}" alt="${this.mentor.name}" style="width: 80px; height: 80px; border-radius: 6px;" />
-          <div>
-            <h3 style="margin: 0;">${this.mentor.name}</h3>
-            <p style="margin: 5px 0; opacity: 0.75;">${this.mentor.title}</p>
-          </div>
-        </div>
-        <div class="suggestion-content" style="margin: 15px 0;">
-          <p style="font-style: italic; font-size: 1.1em;">"${this.topSuggestion.name} would be an excellent choice for you."</p>
-          <p><strong>Why:</strong> ${this.reason}</p>
-          <div class="background-preview" style="border: 1px solid #ccc; padding: 10px; border-radius: 4px; margin-top: 10px;">
-            <p>${this.topSuggestion.narrativeDescription || ''}</p>
-            ${this.topSuggestion.relevantSkills ? `<p><strong>Skills:</strong> ${this.topSuggestion.relevantSkills.join(', ')}</p>` : ''}
-            ${this.topSuggestion.bonusLanguage ? `<p><strong>Bonus Language:</strong> ${this.topSuggestion.bonusLanguage}</p>` : ''}
-          </div>
-        </div>
-      </div>
-      <div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
-        <button class="btn btn-primary" data-action="apply" style="margin-right: 0.5rem;">Accept Suggestion</button>
-        <button class="btn btn-secondary" data-action="decline">Browse Manually</button>
-      </div>
-    `;
+  async _prepareContext(options) {
+    return {
+      mentor: this.mentor,
+      topSuggestion: this.topSuggestion,
+      reason: this.reason
+    };
   }
 
-  _replaceHTML(result, content, options) {
-    result.innerHTML = '';
-    result.appendChild(content);
-  }
+  async _onRender(context, options) {
+    const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
 
-  _onRender(context, options) {
-    super._onRender(context, options);
-
-    this.element?.querySelector('[data-action="apply"]')?.addEventListener('click', async () => {
-      // Apply the suggested background
+    root.querySelector('[data-action="apply"]')?.addEventListener('click', async () => {
       this.parentChargen.characterData.background = {
         id: this.topSuggestion.id,
         name: this.topSuggestion.name,
@@ -709,7 +691,7 @@ class BackgroundMentorSuggestionDialog extends foundry.applications.api.Applicat
       this.close();
     });
 
-    this.element?.querySelector('[data-action="decline"]')?.addEventListener('click', () => {
+    root.querySelector('[data-action="decline"]')?.addEventListener('click', () => {
       this.close();
     });
   }
