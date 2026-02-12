@@ -9,7 +9,6 @@
  *   Called automatically from hardening-init.js in ready hook
  */
 
-import { HandlebarsApplicationMixin } from "foundry/applications/api/handlebars-application.mjs";
 import { SWSELogger } from '../utils/logger.js';
 import { initializeTooltipDiscovery } from './tooltip-discovery.js';
 
@@ -59,7 +58,7 @@ export async function resetWelcome() {
 /**
  * Welcome Dialog - ApplicationV2 Template-Driven Implementation with Sentinel Diagnostics
  */
-class WelcomeDialog extends HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: 'swse-welcome-dialog',
     window: { icon: 'fas fa-star', title: '⭐ Welcome to SWSE for Foundry VTT' }
