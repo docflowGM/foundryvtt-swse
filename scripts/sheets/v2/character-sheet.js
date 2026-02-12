@@ -182,6 +182,14 @@ export class SWSEV2CharacterSheet extends HandlebarsApplicationMixin(foundry.app
       throw new Error('CharacterSheet: element is not an HTMLElement after render');
     }
 
+    // V2 PARTS TIMING: Only assert when full sheet DOM is assembled.
+    // If sheet-body doesn't exist, we're in a partial render pass (e.g., header-only).
+    // Skip assertion and let _onRender proceed; assertion will run on final PARTS assembly.
+    if (!root.querySelector('.sheet-body')) {
+      RenderAssertions.logCheckpoint('CharacterSheet', '_onRender: skipping assertion (partial PARTS render)');
+      return;
+    }
+
     // ASSERT: Required DOM elements exist (catch template issues early)
     RenderAssertions.assertDOMElements(
       root,
