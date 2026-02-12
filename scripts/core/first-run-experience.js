@@ -156,7 +156,9 @@ async function showWelcomeDialog() {
   return new Promise((resolve) => {
     const dialog = new WelcomeDialog();
     dialog.resolveDialog = resolve;
-    dialog.render(true);
+    requestAnimationFrame(() => {
+      dialog.render(true);
+    });
   });
 }
 
