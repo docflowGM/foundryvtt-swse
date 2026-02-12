@@ -35,7 +35,11 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       classes: ['swse', 'swse-sheet', 'swse-npc-sheet', 'v2'],
       template: 'systems/foundryvtt-swse/templates/actors/npc/v2/npc-sheet.hbs',
       width: 820,
-      height: 920
+      height: 920,
+      form: {
+        closeOnSubmit: false,
+        submitOnChange: false
+      }
     }
   );
 
@@ -53,7 +57,14 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       ?? { ...base };
     return foundry.utils.mergeObject(clone, legacy);
   }
-async _prepareContext(options) {
+
+  constructor(document, options = {}) {
+    super(options);
+    this.document = document;
+    this.actor = document;
+  }
+
+  async _prepareContext(options) {
     // Fail-fast: this sheet is for NPCs only
     if (this.document.type !== 'npc') {
       throw new Error(
@@ -99,8 +110,34 @@ async _prepareContext(options) {
     const root = this.element;
     if (!(root instanceof HTMLElement)) {return;}
 
+    // Prevent duplicate event binding
+    if (root.dataset.bound === "true") return;
+    root.dataset.bound = "true";
+
     // Highlight the current condition step
     markActiveConditionStep(root, this.actor);
+
+    // Prevent duplicate tab wiring
+    if (root.dataset.tabsBound === "true") return;
+    root.dataset.tabsBound = "true";
+
+    // Activate default tab
+    const defaultTab = root.querySelector('.tab[data-tab="summary"]');
+    if (defaultTab) defaultTab.classList.add('active');
+
+    // Tab click handling
+    for (const tabBtn of root.querySelectorAll('.sheet-tabs .item')) {
+      tabBtn.addEventListener('click', (ev) => {
+        const tabName = ev.currentTarget.dataset.tab;
+        if (!tabName) return;
+
+        root.querySelectorAll('.sheet-tabs .item').forEach(b => b.classList.remove('active'));
+        ev.currentTarget.classList.add('active');
+
+        root.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        root.querySelector(`.tab[data-tab="${tabName}"]`)?.classList.add('active');
+      });
+    }
 
     // Condition step clicking
     for (const el of root.querySelectorAll('.swse-v2-condition-step')) {
