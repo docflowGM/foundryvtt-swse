@@ -229,6 +229,14 @@ Hooks.once('init', async () => {
     console.warn('SWSE | Warning: No default character sheet marked after registration');
   }
 
+  // Validate sheet registration
+  console.log('SWSE | Sheet Classes:', {
+    character: Object.keys(CONFIG.Actor.sheetClasses.character || {}),
+    npc: Object.keys(CONFIG.Actor.sheetClasses.npc || {}),
+    droid: Object.keys(CONFIG.Actor.sheetClasses.droid || {}),
+    vehicle: Object.keys(CONFIG.Actor.sheetClasses.vehicle || {})
+  });
+
   /* ---------- FORENSIC SHEET DIAGNOSTIC ---------- */
   // DISABLED: The diagnostic was shadowing the real sheet getter, causing it to return null
   // This was preventing all sheets from opening. The diagnostic code itself needs fixing
