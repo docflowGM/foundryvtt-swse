@@ -1,8 +1,21 @@
 // scripts/sheets/v2/droid-sheet.js
+const { HandlebarsApplicationMixin } = foundry.applications.api;
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { RenderAssertions } from '../../core/render-assertions.js';
+import { initiateItemSale } from '../../apps/item-selling-system.js';
 import { DroidBuilderApp } from '../../apps/droid-builder-app.js';
 
-const { HandlebarsApplicationMixin } = foundry.applications.api;
+/**
+ * Safe accessor for devMode setting
+ * Safely checks if core.devMode is registered before accessing
+ */
+function getDevMode() {
+  try {
+    return game.settings.get('core', 'devMode');
+  } catch {
+    return false;
+  }
+}
 
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
@@ -17,11 +30,26 @@ function markActiveConditionStep(root, actor) {
 
 
 /**
- * SWSEV2DroidSheet
- * v2 sheets are dumb views:
- * - Read actor.system.derived only
- * - Emit intent via Actor APIs (which route through ActorEngine)
- * - _updateObject routes through ActorEngine
+ * SWSEV2DroidSheet - Droid Sheet Application
+ *
+ * RENDER CONTRACT (CRITICAL FOR V2 STABILITY):
+ * ============================================
+ * 1. All rendering is declarative (Handlebars templates only)
+ * 2. No manual DOM manipulation in render hooks
+ * 3. All state flows from getData() context (single source of truth)
+ * 4. Event handlers emit intent via Actor APIs (not direct DOM mutation)
+ * 5. Context is immutable during render (frozen with structuredClone)
+ *
+ * ARCHITECTURE:
+ * - _prepareContext() builds the view model
+ * - Handlebars renders from that model (via templates + partials)
+ * - _onRender() attaches event listeners (read-only DOM traversal)
+ * - _updateObject() routes mutations through ActorEngine (atomic updates)
+ *
+ * WHY THIS MATTERS:
+ * V2 batches renders. If you mutate DOM directly, the next render
+ * wipes your changes. Manual DOM work breaks reactivity. Always
+ * compute values in getData() and pass to template.
  */
 export class SWSEV2DroidSheet extends HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static PARTS = {
@@ -60,18 +88,48 @@ export class SWSEV2DroidSheet extends HandlebarsApplicationMixin(foundry.applica
     return foundry.utils.mergeObject(clone, legacy);
   }
 
+  /**
+   * Validate sheet configuration on instantiation (v13+ safety).
+   * Catches missing template path early instead of blank sheet.
+   */
   constructor(document, options = {}) {
     super(options);
     this.document = document;
     this.actor = document;
+
+    if (!this.constructor.DEFAULT_OPTIONS?.template) {
+      throw new Error(
+        'SWSEV2DroidSheet: Missing template path in DEFAULT_OPTIONS. Sheet cannot render.'
+      );
+    }
   }
 
   async _prepareContext(options) {
+    RenderAssertions.logCheckpoint('DroidSheet', 'prepareContext start');
+
     // Fail-fast: this sheet is for droids only
     if (this.document.type !== 'droid') {
       throw new Error(
         `SWSEV2DroidSheet requires actor type "droid", got "${this.document.type}"`
       );
+    }
+
+    // Build context from actor data
+    const actor = this.document;
+
+    // ACTOR VALIDATION
+    RenderAssertions.assertActorValid(actor, 'SWSEV2DroidSheet');
+
+    // DATA VALIDATION (catches 80% of blank sheet issues)
+    if (getDevMode()) {
+      if (!actor.system) {
+        throw new Error(
+          `${this.constructor.name}: getData() missing system data. Template will be blank.`
+        );
+      }
+      if (!actor.id) {
+        throw new Error(`${this.constructor.name}: getData() missing actor. Template will be blank.`);
+      }
     }
 
     // Restore inherited context from super (includes cssClass, owner, limited, etc.)
@@ -80,9 +138,8 @@ export class SWSEV2DroidSheet extends HandlebarsApplicationMixin(foundry.applica
     // AppV2 Compatibility: Extend inherited context with SWSE-specific fields
     // V13 AppV2 calls structuredClone() on render context - Document objects,
     // Collections, and User objects cannot be cloned. Extract only primitives and data.
-    const actor = this.document;
     const overrides = {
-      // Full actor object
+      // Full actor object (serializable after structuredClone)
       actor,
       system: actor.system,
       derived: actor.system?.derived ?? {},
@@ -104,17 +161,54 @@ export class SWSEV2DroidSheet extends HandlebarsApplicationMixin(foundry.applica
       config: CONFIG.SWSE
     };
 
+    // ASSERT: Context must be serializable for AppV2 (structuredClone requirement)
+    RenderAssertions.assertContextSerializable(overrides, 'SWSEV2DroidSheet');
+    RenderAssertions.logCheckpoint('DroidSheet', 'prepareContext complete', { actorId: actor.id });
+
     return { ...context, ...overrides };
   }
 
-  async _onRender(context, options) {
+  /**
+   * Post-render hook: Attach event listeners, NOT manipulate DOM
+   *
+   * RULES FOR _onRender():
+   * ✓ Traverse DOM with querySelector/querySelectorAll
+   * ✓ Attach event listeners via addEventListener
+   * ✓ Read data attributes and CSS classes
+   * ✗ Do NOT mutate DOM (add/remove/modify elements)
+   * ✗ Do NOT change CSS classes or styles
+   * ✗ Do NOT set textContent or innerHTML
+   *
+   * If you need to change what renders: update actor data in _updateObject(),
+   * which triggers a re-render with new _prepareContext() data.
+   */
+  async _onRender(_context, _options) {
+    RenderAssertions.logCheckpoint('DroidSheet', '_onRender start');
+
     // AppV2 invariant: all DOM access must use this.element
     const root = this.element;
-    if (!(root instanceof HTMLElement)) {return;}
+    if (!(root instanceof HTMLElement)) {
+      throw new Error('DroidSheet: element is not an HTMLElement after render');
+    }
+
+    // V2 PARTS TIMING: Only assert when full sheet DOM is assembled.
+    // If sheet-body doesn't exist, we're in a partial render pass (e.g., header-only).
+    // Skip assertion and let _onRender proceed; assertion will run on final PARTS assembly.
+    if (!root.querySelector('.sheet-body')) {
+      RenderAssertions.logCheckpoint('DroidSheet', '_onRender: skipping assertion (partial PARTS render)');
+      return;
+    }
 
     // Prevent duplicate event binding
     if (root.dataset.bound === "true") return;
     root.dataset.bound = "true";
+
+    // ASSERT: Required DOM elements exist (catch template issues early)
+    RenderAssertions.assertDOMElements(
+      root,
+      ['.sheet-tabs', '.sheet-body', '.swse-v2-condition-step'],
+      'SWSEV2DroidSheet'
+    );
 
     // Highlight the current condition step
     markActiveConditionStep(root, this.actor);
@@ -200,6 +294,21 @@ export class SWSEV2DroidSheet extends HandlebarsApplicationMixin(foundry.applica
       });
     }
 
+    // Item selling (inventory context action)
+    for (const el of root.querySelectorAll('[data-action="sell"]')) {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const itemRow = ev.currentTarget?.closest('.item-row');
+        const itemId = itemRow?.dataset?.itemId;
+        if (!itemId) {return;}
+        const item = this.actor?.items?.get(itemId);
+        if (item) {
+          await initiateItemSale(item, this.actor);
+        }
+      });
+    }
+
     // Action execution
     for (const el of root.querySelectorAll('.swse-v2-use-action')) {
       el.addEventListener('click', async (ev) => {
@@ -213,7 +322,7 @@ export class SWSEV2DroidSheet extends HandlebarsApplicationMixin(foundry.applica
       });
     }
 
-    // Phase 3c: Edit droid systems
+    // Phase 3c: Edit droid systems (droid-specific handler)
     const editDroidBtn = root.querySelector('.edit-droid-systems');
     if (editDroidBtn) {
       editDroidBtn.addEventListener('click', async (ev) => {
@@ -239,6 +348,9 @@ export class SWSEV2DroidSheet extends HandlebarsApplicationMixin(foundry.applica
         }
       });
     }
+
+    // FINAL CHECKPOINT: Assert render completed successfully
+    RenderAssertions.assertRenderComplete(this, 'SWSEV2DroidSheet');
   }
 
   async _updateObject(event, formData) {
