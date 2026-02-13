@@ -154,21 +154,23 @@ import { registerCriticalFlowTests } from './scripts/tests/critical-flow-tests.j
    Must happen BEFORE documentClass assignment at top-level
    ========================================================================== */
 
-const systemId = game.system.id;
+const systemId = game?.system?.id;
 
-// Clean unregister any stale registrations
-foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2CharacterSheet);
-foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2NpcSheet);
-foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2DroidSheet);
-foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2VehicleSheet);
-foundry.documents.collections.Items.unregisterSheet(systemId, SWSEItemSheet);
+if (systemId) {
+  // Clean unregister any stale registrations
+  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2CharacterSheet);
+  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2NpcSheet);
+  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2DroidSheet);
+  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2VehicleSheet);
+  foundry.documents.collections.Items.unregisterSheet(systemId, SWSEItemSheet);
 
-// Register and force defaults
-foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2CharacterSheet, { types: ['character'], makeDefault: true });
-foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2NpcSheet, { types: ['npc'], makeDefault: true });
-foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2DroidSheet, { types: ['droid'], makeDefault: true });
-foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2VehicleSheet, { types: ['vehicle'], makeDefault: true });
-foundry.documents.collections.Items.registerSheet(systemId, SWSEItemSheet, { makeDefault: true });
+  // Register and force defaults
+  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2CharacterSheet, { types: ['character'], makeDefault: true });
+  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2NpcSheet, { types: ['npc'], makeDefault: true });
+  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2DroidSheet, { types: ['droid'], makeDefault: true });
+  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2VehicleSheet, { types: ['vehicle'], makeDefault: true });
+  foundry.documents.collections.Items.registerSheet(systemId, SWSEItemSheet, { makeDefault: true });
+}
 
 /* ==========================================================================
    EARLY DOCUMENT CLASS REGISTRATION (v13 boot-order critical)
