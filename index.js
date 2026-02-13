@@ -1,6 +1,6 @@
 /* ========================================================================== */
-/* SWSE SYSTEM ENTRY — CANONICAL V13 BUILD                                    */
-/* Deterministic, AppV2-safe, full feature surface                            */
+/* SWSE SYSTEM ENTRY — CLEAN V13 BUILD                                        */
+/* Stable, deterministic boot lifecycle                                       */
 /* ========================================================================== */
 
 /* ========================================================================== */
@@ -38,14 +38,9 @@ import { SWSE } from "./scripts/core/config.js";
 import { registerSystemSettings } from "./scripts/core/settings.js";
 import { initializeUtils } from "./scripts/core/utils-init.js";
 import { initializeRolls } from "./scripts/core/rolls-init.js";
-import { initializeSheetStabilizer } from './scripts/core/sheet-stabilizer.js';
 
 // Hardening
 import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from "./scripts/core/hardening-init.js";
-
-// Contracts / Guards
-import { DiagnosticMode } from "./scripts/contracts/diagnostic-mode.js";
-import { initializeV2RenderGuard } from "./scripts/core/v2-render-guard.js";
 
 // Logging
 import { swseLogger } from "./scripts/utils/logger.js";
@@ -70,7 +65,7 @@ import { SWSEItemSheet } from "./scripts/items/swse-item-sheet.js";
 // Handlebars
 import { registerHandlebarsHelpers } from "./helpers/handlebars/index.js";
 import { registerSWSEPartials } from "./helpers/handlebars/partials-auto.js";
-import { preloadHandlebarsTemplates, assertPartialsResolved } from "./scripts/core/load-templates.js";
+import { preloadHandlebarsTemplates } from "./scripts/core/load-templates.js";
 
 // Engines
 import { RulesEngine } from "./scripts/rules/rules-engine.js";
@@ -97,7 +92,7 @@ import { MentorTranslationSettings } from "./scripts/mentor/mentor-translation-s
 // Suggestions
 import { SuggestionService } from "./scripts/engine/SuggestionService.js";
 import { registerSuggestionHooks } from "./scripts/hooks/suggestion-hooks.js";
-import { registerCombatSuggestionHooks, requestCombatEvaluation } from "./scripts/suggestion-engine/combat-hooks.js";
+import { registerCombatSuggestionHooks } from "./scripts/suggestion-engine/combat-hooks.js";
 import { CombatSuggestionEngine } from "./scripts/suggestion-engine/combat-engine.js";
 import { testHarness } from "./scripts/suggestion-engine/test-harness.js";
 import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discovery/index.js";
@@ -111,7 +106,7 @@ import { initializePhase5, getPhaseSummary } from "./scripts/core/phase5-init.js
 import { registerCriticalFlowTests } from "./scripts/tests/critical-flow-tests.js";
 
 /* ========================================================================== */
-/* EARLY DOCUMENT CLASS REGISTRATION (MUST BE TOP-LEVEL)                      */
+/* EARLY DOCUMENT CLASS REGISTRATION                                          */
 /* ========================================================================== */
 
 CONFIG.Actor.documentClass = SWSEV2BaseActor;
@@ -121,22 +116,18 @@ CONFIG.Item.documentClass  = SWSEItemBase;
 /* INIT                                                                        */
 /* ========================================================================== */
 
-Hooks.once('init', async () => {
-  if (globalThis.__SWSE_INIT__) return;
-  globalThis.__SWSE_INIT__ = true;
+Hooks.once("init", () => {
 
-  swseLogger.log('SWSE | Init start');
+  swseLogger.log("SWSE | Init");
 
-  /* ---------- SHEET STABILIZER (must be first) ---------- */
-  initializeSheetStabilizer({
-    preloadTemplates: preloadHandlebarsTemplates,
-    registerPartials: registerSWSEPartials
-  });
-
-  /* ---------- SHEET REGISTRATION (v13-compliant) ---------- */
   const SYSTEM_ID = "foundryvtt-swse";
   const ActorsCollection = foundry.documents.collections.Actors;
   const ItemsCollection  = foundry.documents.collections.Items;
+
+  /* ---------- PARTIALS + TEMPLATES (MUST BE EARLY) ---------- */
+
+  registerSWSEPartials();
+  preloadHandlebarsTemplates();
 
   /* ---------- SHEET REGISTRATION ---------- */
 
@@ -157,7 +148,6 @@ Hooks.once('init', async () => {
   ThemeLoader.init();
 
   CONFIG.SWSE = SWSE;
-
 });
 
 /* ========================================================================== */
@@ -166,17 +156,11 @@ Hooks.once('init', async () => {
 
 Hooks.once("ready", async () => {
 
-  swseLogger.log("SWSE | READY");
+  swseLogger.log("SWSE | Ready");
 
   await initializeHardeningSystem();
   registerHardeningHooks();
   await validateSystemReady();
-
-  await preloadHandlebarsTemplates();
-  await registerSWSEPartials();
-  assertPartialsResolved();
-
-
 
   await CompendiumVerification.verifyCompendiums();
 
@@ -197,7 +181,9 @@ Hooks.once("ready", async () => {
   initializeDiscoverySystem();
   initializeGMSuggestions();
 
-  SuggestionService.initialize({ systemJSON: await fetch("systems/foundryvtt-swse/system.json").then(r=>r.json()) });
+  const systemJSON = await fetch("systems/foundryvtt-swse/system.json").then(r => r.json());
+  SuggestionService.initialize({ systemJSON });
+
   registerSuggestionHooks();
   registerCombatSuggestionHooks();
 
@@ -211,8 +197,7 @@ Hooks.once("ready", async () => {
       FeatSystem,
       SkillSystem,
       TalentAbilitiesEngine,
-      CombatSuggestionEngine,
-      requestCombatEvaluation
+      CombatSuggestionEngine
     },
     debug: {
       testHarness,
@@ -220,27 +205,14 @@ Hooks.once("ready", async () => {
     }
   };
 
-  if (!game.settings.get("core","devMode")) {
+  if (!game.settings.get("core", "devMode")) {
     Object.freeze(window.SWSE);
   }
 
-    onDiscoveryReady();
+  onDiscoveryReady();
 
-  /* -------------------------------------------------------------------------- */
-  /* FINAL SHEET CACHE RESET                                                    */
-  /* Must run AFTER all systems that may touch actor.sheet                      */
-  /* -------------------------------------------------------------------------- */
-
-  for (const actor of game.actors) {
-    if (actor._sheet === null) {
-      delete actor._sheet;
-    }
-  }
-
-  console.timeEnd('SWSE Ready');
-  swseLogger.log('SWSE | Fully loaded');
+  swseLogger.log("SWSE | Fully loaded");
 });
-
 
 /* ========================================================================== */
 /* CANVAS SAFETY                                                               */
