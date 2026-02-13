@@ -150,11 +150,23 @@ import { registerCriticalFlowTests } from './scripts/tests/critical-flow-tests.j
 // import { initializeSheetDiagnostics } from './scripts/core/forensic-sheet-diagnostic.js';
 
 /* ==========================================================================
-   EARLY DOCUMENT CLASS REGISTRATION (v13 boot-order critical)
+   EARLY SHEET & DOCUMENT CLASS REGISTRATION (v13 boot-order critical)
    Must happen at top-level before any hooks to ensure documents are
-   instantiated with correct classes during Foundry initialization
+   instantiated with correct classes during Foundry initialization.
+   Register sheets FIRST so they're available when actors are created.
    ========================================================================== */
 
+const systemId = game.system.id;
+
+// Register sheet classes BEFORE setting documentClass so they're available
+// when actors are instantiated during world load
+foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2CharacterSheet, { types: ['character'], makeDefault: true });
+foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2NpcSheet, { types: ['npc'], makeDefault: true });
+foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2DroidSheet, { types: ['droid'], makeDefault: true });
+foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2VehicleSheet, { types: ['vehicle'], makeDefault: true });
+foundry.documents.collections.Items.registerSheet(systemId, SWSEItemSheet, { makeDefault: true });
+
+// NOW set document classes - sheets are ready
 CONFIG.Actor.documentClass = SWSEV2BaseActor;
 CONFIG.Item.documentClass = SWSEItemBase;
 
@@ -211,23 +223,7 @@ Hooks.once('init', async () => {
   /* ---------- PHASE 3: documents & sheets ---------- */
   CONFIG.SWSE = SWSE;
 
-  const systemId = game.system.id;
-
-  // Clean unregister any stale registrations
-  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2CharacterSheet);
-  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2NpcSheet);
-  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2DroidSheet);
-  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2VehicleSheet);
-  foundry.documents.collections.Items.unregisterSheet(systemId, SWSEItemSheet);
-
-  // Register and force defaults
-  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2CharacterSheet, { types: ['character'], makeDefault: true });
-  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2NpcSheet, { types: ['npc'], makeDefault: true });
-  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2DroidSheet, { types: ['droid'], makeDefault: true });
-  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2VehicleSheet, { types: ['vehicle'], makeDefault: true });
-  foundry.documents.collections.Items.registerSheet(systemId, SWSEItemSheet, { makeDefault: true });
-
-  // Verify defaults are set
+  // Sheets already registered at top-level. Verify defaults are set.
   const charSheets = CONFIG.Actor.sheetClasses.character || {};
   const hasDefault = Object.values(charSheets).some(sheet => sheet.default === true);
   if (!hasDefault) {
