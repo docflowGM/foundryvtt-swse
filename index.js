@@ -166,10 +166,7 @@ Hooks.once("ready", async () => {
   await registerSWSEPartials();
   assertPartialsResolved();
 
-  // Repair invalid sheet cache if corrupted
-  for (const actor of game.actors) {
-    if (actor._sheet === null) delete actor._sheet;
-  }
+
 
   await CompendiumVerification.verifyCompendiums();
 
@@ -217,11 +214,23 @@ Hooks.once("ready", async () => {
     Object.freeze(window.SWSE);
   }
 
-  onDiscoveryReady();
+    onDiscoveryReady();
+
+  /* -------------------------------------------------------------------------- */
+  /* FINAL SHEET CACHE RESET                                                    */
+  /* Must run AFTER all systems that may touch actor.sheet                      */
+  /* -------------------------------------------------------------------------- */
+
+  for (const actor of game.actors) {
+    if (actor._sheet === null) {
+      delete actor._sheet;
+    }
+  }
 
   console.timeEnd('SWSE Ready');
   swseLogger.log('SWSE | Fully loaded');
 });
+
 
 /* ========================================================================== */
 /* CANVAS SAFETY                                                               */
