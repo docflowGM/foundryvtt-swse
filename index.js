@@ -229,7 +229,10 @@ Hooks.once('init', async () => {
   }
 
   /* ---------- FORENSIC SHEET DIAGNOSTIC ---------- */
-  initializeSheetDiagnostics();
+  // DISABLED: The diagnostic was shadowing the real sheet getter, causing it to return null
+  // This was preventing all sheets from opening. The diagnostic code itself needs fixing
+  // if it's going to be re-enabled.
+  // initializeSheetDiagnostics();
 
   /* ---------- PHASE 3: Structural Enforcement Layer ---------- */
   await initializeV2RenderGuard();
