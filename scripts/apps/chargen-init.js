@@ -155,6 +155,18 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                 new CharacterGeneratorNarrative(tempActor).render(true);
             });
             header.appendChild(button);
+
+            // Store button
+            const storeButton = document.createElement('button');
+            storeButton.className = 'chargen-button store-button';
+            storeButton.innerHTML = '<i class="fas fa-shopping-cart"></i> Store';
+            storeButton.title = 'Open the Galactic Trade Exchange';
+            storeButton.addEventListener('click', async () => {
+                const { SWSEStore } = await import('./store/store-main.js');
+                const store = new SWSEStore();
+                store.render(true);
+            });
+            header.appendChild(storeButton);
         }
     }
 });
