@@ -30,7 +30,7 @@ export function initializeSheetStabilizer({
     // Clear stale sheet cache once after full boot
     for (const actor of game.actors) {
       if (actor._sheet === null) {
-        delete actor._sheet;
+        actor._sheet = undefined;
       }
     }
 
