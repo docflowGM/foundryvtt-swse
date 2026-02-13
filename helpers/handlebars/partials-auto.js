@@ -1,58 +1,51 @@
-import { swseLogger } from '../../scripts/utils/logger.js';
+/* ========================================================================== */
+/* RECURSIVE PARTIAL REGISTRATION (V13 SAFE)                                */
+/* Registers ALL partials using full template path as key                    */
+/* ========================================================================== */
 
 export async function registerSWSEPartials() {
-  const partialFiles = [];
+  const basePath = "systems/foundryvtt-swse/templates";
 
-  // Recursively discover all .hbs files under /partials/ directories
-  async function scanForPartials(dir) {
-    try {
-      const response = await fetch(dir);
-      if (!response.ok) return;
+  // Recursively collect all partial paths
+  async function collectPartials(path) {
+    const response = await fetch(path);
+    const text = await response.text();
 
-      const html = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
+    // This assumes directory listing is enabled in dev environment.
+    // If not, you will need to maintain a manifest list instead.
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, "text/html");
 
-      // Extract links from directory listing
-      for (const link of doc.querySelectorAll('a')) {
-        const href = link.getAttribute('href');
-        if (!href || href === '../') continue;
+    const links = [...doc.querySelectorAll("a")]
+      .map(a => a.getAttribute("href"))
+      .filter(Boolean);
 
-        const fullPath = dir.endsWith('/') ? dir + href : dir + '/' + href;
+    const partials = [];
 
-        if (href.endsWith('.hbs')) {
-          partialFiles.push(fullPath);
-        } else if (href.endsWith('/')) {
-          // Recursively scan subdirectories
-          await scanForPartials(fullPath);
-        }
+    for (const link of links) {
+      if (link.endsWith("/")) {
+        // recurse into subdirectory
+        const subPath = path + "/" + link.replace("/", "");
+        const subPartials = await collectPartials(subPath);
+        partials.push(...subPartials);
+      } else if (link.endsWith(".hbs") && path.includes("/partials")) {
+        partials.push(path + "/" + link);
       }
-    } catch (error) {
-      // Silently skip unreadable directories
     }
+
+    return partials;
   }
 
-  // Start scanning from templates root
-  await scanForPartials('systems/foundryvtt-swse/templates');
+  try {
+    const partialPaths = await collectPartials(basePath);
 
-  // Filter to only files under /partials/ directories
-  const partialsToRegister = partialFiles.filter(path => path.includes('/partials/'));
-
-  swseLogger.log(`SWSE | Found ${partialsToRegister.length} partial files to register`);
-
-  for (const path of partialsToRegister) {
-    try {
-      const response = await fetch(path);
-      if (!response.ok) {
-        swseLogger.warn(`SWSE | Failed to fetch partial: ${path} (${response.status})`);
-        continue;
-      }
-      const html = await response.text();
-      // Register with full path as the partial name
-      Handlebars.registerPartial(path, html);
-      swseLogger.log(`SWSE | Registered partial: ${path}`);
-    } catch (error) {
-      swseLogger.error(`SWSE | Error registering partial ${path}:`, error);
+    for (const partialPath of partialPaths) {
+      const template = await fetch(partialPath).then(r => r.text());
+      Handlebars.registerPartial(partialPath, template);
     }
+
+    console.log(`SWSE | Registered ${partialPaths.length} partials (recursive)`);
+  } catch (err) {
+    console.error("SWSE | Partial registration failed:", err);
   }
 }
