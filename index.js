@@ -38,6 +38,7 @@ import { SWSE } from "./scripts/core/config.js";
 import { registerSystemSettings } from "./scripts/core/settings.js";
 import { initializeUtils } from "./scripts/core/utils-init.js";
 import { initializeRolls } from "./scripts/core/rolls-init.js";
+import { initializeSheetStabilizer } from './scripts/core/sheet-stabilizer.js';
 
 // Hardening
 import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from "./scripts/core/hardening-init.js";
@@ -120,10 +121,19 @@ CONFIG.Item.documentClass  = SWSEItemBase;
 /* INIT                                                                        */
 /* ========================================================================== */
 
-Hooks.once("init", () => {
+Hooks.once('init', async () => {
+  if (globalThis.__SWSE_INIT__) return;
+  globalThis.__SWSE_INIT__ = true;
 
-  swseLogger.log("SWSE | INIT");
+  swseLogger.log('SWSE | Init start');
 
+  /* ---------- SHEET STABILIZER (must be first) ---------- */
+  initializeSheetStabilizer({
+    preloadTemplates: preloadHandlebarsTemplates,
+    registerPartials: registerSWSEPartials
+  });
+
+  /* ---------- SHEET REGISTRATION (v13-compliant) ---------- */
   const SYSTEM_ID = "foundryvtt-swse";
   const ActorsCollection = foundry.documents.collections.Actors;
   const ItemsCollection  = foundry.documents.collections.Items;
