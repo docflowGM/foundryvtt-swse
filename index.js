@@ -150,6 +150,15 @@ import { registerCriticalFlowTests } from './scripts/tests/critical-flow-tests.j
 // import { initializeSheetDiagnostics } from './scripts/core/forensic-sheet-diagnostic.js';
 
 /* ==========================================================================
+   EARLY DOCUMENT CLASS REGISTRATION (v13 boot-order critical)
+   Must happen at top-level before any hooks to ensure documents are
+   instantiated with correct classes during Foundry initialization
+   ========================================================================== */
+
+CONFIG.Actor.documentClass = SWSEV2BaseActor;
+CONFIG.Item.documentClass = SWSEItemBase;
+
+/* ==========================================================================
    INTERNAL BOOTSTRAP HELPERS
    ========================================================================== */
 
@@ -201,10 +210,6 @@ Hooks.once('init', async () => {
 
   /* ---------- PHASE 3: documents & sheets ---------- */
   CONFIG.SWSE = SWSE;
-
-  // Document class registration (v13: must be inside init hook)
-  CONFIG.Actor.documentClass = SWSEV2BaseActor;
-  CONFIG.Item.documentClass = SWSEItemBase;
 
   const systemId = game.system.id;
 
