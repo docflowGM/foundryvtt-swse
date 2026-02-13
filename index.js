@@ -358,6 +358,16 @@ Hooks.once('ready', async () => {
 
   console.timeEnd('SWSE Ready');
   swseLogger.log('SWSE | Fully loaded');
+
+  /* -------------------------------------------------------------------------- */
+  /* FINAL SHEET CACHE RESET                                                    */
+  /* Prevent early-boot sheet instantiation failures from persisting            */
+  /* -------------------------------------------------------------------------- */
+  for (const actor of game.actors) {
+    if (actor._sheet === null) {
+      delete actor._sheet;
+    }
+  }
 });
 
 /* ==========================================================================
