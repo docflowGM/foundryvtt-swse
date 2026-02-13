@@ -72,6 +72,7 @@ import { SWSE } from './scripts/core/config.js';
 import { registerSystemSettings } from './scripts/core/settings.js';
 import { initializeUtils } from './scripts/core/utils-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
+import { initializeSheetStabilizer } from './scripts/core/sheet-stabilizer.js';
 
 // ---- v13 hardening ----
 import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from './scripts/core/hardening-init.js';
@@ -186,6 +187,12 @@ Hooks.once('init', async () => {
   globalThis.__SWSE_INIT__ = true;
 
   swseLogger.log('SWSE | Init start');
+
+  /* ---------- SHEET STABILIZER (must be first) ---------- */
+  initializeSheetStabilizer({
+    preloadTemplates: preloadHandlebarsTemplates,
+    registerPartials: registerSWSEPartials
+  });
 
   /* ---------- SHEET REGISTRATION (v13-compliant) ---------- */
   const SYSTEM_ID = "foundryvtt-swse";
