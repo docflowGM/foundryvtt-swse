@@ -21,11 +21,11 @@
 
   Examples:
     {{#each suggestions}}
-      {{> suggestion-card this}}
+      {{> "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs" this}}
     {{/each}}
 
     {{#with feat}}
-      {{> suggestion-card id=id name=name img=img tier=tier tierLabel=label}}
+      {{> "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs" id=id name=name img=img tier=tier tierLabel=label}}
     {{/with}}
 --}}
 

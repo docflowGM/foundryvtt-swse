@@ -1,0 +1,46 @@
+{{!--
+  Ability Card Partial (Starship Maneuvers)
+
+  Input context:
+    - name: string
+    - img: string
+    - description: string (may contain HTML)
+    - actionType: string
+    - tags: string[]
+    - spent: boolean
+    - inSuite: boolean
+
+  Optional hash:
+    - context: string (e.g. "starship-maneuver")
+--}}
+
+<div class="maneuver-card {{#if inSuite}}in-suite{{/if}} {{#if spent}}maneuver-spent{{/if}}"
+     data-item-id="{{_id}}">
+  <img src="{{img}}" width="32" height="32" alt="{{name}}"/>
+
+  <div class="power-meta" style="flex: 1;">
+    <div class="power-name" style="display:flex; align-items:center; gap:0.5rem;">
+      <span style="flex:1;">{{name}}</span>
+      {{#if actionType}}
+        <span class="tag" style="font-size: 0.75rem; opacity: 0.85;">{{actionType}}</span>
+      {{/if}}
+      {{#if spent}}
+        <span class="spent-indicator">(SPENT)</span>
+      {{/if}}
+    </div>
+
+    {{#if tags}}
+      <div class="tags" style="display:flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.25rem;">
+        {{#each tags}}
+          <span class="tag" style="font-size: 0.7rem; opacity: 0.85;">{{this}}</span>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#if description}}
+      <div class="power-desc" style="margin-top: 0.25rem;">
+        {{{description}}}
+      </div>
+    {{/if}}
+  </div>
+</div>

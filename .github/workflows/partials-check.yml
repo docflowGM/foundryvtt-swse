@@ -1,0 +1,42 @@
+name: Enforce Handlebars Partial Discipline
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate_partials:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install dependencies (if any)
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Generate partials report (PR artifact)
+        if: github.event_name == 'pull_request'
+        run: node tools/validate-partials.mjs --strict --report partials-report.json || true
+
+      - name: Upload partials report artifact
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: partials-report
+          path: partials-report.json
+
+      - name: Validate partial includes
+        run: npm run validate:partials
+
+      - name: Check partial manifest is up to date
+        run: node tools/generate-partials-manifest.mjs --check

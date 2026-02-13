@@ -164,10 +164,10 @@
   <div class="vehicle-center">
 
     {{!-- Holographic ship image + scanner + damage overlays --}}
-    {{> "vehicle-image" actor=actor }}
+    {{> "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-image.hbs" actor=actor }}
 
     {{!-- HUD callouts (holographic stat tiles) --}}
-    {{> "vehicle-callouts" actor=actor }}
+    {{> "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-callouts.hbs" actor=actor }}
 
   </div>
 
@@ -340,7 +340,7 @@
           <i class="{{getIconClass 'chevronDown'}}"></i> Actions
         </button>
         <div class="crew-actions-panel" style="display: none;">
-          {{> "crew-action-cards" actions=posData.actions position=posKey}}
+          {{> "systems/foundryvtt-swse/templates/partials/crew-action-cards.hbs" actions=posData.actions position=posKey}}
         </div>
         {{/if}}
         {{/if}}

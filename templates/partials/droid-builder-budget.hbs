@@ -1,0 +1,30 @@
+{{!--
+  Droid Builder Budget Display
+
+  Hash:
+    - budget: { total:number, spent:number, remaining:number }
+--}}
+
+{{#if budget}}
+  <div class="budget-display">
+    <div class="budget-bar-label">
+      <span>Budget</span>
+      {{#if (lt budget.remaining 0)}}
+        <span class="budget-over">Over by {{abs budget.remaining}} credits</span>
+      {{else}}
+        <span class="budget-remaining">{{budget.remaining}} credits remaining</span>
+      {{/if}}
+    </div>
+
+    <div class="budget-bar"
+         data-budget-total="{{budget.total}}"
+         data-budget-spent="{{budget.spent}}">
+      <div class="budget-spent"></div>
+    </div>
+
+    <div class="budget-bar-label" style="margin-top: 6px;">
+      <span>Spent</span>
+      <span>{{budget.spent}} / {{budget.total}} credits</span>
+    </div>
+  </div>
+{{/if}}
