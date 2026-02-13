@@ -219,8 +219,8 @@ Hooks.once("ready", async () => {
 
   onDiscoveryReady();
 
-  swseLogger.log("SWSE | FULLY LOADED");
-
+  console.timeEnd('SWSE Ready');
+  swseLogger.log('SWSE | Fully loaded');
 });
 
 /* ========================================================================== */
