@@ -146,7 +146,8 @@ import { initializePhase5, getPhaseSummary } from './scripts/core/phase5-init.js
 import { registerCriticalFlowTests } from './scripts/tests/critical-flow-tests.js';
 
 // ---- Forensic diagnostics ----
-import { initializeSheetDiagnostics } from './scripts/core/forensic-sheet-diagnostic.js';
+// DISABLED: The diagnostic was shadowing the real sheet getter, causing it to return null
+// import { initializeSheetDiagnostics } from './scripts/core/forensic-sheet-diagnostic.js';
 
 /* ==========================================================================
    INTERNAL BOOTSTRAP HELPERS
