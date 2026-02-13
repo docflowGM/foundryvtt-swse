@@ -150,29 +150,6 @@ import { registerCriticalFlowTests } from './scripts/tests/critical-flow-tests.j
 // import { initializeSheetDiagnostics } from './scripts/core/forensic-sheet-diagnostic.js';
 
 /* ==========================================================================
-   SHEET REGISTRATION (v13 boot-order critical)
-   Must happen BEFORE documentClass assignment at top-level
-   ========================================================================== */
-
-const systemId = game?.system?.id;
-
-if (systemId) {
-  // Clean unregister any stale registrations
-  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2CharacterSheet);
-  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2NpcSheet);
-  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2DroidSheet);
-  foundry.documents.collections.Actors.unregisterSheet(systemId, SWSEV2VehicleSheet);
-  foundry.documents.collections.Items.unregisterSheet(systemId, SWSEItemSheet);
-
-  // Register and force defaults
-  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2CharacterSheet, { types: ['character'], makeDefault: true });
-  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2NpcSheet, { types: ['npc'], makeDefault: true });
-  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2DroidSheet, { types: ['droid'], makeDefault: true });
-  foundry.documents.collections.Actors.registerSheet(systemId, SWSEV2VehicleSheet, { types: ['vehicle'], makeDefault: true });
-  foundry.documents.collections.Items.registerSheet(systemId, SWSEItemSheet, { makeDefault: true });
-}
-
-/* ==========================================================================
    EARLY DOCUMENT CLASS REGISTRATION (v13 boot-order critical)
    Must happen at top-level AFTER sheets to ensure documents are
    instantiated with correct classes during Foundry initialization
@@ -209,6 +186,42 @@ Hooks.once('init', async () => {
   globalThis.__SWSE_INIT__ = true;
 
   swseLogger.log('SWSE | Init start');
+
+  /* ---------- SHEET REGISTRATION (v13-compliant) ---------- */
+  const SYSTEM_ID = "foundryvtt-swse";
+  const ActorsCollection = foundry.documents.collections.Actors;
+
+  ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2CharacterSheet, {
+    types: ["character"],
+    makeDefault: true
+  });
+
+  ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2NpcSheet, {
+    types: ["npc"],
+    makeDefault: true
+  });
+
+  ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2DroidSheet, {
+    types: ["droid"],
+    makeDefault: true
+  });
+
+  ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2VehicleSheet, {
+    types: ["vehicle"],
+    makeDefault: true
+  });
+
+  // Register Items sheet
+  const ItemsCollection = foundry.documents.collections.Items;
+  ItemsCollection.registerSheet(SYSTEM_ID, SWSEItemSheet, {
+    makeDefault: true
+  });
+
+  // Debug verification log
+  console.log(
+    "SWSE Sheet Registration:",
+    CONFIG.Actor.sheetClasses
+  );
 
   /* ---------- PHASE -1: v13 hardening (must be first) ---------- */
   await initializeHardeningSystem();
