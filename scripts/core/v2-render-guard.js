@@ -16,10 +16,22 @@ import { HooksRegistry } from '../hooks/hooks-registry.js';
 import { SWSELogger } from '../utils/logger.js';
 
 /**
+ * DIAGNOSTIC MODE: Toggle Phase 3 enforcement
+ * Set to false to disable the enforcement layer for diagnostic isolation
+ * This helps determine if enforcement is mutating sheet instantiation
+ */
+const ENABLE_PHASE3_ENFORCEMENT = false;
+
+/**
  * Initialize Phase 3 structural enforcement
  * Registers all runtime guards and diagnostic hooks
  */
 export async function initializeV2RenderGuard() {
+    if (!ENABLE_PHASE3_ENFORCEMENT) {
+        SWSELogger.log('Phase 3 Structural Enforcement Layer DISABLED (diagnostic mode)');
+        return;
+    }
+
     SWSELogger.log('Initializing Phase 3 Structural Enforcement Layer');
 
     registerRenderContractAssertions();
