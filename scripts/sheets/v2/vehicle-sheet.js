@@ -27,7 +27,7 @@ export class SWSEV2VehicleSheet extends
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "swse-sheet", "swse-vehicle-sheet", "v2"],
+      classes: ["swse", "swse-app", "swse-sheet", "swse-vehicle-sheet", "v2"],
       width: 820,
       height: 920,
       form: {

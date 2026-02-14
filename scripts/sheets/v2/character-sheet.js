@@ -32,7 +32,7 @@ export class SWSEV2CharacterSheet extends
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "swse-sheet", "swse-character-sheet", "v2"],
+      classes: ["swse", "swse-app", "swse-sheet", "swse-character-sheet", "v2"],
       width: 820,
       height: 920,
       form: {
