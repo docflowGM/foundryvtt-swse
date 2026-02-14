@@ -34,14 +34,16 @@ const VALID_ITEM_TYPES = {
     "condition", "combat-action", "class"
   ],
   vehicle: [
-    "weapon", "equipment", "vehicleWeapon", "vehicleWeaponRange"
+    "weapon", "armor", "equipment",
+    "vehicleWeapon", "vehicleWeaponRange"
   ]
 };
 
 /**
- * Which actor types each sheet accepts as owned/crew references.
+ * Which actor types each sheet accepts as crew/owned references.
+ * Vehicle crew: any character, NPC, or droid can crew a vehicle.
  */
-const VALID_ACTOR_TYPES = {
+const VALID_CREW_TYPES = {
   character: ["vehicle", "npc", "beast", "droid"],
   npc: [],
   droid: ["vehicle", "npc", "beast"],
@@ -51,9 +53,11 @@ const VALID_ACTOR_TYPES = {
 /**
  * Actor types that trigger "sheet claim" (close current, open dropped).
  * Key = current sheet actor type, value = dropped actor types that claim.
+ *
+ * Vehicles never sheet-claim for character/NPC/droid — those always
+ * become crew. Only vehicle→vehicle triggers claim.
  */
 const SHEET_CLAIM_TYPES = {
-  vehicle: ["vehicle"],
   droid: ["droid"],
   npc: ["npc"],
   character: ["character"]
@@ -158,8 +162,11 @@ export class DropService {
    * Handle an Actor drop onto an actor sheet.
    *
    * Priority order:
-   * 1. Sheet claim (same type → close sheet, open dropped actor)
-   * 2. Crew/owned reference (add to ownedActors array)
+   * 1. Crew/owned reference — if the dropped actor type is in VALID_CREW_TYPES
+   *    for this sheet, add as crew/owned (vehicles always crew actors)
+   * 2. Sheet claim — if same actor type dropped on same type sheet
+   *    (e.g. vehicle→vehicle), close current and open dropped
+   * 3. Reject — type not valid for this sheet
    */
   static async _handleActorDrop(data, event, targetActor, sheet) {
     const droppedActor = await fromUuid(data.uuid);
@@ -168,7 +175,30 @@ export class DropService {
     // Self-drop guard
     if (droppedActor.id === targetActor.id) return false;
 
-    // Sheet claim: same type replaces the sheet
+    // --- CREW / OWNED REFERENCE ---
+    // Check crew eligibility FIRST. For vehicles this means
+    // character, NPC, and droid always become crew — never sheet-claim.
+    const crewTypes = VALID_CREW_TYPES[targetActor.type] || [];
+    if (crewTypes.includes(droppedActor.type)) {
+      // Duplicate guard
+      const owned = [...(targetActor.system.ownedActors || [])];
+      if (owned.find(o => o.id === droppedActor.id)) {
+        ui.notifications.info(
+          `${droppedActor.name} is already linked to ${targetActor.name}.`
+        );
+        return false;
+      }
+
+      owned.push({ id: droppedActor.id, type: droppedActor.type });
+      await targetActor.update({ "system.ownedActors": owned });
+
+      const label = targetActor.type === "vehicle" ? "crew member" : "owned actor";
+      ui.notifications.info(`Added ${droppedActor.name} as ${label}.`);
+      return true;
+    }
+
+    // --- SHEET CLAIM ---
+    // Same type replaces the sheet (e.g. vehicle→vehicle opens dropped vehicle)
     const claimTypes = SHEET_CLAIM_TYPES[targetActor.type] || [];
     if (claimTypes.includes(droppedActor.type)) {
       sheet.close();
@@ -176,31 +206,11 @@ export class DropService {
       return true;
     }
 
-    // Validate actor type for this sheet
-    const allowedTypes = VALID_ACTOR_TYPES[targetActor.type] || [];
-    if (!allowedTypes.includes(droppedActor.type)) {
-      ui.notifications.warn(
-        `Cannot add ${droppedActor.type} actors to a ${targetActor.type} sheet.`
-      );
-      return false;
-    }
-
-    // Duplicate guard
-    const owned = [...(targetActor.system.ownedActors || [])];
-    if (owned.find(o => o.id === droppedActor.id)) {
-      ui.notifications.info(
-        `${droppedActor.name} is already linked to ${targetActor.name}.`
-      );
-      return false;
-    }
-
-    // Add reference
-    owned.push({ id: droppedActor.id, type: droppedActor.type });
-    await targetActor.update({ "system.ownedActors": owned });
-
-    const label = targetActor.type === "vehicle" ? "crew member" : "owned actor";
-    ui.notifications.info(`Added ${droppedActor.name} as ${label}.`);
-    return true;
+    // --- REJECT ---
+    ui.notifications.warn(
+      `Cannot add ${droppedActor.type} actors to a ${targetActor.type} sheet.`
+    );
+    return false;
   }
 
   /* ------------------------------------------------------------------------ */
