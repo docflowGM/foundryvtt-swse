@@ -97,6 +97,15 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
+    // Build owned actors map
+    const ownedActorMap = {};
+    for (const entry of actor.system.ownedActors || []) {
+      const ownedActor = game.actors.get(entry.id);
+      if (ownedActor) {
+        ownedActorMap[entry.id] = ownedActor;
+      }
+    }
+
     const overrides = {
       actor,
       system: actor.system,
@@ -110,6 +119,7 @@ export class SWSEV2CharacterSheet extends
         img: item.img,
         system: item.system
       })),
+      ownedActorMap,
       editable: this.isEditable,
       user: {
         id: game.user.id,
@@ -447,6 +457,63 @@ export class SWSEV2CharacterSheet extends
       this,
       "SWSEV2CharacterSheet"
     );
+  }
+
+    /* ---- OWNED ACTORS MANAGEMENT ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="remove-owned"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const actorId = ev.currentTarget?.dataset?.actorId;
+        if (!actorId) return;
+        const owned = this.document.system.ownedActors?.filter(o => o.id !== actorId) || [];
+        await this.document.update({ "system.ownedActors": owned });
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="open-owned"]')) {
+      btn.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        const actorId = ev.currentTarget?.dataset?.actorId;
+        if (!actorId) return;
+        const actor = game.actors.get(actorId);
+        actor?.sheet?.render(true);
+      });
+    }
+  }
+
+  /* -------- -------- -------- -------- -------- -------- -------- -------- */
+  /* DRAG & DROP HANDLING                                                     */
+  /* -------- -------- -------- -------- -------- -------- -------- -------- */
+
+  async _onDrop(event) {
+    const data = TextEditor.getDragEventData(event);
+
+    if (data.type !== "Actor") return;
+
+    const actor = await fromUuid(data.uuid);
+    if (!actor) return;
+
+    const allowed = ["vehicle", "npc", "beast"];
+    if (!allowed.includes(actor.type)) {
+      ui.notifications.warn(`Can only add ${allowed.join(", ")} as owned actors`);
+      return;
+    }
+
+    const owned = [...(this.document.system.ownedActors || [])];
+
+    if (owned.find(o => o.id === actor.id)) {
+      ui.notifications.info(`${actor.name} is already owned by this actor`);
+      return;
+    }
+
+    owned.push({ id: actor.id, type: actor.type });
+
+    await this.document.update({
+      "system.ownedActors": owned
+    });
+
+    ui.notifications.info(`Added ${actor.name} as owned actor`);
   }
 
   /* ------------------------------------------------------------------------ */

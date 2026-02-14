@@ -92,15 +92,34 @@
       <div class="swse-v2-sheet-grid">
         <section class="other-owned">
           <h3>Followers & Assets</h3>
-          <div class="owned-actors-list">
+          <div class="owned-actors-list" style="border: 2px dashed #ccc; padding: 12px; border-radius: 4px; min-height: 100px; background: rgba(0,0,0,0.05);">
             {{#if actor.system.ownedActors}}
-              {{#each actor.system.ownedActors}}
-              <div class="owned-entry">
-                {{this.name}}
-              </div>
+              {{#each actor.system.ownedActors as |entry|}}
+                {{#with (lookup ../ownedActorMap entry.id) as |actor|}}
+                  <div class="owned-entry" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #ddd;">
+                    <div style="flex: 1;">
+                      <button type="button"
+                              class="owned-button"
+                              data-action="open-owned"
+                              data-actor-id="{{actor.id}}"
+                              style="background: none; border: none; padding: 0; color: #0066cc; cursor: pointer; text-decoration: underline;">
+                        {{actor.name}}
+                      </button>
+                    </div>
+                    <button type="button"
+                            class="owned-remove"
+                            data-action="remove-owned"
+                            data-actor-id="{{actor.id}}"
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Remove
+                    </button>
+                  </div>
+                {{/with}}
               {{/each}}
             {{else}}
-              <div class="muted">No followers or assets</div>
+              <div class="muted" style="text-align: center; padding: 20px;">
+                Drag vehicles, NPCs, or beasts here to add followers or assets.
+              </div>
             {{/if}}
           </div>
         </section>
