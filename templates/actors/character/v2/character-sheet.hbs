@@ -32,8 +32,14 @@
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-left">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
+        </div>
+        <div class="swse-v2-right">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/second-wind-panel.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/dark-side-panel.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/languages-panel.hbs"}}
         </div>
       </div>
     </section>
@@ -73,12 +79,267 @@
     {{#if actor.system.forceSensitive}}
     <section class="tab" data-group="primary" data-tab="force">
       <div class="swse-v2-sheet-grid">
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Force Powers</h3>
+              <button type="button" data-action="add-force-power" class="swse-btn" style="padding: 4px 8px; font-size: 0.85em;">+ Add Power</button>
+            </div>
+            {{#if (filter items "type" "forcePower")}}
+              <div class="force-powers-list">
+                {{#each (filter items "type" "forcePower") as |item|}}
+                  <div class="force-power-row" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee;">
+                    <button type="button"
+                            class="force-power-name swse-v2-open-item"
+                            data-item-id="{{item.id}}"
+                            style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline; text-align: left; flex: 1;">
+                      {{item.name}}
+                    </button>
+                    <button type="button"
+                            class="force-power-delete"
+                            data-action="delete-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Delete
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="muted" style="padding: 16px;">No Force Powers. Click "Add Power" to learn one.</div>
+            {{/if}}
+          </div>
+        </div>
+
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Force Techniques</h3>
+              <button type="button" data-action="add-force-technique" class="swse-btn" style="padding: 4px 8px; font-size: 0.85em;">+ Add Technique</button>
+            </div>
+            {{#if (filter items "type" "forceTechnique")}}
+              <div class="force-techniques-list">
+                {{#each (filter items "type" "forceTechnique") as |item|}}
+                  <div class="force-technique-row" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee;">
+                    <button type="button"
+                            class="force-technique-name swse-v2-open-item"
+                            data-item-id="{{item.id}}"
+                            style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline; text-align: left; flex: 1;">
+                      {{item.name}}
+                    </button>
+                    <button type="button"
+                            class="force-technique-delete"
+                            data-action="delete-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Delete
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="muted" style="padding: 16px;">No Force Techniques. Click "Add Technique" to learn one.</div>
+            {{/if}}
+          </div>
+        </div>
+
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Force Secrets</h3>
+              <button type="button" data-action="add-force-secret" class="swse-btn" style="padding: 4px 8px; font-size: 0.85em;">+ Add Secret</button>
+            </div>
+            {{#if (filter items "type" "forceSecret")}}
+              <div class="force-secrets-list">
+                {{#each (filter items "type" "forceSecret") as |item|}}
+                  <div class="force-secret-row" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee;">
+                    <button type="button"
+                            class="force-secret-name swse-v2-open-item"
+                            data-item-id="{{item.id}}"
+                            style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline; text-align: left; flex: 1;">
+                      {{item.name}}
+                    </button>
+                    <button type="button"
+                            class="force-secret-delete"
+                            data-action="delete-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Delete
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="muted" style="padding: 16px;">No Force Secrets. Click "Add Secret" to unlock one.</div>
+            {{/if}}
+          </div>
+        </div>
       </div>
     </section>
     {{/if}}
 
     <section class="tab" data-group="primary" data-tab="gear">
       <div class="swse-v2-sheet-grid">
+        <div class="swse-v2-full">
+          <section class="gear-section">
+            <h3>Equipment</h3>
+            {{#if equipment}}
+              <div class="equipment-list" style="border-top: 1px solid #ddd;">
+                {{#each equipment as |item|}}
+                  <div class="equipment-row" style="display: grid; grid-template-columns: 1fr 80px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                    <div class="equipment-name">
+                      <button type="button"
+                              class="equipment-name-btn swse-v2-open-item"
+                              data-item-id="{{item.id}}"
+                              style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
+                        {{item.name}}
+                      </button>
+                    </div>
+                    <input type="number"
+                           name="items.{{item.id}}.system.quantity"
+                           value="{{item.system.quantity}}"
+                           min="0"
+                           style="padding: 4px; border: 1px solid #ccc; border-radius: 2px;">
+                    <div class="equipment-weight" style="text-align: right;">
+                      {{item.system.weight}} lbs
+                    </div>
+                    <button type="button"
+                            class="equipment-sell"
+                            data-action="sell-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Sell
+                    </button>
+                    <button type="button"
+                            class="equipment-delete"
+                            data-action="delete-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Delete
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="muted" style="padding: 16px;">No equipment</div>
+            {{/if}}
+          </section>
+        </div>
+
+        <div class="swse-v2-full">
+          <section class="armor-section">
+            <h3>Armor</h3>
+            {{#if armor}}
+              <div class="armor-list" style="border-top: 1px solid #ddd;">
+                {{#each armor as |item|}}
+                  <div class="armor-row" style="display: grid; grid-template-columns: 40px 1fr 120px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                    <div style="text-align: center;">
+                      <input type="checkbox"
+                             class="armor-equip"
+                             data-action="toggle-equip-armor"
+                             data-item-id="{{item.id}}"
+                             {{#if item.system.equipped}}checked{{/if}}
+                             style="cursor: pointer;">
+                    </div>
+                    <div class="armor-name">
+                      <button type="button"
+                              class="armor-name-btn swse-v2-open-item"
+                              data-item-id="{{item.id}}"
+                              style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
+                        {{item.name}}
+                      </button>
+                    </div>
+                    <div style="font-size: 0.85em;">
+                      Def: {{item.system.defenseBonus}} | DX: {{item.system.maxDex}}
+                    </div>
+                    <div style="text-align: right; font-size: 0.85em;">
+                      {{item.system.weight}} lbs
+                    </div>
+                    <button type="button"
+                            class="armor-sell"
+                            data-action="sell-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Sell
+                    </button>
+                    <button type="button"
+                            class="armor-delete"
+                            data-action="delete-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Delete
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="muted" style="padding: 16px;">No armor equipped</div>
+            {{/if}}
+          </section>
+        </div>
+
+        <div class="swse-v2-full">
+          <section class="weapons-section">
+            <h3>Weapons</h3>
+            {{#if weapons}}
+              <div class="weapons-list" style="border-top: 1px solid #ddd;">
+                {{#each weapons as |item|}}
+                  <div class="weapon-row" style="display: grid; grid-template-columns: 1fr 100px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                    <div class="weapon-name">
+                      <button type="button"
+                              class="weapon-name-btn swse-v2-open-item"
+                              data-item-id="{{item.id}}"
+                              style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
+                        {{item.name}}
+                      </button>
+                    </div>
+                    <div style="font-size: 0.85em;">
+                      {{item.system.damage}}
+                    </div>
+                    <button type="button"
+                            class="weapon-delete"
+                            data-action="delete-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Delete
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="muted" style="padding: 16px;">No weapons</div>
+            {{/if}}
+          </section>
+        </div>
+
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Encumbrance</h3>
+            </div>
+            <div style="padding: 16px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div>
+                  <div style="font-size: 0.9em; color: #666; margin-bottom: 4px;">Total Weight</div>
+                  <div style="font-size: 1.5em; font-weight: bold;">
+                    {{derived.encumbrance.total}}/{{derived.encumbrance.max}} lbs
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size: 0.9em; color: #666; margin-bottom: 4px;">Encumbrance State</div>
+                  <div style="font-size: 1.2em; font-weight: bold; {{#if (eq derived.encumbrance.state "Heavily Encumbered")}}color: #cc0000;{{/if}}">
+                    {{derived.encumbrance.state}}
+                  </div>
+                </div>
+              </div>
+              {{#if derived.encumbrance.penalty}}
+                <div style="color: #cc0000; font-weight: bold;">
+                  Penalty: {{derived.encumbrance.penalty}}
+                </div>
+              {{/if}}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -86,15 +347,34 @@
       <div class="swse-v2-sheet-grid">
         <section class="other-owned">
           <h3>Followers & Assets</h3>
-          <div class="owned-actors-list">
+          <div class="owned-actors-list" style="border: 2px dashed #ccc; padding: 12px; border-radius: 4px; min-height: 100px; background: rgba(0,0,0,0.05);">
             {{#if actor.system.ownedActors}}
-              {{#each actor.system.ownedActors}}
-              <div class="owned-entry">
-                {{this.name}}
-              </div>
+              {{#each actor.system.ownedActors as |entry|}}
+                {{#with (lookup ../ownedActorMap entry.id) as |actor|}}
+                  <div class="owned-entry" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #ddd;">
+                    <div style="flex: 1;">
+                      <button type="button"
+                              class="owned-button"
+                              data-action="open-owned"
+                              data-actor-id="{{actor.id}}"
+                              style="background: none; border: none; padding: 0; color: #0066cc; cursor: pointer; text-decoration: underline;">
+                        {{actor.name}}
+                      </button>
+                    </div>
+                    <button type="button"
+                            class="owned-remove"
+                            data-action="remove-owned"
+                            data-actor-id="{{actor.id}}"
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Remove
+                    </button>
+                  </div>
+                {{/with}}
               {{/each}}
             {{else}}
-              <div class="muted">No followers or assets</div>
+              <div class="muted" style="text-align: center; padding: 20px;">
+                Drag vehicles, NPCs, or beasts here to add followers or assets.
+              </div>
             {{/if}}
           </div>
         </section>
@@ -103,6 +383,17 @@
 
     <section class="tab" data-group="primary" data-tab="biography">
       <div class="swse-v2-sheet-grid">
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Character Notes & Background</h3>
+            </div>
+            <textarea name="system.biography"
+                      placeholder="Write your character's background, personality, goals, bonds, motivations, and other notes here..."
+                      style="width: 100%; height: 300px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; resize: vertical;"
+                      {{#unless editable}}disabled{{/unless}}>{{system.biography}}</textarea>
+          </div>
+        </div>
       </div>
     </section>
   </section>

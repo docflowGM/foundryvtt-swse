@@ -61,7 +61,9 @@ export async function resetWelcome() {
 class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: 'swse-welcome-dialog',
-    window: { icon: 'fas fa-star', title: '⭐ Welcome to SWSE for Foundry VTT' }
+    window: { icon: 'fas fa-star', title: '⭐ Welcome to SWSE for Foundry VTT' },
+    position: { width: 800, height: 600 },
+    resizable: true
   };
 
   static PARTS = {

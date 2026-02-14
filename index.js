@@ -62,6 +62,11 @@ import { SWSEV2DroidSheet } from "./scripts/sheets/v2/droid-sheet.js";
 import { SWSEV2VehicleSheet } from "./scripts/sheets/v2/vehicle-sheet.js";
 import { SWSEItemSheet } from "./scripts/items/swse-item-sheet.js";
 
+// Apps
+import CharacterGenerator from "./scripts/apps/chargen/chargen-main.js";
+import { SWSELevelUpEnhanced } from "./scripts/apps/levelup/levelup-main.js";
+import { SWSEStore } from "./scripts/apps/store/store-main.js";
+
 // Handlebars
 import { registerHandlebarsHelpers } from "./helpers/handlebars/index.js";
 import { registerSWSEPartials } from "./helpers/handlebars/partials-auto.js";
@@ -192,6 +197,28 @@ Hooks.once("ready", async () => {
   initializePhase5();
   registerCriticalFlowTests();
 
+  // Restore global SWSE namespace
+  game.swse = {
+    engine: SWSEProgressionEngine,
+    progression: SWSEProgressionEngine,
+    chargen: CharacterGenerator,
+    levelup: SWSELevelUpEnhanced,
+    store: SWSEStore,
+    suggestion: SuggestionService,
+    ui: {
+      ChargenApp: CharacterGenerator,
+      LevelUpApp: SWSELevelUpEnhanced,
+      StoreApp: SWSEStore
+    },
+    rolls: game.swse?.rolls || {},
+    api: {
+      FeatSystem,
+      SkillSystem,
+      TalentAbilitiesEngine,
+      CombatSuggestionEngine
+    }
+  };
+
   window.SWSE = {
     api: {
       FeatSystem,
@@ -212,6 +239,78 @@ Hooks.once("ready", async () => {
   onDiscoveryReady();
 
   swseLogger.log("SWSE | Fully loaded");
+});
+
+/* ========================================================================== */
+/* HEADER CONTROLS REGISTRATION                                              */
+/* ========================================================================== */
+
+Hooks.on("getHeaderControlsApplicationV2", (app, controls) => {
+  const actor = app.document;
+  if (!actor) return;
+
+  // CHARACTER SHEET CONTROLS
+  if (app instanceof SWSEV2CharacterSheet) {
+    const chargenComplete = actor.system?.chargenComplete;
+
+    // Chargen / Level Up button
+    if (!chargenComplete) {
+      controls.unshift({
+        icon: "fas fa-user-plus",
+        label: "Chargen",
+        class: "swse-glow-button",
+        action: () => {
+          game.swse.chargen?.open?.(actor);
+        }
+      });
+    } else {
+      controls.unshift({
+        icon: "fas fa-arrow-up",
+        label: "Level Up",
+        class: "swse-glow-button",
+        action: () => {
+          game.swse.levelup?.showForActor?.(actor);
+        }
+      });
+    }
+  }
+
+  // NPC SHEET CONTROLS
+  if (app instanceof SWSEV2NpcSheet) {
+    // Only show Level Up if progression mode is enabled
+    if (actor.system?.useProgression) {
+      controls.unshift({
+        icon: "fas fa-arrow-up",
+        label: "Level Up",
+        class: "swse-glow-button",
+        action: () => {
+          game.swse.levelup?.showForActor?.(actor);
+        }
+      });
+    }
+  }
+
+  // SHARED CONTROLS (both Character and NPC)
+  if (app instanceof SWSEV2CharacterSheet || app instanceof SWSEV2NpcSheet) {
+    // Store button
+    controls.unshift({
+      icon: "fas fa-store",
+      label: "Store",
+      class: "swse-glow-button",
+      action: () => {
+        game.swse.store?.open?.(actor);
+      }
+    });
+
+    // Mentor button
+    controls.unshift({
+      icon: "fas fa-comments",
+      label: "Talk to Mentor",
+      action: () => {
+        game.swse.ui?.MentorDialog?.open?.(actor);
+      }
+    });
+  }
 });
 
 /* ========================================================================== */

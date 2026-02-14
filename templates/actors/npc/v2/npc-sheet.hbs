@@ -34,6 +34,32 @@
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
         </div>
+        <div class="swse-v2-right">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Progression Mode</h3>
+            </div>
+            <div style="padding: 16px;">
+              <label style="display: flex; gap: 8px; align-items: center; cursor: pointer;">
+                <input type="checkbox"
+                       name="system.useProgression"
+                       {{#if system.useProgression}}checked{{/if}}
+                       {{#unless editable}}disabled{{/unless}}
+                       style="width: 20px; height: 20px; cursor: pointer;">
+                <span>Enable Progression Mode</span>
+              </label>
+              <div style="margin-top: 12px; font-size: 0.9em; color: #666; line-height: 1.5;">
+                {{#if system.useProgression}}
+                  <strong style="color: #0d7;"> ✓ Progression Enabled</strong><br>
+                  NPC can level up, gain feats, learn talents, and follow class progression rules.
+                {{else}}
+                  <strong style="color: #999;">○ Statblock Mode</strong><br>
+                  NPC uses fixed ability scores and custom stat values. Level Up and progression features are hidden.
+                {{/if}}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -51,11 +77,45 @@
 
     <section class="tab" data-group="primary" data-tab="stats">
       <div class="swse-v2-sheet-grid">
-        <div class="swse-v2-left">
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Ability Scores (Editable - Statblock Mode)</h3>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 12px;">
+              <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; text-align: center;">
+                <div style="font-size: 0.85em; color: #666; margin-bottom: 4px; text-transform: uppercase;">STR</div>
+                <input type="number" name="system.attributes.str.base" value="{{system.attributes.str.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} style="width: 60px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ddd; border-radius: 2px; padding: 4px;">
+              </div>
+              <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; text-align: center;">
+                <div style="font-size: 0.85em; color: #666; margin-bottom: 4px; text-transform: uppercase;">DEX</div>
+                <input type="number" name="system.attributes.dex.base" value="{{system.attributes.dex.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} style="width: 60px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ddd; border-radius: 2px; padding: 4px;">
+              </div>
+              <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; text-align: center;">
+                <div style="font-size: 0.85em; color: #666; margin-bottom: 4px; text-transform: uppercase;">CON</div>
+                <input type="number" name="system.attributes.con.base" value="{{system.attributes.con.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} style="width: 60px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ddd; border-radius: 2px; padding: 4px;">
+              </div>
+              <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; text-align: center;">
+                <div style="font-size: 0.85em; color: #666; margin-bottom: 4px; text-transform: uppercase;">INT</div>
+                <input type="number" name="system.attributes.int.base" value="{{system.attributes.int.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} style="width: 60px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ddd; border-radius: 2px; padding: 4px;">
+              </div>
+              <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; text-align: center;">
+                <div style="font-size: 0.85em; color: #666; margin-bottom: 4px; text-transform: uppercase;">WIS</div>
+                <input type="number" name="system.attributes.wis.base" value="{{system.attributes.wis.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} style="width: 60px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ddd; border-radius: 2px; padding: 4px;">
+              </div>
+              <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; text-align: center;">
+                <div style="font-size: 0.85em; color: #666; margin-bottom: 4px; text-transform: uppercase;">CHA</div>
+                <input type="number" name="system.attributes.cha.base" value="{{system.attributes.cha.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} style="width: 60px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ddd; border-radius: 2px; padding: 4px;">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
         </div>
 
-        <div class="swse-v2-right">
+        <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs"}}
         </div>
       </div>
@@ -79,6 +139,103 @@
     {{#if actor.items}}
     <section class="tab" data-group="primary" data-tab="gear">
       <div class="swse-v2-sheet-grid">
+        <div class="swse-v2-full">
+          <section class="gear-section">
+            <h3>Equipment</h3>
+            {{#if equipment}}
+              <div class="equipment-list" style="border-top: 1px solid #ddd;">
+                {{#each equipment as |item|}}
+                  <div class="equipment-row" style="display: grid; grid-template-columns: 1fr 80px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                    <div class="equipment-name">
+                      <button type="button"
+                              class="equipment-name-btn swse-v2-open-item"
+                              data-item-id="{{item.id}}"
+                              style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
+                        {{item.name}}
+                      </button>
+                    </div>
+                    <input type="number"
+                           name="items.{{item.id}}.system.quantity"
+                           value="{{item.system.quantity}}"
+                           min="0"
+                           style="padding: 4px; border: 1px solid #ccc; border-radius: 2px;">
+                    <div class="equipment-weight" style="text-align: right;">
+                      {{item.system.weight}} lbs
+                    </div>
+                    <button type="button"
+                            class="equipment-sell"
+                            data-action="sell-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Sell
+                    </button>
+                    <button type="button"
+                            class="equipment-delete"
+                            data-action="delete-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Delete
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="muted" style="padding: 16px;">No equipment</div>
+            {{/if}}
+          </section>
+        </div>
+
+        <div class="swse-v2-full">
+          <section class="armor-section">
+            <h3>Armor</h3>
+            {{#if armor}}
+              <div class="armor-list" style="border-top: 1px solid #ddd;">
+                {{#each armor as |item|}}
+                  <div class="armor-row" style="display: grid; grid-template-columns: 40px 1fr 120px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                    <div style="text-align: center;">
+                      <input type="checkbox"
+                             class="armor-equip"
+                             data-action="toggle-equip-armor"
+                             data-item-id="{{item.id}}"
+                             {{#if item.system.equipped}}checked{{/if}}
+                             style="cursor: pointer;">
+                    </div>
+                    <div class="armor-name">
+                      <button type="button"
+                              class="armor-name-btn swse-v2-open-item"
+                              data-item-id="{{item.id}}"
+                              style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
+                        {{item.name}}
+                      </button>
+                    </div>
+                    <div style="font-size: 0.85em;">
+                      Def: {{item.system.defenseBonus}} | DX: {{item.system.maxDex}}
+                    </div>
+                    <div style="text-align: right; font-size: 0.85em;">
+                      {{item.system.weight}} lbs
+                    </div>
+                    <button type="button"
+                            class="armor-sell"
+                            data-action="sell-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Sell
+                    </button>
+                    <button type="button"
+                            class="armor-delete"
+                            data-action="delete-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Delete
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="muted" style="padding: 16px;">No armor equipped</div>
+            {{/if}}
+          </section>
+        </div>
       </div>
     </section>
     {{/if}}

@@ -1,0 +1,34 @@
+<div class="holo-panel">
+  <div class="section-bar">
+    <h3 class="section-header">Dark Side Score</h3>
+  </div>
+
+  <div class="swse-v2-dark-side">
+    <div class="swse-v2-ds-info">
+      <span class="ds-label">Score:</span>
+      <span class="ds-value">{{system.darkSideScore}} / {{darkSideMax}}</span>
+    </div>
+
+    <div class="swse-v2-ds-spectrum" data-action="set-dark-side-score">
+      {{#each darkSideSegments as |segment|}}
+        <div
+          class="ds-segment {{#if segment.filled}}filled{{/if}}"
+          data-index="{{segment.index}}"
+          style="background-color: {{segment.color}};"
+          title="{{segment.index}} Dark Side Points"
+        ></div>
+      {{/each}}
+    </div>
+
+    <div class="swse-v2-ds-legend">
+      <span class="legend-left">
+        <span class="legend-color" style="background-color: #4A90E2;"></span>
+        Light
+      </span>
+      <span class="legend-right">
+        <span class="legend-color" style="background-color: #E74C3C;"></span>
+        Dark
+      </span>
+    </div>
+  </div>
+</div>

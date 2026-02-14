@@ -5,6 +5,7 @@ const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { RenderAssertions } from '../../core/render-assertions.js';
 import { initiateItemSale } from '../../apps/item-selling-system.js';
+import { SWSELevelUp } from '../../apps/swse-levelup.js';
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -30,6 +31,7 @@ export class SWSEV2NpcSheet extends
       classes: ["swse", "swse-app", "swse-sheet", "swse-npc-sheet", "v2"],
       width: 820,
       height: 920,
+      resizable: true,
       form: {
         closeOnSubmit: false,
         submitOnChange: false
@@ -55,6 +57,23 @@ export class SWSEV2NpcSheet extends
 
     const baseContext = await super._prepareContext(options);
 
+    // Build equipment and armor lists
+    const equipment = actor.items.filter(item => item.type === "equipment").map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      img: item.img,
+      system: item.system
+    }));
+
+    const armor = actor.items.filter(item => item.type === "armor").map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      img: item.img,
+      system: item.system
+    }));
+
     const overrides = {
       actor,
       system: actor.system,
@@ -66,6 +85,8 @@ export class SWSEV2NpcSheet extends
         img: item.img,
         system: item.system
       })),
+      equipment,
+      armor,
       editable: this.isEditable,
       user: {
         id: game.user.id,
@@ -214,6 +235,61 @@ export class SWSEV2NpcSheet extends
         if (typeof this.actor?.useAction === "function") {
           await this.actor?.useAction(actionId);
         }
+      });
+    }
+
+    /* ---------------- PROGRESSION BUTTONS (NPC-SPECIFIC) ---------------- */
+
+    const levelUpBtn = root.querySelector('[data-action="level-up"]');
+    if (levelUpBtn) {
+      levelUpBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (this.actor) {
+          await SWSELevelUp.openEnhanced(this.actor);
+        }
+      });
+    }
+
+    /* ---- EQUIPMENT: SELL & DELETE ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="sell-item"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId) return;
+        const item = this.document.items.get(itemId);
+        if (!item) return;
+
+        const price = item.system.price ?? 0;
+        const currentCredits = this.document.system.credits ?? 0;
+
+        await this.document.update({
+          "system.credits": currentCredits + price
+        });
+
+        await this.document.deleteEmbeddedDocuments("Item", [itemId]);
+        ui.notifications.info(`Sold ${item.name} for ${price} credits`);
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="delete-item"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId) return;
+        await this.document.deleteEmbeddedDocuments("Item", [itemId]);
+      });
+    }
+
+    /* ---- ARMOR EQUIP TOGGLE ---- */
+
+    for (const checkbox of root.querySelectorAll('[data-action="toggle-equip-armor"]')) {
+      checkbox.addEventListener("change", async (ev) => {
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId) return;
+        const item = this.document.items.get(itemId);
+        if (!item) return;
+        await item.update({ "system.equipped": ev.currentTarget.checked });
       });
     }
 

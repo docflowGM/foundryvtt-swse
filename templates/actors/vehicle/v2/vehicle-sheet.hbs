@@ -59,6 +59,45 @@
 
     <section class="tab" data-group="primary" data-tab="crew">
       <div class="swse-v2-grid">
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Crew Members</h3>
+            </div>
+            <div style="padding: 12px;">
+              {{#if actor.system.ownedActors}}
+                <div class="owned-actors-list" style="border-top: 1px solid #ddd;">
+                  {{#each actor.system.ownedActors as |entry|}}
+                    {{#with (lookup ownedActorMap entry.id)}}
+                    <div class="owned-entry" style="display: grid; grid-template-columns: 1fr 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                      <div>
+                        <strong style="color: #0d7;">{{this.name}}</strong><br>
+                        <span style="font-size: 0.85em; color: #666;">{{entry.type}}</span>
+                      </div>
+                      <button type="button"
+                              class="crew-open-btn"
+                              data-action="open-owned"
+                              data-actor-id="{{this.id}}"
+                              style="background: #0066cc; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.85em;">
+                        Open
+                      </button>
+                      <button type="button"
+                              class="crew-remove-btn"
+                              data-action="remove-owned"
+                              data-actor-id="{{this.id}}"
+                              style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.85em;">
+                        Remove
+                      </button>
+                    </div>
+                    {{/with}}
+                  {{/each}}
+                </div>
+              {{else}}
+                <div class="muted" style="padding: 16px;">No crew members. Drag characters/NPCs here to add them.</div>
+              {{/if}}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -78,9 +117,61 @@
 
     <section class="tab" data-group="primary" data-tab="systems">
       <div class="swse-v2-grid" style="margin-top:12px;">
-        <div class="swse-v2-holo-group">
-          <div class="swse-v2-holo-header">Actions</div>
-          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs"}}
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Equipment</h3>
+            </div>
+            {{#if equipment}}
+              <div class="equipment-list" style="border-top: 1px solid #ddd;">
+                {{#each equipment as |item|}}
+                  <div class="equipment-row" style="display: grid; grid-template-columns: 1fr 80px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                    <div class="equipment-name">
+                      <button type="button"
+                              class="equipment-name-btn swse-v2-open-item"
+                              data-item-id="{{item.id}}"
+                              style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
+                        {{item.name}}
+                      </button>
+                    </div>
+                    <input type="number"
+                           name="items.{{item.id}}.system.quantity"
+                           value="{{item.system.quantity}}"
+                           min="0"
+                           style="padding: 4px; border: 1px solid #ccc; border-radius: 2px;">
+                    <div class="equipment-weight" style="text-align: right;">
+                      {{item.system.weight}} lbs
+                    </div>
+                    <button type="button"
+                            class="equipment-sell"
+                            data-action="sell-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Sell
+                    </button>
+                    <button type="button"
+                            class="equipment-delete"
+                            data-action="delete-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Delete
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="muted" style="padding: 16px;">No equipment</div>
+            {{/if}}
+          </div>
+        </div>
+
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Actions</h3>
+            </div>
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs"}}
+          </div>
         </div>
       </div>
     </section>

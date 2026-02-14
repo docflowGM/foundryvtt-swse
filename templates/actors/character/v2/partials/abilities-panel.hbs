@@ -1,0 +1,205 @@
+<div class="holo-panel">
+  <div class="section-bar">
+    <h3 class="section-header">Abilities</h3>
+  </div>
+
+  <div class="swse-v2-abilities-grid">
+    <!-- STR -->
+    {{#with system.attributes.str as |ability|}}
+    <div class="ability-row-full">
+      <div class="ability-label">STR</div>
+      <div class="ability-components flexrow">
+        <div class="component">
+          <label class="label-xs">Base</label>
+          <input type="number" class="input-sm" name="system.attributes.str.base" value="{{ability.base}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Racial</label>
+          <input type="number" class="input-sm" name="system.attributes.str.racial" value="{{ability.racial}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Enh</label>
+          <input type="number" class="input-sm" name="system.attributes.str.enhancement" value="{{ability.enhancement}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Temp</label>
+          <input type="number" class="input-sm" name="system.attributes.str.temp" value="{{ability.temp}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component read-only">
+          <label class="label-xs">Total</label>
+          <span class="value-sm">{{ability.total}}</span>
+        </div>
+        <div class="component read-only">
+          <label class="label-xs">Mod</label>
+          <span class="value-mod">{{numberFormat (safeNumber ability.mod 0) decimals=0 sign=true}}</span>
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- DEX -->
+    {{#with system.attributes.dex as |ability|}}
+    <div class="ability-row-full">
+      <div class="ability-label">DEX</div>
+      <div class="ability-components flexrow">
+        <div class="component">
+          <label class="label-xs">Base</label>
+          <input type="number" class="input-sm" name="system.attributes.dex.base" value="{{ability.base}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Racial</label>
+          <input type="number" class="input-sm" name="system.attributes.dex.racial" value="{{ability.racial}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Enh</label>
+          <input type="number" class="input-sm" name="system.attributes.dex.enhancement" value="{{ability.enhancement}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Temp</label>
+          <input type="number" class="input-sm" name="system.attributes.dex.temp" value="{{ability.temp}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component read-only">
+          <label class="label-xs">Total</label>
+          <span class="value-sm">{{ability.total}}</span>
+        </div>
+        <div class="component read-only">
+          <label class="label-xs">Mod</label>
+          <span class="value-mod">{{numberFormat (safeNumber ability.mod 0) decimals=0 sign=true}}</span>
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- CON -->
+    {{#with system.attributes.con as |ability|}}
+    <div class="ability-row-full">
+      <div class="ability-label">CON</div>
+      <div class="ability-components flexrow">
+        <div class="component">
+          <label class="label-xs">Base</label>
+          <input type="number" class="input-sm" name="system.attributes.con.base" value="{{ability.base}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Racial</label>
+          <input type="number" class="input-sm" name="system.attributes.con.racial" value="{{ability.racial}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Enh</label>
+          <input type="number" class="input-sm" name="system.attributes.con.enhancement" value="{{ability.enhancement}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Temp</label>
+          <input type="number" class="input-sm" name="system.attributes.con.temp" value="{{ability.temp}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component read-only">
+          <label class="label-xs">Total</label>
+          <span class="value-sm">{{ability.total}}</span>
+        </div>
+        <div class="component read-only">
+          <label class="label-xs">Mod</label>
+          <span class="value-mod">{{numberFormat (safeNumber ability.mod 0) decimals=0 sign=true}}</span>
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- INT -->
+    {{#with system.attributes.int as |ability|}}
+    <div class="ability-row-full">
+      <div class="ability-label">INT</div>
+      <div class="ability-components flexrow">
+        <div class="component">
+          <label class="label-xs">Base</label>
+          <input type="number" class="input-sm" name="system.attributes.int.base" value="{{ability.base}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Racial</label>
+          <input type="number" class="input-sm" name="system.attributes.int.racial" value="{{ability.racial}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Enh</label>
+          <input type="number" class="input-sm" name="system.attributes.int.enhancement" value="{{ability.enhancement}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Temp</label>
+          <input type="number" class="input-sm" name="system.attributes.int.temp" value="{{ability.temp}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component read-only">
+          <label class="label-xs">Total</label>
+          <span class="value-sm">{{ability.total}}</span>
+        </div>
+        <div class="component read-only">
+          <label class="label-xs">Mod</label>
+          <span class="value-mod">{{numberFormat (safeNumber ability.mod 0) decimals=0 sign=true}}</span>
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- WIS -->
+    {{#with system.attributes.wis as |ability|}}
+    <div class="ability-row-full">
+      <div class="ability-label">WIS</div>
+      <div class="ability-components flexrow">
+        <div class="component">
+          <label class="label-xs">Base</label>
+          <input type="number" class="input-sm" name="system.attributes.wis.base" value="{{ability.base}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Racial</label>
+          <input type="number" class="input-sm" name="system.attributes.wis.racial" value="{{ability.racial}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Enh</label>
+          <input type="number" class="input-sm" name="system.attributes.wis.enhancement" value="{{ability.enhancement}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Temp</label>
+          <input type="number" class="input-sm" name="system.attributes.wis.temp" value="{{ability.temp}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component read-only">
+          <label class="label-xs">Total</label>
+          <span class="value-sm">{{ability.total}}</span>
+        </div>
+        <div class="component read-only">
+          <label class="label-xs">Mod</label>
+          <span class="value-mod">{{numberFormat (safeNumber ability.mod 0) decimals=0 sign=true}}</span>
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- CHA -->
+    {{#with system.attributes.cha as |ability|}}
+    <div class="ability-row-full">
+      <div class="ability-label">CHA</div>
+      <div class="ability-components flexrow">
+        <div class="component">
+          <label class="label-xs">Base</label>
+          <input type="number" class="input-sm" name="system.attributes.cha.base" value="{{ability.base}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Racial</label>
+          <input type="number" class="input-sm" name="system.attributes.cha.racial" value="{{ability.racial}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Enh</label>
+          <input type="number" class="input-sm" name="system.attributes.cha.enhancement" value="{{ability.enhancement}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component">
+          <label class="label-xs">Temp</label>
+          <input type="number" class="input-sm" name="system.attributes.cha.temp" value="{{ability.temp}}" {{#unless editable}}disabled{{/unless}} />
+        </div>
+        <div class="component read-only">
+          <label class="label-xs">Total</label>
+          <span class="value-sm">{{ability.total}}</span>
+        </div>
+        <div class="component read-only">
+          <label class="label-xs">Mod</label>
+          <span class="value-mod">{{numberFormat (safeNumber ability.mod 0) decimals=0 sign=true}}</span>
+        </div>
+      </div>
+    </div>
+    {{/with}}
+  </div>
+</div>
