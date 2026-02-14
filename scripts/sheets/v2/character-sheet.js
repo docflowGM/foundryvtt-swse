@@ -8,6 +8,7 @@ import { initiateItemSale } from "../../apps/item-selling-system.js";
 import { RollEngine } from "../../engine/roll-engine.js";
 import { SWSELevelUp } from "../../apps/swse-levelup.js";
 import { rollSkill } from "../../rolls/skills.js";
+import { rollAttack } from "../../combat/rolls/attacks.js";
 
 /* ========================================================================== */
 /* SWSEV2CharacterSheet                                                       */
@@ -413,15 +414,61 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
-    /* ---------------- SKILL ROLLING (CLICK ON SKILL TOTAL) ---------------- */
+    /* ---------------- SKILL ROLLING ---------------- */
 
-    for (const el of root.querySelectorAll('.skill-col-total')) {
+    for (const el of root.querySelectorAll('[data-action="roll-skill"]')) {
       el.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        const skillContainer = ev.currentTarget.closest(".skill-row-container");
-        const skillKey = skillContainer?.dataset?.skill;
+        const skillKey = ev.currentTarget?.dataset?.skill;
         if (skillKey && this.actor) {
           await rollSkill(this.actor, skillKey);
+        }
+      });
+    }
+
+    /* ---------------- DEFENSE ROLLING ---------------- */
+
+    for (const el of root.querySelectorAll('[data-action="roll-defense"]')) {
+      el.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const defenseType = ev.currentTarget?.dataset?.defense;
+        if (defenseType && this.actor) {
+          if (typeof game.swse?.rolls?.defenses?.rollDefense === "function") {
+            await game.swse.rolls.defenses.rollDefense(this.document, defenseType);
+          }
+        }
+      });
+    }
+
+    /* ---------------- WEAPON ROLLING ---------------- */
+
+    for (const el of root.querySelectorAll('[data-action="roll-weapon"]')) {
+      el.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId || !this.actor) return;
+        const item = this.actor.items?.get(itemId);
+        if (!item) return;
+        if (typeof item.roll === "function") {
+          await item.roll();
+        } else {
+          await rollAttack(this.actor, item);
+        }
+      });
+    }
+
+    /* ---------------- FORCE POWER ROLLING ---------------- */
+
+    for (const el of root.querySelectorAll('[data-action="roll-force-power"]')) {
+      el.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId || !this.actor) return;
+        if (typeof game.swse?.rolls?.rollForcePower === "function") {
+          await game.swse.rolls.rollForcePower(this.document, itemId);
+        } else {
+          const item = this.actor.items?.get(itemId);
+          item?.sheet?.render(true);
         }
       });
     }

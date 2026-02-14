@@ -6,6 +6,8 @@ import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { RenderAssertions } from '../../core/render-assertions.js';
 import { initiateItemSale } from '../../apps/item-selling-system.js';
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
+import { rollSkill } from '../../rolls/skills.js';
+import { rollAttack } from '../../combat/rolls/attacks.js';
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -222,6 +224,49 @@ export class SWSEV2NpcSheet extends
         const item = this.actor?.items?.get(itemId);
         if (item && this.actor) {
           await initiateItemSale(item, this.actor);
+        }
+      });
+    }
+
+    /* ---------------- SKILL ROLLING ---------------- */
+
+    for (const el of root.querySelectorAll('[data-action="roll-skill"]')) {
+      el.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const skillKey = ev.currentTarget?.dataset?.skill;
+        if (skillKey && this.actor) {
+          await rollSkill(this.actor, skillKey);
+        }
+      });
+    }
+
+    /* ---------------- DEFENSE ROLLING ---------------- */
+
+    for (const el of root.querySelectorAll('[data-action="roll-defense"]')) {
+      el.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const defenseType = ev.currentTarget?.dataset?.defense;
+        if (defenseType && this.actor) {
+          if (typeof game.swse?.rolls?.defenses?.rollDefense === "function") {
+            await game.swse.rolls.defenses.rollDefense(this.document, defenseType);
+          }
+        }
+      });
+    }
+
+    /* ---------------- WEAPON ROLLING ---------------- */
+
+    for (const el of root.querySelectorAll('[data-action="roll-weapon"]')) {
+      el.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId || !this.actor) return;
+        const item = this.actor.items?.get(itemId);
+        if (!item) return;
+        if (typeof item.roll === "function") {
+          await item.roll();
+        } else {
+          await rollAttack(this.actor, item);
         }
       });
     }

@@ -6,7 +6,7 @@
   <div class="swse-v2-defenses-breakdown">
     <!-- REFLEX -->
     <div class="defense-row">
-      <div class="defense-label">Reflex</div>
+      <div class="defense-label" data-action="roll-defense" data-defense="reflex">Reflex</div>
       <div class="defense-inputs flexrow">
         <select class="defense-ability-select" name="system.defenses.reflex.ability" title="Select ability modifier for Reflex">
           <option value="str" {{#if (eq system.defenses.reflex.ability "str")}}selected{{/if}}>STR</option>
@@ -17,13 +17,13 @@
           <option value="cha" {{#if (eq system.defenses.reflex.ability "cha")}}selected{{/if}}>CHA</option>
         </select>
         <input type="number" class="defense-misc-input" name="system.defenses.reflex.misc.user.extra" value="{{system.defenses.reflex.misc.user.extra}}" placeholder="Misc" title="Miscellaneous modifier"/>
-        <span class="defense-total">{{system.defenses.reflex.total}}</span>
+        <span class="defense-total" data-action="roll-defense" data-defense="reflex">{{system.defenses.reflex.total}}</span>
       </div>
     </div>
 
     <!-- FORTITUDE -->
     <div class="defense-row">
-      <div class="defense-label">Fortitude</div>
+      <div class="defense-label" data-action="roll-defense" data-defense="fortitude">Fortitude</div>
       <div class="defense-inputs flexrow">
         <select class="defense-ability-select" name="system.defenses.fort.ability" title="Select ability modifier for Fortitude">
           <option value="str" {{#if (eq system.defenses.fort.ability "str")}}selected{{/if}}>STR</option>
@@ -34,13 +34,13 @@
           <option value="cha" {{#if (eq system.defenses.fort.ability "cha")}}selected{{/if}}>CHA</option>
         </select>
         <input type="number" class="defense-misc-input" name="system.defenses.fort.misc.user.extra" value="{{system.defenses.fort.misc.user.extra}}" placeholder="Misc" title="Miscellaneous modifier"/>
-        <span class="defense-total">{{system.defenses.fort.total}}</span>
+        <span class="defense-total" data-action="roll-defense" data-defense="fortitude">{{system.defenses.fort.total}}</span>
       </div>
     </div>
 
     <!-- WILL -->
     <div class="defense-row">
-      <div class="defense-label">Will</div>
+      <div class="defense-label" data-action="roll-defense" data-defense="will">Will</div>
       <div class="defense-inputs flexrow">
         <select class="defense-ability-select" name="system.defenses.will.ability" title="Select ability modifier for Will">
           <option value="str" {{#if (eq system.defenses.will.ability "str")}}selected{{/if}}>STR</option>
@@ -51,7 +51,7 @@
           <option value="cha" {{#if (eq system.defenses.will.ability "cha")}}selected{{/if}}>CHA</option>
         </select>
         <input type="number" class="defense-misc-input" name="system.defenses.will.misc.user.extra" value="{{system.defenses.will.misc.user.extra}}" placeholder="Misc" title="Miscellaneous modifier"/>
-        <span class="defense-total">{{system.defenses.will.total}}</span>
+        <span class="defense-total" data-action="roll-defense" data-defense="will">{{system.defenses.will.total}}</span>
       </div>
     </div>
 
