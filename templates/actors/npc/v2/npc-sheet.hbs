@@ -15,24 +15,29 @@
   </header>
 
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="summary">Summary</a>
+    <a class="item active" data-tab="overview">Overview</a>
+    <a class="item" data-tab="combat">Combat</a>
+    <a class="item" data-tab="stats">Stats</a>
+    <a class="item" data-tab="talents">Talents</a>
+    {{#if actor.system.forceSensitive}}<a class="item" data-tab="force">Force</a>{{/if}}
+    {{#if actor.items}}<a class="item" data-tab="gear">Gear</a>{{/if}}
+    {{#if actor.system.isDroid}}<a class="item" data-tab="systems">Systems</a>{{/if}}
+    {{#if (eq actor.system.creatureType "beast")}}<a class="item" data-tab="beast">Beast</a>{{/if}}
   </nav>
 
   <section class="sheet-body">
-    <section class="tab" data-group="primary" data-tab="summary">
+    <section class="tab active" data-group="primary" data-tab="overview">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-left">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
         </div>
+      </div>
+    </section>
 
-        <div class="swse-v2-right">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs"}}
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs"}}
-        </div>
-
+    <section class="tab" data-group="primary" data-tab="combat">
+      <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
         </div>
@@ -42,4 +47,59 @@
         </div>
       </div>
     </section>
+
+    <section class="tab" data-group="primary" data-tab="stats">
+      <div class="swse-v2-sheet-grid">
+        <div class="swse-v2-left">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
+        </div>
+
+        <div class="swse-v2-right">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs"}}
+        </div>
+      </div>
+    </section>
+
+    <section class="tab" data-group="primary" data-tab="talents">
+      <div class="swse-v2-sheet-grid">
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs"}}
+        </div>
+      </div>
+    </section>
+
+    {{#if actor.system.forceSensitive}}
+    <section class="tab" data-group="primary" data-tab="force">
+      <div class="swse-v2-sheet-grid">
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if actor.items}}
+    <section class="tab" data-group="primary" data-tab="gear">
+      <div class="swse-v2-sheet-grid">
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if actor.system.isDroid}}
+    <section class="tab" data-group="primary" data-tab="systems">
+      <div class="swse-v2-sheet-grid">
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs"}}
+        </div>
+
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history.hbs"}}
+        </div>
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if (eq actor.system.creatureType "beast")}}
+    <section class="tab" data-group="primary" data-tab="beast">
+      <div class="swse-v2-sheet-grid">
+      </div>
+    </section>
+    {{/if}}
   </section>
