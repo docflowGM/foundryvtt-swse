@@ -1,25 +1,997 @@
 <div class="holo-panel">
   <div class="section-bar">
     <h3 class="section-header">Skills</h3>
-    <div class="muted">Read-only v2 view (derived)</div>
+    <div class="muted">Full skill list with training, focus, and ability assignment</div>
   </div>
 
-  <div class="swse-v2-skills">
-    <div class="swse-v2-skill-header">
-      <span class="name">Skill</span>
-      <span class="meta">Ability</span>
-      <span class="meta" data-swse-tooltip="SkillTrained">T</span>
-      <span class="meta">F</span>
-      <span class="total">Total</span>
+  <!-- Filter & Sort Toolbar -->
+  <div class="skills-filter-toolbar flexrow">
+    <div class="filter-group">
+      <label>Show:</label>
+      <button class="filter-btn active" data-filter="all" title="Show all skills">All</button>
+      <button class="filter-btn" data-filter="trained" title="Show only trained skills">Trained</button>
+      <button class="filter-btn" data-filter="untrained" title="Show only untrained skills">Untrained</button>
+      <button class="filter-btn" data-filter="favorite" title="Show only favorite skills">Favorites</button>
     </div>
-    {{#each derived.skills.list}}
-      <div class="swse-v2-skill-row">
-        <span class="name">{{this.label}}</span>
-        <span class="meta">{{this.ability}}</span>
-        <span class="meta">{{#if this.trained}}✔{{/if}}</span>
-        <span class="meta">{{#if this.focused}}✔{{/if}}</span>
-        <span class="total">{{this.total}}</span>
+    <div class="sort-group">
+      <label>Sort:</label>
+      <select class="sort-select" title="Sort skills">
+        <option value="default">Default Order</option>
+        <option value="trained-first">Trained First</option>
+        <option value="trained-last">Trained Last</option>
+        <option value="name-asc">Name (A-Z)</option>
+        <option value="name-desc">Name (Z-A)</option>
+        <option value="total-desc">Total (High to Low)</option>
+        <option value="total-asc">Total (Low to High)</option>
+        <option value="favorite-first">Favorites First</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Skills Header -->
+  <div class="skills-header flexrow">
+    <div class="skill-col-favorite"><i class="fas fa-star" aria-hidden="true" title="Favorite"></i></div>
+    <div class="skill-col-total">Total</div>
+    <div class="skill-col-name">Skill</div>
+    <div class="skill-col-ability">Ability</div>
+    <div class="skill-col-half-level">½ Lvl</div>
+    <div class="skill-col-trained" title="Trained (+5)">T</div>
+    <div class="skill-col-focus" title="Skill Focus (+5)">F</div>
+    <div class="skill-col-misc">Misc</div>
+  </div>
+
+  <!-- Skills List -->
+  <div class="skills-list">
+    <!-- Acrobatics -->
+    {{#with system.skills.acrobatics as |skill|}}
+    <div class="skill-row-container" data-skill="acrobatics">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="acrobatics" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Acrobatics</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.acrobatics.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.acrobatics.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.acrobatics.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.acrobatics.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
       </div>
-    {{/each}}
+    </div>
+    {{/with}}
+
+    <!-- Climb -->
+    {{#with system.skills.climb as |skill|}}
+    <div class="skill-row-container" data-skill="climb">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="climb" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Climb</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.climb.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.climb.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.climb.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.climb.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Deception -->
+    {{#with system.skills.deception as |skill|}}
+    <div class="skill-row-container" data-skill="deception">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="deception" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Deception</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.deception.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.deception.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.deception.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.deception.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Endurance -->
+    {{#with system.skills.endurance as |skill|}}
+    <div class="skill-row-container" data-skill="endurance">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="endurance" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Endurance</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.endurance.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.endurance.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.endurance.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.endurance.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Gather Information -->
+    {{#with system.skills.gatherInformation as |skill|}}
+    <div class="skill-row-container" data-skill="gatherInformation">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="gatherInformation" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Gather Information</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.gatherInformation.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.gatherInformation.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.gatherInformation.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.gatherInformation.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Initiative -->
+    {{#with system.skills.initiative as |skill|}}
+    <div class="skill-row-container" data-skill="initiative">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="initiative" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Initiative</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.initiative.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.initiative.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.initiative.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.initiative.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Jump -->
+    {{#with system.skills.jump as |skill|}}
+    <div class="skill-row-container" data-skill="jump">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="jump" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Jump</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.jump.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.jump.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.jump.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.jump.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Knowledge (Bureaucracy) -->
+    {{#with system.skills.knowledgeBureaucracy as |skill|}}
+    <div class="skill-row-container" data-skill="knowledgeBureaucracy">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="knowledgeBureaucracy" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Knowledge (Bureaucracy)</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.knowledgeBureaucracy.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.knowledgeBureaucracy.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.knowledgeBureaucracy.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.knowledgeBureaucracy.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Knowledge (Galactic Lore) -->
+    {{#with system.skills.knowledgeGalacticLore as |skill|}}
+    <div class="skill-row-container" data-skill="knowledgeGalacticLore">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="knowledgeGalacticLore" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Knowledge (Galactic Lore)</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.knowledgeGalacticLore.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.knowledgeGalacticLore.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.knowledgeGalacticLore.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.knowledgeGalacticLore.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Knowledge (Life Sciences) -->
+    {{#with system.skills.knowledgeLifeSciences as |skill|}}
+    <div class="skill-row-container" data-skill="knowledgeLifeSciences">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="knowledgeLifeSciences" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Knowledge (Life Sciences)</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.knowledgeLifeSciences.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.knowledgeLifeSciences.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.knowledgeLifeSciences.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.knowledgeLifeSciences.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Knowledge (Physical Sciences) -->
+    {{#with system.skills.knowledgePhysicalSciences as |skill|}}
+    <div class="skill-row-container" data-skill="knowledgePhysicalSciences">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="knowledgePhysicalSciences" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Knowledge (Physical Sciences)</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.knowledgePhysicalSciences.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.knowledgePhysicalSciences.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.knowledgePhysicalSciences.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.knowledgePhysicalSciences.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Knowledge (Social Sciences) -->
+    {{#with system.skills.knowledgeSocialSciences as |skill|}}
+    <div class="skill-row-container" data-skill="knowledgeSocialSciences">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="knowledgeSocialSciences" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Knowledge (Social Sciences)</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.knowledgeSocialSciences.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.knowledgeSocialSciences.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.knowledgeSocialSciences.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.knowledgeSocialSciences.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Knowledge (Tactics) -->
+    {{#with system.skills.knowledgeTactics as |skill|}}
+    <div class="skill-row-container" data-skill="knowledgeTactics">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="knowledgeTactics" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Knowledge (Tactics)</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.knowledgeTactics.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.knowledgeTactics.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.knowledgeTactics.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.knowledgeTactics.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Knowledge (Technology) -->
+    {{#with system.skills.knowledgeTechnology as |skill|}}
+    <div class="skill-row-container" data-skill="knowledgeTechnology">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="knowledgeTechnology" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Knowledge (Technology)</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.knowledgeTechnology.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.knowledgeTechnology.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.knowledgeTechnology.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.knowledgeTechnology.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Mechanics -->
+    {{#with system.skills.mechanics as |skill|}}
+    <div class="skill-row-container" data-skill="mechanics">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="mechanics" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Mechanics</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.mechanics.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.mechanics.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.mechanics.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.mechanics.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Perception -->
+    {{#with system.skills.perception as |skill|}}
+    <div class="skill-row-container" data-skill="perception">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="perception" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Perception</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.perception.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.perception.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.perception.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.perception.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Persuasion -->
+    {{#with system.skills.persuasion as |skill|}}
+    <div class="skill-row-container" data-skill="persuasion">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="persuasion" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Persuasion</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.persuasion.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.persuasion.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.persuasion.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.persuasion.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Pilot -->
+    {{#with system.skills.pilot as |skill|}}
+    <div class="skill-row-container" data-skill="pilot">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="pilot" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Pilot</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.pilot.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.pilot.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.pilot.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.pilot.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Ride -->
+    {{#with system.skills.ride as |skill|}}
+    <div class="skill-row-container" data-skill="ride">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="ride" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Ride</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.ride.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.ride.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.ride.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.ride.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Stealth -->
+    {{#with system.skills.stealth as |skill|}}
+    <div class="skill-row-container" data-skill="stealth">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="stealth" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Stealth</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.stealth.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.stealth.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.stealth.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.stealth.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Survival -->
+    {{#with system.skills.survival as |skill|}}
+    <div class="skill-row-container" data-skill="survival">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="survival" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Survival</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.survival.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.survival.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.survival.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.survival.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Swim -->
+    {{#with system.skills.swim as |skill|}}
+    <div class="skill-row-container" data-skill="swim">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="swim" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Swim</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.swim.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.swim.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.swim.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.swim.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Treat Injury -->
+    {{#with system.skills.treatInjury as |skill|}}
+    <div class="skill-row-container" data-skill="treatInjury">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="treatInjury" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Treat Injury</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.treatInjury.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.treatInjury.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.treatInjury.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.treatInjury.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Use Computer -->
+    {{#with system.skills.useComputer as |skill|}}
+    <div class="skill-row-container" data-skill="useComputer">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="useComputer" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Use Computer</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.useComputer.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.useComputer.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.useComputer.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.useComputer.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+
+    <!-- Use the Force (if applicable) -->
+    {{#if actor.system.forceSensitive}}
+    {{#with system.skills.useTheForce as |skill|}}
+    <div class="skill-row-container" data-skill="useTheForce">
+      <div class="skill-row flexrow">
+        <div class="skill-col-favorite">
+          <button type="button" class="skill-favorite-toggle" data-skill="useTheForce" title="Favorite this skill">
+            <i class="fas fa-star {{#if skill.favorite}}active{{/if}}" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+          {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
+        </div>
+        <div class="skill-col-name">Use the Force</div>
+        <div class="skill-col-ability">
+          <select name="system.skills.useTheForce.selectedAbility" class="ability-dropdown">
+            <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
+            <option value="dex" {{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}>DEX</option>
+            {{#unless @root.system.isDroid}}<option value="con" {{#if (eq skill.selectedAbility 'con')}}selected{{/if}}>CON</option>{{/unless}}
+            <option value="int" {{#if (eq skill.selectedAbility 'int')}}selected{{/if}}>INT</option>
+            <option value="wis" {{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}>WIS</option>
+            <option value="cha" {{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}>CHA</option>
+          </select>
+          <span class="ability-mod">{{numberFormat (safeNumber skill.abilityMod 0) decimals=0 sign=true}}</span>
+        </div>
+        <div class="skill-col-half-level">{{@root.derived.identity.halfLevel}}</div>
+        <div class="skill-col-trained">
+          <input type="checkbox" name="system.skills.useTheForce.trained" {{checked skill.trained}} />
+        </div>
+        <div class="skill-col-focus">
+          <input type="checkbox" name="system.skills.useTheForce.focused" {{checked skill.focused}} />
+        </div>
+        <div class="skill-col-misc">
+          <input type="number" name="system.skills.useTheForce.miscMod" value="{{skill.miscMod}}" placeholder="0" />
+        </div>
+      </div>
+    </div>
+    {{/with}}
+    {{/if}}
   </div>
 </div>
