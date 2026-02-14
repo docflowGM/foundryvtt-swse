@@ -132,6 +132,17 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   };
 
   /**
+   * Canonical entry point for opening level up UI
+   * @param {Actor} actor - The actor to level up
+   * @returns {SWSELevelUpEnhanced} The level up dialog instance
+   */
+  static async showForActor(actor) {
+    const dialog = new SWSELevelUpEnhanced(actor);
+    dialog.render({ force: true });
+    return dialog;
+  }
+
+  /**
    * Detect if character is incomplete and determine which step to start at
    * @param {Actor} actor - The actor to check
    * @returns {string|null} The step to start at, or null if character is complete

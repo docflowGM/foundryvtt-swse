@@ -52,6 +52,17 @@ import { buildNamePatch } from './steps/name-step.js';
 import { confirm } from '../../utils/ui-utils.js';
 
 export default class CharacterGenerator extends SWSEApplicationV2 {
+  /**
+   * Canonical entry point for opening character generator
+   * @param {Actor} actor - The actor to generate/modify (null for new character)
+   * @returns {CharacterGenerator} The character generator dialog instance
+   */
+  static async open(actor) {
+    const dialog = new CharacterGenerator(actor);
+    dialog.render({ force: true });
+    return dialog;
+  }
+
   constructor(actor = null, options = {}) {
     super(options);
     this.actor = actor;
