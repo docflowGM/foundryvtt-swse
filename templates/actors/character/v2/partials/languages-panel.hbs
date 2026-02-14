@@ -1,0 +1,20 @@
+<div class="holo-panel">
+  <div class="section-bar">
+    <h3 class="section-header">Languages</h3>
+    <div class="muted">From class, species, background</div>
+  </div>
+
+  <div class="swse-v2-languages-list">
+    {{#if system.languages.length}}
+      <div class="language-items">
+        {{#each system.languages as |lang|}}
+          <div class="language-item">
+            <span class="language-name">{{lang}}</span>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="muted">No languages known.</div>
+    {{/if}}
+  </div>
+</div>

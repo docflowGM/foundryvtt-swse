@@ -17,12 +17,26 @@
   <div class="swse-v2-resources" style="margin-top:8px;">
     <div class="swse-v2-resource" data-kind="destiny" title="Destiny Points">
       <span class="label">DP</span>
-      <input type="number" name="system.destinyPoints.value" value="{{system.destinyPoints.value}}" style="width:60px;" {{#unless editable}}disabled{{/unless}} />
+      <div style="display:flex; gap:8px; align-items:center;">
+        <span class="ticks">
+          {{#each derived.identity.destinyPointsDisplay.ticks as |tick|}}
+            <span class="tick {{#if tick.filled}}filled{{/if}}"></span>
+          {{/each}}
+        </span>
+        <span class="count">{{system.destinyPoints.value}}/{{system.destinyPoints.max}}</span>
+      </div>
     </div>
 
     <div class="swse-v2-resource" data-kind="force" title="Force Points">
       <span class="label">FP</span>
-      <input type="number" name="system.forcePoints.value" value="{{system.forcePoints.value}}" style="width:60px;" {{#unless editable}}disabled{{/unless}} />
+      <div style="display:flex; gap:8px; align-items:center;">
+        <span class="ticks">
+          {{#each derived.identity.forcePointsDisplay.ticks as |tick|}}
+            <span class="tick {{#if tick.filled}}filled{{/if}}"></span>
+          {{/each}}
+        </span>
+        <span class="count">{{system.forcePoints.value}}/{{system.forcePoints.max}}</span>
+      </div>
     </div>
   </div>
 </div>
