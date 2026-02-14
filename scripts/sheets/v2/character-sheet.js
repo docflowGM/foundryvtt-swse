@@ -142,7 +142,7 @@ export class SWSEV2CharacterSheet extends
       el.addEventListener("click", (ev) => {
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
-        const item = this.actor.items.get(itemId);
+        const item = this.actor?.items?.get(itemId);
         item?.sheet?.render(true);
       });
     }
@@ -154,8 +154,8 @@ export class SWSEV2CharacterSheet extends
         ev.preventDefault();
         const row = ev.currentTarget.closest(".item-row");
         const itemId = row?.dataset?.itemId;
-        const item = this.actor.items.get(itemId);
-        if (item) {
+        const item = this.actor?.items?.get(itemId);
+        if (item && this.actor) {
           await initiateItemSale(item, this.actor);
         }
       });
@@ -167,8 +167,8 @@ export class SWSEV2CharacterSheet extends
       el.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const actionId = ev.currentTarget?.dataset?.actionId;
-        if (typeof this.actor.useAction === "function") {
-          await this.actor.useAction(actionId);
+        if (typeof this.actor?.useAction === "function") {
+          await this.actor?.useAction(actionId);
         }
       });
     }
