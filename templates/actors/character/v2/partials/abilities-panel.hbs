@@ -1,0 +1,73 @@
+<div class="holo-panel">
+  <div class="section-bar">
+    <h3 class="section-header">Abilities</h3>
+  </div>
+
+  <div class="swse-v2-abilities-grid">
+    <!-- STR -->
+    {{#with system.abilities.str as |ability|}}
+    <div class="ability-row">
+      <div class="ability-label">STR</div>
+      <div class="ability-score">
+        <input type="number" name="system.abilities.str.value" value="{{ability.value}}" {{#unless editable}}disabled{{/unless}} />
+      </div>
+      <div class="ability-mod">{{numberFormat (safeNumber ability.mod 0) decimals=0 sign=true}}</div>
+    </div>
+    {{/with}}
+
+    <!-- DEX -->
+    {{#with system.abilities.dex as |ability|}}
+    <div class="ability-row">
+      <div class="ability-label">DEX</div>
+      <div class="ability-score">
+        <input type="number" name="system.abilities.dex.value" value="{{ability.value}}" {{#unless editable}}disabled{{/unless}} />
+      </div>
+      <div class="ability-mod">{{numberFormat (safeNumber ability.mod 0) decimals=0 sign=true}}</div>
+    </div>
+    {{/with}}
+
+    <!-- CON -->
+    {{#with system.abilities.con as |ability|}}
+    <div class="ability-row">
+      <div class="ability-label">CON</div>
+      <div class="ability-score">
+        <input type="number" name="system.abilities.con.value" value="{{ability.value}}" {{#unless editable}}disabled{{/unless}} />
+      </div>
+      <div class="ability-mod">{{numberFormat (safeNumber ability.mod 0) decimals=0 sign=true}}</div>
+    </div>
+    {{/with}}
+
+    <!-- INT -->
+    {{#with system.abilities.int as |ability|}}
+    <div class="ability-row">
+      <div class="ability-label">INT</div>
+      <div class="ability-score">
+        <input type="number" name="system.abilities.int.value" value="{{ability.value}}" {{#unless editable}}disabled{{/unless}} />
+      </div>
+      <div class="ability-mod">{{numberFormat (safeNumber ability.mod 0) decimals=0 sign=true}}</div>
+    </div>
+    {{/with}}
+
+    <!-- WIS -->
+    {{#with system.abilities.wis as |ability|}}
+    <div class="ability-row">
+      <div class="ability-label">WIS</div>
+      <div class="ability-score">
+        <input type="number" name="system.abilities.wis.value" value="{{ability.value}}" {{#unless editable}}disabled{{/unless}} />
+      </div>
+      <div class="ability-mod">{{numberFormat (safeNumber ability.mod 0) decimals=0 sign=true}}</div>
+    </div>
+    {{/with}}
+
+    <!-- CHA -->
+    {{#with system.abilities.cha as |ability|}}
+    <div class="ability-row">
+      <div class="ability-label">CHA</div>
+      <div class="ability-score">
+        <input type="number" name="system.abilities.cha.value" value="{{ability.value}}" {{#unless editable}}disabled{{/unless}} />
+      </div>
+      <div class="ability-mod">{{numberFormat (safeNumber ability.mod 0) decimals=0 sign=true}}</div>
+    </div>
+    {{/with}}
+  </div>
+</div>
