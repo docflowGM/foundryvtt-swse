@@ -6,6 +6,7 @@ import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { RenderAssertions } from '../../core/render-assertions.js';
 import { initiateItemSale } from '../../apps/item-selling-system.js';
 import { DroidBuilderApp } from '../../apps/droid-builder-app.js';
+import { SWSELevelUp } from '../../apps/swse-levelup.js';
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -31,6 +32,7 @@ export class SWSEV2DroidSheet extends
       classes: ["swse", "swse-app", "swse-sheet", "swse-droid-sheet", "v2"],
       width: 820,
       height: 920,
+      resizable: true,
       form: {
         closeOnSubmit: false,
         submitOnChange: false
@@ -236,6 +238,18 @@ export class SWSEV2DroidSheet extends
         } catch (err) {
           console.error('Failed to open droid builder:', err);
           ui.notifications.error('Failed to open droid builder.');
+        }
+      });
+    }
+
+    /* ---------------- PROGRESSION BUTTONS (DROID-SPECIFIC) ---------------- */
+
+    const levelUpBtn = root.querySelector('[data-action="level-up"]');
+    if (levelUpBtn) {
+      levelUpBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (this.actor) {
+          await SWSELevelUp.openEnhanced(this.actor);
         }
       });
     }

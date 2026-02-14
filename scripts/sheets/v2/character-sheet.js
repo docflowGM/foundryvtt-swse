@@ -5,6 +5,8 @@ const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api
 import { ActorEngine } from "../../actors/engine/actor-engine.js";
 import { RenderAssertions } from "../../core/render-assertions.js";
 import { initiateItemSale } from "../../apps/item-selling-system.js";
+import { RollEngine } from "../../engine/roll-engine.js";
+import { SWSELevelUp } from "../../apps/swse-levelup.js";
 
 /* ========================================================================== */
 /* SWSEV2CharacterSheet                                                       */
@@ -35,6 +37,7 @@ export class SWSEV2CharacterSheet extends
       classes: ["swse", "swse-app", "swse-sheet", "swse-character-sheet", "v2"],
       width: 820,
       height: 920,
+      resizable: true,
       form: {
         closeOnSubmit: false,
         submitOnChange: false
@@ -136,6 +139,51 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
+    /* ---------------- CONDITION STEP HANDLING ---------------- */
+
+    for (const el of root.querySelectorAll(".swse-v2-condition-step")) {
+      el.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const step = Number(ev.currentTarget?.dataset?.step);
+        if (!Number.isFinite(step)) return;
+        if (typeof this.actor?.setConditionTrackStep === "function") {
+          await this.actor?.setConditionTrackStep(step);
+        } else if (this.actor) {
+          await ActorEngine.updateActor(this.actor, { 'system.conditionTrack.current': step });
+        }
+      });
+    }
+
+    const improveBtn = root.querySelector(".swse-v2-condition-improve");
+    if (improveBtn) {
+      improveBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (typeof this.actor?.improveConditionTrack === "function") {
+          await this.actor?.improveConditionTrack();
+        }
+      });
+    }
+
+    const worsenBtn = root.querySelector(".swse-v2-condition-worsen");
+    if (worsenBtn) {
+      worsenBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (typeof this.actor?.worsenConditionTrack === "function") {
+          await this.actor?.worsenConditionTrack();
+        }
+      });
+    }
+
+    const persistentCheckbox = root.querySelector(".swse-v2-condition-persistent");
+    if (persistentCheckbox) {
+      persistentCheckbox.addEventListener("change", async (ev) => {
+        const flag = ev.currentTarget?.checked === true;
+        if (typeof this.actor?.setConditionTrackPersistent === "function") {
+          await this.actor?.setConditionTrackPersistent(flag);
+        }
+      });
+    }
+
     /* ---------------- ITEM OPEN ---------------- */
 
     for (const el of root.querySelectorAll(".swse-v2-open-item")) {
@@ -169,6 +217,48 @@ export class SWSEV2CharacterSheet extends
         const actionId = ev.currentTarget?.dataset?.actionId;
         if (typeof this.actor?.useAction === "function") {
           await this.actor?.useAction(actionId);
+        }
+      });
+    }
+
+    /* ---------------- PROGRESSION BUTTONS ---------------- */
+
+    const levelUpBtn = root.querySelector('[data-action="level-up"]');
+    if (levelUpBtn) {
+      levelUpBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (this.actor) {
+          await SWSELevelUp.openEnhanced(this.actor);
+        }
+      });
+    }
+
+    const selectClassBtn = root.querySelector('[data-action="select-class"]');
+    if (selectClassBtn) {
+      selectClassBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (this.actor) {
+          await SWSELevelUp.openEnhanced(this.actor);
+        }
+      });
+    }
+
+    const selectSpeciesBtn = root.querySelector('[data-action="select-species"]');
+    if (selectSpeciesBtn) {
+      selectSpeciesBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (this.actor) {
+          await SWSELevelUp.openEnhanced(this.actor);
+        }
+      });
+    }
+
+    const selectBackgroundBtn = root.querySelector('[data-action="select-background"]');
+    if (selectBackgroundBtn) {
+      selectBackgroundBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (this.actor) {
+          await SWSELevelUp.openEnhanced(this.actor);
         }
       });
     }

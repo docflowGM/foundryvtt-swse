@@ -5,6 +5,7 @@ const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { RenderAssertions } from '../../core/render-assertions.js';
 import { initiateItemSale } from '../../apps/item-selling-system.js';
+import { SWSELevelUp } from '../../apps/swse-levelup.js';
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -30,6 +31,7 @@ export class SWSEV2NpcSheet extends
       classes: ["swse", "swse-app", "swse-sheet", "swse-npc-sheet", "v2"],
       width: 820,
       height: 920,
+      resizable: true,
       form: {
         closeOnSubmit: false,
         submitOnChange: false
@@ -213,6 +215,18 @@ export class SWSEV2NpcSheet extends
         const actionId = ev.currentTarget?.dataset?.actionId;
         if (typeof this.actor?.useAction === "function") {
           await this.actor?.useAction(actionId);
+        }
+      });
+    }
+
+    /* ---------------- PROGRESSION BUTTONS (NPC-SPECIFIC) ---------------- */
+
+    const levelUpBtn = root.querySelector('[data-action="level-up"]');
+    if (levelUpBtn) {
+      levelUpBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (this.actor) {
+          await SWSELevelUp.openEnhanced(this.actor);
         }
       });
     }
