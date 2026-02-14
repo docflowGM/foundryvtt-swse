@@ -7,6 +7,7 @@ import { RenderAssertions } from '../../core/render-assertions.js';
 import { initiateItemSale } from '../../apps/item-selling-system.js';
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { rollAttack } from '../../combat/rolls/attacks.js';
+import { DropService } from '../../services/drop-service.js';
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -317,6 +318,10 @@ export class SWSEV2VehicleSheet extends
       });
     }
 
+    /* ---- DRAG & DROP VISUAL FEEDBACK ---- */
+
+    DropService.bindDragFeedback(root);
+
     RenderAssertions.assertRenderComplete(
       this,
       "SWSEV2VehicleSheet"
@@ -328,33 +333,7 @@ export class SWSEV2VehicleSheet extends
   /* -------- -------- -------- -------- -------- -------- -------- -------- */
 
   async _onDrop(event) {
-    const data = TextEditor.getDragEventData(event);
-
-    if (data.type !== "Actor") return;
-
-    const actor = await fromUuid(data.uuid);
-    if (!actor) return;
-
-    const allowed = ["character", "npc"];
-    if (!allowed.includes(actor.type)) {
-      ui.notifications.warn(`Can only add ${allowed.join(", ")} as crew members`);
-      return;
-    }
-
-    const owned = [...(this.document.system.ownedActors || [])];
-
-    if (owned.find(o => o.id === actor.id)) {
-      ui.notifications.info(`${actor.name} is already a crew member`);
-      return;
-    }
-
-    owned.push({ id: actor.id, type: actor.type });
-
-    await this.document.update({
-      "system.ownedActors": owned
-    });
-
-    ui.notifications.info(`Added ${actor.name} as crew member`);
+    return DropService.onDrop(event, this);
   }
 
   /* ------------------------------------------------------------------------ */

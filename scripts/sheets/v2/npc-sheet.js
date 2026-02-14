@@ -8,6 +8,7 @@ import { initiateItemSale } from '../../apps/item-selling-system.js';
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { rollSkill } from '../../rolls/skills.js';
 import { rollAttack } from '../../combat/rolls/attacks.js';
+import { DropService } from '../../services/drop-service.js';
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -338,10 +339,22 @@ export class SWSEV2NpcSheet extends
       });
     }
 
+    /* ---- DRAG & DROP VISUAL FEEDBACK ---- */
+
+    DropService.bindDragFeedback(root);
+
     RenderAssertions.assertRenderComplete(
       this,
       "SWSEV2NpcSheet"
     );
+  }
+
+  /* -------- -------- -------- -------- -------- -------- -------- -------- */
+  /* DRAG & DROP HANDLING                                                     */
+  /* -------- -------- -------- -------- -------- -------- -------- -------- */
+
+  async _onDrop(event) {
+    return DropService.onDrop(event, this);
   }
 
   async _updateObject(event, formData) {

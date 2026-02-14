@@ -9,6 +9,7 @@ import { RollEngine } from "../../engine/roll-engine.js";
 import { SWSELevelUp } from "../../apps/swse-levelup.js";
 import { rollSkill } from "../../rolls/skills.js";
 import { rollAttack } from "../../combat/rolls/attacks.js";
+import { DropService } from "../../services/drop-service.js";
 
 /* ========================================================================== */
 /* SWSEV2CharacterSheet                                                       */
@@ -653,6 +654,10 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
+    /* ---- DRAG & DROP VISUAL FEEDBACK ---- */
+
+    DropService.bindDragFeedback(root);
+
     RenderAssertions.assertRenderComplete(
       this,
       "SWSEV2CharacterSheet"
@@ -664,33 +669,7 @@ export class SWSEV2CharacterSheet extends
   /* -------- -------- -------- -------- -------- -------- -------- -------- */
 
   async _onDrop(event) {
-    const data = TextEditor.getDragEventData(event);
-
-    if (data.type !== "Actor") return;
-
-    const actor = await fromUuid(data.uuid);
-    if (!actor) return;
-
-    const allowed = ["vehicle", "npc", "beast"];
-    if (!allowed.includes(actor.type)) {
-      ui.notifications.warn(`Can only add ${allowed.join(", ")} as owned actors`);
-      return;
-    }
-
-    const owned = [...(this.document.system.ownedActors || [])];
-
-    if (owned.find(o => o.id === actor.id)) {
-      ui.notifications.info(`${actor.name} is already owned by this actor`);
-      return;
-    }
-
-    owned.push({ id: actor.id, type: actor.type });
-
-    await this.document.update({
-      "system.ownedActors": owned
-    });
-
-    ui.notifications.info(`Added ${actor.name} as owned actor`);
+    return DropService.onDrop(event, this);
   }
 
   /* ------------------------------------------------------------------------ */
