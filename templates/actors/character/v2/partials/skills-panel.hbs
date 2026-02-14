@@ -47,10 +47,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="acrobatics">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Acrobatics</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="acrobatics">Acrobatics</div>
         <div class="skill-col-ability">
           <select name="system.skills.acrobatics.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -85,10 +85,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="climb">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Climb</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="climb">Climb</div>
         <div class="skill-col-ability">
           <select name="system.skills.climb.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -123,10 +123,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="deception">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Deception</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="deception">Deception</div>
         <div class="skill-col-ability">
           <select name="system.skills.deception.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -161,10 +161,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="endurance">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Endurance</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="endurance">Endurance</div>
         <div class="skill-col-ability">
           <select name="system.skills.endurance.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -199,10 +199,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="gatherInformation">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Gather Information</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="gatherInformation">Gather Information</div>
         <div class="skill-col-ability">
           <select name="system.skills.gatherInformation.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -237,10 +237,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="initiative">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Initiative</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="initiative">Initiative</div>
         <div class="skill-col-ability">
           <select name="system.skills.initiative.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -275,10 +275,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="jump">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Jump</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="jump">Jump</div>
         <div class="skill-col-ability">
           <select name="system.skills.jump.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -313,10 +313,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="knowledgeBureaucracy">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Knowledge (Bureaucracy)</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="knowledgeBureaucracy">Knowledge (Bureaucracy)</div>
         <div class="skill-col-ability">
           <select name="system.skills.knowledgeBureaucracy.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -351,10 +351,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="knowledgeGalacticLore">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Knowledge (Galactic Lore)</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="knowledgeGalacticLore">Knowledge (Galactic Lore)</div>
         <div class="skill-col-ability">
           <select name="system.skills.knowledgeGalacticLore.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -389,10 +389,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="knowledgeLifeSciences">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Knowledge (Life Sciences)</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="knowledgeLifeSciences">Knowledge (Life Sciences)</div>
         <div class="skill-col-ability">
           <select name="system.skills.knowledgeLifeSciences.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -427,10 +427,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="knowledgePhysicalSciences">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Knowledge (Physical Sciences)</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="knowledgePhysicalSciences">Knowledge (Physical Sciences)</div>
         <div class="skill-col-ability">
           <select name="system.skills.knowledgePhysicalSciences.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -465,10 +465,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="knowledgeSocialSciences">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Knowledge (Social Sciences)</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="knowledgeSocialSciences">Knowledge (Social Sciences)</div>
         <div class="skill-col-ability">
           <select name="system.skills.knowledgeSocialSciences.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -503,10 +503,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="knowledgeTactics">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Knowledge (Tactics)</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="knowledgeTactics">Knowledge (Tactics)</div>
         <div class="skill-col-ability">
           <select name="system.skills.knowledgeTactics.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -541,10 +541,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="knowledgeTechnology">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Knowledge (Technology)</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="knowledgeTechnology">Knowledge (Technology)</div>
         <div class="skill-col-ability">
           <select name="system.skills.knowledgeTechnology.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -579,10 +579,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="mechanics">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Mechanics</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="mechanics">Mechanics</div>
         <div class="skill-col-ability">
           <select name="system.skills.mechanics.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -617,10 +617,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="perception">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Perception</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="perception">Perception</div>
         <div class="skill-col-ability">
           <select name="system.skills.perception.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -655,10 +655,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="persuasion">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Persuasion</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="persuasion">Persuasion</div>
         <div class="skill-col-ability">
           <select name="system.skills.persuasion.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -693,10 +693,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="pilot">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Pilot</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="pilot">Pilot</div>
         <div class="skill-col-ability">
           <select name="system.skills.pilot.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -731,10 +731,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="ride">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Ride</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="ride">Ride</div>
         <div class="skill-col-ability">
           <select name="system.skills.ride.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -769,10 +769,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="stealth">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Stealth</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="stealth">Stealth</div>
         <div class="skill-col-ability">
           <select name="system.skills.stealth.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -807,10 +807,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="survival">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Survival</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="survival">Survival</div>
         <div class="skill-col-ability">
           <select name="system.skills.survival.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -845,10 +845,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="swim">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Swim</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="swim">Swim</div>
         <div class="skill-col-ability">
           <select name="system.skills.swim.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -883,10 +883,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="treatInjury">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Treat Injury</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="treatInjury">Treat Injury</div>
         <div class="skill-col-ability">
           <select name="system.skills.treatInjury.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -921,10 +921,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="useComputer">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Use Computer</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="useComputer">Use Computer</div>
         <div class="skill-col-ability">
           <select name="system.skills.useComputer.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>
@@ -960,10 +960,10 @@
             <i class="fas fa-star" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}">
+        <div class="skill-col-total {{#if skill.trained}}trained{{/if}}" data-action="roll-skill" data-skill="useTheForce">
           {{numberFormat (safeNumber skill.total 0) decimals=0 sign=true}}
         </div>
-        <div class="skill-col-name">Use the Force</div>
+        <div class="skill-col-name" data-action="roll-skill" data-skill="useTheForce">Use the Force</div>
         <div class="skill-col-ability">
           <select name="system.skills.useTheForce.selectedAbility" class="ability-dropdown">
             <option value="str" {{#if (eq skill.selectedAbility 'str')}}selected{{/if}}>STR</option>

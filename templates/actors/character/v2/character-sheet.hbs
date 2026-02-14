@@ -90,7 +90,8 @@
                 {{#each (filter items "type" "forcePower") as |item|}}
                   <div class="force-power-row" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee;">
                     <button type="button"
-                            class="force-power-name swse-v2-open-item"
+                            class="force-power-name"
+                            data-action="roll-force-power"
                             data-item-id="{{item.id}}"
                             style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline; text-align: left; flex: 1;">
                       {{item.name}}

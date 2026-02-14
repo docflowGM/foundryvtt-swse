@@ -6,6 +6,7 @@ import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { RenderAssertions } from '../../core/render-assertions.js';
 import { initiateItemSale } from '../../apps/item-selling-system.js';
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
+import { rollAttack } from '../../combat/rolls/attacks.js';
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -272,6 +273,23 @@ export class SWSEV2VehicleSheet extends
         if (!actorId) return;
         const actor = game.actors.get(actorId);
         actor?.sheet?.render(true);
+      });
+    }
+
+    /* ---------------- WEAPON ROLLING ---------------- */
+
+    for (const el of root.querySelectorAll('[data-action="roll-weapon"]')) {
+      el.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId || !this.actor) return;
+        const item = this.actor.items?.get(itemId);
+        if (!item) return;
+        if (typeof item.roll === "function") {
+          await item.roll();
+        } else {
+          await rollAttack(this.actor, item);
+        }
       });
     }
 
