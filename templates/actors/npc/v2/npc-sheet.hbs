@@ -34,6 +34,32 @@
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
         </div>
+        <div class="swse-v2-right">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Progression Mode</h3>
+            </div>
+            <div style="padding: 16px;">
+              <label style="display: flex; gap: 8px; align-items: center; cursor: pointer;">
+                <input type="checkbox"
+                       name="system.useProgression"
+                       {{#if system.useProgression}}checked{{/if}}
+                       {{#unless editable}}disabled{{/unless}}
+                       style="width: 20px; height: 20px; cursor: pointer;">
+                <span>Enable Progression Mode</span>
+              </label>
+              <div style="margin-top: 12px; font-size: 0.9em; color: #666; line-height: 1.5;">
+                {{#if system.useProgression}}
+                  <strong style="color: #0d7;"> ✓ Progression Enabled</strong><br>
+                  NPC can level up, gain feats, learn talents, and follow class progression rules.
+                {{else}}
+                  <strong style="color: #999;">○ Statblock Mode</strong><br>
+                  NPC uses fixed ability scores and custom stat values. Level Up and progression features are hidden.
+                {{/if}}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 

@@ -246,52 +246,71 @@ Hooks.once("ready", async () => {
 /* ========================================================================== */
 
 Hooks.on("getHeaderControlsApplicationV2", (app, controls) => {
-  if (!(app instanceof SWSEV2CharacterSheet)) return;
-
   const actor = app.document;
   if (!actor) return;
 
-  const chargenComplete = actor.system?.chargenComplete;
+  // CHARACTER SHEET CONTROLS
+  if (app instanceof SWSEV2CharacterSheet) {
+    const chargenComplete = actor.system?.chargenComplete;
 
-  // Chargen / Level Up button
-  if (!chargenComplete) {
+    // Chargen / Level Up button
+    if (!chargenComplete) {
+      controls.unshift({
+        icon: "fas fa-user-plus",
+        label: "Chargen",
+        class: "swse-glow-button",
+        action: () => {
+          game.swse.chargen?.open?.(actor);
+        }
+      });
+    } else {
+      controls.unshift({
+        icon: "fas fa-arrow-up",
+        label: "Level Up",
+        class: "swse-glow-button",
+        action: () => {
+          game.swse.levelup?.showForActor?.(actor);
+        }
+      });
+    }
+  }
+
+  // NPC SHEET CONTROLS
+  if (app instanceof SWSEV2NpcSheet) {
+    // Only show Level Up if progression mode is enabled
+    if (actor.system?.useProgression) {
+      controls.unshift({
+        icon: "fas fa-arrow-up",
+        label: "Level Up",
+        class: "swse-glow-button",
+        action: () => {
+          game.swse.levelup?.showForActor?.(actor);
+        }
+      });
+    }
+  }
+
+  // SHARED CONTROLS (both Character and NPC)
+  if (app instanceof SWSEV2CharacterSheet || app instanceof SWSEV2NpcSheet) {
+    // Store button
     controls.unshift({
-      icon: "fas fa-user-plus",
-      label: "Chargen",
+      icon: "fas fa-store",
+      label: "Store",
       class: "swse-glow-button",
       action: () => {
-        game.swse.chargen?.open?.(actor);
+        game.swse.store?.open?.(actor);
       }
     });
-  } else {
+
+    // Mentor button
     controls.unshift({
-      icon: "fas fa-arrow-up",
-      label: "Level Up",
-      class: "swse-glow-button",
+      icon: "fas fa-comments",
+      label: "Talk to Mentor",
       action: () => {
-        game.swse.levelup?.showForActor?.(actor);
+        game.swse.ui?.MentorDialog?.open?.(actor);
       }
     });
   }
-
-  // Store button
-  controls.unshift({
-    icon: "fas fa-store",
-    label: "Store",
-    class: "swse-glow-button",
-    action: () => {
-      game.swse.store?.open?.(actor);
-    }
-  });
-
-  // Mentor button
-  controls.unshift({
-    icon: "fas fa-comments",
-    label: "Talk to Mentor",
-    action: () => {
-      game.swse.ui?.MentorDialog?.open?.(actor);
-    }
-  });
 });
 
 /* ========================================================================== */
