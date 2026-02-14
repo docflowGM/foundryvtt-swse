@@ -62,6 +62,11 @@ import { SWSEV2DroidSheet } from "./scripts/sheets/v2/droid-sheet.js";
 import { SWSEV2VehicleSheet } from "./scripts/sheets/v2/vehicle-sheet.js";
 import { SWSEItemSheet } from "./scripts/items/swse-item-sheet.js";
 
+// Apps
+import CharacterGenerator from "./scripts/apps/chargen/chargen-main.js";
+import { SWSELevelUpEnhanced } from "./scripts/apps/levelup/levelup-main.js";
+import { SWSEStore } from "./scripts/apps/store/store-main.js";
+
 // Handlebars
 import { registerHandlebarsHelpers } from "./helpers/handlebars/index.js";
 import { registerSWSEPartials } from "./helpers/handlebars/partials-auto.js";
@@ -191,6 +196,28 @@ Hooks.once("ready", async () => {
   Upkeep.init();
   initializePhase5();
   registerCriticalFlowTests();
+
+  // Restore global SWSE namespace
+  game.swse = {
+    engine: SWSEProgressionEngine,
+    progression: SWSEProgressionEngine,
+    chargen: CharacterGenerator,
+    levelup: SWSELevelUpEnhanced,
+    store: SWSEStore,
+    suggestion: SuggestionService,
+    ui: {
+      ChargenApp: CharacterGenerator,
+      LevelUpApp: SWSELevelUpEnhanced,
+      StoreApp: SWSEStore
+    },
+    rolls: game.swse?.rolls || {},
+    api: {
+      FeatSystem,
+      SkillSystem,
+      TalentAbilitiesEngine,
+      CombatSuggestionEngine
+    }
+  };
 
   window.SWSE = {
     api: {
