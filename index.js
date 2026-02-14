@@ -36,6 +36,7 @@ window.addEventListener("unhandledrejection", (event) => {
 // Core
 import { SWSE } from "./scripts/core/config.js";
 import { registerSystemSettings } from "./scripts/core/settings.js";
+import { registerHouseruleSettings } from "./scripts/houserules/houserule-settings.js";
 import { initializeUtils } from "./scripts/core/utils-init.js";
 import { initializeRolls } from "./scripts/core/rolls-init.js";
 
@@ -146,6 +147,7 @@ Hooks.once("init", () => {
   /* ---------- STRUCTURAL SYSTEMS ---------- */
 
   registerSystemSettings();
+  registerHouseruleSettings();
   registerHandlebarsHelpers();
   registerInitHooks();
   registerDestinyHooks();
