@@ -4,37 +4,25 @@
   </div>
 
   <div class="swse-v2-identity-grid">
-    <div class="field"><span class="label">Class</span><span class="value">{{derived.identity.className}}</span></div>
-    <div class="field"><span class="label">Level</span><span class="value">{{derived.identity.level}}</span></div>
-    <div class="field"><span class="label">Species</span><span class="value">{{derived.identity.species}}</span></div>
-    <div class="field"><span class="label">Gender</span><span class="value">{{derived.identity.gender}}</span></div>
-    <div class="field"><span class="label">Background</span><span class="value">{{derived.identity.background}}</span></div>
+    <div class="field"><span class="label">Class</span><button type="button" data-action="select-class" class="swse-link">{{derived.identity.className}}</button></div>
+    <div class="field"><span class="label">Level</span><div style="display:flex; gap:8px; align-items:center;"><span class="value">{{derived.identity.level}}</span><button type="button" data-action="level-up" class="swse-btn">Level Up</button></div></div>
+    <div class="field"><span class="label">Species</span><button type="button" data-action="select-species" class="swse-link">{{derived.identity.species}}</button></div>
+    <div class="field"><span class="label">Gender</span><input type="text" name="system.gender" value="{{system.gender}}" {{#unless editable}}disabled{{/unless}} /></div>
+    <div class="field"><span class="label">Background</span><button type="button" data-action="select-background" class="swse-link">{{derived.identity.background}}</button></div>
     <div class="field"><span class="label">Destiny</span><span class="value">{{derived.identity.destinyType}}</span></div>
     <div class="field"><span class="label">Size</span><span class="value">{{derived.identity.size}}</span></div>
     <div class="field"><span class="label">Speed</span><span class="value">{{derived.identity.speed}}</span></div>
   </div>
 
-  {{#if derived.identity.forcePointsDisplay}}
-    <div class="swse-v2-resources" style="margin-top:8px;">
-      <div class="swse-v2-resource" data-kind="destiny" title="Destiny Points">
-        <span class="label">DP</span>
-        <span class="ticks {{derived.identity.destinyPointsDisplay.sizeClass}}">
-          {{#each derived.identity.destinyPointsDisplay.ticks as |t|}}
-            <span class="tick {{#if t.filled}}filled{{/if}}"></span>
-          {{/each}}
-        </span>
-        <span class="count">{{derived.identity.destinyPointsDisplay.labelText}}</span>
-      </div>
-
-      <div class="swse-v2-resource" data-kind="force" title="Force Points">
-        <span class="label">FP</span>
-        <span class="ticks {{derived.identity.forcePointsDisplay.sizeClass}}">
-          {{#each derived.identity.forcePointsDisplay.ticks as |t|}}
-            <span class="tick {{#if t.filled}}filled{{/if}}"></span>
-          {{/each}}
-        </span>
-        <span class="count">{{derived.identity.forcePointsDisplay.labelText}}</span>
-      </div>
+  <div class="swse-v2-resources" style="margin-top:8px;">
+    <div class="swse-v2-resource" data-kind="destiny" title="Destiny Points">
+      <span class="label">DP</span>
+      <input type="number" name="system.destinyPoints.value" value="{{system.destinyPoints.value}}" style="width:60px;" {{#unless editable}}disabled{{/unless}} />
     </div>
-  {{/if}}
+
+    <div class="swse-v2-resource" data-kind="force" title="Force Points">
+      <span class="label">FP</span>
+      <input type="number" name="system.forcePoints.value" value="{{system.forcePoints.value}}" style="width:60px;" {{#unless editable}}disabled{{/unless}} />
+    </div>
+  </div>
 </div>

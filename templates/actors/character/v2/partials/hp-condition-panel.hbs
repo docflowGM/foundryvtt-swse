@@ -10,7 +10,10 @@
   <div class="swse-v2-hp-row">
     <div class="swse-v2-hp-block" data-swse-tooltip="HitPoints">
       <div class="label">HP</div>
-      <div class="value">{{derived.hp.value}} / {{derived.hp.max}}</div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <input type="number" name="system.hp.value" value="{{system.hp.value}}" style="width:60px;" {{#unless editable}}disabled{{/unless}} />
+        <span class="value">/ {{derived.hp.max}}</span>
+      </div>
       {{#if derived.hp.temp}}
         <div class="muted">Temp: {{derived.hp.temp}}</div>
       {{/if}}
