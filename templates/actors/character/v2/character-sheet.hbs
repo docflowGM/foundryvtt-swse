@@ -85,6 +85,122 @@
 
     <section class="tab" data-group="primary" data-tab="gear">
       <div class="swse-v2-sheet-grid">
+        <div class="swse-v2-full">
+          <section class="gear-section">
+            <h3>Equipment</h3>
+            {{#if equipment}}
+              <div class="equipment-list" style="border-top: 1px solid #ddd;">
+                {{#each equipment as |item|}}
+                  <div class="equipment-row" style="display: grid; grid-template-columns: 1fr 80px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                    <div class="equipment-name">
+                      <button type="button"
+                              class="equipment-name-btn swse-v2-open-item"
+                              data-item-id="{{item.id}}"
+                              style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
+                        {{item.name}}
+                      </button>
+                    </div>
+                    <input type="number"
+                           name="items.{{item.id}}.system.quantity"
+                           value="{{item.system.quantity}}"
+                           min="0"
+                           style="padding: 4px; border: 1px solid #ccc; border-radius: 2px;">
+                    <div class="equipment-weight" style="text-align: right;">
+                      {{item.system.weight}} lbs
+                    </div>
+                    <button type="button"
+                            class="equipment-sell"
+                            data-action="sell-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Sell
+                    </button>
+                    <button type="button"
+                            class="equipment-delete"
+                            data-action="delete-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Delete
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="muted" style="padding: 16px;">No equipment</div>
+            {{/if}}
+          </section>
+        </div>
+
+        <div class="swse-v2-full">
+          <section class="armor-section">
+            <h3>Armor</h3>
+            {{#if armor}}
+              <div class="armor-list" style="border-top: 1px solid #ddd;">
+                {{#each armor as |item|}}
+                  <div class="armor-row" style="display: grid; grid-template-columns: 1fr 120px 100px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                    <div class="armor-name">
+                      <button type="button"
+                              class="armor-name-btn swse-v2-open-item"
+                              data-item-id="{{item.id}}"
+                              style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
+                        {{item.name}}
+                      </button>
+                    </div>
+                    <div style="font-size: 0.85em;">
+                      Def: {{item.system.defenseBonus}} | DX: {{item.system.maxDex}}
+                    </div>
+                    <div style="text-align: right; font-size: 0.85em;">
+                      {{item.system.weight}} lbs
+                    </div>
+                    <button type="button"
+                            class="armor-delete"
+                            data-action="delete-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Delete
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="muted" style="padding: 16px;">No armor equipped</div>
+            {{/if}}
+          </section>
+        </div>
+
+        <div class="swse-v2-full">
+          <section class="weapons-section">
+            <h3>Weapons</h3>
+            {{#if weapons}}
+              <div class="weapons-list" style="border-top: 1px solid #ddd;">
+                {{#each weapons as |item|}}
+                  <div class="weapon-row" style="display: grid; grid-template-columns: 1fr 100px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                    <div class="weapon-name">
+                      <button type="button"
+                              class="weapon-name-btn swse-v2-open-item"
+                              data-item-id="{{item.id}}"
+                              style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
+                        {{item.name}}
+                      </button>
+                    </div>
+                    <div style="font-size: 0.85em;">
+                      {{item.system.damage}}
+                    </div>
+                    <button type="button"
+                            class="weapon-delete"
+                            data-action="delete-item"
+                            data-item-id="{{item.id}}"
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                      Delete
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="muted" style="padding: 16px;">No weapons</div>
+            {{/if}}
+          </section>
+        </div>
       </div>
     </section>
 

@@ -106,6 +106,31 @@ export class SWSEV2CharacterSheet extends
       }
     }
 
+    // Build equipment, armor, and weapon lists
+    const equipment = actor.items.filter(item => item.type === "equipment").map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      img: item.img,
+      system: item.system
+    }));
+
+    const armor = actor.items.filter(item => item.type === "armor").map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      img: item.img,
+      system: item.system
+    }));
+
+    const weapons = actor.items.filter(item => item.type === "weapon").map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      img: item.img,
+      system: item.system
+    }));
+
     const overrides = {
       actor,
       system: actor.system,
@@ -119,6 +144,9 @@ export class SWSEV2CharacterSheet extends
         img: item.img,
         system: item.system
       })),
+      equipment,
+      armor,
+      weapons,
       ownedActorMap,
       editable: this.isEditable,
       user: {
@@ -450,6 +478,37 @@ export class SWSEV2CharacterSheet extends
             });
           }
         }
+      });
+    }
+
+    /* ---- EQUIPMENT: SELL & DELETE ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="sell-item"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId) return;
+        const item = this.document.items.get(itemId);
+        if (!item) return;
+
+        const price = item.system.price ?? 0;
+        const currentCredits = this.document.system.credits ?? 0;
+
+        await this.document.update({
+          "system.credits": currentCredits + price
+        });
+
+        await this.document.deleteEmbeddedDocuments("Item", [itemId]);
+        ui.notifications.info(`Sold ${item.name} for ${price} credits`);
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="delete-item"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId) return;
+        await this.document.deleteEmbeddedDocuments("Item", [itemId]);
       });
     }
 
