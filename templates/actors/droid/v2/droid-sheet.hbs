@@ -1,4 +1,4 @@
-<form class="{{cssClass}} swse holo" autocomplete="off" data-theme="holo">
+<div class="swse swse-sheet v2">
   <header class="sheet-header holo-header">
     <div class="header-left">
       <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="64" width="64"/>
@@ -16,25 +16,39 @@
   </header>
 
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="summary">Summary</a>
+    <a class="item active" data-tab="overview">Overview</a>
+    <a class="item" data-tab="systems">Systems</a>
+    <a class="item" data-tab="combat">Combat</a>
+    <a class="item" data-tab="skills">Skills</a>
+    <a class="item" data-tab="gear">Gear</a>
+    <a class="item" data-tab="other">Other</a>
   </nav>
 
   <section class="sheet-body">
-    <section class="tab" data-group="primary" data-tab="summary">
+    <section class="tab active" data-group="primary" data-tab="overview">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-left">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs"}}
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
         </div>
+      </div>
+    </section>
 
-        <div class="swse-v2-right">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs"}}
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs"}}
+    <section class="tab" data-group="primary" data-tab="systems">
+      <div class="swse-v2-sheet-grid">
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs"}}
         </div>
 
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history.hbs"}}
+        </div>
+      </div>
+    </section>
+
+    <section class="tab" data-group="primary" data-tab="combat">
+      <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
         </div>
@@ -42,12 +56,39 @@
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
         </div>
+      </div>
+    </section>
 
-        {{!-- Phase 5: Build History Panel --}}
+    <section class="tab" data-group="primary" data-tab="skills">
+      <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
         </div>
       </div>
     </section>
+
+    <section class="tab" data-group="primary" data-tab="gear">
+      <div class="swse-v2-sheet-grid">
+      </div>
+    </section>
+
+    <section class="tab" data-group="primary" data-tab="other">
+      <div class="swse-v2-sheet-grid">
+        <section class="other-owned">
+          <h3>Followers & Assets</h3>
+          <div class="owned-actors-list">
+            {{#if actor.system.ownedActors}}
+              {{#each actor.system.ownedActors}}
+              <div class="owned-entry">
+                {{this.name}}
+              </div>
+              {{/each}}
+            {{else}}
+              <div class="muted">No followers or assets</div>
+            {{/if}}
+          </div>
+        </section>
+      </div>
+    </section>
   </section>
-</form>
+</div>
