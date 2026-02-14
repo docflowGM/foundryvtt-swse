@@ -72,10 +72,37 @@ export class SWSEV2CharacterSheet extends
 
     const baseContext = await super._prepareContext(options);
 
+    // Compute Dark Side max (WIS score × houserule multiplier)
+    const wisScore = actor.system?.attributes?.wis?.total ?? 10;
+    const darkSideMultiplier = game.settings?.get('foundryvtt-swse', 'darkSideMaxMultiplier') ?? 1;
+    const darkSideMax = Math.floor(wisScore * darkSideMultiplier);
+    const currentDarkSideScore = actor.system?.darkSideScore ?? 0;
+
+    // Generate dark side spectrum segments
+    const darkSideSegments = [];
+    for (let i = 0; i < darkSideMax; i++) {
+      const ratio = darkSideMax > 0 ? i / darkSideMax : 0;
+      // Linear interpolation from blue (#4A90E2) to red (#E74C3C)
+      const blueR = 74, blueG = 144, blueB = 226;
+      const redR = 231, redG = 76, redB = 60;
+      const r = Math.round(blueR + (redR - blueR) * ratio);
+      const g = Math.round(blueG + (redG - blueG) * ratio);
+      const b = Math.round(blueB + (redB - blueB) * ratio);
+      const color = `rgb(${r}, ${g}, ${b})`;
+
+      darkSideSegments.push({
+        index: i,
+        filled: i < currentDarkSideScore,
+        color: color
+      });
+    }
+
     const overrides = {
       actor,
       system: actor.system,
       derived: actor.system?.derived ?? {},
+      darkSideMax,
+      darkSideSegments,
       items: actor.items.map(item => ({
         id: item.id,
         name: item.name,
@@ -357,6 +384,61 @@ export class SWSEV2CharacterSheet extends
         const skillKey = skillContainer?.dataset?.skill;
         if (skillKey && this.actor) {
           await rollSkill(this.actor, skillKey);
+        }
+      });
+    }
+
+    /* ---------------- SECOND WIND ACTIONS ---------------- */
+
+    const swRecoverBtn = root.querySelector('[data-action="use-second-wind"]');
+    if (swRecoverBtn) {
+      swRecoverBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const uses = this.actor.system?.secondWind?.uses ?? 0;
+        const healing = this.actor.system?.secondWind?.healing ?? 0;
+
+        if (uses > 0 && healing > 0) {
+          // Restore HP
+          const currentHp = this.actor.system?.hp?.value ?? 0;
+          const maxHp = this.actor.system?.hp?.max ?? 1;
+          const newHp = Math.min(currentHp + healing, maxHp);
+
+          // Decrease uses
+          await ActorEngine.updateActor(this.actor, {
+            'system.hp.value': newHp,
+            'system.secondWind.uses': uses - 1
+          });
+
+          ui.notifications.info(`${this.actor.name} recovered ${healing} HP with Second Wind!`);
+        }
+      });
+    }
+
+    const swRestBtn = root.querySelector('[data-action="rest-second-wind"]');
+    if (swRestBtn) {
+      swRestBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const max = this.actor.system?.secondWind?.max ?? 1;
+        await ActorEngine.updateActor(this.actor, {
+          'system.secondWind.uses': max
+        });
+        ui.notifications.info(`${this.actor.name} rested. Second Wind uses restored!`);
+      });
+    }
+
+    /* ---------------- DARK SIDE SPECTRUM CLICK ---------------- */
+
+    const dsSpectrum = root.querySelector('.swse-v2-ds-spectrum');
+    if (dsSpectrum) {
+      dsSpectrum.addEventListener("click", async (ev) => {
+        const segment = ev.target.closest('.ds-segment');
+        if (segment) {
+          const index = Number(segment.dataset.index);
+          if (Number.isFinite(index)) {
+            await ActorEngine.updateActor(this.actor, {
+              'system.darkSideScore': index
+            });
+          }
         }
       });
     }
