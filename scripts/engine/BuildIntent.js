@@ -439,7 +439,7 @@ export class BuildIntent {
             trainedSkills.add((s.key || s).toLowerCase());
         });
 
-        const abilities = actor.system?.abilities || {};
+        const abilities = actor.system?.attributes || {};
         let highestAbility = null;
         let highestScore = 0;
         for (const [key, data] of Object.entries(abilities)) {
