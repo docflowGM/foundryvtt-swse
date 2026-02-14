@@ -57,6 +57,23 @@ export class SWSEV2NpcSheet extends
 
     const baseContext = await super._prepareContext(options);
 
+    // Build equipment and armor lists
+    const equipment = actor.items.filter(item => item.type === "equipment").map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      img: item.img,
+      system: item.system
+    }));
+
+    const armor = actor.items.filter(item => item.type === "armor").map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      img: item.img,
+      system: item.system
+    }));
+
     const overrides = {
       actor,
       system: actor.system,
@@ -68,6 +85,8 @@ export class SWSEV2NpcSheet extends
         img: item.img,
         system: item.system
       })),
+      equipment,
+      armor,
       editable: this.isEditable,
       user: {
         id: game.user.id,
@@ -228,6 +247,49 @@ export class SWSEV2NpcSheet extends
         if (this.actor) {
           await SWSELevelUp.openEnhanced(this.actor);
         }
+      });
+    }
+
+    /* ---- EQUIPMENT: SELL & DELETE ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="sell-item"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId) return;
+        const item = this.document.items.get(itemId);
+        if (!item) return;
+
+        const price = item.system.price ?? 0;
+        const currentCredits = this.document.system.credits ?? 0;
+
+        await this.document.update({
+          "system.credits": currentCredits + price
+        });
+
+        await this.document.deleteEmbeddedDocuments("Item", [itemId]);
+        ui.notifications.info(`Sold ${item.name} for ${price} credits`);
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="delete-item"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId) return;
+        await this.document.deleteEmbeddedDocuments("Item", [itemId]);
+      });
+    }
+
+    /* ---- ARMOR EQUIP TOGGLE ---- */
+
+    for (const checkbox of root.querySelectorAll('[data-action="toggle-equip-armor"]')) {
+      checkbox.addEventListener("change", async (ev) => {
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId) return;
+        const item = this.document.items.get(itemId);
+        if (!item) return;
+        await item.update({ "system.equipped": ev.currentTarget.checked });
       });
     }
 
