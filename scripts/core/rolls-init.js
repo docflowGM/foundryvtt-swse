@@ -11,6 +11,7 @@ import * as Dice from '../rolls/dice.js';
 import * as Initiative from '../rolls/initiative.js';
 import * as Saves from '../rolls/saves.js';
 import * as Skills from '../rolls/skills.js';
+import * as ForcePowers from '../rolls/force-powers.js';
 
 /**
  * Initialize roll functions and expose them on game.swse.rolls
@@ -27,7 +28,8 @@ export function initializeRolls() {
     dice: Dice,
     initiative: Initiative,
     saves: Saves,
-    skills: Skills
+    skills: Skills,
+    rollForcePower: ForcePowers.rollForcePower
   };
 
   SWSELogger.log('SWSE | ✓ Rolls initialized:', Object.keys(game.swse.rolls));

@@ -40,6 +40,44 @@ export function calculateDefense(actor, type) {
 }
 
 /**
+ * Roll a defense check
+ * @param {Actor} actor - The actor rolling the defense
+ * @param {string} defenseType - Defense type (fortitude, reflex, will)
+ * @returns {Promise<Roll>} The defense check roll
+ */
+export async function rollDefense(actor, defenseType) {
+  const utils = game.swse.utils;
+
+  if (!actor) {
+    ui.notifications.warn('No actor specified for defense roll');
+    return null;
+  }
+
+  // Normalize defense type
+  const typeMap = { 'fort': 'fortitude', 'ref': 'reflex' };
+  const normalizedType = typeMap[defenseType] || defenseType;
+
+  const defense = actor.system?.defenses?.[normalizedType];
+
+  if (!defense) {
+    ui.notifications.warn(`Defense ${defenseType} not found`);
+    return null;
+  }
+
+  const defenseValue = defense.total ?? 10;
+  const label = normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1);
+
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${defenseValue}`).evaluate({ async: true });
+
+  await roll.toMessage({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    flavor: `${label} Defense Check (vs DC ${defenseValue})`
+  }, { create: true });
+
+  return roll;
+}
+
+/**
  * Calculate all defenses for an actor
  * @param {Actor} actor - The actor
  * @returns {object} All defense values
