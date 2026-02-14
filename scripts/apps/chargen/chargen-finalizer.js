@@ -108,6 +108,7 @@ export class ChargenFinalizer {
       SWSELogger.error('[CHARGEN FINALIZER] Finalization failed:', error);
       throw error;
     }
+    });
   }
 
   /**
