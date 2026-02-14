@@ -5,6 +5,7 @@ import { FinalizeIntegration } from '../progression/integration/finalize-integra
 import { ProgressionSession } from './ProgressionSession.js';
 import { SuggestionService } from './SuggestionService.js';
 import { createChatMessage } from '../core/document-api-v13.js';
+import { SWSELevelUp } from '../apps/swse-levelup.js';
 
 /**
  * Unified SWSE Progression Engine
@@ -2888,6 +2889,91 @@ async applyScalingFeature(feature) {
       swseLogger.error(`[PROGRESSION] Error getting suggestions:`, err);
       return [];
     }
+  }
+
+  /* ========================================
+     ITEM SELECTOR METHODS (Engine Authority)
+     Sheets emit intent by calling these methods
+     ======================================== */
+
+  /**
+   * Open feat selector dialog
+   * Routes to level-up system for feat selection
+   * Sheets emit intent by calling this method
+   * @param {Actor} actor - Actor to add feat to
+   * @static
+   */
+  static async openFeatSelector(actor) {
+    if (!actor) {
+      swseLogger.warn('[PROGRESSION] openFeatSelector: No actor provided');
+      return;
+    }
+    swseLogger.log(`[PROGRESSION] Opening feat selector for ${actor.name}`);
+    await SWSELevelUp.openEnhanced(actor);
+  }
+
+  /**
+   * Open talent selector dialog
+   * Routes to level-up system for talent selection
+   * Sheets emit intent by calling this method
+   * @param {Actor} actor - Actor to add talent to
+   * @static
+   */
+  static async openTalentSelector(actor) {
+    if (!actor) {
+      swseLogger.warn('[PROGRESSION] openTalentSelector: No actor provided');
+      return;
+    }
+    swseLogger.log(`[PROGRESSION] Opening talent selector for ${actor.name}`);
+    await SWSELevelUp.openEnhanced(actor);
+  }
+
+  /**
+   * Open force power selector dialog
+   * Routes to level-up system for force power selection
+   * Sheets emit intent by calling this method
+   * @param {Actor} actor - Actor to add force power to
+   * @static
+   */
+  static async openForcePowerSelector(actor) {
+    if (!actor) {
+      swseLogger.warn('[PROGRESSION] openForcePowerSelector: No actor provided');
+      return;
+    }
+    swseLogger.log(`[PROGRESSION] Opening force power selector for ${actor.name}`);
+    await SWSELevelUp.openEnhanced(actor);
+  }
+
+  /**
+   * Open force technique selector dialog
+   * Routes to level-up system for force technique selection
+   * Sheets emit intent by calling this method
+   * @param {Actor} actor - Actor to add force technique to
+   * @static
+   */
+  static async openForceTechniqueSelector(actor) {
+    if (!actor) {
+      swseLogger.warn('[PROGRESSION] openForceTechniqueSelector: No actor provided');
+      return;
+    }
+    swseLogger.log(`[PROGRESSION] Opening force technique selector for ${actor.name}`);
+    await SWSELevelUp.openEnhanced(actor);
+  }
+
+  /**
+   * Open force secret selector dialog
+   * Routes to level-up system for force secret selection
+   * Sheets emit intent by calling this method
+   * @param {Actor} actor - Actor to add force secret to
+   * @static
+   */
+  static async openForceSecretSelector(actor) {
+    if (!actor) {
+      swseLogger.warn('[PROGRESSION] openForceSecretSelector: No actor provided');
+      return;
+    }
+    swseLogger.log(`[PROGRESSION] Opening force secret selector for ${actor.name}`);
+    await SWSELevelUp.openEnhanced(actor);
   }
 }
 
