@@ -51,11 +51,45 @@
 
     <section class="tab" data-group="primary" data-tab="stats">
       <div class="swse-v2-sheet-grid">
-        <div class="swse-v2-left">
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Ability Scores (Editable - Statblock Mode)</h3>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 12px;">
+              <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; text-align: center;">
+                <div style="font-size: 0.85em; color: #666; margin-bottom: 4px; text-transform: uppercase;">STR</div>
+                <input type="number" name="system.attributes.str.base" value="{{system.attributes.str.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} style="width: 60px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ddd; border-radius: 2px; padding: 4px;">
+              </div>
+              <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; text-align: center;">
+                <div style="font-size: 0.85em; color: #666; margin-bottom: 4px; text-transform: uppercase;">DEX</div>
+                <input type="number" name="system.attributes.dex.base" value="{{system.attributes.dex.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} style="width: 60px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ddd; border-radius: 2px; padding: 4px;">
+              </div>
+              <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; text-align: center;">
+                <div style="font-size: 0.85em; color: #666; margin-bottom: 4px; text-transform: uppercase;">CON</div>
+                <input type="number" name="system.attributes.con.base" value="{{system.attributes.con.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} style="width: 60px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ddd; border-radius: 2px; padding: 4px;">
+              </div>
+              <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; text-align: center;">
+                <div style="font-size: 0.85em; color: #666; margin-bottom: 4px; text-transform: uppercase;">INT</div>
+                <input type="number" name="system.attributes.int.base" value="{{system.attributes.int.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} style="width: 60px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ddd; border-radius: 2px; padding: 4px;">
+              </div>
+              <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; text-align: center;">
+                <div style="font-size: 0.85em; color: #666; margin-bottom: 4px; text-transform: uppercase;">WIS</div>
+                <input type="number" name="system.attributes.wis.base" value="{{system.attributes.wis.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} style="width: 60px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ddd; border-radius: 2px; padding: 4px;">
+              </div>
+              <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; text-align: center;">
+                <div style="font-size: 0.85em; color: #666; margin-bottom: 4px; text-transform: uppercase;">CHA</div>
+                <input type="number" name="system.attributes.cha.base" value="{{system.attributes.cha.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} style="width: 60px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ddd; border-radius: 2px; padding: 4px;">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
         </div>
 
-        <div class="swse-v2-right">
+        <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs"}}
         </div>
       </div>
