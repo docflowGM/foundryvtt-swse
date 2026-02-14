@@ -263,6 +263,90 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
+    /* ---------------- SKILLS SYSTEM (FILTER + FAVORITE + SORT) ---------------- */
+
+    // Skill filter input
+    const skillFilterInput = root.querySelector('[data-action="filter-skills"]');
+    if (skillFilterInput) {
+      skillFilterInput.addEventListener("input", (ev) => {
+        const query = ev.target.value.toLowerCase();
+        const skillRows = root.querySelectorAll(".skill-row-container");
+        skillRows.forEach(row => {
+          const skillName = row.dataset.skillName?.toLowerCase() || "";
+          row.style.display = skillName.includes(query) ? "" : "none";
+        });
+      });
+    }
+
+    // Skill favorite toggle
+    for (const btn of root.querySelectorAll('[data-action="toggle-favorite"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const skill = ev.currentTarget?.dataset?.skill;
+        if (skill && this.actor) {
+          const path = `system.skills.${skill}.favorite`;
+          const current = this.actor.system?.skills?.[skill]?.favorite;
+          await this.actor.update({ [path]: !current });
+        }
+      });
+    }
+
+    // Skill sort
+    const skillSortSelect = root.querySelector('[data-action="sort-skills"]:not([data-sort])');
+    if (skillSortSelect) {
+      skillSortSelect.addEventListener("change", (ev) => {
+        const sortBy = ev.target.value;
+        const skillRows = Array.from(root.querySelectorAll(".skill-row-container"));
+
+        const sortedRows = skillRows.sort((a, b) => {
+          let aVal, bVal;
+
+          switch (sortBy) {
+            case "name":
+              aVal = (a.dataset.skillName || "").toLowerCase();
+              bVal = (b.dataset.skillName || "").toLowerCase();
+              return aVal.localeCompare(bVal);
+
+            case "favorite-first":
+              aVal = !!a.querySelector('[data-action="toggle-favorite"].active');
+              bVal = !!b.querySelector('[data-action="toggle-favorite"].active');
+              return bVal - aVal; // Favorites first
+
+            case "trained-first":
+              aVal = !!a.querySelector('.skill-col-trained input:checked');
+              bVal = !!b.querySelector('.skill-col-trained input:checked');
+              return bVal - aVal; // Trained first
+
+            case "trained-last":
+              aVal = !!a.querySelector('.skill-col-trained input:checked');
+              bVal = !!b.querySelector('.skill-col-trained input:checked');
+              return aVal - bVal; // Untrained first
+
+            case "total-desc":
+              aVal = parseInt(a.querySelector('.skill-col-total')?.textContent || "0");
+              bVal = parseInt(b.querySelector('.skill-col-total')?.textContent || "0");
+              return bVal - aVal;
+
+            case "total-asc":
+              aVal = parseInt(a.querySelector('.skill-col-total')?.textContent || "0");
+              bVal = parseInt(b.querySelector('.skill-col-total')?.textContent || "0");
+              return aVal - bVal;
+
+            default: // default order
+              return skillRows.indexOf(a) - skillRows.indexOf(b);
+          }
+        });
+
+        // Reorder DOM
+        const skillsList = root.querySelector(".skills-list");
+        if (skillsList) {
+          sortedRows.forEach(row => {
+            skillsList.appendChild(row);
+          });
+        }
+      });
+    }
+
     RenderAssertions.assertRenderComplete(
       this,
       "SWSEV2CharacterSheet"
