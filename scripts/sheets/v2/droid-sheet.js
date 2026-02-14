@@ -143,9 +143,9 @@ export class SWSEV2DroidSheet extends
         ev.preventDefault();
         const step = Number(ev.currentTarget?.dataset?.step);
         if (!Number.isFinite(step)) return;
-        if (typeof this.actor.setConditionTrackStep === "function") {
-          await this.actor.setConditionTrackStep(step);
-        } else {
+        if (typeof this.actor?.setConditionTrackStep === "function") {
+          await this.actor?.setConditionTrackStep(step);
+        } else if (this.actor) {
           await ActorEngine.updateActor(this.actor, { 'system.conditionTrack.current': step });
         }
       });
@@ -155,8 +155,8 @@ export class SWSEV2DroidSheet extends
     if (improveBtn) {
       improveBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        if (typeof this.actor.improveConditionTrack === "function") {
-          await this.actor.improveConditionTrack();
+        if (typeof this.actor?.improveConditionTrack === "function") {
+          await this.actor?.improveConditionTrack();
         }
       });
     }
@@ -165,8 +165,8 @@ export class SWSEV2DroidSheet extends
     if (worsenBtn) {
       worsenBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        if (typeof this.actor.worsenConditionTrack === "function") {
-          await this.actor.worsenConditionTrack();
+        if (typeof this.actor?.worsenConditionTrack === "function") {
+          await this.actor?.worsenConditionTrack();
         }
       });
     }
@@ -175,8 +175,8 @@ export class SWSEV2DroidSheet extends
     if (persistentCheckbox) {
       persistentCheckbox.addEventListener("change", async (ev) => {
         const flag = ev.currentTarget?.checked === true;
-        if (typeof this.actor.setConditionTrackPersistent === "function") {
-          await this.actor.setConditionTrackPersistent(flag);
+        if (typeof this.actor?.setConditionTrackPersistent === "function") {
+          await this.actor?.setConditionTrackPersistent(flag);
         }
       });
     }
@@ -187,7 +187,7 @@ export class SWSEV2DroidSheet extends
       el.addEventListener("click", (ev) => {
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
-        const item = this.actor.items.get(itemId);
+        const item = this.actor?.items?.get(itemId);
         item?.sheet?.render(true);
       });
     }
@@ -199,8 +199,8 @@ export class SWSEV2DroidSheet extends
         ev.preventDefault();
         const row = ev.currentTarget.closest(".item-row");
         const itemId = row?.dataset?.itemId;
-        const item = this.actor.items.get(itemId);
-        if (item) {
+        const item = this.actor?.items?.get(itemId);
+        if (item && this.actor) {
           await initiateItemSale(item, this.actor);
         }
       });
@@ -212,8 +212,8 @@ export class SWSEV2DroidSheet extends
       el.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const actionId = ev.currentTarget?.dataset?.actionId;
-        if (typeof this.actor.useAction === "function") {
-          await this.actor.useAction(actionId);
+        if (typeof this.actor?.useAction === "function") {
+          await this.actor?.useAction(actionId);
         }
       });
     }
