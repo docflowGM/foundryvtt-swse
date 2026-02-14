@@ -126,7 +126,7 @@ export class ExplainabilityGenerator {
     if (accuracy.includes('accurate')) {
       reasons.push('Accurate—improves your hit consistency');
     } else if (accuracy.includes('inaccurate')) {
-      reasons.push('Less reliable—you'll miss more often');
+      reasons.push('Less reliable—you\'ll miss more often');
     } else if (accuracy.includes('autofire')) {
       reasons.push('Autofire—trades accuracy for volume');
     }
