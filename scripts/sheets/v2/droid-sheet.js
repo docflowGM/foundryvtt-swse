@@ -58,6 +58,40 @@ export class SWSEV2DroidSheet extends
 
     const baseContext = await super._prepareContext(options);
 
+    // Build owned actors map
+    const ownedActorMap = {};
+    for (const entry of actor.system.ownedActors || []) {
+      const ownedActor = game.actors.get(entry.id);
+      if (ownedActor) {
+        ownedActorMap[entry.id] = ownedActor;
+      }
+    }
+
+    // Build equipment, armor, and weapon lists
+    const equipment = actor.items.filter(item => item.type === "equipment").map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      img: item.img,
+      system: item.system
+    }));
+
+    const armor = actor.items.filter(item => item.type === "armor").map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      img: item.img,
+      system: item.system
+    }));
+
+    const weapons = actor.items.filter(item => item.type === "weapon").map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      img: item.img,
+      system: item.system
+    }));
+
     const overrides = {
       actor,
       system: actor.system,
@@ -69,6 +103,10 @@ export class SWSEV2DroidSheet extends
         img: item.img,
         system: item.system
       })),
+      equipment,
+      armor,
+      weapons,
+      ownedActorMap,
       editable: this.isEditable,
       user: {
         id: game.user.id,
@@ -194,17 +232,84 @@ export class SWSEV2DroidSheet extends
       });
     }
 
-    /* ---------------- ITEM SELL ---------------- */
+    /* ---- EQUIPMENT: SELL & DELETE ---- */
 
-    for (const el of root.querySelectorAll('[data-action="sell"]')) {
-      el.addEventListener("click", async (ev) => {
+    for (const btn of root.querySelectorAll('[data-action="sell-item"]')) {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        const row = ev.currentTarget.closest(".item-row");
-        const itemId = row?.dataset?.itemId;
-        const item = this.actor?.items?.get(itemId);
-        if (item && this.actor) {
-          await initiateItemSale(item, this.actor);
-        }
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId) return;
+        const item = this.document.items.get(itemId);
+        if (!item) return;
+
+        const price = item.system.price ?? 0;
+        const currentCredits = this.document.system.credits ?? 0;
+
+        await this.document.update({
+          "system.credits": currentCredits + price
+        });
+
+        await this.document.deleteEmbeddedDocuments("Item", [itemId]);
+        ui.notifications.info(`Sold ${item.name} for ${price} credits`);
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="delete-item"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId) return;
+        await this.document.deleteEmbeddedDocuments("Item", [itemId]);
+      });
+    }
+
+    /* ---- ARMOR EQUIP TOGGLE ---- */
+
+    for (const checkbox of root.querySelectorAll('[data-action="toggle-equip-armor"]')) {
+      checkbox.addEventListener("change", async (ev) => {
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId) return;
+        const item = this.document.items.get(itemId);
+        if (!item) return;
+        await item.update({ "system.equipped": ev.currentTarget.checked });
+      });
+    }
+
+    /* ---- FEAT/TALENT BUTTONS ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="add-feat"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        game.swse.progression?.openFeatSelector?.(this.document);
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="add-talent"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        game.swse.progression?.openTalentSelector?.(this.document);
+      });
+    }
+
+    /* ---- OWNED ACTORS MANAGEMENT ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="remove-owned"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const actorId = ev.currentTarget?.dataset?.actorId;
+        if (!actorId) return;
+        const owned = this.document.system.ownedActors?.filter(o => o.id !== actorId) || [];
+        await this.document.update({ "system.ownedActors": owned });
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="open-owned"]')) {
+      btn.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        const actorId = ev.currentTarget?.dataset?.actorId;
+        if (!actorId) return;
+        const actor = game.actors.get(actorId);
+        actor?.sheet?.render(true);
       });
     }
 
@@ -259,6 +364,44 @@ export class SWSEV2DroidSheet extends
       "SWSEV2DroidSheet"
     );
   }
+
+  /* -------- -------- -------- -------- -------- -------- -------- -------- */
+  /* DRAG & DROP HANDLING                                                     */
+  /* -------- -------- -------- -------- -------- -------- -------- -------- */
+
+  async _onDrop(event) {
+    const data = TextEditor.getDragEventData(event);
+
+    if (data.type !== "Actor") return;
+
+    const actor = await fromUuid(data.uuid);
+    if (!actor) return;
+
+    const allowed = ["vehicle", "npc", "beast"];
+    if (!allowed.includes(actor.type)) {
+      ui.notifications.warn(`Can only add ${allowed.join(", ")} as owned actors`);
+      return;
+    }
+
+    const owned = [...(this.document.system.ownedActors || [])];
+
+    if (owned.find(o => o.id === actor.id)) {
+      ui.notifications.info(`${actor.name} is already owned by this actor`);
+      return;
+    }
+
+    owned.push({ id: actor.id, type: actor.type });
+
+    await this.document.update({
+      "system.ownedActors": owned
+    });
+
+    ui.notifications.info(`Added ${actor.name} as owned actor`);
+  }
+
+  /* ------------------------------------------------------------------------ */
+  /* FORM UPDATE ROUTING                                                      */
+  /* ------------------------------------------------------------------------ */
 
   async _updateObject(event, formData) {
     const expanded = foundry.utils.expandObject(formData);
