@@ -512,11 +512,77 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
-    RenderAssertions.assertRenderComplete(
-      this,
-      "SWSEV2CharacterSheet"
-    );
-  }
+    /* ---- ARMOR EQUIP TOGGLE ---- */
+
+    for (const checkbox of root.querySelectorAll('[data-action="toggle-equip-armor"]')) {
+      checkbox.addEventListener("change", async (ev) => {
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId) return;
+        const item = this.document.items.get(itemId);
+        if (!item) return;
+        await item.update({ "system.equipped": ev.currentTarget.checked });
+      });
+    }
+
+    /* ---- FORCE SUBSYSTEM BUTTONS ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="add-force-power"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        game.swse.progression?.openForcePowerSelector?.(this.document);
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="add-force-technique"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        game.swse.progression?.openForceTechniqueSelector?.(this.document);
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="add-force-secret"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        game.swse.progression?.openForceSecretSelector?.(this.document);
+      });
+    }
+
+    /* ---- FEAT/TALENT BUTTONS ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="add-feat"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        game.swse.progression?.openFeatSelector?.(this.document);
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="add-talent"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        game.swse.progression?.openTalentSelector?.(this.document);
+      });
+    }
+
+    /* ---- LANGUAGES EDITOR ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="add-language"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const langs = [...(this.document.system.languages || []), ""];
+        await this.document.update({ "system.languages": langs });
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="remove-language"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const index = Number(ev.currentTarget?.dataset?.index);
+        if (!Number.isFinite(index)) return;
+        const langs = [...(this.document.system.languages || [])];
+        langs.splice(index, 1);
+        await this.document.update({ "system.languages": langs });
+      });
+    }
 
     /* ---- OWNED ACTORS MANAGEMENT ---- */
 
@@ -539,6 +605,11 @@ export class SWSEV2CharacterSheet extends
         actor?.sheet?.render(true);
       });
     }
+
+    RenderAssertions.assertRenderComplete(
+      this,
+      "SWSEV2CharacterSheet"
+    );
   }
 
   /* -------- -------- -------- -------- -------- -------- -------- -------- */
