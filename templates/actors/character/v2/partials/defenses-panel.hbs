@@ -7,14 +7,8 @@
     <!-- REFLEX -->
     <div class="defense-row">
       <div class="defense-label">Reflex</div>
-      <div class="defense-formula">
-        <span class="formula-static">10</span>
-        <span class="formula-op">+</span>
-        <span class="formula-component" title="Armor bonus or Level">{{#if system.defenses.reflex.armor}}{{system.defenses.reflex.armor}}{{else}}{{system.defenses.reflex.level}}{{/if}}</span>
-        <span class="formula-op">+</span>
-        <span class="formula-component" title="Class bonus">{{system.defenses.reflex.classBonus}}</span>
-        <span class="formula-op">+</span>
-        <select class="formula-ability-select" name="system.defenses.reflex.ability" title="Select ability modifier for Reflex">
+      <div class="defense-inputs flexrow">
+        <select class="defense-ability-select" name="system.defenses.reflex.ability" title="Select ability modifier for Reflex">
           <option value="str" {{#if (eq system.defenses.reflex.ability "str")}}selected{{/if}}>STR</option>
           <option value="dex" {{#if (eq system.defenses.reflex.ability "dex")}}selected{{/if}}>DEX</option>
           <option value="con" {{#if (eq system.defenses.reflex.ability "con")}}selected{{/if}}>CON</option>
@@ -22,34 +16,16 @@
           <option value="wis" {{#if (eq system.defenses.reflex.ability "wis")}}selected{{/if}}>WIS</option>
           <option value="cha" {{#if (eq system.defenses.reflex.ability "cha")}}selected{{/if}}>CHA</option>
         </select>
-        <span class="formula-op">+</span>
-        <input type="number" class="formula-misc-input" name="system.defenses.reflex.misc.user.extra" value="{{system.defenses.reflex.misc.user.extra}}" title="Miscellaneous modifier"/>
-        <span class="formula-op">=</span>
-        <span class="formula-total">{{system.defenses.reflex.total}}</span>
-      </div>
-    </div>
-
-    <!-- FLAT-FOOTED -->
-    <div class="defense-row">
-      <div class="defense-label">Flat-Footed</div>
-      <div class="defense-formula">
-        <span class="formula-static">(Reflex without ability modifier)</span>
-        <span class="formula-op">=</span>
-        <span class="formula-total">{{system.defenses.flatFooted.total}}</span>
+        <input type="number" class="defense-misc-input" name="system.defenses.reflex.misc.user.extra" value="{{system.defenses.reflex.misc.user.extra}}" placeholder="Misc" title="Miscellaneous modifier"/>
+        <span class="defense-total">{{system.defenses.reflex.total}}</span>
       </div>
     </div>
 
     <!-- FORTITUDE -->
     <div class="defense-row">
       <div class="defense-label">Fortitude</div>
-      <div class="defense-formula">
-        <span class="formula-static">10</span>
-        <span class="formula-op">+</span>
-        <span class="formula-component" title="Character level">{{system.defenses.fort.level}}</span>
-        <span class="formula-op">+</span>
-        <span class="formula-component" title="Class bonus">{{system.defenses.fort.classBonus}}</span>
-        <span class="formula-op">+</span>
-        <select class="formula-ability-select" name="system.defenses.fort.ability" title="Select ability modifier for Fortitude">
+      <div class="defense-inputs flexrow">
+        <select class="defense-ability-select" name="system.defenses.fort.ability" title="Select ability modifier for Fortitude">
           <option value="str" {{#if (eq system.defenses.fort.ability "str")}}selected{{/if}}>STR</option>
           <option value="dex" {{#if (eq system.defenses.fort.ability "dex")}}selected{{/if}}>DEX</option>
           <option value="con" {{#if (eq system.defenses.fort.ability "con")}}selected{{/if}}>CON</option>
@@ -57,24 +33,16 @@
           <option value="wis" {{#if (eq system.defenses.fort.ability "wis")}}selected{{/if}}>WIS</option>
           <option value="cha" {{#if (eq system.defenses.fort.ability "cha")}}selected{{/if}}>CHA</option>
         </select>
-        <span class="formula-op">+</span>
-        <input type="number" class="formula-misc-input" name="system.defenses.fort.misc.user.extra" value="{{system.defenses.fort.misc.user.extra}}" title="Miscellaneous modifier"/>
-        <span class="formula-op">=</span>
-        <span class="formula-total">{{system.defenses.fort.total}}</span>
+        <input type="number" class="defense-misc-input" name="system.defenses.fort.misc.user.extra" value="{{system.defenses.fort.misc.user.extra}}" placeholder="Misc" title="Miscellaneous modifier"/>
+        <span class="defense-total">{{system.defenses.fort.total}}</span>
       </div>
     </div>
 
     <!-- WILL -->
     <div class="defense-row">
       <div class="defense-label">Will</div>
-      <div class="defense-formula">
-        <span class="formula-static">10</span>
-        <span class="formula-op">+</span>
-        <span class="formula-component" title="Character level">{{system.defenses.will.level}}</span>
-        <span class="formula-op">+</span>
-        <span class="formula-component" title="Class bonus">{{system.defenses.will.classBonus}}</span>
-        <span class="formula-op">+</span>
-        <select class="formula-ability-select" name="system.defenses.will.ability" title="Select ability modifier for Will">
+      <div class="defense-inputs flexrow">
+        <select class="defense-ability-select" name="system.defenses.will.ability" title="Select ability modifier for Will">
           <option value="str" {{#if (eq system.defenses.will.ability "str")}}selected{{/if}}>STR</option>
           <option value="dex" {{#if (eq system.defenses.will.ability "dex")}}selected{{/if}}>DEX</option>
           <option value="con" {{#if (eq system.defenses.will.ability "con")}}selected{{/if}}>CON</option>
@@ -82,10 +50,17 @@
           <option value="wis" {{#if (eq system.defenses.will.ability "wis")}}selected{{/if}}>WIS</option>
           <option value="cha" {{#if (eq system.defenses.will.ability "cha")}}selected{{/if}}>CHA</option>
         </select>
-        <span class="formula-op">+</span>
-        <input type="number" class="formula-misc-input" name="system.defenses.will.misc.user.extra" value="{{system.defenses.will.misc.user.extra}}" title="Miscellaneous modifier"/>
-        <span class="formula-op">=</span>
-        <span class="formula-total">{{system.defenses.will.total}}</span>
+        <input type="number" class="defense-misc-input" name="system.defenses.will.misc.user.extra" value="{{system.defenses.will.misc.user.extra}}" placeholder="Misc" title="Miscellaneous modifier"/>
+        <span class="defense-total">{{system.defenses.will.total}}</span>
+      </div>
+    </div>
+
+    <!-- FLAT-FOOTED -->
+    <div class="defense-row">
+      <div class="defense-label">Flat-Footed</div>
+      <div class="defense-inputs flexrow">
+        <span class="defense-note">(Reflex without ability mod)</span>
+        <span class="defense-total">{{system.defenses.flatFooted.total}}</span>
       </div>
     </div>
   </div>

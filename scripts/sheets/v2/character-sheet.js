@@ -7,6 +7,7 @@ import { RenderAssertions } from "../../core/render-assertions.js";
 import { initiateItemSale } from "../../apps/item-selling-system.js";
 import { RollEngine } from "../../engine/roll-engine.js";
 import { SWSELevelUp } from "../../apps/swse-levelup.js";
+import { rollSkill } from "../../rolls/skills.js";
 
 /* ========================================================================== */
 /* SWSEV2CharacterSheet                                                       */
@@ -343,6 +344,19 @@ export class SWSEV2CharacterSheet extends
           sortedRows.forEach(row => {
             skillsList.appendChild(row);
           });
+        }
+      });
+    }
+
+    /* ---------------- SKILL ROLLING (CLICK ON SKILL TOTAL) ---------------- */
+
+    for (const el of root.querySelectorAll('.skill-col-total')) {
+      el.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const skillContainer = ev.currentTarget.closest(".skill-row-container");
+        const skillKey = skillContainer?.dataset?.skill;
+        if (skillKey && this.actor) {
+          await rollSkill(this.actor, skillKey);
         }
       });
     }
