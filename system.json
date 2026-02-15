@@ -90,7 +90,8 @@
     "styles/sheets/themes/legacy/high-contrast.css",
     "styles/sheets/themes/legacy/holo-default.css",
     "styles/ui/wishlist.css",
-    "styles/core/appv2-structural-safe.css"
+    "styles/core/appv2-structural-safe.css",
+    "styles/components/xp-bar.css"
   ],
   "languages": [
     {

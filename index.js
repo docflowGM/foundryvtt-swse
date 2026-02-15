@@ -116,6 +116,11 @@ import { EnhancedPilot } from "./scripts/engine/combat/starship/enhanced-pilot.j
 import { EnhancedCommander } from "./scripts/engine/combat/starship/enhanced-commander.js";
 import { VehicleTurnController } from "./scripts/engine/combat/starship/vehicle-turn-controller.js";
 
+// XP System
+import { isXPEnabled, applyXP, calculateEncounterXP } from "./scripts/engine/progression/xp-engine.js";
+import { XP_LEVEL_THRESHOLDS } from "./scripts/engine/progression/xp-constants.js";
+import { SWSEXPCalculator } from "./scripts/apps/xp-calculator.js";
+
 // Misc
 import { SystemInitHooks } from "./scripts/progression/hooks/system-init-hooks.js";
 import { Upkeep } from "./scripts/automation/upkeep.js";
@@ -218,6 +223,13 @@ Hooks.once("ready", async () => {
 
   // Initialize Starship Combat Engines (stateless — no hooks needed)
 
+  // XP System — progression hook (does not auto-level)
+  Hooks.on('swseXPLevelGained', (actor, level) => {
+    swseLogger.log(`SWSE XP | ${actor.name} reached XP level ${level}`);
+    // Open level-up UI if available — does NOT auto-apply class levels
+    game.swse?.levelup?.showForActor?.(actor);
+  });
+
   // Restore global SWSE namespace
   game.swse = {
     engine: SWSEProgressionEngine,
@@ -229,7 +241,8 @@ Hooks.once("ready", async () => {
     ui: {
       ChargenApp: CharacterGenerator,
       LevelUpApp: SWSELevelUpEnhanced,
-      StoreApp: SWSEStore
+      StoreApp: SWSEStore,
+      XPCalculator: SWSEXPCalculator
     },
     rolls: game.swse?.rolls || {},
     api: {
@@ -245,7 +258,8 @@ Hooks.once("ready", async () => {
       EnhancedEngineer,
       EnhancedPilot,
       EnhancedCommander,
-      VehicleTurnController
+      VehicleTurnController,
+      XP: { isXPEnabled, applyXP, calculateEncounterXP, XP_LEVEL_THRESHOLDS }
     }
   };
 
@@ -263,7 +277,8 @@ Hooks.once("ready", async () => {
       EnhancedEngineer,
       EnhancedPilot,
       EnhancedCommander,
-      VehicleTurnController
+      VehicleTurnController,
+      XP: { isXPEnabled, applyXP, calculateEncounterXP, XP_LEVEL_THRESHOLDS }
     },
     debug: {
       testHarness,
