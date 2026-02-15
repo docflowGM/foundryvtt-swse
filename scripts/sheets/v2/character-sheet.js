@@ -505,7 +505,60 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
-    /* ---------------- SKILL ROLLING ---------------- */
+    /* ---- PHASE 2: CLICK-TO-ROLL SKILLS ---- */
+
+    for (const el of root.querySelectorAll('.rollable-skill')) {
+      el.addEventListener("click", async (ev) => {
+        // Prevent selection
+        if (ev.detail > 1) return;
+
+        ev.preventDefault();
+        const skillKey = ev.currentTarget?.dataset?.skill;
+        if (skillKey && this.actor) {
+          await rollSkill(this.actor, skillKey);
+        }
+      });
+
+      el.addEventListener("contextmenu", (ev) => {
+        // Prevent browser context menu
+        ev.preventDefault();
+        // Phase 3 will add context menu logic here
+        const skillKey = ev.currentTarget?.dataset?.skill;
+        if (skillKey) {
+          // Placeholder: log to console for now
+          console.log(`[Phase 3] Skill context menu requested for: ${skillKey}`);
+        }
+      });
+    }
+
+    /* ---- PHASE 2: CLICK-TO-ROLL ATTACKS ---- */
+
+    for (const el of root.querySelectorAll('.rollable-attack')) {
+      el.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId || !this.actor) return;
+
+        // Shift+click = damage roll
+        if (ev.shiftKey) {
+          // For now, just log (Phase 3 will handle damage rolls)
+          console.log(`[Phase 2] Shift+click damage for: ${itemId}`);
+          return;
+        }
+
+        // Left click = attack roll
+        const item = this.actor.items?.get(itemId);
+        if (!item) return;
+
+        if (typeof item.roll === "function") {
+          await item.roll();
+        } else {
+          await rollAttack(this.actor, item);
+        }
+      });
+    }
+
+    /* ---------------- SKILL ROLLING (Legacy) ---------------- */
 
     for (const el of root.querySelectorAll('[data-action="roll-skill"]')) {
       el.addEventListener("click", async (ev) => {

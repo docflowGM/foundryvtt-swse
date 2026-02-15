@@ -6201,3 +6201,35 @@ select.action-type-filter {
   cursor: not-allowed;
   border-color: rgba(255, 255, 255, 0.1);
 }
+
+/* =========================================================
+   PHASE 2: CLICK-TO-ROLL INTERACTION STYLING
+   ========================================================= */
+
+.character-sheet .rollable-skill,
+.character-sheet .rollable-attack,
+.character-sheet .rollable-init,
+.character-sheet .rollable-save {
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+  border-radius: 4px;
+  padding: 4px 6px;
+}
+
+/* Hover effect */
+.character-sheet .rollable-skill:hover,
+.character-sheet .rollable-attack:hover,
+.character-sheet .rollable-init:hover,
+.character-sheet .rollable-save:hover {
+  background: rgba(0, 255, 255, 0.06);
+  box-shadow: inset 0 0 6px rgba(0, 255, 255, 0.15);
+}
+
+/* Active click feedback */
+.character-sheet .rollable-skill:active,
+.character-sheet .rollable-attack:active,
+.character-sheet .rollable-init:active,
+.character-sheet .rollable-save:active {
+  background: rgba(0, 255, 255, 0.12);
+  box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.4);
+}
