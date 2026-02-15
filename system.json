@@ -70,6 +70,7 @@
     "styles/sheets/sheet-improvements.css",
     "styles/sheets/improved-contrast.css",
     "styles/combat/combat-enhancements.css",
+    "styles/combat/initiative.css",
     "styles/combat/vehicle-combat.css",
     "styles/components/assets-tab.css",
     "styles/progression/ability-rolling.css",

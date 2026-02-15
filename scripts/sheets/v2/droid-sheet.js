@@ -235,6 +235,18 @@ export class SWSEV2DroidSheet extends
       });
     }
 
+    /* ---------------- INITIATIVE CONTROLS ---------------- */
+
+    root.querySelector(".roll-initiative")?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      await this.actor.swseRollInitiative();
+    });
+
+    root.querySelector(".take10-initiative")?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      await this.actor.swseTake10Initiative();
+    });
+
     /* ---------------- ITEM OPEN ---------------- */
 
     for (const el of root.querySelectorAll(".swse-v2-open-item")) {

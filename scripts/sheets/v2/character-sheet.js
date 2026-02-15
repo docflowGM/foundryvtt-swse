@@ -183,6 +183,42 @@ export class SWSEV2CharacterSheet extends
     const forcePoints = actor.system?.forcePoints?.value ?? 0;
     const fpAvailable = forcePoints > 0;
 
+    // Initiative modifier (canonical source)
+    const initiativeTotal = actor.system.skills?.initiative?.total ?? 0;
+
+    // Pre-filter Force items for template (avoid inline filter/set)
+    const allItems = actor.items.map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      img: item.img,
+      system: item.system
+    }));
+
+    const forcePowers = allItems
+      .filter(i => i.type === "forcePower")
+      .map(i => ({
+        ...i,
+        cardStyle: (() => {
+          const desc = (i.system.descriptor || "").toLowerCase();
+          if (desc === "light") return "border-left: 4px solid #66ccff;";
+          if (desc === "dark") return "border-left: 4px solid #ff4444;";
+          return "border-left: 4px solid #888;";
+        })()
+      }));
+    const forceTechniques = allItems.filter(i => i.type === "forceTechnique");
+    const forceSecrets = allItems.filter(i => i.type === "forceSecret");
+
+    // Encumbrance CSS class (avoid inline eq comparisons)
+    const encumbranceStateCss = (() => {
+      switch (encumbranceInfo.state) {
+        case "normal": return "background: #e8f5e9; color: #2e7d32;";
+        case "encumbered": return "background: #fff3e0; color: #e65100;";
+        case "heavy": return "background: #ffe0e0; color: #c62828;";
+        default: return "background: #ffebee; color: #b71c1c;";
+      }
+    })();
+
     // PHASE 3: Build Mode & Prerequisites
     const buildMode = actor.system?.buildMode ?? 'validated';
     const buildAudit = PrerequisiteEngine.auditBuild(actor);
@@ -202,15 +238,13 @@ export class SWSEV2CharacterSheet extends
       hpCritical,
       ctWarning,
       fpAvailable,
+      initiativeTotal,
       darkSideMax,
       darkSideSegments,
-      items: actor.items.map(item => ({
-        id: item.id,
-        name: item.name,
-        type: item.type,
-        img: item.img,
-        system: item.system
-      })),
+      items: allItems,
+      forcePowers,
+      forceTechniques,
+      forceSecrets,
       equipment,
       armor,
       weapons,
@@ -227,6 +261,7 @@ export class SWSEV2CharacterSheet extends
       totalWeight: Math.round(totalWeight * 100) / 100,
       encumbranceState: encumbranceInfo.state,
       encumbranceLabel: encumbranceInfo.label,
+      encumbranceStateCss,
       encumbranceThresholds: {
         light: encumbranceInfo.light,
         medium: encumbranceInfo.medium,
@@ -546,6 +581,23 @@ export class SWSEV2CharacterSheet extends
         }
       });
     }
+
+    /* ---- INITIATIVE CONTROLS ---- */
+
+    root.querySelector(".roll-initiative")?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      await this.actor.swseRollInitiative();
+    });
+
+    root.querySelector(".take10-initiative")?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      await this.actor.swseTake10Initiative();
+    });
+
+    root.querySelector(".roll-initiative-force")?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      await this.actor.swseRollInitiative({ useForce: true });
+    });
 
     /* ---- PHASE 2: CLICK-TO-ROLL SKILLS ---- */
 

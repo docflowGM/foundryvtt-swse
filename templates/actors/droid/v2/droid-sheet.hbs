@@ -53,6 +53,28 @@
 
     <section class="tab" data-group="primary" data-tab="combat">
       <div class="swse-v2-sheet-grid">
+
+        <!-- INITIATIVE DISPLAY -->
+        <div class="swse-v2-full">
+          <div class="holo-panel initiative-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Initiative</h3>
+            </div>
+            <div class="initiative-panel-body">
+              <div class="initiative-mod-label">Total Modifier</div>
+              <div class="initiative-mod-value">{{system.skills.initiative.total}}</div>
+              <div class="initiative-controls">
+                <button type="button" class="initiative-btn roll-initiative">
+                  Roll
+                </button>
+                <button type="button" class="initiative-btn take10-initiative">
+                  Take 10
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
         </div>
@@ -90,7 +112,7 @@
             <h3>Equipment</h3>
             {{#if equipment}}
               <div class="equipment-list" style="border-top: 1px solid #ddd;">
-                {{#each equipment as |item|}}\
+                {{#each equipment as |item|}}
                   <div class="equipment-row" style="display: grid; grid-template-columns: 1fr 80px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
                     <div class="equipment-name">
                       <button type="button"

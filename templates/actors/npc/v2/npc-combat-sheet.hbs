@@ -26,8 +26,27 @@
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
     </div>
 
-    <!-- Right Column: Attacks and Actions -->
+    <!-- Right Column: Initiative, Attacks and Actions -->
     <div class="npc-combat-right">
+
+      <!-- INITIATIVE DISPLAY -->
+      <div class="holo-panel initiative-panel">
+        <div class="section-bar">
+          <h3 class="section-header">Initiative</h3>
+        </div>
+        <div class="initiative-panel-body initiative-panel-compact">
+          <div class="initiative-mod-value">{{system.skills.initiative.total}}</div>
+          <div class="initiative-controls">
+            <button type="button" class="initiative-btn roll-initiative">
+              Roll
+            </button>
+            <button type="button" class="initiative-btn take10-initiative">
+              Take 10
+            </button>
+          </div>
+        </div>
+      </div>
+
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
     </div>

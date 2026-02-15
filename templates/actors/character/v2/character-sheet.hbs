@@ -125,35 +125,27 @@
     <section class="tab" data-group="primary" data-tab="combat">
       <div class="swse-v2-sheet-grid">
 
-        <!-- PHASE 3: INITIATIVE DISPLAY -->
+        <!-- INITIATIVE DISPLAY -->
         <div class="swse-v2-full">
-          <div class="holo-panel" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-            <div class="section-bar" style="background: rgba(0,0,0,0.2);">
-              <h3 class="section-header" style="color: white;">⚡ Initiative</h3>
+          <div class="holo-panel initiative-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Initiative</h3>
             </div>
-            <div style="padding: 16px; text-align: center;">
-              <div style="font-size: 0.75rem; opacity: 0.9; margin-bottom: 8px;">Total Modifier</div>
-              <div style="font-size: 2.5em; font-weight: bold;">
-                {{#if derived.skills.list}}
-                  {{#with (lookup (reduce derived.skills.list (fn (accum item)
-                    (if (eq item.key "initiative") item accum))) null) as |initSkill|}}
-                    {{#if initSkill}}
-                      {{#if (lt initSkill.total 0)}}−{{/if}}{{abs initSkill.total}}
-                    {{else}}
-                      +0
-                    {{/if}}
-                  {{/with}}
-                {{else}}
-                  +0
-                {{/if}}
-              </div>
-              <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 12px;">
-                <button type="button"
-                        class="rollable-skill"
-                        data-skill="initiative"
-                        style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                  Roll Initiative
+            <div class="initiative-panel-body">
+              <div class="initiative-mod-label">Total Modifier</div>
+              <div class="initiative-mod-value">{{initiativeTotal}}</div>
+              <div class="initiative-controls">
+                <button type="button" class="initiative-btn roll-initiative">
+                  Roll
                 </button>
+                <button type="button" class="initiative-btn take10-initiative">
+                  Take 10
+                </button>
+                {{#if fpAvailable}}
+                <button type="button" class="initiative-btn roll-initiative-force">
+                  Roll + Force
+                </button>
+                {{/if}}
               </div>
             </div>
           </div>
@@ -198,18 +190,10 @@
               <h3 class="section-header">Force Powers</h3>
               <button type="button" data-action="add-force-power" class="swse-btn" style="padding: 4px 8px; font-size: 0.85em;">+ Add Power</button>
             </div>
-            {{#if (filter items "type" "forcePower")}}
+            {{#if forcePowers}}
               <div class="force-powers-list">
-                {{#each (filter items "type" "forcePower") as |item|}}
-                  {{#if (eq (lowercase item.system.descriptor) "light")}}
-                    {{#set forceCardStyle "border-left: 4px solid #66ccff;"}}
-                  {{else if (eq (lowercase item.system.descriptor) "dark")}}
-                    {{#set forceCardStyle "border-left: 4px solid #ff4444;"}}
-                  {{else}}
-                    {{#set forceCardStyle "border-left: 4px solid #888;"}}
-                  {{/if}}
-
-                  <div class="force-power-row" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee; {{forceCardStyle}}">
+                {{#each forcePowers as |item|}}
+                  <div class="force-power-row" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee; {{item.cardStyle}}">
                     <button type="button"
                             class="force-power-name"
                             data-action="roll-force-power"
@@ -242,9 +226,9 @@
               <h3 class="section-header">Force Techniques</h3>
               <button type="button" data-action="add-force-technique" class="swse-btn" style="padding: 4px 8px; font-size: 0.85em;">+ Add Technique</button>
             </div>
-            {{#if (filter items "type" "forceTechnique")}}
+            {{#if forceTechniques}}
               <div class="force-techniques-list">
-                {{#each (filter items "type" "forceTechnique") as |item|}}
+                {{#each forceTechniques as |item|}}
                   <div class="force-technique-row" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee;">
                     <button type="button"
                             class="force-technique-name swse-v2-open-item"
@@ -274,9 +258,9 @@
               <h3 class="section-header">Force Secrets</h3>
               <button type="button" data-action="add-force-secret" class="swse-btn" style="padding: 4px 8px; font-size: 0.85em;">+ Add Secret</button>
             </div>
-            {{#if (filter items "type" "forceSecret")}}
+            {{#if forceSecrets}}
               <div class="force-secrets-list">
-                {{#each (filter items "type" "forceSecret") as |item|}}
+                {{#each forceSecrets as |item|}}
                   <div class="force-secret-row" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee;">
                     <button type="button"
                             class="force-secret-name swse-v2-open-item"
@@ -314,7 +298,7 @@
               <div style="font-size: 0.85rem;">
                 <strong>Weight:</strong> {{totalWeight}} lbs
               </div>
-              <div style="font-size: 0.85rem; padding: 4px 8px; border-radius: 4px; {{#if (eq encumbranceState "normal")}}background: #e8f5e9; color: #2e7d32;{{else if (eq encumbranceState "encumbered")}}background: #fff3e0; color: #e65100;{{else if (eq encumbranceState "heavy")}}background: #ffe0e0; color: #c62828;{{else}}background: #ffebee; color: #b71c1c;{{/if}}">
+              <div style="font-size: 0.85rem; padding: 4px 8px; border-radius: 4px; {{encumbranceStateCss}}">
                 {{encumbranceLabel}}
               </div>
             </div>

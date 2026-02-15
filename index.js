@@ -109,6 +109,9 @@ import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discov
 import { ThresholdEngine } from "./scripts/engine/combat/threshold-engine.js";
 import { MountEngine } from "./scripts/engine/mount/mount-engine.js";
 
+// Initiative Engine
+import { SWSEInitiative } from "./scripts/engine/combat/SWSEInitiative.js";
+
 // Starship Combat Engines
 import { ScaleEngine } from "./scripts/engine/combat/scale-engine.js";
 import { SubsystemEngine } from "./scripts/engine/combat/starship/subsystem-engine.js";
@@ -274,6 +277,7 @@ Hooks.once("ready", async () => {
       ThresholdEngine,
       MountEngine,
       ScaleEngine,
+      SWSEInitiative,
       SubsystemEngine,
       EnhancedShields,
       EnhancedEngineer,
@@ -293,6 +297,7 @@ Hooks.once("ready", async () => {
       ThresholdEngine,
       MountEngine,
       ScaleEngine,
+      SWSEInitiative,
       SubsystemEngine,
       EnhancedShields,
       EnhancedEngineer,
