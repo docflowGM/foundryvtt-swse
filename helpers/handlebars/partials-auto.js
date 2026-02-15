@@ -7,6 +7,7 @@ const PARTIALS = [
 
   // Character V2
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs",
@@ -14,6 +15,10 @@ const PARTIALS = [
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/second-wind-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/dark-side-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/languages-panel.hbs",
 
   // Droid V2
   "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs",
@@ -22,6 +27,13 @@ const PARTIALS = [
   // Vehicle V2
   "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/attacks-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/identity-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/resource-cartridges.hbs",
+  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/hp-condition-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/defenses-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/damage-threshold-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/cargo-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/crew-panel.hbs",
 
   // Shared
   "systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs",
