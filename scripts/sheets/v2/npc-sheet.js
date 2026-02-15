@@ -9,6 +9,7 @@ import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { rollSkill } from '../../rolls/skills.js';
 import { rollAttack } from '../../combat/rolls/attacks.js';
 import { DropService } from '../../services/drop-service.js';
+import { isXPEnabled } from '../../engine/progression/xp-engine.js';
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -77,10 +78,20 @@ export class SWSEV2NpcSheet extends
       system: item.system
     }));
 
+    // XP display data
+    const xpEnabled = isXPEnabled();
+    const xpData = actor.system?.derived?.xp ?? null;
+    const xpPercent = xpData?.progressPercent ?? 0;
+    const isGM = game.user?.isGM === true;
+
     const overrides = {
       actor,
       system: actor.system,
       derived: actor.system?.derived ?? {},
+      xpEnabled,
+      xpData,
+      xpPercent,
+      isGM,
       items: actor.items.map(item => ({
         id: item.id,
         name: item.name,

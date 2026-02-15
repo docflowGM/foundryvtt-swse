@@ -1,0 +1,92 @@
+<div class="swse-xp-calculator" style="padding: 16px; font-family: var(--swse-font, sans-serif);">
+
+  {{#unless xpEnabled}}
+    <div style="padding: 20px; text-align: center; color: #cc0000;">
+      Experience system is disabled. Enable it in Houserule Settings.
+    </div>
+  {{else}}
+
+  <div style="margin-bottom: 16px;">
+    <h3 style="margin: 0 0 12px 0; color: rgba(0,255,255,0.9); font-size: 1em; text-transform: uppercase; letter-spacing: 0.05em;">Enemies</h3>
+
+    {{#each enemies as |enemy|}}
+    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
+      <label style="font-size: 0.85em; color: #aaa; min-width: 60px;">CL:</label>
+      <input type="number"
+             data-field="enemy-cl"
+             data-index="{{enemy.index}}"
+             value="{{enemy.cl}}"
+             min="0"
+             max="40"
+             style="width: 70px; padding: 4px 6px; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,255,255,0.3); color: rgba(0,255,255,0.95); border-radius: 3px;">
+      {{#if (gt ../enemies.length 1)}}
+      <button type="button"
+              data-action="remove-enemy"
+              data-index="{{enemy.index}}"
+              style="background: rgba(204,0,0,0.8); color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 0.8em;">
+        X
+      </button>
+      {{/if}}
+    </div>
+    {{/each}}
+
+    <button type="button"
+            data-action="add-enemy"
+            style="margin-top: 6px; background: rgba(0,255,255,0.15); color: rgba(0,255,255,0.9); border: 1px solid rgba(0,255,255,0.3); padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 0.85em;">
+      + Add Enemy
+    </button>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+    <div>
+      <label style="font-size: 0.8em; color: #aaa; display: block; margin-bottom: 4px;">Party Size</label>
+      <input type="number"
+             data-field="party-size"
+             value="{{partySize}}"
+             min="1"
+             max="20"
+             style="width: 100%; padding: 4px 6px; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,255,255,0.3); color: rgba(0,255,255,0.95); border-radius: 3px;">
+    </div>
+    <div>
+      <label style="font-size: 0.8em; color: #aaa; display: block; margin-bottom: 4px;">Average Party Level</label>
+      <input type="number"
+             data-field="average-level"
+             value="{{averageLevel}}"
+             min="1"
+             max="20"
+             style="width: 100%; padding: 4px 6px; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,255,255,0.3); color: rgba(0,255,255,0.95); border-radius: 3px;">
+    </div>
+  </div>
+
+  <div style="margin-bottom: 16px;">
+    <label style="font-size: 0.8em; color: #aaa; display: block; margin-bottom: 4px;">GM Multiplier</label>
+    <input type="number"
+           data-field="gm-multiplier"
+           value="{{gmMultiplier}}"
+           min="0"
+           max="10"
+           step="0.1"
+           style="width: 100px; padding: 4px 6px; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,255,255,0.3); color: rgba(0,255,255,0.95); border-radius: 3px;">
+  </div>
+
+  <div style="background: rgba(0,255,255,0.05); border: 1px solid rgba(0,255,255,0.25); border-radius: 6px; padding: 12px; margin-bottom: 16px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div>
+        <div style="font-size: 0.75em; color: rgba(0,255,255,0.6); text-transform: uppercase; letter-spacing: 0.05em;">Total Encounter XP</div>
+        <div style="font-size: 1.3em; font-weight: bold; color: rgba(0,255,255,0.95);">{{totalEncounterXP}}</div>
+      </div>
+      <div>
+        <div style="font-size: 0.75em; color: rgba(0,255,255,0.6); text-transform: uppercase; letter-spacing: 0.05em;">XP per Character</div>
+        <div style="font-size: 1.3em; font-weight: bold; color: rgba(0,255,255,0.95);">{{xpPerCharacter}}</div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button"
+          data-action="distribute-xp"
+          style="width: 100%; padding: 8px 16px; background: linear-gradient(180deg, rgba(0,255,255,0.3), rgba(0,180,255,0.3)); color: rgba(0,255,255,0.95); border: 1px solid rgba(0,255,255,0.5); border-radius: 4px; cursor: pointer; font-size: 0.95em; font-weight: bold; letter-spacing: 0.05em;">
+    Distribute to Selected Tokens
+  </button>
+
+  {{/unless}}
+</div>

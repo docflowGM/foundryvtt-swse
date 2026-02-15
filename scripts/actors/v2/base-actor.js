@@ -7,6 +7,7 @@ import { computeNpcDerived } from './npc-actor.js';
 import { computeDroidDerived } from './droid-actor.js';
 import { computeVehicleDerived } from './vehicle-actor.js';
 import { shouldSkipDerivedData } from '../../utils/hardening.js';
+import { computeXpDerived } from '../../engine/progression/xp-engine.js';
 
 /**
  * SWSE V2 Base Actor
@@ -53,6 +54,11 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     }
 
     this._applyV2ConditionTrackDerived(system);
+
+    // XP derived data — engine-level, no UI coupling
+    if (this.type !== 'vehicle') {
+      computeXpDerived(this, system);
+    }
 
     system.derived.meta.lastRecalcMs = Date.now();
   }

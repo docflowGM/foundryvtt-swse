@@ -10,6 +10,7 @@ import { SWSELevelUp } from "../../apps/swse-levelup.js";
 import { rollSkill } from "../../rolls/skills.js";
 import { rollAttack } from "../../combat/rolls/attacks.js";
 import { DropService } from "../../services/drop-service.js";
+import { isXPEnabled } from "../../engine/progression/xp-engine.js";
 
 /* ========================================================================== */
 /* SWSEV2CharacterSheet                                                       */
@@ -133,10 +134,20 @@ export class SWSEV2CharacterSheet extends
       system: item.system
     }));
 
+    // XP display data
+    const xpEnabled = isXPEnabled();
+    const xpData = actor.system?.derived?.xp ?? null;
+    const xpPercent = xpData?.progressPercent ?? 0;
+    const isGM = game.user?.isGM === true;
+
     const overrides = {
       actor,
       system: actor.system,
       derived: actor.system?.derived ?? {},
+      xpEnabled,
+      xpData,
+      xpPercent,
+      isGM,
       darkSideMax,
       darkSideSegments,
       items: actor.items.map(item => ({

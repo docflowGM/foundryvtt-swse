@@ -692,6 +692,19 @@ export function registerHouseruleSettings() {
   });
 
   /* -------------------------------------------------------------------------- */
+  /*                           EXPERIENCE POINTS                                */
+  /* -------------------------------------------------------------------------- */
+
+  register('enableExperienceSystem', {
+    name: 'Enable Experience System',
+    hint: 'Enable XP tracking for characters. When disabled, XP is not tracked and the XP panel is hidden from all sheets.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  /* -------------------------------------------------------------------------- */
   /*                               PRESET MANAGEMENT                             */
   /* -------------------------------------------------------------------------- */
 
