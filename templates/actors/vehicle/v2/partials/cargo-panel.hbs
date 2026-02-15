@@ -1,0 +1,32 @@
+<div class="holo-panel">
+  <div class="section-bar">
+    <h3 class="section-header">Cargo & Weight</h3>
+  </div>
+
+  <div class="swse-v2-cargo-display" style="padding: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <span class="label">Cargo Weight:</span>
+      <span class="value {{#if (eq cargoState 'normal')}}success{{else if (eq cargoState 'near')}}warning{{else if (eq cargoState 'over')}}danger{{/if}}">
+        {{totalCargoWeight}} / {{cargoCapacity}} kg
+      </span>
+    </div>
+    <div style="width: 100%; height: 16px; background: #333; border-radius: 4px; overflow: hidden; border: 1px solid #555;">
+      {{#if (eq cargoState 'normal')}}
+        <div style="height: 100%; width: {{multiply (divide totalCargoWeight cargoCapacity) 100}}%; background: linear-gradient(90deg, #0d7, #0a5);"></div>
+      {{else if (eq cargoState 'near')}}
+        <div style="height: 100%; width: {{multiply (divide totalCargoWeight cargoCapacity) 100}}%; background: linear-gradient(90deg, #f90, #d70);"></div>
+      {{else if (eq cargoState 'over')}}
+        <div style="height: 100%; width: 100%; background: linear-gradient(90deg, #c33, #a00);"></div>
+      {{/if}}
+    </div>
+    <div style="margin-top: 8px; font-size: 0.85em; opacity: 0.8;">
+      {{#if (eq cargoState 'normal')}}
+        Cargo within normal limits
+      {{else if (eq cargoState 'near')}}
+        ⚠ Approaching capacity
+      {{else if (eq cargoState 'over')}}
+        🚨 Over capacity
+      {{/if}}
+    </div>
+  </div>
+</div>

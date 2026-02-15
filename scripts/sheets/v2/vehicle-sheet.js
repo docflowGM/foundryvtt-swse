@@ -65,6 +65,17 @@ export class SWSEV2VehicleSheet extends
 
     const baseContext = await super._prepareContext(options);
 
+    // DATAPAD HEADER: HP state
+    const currentHp = actor.system?.hp?.value ?? 0;
+    const maxHp = actor.system?.hp?.max ?? 1;
+    const hpPercent = Math.max(0, Math.min(100, (currentHp / maxHp) * 100));
+    const hpWarning = hpPercent <= 50 && hpPercent > 25;
+    const hpCritical = hpPercent <= 25;
+
+    // Condition Track state
+    const conditionStep = actor.system?.conditionTrack?.current ?? 0;
+    const ctWarning = conditionStep > 0;
+
     // Build owned actors map (crew members)
     const ownedActorMap = {};
     for (const entry of actor.system.ownedActors || []) {
@@ -113,6 +124,17 @@ export class SWSEV2VehicleSheet extends
       }))
       : null;
 
+    // Cargo weight calculation
+    const cargoCapacity = actor.system?.cargo?.capacity ?? 500;
+    let totalCargoWeight = 0;
+    const cargoItems = actor.items.filter(item => item.type === "equipment");
+    for (const item of cargoItems) {
+      const weight = item.system?.weight ?? 0;
+      const quantity = item.system?.quantity ?? 1;
+      totalCargoWeight += weight * quantity;
+    }
+    const cargoState = totalCargoWeight > cargoCapacity * 1.1 ? 'over' : totalCargoWeight > cargoCapacity * 0.8 ? 'near' : 'normal';
+
     const overrides = {
       actor,
       system: actor.system,
@@ -134,6 +156,15 @@ export class SWSEV2VehicleSheet extends
         role: game.user.role
       },
       config: CONFIG.SWSE,
+      // DATAPAD HEADER STATES
+      hpPercent,
+      hpWarning,
+      hpCritical,
+      ctWarning,
+      // CARGO SYSTEM
+      cargoCapacity: Math.round(cargoCapacity * 100) / 100,
+      totalCargoWeight: Math.round(totalCargoWeight * 100) / 100,
+      cargoState,
       // Starship engine states
       engines: {
         subsystemsEnabled,
