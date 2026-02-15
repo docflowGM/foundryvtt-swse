@@ -14,7 +14,7 @@
       <span class="meta"></span>
     </div>
     {{#each derived.attacks.list}}
-      <div class="swse-v2-attack-row" title="Click name to open item">
+      <div class="swse-v2-attack-row rollable-attack" data-item-id="{{this.id}}" title="Click to roll attack • Shift+click for damage">
         <a class="name swse-v2-open-item" data-item-id="{{this.id}}">{{this.name}}</a>
         <span class="meta">{{this.type}}</span>
         <span class="meta">{{this.range}}</span>

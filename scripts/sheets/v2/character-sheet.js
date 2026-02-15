@@ -11,6 +11,10 @@ import { rollSkill } from "../../rolls/skills.js";
 import { rollAttack } from "../../combat/rolls/attacks.js";
 import { DropService } from "../../services/drop-service.js";
 import { isXPEnabled } from "../../engine/progression/xp-engine.js";
+import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
+import { PrerequisiteEngine } from "../../engine/prerequisites/PrerequisiteEngine.js";
+import { ModifierEngine } from "../../engine/modifiers/ModifierEngine.js";
+import { ModifierBreakdownDialog } from "../../apps/dialogs/modifier-breakdown-dialog.js";
 
 /* ========================================================================== */
 /* SWSEV2CharacterSheet                                                       */
@@ -55,6 +59,8 @@ export class SWSEV2CharacterSheet extends
 
   constructor(document, options = {}) {
     super(document, options);
+    this._inventorySearch = ""; // Inventory search filter state
+    this._expandedItemIds = new Set(); // Expanded item cards for stack splitting
   }
 
   /* ------------------------------------------------------------------------ */
@@ -110,35 +116,76 @@ export class SWSEV2CharacterSheet extends
     }
 
     // Build equipment, armor, and weapon lists
-    const equipment = actor.items.filter(item => item.type === "equipment").map(item => ({
+    let equipment = actor.items.filter(item => item.type === "equipment").map(item => ({
       id: item.id,
       name: item.name,
       type: item.type,
       img: item.img,
-      system: item.system
+      system: item.system,
+      _expanded: this._expandedItemIds.has(item.id)
     }));
 
-    const armor = actor.items.filter(item => item.type === "armor").map(item => ({
+    let armor = actor.items.filter(item => item.type === "armor").map(item => ({
       id: item.id,
       name: item.name,
       type: item.type,
       img: item.img,
-      system: item.system
+      system: item.system,
+      _expanded: this._expandedItemIds.has(item.id)
     }));
 
-    const weapons = actor.items.filter(item => item.type === "weapon").map(item => ({
+    let weapons = actor.items.filter(item => item.type === "weapon").map(item => ({
       id: item.id,
       name: item.name,
       type: item.type,
       img: item.img,
-      system: item.system
+      system: item.system,
+      _expanded: this._expandedItemIds.has(item.id)
     }));
+
+    // PHASE 2: Apply search filter if active
+    if (this._inventorySearch && this._inventorySearch.trim() !== '') {
+      equipment = InventoryEngine.filterBySearch(equipment, this._inventorySearch);
+      armor = InventoryEngine.filterBySearch(armor, this._inventorySearch);
+      weapons = InventoryEngine.filterBySearch(weapons, this._inventorySearch);
+    }
+
+    // Calculate total weight from all inventory items
+    const allInventory = InventoryEngine.getAllInventory(actor);
+    const totalWeight = InventoryEngine.calculateTotalWeight(allInventory);
+
+    // Get encumbrance state
+    const strScore = actor.system?.abilities?.str?.total ?? 10;
+    const encumbranceInfo = InventoryEngine.calculateEncumbranceState(totalWeight, strScore, 1);
 
     // XP display data
     const xpEnabled = isXPEnabled();
     const xpData = actor.system?.derived?.xp ?? null;
     const xpPercent = xpData?.progressPercent ?? 0;
     const isGM = game.user?.isGM === true;
+
+    // PHASE 1: Datapad Header + Command Bar state
+    const isLevel0 = (actor.system?.level ?? 0) === 0;
+    const xpLevelReady = xpData?.readyToLevel ?? false;
+
+    // HP state
+    const currentHp = actor.system?.hp?.value ?? 0;
+    const maxHp = actor.system?.hp?.max ?? 1;
+    const hpPercent = Math.max(0, Math.min(100, (currentHp / maxHp) * 100));
+    const hpWarning = hpPercent <= 50 && hpPercent > 25;
+    const hpCritical = hpPercent <= 25;
+
+    // Condition Track state
+    const conditionStep = actor.system?.conditionTrack?.current ?? 0;
+    const ctWarning = conditionStep > 0;
+
+    // Force Points state
+    const forcePoints = actor.system?.forcePoints?.value ?? 0;
+    const fpAvailable = forcePoints > 0;
+
+    // PHASE 3: Build Mode & Prerequisites
+    const buildMode = actor.system?.buildMode ?? 'validated';
+    const buildAudit = PrerequisiteEngine.auditBuild(actor);
 
     const overrides = {
       actor,
@@ -148,6 +195,13 @@ export class SWSEV2CharacterSheet extends
       xpData,
       xpPercent,
       isGM,
+      isLevel0,
+      xpLevelReady,
+      hpPercent,
+      hpWarning,
+      hpCritical,
+      ctWarning,
+      fpAvailable,
       darkSideMax,
       darkSideSegments,
       items: actor.items.map(item => ({
@@ -167,7 +221,21 @@ export class SWSEV2CharacterSheet extends
         name: game.user.name,
         role: game.user.role
       },
-      config: CONFIG.SWSE
+      config: CONFIG.SWSE,
+      // PHASE 2: Inventory enhancements
+      inventorySearch: this._inventorySearch,
+      totalWeight: Math.round(totalWeight * 100) / 100,
+      encumbranceState: encumbranceInfo.state,
+      encumbranceLabel: encumbranceInfo.label,
+      encumbranceThresholds: {
+        light: encumbranceInfo.light,
+        medium: encumbranceInfo.medium,
+        heavy: encumbranceInfo.heavy
+      },
+      // PHASE 3: Build Mode & Prerequisites
+      buildMode,
+      buildValid: buildAudit.valid,
+      buildViolations: buildAudit.violations
     };
 
     RenderAssertions.assertContextSerializable(
@@ -300,6 +368,59 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
+    /* ---- PHASE 1: COMMAND BAR BUTTONS ---- */
+
+    const chargenBtn = root.querySelector('[data-action="cmd-chargen"]');
+    if (chargenBtn) {
+      chargenBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (this.actor) {
+          await SWSELevelUp.openEnhanced(this.actor);
+        }
+      });
+    }
+
+    const levelupBtn = root.querySelector('[data-action="cmd-levelup"]');
+    if (levelupBtn) {
+      levelupBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (this.actor) {
+          await SWSELevelUp.openEnhanced(this.actor);
+        }
+      });
+    }
+
+    const storeBtn = root.querySelector('[data-action="cmd-store"]');
+    if (storeBtn) {
+      storeBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (game.swse?.store) {
+          new game.swse.store().render(true);
+        }
+      });
+    }
+
+    const restBtn = root.querySelector('[data-action="cmd-rest"]');
+    if (restBtn) {
+      restBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const max = this.actor.system?.secondWind?.max ?? 1;
+        await ActorEngine.updateActor(this.actor, {
+          'system.secondWind.uses': max
+        });
+        ui.notifications.info(`${this.actor.name} rested. Second Wind uses restored!`);
+      });
+    }
+
+    const conditionsBtn = root.querySelector('[data-action="cmd-conditions"]');
+    if (conditionsBtn) {
+      conditionsBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        // Scroll to HP/Condition panel in Overview tab
+        root.querySelector('[data-tab="overview"]')?.click();
+      });
+    }
+
     /* ---------------- PROGRESSION BUTTONS ---------------- */
 
     const levelUpBtn = root.querySelector('[data-action="level-up"]');
@@ -426,7 +547,60 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
-    /* ---------------- SKILL ROLLING ---------------- */
+    /* ---- PHASE 2: CLICK-TO-ROLL SKILLS ---- */
+
+    for (const el of root.querySelectorAll('.rollable-skill')) {
+      el.addEventListener("click", async (ev) => {
+        // Prevent selection
+        if (ev.detail > 1) return;
+
+        ev.preventDefault();
+        const skillKey = ev.currentTarget?.dataset?.skill;
+        if (skillKey && this.actor) {
+          await rollSkill(this.actor, skillKey);
+        }
+      });
+
+      el.addEventListener("contextmenu", (ev) => {
+        // Prevent browser context menu
+        ev.preventDefault();
+        // Phase 3 will add context menu logic here
+        const skillKey = ev.currentTarget?.dataset?.skill;
+        if (skillKey) {
+          // Placeholder: log to console for now
+          console.log(`[Phase 3] Skill context menu requested for: ${skillKey}`);
+        }
+      });
+    }
+
+    /* ---- PHASE 2: CLICK-TO-ROLL ATTACKS ---- */
+
+    for (const el of root.querySelectorAll('.rollable-attack')) {
+      el.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId || !this.actor) return;
+
+        // Shift+click = damage roll
+        if (ev.shiftKey) {
+          // For now, just log (Phase 3 will handle damage rolls)
+          console.log(`[Phase 2] Shift+click damage for: ${itemId}`);
+          return;
+        }
+
+        // Left click = attack roll
+        const item = this.actor.items?.get(itemId);
+        if (!item) return;
+
+        if (typeof item.roll === "function") {
+          await item.roll();
+        } else {
+          await rollAttack(this.actor, item);
+        }
+      });
+    }
+
+    /* ---------------- SKILL ROLLING (Legacy) ---------------- */
 
     for (const el of root.querySelectorAll('[data-action="roll-skill"]')) {
       el.addEventListener("click", async (ev) => {
@@ -482,6 +656,76 @@ export class SWSEV2CharacterSheet extends
           const item = this.actor.items?.get(itemId);
           item?.sheet?.render(true);
         }
+      });
+    }
+
+    /* ---- PHASE 3: SKILL MODIFIER BREAKDOWN POPOUT & HOVER TOOLTIP ---- */
+
+    for (const miscCell of root.querySelectorAll('.skill-col-misc input')) {
+      miscCell.addEventListener("click", async (ev) => {
+        ev.stopPropagation();
+        const skillRow = ev.currentTarget?.closest('[data-skill-name]');
+        if (!skillRow) return;
+
+        const skillName = skillRow.dataset.skillName;
+        if (!skillName) return;
+
+        // Get modifiers from ModifierEngine
+        const modifiers = ModifierEngine.getSkillModifiers(this.actor, skillName);
+
+        // Show breakdown dialog
+        await ModifierBreakdownDialog.show(this.actor, modifiers, skillName);
+      });
+
+      // Add hover tooltip
+      miscCell.addEventListener("mouseenter", (ev) => {
+        const skillRow = ev.currentTarget?.closest('[data-skill-name]');
+        if (!skillRow) return;
+
+        const skillName = skillRow.dataset.skillName;
+        if (!skillName) return;
+
+        // Get modifiers from ModifierEngine
+        const modifiers = ModifierEngine.getSkillModifiers(this.actor, skillName);
+
+        // Build tooltip text
+        let tooltipText = `${skillName} Modifiers:\n`;
+        let total = 0;
+        if (modifiers && modifiers.length > 0) {
+          for (const mod of modifiers) {
+            const value = mod.value || 0;
+            total += value;
+            const sign = value >= 0 ? '+' : '';
+            tooltipText += `${sign}${value} ${mod.description || mod.sourceName}\n`;
+          }
+          tooltipText += `\nTotal: ${total >= 0 ? '+' : ''}${total}`;
+        } else {
+          tooltipText += `No modifiers applied.`;
+        }
+
+        ev.currentTarget.title = tooltipText;
+      });
+    }
+
+    /* ---- PHASE 3: TAKE 10/20 CONTEXT MENU ---- */
+
+    for (const skillRow of root.querySelectorAll('.skill-row-container')) {
+      const skillKey = skillRow.dataset.skillName;
+      if (!skillKey) continue;
+
+      // Right-click context for Take 10/20
+      skillRow.addEventListener("contextmenu", (ev) => {
+        ev.preventDefault();
+
+        const skill = this.actor.system?.skills?.[skillKey];
+        if (!skill) return;
+
+        const totalBonus = skill.total ?? 0;
+        const take10 = 10 + totalBonus;
+        const take20 = 20 + totalBonus;
+
+        const tooltip = `${skillKey}\nTake 10: ${take10}\nTake 20: ${take20}`;
+        ui.notifications.info(tooltip);
       });
     }
 
@@ -606,19 +850,61 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
-    /* ---- FEAT/TALENT BUTTONS ---- */
+    /* ---- FEAT/TALENT BUTTONS WITH PREREQUISITE CHECKING ---- */
 
     for (const btn of root.querySelectorAll('[data-action="add-feat"]')) {
       btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
+
+        // Track item count before opening selector
+        const itemCountBefore = this.actor?.items?.size ?? 0;
+
+        // Open feat selector
         game.swse.progression?.openFeatSelector?.(this.document);
+
+        // After selector completes, check for new items and validate prerequisites
+        setTimeout(async () => {
+          const itemCountAfter = this.actor?.items?.size ?? 0;
+          if (itemCountAfter > itemCountBefore) {
+            // New items were added, validate all feats
+            const newItems = Array.from(this.actor.items).filter(item => item.type === 'feat').slice(-1);
+            for (const item of newItems) {
+              const validation = PrerequisiteEngine.validateItemPrerequisites(this.actor, item);
+              if (!validation.valid) {
+                await PrerequisiteEngine.enableFreeBuildMode(this.actor);
+                ui.notifications.warn(`${item.name} has unmet prerequisites. Free Build Mode enabled.`);
+              }
+            }
+          }
+        }, 500);
       });
     }
 
     for (const btn of root.querySelectorAll('[data-action="add-talent"]')) {
       btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
+
+        // Track item count before opening selector
+        const itemCountBefore = this.actor?.items?.size ?? 0;
+
+        // Open talent selector
         game.swse.progression?.openTalentSelector?.(this.document);
+
+        // After selector completes, check for new items and validate prerequisites
+        setTimeout(async () => {
+          const itemCountAfter = this.actor?.items?.size ?? 0;
+          if (itemCountAfter > itemCountBefore) {
+            // New items were added, validate all talents
+            const newItems = Array.from(this.actor.items).filter(item => item.type === 'talent').slice(-1);
+            for (const item of newItems) {
+              const validation = PrerequisiteEngine.validateItemPrerequisites(this.actor, item);
+              if (!validation.valid) {
+                await PrerequisiteEngine.enableFreeBuildMode(this.actor);
+                ui.notifications.warn(`${item.name} has unmet prerequisites. Free Build Mode enabled.`);
+              }
+            }
+          }
+        }, 500);
       });
     }
 
@@ -662,6 +948,143 @@ export class SWSEV2CharacterSheet extends
         if (!actorId) return;
         const actor = game.actors.get(actorId);
         actor?.sheet?.render(true);
+      });
+    }
+
+    /* ---- PHASE 2: TALENTS & FEATS MANAGEMENT ---- */
+
+    for (const card of root.querySelectorAll('[data-toggle="expand"]')) {
+      card.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        card.style.boxShadow = card.style.boxShadow ? '' : '0 0 8px rgba(33, 150, 243, 0.3)';
+        const actions = card.querySelector('.talent-card-actions, .feat-card-actions');
+        if (actions) {
+          actions.style.opacity = actions.style.opacity === '0' ? '1' : '0';
+        }
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="delete-talent"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId || !this.actor) return;
+        await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+        ui.notifications.info("Talent removed.");
+
+        // Auto-revalidate build after item deletion
+        setTimeout(async () => {
+          const valid = await PrerequisiteEngine.validateBuild(this.actor);
+          if (valid) {
+            ui.notifications.info("Build revalidated - returning to validated mode.");
+            await this.render();
+          }
+        }, 250);
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="delete-feat"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId || !this.actor) return;
+        await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+        ui.notifications.info("Feat removed.");
+
+        // Auto-revalidate build after item deletion
+        setTimeout(async () => {
+          const valid = await PrerequisiteEngine.validateBuild(this.actor);
+          if (valid) {
+            ui.notifications.info("Build revalidated - returning to validated mode.");
+            await this.render();
+          }
+        }, 250);
+      });
+    }
+
+    /* ---- PHASE 3: PREREQUISITE VALIDATION & FREE BUILD MODE ---- */
+
+    const revalidateBtn = root.querySelector('[data-action="revalidate-build"]');
+    if (revalidateBtn) {
+      revalidateBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const valid = await PrerequisiteEngine.validateBuild(this.actor);
+        if (valid) {
+          ui.notifications.info("Build validated successfully!");
+          await this.render();
+        } else {
+          const audit = PrerequisiteEngine.auditBuild(this.actor);
+          const msg = PrerequisiteEngine.formatViolations(audit);
+          ui.notifications.warn(msg);
+        }
+      });
+    }
+
+    /* ---- PHASE 2: INVENTORY SEARCH FILTER ---- */
+
+    const inventorySearchInput = root.querySelector('[data-action="inventory-search"]');
+    if (inventorySearchInput) {
+      inventorySearchInput.addEventListener("input", async (ev) => {
+        this._inventorySearch = ev.target.value;
+        await this.render();
+      });
+    }
+
+    /* ---- PHASE 2: STACK SPLITTING ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="split-stack"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        const item = this.actor?.items?.get(itemId);
+        if (!item) return;
+
+        const currentQty = Number(item.system.quantity) || 1;
+        if (currentQty <= 1) {
+          ui.notifications.warn("Cannot split a stack of 1 item.");
+          return;
+        }
+
+        // Show inline split dialog
+        const splitQty = prompt(`Split ${item.name}?\nEnter quantity to split (1-${currentQty - 1}):`, "1");
+        if (!splitQty) return;
+
+        const qty = Number(splitQty);
+        if (!Number.isFinite(qty) || qty < 1 || qty >= currentQty) {
+          ui.notifications.error("Invalid split quantity.");
+          return;
+        }
+
+        // Update original item
+        await item.update({ "system.quantity": currentQty - qty });
+
+        // Create new stack
+        const newItem = item.toObject();
+        newItem.system.quantity = qty;
+        await this.actor.createEmbeddedDocuments("Item", [newItem]);
+
+        ui.notifications.info(`${item.name} split: ${qty} item(s) moved to new stack.`);
+      });
+    }
+
+    /* ---- PHASE 2: EXPAND/COLLAPSE ITEM CARDS ---- */
+
+    for (const card of root.querySelectorAll('[data-action="toggle-item-expand"]')) {
+      card.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId) return;
+
+        if (this._expandedItemIds.has(itemId)) {
+          this._expandedItemIds.delete(itemId);
+        } else {
+          this._expandedItemIds.add(itemId);
+        }
+
+        // Re-render to show/hide expanded content
+        this.render();
       });
     }
 

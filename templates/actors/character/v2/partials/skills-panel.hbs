@@ -40,7 +40,7 @@
   <div class="skills-list">
     <!-- Acrobatics -->
     {{#with system.skills.acrobatics as |skill|}}
-    <div class="skill-row-container" data-skill="acrobatics" data-skill-name="Acrobatics">
+    <div class="skill-row-container rollable-skill" data-skill="acrobatics" data-skill-name="Acrobatics">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="acrobatics" title="Mark as favorite">
@@ -78,7 +78,7 @@
 
     <!-- Climb -->
     {{#with system.skills.climb as |skill|}}
-    <div class="skill-row-container" data-skill="climb" data-skill-name="Climb">
+    <div class="skill-row-container rollable-skill" data-skill="climb" data-skill-name="Climb">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="climb" title="Mark as favorite">
@@ -116,7 +116,7 @@
 
     <!-- Deception -->
     {{#with system.skills.deception as |skill|}}
-    <div class="skill-row-container" data-skill="deception" data-skill-name="Deception">
+    <div class="skill-row-container rollable-skill" data-skill="deception" data-skill-name="Deception">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="deception" title="Mark as favorite">
@@ -154,7 +154,7 @@
 
     <!-- Endurance -->
     {{#with system.skills.endurance as |skill|}}
-    <div class="skill-row-container" data-skill="endurance" data-skill-name="Endurance">
+    <div class="skill-row-container rollable-skill" data-skill="endurance" data-skill-name="Endurance">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="endurance" title="Mark as favorite">
@@ -192,7 +192,7 @@
 
     <!-- Gather Information -->
     {{#with system.skills.gatherInformation as |skill|}}
-    <div class="skill-row-container" data-skill="gatherInformation" data-skill-name="Gather Information">
+    <div class="skill-row-container rollable-skill" data-skill="gatherInformation" data-skill-name="Gather Information">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="gatherInformation" title="Mark as favorite">
@@ -230,7 +230,7 @@
 
     <!-- Initiative -->
     {{#with system.skills.initiative as |skill|}}
-    <div class="skill-row-container" data-skill="initiative" data-skill-name="Initiative">
+    <div class="skill-row-container rollable-skill" data-skill="initiative" data-skill-name="Initiative">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="initiative" title="Mark as favorite">
@@ -268,7 +268,7 @@
 
     <!-- Jump -->
     {{#with system.skills.jump as |skill|}}
-    <div class="skill-row-container" data-skill="jump" data-skill-name="Jump">
+    <div class="skill-row-container rollable-skill" data-skill="jump" data-skill-name="Jump">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="jump" title="Mark as favorite">
@@ -306,7 +306,7 @@
 
     <!-- Knowledge (Bureaucracy) -->
     {{#with system.skills.knowledgeBureaucracy as |skill|}}
-    <div class="skill-row-container" data-skill="knowledgeBureaucracy" data-skill-name="Knowledge (Bureaucracy)">
+    <div class="skill-row-container rollable-skill" data-skill="knowledgeBureaucracy" data-skill-name="Knowledge (Bureaucracy)">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="knowledgeBureaucracy" title="Mark as favorite">
@@ -344,7 +344,7 @@
 
     <!-- Knowledge (Galactic Lore) -->
     {{#with system.skills.knowledgeGalacticLore as |skill|}}
-    <div class="skill-row-container" data-skill="knowledgeGalacticLore" data-skill-name="Knowledge (Galactic Lore)">
+    <div class="skill-row-container rollable-skill" data-skill="knowledgeGalacticLore" data-skill-name="Knowledge (Galactic Lore)">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="knowledgeGalacticLore" title="Mark as favorite">
@@ -382,7 +382,7 @@
 
     <!-- Knowledge (Life Sciences) -->
     {{#with system.skills.knowledgeLifeSciences as |skill|}}
-    <div class="skill-row-container" data-skill="knowledgeLifeSciences" data-skill-name="Knowledge (Life Sciences)">
+    <div class="skill-row-container rollable-skill" data-skill="knowledgeLifeSciences" data-skill-name="Knowledge (Life Sciences)">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="knowledgeLifeSciences" title="Mark as favorite">
@@ -420,7 +420,7 @@
 
     <!-- Knowledge (Physical Sciences) -->
     {{#with system.skills.knowledgePhysicalSciences as |skill|}}
-    <div class="skill-row-container" data-skill="knowledgePhysicalSciences" data-skill-name="Knowledge (Physical Sciences)">
+    <div class="skill-row-container rollable-skill" data-skill="knowledgePhysicalSciences" data-skill-name="Knowledge (Physical Sciences)">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="knowledgePhysicalSciences" title="Mark as favorite">
@@ -458,7 +458,7 @@
 
     <!-- Knowledge (Social Sciences) -->
     {{#with system.skills.knowledgeSocialSciences as |skill|}}
-    <div class="skill-row-container" data-skill="knowledgeSocialSciences" data-skill-name="Knowledge (Social Sciences)">
+    <div class="skill-row-container rollable-skill" data-skill="knowledgeSocialSciences" data-skill-name="Knowledge (Social Sciences)">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="knowledgeSocialSciences" title="Mark as favorite">
@@ -496,7 +496,7 @@
 
     <!-- Knowledge (Tactics) -->
     {{#with system.skills.knowledgeTactics as |skill|}}
-    <div class="skill-row-container" data-skill="knowledgeTactics" data-skill-name="Knowledge (Tactics)">
+    <div class="skill-row-container rollable-skill" data-skill="knowledgeTactics" data-skill-name="Knowledge (Tactics)">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="knowledgeTactics" title="Mark as favorite">
@@ -534,7 +534,7 @@
 
     <!-- Knowledge (Technology) -->
     {{#with system.skills.knowledgeTechnology as |skill|}}
-    <div class="skill-row-container" data-skill="knowledgeTechnology" data-skill-name="Knowledge (Technology)">
+    <div class="skill-row-container rollable-skill" data-skill="knowledgeTechnology" data-skill-name="Knowledge (Technology)">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="knowledgeTechnology" title="Mark as favorite">
@@ -572,7 +572,7 @@
 
     <!-- Mechanics -->
     {{#with system.skills.mechanics as |skill|}}
-    <div class="skill-row-container" data-skill="mechanics" data-skill-name="Mechanics">
+    <div class="skill-row-container rollable-skill" data-skill="mechanics" data-skill-name="Mechanics">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="mechanics" title="Mark as favorite">
@@ -610,7 +610,7 @@
 
     <!-- Perception -->
     {{#with system.skills.perception as |skill|}}
-    <div class="skill-row-container" data-skill="perception" data-skill-name="Perception">
+    <div class="skill-row-container rollable-skill" data-skill="perception" data-skill-name="Perception">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="perception" title="Mark as favorite">
@@ -648,7 +648,7 @@
 
     <!-- Persuasion -->
     {{#with system.skills.persuasion as |skill|}}
-    <div class="skill-row-container" data-skill="persuasion" data-skill-name="Persuasion">
+    <div class="skill-row-container rollable-skill" data-skill="persuasion" data-skill-name="Persuasion">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="persuasion" title="Mark as favorite">
@@ -686,7 +686,7 @@
 
     <!-- Pilot -->
     {{#with system.skills.pilot as |skill|}}
-    <div class="skill-row-container" data-skill="pilot" data-skill-name="Pilot">
+    <div class="skill-row-container rollable-skill" data-skill="pilot" data-skill-name="Pilot">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="pilot" title="Mark as favorite">
@@ -724,7 +724,7 @@
 
     <!-- Ride -->
     {{#with system.skills.ride as |skill|}}
-    <div class="skill-row-container" data-skill="ride" data-skill-name="Ride">
+    <div class="skill-row-container rollable-skill" data-skill="ride" data-skill-name="Ride">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="ride" title="Mark as favorite">
@@ -762,7 +762,7 @@
 
     <!-- Stealth -->
     {{#with system.skills.stealth as |skill|}}
-    <div class="skill-row-container" data-skill="stealth" data-skill-name="Stealth">
+    <div class="skill-row-container rollable-skill" data-skill="stealth" data-skill-name="Stealth">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="stealth" title="Mark as favorite">
@@ -800,7 +800,7 @@
 
     <!-- Survival -->
     {{#with system.skills.survival as |skill|}}
-    <div class="skill-row-container" data-skill="survival" data-skill-name="Survival">
+    <div class="skill-row-container rollable-skill" data-skill="survival" data-skill-name="Survival">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="survival" title="Mark as favorite">
@@ -838,7 +838,7 @@
 
     <!-- Swim -->
     {{#with system.skills.swim as |skill|}}
-    <div class="skill-row-container" data-skill="swim" data-skill-name="Swim">
+    <div class="skill-row-container rollable-skill" data-skill="swim" data-skill-name="Swim">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="swim" title="Mark as favorite">
@@ -876,7 +876,7 @@
 
     <!-- Treat Injury -->
     {{#with system.skills.treatInjury as |skill|}}
-    <div class="skill-row-container" data-skill="treatInjury" data-skill-name="Treat Injury">
+    <div class="skill-row-container rollable-skill" data-skill="treatInjury" data-skill-name="Treat Injury">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="treatInjury" title="Mark as favorite">
@@ -914,7 +914,7 @@
 
     <!-- Use Computer -->
     {{#with system.skills.useComputer as |skill|}}
-    <div class="skill-row-container" data-skill="useComputer" data-skill-name="Use Computer">
+    <div class="skill-row-container rollable-skill" data-skill="useComputer" data-skill-name="Use Computer">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="useComputer" title="Mark as favorite">
@@ -953,7 +953,7 @@
     <!-- Use the Force (if applicable) -->
     {{#if actor.system.forceSensitive}}
     {{#with system.skills.useTheForce as |skill|}}
-    <div class="skill-row-container" data-skill="useTheForce" data-skill-name="Use the Force">
+    <div class="skill-row-container rollable-skill" data-skill="useTheForce" data-skill-name="Use the Force">
       <div class="skill-row flexrow">
         <div class="skill-col-favorite">
           <button type="button" class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}" data-action="toggle-favorite" data-skill="useTheForce" title="Mark as favorite">

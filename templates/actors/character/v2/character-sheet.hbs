@@ -1,5 +1,70 @@
 <div class="swse-sheet swse-character-sheet v2">
   <div class="sheet-inner">
+    <!-- PHASE 1: DATAPAD HEADER -->
+    <section class="datapad-header">
+      <div class="header-main">
+        <div>
+          <div class="char-name">{{actor.name}}</div>
+          <div class="char-meta">
+            {{#if system.class}}{{system.class}}{{/if}}
+            {{#if system.level}}Level {{system.level}}{{/if}}
+          </div>
+        </div>
+        <div class="header-defenses">
+          <div class="swse-stat" data-swse-tooltip="FortitudeDefense"><div class="label">FORT</div><div class="value">{{derived.defenses.fort}}</div></div>
+          <div class="swse-stat" data-swse-tooltip="ReflexDefense"><div class="label">REF</div><div class="value">{{derived.defenses.ref}}</div></div>
+          <div class="swse-stat" data-swse-tooltip="WillDefense"><div class="label">WILL</div><div class="value">{{derived.defenses.will}}</div></div>
+          <div class="swse-stat" data-swse-tooltip="DamageThreshold"><div class="label">DT</div><div class="value">{{derived.damage.threshold}}</div></div>
+        </div>
+      </div>
+
+      <!-- XP BAR -->
+      {{#if xpEnabled}}
+      <div class="header-bar">
+        <div style="font-size: 0.7rem; opacity: 0.6; margin-bottom: 2px;">XP</div>
+        <div class="datapad-status-bar xp {{#if xpLevelReady}}xp-ready{{/if}}">
+          <div class="fill" style="width: {{xpPercent}}%;"></div>
+        </div>
+      </div>
+      {{/if}}
+
+      <!-- HP BAR -->
+      <div class="header-bar">
+        <div style="font-size: 0.7rem; opacity: 0.6; margin-bottom: 2px;">HP</div>
+        <div class="datapad-status-bar hp {{#if hpCritical}}hp-critical{{else if hpWarning}}hp-warning{{/if}}">
+          <div class="fill" style="width: {{hpPercent}}%;"></div>
+        </div>
+      </div>
+
+      <!-- STATUS INDICATORS -->
+      <div class="datapad-indicators">
+        {{#if ctWarning}}<span class="ct-warning">⚠ Condition</span>{{/if}}
+        {{#if fpAvailable}}<span class="fp-available">◆ Force Points</span>{{/if}}
+      </div>
+    </section>
+
+    <!-- PHASE 1: COMMAND BAR -->
+    <section class="datapad-command-bar">
+      {{#if isLevel0}}
+        <button type="button" class="cmd-chargen" data-action="cmd-chargen" title="Start character creation">
+          ⚙ Character Generator
+        </button>
+      {{else}}
+        <button type="button" class="cmd-levelup {{#if xpLevelReady}}level-ready{{/if}}" data-action="cmd-levelup" title="Advance to next level">
+          ⬆ Level Up
+        </button>
+      {{/if}}
+      <button type="button" class="cmd-store" data-action="cmd-store" title="Access the Galactic Trade Exchange">
+        🛒 Store
+      </button>
+      <button type="button" class="cmd-rest" data-action="cmd-rest" title="Rest and restore abilities">
+        😴 Rest
+      </button>
+      <button type="button" class="cmd-conditions" data-action="cmd-conditions" title="Manage conditions">
+        📋 Conditions
+      </button>
+    </section>
+
     <header class="sheet-header">
     <div class="flexrow" style="align-items:center; gap:12px;">
       <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="52" height="52" style="border-radius:8px;"/>
@@ -15,6 +80,18 @@
       </div>
     </div>
   </header>
+
+  <!-- PHASE 3: BUILD MODE INDICATOR -->
+  {{#if (eq buildMode "free")}}
+    <div style="background: #fff3e0; border: 2px solid #ff6b35; border-radius: 6px; padding: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+      <span style="color: #e65100; font-weight: bold;">
+        ⚠ Free Build Mode — Prerequisites not enforced
+      </span>
+      <button type="button" class="revalidate-build" style="background: #2196F3; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em; data-action="revalidate-build">
+        Revalidate Build
+      </button>
+    </div>
+  {{/if}}
 
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item active" data-tab="overview">Overview</a>
@@ -47,6 +124,41 @@
 
     <section class="tab" data-group="primary" data-tab="combat">
       <div class="swse-v2-sheet-grid">
+
+        <!-- PHASE 3: INITIATIVE DISPLAY -->
+        <div class="swse-v2-full">
+          <div class="holo-panel" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <div class="section-bar" style="background: rgba(0,0,0,0.2);">
+              <h3 class="section-header" style="color: white;">⚡ Initiative</h3>
+            </div>
+            <div style="padding: 16px; text-align: center;">
+              <div style="font-size: 0.75rem; opacity: 0.9; margin-bottom: 8px;">Total Modifier</div>
+              <div style="font-size: 2.5em; font-weight: bold;">
+                {{#if derived.skills.list}}
+                  {{#with (lookup (reduce derived.skills.list (fn (accum item)
+                    (if (eq item.key "initiative") item accum))) null) as |initSkill|}}
+                    {{#if initSkill}}
+                      {{#if (lt initSkill.total 0)}}−{{/if}}{{abs initSkill.total}}
+                    {{else}}
+                      +0
+                    {{/if}}
+                  {{/with}}
+                {{else}}
+                  +0
+                {{/if}}
+              </div>
+              <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 12px;">
+                <button type="button"
+                        class="rollable-skill"
+                        data-skill="initiative"
+                        style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                  Roll Initiative
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
         </div>
@@ -89,13 +201,24 @@
             {{#if (filter items "type" "forcePower")}}
               <div class="force-powers-list">
                 {{#each (filter items "type" "forcePower") as |item|}}
-                  <div class="force-power-row" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee;">
+                  {{#if (eq (lowercase item.system.descriptor) "light")}}
+                    {{#set forceCardStyle "border-left: 4px solid #66ccff;"}}
+                  {{else if (eq (lowercase item.system.descriptor) "dark")}}
+                    {{#set forceCardStyle "border-left: 4px solid #ff4444;"}}
+                  {{else}}
+                    {{#set forceCardStyle "border-left: 4px solid #888;"}}
+                  {{/if}}
+
+                  <div class="force-power-row" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee; {{forceCardStyle}}">
                     <button type="button"
                             class="force-power-name"
                             data-action="roll-force-power"
                             data-item-id="{{item.id}}"
                             style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline; text-align: left; flex: 1;">
                       {{item.name}}
+                      {{#if item.system.descriptor}}
+                        <span style="font-size: 0.7rem; opacity: 0.6; margin-left: 4px;">({{item.system.descriptor}})</span>
+                      {{/if}}
                     </button>
                     <button type="button"
                             class="force-power-delete"
@@ -185,10 +308,39 @@
         <div class="swse-v2-full">
           <section class="gear-section">
             <h3>Equipment</h3>
+
+            <!-- PHASE 2: INVENTORY SUMMARY & SEARCH -->
+            <div class="inventory-summary" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px;">
+              <div style="font-size: 0.85rem;">
+                <strong>Weight:</strong> {{totalWeight}} lbs
+              </div>
+              <div style="font-size: 0.85rem; padding: 4px 8px; border-radius: 4px; {{#if (eq encumbranceState "normal")}}background: #e8f5e9; color: #2e7d32;{{else if (eq encumbranceState "encumbered")}}background: #fff3e0; color: #e65100;{{else if (eq encumbranceState "heavy")}}background: #ffe0e0; color: #c62828;{{else}}background: #ffebee; color: #b71c1c;{{/if}}">
+                {{encumbranceLabel}}
+              </div>
+            </div>
+
+            <!-- PHASE 2: INVENTORY SEARCH -->
+            <div class="inventory-search" style="margin-bottom: 10px;">
+              <input type="text"
+                     class="inventory-search-input"
+                     data-action="inventory-search"
+                     placeholder="Search inventory..."
+                     value="{{inventorySearch}}"
+                     style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #ccc; background: #fff;" />
+            </div>
+
             {{#if equipment}}
               <div class="equipment-list" style="border-top: 1px solid #ddd;">
                 {{#each equipment as |item|}}
-                  <div class="equipment-row" style="display: grid; grid-template-columns: 1fr 80px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                  <div class="equipment-row" style="display: grid; grid-template-columns: 20px 1fr 80px 100px 60px 60px 60px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                    <!-- PHASE 2: EXPAND/COLLAPSE TOGGLE -->
+                    <button type="button"
+                            class="item-expand-toggle"
+                            data-action="toggle-item-expand"
+                            data-item-id="{{item.id}}"
+                            style="background: none; border: none; cursor: pointer; padding: 0; width: 20px; text-align: center;">
+                      {{#if item._expanded}}▼{{else}}▶{{/if}}
+                    </button>
                     <div class="equipment-name">
                       <button type="button"
                               class="equipment-name-btn swse-v2-open-item"
@@ -205,18 +357,30 @@
                     <div class="equipment-weight" style="text-align: right;">
                       {{item.system.weight}} lbs
                     </div>
+                    <!-- PHASE 2: SPLIT BUTTON (if qty > 1) -->
+                    {{#if (gt item.system.quantity 1)}}
+                      <button type="button"
+                              class="equipment-split"
+                              data-action="split-stack"
+                              data-item-id="{{item.id}}"
+                              style="background: #2196F3; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.8em;">
+                        Split
+                      </button>
+                    {{else}}
+                      <div></div>
+                    {{/if}}
                     <button type="button"
                             class="equipment-sell"
                             data-action="sell-item"
                             data-item-id="{{item.id}}"
-                            style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                            style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.8em;">
                       Sell
                     </button>
                     <button type="button"
                             class="equipment-delete"
                             data-action="delete-item"
                             data-item-id="{{item.id}}"
-                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.8em;">
                       Delete
                     </button>
                   </div>
@@ -324,19 +488,36 @@
                 <div>
                   <div style="font-size: 0.9em; color: #666; margin-bottom: 4px;">Total Weight</div>
                   <div style="font-size: 1.5em; font-weight: bold;">
-                    {{derived.encumbrance.total}}/{{derived.encumbrance.max}} lbs
+                    {{derived.encumbrance.total}} lbs
                   </div>
                 </div>
                 <div>
                   <div style="font-size: 0.9em; color: #666; margin-bottom: 4px;">Encumbrance State</div>
-                  <div style="font-size: 1.2em; font-weight: bold; {{#if (eq derived.encumbrance.state "Heavily Encumbered")}}color: #cc0000;{{/if}}">
-                    {{derived.encumbrance.state}}
+                  <div style="font-size: 1.2em; font-weight: bold; {{#if (eq derived.encumbrance.state "heavy")}}color: #ff6b35;{{else if (eq derived.encumbrance.state "overloaded")}}color: #cc0000;{{/if}}">
+                    {{derived.encumbrance.label}}
                   </div>
                 </div>
               </div>
-              {{#if derived.encumbrance.penalty}}
-                <div style="color: #cc0000; font-weight: bold;">
-                  Penalty: {{derived.encumbrance.penalty}}
+
+              <!-- Load thresholds -->
+              <div style="font-size: 0.75rem; margin-bottom: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px; opacity: 0.8;">
+                <div>Light Load: {{derived.encumbrance.lightLoad}} lbs</div>
+                <div>Medium Load: {{derived.encumbrance.mediumLoad}} lbs</div>
+                <div>Heavy Load: {{derived.encumbrance.heavyLoad}} lbs</div>
+              </div>
+
+              {{#if derived.encumbrance.skillPenalty}}
+                <div style="color: #ff6b35; font-weight: bold; margin-bottom: 8px;">
+                  Skill Penalty: {{derived.encumbrance.skillPenalty}}
+                </div>
+                <div style="font-size: 0.75rem; opacity: 0.9;">
+                  <strong>Affected Skills:</strong> {{#join derived.encumbrance.affectedSkills ", "}}{{/join}}
+                </div>
+              {{/if}}
+
+              {{#if derived.encumbrance.removeDexToReflex}}
+                <div style="color: #cc0000; font-weight: bold; margin-top: 8px;">
+                  ⚠ Dex bonus to Reflex removed
                 </div>
               {{/if}}
             </div>
@@ -385,6 +566,8 @@
 
     <section class="tab" data-group="primary" data-tab="biography">
       <div class="swse-v2-sheet-grid">
+
+        <!-- CHARACTER NOTES -->
         <div class="swse-v2-full">
           <div class="holo-panel">
             <div class="section-bar">
@@ -392,10 +575,67 @@
             </div>
             <textarea name="system.biography"
                       placeholder="Write your character's background, personality, goals, bonds, motivations, and other notes here..."
-                      style="width: 100%; height: 300px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; resize: vertical;"
+                      style="width: 100%; height: 250px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; resize: vertical;"
                       {{#unless editable}}disabled{{/unless}}>{{system.biography}}</textarea>
           </div>
         </div>
+
+        <!-- BIOGRAPHY EXPANSION FIELDS -->
+        <div class="swse-v2-left">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Background Details</h3>
+            </div>
+
+            <div style="padding: 8px;">
+              <!-- Contacts / Allies -->
+              <div style="margin-bottom: 12px;">
+                <label style="font-size: 0.7rem; text-transform: uppercase; opacity: 0.6; display: block; margin-bottom: 4px;">Contacts & Allies</label>
+                <textarea name="system.biography.contacts"
+                          placeholder="List contacts, allies, NPCs, and important relationships..."
+                          style="width: 100%; height: 80px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85em; resize: vertical;"
+                          {{#unless editable}}disabled{{/unless}}>{{system.biography.contacts}}</textarea>
+              </div>
+
+              <!-- Reputation -->
+              <div style="margin-bottom: 12px;">
+                <label style="font-size: 0.7rem; text-transform: uppercase; opacity: 0.6; display: block; margin-bottom: 4px;">Reputation & Notoriety</label>
+                <textarea name="system.biography.reputation"
+                          placeholder="How is your character known? What are they famous or infamous for?"
+                          style="width: 100%; height: 60px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85em; resize: vertical;"
+                          {{#unless editable}}disabled{{/unless}}>{{system.biography.reputation}}</textarea>
+              </div>
+
+              <!-- Faction Alignment -->
+              <div>
+                <label style="font-size: 0.7rem; text-transform: uppercase; opacity: 0.6; display: block; margin-bottom: 4px;">Faction Alignment</label>
+                <input type="text"
+                       name="system.biography.faction"
+                       placeholder="Republic, Empire, Smugglers, etc."
+                       value="{{system.biography.faction}}"
+                       style="width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85em;"
+                       {{#unless editable}}disabled{{/unless}} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GM-ONLY NOTES -->
+        {{#if isGM}}
+        <div class="swse-v2-right">
+          <div class="holo-panel" style="background: #fffacd; border: 1px solid #daa520;">
+            <div class="section-bar" style="background: #daa520; color: white;">
+              <h3 class="section-header">GM-Only Notes</h3>
+            </div>
+
+            <textarea name="system.biography.gmNotes"
+                      placeholder="Secret information visible only to GM..."
+                      style="width: 100%; height: 250px; padding: 8px; border: 1px solid #daa520; border-radius: 4px; font-family: monospace; resize: vertical; background: #ffffef;"
+                      {{#unless editable}}disabled{{/unless}}>{{system.biography.gmNotes}}</textarea>
+          </div>
+        </div>
+        {{/if}}
+
       </div>
     </section>
   </section>
