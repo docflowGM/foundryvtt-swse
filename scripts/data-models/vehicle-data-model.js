@@ -531,6 +531,18 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             return Number.isNaN(num) ? 0 : Math.floor(num);
           }
         }),
+        persistentSteps: new fields.NumberField({
+          required: true,
+          nullable: true,
+          initial: 0,
+          min: 0,
+          integer: true,
+          clean: value => {
+            if (value === null || value === undefined || value === '') {return 0;}
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
+        }),
         penalty: new fields.NumberField({
           required: true,
           nullable: true,
@@ -701,6 +713,9 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
     // Formula: Fortitude Defense + Size-specific modifier
     const sizeDamageModifier = this._getSizeDamageThresholdModifier();
     this.damageThreshold = this.fortitudeDefense + sizeDamageModifier;
+
+    // Enhanced Massive Damage: override DT if formula modified
+    this._applyEnhancedDamageThreshold(sizeDamageModifier);
 
     // Calculate Condition Track penalty
     if (this.conditionTrack) {
@@ -944,5 +959,29 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
 
     const initiativeBonus = pilotInitiativeMod + sizeModifier + dexMod;
     this.initiative = `${initiativeBonus >= 0 ? '+' : ''}${initiativeBonus}`;
+  }
+
+  /**
+   * Apply enhanced DT formula override from ThresholdEngine settings.
+   * Only activates if both enableEnhancedMassiveDamage and modifyDamageThresholdFormula are true.
+   * @param {number} sizeDamageModifier - The size-based DT modifier already calculated
+   */
+  _applyEnhancedDamageThreshold(sizeDamageModifier) {
+    try {
+      const enabled = game.settings?.get('foundryvtt-swse', 'enableEnhancedMassiveDamage');
+      const modifyFormula = game.settings?.get('foundryvtt-swse', 'modifyDamageThresholdFormula');
+      if (!enabled || !modifyFormula) return;
+
+      const formulaType = game.settings?.get('foundryvtt-swse', 'damageThresholdFormulaType') ?? 'fullLevel';
+      const vehicleLevel = this.challengeLevel ?? 0;
+
+      if (formulaType === 'halfLevel') {
+        this.damageThreshold = this.fortitudeDefense + Math.floor(vehicleLevel / 2) + sizeDamageModifier;
+      } else {
+        this.damageThreshold = this.fortitudeDefense + vehicleLevel + sizeDamageModifier;
+      }
+    } catch {
+      // Settings not yet registered or not available; skip silently
+    }
   }
 }

@@ -103,6 +103,10 @@ import { CombatSuggestionEngine } from "./scripts/suggestion-engine/combat-engin
 import { testHarness } from "./scripts/suggestion-engine/test-harness.js";
 import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discovery/index.js";
 
+// House Rule Engines
+import { ThresholdEngine } from "./scripts/engine/combat/threshold-engine.js";
+import { MountEngine } from "./scripts/engine/mount/mount-engine.js";
+
 // Misc
 import { SystemInitHooks } from "./scripts/progression/hooks/system-init-hooks.js";
 import { Upkeep } from "./scripts/automation/upkeep.js";
@@ -199,6 +203,10 @@ Hooks.once("ready", async () => {
   initializePhase5();
   registerCriticalFlowTests();
 
+  // Initialize House Rule Engines
+  MountEngine.registerHooks();
+  Hooks.on('deleteCombat', (combat) => ThresholdEngine.onCombatEnd(combat));
+
   // Restore global SWSE namespace
   game.swse = {
     engine: SWSEProgressionEngine,
@@ -217,7 +225,9 @@ Hooks.once("ready", async () => {
       FeatSystem,
       SkillSystem,
       TalentAbilitiesEngine,
-      CombatSuggestionEngine
+      CombatSuggestionEngine,
+      ThresholdEngine,
+      MountEngine
     }
   };
 
@@ -226,7 +236,9 @@ Hooks.once("ready", async () => {
       FeatSystem,
       SkillSystem,
       TalentAbilitiesEngine,
-      CombatSuggestionEngine
+      CombatSuggestionEngine,
+      ThresholdEngine,
+      MountEngine
     },
     debug: {
       testHarness,

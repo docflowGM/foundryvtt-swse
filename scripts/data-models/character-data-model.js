@@ -118,7 +118,22 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       conditionTrack: new fields.SchemaField({
         current: new fields.NumberField({ required: true, initial: 0, min: 0, max: 5, integer: true }),
         persistent: new fields.BooleanField({ required: true, initial: false }),
+        persistentSteps: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
         penalty: new fields.NumberField({ required: true, initial: 0, integer: true })
+      }),
+
+      // Mount System — rider state
+      mounted: new fields.SchemaField({
+        isMounted: new fields.BooleanField({ required: true, initial: false }),
+        mountId: new fields.StringField({ required: false, nullable: true, initial: null })
+      }),
+
+      // Mount System — mount state (when this actor IS a mount)
+      mount: new fields.SchemaField({
+        riderIds: new fields.ArrayField(
+          new fields.StringField({ required: true, initial: '' }),
+          { required: true, initial: [] }
+        )
       }),
 
       // Level
@@ -318,6 +333,60 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Calculate initiative AFTER skills are prepared (initiative is a skill)
     this._calculateInitiative();
+
+    // Mount System: override effective speed when mounted
+    this._applyMountedMovement();
+
+    // Enhanced Massive Damage: override DT if formula modified
+    this._applyEnhancedDamageThreshold();
+  }
+
+  /**
+   * Apply mounted movement override.
+   * When mounted, use mount's speed instead of character's own.
+   * Does NOT mutate base speed; only overrides effectiveSpeed.
+   */
+  _applyMountedMovement() {
+    if (!this.mounted?.isMounted) return;
+
+    const mountId = this.mounted.mountId;
+    if (!mountId) return;
+
+    const mount = game.actors?.get(mountId);
+    if (!mount) return;
+
+    this.effectiveSpeed = mount.system.speed ?? mount.system.effectiveSpeed ?? this.effectiveSpeed;
+  }
+
+  /**
+   * Apply enhanced DT formula override from ThresholdEngine settings.
+   * Only activates if both enableEnhancedMassiveDamage and modifyDamageThresholdFormula are true.
+   */
+  _applyEnhancedDamageThreshold() {
+    try {
+      const enabled = game.settings?.get('foundryvtt-swse', 'enableEnhancedMassiveDamage');
+      const modifyFormula = game.settings?.get('foundryvtt-swse', 'modifyDamageThresholdFormula');
+      if (!enabled || !modifyFormula) return;
+
+      const formulaType = game.settings?.get('foundryvtt-swse', 'damageThresholdFormulaType') ?? 'fullLevel';
+      const fortTotal = this.defenses?.fort?.total ?? 10;
+      const heroicLevel = this.heroicLevel ?? this.level ?? 1;
+
+      // Character size modifier for DT
+      const sizeModifiers = {
+        'fine': -10, 'diminutive': -5, 'tiny': -2, 'small': -1,
+        'medium': 0, 'large': 1, 'huge': 2, 'gargantuan': 5, 'colossal': 10
+      };
+      const sizeMod = sizeModifiers[(this.parent?.system?.size || 'medium').toLowerCase()] ?? 0;
+
+      if (formulaType === 'halfLevel') {
+        this.damageThreshold = fortTotal + Math.floor(heroicLevel / 2) + sizeMod;
+      } else {
+        this.damageThreshold = fortTotal + heroicLevel + sizeMod;
+      }
+    } catch {
+      // Settings not yet registered or not available; skip silently
+    }
   }
 
   /**
