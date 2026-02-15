@@ -6039,3 +6039,165 @@ select.action-type-filter {
   color: rgba(0, 255, 150, 1);
   text-shadow: 0 0 8px rgba(0, 255, 150, 0.4);
 }
+
+/* =========================================================
+   PHASE 1: SWSE DATAPAD HEADER
+   ========================================================= */
+
+.character-sheet .datapad-header {
+  background: linear-gradient(
+    180deg,
+    rgba(15, 22, 32, 0.95),
+    rgba(10, 16, 24, 0.95)
+  );
+  border-bottom: 1px solid rgba(0, 255, 255, 0.15);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Name + Class Row */
+.character-sheet .datapad-header .header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.character-sheet .datapad-header .char-name {
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #e6faff;
+}
+
+.character-sheet .datapad-header .char-meta {
+  font-size: 0.85rem;
+  opacity: 0.75;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.character-sheet .datapad-header .header-defenses {
+  display: flex;
+  gap: 12px;
+}
+
+/* =========================================================
+   STATUS BARS
+   ========================================================= */
+
+.datapad-status-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.datapad-status-bar .fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+/* XP BAR */
+.datapad-status-bar.xp .fill {
+  background: linear-gradient(
+    90deg,
+    #00e0ff,
+    #00ffff
+  );
+}
+
+.datapad-status-bar.xp-ready .fill {
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+}
+
+/* HP BAR */
+.datapad-status-bar.hp .fill {
+  background: linear-gradient(
+    90deg,
+    #44ff88,
+    #00ffaa
+  );
+}
+
+.datapad-status-bar.hp-warning .fill {
+  background: linear-gradient(
+    90deg,
+    #ffcc00,
+    #ff9900
+  );
+}
+
+.datapad-status-bar.hp-critical .fill {
+  background: linear-gradient(
+    90deg,
+    #ff3300,
+    #cc0000
+  );
+  box-shadow: 0 0 6px rgba(255, 0, 0, 0.6);
+}
+
+/* =========================================================
+   CONDITION + FORCE STATUS INDICATORS
+   ========================================================= */
+
+.datapad-indicators {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+}
+
+.datapad-indicators .ct-warning {
+  color: #ffcc00;
+}
+
+.datapad-indicators .fp-available {
+  color: #00ffff;
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.4);
+}
+
+/* =========================================================
+   PHASE 1: COMMAND BAR
+   ========================================================= */
+
+.character-sheet .datapad-command-bar {
+  display: flex;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(10, 18, 28, 0.95);
+  border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+/* Command Buttons */
+.datapad-command-bar button {
+  background: transparent;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  color: #ccfaff;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.datapad-command-bar button:hover {
+  background: rgba(0, 255, 255, 0.08);
+  border-color: rgba(0, 255, 255, 0.6);
+}
+
+.datapad-command-bar button.level-ready {
+  border-color: #00ffff;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+}
+
+.datapad-command-bar button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.1);
+}

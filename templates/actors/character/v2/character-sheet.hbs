@@ -1,5 +1,70 @@
 <div class="swse-sheet swse-character-sheet v2">
   <div class="sheet-inner">
+    <!-- PHASE 1: DATAPAD HEADER -->
+    <section class="datapad-header">
+      <div class="header-main">
+        <div>
+          <div class="char-name">{{actor.name}}</div>
+          <div class="char-meta">
+            {{#if system.class}}{{system.class}}{{/if}}
+            {{#if system.level}}Level {{system.level}}{{/if}}
+          </div>
+        </div>
+        <div class="header-defenses">
+          <div class="swse-stat" data-swse-tooltip="FortitudeDefense"><div class="label">FORT</div><div class="value">{{derived.defenses.fort}}</div></div>
+          <div class="swse-stat" data-swse-tooltip="ReflexDefense"><div class="label">REF</div><div class="value">{{derived.defenses.ref}}</div></div>
+          <div class="swse-stat" data-swse-tooltip="WillDefense"><div class="label">WILL</div><div class="value">{{derived.defenses.will}}</div></div>
+          <div class="swse-stat" data-swse-tooltip="DamageThreshold"><div class="label">DT</div><div class="value">{{derived.damage.threshold}}</div></div>
+        </div>
+      </div>
+
+      <!-- XP BAR -->
+      {{#if xpEnabled}}
+      <div class="header-bar">
+        <div style="font-size: 0.7rem; opacity: 0.6; margin-bottom: 2px;">XP</div>
+        <div class="datapad-status-bar xp {{#if xpLevelReady}}xp-ready{{/if}}">
+          <div class="fill" style="width: {{xpPercent}}%;"></div>
+        </div>
+      </div>
+      {{/if}}
+
+      <!-- HP BAR -->
+      <div class="header-bar">
+        <div style="font-size: 0.7rem; opacity: 0.6; margin-bottom: 2px;">HP</div>
+        <div class="datapad-status-bar hp {{#if hpCritical}}hp-critical{{else if hpWarning}}hp-warning{{/if}}">
+          <div class="fill" style="width: {{hpPercent}}%;"></div>
+        </div>
+      </div>
+
+      <!-- STATUS INDICATORS -->
+      <div class="datapad-indicators">
+        {{#if ctWarning}}<span class="ct-warning">⚠ Condition</span>{{/if}}
+        {{#if fpAvailable}}<span class="fp-available">◆ Force Points</span>{{/if}}
+      </div>
+    </section>
+
+    <!-- PHASE 1: COMMAND BAR -->
+    <section class="datapad-command-bar">
+      {{#if isLevel0}}
+        <button type="button" class="cmd-chargen" data-action="cmd-chargen" title="Start character creation">
+          ⚙ Character Generator
+        </button>
+      {{else}}
+        <button type="button" class="cmd-levelup {{#if xpLevelReady}}level-ready{{/if}}" data-action="cmd-levelup" title="Advance to next level">
+          ⬆ Level Up
+        </button>
+      {{/if}}
+      <button type="button" class="cmd-store" data-action="cmd-store" title="Access the Galactic Trade Exchange">
+        🛒 Store
+      </button>
+      <button type="button" class="cmd-rest" data-action="cmd-rest" title="Rest and restore abilities">
+        😴 Rest
+      </button>
+      <button type="button" class="cmd-conditions" data-action="cmd-conditions" title="Manage conditions">
+        📋 Conditions
+      </button>
+    </section>
+
     <header class="sheet-header">
     <div class="flexrow" style="align-items:center; gap:12px;">
       <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="52" height="52" style="border-radius:8px;"/>

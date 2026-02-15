@@ -140,6 +140,25 @@ export class SWSEV2CharacterSheet extends
     const xpPercent = xpData?.progressPercent ?? 0;
     const isGM = game.user?.isGM === true;
 
+    // PHASE 1: Datapad Header + Command Bar state
+    const isLevel0 = (actor.system?.level ?? 0) === 0;
+    const xpLevelReady = xpData?.readyToLevel ?? false;
+
+    // HP state
+    const currentHp = actor.system?.hp?.value ?? 0;
+    const maxHp = actor.system?.hp?.max ?? 1;
+    const hpPercent = Math.max(0, Math.min(100, (currentHp / maxHp) * 100));
+    const hpWarning = hpPercent <= 50 && hpPercent > 25;
+    const hpCritical = hpPercent <= 25;
+
+    // Condition Track state
+    const conditionStep = actor.system?.conditionTrack?.current ?? 0;
+    const ctWarning = conditionStep > 0;
+
+    // Force Points state
+    const forcePoints = actor.system?.forcePoints?.value ?? 0;
+    const fpAvailable = forcePoints > 0;
+
     const overrides = {
       actor,
       system: actor.system,
@@ -148,6 +167,13 @@ export class SWSEV2CharacterSheet extends
       xpData,
       xpPercent,
       isGM,
+      isLevel0,
+      xpLevelReady,
+      hpPercent,
+      hpWarning,
+      hpCritical,
+      ctWarning,
+      fpAvailable,
       darkSideMax,
       darkSideSegments,
       items: actor.items.map(item => ({
@@ -297,6 +323,59 @@ export class SWSEV2CharacterSheet extends
         if (typeof this.actor?.useAction === "function") {
           await this.actor?.useAction(actionId);
         }
+      });
+    }
+
+    /* ---- PHASE 1: COMMAND BAR BUTTONS ---- */
+
+    const chargenBtn = root.querySelector('[data-action="cmd-chargen"]');
+    if (chargenBtn) {
+      chargenBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (this.actor) {
+          await SWSELevelUp.openEnhanced(this.actor);
+        }
+      });
+    }
+
+    const levelupBtn = root.querySelector('[data-action="cmd-levelup"]');
+    if (levelupBtn) {
+      levelupBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (this.actor) {
+          await SWSELevelUp.openEnhanced(this.actor);
+        }
+      });
+    }
+
+    const storeBtn = root.querySelector('[data-action="cmd-store"]');
+    if (storeBtn) {
+      storeBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (game.swse?.store) {
+          new game.swse.store().render(true);
+        }
+      });
+    }
+
+    const restBtn = root.querySelector('[data-action="cmd-rest"]');
+    if (restBtn) {
+      restBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const max = this.actor.system?.secondWind?.max ?? 1;
+        await ActorEngine.updateActor(this.actor, {
+          'system.secondWind.uses': max
+        });
+        ui.notifications.info(`${this.actor.name} rested. Second Wind uses restored!`);
+      });
+    }
+
+    const conditionsBtn = root.querySelector('[data-action="cmd-conditions"]');
+    if (conditionsBtn) {
+      conditionsBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        // Scroll to HP/Condition panel in Overview tab
+        root.querySelector('[data-tab="overview"]')?.click();
       });
     }
 
