@@ -828,6 +828,41 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
+    /* ---- PHASE 2: TALENTS & FEATS MANAGEMENT ---- */
+
+    for (const card of root.querySelectorAll('[data-toggle="expand"]')) {
+      card.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        card.style.boxShadow = card.style.boxShadow ? '' : '0 0 8px rgba(33, 150, 243, 0.3)';
+        const actions = card.querySelector('.talent-card-actions, .feat-card-actions');
+        if (actions) {
+          actions.style.opacity = actions.style.opacity === '0' ? '1' : '0';
+        }
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="delete-talent"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId || !this.actor) return;
+        await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+        ui.notifications.info("Talent removed.");
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="delete-feat"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId || !this.actor) return;
+        await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+        ui.notifications.info("Feat removed.");
+      });
+    }
+
     /* ---- PHASE 2: INVENTORY SEARCH FILTER ---- */
 
     const inventorySearchInput = root.querySelector('[data-action="inventory-search"]');

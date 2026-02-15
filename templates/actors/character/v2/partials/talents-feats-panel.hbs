@@ -1,0 +1,113 @@
+<!-- TALENTS & FEATS TAB CONTENT -->
+<div class="talents-feats-container">
+
+  <!-- FREE BUILD MODE INDICATOR -->
+  {{#if (eq system.buildMode "free")}}
+    <div class="free-build-warning" style="background: #fff3e0; border: 1px solid #ff6b35; border-radius: 6px; padding: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+      <span style="color: #e65100; font-weight: bold;">⚠ Free Build Mode Active</span>
+      <button type="button" class="revalidate-build" style="background: #2196F3; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8em;">
+        Revalidate Build
+      </button>
+    </div>
+  {{/if}}
+
+  <!-- TALENTS SECTION -->
+  <div class="talents-section datapad-panel" style="margin-bottom: 16px;">
+    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h3 class="section-header">Talents</h3>
+      <button type="button" class="add-talent swse-btn" data-action="add-talent" style="padding: 4px 8px; font-size: 0.85em;">
+        + Add Talent
+      </button>
+    </div>
+
+    {{#if (hasItems items "talent")}}
+      <div class="talents-by-tree">
+        {{#each (groupTalentsByTree items) as |treeGroup|}}
+          <div class="talent-tree-group" style="margin-bottom: 12px;">
+            <div class="talent-tree-label" style="font-size: 0.75rem; text-transform: uppercase; opacity: 0.6; margin-bottom: 6px; font-weight: bold;">
+              {{treeGroup.tree}}
+            </div>
+            <div class="talent-cards" style="display: flex; flex-wrap: wrap; gap: 10px;">
+              {{#each treeGroup.items as |talent|}}
+                <div class="talent-card {{#if talent._expanded}}expanded{{/if}}{{#if talent.system.custom}} custom{{/if}}"
+                     data-item-id="{{talent.id}}"
+                     style="width: 220px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; padding: 8px; cursor: pointer; transition: all 0.2s;">
+
+                  <div class="talent-card-header" style="font-weight: bold; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+                    <span>{{talent.name}}</span>
+                    <span style="font-size: 0.7rem; {{#if talent.system.custom}}border: 1px dashed #ccc; padding: 2px 4px; border-radius: 3px;{{/if}}">
+                      {{#if talent.system.custom}}CUSTOM{{/if}}
+                    </span>
+                  </div>
+
+                  {{#if talent._expanded}}
+                    <div class="talent-card-body" style="font-size: 0.75rem; opacity: 0.85; margin-top: 6px; border-top: 1px solid #eee; padding-top: 6px;">
+                      <div style="line-height: 1.4;">
+                        {{{talent.system.description}}}
+                      </div>
+                      <div style="margin-top: 6px; display: flex; gap: 4px;">
+                        <button type="button" class="delete-talent swse-btn" data-action="delete-talent" data-item-id="{{talent.id}}" style="flex: 1; padding: 3px; font-size: 0.7em; background: #cc0000; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  {{/if}}
+                </div>
+              {{/each}}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="muted" style="padding: 12px; text-align: center;">
+        No talents. Click "Add Talent" to select one.
+      </div>
+    {{/if}}
+  </div>
+
+  <!-- FEATS SECTION -->
+  <div class="feats-section datapad-panel">
+    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h3 class="section-header">Feats</h3>
+      <button type="button" class="add-feat swse-btn" data-action="add-feat" style="padding: 4px 8px; font-size: 0.85em;">
+        + Add Feat
+      </button>
+    </div>
+
+    {{#if (hasItems items "feat")}}
+      <div class="feat-cards" style="display: flex; flex-wrap: wrap; gap: 10px;">
+        {{#each (filterItems items "type" "feat") as |feat|}}
+          <div class="feat-card {{#if feat._expanded}}expanded{{/if}}{{#if feat.system.custom}} custom{{/if}}"
+               data-item-id="{{feat.id}}"
+               style="width: 200px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; padding: 8px; cursor: pointer; transition: all 0.2s;">
+
+            <div class="feat-card-header" style="font-weight: bold; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+              <span>{{feat.name}}</span>
+              <span style="font-size: 0.7rem; {{#if feat.system.custom}}border: 1px dashed #ccc; padding: 2px 4px; border-radius: 3px;{{/if}}">
+                {{#if feat.system.custom}}CUSTOM{{/if}}
+              </span>
+            </div>
+
+            {{#if feat._expanded}}
+              <div class="feat-card-body" style="font-size: 0.75rem; opacity: 0.85; margin-top: 6px; border-top: 1px solid #eee; padding-top: 6px;">
+                <div style="line-height: 1.4;">
+                  {{{feat.system.description}}}
+                </div>
+                <div style="margin-top: 6px; display: flex; gap: 4px;">
+                  <button type="button" class="delete-feat swse-btn" data-action="delete-feat" data-item-id="{{feat.id}}" style="flex: 1; padding: 3px; font-size: 0.7em; background: #cc0000; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                    Delete
+                  </button>
+                </div>
+              </div>
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="muted" style="padding: 12px; text-align: center;">
+        No feats. Click "Add Feat" to select one.
+      </div>
+    {{/if}}
+  </div>
+
+</div>
