@@ -1,0 +1,38 @@
+<div class="holo-panel" data-drop-zone="crew">
+  <div class="section-bar">
+    <h3 class="section-header">Crew Management</h3>
+  </div>
+
+  <div style="padding: 12px;">
+    {{#if actor.system.ownedActors}}
+      <div class="crew-list" style="border-top: 1px solid #ddd;">
+        {{#each actor.system.ownedActors as |entry|}}
+          {{#with (lookup ownedActorMap entry.id)}}
+          <div class="crew-entry" style="display: grid; grid-template-columns: 1fr 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+            <div>
+              <strong style="color: #0d7;">{{this.name}}</strong><br>
+              <span style="font-size: 0.85em; color: #666;">{{entry.type}}</span>
+            </div>
+            <button type="button"
+                    class="crew-open-btn"
+                    data-action="open-owned"
+                    data-actor-id="{{this.id}}"
+                    style="background: #0066cc; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.85em;">
+              Open
+            </button>
+            <button type="button"
+                    class="crew-remove-btn"
+                    data-action="remove-owned"
+                    data-actor-id="{{this.id}}"
+                    style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.85em;">
+              Remove
+            </button>
+          </div>
+          {{/with}}
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="muted" style="padding: 16px;">No crew members. Drag characters/NPCs here to add them.</div>
+    {{/if}}
+  </div>
+</div>

@@ -1581,3 +1581,285 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   VEHICLE SHEET V2 - DATAPAD ARCHITECTURE SCOPING
+   ───────────────────────────────────────────────────────────── */
+
+.swse.vehicle-sheet {
+  --swse-bg-secondary: #10151c;
+}
+
+/* Datapad Header for Vehicle */
+.swse.vehicle-sheet .datapad-header {
+  background: linear-gradient(135deg, rgba(13, 24, 44, 0.95) 0%, rgba(20, 35, 60, 0.95) 100%);
+  border-bottom: 2px solid rgba(0, 170, 255, 0.4);
+}
+
+.swse.vehicle-sheet .vehicle-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--swse-text-light);
+}
+
+.swse.vehicle-sheet .vehicle-meta {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  color: var(--swse-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Sheet grid layout for vehicle overview */
+.swse.vehicle-sheet .swse-v2-sheet-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 12px;
+}
+
+.swse.vehicle-sheet .swse-v2-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.swse.vehicle-sheet .swse-v2-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Vehicle identity grid */
+.swse.vehicle-sheet .swse-v2-identity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 12px;
+}
+
+.swse.vehicle-sheet .swse-v2-identity-grid .field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swse.vehicle-sheet .swse-v2-identity-grid .label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--swse-secondary);
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.swse.vehicle-sheet .swse-v2-identity-grid .value {
+  color: var(--swse-text-light);
+  font-weight: 500;
+}
+
+/* Resource cartridges */
+.swse.vehicle-sheet .swse-v2-resources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+}
+
+.swse.vehicle-sheet .swse-v2-resource {
+  flex: 0 1 calc(33.333% - 6px);
+  background: var(--swse-bg-overlay);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  border-radius: 4px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.swse.vehicle-sheet .swse-v2-resource .label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--swse-secondary);
+  font-weight: bold;
+  letter-spacing: 0.3px;
+}
+
+.swse.vehicle-sheet .swse-v2-resource .count {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--swse-text-light);
+}
+
+/* HP Row */
+.swse.vehicle-sheet .swse-v2-hp-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 12px;
+}
+
+.swse.vehicle-sheet .swse-v2-hp-block,
+.swse.vehicle-sheet .swse-v2-condition-block {
+  background: var(--swse-bg-overlay);
+  border: 1px solid rgba(0, 170, 255, 0.2);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+/* Condition steps */
+.swse.vehicle-sheet .condition-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.swse.vehicle-sheet .swse-v2-condition-step {
+  flex: 1;
+  min-width: 45px;
+  padding: 4px 6px;
+  background: var(--swse-bg-dark);
+  border: 1px solid var(--swse-border-default);
+  color: var(--swse-text-light);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.swse.vehicle-sheet .swse-v2-condition-step:hover {
+  border-color: var(--swse-secondary);
+  background: var(--swse-bg-hover);
+}
+
+.swse.vehicle-sheet .swse-v2-condition-step.active {
+  background: var(--swse-secondary);
+  color: var(--swse-bg-dark);
+  border-color: var(--swse-secondary);
+}
+
+/* Defenses breakdown */
+.swse.vehicle-sheet .swse-v2-defenses-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+
+.swse.vehicle-sheet .defense-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.swse.vehicle-sheet .defense-label {
+  min-width: 80px;
+  color: var(--swse-secondary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.swse.vehicle-sheet .defense-label:hover {
+  opacity: 0.8;
+}
+
+.swse.vehicle-sheet .defense-inputs {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.swse.vehicle-sheet .defense-misc-input {
+  width: 60px;
+  padding: 4px 6px;
+  background: var(--swse-bg-dark);
+  border: 1px solid var(--swse-border-default);
+  color: var(--swse-text-light);
+  border-radius: 3px;
+  font-size: 0.9rem;
+}
+
+.swse.vehicle-sheet .defense-total {
+  min-width: 40px;
+  text-align: center;
+  font-weight: bold;
+  color: var(--swse-text-light);
+  cursor: pointer;
+}
+
+/* Damage threshold */
+.swse.vehicle-sheet .swse-v2-dt-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+
+.swse.vehicle-sheet .dt-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.swse.vehicle-sheet .dt-row .label {
+  min-width: 80px;
+  font-weight: bold;
+  color: var(--swse-secondary);
+}
+
+.swse.vehicle-sheet .dt-row .value {
+  color: var(--swse-text-light);
+  font-weight: 500;
+}
+
+/* Cargo panel */
+.swse.vehicle-sheet .swse-v2-cargo-display {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.swse.vehicle-sheet .swse-v2-cargo-display .success {
+  color: var(--swse-success);
+}
+
+.swse.vehicle-sheet .swse-v2-cargo-display .warning {
+  color: var(--swse-warning);
+}
+
+.swse.vehicle-sheet .swse-v2-cargo-display .danger {
+  color: var(--swse-danger);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .swse.vehicle-sheet .swse-v2-sheet-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .swse.vehicle-sheet .swse-v2-identity-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .swse.vehicle-sheet .swse-v2-identity-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .swse.vehicle-sheet .swse-v2-hp-row {
+    grid-template-columns: 1fr;
+  }
+
+  .swse.vehicle-sheet .swse-v2-resources {
+    justify-content: space-between;
+  }
+
+  .swse.vehicle-sheet .swse-v2-resource {
+    flex: 0 1 calc(50% - 4px);
+  }
+}

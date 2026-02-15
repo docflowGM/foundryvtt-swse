@@ -1,329 +1,301 @@
-<div class="swse swse-sheet v2">
-  <header class="sheet-header">
-    <div class="flexrow" style="align-items:center; gap:12px;">
-      <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="48" height="48" style="border-radius:8px;"/>
-      <div class="flexcol" style="gap:4px;">
-        <input name="name" type="text" value="{{actor.name}}" style="font-size:1.2rem; font-weight:700;"/>
-        <div class="muted" style="opacity:0.8;">v2 Vehicle Sheet (Phase 2)</div>
-      </div>
-      <div class="flexrow" style="margin-left:auto; gap:10px;">
-        <div class="swse-stat"><div class="label">FORT</div><div class="value">{{derived.defenses.fort}}</div></div>
-        <div class="swse-stat"><div class="label">REF</div><div class="value">{{derived.defenses.ref}}</div></div>
-        <div class="swse-stat"><div class="label">WILL</div><div class="value">{{derived.defenses.will}}</div></div>
-        <div class="swse-stat"><div class="label">DT</div><div class="value">{{derived.damage.threshold}}</div></div>
-      </div>
-    </div>
-  </header>
-
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item active" data-tab="overview">Overview</a>
-    <a class="item" data-tab="crew">Crew</a>
-    <a class="item" data-tab="maneuvers">Maneuvers</a>
-    <a class="item" data-tab="weapons">Weapons</a>
-    <a class="item" data-tab="systems">Systems</a>
-  </nav>
-
-  <section class="sheet-body">
-    <section class="tab active" data-group="primary" data-tab="overview">
-      <div class="holo-panel">
-        <div class="section-bar">
-          <h3 class="section-header">Condition</h3>
-          <label class="inline-flag">
-            <input type="checkbox" class="swse-v2-condition-persistent" {{#if derived.damage.conditionPersistent}}checked{{/if}} />
-            Persistent
-          </label>
-        </div>
-
-        <div class="condition-row">
-          <button type="button" class="swse-v2-condition-improve">Improve</button>
-          <div class="condition-steps">
-            <button type="button" class="swse-v2-condition-step" data-step="0">Normal</button>
-            <button type="button" class="swse-v2-condition-step" data-step="1">-1</button>
-            <button type="button" class="swse-v2-condition-step" data-step="2">-2</button>
-            <button type="button" class="swse-v2-condition-step" data-step="3">-5</button>
-            <button type="button" class="swse-v2-condition-step" data-step="4">-10</button>
-            <button type="button" class="swse-v2-condition-step" data-step="5">Helpless</button>
-          </div>
-          <button type="button" class="swse-v2-condition-worsen">Worsen</button>
-
-          <div class="condition-readout">
-            <span class="label">Penalty:</span>
-            <span class="value">{{derived.damage.conditionPenalty}}</span>
-            {{#if derived.damage.conditionHelpless}}
-              <span class="badge">Helpless</span>
-            {{/if}}
+<div class="swse-sheet swse-vehicle-sheet v2">
+  <div class="sheet-inner">
+    <!-- DATAPAD HEADER -->
+    <section class="datapad-header">
+      <div class="header-main">
+        <div>
+          <div class="vehicle-name">{{actor.name}}</div>
+          <div class="vehicle-meta">
+            {{#if system.type}}{{system.type}}{{/if}}
+            {{#if system.size}} — {{system.size}}{{/if}}
           </div>
         </div>
+        <div class="header-defenses">
+          <div class="swse-stat" data-swse-tooltip="ReflexDefense"><div class="label">REF</div><div class="value">{{derived.defenses.ref}}</div></div>
+          <div class="swse-stat" data-swse-tooltip="FortitudeDefense"><div class="label">FORT</div><div class="value">{{derived.defenses.fort}}</div></div>
+          <div class="swse-stat" data-swse-tooltip="DamageThreshold"><div class="label">DT</div><div class="value">{{derived.damage.threshold}}</div></div>
+        </div>
+      </div>
+
+      <!-- HP BAR -->
+      <div class="header-bar">
+        <div style="font-size: 0.7rem; opacity: 0.6; margin-bottom: 2px;">HP</div>
+        <div class="datapad-status-bar hp {{#if hpCritical}}hp-critical{{else if hpWarning}}hp-warning{{/if}}">
+          <div class="fill" style="width: {{hpPercent}}%;"></div>
+        </div>
+      </div>
+
+      <!-- STATUS INDICATORS -->
+      <div class="datapad-indicators">
+        {{#if ctWarning}}<span class="ct-warning">⚠ Condition</span>{{/if}}
+        {{#if (gt cargoState "normal")}}<span class="cargo-warning">📦 Cargo</span>{{/if}}
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="crew">
-      <div class="swse-v2-grid">
-        <div class="swse-v2-full">
-          <div class="holo-panel" data-drop-zone="crew">
-            <div class="section-bar">
-              <h3 class="section-header">Crew Members</h3>
+    <header class="sheet-header">
+      <div class="flexrow" style="align-items:center; gap:12px;">
+        <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="52" height="52" style="border-radius:8px;"/>
+        <div class="flexcol" style="gap:4px;">
+          <input name="name" type="text" value="{{actor.name}}" style="font-size:1.25rem; font-weight:800;"/>
+          <div class="muted" style="opacity:0.8;">v2 Vehicle Sheet — Datapad Architecture</div>
+        </div>
+        <div class="flexrow" style="margin-left:auto; gap:10px;">
+          <div class="swse-stat" data-swse-tooltip="ReflexDefense"><div class="label">REF</div><div class="value">{{derived.defenses.ref}}</div></div>
+          <div class="swse-stat" data-swse-tooltip="FortitudeDefense"><div class="label">FORT</div><div class="value">{{derived.defenses.fort}}</div></div>
+          <div class="swse-stat" data-swse-tooltip="DamageThreshold"><div class="label">DT</div><div class="value">{{derived.damage.threshold}}</div></div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="sheet-tabs tabs" data-group="primary">
+      <a class="item active" data-tab="overview">Overview</a>
+      <a class="item" data-tab="weapons">Weapons</a>
+      <a class="item" data-tab="crew">Crew</a>
+      <a class="item" data-tab="systems">Systems</a>
+    </nav>
+
+    <section class="sheet-body">
+      <section class="tab active" data-group="primary" data-tab="overview">
+        <div class="swse-v2-sheet-grid">
+          <div class="swse-v2-left">
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/identity-panel.hbs"}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/resource-cartridges.hbs"}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/hp-condition-panel.hbs"}}
+          </div>
+          <div class="swse-v2-right">
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/defenses-panel.hbs"}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/damage-threshold-panel.hbs"}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/cargo-panel.hbs"}}
+          </div>
+        </div>
+      </section>
+
+      <section class="tab" data-group="primary" data-tab="weapons" data-drop-zone="weapon">
+        <div class="swse-v2-grid" style="margin-top:12px;">
+          <div class="swse-v2-holo-group">
+            <div class="swse-v2-holo-header">Attacks</div>
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/attacks-panel.hbs"}}
+          </div>
+        </div>
+      </section>
+
+      <section class="tab" data-group="primary" data-tab="crew">
+        <div class="swse-v2-grid">
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/crew-panel.hbs"}}
+        </div>
+      </section>
+
+      <section class="tab" data-group="primary" data-tab="systems" data-drop-zone="equipment">
+        <div class="swse-v2-grid" style="margin-top:12px;">
+
+          {{#if engines.subsystemsEnabled}}
+          <div class="swse-v2-full">
+            <div class="holo-panel">
+              <div class="section-bar">
+                <h3 class="section-header">Subsystems</h3>
+                <span class="muted">SWES Subsystem Damage</span>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; padding:8px;">
+                {{#each engines.subsystems as |tier name|}}
+                <div class="swse-v2-subsystem-card" style="padding:8px; border:1px solid {{#if (eq tier 'normal')}}#0d7{{else if (eq tier 'damaged')}}#f90{{else if (eq tier 'disabled')}}#c33{{else}}#666{{/if}}; border-radius:4px; text-align:center;">
+                  <div style="font-weight:700; text-transform:capitalize; font-size:0.9em;">{{name}}</div>
+                  <div style="color:{{#if (eq tier 'normal')}}#0d7{{else if (eq tier 'damaged')}}#f90{{else if (eq tier 'disabled')}}#c33{{else}}#666{{/if}}; text-transform:uppercase; font-size:0.8em; margin:4px 0;">{{tier}}</div>
+                  {{#unless (eq tier 'normal')}}
+                    {{#unless (eq tier 'destroyed')}}
+                    <button type="button" class="swse-v2-btn" data-action="repair-subsystem" data-subsystem="{{name}}" style="font-size:0.75em; padding:2px 6px;">Repair</button>
+                    {{/unless}}
+                  {{/unless}}
+                </div>
+                {{/each}}
+              </div>
             </div>
-            <div style="padding: 12px;">
-              {{#if actor.system.ownedActors}}
-                <div class="owned-actors-list" style="border-top: 1px solid #ddd;">
-                  {{#each actor.system.ownedActors as |entry|}}
-                    {{#with (lookup ownedActorMap entry.id)}}
-                    <div class="owned-entry" style="display: grid; grid-template-columns: 1fr 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
-                      <div>
-                        <strong style="color: #0d7;">{{this.name}}</strong><br>
-                        <span style="font-size: 0.85em; color: #666;">{{entry.type}}</span>
+          </div>
+          {{/if}}
+
+          {{#if engines.enhancedShieldsEnabled}}
+          <div class="swse-v2-full">
+            <div class="holo-panel">
+              <div class="section-bar">
+                <h3 class="section-header">Directional Shields</h3>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; padding:8px; text-align:center;">
+                <div>
+                  <div style="font-weight:700; font-size:0.85em;">FORE</div>
+                  <div style="font-size:1.2em; color:#0af;">{{engines.shieldZones.fore}}</div>
+                  <button type="button" class="swse-v2-btn" data-action="shield-focus" data-zone="fore" style="font-size:0.75em; padding:2px 6px;">Focus</button>
+                </div>
+                <div>
+                  <div style="font-weight:700; font-size:0.85em;">AFT</div>
+                  <div style="font-size:1.2em; color:#0af;">{{engines.shieldZones.aft}}</div>
+                  <button type="button" class="swse-v2-btn" data-action="shield-focus" data-zone="aft" style="font-size:0.75em; padding:2px 6px;">Focus</button>
+                </div>
+                <div>
+                  <div style="font-weight:700; font-size:0.85em;">PORT</div>
+                  <div style="font-size:1.2em; color:#0af;">{{engines.shieldZones.port}}</div>
+                  <button type="button" class="swse-v2-btn" data-action="shield-focus" data-zone="port" style="font-size:0.75em; padding:2px 6px;">Focus</button>
+                </div>
+                <div>
+                  <div style="font-weight:700; font-size:0.85em;">STARBOARD</div>
+                  <div style="font-size:1.2em; color:#0af;">{{engines.shieldZones.starboard}}</div>
+                  <button type="button" class="swse-v2-btn" data-action="shield-focus" data-zone="starboard" style="font-size:0.75em; padding:2px 6px;">Focus</button>
+                </div>
+              </div>
+              <div style="text-align:center; padding:4px 8px 8px;">
+                <button type="button" class="swse-v2-btn" data-action="shield-equalize">Equalize All</button>
+              </div>
+            </div>
+          </div>
+          {{/if}}
+
+          {{#if engines.enhancedEngineerEnabled}}
+          <div class="swse-v2-full">
+            <div class="holo-panel">
+              <div class="section-bar">
+                <h3 class="section-header">Power Allocation</h3>
+                <span class="muted">Budget: {{engines.powerBudget}}</span>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; padding:8px; text-align:center;">
+                <div>
+                  <div style="font-weight:700; font-size:0.85em;">WEAPONS</div>
+                  <div style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:4px;">
+                    <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="weapons" data-direction="down" style="padding:2px 6px;">-</button>
+                    <span style="font-size:1.2em; min-width:24px;">{{engines.powerAllocation.weapons}}</span>
+                    <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="weapons" data-direction="up" style="padding:2px 6px;">+</button>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-weight:700; font-size:0.85em;">SHIELDS</div>
+                  <div style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:4px;">
+                    <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="shields" data-direction="down" style="padding:2px 6px;">-</button>
+                    <span style="font-size:1.2em; min-width:24px;">{{engines.powerAllocation.shields}}</span>
+                    <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="shields" data-direction="up" style="padding:2px 6px;">+</button>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-weight:700; font-size:0.85em;">ENGINES</div>
+                  <div style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:4px;">
+                    <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="engines" data-direction="down" style="padding:2px 6px;">-</button>
+                    <span style="font-size:1.2em; min-width:24px;">{{engines.powerAllocation.engines}}</span>
+                    <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="engines" data-direction="up" style="padding:2px 6px;">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {{/if}}
+
+          {{#if engines.enhancedPilotEnabled}}
+          <div class="swse-v2-full">
+            <div class="holo-panel">
+              <div class="section-bar">
+                <h3 class="section-header">Pilot Maneuvers</h3>
+                <span class="muted">Active: {{engines.pilotManeuver}}</span>
+              </div>
+              <div class="swse-v2-maneuver-controls" style="display:flex; gap:6px; padding:8px; flex-wrap:wrap;">
+                <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'none')}}active{{/if}}" data-action="set-maneuver" data-maneuver="none">None</button>
+                <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'evasive')}}active{{/if}}" data-action="set-maneuver" data-maneuver="evasive" title="+2 Reflex, -2 Attacks">Evasive</button>
+                <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'attackRun')}}active{{/if}}" data-action="set-maneuver" data-maneuver="attackRun" title="+2 Attacks, -2 Reflex">Attack Run</button>
+                <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'allOut')}}active{{/if}}" data-action="set-maneuver" data-maneuver="allOut" title="2x Speed, no attacks, -2 Reflex">All-Out</button>
+                <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'trick')}}active{{/if}}" data-action="set-maneuver" data-maneuver="trick" title="Opposed Pilot check">Trick</button>
+              </div>
+            </div>
+          </div>
+          {{/if}}
+
+          {{#if engines.enhancedCommanderEnabled}}
+          <div class="swse-v2-full">
+            <div class="holo-panel">
+              <div class="section-bar">
+                <h3 class="section-header">Commander Orders</h3>
+                <span class="muted">Active: {{engines.commanderOrder}}</span>
+              </div>
+              <div class="swse-v2-order-controls" style="display:flex; gap:6px; padding:8px; flex-wrap:wrap;">
+                <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'none')}}active{{/if}}" data-action="set-order" data-order="none">None</button>
+                <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'coordinateFire')}}active{{/if}}" data-action="set-order" data-order="coordinateFire" title="+1 attack to all gunners">Coordinate Fire</button>
+                <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'inspire')}}active{{/if}}" data-action="set-order" data-order="inspire" title="+1 morale to all crew">Inspire Crew</button>
+                <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'tacticalAdvantage')}}active{{/if}}" data-action="set-order" data-order="tacticalAdvantage" title="Extra Swift Action">Tactical Advantage</button>
+                <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'battleAnalysis')}}active{{/if}}" data-action="set-order" data-order="battleAnalysis" title="Reveal target DT/CT">Battle Analysis</button>
+              </div>
+            </div>
+          </div>
+          {{/if}}
+
+          {{#if engines.turnControllerEnabled}}
+          <div class="swse-v2-full">
+            <div class="holo-panel">
+              <div class="section-bar">
+                <h3 class="section-header">Turn Phases</h3>
+                <span class="muted">Current: {{engines.turnState.currentPhase}}</span>
+              </div>
+              <div style="display:flex; gap:6px; padding:8px; align-items:center; flex-wrap:wrap;">
+                {{#each engines.turnPhases}}
+                  <span class="swse-v2-phase-badge" style="padding:4px 8px; border-radius:4px; background:{{#if this.active}}#0d7{{else}}#333{{/if}}; color:{{#if this.active}}#000{{else}}#999{{/if}}; font-size:0.85em; text-transform:capitalize;">{{this.name}}</span>
+                {{/each}}
+                <button type="button" class="swse-v2-btn" data-action="advance-phase" style="margin-left:auto;">Advance</button>
+                <button type="button" class="swse-v2-btn" data-action="reset-turn">Reset</button>
+              </div>
+            </div>
+          </div>
+          {{/if}}
+
+          <div class="swse-v2-full">
+            <div class="holo-panel">
+              <div class="section-bar">
+                <h3 class="section-header">Equipment</h3>
+              </div>
+              {{#if equipment}}
+                <div class="equipment-list" style="border-top: 1px solid #ddd;">
+                  {{#each equipment as |item|}}
+                    <div class="equipment-row" style="display: grid; grid-template-columns: 1fr 80px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                      <div class="equipment-name">
+                        <button type="button"
+                                class="equipment-name-btn swse-v2-open-item"
+                                data-item-id="{{item.id}}"
+                                style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
+                          {{item.name}}
+                        </button>
+                      </div>
+                      <input type="number"
+                             name="items.{{item.id}}.system.quantity"
+                             value="{{item.system.quantity}}"
+                             min="0"
+                             style="padding: 4px; border: 1px solid #ccc; border-radius: 2px;">
+                      <div class="equipment-weight" style="text-align: right;">
+                        {{item.system.weight}} lbs
                       </div>
                       <button type="button"
-                              class="crew-open-btn"
-                              data-action="open-owned"
-                              data-actor-id="{{this.id}}"
-                              style="background: #0066cc; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.85em;">
-                        Open
+                              class="equipment-sell"
+                              data-action="sell-item"
+                              data-item-id="{{item.id}}"
+                              style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                        Sell
                       </button>
                       <button type="button"
-                              class="crew-remove-btn"
-                              data-action="remove-owned"
-                              data-actor-id="{{this.id}}"
-                              style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.85em;">
-                        Remove
+                              class="equipment-delete"
+                              data-action="delete-item"
+                              data-item-id="{{item.id}}"
+                              style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                        Delete
                       </button>
                     </div>
-                    {{/with}}
                   {{/each}}
                 </div>
               {{else}}
-                <div class="muted" style="padding: 16px;">No crew members. Drag characters/NPCs here to add them.</div>
+                <div class="muted" style="padding: 16px;">No equipment</div>
               {{/if}}
             </div>
           </div>
+
+          <div class="swse-v2-full">
+            <div class="holo-panel">
+              <div class="section-bar">
+                <h3 class="section-header">Actions</h3>
+              </div>
+              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs"}}
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
     </section>
-
-    <section class="tab" data-group="primary" data-tab="maneuvers">
-      <div class="swse-v2-grid">
-        {{#if engines.enhancedPilotEnabled}}
-        <div class="swse-v2-full">
-          <div class="holo-panel">
-            <div class="section-bar">
-              <h3 class="section-header">Pilot Maneuvers</h3>
-              <span class="muted">Active: {{engines.pilotManeuver}}</span>
-            </div>
-            <div class="swse-v2-maneuver-controls" style="display:flex; gap:6px; padding:8px; flex-wrap:wrap;">
-              <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'none')}}active{{/if}}" data-action="set-maneuver" data-maneuver="none">None</button>
-              <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'evasive')}}active{{/if}}" data-action="set-maneuver" data-maneuver="evasive" title="+2 Reflex, -2 Attacks">Evasive</button>
-              <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'attackRun')}}active{{/if}}" data-action="set-maneuver" data-maneuver="attackRun" title="+2 Attacks, -2 Reflex">Attack Run</button>
-              <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'allOut')}}active{{/if}}" data-action="set-maneuver" data-maneuver="allOut" title="2x Speed, no attacks, -2 Reflex">All-Out</button>
-              <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'trick')}}active{{/if}}" data-action="set-maneuver" data-maneuver="trick" title="Opposed Pilot check">Trick</button>
-            </div>
-          </div>
-        </div>
-        {{/if}}
-
-        {{#if engines.enhancedCommanderEnabled}}
-        <div class="swse-v2-full">
-          <div class="holo-panel">
-            <div class="section-bar">
-              <h3 class="section-header">Commander Orders</h3>
-              <span class="muted">Active: {{engines.commanderOrder}}</span>
-            </div>
-            <div class="swse-v2-order-controls" style="display:flex; gap:6px; padding:8px; flex-wrap:wrap;">
-              <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'none')}}active{{/if}}" data-action="set-order" data-order="none">None</button>
-              <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'coordinateFire')}}active{{/if}}" data-action="set-order" data-order="coordinateFire" title="+1 attack to all gunners">Coordinate Fire</button>
-              <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'inspire')}}active{{/if}}" data-action="set-order" data-order="inspire" title="+1 morale to all crew">Inspire Crew</button>
-              <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'tacticalAdvantage')}}active{{/if}}" data-action="set-order" data-order="tacticalAdvantage" title="Extra Swift Action">Tactical Advantage</button>
-              <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'battleAnalysis')}}active{{/if}}" data-action="set-order" data-order="battleAnalysis" title="Reveal target DT/CT">Battle Analysis</button>
-            </div>
-          </div>
-        </div>
-        {{/if}}
-
-        {{#if engines.turnControllerEnabled}}
-        <div class="swse-v2-full">
-          <div class="holo-panel">
-            <div class="section-bar">
-              <h3 class="section-header">Turn Phases</h3>
-              <span class="muted">Current: {{engines.turnState.currentPhase}}</span>
-            </div>
-            <div style="display:flex; gap:6px; padding:8px; align-items:center; flex-wrap:wrap;">
-              {{#each engines.turnPhases}}
-                <span class="swse-v2-phase-badge" style="padding:4px 8px; border-radius:4px; background:{{#if this.active}}#0d7{{else}}#333{{/if}}; color:{{#if this.active}}#000{{else}}#999{{/if}}; font-size:0.85em; text-transform:capitalize;">{{this.name}}</span>
-              {{/each}}
-              <button type="button" class="swse-v2-btn" data-action="advance-phase" style="margin-left:auto;">Advance</button>
-              <button type="button" class="swse-v2-btn" data-action="reset-turn">Reset</button>
-            </div>
-          </div>
-        </div>
-        {{/if}}
-      </div>
-    </section>
-
-    <section class="tab" data-group="primary" data-tab="weapons" data-drop-zone="weapon">
-      <div class="swse-v2-grid" style="margin-top:12px;">
-        <div class="swse-v2-holo-group">
-          <div class="swse-v2-holo-header">Attacks</div>
-          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/attacks-panel.hbs"}}
-        </div>
-      </div>
-    </section>
-
-    <section class="tab" data-group="primary" data-tab="systems" data-drop-zone="equipment">
-      <div class="swse-v2-grid" style="margin-top:12px;">
-
-        {{#if engines.subsystemsEnabled}}
-        <div class="swse-v2-full">
-          <div class="holo-panel">
-            <div class="section-bar">
-              <h3 class="section-header">Subsystems</h3>
-              <span class="muted">SWES Subsystem Damage</span>
-            </div>
-            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; padding:8px;">
-              {{#each engines.subsystems as |tier name|}}
-              <div class="swse-v2-subsystem-card" style="padding:8px; border:1px solid {{#if (eq tier 'normal')}}#0d7{{else if (eq tier 'damaged')}}#f90{{else if (eq tier 'disabled')}}#c33{{else}}#666{{/if}}; border-radius:4px; text-align:center;">
-                <div style="font-weight:700; text-transform:capitalize; font-size:0.9em;">{{name}}</div>
-                <div style="color:{{#if (eq tier 'normal')}}#0d7{{else if (eq tier 'damaged')}}#f90{{else if (eq tier 'disabled')}}#c33{{else}}#666{{/if}}; text-transform:uppercase; font-size:0.8em; margin:4px 0;">{{tier}}</div>
-                {{#unless (eq tier 'normal')}}
-                  {{#unless (eq tier 'destroyed')}}
-                  <button type="button" class="swse-v2-btn" data-action="repair-subsystem" data-subsystem="{{name}}" style="font-size:0.75em; padding:2px 6px;">Repair</button>
-                  {{/unless}}
-                {{/unless}}
-              </div>
-              {{/each}}
-            </div>
-          </div>
-        </div>
-        {{/if}}
-
-        {{#if engines.enhancedShieldsEnabled}}
-        <div class="swse-v2-full">
-          <div class="holo-panel">
-            <div class="section-bar">
-              <h3 class="section-header">Directional Shields</h3>
-            </div>
-            <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; padding:8px; text-align:center;">
-              <div>
-                <div style="font-weight:700; font-size:0.85em;">FORE</div>
-                <div style="font-size:1.2em; color:#0af;">{{engines.shieldZones.fore}}</div>
-                <button type="button" class="swse-v2-btn" data-action="shield-focus" data-zone="fore" style="font-size:0.75em; padding:2px 6px;">Focus</button>
-              </div>
-              <div>
-                <div style="font-weight:700; font-size:0.85em;">AFT</div>
-                <div style="font-size:1.2em; color:#0af;">{{engines.shieldZones.aft}}</div>
-                <button type="button" class="swse-v2-btn" data-action="shield-focus" data-zone="aft" style="font-size:0.75em; padding:2px 6px;">Focus</button>
-              </div>
-              <div>
-                <div style="font-weight:700; font-size:0.85em;">PORT</div>
-                <div style="font-size:1.2em; color:#0af;">{{engines.shieldZones.port}}</div>
-                <button type="button" class="swse-v2-btn" data-action="shield-focus" data-zone="port" style="font-size:0.75em; padding:2px 6px;">Focus</button>
-              </div>
-              <div>
-                <div style="font-weight:700; font-size:0.85em;">STARBOARD</div>
-                <div style="font-size:1.2em; color:#0af;">{{engines.shieldZones.starboard}}</div>
-                <button type="button" class="swse-v2-btn" data-action="shield-focus" data-zone="starboard" style="font-size:0.75em; padding:2px 6px;">Focus</button>
-              </div>
-            </div>
-            <div style="text-align:center; padding:4px 8px 8px;">
-              <button type="button" class="swse-v2-btn" data-action="shield-equalize">Equalize All</button>
-            </div>
-          </div>
-        </div>
-        {{/if}}
-
-        {{#if engines.enhancedEngineerEnabled}}
-        <div class="swse-v2-full">
-          <div class="holo-panel">
-            <div class="section-bar">
-              <h3 class="section-header">Power Allocation</h3>
-              <span class="muted">Budget: {{engines.powerBudget}}</span>
-            </div>
-            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; padding:8px; text-align:center;">
-              <div>
-                <div style="font-weight:700; font-size:0.85em;">WEAPONS</div>
-                <div style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:4px;">
-                  <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="weapons" data-direction="down" style="padding:2px 6px;">-</button>
-                  <span style="font-size:1.2em; min-width:24px;">{{engines.powerAllocation.weapons}}</span>
-                  <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="weapons" data-direction="up" style="padding:2px 6px;">+</button>
-                </div>
-              </div>
-              <div>
-                <div style="font-weight:700; font-size:0.85em;">SHIELDS</div>
-                <div style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:4px;">
-                  <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="shields" data-direction="down" style="padding:2px 6px;">-</button>
-                  <span style="font-size:1.2em; min-width:24px;">{{engines.powerAllocation.shields}}</span>
-                  <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="shields" data-direction="up" style="padding:2px 6px;">+</button>
-                </div>
-              </div>
-              <div>
-                <div style="font-weight:700; font-size:0.85em;">ENGINES</div>
-                <div style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:4px;">
-                  <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="engines" data-direction="down" style="padding:2px 6px;">-</button>
-                  <span style="font-size:1.2em; min-width:24px;">{{engines.powerAllocation.engines}}</span>
-                  <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="engines" data-direction="up" style="padding:2px 6px;">+</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {{/if}}
-
-        <div class="swse-v2-full">
-          <div class="holo-panel">
-            <div class="section-bar">
-              <h3 class="section-header">Equipment</h3>
-            </div>
-            {{#if equipment}}
-              <div class="equipment-list" style="border-top: 1px solid #ddd;">
-                {{#each equipment as |item|}}
-                  <div class="equipment-row" style="display: grid; grid-template-columns: 1fr 80px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
-                    <div class="equipment-name">
-                      <button type="button"
-                              class="equipment-name-btn swse-v2-open-item"
-                              data-item-id="{{item.id}}"
-                              style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
-                        {{item.name}}
-                      </button>
-                    </div>
-                    <input type="number"
-                           name="items.{{item.id}}.system.quantity"
-                           value="{{item.system.quantity}}"
-                           min="0"
-                           style="padding: 4px; border: 1px solid #ccc; border-radius: 2px;">
-                    <div class="equipment-weight" style="text-align: right;">
-                      {{item.system.weight}} lbs
-                    </div>
-                    <button type="button"
-                            class="equipment-sell"
-                            data-action="sell-item"
-                            data-item-id="{{item.id}}"
-                            style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
-                      Sell
-                    </button>
-                    <button type="button"
-                            class="equipment-delete"
-                            data-action="delete-item"
-                            data-item-id="{{item.id}}"
-                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
-                      Delete
-                    </button>
-                  </div>
-                {{/each}}
-              </div>
-            {{else}}
-              <div class="muted" style="padding: 16px;">No equipment</div>
-            {{/if}}
-          </div>
-        </div>
-
-        <div class="swse-v2-full">
-          <div class="holo-panel">
-            <div class="section-bar">
-              <h3 class="section-header">Actions</h3>
-            </div>
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs"}}
-          </div>
-        </div>
-      </div>
-    </section>
-  </section>
+  </div>
 </div>
