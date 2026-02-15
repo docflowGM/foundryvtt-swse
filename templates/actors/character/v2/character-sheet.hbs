@@ -179,7 +179,7 @@
     </section>
     {{/if}}
 
-    <section class="tab" data-group="primary" data-tab="gear">
+    <section class="tab" data-group="primary" data-tab="gear" data-drop-zone="inventory">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           <section class="gear-section">
@@ -348,7 +348,7 @@
       <div class="swse-v2-sheet-grid">
         <section class="other-owned">
           <h3>Followers & Assets</h3>
-          <div class="owned-actors-list" style="border: 2px dashed #ccc; padding: 12px; border-radius: 4px; min-height: 100px; background: rgba(0,0,0,0.05);">
+          <div class="owned-actors-list" data-drop-zone="other" style="border: 2px dashed #ccc; padding: 12px; border-radius: 4px; min-height: 100px; background: rgba(0,0,0,0.05);">
             {{#if actor.system.ownedActors}}
               {{#each actor.system.ownedActors as |entry|}}
                 {{#with (lookup ../ownedActorMap entry.id) as |actor|}}

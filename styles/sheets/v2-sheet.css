@@ -280,3 +280,34 @@
   background: rgba(255,255,255,0.06);
 }
 
+
+/* ------------------------------------------------------------------ */
+/* UNIFIED DRAG & DROP VISUAL FEEDBACK                                 */
+/* ------------------------------------------------------------------ */
+
+/* Sheet-level active drop indicator */
+.swse-sheet.v2.drop-active {
+  outline: 2px solid var(--swse-success, #00ff88);
+  outline-offset: -2px;
+  box-shadow: inset 0 0 20px rgba(0, 255, 136, 0.08);
+}
+
+/* Zone-level active drop indicator */
+.swse-sheet.v2 [data-drop-zone].drop-zone-active {
+  background: rgba(0, 255, 136, 0.08);
+  border-color: var(--swse-success, #00ff88);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.15);
+}
+
+/* Owned actors list drop zone styling */
+.swse-sheet.v2 .owned-actors-list[data-drop-zone].drop-zone-active {
+  border-color: var(--swse-success, #00ff88);
+  background: rgba(0, 255, 136, 0.1);
+}
+
+/* Crew panel drop zone */
+.swse-sheet.v2 .holo-panel[data-drop-zone="crew"].drop-zone-active {
+  border-color: var(--swse-success, #00ff88);
+  box-shadow: 0 0 16px rgba(0, 255, 136, 0.2);
+}
+

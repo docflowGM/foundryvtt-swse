@@ -103,6 +103,19 @@ import { CombatSuggestionEngine } from "./scripts/suggestion-engine/combat-engin
 import { testHarness } from "./scripts/suggestion-engine/test-harness.js";
 import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discovery/index.js";
 
+// House Rule Engines
+import { ThresholdEngine } from "./scripts/engine/combat/threshold-engine.js";
+import { MountEngine } from "./scripts/engine/mount/mount-engine.js";
+
+// Starship Combat Engines
+import { ScaleEngine } from "./scripts/engine/combat/scale-engine.js";
+import { SubsystemEngine } from "./scripts/engine/combat/starship/subsystem-engine.js";
+import { EnhancedShields } from "./scripts/engine/combat/starship/enhanced-shields.js";
+import { EnhancedEngineer } from "./scripts/engine/combat/starship/enhanced-engineer.js";
+import { EnhancedPilot } from "./scripts/engine/combat/starship/enhanced-pilot.js";
+import { EnhancedCommander } from "./scripts/engine/combat/starship/enhanced-commander.js";
+import { VehicleTurnController } from "./scripts/engine/combat/starship/vehicle-turn-controller.js";
+
 // Misc
 import { SystemInitHooks } from "./scripts/progression/hooks/system-init-hooks.js";
 import { Upkeep } from "./scripts/automation/upkeep.js";
@@ -199,6 +212,12 @@ Hooks.once("ready", async () => {
   initializePhase5();
   registerCriticalFlowTests();
 
+  // Initialize House Rule Engines
+  MountEngine.registerHooks();
+  Hooks.on('deleteCombat', (combat) => ThresholdEngine.onCombatEnd(combat));
+
+  // Initialize Starship Combat Engines (stateless — no hooks needed)
+
   // Restore global SWSE namespace
   game.swse = {
     engine: SWSEProgressionEngine,
@@ -217,7 +236,16 @@ Hooks.once("ready", async () => {
       FeatSystem,
       SkillSystem,
       TalentAbilitiesEngine,
-      CombatSuggestionEngine
+      CombatSuggestionEngine,
+      ThresholdEngine,
+      MountEngine,
+      ScaleEngine,
+      SubsystemEngine,
+      EnhancedShields,
+      EnhancedEngineer,
+      EnhancedPilot,
+      EnhancedCommander,
+      VehicleTurnController
     }
   };
 
@@ -226,7 +254,16 @@ Hooks.once("ready", async () => {
       FeatSystem,
       SkillSystem,
       TalentAbilitiesEngine,
-      CombatSuggestionEngine
+      CombatSuggestionEngine,
+      ThresholdEngine,
+      MountEngine,
+      ScaleEngine,
+      SubsystemEngine,
+      EnhancedShields,
+      EnhancedEngineer,
+      EnhancedPilot,
+      EnhancedCommander,
+      VehicleTurnController
     },
     debug: {
       testHarness,

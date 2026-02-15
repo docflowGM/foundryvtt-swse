@@ -1266,5 +1266,201 @@ export function registerHouseruleSettings() {
     default: ''
   });
 
+  /* -------------------------------------------------------------------------- */
+  /*                    ENHANCED MASSIVE DAMAGE MODULE                          */
+  /* -------------------------------------------------------------------------- */
+
+  register('enableEnhancedMassiveDamage', {
+    name: 'Enable Enhanced Massive Damage',
+    hint: 'Master toggle for the Enhanced Massive Damage house rule module. All threshold-related house rules below require this to be enabled.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('persistentDTPenalty', {
+    name: 'Persistent Damage Threshold Penalty',
+    hint: 'When a single attack exceeds DT, apply a persistent CT penalty that cannot be removed by Second Wind, Rally, or minor healing. Requires medical treatment, engineering, or extended rest.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('persistentDTPenaltyCap', {
+    name: 'Persistent CT Penalty Cap',
+    hint: 'Maximum number of persistent CT penalty steps that can accumulate. Prevents runaway spiral.',
+    scope: 'world',
+    config: true,
+    type: Number,
+    default: 3
+  });
+
+  register('doubleThresholdPenalty', {
+    name: 'Double Threshold Penalty',
+    hint: 'When damage >= 2x Damage Threshold, apply -2 CT instead of -1. If persistent DT penalty is also enabled, both steps are persistent.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('stunThresholdRule', {
+    name: 'Stun Damage Threshold Variant',
+    hint: 'Stun damage >= DT moves -2 CT. Stun damage >= 2x DT causes immediate unconsciousness. Does not affect vehicle Ion logic unless configured.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('eliminateInstantDeath', {
+    name: 'Eliminate Instant Death',
+    hint: 'Instead of instant death from HP overflow, target drops to 0 HP and moves to bottom of CT. Stabilization rules apply. Good for heroic campaigns.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('modifyDamageThresholdFormula', {
+    name: 'Modify Damage Threshold Formula',
+    hint: 'Override the RAW DT formula (Fortitude Defense) with an enhanced formula that includes heroic level and size modifier. Helps fix high-level fragility.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('damageThresholdFormulaType', {
+    name: 'Damage Threshold Formula Type',
+    hint: 'Which enhanced DT formula to use. Full Level: DT = Fort + heroicLevel + size. Half Level: DT = Fort + (heroicLevel/2) + size.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: {
+      fullLevel: 'Full Heroic Level',
+      halfLevel: 'Half Heroic Level (rounded down)'
+    },
+    default: 'fullLevel'
+  });
+
+  register('limitMoveObjectDamage', {
+    name: 'Limit Move Object Damage',
+    hint: 'Override Move Object force power damage rules.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  /* -------------------------------------------------------------------------- */
+  /*                     ADDITIONAL HOUSE RULES                                 */
+  /* -------------------------------------------------------------------------- */
+
+  register('enableGlancingHit', {
+    name: 'Enable Glancing Hit Rule',
+    hint: 'When an attack hits by margin <= 1 (attack total is between defense and defense+1), damage is halved. Threshold penalties only apply if halved damage still >= DT.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableLastGrasp', {
+    name: 'Enable Last Grasp',
+    hint: 'When a vehicle is reduced to 0 HP, a PC pilot with Force Points can spend one to take a final Standard Action before the vehicle enters disabled state.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableEmergencyPatch', {
+    name: 'Enable Emergency Patch',
+    hint: 'During engineer phase, spend a Force Point and make a Mechanics DC 20 check to downgrade one subsystem damage tier. Once per encounter per vehicle.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableSubsystemRepairCost', {
+    name: 'Enable Subsystem Repair Cost',
+    hint: 'Repairing subsystems outside combat costs 15% of vehicle base cost per tier repaired. Does not apply to in-combat Emergency Patch.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  /* -------------------------------------------------------------------------- */
+  /*                     STARSHIP ENGINE MODULES                               */
+  /* -------------------------------------------------------------------------- */
+
+  register('enableScaleEngine', {
+    name: 'Enable Scale Engine',
+    hint: 'Enables character/starship scale conversions for distance, speed, and damage when combatants of different scales interact.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableSWES', {
+    name: 'Enable Subsystem Engine (SWES)',
+    hint: 'Vehicles have individually damageable subsystems (engines, weapons, shields, sensors, comms, life support). Subsystem damage escalates when DT is exceeded.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableEnhancedShields', {
+    name: 'Enable Enhanced Shields',
+    hint: 'Directional shield management with four zones (fore/aft/port/starboard). Shield operators can redistribute, focus, and equalize shield points.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableEnhancedEngineer', {
+    name: 'Enable Enhanced Engineer',
+    hint: 'Power allocation system for vehicles. Engineers distribute a power budget across weapons, shields, and engines with five power levels.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableEnhancedPilot', {
+    name: 'Enable Enhanced Pilot',
+    hint: 'Pilot maneuver system including Evasive Action, Attack Run, All-Out Movement, and Trick Maneuver with trade-offs.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableEnhancedCommander', {
+    name: 'Enable Enhanced Commander',
+    hint: 'Commander tactical orders including Coordinate Fire, Inspire Crew, Tactical Advantage, and Battle Analysis.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableVehicleTurnController', {
+    name: 'Enable Vehicle Turn Controller',
+    hint: 'Phase-based crew action sequencing for vehicle combat turns (Commander → Pilot → Engineer → Shields → Gunner → Cleanup).',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   SWSELogger.info('SWSE | Houserule settings registered successfully.');
 }

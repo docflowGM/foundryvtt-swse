@@ -1,0 +1,164 @@
+[
+  {
+    "id": "blaster-cannons",
+    "name": "Blaster Cannons",
+    "slug": "blaster-cannons",
+    "character": {
+      "pb": "0-120",
+      "short": "121-240",
+      "medium": "241-600",
+      "long": "601-1200"
+    },
+    "starship": {
+      "pb": "0-1",
+      "short": "2",
+      "medium": "3-4",
+      "long": "5-8"
+    },
+    "notes": null
+  },
+  {
+    "id": "gravity-well-projectors",
+    "name": "Gravity Well Projectors",
+    "slug": "gravity-well-projectors",
+    "character": {
+      "pb": "0-1500",
+      "short": null,
+      "medium": null,
+      "long": null
+    },
+    "starship": {
+      "pb": "0-10",
+      "short": null,
+      "medium": null,
+      "long": null
+    },
+    "notes": null
+  },
+  {
+    "id": "ion-cannons",
+    "name": "Ion Cannons",
+    "slug": "ion-cannons",
+    "character": {
+      "pb": "0-300",
+      "short": "301-600",
+      "medium": "601-1500",
+      "long": "1501-3000"
+    },
+    "starship": {
+      "pb": "0-2",
+      "short": "3-4",
+      "medium": "5-10",
+      "long": "11-20"
+    },
+    "notes": "Heavy and Hapan Triple require Colossal (Frigate)+"
+  },
+  {
+    "id": "laser-cannons",
+    "name": "Laser Cannons",
+    "slug": "laser-cannons",
+    "character": {
+      "pb": "0-150",
+      "short": "151-300",
+      "medium": "301-750",
+      "long": "751-1500"
+    },
+    "starship": {
+      "pb": "0-1",
+      "short": "2",
+      "medium": "3-5",
+      "long": "6-10"
+    },
+    "notes": null
+  },
+  {
+    "id": "missiles-torpedoes",
+    "name": "Missiles or Torpedoes",
+    "slug": "missiles-torpedoes",
+    "character": {
+      "pb": "0-450",
+      "short": "451-900",
+      "medium": "901-2250",
+      "long": "2251-4500"
+    },
+    "starship": {
+      "pb": "0-3",
+      "short": "4-6",
+      "medium": "7-15",
+      "long": "16-30"
+    },
+    "notes": null
+  },
+  {
+    "id": "point-defense",
+    "name": "Point-Defense",
+    "slug": "point-defense",
+    "character": {
+      "pb": "0-150",
+      "short": "151-300",
+      "medium": "301-750",
+      "long": "751-1500"
+    },
+    "starship": {
+      "pb": "0-1",
+      "short": "2",
+      "medium": "3-5",
+      "long": "6-10"
+    },
+    "notes": "Colossal (Frigate)+ only"
+  },
+  {
+    "id": "shieldbuster-torpedoes",
+    "name": "Shieldbuster Torpedoes",
+    "slug": "shieldbuster-torpedoes",
+    "character": {
+      "pb": "0-450",
+      "short": "451-900",
+      "medium": "901-2250",
+      "long": "2251-4000"
+    },
+    "starship": {
+      "pb": "0-3",
+      "short": "4-6",
+      "medium": "7-15",
+      "long": "16-30"
+    },
+    "notes": null
+  },
+  {
+    "id": "tractor-beams",
+    "name": "Tractor Beams",
+    "slug": "tractor-beams",
+    "character": {
+      "pb": "0-150",
+      "short": "151-300",
+      "medium": "301-750",
+      "long": "751-1500"
+    },
+    "starship": {
+      "pb": "0-1",
+      "short": "2",
+      "medium": "3-5",
+      "long": "6-10"
+    },
+    "notes": null
+  },
+  {
+    "id": "turbolasers",
+    "name": "Turbolasers",
+    "slug": "turbolasers",
+    "character": {
+      "pb": "0-600",
+      "short": "601-1200",
+      "medium": "1201-3000",
+      "long": "3001-6000"
+    },
+    "starship": {
+      "pb": "0-4",
+      "short": "5-8",
+      "medium": "9-20",
+      "long": "21-40"
+    },
+    "notes": "Colossal (Frigate)+ only"
+  }
+]

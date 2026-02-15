@@ -339,6 +339,20 @@
       "path": "packs/vehicles"
     },
     {
+      "name": "vehicle-weapons",
+      "label": "Vehicle Weapons",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/vehicle-weapons"
+    },
+    {
+      "name": "vehicle-weapon-ranges",
+      "label": "Vehicle Weapon Ranges",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/vehicle-weapon-ranges"
+    },
+    {
       "name": "equipment-comlinks",
       "label": "Equipment - Communications",
       "type": "Item",

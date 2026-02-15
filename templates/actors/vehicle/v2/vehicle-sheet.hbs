@@ -60,7 +60,7 @@
     <section class="tab" data-group="primary" data-tab="crew">
       <div class="swse-v2-grid">
         <div class="swse-v2-full">
-          <div class="holo-panel">
+          <div class="holo-panel" data-drop-zone="crew">
             <div class="section-bar">
               <h3 class="section-header">Crew Members</h3>
             </div>
@@ -103,10 +103,63 @@
 
     <section class="tab" data-group="primary" data-tab="maneuvers">
       <div class="swse-v2-grid">
+        {{#if engines.enhancedPilotEnabled}}
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Pilot Maneuvers</h3>
+              <span class="muted">Active: {{engines.pilotManeuver}}</span>
+            </div>
+            <div class="swse-v2-maneuver-controls" style="display:flex; gap:6px; padding:8px; flex-wrap:wrap;">
+              <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'none')}}active{{/if}}" data-action="set-maneuver" data-maneuver="none">None</button>
+              <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'evasive')}}active{{/if}}" data-action="set-maneuver" data-maneuver="evasive" title="+2 Reflex, -2 Attacks">Evasive</button>
+              <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'attackRun')}}active{{/if}}" data-action="set-maneuver" data-maneuver="attackRun" title="+2 Attacks, -2 Reflex">Attack Run</button>
+              <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'allOut')}}active{{/if}}" data-action="set-maneuver" data-maneuver="allOut" title="2x Speed, no attacks, -2 Reflex">All-Out</button>
+              <button type="button" class="swse-v2-btn {{#if (eq engines.pilotManeuver 'trick')}}active{{/if}}" data-action="set-maneuver" data-maneuver="trick" title="Opposed Pilot check">Trick</button>
+            </div>
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if engines.enhancedCommanderEnabled}}
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Commander Orders</h3>
+              <span class="muted">Active: {{engines.commanderOrder}}</span>
+            </div>
+            <div class="swse-v2-order-controls" style="display:flex; gap:6px; padding:8px; flex-wrap:wrap;">
+              <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'none')}}active{{/if}}" data-action="set-order" data-order="none">None</button>
+              <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'coordinateFire')}}active{{/if}}" data-action="set-order" data-order="coordinateFire" title="+1 attack to all gunners">Coordinate Fire</button>
+              <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'inspire')}}active{{/if}}" data-action="set-order" data-order="inspire" title="+1 morale to all crew">Inspire Crew</button>
+              <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'tacticalAdvantage')}}active{{/if}}" data-action="set-order" data-order="tacticalAdvantage" title="Extra Swift Action">Tactical Advantage</button>
+              <button type="button" class="swse-v2-btn {{#if (eq engines.commanderOrder 'battleAnalysis')}}active{{/if}}" data-action="set-order" data-order="battleAnalysis" title="Reveal target DT/CT">Battle Analysis</button>
+            </div>
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if engines.turnControllerEnabled}}
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Turn Phases</h3>
+              <span class="muted">Current: {{engines.turnState.currentPhase}}</span>
+            </div>
+            <div style="display:flex; gap:6px; padding:8px; align-items:center; flex-wrap:wrap;">
+              {{#each engines.turnPhases}}
+                <span class="swse-v2-phase-badge" style="padding:4px 8px; border-radius:4px; background:{{#if this.active}}#0d7{{else}}#333{{/if}}; color:{{#if this.active}}#000{{else}}#999{{/if}}; font-size:0.85em; text-transform:capitalize;">{{this.name}}</span>
+              {{/each}}
+              <button type="button" class="swse-v2-btn" data-action="advance-phase" style="margin-left:auto;">Advance</button>
+              <button type="button" class="swse-v2-btn" data-action="reset-turn">Reset</button>
+            </div>
+          </div>
+        </div>
+        {{/if}}
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="weapons">
+    <section class="tab" data-group="primary" data-tab="weapons" data-drop-zone="weapon">
       <div class="swse-v2-grid" style="margin-top:12px;">
         <div class="swse-v2-holo-group">
           <div class="swse-v2-holo-header">Attacks</div>
@@ -115,8 +168,105 @@
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="systems">
+    <section class="tab" data-group="primary" data-tab="systems" data-drop-zone="equipment">
       <div class="swse-v2-grid" style="margin-top:12px;">
+
+        {{#if engines.subsystemsEnabled}}
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Subsystems</h3>
+              <span class="muted">SWES Subsystem Damage</span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; padding:8px;">
+              {{#each engines.subsystems as |tier name|}}
+              <div class="swse-v2-subsystem-card" style="padding:8px; border:1px solid {{#if (eq tier 'normal')}}#0d7{{else if (eq tier 'damaged')}}#f90{{else if (eq tier 'disabled')}}#c33{{else}}#666{{/if}}; border-radius:4px; text-align:center;">
+                <div style="font-weight:700; text-transform:capitalize; font-size:0.9em;">{{name}}</div>
+                <div style="color:{{#if (eq tier 'normal')}}#0d7{{else if (eq tier 'damaged')}}#f90{{else if (eq tier 'disabled')}}#c33{{else}}#666{{/if}}; text-transform:uppercase; font-size:0.8em; margin:4px 0;">{{tier}}</div>
+                {{#unless (eq tier 'normal')}}
+                  {{#unless (eq tier 'destroyed')}}
+                  <button type="button" class="swse-v2-btn" data-action="repair-subsystem" data-subsystem="{{name}}" style="font-size:0.75em; padding:2px 6px;">Repair</button>
+                  {{/unless}}
+                {{/unless}}
+              </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if engines.enhancedShieldsEnabled}}
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Directional Shields</h3>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; padding:8px; text-align:center;">
+              <div>
+                <div style="font-weight:700; font-size:0.85em;">FORE</div>
+                <div style="font-size:1.2em; color:#0af;">{{engines.shieldZones.fore}}</div>
+                <button type="button" class="swse-v2-btn" data-action="shield-focus" data-zone="fore" style="font-size:0.75em; padding:2px 6px;">Focus</button>
+              </div>
+              <div>
+                <div style="font-weight:700; font-size:0.85em;">AFT</div>
+                <div style="font-size:1.2em; color:#0af;">{{engines.shieldZones.aft}}</div>
+                <button type="button" class="swse-v2-btn" data-action="shield-focus" data-zone="aft" style="font-size:0.75em; padding:2px 6px;">Focus</button>
+              </div>
+              <div>
+                <div style="font-weight:700; font-size:0.85em;">PORT</div>
+                <div style="font-size:1.2em; color:#0af;">{{engines.shieldZones.port}}</div>
+                <button type="button" class="swse-v2-btn" data-action="shield-focus" data-zone="port" style="font-size:0.75em; padding:2px 6px;">Focus</button>
+              </div>
+              <div>
+                <div style="font-weight:700; font-size:0.85em;">STARBOARD</div>
+                <div style="font-size:1.2em; color:#0af;">{{engines.shieldZones.starboard}}</div>
+                <button type="button" class="swse-v2-btn" data-action="shield-focus" data-zone="starboard" style="font-size:0.75em; padding:2px 6px;">Focus</button>
+              </div>
+            </div>
+            <div style="text-align:center; padding:4px 8px 8px;">
+              <button type="button" class="swse-v2-btn" data-action="shield-equalize">Equalize All</button>
+            </div>
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if engines.enhancedEngineerEnabled}}
+        <div class="swse-v2-full">
+          <div class="holo-panel">
+            <div class="section-bar">
+              <h3 class="section-header">Power Allocation</h3>
+              <span class="muted">Budget: {{engines.powerBudget}}</span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; padding:8px; text-align:center;">
+              <div>
+                <div style="font-weight:700; font-size:0.85em;">WEAPONS</div>
+                <div style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:4px;">
+                  <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="weapons" data-direction="down" style="padding:2px 6px;">-</button>
+                  <span style="font-size:1.2em; min-width:24px;">{{engines.powerAllocation.weapons}}</span>
+                  <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="weapons" data-direction="up" style="padding:2px 6px;">+</button>
+                </div>
+              </div>
+              <div>
+                <div style="font-weight:700; font-size:0.85em;">SHIELDS</div>
+                <div style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:4px;">
+                  <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="shields" data-direction="down" style="padding:2px 6px;">-</button>
+                  <span style="font-size:1.2em; min-width:24px;">{{engines.powerAllocation.shields}}</span>
+                  <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="shields" data-direction="up" style="padding:2px 6px;">+</button>
+                </div>
+              </div>
+              <div>
+                <div style="font-weight:700; font-size:0.85em;">ENGINES</div>
+                <div style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:4px;">
+                  <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="engines" data-direction="down" style="padding:2px 6px;">-</button>
+                  <span style="font-size:1.2em; min-width:24px;">{{engines.powerAllocation.engines}}</span>
+                  <button type="button" class="swse-v2-btn" data-action="power-adjust" data-system="engines" data-direction="up" style="padding:2px 6px;">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/if}}
+
         <div class="swse-v2-full">
           <div class="holo-panel">
             <div class="section-bar">

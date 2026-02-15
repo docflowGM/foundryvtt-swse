@@ -531,6 +531,18 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             return Number.isNaN(num) ? 0 : Math.floor(num);
           }
         }),
+        persistentSteps: new fields.NumberField({
+          required: true,
+          nullable: true,
+          initial: 0,
+          min: 0,
+          integer: true,
+          clean: value => {
+            if (value === null || value === undefined || value === '') {return 0;}
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
+        }),
         penalty: new fields.NumberField({
           required: true,
           nullable: true,
@@ -610,6 +622,45 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
 
       // Sensors
       senses: new fields.StringField({ required: false, initial: '' }),
+
+      // Subsystem damage tiers (SWES)
+      subsystems: new fields.SchemaField({
+        engines: new fields.StringField({ required: true, initial: 'normal' }),
+        weapons: new fields.StringField({ required: true, initial: 'normal' }),
+        shields: new fields.StringField({ required: true, initial: 'normal' }),
+        sensors: new fields.StringField({ required: true, initial: 'normal' }),
+        comms: new fields.StringField({ required: true, initial: 'normal' }),
+        lifeSupport: new fields.StringField({ required: true, initial: 'normal' })
+      }),
+
+      // Enhanced directional shields
+      enhancedShields: new fields.SchemaField({
+        fore: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
+        aft: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
+        port: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
+        starboard: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true })
+      }),
+
+      // Power allocation (Enhanced Engineer)
+      powerAllocation: new fields.SchemaField({
+        weapons: new fields.NumberField({ required: true, initial: 2, min: 0, max: 4, integer: true }),
+        shields: new fields.NumberField({ required: true, initial: 2, min: 0, max: 4, integer: true }),
+        engines: new fields.NumberField({ required: true, initial: 2, min: 0, max: 4, integer: true })
+      }),
+
+      // Pilot maneuver (Enhanced Pilot)
+      pilotManeuver: new fields.StringField({ required: true, initial: 'none' }),
+
+      // Commander order (Enhanced Commander)
+      commanderOrder: new fields.StringField({ required: true, initial: 'none' }),
+
+      // Turn state (Vehicle Turn Controller)
+      turnState: new fields.SchemaField({
+        currentPhase: new fields.StringField({ required: true, initial: 'commander' }),
+        phaseIndex: new fields.NumberField({ required: true, initial: 0, min: 0, max: 5, integer: true }),
+        completedPhases: new fields.ArrayField(new fields.StringField(), { initial: [] }),
+        crewActed: new fields.ObjectField({ initial: {} })
+      }),
 
       // Emplacement Points for vehicle modifications
       emplacementPoints: new fields.NumberField({
@@ -701,6 +752,9 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
     // Formula: Fortitude Defense + Size-specific modifier
     const sizeDamageModifier = this._getSizeDamageThresholdModifier();
     this.damageThreshold = this.fortitudeDefense + sizeDamageModifier;
+
+    // Enhanced Massive Damage: override DT if formula modified
+    this._applyEnhancedDamageThreshold(sizeDamageModifier);
 
     // Calculate Condition Track penalty
     if (this.conditionTrack) {
@@ -944,5 +998,29 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
 
     const initiativeBonus = pilotInitiativeMod + sizeModifier + dexMod;
     this.initiative = `${initiativeBonus >= 0 ? '+' : ''}${initiativeBonus}`;
+  }
+
+  /**
+   * Apply enhanced DT formula override from ThresholdEngine settings.
+   * Only activates if both enableEnhancedMassiveDamage and modifyDamageThresholdFormula are true.
+   * @param {number} sizeDamageModifier - The size-based DT modifier already calculated
+   */
+  _applyEnhancedDamageThreshold(sizeDamageModifier) {
+    try {
+      const enabled = game.settings?.get('foundryvtt-swse', 'enableEnhancedMassiveDamage');
+      const modifyFormula = game.settings?.get('foundryvtt-swse', 'modifyDamageThresholdFormula');
+      if (!enabled || !modifyFormula) return;
+
+      const formulaType = game.settings?.get('foundryvtt-swse', 'damageThresholdFormulaType') ?? 'fullLevel';
+      const vehicleLevel = this.challengeLevel ?? 0;
+
+      if (formulaType === 'halfLevel') {
+        this.damageThreshold = this.fortitudeDefense + Math.floor(vehicleLevel / 2) + sizeDamageModifier;
+      } else {
+        this.damageThreshold = this.fortitudeDefense + vehicleLevel + sizeDamageModifier;
+      }
+    } catch {
+      // Settings not yet registered or not available; skip silently
+    }
   }
 }
