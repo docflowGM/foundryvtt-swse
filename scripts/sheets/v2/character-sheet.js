@@ -13,6 +13,8 @@ import { DropService } from "../../services/drop-service.js";
 import { isXPEnabled } from "../../engine/progression/xp-engine.js";
 import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
 import { PrerequisiteEngine } from "../../engine/prerequisites/PrerequisiteEngine.js";
+import { ModifierEngine } from "../../engine/modifiers/ModifierEngine.js";
+import { ModifierBreakdownDialog } from "../../apps/dialogs/modifier-breakdown-dialog.js";
 
 /* ========================================================================== */
 /* SWSEV2CharacterSheet                                                       */
@@ -654,6 +656,47 @@ export class SWSEV2CharacterSheet extends
           const item = this.actor.items?.get(itemId);
           item?.sheet?.render(true);
         }
+      });
+    }
+
+    /* ---- PHASE 3: SKILL MODIFIER BREAKDOWN POPOUT ---- */
+
+    for (const miscCell of root.querySelectorAll('.skill-col-misc input')) {
+      miscCell.addEventListener("click", async (ev) => {
+        ev.stopPropagation();
+        const skillRow = ev.currentTarget?.closest('[data-skill-name]');
+        if (!skillRow) return;
+
+        const skillName = skillRow.dataset.skillName;
+        if (!skillName) return;
+
+        // Get modifiers from ModifierEngine
+        const modifiers = ModifierEngine.getSkillModifiers(this.actor, skillName);
+
+        // Show breakdown dialog
+        await ModifierBreakdownDialog.show(this.actor, modifiers, skillName);
+      });
+    }
+
+    /* ---- PHASE 3: TAKE 10/20 CONTEXT MENU ---- */
+
+    for (const skillRow of root.querySelectorAll('.skill-row-container')) {
+      const skillKey = skillRow.dataset.skillName;
+      if (!skillKey) continue;
+
+      // Right-click context for Take 10/20
+      skillRow.addEventListener("contextmenu", (ev) => {
+        ev.preventDefault();
+
+        const skill = this.actor.system?.skills?.[skillKey];
+        if (!skill) return;
+
+        const totalBonus = skill.total ?? 0;
+        const take10 = 10 + totalBonus;
+        const take20 = 20 + totalBonus;
+
+        const tooltip = `${skillKey}\nTake 10: ${take10}\nTake 20: ${take20}`;
+        ui.notifications.info(tooltip);
       });
     }
 

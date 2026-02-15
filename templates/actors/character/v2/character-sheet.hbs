@@ -124,6 +124,41 @@
 
     <section class="tab" data-group="primary" data-tab="combat">
       <div class="swse-v2-sheet-grid">
+
+        <!-- PHASE 3: INITIATIVE DISPLAY -->
+        <div class="swse-v2-full">
+          <div class="holo-panel" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <div class="section-bar" style="background: rgba(0,0,0,0.2);">
+              <h3 class="section-header" style="color: white;">⚡ Initiative</h3>
+            </div>
+            <div style="padding: 16px; text-align: center;">
+              <div style="font-size: 0.75rem; opacity: 0.9; margin-bottom: 8px;">Total Modifier</div>
+              <div style="font-size: 2.5em; font-weight: bold;">
+                {{#if derived.skills.list}}
+                  {{#with (lookup (reduce derived.skills.list (fn (accum item)
+                    (if (eq item.key "initiative") item accum))) null) as |initSkill|}}
+                    {{#if initSkill}}
+                      {{#if (lt initSkill.total 0)}}−{{/if}}{{abs initSkill.total}}
+                    {{else}}
+                      +0
+                    {{/if}}
+                  {{/with}}
+                {{else}}
+                  +0
+                {{/if}}
+              </div>
+              <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 12px;">
+                <button type="button"
+                        class="rollable-skill"
+                        data-skill="initiative"
+                        style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                  Roll Initiative
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
         </div>
