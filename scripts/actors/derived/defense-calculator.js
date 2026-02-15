@@ -21,11 +21,14 @@ export class DefenseCalculator {
    * Calculate defense bonuses for all three defense types.
    * Async, but called during recalculation, not mutation.
    *
+   * Phase 0: Accepts modifier adjustments from ModifierEngine
+   *
    * @param {Actor} actor - for ability modifier access
    * @param {Array} classLevels - from actor.system.progression.classLevels
+   * @param {Object} options - { adjustments: {fort, ref, will} } modifier adjustments
    * @returns {Promise<Object>} { fortitude, reflex, will }
    */
-  static async calculate(actor, classLevels) {
+  static async calculate(actor, classLevels, options = {}) {
     const abilities = actor.system.attributes || {};
 
     // Get ability modifiers
@@ -43,19 +46,23 @@ export class DefenseCalculator {
     const isDroidActor = actor.system.isDroid || false;
     const fortAbility = isDroidActor ? strMod : Math.max(strMod, conMod);
 
+    // Get modifier adjustments (Phase 0)
+    const adjustments = options?.adjustments || {};
+    const fortAdjust = adjustments.fort || 0;
+    const refAdjust = adjustments.ref || 0;
+    const willAdjust = adjustments.will || 0;
+
+    // Calculate base and total for each defense
+    const calcDefense = (classBonus, abilityMod, adjustment) => {
+      const base = 10 + classBonus + abilityMod;
+      const total = Math.max(1, base + adjustment);
+      return { base, total, adjustment };
+    };
+
     return {
-      fortitude: {
-        class: fortBonus,
-        ability: fortAbility
-      },
-      reflex: {
-        class: refBonus,
-        ability: dexMod
-      },
-      will: {
-        class: willBonus,
-        ability: wisMod
-      }
+      fortitude: calcDefense(fortBonus, fortAbility, fortAdjust),
+      reflex: calcDefense(refBonus, dexMod, refAdjust),
+      will: calcDefense(willBonus, wisMod, willAdjust)
     };
   }
 

@@ -1,0 +1,30 @@
+<div class="damage-app">
+  <div class="hp-status">
+    <div class="hp-bar">
+      <div class="hp-fill" style="width: {{hpStatus.percent}}%"></div>
+    </div>
+    <span>{{hpStatus.current}} / {{hpStatus.max}} HP</span>
+    {{#if hpStatus.temp}}<span class="temp-hp">+{{hpStatus.temp}} temp</span>{{/if}}
+  </div>
+
+  {{#if dt}}<div class="dt-info">DT: {{dt}}</div>{{/if}}
+
+  <div class="damage-input">
+    <input type="number" name="damage" placeholder="Damage" value="{{damageInput}}" />
+    <label>
+      <input type="checkbox" name="bypassDT" {{#if bypassDT}}checked{{/if}} />
+      Bypass DT
+    </label>
+  </div>
+
+  <div class="damage-buttons">
+    <button data-action="apply" class="btn">Apply</button>
+    <button data-action="apply-half" class="btn">Half</button>
+    <button data-action="apply-double" class="btn">×2</button>
+  </div>
+
+  <div class="healing-buttons">
+    <button data-action="heal" class="btn btn-heal">Heal</button>
+    <button data-action="restore-temp" class="btn btn-temp">Temp HP</button>
+  </div>
+</div>

@@ -1,0 +1,352 @@
+/**
+ * Skill Modifier Breakdown App Styles
+ * Phase B — Modifier visibility and editing UI
+ */
+
+.skill-modifier-breakdown {
+  background: var(--swse-bg-secondary, #2b2b2b);
+  border: 1px solid var(--swse-border-accent, #444);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 0.875rem;
+}
+
+/* Header */
+.skill-modifier-breakdown .breakdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--swse-border-subtle, #333);
+}
+
+.skill-modifier-breakdown .skill-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--swse-text-primary, #fff);
+}
+
+.skill-modifier-breakdown .breakdown-total {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.skill-modifier-breakdown .breakdown-total .label {
+  color: var(--swse-text-secondary, #aaa);
+  font-size: 0.75rem;
+}
+
+.skill-modifier-breakdown .breakdown-total .value {
+  color: var(--swse-text-secondary, #aaa);
+  min-width: 24px;
+  text-align: right;
+}
+
+.skill-modifier-breakdown .breakdown-total .value.positive {
+  color: var(--swse-color-success, #4a9d6f);
+}
+
+/* Sections */
+.skill-modifier-breakdown .breakdown-section {
+  margin-bottom: 12px;
+  padding: 8px;
+  background: var(--swse-bg-tertiary, #1f1f1f);
+  border-radius: 4px;
+}
+
+.skill-modifier-breakdown .breakdown-section h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--swse-text-accent, #daa520);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Mod Rows */
+.skill-modifier-breakdown .mod-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 4px;
+  border-left: 3px solid var(--swse-border-subtle, #333);
+  padding-left: 8px;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.skill-modifier-breakdown .mod-row.custom {
+  border-left-color: var(--swse-accent, #d4af37);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.skill-modifier-breakdown .mod-row.encumbrance {
+  border-left-color: var(--swse-color-warning, #ff9900);
+}
+
+.skill-modifier-breakdown .mod-row.condition {
+  border-left-color: var(--swse-color-danger, #ff4444);
+}
+
+.skill-modifier-breakdown .mod-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.skill-modifier-breakdown .mod-source {
+  color: var(--swse-text-primary, #fff);
+  font-weight: 500;
+}
+
+.skill-modifier-breakdown .mod-type {
+  color: var(--swse-text-secondary, #aaa);
+  font-size: 0.7rem;
+  font-style: italic;
+}
+
+.skill-modifier-breakdown .mod-value {
+  color: var(--swse-text-secondary, #aaa);
+  font-weight: 600;
+  min-width: 40px;
+  text-align: right;
+}
+
+.skill-modifier-breakdown .mod-value.bonus {
+  color: var(--swse-color-success, #4a9d6f);
+}
+
+.skill-modifier-breakdown .mod-value.penalty {
+  color: var(--swse-color-warning, #ff9900);
+}
+
+.skill-modifier-breakdown .btn-remove-mod {
+  background: transparent;
+  border: none;
+  color: var(--swse-color-danger, #ff4444);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 4px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.skill-modifier-breakdown .btn-remove-mod:hover {
+  opacity: 1;
+}
+
+/* Custom Mod List */
+.skill-modifier-breakdown .custom-mod-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skill-modifier-breakdown .custom-mod-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 3px;
+  font-size: 0.75rem;
+}
+
+.skill-modifier-breakdown .custom-mod-row.disabled {
+  opacity: 0.6;
+  background: rgba(212, 175, 55, 0.05);
+  border-color: rgba(212, 175, 55, 0.15);
+}
+
+.skill-modifier-breakdown .custom-mod-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.skill-modifier-breakdown .custom-mod-source {
+  color: var(--swse-text-primary, #fff);
+  font-weight: 500;
+}
+
+.skill-modifier-breakdown .custom-mod-type {
+  color: var(--swse-text-secondary, #aaa);
+  font-size: 0.7rem;
+  font-style: italic;
+}
+
+.skill-modifier-breakdown .custom-mod-value {
+  color: var(--swse-text-secondary, #aaa);
+  font-weight: 600;
+}
+
+.skill-modifier-breakdown .custom-mod-value.bonus {
+  color: var(--swse-color-success, #4a9d6f);
+}
+
+.skill-modifier-breakdown .custom-mod-value.penalty {
+  color: var(--swse-color-warning, #ff9900);
+}
+
+.skill-modifier-breakdown .custom-mod-actions {
+  display: flex;
+  gap: 4px;
+  margin-left: 8px;
+}
+
+.skill-modifier-breakdown .btn-toggle-custom,
+.skill-modifier-breakdown .btn-remove-custom {
+  background: transparent;
+  border: 1px solid var(--swse-border-accent, #444);
+  color: var(--swse-text-secondary, #aaa);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+
+.skill-modifier-breakdown .btn-toggle-custom:hover,
+.skill-modifier-breakdown .btn-remove-custom:hover {
+  border-color: var(--swse-accent, #d4af37);
+  color: var(--swse-accent, #d4af37);
+}
+
+.skill-modifier-breakdown .btn-remove-custom:hover {
+  border-color: var(--swse-color-danger, #ff4444);
+  color: var(--swse-color-danger, #ff4444);
+}
+
+/* Add Custom Form */
+.skill-modifier-breakdown .add-custom {
+  border-top: 1px solid var(--swse-border-subtle, #333);
+  padding-top: 12px;
+}
+
+.skill-modifier-breakdown .add-custom-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skill-modifier-breakdown .add-custom-form h4 {
+  margin: 0;
+}
+
+.skill-modifier-breakdown .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.skill-modifier-breakdown .form-group label {
+  color: var(--swse-text-secondary, #aaa);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.skill-modifier-breakdown .form-group input,
+.skill-modifier-breakdown .form-group select {
+  background: var(--swse-bg-input, #1a1a1a);
+  border: 1px solid var(--swse-border-accent, #444);
+  color: var(--swse-text-primary, #fff);
+  padding: 6px 8px;
+  border-radius: 3px;
+  font-size: 0.85rem;
+}
+
+.skill-modifier-breakdown .form-group input:focus,
+.skill-modifier-breakdown .form-group select:focus {
+  border-color: var(--swse-accent, #d4af37);
+  outline: none;
+  box-shadow: 0 0 4px rgba(212, 175, 55, 0.3);
+}
+
+.skill-modifier-breakdown .form-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.skill-modifier-breakdown .btn {
+  padding: 6px 12px;
+  border: 1px solid var(--swse-border-accent, #444);
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex: 1;
+}
+
+.skill-modifier-breakdown .btn-primary {
+  background: var(--swse-accent, #d4af37);
+  color: #000;
+  border-color: var(--swse-accent, #d4af37);
+}
+
+.skill-modifier-breakdown .btn-primary:hover {
+  background: #e5c158;
+  border-color: #e5c158;
+}
+
+.skill-modifier-breakdown .btn-secondary {
+  background: transparent;
+  color: var(--swse-text-secondary, #aaa);
+}
+
+.skill-modifier-breakdown .btn-secondary:hover {
+  border-color: var(--swse-text-secondary, #aaa);
+  color: var(--swse-text-primary, #fff);
+}
+
+.skill-modifier-breakdown .btn-add-custom {
+  background: transparent;
+  color: var(--swse-accent, #d4af37);
+  width: 100%;
+  margin-top: 4px;
+}
+
+.skill-modifier-breakdown .btn-add-custom:hover {
+  border-color: var(--swse-accent, #d4af37);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+/* Info Text */
+.skill-modifier-breakdown .breakdown-info {
+  font-size: 0.7rem;
+  color: var(--swse-text-secondary, #aaa);
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+.skill-modifier-breakdown .breakdown-info p {
+  margin: 0;
+}
+
+.skill-modifier-breakdown .breakdown-info strong {
+  color: var(--swse-text-accent, #daa520);
+}
+
+/* Empty State */
+.skill-modifier-breakdown .empty-state {
+  color: var(--swse-text-secondary, #aaa);
+  font-size: 0.8rem;
+  padding: 12px;
+  text-align: center;
+  font-style: italic;
+}

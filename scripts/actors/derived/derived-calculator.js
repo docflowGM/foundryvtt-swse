@@ -13,6 +13,7 @@
 import { HPCalculator } from './hp-calculator.js';
 import { BABCalculator } from './bab-calculator.js';
 import { DefenseCalculator } from './defense-calculator.js';
+import { ModifierEngine } from '../modifiers/ModifierEngine.js';
 import { swseLogger } from '../../utils/logger.js';
 
 export class DerivedCalculator {
@@ -28,10 +29,32 @@ export class DerivedCalculator {
       const prog = actor.system.progression || {};
       const classLevels = prog.classLevels || [];
 
-      // Compute all derived values
-      const hp = HPCalculator.calculate(actor, classLevels);
-      const bab = await BABCalculator.calculate(classLevels);
-      const defenses = await DefenseCalculator.calculate(actor, classLevels);
+      // ========================================
+      // PHASE 0: Modifier Pipeline Integration
+      // ========================================
+      // Collect all modifiers from every source
+      const allModifiers = await ModifierEngine.getAllModifiers(actor);
+
+      // Aggregate modifiers: group by target, apply stacking rules
+      const modifierMap = await ModifierEngine.aggregateAll(actor);
+
+      // Extract specific adjustments for calculators
+      const hpAdjustment = modifierMap['hp.max'] || 0;
+      const defenseAdjustments = {
+        fort: modifierMap['defense.fort'] || 0,
+        ref: modifierMap['defense.reflex'] || 0,
+        will: modifierMap['defense.will'] || 0
+      };
+      const babAdjustment = modifierMap['bab.total'] || 0;
+
+      swseLogger.debug(`[DerivedCalculator] Modifier adjustments: HP=${hpAdjustment}, Fort=${defenseAdjustments.fort}, Ref=${defenseAdjustments.ref}, Will=${defenseAdjustments.will}, BAB=${babAdjustment}`);
+
+      // ========================================
+      // Compute all derived values (base only)
+      // ========================================
+      const hp = HPCalculator.calculate(actor, classLevels, { adjustment: hpAdjustment });
+      const bab = await BABCalculator.calculate(classLevels, { adjustment: babAdjustment });
+      const defenses = await DefenseCalculator.calculate(actor, classLevels, { adjustments: defenseAdjustments });
 
       // Build update object (all writes go to system.derived.*)
       const updates = {};
@@ -39,29 +62,62 @@ export class DerivedCalculator {
       // HP
       if (hp.max > 0) {
         updates['system.derived.hp'] = {
+          base: hp.base || hp.max,  // Store base for reference
           max: hp.max,
-          value: actor.system.hp?.value || hp.value // Preserve current HP if set
+          total: hp.max,
+          value: actor.system.hp?.value || hp.value, // Preserve current HP if set
+          adjustment: hpAdjustment
         };
       }
 
       // BAB
       if (bab >= 0) {
         updates['system.derived.bab'] = bab;
+        updates['system.derived.babAdjustment'] = babAdjustment;
       }
 
       // Defenses
       if (defenses.fortitude) {
         updates['system.derived.defenses'] = updates['system.derived.defenses'] || {};
-        updates['system.derived.defenses'].fortitude = defenses.fortitude;
+        updates['system.derived.defenses'].fortitude = {
+          base: defenses.fortitude.base,
+          total: defenses.fortitude.total,
+          adjustment: defenseAdjustments.fort
+        };
       }
       if (defenses.reflex) {
         updates['system.derived.defenses'] = updates['system.derived.defenses'] || {};
-        updates['system.derived.defenses'].reflex = defenses.reflex;
+        updates['system.derived.defenses'].reflex = {
+          base: defenses.reflex.base,
+          total: defenses.reflex.total,
+          adjustment: defenseAdjustments.ref
+        };
       }
       if (defenses.will) {
         updates['system.derived.defenses'] = updates['system.derived.defenses'] || {};
-        updates['system.derived.defenses'].will = defenses.will;
+        updates['system.derived.defenses'].will = {
+          base: defenses.will.base,
+          total: defenses.will.total,
+          adjustment: defenseAdjustments.will
+        };
       }
+
+      // ========================================
+      // Store modifier breakdown for UI
+      // ========================================
+      const skillTargets = Object.keys(actor?.system?.skills || {})
+        .map(key => `skill.${key}`);
+      const allTargets = [
+        ...skillTargets,
+        'defense.fort', 'defense.reflex', 'defense.will',
+        'hp.max', 'bab.total', 'initiative.total'
+      ];
+      const modifierBreakdown = await ModifierEngine.buildModifierBreakdown(actor, allTargets);
+
+      updates['system.derived.modifiers'] = {
+        all: allModifiers,
+        breakdown: modifierBreakdown
+      };
 
       swseLogger.debug(`DerivedCalculator computed for ${actor.name}`, { updates });
 

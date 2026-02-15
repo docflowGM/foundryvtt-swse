@@ -29,10 +29,13 @@ export class BABCalculator {
    * Calculate total BAB from class levels.
    * Async (loads compendium data), but only called during recalculation, not mutation.
    *
+   * Phase 0: Accepts modifier adjustments from ModifierEngine
+   *
    * @param {Array} classLevels - from actor.system.progression.classLevels
-   * @returns {Promise<number>} total BAB
+   * @param {Object} options - { adjustment: number } modifier adjustments
+   * @returns {Promise<number>} total BAB (adjusted)
    */
-  static async calculate(classLevels) {
+  static async calculate(classLevels, options = {}) {
     if (!classLevels || classLevels.length === 0) {
       return 0;
     }
@@ -71,6 +74,8 @@ export class BABCalculator {
       }
     }
 
-    return totalBAB;
+    // Apply modifier adjustment (Phase 0)
+    const adjustment = options?.adjustment || 0;
+    return totalBAB + adjustment;
   }
 }

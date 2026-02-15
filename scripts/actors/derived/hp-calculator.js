@@ -22,13 +22,16 @@ export class HPCalculator {
    * Calculate max HP from class levels.
    * Synchronous, pure function.
    *
+   * Phase 0: Accepts modifier adjustments from ModifierEngine
+   *
    * @param {Actor} actor - for isDroid, CON mod access
    * @param {Array} classLevels - from actor.system.progression.classLevels
-   * @returns {Object} { max, value }
+   * @param {Object} options - { adjustment: number } modifier adjustments
+   * @returns {Object} { base, max, value, adjustment }
    */
-  static calculate(actor, classLevels) {
+  static calculate(actor, classLevels, options = {}) {
     if (!classLevels || classLevels.length === 0) {
-      return { max: 1, value: 1 };
+      return { base: 1, max: 1, value: 1, adjustment: 0 };
     }
 
     let maxHP = 0;
@@ -57,9 +60,15 @@ export class HPCalculator {
       }
     }
 
+    const baseHP = Math.max(1, maxHP);
+    const adjustment = options?.adjustment || 0;
+    const finalHP = Math.max(1, baseHP + adjustment);
+
     return {
-      max: Math.max(1, maxHP),
-      value: Math.max(1, maxHP)
+      base: baseHP,
+      max: finalHP,
+      value: finalHP,
+      adjustment
     };
   }
 }

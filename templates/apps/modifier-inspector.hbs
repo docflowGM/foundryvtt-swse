@@ -1,0 +1,63 @@
+<div class="modifier-inspector">
+  <div class="inspector-toolbar">
+    <div class="stats">
+      <span>Total Modifiers: {{totalModifiers}}</span>
+      <span>Targets: {{totalTargets}}</span>
+    </div>
+    <div class="controls">
+      <select name="filter">
+        <option value="">All Sources</option>
+        {{#each sources}}
+          <option value="{{this}}" {{#if (compare this ../filterSource)}}selected{{/if}}>{{this}}</option>
+        {{/each}}
+      </select>
+      <select name="sort">
+        <option value="target" {{#if (compare 'target' sortBy)}}selected{{/if}}>Sort by Target</option>
+        <option value="source" {{#if (compare 'source' sortBy)}}selected{{/if}}>Sort by Source</option>
+      </select>
+      <button class="btn" data-action="copy-json">Copy JSON</button>
+    </div>
+  </div>
+
+  {{#if allModifiers}}
+    <div class="modifier-list">
+      <table>
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Target</th>
+            <th>Type</th>
+            <th>Value</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each allModifiers}}
+            <tr class="mod-row {{this.source}}" data-mod-id="{{this.id}}">
+              <td class="mod-source">{{this.sourceName}}</td>
+              <td class="mod-target">{{this.target}}</td>
+              <td class="mod-type">{{this.type}}</td>
+              <td class="mod-value {{#if (compare this.value '>' 0)}}bonus{{else}}penalty{{/if}}">
+                {{#if (compare this.value '>' 0)}}+{{/if}}{{this.value}}
+              </td>
+              <td class="mod-total">
+                {{#lookup ../aggregated this.target}}—{{/lookup}}
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  {{else}}
+    <div class="empty">No modifiers found</div>
+  {{/if}}
+
+  <div class="target-summary">
+    <h4>Target Summary</h4>
+    <ul>
+      {{#each targetSummary}}
+        <li><strong>{{@key}}:</strong> {{this.total}} ({{this.modCount}} modifiers)</li>
+      {{/each}}
+    </ul>
+  </div>
+</div>
