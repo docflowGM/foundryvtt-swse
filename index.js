@@ -59,6 +59,8 @@ import { SWSEItemBase } from "./scripts/items/base/swse-item-base.js";
 // Sheets
 import { SWSEV2CharacterSheet } from "./scripts/sheets/v2/character-sheet.js";
 import { SWSEV2NpcSheet } from "./scripts/sheets/v2/npc-sheet.js";
+import { SWSEV2CombatNpcSheet } from "./scripts/sheets/v2/npc-combat-sheet.js";
+import { SWSEV2FullNpcSheet } from "./scripts/sheets/v2/npc-full-sheet.js";
 import { SWSEV2DroidSheet } from "./scripts/sheets/v2/droid-sheet.js";
 import { SWSEV2VehicleSheet } from "./scripts/sheets/v2/vehicle-sheet.js";
 import { SWSEItemSheet } from "./scripts/items/swse-item-sheet.js";
@@ -156,7 +158,9 @@ Hooks.once("init", () => {
   /* ---------- SHEET REGISTRATION ---------- */
 
   ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2CharacterSheet, { types: ["character"], makeDefault: true });
-  ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2NpcSheet, { types: ["npc"], makeDefault: true });
+  ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2CombatNpcSheet, { types: ["npc"], makeDefault: true, label: "SWSE NPC Combat Sheet" });
+  ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2FullNpcSheet, { types: ["npc"], label: "SWSE NPC Full Sheet" });
+  ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2NpcSheet, { types: ["npc"], label: "SWSE NPC Legacy Sheet" });
   ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2DroidSheet, { types: ["droid"], makeDefault: true });
   ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2VehicleSheet, { types: ["vehicle"], makeDefault: true });
 
@@ -228,6 +232,23 @@ Hooks.once("ready", async () => {
     swseLogger.log(`SWSE XP | ${actor.name} reached XP level ${level}`);
     // Open level-up UI if available — does NOT auto-apply class levels
     game.swse?.levelup?.showForActor?.(actor);
+  });
+
+  // NPC Dual-Mode Sheet Switching
+  Hooks.on('renderActorSheet', (app) => {
+    if (app.actor?.type !== "npc") return;
+
+    const sheetMode = app.actor.system?.sheetMode ?? "combat";
+    const isCombatSheet = app instanceof SWSEV2CombatNpcSheet;
+    const isFullSheet = app instanceof SWSEV2FullNpcSheet;
+
+    if (sheetMode === "combat" && !isCombatSheet) {
+      app.close();
+      new SWSEV2CombatNpcSheet(app.actor).render(true);
+    } else if (sheetMode === "full" && !isFullSheet) {
+      app.close();
+      new SWSEV2FullNpcSheet(app.actor).render(true);
+    }
   });
 
   // Restore global SWSE namespace

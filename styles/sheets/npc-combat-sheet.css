@@ -1,0 +1,142 @@
+/* styles/sheets/npc-combat-sheet.css */
+/* NPC Combat Appliance Sheet - Lightweight, Combat-First */
+
+.swse-npc-combat-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ================================================================ */
+/* HEADER STYLING                                                  */
+/* ================================================================ */
+
+.swse-npc-combat-sheet .sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 12px;
+  border-bottom: 2px solid var(--swse-border-accent, #00c0ff);
+}
+
+.swse-npc-combat-sheet .header-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.swse-npc-combat-sheet .profile {
+  width: 64px;
+  height: 64px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid var(--swse-border-accent, #00c0ff);
+}
+
+.swse-npc-combat-sheet .title-block {
+  flex: 1;
+  min-width: 0;
+}
+
+.swse-npc-combat-sheet .title-block .charname input {
+  font-size: 1.2rem;
+  font-weight: 600;
+  width: 100%;
+}
+
+.swse-npc-combat-sheet .title-block .subline {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+.swse-npc-combat-sheet .npc-combat-header-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-width: max-content;
+}
+
+/* ================================================================ */
+/* BODY LAYOUT                                                     */
+/* ================================================================ */
+
+.swse-npc-combat-sheet .sheet-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 12px;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.swse-npc-combat-sheet .npc-combat-left,
+.swse-npc-combat-sheet .npc-combat-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* ================================================================ */
+/* FOOTER ACTIONS                                                  */
+/* ================================================================ */
+
+.swse-npc-combat-sheet .sheet-footer,
+.swse-npc-combat-sheet .npc-combat-footer {
+  padding: 12px;
+  border-top: 1px solid var(--swse-border-accent, #00c0ff);
+  background: rgba(0, 40, 70, 0.1);
+}
+
+.swse-npc-combat-sheet .npc-combat-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.swse-npc-combat-sheet .action-btn {
+  padding: 8px 14px;
+  border: 1px solid var(--swse-border-accent, #00c0ff);
+  background: rgba(0, 200, 255, 0.1);
+  color: var(--swse-text-primary, #cef);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 150ms ease;
+}
+
+.swse-npc-combat-sheet .action-btn:hover {
+  background: rgba(0, 200, 255, 0.25);
+  box-shadow: 0 0 12px rgba(0, 200, 255, 0.3);
+}
+
+.swse-npc-combat-sheet .action-btn:active {
+  transform: scale(0.98);
+}
+
+/* ================================================================ */
+/* RESPONSIVE                                                      */
+/* ================================================================ */
+
+@media (max-width: 1000px) {
+  .swse-npc-combat-sheet .sheet-body {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-npc-combat-sheet .sheet-header {
+    flex-direction: column;
+  }
+
+  .swse-npc-combat-sheet .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
