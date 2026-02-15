@@ -659,7 +659,7 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
-    /* ---- PHASE 3: SKILL MODIFIER BREAKDOWN POPOUT ---- */
+    /* ---- PHASE 3: SKILL MODIFIER BREAKDOWN POPOUT & HOVER TOOLTIP ---- */
 
     for (const miscCell of root.querySelectorAll('.skill-col-misc input')) {
       miscCell.addEventListener("click", async (ev) => {
@@ -675,6 +675,35 @@ export class SWSEV2CharacterSheet extends
 
         // Show breakdown dialog
         await ModifierBreakdownDialog.show(this.actor, modifiers, skillName);
+      });
+
+      // Add hover tooltip
+      miscCell.addEventListener("mouseenter", (ev) => {
+        const skillRow = ev.currentTarget?.closest('[data-skill-name]');
+        if (!skillRow) return;
+
+        const skillName = skillRow.dataset.skillName;
+        if (!skillName) return;
+
+        // Get modifiers from ModifierEngine
+        const modifiers = ModifierEngine.getSkillModifiers(this.actor, skillName);
+
+        // Build tooltip text
+        let tooltipText = `${skillName} Modifiers:\n`;
+        let total = 0;
+        if (modifiers && modifiers.length > 0) {
+          for (const mod of modifiers) {
+            const value = mod.value || 0;
+            total += value;
+            const sign = value >= 0 ? '+' : '';
+            tooltipText += `${sign}${value} ${mod.description || mod.sourceName}\n`;
+          }
+          tooltipText += `\nTotal: ${total >= 0 ? '+' : ''}${total}`;
+        } else {
+          tooltipText += `No modifiers applied.`;
+        }
+
+        ev.currentTarget.title = tooltipText;
       });
     }
 
@@ -821,19 +850,61 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
-    /* ---- FEAT/TALENT BUTTONS ---- */
+    /* ---- FEAT/TALENT BUTTONS WITH PREREQUISITE CHECKING ---- */
 
     for (const btn of root.querySelectorAll('[data-action="add-feat"]')) {
       btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
+
+        // Track item count before opening selector
+        const itemCountBefore = this.actor?.items?.size ?? 0;
+
+        // Open feat selector
         game.swse.progression?.openFeatSelector?.(this.document);
+
+        // After selector completes, check for new items and validate prerequisites
+        setTimeout(async () => {
+          const itemCountAfter = this.actor?.items?.size ?? 0;
+          if (itemCountAfter > itemCountBefore) {
+            // New items were added, validate all feats
+            const newItems = Array.from(this.actor.items).filter(item => item.type === 'feat').slice(-1);
+            for (const item of newItems) {
+              const validation = PrerequisiteEngine.validateItemPrerequisites(this.actor, item);
+              if (!validation.valid) {
+                await PrerequisiteEngine.enableFreeBuildMode(this.actor);
+                ui.notifications.warn(`${item.name} has unmet prerequisites. Free Build Mode enabled.`);
+              }
+            }
+          }
+        }, 500);
       });
     }
 
     for (const btn of root.querySelectorAll('[data-action="add-talent"]')) {
       btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
+
+        // Track item count before opening selector
+        const itemCountBefore = this.actor?.items?.size ?? 0;
+
+        // Open talent selector
         game.swse.progression?.openTalentSelector?.(this.document);
+
+        // After selector completes, check for new items and validate prerequisites
+        setTimeout(async () => {
+          const itemCountAfter = this.actor?.items?.size ?? 0;
+          if (itemCountAfter > itemCountBefore) {
+            // New items were added, validate all talents
+            const newItems = Array.from(this.actor.items).filter(item => item.type === 'talent').slice(-1);
+            for (const item of newItems) {
+              const validation = PrerequisiteEngine.validateItemPrerequisites(this.actor, item);
+              if (!validation.valid) {
+                await PrerequisiteEngine.enableFreeBuildMode(this.actor);
+                ui.notifications.warn(`${item.name} has unmet prerequisites. Free Build Mode enabled.`);
+              }
+            }
+          }
+        }, 500);
       });
     }
 
@@ -901,6 +972,15 @@ export class SWSEV2CharacterSheet extends
         if (!itemId || !this.actor) return;
         await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
         ui.notifications.info("Talent removed.");
+
+        // Auto-revalidate build after item deletion
+        setTimeout(async () => {
+          const valid = await PrerequisiteEngine.validateBuild(this.actor);
+          if (valid) {
+            ui.notifications.info("Build revalidated - returning to validated mode.");
+            await this.render();
+          }
+        }, 250);
       });
     }
 
@@ -912,6 +992,15 @@ export class SWSEV2CharacterSheet extends
         if (!itemId || !this.actor) return;
         await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
         ui.notifications.info("Feat removed.");
+
+        // Auto-revalidate build after item deletion
+        setTimeout(async () => {
+          const valid = await PrerequisiteEngine.validateBuild(this.actor);
+          if (valid) {
+            ui.notifications.info("Build revalidated - returning to validated mode.");
+            await this.render();
+          }
+        }, 250);
       });
     }
 

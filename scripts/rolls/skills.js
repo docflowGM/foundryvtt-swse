@@ -3,6 +3,8 @@
 // Skill check rolling using SWSE utils
 // ============================================
 
+import { SkillEnforcementEngine } from "../engine/skills/SkillEnforcementEngine.js";
+
 /**
  * Roll a skill check
  * @param {Actor} actor - The actor making the check
@@ -15,6 +17,16 @@ export async function rollSkill(actor, skillKey) {
 
   if (!skill) {
     ui.notifications.warn(`Skill ${skillKey} not found`);
+    return null;
+  }
+
+  // Check trained-only enforcement
+  const isTrained = skill.trained === true;
+  const skillDef = CONFIG.SWSE.skills?.[skillKey] || {};
+  const permission = SkillEnforcementEngine.canRollSkill(skillDef, isTrained);
+
+  if (!permission.allowed) {
+    ui.notifications.warn(`${permission.reason}`);
     return null;
   }
 
