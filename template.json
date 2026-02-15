@@ -173,7 +173,34 @@
         "value": 100,
         "max": 100
       },
-      "speed": 0
+      "speed": 0,
+      "subsystems": {
+        "engines": "normal",
+        "weapons": "normal",
+        "shields": "normal",
+        "sensors": "normal",
+        "comms": "normal",
+        "lifeSupport": "normal"
+      },
+      "enhancedShields": {
+        "fore": 0,
+        "aft": 0,
+        "port": 0,
+        "starboard": 0
+      },
+      "powerAllocation": {
+        "weapons": 2,
+        "shields": 2,
+        "engines": 2
+      },
+      "pilotManeuver": "none",
+      "commanderOrder": "none",
+      "turnState": {
+        "currentPhase": "commander",
+        "phaseIndex": 0,
+        "completedPhases": [],
+        "crewActed": {}
+      }
     }
   },
   "Item": {

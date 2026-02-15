@@ -1395,5 +1395,72 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  /* -------------------------------------------------------------------------- */
+  /*                     STARSHIP ENGINE MODULES                               */
+  /* -------------------------------------------------------------------------- */
+
+  register('enableScaleEngine', {
+    name: 'Enable Scale Engine',
+    hint: 'Enables character/starship scale conversions for distance, speed, and damage when combatants of different scales interact.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableSWES', {
+    name: 'Enable Subsystem Engine (SWES)',
+    hint: 'Vehicles have individually damageable subsystems (engines, weapons, shields, sensors, comms, life support). Subsystem damage escalates when DT is exceeded.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableEnhancedShields', {
+    name: 'Enable Enhanced Shields',
+    hint: 'Directional shield management with four zones (fore/aft/port/starboard). Shield operators can redistribute, focus, and equalize shield points.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableEnhancedEngineer', {
+    name: 'Enable Enhanced Engineer',
+    hint: 'Power allocation system for vehicles. Engineers distribute a power budget across weapons, shields, and engines with five power levels.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableEnhancedPilot', {
+    name: 'Enable Enhanced Pilot',
+    hint: 'Pilot maneuver system including Evasive Action, Attack Run, All-Out Movement, and Trick Maneuver with trade-offs.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableEnhancedCommander', {
+    name: 'Enable Enhanced Commander',
+    hint: 'Commander tactical orders including Coordinate Fire, Inspire Crew, Tactical Advantage, and Battle Analysis.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('enableVehicleTurnController', {
+    name: 'Enable Vehicle Turn Controller',
+    hint: 'Phase-based crew action sequencing for vehicle combat turns (Commander → Pilot → Engineer → Shields → Gunner → Cleanup).',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   SWSELogger.info('SWSE | Houserule settings registered successfully.');
 }

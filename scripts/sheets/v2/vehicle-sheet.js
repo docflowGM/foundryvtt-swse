@@ -8,6 +8,12 @@ import { initiateItemSale } from '../../apps/item-selling-system.js';
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { rollAttack } from '../../combat/rolls/attacks.js';
 import { DropService } from '../../services/drop-service.js';
+import { SubsystemEngine } from '../../engine/combat/starship/subsystem-engine.js';
+import { EnhancedShields } from '../../engine/combat/starship/enhanced-shields.js';
+import { EnhancedEngineer } from '../../engine/combat/starship/enhanced-engineer.js';
+import { EnhancedPilot } from '../../engine/combat/starship/enhanced-pilot.js';
+import { EnhancedCommander } from '../../engine/combat/starship/enhanced-commander.js';
+import { VehicleTurnController } from '../../engine/combat/starship/vehicle-turn-controller.js';
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -85,6 +91,28 @@ export class SWSEV2VehicleSheet extends
       system: item.system
     }));
 
+    // Engine states for template
+    const subsystemsEnabled = SubsystemEngine.enabled;
+    const enhancedShieldsEnabled = EnhancedShields.enabled;
+    const enhancedEngineerEnabled = EnhancedEngineer.enabled;
+    const enhancedPilotEnabled = EnhancedPilot.enabled;
+    const enhancedCommanderEnabled = EnhancedCommander.enabled;
+    const turnControllerEnabled = VehicleTurnController.enabled;
+
+    const subsystems = subsystemsEnabled ? SubsystemEngine.getSubsystems(actor) : null;
+    const subsystemPenalties = subsystemsEnabled ? SubsystemEngine.getAggregatePenalties(actor) : null;
+    const shieldZones = enhancedShieldsEnabled ? (actor.system.enhancedShields ?? {}) : null;
+    const powerAllocation = enhancedEngineerEnabled ? (actor.system.powerAllocation ?? {}) : null;
+    const pilotManeuver = enhancedPilotEnabled ? (actor.system.pilotManeuver ?? 'none') : null;
+    const commanderOrder = enhancedCommanderEnabled ? (actor.system.commanderOrder ?? 'none') : null;
+    const turnState = turnControllerEnabled ? (actor.system.turnState ?? {}) : null;
+    const turnPhases = turnControllerEnabled
+      ? ['commander', 'pilot', 'engineer', 'shields', 'gunner', 'cleanup'].map(p => ({
+        name: p,
+        active: turnState?.currentPhase === p
+      }))
+      : null;
+
     const overrides = {
       actor,
       system: actor.system,
@@ -105,7 +133,25 @@ export class SWSEV2VehicleSheet extends
         name: game.user.name,
         role: game.user.role
       },
-      config: CONFIG.SWSE
+      config: CONFIG.SWSE,
+      // Starship engine states
+      engines: {
+        subsystemsEnabled,
+        enhancedShieldsEnabled,
+        enhancedEngineerEnabled,
+        enhancedPilotEnabled,
+        enhancedCommanderEnabled,
+        turnControllerEnabled,
+        subsystems,
+        subsystemPenalties,
+        shieldZones,
+        powerAllocation,
+        pilotManeuver,
+        commanderOrder,
+        turnState,
+        turnPhases,
+        powerBudget: enhancedEngineerEnabled ? EnhancedEngineer.getPowerBudget(actor) : 0
+      }
     };
 
     RenderAssertions.assertContextSerializable(
@@ -315,6 +361,93 @@ export class SWSEV2VehicleSheet extends
         if (this.actor) {
           await SWSELevelUp.openEnhanced(this.actor);
         }
+      });
+    }
+
+    /* ---- SUBSYSTEM REPAIR ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="repair-subsystem"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const subsystem = ev.currentTarget?.dataset?.subsystem;
+        if (!subsystem || !this.actor) return;
+        await SubsystemEngine.repairSubsystem(this.actor, subsystem);
+      });
+    }
+
+    /* ---- ENHANCED SHIELDS ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="shield-focus"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const zone = ev.currentTarget?.dataset?.zone;
+        if (!zone || !this.actor) return;
+        await EnhancedShields.focusShields(this.actor, zone);
+      });
+    }
+
+    const equalizeBtn = root.querySelector('[data-action="shield-equalize"]');
+    if (equalizeBtn) {
+      equalizeBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (!this.actor) return;
+        await EnhancedShields.equalizeShields(this.actor);
+      });
+    }
+
+    /* ---- POWER ALLOCATION ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="power-adjust"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const system = ev.currentTarget?.dataset?.system;
+        const direction = ev.currentTarget?.dataset?.direction;
+        if (!system || !direction || !this.actor) return;
+        const current = this.actor.system?.powerAllocation?.[system] ?? 2;
+        const newVal = direction === 'up' ? Math.min(4, current + 1) : Math.max(0, current - 1);
+        await ActorEngine.updateActor(this.actor, { [`system.powerAllocation.${system}`]: newVal });
+      });
+    }
+
+    /* ---- PILOT MANEUVER ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="set-maneuver"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const maneuver = ev.currentTarget?.dataset?.maneuver;
+        if (!maneuver || !this.actor) return;
+        await EnhancedPilot.setManeuver(this.actor, maneuver);
+      });
+    }
+
+    /* ---- COMMANDER ORDER ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="set-order"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const order = ev.currentTarget?.dataset?.order;
+        if (!order || !this.actor) return;
+        await EnhancedCommander.issueOrder(this.actor, order);
+      });
+    }
+
+    /* ---- TURN CONTROLLER ---- */
+
+    const advancePhaseBtn = root.querySelector('[data-action="advance-phase"]');
+    if (advancePhaseBtn) {
+      advancePhaseBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (!this.actor) return;
+        await VehicleTurnController.advancePhase(this.actor);
+      });
+    }
+
+    const resetTurnBtn = root.querySelector('[data-action="reset-turn"]');
+    if (resetTurnBtn) {
+      resetTurnBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (!this.actor) return;
+        await VehicleTurnController.startTurn(this.actor);
       });
     }
 

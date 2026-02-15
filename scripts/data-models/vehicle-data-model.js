@@ -623,6 +623,45 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       // Sensors
       senses: new fields.StringField({ required: false, initial: '' }),
 
+      // Subsystem damage tiers (SWES)
+      subsystems: new fields.SchemaField({
+        engines: new fields.StringField({ required: true, initial: 'normal' }),
+        weapons: new fields.StringField({ required: true, initial: 'normal' }),
+        shields: new fields.StringField({ required: true, initial: 'normal' }),
+        sensors: new fields.StringField({ required: true, initial: 'normal' }),
+        comms: new fields.StringField({ required: true, initial: 'normal' }),
+        lifeSupport: new fields.StringField({ required: true, initial: 'normal' })
+      }),
+
+      // Enhanced directional shields
+      enhancedShields: new fields.SchemaField({
+        fore: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
+        aft: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
+        port: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
+        starboard: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true })
+      }),
+
+      // Power allocation (Enhanced Engineer)
+      powerAllocation: new fields.SchemaField({
+        weapons: new fields.NumberField({ required: true, initial: 2, min: 0, max: 4, integer: true }),
+        shields: new fields.NumberField({ required: true, initial: 2, min: 0, max: 4, integer: true }),
+        engines: new fields.NumberField({ required: true, initial: 2, min: 0, max: 4, integer: true })
+      }),
+
+      // Pilot maneuver (Enhanced Pilot)
+      pilotManeuver: new fields.StringField({ required: true, initial: 'none' }),
+
+      // Commander order (Enhanced Commander)
+      commanderOrder: new fields.StringField({ required: true, initial: 'none' }),
+
+      // Turn state (Vehicle Turn Controller)
+      turnState: new fields.SchemaField({
+        currentPhase: new fields.StringField({ required: true, initial: 'commander' }),
+        phaseIndex: new fields.NumberField({ required: true, initial: 0, min: 0, max: 5, integer: true }),
+        completedPhases: new fields.ArrayField(new fields.StringField(), { initial: [] }),
+        crewActed: new fields.ObjectField({ initial: {} })
+      }),
+
       // Emplacement Points for vehicle modifications
       emplacementPoints: new fields.NumberField({
         required: true,
