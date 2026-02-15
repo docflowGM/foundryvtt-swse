@@ -547,6 +547,23 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
+    /* ---- INITIATIVE CONTROLS ---- */
+
+    root.querySelector(".roll-initiative")?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      await this.actor.swseRollInitiative();
+    });
+
+    root.querySelector(".take10-initiative")?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      await this.actor.swseTake10Initiative();
+    });
+
+    root.querySelector(".roll-initiative-force")?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      await this.actor.swseRollInitiative({ useForce: true });
+    });
+
     /* ---- PHASE 2: CLICK-TO-ROLL SKILLS ---- */
 
     for (const el of root.querySelectorAll('.rollable-skill')) {

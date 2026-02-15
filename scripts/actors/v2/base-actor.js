@@ -9,6 +9,7 @@ import { computeDroidDerived } from './droid-actor.js';
 import { computeVehicleDerived } from './vehicle-actor.js';
 import { shouldSkipDerivedData } from '../../utils/hardening.js';
 import { computeXpDerived } from '../../engine/progression/xp-engine.js';
+import { SWSEInitiative } from '../../engine/combat/SWSEInitiative.js';
 
 /**
  * SWSE V2 Base Actor
@@ -216,6 +217,26 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     system.derived.damage.conditionPersistent = persistent;
     system.derived.damage.conditionHelpless = helpless;
     system.derived.damage.conditionPenalty = this.getConditionPenalty(step);
+  }
+
+  /* ------------------------------------------------------------------------ */
+  /* Initiative (SWSE Rules-Accurate)                                         */
+  /* ------------------------------------------------------------------------ */
+
+  /**
+   * Roll initiative (1d20 + modifier) and apply to Combat Tracker.
+   * @param {object} [options]
+   * @param {boolean} [options.useForce=false] Spend a Force Point for bonus die.
+   */
+  async swseRollInitiative(options = {}) {
+    return SWSEInitiative.rollInitiative(this, options);
+  }
+
+  /**
+   * Take 10 on initiative (10 + modifier) and apply to Combat Tracker.
+   */
+  async swseTake10Initiative() {
+    return SWSEInitiative.take10Initiative(this);
   }
 }
 

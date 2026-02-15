@@ -1,0 +1,93 @@
+/* ============================================================================
+   SWSE Initiative Controls
+   Styles for Roll / Take 10 / Roll + Force buttons and initiative panel
+   ============================================================================ */
+
+/* ─────── Initiative Panel (Droid & NPC sheets) ─────── */
+.initiative-panel {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.initiative-panel .section-bar {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.initiative-panel .section-header {
+  color: white;
+}
+
+.initiative-panel-body {
+  padding: 16px;
+  text-align: center;
+}
+
+.initiative-panel-compact {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.initiative-mod-label {
+  font-size: 0.75rem;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.initiative-mod-value {
+  font-size: 2.5em;
+  font-weight: bold;
+}
+
+.initiative-panel-compact .initiative-mod-value {
+  font-size: 1.8em;
+}
+
+/* ─────── Button Row ─────── */
+.initiative-controls {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.initiative-panel-compact .initiative-controls {
+  margin-top: 0;
+}
+
+/* ─────── Individual Buttons ─────── */
+.initiative-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background var(--swse-transition-base, 0.2s),
+              border-color var(--swse-transition-base, 0.2s);
+}
+
+.initiative-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Force Point button accent */
+.roll-initiative-force {
+  border-color: rgba(0, 217, 255, 0.6);
+}
+
+.roll-initiative-force:hover {
+  background: rgba(0, 217, 255, 0.25);
+  border-color: rgba(0, 217, 255, 0.8);
+}
+
+/* ─────── Chat Message: Take 10 ─────── */
+.swse-initiative-take10 {
+  padding: 6px 10px;
+  font-size: 0.9rem;
+}

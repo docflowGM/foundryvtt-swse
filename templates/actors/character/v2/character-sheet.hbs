@@ -147,13 +147,18 @@
                   +0
                 {{/if}}
               </div>
-              <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 12px;">
-                <button type="button"
-                        class="rollable-skill"
-                        data-skill="initiative"
-                        style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                  Roll Initiative
+              <div class="initiative-controls">
+                <button type="button" class="initiative-btn roll-initiative">
+                  Roll
                 </button>
+                <button type="button" class="initiative-btn take10-initiative">
+                  Take 10
+                </button>
+                {{#if fpAvailable}}
+                <button type="button" class="initiative-btn roll-initiative-force">
+                  Roll + Force
+                </button>
+                {{/if}}
               </div>
             </div>
           </div>
