@@ -64,6 +64,9 @@ export class ModifierEngine {
       // Source 8: Custom modifiers (Phase B - user-defined via UI)
       modifiers.push(...this._getCustomModifiers(actor));
 
+      // Source 9: Active Effects (Phase D - temporary/duration-based)
+      modifiers.push(...this._getActiveEffectModifiers(actor));
+
       swseLogger.debug(`[ModifierEngine] Collected ${modifiers.length} modifiers for ${actor.name}`);
 
       return modifiers;
@@ -754,6 +757,44 @@ export class ModifierEngine {
       return modifiers;
     } catch (err) {
       swseLogger.warn(`[ModifierEngine] Error collecting custom modifiers:`, err);
+      return modifiers;
+    }
+  }
+
+  /**
+   * Collect modifiers from active effects (Phase D)
+   * @private
+   * @param {Actor} actor
+   * @returns {Modifier[]}
+   */
+  static _getActiveEffectModifiers(actor) {
+    const modifiers = [];
+
+    try {
+      const effects = Array.isArray(actor?.system?.activeEffects) ? actor.system.activeEffects : [];
+
+      for (const effect of effects) {
+        if (effect.enabled === false || !effect.target) continue;
+
+        try {
+          modifiers.push(createModifier({
+            source: ModifierSource.EFFECT,
+            sourceId: effect.id,
+            sourceName: `${effect.name} (${effect.roundsRemaining}r)`,
+            target: effect.target,
+            type: String(effect.type || 'untyped').toLowerCase(),
+            value: Number(effect.value) || 0,
+            enabled: true,
+            description: `${effect.name}: ${effect.roundsRemaining} rounds`
+          }));
+        } catch (err) {
+          swseLogger.warn(`Failed to create active effect modifier:`, err);
+        }
+      }
+
+      return modifiers;
+    } catch (err) {
+      swseLogger.warn(`[ModifierEngine] Error collecting active effects:`, err);
       return modifiers;
     }
   }
