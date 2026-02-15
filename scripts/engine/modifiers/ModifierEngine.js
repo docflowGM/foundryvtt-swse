@@ -56,7 +56,12 @@ export class ModifierEngine {
       // Source 6: Items (equipment/armor)
       modifiers.push(...this._getItemModifiers(actor));
 
-      // Source 7: Custom effects (future)
+      // Source 7: Droid Modifications (Phase A - droids only)
+      if (actor.type === 'droid') {
+        modifiers.push(...this._getDroidModModifiers(actor));
+      }
+
+      // Source 8: Custom effects (future)
       // modifiers.push(...this._getCustomModifiers(actor));
 
       swseLogger.debug(`[ModifierEngine] Collected ${modifiers.length} modifiers for ${actor.name}`);
@@ -629,6 +634,74 @@ export class ModifierEngine {
     // Phase 0: Items don't have modifiers yet
     // Phase 1+: Parse armor AC bonuses, etc.
     return [];
+  }
+
+  /**
+   * Collect modifiers from droid modifications (Phase A)
+   * Droids can install hardware modifications that contribute modifiers
+   *
+   * @private
+   * @param {Actor} actor - Must be a droid actor
+   * @returns {Modifier[]}
+   */
+  static _getDroidModModifiers(actor) {
+    const modifiers = [];
+
+    if (actor.type !== 'droid') {
+      return modifiers;
+    }
+
+    try {
+      const droidSystems = actor?.system?.droidSystems;
+      if (!droidSystems) {
+        return modifiers;
+      }
+
+      const mods = Array.isArray(droidSystems.mods) ? droidSystems.mods : [];
+
+      for (const mod of mods) {
+        // Skip disabled modifications
+        if (mod.enabled === false) {
+          continue;
+        }
+
+        const modName = mod.name || `Droid Mod ${mod.id}`;
+        const modId = mod.id;
+        const modArray = Array.isArray(mod.modifiers) ? mod.modifiers : [];
+
+        // Convert each modifier in the modification
+        for (const modifierData of modArray) {
+          if (!modifierData || typeof modifierData !== 'object') continue;
+
+          const target = String(modifierData.target || '').trim();
+          const type = String(modifierData.type || 'untyped').trim().toLowerCase();
+          const value = Number(modifierData.value) || 0;
+
+          if (!target) continue;
+
+          try {
+            modifiers.push(createModifier({
+              source: ModifierSource.DROID_MOD,
+              sourceId: modId,
+              sourceName: modName,
+              target: target,
+              type: type,
+              value: value,
+              enabled: true,
+              description: `${modName}: ${target} ${value > 0 ? '+' : ''}${value}`
+            }));
+          } catch (err) {
+            swseLogger.warn(`Failed to create modifier for droid mod ${modName}:`, err);
+          }
+        }
+      }
+
+      swseLogger.debug(`[ModifierEngine] Collected ${modifiers.length} modifiers from droid modifications`);
+      return modifiers;
+    } catch (err) {
+      swseLogger.warn(`[ModifierEngine] Error collecting droid mod modifiers:`, err);
+      return modifiers;
+    }
   }
 
   /**
