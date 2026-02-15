@@ -2,6 +2,7 @@
 import { SWSEActorBase } from '../base/swse-actor-base.js';
 import { ActorEngine } from '../engine/actor-engine.js';
 import { DerivedCalculator } from '../derived/derived-calculator.js';
+import { ModifierEngine } from '../../engine/modifiers/ModifierEngine.js';
 import { computeCharacterDerived } from './character-actor.js';
 import { computeNpcDerived } from './npc-actor.js';
 import { computeDroidDerived } from './droid-actor.js';
@@ -64,8 +65,10 @@ export class SWSEV2BaseActor extends SWSEActorBase {
   }
 
   /**
-   * Async computation of HP, BAB, defenses.
+   * Async computation of HP, BAB, defenses, and modifier application.
    * Runs after prepareDerivedData completes.
+   *
+   * Phase 0: Applies modifiers to skills, defenses, and HP
    * @private
    */
   async _computeDerivedAsync(system) {
@@ -83,6 +86,14 @@ export class SWSEV2BaseActor extends SWSEActorBase {
           }
         }
       }
+
+      // Phase 0: Apply modifiers to derived data
+      // Get all modifiers and aggregated map
+      const allModifiers = await ModifierEngine.getAllModifiers(this);
+      const modifierMap = await ModifierEngine.aggregateAll(this);
+
+      // Apply modifiers to skills, defenses, HP, and other values
+      await ModifierEngine.applyAll(this, modifierMap, allModifiers);
     } catch (err) {
       // Log but don't throw - derived computation is non-critical
       console.warn(`Failed to compute derived values for ${this.name}:`, err);

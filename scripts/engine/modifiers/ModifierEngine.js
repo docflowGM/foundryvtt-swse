@@ -1,78 +1,352 @@
 /**
- * ModifierEngine — Centralized Modifier Aggregation
+ * ModifierEngine.js — Unified Modifier Pipeline (Phase 0)
  *
- * Single source of truth for all modifiers:
- * - Feat bonuses
- * - Talent bonuses
- * - Species traits
- * - Encumbrance penalties
- * - Conditions
- * - Custom modifiers
+ * Responsibilities:
+ * - Collect modifiers from all sources (feats, talents, species, encumbrance, conditions)
+ * - Convert all sources to canonical Modifier objects
+ * - Aggregate and apply stacking rules
+ * - Inject resolved modifiers into derived data
+ * - Provide modifier breakdowns for UI display
  *
- * No mutations. Pure calculation. Fully derived.
+ * Single source of truth for modifier math.
  */
+
+import { ModifierType, ModifierSource, createModifier, isValidModifier } from './ModifierTypes.js';
+import ModifierUtils from './ModifierUtils.js';
+import { EncumbranceEngine } from '../encumbrance/EncumbranceEngine.js';
+import { swseLogger } from '../../utils/logger.js';
 
 export class ModifierEngine {
   /**
-   * Get all modifiers for a skill
-   * @param {Actor} actor - Character actor
-   * @param {string} skillKey - Skill key (e.g., 'acrobatics')
-   * @returns {Array} Array of modifier objects
+   * Collect all modifiers from every source for an actor
+   *
+   * Sources:
+   * 1. Feats (skillBonuses, defenseModifiers, initiativeBonus)
+   * 2. Talents (same as feats)
+   * 3. Species (skillBonuses, ability modifiers)
+   * 4. Encumbrance (skillPenalties, speedPenalties)
+   * 5. Conditions (conditional penalties)
+   * 6. Items (equipment/armor bonuses)
+   * 7. Custom (user-defined effects)
+   *
+   * @param {Actor} actor
+   * @returns {Modifier[]} Array of all collected modifiers
    */
-  static getSkillModifiers(actor, skillKey) {
+  static async getAllModifiers(actor) {
+    if (!actor) return [];
+
     const modifiers = [];
 
-    // From feats
-    const featMods = this._getFeatsModifiers(actor, skillKey);
-    modifiers.push(...featMods);
+    try {
+      // Source 1: Feats
+      modifiers.push(...this._getFeatModifiers(actor));
 
-    // From talents
-    const talentMods = this._getTalentModifiers(actor, skillKey);
-    modifiers.push(...talentMods);
+      // Source 2: Talents
+      modifiers.push(...this._getTalentModifiers(actor));
 
-    // From species
-    const speciesMods = this._getSpeciesModifiers(actor, skillKey);
-    modifiers.push(...speciesMods);
+      // Source 3: Species
+      modifiers.push(...this._getSpeciesModifiers(actor));
 
-    // From encumbrance
-    const encumMods = this._getEncumbranceModifiers(actor, skillKey);
-    modifiers.push(...encumMods);
+      // Source 4: Encumbrance
+      modifiers.push(...this._getEncumbranceModifiers(actor));
 
-    // From conditions
-    const condMods = this._getConditionModifiers(actor, skillKey);
-    modifiers.push(...condMods);
+      // Source 5: Conditions
+      modifiers.push(...this._getConditionModifiers(actor));
 
-    return modifiers;
+      // Source 6: Items (equipment/armor)
+      modifiers.push(...this._getItemModifiers(actor));
+
+      // Source 7: Custom effects (future)
+      // modifiers.push(...this._getCustomModifiers(actor));
+
+      swseLogger.debug(`[ModifierEngine] Collected ${modifiers.length} modifiers for ${actor.name}`);
+
+      return modifiers;
+    } catch (err) {
+      swseLogger.error(`[ModifierEngine] Error collecting modifiers for ${actor?.name}:`, err);
+      return [];
+    }
   }
 
   /**
-   * Calculate total modifier for a skill
-   * @param {Actor} actor - Character actor
-   * @param {string} skillKey - Skill key
-   * @returns {number} Total modifier value
+   * Aggregate all modifiers: collect, group by target, apply stacking
+   *
+   * @param {Actor} actor
+   * @returns {Object<string, number>} Map of target → total modifier value
    */
-  static calculateSkillModifier(actor, skillKey) {
-    const modifiers = this.getSkillModifiers(actor, skillKey);
-    return modifiers.reduce((sum, mod) => sum + (mod.value || 0), 0);
+  static async aggregateAll(actor) {
+    const allModifiers = await this.getAllModifiers(actor);
+    const aggregated = {};
+
+    // Group by target
+    const byTarget = ModifierUtils.groupByTarget(allModifiers);
+
+    // For each target, resolve stacking and sum
+    for (const [target, modsForTarget] of byTarget.entries()) {
+      const resolved = ModifierUtils.resolveStacking(modsForTarget);
+      const total = ModifierUtils.sumModifiers(resolved);
+
+      if (total !== 0) {
+        aggregated[target] = total;
+      }
+    }
+
+    return aggregated;
   }
 
   /**
-   * Get modifiers from feats
+   * Get aggregated modifier value for specific target
+   *
+   * @param {Actor} actor
+   * @param {string} target - Target key
+   * @returns {number}
+   */
+  static async aggregateTarget(actor, target) {
+    const allModifiers = await this.getAllModifiers(actor);
+    return ModifierUtils.calculateModifierTotal(allModifiers, target);
+  }
+
+  /**
+   * Get detailed modifier breakdown for UI display
+   *
+   * @param {Actor} actor
+   * @param {string} target - Target key
+   * @returns {Object} {total, applied, breakdown}
+   */
+  static async getModifierDetail(actor, target) {
+    const allModifiers = await this.getAllModifiers(actor);
+    return ModifierUtils.getModifierDetail(allModifiers, target);
+  }
+
+  /**
+   * Build canonical modifier breakdown object for storage
+   *
+   * Structure stored in system.derived.modifiers:
+   * {
+   *   "skill.acrobatics": { total: 2, applied: [...], breakdown: [...] },
+   *   "defense.reflex": { total: 1, applied: [...], breakdown: [...] }
+   * }
+   *
+   * @param {Actor} actor
+   * @param {string[]} targets - Targets to include in breakdown
+   * @returns {Object}
+   */
+  static async buildModifierBreakdown(actor, targets = []) {
+    const allModifiers = await this.getAllModifiers(actor);
+    return ModifierUtils.buildModifierBreakdown(allModifiers, targets);
+  }
+
+  /**
+   * Apply aggregated modifiers to derived data
+   *
+   * Writes to:
+   * - actor.system.skills[key].total = base + modifier
+   * - actor.system.derived.defense.*.total = base + modifier
+   * - actor.system.derived.hp.total = base + modifier
+   * - actor.system.derived.modifiers = breakdown
+   *
+   * GUARDRAIL: Only writes to .total fields, never .base fields
+   *
+   * @param {Actor} actor
+   * @param {Object<string, number>} modifierMap - From aggregateAll()
+   * @param {Modifier[]} allModifiers - Full modifier array
+   */
+  static async applyAll(actor, modifierMap, allModifiers = []) {
+    if (!actor || !modifierMap) return;
+
+    try {
+      // Build modifier breakdown for storage
+      const skillTargets = this._getAllSkillTargets(actor);
+      const defenseTargets = ['defense.fort', 'defense.reflex', 'defense.will', 'defense.damageThreshold'];
+      const allTargets = [...skillTargets, ...defenseTargets, 'hp.max', 'bab.total', 'initiative.total', 'speed.base'];
+
+      const modifierBreakdown = ModifierUtils.buildModifierBreakdown(allModifiers, allTargets);
+
+      // ========================================
+      // SKILLS
+      // ========================================
+      const skills = actor.system?.skills;
+      if (skills && typeof skills === 'object') {
+        for (const [skillKey, skillData] of Object.entries(skills)) {
+          if (!skillData || typeof skillData !== 'object') continue;
+
+          const targetKey = `skill.${skillKey}`;
+          const modifier = modifierMap[targetKey] || 0;
+          const base = skillData.base || skillData.total || 0;
+
+          // GUARDRAIL: Do NOT mutate base
+          skillData.total = Math.max(0, base + modifier);
+        }
+      }
+
+      // ========================================
+      // DEFENSES
+      // ========================================
+      const derived = actor.system?.derived;
+      if (derived && typeof derived === 'object') {
+        // Initialize defenses structure if needed
+        if (!derived.defenses || typeof derived.defenses !== 'object') {
+          derived.defenses = {};
+        }
+
+        const defensePaths = {
+          fort: 'defense.fort',
+          fortitude: 'defense.fort',
+          ref: 'defense.reflex',
+          reflex: 'defense.reflex',
+          will: 'defense.will'
+        };
+
+        for (const [defenseKey, targetKey] of Object.entries(defensePaths)) {
+          const defense = derived.defenses[defenseKey] || {};
+          const modifier = modifierMap[targetKey] || 0;
+
+          // Get base value (from class calculation)
+          const base = defense.base || defense.total || 10;
+
+          // GUARDRAIL: Do NOT mutate base
+          defense.total = Math.max(1, base + modifier);
+
+          // Store adjustment for UI display
+          defense.adjustment = modifier;
+
+          derived.defenses[defenseKey] = defense;
+        }
+
+        // ========================================
+        // HP
+        // ========================================
+        if (!derived.hp || typeof derived.hp !== 'object') {
+          derived.hp = {};
+        }
+
+        const hpModifier = modifierMap['hp.max'] || 0;
+        const hpBase = derived.hp.base || 1;
+
+        // GUARDRAIL: Do NOT mutate base
+        derived.hp.total = Math.max(1, hpBase + hpModifier);
+        derived.hp.adjustment = hpModifier;
+
+        // ========================================
+        // BAB (Base Attack Bonus)
+        // ========================================
+        const babModifier = modifierMap['bab.total'] || 0;
+        derived.bab = (derived.bab || 0) + babModifier;
+        derived.babAdjustment = babModifier;
+
+        // ========================================
+        // INITIATIVE
+        // ========================================
+        const initiativeModifier = modifierMap['initiative.total'] || 0;
+        derived.initiative = (derived.initiative || 0) + initiativeModifier;
+        derived.initiativeAdjustment = initiativeModifier;
+
+        // ========================================
+        // SPEED
+        // ========================================
+        const speedModifier = modifierMap['speed.base'] || 0;
+        if (derived.speed) {
+          const baseSpeed = derived.speed.base || 0;
+          derived.speed.total = Math.max(0, baseSpeed + speedModifier);
+          derived.speed.adjustment = speedModifier;
+        }
+
+        // ========================================
+        // STORE MODIFIER BREAKDOWN (for UI)
+        // ========================================
+        derived.modifiers = {
+          all: allModifiers || [],
+          breakdown: modifierBreakdown
+        };
+      }
+
+      swseLogger.debug(`[ModifierEngine] Applied modifiers to ${actor.name}`);
+    } catch (err) {
+      swseLogger.error(`[ModifierEngine] Error applying modifiers to ${actor?.name}:`, err);
+    }
+  }
+
+  /**
+   * ========================================
+   * PRIVATE: Modifier Collection Methods
+   * ========================================
+   */
+
+  /**
+   * Collect modifiers from feats
    * @private
+   * @param {Actor} actor
+   * @returns {Modifier[]}
    */
-  static _getFeatsModifiers(actor, skillKey) {
+  static _getFeatModifiers(actor) {
     const modifiers = [];
-    const feats = actor.items?.filter(i => i.type === 'feat') || [];
+    const feats = (actor?.items ?? []).filter(i => i.type === 'feat');
 
     for (const feat of feats) {
-      const skillBonus = feat.system?.skillBonuses?.[skillKey];
-      if (skillBonus) {
-        modifiers.push({
-          source: 'feat',
-          sourceName: feat.name,
-          value: Number(skillBonus),
-          description: `Feat: ${feat.name}`
-        });
+      const data = feat.system ?? {};
+      const featName = feat.name || 'Unknown Feat';
+      const featId = feat.id;
+
+      // Parse skill bonuses
+      if (data.skillBonuses && typeof data.skillBonuses === 'object') {
+        for (const [skillKey, bonusValue] of Object.entries(data.skillBonuses)) {
+          if (typeof bonusValue === 'number' && bonusValue !== 0) {
+            try {
+              modifiers.push(createModifier({
+                source: ModifierSource.FEAT,
+                sourceId: featId,
+                sourceName: featName,
+                target: `skill.${skillKey}`,
+                type: ModifierType.UNTYPED, // Could be inferred from benefit text
+                value: bonusValue,
+                enabled: true,
+                description: `${featName} +${bonusValue}`
+              }));
+            } catch (err) {
+              swseLogger.warn(`Failed to create modifier for feat ${featName} skill ${skillKey}:`, err);
+            }
+          }
+        }
+      }
+
+      // Parse defense modifiers
+      if (data.defenseModifiers && typeof data.defenseModifiers === 'object') {
+        for (const [defense, bonusValue] of Object.entries(data.defenseModifiers)) {
+          if (typeof bonusValue === 'number' && bonusValue !== 0) {
+            try {
+              modifiers.push(createModifier({
+                source: ModifierSource.FEAT,
+                sourceId: featId,
+                sourceName: featName,
+                target: `defense.${defense}`,
+                type: ModifierType.UNTYPED,
+                value: bonusValue,
+                enabled: true,
+                description: `${featName} +${bonusValue}`
+              }));
+            } catch (err) {
+              swseLogger.warn(`Failed to create modifier for feat ${featName} defense ${defense}:`, err);
+            }
+          }
+        }
+      }
+
+      // Parse initiative bonus
+      if (typeof data.initiativeBonus === 'number' && data.initiativeBonus !== 0) {
+        try {
+          modifiers.push(createModifier({
+            source: ModifierSource.FEAT,
+            sourceId: featId,
+            sourceName: featName,
+            target: 'initiative.total',
+            type: ModifierType.UNTYPED,
+            value: data.initiativeBonus,
+            enabled: true,
+            description: `${featName} ${data.initiativeBonus > 0 ? '+' : ''}${data.initiativeBonus}`
+          }));
+        } catch (err) {
+          swseLogger.warn(`Failed to create modifier for feat ${featName} initiative:`, err);
+        }
       }
     }
 
@@ -80,22 +354,61 @@ export class ModifierEngine {
   }
 
   /**
-   * Get modifiers from talents
+   * Collect modifiers from talents
    * @private
+   * @param {Actor} actor
+   * @returns {Modifier[]}
    */
-  static _getTalentModifiers(actor, skillKey) {
+  static _getTalentModifiers(actor) {
     const modifiers = [];
-    const talents = actor.items?.filter(i => i.type === 'talent') || [];
+    const talents = (actor?.items ?? []).filter(i => i.type === 'talent');
 
     for (const talent of talents) {
-      const skillBonus = talent.system?.skillBonuses?.[skillKey];
-      if (skillBonus) {
-        modifiers.push({
-          source: 'talent',
-          sourceName: talent.name,
-          value: Number(skillBonus),
-          description: `Talent: ${talent.name}`
-        });
+      const data = talent.system ?? {};
+      const talentName = talent.name || 'Unknown Talent';
+      const talentId = talent.id;
+
+      // Talents follow same bonus structure as feats
+      if (data.skillBonuses && typeof data.skillBonuses === 'object') {
+        for (const [skillKey, bonusValue] of Object.entries(data.skillBonuses)) {
+          if (typeof bonusValue === 'number' && bonusValue !== 0) {
+            try {
+              modifiers.push(createModifier({
+                source: ModifierSource.TALENT,
+                sourceId: talentId,
+                sourceName: talentName,
+                target: `skill.${skillKey}`,
+                type: ModifierType.UNTYPED,
+                value: bonusValue,
+                enabled: true,
+                description: `${talentName} +${bonusValue}`
+              }));
+            } catch (err) {
+              swseLogger.warn(`Failed to create modifier for talent ${talentName}:`, err);
+            }
+          }
+        }
+      }
+
+      if (data.defenseModifiers && typeof data.defenseModifiers === 'object') {
+        for (const [defense, bonusValue] of Object.entries(data.defenseModifiers)) {
+          if (typeof bonusValue === 'number' && bonusValue !== 0) {
+            try {
+              modifiers.push(createModifier({
+                source: ModifierSource.TALENT,
+                sourceId: talentId,
+                sourceName: talentName,
+                target: `defense.${defense}`,
+                type: ModifierType.UNTYPED,
+                value: bonusValue,
+                enabled: true,
+                description: `${talentName} +${bonusValue}`
+              }));
+            } catch (err) {
+              swseLogger.warn(`Failed to create modifier for talent ${talentName} defense:`, err);
+            }
+          }
+        }
       }
     }
 
@@ -103,213 +416,235 @@ export class ModifierEngine {
   }
 
   /**
-   * Get modifiers from species traits
+   * Collect modifiers from species
    * @private
+   * @param {Actor} actor
+   * @returns {Modifier[]}
    */
-  static _getSpeciesModifiers(actor, skillKey) {
+  static _getSpeciesModifiers(actor) {
     const modifiers = [];
 
-    // Check species definition if available
-    const species = actor.system?.species;
-    if (species?.skillBonuses?.[skillKey]) {
-      modifiers.push({
-        source: 'species',
-        sourceName: typeof species === 'string' ? species : species.name,
-        value: Number(species.skillBonuses[skillKey]),
-        description: `Species: ${typeof species === 'string' ? species : species.name}`
-      });
+    // Species stored in actor.system.species (string or object)
+    const species = actor?.system?.species;
+    if (!species) return modifiers;
+
+    const speciesName = typeof species === 'string' ? species : species?.name || species?.value || 'Unknown Species';
+    const speciesId = `species.${speciesName}`;
+
+    // Parse skill bonuses from species
+    const speciesData = typeof species === 'object' ? species : {};
+
+    if (speciesData.skillBonuses && typeof speciesData.skillBonuses === 'object') {
+      for (const [skillKey, bonusValue] of Object.entries(speciesData.skillBonuses)) {
+        if (typeof bonusValue === 'number' && bonusValue !== 0) {
+          try {
+            modifiers.push(createModifier({
+              source: ModifierSource.SPECIES,
+              sourceId: speciesId,
+              sourceName: `${speciesName} (Species)`,
+              target: `skill.${skillKey}`,
+              type: ModifierType.UNTYPED,
+              value: bonusValue,
+              enabled: true,
+              description: `${speciesName} species +${bonusValue}`
+            }));
+          } catch (err) {
+            swseLogger.warn(`Failed to create species skill modifier for ${speciesName}:`, err);
+          }
+        }
+      }
     }
 
     return modifiers;
   }
 
   /**
-   * Get modifiers from encumbrance
+   * Collect modifiers from encumbrance state
    * @private
+   * @param {Actor} actor
+   * @returns {Modifier[]}
    */
-  static _getEncumbranceModifiers(actor, skillKey) {
+  static _getEncumbranceModifiers(actor) {
     const modifiers = [];
 
-    const encumbrance = actor.system?.derived?.encumbrance;
-    if (!encumbrance) return modifiers;
+    try {
+      const encState = EncumbranceEngine.calculateEncumbrance(actor);
 
-    // Check if skill is affected by encumbrance penalty
-    if (encumbrance.affectedSkills?.includes(skillKey) && encumbrance.skillPenalty) {
-      modifiers.push({
-        source: 'encumbrance',
-        sourceName: encumbrance.label,
-        value: encumbrance.skillPenalty,
-        description: `Encumbrance (${encumbrance.label})`
-      });
+      if (!encState || encState.state === 'normal') {
+        return modifiers;
+      }
+
+      // Encumbrance penalty applies to specific skills
+      if (encState.skillPenalty !== 0 && Array.isArray(encState.affectedSkills)) {
+        const affectedSkills = encState.affectedSkills;
+        const penaltyValue = encState.skillPenalty;
+
+        for (const skillKey of affectedSkills) {
+          try {
+            modifiers.push(createModifier({
+              source: ModifierSource.ENCUMBRANCE,
+              sourceId: `encumbrance.${encState.state}`,
+              sourceName: `Encumbrance (${encState.label})`,
+              target: `skill.${skillKey}`,
+              type: ModifierType.PENALTY,
+              value: penaltyValue,
+              enabled: true,
+              priority: 10, // Encumbrance penalties apply early
+              description: `${encState.label} ${penaltyValue}`
+            }));
+          } catch (err) {
+            swseLogger.warn(`Failed to create encumbrance modifier for skill ${skillKey}:`, err);
+          }
+        }
+      }
+
+      // Speed penalty (if applicable)
+      if (encState.speedMultiplier !== 1) {
+        try {
+          modifiers.push(createModifier({
+            source: ModifierSource.ENCUMBRANCE,
+            sourceId: `encumbrance.${encState.state}`,
+            sourceName: `Encumbrance (${encState.label})`,
+            target: 'speed.base',
+            type: ModifierType.PENALTY,
+            value: Math.round((encState.speedMultiplier - 1) * 100), // As percentage
+            enabled: true,
+            priority: 10,
+            description: `${encState.label} speed`
+          }));
+        } catch (err) {
+          swseLogger.warn(`Failed to create encumbrance speed modifier:`, err);
+        }
+      }
+
+      // Meta-modifier for dexterity loss (special handling in DefenseCalculator)
+      if (encState.removeDexToReflex === true) {
+        try {
+          modifiers.push(createModifier({
+            source: ModifierSource.ENCUMBRANCE,
+            sourceId: `encumbrance.${encState.state}`,
+            sourceName: `Encumbrance (${encState.label})`,
+            target: 'defense.reflex',
+            type: ModifierType.DEXTERITY_LOSS,
+            value: 0, // Meta-modifier, no numeric value
+            enabled: true,
+            priority: 5,
+            description: 'DEX bonus lost due to encumbrance'
+          }));
+        } catch (err) {
+          swseLogger.warn(`Failed to create encumbrance dexterity loss modifier:`, err);
+        }
+      }
+    } catch (err) {
+      swseLogger.warn(`[ModifierEngine] Error collecting encumbrance modifiers:`, err);
     }
 
     return modifiers;
   }
 
   /**
-   * Get modifiers from conditions
+   * Collect modifiers from condition track
    * @private
+   * @param {Actor} actor
+   * @returns {Modifier[]}
    */
-  static _getConditionModifiers(actor, skillKey) {
+  static _getConditionModifiers(actor) {
     const modifiers = [];
 
-    // Condition Track penalties could go here
-    // For now, just a placeholder for future expansion
-    const conditions = actor.system?.conditionTrack?.current ?? 0;
-    if (conditions > 0) {
-      // Apply condition penalties as needed
-      const conditionPenalty = this._getConditionPenalty(conditions);
-      if (conditionPenalty !== 0) {
-        modifiers.push({
-          source: 'condition',
-          sourceName: 'Condition Track',
-          value: conditionPenalty,
-          description: `Condition Track (Step ${conditions})`
-        });
+    try {
+      const ct = actor?.system?.conditionTrack;
+      if (!ct) return modifiers;
+
+      const step = Number(ct.current ?? 0);
+      if (step <= 0 || step >= 5) {
+        // Step 0 (normal) or 5+ (helpless) don't apply numeric penalties
+        return modifiers;
       }
+
+      // Define condition penalties per step (SWSE rules)
+      const conditionPenalties = {
+        1: -1,   // Step 1: -1 penalty
+        2: -2,   // Step 2: -2 penalty
+        3: -5,   // Step 3: -5 penalty
+        4: -10   // Step 4: -10 penalty
+      };
+
+      const penalty = conditionPenalties[step] || 0;
+      if (penalty === 0) return modifiers;
+
+      const conditionLabel = `Condition Track (Step ${step})`;
+
+      // Apply to all skills
+      const allSkills = this._getAllSkillTargets(actor);
+      for (const skillTarget of allSkills) {
+        try {
+          modifiers.push(createModifier({
+            source: ModifierSource.CONDITION,
+            sourceId: `condition.step${step}`,
+            sourceName: conditionLabel,
+            target: skillTarget,
+            type: ModifierType.PENALTY,
+            value: penalty,
+            enabled: true,
+            priority: 20, // After other penalties
+            description: conditionLabel
+          }));
+        } catch (err) {
+          swseLogger.warn(`Failed to create condition modifier for ${skillTarget}:`, err);
+        }
+      }
+
+      // Apply to defenses
+      for (const defense of ['defense.fort', 'defense.reflex', 'defense.will']) {
+        try {
+          modifiers.push(createModifier({
+            source: ModifierSource.CONDITION,
+            sourceId: `condition.step${step}`,
+            sourceName: conditionLabel,
+            target: defense,
+            type: ModifierType.PENALTY,
+            value: penalty,
+            enabled: true,
+            priority: 20,
+            description: conditionLabel
+          }));
+        } catch (err) {
+          swseLogger.warn(`Failed to create condition modifier for ${defense}:`, err);
+        }
+      }
+    } catch (err) {
+      swseLogger.warn(`[ModifierEngine] Error collecting condition modifiers:`, err);
     }
 
     return modifiers;
   }
 
   /**
-   * Calculate condition penalty based on current step
+   * Collect modifiers from items (equipment, armor, etc.)
    * @private
+   * @param {Actor} actor
+   * @returns {Modifier[]}
    */
-  static _getConditionPenalty(step) {
-    // Example: -1 per condition step on certain skills
-    // Adjust as needed based on game rules
-    return 0; // Currently no automatic condition penalties
+  static _getItemModifiers(actor) {
+    // Phase 0: Items don't have modifiers yet
+    // Phase 1+: Parse armor AC bonuses, etc.
+    return [];
   }
 
   /**
-   * Get modifiers for a defense
-   * @param {Actor} actor - Character actor
-   * @param {string} defenseType - Defense type (reflex, fortitude, will)
-   * @returns {Array} Array of modifier objects
+   * Get all skill target keys for an actor
+   * @private
+   * @param {Actor} actor
+   * @returns {string[]}
    */
-  static getDefenseModifiers(actor, defenseType) {
-    const modifiers = [];
+  static _getAllSkillTargets(actor) {
+    const skills = actor?.system?.skills;
+    if (!skills || typeof skills !== 'object') return [];
 
-    // From talents that affect defenses
-    const talents = actor.items?.filter(i => i.type === 'talent') || [];
-    for (const talent of talents) {
-      const defenseBonus = talent.system?.defenseModifiers?.[defenseType];
-      if (defenseBonus) {
-        modifiers.push({
-          source: 'talent',
-          sourceName: talent.name,
-          value: Number(defenseBonus),
-          description: `Talent: ${talent.name}`
-        });
-      }
-    }
-
-    // From feats
-    const feats = actor.items?.filter(i => i.type === 'feat') || [];
-    for (const feat of feats) {
-      const defenseBonus = feat.system?.defenseModifiers?.[defenseType];
-      if (defenseBonus) {
-        modifiers.push({
-          source: 'feat',
-          sourceName: feat.name,
-          value: Number(defenseBonus),
-          description: `Feat: ${feat.name}`
-        });
-      }
-    }
-
-    // Encumbrance-specific: Dex to Reflex loss when overloaded
-    if (defenseType === 'reflex') {
-      const encumbrance = actor.system?.derived?.encumbrance;
-      if (encumbrance?.removeDexToReflex) {
-        modifiers.push({
-          source: 'encumbrance',
-          sourceName: 'Encumbrance',
-          value: 0, // This is a modifier (loss of existing bonus, not a direct penalty)
-          description: 'Encumbrance: Dex bonus removed',
-          type: 'dexRemoval'
-        });
-      }
-    }
-
-    return modifiers;
-  }
-
-  /**
-   * Get all modifiers affecting initiative
-   * @param {Actor} actor - Character actor
-   * @returns {Array} Array of modifier objects
-   */
-  static getInitiativeModifiers(actor) {
-    // Initiative uses Dex modifier + any bonuses
-    // Affected by encumbrance if heavy/overloaded
-    const modifiers = [];
-
-    // Encumbrance penalty
-    const encumbrance = actor.system?.derived?.encumbrance;
-    if (encumbrance?.affectedSkills?.includes('initiative') && encumbrance.skillPenalty) {
-      modifiers.push({
-        source: 'encumbrance',
-        sourceName: encumbrance.label,
-        value: encumbrance.skillPenalty,
-        description: `Encumbrance (${encumbrance.label})`
-      });
-    }
-
-    // From feats/talents that affect initiative
-    const allItems = [...(actor.items?.filter(i => i.type === 'feat') || []),
-                       ...(actor.items?.filter(i => i.type === 'talent') || [])];
-
-    for (const item of allItems) {
-      const initiativeBonus = item.system?.initiativeBonus;
-      if (initiativeBonus) {
-        modifiers.push({
-          source: item.type,
-          sourceName: item.name,
-          value: Number(initiativeBonus),
-          description: `${item.type === 'feat' ? 'Feat' : 'Talent'}: ${item.name}`
-        });
-      }
-    }
-
-    return modifiers;
-  }
-
-  /**
-   * Get modifier breakdown for display
-   * Useful for UI popouts showing where bonuses come from
-   * @param {Actor} actor - Character actor
-   * @param {string} type - 'skill', 'defense', 'initiative'
-   * @param {string} key - skill key, defense type, or null
-   * @returns {Array} Formatted modifier array with descriptions
-   */
-  static getModifierBreakdown(actor, type, key) {
-    let modifiers = [];
-
-    switch (type) {
-      case 'skill':
-        modifiers = this.getSkillModifiers(actor, key);
-        break;
-      case 'defense':
-        modifiers = this.getDefenseModifiers(actor, key);
-        break;
-      case 'initiative':
-        modifiers = this.getInitiativeModifiers(actor);
-        break;
-    }
-
-    return modifiers;
-  }
-
-  /**
-   * Get total modifier for any calculated value
-   * @param {Array} modifiers - Array of modifier objects
-   * @returns {number} Sum of all modifiers
-   */
-  static totalModifiers(modifiers) {
-    return Array.isArray(modifiers)
-      ? modifiers.reduce((sum, mod) => sum + (mod.value || 0), 0)
-      : 0;
+    return Object.keys(skills)
+      .filter(key => skills[key] && typeof skills[key] === 'object')
+      .map(key => `skill.${key}`);
   }
 }
+
+export default ModifierEngine;
