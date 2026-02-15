@@ -1,0 +1,45 @@
+<div class="swse swse-sheet swse-npc-combat-sheet v2">
+
+  <!-- Header -->
+  <header class="sheet-header holo-header npc-combat-header">
+    <div class="header-left">
+      <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="64" width="64"/>
+      <div class="title-block">
+        <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h1>
+        <div class="subline muted">NPC Combat Mode — Level {{system.level}}</div>
+      </div>
+    </div>
+    <div class="header-right npc-combat-header-stats">
+      <div class="swse-stat"><div class="label">FORT</div><div class="value">{{derived.defenses.fort}}</div></div>
+      <div class="swse-stat"><div class="label">REF</div><div class="value">{{derived.defenses.ref}}</div></div>
+      <div class="swse-stat"><div class="label">WILL</div><div class="value">{{derived.defenses.will}}</div></div>
+      <div class="swse-stat"><div class="label">DT</div><div class="value">{{derived.damage.threshold}}</div></div>
+    </div>
+  </header>
+
+  <!-- Combat Grid -->
+  <section class="sheet-body npc-combat-body">
+
+    <!-- Left Column: HP, Condition, Defenses -->
+    <div class="npc-combat-left">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
+    </div>
+
+    <!-- Right Column: Attacks and Actions -->
+    <div class="npc-combat-right">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
+    </div>
+
+  </section>
+
+  <!-- Quick Actions Bar -->
+  <footer class="npc-combat-footer">
+    <div class="npc-combat-actions">
+      <button type="button" class="action-btn" data-action="level-up">Level Up</button>
+      <button type="button" class="action-btn" data-action="switch-full-mode">Full Mode</button>
+    </div>
+  </footer>
+
+</div>

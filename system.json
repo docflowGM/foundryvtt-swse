@@ -64,6 +64,7 @@
     "styles/sheets/vehicle-sheet.css",
     "styles/sheets/unified-sheets.css",
     "styles/sheets/v2-sheet.css",
+    "styles/sheets/npc-combat-sheet.css",
     "styles/sheets/skill-actions.css",
     "styles/sheets/feat-actions.css",
     "styles/sheets/sheet-improvements.css",
