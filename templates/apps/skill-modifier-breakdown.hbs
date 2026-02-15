@@ -1,0 +1,136 @@
+<div class="skill-modifier-breakdown">
+  <div class="breakdown-header">
+    <h3 class="skill-name">{{skillName}}</h3>
+    <div class="breakdown-total">
+      <span class="label">Total Misc:</span>
+      <span class="value {{#if total}}positive{{/if}}">{{total}}</span>
+    </div>
+  </div>
+
+  <!-- Applied Modifiers (Read-Only) -->
+  {{#if hasModifiers}}
+    <div class="breakdown-section applied-mods">
+      <h4>Applied Modifiers</h4>
+      <div class="mod-list">
+        {{#each appliedModifiers}}
+          <div class="mod-row {{this.source}}">
+            <div class="mod-info">
+              <span class="mod-source">{{this.sourceName}}</span>
+              <span class="mod-type">[{{this.type}}]</span>
+            </div>
+            <div class="mod-value {{#if this.value}}{{#if (compare this.value '>' 0)}}bonus{{else}}penalty{{/if}}{{/if}}">
+              {{#if this.value}}{{#if (compare this.value '>' 0)}}+{{/if}}{{this.value}}{{else}}—{{/if}}
+            </div>
+            {{#if this.canRemove}}
+              <button
+                class="btn-remove-mod"
+                data-action="remove-custom"
+                data-index="{{@index}}"
+                title="Remove custom modifier"
+              >
+                ×
+              </button>
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+    </div>
+  {{/if}}
+
+  <!-- Custom Modifiers Section -->
+  {{#if hasCustom}}
+    <div class="breakdown-section custom-mods">
+      <h4>Custom Modifiers</h4>
+      <div class="custom-mod-list">
+        {{#each customModifiers}}
+          <div class="custom-mod-row {{#unless this.enabled}}disabled{{/unless}}">
+            <div class="custom-mod-content">
+              <span class="custom-mod-source">{{this.sourceName}}</span>
+              <span class="custom-mod-type">[{{this.type}}]</span>
+              <span class="custom-mod-value {{#if (compare this.value '>' 0)}}bonus{{else}}penalty{{/if}}">
+                {{#if (compare this.value '>' 0)}}+{{/if}}{{this.value}}
+              </span>
+            </div>
+            <div class="custom-mod-actions">
+              <button
+                class="btn-toggle-custom"
+                data-action="toggle-custom"
+                data-index="{{this.index}}"
+                title="{{#if this.enabled}}Disable{{else}}Enable{{/if}} modifier"
+              >
+                {{#if this.enabled}}✓{{else}}○{{/if}}
+              </button>
+              <button
+                class="btn-remove-custom"
+                data-action="remove-custom"
+                data-index="{{this.index}}"
+                title="Remove modifier"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+  {{/if}}
+
+  <!-- Add Custom Modifier Form -->
+  <div class="breakdown-section add-custom">
+    {{#if isAddingCustom}}
+      <div class="add-custom-form">
+        <h4>Add Custom Modifier</h4>
+
+        <div class="form-group">
+          <label for="sourceName">Source Name</label>
+          <input
+            type="text"
+            id="sourceName"
+            name="sourceName"
+            placeholder="e.g., GM Bonus, Temporary Effect"
+            value="{{newCustomData.sourceName}}"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="type">Type</label>
+          <select id="type" name="type" value="{{newCustomData.type}}">
+            {{#each modifierTypes}}
+              <option value="{{this}}" {{#if (compare this ../newCustomData.type)}}selected{{/if}}>
+                {{this}}
+              </option>
+            {{/each}}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="value">Value</label>
+          <input
+            type="number"
+            id="value"
+            name="value"
+            placeholder="0"
+            value="{{newCustomData.value}}"
+          />
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" data-action="submit-custom">Add</button>
+          <button class="btn btn-secondary" data-action="cancel-custom">Cancel</button>
+        </div>
+      </div>
+    {{else}}
+      <button class="btn btn-add-custom" data-action="add-custom">
+        + Add Custom Modifier
+      </button>
+    {{/if}}
+  </div>
+
+  <!-- Info Text -->
+  <div class="breakdown-info">
+    <p>
+      <strong>Note:</strong> Applied modifiers are calculated automatically by the system
+      and cannot be edited here. Add custom modifiers to override or supplement system calculations.
+    </p>
+  </div>
+</div>

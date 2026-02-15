@@ -61,8 +61,8 @@ export class ModifierEngine {
         modifiers.push(...this._getDroidModModifiers(actor));
       }
 
-      // Source 8: Custom effects (future)
-      // modifiers.push(...this._getCustomModifiers(actor));
+      // Source 8: Custom modifiers (Phase B - user-defined via UI)
+      modifiers.push(...this._getCustomModifiers(actor));
 
       swseLogger.debug(`[ModifierEngine] Collected ${modifiers.length} modifiers for ${actor.name}`);
 
@@ -700,6 +700,60 @@ export class ModifierEngine {
       return modifiers;
     } catch (err) {
       swseLogger.warn(`[ModifierEngine] Error collecting droid mod modifiers:`, err);
+      return modifiers;
+    }
+  }
+
+  /**
+   * Collect modifiers from custom sources (Phase B - UI-managed)
+   * Stored in actor.system.customModifiers array
+   *
+   * @private
+   * @param {Actor} actor
+   * @returns {Modifier[]}
+   */
+  static _getCustomModifiers(actor) {
+    const modifiers = [];
+
+    try {
+      const customMods = Array.isArray(actor?.system?.customModifiers) ? actor.system.customModifiers : [];
+
+      for (const customMod of customMods) {
+        // Skip disabled custom modifiers
+        if (customMod.enabled === false) {
+          continue;
+        }
+
+        if (!customMod || typeof customMod !== 'object') continue;
+
+        const customName = customMod.sourceName || customMod.name || 'Custom Modifier';
+        const customId = customMod.id;
+        const target = String(customMod.target || '').trim();
+        const type = String(customMod.type || 'untyped').trim().toLowerCase();
+        const value = Number(customMod.value) || 0;
+
+        if (!target) continue;
+
+        try {
+          modifiers.push(createModifier({
+            source: ModifierSource.CUSTOM,
+            sourceId: customId || `custom_${customName}`,
+            sourceName: customName,
+            target: target,
+            type: type,
+            value: value,
+            enabled: true,
+            description: `${customName}: ${target} ${value > 0 ? '+' : ''}${value}`
+          }));
+        } catch (err) {
+          swseLogger.warn(`Failed to create custom modifier ${customName}:`, err);
+        }
+      }
+
+      swseLogger.debug(`[ModifierEngine] Collected ${modifiers.length} custom modifiers`);
+      return modifiers;
+    } catch (err) {
+      swseLogger.warn(`[ModifierEngine] Error collecting custom modifiers:`, err);
       return modifiers;
     }
   }
