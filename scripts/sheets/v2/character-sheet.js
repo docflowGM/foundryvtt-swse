@@ -12,6 +12,7 @@ import { rollAttack } from "../../combat/rolls/attacks.js";
 import { DropService } from "../../services/drop-service.js";
 import { isXPEnabled } from "../../engine/progression/xp-engine.js";
 import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
+import { PrerequisiteEngine } from "../../engine/prerequisites/PrerequisiteEngine.js";
 
 /* ========================================================================== */
 /* SWSEV2CharacterSheet                                                       */
@@ -180,6 +181,10 @@ export class SWSEV2CharacterSheet extends
     const forcePoints = actor.system?.forcePoints?.value ?? 0;
     const fpAvailable = forcePoints > 0;
 
+    // PHASE 3: Build Mode & Prerequisites
+    const buildMode = actor.system?.buildMode ?? 'validated';
+    const buildAudit = PrerequisiteEngine.auditBuild(actor);
+
     const overrides = {
       actor,
       system: actor.system,
@@ -224,7 +229,11 @@ export class SWSEV2CharacterSheet extends
         light: encumbranceInfo.light,
         medium: encumbranceInfo.medium,
         heavy: encumbranceInfo.heavy
-      }
+      },
+      // PHASE 3: Build Mode & Prerequisites
+      buildMode,
+      buildValid: buildAudit.valid,
+      buildViolations: buildAudit.violations
     };
 
     RenderAssertions.assertContextSerializable(
@@ -860,6 +869,24 @@ export class SWSEV2CharacterSheet extends
         if (!itemId || !this.actor) return;
         await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
         ui.notifications.info("Feat removed.");
+      });
+    }
+
+    /* ---- PHASE 3: PREREQUISITE VALIDATION & FREE BUILD MODE ---- */
+
+    const revalidateBtn = root.querySelector('[data-action="revalidate-build"]');
+    if (revalidateBtn) {
+      revalidateBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const valid = await PrerequisiteEngine.validateBuild(this.actor);
+        if (valid) {
+          ui.notifications.info("Build validated successfully!");
+          await this.render();
+        } else {
+          const audit = PrerequisiteEngine.auditBuild(this.actor);
+          const msg = PrerequisiteEngine.formatViolations(audit);
+          ui.notifications.warn(msg);
+        }
       });
     }
 

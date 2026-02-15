@@ -6,6 +6,7 @@
 import combatActions from "../../../data/combat-actions.json" with { type: "json" };
 import { FeatActionsMapper } from "../../utils/feat-actions-mapper.js";
 import { EncumbranceEngine } from "../../engine/encumbrance/EncumbranceEngine.js";
+import { PrerequisiteEngine } from "../../engine/prerequisites/PrerequisiteEngine.js";
 
 /**
  * Compute the minimal v2-derived fields for Characters.
