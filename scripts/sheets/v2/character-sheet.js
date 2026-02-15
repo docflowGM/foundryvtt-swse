@@ -11,6 +11,7 @@ import { rollSkill } from "../../rolls/skills.js";
 import { rollAttack } from "../../combat/rolls/attacks.js";
 import { DropService } from "../../services/drop-service.js";
 import { isXPEnabled } from "../../engine/progression/xp-engine.js";
+import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
 
 /* ========================================================================== */
 /* SWSEV2CharacterSheet                                                       */
@@ -55,6 +56,8 @@ export class SWSEV2CharacterSheet extends
 
   constructor(document, options = {}) {
     super(document, options);
+    this._inventorySearch = ""; // Inventory search filter state
+    this._expandedItemIds = new Set(); // Expanded item cards for stack splitting
   }
 
   /* ------------------------------------------------------------------------ */
@@ -110,29 +113,47 @@ export class SWSEV2CharacterSheet extends
     }
 
     // Build equipment, armor, and weapon lists
-    const equipment = actor.items.filter(item => item.type === "equipment").map(item => ({
+    let equipment = actor.items.filter(item => item.type === "equipment").map(item => ({
       id: item.id,
       name: item.name,
       type: item.type,
       img: item.img,
-      system: item.system
+      system: item.system,
+      _expanded: this._expandedItemIds.has(item.id)
     }));
 
-    const armor = actor.items.filter(item => item.type === "armor").map(item => ({
+    let armor = actor.items.filter(item => item.type === "armor").map(item => ({
       id: item.id,
       name: item.name,
       type: item.type,
       img: item.img,
-      system: item.system
+      system: item.system,
+      _expanded: this._expandedItemIds.has(item.id)
     }));
 
-    const weapons = actor.items.filter(item => item.type === "weapon").map(item => ({
+    let weapons = actor.items.filter(item => item.type === "weapon").map(item => ({
       id: item.id,
       name: item.name,
       type: item.type,
       img: item.img,
-      system: item.system
+      system: item.system,
+      _expanded: this._expandedItemIds.has(item.id)
     }));
+
+    // PHASE 2: Apply search filter if active
+    if (this._inventorySearch && this._inventorySearch.trim() !== '') {
+      equipment = InventoryEngine.filterBySearch(equipment, this._inventorySearch);
+      armor = InventoryEngine.filterBySearch(armor, this._inventorySearch);
+      weapons = InventoryEngine.filterBySearch(weapons, this._inventorySearch);
+    }
+
+    // Calculate total weight from all inventory items
+    const allInventory = InventoryEngine.getAllInventory(actor);
+    const totalWeight = InventoryEngine.calculateTotalWeight(allInventory);
+
+    // Get encumbrance state
+    const strScore = actor.system?.abilities?.str?.total ?? 10;
+    const encumbranceInfo = InventoryEngine.calculateEncumbranceState(totalWeight, strScore, 1);
 
     // XP display data
     const xpEnabled = isXPEnabled();
@@ -193,7 +214,17 @@ export class SWSEV2CharacterSheet extends
         name: game.user.name,
         role: game.user.role
       },
-      config: CONFIG.SWSE
+      config: CONFIG.SWSE,
+      // PHASE 2: Inventory enhancements
+      inventorySearch: this._inventorySearch,
+      totalWeight: Math.round(totalWeight * 100) / 100,
+      encumbranceState: encumbranceInfo.state,
+      encumbranceLabel: encumbranceInfo.label,
+      encumbranceThresholds: {
+        light: encumbranceInfo.light,
+        medium: encumbranceInfo.medium,
+        heavy: encumbranceInfo.heavy
+      }
     };
 
     RenderAssertions.assertContextSerializable(
@@ -794,6 +825,72 @@ export class SWSEV2CharacterSheet extends
         if (!actorId) return;
         const actor = game.actors.get(actorId);
         actor?.sheet?.render(true);
+      });
+    }
+
+    /* ---- PHASE 2: INVENTORY SEARCH FILTER ---- */
+
+    const inventorySearchInput = root.querySelector('[data-action="inventory-search"]');
+    if (inventorySearchInput) {
+      inventorySearchInput.addEventListener("input", async (ev) => {
+        this._inventorySearch = ev.target.value;
+        await this.render();
+      });
+    }
+
+    /* ---- PHASE 2: STACK SPLITTING ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="split-stack"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        const item = this.actor?.items?.get(itemId);
+        if (!item) return;
+
+        const currentQty = Number(item.system.quantity) || 1;
+        if (currentQty <= 1) {
+          ui.notifications.warn("Cannot split a stack of 1 item.");
+          return;
+        }
+
+        // Show inline split dialog
+        const splitQty = prompt(`Split ${item.name}?\nEnter quantity to split (1-${currentQty - 1}):`, "1");
+        if (!splitQty) return;
+
+        const qty = Number(splitQty);
+        if (!Number.isFinite(qty) || qty < 1 || qty >= currentQty) {
+          ui.notifications.error("Invalid split quantity.");
+          return;
+        }
+
+        // Update original item
+        await item.update({ "system.quantity": currentQty - qty });
+
+        // Create new stack
+        const newItem = item.toObject();
+        newItem.system.quantity = qty;
+        await this.actor.createEmbeddedDocuments("Item", [newItem]);
+
+        ui.notifications.info(`${item.name} split: ${qty} item(s) moved to new stack.`);
+      });
+    }
+
+    /* ---- PHASE 2: EXPAND/COLLAPSE ITEM CARDS ---- */
+
+    for (const card of root.querySelectorAll('[data-action="toggle-item-expand"]')) {
+      card.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId) return;
+
+        if (this._expandedItemIds.has(itemId)) {
+          this._expandedItemIds.delete(itemId);
+        } else {
+          this._expandedItemIds.add(itemId);
+        }
+
+        // Re-render to show/hide expanded content
+        this.render();
       });
     }
 

@@ -250,10 +250,39 @@
         <div class="swse-v2-full">
           <section class="gear-section">
             <h3>Equipment</h3>
+
+            <!-- PHASE 2: INVENTORY SUMMARY & SEARCH -->
+            <div class="inventory-summary" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px;">
+              <div style="font-size: 0.85rem;">
+                <strong>Weight:</strong> {{totalWeight}} lbs
+              </div>
+              <div style="font-size: 0.85rem; padding: 4px 8px; border-radius: 4px; {{#if (eq encumbranceState "normal")}}background: #e8f5e9; color: #2e7d32;{{else if (eq encumbranceState "encumbered")}}background: #fff3e0; color: #e65100;{{else if (eq encumbranceState "heavy")}}background: #ffe0e0; color: #c62828;{{else}}background: #ffebee; color: #b71c1c;{{/if}}">
+                {{encumbranceLabel}}
+              </div>
+            </div>
+
+            <!-- PHASE 2: INVENTORY SEARCH -->
+            <div class="inventory-search" style="margin-bottom: 10px;">
+              <input type="text"
+                     class="inventory-search-input"
+                     data-action="inventory-search"
+                     placeholder="Search inventory..."
+                     value="{{inventorySearch}}"
+                     style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #ccc; background: #fff;" />
+            </div>
+
             {{#if equipment}}
               <div class="equipment-list" style="border-top: 1px solid #ddd;">
                 {{#each equipment as |item|}}
-                  <div class="equipment-row" style="display: grid; grid-template-columns: 1fr 80px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                  <div class="equipment-row" style="display: grid; grid-template-columns: 20px 1fr 80px 100px 60px 60px 60px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+                    <!-- PHASE 2: EXPAND/COLLAPSE TOGGLE -->
+                    <button type="button"
+                            class="item-expand-toggle"
+                            data-action="toggle-item-expand"
+                            data-item-id="{{item.id}}"
+                            style="background: none; border: none; cursor: pointer; padding: 0; width: 20px; text-align: center;">
+                      {{#if item._expanded}}▼{{else}}▶{{/if}}
+                    </button>
                     <div class="equipment-name">
                       <button type="button"
                               class="equipment-name-btn swse-v2-open-item"
@@ -270,18 +299,30 @@
                     <div class="equipment-weight" style="text-align: right;">
                       {{item.system.weight}} lbs
                     </div>
+                    <!-- PHASE 2: SPLIT BUTTON (if qty > 1) -->
+                    {{#if (gt item.system.quantity 1)}}
+                      <button type="button"
+                              class="equipment-split"
+                              data-action="split-stack"
+                              data-item-id="{{item.id}}"
+                              style="background: #2196F3; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.8em;">
+                        Split
+                      </button>
+                    {{else}}
+                      <div></div>
+                    {{/if}}
                     <button type="button"
                             class="equipment-sell"
                             data-action="sell-item"
                             data-item-id="{{item.id}}"
-                            style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                            style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.8em;">
                       Sell
                     </button>
                     <button type="button"
                             class="equipment-delete"
                             data-action="delete-item"
                             data-item-id="{{item.id}}"
-                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+                            style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.8em;">
                       Delete
                     </button>
                   </div>
@@ -389,19 +430,36 @@
                 <div>
                   <div style="font-size: 0.9em; color: #666; margin-bottom: 4px;">Total Weight</div>
                   <div style="font-size: 1.5em; font-weight: bold;">
-                    {{derived.encumbrance.total}}/{{derived.encumbrance.max}} lbs
+                    {{derived.encumbrance.total}} lbs
                   </div>
                 </div>
                 <div>
                   <div style="font-size: 0.9em; color: #666; margin-bottom: 4px;">Encumbrance State</div>
-                  <div style="font-size: 1.2em; font-weight: bold; {{#if (eq derived.encumbrance.state "Heavily Encumbered")}}color: #cc0000;{{/if}}">
-                    {{derived.encumbrance.state}}
+                  <div style="font-size: 1.2em; font-weight: bold; {{#if (eq derived.encumbrance.state "heavy")}}color: #ff6b35;{{else if (eq derived.encumbrance.state "overloaded")}}color: #cc0000;{{/if}}">
+                    {{derived.encumbrance.label}}
                   </div>
                 </div>
               </div>
-              {{#if derived.encumbrance.penalty}}
-                <div style="color: #cc0000; font-weight: bold;">
-                  Penalty: {{derived.encumbrance.penalty}}
+
+              <!-- Load thresholds -->
+              <div style="font-size: 0.75rem; margin-bottom: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px; opacity: 0.8;">
+                <div>Light Load: {{derived.encumbrance.lightLoad}} lbs</div>
+                <div>Medium Load: {{derived.encumbrance.mediumLoad}} lbs</div>
+                <div>Heavy Load: {{derived.encumbrance.heavyLoad}} lbs</div>
+              </div>
+
+              {{#if derived.encumbrance.skillPenalty}}
+                <div style="color: #ff6b35; font-weight: bold; margin-bottom: 8px;">
+                  Skill Penalty: {{derived.encumbrance.skillPenalty}}
+                </div>
+                <div style="font-size: 0.75rem; opacity: 0.9;">
+                  <strong>Affected Skills:</strong> {{#join derived.encumbrance.affectedSkills ", "}}{{/join}}
+                </div>
+              {{/if}}
+
+              {{#if derived.encumbrance.removeDexToReflex}}
+                <div style="color: #cc0000; font-weight: bold; margin-top: 8px;">
+                  ⚠ Dex bonus to Reflex removed
                 </div>
               {{/if}}
             </div>

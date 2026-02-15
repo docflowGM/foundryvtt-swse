@@ -5,6 +5,7 @@
 
 import combatActions from "../../../data/combat-actions.json" with { type: "json" };
 import { FeatActionsMapper } from "../../utils/feat-actions-mapper.js";
+import { EncumbranceEngine } from "../../engine/encumbrance/EncumbranceEngine.js";
 
 /**
  * Compute the minimal v2-derived fields for Characters.
@@ -23,6 +24,7 @@ export function computeCharacterDerived(actor, system) {
   system.derived.feats ??= {};
   system.derived.talents ??= {};
   system.derived.actions ??= {};
+  system.derived.encumbrance ??= {};
 
   const defenses = system.defenses ?? {};
   const fort = defenses.fortitude ?? defenses.fort ?? {};
@@ -45,6 +47,7 @@ export function computeCharacterDerived(actor, system) {
   mirrorFeats(actor, system);
   mirrorTalents(actor, system);
   mirrorActions(actor, system);
+  mirrorEncumbrance(actor, system);
 }
 
 const RESOURCE_TICK_CAP = 100;
@@ -523,6 +526,22 @@ function humanizeSkillKey(key) {
     .replace(/^use computer$/i, 'Use Computer')
     .replace(/^treat injury$/i, 'Treat Injury')
     .replace(/^gather information$/i, 'Gather Information');
+}
+
+function mirrorEncumbrance(actor, system) {
+  const encState = EncumbranceEngine.calculateEncumbrance(actor);
+  system.derived.encumbrance.state = encState.state;
+  system.derived.encumbrance.label = encState.label;
+  system.derived.encumbrance.total = encState.totalWeight;
+  system.derived.encumbrance.lightLoad = encState.lightLoad;
+  system.derived.encumbrance.mediumLoad = encState.mediumLoad;
+  system.derived.encumbrance.heavyLoad = encState.heavyLoad;
+  system.derived.encumbrance.overloadThreshold = encState.overloadThreshold;
+  system.derived.encumbrance.skillPenalty = encState.skillPenalty;
+  system.derived.encumbrance.speedMultiplier = encState.speedMultiplier;
+  system.derived.encumbrance.runMultiplier = encState.runMultiplier;
+  system.derived.encumbrance.removeDexToReflex = encState.removeDexToReflex;
+  system.derived.encumbrance.affectedSkills = encState.affectedSkills;
 }
 
 function splitCamel(str) {
