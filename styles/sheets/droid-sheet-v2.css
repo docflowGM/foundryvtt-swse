@@ -1,0 +1,504 @@
+/**
+ * DroidSheetV2 Styles
+ */
+
+.droid-sheet-v2 {
+  background: var(--swse-bg-primary, #1a1a1a);
+  color: var(--swse-text-primary, #fff);
+}
+
+/* Header */
+.droid-sheet-v2 .sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: var(--swse-bg-secondary, #2b2b2b);
+  border-bottom: 2px solid var(--swse-accent, #d4af37);
+  margin-bottom: 12px;
+}
+
+.droid-sheet-v2 .header-name {
+  flex: 1;
+}
+
+.droid-sheet-v2 .header-name h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.droid-sheet-v2 .header-name h1 input {
+  background: transparent;
+  border: none;
+  color: var(--swse-text-primary, #fff);
+  font-size: 1.5rem;
+  font-weight: 700;
+  width: 100%;
+}
+
+.droid-sheet-v2 .actor-type {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--swse-text-secondary, #aaa);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.droid-sheet-v2 .header-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.droid-sheet-v2 .stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.droid-sheet-v2 .stat label {
+  font-size: 0.75rem;
+  color: var(--swse-text-secondary, #aaa);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.droid-sheet-v2 .stat select {
+  background: var(--swse-bg-input, #1a1a1a);
+  border: 1px solid var(--swse-border-accent, #444);
+  color: var(--swse-text-primary, #fff);
+  padding: 6px 8px;
+  border-radius: 3px;
+  font-size: 0.85rem;
+}
+
+/* Alerts -->
+.droid-sheet-v2 .sheet-alert {
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.droid-sheet-v2 .sheet-alert.errors {
+  background: rgba(255, 68, 68, 0.1);
+  border-left: 3px solid #ff4444;
+}
+
+.droid-sheet-v2 .sheet-alert.warnings {
+  background: rgba(255, 153, 0, 0.1);
+  border-left: 3px solid #ff9900;
+}
+
+.droid-sheet-v2 .alert-item {
+  padding: 4px 0;
+}
+
+/* Tabs */
+.droid-sheet-v2 .sheet-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--swse-border-accent, #444);
+  margin-bottom: 12px;
+}
+
+.droid-sheet-v2 .sheet-tabs .item {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+  background: transparent;
+  color: var(--swse-text-secondary, #aaa);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.droid-sheet-v2 .sheet-tabs .item:hover {
+  color: var(--swse-text-primary, #fff);
+}
+
+.droid-sheet-v2 .sheet-tabs .item.active {
+  color: var(--swse-accent, #d4af37);
+  border-bottom-color: var(--swse-accent, #d4af37);
+}
+
+/* Content area */
+.droid-sheet-v2 .sheet-body {
+  padding: 12px;
+  max-height: calc(100% - 200px);
+  overflow-y: auto;
+}
+
+.droid-sheet-v2 .tab {
+  display: none;
+}
+
+.droid-sheet-v2 .tab.active {
+  display: block;
+}
+
+/* Systems Grid */
+.droid-sheet-v2 .systems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.droid-sheet-v2 .system-card {
+  background: var(--swse-bg-secondary, #2b2b2b);
+  border: 1px solid var(--swse-border-accent, #444);
+  border-radius: 4px;
+  padding: 12px;
+}
+
+.droid-sheet-v2 .system-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 0.9rem;
+  color: var(--swse-accent, #d4af37);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.droid-sheet-v2 .system-card select {
+  width: 100%;
+  background: var(--swse-bg-input, #1a1a1a);
+  border: 1px solid var(--swse-border-accent, #444);
+  color: var(--swse-text-primary, #fff);
+  padding: 6px 8px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+}
+
+.droid-sheet-v2 .system-info {
+  font-size: 0.75rem;
+  color: var(--swse-text-secondary, #aaa);
+  margin: 0;
+  font-style: italic;
+}
+
+/* Modifications */
+.droid-sheet-v2 .mod-header {
+  margin-bottom: 12px;
+}
+
+.droid-sheet-v2 .hardpoint-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  font-size: 0.8rem;
+}
+
+.droid-sheet-v2 .hardpoint-track {
+  flex: 1;
+  height: 6px;
+  background: var(--swse-bg-tertiary, #1f1f1f);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.droid-sheet-v2 .hardpoint-used {
+  height: 100%;
+  background: var(--swse-accent, #d4af37);
+  transition: width 0.3s ease;
+}
+
+.droid-sheet-v2 .mod-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.droid-sheet-v2 .mod-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background: var(--swse-bg-secondary, #2b2b2b);
+  border: 1px solid var(--swse-border-accent, #444);
+  border-radius: 3px;
+}
+
+.droid-sheet-v2 .mod-item.disabled {
+  opacity: 0.6;
+  background: var(--swse-bg-tertiary, #1f1f1f);
+}
+
+.droid-sheet-v2 .mod-info {
+  flex: 1;
+}
+
+.droid-sheet-v2 .mod-name {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--swse-text-primary, #fff);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.droid-sheet-v2 .mod-meta {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--swse-text-secondary, #aaa);
+}
+
+.droid-sheet-v2 .mod-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.droid-sheet-v2 .btn-toggle,
+.droid-sheet-v2 .btn-remove {
+  background: transparent;
+  border: 1px solid var(--swse-border-accent, #444);
+  color: var(--swse-text-secondary, #aaa);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+
+.droid-sheet-v2 .btn-toggle:hover {
+  border-color: var(--swse-accent, #d4af37);
+  color: var(--swse-accent, #d4af37);
+}
+
+.droid-sheet-v2 .btn-remove:hover {
+  border-color: #ff4444;
+  color: #ff4444;
+}
+
+/* Generic item lists */
+.droid-sheet-v2 .tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.droid-sheet-v2 .tab-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.droid-sheet-v2 .item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.droid-sheet-v2 .item-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 8px;
+  background: var(--swse-bg-secondary, #2b2b2b);
+  border: 1px solid var(--swse-border-accent, #444);
+  border-radius: 3px;
+}
+
+.droid-sheet-v2 .item-row input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--swse-text-primary, #fff);
+  font-size: 0.85rem;
+}
+
+.droid-sheet-v2 .item-row .qty {
+  width: 40px !important;
+  text-align: center;
+}
+
+.droid-sheet-v2 .btn-add {
+  background: var(--swse-accent, #d4af37);
+  color: #000;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.droid-sheet-v2 .btn-add:hover:not(:disabled) {
+  background: #e5c158;
+}
+
+.droid-sheet-v2 .btn-add:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Equipment section */
+.droid-sheet-v2 .equipment-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.droid-sheet-v2 .section {
+  background: var(--swse-bg-secondary, #2b2b2b);
+  border: 1px solid var(--swse-border-accent, #444);
+  border-radius: 4px;
+  padding: 12px;
+}
+
+.droid-sheet-v2 .section h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.85rem;
+  color: var(--swse-accent, #d4af37);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Budget section */
+.droid-sheet-v2 .budget-section {
+  max-width: 500px;
+}
+
+.droid-sheet-v2 .credit-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--swse-bg-secondary, #2b2b2b);
+  border: 1px solid var(--swse-border-accent, #444);
+  border-radius: 4px;
+}
+
+.droid-sheet-v2 .credit-input {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.droid-sheet-v2 .credit-input label {
+  font-size: 0.75rem;
+  color: var(--swse-text-secondary, #aaa);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.droid-sheet-v2 .credit-input input {
+  background: var(--swse-bg-input, #1a1a1a);
+  border: 1px solid var(--swse-border-accent, #444);
+  color: var(--swse-text-primary, #fff);
+  padding: 6px 8px;
+  border-radius: 3px;
+  font-size: 0.85rem;
+}
+
+.droid-sheet-v2 .credit-display {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background: var(--swse-bg-tertiary, #1f1f1f);
+  border-radius: 3px;
+}
+
+.droid-sheet-v2 .remaining {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.droid-sheet-v2 .remaining.positive {
+  color: var(--swse-color-success, #4a9d6f);
+}
+
+.droid-sheet-v2 .remaining.negative {
+  color: #ff4444;
+}
+
+.droid-sheet-v2 .budget-bar {
+  margin-bottom: 16px;
+}
+
+.droid-sheet-v2 .budget-track {
+  height: 12px;
+  background: var(--swse-bg-tertiary, #1f1f1f);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.droid-sheet-v2 .budget-spent {
+  height: 100%;
+  background: linear-gradient(90deg, #d4af37, #ffcc66);
+  transition: width 0.3s ease;
+}
+
+.droid-sheet-v2 .budget-percent {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--swse-text-secondary, #aaa);
+}
+
+.droid-sheet-v2 .budget-breakdown {
+  padding: 12px;
+  background: var(--swse-bg-secondary, #2b2b2b);
+  border: 1px solid var(--swse-border-accent, #444);
+  border-radius: 4px;
+}
+
+.droid-sheet-v2 .budget-breakdown h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.8rem;
+}
+
+.droid-sheet-v2 .budget-breakdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.75rem;
+}
+
+.droid-sheet-v2 .budget-breakdown li {
+  padding: 4px 0;
+  border-bottom: 1px solid var(--swse-border-subtle, #333);
+}
+
+.droid-sheet-v2 .budget-breakdown li:last-child {
+  border-bottom: none;
+}
+
+/* Empty states */
+.droid-sheet-v2 .empty {
+  text-align: center;
+  padding: 16px;
+  color: var(--swse-text-secondary, #aaa);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+/* Scrollbar */
+.droid-sheet-v2 .sheet-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.droid-sheet-v2 .sheet-body::-webkit-scrollbar-track {
+  background: var(--swse-bg-tertiary, #1f1f1f);
+}
+
+.droid-sheet-v2 .sheet-body::-webkit-scrollbar-thumb {
+  background: var(--swse-accent, #d4af37);
+  border-radius: 4px;
+}
+
+.droid-sheet-v2 .sheet-body::-webkit-scrollbar-thumb:hover {
+  background: #e5c158;
+}

@@ -1,0 +1,268 @@
+<form class="droid-sheet-v2">
+  <!-- Header -->
+  <div class="sheet-header">
+    <div class="header-name">
+      <h1><input type="text" name="name" value="{{actor.name}}" /></h1>
+      <span class="actor-type">Droid</span>
+    </div>
+    <div class="header-stats">
+      <div class="stat">
+        <label>Degree</label>
+        <select name="degree">
+          {{#each degreeOptions}}
+            <option value="{{this.value}}" {{#if (compare this.value ../droidSystems.degree)}}selected{{/if}}>
+              {{this.label}}
+            </option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="stat">
+        <label>Size</label>
+        <select name="size">
+          {{#each sizeOptions}}
+            <option value="{{this.value}}" {{#if (compare this.value ../droidSystems.size)}}selected{{/if}}>
+              {{this.label}}
+            </option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Validation Messages -->
+  {{#if validation.errors}}
+    <div class="sheet-alert errors">
+      {{#each validation.errors}}
+        <div class="alert-item">⚠️ {{this}}</div>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  {{#if modValidation.warnings}}
+    <div class="sheet-alert warnings">
+      {{#each modValidation.warnings}}
+        <div class="alert-item">⚠️ {{this}}</div>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  <!-- Tabs -->
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="systems">Systems</a>
+    <a class="item" data-tab="modifications">Modifications</a>
+    <a class="item" data-tab="appendages">Appendages</a>
+    <a class="item" data-tab="equipment">Equipment</a>
+    <a class="item" data-tab="budget">Budget</a>
+  </nav>
+
+  <div class="sheet-body">
+    <!-- SYSTEMS TAB -->
+    <div class="tab systems" data-tab="systems">
+      <div class="systems-grid">
+        <div class="system-card">
+          <h3>Locomotion</h3>
+          <select name="locomotion">
+            <option value="">None Selected</option>
+            {{#each locomotionOptions}}
+              <option value="{{this.id}}" {{#if (compare this.id ../currentLocomtion.id)}}selected{{/if}}>
+                {{this.name}}
+              </option>
+            {{/each}}
+          </select>
+          {{#if droidSystems.locomotion.name}}
+            <p class="system-info">{{droidSystems.locomotion.name}}</p>
+          {{/if}}
+        </div>
+
+        <div class="system-card">
+          <h3>Processor</h3>
+          <select name="processor">
+            <option value="">None Selected</option>
+            {{#each processorOptions}}
+              <option value="{{this.id}}" {{#if (compare this.id ../currentProcessor.id)}}selected{{/if}}>
+                {{this.name}}
+              </option>
+            {{/each}}
+          </select>
+          {{#if droidSystems.processor.name}}
+            <p class="system-info">{{droidSystems.processor.name}}</p>
+          {{/if}}
+        </div>
+
+        <div class="system-card">
+          <h3>Armor</h3>
+          <select name="armor">
+            <option value="">None Selected</option>
+            {{#each armorOptions}}
+              <option value="{{this.id}}" {{#if (compare this.id ../currentArmor.id)}}selected{{/if}}>
+                {{this.name}}
+              </option>
+            {{/each}}
+          </select>
+          {{#if droidSystems.armor.name}}
+            <p class="system-info">Rating: {{droidSystems.armor.rating}}</p>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+
+    <!-- MODIFICATIONS TAB -->
+    <div class="tab modifications" data-tab="modifications">
+      <div class="mod-header">
+        <h3>Modifications</h3>
+        <div class="hardpoint-bar">
+          <span class="hardpoint-label">Hardpoints:</span>
+          <div class="hardpoint-track">
+            <div class="hardpoint-used" style="width: {{divide hardpoints.used hardpoints.max}}%"></div>
+          </div>
+          <span class="hardpoint-count">{{hardpoints.used}} / {{hardpoints.max}}</span>
+        </div>
+        <button type="button" class="btn btn-add" data-action="add-mod" {{#unless hardpoints.available}}disabled{{/unless}}>
+          + Add Modification
+        </button>
+      </div>
+
+      {{#if modifications}}
+        <div class="mod-list">
+          {{#each modifications}}
+            <div class="mod-item {{#unless this.enabled}}disabled{{/unless}}">
+              <div class="mod-info">
+                <input type="text" class="mod-name" value="{{this.name}}" readonly />
+                <div class="mod-meta">
+                  <span class="hardpoint-cost">{{this.hardpoints}} HP</span>
+                  <span class="credit-cost">{{this.cost}} cr</span>
+                </div>
+              </div>
+              <div class="mod-actions">
+                <button type="button" class="btn-toggle" data-action="toggle-mod" data-index="{{this.index}}"
+                        title="Toggle modification">
+                  {{#if this.enabled}}✓{{else}}○{{/if}}
+                </button>
+                <button type="button" class="btn-remove" data-action="remove-mod" data-index="{{this.index}}"
+                        title="Remove modification">
+                  ✕
+                </button>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="empty">No modifications installed</p>
+      {{/if}}
+    </div>
+
+    <!-- APPENDAGES TAB -->
+    <div class="tab appendages" data-tab="appendages">
+      <div class="tab-header">
+        <h3>Appendages</h3>
+        <button type="button" class="btn btn-add" data-action="add-appendage">+ Add Appendage</button>
+      </div>
+
+      {{#if appendages}}
+        <div class="item-list">
+          {{#each appendages}}
+            <div class="item-row">
+              <input type="text" value="{{this.name}}" readonly />
+              <button type="button" class="btn-remove" data-action="remove-appendage" data-index="{{this.index}}">✕</button>
+            </div>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="empty">No appendages configured</p>
+      {{/if}}
+    </div>
+
+    <!-- EQUIPMENT TAB -->
+    <div class="tab equipment" data-tab="equipment">
+      <div class="equipment-section">
+        <div class="section">
+          <h4>Sensors</h4>
+          {{#if sensors}}
+            <div class="item-list">
+              {{#each sensors}}
+                <div class="item-row">
+                  <input type="text" value="{{this.name}}" readonly />
+                  <button type="button" class="btn-remove" data-action="remove-sensor" data-index="{{this.index}}">✕</button>
+                </div>
+              {{/each}}
+            </div>
+          {{/if}}
+          <button type="button" class="btn btn-add" data-action="add-sensor">+ Add Sensor</button>
+        </div>
+
+        <div class="section">
+          <h4>Weapons</h4>
+          {{#if weapons}}
+            <div class="item-list">
+              {{#each weapons}}
+                <div class="item-row">
+                  <input type="text" value="{{this.name}}" readonly />
+                  <input type="number" value="{{this.quantity}}" min="1" class="qty" readonly />
+                  <button type="button" class="btn-remove" data-action="remove-weapon" data-index="{{this.index}}">✕</button>
+                </div>
+              {{/each}}
+            </div>
+          {{/if}}
+          <button type="button" class="btn btn-add" data-action="add-weapon">+ Add Weapon</button>
+        </div>
+
+        <div class="section">
+          <h4>Accessories</h4>
+          {{#if accessories}}
+            <div class="item-list">
+              {{#each accessories}}
+                <div class="item-row">
+                  <input type="text" value="{{this.name}}" readonly />
+                  <button type="button" class="btn-remove" data-action="remove-accessory" data-index="{{this.index}}">✕</button>
+                </div>
+              {{/each}}
+            </div>
+          {{/if}}
+          <button type="button" class="btn btn-add" data-action="add-accessory">+ Add Accessory</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUDGET TAB -->
+    <div class="tab budget" data-tab="budget">
+      <div class="budget-section">
+        <h3>Credit Budget</h3>
+
+        <div class="credit-card">
+          <div class="credit-input">
+            <label>Total Credits</label>
+            <input type="number" name="credits-total" value="{{credits.total}}" min="0" />
+          </div>
+
+          <div class="credit-input">
+            <label>Spent</label>
+            <input type="number" name="credits-spent" value="{{credits.spent}}" min="0" />
+          </div>
+
+          <div class="credit-display">
+            <label>Remaining</label>
+            <span class="remaining {{#if (compare credits.remaining '>' 0)}}positive{{else}}negative{{/if}}">
+              {{credits.remaining}}
+            </span>
+          </div>
+        </div>
+
+        <div class="budget-bar">
+          <div class="budget-track">
+            <div class="budget-spent" style="width: {{credits.percent}}%"></div>
+          </div>
+          <span class="budget-percent">{{credits.percent}}% allocated</span>
+        </div>
+
+        <div class="budget-breakdown">
+          <h4>Cost Breakdown</h4>
+          <ul>
+            {{#each modifications}}
+              <li>{{this.name}}: {{this.cost}} cr</li>
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
