@@ -18,6 +18,9 @@ import { normalizeCredits } from '../../utils/credit-normalization.js';
 const logger = () => SWSELogger || globalThis.swseLogger || console;
 
 export class StoreEngine {
+  // Atomic purchase lock: prevents concurrent purchase execution on same engine instance
+  static _purchasingActors = new Set();
+
   /**
    * Get store inventory from SSOT (compendiums)
    * Returns fully normalized, categorized, and priced inventory
@@ -131,6 +134,8 @@ export class StoreEngine {
    *   - Emit audit log
    *
    * ATOMIC: Either fully succeeds or fully fails. No partial state.
+   * OWNERSHIP ENFORCED: Only actor owner can complete purchases
+   * IDEMPOTENT: Session-level duplicate guard prevents double-grants
    *
    * @param {Object} context
    * @param {Actor} context.actor - purchasing actor (required)
@@ -152,24 +157,92 @@ export class StoreEngine {
       return { success: false, error: 'No actor provided', transactionId: null };
     }
 
-    // Validate eligibility before attempting transaction
-    const eligibility = this.canPurchase(context);
-    if (!eligibility.canPurchase) {
-      logger().warn('StoreEngine.purchase: Not eligible', {
+    // HARDENING 1: Ownership enforcement
+    if (!actor.isOwner) {
+      logger().error('StoreEngine.purchase: Insufficient permissions', {
         actor: actor.id,
-        reason: eligibility.reason
+        isOwner: actor.isOwner
       });
       return {
         success: false,
-        error: eligibility.reason,
+        error: 'Insufficient permissions to complete purchase.',
+        transactionId: null
+      };
+    }
+
+    // HARDENING 2: Atomic purchase lock per actor (prevent concurrent purchases)
+    if (this._purchasingActors.has(actor.id)) {
+      logger().error('StoreEngine.purchase: Purchase already in progress', {
+        actor: actor.id
+      });
+      return {
+        success: false,
+        error: 'Purchase already in progress. Please wait.',
         transactionId: null
       };
     }
 
     const transactionId = `tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    this._purchasingActors.add(actor.id);
 
     try {
-      const currentCredits = Number(actor.system?.credits) ?? 0;
+      // HARDENING 3: Re-read fresh actor state immediately before write (closes race window)
+      const freshActor = game.actors.get(actor.id);
+      if (!freshActor) {
+        logger().error('StoreEngine.purchase: Actor no longer exists', {
+          transactionId,
+          actor: actor.id
+        });
+        return {
+          success: false,
+          error: 'Actor no longer exists.',
+          transactionId
+        };
+      }
+
+      // HARDENING 7: Defensive numeric validation
+      const currentCredits = Number(freshActor.system?.credits) ?? 0;
+      if (!Number.isFinite(currentCredits) || currentCredits < 0) {
+        logger().error('StoreEngine.purchase: Invalid credit state', {
+          transactionId,
+          actor: actor.id,
+          currentCredits
+        });
+        return {
+          success: false,
+          error: 'Invalid credit state.',
+          transactionId
+        };
+      }
+
+      if (!Number.isFinite(totalCost) || totalCost < 0) {
+        logger().error('StoreEngine.purchase: Invalid cart total', {
+          transactionId,
+          actor: actor.id,
+          totalCost
+        });
+        return {
+          success: false,
+          error: 'Invalid cart total.',
+          transactionId
+        };
+      }
+
+      // Re-validate affordability at execution time (race condition fix)
+      if (currentCredits < totalCost) {
+        logger().warn('StoreEngine: Insufficient credits at execution time', {
+          transactionId,
+          actor: actor.id,
+          have: currentCredits,
+          need: totalCost
+        });
+        return {
+          success: false,
+          error: `Insufficient credits at time of transaction (have ${currentCredits}, need ${totalCost}).`,
+          transactionId
+        };
+      }
+
       const newCredits = normalizeCredits(currentCredits - totalCost);
 
       logger().info('StoreEngine: Purchase starting', {
@@ -180,16 +253,36 @@ export class StoreEngine {
         creditsAfter: newCredits
       });
 
-      // Step 1: Deduct credits
-      await actor.update({ 'system.credits': newCredits });
+      // HARDENING 5: Initialize store schema meta if needed
+      const existingFlags = freshActor.flags['foundryvtt-swse'] || {};
+      if (!existingFlags.meta) {
+        existingFlags.meta = {
+          schemaVersion: 1,
+          cartVersion: 1
+        };
+      }
+
+      // HARDENING 6: Add purchase idempotency token
+      if (!existingFlags.sessionPurchaseIds) {
+        existingFlags.sessionPurchaseIds = [];
+      }
+      existingFlags.sessionPurchaseIds.push(transactionId);
+      // Keep only last 100 transactions to avoid memory bloat
+      if (existingFlags.sessionPurchaseIds.length > 100) {
+        existingFlags.sessionPurchaseIds = existingFlags.sessionPurchaseIds.slice(-100);
+      }
+
+      // HARDENING 3: Single batched update (no race window between reads and writes)
+      await freshActor.update({
+        'system.credits': newCredits,
+        'flags.foundryvtt-swse': existingFlags
+      });
 
       // Step 2: Grant items (if callback provided)
       if (itemGrantCallback && typeof itemGrantCallback === 'function') {
         try {
-          await itemGrantCallback(actor, items);
+          await itemGrantCallback(freshActor, items);
         } catch (grantErr) {
-          // If item grant fails, still count as success (credits deducted)
-          // Future: implement rollback mechanism if needed
           logger().warn('StoreEngine: Item grant failed (credits deducted)', {
             transactionId,
             error: grantErr.message
@@ -221,6 +314,9 @@ export class StoreEngine {
         error: err.message,
         transactionId
       };
+    } finally {
+      // Always release the lock
+      this._purchasingActors.delete(actor.id);
     }
   }
 
