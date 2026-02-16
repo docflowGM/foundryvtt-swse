@@ -196,34 +196,38 @@ async _prepareContext(options) {
     }
 
     // Build comprehensive summary content with mentor dialogue
-    const summaryContent = this._buildTemplateSummary(template);
+    const summaryContent = await this._buildTemplateSummary(template);
 
     const content = `
-      <div class="mentor-dialogue-container">
-        <div class="mentor-header">
-          <div class="mentor-avatar" style="background-image: url('${mentor.avatar}')"></div>
-          <div class="mentor-info">
-            <h2>${mentor.name}</h2>
-            <p class="mentor-title">${mentor.title}</p>
+      <div class="mentor-dialogue-container" style="display: flex; flex-direction: column; height: 100%; max-height: 600px;">
+        <div class="mentor-header" style="flex-shrink: 0; padding-bottom: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="mentor-avatar" style="background-image: url('${mentor.avatar}'); width: 60px; height: 60px; border-radius: 50%; background-size: cover;"></div>
+            <div class="mentor-info">
+              <h2 style="margin: 0; font-size: 1.2rem;">${mentor.name}</h2>
+              <p class="mentor-title" style="margin: 0; font-size: 0.9rem;">${mentor.title}</p>
+            </div>
           </div>
         </div>
 
-        <div class="mentor-speech">
-          <div class="speech-bubble greeting">
-            <p>${dialogue.greeting}</p>
+        <div class="mentor-speech" style="flex-shrink: 0; padding: 0.5rem 0;">
+          <div class="speech-bubble greeting" style="padding: 0.5rem; background: rgba(74, 144, 226, 0.1); border-radius: 4px; margin-bottom: 0.5rem;">
+            <p style="margin: 0; font-size: 0.95rem;">${dialogue.greeting}</p>
           </div>
-          <div class="speech-bubble confirmation">
-            <p>${dialogue.confirmation}</p>
+          <div class="speech-bubble confirmation" style="padding: 0.5rem; background: rgba(74, 144, 226, 0.1); border-radius: 4px;">
+            <p style="margin: 0; font-size: 0.95rem;">${dialogue.confirmation}</p>
           </div>
         </div>
 
-        ${summaryContent}
+        <div style="flex: 1; overflow-y: auto; padding: 0.5rem 0; margin: 0.5rem 0;">
+          ${summaryContent}
+        </div>
 
-        <div class="character-name-input" style="margin-top: 1rem; padding: 1rem; background: rgba(74, 144, 226, 0.1); border-radius: 4px;">
-          <label for="template-char-name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
+        <div class="character-name-input" style="flex-shrink: 0; margin-top: 0.5rem; padding: 1rem; background: rgba(74, 144, 226, 0.1); border-radius: 4px;">
+          <label for="template-char-name" style="display: block; margin-bottom: 0.5rem; font-weight: bold; font-size: 0.95rem;">
             What shall we call you?
           </label>
-          <input type="text" id="template-char-name" name="template-char-name" placeholder="Enter your character's name..." style="width: 100%; padding: 0.5rem; border: 1px solid #0af; border-radius: 4px;" value="${template.name}" />
+          <input type="text" id="template-char-name" name="template-char-name" placeholder="Enter your character's name..." style="width: 100%; padding: 0.5rem; border: 1px solid #0af; border-radius: 4px; box-sizing: border-box;" value="${template.name}" />
         </div>
       </div>
     `;
@@ -277,7 +281,7 @@ async _prepareContext(options) {
         }
       }, {
         width: 700,
-        height: 'auto',
+        height: 700,
         classes: ['swse', 'mentor-dialogue'],
         resizable: true
       });
@@ -1003,7 +1007,7 @@ async _prepareContext(options) {
   /**
    * Build a comprehensive template summary matching chargen final summary style
    */
-  _buildTemplateSummary(template) {
+  async _buildTemplateSummary(template) {
     const abilities = template.abilityScores || {};
     const trainedSkills = template.trainedSkills || [];
     const equipment = template.startingEquipment || [];
@@ -1011,11 +1015,17 @@ async _prepareContext(options) {
 
     let skillsHtml = '';
     if (trainedSkills && trainedSkills.length > 0) {
+      // Resolve skill names from IDs
+      const skillNames = await Promise.all(
+        trainedSkills.map(ref => resolveSkillName(ref))
+      );
+      const displayNames = skillNames.map((name, i) => name ?? trainedSkills[i]);
+
       skillsHtml = `
         <div class="summary-section">
           <h4>Trained Skills</h4>
           <ul class="summary-list">
-            ${trainedSkills.map(skill => `<li>${skill}</li>`).join('')}
+            ${displayNames.map(skill => `<li>${skill}</li>`).join('')}
           </ul>
         </div>
       `;
@@ -1066,15 +1076,19 @@ async _prepareContext(options) {
    * Show template summary without mentor dialogue
    */
   async _showTemplateSummaryDialog(template, onConfirm, onCancel) {
-    const summaryContent = this._buildTemplateSummary(template);
+    const summaryContent = await this._buildTemplateSummary(template);
 
     const content = `
-      ${summaryContent}
-      <div class="character-name-input" style="margin-top: 1rem; padding: 1rem; background: rgba(74, 144, 226, 0.1); border-radius: 4px;">
-        <label for="template-char-name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
-          What shall we call you?
-        </label>
-        <input type="text" id="template-char-name" name="template-char-name" placeholder="Enter your character's name..." style="width: 100%; padding: 0.5rem; border: 1px solid #0af; border-radius: 4px;" value="${template.name}" />
+      <div style="display: flex; flex-direction: column; height: 100%; max-height: 500px;">
+        <div style="flex: 1; overflow-y: auto; padding: 0.5rem; margin-bottom: 0.5rem;">
+          ${summaryContent}
+        </div>
+        <div class="character-name-input" style="flex-shrink: 0; padding: 1rem; background: rgba(74, 144, 226, 0.1); border-radius: 4px;">
+          <label for="template-char-name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
+            What shall we call you?
+          </label>
+          <input type="text" id="template-char-name" name="template-char-name" placeholder="Enter your character's name..." style="width: 100%; padding: 0.5rem; border: 1px solid #0af; border-radius: 4px; box-sizing: border-box;" value="${template.name}" />
+        </div>
       </div>
     `;
 
@@ -1122,7 +1136,7 @@ async _prepareContext(options) {
         }
       }, {
         width: 700,
-        height: 'auto',
+        height: 600,
         classes: ['swse', 'template-summary-dialog'],
         resizable: true
       });
