@@ -9,53 +9,31 @@ import SWSEApplication from './base/swse-application.js';
 
 export class VehicleModificationApp extends SWSEApplication {
 
-  constructor(actor, options = {}) {
-    // Defensive: Ensure this app never uses sidebar as target
-    options.target = null;
-    options.window = options.window || {};
-    options.window.frame = true;
-
+  constructor(options = {}) {
     super(options);
-    this.actor = actor;
+    this.actor = options.actor;
     this.stockShip = null;
     this.modifications = [];
     this.currentStep = 'intro';
     this.selectedCategory = 'movement';
-    this.lastAction = null; // 'removed' to show removal dialogue once
+    this.lastAction = null;
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEApplication.DEFAULT_OPTIONS ?? {},
-    {
-      classes: ['swse', 'swse-vehicle-mod-app'],
-      template: 'systems/foundryvtt-swse/templates/apps/vehicle-modification.hbs',
-      position: { width: 900, height: 700 },
+  static DEFAULT_OPTIONS = {
+    id: 'swse-vehicle-modification',
+    classes: ['swse', 'swse-vehicle-mod-app'],
+    tag: 'div',
+    template: 'systems/foundryvtt-swse/templates/apps/vehicle-modification.hbs',
+    position: { width: 900, height: 700 },
+    window: {
       title: 'Starship Acquisition & Modification',
       resizable: true,
-      draggable: true,
-      popOut: true,
-      window: {
-        frame: true,
-        popOut: true
-      }
-    }
-  );
+      frame: true
+    },
+    popOut: true
+  };
 
-
-  /**
-   * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
-   * This bridges legacy apps to the V2 accessor.
-   * @returns {object}
-   */
-  static get defaultOptions() {
-    const base = super.defaultOptions ?? super.DEFAULT_OPTIONS ?? {};
-    const legacy = this.DEFAULT_OPTIONS ?? {};
-    const clone = foundry.utils?.deepClone?.(base)
-      ?? foundry.utils?.duplicate?.(base)
-      ?? { ...base };
-    return foundry.utils.mergeObject(clone, legacy);
-  }
-async _prepareContext(options) {
+  async _prepareContext(options) {
     const context = {};
 
     context.actor = this.actor;
@@ -814,12 +792,9 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
    * Static method to open the app
    */
   static async open(actor) {
-    // Initialize the manager if needed
     if (!VehicleModificationManager._initialized) {
       await VehicleModificationManager.init();
     }
-
-    const app = new VehicleModificationApp(actor);
-    app.render(true);
+    return new this({ actor }).render(true);
   }
 }
