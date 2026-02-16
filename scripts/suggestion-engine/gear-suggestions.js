@@ -6,6 +6,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { assignTier, clampScore } from './shared-scoring-utils.js';
 
 export class GearSuggestions {
   /**
@@ -141,16 +142,20 @@ export class GearSuggestions {
       const priceBias = this._scorePriceBias(gear);
 
       // Final score (additive, bounded 0-100)
-      const finalScore = Math.max(0, Math.min(100,
-        baseRelevance +
+      let finalScore = baseRelevance +
         roleAlignment +
         axisA +
         axisB +
-        priceBias
-      ));
+        priceBias;
 
-      // Assign tier
-      const tier = this._assignTier(finalScore);
+      // NaN protection
+      if (!Number.isFinite(finalScore)) finalScore = 0;
+
+      // Clamp to 0-100
+      finalScore = clampScore(finalScore, 0, 100);
+
+      // Assign tier (canonical)
+      const tier = assignTier(finalScore);
 
       return {
         gearId: gear.id,
@@ -275,17 +280,6 @@ export class GearSuggestions {
     return -4;
   }
 
-  /**
-   * Assign tier from final score
-   * @private
-   */
-  static _assignTier(score) {
-    if (score >= 70) return 'excellent';
-    if (score >= 55) return 'good';
-    if (score >= 40) return 'viable';
-    if (score >= 25) return 'situational';
-    return 'niche';
-  }
 
   /**
    * Generate explanations for gear score
@@ -359,20 +353,21 @@ export class GearSuggestions {
   }
 
   /**
-   * Group scored gear by tier
+   * Group scored gear by tier (canonical tier labels)
    * @private
    */
   static _groupByTier(scored) {
     const groups = {
-      excellent: [],
-      good: [],
-      viable: [],
-      situational: [],
-      niche: []
+      'Perfect': [],
+      'Excellent': [],
+      'Good': [],
+      'Viable': [],
+      'Marginal': [],
+      'Poor': []
     };
 
     scored.forEach(gear => {
-      const tier = gear.combined.tier || 'niche';
+      const tier = gear.combined.tier || 'Poor';
       if (groups[tier]) {
         groups[tier].push(gear);
       }
