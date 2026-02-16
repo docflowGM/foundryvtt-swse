@@ -236,10 +236,19 @@ export class SWSEV2CharacterSheet extends
     const buildMode = actor.system?.buildMode ?? 'validated';
     const buildAudit = PrerequisiteEngine.auditBuild(actor);
 
+    // Flatten defenses for header display (ensure numeric values)
+    const headerDefenses = {
+      fort: actor.system?.defenses?.fort?.total ?? 10,
+      ref: actor.system?.defenses?.reflex?.total ?? 10,
+      will: actor.system?.defenses?.will?.total ?? 10,
+      dt: actor.system?.derived?.damageThreshold ?? 0
+    };
+
     const overrides = {
       actor,
       system: actor.system,
       derived: actor.system?.derived ?? {},
+      headerDefenses,
       xpEnabled,
       xpData,
       xpPercent,
@@ -489,13 +498,19 @@ export class SWSEV2CharacterSheet extends
     const storeBtn = root.querySelector('[data-action="cmd-store"]');
     if (storeBtn) {
       storeBtn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const actor = this.object;
+        if (!actor) {
+          ui.notifications.warn('No character selected to open store.');
+          return;
+        }
         try {
-          ev.preventDefault();
-          if (game.swse?.store) {
-            new game.swse.store().render(true);
-          }
+          const { SWSEStore } = await import('../../apps/store/store-main.js');
+          const store = new SWSEStore(actor);
+          await store.render(true);
         } catch (err) {
           console.error("Error opening store:", err);
+          ui.notifications.error('Failed to open store. Check console for details.');
         }
       });
     }
