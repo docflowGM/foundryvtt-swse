@@ -179,6 +179,20 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
         surveyResponses: new fields.ObjectField({ required: true, initial: {} })
       }),
 
+      // Progression integrity & legality tracking
+      meta: new fields.SchemaField({
+        schemaVersion: new fields.NumberField({ required: true, initial: 1, integer: true }),
+        streetLegal: new fields.BooleanField({ required: true, initial: true }),
+        lastValidation: new fields.SchemaField({
+          passed: new fields.BooleanField({ required: true, initial: true }),
+          errors: new fields.ArrayField(
+            new fields.StringField({ required: true, initial: '' }),
+            { required: true, initial: [] }
+          ),
+          timestamp: new fields.NumberField({ required: true, initial: 0, integer: true })
+        })
+      }),
+
       // Droid Systems (AppV2-compliant, first-class document data)
       droidSystems: new fields.SchemaField({
         // Core droid identity

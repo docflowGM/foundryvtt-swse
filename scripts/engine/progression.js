@@ -55,6 +55,8 @@ export class SWSEProgressionEngine {
     this.current = null;
     this.completedSteps = [];
     this.data = {};
+    this._isFinalizing = false; // Atomicity guard for finalize()
+    this.freeBuild = false; // Free Build mode flag (from chargen)
 
     swseLogger.log(`[PROGRESSION] Loading state from actor...`);
     // Load saved state from actor
@@ -670,11 +672,29 @@ async applyScalingFeature(feature) {
 
   /**
    * Finalize progression
+   * HARDENED: Atomicity guard + permission check
    */
   async finalize() {
+    // Permission check: Only owner can finalize
+    if (!this.actor.isOwner) {
+      throw new Error('You do not have permission to finalize this actor\'s progression');
+    }
+
+    // Idempotency guard: Prevent double finalization
+    if (this._isFinalizing) {
+      throw new Error('Finalization is already in progress');
+    }
+
+    if (this.actor.getFlag('swse', 'finalized')) {
+      throw new Error('This character\'s progression has already been finalized');
+    }
+
+    this._isFinalizing = true;
+
     try {
       // Autoprompt required selections BEFORE modifying the actor
       if (!(await this._autoPromptSelections())) {
+        this._isFinalizing = false;
         return false; // User must finish choices
       }
 
@@ -880,6 +900,18 @@ async applyScalingFeature(feature) {
         swseLogger.warn('Derived stats recalculation failed:', err);
       }
 
+      // Mark actor as finalized (prevents re-finalization)
+      await this.actor.setFlag('swse', 'finalized', true);
+
+      // Update street legal status
+      const validation = await this._validateProgression();
+      await this.actor.update({
+        'system.meta.streetLegal': validation.passed,
+        'system.meta.lastValidation.passed': validation.passed,
+        'system.meta.lastValidation.errors': validation.errors,
+        'system.meta.lastValidation.timestamp': Date.now()
+      });
+
       swseLogger.log(`Progression finalized for ${this.actor.name}`);
 
       // Optional: Clear state after completion
@@ -889,8 +921,51 @@ async applyScalingFeature(feature) {
     } catch (err) {
       swseLogger.error('Progression finalize failed:', err);
       ui.notifications?.error(`Failed to finalize: ${err.message}`);
+      this._isFinalizing = false; // Reset lock on error
       throw err;
+    } finally {
+      this._isFinalizing = false; // Ensure lock is always released
     }
+  }
+
+  /**
+   * Validate progression for legality
+   * Returns validation result (passed/errors)
+   * @returns {Promise<Object>} { passed: boolean, errors: string[] }
+   * @private
+   */
+  async _validateProgression() {
+    const errors = [];
+    const prog = this.actor.system.progression || {};
+    const classLevels = prog.classLevels || [];
+
+    // Check prestige class prerequisites if Free Build is not enabled
+    if (!this.freeBuild) {
+      const { PrerequisiteChecker } = await import('../data/prerequisite-checker.js');
+      const { CORE_CLASSES } = await import('../progression/data/progression-data.js');
+
+      for (const classLevel of classLevels) {
+        const isPrestige = !CORE_CLASSES.includes(classLevel.class);
+        if (isPrestige) {
+          try {
+            const check = await PrerequisiteChecker.checkPrestigeClassPrerequisites(
+              this.actor,
+              classLevel.class
+            );
+            if (!check.met) {
+              errors.push(`${classLevel.class}: Missing ${check.missing.join(', ')}`);
+            }
+          } catch (err) {
+            errors.push(`${classLevel.class}: Validation error - ${err.message}`);
+          }
+        }
+      }
+    }
+
+    return {
+      passed: errors.length === 0,
+      errors: errors
+    };
   }
 
   /**
@@ -1221,48 +1296,54 @@ async applyScalingFeature(feature) {
       throw new Error(errorMsg);
     }
 
-    // Prerequisite validation (can be skipped for free build mode)
-    if (!skipPrerequisites) {
-      const progression = this.actor.system.progression || {};
-      const classLevels = progression.classLevels || [];
-      // FIXED: Calculate actual character level, not array length
-      // Character level = sum of all class levels (not count of classes)
-      const currentLevel = classLevels.reduce((sum, cl) => sum + cl.level, 0);
+    // HARDENED: Prestige class prerequisite validation - ALWAYS RUN (never skip)
+    // Free Build mode allows enforcement bypass, but validation always runs
+    const progression = this.actor.system.progression || {};
+    const classLevels = progression.classLevels || [];
+    // FIXED: Calculate actual character level, not array length
+    // Character level = sum of all class levels (not count of classes)
+    const currentLevel = classLevels.reduce((sum, cl) => sum + cl.level, 0);
 
-      // Check prestige class prerequisites using centralized PrerequisiteChecker
-      if (classData.prestigeClass) {
-        const { checkPrerequisites } = await import('../data/prerequisite-checker.js');
+    // Check prestige class prerequisites using centralized PrerequisiteChecker
+    if (classData.prestigeClass) {
+      const { checkPrerequisites } = await import('../data/prerequisite-checker.js');
 
-        // Create a snapshot that includes pending progression data
-        // This allows PrerequisiteChecker to validate against both current and pending state
-        const progressionSnapshot = {
-          ...this.actor,
-          system: {
-            ...this.actor.system,
-            // Override with current/pending progression values
-            level: currentLevel,
-            bab: await calculateBAB(classLevels),
-            // Include pending feats/talents/trained skills
-            progression: {
-              ...progression,
-              feats: progression.feats || [],
-              startingFeats: progression.startingFeats || [],
-              trainedSkills: progression.trainedSkills || []
-            }
+      // Create a snapshot that includes pending progression data
+      // This allows PrerequisiteChecker to validate against both current and pending state
+      const progressionSnapshot = {
+        ...this.actor,
+        system: {
+          ...this.actor.system,
+          // Override with current/pending progression values
+          level: currentLevel,
+          bab: await calculateBAB(classLevels),
+          // Include pending feats/talents/trained skills
+          progression: {
+            ...progression,
+            feats: progression.feats || [],
+            startingFeats: progression.startingFeats || [],
+            trainedSkills: progression.trainedSkills || []
           }
-        };
+        }
+      };
 
-        // Use centralized prerequisite checker (reads from PRESTIGE_PREREQUISITES)
-        const prereqCheck = checkPrerequisites(progressionSnapshot, classId);
+      // Use centralized prerequisite checker (reads from PRESTIGE_PREREQUISITES)
+      const prereqCheck = checkPrerequisites(progressionSnapshot, classId);
 
-        if (!prereqCheck.met) {
-          const details = prereqCheck.missing.join(', ');
+      if (!prereqCheck.met) {
+        const details = prereqCheck.missing.join(', ');
+        // HARDENED: Enforce even if skipPrerequisites is true (Free Build checked separately)
+        // Unless Free Build mode is active, block prestige class selection
+        if (!this.freeBuild) {
+          swseLogger.error(`[PROGRESSION-PRESTIGE] Prestige prerequisite failed: ${details}`);
           throw new Error(`Prestige class "${classId}" unmet prerequisites: ${details}`);
+        } else {
+          swseLogger.warn(`[PROGRESSION-PRESTIGE] Prestige prerequisite bypassed via Free Build: ${details}`);
         }
+      }
 
-        if (prereqCheck.details?.special) {
-          swseLogger.warn(`[PROGRESSION-PRESTIGE] Special condition for "${classId}": ${prereqCheck.details.special}`);
-        }
+      if (prereqCheck.details?.special) {
+        swseLogger.warn(`[PROGRESSION-PRESTIGE] Special condition for "${classId}": ${prereqCheck.details.special}`);
       }
     }
 

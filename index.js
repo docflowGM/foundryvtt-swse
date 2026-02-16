@@ -47,9 +47,10 @@ import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks 
 import { swseLogger } from "./scripts/utils/logger.js";
 import { errorHandler } from "./scripts/core/error-handler.js";
 
-// Data
+// Data & Migrations
 import { dataPreloader } from "./scripts/core/data-preloader.js";
 import { runJsonBackedIdsMigration } from "./scripts/migrations/json-backed-ids-migration.js";
+import { MigrationManager } from "./scripts/core/migration-manager.js";
 import { CompendiumVerification } from "./scripts/core/compendium-verification.js";
 
 // Documents
@@ -179,6 +180,9 @@ Hooks.once("init", () => {
   registerKeybindings();
   ThemeLoader.init();
 
+  // HARDENED: Register migration system (v1.2.1)
+  MigrationManager.registerSettings();
+
   CONFIG.SWSE = SWSE;
 });
 
@@ -193,6 +197,11 @@ Hooks.once("ready", async () => {
   await initializeHardeningSystem();
   registerHardeningHooks();
   await validateSystemReady();
+
+  // HARDENED: Run schema migrations (v1.2.1)
+  if (game.user.isGM) {
+    await MigrationManager.migrateWorld();
+  }
 
   await CompendiumVerification.verifyCompendiums();
 
