@@ -122,6 +122,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         wis: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
         cha: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 }
       },
+      abilitiesAssigned: false,  // Track if user has assigned abilities
       skills: {},
       trainedSkills: [],  // Track which skills are trained (for progression)
       classSkillsList: [],  // List of skills that are class skills for this class

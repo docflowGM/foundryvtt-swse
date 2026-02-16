@@ -182,6 +182,23 @@ section {
  margin-bottom: 0.5rem;
 }
 
+.type-card {
+ cursor: pointer;
+ border: 2px solid var(--color-border-light);
+ border-radius: 8px;
+ transition: all 0.2s ease;
+}
+
+.type-card:hover {
+ border-color: var(--color-accent);
+ box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+ transform: translateY(-2px);
+}
+
+.type-card:active {
+ transform: translateY(0);
+}
+
 .import-option {
  text-align: center;
  margin: 2rem 0;

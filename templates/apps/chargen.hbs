@@ -74,7 +74,7 @@
  </div>
  {{/if}}
 
- <div class="chevron-step {{#if (eq currentStep 'abilities')}}active{{/if}} {{#if characterData.abilities}}completed{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'abilities')}}skipped{{/if}}" data-step="abilities">
+ <div class="chevron-step {{#if (eq currentStep 'abilities')}}active{{/if}} {{#if characterData.abilitiesAssigned}}completed{{/if}} {{#if freeBuild}}clickable{{/if}} {{#if (lookup skippedStepsMap 'abilities')}}skipped{{/if}}" data-step="abilities">
  <span class="chevron-label">Abilities</span>
  </div>
 
@@ -192,16 +192,16 @@
  <h3>What are you?</h3>
  <p class="hint">Choose whether you're creating a living being or a droid character.</p>
  <div class="type-grid">
- <button type="button" class="select-type choice-button" data-type="living">
+ <div class="type-card choice-button select-type" data-type="living">
  <i class="{{getIconClass 'user'}}"></i>
- <h4>Living Being</h4>
+ <h3>Living Being</h3>
  <p>Organic species with unique traits</p>
- </button>
- <button type="button" class="select-type choice-button" data-type="droid">
+ </div>
+ <div class="type-card choice-button select-type" data-type="droid">
  <i class="{{getIconClass 'robot'}}"></i>
- <h4>Droid</h4>
+ <h3>Droid</h3>
  <p>Mechanical beings with specialized functions</p>
- </button>
+ </div>
  </div>
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">

@@ -174,6 +174,7 @@ export function _bindAbilitiesUI(root) {
       pool -= deltaCost;
       el.value = newVal;
       chargen.characterData.abilities[ab].base = newVal;
+      chargen.characterData.abilitiesAssigned = true;
       updatePointRemaining();
       recalcPreview();
     };
@@ -392,6 +393,7 @@ export function _bindAbilitiesUI(root) {
         }
 
         recalcPreview();
+        chargen.characterData.abilitiesAssigned = true;
         container.dataset.locked = 'true';
         container.querySelectorAll('.draggable-roll').forEach(el => (el.draggable = false));
         ui.notifications.info('Ability scores confirmed and locked!');
@@ -700,6 +702,7 @@ export function _bindAbilitiesUI(root) {
         }
 
         recalcPreview();
+        chargen.characterData.abilitiesAssigned = true;
         container.dataset.locked = 'true';
         container.querySelectorAll('.draggable-roll').forEach(el => (el.draggable = false));
         ui.notifications.info('Ability scores confirmed and locked!');
@@ -967,6 +970,7 @@ export function _bindAbilitiesUI(root) {
         }
 
         recalcPreview();
+        chargen.characterData.abilitiesAssigned = true;
         container.dataset.locked = 'true';
         container.querySelectorAll('.draggable-roll').forEach(el => (el.draggable = false));
         ui.notifications.info('Ability scores confirmed and locked!');
