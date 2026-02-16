@@ -16,7 +16,7 @@ import { guardOnRender, validateTemplate } from '../../debug/appv2-probe.js';
 
 export default class SWSEApplicationV2 extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
-    classes: ['swse', 'swse-window', 'swse-app'],
+    classes: ['swse', 'swse-window'],
     tag: 'div',
     position: {
       width: 600,

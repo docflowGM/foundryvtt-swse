@@ -10,6 +10,11 @@ import SWSEApplication from './base/swse-application.js';
 export class VehicleModificationApp extends SWSEApplication {
 
   constructor(actor, options = {}) {
+    // Defensive: Ensure this app never uses sidebar as target
+    options.target = null;
+    options.window = options.window || {};
+    options.window.frame = true;
+
     super(options);
     this.actor = actor;
     this.stockShip = null;
@@ -27,7 +32,8 @@ export class VehicleModificationApp extends SWSEApplication {
       position: { width: 900, height: 700 },
       title: 'Starship Acquisition & Modification',
       resizable: true,
-      draggable: true
+      draggable: true,
+      popOut: true
     }
   );
 
