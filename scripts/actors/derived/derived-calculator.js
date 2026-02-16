@@ -13,7 +13,7 @@
 import { HPCalculator } from './hp-calculator.js';
 import { BABCalculator } from './bab-calculator.js';
 import { DefenseCalculator } from './defense-calculator.js';
-import { ModifierEngine } from '../modifiers/ModifierEngine.js';
+import { ModifierEngine } from '../../engine/modifiers/ModifierEngine.js';
 import { swseLogger } from '../../utils/logger.js';
 
 export class DerivedCalculator {

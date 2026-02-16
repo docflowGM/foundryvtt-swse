@@ -398,12 +398,18 @@ export class SWSEStore extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   _tierToDisplayLabel(tier) {
-    // Convert tier to display: "STRONG_FIT" → "Strong Fit"
+    // Convert tier to display with canonical labels
     const tierMap = {
-      'STRONG_FIT': 'Strong Fit',
-      'VIABLE': 'Viable',
-      'SITUATIONAL': 'Situational',
-      'OUTPERFORMED': 'Outperformed'
+      'Perfect': 'Perfect',
+      'Excellent': 'Excellent',
+      'Good': 'Good',
+      'Viable': 'Viable',
+      'Marginal': 'Marginal',
+      'Poor': 'Poor',
+      // Legacy support
+      'STRONG_FIT': 'Excellent',
+      'SITUATIONAL': 'Marginal',
+      'OUTPERFORMED': 'Poor'
     };
     return tierMap[tier] || tier;
   }

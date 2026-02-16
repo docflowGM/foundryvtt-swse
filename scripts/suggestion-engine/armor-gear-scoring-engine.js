@@ -13,6 +13,8 @@
  *   Axis B: Action Cost (action economy to activate/use)
  */
 
+import { assignTier, scaleNormalizedTo100, clampScore } from './shared-scoring-utils.js';
+
 export class ArmorGearScoringEngine {
   /**
    * Score armor piece for character
@@ -32,27 +34,39 @@ export class ArmorGearScoringEngine {
     // Resolve tradeoff
     const combined = this._resolveArmorTradeoff(axisA, axisB, charContext);
 
+    // Convert to 0-100 scale
+    const axisAScore100 = scaleNormalizedTo100(axisA.normalizedScore);
+    const axisBScore100 = scaleNormalizedTo100(axisB.normalizedScore);
+    let finalScore = scaleNormalizedTo100(combined.finalScore);
+
+    // NaN protection
+    if (!Number.isFinite(finalScore)) finalScore = 0;
+    finalScore = clampScore(finalScore, 0, 100);
+
+    // Assign canonical tier
+    const tier = assignTier(finalScore);
+
     return {
       armorId: armor.id,
       armorName: armor.name,
 
       axisA: {
         label: 'Protection Value',
-        score: axisA.normalizedScore,
+        score: axisAScore100,
         soak: axisA.soakAmount,
         band: axisA.band
       },
 
       axisB: {
         label: 'Mobility Cost',
-        score: axisB.normalizedScore,
+        score: axisBScore100,
         category: axisB.category,
         mobilityPenalty: axisB.penalty
       },
 
       combined: {
-        finalScore: combined.finalScore,
-        tier: combined.tier,
+        finalScore,
+        tier,
         tradeoffType: combined.tradeoffType
       },
 
@@ -84,27 +98,39 @@ export class ArmorGearScoringEngine {
     // Resolve tradeoff
     const combined = this._resolveGearTradeoff(axisA, axisB, charContext);
 
+    // Convert to 0-100 scale
+    const axisAScore100 = scaleNormalizedTo100(axisA.normalizedScore);
+    const axisBScore100 = scaleNormalizedTo100(axisB.normalizedScore);
+    let finalScore = scaleNormalizedTo100(combined.finalScore);
+
+    // NaN protection
+    if (!Number.isFinite(finalScore)) finalScore = 0;
+    finalScore = clampScore(finalScore, 0, 100);
+
+    // Assign canonical tier
+    const tier = assignTier(finalScore);
+
     return {
       gearId: gear.id,
       gearName: gear.name,
 
       axisA: {
         label: 'Utility Value',
-        score: axisA.normalizedScore,
+        score: axisAScore100,
         benefit: axisA.benefit,
         category: axisA.utilityCategory
       },
 
       axisB: {
         label: 'Action Cost',
-        score: axisB.normalizedScore,
+        score: axisBScore100,
         actionCost: axisB.actionCost,
         upfront: axisB.upfrontCost
       },
 
       combined: {
-        finalScore: combined.finalScore,
-        tier: combined.tier,
+        finalScore,
+        tier,
         tradeoffType: combined.tradeoffType
       },
 
@@ -269,7 +295,6 @@ export class ArmorGearScoringEngine {
 
     return {
       finalScore: Math.min(1.0, finalScore),
-      tier: this._assignTier(finalScore),
       tradeoffType: axisA.normalizedScore > 0.7 ? 'heavy-protection' : 'light-mobile',
       explanations: [
         `${axisA.band} protection (soak ${axisA.soak})`,
@@ -296,7 +321,6 @@ export class ArmorGearScoringEngine {
 
     return {
       finalScore: Math.min(1.0, finalScore),
-      tier: this._assignTier(finalScore),
       tradeoffType: axisA.normalizedScore > 0.7 ? 'high-utility' : 'specialized',
       explanations: [
         `${axisA.utilityCategory} equipment`,
@@ -305,18 +329,6 @@ export class ArmorGearScoringEngine {
     };
   }
 
-  /**
-   * Assign tier
-   * @private
-   */
-  static _assignTier(score) {
-    if (score >= 0.9) return 'perfect';
-    if (score >= 0.8) return 'excellent';
-    if (score >= 0.7) return 'good';
-    if (score >= 0.55) return 'viable';
-    if (score >= 0.35) return 'marginal';
-    return 'poor';
-  }
 
   /**
    * Extract character context (minimal version)

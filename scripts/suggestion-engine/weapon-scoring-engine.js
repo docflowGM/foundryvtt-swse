@@ -34,6 +34,7 @@ import { TradeoffResolver } from './scoring/tradeoff-resolver.js';
 import { WeightedScoreEngine } from './scoring/weighted-score-engine.js';
 import { CategoryNormalizationEngine } from './scoring/category-normalization-engine.js';
 import { ExplainabilityGenerator } from './scoring/explainability-generator.js';
+import { assignTier, clampScore, scaleNormalizedTo100, buildPeerGroupIndex, getPeerGroup } from './shared-scoring-utils.js';
 
 export class WeaponScoringEngine {
   /**
@@ -66,6 +67,18 @@ export class WeaponScoringEngine {
       // Resolve tradeoffs and compute final score
       const combined = TradeoffResolver.resolveTradeoff(axisA, axisB, charContext);
 
+      // Convert to 0-100 scale (axes are 0-1, combined might be 0-1 too)
+      const axisAScore100 = scaleNormalizedTo100(axisA.normalizedScore);
+      const axisBScore100 = scaleNormalizedTo100(axisB.normalizedScore);
+      let finalScore = scaleNormalizedTo100(combined.finalScore);
+
+      // NaN protection
+      if (!Number.isFinite(finalScore)) finalScore = 0;
+      finalScore = clampScore(finalScore, 0, 100);
+
+      // Assign tier (canonical)
+      const tier = assignTier(finalScore);
+
       // Generate explanations
       const explanations = ExplainabilityGenerator.generateExplanations(
         weapon,
@@ -81,10 +94,10 @@ export class WeaponScoringEngine {
         weaponName: weapon.name,
         weaponType: weapon.type,
 
-        // Axis scores (0-1 normalized)
+        // Axis scores (0-100)
         axisA: {
           label: 'Damage-on-Hit',
-          score: axisA.normalizedScore,
+          score: axisAScore100,
           band: axisA.band,
           rawDamage: axisA.averageDamage,
           details: axisA
@@ -92,7 +105,7 @@ export class WeaponScoringEngine {
 
         axisB: {
           label: 'Hit-Likelihood Bias',
-          score: axisB.normalizedScore,
+          score: axisBScore100,
           factor: axisB.factor,
           bias: axisB.biasDirection,
           details: axisB
@@ -100,8 +113,8 @@ export class WeaponScoringEngine {
 
         // Combined evaluation
         combined: {
-          finalScore: combined.finalScore,
-          tier: combined.tier,
+          finalScore,
+          tier,
           tradeoffType: combined.tradeoffType
         },
 
@@ -143,27 +156,28 @@ export class WeaponScoringEngine {
       .map(weapon => this.scoreWeapon(weapon, character, options))
       .filter(result => result.combined); // Filter out invalid scores
 
-    // Apply category normalization (trap item detection)
+    // Apply category normalization (trap item detection) - O(n) via peer index
     if (options.applyCategoryNormalization !== false) {
-      const peerGroups = CategoryNormalizationEngine.getPeerGroups(weapons);
+      // Build peer index by weapon category (O(n))
+      const peerIndex = buildPeerGroupIndex(weapons, (weapon) => {
+        return weapon.system?.category || 'unknown';
+      });
+
       scored.forEach(result => {
-        const group = weapons.find(w => w.id === result.weaponId);
-        if (group) {
-          const peerGroupKey = Object.keys(peerGroups).find(
-            key => peerGroups[key].some(w => w.id === group.id)
+        const weaponItem = weapons.find(w => w.id === result.weaponId);
+        if (weaponItem) {
+          const peerGroup = getPeerGroup(weaponItem, peerIndex, (w) => w.system?.category || 'unknown');
+          const categoryAdj = CategoryNormalizationEngine.computeCategoryAdjustment(
+            weaponItem,
+            peerGroup
           );
-          if (peerGroupKey) {
-            const peerGroup = peerGroups[peerGroupKey];
-            const categoryAdj = CategoryNormalizationEngine.computeCategoryAdjustment(
-              group,
-              peerGroup
-            );
-            result.categoryNormalization = categoryAdj;
-            // Apply adjustment to final score (additive)
-            if (result.combined) {
-              result.combined.finalScore += categoryAdj.adjustment;
-              result.combined.finalScore = Math.max(0, Math.min(100, result.combined.finalScore));
-            }
+          result.categoryNormalization = categoryAdj;
+          // Apply adjustment to final score (additive)
+          if (result.combined) {
+            result.combined.finalScore += categoryAdj.adjustment;
+            result.combined.finalScore = clampScore(result.combined.finalScore, 0, 100);
+            // Update tier based on adjusted score
+            result.combined.tier = assignTier(result.combined.finalScore);
           }
         }
       });

@@ -23,6 +23,7 @@ import { ArmorAxisAEngine } from './scoring/armor-axis-a-engine.js';
 import { ArmorAxisBEngine } from './scoring/armor-axis-b-engine.js';
 import { ArmorRoleAlignmentEngine } from './scoring/armor-role-alignment-engine.js';
 import { ArmorExplainabilityGenerator } from './scoring/armor-explainability-generator.js';
+import { assignTier, clampScore } from './shared-scoring-utils.js';
 
 export class ArmorScoringEngine {
   /**
@@ -65,17 +66,21 @@ export class ArmorScoringEngine {
       const priceBias = this._scorePriceBias(armor);
 
       // Sum components (additive, not multiplicative)
-      const finalScore = Math.max(0, Math.min(100,
-        baseRelevance +
+      let finalScore = baseRelevance +
         roleAlignment +
         axisA.score +
         axisB.score +
         categoryNorm +
-        priceBias
-      ));
+        priceBias;
 
-      // Assign tier
-      const tier = this._assignTier(finalScore);
+      // NaN protection
+      if (!Number.isFinite(finalScore)) finalScore = 0;
+
+      // Clamp to 0-100
+      finalScore = clampScore(finalScore, 0, 100);
+
+      // Assign tier (canonical)
+      const tier = assignTier(finalScore);
 
       // Generate explanations
       const explanations = ArmorExplainabilityGenerator.generateExplanations(
@@ -235,16 +240,6 @@ export class ArmorScoringEngine {
     }
   }
 
-  /**
-   * Assign tier from final score
-   * @private
-   */
-  static _assignTier(score) {
-    if (score >= 45) return 'strong-fit';
-    if (score >= 35) return 'viable';
-    if (score >= 25) return 'situational';
-    return 'outperformed';
-  }
 
   /**
    * Extract character context needed for armor scoring
