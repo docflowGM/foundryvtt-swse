@@ -70,6 +70,7 @@ export class SWSEV2CharacterSheet extends
     super(document, options);
     this._inventorySearch = ""; // Inventory search filter state
     this._expandedItemIds = new Set(); // Expanded item cards for stack splitting
+    this._boundElements = new WeakSet(); // Track which elements have listeners attached
   }
 
   /* ------------------------------------------------------------------------ */
@@ -90,41 +91,101 @@ export class SWSEV2CharacterSheet extends
 
     const baseContext = await super._prepareContext(options);
 
-    // Compute Dark Side max (WIS score × houserule multiplier)
-    const wisScore = actor.system?.attributes?.wis?.total ?? 10;
+    /* ========== PHASE 1: EXPLICIT SUMMARY VIEW MODEL ========== */
+
+    // Extract ability scores explicitly (ensure all are present)
+    const abilities = {
+      str: { value: actor.system?.abilities?.str?.value ?? 10, total: actor.system?.abilities?.str?.total ?? 10 },
+      dex: { value: actor.system?.abilities?.dex?.value ?? 10, total: actor.system?.abilities?.dex?.total ?? 10 },
+      con: { value: actor.system?.abilities?.con?.value ?? 10, total: actor.system?.abilities?.con?.total ?? 10 },
+      int: { value: actor.system?.abilities?.int?.value ?? 10, total: actor.system?.abilities?.int?.total ?? 10 },
+      wis: { value: actor.system?.abilities?.wis?.value ?? 10, total: actor.system?.abilities?.wis?.total ?? 10 },
+      cha: { value: actor.system?.abilities?.cha?.value ?? 10, total: actor.system?.abilities?.cha?.total ?? 10 }
+    };
+
+    // Extract defenses explicitly
+    const defenses = {
+      fort: { value: actor.system?.defenses?.fort?.value ?? 10, total: actor.system?.defenses?.fort?.total ?? 10 },
+      ref: { value: actor.system?.defenses?.reflex?.value ?? 10, total: actor.system?.defenses?.reflex?.total ?? 10 },
+      will: { value: actor.system?.defenses?.will?.value ?? 10, total: actor.system?.defenses?.will?.total ?? 10 },
+      flatFoot: { value: actor.system?.defenses?.flatFoot?.value ?? 10, total: actor.system?.defenses?.flatFoot?.total ?? 10 }
+    };
+
+    // Header defenses (for quick access)
+    const headerDefenses = {
+      fort: defenses.fort.total,
+      ref: defenses.ref.total,
+      will: defenses.will.total,
+      dt: actor.system?.derived?.damageThreshold ?? 0
+    };
+
+    // Extract skills explicitly (filter from items)
+    const allSkills = actor.items
+      .filter(i => i.type === "skill")
+      .map(skill => ({
+        id: skill.id,
+        name: skill.name,
+        type: skill.type,
+        system: skill.system
+      }));
+
+    // XP and progression data
+    const level = actor.system?.level ?? 0;
+    const currentXP = actor.system?.xp?.total ?? 0;
+    const xpData = actor.system?.derived?.xp ?? null;
+    const nextLevelXP = xpData?.nextLevelAt ?? Infinity;
+    const xpEnabled = isXPEnabled();
+    const xpPercent = xpData?.progressPercent ?? 0;
+    const xpLevelReady = currentXP >= nextLevelXP && nextLevelXP !== Infinity;
+
+    // HP and condition state
+    const currentHp = actor.system?.hp?.value ?? 0;
+    const maxHp = actor.system?.hp?.max ?? 1;
+    const hpPercent = Math.max(0, Math.min(100, (currentHp / maxHp) * 100));
+    const hpWarning = hpPercent <= 50 && hpPercent > 25;
+    const hpCritical = hpPercent <= 25;
+
+    // Condition track
+    const conditionStep = actor.system?.conditionTrack?.current ?? 0;
+    const conditionPersistent = actor.system?.conditionTrack?.persistent ?? false;
+    const ctWarning = conditionStep > 0;
+
+    // Force Points
+    const forcePoints = actor.system?.forcePoints?.value ?? 0;
+    const forceSensitive = actor.system?.forceSensitive ?? false;
+    const fpAvailable = forcePoints > 0;
+
+    // Dark Side scoring
+    const wisScore = abilities.wis.total;
     const darkSideMultiplier = game.settings?.get('foundryvtt-swse', 'darkSideMaxMultiplier') ?? 1;
     const darkSideMax = Math.floor(wisScore * darkSideMultiplier);
     const currentDarkSideScore = actor.system?.darkSideScore ?? 0;
 
-    // Generate dark side spectrum segments
+    // Generate dark side spectrum
     const darkSideSegments = [];
     for (let i = 0; i < darkSideMax; i++) {
       const ratio = darkSideMax > 0 ? i / darkSideMax : 0;
-      // Linear interpolation from blue (#4A90E2) to red (#E74C3C)
       const blueR = 74, blueG = 144, blueB = 226;
       const redR = 231, redG = 76, redB = 60;
       const r = Math.round(blueR + (redR - blueR) * ratio);
       const g = Math.round(blueG + (redG - blueG) * ratio);
       const b = Math.round(blueB + (redB - blueB) * ratio);
-      const color = `rgb(${r}, ${g}, ${b})`;
-
       darkSideSegments.push({
         index: i,
         filled: i < currentDarkSideScore,
-        color: color
+        color: `rgb(${r}, ${g}, ${b})`
       });
     }
 
-    // Build owned actors map
-    const ownedActorMap = {};
-    for (const entry of actor.system.ownedActors || []) {
-      const ownedActor = game.actors.get(entry.id);
-      if (ownedActor) {
-        ownedActorMap[entry.id] = ownedActor;
-      }
-    }
+    // Combat readiness
+    const initiativeTotal = actor.system?.skills?.initiative?.total ?? 0;
 
-    // Build equipment, armor, and weapon lists
+    // Credits (ensure integer)
+    const credits = Math.floor(actor.system?.credits ?? 0);
+
+    /* ========== PHASE 2: BUILD ITEM COLLECTIONS ========== */
+
+    // Equipment, armor, weapons
     let equipment = actor.items.filter(item => item.type === "equipment").map(item => ({
       id: item.id,
       name: item.name,
@@ -152,54 +213,29 @@ export class SWSEV2CharacterSheet extends
       _expanded: this._expandedItemIds.has(item.id)
     }));
 
-    // PHASE 2: Apply search filter if active
+    // Apply search filter if active
     if (this._inventorySearch && this._inventorySearch.trim() !== '') {
       equipment = InventoryEngine.filterBySearch(equipment, this._inventorySearch);
       armor = InventoryEngine.filterBySearch(armor, this._inventorySearch);
       weapons = InventoryEngine.filterBySearch(weapons, this._inventorySearch);
     }
 
-    // Calculate total weight from all inventory items
+    // Encumbrance calculation
     const allInventory = InventoryEngine.getAllInventory(actor);
     const totalWeight = InventoryEngine.calculateTotalWeight(allInventory);
-
-    // Get encumbrance state
-    const strScore = actor.system?.abilities?.str?.total ?? 10;
+    const strScore = abilities.str.total;
     const encumbranceInfo = InventoryEngine.calculateEncumbranceState(totalWeight, strScore, 1);
 
-    // XP display data
-    const xpEnabled = isXPEnabled();
-    const xpData = actor.system?.derived?.xp ?? null;
-    const xpPercent = xpData?.progressPercent ?? 0;
-    const isGM = game.user?.isGM === true;
+    const encumbranceStateCss = (() => {
+      switch (encumbranceInfo.state) {
+        case "normal": return "background: #e8f5e9; color: #2e7d32;";
+        case "encumbered": return "background: #fff3e0; color: #e65100;";
+        case "heavy": return "background: #ffe0e0; color: #c62828;";
+        default: return "background: #ffebee; color: #b71c1c;";
+      }
+    })();
 
-    // PHASE 1: Datapad Header + Command Bar state
-    const isLevel0 = (actor.system?.level ?? 0) === 0;
-
-    // PHASE 2: XP Level Ready - recompute fresh on each render
-    const currentXP = actor.system?.xp?.total ?? 0;
-    const nextLevelXP = xpData?.nextLevelAt ?? Infinity;
-    const xpLevelReady = currentXP >= nextLevelXP && nextLevelXP !== Infinity;
-
-    // HP state
-    const currentHp = actor.system?.hp?.value ?? 0;
-    const maxHp = actor.system?.hp?.max ?? 1;
-    const hpPercent = Math.max(0, Math.min(100, (currentHp / maxHp) * 100));
-    const hpWarning = hpPercent <= 50 && hpPercent > 25;
-    const hpCritical = hpPercent <= 25;
-
-    // Condition Track state
-    const conditionStep = actor.system?.conditionTrack?.current ?? 0;
-    const ctWarning = conditionStep > 0;
-
-    // Force Points state
-    const forcePoints = actor.system?.forcePoints?.value ?? 0;
-    const fpAvailable = forcePoints > 0;
-
-    // Initiative modifier (canonical source)
-    const initiativeTotal = actor.system.skills?.initiative?.total ?? 0;
-
-    // Pre-filter Force items for template (avoid inline filter/set)
+    // All items mapped
     const allItems = actor.items.map(item => ({
       id: item.id,
       name: item.name,
@@ -208,6 +244,7 @@ export class SWSEV2CharacterSheet extends
       system: item.system
     }));
 
+    // Force items
     const forcePowers = allItems
       .filter(i => i.type === "forcePower")
       .map(i => ({
@@ -219,67 +256,83 @@ export class SWSEV2CharacterSheet extends
           return "border-left: 4px solid #888;";
         })()
       }));
+
     const forceTechniques = allItems.filter(i => i.type === "forceTechnique");
     const forceSecrets = allItems.filter(i => i.type === "forceSecret");
 
-    // Encumbrance CSS class (avoid inline eq comparisons)
-    const encumbranceStateCss = (() => {
-      switch (encumbranceInfo.state) {
-        case "normal": return "background: #e8f5e9; color: #2e7d32;";
-        case "encumbered": return "background: #fff3e0; color: #e65100;";
-        case "heavy": return "background: #ffe0e0; color: #c62828;";
-        default: return "background: #ffebee; color: #b71c1c;";
+    // Owned actors
+    const ownedActorMap = {};
+    for (const entry of actor.system.ownedActors || []) {
+      const ownedActor = game.actors.get(entry.id);
+      if (ownedActor) {
+        ownedActorMap[entry.id] = ownedActor;
       }
-    })();
+    }
 
-    // PHASE 3: Build Mode & Prerequisites
+    /* ========== PHASE 3: BUILD MODE & LANGUAGES ========== */
+
     const buildMode = actor.system?.buildMode ?? 'validated';
     const buildAudit = PrerequisiteEngine.auditBuild(actor);
+    const languages = actor.system?.languages ?? [];
+    const isLevel0 = level === 0;
+    const isGM = game.user?.isGM === true;
 
-    // Flatten defenses for header display (ensure numeric values)
-    const headerDefenses = {
-      fort: actor.system?.defenses?.fort?.total ?? 10,
-      ref: actor.system?.defenses?.reflex?.total ?? 10,
-      will: actor.system?.defenses?.will?.total ?? 10,
-      dt: actor.system?.derived?.damageThreshold ?? 0
-    };
+    /* ========== FINAL CONTEXT ASSEMBLY ========== */
 
     const overrides = {
+      // Core actor data
       actor,
       system: actor.system,
       derived: actor.system?.derived ?? {},
+
+      // Explicit ability scores
+      abilities,
+      defenses,
       headerDefenses,
+
+      // Skills
+      allSkills,
+
+      // Progression
+      level,
+      currentXP,
+      nextLevelXP,
       xpEnabled,
-      xpData,
       xpPercent,
-      isGM,
-      isLevel0,
       xpLevelReady,
+      xpData,
+
+      // HP & Conditions
+      currentHp,
+      maxHp,
       hpPercent,
       hpWarning,
       hpCritical,
+      conditionStep,
+      conditionPersistent,
       ctWarning,
+
+      // Force
+      forcePoints,
+      forceSensitive,
       fpAvailable,
-      initiativeTotal,
-      darkSideMax,
-      darkSideSegments,
-      items: allItems,
       forcePowers,
       forceTechniques,
       forceSecrets,
+
+      // Dark Side
+      darkSideMax,
+      currentDarkSideScore,
+      darkSideSegments,
+
+      // Combat
+      initiativeTotal,
+
+      // Inventory
       equipment,
       armor,
       weapons,
-      ownedActorMap,
-      editable: this.isEditable,
-      user: {
-        id: game.user.id,
-        name: game.user.name,
-        role: game.user.role
-      },
-      config: CONFIG.SWSE,
-      // PHASE 2: Inventory enhancements
-      inventorySearch: this._inventorySearch,
+      allItems,
       totalWeight: Math.round(totalWeight * 100) / 100,
       encumbranceState: encumbranceInfo.state,
       encumbranceLabel: encumbranceInfo.label,
@@ -289,12 +342,33 @@ export class SWSEV2CharacterSheet extends
         medium: encumbranceInfo.medium,
         heavy: encumbranceInfo.heavy
       },
-      // PHASE 3: Build Mode & Prerequisites
+      inventorySearch: this._inventorySearch,
+
+      // Economy
+      credits,
+
+      // Characters & NPCs
+      languages,
+      ownedActorMap,
+
+      // Build validation
       buildMode,
       buildValid: buildAudit.valid,
       buildViolations: buildAudit.violations,
-      // PHASE 5: Attacks - ensure derived attacks are present
-      attacks: actor.system?.derived?.attacks ?? { list: [] }
+
+      // Combat actions
+      attacks: actor.system?.derived?.attacks ?? { list: [] },
+
+      // UI state
+      isLevel0,
+      isGM,
+      editable: this.isEditable,
+      user: {
+        id: game.user.id,
+        name: game.user.name,
+        role: game.user.role
+      },
+      config: CONFIG.SWSE
     };
 
     RenderAssertions.assertContextSerializable(
@@ -322,32 +396,41 @@ export class SWSEV2CharacterSheet extends
       return;
     }
 
-    if (root.dataset.bound === "true") return;
-    root.dataset.bound = "true";
-
     RenderAssertions.assertDOMElements(
       root,
       [".sheet-tabs", ".sheet-body"],
       "SWSEV2CharacterSheet"
     );
 
-    /* ---------------- TAB HANDLING ---------------- */
+    /* ============ PHASE 2: TAB HANDLING (APPV2 SAFE) ============ */
 
-    for (const tabBtn of root.querySelectorAll(".sheet-tabs .item")) {
-      tabBtn.addEventListener("click", (ev) => {
-        const tabName = ev.currentTarget.dataset.tab;
+    // Only bind tab listener once per element instance (use WeakSet to track)
+    if (!this._boundElements.has(root)) {
+      this._boundElements.add(root);
+
+      root.addEventListener("click", (ev) => {
+        const tabBtn = ev.target.closest(".sheet-tabs .item[data-tab]");
+        if (!tabBtn) return;
+
+        const tabName = tabBtn.dataset.tab;
         if (!tabName) return;
 
+        ev.preventDefault();
+
+        // Deactivate all tabs and tab content
         root.querySelectorAll(".sheet-tabs .item")
           .forEach(b => b.classList.remove("active"));
 
-        ev.currentTarget.classList.add("active");
-
-        root.querySelectorAll(".tab")
+        root.querySelectorAll(".sheet-body .tab")
           .forEach(t => t.classList.remove("active"));
 
-        root.querySelector(`.tab[data-tab="${tabName}"]`)
-          ?.classList.add("active");
+        // Activate selected tab
+        tabBtn.classList.add("active");
+
+        const targetTab = root.querySelector(`.sheet-body .tab[data-tab="${tabName}"]`);
+        if (targetTab) {
+          targetTab.classList.add("active");
+        }
       });
     }
 
