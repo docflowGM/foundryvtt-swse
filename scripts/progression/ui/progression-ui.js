@@ -10,10 +10,19 @@ export class ProgressionUI {
     return new Promise((resolve) => {
       const content = `
         <p>Start Character Creation:</p>
-        <div class="swse-quick-choices">
-          <button type="button" data-choice="living">Living Being</button>
-          <button type="button" data-choice="droid">Droid</button>
-          <button type="button" data-choice="template">Template Build</button>
+        <div class="type-grid">
+          <div class="type-card choice-button" data-choice="living">
+            <h3>Living Being</h3>
+            <p>Organic species with unique traits and force sensitivity.</p>
+          </div>
+          <div class="type-card choice-button" data-choice="droid">
+            <h3>Droid</h3>
+            <p>Mechanical beings with specialized modules and upgrade slots.</p>
+          </div>
+          <div class="type-card choice-button" data-choice="template">
+            <h3>Template Build</h3>
+            <p>Quick build from pre-made templates and backgrounds.</p>
+          </div>
         </div>`;
       const dlg = new SWSEDialogV2({
         title: 'Create Character',
@@ -21,10 +30,14 @@ export class ProgressionUI {
         buttons: { cancel: { label: 'Cancel' } },
         render: (html) => {
           const root = html?.[0] ?? html;
-  root.querySelectorAll('[data-choice]').forEach(el => el.addEventListener('click', (ev) => {
-            resolve(ev.currentTarget.dataset.choice);
-            dlg.close();
-          }));
+          root.querySelectorAll('[data-choice]').forEach(el => {
+            el.addEventListener('click', (ev) => {
+              root.querySelectorAll('[data-choice]').forEach(c => c.classList.remove('selected'));
+              ev.currentTarget.classList.add('selected');
+              resolve(ev.currentTarget.dataset.choice);
+              dlg.close();
+            });
+          });
         }
       });
       dlg.render(true);

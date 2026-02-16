@@ -20,9 +20,15 @@ function isEpicBlocked(actor) {
 
 async function onClickLevelUp(app) {
   const actor = app?.actor ?? app?.document;
-  if (!actor) {return;}
+  if (!actor) {
+    console.warn('[SWSE LevelUp] No actor found in app:', app);
+    return;
+  }
+
+  SWSELogger.log(`[LevelUp Routing] Actor type: "${actor.type}", Name: "${actor.name}"`);
 
   if (actor.type === 'character') {
+    SWSELogger.log(`[LevelUp Routing] → Opening SWSELevelUpEnhanced for character: ${actor.name}`);
     if (isEpicBlocked(actor)) {
       ui?.notifications?.warn?.('Epic Override required to proceed beyond level 20 (System Settings → Epic Override).');
       return;
@@ -32,9 +38,13 @@ async function onClickLevelUp(app) {
   }
 
   if (actor.type === 'npc') {
+    SWSELogger.log(`[LevelUp Routing] → Opening SWSENpcLevelUpEntry for NPC: ${actor.name}`);
     if (!game.user?.isGM) {return ui?.notifications?.warn?.('GM only.');}
     new SWSENpcLevelUpEntry(actor).render(true);
+    return;
   }
+
+  SWSELogger.warn(`[LevelUp Routing] Unknown actor type: "${actor.type}" for ${actor.name}`);
 }
 
 export function registerLevelUpSheetHooks() {
