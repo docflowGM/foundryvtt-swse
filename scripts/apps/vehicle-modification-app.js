@@ -27,13 +27,17 @@ export class VehicleModificationApp extends SWSEApplication {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
     SWSEApplication.DEFAULT_OPTIONS ?? {},
     {
-      classes: ['swse', 'vehicle-modification-app', 'swse-app'],
+      classes: ['swse', 'swse-vehicle-mod-app'],
       template: 'systems/foundryvtt-swse/templates/apps/vehicle-modification.hbs',
       position: { width: 900, height: 700 },
       title: 'Starship Acquisition & Modification',
       resizable: true,
       draggable: true,
-      popOut: true
+      popOut: true,
+      window: {
+        frame: true,
+        popOut: true
+      }
     }
   );
 
