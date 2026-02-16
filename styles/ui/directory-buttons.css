@@ -1,0 +1,85 @@
+/* ============================================================================
+   Actor Directory Integration Buttons
+   Safe, scoped styling for character creation buttons
+   ============================================================================ */
+
+/* Container for directory buttons */
+.swse-directory-buttons {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+/* Individual directory buttons */
+.swse-directory-buttons button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 170, 255, 0.4);
+  background: linear-gradient(145deg, rgba(10, 35, 55, 0.8), rgba(7, 25, 40, 0.9));
+  color: #9ed0ff;
+  cursor: pointer;
+  transition: all 180ms ease;
+  white-space: nowrap;
+}
+
+.swse-directory-buttons button:hover {
+  background: linear-gradient(145deg, rgba(15, 50, 75, 0.95), rgba(10, 30, 50, 1));
+  border-color: rgba(0, 217, 255, 0.6);
+  color: #00d9ff;
+  box-shadow: 0 0 12px rgba(0, 170, 255, 0.25);
+}
+
+.swse-directory-buttons button:active {
+  transform: scale(0.98);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Icons styling */
+.swse-directory-buttons button i {
+  font-size: 12px;
+  display: inline-block;
+}
+
+/* Chargen button specific */
+.swse-chargen-btn {
+  background: linear-gradient(145deg, rgba(10, 40, 65, 0.85), rgba(5, 25, 45, 0.95));
+  border-color: rgba(0, 170, 255, 0.35);
+}
+
+.swse-chargen-btn:hover {
+  background: linear-gradient(145deg, rgba(15, 55, 85, 0.95), rgba(10, 35, 60, 1));
+  border-color: rgba(0, 217, 255, 0.6);
+}
+
+/* Template button specific */
+.swse-template-chargen-btn {
+  background: linear-gradient(145deg, rgba(35, 20, 55, 0.85), rgba(25, 10, 45, 0.95));
+  border-color: rgba(200, 100, 255, 0.35);
+  color: #d9b3ff;
+}
+
+.swse-template-chargen-btn:hover {
+  background: linear-gradient(145deg, rgba(50, 30, 75, 0.95), rgba(40, 20, 60, 1));
+  border-color: rgba(220, 150, 255, 0.6);
+  color: #e6ccff;
+  box-shadow: 0 0 12px rgba(200, 100, 255, 0.25);
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 600px) {
+  .swse-directory-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .swse-directory-buttons button {
+    width: 100%;
+    justify-content: center;
+  }
+}

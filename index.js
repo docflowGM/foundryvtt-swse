@@ -89,6 +89,7 @@ import { SWSELanguageModule } from "./scripts/progression/modules/language-modul
 import { registerInitHooks, registerDestinyHooks } from "./scripts/hooks/index.js";
 import { initializeForcePowerHooks } from "./scripts/hooks/force-power-hooks.js";
 import { initializeFollowerHooks } from "./scripts/hooks/follower-hooks.js";
+import { registerDirectoryHooks } from "./scripts/hooks/directory-hooks.js";
 import { registerKeybindings } from "./scripts/core/keybindings.js";
 
 // UI
@@ -177,6 +178,7 @@ Hooks.once("init", () => {
   registerHandlebarsHelpers();
   registerInitHooks();
   registerDestinyHooks();
+  registerDirectoryHooks();
   registerKeybindings();
   ThemeLoader.init();
 
