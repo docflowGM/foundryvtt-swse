@@ -7,6 +7,7 @@
 
 import { ArmorScoringEngine } from './armor-scoring-engine.js';
 import { SWSELogger } from '../utils/logger.js';
+import { assignTier } from './shared-scoring-utils.js';
 
 export class ArmorSuggestions {
   /**
@@ -175,14 +176,16 @@ export class ArmorSuggestions {
    */
   static _groupByTier(scored) {
     const groups = {
-      'strong-fit': [],
-      'viable': [],
-      'situational': [],
-      'outperformed': []
+      'Perfect': [],
+      'Excellent': [],
+      'Good': [],
+      'Viable': [],
+      'Marginal': [],
+      'Poor': []
     };
 
     scored.forEach(armor => {
-      const tier = armor.combined.tier || 'outperformed';
+      const tier = armor.combined.tier || 'Poor';
       if (groups[tier]) {
         groups[tier].push(armor);
       }
@@ -280,10 +283,8 @@ export class ArmorSuggestions {
       score = Math.max(0, score - 8); // Strong penalty if talents present
     }
 
-    // Tier assignment
-    let tier = 'outperformed';
-    if (score >= 35) tier = 'viable';
-    if (score >= 45) tier = 'strong-fit';
+    // Tier assignment (canonical)
+    const tier = assignTier(score);
 
     return {
       armorId: 'NO_ARMOR',

@@ -295,7 +295,6 @@ export class ArmorGearScoringEngine {
 
     return {
       finalScore: Math.min(1.0, finalScore),
-      tier: this._assignTier(finalScore),
       tradeoffType: axisA.normalizedScore > 0.7 ? 'heavy-protection' : 'light-mobile',
       explanations: [
         `${axisA.band} protection (soak ${axisA.soak})`,
@@ -322,7 +321,6 @@ export class ArmorGearScoringEngine {
 
     return {
       finalScore: Math.min(1.0, finalScore),
-      tier: this._assignTier(finalScore),
       tradeoffType: axisA.normalizedScore > 0.7 ? 'high-utility' : 'specialized',
       explanations: [
         `${axisA.utilityCategory} equipment`,
