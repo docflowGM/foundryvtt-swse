@@ -2251,8 +2251,16 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
   /**
    * Toggle free build mode
+   * HARDENED: GM-only, validation always runs, Free Build only overrides enforcement
    */
   async _onToggleFreeBuild(event) {
+    // HARDENED: Only GMs can enable Free Build
+    if (!game.user.isGM) {
+      ui.notifications.warn('Only GMs can enable Free Build mode.');
+      event.currentTarget.checked = false;
+      return;
+    }
+
     const checkbox = event.currentTarget;
     const wantsToEnable = checkbox.checked;
 
@@ -2262,19 +2270,23 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         'Enable Free Build Mode?',
         `
           <div style="margin-bottom: 10px;">
-            <p><i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i> <strong>Enable Free Build Mode?</strong></p>
-            <p>Free Build Mode removes all validation and restrictions.</p>
-            <p style="margin-top: 10px;">You will be able to:</p>
+            <p><i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i> <strong>Enable Free Build Mode (GM Only)?</strong></p>
+            <p>Free Build Mode allows bypassing validation enforcement.</p>
+            <p style="margin-top: 10px;">Validation still runs, but enforcement is bypassed. Character will be marked as:</p>
             <ul style="margin-left: 20px; margin-top: 5px;">
-              <li>✓ Skip validation requirements</li>
-              <li>✓ Select any feats or talents (ignore prerequisites)</li>
-              <li>✓ Train any skills without class restrictions</li>
+              <li>🟡 GM Modified (if validation errors present)</li>
+              <li>🟢 Street Legal (if all validation passes)</li>
+            </ul>
+            <p style="margin-top: 15px;">You will be able to:</p>
+            <ul style="margin-left: 20px; margin-top: 5px;">
+              <li>✓ Select feats/talents without all prerequisites</li>
+              <li>✓ Train restricted skills</li>
               <li>✓ Jump between steps freely</li>
-              <li>✓ Set any ability scores</li>
+              <li>✓ Set custom ability scores</li>
             </ul>
             <p style="margin-top: 15px; padding: 10px; background: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b;">
-              <strong>Warning:</strong> This is intended for experienced users who understand SWSE rules.
-              Characters created in Free Build mode may not follow standard rules.
+              <strong>Warning:</strong> For GM-created or test characters only.
+              Character legality will be tracked and displayed on character sheet.
             </p>
           </div>
         `
@@ -2288,11 +2300,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       // User confirmed, enable free build
       this.freeBuild = true;
-      ui.notifications.info('Free Build Mode enabled. All restrictions removed.');
+      ui.notifications.info('Free Build Mode enabled (GM only). Validation still runs; enforcement is bypassed.');
     } else if (!wantsToEnable && this.freeBuild) {
       // Disabling free build mode
       this.freeBuild = false;
-      ui.notifications.info('Free Build Mode disabled. Validation rules will now apply.');
+      ui.notifications.info('Free Build Mode disabled. Normal validation enforcement restored.');
     }
 
     await this.render();

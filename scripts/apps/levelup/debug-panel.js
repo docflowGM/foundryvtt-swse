@@ -10,6 +10,7 @@
 import { BuildIntent, BUILD_THEMES, PRESTIGE_SIGNALS, FEAT_THEME_SIGNALS } from '../../engine/BuildIntent.js';
 import { ClassSuggestionEngine, CLASS_SYNERGY_DATA } from '../../engine/ClassSuggestionEngine.js';
 import { SWSELogger } from '../../utils/logger.js';
+import { CORE_CLASSES } from '../../progression/data/progression-data.js'; // PHASE C: Consolidate class lists
 
 // V2 API base class
 import SWSEApplicationV2 from '../base/swse-application-v2.js';
@@ -208,7 +209,8 @@ export class GMDebugPanel extends SWSEApplicationV2 {
 
         const analysis = [];
         for (const cls of allClasses) {
-            const isPrestige = !['Jedi', 'Noble', 'Scoundrel', 'Scout', 'Soldier'].includes(cls.name);
+            // PHASE C: Use centralized CORE_CLASSES instead of hardcoded list
+            const isPrestige = !CORE_CLASSES.includes(cls.name);
             if (!isPrestige) {continue;}
 
             const prereqData = prestigePrereqs[cls.name];

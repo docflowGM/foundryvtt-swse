@@ -125,6 +125,8 @@ async function _ensureActorDoc(actorOrData) {
 
 export class SuggestionService {
   static _cache = new Map(); // key -> {rev, suggestions, meta}
+  static _cacheStats = new Map(); // key -> {accessTime}
+  static MAX_CACHE_SIZE = 500; // PHASE B: Limit cache to prevent unbounded growth
   static _initialized = false;
 
   static initialize({ systemJSON }) {
@@ -157,8 +159,13 @@ export class SuggestionService {
 
     const key = `${actor?.id ?? 'temp'}::${context}::${options.domain ?? 'all'}`;
 
+    // PHASE B: Track cache access for LRU eviction
     const cached = this._cache.get(key);
-    if (cached?.rev === revision) {return cached.suggestions;}
+    if (cached?.rev === revision) {
+      // Update access time for LRU tracking
+      this._cacheStats.set(key, { accessTime: Date.now() });
+      return cached.suggestions;
+    }
 
     const trace = game.settings.get('foundryvtt-swse', 'enableSuggestionTrace') ?? false;
 
@@ -212,7 +219,30 @@ export class SuggestionService {
     }
 
     this.validateSuggestionDTO(focusFiltered, { context, domain: options.domain });
+
+    // PHASE B: LRU eviction when cache exceeds MAX_CACHE_SIZE
+    if (this._cache.size >= this.MAX_CACHE_SIZE) {
+      // Find least recently used entry
+      let lruKey = null;
+      let lruTime = Infinity;
+
+      for (const [k, stat] of this._cacheStats.entries()) {
+        if (stat.accessTime < lruTime) {
+          lruTime = stat.accessTime;
+          lruKey = k;
+        }
+      }
+
+      // Remove LRU entry
+      if (lruKey) {
+        this._cache.delete(lruKey);
+        this._cacheStats.delete(lruKey);
+      }
+    }
+
+    // Add new entry and track access time
     this._cache.set(key, { rev: revision, suggestions: focusFiltered, meta: { debug } });
+    this._cacheStats.set(key, { accessTime: Date.now() });
     return focusFiltered;
   }
 

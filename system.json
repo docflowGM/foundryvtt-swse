@@ -2,11 +2,12 @@
   "id": "foundryvtt-swse",
   "title": "Star Wars Saga Edition",
   "description": "Complete Star Wars Saga Edition implementation for FoundryVTT with automated character sheets, combat mechanics, Force powers, vehicles, and comprehensive game rules.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
   },
+  "schemaVersion": 1,
   "authors": [
     {
       "name": "Doc Flow",
