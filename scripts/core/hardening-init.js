@@ -34,6 +34,33 @@ import {
 const SYSTEM_ID = 'foundryvtt-swse';
 
 /**
+ * Restore sidebar to default Foundry classes
+ * Foundry's ApplicationV2 may leak app class definitions during module load.
+ * This removes any non-Foundry classes that may have been injected.
+ * @private
+ */
+function _restoreSidebarDefaults() {
+  const sidebar = document.getElementById('sidebar');
+  if (!sidebar) return;
+
+  // Get current classes and filter to only Foundry defaults
+  const currentClasses = Array.from(sidebar.classList);
+
+  // Foundry sidebar default classes (these should always be present)
+  const foundryDefaults = ['collapsed', 'app', 'window-app'];
+  const swseInjected = ['swse', 'vehicle-modification-app', 'swse-app', 'swse-theme-holo'];
+
+  // Remove any SWSE-injected classes
+  const classesToRemove = currentClasses.filter(cls => swseInjected.includes(cls));
+  classesToRemove.forEach(cls => sidebar.classList.remove(cls));
+
+  // Log if we removed anything
+  if (classesToRemove.length > 0) {
+    log.warn(`SWSE | Removed ${classesToRemove.length} injected classes from sidebar:`, classesToRemove);
+  }
+}
+
+/**
  * Initialize all hardening systems (call from init hook)
  */
 export async function initializeHardeningSystem() {
@@ -60,6 +87,9 @@ export async function initializeHardeningSystem() {
       initialized: true,
       timestamp: Date.now()
     };
+
+    // Defensive: Remove any app classes that may have leaked into sidebar during module load
+    _restoreSidebarDefaults();
 
     log.info('SWSE | v13 hardening systems initialized');
     log.info('SWSE | Phase 6 (First-run, Feature Flags, Tooltip Discovery) ready');
