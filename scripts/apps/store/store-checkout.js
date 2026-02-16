@@ -12,6 +12,7 @@ import { ProgressionEngine } from '../../progression/engine/progression-engine.j
 import { StoreEngine } from '../../engines/store/store-engine.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { normalizeCredits } from '../../utils/credit-normalization.js';
+import { calculateFinalCost, calculateUsedCost } from '../../engines/store/pricing.js';
 import CharacterGenerator from '../chargen/chargen-main.js';
 import { VehicleModificationApp } from '../vehicle-modification-app.js';
 import { DroidBuilderApp } from '../droid-builder-app.js';
@@ -557,6 +558,94 @@ export function calculateCartTotal(cart) {
 }
 
 /**
+ * HARDENING 4: Revalidate cart before checkout
+ * Do NOT trust stored cart item costs.
+ * Re-resolve each item from store index and recalculate prices.
+ *
+ * @param {Object} store - Store instance
+ * @returns {Object} { totalRevalidated, removed, recalculated }
+ */
+function revalidateCart(store) {
+  const report = { totalRevalidated: 0, removed: [], recalculated: [] };
+
+  // Revalidate regular items
+  for (let i = store.cart.items.length - 1; i >= 0; i--) {
+    const cartItem = store.cart.items[i];
+    const storeItem = store.itemsById.get(cartItem.id);
+    if (!storeItem) {
+      report.removed.push({ type: 'item', name: cartItem.name });
+      store.cart.items.splice(i, 1);
+    } else {
+      const recalculated = normalizeCredits(storeItem.finalCost);
+      if (recalculated !== cartItem.cost) {
+        report.recalculated.push({
+          type: 'item',
+          name: cartItem.name,
+          old: cartItem.cost,
+          new: recalculated
+        });
+        cartItem.cost = recalculated;
+      }
+      report.totalRevalidated += recalculated;
+    }
+  }
+
+  // Revalidate droids
+  for (let i = store.cart.droids.length - 1; i >= 0; i--) {
+    const cartDroid = store.cart.droids[i];
+    const storeItem = store.itemsById.get(cartDroid.id);
+    if (!storeItem) {
+      report.removed.push({ type: 'droid', name: cartDroid.name });
+      store.cart.droids.splice(i, 1);
+    } else {
+      const recalculated = normalizeCredits(storeItem.finalCost);
+      if (recalculated !== cartDroid.cost) {
+        report.recalculated.push({
+          type: 'droid',
+          name: cartDroid.name,
+          old: cartDroid.cost,
+          new: recalculated
+        });
+        cartDroid.cost = recalculated;
+      }
+      report.totalRevalidated += recalculated;
+    }
+  }
+
+  // Revalidate vehicles
+  for (let i = store.cart.vehicles.length - 1; i >= 0; i--) {
+    const cartVehicle = store.cart.vehicles[i];
+    const storeItem = store.itemsById.get(cartVehicle.id);
+    if (!storeItem) {
+      report.removed.push({ type: 'vehicle', name: cartVehicle.name });
+      store.cart.vehicles.splice(i, 1);
+    } else {
+      const isUsed = cartVehicle.condition === 'used';
+      const recalculated = normalizeCredits(isUsed ? storeItem.finalCostUsed : storeItem.finalCost);
+      if (recalculated !== cartVehicle.cost) {
+        report.recalculated.push({
+          type: 'vehicle',
+          name: cartVehicle.name,
+          old: cartVehicle.cost,
+          new: recalculated
+        });
+        cartVehicle.cost = recalculated;
+      }
+      report.totalRevalidated += recalculated;
+    }
+  }
+
+  if (report.recalculated.length > 0 || report.removed.length > 0) {
+    SWSELogger.info('SWSE Store | Cart revalidated', {
+      recalculated: report.recalculated.length,
+      removed: report.removed.length
+    });
+  }
+
+  return report;
+}
+
+/**
  * Checkout and purchase all items in cart
  * @param {Object} store - Store instance
  * @param {Function} animateNumberCallback - Callback to animate numbers
@@ -566,7 +655,13 @@ export async function checkout(store, animateNumberCallback) {
 
     const credits = Number(actor.system.credits) || 0;
 
-    // Calculate total
+    // HARDENING 4: Revalidate cart before checkout (re-price all items)
+    const revalidationReport = revalidateCart(store);
+    if (revalidationReport.removed.length > 0) {
+        ui.notifications.warn(`${revalidationReport.removed.length} item(s) no longer available and were removed.`);
+    }
+
+    // Calculate total using revalidated costs
     const total = calculateCartTotal(store.cart);
 
     if (total === 0) {
