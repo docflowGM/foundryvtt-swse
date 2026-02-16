@@ -65,18 +65,12 @@
       </button>
     </section>
 
-    <header class="sheet-header">
+    <header class="sheet-header" style="padding: 8px 12px; background: rgba(0, 255, 255, 0.05); border-bottom: 1px solid rgba(0, 255, 255, 0.2);">
     <div class="flexrow" style="align-items:center; gap:12px;">
-      <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="52" height="52" style="border-radius:8px;"/>
-      <div class="flexcol" style="gap:4px;">
-        <input name="name" type="text" value="{{actor.name}}" style="font-size:1.25rem; font-weight:800;"/>
-        <div class="muted" style="opacity:0.8;">v2 Character Sheet — Phase 2 (read-only derived)</div>
-      </div>
-      <div class="flexrow" style="margin-left:auto; gap:10px;">
-        <div class="swse-stat" data-swse-tooltip="FortitudeDefense"><div class="label">FORT</div><div class="value">{{derived.defenses.fort}}</div></div>
-        <div class="swse-stat" data-swse-tooltip="ReflexDefense"><div class="label">REF</div><div class="value">{{derived.defenses.ref}}</div></div>
-        <div class="swse-stat" data-swse-tooltip="WillDefense"><div class="label">WILL</div><div class="value">{{derived.defenses.will}}</div></div>
-        <div class="swse-stat" data-swse-tooltip="DamageThreshold"><div class="label">DT</div><div class="value">{{derived.damage.threshold}}</div></div>
+      <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="48" height="48" style="border-radius:6px;"/>
+      <div class="flexcol" style="gap:2px;">
+        <input name="name" type="text" value="{{actor.name}}" style="font-size:1.15rem; font-weight:bold; background: transparent; border: none; color: inherit; padding: 2px;"/>
+        <div class="muted" style="opacity:0.6; font-size:0.85rem;">SWSE v2 Character Sheet</div>
       </div>
     </div>
   </header>
