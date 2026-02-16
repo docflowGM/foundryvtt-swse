@@ -236,10 +236,19 @@ export class SWSEV2CharacterSheet extends
     const buildMode = actor.system?.buildMode ?? 'validated';
     const buildAudit = PrerequisiteEngine.auditBuild(actor);
 
+    // Flatten defenses for header display (ensure numeric values)
+    const headerDefenses = {
+      fort: actor.system?.defenses?.fort?.total ?? 10,
+      ref: actor.system?.defenses?.reflex?.total ?? 10,
+      will: actor.system?.defenses?.will?.total ?? 10,
+      dt: actor.system?.derived?.damageThreshold ?? 0
+    };
+
     const overrides = {
       actor,
       system: actor.system,
       derived: actor.system?.derived ?? {},
+      headerDefenses,
       xpEnabled,
       xpData,
       xpPercent,
