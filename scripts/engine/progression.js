@@ -1347,7 +1347,6 @@ async applyScalingFeature(feature) {
       }
     }
 
-    const progression = this.actor.system.progression || {};
     const classLevels = Array.from(progression.classLevels || []);
 
     // Determine which level of THIS CLASS is being taken
