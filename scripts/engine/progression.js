@@ -1347,8 +1347,6 @@ async applyScalingFeature(feature) {
       }
     }
 
-    const classLevels = Array.from(progression.classLevels || []);
-
     // Determine which level of THIS CLASS is being taken
     // Count how many levels of this specific class the character already has
     const existingLevelsInClass = classLevels.filter(cl => cl.class === classId).length;
