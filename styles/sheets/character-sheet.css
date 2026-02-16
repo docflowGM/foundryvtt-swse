@@ -99,10 +99,28 @@ form.swse-datapad-sheet {
   color: #cfeffc;
   background: radial-gradient(circle at 10% 10%, #071426 0%, #03060b 60%);
   border-radius: 8px;
-  overflow-y: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* AppV2: sheet-inner is the flex container for all content */
+.swse-sheet .sheet-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 1 1 auto;
+}
+
+/* Headers and navigation: do not grow */
+.swse-sheet .datapad-header,
+.swse-sheet .datapad-command-bar,
+.swse-sheet .sheet-header,
+.swse-sheet .sheet-tabs {
+  flex: 0 0 auto;
 }
 
 .swse * {
@@ -269,7 +287,15 @@ form.swse-datapad-sheet {
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   transform: translateZ(0);
-  flex: 1;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.swse .sheet-body .tab {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .swse .sheet-body::-webkit-scrollbar {
