@@ -10,6 +10,11 @@ import SWSEApplication from './base/swse-application.js';
 export class VehicleModificationApp extends SWSEApplication {
 
   constructor(actor, options = {}) {
+    // Defensive: Ensure this app never uses sidebar as target
+    options.target = null;
+    options.window = options.window || {};
+    options.window.frame = true;
+
     super(options);
     this.actor = actor;
     this.stockShip = null;
