@@ -2405,6 +2405,7 @@ async applyScalingFeature(feature) {
    */
   _validateChoices(preview, choices) {
     const errors = [];
+    const progression = this.actor.system.progression || {};
 
     // Validate talent count
     if (choices.talents) {
@@ -2413,11 +2414,10 @@ async applyScalingFeature(feature) {
       }
 
       // Validate talent uniqueness
-      const progression = this.actor.system.progression || {};
       const existingTalents = progression.talents || [];
-      const duplicates = choices.talents.filter(t => existingTalents.includes(t));
-      if (duplicates.length > 0) {
-        errors.push(`Duplicate talents: ${duplicates.join(', ')}`);
+      const talentDuplicates = choices.talents.filter(t => existingTalents.includes(t));
+      if (talentDuplicates.length > 0) {
+        errors.push(`Duplicate talents: ${talentDuplicates.join(', ')}`);
       }
     }
 
@@ -2428,11 +2428,10 @@ async applyScalingFeature(feature) {
       }
 
       // Validate feat uniqueness
-      const progression = this.actor.system.progression || {};
       const existingFeats = [...(progression.feats || []), ...(progression.startingFeats || [])];
-      const duplicates = choices.feats.filter(f => existingFeats.includes(f));
-      if (duplicates.length > 0) {
-        errors.push(`Duplicate feats: ${duplicates.join(', ')}`);
+      const featDuplicates = choices.feats.filter(f => existingFeats.includes(f));
+      if (featDuplicates.length > 0) {
+        errors.push(`Duplicate feats: ${featDuplicates.join(', ')}`);
       }
     }
 
