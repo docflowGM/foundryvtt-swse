@@ -13,7 +13,7 @@
       <span class="meta">Resources</span>
       <span class="meta"></span>
     </div>
-    {{#each derived.attacks.list}}
+    {{#each attacks.list}}
       <div class="swse-v2-attack-row rollable-attack" data-item-id="{{this.id}}" title="Click to roll attack • Shift+click for damage">
         <a class="name swse-v2-open-item" data-item-id="{{this.id}}">{{this.name}}</a>
         <span class="meta">{{this.type}}</span>
@@ -41,7 +41,7 @@
       </div>
     {{/each}}
 
-    {{#unless derived.attacks.list.length}}
+    {{#unless attacks.list.length}}
       <div class="muted" style="padding:6px 0;">No equipped weapons.</div>
     {{/unless}}
   </div>

@@ -46,6 +46,15 @@ export class SWSEV2CharacterSheet extends
       width: 820,
       height: 920,
       resizable: true,
+      minimizable: true,
+      window: {
+        resizable: true,
+        minimizable: true
+      },
+      dragDrop: [
+        { dropSelector: ".sheet-body" },
+        { dropSelector: "[data-drop-zone]" }
+      ],
       form: {
         closeOnSubmit: false,
         submitOnChange: false
@@ -166,7 +175,11 @@ export class SWSEV2CharacterSheet extends
 
     // PHASE 1: Datapad Header + Command Bar state
     const isLevel0 = (actor.system?.level ?? 0) === 0;
-    const xpLevelReady = xpData?.readyToLevel ?? false;
+
+    // PHASE 2: XP Level Ready - recompute fresh on each render
+    const currentXP = actor.system?.xp?.total ?? 0;
+    const nextLevelXP = xpData?.nextLevelAt ?? Infinity;
+    const xpLevelReady = currentXP >= nextLevelXP && nextLevelXP !== Infinity;
 
     // HP state
     const currentHp = actor.system?.hp?.value ?? 0;
@@ -270,7 +283,9 @@ export class SWSEV2CharacterSheet extends
       // PHASE 3: Build Mode & Prerequisites
       buildMode,
       buildValid: buildAudit.valid,
-      buildViolations: buildAudit.violations
+      buildViolations: buildAudit.violations,
+      // PHASE 5: Attacks - ensure derived attacks are present
+      attacks: actor.system?.derived?.attacks ?? { list: [] }
     };
 
     RenderAssertions.assertContextSerializable(
@@ -290,6 +305,12 @@ export class SWSEV2CharacterSheet extends
     const root = this.element;
     if (!(root instanceof HTMLElement)) {
       throw new Error("CharacterSheet: element not HTMLElement");
+    }
+
+    // Ensure actor reference is valid
+    if (!this.document) {
+      console.error("CharacterSheet: actor document is undefined");
+      return;
     }
 
     if (root.dataset.bound === "true") return;
@@ -325,13 +346,19 @@ export class SWSEV2CharacterSheet extends
 
     for (const el of root.querySelectorAll(".swse-v2-condition-step")) {
       el.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const step = Number(ev.currentTarget?.dataset?.step);
-        if (!Number.isFinite(step)) return;
-        if (typeof this.actor?.setConditionTrackStep === "function") {
-          await this.actor?.setConditionTrackStep(step);
-        } else if (this.actor) {
-          await ActorEngine.updateActor(this.actor, { 'system.conditionTrack.current': step });
+        try {
+          ev.preventDefault();
+          const step = Number(ev.currentTarget?.dataset?.step);
+          if (!Number.isFinite(step)) return;
+          const actor = this.document;
+          if (!actor) return;
+          if (typeof actor.setConditionTrackStep === "function") {
+            await actor.setConditionTrackStep(step);
+          } else {
+            await ActorEngine.updateActor(actor, { 'system.conditionTrack.current': step });
+          }
+        } catch (err) {
+          console.error("Error setting condition track step:", err);
         }
       });
     }
@@ -339,9 +366,13 @@ export class SWSEV2CharacterSheet extends
     const improveBtn = root.querySelector(".swse-v2-condition-improve");
     if (improveBtn) {
       improveBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        if (typeof this.actor?.improveConditionTrack === "function") {
-          await this.actor?.improveConditionTrack();
+        try {
+          ev.preventDefault();
+          const actor = this.document;
+          if (!actor || typeof actor.improveConditionTrack !== "function") return;
+          await actor.improveConditionTrack();
+        } catch (err) {
+          console.error("Error improving condition track:", err);
         }
       });
     }
@@ -349,9 +380,13 @@ export class SWSEV2CharacterSheet extends
     const worsenBtn = root.querySelector(".swse-v2-condition-worsen");
     if (worsenBtn) {
       worsenBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        if (typeof this.actor?.worsenConditionTrack === "function") {
-          await this.actor?.worsenConditionTrack();
+        try {
+          ev.preventDefault();
+          const actor = this.document;
+          if (!actor || typeof actor.worsenConditionTrack !== "function") return;
+          await actor.worsenConditionTrack();
+        } catch (err) {
+          console.error("Error worsening condition track:", err);
         }
       });
     }
@@ -359,9 +394,13 @@ export class SWSEV2CharacterSheet extends
     const persistentCheckbox = root.querySelector(".swse-v2-condition-persistent");
     if (persistentCheckbox) {
       persistentCheckbox.addEventListener("change", async (ev) => {
-        const flag = ev.currentTarget?.checked === true;
-        if (typeof this.actor?.setConditionTrackPersistent === "function") {
-          await this.actor?.setConditionTrackPersistent(flag);
+        try {
+          const flag = ev.currentTarget?.checked === true;
+          const actor = this.document;
+          if (!actor || typeof actor.setConditionTrackPersistent !== "function") return;
+          await actor.setConditionTrackPersistent(flag);
+        } catch (err) {
+          console.error("Error setting condition persistent flag:", err);
         }
       });
     }
@@ -370,10 +409,19 @@ export class SWSEV2CharacterSheet extends
 
     for (const el of root.querySelectorAll(".swse-v2-open-item")) {
       el.addEventListener("click", (ev) => {
-        ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
-        const item = this.actor?.items?.get(itemId);
-        item?.sheet?.render(true);
+        try {
+          ev.preventDefault();
+          const itemId = ev.currentTarget?.dataset?.itemId;
+          if (!itemId) return;
+          const actor = this.document;
+          if (!actor) return;
+          const item = actor.items?.get(itemId);
+          if (item?.sheet) {
+            item.sheet.render(true);
+          }
+        } catch (err) {
+          console.error("Error opening item sheet:", err);
+        }
       });
     }
 
@@ -395,10 +443,15 @@ export class SWSEV2CharacterSheet extends
 
     for (const el of root.querySelectorAll(".swse-v2-use-action")) {
       el.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const actionId = ev.currentTarget?.dataset?.actionId;
-        if (typeof this.actor?.useAction === "function") {
-          await this.actor?.useAction(actionId);
+        try {
+          ev.preventDefault();
+          const actionId = ev.currentTarget?.dataset?.actionId;
+          if (!actionId) return;
+          const actor = this.document;
+          if (!actor || typeof actor.useAction !== "function") return;
+          await actor.useAction(actionId);
+        } catch (err) {
+          console.error("Error using action:", err);
         }
       });
     }
@@ -408,9 +461,13 @@ export class SWSEV2CharacterSheet extends
     const chargenBtn = root.querySelector('[data-action="cmd-chargen"]');
     if (chargenBtn) {
       chargenBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        if (this.actor) {
-          await SWSELevelUp.openEnhanced(this.actor);
+        try {
+          ev.preventDefault();
+          const actor = this.document;
+          if (!actor) return;
+          await SWSELevelUp.openEnhanced(actor);
+        } catch (err) {
+          console.error("Error opening character generator:", err);
         }
       });
     }
@@ -418,9 +475,13 @@ export class SWSEV2CharacterSheet extends
     const levelupBtn = root.querySelector('[data-action="cmd-levelup"]');
     if (levelupBtn) {
       levelupBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        if (this.actor) {
-          await SWSELevelUp.openEnhanced(this.actor);
+        try {
+          ev.preventDefault();
+          const actor = this.document;
+          if (!actor) return;
+          await SWSELevelUp.openEnhanced(actor);
+        } catch (err) {
+          console.error("Error opening level up dialog:", err);
         }
       });
     }
@@ -428,9 +489,13 @@ export class SWSEV2CharacterSheet extends
     const storeBtn = root.querySelector('[data-action="cmd-store"]');
     if (storeBtn) {
       storeBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        if (game.swse?.store) {
-          new game.swse.store().render(true);
+        try {
+          ev.preventDefault();
+          if (game.swse?.store) {
+            new game.swse.store().render(true);
+          }
+        } catch (err) {
+          console.error("Error opening store:", err);
         }
       });
     }
@@ -438,21 +503,31 @@ export class SWSEV2CharacterSheet extends
     const restBtn = root.querySelector('[data-action="cmd-rest"]');
     if (restBtn) {
       restBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const max = this.actor.system?.secondWind?.max ?? 1;
-        await ActorEngine.updateActor(this.actor, {
-          'system.secondWind.uses': max
-        });
-        ui.notifications.info(`${this.actor.name} rested. Second Wind uses restored!`);
+        try {
+          ev.preventDefault();
+          const actor = this.document;
+          if (!actor) return;
+          const max = actor.system?.secondWind?.max ?? 1;
+          await ActorEngine.updateActor(actor, {
+            'system.secondWind.uses': max
+          });
+          ui.notifications.info(`${actor.name} rested. Second Wind uses restored!`);
+        } catch (err) {
+          console.error("Error resting:", err);
+        }
       });
     }
 
     const conditionsBtn = root.querySelector('[data-action="cmd-conditions"]');
     if (conditionsBtn) {
       conditionsBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        // Scroll to HP/Condition panel in Overview tab
-        root.querySelector('[data-tab="overview"]')?.click();
+        try {
+          ev.preventDefault();
+          // Scroll to HP/Condition panel in Overview tab
+          root.querySelector('[data-tab="overview"]')?.click();
+        } catch (err) {
+          console.error("Error navigating to conditions:", err);
+        }
       });
     }
 
@@ -461,9 +536,13 @@ export class SWSEV2CharacterSheet extends
     const levelUpBtn = root.querySelector('[data-action="level-up"]');
     if (levelUpBtn) {
       levelUpBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        if (this.actor) {
-          await SWSELevelUp.openEnhanced(this.actor);
+        try {
+          ev.preventDefault();
+          const actor = this.document;
+          if (!actor) return;
+          await SWSELevelUp.openEnhanced(actor);
+        } catch (err) {
+          console.error("Error triggering level up:", err);
         }
       });
     }
@@ -471,9 +550,13 @@ export class SWSEV2CharacterSheet extends
     const selectClassBtn = root.querySelector('[data-action="select-class"]');
     if (selectClassBtn) {
       selectClassBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        if (this.actor) {
-          await SWSELevelUp.openEnhanced(this.actor);
+        try {
+          ev.preventDefault();
+          const actor = this.document;
+          if (!actor) return;
+          await SWSELevelUp.openEnhanced(actor);
+        } catch (err) {
+          console.error("Error selecting class:", err);
         }
       });
     }
@@ -481,9 +564,13 @@ export class SWSEV2CharacterSheet extends
     const selectSpeciesBtn = root.querySelector('[data-action="select-species"]');
     if (selectSpeciesBtn) {
       selectSpeciesBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        if (this.actor) {
-          await SWSELevelUp.openEnhanced(this.actor);
+        try {
+          ev.preventDefault();
+          const actor = this.document;
+          if (!actor) return;
+          await SWSELevelUp.openEnhanced(actor);
+        } catch (err) {
+          console.error("Error selecting species:", err);
         }
       });
     }
@@ -491,9 +578,13 @@ export class SWSEV2CharacterSheet extends
     const selectBackgroundBtn = root.querySelector('[data-action="select-background"]');
     if (selectBackgroundBtn) {
       selectBackgroundBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        if (this.actor) {
-          await SWSELevelUp.openEnhanced(this.actor);
+        try {
+          ev.preventDefault();
+          const actor = this.document;
+          if (!actor) return;
+          await SWSELevelUp.openEnhanced(actor);
+        } catch (err) {
+          console.error("Error selecting background:", err);
         }
       });
     }
@@ -516,12 +607,17 @@ export class SWSEV2CharacterSheet extends
     // Skill favorite toggle
     for (const btn of root.querySelectorAll('[data-action="toggle-favorite"]')) {
       btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const skill = ev.currentTarget?.dataset?.skill;
-        if (skill && this.actor) {
+        try {
+          ev.preventDefault();
+          const skill = ev.currentTarget?.dataset?.skill;
+          if (!skill) return;
+          const actor = this.document;
+          if (!actor) return;
           const path = `system.skills.${skill}.favorite`;
-          const current = this.actor.system?.skills?.[skill]?.favorite;
-          await this.actor.update({ [path]: !current });
+          const current = actor.system?.skills?.[skill]?.favorite;
+          await actor.update({ [path]: !current });
+        } catch (err) {
+          console.error("Error toggling skill favorite:", err);
         }
       });
     }
@@ -585,42 +681,69 @@ export class SWSEV2CharacterSheet extends
     /* ---- INITIATIVE CONTROLS ---- */
 
     root.querySelector(".roll-initiative")?.addEventListener("click", async (ev) => {
-      ev.preventDefault();
-      await this.actor.swseRollInitiative();
+      try {
+        ev.preventDefault();
+        const actor = this.document;
+        if (!actor || typeof actor.swseRollInitiative !== "function") return;
+        await actor.swseRollInitiative();
+      } catch (err) {
+        console.error("Error rolling initiative:", err);
+      }
     });
 
     root.querySelector(".take10-initiative")?.addEventListener("click", async (ev) => {
-      ev.preventDefault();
-      await this.actor.swseTake10Initiative();
+      try {
+        ev.preventDefault();
+        const actor = this.document;
+        if (!actor || typeof actor.swseTake10Initiative !== "function") return;
+        await actor.swseTake10Initiative();
+      } catch (err) {
+        console.error("Error taking 10 on initiative:", err);
+      }
     });
 
     root.querySelector(".roll-initiative-force")?.addEventListener("click", async (ev) => {
-      ev.preventDefault();
-      await this.actor.swseRollInitiative({ useForce: true });
+      try {
+        ev.preventDefault();
+        const actor = this.document;
+        if (!actor || typeof actor.swseRollInitiative !== "function") return;
+        await actor.swseRollInitiative({ useForce: true });
+      } catch (err) {
+        console.error("Error rolling force initiative:", err);
+      }
     });
 
     /* ---- PHASE 2: CLICK-TO-ROLL SKILLS ---- */
 
     for (const el of root.querySelectorAll('.rollable-skill')) {
       el.addEventListener("click", async (ev) => {
-        // Prevent selection
-        if (ev.detail > 1) return;
+        try {
+          // Prevent selection
+          if (ev.detail > 1) return;
 
-        ev.preventDefault();
-        const skillKey = ev.currentTarget?.dataset?.skill;
-        if (skillKey && this.actor) {
-          await rollSkill(this.actor, skillKey);
+          ev.preventDefault();
+          const skillKey = ev.currentTarget?.dataset?.skill;
+          if (!skillKey) return;
+          const actor = this.document;
+          if (!actor) return;
+          await rollSkill(actor, skillKey);
+        } catch (err) {
+          console.error("Error rolling skill:", err);
         }
       });
 
       el.addEventListener("contextmenu", (ev) => {
-        // Prevent browser context menu
-        ev.preventDefault();
-        // Phase 3 will add context menu logic here
-        const skillKey = ev.currentTarget?.dataset?.skill;
-        if (skillKey) {
-          // Placeholder: log to console for now
-          console.log(`[Phase 3] Skill context menu requested for: ${skillKey}`);
+        try {
+          // Prevent browser context menu
+          ev.preventDefault();
+          // Phase 3 will add context menu logic here
+          const skillKey = ev.currentTarget?.dataset?.skill;
+          if (skillKey) {
+            // Placeholder: log to console for now
+            console.log(`[Phase 3] Skill context menu requested for: ${skillKey}`);
+          }
+        } catch (err) {
+          console.error("Error in skill context menu:", err);
         }
       });
     }
@@ -629,25 +752,31 @@ export class SWSEV2CharacterSheet extends
 
     for (const el of root.querySelectorAll('.rollable-attack')) {
       el.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
-        if (!itemId || !this.actor) return;
+        try {
+          ev.preventDefault();
+          const itemId = ev.currentTarget?.dataset?.itemId;
+          if (!itemId) return;
+          const actor = this.document;
+          if (!actor) return;
 
-        // Shift+click = damage roll
-        if (ev.shiftKey) {
-          // For now, just log (Phase 3 will handle damage rolls)
-          console.log(`[Phase 2] Shift+click damage for: ${itemId}`);
-          return;
-        }
+          // Shift+click = damage roll
+          if (ev.shiftKey) {
+            // For now, just log (Phase 3 will handle damage rolls)
+            console.log(`[Phase 2] Shift+click damage for: ${itemId}`);
+            return;
+          }
 
-        // Left click = attack roll
-        const item = this.actor.items?.get(itemId);
-        if (!item) return;
+          // Left click = attack roll
+          const item = actor.items?.get(itemId);
+          if (!item) return;
 
-        if (typeof item.roll === "function") {
-          await item.roll();
-        } else {
-          await rollAttack(this.actor, item);
+          if (typeof item.roll === "function") {
+            await item.roll();
+          } else {
+            await rollAttack(actor, item);
+          }
+        } catch (err) {
+          console.error("Error rolling attack:", err);
         }
       });
     }
@@ -656,10 +785,15 @@ export class SWSEV2CharacterSheet extends
 
     for (const el of root.querySelectorAll('[data-action="roll-skill"]')) {
       el.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const skillKey = ev.currentTarget?.dataset?.skill;
-        if (skillKey && this.actor) {
-          await rollSkill(this.actor, skillKey);
+        try {
+          ev.preventDefault();
+          const skillKey = ev.currentTarget?.dataset?.skill;
+          if (!skillKey) return;
+          const actor = this.document;
+          if (!actor) return;
+          await rollSkill(actor, skillKey);
+        } catch (err) {
+          console.error("Error rolling skill:", err);
         }
       });
     }
@@ -668,12 +802,15 @@ export class SWSEV2CharacterSheet extends
 
     for (const el of root.querySelectorAll('[data-action="roll-defense"]')) {
       el.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const defenseType = ev.currentTarget?.dataset?.defense;
-        if (defenseType && this.actor) {
+        try {
+          ev.preventDefault();
+          const defenseType = ev.currentTarget?.dataset?.defense;
+          if (!defenseType) return;
           if (typeof game.swse?.rolls?.defenses?.rollDefense === "function") {
             await game.swse.rolls.defenses.rollDefense(this.document, defenseType);
           }
+        } catch (err) {
+          console.error("Error rolling defense:", err);
         }
       });
     }
@@ -682,15 +819,21 @@ export class SWSEV2CharacterSheet extends
 
     for (const el of root.querySelectorAll('[data-action="roll-weapon"]')) {
       el.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
-        if (!itemId || !this.actor) return;
-        const item = this.actor.items?.get(itemId);
-        if (!item) return;
-        if (typeof item.roll === "function") {
-          await item.roll();
-        } else {
-          await rollAttack(this.actor, item);
+        try {
+          ev.preventDefault();
+          const itemId = ev.currentTarget?.dataset?.itemId;
+          if (!itemId) return;
+          const actor = this.document;
+          if (!actor) return;
+          const item = actor.items?.get(itemId);
+          if (!item) return;
+          if (typeof item.roll === "function") {
+            await item.roll();
+          } else {
+            await rollAttack(actor, item);
+          }
+        } catch (err) {
+          console.error("Error rolling weapon:", err);
         }
       });
     }
@@ -699,14 +842,22 @@ export class SWSEV2CharacterSheet extends
 
     for (const el of root.querySelectorAll('[data-action="roll-force-power"]')) {
       el.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
-        if (!itemId || !this.actor) return;
-        if (typeof game.swse?.rolls?.rollForcePower === "function") {
-          await game.swse.rolls.rollForcePower(this.document, itemId);
-        } else {
-          const item = this.actor.items?.get(itemId);
-          item?.sheet?.render(true);
+        try {
+          ev.preventDefault();
+          const itemId = ev.currentTarget?.dataset?.itemId;
+          if (!itemId) return;
+          if (typeof game.swse?.rolls?.rollForcePower === "function") {
+            await game.swse.rolls.rollForcePower(this.document, itemId);
+          } else {
+            const actor = this.document;
+            if (!actor) return;
+            const item = actor.items?.get(itemId);
+            if (item?.sheet) {
+              item.sheet.render(true);
+            }
+          }
+        } catch (err) {
+          console.error("Error rolling force power:", err);
         }
       });
     }
@@ -715,47 +866,61 @@ export class SWSEV2CharacterSheet extends
 
     for (const miscCell of root.querySelectorAll('.skill-col-misc input')) {
       miscCell.addEventListener("click", async (ev) => {
-        ev.stopPropagation();
-        const skillRow = ev.currentTarget?.closest('[data-skill-name]');
-        if (!skillRow) return;
+        try {
+          ev.stopPropagation();
+          const skillRow = ev.currentTarget?.closest('[data-skill-name]');
+          if (!skillRow) return;
 
-        const skillName = skillRow.dataset.skillName;
-        if (!skillName) return;
+          const skillName = skillRow.dataset.skillName;
+          if (!skillName) return;
 
-        // Get modifiers from ModifierEngine
-        const modifiers = ModifierEngine.getSkillModifiers(this.actor, skillName);
+          const actor = this.document;
+          if (!actor) return;
 
-        // Show breakdown dialog
-        await ModifierBreakdownDialog.show(this.actor, modifiers, skillName);
+          // Get modifiers from ModifierEngine
+          const modifiers = ModifierEngine.getSkillModifiers(actor, skillName);
+
+          // Show breakdown dialog
+          await ModifierBreakdownDialog.show(actor, modifiers, skillName);
+        } catch (err) {
+          console.error("Error showing modifier breakdown:", err);
+        }
       });
 
       // Add hover tooltip
       miscCell.addEventListener("mouseenter", (ev) => {
-        const skillRow = ev.currentTarget?.closest('[data-skill-name]');
-        if (!skillRow) return;
+        try {
+          const skillRow = ev.currentTarget?.closest('[data-skill-name]');
+          if (!skillRow) return;
 
-        const skillName = skillRow.dataset.skillName;
-        if (!skillName) return;
+          const skillName = skillRow.dataset.skillName;
+          if (!skillName) return;
 
-        // Get modifiers from ModifierEngine
-        const modifiers = ModifierEngine.getSkillModifiers(this.actor, skillName);
+          const actor = this.document;
+          if (!actor) return;
 
-        // Build tooltip text
-        let tooltipText = `${skillName} Modifiers:\n`;
-        let total = 0;
-        if (modifiers && modifiers.length > 0) {
-          for (const mod of modifiers) {
-            const value = mod.value || 0;
-            total += value;
-            const sign = value >= 0 ? '+' : '';
-            tooltipText += `${sign}${value} ${mod.description || mod.sourceName}\n`;
+          // Get modifiers from ModifierEngine
+          const modifiers = ModifierEngine.getSkillModifiers(actor, skillName);
+
+          // Build tooltip text
+          let tooltipText = `${skillName} Modifiers:\n`;
+          let total = 0;
+          if (modifiers && modifiers.length > 0) {
+            for (const mod of modifiers) {
+              const value = mod.value || 0;
+              total += value;
+              const sign = value >= 0 ? '+' : '';
+              tooltipText += `${sign}${value} ${mod.description || mod.sourceName}\n`;
+            }
+            tooltipText += `\nTotal: ${total >= 0 ? '+' : ''}${total}`;
+          } else {
+            tooltipText += `No modifiers applied.`;
           }
-          tooltipText += `\nTotal: ${total >= 0 ? '+' : ''}${total}`;
-        } else {
-          tooltipText += `No modifiers applied.`;
-        }
 
-        ev.currentTarget.title = tooltipText;
+          ev.currentTarget.title = tooltipText;
+        } catch (err) {
+          console.error("Error updating modifier tooltip:", err);
+        }
       });
     }
 
@@ -767,17 +932,24 @@ export class SWSEV2CharacterSheet extends
 
       // Right-click context for Take 10/20
       skillRow.addEventListener("contextmenu", (ev) => {
-        ev.preventDefault();
+        try {
+          ev.preventDefault();
 
-        const skill = this.actor.system?.skills?.[skillKey];
-        if (!skill) return;
+          const actor = this.document;
+          if (!actor) return;
 
-        const totalBonus = skill.total ?? 0;
-        const take10 = 10 + totalBonus;
-        const take20 = 20 + totalBonus;
+          const skill = actor.system?.skills?.[skillKey];
+          if (!skill) return;
 
-        const tooltip = `${skillKey}\nTake 10: ${take10}\nTake 20: ${take20}`;
-        ui.notifications.info(tooltip);
+          const totalBonus = skill.total ?? 0;
+          const take10 = 10 + totalBonus;
+          const take20 = 20 + totalBonus;
+
+          const tooltip = `${skillKey}\nTake 10: ${take10}\nTake 20: ${take20}`;
+          ui.notifications.info(tooltip);
+        } catch (err) {
+          console.error("Error showing take 10/20 context:", err);
+        }
       });
     }
 
@@ -786,23 +958,29 @@ export class SWSEV2CharacterSheet extends
     const swRecoverBtn = root.querySelector('[data-action="use-second-wind"]');
     if (swRecoverBtn) {
       swRecoverBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const uses = this.actor.system?.secondWind?.uses ?? 0;
-        const healing = this.actor.system?.secondWind?.healing ?? 0;
+        try {
+          ev.preventDefault();
+          const actor = this.document;
+          if (!actor) return;
+          const uses = actor.system?.secondWind?.uses ?? 0;
+          const healing = actor.system?.secondWind?.healing ?? 0;
 
-        if (uses > 0 && healing > 0) {
-          // Restore HP
-          const currentHp = this.actor.system?.hp?.value ?? 0;
-          const maxHp = this.actor.system?.hp?.max ?? 1;
-          const newHp = Math.min(currentHp + healing, maxHp);
+          if (uses > 0 && healing > 0) {
+            // Restore HP
+            const currentHp = actor.system?.hp?.value ?? 0;
+            const maxHp = actor.system?.hp?.max ?? 1;
+            const newHp = Math.min(currentHp + healing, maxHp);
 
-          // Decrease uses
-          await ActorEngine.updateActor(this.actor, {
-            'system.hp.value': newHp,
-            'system.secondWind.uses': uses - 1
-          });
+            // Decrease uses
+            await ActorEngine.updateActor(actor, {
+              'system.hp.value': newHp,
+              'system.secondWind.uses': uses - 1
+            });
 
-          ui.notifications.info(`${this.actor.name} recovered ${healing} HP with Second Wind!`);
+            ui.notifications.info(`${actor.name} recovered ${healing} HP with Second Wind!`);
+          }
+        } catch (err) {
+          console.error("Error using second wind:", err);
         }
       });
     }
@@ -810,12 +988,18 @@ export class SWSEV2CharacterSheet extends
     const swRestBtn = root.querySelector('[data-action="rest-second-wind"]');
     if (swRestBtn) {
       swRestBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const max = this.actor.system?.secondWind?.max ?? 1;
-        await ActorEngine.updateActor(this.actor, {
-          'system.secondWind.uses': max
-        });
-        ui.notifications.info(`${this.actor.name} rested. Second Wind uses restored!`);
+        try {
+          ev.preventDefault();
+          const actor = this.document;
+          if (!actor) return;
+          const max = actor.system?.secondWind?.max ?? 1;
+          await ActorEngine.updateActor(actor, {
+            'system.secondWind.uses': max
+          });
+          ui.notifications.info(`${actor.name} rested. Second Wind uses restored!`);
+        } catch (err) {
+          console.error("Error resting second wind:", err);
+        }
       });
     }
 
@@ -824,14 +1008,20 @@ export class SWSEV2CharacterSheet extends
     const dsSpectrum = root.querySelector('.swse-v2-ds-spectrum');
     if (dsSpectrum) {
       dsSpectrum.addEventListener("click", async (ev) => {
-        const segment = ev.target.closest('.ds-segment');
-        if (segment) {
-          const index = Number(segment.dataset.index);
-          if (Number.isFinite(index)) {
-            await ActorEngine.updateActor(this.actor, {
-              'system.darkSideScore': index
-            });
+        try {
+          const segment = ev.target.closest('.ds-segment');
+          if (segment) {
+            const index = Number(segment.dataset.index);
+            if (Number.isFinite(index)) {
+              const actor = this.document;
+              if (!actor) return;
+              await ActorEngine.updateActor(actor, {
+                'system.darkSideScore': index
+              });
+            }
           }
+        } catch (err) {
+          console.error("Error updating dark side score:", err);
         }
       });
     }
@@ -840,30 +1030,38 @@ export class SWSEV2CharacterSheet extends
 
     for (const btn of root.querySelectorAll('[data-action="sell-item"]')) {
       btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
-        if (!itemId) return;
-        const item = this.document.items.get(itemId);
-        if (!item) return;
+        try {
+          ev.preventDefault();
+          const itemId = ev.currentTarget?.dataset?.itemId;
+          if (!itemId) return;
+          const item = this.document.items.get(itemId);
+          if (!item) return;
 
-        const price = item.system.price ?? 0;
-        const currentCredits = this.document.system.credits ?? 0;
+          const price = item.system.price ?? 0;
+          const currentCredits = this.document.system.credits ?? 0;
 
-        await this.document.update({
-          "system.credits": currentCredits + price
-        });
+          await this.document.update({
+            "system.credits": currentCredits + price
+          });
 
-        await this.document.deleteEmbeddedDocuments("Item", [itemId]);
-        ui.notifications.info(`Sold ${item.name} for ${price} credits`);
+          await this.document.deleteEmbeddedDocuments("Item", [itemId]);
+          ui.notifications.info(`Sold ${item.name} for ${price} credits`);
+        } catch (err) {
+          console.error("Error selling item:", err);
+        }
       });
     }
 
     for (const btn of root.querySelectorAll('[data-action="delete-item"]')) {
       btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
-        if (!itemId) return;
-        await this.document.deleteEmbeddedDocuments("Item", [itemId]);
+        try {
+          ev.preventDefault();
+          const itemId = ev.currentTarget?.dataset?.itemId;
+          if (!itemId) return;
+          await this.document.deleteEmbeddedDocuments("Item", [itemId]);
+        } catch (err) {
+          console.error("Error deleting item:", err);
+        }
       });
     }
 
@@ -871,11 +1069,15 @@ export class SWSEV2CharacterSheet extends
 
     for (const checkbox of root.querySelectorAll('[data-action="toggle-equip-armor"]')) {
       checkbox.addEventListener("change", async (ev) => {
-        const itemId = ev.currentTarget?.dataset?.itemId;
-        if (!itemId) return;
-        const item = this.document.items.get(itemId);
-        if (!item) return;
-        await item.update({ "system.equipped": ev.currentTarget.checked });
+        try {
+          const itemId = ev.currentTarget?.dataset?.itemId;
+          if (!itemId) return;
+          const item = this.document.items.get(itemId);
+          if (!item) return;
+          await item.update({ "system.equipped": ev.currentTarget.checked });
+        } catch (err) {
+          console.error("Error toggling armor equip:", err);
+        }
       });
     }
 
@@ -883,22 +1085,34 @@ export class SWSEV2CharacterSheet extends
 
     for (const btn of root.querySelectorAll('[data-action="add-force-power"]')) {
       btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        game.swse.progression?.openForcePowerSelector?.(this.document);
+        try {
+          ev.preventDefault();
+          game.swse.progression?.openForcePowerSelector?.(this.document);
+        } catch (err) {
+          console.error("Error opening force power selector:", err);
+        }
       });
     }
 
     for (const btn of root.querySelectorAll('[data-action="add-force-technique"]')) {
       btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        game.swse.progression?.openForceTechniqueSelector?.(this.document);
+        try {
+          ev.preventDefault();
+          game.swse.progression?.openForceTechniqueSelector?.(this.document);
+        } catch (err) {
+          console.error("Error opening force technique selector:", err);
+        }
       });
     }
 
     for (const btn of root.querySelectorAll('[data-action="add-force-secret"]')) {
       btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        game.swse.progression?.openForceSecretSelector?.(this.document);
+        try {
+          ev.preventDefault();
+          game.swse.progression?.openForceSecretSelector?.(this.document);
+        } catch (err) {
+          console.error("Error opening force secret selector:", err);
+        }
       });
     }
 
@@ -906,57 +1120,79 @@ export class SWSEV2CharacterSheet extends
 
     for (const btn of root.querySelectorAll('[data-action="add-feat"]')) {
       btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
+        try {
+          ev.preventDefault();
 
-        // Track item count before opening selector
-        const itemCountBefore = this.actor?.items?.size ?? 0;
+          const actor = this.document;
+          if (!actor) return;
 
-        // Open feat selector
-        game.swse.progression?.openFeatSelector?.(this.document);
+          // Track item count before opening selector
+          const itemCountBefore = actor.items?.size ?? 0;
 
-        // After selector completes, check for new items and validate prerequisites
-        setTimeout(async () => {
-          const itemCountAfter = this.actor?.items?.size ?? 0;
-          if (itemCountAfter > itemCountBefore) {
-            // New items were added, validate all feats
-            const newItems = Array.from(this.actor.items).filter(item => item.type === 'feat').slice(-1);
-            for (const item of newItems) {
-              const validation = PrerequisiteEngine.validateItemPrerequisites(this.actor, item);
-              if (!validation.valid) {
-                await PrerequisiteEngine.enableFreeBuildMode(this.actor);
-                ui.notifications.warn(`${item.name} has unmet prerequisites. Free Build Mode enabled.`);
+          // Open feat selector
+          game.swse.progression?.openFeatSelector?.(actor);
+
+          // After selector completes, check for new items and validate prerequisites
+          setTimeout(async () => {
+            try {
+              const itemCountAfter = actor.items?.size ?? 0;
+              if (itemCountAfter > itemCountBefore) {
+                // New items were added, validate all feats
+                const newItems = Array.from(actor.items).filter(item => item.type === 'feat').slice(-1);
+                for (const item of newItems) {
+                  const validation = PrerequisiteEngine.validateItemPrerequisites(actor, item);
+                  if (!validation.valid) {
+                    await PrerequisiteEngine.enableFreeBuildMode(actor);
+                    ui.notifications.warn(`${item.name} has unmet prerequisites. Free Build Mode enabled.`);
+                  }
+                }
               }
+            } catch (err) {
+              console.error("Error validating feat prerequisites:", err);
             }
-          }
-        }, 500);
+          }, 500);
+        } catch (err) {
+          console.error("Error adding feat:", err);
+        }
       });
     }
 
     for (const btn of root.querySelectorAll('[data-action="add-talent"]')) {
       btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
+        try {
+          ev.preventDefault();
 
-        // Track item count before opening selector
-        const itemCountBefore = this.actor?.items?.size ?? 0;
+          const actor = this.document;
+          if (!actor) return;
 
-        // Open talent selector
-        game.swse.progression?.openTalentSelector?.(this.document);
+          // Track item count before opening selector
+          const itemCountBefore = actor.items?.size ?? 0;
 
-        // After selector completes, check for new items and validate prerequisites
-        setTimeout(async () => {
-          const itemCountAfter = this.actor?.items?.size ?? 0;
-          if (itemCountAfter > itemCountBefore) {
-            // New items were added, validate all talents
-            const newItems = Array.from(this.actor.items).filter(item => item.type === 'talent').slice(-1);
-            for (const item of newItems) {
-              const validation = PrerequisiteEngine.validateItemPrerequisites(this.actor, item);
-              if (!validation.valid) {
-                await PrerequisiteEngine.enableFreeBuildMode(this.actor);
-                ui.notifications.warn(`${item.name} has unmet prerequisites. Free Build Mode enabled.`);
+          // Open talent selector
+          game.swse.progression?.openTalentSelector?.(actor);
+
+          // After selector completes, check for new items and validate prerequisites
+          setTimeout(async () => {
+            try {
+              const itemCountAfter = actor.items?.size ?? 0;
+              if (itemCountAfter > itemCountBefore) {
+                // New items were added, validate all talents
+                const newItems = Array.from(actor.items).filter(item => item.type === 'talent').slice(-1);
+                for (const item of newItems) {
+                  const validation = PrerequisiteEngine.validateItemPrerequisites(actor, item);
+                  if (!validation.valid) {
+                    await PrerequisiteEngine.enableFreeBuildMode(actor);
+                    ui.notifications.warn(`${item.name} has unmet prerequisites. Free Build Mode enabled.`);
+                  }
+                }
               }
+            } catch (err) {
+              console.error("Error validating talent prerequisites:", err);
             }
-          }
-        }, 500);
+          }, 500);
+        } catch (err) {
+          console.error("Error adding talent:", err);
+        }
       });
     }
 
@@ -964,20 +1200,28 @@ export class SWSEV2CharacterSheet extends
 
     for (const btn of root.querySelectorAll('[data-action="add-language"]')) {
       btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const langs = [...(this.document.system.languages || []), ""];
-        await this.document.update({ "system.languages": langs });
+        try {
+          ev.preventDefault();
+          const langs = [...(this.document.system.languages || []), ""];
+          await this.document.update({ "system.languages": langs });
+        } catch (err) {
+          console.error("Error adding language:", err);
+        }
       });
     }
 
     for (const btn of root.querySelectorAll('[data-action="remove-language"]')) {
       btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const index = Number(ev.currentTarget?.dataset?.index);
-        if (!Number.isFinite(index)) return;
-        const langs = [...(this.document.system.languages || [])];
-        langs.splice(index, 1);
-        await this.document.update({ "system.languages": langs });
+        try {
+          ev.preventDefault();
+          const index = Number(ev.currentTarget?.dataset?.index);
+          if (!Number.isFinite(index)) return;
+          const langs = [...(this.document.system.languages || [])];
+          langs.splice(index, 1);
+          await this.document.update({ "system.languages": langs });
+        } catch (err) {
+          console.error("Error removing language:", err);
+        }
       });
     }
 
@@ -985,21 +1229,31 @@ export class SWSEV2CharacterSheet extends
 
     for (const btn of root.querySelectorAll('[data-action="remove-owned"]')) {
       btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const actorId = ev.currentTarget?.dataset?.actorId;
-        if (!actorId) return;
-        const owned = this.document.system.ownedActors?.filter(o => o.id !== actorId) || [];
-        await this.document.update({ "system.ownedActors": owned });
+        try {
+          ev.preventDefault();
+          const actorId = ev.currentTarget?.dataset?.actorId;
+          if (!actorId) return;
+          const owned = this.document.system.ownedActors?.filter(o => o.id !== actorId) || [];
+          await this.document.update({ "system.ownedActors": owned });
+        } catch (err) {
+          console.error("Error removing owned actor:", err);
+        }
       });
     }
 
     for (const btn of root.querySelectorAll('[data-action="open-owned"]')) {
       btn.addEventListener("click", (ev) => {
-        ev.preventDefault();
-        const actorId = ev.currentTarget?.dataset?.actorId;
-        if (!actorId) return;
-        const actor = game.actors.get(actorId);
-        actor?.sheet?.render(true);
+        try {
+          ev.preventDefault();
+          const actorId = ev.currentTarget?.dataset?.actorId;
+          if (!actorId) return;
+          const actor = game.actors.get(actorId);
+          if (actor?.sheet) {
+            actor.sheet.render(true);
+          }
+        } catch (err) {
+          console.error("Error opening owned actor:", err);
+        }
       });
     }
 
@@ -1007,52 +1261,76 @@ export class SWSEV2CharacterSheet extends
 
     for (const card of root.querySelectorAll('[data-toggle="expand"]')) {
       card.addEventListener("click", (ev) => {
-        ev.preventDefault();
-        card.style.boxShadow = card.style.boxShadow ? '' : '0 0 8px rgba(33, 150, 243, 0.3)';
-        const actions = card.querySelector('.talent-card-actions, .feat-card-actions');
-        if (actions) {
-          actions.style.opacity = actions.style.opacity === '0' ? '1' : '0';
+        try {
+          ev.preventDefault();
+          card.style.boxShadow = card.style.boxShadow ? '' : '0 0 8px rgba(33, 150, 243, 0.3)';
+          const actions = card.querySelector('.talent-card-actions, .feat-card-actions');
+          if (actions) {
+            actions.style.opacity = actions.style.opacity === '0' ? '1' : '0';
+          }
+        } catch (err) {
+          console.error("Error expanding card:", err);
         }
       });
     }
 
     for (const btn of root.querySelectorAll('[data-action="delete-talent"]')) {
       btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        ev.stopPropagation();
-        const itemId = ev.currentTarget?.dataset?.itemId;
-        if (!itemId || !this.actor) return;
-        await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
-        ui.notifications.info("Talent removed.");
+        try {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const itemId = ev.currentTarget?.dataset?.itemId;
+          if (!itemId) return;
+          const actor = this.document;
+          if (!actor) return;
+          await actor.deleteEmbeddedDocuments("Item", [itemId]);
+          ui.notifications.info("Talent removed.");
 
-        // Auto-revalidate build after item deletion
-        setTimeout(async () => {
-          const valid = await PrerequisiteEngine.validateBuild(this.actor);
-          if (valid) {
-            ui.notifications.info("Build revalidated - returning to validated mode.");
-            await this.render();
-          }
-        }, 250);
+          // Auto-revalidate build after item deletion
+          setTimeout(async () => {
+            try {
+              const valid = await PrerequisiteEngine.validateBuild(actor);
+              if (valid) {
+                ui.notifications.info("Build revalidated - returning to validated mode.");
+                await this.render();
+              }
+            } catch (err) {
+              console.error("Error validating build after talent deletion:", err);
+            }
+          }, 250);
+        } catch (err) {
+          console.error("Error deleting talent:", err);
+        }
       });
     }
 
     for (const btn of root.querySelectorAll('[data-action="delete-feat"]')) {
       btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        ev.stopPropagation();
-        const itemId = ev.currentTarget?.dataset?.itemId;
-        if (!itemId || !this.actor) return;
-        await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
-        ui.notifications.info("Feat removed.");
+        try {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const itemId = ev.currentTarget?.dataset?.itemId;
+          if (!itemId) return;
+          const actor = this.document;
+          if (!actor) return;
+          await actor.deleteEmbeddedDocuments("Item", [itemId]);
+          ui.notifications.info("Feat removed.");
 
-        // Auto-revalidate build after item deletion
-        setTimeout(async () => {
-          const valid = await PrerequisiteEngine.validateBuild(this.actor);
-          if (valid) {
-            ui.notifications.info("Build revalidated - returning to validated mode.");
-            await this.render();
-          }
-        }, 250);
+          // Auto-revalidate build after item deletion
+          setTimeout(async () => {
+            try {
+              const valid = await PrerequisiteEngine.validateBuild(actor);
+              if (valid) {
+                ui.notifications.info("Build revalidated - returning to validated mode.");
+                await this.render();
+              }
+            } catch (err) {
+              console.error("Error validating build after feat deletion:", err);
+            }
+          }, 250);
+        } catch (err) {
+          console.error("Error deleting feat:", err);
+        }
       });
     }
 
@@ -1061,15 +1339,21 @@ export class SWSEV2CharacterSheet extends
     const revalidateBtn = root.querySelector('[data-action="revalidate-build"]');
     if (revalidateBtn) {
       revalidateBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const valid = await PrerequisiteEngine.validateBuild(this.actor);
-        if (valid) {
-          ui.notifications.info("Build validated successfully!");
-          await this.render();
-        } else {
-          const audit = PrerequisiteEngine.auditBuild(this.actor);
-          const msg = PrerequisiteEngine.formatViolations(audit);
-          ui.notifications.warn(msg);
+        try {
+          ev.preventDefault();
+          const actor = this.document;
+          if (!actor) return;
+          const valid = await PrerequisiteEngine.validateBuild(actor);
+          if (valid) {
+            ui.notifications.info("Build validated successfully!");
+            await this.render();
+          } else {
+            const audit = PrerequisiteEngine.auditBuild(actor);
+            const msg = PrerequisiteEngine.formatViolations(audit);
+            ui.notifications.warn(msg);
+          }
+        } catch (err) {
+          console.error("Error revalidating build:", err);
         }
       });
     }
@@ -1079,8 +1363,12 @@ export class SWSEV2CharacterSheet extends
     const inventorySearchInput = root.querySelector('[data-action="inventory-search"]');
     if (inventorySearchInput) {
       inventorySearchInput.addEventListener("input", async (ev) => {
-        this._inventorySearch = ev.target.value;
-        await this.render();
+        try {
+          this._inventorySearch = ev.target.value;
+          await this.render();
+        } catch (err) {
+          console.error("Error filtering inventory:", err);
+        }
       });
     }
 
@@ -1088,36 +1376,42 @@ export class SWSEV2CharacterSheet extends
 
     for (const btn of root.querySelectorAll('[data-action="split-stack"]')) {
       btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
-        const item = this.actor?.items?.get(itemId);
-        if (!item) return;
+        try {
+          ev.preventDefault();
+          const itemId = ev.currentTarget?.dataset?.itemId;
+          const actor = this.document;
+          if (!actor) return;
+          const item = actor.items?.get(itemId);
+          if (!item) return;
 
-        const currentQty = Number(item.system.quantity) || 1;
-        if (currentQty <= 1) {
-          ui.notifications.warn("Cannot split a stack of 1 item.");
-          return;
+          const currentQty = Number(item.system.quantity) || 1;
+          if (currentQty <= 1) {
+            ui.notifications.warn("Cannot split a stack of 1 item.");
+            return;
+          }
+
+          // Show inline split dialog
+          const splitQty = prompt(`Split ${item.name}?\nEnter quantity to split (1-${currentQty - 1}):`, "1");
+          if (!splitQty) return;
+
+          const qty = Number(splitQty);
+          if (!Number.isFinite(qty) || qty < 1 || qty >= currentQty) {
+            ui.notifications.error("Invalid split quantity.");
+            return;
+          }
+
+          // Update original item
+          await item.update({ "system.quantity": currentQty - qty });
+
+          // Create new stack
+          const newItem = item.toObject();
+          newItem.system.quantity = qty;
+          await actor.createEmbeddedDocuments("Item", [newItem]);
+
+          ui.notifications.info(`${item.name} split: ${qty} item(s) moved to new stack.`);
+        } catch (err) {
+          console.error("Error splitting stack:", err);
         }
-
-        // Show inline split dialog
-        const splitQty = prompt(`Split ${item.name}?\nEnter quantity to split (1-${currentQty - 1}):`, "1");
-        if (!splitQty) return;
-
-        const qty = Number(splitQty);
-        if (!Number.isFinite(qty) || qty < 1 || qty >= currentQty) {
-          ui.notifications.error("Invalid split quantity.");
-          return;
-        }
-
-        // Update original item
-        await item.update({ "system.quantity": currentQty - qty });
-
-        // Create new stack
-        const newItem = item.toObject();
-        newItem.system.quantity = qty;
-        await this.actor.createEmbeddedDocuments("Item", [newItem]);
-
-        ui.notifications.info(`${item.name} split: ${qty} item(s) moved to new stack.`);
       });
     }
 
@@ -1125,18 +1419,22 @@ export class SWSEV2CharacterSheet extends
 
     for (const card of root.querySelectorAll('[data-action="toggle-item-expand"]')) {
       card.addEventListener("click", (ev) => {
-        ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
-        if (!itemId) return;
+        try {
+          ev.preventDefault();
+          const itemId = ev.currentTarget?.dataset?.itemId;
+          if (!itemId) return;
 
-        if (this._expandedItemIds.has(itemId)) {
-          this._expandedItemIds.delete(itemId);
-        } else {
-          this._expandedItemIds.add(itemId);
+          if (this._expandedItemIds.has(itemId)) {
+            this._expandedItemIds.delete(itemId);
+          } else {
+            this._expandedItemIds.add(itemId);
+          }
+
+          // Re-render to show/hide expanded content
+          this.render();
+        } catch (err) {
+          console.error("Error toggling item expand:", err);
         }
-
-        // Re-render to show/hide expanded content
-        this.render();
       });
     }
 
