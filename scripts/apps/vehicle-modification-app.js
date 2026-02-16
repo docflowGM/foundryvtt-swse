@@ -27,7 +27,8 @@ export class VehicleModificationApp extends SWSEApplication {
       position: { width: 900, height: 700 },
       title: 'Starship Acquisition & Modification',
       resizable: true,
-      draggable: true
+      draggable: true,
+      popOut: true
     }
   );
 
