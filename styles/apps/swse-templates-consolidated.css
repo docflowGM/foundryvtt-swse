@@ -160,21 +160,24 @@ section {
 }
 
 .type-grid {
- display: grid;
- grid-template-columns: repeat(2, 1fr);
- gap: 2rem;
- max-width: 600px;
- margin: 2rem auto;
+ display: flex;
+ gap: 1.5rem;
+ margin: 2rem 0;
+ flex-wrap: wrap;
+ justify-content: center;
 }
 
 .type-grid .choice-button {
- padding: 2rem;
- min-height: 150px;
+ flex: 0 1 calc(33.333% - 1rem);
+ min-width: 200px;
+ padding: 1.5rem;
+ min-height: 140px;
  display: flex;
  flex-direction: column;
  align-items: center;
  justify-content: center;
- gap: 0.5rem;
+ gap: 0.75rem;
+ text-align: center;
 }
 
 .type-grid .choice-button i {
@@ -184,19 +187,40 @@ section {
 
 .type-card {
  cursor: pointer;
- border: 2px solid var(--color-border-light);
+ border: 2px solid var(--swse-accent, #00d9ff);
  border-radius: 8px;
+ padding: 1.5rem;
+ background: linear-gradient(135deg, rgba(7, 31, 44, 0.8), rgba(13, 47, 63, 0.8));
  transition: all 0.2s ease;
 }
 
+.type-card h3 {
+ font-size: 1.1rem;
+ font-weight: bold;
+ text-transform: uppercase;
+ margin: 0 0 0.5rem 0;
+}
+
+.type-card p {
+ font-size: 0.9rem;
+ margin: 0;
+ opacity: 0.9;
+}
+
 .type-card:hover {
- border-color: var(--color-accent);
- box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
- transform: translateY(-2px);
+ border-color: #00d9ff;
+ box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+ transform: translateY(-3px);
+}
+
+.type-card.selected {
+ border-color: #00d9ff;
+ box-shadow: 0 0 20px rgba(0, 217, 255, 0.6);
+ background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(0, 217, 255, 0.1));
 }
 
 .type-card:active {
- transform: translateY(0);
+ transform: translateY(-1px);
 }
 
 .import-option {
