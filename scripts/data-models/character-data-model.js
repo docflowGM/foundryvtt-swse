@@ -252,6 +252,13 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     };
   }
 
+  /**
+   * PHASE C: V14 ASYNC COMPATIBILITY
+   * This method MUST remain synchronous per Foundry's requirement.
+   * prepareDerivedData() cannot be async in v13 or v14.
+   * All derived calculations are synchronous and complete before returning.
+   * For future v14+ async operations, see prepareDataAsync() stub below.
+   */
   prepareDerivedData() {
     const actor = this.parent;
 
@@ -1092,5 +1099,24 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       this.destinyPoints.value,
       this.destinyPoints.max
     );
+  }
+
+  /**
+   * PHASE C: V14+ Async Preparation Stub
+   *
+   * In Foundry v14+, if async derived data operations become necessary,
+   * this method can be implemented to handle them asynchronously.
+   *
+   * Current architecture: All derived data is synchronous (required).
+   * Future path: If V14 requires async operations, implement this method
+   * and ensure it's called at the appropriate lifecycle point.
+   *
+   * DO NOT call this in v13. This is scaffolding for future compatibility.
+   */
+  async prepareDataAsync() {
+    // Stub: Future implementation for v14+ async operations
+    // This preserves synchronous prepareDerivedData() contract while
+    // allowing async operations if needed in future Foundry versions.
+    return Promise.resolve();
   }
 }
