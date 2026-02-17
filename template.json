@@ -407,7 +407,7 @@
       },
       "prerequisites": [],
       "tags": [],
-      "icon": "fas fa-fighter-jet"
+      "icon": "fa-solid fa-fighter-jet"
     },
     "vehicleWeapon": {
       "templates": [

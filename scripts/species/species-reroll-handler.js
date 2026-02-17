@@ -175,7 +175,7 @@ export class SpeciesRerollHandler {
     const content = `
       <div class="swse-species-reroll-card">
         <div class="swse-holo-header">
-          <i class="fas fa-dice"></i> ${traitName} - Reroll
+          <i class="fa-solid fa-dice"></i> ${traitName} - Reroll
         </div>
         <table class="swse-holo-breakdown">
           <tr><td>Skill</td><td>${skillName}</td></tr>
@@ -257,7 +257,7 @@ export class SpeciesRerollHandler {
                 data-skill="${skillKey}"
                 data-trait-id="${trait.id}"
                 data-roll-total="${roll.total}">
-          <i class="fas fa-dice"></i> ${traitName}: Reroll
+          <i class="fa-solid fa-dice"></i> ${traitName}: Reroll
         </button>
       </div>
     `;
@@ -327,7 +327,7 @@ export function registerRerollListeners() {
 
       // Disable the button
       button.disabled = true;
-      button.innerHTML = '<i class="fas fa-check"></i> Reroll Used';
+      button.innerHTML = '<i class="fa-solid fa-check"></i> Reroll Used';
 
       // Send result to chat
       await SpeciesRerollHandler._sendRerollMessage(

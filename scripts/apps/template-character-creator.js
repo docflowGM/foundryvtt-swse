@@ -239,7 +239,7 @@ async _prepareContext(options) {
         content: content,
         buttons: {
           confirm: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Create Character',
             callback: (html) => {
               // Get character name from input field using native DOM API
@@ -261,7 +261,7 @@ async _prepareContext(options) {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Go Back',
             callback: () => {
               if (onCancel) {
@@ -451,7 +451,7 @@ async _prepareContext(options) {
       content: content,
       buttons: {
         confirm: {
-          icon: '<i class="fas fa-check"></i>',
+          icon: '<i class="fa-solid fa-check"></i>',
           label: 'Finish',
           callback: async (html) => {
             // Get selected skills using native DOM API
@@ -676,7 +676,7 @@ async _prepareContext(options) {
         `,
         buttons: {
           create: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Create',
             callback: (html) => {
               const nameInput = html.querySelector('#character-name');
@@ -691,7 +691,7 @@ async _prepareContext(options) {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => {
               dialog.close();
@@ -1098,7 +1098,7 @@ async _prepareContext(options) {
         content: content,
         buttons: {
           confirm: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Create Character',
             callback: (html) => {
               const nameInput = html.querySelector('#template-char-name');
@@ -1117,7 +1117,7 @@ async _prepareContext(options) {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Go Back',
             callback: () => {
               if (onCancel) {

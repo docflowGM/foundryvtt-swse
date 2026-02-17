@@ -138,7 +138,7 @@ export function computeVehicleDefensiveStats(vehicleActor) {
 
 /**
  * Evaluate range bands for vehicle weapons.
- * RAW: starship ranges are in squares but far greater than personal weapons.
+ * RAW: starship ranges are in squares but fa-regular greater than personal weapons.
  */
 export function computeVehicleRangeBand(attackerToken, targetToken, weapon, actor) {
   const dist = measureSquares(attackerToken, targetToken);

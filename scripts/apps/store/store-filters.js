@@ -67,7 +67,7 @@ export function applyAvailabilityFilter(doc, filterValue, itemsById) {
         const tempEmptyMessage = document.createElement('div');
         tempEmptyMessage.className = 'empty-message temp-empty-message';
         tempEmptyMessage.innerHTML = `
-            <i class="fas fa-filter"></i>
+            <i class="fa-solid fa-filter"></i>
             <p>No items match the selected availability filter.</p>
         `;
         const productsList = activePanel.querySelector('.products-list');
@@ -122,7 +122,7 @@ export function applySearchFilter(doc, searchTerm) {
             searchEmptyMsg = document.createElement('div');
             searchEmptyMsg.className = 'empty-message search-empty-message';
             searchEmptyMsg.innerHTML = `
-                <i class="fas fa-search"></i>
+                <i class="fa-solid fa-search"></i>
                 <p>No items found matching "${searchTerm}".</p>
             `;
             const productsList = activePanel.querySelector('.products-list');

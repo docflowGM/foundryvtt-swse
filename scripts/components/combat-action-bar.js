@@ -54,7 +54,7 @@ export class CombatActionBar {
   static _headerHTML(actor, inCombat) {
     return `
       <header class="swse-bar-header">
-        <h3><i class="fas fa-swords"></i> ${escapeHTML(actor.name)} — Combat</h3>
+        <h3><i class="fa-solid fa-swords"></i> ${escapeHTML(actor.name)} — Combat</h3>
         ${inCombat ? `<span class="in-combat">In Combat</span>` : ''}
       </header>`;
   }
@@ -93,12 +93,12 @@ export class CombatActionBar {
           <h4>Attack</h4>
           <button class="swse-btn" data-action="attack"
             ${!econ.standard || !hasWeapon ? 'disabled' : ''}>
-            <i class="fas fa-sword"></i> Attack
+            <i class="fa-solid fa-sword"></i> Attack
           </button>
 
           <button class="swse-btn" data-action="full-attack"
             ${!econ.fullRound || !hasWeapon ? 'disabled' : ''}>
-            <i class="fas fa-swords"></i> Full Attack
+            <i class="fa-solid fa-swords"></i> Full Attack
           </button>
         </div>
 
@@ -108,13 +108,13 @@ export class CombatActionBar {
 
           <button class="swse-btn ${eff.fightingDefensively ? 'active' : ''}"
             data-action="fighting-defensively">
-            <i class="fas fa-shield-halved"></i> Fight Defensively
+            <i class="fa-solid fa-shield-halved"></i> Fight Defensively
           </button>
 
           <button class="swse-btn ${eff.totalDefense ? 'active' : ''}"
             data-action="total-defense"
             ${!econ.standard ? 'disabled' : ''}>
-            <i class="fas fa-shield"></i> Total Defense
+            <i class="fa-solid fa-shield"></i> Total Defense
           </button>
         </div>
 
@@ -124,12 +124,12 @@ export class CombatActionBar {
 
           <button class="swse-btn" data-action="move"
             ${!econ.move ? 'disabled' : ''}>
-            <i class="fas fa-person-running"></i> Move
+            <i class="fa-solid fa-person-running"></i> Move
           </button>
 
           <button class="swse-btn" data-action="charge"
             ${!econ.fullRound ? 'disabled' : ''}>
-            <i class="fas fa-horse-head"></i> Charge
+            <i class="fa-solid fa-horse-head"></i> Charge
           </button>
         </div>
 
@@ -139,12 +139,12 @@ export class CombatActionBar {
 
           <button class="swse-btn" data-action="aid-another"
             ${!econ.standard ? 'disabled' : ''}>
-            <i class="fas fa-handshake"></i> Aid Another
+            <i class="fa-solid fa-handshake"></i> Aid Another
           </button>
 
           <button class="swse-btn" data-action="second-wind"
             ${actor.system.secondWind?.uses < 1 || !econ.swift ? 'disabled' : ''}>
-            <i class="fas fa-heart-pulse"></i> Second Wind (${actor.system.secondWind?.uses}/1)
+            <i class="fa-solid fa-heart-pulse"></i> Second Wind (${actor.system.secondWind?.uses}/1)
           </button>
         </div>
 
@@ -155,7 +155,7 @@ export class CombatActionBar {
     return `
       <section class="swse-end-turn">
         <button class="swse-btn end-turn" data-action="end-turn">
-          <i class="fas fa-forward"></i> End Turn
+          <i class="fa-solid fa-forward"></i> End Turn
         </button>
       </section>`;
   }

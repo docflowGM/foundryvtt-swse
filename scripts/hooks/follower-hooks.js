@@ -153,7 +153,7 @@ class FollowerTemplateSelectionDialog extends foundry.applications.api.Applicati
     static DEFAULT_OPTIONS = {
         id: 'follower-template-selection-dialog',
         tag: 'div',
-        window: { icon: 'fas fa-users', title: 'Choose Follower Template' },
+        window: { icon: 'fa-solid fa-users', title: 'Choose Follower Template' },
         position: { width: 600, height: 'auto' }
     };
 
@@ -189,10 +189,10 @@ class FollowerTemplateSelectionDialog extends foundry.applications.api.Applicati
             </form>
             <div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
                 <button class="btn btn-primary" data-action="create" style="margin-right: 0.5rem;">
-                    <i class="fas fa-check"></i> Continue
+                    <i class="fa-solid fa-check"></i> Continue
                 </button>
                 <button class="btn btn-secondary" data-action="cancel">
-                    <i class="fas fa-times"></i> Cancel
+                    <i class="fa-solid fa-times"></i> Cancel
                 </button>
             </div>
         `;
@@ -270,9 +270,9 @@ function addFollowerManagementUI(html, actor, followerTalents) {
     const followerHTML = `
         <div class="follower-management-section">
             <h3>
-                <i class="fas fa-users"></i> Followers
+                <i class="fa-solid fa-users"></i> Followers
                 <button type="button" class="create-follower-btn" title="Create New Follower">
-                    <i class="fas fa-plus"></i> Add Follower
+                    <i class="fa-solid fa-plus"></i> Add Follower
                 </button>
             </h3>
             <div class="followers-list">
@@ -286,10 +286,10 @@ function addFollowerManagementUI(html, actor, followerTalents) {
                         </div>
                         <div class="follower-actions">
                             <button type="button" class="open-follower-sheet" title="Open Sheet">
-                                <i class="fas fa-file-alt"></i>
+                                <i class="fa-solid fa-file-alt"></i>
                             </button>
                             <button type="button" class="remove-follower" title="Remove Follower">
-                                <i class="fas fa-trash"></i>
+                                <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
                     </div>
@@ -349,7 +349,7 @@ class TalentSelectionDialog extends foundry.applications.api.ApplicationV2 {
     static DEFAULT_OPTIONS = {
         id: 'talent-selection-dialog',
         tag: 'div',
-        window: { icon: 'fas fa-list', title: 'Select Talent' },
+        window: { icon: 'fa-solid fa-list', title: 'Select Talent' },
         position: { width: 500, height: 'auto' }
     };
 
@@ -371,10 +371,10 @@ class TalentSelectionDialog extends foundry.applications.api.ApplicationV2 {
             </form>
             <div class="dialog-buttons" style="margin-top: 1rem; text-align: right;">
                 <button class="btn btn-primary" data-action="select" style="margin-right: 0.5rem;">
-                    <i class="fas fa-check"></i> Select
+                    <i class="fa-solid fa-check"></i> Select
                 </button>
                 <button class="btn btn-secondary" data-action="cancel">
-                    <i class="fas fa-times"></i> Cancel
+                    <i class="fa-solid fa-times"></i> Cancel
                 </button>
             </div>
         `;

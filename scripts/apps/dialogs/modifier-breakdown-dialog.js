@@ -49,7 +49,7 @@ export class ModifierBreakdownDialog extends Dialog {
       content,
       buttons: {
         close: {
-          icon: '<i class="fas fa-check"></i>',
+          icon: '<i class="fa-solid fa-check"></i>',
           label: 'Close',
           callback: () => {}
         }

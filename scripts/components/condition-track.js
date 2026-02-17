@@ -44,11 +44,11 @@ export class ConditionTrackComponent {
 
         <div class="ct-controls">
           <button class="ct-btn improve" data-ct="improve">
-            <i class="fas fa-arrow-up"></i> Recover
+            <i class="fa-solid fa-arrow-up"></i> Recover
           </button>
 
           <button class="ct-btn worsen" data-ct="worsen">
-            <i class="fas fa-arrow-down"></i> Worsen
+            <i class="fa-solid fa-arrow-down"></i> Worsen
           </button>
 
           <label class="ct-persistent">
@@ -88,7 +88,7 @@ export class ConditionTrackComponent {
   static _headerHTML(persistent) {
     return `
       <div class="ct-header">
-        <h3><i class="fas fa-heart-crack"></i> Condition Track</h3>
+        <h3><i class="fa-solid fa-heart-crack"></i> Condition Track</h3>
         ${persistent ? `<span class="ct-tag">Persistent</span>` : ''}
       </div>
     `;

@@ -223,15 +223,15 @@ export async function _calculateForcePowerSuggestions(powers) {
  */
 function _getSuggestionIcon(tier) {
   const iconMap = {
-    6: 'fas fa-crown',      // Prestige prerequisite
-    5: 'fas fa-star',       // Prestige ready now
-    4: 'fas fa-link',       // Path continuation
-    3: 'fas fa-gem',        // Strong synergy
-    2: 'fas fa-bolt',       // Ability synergy
-    1: 'fas fa-check',      // Thematic fit
-    0: 'fas fa-circle'      // Available
+    6: 'fa-solid fa-crown',      // Prestige prerequisite
+    5: 'fa-solid fa-star',       // Prestige ready now
+    4: 'fa-solid fa-link',       // Path continuation
+    3: 'fa-solid fa-gem',        // Strong synergy
+    2: 'fa-solid fa-bolt',       // Ability synergy
+    1: 'fa-solid fa-check',      // Thematic fit
+    0: 'fa-solid fa-circle'      // Available
   };
-  return iconMap[tier] || 'fas fa-circle';
+  return iconMap[tier] || 'fa-solid fa-circle';
 }
 
 /**

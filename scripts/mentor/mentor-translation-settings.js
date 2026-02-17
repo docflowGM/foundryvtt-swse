@@ -130,7 +130,7 @@ export class MentorTranslationSettings {
       content,
       buttons: {
         save: {
-          icon: '<i class="fas fa-check"></i>',
+          icon: '<i class="fa-solid fa-check"></i>',
           label: 'Save',
           callback: (html) => {
             const enabled = html.querySelector('#translation-enabled')?.checked;
@@ -145,7 +145,7 @@ export class MentorTranslationSettings {
           }
         },
         cancel: {
-          icon: '<i class="fas fa-times"></i>',
+          icon: '<i class="fa-solid fa-times"></i>',
           label: 'Close'
         }
       }

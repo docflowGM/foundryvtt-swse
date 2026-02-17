@@ -263,7 +263,7 @@ Phase 4 — Application
    - This is essential for checking prerequisites during multi-step progression
 
 4. **Single Source of Truth Matters**
-   - Having PRESTIGE_PREREQUISITES in one place (prestige-prerequisites.js) is far better than scattered rules
+   - Having PRESTIGE_PREREQUISITES in one place (prestige-prerequisites.js) is fa-regular better than scattered rules
    - Makes adding/modifying prestige classes simple and discoverable
 
 ---

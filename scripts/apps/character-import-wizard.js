@@ -11,7 +11,7 @@ export class CharacterImportWizard extends foundry.applications.api.ApplicationV
   static DEFAULT_OPTIONS = {
     id: 'character-import-wizard',
     tag: 'div',
-    window: { icon: 'fas fa-upload', title: 'Import Character' },
+    window: { icon: 'fa-solid fa-upload', title: 'Import Character' },
     position: { width: 600, height: 'auto' },
     form: { handler: CharacterImportWizard.onSave, closeOnSave: false }
   };

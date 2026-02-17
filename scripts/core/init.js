@@ -15,7 +15,7 @@ Hooks.once('ready', () => {
     const btn = document.createElement('button');
     btn.id = 'gm-droid-approval-btn';
     btn.className = 'gm-droid-approval-button';
-    btn.innerHTML = '<i class="fas fa-clipboard-check"></i> Droid Approvals';
+    btn.innerHTML = '<i class="fa-solid fa-clipboard-check"></i> Droid Approvals';
     btn.title = 'Review and approve pending custom droids';
     btn.addEventListener('click', () => GMDroidApprovalDashboard.open());
 

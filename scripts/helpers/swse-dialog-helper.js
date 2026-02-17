@@ -98,7 +98,7 @@ export default class SWSEDialogHelper {
         content: `<p>${message}</p>`,
         buttons: {
           ok: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'OK',
             callback: () => true
           }

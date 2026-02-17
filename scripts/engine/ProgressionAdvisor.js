@@ -260,15 +260,15 @@ export class ProgressionAdvisor {
   static getAbilityIcon(ability) {
     const abbrev = this.getAbilityAbbrev(ability);
     const icons = {
-      'str': 'fas fa-hammer',        // Strength
-      'dex': 'fas fa-feather',       // Dexterity
-      'con': 'fas fa-heart',         // Constitution
-      'int': 'fas fa-brain',         // Intelligence
-      'wis': 'fas fa-eye',           // Wisdom
-      'cha': 'fas fa-users'          // Charisma
+      'str': 'fa-solid fa-hammer',        // Strength
+      'dex': 'fa-solid fa-feather',       // Dexterity
+      'con': 'fa-solid fa-heart',         // Constitution
+      'int': 'fa-solid fa-brain',         // Intelligence
+      'wis': 'fa-solid fa-eye',           // Wisdom
+      'cha': 'fa-solid fa-users'          // Charisma
     };
 
-    return icons[abbrev] || 'fas fa-cube';
+    return icons[abbrev] || 'fa-solid fa-cube';
   }
 }
 

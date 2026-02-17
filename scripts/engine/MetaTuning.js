@@ -223,7 +223,7 @@ export function registerMetaTuningSettings() {
         name: 'Suggestion Engine Tuning',
         label: 'Configure Suggestion Engine',
         hint: 'Adjust weights and parameters for feat, talent, and class suggestions',
-        icon: 'fas fa-sliders-h',
+        icon: 'fa-solid fa-sliders-h',
         type: MetaTuningConfig,
         restricted: true
     });

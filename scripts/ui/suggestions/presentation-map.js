@@ -27,7 +27,7 @@ export const SUGGESTION_PRESENTATION_MAP = {
   // Tier 6: Prestige path prerequisites
   PRESTIGE_PREREQ: {
     icon: 'fa-crown',
-    iconClass: 'fas fa-crown suggestion-prestige',
+    iconClass: 'fa-solid fa-crown suggestion-prestige',
     cssClass: 'suggestion-tier-prestige',
     reason: "Prerequisite for a prestige class you're building toward",
     color: 'gold',
@@ -37,7 +37,7 @@ export const SUGGESTION_PRESENTATION_MAP = {
   // Tier 5.5: Wishlist prerequisites
   WISHLIST_PATH: {
     icon: 'fa-star',
-    iconClass: 'fas fa-star suggestion-wishlist',
+    iconClass: 'fa-solid fa-star suggestion-wishlist',
     cssClass: 'suggestion-tier-wishlist',
     reason: 'Prerequisite for a goal on your wishlist',
     color: 'cyan',
@@ -47,7 +47,7 @@ export const SUGGESTION_PRESENTATION_MAP = {
   // Tier 5: Meta synergy & martial arts
   META_SYNERGY: {
     icon: 'fa-fire',
-    iconClass: 'fas fa-fire suggestion-synergy',
+    iconClass: 'fa-solid fa-fire suggestion-synergy',
     cssClass: 'suggestion-tier-synergy',
     reason: 'Strong recommendation for your build',
     color: 'red',
@@ -56,7 +56,7 @@ export const SUGGESTION_PRESENTATION_MAP = {
 
   MARTIAL_ARTS: {
     icon: 'fa-fire',
-    iconClass: 'fas fa-fire suggestion-martial',
+    iconClass: 'fa-solid fa-fire suggestion-martial',
     cssClass: 'suggestion-tier-martial',
     reason: 'Martial arts feat - highly recommended when prerequisites are met',
     color: 'orange',
@@ -66,7 +66,7 @@ export const SUGGESTION_PRESENTATION_MAP = {
   // Tier 4.5: Species-specific feats
   SPECIES_EARLY: {
     icon: 'fa-dna',
-    iconClass: 'fas fa-dna suggestion-species',
+    iconClass: 'fa-solid fa-dna suggestion-species',
     cssClass: 'suggestion-tier-species',
     reason: 'Excellent species feat for your level',
     color: 'purple',
@@ -76,7 +76,7 @@ export const SUGGESTION_PRESENTATION_MAP = {
   // Tier 4: Chain continuation
   CHAIN_CONTINUATION: {
     icon: 'fa-link',
-    iconClass: 'fas fa-link suggestion-chain',
+    iconClass: 'fa-solid fa-link suggestion-chain',
     cssClass: 'suggestion-tier-chain',
     reason: 'Builds directly on a feat or talent you already have',
     color: 'green',
@@ -86,7 +86,7 @@ export const SUGGESTION_PRESENTATION_MAP = {
   // Tier 3.5: Mentor bias matches
   MENTOR_BIAS_MATCH: {
     icon: 'fa-user-tie',
-    iconClass: 'fas fa-user-tie suggestion-mentor',
+    iconClass: 'fa-solid fa-user-tie suggestion-mentor',
     cssClass: 'suggestion-tier-mentor',
     reason: 'Aligns with your mentor survey answers',
     color: 'blue',
@@ -96,7 +96,7 @@ export const SUGGESTION_PRESENTATION_MAP = {
   // Tier 3: Trained skill matches
   SKILL_PREREQ_MATCH: {
     icon: 'fa-bullseye',
-    iconClass: 'fas fa-bullseye suggestion-skill',
+    iconClass: 'fa-solid fa-bullseye suggestion-skill',
     cssClass: 'suggestion-tier-skill',
     reason: 'Uses a trained skill you possess',
     color: 'lime',
@@ -106,7 +106,7 @@ export const SUGGESTION_PRESENTATION_MAP = {
   // Tier 2: Ability score matches
   ABILITY_PREREQ_MATCH: {
     icon: 'fa-fist-raised',
-    iconClass: 'fas fa-fist-raised suggestion-ability',
+    iconClass: 'fa-solid fa-fist-raised suggestion-ability',
     cssClass: 'suggestion-tier-ability',
     reason: 'Scales with your highest ability score',
     color: 'yellow',
@@ -116,7 +116,7 @@ export const SUGGESTION_PRESENTATION_MAP = {
   // Tier 1: Class synergy
   CLASS_SYNERGY: {
     icon: 'fa-users-cog',
-    iconClass: 'fas fa-users-cog suggestion-class',
+    iconClass: 'fa-solid fa-users-cog suggestion-class',
     cssClass: 'suggestion-tier-class',
     reason: 'Strong synergy with your class',
     color: 'silver',
@@ -136,7 +136,7 @@ export const SUGGESTION_PRESENTATION_MAP = {
   // Future availability (unqualified items)
   FUTURE_AVAILABLE: {
     icon: 'fa-hourglass-end',
-    iconClass: 'fas fa-hourglass-end suggestion-future',
+    iconClass: 'fa-solid fa-hourglass-end suggestion-future',
     cssClass: 'suggestion-tier-future',
     reason: 'Available in future levels',
     color: 'orange',

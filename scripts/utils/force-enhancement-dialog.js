@@ -26,7 +26,7 @@ export class ForceEnhancementDialog {
         content: this._buildDialogContent(actor, power, techniques, secrets),
         buttons: {
           apply: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Apply Selected',
             callback: (html) => {
               const selected = this._parseSelections(html, techniques, secrets);
@@ -34,7 +34,7 @@ export class ForceEnhancementDialog {
             }
           },
           none: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Use Without Enhancements',
             callback: () => resolve({ techniques: [], secrets: [] })
           }
@@ -69,7 +69,7 @@ export class ForceEnhancementDialog {
     if (techniques.length > 0) {
       html += `
         <div class="enhancement-section">
-          <h3><i class="fas fa-hand-sparkles"></i> Force Techniques</h3>
+          <h3><i class="fa-solid fa-hand-sparkles"></i> Force Techniques</h3>
           <div class="enhancement-list">
       `;
 
@@ -103,7 +103,7 @@ export class ForceEnhancementDialog {
     if (secrets.length > 0) {
       html += `
         <div class="enhancement-section">
-          <h3><i class="fas fa-star"></i> Force Secrets</h3>
+          <h3><i class="fa-solid fa-star"></i> Force Secrets</h3>
           <div class="enhancement-list">
       `;
 
@@ -142,11 +142,11 @@ export class ForceEnhancementDialog {
     html += `
         <div class="enhancement-resources">
           <div class="resource-display">
-            <i class="fas fa-bolt"></i>
+            <i class="fa-solid fa-bolt"></i>
             <strong>Force Points:</strong> ${fp.value}/${fp.max}
           </div>
           <div class="resource-display">
-            <i class="fas fa-star"></i>
+            <i class="fa-solid fa-star"></i>
             <strong>Destiny Points:</strong> ${dp.value}/${dp.max}
           </div>
         </div>

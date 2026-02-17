@@ -50,49 +50,49 @@ export class HouserulesConfig extends SWSEFormApplicationV2 {
       menus: [
         {
           id: 'character-creation',
-          icon: 'fas fa-user-plus',
+          icon: 'fa-solid fa-user-plus',
           title: 'Character Creation',
           description: 'Ability scores, hit points, and starting character rules'
         },
         {
           id: 'character-restrictions',
-          icon: 'fas fa-ban',
+          icon: 'fa-solid fa-ban',
           title: 'Character Restrictions',
           description: 'Ban races, disable backgrounds'
         },
         {
           id: 'skills-feats',
-          icon: 'fas fa-dice-d20',
+          icon: 'fa-solid fa-dice-d20',
           title: 'Skills & Feats',
           description: 'Skill checks, feat variants, feint mechanics'
         },
         {
           id: 'advancement',
-          icon: 'fas fa-arrow-up',
+          icon: 'fa-solid fa-arrow-up',
           title: 'Advancement',
           description: 'Level-up rules, talents, retraining'
         },
         {
           id: 'combat',
-          icon: 'fas fa-fist-raised',
+          icon: 'fa-solid fa-fist-raised',
           title: 'Combat',
           description: 'Death, diagonal movement, critical hits, condition track'
         },
         {
           id: 'force',
-          icon: 'fas fa-hand-sparkles',
+          icon: 'fa-solid fa-hand-sparkles',
           title: 'Force & Destiny',
           description: 'Force powers, dark side rules, destiny mechanics'
         },
         {
           id: 'space-combat',
-          icon: 'fas fa-rocket',
+          icon: 'fa-solid fa-rocket',
           title: 'Space Combat',
           description: 'Ship combat, initiative, role priority'
         },
         {
           id: 'presets',
-          icon: 'fas fa-file-import',
+          icon: 'fa-solid fa-file-import',
           title: 'Presets',
           description: 'Load, apply, and export ruleset presets'
         }
@@ -167,7 +167,7 @@ Hooks.once('ready', () => {
     name: 'House Rules Configuration',
     label: 'Configure House Rules',
     hint: 'Open the unified configuration menu for all SWSE houserules.',
-    icon: 'fas fa-cog',
+    icon: 'fa-solid fa-cog',
     type: HouserulesConfig,
     restricted: true
   });

@@ -100,7 +100,7 @@ export class MentorSelectorWindow {
             buttons: {
                 ok: {
                     label: 'Confirm',
-                    icon: '<i class="fas fa-check"></i>',
+                    icon: '<i class="fa-solid fa-check"></i>',
                     callback: async (html) => {
                         const selectedMentor = (html?.[0] ?? html)?.querySelector('#selected-mentor')?.value;
 
@@ -121,7 +121,7 @@ export class MentorSelectorWindow {
                 },
                 cancel: {
                     label: 'Cancel',
-                    icon: '<i class="fas fa-times"></i>'
+                    icon: '<i class="fa-solid fa-times"></i>'
                 }
             },
             default: 'ok',

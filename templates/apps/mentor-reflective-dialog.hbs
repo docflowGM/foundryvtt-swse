@@ -22,7 +22,7 @@
       <!-- Topic Title -->
       <div class="topic-display">
         <h3>
-          <i class="fas {{currentTopic.icon}}"></i>
+          <i class="fa-solid {{currentTopic.icon}}"></i>
           {{currentTopic.title}}
         </h3>
         <p class="topic-desc">{{currentTopic.description}}</p>
@@ -61,7 +61,7 @@
           <i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Commit to Striker Path
         </button>
         <button class="commit-path-btn" data-path="controller" type="button">
-          <i class="fas fa-wand-magic-sparkles"></i> Commit to Controller Path
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Commit to Controller Path
         </button>
       </div>
       {{/if}}
@@ -107,7 +107,7 @@
         {{#each topics}}
           <button class="topic-button" data-topic="{{this.key}}" type="button">
             <div class="topic-icon">
-              <i class="fas {{this.icon}}"></i>
+              <i class="fa-solid {{this.icon}}"></i>
             </div>
             <div class="topic-text">
               <h4>{{this.title}}</h4>

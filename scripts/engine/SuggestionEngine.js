@@ -1028,7 +1028,7 @@ export class SuggestionEngine {
      * @param {Object} actorState - Pre-computed actor state
      * @param {Object} buildIntent - Build intent analysis
      * @param {Object} pendingData - Pending selections
-     * @returns {Object|null} Suggestion metadata or null if too far away
+     * @returns {Object|null} Suggestion metadata or null if too fa-regular away
      */
     static _scoreFutureAvailability(item, actor, actorState, buildIntent, pendingData) {
         // Analyze what prerequisites are not met
@@ -1172,7 +1172,7 @@ export class SuggestionEngine {
      * @param {Object} pathway - Qualification pathway analysis
      * @param {Object} item - The feat/talent
      * @param {Object} actorState - Pre-computed actor state
-     * @returns {Object|null} Tier score object or null if too far away
+     * @returns {Object|null} Tier score object or null if too fa-regular away
      */
     static _calcFutureAvailabilityTier(pathway, item, actorState) {
         if (pathway.levelsToQualify === 0) {return null;}  // Already qualified

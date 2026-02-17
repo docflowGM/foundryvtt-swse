@@ -92,7 +92,7 @@ export class FeatEffectsMigration {
             content: message,
             buttons: {
                 ok: {
-                    icon: '<i class="fas fa-check"></i>',
+                    icon: '<i class="fa-solid fa-check"></i>',
                     label: 'OK'
                 }
             }

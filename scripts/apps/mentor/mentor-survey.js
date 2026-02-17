@@ -688,7 +688,7 @@ export class MentorSurvey {
             `,
             buttons: {
               accept: {
-                icon: '<i class="fas fa-check"></i>',
+                icon: '<i class="fa-solid fa-check"></i>',
                 label: "I'm ready",
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] promptSurvey: ✓ User clicked ACCEPT button`);
@@ -696,7 +696,7 @@ export class MentorSurvey {
                 }
               },
               decline: {
-                icon: '<i class="fas fa-times"></i>',
+                icon: '<i class="fa-solid fa-times"></i>',
                 label: 'Maybe later',
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] promptSurvey: ✓ User clicked DECLINE button`);

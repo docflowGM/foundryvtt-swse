@@ -688,7 +688,7 @@ export class MentorSurvey {
             `,
             buttons: {
               accept: {
-                icon: '<i class="fas fa-check"></i>',
+                icon: '<i class="fa-solid fa-check"></i>',
                 label: "I'm ready",
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] promptSurvey: ✓ User clicked ACCEPT button`);
@@ -696,7 +696,7 @@ export class MentorSurvey {
                 }
               },
               decline: {
-                icon: '<i class="fas fa-times"></i>',
+                icon: '<i class="fa-solid fa-times"></i>',
                 label: 'Maybe later',
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] promptSurvey: ✓ User clicked DECLINE button`);
@@ -795,7 +795,7 @@ export class MentorSurvey {
             `,
             buttons: {
               continue: {
-                icon: '<i class="fas fa-arrow-right"></i>',
+                icon: '<i class="fa-solid fa-arrow-right"></i>',
                 label: 'Continue',
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] showSurvey: User acknowledged skip confirmation`);
@@ -851,7 +851,7 @@ export class MentorSurvey {
             `,
             buttons: {
               begin: {
-                icon: '<i class="fas fa-arrow-right"></i>',
+                icon: '<i class="fa-solid fa-arrow-right"></i>',
                 label: isResuming ? 'Continue Survey' : 'Begin Survey',
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] showSurvey: User ${isResuming ? 'resumed' : 'began'} survey`);
@@ -859,7 +859,7 @@ export class MentorSurvey {
                 }
               },
               skip: {
-                icon: '<i class="fas fa-forward"></i>',
+                icon: '<i class="fa-solid fa-forward"></i>',
                 label: 'Skip Survey',
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] showSurvey: User skipped survey at ${isResuming ? 'resume' : 'introduction'}`);
@@ -907,7 +907,7 @@ export class MentorSurvey {
             `,
             buttons: {
               finish: {
-                icon: '<i class="fas fa-check"></i>',
+                icon: '<i class="fa-solid fa-check"></i>',
                 label: 'Continue',
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] showSurvey: User finished survey`);
@@ -976,7 +976,7 @@ export class MentorSurvey {
             `,
             buttons: {
               next: {
-                icon: '<i class="fas fa-arrow-right"></i>',
+                icon: '<i class="fa-solid fa-arrow-right"></i>',
                 label: index === questionIds.length - 1 ? 'Finish' : 'Next',
                 callback: (html) => {
                   const selectedIndex = parseInt((root?.querySelector?.('input[name="answer"]:checked')?.value ?? null), 10);
@@ -997,7 +997,7 @@ export class MentorSurvey {
                 }
               },
               skip: {
-                icon: '<i class="fas fa-forward"></i>',
+                icon: '<i class="fa-solid fa-forward"></i>',
                 label: 'Skip Survey',
                 callback: () => {
                   swseLogger.log(`[MENTOR-SURVEY] showSurvey: User skipped survey at question ${index + 1}/${questionIds.length}`);

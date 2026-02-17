@@ -347,7 +347,7 @@ Hooks.on("getHeaderControlsApplicationV2", (app, controls) => {
     // Chargen / Level Up button
     if (!chargenComplete) {
       controls.unshift({
-        icon: "fas fa-user-plus",
+        icon: "fa-solid fa-user-plus",
         label: "Chargen",
         class: "swse-glow-button",
         action: () => {
@@ -356,7 +356,7 @@ Hooks.on("getHeaderControlsApplicationV2", (app, controls) => {
       });
     } else {
       controls.unshift({
-        icon: "fas fa-arrow-up",
+        icon: "fa-solid fa-arrow-up",
         label: "Level Up",
         class: "swse-glow-button",
         action: () => {
@@ -371,7 +371,7 @@ Hooks.on("getHeaderControlsApplicationV2", (app, controls) => {
     // Only show Level Up if progression mode is enabled
     if (actor.system?.useProgression) {
       controls.unshift({
-        icon: "fas fa-arrow-up",
+        icon: "fa-solid fa-arrow-up",
         label: "Level Up",
         class: "swse-glow-button",
         action: () => {
@@ -385,7 +385,7 @@ Hooks.on("getHeaderControlsApplicationV2", (app, controls) => {
   if (app instanceof SWSEV2CharacterSheet || app instanceof SWSEV2NpcSheet) {
     // Store button
     controls.unshift({
-      icon: "fas fa-store",
+      icon: "fa-solid fa-store",
       label: "Store",
       class: "swse-glow-button",
       action: () => {
@@ -395,7 +395,7 @@ Hooks.on("getHeaderControlsApplicationV2", (app, controls) => {
 
     // Mentor button
     controls.unshift({
-      icon: "fas fa-comments",
+      icon: "fa-solid fa-comments",
       label: "Talk to Mentor",
       action: () => {
         game.swse.ui?.MentorDialog?.open?.(actor);

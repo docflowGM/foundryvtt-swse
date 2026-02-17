@@ -196,12 +196,12 @@ async _prepareContext(options) {
       content: content,
       buttons: {
         import: {
-          icon: '<i class="fas fa-download"></i>',
+          icon: '<i class="fa-solid fa-download"></i>',
           label: 'Import to NPC Compendium',
           callback: () => this._importUnitToCompendium(unit)
         },
         close: {
-          icon: '<i class="fas fa-times"></i>',
+          icon: '<i class="fa-solid fa-times"></i>',
           label: 'Close'
         }
       },

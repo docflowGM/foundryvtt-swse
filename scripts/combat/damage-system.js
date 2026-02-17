@@ -99,7 +99,7 @@ export class DamageSystem {
         `,
         buttons: {
           apply: {
-            icon: '<i class="fas fa-heart-broken"></i>',
+            icon: '<i class="fa-solid fa-heart-broken"></i>',
             label: game.i18n.localize('SWSE.Dialogs.ApplyDamage.Button'),
             callback: async html => {
               const amount = Math.max(0, Number((html?.[0] ?? html)?.querySelector('[name="amount"]')?.value || 0));
@@ -117,7 +117,7 @@ export class DamageSystem {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: game.i18n.localize('SWSE.Dialogs.Buttons.Cancel'),
             callback: () => resolve(null)
           }
@@ -170,7 +170,7 @@ export class DamageSystem {
         `,
         buttons: {
           apply: {
-            icon: `<i class="fas ${icon}"></i>`,
+            icon: `<i class="fa-solid ${icon}"></i>`,
             label,
             callback: async html => {
               const amount = Math.max(0, Number((html?.[0] ?? html)?.querySelector('[name="amount"]')?.value || 0));
@@ -186,7 +186,7 @@ export class DamageSystem {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: game.i18n.localize('SWSE.Dialogs.Buttons.Cancel'),
             callback: () => resolve(null)
           }
@@ -227,7 +227,7 @@ export class DamageSystem {
         `,
         buttons: {
           apply: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Apply',
             callback: async html => {
               const newCT = Number((html?.[0] ?? html)?.querySelector('[name="ct"]')?.value);
@@ -236,7 +236,7 @@ export class DamageSystem {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: game.i18n.localize('SWSE.Dialogs.Buttons.Cancel'),
             callback: () => resolve(null)
           }

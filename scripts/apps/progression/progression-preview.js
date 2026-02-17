@@ -207,12 +207,12 @@ export class ProgressionPreview {
         content,
         buttons: {
           confirm: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Apply Changes',
             callback: () => resolve(true)
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => resolve(false)
           }

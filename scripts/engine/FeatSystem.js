@@ -50,10 +50,10 @@ export class FeatSystem {
     }
 
     static _typeIcon(data) {
-        if (data.featType === 'force') {return 'fas fa-jedi';}
-        if (data.benefit?.match(/attack|melee|ranged/i)) {return 'fas fa-crosshairs';}
-        if (data.benefit?.match(/check|skill/i)) {return 'fas fa-dice-d20';}
-        return 'fas fa-star';
+        if (data.featType === 'force') {return 'fa-solid fa-jedi';}
+        if (data.benefit?.match(/attack|melee|ranged/i)) {return 'fa-solid fa-crosshairs';}
+        if (data.benefit?.match(/check|skill/i)) {return 'fa-solid fa-dice-d20';}
+        return 'fa-solid fa-star';
     }
 
     /* -------------------------------------------------------------

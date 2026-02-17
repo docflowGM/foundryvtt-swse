@@ -290,7 +290,7 @@ export function registerDebugCommand() {
         buttons.unshift({
             label: 'Debug BuildIntent',
             class: 'debug-build-intent',
-            icon: 'fas fa-bug',
+            icon: 'fa-solid fa-bug',
             onclick: () => showGMDebugPanel(sheet.actor)
         });
     });

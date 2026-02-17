@@ -113,7 +113,7 @@ game.settings.registerMenu('swse', 'houserules', {
   name: 'House Rules',
   label: 'Configure House Rules',
   hint: 'Enable or disable optional rule variants',
-  icon: 'fas fa-cogs',
+  icon: 'fa-solid fa-cogs',
   type: HouserulesConfig,
   restricted: true  // GM only
 });

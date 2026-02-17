@@ -643,7 +643,7 @@ class BackgroundMentorSuggestionDialog extends foundry.applications.api.Handleba
   static DEFAULT_OPTIONS = {
     id: 'swse-background-mentor-suggestion',
     tag: 'div',
-    window: { icon: 'fas fa-user-tie', title: 'Mentor Recommendation' },
+    window: { icon: 'fa-solid fa-user-tie', title: 'Mentor Recommendation' },
     position: { width: 500, height: 'auto' }
   };
 

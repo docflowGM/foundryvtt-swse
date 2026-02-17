@@ -416,7 +416,7 @@ export class CharacterTemplates {
               <small>${template.notes}</small>
             </div>
             <button class="template-select-btn" data-template-id="${template.id}">
-              <i class="fas fa-check"></i> Select Template
+              <i class="fa-solid fa-check"></i> Select Template
             </button>
           </div>
         `;
@@ -433,7 +433,7 @@ export class CharacterTemplates {
 
         <div class="template-actions">
           <button class="custom-build-btn">
-            <i class="fas fa-user-edit"></i> Custom Build (No Template)
+            <i class="fa-solid fa-user-edit"></i> Custom Build (No Template)
           </button>
         </div>
       </div>
@@ -777,7 +777,7 @@ class TemplateSelectionDialog extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: 'swse-template-selection-dialog',
     tag: 'div',
-    window: { icon: 'fas fa-clipboard-list', title: 'Character Template Selection' },
+    window: { icon: 'fa-solid fa-clipboard-list', title: 'Character Template Selection' },
     position: { width: 900, height: 700 }
   };
 

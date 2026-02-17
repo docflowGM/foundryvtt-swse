@@ -126,7 +126,7 @@ The character sheet automatically displays bonus HP when present:
 ```handlebars
 {{#if system.hp.bonus}}
 <span class="bonus-hp-indicator">
-  <i class="fas fa-shield-alt"></i>+{{system.hp.bonus}}
+  <i class="fa-solid fa-shield-alt"></i>+{{system.hp.bonus}}
 </span>
 {{/if}}
 ```

@@ -110,7 +110,7 @@ export class CustomItemDialog {
         `,
         buttons: {
           create: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Create Weapon',
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
@@ -152,7 +152,7 @@ export class CustomItemDialog {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => resolve(null)
           }
@@ -262,7 +262,7 @@ export class CustomItemDialog {
         `,
         buttons: {
           create: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Create Armor',
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
@@ -304,7 +304,7 @@ export class CustomItemDialog {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => resolve(null)
           }
@@ -366,7 +366,7 @@ export class CustomItemDialog {
         `,
         buttons: {
           create: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Create Equipment',
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
@@ -391,7 +391,7 @@ export class CustomItemDialog {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => resolve(null)
           }
@@ -479,7 +479,7 @@ export class CustomItemDialog {
         `,
         buttons: {
           create: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Create Feat',
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
@@ -515,7 +515,7 @@ export class CustomItemDialog {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => resolve(null)
           }
@@ -591,7 +591,7 @@ export class CustomItemDialog {
         `,
         buttons: {
           create: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Create Talent',
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
@@ -621,7 +621,7 @@ export class CustomItemDialog {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => resolve(null)
           }
@@ -749,10 +749,10 @@ export class CustomItemDialog {
                   <input type="number" name="dc-0" placeholder="DC" class="dc-input" value="15"/>
                   <input type="text" name="effect-0" placeholder="Effect" class="effect-input" style="flex: 2"/>
                   <input type="text" name="description-0" placeholder="Description" class="description-input" style="flex: 3"/>
-                  <button type="button" class="remove-dc-row" data-index="0"><i class="fas fa-times"></i></button>
+                  <button type="button" class="remove-dc-row" data-index="0"><i class="fa-solid fa-times"></i></button>
                 </div>
               </div>
-              <button type="button" id="add-dc-row" class="add-button"><i class="fas fa-plus"></i> Add DC Row</button>
+              <button type="button" id="add-dc-row" class="add-button"><i class="fa-solid fa-plus"></i> Add DC Row</button>
             </div>
 
             <div class="form-row">
@@ -804,7 +804,7 @@ export class CustomItemDialog {
                   <input type="number" name="dc-\${dcRowIndex}" placeholder="DC" class="dc-input"/>
                   <input type="text" name="effect-\${dcRowIndex}" placeholder="Effect" class="effect-input" style="flex: 2"/>
                   <input type="text" name="description-\${dcRowIndex}" placeholder="Description" class="description-input" style="flex: 3"/>
-                  <button type="button" class="remove-dc-row" data-index="\${dcRowIndex}"><i class="fas fa-times"></i></button>
+                  <button type="button" class="remove-dc-row" data-index="\${dcRowIndex}"><i class="fa-solid fa-times"></i></button>
                 \`;
                 container.appendChild(newRow);
 
@@ -827,7 +827,7 @@ export class CustomItemDialog {
         `,
         buttons: {
           create: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Create Force Power',
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
@@ -896,7 +896,7 @@ export class CustomItemDialog {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => resolve(null)
           }

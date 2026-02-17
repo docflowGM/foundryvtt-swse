@@ -383,7 +383,7 @@ actor.system.suggestionEngine.anchors.primary = {
 **Deliverables:**
 - Mentor backstory/flavor text (conditional on player archetype)
 - Dialogue that references specific feats/talents the player has selected
-- "Remember when you first selected [item]? Look how far you've come."
+- "Remember when you first selected [item]? Look how fa-regular you've come."
 - End-of-campaign "retrospective" mentor commentary
 - Optional: Let mentor be "disappointed" or "proud" based on pivot/anchor behavior
 

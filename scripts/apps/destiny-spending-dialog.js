@@ -11,7 +11,7 @@ export class DestinySpendingDialog extends foundry.applications.api.ApplicationV
   static DEFAULT_OPTIONS = {
     id: 'destiny-spending-dialog',
     tag: 'div',
-    window: { icon: 'fas fa-star', title: 'Spend Destiny Point' },
+    window: { icon: 'fa-solid fa-star', title: 'Spend Destiny Point' },
     position: { width: 500, height: 'auto' }
   };
 

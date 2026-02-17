@@ -190,7 +190,7 @@
                     data-ability-id="{{ability.id}}"
                     data-talent-id="{{ability.sourceTalentId}}"
                     type="button">
-              <i class="fas {{#if ability.isToggled}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i>
+              <i class="fa-solid {{#if ability.isToggled}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i>
               {{#if ability.isToggled}}Active{{else}}Inactive{{/if}}
             </button>
           </div>
@@ -317,7 +317,7 @@
     {{!-- Reset Uses Button --}}
     <div class="ability-reset-section">
       <button class="ability-reset-btn" data-action="resetEncounterUses" type="button">
-        <i class="fas fa-arrows-rotate"></i> Reset Encounter Uses
+        <i class="fa-solid fa-arrows-rotate"></i> Reset Encounter Uses
       </button>
       <button class="ability-reset-btn" data-action="resetDayUses" type="button">
         <i class="{{getIconClass 'sun'}}"></i> Reset Daily Uses

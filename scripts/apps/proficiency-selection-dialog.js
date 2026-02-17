@@ -182,7 +182,7 @@ export class ProficiencySelectionDialog {
         `,
         buttons: {
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => resolve(null)
           }

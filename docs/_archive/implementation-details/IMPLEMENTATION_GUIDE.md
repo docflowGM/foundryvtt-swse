@@ -95,7 +95,7 @@ The new system uses data-action attributes. Update your buttons:
 **New pattern:**
 ```handlebars
 <button data-action="createFeat" class="item-control" data-type="feat">
-  <i class="fas fa-plus"></i> Add Feat
+  <i class="fa-solid fa-plus"></i> Add Feat
 </button>
 ```
 
@@ -114,8 +114,8 @@ The new system uses data-action attributes. Update your buttons:
   <div class="item" data-item-id="{{this._id}}">
     <h4>{{this.name}}</h4>
     <div class="item-controls">
-      <a class="item-control" data-action="edit"><i class="fas fa-edit"></i></a>
-      <a class="item-control" data-action="delete"><i class="fas fa-trash"></i></a>
+      <a class="item-control" data-action="edit"><i class="fa-solid fa-edit"></i></a>
+      <a class="item-control" data-action="delete"><i class="fa-solid fa-trash"></i></a>
     </div>
   </div>
 {{/each}}

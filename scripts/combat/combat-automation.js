@@ -131,7 +131,7 @@ export class SWSECombatAutomation {
         `,
         buttons: {
           recover: {
-            icon: '<i class="fas fa-heart"></i>',
+            icon: '<i class="fa-solid fa-heart"></i>',
             label: 'Recover Naturally',
             callback: async () => {
               await actor.moveConditionTrack(-1);
@@ -145,7 +145,7 @@ export class SWSECombatAutomation {
             }
           },
           secondWind: {
-            icon: '<i class="fas fa-wind"></i>',
+            icon: '<i class="fa-solid fa-wind"></i>',
             label: 'Use Second Wind',
             callback: async () => {
               if (actor.type !== 'character') {
@@ -157,7 +157,7 @@ export class SWSECombatAutomation {
             }
           },
           skip: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Skip',
             callback: () => {
               ui.notifications.info(`${actor.name} does not attempt recovery.`);

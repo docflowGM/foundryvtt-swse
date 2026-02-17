@@ -202,7 +202,7 @@ export class OpportunityCostAnalyzer {
           reasons: [`Delays entry into ${targetPrestige} by requiring non-prerequisite choices`]
         };
       } else if (missingFeatCount > 2) {
-        // Prestige still far away - softer warning
+        // Prestige still fa-regular away - softer warning
         return {
           cost: 0.08,
           reasons: [`Slightly diverts from ${targetPrestige} path (${missingFeatCount} prereqs remain)`]

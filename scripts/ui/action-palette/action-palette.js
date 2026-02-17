@@ -231,7 +231,7 @@ export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) 
         content,
         buttons: {
           spawn: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Spawn',
             callback: (html) => {
               const quantity = parseInt((html?.[0] ?? html)?.querySelector('input[name="quantity"]')?.value) || 1;
@@ -241,7 +241,7 @@ export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) 
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => resolve()
           }
@@ -316,7 +316,7 @@ export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) 
         content,
         buttons: {
           execute: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Execute',
             callback: (html) => {
               this._applyCommand(item, html);
@@ -324,7 +324,7 @@ export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) 
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => resolve()
           }

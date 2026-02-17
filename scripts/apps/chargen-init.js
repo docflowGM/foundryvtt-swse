@@ -40,14 +40,14 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                 // Build dialog buttons
                 const buttons = {
                     template: {
-                        icon: '<i class="fas fa-star"></i>',
+                        icon: '<i class="fa-solid fa-star"></i>',
                         label: 'PC from Template',
                         callback: () => {
                             TemplateCharacterCreator.create();
                         }
                     },
                     generator: {
-                        icon: '<i class="fas fa-dice-d20"></i>',
+                        icon: '<i class="fa-solid fa-dice-d20"></i>',
                         label: 'Custom PC Generator',
                         callback: async () => {
                             // Create temporary actor for consistent initialization and mentor survey handling
@@ -70,7 +70,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                 // Add NPC Generator button only if permitted
                 if (canCreateNPC) {
                     buttons.npc = {
-                        icon: '<i class="fas fa-users"></i>',
+                        icon: '<i class="fa-solid fa-users"></i>',
                         label: 'NPC Generator',
                         callback: async () => {
                             // Create temporary NPC actor for consistent initialization
@@ -91,7 +91,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
 
                 // Always allow manual creation
                 buttons.manual = {
-                    icon: '<i class="fas fa-user"></i>',
+                    icon: '<i class="fa-solid fa-user"></i>',
                     label: 'Create Manually',
                     callback: async () => {
                         await createActor({
@@ -127,7 +127,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
             // Template button
             const templateButton = document.createElement('button');
             templateButton.className = 'chargen-button template-button';
-            templateButton.innerHTML = '<i class="fas fa-star"></i> Templates';
+            templateButton.innerHTML = '<i class="fa-solid fa-star"></i> Templates';
             templateButton.title = 'Create character from template';
             templateButton.addEventListener('click', () => {
                 TemplateCharacterCreator.create();
@@ -137,7 +137,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
             // Character generator button
             const button = document.createElement('button');
             button.className = 'chargen-button';
-            button.innerHTML = '<i class="fas fa-hat-wizard"></i> Generator';
+            button.innerHTML = '<i class="fa-solid fa-hat-wizard"></i> Generator';
             button.title = 'Open custom character generator';
             button.addEventListener('click', async () => {
                 // Create temporary actor for consistent initialization and mentor survey handling
@@ -159,7 +159,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
             // Store button
             const storeButton = document.createElement('button');
             storeButton.className = 'chargen-button store-button';
-            storeButton.innerHTML = '<i class="fas fa-shopping-cart"></i> Store';
+            storeButton.innerHTML = '<i class="fa-solid fa-shopping-cart"></i> Store';
             storeButton.title = 'Open the Galactic Trade Exchange';
             storeButton.addEventListener('click', async () => {
                 const { SWSEStore } = await import('./store/store-main.js');

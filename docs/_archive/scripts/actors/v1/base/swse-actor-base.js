@@ -304,7 +304,7 @@ export class SWSEActorBase extends Actor {
     const content = `
       <div class="swse-holo-card swse-item-card">
         <div class="swse-holo-header">
-          <i class="fas fa-box"></i> ${item.name}
+          <i class="fa-solid fa-box"></i> ${item.name}
         </div>
         ${meta ? `<div class="swse-item-meta-row">${meta}</div>` : ''}
         ${description ? `<div class="swse-item-body">${description}</div>` : ''}
@@ -433,7 +433,7 @@ export class SWSEActorBase extends Actor {
     if (!options.silent) {
       const message = `
         <div class="swse force-point-spend">
-          <h4><i class="fas fa-hand-sparkles"></i> Force Point Spent</h4>
+          <h4><i class="fa-solid fa-hand-sparkles"></i> Force Point Spent</h4>
           <p><strong>${this.name}</strong> spends ${amount} Force Point${amount > 1 ? 's' : ''} for ${reason}.</p>
           <p class="fp-remaining">Force Points Remaining: ${fp.value - amount}/${fp.max}</p>
         </div>

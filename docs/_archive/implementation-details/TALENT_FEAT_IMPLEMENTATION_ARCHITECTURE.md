@@ -324,7 +324,7 @@ const pendingData = {
 ```handlebars
 {{#each talentTrees}}
   <button class="select-talent-tree choice-button" data-tree="{{this}}">
-    <i class="fas fa-tree"></i>
+    <i class="fa-solid fa-tree"></i>
     <span>{{this}}</span>
   </button>
 {{/each}}

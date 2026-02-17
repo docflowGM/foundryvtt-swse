@@ -193,7 +193,7 @@ export async function showV1DiagnosticsPanel() {
     content: html,
     buttons: {
       close: {
-        icon: '<i class="fas fa-times"></i>',
+        icon: '<i class="fa-solid fa-times"></i>',
         label: 'Close',
         callback: () => {}
       }

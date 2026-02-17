@@ -265,7 +265,7 @@ if (!cachedData || cachedData.version !== game.system.version) {
 
 ```html
 <button aria-label="Add Blaster Pistol to cart" class="buy-item">
-    <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
+    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Add to Cart
 </button>
 ```
 

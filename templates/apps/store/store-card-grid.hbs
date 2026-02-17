@@ -33,7 +33,7 @@
   <div class="card-store-controls">
     <div class="search-container">
       <input type="text" id="store-search" class="store-search-input" placeholder="Search items..." aria-label="Search store items"/>
-      <i class="fas fa-search"></i>
+      <i class="fa-solid fa-search"></i>
     </div>
 
     <div class="filter-sort-row">
@@ -75,19 +75,19 @@
 
       {{!-- Cart Button --}}
       <button type="button" class="view-cart-btn holo-btn" data-action="view-cart" aria-label="View shopping cart">
-        <i class="fas fa-shopping-cart"></i>
+        <i class="fa-solid fa-shopping-cart"></i>
         <span class="cart-count" id="cart-count" aria-live="polite">0</span>
       </button>
 
       {{!-- Phase 3b: Build Custom Droid Button --}}
       <button type="button" class="create-custom-droid holo-btn primary" aria-label="Design and build a custom droid">
-        <i class="fas fa-robot"></i>
+        <i class="fa-solid fa-robot"></i>
         Build Droid
       </button>
 
       {{!-- Phase 3d: Build from Template Button --}}
       <button type="button" class="build-droid-from-template holo-btn secondary" aria-label="Clone and customize a droid template">
-        <i class="fas fa-clone"></i>
+        <i class="fa-solid fa-clone"></i>
         From Template
       </button>
     </div>
@@ -140,7 +140,7 @@
                 View Details
               </button>
               <button type="button" class="add-to-cart-btn holo-btn secondary" data-action="add-to-cart" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
-                <i class="fas fa-plus"></i>
+                <i class="fa-solid fa-plus"></i>
               </button>
             </div>
           </div>
@@ -148,7 +148,7 @@
       </div>
     {{else}}
       <div class="empty-state">
-        <i class="fas fa-box-open"></i>
+        <i class="fa-solid fa-box-open"></i>
         <p>No items match your search.</p>
       </div>
     {{/if}}
@@ -159,7 +159,7 @@
     <div class="cart-header">
       <h3>Your Cart</h3>
       <button type="button" class="close-cart-btn" data-action="close-cart" aria-label="Close cart">
-        <i class="fas fa-times"></i>
+        <i class="fa-solid fa-times"></i>
       </button>
     </div>
     <div class="cart-items" id="cart-items-list">

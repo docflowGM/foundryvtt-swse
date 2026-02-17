@@ -505,7 +505,7 @@ class CustomLanguageDialog extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: 'swse-custom-language-dialog',
     tag: 'div',
-    window: { icon: 'fas fa-language', title: 'Add Custom Language' },
+    window: { icon: 'fa-solid fa-language', title: 'Add Custom Language' },
     position: { width: 400, height: 'auto' }
   };
 
