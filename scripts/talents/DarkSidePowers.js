@@ -1859,8 +1859,6 @@ Hooks.on('darkSideSavantTriggered', async (actor) => {
   }
 });
 
-export default DarkSidePowers
-
   // ========================================================================
   // SITH ALCHEMY - Extended Transformations (Amulet, Armor, Weapon)
   // Implements the rules text provided by GM (stable, time-gated with flags)
@@ -2253,3 +2251,5 @@ export default DarkSidePowers
   }
 
 }
+
+export default DarkSidePowers;
