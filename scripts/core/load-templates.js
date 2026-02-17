@@ -87,10 +87,6 @@ export const SWSE_TEMPLATES = [
   // ==============================
   'systems/foundryvtt-swse/templates/apps/npc-levelup-entry.hbs',
 
-  // ==============================
-  // Canvas UI
-  // ==============================
-  'systems/foundryvtt-swse/templates/canvas-ui/toolbar.hbs'
 ];
 
 
