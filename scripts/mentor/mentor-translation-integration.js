@@ -13,7 +13,6 @@
  */
 
 import { AurebeshTranslator } from './aurebesh-translator.js';
-import { TRANSLATION_PRESETS } from './translation-presets.js';
 import { TRANSLATION_PRESETS, MENTOR_PRESET_MAP } from '../ui/dialogue/translation-presets.js';
 
 export class MentorTranslationIntegration {
@@ -31,7 +30,7 @@ export class MentorTranslationIntegration {
    * Mentor → preset mapping
    * Customize which mentor uses which Aurebesh style
    */
-  static  = {
+  static MENTOR_PRESET_MAP = {
     'jedi-master': 'mentor',      // Wise, measured
     'sith-lord': 'sith',           // Aggressive, dangerous
     'protocol-droid': 'droid',     // Clinical, precise
