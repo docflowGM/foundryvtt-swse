@@ -9,15 +9,16 @@ import { confirm as uiConfirm } from '../utils/ui-utils.js';
 
 export class CharacterImportWizard extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
+    classes: ['swse', 'swse-inwindow-modal'],
     id: 'character-import-wizard',
     tag: 'div',
-    window: { icon: 'fa-solid fa-upload', title: 'Import Character' },
+    window: { icon: 'fa-solid fa-lightbulb', title: 'Mentor Suggestion', frame: false, resizable: false, draggable: false },
     position: { width: 600, height: 'auto' },
     form: { handler: CharacterImportWizard.onSave, closeOnSave: false }
   };
 
   static PARTS = {
-    main: { template: 'systems/foundryvtt-swse/templates/apps/character-import-wizard.hbs' }
+    content: { template: 'systems/foundryvtt-swse/templates/apps/character-import-wizard.hbs' }
   };
 
   constructor(options = {}) {

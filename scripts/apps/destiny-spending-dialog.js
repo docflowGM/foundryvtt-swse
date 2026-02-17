@@ -9,14 +9,15 @@ import { SWSELogger } from '../utils/logger.js';
 
 export class DestinySpendingDialog extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
+    classes: ['swse', 'swse-inwindow-modal'],
     id: 'destiny-spending-dialog',
     tag: 'div',
-    window: { icon: 'fa-solid fa-star', title: 'Spend Destiny Point' },
+    window: { icon: 'fa-solid fa-lightbulb', title: 'Mentor Suggestion', frame: false, resizable: false, draggable: false },
     position: { width: 500, height: 'auto' }
   };
 
   static PARTS = {
-    main: { template: 'systems/foundryvtt-swse/templates/apps/destiny-spending-dialog.hbs' }
+    content: { template: 'systems/foundryvtt-swse/templates/apps/destiny-spending-dialog.hbs' }
   };
 
   constructor(actor, options = {}) {

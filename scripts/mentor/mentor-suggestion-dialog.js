@@ -9,7 +9,7 @@
 
 import { MentorSuggestionVoice } from './mentor-suggestion-voice.js';
 import { MENTORS } from './mentor-dialogues.js';
-import { TypingAnimation } from '../utils/typing-animation.js';
+import { MentorTranslationIntegration } from './mentor-translation-integration.js';
 
 export class MentorSuggestionDialog extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
@@ -156,22 +156,13 @@ export class MentorSuggestionDialog extends foundry.applications.api.Application
   startTypingAnimation() {
     const introElement = this.element?.querySelector('.mentor-intro');
     const explanationElement = this.element?.querySelector('.mentor-explanation');
-
-    if (introElement && explanationElement) {
-      const introText = this.voicedSuggestion.introduction;
-      const explanationText = this.voicedSuggestion.explanation;
-
-      TypingAnimation.typeText(introElement, introText, {
-        speed: 50,
-        skipOnClick: true,
-        onComplete: () => {
-          TypingAnimation.typeText(explanationElement, explanationText, {
-            speed: 45,
-            skipOnClick: true
-          });
-        }
-      });
-    }
+    if (!introElement || !explanationElement) { return; }
+    const introText = this.voicedSuggestion.introduction;
+    const explanationText = this.voicedSuggestion.explanation;
+    const mentorKey = MentorTranslationIntegration.normalizeMentorKey(this.mentorName || this.currentMentorClass || 'default');
+    MentorTranslationIntegration.render({ text: introText, container: introElement, mentor: mentorKey, topic: 'mentor_intro', force: true, onComplete: () => {
+      MentorTranslationIntegration.render({ text: explanationText, container: explanationElement, mentor: mentorKey, topic: 'mentor_explanation', force: true });
+    }});
   }
 
   /**

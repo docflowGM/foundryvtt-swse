@@ -5,6 +5,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { SuggestionService } from '../../engine/SuggestionService.js';
+import { MentorTranslationIntegration } from '../../mentor/mentor-translation-integration.js';
 import { BackgroundRegistry } from '../../registries/background-registry.js';
 
 /**
@@ -314,11 +315,6 @@ export async function _onAskMentorBackgroundSuggestion(event) {
       ui.notifications.warn('Unable to generate a suggestion.');
       return;
     }
-
-    // Import mentor dialog for display
-    const { MentorSuggestionDialog } = await import('../mentor-suggestion-dialog.js');
-    const { getMentorForClass, getMentorForClass: getMentorForClassName } = await import('../mentor-dialogues.js');
-
     // Get the character's mentor based on class
     const className = this.characterData.classes?.[0]?.name || 'Scoundrel';
     const mentor = getMentorForClass(className);

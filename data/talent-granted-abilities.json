@@ -1,9 +1,9 @@
 {
   "_meta": {
-    "version": "1.0.3",
+    "version": "1.0.5",
     "description": "Comprehensive talent ability definitions for SWSE Foundry system",
     "totalAbilities": 468,
-    "lastModified": "2026-01-01",
+    "lastModified": "2026-02-17",
     "multiOptionTalents": 9,
     "notes": "Includes 9 multi-option talents with 27 total sub-abilities (Pistol Duelist, Fool's Luck, Beloved, Dumb Luck, Cunning Strategist, Experienced Brawler, Shadow Striker, Swift Strider, Two-Faced) (27 Starship Maneuvers from Ace Pilot tree) (27 Starship Maneuvers from Ace Pilot tree)"
   },
@@ -32,7 +32,7 @@
         "lightsaber",
         "reaction"
       ],
-      "icon": "fa-solid fa-shield-alt",
+      "icon": "fas fa-shield-alt",
       "linkedAction": "block-defense",
       "alsoFeat": true
     },
@@ -60,7 +60,7 @@
         "lightsaber",
         "reaction"
       ],
-      "icon": "fa-solid fa-shield-alt",
+      "icon": "fas fa-shield-alt",
       "linkedAction": "deflect-defense",
       "alsoFeat": true
     },
@@ -99,7 +99,7 @@
         "reaction",
         "force-point"
       ],
-      "icon": "fa-solid fa-exchange-alt",
+      "icon": "fas fa-exchange-alt",
       "alsoFeat": true
     },
     "adept-negotiator": {
@@ -135,7 +135,7 @@
         "condition-track",
         "standard"
       ],
-      "icon": "fa-solid fa-handshake",
+      "icon": "fas fa-handshake",
       "linkedAction": "persuasion-vs-will"
     },
     "master-negotiator": {
@@ -162,7 +162,7 @@
         "condition-track",
         "modifier"
       ],
-      "icon": "fa-solid fa-handshake",
+      "icon": "fas fa-handshake",
       "linkedAction": "persuasion-vs-will"
     },
     "skilled-advisor": {
@@ -197,7 +197,7 @@
         "ally-buff",
         "force-point-enhanced"
       ],
-      "icon": "fa-solid fa-user-graduate"
+      "icon": "fas fa-user-graduate"
     },
     "force-persuasion": {
       "id": "force-persuasion",
@@ -218,7 +218,7 @@
         "skill",
         "passive"
       ],
-      "icon": "fa-solid fa-brain"
+      "icon": "fas fa-brain"
     },
     "force-focus": {
       "id": "force-focus",
@@ -258,7 +258,7 @@
         "power-recovery",
         "force-point"
       ],
-      "icon": "fa-solid fa-atom"
+      "icon": "fas fa-atom"
     },
     "inspire-confidence": {
       "id": "inspire-confidence",
@@ -297,7 +297,7 @@
         "ally-buff",
         "healing"
       ],
-      "icon": "fa-solid fa-bullhorn"
+      "icon": "fas fa-bullhorn"
     },
     "bolster-ally": {
       "id": "bolster-ally",
@@ -323,7 +323,7 @@
         "support",
         "condition-track"
       ],
-      "icon": "fa-solid fa-heart"
+      "icon": "fas fa-heart"
     },
     "ignite-fervor": {
       "id": "ignite-fervor",
@@ -355,7 +355,7 @@
         "support",
         "damage"
       ],
-      "icon": "fa-solid fa-fire"
+      "icon": "fas fa-fire"
     },
     "willpower": {
       "id": "willpower",
@@ -383,7 +383,7 @@
         "support",
         "defense"
       ],
-      "icon": "fa-solid fa-brain"
+      "icon": "fas fa-brain"
     },
     "beloved": {
       "id": "beloved",
@@ -418,7 +418,7 @@
         "versatile",
         "support"
       ],
-      "icon": "fa-solid fa-heart"
+      "icon": "fas fa-heart"
     },
     "sneak-attack": {
       "id": "sneak-attack",
@@ -444,7 +444,7 @@
         "stealth",
         "passive"
       ],
-      "icon": "fa-solid fa-user-ninja"
+      "icon": "fas fa-user-ninja"
     },
     "skirmisher": {
       "id": "skirmisher",
@@ -465,7 +465,7 @@
         "mobility",
         "passive"
       ],
-      "icon": "fa-solid fa-running"
+      "icon": "fas fa-running"
     },
     "dastardly-strike": {
       "id": "dastardly-strike",
@@ -487,7 +487,7 @@
         "condition-track",
         "passive"
       ],
-      "icon": "fa-solid fa-skull-crossbones"
+      "icon": "fas fa-skull-crossbones"
     },
     "devastating-attack": {
       "id": "devastating-attack",
@@ -512,7 +512,7 @@
         "melee",
         "passive"
       ],
-      "icon": "fa-solid fa-fist-raised"
+      "icon": "fas fa-fist-raised"
     },
     "weapon-specialization": {
       "id": "weapon-specialization",
@@ -535,7 +535,7 @@
         "passive",
         "variable"
       ],
-      "icon": "fa-solid fa-crosshairs"
+      "icon": "fas fa-crosshairs"
     },
     "greater-weapon-specialization": {
       "id": "greater-weapon-specialization",
@@ -560,7 +560,7 @@
         "passive",
         "modifier"
       ],
-      "icon": "fa-solid fa-crosshairs"
+      "icon": "fas fa-crosshairs"
     },
     "uncanny-dodge-1": {
       "id": "uncanny-dodge-1",
@@ -579,7 +579,7 @@
         "defense",
         "passive"
       ],
-      "icon": "fa-solid fa-eye"
+      "icon": "fas fa-eye"
     },
     "uncanny-dodge-2": {
       "id": "uncanny-dodge-2",
@@ -605,7 +605,7 @@
         "defense",
         "passive"
       ],
-      "icon": "fa-solid fa-eye"
+      "icon": "fas fa-eye"
     },
     "evasion": {
       "id": "evasion",
@@ -624,7 +624,7 @@
         "defense",
         "passive"
       ],
-      "icon": "fa-solid fa-wind"
+      "icon": "fas fa-wind"
     },
     "improved-evasion": {
       "id": "improved-evasion",
@@ -648,7 +648,7 @@
         "passive",
         "modifier"
       ],
-      "icon": "fa-solid fa-wind"
+      "icon": "fas fa-wind"
     },
     "hide-in-plain-sight": {
       "id": "hide-in-plain-sight",
@@ -667,7 +667,7 @@
         "stealth",
         "passive"
       ],
-      "icon": "fa-solid fa-ghost"
+      "icon": "fas fa-ghost"
     },
     "improved-stealth": {
       "id": "improved-stealth",
@@ -686,7 +686,7 @@
         "stealth",
         "passive"
       ],
-      "icon": "fa-solid fa-shoe-prints"
+      "icon": "fas fa-shoe-prints"
     },
     "total-concealment": {
       "id": "total-concealment",
@@ -711,7 +711,7 @@
         "defense",
         "passive"
       ],
-      "icon": "fa-solid fa-mask"
+      "icon": "fas fa-mask"
     },
     "hunters-mark": {
       "id": "hunters-mark",
@@ -733,7 +733,7 @@
         "condition-track",
         "passive"
       ],
-      "icon": "fa-solid fa-crosshairs"
+      "icon": "fas fa-crosshairs"
     },
     "familiar-foe": {
       "id": "familiar-foe",
@@ -756,7 +756,7 @@
         "tracking",
         "swift"
       ],
-      "icon": "fa-solid fa-user-secret"
+      "icon": "fas fa-user-secret"
     },
     "hunters-target": {
       "id": "hunters-target",
@@ -781,7 +781,7 @@
         "tracking",
         "passive"
       ],
-      "icon": "fa-solid fa-bullseye"
+      "icon": "fas fa-bullseye"
     },
     "acute-senses": {
       "id": "acute-senses",
@@ -801,7 +801,7 @@
         "reroll",
         "passive"
       ],
-      "icon": "fa-solid fa-search"
+      "icon": "fas fa-search"
     },
     "keen-shot": {
       "id": "keen-shot",
@@ -824,7 +824,7 @@
         "ranged",
         "passive"
       ],
-      "icon": "fa-solid fa-bullseye"
+      "icon": "fas fa-bullseye"
     },
     "armored-defense": {
       "id": "armored-defense",
@@ -847,7 +847,7 @@
         "armor",
         "passive"
       ],
-      "icon": "fa-solid fa-shield-alt"
+      "icon": "fas fa-shield-alt"
     },
     "improved-armored-defense": {
       "id": "improved-armored-defense",
@@ -874,7 +874,7 @@
         "passive",
         "modifier"
       ],
-      "icon": "fa-solid fa-shield-alt"
+      "icon": "fas fa-shield-alt"
     },
     "juggernaut": {
       "id": "juggernaut",
@@ -897,7 +897,7 @@
         "armor",
         "passive"
       ],
-      "icon": "fa-solid fa-user-shield"
+      "icon": "fas fa-user-shield"
     },
     "second-skin": {
       "id": "second-skin",
@@ -917,7 +917,7 @@
         "mobility",
         "passive"
       ],
-      "icon": "fa-solid fa-tshirt"
+      "icon": "fas fa-tshirt"
     },
     "melee-smash": {
       "id": "melee-smash",
@@ -939,7 +939,7 @@
         "melee",
         "passive"
       ],
-      "icon": "fa-solid fa-fist-raised"
+      "icon": "fas fa-fist-raised"
     },
     "stunning-strike": {
       "id": "stunning-strike",
@@ -964,7 +964,7 @@
         "condition-track",
         "passive"
       ],
-      "icon": "fa-solid fa-dizzy",
+      "icon": "fas fa-dizzy",
       "alsoFeat": true
     },
     "unbalancing-attack": {
@@ -993,7 +993,7 @@
         "control",
         "free"
       ],
-      "icon": "fa-solid fa-level-down-alt"
+      "icon": "fas fa-level-down-alt"
     },
     "draw-fire": {
       "id": "draw-fire",
@@ -1019,7 +1019,7 @@
         "tank",
         "standard"
       ],
-      "icon": "fa-solid fa-bullseye"
+      "icon": "fas fa-bullseye"
     },
     "keep-them-at-bay": {
       "id": "keep-them-at-bay",
@@ -1041,7 +1041,7 @@
         "suppression",
         "modifier"
       ],
-      "icon": "fa-solid fa-hand-paper"
+      "icon": "fas fa-hand-paper"
     },
     "cover-fire": {
       "id": "cover-fire",
@@ -1066,7 +1066,7 @@
         "defense",
         "passive"
       ],
-      "icon": "fa-solid fa-shield-alt"
+      "icon": "fas fa-shield-alt"
     },
     "battle-analysis": {
       "id": "battle-analysis",
@@ -1095,7 +1095,7 @@
         "tactics",
         "swift"
       ],
-      "icon": "fa-solid fa-chess",
+      "icon": "fas fa-chess",
       "linkedAction": "knowledge-tactics"
     },
     "trigger-work": {
@@ -1117,7 +1117,7 @@
         "ranged",
         "passive"
       ],
-      "icon": "fa-solid fa-bullseye"
+      "icon": "fas fa-bullseye"
     },
     "debilitating-shot": {
       "id": "debilitating-shot",
@@ -1139,7 +1139,7 @@
         "condition-track",
         "passive"
       ],
-      "icon": "fa-solid fa-crosshairs"
+      "icon": "fas fa-crosshairs"
     },
     "knockdown-shot": {
       "id": "knockdown-shot",
@@ -1162,7 +1162,7 @@
         "ranged",
         "passive"
       ],
-      "icon": "fa-solid fa-level-down-alt"
+      "icon": "fas fa-level-down-alt"
     },
     "multiattack-proficiency": {
       "id": "multiattack-proficiency",
@@ -1185,7 +1185,7 @@
         "multiattack",
         "passive"
       ],
-      "icon": "fa-solid fa-clone"
+      "icon": "fas fa-clone"
     },
     "controlled-burst": {
       "id": "controlled-burst",
@@ -1211,7 +1211,7 @@
         "autofire",
         "passive"
       ],
-      "icon": "fa-solid fa-compress-arrows-alt"
+      "icon": "fas fa-compress-arrows-alt"
     },
     "force-warning": {
       "id": "force-warning",
@@ -1234,7 +1234,7 @@
         "defense",
         "passive"
       ],
-      "icon": "fa-solid fa-exclamation-triangle",
+      "icon": "fas fa-exclamation-triangle",
       "linkedAction": "perception-surprise"
     },
     "gauge-force-potential": {
@@ -1267,7 +1267,7 @@
         "sense",
         "standard"
       ],
-      "icon": "fa-solid fa-eye",
+      "icon": "fas fa-eye",
       "linkedAction": "use-the-force"
     },
     "force-treatment": {
@@ -1287,7 +1287,7 @@
         "healing",
         "standard"
       ],
-      "icon": "fa-solid fa-hand-holding-medical",
+      "icon": "fas fa-hand-holding-medical",
       "linkedAction": "treat-injury"
     },
     "temporal-awareness": {
@@ -1314,7 +1314,7 @@
         "defense",
         "reaction"
       ],
-      "icon": "fa-solid fa-clock",
+      "icon": "fas fa-clock",
       "linkedAction": "defense-reaction"
     },
     "rapid-reaction": {
@@ -1335,7 +1335,7 @@
         "action-economy",
         "passive"
       ],
-      "icon": "fa-solid fa-bolt",
+      "icon": "fas fa-bolt",
       "linkedAction": "swift-action-economy"
     },
     "electronic-sabotage": {
@@ -1361,7 +1361,7 @@
         "sabotage",
         "standard"
       ],
-      "icon": "fa-solid fa-microchip",
+      "icon": "fas fa-microchip",
       "linkedAction": "use-computer"
     },
     "trace": {
@@ -1381,7 +1381,7 @@
         "tracking",
         "standard"
       ],
-      "icon": "fa-solid fa-search-location",
+      "icon": "fas fa-search-location",
       "linkedAction": "use-computer"
     },
     "vehicular-evasion": {
@@ -1402,7 +1402,7 @@
         "defense",
         "passive"
       ],
-      "icon": "fa-solid fa-plane",
+      "icon": "fas fa-plane",
       "linkedAction": "vehicle-reflex"
     },
     "full-throttle": {
@@ -1424,7 +1424,7 @@
         "mobility",
         "free"
       ],
-      "icon": "fa-solid fa-tachometer-alt",
+      "icon": "fas fa-tachometer-alt",
       "linkedAction": "vehicle-movement"
     },
     "juke": {
@@ -1452,7 +1452,7 @@
         "defense",
         "reaction"
       ],
-      "icon": "fa-solid fa-random",
+      "icon": "fas fa-random",
       "linkedAction": "vehicle-defense"
     },
     "starship-tactics": {
@@ -1475,7 +1475,7 @@
         "support",
         "swift"
       ],
-      "icon": "fa-solid fa-rocket",
+      "icon": "fas fa-rocket",
       "linkedAction": "starship-gunnery"
     },
     "elusive-target": {
@@ -1498,7 +1498,7 @@
         "defense",
         "passive"
       ],
-      "icon": "fa-solid fa-wind",
+      "icon": "fas fa-wind",
       "linkedAction": "reflex-defensive",
       "alsoFeat": true
     },
@@ -1524,7 +1524,7 @@
         "passive",
         "variable"
       ],
-      "icon": "fa-solid fa-graduation-cap",
+      "icon": "fas fa-graduation-cap",
       "linkedAction": "trained-skill-bonus"
     },
     "long-stride": {
@@ -1545,7 +1545,7 @@
         "mobility",
         "passive"
       ],
-      "icon": "fa-solid fa-running",
+      "icon": "fas fa-running",
       "linkedAction": "base-movement"
     },
     "barter": {
@@ -1572,7 +1572,7 @@
         "economy",
         "standard"
       ],
-      "icon": "fa-solid fa-handshake",
+      "icon": "fas fa-handshake",
       "linkedAction": "persuasion-haggle"
     },
     "weaken-resolve": {
@@ -1600,7 +1600,7 @@
         "debuff",
         "standard"
       ],
-      "icon": "fa-solid fa-frown",
+      "icon": "fas fa-frown",
       "linkedAction": "persuasion-vs-will"
     },
     "presence": {
@@ -1623,7 +1623,7 @@
         "combat",
         "passive"
       ],
-      "icon": "fa-solid fa-user-tie",
+      "icon": "fas fa-user-tie",
       "linkedAction": "feint-melee"
     },
     "demand-surrender": {
@@ -1656,7 +1656,7 @@
         "control",
         "standard"
       ],
-      "icon": "fa-solid fa-flag",
+      "icon": "fas fa-flag",
       "linkedAction": "persuasion-vs-will"
     },
     "lucky-shot": {
@@ -1683,7 +1683,7 @@
         "offense",
         "free"
       ],
-      "icon": "fa-solid fa-dice",
+      "icon": "fas fa-dice",
       "linkedAction": "attack-reroll",
       "alsoFeat": true
     },
@@ -1711,7 +1711,7 @@
         "universal",
         "free"
       ],
-      "icon": "fa-solid fa-clover",
+      "icon": "fas fa-clover",
       "linkedAction": "d20-bonus"
     },
     "knack": {
@@ -1738,7 +1738,7 @@
         "skill",
         "free"
       ],
-      "icon": "fa-solid fa-star",
+      "icon": "fas fa-star",
       "linkedAction": "skill-check-guarantee"
     },
     "droidcraft": {
@@ -1767,7 +1767,7 @@
         "crafting",
         "passive"
       ],
-      "icon": "fa-solid fa-robot",
+      "icon": "fas fa-robot",
       "linkedAction": "mechanics-droid"
     },
     "master-slicer": {
@@ -1790,7 +1790,7 @@
         "skill",
         "passive"
       ],
-      "icon": "fa-solid fa-laptop-code",
+      "icon": "fas fa-laptop-code",
       "linkedAction": "use-computer"
     },
     "lightsaber-defense": {
@@ -1814,7 +1814,7 @@
         "lightsaber",
         "passive"
       ],
-      "icon": "fa-solid fa-shield-alt",
+      "icon": "fas fa-shield-alt",
       "linkedAction": "reflex-defense"
     },
     "lightsaber-throw": {
@@ -1836,7 +1836,7 @@
         "lightsaber",
         "standard"
       ],
-      "icon": "fa-solid fa-satellite",
+      "icon": "fas fa-satellite",
       "linkedAction": "lightsaber-ranged"
     },
     "severing-strike": {
@@ -1862,7 +1862,7 @@
         "force-point",
         "reaction"
       ],
-      "icon": "fa-solid fa-cut",
+      "icon": "fas fa-cut",
       "linkedAction": "lightsaber-critical"
     },
     "dark-side-sense": {
@@ -1882,7 +1882,7 @@
         "sense",
         "standard"
       ],
-      "icon": "fa-solid fa-moon",
+      "icon": "fas fa-moon",
       "linkedAction": "use-the-force"
     },
     "force-intuition": {
@@ -1904,7 +1904,7 @@
         "initiative",
         "passive"
       ],
-      "icon": "fa-solid fa-lightbulb",
+      "icon": "fas fa-lightbulb",
       "linkedAction": "initiative"
     },
     "ataru": {
@@ -1932,7 +1932,7 @@
         "form",
         "toggleable"
       ],
-      "icon": "fa-solid fa-wind",
+      "icon": "fas fa-wind",
       "linkedAction": "lightsaber-acrobatic"
     },
     "djem-so": {
@@ -1958,7 +1958,7 @@
         "form",
         "reaction"
       ],
-      "icon": "fa-solid fa-exchange-alt",
+      "icon": "fas fa-exchange-alt",
       "linkedAction": "lightsaber-counterattack"
     },
     "makashi": {
@@ -1981,7 +1981,7 @@
         "form",
         "passive"
       ],
-      "icon": "fa-solid fa-fencing",
+      "icon": "fas fa-fencing",
       "linkedAction": "lightsaber-duel"
     },
     "niman": {
@@ -2004,7 +2004,7 @@
         "form",
         "swift"
       ],
-      "icon": "fa-solid fa-atom",
+      "icon": "fas fa-atom",
       "linkedAction": "lightsaber-force-combo"
     },
     "shien": {
@@ -2030,7 +2030,7 @@
         "reaction",
         "force-point"
       ],
-      "icon": "fa-solid fa-shield-alt",
+      "icon": "fas fa-shield-alt",
       "linkedAction": "lightsaber-deflect-redirect"
     },
     "shii-cho": {
@@ -2058,7 +2058,7 @@
         "form",
         "passive"
       ],
-      "icon": "fa-solid fa-users",
+      "icon": "fas fa-users",
       "linkedAction": "lightsaber-multiattack"
     },
     "soresu": {
@@ -2080,7 +2080,7 @@
         "form",
         "passive"
       ],
-      "icon": "fa-solid fa-shield-alt",
+      "icon": "fas fa-shield-alt",
       "linkedAction": "lightsaber-defense-free"
     },
     "juyo": {
@@ -2108,7 +2108,7 @@
         "form",
         "toggleable"
       ],
-      "icon": "fa-solid fa-skull",
+      "icon": "fas fa-skull",
       "linkedAction": "lightsaber-aggressive"
     },
     "vaapad": {
@@ -2135,7 +2135,7 @@
         "form",
         "passive"
       ],
-      "icon": "fa-solid fa-bolt",
+      "icon": "fas fa-bolt",
       "linkedAction": "lightsaber-critical-combo"
     },
     "acrobatic-recovery": {
@@ -2160,7 +2160,7 @@
         "force-point",
         "reaction"
       ],
-      "icon": "fa-solid fa-redo",
+      "icon": "fas fa-redo",
       "linkedAction": "acrobatics-prone"
     },
     "force-haze": {
@@ -2193,7 +2193,7 @@
         "force-point",
         "standard"
       ],
-      "icon": "fa-solid fa-cloud",
+      "icon": "fas fa-cloud",
       "linkedAction": "force-power-aoe"
     },
     "improved-dark-rage": {
@@ -2227,7 +2227,7 @@
         "force-point",
         "modifier"
       ],
-      "icon": "fa-solid fa-angry",
+      "icon": "fas fa-angry",
       "linkedAction": "dark-rage-enhancement"
     },
     "surge-of-power": {
@@ -2254,7 +2254,7 @@
         "force-point",
         "swift"
       ],
-      "icon": "fa-solid fa-bolt",
+      "icon": "fas fa-bolt",
       "linkedAction": "force-point-boost"
     },
     "force-point-recovery": {
@@ -2289,7 +2289,7 @@
         "force-point",
         "reaction"
       ],
-      "icon": "fa-solid fa-sync",
+      "icon": "fas fa-sync",
       "linkedAction": "force-point-recovery"
     },
     "force-fortification": {
@@ -2308,7 +2308,7 @@
         "force",
         "substitution"
       ],
-      "icon": "fa-solid fa-shield-alt"
+      "icon": "fas fa-shield-alt"
     },
     "defensive-measures": {
       "name": "Defensive Measures",
@@ -2325,7 +2325,7 @@
         "defense",
         "substitution"
       ],
-      "icon": "fa-solid fa-shield-alt"
+      "icon": "fas fa-shield-alt"
     },
     "rifle-master": {
       "name": "Rifle Master",
@@ -2342,7 +2342,7 @@
         "weapon",
         "substitution"
       ],
-      "icon": "fa-solid fa-gun"
+      "icon": "fas fa-gun"
     },
     "exotic-weapons-master": {
       "name": "Exotic Weapons Master",
@@ -2360,7 +2360,7 @@
         "substitution",
         "focus"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "armored-spacer": {
       "name": "Armored Spacer",
@@ -2377,7 +2377,7 @@
         "armor",
         "substitution"
       ],
-      "icon": "fa-solid fa-vest"
+      "icon": "fas fa-vest"
     },
     "take-them-alive": {
       "name": "Take Them Alive",
@@ -2394,7 +2394,7 @@
         "social",
         "substitution"
       ],
-      "icon": "fa-solid fa-handshake"
+      "icon": "fas fa-handshake"
     },
     "advantageous-positioning": {
       "name": "Advantageous Positioning",
@@ -2411,7 +2411,7 @@
         "combat",
         "substitution"
       ],
-      "icon": "fa-solid fa-arrow-right"
+      "icon": "fas fa-arrow-right"
     },
     "avert-disaster": {
       "name": "Avert Disaster",
@@ -2431,7 +2431,7 @@
         "reaction",
         "once-per-encounter"
       ],
-      "icon": "fa-solid fa-shield-alt"
+      "icon": "fas fa-shield-alt"
     },
     "aggressive-surge": {
       "name": "Aggressive Surge",
@@ -2451,7 +2451,7 @@
         "movement",
         "once-per-encounter"
       ],
-      "icon": "fa-solid fa-bolt"
+      "icon": "fas fa-bolt"
     },
     "cleanse-mind": {
       "name": "Cleanse Mind",
@@ -2472,7 +2472,7 @@
         "condition",
         "reaction"
       ],
-      "icon": "fa-solid fa-head-side-virus"
+      "icon": "fas fa-head-side-virus"
     },
     "dirty-fighting": {
       "name": "Dirty Fighting",
@@ -2492,7 +2492,7 @@
         "damage",
         "once-per-encounter"
       ],
-      "icon": "fa-solid fa-fist-raised"
+      "icon": "fas fa-fist-raised"
     },
     "entreat-aid": {
       "name": "Entreat Aid",
@@ -2511,7 +2511,7 @@
         "support",
         "cooperative"
       ],
-      "icon": "fa-solid fa-handshake"
+      "icon": "fas fa-handshake"
     },
     "adrenaline-implant": {
       "name": "Adrenaline Implant",
@@ -2529,7 +2529,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-plus-circle"
+      "icon": "fas fa-plus-circle"
     },
     "crucial-advice": {
       "name": "Crucial Advice",
@@ -2547,7 +2547,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-dice"
+      "icon": "fas fa-dice"
     },
     "fight-to-the-death": {
       "name": "Fight to the Death",
@@ -2565,7 +2565,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-heart"
+      "icon": "fas fa-heart"
     },
     "force-harmony": {
       "name": "Force Harmony",
@@ -2583,7 +2583,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "gang-leader": {
       "name": "Gang Leader",
@@ -2601,7 +2601,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-mask"
+      "icon": "fas fa-mask"
     },
     "grand-leader": {
       "name": "Grand Leader",
@@ -2619,7 +2619,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-crown"
+      "icon": "fas fa-crown"
     },
     "hasty-withdrawal": {
       "name": "Hasty Withdrawal",
@@ -2637,7 +2637,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-running"
+      "icon": "fas fa-running"
     },
     "higher-yield": {
       "name": "Higher Yield",
@@ -2655,7 +2655,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-bomb"
+      "icon": "fas fa-bomb"
     },
     "hunter's-target": {
       "name": "Hunter's Target",
@@ -2673,7 +2673,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-crosshairs"
+      "icon": "fas fa-crosshairs"
     },
     "it's-a-trap": {
       "name": "It's a Trap",
@@ -2691,7 +2691,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-exclamation"
+      "icon": "fas fa-exclamation"
     },
     "jet-pack-withdraw": {
       "name": "Jet Pack Withdraw",
@@ -2709,7 +2709,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-jet-fighter"
+      "icon": "fas fa-jet-fighter"
     },
     "labyrinthine-mind": {
       "name": "Labyrinthine Mind",
@@ -2727,7 +2727,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-brain"
+      "icon": "fas fa-brain"
     },
     "lifesaver": {
       "name": "Lifesaver",
@@ -2745,7 +2745,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-shield-heart"
+      "icon": "fas fa-shield-heart"
     },
     "lightsaber-form-savant": {
       "name": "Lightsaber Form Savant",
@@ -2763,7 +2763,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "mandalorian-advance": {
       "name": "Mandalorian Advance",
@@ -2781,7 +2781,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-forward"
+      "icon": "fas fa-forward"
     },
     "power-of-hatred": {
       "name": "Power of Hatred",
@@ -2799,7 +2799,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-fire"
+      "icon": "fas fa-fire"
     },
     "quick-fix": {
       "name": "Quick Fix",
@@ -2817,7 +2817,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-tools"
+      "icon": "fas fa-tools"
     },
     "quick-on-your-feet": {
       "name": "Quick on Your Feet",
@@ -2835,7 +2835,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-running"
+      "icon": "fas fa-running"
     },
     "rally": {
       "name": "Rally",
@@ -2853,7 +2853,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-shield-alt"
+      "icon": "fas fa-shield-alt"
     },
     "renew-vision": {
       "name": "Renew Vision",
@@ -2871,7 +2871,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-eye"
+      "icon": "fas fa-eye"
     },
     "resilience-implant": {
       "name": "Resilience Implant",
@@ -2889,7 +2889,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-plus"
+      "icon": "fas fa-plus"
     },
     "seize-object": {
       "name": "Seize Object",
@@ -2907,7 +2907,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-hand-fist"
+      "icon": "fas fa-hand-fist"
     },
     "squadron-maneuvers": {
       "name": "Squadron Maneuvers",
@@ -2925,7 +2925,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-plane"
+      "icon": "fas fa-plane"
     },
     "squadron-tactics": {
       "name": "Squadron Tactics",
@@ -2943,7 +2943,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-plane"
+      "icon": "fas fa-plane"
     },
     "strength-implant": {
       "name": "Strength Implant",
@@ -2961,7 +2961,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-fist-raised"
+      "icon": "fas fa-fist-raised"
     },
     "strike-and-run": {
       "name": "Strike and Run",
@@ -2979,7 +2979,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-arrow-right"
+      "icon": "fas fa-arrow-right"
     },
     "surge": {
       "name": "Surge",
@@ -2997,7 +2997,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-arrow-up"
+      "icon": "fas fa-arrow-up"
     },
     "surge-of-light": {
       "name": "Surge of Light",
@@ -3015,7 +3015,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-sun"
+      "icon": "fas fa-sun"
     },
     "telekinetic-savant": {
       "name": "Telekinetic Savant",
@@ -3033,7 +3033,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-hand"
+      "icon": "fas fa-hand"
     },
     "uncanny-luck": {
       "name": "Uncanny Luck",
@@ -3051,7 +3051,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-dice-d20"
+      "icon": "fas fa-dice-d20"
     },
     "urgency": {
       "name": "Urgency",
@@ -3069,7 +3069,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-bolt"
+      "icon": "fas fa-bolt"
     },
     "vital-encouragement": {
       "name": "Vital Encouragement",
@@ -3087,7 +3087,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-heart"
+      "icon": "fas fa-heart"
     },
     "weak-point": {
       "name": "Weak Point",
@@ -3105,7 +3105,7 @@
         "once-per-encounter",
         "ability"
       ],
-      "icon": "fa-solid fa-target"
+      "icon": "fas fa-target"
     },
     "advanced-intel": {
       "name": "Advanced Intel",
@@ -3118,7 +3118,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-binoculars"
+      "icon": "fas fa-binoculars"
     },
     "assault-tactics": {
       "name": "Assault Tactics",
@@ -3131,7 +3131,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-tactics"
+      "icon": "fas fa-tactics"
     },
     "aversion": {
       "name": "Aversion",
@@ -3144,7 +3144,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-ban"
+      "icon": "fas fa-ban"
     },
     "beast-trick": {
       "name": "Beast Trick",
@@ -3157,7 +3157,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-brain"
+      "icon": "fas fa-brain"
     },
     "black-market-buyer": {
       "name": "Black Market Buyer",
@@ -3170,7 +3170,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-shop"
+      "icon": "fas fa-shop"
     },
     "blowback": {
       "name": "Blowback",
@@ -3183,7 +3183,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-arrow-right"
+      "icon": "fas fa-arrow-right"
     },
     "breach-cover": {
       "name": "Breach Cover",
@@ -3196,7 +3196,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-shield-slash"
+      "icon": "fas fa-shield-slash"
     },
     "breaching-explosive": {
       "name": "Breaching Explosive",
@@ -3209,7 +3209,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-bomb"
+      "icon": "fas fa-bomb"
     },
     "bring-them-back": {
       "name": "Bring Them Back",
@@ -3222,7 +3222,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-person-hiking"
+      "icon": "fas fa-person-hiking"
     },
     "bunker-blaster": {
       "name": "Bunker Blaster",
@@ -3235,7 +3235,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-gun"
+      "icon": "fas fa-gun"
     },
     "call-weapon": {
       "name": "Call Weapon",
@@ -3248,7 +3248,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "cause-mutation": {
       "name": "Cause Mutation",
@@ -3261,7 +3261,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-ghost"
+      "icon": "fas fa-ghost"
     },
     "channel-energy": {
       "name": "Channel Energy",
@@ -3274,7 +3274,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-bolt"
+      "icon": "fas fa-bolt"
     },
     "close-contact": {
       "name": "Close Contact",
@@ -3287,7 +3287,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-expand"
+      "icon": "fas fa-expand"
     },
     "collective-visions": {
       "name": "Collective Visions",
@@ -3300,7 +3300,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-people"
+      "icon": "fas fa-people"
     },
     "competitive-edge": {
       "name": "Competitive Edge",
@@ -3313,7 +3313,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-chess"
+      "icon": "fas fa-chess"
     },
     "crippling-strike": {
       "name": "Crippling Strike",
@@ -3326,7 +3326,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-walking"
+      "icon": "fas fa-walking"
     },
     "cunning-distraction": {
       "name": "Cunning Distraction",
@@ -3339,7 +3339,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-person-running"
+      "icon": "fas fa-person-running"
     },
     "curved-throw": {
       "name": "Curved Throw",
@@ -3352,7 +3352,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-circle-arrow-right"
+      "icon": "fas fa-circle-arrow-right"
     },
     "custom-model": {
       "name": "Custom Model",
@@ -3365,7 +3365,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "dark-side-adept": {
       "name": "Dark Side Adept",
@@ -3378,7 +3378,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "dark-side-master": {
       "name": "Dark Side Master",
@@ -3391,7 +3391,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "deny-move": {
       "name": "Deny Move",
@@ -3404,7 +3404,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "distant-command": {
       "name": "Distant Command",
@@ -3417,7 +3417,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "echoes-in-the-force": {
       "name": "Echoes in the Force",
@@ -3430,7 +3430,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "emergency-team": {
       "name": "Emergency Team",
@@ -3443,7 +3443,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "empower-weapon": {
       "name": "Empower Weapon",
@@ -3456,7 +3456,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "exotic-weapon-mastery": {
       "name": "Exotic Weapon Mastery",
@@ -3469,7 +3469,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "exploit-weakness": {
       "name": "Exploit Weakness",
@@ -3482,7 +3482,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "exposing-strike": {
       "name": "Exposing Strike",
@@ -3495,7 +3495,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "extra-first-aid": {
       "name": "Extra First Aid",
@@ -3508,7 +3508,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "feel-the-force": {
       "name": "Feel the Force",
@@ -3521,7 +3521,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "fleet-deployment": {
       "name": "Fleet Deployment",
@@ -3534,7 +3534,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "force-revive": {
       "name": "Force Revive",
@@ -3547,7 +3547,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "fortified-body": {
       "name": "Fortified Body",
@@ -3560,7 +3560,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "grabber": {
       "name": "Grabber",
@@ -3573,7 +3573,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "greater-focused-force-talisman": {
       "name": "Greater Focused Force Talisman",
@@ -3586,7 +3586,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "guaranteed-shot": {
       "name": "Guaranteed Shot",
@@ -3599,7 +3599,7 @@
         "conditional",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "guidance": {
       "name": "Guidance",
@@ -3612,7 +3612,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "gun-club": {
       "name": "Gun Club",
@@ -3625,7 +3625,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "healing-boost": {
       "name": "Healing Boost",
@@ -3638,7 +3638,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "hyperdriven": {
       "name": "Hyperdriven",
@@ -3651,7 +3651,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-graduation-cap"
+      "icon": "fas fa-graduation-cap"
     },
     "illusion-bond": {
       "name": "Illusion Bond",
@@ -3664,7 +3664,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "immovable": {
       "name": "Immovable",
@@ -3677,7 +3677,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "impel-ally-i": {
       "name": "Impel Ally I",
@@ -3690,7 +3690,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-running"
+      "icon": "fas fa-running"
     },
     "improved-consulars-vitality": {
       "name": "Improved Consular's Vitality",
@@ -3703,7 +3703,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "improved-healing-boost": {
       "name": "Improved Healing Boost",
@@ -3716,7 +3716,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "improved-sentinels-gambit": {
       "name": "Improved Sentinel's Gambit",
@@ -3729,7 +3729,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "improved-weaken-resolve": {
       "name": "Improved Weaken Resolve",
@@ -3742,7 +3742,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "improvised-weapon-master": {
       "name": "Improvised Weapon Master",
@@ -3755,7 +3755,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "indomitable-will": {
       "name": "Indomitable Will",
@@ -3768,7 +3768,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-shield-virus",
+      "icon": "fas fa-shield-virus",
       "alsoFeat": true
     },
     "influential-friends": {
@@ -3782,7 +3782,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-graduation-cap"
+      "icon": "fas fa-graduation-cap"
     },
     "jedi-network": {
       "name": "Jedi Network",
@@ -3795,7 +3795,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "keep-it-going": {
       "name": "Keep It Going",
@@ -3808,7 +3808,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "knockback": {
       "name": "Knockback",
@@ -3821,7 +3821,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "make-do": {
       "name": "Make Do",
@@ -3834,7 +3834,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "masterwork-lightsaber": {
       "name": "Masterwork Lightsaber",
@@ -3847,7 +3847,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "mercenarys-determination": {
       "name": "Mercenary's Determination",
@@ -3860,7 +3860,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-running"
+      "icon": "fas fa-running"
     },
     "no-escape": {
       "name": "No Escape",
@@ -3873,7 +3873,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "noble-fencing-style": {
       "name": "Noble Fencing Style",
@@ -3886,7 +3886,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword",
+      "icon": "fas fa-sword",
       "alsoFeat": true
     },
     "one-for-the-team": {
@@ -3900,7 +3900,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "only-the-finest": {
       "name": "Only the Finest",
@@ -3913,7 +3913,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "perfect-telepathy": {
       "name": "Perfect Telepathy",
@@ -3926,7 +3926,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "phalanx": {
       "name": "Phalanx",
@@ -3939,7 +3939,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "prepared-explosive": {
       "name": "Prepared Explosive",
@@ -3952,7 +3952,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "psychic-defenses": {
       "name": "Psychic Defenses",
@@ -3965,7 +3965,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "psychometry": {
       "name": "Psychometry",
@@ -3978,7 +3978,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "pursuit": {
       "name": "Pursuit",
@@ -3991,7 +3991,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-dice"
+      "icon": "fas fa-dice"
     },
     "quick-modification": {
       "name": "Quick Modification",
@@ -4004,7 +4004,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "quick-modifications": {
       "name": "Quick Modifications",
@@ -4017,7 +4017,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "raiders-frenzy": {
       "name": "Raider's Frenzy",
@@ -4030,7 +4030,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "ready-and-willing": {
       "name": "Ready and Willing",
@@ -4043,7 +4043,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "reduce-mobility": {
       "name": "Reduce Mobility",
@@ -4056,7 +4056,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-running"
+      "icon": "fas fa-running"
     },
     "respected-officer": {
       "name": "Respected Officer",
@@ -4069,7 +4069,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "security-slicer": {
       "name": "Security Slicer",
@@ -4082,7 +4082,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "sentinels-observation": {
       "name": "Sentinel's Observation",
@@ -4095,7 +4095,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "shaped-explosion": {
       "name": "Shaped Explosion",
@@ -4108,7 +4108,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "share-talent": {
       "name": "Share Talent",
@@ -4121,7 +4121,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "signature-item": {
       "name": "Signature Item",
@@ -4134,7 +4134,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-graduation-cap"
+      "icon": "fas fa-graduation-cap"
     },
     "single-weapon-flourish-i": {
       "name": "Single Weapon Flourish I",
@@ -4147,7 +4147,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "sith-alchemy-craft": {
       "name": "Sith Alchemy (craft)",
@@ -4160,7 +4160,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "sith-alchemy-specialist": {
       "name": "Sith Alchemy Specialist",
@@ -4173,7 +4173,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "soothing-presence": {
       "name": "Soothing Presence",
@@ -4186,7 +4186,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "spontaneous-skill": {
       "name": "Spontaneous Skill",
@@ -4199,7 +4199,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-graduation-cap"
+      "icon": "fas fa-graduation-cap"
     },
     "sprint": {
       "name": "Sprint",
@@ -4212,7 +4212,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-running"
+      "icon": "fas fa-running"
     },
     "squad-superiority": {
       "name": "Squad Superiority",
@@ -4225,7 +4225,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "stalwart-subordinates": {
       "name": "Stalwart Subordinates",
@@ -4238,7 +4238,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "stay-in-the-fight-recruit": {
       "name": "Stay in the Fight (Recruit)",
@@ -4251,7 +4251,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "stick-together": {
       "name": "Stick Together",
@@ -4264,7 +4264,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "stolen-form": {
       "name": "Stolen Form",
@@ -4277,7 +4277,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "stymie": {
       "name": "Stymie",
@@ -4290,7 +4290,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-graduation-cap"
+      "icon": "fas fa-graduation-cap"
     },
     "surefooted": {
       "name": "Surefooted",
@@ -4303,7 +4303,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-running"
+      "icon": "fas fa-running"
     },
     "takedown": {
       "name": "Takedown",
@@ -4316,7 +4316,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "team-recruiting": {
       "name": "Team Recruiting",
@@ -4329,7 +4329,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "thrown-lightsaber-mastery": {
       "name": "Thrown Lightsaber Mastery",
@@ -4342,7 +4342,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-running"
+      "icon": "fas fa-running"
     },
     "tough-as-nails": {
       "name": "Tough as Nails",
@@ -4355,7 +4355,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "transfer-essence": {
       "name": "Transfer Essence",
@@ -4368,7 +4368,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "turret-self-destruct": {
       "name": "Turret Self-Destruct",
@@ -4381,7 +4381,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-sword"
+      "icon": "fas fa-sword"
     },
     "unsavory-reputation": {
       "name": "Unsavory Reputation",
@@ -4394,7 +4394,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-graduation-cap"
+      "icon": "fas fa-graduation-cap"
     },
     "visions": {
       "name": "Visions",
@@ -4407,7 +4407,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "ward": {
       "name": "Ward",
@@ -4420,7 +4420,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "watch-this": {
       "name": "Watch This",
@@ -4433,7 +4433,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "zone-of-recuperation": {
       "name": "Zone of Recuperation",
@@ -4446,7 +4446,7 @@
         "special",
         "complex"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "adversary-lore": {
       "name": "Adversary Lore",
@@ -4459,7 +4459,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "attract-minion": {
       "name": "Attract Minion",
@@ -4472,7 +4472,7 @@
         "follower",
         "grant_follower"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "attract-privateer": {
       "name": "Attract Privateer",
@@ -4485,7 +4485,7 @@
         "follower",
         "grant_follower"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "bodyguard-i": {
       "name": "Bodyguard I",
@@ -4498,7 +4498,7 @@
         "follower",
         "grant_follower"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "bodyguard-ii": {
       "name": "Bodyguard II",
@@ -4511,7 +4511,7 @@
         "follower",
         "grant_follower"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "bodyguard-iii": {
       "name": "Bodyguard III",
@@ -4524,7 +4524,7 @@
         "follower",
         "grant_follower"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "capture-droid": {
       "name": "Capture Droid",
@@ -4537,7 +4537,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "close-combat-assault": {
       "name": "Close-Combat Assault",
@@ -4551,7 +4551,7 @@
         "enhance_follower",
         "follower-enhancement"
       ],
-      "icon": "fa-solid fa-users",
+      "icon": "fas fa-users",
       "followerEnhancement": true
     },
     "combined-fire-naval": {
@@ -4565,7 +4565,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "commanding-officer": {
       "name": "Commanding Officer",
@@ -4579,7 +4579,7 @@
         "grant_follower",
         "follower-generator"
       ],
-      "icon": "fa-solid fa-users",
+      "icon": "fas fa-users",
       "followerGenerator": true
     },
     "coordinated-tactics": {
@@ -4594,7 +4594,7 @@
         "enhance_follower",
         "follower-enhancement"
       ],
-      "icon": "fa-solid fa-users",
+      "icon": "fas fa-users",
       "followerEnhancement": true
     },
     "counterpunch": {
@@ -4608,7 +4608,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "dark-healing": {
       "name": "Dark Healing",
@@ -4621,7 +4621,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "dark-healing-field": {
       "name": "Dark Healing Field",
@@ -4634,7 +4634,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "dark-side-bane": {
       "name": "Dark Side Bane",
@@ -4647,7 +4647,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "dark-side-scourge": {
       "name": "Dark Side Scourge",
@@ -4660,7 +4660,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "droid-expert": {
       "name": "Droid Expert",
@@ -4673,7 +4673,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "droid-jammer": {
       "name": "Droid Jammer",
@@ -4686,7 +4686,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "fear-me": {
       "name": "Fear Me",
@@ -4699,7 +4699,7 @@
         "follower",
         "follower_mechanic"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "fire-at-will": {
       "name": "Fire at Will",
@@ -4712,7 +4712,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "frighten": {
       "name": "Frighten",
@@ -4725,7 +4725,7 @@
         "follower",
         "offensive_support"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "get-into-position": {
       "name": "Get Into Position",
@@ -4739,7 +4739,7 @@
         "enhance_follower",
         "follower-enhancement"
       ],
-      "icon": "fa-solid fa-users",
+      "icon": "fas fa-users",
       "followerEnhancement": true
     },
     "ignore-damage-reduction": {
@@ -4753,7 +4753,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "improved-soft-cover": {
       "name": "Improved Soft Cover",
@@ -4766,7 +4766,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "inspire-loyalty": {
       "name": "Inspire Loyalty",
@@ -4780,7 +4780,7 @@
         "grant_follower",
         "follower-generator"
       ],
-      "icon": "fa-solid fa-users",
+      "icon": "fas fa-users",
       "followerGenerator": true
     },
     "mind-probe": {
@@ -4794,7 +4794,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "protector-actions": {
       "name": "Protector Actions",
@@ -4807,7 +4807,7 @@
         "follower",
         "defensive_support"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "punishing-protection": {
       "name": "Punishing Protection",
@@ -4820,7 +4820,7 @@
         "follower",
         "offensive_support"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "reap-retribution": {
       "name": "Reap Retribution",
@@ -4833,7 +4833,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "reconnaissance-actions": {
       "name": "Reconnaissance Actions",
@@ -4847,7 +4847,7 @@
         "special",
         "follower-enhancement"
       ],
-      "icon": "fa-solid fa-users",
+      "icon": "fas fa-users",
       "followerEnhancement": true
     },
     "reconnaissance-team-leader": {
@@ -4861,7 +4861,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "regroup": {
       "name": "Regroup",
@@ -4874,7 +4874,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "repairs-on-the-fly": {
       "name": "Repairs on the Fly",
@@ -4887,7 +4887,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "shared-notoriety": {
       "name": "Shared Notoriety",
@@ -4900,7 +4900,7 @@
         "follower",
         "follower_mechanic"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "shelter": {
       "name": "Shelter",
@@ -4913,7 +4913,7 @@
         "follower",
         "follower_mechanic"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "squad-actions": {
       "name": "Squad Actions",
@@ -4926,7 +4926,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "tactical-superiority": {
       "name": "Tactical Superiority",
@@ -4939,7 +4939,7 @@
         "follower",
         "follower_mechanic"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "tech-savant": {
       "name": "Tech Savant",
@@ -4952,7 +4952,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "treacherous": {
       "name": "Treacherous",
@@ -4965,7 +4965,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "undying-loyalty": {
       "name": "Undying Loyalty",
@@ -4979,7 +4979,7 @@
         "enhance_follower",
         "follower-enhancement"
       ],
-      "icon": "fa-solid fa-users",
+      "icon": "fas fa-users",
       "followerEnhancement": true
     },
     "unsettling-presence": {
@@ -4993,7 +4993,7 @@
         "follower",
         "special"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "wealth-of-allies": {
       "name": "Wealth of Allies",
@@ -5006,7 +5006,7 @@
         "follower",
         "follower_mechanic"
       ],
-      "icon": "fa-solid fa-users"
+      "icon": "fas fa-users"
     },
     "idealist": {
       "name": "Idealist",
@@ -5020,7 +5020,7 @@
         "defense",
         "substitution"
       ],
-      "icon": "fa-solid fa-shield-alt",
+      "icon": "fas fa-shield-alt",
       "fromAttribute": "wisdom",
       "toAttribute": "charisma",
       "targetDefense": "will"
@@ -5037,7 +5037,7 @@
         "defense",
         "substitution"
       ],
-      "icon": "fa-solid fa-shield-alt"
+      "icon": "fas fa-shield-alt"
     },
     "acrobatic-strike": {
       "name": "Acrobatic Strike",
@@ -5051,7 +5051,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "adaptable-talent": {
       "name": "Adaptable Talent",
@@ -5065,7 +5065,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "assured-attack": {
       "name": "Assured Attack",
@@ -5079,7 +5079,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "bantha-rush": {
       "name": "Bantha Rush",
@@ -5093,7 +5093,7 @@
         "active",
         "action_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "battle-meditation": {
       "name": "Battle Meditation",
@@ -5107,7 +5107,7 @@
         "active",
         "force_point_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "burst-of-speed": {
       "name": "Burst of Speed",
@@ -5121,7 +5121,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "charging-fire": {
       "name": "Charging Fire",
@@ -5135,7 +5135,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "clawed-subspecies": {
       "name": "Clawed Subspecies",
@@ -5149,7 +5149,7 @@
         "active",
         "conditional"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "cleave": {
       "name": "Cleave",
@@ -5163,7 +5163,7 @@
         "active",
         "conditional"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "combat-reflexes": {
       "name": "Combat Reflexes",
@@ -5177,7 +5177,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "conditioned": {
       "name": "Conditioned",
@@ -5191,7 +5191,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "confident-success": {
       "name": "Confident Success",
@@ -5205,7 +5205,7 @@
         "active",
         "conditional"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "crush": {
       "name": "Crush",
@@ -5219,7 +5219,7 @@
         "active",
         "force_point_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "deadeye": {
       "name": "Deadeye",
@@ -5233,7 +5233,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "deep-sight": {
       "name": "Deep Sight",
@@ -5247,7 +5247,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "delay-damage": {
       "name": "Delay Damage",
@@ -5261,7 +5261,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "desperate-gambit": {
       "name": "Desperate Gambit",
@@ -5275,7 +5275,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "dodge": {
       "name": "Dodge",
@@ -5289,7 +5289,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "double-attack": {
       "name": "Double Attack",
@@ -5303,7 +5303,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "echani-training": {
       "name": "Echani Training",
@@ -5317,7 +5317,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "fast-surge": {
       "name": "Fast Surge",
@@ -5331,7 +5331,7 @@
         "active",
         "action_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "fast-talk": {
       "name": "Fast Talk",
@@ -5345,7 +5345,7 @@
         "active",
         "action_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "flawless-pilot": {
       "name": "Flawless Pilot",
@@ -5359,7 +5359,7 @@
         "active",
         "reroll"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "force-regimen-mastery": {
       "name": "Force Regimen Mastery",
@@ -5373,7 +5373,7 @@
         "active",
         "force_point_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "forceful-blast": {
       "name": "Forceful Blast",
@@ -5387,7 +5387,7 @@
         "active",
         "force_point_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "forceful-recovery": {
       "name": "Forceful Recovery",
@@ -5401,7 +5401,7 @@
         "active",
         "reroll"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "forceful-strike": {
       "name": "Forceful Strike",
@@ -5415,7 +5415,7 @@
         "active",
         "force_point_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "forceful-telekinesis": {
       "name": "Forceful Telekinesis",
@@ -5429,7 +5429,7 @@
         "active",
         "force_point_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "forceful-vitality": {
       "name": "Forceful Vitality",
@@ -5443,7 +5443,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "forceful-will": {
       "name": "Forceful Will",
@@ -5457,7 +5457,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "forest-stalker": {
       "name": "Forest Stalker",
@@ -5471,7 +5471,7 @@
         "active",
         "reroll"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "friendly-fire-avoidance": {
       "name": "Friendly Fire Avoidance",
@@ -5485,7 +5485,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "frightening-presence": {
       "name": "Frightening Presence",
@@ -5499,7 +5499,7 @@
         "active",
         "conditional"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "frightful-presence": {
       "name": "Frightful Presence",
@@ -5513,7 +5513,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "grappling-strike": {
       "name": "Grappling Strike",
@@ -5527,7 +5527,7 @@
         "active",
         "action_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "harm’s-way": {
       "name": "Harm’s Way",
@@ -5541,7 +5541,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "headstrong": {
       "name": "Headstrong",
@@ -5555,7 +5555,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "heroic-surge": {
       "name": "Heroic Surge",
@@ -5569,7 +5569,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "hijkata-training": {
       "name": "Hijkata Training",
@@ -5583,7 +5583,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "hunters-instincts": {
       "name": "Hunter's Instincts",
@@ -5597,7 +5597,7 @@
         "active",
         "reroll"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "inborn-resilience": {
       "name": "Inborn Resilience",
@@ -5611,7 +5611,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "instinctive-perception": {
       "name": "Instinctive Perception",
@@ -5625,7 +5625,7 @@
         "active",
         "reroll"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "intimidating-presence": {
       "name": "Intimidating Presence",
@@ -5639,7 +5639,7 @@
         "active",
         "action_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "intuitive-initiative": {
       "name": "Intuitive Initiative",
@@ -5653,7 +5653,7 @@
         "active",
         "reroll"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "jack-of-all-trades": {
       "name": "Jack of All Trades",
@@ -5667,7 +5667,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "ktara-training": {
       "name": "K'tara Training",
@@ -5681,7 +5681,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "kthri-training": {
       "name": "K'thri Training",
@@ -5695,7 +5695,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "knock-prone": {
       "name": "Knock Prone",
@@ -5709,7 +5709,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "linguist": {
       "name": "Linguist",
@@ -5723,7 +5723,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "low-profile": {
       "name": "Low Profile",
@@ -5737,7 +5737,7 @@
         "active",
         "reroll"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "melee-defense": {
       "name": "Melee Defense",
@@ -5751,7 +5751,7 @@
         "active",
         "action_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "mighty-swing": {
       "name": "Mighty Swing",
@@ -5765,7 +5765,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "mind-of-reason": {
       "name": "Mind of Reason",
@@ -5779,7 +5779,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "mobile-fighting": {
       "name": "Mobile Fighting",
@@ -5793,7 +5793,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "mounted-combat": {
       "name": "Mounted Combat",
@@ -5807,7 +5807,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "mounted-regiment": {
       "name": "Mounted Regiment",
@@ -5821,7 +5821,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "natural-leader": {
       "name": "Natural Leader",
@@ -5835,7 +5835,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "nimble-team": {
       "name": "Nimble Team",
@@ -5849,7 +5849,7 @@
         "active",
         "conditional"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "perfect-intuition": {
       "name": "Perfect Intuition",
@@ -5863,7 +5863,7 @@
         "active",
         "reroll"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "perfect-swimmer": {
       "name": "Perfect Swimmer",
@@ -5877,7 +5877,7 @@
         "active",
         "reroll"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "pin": {
       "name": "Pin",
@@ -5891,7 +5891,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "power-attack": {
       "name": "Power Attack",
@@ -5905,7 +5905,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "quick-comeback": {
       "name": "Quick Comeback",
@@ -5919,7 +5919,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "quick-draw": {
       "name": "Quick Draw",
@@ -5933,7 +5933,7 @@
         "active",
         "action_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "rapid-shot": {
       "name": "Rapid Shot",
@@ -5947,7 +5947,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "rapid-strike": {
       "name": "Rapid Strike",
@@ -5961,7 +5961,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "reactive-awareness": {
       "name": "Reactive Awareness",
@@ -5975,7 +5975,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "reactive-stealth": {
       "name": "Reactive Stealth",
@@ -5989,7 +5989,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "regenerative-healing": {
       "name": "Regenerative Healing",
@@ -6003,7 +6003,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "resilient-reflexes": {
       "name": "Resilient Reflexes",
@@ -6017,7 +6017,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "resilient-strength": {
       "name": "Resilient Strength",
@@ -6031,7 +6031,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "resilient-talent": {
       "name": "Resilient Talent",
@@ -6045,7 +6045,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "resilient-will": {
       "name": "Resilient Will",
@@ -6059,7 +6059,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "running-attack": {
       "name": "Running Attack",
@@ -6073,7 +6073,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "saber-throw": {
       "name": "Saber Throw",
@@ -6087,7 +6087,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "savage-attack": {
       "name": "Savage Attack",
@@ -6101,7 +6101,7 @@
         "active",
         "reroll"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "scavenger": {
       "name": "Scavenger",
@@ -6115,7 +6115,7 @@
         "active",
         "reroll"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "skill-training": {
       "name": "Skill Training",
@@ -6129,7 +6129,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "slippery-maneuver": {
       "name": "Slippery Maneuver",
@@ -6143,7 +6143,7 @@
         "active",
         "reroll"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "sniper": {
       "name": "Sniper",
@@ -6157,7 +6157,7 @@
         "active",
         "action_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "spring-attack": {
       "name": "Spring Attack",
@@ -6171,7 +6171,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "staggering-attack": {
       "name": "Staggering Attack",
@@ -6185,7 +6185,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "stava-training": {
       "name": "Stava Training",
@@ -6199,7 +6199,7 @@
         "active",
         "action_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "stealthy": {
       "name": "Stealthy",
@@ -6213,7 +6213,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "strong-bellow": {
       "name": "Strong Bellow",
@@ -6227,7 +6227,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "surgical-precision": {
       "name": "Surgical Precision",
@@ -6241,7 +6241,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "survivor-of-ryloth": {
       "name": "Survivor of Ryloth",
@@ -6255,7 +6255,7 @@
         "active",
         "conditional"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "tae-jitsu-training": {
       "name": "Tae-Jitsu Training",
@@ -6269,7 +6269,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "tech-specialist": {
       "name": "Tech Specialist",
@@ -6283,7 +6283,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "triple-crit": {
       "name": "Triple Crit",
@@ -6297,7 +6297,7 @@
         "active",
         "conditional"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "triple-crit-specialist": {
       "name": "Triple Crit Specialist",
@@ -6311,7 +6311,7 @@
         "active",
         "conditional"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "trustworthy": {
       "name": "Trustworthy",
@@ -6325,7 +6325,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "unstoppable-force": {
       "name": "Unstoppable Force",
@@ -6339,7 +6339,7 @@
         "active",
         "force_point_ability"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "unwavering-focus": {
       "name": "Unwavering Focus",
@@ -6353,7 +6353,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "vehicular-combat": {
       "name": "Vehicular Combat",
@@ -6367,7 +6367,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "wary-sentries": {
       "name": "Wary Sentries",
@@ -6381,7 +6381,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "weapon-finesse": {
       "name": "Weapon Finesse",
@@ -6395,7 +6395,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "whirlwind-attack": {
       "name": "Whirlwind Attack",
@@ -6409,7 +6409,7 @@
         "active",
         "special"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "wounding-strike": {
       "name": "Wounding Strike",
@@ -6423,7 +6423,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "wrruushi-training": {
       "name": "Wrruushi Training",
@@ -6437,7 +6437,7 @@
         "active",
         "limited_use"
       ],
-      "icon": "fa-solid fa-star"
+      "icon": "fas fa-star"
     },
     "closed-mind": {
       "id": "closed-mind",
@@ -6460,7 +6460,7 @@
         "passive",
         "mind-affecting"
       ],
-      "icon": "fa-solid fa-brain"
+      "icon": "fas fa-brain"
     },
     "connections": {
       "id": "connections",
@@ -6487,7 +6487,7 @@
         "passive",
         "noble"
       ],
-      "icon": "fa-solid fa-handshake"
+      "icon": "fas fa-handshake"
     },
     "expert-grappler": {
       "id": "expert-grappler",
@@ -6510,7 +6510,7 @@
         "passive",
         "soldier"
       ],
-      "icon": "fa-solid fa-hand-rock"
+      "icon": "fas fa-hand-rock"
     },
     "great-shot": {
       "id": "great-shot",
@@ -6532,7 +6532,7 @@
         "pilot",
         "accuracy"
       ],
-      "icon": "fa-solid fa-bullseye"
+      "icon": "fas fa-bullseye"
     },
     "master-advisor": {
       "id": "master-advisor",
@@ -6560,7 +6560,7 @@
         "modifier",
         "jedi"
       ],
-      "icon": "fa-solid fa-graduation-cap"
+      "icon": "fas fa-graduation-cap"
     },
     "penetrating-attack": {
       "id": "penetrating-attack",
@@ -6586,7 +6586,7 @@
         "soldier",
         "weapon-specific"
       ],
-      "icon": "fa-solid fa-crosshairs"
+      "icon": "fas fa-crosshairs"
     },
     "pistol-duelist-end-game": {
       "id": "pistol-duelist-end-game",
@@ -6613,7 +6613,7 @@
         "standard",
         "damage"
       ],
-      "icon": "fa-solid fa-crosshairs",
+      "icon": "fas fa-crosshairs",
       "linkedAction": "ranged-attack"
     },
     "pistol-duelist-snap-aiming": {
@@ -6640,7 +6640,7 @@
         "aim",
         "bonus"
       ],
-      "icon": "fa-solid fa-bullseye",
+      "icon": "fas fa-bullseye",
       "linkedAction": "ranged-attack"
     },
     "pistol-duelist-stand-ready": {
@@ -6673,7 +6673,7 @@
         "offense",
         "standard"
       ],
-      "icon": "fa-solid fa-user-shield",
+      "icon": "fas fa-user-shield",
       "linkedAction": "ranged-attack"
     },
     "fools-luck-attack-boost": {
@@ -6701,7 +6701,7 @@
         "offense",
         "swift"
       ],
-      "icon": "fa-solid fa-crosshairs"
+      "icon": "fas fa-crosshairs"
     },
     "fools-luck-skill-boost": {
       "id": "fools-luck-skill-boost",
@@ -6729,7 +6729,7 @@
         "skill",
         "swift"
       ],
-      "icon": "fa-solid fa-hand-sparkles"
+      "icon": "fas fa-hand-sparkles"
     },
     "fools-luck-defense-boost": {
       "id": "fools-luck-defense-boost",
@@ -6757,7 +6757,7 @@
         "defense",
         "swift"
       ],
-      "icon": "fa-solid fa-shield-alt"
+      "icon": "fas fa-shield-alt"
     },
     "beloved-protective-stance": {
       "id": "beloved-protective-stance",
@@ -6786,7 +6786,7 @@
         "support",
         "swift"
       ],
-      "icon": "fa-solid fa-shield-alt"
+      "icon": "fas fa-shield-alt"
     },
     "beloved-coordinated-attack": {
       "id": "beloved-coordinated-attack",
@@ -6813,7 +6813,7 @@
         "support",
         "reaction"
       ],
-      "icon": "fa-solid fa-fist-raised"
+      "icon": "fas fa-fist-raised"
     },
     "beloved-tactical-retreat": {
       "id": "beloved-tactical-retreat",
@@ -6841,7 +6841,7 @@
         "support",
         "reaction"
       ],
-      "icon": "fa-solid fa-running"
+      "icon": "fas fa-running"
     },
     "dumb-luck-defensive-stance": {
       "id": "dumb-luck-defensive-stance",
@@ -6871,7 +6871,7 @@
         "defense",
         "reaction"
       ],
-      "icon": "fa-solid fa-shield-alt"
+      "icon": "fas fa-shield-alt"
     },
     "dumb-luck-evasive-move": {
       "id": "dumb-luck-evasive-move",
@@ -6898,7 +6898,7 @@
         "mobility",
         "reaction"
       ],
-      "icon": "fa-solid fa-running"
+      "icon": "fas fa-running"
     },
     "dumb-luck-lucky-shot": {
       "id": "dumb-luck-lucky-shot",
@@ -6926,7 +6926,7 @@
         "offense",
         "reaction"
       ],
-      "icon": "fa-solid fa-bullseye"
+      "icon": "fas fa-bullseye"
     },
     "cunning-strategist-expose-weakness": {
       "id": "cunning-strategist-expose-weakness",
@@ -6955,7 +6955,7 @@
         "debuff",
         "reaction"
       ],
-      "icon": "fa-solid fa-crosshairs"
+      "icon": "fas fa-crosshairs"
     },
     "cunning-strategist-hamstring": {
       "id": "cunning-strategist-hamstring",
@@ -6983,7 +6983,7 @@
         "debuff",
         "reaction"
       ],
-      "icon": "fa-solid fa-shoe-prints"
+      "icon": "fas fa-shoe-prints"
     },
     "cunning-strategist-divide-attention": {
       "id": "cunning-strategist-divide-attention",
@@ -7012,7 +7012,7 @@
         "debuff",
         "reaction"
       ],
-      "icon": "fa-solid fa-users-slash"
+      "icon": "fas fa-users-slash"
     },
     "experienced-brawler-dodge-stance": {
       "id": "experienced-brawler-dodge-stance",
@@ -7042,7 +7042,7 @@
         "defense",
         "reaction"
       ],
-      "icon": "fa-solid fa-shield-alt"
+      "icon": "fas fa-shield-alt"
     },
     "experienced-brawler-fortify": {
       "id": "experienced-brawler-fortify",
@@ -7071,7 +7071,7 @@
         "defense",
         "reaction"
       ],
-      "icon": "fa-solid fa-shield-alt"
+      "icon": "fas fa-shield-alt"
     },
     "experienced-brawler-tactical-reposition": {
       "id": "experienced-brawler-tactical-reposition",
@@ -7099,7 +7099,7 @@
         "mobility",
         "reaction"
       ],
-      "icon": "fa-solid fa-running"
+      "icon": "fas fa-running"
     },
     "shadow-striker-vanish": {
       "id": "shadow-striker-vanish",
@@ -7128,7 +7128,7 @@
         "stealth",
         "reaction"
       ],
-      "icon": "fa-solid fa-eye-slash"
+      "icon": "fas fa-eye-slash"
     },
     "shadow-striker-disable": {
       "id": "shadow-striker-disable",
@@ -7157,7 +7157,7 @@
         "debuff",
         "reaction"
       ],
-      "icon": "fa-solid fa-ban"
+      "icon": "fas fa-ban"
     },
     "shadow-striker-precision-strike": {
       "id": "shadow-striker-precision-strike",
@@ -7186,7 +7186,7 @@
         "offense",
         "reaction"
       ],
-      "icon": "fa-solid fa-crosshairs"
+      "icon": "fas fa-crosshairs"
     },
     "swift-strider-fleet-footed": {
       "id": "swift-strider-fleet-footed",
@@ -7218,7 +7218,7 @@
         "mobility",
         "swift"
       ],
-      "icon": "fa-solid fa-running"
+      "icon": "fas fa-running"
     },
     "swift-strider-charging-assault": {
       "id": "swift-strider-charging-assault",
@@ -7244,7 +7244,7 @@
         "offense",
         "swift"
       ],
-      "icon": "fa-solid fa-horse-head"
+      "icon": "fas fa-horse-head"
     },
     "swift-strider-nimble-movement": {
       "id": "swift-strider-nimble-movement",
@@ -7277,7 +7277,7 @@
         "mobility",
         "swift"
       ],
-      "icon": "fa-solid fa-running"
+      "icon": "fas fa-running"
     },
     "two-faced-repeat-offense": {
       "id": "two-faced-repeat-offense",
@@ -7304,7 +7304,7 @@
         "offense",
         "reaction"
       ],
-      "icon": "fa-solid fa-redo"
+      "icon": "fas fa-redo"
     },
     "two-faced-defensive-posture": {
       "id": "two-faced-defensive-posture",
@@ -7331,7 +7331,7 @@
         "defense",
         "reaction"
       ],
-      "icon": "fa-solid fa-hand-paper"
+      "icon": "fas fa-hand-paper"
     },
     "two-faced-opportunistic-strike": {
       "id": "two-faced-opportunistic-strike",
@@ -7359,7 +7359,7 @@
         "offense",
         "reaction"
       ],
-      "icon": "fa-solid fa-crosshairs"
+      "icon": "fas fa-crosshairs"
     },
     "ackbar-slash": {
       "id": "ackbar-slash",
@@ -7403,7 +7403,7 @@
         "tactics",
         "reaction"
       ],
-      "icon": "fa-solid fa-directions",
+      "icon": "fas fa-directions",
       "linkedAction": "starship-maneuver"
     },
     "afterburn": {
@@ -7447,7 +7447,7 @@
         "mobility",
         "fullround"
       ],
-      "icon": "fa-solid fa-fire",
+      "icon": "fas fa-fire",
       "linkedAction": "starship-maneuver"
     },
     "angle-deflector-shields": {
@@ -7475,7 +7475,7 @@
         "attack-pattern",
         "swift"
       ],
-      "icon": "fa-solid fa-shield-alt",
+      "icon": "fas fa-shield-alt",
       "linkedAction": "starship-maneuver"
     },
     "attack-formation-zeta-nine": {
@@ -7503,7 +7503,7 @@
         "attack-pattern",
         "swift"
       ],
-      "icon": "fa-solid fa-cube",
+      "icon": "fas fa-cube",
       "linkedAction": "starship-maneuver"
     },
     "attack-pattern-delta": {
@@ -7531,7 +7531,7 @@
         "attack-pattern",
         "swift"
       ],
-      "icon": "fa-solid fa-arrows-alt",
+      "icon": "fas fa-arrows-alt",
       "linkedAction": "starship-maneuver"
     },
     "corellian-slip": {
@@ -7580,7 +7580,7 @@
         "teamwork",
         "fullround"
       ],
-      "icon": "fa-solid fa-arrow-right",
+      "icon": "fas fa-arrow-right",
       "linkedAction": "starship-maneuver"
     },
     "counter": {
@@ -7622,7 +7622,7 @@
         "dogfight",
         "reaction"
       ],
-      "icon": "fa-solid fa-reply",
+      "icon": "fas fa-reply",
       "linkedAction": "starship-maneuver"
     },
     "darklighter-spin": {
@@ -7662,7 +7662,7 @@
         "offense",
         "standard"
       ],
-      "icon": "fa-solid fa-sync",
+      "icon": "fas fa-sync",
       "linkedAction": "starship-maneuver"
     },
     "devastating-hit": {
@@ -7702,7 +7702,7 @@
         "offense",
         "standard"
       ],
-      "icon": "fa-solid fa-bullseye",
+      "icon": "fas fa-bullseye",
       "linkedAction": "starship-maneuver"
     },
     "engine-hit": {
@@ -7743,7 +7743,7 @@
         "debuff",
         "reaction"
       ],
-      "icon": "fa-solid fa-fan",
+      "icon": "fas fa-fan",
       "linkedAction": "starship-maneuver"
     },
     "evasive-action": {
@@ -7788,7 +7788,7 @@
         "dogfight",
         "move"
       ],
-      "icon": "fa-solid fa-wind",
+      "icon": "fas fa-wind",
       "linkedAction": "starship-maneuver"
     },
     "explosive-shot": {
@@ -7829,7 +7829,7 @@
         "offense",
         "reaction"
       ],
-      "icon": "fa-solid fa-explosion",
+      "icon": "fas fa-explosion",
       "linkedAction": "starship-maneuver"
     },
     "howlrunner-formation": {
@@ -7856,7 +7856,7 @@
         "attack-pattern",
         "swift"
       ],
-      "icon": "fa-solid fa-expand",
+      "icon": "fas fa-expand",
       "linkedAction": "starship-maneuver"
     },
     "i-have-you-now": {
@@ -7899,7 +7899,7 @@
         "offense",
         "swift"
       ],
-      "icon": "fa-solid fa-crosshairs",
+      "icon": "fas fa-crosshairs",
       "linkedAction": "starship-maneuver"
     },
     "intercept": {
@@ -7943,7 +7943,7 @@
         "dogfight",
         "reaction"
       ],
-      "icon": "fa-solid fa-arrow-up",
+      "icon": "fas fa-arrow-up",
       "linkedAction": "starship-maneuver"
     },
     "overwhelming-assault": {
@@ -7971,7 +7971,7 @@
         "attack-pattern",
         "swift"
       ],
-      "icon": "fa-solid fa-bolt",
+      "icon": "fas fa-bolt",
       "linkedAction": "starship-maneuver"
     },
     "segnors-loop": {
@@ -8015,7 +8015,7 @@
         "mobility",
         "reaction"
       ],
-      "icon": "fa-solid fa-redo",
+      "icon": "fas fa-redo",
       "linkedAction": "starship-maneuver"
     },
     "shield-hit": {
@@ -8055,7 +8055,7 @@
         "debuff",
         "standard"
       ],
-      "icon": "fa-solid fa-ban",
+      "icon": "fas fa-ban",
       "linkedAction": "starship-maneuver"
     },
     "skim-the-surface": {
@@ -8099,7 +8099,7 @@
         "offense",
         "fullround"
       ],
-      "icon": "fa-solid fa-water",
+      "icon": "fas fa-water",
       "linkedAction": "starship-maneuver"
     },
     "skywalker-loop": {
@@ -8126,7 +8126,7 @@
         "dogfight",
         "reaction"
       ],
-      "icon": "fa-solid fa-circle",
+      "icon": "fas fa-circle",
       "linkedAction": "starship-maneuver"
     },
     "snap-roll": {
@@ -8153,7 +8153,7 @@
         "defense",
         "reaction"
       ],
-      "icon": "fa-solid fa-vial",
+      "icon": "fas fa-vial",
       "linkedAction": "starship-maneuver"
     },
     "strike-formation": {
@@ -8181,7 +8181,7 @@
         "attack-pattern",
         "swift"
       ],
-      "icon": "fa-solid fa-hammer",
+      "icon": "fas fa-hammer",
       "linkedAction": "starship-maneuver"
     },
     "tallon-roll": {
@@ -8226,7 +8226,7 @@
         "dogfight",
         "reaction"
       ],
-      "icon": "fa-solid fa-infinity",
+      "icon": "fas fa-infinity",
       "linkedAction": "starship-maneuver"
     },
     "target-lock": {
@@ -8275,7 +8275,7 @@
         "dogfight",
         "standard"
       ],
-      "icon": "fa-solid fa-lock",
+      "icon": "fas fa-lock",
       "linkedAction": "starship-maneuver"
     },
     "target-sense": {
@@ -8315,7 +8315,7 @@
         "pilot",
         "swift"
       ],
-      "icon": "fa-solid fa-eye",
+      "icon": "fas fa-eye",
       "linkedAction": "starship-maneuver",
       "prerequisites": [
         "use-the-force-trained"
@@ -8359,7 +8359,7 @@
         "debuff",
         "reaction"
       ],
-      "icon": "fa-solid fa-forward",
+      "icon": "fas fa-forward",
       "linkedAction": "starship-maneuver"
     },
     "wotan-weave": {
@@ -8399,7 +8399,7 @@
         "defense",
         "swift"
       ],
-      "icon": "fa-solid fa-spiral",
+      "icon": "fas fa-spiral",
       "linkedAction": "starship-maneuver"
     }
   }

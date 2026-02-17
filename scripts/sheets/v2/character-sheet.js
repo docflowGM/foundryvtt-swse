@@ -269,6 +269,67 @@ export class SWSEV2CharacterSheet extends
       }
     }
 
+
+// Follower slots (granted by follower talents)
+const rawFollowerSlots = actor.getFlag('swse', 'followerSlots') || [];
+
+// Per-talent badge counts
+const followerTalentCountMap = {};
+for (const s of rawFollowerSlots) {
+  followerTalentCountMap[s.talentName] = (followerTalentCountMap[s.talentName] || 0) + (s.createdActorId ? 1 : 0);
+}
+
+const followerTalentBadges = Object.entries(
+  rawFollowerSlots.reduce((acc, s) => {
+    acc[s.talentName] = acc[s.talentName] || true;
+    return acc;
+  }, {})
+).map(([talentName]) => {
+  const cfg = getFollowerTalentConfig(talentName);
+  const max = cfg?.maxCount ?? null;
+  return {
+    talentName,
+    current: followerTalentCountMap[talentName] || 0,
+    max: max ?? '—'
+  };
+});
+
+const followerSlots = rawFollowerSlots.map((slot) => {
+  const follower = slot.createdActorId ? game.actors.get(slot.createdActorId) : null;
+  const cfg = getFollowerTalentConfig(slot.talentName);
+  const max = cfg?.maxCount ?? 0;
+  const current = followerTalentCountMap[slot.talentName] || 0;
+
+  const hpValue = follower?.system?.hp?.value ?? follower?.system?.hitPoints?.value ?? 0;
+  const hpMax = follower?.system?.hp?.max ?? follower?.system?.hitPoints?.max ?? 0;
+  const level = follower?.system?.level ?? 1;
+
+  const tokenImg = follower?.prototypeToken?.texture?.src ?? follower?.img ?? null;
+
+  const role = follower?.system?.followerType
+    ?? follower?.getFlag?.('swse', 'followerRole')
+    ?? slot.templateType
+    ?? null;
+
+  const roleLabel = role ? String(role).charAt(0).toUpperCase() + String(role).slice(1) : 'Follower';
+
+  const tags = [];
+  if (role) tags.push(roleLabel);
+  tags.push('Follower');
+  if (follower?.type) tags.push(follower.type);
+
+  return {
+    ...slot,
+    actor: follower,
+    tokenImg,
+    hp: { value: hpValue, max: hpMax },
+    level,
+    roleLabel,
+    isLocked: !slot.createdActorId && max > 0 && current >= max,
+    tags
+  };
+});
+
     /* ========== PHASE 3: BUILD MODE & LANGUAGES ========== */
 
     const buildMode = actor.system?.buildMode ?? 'validated';
@@ -378,6 +439,139 @@ export class SWSEV2CharacterSheet extends
 
     return { ...baseContext, ...overrides };
   }
+/* ------------------------------------------------------------------------ */
+/* INLINE MODAL HOST (IN-SHEET)                                             */
+/* ------------------------------------------------------------------------ */
+
+_getInlineModalHost() {
+  return this.element?.querySelector?.('[data-inline-modal]') ?? null;
+}
+
+_openInlineModal({ title, bodyHtml, footerButtons = [] }) {
+  const host = this._getInlineModalHost();
+  if (!host) return;
+
+  host.hidden = false;
+  host.style.position = 'relative';
+
+  host.querySelector('[data-inline-title]').textContent = title ?? '';
+
+  const body = host.querySelector('[data-inline-body]');
+  const footer = host.querySelector('[data-inline-footer]');
+
+  body.innerHTML = bodyHtml ?? '';
+  footer.innerHTML = '';
+
+  for (const btn of footerButtons) {
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.innerHTML = btn.iconHtml ? `${btn.iconHtml} ${btn.label ?? ''}` : (btn.label ?? 'OK');
+    if (btn.disabled) el.disabled = true;
+    el.addEventListener('click', btn.onClick);
+    footer.appendChild(el);
+  }
+}
+
+_closeInlineModal() {
+  const host = this._getInlineModalHost();
+  if (!host) return;
+  host.hidden = true;
+  host.querySelector('[data-inline-body]').innerHTML = '';
+  host.querySelector('[data-inline-footer]').innerHTML = '';
+  this._embeddedFollowerActorIds = [];
+  this._embeddedFollowerIndex = 0;
+  this._embeddedFollowerActorId = null;
+}
+
+_getFollowerActorIdsForModal() {
+  const slots = this.actor.getFlag('swse', 'followerSlots') || [];
+  const ids = slots.map(s => s.createdActorId).filter(Boolean);
+  return Array.from(new Set(ids));
+}
+
+async _renderFollowerSheetIntoModal(actorId) {
+  const host = this._getInlineModalHost();
+  if (!host) return;
+
+  const follower = game.actors.get(actorId);
+  if (!follower) return;
+
+  this._embeddedFollowerActorId = actorId;
+
+  const body = host.querySelector('[data-inline-body]');
+  body.innerHTML = '<div class="swse-embed-loading" style="opacity:0.8;">Loading follower sheet…</div>';
+
+  // Render follower sheet into an isolated container inside the modal
+  const container = document.createElement('div');
+  container.classList.add('swse-embedded-follower-sheet');
+  body.innerHTML = '';
+  body.appendChild(container);
+
+  // AppV2-safe: render into explicit target (no new window)
+  const sheet = follower.sheet;
+  if (!sheet) return;
+
+  // Ensure this doesn't persist options.target (we only pass render options)
+  await sheet.render({
+    force: true,
+    target: container,
+    // keep it frameless inside host
+    classes: ['swse-embedded'],
+    popOut: false
+  });
+
+  // Set modal title
+  host.querySelector('[data-inline-title]').textContent = follower.name;
+}
+
+async _openFollowerEditorModal(actorId) {
+  this._embeddedFollowerActorIds = this._getFollowerActorIdsForModal();
+  this._embeddedFollowerIndex = Math.max(0, this._embeddedFollowerActorIds.indexOf(actorId));
+  if (this._embeddedFollowerIndex < 0) this._embeddedFollowerIndex = 0;
+
+  const host = this._getInlineModalHost();
+  if (!host) return;
+
+  this._openInlineModal({
+    title: 'Follower',
+    bodyHtml: '',
+    footerButtons: [
+      {
+        label: 'Close',
+        iconHtml: '<i class="fa-solid fa-xmark"></i>',
+        onClick: () => this._closeInlineModal()
+      }
+    ]
+  });
+
+  await this._renderFollowerSheetIntoModal(this._embeddedFollowerActorIds[this._embeddedFollowerIndex]);
+  this._updateFollowerNavButtons();
+}
+
+_updateFollowerNavButtons() {
+  const host = this._getInlineModalHost();
+  if (!host) return;
+
+  const prevBtn = host.querySelector('[data-action="follower-prev"]');
+  const nextBtn = host.querySelector('[data-action="follower-next"]');
+
+  const n = this._embeddedFollowerActorIds?.length ?? 0;
+  if (!prevBtn || !nextBtn) return;
+
+  prevBtn.disabled = n <= 1;
+  nextBtn.disabled = n <= 1;
+}
+
+async _cycleFollowerInModal(delta) {
+  const ids = this._embeddedFollowerActorIds ?? [];
+  if (ids.length <= 1) return;
+
+  this._embeddedFollowerIndex = (this._embeddedFollowerIndex + delta + ids.length) % ids.length;
+  const id = ids[this._embeddedFollowerIndex];
+  await this._renderFollowerSheetIntoModal(id);
+  this._updateFollowerNavButtons();
+}
+
 
   /* ------------------------------------------------------------------------ */
   /* POST-RENDER EVENT BINDING                                                */
@@ -386,6 +580,9 @@ export class SWSEV2CharacterSheet extends
   async _onRender(context, options) {
 
     const root = this.element;
+    // Inline modal host bindings
+    this._bindFollowerInlineModal(root);
+
     if (!(root instanceof HTMLElement)) {
       throw new Error("CharacterSheet: element not HTMLElement");
     }
@@ -1546,6 +1743,24 @@ export class SWSEV2CharacterSheet extends
     );
   }
 
+_bindFollowerInlineModal(root) {
+  const host = root.querySelector('[data-inline-modal]');
+  if (!host) return;
+
+  if (host.dataset.bound === 'true') return;
+  host.dataset.bound = 'true';
+
+  host.querySelectorAll('[data-action="inline-cancel"]').forEach((el) => {
+    el.addEventListener('click', () => this._closeInlineModal());
+  });
+
+  const prevBtn = host.querySelector('[data-action="follower-prev"]');
+  const nextBtn = host.querySelector('[data-action="follower-next"]');
+
+  prevBtn?.addEventListener('click', () => this._cycleFollowerInModal(-1));
+  nextBtn?.addEventListener('click', () => this._cycleFollowerInModal(1));
+}
+
   /* -------- -------- -------- -------- -------- -------- -------- -------- */
   /* DRAG & DROP HANDLING                                                     */
   /* -------- -------- -------- -------- -------- -------- -------- -------- */
@@ -1557,6 +1772,123 @@ export class SWSEV2CharacterSheet extends
   /* ------------------------------------------------------------------------ */
   /* FORM UPDATE ROUTING                                                      */
   /* ------------------------------------------------------------------------ */
+
+
+_onDragStartOwnedEntry(event) {
+  const el = event.target?.closest?.('[draggable="true"][data-actor-id]');
+  if (!el) return;
+
+  const actorId = el.dataset.actorId;
+  const dragged = game.actors.get(actorId);
+  if (!dragged) return;
+
+  const payload = {
+    type: 'Actor',
+    uuid: dragged.uuid,
+    swse: { sourceOwnerUuid: this.actor.uuid }
+  };
+
+  event.dataTransfer?.setData('text/plain', JSON.stringify(payload));
+  event.dataTransfer.effectAllowed = 'copyMove';
+}
+
+async _onCreateFollowerFromSlot(event) {
+  event.preventDefault();
+  const slotId = event.currentTarget?.dataset?.slotId;
+  if (!slotId) return;
+
+  const slots = this.actor.getFlag('swse', 'followerSlots') || [];
+  const slot = slots.find((s) => s.id === slotId);
+  if (!slot) return;
+
+  const cfg = getFollowerTalentConfig(slot.talentName);
+  const max = cfg?.maxCount ?? 0;
+  const filled = slots.filter((s) => s.talentName === slot.talentName && !!s.createdActorId).length;
+  if (max > 0 && filled >= max) {
+    ui.notifications?.warn?.('Follower limit reached for this talent.');
+    return;
+  }
+
+  const ctx = await FollowerCreator.getInlineCreationContext(
+    this.actor,
+    cfg?.templateChoices ?? slot.templateChoices ?? null,
+    { name: slot.talentName, id: slot.talentItemId }
+  );
+
+  if (!ctx) return;
+
+  const bodyHtml = await renderTemplate(
+    'systems/foundryvtt-swse/templates/apps/follower-inline-builder.hbs',
+    {
+      templateTypes: ctx.templateTypes,
+      speciesList: ctx.speciesList,
+      defaultName: `${this.actor.name}'s Follower`
+    }
+  );
+
+  this._openInlineModal({
+    title: 'Follower Creation',
+    bodyHtml,
+    footerButtons: [
+      {
+        label: 'Create',
+        iconHtml: '<i class="fa-solid fa-check"></i>',
+        onClick: async () => {
+          const host = this._getInlineModalHost();
+          const form = host?.querySelector('form');
+          if (!form) return;
+
+          const fd = new FormData(form);
+
+          const followerData = {
+            name: fd.get('name'),
+            species: fd.get('species'),
+            abilityChoice: fd.get('abilityChoice') || null,
+            skillChoice: fd.get('skillChoice') || null,
+            featChoice: fd.get('featChoice') || null,
+            humanBonus: fd.get('humanBonus') || null,
+            templateType: fd.get('templateType')
+          };
+
+          const created = await FollowerCreator.createFollowerFromData(
+            this.actor,
+            followerData.templateType,
+            followerData,
+            { name: slot.talentName, id: slot.talentItemId }
+          );
+
+          if (!created) return;
+
+          // mark actor role for display/search
+          try {
+            await created.setFlag('swse', 'followerRole', followerData.templateType);
+          } catch {}
+
+          // Attach created follower to slot
+          const nextSlots = (this.actor.getFlag('swse', 'followerSlots') || []).map((s) => {
+            if (s.id !== slotId) return s;
+            return { ...s, createdActorId: created.id, templateType: followerData.templateType };
+          });
+          await this.actor.setFlag('swse', 'followerSlots', nextSlots);
+
+          const followers = this.actor.getFlag('swse', 'followers') || [];
+          if (!followers.some((f) => f.id === created.id)) {
+            followers.push({ id: created.id, talent: slot.talentName, slotId });
+            await this.actor.setFlag('swse', 'followers', followers);
+          }
+
+          this._closeInlineModal();
+          this.render();
+        }
+      },
+      {
+        label: 'Cancel',
+        iconHtml: '<i class="fa-solid fa-xmark"></i>',
+        onClick: () => this._closeInlineModal()
+      }
+    ]
+  });
+}
 
   async _updateObject(event, formData) {
     const expanded = foundry.utils.expandObject(formData);

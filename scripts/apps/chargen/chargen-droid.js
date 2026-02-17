@@ -1176,9 +1176,9 @@ class DroidImportDialog extends foundry.applications.api.ApplicationV2 {
     return {};
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    const searchInput = html.querySelector('#droid-search');
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const html = this.element;    const searchInput = html.querySelector('#droid-search');
     const resultsDiv = html.querySelector('#droid-results');
 
     if (!searchInput || !resultsDiv) return;

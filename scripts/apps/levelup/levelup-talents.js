@@ -341,7 +341,7 @@ export async function showTalentTreeDialog(treeName, talentData, actor, selectCa
     default: 'close',
     render: (html) => {
       // Get the DOM element (handle both jQuery and DOM element inputs)
-      const htmlElement = html instanceof jQuery ? html[0] : html;
+      const htmlElement = html instanceof HTMLElement ? html : (html?.[0] instanceof HTMLElement ? html[0] : null);
 
       // Add click handlers for talent selection
       htmlElement.querySelectorAll('.talent-node').forEach(el => {

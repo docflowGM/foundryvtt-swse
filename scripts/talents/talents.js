@@ -48,6 +48,16 @@ export const TALENT_EFFECTS = {
     description: '+1 to all defenses'
   },
 
+'Force of Will': {
+  effects: [{
+    key: 'system.defenses.will.misc',
+    mode: 2,
+    value: '2',
+    priority: 20
+  }],
+  description: '+2 insight bonus to Will Defense (always on). The encounter aura portion remains rules text.'
+},
+
   'Second Skin': {
     effects: [{
       key: 'system.defenses.reflex.armorBonus',

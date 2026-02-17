@@ -9,30 +9,46 @@
 
     {{!-- Filter Tabs --}}
     <div class="ability-filter-tabs">
-      <button class="ability-filter-btn active" data-filter="all" type="button">
-        <i class="{{getIconClass 'th'}}"></i> All ({{talentAbilities.all.length}})
-      </button>
-      {{#if talentAbilities.byType.reaction.length}}
-      <button class="ability-filter-btn" data-filter="reaction" type="button">
-        <i class="{{getIconClass 'bolt'}}"></i> Reactions ({{talentAbilities.byType.reaction.length}})
-      </button>
-      {{/if}}
-      {{#if talentAbilities.byType.standard.length}}
-      <button class="ability-filter-btn" data-filter="standard" type="button">
-        <i class="{{getIconClass 'circle'}}"></i> Standard ({{talentAbilities.byType.standard.length}})
-      </button>
-      {{/if}}
-      {{#if talentAbilities.byType.swift.length}}
-      <button class="ability-filter-btn" data-filter="swift" type="button">
-        <i class="{{getIconClass 'wind'}}"></i> Swift ({{talentAbilities.byType.swift.length}})
-      </button>
-      {{/if}}
-      {{#if talentAbilities.byType.passive.length}}
-      <button class="ability-filter-btn" data-filter="passive" type="button">
-        <i class="{{getIconClass 'shieldAlt'}}"></i> Passive ({{talentAbilities.byType.passive.length}})
-      </button>
-      {{/if}}
-    </div>
+  <button class="ability-filter-btn active" data-filter="all" type="button">
+    <i class="{{getIconClass 'th'}}"></i> All ({{talentAbilities.all.length}})
+  </button>
+  {{#if talentAbilities.byType.reaction.length}}
+  <button class="ability-filter-btn" data-filter="reaction" type="button">
+    <i class="{{getIconClass 'bolt'}}"></i> Reaction ({{talentAbilities.byType.reaction.length}})
+  </button>
+  {{/if}}
+  {{#if talentAbilities.byType.free.length}}
+  <button class="ability-filter-btn" data-filter="free" type="button">
+    <i class="{{getIconClass 'wand'}}"></i> Free Action ({{talentAbilities.byType.free.length}})
+  </button>
+  {{/if}}
+  {{#if talentAbilities.byType.swift.length}}
+  <button class="ability-filter-btn" data-filter="swift" type="button">
+    <i class="{{getIconClass 'wind'}}"></i> Swift Action ({{talentAbilities.byType.swift.length}})
+  </button>
+  {{/if}}
+  {{#if talentAbilities.byType.standard.length}}
+  <button class="ability-filter-btn" data-filter="standard" type="button">
+    <i class="{{getIconClass 'circle'}}"></i> Standard Action ({{talentAbilities.byType.standard.length}})
+  </button>
+  {{/if}}
+  {{#if talentAbilities.byType.fullRound.length}}
+  <button class="ability-filter-btn" data-filter="fullRound" type="button">
+    <i class="{{getIconClass 'hourglass'}}"></i> Full-Round Action ({{talentAbilities.byType.fullRound.length}})
+  </button>
+  {{/if}}
+  {{#if talentAbilities.byType.passive.length}}
+  <button class="ability-filter-btn" data-filter="passive" type="button">
+    <i class="{{getIconClass 'shieldAlt'}}"></i> Passive ({{talentAbilities.byType.passive.length}})
+  </button>
+  {{/if}}
+  {{#if talentAbilities.byType.modifier.length}}
+  <button class="ability-filter-btn" data-filter="modifier" type="button">
+    <i class="{{getIconClass 'sliders'}}"></i> Modifiers ({{talentAbilities.byType.modifier.length}})
+  </button>
+  {{/if}}
+</div>
+
 
     {{!-- Ability Cards Grid --}}
     <div class="ability-cards-grid">
@@ -100,16 +116,17 @@
                 {{subAbility.description}}
               </div>
 
-              {{#if subAbility.rollData.canRoll}}
               <button class="sub-ability-use-btn"
-                      data-action="useSubAbility"
-                      data-sub-ability-id="{{subAbility.id}}"
-                      data-talent-id="{{subAbility.sourceTalentId}}"
-                      type="button">
-                <i class="{{getIconClass 'diceD20'}}"></i>
-                Use {{subAbility.name}}
-              </button>
-              {{/if}}
+        data-action="useSubAbility"
+        data-sub-ability-id="{{subAbility.id}}"
+        data-talent-id="{{subAbility.sourceTalentId}}"
+        type="button">
+  {{#if subAbility.rollData.canRoll}}
+    <i class="{{getIconClass 'diceD20'}}"></i> Roll {{subAbility.name}}
+  {{else}}
+    <i class="{{getIconClass 'listCheck'}}"></i> Select {{subAbility.name}}
+  {{/if}}
+</button>
 
             </div>
             {{/each}}
@@ -190,7 +207,7 @@
                     data-ability-id="{{ability.id}}"
                     data-talent-id="{{ability.sourceTalentId}}"
                     type="button">
-              <i class="fa-solid {{#if ability.isToggled}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i>
+              <i class="fas {{#if ability.isToggled}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i>
               {{#if ability.isToggled}}Active{{else}}Inactive{{/if}}
             </button>
           </div>
@@ -317,7 +334,7 @@
     {{!-- Reset Uses Button --}}
     <div class="ability-reset-section">
       <button class="ability-reset-btn" data-action="resetEncounterUses" type="button">
-        <i class="fa-solid fa-arrows-rotate"></i> Reset Encounter Uses
+        <i class="fas fa-arrows-rotate"></i> Reset Encounter Uses
       </button>
       <button class="ability-reset-btn" data-action="resetDayUses" type="button">
         <i class="{{getIconClass 'sun'}}"></i> Reset Daily Uses

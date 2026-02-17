@@ -23,3 +23,22 @@
    .app.swse-window button.ui-control.icon::before { ... }
    NOT on body level.
 */
+
+
+/* ==========================================================================
+   In-Window Modals (AppV2 windows without chrome)
+   Used to avoid spawning extra "popup windows" during workflows.
+   ========================================================================== */
+
+.window-app.swse-inwindow-modal {
+  box-shadow: none;
+}
+
+.window-app.swse-inwindow-modal .window-header {
+  display: none;
+}
+
+.window-app.swse-inwindow-modal .window-content {
+  padding: 0;
+}
+

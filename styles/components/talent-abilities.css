@@ -1283,3 +1283,60 @@
 .sub-ability-use-btn i {
   font-size: 1.1em;
 }
+
+
+/* Inline modal host (in-sheet, frameless) */
+.swse-inline-modal-host {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+}
+
+.swse-inline-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+}
+
+.swse-inline-modal {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  background: rgba(10, 16, 24, 0.92);
+  border: 1px solid rgba(102, 204, 255, 0.25);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.swse-inline-modal-header {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.swse-inline-modal-body {
+  padding: 12px;
+  overflow: auto;
+  flex: 1;
+}
+
+.swse-inline-modal-footer {
+  padding: 10px 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+
+.swse-follower-badge {
+  padding: 2px 8px;
+  border: 1px solid rgba(102, 204, 255, 0.25);
+  border-radius: 999px;
+}

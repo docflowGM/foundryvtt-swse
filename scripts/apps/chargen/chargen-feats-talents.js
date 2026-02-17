@@ -1007,9 +1007,9 @@ class SkillFocusDialog extends foundry.applications.api.ApplicationV2 {
     return { skillOptions: this.skillOptions };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    const skillSelect = html.querySelector('#skill-focus-selection');
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const html = this.element;    const skillSelect = html.querySelector('#skill-focus-selection');
 
     html.querySelector('[data-action="select"]')?.addEventListener('click', async () => {
       const selectedSkill = skillSelect?.value;

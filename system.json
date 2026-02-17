@@ -32,6 +32,7 @@
     "scripts/progression/talents/TalentTreeRegistry.js",
     "scripts/talents/DarkSidePowers.js",
     "scripts/talents/dark-side-powers-init.js",
+    "scripts/talents/squad-actions-init.js",
     "scripts/talents/light-side-init.js"
   ],
   "styles": [
@@ -105,12 +106,12 @@
     },
     {
       "lang": "es",
-      "name": "Espa\u00f1ol",
+      "name": "Español",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Fran\u00e7ais",
+      "name": "Français",
       "path": "lang/fr.json"
     },
     {
@@ -120,7 +121,7 @@
     },
     {
       "lang": "ru",
-      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "name": "Русский",
       "path": "lang/ru.json"
     }
   ],

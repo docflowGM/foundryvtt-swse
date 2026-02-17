@@ -32,7 +32,80 @@ export class FollowerCreator {
      * @param {Object} grantingTalent - The talent that granted this follower
      * @returns {Promise<Actor>} The created follower actor
      */
-    static async createFollower(owner, templateType, grantingTalent = null) {
+    /**
+ * Build creation context for an inline (in-sheet) follower builder.
+ * This does NOT render dialogs or create windows.
+ *
+ * @param {Actor} owner
+ * @param {string[]|null} templateChoices
+ * @param {object|null} grantingTalent
+ * @returns {Promise<object|null>}
+ */
+static async getInlineCreationContext(owner, templateChoices = null, grantingTalent = null) {
+  const templates = await this.getFollowerTemplates();
+  const allowed = templateChoices?.length
+    ? templateChoices.filter(k => templates[k])
+    : Object.keys(templates);
+
+  const speciesPack = game.packs.get('foundryvtt-swse.species');
+  if (!speciesPack) {
+    ui.notifications.error('Species compendium not found! Cannot create follower.');
+    return null;
+  }
+
+  const speciesIndex = await speciesPack.getIndex();
+  const speciesList = speciesIndex
+    .map(s => ({ id: s._id, name: s.name }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const templateTypes = allowed.map(key => ({
+    key,
+    name: templates[key]?.name ?? key
+  }));
+
+  return { owner, grantingTalent, templateTypes, speciesList, templates };
+}
+
+/**
+ * Create follower directly from form data (no dialogs).
+ *
+ * @param {Actor} owner
+ * @param {string} templateType
+ * @param {object} followerData
+ * @param {object|null} grantingTalent
+ * @returns {Promise<Actor|null>}
+ */
+static async createFollowerFromData(owner, templateType, followerData, grantingTalent = null) {
+  const templates = await this.getFollowerTemplates();
+  const template = templates[templateType];
+
+  if (!template) {
+    ui.notifications.error(`Invalid follower template: ${templateType}`);
+    return null;
+  }
+
+  const follower = await this._buildFollowerActor(owner, template, followerData, grantingTalent);
+  if (!follower) return null;
+
+  await this._linkFollowerToOwner(owner, follower, grantingTalent);
+
+  try {
+    Hooks.callAll('swse:progression:completed', {
+      actor: follower,
+      mode: 'follower',
+      level: follower.system.level,
+      owner: owner.id,
+      template: templateType
+    });
+  } catch (e) {
+    console.warn('SWSE | FollowerCreator completion hook threw:', e);
+  }
+
+  ui.notifications.info(`Follower "${follower.name}" created successfully!`);
+  return follower;
+}
+
+static async createFollower(owner, templateType, grantingTalent = null) {
         const templates = await this.getFollowerTemplates();
         const template = templates[templateType];
 
@@ -48,11 +121,8 @@ export class FollowerCreator {
             return null; // User cancelled
         }
 
-        // Create the follower actor
-        const follower = await this._buildFollowerActor(owner, template, followerData, grantingTalent);
-
-        // Link follower to owner
-        await this._linkFollowerToOwner(owner, follower, grantingTalent);
+        const follower = await this.createFollowerFromData(owner, templateType, followerData, grantingTalent);
+        if (!follower) {return null;}
 
         // Fire completion hook for consistency with main progression system
         try {
@@ -102,7 +172,7 @@ export class FollowerCreator {
                 content: html,
                 buttons: {
                     create: {
-                        icon: '<i class="fa-solid fa-check"></i>',
+                        icon: '<i class="fas fa-check"></i>',
                         label: 'Create Follower',
                         callback: async (html) => {
                             const formData = new FormData(html[0].querySelector('form'));
@@ -119,7 +189,7 @@ export class FollowerCreator {
                         }
                     },
                     cancel: {
-                        icon: '<i class="fa-solid fa-times"></i>',
+                        icon: '<i class="fas fa-times"></i>',
                         label: 'Cancel',
                         callback: () => resolve(null)
                     }

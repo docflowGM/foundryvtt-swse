@@ -5,10 +5,11 @@ import { isEpicOverrideEnabled } from '../../settings/epic-override.js';
 import { getLevelSplit } from '../../actors/derived/level-split.js';
 import { ensureNpcProgressionMode, revertNpcToStatblock, levelUpNpcNonheroic } from '../../engine/npc-levelup.js';
 import { SWSELevelUpEnhanced } from './levelup-enhanced.js';
+import { SWSEDialogV2 } from '../dialogs/swse-dialog-v2.js';
 
 export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
   static PARTS = {
-    main: { template: 'systems/foundryvtt-swse/templates/apps/npc-levelup-entry.hbs' }
+    content: { template: 'systems/foundryvtt-swse/templates/apps/npc-levelup-entry.hbs' }
   };
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {

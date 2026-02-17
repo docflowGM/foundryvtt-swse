@@ -14,6 +14,7 @@
 
 import { AurebeshTranslator } from './aurebesh-translator.js';
 import { TRANSLATION_PRESETS } from './translation-presets.js';
+import { TRANSLATION_PRESETS, MENTOR_PRESET_MAP } from '../ui/dialogue/translation-presets.js';
 
 export class MentorTranslationIntegration {
   /**
@@ -30,7 +31,7 @@ export class MentorTranslationIntegration {
    * Mentor → preset mapping
    * Customize which mentor uses which Aurebesh style
    */
-  static mentorPresets = {
+  static  = {
     'jedi-master': 'mentor',      // Wise, measured
     'sith-lord': 'sith',           // Aggressive, dangerous
     'protocol-droid': 'droid',     // Clinical, precise
@@ -97,7 +98,7 @@ export class MentorTranslationIntegration {
         container.dataset.preset = preset;
         onComplete();
       },
-      enableSkip: this.settings.skipOnClick
+      enableSkip: true
     });
   }
 
@@ -115,24 +116,49 @@ export class MentorTranslationIntegration {
    * Get preset for mentor
    * @private
    */
-  static _getPresetForMentor(mentor) {
-    // Normalize mentor name
-    const key = mentor?.toLowerCase?.()?.trim() || 'default';
+  static normalizeMentorKey(mentor) {
+    const key = this.normalizeMentorKey(mentor);
 
-    // Direct match
-    if (this.mentorPresets[key]) {
-      return this.mentorPresets[key];
+    // Return the canonical map key if we can match it.
+    if (MENTOR_PRESET_MAP[key]) return key;
+
+    for (const name of Object.keys(MENTOR_PRESET_MAP)) {
+      if (!name || name === 'default') continue;
+      if (key.includes(name)) return name;
     }
 
+    // Fall back to a stable, internal-only token.
+    return 'default';
+  }
+
+  
+  static _getPresetForMentor(mentor) {
+    const key = this.normalizeMentorKey(mentor);
+    const mapped = MENTOR_PRESET_MAP[key] ?? MENTOR_PRESET_MAP.default ?? 'mentor';
+    return TRANSLATION_PRESETS[mapped] ? mapped : 'mentor';
+  }
+
+
+    // 3) Heuristic fallback (backwards compatible)
+    if (key.includes('sith')) return 'sith';
+    if (key.includes('jedi')) return 'jedi';
+    if (key.includes('droid') || key.includes('protocol')) return 'droid';
+    if (key.includes('holocron')) return 'holocron';
+    if (key.includes('vision') || key.includes('force-vision')) return 'forcevision';
+
+    return 'mentor';
+  }
+
+
     // Fuzzy match (check if key contains mentor name)
-    for (const [mentorKey, preset] of Object.entries(this.mentorPresets)) {
+    for (const [mentorKey, preset] of Object.entries(this.)) {
       if (mentorKey !== 'default' && key.includes(mentorKey)) {
         return preset;
       }
     }
 
     // Fallback
-    return this.mentorPresets.default;
+    return 'mentor';
   }
 
   /**
@@ -194,7 +220,7 @@ export class MentorTranslationIntegration {
    * Register a custom mentor preset
    */
   static registerMentorPreset(mentorKey, preset) {
-    this.mentorPresets[mentorKey.toLowerCase()] = preset;
+    this.[mentorKey.toLowerCase()] = preset;
   }
 
   /**

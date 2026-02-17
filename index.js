@@ -89,6 +89,7 @@ import { SWSELanguageModule } from "./scripts/progression/modules/language-modul
 import { registerInitHooks, registerDestinyHooks } from "./scripts/hooks/index.js";
 import { initializeForcePowerHooks } from "./scripts/hooks/force-power-hooks.js";
 import { initializeFollowerHooks } from "./scripts/hooks/follower-hooks.js";
+import { initializeTalentEffectsHooks } from "./scripts/hooks/talent-effects-hooks.js";
 import { registerDirectoryHooks } from "./scripts/hooks/directory-hooks.js";
 import { registerKeybindings } from "./scripts/core/keybindings.js";
 
@@ -216,6 +217,7 @@ Hooks.once("ready", async () => {
   initializeUtils();
   initializeForcePowerHooks();
   initializeFollowerHooks();
+  initializeTalentEffectsHooks();
   initializeProgressionHooks();
   SWSELanguageModule.init();
 

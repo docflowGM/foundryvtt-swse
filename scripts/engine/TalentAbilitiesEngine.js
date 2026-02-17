@@ -27,7 +27,7 @@ import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 const TALENT_ABILITY_EFFECTS = {
     'ataru': {
         name: 'Ataru Form',
-        icon: 'fa-solid fa-wind',
+        icon: 'fas fa-wind',
         duration: { rounds: 1 },
         updates: {
             'system.attackBonus': { mode: 'ADD', value: 2 },
@@ -37,7 +37,7 @@ const TALENT_ABILITY_EFFECTS = {
     },
     'juyo': {
         name: 'Juyo Form',
-        icon: 'fa-solid fa-skull',
+        icon: 'fas fa-skull',
         duration: { rounds: 1 },
         updates: {
             'system.damageBonus': { mode: 'ADD', value: 2 },
@@ -49,7 +49,7 @@ const TALENT_ABILITY_EFFECTS = {
     },
     'lightsaber-defense': {
         name: 'Lightsaber Defense',
-        icon: 'fa-solid fa-shield-alt',
+        icon: 'fas fa-shield-alt',
         updates: {
             'system.defenses.reflex.misc': { mode: 'ADD', value: 1 }
         },
@@ -57,7 +57,7 @@ const TALENT_ABILITY_EFFECTS = {
     },
     'armored-defense': {
         name: 'Armored Defense',
-        icon: 'fa-solid fa-shield-alt',
+        icon: 'fas fa-shield-alt',
         updates: {
             'system.defenses.reflex.misc': { mode: 'ADD', value: 1 }
         },
@@ -65,7 +65,7 @@ const TALENT_ABILITY_EFFECTS = {
     },
     'improved-armored-defense': {
         name: 'Improved Armored Defense',
-        icon: 'fa-solid fa-shield-alt',
+        icon: 'fas fa-shield-alt',
         updates: {
             'system.defenses.reflex.misc': { mode: 'ADD', value: 2 }
         },
@@ -73,7 +73,7 @@ const TALENT_ABILITY_EFFECTS = {
     },
     'elusive-target': {
         name: 'Elusive Target',
-        icon: 'fa-solid fa-wind',
+        icon: 'fas fa-wind',
         updates: {
             'system.defenses.reflex.misc': { mode: 'ADD', value: 2 }
         },
@@ -119,6 +119,122 @@ const CONDITION_TRACK_TALENTS = {
 };
 
 export class TalentAbilitiesEngine {
+/* ------------------------------------------------------------------------ */
+/* TAG NORMALIZATION                                                        */
+/* ------------------------------------------------------------------------ */
+
+static CANONICAL_TAG_ORDER = [
+    "Situational",
+    "Passive",
+    "Free Action",
+    "Swift Action",
+    "Move Action",
+    "Standard Action",
+    "Full-Round Action",
+    "Reaction",
+    "Once Per Encounter",
+    "Once Per Day",
+    "Followers",
+    "Force",
+    "Dark Side",
+    "Light Side",
+    "Mind-Affecting",
+    "Fear",
+    "Vehicle",
+    "Jet Pack",
+    "Lightsaber",
+    "Autofire",
+    "Second Wind",
+    "Condition Track",
+    "Cover",
+    "Disarm",
+    "Movement",
+    "Attack",
+    "Defense",
+    "Support",
+    "Social",
+    "Luck",
+    "Resource",
+    "Tactics"
+];
+
+static TAG_SYNONYMS = {
+    "mind affecting": "Mind-Affecting",
+    "mind-affecting": "Mind-Affecting",
+    "followers": "Followers",
+    "follower": "Followers",
+    "force": "Force",
+    "dark side": "Dark Side",
+    "light side": "Light Side",
+    "fear": "Fear",
+    "vehicle": "Vehicle",
+    "jet pack": "Jet Pack",
+    "jet-pack": "Jet Pack",
+    "lightsaber": "Lightsaber",
+    "autofire": "Autofire",
+    "second wind": "Second Wind",
+    "condition track": "Condition Track",
+    "cover": "Cover",
+    "disarm": "Disarm",
+    "movement": "Movement",
+    "attack": "Attack",
+    "defense": "Defense",
+    "support": "Support",
+    "social": "Social",
+    "luck": "Luck",
+    "resource": "Resource",
+    "tactics": "Tactics",
+    "situational": "Situational",
+    "once per encounter": "Once Per Encounter",
+    "once per day": "Once Per Day"
+};
+
+static _canonicalizeTag(raw) {
+    if (!raw) return null;
+    const key = String(raw).trim();
+    if (!key) return null;
+
+    // Exact canonical
+    const exact = this.CANONICAL_TAG_ORDER.find(t => t.toLowerCase() === key.toLowerCase());
+    if (exact) return exact;
+
+    const mapped = this.TAG_SYNONYMS[key.toLowerCase()];
+    if (mapped) return mapped;
+
+    return null;
+}
+
+static _canonicalizeTags(tags, actionType) {
+    const out = [];
+
+    // actionType -> canonical action label tag
+    const typeToLabel = {
+        reaction: "Reaction",
+        standard: "Standard Action",
+        swift: "Swift Action",
+        fullRound: "Full-Round Action",
+        free: "Free Action",
+        passive: "Passive",
+        move: "Move Action"
+    };
+
+    const actionTag = typeToLabel[actionType] ?? null;
+    if (actionTag) out.push(actionTag);
+
+    for (const t of (tags ?? [])) {
+        const c = this._canonicalizeTag(t);
+        if (c) out.push(c);
+    }
+
+    // De-dup
+    const unique = Array.from(new Set(out));
+
+    // Stable sort by canonical order, unknowns dropped earlier so safe
+    unique.sort((a, b) => this.CANONICAL_TAG_ORDER.indexOf(a) - this.CANONICAL_TAG_ORDER.indexOf(b));
+    return unique;
+}
+
+
 
     /**
      * Get all ability definitions
@@ -395,7 +511,7 @@ export class TalentAbilitiesEngine {
             talentTree: template.talentTree,
             description: `Choose one of ${subAbilities.length} options`,
             actionType: 'multi-option',
-            icon: template.icon || 'fa-solid fa-list',
+            icon: template.icon || 'fas fa-list',
             typeLabel: 'Multi-Option',
             typeBadgeClass: 'multi-option',
             sourceTalent: template.sourceTalent,
@@ -1126,7 +1242,7 @@ export class TalentAbilitiesEngine {
     static async _postDamageEffectsToChat(attacker, target, effects) {
         const content = `
             <div class="swse-talent-effects-message">
-                <h4><i class="fa-solid fa-bolt"></i> Talent Effects Applied</h4>
+                <h4><i class="fas fa-bolt"></i> Talent Effects Applied</h4>
                 <p><strong>${attacker.name}</strong> affects <strong>${target.name}</strong>:</p>
                 <ul>
                     ${effects.map(e => `<li><strong>${e.name}:</strong> ${e.effect}</li>`).join('')}
@@ -1221,7 +1337,7 @@ export class TalentAbilitiesEngine {
                     <div class="reaction-option">
                         <label>
                             <input type="radio" name="reaction" value="none" checked>
-                            <i class="fa-solid fa-times"></i> No reaction
+                            <i class="fas fa-times"></i> No reaction
                         </label>
                     </div>
                 </div>
@@ -1234,7 +1350,7 @@ export class TalentAbilitiesEngine {
                 content,
                 buttons: {
                     confirm: {
-                        icon: '<i class="fa-solid fa-check"></i>',
+                        icon: '<i class="fas fa-check"></i>',
                         label: 'Confirm',
                         callback: async (html) => {
                             const root = html instanceof HTMLElement ? html : html?.[0];
@@ -1254,7 +1370,7 @@ export class TalentAbilitiesEngine {
                         }
                     },
                     cancel: {
-                        icon: '<i class="fa-solid fa-times"></i>',
+                        icon: '<i class="fas fa-times"></i>',
                         label: 'Skip',
                         callback: () => resolve(null)
                     }

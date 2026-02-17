@@ -42,12 +42,12 @@ export class AurebeshTranslator {
     container.appendChild(wrapper);
 
     // Initialize state
-    let isSkipped = false;
+    const isSkippedRef = { value: false };
     let animationPromise;
 
     // Create skip handler
     const skipHandler = () => {
-      isSkipped = true;
+      isSkippedRef.value = true;
       if (enableSkip) {wrapper.removeEventListener('click', skipHandler);}
     };
 
@@ -58,11 +58,11 @@ export class AurebeshTranslator {
 
     try {
       // Run animation (returns promise)
-      animationPromise = this._animateReveal(wrapper, text, config, isSkipped);
+      animationPromise = this._animateReveal(wrapper, text, config, isSkippedRef);
       await animationPromise;
 
       // If skipped, reveal all remaining text instantly
-      if (isSkipped) {
+      if (isSkippedRef.value) {
         wrapper.innerHTML = this._buildFinalMarkup(text, config);
       }
 
@@ -86,7 +86,7 @@ export class AurebeshTranslator {
 
     for (let i = 0; i < chars.length; i++) {
       // If skipped, stop animating and let parent handle reveal
-      if (skipRef) {break;}
+      if (skipRef?.value) {break;}
 
       const char = chars[i];
       const revealed = chars.slice(0, i + 1).join('');

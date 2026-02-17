@@ -9,18 +9,19 @@
 
 import { MentorSuggestionVoice } from '../../mentor/mentor-suggestion-voice.js';
 import { MENTORS } from './mentor-dialogues.js';
-import { TypingAnimation } from '../../utils/typing-animation.js';
+import { MentorTranslationIntegration } from '../../mentor/mentor-translation-integration.js';
 
 export class MentorSuggestionDialog extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
+    classes: ['swse', 'swse-inwindow-modal'],
     id: 'mentor-suggestion-dialog',
     tag: 'div',
-    window: { icon: 'fa-solid fa-lightbulb', title: 'Mentor Suggestion' },
+    window: { icon: 'fa-solid fa-lightbulb', title: 'Mentor Suggestion', frame: false, resizable: false, draggable: false },
     position: { width: 550, height: 'auto' }
   };
 
   static PARTS = {
-    main: { template: 'systems/foundryvtt-swse/templates/apps/mentor-suggestion-dialog.hbs' }
+    content: { template: 'systems/foundryvtt-swse/templates/apps/mentor-suggestion-dialog.hbs' }
   };
 
   constructor(mentor, voicedSuggestion, suggestion, options = {}) {
@@ -121,21 +122,28 @@ export class MentorSuggestionDialog extends foundry.applications.api.Application
     const introElement = this.element?.querySelector('.mentor-intro');
     const explanationElement = this.element?.querySelector('.mentor-explanation');
 
-    if (introElement && explanationElement) {
-      const introText = this.voicedSuggestion.introduction;
-      const explanationText = this.voicedSuggestion.explanation;
+    if (!introElement || !explanationElement) { return; }
 
-      TypingAnimation.typeText(introElement, introText, {
-        speed: 50,
-        skipOnClick: true,
-        onComplete: () => {
-          TypingAnimation.typeText(explanationElement, explanationText, {
-            speed: 45,
-            skipOnClick: true
-          });
-        }
-      });
-    }
+    const introText = this.voicedSuggestion.introduction;
+    const explanationText = this.voicedSuggestion.explanation;
+    const mentorKey = MentorTranslationIntegration.normalizeMentorKey(this.mentorName || this.currentMentorClass || 'default');
+
+    MentorTranslationIntegration.render({
+      text: introText,
+      container: introElement,
+      mentor: mentorKey,
+      topic: 'mentor_intro',
+      force: true,
+      onComplete: () => {
+        MentorTranslationIntegration.render({
+          text: explanationText,
+          container: explanationElement,
+          mentor: mentorKey,
+          topic: 'mentor_explanation',
+          force: true
+        });
+      }
+    });
   }
 
   /**

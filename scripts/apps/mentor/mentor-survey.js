@@ -8,7 +8,7 @@
  */
 
 import { MENTORS } from './mentor-dialogues.js';
-import { TypingAnimation } from '../../utils/typing-animation.js';
+import { MentorTranslationIntegration } from '../../mentor/mentor-translation-integration.js';
 import { swseLogger } from '../../utils/logger.js';
 import { seedMentorMemoryFromSurvey, getMentorMemory, setMentorMemory } from '../../mentor/mentor-memory.js';
 
@@ -710,11 +710,14 @@ export class MentorSurvey {
               const root = this.element;
               const greetingElement = root?.querySelector?.('.mentor-greeting');
               if (greetingElement) {
-                swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Starting typing animation...`);
                 const greetingText = greetingElement.textContent;
-                TypingAnimation.typeText(greetingElement, greetingText, {
-                  speed: 45,
-                  skipOnClick: true
+                greetingElement.textContent = '';
+                MentorTranslationIntegration.render({
+                  text: greetingText,
+                  container: greetingElement,
+                  mentor: MentorTranslationIntegration.normalizeMentorKey(this.currentMentorClass ?? 'default'),
+                  topic: 'mentor_survey_greeting',
+                  force: true
                 });
               } else {
                 swseLogger.warn(`[MENTOR-SURVEY] promptSurvey: Greeting element not found in rendered HTML`);

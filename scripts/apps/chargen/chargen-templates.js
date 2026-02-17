@@ -446,8 +446,18 @@ export class CharacterTemplates {
    * Show template selection dialog
    * @param {Function} onSelect - Callback when template is selected (receives templateId or null for custom)
    */
-  static async showTemplateDialog(onSelect) {
+  static async showTemplateDialog(onSelect, hostApp = null) {
     const content = await this.renderTemplateSelection();
+    if (hostApp && typeof hostApp._openInWindowModal === 'function') {
+      hostApp._openInWindowModal({
+        title: 'Character Template Selection',
+        html: content,
+        onMount: (bodyEl) => {
+          CharacterTemplates._bindTemplateSelectionInline(bodyEl, onSelect, () => hostApp._closeInWindowModal());
+        }
+      });
+      return;
+    }
     const dialog = new TemplateSelectionDialog(content, onSelect);
     dialog.render(true);
   }
@@ -775,9 +785,10 @@ export class CharacterTemplates {
  */
 class TemplateSelectionDialog extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
+    classes: ['swse', 'swse-inwindow-modal'],
     id: 'swse-template-selection-dialog',
     tag: 'div',
-    window: { icon: 'fa-solid fa-clipboard-list', title: 'Character Template Selection' },
+    window: { frame: false,  icon: 'fa-solid fa-clipboard-list', title: 'Character Template Selection' , resizable: false, draggable: false },
     position: { width: 900, height: 700 }
   };
 
@@ -795,9 +806,9 @@ class TemplateSelectionDialog extends foundry.applications.api.ApplicationV2 {
     return { templateContent: this.templateContent };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    const root = html;
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const html = this.element;    const root = html;
     if (!root) return;
 
     // Tab switching

@@ -1,0 +1,60 @@
+<div class="swse-follower-inline-builder">
+  <form>
+    <div class="holo-panel">
+      <div class="section-bar">
+        <h3 class="section-header">Create Follower</h3>
+      </div>
+
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" value="{{defaultName}}" placeholder="Follower name"/>
+      </div>
+
+      <div class="form-group">
+        <label>Template</label>
+        <select name="templateType">
+          {{#each templateTypes as |t|}}
+            <option value="{{t.key}}">{{t.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Species</label>
+        <select name="species">
+          {{#each speciesList as |s|}}
+            <option value="{{s.id}}">{{s.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Ability Bonus Choice</label>
+        <select name="abilityChoice">
+          <option value="">(none)</option>
+          <option value="str">STR</option>
+          <option value="dex">DEX</option>
+          <option value="con">CON</option>
+          <option value="int">INT</option>
+          <option value="wis">WIS</option>
+          <option value="cha">CHA</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Skill Choice (optional)</label>
+        <input type="text" name="skillChoice" placeholder="e.g. Perception"/>
+      </div>
+
+      <div class="form-group">
+        <label>Feat Choice (optional)</label>
+        <input type="text" name="featChoice" placeholder="e.g. Armor Proficiency (Light)"/>
+      </div>
+
+      <div class="form-group">
+        <label>Human Bonus (optional)</label>
+        <input type="text" name="humanBonus" placeholder="e.g. Skill Training (Stealth)"/>
+      </div>
+    </div>
+  </form>
+</div>

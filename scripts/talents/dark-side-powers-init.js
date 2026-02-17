@@ -744,8 +744,8 @@ Hooks.once('ready', () => {
     dialog.render(true);
   };
 
-  // Sith Alchemy (create) - Unified macro for creating talismans or weapons
-  window.SWSE.macros.sithAlchemyCreate = async () => {
+  // Sith Alchemy - Unified menu (Amulet, Armor, Talisman, Weapon)
+  window.SWSE.macros.sithAlchemy = async () => {
     const actor = game.user.character;
     if (!actor) {
       ui.notifications.error('Please select a character');
@@ -757,110 +757,152 @@ Hooks.once('ready', () => {
       return;
     }
 
-    // Check if cooldown applies for talisman
+    const buttons = {};
+
+    // ---- Amulet (start/complete)
+    const amuletCraft = actor.getFlag('swse', 'sithAmuletCraft');
+    if (!amuletCraft || amuletCraft.completedAt) {
+      buttons.startAmulet = {
+        label: 'Start Sith Amulet (25,000 cr, 1 week)',
+        callback: async () => {
+          const result = await DarkSidePowers.startSithAmuletCraft(actor);
+          if (!result.success) ui.notifications.warn(result.message);
+        }
+      };
+    } else {
+      buttons.completeAmulet = {
+        label: 'Complete Sith Amulet (1 FP)',
+        callback: async () => {
+          const result = await DarkSidePowers.completeSithAmuletCraft(actor);
+          if (!result.success) ui.notifications.warn(result.message);
+        }
+      };
+    }
+
+    // ---- Talisman
     const hasTalismanCooldown = !DarkSidePowers.canCreateNewSithTalisman(actor);
     const hasActiveTalisman = DarkSidePowers.getActiveSithTalisman(actor);
+    if (!hasActiveTalisman && !hasTalismanCooldown) {
+      buttons.talisman = {
+        label: 'Create Sith Talisman (Full-Round, 1 FP)',
+        callback: async () => {
+          const result = await DarkSidePowers.createSithTalisman(actor);
+          if (!result.success) ui.notifications.warn(result.message);
+        }
+      };
+    }
 
-    // Check available melee weapons
+    // ---- Armor (select battle armor, start/complete)
+    const battleArmors = actor.items.filter(i => i.type === 'armor' && (i.name || '').toLowerCase().includes('battle armor'));
+    if (battleArmors.length) {
+      buttons.armor = {
+        label: 'Sith Armor (start/complete on selected Battle Armor)',
+        callback: async () => {
+          const armorOptions = battleArmors.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+          const armorDialog = new SWSEDialogV2({
+            title: 'Sith Armor Transformation',
+            content: `
+              <div class="form-group">
+                <label>Choose Battle Armor:</label>
+                <select id="swse-sith-armor-select">${armorOptions}</select>
+              </div>
+              <p><em>Start: 1-3 days depending on armor weight. Complete: 1 FP.</em></p>
+            `,
+            buttons: {
+              start: {
+                label: 'Start',
+                callback: async (html) => {
+                  const id = html.find('#swse-sith-armor-select').val();
+                  const armorItem = actor.items.get(id);
+                  const result = await DarkSidePowers.startSithArmorTransform(actor, armorItem);
+                  if (!result.success) ui.notifications.warn(result.message);
+                }
+              },
+              complete: {
+                label: 'Complete',
+                callback: async (html) => {
+                  const id = html.find('#swse-sith-armor-select').val();
+                  const armorItem = actor.items.get(id);
+                  const result = await DarkSidePowers.completeSithArmorTransform(actor, armorItem);
+                  if (!result.success) ui.notifications.warn(result.message);
+                }
+              },
+              cancel: { label: 'Cancel' }
+            }
+          });
+          armorDialog.render(true);
+        }
+      };
+    }
+
+    // ---- Weapon (select melee weapon, start/complete, and swift-bonus)
     const meleeWeapons = actor.items.filter(item =>
       item.type === 'weapon' &&
       (item.system?.weaponType === 'advanced-melee' || item.system?.weaponType === 'simple-melee')
     );
 
-    const buttons = {};
-
-    // Add talisman option if available
-    if (!hasActiveTalisman && !hasTalismanCooldown) {
-      buttons.talisman = {
-        label: 'Create Sith Talisman (Full-Round Action, 1 FP)',
-        callback: async () => {
-          const result = await DarkSidePowers.createSithTalisman(actor);
-          if (!result.success) {
-            ui.notifications.warn(result.message);
-          }
-        }
-      };
-    }
-
-    // Add weapon option if weapons available
-    if (meleeWeapons.length > 0) {
+    if (meleeWeapons.length) {
       buttons.weapon = {
-        label: 'Create Sith Alchemical Weapon (Full-Round Action)',
+        label: 'Sith Weapon (start/complete on selected melee weapon)',
         callback: async () => {
-          if (meleeWeapons.length === 1) {
-            // Only one weapon, enhance it directly
-            const result = await DarkSidePowers.createSithAlchemicalWeapon(actor, meleeWeapons[0]);
-            if (!result.success) {
-              ui.notifications.warn(result.message);
-            }
-          } else {
-            // Multiple weapons, show selection dialog
-            const weaponOptions = meleeWeapons
-              .map(w => `<option value="${w.id}">${w.name}</option>`)
-              .join('');
-
-            const weaponDialog = new SWSEDialogV2({
-              title: 'Select Weapon to Enhance',
-              content: `
-                <div class="form-group">
-                  <label>Choose a melee weapon to enhance with Sith Alchemy:</label>
-                  <select id="weapon-select" style="width: 100%;">
-                    ${weaponOptions}
-                  </select>
-                </div>
-              `,
-              buttons: {
-                enhance: {
-                  label: 'Create Sith Alchemical Weapon',
-                  callback: async (html) => {
-                    const weaponId = (html?.[0] ?? html)?.querySelector('#weapon-select')?.value;
-                    const weapon = actor.items.get(weaponId);
-                    const result = await DarkSidePowers.createSithAlchemicalWeapon(actor, weapon);
-                    if (!result.success) {
-                      ui.notifications.warn(result.message);
-                    }
-                  }
-                },
-                cancel: {
-                  label: 'Cancel'
+          const weaponOptions = meleeWeapons.map(w => `<option value="${w.id}">${w.name}</option>`).join('');
+          const weaponDialog = new SWSEDialogV2({
+            title: 'Sith Weapon Imbuement',
+            content: `
+              <div class="form-group">
+                <label>Choose melee weapon:</label>
+                <select id="swse-sith-weapon-select">${weaponOptions}</select>
+              </div>
+              <p><em>Start: 1 hour. Complete: 1 FP. After completion: Swift Action damage surge (1 FP, DSP +1).</em></p>
+            `,
+            buttons: {
+              start: {
+                label: 'Start',
+                callback: async (html) => {
+                  const id = html.find('#swse-sith-weapon-select').val();
+                  const weaponItem = actor.items.get(id);
+                  const result = await DarkSidePowers.startSithWeaponCraft(actor, weaponItem);
+                  if (!result.success) ui.notifications.warn(result.message);
                 }
-              }
-            });
-
-            weaponDialog.render(true);
-          }
+              },
+              complete: {
+                label: 'Complete',
+                callback: async (html) => {
+                  const id = html.find('#swse-sith-weapon-select').val();
+                  const weaponItem = actor.items.get(id);
+                  const result = await DarkSidePowers.completeSithWeaponCraft(actor, weaponItem);
+                  if (!result.success) ui.notifications.warn(result.message);
+                }
+              },
+              surge: {
+                label: 'Swift Damage Surge',
+                callback: async (html) => {
+                  const id = html.find('#swse-sith-weapon-select').val();
+                  const weaponItem = actor.items.get(id);
+                  const result = await DarkSidePowers.activateSithWeaponBonus(actor, weaponItem);
+                  if (!result.success) ui.notifications.warn(result.message);
+                }
+              },
+              cancel: { label: 'Cancel' }
+            }
+          });
+          weaponDialog.render(true);
         }
       };
-    }
-
-    buttons.cancel = {
-      label: 'Cancel'
-    };
-
-    // Build status message
-    let statusMessage = '<p>What would you like to create?</p>';
-    if (hasActiveTalisman) {
-      statusMessage += '<p class="warning-text"><strong>⚠ You already have an active Sith Talisman.</strong> You cannot create another until this one is destroyed.</p>';
-    }
-    if (hasTalismanCooldown) {
-      statusMessage += '<p class="warning-text"><strong>⚠ Sith Talisman on cooldown.</strong> You must wait 24 hours after destroying one to create another.</p>';
-    }
-    if (meleeWeapons.length === 0) {
-      statusMessage += '<p class="warning-text"><strong>⚠ No melee weapons available.</strong> Sith Alchemical Weapons require a melee weapon to enhance.</p>';
     }
 
     const dialog = new SWSEDialogV2({
-      title: 'Sith Alchemy (create) - Choose Creation Type',
+      title: 'Sith Alchemy',
       content: `
-        <div class="form-group">
-          ${statusMessage}
-        </div>
+        <p>Select an alchemical transformation.</p>
+        <p><em>Each completed transformation increases Dark Side Score by 1.</em></p>
       `,
-      buttons: buttons
+      buttons: Object.keys(buttons).length ? buttons : { cancel: { label: 'Cancel' } }
     });
 
     dialog.render(true);
   };
+
 
   SWSELogger.log('SWSE System | Dark Side Powers loaded successfully');
   console.log('Dark Side Powers available at: window.SWSE.talents.darkSidePowers');
@@ -896,3 +938,6 @@ Hooks.once('ready', () => {
 });
 
 export default DarkSidePowers;
+
+// Back-compat alias
+window.SWSE.macros.sithAlchemyCreate = window.SWSE.macros.sithAlchemy;

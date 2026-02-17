@@ -3842,3 +3842,80 @@
   font-size: 0.9rem;
   line-height: 1.25;
 }
+
+
+/* ==========================================================================
+   Chargen Class Cards — Photo Backgrounds (cover-filled)
+   ========================================================================== */
+
+.window-app.swse-chargen .class-card-face {
+  background-image: linear-gradient(rgba(10, 15, 26, 0.65), rgba(10, 15, 26, 0.85)), var(--card-bg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.window-app.swse-chargen .class-card-face .class-icon {
+  backdrop-filter: blur(2px);
+}
+
+
+
+/* ==========================================================================
+   Chargen In-Window Modal Host
+   ========================================================================== */
+
+.window-app.swse-chargen .swse-modal-host[hidden] { display: none; }
+
+.window-app.swse-chargen .swse-modal-host {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+}
+
+.window-app.swse-chargen .swse-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.window-app.swse-chargen .swse-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(900px, calc(100% - 48px));
+  max-height: calc(100% - 48px);
+  overflow: hidden;
+  border: 1px solid rgba(120, 255, 255, 0.25);
+  background: rgba(8, 12, 18, 0.92);
+  box-shadow: 0 0 28px rgba(90, 255, 255, 0.16);
+  border-radius: 10px;
+}
+
+.window-app.swse-chargen .swse-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(120, 255, 255, 0.18);
+}
+
+.window-app.swse-chargen .swse-modal-title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.window-app.swse-chargen .swse-modal-close {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.window-app.swse-chargen .swse-modal-body {
+  padding: 14px;
+  overflow: auto;
+  max-height: calc(100% - 54px);
+}
+

@@ -8,7 +8,7 @@
  */
 
 import { MENTORS } from './mentor-dialogues.js';
-import { TypingAnimation } from '../utils/typing-animation.js';
+import { MentorTranslationIntegration } from './mentor-translation-integration.js';
 import { swseLogger } from '../utils/logger.js';
 import { seedMentorMemoryFromSurvey, getMentorMemory, setMentorMemory } from './mentor-memory.js';
 
@@ -713,10 +713,10 @@ export class MentorSurvey {
               if (greetingElement) {
                 swseLogger.log(`[MENTOR-SURVEY] promptSurvey: Starting typing animation...`);
                 const greetingText = greetingElement.textContent;
-                TypingAnimation.typeText(greetingElement, greetingText, {
+                MentorTranslationIntegration.render({ text: greetingText, {
                   speed: 45,
                   skipOnClick: true
-                });
+                }, container: greetingElement, mentor: MentorTranslationIntegration.normalizeMentorKey(mentor?.name ?? 'default'), topic: 'mentor_survey', force: true });
               } else {
                 swseLogger.warn(`[MENTOR-SURVEY] promptSurvey: Greeting element not found in rendered HTML`);
               }
@@ -809,10 +809,10 @@ export class MentorSurvey {
               const skipElement = root?.querySelector?.('.mentor-skip-text');
               if (skipElement) {
                 const skipText = skipElement.textContent;
-                TypingAnimation.typeText(skipElement, skipText, {
+                MentorTranslationIntegration.render({ text: skipText, {
                   speed: 45,
                   skipOnClick: true
-                });
+                }, container: skipElement, mentor: MentorTranslationIntegration.normalizeMentorKey(mentor?.name ?? 'default'), topic: 'mentor_survey', force: true });
               }
             }
           },
@@ -874,10 +874,10 @@ export class MentorSurvey {
               const greetingElement = root?.querySelector?.('.mentor-greeting');
               if (greetingElement) {
                 const greetingText = greetingElement.textContent;
-                TypingAnimation.typeText(greetingElement, greetingText, {
+                MentorTranslationIntegration.render({ text: greetingText, {
                   speed: 45,
                   skipOnClick: true
-                });
+                }, container: greetingElement, mentor: MentorTranslationIntegration.normalizeMentorKey(mentor?.name ?? 'default'), topic: 'mentor_survey', force: true });
               }
             }
           },
@@ -922,10 +922,10 @@ export class MentorSurvey {
               const conclusionElement = root?.querySelector?.('.mentor-conclusion-text');
               if (conclusionElement) {
                 const conclusionText = conclusionElement.textContent;
-                TypingAnimation.typeText(conclusionElement, conclusionText, {
+                MentorTranslationIntegration.render({ text: conclusionText, {
                   speed: 45,
                   skipOnClick: true
-                });
+                }, container: conclusionElement, mentor: MentorTranslationIntegration.normalizeMentorKey(mentor?.name ?? 'default'), topic: 'mentor_survey', force: true });
               }
             }
           },
@@ -1011,10 +1011,10 @@ export class MentorSurvey {
               const questionElement = root.querySelector('.mentor-question')[0];
               if (questionElement) {
                 const questionText = questionElement.textContent;
-                TypingAnimation.typeText(questionElement, questionText, {
+                MentorTranslationIntegration.render({ text: questionText, {
                   speed: 45,
                   skipOnClick: true
-                });
+                }, container: questionElement, mentor: MentorTranslationIntegration.normalizeMentorKey(mentor?.name ?? 'default'), topic: 'mentor_survey', force: true });
               }
             }
           },

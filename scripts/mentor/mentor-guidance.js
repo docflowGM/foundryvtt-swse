@@ -13,6 +13,7 @@ import {
 import { swseLogger } from '../utils/logger.js';
 import { TypingAnimation } from '../utils/typing-animation.js';
 import { createChatMessage } from '../core/document-api-v13.js';
+import { MentorTranslationIntegration } from './mentor-translation-integration.js';
 
 export class MentorGuidanceUI {
 

@@ -522,9 +522,9 @@ class CustomLanguageDialog extends foundry.applications.api.ApplicationV2 {
     return {};
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    const input = html.querySelector('#custom-language-input');
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const html = this.element;    const input = html.querySelector('#custom-language-input');
 
     html.querySelector('[data-action="ok"]')?.addEventListener('click', () => {
       const value = input?.value?.trim();
