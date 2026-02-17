@@ -1,31 +1,25 @@
-/* === FINAL ICON FIX: SIDEBAR BUTTONS === */
-body:not([data-theme="high-contrast"]) button.ui-control.icon::before {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 100%;
-  -webkit-mask-image: var(--control-icon);
-  mask-image: var(--control-icon);
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  background-color: var(--control-icon-color, #9ed0ff);
-}
+/* ============================================================================
+   SWSE CSS — MUST BE SCOPED TO .app.swse-window
+   ============================================================================
+   This file contains baseline SWSE styling.
+   All rules must be namespaced to SWSE windows only.
+   Never modify global Foundry UI elements.
+   ============================================================================ */
 
-/* High Contrast Mode: use background-image fallback */
-body[data-theme="high-contrast"] button.ui-control.icon::before {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 100%;
-  mask-image: none;
-  -webkit-mask-image: none;
-  background-image: var(--control-icon);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  background-color: transparent;
-}
+/* === ICON FIX: SWSE WINDOW BUTTONS ONLY === */
+
+/* PHASE 1: REMOVE GLOBAL SCOPE
+   These rules were targeting button.ui-control globally via body selector.
+   This broke Foundry sidebar and control buttons.
+
+   DEPRECATED: body:not([data-theme="high-contrast"]) button.ui-control.icon::before
+   DEPRECATED: body[data-theme="high-contrast"] button.ui-control.icon::before
+
+   RATIONALE: Never modify Foundry core UI elements globally.
+   Icon styling must be scoped to .app.swse-window only.
+*/
+
+/* If SWSE needs custom icon handling, it must be applied inside SWSE windows:
+   .app.swse-window button.ui-control.icon::before { ... }
+   NOT on body level.
+*/
