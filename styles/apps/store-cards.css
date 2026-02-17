@@ -366,7 +366,7 @@
   height: auto;
   max-height: 80vh;
   overflow-y: auto;
-  z-index: 2000;
+  z-index: 1120; /* PHASE 3: Normalized from 2000 */
   box-shadow: 0 20px 60px rgba(0, 255, 136, 0.4),
               0 0 40px rgba(0, 255, 136, 0.2),
               inset 0 0 20px rgba(0, 255, 136, 0.05);
@@ -470,7 +470,7 @@
  * Cart sidebar in checkout mode: Transforms to ledger view
  */
 .store.checkout-mode .cart-sidebar {
-  z-index: 2100;
+  z-index: 1130; /* PHASE 3: Normalized from 2100 */
 }
 
 .store.checkout-mode .cart-header {

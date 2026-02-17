@@ -1,5 +1,12 @@
 /* =====================================================
+   SWSE CSS — MUST BE SCOPED TO .app.swse-window
+   =====================================================
    SWSE Combat Action Browser - Stylesheet
+
+   PHASE 5 ENFORCEMENT:
+   - Sidebar tab injection is scoped to .swse-action-browser-tab
+   - No modifications to #sidebar-tabs itself
+   - Only styling SWSE-specific elements within sidebar
    ===================================================== */
 
 .swse-action-browser {
@@ -259,8 +266,20 @@
 }
 
 /* =====================================================
-   Sidebar Button
+   Sidebar Button — SWSE Action Browser Tab
    ===================================================== */
+
+/* PHASE 2 NOTE: This selects a SWSE-specific class inside #sidebar-tabs.
+   The .swse-action-browser-tab is injected into Foundry's sidebar tabs.
+   We style only the SWSE tab element, not the sidebar container itself.
+
+   This is acceptable because:
+   1. Target is SWSE-scoped (.swse-action-browser-tab class)
+   2. Sidebar tabs themselves are unmodified
+   3. Only appearance of SWSE's own tab is changed
+
+   AVOID: Styling #sidebar-tabs directly or removing/hiding other tabs.
+*/
 
 #sidebar-tabs .swse-action-browser-tab {
   flex: 0 0 32px;

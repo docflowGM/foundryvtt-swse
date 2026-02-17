@@ -1,6 +1,13 @@
 /* ==========================================================================
+   SWSE CSS — MUST BE SCOPED TO .app.swse-window
+   ==========================================================================
    SWSE Discovery System Styles
    Tooltips, Callouts, Feature Tour
+
+   PHASE 5 ENFORCEMENT:
+   - All discovery elements are scoped to SWSE windows
+   - Z-index normalized to 1000-1200 range (Phase 3)
+   - No Foundry core element styling
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -8,7 +15,7 @@
    -------------------------------------------------------------------------- */
 .swse-discovery-tooltip {
   position: fixed;
-  z-index: 100010;
+  z-index: 1100; /* PHASE 3: Normalized from 100010 */
   max-width: 280px;
   padding: 8px 12px;
   background: var(--swse-tooltip-bg, #1a1a2e);
@@ -56,7 +63,7 @@
    -------------------------------------------------------------------------- */
 .swse-discovery-callout {
   position: fixed;
-  z-index: 100005;
+  z-index: 1050; /* PHASE 3: Normalized from 100005 */
   max-width: 320px;
   padding: 14px 16px;
   background: var(--swse-callout-bg, #0f1a2e);
@@ -120,7 +127,7 @@
 .swse-discovery-tour__overlay {
   position: fixed;
   inset: 0;
-  z-index: 100020;
+  z-index: 1200; /* PHASE 3: Normalized from 100020 */
   display: flex;
   align-items: center;
   justify-content: center;

@@ -1,16 +1,19 @@
-/**
- * ApplicationV2 Structural Safety Layer
- * Corrects layout contract violations for V13 compatibility
- *
- * This layer enforces:
- * - Flexbox measurement stability (min-height: 0 on scrollable flex children)
- * - Window containment contract (no structural overrides on .window-*)
- * - Stacking context discipline (z-index scale)
- * - Overflow predictability (proper scroll container sizing)
- *
- * Load AFTER all app CSS but BEFORE theme overrides.
- * Generated: 2026-02-11 (Run 2 - CSS Audit Pass A)
- */
+/* ============================================================================
+   SWSE CSS — MUST BE SCOPED TO .app.swse-window
+   ============================================================================
+   ApplicationV2 Structural Safety Layer
+   Corrects layout contract violations for V13 compatibility
+
+   This layer enforces:
+   - Flexbox measurement stability (min-height: 0 on scrollable flex children)
+   - Window containment contract (no structural overrides on .window-*)
+   - Stacking context discipline (z-index scale)
+   - Overflow predictability (proper scroll container sizing)
+
+   Load AFTER all app CSS but BEFORE theme overrides.
+   Generated: 2026-02-11 (Run 2 - CSS Audit Pass A)
+   REFACTORED: 2026-02-17 (PHASE 5 - Namespace enforcement)
+   ============================================================================ */
 
 /* ===========================
    PHASE A: Flexbox Normalization
@@ -177,7 +180,17 @@
    =========================== */
 
 /* Ensure scrollbar width doesn't cause overflow */
-.swse * {
+/* PHASE 1: Replace wildcard with explicit selector list */
+.swse,
+.swse > *,
+.swse button,
+.swse input,
+.swse select,
+.swse textarea,
+.swse .form-group,
+.swse .content,
+.swse .panel,
+.swse .list-container {
   box-sizing: border-box;
   /* ^ Critical: includes padding/border in width calculations */
 }
