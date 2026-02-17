@@ -30,7 +30,7 @@
 **Examples**:
 ```javascript
 // Line 55 in combat-action-bar.js
-<h3><i class="fas fa-swords"></i> ${actor.name} — Combat</h3>
+<h3><i class="fa-solid fa-swords"></i> ${actor.name} — Combat</h3>
 
 // Line 273 in combat-action-bar.js
 content: `<b>${actor.name}</b> regains <strong>${heal}</strong> HP!`

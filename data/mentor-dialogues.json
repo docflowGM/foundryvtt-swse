@@ -581,7 +581,7 @@
         "5": "Halfway through your journey as a Knight, you shape the lives of others with your choices. Consider mentoring a Padawan soon—your knowledge and compassion will guide them, and the path toward Mastery becomes clearer.",
         "6": "Your reputation is spreading among your peers. Others look to you for guidance. This is both an honor and a responsibility you must embrace fully.",
         "7": "You are becoming the Jedi the Order needs: strong, disciplined, and wise, with the courage to act and the judgment to choose when to wait.",
-        "8": "Your mastery deepens, and soon you will have the opportunity to train another. The lessons you impart will echo far beyond your own missions.",
+        "8": "Your mastery deepens, and soon you will have the opportunity to train another. The lessons you impart will echo fa-regular beyond your own missions.",
         "9": "Your clarity and connection to the Force surpass many around you. Continue walking your path with humility and purpose.",
         "10": "You have completed the first great stage of your journey as a Jedi Knight. Whatever the Force asks of you next, face it with courage and wisdom. May it guide you always."
       },
@@ -613,7 +613,7 @@
       "description": "Your fellow Jedi Master, treating you as an equal and old friend",
       "portrait": "systems/foundryvtt-swse/assets/mentors/miraj.webp",
       "levelGreetings": {
-        "1": "Welcome, my friend. We stand as equals now, shaped by the Force and by our shared experiences. It is good to see how far you have come.",
+        "1": "Welcome, my friend. We stand as equals now, shaped by the Force and by our shared experiences. It is good to see how fa-regular you have come.",
         "2": "Your wisdom and insight continue to grow. I trust your judgment, and I am proud to walk this path alongside you.",
         "3": "The Order is stronger because of you. Your counsel and example inspire those around you, just as you have inspired me.",
         "4": "I have watched your journey, and it fills me with respect. Your connection to the Force is deep, steady, and true.",
@@ -1129,7 +1129,7 @@
           ]
         },
         "dspBlocked": [
-          "Oh darling, that’s far too personal.",
+          "Oh darling, that’s fa-regular too personal.",
           "Secrets lose value when shared.",
           "Not that story. Pick another."
         ]
@@ -1269,7 +1269,7 @@
       "description": "A self-taught Force user from a distant tradition, seeking wisdom rather than power",
       "portrait": "systems/foundryvtt-swse/assets/mentors/venn.webp",
       "levelGreetings": {
-        "1": "You are touched by the Force, but not as the Jedi or the Sith know it. Your path is older, stranger, and far less understood. Walk carefully, and learn to listen to its whispers.",
+        "1": "You are touched by the Force, but not as the Jedi or the Sith know it. Your path is older, stranger, and fa-regular less understood. Walk carefully, and learn to listen to its whispers.",
         "2": "The currents of the Force—or whatever your people call it—move through you. Do not seek to command them; seek to understand them.",
         "3": "The galaxy may fear or revere what it does not understand. You are learning that mastery is not domination, but attunement.",
         "4": "Your connection deepens. There are secrets in the Force that the Jedi and Sith overlook, and you are beginning to glimpse them.",
@@ -1277,7 +1277,7 @@
         "6": "The Force moves through you naturally, like a stream shaping stone. Its aid may seem supernatural to some, but to you it is part of your understanding of the universe.",
         "7": "You are uncovering knowledge few ever touch: the rites, the visions, the unseen threads that bind all life. Continue to question, observe, and feel.",
         "8": "The Force—or the Nameless Power, as some call it—is a living, breathing presence. You see its patterns where others see chaos. That perception is power itself.",
-        "9": "Your journey nears its height. Few adepts wander so far from home, or pierce so deeply into mysteries that most fear. You do not fear; you observe.",
+        "9": "Your journey nears its height. Few adepts wander so fa-regular from home, or pierce so deeply into mysteries that most fear. You do not fear; you observe.",
         "10": "You are now a master Force Adept. Free of the Jedi Codes, free of Sith ambitions, beholden only to your understanding. Walk your path, and let the universe reveal itself to you in all its complexity."
       },
       "classGuidance": "Choose abilities that expand your understanding of the Force's mysteries. Seek insight, not domination.",

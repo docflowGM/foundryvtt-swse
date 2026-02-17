@@ -63,7 +63,7 @@ export class SWSECombatActionBrowser extends SWSEApplication {
 
       const btn = document.createElement('li');
       btn.classList.add('swse-action-browser-tab');
-      btn.innerHTML = `<i class="fas fa-crossed-swords"></i>`;
+      btn.innerHTML = `<i class="fa-solid fa-crossed-swords"></i>`;
       btn.title = 'Combat Action Browser';
       btn.addEventListener('click', () => {
         new SWSECombatActionBrowser().render(true);
@@ -80,7 +80,7 @@ export class SWSECombatActionBrowser extends SWSEApplication {
 
       const btn = document.createElement('div');
       btn.classList.add('control-icon', 'swse-action-hud');
-      btn.innerHTML = `<i class="fas fa-crossed-swords"></i>`;
+      btn.innerHTML = `<i class="fa-solid fa-crossed-swords"></i>`;
       btn.title = 'Open Combat Action Browser';
 
       btn.addEventListener('click', () => {

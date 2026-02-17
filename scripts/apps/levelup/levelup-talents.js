@@ -334,7 +334,7 @@ export async function showTalentTreeDialog(treeName, talentData, actor, selectCa
     content: treeHtml,
     buttons: {
       close: {
-        icon: '<i class="fas fa-times"></i>',
+        icon: '<i class="fa-solid fa-times"></i>',
         label: 'Close'
       }
     },

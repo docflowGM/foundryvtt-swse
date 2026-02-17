@@ -336,7 +336,7 @@ export async function createDogfightMessage(result) {
   const content = `
     <div class="swse-dogfight-roll">
       <div class="dogfight-header">
-        <h3><i class="fas fa-fighter-jet"></i> Dogfight!</h3>
+        <h3><i class="fa-solid fa-fighter-jet"></i> Dogfight!</h3>
       </div>
       <div class="opposed-rolls">
         <div class="initiator-roll">

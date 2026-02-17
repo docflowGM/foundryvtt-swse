@@ -58,7 +58,7 @@ Example:
 <button class="btn-primary" type="button">Click me</button>
 
 {{!-- ❌ BAD --}}
-<i class="fas fa-check"></i>
+<i class="fa-solid fa-check"></i>
 <div onclick="myFunction()">Click me</div>
 ```
 
@@ -167,7 +167,7 @@ Never hardcode icon classes. This prevents the 142-icon refactor disaster.
 <i class="{{getIconClass 'warning'}}"></i>
 
 {{!-- ❌ BAD --}}
-<i class="fas fa-check"></i>
+<i class="fa-solid fa-check"></i>
 <i class="fa-solid fa-triangle-exclamation"></i>
 ```
 
@@ -181,7 +181,7 @@ container.appendChild(icon);
 
 // ❌ BAD
 const icon = document.createElement('i');
-icon.className = 'fas fa-check';
+icon.className = 'fa-solid fa-check';
 ```
 
 When FontAwesome upgrades, update `icon-constants.js` once → everywhere works.

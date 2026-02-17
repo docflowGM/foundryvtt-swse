@@ -253,7 +253,7 @@ const attributeSuggestions = await progressionEngine.getSuggestedAttributeIncrea
 //     suggestion: {
 //       tier: 5,
 //       reason: "Modifier increases from +2 to +3; Primary ability for your build; Improves trained skill(s): perception",
-//       icon: 'fas fa-star'
+//       icon: 'fa-solid fa-star'
 //     },
 //     isSuggested: true
 //   },

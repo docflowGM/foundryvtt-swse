@@ -180,7 +180,7 @@ export async function createCollisionMessage(result) {
   const content = `
     <div class="swse-collision-roll">
       <div class="collision-header">
-        <h3><i class="fas fa-car-crash"></i> Collision!</h3>
+        <h3><i class="fa-solid fa-car-crash"></i> Collision!</h3>
       </div>
       <div class="collision-info">
         <strong>${vehicle.name}</strong> collides with <strong>${object.name}</strong>

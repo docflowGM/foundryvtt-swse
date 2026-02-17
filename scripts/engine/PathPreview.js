@@ -104,7 +104,7 @@ export class PathPreview {
                         breakdown: projection.breakdown
                     });
                 } else {
-                    // Too far away to show
+                    // Too fa-regular away to show
                     previews.push({
                         className: target.className,
                         status: 'distant',
@@ -374,7 +374,7 @@ export function generatePathPreviewHtml(preview) {
     let html = `
         <div class="path-preview-card ${statusClass}">
             <div class="path-header">
-                <i class="fas ${statusIcon}"></i>
+                <i class="fa-solid ${statusIcon}"></i>
                 <h4>${preview.className}</h4>
                 ${preview.status !== 'qualified' ? `<span class="levels-badge">${preview.levelsAway} lvl</span>` : ''}
             </div>
@@ -402,13 +402,13 @@ export function generatePathPreviewHtml(preview) {
 export function generateCompactPreviewHtml(preview) {
     if (preview.status === 'qualified') {
         return `<span class="path-preview-inline qualified">
-            <i class="fas fa-crown"></i> Qualified for ${preview.className}
+            <i class="fa-solid fa-crown"></i> Qualified for ${preview.className}
         </span>`;
     }
 
     if (preview.status === 'reachable') {
         return `<span class="path-preview-inline reachable">
-            <i class="fas fa-arrow-up"></i> ${preview.className} in ${preview.levelsAway} lvl
+            <i class="fa-solid fa-arrow-up"></i> ${preview.className} in ${preview.levelsAway} lvl
         </span>`;
     }
 

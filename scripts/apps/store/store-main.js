@@ -883,7 +883,7 @@ export class SWSEStore extends HandlebarsApplicationMixin(ApplicationV2) {
     return `
       <div class="modal-content">
         <button type="button" class="close-modal-btn" style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--holo-cyan); cursor: pointer; font-size: 20px;">
-          <i class="fas fa-times"></i>
+          <i class="fa-solid fa-times"></i>
         </button>
 
         <div class="modal-header">
@@ -936,7 +936,7 @@ export class SWSEStore extends HandlebarsApplicationMixin(ApplicationV2) {
               ${mentorReview ? `
                 <div class="mentor-review" style="margin-bottom: 12px; padding: 12px; background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(255, 165, 0, 0.05)); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 4px;">
                   <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-family: Consolas, monospace;">
-                    <i class="fas fa-user-circle" style="color: var(--holo-amber); font-size: 16px;"></i>
+                    <i class="fa-solid fa-user-circle" style="color: var(--holo-amber); font-size: 16px;"></i>
                     <strong style="color: var(--holo-amber);">Rendarr</strong>
                   </div>
                   <p style="margin: 0; font-size: 12px; line-height: 1.6; font-style: italic; font-family: Consolas, monospace; color: rgba(255, 255, 255, 0.9);">
@@ -965,7 +965,7 @@ export class SWSEStore extends HandlebarsApplicationMixin(ApplicationV2) {
           </div>
 
           <button type="button" class="modal-add-to-cart holo-btn" style="width: 100%; padding: 12px; background: rgba(0, 217, 255, 0.15); border: 1px solid var(--holo-cyan); color: var(--holo-cyan); font-weight: bold; cursor: pointer; border-radius: 4px;">
-            <i class="fas fa-plus"></i> Add to Cart
+            <i class="fa-solid fa-plus"></i> Add to Cart
           </button>
         </div>
       </div>
@@ -1069,20 +1069,20 @@ export class SWSEStore extends HandlebarsApplicationMixin(ApplicationV2) {
       if (review.type === 'competitor') {
         bgColor = 'rgba(100, 255, 100, 0.1)';
         borderColor = 'rgba(100, 255, 100, 0.3)';
-        icon = '<i class="fas fa-user-secret" style="color: #64ff64; margin-right: 4px;"></i>';
+        icon = '<i class="fa-solid fa-user-secret" style="color: #64ff64; margin-right: 4px;"></i>';
       } else if (review.type === 'seller') {
         bgColor = 'rgba(255, 100, 100, 0.1)';
         borderColor = 'rgba(255, 100, 100, 0.3)';
-        icon = '<i class="fas fa-store" style="color: #ff6464; margin-right: 4px;"></i>';
+        icon = '<i class="fa-solid fa-store" style="color: #ff6464; margin-right: 4px;"></i>';
       } else if (review.type === 'system-message') {
         bgColor = 'rgba(150, 150, 150, 0.1)';
         borderColor = 'rgba(150, 150, 150, 0.3)';
-        icon = '<i class="fas fa-info-circle" style="color: #969696; margin-right: 4px;"></i>';
+        icon = '<i class="fa-solid fa-info-circle" style="color: #969696; margin-right: 4px;"></i>';
       } else {
         // customer
         bgColor = 'rgba(0, 0, 0, 0.2)';
         borderColor = 'rgba(0, 217, 255, 0.3)';
-        icon = '<i class="fas fa-user" style="color: #00d9ff; margin-right: 4px;"></i>';
+        icon = '<i class="fa-solid fa-user" style="color: #00d9ff; margin-right: 4px;"></i>';
       }
 
       // Star rating display (if present)
@@ -1153,7 +1153,7 @@ export class SWSEStore extends HandlebarsApplicationMixin(ApplicationV2) {
           <div class="cart-item-cost">₢ ${entry.cost ?? 0}</div>
         </div>
         <button type="button" class="cart-item-remove holo-btn secondary" data-type="${type}" data-id="${entry.id}">
-          <i class="fas fa-times"></i>
+          <i class="fa-solid fa-times"></i>
         </button>
       `;
       listEl.appendChild(row);

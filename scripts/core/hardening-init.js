@@ -139,7 +139,7 @@ class HardeningStatusPanel extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: 'swse-hardening-status',
     tag: 'div',
-    window: { icon: 'fas fa-shield', title: 'SWSE v13 Hardening Status' },
+    window: { icon: 'fa-solid fa-shield', title: 'SWSE v13 Hardening Status' },
     position: { width: 500, height: 'auto' }
   };
 
@@ -175,10 +175,10 @@ class HardeningStatusPanel extends foundry.applications.api.ApplicationV2 {
 
         <div class="status-buttons">
           <button class="btn btn-primary" data-action="run-diagnostics">
-            <i class="fas fa-stethoscope"></i> Run Diagnostics
+            <i class="fa-solid fa-stethoscope"></i> Run Diagnostics
           </button>
           <button class="btn btn-secondary" data-action="close">
-            <i class="fas fa-times"></i> Close
+            <i class="fa-solid fa-times"></i> Close
           </button>
         </div>
       </div>

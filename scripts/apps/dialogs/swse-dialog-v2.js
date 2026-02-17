@@ -107,7 +107,7 @@ export class SWSEDialogV2 extends SWSEApplicationV2 {
   static async confirm({ title = 'Confirm', content = '', yes, no, defaultYes = true, options = {} } = {}) {
     const buttons = {
       yes: {
-        icon: '<i class="fas fa-check"></i>',
+        icon: '<i class="fa-solid fa-check"></i>',
         label: game?.i18n?.localize?.('Yes') ?? 'Yes',
         callback: (html) => {
           try { return typeof yes === 'function' ? yes(html) : true; }
@@ -115,7 +115,7 @@ export class SWSEDialogV2 extends SWSEApplicationV2 {
         }
       },
       no: {
-        icon: '<i class="fas fa-times"></i>',
+        icon: '<i class="fa-solid fa-times"></i>',
         label: game?.i18n?.localize?.('No') ?? 'No',
         callback: (html) => {
           try { return typeof no === 'function' ? no(html) : false; }
@@ -140,12 +140,12 @@ export class SWSEDialogV2 extends SWSEApplicationV2 {
   static async prompt({ title = 'Prompt', content = '', label = 'Confirm', callback, options = {} } = {}) {
     const buttons = {
       ok: {
-        icon: '<i class="fas fa-check"></i>',
+        icon: '<i class="fa-solid fa-check"></i>',
         label,
         callback: (html) => (typeof callback === 'function' ? callback(html) : true)
       },
       cancel: {
-        icon: '<i class="fas fa-times"></i>',
+        icon: '<i class="fa-solid fa-times"></i>',
         label: game?.i18n?.localize?.('Cancel') ?? 'Cancel',
         callback: () => null
       }

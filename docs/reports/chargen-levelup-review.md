@@ -502,7 +502,7 @@ Hooks.call('swse.classSelected', {
 ```
 
 **Benefits:**
-- Users know how far they've come
+- Users know how fa-regular they've come
 - Reduces anxiety about process length
 - Can click steps to jump back
 - Professional appearance
@@ -556,13 +556,13 @@ Hooks.call('swse.classSelected', {
 
 ```html
 <div class="validation-indicator">
-  <i class="fas fa-check-circle valid"></i>
-  <i class="fas fa-exclamation-triangle invalid"></i>
+  <i class="fa-solid fa-check-circle valid"></i>
+  <i class="fa-solid fa-exclamation-triangle invalid"></i>
   <span class="validation-message">Select a feat to continue</span>
 </div>
 
 <button class="next-step" disabled="{{unless canProceed 'disabled'}}">
-  Next <i class="fas fa-arrow-right"></i>
+  Next <i class="fa-solid fa-arrow-right"></i>
 </button>
 ```
 
@@ -584,13 +584,13 @@ Hooks.call('swse.classSelected', {
 ```html
 <div class="feat-prerequisites">
   <span class="prereq met" title="✓ You meet this requirement">
-    <i class="fas fa-check"></i> BAB +7
+    <i class="fa-solid fa-check"></i> BAB +7
   </span>
   <span class="prereq unmet" title="✗ You need 2 more BAB">
-    <i class="fas fa-times"></i> BAB +9 (You have +7)
+    <i class="fa-solid fa-times"></i> BAB +9 (You have +7)
   </span>
   <span class="prereq met">
-    <i class="fas fa-check"></i> Force Sensitivity
+    <i class="fa-solid fa-check"></i> Force Sensitivity
   </span>
 </div>
 ```
@@ -625,7 +625,7 @@ Hooks.call('swse.classSelected', {
 </div>
 
 <button class="btn-add-to-compare" data-item-id="{{id}}">
-  <i class="fas fa-balance-scale"></i> Compare
+  <i class="fa-solid fa-balance-scale"></i> Compare
 </button>
 ```
 
@@ -786,7 +786,7 @@ Hooks.call('swse.classSelected', {
   <span id="jedi-description" class="sr-only">
     Jedi class. Hit die 1d10. Force-sensitive class with lightsaber proficiency.
   </span>
-  <i class="fas fa-jedi" aria-hidden="true"></i> Jedi
+  <i class="fa-solid fa-jedi" aria-hidden="true"></i> Jedi
 </button>
 ```
 
@@ -981,7 +981,7 @@ constructor(actor, options = {}) {
   <h4>Not sure what to choose? Try these builds:</h4>
 
   <button class="build-template" data-build="tank">
-    <i class="fas fa-shield-alt"></i>
+    <i class="fa-solid fa-shield-alt"></i>
     <h5>Tank Build</h5>
     <p>High HP, good defenses, melee focus</p>
     <span class="build-selections">
@@ -990,7 +990,7 @@ constructor(actor, options = {}) {
   </button>
 
   <button class="build-template" data-build="sniper">
-    <i class="fas fa-crosshairs"></i>
+    <i class="fa-solid fa-crosshairs"></i>
     <h5>Sniper Build</h5>
     <p>Long-range precision damage</p>
     <span class="build-selections">
@@ -999,7 +999,7 @@ constructor(actor, options = {}) {
   </button>
 
   <button class="build-template" data-build="force-user">
-    <i class="fas fa-hand-sparkles"></i>
+    <i class="fa-solid fa-hand-sparkles"></i>
     <h5>Force User Build</h5>
     <p>Enhanced Force powers</p>
     <span class="build-selections">
@@ -1028,7 +1028,7 @@ constructor(actor, options = {}) {
 <div class="feat-card" data-help="combat-feats">
   <h5>Point Blank Shot</h5>
   <button class="btn-help" aria-label="Show rules">
-    <i class="fas fa-question-circle"></i>
+    <i class="fa-solid fa-question-circle"></i>
   </button>
 </div>
 
@@ -1109,10 +1109,10 @@ class SelectionHistory {
     <h3>🎉 Character Created!</h3>
     <p>Here's what to do next:</p>
     <ol>
-      <li><i class="fas fa-shopping-bag"></i> Visit the <button class="link-shop">Shop</button> to buy equipment</li>
-      <li><i class="fas fa-book"></i> Review your <button class="link-features">class features</button></li>
-      <li><i class="fas fa-dice-d20"></i> Learn how <button class="link-rolling">rolling works</button></li>
-      <li><i class="fas fa-users"></i> Join your GM's game!</li>
+      <li><i class="fa-solid fa-shopping-bag"></i> Visit the <button class="link-shop">Shop</button> to buy equipment</li>
+      <li><i class="fa-solid fa-book"></i> Review your <button class="link-features">class features</button></li>
+      <li><i class="fa-solid fa-dice-d20"></i> Learn how <button class="link-rolling">rolling works</button></li>
+      <li><i class="fa-solid fa-users"></i> Join your GM's game!</li>
     </ol>
     <button class="btn-dismiss">Got it, thanks!</button>
     <label>
@@ -1186,25 +1186,25 @@ async _onCompleteLevelUp() {
     <h4>What's New:</h4>
     <ul>
       <li class="change-hp">
-        <i class="fas fa-heart"></i> HP: {{oldHP}} → <strong>{{newHP}}</strong> (+{{hpGain}})
+        <i class="fa-solid fa-heart"></i> HP: {{oldHP}} → <strong>{{newHP}}</strong> (+{{hpGain}})
       </li>
       <li class="change-bab">
-        <i class="fas fa-fist-raised"></i> BAB: +{{oldBAB}} → <strong>+{{newBAB}}</strong>
+        <i class="fa-solid fa-fist-raised"></i> BAB: +{{oldBAB}} → <strong>+{{newBAB}}</strong>
       </li>
       <li class="change-abilities">
-        <i class="fas fa-arrow-up"></i> STR +2, WIS +2
+        <i class="fa-solid fa-arrow-up"></i> STR +2, WIS +2
       </li>
       <li class="change-feat">
-        <i class="fas fa-star"></i> New Feat: <strong>{{feat.name}}</strong>
+        <i class="fa-solid fa-star"></i> New Feat: <strong>{{feat.name}}</strong>
       </li>
       <li class="change-talent">
-        <i class="fas fa-gem"></i> New Talent: <strong>{{talent.name}}</strong>
+        <i class="fa-solid fa-gem"></i> New Talent: <strong>{{talent.name}}</strong>
       </li>
     </ul>
   </div>
 
   <button class="btn-view-sheet" data-actor-id="{{actor.id}}">
-    View Character Sheet <i class="fas fa-external-link-alt"></i>
+    View Character Sheet <i class="fa-solid fa-external-link-alt"></i>
   </button>
 </div>
 ```

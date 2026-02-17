@@ -986,7 +986,7 @@ class SkillFocusDialog extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: 'swse-skill-focus-dialog',
     tag: 'div',
-    window: { icon: 'fas fa-graduation-cap', title: 'Select Skill' },
+    window: { icon: 'fa-solid fa-graduation-cap', title: 'Select Skill' },
     position: { width: 400, height: 'auto' }
   };
 

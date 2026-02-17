@@ -412,7 +412,7 @@ export async function showRollModifiersDialog(options = {}) {
       content,
       buttons: {
         roll: {
-          icon: '<i class="fas fa-dice-d20"></i>',
+          icon: '<i class="fa-solid fa-dice-d20"></i>',
           label: 'Roll',
           callback: html => {
             const root = html instanceof HTMLElement ? html : html?.[0];
@@ -453,7 +453,7 @@ export async function showRollModifiersDialog(options = {}) {
           }
         },
         cancel: {
-          icon: '<i class="fas fa-times"></i>',
+          icon: '<i class="fa-solid fa-times"></i>',
           label: 'Cancel',
           callback: () => resolve(null)
         }
@@ -657,7 +657,7 @@ export async function rollCriticalConfirmation({ actor, weapon, attackBonus, tar
   const html = `
     <div class="swse-crit-confirm-card ${confirmed ? 'confirmed' : 'failed'}">
       <div class="crit-header">
-        <i class="fas fa-crosshairs"></i>
+        <i class="fa-solid fa-crosshairs"></i>
         Critical Confirmation
       </div>
       <div class="crit-result">
@@ -670,8 +670,8 @@ export async function rollCriticalConfirmation({ actor, weapon, attackBonus, tar
       </div>
       <div class="crit-outcome ${confirmed ? 'success' : 'failure'}">
         ${confirmed
-          ? '<i class="fas fa-circle-check"></i> CRITICAL HIT CONFIRMED!'
-          : '<i class="fas fa-circle-xmark"></i> Critical not confirmed (normal hit)'}
+          ? '<i class="fa-solid fa-circle-check"></i> CRITICAL HIT CONFIRMED!'
+          : '<i class="fa-solid fa-circle-xmark"></i> Critical not confirmed (normal hit)'}
       </div>
     </div>
   `;
@@ -718,7 +718,7 @@ export async function rollConcealmentCheck(missChance, actor = null) {
   const html = `
     <div class="swse-concealment-card ${hit ? 'hit' : 'miss'}">
       <div class="concealment-header">
-        <i class="fas fa-eye-slash"></i>
+        <i class="fa-solid fa-eye-slash"></i>
         Concealment Check
       </div>
       <div class="concealment-result">
@@ -727,8 +727,8 @@ export async function rollConcealmentCheck(missChance, actor = null) {
       </div>
       <div class="concealment-outcome ${hit ? 'success' : 'failure'}">
         ${hit
-          ? '<i class="fas fa-check"></i> Attack hits!'
-          : '<i class="fas fa-times"></i> Concealment causes miss!'}
+          ? '<i class="fa-solid fa-check"></i> Attack hits!'
+          : '<i class="fa-solid fa-times"></i> Concealment causes miss!'}
       </div>
     </div>
   `;

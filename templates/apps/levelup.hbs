@@ -306,7 +306,7 @@
               </span>
               {{/if}}
               <div class="class-icon {{#if this.isPrestige}}prestige-icon{{/if}}">
-                <i class="fas {{this.icon}}"></i>
+                <i class="fa-solid {{this.icon}}"></i>
               </div>
               <h3>{{this.name}}</h3>
               <p class="class-desc">{{this.description}}</p>
@@ -348,7 +348,7 @@
               </span>
               {{/if}}
               <div class="class-icon">
-                <i class="fas {{this.icon}}"></i>
+                <i class="fa-solid {{this.icon}}"></i>
               </div>
               <h3>{{this.name}}</h3>
               <p class="class-desc">{{this.description}}</p>
@@ -424,7 +424,7 @@
             </span>
             {{/if}}
             <div class="class-icon prestige-icon">
-              <i class="fas {{#if this.isSuggested}}fa-star{{else}}fa-crown{{/if}}"></i>
+              <i class="fa-solid {{#if this.isSuggested}}fa-star{{else}}fa-crown{{/if}}"></i>
             </div>
             <h3>{{this.name}}</h3>
             <p class="class-desc">{{this.description}}</p>
@@ -764,7 +764,7 @@
                         data-feat-id="{{this._id}}"
                         {{#if this.isUnavailable}}disabled title="Prerequisites not met"{{/if}}
                         {{#if this.isOwned}}{{#unless this.isRepeatable}}disabled title="Already owned"{{/unless}}{{/if}}>
-                  <i class="fas {{#if this.isOwned}}fa-circle-check{{else}}fa-star{{/if}}"></i> {{#if this.isOwned}}{{#if this.isRepeatable}}Select Again{{else}}Owned{{/if}}{{else if this.isUnavailable}}Unavailable{{else}}Select{{/if}}
+                  <i class="fa-solid {{#if this.isOwned}}fa-circle-check{{else}}fa-star{{/if}}"></i> {{#if this.isOwned}}{{#if this.isRepeatable}}Select Again{{else}}Owned{{/if}}{{else if this.isUnavailable}}Unavailable{{else}}Select{{/if}}
                 </button>
               </div>
               {{/each}}
@@ -824,7 +824,7 @@
           {{/if}}
           <h4 class="power-name">{{this.name}}</h4>
           <button class="select-force-power choice-button" data-power-id="{{this.id}}">
-            <i class="fas {{#if (eq this.id ../selectedForcePowers.*.id)}}fa-circle-check{{else}}fa-circle-plus{{/if}}"></i> {{#if (eq this.id ../selectedForcePowers.*.id)}}Selected{{else}}Select{{/if}}
+            <i class="fa-solid {{#if (eq this.id ../selectedForcePowers.*.id)}}fa-circle-check{{else}}fa-circle-plus{{/if}}"></i> {{#if (eq this.id ../selectedForcePowers.*.id)}}Selected{{else}}Select{{/if}}
           </button>
         </div>
         {{/each}}
@@ -867,7 +867,7 @@
       {{#if talentState}}
       <div class="talent-progress-indicator">
         <div class="progress-item {{#if selectedTalents.heroic}}completed{{/if}} {{#if talentState.needsHeroicTalent}}required{{/if}}">
-          <i class="fas {{#if selectedTalents.heroic}}fa-circle-check{{else}}fa-circle{{/if}}"></i>
+          <i class="fa-solid {{#if selectedTalents.heroic}}fa-circle-check{{else}}fa-circle{{/if}}"></i>
           <span>Heroic Talent</span>
           {{#if selectedTalents.heroic}}
             <small>{{selectedTalents.heroic.name}}</small>
@@ -878,7 +878,7 @@
         {{/if}}
         {{#if talentState.needsClassTalent}}
         <div class="progress-item {{#if selectedTalents.class}}completed{{/if}} required">
-          <i class="fas {{#if selectedTalents.class}}fa-circle-check{{else}}fa-circle{{/if}}"></i>
+          <i class="fa-solid {{#if selectedTalents.class}}fa-circle-check{{else}}fa-circle{{/if}}"></i>
           <span>Class Talent ({{selectedClass.name}})</span>
           {{#if selectedTalents.class}}
             <small>{{selectedTalents.class.name}}</small>

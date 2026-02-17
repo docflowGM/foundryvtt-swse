@@ -197,7 +197,7 @@ export const RollEngine = {
     return `
     <div class="swse-holo-card">
       <div class="swse-holo-header">
-        <i class="fas fa-dice-d20"></i> ${title}
+        <i class="fa-solid fa-dice-d20"></i> ${title}
       </div>
 
       ${actionHtml}

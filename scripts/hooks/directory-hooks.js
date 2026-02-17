@@ -33,7 +33,7 @@ function handleRenderActorDirectory(app, html, data) {
   const guidedBtn = document.createElement('button');
   guidedBtn.classList.add('swse-chargen-btn');
   guidedBtn.type = 'button';
-  guidedBtn.innerHTML = '<i class="fas fa-person"></i> Chargen';
+  guidedBtn.innerHTML = '<i class="fa-solid fa-person"></i> Chargen';
   guidedBtn.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -45,7 +45,7 @@ function handleRenderActorDirectory(app, html, data) {
   const templateBtn = document.createElement('button');
   templateBtn.classList.add('swse-template-chargen-btn');
   templateBtn.type = 'button';
-  templateBtn.innerHTML = '<i class="fas fa-file-alt"></i> Create From Template';
+  templateBtn.innerHTML = '<i class="fa-solid fa-file-alt"></i> Create From Template';
   templateBtn.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();

@@ -50,7 +50,7 @@ export class ForceSuiteComponent {
       <div class="swse-force-suite">
 
         <header class="fs-header">
-          <h2><i class="fas fa-jedi"></i> Force Powers (${known} known)</h2>
+          <h2><i class="fa-solid fa-jedi"></i> Force Powers (${known} known)</h2>
         </header>
 
         <section class="fs-layout">
@@ -65,7 +65,7 @@ export class ForceSuiteComponent {
 
           <!-- Arrow -->
           <div class="fs-arrow">
-            <i class="fas fa-arrow-right"></i>
+            <i class="fa-solid fa-arrow-right"></i>
           </div>
 
           <!-- SPENT Powers -->
@@ -117,11 +117,11 @@ export class ForceSuiteComponent {
         <div class="fs-actions">
           ${!spent ? `
             <button class="use-power" data-act="use" data-power="${power.id}">
-              <i class="fas fa-hand-sparkles"></i>
+              <i class="fa-solid fa-hand-sparkles"></i>
             </button>
           ` : `
             <button class="regain-one" data-act="regainOne" data-power="${power.id}">
-              <i class="fas fa-rotate-left"></i>
+              <i class="fa-solid fa-rotate-left"></i>
             </button>
           `}
         </div>

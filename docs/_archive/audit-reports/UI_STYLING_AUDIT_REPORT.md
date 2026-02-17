@@ -232,7 +232,7 @@ The `--swse-text-secondary: #6a9dcd` color is used throughout:
 **HBS Template Pattern (item-controls.hbs):**
 ```handlebars
 <a class="item-control item-edit" data-action="edit" title="Edit Item" aria-label="Edit Item">
-  <i class="fas fa-edit"></i>
+  <i class="fa-solid fa-edit"></i>
 </a>
 ```
 
@@ -547,7 +547,7 @@ static get defaultOptions() {
 **Pattern Used:**
 ```handlebars
 <a class="item-control item-edit" data-action="edit" title="Edit Item">
-  <i class="fas fa-edit"></i>
+  <i class="fa-solid fa-edit"></i>
 </a>
 ```
 

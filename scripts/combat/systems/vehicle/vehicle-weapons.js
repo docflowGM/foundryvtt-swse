@@ -307,7 +307,7 @@ export async function createBatteryMessage(result) {
   const content = `
     <div class="swse-battery-roll">
       <div class="battery-header">
-        <h3><i class="fas fa-th"></i> Weapon Battery (${mode})</h3>
+        <h3><i class="fa-solid fa-th"></i> Weapon Battery (${mode})</h3>
         <div class="battery-info">${weapons.length} × ${weapons[0].name}</div>
       </div>
       ${mainAttack ? `

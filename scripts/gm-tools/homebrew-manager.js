@@ -13,7 +13,7 @@ export class SWSEHomebrewManager {
       name: 'Homebrew Content Manager',
       label: 'Manage Homebrew',
       hint: 'Create and manage custom content',
-      icon: 'fas fa-flask',
+      icon: 'fa-solid fa-flask',
       type: HomebrewManagerApp,
       restricted: true
     });
@@ -237,7 +237,7 @@ async _prepareContext(options) {
         content: `<div class="form-group"><label>Name:</label><input type="text" name="name" autofocus/></div>`,
         buttons: {
           create: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Create',
             callback: (html) => {
               const element = html instanceof HTMLElement ? html : html[0];
@@ -246,7 +246,7 @@ async _prepareContext(options) {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => resolve(null)
           }
@@ -284,7 +284,7 @@ async _prepareContext(options) {
       `,
       buttons: {
         import: {
-          icon: '<i class="fas fa-file-import"></i>',
+          icon: '<i class="fa-solid fa-file-import"></i>',
           label: 'Import',
           callback: async (html) => {
             const element = html instanceof HTMLElement ? html : html[0];
@@ -297,7 +297,7 @@ async _prepareContext(options) {
           }
         },
         cancel: {
-          icon: '<i class="fas fa-times"></i>',
+          icon: '<i class="fa-solid fa-times"></i>',
           label: 'Cancel'
         }
       },

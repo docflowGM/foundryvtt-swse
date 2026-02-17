@@ -1058,14 +1058,14 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
               ${skillOptions}
             </select>
             <p class="hint-text" style="margin-top: 10px;">
-              <i class="fas fa-circle-info"></i>
+              <i class="fa-solid fa-circle-info"></i>
               You gain training in this skill, making it a class skill and allowing you to use it untrained.
             </p>
           </div>
         `,
         buttons: {
           select: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Select',
             callback: (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
@@ -1084,7 +1084,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => {
               ui.notifications.warn('Skill Training feat cancelled.');
@@ -1153,14 +1153,14 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
               ${optionsHTML}
             </select>
             <p class="hint-text" style="margin-top: 10px;">
-              <i class="fas fa-circle-info"></i>
+              <i class="fa-solid fa-circle-info"></i>
               ${feat.system.benefit || ''}
             </p>
           </div>
         `,
         buttons: {
           select: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Select',
             callback: (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
@@ -1179,7 +1179,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => {
               ui.notifications.warn('Feat selection cancelled.');
@@ -1319,7 +1319,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       const badge = document.createElement('span');
       badge.className = 'active-tag-badge';
       badge.dataset.tag = tag;
-      badge.innerHTML = `${tag} <i class="fas fa-times remove-tag"></i>`;
+      badge.innerHTML = `${tag} <i class="fa-solid fa-times remove-tag"></i>`;
       container.appendChild(badge);
 
       badge.addEventListener('click', (ev) => {
@@ -1743,7 +1743,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       title: 'Skip This Step?',
       content: `
         <div class="skip-warning">
-          <p><i class="fas fa-exclamation-triangle"></i> <strong>Warning:</strong></p>
+          <p><i class="fa-solid fa-exclamation-triangle"></i> <strong>Warning:</strong></p>
           <p>You are about to skip this step without completing it.</p>
           <p>You will be responsible for adding any missing selections later.</p>
           <p>Continue?</p>
@@ -1773,7 +1773,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
         title: 'Enable Free Build Mode?',
         content: `
           <div class="free-build-warning">
-            <p><i class="fas fa-unlock-alt"></i> <strong>Free Build Mode</strong></p>
+            <p><i class="fa-solid fa-unlock-alt"></i> <strong>Free Build Mode</strong></p>
             <p>This mode allows you to skip validation checks and build your character freely.</p>
             <p><strong>You are responsible for:</strong></p>
             <ul>
@@ -2000,7 +2000,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       // Create chat message with mentor narration
       const chatContent = `
         <div class="swse level-up-message">
-          <h3><i class="fas fa-level-up-alt"></i> Level Up!</h3>
+          <h3><i class="fa-solid fa-level-up-alt"></i> Level Up!</h3>
           <div class="mentor-narration" style="background: rgba(0,0,0,0.3); padding: 0.5rem; border-left: 3px solid #00d9ff; margin: 0.5rem 0; font-style: italic;">
             <strong>${this.mentor.name}, ${this.mentor.title}:</strong><br>
             "${this.mentorGreeting}"

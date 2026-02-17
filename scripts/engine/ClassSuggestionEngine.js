@@ -1166,19 +1166,19 @@ export class ClassSuggestionEngine {
         return `
             <div class="class-suggestion-legend">
                 <div class="class-suggestion-legend-item tier-prestige">
-                    <span class="legend-icon"><i class="fas fa-star"></i></span>
+                    <span class="legend-icon"><i class="fa-solid fa-star"></i></span>
                     <span>Qualified Prestige</span>
                 </div>
                 <div class="class-suggestion-legend-item tier-path">
-                    <span class="legend-icon"><i class="fas fa-route"></i></span>
+                    <span class="legend-icon"><i class="fa-solid fa-route"></i></span>
                     <span>Continue Path</span>
                 </div>
                 <div class="class-suggestion-legend-item tier-unlock">
-                    <span class="legend-icon"><i class="fas fa-unlock"></i></span>
+                    <span class="legend-icon"><i class="fa-solid fa-unlock"></i></span>
                     <span>Near Prestige</span>
                 </div>
                 <div class="class-suggestion-legend-item tier-synergy">
-                    <span class="legend-icon"><i class="fas fa-gears"></i></span>
+                    <span class="legend-icon"><i class="fa-solid fa-gears"></i></span>
                     <span>Build Synergy</span>
                 </div>
             </div>

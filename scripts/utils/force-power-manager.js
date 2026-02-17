@@ -126,11 +126,11 @@ export class ForcePowerManager {
           </div>
           <div class="power-quantity-controls">
             <button type="button" class="power-decrease" data-power-id="${power._id}">
-              <i class="fas fa-minus"></i>
+              <i class="fa-solid fa-minus"></i>
             </button>
             <span class="power-count" data-power-id="${power._id}">0</span>
             <button type="button" class="power-increase" data-power-id="${power._id}">
-              <i class="fas fa-plus"></i>
+              <i class="fa-solid fa-plus"></i>
             </button>
           </div>
         </div>
@@ -153,7 +153,7 @@ export class ForcePowerManager {
         content: dialogContent,
         buttons: {
           ok: {
-            icon: '<i class="fas fa-check"></i>',
+            icon: '<i class="fa-solid fa-check"></i>',
             label: 'Confirm Selection',
             callback: (html) => {
               const selected = [];
@@ -166,7 +166,7 @@ export class ForcePowerManager {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => resolve([])
           }

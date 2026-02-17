@@ -1340,11 +1340,11 @@ function _renderAbilityAdjustments(overlay) {
         <label class="ability-label">${label}</label>
         <div class="adjustment-controls">
           <button type="button" class="ability-minus-btn" data-ability="${ability}" title="Decrease by 1">
-            <i class="fas fa-minus"></i>
+            <i class="fa-solid fa-minus"></i>
           </button>
           <span class="adjustment-value">${displayValue}</span>
           <button type="button" class="ability-plus-btn" data-ability="${ability}" title="Increase by 1">
-            <i class="fas fa-plus"></i>
+            <i class="fa-solid fa-plus"></i>
           </button>
         </div>
       </div>

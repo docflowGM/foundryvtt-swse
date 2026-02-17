@@ -102,7 +102,7 @@ export class FollowerCreator {
                 content: html,
                 buttons: {
                     create: {
-                        icon: '<i class="fas fa-check"></i>',
+                        icon: '<i class="fa-solid fa-check"></i>',
                         label: 'Create Follower',
                         callback: async (html) => {
                             const formData = new FormData(html[0].querySelector('form'));
@@ -119,7 +119,7 @@ export class FollowerCreator {
                         }
                     },
                     cancel: {
-                        icon: '<i class="fas fa-times"></i>',
+                        icon: '<i class="fa-solid fa-times"></i>',
                         label: 'Cancel',
                         callback: () => resolve(null)
                     }

@@ -143,7 +143,7 @@ export class ForcePointsUtil {
         `,
         buttons: {
           spend: {
-            icon: '<i class="fas fa-dice"></i>',
+            icon: '<i class="fa-solid fa-dice"></i>',
             label: 'Spend Force Point',
             callback: html => {
               const element = html instanceof HTMLElement ? html : html[0];
@@ -153,7 +153,7 @@ export class ForcePointsUtil {
             }
           },
           cancel: {
-            icon: '<i class="fas fa-times"></i>',
+            icon: '<i class="fa-solid fa-times"></i>',
             label: 'Cancel',
             callback: () => resolve(null)
           }
@@ -174,7 +174,7 @@ export class ForcePointsUtil {
 
     const html = `
       <div class="swse force-point-roll">
-        <h3><i class="fas fa-hand-sparkles"></i> Force Point Spent</h3>
+        <h3><i class="fa-solid fa-hand-sparkles"></i> Force Point Spent</h3>
         <div class="dice-roll">
           <div class="dice-formula">${roll.formula}</div>
           <div class="dice-tooltip">
@@ -186,7 +186,7 @@ export class ForcePointsUtil {
         </div>
         ${darkSideRoll !== null ? `
           <div class="dark-side-bonus">
-            <i class="fas fa-moon"></i> Dark Side Bonus: +${darkSideRoll}
+            <i class="fa-solid fa-moon"></i> Dark Side Bonus: +${darkSideRoll}
             <div class="warning">Dark Side Score increased by 1</div>
           </div>
         ` : ''}

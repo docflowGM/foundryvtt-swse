@@ -35,7 +35,7 @@ export class TalentTreeVisualizer {
       content: content,
       buttons: {
         cancel: {
-          icon: '<i class="fas fa-times"></i>',
+          icon: '<i class="fa-solid fa-times"></i>',
           label: "Cancel"
         }
       },
@@ -96,7 +96,7 @@ export class TalentTreeVisualizer {
             ${ownedCount > 0 ? `<span class="owned-count">${ownedCount} Owned</span>` : ''}
           </div>
           <div class="tree-card-icon">
-            <i class="fas fa-tree"></i>
+            <i class="fa-solid fa-tree"></i>
           </div>
           <div class="tree-preview-panel" style="display: none;">
             <div class="preview-talents-list">
@@ -113,7 +113,7 @@ export class TalentTreeVisualizer {
         <div class="tree-preview-sidebar">
           <div class="preview-content">
             <div class="preview-placeholder">
-              <i class="fas fa-hand-pointer"></i>
+              <i class="fa-solid fa-hand-pointer"></i>
               <p>Hover over a tree to preview talents</p>
             </div>
           </div>
@@ -142,10 +142,10 @@ export class TalentTreeVisualizer {
       html += `
         <li class="preview-talent-item ${isOwned ? 'owned' : ''}">
           <span class="talent-name">
-            ${isOwned ? '<i class="fas fa-circle-check"></i>' : ''}
+            ${isOwned ? '<i class="fa-solid fa-circle-check"></i>' : ''}
             ${talent.name}
           </span>
-          ${hasPrereq ? '<span class="prereq-marker"><i class="fas fa-link"></i></span>' : ''}
+          ${hasPrereq ? '<span class="prereq-marker"><i class="fa-solid fa-link"></i></span>' : ''}
         </li>
       `;
     });
@@ -194,7 +194,7 @@ export class TalentTreeVisualizer {
       <div class="tree-loading-overlay">
         <div class="loading-content">
           <div class="loading-spinner">
-            <i class="fas fa-arrows-rotate fa-spin"></i>
+            <i class="fa-solid fa-arrows-rotate fa-spin"></i>
           </div>
           <h3>Loading ${treeName}...</h3>
           <div class="loading-bar">
@@ -273,7 +273,7 @@ export class TalentTreeVisualizer {
       content: treeHtml,
       buttons: {
         back: {
-          icon: '<i class="fas fa-arrow-left"></i>',
+          icon: '<i class="fa-solid fa-arrow-left"></i>',
           label: "Back to Trees",
           callback: async () => {
             // Re-open tree selection
@@ -286,7 +286,7 @@ export class TalentTreeVisualizer {
           }
         },
         close: {
-          icon: '<i class="fas fa-times"></i>',
+          icon: '<i class="fa-solid fa-times"></i>',
           label: "Close"
         }
       },

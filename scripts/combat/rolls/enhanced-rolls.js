@@ -386,12 +386,12 @@ export class SWSERoll {
         </div>
         <div class="attack-outcome ${isHit ? (critConfirmed ? 'critical' : 'hit') : 'miss'}">
           ${concealmentResult.hit === false
-            ? '<i class="fas fa-eye-slash"></i> Miss (Concealment)'
+            ? '<i class="fa-solid fa-eye-slash"></i> Miss (Concealment)'
             : isHit
               ? (critConfirmed
-                ? `<i class="fas fa-star"></i> CRITICAL HIT! (×${critMultiplier} damage)`
-                : '<i class="fas fa-check"></i> Hit!')
-              : '<i class="fas fa-times"></i> Miss'}
+                ? `<i class="fa-solid fa-star"></i> CRITICAL HIT! (×${critMultiplier} damage)`
+                : '<i class="fa-solid fa-check"></i> Hit!')
+              : '<i class="fa-solid fa-times"></i> Miss'}
         </div>
       ` : '';
 
@@ -404,7 +404,7 @@ export class SWSERoll {
 
           <div class="attack-result">
             <div class="roll-total">${roll.total}</div>
-            <div class="roll-d20">d20: ${d20}${critAnalysis.isNat20 ? ' <i class="fas fa-star" title="Natural 20!"></i>' : ''}</div>
+            <div class="roll-d20">d20: ${d20}${critAnalysis.isNat20 ? ' <i class="fa-solid fa-star" title="Natural 20!"></i>' : ''}</div>
             <div class="roll-formula">${formula}</div>
             <div class="roll-bonus">
               Attack Bonus: ${bonusString}
@@ -418,16 +418,16 @@ export class SWSERoll {
             <div class="crit-banner ${critConfirmed ? 'confirmed' : 'unconfirmed'}">
               ${critConfirmed
                 ? (critAnalysis.isNat20
-                  ? `<i class="fas fa-star"></i> NATURAL 20 — CRITICAL HIT! (×${critMultiplier})`
-                  : `<i class="fas fa-crosshairs"></i> CRITICAL CONFIRMED! (×${critMultiplier})`)
-                : `<i class="fas fa-crosshairs"></i> Critical Threat (unconfirmed)`}
+                  ? `<i class="fa-solid fa-star"></i> NATURAL 20 — CRITICAL HIT! (×${critMultiplier})`
+                  : `<i class="fa-solid fa-crosshairs"></i> CRITICAL CONFIRMED! (×${critMultiplier})`)
+                : `<i class="fa-solid fa-crosshairs"></i> Critical Threat (unconfirmed)`}
             </div>
           ` : ''}
 
           ${hitMissHTML}
 
           <button class="swse-roll-damage" data-weapon-id="${weapon.id}" data-is-crit="${critConfirmed}" data-crit-mult="${critMultiplier}" data-two-handed="${modifiers.twoHanded || false}">
-            <i class="fas fa-burst"></i> Roll Damage${critConfirmed ? ` (×${critMultiplier})` : ''}
+            <i class="fa-solid fa-burst"></i> Roll Damage${critConfirmed ? ` (×${critMultiplier})` : ''}
           </button>
         </div>
       `;
@@ -483,7 +483,7 @@ export class SWSERoll {
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `
         <div class="swse-bulk-attack-header">
-          <h3><i class="fas fa-crosshairs"></i> ${weapon.name} — Attacking ${targets.length} target${targets.length > 1 ? 's' : ''}</h3>
+          <h3><i class="fa-solid fa-crosshairs"></i> ${weapon.name} — Attacking ${targets.length} target${targets.length > 1 ? 's' : ''}</h3>
         </div>
       `
     });
@@ -1231,7 +1231,7 @@ export class SWSERoll {
         <div class="skill-dc">
           <span>vs DC ${dc}</span>
           <span class="dc-result ${success ? 'success' : 'failure'}">
-            ${success ? '<i class="fas fa-check"></i> Success' : '<i class="fas fa-times"></i> Failure'}
+            ${success ? '<i class="fa-solid fa-check"></i> Success' : '<i class="fa-solid fa-times"></i> Failure'}
             (${roll.total - dc >= 0 ? '+' : ''}${roll.total - dc})
           </span>
         </div>
@@ -1241,7 +1241,7 @@ export class SWSERoll {
         <div class="swse-skill-card">
           <h3>${skillKey.toUpperCase()} Check</h3>
           <div class="roll-total">${roll.total}</div>
-          <div class="roll-d20">d20: ${d20}${d20 === 20 ? ' <i class="fas fa-star"></i>' : d20 === 1 ? ' <i class="fas fa-skull"></i>' : ''}</div>
+          <div class="roll-d20">d20: ${d20}${d20 === 20 ? ' <i class="fa-solid fa-star"></i>' : d20 === 1 ? ' <i class="fa-solid fa-skull"></i>' : ''}</div>
           <div class="roll-formula">${formula}</div>
           <div class="roll-breakdown">${parts.join(', ')}</div>
           ${dcHTML}
@@ -1418,7 +1418,7 @@ export class SWSERoll {
 
       const html = `
         <div class="swse-initiative-card">
-          <h3><i class="fas fa-bolt"></i> Initiative</h3>
+          <h3><i class="fa-solid fa-bolt"></i> Initiative</h3>
           <div class="roll-total">${roll.total}</div>
           <div class="roll-formula">${formula}</div>
           <div class="roll-breakdown">DEX ${dexMod >= 0 ? '+' : ''}${dexMod}${initBonus ? `, Misc ${initBonus >= 0 ? '+' : ''}${initBonus}` : ''}</div>
@@ -1560,7 +1560,7 @@ export class SWSERoll {
         displayParts.push(`
           <div class="enhancement-active technique">
             <img src="${tech.img}" class="enhancement-icon" />
-            <div class="enhancement-name"><i class="fas fa-hand-sparkles"></i> ${tech.name}</div>
+            <div class="enhancement-name"><i class="fa-solid fa-hand-sparkles"></i> ${tech.name}</div>
             <div class="enhancement-effect">${tech.system.description}</div>
           </div>
         `);
@@ -1591,7 +1591,7 @@ export class SWSERoll {
         displayParts.push(`
           <div class="enhancement-active secret">
             <img src="${secret.img}" class="enhancement-icon" />
-            <div class="enhancement-name"><i class="fas fa-star"></i> ${secret.name}</div>
+            <div class="enhancement-name"><i class="fa-solid fa-star"></i> ${secret.name}</div>
             <div class="enhancement-cost">${useDP ? 'Destiny Point' : 'Force Point'} spent</div>
             <div class="enhancement-effect">${secret.system.description}</div>
           </div>
@@ -1603,7 +1603,7 @@ export class SWSERoll {
       effects.displayHTML = `
         <div class="force-enhancements-active">
           <div class="enhancements-header">
-            <i class="fas fa-magic"></i> Active Enhancements
+            <i class="fa-solid fa-magic"></i> Active Enhancements
           </div>
           ${displayParts.join('')}
         </div>
@@ -1769,7 +1769,7 @@ export class SWSERoll {
 
       // Build chat card (abbreviated for space)
       const darkSideWarning = power.system.discipline === 'dark-side'
-        ? `<div class="dark-side-warning"><i class="fas fa-skull"></i> Dark Side Power</div>`
+        ? `<div class="dark-side-warning"><i class="fa-solid fa-skull"></i> Dark Side Power</div>`
         : '';
 
       const html = `

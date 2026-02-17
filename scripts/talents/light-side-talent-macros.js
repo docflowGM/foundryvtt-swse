@@ -315,7 +315,7 @@ export class LightSideTalentMacros {
               ${allyOptions}
             </select>
             <p class="hint-text">
-              <i class="fas fa-circle-info"></i>
+              <i class="fa-solid fa-circle-info"></i>
               You will spend a Force Point and roll 1d6. The result is added to the ally's next check.
             </p>
           </div>
@@ -476,7 +476,7 @@ export class LightSideTalentMacros {
               ${penaltyOptions.join('')}
             </select>
             <p style="margin-top: 10px; font-size: 12px; color: #666;">
-              <i class="fas fa-circle-info"></i>
+              <i class="fa-solid fa-circle-info"></i>
               Effect lasts until the start of your next turn.
             </p>
           </div>
@@ -541,11 +541,11 @@ export class LightSideTalentMacros {
 
       const modifierType = hasForcePersuasion ? 'Use the Force' : 'Persuasion';
       const levelNote = result.targetLevel > result.actorLevel
-        ? `<p style="color: #cc6644;"><i class="fas fa-circle-exclamation"></i> Target is higher level. Will Defense increased by +5.</p>`
+        ? `<p style="color: #cc6644;"><i class="fa-solid fa-circle-exclamation"></i> Target is higher level. Will Defense increased by +5.</p>`
         : '';
 
       const masterNote = hasMasterNegotiator
-        ? `<p style="color: #88cc44;"><i class="fas fa-star"></i> Master Negotiator: On success, target moves 2 steps instead of 1.</p>`
+        ? `<p style="color: #88cc44;"><i class="fa-solid fa-star"></i> Master Negotiator: On success, target moves 2 steps instead of 1.</p>`
         : '';
 
       const dialogContent = `
@@ -557,7 +557,7 @@ export class LightSideTalentMacros {
           ${levelNote}
           ${masterNote}
           <p style="margin-top: 15px; padding: 10px; background: #f0f0f0; border-left: 3px solid #4488cc;">
-            <i class="fas fa-circle-info"></i> Rolling 1d20 + ${result.persuasionModifier} vs DC ${result.targetWillDefense}
+            <i class="fa-solid fa-circle-info"></i> Rolling 1d20 + ${result.persuasionModifier} vs DC ${result.targetWillDefense}
           </p>
         </div>
       `;

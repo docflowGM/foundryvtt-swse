@@ -114,7 +114,7 @@
   "actionType": "passive/reaction/free_action/etc",
   "effect": "effect_type",
   "tags": ["category", "subcategory"],
-  "icon": "fas fa-icon"
+  "icon": "fa-solid fa-icon"
 }
 ```
 

@@ -71,7 +71,7 @@ Each card:
       }
     ],
     "tags": ["relevant", "tags"],
-    "icon": "fas fa-icon-name"
+    "icon": "fa-solid fa-icon-name"
   }
 }
 ```

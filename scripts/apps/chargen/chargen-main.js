@@ -2148,7 +2148,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         'Skip Steps?',
         `
           <div style="margin-bottom: 10px;">
-            <p><i class="fas fa-exclamation-triangle" style="color: #ff9800;"></i> <strong>Skip to ${stepLabel}?</strong></p>
+            <p><i class="fa-solid fa-exclamation-triangle" style="color: #ff9800;"></i> <strong>Skip to ${stepLabel}?</strong></p>
             <p>You are about to skip ${targetIndex - currentIndex} step(s).</p>
             <p style="margin-top: 10px; padding: 10px; background: rgba(255, 152, 0, 0.1); border-left: 3px solid #ff9800;">
               <strong>Warning:</strong> Skipping steps may make your character illegal and affect your builds. You can return to these steps later.
@@ -2188,7 +2188,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       'Skip This Step?',
       `
         <div style="margin-bottom: 10px;">
-          <p><i class="fas fa-exclamation-triangle" style="color: #ff9800;"></i> <strong>Skip this step?</strong></p>
+          <p><i class="fa-solid fa-exclamation-triangle" style="color: #ff9800;"></i> <strong>Skip this step?</strong></p>
           <p>This step is important for character creation.</p>
           <p style="margin-top: 10px; padding: 10px; background: rgba(255, 152, 0, 0.1); border-left: 3px solid #ff9800;">
             <strong>Warning:</strong> Skipping this step may make your character illegal and affect your builds. You can always come back later to complete it.
@@ -2271,7 +2271,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         'Enable Free Build Mode?',
         `
           <div style="margin-bottom: 10px;">
-            <p><i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i> <strong>Enable Free Build Mode (GM Only)?</strong></p>
+            <p><i class="fa-solid fa-exclamation-triangle" style="color: #ff6b6b;"></i> <strong>Enable Free Build Mode (GM Only)?</strong></p>
             <p>Free Build Mode allows bypassing validation enforcement.</p>
             <p style="margin-top: 10px;">Validation still runs, but enforcement is bypassed. Character will be marked as:</p>
             <ul style="margin-left: 20px; margin-top: 5px;">
@@ -3594,7 +3594,7 @@ class FeatSuggestionsDialog extends foundry.applications.api.HandlebarsApplicati
   static DEFAULT_OPTIONS = {
     id: 'swse-feat-suggestions-dialog',
     tag: 'div',
-    window: { icon: 'fas fa-lightbulb', title: 'Feat Suggestions' },
+    window: { icon: 'fa-solid fa-lightbulb', title: 'Feat Suggestions' },
     position: { width: 600, height: 'auto' }
   };
 
@@ -3649,7 +3649,7 @@ class ClassRequiredDialog extends foundry.applications.api.HandlebarsApplication
   static DEFAULT_OPTIONS = {
     id: 'swse-class-required-dialog',
     tag: 'div',
-    window: { icon: 'fas fa-exclamation-circle', title: 'Class Required' },
+    window: { icon: 'fa-solid fa-exclamation-circle', title: 'Class Required' },
     position: { width: 500, height: 'auto' }
   };
 

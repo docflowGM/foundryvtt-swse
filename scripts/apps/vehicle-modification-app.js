@@ -696,7 +696,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
       content: content,
       buttons: {
         close: {
-          icon: '<i class="fas fa-times"></i>',
+          icon: '<i class="fa-solid fa-times"></i>',
           label: 'Close'
         }
       }

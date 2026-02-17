@@ -203,8 +203,8 @@ export function _populateLocomotionSystems(doc) {
         ${loco.features ? `<p><strong>Features:</strong> ${loco.features.join(', ')}</p>` : ''}
         ${loco.restrictions && loco.restrictions.length > 0 ? `<p><strong>Restrictions:</strong> ${loco.restrictions.join(', ')}</p>` : ''}
         ${isPurchased
-          ? '<button type="button" class="remove-system" data-category="locomotion" data-id="' + loco.id + '"><i class="fas fa-times"></i> Remove</button>'
-          : '<button type="button" class="purchase-system" data-category="locomotion" data-id="' + loco.id + '" data-cost="' + cost + '" data-weight="' + weight + '" data-speed="' + speed + '"><i class="fas fa-cart-plus"></i> Add</button>'
+          ? '<button type="button" class="remove-system" data-category="locomotion" data-id="' + loco.id + '"><i class="fa-solid fa-times"></i> Remove</button>'
+          : '<button type="button" class="purchase-system" data-category="locomotion" data-id="' + loco.id + '" data-cost="' + cost + '" data-weight="' + weight + '" data-speed="' + speed + '"><i class="fa-solid fa-cart-plus"></i> Add</button>'
         }
       </div>
     `;
@@ -264,8 +264,8 @@ function _buildLocomotionEnhancements(doc) {
           <p><strong>Additional Cost:</strong> ${enhancementCost.toLocaleString()} cr</p>
           ${enhancement.effects ? `<p><strong>Effects:</strong> ${enhancement.effects.join(', ')}</p>` : ''}
           ${isSelected
-            ? '<button type="button" class="remove-enhancement" data-category="enhancement" data-enhancement="' + enhancement.id + '"><i class="fas fa-times"></i> Remove</button>'
-            : '<button type="button" class="add-enhancement" data-category="enhancement" data-enhancement="' + enhancement.id + '" data-cost="' + enhancementCost + '"><i class="fas fa-plus"></i> Add</button>'
+            ? '<button type="button" class="remove-enhancement" data-category="enhancement" data-enhancement="' + enhancement.id + '"><i class="fa-solid fa-times"></i> Remove</button>'
+            : '<button type="button" class="add-enhancement" data-category="enhancement" data-enhancement="' + enhancement.id + '" data-cost="' + enhancementCost + '"><i class="fa-solid fa-plus"></i> Add</button>'
           }
         </div>
       `;
@@ -328,8 +328,8 @@ export function _populateProcessorSystems(doc) {
         ${proc.restrictions && proc.restrictions.length > 0 ? `<p><strong>Restrictions:</strong> ${proc.restrictions.join(', ')}</p>` : ''}
         ${proc.notes ? `<p class="processor-notes"><em>Note:</em> ${proc.notes}</p>` : ''}
         ${isPurchased
-          ? '<button type="button" class="remove-system" data-category="processor" data-id="' + proc.id + '"><i class="fas fa-times"></i> Remove</button>'
-          : '<button type="button" class="purchase-system" data-category="processor" data-id="' + proc.id + '" data-cost="' + cost + '" data-weight="' + weight + '"><i class="fas fa-cart-plus"></i> Add</button>'
+          ? '<button type="button" class="remove-system" data-category="processor" data-id="' + proc.id + '"><i class="fa-solid fa-times"></i> Remove</button>'
+          : '<button type="button" class="purchase-system" data-category="processor" data-id="' + proc.id + '" data-cost="' + cost + '" data-weight="' + weight + '"><i class="fa-solid fa-cart-plus"></i> Add</button>'
         }
       </div>
     `;
@@ -380,8 +380,8 @@ export function _populateAppendageSystems(doc) {
         <p><strong>Weight:</strong> ${weight} kg</p>
         <p><strong>Availability:</strong> ${app.availability}</p>
         ${purchaseCount > 0 ? '<p class="purchase-count">Owned: ' + purchaseCount + '</p>' : ''}
-        <button type="button" class="purchase-system" data-category="appendage" data-id="${app.id}" data-cost="${isFree ? 0 : cost}" data-weight="${weight}"><i class="fas fa-cart-plus"></i> Add</button>
-        ${purchaseCount > 0 ? '<button type="button" class="remove-system" data-category="appendage" data-id="' + app.id + '"><i class="fas fa-minus"></i> Remove One</button>' : ''}
+        <button type="button" class="purchase-system" data-category="appendage" data-id="${app.id}" data-cost="${isFree ? 0 : cost}" data-weight="${weight}"><i class="fa-solid fa-cart-plus"></i> Add</button>
+        ${purchaseCount > 0 ? '<button type="button" class="remove-system" data-category="appendage" data-id="' + app.id + '"><i class="fa-solid fa-minus"></i> Remove One</button>' : ''}
       </div>
     `;
     html += appendageHtml;
@@ -460,8 +460,8 @@ function _buildAppendageEnhancements(doc) {
         ${enhancement.restrictions && enhancement.restrictions.length > 0 ? `<p><strong>Restrictions:</strong> ${enhancement.restrictions.join(', ')}</p>` : ''}
         <p><strong>Availability:</strong> ${enhancement.availability}</p>
         ${isSelected
-          ? '<button type="button" class="remove-enhancement" data-category="appendage-enhancement" data-enhancement="' + enhancement.id + '"><i class="fas fa-times"></i> Remove</button>'
-          : '<button type="button" class="add-enhancement" data-category="appendage-enhancement" data-enhancement="' + enhancement.id + '" data-cost="' + enhancementCost + '"><i class="fas fa-plus"></i> Add</button>'
+          ? '<button type="button" class="remove-enhancement" data-category="appendage-enhancement" data-enhancement="' + enhancement.id + '"><i class="fa-solid fa-times"></i> Remove</button>'
+          : '<button type="button" class="add-enhancement" data-category="appendage-enhancement" data-enhancement="' + enhancement.id + '" data-cost="' + enhancementCost + '"><i class="fa-solid fa-plus"></i> Add</button>'
         }
       </div>
     `;
@@ -519,8 +519,8 @@ export function _populateAccessoryCategory(doc, category, items) {
         <p><strong>Weight:</strong> ${weight} kg</p>
         <p><strong>Availability:</strong> ${item.availability}</p>
         ${isPurchased
-          ? '<button type="button" class="remove-system" data-category="accessory" data-subcategory="' + category + '" data-id="' + item.id + '"><i class="fas fa-times"></i> Remove</button>'
-          : '<button type="button" class="purchase-system" data-category="accessory" data-subcategory="' + category + '" data-id="' + item.id + '" data-cost="' + cost + '" data-weight="' + weight + '"><i class="fas fa-cart-plus"></i> Add</button>'
+          ? '<button type="button" class="remove-system" data-category="accessory" data-subcategory="' + category + '" data-id="' + item.id + '"><i class="fa-solid fa-times"></i> Remove</button>'
+          : '<button type="button" class="purchase-system" data-category="accessory" data-subcategory="' + category + '" data-id="' + item.id + '" data-cost="' + cost + '" data-weight="' + weight + '"><i class="fa-solid fa-cart-plus"></i> Add</button>'
         }
       </div>
     `;
@@ -941,7 +941,7 @@ export function _updateCartDisplay(doc) {
   if (items.length === 0) {
     cartItemsList.innerHTML = `
       <div class="cart-empty-message">
-        <i class="fas fa-box-open"></i>
+        <i class="fa-solid fa-box-open"></i>
         <p>No systems added yet. Browse the shop to customize your droid!</p>
       </div>
     `;
@@ -953,7 +953,7 @@ export function _updateCartDisplay(doc) {
 
       cartItemsList.innerHTML += `
         <div class="cart-item">
-          <div class="item-icon"><i class="fas ${item.icon}"></i></div>
+          <div class="item-icon"><i class="fa-solid ${item.icon}"></i></div>
           <div class="item-details">
             <div class="item-name">${item.name}</div>
             <div class="item-specs">${item.specs}</div>
@@ -962,7 +962,7 @@ export function _updateCartDisplay(doc) {
             <span class="price-amount">${item.cost.toLocaleString()} cr</span>
           </div>
           <button type="button" class="remove-from-cart remove-system" ${removeDataAttrs}>
-            <i class="fas fa-trash"></i>
+            <i class="fa-solid fa-trash"></i>
           </button>
         </div>
       `;
@@ -998,14 +998,14 @@ export function _updateCartValidation(doc) {
   if (issues.length === 0) {
     validationContainer.innerHTML = `
       <div class="validation-success">
-        <i class="fas fa-circle-check"></i>
+        <i class="fa-solid fa-circle-check"></i>
         <span>All requirements met! Ready to proceed.</span>
       </div>
     `;
   } else {
     validationContainer.innerHTML = issues.map(issue => `
       <div class="validation-item" id="validation-${escapeHtml(issue.id)}">
-        <i class="fas fa-circle-exclamation"></i>
+        <i class="fa-solid fa-circle-exclamation"></i>
         <span>${escapeHtml(issue.text)}</span>
       </div>
     `).join('');
@@ -1157,7 +1157,7 @@ class DroidImportDialog extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: 'swse-droid-import-dialog',
     tag: 'div',
-    window: { icon: 'fas fa-robot', title: 'Import Droid Type' },
+    window: { icon: 'fa-solid fa-robot', title: 'Import Droid Type' },
     position: { width: 500, height: 'auto' }
   };
 

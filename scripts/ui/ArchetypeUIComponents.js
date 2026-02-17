@@ -207,7 +207,7 @@ export async function showPrestigePathDialog(actor, options = {}) {
       content: html,
       buttons: {
         close: {
-          icon: '<i class="fas fa-times"></i>',
+          icon: '<i class="fa-solid fa-times"></i>',
           label: 'Close',
           callback: () => {}
         }
@@ -287,7 +287,7 @@ export async function registerArchetypeUISection(sheet) {
     const fullHtml = `
       <section class="archetype-ui-section">
         <h3 class="archetype-section-title">
-          <i class="fas fa-compass"></i> Build Analysis
+          <i class="fa-solid fa-compass"></i> Build Analysis
         </h3>
 
         <div class="archetype-ui-content">

@@ -15,7 +15,7 @@ export class MentorSuggestionDialog extends foundry.applications.api.Application
   static DEFAULT_OPTIONS = {
     id: 'mentor-suggestion-dialog',
     tag: 'div',
-    window: { icon: 'fas fa-lightbulb', title: 'Mentor Suggestion' },
+    window: { icon: 'fa-solid fa-lightbulb', title: 'Mentor Suggestion' },
     position: { width: 550, height: 'auto' }
   };
 
@@ -105,10 +105,10 @@ export class MentorSuggestionDialog extends foundry.applications.api.Application
 
         <div class="mentor-buttons">
           <button class="btn btn-success" data-action="apply">
-            <i class="fas fa-check"></i> Apply Suggestion
+            <i class="fa-solid fa-check"></i> Apply Suggestion
           </button>
           <button class="btn btn-secondary" data-action="dismiss">
-            <i class="fas fa-times"></i> Dismiss
+            <i class="fa-solid fa-times"></i> Dismiss
           </button>
         </div>
       </div>

@@ -736,7 +736,7 @@ export const MENTOR_SUGGESTION_DIALOGUES = {
                 ranged: {
                     observation: 'Distance is safety.',
                     suggestion: 'This feat improves your ranged effectiveness.',
-                    respectClause: "Hit them from far away. They can't hit back."
+                    respectClause: "Hit them from fa-regular away. They can't hit back."
                 }
             },
             mid: {

@@ -104,7 +104,7 @@ const featActions = SWSE.FeatSystem.buildFeatActions(actor);
       benefit: "...",
       type: "combat",      // "combat", "force", "skill", "passive"
       typeLabel: "COMBAT",
-      icon: "fas fa-crosshairs",
+      icon: "fa-solid fa-crosshairs",
       uses: { ... },
       actions: { attack: true }
     }

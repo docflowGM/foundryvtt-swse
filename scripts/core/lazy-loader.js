@@ -203,7 +203,7 @@ export class LazyLoader {
           // Show loading indicator
           if (tabContent) {
             const originalContent = tabContent.innerHTML;
-            tabContent.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+            tabContent.innerHTML = '<div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>';
 
             try {
               // Execute tab-specific callback

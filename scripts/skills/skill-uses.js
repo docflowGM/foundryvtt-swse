@@ -50,7 +50,7 @@ export class JumpUses {
     );
 
     ui.notifications.info(
-      success ? `${actor.name} clears the ${distance}m gap!` : `${actor.name} doesn't jump far enough!`
+      success ? `${actor.name} clears the ${distance}m gap!` : `${actor.name} doesn't jump fa-regular enough!`
     );
 
     return {

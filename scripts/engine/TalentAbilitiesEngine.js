@@ -27,7 +27,7 @@ import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 const TALENT_ABILITY_EFFECTS = {
     'ataru': {
         name: 'Ataru Form',
-        icon: 'fas fa-wind',
+        icon: 'fa-solid fa-wind',
         duration: { rounds: 1 },
         updates: {
             'system.attackBonus': { mode: 'ADD', value: 2 },
@@ -37,7 +37,7 @@ const TALENT_ABILITY_EFFECTS = {
     },
     'juyo': {
         name: 'Juyo Form',
-        icon: 'fas fa-skull',
+        icon: 'fa-solid fa-skull',
         duration: { rounds: 1 },
         updates: {
             'system.damageBonus': { mode: 'ADD', value: 2 },
@@ -49,7 +49,7 @@ const TALENT_ABILITY_EFFECTS = {
     },
     'lightsaber-defense': {
         name: 'Lightsaber Defense',
-        icon: 'fas fa-shield-alt',
+        icon: 'fa-solid fa-shield-alt',
         updates: {
             'system.defenses.reflex.misc': { mode: 'ADD', value: 1 }
         },
@@ -57,7 +57,7 @@ const TALENT_ABILITY_EFFECTS = {
     },
     'armored-defense': {
         name: 'Armored Defense',
-        icon: 'fas fa-shield-alt',
+        icon: 'fa-solid fa-shield-alt',
         updates: {
             'system.defenses.reflex.misc': { mode: 'ADD', value: 1 }
         },
@@ -65,7 +65,7 @@ const TALENT_ABILITY_EFFECTS = {
     },
     'improved-armored-defense': {
         name: 'Improved Armored Defense',
-        icon: 'fas fa-shield-alt',
+        icon: 'fa-solid fa-shield-alt',
         updates: {
             'system.defenses.reflex.misc': { mode: 'ADD', value: 2 }
         },
@@ -73,7 +73,7 @@ const TALENT_ABILITY_EFFECTS = {
     },
     'elusive-target': {
         name: 'Elusive Target',
-        icon: 'fas fa-wind',
+        icon: 'fa-solid fa-wind',
         updates: {
             'system.defenses.reflex.misc': { mode: 'ADD', value: 2 }
         },
@@ -324,7 +324,7 @@ export class TalentAbilitiesEngine {
             sourceTalent: talent,
             sourceTalentId: talent.id,
             sourceTalentName: talent.name,
-            icon: ability.icon || 'fas fa-star',
+            icon: ability.icon || 'fa-solid fa-star',
             typeLabel: this._getTypeLabel(ability.actionType),
             typeBadgeClass: this._getTypeBadgeClass(ability.actionType)
         };
@@ -395,7 +395,7 @@ export class TalentAbilitiesEngine {
             talentTree: template.talentTree,
             description: `Choose one of ${subAbilities.length} options`,
             actionType: 'multi-option',
-            icon: template.icon || 'fas fa-list',
+            icon: template.icon || 'fa-solid fa-list',
             typeLabel: 'Multi-Option',
             typeBadgeClass: 'multi-option',
             sourceTalent: template.sourceTalent,
@@ -1126,7 +1126,7 @@ export class TalentAbilitiesEngine {
     static async _postDamageEffectsToChat(attacker, target, effects) {
         const content = `
             <div class="swse-talent-effects-message">
-                <h4><i class="fas fa-bolt"></i> Talent Effects Applied</h4>
+                <h4><i class="fa-solid fa-bolt"></i> Talent Effects Applied</h4>
                 <p><strong>${attacker.name}</strong> affects <strong>${target.name}</strong>:</p>
                 <ul>
                     ${effects.map(e => `<li><strong>${e.name}:</strong> ${e.effect}</li>`).join('')}
@@ -1221,7 +1221,7 @@ export class TalentAbilitiesEngine {
                     <div class="reaction-option">
                         <label>
                             <input type="radio" name="reaction" value="none" checked>
-                            <i class="fas fa-times"></i> No reaction
+                            <i class="fa-solid fa-times"></i> No reaction
                         </label>
                     </div>
                 </div>
@@ -1234,7 +1234,7 @@ export class TalentAbilitiesEngine {
                 content,
                 buttons: {
                     confirm: {
-                        icon: '<i class="fas fa-check"></i>',
+                        icon: '<i class="fa-solid fa-check"></i>',
                         label: 'Confirm',
                         callback: async (html) => {
                             const root = html instanceof HTMLElement ? html : html?.[0];
@@ -1254,7 +1254,7 @@ export class TalentAbilitiesEngine {
                         }
                     },
                     cancel: {
-                        icon: '<i class="fas fa-times"></i>',
+                        icon: '<i class="fa-solid fa-times"></i>',
                         label: 'Skip',
                         callback: () => resolve(null)
                     }

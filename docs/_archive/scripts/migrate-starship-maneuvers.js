@@ -43,7 +43,7 @@ const starshipManeuvers = {
     },
     special: 'The new target of the redirected attack may not in turn use the Ackbar Slash maneuver to redirect that attack.',
     tags: ['vehicle', 'pilot', 'tactics', 'reaction'],
-    icon: 'fas fa-directions',
+    icon: 'fa-solid fa-directions',
     linkedAction: 'starship-maneuver'
   },
   'afterburn': {
@@ -70,7 +70,7 @@ const starshipManeuvers = {
     },
     special: 'You take the All-Out Movement Action as a Free Action. The bonuses apply during this action to Pilot checks made to resist Dogfight initiation.',
     tags: ['vehicle', 'pilot', 'mobility', 'fullround'],
-    icon: 'fas fa-fire',
+    icon: 'fa-solid fa-fire',
     linkedAction: 'starship-maneuver'
   },
   'angle-deflector-shields': {
@@ -92,7 +92,7 @@ const starshipManeuvers = {
     },
     special: 'Requires vehicle with SR 5+. Shield Rating is considered double for chosen target, halved (rounded down) for all others. You may change target as a Swift Action. Deactivate as Swift Action.',
     tags: ['vehicle', 'defense', 'shields', 'attack-pattern', 'swift'],
-    icon: 'fas fa-shield-alt',
+    icon: 'fa-solid fa-shield-alt',
     linkedAction: 'starship-maneuver'
   },
   'attack-formation-zeta-nine': {
@@ -114,7 +114,7 @@ const starshipManeuvers = {
     },
     special: 'Requires vehicle with SR 5+. Formation emphasizes defense over offense. Deactivate as Swift Action.',
     tags: ['vehicle', 'formation', 'defense', 'attack-pattern', 'swift'],
-    icon: 'fas fa-cube',
+    icon: 'fa-solid fa-cube',
     linkedAction: 'starship-maneuver'
   },
   'attack-pattern-delta': {
@@ -136,7 +136,7 @@ const starshipManeuvers = {
     },
     special: 'Gain +1 maneuver bonus to vehicle Reflex Defense when adjacent to an allied Starfighter or Airspeeder. Bonus increases to +2 if any adjacent allies are also using Attack Pattern Delta.',
     tags: ['vehicle', 'formation', 'defense', 'attack-pattern', 'swift'],
-    icon: 'fas fa-arrows-alt',
+    icon: 'fa-solid fa-arrows-alt',
     linkedAction: 'starship-maneuver'
   },
   'corellian-slip': {
@@ -164,7 +164,7 @@ const starshipManeuvers = {
     },
     special: "Move up to twice your Vehicle's Speed in a straight line through opponent's square. Make an attack as Free Action when entering opponent's square. If movement is halted (such as being drawn into Dogfight), maneuver fails. If failed, you still move through opponent's square and Collision occurs normally—you don't get an attack and can't attempt to Avoid Collision. Opponent may attempt to Avoid Collision.",
     tags: ['vehicle', 'pilot', 'offense', 'teamwork', 'fullround'],
-    icon: 'fas fa-arrow-right',
+    icon: 'fa-solid fa-arrow-right',
     linkedAction: 'starship-maneuver'
   },
   'counter': {
@@ -191,7 +191,7 @@ const starshipManeuvers = {
     },
     special: 'Activate as Reaction to being attacked by a Vehicle in Dogfight. Attack is resolved before you take your Action. Initiative Order is not modified.',
     tags: ['vehicle', 'pilot', 'defense', 'dogfight', 'reaction'],
-    icon: 'fas fa-reply',
+    icon: 'fa-solid fa-reply',
     linkedAction: 'starship-maneuver'
   },
   'darklighter-spin': {
@@ -217,7 +217,7 @@ const starshipManeuvers = {
     },
     special: 'Make Starship Scale Area Attack with Autofire weapon even if not normally capable. Weapon must be capable of Autofire.',
     tags: ['vehicle', 'pilot', 'offense', 'standard'],
-    icon: 'fas fa-arrows-rotate',
+    icon: 'fa-solid fa-arrows-rotate',
     linkedAction: 'starship-maneuver'
   },
   'devastating-hit': {
@@ -243,7 +243,7 @@ const starshipManeuvers = {
     },
     special: "Make attack roll. Compare to target's Reflex Defense. Effects depend on how much you exceed the defense.",
     tags: ['vehicle', 'gunner', 'offense', 'standard'],
-    icon: 'fas fa-bullseye',
+    icon: 'fa-solid fa-bullseye',
     linkedAction: 'starship-maneuver'
   },
   'engine-hit': {
@@ -270,7 +270,7 @@ const starshipManeuvers = {
     },
     special: 'Activate as Reaction after dealing Critical Hit or damage >= Damage Threshold. Reduction lasts remainder of encounter. Engineer on target can repair with Full-Round Action.',
     tags: ['vehicle', 'gunner', 'debuff', 'reaction'],
-    icon: 'fas fa-fan',
+    icon: 'fa-solid fa-fan',
     linkedAction: 'starship-maneuver'
   },
   'evasive-action': {
@@ -297,7 +297,7 @@ const starshipManeuvers = {
     },
     special: 'Immediately attempt to disengage from Dogfight with no action required.',
     tags: ['vehicle', 'pilot', 'mobility', 'dogfight', 'move'],
-    icon: 'fas fa-wind',
+    icon: 'fa-solid fa-wind',
     linkedAction: 'starship-maneuver'
   },
   'explosive-shot': {
@@ -324,7 +324,7 @@ const starshipManeuvers = {
     },
     special: 'Activate as Reaction to attack that destroys a Vehicle (reduces to 0 HP with damage >= Damage Threshold).',
     tags: ['vehicle', 'gunner', 'offense', 'reaction'],
-    icon: 'fas fa-explosion',
+    icon: 'fa-solid fa-explosion',
     linkedAction: 'starship-maneuver'
   },
   'howlrunner-formation': {
@@ -345,7 +345,7 @@ const starshipManeuvers = {
       effect: '+1 maneuver bonus on attack rolls while adjacent to allied Airspeeder or Starfighter (+2 if adjacent allies also using Howlrunner)'
     },
     tags: ['vehicle', 'formation', 'offense', 'attack-pattern', 'swift'],
-    icon: 'fas fa-expand',
+    icon: 'fa-solid fa-expand',
     linkedAction: 'starship-maneuver'
   },
   'i-have-you-now': {
@@ -371,7 +371,7 @@ const starshipManeuvers = {
       ]
     },
     tags: ['vehicle', 'pilot', 'offense', 'swift'],
-    icon: 'fas fa-crosshairs',
+    icon: 'fa-solid fa-crosshairs',
     linkedAction: 'starship-maneuver'
   },
   'intercept': {
@@ -398,7 +398,7 @@ const starshipManeuvers = {
       ]
     },
     tags: ['vehicle', 'pilot', 'dogfight', 'reaction'],
-    icon: 'fas fa-arrow-up',
+    icon: 'fa-solid fa-arrow-up',
     linkedAction: 'starship-maneuver'
   },
   'overwhelming-assault': {
@@ -420,7 +420,7 @@ const starshipManeuvers = {
     },
     special: 'Change target as Swift Action. Damage bonus only applies to chosen target, penalty applies to all attacks until start of next turn. Deactivate as Swift Action.',
     tags: ['vehicle', 'formation', 'offense', 'attack-pattern', 'swift'],
-    icon: 'fas fa-bolt',
+    icon: 'fa-solid fa-bolt',
     linkedAction: 'starship-maneuver'
   },
   'segnors-loop': {
@@ -447,7 +447,7 @@ const starshipManeuvers = {
       ]
     },
     tags: ['vehicle', 'pilot', 'mobility', 'reaction'],
-    icon: 'fas fa-rotate-right',
+    icon: 'fa-solid fa-rotate-right',
     linkedAction: 'starship-maneuver'
   },
   'shield-hit': {
@@ -473,7 +473,7 @@ const starshipManeuvers = {
     },
     special: 'Damage reduced normally by DR and SR. Effect applied after damage. If damage exceeds SR, additional -5 reduction applies. System Operator can Recharge Shields to restore SR.',
     tags: ['vehicle', 'gunner', 'debuff', 'standard'],
-    icon: 'fas fa-ban',
+    icon: 'fa-solid fa-ban',
     linkedAction: 'starship-maneuver'
   },
   'skim-the-surface': {
@@ -500,7 +500,7 @@ const starshipManeuvers = {
     },
     special: "Move up to twice Speed through target's Fighting Space. Make attack ignoring SR. If result <20, Collision occurs. Gunners with Ready Actions take same penalties and ignore SR.",
     tags: ['vehicle', 'pilot', 'offense', 'fullround'],
-    icon: 'fas fa-water',
+    icon: 'fa-solid fa-water',
     linkedAction: 'starship-maneuver'
   },
   'skywalker-loop': {
@@ -522,7 +522,7 @@ const starshipManeuvers = {
       effect: 'Make Attack of Opportunity against opponent who failed Dogfight check'
     },
     tags: ['vehicle', 'pilot', 'dogfight', 'reaction'],
-    icon: 'fas fa-circle',
+    icon: 'fa-solid fa-circle',
     linkedAction: 'starship-maneuver'
   },
   'snap-roll': {
@@ -544,7 +544,7 @@ const starshipManeuvers = {
     },
     special: 'Declare before attack is resolved and damage rolled. Check result becomes your Reflex Defense vs that attack.',
     tags: ['vehicle', 'pilot', 'defense', 'reaction'],
-    icon: 'fas fa-vial',
+    icon: 'fa-solid fa-vial',
     linkedAction: 'starship-maneuver'
   },
   'strike-formation': {
@@ -566,7 +566,7 @@ const starshipManeuvers = {
     },
     special: 'Deactivate as Swift Action. Formation remains spent if deactivated.',
     tags: ['vehicle', 'formation', 'offense', 'attack-pattern', 'swift'],
-    icon: 'fas fa-hammer',
+    icon: 'fa-solid fa-hammer',
     linkedAction: 'starship-maneuver'
   },
   'tallon-roll': {
@@ -594,7 +594,7 @@ const starshipManeuvers = {
     },
     special: 'Activate as Reaction after opponent declares Dogfight disengagement attempt, before opposed Pilot check.',
     tags: ['vehicle', 'pilot', 'dogfight', 'reaction'],
-    icon: 'fas fa-infinity',
+    icon: 'fa-solid fa-infinity',
     linkedAction: 'starship-maneuver'
   },
   'target-lock': {
@@ -622,7 +622,7 @@ const starshipManeuvers = {
     },
     special: 'If target successfully disengages, benefits are lost even if you initiate Dogfight again.',
     tags: ['vehicle', 'pilot', 'offense', 'dogfight', 'standard'],
-    icon: 'fas fa-lock',
+    icon: 'fa-solid fa-lock',
     linkedAction: 'starship-maneuver'
   },
   'target-sense': {
@@ -648,7 +648,7 @@ const starshipManeuvers = {
     },
     special: "Replace Vehicle's INT bonus with your CHA bonus on attack rolls this round. Bonus stacks with Battle Strike Force Power.",
     tags: ['vehicle', 'force', 'pilot', 'swift'],
-    icon: 'fas fa-eye',
+    icon: 'fa-solid fa-eye',
     linkedAction: 'starship-maneuver',
     prerequisites: ['use-the-force-trained']
   },
@@ -676,7 +676,7 @@ const starshipManeuvers = {
     },
     special: 'Activate as Reaction after dealing Critical Hit or damage >= Damage Threshold. Effects last remainder of encounter.',
     tags: ['vehicle', 'gunner', 'debuff', 'reaction'],
-    icon: 'fas fa-forward',
+    icon: 'fa-solid fa-forward',
     linkedAction: 'starship-maneuver'
   },
   'wotan-weave': {
@@ -702,7 +702,7 @@ const starshipManeuvers = {
     },
     special: 'Used when Fly Defensively. Bonuses until start of next turn. If Speed would be reduced to 0, you automatically fail.',
     tags: ['vehicle', 'pilot', 'defense', 'swift'],
-    icon: 'fas fa-spiral',
+    icon: 'fa-solid fa-spiral',
     linkedAction: 'starship-maneuver'
   }
 };
