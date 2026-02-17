@@ -91,25 +91,21 @@
    5. HARD EXCLUSIONS — PROTECT FOUNDRY CORE UI
    -------------------------------------------------------------------------- */
 
-/* Never touch Foundry controls */
-.ui-control,
-.ui-control.icon,
-#sidebar,
-#sidebar-tabs,
-#controls,
-#hotbar {
-  all: unset;
-}
+/* PHASE 2: REMOVE DESTRUCTIVE all: unset RULES
+   These rules were resetting ALL properties on Foundry core UI elements.
+   all: unset destroys button functionality, sidebar layout, controls rendering.
 
-/* Restore Foundry icon buttons explicitly */
-button.ui-control.icon {
-  display: flex;
-  padding: 0;
-  background-color: var(--control-icon-color);
-  -webkit-mask-image: var(--control-icon);
-  mask-image: var(--control-icon);
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-}
+   REMOVED: #sidebar, #sidebar-tabs, #controls, #hotbar { all: unset; }
+
+   POLICY: Never use all: unset on Foundry core selectors.
+   Foundry styling is protected by default. SWSE theming only applies to SWSE windows.
+*/
+
+/* PHASE 2: REMOVED
+   This was attempting to "restore" Foundry icon buttons globally.
+   Never style button.ui-control globally - it breaks Foundry UI.
+
+   REMOVED: button.ui-control.icon styling
+
+   Icon styling for SWSE buttons must be scoped to .app.swse-window only.
+*/

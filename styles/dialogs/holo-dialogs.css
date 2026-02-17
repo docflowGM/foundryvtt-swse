@@ -1,4 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════════════════
+   SWSE CSS — MUST BE SCOPED TO .app.swse-window
+   ═════════════════════════════════════════════════════════════════════════
    CSS LAYER DECLARATION (V13+ FUTURE-PROOFING)
 
    Establishes layering order:
@@ -7,6 +9,9 @@
 
    Prevents: SWSE styles accidentally overriding critical Foundry rules
    or losing to future Foundry v14+ changes.
+
+   PHASE 5 ENFORCEMENT: No selectors target Foundry core elements
+   (#sidebar, #ui-left, #hotbar, etc.)
    ═════════════════════════════════════════════════════════════════════════ */
 @layer foundry, swse;
 
@@ -538,45 +543,20 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   SIDEBAR CONTAINMENT FIX - Restore Foundry's sidebar sliding mechanism
-   ═════════════════════════════════════════════════════════════════════════ */
-
-[data-theme=holo] #sidebar {
-  position: relative !important;
-  overflow: hidden !important;
-}
-
-[data-theme=holo] #sidebar-content {
-  position: relative !important;
-  overflow: hidden !important;
-}
-
-[data-theme=holo] #sidebar-content > * {
-  overflow: auto;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   FOUNDRY UI CONTAINMENT CONTRACT (V13+ INVARIANT)
+   SIDEBAR CONTAINMENT FIX - DEPRECATED
    ═════════════════════════════════════════════════════════════════════════
 
-   These containers are critical to Foundry's layout and z-index stacking.
-   Violations cause: tab bleed, z-index chaos, phantom scroll bugs.
+   PHASE 1 REMOVAL: These rules directly damaged Foundry core layout.
+   They applied position: relative, overflow: hidden, and contain: layout paint
+   to #sidebar, #sidebar-content - breaking the sidebar sliding mechanism.
 
-   REQUIRED: These rules must always have:
-   - position: relative
-   - contain: layout paint
-
-   FORBIDDEN: Never apply to these containers:
-   - transform (will break z-index stacking)
-   - filter (will create stacking context corruption)
-   - backdrop-filter (will clip descendants)
-
-   If you need glow/blur effects, wrap with an inner div.
+   These rules are REMOVED to restore Foundry core integrity.
+   SWSE theming is applied only to SWSE windows, never to core Foundry containers.
    ═════════════════════════════════════════════════════════════════════════ */
 
-[data-theme=holo] #sidebar,
-[data-theme=holo] #sidebar-content,
-[data-theme=holo] .app.window-app {
-  position: relative;
-  contain: layout paint;
-}
+/* [REMOVED PHASE 1]
+   - [data-theme=holo] #sidebar { position: relative !important; overflow: hidden !important; }
+   - [data-theme=holo] #sidebar-content { position: relative !important; overflow: hidden !important; }
+   - [data-theme=holo] #sidebar-content > * { overflow: auto; }
+   - [data-theme=holo] #sidebar, #sidebar-content, .app.window-app with contain: layout paint
+*/
