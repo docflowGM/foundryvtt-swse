@@ -1859,397 +1859,395 @@ Hooks.on('darkSideSavantTriggered', async (actor) => {
   }
 });
 
-  // ========================================================================
-  // SITH ALCHEMY - Extended Transformations (Amulet, Armor, Weapon)
-  // Implements the rules text provided by GM (stable, time-gated with flags)
-  // ========================================================================
+// ========================================================================
+// SITH ALCHEMY - Extended Transformations (Amulet, Armor, Weapon)
+// Implements the rules text provided by GM (stable, time-gated with flags)
+// ========================================================================
 
-  static _nowISO() {
-    return new Date().toISOString();
+export function _nowISO() {
+  return new Date().toISOString();
+}
+
+export function _addHours(date, hours) {
+  const d = new Date(date);
+  d.setHours(d.getHours() + hours);
+  return d;
+}
+
+export function _addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+export function _isComplete(isoTime) {
+  if (!isoTime) { return false; }
+  return new Date() >= new Date(isoTime);
+}
+
+export function _getCredits(actor) {
+  return Number(actor?.system?.credits ?? 0);
+}
+
+export async function _spendCredits(actor, amount) {
+  const credits = _getCredits(actor);
+  if (credits < amount) {
+    return { ok: false, message: `Insufficient credits. Requires ${amount} credits (you have ${credits}).` };
+  }
+  await actor.update({ 'system.credits': credits - amount });
+  return { ok: true, before: credits, after: credits - amount };
+}
+
+export function _getFP(actor) {
+  return Number(actor?.system?.forcePoints?.value ?? 0);
+}
+
+export async function _spendFP(actor, amount = 1) {
+  const fp = _getFP(actor);
+  if (fp < amount) {
+    return { ok: false, message: `Not enough Force Points. Requires ${amount} Force Point(s).` };
+  }
+  await actor.update({ 'system.forcePoints.value': fp - amount });
+  return { ok: true, before: fp, after: fp - amount };
+}
+
+export function _getDSP(actor) {
+  return Number(actor?.system?.darkSideScore ?? 0);
+}
+
+export async function _increaseDSP(actor, amount = 1) {
+  const dsp = _getDSP(actor);
+  const next = dsp + amount;
+  await actor.update({ 'system.darkSideScore': next });
+  return { before: dsp, after: next };
+}
+
+/**
+ * Start crafting a Sith Amulet.
+ * - Costs 25,000 credits in materials (abstracted as credits)
+ * - Takes 7 days (1 week)
+ * - On completion: spend 1 FP, gain a Sith Amulet item, DSP +1
+ */
+export async function startSithAmuletCraft(actor) {
+  if (!DarkSidePowers.hasSithAlchemy(actor)) {
+    return { success: false, message: 'Actor does not have Sith Alchemy' };
   }
 
-  static _addHours(date, hours) {
-    const d = new Date(date);
-    d.setHours(d.getHours() + hours);
-    return d;
+  const existing = actor.getFlag('swse', 'sithAmuletCraft');
+  if (existing && !existing.completedAt) {
+    return { success: false, message: 'A Sith Amulet craft is already in progress.' };
   }
 
-  static _addDays(date, days) {
-    const d = new Date(date);
-    d.setDate(d.getDate() + days);
-    return d;
+  const cost = 25000;
+  const creditSpend = await _spendCredits(actor, cost);
+  if (!creditSpend.ok) { return { success: false, message: creditSpend.message }; }
+
+  const startedAt = _nowISO();
+  const completesAt = _addDays(startedAt, 7).toISOString();
+
+  const craft = { startedAt, completesAt, cost, completedAt: null };
+  await actor.setFlag('swse', 'sithAmuletCraft', craft);
+
+  await createChatMessage({
+    speaker: { actor },
+    content: `
+      <div class="swse-sith-alchemy">
+        <h3><img src="icons/svg/amulet.svg" style="width: 20px; height: 20px;"> Sith Amulet Craft Started</h3>
+        <p><strong>${actor.name}</strong> begins crafting a Sith Amulet.</p>
+        <p><strong>Materials:</strong> ${cost.toLocaleString()} credits</p>
+        <p><strong>Time:</strong> 1 week (completes after ${new Date(completesAt).toLocaleString()})</p>
+        <p><em>Completion requires spending 1 Force Point.</em></p>
+      </div>
+    `
+  });
+
+  return { success: true, startedAt, completesAt, cost };
+}
+
+export async function completeSithAmuletCraft(actor) {
+  const craft = actor.getFlag('swse', 'sithAmuletCraft');
+  if (!craft || craft.completedAt) {
+    return { success: false, message: 'No Sith Amulet craft is currently in progress.' };
+  }
+  if (!_isComplete(craft.completesAt)) {
+    return { success: false, message: 'Sith Amulet craft is not finished yet.' };
   }
 
-  static _isComplete(isoTime) {
-    if (!isoTime) { return false; }
-    return new Date() >= new Date(isoTime);
+  const fpSpend = await _spendFP(actor, 1);
+  if (!fpSpend.ok) { return { success: false, message: fpSpend.message }; }
+
+  const dsp = await _increaseDSP(actor, 1);
+
+  const itemData = {
+    name: 'Sith Amulet',
+    type: 'equipment',
+    system: {
+      description: 'A powerful amulet forged through Sith Alchemy. (System note: item created via Sith Alchemy.)',
+      equipped: false,
+      quantity: 1,
+      rarity: 'legendary'
+    }
+  };
+
+  const createdItems = await createItemInActor(actor, itemData);
+  if (!createdItems || !Array.isArray(createdItems) || createdItems.length === 0) {
+    ui.notifications.error('Failed to create Sith Amulet item');
+    return { success: false, message: 'Failed to create Sith Amulet item' };
   }
 
-  static _getCredits(actor) {
-    return Number(actor?.system?.credits ?? 0);
+  const completedAt = _nowISO();
+  await actor.setFlag('swse', 'sithAmuletCraft', { ...craft, completedAt });
+
+  await createChatMessage({
+    speaker: { actor },
+    content: `
+      <div class="swse-sith-alchemy">
+        <h3><img src="icons/svg/amulet.svg" style="width: 20px; height: 20px;"> Sith Amulet Completed</h3>
+        <p><strong>${actor.name}</strong> completes a Sith Amulet.</p>
+        <p><strong>Force Point:</strong> -1</p>
+        <p><strong>Dark Side Score:</strong> +1 (now ${dsp.after})</p>
+      </div>
+    `
+  });
+
+  return { success: true, itemId: createdItems[0].id, newDSP: dsp.after };
+}
+
+/**
+ * Start transforming Battle Armor into Sith Dark Armor.
+ * Requires an existing Battle Armor item. Completion costs 1 FP.
+ * Time: Light=1 day, Standard=2 days, Heavy=3 days
+ */
+export function _classifyBattleArmor(armorItem) {
+  const name = (armorItem?.name || '').toLowerCase();
+  if (name.includes('light battle armor')) { return { tier: 'light', days: 1, resultName: 'Light Dark Armor' }; }
+  if (name.includes('heavy battle armor')) { return { tier: 'heavy', days: 3, resultName: 'Heavy Dark Armor' }; }
+  if (name.includes('battle armor')) { return { tier: 'standard', days: 2, resultName: 'Dark Armor' }; }
+  return null;
+}
+
+export async function startSithArmorTransform(actor, armorItem) {
+  if (!DarkSidePowers.hasSithAlchemy(actor)) {
+    return { success: false, message: 'Actor does not have Sith Alchemy' };
+  }
+  if (!armorItem || armorItem.type !== 'armor') {
+    return { success: false, message: 'You must select an Armor item.' };
   }
 
-  static async _spendCredits(actor, amount) {
-    const credits = this._getCredits(actor);
-    if (credits < amount) {
-      return { ok: false, message: `Insufficient credits. Requires ${amount} credits (you have ${credits}).` };
-    }
-    await actor.update({ 'system.credits': credits - amount });
-    return { ok: true, before: credits, after: credits - amount };
+  const info = _classifyBattleArmor(armorItem);
+  if (!info) {
+    return { success: false, message: 'Sith Armor can only be created from Battle Armor (Light, Standard, Heavy).' };
   }
 
-  static _getFP(actor) {
-    return Number(actor?.system?.forcePoints?.value ?? 0);
+  const pending = armorItem.getFlag('swse', 'sithArmorTransform');
+  if (pending && !pending.completedAt) {
+    return { success: false, message: 'This armor already has a Sith Armor transformation in progress.' };
   }
 
-  static async _spendFP(actor, amount = 1) {
-    const fp = this._getFP(actor);
-    if (fp < amount) {
-      return { ok: false, message: `Not enough Force Points. Requires ${amount} Force Point(s).` };
-    }
-    await actor.update({ 'system.forcePoints.value': fp - amount });
-    return { ok: true, before: fp, after: fp - amount };
+  const startedAt = _nowISO();
+  const completesAt = _addDays(startedAt, info.days).toISOString();
+
+  await armorItem.setFlag('swse', 'sithArmorTransform', {
+    startedAt,
+    completesAt,
+    tier: info.tier,
+    resultName: info.resultName,
+    completedAt: null
+  });
+
+  await createChatMessage({
+    speaker: { actor },
+    content: `
+      <div class="swse-sith-alchemy">
+        <h3><img src="icons/svg/armor.svg" style="width: 20px; height: 20px;"> Sith Armor Transformation Started</h3>
+        <p><strong>${actor.name}</strong> begins transforming <strong>${armorItem.name}</strong> into <strong>${info.resultName}</strong>.</p>
+        <p><strong>Time:</strong> ${info.days} day(s) (completes after ${new Date(completesAt).toLocaleString()})</p>
+        <p><em>Completion requires spending 1 Force Point.</em></p>
+      </div>
+    `
+  });
+
+  return { success: true, startedAt, completesAt, days: info.days };
+}
+
+export async function completeSithArmorTransform(actor, armorItem) {
+  if (!armorItem || armorItem.type !== 'armor') {
+    return { success: false, message: 'You must select an Armor item.' };
+  }
+  const pending = armorItem.getFlag('swse', 'sithArmorTransform');
+  if (!pending || pending.completedAt) {
+    return { success: false, message: 'No Sith Armor transformation is currently in progress for this armor.' };
+  }
+  if (!_isComplete(pending.completesAt)) {
+    return { success: false, message: 'Sith Armor transformation is not finished yet.' };
   }
 
-  static _getDSP(actor) {
-    return Number(actor?.system?.darkSideScore ?? 0);
+  const fpSpend = await _spendFP(actor, 1);
+  if (!fpSpend.ok) { return { success: false, message: fpSpend.message }; }
+
+  const dsp = await _increaseDSP(actor, 1);
+
+  const originalDescription = armorItem.system?.description || '';
+  const enhancedDescription = `${originalDescription}\n\n**Sith Alchemy (Sith Armor):** This armor has been transformed into ${pending.resultName} through dark alchemy.`;
+
+  await ActorEngine.updateOwnedItems(actor, [{
+    _id: armorItem.id,
+    name: pending.resultName,
+    'flags.swse.sithArmor': true,
+    'system.description': enhancedDescription
+  }]);
+
+  await armorItem.setFlag('swse', 'sithArmorTransform', { ...pending, completedAt: _nowISO() });
+
+  await createChatMessage({
+    speaker: { actor },
+    content: `
+      <div class="swse-sith-alchemy">
+        <h3><img src="icons/svg/armor.svg" style="width: 20px; height: 20px;"> Sith Armor Completed</h3>
+        <p><strong>${actor.name}</strong> completes the transformation into <strong>${pending.resultName}</strong>.</p>
+        <p><strong>Force Point:</strong> -1</p>
+        <p><strong>Dark Side Score:</strong> +1 (now ${dsp.after})</p>
+      </div>
+    `
+  });
+
+  return { success: true, newDSP: dsp.after };
+}
+
+/**
+ * Start creating a Sith Weapon from a melee weapon.
+ * - Takes 1 hour
+ * - Completion requires spending 1 FP, DSP +1
+ * - Grants special handling (flags) and enables Swift FP damage-bonus action
+ */
+export async function startSithWeaponCraft(actor, weaponItem) {
+  if (!DarkSidePowers.hasSithAlchemy(actor)) {
+    return { success: false, message: 'Actor does not have Sith Alchemy' };
+  }
+  if (!weaponItem || weaponItem.type !== 'weapon') {
+    return { success: false, message: 'You must select a Weapon item.' };
   }
 
-  static async _increaseDSP(actor, amount = 1) {
-    const dsp = this._getDSP(actor);
-    const next = dsp + amount;
-    await actor.update({ 'system.darkSideScore': next });
-    return { before: dsp, after: next };
+  const validWeaponTypes = ['advanced-melee', 'simple-melee'];
+  if (!validWeaponTypes.includes(weaponItem.system?.weaponType)) {
+    return { success: false, message: 'Sith Weapons can only be created from Simple Melee or Advanced Melee weapons.' };
   }
 
-  /**
-   * Start crafting a Sith Amulet.
-   * - Costs 25,000 credits in materials (abstracted as credits)
-   * - Takes 7 days (1 week)
-   * - On completion: spend 1 FP, gain a Sith Amulet item, DSP +1
-   */
-  static async startSithAmuletCraft(actor) {
-    if (!this.hasSithAlchemy(actor)) {
-      return { success: false, message: 'Actor does not have Sith Alchemy' };
-    }
-
-    const existing = actor.getFlag('swse', 'sithAmuletCraft');
-    if (existing && !existing.completedAt) {
-      return { success: false, message: 'A Sith Amulet craft is already in progress.' };
-    }
-
-    const cost = 25000;
-    const creditSpend = await this._spendCredits(actor, cost);
-    if (!creditSpend.ok) { return { success: false, message: creditSpend.message }; }
-
-    const startedAt = this._nowISO();
-    const completesAt = this._addDays(startedAt, 7).toISOString();
-
-    const craft = { startedAt, completesAt, cost, completedAt: null };
-    await actor.setFlag('swse', 'sithAmuletCraft', craft);
-
-    await createChatMessage({
-      speaker: { actor },
-      content: `
-        <div class="swse-sith-alchemy">
-          <h3><img src="icons/svg/amulet.svg" style="width: 20px; height: 20px;"> Sith Amulet Craft Started</h3>
-          <p><strong>${actor.name}</strong> begins crafting a Sith Amulet.</p>
-          <p><strong>Materials:</strong> ${cost.toLocaleString()} credits</p>
-          <p><strong>Time:</strong> 1 week (completes after ${new Date(completesAt).toLocaleString()})</p>
-          <p><em>Completion requires spending 1 Force Point.</em></p>
-        </div>
-      `
-    });
-
-    return { success: true, startedAt, completesAt, cost };
+  const pending = weaponItem.getFlag('swse', 'sithWeaponCraft');
+  if (pending && !pending.completedAt) {
+    return { success: false, message: 'This weapon already has a Sith Weapon creation in progress.' };
   }
 
-  static async completeSithAmuletCraft(actor) {
-    const craft = actor.getFlag('swse', 'sithAmuletCraft');
-    if (!craft || craft.completedAt) {
-      return { success: false, message: 'No Sith Amulet craft is currently in progress.' };
-    }
-    if (!this._isComplete(craft.completesAt)) {
-      return { success: false, message: 'Sith Amulet craft is not finished yet.' };
-    }
+  const startedAt = _nowISO();
+  const completesAt = _addHours(startedAt, 1).toISOString();
 
-    const fpSpend = await this._spendFP(actor, 1);
-    if (!fpSpend.ok) { return { success: false, message: fpSpend.message }; }
+  await weaponItem.setFlag('swse', 'sithWeaponCraft', {
+    startedAt,
+    completesAt,
+    completedAt: null
+  });
 
-    const dsp = await this._increaseDSP(actor, 1);
+  await createChatMessage({
+    speaker: { actor },
+    content: `
+      <div class="swse-sith-alchemy">
+        <h3><img src="icons/svg/sword.svg" style="width: 20px; height: 20px;"> Sith Weapon Imbuement Started</h3>
+        <p><strong>${actor.name}</strong> begins imbuing <strong>${weaponItem.name}</strong> with Sith Alchemy.</p>
+        <p><strong>Time:</strong> 1 hour (completes after ${new Date(completesAt).toLocaleString()})</p>
+        <p><em>Completion requires spending 1 Force Point.</em></p>
+      </div>
+    `
+  });
 
-    const itemData = {
-      name: 'Sith Amulet',
-      type: 'equipment',
-      system: {
-        description: 'A powerful amulet forged through Sith Alchemy. (System note: item created via Sith Alchemy.)',
-        equipped: false,
-        quantity: 1,
-        rarity: 'legendary'
-      }
-    };
+  return { success: true, startedAt, completesAt };
+}
 
-    const createdItems = await createItemInActor(actor, itemData);
-    if (!createdItems || !Array.isArray(createdItems) || createdItems.length === 0) {
-      ui.notifications.error('Failed to create Sith Amulet item');
-      return { success: false, message: 'Failed to create Sith Amulet item' };
-    }
-
-    const completedAt = this._nowISO();
-    await actor.setFlag('swse', 'sithAmuletCraft', { ...craft, completedAt });
-
-    await createChatMessage({
-      speaker: { actor },
-      content: `
-        <div class="swse-sith-alchemy">
-          <h3><img src="icons/svg/amulet.svg" style="width: 20px; height: 20px;"> Sith Amulet Completed</h3>
-          <p><strong>${actor.name}</strong> completes a Sith Amulet.</p>
-          <p><strong>Force Point:</strong> -1</p>
-          <p><strong>Dark Side Score:</strong> +1 (now ${dsp.after})</p>
-        </div>
-      `
-    });
-
-    return { success: true, itemId: createdItems[0].id, newDSP: dsp.after };
+export async function completeSithWeaponCraft(actor, weaponItem) {
+  if (!weaponItem || weaponItem.type !== 'weapon') {
+    return { success: false, message: 'You must select a Weapon item.' };
+  }
+  const pending = weaponItem.getFlag('swse', 'sithWeaponCraft');
+  if (!pending || pending.completedAt) {
+    return { success: false, message: 'No Sith Weapon creation is currently in progress for this weapon.' };
+  }
+  if (!_isComplete(pending.completesAt)) {
+    return { success: false, message: 'Sith Weapon creation is not finished yet.' };
   }
 
-  /**
-   * Start transforming Battle Armor into Sith Dark Armor.
-   * Requires an existing Battle Armor item. Completion costs 1 FP.
-   * Time: Light=1 day, Standard=2 days, Heavy=3 days
-   */
-  static _classifyBattleArmor(armorItem) {
-    const name = (armorItem?.name || '').toLowerCase();
-    if (name.includes('light battle armor')) { return { tier: 'light', days: 1, resultName: 'Light Dark Armor' }; }
-    if (name.includes('heavy battle armor')) { return { tier: 'heavy', days: 3, resultName: 'Heavy Dark Armor' }; }
-    if (name.includes('battle armor')) { return { tier: 'standard', days: 2, resultName: 'Dark Armor' }; }
-    return null;
+  const fpSpend = await _spendFP(actor, 1);
+  if (!fpSpend.ok) { return { success: false, message: fpSpend.message }; }
+
+  const dsp = await _increaseDSP(actor, 1);
+
+  const originalDescription = weaponItem.system?.description || '';
+  const enhancedDescription = `${originalDescription}\n\n**Sith Alchemy (Sith Weapon):** Lightsabers do not ignore this weapon's Damage Reduction. Proficient users treat it as a Lightsaber for Block, Deflect, and Redirect Shot.`;
+
+  await ActorEngine.updateOwnedItems(actor, [{
+    _id: weaponItem.id,
+    'flags.swse.sithWeapon': true,
+    'flags.swse.sithAlchemical': true,
+    'system.description': enhancedDescription
+  }]);
+
+  await weaponItem.setFlag('swse', 'sithWeaponCraft', { ...pending, completedAt: _nowISO() });
+
+  await createChatMessage({
+    speaker: { actor },
+    content: `
+      <div class="swse-sith-alchemy">
+        <h3><img src="icons/svg/sword.svg" style="width: 20px; height: 20px;"> Sith Weapon Completed</h3>
+        <p><strong>${actor.name}</strong> completes the Sith Weapon imbuement on <strong>${weaponItem.name}</strong>.</p>
+        <p><strong>Force Point:</strong> -1</p>
+        <p><strong>Dark Side Score:</strong> +1 (now ${dsp.after})</p>
+        <p><em>Swift Action: spend 1 FP to add bonus damage equal to your Dark Side Score to your next attack with this weapon (DSP +1).</em></p>
+      </div>
+    `
+  });
+
+  return { success: true, newDSP: dsp.after };
+}
+
+/**
+ * Swift Action: Spend 1 FP to gain bonus damage = current Dark Side Score on next attack with a Sith Weapon.
+ * Increases Dark Side Score by 1 when activated.
+ *
+ * This stores a one-shot damage bonus on the actor and is consumed by the damage roller.
+ */
+export async function activateSithWeaponBonus(actor, weaponItem) {
+  if (!weaponItem || weaponItem.type !== 'weapon' || weaponItem.getFlag('swse', 'sithWeapon') !== true) {
+    return { success: false, message: 'You must select a Sith Weapon.' };
   }
 
-  static async startSithArmorTransform(actor, armorItem) {
-    if (!this.hasSithAlchemy(actor)) {
-      return { success: false, message: 'Actor does not have Sith Alchemy' };
-    }
-    if (!armorItem || armorItem.type !== 'armor') {
-      return { success: false, message: 'You must select an Armor item.' };
-    }
+  const fpSpend = await _spendFP(actor, 1);
+  if (!fpSpend.ok) { return { success: false, message: fpSpend.message }; }
 
-    const info = this._classifyBattleArmor(armorItem);
-    if (!info) {
-      return { success: false, message: 'Sith Armor can only be created from Battle Armor (Light, Standard, Heavy).' };
-    }
+  const bonus = _getDSP(actor);
+  const dsp = await _increaseDSP(actor, 1);
 
-    const pending = armorItem.getFlag('swse', 'sithArmorTransform');
-    if (pending && !pending.completedAt) {
-      return { success: false, message: 'This armor already has a Sith Armor transformation in progress.' };
-    }
+  const payload = {
+    weaponId: weaponItem.id,
+    bonusDamage: bonus,
+    activatedAt: _nowISO(),
+    encounterId: game.combat?.id ?? null,
+    expiresAt: game.combat ? null : _addHours(_nowISO(), 1).toISOString()
+  };
 
-    const startedAt = this._nowISO();
-    const completesAt = this._addDays(startedAt, info.days).toISOString();
+  await actor.setFlag('swse', 'sithWeaponDamageBonus', payload);
 
-    await armorItem.setFlag('swse', 'sithArmorTransform', {
-      startedAt,
-      completesAt,
-      tier: info.tier,
-      resultName: info.resultName,
-      completedAt: null
-    });
+  await createChatMessage({
+    speaker: { actor },
+    content: `
+      <div class="swse-sith-alchemy">
+        <h3><img src="icons/svg/sword.svg" style="width: 20px; height: 20px;"> Sith Weapon Damage Surge</h3>
+        <p><strong>${actor.name}</strong> channels the Dark Side through <strong>${weaponItem.name}</strong>.</p>
+        <p><strong>Next attack bonus damage:</strong> +${bonus} (Dark Side Score)</p>
+        <p><strong>Force Point:</strong> -1</p>
+        <p><strong>Dark Side Score:</strong> +1 (now ${dsp.after})</p>
+      </div>
+    `
+  });
 
-    await createChatMessage({
-      speaker: { actor },
-      content: `
-        <div class="swse-sith-alchemy">
-          <h3><img src="icons/svg/armor.svg" style="width: 20px; height: 20px;"> Sith Armor Transformation Started</h3>
-          <p><strong>${actor.name}</strong> begins transforming <strong>${armorItem.name}</strong> into <strong>${info.resultName}</strong>.</p>
-          <p><strong>Time:</strong> ${info.days} day(s) (completes after ${new Date(completesAt).toLocaleString()})</p>
-          <p><em>Completion requires spending 1 Force Point.</em></p>
-        </div>
-      `
-    });
-
-    return { success: true, startedAt, completesAt, days: info.days };
-  }
-
-  static async completeSithArmorTransform(actor, armorItem) {
-    if (!armorItem || armorItem.type !== 'armor') {
-      return { success: false, message: 'You must select an Armor item.' };
-    }
-    const pending = armorItem.getFlag('swse', 'sithArmorTransform');
-    if (!pending || pending.completedAt) {
-      return { success: false, message: 'No Sith Armor transformation is currently in progress for this armor.' };
-    }
-    if (!this._isComplete(pending.completesAt)) {
-      return { success: false, message: 'Sith Armor transformation is not finished yet.' };
-    }
-
-    const fpSpend = await this._spendFP(actor, 1);
-    if (!fpSpend.ok) { return { success: false, message: fpSpend.message }; }
-
-    const dsp = await this._increaseDSP(actor, 1);
-
-    const originalDescription = armorItem.system?.description || '';
-    const enhancedDescription = `${originalDescription}\n\n**Sith Alchemy (Sith Armor):** This armor has been transformed into ${pending.resultName} through dark alchemy.`;
-
-    await ActorEngine.updateOwnedItems(actor, [{
-      _id: armorItem.id,
-      name: pending.resultName,
-      'flags.swse.sithArmor': true,
-      'system.description': enhancedDescription
-    }]);
-
-    await armorItem.setFlag('swse', 'sithArmorTransform', { ...pending, completedAt: this._nowISO() });
-
-    await createChatMessage({
-      speaker: { actor },
-      content: `
-        <div class="swse-sith-alchemy">
-          <h3><img src="icons/svg/armor.svg" style="width: 20px; height: 20px;"> Sith Armor Completed</h3>
-          <p><strong>${actor.name}</strong> completes the transformation into <strong>${pending.resultName}</strong>.</p>
-          <p><strong>Force Point:</strong> -1</p>
-          <p><strong>Dark Side Score:</strong> +1 (now ${dsp.after})</p>
-        </div>
-      `
-    });
-
-    return { success: true, newDSP: dsp.after };
-  }
-
-  /**
-   * Start creating a Sith Weapon from a melee weapon.
-   * - Takes 1 hour
-   * - Completion requires spending 1 FP, DSP +1
-   * - Grants special handling (flags) and enables Swift FP damage-bonus action
-   */
-  static async startSithWeaponCraft(actor, weaponItem) {
-    if (!this.hasSithAlchemy(actor)) {
-      return { success: false, message: 'Actor does not have Sith Alchemy' };
-    }
-    if (!weaponItem || weaponItem.type !== 'weapon') {
-      return { success: false, message: 'You must select a Weapon item.' };
-    }
-
-    const validWeaponTypes = ['advanced-melee', 'simple-melee'];
-    if (!validWeaponTypes.includes(weaponItem.system?.weaponType)) {
-      return { success: false, message: 'Sith Weapons can only be created from Simple Melee or Advanced Melee weapons.' };
-    }
-
-    const pending = weaponItem.getFlag('swse', 'sithWeaponCraft');
-    if (pending && !pending.completedAt) {
-      return { success: false, message: 'This weapon already has a Sith Weapon creation in progress.' };
-    }
-
-    const startedAt = this._nowISO();
-    const completesAt = this._addHours(startedAt, 1).toISOString();
-
-    await weaponItem.setFlag('swse', 'sithWeaponCraft', {
-      startedAt,
-      completesAt,
-      completedAt: null
-    });
-
-    await createChatMessage({
-      speaker: { actor },
-      content: `
-        <div class="swse-sith-alchemy">
-          <h3><img src="icons/svg/sword.svg" style="width: 20px; height: 20px;"> Sith Weapon Imbuement Started</h3>
-          <p><strong>${actor.name}</strong> begins imbuing <strong>${weaponItem.name}</strong> with Sith Alchemy.</p>
-          <p><strong>Time:</strong> 1 hour (completes after ${new Date(completesAt).toLocaleString()})</p>
-          <p><em>Completion requires spending 1 Force Point.</em></p>
-        </div>
-      `
-    });
-
-    return { success: true, startedAt, completesAt };
-  }
-
-  static async completeSithWeaponCraft(actor, weaponItem) {
-    if (!weaponItem || weaponItem.type !== 'weapon') {
-      return { success: false, message: 'You must select a Weapon item.' };
-    }
-    const pending = weaponItem.getFlag('swse', 'sithWeaponCraft');
-    if (!pending || pending.completedAt) {
-      return { success: false, message: 'No Sith Weapon creation is currently in progress for this weapon.' };
-    }
-    if (!this._isComplete(pending.completesAt)) {
-      return { success: false, message: 'Sith Weapon creation is not finished yet.' };
-    }
-
-    const fpSpend = await this._spendFP(actor, 1);
-    if (!fpSpend.ok) { return { success: false, message: fpSpend.message }; }
-
-    const dsp = await this._increaseDSP(actor, 1);
-
-    const originalDescription = weaponItem.system?.description || '';
-    const enhancedDescription = `${originalDescription}\n\n**Sith Alchemy (Sith Weapon):** Lightsabers do not ignore this weapon's Damage Reduction. Proficient users treat it as a Lightsaber for Block, Deflect, and Redirect Shot.`;
-
-    await ActorEngine.updateOwnedItems(actor, [{
-      _id: weaponItem.id,
-      'flags.swse.sithWeapon': true,
-      'flags.swse.sithAlchemical': true,
-      'system.description': enhancedDescription
-    }]);
-
-    await weaponItem.setFlag('swse', 'sithWeaponCraft', { ...pending, completedAt: this._nowISO() });
-
-    await createChatMessage({
-      speaker: { actor },
-      content: `
-        <div class="swse-sith-alchemy">
-          <h3><img src="icons/svg/sword.svg" style="width: 20px; height: 20px;"> Sith Weapon Completed</h3>
-          <p><strong>${actor.name}</strong> completes the Sith Weapon imbuement on <strong>${weaponItem.name}</strong>.</p>
-          <p><strong>Force Point:</strong> -1</p>
-          <p><strong>Dark Side Score:</strong> +1 (now ${dsp.after})</p>
-          <p><em>Swift Action: spend 1 FP to add bonus damage equal to your Dark Side Score to your next attack with this weapon (DSP +1).</em></p>
-        </div>
-      `
-    });
-
-    return { success: true, newDSP: dsp.after };
-  }
-
-  /**
-   * Swift Action: Spend 1 FP to gain bonus damage = current Dark Side Score on next attack with a Sith Weapon.
-   * Increases Dark Side Score by 1 when activated.
-   *
-   * This stores a one-shot damage bonus on the actor and is consumed by the damage roller.
-   */
-  static async activateSithWeaponBonus(actor, weaponItem) {
-    if (!weaponItem || weaponItem.type !== 'weapon' || weaponItem.getFlag('swse', 'sithWeapon') !== true) {
-      return { success: false, message: 'You must select a Sith Weapon.' };
-    }
-
-    const fpSpend = await this._spendFP(actor, 1);
-    if (!fpSpend.ok) { return { success: false, message: fpSpend.message }; }
-
-    const bonus = this._getDSP(actor);
-    const dsp = await this._increaseDSP(actor, 1);
-
-    const payload = {
-      weaponId: weaponItem.id,
-      bonusDamage: bonus,
-      activatedAt: this._nowISO(),
-      encounterId: game.combat?.id ?? null,
-      expiresAt: game.combat ? null : this._addHours(this._nowISO(), 1).toISOString()
-    };
-
-    await actor.setFlag('swse', 'sithWeaponDamageBonus', payload);
-
-    await createChatMessage({
-      speaker: { actor },
-      content: `
-        <div class="swse-sith-alchemy">
-          <h3><img src="icons/svg/sword.svg" style="width: 20px; height: 20px;"> Sith Weapon Damage Surge</h3>
-          <p><strong>${actor.name}</strong> channels the Dark Side through <strong>${weaponItem.name}</strong>.</p>
-          <p><strong>Next attack bonus damage:</strong> +${bonus} (Dark Side Score)</p>
-          <p><strong>Force Point:</strong> -1</p>
-          <p><strong>Dark Side Score:</strong> +1 (now ${dsp.after})</p>
-        </div>
-      `
-    });
-
-    return { success: true, bonusDamage: bonus, newDSP: dsp.after };
-  }
-
+  return { success: true, bonusDamage: bonus, newDSP: dsp.after };
 }
 
 export default DarkSidePowers;
