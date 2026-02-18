@@ -1,0 +1,1213 @@
+[
+  {
+    "id": "vital-transfer",
+    "sourceType": "forcePower",
+    "sourceId": "00b65e47a4dd7d76",
+    "name": "Vital Transfer",
+    "description": "<p>You channel the Force to heal injuries and restore vitality. The target recovers hit points based on your Use the Force check result.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [
+        {
+          "min": 15,
+          "description": "Target heals 2d6 hit points",
+          "effectSummary": "2d6 healing"
+        },
+        {
+          "min": 20,
+          "description": "Target heals 4d6 hit points",
+          "effectSummary": "4d6 healing"
+        },
+        {
+          "min": 25,
+          "description": "Target heals 6d6 hit points and removes one ongoing condition",
+          "effectSummary": "6d6 healing + condition"
+        },
+        {
+          "min": 30,
+          "description": "Target heals 8d6 hit points and removes all ongoing conditions",
+          "effectSummary": "8d6 healing + all conditions"
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "Touch",
+      "target": "One living creature",
+      "duration": "Instantaneous",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "farseeing",
+    "sourceType": "forcePower",
+    "sourceId": "0419ecb55f011f81",
+    "name": "Farseeing",
+    "description": "<p>You peer through the Force to see distant locations or events. You can observe a place you've been before or a person you know, regardless of distance.</p>",
+    "actionType": "passive",
+    "actionLabel": "1 minute",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "Unlimited",
+      "target": "Special",
+      "duration": "Concentration",
+      "maintainable": true
+    }
+  },
+  {
+    "id": "force-lightning",
+    "sourceType": "forcePower",
+    "sourceId": "0a422b939edfad56",
+    "name": "Force Lightning",
+    "description": "<p>You unleash devastating arcs of Force Lightning from your fingertips. The target takes lightning damage based on your Use the Force check result.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "Dark Side"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [
+        {
+          "min": 15,
+          "description": "Target takes 2d6 lightning damage",
+          "effectSummary": "2d6 lightning damage"
+        },
+        {
+          "min": 20,
+          "description": "Target takes 4d6 lightning damage",
+          "effectSummary": "4d6 lightning damage"
+        },
+        {
+          "min": 25,
+          "description": "Target takes 6d6 lightning damage and is stunned for 1 round",
+          "effectSummary": "6d6 lightning damage + stun"
+        },
+        {
+          "min": 30,
+          "description": "Target takes 8d6 lightning damage and is stunned for 1d4 rounds",
+          "effectSummary": "8d6 lightning damage + stun 1d4"
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6 squares",
+      "target": "One creature",
+      "duration": "Instantaneous",
+      "maintainable": true
+    }
+  },
+  {
+    "id": "force-cloak",
+    "sourceType": "forcePower",
+    "sourceId": "18e79be8d48946ba",
+    "name": "Force Cloak",
+    "description": "<p>You bend light and perceptions around yourself, becoming invisible. You gain total concealment and a +10 bonus to Stealth checks.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "Personal",
+      "target": "You",
+      "duration": "Concentration",
+      "maintainable": true
+    }
+  },
+  {
+    "id": "force-disarm",
+    "sourceType": "forcePower",
+    "sourceId": "18f33f87a1ebee74",
+    "name": "Force Disarm",
+    "description": "<p>You use telekinetic force to wrench a weapon or object from your target's grasp. Make a Use the Force check opposed by the target's Strength check or Will Defense (whichever is higher).</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "opposed",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6 squares",
+      "target": "One creature",
+      "duration": "Instantaneous",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "surge",
+    "sourceType": "forcePower",
+    "sourceId": "1ac1084ca8f07114",
+    "name": "Surge",
+    "description": "<p>You use the Force to push your body beyond normal limits. You gain an additional move action this turn.</p>",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "Personal",
+      "target": "You",
+      "duration": "1 round",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-track",
+    "sourceType": "forcePower",
+    "sourceId": "2466fc76adef817b",
+    "name": "Force Track",
+    "description": "<p>You place a Force 'mark' on your target, allowing you to track them through the Force. You always know the target's direction and approximate distance for the duration.</p>",
+    "actionType": "passive",
+    "actionLabel": "1 minute",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "Touch",
+      "target": "One creature",
+      "duration": "24 hours",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "move-object",
+    "sourceType": "forcePower",
+    "sourceId": "289013a32bd179ad",
+    "name": "Move Object",
+    "description": "<p>You move objects or creatures through the air using telekinesis. The maximum size/weight you can move depends on your Use the Force check result.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [
+        {
+          "min": 15,
+          "description": "Move objects up to Medium size or 50 kg",
+          "effectSummary": "Medium (50 kg)"
+        },
+        {
+          "min": 20,
+          "description": "Move objects up to Large size or 250 kg",
+          "effectSummary": "Large (250 kg)"
+        },
+        {
+          "min": 25,
+          "description": "Move objects up to Huge size or 1 metric ton",
+          "effectSummary": "Huge (1 ton)"
+        },
+        {
+          "min": 30,
+          "description": "Move objects up to Gargantuan size or 5 metric tons",
+          "effectSummary": "Gargantuan (5 tons)"
+        },
+        {
+          "min": 35,
+          "description": "Move objects up to Colossal size or 20 metric tons (starfighter-sized)",
+          "effectSummary": "Colossal (20 tons)"
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "12 squares",
+      "target": "One object or creature",
+      "duration": "Concentration",
+      "maintainable": true
+    }
+  },
+  {
+    "id": "rebuke",
+    "sourceType": "forcePower",
+    "sourceId": "390074b44aedfa2a",
+    "name": "Rebuke",
+    "description": "<p>You overwhelm a Force user with a powerful Force presence. If the target is Force-sensitive, they must make a Will save (DC = your UTF check) or be dazed for 1 round.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6 squares",
+      "target": "One Force-sensitive creature",
+      "duration": "1 round",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-slam",
+    "sourceType": "forcePower",
+    "sourceId": "462a6c23e00c4dfc",
+    "name": "Force Slam",
+    "description": "<p>You use telekinetic force to violently slam your target against a surface. The target takes 4d6 damage and is knocked prone.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6 squares",
+      "target": "One creature or object",
+      "duration": "Instantaneous",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-defense",
+    "sourceType": "forcePower",
+    "sourceId": "50be88fe6aa77d07",
+    "name": "Force Defense",
+    "description": "<p>You use the Force to deflect an incoming attack. You gain a +5 Force bonus to your Reflex Defense against one attack.</p>",
+    "actionType": "reaction",
+    "actionLabel": "Reaction",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "opposed",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "Personal",
+      "target": "You",
+      "duration": "Instantaneous",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-scream",
+    "sourceType": "forcePower",
+    "sourceId": "64d987296e6bb054",
+    "name": "Force Scream",
+    "description": "<p>You unleash a Force-amplified scream that can shatter objects and stun enemies. All creatures in the area must make a Fortitude save (DC = your Use the Force check) or be stunned for 1 round.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "Dark Side"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6-square cone",
+      "target": "All creatures in area",
+      "duration": "Instantaneous",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "malacia",
+    "sourceType": "forcePower",
+    "sourceId": "68353e70defb7efa",
+    "name": "Malacia",
+    "description": "<p>You disrupt your target's inner ear and equilibrium through the Force. The target must make a Fortitude save (DC = your UTF check) or become nauseated for the duration.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "Light Side"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6 squares",
+      "target": "One living creature",
+      "duration": "1 round/level",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "battle-meditation",
+    "sourceType": "forcePower",
+    "sourceId": "75838fe2c1165b3d",
+    "name": "Battle Meditation",
+    "description": "<p>You bolster the morale and combat effectiveness of your allies through the Force. All allies within range gain a +2 morale bonus to attack rolls, damage rolls, and Will Defense.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "Light Side"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "opposed",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "12 squares",
+      "target": "Allies within range",
+      "duration": "Concentration (up to 1 minute)",
+      "maintainable": true
+    }
+  },
+  {
+    "id": "force-weapon",
+    "sourceType": "forcePower",
+    "sourceId": "7765b572c9f02bb0",
+    "name": "Force Weapon",
+    "description": "<p>You imbue a weapon with the Force, allowing it to bypass damage reduction and strike incorporeal creatures normally.</p>",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "Touch",
+      "target": "One weapon",
+      "duration": "1 minute",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "drain-life",
+    "sourceType": "forcePower",
+    "sourceId": "9a03352cce987282",
+    "name": "Drain Life",
+    "description": "<p>You drain the life force from your target, transferring their vitality to yourself. The target takes damage and you heal an equal amount.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "Dark Side"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [
+        {
+          "min": 15,
+          "description": "Target takes 2d6 damage; you heal 2d6 hit points",
+          "effectSummary": "2d6 damage/heal"
+        },
+        {
+          "min": 20,
+          "description": "Target takes 4d6 damage; you heal 4d6 hit points",
+          "effectSummary": "4d6 damage/heal"
+        },
+        {
+          "min": 25,
+          "description": "Target takes 6d6 damage and is weakened; you heal 6d6 hit points",
+          "effectSummary": "6d6 damage/heal + weakened"
+        },
+        {
+          "min": 30,
+          "description": "Target takes 8d6 damage and is exhausted; you heal 8d6 hit points",
+          "effectSummary": "8d6 damage/heal + exhausted"
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6 squares",
+      "target": "One living creature",
+      "duration": "Instantaneous",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-stun",
+    "sourceType": "forcePower",
+    "sourceId": "a214d4f56b4abe11",
+    "name": "Force Stun",
+    "description": "<p>You use the Force to overwhelm your target's mind, stunning them. The target must make a Will save (DC = your UTF check) or be stunned for 1 round.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6 squares",
+      "target": "One creature",
+      "duration": "1 round",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "sever-force-lesser",
+    "sourceType": "forcePower",
+    "sourceId": "a4832d1e91a994b3",
+    "name": "Sever Force (Lesser)",
+    "description": "<p>You temporarily sever your target's connection to the Force. The target cannot use Force Powers or Force Talents for the duration.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "Dark Side"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 25,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6 squares",
+      "target": "One Force-sensitive creature",
+      "duration": "1 encounter",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-storm",
+    "sourceType": "forcePower",
+    "sourceId": "aef6dad242fd225b",
+    "name": "Force Storm",
+    "description": "<p>You create a massive Force storm of lightning and violent energy. All creatures in the area take 10d6 lightning damage each round (Reflex half, DC = your UTF check).</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "Dark Side"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 30,
+      "tiers": [
+        {
+          "min": 30,
+          "description": "All creatures in 20-square radius take 10d6 lightning damage (Reflex half)",
+          "effectSummary": "10d6 to all in area"
+        },
+        {
+          "min": 35,
+          "description": "All creatures take 12d6 damage (Reflex half) and are stunned 1 round (Fort negates)",
+          "effectSummary": "12d6 to all + stun"
+        },
+        {
+          "min": 40,
+          "description": "All creatures take 15d6 damage; those reduced to 0 HP are disintegrated",
+          "effectSummary": "15d6 to all + disintegrate"
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "12 squares",
+      "target": "20-square radius",
+      "duration": "Concentration",
+      "maintainable": true
+    }
+  },
+  {
+    "id": "sever-force",
+    "sourceType": "forcePower",
+    "sourceId": "b52769dd11b4e52c",
+    "name": "Sever Force",
+    "description": "<p>You permanently sever a Force user's connection to the Force. The target loses all Force abilities permanently.</p>",
+    "actionType": "passive",
+    "actionLabel": "1 minute",
+    "tags": [
+      "Force",
+      "Dark Side"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 30,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "Touch",
+      "target": "One Force-sensitive creature",
+      "duration": "Permanent",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-body",
+    "sourceType": "forcePower",
+    "sourceId": "b9a47b740e862b56",
+    "name": "Force Body",
+    "description": "<p>You use the Force to push your body beyond its normal limits. You gain Damage Reduction 10 and a +4 bonus to Strength until the start of your next turn.</p>",
+    "actionType": "reaction",
+    "actionLabel": "Reaction",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 25,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "Personal",
+      "target": "You",
+      "duration": "1 round",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "negate-energy",
+    "sourceType": "forcePower",
+    "sourceId": "be1ae263c498af3b",
+    "name": "Negate Energy",
+    "description": "<p>You use the Force to absorb or deflect energy damage. The target gains energy resistance 20 against one energy attack.</p>",
+    "actionType": "reaction",
+    "actionLabel": "Reaction",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "Personal or touch",
+      "target": "You or one creature",
+      "duration": "Instantaneous",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-sense",
+    "sourceType": "forcePower",
+    "sourceId": "c857835de924b420",
+    "name": "Force Sense",
+    "description": "<p>You open yourself to the Force, sensing danger and gaining heightened awareness. You cannot be surprised and gain a +5 bonus to Perception checks until the start of your next turn.</p>",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "Personal",
+      "target": "You",
+      "duration": "1 round",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "battlemind",
+    "sourceType": "forcePower",
+    "sourceId": "d3d65e4805304da9",
+    "name": "Battlemind",
+    "description": "<p>You focus your mind through the Force, gaining tactical clarity. You gain a +2 insight bonus to Reflex Defense until the start of your next turn.</p>",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "opposed",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "Personal",
+      "target": "You",
+      "duration": "1 round",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-thrust",
+    "sourceType": "forcePower",
+    "sourceId": "d51bf85903366b6b",
+    "name": "Force Thrust",
+    "description": "<p>You violently push your target away with telekinetic force. The target is pushed 6 squares away from you and knocked prone, taking 2d6 damage.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6 squares",
+      "target": "One creature or object",
+      "duration": "Instantaneous",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "drain-energy",
+    "sourceType": "forcePower",
+    "sourceId": "d5d13cf231f71929",
+    "name": "Drain Energy",
+    "description": "<p>You drain the energy from technological devices through the Force. The target takes energy damage based on your Use the Force check result.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "Dark Side"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [
+        {
+          "min": 15,
+          "description": "Target takes 2d6 energy damage",
+          "effectSummary": "2d6 energy damage"
+        },
+        {
+          "min": 20,
+          "description": "Target takes 4d6 energy damage",
+          "effectSummary": "4d6 energy damage"
+        },
+        {
+          "min": 25,
+          "description": "Target takes 6d6 energy damage and is disabled for 1 round",
+          "effectSummary": "6d6 energy damage + disabled"
+        },
+        {
+          "min": 30,
+          "description": "Target takes 8d6 energy damage and shuts down for 1d4 rounds",
+          "effectSummary": "8d6 energy damage + shutdown"
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6 squares",
+      "target": "One droid or electronic device",
+      "duration": "Instantaneous",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "inspire",
+    "sourceType": "forcePower",
+    "sourceId": "dc331021badb59ed",
+    "name": "Inspire",
+    "description": "<p>You inspire an ally through the Force, granting them confidence and clarity. The target gains a +2 morale bonus to their next attack roll or skill check.</p>",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6 squares",
+      "target": "One ally",
+      "duration": "1 round",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-strike",
+    "sourceType": "forcePower",
+    "sourceId": "e2cfcd6f4097fa30",
+    "name": "Force Strike",
+    "description": "<p>You strike your target with a telekinetic blow. The target takes 2d6 Force damage and must make a Fortitude save (DC = your UTF check) or be knocked prone.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6 squares",
+      "target": "One creature",
+      "duration": "Instantaneous",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "mind-trick",
+    "sourceType": "forcePower",
+    "sourceId": "e6649f366d6c5737",
+    "name": "Mind Trick",
+    "description": "<p>You influence a weak mind to believe what you tell them or follow a simple suggestion. The target must make a Will save (DC = your UTF check) or be affected.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6 squares",
+      "target": "One creature",
+      "duration": "1 minute or until completed",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "battle-strike",
+    "sourceType": "forcePower",
+    "sourceId": "f177dc6d65f76de9",
+    "name": "Battle Strike",
+    "description": "<p>You channel the Force to enhance your next melee attack. Your next melee attack this round gains a +1d6 bonus to damage.</p>",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "Personal",
+      "target": "You",
+      "duration": "1 round",
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-grip",
+    "sourceType": "forcePower",
+    "sourceId": "f41a957f71e98a6a",
+    "name": "Force Grip",
+    "description": "<p>You use the Force to telekinetically choke or crush your target. The target takes damage each round based on your Use the Force check result.</p>",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "Dark Side"
+    ],
+    "usage": {
+      "perEncounter": null,
+      "perDay": null
+    },
+    "resourceCost": {
+      "powerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "tiers": [
+        {
+          "min": 15,
+          "description": "Target takes 2d6 damage per round and is immobilized",
+          "effectSummary": "2d6 damage/round"
+        },
+        {
+          "min": 20,
+          "description": "Target takes 4d6 damage per round and is immobilized",
+          "effectSummary": "4d6 damage/round"
+        },
+        {
+          "min": 25,
+          "description": "Target takes 6d6 damage per round, is immobilized, and lifted off ground",
+          "effectSummary": "6d6 damage/round + lift"
+        },
+        {
+          "min": 30,
+          "description": "Target takes 8d6 damage per round and is being crushed (fort save or die)",
+          "effectSummary": "8d6 damage/round + crush"
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "range": "6 squares",
+      "target": "One creature",
+      "duration": "Concentration",
+      "maintainable": true
+    }
+  }
+]
