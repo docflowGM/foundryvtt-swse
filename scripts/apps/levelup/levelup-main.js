@@ -260,60 +260,6 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   }
 
   /**
-   * PHASE B: Bind event listeners with cleanup tracking
-   * Replaces inline addEventListener calls, enables proper cleanup
-   */
-  _bindEventListeners() {
-    // Clear previous listeners first
-    this._eventListeners.forEach(({ el, event, handler }) => {
-      el.removeEventListener(event, handler);
-    });
-    this._eventListeners = [];
-
-    const root = this.element;
-    const qsa = (el, sel) => el.querySelectorAll(sel);
-
-    // Helper to track listener binding
-    const addListener = (selector, eventName, handler) => {
-      qsa(root, selector).forEach(el => {
-        const boundHandler = handler.bind(this);
-        el.addEventListener(eventName, boundHandler);
-        this._eventListeners.push({ el, event: eventName, handler: boundHandler });
-      });
-    };
-
-    // Comprehensive event listener binding for levelup UI
-    addListener('.select-class-btn', 'click', this._onSelectClass);
-    addListener('.class-choice-btn', 'click', this._onSelectClass);
-    addListener('.show-prestige-btn', 'click', this._onShowPrestigeClasses);
-    addListener('.back-to-base-classes', 'click', this._onBackToBaseClasses);
-    addListener('.select-feat-btn', 'click', this._onSelectMulticlassFeat);
-    addListener('.select-skill-btn', 'click', this._onSelectMulticlassSkill);
-    addListener('.ability-increase-btn', 'click', this._onAbilityIncrease);
-    addListener('.ask-mentor-attribute', 'click', this._onAskMentorAttributeSuggestion);
-    addListener('.select-bonus-feat', 'click', this._onSelectBonusFeat);
-    addListener('.select-force-power', 'click', this._onSelectForcePower);
-    addListener('.select-talent-tree', 'click', this._onSelectTalentTree);
-    addListener('.next-step', 'click', this._onNextStep);
-    addListener('.prev-step', 'click', this._onPrevStep);
-    addListener('.skip-step', 'click', this._onSkipStep);
-    addListener('.free-build-toggle', 'change', this._onToggleFreeBuild);
-    addListener('.complete-levelup', 'click', this._onCompleteLevelUp);
-    addListener('.category-header', 'click', this._onToggleFeatCategory);
-    addListener('.feat-search-input', 'input', this._onFeatSearch);
-    addListener('.clear-search-btn', 'click', this._onClearSearch);
-    addListener('.clear-filters-btn', 'click', this._onClearAllFilters);
-    addListener('.show-unavailable-toggle', 'change', this._onToggleShowUnavailable);
-    addListener('.feat-tag', 'click', this._onClickFeatTag);
-    addListener('.show-prestige-roadmap', 'click', this._onShowPrestigeRoadmap);
-    addListener('.show-gm-debug-panel', 'click', this._onShowGMDebugPanel);
-    addListener('.ask-mentor-class-suggestion', 'click', this._onAskMentorClassSuggestion);
-    addListener('.ask-mentor-feat-suggestion', 'click', this._onAskMentorFeatSuggestion);
-    addListener('.ask-mentor-talent-suggestion', 'click', this._onAskMentorTalentSuggestion);
-    addListener('.ask-mentor-force-power-suggestion', 'click', this._onAskMentorForcePowerSuggestion);
-  }
-
-  /**
    * PHASE B: Comprehensive event listener binding (all listeners tracked)
    * Replaces inline addEventListener calls from _onRender (original lines 464-519)
    */
