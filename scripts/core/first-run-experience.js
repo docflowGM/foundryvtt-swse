@@ -84,6 +84,18 @@ class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(
     return {};
   }
 
+  _updatePosition() {
+    // Skip positioning if element doesn't have valid dimensions yet
+    if (!this.element) return;
+    const rect = this.element.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+      // Defer positioning to next frame when element has dimensions
+      requestAnimationFrame(() => super._updatePosition());
+      return;
+    }
+    super._updatePosition();
+  }
+
   async _onRender(context, options) {
     const root = this.element;
 
