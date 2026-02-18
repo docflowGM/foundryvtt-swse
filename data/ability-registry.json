@@ -1,0 +1,42 @@
+{
+  "abilities": [
+    {
+      "id": "feat__improved-initiative",
+      "sourceType": "feat",
+      "sourceId": "Improved Initiative",
+      "name": "Improved Initiative",
+      "description": "",
+      "actionType": "passive",
+      "tags": [
+        "Tactics"
+      ],
+      "usage": {},
+      "effects": [
+        {
+          "key": "system.skills.initiative.miscMod",
+          "mode": "ADD",
+          "value": 4
+        }
+      ]
+    },
+    {
+      "id": "feat__toughness",
+      "sourceType": "feat",
+      "sourceId": "Toughness",
+      "name": "Toughness",
+      "description": "",
+      "actionType": "passive",
+      "tags": [
+        "Defense"
+      ],
+      "usage": {},
+      "effects": [
+        {
+          "key": "system.hitPoints.bonusPerLevel",
+          "mode": "ADD",
+          "value": 1
+        }
+      ]
+    }
+  ]
+}

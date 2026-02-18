@@ -204,14 +204,14 @@ async function handleItemCreate(item, options, userId) {
                     ${skillOptions}
                 </select>
                 <p class="hint-text" style="margin-top: 10px;">
-                    <i class="fa-solid fa-circle-info"></i>
+                    <i class="fas fa-circle-info"></i>
                     Skill Focus grants a +5 bonus to the selected skill.
                 </p>
             </div>
         `,
         buttons: {
             select: {
-                icon: '<i class="fa-solid fa-check"></i>',
+                icon: '<i class="fas fa-check"></i>',
                 label: 'Select',
                 callback: async (html) => {
                     const selectedSkill = (root?.querySelector?.('#skill-focus-selection')?.value ?? null);
@@ -231,7 +231,7 @@ async function handleItemCreate(item, options, userId) {
                 }
             },
             cancel: {
-                icon: '<i class="fa-solid fa-times"></i>',
+                icon: '<i class="fas fa-times"></i>',
                 label: 'Cancel',
                 callback: async () => {
                     // Delete the feat if cancelled
@@ -426,12 +426,12 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
                 <div class="skill-selection-container" style="max-height: 300px; overflow-y: auto; margin: 10px 0; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
                     ${skillCheckboxes}
                 </div>
-                <p class="hint-text"><i class="fa-solid fa-circle-info"></i> Trained skills gain a +5 bonus to checks.</p>
+                <p class="hint-text"><i class="fas fa-circle-info"></i> Trained skills gain a +5 bonus to checks.</p>
             </div>
         `,
         buttons: {
             confirm: {
-                icon: '<i class="fa-solid fa-check"></i>',
+                icon: '<i class="fas fa-check"></i>',
                 label: 'Confirm Selection',
                 callback: async (html) => {
                     const root = html instanceof HTMLElement ? html : html?.[0];

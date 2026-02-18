@@ -119,122 +119,6 @@ const CONDITION_TRACK_TALENTS = {
 };
 
 export class TalentAbilitiesEngine {
-/* ------------------------------------------------------------------------ */
-/* TAG NORMALIZATION                                                        */
-/* ------------------------------------------------------------------------ */
-
-static CANONICAL_TAG_ORDER = [
-    "Situational",
-    "Passive",
-    "Free Action",
-    "Swift Action",
-    "Move Action",
-    "Standard Action",
-    "Full-Round Action",
-    "Reaction",
-    "Once Per Encounter",
-    "Once Per Day",
-    "Followers",
-    "Force",
-    "Dark Side",
-    "Light Side",
-    "Mind-Affecting",
-    "Fear",
-    "Vehicle",
-    "Jet Pack",
-    "Lightsaber",
-    "Autofire",
-    "Second Wind",
-    "Condition Track",
-    "Cover",
-    "Disarm",
-    "Movement",
-    "Attack",
-    "Defense",
-    "Support",
-    "Social",
-    "Luck",
-    "Resource",
-    "Tactics"
-];
-
-static TAG_SYNONYMS = {
-    "mind affecting": "Mind-Affecting",
-    "mind-affecting": "Mind-Affecting",
-    "followers": "Followers",
-    "follower": "Followers",
-    "force": "Force",
-    "dark side": "Dark Side",
-    "light side": "Light Side",
-    "fear": "Fear",
-    "vehicle": "Vehicle",
-    "jet pack": "Jet Pack",
-    "jet-pack": "Jet Pack",
-    "lightsaber": "Lightsaber",
-    "autofire": "Autofire",
-    "second wind": "Second Wind",
-    "condition track": "Condition Track",
-    "cover": "Cover",
-    "disarm": "Disarm",
-    "movement": "Movement",
-    "attack": "Attack",
-    "defense": "Defense",
-    "support": "Support",
-    "social": "Social",
-    "luck": "Luck",
-    "resource": "Resource",
-    "tactics": "Tactics",
-    "situational": "Situational",
-    "once per encounter": "Once Per Encounter",
-    "once per day": "Once Per Day"
-};
-
-static _canonicalizeTag(raw) {
-    if (!raw) return null;
-    const key = String(raw).trim();
-    if (!key) return null;
-
-    // Exact canonical
-    const exact = this.CANONICAL_TAG_ORDER.find(t => t.toLowerCase() === key.toLowerCase());
-    if (exact) return exact;
-
-    const mapped = this.TAG_SYNONYMS[key.toLowerCase()];
-    if (mapped) return mapped;
-
-    return null;
-}
-
-static _canonicalizeTags(tags, actionType) {
-    const out = [];
-
-    // actionType -> canonical action label tag
-    const typeToLabel = {
-        reaction: "Reaction",
-        standard: "Standard Action",
-        swift: "Swift Action",
-        fullRound: "Full-Round Action",
-        free: "Free Action",
-        passive: "Passive",
-        move: "Move Action"
-    };
-
-    const actionTag = typeToLabel[actionType] ?? null;
-    if (actionTag) out.push(actionTag);
-
-    for (const t of (tags ?? [])) {
-        const c = this._canonicalizeTag(t);
-        if (c) out.push(c);
-    }
-
-    // De-dup
-    const unique = Array.from(new Set(out));
-
-    // Stable sort by canonical order, unknowns dropped earlier so safe
-    unique.sort((a, b) => this.CANONICAL_TAG_ORDER.indexOf(a) - this.CANONICAL_TAG_ORDER.indexOf(b));
-    return unique;
-}
-
-
 
     /**
      * Get all ability definitions
@@ -440,7 +324,7 @@ static _canonicalizeTags(tags, actionType) {
             sourceTalent: talent,
             sourceTalentId: talent.id,
             sourceTalentName: talent.name,
-            icon: ability.icon || 'fa-solid fa-star',
+            icon: ability.icon || 'fas fa-star',
             typeLabel: this._getTypeLabel(ability.actionType),
             typeBadgeClass: this._getTypeBadgeClass(ability.actionType)
         };

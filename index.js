@@ -1,420 +1,320 @@
-/* ========================================================================== */
-/* SWSE SYSTEM ENTRY — CLEAN V13 BUILD                                        */
-/* Stable, deterministic boot lifecycle                                       */
-/* ========================================================================== */
+/* ==========================================================================
+   SWSE SYSTEM INDEX.JS (OPTIMIZED CANONICAL)
+   Foundry V13 / AppV2 compliant
+   ========================================================================== */
 
-/* ========================================================================== */
-/* LOAD GUARD                                                                  */
-/* ========================================================================== */
+/* =========================
+   GLOBAL SAFETY GUARDS
+   ========================= */
 
-if (globalThis.__SWSE_BOOT__) {
-  console.error("SWSE | Double load detected.");
-  throw new Error("SWSE boot aborted.");
+if (globalThis.__SWSE_INDEX_LOADED__) {
+  console.warn('SWSE | index.js loaded more than once — aborting');
+  throw new Error('SWSE double-load detected');
 }
-globalThis.__SWSE_BOOT__ = true;
+globalThis.__SWSE_INDEX_LOADED__ = true;
 
-/* ========================================================================== */
-/* GLOBAL ERROR HANDLERS                                                       */
-/* ========================================================================== */
+/* =========================
+   GLOBAL ERROR HANDLERS
+   ========================= */
 
-window.addEventListener("error", (event) => {
-  console.group("🔥 SWSE HARD ERROR");
+window.addEventListener('error', (event) => {
+  console.group('%c🔥 SWSE HARD ERROR', 'color:red; font-size:16px;');
   console.error(event.error || event.message);
   console.groupEnd();
 });
 
-window.addEventListener("unhandledrejection", (event) => {
-  console.group("🔥 SWSE UNHANDLED PROMISE");
+window.addEventListener('unhandledrejection', (event) => {
+  console.group('%c🔥 SWSE UNHANDLED PROMISE', 'color:orange; font-size:16px;');
   console.error(event.reason);
   console.groupEnd();
 });
 
-/* ========================================================================== */
-/* IMPORTS                                                                     */
-/* ========================================================================== */
+/* =========================
+   JQUERY RUNTIME GUARD (v13 compliance)
+   ========================= */
 
-// Core
-import { SWSE } from "./scripts/core/config.js";
-import { registerSystemSettings } from "./scripts/core/settings.js";
-import { registerHouseruleSettings } from "./scripts/houserules/houserule-settings.js";
-import { initializeUtils } from "./scripts/core/utils-init.js";
-import { initializeRolls } from "./scripts/core/rolls-init.js";
+if (typeof $ !== 'undefined' || typeof jQuery !== 'undefined') {
+  const jq = globalThis.$ || globalThis.jQuery;
+  if (jq) {
+    const originalFind = jq.fn?.find;
+    const originalOn = jq.fn?.on;
 
-// Hardening
-import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from "./scripts/core/hardening-init.js";
+    // Override jQuery methods to prevent v1 slippage
+    if (jq.fn) {
+      jq.fn.find = function() {
+        const stack = new Error().stack;
+        console.error('🔥 SWSE | jQuery.find() detected at runtime (v1 pattern). Use element.querySelector() instead.\n', stack);
+        throw new Error('SWSE: jQuery methods are not permitted in AppV2. Use DOM APIs instead.');
+      };
 
-// Logging
-import { swseLogger } from "./scripts/utils/logger.js";
-import { errorHandler } from "./scripts/core/error-handler.js";
-
-// Data & Migrations
-import { dataPreloader } from "./scripts/core/data-preloader.js";
-import { runJsonBackedIdsMigration } from "./scripts/migrations/json-backed-ids-migration.js";
-import { MigrationManager } from "./scripts/core/migration-manager.js";
-import { CompendiumVerification } from "./scripts/core/compendium-verification.js";
-
-// Documents
-import { SWSEV2BaseActor } from "./scripts/actors/v2/base-actor.js";
-import { SWSEItemBase } from "./scripts/items/base/swse-item-base.js";
-
-// Sheets
-import { SWSEV2CharacterSheet } from "./scripts/sheets/v2/character-sheet.js";
-import { SWSEV2NpcSheet } from "./scripts/sheets/v2/npc-sheet.js";
-import { SWSEV2CombatNpcSheet } from "./scripts/sheets/v2/npc-combat-sheet.js";
-import { SWSEV2FullNpcSheet } from "./scripts/sheets/v2/npc-full-sheet.js";
-import { SWSEV2DroidSheet } from "./scripts/sheets/v2/droid-sheet.js";
-import { SWSEV2VehicleSheet } from "./scripts/sheets/v2/vehicle-sheet.js";
-import { SWSEItemSheet } from "./scripts/items/swse-item-sheet.js";
-
-// Apps
-import CharacterGenerator from "./scripts/apps/chargen/chargen-main.js";
-import { SWSELevelUpEnhanced } from "./scripts/apps/levelup/levelup-main.js";
-import { SWSEStore } from "./scripts/apps/store/store-main.js";
-
-// Handlebars
-import { registerHandlebarsHelpers } from "./helpers/handlebars/index.js";
-import { registerSWSEPartials } from "./helpers/handlebars/partials-auto.js";
-import { preloadHandlebarsTemplates } from "./scripts/core/load-templates.js";
-
-// Engines
-import { RulesEngine } from "./scripts/rules/rules-engine.js";
-import { SWSEProgressionEngine, initializeProgressionHooks } from "./scripts/engine/progression.js";
-import { FeatSystem } from "./scripts/engine/FeatSystem.js";
-import { SkillSystem } from "./scripts/engine/SkillSystem.js";
-import { TalentAbilitiesEngine } from "./scripts/engine/TalentAbilitiesEngine.js";
-import TalentActionLinker from "./scripts/engine/talent-action-linker.js";
-import { SWSELanguageModule } from "./scripts/progression/modules/language-module.js";
-
-// Hooks
-import { registerInitHooks, registerDestinyHooks } from "./scripts/hooks/index.js";
-import { initializeForcePowerHooks } from "./scripts/hooks/force-power-hooks.js";
-import { initializeFollowerHooks } from "./scripts/hooks/follower-hooks.js";
-import { initializeTalentEffectsHooks } from "./scripts/hooks/talent-effects-hooks.js";
-import { registerDirectoryHooks } from "./scripts/hooks/directory-hooks.js";
-import { registerKeybindings } from "./scripts/core/keybindings.js";
-
-// UI
-import { ThemeLoader } from "./scripts/theme-loader.js";
-import { initializeSceneControls } from "./scripts/scene-controls/init.js";
-import { initializeActionPalette } from "./scripts/ui/action-palette/init.js";
-import { initializeGMSuggestions } from "./scripts/gm-suggestions/init.js";
-import { MentorTranslationSettings } from "./scripts/mentor/mentor-translation-settings.js";
-
-// Suggestions
-import { SuggestionService } from "./scripts/engine/SuggestionService.js";
-import { registerSuggestionHooks } from "./scripts/hooks/suggestion-hooks.js";
-import { registerCombatSuggestionHooks } from "./scripts/suggestion-engine/combat-hooks.js";
-import { CombatSuggestionEngine } from "./scripts/suggestion-engine/combat-engine.js";
-import { testHarness } from "./scripts/suggestion-engine/test-harness.js";
-import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discovery/index.js";
-
-// House Rule Engines
-import { ThresholdEngine } from "./scripts/engine/combat/threshold-engine.js";
-import { MountEngine } from "./scripts/engine/mount/mount-engine.js";
-
-// Initiative Engine
-import { SWSEInitiative } from "./scripts/engine/combat/SWSEInitiative.js";
-
-// Starship Combat Engines
-import { ScaleEngine } from "./scripts/engine/combat/scale-engine.js";
-import { SubsystemEngine } from "./scripts/engine/combat/starship/subsystem-engine.js";
-import { EnhancedShields } from "./scripts/engine/combat/starship/enhanced-shields.js";
-import { EnhancedEngineer } from "./scripts/engine/combat/starship/enhanced-engineer.js";
-import { EnhancedPilot } from "./scripts/engine/combat/starship/enhanced-pilot.js";
-import { EnhancedCommander } from "./scripts/engine/combat/starship/enhanced-commander.js";
-import { VehicleTurnController } from "./scripts/engine/combat/starship/vehicle-turn-controller.js";
-
-// XP System
-import { isXPEnabled, applyXP, calculateEncounterXP } from "./scripts/engine/progression/xp-engine.js";
-import { XP_LEVEL_THRESHOLDS } from "./scripts/engine/progression/xp-constants.js";
-import { SWSEXPCalculator } from "./scripts/apps/xp-calculator.js";
-
-// Misc
-import { SystemInitHooks } from "./scripts/progression/hooks/system-init-hooks.js";
-import { Upkeep } from "./scripts/automation/upkeep.js";
-
-// Phase 5
-import { initializePhase5, getPhaseSummary } from "./scripts/core/phase5-init.js";
-import { registerCriticalFlowTests } from "./scripts/tests/critical-flow-tests.js";
-
-/* ========================================================================== */
-/* EARLY DOCUMENT CLASS REGISTRATION                                          */
-/* ========================================================================== */
-
-CONFIG.Actor.documentClass = SWSEV2BaseActor;
-CONFIG.Item.documentClass  = SWSEItemBase;
-
-/* ========================================================================== */
-/* INIT                                                                        */
-/* ========================================================================== */
-
-Hooks.once("init", () => {
-
-  swseLogger.log("SWSE | Init");
-
-  const SYSTEM_ID = "foundryvtt-swse";
-  const ActorsCollection = foundry.documents.collections.Actors;
-  const ItemsCollection  = foundry.documents.collections.Items;
-
-  /* ---------- PARTIALS + TEMPLATES (MUST BE EARLY) ---------- */
-
-  registerSWSEPartials();
-  preloadHandlebarsTemplates();
-
-  /* ---------- SHEET REGISTRATION ---------- */
-
-  ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2CharacterSheet, { types: ["character"], makeDefault: true });
-  ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2CombatNpcSheet, { types: ["npc"], makeDefault: true, label: "SWSE NPC Combat Sheet" });
-  ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2FullNpcSheet, { types: ["npc"], label: "SWSE NPC Full Sheet" });
-  ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2NpcSheet, { types: ["npc"], label: "SWSE NPC Legacy Sheet" });
-  ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2DroidSheet, { types: ["droid"], makeDefault: true });
-  ActorsCollection.registerSheet(SYSTEM_ID, SWSEV2VehicleSheet, { types: ["vehicle"], makeDefault: true });
-
-  ItemsCollection.registerSheet(SYSTEM_ID, SWSEItemSheet, { makeDefault: true });
-
-  /* ---------- STRUCTURAL SYSTEMS ---------- */
-
-  registerSystemSettings();
-  registerHouseruleSettings();
-  registerHandlebarsHelpers();
-  registerInitHooks();
-  registerDestinyHooks();
-  registerDirectoryHooks();
-  registerKeybindings();
-  ThemeLoader.init();
-
-  // HARDENED: Register migration system (v1.2.1)
-  MigrationManager.registerSettings();
-
-  CONFIG.SWSE = SWSE;
-});
-
-/* ========================================================================== */
-/* READY                                                                       */
-/* ========================================================================== */
-
-Hooks.once("ready", async () => {
-
-  swseLogger.log("SWSE | Ready");
-
-  await initializeHardeningSystem();
-  registerHardeningHooks();
-  await validateSystemReady();
-
-  // HARDENED: Run schema migrations (v1.2.1)
-  if (game.user.isGM) {
-    await MigrationManager.migrateWorld();
+      jq.fn.on = function() {
+        const stack = new Error().stack;
+        console.error('🔥 SWSE | jQuery.on() detected at runtime (v1 pattern). Use addEventListener() instead.\n', stack);
+        throw new Error('SWSE: jQuery event binding is not permitted in AppV2. Use addEventListener instead.');
+      };
+    }
   }
+}
 
-  await CompendiumVerification.verifyCompendiums();
+/* =========================
+   PHASE 3: RUNTIME CONTRACT (must be first)
+   ========================= */
 
-  await Promise.all([
-    dataPreloader.preload({ priority: ["classes","skills"], background: ["feats","talents","species"] }),
-    runJsonBackedIdsMigration()
-  ]);
+import './scripts/apps/dialogs/swse-dialog-v2.js';
+import { RuntimeContract } from './scripts/contracts/runtime-contract.js';
 
-  initializeRolls();
-  initializeUtils();
-  initializeForcePowerHooks();
-  initializeFollowerHooks();
-  initializeTalentEffectsHooks();
-  initializeProgressionHooks();
-  SWSELanguageModule.init();
+/* =========================
+   IMPORTS
+   ========================= */
 
-  initializeSceneControls();
-  initializeActionPalette();
-  initializeDiscoverySystem();
-  initializeGMSuggestions();
+// ---- core / config ----
+import { SWSE } from './scripts/core/config.js';
+import { registerSystemSettings } from './scripts/core/settings.js';
+import { initializeUtils } from './scripts/core/utils-init.js';
+import { initializeRolls } from './scripts/core/rolls-init.js';
 
-  const systemJSON = await fetch("systems/foundryvtt-swse/system.json").then(r => r.json());
+// ---- v13 hardening ----
+import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from './scripts/core/hardening-init.js';
+
+// ---- phase 3 contracts ----
+import { DiagnosticMode } from './scripts/contracts/diagnostic-mode.js';
+import { initializeV2RenderGuard } from './scripts/core/v2-render-guard.js';
+
+// ---- logging / perf ----
+import { swseLogger } from './scripts/utils/logger.js';
+import { perfMonitor, debounce, throttle } from './scripts/utils/performance-utils.js';
+import { errorHandler, errorCommands, logError } from './scripts/core/error-handler.js';
+
+// ---- data / preload ----
+import { dataPreloader } from './scripts/core/data-preloader.js';
+import { runJsonBackedIdsMigration } from './scripts/migrations/json-backed-ids-migration.js';
+import { CompendiumVerification } from './scripts/core/compendium-verification.js';
+
+// ---- actors / items ----
+import { SWSEV2BaseActor } from './scripts/actors/v2/base-actor.js';
+import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
+import { ActorEngine } from './scripts/actors/engine/actor-engine.js';
+
+// ---- sheets ----
+import { SWSEV2CharacterSheet } from './scripts/sheets/v2/character-sheet.js';
+import { SWSEV2NpcSheet } from './scripts/sheets/v2/npc-sheet.js';
+import { SWSEV2DroidSheet } from './scripts/sheets/v2/droid-sheet.js';
+import { SWSEV2VehicleSheet } from './scripts/sheets/v2/vehicle-sheet.js';
+import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
+
+// ---- handlebars ----
+import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
+import { registerSWSEPartials } from './helpers/handlebars/partials-auto.js';
+import { preloadHandlebarsTemplates, assertPartialsResolved } from './scripts/core/load-templates.js';
+
+// ---- engines ----
+import { RulesEngine } from './scripts/rules/rules-engine.js';
+import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/engine/progression.js';
+import { FeatSystem } from './scripts/engine/FeatSystem.js';
+import { SkillSystem } from './scripts/engine/SkillSystem.js';
+import { TalentAbilitiesEngine } from './scripts/engine/TalentAbilitiesEngine.js';
+import TalentActionLinker from './scripts/engine/talent-action-linker.js';
+import { SWSELanguageModule } from './scripts/progression/modules/language-module.js';
+
+// ---- hooks ----
+import { registerInitHooks, registerDestinyHooks } from './scripts/hooks/index.js';
+import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js';
+import { initializeFollowerHooks } from './scripts/hooks/follower-hooks.js';
+import { registerKeybindings } from './scripts/core/keybindings.js';
+
+// ---- UI systems (registered in init, initialized in ready) ----
+import { ThemeLoader } from './scripts/theme-loader.js';
+import { initializeSceneControls } from './scripts/scene-controls/init.js';
+import { initializeActionPalette } from './scripts/ui/action-palette/init.js';
+import { initializeGMSuggestions } from './scripts/gm-suggestions/init.js';
+import { MentorTranslationSettings } from './scripts/mentor/mentor-translation-settings.js';
+
+// ---- suggestions / discovery ----
+import { SuggestionService } from './scripts/engine/SuggestionService.js';
+import { registerSuggestionHooks } from './scripts/hooks/suggestion-hooks.js';
+import { registerCombatSuggestionHooks, requestCombatEvaluation } from './scripts/suggestion-engine/combat-hooks.js';
+import { CombatSuggestionEngine } from './scripts/suggestion-engine/combat-engine.js';
+import { testHarness } from './scripts/suggestion-engine/test-harness.js';
+import { initializeDiscoverySystem, onDiscoveryReady } from './scripts/ui/discovery/index.js';
+
+// ---- misc ----
+import { SystemInitHooks } from './scripts/progression/hooks/system-init-hooks.js';
+import { Upkeep } from './scripts/automation/upkeep.js';
+
+// ---- Phase 5: Observability, Testing, Forward Compatibility ----
+import { initializePhase5, getPhaseSummary } from './scripts/core/phase5-init.js';
+import { registerCriticalFlowTests } from './scripts/tests/critical-flow-tests.js';
+
+/* ==========================================================================
+   INTERNAL BOOTSTRAP HELPERS
+   ========================================================================== */
+
+async function bootstrapTemplates() {
+  await preloadHandlebarsTemplates();
+  await registerSWSEPartials();
+  assertPartialsResolved();
+}
+
+async function bootstrapSuggestionSystem() {
+  const systemJSON = await fetch('systems/foundryvtt-swse/system.json').then(r => r.json());
   SuggestionService.initialize({ systemJSON });
 
   registerSuggestionHooks();
   registerCombatSuggestionHooks();
+  initializeGMSuggestions();
+}
 
-  RulesEngine.init();
-  Upkeep.init();
+/* ==========================================================================
+   INIT
+   ========================================================================== */
+
+Hooks.once('init', async () => {
+  if (globalThis.__SWSE_INIT__) return;
+  globalThis.__SWSE_INIT__ = true;
+
+  swseLogger.log('SWSE | Init start');
+
+  /* ---------- PHASE -1: v13 hardening (must be first) ---------- */
+  await initializeHardeningSystem();
+  registerHardeningHooks();
+
+  /* ---------- PHASE 0: invariants ---------- */
+  registerHandlebarsHelpers();
+  Handlebars.registerHelper('let', (ctx, opts) => opts.fn({ ...this, ...ctx }));
+
+  /* ---------- PHASE 1: settings & hooks ---------- */
+  registerSystemSettings();
+  MentorTranslationSettings.registerSettings();
+  initializeDiscoverySystem();
+
+  registerInitHooks();
+  registerDestinyHooks();
+  registerKeybindings();
+
+  /* ---------- PHASE 2: UI infrastructure ---------- */
+  ThemeLoader.init();
+  await bootstrapTemplates();
+
+  /* ---------- PHASE 3: documents & sheets ---------- */
+  CONFIG.SWSE = SWSE;
+  CONFIG.Actor.documentClass = SWSEV2BaseActor;
+  CONFIG.Item.documentClass = SWSEItemBase;
+
+  foundry.documents.collections.Actors.registerSheet('swse', SWSEV2CharacterSheet, { types: ['character'], makeDefault: true });
+  foundry.documents.collections.Actors.registerSheet('swse', SWSEV2NpcSheet, { types: ['npc'], makeDefault: true });
+  foundry.documents.collections.Actors.registerSheet('swse', SWSEV2DroidSheet, { types: ['droid'], makeDefault: true });
+  foundry.documents.collections.Actors.registerSheet('swse', SWSEV2VehicleSheet, { types: ['vehicle'], makeDefault: true });
+  foundry.documents.collections.Items.registerSheet('swse', SWSEItemSheet, { makeDefault: true });
+
+  /* ---------- PHASE 3: Structural Enforcement Layer ---------- */
+  await initializeV2RenderGuard();
+
+  swseLogger.log('SWSE | Init complete');
+});
+
+/* ==========================================================================
+   READY
+   ========================================================================== */
+
+Hooks.once('ready', async () => {
+  if (globalThis.__SWSE_READY__) return;
+  globalThis.__SWSE_READY__ = true;
+
+  console.time('SWSE Ready');
+
+  swseLogger.log('SWSE | Ready start');
+
+  /* ---------- v13 hardening validation ---------- */
+  await validateSystemReady();
+
+  errorHandler.initialize();
+  initializeRolls();
+
+  /* ---------- phase 3: diagnostic mode ---------- */
+  await DiagnosticMode.initialize();
+
+  /* ---------- Phase 5: Observability, Testing, Forward Compatibility ---------- */
   initializePhase5();
   registerCriticalFlowTests();
 
-  // Initialize House Rule Engines
-  MountEngine.registerHooks();
-  Hooks.on('deleteCombat', (combat) => ThresholdEngine.onCombatEnd(combat));
+  /* ---------- data & progression ---------- */
+  // Verify compendium integrity first (fail-fast if missing)
+  await CompendiumVerification.verifyCompendiums();
 
-  // Initialize Starship Combat Engines (stateless — no hooks needed)
+  await Promise.all([
+    dataPreloader.preload({
+      priority: ['classes', 'skills'],
+      background: ['feats', 'talents', 'species']
+    }),
+    runJsonBackedIdsMigration()
+  ]);
 
-  // XP System — progression hook (does not auto-level)
-  Hooks.on('swseXPLevelGained', (actor, level) => {
-    swseLogger.log(`SWSE XP | ${actor.name} reached XP level ${level}`);
-    // Open level-up UI if available — does NOT auto-apply class levels
-    game.swse?.levelup?.showForActor?.(actor);
-  });
+  await SystemInitHooks.onSystemReady();
 
-  // NPC Dual-Mode Sheet Switching
-  Hooks.on('renderActorSheet', (app) => {
-    if (app.actor?.type !== "npc") return;
+  initializeForcePowerHooks();
+  initializeFollowerHooks();
+  initializeProgressionHooks();
+  SWSELanguageModule.init();
 
-    const sheetMode = app.actor.system?.sheetMode ?? "combat";
-    const isCombatSheet = app instanceof SWSEV2CombatNpcSheet;
-    const isFullSheet = app instanceof SWSEV2FullNpcSheet;
+  /* ---------- suggestions ---------- */
+  await bootstrapSuggestionSystem();
 
-    if (sheetMode === "combat" && !isCombatSheet) {
-      app.close();
-      new SWSEV2CombatNpcSheet(app.actor).render(true);
-    } else if (sheetMode === "full" && !isFullSheet) {
-      app.close();
-      new SWSEV2FullNpcSheet(app.actor).render(true);
-    }
-  });
+  /* ---------- UI (DOM-safe) ---------- */
+  initializeSceneControls();
+  initializeActionPalette();
+  MentorTranslationSettings.loadSettings();
 
-  // Restore global SWSE namespace
-  game.swse = {
-    engine: SWSEProgressionEngine,
-    progression: SWSEProgressionEngine,
-    chargen: CharacterGenerator,
-    levelup: SWSELevelUpEnhanced,
-    store: SWSEStore,
-    suggestion: SuggestionService,
-    ui: {
-      ChargenApp: CharacterGenerator,
-      LevelUpApp: SWSELevelUpEnhanced,
-      StoreApp: SWSEStore,
-      XPCalculator: SWSEXPCalculator
-    },
-    rolls: game.swse?.rolls || {},
-    api: {
-      FeatSystem,
-      SkillSystem,
-      TalentAbilitiesEngine,
-      CombatSuggestionEngine,
-      ThresholdEngine,
-      MountEngine,
-      ScaleEngine,
-      SWSEInitiative,
-      SubsystemEngine,
-      EnhancedShields,
-      EnhancedEngineer,
-      EnhancedPilot,
-      EnhancedCommander,
-      VehicleTurnController,
-      XP: { isXPEnabled, applyXP, calculateEncounterXP, XP_LEVEL_THRESHOLDS }
+  /* ---------- engines ---------- */
+  RulesEngine.init();
+  Upkeep.init();
+  initializeUtils();
+
+  /* ---------- global API ---------- */
+  const publicAPI = {
+    ActorEngine,
+    FeatSystem,
+    SkillSystem,
+    TalentAbilitiesEngine,
+    TalentActionLinker,
+    CombatSuggestionEngine,
+    requestCombatEvaluation
+  };
+
+  const debugAPI = {
+    testHarness,
+    debounce,
+    throttle,
+    logError,
+    errors: errorCommands,
+    phase5: {
+      summary: getPhaseSummary
     }
   };
 
   window.SWSE = {
-    api: {
-      FeatSystem,
-      SkillSystem,
-      TalentAbilitiesEngine,
-      CombatSuggestionEngine,
-      ThresholdEngine,
-      MountEngine,
-      ScaleEngine,
-      SWSEInitiative,
-      SubsystemEngine,
-      EnhancedShields,
-      EnhancedEngineer,
-      EnhancedPilot,
-      EnhancedCommander,
-      VehicleTurnController,
-      XP: { isXPEnabled, applyXP, calculateEncounterXP, XP_LEVEL_THRESHOLDS }
-    },
-    debug: {
-      testHarness,
-      phase5: { summary: getPhaseSummary }
-    }
+    api: publicAPI,
+    debug: debugAPI
   };
 
-  if (!game.settings.get("core", "devMode")) {
+  if (!game.settings.get('core', 'devMode')) {
     Object.freeze(window.SWSE);
   }
 
   onDiscoveryReady();
 
-  swseLogger.log("SWSE | Fully loaded");
+  console.timeEnd('SWSE Ready');
+  swseLogger.log('SWSE | Fully loaded');
 });
 
-/* ========================================================================== */
-/* HEADER CONTROLS REGISTRATION                                              */
-/* ========================================================================== */
+/* ==========================================================================
+   CANVAS SAFETY
+   ========================================================================== */
 
-Hooks.on("getHeaderControlsApplicationV2", (app, controls) => {
-  const actor = app.document;
-  if (!actor) return;
-
-  // CHARACTER SHEET CONTROLS
-  if (app instanceof SWSEV2CharacterSheet) {
-    const chargenComplete = actor.system?.chargenComplete;
-
-    // Chargen / Level Up button
-    if (!chargenComplete) {
-      controls.unshift({
-        icon: "fa-solid fa-user-plus",
-        label: "Chargen",
-        class: "swse-glow-button",
-        action: () => {
-          game.swse.chargen?.open?.(actor);
-        }
-      });
-    } else {
-      controls.unshift({
-        icon: "fa-solid fa-arrow-up",
-        label: "Level Up",
-        class: "swse-glow-button",
-        action: () => {
-          game.swse.levelup?.showForActor?.(actor);
-        }
-      });
-    }
-  }
-
-  // NPC SHEET CONTROLS
-  if (app instanceof SWSEV2NpcSheet) {
-    // Only show Level Up if progression mode is enabled
-    if (actor.system?.useProgression) {
-      controls.unshift({
-        icon: "fa-solid fa-arrow-up",
-        label: "Level Up",
-        class: "swse-glow-button",
-        action: () => {
-          game.swse.levelup?.showForActor?.(actor);
-        }
-      });
-    }
-  }
-
-  // SHARED CONTROLS (both Character and NPC)
-  if (app instanceof SWSEV2CharacterSheet || app instanceof SWSEV2NpcSheet) {
-    // Store button
-    controls.unshift({
-      icon: "fa-solid fa-store",
-      label: "Store",
-      class: "swse-glow-button",
-      action: () => {
-        game.swse.store?.open?.(actor);
-      }
-    });
-
-    // Mentor button
-    controls.unshift({
-      icon: "fa-solid fa-comments",
-      label: "Talk to Mentor",
-      action: () => {
-        game.swse.ui?.MentorDialog?.open?.(actor);
-      }
-    });
-  }
-});
-
-/* ========================================================================== */
-/* CANVAS SAFETY                                                               */
-/* ========================================================================== */
-
-Hooks.on("canvasReady", () => {
-  const board = document.querySelector("#board");
+Hooks.on('canvasReady', () => {
+  const board = document.querySelector('#board');
   if (board) {
-    board.style.display = "block";
-    board.style.visibility = "visible";
-    board.style.opacity = "1";
+    board.style.display = 'block';
+    board.style.visibility = 'visible';
+    board.style.opacity = '1';
   }
 });
