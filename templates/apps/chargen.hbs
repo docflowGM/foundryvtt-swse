@@ -54,6 +54,9 @@
  <span class="hint-text">Skip validation and build freely</span>
  </label>
  </div>
+ <button type="button" class="cancel-chargen btn-danger" title="Cancel character creation and discard all progress">
+   <i class="{{getIconClass 'times'}}"></i> Cancel
+ </button>
  </div>
  </div>
  </header>
@@ -2168,16 +2171,30 @@
  </div>
  {{/if}}
 
+ {{!-- Summary Finance Panel (preview-aware, no actor mutation) --}}
+ {{#if summaryFinance}}
+ <div class="summary-finance-panel">
+   <h4><i class="{{getIconClass 'coins'}}"></i> Starting Funds</h4>
+   <dl class="summary-list">
+     <dt>Total Credits:</dt><dd>{{summaryFinance.totalCredits}} cr</dd>
+     {{#if (gt summaryFinance.spentCredits 0)}}
+     <dt>Spent:</dt><dd>{{summaryFinance.spentCredits}} cr</dd>
+     <dt>Remaining:</dt><dd>{{summaryFinance.remainingCredits}} cr</dd>
+     {{/if}}
+   </dl>
+ </div>
+ {{/if}}
+
  <div class="summary-confirmation">
  <div class="confirmation-box">
  <i class="{{getIconClass 'success'}}"></i>
  <p><strong>Ready to create your character?</strong></p>
  {{#if characterData.creditsChosen}}
- <p>Once created, you'll be able to shop for equipment with your starting {{characterData.credits}} credits.</p>
+ <p>Once created, you'll be able to shop for equipment with your starting {{summaryFinance.totalCredits}} credits.</p>
  {{else if characterData.startingCreditsFormula}}
  <p>Please choose your starting credits above before creating your character.</p>
  {{else}}
- <p>Once created, you'll be able to shop for equipment with your starting {{characterData.credits}} credits.</p>
+ <p>Once created, you'll be able to shop for equipment with your starting {{summaryFinance.totalCredits}} credits.</p>
  {{/if}}
  </div>
  </div>

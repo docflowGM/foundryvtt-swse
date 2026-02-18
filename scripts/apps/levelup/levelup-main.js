@@ -364,6 +364,25 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     addListener('.ask-mentor-feat-suggestion', 'click', this._onAskMentorFeatSuggestion);
     addListener('.ask-mentor-talent-suggestion', 'click', this._onAskMentorTalentSuggestion);
     addListener('.ask-mentor-force-power-suggestion', 'click', this._onAskMentorForcePowerSuggestion);
+    addListener('.cancel-levelup', 'click', this._onCancelLevelUp);
+  }
+
+  /**
+   * Cancel level-up with confirmation. No actor mutations have occurred — safe to discard.
+   */
+  async _onCancelLevelUp(event) {
+    event?.preventDefault();
+    const confirmed = await Dialog.confirm({
+      title: game.i18n.localize('SWSE.LevelUp.CancelTitle') || 'Cancel Level Up',
+      content: `<p>${game.i18n.localize('SWSE.LevelUp.CancelContent') || 'Are you sure? No changes will be saved.'}</p>`,
+      defaultYes: false
+    });
+    if (confirmed) {
+      // Clear any in-memory session/lock — no actor flags were written during levelup staging
+      if (this.actor?._progressionSession) delete this.actor._progressionSession;
+      if (this.actor?._swseProgressionLock) delete this.actor._swseProgressionLock;
+      await this.close();
+    }
   }
 
   async _prepareContext() {
