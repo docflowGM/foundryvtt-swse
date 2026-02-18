@@ -296,7 +296,7 @@ Hooks.once('ready', async () => {
     debug: debugAPI
   };
 
-  if (!game.settings.get('core', 'devMode')) {
+  if (!(game.modules.get('_dev-mode')?.active ?? false)) {
     Object.freeze(window.SWSE);
   }
 

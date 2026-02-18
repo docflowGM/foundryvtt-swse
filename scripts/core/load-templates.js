@@ -114,7 +114,7 @@ export async function preloadHandlebarsTemplates() {
  * Dev-only sanity check to ensure all templates are registered.
  */
 export function assertTemplatesResolved() {
-  if (!game.settings.get('core', 'devMode')) return;
+  if (!(game.modules.get('_dev-mode')?.active ?? false)) return;
 
   const missing = [];
 
