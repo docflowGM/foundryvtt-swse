@@ -83,7 +83,7 @@ export function logChargenRender(app, context) {
  * Global V1 usage tripwire (dev-mode only)
  */
 export function initV1Tripwire() {
-  if (globalThis.game?.settings?.get?.('swse', 'devMode')) {
+  if (globalThis.game?.settings?.get?.('foundryvtt-swse', 'devMode')) {
     const patterns = ['html.find(', 'html.on(', 'activateListeners('];
 
     console.warn('⚠️ V1 tripwire active. Watching for patterns:', patterns);

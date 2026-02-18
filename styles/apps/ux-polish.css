@@ -113,8 +113,8 @@
   transform: scale(0.95);
 }
 
-/* Smooth panel transitions */
-.app {
+/* Smooth panel transitions — scoped to SWSE apps only */
+.swse-app-app.app {
   animation: panel-slide-in 0.3s ease-out;
 }
 
@@ -129,10 +129,10 @@
   }
 }
 
-/* Accessibility: focus states */
-button:focus,
-input:focus,
-select:focus {
+/* Accessibility: focus states — scoped to SWSE apps only */
+.swse-app-app button:focus,
+.swse-app-app input:focus,
+.swse-app-app select:focus {
   outline: 2px solid var(--swse-accent, #d4af37);
   outline-offset: 2px;
 }

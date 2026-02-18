@@ -37,6 +37,7 @@
   ],
   "styles": [
     "styles/swse-system.css",
+    "styles/core-overrides.css",
     "styles/core/swse-base.css",
     "styles/core/canvas-safety.css",
     "styles/fixes/canvas-viewport-fix.css",
