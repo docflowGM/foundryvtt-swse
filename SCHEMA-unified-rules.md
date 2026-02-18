@@ -50,7 +50,15 @@ type RuleType =
   | 'naturalWeapon'
   | 'movement'
   | 'breathing'
-  | 'immunity';
+  | 'immunity'
+  | 'reroll'
+  | 'sense'
+  | 'size'
+  | 'naturalArmor'
+  | 'rage'
+  | 'meleeCultureBonus'
+  | 'multiLimb'
+  | 'restriction';
 
 type ActivationCondition =
   | { type: 'always' }
@@ -635,6 +643,343 @@ interface ImmunityRule extends RuleElement {
     "values": ["fire"]
   },
   "severity": "partial"
+}
+```
+
+---
+
+## Reroll Rule
+
+For conditional reroll abilities (e.g., "may reroll, must accept result" or "reroll, keep higher").
+
+```typescript
+interface RerollRule extends RuleElement {
+  type: 'reroll';
+
+  // What triggers the reroll opportunity
+  triggeredBy: {
+    type: 'skillCheck' | 'abilityCheck' | 'attack' | 'save' | 'initiative';
+    skillId?: string;  // For skill-specific rerolls
+  };
+
+  // Number of times this can be rerolled per encounter/day
+  timesPerEncounter: number;
+
+  // What happens after reroll
+  outcome: 'mustAccept' | 'keepHigher' | 'chooseEither';
+
+  // Description for UI
+  description: string;
+}
+```
+
+### Example: Silver Tongue (Reroll & Must Accept)
+```json
+{
+  "id": "silver-tongue-reroll",
+  "type": "reroll",
+  "triggeredBy": {
+    "type": "skillCheck",
+    "skillId": "persuasion"
+  },
+  "timesPerEncounter": 1,
+  "outcome": "mustAccept",
+  "description": "May reroll any Persuasion check, but must accept the result"
+}
+```
+
+### Example: Expert Pilot (Reroll, Choose Higher)
+```json
+{
+  "id": "expert-pilot",
+  "type": "reroll",
+  "triggeredBy": {
+    "type": "skillCheck",
+    "skillId": "pilot"
+  },
+  "timesPerEncounter": 1,
+  "outcome": "keepHigher",
+  "description": "May reroll any Pilot check"
+}
+```
+
+---
+
+## Sense Rule
+
+For special senses like blindsense, darkvision, Force sight.
+
+```typescript
+interface SenseRule extends RuleElement {
+  type: 'sense';
+
+  // Type of sense
+  senseType: 'darkvision' | 'blindsense' | 'tremorsense' | 'force-sight' | 'other';
+
+  // Range in squares (or null for unlimited)
+  range: number | null;
+
+  // Optional: conditions that suppress or modify this sense
+  suppressedBy?: string[];  // e.g., ['magical-darkness', 'force-suppression']
+
+  // Description for UI
+  description: string;
+}
+```
+
+### Example: Darkvision
+```json
+{
+  "id": "darkvision",
+  "type": "sense",
+  "senseType": "darkvision",
+  "range": null,
+  "description": "Ignores concealment caused by darkness"
+}
+```
+
+### Example: Blindsense
+```json
+{
+  "id": "blindsense-6sq",
+  "type": "sense",
+  "senseType": "blindsense",
+  "range": 6,
+  "description": "Gains blindsense out to 6 squares"
+}
+```
+
+---
+
+## Size Rule
+
+For size category effects (penalties/bonuses).
+
+```typescript
+interface SizeRule extends RuleElement {
+  type: 'size';
+
+  // Size category
+  sizeCategory: 'tiny' | 'small' | 'medium' | 'large' | 'huge' | 'gargantuan';
+
+  // Effects
+  effects: {
+    reflexDefensePenalty?: number;
+    stealthPenalty?: number;
+    damageThresholdBonus?: number;
+    carryingCapacityMultiplier?: number;
+    grappleBonus?: number;
+  };
+}
+```
+
+### Example: Large Size
+```json
+{
+  "id": "large-size",
+  "type": "size",
+  "sizeCategory": "large",
+  "effects": {
+    "reflexDefensePenalty": -1,
+    "stealthPenalty": -5,
+    "damageThresholdBonus": 5,
+    "carryingCapacityMultiplier": 2
+  }
+}
+```
+
+---
+
+## Natural Armor Rule
+
+For natural armor bonuses (stacks with armor).
+
+```typescript
+interface NaturalArmorRule extends RuleElement {
+  type: 'naturalArmor';
+
+  // Bonus amount
+  value: number;
+
+  // Defense this applies to (usually reflex)
+  defense: 'reflex' | 'fortitude' | 'will';
+
+  // Note: always stacks with equipment armor
+}
+```
+
+### Example: Mantellian Savrip Natural Armor
+```json
+{
+  "id": "natural-armor-2",
+  "type": "naturalArmor",
+  "value": 2,
+  "defense": "reflex"
+}
+```
+
+---
+
+## Rage Rule
+
+For triggered combat bonuses when conditions are met.
+
+```typescript
+interface RageRule extends RuleElement {
+  type: 'rage';
+
+  // What triggers rage
+  trigger: {
+    type: 'hpThreshold' | 'condition' | 'action';
+    value?: number | string;  // e.g., 50 (for 50% HP) or 'damaged-by-fire'
+  };
+
+  // Duration
+  duration: 'untilEndOfEncounter' | 'untilHealed' | '1d4rounds' | 'other';
+
+  // Bonuses while active
+  bonuses: {
+    meleeAttackBonus?: number;
+    meleeDamageBonus?: number;
+    fortitudeDefenseBonus?: number;
+  };
+
+  // Description
+  description: string;
+}
+```
+
+### Example: Wookiee Rage
+```json
+{
+  "id": "wookiee-rage",
+  "type": "rage",
+  "trigger": {
+    "type": "hpThreshold",
+    "value": 50
+  },
+  "duration": "untilEndOfEncounter",
+  "bonuses": {
+    "meleeAttackBonus": 2,
+    "meleeDamageBonus": 2
+  },
+  "description": "When reduced to half hit points or fewer, gains +2 to melee attacks and damage"
+}
+```
+
+---
+
+## Melee Culture Bonus Rule
+
+For flat melee bonuses from culture/training.
+
+```typescript
+interface MeleeCultureBonusRule extends RuleElement {
+  type: 'meleeCultureBonus';
+
+  // Bonus amount
+  value: number;
+
+  // Type of melee attack
+  appliesTo: 'all' | 'unarmed' | 'weapons' | 'natural-weapons';
+
+  // Bonus type
+  bonusType: 'species' | 'insight' | 'morale';
+
+  // Optional: only when conditions met
+  condition?: {
+    type: 'trained' | 'proficient';
+    value?: string;
+  };
+}
+```
+
+### Example: Warrior Culture
+```json
+{
+  "id": "warrior-culture",
+  "type": "meleeCultureBonus",
+  "value": 2,
+  "appliesTo": "all",
+  "bonusType": "species",
+  "description": "Gains +2 bonus on melee attack rolls"
+}
+```
+
+---
+
+## Multi-Limb Rule
+
+For bonuses from extra limbs (grapple, multi-weapon).
+
+```typescript
+interface MultiLimbRule extends RuleElement {
+  type: 'multiLimb';
+
+  // Number of extra limbs
+  limbCount: number;
+
+  // Effects
+  effects: {
+    grappleBonus?: number;
+    weaponPenaltyIgnore?: boolean;  // Ignore multi-weapon penalty
+  };
+}
+```
+
+### Example: Four Arms (Besalisk)
+```json
+{
+  "id": "four-arms",
+  "type": "multiLimb",
+  "limbCount": 4,
+  "effects": {
+    "grappleBonus": 2,
+    "weaponPenaltyIgnore": true
+  }
+}
+```
+
+---
+
+## Restriction Rule
+
+For mechanical restrictions (can't use certain weapons, equipment, etc.).
+
+```typescript
+interface RestrictionRule extends RuleElement {
+  type: 'restriction';
+
+  // What is restricted
+  restricts: 'weaponType' | 'equipmentType' | 'feat' | 'ability' | 'other';
+
+  // What specifically is restricted
+  targets: string[];  // e.g., ['heavy-weapons', 'pistols', 'rifles']
+
+  // Reason (for UI)
+  reason: string;
+}
+```
+
+### Example: Primitive Weapons Restriction
+```json
+{
+  "id": "primitive-restriction",
+  "type": "restriction",
+  "restricts": "weaponType",
+  "targets": ["heavy-weapons", "pistols", "rifles"],
+  "reason": "Does not gain proficiency with advanced weapons"
+}
+```
+
+### Example: Living Technology Restriction
+```json
+{
+  "id": "living-tech-restriction",
+  "type": "restriction",
+  "restricts": "equipmentType",
+  "targets": ["inorganic-equipment", "cybernetics"],
+  "reason": "Can only use organic equipment"
 }
 ```
 
