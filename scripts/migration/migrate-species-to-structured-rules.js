@@ -95,6 +95,7 @@ class SpeciesMigrator {
       damageBonuses: 0,
       damageReductions: 0,
       fastHealing: 0,
+      naturalWeapon: 0,
       movement: 0,
       breathing: 0,
       immunity: 0,
@@ -235,9 +236,11 @@ class SpeciesMigrator {
     const patterns = [
       this._tryParseSkillBonus,
       this._tryParseDefenseBonus,
+      this._tryParseWillDefenseBonus,
       this._tryParseDamageBonus,
       this._tryParseDamageReduction,
       this._tryParseFastHealing,
+      this._tryParseNaturalWeapon,
       this._tryParseMovement,
       this._tryParseBreathing,
       this._tryParseImmunity,
@@ -249,6 +252,7 @@ class SpeciesMigrator {
       this._tryParseMeleeCultureBonus,
       this._tryParseMultiLimb,
       this._tryParseRestriction,
+      this._tryParseForceAbility,
       this._tryParseFeatGrant
     ];
 
@@ -360,9 +364,31 @@ class SpeciesMigrator {
   }
 
   /**
-   * Parse damage bonus pattern: "+X species bonus on [Damage]"
+   * Parse damage bonus pattern: "+X species bonus on [Damage]" or grapple checks
    */
   _tryParseDamageBonus(text, originalText) {
+    // Check for grapple bonus
+    if (text.includes('grapple')) {
+      const pattern = /\+(\d+)\s+species\s+bonus\s+on\s+grapple/i;
+      const match = text.match(pattern);
+      if (match) {
+        const value = parseInt(match[1], 10);
+
+        const rule = {
+          type: 'damageModifier',
+          attackType: 'melee',
+          target: 'attackRoll',  // grapple uses attack roll mechanics
+          value,
+          bonusType: 'species',
+          description: 'Grapple bonus',
+          when: { type: 'always' }
+        };
+
+        this.stats.damageBonuses++;
+        return [rule];
+      }
+    }
+
     if (!text.includes('damage')) return null;
 
     const patterns = [
@@ -391,6 +417,56 @@ class SpeciesMigrator {
         this.stats.damageBonuses++;
         return [rule];
       }
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse special ability that adds to Will Defense
+   */
+  _tryParseWillDefenseBonus(text, originalText) {
+    const pattern = /\+(\d+).*?will\s+defense|gains?\s+.*?\+(\d+).*?will/i;
+    const match = originalText.match(pattern);
+
+    if (match) {
+      const value = parseInt(match[1] || match[2], 10);
+
+      const rule = {
+        type: 'defenseModifier',
+        defense: 'will',
+        value,
+        bonusType: 'species',
+        when: { type: 'always' }
+      };
+
+      this.stats.defenseBonuses = (this.stats.defenseBonuses || 0) + 1;
+      return [rule];
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse Force Sensitivity feat grant
+   */
+  _tryParseForceAbility(text, originalText) {
+    if (text.includes('force') && (text.includes('sensitivity') || text.includes('use the force') || text.includes('force training'))) {
+      let featId = 'force-sensitivity';
+
+      if (text.includes('training') || text.includes('force training')) {
+        featId = 'force-training';
+      }
+
+      const rule = {
+        type: 'featGrant',
+        featId,
+        when: { type: 'always' },
+        allowMultiple: false
+      };
+
+      this.stats.featGrants++;
+      return [rule];
     }
 
     return null;
@@ -505,15 +581,19 @@ class SpeciesMigrator {
   }
 
   /**
-   * Parse movement pattern: "swim speed equal to its base speed", "climb speed", etc.
+   * Parse movement pattern: "swim speed", "fly", "wings", "glide", etc.
    */
   _tryParseMovement(text, originalText) {
     const patterns = [
-      { regex: /(\d+)\s*(?:ft|feet)?\.?\s+(climb|swim|fly|burrow)\s+speed/i, hasValue: true },
+      { regex: /(\d+)\s*(?:ft|feet|sq|square)?\.?\s+(climb|swim|fly|burrow)\s+speed/i, hasValue: true },
       { regex: /(climb|swim|fly|burrow)\s+speed\s+equal\s+to\s+(?:its\s+)?base\s+speed/i, hasValue: false },
       { regex: /gains?\s+a?\s+(climb|swim|fly|burrow)\s+speed\s+equal\s+to\s+(?:its\s+)?base\s+speed/i, hasValue: false },
       { regex: /gains?\s+(?:a\s+)?(climb|swim|fly|burrow)\s+speed\s+of\s+(\d+)/i, hasValue: true },
-      { regex: /can\s+(climb|swim|fly)\s+at\s+(\d+)\s*(?:ft|feet)?/i, hasValue: true }
+      { regex: /can\s+(climb|swim|fly)\s+at\s+(\d+)\s*(?:ft|feet)?/i, hasValue: true },
+      { regex: /may\s+fly\s+with\s+a\s+speed\s+of\s+(\d+)\s+squares?/i, mode: 'fly', speedGroup: 1 },
+      { regex: /wings?.*?fly.*?(\d+)\s+squares?/i, mode: 'fly', speedGroup: 1 },
+      { regex: /\bwings\b.*?\(([a-z]+)\)/i, mode: 'fly', speedValue: 6 },
+      { regex: /\bglide\b/i, mode: 'fly', speedValue: 6 }
     ];
 
     for (const pp of patterns) {
@@ -521,14 +601,23 @@ class SpeciesMigrator {
       if (match) {
         let mode, speed;
 
-        if (pp.hasValue) {
+        // Handle different pattern types
+        if (pp.mode && pp.speedValue) {
+          // Direct mode and speed
+          mode = pp.mode;
+          speed = pp.speedValue;
+        } else if (pp.mode && pp.speedGroup) {
+          // Mode with speed from capture group
+          mode = pp.mode;
+          speed = match[pp.speedGroup] ? parseInt(match[pp.speedGroup], 10) : 6;
+        } else if (pp.hasValue) {
           // Pattern has explicit value
           if (!isNaN(match[1])) {
             speed = parseInt(match[1], 10);
-            mode = match[2].toLowerCase();
+            mode = match[2] ? match[2].toLowerCase() : 'walk';
           } else {
             mode = match[1].toLowerCase();
-            speed = parseInt(match[2], 10);
+            speed = match[2] ? parseInt(match[2], 10) : 30;
           }
         } else {
           // "equal to base speed" - assume standard speed (6 squares = 30 ft)
@@ -537,12 +626,12 @@ class SpeciesMigrator {
         }
 
         // Convert feet to squares if needed (1 square = 5 ft)
-        const speedInSquares = Math.floor(speed / 5) || 1;
+        const speedInSquares = speed > 10 ? Math.floor(speed / 5) : speed;
 
         const rule = {
           type: 'movement',
           mode,
-          speed: speedInSquares,
+          speed: speedInSquares || 1,
           combatMovement: true,
           when: { type: 'always' }
         };
@@ -560,12 +649,11 @@ class SpeciesMigrator {
    */
   _tryParseBreathing(text, originalText) {
     const patterns = [
-      { regex: /can\s+breathe\s+water/i, type: 'aquatic' },
-      { regex: /breathe(?:s)?\s+water/i, type: 'aquatic' },
-      { regex: /can\s+breathe\s+(?:in\s+)?(?:a\s+)?vacuum/i, type: 'vacuum' },
+      { regex: /can\s+breathe\s+(?:both\s+)?(?:air\s+and\s+)?water|breathe(?:s)?\s+water/i, type: 'aquatic' },
+      { regex: /aquatic.*breathing|can\s+breathe\s+water/i, type: 'aquatic' },
+      { regex: /can\s+breathe\s+(?:in\s+)?(?:a\s+)?vacuum|vacuum.*breathing/i, type: 'vacuum' },
       { regex: /does\s+not\s+need\s+to\s+breathe/i, type: 'vacuum-adapted' },
-      { regex: /amphibious\s+breathing/i, type: 'amphibious' },
-      { regex: /can\s+breathe\s+(?:air\s+and\s+)?water|aquatic\s+breathing/i, type: 'amphibious' },
+      { regex: /amphibious.*breathing|breathe.*both\s+air.*water|can\s+breathe\s+air\s+and\s+water/i, type: 'amphibious' },
       { regex: /poison\s+(?:resistant|immunity|immune)/i, type: 'poison-resistant' }
     ];
 
@@ -632,6 +720,56 @@ class SpeciesMigrator {
   }
 
   /**
+   * Parse natural weapon pattern: "claws", "bite", "natural weapons", etc.
+   */
+  _tryParseNaturalWeapon(text, originalText) {
+    const patterns = [
+      { regex: /natural\s+(?:claw|bite)\s+attacks?|has\s+(?:natural\s+)?claw/i, type: 'claws', damage: '1d4' },
+      { regex: /has\s+natural\s+claw.*?(\d+d\d+)\s+points?.*?slashing/i, type: 'claws', damageGroup: 1 },
+      { regex: /natural\s+weapons?/i, type: 'claws', damage: '1d4' },
+      { regex: /claw\s+attacks?.*?deal\s+(\d+d\d+)/i, type: 'claws', damageGroup: 1 },
+      { regex: /bite\s+attack/i, type: 'bite', damage: '1d6' }
+    ];
+
+    for (const pp of patterns) {
+      if (pp.regex.test(text)) {
+        let damage = pp.damage;
+        const match = originalText.match(pp.regex);
+        if (pp.damageGroup && match && match[pp.damageGroup]) {
+          damage = match[pp.damageGroup];
+        }
+
+        const rule = {
+          type: 'naturalWeapon',
+          id: pp.type,
+          name: pp.type === 'claws' ? 'Claws' : 'Bite',
+          weaponCategory: 'melee',
+          attackAbility: 'str',
+          damage: {
+            formula: damage,
+            damageType: pp.type === 'bite' ? 'piercing' : 'slashing'
+          },
+          critical: { range: 20, multiplier: 2 },
+          proficiency: { type: 'natural', isProficient: true },
+          traits: {
+            alwaysArmed: true,
+            countsAsWeapon: true,
+            finesse: false,
+            light: false,
+            twoHanded: false
+          },
+          when: { type: 'always' }
+        };
+
+        this.stats.naturalWeapon = (this.stats.naturalWeapon || 0) + 1;
+        return [rule];
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Parse reroll pattern: "may reroll", "reroll and keep higher", etc.
    */
   _tryParseReroll(text, originalText) {
@@ -680,9 +818,9 @@ class SpeciesMigrator {
    */
   _tryParseSense(text, originalText) {
     const patterns = [
-      { regex: /darkvision/i, type: 'darkvision', range: null },
+      { regex: /ignores?\s+concealment.*?darkness|darkvision/i, type: 'darkvision', range: null },
       { regex: /(?:gains?\s+)?blindsense\s+out\s+to\s+(\d+)\s+squares?/i, type: 'blindsense', rangeGroup: 1 },
-      { regex: /force.sight|perceives?\s+.*?\s+through\s+the\s+force/i, type: 'force-sight', range: null },
+      { regex: /force.?sight|perceives?\s+.*?\s+through\s+the\s+force|blind\s+but\s+perceives/i, type: 'force-sight', range: null },
       { regex: /tremorsense/i, type: 'tremorsense', range: null }
     ];
 
@@ -858,13 +996,14 @@ class SpeciesMigrator {
   }
 
   /**
-   * Parse multi-limb pattern: "four arms", "extra limbs", etc.
+   * Parse multi-limb pattern: "four arms", "extra limbs", "elongated reach", "quad-limbed", etc.
    */
   _tryParseMultiLimb(text, originalText) {
     const patterns = [
-      { regex: /four\s+arms?/i, count: 4 },
+      { regex: /four\s+(?:arms?|hands?)/i, count: 4, grapple: true },
       { regex: /(?:multiple|extra)\s+limbs?/i, count: 2 },
-      { regex: /quad.limbed/i, count: 4 }
+      { regex: /quad\s*-?limbed/i, count: 4, grapple: true },
+      { regex: /elongated\s+reach/i, count: 2, grapple: true }
     ];
 
     for (const pp of patterns) {
@@ -872,10 +1011,10 @@ class SpeciesMigrator {
         const effects = {};
 
         // Parse effects
-        if (originalText.includes('grapple')) {
+        if (pp.grapple || originalText.toLowerCase().includes('grapple')) {
           effects.grappleBonus = 2;
         }
-        if (originalText.includes('multi') || originalText.includes('multiple')) {
+        if (originalText.toLowerCase().includes('multi') && originalText.toLowerCase().includes('weapon')) {
           effects.weaponPenaltyIgnore = true;
         }
 
@@ -999,6 +1138,7 @@ class SpeciesMigrator {
     console.log(`   - Skill bonuses:       ${this.stats.skillBonuses}`);
     console.log(`   - Defense bonuses:     ${this.stats.defenseBonuses}`);
     console.log(`   - Damage bonuses:      ${this.stats.damageBonuses}`);
+    console.log(`   - Natural weapons:     ${this.stats.naturalWeapon}`);
     console.log(`   - Rerolls:             ${this.stats.reroll}`);
     console.log(`   - Senses:              ${this.stats.sense}`);
     console.log(`   - Size effects:        ${this.stats.size}`);

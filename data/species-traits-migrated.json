@@ -123,7 +123,19 @@
       {
         "id": "darkvision",
         "name": "Darkvision",
-        "description": "An Arkanian ignores concealment caused by darkness."
+        "description": "An Arkanian ignores concealment caused by darkness.",
+        "rules": [
+          {
+            "type": "sense",
+            "senseType": "darkvision",
+            "range": null,
+            "description": "An Arkanian ignores concealment caused by darkness.",
+            "when": {
+              "type": "always"
+            },
+            "id": "darkvision-rule-0"
+          }
+        ]
       },
       {
         "id": "genetic-memory",
@@ -398,7 +410,38 @@
       {
         "id": "claws",
         "name": "Claws",
-        "description": "A Cathar has natural claw attacks that deal 1d4 points of slashing damage."
+        "description": "A Cathar has natural claw attacks that deal 1d4 points of slashing damage.",
+        "rules": [
+          {
+            "type": "naturalWeapon",
+            "id": "claws-rule-0",
+            "name": "Claws",
+            "weaponCategory": "melee",
+            "attackAbility": "str",
+            "damage": {
+              "formula": "1d4",
+              "damageType": "slashing"
+            },
+            "critical": {
+              "range": 20,
+              "multiplier": 2
+            },
+            "proficiency": {
+              "type": "natural",
+              "isProficient": true
+            },
+            "traits": {
+              "alwaysArmed": true,
+              "countsAsWeapon": true,
+              "finesse": false,
+              "light": false,
+              "twoHanded": false
+            },
+            "when": {
+              "type": "always"
+            }
+          }
+        ]
       },
       {
         "id": "feline-agility",
@@ -434,7 +477,18 @@
       {
         "id": "force-adaptation",
         "name": "Force Adaptation",
-        "description": "A Celegian may use the Force even without formal Force training."
+        "description": "A Celegian may use the Force even without formal Force training.",
+        "rules": [
+          {
+            "type": "featGrant",
+            "featId": "force-training",
+            "when": {
+              "type": "always"
+            },
+            "allowMultiple": false,
+            "id": "force-adaptation-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -453,7 +507,19 @@
       {
         "id": "binary-brain",
         "name": "Binary Brain",
-        "description": "A Cerean gains a +2 species bonus on Will Defense."
+        "description": "A Cerean gains a +2 species bonus on Will Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "binary-brain-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -494,7 +560,19 @@
       {
         "id": "amphibious",
         "name": "Amphibious",
-        "description": "A Chagrian can breathe both air and water without penalty."
+        "description": "A Chagrian can breathe both air and water without penalty.",
+        "rules": [
+          {
+            "type": "breathing",
+            "breathType": "aquatic",
+            "immune": false,
+            "description": "A Chagrian can breathe both air and water without penalty.",
+            "when": {
+              "type": "always"
+            },
+            "id": "amphibious-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -513,7 +591,19 @@
       {
         "id": "darkvision",
         "name": "Darkvision",
-        "description": "A Chiss ignores concealment caused by darkness."
+        "description": "A Chiss ignores concealment caused by darkness.",
+        "rules": [
+          {
+            "type": "sense",
+            "senseType": "darkvision",
+            "range": null,
+            "description": "A Chiss ignores concealment caused by darkness.",
+            "when": {
+              "type": "always"
+            },
+            "id": "darkvision-rule-0"
+          }
+        ]
       },
       {
         "id": "tactical-training",
@@ -605,7 +695,21 @@
       {
         "id": "quad-limbed",
         "name": "Quad-Limbed",
-        "description": "A Codru-Ji gains a +2 species bonus on grapple checks."
+        "description": "A Codru-Ji gains a +2 species bonus on grapple checks.",
+        "rules": [
+          {
+            "type": "damageModifier",
+            "attackType": "melee",
+            "target": "attackRoll",
+            "value": 2,
+            "bonusType": "species",
+            "description": "Grapple bonus",
+            "when": {
+              "type": "always"
+            },
+            "id": "quad-limbed-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -894,7 +998,18 @@
       {
         "id": "force-sensitivity",
         "name": "Force Sensitivity",
-        "description": "A Felucian may use the Force even if it does not have the Force Sensitivity feat."
+        "description": "A Felucian may use the Force even if it does not have the Force Sensitivity feat.",
+        "rules": [
+          {
+            "type": "featGrant",
+            "featId": "force-sensitivity",
+            "when": {
+              "type": "always"
+            },
+            "allowMultiple": false,
+            "id": "force-sensitivity-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -975,7 +1090,19 @@
       {
         "id": "third-person-speech",
         "name": "Third Person Speech",
-        "description": "A Gand gains a +2 species bonus on Will Defense."
+        "description": "A Gand gains a +2 species bonus on Will Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "third-person-speech-rule-0"
+          }
+        ]
       },
       {
         "id": "natural-tracker",
@@ -1113,7 +1240,19 @@
       {
         "id": "wings",
         "name": "Wings",
-        "description": "A Geonosian may fly with a speed of 6 squares (clumsy)."
+        "description": "A Geonosian may fly with a speed of 6 squares (clumsy).",
+        "rules": [
+          {
+            "type": "movement",
+            "mode": "fly",
+            "speed": 6,
+            "combatMovement": true,
+            "when": {
+              "type": "always"
+            },
+            "id": "wings-rule-0"
+          }
+        ]
       },
       {
         "id": "hive-mind",
@@ -1242,7 +1381,19 @@
       {
         "id": "amphibious",
         "name": "Amphibious",
-        "description": "A Gungan can breathe both air and water."
+        "description": "A Gungan can breathe both air and water.",
+        "rules": [
+          {
+            "type": "breathing",
+            "breathType": "aquatic",
+            "immune": false,
+            "description": "A Gungan can breathe both air and water.",
+            "when": {
+              "type": "always"
+            },
+            "id": "amphibious-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [
@@ -1665,7 +1816,18 @@
       {
         "id": "force-sensitivity",
         "name": "Force Sensitivity",
-        "description": "A Khil may use the Force even if it does not have the Force Sensitivity feat."
+        "description": "A Khil may use the Force even if it does not have the Force Sensitivity feat.",
+        "rules": [
+          {
+            "type": "featGrant",
+            "featId": "force-sensitivity",
+            "when": {
+              "type": "always"
+            },
+            "allowMultiple": false,
+            "id": "force-sensitivity-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -1891,12 +2053,74 @@
       {
         "id": "natural-weapons",
         "name": "Natural Weapons",
-        "description": "A Mantellian Savrip has Natural Weapons, in the form of tough claws. When making an Unarmed attack, it may choose to use its Natural Weapons, dealing 1d6 points of Slashing damage instead of normal Unarmed damage. Mantellian Savrips are always considered armed with their Natural Weapons."
+        "description": "A Mantellian Savrip has Natural Weapons, in the form of tough claws. When making an Unarmed attack, it may choose to use its Natural Weapons, dealing 1d6 points of Slashing damage instead of normal Unarmed damage. Mantellian Savrips are always considered armed with their Natural Weapons.",
+        "rules": [
+          {
+            "type": "naturalWeapon",
+            "id": "natural-weapons-rule-0",
+            "name": "Claws",
+            "weaponCategory": "melee",
+            "attackAbility": "str",
+            "damage": {
+              "formula": "1d4",
+              "damageType": "slashing"
+            },
+            "critical": {
+              "range": 20,
+              "multiplier": 2
+            },
+            "proficiency": {
+              "type": "natural",
+              "isProficient": true
+            },
+            "traits": {
+              "alwaysArmed": true,
+              "countsAsWeapon": true,
+              "finesse": false,
+              "light": false,
+              "twoHanded": false
+            },
+            "when": {
+              "type": "always"
+            }
+          }
+        ]
       },
       {
         "id": "poison",
         "name": "Poison",
-        "description": "If the Natural Weapons of a Mantellian Savrip deal damage to a living target, the target is also Poisoned. If the Poison succeeds on an attack roll (1d20 + Character Level) against the target's Fortitude Defense, the target moves -1 step along the Condition Track. A target moved to the end of the Condition Track by the Poison is Immobilized, but not Unconscious."
+        "description": "If the Natural Weapons of a Mantellian Savrip deal damage to a living target, the target is also Poisoned. If the Poison succeeds on an attack roll (1d20 + Character Level) against the target's Fortitude Defense, the target moves -1 step along the Condition Track. A target moved to the end of the Condition Track by the Poison is Immobilized, but not Unconscious.",
+        "rules": [
+          {
+            "type": "naturalWeapon",
+            "id": "poison-rule-0",
+            "name": "Claws",
+            "weaponCategory": "melee",
+            "attackAbility": "str",
+            "damage": {
+              "formula": "1d4",
+              "damageType": "slashing"
+            },
+            "critical": {
+              "range": 20,
+              "multiplier": 2
+            },
+            "proficiency": {
+              "type": "natural",
+              "isProficient": true
+            },
+            "traits": {
+              "alwaysArmed": true,
+              "countsAsWeapon": true,
+              "finesse": false,
+              "light": false,
+              "twoHanded": false
+            },
+            "when": {
+              "type": "always"
+            }
+          }
+        ]
       },
       {
         "id": "primitive",
@@ -1953,7 +2177,18 @@
       {
         "id": "force-sensitivity",
         "name": "Force Sensitivity",
-        "description": "A Miraluka gains the Force Sensitivity feat at 1st level."
+        "description": "A Miraluka gains the Force Sensitivity feat at 1st level.",
+        "rules": [
+          {
+            "type": "featGrant",
+            "featId": "force-sensitivity",
+            "when": {
+              "type": "always"
+            },
+            "allowMultiple": false,
+            "id": "force-sensitivity-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -1978,7 +2213,19 @@
       {
         "id": "amphibious",
         "name": "Amphibious",
-        "description": "A Mon Calamari can breathe both air and water."
+        "description": "A Mon Calamari can breathe both air and water.",
+        "rules": [
+          {
+            "type": "breathing",
+            "breathType": "aquatic",
+            "immune": false,
+            "description": "A Mon Calamari can breathe both air and water.",
+            "when": {
+              "type": "always"
+            },
+            "id": "amphibious-rule-0"
+          }
+        ]
       },
       {
         "id": "tech-savvy",
@@ -2273,7 +2520,19 @@
       {
         "id": "winged-glide",
         "name": "Winged Glide",
-        "description": "A Nyriaanan may glide, reducing falling damage to zero if conscious."
+        "description": "A Nyriaanan may glide, reducing falling damage to zero if conscious.",
+        "rules": [
+          {
+            "type": "movement",
+            "mode": "fly",
+            "speed": 6,
+            "combatMovement": true,
+            "when": {
+              "type": "always"
+            },
+            "id": "winged-glide-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -2292,7 +2551,19 @@
       {
         "id": "amphibious",
         "name": "Amphibious",
-        "description": "A Quarren can breathe both air and water."
+        "description": "A Quarren can breathe both air and water.",
+        "rules": [
+          {
+            "type": "breathing",
+            "breathType": "aquatic",
+            "immune": false,
+            "description": "A Quarren can breathe both air and water.",
+            "when": {
+              "type": "always"
+            },
+            "id": "amphibious-rule-0"
+          }
+        ]
       },
       {
         "id": "forceful-presence",
@@ -2487,7 +2758,19 @@
       {
         "id": "amphibious",
         "name": "Amphibious",
-        "description": "A Selkath can breathe both air and water."
+        "description": "A Selkath can breathe both air and water.",
+        "rules": [
+          {
+            "type": "breathing",
+            "breathType": "aquatic",
+            "immune": false,
+            "description": "A Selkath can breathe both air and water.",
+            "when": {
+              "type": "always"
+            },
+            "id": "amphibious-rule-0"
+          }
+        ]
       },
       {
         "id": "aquatic-adaptation",
@@ -2775,7 +3058,38 @@
       {
         "id": "claws",
         "name": "Claws",
-        "description": "A Togorian has natural claw attacks that deal 1d6 points of slashing damage."
+        "description": "A Togorian has natural claw attacks that deal 1d6 points of slashing damage.",
+        "rules": [
+          {
+            "type": "naturalWeapon",
+            "id": "claws-rule-0",
+            "name": "Claws",
+            "weaponCategory": "melee",
+            "attackAbility": "str",
+            "damage": {
+              "formula": "1d4",
+              "damageType": "slashing"
+            },
+            "critical": {
+              "range": 20,
+              "multiplier": 2
+            },
+            "proficiency": {
+              "type": "natural",
+              "isProficient": true
+            },
+            "traits": {
+              "alwaysArmed": true,
+              "countsAsWeapon": true,
+              "finesse": false,
+              "light": false,
+              "twoHanded": false
+            },
+            "when": {
+              "type": "always"
+            }
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -2811,7 +3125,19 @@
       {
         "id": "wings",
         "name": "Wings",
-        "description": "A Toydarian may fly with a speed of 6 squares (clumsy)."
+        "description": "A Toydarian may fly with a speed of 6 squares (clumsy).",
+        "rules": [
+          {
+            "type": "movement",
+            "mode": "fly",
+            "speed": 6,
+            "combatMovement": true,
+            "when": {
+              "type": "always"
+            },
+            "id": "wings-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -2830,7 +3156,38 @@
       {
         "id": "claws",
         "name": "Claws",
-        "description": "A Trandoshan has natural claw attacks that deal 1d6 points of slashing damage."
+        "description": "A Trandoshan has natural claw attacks that deal 1d6 points of slashing damage.",
+        "rules": [
+          {
+            "type": "naturalWeapon",
+            "id": "claws-rule-0",
+            "name": "Claws",
+            "weaponCategory": "melee",
+            "attackAbility": "str",
+            "damage": {
+              "formula": "1d4",
+              "damageType": "slashing"
+            },
+            "critical": {
+              "range": 20,
+              "multiplier": 2
+            },
+            "proficiency": {
+              "type": "natural",
+              "isProficient": true
+            },
+            "traits": {
+              "alwaysArmed": true,
+              "countsAsWeapon": true,
+              "finesse": false,
+              "light": false,
+              "twoHanded": false
+            },
+            "when": {
+              "type": "always"
+            }
+          }
+        ]
       }
     ],
     "activatedAbilities": [
@@ -3186,7 +3543,21 @@
       {
         "id": "elongated-reach",
         "name": "Elongated Reach",
-        "description": "A Wroonian gains a +2 species bonus on grapple checks."
+        "description": "A Wroonian gains a +2 species bonus on grapple checks.",
+        "rules": [
+          {
+            "type": "damageModifier",
+            "attackType": "melee",
+            "target": "attackRoll",
+            "value": 2,
+            "bonusType": "species",
+            "description": "Grapple bonus",
+            "when": {
+              "type": "always"
+            },
+            "id": "elongated-reach-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -3519,7 +3890,21 @@
       {
         "id": "four-arms",
         "name": "Four Arms",
-        "description": "A Besalisk may wield and hold items as if it had four hands, gaining a +2 species bonus on grapple checks."
+        "description": "A Besalisk may wield and hold items as if it had four hands, gaining a +2 species bonus on grapple checks.",
+        "rules": [
+          {
+            "type": "damageModifier",
+            "attackType": "melee",
+            "target": "attackRoll",
+            "value": 2,
+            "bonusType": "species",
+            "description": "Grapple bonus",
+            "when": {
+              "type": "always"
+            },
+            "id": "four-arms-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -3963,7 +4348,19 @@
       {
         "id": "glide-wings",
         "name": "Glide Wings",
-        "description": "A Rishi may glide, reducing falling damage to zero if conscious."
+        "description": "A Rishi may glide, reducing falling damage to zero if conscious.",
+        "rules": [
+          {
+            "type": "movement",
+            "mode": "fly",
+            "speed": 6,
+            "combatMovement": true,
+            "when": {
+              "type": "always"
+            },
+            "id": "glide-wings-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
