@@ -139,6 +139,7 @@ export async function initializeFirstRunExperience() {
     const show = await shouldShowWelcome();
     if (show) {
       SWSELogger.log('Showing first-run welcome dialog');
+      await new Promise(resolve => setTimeout(resolve, 0));
       await showWelcomeDialog();
     }
   } catch (err) {
