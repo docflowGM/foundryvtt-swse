@@ -90,7 +90,31 @@ export class AbilityModelValidator {
 
     const all = panelModel.all || [];
     for (let i = 0; i < all.length; i++) {
-      _validateAbility(all[i], `panel.all[${i}]`);
+      const ability = all[i];
+      if (ability?.type === 'forceModifier') {
+        this._validateForceModifier(ability, `panel.all[${i}]`);
+      } else {
+        _validateAbility(ability, `panel.all[${i}]`);
+      }
+    }
+  }
+
+  static _validateForceModifier(modifier, path) {
+    if (!modifier.hookType) _warn('forceModifier', `missing hookType at ${path}`, modifier);
+    if (modifier.hookType === 'powerUse' && !modifier.scope) _warn('forceModifier', `powerUse missing scope at ${path}`, modifier);
+    if (!Array.isArray(modifier.modifierRules) || modifier.modifierRules.length === 0) {
+      _warn('forceModifier', `empty modifierRules at ${path}`, modifier);
+    }
+
+    const costOptions = modifier?.activation?.costOptions ?? [];
+    const keys = new Set(costOptions.map((c) => c?.conditionKey).filter(Boolean));
+    if (keys.size) {
+      const used = new Set((modifier?.modifierRules ?? []).map((r) => r?.costCondition).filter(Boolean));
+      for (const k of keys) if (!used.has(k)) _warn('forceModifier', `costOption unused at ${path}`, { k, modifier });
+    }
+
+    if (modifier?.hookType === 'encounterEnd' && modifier?.resolution?.engine !== 'force') {
+      _warn('forceModifier', `encounterEnd forceModifier resolution.engine != force at ${path}`, modifier);
     }
   }
 }

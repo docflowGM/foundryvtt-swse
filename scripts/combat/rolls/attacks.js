@@ -157,3 +157,66 @@ export async function rollFullAttack(actor, weapon) {
 
   return result;
 }
+
+/* ============= Phase 4: Narration Wrappers ============= */
+
+/**
+ * Helper: get first targeted token name
+ */
+function _firstTargetName() {
+  try {
+    const t = Array.from(game.user.targets ?? []);
+    if (!t.length) return null;
+    return t[0]?.name ?? t[0]?.document?.name ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Roll attack + damage together with narration
+ * Does NOT reference defenses; narration is supplemental only
+ */
+export async function rollAttackAndDamageWithNarration(actor, weapon) {
+  if (!actor || !weapon) {
+    ui.notifications.error('Missing actor or weapon for attack roll.');
+    return null;
+  }
+
+  const targetName = _firstTargetName();
+  const atkBonus = computeAttackBonus(actor, weapon);
+  const dmgBonus = computeDamageBonus(actor, weapon);
+
+  const rollFormula = `1d20 + ${atkBonus}`;
+  const dmgFormula = `${weapon.system?.damage ?? weapon.damage ?? '1d6'} + ${dmgBonus}`;
+
+  const attackRoll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula).evaluate({ async: true });
+  const damageRoll = await globalThis.SWSE.RollEngine.safeRoll(dmgFormula).evaluate({ async: true });
+
+  const atkTotal = attackRoll?.total;
+  const dmgTotal = damageRoll?.total;
+
+  // Post attack roll card
+  await attackRoll.toMessage({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`
+  }, { create: true });
+
+  // Post damage roll card
+  await damageRoll.toMessage({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    flavor: `${weapon.name} Damage`
+  }, { create: true });
+
+  // Post supplemental narration (gated by setting)
+  if (typeof atkTotal === "number" && typeof dmgTotal === "number") {
+    try {
+      const { ActionChatEngine } = await import("../../chat/action-chat-engine.js");
+      await ActionChatEngine.narrationAttack(actor, weapon.name ?? "Weapon", atkTotal, dmgTotal, { targetName });
+    } catch {
+      // Narration engine not available; continue anyway
+    }
+  }
+
+  return { attack: attackRoll, damage: damageRoll };
+}

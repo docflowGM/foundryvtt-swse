@@ -744,6 +744,111 @@ export class ProgressionSession {
       swseLogger.warn('Failed to post session summary:', err);
     }
   }
+
+  /* ============= Phase 5: Near-Human chargen ============= */
+
+  /**
+   * Initialize Near-Human draft if not already present
+   */
+  _ensureNearHumanDraft() {
+    if (!this.stagedChanges.nearHuman) {
+      this.stagedChanges.nearHuman = {
+        sacrifices: { extraFeat: false, extraSkill: false },
+        selectedTraits: [],
+        abilityAdjustments: { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 },
+      };
+    }
+  }
+
+  setNearHumanSacrifice(kind, enabled) {
+    this._ensureNearHumanDraft();
+    if (kind !== "extraFeat" && kind !== "extraSkill") return;
+    this.stagedChanges.nearHuman.sacrifices[kind] = Boolean(enabled);
+    this._trimNearHumanTraitsToSlots();
+  }
+
+  getNearHumanTraitSlots() {
+    this._ensureNearHumanDraft();
+    const s = this.stagedChanges.nearHuman?.sacrifices ?? {};
+    return (s.extraFeat ? 1 : 0) + (s.extraSkill ? 1 : 0);
+  }
+
+  addNearHumanTrait(traitId) {
+    if (!traitId) return false;
+    this._ensureNearHumanDraft();
+    const slots = this.getNearHumanTraitSlots();
+    if (slots <= 0) return false;
+
+    const arr = this.stagedChanges.nearHuman.selectedTraits;
+    if (arr.includes(traitId)) return true;
+    if (arr.length >= slots) return false;
+
+    arr.push(traitId);
+    return true;
+  }
+
+  removeNearHumanTrait(traitId) {
+    this._ensureNearHumanDraft();
+    const arr = this.stagedChanges.nearHuman.selectedTraits;
+    const idx = arr.indexOf(traitId);
+    if (idx === -1) return false;
+    arr.splice(idx, 1);
+    return true;
+  }
+
+  _trimNearHumanTraitsToSlots() {
+    const slots = this.getNearHumanTraitSlots();
+    const arr = this.stagedChanges.nearHuman.selectedTraits;
+    if (arr.length <= slots) return;
+    // deterministic: keep earliest picks
+    this.stagedChanges.nearHuman.selectedTraits = arr.slice(0, slots);
+  }
+
+  setNearHumanAbilityDelta(abilityKey, delta) {
+    const key = String(abilityKey).toLowerCase();
+    if (!["str", "dex", "con", "int", "wis", "cha"].includes(key)) return false;
+
+    this._ensureNearHumanDraft();
+    const v = Math.max(-2, Math.min(2, Number(delta)));
+    const next = { ...this.stagedChanges.nearHuman.abilityAdjustments, [key]: v };
+    if (this._sumAbilityAdjustments(next) !== 0) return false;
+
+    this.stagedChanges.nearHuman.abilityAdjustments = next;
+    return true;
+  }
+
+  getNearHumanAbilityAdjustments() {
+    this._ensureNearHumanDraft();
+    return { ...this.stagedChanges.nearHuman.abilityAdjustments };
+  }
+
+  canIncrementAbility(key) {
+    this._ensureNearHumanDraft();
+    const current = this.stagedChanges.nearHuman.abilityAdjustments[key] ?? 0;
+    if (current >= 2) return false;
+    const next = { ...this.stagedChanges.nearHuman.abilityAdjustments, [key]: current + 1 };
+    return this._sumAbilityAdjustments(next) === 0;
+  }
+
+  canDecrementAbility(key) {
+    this._ensureNearHumanDraft();
+    const current = this.stagedChanges.nearHuman.abilityAdjustments[key] ?? 0;
+    if (current <= -2) return false;
+    const next = { ...this.stagedChanges.nearHuman.abilityAdjustments, [key]: current - 1 };
+    return this._sumAbilityAdjustments(next) === 0;
+  }
+
+  _sumAbilityAdjustments(adj) {
+    return ["str", "dex", "con", "int", "wis", "cha"].reduce((n, k) => n + (Number(adj?.[k]) || 0), 0);
+  }
+
+  isNearHumanValid() {
+    this._ensureNearHumanDraft();
+    const slots = this.getNearHumanTraitSlots();
+    const traitsOk = this.stagedChanges.nearHuman.selectedTraits.length <= slots;
+    const sumOk = this._sumAbilityAdjustments(this.stagedChanges.nearHuman.abilityAdjustments) === 0;
+    return traitsOk && sumOk;
+  }
 }
 
 export default ProgressionSession;
