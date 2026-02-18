@@ -78,6 +78,10 @@ class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(
   constructor(options = {}) {
     super(options);
     this.resolveDialog = null;
+    // Ensure position is initialized from DEFAULT_OPTIONS
+    if (!this.position) {
+      this.position = { ...this.constructor.DEFAULT_OPTIONS.position };
+    }
   }
 
   async _prepareContext() {
@@ -87,10 +91,18 @@ class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(
   _updatePosition() {
     // Skip positioning if element doesn't have valid dimensions yet
     if (!this.element) return;
+
+    // Ensure position object exists before proceeding
+    if (!this.position) {
+      this.position = { ...this.constructor.DEFAULT_OPTIONS.position };
+    }
+
     const rect = this.element.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) {
       // Defer positioning to next frame when element has dimensions
-      requestAnimationFrame(() => super._updatePosition());
+      requestAnimationFrame(() => {
+        if (this.position) super._updatePosition();
+      });
       return;
     }
     super._updatePosition();
