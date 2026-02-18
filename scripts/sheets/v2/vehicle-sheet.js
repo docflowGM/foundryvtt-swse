@@ -14,6 +14,7 @@ import { EnhancedEngineer } from '../../engine/combat/starship/enhanced-engineer
 import { EnhancedPilot } from '../../engine/combat/starship/enhanced-pilot.js';
 import { EnhancedCommander } from '../../engine/combat/starship/enhanced-commander.js';
 import { VehicleTurnController } from '../../engine/combat/starship/vehicle-turn-controller.js';
+import { StarshipManeuversEngine } from '../../engine/StarshipManeuversEngine.js';
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -135,6 +136,9 @@ export class SWSEV2VehicleSheet extends
     }
     const cargoState = totalCargoWeight > cargoCapacity * 1.1 ? 'over' : totalCargoWeight > cargoCapacity * 0.8 ? 'near' : 'normal';
 
+    // Starship Maneuvers (for pilot/crew crew positions)
+    const starshipManeuvers = StarshipManeuversEngine.getManeuversForActor(actor);
+
     const overrides = {
       actor,
       system: actor.system,
@@ -182,7 +186,9 @@ export class SWSEV2VehicleSheet extends
         turnState,
         turnPhases,
         powerBudget: enhancedEngineerEnabled ? EnhancedEngineer.getPowerBudget(actor) : 0
-      }
+      },
+      // Starship Maneuvers
+      starshipManeuvers
     };
 
     RenderAssertions.assertContextSerializable(
@@ -479,6 +485,30 @@ export class SWSEV2VehicleSheet extends
         ev.preventDefault();
         if (!this.actor) return;
         await VehicleTurnController.startTurn(this.actor);
+      });
+    }
+
+    /* ---- STARSHIP MANEUVERS ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="useManeuver"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId || !this.actor) return;
+        const item = this.actor.items?.get(itemId);
+        if (!item) return;
+        await ActorEngine.updateActor(this.actor, { [`items.${itemId}.system.spent`]: true });
+      });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="regainManeuver"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        if (!itemId || !this.actor) return;
+        const item = this.actor.items?.get(itemId);
+        if (!item) return;
+        await ActorEngine.updateActor(this.actor, { [`items.${itemId}.system.spent`]: false });
       });
     }
 

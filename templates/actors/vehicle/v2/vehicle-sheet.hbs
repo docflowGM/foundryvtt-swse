@@ -238,6 +238,18 @@
           </div>
           {{/if}}
 
+          {{#if starshipManeuvers.total}}
+          <div class="swse-v2-full">
+            <div class="holo-panel">
+              <div class="section-bar">
+                <h3 class="section-header">Starship Maneuvers</h3>
+                <span class="muted">{{starshipManeuvers.total}} learned</span>
+              </div>
+              {{> "systems/foundryvtt-swse/templates/partials/starship-maneuvers-panel.hbs" maneuvers=starshipManeuvers}}
+            </div>
+          </div>
+          {{/if}}
+
           <div class="swse-v2-full">
             <div class="holo-panel">
               <div class="section-bar">
