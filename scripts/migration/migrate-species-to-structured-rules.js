@@ -305,7 +305,7 @@ class SpeciesMigrator {
     for (const pattern of patterns) {
       const match = text.match(pattern);
       if (match) {
-        const value = parseInt(match[1], 10);
+        let value = parseInt(match[1], 10);
         let defense = match[2].toLowerCase().trim();
 
         // Normalize defense name
