@@ -18,7 +18,7 @@ function _isDevMode() {
     if (globalThis?.CONFIG?.debug?.swse) return true;
   } catch (_err) {}
   try {
-    return !!globalThis?.game?.settings?.get?.('swse', 'devMode');
+    return !!globalThis?.game?.settings?.get?.('foundryvtt-swse', 'devMode');
   } catch (_err) {}
   return false;
 }

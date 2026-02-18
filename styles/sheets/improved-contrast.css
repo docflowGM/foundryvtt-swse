@@ -159,23 +159,8 @@
   color: var(--swse-fg-color);
 }
 
-/*--------------------------------*/
-/* Icon Controls (Sidebar/Toolbar)*/
-/*--------------------------------*/
-/* Apply SVG mask and tint from CSS variables */
-button.ui-control.icon {
-  mask-image: var(--control-icon);
-  -webkit-mask-image: var(--control-icon);
-  mask-repeat: no-repeat;
-  -webkit-mask-repeat: no-repeat;
-  mask-position: center;
-  -webkit-mask-position: center;
-  mask-size: contain;
-  -webkit-mask-size: contain;
-  background-color: var(--control-icon-color);
-  width: 36px;
-  height: 36px;
-}
+/* Icon Controls: global button.ui-control.icon removed — mask baseline
+   lives in styles/core-overrides.css under #sidebar scope only. */
 
 /*--------------------------------*/
 /* High-Contrast / Forced Colors  */

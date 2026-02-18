@@ -1,0 +1,24 @@
+/* ============================================================================
+   SWSE — CORE OVERRIDES
+   Intentional Foundry Core UI overrides.
+   These selectors target Foundry's own UI regions (#sidebar, #controls, etc.)
+   and must not be moved into the SWSE namespace.
+
+   Rules here are explicitly reviewed and safe for Foundry v13 AppV2.
+   ============================================================================ */
+
+/* Intentional Foundry Core Override */
+/* Restores the correct SVG mask system for sidebar icon buttons.
+   Higher specificity than any global button.ui-control.icon rule.
+   Uses Foundry's own --control-icon and --control-icon-color variables. */
+#sidebar button.ui-control.icon {
+  mask-image: var(--control-icon);
+  -webkit-mask-image: var(--control-icon);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  background-color: var(--control-icon-color);
+}
