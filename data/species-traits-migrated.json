@@ -2020,7 +2020,18 @@
       {
         "id": "ability-modifiers",
         "name": "Ability Modifiers",
-        "description": "All Mantellian Savrips receive a +4 bonus to both their Strength and Constitution, but suffer -4 penalties to their Intelligence, Wisdom, and Charisma, as well as a -2 penalty to their Dexterity."
+        "description": "All Mantellian Savrips receive a +4 bonus to both their Strength and Constitution, but suffer -4 penalties to their Intelligence, Wisdom, and Charisma, as well as a -2 penalty to their Dexterity.",
+        "rules": [
+          {
+            "type": "abilityScoreModifier",
+            "ability": "dexterity",
+            "value": -4,
+            "when": {
+              "type": "always"
+            },
+            "id": "ability-modifiers-rule-0"
+          }
+        ]
       },
       {
         "id": "large-size",
@@ -2130,7 +2141,8 @@
       {
         "id": "automatic-languages",
         "name": "Automatic Languages",
-        "description": "All Mantellian Savrips can speak Savrip."
+        "description": "All Mantellian Savrips can speak Savrip.",
+        "rules": []
       }
     ],
     "activatedAbilities": [
@@ -3482,7 +3494,18 @@
       {
         "id": "mighty",
         "name": "Mighty",
-        "description": "A Wookiee gains a +4 species bonus to Strength."
+        "description": "A Wookiee gains a +4 species bonus to Strength.",
+        "rules": [
+          {
+            "type": "abilityScoreModifier",
+            "ability": "strength",
+            "value": 4,
+            "when": {
+              "type": "always"
+            },
+            "id": "mighty-rule-0"
+          }
+        ]
       },
       {
         "id": "endurance",

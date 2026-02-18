@@ -93,6 +93,7 @@ class SpeciesMigrator {
       skillBonuses: 0,
       defenseBonuses: 0,
       damageBonuses: 0,
+      abilityScoreModifier: 0,
       damageReductions: 0,
       fastHealing: 0,
       naturalWeapon: 0,
@@ -183,6 +184,13 @@ class SpeciesMigrator {
   }
 
   /**
+   * Traits that should be stripped (no rule conversion needed)
+   */
+  get STRIP_TRAITS() {
+    return ['Automatic Languages', 'Unknown Trait'];
+  }
+
+  /**
    * Migrate an array of traits
    */
   _migrateTraitArray(traits, speciesName) {
@@ -198,6 +206,13 @@ class SpeciesMigrator {
         name: trait.name || 'Unknown Trait',
         description: trait.description || trait.name || ''
       };
+
+      // Check if this should be stripped
+      if (this.STRIP_TRAITS.includes(trait.name)) {
+        migrated.rules = [];
+        this.stats.convertedTraits++;
+        return migrated;
+      }
 
       // If trait already has rules, keep them
       if (trait.rules && Array.isArray(trait.rules)) {
@@ -238,6 +253,7 @@ class SpeciesMigrator {
       this._tryParseDefenseBonus,
       this._tryParseWillDefenseBonus,
       this._tryParseDamageBonus,
+      this._tryParseAbilityScoreModifier,
       this._tryParseDamageReduction,
       this._tryParseFastHealing,
       this._tryParseNaturalWeapon,
@@ -415,6 +431,40 @@ class SpeciesMigrator {
         };
 
         this.stats.damageBonuses++;
+        return [rule];
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse ability score modifiers: "+4 Strength", etc.
+   */
+  _tryParseAbilityScoreModifier(text, originalText) {
+    const patterns = [
+      { ability: 'strength', regex: /\+(\d+)\s+(?:species\s+)?bonus\s+to\s+strength|strength.*?(\+\d+)|-(\d+).*?strength/i },
+      { ability: 'dexterity', regex: /\+(\d+)\s+(?:species\s+)?bonus\s+to\s+dexterity|dexterity.*?(\+\d+)|-(\d+).*?dexterity/i },
+      { ability: 'constitution', regex: /\+(\d+)\s+(?:species\s+)?bonus\s+to\s+constitution|constitution.*?(\+\d+)|-(\d+).*?constitution/i },
+      { ability: 'intelligence', regex: /\+(\d+)\s+(?:species\s+)?bonus\s+to\s+intelligence|intelligence.*?(\+\d+)|-(\d+).*?intelligence/i },
+      { ability: 'wisdom', regex: /\+(\d+)\s+(?:species\s+)?bonus\s+to\s+wisdom|wisdom.*?(\+\d+)|-(\d+).*?wisdom/i },
+      { ability: 'charisma', regex: /\+(\d+)\s+(?:species\s+)?bonus\s+to\s+charisma|charisma.*?(\+\d+)|-(\d+).*?charisma/i }
+    ];
+
+    for (const pp of patterns) {
+      const match = originalText.match(pp.regex);
+      if (match) {
+        const value = parseInt(match[1] || match[2] || match[3] || '0', 10);
+        if (value === 0) continue;
+
+        const rule = {
+          type: 'abilityScoreModifier',
+          ability: pp.ability,
+          value: match[3] ? -value : value,
+          when: { type: 'always' }
+        };
+
+        this.stats.abilityScoreModifier = (this.stats.abilityScoreModifier || 0) + 1;
         return [rule];
       }
     }
@@ -774,6 +824,7 @@ class SpeciesMigrator {
    */
   _tryParseReroll(text, originalText) {
     const patterns = [
+      { regex: /may\s+(?:choose\s+)?reroll\s+any\s+([a-z\s]+),\s+but\s+(?:(?:the\s+)?result|outcome)\s+(?:of\s+the\s+reroll\s+)?must\s+be\s+accepted/i, outcome: 'mustAccept' },
       { regex: /may\s+reroll\s+any\s+([a-z\s]+)\s+(?:checks?|rolls?)/i, outcome: 'mustAccept' },
       { regex: /may\s+(?:choose\s+to\s+)?reroll\s+(?:any\s+)?([a-z\s]+),\s+but\s+(?:must\s+)?accept/i, outcome: 'mustAccept' },
       { regex: /may\s+(?:choose\s+to\s+)?reroll\s+(?:any\s+)?([a-z\s]+)(?:\s+(?:rolls?|checks))?(?:\s+and\s+use|,\s+using)?\s+(?:the\s+)?(?:higher|better)/i, outcome: 'keepHigher' },
@@ -1138,6 +1189,7 @@ class SpeciesMigrator {
     console.log(`   - Skill bonuses:       ${this.stats.skillBonuses}`);
     console.log(`   - Defense bonuses:     ${this.stats.defenseBonuses}`);
     console.log(`   - Damage bonuses:      ${this.stats.damageBonuses}`);
+    console.log(`   - Ability modifiers:   ${this.stats.abilityScoreModifier}`);
     console.log(`   - Natural weapons:     ${this.stats.naturalWeapon}`);
     console.log(`   - Rerolls:             ${this.stats.reroll}`);
     console.log(`   - Senses:              ${this.stats.sense}`);
