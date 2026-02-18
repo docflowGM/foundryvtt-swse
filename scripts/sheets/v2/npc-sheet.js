@@ -24,39 +24,34 @@ function markActiveConditionStep(root, actor) {
  */
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    super.DEFAULT_OPTIONS,
-    {
+  static PARTS = {
+    ...super.PARTS,
+    body: {
+      template: 'systems/foundryvtt-swse/templates/actors/npc/v2/npc-sheet.hbs'
+    }
+  };
+
+
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['swse', 'swse-sheet', 'swse-npc-sheet', 'v2'],
-      template: 'systems/foundryvtt-swse/templates/actors/npc/v2/npc-sheet.hbs',
       width: 820,
       height: 920,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'summary' }],
       scrollY: ['.sheet-body']
-    }
-  );
-
-
-  /**
-   * AppV2 contract: Foundry reads options from `defaultOptions`, not `DEFAULT_OPTIONS`.
-   * This bridges legacy apps to the V2 accessor.
-   * @returns {object}
-   */
-  static get defaultOptions() {
-    const base = super.defaultOptions ?? super.DEFAULT_OPTIONS ?? {};
-    const legacy = this.DEFAULT_OPTIONS ?? {};
-    const clone = foundry.utils?.deepClone?.(base)
-      ?? foundry.utils?.duplicate?.(base)
-      ?? { ...base };
-    return foundry.utils.mergeObject(clone, legacy);
+    });
   }
-async _prepareContext(options) {
+
+  async _prepareContext(options) {
     // Fail-fast: this sheet is for NPCs only
     if (this.document.type !== 'npc') {
       throw new Error(
         `SWSEV2NpcSheet requires actor type "npc", got "${this.document.type}"`
       );
     }
+
+    // AppV2 inheritance: Call super to get base context
+    const baseContext = await super._prepareContext(options);
 
     // AppV2 Compatibility: Only pass serializable data
     // V13 AppV2 calls structuredClone() on render context - Document objects,
@@ -108,7 +103,7 @@ async _prepareContext(options) {
     }
 
     this._talentAbilitiesCache = context.talentAbilities;
-    return context;
+    return foundry.utils.mergeObject(baseContext, context);
   }
 
   async _onRender(context, options) {
@@ -198,101 +193,101 @@ async _prepareContext(options) {
     }
   }
 
+  _bindTalentAbilitiesPanel(root) {
+    for (const container of root.querySelectorAll('.swse-talent-abilities-container')) {
+      if (container.dataset.abilityBound === 'true') continue;
+      container.dataset.abilityBound = 'true';
 
-_bindTalentAbilitiesPanel(root) {
-  for (const container of root.querySelectorAll('.swse-talent-abilities-container')) {
-    if (container.dataset.abilityBound === 'true') continue;
-    container.dataset.abilityBound = 'true';
+      const applyFilter = (filter) => {
+        for (const btn of container.querySelectorAll('.ability-filter-btn')) {
+          btn.classList.toggle('active', btn.dataset.filter === filter);
+        }
 
-    const applyFilter = (filter) => {
-      for (const btn of container.querySelectorAll('.ability-filter-btn')) {
-        btn.classList.toggle('active', btn.dataset.filter === filter);
-      }
+        for (const card of container.querySelectorAll('.ability-card')) {
+          const type = card.dataset.actionType;
+          const show = filter === 'all' || type === filter;
+          card.style.display = show ? '' : 'none';
+        }
+      };
 
-      for (const card of container.querySelectorAll('.ability-card')) {
-        const type = card.dataset.actionType;
-        const show = filter === 'all' || type === filter;
-        card.style.display = show ? '' : 'none';
-      }
-    };
+      container.addEventListener('click', async (ev) => {
+        const filterBtn = ev.target.closest('.ability-filter-btn');
+        if (filterBtn?.dataset?.filter) {
+          ev.preventDefault();
+          applyFilter(filterBtn.dataset.filter);
+          return;
+        }
 
-    container.addEventListener('click', async (ev) => {
-      const filterBtn = ev.target.closest('.ability-filter-btn');
-      if (filterBtn?.dataset?.filter) {
-        ev.preventDefault();
-        applyFilter(filterBtn.dataset.filter);
-        return;
-      }
+        const actionEl = ev.target.closest('[data-action]');
+        if (!actionEl) return;
 
-      const actionEl = ev.target.closest('[data-action]');
-      if (!actionEl) return;
+        const action = actionEl.dataset.action;
 
-      const action = actionEl.dataset.action;
+        if (action === 'expandAbility' || action === 'showMultiOptions') {
+          ev.preventDefault();
+          const card = actionEl.closest('.ability-card');
+          if (!card) return;
 
-      if (action === 'expandAbility' || action === 'showMultiOptions') {
-        ev.preventDefault();
-        const card = actionEl.closest('.ability-card');
-        if (!card) return;
+          const isExpanded = card.classList.toggle('expanded');
 
-        const isExpanded = card.classList.toggle('expanded');
-
-        if (action === 'showMultiOptions') {
-          const list = card.querySelector('.multi-option-sub-abilities');
-          if (list) {
-            list.style.display = isExpanded ? '' : 'none';
+          if (action === 'showMultiOptions') {
+            const list = card.querySelector('.multi-option-sub-abilities');
+            if (list) {
+              list.style.display = isExpanded ? '' : 'none';
+            }
           }
-        }
 
-        return;
-      }
-
-      if (action === 'useSubAbility') {
-        ev.preventDefault();
-
-        const subId = actionEl.dataset.subAbilityId;
-        if (!subId) return;
-
-        const cache = this._talentAbilitiesCache;
-        const subAbility =
-          cache?.all?.flatMap(a => a.subAbilities || []).find(a => a.id === subId);
-
-        if (!subAbility) return;
-
-        if (subAbility.usesData?.isLimited && subAbility.usesData?.canUse === false) {
-          ui.notifications?.warn?.('No uses remaining.');
           return;
         }
 
-        const speaker = ChatMessage.getSpeaker({ actor: this.actor });
+        if (action === 'useSubAbility') {
+          ev.preventDefault();
 
-        if (subAbility.rollData?.canRoll && subAbility.rollData?.formula) {
-          const rollData = this.actor?.getRollData?.() ?? {};
-          const roll = await (new Roll(subAbility.rollData.formula, rollData)).roll({ async: true });
+          const subId = actionEl.dataset.subAbilityId;
+          if (!subId) return;
 
-          const flavorParts = [
-            `<strong>${subAbility.name}</strong>`,
-            subAbility.typeLabel ? `(${subAbility.typeLabel})` : '',
-            subAbility.rollData.vsLabel ? `${subAbility.rollData.vsLabel}` : '',
-            subAbility.rollData.dcLabel ? `${subAbility.rollData.dcLabel}` : ''
-          ].filter(Boolean);
+          const cache = this._talentAbilitiesCache;
+          const subAbility =
+            cache?.all?.flatMap(a => a.subAbilities || []).find(a => a.id === subId);
 
-          await roll.toMessage({ speaker, flavor: flavorParts.join(' ') });
-          return;
+          if (!subAbility) return;
+
+          if (subAbility.usesData?.isLimited && subAbility.usesData?.canUse === false) {
+            ui.notifications?.warn?.('No uses remaining.');
+            return;
+          }
+
+          const speaker = ChatMessage.getSpeaker({ actor: this.actor });
+
+          if (subAbility.rollData?.canRoll && subAbility.rollData?.formula) {
+            const rollData = this.actor?.getRollData?.() ?? {};
+            const roll = await (new Roll(subAbility.rollData.formula, rollData)).roll({ async: true });
+
+            const flavorParts = [
+              `<strong>${subAbility.name}</strong>`,
+              subAbility.typeLabel ? `(${subAbility.typeLabel})` : '',
+              subAbility.rollData.vsLabel ? `${subAbility.rollData.vsLabel}` : '',
+              subAbility.rollData.dcLabel ? `${subAbility.rollData.dcLabel}` : ''
+            ].filter(Boolean);
+
+            await roll.toMessage({ speaker, flavor: flavorParts.join(' ') });
+            return;
+          }
+
+          const content = `
+            <div class="swse-ability-chat-card">
+              <h3>${foundry.utils.escapeHTML(subAbility.name || '')}</h3>
+              ${subAbility.typeLabel ? `<p><strong>Action:</strong> ${foundry.utils.escapeHTML(subAbility.typeLabel)}</p>` : ''}
+              ${subAbility.description ? `<p>${foundry.utils.escapeHTML(subAbility.description)}</p>` : ''}
+            </div>
+          `;
+
+          await ChatMessage.create({ speaker, content });
         }
+      });
 
-        const content = `
-          <div class="swse-ability-chat-card">
-            <h3>${foundry.utils.escapeHTML(subAbility.name || '')}</h3>
-            ${subAbility.typeLabel ? `<p><strong>Action:</strong> ${foundry.utils.escapeHTML(subAbility.typeLabel)}</p>` : ''}
-            ${subAbility.description ? `<p>${foundry.utils.escapeHTML(subAbility.description)}</p>` : ''}
-          </div>
-        `;
-
-        await ChatMessage.create({ speaker, content });
-      }
-    });
-
-    applyFilter('all');
+      applyFilter('all');
+    }
   }
 
   /* -------- ABILITIES TAB HANDLERS (Phase 3) -------- */
@@ -354,7 +349,6 @@ _bindTalentAbilitiesPanel(root) {
       });
     });
   }
-}
 
   async _updateObject(event, formData) {
     const expanded = foundry.utils.expandObject(formData);
