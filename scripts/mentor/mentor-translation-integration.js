@@ -137,29 +137,6 @@ export class MentorTranslationIntegration {
     return TRANSLATION_PRESETS[mapped] ? mapped : 'mentor';
   }
 
-
-    // 3) Heuristic fallback (backwards compatible)
-    if (key.includes('sith')) return 'sith';
-    if (key.includes('jedi')) return 'jedi';
-    if (key.includes('droid') || key.includes('protocol')) return 'droid';
-    if (key.includes('holocron')) return 'holocron';
-    if (key.includes('vision') || key.includes('force-vision')) return 'forcevision';
-
-    return 'mentor';
-  }
-
-
-    // Fuzzy match (check if key contains mentor name)
-    for (const [mentorKey, preset] of Object.entries(this.)) {
-      if (mentorKey !== 'default' && key.includes(mentorKey)) {
-        return preset;
-      }
-    }
-
-    // Fallback
-    return 'mentor';
-  }
-
   /**
    * Ensure dialogue CSS is loaded
    * @private
@@ -219,7 +196,7 @@ export class MentorTranslationIntegration {
    * Register a custom mentor preset
    */
   static registerMentorPreset(mentorKey, preset) {
-    this.[mentorKey.toLowerCase()] = preset;
+    MENTOR_PRESET_MAP[mentorKey.toLowerCase()] = preset;
   }
 
   /**
