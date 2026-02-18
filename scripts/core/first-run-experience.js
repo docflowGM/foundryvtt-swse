@@ -78,37 +78,15 @@ class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(
   constructor(options = {}) {
     super(options);
     this.resolveDialog = null;
-    // Ensure position is initialized from DEFAULT_OPTIONS
-    if (!this.position) {
-      this.position = { ...this.constructor.DEFAULT_OPTIONS.position };
-    }
   }
 
   async _prepareContext() {
     return {};
   }
 
-  _updatePosition() {
-    // Skip positioning if element doesn't have valid dimensions yet
-    if (!this.element) return;
-
-    // Ensure position object exists before proceeding
-    if (!this.position) {
-      this.position = { ...this.constructor.DEFAULT_OPTIONS.position };
-    }
-
-    const rect = this.element.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) {
-      // Defer positioning to next frame when element has dimensions
-      requestAnimationFrame(() => {
-        if (this.position) super._updatePosition();
-      });
-      return;
-    }
-    super._updatePosition();
-  }
-
   async _onRender(context, options) {
+    await super._onRender(context, options);
+
     const root = this.element;
 
     // --- SENTINEL CHECK 1: HTMLElement contract ---
@@ -121,27 +99,18 @@ class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(
     this.constructor._sentinelRenderCount++;
     const renderCount = this.constructor._sentinelRenderCount;
 
-    const isDevMode = game?.settings?.get?.(SYSTEM_ID, 'devMode');
+    const isDevMode = game.modules.get('_dev-mode')?.active ?? false;
     if (isDevMode) {
       console.debug(`SWSE Sentinel: WelcomeDialog render #${renderCount}`);
     }
 
-    // --- SENTINEL CHECK 3: DOM stability ---
-    const rect = root.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) {
-      console.warn('SWSE Sentinel: WelcomeDialog rendered with zero dimensions.', {
-        width: rect.width,
-        height: rect.height
-      });
-    }
-
-    // --- SENTINEL CHECK 4: Duplicate listener detection ---
+    // --- SENTINEL CHECK 3: Duplicate listener detection ---
     if (root.dataset.sentinelAttached === 'true') {
       console.warn('SWSE Sentinel: Duplicate _onRender execution detected.');
     }
     root.dataset.sentinelAttached = 'true';
 
-    // --- SENTINEL CHECK 5: Header presence ---
+    // --- SENTINEL CHECK 4: Header presence ---
     const header = root.querySelector('.window-header');
     if (!header) {
       console.warn('SWSE Sentinel: No window-header found.');
@@ -150,6 +119,11 @@ class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(
     if (isDevMode) {
       console.debug('SWSE Sentinel: WelcomeDialog lifecycle healthy.');
     }
+
+    // Set position after render completes to satisfy AppV2 contract
+    requestAnimationFrame(() => {
+      this.setPosition({ width: 800, height: 'auto' });
+    });
 
     // --- EVENT LISTENER ATTACHMENT ---
     const button = root.querySelector('[data-action="got-it"]');

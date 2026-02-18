@@ -15,14 +15,10 @@
 
 /**
  * Safe accessor for devMode setting
- * Safely checks if core.devMode is registered before accessing
+ * Uses _dev-mode module if available, otherwise returns false
  */
 function getDevMode() {
-  try {
-    return getDevMode();
-  } catch {
-    return false;
-  }
+  return game.modules.get('_dev-mode')?.active ?? false;
 }
 
 /**
