@@ -195,24 +195,24 @@ export class PrerequisiteEngine {
 
   /**
    * Enable Free Build Mode (override mode)
-   * @param {Actor} actor - Character actor
+   * Pure: returns the update object. Caller must apply via actor.update() in commit phase.
+   * @param {Actor} actor - Character actor (unused; kept for API compat)
+   * @returns {Object} Update object to apply
    */
   static async enableFreeBuildMode(actor) {
-    await actor.update({ 'system.buildMode': 'free' });
+    return { 'system.buildMode': 'free' };
   }
 
   /**
-   * Validate and potentially switch from free build mode
+   * Validate and return audit result. Pure — no actor mutations.
+   * Caller must apply recommendedUpdate via actor.update() in commit phase if desired.
    * @param {Actor} actor - Character actor
-   * @returns {boolean} True if valid and switched to validated mode
+   * @returns {boolean} True if build is valid (preserved for backward compat)
    */
   static async validateBuild(actor) {
     const audit = this.auditBuild(actor);
-    if (audit.valid) {
-      await actor.update({ 'system.buildMode': 'validated' });
-      return true;
-    }
-    return false;
+    // Caller must persist the mode change: await actor.update({ 'system.buildMode': 'validated' })
+    return audit.valid;
   }
 
   /**

@@ -903,14 +903,20 @@ async applyScalingFeature(feature) {
       // Mark actor as finalized (prevents re-finalization)
       await this.actor.setFlag('swse', 'finalized', true);
 
-      // Update street legal status
+      // Update street legal status + any staged HP delta (e.g., retroactive CON HP)
       const validation = await this._validateProgression();
-      await this.actor.update({
+      const finalActorUpdates = {
         'system.meta.streetLegal': validation.passed,
         'system.meta.lastValidation.passed': validation.passed,
         'system.meta.lastValidation.errors': validation.errors,
         'system.meta.lastValidation.timestamp': Date.now()
-      });
+      };
+      if (this._pendingHPDelta) {
+        finalActorUpdates['system.hp.max'] = (this.actor.system.hp?.max || 0) + this._pendingHPDelta;
+        finalActorUpdates['system.hp.value'] = (this.actor.system.hp?.value || 0) + this._pendingHPDelta;
+        this._pendingHPDelta = 0;
+      }
+      await this.actor.update(finalActorUpdates);
 
       swseLogger.log(`Progression finalized for ${this.actor.name}`);
 

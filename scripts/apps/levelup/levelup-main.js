@@ -1898,7 +1898,30 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       }
 
       // ========================================
-      // STEP 2: Finalize through progression engine
+      // STEP 2: Stage retroactive CON HP delta before finalize
+      // Must run pre-finalize so the delta is applied atomically within finalize()
+      // Uses pre-commit actor.con.base (ability increase is staged, not yet applied)
+      // ========================================
+      const isDroid = this.actor.system.isDroid || false;
+      if (isDroid && this.abilityIncreases.con && this.abilityIncreases.con > 0) {
+        swseLogger.log('SWSE LevelUp | CON modifier increase: Skipped for droid (no CON)');
+      } else if (!isDroid && this.abilityIncreases.con && this.abilityIncreases.con > 0) {
+        const conBase = this.actor.system.attributes?.con?.base || 10;
+        const conIncrease = this.abilityIncreases.con;
+        const oldConMod = Math.floor((conBase - 10) / 2);
+        const newConMod = Math.floor((conBase + conIncrease - 10) / 2);
+        if (newConMod > oldConMod) {
+          const modIncrease = newConMod - oldConMod;
+          const retroactiveHPGain = newLevel * modIncrease;
+          // Stage delta on engine — finalize() applies it atomically after ActorProgressionUpdater
+          this.progressionEngine._pendingHPDelta = (this.progressionEngine._pendingHPDelta || 0) + retroactiveHPGain;
+          swseLogger.log(`SWSE LevelUp | CON modifier increasing - staging ${retroactiveHPGain} retroactive HP`);
+          ui.notifications.info(`Constitution increased! You gain ${retroactiveHPGain} retroactive HP!`);
+        }
+      }
+
+      // ========================================
+      // STEP 3: Finalize through progression engine
       // ========================================
       swseLogger.log('SWSE LevelUp | Finalizing through progression engine');
 
@@ -1934,31 +1957,6 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       if (getMilestoneFt) {
         ui.notifications.info(`Level ${newLevel}! You gain a bonus general feat.`);
         swseLogger.log(`SWSE LevelUp | Level ${newLevel} milestone - bonus general feat granted`);
-      }
-
-      // Handle CON modifier retroactive HP
-      // Note: This is level-up specific since chargen starts fresh
-      // Droids don't have Constitution, skip HP gain for droids
-      const isDroid = this.actor.system.isDroid || false;
-      if (isDroid && this.abilityIncreases.con && this.abilityIncreases.con > 0) {
-        swseLogger.log('SWSE LevelUp | CON modifier increase: Skipped for droid (no CON)');
-      } else if (!isDroid && this.abilityIncreases.con && this.abilityIncreases.con > 0) {
-        // Check if the increase pushed us to a new modifier tier
-        const conMod = this.actor.system.attributes?.con?.mod || 0;
-        const oldConBase = (this.actor.system.attributes?.con?.base || 10) - this.abilityIncreases.con;
-        const oldConMod = Math.floor((oldConBase - 10) / 2);
-        if (conMod > oldConMod) {
-          const modIncrease = conMod - oldConMod;
-          const retroactiveHPGain = newLevel * modIncrease;
-          // Apply retroactive HP
-          const currentHP = this.actor.system.hp.max || 0;
-          await this.actor.update({
-            'system.hp.max': currentHP + retroactiveHPGain,
-            'system.hp.value': (this.actor.system.hp.value || 0) + retroactiveHPGain
-          });
-          swseLogger.log(`SWSE LevelUp | CON modifier increased - granting ${retroactiveHPGain} retroactive HP`);
-          ui.notifications.info(`Constitution increased! You gain ${retroactiveHPGain} retroactive HP!`);
-        }
       }
 
       // Handle INT modifier bonus skill notification

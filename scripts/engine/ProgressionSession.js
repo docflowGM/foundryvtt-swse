@@ -70,7 +70,10 @@ export class ProgressionSession {
       itemsToCreate: [],
 
       // Items to delete
-      itemsToDelete: []
+      itemsToDelete: [],
+
+      // Arbitrary actor updates staged via stageActorUpdate()
+      pendingActorUpdates: {}
     };
 
     // Validation errors
@@ -194,6 +197,19 @@ export class ProgressionSession {
     swseLogger.log(`[SESSION] Staging HP: ${value}`);
     this.stagedChanges.hp.push(value);
     return true;
+  }
+
+  /**
+   * Stage arbitrary actor updates to be applied atomically on commit.
+   * Use this instead of direct actor.update() in UI handlers during progression.
+   * @param {Object} updateObject - Foundry dot-notation update object
+   */
+  stageActorUpdate(updateObject) {
+    if (!this.stagedChanges.pendingActorUpdates) {
+      this.stagedChanges.pendingActorUpdates = {};
+    }
+    Object.assign(this.stagedChanges.pendingActorUpdates, updateObject);
+    swseLogger.log(`[SESSION] Staged actor updates:`, Object.keys(updateObject));
   }
 
   // ============================================================================
@@ -405,6 +421,11 @@ export class ProgressionSession {
         updates['system.hp.max'] = currentMax + totalHPGain;
       }
 
+      // Merge any additional staged actor updates (from stageActorUpdate())
+      if (this.stagedChanges.pendingActorUpdates && Object.keys(this.stagedChanges.pendingActorUpdates).length > 0) {
+        Object.assign(updates, this.stagedChanges.pendingActorUpdates);
+      }
+
       // Apply all updates atomically
       swseLogger.log(`[SESSION] Applying ${Object.keys(updates).length} updates to actor...`);
       await applyActorUpdateAtomic(this.actor, updates);
@@ -486,7 +507,8 @@ export class ProgressionSession {
       abilityIncreases: {},
       hp: [],
       itemsToCreate: [],
-      itemsToDelete: []
+      itemsToDelete: [],
+      pendingActorUpdates: {}
     };
 
     this.isRolledBack = true;

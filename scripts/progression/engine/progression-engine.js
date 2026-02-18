@@ -26,12 +26,12 @@ export class ProgressionEngine {
    */
   static async acquireLock(actor) {
     swseLogger.log(`[PROGRESSION-ENGINE] acquireLock: Acquiring lock for actor ${actor.id} (${actor.name})`);
-    const flag = actor.getFlag('swse', 'progressionLock');
-    if (flag) {
+    // In-memory lock only — no actor flag written during progression
+    if (actor._swseProgressionLock) {
       swseLogger.error(`[PROGRESSION-ENGINE] ERROR: acquireLock failed - lock already held for actor ${actor.id}`);
       throw new Error('Progression lock held');
     }
-    await actor.setFlag('swse', 'progressionLock', true);
+    actor._swseProgressionLock = true;
     swseLogger.log(`[PROGRESSION-ENGINE] acquireLock: Lock acquired successfully for actor ${actor.id}`);
   }
 
@@ -40,7 +40,7 @@ export class ProgressionEngine {
    */
   static async releaseLock(actor) {
     swseLogger.log(`[PROGRESSION-ENGINE] releaseLock: Releasing lock for actor ${actor.id}`);
-    await actor.unsetFlag('swse', 'progressionLock');
+    delete actor._swseProgressionLock;
     swseLogger.log(`[PROGRESSION-ENGINE] releaseLock: Lock released successfully for actor ${actor.id}`);
   }
 
@@ -240,8 +240,8 @@ static async _triggerForcePowers(actor) {
 
     const summary = {};
 
+    // In-memory only — flag write deferred; no actor flag during active progression
     actor._swseLastProgressionUpdate = summary;
-    await actor.setFlag('swse', 'lastProgressionUpdate', summary);
 
     ForcePowerEngine.handleForcePowerTriggers(actor, summary);
   } catch (e) {
