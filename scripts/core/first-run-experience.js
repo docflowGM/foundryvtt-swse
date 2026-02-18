@@ -61,9 +61,8 @@ export async function resetWelcome() {
 class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: 'swse-welcome-dialog',
-    window: { icon: 'fa-solid fa-star', title: '⭐ Welcome to SWSE for Foundry VTT' },
-    position: { width: 800, height: 600 },
-    resizable: true
+    window: { icon: 'fa-solid fa-star', title: '⭐ Welcome to SWSE for Foundry VTT', resizable: false },
+    position: { width: 800, height: 'auto' }
   };
 
   static PARTS = {
@@ -119,11 +118,6 @@ class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(
     if (isDevMode) {
       console.debug('SWSE Sentinel: WelcomeDialog lifecycle healthy.');
     }
-
-    // Set position after render completes to satisfy AppV2 contract
-    requestAnimationFrame(() => {
-      this.setPosition({ width: 800, height: 'auto' });
-    });
 
     // --- EVENT LISTENER ATTACHMENT ---
     const button = root.querySelector('[data-action="got-it"]');

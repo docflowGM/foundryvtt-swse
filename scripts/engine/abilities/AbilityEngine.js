@@ -466,7 +466,7 @@ export class AbilityEngine {
   static _isDev() {
     return (
       game?.settings?.get?.("foundryvtt-swse", "devMode") === true ||
-      game?.settings?.get?.("core", "devMode") === true
+      (game?.modules?.get?.('_dev-mode')?.active ?? false)
     );
   }
 }

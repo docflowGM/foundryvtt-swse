@@ -16,11 +16,7 @@ function isEnabled() {
   } catch {
     // fall through
   }
-  try {
-    return !!game?.settings?.get?.('core', 'devMode');
-  } catch {
-    return false;
-  }
+  return game?.modules?.get?.('_dev-mode')?.active ?? false;
 }
 
 function normalizeString(value) {
