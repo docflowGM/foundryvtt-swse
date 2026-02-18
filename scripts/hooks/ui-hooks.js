@@ -175,7 +175,7 @@ function handleRenderApplication(app, html, data) {
     if (isOutOfBounds) {
         const constrainedPos = constrainPosition(currentPos, bounds);
 /* COMMENTED BY fix_ui_js.py - disabled-app-setposition */
-        app.setPosition(constrainedPos);
+        // app.setPosition(constrainedPos);
     }
 }
 
