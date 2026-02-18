@@ -233,37 +233,53 @@ export class SWSEV2VehicleSheet extends
 
     /* ---------------- TAB HANDLING ---------------- */
 
-    for (const tabBtn of root.querySelectorAll(".sheet-tabs .item")) {
-      tabBtn.addEventListener("click", (ev) => {
-        const tabName = ev.currentTarget.dataset.tab;
-        if (!tabName) return;
+    try {
+      for (const tabBtn of root.querySelectorAll(".sheet-tabs .item")) {
+        tabBtn.addEventListener("click", (ev) => {
+          try {
+            const tabName = ev.currentTarget.dataset.tab;
+            if (!tabName) return;
 
-        root.querySelectorAll(".sheet-tabs .item")
-          .forEach(b => b.classList.remove("active"));
+            root.querySelectorAll(".sheet-tabs .item")
+              .forEach(b => b.classList.remove("active"));
 
-        ev.currentTarget.classList.add("active");
+            ev.currentTarget.classList.add("active");
 
-        root.querySelectorAll(".tab")
-          .forEach(t => t.classList.remove("active"));
+            root.querySelectorAll(".tab")
+              .forEach(t => t.classList.remove("active"));
 
-        root.querySelector(`.tab[data-tab="${tabName}"]`)
-          ?.classList.add("active");
-      });
+            root.querySelector(`.tab[data-tab="${tabName}"]`)
+              ?.classList.add("active");
+          } catch (err) {
+            console.error("Error handling tab click:", err);
+          }
+        });
+      }
+    } catch (err) {
+      console.error("Error binding tab handlers:", err);
     }
 
     /* ---------------- CONDITION STEP HANDLING ---------------- */
 
-    for (const el of root.querySelectorAll(".swse-v2-condition-step")) {
-      el.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const step = Number(ev.currentTarget?.dataset?.step);
-        if (!Number.isFinite(step)) return;
-        if (typeof this.actor?.setConditionTrackStep === "function") {
-          await this.actor?.setConditionTrackStep(step);
-        } else if (this.actor) {
-          await ActorEngine.updateActor(this.actor, { 'system.conditionTrack.current': step });
-        }
-      });
+    try {
+      for (const el of root.querySelectorAll(".swse-v2-condition-step")) {
+        el.addEventListener("click", async (ev) => {
+          try {
+            ev.preventDefault();
+            const step = Number(ev.currentTarget?.dataset?.step);
+            if (!Number.isFinite(step)) return;
+            if (typeof this.actor?.setConditionTrackStep === "function") {
+              await this.actor?.setConditionTrackStep(step);
+            } else if (this.actor) {
+              await ActorEngine.updateActor(this.actor, { 'system.conditionTrack.current': step });
+            }
+          } catch (err) {
+            console.error("Error handling condition step click:", err);
+          }
+        });
+      }
+    } catch (err) {
+      console.error("Error binding condition step handlers:", err);
     }
 
     const improveBtn = root.querySelector(".swse-v2-condition-improve");
@@ -514,7 +530,11 @@ export class SWSEV2VehicleSheet extends
 
     /* ---- DRAG & DROP VISUAL FEEDBACK ---- */
 
-    DropService.bindDragFeedback(root);
+    try {
+      DropService.bindDragFeedback(root);
+    } catch (err) {
+      console.error("Error binding drag feedback:", err);
+    }
 
     RenderAssertions.assertRenderComplete(
       this,

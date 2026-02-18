@@ -2,6 +2,7 @@
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { TalentAbilitiesEngine } from '../../engine/TalentAbilitiesEngine.js';
 import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
+import { RenderAssertions } from '../../core/render-assertions.js';
 
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
@@ -49,6 +50,8 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         `SWSEV2NpcSheet requires actor type "npc", got "${this.document.type}"`
       );
     }
+
+    RenderAssertions.assertActorValid(this.document, "SWSEV2NpcSheet");
 
     // AppV2 inheritance: Call super to get base context
     const baseContext = await super._prepareContext(options);
@@ -102,6 +105,8 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       console.error('Error preparing abilities panel for NPC sheet:', err);
     }
 
+    RenderAssertions.assertContextSerializable(context, "SWSEV2NpcSheet");
+
     this._talentAbilitiesCache = context.talentAbilities;
     return foundry.utils.mergeObject(baseContext, context);
   }
@@ -109,7 +114,15 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
   async _onRender(context, options) {
     // AppV2 invariant: all DOM access must use this.element
     const root = this.element;
-    if (!(root instanceof HTMLElement)) {return;}
+    if (!(root instanceof HTMLElement)) {
+      throw new Error("NpcSheet: element not HTMLElement");
+    }
+
+    RenderAssertions.assertDOMElements(
+      root,
+      [".sheet-tabs", ".sheet-body"],
+      "SWSEV2NpcSheet"
+    );
 
     // Highlight the current condition step
     markActiveConditionStep(root, this.actor);
@@ -191,6 +204,11 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         }
       });
     }
+
+    RenderAssertions.assertRenderComplete(
+      this,
+      "SWSEV2NpcSheet"
+    );
   }
 
   _bindTalentAbilitiesPanel(root) {
