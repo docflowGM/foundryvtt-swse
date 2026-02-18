@@ -85,41 +85,11 @@ class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(
     return {};
   }
 
-  async _onRender(context, options) {
-    await super._onRender(context, options);
+  _onRender(context, options) {
+    super._onRender(context, options);
 
     const root = this.element;
-
-    // --- SENTINEL CHECK 1: HTMLElement contract ---
-    if (!(root instanceof HTMLElement)) {
-      console.error('SWSE Sentinel: WelcomeDialog root is not HTMLElement.');
-      return;
-    }
-
-    // --- SENTINEL CHECK 2: Render counter ---
-    this.constructor._sentinelRenderCount++;
-    const renderCount = this.constructor._sentinelRenderCount;
-
-    const isDevMode = game.modules.get('_dev-mode')?.active ?? false;
-    if (isDevMode) {
-      console.debug(`SWSE Sentinel: WelcomeDialog render #${renderCount}`);
-    }
-
-    // --- SENTINEL CHECK 3: Duplicate listener detection ---
-    if (root.dataset.sentinelAttached === 'true') {
-      console.warn('SWSE Sentinel: Duplicate _onRender execution detected.');
-    }
-    root.dataset.sentinelAttached = 'true';
-
-    // --- SENTINEL CHECK 4: Header presence ---
-    const header = root.querySelector('.window-header');
-    if (!header) {
-      console.warn('SWSE Sentinel: No window-header found.');
-    }
-
-    if (isDevMode) {
-      console.debug('SWSE Sentinel: WelcomeDialog lifecycle healthy.');
-    }
+    if (!root) return;
 
     // --- EVENT LISTENER ATTACHMENT ---
     const button = root.querySelector('[data-action="got-it"]');
