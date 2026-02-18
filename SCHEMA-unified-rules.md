@@ -41,11 +41,16 @@ type RuleType =
   | 'skillModifier'
   | 'defenseModifier'
   | 'damageModifier'
+  | 'damageReduction'
+  | 'fastHealing'
   | 'featGrant'
   | 'talentGrant'
   | 'specialAbility'
   | 'abilityScoreModifier'
-  | 'naturalWeapon';
+  | 'naturalWeapon'
+  | 'movement'
+  | 'breathing'
+  | 'immunity';
 
 type ActivationCondition =
   | { type: 'always' }
@@ -401,6 +406,237 @@ When SpeciesTraitEngine processes a naturalWeapon rule:
    ```
 3. **On species change**: Remove all items with `flags.swse.generatedBy === "species"`
 4. **Combat system**: Treats like normal weapons (no special logic)
+
+---
+
+## Damage Reduction Rule
+
+For species with inherent damage reduction (e.g., Chevin DR 2).
+
+```typescript
+interface DamageReductionRule extends RuleElement {
+  type: 'damageReduction';
+
+  // Amount of damage reduced
+  value: number;
+
+  // Which damage types this applies to
+  appliesTo: {
+    damageTypes: string[];  // e.g. ['all'], ['energy'], ['physical', 'fire']
+    exceptions?: string[];  // e.g. ['force'] - types that bypass this DR
+  };
+
+  // Stacking behavior: 'highest' or 'stack'
+  stacking?: 'highest' | 'stack';
+}
+```
+
+### Example: Chevin DR 2
+```json
+{
+  "id": "chevin-dr",
+  "type": "damageReduction",
+  "value": 2,
+  "appliesTo": {
+    "damageTypes": ["all"]
+  },
+  "stacking": "highest",
+  "when": { "type": "always" }
+}
+```
+
+### Example: Type-Specific DR
+```json
+{
+  "id": "dr-energy",
+  "type": "damageReduction",
+  "value": 5,
+  "appliesTo": {
+    "damageTypes": ["energy"],
+    "exceptions": ["force"]
+  },
+  "stacking": "highest"
+}
+```
+
+---
+
+## Fast Healing Rule
+
+For persistent regeneration that occurs at specific timing (usually turn start).
+
+```typescript
+interface FastHealingRule extends RuleElement {
+  type: 'fastHealing';
+
+  // Amount healed per trigger
+  value: number;
+
+  // When healing occurs
+  trigger: 'startOfTurn' | 'endOfTurn' | 'startOfRound';
+
+  // Optional: only heal in specific conditions
+  condition?: {
+    type: 'environment' | 'hasEffect' | 'statusActive';
+    value: string;  // e.g., 'water', 'regeneration-buff', 'alive'
+  };
+
+  // Optional: suppress healing under conditions
+  suppressedBy?: {
+    type: 'damageType' | 'condition' | 'effect';
+    value: string[];
+  };
+}
+```
+
+### Example: Unconditional Fast Healing
+```json
+{
+  "id": "fast-healing-5",
+  "type": "fastHealing",
+  "value": 5,
+  "trigger": "startOfTurn",
+  "when": { "type": "always" }
+}
+```
+
+### Example: Conditional Fast Healing
+```json
+{
+  "id": "fast-healing-water",
+  "type": "fastHealing",
+  "value": 5,
+  "trigger": "startOfTurn",
+  "condition": {
+    "type": "environment",
+    "value": "water"
+  },
+  "suppressedBy": {
+    "type": "damageType",
+    "value": ["fire", "cold"]
+  }
+}
+```
+
+---
+
+## Movement Rule
+
+For species with special movement modes or speeds.
+
+```typescript
+interface MovementRule extends RuleElement {
+  type: 'movement';
+
+  // Movement mode
+  mode: 'walk' | 'climb' | 'swim' | 'fly' | 'burrow';
+
+  // Speed in squares (Saga uses 5-ft squares)
+  speed: number;
+
+  // Can this be used in combat?
+  combatMovement: boolean;
+
+  // Optional condition
+  condition?: {
+    type: 'special' | 'terrain';
+    value: string;
+  };
+}
+```
+
+### Example: Climb Speed
+```json
+{
+  "id": "climb-speed",
+  "type": "movement",
+  "mode": "climb",
+  "speed": 4,
+  "combatMovement": true
+}
+```
+
+---
+
+## Breathing Rule
+
+For species with special environmental requirements or immunities.
+
+```typescript
+interface BreathingRule extends RuleElement {
+  type: 'breathing';
+
+  // Type of breathing/environment adaptation
+  type: 'aquatic' | 'amphibious' | 'vacuum' | 'vacuum-adapted' | 'poison-resistant' | 'other';
+
+  // If true, no special breathing required
+  immune: boolean;
+
+  // Description for UI
+  description: string;
+}
+```
+
+### Example: Aquatic Breathing
+```json
+{
+  "id": "aquatic-breathing",
+  "type": "breathing",
+  "breathType": "aquatic",
+  "immune": false,
+  "description": "Can breathe underwater"
+}
+```
+
+---
+
+## Immunity Rule
+
+For damage type, condition, or effect immunities.
+
+```typescript
+interface ImmunityRule extends RuleElement {
+  type: 'immunity';
+
+  // What this provides immunity to
+  immuneTo: {
+    type: 'damageType' | 'condition' | 'effect' | 'environment';
+    values: string[];  // e.g. ['fire', 'cold'] or ['charm', 'fear']
+  };
+
+  // Optional exceptions
+  exceptions?: string[];
+
+  // Severity: 'full' (immune) or 'partial' (resistance)
+  severity: 'full' | 'partial';
+}
+```
+
+### Example: Droid Immunities
+```json
+{
+  "id": "droid-immunities",
+  "type": "immunity",
+  "immuneTo": {
+    "type": "condition",
+    "values": ["poison", "disease", "sleep"]
+  },
+  "severity": "full"
+}
+```
+
+### Example: Partial Immunity
+```json
+{
+  "id": "fire-resistance",
+  "type": "immunity",
+  "immuneTo": {
+    "type": "damageType",
+    "values": ["fire"]
+  },
+  "severity": "partial"
+}
+```
 
 ---
 

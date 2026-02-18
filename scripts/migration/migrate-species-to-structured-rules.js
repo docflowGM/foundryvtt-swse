@@ -93,6 +93,11 @@ class SpeciesMigrator {
       skillBonuses: 0,
       defenseBonuses: 0,
       damageBonuses: 0,
+      damageReductions: 0,
+      fastHealing: 0,
+      movement: 0,
+      breathing: 0,
+      immunity: 0,
       featGrants: 0,
       specialAbilities: 0,
       failed: 0
@@ -223,6 +228,11 @@ class SpeciesMigrator {
       this._tryParseSkillBonus,
       this._tryParseDefenseBonus,
       this._tryParseDamageBonus,
+      this._tryParseDamageReduction,
+      this._tryParseFastHealing,
+      this._tryParseMovement,
+      this._tryParseBreathing,
+      this._tryParseImmunity,
       this._tryParseFeatGrant
     ];
 
@@ -394,6 +404,218 @@ class SpeciesMigrator {
   }
 
   /**
+   * Parse damage reduction pattern: "Damage Reduction X" or "DR X"
+   */
+  _tryParseDamageReduction(text, originalText) {
+    const patterns = [
+      /damage\s+reduction\s+(\d+)(?:\s+vs?\.?\s+([a-z\s,]+))?/i,
+      /dr\s+(\d+)(?:\s+vs?\.?\s+([a-z\s,]+))?/i
+    ];
+
+    for (const pattern of patterns) {
+      const match = text.match(pattern);
+      if (match) {
+        const value = parseInt(match[1], 10);
+        let damageTypes = ['all'];
+
+        if (match[2]) {
+          damageTypes = match[2]
+            .split(/[,;]/)
+            .map(t => t.trim().toLowerCase())
+            .filter(t => t);
+        }
+
+        const rule = {
+          type: 'damageReduction',
+          value,
+          appliesTo: { damageTypes },
+          stacking: 'highest',
+          when: { type: 'always' }
+        };
+
+        this.stats.damageReductions = (this.stats.damageReductions || 0) + 1;
+        return [rule];
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse fast healing pattern: "regains hit points", "regeneration", etc.
+   */
+  _tryParseFastHealing(text, originalText) {
+    const patterns = [
+      /(?:automatically\s+)?regains?\s+hit\s+points?\s+equal\s+to\s+(?:its\s+)?(\w+)/i,
+      /(?:automatically\s+)?regains?\s+(\d+)\s+hit\s+points?/i,
+      /fast\s+healing\s+(\d+)/i
+    ];
+
+    for (const pattern of patterns) {
+      const match = text.match(pattern);
+      if (match) {
+        let value;
+
+        // If it's "level" or similar, use a reasonable default
+        if (match[1] === 'level' || match[1] === 'character' || !isNaN(match[1])) {
+          value = isNaN(match[1]) ? 1 : parseInt(match[1], 10);
+        } else {
+          continue;
+        }
+
+        const rule = {
+          type: 'fastHealing',
+          value,
+          trigger: 'startOfTurn',
+          when: { type: 'always' }
+        };
+
+        // Check for suppression (e.g., "unless damaged by fire or acid")
+        const suppressMatch = originalText.match(/unless\s+(?:damaged\s+by\s+)?([a-z\s]+?)(?:\s+damage)?(?:\s+or|\.)/i);
+        if (suppressMatch) {
+          const damageType = suppressMatch[1].trim().toLowerCase();
+          rule.suppressedBy = {
+            type: 'damageType',
+            value: [damageType]
+          };
+        }
+
+        this.stats.fastHealing = (this.stats.fastHealing || 0) + 1;
+        return [rule];
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse movement pattern: "swim speed equal to its base speed", "climb speed", etc.
+   */
+  _tryParseMovement(text, originalText) {
+    const patterns = [
+      { regex: /(\d+)\s*(?:ft|feet)?\.?\s+(climb|swim|fly|burrow)\s+speed/i, hasValue: true },
+      { regex: /(climb|swim|fly|burrow)\s+speed\s+equal\s+to\s+(?:its\s+)?base\s+speed/i, hasValue: false },
+      { regex: /gains?\s+a?\s+(climb|swim|fly|burrow)\s+speed\s+equal\s+to\s+(?:its\s+)?base\s+speed/i, hasValue: false },
+      { regex: /gains?\s+(?:a\s+)?(climb|swim|fly|burrow)\s+speed\s+of\s+(\d+)/i, hasValue: true },
+      { regex: /can\s+(climb|swim|fly)\s+at\s+(\d+)\s*(?:ft|feet)?/i, hasValue: true }
+    ];
+
+    for (const pp of patterns) {
+      const match = text.match(pp.regex);
+      if (match) {
+        let mode, speed;
+
+        if (pp.hasValue) {
+          // Pattern has explicit value
+          if (!isNaN(match[1])) {
+            speed = parseInt(match[1], 10);
+            mode = match[2].toLowerCase();
+          } else {
+            mode = match[1].toLowerCase();
+            speed = parseInt(match[2], 10);
+          }
+        } else {
+          // "equal to base speed" - assume standard speed (6 squares = 30 ft)
+          mode = match[1].toLowerCase();
+          speed = 30;
+        }
+
+        // Convert feet to squares if needed (1 square = 5 ft)
+        const speedInSquares = Math.floor(speed / 5) || 1;
+
+        const rule = {
+          type: 'movement',
+          mode,
+          speed: speedInSquares,
+          combatMovement: true,
+          when: { type: 'always' }
+        };
+
+        this.stats.movement = (this.stats.movement || 0) + 1;
+        return [rule];
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse breathing/environment pattern: "can breathe water", "does not need to breathe", etc.
+   */
+  _tryParseBreathing(text, originalText) {
+    const patterns = [
+      { regex: /can\s+breathe\s+water/i, type: 'aquatic' },
+      { regex: /breathe(?:s)?\s+water/i, type: 'aquatic' },
+      { regex: /can\s+breathe\s+(?:in\s+)?(?:a\s+)?vacuum/i, type: 'vacuum' },
+      { regex: /does\s+not\s+need\s+to\s+breathe/i, type: 'vacuum-adapted' },
+      { regex: /amphibious\s+breathing/i, type: 'amphibious' },
+      { regex: /can\s+breathe\s+(?:air\s+and\s+)?water|aquatic\s+breathing/i, type: 'amphibious' },
+      { regex: /poison\s+(?:resistant|immunity|immune)/i, type: 'poison-resistant' }
+    ];
+
+    for (const pp of patterns) {
+      if (pp.regex.test(text)) {
+        const rule = {
+          type: 'breathing',
+          breathType: pp.type,
+          immune: text.toLowerCase().includes('immune'),
+          description: originalText.substring(0, 100),
+          when: { type: 'always' }
+        };
+
+        this.stats.breathing = (this.stats.breathing || 0) + 1;
+        return [rule];
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse immunity pattern: "immune to", "immunity to", etc.
+   */
+  _tryParseImmunity(text, originalText) {
+    const patterns = [
+      /immun(?:e|ity)\s+to\s+([a-z\s,]+?)(?:\s+(?:damage|condition))?/i,
+      /cannot\s+be\s+([a-z\s,]+?)(?:\s+by|\.)?/i
+    ];
+
+    for (const pattern of patterns) {
+      const match = text.match(pattern);
+      if (match) {
+        let values = match[1]
+          .split(/[,;and]+/)
+          .map(v => v.trim().toLowerCase())
+          .filter(v => v);
+
+        if (values.length === 0) continue;
+
+        // Determine if it's damage type or condition
+        const damageTypes = ['fire', 'cold', 'electricity', 'energy', 'sonic', 'acid', 'physical', 'piercing', 'slashing', 'bludgeoning'];
+        const conditions = ['poison', 'disease', 'sleep', 'charm', 'fear', 'stun', 'paralysis'];
+
+        const isDamage = values.some(v => damageTypes.some(dt => v.includes(dt)));
+        const isCondition = values.some(v => conditions.some(cond => v.includes(cond)));
+
+        const rule = {
+          type: 'immunity',
+          immuneTo: {
+            type: isDamage ? 'damageType' : isCondition ? 'condition' : 'effect',
+            values
+          },
+          severity: 'full',
+          when: { type: 'always' }
+        };
+
+        this.stats.immunity = (this.stats.immunity || 0) + 1;
+        return [rule];
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Extract context condition from description
    */
   _extractContext(text) {
@@ -457,12 +679,18 @@ class SpeciesMigrator {
     console.log(`   Total species:      ${this.stats.totalSpecies}`);
     console.log(`   Total traits:       ${this.stats.totalTraits}`);
     console.log(`   Converted traits:   ${this.stats.convertedTraits}`);
-    console.log(`   Skill bonuses:      ${this.stats.skillBonuses}`);
-    console.log(`   Defense bonuses:    ${this.stats.defenseBonuses}`);
-    console.log(`   Damage bonuses:     ${this.stats.damageBonuses}`);
-    console.log(`   Feat grants:        ${this.stats.featGrants}`);
-    console.log(`   Special abilities:  ${this.stats.specialAbilities}`);
-    console.log(`   Failed:             ${this.stats.failed}`);
+    console.log(`\n   Rule Types Found:`);
+    console.log(`   - Skill bonuses:    ${this.stats.skillBonuses}`);
+    console.log(`   - Defense bonuses:  ${this.stats.defenseBonuses}`);
+    console.log(`   - Damage bonuses:   ${this.stats.damageBonuses}`);
+    console.log(`   - Damage reduction: ${this.stats.damageReductions}`);
+    console.log(`   - Fast healing:     ${this.stats.fastHealing}`);
+    console.log(`   - Movement:         ${this.stats.movement}`);
+    console.log(`   - Breathing:        ${this.stats.breathing}`);
+    console.log(`   - Immunity:         ${this.stats.immunity}`);
+    console.log(`   - Feat grants:      ${this.stats.featGrants}`);
+    console.log(`   - Special abilities:${this.stats.specialAbilities}`);
+    console.log(`   - Failed:           ${this.stats.failed}`);
 
     const conversionRate = (
       (this.stats.convertedTraits / this.stats.totalTraits) *
