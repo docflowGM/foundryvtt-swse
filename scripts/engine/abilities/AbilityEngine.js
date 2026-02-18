@@ -14,13 +14,15 @@ import { getTalentAbilitiesForActor } from "./talent-ability-module.js";
 import { getForcePowerAbilitiesForActor } from "./forcePower-ability-module.js";
 import { getSpeciesAbilitiesForActor } from "./species-ability-module.js";
 import { getForceModifierAbilitiesForActor } from "./force-modifier-module.js";
+import { getActionAbilitiesForActor } from "./action-ability-module.js";
 
 export const ABILITY_TYPES = Object.freeze([
   "talent",
   "feat",
   "forcePower",
-  "forceModifier", // NEW
+  "forceModifier",
   "starshipManeuver",
+  "action", // NEW: unified action schema (combat/skill/ship/force/environmental)
 ]);
 
 const FORCE_MOD_HOOKS = new Set(["powerUse", "encounterEnd", "roundStart", null]);
@@ -55,6 +57,7 @@ export class AbilityEngine {
     out.push(...getForcePowerAbilitiesForActor(actor, opts));
     out.push(...getSpeciesAbilitiesForActor(actor, opts));
     out.push(...getForceModifierAbilitiesForActor(actor, opts));
+    out.push(...getActionAbilitiesForActor(actor, opts)); // NEW: Actions
 
     return out;
   }
@@ -66,6 +69,56 @@ export class AbilityEngine {
       for (const t of a.tags ?? []) tags.add(String(t));
     }
     return tags;
+  }
+
+  /* ============= Action Selectors (Pure, Non-Mutating) ============= */
+
+  /**
+   * Get all action abilities for actor.
+   * @param {Actor} actor
+   * @param {{pendingData?: object}} [opts]
+   * @returns {Array} Normalized action abilities
+   */
+  static getActions(actor, opts = {}) {
+    return this.getAbilitiesForActor(actor, opts)
+      .map((a) => this._normalizeAbility(actor, a))
+      .filter((a) => a.type === "action");
+  }
+
+  /**
+   * Get actions filtered by subtype.
+   * @param {Actor} actor
+   * @param {string} subtype One of: "skill", "ship", "combat", "force", "environmental"
+   * @param {{pendingData?: object}} [opts]
+   * @returns {Array}
+   */
+  static getActionsBySubtype(actor, subtype, opts = {}) {
+    return this.getActions(actor, opts)
+      .filter((a) => a.subtype === subtype);
+  }
+
+  /**
+   * Get ship actions filtered by crew position.
+   * @param {Actor} actor
+   * @param {string} crewPosition e.g., "pilot", "gunner", "navigator"
+   * @param {{pendingData?: object}} [opts]
+   * @returns {Array}
+   */
+  static getActionsByCrewPosition(actor, crewPosition, opts = {}) {
+    return this.getActions(actor, opts)
+      .filter((a) => a.crewPosition === crewPosition);
+  }
+
+  /**
+   * Get actions filtered by action.type (action economy).
+   * @param {Actor} actor
+   * @param {string} actionType One of: "standard", "move", "swift", "full-round", "reaction", "free", "varies"
+   * @param {{pendingData?: object}} [opts]
+   * @returns {Array}
+   */
+  static getActionsByActionType(actor, actionType, opts = {}) {
+    return this.getActions(actor, opts)
+      .filter((a) => a.action?.type === actionType);
   }
 
   /* ============= Force Modifiers Selectors ============= */
@@ -118,6 +171,10 @@ export class AbilityEngine {
 
     if (base.type === "forceModifier") {
       return this._normalizeForceModifier(base, raw);
+    }
+
+    if (base.type === "action") {
+      return this._normalizeAction(base, raw);
     }
 
     return base;
@@ -180,6 +237,77 @@ export class AbilityEngine {
       powerId: s?.powerId ?? null,
       categoryId: s?.categoryId ?? null,
       filter: s?.filter ?? null,
+    };
+  }
+
+  /* ============= Action Normalization ============= */
+
+  static _normalizeAction(base, raw) {
+    const VALID_SUBTYPES = ["skill", "ship", "combat", "force", "environmental"];
+    const VALID_ACTION_TYPES = ["standard", "move", "swift", "full-round", "reaction", "free", "varies"];
+    const VALID_ENGINES = ["combat", "vehicle", "skill", "force"];
+
+    const subtype = VALID_SUBTYPES.includes(raw?.subtype) ? raw.subtype : "combat";
+    const actionType = VALID_ACTION_TYPES.includes(raw?.action?.type) ? raw.action.type : "standard";
+    const actionCost = raw?.action?.cost ?? null;
+
+    // Related skills: ensure array of normalized objects
+    const relatedSkills = Array.isArray(raw?.relatedSkills)
+      ? raw.relatedSkills.map((s) => this._normalizeRelatedSkill(s))
+      : [];
+
+    // Resolve engine from subtype
+    const engineFromSubtype =
+      subtype === "ship" ? "vehicle" :
+      subtype === "skill" ? "skill" :
+      subtype === "combat" ? "combat" :
+      subtype === "force" ? "force" :
+      subtype === "environmental" ? "skill" :
+      "combat";
+
+    const engine = raw?.resolution?.engine
+      ? (VALID_ENGINES.includes(raw.resolution.engine) ? raw.resolution.engine : engineFromSubtype)
+      : engineFromSubtype;
+
+    const out = {
+      ...base,
+      type: "action",
+      subtype,
+      action: {
+        type: actionType,
+        cost: actionCost,
+      },
+      crewPosition: raw?.crewPosition ?? null,
+      relatedSkills,
+      effect: raw?.effect ?? null,
+      prerequisites: Array.isArray(raw?.prerequisites) ? raw.prerequisites : [],
+      resolution: { engine },
+    };
+
+    // Dev-only validation
+    if (this._isDev()) {
+      if (!VALID_SUBTYPES.includes(subtype)) console.warn("SWSE | action invalid subtype", { subtype, out });
+      if (!VALID_ACTION_TYPES.includes(actionType)) console.warn("SWSE | action invalid action.type", { actionType, out });
+      if (!VALID_ENGINES.includes(engine)) console.warn("SWSE | action invalid resolution.engine", { engine, out });
+    }
+
+    return out;
+  }
+
+  static _normalizeRelatedSkill(s) {
+    if (!s) return null;
+
+    const VALID_DC_TYPES = ["flat", "opposed", "expression", "varies"];
+    const dcType = VALID_DC_TYPES.includes(s?.dc?.type) ? s.dc.type : "flat";
+
+    return {
+      skill: s?.skill ?? "knowledge",
+      dc: {
+        type: dcType,
+        value: s?.dc?.value ?? null,
+      },
+      when: s?.when ?? null,
+      outcome: s?.outcome ?? null,
     };
   }
 
