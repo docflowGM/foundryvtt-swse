@@ -1,6 +1,7 @@
 // scripts/sheets/v2/npc-sheet.js
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { TalentAbilitiesEngine } from '../../engine/TalentAbilitiesEngine.js';
+import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
@@ -88,8 +89,23 @@ async _prepareContext(options) {
         role: game.user.role
       },
       config: CONFIG.SWSE,
-      talentAbilities: TalentAbilitiesEngine.toSerializable(TalentAbilitiesEngine.getAbilitiesForActor(actor))
+      talentAbilities: TalentAbilitiesEngine.toSerializable(TalentAbilitiesEngine.getAbilitiesForActor(actor)),
+      // Abilities panel data (Phase 3)
+      feats: [],
+      talents: [],
+      racialAbilities: [],
+      abilityPanel: {}
     };
+
+    try {
+      const abilityPanel = AbilityEngine.getCardPanelModelForActor(actor);
+      context.abilityPanel = abilityPanel;
+      context.feats = abilityPanel.all?.filter(a => a.type === "feat") ?? [];
+      context.talents = abilityPanel.all?.filter(a => a.type === "talent") ?? [];
+      context.racialAbilities = abilityPanel.all?.filter(a => a.type === "racialAbility") ?? [];
+    } catch (err) {
+      console.error('Error preparing abilities panel for NPC sheet:', err);
+    }
 
     this._talentAbilitiesCache = context.talentAbilities;
     return context;
@@ -141,6 +157,9 @@ async _prepareContext(options) {
 
     // Talent Abilities panel (multi-option actions, filtering)
     this._bindTalentAbilitiesPanel(root);
+
+    // Abilities tab handlers (Phase 3)
+    this._bindAbilityCardHandlers(root);
 
     // Condition track persistence toggle
     const persistentCheckbox = root.querySelector('.swse-v2-condition-persistent');
@@ -274,6 +293,66 @@ _bindTalentAbilitiesPanel(root) {
     });
 
     applyFilter('all');
+  }
+
+  /* -------- ABILITIES TAB HANDLERS (Phase 3) -------- */
+
+  _bindAbilityCardHandlers(root) {
+    // Ability card chat button
+    root.querySelectorAll('.ability-chat-btn').forEach((btn) => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const abilityId = ev.currentTarget?.dataset?.abilityId;
+        if (!abilityId) return;
+
+        try {
+          const { ActionChatEngine } = await import('../../chat/action-chat-engine.js');
+          await ActionChatEngine.emote(this.actor, `uses ability: ${abilityId}`);
+        } catch (err) {
+          console.error('Error posting ability chat:', err);
+        }
+      });
+    });
+
+    // Ability card roll button
+    root.querySelectorAll('.ability-roll-btn').forEach((btn) => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const abilityId = ev.currentTarget?.dataset?.abilityId;
+        if (!abilityId) return;
+
+        try {
+          const ability = this.actor.items?.get(abilityId);
+          if (ability && typeof rollAttack === 'function') {
+            const { rollAttack } = await import('../../combat/rolls/attacks.js');
+            await rollAttack(this.actor, ability);
+          }
+        } catch (err) {
+          console.error('Error rolling ability:', err);
+        }
+      });
+    });
+
+    // Ability card use button
+    root.querySelectorAll('.ability-use-btn').forEach((btn) => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const abilityId = ev.currentTarget?.dataset?.abilityId;
+        if (!abilityId) return;
+
+        try {
+          const ability = this.actor.items?.get(abilityId);
+          if (ability) {
+            // Mark as used
+            const { AbilityUsage } = await import('../../engine/abilities/ability-usage.js');
+            await AbilityUsage.markUsed(this.actor, abilityId);
+            this.render();
+          }
+        } catch (err) {
+          console.error('Error using ability:', err);
+        }
+      });
+    });
   }
 }
 

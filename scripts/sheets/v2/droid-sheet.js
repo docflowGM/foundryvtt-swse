@@ -11,6 +11,7 @@ import { rollSkill } from '../../rolls/skills.js';
 import { rollAttack } from '../../combat/rolls/attacks.js';
 import { DropService } from '../../services/drop-service.js';
 import { isXPEnabled } from '../../engine/progression/xp-engine.js';
+import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -102,6 +103,19 @@ export class SWSEV2DroidSheet extends
     const xpPercent = xpData?.progressPercent ?? 0;
     const isGM = game.user?.isGM === true;
 
+    // Abilities panel data (Phase 3)
+    let feats = [];
+    let talents = [];
+    let racialAbilities = [];
+    try {
+      const abilityPanel = AbilityEngine.getCardPanelModelForActor(actor);
+      feats = abilityPanel.all?.filter(a => a.type === "feat") ?? [];
+      talents = abilityPanel.all?.filter(a => a.type === "talent") ?? [];
+      racialAbilities = abilityPanel.all?.filter(a => a.type === "racialAbility") ?? [];
+    } catch (err) {
+      console.error('Error preparing abilities panel for Droid sheet:', err);
+    }
+
     const overrides = {
       actor,
       system: actor.system,
@@ -121,6 +135,9 @@ export class SWSEV2DroidSheet extends
       armor,
       weapons,
       ownedActorMap,
+      feats,
+      talents,
+      racialAbilities,
       editable: this.isEditable,
       user: {
         id: game.user.id,
@@ -428,6 +445,10 @@ export class SWSEV2DroidSheet extends
       });
     }
 
+    /* ---- ABILITIES TAB HANDLERS (Phase 3) ---- */
+
+    this._bindAbilityCardHandlers(root);
+
     /* ---- DRAG & DROP VISUAL FEEDBACK ---- */
 
     DropService.bindDragFeedback(root);
@@ -436,6 +457,63 @@ export class SWSEV2DroidSheet extends
       this,
       "SWSEV2DroidSheet"
     );
+  }
+
+  _bindAbilityCardHandlers(root) {
+    // Ability card chat button
+    root.querySelectorAll('.ability-chat-btn').forEach((btn) => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const abilityId = ev.currentTarget?.dataset?.abilityId;
+        if (!abilityId) return;
+
+        try {
+          const { ActionChatEngine } = await import('../../chat/action-chat-engine.js');
+          await ActionChatEngine.emote(this.document, `uses ability: ${abilityId}`);
+        } catch (err) {
+          console.error('Error posting ability chat:', err);
+        }
+      });
+    });
+
+    // Ability card roll button
+    root.querySelectorAll('.ability-roll-btn').forEach((btn) => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const abilityId = ev.currentTarget?.dataset?.abilityId;
+        if (!abilityId) return;
+
+        try {
+          const ability = this.document.items?.get(abilityId);
+          if (ability) {
+            await rollAttack(this.document, ability);
+          }
+        } catch (err) {
+          console.error('Error rolling ability:', err);
+        }
+      });
+    });
+
+    // Ability card use button
+    root.querySelectorAll('.ability-use-btn').forEach((btn) => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const abilityId = ev.currentTarget?.dataset?.abilityId;
+        if (!abilityId) return;
+
+        try {
+          const ability = this.document.items?.get(abilityId);
+          if (ability) {
+            // Mark as used
+            const { AbilityUsage } = await import('../../engine/abilities/ability-usage.js');
+            await AbilityUsage.markUsed(this.document, abilityId);
+            this.render();
+          }
+        } catch (err) {
+          console.error('Error using ability:', err);
+        }
+      });
+    });
   }
 
   /* -------- -------- -------- -------- -------- -------- -------- -------- */
