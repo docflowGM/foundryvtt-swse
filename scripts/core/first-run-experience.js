@@ -129,22 +129,29 @@ async function showWelcomeDialog() {
 /**
  * Initialize first-run experience
  * Called from hardening-init.js ready hook
+ *
+ * Fixed: Use canvasReady hook to ensure ApplicationV2 UI layer is fully stable
+ * before rendering the dialog. This prevents "Cannot read properties of null" errors
+ * when ApplicationV2 attempts to position the window.
  */
-export async function initializeFirstRunExperience() {
-  if (!game?.ready || !game?.user?.isGM) {
-    return;
-  }
+export function initializeFirstRunExperience() {
+  if (!game?.user?.isGM) return;
 
-  try {
-    const show = await shouldShowWelcome();
-    if (show) {
+  Hooks.once("canvasReady", async () => {
+    try {
+      const show = await shouldShowWelcome();
+      if (!show) return;
+
       SWSELogger.log('Showing first-run welcome dialog');
-      await new Promise(resolve => setTimeout(resolve, 0));
+
+      // Ensure UI layer is fully stable before rendering
+      await new Promise(resolve => requestAnimationFrame(() => resolve()));
+
       await showWelcomeDialog();
+    } catch (err) {
+      SWSELogger.error('First-run experience error:', err.message);
     }
-  } catch (err) {
-    SWSELogger.error('First-run experience error:', err.message);
-  }
+  });
 }
 
 /**
