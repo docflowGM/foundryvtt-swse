@@ -1,0 +1,156 @@
+/* ========================================================================== */
+/* Abilities Tab Styles - Phase 3 */
+/* Filter bar, action economy color coding, and ability cards */
+/* ========================================================================== */
+
+.swse-abilities-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.swse-abilities-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  background: rgba(0, 20, 30, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+.swse-abilities-filters select,
+.swse-abilities-filters input {
+  min-width: 140px;
+  padding: 6px 8px;
+  background: rgba(0, 40, 60, 0.8);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 4px;
+  color: inherit;
+}
+
+.swse-abilities-filters select:focus,
+.swse-abilities-filters input:focus {
+  border-color: rgba(0, 255, 255, 0.6);
+  box-shadow: 0 0 6px rgba(0, 255, 255, 0.4);
+}
+
+.swse-ability-section {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px;
+  background: rgba(0, 20, 30, 0.2);
+}
+
+.swse-ability-section h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: rgba(0, 255, 255, 0.9);
+}
+
+.swse-ability-card {
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 6px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 40, 60, 0.6);
+  transition: all 0.2s ease;
+}
+
+.swse-ability-card:hover {
+  background: rgba(0, 60, 80, 0.8);
+  box-shadow: 0 2px 8px rgba(0, 255, 255, 0.2);
+}
+
+/* Action Economy Color Coding */
+.swse-ability-card[data-action="free"],
+.swse-ability-card[data-action="passive"] {
+  border-left-color: rgba(0, 255, 0, 0.6);
+}
+
+.swse-ability-card[data-action="swift"],
+.swse-ability-card[data-action="move"] {
+  border-left-color: rgba(255, 200, 0, 0.6);
+}
+
+.swse-ability-card[data-action="standard"] {
+  border-left-color: rgba(255, 255, 0, 0.6);
+}
+
+.swse-ability-card[data-action="reaction"] {
+  border-left-color: rgba(0, 120, 255, 0.7);
+}
+
+.swse-ability-card[data-action="fullRound"] {
+  border-left-color: rgba(255, 0, 0, 0.6);
+}
+
+.swse-ability-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.swse-ability-card-title {
+  font-weight: 600;
+  font-size: 1em;
+}
+
+.swse-ability-card-action {
+  font-size: 0.85em;
+  opacity: 0.8;
+  color: rgba(0, 255, 255, 0.7);
+}
+
+.swse-ability-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.swse-ability-tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  font-size: 0.85em;
+  background: rgba(0, 100, 120, 0.5);
+  transition: all 0.15s ease;
+}
+
+.swse-ability-tag:hover {
+  border-color: rgba(0, 255, 255, 0.6);
+  background: rgba(0, 120, 150, 0.7);
+}
+
+.swse-ability-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.swse-ability-actions button {
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  background: rgba(0, 100, 120, 0.6);
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.15s ease;
+}
+
+.swse-ability-actions button:hover {
+  border-color: rgba(0, 255, 255, 0.6);
+  background: rgba(0, 140, 160, 0.8);
+}
+
+.swse-ability-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

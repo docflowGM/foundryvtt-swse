@@ -15,6 +15,7 @@ import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
 import { PrerequisiteEngine } from "../../engine/prerequisites/PrerequisiteEngine.js";
 import { ModifierEngine } from "../../engine/modifiers/ModifierEngine.js";
 import { ModifierBreakdownDialog } from "../../apps/dialogs/modifier-breakdown-dialog.js";
+import { AbilityEngine } from "../../engine/abilities/AbilityEngine.js";
 
 /* ========================================================================== */
 /* SWSEV2CharacterSheet                                                       */
@@ -260,6 +261,12 @@ export class SWSEV2CharacterSheet extends
     const forceTechniques = allItems.filter(i => i.type === "forceTechnique");
     const forceSecrets = allItems.filter(i => i.type === "forceSecret");
 
+    // Abilities panel data (Phase 3)
+    const abilityPanel = AbilityEngine.getCardPanelModelForActor(actor);
+    const feats = abilityPanel.all?.filter(a => a.type === "feat") ?? [];
+    const talents = abilityPanel.all?.filter(a => a.type === "talent") ?? [];
+    const racialAbilities = abilityPanel.all?.filter(a => a.type === "racialAbility") ?? [];
+
     // Owned actors
     const ownedActorMap = {};
     for (const entry of actor.system.ownedActors || []) {
@@ -380,6 +387,12 @@ const followerSlots = rawFollowerSlots.map((slot) => {
       forcePowers,
       forceTechniques,
       forceSecrets,
+
+      // Abilities (Phase 3)
+      feats,
+      talents,
+      racialAbilities,
+      abilityPanel,
 
       // Dark Side
       darkSideMax,
@@ -1737,6 +1750,9 @@ async _cycleFollowerInModal(delta) {
 
     DropService.bindDragFeedback(root);
 
+    /* -------- ABILITIES TAB HANDLERS (Phase 3) -------- */
+    this._bindAbilityCardHandlers(root);
+
     RenderAssertions.assertRenderComplete(
       this,
       "SWSEV2CharacterSheet"
@@ -1759,6 +1775,65 @@ _bindFollowerInlineModal(root) {
 
   prevBtn?.addEventListener('click', () => this._cycleFollowerInModal(-1));
   nextBtn?.addEventListener('click', () => this._cycleFollowerInModal(1));
+}
+
+/* -------- ABILITIES TAB HANDLERS (Phase 3) -------- */
+
+_bindAbilityCardHandlers(root) {
+  // Ability card chat button
+  root.querySelectorAll('.ability-chat-btn').forEach((btn) => {
+    btn.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      const abilityId = ev.currentTarget?.dataset?.abilityId;
+      if (!abilityId) return;
+
+      try {
+        const { ActionChatEngine } = await import('../../chat/action-chat-engine.js');
+        await ActionChatEngine.emote(this.document, `uses ability: ${abilityId}`);
+      } catch (err) {
+        console.error('Error posting ability chat:', err);
+      }
+    });
+  });
+
+  // Ability card roll button
+  root.querySelectorAll('.ability-roll-btn').forEach((btn) => {
+    btn.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      const abilityId = ev.currentTarget?.dataset?.abilityId;
+      if (!abilityId) return;
+
+      try {
+        const ability = this.document.items?.get(abilityId);
+        if (ability && typeof rollAttack === 'function') {
+          await rollAttack(this.document, ability);
+        }
+      } catch (err) {
+        console.error('Error rolling ability:', err);
+      }
+    });
+  });
+
+  // Ability card use button
+  root.querySelectorAll('.ability-use-btn').forEach((btn) => {
+    btn.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      const abilityId = ev.currentTarget?.dataset?.abilityId;
+      if (!abilityId) return;
+
+      try {
+        const ability = this.document.items?.get(abilityId);
+        if (ability) {
+          // Mark as used
+          const { AbilityUsage } = await import('../../engine/abilities/ability-usage.js');
+          await AbilityUsage.markUsed(this.document, abilityId);
+          this.render();
+        }
+      } catch (err) {
+        console.error('Error using ability:', err);
+      }
+    });
+  });
 }
 
   /* -------- -------- -------- -------- -------- -------- -------- -------- */

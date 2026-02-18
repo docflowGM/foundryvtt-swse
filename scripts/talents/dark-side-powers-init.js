@@ -940,4 +940,6 @@ Hooks.once('ready', () => {
 export default DarkSidePowers;
 
 // Back-compat alias
-window.SWSE.macros.sithAlchemyCreate = window.SWSE.macros.sithAlchemy;
+if (window.SWSE?.macros) {
+  window.SWSE.macros.sithAlchemyCreate = window.SWSE.macros.sithAlchemy;
+}

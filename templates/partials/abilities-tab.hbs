@@ -1,0 +1,175 @@
+<!-- Phase 3: Abilities Tab Template -->
+<div class="swse-abilities-tab">
+  <!-- Filter Bar -->
+  <div class="swse-abilities-filters">
+    <select name="filter-section" class="filter-section">
+      <option value="">All Sections</option>
+      <option value="feats">Feats</option>
+      <option value="talents">Talents</option>
+      <option value="racial">Racial Abilities</option>
+    </select>
+
+    <select name="filter-action" class="filter-action">
+      <option value="">All Action Types</option>
+      <option value="free">Free Action</option>
+      <option value="swift">Swift Action</option>
+      <option value="move">Move Action</option>
+      <option value="standard">Standard Action</option>
+      <option value="reaction">Reaction</option>
+      <option value="fullRound">Full-Round Action</option>
+      <option value="passive">Passive</option>
+    </select>
+
+    <input type="text" name="filter-search" class="filter-search" placeholder="Search abilities...">
+
+    <select name="sort-by" class="sort-by">
+      <option value="name">Sort by Name</option>
+      <option value="action">Sort by Action Type</option>
+      <option value="recent">Most Recent</option>
+    </select>
+  </div>
+
+  <!-- Feats Section -->
+  <div class="swse-ability-section feats-section">
+    <h3>{{localize "SWSE.ACTOR.TABS.FEATS"}}</h3>
+    <div class="ability-list feats-list">
+      {{#each feats}}
+        <div class="swse-ability-card" data-ability-id="{{this.id}}" data-action="{{this.actionEconomy}}">
+          <div class="swse-ability-card-header">
+            <div class="swse-ability-card-title">{{this.name}}</div>
+            {{#if this.actionEconomy}}
+              <div class="swse-ability-card-action">{{this.actionEconomy}}</div>
+            {{/if}}
+          </div>
+
+          {{#if this.description}}
+            <p class="ability-description">{{this.description}}</p>
+          {{/if}}
+
+          {{#if this.tags}}
+            <div class="swse-ability-tags">
+              {{#each this.tags}}
+                <span class="swse-ability-tag" data-tag="{{this}}">{{this}}</span>
+              {{/each}}
+            </div>
+          {{/if}}
+
+          <div class="swse-ability-actions">
+            {{#if this.rollData.canRoll}}
+              <button type="button" class="ability-roll-btn" data-ability-id="{{this.id}}">
+                {{localize "SWSE.ACTION.ROLL"}}
+              </button>
+            {{/if}}
+            <button type="button" class="ability-chat-btn" data-ability-id="{{this.id}}">
+              {{localize "SWSE.ACTION.CHAT"}}
+            </button>
+            {{#if this.usage.canUse}}
+              <button type="button" class="ability-use-btn" data-ability-id="{{this.id}}">
+                {{localize "SWSE.ACTION.USE"}}
+                {{#if this.usage.isLimited}}
+                  ({{this.usage.current}}/{{this.usage.max}})
+                {{/if}}
+              </button>
+            {{/if}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+
+  <!-- Talents Section -->
+  <div class="swse-ability-section talents-section">
+    <h3>{{localize "SWSE.ACTOR.TABS.TALENTS"}}</h3>
+    <div class="ability-list talents-list">
+      {{#each talents}}
+        <div class="swse-ability-card" data-ability-id="{{this.id}}" data-action="{{this.actionEconomy}}">
+          <div class="swse-ability-card-header">
+            <div class="swse-ability-card-title">{{this.name}}</div>
+            {{#if this.actionEconomy}}
+              <div class="swse-ability-card-action">{{this.actionEconomy}}</div>
+            {{/if}}
+          </div>
+
+          {{#if this.description}}
+            <p class="ability-description">{{this.description}}</p>
+          {{/if}}
+
+          {{#if this.tags}}
+            <div class="swse-ability-tags">
+              {{#each this.tags}}
+                <span class="swse-ability-tag" data-tag="{{this}}">{{this}}</span>
+              {{/each}}
+            </div>
+          {{/if}}
+
+          <div class="swse-ability-actions">
+            {{#if this.rollData.canRoll}}
+              <button type="button" class="ability-roll-btn" data-ability-id="{{this.id}}">
+                {{localize "SWSE.ACTION.ROLL"}}
+              </button>
+            {{/if}}
+            <button type="button" class="ability-chat-btn" data-ability-id="{{this.id}}">
+              {{localize "SWSE.ACTION.CHAT"}}
+            </button>
+            {{#if this.usage.canUse}}
+              <button type="button" class="ability-use-btn" data-ability-id="{{this.id}}">
+                {{localize "SWSE.ACTION.USE"}}
+                {{#if this.usage.isLimited}}
+                  ({{this.usage.current}}/{{this.usage.max}})
+                {{/if}}
+              </button>
+            {{/if}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+
+  <!-- Racial Abilities Section -->
+  <div class="swse-ability-section racial-section">
+    <h3>{{localize "SWSE.ACTOR.TABS.RACIAL"}}</h3>
+    <div class="ability-list racial-list">
+      {{#each racial}}
+        <div class="swse-ability-card" data-ability-id="{{this.id}}" data-action="{{this.actionEconomy}}">
+          <div class="swse-ability-card-header">
+            <div class="swse-ability-card-title">{{this.name}}</div>
+            {{#if this.actionEconomy}}
+              <div class="swse-ability-card-action">{{this.actionEconomy}}</div>
+            {{/if}}
+          </div>
+
+          {{#if this.description}}
+            <p class="ability-description">{{this.description}}</p>
+          {{/if}}
+
+          {{#if this.tags}}
+            <div class="swse-ability-tags">
+              {{#each this.tags}}
+                <span class="swse-ability-tag" data-tag="{{this}}">{{this}}</span>
+              {{/each}}
+            </div>
+          {{/if}}
+
+          <div class="swse-ability-actions">
+            {{#if this.rollData.canRoll}}
+              <button type="button" class="ability-roll-btn" data-ability-id="{{this.id}}">
+                {{localize "SWSE.ACTION.ROLL"}}
+              </button>
+            {{/if}}
+            <button type="button" class="ability-chat-btn" data-ability-id="{{this.id}}">
+              {{localize "SWSE.ACTION.CHAT"}}
+            </button>
+            {{#if this.usage.canUse}}
+              <button type="button" class="ability-use-btn" data-ability-id="{{this.id}}">
+                {{localize "SWSE.ACTION.USE"}}
+                {{#if this.usage.isLimited}}
+                  ({{this.usage.current}}/{{this.usage.max}})
+                {{/if}}
+              </button>
+            {{/if}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</div>

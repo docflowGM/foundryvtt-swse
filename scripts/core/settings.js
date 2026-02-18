@@ -230,5 +230,30 @@ export function registerSystemSettings() {
   // Register MetaTuning settings for suggestion engine
   registerMetaTuningSettings();
 
+  // Phase 1: Chat narration setting
+  game.settings.register('foundryvtt-swse', 'enableChatNarrationForRolls', {
+    name: 'Enable Narrative Chat Supplements',
+    hint: 'If enabled, rolls and actions also post short narrative lines to chat. Roll cards remain unchanged.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: true,
+  });
+
+  // Phase 5: Starting credit mode setting
+  game.settings.register('foundryvtt-swse', 'startingCreditMode', {
+    name: 'Starting Credit Mode',
+    hint: 'Determines how base class starting credits are determined during chargen: rolled, maximum, or player choice.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: {
+      roll: 'Roll',
+      max: 'Take Maximum',
+      playerChoice: 'Player Choice',
+    },
+    default: 'roll',
+  });
+
   SWSELogger.log('SWSE | Settings registered');
 }

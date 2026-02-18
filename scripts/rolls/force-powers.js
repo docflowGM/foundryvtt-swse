@@ -58,3 +58,63 @@ export async function rollForcePower(actor, itemId) {
 
   return roll;
 }
+
+/* ============= Phase 4: Narration ============= */
+
+function _pickEffectFromChart(dcChart, rollTotal) {
+  if (!Array.isArray(dcChart) || typeof rollTotal !== "number") return null;
+
+  // Expect entries: { dc: number, description/effect: string }
+  const sorted = dcChart
+    .map((e) => ({ dc: Number(e.dc), text: e.description ?? e.effect ?? "" }))
+    .filter((e) => Number.isFinite(e.dc) && e.text)
+    .sort((a, b) => a.dc - b.dc);
+
+  let best = null;
+  for (const e of sorted) {
+    if (rollTotal >= e.dc) best = e;
+  }
+  return best?.text ?? null;
+}
+
+function _extractFirstDiceExpression(text) {
+  // Minimal dice expression finder: 2d6+3, 4d6, 1d20+@mod won't be rolled here.
+  const m = String(text).match(/\b\d+d\d+(?:\s*[+\-]\s*\d+)?\b/i);
+  return m ? m[0].replace(/\s+/g, "") : null;
+}
+
+/**
+ * Narrate a force power result based on roll total and effect tier from dcChart
+ */
+export async function narrateForcePowerResult(actor, powerItem, roll) {
+  if (!actor || !powerItem || !roll) return;
+
+  try {
+    const { ActionChatEngine } = await import("../chat/action-chat-engine.js");
+
+    const total = roll.total;
+    const chart = powerItem?.system?.dcChart ?? powerItem?.system?.dcchart ?? null;
+
+    const effectText = _pickEffectFromChart(chart, total);
+    if (!effectText) {
+      await ActionChatEngine.narrationForcePower(actor, powerItem.name, total, {});
+      return;
+    }
+
+    // Optional: if effect includes dice, roll it and include total.
+    let extra = `It does ${effectText}`;
+    const diceExpr = _extractFirstDiceExpression(effectText);
+    if (diceExpr) {
+      try {
+        const r = await new Roll(diceExpr, actor.getRollData?.() ?? {}).evaluate({ async: true });
+        extra = `It does ${effectText} (rolled ${diceExpr} = ${r.total}).`;
+      } catch {
+        // ignore
+      }
+    }
+
+    await ActionChatEngine.narrationForcePower(actor, powerItem.name, total, { extra });
+  } catch {
+    // Narration engine not available; continue anyway
+  }
+}

@@ -1,0 +1,100 @@
+<!-- Phase 5: Near-Human Chargen Template -->
+<div class="near-human-container">
+  <!-- Sacrifice Selection -->
+  <div class="near-human-sacrifice">
+    <h3>{{localize "SWSE.CHARGEN.NEAR_HUMAN.SACRIFICE_TITLE"}}</h3>
+    <p class="help-text">{{localize "SWSE.CHARGEN.NEAR_HUMAN.SACRIFICE_HELP"}}</p>
+
+    <label class="sacrifice-option">
+      <input type="checkbox" name="nh-sac-extraFeat" {{checked session.stagedChanges.nearHuman.sacrifices.extraFeat}} data-action="sacrifice">
+      <span>{{localize "SWSE.CHARGEN.NEAR_HUMAN.SACRIFICE_FEAT"}}</span>
+    </label>
+
+    <label class="sacrifice-option">
+      <input type="checkbox" name="nh-sac-extraSkill" {{checked session.stagedChanges.nearHuman.sacrifices.extraSkill}} data-action="sacrifice">
+      <span>{{localize "SWSE.CHARGEN.NEAR_HUMAN.SACRIFICE_SKILL"}}</span>
+    </label>
+
+    <div class="near-human-slots">
+      <strong>{{localize "SWSE.CHARGEN.NEAR_HUMAN.TRAIT_SLOTS"}}:</strong>
+      <span class="slots-count">{{slots}}</span>
+      &nbsp;|&nbsp;
+      <strong>{{localize "SWSE.CHARGEN.NEAR_HUMAN.SELECTED"}}:</strong>
+      <span class="selected-count">{{selectedCount}}</span>
+    </div>
+  </div>
+
+  <!-- Ability Adjustments -->
+  <div class="near-human-ability">
+    <h3>{{localize "SWSE.CHARGEN.NEAR_HUMAN.ABILITY_TITLE"}}</h3>
+    <p class="help-text">{{localize "SWSE.CHARGEN.NEAR_HUMAN.ABILITY_HELP"}}</p>
+
+    <div class="nh-ability-grid">
+      {{#each abilityKeys as |key|}}
+        <div class="nh-ability-row" data-ability="{{key}}">
+          <div class="nh-ability-label">{{uppercase key}}</div>
+          <button type="button" class="nh-ability-step" data-delta="-1" data-ability="{{key}}" {{#unless (canDecrement key)}}disabled{{/unless}}>−</button>
+          <div class="nh-ability-val">{{lookup session.stagedChanges.nearHuman.abilityAdjustments key}}</div>
+          <button type="button" class="nh-ability-step" data-delta="1" data-ability="{{key}}" {{#unless (canIncrement key)}}disabled{{/unless}}>+</button>
+        </div>
+      {{/each}}
+    </div>
+    <div class="nh-ability-sum">
+      <strong>{{localize "SWSE.CHARGEN.NEAR_HUMAN.TOTAL"}}:</strong>
+      <span class="sum-value {{#if (isValidSum)}}valid{{else}}invalid{{/if}}">{{abilitySum}}</span>
+    </div>
+  </div>
+
+  <!-- Trait Selection -->
+  <div class="near-human-grid">
+    <div class="near-human-available">
+      <h3>{{localize "SWSE.CHARGEN.NEAR_HUMAN.AVAILABLE_TRAITS"}}</h3>
+      <div class="trait-list available-traits" data-source="available">
+        {{#each availableTraits as |trait|}}
+          <div class="trait-card" draggable="true" data-trait-id="{{trait.id}}" title="{{trait.description}}">
+            <div class="trait-title">{{trait.label}}</div>
+            <div class="trait-desc">{{truncate trait.description 60}}</div>
+          </div>
+        {{/each}}
+        {{#if (not availableTraits)}}
+          <p class="no-traits">{{localize "SWSE.CHARGEN.NEAR_HUMAN.NO_AVAILABLE"}}</p>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="near-human-selected">
+      <h3>
+        {{localize "SWSE.CHARGEN.NEAR_HUMAN.SELECTED_TRAITS"}}
+        <span class="slot-indicator">({{selectedCount}} / {{slots}})</span>
+      </h3>
+      <div class="trait-list selected-traits" data-drop-zone="true">
+        {{#each session.stagedChanges.nearHuman.selectedTraits as |traitId|}}
+          {{#with (lookupTrait traitId)}}
+            <div class="trait-card selected" data-trait-id="{{traitId}}">
+              <div class="trait-title">{{this.label}}</div>
+              <div class="trait-desc">{{truncate this.description 60}}</div>
+              <button type="button" class="remove-btn" data-trait-id="{{traitId}}" title="Remove trait">×</button>
+            </div>
+          {{/with}}
+        {{/each}}
+        {{#if (not session.stagedChanges.nearHuman.selectedTraits)}}
+          <p class="drop-hint">{{localize "SWSE.CHARGEN.NEAR_HUMAN.DROP_HINT"}}</p>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+  <!-- Validation Status -->
+  <div class="near-human-validation {{#if isValid}}valid{{else}}invalid{{/if}}">
+    {{#if isValid}}
+      <span class="validation-icon">✓</span>
+      <span>{{localize "SWSE.CHARGEN.NEAR_HUMAN.VALID"}}</span>
+    {{else}}
+      <span class="validation-icon">✗</span>
+      <span>{{localize "SWSE.CHARGEN.NEAR_HUMAN.INVALID"}}</span>
+      {{#if (not abilityValid)}}
+        <span class="validation-detail">Ability sum must equal 0</span>
+      {{/if}}
+    {{/if}}
+  </div>
+</div>

@@ -35,8 +35,32 @@ const CANONICAL = new Set([
   'Social',
   'Luck',
   'Resource',
-  'Tactics'
+  'Tactics',
+  // Starship maneuver category tags
+  'ship',
+  'maneuver',
+  // Starship crew role tags
+  'pilot',
+  'gunner',
+  'copilot',
+  'engineer',
+  'commander',
+  'systemOperator',
+  // Starship maneuver semantic tags
+  'attack-pattern',
+  'dogfight',
+  'force'
 ]);
+
+/**
+ * Structured tag namespaces for starship maneuvers.
+ * Used by normalization and filtering logic.
+ */
+const MANEUVER_TAG_NAMESPACES = {
+  category: ['ship', 'maneuver'],
+  role: ['pilot', 'gunner', 'copilot', 'engineer', 'commander', 'systemOperator'],
+  semantic: ['attack-pattern', 'dogfight', 'force']
+};
 
 const ACTION_LABELS = {
   passive: 'Passive',
@@ -85,5 +109,24 @@ export class AbilityTags {
 
   static isCanonical(tag) {
     return CANONICAL.has(_norm(tag));
+  }
+
+  /**
+   * Get starship maneuver tag namespaces.
+   * @returns {object} {category, role, semantic}
+   */
+  static getManeuverTagNamespaces() {
+    return structuredClone(MANEUVER_TAG_NAMESPACES);
+  }
+
+  /**
+   * Check if a tag is in a specific namespace.
+   * @param {string} tag
+   * @param {string} namespace 'category' | 'role' | 'semantic'
+   * @returns {boolean}
+   */
+  static isManeuverTagInNamespace(tag, namespace) {
+    const ns = MANEUVER_TAG_NAMESPACES[namespace] || [];
+    return ns.includes(_norm(tag).toLowerCase());
   }
 }
