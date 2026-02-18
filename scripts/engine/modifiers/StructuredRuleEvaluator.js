@@ -369,6 +369,62 @@ export class StructuredRuleEvaluator {
 
     return grants;
   }
+
+  /**
+   * Extract natural weapon rules from structured rules
+   * Returns array of natural weapon specifications to generate as embedded items
+   * @param {Array} speciesTraits
+   * @param {Actor} actor - Used to check activation conditions
+   * @param {string} speciesId - For provenance tracking
+   * @returns {Array} Array of natural weapon specs
+   */
+  static extractNaturalWeapons(speciesTraits, actor, speciesId) {
+    const weapons = [];
+
+    if (!speciesTraits || !Array.isArray(speciesTraits)) {
+      return weapons;
+    }
+
+    for (const trait of speciesTraits) {
+      if (!trait.rules || !Array.isArray(trait.rules)) {
+        continue;
+      }
+
+      for (const rule of trait.rules) {
+        if (rule.type !== 'naturalWeapon') {
+          continue;
+        }
+
+        // Check if activation condition is met
+        if (!this._checkActivationCondition(rule.when, actor)) {
+          continue;
+        }
+
+        weapons.push({
+          ruleId: rule.id,
+          traitId: trait.id,
+          speciesId: speciesId,
+          name: rule.name || 'Natural Weapon',
+          weaponCategory: rule.weaponCategory || 'melee',
+          attackAbility: rule.attackAbility || 'str',
+          damage: rule.damage || { formula: '1d4', damageType: 'slashing' },
+          critical: rule.critical || { range: 20, multiplier: 2 },
+          proficiency: rule.proficiency || { type: 'natural', isProficient: true },
+          traits: rule.traits || {
+            alwaysArmed: true,
+            countsAsWeapon: true,
+            finesse: false,
+            light: false,
+            twoHanded: false
+          },
+          scaling: rule.scaling || { bySize: false },
+          generatedItemData: rule.generatedItemData || null
+        });
+      }
+    }
+
+    return weapons;
+  }
 }
 
 export default StructuredRuleEvaluator;

@@ -44,7 +44,8 @@ type RuleType =
   | 'featGrant'
   | 'talentGrant'
   | 'specialAbility'
-  | 'abilityScoreModifier';
+  | 'abilityScoreModifier'
+  | 'naturalWeapon';
 
 type ActivationCondition =
   | { type: 'always' }
@@ -281,6 +282,125 @@ interface AbilityScoreModifierRule extends RuleElement {
   value: number;
 }
 ```
+
+---
+
+## Natural Weapon Rule
+
+For permanent, structural attack entries (claws, bite, tail, etc.).
+
+**Important**: Natural weapons are NOT activated abilities. They are permanent attack sources that generate embedded weapon items.
+
+```typescript
+interface NaturalWeaponRule extends RuleElement {
+  type: 'naturalWeapon';
+
+  // Unique identifier within species
+  id: string;
+
+  // Display name
+  name: string;
+
+  // Attack category
+  weaponCategory: 'melee' | 'ranged';
+
+  // Which ability modifier is used for attack rolls
+  attackAbility: 'str' | 'dex' | 'auto';
+
+  // Damage profile
+  damage: {
+    formula: string;              // e.g. "1d6", "1d4"
+    damageType: string;           // slashing, piercing, bludgeoning, sonic, etc.
+  };
+
+  // Critical hit range and multiplier
+  critical?: {
+    range: number;                // Threat range (20 = 20-20, 19 = 19-20)
+    multiplier: number;           // Crit multiplier (2x, 3x, 4x)
+  };
+
+  // Proficiency (always natural for natural weapons)
+  proficiency: {
+    type: 'natural';
+    isProficient: true;
+  };
+
+  // Combat traits
+  traits: {
+    alwaysArmed: boolean;         // Cannot be disarmed
+    countsAsWeapon: boolean;      // Treated as weapon for feat requirements
+    finesse: boolean;             // Can use Dex or Str
+    light: boolean;               // Can be dual-wielded
+    twoHanded: boolean;           // Requires two limbs
+  };
+
+  // Optional damage scaling
+  scaling?: {
+    bySize: boolean;
+    sizeTable?: Record<string, string>; // e.g. { "small": "1d4", "medium": "1d6" }
+  };
+
+  // Optional advanced override for embedded item template
+  generatedItemData?: object;
+}
+```
+
+### Example: Cathar Claws
+
+```json
+{
+  "id": "claws",
+  "type": "naturalWeapon",
+  "name": "Claws",
+  "weaponCategory": "melee",
+  "attackAbility": "str",
+  "damage": {
+    "formula": "1d6",
+    "damageType": "slashing"
+  },
+  "critical": {
+    "range": 20,
+    "multiplier": 2
+  },
+  "proficiency": {
+    "type": "natural",
+    "isProficient": true
+  },
+  "traits": {
+    "alwaysArmed": true,
+    "countsAsWeapon": true,
+    "finesse": false,
+    "light": false,
+    "twoHanded": false
+  },
+  "scaling": {
+    "bySize": false,
+    "sizeTable": null
+  },
+  "when": { "type": "always" }
+}
+```
+
+### Engine Behavior
+
+When SpeciesTraitEngine processes a naturalWeapon rule:
+
+1. **Create embedded Item** of type `weapon`
+2. **Set flags for tracking**:
+   ```json
+   {
+     "flags": {
+       "swse": {
+         "generatedBy": "species",
+         "speciesId": "cathar",
+         "ruleId": "claws",
+         "naturalWeapon": true
+       }
+     }
+   }
+   ```
+3. **On species change**: Remove all items with `flags.swse.generatedBy === "species"`
+4. **Combat system**: Treats like normal weapons (no special logic)
 
 ---
 

@@ -135,5 +135,57 @@
     "equipmentGrants": [],
     "tags": ["test", "defense", "toughness"],
     "notes": ["Test species for defense modifier"]
+  },
+  {
+    "id": "cathar",
+    "name": "Cathar",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "natural-claws",
+        "name": "Natural Claws",
+        "description": "A Cathar has natural claw attacks that deal 1d6 points of slashing damage.",
+        "rules": [
+          {
+            "id": "claws-weapon",
+            "type": "naturalWeapon",
+            "name": "Claws",
+            "weaponCategory": "melee",
+            "attackAbility": "str",
+            "damage": {
+              "formula": "1d6",
+              "damageType": "slashing"
+            },
+            "critical": {
+              "range": 20,
+              "multiplier": 2
+            },
+            "proficiency": {
+              "type": "natural",
+              "isProficient": true
+            },
+            "traits": {
+              "alwaysArmed": true,
+              "countsAsWeapon": true,
+              "finesse": false,
+              "light": false,
+              "twoHanded": false
+            },
+            "scaling": {
+              "bySize": false,
+              "sizeTable": null
+            },
+            "when": { "type": "always" }
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": ["test", "natural-weapon", "claws"],
+    "notes": ["Test species for natural weapon rule generation"]
   }
 ]

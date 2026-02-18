@@ -376,4 +376,120 @@ describe('StructuredRuleEvaluator', () => {
       expect(grants[0].featId).toBe('force-training');
     });
   });
+
+  describe('Natural Weapon Extraction', () => {
+    test('should extract natural weapon specs', () => {
+      const traits = [
+        {
+          id: 'natural-claws',
+          rules: [
+            {
+              id: 'claws-weapon',
+              type: 'naturalWeapon',
+              name: 'Claws',
+              weaponCategory: 'melee',
+              attackAbility: 'str',
+              damage: {
+                formula: '1d6',
+                damageType: 'slashing'
+              },
+              critical: {
+                range: 20,
+                multiplier: 2
+              },
+              proficiency: {
+                type: 'natural',
+                isProficient: true
+              },
+              traits: {
+                alwaysArmed: true,
+                countsAsWeapon: true,
+                finesse: false,
+                light: false,
+                twoHanded: false
+              },
+              scaling: {
+                bySize: false
+              },
+              when: { type: 'always' }
+            }
+          ]
+        }
+      ];
+
+      const actor = createMockActor();
+      const weapons = StructuredRuleEvaluator.extractNaturalWeapons(traits, actor, 'cathar');
+
+      expect(weapons).toHaveLength(1);
+      expect(weapons[0].name).toBe('Claws');
+      expect(weapons[0].damage.formula).toBe('1d6');
+      expect(weapons[0].damage.damageType).toBe('slashing');
+      expect(weapons[0].traits.alwaysArmed).toBe(true);
+      expect(weapons[0].speciesId).toBe('cathar');
+    });
+
+    test('should not extract natural weapons with unmet conditions', () => {
+      const traits = [
+        {
+          id: 'natural-claws',
+          rules: [
+            {
+              id: 'claws-weapon',
+              type: 'naturalWeapon',
+              name: 'Claws',
+              weaponCategory: 'melee',
+              attackAbility: 'str',
+              damage: {
+                formula: '1d6',
+                damageType: 'slashing'
+              },
+              traits: {
+                alwaysArmed: true,
+                countsAsWeapon: true
+              },
+              when: {
+                type: 'levelReached',
+                minLevel: 10
+              }
+            }
+          ]
+        }
+      ];
+
+      // Should not extract at level 1
+      let actor = createMockActor({ system: { level: 1 } });
+      let weapons = StructuredRuleEvaluator.extractNaturalWeapons(traits, actor, 'test');
+      expect(weapons).toHaveLength(0);
+
+      // Should extract at level 10
+      actor = createMockActor({ system: { level: 10 } });
+      weapons = StructuredRuleEvaluator.extractNaturalWeapons(traits, actor, 'test');
+      expect(weapons).toHaveLength(1);
+    });
+
+    test('should provide defaults for missing fields', () => {
+      const traits = [
+        {
+          id: 'basic-weapon',
+          rules: [
+            {
+              id: 'weapon-1',
+              type: 'naturalWeapon',
+              name: 'Bite',
+              when: { type: 'always' }
+            }
+          ]
+        }
+      ];
+
+      const actor = createMockActor();
+      const weapons = StructuredRuleEvaluator.extractNaturalWeapons(traits, actor, 'test');
+
+      expect(weapons).toHaveLength(1);
+      expect(weapons[0].weaponCategory).toBe('melee');
+      expect(weapons[0].attackAbility).toBe('str');
+      expect(weapons[0].damage.formula).toBe('1d4');
+      expect(weapons[0].damage.damageType).toBe('slashing');
+    });
+  });
 });
