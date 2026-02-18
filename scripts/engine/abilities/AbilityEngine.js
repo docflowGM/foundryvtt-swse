@@ -121,6 +121,40 @@ export class AbilityEngine {
       .filter((a) => a.action?.type === actionType);
   }
 
+  /**
+   * Get starship maneuvers.
+   * @param {Actor} actor
+   * @param {{pendingData?: object}} [opts]
+   * @returns {Array} Normalized shipManeuver actions
+   */
+  static getShipManeuvers(actor, opts = {}) {
+    return this.getActionsBySubtype(actor, "shipManeuver", opts);
+  }
+
+  /**
+   * Get starship maneuvers by descriptor.
+   * @param {Actor} actor
+   * @param {string} descriptor One of: "Attack Pattern", "Dogfight", "Force", "Gunner"
+   * @param {{pendingData?: object}} [opts]
+   * @returns {Array}
+   */
+  static getShipManeuversByDescriptor(actor, descriptor, opts = {}) {
+    return this.getShipManeuvers(actor, opts)
+      .filter((m) => m.maneuver?.descriptors?.includes(descriptor));
+  }
+
+  /**
+   * Get starship maneuvers for a specific crew position.
+   * @param {Actor} actor
+   * @param {string} crewPosition e.g., "pilot", "gunner", "navigator"
+   * @param {{pendingData?: object}} [opts]
+   * @returns {Array}
+   */
+  static getShipManeuversForCrewPosition(actor, crewPosition, opts = {}) {
+    return this.getShipManeuvers(actor, opts)
+      .filter((m) => !m.crewPosition || m.crewPosition === crewPosition);
+  }
+
   /* ============= Force Modifiers Selectors ============= */
 
   static getForceModifiers(actor, opts = {}) {
@@ -174,7 +208,14 @@ export class AbilityEngine {
     }
 
     if (base.type === "action") {
-      return this._normalizeAction(base, raw);
+      const normalized = this._normalizeAction(base, raw);
+
+      // Special handling for shipManeuver subtype
+      if (normalized.subtype === "shipManeuver") {
+        return this._normalizeShipManeuver(normalized, raw);
+      }
+
+      return normalized;
     }
 
     return base;
@@ -309,6 +350,78 @@ export class AbilityEngine {
       when: s?.when ?? null,
       outcome: s?.outcome ?? null,
     };
+  }
+
+  /* ============= Starship Maneuver Normalization ============= */
+
+  static _normalizeShipManeuver(base, raw) {
+    const VALID_DESCRIPTORS = ["Attack Pattern", "Dogfight", "Force", "Gunner"];
+
+    const maneuver = raw?.maneuver ?? {};
+
+    // Descriptors (tagging)
+    const descriptors = Array.isArray(maneuver?.descriptors)
+      ? maneuver.descriptors.filter((d) => VALID_DESCRIPTORS.includes(d))
+      : [];
+
+    // Suite usage (regain logic for VehicleEngine)
+    const suiteUsage = {
+      spentOnUse: maneuver?.suiteUsage?.spentOnUse !== false,
+      regain: {
+        rest: maneuver?.suiteUsage?.regain?.rest !== false,
+        natural20Pilot: maneuver?.suiteUsage?.regain?.natural20Pilot !== false,
+        forcePoint: maneuver?.suiteUsage?.regain?.forcePoint !== false,
+        uniqueAbility: maneuver?.suiteUsage?.regain?.uniqueAbility ?? false,
+      },
+    };
+
+    // Pilot check (resolution metadata for VehicleEngine)
+    const pilotCheck = maneuver?.pilotCheck ?? {};
+    const scalingTiers = Array.isArray(pilotCheck?.scalingTiers)
+      ? pilotCheck.scalingTiers.map((t) => ({
+          minCheck: Number.isFinite(t?.minCheck) ? t.minCheck : 15,
+          effect: t?.effect ?? "",
+        }))
+      : [];
+
+    const normalizedPilotCheck = {
+      dc: pilotCheck?.dc ?? null,
+      opposed: Boolean(pilotCheck?.opposed),
+      allOrNothing: Boolean(pilotCheck?.allOrNothing),
+      scalingTiers,
+    };
+
+    // Restrictions (enforcement in VehicleEngine)
+    const restrictions = maneuver?.restrictions ?? {};
+    const normalizedRestrictions = {
+      pilotOnly: Boolean(restrictions?.pilotOnly),
+      starfightersOnly: Boolean(restrictions?.starfightersOnly),
+      dogfightOnly: Boolean(restrictions?.dogfightOnly),
+      forceSensitiveOnly: Boolean(restrictions?.forceSensitiveOnly),
+    };
+
+    const out = {
+      ...base,
+      type: "action",
+      subtype: "shipManeuver",
+      maneuver: {
+        descriptors,
+        suiteUsage,
+        pilotCheck: normalizedPilotCheck,
+        restrictions: normalizedRestrictions,
+      },
+    };
+
+    // Dev-only validation
+    if (this._isDev()) {
+      if (!suiteUsage.spentOnUse) console.warn("SWSE | shipManeuver spentOnUse false (unusual)", { out });
+      if (!suiteUsage.regain.rest) console.warn("SWSE | shipManeuver cannot regain on rest (unusual)", { out });
+      if (scalingTiers.length === 0 && !normalizedPilotCheck.allOrNothing && normalizedPilotCheck.dc === null && !normalizedPilotCheck.opposed) {
+        console.warn("SWSE | shipManeuver no pilotCheck conditions defined", { out });
+      }
+    }
+
+    return out;
   }
 
   static _passesFilter(filter, powerData) {
