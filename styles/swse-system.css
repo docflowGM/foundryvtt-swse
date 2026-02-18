@@ -174,3 +174,20 @@
   padding: 4px 12px;
   cursor: pointer;
 }
+
+/* ================================
+   SECTION 14 — SIDEBAR ICON MASK BASELINE
+   Safe restore for Foundry v13 core UI mask system.
+   Higher specificity than global button.ui-control.icon rules.
+   ================================ */
+#sidebar button.ui-control.icon {
+  mask-image: var(--control-icon);
+  -webkit-mask-image: var(--control-icon);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  background-color: var(--control-icon-color);
+}
