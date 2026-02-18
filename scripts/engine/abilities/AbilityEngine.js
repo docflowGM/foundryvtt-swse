@@ -400,10 +400,32 @@ export class AbilityEngine {
       forceSensitiveOnly: Boolean(restrictions?.forceSensitiveOnly),
     };
 
+    // Tag normalization (filtering semantics)
+    let tags = Array.isArray(raw?.tags) ? [...raw.tags] : [];
+
+    // Ensure base tags present
+    if (!tags.includes("ship")) tags.push("ship");
+    if (!tags.includes("maneuver")) tags.push("maneuver");
+
+    // Derive semantic tags from descriptors
+    if (descriptors.includes("Attack Pattern") && !tags.includes("attack-pattern")) {
+      tags.push("attack-pattern");
+    }
+    if (descriptors.includes("Dogfight") && !tags.includes("dogfight")) {
+      tags.push("dogfight");
+    }
+    if (descriptors.includes("Force") && !tags.includes("force")) {
+      tags.push("force");
+    }
+
+    // Canonicalize tags
+    tags = AbilityTags.canonicalize(tags, base.action?.type ?? "passive");
+
     const out = {
       ...base,
       type: "action",
       subtype: "shipManeuver",
+      tags,
       maneuver: {
         descriptors,
         suiteUsage,
@@ -418,6 +440,12 @@ export class AbilityEngine {
       if (!suiteUsage.regain.rest) console.warn("SWSE | shipManeuver cannot regain on rest (unusual)", { out });
       if (scalingTiers.length === 0 && !normalizedPilotCheck.allOrNothing && normalizedPilotCheck.dc === null && !normalizedPilotCheck.opposed) {
         console.warn("SWSE | shipManeuver no pilotCheck conditions defined", { out });
+      }
+      // Validate role tags
+      const ns = AbilityTags.getManeuverTagNamespaces();
+      const roleTagsInAbility = tags.filter(t => ns.role.includes(t));
+      if (roleTagsInAbility.length === 0) {
+        console.warn("SWSE | shipManeuver has no role tag (pilot/gunner/etc)", { out });
       }
     }
 
