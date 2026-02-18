@@ -1,0 +1,1155 @@
+[
+  {
+    "id": "force-power-vital-transfer",
+    "sourceType": "forcePower",
+    "name": "Vital Transfer",
+    "description": "You channel the Force to heal injuries and restore vitality. The target recovers hit points based on your Use the Force check result.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Vital",
+      "Healing"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "2d6 healing",
+          "description": "Target heals 2d6 hit points"
+        },
+        {
+          "dc": 20,
+          "effect": "4d6 healing",
+          "description": "Target heals 4d6 hit points"
+        },
+        {
+          "dc": 25,
+          "effect": "6d6 healing + condition",
+          "description": "Target heals 6d6 hit points and removes one ongoing condition"
+        },
+        {
+          "dc": 30,
+          "effect": "8d6 healing + all conditions",
+          "description": "Target heals 8d6 hit points and removes all ongoing conditions"
+        }
+      ]
+    },
+    "meta": {
+      "powerLevel": 3,
+      "discipline": "vital",
+      "duration": "Instantaneous",
+      "range": "Touch",
+      "target": "One living creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 99,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-farseeing",
+    "sourceType": "forcePower",
+    "name": "Farseeing",
+    "description": "You peer through the Force to see distant locations or events. You can observe a place you've been before or a person you know, regardless of distance.",
+    "actionType": "extended",
+    "tags": [
+      "Force",
+      "Mind-Affecting",
+      "Scrying"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 20
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 2,
+      "discipline": "telepathic",
+      "duration": "Concentration",
+      "range": "Unlimited",
+      "target": "Special",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 95,
+      "maintainable": true
+    }
+  },
+  {
+    "id": "force-power-force-lightning",
+    "sourceType": "forcePower",
+    "name": "Force Lightning",
+    "description": "You unleash devastating arcs of Force Lightning from your fingertips. The target takes lightning damage based on your Use the Force check result.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Dark Side",
+      "Force Lightning"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "2d6 lightning damage",
+          "description": "Target takes 2d6 lightning damage"
+        },
+        {
+          "dc": 20,
+          "effect": "4d6 lightning damage",
+          "description": "Target takes 4d6 lightning damage"
+        },
+        {
+          "dc": 25,
+          "effect": "6d6 lightning damage + stun",
+          "description": "Target takes 6d6 lightning damage and is stunned for 1 round"
+        },
+        {
+          "dc": 30,
+          "effect": "8d6 lightning damage + stun 1d4",
+          "description": "Target takes 8d6 lightning damage and is stunned for 1d4 rounds"
+        }
+      ]
+    },
+    "meta": {
+      "powerLevel": 4,
+      "discipline": "dark-side",
+      "duration": "Instantaneous",
+      "range": "6 squares",
+      "target": "One creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 96,
+      "maintainable": true
+    }
+  },
+  {
+    "id": "force-power-force-cloak",
+    "sourceType": "forcePower",
+    "name": "Force Cloak",
+    "description": "You bend light and perceptions around yourself, becoming invisible. You gain total concealment and a +10 bonus to Stealth checks.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Mind-Affecting"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 20
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 2,
+      "discipline": "telepathic",
+      "duration": "Concentration",
+      "range": "Personal",
+      "target": "You",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 95,
+      "maintainable": true
+    }
+  },
+  {
+    "id": "force-power-force-disarm",
+    "sourceType": "forcePower",
+    "name": "Force Disarm",
+    "description": "You use telekinetic force to wrench a weapon or object from your target's grasp. Make a Use the Force check opposed by the target's Strength check or Will Defense (whichever is higher).",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Telekinetic"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "opposed",
+      "defender": "Use the Force",
+      "vs": "Defense"
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "Instantaneous",
+      "range": "6 squares",
+      "target": "One creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 96,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-surge",
+    "sourceType": "forcePower",
+    "name": "Surge",
+    "description": "You use the Force to push your body beyond normal limits. You gain an additional move action this turn.",
+    "actionType": "free",
+    "tags": [
+      "Force",
+      "Vital"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "vital",
+      "duration": "1 round",
+      "range": "Personal",
+      "target": "You",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 99,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-force-track",
+    "sourceType": "forcePower",
+    "name": "Force Track",
+    "description": "You place a Force 'mark' on your target, allowing you to track them through the Force. You always know the target's direction and approximate distance for the duration.",
+    "actionType": "extended",
+    "tags": [
+      "Force",
+      "Mind-Affecting"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telepathic",
+      "duration": "24 hours",
+      "range": "Touch",
+      "target": "One creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 97,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-move-object",
+    "sourceType": "forcePower",
+    "name": "Move Object",
+    "description": "You move objects or creatures through the air using telekinesis. The maximum size/weight you can move depends on your Use the Force check result.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Telekinetic"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "Medium (50 kg)",
+          "description": "Move objects up to Medium size or 50 kg"
+        },
+        {
+          "dc": 20,
+          "effect": "Large (250 kg)",
+          "description": "Move objects up to Large size or 250 kg"
+        },
+        {
+          "dc": 25,
+          "effect": "Huge (1 ton)",
+          "description": "Move objects up to Huge size or 1 metric ton"
+        },
+        {
+          "dc": 30,
+          "effect": "Gargantuan (5 tons)",
+          "description": "Move objects up to Gargantuan size or 5 metric tons"
+        },
+        {
+          "dc": 35,
+          "effect": "Colossal (20 tons)",
+          "description": "Move objects up to Colossal size or 20 metric tons (starfighter-sized)"
+        }
+      ]
+    },
+    "meta": {
+      "powerLevel": 2,
+      "discipline": "telekinetic",
+      "duration": "Concentration",
+      "range": "12 squares",
+      "target": "One object or creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 98,
+      "maintainable": true
+    }
+  },
+  {
+    "id": "force-power-rebuke",
+    "sourceType": "forcePower",
+    "name": "Rebuke",
+    "description": "You overwhelm a Force user with a powerful Force presence. If the target is Force-sensitive, they must make a Will save (DC = your UTF check) or be dazed for 1 round.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Mind-Affecting"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 20
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 2,
+      "discipline": "telepathic",
+      "duration": "1 round",
+      "range": "6 squares",
+      "target": "One Force-sensitive creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 99,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-force-slam",
+    "sourceType": "forcePower",
+    "name": "Force Slam",
+    "description": "You use telekinetic force to violently slam your target against a surface. The target takes 4d6 damage and is knocked prone.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Telekinetic"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 20
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 2,
+      "discipline": "telekinetic",
+      "duration": "Instantaneous",
+      "range": "6 squares",
+      "target": "One creature or object",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 97,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-force-defense",
+    "sourceType": "forcePower",
+    "name": "Force Defense",
+    "description": "You use the Force to deflect an incoming attack. You gain a +5 Force bonus to your Reflex Defense against one attack.",
+    "actionType": "reaction",
+    "tags": [
+      "Force",
+      "Telekinetic"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "Instantaneous",
+      "range": "Personal",
+      "target": "You",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 96,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-force-scream",
+    "sourceType": "forcePower",
+    "name": "Force Scream",
+    "description": "You unleash a Force-amplified scream that can shatter objects and stun enemies. All creatures in the area must make a Fortitude save (DC = your Use the Force check) or be stunned for 1 round.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Dark Side",
+      "Sonic"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 20
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 3,
+      "discipline": "dark-side",
+      "duration": "Instantaneous",
+      "range": "6-square cone",
+      "target": "All creatures in area",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": 88,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-malacia",
+    "sourceType": "forcePower",
+    "name": "Malacia",
+    "description": "You disrupt your target's inner ear and equilibrium through the Force. The target must make a Fortitude save (DC = your UTF check) or become nauseated for the duration.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Vital",
+      "Mind-Affecting",
+      "Light Side"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 20
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 2,
+      "discipline": "vital",
+      "duration": "1 round/level",
+      "range": "6 squares",
+      "target": "One living creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 98,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-battle-meditation",
+    "sourceType": "forcePower",
+    "name": "Battle Meditation",
+    "description": "You bolster the morale and combat effectiveness of your allies through the Force. All allies within range gain a +2 morale bonus to attack rolls, damage rolls, and Will Defense.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Mind-Affecting",
+      "Light Side"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 20
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 2,
+      "discipline": "telepathic",
+      "duration": "Concentration (up to 1 minute)",
+      "range": "12 squares",
+      "target": "Allies within range",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 94,
+      "maintainable": true
+    }
+  },
+  {
+    "id": "force-power-force-weapon",
+    "sourceType": "forcePower",
+    "name": "Force Weapon",
+    "description": "You imbue a weapon with the Force, allowing it to bypass damage reduction and strike incorporeal creatures normally.",
+    "actionType": "free",
+    "tags": [
+      "Force",
+      "Telekinetic"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "1 minute",
+      "range": "Touch",
+      "target": "One weapon",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 98,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-drain-life",
+    "sourceType": "forcePower",
+    "name": "Drain Life",
+    "description": "You drain the life force from your target, transferring their vitality to yourself. The target takes damage and you heal an equal amount.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Dark Side",
+      "Life Drain"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "2d6 damage/heal",
+          "description": "Target takes 2d6 damage; you heal 2d6 hit points"
+        },
+        {
+          "dc": 20,
+          "effect": "4d6 damage/heal",
+          "description": "Target takes 4d6 damage; you heal 4d6 hit points"
+        },
+        {
+          "dc": 25,
+          "effect": "6d6 damage/heal + weakened",
+          "description": "Target takes 6d6 damage and is weakened; you heal 6d6 hit points"
+        },
+        {
+          "dc": 30,
+          "effect": "8d6 damage/heal + exhausted",
+          "description": "Target takes 8d6 damage and is exhausted; you heal 8d6 hit points"
+        }
+      ]
+    },
+    "meta": {
+      "powerLevel": 4,
+      "discipline": "dark-side",
+      "duration": "Instantaneous",
+      "range": "6 squares",
+      "target": "One living creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 95,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-force-stun",
+    "sourceType": "forcePower",
+    "name": "Force Stun",
+    "description": "You use the Force to overwhelm your target's mind, stunning them. The target must make a Will save (DC = your UTF check) or be stunned for 1 round.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Mind-Affecting"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 20
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 2,
+      "discipline": "telepathic",
+      "duration": "1 round",
+      "range": "6 squares",
+      "target": "One creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 97,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-sever-force-lesser",
+    "sourceType": "forcePower",
+    "name": "Sever Force (Lesser)",
+    "description": "You temporarily sever your target's connection to the Force. The target cannot use Force Powers or Force Talents for the duration.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Dark Side",
+      "Force Drain"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 25
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 3,
+      "discipline": "dark-side",
+      "duration": "1 encounter",
+      "range": "6 squares",
+      "target": "One Force-sensitive creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 99,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-force-storm",
+    "sourceType": "forcePower",
+    "name": "Force Storm",
+    "description": "You create a massive Force storm of lightning and violent energy. All creatures in the area take 10d6 lightning damage each round (Reflex half, DC = your UTF check).",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Dark Side",
+      "Force Lightning",
+      "Area"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 30
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "dcChart": [
+        {
+          "dc": 30,
+          "effect": "10d6 to all in area",
+          "description": "All creatures in 20-square radius take 10d6 lightning damage (Reflex half)"
+        },
+        {
+          "dc": 35,
+          "effect": "12d6 to all + stun",
+          "description": "All creatures take 12d6 damage (Reflex half) and are stunned 1 round (Fort negates)"
+        },
+        {
+          "dc": 40,
+          "effect": "15d6 to all + disintegrate",
+          "description": "All creatures take 15d6 damage; those reduced to 0 HP are disintegrated"
+        }
+      ]
+    },
+    "meta": {
+      "powerLevel": 6,
+      "discipline": "dark-side",
+      "duration": "Concentration",
+      "range": "12 squares",
+      "target": "20-square radius",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 97,
+      "maintainable": true
+    }
+  },
+  {
+    "id": "force-power-sever-force",
+    "sourceType": "forcePower",
+    "name": "Sever Force",
+    "description": "You permanently sever a Force user's connection to the Force. The target loses all Force abilities permanently.",
+    "actionType": "extended",
+    "tags": [
+      "Force",
+      "Dark Side",
+      "Force Drain"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 30
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 6,
+      "discipline": "dark-side",
+      "duration": "Permanent",
+      "range": "Touch",
+      "target": "One Force-sensitive creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 99,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-force-body",
+    "sourceType": "forcePower",
+    "name": "Force Body",
+    "description": "You use the Force to push your body beyond its normal limits. You gain Damage Reduction 10 and a +4 bonus to Strength until the start of your next turn.",
+    "actionType": "reaction",
+    "tags": [
+      "Force",
+      "Vital"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 25
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 3,
+      "discipline": "vital",
+      "duration": "1 round",
+      "range": "Personal",
+      "target": "You",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 95,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-negate-energy",
+    "sourceType": "forcePower",
+    "name": "Negate Energy",
+    "description": "You use the Force to absorb or deflect energy damage. The target gains energy resistance 20 against one energy attack.",
+    "actionType": "reaction",
+    "tags": [
+      "Force",
+      "Telekinetic"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 20
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 2,
+      "discipline": "telekinetic",
+      "duration": "Instantaneous",
+      "range": "Personal or touch",
+      "target": "You or one creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 99,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-force-sense",
+    "sourceType": "forcePower",
+    "name": "Force Sense",
+    "description": "You open yourself to the Force, sensing danger and gaining heightened awareness. You cannot be surprised and gain a +5 bonus to Perception checks until the start of your next turn.",
+    "actionType": "free",
+    "tags": [
+      "Force",
+      "Mind-Affecting"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telepathic",
+      "duration": "1 round",
+      "range": "Personal",
+      "target": "You",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 96,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-battlemind",
+    "sourceType": "forcePower",
+    "name": "Battlemind",
+    "description": "You focus your mind through the Force, gaining tactical clarity. You gain a +2 insight bonus to Reflex Defense until the start of your next turn.",
+    "actionType": "free",
+    "tags": [
+      "Force",
+      "Mind-Affecting"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telepathic",
+      "duration": "1 round",
+      "range": "Personal",
+      "target": "You",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 94,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-force-thrust",
+    "sourceType": "forcePower",
+    "name": "Force Thrust",
+    "description": "You violently push your target away with telekinetic force. The target is pushed 6 squares away from you and knocked prone, taking 2d6 damage.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Telekinetic"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 20
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 2,
+      "discipline": "telekinetic",
+      "duration": "Instantaneous",
+      "range": "6 squares",
+      "target": "One creature or object",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 97,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-drain-energy",
+    "sourceType": "forcePower",
+    "name": "Drain Energy",
+    "description": "You drain the energy from technological devices through the Force. The target takes energy damage based on your Use the Force check result.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Dark Side"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "2d6 energy damage",
+          "description": "Target takes 2d6 energy damage"
+        },
+        {
+          "dc": 20,
+          "effect": "4d6 energy damage",
+          "description": "Target takes 4d6 energy damage"
+        },
+        {
+          "dc": 25,
+          "effect": "6d6 energy damage + disabled",
+          "description": "Target takes 6d6 energy damage and is disabled for 1 round"
+        },
+        {
+          "dc": 30,
+          "effect": "8d6 energy damage + shutdown",
+          "description": "Target takes 8d6 energy damage and shuts down for 1d4 rounds"
+        }
+      ]
+    },
+    "meta": {
+      "powerLevel": 3,
+      "discipline": "dark-side",
+      "duration": "Instantaneous",
+      "range": "6 squares",
+      "target": "One droid or electronic device",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 95,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-inspire",
+    "sourceType": "forcePower",
+    "name": "Inspire",
+    "description": "You inspire an ally through the Force, granting them confidence and clarity. The target gains a +2 morale bonus to their next attack roll or skill check.",
+    "actionType": "free",
+    "tags": [
+      "Force",
+      "Mind-Affecting"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telepathic",
+      "duration": "1 round",
+      "range": "6 squares",
+      "target": "One ally",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 98,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-force-strike",
+    "sourceType": "forcePower",
+    "name": "Force Strike",
+    "description": "You strike your target with a telekinetic blow. The target takes 2d6 Force damage and must make a Fortitude save (DC = your UTF check) or be knocked prone.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Telekinetic"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "Instantaneous",
+      "range": "6 squares",
+      "target": "One creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 97,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-mind-trick",
+    "sourceType": "forcePower",
+    "name": "Mind Trick",
+    "description": "You influence a weak mind to believe what you tell them or follow a simple suggestion. The target must make a Will save (DC = your UTF check) or be affected.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Mind-Affecting"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telepathic",
+      "duration": "1 minute or until completed",
+      "range": "6 squares",
+      "target": "One creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 98,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-battle-strike",
+    "sourceType": "forcePower",
+    "name": "Battle Strike",
+    "description": "You channel the Force to enhance your next melee attack. Your next melee attack this round gains a +1d6 bonus to damage.",
+    "actionType": "free",
+    "tags": [
+      "Force",
+      "Telekinetic"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "flat",
+      "description": "No check required"
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "1 round",
+      "range": "Personal",
+      "target": "You",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 94,
+      "maintainable": false
+    }
+  },
+  {
+    "id": "force-power-force-grip",
+    "sourceType": "forcePower",
+    "name": "Force Grip",
+    "description": "You use the Force to telekinetically choke or crush your target. The target takes damage each round based on your Use the Force check result.",
+    "actionType": "action",
+    "tags": [
+      "Force",
+      "Dark Side",
+      "Telekinetic"
+    ],
+    "usage": {
+      "charges": 0,
+      "recovery": "none"
+    },
+    "resourceCost": {
+      "forcePoints": 15
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "2d6 damage/round",
+          "description": "Target takes 2d6 damage per round and is immobilized"
+        },
+        {
+          "dc": 20,
+          "effect": "4d6 damage/round",
+          "description": "Target takes 4d6 damage per round and is immobilized"
+        },
+        {
+          "dc": 25,
+          "effect": "6d6 damage/round + lift",
+          "description": "Target takes 6d6 damage per round, is immobilized, and lifted off ground"
+        },
+        {
+          "dc": 30,
+          "effect": "8d6 damage/round + crush",
+          "description": "Target takes 8d6 damage per round and is being crushed (fort save or die)"
+        }
+      ]
+    },
+    "meta": {
+      "powerLevel": 3,
+      "discipline": "dark-side",
+      "duration": "Concentration",
+      "range": "6 squares",
+      "target": "One creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 96,
+      "maintainable": true
+    }
+  }
+]

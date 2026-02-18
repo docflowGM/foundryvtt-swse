@@ -1,0 +1,4467 @@
+[
+  {
+    "name": "Advozse",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "silver-tongue",
+        "name": "Silver Tongue",
+        "description": "An Advozse gains a +5 species bonus on Persuasion checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "persuasion",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "silver-tongue-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "silver-tongue-reroll",
+        "name": "Silver Tongue (Reroll)",
+        "description": "An Advozse may reroll any Persuasion check, but must accept the result of the reroll even if it is worse.",
+        "rules": [
+          {
+            "type": "reroll",
+            "triggeredBy": {
+              "type": "skillCheck",
+              "skillId": "persuasion"
+            },
+            "timesPerEncounter": 1,
+            "outcome": "mustAccept",
+            "description": "An Advozse may reroll any Persuasion check, but must accept the result of the reroll even if it is worse.",
+            "when": {
+              "type": "always"
+            },
+            "id": "silver-tongue-reroll-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "advozse"
+  },
+  {
+    "name": "Aleena",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "small-size",
+        "name": "Small Size",
+        "description": "As a Small creature, an Aleena gains a +5 species bonus to Stealth checks and a +1 species bonus to Reflex Defense, but takes a -5 penalty on grapple checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "stealth",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "small-size-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "aleena"
+  },
+  {
+    "name": "Aqualish",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "ferocity",
+        "name": "Ferocity",
+        "description": "When reduced to half hit points or fewer, an Aqualish gains a +2 species bonus on melee attack rolls and damage rolls until the end of the encounter.",
+        "rules": [
+          {
+            "type": "damageModifier",
+            "attackType": "melee",
+            "target": "damageRoll",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "ferocity-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "aqualish"
+  },
+  {
+    "name": "Arkanian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "darkvision",
+        "name": "Darkvision",
+        "description": "An Arkanian ignores concealment caused by darkness.",
+        "rules": [
+          {
+            "type": "sense",
+            "senseType": "darkvision",
+            "range": null,
+            "description": "An Arkanian ignores concealment caused by darkness.",
+            "when": {
+              "type": "always"
+            },
+            "id": "darkvision-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "genetic-memory",
+        "name": "Genetic Memory",
+        "description": "An Arkanian gains a +2 species bonus on Knowledge (life sciences) checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "knowledgeLifeSciences",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "genetic-memory-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "arkanian"
+  },
+  {
+    "name": "Arkanian Offshoot",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "resilient-physiology",
+        "name": "Resilient Physiology",
+        "description": "An Arkanian Offshoot gains a +2 species bonus to Fortitude Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "resilient-physiology-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "arkanian-offshoot"
+  },
+  {
+    "name": "Balosar",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [
+      {
+        "id": "toxic-breath",
+        "name": "Toxic Breath",
+        "actionType": "standard",
+        "usage": {
+          "perEncounter": null,
+          "perDay": null
+        },
+        "description": "As a standard action, a Balosar may emit toxic gas; creatures adjacent to the Balosar take a -2 penalty on attack rolls until the end of the Balosar's next turn."
+      }
+    ],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "balosar"
+  },
+  {
+    "name": "Barabel",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "reptilian-ferocity",
+        "name": "Reptilian Ferocity",
+        "description": "When reduced to half hit points or fewer, a Barabel gains a +2 species bonus on attack rolls and damage rolls until the end of the encounter.",
+        "rules": [
+          {
+            "type": "damageModifier",
+            "attackType": "melee",
+            "target": "damageRoll",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "reptilian-ferocity-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "barabel"
+  },
+  {
+    "name": "Bith",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "musical-savant",
+        "name": "Musical Savant",
+        "description": "A Bith gains a +5 species bonus on Perform checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "perform",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "musical-savant-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "fragile",
+        "name": "Fragile",
+        "description": "A Bith takes a -2 species penalty to Fortitude Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": -2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "fragile-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "bith"
+  },
+  {
+    "name": "Blood Carver",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "battle-rage",
+        "name": "Battle Rage",
+        "description": "When a Blood Carver takes damage, it gains a +2 species bonus on melee damage rolls until the end of its next turn.",
+        "rules": [
+          {
+            "type": "damageModifier",
+            "attackType": "melee",
+            "target": "damageRoll",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "battle-rage-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "blood-carver"
+  },
+  {
+    "name": "Bothan",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "bothan-spy-network",
+        "name": "Bothan Spy Network",
+        "description": "A Bothan may reroll any Gather Information check, but must accept the result of the reroll even if it is worse.",
+        "rules": [
+          {
+            "type": "reroll",
+            "triggeredBy": {
+              "type": "skillCheck",
+              "skillId": "gatherInfo"
+            },
+            "timesPerEncounter": 1,
+            "outcome": "mustAccept",
+            "description": "A Bothan may reroll any Gather Information check, but must accept the result of the reroll even if it is worse.",
+            "when": {
+              "type": "always"
+            },
+            "id": "bothan-spy-network-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "bothan"
+  },
+  {
+    "name": "Caamasi",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "pacifist-insight",
+        "name": "Pacifist Insight",
+        "description": "A Caamasi gains a +5 species bonus on Initiative checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "initiative",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "pacifist-insight-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "pacifist-insight-reroll",
+        "name": "Pacifist Insight (Reroll)",
+        "description": "A Caamasi may reroll Initiative checks but must accept the new result."
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "caamasi"
+  },
+  {
+    "name": "Cathar",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "claws",
+        "name": "Claws",
+        "description": "A Cathar has natural claw attacks that deal 1d4 points of slashing damage.",
+        "rules": [
+          {
+            "type": "naturalWeapon",
+            "id": "claws-rule-0",
+            "name": "Claws",
+            "weaponCategory": "melee",
+            "attackAbility": "str",
+            "damage": {
+              "formula": "1d4",
+              "damageType": "slashing"
+            },
+            "critical": {
+              "range": 20,
+              "multiplier": 2
+            },
+            "proficiency": {
+              "type": "natural",
+              "isProficient": true
+            },
+            "traits": {
+              "alwaysArmed": true,
+              "countsAsWeapon": true,
+              "finesse": false,
+              "light": false,
+              "twoHanded": false
+            },
+            "when": {
+              "type": "always"
+            }
+          }
+        ]
+      },
+      {
+        "id": "feline-agility",
+        "name": "Feline Agility",
+        "description": "A Cathar gains a +2 species bonus to Reflex Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "reflex",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "feline-agility-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "cathar"
+  },
+  {
+    "name": "Celegian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "force-adaptation",
+        "name": "Force Adaptation",
+        "description": "A Celegian may use the Force even without formal Force training.",
+        "rules": [
+          {
+            "type": "featGrant",
+            "featId": "force-training",
+            "when": {
+              "type": "always"
+            },
+            "allowMultiple": false,
+            "id": "force-adaptation-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "celegian"
+  },
+  {
+    "name": "Cerean",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "binary-brain",
+        "name": "Binary Brain",
+        "description": "A Cerean gains a +2 species bonus on Will Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "binary-brain-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "binary-brain-reroll",
+        "name": "Binary Brain (Reroll)",
+        "description": "A Cerean may reroll any Knowledge check, but must accept the result of the reroll.",
+        "rules": [
+          {
+            "type": "reroll",
+            "triggeredBy": {
+              "type": "skillCheck",
+              "skillId": "knowledgeGalacticLore"
+            },
+            "timesPerEncounter": 1,
+            "outcome": "mustAccept",
+            "description": "A Cerean may reroll any Knowledge check, but must accept the result of the reroll.",
+            "when": {
+              "type": "always"
+            },
+            "id": "binary-brain-reroll-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "cerean"
+  },
+  {
+    "name": "Chagrian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "amphibious",
+        "name": "Amphibious",
+        "description": "A Chagrian can breathe both air and water without penalty.",
+        "rules": [
+          {
+            "type": "breathing",
+            "breathType": "aquatic",
+            "immune": false,
+            "description": "A Chagrian can breathe both air and water without penalty.",
+            "when": {
+              "type": "always"
+            },
+            "id": "amphibious-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "chagrian"
+  },
+  {
+    "name": "Chiss",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "darkvision",
+        "name": "Darkvision",
+        "description": "A Chiss ignores concealment caused by darkness.",
+        "rules": [
+          {
+            "type": "sense",
+            "senseType": "darkvision",
+            "range": null,
+            "description": "A Chiss ignores concealment caused by darkness.",
+            "when": {
+              "type": "always"
+            },
+            "id": "darkvision-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "tactical-training",
+        "name": "Tactical Training",
+        "description": "A Chiss gains a +2 species bonus on Initiative checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "initiative",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "tactical-training-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "chiss"
+  },
+  {
+    "name": "Chistori",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "brute-strength",
+        "name": "Brute Strength",
+        "description": "A Chistori gains a +2 species bonus on melee damage rolls.",
+        "rules": [
+          {
+            "type": "damageModifier",
+            "attackType": "melee",
+            "target": "damageRoll",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "brute-strength-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "chistori"
+  },
+  {
+    "name": "Clawdite",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [
+      {
+        "id": "shapeshifter",
+        "name": "Shapeshifter",
+        "actionType": "fullRound",
+        "usage": {
+          "perEncounter": null,
+          "perDay": null
+        },
+        "description": "As a full-round action, a Clawdite may alter its appearance to resemble any Medium humanoid."
+      }
+    ],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "clawdite"
+  },
+  {
+    "name": "Codru-Ji",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "quad-limbed",
+        "name": "Quad-Limbed",
+        "description": "A Codru-Ji gains a +2 species bonus on grapple checks.",
+        "rules": [
+          {
+            "type": "damageModifier",
+            "attackType": "melee",
+            "target": "attackRoll",
+            "value": 2,
+            "bonusType": "species",
+            "description": "Grapple bonus",
+            "when": {
+              "type": "always"
+            },
+            "id": "quad-limbed-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "codru-ji"
+  },
+  {
+    "name": "Dathomirian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "force-affinity",
+        "name": "Force Affinity",
+        "description": "A Dathomirian gains a +2 species bonus on Use the Force checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "useTheForce",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "force-affinity-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "dathomirian"
+  },
+  {
+    "name": "Dashade",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "force-resistance",
+        "name": "Force Resistance",
+        "description": "A Dashade gains a +5 species bonus to Reflex Defense against Force powers.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "reflex",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "force-resistance-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "dashade"
+  },
+  {
+    "name": "Defel",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "shadow-blend",
+        "name": "Shadow Blend",
+        "description": "A Defel gains concealment in low-light or darker conditions."
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "defel"
+  },
+  {
+    "name": "Draethos",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "resilient-hide",
+        "name": "Resilient Hide",
+        "description": "A Draethos gains a +2 species bonus to Fortitude Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "resilient-hide-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "draethos"
+  },
+  {
+    "name": "Dug",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "reverse-jointed",
+        "name": "Reverse Jointed",
+        "description": "A Dug gains a +2 species bonus on Acrobatics checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "acrobatics",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "reverse-jointed-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "dug"
+  },
+  {
+    "name": "Duros",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "expert-pilot",
+        "name": "Expert Pilot",
+        "description": "As natural spacers, a Duros may choose to reroll any Pilot check, but the result of the reroll must be accepted even if it is worse."
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "duros"
+  },
+  {
+    "name": "Elomin",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "frail-build",
+        "name": "Frail Build",
+        "description": "An Elomin takes a -2 species penalty to Fortitude Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": -2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "frail-build-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "technical-savant",
+        "name": "Technical Savant",
+        "description": "An Elomin gains a +2 species bonus on Mechanics checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "mechanics",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "technical-savant-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "elomin"
+  },
+  {
+    "name": "Ewok",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "small-size",
+        "name": "Small Size",
+        "description": "As a Small creature, an Ewok gains a +5 species bonus to Stealth checks and a +1 species bonus to Reflex Defense, but takes a -5 penalty on grapple checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "stealth",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "small-size-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "primitive-weapons",
+        "name": "Primitive Weapons",
+        "description": "An Ewok gains proficiency with primitive weapons."
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "ewok"
+  },
+  {
+    "name": "Falleen",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [
+      {
+        "id": "pheromones",
+        "name": "Pheromones",
+        "actionType": "standard",
+        "usage": {
+          "perEncounter": null,
+          "perDay": null
+        },
+        "description": "As a standard action, a Falleen may impose a -2 penalty to Will Defense on all living creatures within 6 squares until the end of the encounter."
+      }
+    ],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "falleen"
+  },
+  {
+    "name": "Felucian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "force-sensitivity",
+        "name": "Force Sensitivity",
+        "description": "A Felucian may use the Force even if it does not have the Force Sensitivity feat.",
+        "rules": [
+          {
+            "type": "featGrant",
+            "featId": "force-sensitivity",
+            "when": {
+              "type": "always"
+            },
+            "allowMultiple": false,
+            "id": "force-sensitivity-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "felucian"
+  },
+  {
+    "name": "Feeorin",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "intimidating-presence",
+        "name": "Intimidating Presence",
+        "description": "A Feeorin gains a +5 species bonus on Intimidate checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "persuasion",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "intimidating-presence-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "feeorin"
+  },
+  {
+    "name": "Fosh",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "subtle-influence",
+        "name": "Subtle Influence",
+        "description": "A Fosh gains a +5 species bonus on Deception checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "deception",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "subtle-influence-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "fosh"
+  },
+  {
+    "name": "Gand (Non-Force-Sensitive)",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "third-person-speech",
+        "name": "Third Person Speech",
+        "description": "A Gand gains a +2 species bonus on Will Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "third-person-speech-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "natural-tracker",
+        "name": "Natural Tracker",
+        "description": "A Gand gains a +5 species bonus on Survival checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "survival",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "natural-tracker-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [
+      {
+        "itemName": "Breathing Apparatus",
+        "type": "grantItem",
+        "starting": true
+      },
+      {
+        "itemName": "Breathing Filter",
+        "type": "grantItem",
+        "starting": true
+      },
+      {
+        "itemName": "Transliterator",
+        "type": "grantItem",
+        "starting": true
+      }
+    ],
+    "tags": [],
+    "notes": [],
+    "id": "gand-non-force-sensitive"
+  },
+  {
+    "name": "Gamorrean",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "low-cunning",
+        "name": "Low Cunning",
+        "description": "A Gamorrean takes a -2 species penalty on Will Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": -2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "low-cunning-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "brutal-charge",
+        "name": "Brutal Charge",
+        "description": "A Gamorrean gains a +2 species bonus on melee damage rolls when charging.",
+        "rules": [
+          {
+            "type": "damageModifier",
+            "attackType": "melee",
+            "target": "damageRoll",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "brutal-charge-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "gamorrean"
+  },
+  {
+    "name": "Gen'Dai",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "regeneration",
+        "name": "Regeneration",
+        "description": "A Gen'Dai automatically regains hit points equal to its level at the start of each turn unless damaged by fire or acid.",
+        "rules": [
+          {
+            "type": "fastHealing",
+            "value": 1,
+            "trigger": "startOfTurn",
+            "when": {
+              "type": "always"
+            },
+            "suppressedBy": {
+              "type": "damageType",
+              "value": [
+                "fire"
+              ]
+            },
+            "id": "regeneration-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "gen-dai"
+  },
+  {
+    "name": "Geonosian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "wings",
+        "name": "Wings",
+        "description": "A Geonosian may fly with a speed of 6 squares (clumsy).",
+        "rules": [
+          {
+            "type": "movement",
+            "mode": "fly",
+            "speed": 6,
+            "combatMovement": true,
+            "when": {
+              "type": "always"
+            },
+            "id": "wings-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "hive-mind",
+        "name": "Hive Mind",
+        "description": "A Geonosian gains a +2 species bonus on Initiative checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "initiative",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "hive-mind-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "geonosian"
+  },
+  {
+    "name": "Givin",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "analytical-mind",
+        "name": "Analytical Mind",
+        "description": "A Givin gains a +5 species bonus on Mechanics and Knowledge (physical sciences) checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "mechanics",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "analytical-mind-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "givin"
+  },
+  {
+    "name": "Gotal",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "force-awareness",
+        "name": "Force Awareness",
+        "description": "A Gotal gains blindsense out to 6 squares.",
+        "rules": [
+          {
+            "type": "sense",
+            "senseType": "blindsense",
+            "range": 6,
+            "description": "A Gotal gains blindsense out to 6 squares.",
+            "when": {
+              "type": "always"
+            },
+            "id": "force-awareness-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "gotal"
+  },
+  {
+    "name": "Gran",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "three-eyed-vision",
+        "name": "Three-Eyed Vision",
+        "description": "A Gran gains a +2 species bonus to Reflex Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "reflex",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "three-eyed-vision-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "gran"
+  },
+  {
+    "name": "Gungan",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "amphibious",
+        "name": "Amphibious",
+        "description": "A Gungan can breathe both air and water.",
+        "rules": [
+          {
+            "type": "breathing",
+            "breathType": "aquatic",
+            "immune": false,
+            "description": "A Gungan can breathe both air and water.",
+            "when": {
+              "type": "always"
+            },
+            "id": "amphibious-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [
+      {
+        "id": "lucky",
+        "name": "Lucky",
+        "actionType": "free",
+        "usage": {
+          "perEncounter": 1,
+          "perDay": null
+        },
+        "description": "Once per encounter, a Gungan may reroll an attack roll, skill check, or ability check but must accept the new result."
+      }
+    ],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "gungan"
+  },
+  {
+    "name": "Herglic",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "massive-build",
+        "name": "Massive Build",
+        "description": "A Herglic gains a +5 species bonus on Strength checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "str",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "massive-build-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "herglic"
+  },
+  {
+    "name": "Houk",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "powerful-arms",
+        "name": "Powerful Arms",
+        "description": "A Houk gains a +2 species bonus on melee attack rolls.",
+        "rules": [
+          {
+            "type": "meleeCultureBonus",
+            "value": 2,
+            "appliesTo": "all",
+            "bonusType": "species",
+            "description": "A Houk gains a +2 species bonus on melee attack rolls.",
+            "when": {
+              "type": "always"
+            },
+            "id": "powerful-arms-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "houk"
+  },
+  {
+    "name": "Human",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "versatile",
+        "name": "Versatile",
+        "description": "A Human gains a bonus feat at 1st level.",
+        "rules": [
+          {
+            "type": "featGrant",
+            "featId": "bonus-feat",
+            "when": {
+              "type": "always"
+            },
+            "allowMultiple": false,
+            "id": "versatile-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "skilled",
+        "name": "Skilled",
+        "description": "A Human gains one additional trained skill."
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "human"
+  },
+  {
+    "name": "Hutt",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "immense-bulk",
+        "name": "Immense Bulk",
+        "description": "A Hutt gains a +5 species bonus to Fortitude Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "immense-bulk-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "slow",
+        "name": "Slow",
+        "description": "A Hutt's base speed is reduced by 2 squares."
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "hutt"
+  },
+  {
+    "name": "Iktotchi",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "prescient-vision",
+        "name": "Prescient Vision",
+        "description": "An Iktotchi gains a +2 species bonus on Initiative checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "initiative",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "prescient-vision-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "prescient-vision-reroll",
+        "name": "Prescient Vision (Reroll)",
+        "description": "An Iktotchi may reroll Initiative checks."
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "iktotchi"
+  },
+  {
+    "name": "Ithorian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "nature-affinity",
+        "name": "Nature Affinity",
+        "description": "An Ithorian gains a +5 species bonus on Knowledge (life sciences) checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "knowledgeLifeSciences",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "nature-affinity-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [
+      {
+        "id": "sonic-bellow",
+        "name": "Sonic Bellow",
+        "actionType": "standard",
+        "usage": {
+          "perEncounter": null,
+          "perDay": null
+        },
+        "description": "As a standard action, an Ithorian may emit a sonic bellow that deals 1d6 sonic damage to adjacent enemies."
+      }
+    ],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "ithorian"
+  },
+  {
+    "name": "Jawa",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "scavenger",
+        "name": "Scavenger",
+        "description": "A Jawa gains a +5 species bonus on Mechanics checks to repair or jury-rig devices.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "mechanics",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "scavenger-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "jawa"
+  },
+  {
+    "name": "Kel Dor",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "force-awareness",
+        "name": "Force Awareness",
+        "description": "A Kel Dor gains a +2 species bonus on Use the Force checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "useTheForce",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "force-awareness-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [
+      {
+        "itemName": "Breath Mask",
+        "type": "grantItem",
+        "starting": true
+      }
+    ],
+    "tags": [],
+    "notes": [
+      "A Kel Dor must wear a breath mask to survive in oxygen-rich atmospheres."
+    ],
+    "id": "kel-dor"
+  },
+  {
+    "name": "Kaminoan",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "genetic-expertise",
+        "name": "Genetic Expertise",
+        "description": "A Kaminoan gains a +5 species bonus on Knowledge (life sciences) checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "knowledgeLifeSciences",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "genetic-expertise-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "fragile",
+        "name": "Fragile",
+        "description": "A Kaminoan takes a -2 species penalty to Fortitude Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": -2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "fragile-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "kaminoan"
+  },
+  {
+    "name": "Kaleesh",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "fearsome-reputation",
+        "name": "Fearsome Reputation",
+        "description": "A Kaleesh gains a +5 species bonus on Intimidate checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "persuasion",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "fearsome-reputation-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "kaleesh"
+  },
+  {
+    "name": "Kerkoiden",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "military-training",
+        "name": "Military Training",
+        "description": "A Kerkoiden gains a +2 species bonus on Initiative checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "initiative",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "military-training-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "kerkoiden"
+  },
+  {
+    "name": "Khil",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "force-sensitivity",
+        "name": "Force Sensitivity",
+        "description": "A Khil may use the Force even if it does not have the Force Sensitivity feat.",
+        "rules": [
+          {
+            "type": "featGrant",
+            "featId": "force-sensitivity",
+            "when": {
+              "type": "always"
+            },
+            "allowMultiple": false,
+            "id": "force-sensitivity-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "khil"
+  },
+  {
+    "name": "Kissai",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "dark-ritualist",
+        "name": "Dark Ritualist",
+        "description": "A Kissai gains a +2 species bonus on Use the Force checks when using dark side powers.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "useTheForce",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "dark-ritualist-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "kissai"
+  },
+  {
+    "name": "Klatooinian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "hard-laborer",
+        "name": "Hard Laborer",
+        "description": "A Klatooinian gains a +2 species bonus on Endurance checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "endurance",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "hard-laborer-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "klatooinian"
+  },
+  {
+    "name": "Lannik",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "stocky-build",
+        "name": "Stocky Build",
+        "description": "A Lannik gains a +2 species bonus to Fortitude Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "stocky-build-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "lannik"
+  },
+  {
+    "name": "Lurmen",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "pacifist-resolve",
+        "name": "Pacifist Resolve",
+        "description": "A Lurmen gains a +2 species bonus to Will Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "pacifist-resolve-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "lurmen"
+  },
+  {
+    "name": "Massassi",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "brutal-strength",
+        "name": "Brutal Strength",
+        "description": "A Massassi gains a +2 species bonus on melee damage rolls.",
+        "rules": [
+          {
+            "type": "damageModifier",
+            "attackType": "melee",
+            "target": "damageRoll",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "brutal-strength-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "dark-side-affinity",
+        "name": "Dark Side Affinity",
+        "description": "A Massassi gains a +2 species bonus on Use the Force checks when using dark side powers.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "useTheForce",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "dark-side-affinity-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "massassi"
+  },
+  {
+    "name": "Mantellian Savrip",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "ability-modifiers",
+        "name": "Ability Modifiers",
+        "description": "All Mantellian Savrips receive a +4 bonus to both their Strength and Constitution, but suffer -4 penalties to their Intelligence, Wisdom, and Charisma, as well as a -2 penalty to their Dexterity.",
+        "rules": [
+          {
+            "type": "abilityScoreModifier",
+            "ability": "dexterity",
+            "value": -4,
+            "when": {
+              "type": "always"
+            },
+            "id": "ability-modifiers-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "large-size",
+        "name": "Large Size",
+        "description": "As Large creatures, Mantellian Savrips take a -1 size penalty to their Reflex Defense and a -5 size penalty on Stealth checks, and they gain a +5 size bonus to their Damage Threshold. Their lifting and carrying limits are double those of Medium characters.",
+        "rules": [
+          {
+            "type": "size",
+            "sizeCategory": "large",
+            "effects": {
+              "carryingCapacityMultiplier": 2
+            },
+            "when": {
+              "type": "always"
+            },
+            "id": "large-size-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "speed",
+        "name": "Speed",
+        "description": "Mantellian Savrips have a base speed of 8 squares."
+      },
+      {
+        "id": "natural-armor",
+        "name": "Natural Armor",
+        "description": "Mantellian Savrips gain a +2 Natural Armor bonus to their Reflex Defense. A Natural Armor bonus stacks with an Armor bonus."
+      },
+      {
+        "id": "natural-weapons",
+        "name": "Natural Weapons",
+        "description": "A Mantellian Savrip has Natural Weapons, in the form of tough claws. When making an Unarmed attack, it may choose to use its Natural Weapons, dealing 1d6 points of Slashing damage instead of normal Unarmed damage. Mantellian Savrips are always considered armed with their Natural Weapons.",
+        "rules": [
+          {
+            "type": "naturalWeapon",
+            "id": "natural-weapons-rule-0",
+            "name": "Claws",
+            "weaponCategory": "melee",
+            "attackAbility": "str",
+            "damage": {
+              "formula": "1d4",
+              "damageType": "slashing"
+            },
+            "critical": {
+              "range": 20,
+              "multiplier": 2
+            },
+            "proficiency": {
+              "type": "natural",
+              "isProficient": true
+            },
+            "traits": {
+              "alwaysArmed": true,
+              "countsAsWeapon": true,
+              "finesse": false,
+              "light": false,
+              "twoHanded": false
+            },
+            "when": {
+              "type": "always"
+            }
+          }
+        ]
+      },
+      {
+        "id": "poison",
+        "name": "Poison",
+        "description": "If the Natural Weapons of a Mantellian Savrip deal damage to a living target, the target is also Poisoned. If the Poison succeeds on an attack roll (1d20 + Character Level) against the target's Fortitude Defense, the target moves -1 step along the Condition Track. A target moved to the end of the Condition Track by the Poison is Immobilized, but not Unconscious.",
+        "rules": [
+          {
+            "type": "naturalWeapon",
+            "id": "poison-rule-0",
+            "name": "Claws",
+            "weaponCategory": "melee",
+            "attackAbility": "str",
+            "damage": {
+              "formula": "1d4",
+              "damageType": "slashing"
+            },
+            "critical": {
+              "range": 20,
+              "multiplier": 2
+            },
+            "proficiency": {
+              "type": "natural",
+              "isProficient": true
+            },
+            "traits": {
+              "alwaysArmed": true,
+              "countsAsWeapon": true,
+              "finesse": false,
+              "light": false,
+              "twoHanded": false
+            },
+            "when": {
+              "type": "always"
+            }
+          }
+        ]
+      },
+      {
+        "id": "primitive",
+        "name": "Primitive",
+        "description": "Mantellian Savrips do not gain Weapon Proficiency (Heavy Weapons), Weapon Proficiency (Pistols), or Weapon Proficiency (Rifles) as starting Feats at first level, even if their Class normally grants them."
+      },
+      {
+        "id": "automatic-languages",
+        "name": "Automatic Languages",
+        "description": "All Mantellian Savrips can speak Savrip.",
+        "rules": []
+      }
+    ],
+    "activatedAbilities": [
+      {
+        "id": "rage",
+        "name": "Rage",
+        "actionType": "swift",
+        "usage": {
+          "perEncounter": null,
+          "perDay": 1
+        },
+        "description": "Once per day, a Mantellian Savrip can fly into a Rage as a Swift Action. While Raging, the Mantellian Savrip temporarily gains a +2 Rage bonus on melee attack rolls and melee damage rolls, but cannot use Skills that require patience and concentration (Mechanics, Stealth, Use the Force). A fit of Rage lasts for a number of rounds equal to 5 + the Mantellian Savrip's Constitution modifier. At the end of its Rage, the Mantellian Savrip moves -1 Persistent step along the Condition Track. The penalties persist until the Mantellian Savrip takes at least 10 minutes to recuperate."
+      }
+    ],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "mantellian-savrip"
+  },
+  {
+    "name": "Miraluka",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "force-sight",
+        "name": "Force Sight",
+        "description": "A Miraluka is blind but perceives the world through the Force, ignoring concealment from darkness.",
+        "rules": [
+          {
+            "type": "sense",
+            "senseType": "force-sight",
+            "range": null,
+            "description": "A Miraluka is blind but perceives the world through the Force, ignoring concealment from darkness.",
+            "when": {
+              "type": "always"
+            },
+            "id": "force-sight-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "force-sensitivity",
+        "name": "Force Sensitivity",
+        "description": "A Miraluka gains the Force Sensitivity feat at 1st level.",
+        "rules": [
+          {
+            "type": "featGrant",
+            "featId": "force-sensitivity",
+            "when": {
+              "type": "always"
+            },
+            "allowMultiple": false,
+            "id": "force-sensitivity-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [
+      {
+        "id": "bonus-force-training",
+        "name": "Unknown Trait",
+        "description": ""
+      }
+    ],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "miraluka"
+  },
+  {
+    "name": "Mon Calamari",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "amphibious",
+        "name": "Amphibious",
+        "description": "A Mon Calamari can breathe both air and water.",
+        "rules": [
+          {
+            "type": "breathing",
+            "breathType": "aquatic",
+            "immune": false,
+            "description": "A Mon Calamari can breathe both air and water.",
+            "when": {
+              "type": "always"
+            },
+            "id": "amphibious-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "tech-savvy",
+        "name": "Tech Savvy",
+        "description": "A Mon Calamari gains a +2 species bonus on Mechanics checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "mechanics",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "tech-savvy-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "mon-calamari"
+  },
+  {
+    "name": "Mrlssi",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "mercantile-instincts",
+        "name": "Mercantile Instincts",
+        "description": "A Mrlssi gains a +5 species bonus on Persuasion checks made to bargain or negotiate.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "persuasion",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "context": {
+              "type": "trade",
+              "description": "trade"
+            },
+            "id": "mercantile-instincts-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "mrlssi"
+  },
+  {
+    "name": "Nagai",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "cold-adaptation",
+        "name": "Cold Adaptation",
+        "description": "A Nagai gains a +2 species bonus to Fortitude Defense against cold environments.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "cold-adaptation-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "nagai"
+  },
+  {
+    "name": "Nautolan",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "aquatic",
+        "name": "Aquatic",
+        "description": "A Nautolan can breathe water and gains a swim speed equal to its base speed.",
+        "rules": [
+          {
+            "type": "movement",
+            "mode": "swim",
+            "speed": 6,
+            "combatMovement": true,
+            "when": {
+              "type": "always"
+            },
+            "id": "aquatic-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "tactile-awareness",
+        "name": "Tactile Awareness",
+        "description": "A Nautolan gains blindsense out to 6 squares.",
+        "rules": [
+          {
+            "type": "sense",
+            "senseType": "blindsense",
+            "range": 6,
+            "description": "A Nautolan gains blindsense out to 6 squares.",
+            "when": {
+              "type": "always"
+            },
+            "id": "tactile-awareness-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "nautolan"
+  },
+  {
+    "name": "Nelvaanian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "feral-instincts",
+        "name": "Feral Instincts",
+        "description": "A Nelvaanian gains a +2 species bonus on Initiative checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "initiative",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "feral-instincts-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "nelvaanian"
+  },
+  {
+    "name": "Neimoidian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "cowardly",
+        "name": "Cowardly",
+        "description": "A Neimoidian takes a -2 species penalty on Will Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": -2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "cowardly-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "mercantile-training",
+        "name": "Mercantile Training",
+        "description": "A Neimoidian gains a +5 species bonus on Persuasion checks related to business.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "persuasion",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "context": {
+              "type": "trade",
+              "description": "trade"
+            },
+            "id": "mercantile-training-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "neimoidian"
+  },
+  {
+    "name": "Noghri",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "assassin-training",
+        "name": "Assassin Training",
+        "description": "A Noghri gains a +2 species bonus on Stealth and Initiative checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "initiative",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "assassin-training-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "noghri"
+  },
+  {
+    "name": "Nosaurian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "prehensile-tail",
+        "name": "Prehensile Tail",
+        "description": "A Nosaurian gains a +2 species bonus on Acrobatics checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "acrobatics",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "prehensile-tail-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "nosaurian"
+  },
+  {
+    "name": "Nyriaanan",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "winged-glide",
+        "name": "Winged Glide",
+        "description": "A Nyriaanan may glide, reducing falling damage to zero if conscious.",
+        "rules": [
+          {
+            "type": "movement",
+            "mode": "fly",
+            "speed": 6,
+            "combatMovement": true,
+            "when": {
+              "type": "always"
+            },
+            "id": "winged-glide-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "nyriaanan"
+  },
+  {
+    "name": "Quarren",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "amphibious",
+        "name": "Amphibious",
+        "description": "A Quarren can breathe both air and water.",
+        "rules": [
+          {
+            "type": "breathing",
+            "breathType": "aquatic",
+            "immune": false,
+            "description": "A Quarren can breathe both air and water.",
+            "when": {
+              "type": "always"
+            },
+            "id": "amphibious-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "forceful-presence",
+        "name": "Forceful Presence",
+        "description": "A Quarren gains a +2 species bonus on Intimidate checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "persuasion",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "forceful-presence-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "quarren"
+  },
+  {
+    "name": "Rakata",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "dark-side-mastery",
+        "name": "Dark Side Mastery",
+        "description": "A Rakata gains a +2 species bonus on Use the Force checks and treats the Use the Force skill as trained.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "useTheForce",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "dark-side-mastery-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "rakata"
+  },
+  {
+    "name": "Replica Droid",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "artificial-being",
+        "name": "Artificial Being",
+        "description": "A Replica Droid is immune to poison and disease but cannot benefit from organic healing.",
+        "rules": [
+          {
+            "type": "immunity",
+            "immuneTo": {
+              "type": "effect",
+              "values": [
+                "p"
+              ]
+            },
+            "severity": "full",
+            "when": {
+              "type": "always"
+            },
+            "id": "artificial-being-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "replica-droid"
+  },
+  {
+    "name": "Rodian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "keen-senses",
+        "name": "Keen Senses",
+        "description": "A Rodian gains a +2 species bonus on Perception checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "perception",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "keen-senses-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "rodian"
+  },
+  {
+    "name": "Ryn",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "natural-performer",
+        "name": "Natural Performer",
+        "description": "A Ryn gains a +5 species bonus on Perform checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "perform",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "natural-performer-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "ryn"
+  },
+  {
+    "name": "Sakiyan",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "aerial-hunter",
+        "name": "Aerial Hunter",
+        "description": "A Sakiyan gains a +2 species bonus on Initiative checks while flying.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "initiative",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "aerial-hunter-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "sakiyan"
+  },
+  {
+    "name": "Selkath",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "amphibious",
+        "name": "Amphibious",
+        "description": "A Selkath can breathe both air and water.",
+        "rules": [
+          {
+            "type": "breathing",
+            "breathType": "aquatic",
+            "immune": false,
+            "description": "A Selkath can breathe both air and water.",
+            "when": {
+              "type": "always"
+            },
+            "id": "amphibious-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "aquatic-adaptation",
+        "name": "Aquatic Adaptation",
+        "description": "A Selkath gains a +2 species bonus to Fortitude Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "aquatic-adaptation-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "selkath"
+  },
+  {
+    "name": "Shard",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "crystalline-body",
+        "name": "Crystalline Body",
+        "description": "A Shard is immune to poison and disease and does not need to breathe.",
+        "rules": [
+          {
+            "type": "breathing",
+            "breathType": "vacuum-adapted",
+            "immune": true,
+            "description": "A Shard is immune to poison and disease and does not need to breathe.",
+            "when": {
+              "type": "always"
+            },
+            "id": "crystalline-body-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "shard"
+  },
+  {
+    "name": "Snivvian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "craven",
+        "name": "Craven",
+        "description": "A Snivvian takes a -2 species penalty to Will Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": -2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "craven-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "opportunistic",
+        "name": "Opportunistic",
+        "description": "A Snivvian gains a +2 species bonus on Deception checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "deception",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "opportunistic-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "snivvian"
+  },
+  {
+    "name": "Sullustan",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "spatial-awareness",
+        "name": "Spatial Awareness",
+        "description": "A Sullustan gains a +5 species bonus on Pilot checks and Initiative checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "pilot",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "spatial-awareness-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "sullustan"
+  },
+  {
+    "name": "Taung",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "warrior-culture",
+        "name": "Warrior Culture",
+        "description": "A Taung gains a +2 species bonus on melee attack rolls.",
+        "rules": [
+          {
+            "type": "meleeCultureBonus",
+            "value": 2,
+            "appliesTo": "all",
+            "bonusType": "species",
+            "description": "A Taung gains a +2 species bonus on melee attack rolls.",
+            "when": {
+              "type": "always"
+            },
+            "id": "warrior-culture-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "taung"
+  },
+  {
+    "name": "Talz",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "cold-adaptation",
+        "name": "Cold Adaptation",
+        "description": "A Talz gains a +5 species bonus to Fortitude Defense against cold environments.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "cold-adaptation-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "talz"
+  },
+  {
+    "name": "Thakwaash",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "dual-brains",
+        "name": "Dual Brains",
+        "description": "A Thakwaash gains a +2 species bonus to Will Defense and Reflex Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "dual-brains-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "thakwaash"
+  },
+  {
+    "name": "Togruta",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "spatial-awareness",
+        "name": "Spatial Awareness",
+        "description": "A Togruta gains blindsense out to 6 squares.",
+        "rules": [
+          {
+            "type": "sense",
+            "senseType": "blindsense",
+            "range": 6,
+            "description": "A Togruta gains blindsense out to 6 squares.",
+            "when": {
+              "type": "always"
+            },
+            "id": "spatial-awareness-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "pack-instincts",
+        "name": "Pack Instincts",
+        "description": "A Togruta gains a +2 species bonus on Initiative checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "initiative",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "pack-instincts-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "togruta"
+  },
+  {
+    "name": "Togorian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "claws",
+        "name": "Claws",
+        "description": "A Togorian has natural claw attacks that deal 1d6 points of slashing damage.",
+        "rules": [
+          {
+            "type": "naturalWeapon",
+            "id": "claws-rule-0",
+            "name": "Claws",
+            "weaponCategory": "melee",
+            "attackAbility": "str",
+            "damage": {
+              "formula": "1d4",
+              "damageType": "slashing"
+            },
+            "critical": {
+              "range": 20,
+              "multiplier": 2
+            },
+            "proficiency": {
+              "type": "natural",
+              "isProficient": true
+            },
+            "traits": {
+              "alwaysArmed": true,
+              "countsAsWeapon": true,
+              "finesse": false,
+              "light": false,
+              "twoHanded": false
+            },
+            "when": {
+              "type": "always"
+            }
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "togorian"
+  },
+  {
+    "name": "Toydarian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "force-resistance",
+        "name": "Force Resistance",
+        "description": "A Toydarian gains a +5 species bonus to Will Defense against Force powers.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "force-resistance-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "wings",
+        "name": "Wings",
+        "description": "A Toydarian may fly with a speed of 6 squares (clumsy).",
+        "rules": [
+          {
+            "type": "movement",
+            "mode": "fly",
+            "speed": 6,
+            "combatMovement": true,
+            "when": {
+              "type": "always"
+            },
+            "id": "wings-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "toydarian"
+  },
+  {
+    "name": "Trandoshan",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "claws",
+        "name": "Claws",
+        "description": "A Trandoshan has natural claw attacks that deal 1d6 points of slashing damage.",
+        "rules": [
+          {
+            "type": "naturalWeapon",
+            "id": "claws-rule-0",
+            "name": "Claws",
+            "weaponCategory": "melee",
+            "attackAbility": "str",
+            "damage": {
+              "formula": "1d4",
+              "damageType": "slashing"
+            },
+            "critical": {
+              "range": 20,
+              "multiplier": 2
+            },
+            "proficiency": {
+              "type": "natural",
+              "isProficient": true
+            },
+            "traits": {
+              "alwaysArmed": true,
+              "countsAsWeapon": true,
+              "finesse": false,
+              "light": false,
+              "twoHanded": false
+            },
+            "when": {
+              "type": "always"
+            }
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [
+      {
+        "id": "regeneration",
+        "name": "Regeneration",
+        "actionType": "free",
+        "usage": {
+          "perEncounter": 1,
+          "perDay": null
+        },
+        "description": "A Trandoshan regains hit points equal to its level once per encounter when reduced below half hit points."
+      }
+    ],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "trandoshan"
+  },
+  {
+    "name": "Trianii",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "feline-instincts",
+        "name": "Feline Instincts",
+        "description": "A Trianii gains a +2 species bonus on Initiative checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "initiative",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "feline-instincts-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "trianii"
+  },
+  {
+    "name": "Twi'lek",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "graceful",
+        "name": "Graceful",
+        "description": "A Twi'lek gains a +2 species bonus to Reflex Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "reflex",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "graceful-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "persuasion-training",
+        "name": "Persuasion Training",
+        "description": "A Twi'lek gains a +5 species bonus on Persuasion checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "persuasion",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "persuasion-training-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "twi-lek"
+  },
+  {
+    "name": "Ubese",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "survivalist",
+        "name": "Survivalist",
+        "description": "An Ubese gains a +2 species bonus on Endurance and Survival checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "endurance",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "survivalist-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "ubese"
+  },
+  {
+    "name": "Utai",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "underground-adaptation",
+        "name": "Underground Adaptation",
+        "description": "An Utai gains darkvision and a +2 species bonus on Perception checks underground.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "perception",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "underground-adaptation-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "utai"
+  },
+  {
+    "name": "Vahla",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "dark-side-affinity",
+        "name": "Dark Side Affinity",
+        "description": "A Vahla gains a +2 species bonus on Use the Force checks when using dark side powers.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "useTheForce",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "dark-side-affinity-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "vahla"
+  },
+  {
+    "name": "Vurk",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "powerful-swimmer",
+        "name": "Powerful Swimmer",
+        "description": "A Vurk gains a swim speed equal to its base speed and a +2 species bonus on Athletics checks while swimming.",
+        "rules": [
+          {
+            "type": "movement",
+            "mode": "swim",
+            "speed": 6,
+            "combatMovement": true,
+            "when": {
+              "type": "always"
+            },
+            "id": "powerful-swimmer-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "vurk"
+  },
+  {
+    "name": "Weequay",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "stoic-resolve",
+        "name": "Stoic Resolve",
+        "description": "A Weequay gains a +2 species bonus to Will Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "stoic-resolve-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "weequay"
+  },
+  {
+    "name": "Whiphid",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "arctic-hunter",
+        "name": "Arctic Hunter",
+        "description": "A Whiphid gains a +2 species bonus on Stealth and Survival checks in cold environments.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "stealth",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "arctic-hunter-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "whiphid"
+  },
+  {
+    "name": "Wookiee",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "mighty",
+        "name": "Mighty",
+        "description": "A Wookiee gains a +4 species bonus to Strength.",
+        "rules": [
+          {
+            "type": "abilityScoreModifier",
+            "ability": "strength",
+            "value": 4,
+            "when": {
+              "type": "always"
+            },
+            "id": "mighty-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "endurance",
+        "name": "Endurance",
+        "description": "A Wookiee gains a +2 species bonus to Fortitude Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "endurance-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "rage",
+        "name": "Rage",
+        "description": "When reduced to half hit points or fewer, a Wookiee gains a +2 bonus on melee attack rolls and damage rolls until the end of the encounter.",
+        "rules": [
+          {
+            "type": "rage",
+            "trigger": {
+              "type": "hpThreshold",
+              "value": 50
+            },
+            "duration": "untilEndOfEncounter",
+            "bonuses": {
+              "meleeAttackBonus": 2,
+              "meleeDamageBonus": 2
+            },
+            "description": "When reduced to half hit points or fewer, a Wookiee gains a +2 bonus on melee attack rolls and damage rolls until the end of the encounter.",
+            "when": {
+              "type": "always"
+            },
+            "id": "rage-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "wookiee"
+  },
+  {
+    "name": "Wroonian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "elongated-reach",
+        "name": "Elongated Reach",
+        "description": "A Wroonian gains a +2 species bonus on grapple checks.",
+        "rules": [
+          {
+            "type": "damageModifier",
+            "attackType": "melee",
+            "target": "attackRoll",
+            "value": 2,
+            "bonusType": "species",
+            "description": "Grapple bonus",
+            "when": {
+              "type": "always"
+            },
+            "id": "elongated-reach-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "wroonian"
+  },
+  {
+    "name": "Yarkora",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "brute-force",
+        "name": "Brute Force",
+        "description": "A Yarkora gains a +2 species bonus on melee damage rolls.",
+        "rules": [
+          {
+            "type": "damageModifier",
+            "attackType": "melee",
+            "target": "damageRoll",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "brute-force-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "yarkora"
+  },
+  {
+    "name": "Yevetha",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "militaristic-culture",
+        "name": "Militaristic Culture",
+        "description": "A Yevetha gains a +2 species bonus on Initiative checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "initiative",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "militaristic-culture-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "yevetha"
+  },
+  {
+    "name": "Yuuzhan Vong",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "force-immunity",
+        "name": "Force Immunity",
+        "description": "A Yuuzhan Vong is immune to the effects of Force powers.",
+        "rules": [
+          {
+            "type": "immunity",
+            "immuneTo": {
+              "type": "effect",
+              "values": [
+                "t"
+              ]
+            },
+            "severity": "full",
+            "when": {
+              "type": "always"
+            },
+            "id": "force-immunity-rule-0"
+          }
+        ]
+      },
+      {
+        "id": "living-technology",
+        "name": "Living Technology",
+        "description": "A Yuuzhan Vong may only use organic equipment.",
+        "rules": [
+          {
+            "type": "restriction",
+            "restricts": "equipmentType",
+            "targets": [
+              "inorganic-equipment"
+            ],
+            "reason": "Can only use organic equipment",
+            "description": "A Yuuzhan Vong may only use organic equipment.",
+            "when": {
+              "type": "always"
+            },
+            "id": "living-technology-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "yuuzhan-vong"
+  },
+  {
+    "name": "Yuzzem",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "rage",
+        "name": "Rage",
+        "description": "When reduced to half hit points or fewer, a Yuzzem gains a +2 species bonus on melee attack rolls until the end of the encounter.",
+        "rules": [
+          {
+            "type": "rage",
+            "trigger": {
+              "type": "hpThreshold",
+              "value": 50
+            },
+            "duration": "untilEndOfEncounter",
+            "bonuses": {
+              "meleeAttackBonus": 2
+            },
+            "description": "When reduced to half hit points or fewer, a Yuzzem gains a +2 species bonus on melee attack rolls until the end of the encounter.",
+            "when": {
+              "type": "always"
+            },
+            "id": "rage-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "yuzzem"
+  },
+  {
+    "name": "Zabrak",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "battle-hardened",
+        "name": "Battle Hardened",
+        "description": "A Zabrak gains a +2 species bonus to Fortitude Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "battle-hardened-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [
+      {
+        "id": "irrepressible",
+        "name": "Irrepressible",
+        "actionType": "free",
+        "usage": {
+          "perEncounter": 1,
+          "perDay": null
+        },
+        "description": "Once per encounter, a Zabrak may ignore the effects of being stunned or dazed for one turn."
+      }
+    ],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "zabrak"
+  },
+  {
+    "name": "Zeltron",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "pheromones",
+        "name": "Pheromones",
+        "description": "A Zeltron gains a +5 species bonus on Persuasion checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "persuasion",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "pheromones-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "zeltron"
+  },
+  {
+    "name": "Zygerrian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "dominating-presence",
+        "name": "Dominating Presence",
+        "description": "A Zygerrian gains a +2 species bonus on Intimidate checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "persuasion",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "dominating-presence-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "zygerrian"
+  },
+  {
+    "name": "Adnerem",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "fearless",
+        "name": "Fearless",
+        "description": "An Adnerem gains a +2 species bonus to Will Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "fearless-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "adnerem"
+  },
+  {
+    "name": "Anzat",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [
+      {
+        "id": "quey-drain",
+        "name": "Quey Drain",
+        "actionType": "standard",
+        "usage": {
+          "perEncounter": null,
+          "perDay": null
+        },
+        "description": "As a standard action, an Anzat may deal 1d6 damage to a helpless living creature and regain hit points equal to the damage dealt."
+      }
+    ],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "anzat"
+  },
+  {
+    "name": "Besalisk",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "four-arms",
+        "name": "Four Arms",
+        "description": "A Besalisk may wield and hold items as if it had four hands, gaining a +2 species bonus on grapple checks.",
+        "rules": [
+          {
+            "type": "damageModifier",
+            "attackType": "melee",
+            "target": "attackRoll",
+            "value": 2,
+            "bonusType": "species",
+            "description": "Grapple bonus",
+            "when": {
+              "type": "always"
+            },
+            "id": "four-arms-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "besalisk"
+  },
+  {
+    "name": "Besalisk (Four-Armed)",
+    "renameTo": null,
+    "inherits": "Besalisk",
+    "structuralTraits": [
+      {
+        "id": "multi-limbed-coordination",
+        "name": "Multi-Limbed Coordination",
+        "description": "A Besalisk may ignore the penalty for using multiple weapons."
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "besalisk-four-armed"
+  },
+  {
+    "name": "Cathar (Savage)",
+    "renameTo": null,
+    "inherits": "Cathar",
+    "structuralTraits": [],
+    "activatedAbilities": [],
+    "conditionalTraits": [
+      {
+        "id": "blood-fury",
+        "name": "Blood Fury",
+        "description": "When reduced to half hit points or fewer, a Cathar gains a +2 species bonus on melee damage rolls.",
+        "rules": [
+          {
+            "type": "damageModifier",
+            "attackType": "melee",
+            "target": "damageRoll",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "blood-fury-rule-0"
+          }
+        ]
+      }
+    ],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "cathar-savage"
+  },
+  {
+    "name": "Devaronian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "force-resistance",
+        "name": "Force Resistance",
+        "description": "A Devaronian gains a +2 species bonus to Will Defense against Force powers.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "will",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "force-resistance-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "devaronian"
+  },
+  {
+    "name": "Drall",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "technical-aptitude",
+        "name": "Technical Aptitude",
+        "description": "A Drall gains a +5 species bonus on Mechanics checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "mechanics",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "technical-aptitude-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "drall"
+  },
+  {
+    "name": "Echani",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "martial-culture",
+        "name": "Martial Culture",
+        "description": "An Echani gains a +2 species bonus on melee attack rolls.",
+        "rules": [
+          {
+            "type": "meleeCultureBonus",
+            "value": 2,
+            "appliesTo": "all",
+            "bonusType": "species",
+            "description": "An Echani gains a +2 species bonus on melee attack rolls.",
+            "when": {
+              "type": "always"
+            },
+            "id": "martial-culture-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "echani"
+  },
+  {
+    "name": "Gossam",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "commercial-instincts",
+        "name": "Commercial Instincts",
+        "description": "A Gossam gains a +5 species bonus on Persuasion checks involving trade or negotiation.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "persuasion",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "context": {
+              "type": "machinery",
+              "description": "trade or negotiation"
+            },
+            "id": "commercial-instincts-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "gossam"
+  },
+  {
+    "name": "Ikkrukkian",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [],
+    "activatedAbilities": [
+      {
+        "id": "war-cry",
+        "name": "War Cry",
+        "actionType": "swift",
+        "usage": {
+          "perEncounter": null,
+          "perDay": null
+        },
+        "description": "As a swift action, an Ikkrukkian may grant allies within 6 squares a +1 bonus on attack rolls until the end of the encounter."
+      }
+    ],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "ikkrukkian"
+  },
+  {
+    "name": "Karkarodon",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "aquatic-predator",
+        "name": "Aquatic Predator",
+        "description": "A Karkarodon gains a swim speed equal to its base speed and a +2 species bonus on melee attack rolls while swimming.",
+        "rules": [
+          {
+            "type": "movement",
+            "mode": "swim",
+            "speed": 6,
+            "combatMovement": true,
+            "when": {
+              "type": "always"
+            },
+            "id": "aquatic-predator-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "karkarodon"
+  },
+  {
+    "name": "Kiffar",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "psychometry",
+        "name": "Psychometry",
+        "description": "A Kiffar gains a +2 species bonus on Use the Force checks to sense Force impressions.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "useTheForce",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "psychometry-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "kiffar"
+  },
+  {
+    "name": "Leporine",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "quick-reflexes",
+        "name": "Quick Reflexes",
+        "description": "A Leporine gains a +2 species bonus to Reflex Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "reflex",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "quick-reflexes-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "leporine"
+  },
+  {
+    "name": "Muun",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "financial-savant",
+        "name": "Financial Savant",
+        "description": "A Muun gains a +5 species bonus on Persuasion and Knowledge (bureaucracy) checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "persuasion",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "financial-savant-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "muun"
+  },
+  {
+    "name": "Nikto",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "hardy-physiology",
+        "name": "Hardy Physiology",
+        "description": "A Nikto gains a +2 species bonus to Fortitude Defense.",
+        "rules": [
+          {
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "hardy-physiology-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "nikto"
+  },
+  {
+    "name": "Ortolan",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "auditory-savant",
+        "name": "Auditory Savant",
+        "description": "An Ortolan gains a +5 species bonus on Perception checks involving sound.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "perception",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "context": {
+              "type": "machinery",
+              "description": "sound"
+            },
+            "id": "auditory-savant-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "ortolan"
+  },
+  {
+    "name": "Qel-Droma",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "force-legacy",
+        "name": "Force Legacy",
+        "description": "A Qel-Droma gains a +2 species bonus on Use the Force checks.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "useTheForce",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "id": "force-legacy-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "qel-droma"
+  },
+  {
+    "name": "Rishi",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "glide-wings",
+        "name": "Glide Wings",
+        "description": "A Rishi may glide, reducing falling damage to zero if conscious.",
+        "rules": [
+          {
+            "type": "movement",
+            "mode": "fly",
+            "speed": 6,
+            "combatMovement": true,
+            "when": {
+              "type": "always"
+            },
+            "id": "glide-wings-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "rishi"
+  },
+  {
+    "name": "Ssi-Ruuvi",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "energy-drain",
+        "name": "Energy Drain",
+        "description": "A Ssi-Ruuvi gains a +2 species bonus on Mechanics checks involving energy weapons.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "mechanics",
+            "value": 2,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "context": {
+              "type": "machinery",
+              "description": "energy weapons"
+            },
+            "id": "energy-drain-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "ssi-ruuvi"
+  },
+  {
+    "name": "Ugnaught",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "industrial-expertise",
+        "name": "Industrial Expertise",
+        "description": "An Ugnaught gains a +5 species bonus on Mechanics checks involving machinery.",
+        "rules": [
+          {
+            "type": "skillModifier",
+            "skillId": "mechanics",
+            "value": 5,
+            "bonusType": "species",
+            "when": {
+              "type": "always"
+            },
+            "context": {
+              "type": "machinery",
+              "description": "machinery"
+            },
+            "id": "industrial-expertise-rule-0"
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": [],
+    "notes": [],
+    "id": "ugnaught"
+  }
+]
