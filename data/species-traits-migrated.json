@@ -27,7 +27,23 @@
       {
         "id": "silver-tongue-reroll",
         "name": "Silver Tongue (Reroll)",
-        "description": "An Advozse may reroll any Persuasion check, but must accept the result of the reroll even if it is worse."
+        "description": "An Advozse may reroll any Persuasion check, but must accept the result of the reroll even if it is worse.",
+        "rules": [
+          {
+            "type": "reroll",
+            "triggeredBy": {
+              "type": "skillCheck",
+              "skillId": "persuasion"
+            },
+            "timesPerEncounter": 1,
+            "outcome": "mustAccept",
+            "description": "An Advozse may reroll any Persuasion check, but must accept the result of the reroll even if it is worse.",
+            "when": {
+              "type": "always"
+            },
+            "id": "silver-tongue-reroll-rule-0"
+          }
+        ]
       }
     ],
     "bonusFeats": [],
@@ -312,7 +328,23 @@
       {
         "id": "bothan-spy-network",
         "name": "Bothan Spy Network",
-        "description": "A Bothan may reroll any Gather Information check, but must accept the result of the reroll even if it is worse."
+        "description": "A Bothan may reroll any Gather Information check, but must accept the result of the reroll even if it is worse.",
+        "rules": [
+          {
+            "type": "reroll",
+            "triggeredBy": {
+              "type": "skillCheck",
+              "skillId": "gatherInfo"
+            },
+            "timesPerEncounter": 1,
+            "outcome": "mustAccept",
+            "description": "A Bothan may reroll any Gather Information check, but must accept the result of the reroll even if it is worse.",
+            "when": {
+              "type": "always"
+            },
+            "id": "bothan-spy-network-rule-0"
+          }
+        ]
       }
     ],
     "bonusFeats": [],
@@ -429,7 +461,23 @@
       {
         "id": "binary-brain-reroll",
         "name": "Binary Brain (Reroll)",
-        "description": "A Cerean may reroll any Knowledge check, but must accept the result of the reroll."
+        "description": "A Cerean may reroll any Knowledge check, but must accept the result of the reroll.",
+        "rules": [
+          {
+            "type": "reroll",
+            "triggeredBy": {
+              "type": "skillCheck",
+              "skillId": "knowledgeGalacticLore"
+            },
+            "timesPerEncounter": 1,
+            "outcome": "mustAccept",
+            "description": "A Cerean may reroll any Knowledge check, but must accept the result of the reroll.",
+            "when": {
+              "type": "always"
+            },
+            "id": "binary-brain-reroll-rule-0"
+          }
+        ]
       }
     ],
     "bonusFeats": [],
@@ -1132,7 +1180,19 @@
       {
         "id": "force-awareness",
         "name": "Force Awareness",
-        "description": "A Gotal gains blindsense out to 6 squares."
+        "description": "A Gotal gains blindsense out to 6 squares.",
+        "rules": [
+          {
+            "type": "sense",
+            "senseType": "blindsense",
+            "range": 6,
+            "description": "A Gotal gains blindsense out to 6 squares.",
+            "when": {
+              "type": "always"
+            },
+            "id": "force-awareness-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -1243,7 +1303,20 @@
       {
         "id": "powerful-arms",
         "name": "Powerful Arms",
-        "description": "A Houk gains a +2 species bonus on melee attack rolls."
+        "description": "A Houk gains a +2 species bonus on melee attack rolls.",
+        "rules": [
+          {
+            "type": "meleeCultureBonus",
+            "value": 2,
+            "appliesTo": "all",
+            "bonusType": "species",
+            "description": "A Houk gains a +2 species bonus on melee attack rolls.",
+            "when": {
+              "type": "always"
+            },
+            "id": "powerful-arms-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -1790,7 +1863,20 @@
       {
         "id": "large-size",
         "name": "Large Size",
-        "description": "As Large creatures, Mantellian Savrips take a -1 size penalty to their Reflex Defense and a -5 size penalty on Stealth checks, and they gain a +5 size bonus to their Damage Threshold. Their lifting and carrying limits are double those of Medium characters."
+        "description": "As Large creatures, Mantellian Savrips take a -1 size penalty to their Reflex Defense and a -5 size penalty on Stealth checks, and they gain a +5 size bonus to their Damage Threshold. Their lifting and carrying limits are double those of Medium characters.",
+        "rules": [
+          {
+            "type": "size",
+            "sizeCategory": "large",
+            "effects": {
+              "carryingCapacityMultiplier": 2
+            },
+            "when": {
+              "type": "always"
+            },
+            "id": "large-size-rule-0"
+          }
+        ]
       },
       {
         "id": "speed",
@@ -1850,7 +1936,19 @@
       {
         "id": "force-sight",
         "name": "Force Sight",
-        "description": "A Miraluka is blind but perceives the world through the Force, ignoring concealment from darkness."
+        "description": "A Miraluka is blind but perceives the world through the Force, ignoring concealment from darkness.",
+        "rules": [
+          {
+            "type": "sense",
+            "senseType": "force-sight",
+            "range": null,
+            "description": "A Miraluka is blind but perceives the world through the Force, ignoring concealment from darkness.",
+            "when": {
+              "type": "always"
+            },
+            "id": "force-sight-rule-0"
+          }
+        ]
       },
       {
         "id": "force-sensitivity",
@@ -1999,7 +2097,19 @@
       {
         "id": "tactile-awareness",
         "name": "Tactile Awareness",
-        "description": "A Nautolan gains blindsense out to 6 squares."
+        "description": "A Nautolan gains blindsense out to 6 squares.",
+        "rules": [
+          {
+            "type": "sense",
+            "senseType": "blindsense",
+            "range": 6,
+            "description": "A Nautolan gains blindsense out to 6 squares.",
+            "when": {
+              "type": "always"
+            },
+            "id": "tactile-awareness-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -2523,7 +2633,20 @@
       {
         "id": "warrior-culture",
         "name": "Warrior Culture",
-        "description": "A Taung gains a +2 species bonus on melee attack rolls."
+        "description": "A Taung gains a +2 species bonus on melee attack rolls.",
+        "rules": [
+          {
+            "type": "meleeCultureBonus",
+            "value": 2,
+            "appliesTo": "all",
+            "bonusType": "species",
+            "description": "A Taung gains a +2 species bonus on melee attack rolls.",
+            "when": {
+              "type": "always"
+            },
+            "id": "warrior-culture-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -2604,7 +2727,19 @@
       {
         "id": "spatial-awareness",
         "name": "Spatial Awareness",
-        "description": "A Togruta gains blindsense out to 6 squares."
+        "description": "A Togruta gains blindsense out to 6 squares.",
+        "rules": [
+          {
+            "type": "sense",
+            "senseType": "blindsense",
+            "range": 6,
+            "description": "A Togruta gains blindsense out to 6 squares.",
+            "when": {
+              "type": "always"
+            },
+            "id": "spatial-awareness-rule-0"
+          }
+        ]
       },
       {
         "id": "pack-instincts",
@@ -3015,7 +3150,26 @@
       {
         "id": "rage",
         "name": "Rage",
-        "description": "When reduced to half hit points or fewer, a Wookiee gains a +2 bonus on melee attack rolls and damage rolls until the end of the encounter."
+        "description": "When reduced to half hit points or fewer, a Wookiee gains a +2 bonus on melee attack rolls and damage rolls until the end of the encounter.",
+        "rules": [
+          {
+            "type": "rage",
+            "trigger": {
+              "type": "hpThreshold",
+              "value": 50
+            },
+            "duration": "untilEndOfEncounter",
+            "bonuses": {
+              "meleeAttackBonus": 2,
+              "meleeDamageBonus": 2
+            },
+            "description": "When reduced to half hit points or fewer, a Wookiee gains a +2 bonus on melee attack rolls and damage rolls until the end of the encounter.",
+            "when": {
+              "type": "always"
+            },
+            "id": "rage-rule-0"
+          }
+        ]
       }
     ],
     "bonusFeats": [],
@@ -3135,7 +3289,22 @@
       {
         "id": "living-technology",
         "name": "Living Technology",
-        "description": "A Yuuzhan Vong may only use organic equipment."
+        "description": "A Yuuzhan Vong may only use organic equipment.",
+        "rules": [
+          {
+            "type": "restriction",
+            "restricts": "equipmentType",
+            "targets": [
+              "inorganic-equipment"
+            ],
+            "reason": "Can only use organic equipment",
+            "description": "A Yuuzhan Vong may only use organic equipment.",
+            "when": {
+              "type": "always"
+            },
+            "id": "living-technology-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],
@@ -3156,7 +3325,25 @@
       {
         "id": "rage",
         "name": "Rage",
-        "description": "When reduced to half hit points or fewer, a Yuzzem gains a +2 species bonus on melee attack rolls until the end of the encounter."
+        "description": "When reduced to half hit points or fewer, a Yuzzem gains a +2 species bonus on melee attack rolls until the end of the encounter.",
+        "rules": [
+          {
+            "type": "rage",
+            "trigger": {
+              "type": "hpThreshold",
+              "value": 50
+            },
+            "duration": "untilEndOfEncounter",
+            "bonuses": {
+              "meleeAttackBonus": 2
+            },
+            "description": "When reduced to half hit points or fewer, a Yuzzem gains a +2 species bonus on melee attack rolls until the end of the encounter.",
+            "when": {
+              "type": "always"
+            },
+            "id": "rage-rule-0"
+          }
+        ]
       }
     ],
     "bonusFeats": [],
@@ -3464,7 +3651,20 @@
       {
         "id": "martial-culture",
         "name": "Martial Culture",
-        "description": "An Echani gains a +2 species bonus on melee attack rolls."
+        "description": "An Echani gains a +2 species bonus on melee attack rolls.",
+        "rules": [
+          {
+            "type": "meleeCultureBonus",
+            "value": 2,
+            "appliesTo": "all",
+            "bonusType": "species",
+            "description": "An Echani gains a +2 species bonus on melee attack rolls.",
+            "when": {
+              "type": "always"
+            },
+            "id": "martial-culture-rule-0"
+          }
+        ]
       }
     ],
     "activatedAbilities": [],

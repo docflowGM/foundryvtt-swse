@@ -98,6 +98,14 @@ class SpeciesMigrator {
       movement: 0,
       breathing: 0,
       immunity: 0,
+      reroll: 0,
+      sense: 0,
+      size: 0,
+      naturalArmor: 0,
+      rage: 0,
+      meleeCultureBonus: 0,
+      multiLimb: 0,
+      restriction: 0,
       featGrants: 0,
       specialAbilities: 0,
       failed: 0
@@ -233,6 +241,14 @@ class SpeciesMigrator {
       this._tryParseMovement,
       this._tryParseBreathing,
       this._tryParseImmunity,
+      this._tryParseReroll,
+      this._tryParseSense,
+      this._tryParseSize,
+      this._tryParseNaturalArmor,
+      this._tryParseRage,
+      this._tryParseMeleeCultureBonus,
+      this._tryParseMultiLimb,
+      this._tryParseRestriction,
       this._tryParseFeatGrant
     ];
 
@@ -616,6 +632,306 @@ class SpeciesMigrator {
   }
 
   /**
+   * Parse reroll pattern: "may reroll", "reroll and keep higher", etc.
+   */
+  _tryParseReroll(text, originalText) {
+    const patterns = [
+      { regex: /may\s+reroll\s+any\s+([a-z\s]+)\s+(?:checks?|rolls?)/i, outcome: 'mustAccept' },
+      { regex: /may\s+(?:choose\s+to\s+)?reroll\s+(?:any\s+)?([a-z\s]+),\s+but\s+(?:must\s+)?accept/i, outcome: 'mustAccept' },
+      { regex: /may\s+(?:choose\s+to\s+)?reroll\s+(?:any\s+)?([a-z\s]+)(?:\s+(?:rolls?|checks))?(?:\s+and\s+use|,\s+using)?\s+(?:the\s+)?(?:higher|better)/i, outcome: 'keepHigher' },
+      { regex: /may\s+reroll\s+([a-z\s]+)\s+(?:checks?|rolls?),\s+(?:result|outcome)\s+must\s+be\s+accepted/i, outcome: 'mustAccept' }
+    ];
+
+    for (const pp of patterns) {
+      const match = text.match(pp.regex);
+      if (match) {
+        const skillOrAbility = match[1].trim().toLowerCase();
+
+        // Try to map to skill ID
+        let triggeredBy = { type: 'skillCheck' };
+        const skillId = this._normalizeSkill(skillOrAbility);
+        if (skillId) {
+          triggeredBy.skillId = skillId;
+        } else if (skillOrAbility.includes('initiative')) {
+          triggeredBy = { type: 'initiative' };
+        } else if (skillOrAbility.includes('attack')) {
+          triggeredBy = { type: 'attack' };
+        }
+
+        const rule = {
+          type: 'reroll',
+          triggeredBy,
+          timesPerEncounter: 1,
+          outcome: pp.outcome,
+          description: originalText.substring(0, 150),
+          when: { type: 'always' }
+        };
+
+        this.stats.reroll = (this.stats.reroll || 0) + 1;
+        return [rule];
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse sense pattern: "darkvision", "blindsense", "gains blindsense", etc.
+   */
+  _tryParseSense(text, originalText) {
+    const patterns = [
+      { regex: /darkvision/i, type: 'darkvision', range: null },
+      { regex: /(?:gains?\s+)?blindsense\s+out\s+to\s+(\d+)\s+squares?/i, type: 'blindsense', rangeGroup: 1 },
+      { regex: /force.sight|perceives?\s+.*?\s+through\s+the\s+force/i, type: 'force-sight', range: null },
+      { regex: /tremorsense/i, type: 'tremorsense', range: null }
+    ];
+
+    for (const pp of patterns) {
+      const match = text.match(pp.regex);
+      if (match) {
+        let range = pp.range;
+        if (pp.rangeGroup && match[pp.rangeGroup]) {
+          range = parseInt(match[pp.rangeGroup], 10);
+        }
+
+        const rule = {
+          type: 'sense',
+          senseType: pp.type,
+          range,
+          description: originalText.substring(0, 100),
+          when: { type: 'always' }
+        };
+
+        this.stats.sense = (this.stats.sense || 0) + 1;
+        return [rule];
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse size pattern: "large size", "as large creatures", etc.
+   */
+  _tryParseSize(text, originalText) {
+    const patterns = [
+      { regex: /(?:as\s+)?large\s+creatures?/i, size: 'large' },
+      { regex: /(?:as\s+)?small\s+creatures?/i, size: 'small' },
+      { regex: /(?:as\s+)?huge\s+creatures?/i, size: 'huge' }
+    ];
+
+    for (const pp of patterns) {
+      if (pp.regex.test(text)) {
+        // Parse effects from description
+        const effects = {};
+
+        if (originalText.includes('-1') && originalText.includes('reflex')) {
+          effects.reflexDefensePenalty = -1;
+        }
+        if (originalText.includes('-5') && originalText.includes('stealth')) {
+          effects.stealthPenalty = -5;
+        }
+        if (originalText.includes('+5') && originalText.includes('damage threshold')) {
+          effects.damageThresholdBonus = 5;
+        }
+        if (originalText.includes('double') && originalText.includes('carry')) {
+          effects.carryingCapacityMultiplier = 2;
+        }
+
+        const rule = {
+          type: 'size',
+          sizeCategory: pp.size,
+          effects,
+          when: { type: 'always' }
+        };
+
+        this.stats.size = (this.stats.size || 0) + 1;
+        return [rule];
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse natural armor pattern: "natural armor bonus", etc.
+   */
+  _tryParseNaturalArmor(text, originalText) {
+    const pattern = /natural\s+armor\s+(?:bonus\s+)?(?:of\s+)?(\+?)(\d+)/i;
+    const match = text.match(pattern);
+
+    if (match) {
+      const value = parseInt(match[2], 10);
+
+      const rule = {
+        type: 'naturalArmor',
+        value,
+        defense: 'reflex',
+        when: { type: 'always' }
+      };
+
+      this.stats.naturalArmor = (this.stats.naturalArmor || 0) + 1;
+      return [rule];
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse rage pattern: "when reduced to half", "gains bonus on melee", etc.
+   */
+  _tryParseRage(text, originalText) {
+    // Check if this is a rage ability
+    if (!originalText.includes('reduced') && !originalText.includes('half') && !originalText.includes('rage')) {
+      return null;
+    }
+
+    const patterns = [
+      /(?:when\s+)?reduced\s+to\s+half\s+hit\s+points?(?:\s+or\s+fewer)?.*?gains?\s+(?:a\s+)?\+(\d+)\s+(?:species\s+)?bonus\s+on\s+([a-z\s]+)/i,
+      /(?:when\s+)?reduced\s+to\s+half\s+hit\s+points?.*?\+(\d+)(?:\s+species)?\s+bonus.*?melee/i
+    ];
+
+    for (const pattern of patterns) {
+      const match = originalText.match(pattern);
+      if (match) {
+        const bonus = parseInt(match[1], 10);
+        const appliesTo = originalText.toLowerCase().includes('damage') ? 'both' : 'melee';
+
+        const bonuses = {};
+        if (appliesTo === 'both' || appliesTo === 'melee') {
+          bonuses.meleeAttackBonus = bonus;
+          if (originalText.includes('damage')) {
+            bonuses.meleeDamageBonus = bonus;
+          }
+        }
+
+        const rule = {
+          type: 'rage',
+          trigger: {
+            type: 'hpThreshold',
+            value: 50
+          },
+          duration: 'untilEndOfEncounter',
+          bonuses,
+          description: originalText.substring(0, 150),
+          when: { type: 'always' }
+        };
+
+        this.stats.rage = (this.stats.rage || 0) + 1;
+        return [rule];
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse melee culture bonus: "warrior culture", "martial culture", "powerful arms", etc.
+   */
+  _tryParseMeleeCultureBonus(text, originalText) {
+    const patterns = [
+      /(?:warrior|martial)\s+culture.*?\+(\d+).*?melee/i,
+      /powerful\s+(?:arms|strength).*?\+(\d+).*?melee/i,
+      /gains?\s+(?:a\s+)?\+(\d+)\s+species\s+bonus\s+on\s+melee\s+attack/i
+    ];
+
+    for (const pattern of patterns) {
+      const match = originalText.match(pattern);
+      if (match) {
+        const value = parseInt(match[1], 10);
+
+        const rule = {
+          type: 'meleeCultureBonus',
+          value,
+          appliesTo: 'all',
+          bonusType: 'species',
+          description: originalText.substring(0, 100),
+          when: { type: 'always' }
+        };
+
+        this.stats.meleeCultureBonus = (this.stats.meleeCultureBonus || 0) + 1;
+        return [rule];
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse multi-limb pattern: "four arms", "extra limbs", etc.
+   */
+  _tryParseMultiLimb(text, originalText) {
+    const patterns = [
+      { regex: /four\s+arms?/i, count: 4 },
+      { regex: /(?:multiple|extra)\s+limbs?/i, count: 2 },
+      { regex: /quad.limbed/i, count: 4 }
+    ];
+
+    for (const pp of patterns) {
+      if (pp.regex.test(text)) {
+        const effects = {};
+
+        // Parse effects
+        if (originalText.includes('grapple')) {
+          effects.grappleBonus = 2;
+        }
+        if (originalText.includes('multi') || originalText.includes('multiple')) {
+          effects.weaponPenaltyIgnore = true;
+        }
+
+        const rule = {
+          type: 'multiLimb',
+          limbCount: pp.count,
+          effects,
+          description: originalText.substring(0, 100),
+          when: { type: 'always' }
+        };
+
+        this.stats.multiLimb = (this.stats.multiLimb || 0) + 1;
+        return [rule];
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse restriction pattern: "does not gain", "cannot", "only use", etc.
+   */
+  _tryParseRestriction(text, originalText) {
+    const patterns = [
+      { regex: /does\s+not\s+gain\s+weapon\s+proficiency\s+\(heavy\s+weapons\)/i, targets: ['heavy-weapons'], restricts: 'weaponType', reason: 'Does not gain proficiency with heavy weapons' },
+      { regex: /does\s+not\s+gain\s+weapon\s+proficiency\s+\((.*?)\)/i, restricts: 'weaponType', reason: 'Limited weapon proficiency' },
+      { regex: /only\s+use\s+organic\s+equipment/i, targets: ['inorganic-equipment'], restricts: 'equipmentType', reason: 'Can only use organic equipment' },
+      { regex: /cannot\s+benefit\s+from\s+organic\s+healing/i, targets: ['organic-healing'], restricts: 'ability', reason: 'Cannot benefit from organic healing' }
+    ];
+
+    for (const pp of patterns) {
+      const match = originalText.match(pp.regex);
+      if (match) {
+        let targets = pp.targets;
+        if (!targets && match[1]) {
+          targets = [match[1].toLowerCase().replace(/[()]/g, '').trim()];
+        }
+
+        const rule = {
+          type: 'restriction',
+          restricts: pp.restricts,
+          targets: targets || [],
+          reason: pp.reason,
+          description: originalText.substring(0, 100),
+          when: { type: 'always' }
+        };
+
+        this.stats.restriction = (this.stats.restriction || 0) + 1;
+        return [rule];
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Extract context condition from description
    */
   _extractContext(text) {
@@ -680,17 +996,25 @@ class SpeciesMigrator {
     console.log(`   Total traits:       ${this.stats.totalTraits}`);
     console.log(`   Converted traits:   ${this.stats.convertedTraits}`);
     console.log(`\n   Rule Types Found:`);
-    console.log(`   - Skill bonuses:    ${this.stats.skillBonuses}`);
-    console.log(`   - Defense bonuses:  ${this.stats.defenseBonuses}`);
-    console.log(`   - Damage bonuses:   ${this.stats.damageBonuses}`);
-    console.log(`   - Damage reduction: ${this.stats.damageReductions}`);
-    console.log(`   - Fast healing:     ${this.stats.fastHealing}`);
-    console.log(`   - Movement:         ${this.stats.movement}`);
-    console.log(`   - Breathing:        ${this.stats.breathing}`);
-    console.log(`   - Immunity:         ${this.stats.immunity}`);
-    console.log(`   - Feat grants:      ${this.stats.featGrants}`);
-    console.log(`   - Special abilities:${this.stats.specialAbilities}`);
-    console.log(`   - Failed:           ${this.stats.failed}`);
+    console.log(`   - Skill bonuses:       ${this.stats.skillBonuses}`);
+    console.log(`   - Defense bonuses:     ${this.stats.defenseBonuses}`);
+    console.log(`   - Damage bonuses:      ${this.stats.damageBonuses}`);
+    console.log(`   - Rerolls:             ${this.stats.reroll}`);
+    console.log(`   - Senses:              ${this.stats.sense}`);
+    console.log(`   - Size effects:        ${this.stats.size}`);
+    console.log(`   - Natural armor:       ${this.stats.naturalArmor}`);
+    console.log(`   - Rage:                ${this.stats.rage}`);
+    console.log(`   - Melee culture bonus: ${this.stats.meleeCultureBonus}`);
+    console.log(`   - Multi-limb:          ${this.stats.multiLimb}`);
+    console.log(`   - Restrictions:        ${this.stats.restriction}`);
+    console.log(`   - Damage reduction:    ${this.stats.damageReductions}`);
+    console.log(`   - Fast healing:        ${this.stats.fastHealing}`);
+    console.log(`   - Movement:            ${this.stats.movement}`);
+    console.log(`   - Breathing:           ${this.stats.breathing}`);
+    console.log(`   - Immunity:            ${this.stats.immunity}`);
+    console.log(`   - Feat grants:         ${this.stats.featGrants}`);
+    console.log(`   - Special abilities:   ${this.stats.specialAbilities}`);
+    console.log(`   - Failed:              ${this.stats.failed}`);
 
     const conversionRate = (
       (this.stats.convertedTraits / this.stats.totalTraits) *
