@@ -9,6 +9,11 @@ import { AbilityTags } from "./ability-tags.js";
 import { AbilityUsage } from "./ability-usage.js";
 import { AbilityRegistry } from "./ability-registry.js";
 import { AbilityModelValidator } from "../../dev/ability-model-validator.js";
+import { getFeatAbilitiesForActor } from "./feat-ability-module.js";
+import { getTalentAbilitiesForActor } from "./talent-ability-module.js";
+import { getForcePowerAbilitiesForActor } from "./forcePower-ability-module.js";
+import { getSpeciesAbilitiesForActor } from "./species-ability-module.js";
+import { getForceModifierAbilitiesForActor } from "./force-modifier-module.js";
 
 export const ABILITY_TYPES = Object.freeze([
   "talent",
@@ -45,13 +50,11 @@ export class AbilityEngine {
     if (!actor) return [];
     const out = [];
 
-    // Placeholder for different ability sources
-    // These would be implemented in separate modules:
-    // out.push(...getFeatAbilitiesForActor(actor, opts));
-    // out.push(...getTalentAbilitiesForActor(actor, opts));
-    // out.push(...getForcePowerAbilitiesForActor(actor, opts));
-    // out.push(...getSpeciesAbilitiesForActor(actor, opts));
-    // out.push(...getForceModifierAbilitiesForActor(actor, opts));
+    out.push(...getFeatAbilitiesForActor(actor, opts));
+    out.push(...getTalentAbilitiesForActor(actor, opts));
+    out.push(...getForcePowerAbilitiesForActor(actor, opts));
+    out.push(...getSpeciesAbilitiesForActor(actor, opts));
+    out.push(...getForceModifierAbilitiesForActor(actor, opts));
 
     return out;
   }
@@ -192,6 +195,9 @@ export class AbilityEngine {
   }
 
   static _isDev() {
-    return game?.settings?.get?.("foundryvtt-swse", "devMode") === true || game?.settings?.get?.("foundryvtt-swse", "developerMode") === true;
+    return (
+      game?.settings?.get?.("foundryvtt-swse", "devMode") === true ||
+      game?.settings?.get?.("core", "devMode") === true
+    );
   }
 }

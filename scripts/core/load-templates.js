@@ -129,3 +129,6 @@ export function assertTemplatesResolved() {
     console.warn(`[SWSE] ${missing.length} template(s) failed to register.`);
   }
 }
+
+// Export alias for backwards compatibility
+export const assertPartialsResolved = assertTemplatesResolved;
