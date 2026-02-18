@@ -491,20 +491,18 @@ export async function _applyBackgroundToActor(actor) {
     updateData['system.notes'] = existingNotes ? `${existingNotes}\n\n${bgNotes}` : bgNotes;
   }
 
-  // Apply the update
-  if (Object.keys(updateData).length > 0) {
-    await actor.update(updateData);
-  }
-
-  // Add bonus language if specified
+  // Add bonus language if specified (build into same updateData for single atomic update)
   if (bg.bonusLanguage) {
     const existingLanguages = actor.system.languages || [];
     const newLanguage = bg.bonusLanguage.split(' or ')[0].trim(); // Take first option if multiple
     if (!existingLanguages.includes(newLanguage)) {
-      await actor.update({
-        'system.languages': [...existingLanguages, newLanguage]
-      });
+      updateData['system.languages'] = [...existingLanguages, newLanguage];
     }
+  }
+
+  // Apply all background updates in a single atomic call
+  if (Object.keys(updateData).length > 0) {
+    await actor.update(updateData);
   }
 
   // Add special ability as a feat if specified

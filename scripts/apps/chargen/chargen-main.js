@@ -1199,6 +1199,32 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       }
     }
 
+    // Navigation booleans — computed in JS so templates receive plain booleans
+    const _navSteps = this._getSteps();
+    const _navIdx = _navSteps.indexOf(this.currentStep);
+    context.canGoBack = _navIdx > 0;
+    context.canGoForward = _navIdx >= 0 && _navIdx < _navSteps.length - 1;
+    context.isFinalStep = this.currentStep === 'summary';
+    context.isShopStep = this.currentStep === 'shop';
+
+    // summaryFinance — structured credits object for summary/shop steps (preview-only, no actor read)
+    if (this.currentStep === 'summary' || this.currentStep === 'shop') {
+      if (this.characterData.isDroid) {
+        context.summaryFinance = {
+          totalCredits: this.characterData.droidCredits?.base || 0,
+          spentCredits: this.characterData.droidSystems?.totalCost || 0,
+          remainingCredits: this.characterData.droidCredits?.remaining || 0
+        };
+      } else {
+        const total = this.characterData.credits || 0;
+        context.summaryFinance = {
+          totalCredits: total,
+          spentCredits: 0,
+          remainingCredits: total
+        };
+      }
+    }
+
     return context;
   }
 
@@ -1483,6 +1509,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     bindClick('.next-step', this._onNextStep);
     bindClick('.prev-step', this._onPrevStep);
     bindClick('.skip-step', this._onSkipStep);
+    bindClick('.cancel-chargen', this._onCancelChargen);
     bindClick('.build-later-droid', this._onBuildLater);
 
     // Chevron step navigation (all steps now clickable with confirmation)
@@ -2736,6 +2763,25 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     this.close();
+  }
+
+  /**
+   * Cancel character creation with confirmation.
+   * Does not mutate actor. Clears in-memory state only.
+   */
+  async _onCancelChargen(event) {
+    event?.preventDefault();
+    const confirmed = await Dialog.confirm({
+      title: game.i18n.localize('SWSE.Chargen.CancelTitle') || 'Cancel Character Creation',
+      content: `<p>${game.i18n.localize('SWSE.Chargen.CancelContent') || 'Are you sure? All progress will be lost.'}</p>`,
+      defaultYes: false
+    });
+    if (confirmed) {
+      // Clear any in-memory progression lock that may have been set by compat layer
+      if (this.actor) delete this.actor._swseProgressionLock;
+      if (this.actor?._progressionSession) delete this.actor._progressionSession;
+      await this.close();
+    }
   }
 
   async _onOpenShop(event) {

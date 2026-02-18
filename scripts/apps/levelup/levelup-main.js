@@ -260,60 +260,6 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   }
 
   /**
-   * PHASE B: Bind event listeners with cleanup tracking
-   * Replaces inline addEventListener calls, enables proper cleanup
-   */
-  _bindEventListeners() {
-    // Clear previous listeners first
-    this._eventListeners.forEach(({ el, event, handler }) => {
-      el.removeEventListener(event, handler);
-    });
-    this._eventListeners = [];
-
-    const root = this.element;
-    const qsa = (el, sel) => el.querySelectorAll(sel);
-
-    // Helper to track listener binding
-    const addListener = (selector, eventName, handler) => {
-      qsa(root, selector).forEach(el => {
-        const boundHandler = handler.bind(this);
-        el.addEventListener(eventName, boundHandler);
-        this._eventListeners.push({ el, event: eventName, handler: boundHandler });
-      });
-    };
-
-    // Comprehensive event listener binding for levelup UI
-    addListener('.select-class-btn', 'click', this._onSelectClass);
-    addListener('.class-choice-btn', 'click', this._onSelectClass);
-    addListener('.show-prestige-btn', 'click', this._onShowPrestigeClasses);
-    addListener('.back-to-base-classes', 'click', this._onBackToBaseClasses);
-    addListener('.select-feat-btn', 'click', this._onSelectMulticlassFeat);
-    addListener('.select-skill-btn', 'click', this._onSelectMulticlassSkill);
-    addListener('.ability-increase-btn', 'click', this._onAbilityIncrease);
-    addListener('.ask-mentor-attribute', 'click', this._onAskMentorAttributeSuggestion);
-    addListener('.select-bonus-feat', 'click', this._onSelectBonusFeat);
-    addListener('.select-force-power', 'click', this._onSelectForcePower);
-    addListener('.select-talent-tree', 'click', this._onSelectTalentTree);
-    addListener('.next-step', 'click', this._onNextStep);
-    addListener('.prev-step', 'click', this._onPrevStep);
-    addListener('.skip-step', 'click', this._onSkipStep);
-    addListener('.free-build-toggle', 'change', this._onToggleFreeBuild);
-    addListener('.complete-levelup', 'click', this._onCompleteLevelUp);
-    addListener('.category-header', 'click', this._onToggleFeatCategory);
-    addListener('.feat-search-input', 'input', this._onFeatSearch);
-    addListener('.clear-search-btn', 'click', this._onClearSearch);
-    addListener('.clear-filters-btn', 'click', this._onClearAllFilters);
-    addListener('.show-unavailable-toggle', 'change', this._onToggleShowUnavailable);
-    addListener('.feat-tag', 'click', this._onClickFeatTag);
-    addListener('.show-prestige-roadmap', 'click', this._onShowPrestigeRoadmap);
-    addListener('.show-gm-debug-panel', 'click', this._onShowGMDebugPanel);
-    addListener('.ask-mentor-class-suggestion', 'click', this._onAskMentorClassSuggestion);
-    addListener('.ask-mentor-feat-suggestion', 'click', this._onAskMentorFeatSuggestion);
-    addListener('.ask-mentor-talent-suggestion', 'click', this._onAskMentorTalentSuggestion);
-    addListener('.ask-mentor-force-power-suggestion', 'click', this._onAskMentorForcePowerSuggestion);
-  }
-
-  /**
    * PHASE B: Comprehensive event listener binding (all listeners tracked)
    * Replaces inline addEventListener calls from _onRender (original lines 464-519)
    */
@@ -364,6 +310,25 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     addListener('.ask-mentor-feat-suggestion', 'click', this._onAskMentorFeatSuggestion);
     addListener('.ask-mentor-talent-suggestion', 'click', this._onAskMentorTalentSuggestion);
     addListener('.ask-mentor-force-power-suggestion', 'click', this._onAskMentorForcePowerSuggestion);
+    addListener('.cancel-levelup', 'click', this._onCancelLevelUp);
+  }
+
+  /**
+   * Cancel level-up with confirmation. No actor mutations have occurred — safe to discard.
+   */
+  async _onCancelLevelUp(event) {
+    event?.preventDefault();
+    const confirmed = await Dialog.confirm({
+      title: game.i18n.localize('SWSE.LevelUp.CancelTitle') || 'Cancel Level Up',
+      content: `<p>${game.i18n.localize('SWSE.LevelUp.CancelContent') || 'Are you sure? No changes will be saved.'}</p>`,
+      defaultYes: false
+    });
+    if (confirmed) {
+      // Clear any in-memory session/lock — no actor flags were written during levelup staging
+      if (this.actor?._progressionSession) delete this.actor._progressionSession;
+      if (this.actor?._swseProgressionLock) delete this.actor._swseProgressionLock;
+      await this.close();
+    }
   }
 
   async _prepareContext() {
@@ -1898,7 +1863,30 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       }
 
       // ========================================
-      // STEP 2: Finalize through progression engine
+      // STEP 2: Stage retroactive CON HP delta before finalize
+      // Must run pre-finalize so the delta is applied atomically within finalize()
+      // Uses pre-commit actor.con.base (ability increase is staged, not yet applied)
+      // ========================================
+      const isDroid = this.actor.system.isDroid || false;
+      if (isDroid && this.abilityIncreases.con && this.abilityIncreases.con > 0) {
+        swseLogger.log('SWSE LevelUp | CON modifier increase: Skipped for droid (no CON)');
+      } else if (!isDroid && this.abilityIncreases.con && this.abilityIncreases.con > 0) {
+        const conBase = this.actor.system.attributes?.con?.base || 10;
+        const conIncrease = this.abilityIncreases.con;
+        const oldConMod = Math.floor((conBase - 10) / 2);
+        const newConMod = Math.floor((conBase + conIncrease - 10) / 2);
+        if (newConMod > oldConMod) {
+          const modIncrease = newConMod - oldConMod;
+          const retroactiveHPGain = newLevel * modIncrease;
+          // Stage delta on engine — finalize() applies it atomically after ActorProgressionUpdater
+          this.progressionEngine._pendingHPDelta = (this.progressionEngine._pendingHPDelta || 0) + retroactiveHPGain;
+          swseLogger.log(`SWSE LevelUp | CON modifier increasing - staging ${retroactiveHPGain} retroactive HP`);
+          ui.notifications.info(`Constitution increased! You gain ${retroactiveHPGain} retroactive HP!`);
+        }
+      }
+
+      // ========================================
+      // STEP 3: Finalize through progression engine
       // ========================================
       swseLogger.log('SWSE LevelUp | Finalizing through progression engine');
 
@@ -1934,31 +1922,6 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       if (getMilestoneFt) {
         ui.notifications.info(`Level ${newLevel}! You gain a bonus general feat.`);
         swseLogger.log(`SWSE LevelUp | Level ${newLevel} milestone - bonus general feat granted`);
-      }
-
-      // Handle CON modifier retroactive HP
-      // Note: This is level-up specific since chargen starts fresh
-      // Droids don't have Constitution, skip HP gain for droids
-      const isDroid = this.actor.system.isDroid || false;
-      if (isDroid && this.abilityIncreases.con && this.abilityIncreases.con > 0) {
-        swseLogger.log('SWSE LevelUp | CON modifier increase: Skipped for droid (no CON)');
-      } else if (!isDroid && this.abilityIncreases.con && this.abilityIncreases.con > 0) {
-        // Check if the increase pushed us to a new modifier tier
-        const conMod = this.actor.system.attributes?.con?.mod || 0;
-        const oldConBase = (this.actor.system.attributes?.con?.base || 10) - this.abilityIncreases.con;
-        const oldConMod = Math.floor((oldConBase - 10) / 2);
-        if (conMod > oldConMod) {
-          const modIncrease = conMod - oldConMod;
-          const retroactiveHPGain = newLevel * modIncrease;
-          // Apply retroactive HP
-          const currentHP = this.actor.system.hp.max || 0;
-          await this.actor.update({
-            'system.hp.max': currentHP + retroactiveHPGain,
-            'system.hp.value': (this.actor.system.hp.value || 0) + retroactiveHPGain
-          });
-          swseLogger.log(`SWSE LevelUp | CON modifier increased - granting ${retroactiveHPGain} retroactive HP`);
-          ui.notifications.info(`Constitution increased! You gain ${retroactiveHPGain} retroactive HP!`);
-        }
       }
 
       // Handle INT modifier bonus skill notification
