@@ -14,6 +14,7 @@
 import { ModifierType, ModifierSource, createModifier, isValidModifier } from './ModifierTypes.js';
 import ModifierUtils from './ModifierUtils.js';
 import { EncumbranceEngine } from '../encumbrance/EncumbranceEngine.js';
+import { StructuredRuleEvaluator } from './StructuredRuleEvaluator.js';
 import { swseLogger } from '../../utils/logger.js';
 
 export class ModifierEngine {
@@ -439,9 +440,29 @@ export class ModifierEngine {
     const speciesName = typeof species === 'string' ? species : species?.name || species?.value || 'Unknown Species';
     const speciesId = `species.${speciesName}`;
 
-    // Parse skill bonuses from species
+    // Parse species data
     const speciesData = typeof species === 'object' ? species : {};
 
+    // Phase 1: Evaluate structured rule elements from species traits (NEW)
+    try {
+      const allTraits = [
+        ...(speciesData.structuralTraits || []),
+        ...(speciesData.conditionalTraits || []),
+        ...(speciesData.bonusFeats || [])
+      ];
+
+      const structuredModifiers = StructuredRuleEvaluator.evaluateSpeciesRules(
+        actor,
+        allTraits,
+        speciesName
+      );
+
+      modifiers.push(...structuredModifiers);
+    } catch (err) {
+      swseLogger.warn(`[ModifierEngine] Error evaluating structured species rules:`, err);
+    }
+
+    // Phase 2: Legacy skill bonuses (DEPRECATED - for backwards compatibility)
     if (speciesData.skillBonuses && typeof speciesData.skillBonuses === 'object') {
       for (const [skillKey, bonusValue] of Object.entries(speciesData.skillBonuses)) {
         if (typeof bonusValue === 'number' && bonusValue !== 0) {

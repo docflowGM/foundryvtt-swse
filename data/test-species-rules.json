@@ -1,0 +1,139 @@
+[
+  {
+    "id": "ugnaught",
+    "name": "Ugnaught",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "industrial-expertise",
+        "name": "Industrial Expertise",
+        "description": "An Ugnaught gains a +5 species bonus on Mechanics checks involving machinery.",
+        "rules": [
+          {
+            "id": "industrial-expertise-mod",
+            "type": "skillModifier",
+            "skillId": "mechanics",
+            "value": 5,
+            "bonusType": "species",
+            "context": {
+              "type": "machinery",
+              "description": "checks involving machinery"
+            },
+            "when": { "type": "always" }
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": ["test", "machinery", "mechanic"],
+    "notes": ["Test species for conditional skill bonus with context"]
+  },
+  {
+    "id": "qel-droma",
+    "name": "Qel-Droma",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "force-legacy",
+        "name": "Force Legacy",
+        "description": "A Qel-Droma gains a +2 species bonus on Use the Force checks.",
+        "rules": [
+          {
+            "id": "force-legacy-mod",
+            "type": "skillModifier",
+            "skillId": "useTheForce",
+            "value": 2,
+            "bonusType": "species",
+            "when": { "type": "always" }
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": ["test", "force", "skill"],
+    "notes": ["Test species for flat skill bonus"]
+  },
+  {
+    "id": "miraluka",
+    "name": "Miraluka",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "force-sensitivity",
+        "name": "Force Sensitivity",
+        "description": "A Miraluka gains the Force Sensitivity feat at 1st level.",
+        "rules": [
+          {
+            "id": "force-sensitivity-grant",
+            "type": "featGrant",
+            "featId": "force-sensitivity",
+            "when": { "type": "always" },
+            "allowMultiple": false
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [
+      {
+        "id": "force-training",
+        "name": "Force Training (Bonus)",
+        "description": "A Miraluka who has Use the Force as a Trained Skill gains the Force Training feat.",
+        "rules": [
+          {
+            "id": "force-training-grant",
+            "type": "featGrant",
+            "featId": "force-training",
+            "when": {
+              "type": "skillTrained",
+              "skillId": "useTheForce"
+            },
+            "allowMultiple": false
+          }
+        ]
+      }
+    ],
+    "equipmentGrants": [],
+    "tags": ["test", "force", "feat-grant", "conditional"],
+    "notes": ["Test species for unconditional and conditional feat grants"]
+  },
+  {
+    "id": "chevin",
+    "name": "Chevin",
+    "renameTo": null,
+    "inherits": null,
+    "structuralTraits": [
+      {
+        "id": "tough-hide",
+        "name": "Tough Hide",
+        "description": "A Chevin gains a +1 species bonus to Fortitude Defense.",
+        "rules": [
+          {
+            "id": "tough-hide-defense",
+            "type": "defenseModifier",
+            "defense": "fortitude",
+            "value": 1,
+            "bonusType": "species",
+            "when": { "type": "always" }
+          }
+        ]
+      }
+    ],
+    "activatedAbilities": [],
+    "conditionalTraits": [],
+    "bonusFeats": [],
+    "equipmentGrants": [],
+    "tags": ["test", "defense", "toughness"],
+    "notes": ["Test species for defense modifier"]
+  }
+]
