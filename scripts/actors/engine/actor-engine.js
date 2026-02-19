@@ -885,6 +885,210 @@ export const ActorEngine = {
       });
       throw err;
     }
+  },
+
+  // ============================================================================
+  // PHASE 5: TALENT EFFECT ORCHESTRATION
+  // ============================================================================
+
+  /**
+   * applyTalentEffect() — COORDINATED TALENT EFFECT MUTATIONS
+   *
+   * Executes a pre-computed talent effect plan.
+   *
+   * Contract:
+   * - Plan is pre-computed (from TalentEffectEngine)
+   * - Each actor mutation is individually governed
+   * - Derived recalculation happens per-actor
+   * - No cross-actor atomicity (domain-level coordination only)
+   * - If any mutation fails, error is thrown (no automatic rollback)
+   *
+   * @param {Object} plan - Effect plan from TalentEffectEngine.build*Plan()
+   * @param {Object} [options={}] - Optional execution options
+   * @returns {Promise<{success, effect, damageAmount, roll, results}>}
+   */
+  async applyTalentEffect(plan, options = {}) {
+    try {
+      if (!plan) {
+        throw new Error('applyTalentEffect() called with no plan');
+      }
+
+      if (!plan.success) {
+        // Plan computation failed; return failure as-is
+        return {
+          success: false,
+          reason: plan.reason,
+          effect: plan.effect
+        };
+      }
+
+      if (!Array.isArray(plan.mutations) || plan.mutations.length === 0) {
+        throw new Error('applyTalentEffect() plan has no mutations');
+      }
+
+      swseLogger.log(`[TALENT EFFECT] Applying ${plan.effect} with ${plan.mutations.length} mutations`, {
+        damageAmount: plan.damageAmount,
+        roll: plan.roll?.result
+      });
+
+      const results = [];
+      const appliedMutations = [];
+
+      // ====================================================================
+      // PHASE 1: Apply each mutation through ActorEngine
+      // ====================================================================
+      for (let i = 0; i < plan.mutations.length; i++) {
+        const mutation = plan.mutations[i];
+
+        try {
+          // Set context for this mutation
+          // Each mutation is individually governed (not wrapped together)
+          MutationInterceptor.setContext({
+            operation: 'applyTalentEffect',
+            effect: plan.effect,
+            mutationIndex: i,
+            totalMutations: plan.mutations.length
+          });
+
+          // Execute mutation based on type
+          if (mutation.type === 'update') {
+            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: update ${mutation.actor.name}`, {
+              data: mutation.data
+            });
+
+            await this.updateActor(mutation.actor, mutation.data);
+
+            results.push({
+              actor: mutation.actor.id,
+              type: 'update',
+              success: true
+            });
+
+            appliedMutations.push(mutation);
+
+          } else if (mutation.type === 'setFlag') {
+            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: setFlag ${mutation.actor.name}`, {
+              scope: mutation.scope,
+              key: mutation.key,
+              value: mutation.value
+            });
+
+            await mutation.actor.setFlag(mutation.scope, mutation.key, mutation.value);
+
+            results.push({
+              actor: mutation.actor.id,
+              type: 'setFlag',
+              success: true
+            });
+
+            appliedMutations.push(mutation);
+
+          } else if (mutation.type === 'createEmbedded') {
+            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: createEmbedded ${mutation.actor.name}`, {
+              embeddedName: mutation.embeddedName,
+              count: mutation.data.length
+            });
+
+            await this.createEmbeddedDocuments(
+              mutation.actor,
+              mutation.embeddedName,
+              mutation.data
+            );
+
+            results.push({
+              actor: mutation.actor.id,
+              type: 'createEmbedded',
+              success: true,
+              count: mutation.data.length
+            });
+
+            appliedMutations.push(mutation);
+
+          } else if (mutation.type === 'deleteEmbedded') {
+            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: deleteEmbedded ${mutation.actor.name}`, {
+              embeddedName: mutation.embeddedName,
+              count: mutation.ids.length
+            });
+
+            await this.deleteEmbeddedDocuments(
+              mutation.actor,
+              mutation.embeddedName,
+              mutation.ids
+            );
+
+            results.push({
+              actor: mutation.actor.id,
+              type: 'deleteEmbedded',
+              success: true,
+              count: mutation.ids.length
+            });
+
+            appliedMutations.push(mutation);
+
+          } else {
+            throw new Error(`Unknown mutation type: ${mutation.type}`);
+          }
+
+        } catch (mutationErr) {
+          swseLogger.error(`[TALENT EFFECT] Mutation ${i + 1} failed: ${mutation.type} on ${mutation.actor.name}`, {
+            error: mutationErr,
+            appliedSoFar: appliedMutations.length,
+            totalMutations: plan.mutations.length
+          });
+
+          // Report which mutations succeeded, which failed
+          results.push({
+            actor: mutation.actor.id,
+            type: mutation.type,
+            success: false,
+            error: mutationErr.message
+          });
+
+          // Throw to prevent partial execution
+          throw new Error(
+            `Talent effect ${plan.effect} failed at mutation ${i + 1}: ${mutationErr.message}`
+          );
+
+        } finally {
+          // Always clear context
+          MutationInterceptor.clearContext();
+        }
+      }
+
+      // ====================================================================
+      // PHASE 2: All mutations succeeded
+      // ====================================================================
+      swseLogger.log(`[TALENT EFFECT] ✅ ${plan.effect} applied successfully`, {
+        mutationCount: plan.mutations.length,
+        damageAmount: plan.damageAmount,
+        resultSummary: results.map(r => `${r.type}:${r.success ? 'OK' : 'FAIL'}`)
+      });
+
+      return {
+        success: true,
+        effect: plan.effect,
+        damageAmount: plan.damageAmount,
+        roll: plan.roll,
+        results: results,
+        mutationCount: plan.mutations.length,
+        timestamp: new Date().toISOString()
+      };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applyTalentEffect failed`, {
+        error: err,
+        effect: plan?.effect,
+        plan: plan
+      });
+
+      // Return error result (do not throw; let caller decide)
+      return {
+        success: false,
+        effect: plan?.effect,
+        reason: err.message,
+        timestamp: new Date().toISOString()
+      };
+    }
   }
 
 };

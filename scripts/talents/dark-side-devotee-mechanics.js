@@ -12,6 +12,8 @@
 import { SWSELogger } from '../utils/logger.js';
 import { createChatMessage } from '../core/document-api-v13.js';
 import { RollEngine } from '../engine/roll-engine.js';
+import { TalentEffectEngine } from './talent-effect-engine.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class DarkSideDevoteeMechanics {
 
@@ -28,48 +30,56 @@ export class DarkSideDevoteeMechanics {
   /**
    * Apply Channel Aggression bonus damage after successful attack on flanked enemy
    * Bonus = 1d6 per class level (max 10d6)
+   *
+   * NEW: Uses TalentEffectEngine (compute) + ActorEngine (execute)
+   * Pattern:
+   * 1. Build effect plan (pure computation)
+   * 2. Apply mutations through ActorEngine
+   * 3. Create side-effects (chat) after success
    */
   static async triggerChannelAggression(actor, targetToken, characterLevel, spendFP = true) {
     if (!this.hasChannelAggression(actor)) {
       return { success: false, message: 'Actor does not have Channel Aggression' };
     }
 
-    // Calculate damage dice (1d6 per level, max 10d6)
-    const damageDice = Math.min(characterLevel, 10);
+    // ========================================================================
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    // ========================================================================
+    const plan = await TalentEffectEngine.buildChannelAggressionPlan({
+      sourceActor: actor,
+      targetActor: targetToken.actor,
+      characterLevel,
+      spendFP
+    });
 
-    if (spendFP) {
-      // Check Force Points
-      const currentFP = actor.system.forcePoints?.value || 0;
-      if (currentFP < 1) {
-        return {
-          success: false,
-          message: 'Not enough Force Points. Channel Aggression requires 1 Force Point.'
-        };
-      }
-
-      // Spend Force Point
-      await actor.update({
-        'system.forcePoints.value': currentFP - 1
-      });
+    // If plan failed, return immediately
+    if (!plan.success) {
+      return {
+        success: false,
+        message: plan.reason
+      };
     }
 
-    // Roll bonus damage
-    const roll = await RollEngine.safeRoll(`${damageDice}d6`);
-    if (!roll) {
-      return { success: false, message: 'Channel Aggression damage roll failed' };
+    // ========================================================================
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    // ========================================================================
+    const result = await ActorEngine.applyTalentEffect(plan);
+
+    if (!result.success) {
+      return {
+        success: false,
+        message: `Channel Aggression failed: ${result.reason}`
+      };
     }
-    const damageAmount = roll.total;
 
-    // Apply damage to target
-    const newHp = Math.max(0, targetToken.actor.system.hp.value - damageAmount);
-    await targetToken.actor.update({ 'system.hp.value': newHp });
-
-    // Create chat message
+    // ========================================================================
+    // PHASE 3: SIDE-EFFECTS (Chat Message)
+    // ========================================================================
     const chatContent = `
       <div class="swse-channel-aggression">
         <h3><img src="icons/svg/blood.svg" style="width: 20px; height: 20px;"> Channel Aggression</h3>
-        <p><strong>${actor.name}</strong> channels their aggression, dealing <strong>${damageAmount}</strong> additional damage to the flanked <strong>${targetToken.actor.name}</strong>!</p>
-        <div class="damage-roll">${roll.result}</div>
+        <p><strong>${actor.name}</strong> channels their aggression, dealing <strong>${result.damageAmount}</strong> additional damage to the flanked <strong>${targetToken.actor.name}</strong>!</p>
+        <div class="damage-roll">${result.roll.result}</div>
       </div>
     `;
 
@@ -77,17 +87,18 @@ export class DarkSideDevoteeMechanics {
       speaker: { actor: actor },
       content: chatContent,
       flavor: 'Channel Aggression - Bonus Damage',
-      rolls: [roll],
+      rolls: [result.roll],
       flags: { swse: { channelAggression: true } }
     });
 
-    SWSELogger.log(`SWSE Talents | ${actor.name} used Channel Aggression for ${damageAmount} damage`);
+    SWSELogger.log(`SWSE Talents | ${actor.name} used Channel Aggression for ${result.damageAmount} damage`);
 
     return {
       success: true,
-      damageDice: damageDice,
-      damageRoll: roll,
-      damageAmount: damageAmount
+      damageDice: plan.damageDice,
+      damageRoll: result.roll,
+      damageAmount: result.damageAmount,
+      mutationCount: result.mutationCount
     };
   }
 
