@@ -27,6 +27,7 @@ import { BABCalculator } from './bab-calculator.js';
 import { DefenseCalculator } from './defense-calculator.js';
 import { ModifierEngine } from '../../engine/modifiers/ModifierEngine.js';
 import { swseLogger } from '../../utils/logger.js';
+import { MutationIntegrityLayer } from '../../core/sentinel/mutation-integrity-layer.js';
 
 export class DerivedCalculator {
   /**
@@ -38,6 +39,9 @@ export class DerivedCalculator {
    */
   static async computeAll(actor) {
     try {
+      // PHASE 3 AUDITING: Record derived recalculation
+      MutationIntegrityLayer.recordDerivedRecalc();
+
       const prog = actor.system.progression || {};
       const classLevels = prog.classLevels || [];
 

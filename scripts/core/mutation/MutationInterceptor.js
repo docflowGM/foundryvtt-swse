@@ -20,6 +20,7 @@
  */
 
 import { swseLogger } from '../../utils/logger.js';
+import { MutationIntegrityLayer } from '../sentinel/mutation-integrity-layer.js';
 
 const STRICT_MODE = false; // Set to true to throw on violations
 const DEV_MODE = true;     // Log all mutations with stack traces
@@ -73,12 +74,17 @@ export class MutationInterceptor {
       );
     }
     _currentMutationContext = context;
+
+    // PHASE 3 AUDITING: Start transaction in Sentinel
+    MutationIntegrityLayer.startTransaction(context);
   }
 
   /**
    * Clear the current mutation context (when ActorEngine finishes).
    */
   static clearContext() {
+    // PHASE 3 AUDITING: End transaction in Sentinel
+    MutationIntegrityLayer.endTransaction();
     _currentMutationContext = null;
   }
 
@@ -145,6 +151,8 @@ export class MutationInterceptor {
       }
 
       try {
+        // PHASE 3 AUDITING: Record mutation event
+        MutationIntegrityLayer.recordMutation('update');
         return original.call(this, data, options);
       } finally {
         if (context?.suppressRecalc) {
@@ -195,6 +203,8 @@ export class MutationInterceptor {
       }
 
       try {
+        // PHASE 3 AUDITING: Record mutation event
+        MutationIntegrityLayer.recordMutation('updateEmbeddedDocuments');
         return original.call(this, embeddedName, updates, options);
       } finally {
         if (context?.suppressRecalc) {
@@ -244,6 +254,8 @@ export class MutationInterceptor {
       }
 
       try {
+        // PHASE 3 AUDITING: Record mutation event
+        MutationIntegrityLayer.recordMutation('createEmbeddedDocuments');
         return original.call(this, embeddedName, data, options);
       } finally {
         if (context?.suppressRecalc) {
@@ -293,6 +305,8 @@ export class MutationInterceptor {
       }
 
       try {
+        // PHASE 3 AUDITING: Record mutation event
+        MutationIntegrityLayer.recordMutation('deleteEmbeddedDocuments');
         return original.call(this, embeddedName, ids, options);
       } finally {
         if (context?.suppressRecalc) {

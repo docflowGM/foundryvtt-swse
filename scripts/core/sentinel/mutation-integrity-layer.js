@@ -30,6 +30,7 @@ export const MutationIntegrityLayer = {
   _violationLog: [],
   _mutationStack: [],
   _actorMutationMap: new Map(),
+  _activeTransaction: null,  // ← TRANSACTION TRACKING
 
   /**
    * Initialize layer for Sentinel registration
@@ -200,6 +201,184 @@ export const MutationIntegrityLayer = {
       byType,
       lastMutation: mutations[mutations.length - 1]
     };
+  },
+
+  /**
+   * ======================================================================
+   * TRANSACTION LIFECYCLE (PHASE 3 AUDITING)
+   * ======================================================================
+   * Enforces structural invariants per operation
+   * Example: applyProgression must have exactly 3 mutations and 1 recalc
+   */
+
+  /**
+   * Start a new mutation transaction
+   * @param {Object} context - {operation, source, suppressRecalc, blockNestedMutations}
+   * @throws {Error} If transaction already active and blockNestedMutations=true
+   */
+  startTransaction(context) {
+    if (this._activeTransaction && context.blockNestedMutations) {
+      const current = this._activeTransaction.operation;
+      throw new Error(
+        `Cannot start ${context.operation} — ${current} already in progress.\n` +
+        `Nested mutations blocked during ${current}.`
+      );
+    }
+
+    this._activeTransaction = {
+      operation: context.operation,
+      source: context.source,
+      startTime: performance.now(),
+      mutationCount: 0,
+      derivedRecalcCount: 0,
+      mutations: [],  // Track each mutation
+      context
+    };
+
+    swseLogger.debug(`[Sentinel] Transaction START: ${context.operation}`);
+  },
+
+  /**
+   * Record a mutation event within active transaction
+   * @param {string} type - 'update', 'createEmbedded', 'deleteEmbedded', 'updateEmbedded'
+   */
+  recordMutation(type) {
+    if (!this._activeTransaction) return;
+    this._activeTransaction.mutationCount++;
+    this._activeTransaction.mutations.push({
+      type,
+      timestamp: performance.now()
+    });
+  },
+
+  /**
+   * Record a derived recalculation within active transaction
+   */
+  recordDerivedRecalc() {
+    if (!this._activeTransaction) return;
+    this._activeTransaction.derivedRecalcCount++;
+  },
+
+  /**
+   * End transaction, validate invariants, produce report
+   * @throws {Error} If invariants violated in STRICT mode
+   */
+  endTransaction() {
+    if (!this._activeTransaction) return;
+
+    const tx = this._activeTransaction;
+    const durationMs = performance.now() - tx.startTime;
+
+    // Validate transaction against policy
+    this._validateTransaction(tx);
+
+    // Produce structured report
+    this._reportTransaction(tx, durationMs);
+
+    // Clear transaction
+    this._activeTransaction = null;
+  },
+
+  /**
+   * Validate transaction invariants against operation policy
+   * @private
+   */
+  _validateTransaction(tx) {
+    const policy = this._getOperationPolicy(tx.operation);
+    if (!policy) return;  // No policy = no enforcement
+
+    const violations = [];
+
+    // Check mutation ceiling
+    if (policy.maxMutations !== undefined && tx.mutationCount > policy.maxMutations) {
+      violations.push(
+        `Too many mutations: ${tx.mutationCount} > ${policy.maxMutations}`
+      );
+    }
+
+    // Check exact derived recalc count
+    if (policy.exactDerivedRecalcs !== undefined &&
+        tx.derivedRecalcCount !== policy.exactDerivedRecalcs) {
+      violations.push(
+        `Derived recalcs mismatch: ${tx.derivedRecalcCount} ≠ ${policy.exactDerivedRecalcs}`
+      );
+    }
+
+    if (violations.length === 0) return;  // PASS
+
+    // Handle violations
+    const message = `[Sentinel] Transaction INVARIANT VIOLATION in ${tx.operation}:\n${violations.join('\n')}`;
+
+    const sentinelMode = game.settings?.get?.('swse', 'sentinelMode') || 'DEV';
+    if (sentinelMode === 'STRICT') {
+      throw new Error(message);
+    } else if (sentinelMode === 'DEV') {
+      console.warn(message, { transaction: tx, violations });
+    }
+  },
+
+  /**
+   * Get operation-specific policy
+   * Defines invariants for each ActorEngine operation
+   * @private
+   */
+  _getOperationPolicy(operation) {
+    return {
+      'applyProgression': {
+        maxMutations: 3,           // Root update + delete items + create items
+        exactDerivedRecalcs: 1     // Single recalc after all mutations
+      },
+      'applyDamage': {
+        maxMutations: 1,
+        exactDerivedRecalcs: 1
+      },
+      'updateActor': {
+        maxMutations: 1,
+        exactDerivedRecalcs: 1
+      },
+      'updateEmbeddedDocuments': {
+        maxMutations: 1,
+        exactDerivedRecalcs: 1
+      }
+    }[operation];
+  },
+
+  /**
+   * Produce structured transaction report
+   * @private
+   */
+  _reportTransaction(tx, durationMs) {
+    const policy = this._getOperationPolicy(tx.operation);
+    const passed = !policy || (
+      tx.mutationCount <= (policy.maxMutations ?? Infinity) &&
+      tx.derivedRecalcCount === (policy.exactDerivedRecalcs ?? tx.derivedRecalcCount)
+    );
+
+    const sentinelMode = game.settings?.get?.('swse', 'sentinelMode') || 'DEV';
+    if (sentinelMode !== 'DEV') return;
+
+    const status = passed ? '✅ PASS' : '❌ FAIL';
+    console.log(
+      `[Sentinel] Transaction END: ${status}`,
+      {
+        operation: tx.operation,
+        mutations: tx.mutationCount,
+        derivedRecalcs: tx.derivedRecalcCount,
+        durationMs: durationMs.toFixed(2),
+        policy: policy ? {
+          maxMutations: policy.maxMutations,
+          exactDerivedRecalcs: policy.exactDerivedRecalcs
+        } : 'no policy'
+      }
+    );
+
+    swseLogger.debug(`[Sentinel] Transaction report`, {
+      operation: tx.operation,
+      mutations: tx.mutationCount,
+      derivedRecalcs: tx.derivedRecalcCount,
+      durationMs,
+      passed
+    });
   },
 
   /**
