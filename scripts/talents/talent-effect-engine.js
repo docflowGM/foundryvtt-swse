@@ -2486,11 +2486,13 @@ export class TalentEffectEngine {
    * Create and set active Sith Talisman
    *
    * @param {Actor} sourceActor - Actor creating talisman
+   * @param {string} talismantItemId - ID of created talisman item
    * @param {boolean} spendFP - Whether to spend Force Points
    * @returns {Promise<Object>} Plan object
    */
   static async buildSithTalismanPlan({
     sourceActor,
+    talismantItemId,
     spendFP = true
   }) {
     // --- Validation ---
@@ -2510,10 +2512,16 @@ export class TalentEffectEngine {
       };
     }
 
+    // --- Compute DSP change ---
+    const currentDSP = sourceActor.system.darkSideScore ?? 0;
+    const newDSP = currentDSP + 1;
+
     // --- Build talisman info ---
     const talismantInfo = {
+      itemId: talismantItemId,
       createdAt: new Date().toISOString(),
-      createdRound: game.combat?.round ?? 0
+      createdRound: game.combat?.round ?? 0,
+      dspIncreaseApplied: true
     };
 
     // --- Build mutations ---
@@ -2530,6 +2538,16 @@ export class TalentEffectEngine {
       });
     }
 
+    // Increase DSP by 1
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "update",
+      data: {
+        "system.darkSideScore": newDSP
+      }
+    });
+
     mutations.push({
       actor: sourceActor,
       actorId: sourceActor.id,
@@ -2544,13 +2562,15 @@ export class TalentEffectEngine {
       effect: "sithTalisman",
       sourceActor: sourceActor,
       talismantInfo: talismantInfo,
+      dspIncreased: 1,
+      newDSP: newDSP,
       mutations
     };
   }
 
   /**
    * Build Destroy Sith Talisman plan
-   * Remove active Sith Talisman
+   * Remove active Sith Talisman and set cooldown
    *
    * @param {Actor} sourceActor - Actor destroying talisman
    * @returns {Promise<Object>} Plan object
@@ -2566,6 +2586,10 @@ export class TalentEffectEngine {
         reason: "No active Sith Talisman"
       };
     }
+
+    // --- Compute cooldown ---
+    const cooldownUntil = new Date();
+    cooldownUntil.setHours(cooldownUntil.getHours() + 24);
 
     // --- Build mutations ---
     const mutations = [];
@@ -2589,11 +2613,22 @@ export class TalentEffectEngine {
       key: "activeSithTalisman"
     });
 
+    // Set cooldown
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: "sithTalismanCooldown",
+      value: cooldownUntil.toISOString()
+    });
+
     return {
       success: true,
       effect: "destroySithTalisman",
       sourceActor: sourceActor,
       talismantInfo: talismantInfo,
+      cooldownHours: 24,
       mutations
     };
   }
