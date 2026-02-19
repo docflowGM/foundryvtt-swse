@@ -22,6 +22,7 @@ import { FeatNormalizer } from '../feats/feat-normalizer.js';
 import { TalentTreeDB } from '../../data/talent-tree-db.js';
 import { ClassesDB } from '../../data/classes-db.js';
 import { TalentDB } from '../../data/talent-db.js';
+import { StableKeyMigration } from '../../data/stable-key-migration.js';
 
 export const SystemInitHooks = {
 
@@ -48,6 +49,9 @@ export const SystemInitHooks = {
             SWSELogger.log('='.repeat(50));
             SWSELogger.log('SWSE Progression Engine: System Initialization');
             SWSELogger.log('='.repeat(50));
+
+            // Step -1: Run stable key migration (ensures all docs have system.key)
+            await StableKeyMigration.runFullMigration();
 
             // Step 0: Build SSOT Data Registries (CRITICAL - must run first)
             await this._buildDataRegistries();

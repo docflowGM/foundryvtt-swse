@@ -31,7 +31,9 @@ export const TalentDB = {
     // In-memory storage
     talents: [],  // All normalized talents
     talentsByTree: new Map(),  // treeId -> Array<Talent>
+    talentsByTreeKey: new Map(),  // treeKey -> Array<Talent> (Phase 5)
     talentsById: new Map(),  // talentId -> Talent
+    _byKey: new Map(),  // stableKey -> Talent (Phase 5)
     isBuilt: false,
 
     /**
@@ -82,13 +84,28 @@ export const TalentDB = {
                     // Store by ID
                     this.talentsById.set(normalizedTalent.id, normalizedTalent);
 
+                    // Store by key (Phase 5)
+                    if (rawTalent.system?.key) {
+                        this._byKey.set(rawTalent.system.key, normalizedTalent);
+                    }
+
                     // Group by tree
                     if (normalizedTalent.treeId) {
                         if (!this.talentsByTree.has(normalizedTalent.treeId)) {
                             this.talentsByTree.set(normalizedTalent.treeId, []);
                         }
                         this.talentsByTree.get(normalizedTalent.treeId).push(normalizedTalent);
-                    } else {
+                    }
+
+                    // Group by tree key (Phase 5)
+                    if (rawTalent.system?.treeKey) {
+                        if (!this.talentsByTreeKey.has(rawTalent.system.treeKey)) {
+                            this.talentsByTreeKey.set(rawTalent.system.treeKey, []);
+                        }
+                        this.talentsByTreeKey.get(rawTalent.system.treeKey).push(normalizedTalent);
+                    }
+
+                    if (!normalizedTalent.treeId) {
                         orphaned++;
                     }
 
@@ -123,6 +140,17 @@ export const TalentDB = {
     },
 
     /**
+     * Get talents for a talent tree by stable key (Phase 5).
+     *
+     * @param {string} treeKey - Talent tree stable key
+     * @returns {Array<Object>} - Talents in this tree
+     */
+    byTreeKey(treeKey) {
+        if (!treeKey) {return [];}
+        return this.talentsByTreeKey.get(treeKey) || [];
+    },
+
+    /**
      * Get a talent by ID.
      *
      * @param {string} talentId - Talent ID
@@ -131,6 +159,17 @@ export const TalentDB = {
     get(talentId) {
         if (!talentId) {return null;}
         return this.talentsById.get(talentId) ?? null;
+    },
+
+    /**
+     * Get a talent by stable key (Phase 5).
+     *
+     * @param {string} key - Talent stable key
+     * @returns {Object|null} - Normalized talent or null
+     */
+    byKey(key) {
+        if (!key) {return null;}
+        return this._byKey.get(key) ?? null;
     },
 
     /**
@@ -243,6 +282,24 @@ export const TalentDB = {
      */
     count() {
         return this.talents.length;
+    },
+
+    /**
+     * Backward compatibility: Get talents by tree, supporting both treeId and treeKey (Phase 8).
+     * Tries key first, then falls back to ID.
+     *
+     * @param {string} treeIdOrKey - Tree ID or stable key
+     * @returns {Array<Object>} - Talents in this tree
+     */
+    byTreeCompat(treeIdOrKey) {
+        if (!treeIdOrKey) {return [];}
+
+        // Try key first
+        let talents = this.byTreeKey(treeIdOrKey);
+        if (talents.length > 0) {return talents;}
+
+        // Fall back to ID
+        return this.byTree(treeIdOrKey);
     },
 
     /**
