@@ -599,6 +599,88 @@ export const ActorEngine = {
       });
       throw err;
     }
+  },
+
+  /**
+   * spendForcePoints() — Reduce actor's force points
+   *
+   * @param {Actor} actor - target actor
+   * @param {number} amount - number of points to spend
+   */
+  async spendForcePoints(actor, amount = 1) {
+    try {
+      if (!actor) {throw new Error('spendForcePoints() called with no actor');}
+      if (typeof amount !== 'number' || amount < 0) {
+        throw new Error(`Invalid force point amount: ${amount}`);
+      }
+
+      const currentFP = actor.system.forcePoints?.value || 0;
+      const newFP = Math.max(0, currentFP - amount);
+      const actualSpent = currentFP - newFP;
+
+      if (actualSpent === 0) {
+        swseLogger.debug(`${actor.name} has no force points to spend`);
+        return { spent: 0, remaining: newFP };
+      }
+
+      await this.updateActor(actor, {
+        'system.forcePoints.value': newFP
+      });
+
+      swseLogger.log(`Force points spent: ${actor.name} used ${actualSpent}FP (now: ${newFP})`, {
+        amount: actualSpent
+      });
+
+      return { spent: actualSpent, remaining: newFP };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.spendForcePoints failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        amount
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * spendDestinyPoints() — Reduce actor's destiny points
+   *
+   * @param {Actor} actor - target actor
+   * @param {number} amount - number of points to spend
+   */
+  async spendDestinyPoints(actor, amount = 1) {
+    try {
+      if (!actor) {throw new Error('spendDestinyPoints() called with no actor');}
+      if (typeof amount !== 'number' || amount < 0) {
+        throw new Error(`Invalid destiny point amount: ${amount}`);
+      }
+
+      const currentDP = actor.system.destinyPoints?.value || 0;
+      const newDP = Math.max(0, currentDP - amount);
+      const actualSpent = currentDP - newDP;
+
+      if (actualSpent === 0) {
+        swseLogger.debug(`${actor.name} has no destiny points to spend`);
+        return { spent: 0, remaining: newDP };
+      }
+
+      await this.updateActor(actor, {
+        'system.destinyPoints.value': newDP
+      });
+
+      swseLogger.log(`Destiny points spent: ${actor.name} used ${actualSpent}DP (now: ${newDP})`, {
+        amount: actualSpent
+      });
+
+      return { spent: actualSpent, remaining: newDP };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.spendDestinyPoints failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        amount
+      });
+      throw err;
+    }
   }
 
 };
