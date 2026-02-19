@@ -60,9 +60,18 @@ export class MutationInterceptor {
    * Set the current mutation context (called by ActorEngine).
    * This tells the interceptors that a mutation is authorized.
    *
-   * @param {string} context - "ActorEngine.updateActor" or similar
+   * @param {Object} context - Context object with operation, source, suppressRecalc, blockNestedMutations
+   * @throws {Error} If nested mutations are blocked and one is already in progress
    */
   static setContext(context) {
+    // CRITICAL: Check nested mutation policy
+    if (context.blockNestedMutations && _currentMutationContext) {
+      throw new Error(
+        `Cannot start ${context.operation} — ` +
+        `${_currentMutationContext.operation} already in progress. ` +
+        `Nested mutations are not permitted during ${_currentMutationContext.operation}.`
+      );
+    }
     _currentMutationContext = context;
   }
 
@@ -104,6 +113,7 @@ export class MutationInterceptor {
 
     Actor.prototype.update = async function(data, options = {}) {
       const isAuthorized = MutationInterceptor._isAuthorized();
+      const context = _currentMutationContext;
       const caller = MutationInterceptor._getCaller();
 
       if (DEV_MODE) {
@@ -111,8 +121,8 @@ export class MutationInterceptor {
           authorized: isAuthorized,
           caller,
           data,
-          context: _currentMutationContext,
-          stack: MutationInterceptor._getStackTrace()
+          context: context?.operation,
+          suppressRecalc: context?.suppressRecalc
         });
       }
 
@@ -129,8 +139,18 @@ export class MutationInterceptor {
         }
       }
 
-      // Always call the original (whether authorized or not in DEV mode)
-      return original.call(this, data, options);
+      // CRITICAL: Set suppressRecalc flag if context requires it
+      if (context?.suppressRecalc) {
+        this.__skipPreparedDerivedData = true;
+      }
+
+      try {
+        return original.call(this, data, options);
+      } finally {
+        if (context?.suppressRecalc) {
+          delete this.__skipPreparedDerivedData;
+        }
+      }
     };
 
     swseLogger.debug('[MutationInterceptor] Actor.prototype.update wrapped');
@@ -145,6 +165,7 @@ export class MutationInterceptor {
 
     Actor.prototype.updateEmbeddedDocuments = async function(embeddedName, updates, options = {}) {
       const isAuthorized = MutationInterceptor._isAuthorized();
+      const context = _currentMutationContext;
       const caller = MutationInterceptor._getCaller();
 
       if (DEV_MODE) {
@@ -152,7 +173,7 @@ export class MutationInterceptor {
           authorized: isAuthorized,
           caller,
           updateCount: updates.length,
-          context: _currentMutationContext
+          suppressRecalc: context?.suppressRecalc
         });
       }
 
@@ -168,7 +189,18 @@ export class MutationInterceptor {
         }
       }
 
-      return original.call(this, embeddedName, updates, options);
+      // CRITICAL: Set suppressRecalc flag if context requires it
+      if (context?.suppressRecalc) {
+        this.__skipPreparedDerivedData = true;
+      }
+
+      try {
+        return original.call(this, embeddedName, updates, options);
+      } finally {
+        if (context?.suppressRecalc) {
+          delete this.__skipPreparedDerivedData;
+        }
+      }
     };
 
     swseLogger.debug('[MutationInterceptor] Actor.prototype.updateEmbeddedDocuments wrapped');
@@ -183,13 +215,15 @@ export class MutationInterceptor {
 
     Actor.prototype.createEmbeddedDocuments = async function(embeddedName, data, options = {}) {
       const isAuthorized = MutationInterceptor._isAuthorized();
+      const context = _currentMutationContext;
       const caller = MutationInterceptor._getCaller();
 
       if (DEV_MODE) {
         swseLogger.debug(`[MUTATION] createEmbeddedDocuments(${embeddedName}) on ${this.name}`, {
           authorized: isAuthorized,
           caller,
-          createCount: data.length
+          createCount: data.length,
+          suppressRecalc: context?.suppressRecalc
         });
       }
 
@@ -204,7 +238,18 @@ export class MutationInterceptor {
         }
       }
 
-      return original.call(this, embeddedName, data, options);
+      // CRITICAL: Set suppressRecalc flag if context requires it
+      if (context?.suppressRecalc) {
+        this.__skipPreparedDerivedData = true;
+      }
+
+      try {
+        return original.call(this, embeddedName, data, options);
+      } finally {
+        if (context?.suppressRecalc) {
+          delete this.__skipPreparedDerivedData;
+        }
+      }
     };
 
     swseLogger.debug('[MutationInterceptor] Actor.prototype.createEmbeddedDocuments wrapped');
@@ -219,13 +264,15 @@ export class MutationInterceptor {
 
     Actor.prototype.deleteEmbeddedDocuments = async function(embeddedName, ids, options = {}) {
       const isAuthorized = MutationInterceptor._isAuthorized();
+      const context = _currentMutationContext;
       const caller = MutationInterceptor._getCaller();
 
       if (DEV_MODE) {
         swseLogger.debug(`[MUTATION] deleteEmbeddedDocuments(${embeddedName}) on ${this.name}`, {
           authorized: isAuthorized,
           caller,
-          deleteCount: ids.length
+          deleteCount: ids.length,
+          suppressRecalc: context?.suppressRecalc
         });
       }
 
@@ -240,7 +287,18 @@ export class MutationInterceptor {
         }
       }
 
-      return original.call(this, embeddedName, ids, options);
+      // CRITICAL: Set suppressRecalc flag if context requires it
+      if (context?.suppressRecalc) {
+        this.__skipPreparedDerivedData = true;
+      }
+
+      try {
+        return original.call(this, embeddedName, ids, options);
+      } finally {
+        if (context?.suppressRecalc) {
+          delete this.__skipPreparedDerivedData;
+        }
+      }
     };
 
     swseLogger.debug('[MutationInterceptor] Actor.prototype.deleteEmbeddedDocuments wrapped');

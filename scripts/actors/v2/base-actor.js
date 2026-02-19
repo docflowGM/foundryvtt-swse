@@ -26,6 +26,15 @@ import { SWSEInitiative } from '../../engine/combat/SWSEInitiative.js';
  */
 export class SWSEV2BaseActor extends SWSEActorBase {
   prepareDerivedData() {
+    // ============================================================================
+    // PHASE 3: MUTATION CONTEXT SUPPRESSION
+    // Skip derived calculation if in progression or other transaction context
+    // ============================================================================
+    if (this.__skipPreparedDerivedData === true) {
+      console.log(`[DERIVED] Skipping prepareDerivedData (mutation context active) on ${this.name}`);
+      return;
+    }
+
     super.prepareDerivedData();
 
     const system = this.system ?? {};

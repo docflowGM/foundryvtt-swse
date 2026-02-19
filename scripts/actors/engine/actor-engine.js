@@ -2,6 +2,9 @@
 import { swseLogger } from '../../utils/logger.js';
 import { applyActorUpdateAtomic } from '../../utils/actor-utils.js';
 import { MutationInterceptor } from '../../core/mutation/MutationInterceptor.js';
+import { determineLevelFromXP } from '../../engine/progression/xp-engine.js';
+import { DerivedCalculator } from '../derived/derived-calculator.js';
+import { ModifierEngine } from '../../engine/modifiers/ModifierEngine.js';
 
 /**
  * ActorEngine
@@ -701,6 +704,185 @@ export const ActorEngine = {
 
     } catch (err) {
       swseLogger.error(`ActorEngine.resetSecondWind failed for ${actor?.name ?? 'unknown actor'}`, { error: err });
+      throw err;
+    }
+  },
+
+  /**
+   * applyProgression() — ATOMIC PROGRESSION TRANSACTION
+   *
+   * Single transaction for all progression mutations:
+   * 1. Compute new level internally
+   * 2. Build full mutation plan (memory)
+   * 3. Apply root state update (1 mutation)
+   * 4. Apply embedded batch changes (2 mutations max: delete, create)
+   * 5. Emit hooks (read-only observers)
+   * 6. Explicit single recomputation
+   *
+   * @param {Actor} actor - target actor
+   * @param {Object} progressionPacket - Atomic progression packet containing:
+   *   - xpDelta: number (XP to add)
+   *   - featsAdded: string[] (feat IDs to add)
+   *   - featsRemoved: string[] (feat IDs to remove for respec)
+   *   - talentsAdded: string[] (talent IDs to add)
+   *   - talentsRemoved: string[] (talent IDs to remove)
+   *   - trainedSkills: {skillKey: boolean} (skills to mark trained)
+   *   - itemsToCreate: Object[] (raw item data to create)
+   *   - stateUpdates: {path: value} (progression state updates)
+   * @returns {Promise<{success, newLevel, leveledUp, mutationCount, itemsCreated, itemsDeleted}>}
+   */
+  async applyProgression(actor, progressionPacket) {
+    try {
+      if (!actor) {throw new Error('applyProgression() called with no actor');}
+      if (!progressionPacket || typeof progressionPacket !== 'object') {
+        throw new Error('applyProgression() requires progressionPacket object');
+      }
+
+      // ====================================================================
+      // PHASE 1: COMPUTE NEW LEVEL (INTERNALLY)
+      // ====================================================================
+      const currentXP = actor.system.xp?.total || 0;
+      const newXPTotal = currentXP + (progressionPacket.xpDelta || 0);
+      const oldLevel = determineLevelFromXP(currentXP);
+      const newLevel = determineLevelFromXP(newXPTotal);
+      const leveledUp = newLevel > oldLevel;
+
+      swseLogger.log(`[PROGRESSION] Applying progression to ${actor.name}:`, {
+        xpDelta: progressionPacket.xpDelta,
+        leveledUp: leveledUp ? `${oldLevel} → ${newLevel}` : 'no level change',
+        featsAdded: progressionPacket.featsAdded?.length || 0,
+        talentsAdded: progressionPacket.talentsAdded?.length || 0,
+        itemsToCreate: progressionPacket.itemsToCreate?.length || 0
+      });
+
+      // ====================================================================
+      // PHASE 2: BUILD FULL MUTATION PLAN (MEMORY)
+      // ====================================================================
+      const rootUpdates = {
+        'system.xp.total': newXPTotal,
+        ...(progressionPacket.stateUpdates || {})
+      };
+
+      const itemsToDelete = actor.items
+        .filter(item =>
+          progressionPacket.featsRemoved?.includes(item.id) ||
+          progressionPacket.talentsRemoved?.includes(item.id)
+        )
+        .map(i => i.id);
+
+      const itemsToCreate = progressionPacket.itemsToCreate || [];
+
+      // ====================================================================
+      // PHASE 3: SET STRICT MUTATION CONTEXT
+      // ====================================================================
+      // blockNestedMutations prevents hooks from triggering additional mutations
+      MutationInterceptor.setContext({
+        operation: 'applyProgression',
+        source: 'ActorEngine.applyProgression',
+        suppressRecalc: true,           // Blocks prepareDerivedData()
+        blockNestedMutations: true      // Blocks additional ActorEngine calls
+      });
+
+      try {
+        // ====================================================================
+        // PHASE 4A: APPLY ROOT UPDATE (Mutation #1)
+        // ====================================================================
+        if (Object.keys(rootUpdates).length > 0) {
+          swseLogger.debug(`[PROGRESSION] Applying ${Object.keys(rootUpdates).length} root updates`);
+          await actor.update(rootUpdates, { diff: false });
+        }
+
+        // ====================================================================
+        // PHASE 4B: DELETE ITEMS (Mutation #2, only if needed)
+        // ====================================================================
+        if (itemsToDelete.length > 0) {
+          swseLogger.debug(`[PROGRESSION] Deleting ${itemsToDelete.length} items`);
+          await actor.deleteEmbeddedDocuments('Item', itemsToDelete);
+        }
+
+        // ====================================================================
+        // PHASE 4C: CREATE ITEMS (Mutation #3, only if needed)
+        // ====================================================================
+        const createdItems = [];
+        if (itemsToCreate.length > 0) {
+          swseLogger.debug(`[PROGRESSION] Creating ${itemsToCreate.length} items`);
+          const created = await actor.createEmbeddedDocuments('Item', itemsToCreate);
+          createdItems.push(...created.map(i => i.id));
+        }
+
+        // ====================================================================
+        // PHASE 5: EMIT PROGRESSION HOOKS (NO MUTATIONS)
+        // ====================================================================
+        // Hooks called AFTER mutations, BEFORE recalc
+        // blockNestedMutations prevents listeners from triggering new mutations
+        if (leveledUp) {
+          Hooks.call('swseProgressionLevelUp', {
+            actor,
+            fromLevel: oldLevel,
+            toLevel: newLevel,
+            xpGained: progressionPacket.xpDelta
+          });
+        }
+
+        Hooks.call('swseProgressionApplied', {
+          actor,
+          packet: progressionPacket,
+          itemsCreated: createdItems.length,
+          itemsDeleted: itemsToDelete.length,
+          newLevel
+        });
+
+        // ====================================================================
+        // PHASE 6: EXPLICIT DETERMINISTIC RECOMPUTATION (ONCE)
+        // ====================================================================
+        // CRITICAL: No sheet rendering, no lifecycle hooks
+        // Direct state computation
+        swseLogger.debug(`[PROGRESSION] Triggering derived recalculation`);
+
+        // Step 1: Compute all derived values
+        await DerivedCalculator.computeAll(actor);
+
+        // Step 2: Apply all modifiers
+        await ModifierEngine.applyAll(actor);
+
+        swseLogger.log(`[PROGRESSION] ✅ Progression applied to ${actor.name}:`, {
+          mutationCount: (itemsToDelete.length > 0 ? 1 : 0) + (itemsToCreate.length > 0 ? 1 : 0) + 1,
+          itemsCreated: createdItems.length,
+          itemsDeleted: itemsToDelete.length,
+          newXPTotal,
+          newLevel
+        });
+
+        // ====================================================================
+        // RETURN RESULTS
+        // ====================================================================
+        return {
+          success: true,
+          newLevel,
+          leveledUp,
+          fromLevel: oldLevel,
+          mutationCount: (itemsToDelete.length > 0 ? 1 : 0) +
+                          (itemsToCreate.length > 0 ? 1 : 0) +
+                          (Object.keys(rootUpdates).length > 0 ? 1 : 0),
+          itemsCreated: createdItems.length,
+          itemsDeleted: itemsToDelete.length,
+          xpTotal: actor.system.xp?.total,
+          createdItemIds: createdItems,
+          timestamp: new Date().toISOString()
+        };
+
+      } finally {
+        // ====================================================================
+        // PHASE 7: CLEAR MUTATION CONTEXT
+        // ====================================================================
+        MutationInterceptor.clearContext();
+      }
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applyProgression failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        packet: progressionPacket
+      });
       throw err;
     }
   }
