@@ -780,67 +780,25 @@ export class DarkSidePowers {
       return { success: false, message: 'Actor does not have Dark Healing' };
     }
 
-    if (spendFP) {
-      const currentFP = actor.system.forcePoints?.value || 0;
-      if (currentFP < 1) {
-        return {
-          success: false,
-          message: 'Not enough Force Points. Dark Healing requires 1 Force Point.'
-        };
-      }
-
-      await actor.update({
-        'system.forcePoints.value': currentFP - 1
-      });
+    const currentFP = actor.system.forcePoints?.value || 0;
+    if (spendFP && currentFP < 1) {
+      return {
+        success: false,
+        message: 'Not enough Force Points. Dark Healing requires 1 Force Point.'
+      };
     }
 
-    // Get Sith class level (Sith Apprentice + Sith Lord)
+    // Get Sith class level and perform attack roll
     const sithLevel = this.getSithClassLevel(actor);
-
-    // Roll ranged attack vs target Fortitude Defense
     const attackRoll = await RollEngine.safeRoll('1d20');
     if (!attackRoll) { SWSELogger.error('Attack roll failed'); return; }
+
     const attackTotal = attackRoll.total + (actor.system.attributes?.dex?.mod || 0);
     const targetFortitude = targetToken.actor.system.defenses?.fortitude?.value || 10;
 
-    let damageAmount = 0;
-    let success = false;
-
-    if (attackTotal >= targetFortitude) {
-      // Success: deal damage and heal
-      const damageRoll = await RollEngine.safeRoll(`${sithLevel}d6`);
-      if (!damageRoll) { SWSELogger.error('Damage roll failed'); return; }
-      damageAmount = damageRoll.total;
-      success = true;
-
-      // Apply damage to target
-      const newHp = Math.max(0, targetToken.actor.system.hp.value - damageAmount);
-      await targetToken.actor.update({ 'system.hp.value': newHp });
-
-      // Heal actor
-      const newActorHp = Math.min(actor.system.hp.max, actor.system.hp.value + damageAmount);
-      await actor.update({ 'system.hp.value': newActorHp });
-
-      const chatContent = `
-        <div class="swse-dark-healing">
-          <h3><img src="icons/svg/skull.svg" style="width: 20px; height: 20px;"> Dark Healing</h3>
-          <p><strong>${actor.name}</strong> drains life force from <strong>${targetToken.actor.name}</strong>!</p>
-          <p>Attack Roll: ${attackTotal} vs Fortitude ${targetFortitude} - <strong>SUCCESS</strong></p>
-          <p><strong>${damageAmount}</strong> damage dealt | <strong>${damageAmount}</strong> HP healed</p>
-        </div>
-      `;
-
-      await createChatMessage({
-        speaker: { actor: actor },
-        content: chatContent,
-        flavor: 'Dark Healing - Life Drained',
-        rolls: [attackRoll, damageRoll],
-        flags: { swse: { darkHealing: true } }
-      });
-
-      SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Healing for ${damageAmount} damage/healing`);
-    } else {
-      // Failure: no effect
+    // Check hit or miss
+    if (attackTotal < targetFortitude) {
+      // Miss: no damage
       const chatContent = `
         <div class="swse-dark-healing-fail">
           <h3><img src="icons/svg/skull.svg" style="width: 20px; height: 20px;"> Dark Healing</h3>
@@ -859,12 +817,59 @@ export class DarkSidePowers {
       });
 
       SWSELogger.log(`SWSE Talents | ${actor.name}'s Dark Healing attack missed`);
+      return { success: false, damageAmount: 0, attackRoll: attackRoll };
     }
 
-    return {
-      success: success,
+    // Hit: roll damage
+    const damageRoll = await RollEngine.safeRoll(`${sithLevel}d6`);
+    if (!damageRoll) { SWSELogger.error('Damage roll failed'); return; }
+    const damageAmount = damageRoll.total;
+
+    // PHASE 1: BUILD PLAN
+    const plan = await TalentEffectEngine.buildDarkHealingPlan({
+      sourceActor: actor,
+      targetActor: targetToken.actor,
       damageAmount: damageAmount,
-      attackRoll: attackRoll
+      spendFP: spendFP
+    });
+
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return { success: false, message: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Dark Healing failed: ${result.reason}`);
+      return { success: false, message: result.reason };
+    }
+
+    // PHASE 3: SIDE-EFFECTS
+    const chatContent = `
+      <div class="swse-dark-healing">
+        <h3><img src="icons/svg/skull.svg" style="width: 20px; height: 20px;"> Dark Healing</h3>
+        <p><strong>${actor.name}</strong> drains life force from <strong>${targetToken.actor.name}</strong>!</p>
+        <p>Attack Roll: ${attackTotal} vs Fortitude ${targetFortitude} - <strong>SUCCESS</strong></p>
+        <p><strong>${damageAmount}</strong> damage dealt | <strong>${damageAmount}</strong> HP healed</p>
+      </div>
+    `;
+
+    await createChatMessage({
+      speaker: { actor: actor },
+      content: chatContent,
+      flavor: 'Dark Healing - Life Drained',
+      rolls: [attackRoll, damageRoll],
+      flags: { swse: { darkHealing: true } }
+    });
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Healing for ${damageAmount} damage/healing`);
+
+    return {
+      success: true,
+      damageAmount: damageAmount,
+      attackRoll: attackRoll,
+      damageRoll: damageRoll
     };
   }
 
@@ -884,50 +889,53 @@ export class DarkSidePowers {
       return { success: false, message: 'Actor does not have Improved Dark Healing' };
     }
 
-    if (spendFP) {
-      const currentFP = actor.system.forcePoints?.value || 0;
-      if (currentFP < 1) {
-        return {
-          success: false,
-          message: 'Not enough Force Points. Improved Dark Healing requires 1 Force Point.'
-        };
-      }
-
-      await actor.update({
-        'system.forcePoints.value': currentFP - 1
-      });
+    const currentFP = actor.system.forcePoints?.value || 0;
+    if (spendFP && currentFP < 1) {
+      return {
+        success: false,
+        message: 'Not enough Force Points. Improved Dark Healing requires 1 Force Point.'
+      };
     }
 
-    // Get Sith class level (Sith Apprentice + Sith Lord)
+    // Get Sith class level and roll attack
     const sithLevel = this.getSithClassLevel(actor);
-
-    // Roll ranged attack vs target Fortitude Defense
     const attackRoll = await RollEngine.safeRoll('1d20');
     if (!attackRoll) { SWSELogger.error('Attack roll failed'); return; }
+
     const attackTotal = attackRoll.total + (actor.system.attributes?.dex?.mod || 0);
     const targetFortitude = targetToken.actor.system.defenses?.fortitude?.value || 10;
 
+    // Roll damage
     const damageRoll = await RollEngine.safeRoll(`${sithLevel}d6`);
     if (!damageRoll) { SWSELogger.error('Damage roll failed'); return; }
     const fullDamage = damageRoll.total;
 
-    let damageDealt = fullDamage;
-    let healAmount = fullDamage;
+    // Calculate damage and healing
+    const damageDealt = (attackTotal >= targetFortitude) ? fullDamage : Math.floor(fullDamage / 2);
+    const healAmount = damageDealt;
 
-    if (attackTotal < targetFortitude) {
-      // On miss: half damage
-      damageDealt = Math.floor(fullDamage / 2);
-      healAmount = Math.floor(fullDamage / 2);
+    // PHASE 1: BUILD PLAN
+    const plan = await TalentEffectEngine.buildImprovedDarkHealingPlan({
+      sourceActor: actor,
+      targetActor: targetToken.actor,
+      damageDealt: damageDealt,
+      healAmount: healAmount,
+      spendFP: spendFP
+    });
+
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return { success: false, message: plan.reason };
     }
 
-    // Apply damage to target
-    const newTargetHp = Math.max(0, targetToken.actor.system.hp.value - damageDealt);
-    await targetToken.actor.update({ 'system.hp.value': newTargetHp });
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Improved Dark Healing failed: ${result.reason}`);
+      return { success: false, message: result.reason };
+    }
 
-    // Heal actor
-    const newActorHp = Math.min(actor.system.hp.max, actor.system.hp.value + healAmount);
-    await actor.update({ 'system.hp.value': newActorHp });
-
+    // PHASE 3: SIDE-EFFECTS
     const chatContent = `
       <div class="swse-improved-dark-healing">
         <h3><img src="icons/svg/skull.svg" style="width: 20px; height: 20px;"> Improved Dark Healing</h3>
@@ -985,19 +993,12 @@ export class DarkSidePowers {
       };
     }
 
-    // Validate Force Points
-    if (spendFP) {
-      const currentFP = actor.system.forcePoints?.value || 0;
-      if (currentFP < 1) {
-        return {
-          success: false,
-          message: 'Not enough Force Points. Dark Healing Field requires 1 Force Point.'
-        };
-      }
-
-      await actor.update({
-        'system.forcePoints.value': currentFP - 1
-      });
+    const currentFP = actor.system.forcePoints?.value || 0;
+    if (spendFP && currentFP < 1) {
+      return {
+        success: false,
+        message: 'Not enough Force Points. Dark Healing Field requires 1 Force Point.'
+      };
     }
 
     // Validate targets (up to 3)
@@ -1012,12 +1013,11 @@ export class DarkSidePowers {
       };
     }
 
-    // Get Sith class level
+    // Get Sith class level and perform all rolls
     const sithLevel = this.getSithClassLevel(actor);
-
-    // Process each target
     let totalDamageDealt = 0;
     const targetResults = [];
+    const targetDamages = [];
 
     for (const targetToken of targetTokens) {
       const targetActor = targetToken.actor;
@@ -1033,17 +1033,8 @@ export class DarkSidePowers {
       if (!damageRoll) { SWSELogger.error('Damage roll failed'); return; }
       const fullDamage = damageRoll.total;
 
-      let damageDealt = fullDamage;
-
-      if (useForceTotal < targetFortitude) {
-        // On miss: half damage
-        damageDealt = Math.floor(fullDamage / 2);
-      }
-
-      // Apply damage to target
-      const newTargetHp = Math.max(0, targetActor.system.hp.value - damageDealt);
-      await targetActor.update({ 'system.hp.value': newTargetHp });
-
+      // Calculate damage (half on miss)
+      const damageDealt = (useForceTotal >= targetFortitude) ? fullDamage : Math.floor(fullDamage / 2);
       totalDamageDealt += damageDealt;
 
       targetResults.push({
@@ -1055,14 +1046,37 @@ export class DarkSidePowers {
         roll: useForceRoll,
         damageRoll: damageRoll
       });
+
+      targetDamages.push({
+        targetActor: targetActor,
+        damageDealt: damageDealt
+      });
     }
 
     // Calculate healing as half the total damage from all targets
     const healAmount = Math.floor(totalDamageDealt / 2);
-    const newActorHp = Math.min(actor.system.hp.max, actor.system.hp.value + healAmount);
-    await actor.update({ 'system.hp.value': newActorHp });
 
-    // Create chat message
+    // PHASE 1: BUILD PLAN
+    const plan = await TalentEffectEngine.buildDarkHealingFieldPlan({
+      sourceActor: actor,
+      targetDamages: targetDamages,
+      totalHealAmount: healAmount,
+      spendFP: spendFP
+    });
+
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return { success: false, message: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Dark Healing Field failed: ${result.reason}`);
+      return { success: false, message: result.reason };
+    }
+
+    // PHASE 3: SIDE-EFFECTS
     const targetSummary = targetResults
       .map(
         t =>
@@ -1118,28 +1132,49 @@ export class DarkSidePowers {
       return { success: false, message: 'Actor does not have Wicked Strike' };
     }
 
-    if (spendFP) {
-      const currentFP = actor.system.forcePoints?.value || 0;
-      if (currentFP < 1) {
-        return {
-          success: false,
-          message: 'Not enough Force Points. Wicked Strike requires 1 Force Point.'
-        };
-      }
-
-      await actor.update({
-        'system.forcePoints.value': currentFP - 1
-      });
+    const currentFP = actor.system.forcePoints?.value || 0;
+    if (spendFP && currentFP < 1) {
+      return {
+        success: false,
+        message: 'Not enough Force Points. Wicked Strike requires 1 Force Point.'
+      };
     }
 
     const targetActor = targetToken.actor;
     const currentCondition = targetActor.system.conditionTrack?.value || 0;
-    const newCondition = Math.max(0, currentCondition - 2); // -2 means moving down 2 steps
+    const newCondition = Math.max(0, currentCondition - 2);
 
-    await targetActor.update({
-      'system.conditionTrack.value': newCondition
+    // PHASE 1: BUILD PLAN
+    const plan = await TalentEffectEngine.buildWickedStrikePlan({
+      sourceActor: actor,
+      targetActor: targetActor,
+      damageAmount: 0, // No HP damage, only condition track change
+      spendFP: spendFP
     });
 
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return { success: false, message: plan.reason };
+    }
+
+    // Add condition track update to plan mutations
+    plan.mutations.push({
+      actor: targetActor,
+      actorId: targetActor.id,
+      type: "update",
+      data: {
+        "system.conditionTrack.value": newCondition
+      }
+    });
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Wicked Strike failed: ${result.reason}`);
+      return { success: false, message: result.reason };
+    }
+
+    // PHASE 3: SIDE-EFFECTS
     const chatContent = `
       <div class="swse-wicked-strike">
         <h3><img src="icons/svg/skull.svg" style="width: 20px; height: 20px;"> Wicked Strike</h3>
@@ -1270,29 +1305,53 @@ export class DarkSidePowers {
       };
     }
 
-    // Regain one spent power from actor
+    // Find first spent power to regain
     const spentPowers = actor.items.filter(item =>
       item.type === 'forcepower' && item.system?.spent === true
     );
 
     let regainedPowerName = null;
+    let regainMutation = null;
+
     if (spentPowers.length > 0) {
       const powerToRegain = spentPowers[0];
-      await ActorEngine.updateOwnedItems(actor, [{
+      regainedPowerName = powerToRegain.name;
+      regainMutation = {
         _id: powerToRegain.id,
         'system.spent': false
-      }]);
-      regainedPowerName = powerToRegain.name;
+      };
     }
 
-    // Drain target's FP
-    await targetActor.update({
-      'system.forcePoints.value': Math.max(0, targetFP - 1)
+    // PHASE 1: BUILD PLAN
+    const plan = await TalentEffectEngine.buildDrainForcePlan({
+      sourceActor: actor,
+      targetActor: targetActor,
+      forceDrained: 1
     });
 
-    // Mark as used
-    await actor.setFlag('foundryvtt-swse', drainForceFlag, true);
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return { success: false, message: plan.reason };
+    }
 
+    // Add regain power mutation if applicable
+    if (regainMutation) {
+      plan.mutations.push({
+        actor: actor,
+        actorId: actor.id,
+        type: "updateOwnedItems",
+        items: [regainMutation]
+      });
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Drain Force failed: ${result.reason}`);
+      return { success: false, message: result.reason };
+    }
+
+    // PHASE 3: SIDE-EFFECTS
     const chatContent = `
       <div class="swse-drain-force">
         <h3><img src="icons/svg/skull.svg" style="width: 20px; height: 20px;"> Drain Force</h3>
@@ -1344,7 +1403,6 @@ export class DarkSidePowers {
       };
     }
 
-
     const activeTalisman = actor.getFlag('foundryvtt-swse', 'activeSithTalisman');
     if (activeTalisman) {
       return {
@@ -1353,27 +1411,15 @@ export class DarkSidePowers {
       };
     }
 
-    if (spendFP) {
-      const currentFP = actor.system.forcePoints?.value || 0;
-      if (currentFP < 1) {
-        return {
-          success: false,
-          message: 'Not enough Force Points. Creating a Sith Talisman requires 1 Force Point.'
-        };
-      }
-
-      await actor.update({
-        'system.forcePoints.value': currentFP - 1
-      });
+    const currentFP = actor.system.forcePoints?.value || 0;
+    if (spendFP && currentFP < 1) {
+      return {
+        success: false,
+        message: 'Not enough Force Points. Creating a Sith Talisman requires 1 Force Point.'
+      };
     }
 
-    // Increase DSP by 1
-    const currentDSP = actor.system.darkSideScore || 0;
-    await actor.update({
-      'system.darkSideScore': currentDSP + 1
-    });
-
-    // Create the talisman item
+    // Create the talisman item first (before mutations)
     const itemData = {
       name: 'Sith Talisman',
       type: 'equipment',
@@ -1393,21 +1439,32 @@ export class DarkSidePowers {
     }
     const itemId = createdItems[0].id;
 
-    const talismantInfo = {
-      itemId: itemId,
-      createdAt: new Date().toISOString(),
-      createdRound: game.combat?.round || 0,
-      dspIncreaseApplied: true
-    };
+    // PHASE 1: BUILD PLAN
+    const plan = await TalentEffectEngine.buildSithTalismanPlan({
+      sourceActor: actor,
+      talismantItemId: itemId,
+      spendFP: spendFP
+    });
 
-    await actor.setFlag('foundryvtt-swse', 'activeSithTalisman', talismantInfo);
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return { success: false, message: plan.reason };
+    }
 
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Failed to create Sith Talisman: ${result.reason}`);
+      return { success: false, message: result.reason };
+    }
+
+    // PHASE 3: SIDE-EFFECTS
     const chatContent = `
       <div class="swse-sith-talisman">
         <h3><img src="icons/svg/amulet.svg" style="width: 20px; height: 20px;"> Sith Talisman Created</h3>
         <p><strong>${actor.name}</strong> imbues an object with Sith sorcery, creating a powerful talisman.</p>
         <p><strong>Effect:</strong> +1d6 to damage rolls with Force Powers</p>
-        <p><strong>Dark Side Score:</strong> +1 (now ${currentDSP + 1})</p>
+        <p><strong>Dark Side Score:</strong> +1 (now ${plan.newDSP})</p>
         <p><em>The talisman remains active until destroyed. If destroyed, you cannot create another one for 24 hours.</em></p>
       </div>
     `;
@@ -1418,38 +1475,34 @@ export class DarkSidePowers {
       flavor: 'Sith Talisman Created'
     });
 
-    SWSELogger.log(`SWSE Talents | ${actor.name} created a Sith Talisman. DSP: ${currentDSP} → ${currentDSP + 1}`);
+    SWSELogger.log(`SWSE Talents | ${actor.name} created a Sith Talisman. DSP: ${plan.newDSP - 1} → ${plan.newDSP}`);
 
     return {
       success: true,
       itemId: itemId,
-      dspIncreased: 1,
-      newDSP: currentDSP + 1,
+      dspIncreased: plan.dspIncreased,
+      newDSP: plan.newDSP,
       actionTime: 'Full-Round Action'
     };
   }
 
   static async destroySithTalisman(actor) {
-    const talisman = actor.getFlag('foundryvtt-swse', 'activeSithTalisman');
-    if (!talisman) {
-      return { success: false, message: 'Actor does not have an active Sith Talisman' };
+    // PHASE 1: BUILD PLAN
+    const plan = await TalentEffectEngine.buildDestroySithTalismanPlan({
+      sourceActor: actor
+    });
+
+    if (!plan.success) {
+      return { success: false, message: plan.reason || 'Failed to destroy talisman' };
     }
 
-    // Delete the actual item from inventory if it exists
-    if (talisman.itemId) {
-      const item = actor.items.get(talisman.itemId);
-      if (item) {
-        await actor.deleteEmbeddedDocuments('Item', [talisman.itemId]);
-      }
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      return { success: false, message: `Failed to destroy talisman: ${result.reason}` };
     }
 
-    await actor.unsetFlag('foundryvtt-swse', 'activeSithTalisman');
-
-    const cooldownUntil = new Date();
-    cooldownUntil.setHours(cooldownUntil.getHours() + 24);
-
-    await actor.setFlag('foundryvtt-swse', 'sithTalismanCooldown', cooldownUntil.toISOString());
-
+    // PHASE 3: SIDE-EFFECTS
     const chatContent = `
       <div class="swse-sith-talisman-destroyed">
         <h3><img src="icons/svg/amulet.svg" style="width: 20px; height: 20px;"> Sith Talisman Destroyed</h3>
@@ -1466,7 +1519,7 @@ export class DarkSidePowers {
 
     SWSELogger.log(`SWSE Talents | ${actor.name}'s Sith Talisman was destroyed`);
 
-    return { success: true, cooldownHours: 24 };
+    return { success: true, cooldownHours: plan.cooldownHours };
   }
 
   static canCreateNewSithTalisman(actor) {
@@ -1679,7 +1732,20 @@ export class DarkSidePowers {
    * Clear Sith Alchemical bonus after attack is made
    */
   static async clearSithAlchemicalBonus(actor) {
-    await actor.unsetFlag('foundryvtt-swse', 'sithAlchemicalBonus');
+    // PHASE 1: BUILD PLAN
+    const plan = await TalentEffectEngine.buildClearSithAlchemicalBonusPlan({
+      sourceActor: actor
+    });
+
+    if (!plan.success) {
+      return;
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    await ActorEngine.applyTalentEffect(plan);
+
+    // PHASE 3: SIDE-EFFECTS (logging only)
+    SWSELogger.log(`SWSE Talents | Cleared Sith Alchemical bonus for ${actor.name}`);
   }
 
   /**
@@ -1757,8 +1823,20 @@ export class DarkSidePowers {
   }
 
   static async setStolenFormTalent(actor, talentName) {
-    await actor.setFlag('foundryvtt-swse', 'stolenFormTalent', talentName);
+    // PHASE 1: BUILD PLAN
+    const plan = await TalentEffectEngine.buildSetStolenFormTalentPlan({
+      sourceActor: actor,
+      talentName: talentName
+    });
 
+    if (!plan.success) {
+      return;
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    await ActorEngine.applyTalentEffect(plan);
+
+    // PHASE 3: SIDE-EFFECTS
     const chatContent = `
       <div class="swse-stolen-form">
         <h3><img src="icons/svg/skull.svg" style="width: 20px; height: 20px;"> Stolen Form</h3>
