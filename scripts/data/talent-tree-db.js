@@ -32,6 +32,7 @@ export const TalentTreeDB = {
     // In-memory map for O(1) lookups: treeId -> normalized tree
     trees: new Map(),
     sourceIndex: new Map(),
+    _byId: new Map(),  // ID -> tree (compatibility API)
     _byKey: new Map(),  // NEW: stableKey -> tree (Phase 6)
     _legacyIdMap: new Map(),  // NEW: legacy treeId -> tree (legacy alias resolution)
 
@@ -75,6 +76,7 @@ export const TalentTreeDB = {
 
                     // Store by ID
                     this.trees.set(normalizedTree.id, normalizedTree);
+                    this._byId.set(normalizedTree.id, normalizedTree);
                     if (normalizedTree.sourceId) {this.sourceIndex.set(normalizedTree.sourceId, normalizedTree);}
 
                     // Store by stable key (generate if not in compendium)
@@ -152,6 +154,26 @@ export const TalentTreeDB = {
     byKey(key) {
         if (!key) {return null;}
         return this._byKey.get(key) ?? null;
+    },
+
+    /**
+     * Get a talent tree by ID (compatibility API).
+     * Direct O(1) lookup for normalized tree IDs.
+     *
+     * @param {string} id - Tree ID
+     * @returns {Object|null} - Normalized tree or null
+     */
+    byId(id) {
+        if (!id) {return null;}
+        // Direct ID lookup
+        if (this._byId?.has(id)) {
+            return this._byId.get(id);
+        }
+        // Legacy alias fallback
+        if (this._legacyIdMap?.has(id)) {
+            return this._legacyIdMap.get(id);
+        }
+        return null;
     },
 
     /**
