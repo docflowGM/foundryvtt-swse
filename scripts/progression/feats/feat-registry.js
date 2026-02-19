@@ -17,11 +17,13 @@ async function loadJSON(url) {
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { toStableKey } from '../../utils/stable-key.js';
 
 export const FeatRegistry = {
 
     // In-memory map for O(1) lookups
     feats: new Map(),
+    _byKey: new Map(),  // stableKey -> feat
     isBuilt: false,
 
     /**
@@ -42,6 +44,12 @@ export const FeatRegistry = {
             for (const featDoc of docs) {
                 if (featDoc.name) {
                     this.feats.set(featDoc.name.toLowerCase(), featDoc);
+
+                    // Store by stable key (generate if not in compendium)
+                    const key = featDoc.system?.key ?? toStableKey(featDoc.name);
+                    if (key) {
+                        this._byKey.set(key, featDoc);
+                    }
                     count++;
                 }
             }
@@ -62,6 +70,14 @@ export const FeatRegistry = {
     get(name) {
         if (!name) {return null;}
         return this.feats.get(name.toLowerCase()) ?? null;
+    },
+
+    /**
+     * Get a feat by stable key
+     */
+    byKey(key) {
+        if (!key) {return null;}
+        return this._byKey.get(key) ?? null;
     },
 
     /**
