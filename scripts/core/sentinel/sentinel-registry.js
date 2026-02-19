@@ -18,6 +18,9 @@ import { PerformanceLayer } from './layers/performance-layer.js';
 // PHASE 3: Import mutation authority layer
 import { MutationIntegrityLayer } from './mutation-integrity-layer.js';
 
+// PHASE 3: Import Batch 1 validation suite
+import { Batch1Validation } from '../mutation/batch-1-validation.js';
+
 /**
  * Initialize and register all sentinel layers
  * Called during system bootstrap
@@ -42,4 +45,12 @@ export function initializeSentinelLayers() {
  */
 export function bootstrapSentinel() {
   SentinelEngine.bootstrap();
+
+  // PHASE 3: Register Batch 1 Validation Suite with Sentinel
+  // Makes validation available via sentinel API
+  if (typeof window !== 'undefined') {
+    window.Batch1Validation = Batch1Validation;
+  }
+
+  console.log('[Sentinel] Batch1Validation suite registered');
 }
