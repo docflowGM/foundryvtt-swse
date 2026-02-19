@@ -71,6 +71,77 @@ export function registerSystemSettings() {
     default: false
   });
 
+  // Sentinel Runtime Kernel Settings
+  game.settings.register('foundryvtt-swse', 'sentinelMode', {
+    name: 'Sentinel Runtime Mode',
+    hint: 'Control Sentinel diagnostic kernel activation: OFF, DEV, STRICT, PRODUCTION',
+    scope: 'client',
+    config: true,
+    type: String,
+    choices: {
+      'OFF': 'Disabled',
+      'DEV': 'Development Mode',
+      'STRICT': 'Strict Mode',
+      'PRODUCTION': 'Production Mode'
+    },
+    default: 'DEV'
+  });
+
+  // Per-layer Sentinel settings
+  game.settings.register('foundryvtt-swse', 'sentinelCss', {
+    name: 'Sentinel CSS Layer',
+    hint: 'Monitor CSS selectors and properties for violations',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  game.settings.register('foundryvtt-swse', 'sentinelRender', {
+    name: 'Sentinel Render Layer',
+    hint: 'Monitor application and sheet rendering for failures',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  game.settings.register('foundryvtt-swse', 'sentinelData', {
+    name: 'Sentinel Data Layer',
+    hint: 'Audit registries and data integrity',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  game.settings.register('foundryvtt-swse', 'sentinelHooks', {
+    name: 'Sentinel Hooks Layer',
+    hint: 'Monitor hook call frequency and patterns',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  game.settings.register('foundryvtt-swse', 'sentinelPromises', {
+    name: 'Sentinel Promises Layer',
+    hint: 'Catch unhandled promise rejections and errors',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  game.settings.register('foundryvtt-swse', 'sentinelPerformance', {
+    name: 'Sentinel Performance Layer',
+    hint: 'Track initialization and render performance metrics',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   game.settings.register('foundryvtt-swse', 'dailyForcePoints', {
     name: 'SWSE.Settings.DailyForcePoints.Name',
     hint: 'SWSE.Settings.DailyForcePoints.Hint',
