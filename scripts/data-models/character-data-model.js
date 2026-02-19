@@ -280,19 +280,23 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       };
     }
 
-    // ⚠️ PHASE 2: Ability modifiers now computed ONLY in DerivedCalculator
-    // DO NOT compute ability.mod or ability.total here
+    // ⚠️ PHASE 2 HARD COMPLETION: NO backward compat computation
+    // Ability modifiers are ONLY computed in DerivedCalculator
     // See: DerivedCalculator.computeAll() → system.derived.attributes.*.mod
+    // All consumers updated to read from system.derived.attributes.*.mod
 
-    // Create abilities alias for parent class compatibility (structure only, no computation)
+    // Create abilities alias structure only (values come from DerivedCalculator)
+    // DO NOT compute total or mod - these are derived values
     this.abilities = {};
     for (const [key, attr] of Object.entries(this.attributes)) {
+      // PHASE 2: Structure-only - actual values in system.derived.attributes.*
       this.abilities[key] = {
         base: attr.base || 10,
         racial: attr.racial || 0,
         misc: (attr.enhancement || 0) + (attr.temp || 0),
-        total: attr.base + (attr.racial || 0) + (attr.enhancement || 0) + (attr.temp || 0),
-        mod: Math.floor(((attr.base || 10) + (attr.racial || 0) + (attr.enhancement || 0) + (attr.temp || 0) - 10) / 2)
+        // Derived values come from DerivedCalculator, NOT computed here
+        total: undefined, // Use system.derived.attributes[key].total
+        mod: undefined    // Use system.derived.attributes[key].mod
       };
     }
 
