@@ -6,6 +6,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export const FeatState = {
 
@@ -46,7 +47,8 @@ export const FeatState = {
 
         featList.push(featName);
 
-        await actor.update({
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, {
             'system.progression.feats': featList
         });
 
@@ -70,7 +72,8 @@ export const FeatState = {
 
         featList.splice(index, 1);
 
-        await actor.update({
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, {
             'system.progression.feats': featList
         });
 
@@ -107,7 +110,8 @@ export const FeatState = {
      * Clear all feats
      */
     async clear(actor) {
-        await actor.update({
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, {
             'system.progression.feats': []
         });
 

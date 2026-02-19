@@ -2,6 +2,7 @@
 
 import { XP_LEVEL_THRESHOLDS, XP_MAX_LEVEL, getXPFromCL } from './xp-constants.js';
 import { getTotalLevel } from '../../actors/derived/level-split.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 const NS = 'foundryvtt-swse';
 
@@ -125,7 +126,8 @@ export async function applyXP(actor, amount) {
   const newLevel = determineLevelFromXP(newTotal);
   const nextThreshold = XP_LEVEL_THRESHOLDS[newLevel + 1] ?? null;
 
-  await actor.update({
+  // PHASE 3: Route through ActorEngine
+  await ActorEngine.updateActor(actor, {
     'system.xp.total': newTotal
   });
 
