@@ -3,6 +3,7 @@ import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { TalentAbilitiesEngine } from '../../engine/TalentAbilitiesEngine.js';
 import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 import { RenderAssertions } from '../../core/render-assertions.js';
+import { RollEngine } from '../../engine/roll-engine.js';
 
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
@@ -279,7 +280,9 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
 
           if (subAbility.rollData?.canRoll && subAbility.rollData?.formula) {
             const rollData = this.actor?.getRollData?.() ?? {};
-            const roll = await (new Roll(subAbility.rollData.formula, rollData)).roll({ async: true });
+            const roll = await RollEngine.safeRoll(subAbility.rollData.formula, rollData);
+
+            if (!roll) return; // Roll failed
 
             const flavorParts = [
               `<strong>${subAbility.name}</strong>`,
