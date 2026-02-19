@@ -2,6 +2,7 @@
 import { swseLogger } from '../utils/logger.js';
 import { applyActorUpdateAtomic } from '../utils/actor-utils.js';
 import { createChatMessage } from '../core/document-api-v13.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 /**
  * ProgressionSession - Session-level transaction wrapper for character progression
@@ -709,7 +710,7 @@ export class ProgressionSession {
 
     if (itemsToCreate.length > 0) {
       swseLogger.log(`[SESSION] Creating ${itemsToCreate.length} items...`);
-      await this.actor.createEmbeddedDocuments('Item', itemsToCreate);
+      await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', itemsToCreate);
     }
   }
 

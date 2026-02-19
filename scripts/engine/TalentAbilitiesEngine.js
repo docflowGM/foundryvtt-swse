@@ -20,7 +20,7 @@ import { RollEngine } from './roll-engine.js';
 // eslint-disable-next-line
 import talentAbilitiesData from '../../data/talent-granted-abilities.json' with { type: 'json' };
 import { createChatMessage } from '../core/document-api-v13.js';
-
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 /**
  * Active Effect definitions for toggleable talent abilities
@@ -1100,7 +1100,7 @@ export class TalentAbilitiesEngine {
         const current = target.system.conditionTrack.current || 0;
         const newValue = Math.max(0, Math.min(5, current - steps)); // 0=normal, 5=helpless
 
-        await target.update({ 'system.conditionTrack.current': newValue });
+        await ActorEngine.updateActor(target, { 'system.conditionTrack.current': newValue });
         SWSELogger.log(`TalentAbilitiesEngine | Moved ${target.name} to CT step ${newValue}`);
     }
 
@@ -1116,7 +1116,7 @@ export class TalentAbilitiesEngine {
         );
 
         if (!hasProne) {
-            await target.createEmbeddedDocuments('ActiveEffect', [{
+            await ActorEngine.createEmbeddedDocuments(target, 'ActiveEffect', [{
                 name: 'Prone',
                 icon: 'icons/svg/falling.svg',
                 flags: { swse: { statusId: 'prone' } }

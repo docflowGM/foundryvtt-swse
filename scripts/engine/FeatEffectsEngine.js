@@ -14,6 +14,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { createEffectOnActor } from '../core/document-api-v13.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class FeatEffectsEngine {
 
@@ -595,7 +596,7 @@ export class FeatEffectsEngine {
                         SWSELogger.warn(`FeatEffectsEngine | Cannot create effects: No ownership on feat ${featItem.name}`);
                         return;
                     }
-                    await featItem.createEmbeddedDocuments('ActiveEffect', effectsData);
+                    await ActorEngine.createEmbeddedDocuments(featItem.actor, 'ActiveEffect', effectsData);
                     SWSELogger.log(`FeatEffectsEngine | Created ${effectsData.length} effects for ${featItem.name}`);
                 } else {
                     SWSELogger.warn(`FeatEffectsEngine | Cannot create effects: Non-owner attempting to modify ${featItem.name}`);
